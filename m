@@ -2,72 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0661A73DF23
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 14:28:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9363D73DF64
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 14:37:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231288AbjFZM2N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 08:28:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59526 "EHLO
+        id S229853AbjFZMhk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 08:37:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230109AbjFZM15 (ORCPT
+        with ESMTP id S231128AbjFZMhh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 08:27:57 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DACED26A8;
-        Mon, 26 Jun 2023 05:27:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=3Fnlcm06KG3ZhOYahi/chwTRVVkhSDvG0K9SeqiS5DE=; b=Kbk3zz0BfOzOZJUrGovlBDWliQ
-        DVc4oS4e8s4KFQMM3PWa1fNnBIg/2eIYh3q936RZcyrYe2kuW1PAeKdeixEad6/EGoF4ZpjXq3Xe/
-        vGPuiBF0Z/OIm5a1SMcqWIH0CMThpXe7QNYPkVknc+cx9l/s+70tRVs9ocToTahg2S6CdEuWpEH92
-        8e4s7psYmG39wYTJhkdnjQrFvribhVHhJwoCYbjuzo43AFftERadw3hMP8Lqk0K7nNkWXxYu70MDc
-        D1o2OIB8XBlCWRy+S3Ufq9QgbHxawyR9LnN///ppSLe1tXGrxF+JfMypyKbloYl8x0twn/gOwVrZh
-        HPUMQT0Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qDlJ1-001hwh-NT; Mon, 26 Jun 2023 12:26:55 +0000
-Date:   Mon, 26 Jun 2023 13:26:55 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Bean Huo <beanhuo@iokpp.de>
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org,
-        akpm@linux-foundation.org, jack@suse.cz, jack@suse.com,
-        tytso@mit.edu, adilger.kernel@dilger.ca, mark@fasheh.com,
-        jlbec@evilplan.org, joseph.qi@linux.alibaba.com, hch@infradead.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        beanhuo@micron.com
-Subject: Re: [RESEND PATCH v3 0/2] clean up block_commit_write
-Message-ID: <ZJmED0CpVewunniH@casper.infradead.org>
-References: <20230626055518.842392-1-beanhuo@iokpp.de>
+        Mon, 26 Jun 2023 08:37:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 470A4E71
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 05:37:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D6F8960D27
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 12:37:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37023C433CA
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 12:37:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687783050;
+        bh=1HgdAcBid0/XGt9gisFnnU2Ur+CMAjUAkWCceo9bhb4=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=QMVLmkjs9DTY5+3uw8uO6g0cuuJ3pMOQtPTDKyJtvKPAjYOoes99VIcyHWInSAZFs
+         7HrwRZNilOvJpLKQTacKJVmUee0TyLsf2cglGYE6dUuC4cbwqcSWwIzsSk31PMzxcj
+         ZTqCtkFfIWk6yT3IWnYzkjqCUXgS/DSjjj0ejDeLpZOF8MnrO2ZwZaMPsJsEWUb6SQ
+         NkxMzlqpt7Hl0IZ+it3XAydAhdiPRqVPt3NUvJHVet9NYyGyZKqEzvNK9/kmP+gND1
+         f60NgfnSam9HN0KjbgsDWTgh1/1X4Rn+811D1lNkuTbMV0VmTf6LeFzrdnBrwd4J/C
+         G5PylH8gDjP4A==
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5607cdb0959so1337074eaf.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 05:37:30 -0700 (PDT)
+X-Gm-Message-State: AC+VfDyOY1HMUfdQaNKrBsJcxLGHUJkc+OaL3P6up671XX+LJXUHHcAd
+        +y3FI7OsJuigfwhKTfB366taU2hpWbuN48/0eJE=
+X-Google-Smtp-Source: ACHHUZ5yI0ZuDqSH1xgQ/66xXcecCKOegyRgBbs4gCemqt1A1hCUOdyZUt50Auar3RsWT/nFjXTDzgHgobAyZjLhST0=
+X-Received: by 2002:a4a:dc45:0:b0:560:c32a:8e10 with SMTP id
+ q5-20020a4adc45000000b00560c32a8e10mr8909975oov.0.1687783049313; Mon, 26 Jun
+ 2023 05:37:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230626055518.842392-1-beanhuo@iokpp.de>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Received: by 2002:a8a:11c3:0:b0:4e8:f6ff:2aab with HTTP; Mon, 26 Jun 2023
+ 05:37:28 -0700 (PDT)
+In-Reply-To: <PUZPR04MB63164CC193BB2EA5270F810E8126A@PUZPR04MB6316.apcprd04.prod.outlook.com>
+References: <PUZPR04MB6316DB8A8CB6107D56716EBC815BA@PUZPR04MB6316.apcprd04.prod.outlook.com>
+ <CAKYAXd9ubktMNDdXPBDjRyUeGARMjMR5Hq+vwwCUbhwUmNURtQ@mail.gmail.com>
+ <PUZPR04MB631602DE8C97F0D3DAA036F08121A@PUZPR04MB6316.apcprd04.prod.outlook.com>
+ <PUZPR04MB63164CC193BB2EA5270F810E8126A@PUZPR04MB6316.apcprd04.prod.outlook.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Mon, 26 Jun 2023 21:37:28 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-aXYh1qzjMb0uhMxpHdA+VuyjruFTFDiuR_88eiPQP5g@mail.gmail.com>
+Message-ID: <CAKYAXd-aXYh1qzjMb0uhMxpHdA+VuyjruFTFDiuR_88eiPQP5g@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] exfat: get file size from DataLength
+To:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+Cc:     "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
+        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 26, 2023 at 07:55:16AM +0200, Bean Huo wrote:
-> change log:
->     v1--v2:
->         1. reordered patches
-> 
->     v2--v3:
->         1. rebased patches to git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next
+2023-06-26 17:45 GMT+09:00, Yuezhang.Mo@sony.com <Yuezhang.Mo@sony.com>:
+>> From: Mo, Yuezhang
+>> Sent: Sunday, June 25, 2023 2:29 PM
+>> > From: Namjae Jeon <linkinjeon@kernel.org>
+>> > First, Thank you so much for your work.
+>> > Have you ever run xfstests against exfat included this changes ?
+>>
+>> Yes, all generic/??? tests of xfstests pass, except generic/251.
+>> Are there any tests that fail in your environment?
+>
+> I run xfstests iteratively and found generic/465 will sometimes fail, the
+> probability of failure is 1/20.
+> I will investigate it and update these patches.
+Okay.
+>
+> PS: generic/251 also fails without these patches, the reason is `cp -a`
+> fails.
+I will check it.
 
-It's be nice to have a bit of an explanation for the whole series here,
-but I think the two patches work standalone.
-
-If you'd like to extend this work, you could convert the callers of
-block_commit_write() to use a folio instead of a page and then unify
-block_commit_write() and __block_commit_write() as you did in the earlier
-version of your patchset.  It shouldn't be too hard, both callers in
-ext4 and the caller in iomap are already done.  That just leaves the
-three callers in ocfs2 and the one caller in udf.
+Thanks!
+>
