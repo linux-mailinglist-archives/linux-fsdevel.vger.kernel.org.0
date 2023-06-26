@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA2F873E6AB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 19:37:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61DA473E69D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 19:36:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231159AbjFZRhP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 13:37:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35720 "EHLO
+        id S231288AbjFZRgZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 13:36:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230047AbjFZRgH (ORCPT
+        with ESMTP id S229501AbjFZRgB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 13:36:07 -0400
+        Mon, 26 Jun 2023 13:36:01 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 246EC10D7;
-        Mon, 26 Jun 2023 10:35:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 302162952;
+        Mon, 26 Jun 2023 10:35:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=Hry/pakf3XrjxtX3FxEBHlEHaVaCFV/OlgXU52VAJV8=; b=jW+KKslSaTipXxmpNDSSeOnylL
-        hzbQCyN3wKzjlszSqjc4HEgvviOgGGjspRJs0Vjv5zO3/R9XMbjtxpTsmS+9Gcwuw/ZcmCCyUnNeN
-        H4tbBHnB66YtrhxCVg35T1Z99VBOHuc93t96BguJpmXgSVovFmRpL3E4/mslcgF20oYguKO1t+f7E
-        aUfCqCMqXZB9pkY6yvUPK4VnHdbnXMwfDHnVDWMQUOAefkCf44Iu/CmD4lgC7Vnrxqd1w5+fQwu8z
-        //QbapaLS3fMPaq6e7Ev6OQIihxf6gBxNalmqp3q/qnWQWabKWAZg/iTq63WdoLJnsWBSSCUnMJEx
-        OM6BZUcg==;
+        bh=E+4oLVAPfstR5U6aMi6Troa+YNi9gddz/xau+Gpg+rc=; b=UixsKVyP80nb0Gf7F4Lg+jN462
+        veiCIiZ5m1gznewobjOw1LIlCVl+NQ9bzKtGc1cy/FIFA2ZFOyC31yskGu3ZRnQRQ486TqTOhj/gr
+        MYy4BGRtCU3MWPXCVKFnpYRI0SO+7rxcxT4MHuv18Sude5qsPpa5V0wVCVDJPMg+CxWSEWOj5iYYW
+        AJDD8UCC+LOhQrktHVtCdUQ+V85q2O0pIp+RIDy4myAwlxwJ/KnWBqgsQgybdKyrahLZIt/KPAliX
+        Z7BL5LWIbRipCNRi/kU84/66Ojv2G0K94IDEtnbMk2QxnYFxyp6hwCZ51e4XG35VOJT7z4XE1c+22
+        +qrDsMow==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qDq7X-001vV5-HI; Mon, 26 Jun 2023 17:35:23 +0000
+        id 1qDq7X-001vV7-Jz; Mon, 26 Jun 2023 17:35:23 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jan Kara <jack@suse.com>, David Howells <dhowells@redhat.com>
-Subject: [PATCH 04/12] writeback: Simplify the loops in write_cache_pages()
-Date:   Mon, 26 Jun 2023 18:35:13 +0100
-Message-Id: <20230626173521.459345-5-willy@infradead.org>
+Subject: [PATCH 05/12] pagevec: Add ability to iterate a queue
+Date:   Mon, 26 Jun 2023 18:35:14 +0100
+Message-Id: <20230626173521.459345-6-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230626173521.459345-1-willy@infradead.org>
 References: <20230626173521.459345-1-willy@infradead.org>
@@ -50,136 +50,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Collapse the two nested loops into one.  This is needed as a step
-towards turning this into an iterator.
----
- mm/page-writeback.c | 94 ++++++++++++++++++++++-----------------------
- 1 file changed, 47 insertions(+), 47 deletions(-)
+Add a loop counter inside the folio_batch to let us iterate from 0-nr
+instead of decrementing nr and treating the batch as a stack.  It would
+generate some very weird and suboptimal I/O patterns for page writeback
+to iterate over the batch as a stack.
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 54f2972dab45..68f28eeb15ed 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2461,6 +2461,7 @@ int write_cache_pages(struct address_space *mapping,
- 		      void *data)
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ include/linux/pagevec.h | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/include/linux/pagevec.h b/include/linux/pagevec.h
+index 87cc678adc85..fcc06c300a72 100644
+--- a/include/linux/pagevec.h
++++ b/include/linux/pagevec.h
+@@ -27,6 +27,7 @@ struct folio;
+  */
+ struct folio_batch {
+ 	unsigned char nr;
++	unsigned char i;
+ 	bool percpu_pvec_drained;
+ 	struct folio *folios[PAGEVEC_SIZE];
+ };
+@@ -40,12 +41,14 @@ struct folio_batch {
+ static inline void folio_batch_init(struct folio_batch *fbatch)
  {
- 	int error;
-+	int i = 0;
+ 	fbatch->nr = 0;
++	fbatch->i = 0;
+ 	fbatch->percpu_pvec_drained = false;
+ }
  
- 	if (wbc->range_cyclic) {
- 		wbc->index = mapping->writeback_index; /* prev offset */
-@@ -2478,65 +2479,64 @@ int write_cache_pages(struct address_space *mapping,
- 	folio_batch_init(&wbc->fbatch);
- 	wbc->err = 0;
+ static inline void folio_batch_reinit(struct folio_batch *fbatch)
+ {
+ 	fbatch->nr = 0;
++	fbatch->i = 0;
+ }
  
--	while (wbc->index <= wbc->end) {
--		int i;
--
--		writeback_get_batch(mapping, wbc);
-+	for (;;) {
-+		struct folio *folio;
+ static inline unsigned int folio_batch_count(struct folio_batch *fbatch)
+@@ -75,6 +78,21 @@ static inline unsigned folio_batch_add(struct folio_batch *fbatch,
+ 	return folio_batch_space(fbatch);
+ }
  
-+		if (i == wbc->fbatch.nr) {
-+			writeback_get_batch(mapping, wbc);
-+			i = 0;
-+		}
- 		if (wbc->fbatch.nr == 0)
- 			break;
- 
--		for (i = 0; i < wbc->fbatch.nr; i++) {
--			struct folio *folio = wbc->fbatch.folios[i];
-+		folio = wbc->fbatch.folios[i++];
- 
--			wbc->done_index = folio->index;
-+		wbc->done_index = folio->index;
- 
--			folio_lock(folio);
--			if (!should_writeback_folio(mapping, wbc, folio)) {
--				folio_unlock(folio);
--				continue;
--			}
-+		folio_lock(folio);
-+		if (!should_writeback_folio(mapping, wbc, folio)) {
-+			folio_unlock(folio);
-+			continue;
-+		}
- 
--			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
--
--			error = writepage(folio, wbc, data);
--			if (unlikely(error)) {
--				/*
--				 * Handle errors according to the type of
--				 * writeback. There's no need to continue for
--				 * background writeback. Just push done_index
--				 * past this page so media errors won't choke
--				 * writeout for the entire file. For integrity
--				 * writeback, we must process the entire dirty
--				 * set regardless of errors because the fs may
--				 * still have state to clear for each page. In
--				 * that case we continue processing and return
--				 * the first error.
--				 */
--				if (error == AOP_WRITEPAGE_ACTIVATE) {
--					folio_unlock(folio);
--					error = 0;
--				} else if (wbc->sync_mode != WB_SYNC_ALL) {
--					wbc->err = error;
--					wbc->done_index = folio->index +
--							folio_nr_pages(folio);
--					return writeback_finish(mapping,
--							wbc, true);
--				}
--				if (!wbc->err)
--					wbc->err = error;
--			}
-+		trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
- 
-+		error = writepage(folio, wbc, data);
-+		if (unlikely(error)) {
- 			/*
--			 * We stop writing back only if we are not doing
--			 * integrity sync. In case of integrity sync we have to
--			 * keep going until we have written all the pages
--			 * we tagged for writeback prior to entering this loop.
-+			 * Handle errors according to the type of
-+			 * writeback. There's no need to continue for
-+			 * background writeback. Just push done_index
-+			 * past this page so media errors won't choke
-+			 * writeout for the entire file. For integrity
-+			 * writeback, we must process the entire dirty
-+			 * set regardless of errors because the fs may
-+			 * still have state to clear for each page. In
-+			 * that case we continue processing and return
-+			 * the first error.
- 			 */
--			if (--wbc->nr_to_write <= 0 &&
--			    wbc->sync_mode == WB_SYNC_NONE)
-+			if (error == AOP_WRITEPAGE_ACTIVATE) {
-+				folio_unlock(folio);
-+				error = 0;
-+			} else if (wbc->sync_mode != WB_SYNC_ALL) {
-+				wbc->err = error;
-+				wbc->done_index = folio->index +
-+						folio_nr_pages(folio);
- 				return writeback_finish(mapping, wbc, true);
-+			}
-+			if (!wbc->err)
-+				wbc->err = error;
- 		}
++/**
++ * folio_batch_next - Return the next folio to process.
++ * @fbatch: The folio batch being processed.
++ *
++ * Use this function to implement a queue of folios.
++ *
++ * Return: The next folio in the queue, or NULL if the queue is empty.
++ */
++static inline struct folio *folio_batch_next(struct folio_batch *fbatch)
++{
++	if (fbatch->i == fbatch->nr)
++		return NULL;
++	return fbatch->folios[fbatch->i++];
++}
 +
-+		/*
-+		 * We stop writing back only if we are not doing
-+		 * integrity sync. In case of integrity sync we have to
-+		 * keep going until we have written all the pages
-+		 * we tagged for writeback prior to entering this loop.
-+		 */
-+		if (--wbc->nr_to_write <= 0 &&
-+		    wbc->sync_mode == WB_SYNC_NONE)
-+			return writeback_finish(mapping, wbc, true);
- 	}
+ void __folio_batch_release(struct folio_batch *pvec);
  
- 	return writeback_finish(mapping, wbc, false);
+ static inline void folio_batch_release(struct folio_batch *fbatch)
 -- 
 2.39.2
 
