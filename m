@@ -2,234 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 72FDE73E823
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 20:23:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03D1D73E8F0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 20:30:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231970AbjFZSXZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 14:23:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37472 "EHLO
+        id S232085AbjFZSas (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 14:30:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231882AbjFZSXR (ORCPT
+        with ESMTP id S232163AbjFZSao (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 14:23:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E5A9211C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 11:22:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E460D60F6B
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 18:21:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF055C433C8;
-        Mon, 26 Jun 2023 18:21:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687803702;
-        bh=UKT1qjbXJ/095r7Q3G5RGYYkec8CgNh7aC+yZ74QvAA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=kmbTkXAgmmFnlq2CWE/KuYZ1krx1nS+2xlTwHd0NOLh2Cxy2pqIlzyZ8LKTdXD6Ef
-         ZU9IAnn/DvWiEqy484ycq0/Ao9w+/2bzgOtaV7+WTc7RygG0wwYDABenSmCxm8Sse+
-         eoAHZp6LEll+IcjSRWGESKr6bBK5/VmMnKdmmVo3nlNEpg3im7bymnpeyQgeDVuVW6
-         Ss7k47Kw5BNwQx3LRWv67kMo0AEhNstkaccwx4zk0CYQg3Sen+oMvfQSzkQlin3czV
-         Eoq//d2TEGDkA1yP7iTcR/SMH5GmtLmU2lOS6wIgypyzu3n6NMvMa6NZjEP1y6D5dP
-         pzBW0cZnIAQsQ==
-Subject: [PATCH v4 3/3] shmem: stable directory offsets
-From:   Chuck Lever <cel@kernel.org>
-To:     viro@zeniv.linux.org.uk, brauner@kernel.org, hughd@google.com,
-        akpm@linux-foundation.org
-Cc:     Chuck Lever <chuck.lever@oracle.com>, jlayton@redhat.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Date:   Mon, 26 Jun 2023 14:21:40 -0400
-Message-ID: <168780370085.2142.4461798321197359310.stgit@manet.1015granger.net>
-In-Reply-To: <168780354647.2142.537463116658872680.stgit@manet.1015granger.net>
-References: <168780354647.2142.537463116658872680.stgit@manet.1015granger.net>
-User-Agent: StGit/1.5
+        Mon, 26 Jun 2023 14:30:44 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29EB010D7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 11:30:38 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-51d9890f368so1676582a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 11:30:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=metaspace-dk.20221208.gappssmtp.com; s=20221208; t=1687804236; x=1690396236;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AZcNk5dnSDXU4m2jPSZ7WfsjYlgWRPbt7AFCuwHpRlI=;
+        b=A2giA9Bk4mKvzTvcXd56HVsiwY1MA/5G8/WnQQwCVZ8hctrkLzU/3GAMe3NnMn/u8B
+         NpZm0LpDjcPa/23jgeGQIE9+BTpAWccBcl3TjuezoPqZW1+4b0j5ZGeDLqOCAv7C7sFp
+         JL1OsKBifrdJ+5FxvilZVX+CuvLZqgh9nfxjeUrQSIibUTtYtLSAq8NMoe7UJVmspKbc
+         zayiFLsaHpmyUTfrmdmfY4oszU7Hwzf01lVOxLENcx6TrXucpnW4CZIc7ATS2hQTG8AV
+         DM5yRTHfOu2nFktjjCgJQS/sBB5iTMR7nsh+3gOGKz/UWQDG0C7k/yYfxmlrBHEzhoG1
+         sQnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687804236; x=1690396236;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AZcNk5dnSDXU4m2jPSZ7WfsjYlgWRPbt7AFCuwHpRlI=;
+        b=T4lmKNG8J8SlpwSkT+0nc7W+eibnfR6bRArA8cCACgGza/FxXUtslimHU6qiHQjsfU
+         19Z07cp7LsPJJcupWJIdzr7SPKDlDfnRiDzNAlqiEkEqSYpRHYid05Oa9pyunDUecwnp
+         dPdNDlUSMbpyviBfaOYdUdxA2f24CjZu8CjHJO3Guv7FYnFMvR9xjOT2cLMA8DbXo1pE
+         /OET7bBfQ06r5QEMqFZ31EtH1ul4h4/w8OjaRZf4BtcjOgmqmc9nk3i2Os7YgXqQiRGQ
+         SApfQ/9PUI/4kSPZkjWEPOTO7Yu7hksAGlNRKmeBmm0FljtlZej0qlKz7zMDebx5OwbZ
+         /Iwg==
+X-Gm-Message-State: AC+VfDx3SHq649c0QilnhBWtxBmtzMuNXXPRwpsFKga2mKqmRwQJIt9m
+        tGbgCHPIPhGTgKkmiGcpxgU/7Q==
+X-Google-Smtp-Source: ACHHUZ6xUBxB1HXnuaoz07JtPXm+JO2uwoH+KaAJy3XVZENmrd8PqJ16iMuF32RMJGApdeZ6EoFW/Q==
+X-Received: by 2002:a05:6402:7d3:b0:51d:a01d:afd3 with SMTP id u19-20020a05640207d300b0051da01dafd3mr1548108edy.22.1687804236266;
+        Mon, 26 Jun 2023 11:30:36 -0700 (PDT)
+Received: from localhost ([79.142.230.34])
+        by smtp.gmail.com with ESMTPSA id o7-20020aa7dd47000000b0051bf57aa0c6sm3099746edw.87.2023.06.26.11.30.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Jun 2023 11:30:35 -0700 (PDT)
+References: <20230626164752.1098394-1-nmi@metaspace.dk>
+ <02730282-88b0-572e-439c-719cfef379bb@wdc.com>
+User-agent: mu4e 1.10.3; emacs 28.2.50
+From:   "Andreas Hindborg (Samsung)" <nmi@metaspace.dk>
+To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc:     Damien Le Moal <dlemoal@kernel.org>,
+        "open list:ZONEFS FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
+        "gost.dev@samsung.com" <gost.dev@samsung.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] zonefs: do not use append if device does not support it
+Date:   Mon, 26 Jun 2023 20:23:48 +0200
+In-reply-to: <02730282-88b0-572e-439c-719cfef379bb@wdc.com>
+Message-ID: <87r0pygjp1.fsf@metaspace.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Chuck Lever <chuck.lever@oracle.com>
 
-The current cursor-based directory offset mechanism doesn't work
-when a tmpfs filesystem is exported via NFS. This is because NFS
-clients do not open directories. Each server-side READDIR operation
-has to open the directory, read it, then close it. The cursor state
-for that directory, being associated strictly with the opened
-struct file, is thus discarded after each NFS READDIR operation.
+Johannes Thumshirn <Johannes.Thumshirn@wdc.com> writes:
 
-Directory offsets are cached not only by NFS clients, but also by
-user space libraries on those clients. Essentially there is no way
-to invalidate those caches when directory offsets have changed on
-an NFS server after the offset-to-dentry mapping changes. Thus the
-whole application stack depends on unchanging directory offsets.
+> On 26.06.23 18:47, Andreas Hindborg wrote:
+>> From: "Andreas Hindborg (Samsung)" <nmi@metaspace.dk>
+>>=20
+>> Zonefs will try to use `zonefs_file_dio_append()` for direct sync writes=
+ even if
+>> device `max_zone_append_sectors` is zero. This will cause the IO to fail=
+ as the
+>> io vector is truncated to zero. It also causes a call to
+>> `invalidate_inode_pages2_range()` with end set to UINT_MAX, which is pro=
+bably
+>> not intentional. Thus, do not use append when device does not support it.
+>>=20
+>
+> I'm sorry but I think it has been stated often enough that for Linux Zone=
+ Append
+> is a mandatory feature for a Zoned Block Device. Therefore this path is e=
+ssentially
+> dead code as max_zone_append_sectors will always be greater than zero.
+>
+> So this is a clear NAK from my side.
 
-The solution we've come up with is to make the directory offset for
-each file in a tmpfs filesystem stable for the life of the directory
-entry it represents.
+OK, thanks for clarifying =F0=9F=91=8D I came across this bugging out while
+playing around with zone append for ublk. The code makes sense if the
+stack expects append to always be present.
 
-shmem_readdir() and shmem_dir_llseek() now use an xarray to map each
-directory offset (an loff_t integer) to the memory address of a
-struct dentry.
+I didn't follow the discussion, could you reiterate why the policy is
+that zoned devices _must_ support append?
 
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
----
- mm/shmem.c |   54 +++++++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 47 insertions(+), 7 deletions(-)
-
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 721f9fd064aa..89012f3583b1 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2410,7 +2410,8 @@ static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block
- 			/* Some things misbehave if size == 0 on a directory */
- 			inode->i_size = 2 * BOGO_DIRENT_SIZE;
- 			inode->i_op = &shmem_dir_inode_operations;
--			inode->i_fop = &simple_dir_operations;
-+			inode->i_fop = &stable_dir_operations;
-+			stable_offset_init(inode);
- 			break;
- 		case S_IFLNK:
- 			/*
-@@ -2950,7 +2951,10 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 		if (error && error != -EOPNOTSUPP)
- 			goto out_iput;
- 
--		error = 0;
-+		error = stable_offset_add(dir, dentry);
-+		if (error)
-+			goto out_iput;
-+
- 		dir->i_size += BOGO_DIRENT_SIZE;
- 		dir->i_ctime = dir->i_mtime = current_time(dir);
- 		inode_inc_iversion(dir);
-@@ -3027,6 +3031,13 @@ static int shmem_link(struct dentry *old_dentry, struct inode *dir, struct dentr
- 			goto out;
- 	}
- 
-+	ret = stable_offset_add(dir, dentry);
-+	if (ret) {
-+		if (inode->i_nlink)
-+			shmem_free_inode(inode->i_sb);
-+		goto out;
-+	}
-+
- 	dir->i_size += BOGO_DIRENT_SIZE;
- 	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(inode);
- 	inode_inc_iversion(dir);
-@@ -3045,6 +3056,8 @@ static int shmem_unlink(struct inode *dir, struct dentry *dentry)
- 	if (inode->i_nlink > 1 && !S_ISDIR(inode->i_mode))
- 		shmem_free_inode(inode->i_sb);
- 
-+	stable_offset_remove(dir, dentry);
-+
- 	dir->i_size -= BOGO_DIRENT_SIZE;
- 	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(inode);
- 	inode_inc_iversion(dir);
-@@ -3103,24 +3116,41 @@ static int shmem_rename2(struct mnt_idmap *idmap,
- {
- 	struct inode *inode = d_inode(old_dentry);
- 	int they_are_dirs = S_ISDIR(inode->i_mode);
-+	int error;
- 
- 	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
- 		return -EINVAL;
- 
--	if (flags & RENAME_EXCHANGE)
-+	if (flags & RENAME_EXCHANGE) {
-+		error = stable_offset_add(new_dir, old_dentry);
-+		if (error)
-+			return error;
-+		error = stable_offset_add(old_dir, new_dentry);
-+		if (error) {
-+			stable_offset_remove(new_dir, old_dentry);
-+			return error;
-+		}
-+		stable_offset_remove(old_dir, old_dentry);
-+		stable_offset_remove(new_dir, new_dentry);
-+
-+		/* Always returns zero */
- 		return simple_rename_exchange(old_dir, old_dentry, new_dir, new_dentry);
-+	}
- 
- 	if (!simple_empty(new_dentry))
- 		return -ENOTEMPTY;
- 
- 	if (flags & RENAME_WHITEOUT) {
--		int error;
--
- 		error = shmem_whiteout(idmap, old_dir, old_dentry);
- 		if (error)
- 			return error;
- 	}
- 
-+	stable_offset_remove(old_dir, old_dentry);
-+	error = stable_offset_add(new_dir, old_dentry);
-+	if (error)
-+		return error;
-+
- 	if (d_really_is_positive(new_dentry)) {
- 		(void) shmem_unlink(new_dir, new_dentry);
- 		if (they_are_dirs) {
-@@ -3164,19 +3194,23 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	if (error && error != -EOPNOTSUPP)
- 		goto out_iput;
- 
-+	error = stable_offset_add(dir, dentry);
-+	if (error)
-+		goto out_iput;
-+
- 	inode->i_size = len-1;
- 	if (len <= SHORT_SYMLINK_LEN) {
- 		inode->i_link = kmemdup(symname, len, GFP_KERNEL);
- 		if (!inode->i_link) {
- 			error = -ENOMEM;
--			goto out_iput;
-+			goto out_remove_offset;
- 		}
- 		inode->i_op = &shmem_short_symlink_operations;
- 	} else {
- 		inode_nohighmem(inode);
- 		error = shmem_get_folio(inode, 0, &folio, SGP_WRITE);
- 		if (error)
--			goto out_iput;
-+			goto out_remove_offset;
- 		inode->i_mapping->a_ops = &shmem_aops;
- 		inode->i_op = &shmem_symlink_inode_operations;
- 		memcpy(folio_address(folio), symname, len);
-@@ -3185,12 +3219,16 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 		folio_unlock(folio);
- 		folio_put(folio);
- 	}
-+
- 	dir->i_size += BOGO_DIRENT_SIZE;
- 	dir->i_ctime = dir->i_mtime = current_time(dir);
- 	inode_inc_iversion(dir);
- 	d_instantiate(dentry, inode);
- 	dget(dentry);
- 	return 0;
-+
-+out_remove_offset:
-+	stable_offset_remove(dir, dentry);
- out_iput:
- 	iput(inode);
- 	return error;
-@@ -3920,6 +3958,8 @@ static void shmem_destroy_inode(struct inode *inode)
- {
- 	if (S_ISREG(inode->i_mode))
- 		mpol_free_shared_policy(&SHMEM_I(inode)->policy);
-+	if (S_ISDIR(inode->i_mode))
-+		stable_offset_destroy(inode);
- }
- 
- static void shmem_init_inode(void *foo)
-
+Best regards,
+Andreas
 
