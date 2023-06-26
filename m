@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2701A73DFA5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 14:46:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93D0273DFAD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 14:47:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230368AbjFZMqf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 08:46:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41122 "EHLO
+        id S231401AbjFZMrW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 08:47:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230375AbjFZMqI (ORCPT
+        with ESMTP id S231383AbjFZMrH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 08:46:08 -0400
+        Mon, 26 Jun 2023 08:47:07 -0400
 Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3C2171700;
-        Mon, 26 Jun 2023 05:44:59 -0700 (PDT)
-X-AuditID: a67dfc5b-d85ff70000001748-0f-64997d6bb058
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4C04B19AB;
+        Mon, 26 Jun 2023 05:46:04 -0700 (PDT)
+X-AuditID: a67dfc5b-d85ff70000001748-22-64997d6ca48a
 From:   Byungchul Park <byungchul@sk.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel_team@skhynix.com, torvalds@linux-foundation.org,
@@ -42,44 +42,44 @@ Cc:     kernel_team@skhynix.com, torvalds@linux-foundation.org,
         gwan-gyeong.mun@intel.com, max.byungchul.park@gmail.com,
         boqun.feng@gmail.com, longman@redhat.com, hdanton@sina.com,
         her0gyugyu@gmail.com
-Subject: [PATCH v10 08/25] dept: Apply sdt_might_sleep_{start,end}() to PG_{locked,writeback} wait
-Date:   Mon, 26 Jun 2023 20:56:43 +0900
-Message-Id: <20230626115700.13873-9-byungchul@sk.com>
+Subject: [PATCH v10 09/25] dept: Apply sdt_might_sleep_{start,end}() to swait
+Date:   Mon, 26 Jun 2023 20:56:44 +0900
+Message-Id: <20230626115700.13873-10-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230626115700.13873-1-byungchul@sk.com>
 References: <20230626115700.13873-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSfUxTZxSH97733vdeCjU3Bd1VyDBNjBGVocHtJC5mCdHdJTPRbEuMxo/O
-        3o1KQW3la9OEj2IUKQqRFpGYUkxFwA+KS0Qp6ZBPGdhJUxlWMpiACEiGFi10aovxn5Mn53d+
-        z1+HoxROZgWnSTsm6dJUWiWR0bLpiKr12hMX1AktHZFQUpQAvlenaKi8UU/Adb0OQf2tXAwT
-        7d/Ao7kpBAu9Dygwl7kQVA0/oeBWxxACR00egf6nS8DtmyHQXXaGQH71DQJ/TQYweE2lGOrs
-        26HnnBWD0z9Og3mCwEVzPg6OZxj8tloWbDmrYKSmgoXA8AboHvIw4BhcCxcueQk0O7pp6Lg9
-        gqH/TiWBofp3DPR0dNHgKjEycO2FlcDknI0Cm2+GhYdOC4abhqDoecCB4eTLtwx0Gp1ButyA
-        wf33XQQtp/7BYK/3ELjnm8LQaC+jYP5KO4KR4mkWCor8LFzMLUZwpsBEw4P/OxkweDfBwptK
-        8vVm8d7UDCUaGjNFx5yFFu9bBbGp4gkrGloGWdFiTxcba+LE6uYJLFbN+hjRXnuaiPbZUlYs
-        nHZj0etpJuKLvj5W7CpfoHfE7JZ9pZa0mgxJ9/mWA7LkXtcoORKQZ50/ayI56HF4IQrjBD5R
-        mHz5nP3I46NWEmLCrxYGBvxUiKP4lUKjcYwpRDKO4qvDhfGutsVCJP+T8K+rH4WY5lcJvVMl
-        OMRyfpMwbypHH6SxQt1N56IojP9CuPundXGvCN7keVtJSCrw5jDBb3hMPhSWC3/UDNDnkNyC
-        PqlFCk1aRqpKo02MT85O02TFHzycakfBv7KdCOy5jWZd37cinkPKCHnCZ+VqBaPK0GentiKB
-        o5RR8mVvzGqFXK3K/lXSHd6vS9dK+lYUzdHKT+Ub5zLVCv4X1TEpRZKOSLqPKebCVuSgq7An
-        NyoyPaat5bXJWPqqrrjzd+HgsDtru2P8Tso+NU76sW+soHvnWcOVpIicmIaKXZk/PHRsfZpY
-        tHA/+sDof4fmjSm+8KZYXN0wtia2abDot8i+ywoVtzxRHxe/5OSXlr3uo+1JHm9+j2ddPvk2
-        T7s0Ojdm27Ofv6tgOEcbPn5dSeuTVRviKJ1e9R5ycJ/5UwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0xTZxjH957Le0qxy0lFPTqnS51ZZBFhse6JM8YPZr4xbDFmusuHSbce
-        pVIKaRHFRINcRJGqRblaZylLR7jJDiRjozWEm1S51EHASyVSdQhWSdQ2VOqldfHLk1/+/39+
-        nx4ZrbSzy2Q6Q5ZoNGj0Kixn5N9+lb827UiVNnG8+kuwlCRC4MUJBqyXGzF4mhsQNLYdo2C6
-        dxuMB/0I5geHaago8yCombxLQ1vfBAJXXR6GkQcfwmhgFoO77BSG/NrLGG48DlPgLS+loEH6
-        Bq6ftVPQGZpioGIaw4WKfCpyHlEQctRz4MhdDb66ag7Ck0ngnhhjofuimwXX7c+h6jcvBqfL
-        zUBfu4+CkX+sGCYa37Bwva+fAY/FzELTUzuGx0EHDY7ALAf/dtooaCmI2GbCLgqOP3/NwlVz
-        Z4R+/5OC0VsdCK6cuEeB1DiGoTvgp6BVKqPh5R+9CHynn3BQWBLi4MKx0whOFZYzMPzqKgsF
-        XjXMz1nxlk2k2z9Lk4LWg8QVtDHkml0gf1ff5UjBldscsUkHSGtdPKl1TlOk5lmAJVL9SUyk
-        Z6UcKX4yShHvmBOTp0NDHOmvnGd2fPyTfJNW1OuyReO6zSny1EHPQ5wZVhw6f6Yc56I7scUo
-        Ribw64Wph3YcZcx/Jty8GaKjHMd/IrSa/2OLkVxG87WxwlR/DxctFvK/CPc9IyjKDL9aGPRb
-        qCgreLXwsrwS/S9dKTS0dL4TxfAbhI4B+7tcGdnkebvwWSS3oQ/qUZzOkJ2u0enVCaa01ByD
-        7lDCrxnpEop8juNI2NKOXoxs60K8DKkWKBJXVGqVrCbblJPehQQZrYpTLJ6r0CoVWk3OYdGY
-        scd4QC+autBHMka1RLH9ezFFye/TZIlpopgpGt+3lCxmWS4aSFYHDUf/muxJWOw7Gbtf/vMi
-        5L+03rrUuXtjafV3w+Z17r13JGeob3NvyhqDNZ7ZRWe0+7L5zMPNs492fpHfFDTua1k18+kc
-        tlUWZZKU2sRdWR2K5EmlPrnwR3fJD2vZ0f1Q8vXMraI9XE2b2Zen3hrbU5Q1d2m5pVSQTP5z
-        KsaUqkmKp40mzVu761OUNQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0yTZxTHeZ732mrdmw7mCxI1TTqNi4BOyDFeE018P0g02cwWXKbN+iLd
+        Cmi5iYkLl7ooF4MmpQgNwaIdoTiw1YhCkRUtIAoVEZEUJrCIKIhhtrEUxcL0y8kv55z/73w5
+        LCG/TUWwmpR0UZei0ipoKSmdWmperz15QR0zVh8J54piwPv2NAmm+joa3H9ZEdRdy8UwcXcP
+        PPFNIgg86CHAaHAjuDgyRMA11zACR00eDY/+XQZ93mkaOg2FNORX19Pw8NUcBk/peQxWWzx0
+        lZgxtPrHSTBO0FBhzMfB8gKD31LLgCVHCaM15QzMjWyAzuF+ChyD38CFSg8NzY5OElyNoxge
+        3TLRMFw3T0GXq4ME97liCq68NtPwymchwOKdZqC3tQpDgz4oejnnwPDHfx8oaC9uDdKlqxj6
+        njYhaDn9DIOtrp+GNu8kBrvNQMDsn3cRjJ6dYuBUkZ+BityzCApPlZLQ876dAr0nFgLvTPTO
+        LULb5DQh6O1ZgsNXRQr3zLxws3yIEfQtg4xQZcsQ7DXrhOrmCSxcnPFSgq32DC3YZs4zQsFU
+        HxY8/c208Lq7mxE6ygLk/sgE6Va1qNVkirro7YelSd1Fbuaoiz1+wzFI5aAeugBJWJ7bxI+9
+        NzCf2WV9gReY5tbwAwN+YoFDudW8vfg5VYCkLMFVL+HHO+4sBr7k4vneD/mLAZJT8o+H+hel
+        Mi6O95cMfTqwirc2tC6KJMF+030zWmA5F8vneZyfdgol/Evrgf85nP+7ZoAsQbIqFFKL5JqU
+        zGSVRrspKik7RXM86pfUZBsKvpXl5NzBRjTj/s6JOBYplspiVpap5ZQqMy072Yl4llCEyr56
+        Z1TLZWpV9glRl3pIl6EV05xoBUsqlss2+rLUcu6IKl38TRSPirrPU8xKInJQ5NO9T7btCEED
+        87FLriuVksth8/pLMduzUq9aykqls6HWZ8dMUZZdo/F3lF8bm9Ymfmu8v/uHxPZAwk/k1uUZ
+        gSttlF56/Ud5w0j5G9900ZbNFRnhcbsyf620Jvzzc+N4kyk84nePs/R7aa79i/b0kDCmAna0
+        UAZu2+rojan7EvOxgkxLUm1YR+jSVB8BZG24cFIDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0hTcRjG/Z/L/xxXq9MadSi6MLDAsDRSXlAqCvIQFEFE0Zda7ZCreWnz
+        kpFhaVFeQgVbpZZOW+Isa4uydGJaUzPn0qVmU9IiM29dnLVmlyn15eXH8/D8Pr0sKTPQS1h1
+        TLyojVFqFFhCSXaGpwVpUq6qgssmEeRmBYN78gIFhVWVGBx3TAgq758hYPhZJHRPjSLwtrWT
+        oM93ICgZ6CPhvq0fgbX8LIbO9/PA6Z7A0JKfiSGttArDy5FpAlyX8wgwmXdAa46BgHrPEAX6
+        YQwF+jTCdz4S4DFWMGBMDYDB8msMTA+EQEt/Fw2NRS00WHvXwNXrLgy11hYKbNWDBHQ+LsTQ
+        X/mHhlZbMwWO3Gwabo8bMIxMGUkwuicY6KgvJuBuus/2adpKwPlvv2loyq73Udk9ApyvaxDU
+        XXhLgLmyC0Oje5QAizmfhJ+3niEYvDTGwLksDwMFZy4hyDx3mYL2X000pLtCwfujEG+OEBpH
+        J0gh3ZIkWKeKKeG5gRceXetjhPS6XkYoNicIlvJAobR2mBBKvrppwVxxEQvmr3mMkDHmJARX
+        Vy0Wxu12Rmi+4qV2LdsviVCJGnWiqF238aAkyp7lYOJs7ImH1l46FbXjDOTP8twG3mb6SMww
+        5lbzPT0ecobl3Erekv2BzkASluRK5/BDzU+ZmWIht4Pv+J02O6C4AP5VX9esSMqF8Z6cvn/S
+        Fbzpbv2syN+X17wwoBmWcaH8WVcDzkGSYuRXgeTqmMRopVoTulZ3LCo5Rn1i7eHYaDPyfY4x
+        ZTq3Gk12RjYgjkWKudLg5VdUMlqZqEuObkA8Syrk0kU/9CqZVKVMPilqYw9oEzSirgEtZSnF
+        Yun2veJBGXdEGS8eE8U4Ufu/JVj/Jano1J4jbc4nJrmf6svTPe8ipaex/UnHsuN+u29UJ916
+        u95u5J0F+w6POTSqi+FFYd1SpW4+tW1VCXpg+V6Vv2BiizdWP2dyG24LZAt/Hd26arzW+oiP
+        3v5ivvwxn+DdtzVQPbcnr3OvJORnkV11+mZQWPObAH2Q4fPqpk2HWoczN1YoKF2UMiSQ1OqU
+        fwGlIlRlNQMAAA==
 X-CFilter-Loop: Reflected
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
         SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -90,56 +90,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Makes Dept able to track dependencies by PG_{locked,writeback} waits.
+Makes Dept able to track dependencies by swaits.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- mm/filemap.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ include/linux/swait.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index c4d4ace9cc70..adc49cb59db6 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -42,6 +42,7 @@
- #include <linux/ramfs.h>
- #include <linux/page_idle.h>
- #include <linux/migrate.h>
+diff --git a/include/linux/swait.h b/include/linux/swait.h
+index 6a8c22b8c2a5..02848211cef5 100644
+--- a/include/linux/swait.h
++++ b/include/linux/swait.h
+@@ -6,6 +6,7 @@
+ #include <linux/stddef.h>
+ #include <linux/spinlock.h>
+ #include <linux/wait.h>
 +#include <linux/dept_sdt.h>
- #include <asm/pgalloc.h>
- #include <asm/tlbflush.h>
- #include "internal.h"
-@@ -1215,6 +1216,9 @@ static inline bool folio_trylock_flag(struct folio *folio, int bit_nr,
- /* How many times do we accept lock stealing from under a waiter? */
- int sysctl_page_lock_unfairness = 5;
+ #include <asm/current.h>
  
-+static struct dept_map __maybe_unused PG_locked_map = DEPT_MAP_INITIALIZER(PG_locked_map, NULL);
-+static struct dept_map __maybe_unused PG_writeback_map = DEPT_MAP_INITIALIZER(PG_writeback_map, NULL);
-+
- static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
- 		int state, enum behavior behavior)
- {
-@@ -1226,6 +1230,11 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
- 	unsigned long pflags;
- 	bool in_thrashing;
+ /*
+@@ -161,6 +162,7 @@ extern void finish_swait(struct swait_queue_head *q, struct swait_queue *wait);
+ 	struct swait_queue __wait;					\
+ 	long __ret = ret;						\
+ 									\
++	sdt_might_sleep_start(NULL);					\
+ 	INIT_LIST_HEAD(&__wait.task_list);				\
+ 	for (;;) {							\
+ 		long __int = prepare_to_swait_event(&wq, &__wait, state);\
+@@ -176,6 +178,7 @@ extern void finish_swait(struct swait_queue_head *q, struct swait_queue *wait);
+ 		cmd;							\
+ 	}								\
+ 	finish_swait(&wq, &__wait);					\
++	sdt_might_sleep_end();						\
+ __out:	__ret;								\
+ })
  
-+	if (bit_nr == PG_locked)
-+		sdt_might_sleep_start(&PG_locked_map);
-+	else if (bit_nr == PG_writeback)
-+		sdt_might_sleep_start(&PG_writeback_map);
-+
- 	if (bit_nr == PG_locked &&
- 	    !folio_test_uptodate(folio) && folio_test_workingset(folio)) {
- 		delayacct_thrashing_start(&in_thrashing);
-@@ -1327,6 +1336,8 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
- 	 */
- 	finish_wait(q, wait);
- 
-+	sdt_might_sleep_end();
-+
- 	if (thrashing) {
- 		delayacct_thrashing_end(&in_thrashing);
- 		psi_memstall_leave(&pflags);
 -- 
 2.17.1
 
