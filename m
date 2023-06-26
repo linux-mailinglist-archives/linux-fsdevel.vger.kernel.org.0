@@ -2,137 +2,253 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 97CE973D5C4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 04:22:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F16E73D5F0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 04:39:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229738AbjFZCW1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Jun 2023 22:22:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34920 "EHLO
+        id S230320AbjFZCjS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Jun 2023 22:39:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229506AbjFZCW0 (ORCPT
+        with ESMTP id S230079AbjFZCjP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Jun 2023 22:22:26 -0400
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2120.outbound.protection.outlook.com [40.107.117.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DF6918D;
-        Sun, 25 Jun 2023 19:22:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ud0KCepAa2AAhRzEOJKS7KaM5Gb6UHvkwugk7lnZBLDSK3d5Mw2s3tk/GCz9fxCLuD6df8eWu+IDpDSSckjiaS6bS7X4KlsdDqaKQEz3P2vQWN+5NtjBBj1ggkZhMKGc7HfBXcscdhQsBHQFydcEfsPmVUbi6cavRmIRifr+b6mWZl5HUczrySDL3N8KvnkyCNgyUP104sQ/z90/XaqC71gvKFjN6Qb1AsnS4lYzQIKppZ0q2X9e9ZkwiuSUHx2JdIqu+XEamQC8lSrz4aqUc5kWTSWJ46CMRw7eO0c8JU0PQ3Mv7SpCrnZB1B36TePGv1Mdvyt38EtfVvZxLe0BVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=M1VZXuA5FY4aP11+wbi0TJZvIsm2JQmjpPOm1lMiyjI=;
- b=QvTDy9n5Qrbztr697ZXBsPEq196xUjesQytYV2nWMYBmxFEZH6KH1+TJbrot52SsXfWkU7bdkIPVPJZiVhLTd+grvUp0r/cbwp7WJJ/Zw/+BGahwhfFm8Rkw1/xmyNrJqNqhy1mURrifA6gQXKnU+Ew9RgWEO6Dhfyygm9hZw1p/knFIgbM1snibq8di4SSa4+m/xq5sbu0/GKJ0JrYmwfBj8oZPVZjrV9IcufLyNsw8aF/imTv/5FLxYuxoVZv+5+gcMpQcgjU0xI93kHZcO4KjmaAMifRvFU8KueLBhvJ825YHIdLkHL0UBs7fllIkCGS5A1VvRP//ZuY6FM7Rsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M1VZXuA5FY4aP11+wbi0TJZvIsm2JQmjpPOm1lMiyjI=;
- b=pJPSISTfERgBHhZMEq+CRzow+WCTcZymkb8mZFO8ycN9hoxCsVINW9uMWy+x+wUccsJTB7/WtAncQHDdSs2IrELsQusjdCG0Wd3adkZKv/zarFeUopN+kg4E/J2ArUo8gGleJH0HHWSKb0VZl+yeXIc3FNtYlyasHpZ6pDiIkm8C4+6ROs6ME46Xb7Gekyj21J2S6KXjKwyxfdRAXqoIV/qxhgXqrLKXl1dUG3Tbfxc1/5dqXLgxkOkyIbMw+th9XSgv8N9Hdz7VTsosTNAhp4JTc7M5PdMIt6URLCf3nCGSmzDU/sADVY1T09VepN98tN7zI2F3Djp4ul7q45ytwQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB6697.apcprd06.prod.outlook.com (2603:1096:400:451::6)
- by TYZPR06MB6215.apcprd06.prod.outlook.com (2603:1096:400:33d::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.23; Mon, 26 Jun
- 2023 02:22:21 +0000
-Received: from TYZPR06MB6697.apcprd06.prod.outlook.com
- ([fe80::f652:a96b:482:409e]) by TYZPR06MB6697.apcprd06.prod.outlook.com
- ([fe80::f652:a96b:482:409e%6]) with mapi id 15.20.6521.023; Mon, 26 Jun 2023
- 02:22:21 +0000
-From:   Lu Hongfei <luhongfei@vivo.com>
-To:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     opensource.kernel@vivo.com, luhongfei@vivo.com
-Subject: [PATCH] fs: iomap: replace the ternary conditional operator with max_t()
-Date:   Mon, 26 Jun 2023 10:22:12 +0800
-Message-Id: <20230626022212.30297-1-luhongfei@vivo.com>
-X-Mailer: git-send-email 2.39.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0073.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:31a::18) To TYZPR06MB6697.apcprd06.prod.outlook.com
- (2603:1096:400:451::6)
+        Sun, 25 Jun 2023 22:39:15 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 616F6E55
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jun 2023 19:38:56 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1b5466bc5f8so4085475ad.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jun 2023 19:38:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687747136; x=1690339136;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q6QMf5QrwEgx53gYkrHQJk/Oxe88JWhNQBmRK1nNjic=;
+        b=eZ/OzEuSP1va8h9QynhzU5yYHQ+k5Y44vcY6mDCRpd4uYok8zZ0DNFzXXnv6chCTYP
+         QaRIKfdgmFRh/edlNhyGENHn1THsId493uC6amGUGRdcRuxbkMLPiJMRjAOYwJw9LqHd
+         ZQ0SY7GKWzUu1O3YaFtUQNEBM4xzXhQLbezCChMFsas34TXstatRTV4SSYMLOJoUaFA5
+         fMxFJ4cyTrL1NbZtL1Q786hkMFMxC+l+zlS7V1ShzmcH/PcXv8FBtl/uwD5n/VLxd8KW
+         Mu58l6JbZC5S58nd5OcU0/e8Luyt6E1bikfVXZ7sk+r3AjTGfEJH6jXn8vLJade6UXCa
+         /ADQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687747136; x=1690339136;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Q6QMf5QrwEgx53gYkrHQJk/Oxe88JWhNQBmRK1nNjic=;
+        b=aL0jbjP8xt4Irg3a4NMyw/eT5UNBWtoe/cGS8OcxKSWsChtzy1bjKJMsF41HoZH7zz
+         NbZoRta0FPizNK8sPcM4FWo1br3gGxzZkXfLNhasnDk/CiRKlbTDL3DXBSMEAQTH/6av
+         MeTLpWnz+WmPp3djAIXQ5izA4zVHaCkJBUkOY1+PeBDLhvetfLtEPwlJFM5bubHI5LAy
+         4lcW9bPxBj36zBtiS+9lzwqiNxgKnfG90PdKyB3TquT0tZFH1QYXcokMmnnG7z9O1OZ9
+         vwzAuEGYCPgYKguDdIxfYHEAK/W4RX5rSJcXwPNY8i8q/u1Md7yB/tXj08sBfV5VhG+L
+         m/kg==
+X-Gm-Message-State: AC+VfDzv6vRM/SQhuNATvKyH1NDzyS1ZPDsjoaGL1qiAHa4ig4AGqqn9
+        unQp430FvtENbRTTewbjVhmr+ixJJJJ0bxwnXmE=
+X-Google-Smtp-Source: ACHHUZ5cnxjR8kxjgCBaymXFtJf7f9vFBanQVBDoxVSmWNORp94cGU11uDWag+IdMCR/84Alk/3kmw==
+X-Received: by 2002:a17:903:230c:b0:1b3:ec39:f42c with SMTP id d12-20020a170903230c00b001b3ec39f42cmr34736346plh.5.1687747135730;
+        Sun, 25 Jun 2023 19:38:55 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id jk17-20020a170903331100b001b54cf5186csm497986plb.126.2023.06.25.19.38.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Jun 2023 19:38:54 -0700 (PDT)
+Message-ID: <81469b33-44cf-8b42-a024-25aa22f9c2a0@kernel.dk>
+Date:   Sun, 25 Jun 2023 20:38:53 -0600
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB6697:EE_|TYZPR06MB6215:EE_
-X-MS-Office365-Filtering-Correlation-Id: 59a5cb2c-51ef-4512-36e9-08db75ec2bf6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: rQnW5s3s3eqF6eXYojZ966ddSjDSsQ4fX0S0awi2r2KuNsO/FioLUNyOO31BeIv+vx0/siU7Wk0GC8wPrSydonY7nFTHFfSCUDVY4iT11nvL+Xrp6LHYtTyvGLlbI0J5icii02KDGsA3ge+jiVhS8x3eHVuWR8JW5y28TIORN6JT3DEk77S4VezSRtOH6aRvyFsl/W+q4YeTDgB4wbFzOrIudNsN6h+vR2gXksEbELIhg7837I37HQ7Z8a4+oWRKhBOF/1uAY9M8mPDYS0ZeQ7igp0ecCY9nihOMdiBqX1jgcTnW9Bi1fK/+Mx8NHDgri+9gXUz/boSqzFZebV2FjPxF/t3IoIY57S9aZiAOuAMKAZ6oTAT9fg16RxtgucssblOmlIS5GHpA9ZIucl7vzd5ho4NJafN06wOIuIC1s81rxQfPwYtROZZ2K2DVZeaVmRHfGoP/uDvXXx+WrIrpSPROb/KQy+WP2Koy5PaC5Cwv5EUQEGdUtH//GMCZZ/QNZSI8IShu8byyHv9jO/ua8HZbegMw3X9IwsVqHdO8QAcciO0clC2UK3D04Y1E6cFUemepi9L4pDr5EhmtDhvZ6+GnoOd3XO3rwOSXa8QRHjAdSMxNzBy+EsSF6wVvDIXx
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6697.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39850400004)(136003)(346002)(396003)(376002)(366004)(451199021)(8676002)(8936002)(66556008)(66946007)(41300700001)(316002)(66476007)(4326008)(6506007)(26005)(6512007)(1076003)(186003)(107886003)(2616005)(478600001)(110136005)(6666004)(52116002)(6486002)(2906002)(4744005)(5660300002)(38350700002)(38100700002)(36756003)(86362001)(83380400001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?opzszIhSluMuDS1yygl2L+OWslmMcscICaSckKS24DMyfz9q3h1etlFyCo3/?=
- =?us-ascii?Q?7FG3ei7X2uFIQwZKyj4BGpl+vkWRnxKosqcNRPG72ASGne/7aGLIf4zE2jfj?=
- =?us-ascii?Q?pUzScd1fOf00EiPM1rvBa0I1lVDQwqAWsRSF+1/vJTVt9yIaMprk3zGoNial?=
- =?us-ascii?Q?VB4jDadKjKA4S46FGHYbxrPwkzc0dqYrS/WFpBwkrV2lNSA8iZyR1n2PV+Vl?=
- =?us-ascii?Q?dbZU9Hx39zSIVYGW9hLVFf3bjbRpowSNVyrKcZhNZrSC+5T1UhbRhpIcje+K?=
- =?us-ascii?Q?XlckC8AT/tuDxxcKBVWxyeXSzwy9HMyjEXNP7TdXhFnF4xzQ2rv5WeK9Qnnz?=
- =?us-ascii?Q?V/NzYIfr1R4tezOM38+9GRBhgYvn8iKF54TkITKv/e2dM0AP3f1NOEpQyedX?=
- =?us-ascii?Q?2iPplNZEd10WKxIWYC0v4La0UPj4vdpSkfnckjGQD1w3Li94AZ53scNA9Wh2?=
- =?us-ascii?Q?Uar3GXtlpyZq/zz8hqKiBCFKN09f1NiUKACaX7PYlwZctSmvULocLp8qU5ZP?=
- =?us-ascii?Q?lfoBoFbOZ7+QRs7jQou4qTbMhpjclAgvtJzTZl0ZCZF0QVjJ5M5dsHSjnW99?=
- =?us-ascii?Q?MwUsNDCnhHKz9HhuMuzkRLCkk8nMqUJbtlWsNq/ptzkvgqLeHZymJxzfUxYl?=
- =?us-ascii?Q?xLkWUtZ0/UzC31h0n9EaHiN5g5BTmNxAfPgxfmna8VHYFohAuZfHBVWp922K?=
- =?us-ascii?Q?FgbBtOpztkgPLJYCl7N8M0QWxdh9jeGMtMRd36PI+kQafVLPj7VMy3Px2zZd?=
- =?us-ascii?Q?kDWh/h3d4wBgQfuMc/Y96eFxrL8o30oOosrisafdXf4sLFsPiz+9t9+2ocFt?=
- =?us-ascii?Q?2GUCVeWgoV0TYAzmR9zPmiWC7KlkXYBU29M9NQM0blX95yZ/ILA7LDtWM6//?=
- =?us-ascii?Q?dOCIvjYD6429zoswsNyb5y0ycfc3VEmsMYVqCI+YrYeFnutQomp+RvaL4T2q?=
- =?us-ascii?Q?t/bAopijd/6dLbeC2YZUT+RrJ6SCQzGTAUD2J7/L3tMHcgydo9U+vkCNFtZc?=
- =?us-ascii?Q?V7nyBJ1VIrmfNtjshn+LJKJkvaPNqU61SOrz7k9TWq0miMPmQUS11ezDQ6lR?=
- =?us-ascii?Q?eJL9AD66UeK5q0pYTrGJiH+ZGC6JSDjTE8pdsaEOTUlV6pQmT6nVQypTaYdU?=
- =?us-ascii?Q?T/491YiOcpgY9FUgZAaQj4EYqkiCw3xOHv4XPSL6kG2UtL+HX4AiS3iGQjnx?=
- =?us-ascii?Q?kQUk811iIClM/yKSW2yx0FHNORJy1qrNaVkVpByig0GeRpU1n9OhE0WMmJci?=
- =?us-ascii?Q?43d+A9p4uDSWSfrbmMWHxnDqCzhVyY7+apXJtl8Prw8/hvooZuI1dAoAaKbd?=
- =?us-ascii?Q?sgsBjQLgCxu78S92PQKXHsh9S9p1U2m3+T3ncCyj24w/g4oBhWzTnLF8iwfL?=
- =?us-ascii?Q?GzDfLLVCRUXWBUr9YmuGr+2Qiyb0DQcaXwjv5aHNwb2kTAmPP/WmxD5g6efr?=
- =?us-ascii?Q?kI+gUTKU/P1nO8vUSKn5RCLCys6JVE03eMPH1aWh4nSXhG4HeffWHWQjKR28?=
- =?us-ascii?Q?/sleuoZPl55Ui8gBOILnoIlXJqcsS37+gKOyi/R37oUpdd+b1ilbmAPEoDxf?=
- =?us-ascii?Q?HlDi5cBcOSomRuBM8IXmaLrAuz2UJtfmt0BPyBnV?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 59a5cb2c-51ef-4512-36e9-08db75ec2bf6
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6697.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2023 02:22:21.5700
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: S6MMS7ms5UfbzlmA4CkgUSQFOmzfcNyfbRf/MLbLQC1cpcVFs1QWPcyxYq9Jx4A6SxRkd+3IZ1NayDUYVH70EQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6215
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] Splice updates for 6.5
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It would be better to replace the traditional ternary conditional
-operator with max_t() in iomap_iter
+Hi Linus,
 
-Signed-off-by: Lu Hongfei <luhongfei@vivo.com>
----
- fs/iomap/iter.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+First batch of splice updates via David, the block side depends on these
+and will be going out after this one. In David's words:
 
-diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
-index 79a0614eaab7..528fd196c50b 100644
---- a/fs/iomap/iter.c
-+++ b/fs/iomap/iter.c
-@@ -77,7 +77,7 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
- 
- 	if (iter->iomap.length && ops->iomap_end) {
- 		ret = ops->iomap_end(iter->inode, iter->pos, iomap_length(iter),
--				iter->processed > 0 ? iter->processed : 0,
-+				max_t(s64, iter->processed, 0),
- 				iter->flags, &iter->iomap);
- 		if (ret < 0 && !iter->processed)
- 			return ret;
+This patchset kills off ITER_PIPE to avoid a race between truncate,
+iov_iter_revert() on the pipe and an as-yet incomplete DMA to a bio with
+unpinned/unref'ed pages from an O_DIRECT splice read.  This causes memory
+corruption[2].  Instead, we use filemap_splice_read(), which invokes the
+buffered file reading code and splices from the pagecache into the pipe;
+copy_splice_read(), which bulk-allocates a buffer, reads into it and then
+pushes the filled pages into the pipe; or handle it in filesystem-specific
+code.
+
+ (1) Rename direct_splice_read() to copy_splice_read().
+
+ (2) Simplify the calculations for the number of pages to be reclaimed in
+     copy_splice_read().
+
+ (3) Turn do_splice_to() into a helper, vfs_splice_read(), so that it can
+     be used by overlayfs and coda to perform the checks on the lower fs.
+
+ (4) Make vfs_splice_read() jump to copy_splice_read() to handle direct-I/O
+     and DAX.
+
+ (5) Provide shmem with its own splice_read to handle non-existent pages
+     in the pagecache.  We don't want a ->read_folio() as we don't want to
+     populate holes, but filemap_get_pages() requires it.
+
+ (6) Provide overlayfs with its own splice_read to call down to a lower
+     layer as overlayfs doesn't provide ->read_folio().
+
+ (7) Provide coda with its own splice_read to call down to a lower layer as
+     coda doesn't provide ->read_folio().
+
+ (8) Direct ->splice_read to copy_splice_read() in tty, procfs, kernfs
+     and random files as they just copy to the output buffer and don't
+     splice pages.
+
+ (9) Provide wrappers for afs, ceph, ecryptfs, ext4, f2fs, nfs, ntfs3,
+     ocfs2, orangefs, xfs and zonefs to do locking and/or revalidation.
+
+(10) Make cifs use filemap_splice_read().
+
+(11) Replace pointers to generic_file_splice_read() with pointers to
+     filemap_splice_read() as DIO and DAX are handled in the caller;
+     filesystems can still provide their own alternate ->splice_read() op.
+
+(12) Remove generic_file_splice_read().
+
+(13) Remove ITER_PIPE and its paraphernalia as generic_file_splice_read()
+     was the only user.
+
+Please pull!
+
+
+The following changes since commit f1fcbaa18b28dec10281551dfe6ed3a3ed80e3d6:
+
+  Linux 6.4-rc2 (2023-05-14 12:51:40 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/for-6.5/splice-2023-06-23
+
+for you to fetch changes up to 9eee8bd81421c5e961cbb1a3c3fa1a06fad545e8:
+
+  splice: kdoc for filemap_splice_read() and copy_splice_read() (2023-05-24 08:42:17 -0600)
+
+----------------------------------------------------------------
+for-6.5/splice-2023-06-23
+
+----------------------------------------------------------------
+David Howells (31):
+      splice: Fix filemap_splice_read() to use the correct inode
+      splice: Make filemap_splice_read() check s_maxbytes
+      splice: Rename direct_splice_read() to copy_splice_read()
+      splice: Clean up copy_splice_read() a bit
+      splice: Make do_splice_to() generic and export it
+      splice: Check for zero count in vfs_splice_read()
+      splice: Make splice from an O_DIRECT fd use copy_splice_read()
+      splice: Make splice from a DAX file use copy_splice_read()
+      shmem: Implement splice-read
+      overlayfs: Implement splice-read
+      coda: Implement splice-read
+      tty, proc, kernfs, random: Use copy_splice_read()
+      net: Make sock_splice_read() use copy_splice_read() by default
+      9p: Add splice_read wrapper
+      afs: Provide a splice-read wrapper
+      ceph: Provide a splice-read wrapper
+      ecryptfs: Provide a splice-read wrapper
+      ext4: Provide a splice-read wrapper
+      f2fs: Provide a splice-read wrapper
+      nfs: Provide a splice-read wrapper
+      ntfs3: Provide a splice-read wrapper
+      ocfs2: Provide a splice-read wrapper
+      orangefs: Provide a splice-read wrapper
+      xfs: Provide a splice-read wrapper
+      zonefs: Provide a splice-read wrapper
+      trace: Convert trace/seq to use copy_splice_read()
+      cifs: Use filemap_splice_read()
+      splice: Use filemap_splice_read() instead of generic_file_splice_read()
+      splice: Remove generic_file_splice_read()
+      iov_iter: Kill ITER_PIPE
+      splice: kdoc for filemap_splice_read() and copy_splice_read()
+
+ block/fops.c            |   2 +-
+ drivers/char/random.c   |   4 +-
+ drivers/tty/tty_io.c    |   4 +-
+ fs/9p/vfs_file.c        |  26 ++-
+ fs/adfs/file.c          |   2 +-
+ fs/affs/file.c          |   2 +-
+ fs/afs/file.c           |  20 ++-
+ fs/bfs/file.c           |   2 +-
+ fs/btrfs/file.c         |   2 +-
+ fs/ceph/file.c          |  65 +++++++-
+ fs/cifs/cifsfs.c        |  12 +-
+ fs/cifs/cifsfs.h        |   3 -
+ fs/cifs/file.c          |  16 --
+ fs/coda/file.c          |  29 +++-
+ fs/cramfs/inode.c       |   2 +-
+ fs/ecryptfs/file.c      |  27 ++-
+ fs/erofs/data.c         |   2 +-
+ fs/exfat/file.c         |   2 +-
+ fs/ext2/file.c          |   2 +-
+ fs/ext4/file.c          |  13 +-
+ fs/f2fs/file.c          |  43 ++++-
+ fs/fat/file.c           |   2 +-
+ fs/fuse/file.c          |   2 +-
+ fs/gfs2/file.c          |   4 +-
+ fs/hfs/inode.c          |   2 +-
+ fs/hfsplus/inode.c      |   2 +-
+ fs/hostfs/hostfs_kern.c |   2 +-
+ fs/hpfs/file.c          |   2 +-
+ fs/jffs2/file.c         |   2 +-
+ fs/jfs/file.c           |   2 +-
+ fs/kernfs/file.c        |   2 +-
+ fs/minix/file.c         |   2 +-
+ fs/nfs/file.c           |  23 ++-
+ fs/nfs/internal.h       |   2 +
+ fs/nfs/nfs4file.c       |   2 +-
+ fs/nilfs2/file.c        |   2 +-
+ fs/ntfs/file.c          |   2 +-
+ fs/ntfs3/file.c         |  31 +++-
+ fs/ocfs2/file.c         |  43 ++++-
+ fs/ocfs2/ocfs2_trace.h  |   3 +
+ fs/omfs/file.c          |   2 +-
+ fs/orangefs/file.c      |  22 ++-
+ fs/overlayfs/file.c     |  23 ++-
+ fs/proc/inode.c         |   4 +-
+ fs/proc/proc_sysctl.c   |   2 +-
+ fs/proc_namespace.c     |   6 +-
+ fs/ramfs/file-mmu.c     |   2 +-
+ fs/ramfs/file-nommu.c   |   2 +-
+ fs/read_write.c         |   2 +-
+ fs/reiserfs/file.c      |   2 +-
+ fs/romfs/mmap-nommu.c   |   2 +-
+ fs/splice.c             | 127 +++++++-------
+ fs/sysv/file.c          |   2 +-
+ fs/ubifs/file.c         |   2 +-
+ fs/udf/file.c           |   2 +-
+ fs/ufs/file.c           |   2 +-
+ fs/vboxsf/file.c        |   2 +-
+ fs/xfs/xfs_file.c       |  30 +++-
+ fs/xfs/xfs_trace.h      |   2 +-
+ fs/zonefs/file.c        |  40 ++++-
+ include/linux/fs.h      |   8 +-
+ include/linux/splice.h  |   3 +
+ include/linux/uio.h     |  14 --
+ kernel/trace/trace.c    |   2 +-
+ lib/iov_iter.c          | 431 +-----------------------------------------------
+ mm/filemap.c            |  31 +++-
+ mm/shmem.c              | 134 ++++++++++++++-
+ net/socket.c            |   2 +-
+ 68 files changed, 694 insertions(+), 621 deletions(-)
+
 -- 
-2.39.0
+Jens Axboe
 
