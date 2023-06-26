@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 71EB873E6AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 19:37:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA2F873E6AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 19:37:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231177AbjFZRhy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 13:37:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35964 "EHLO
+        id S231159AbjFZRhP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 13:37:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231175AbjFZRgS (ORCPT
+        with ESMTP id S230047AbjFZRgH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 13:36:18 -0400
+        Mon, 26 Jun 2023 13:36:07 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71AA32D4F;
-        Mon, 26 Jun 2023 10:35:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 246EC10D7;
+        Mon, 26 Jun 2023 10:35:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=v6PqW+r7ocyNrYaEadNjC9yXbOPBKSknhOaHoHVmJpk=; b=GH5JrXCeoj/GgOPu3iWjttA4pE
-        R9WD1MiCBTid7jEiZMHLeGsbpndBGL7pWST3FhxBWC5vruJtb8/vXrvH0+f62gbXnsXZRlsky8pJq
-        9+M9D8g1czSuBHKCI6CMEd9w5TLyOR/pLQ95L/J/rI+M7DmyKqKs1a6+MLyLQd2/ds8H1fO846FuZ
-        n8cEC0dArDnoP6JGY1ECb59L60b5jQv8FpFk5u65nzfMXMt5F7+6Z/YkjT4frnabjEqYJXLozDGS7
-        3U7dQlvwCi5sQU/ji6nNPG8IbAEl5U5k7LHM+ju+XzD5CgDWD6fjTcbsn7X1Y6zVcs+D6Xlzu9mZ+
-        XAvaJBew==;
+        bh=Hry/pakf3XrjxtX3FxEBHlEHaVaCFV/OlgXU52VAJV8=; b=jW+KKslSaTipXxmpNDSSeOnylL
+        hzbQCyN3wKzjlszSqjc4HEgvviOgGGjspRJs0Vjv5zO3/R9XMbjtxpTsmS+9Gcwuw/ZcmCCyUnNeN
+        H4tbBHnB66YtrhxCVg35T1Z99VBOHuc93t96BguJpmXgSVovFmRpL3E4/mslcgF20oYguKO1t+f7E
+        aUfCqCMqXZB9pkY6yvUPK4VnHdbnXMwfDHnVDWMQUOAefkCf44Iu/CmD4lgC7Vnrxqd1w5+fQwu8z
+        //QbapaLS3fMPaq6e7Ev6OQIihxf6gBxNalmqp3q/qnWQWabKWAZg/iTq63WdoLJnsWBSSCUnMJEx
+        OM6BZUcg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qDq7X-001vV3-FD; Mon, 26 Jun 2023 17:35:23 +0000
+        id 1qDq7X-001vV5-HI; Mon, 26 Jun 2023 17:35:23 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jan Kara <jack@suse.com>, David Howells <dhowells@redhat.com>
-Subject: [PATCH 03/12] writeback: Factor should_writeback_folio() out of write_cache_pages()
-Date:   Mon, 26 Jun 2023 18:35:12 +0100
-Message-Id: <20230626173521.459345-4-willy@infradead.org>
+Subject: [PATCH 04/12] writeback: Simplify the loops in write_cache_pages()
+Date:   Mon, 26 Jun 2023 18:35:13 +0100
+Message-Id: <20230626173521.459345-5-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230626173521.459345-1-willy@infradead.org>
 References: <20230626173521.459345-1-willy@infradead.org>
@@ -50,97 +50,136 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Reduce write_cache_pages() by about 30 lines; much of it is commentary,
-but it all bundles nicely into an obvious function.
-
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Collapse the two nested loops into one.  This is needed as a step
+towards turning this into an iterator.
 ---
- mm/page-writeback.c | 60 +++++++++++++++++++++++++--------------------
- 1 file changed, 33 insertions(+), 27 deletions(-)
+ mm/page-writeback.c | 94 ++++++++++++++++++++++-----------------------
+ 1 file changed, 47 insertions(+), 47 deletions(-)
 
 diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 67c7f1564727..54f2972dab45 100644
+index 54f2972dab45..68f28eeb15ed 100644
 --- a/mm/page-writeback.c
 +++ b/mm/page-writeback.c
-@@ -2394,6 +2394,37 @@ static void writeback_get_batch(struct address_space *mapping,
- 			&wbc->fbatch);
- }
+@@ -2461,6 +2461,7 @@ int write_cache_pages(struct address_space *mapping,
+ 		      void *data)
+ {
+ 	int error;
++	int i = 0;
  
-+static bool should_writeback_folio(struct address_space *mapping,
-+		struct writeback_control *wbc, struct folio *folio)
-+{
-+	/*
-+	 * Folio truncated or invalidated. We can freely skip it then,
-+	 * even for data integrity operations: the folio has disappeared
-+	 * concurrently, so there could be no real expectation of this
-+	 * data integrity operation even if there is now a new, dirty
-+	 * folio at the same pagecache index.
-+	 */
-+	if (unlikely(folio->mapping != mapping))
-+		return false;
-+
-+	/* Did somebody write it for us? */
-+	if (!folio_test_dirty(folio))
-+		return false;
-+
-+	if (folio_test_writeback(folio)) {
-+		if (wbc->sync_mode != WB_SYNC_NONE)
-+			folio_wait_writeback(folio);
-+		else
-+			return false;
-+	}
-+
-+	BUG_ON(folio_test_writeback(folio));
-+	if (!folio_clear_dirty_for_io(folio))
-+		return false;
-+
-+	return true;
-+}
-+
- /**
-  * write_cache_pages - walk the list of dirty pages of the given address space and write all of them.
-  * @mapping: address space structure to write
-@@ -2461,38 +2492,13 @@ int write_cache_pages(struct address_space *mapping,
- 			wbc->done_index = folio->index;
+ 	if (wbc->range_cyclic) {
+ 		wbc->index = mapping->writeback_index; /* prev offset */
+@@ -2478,65 +2479,64 @@ int write_cache_pages(struct address_space *mapping,
+ 	folio_batch_init(&wbc->fbatch);
+ 	wbc->err = 0;
  
- 			folio_lock(folio);
+-	while (wbc->index <= wbc->end) {
+-		int i;
 -
--			/*
--			 * Page truncated or invalidated. We can freely skip it
--			 * then, even for data integrity operations: the page
--			 * has disappeared concurrently, so there could be no
--			 * real expectation of this data integrity operation
--			 * even if there is now a new, dirty page at the same
--			 * pagecache address.
--			 */
--			if (unlikely(folio->mapping != mapping)) {
--continue_unlock:
-+			if (!should_writeback_folio(mapping, wbc, folio)) {
- 				folio_unlock(folio);
- 				continue;
- 			}
+-		writeback_get_batch(mapping, wbc);
++	for (;;) {
++		struct folio *folio;
  
--			if (!folio_test_dirty(folio)) {
--				/* someone wrote it for us */
--				goto continue_unlock;
++		if (i == wbc->fbatch.nr) {
++			writeback_get_batch(mapping, wbc);
++			i = 0;
++		}
+ 		if (wbc->fbatch.nr == 0)
+ 			break;
+ 
+-		for (i = 0; i < wbc->fbatch.nr; i++) {
+-			struct folio *folio = wbc->fbatch.folios[i];
++		folio = wbc->fbatch.folios[i++];
+ 
+-			wbc->done_index = folio->index;
++		wbc->done_index = folio->index;
+ 
+-			folio_lock(folio);
+-			if (!should_writeback_folio(mapping, wbc, folio)) {
+-				folio_unlock(folio);
+-				continue;
 -			}
++		folio_lock(folio);
++		if (!should_writeback_folio(mapping, wbc, folio)) {
++			folio_unlock(folio);
++			continue;
++		}
+ 
+-			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
 -
--			if (folio_test_writeback(folio)) {
--				if (wbc->sync_mode != WB_SYNC_NONE)
--					folio_wait_writeback(folio);
--				else
--					goto continue_unlock;
+-			error = writepage(folio, wbc, data);
+-			if (unlikely(error)) {
+-				/*
+-				 * Handle errors according to the type of
+-				 * writeback. There's no need to continue for
+-				 * background writeback. Just push done_index
+-				 * past this page so media errors won't choke
+-				 * writeout for the entire file. For integrity
+-				 * writeback, we must process the entire dirty
+-				 * set regardless of errors because the fs may
+-				 * still have state to clear for each page. In
+-				 * that case we continue processing and return
+-				 * the first error.
+-				 */
+-				if (error == AOP_WRITEPAGE_ACTIVATE) {
+-					folio_unlock(folio);
+-					error = 0;
+-				} else if (wbc->sync_mode != WB_SYNC_ALL) {
+-					wbc->err = error;
+-					wbc->done_index = folio->index +
+-							folio_nr_pages(folio);
+-					return writeback_finish(mapping,
+-							wbc, true);
+-				}
+-				if (!wbc->err)
+-					wbc->err = error;
 -			}
--
--			BUG_ON(folio_test_writeback(folio));
--			if (!folio_clear_dirty_for_io(folio))
--				goto continue_unlock;
--
- 			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
++		trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
+ 
++		error = writepage(folio, wbc, data);
++		if (unlikely(error)) {
+ 			/*
+-			 * We stop writing back only if we are not doing
+-			 * integrity sync. In case of integrity sync we have to
+-			 * keep going until we have written all the pages
+-			 * we tagged for writeback prior to entering this loop.
++			 * Handle errors according to the type of
++			 * writeback. There's no need to continue for
++			 * background writeback. Just push done_index
++			 * past this page so media errors won't choke
++			 * writeout for the entire file. For integrity
++			 * writeback, we must process the entire dirty
++			 * set regardless of errors because the fs may
++			 * still have state to clear for each page. In
++			 * that case we continue processing and return
++			 * the first error.
+ 			 */
+-			if (--wbc->nr_to_write <= 0 &&
+-			    wbc->sync_mode == WB_SYNC_NONE)
++			if (error == AOP_WRITEPAGE_ACTIVATE) {
++				folio_unlock(folio);
++				error = 0;
++			} else if (wbc->sync_mode != WB_SYNC_ALL) {
++				wbc->err = error;
++				wbc->done_index = folio->index +
++						folio_nr_pages(folio);
+ 				return writeback_finish(mapping, wbc, true);
++			}
++			if (!wbc->err)
++				wbc->err = error;
+ 		}
 +
- 			error = writepage(folio, wbc, data);
- 			if (unlikely(error)) {
- 				/*
++		/*
++		 * We stop writing back only if we are not doing
++		 * integrity sync. In case of integrity sync we have to
++		 * keep going until we have written all the pages
++		 * we tagged for writeback prior to entering this loop.
++		 */
++		if (--wbc->nr_to_write <= 0 &&
++		    wbc->sync_mode == WB_SYNC_NONE)
++			return writeback_finish(mapping, wbc, true);
+ 	}
+ 
+ 	return writeback_finish(mapping, wbc, false);
 -- 
 2.39.2
 
