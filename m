@@ -2,177 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA77473D5BD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 04:13:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97CE973D5C4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 04:22:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229933AbjFZCNf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Jun 2023 22:13:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33802 "EHLO
+        id S229738AbjFZCW1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Jun 2023 22:22:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229776AbjFZCNe (ORCPT
+        with ESMTP id S229506AbjFZCW0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Jun 2023 22:13:34 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A27C12B
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jun 2023 19:12:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1687745568;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NvHSlfKX+Q9EnaTb8YY7loKKccihuP0tvgv06rmGdeo=;
-        b=BKCMv65qYFzMcgrQ7yiOHrb9PW1RqBaLlkSWw72n/NBh7VOZxs+l1TQFw8sAd3QSQMJE1P
-        mxvzECoraOUUqmchv9w5YVq12ZpNG36tqR4cqb5/MP6SuJClhwrXV+uwOxQBU9XKRW6wnz
-        QlLlBTVg8iKjblR3MUaQ6Yj/qO0JatQ=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-5co-B6czMe2ElH8O02h6kw-1; Sun, 25 Jun 2023 22:12:46 -0400
-X-MC-Unique: 5co-B6czMe2ElH8O02h6kw-1
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-53fa00ed93dso2325700a12.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Jun 2023 19:12:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687745565; x=1690337565;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NvHSlfKX+Q9EnaTb8YY7loKKccihuP0tvgv06rmGdeo=;
-        b=I4BqEM8J40El7E9Ifja1kw4x13M6WNU0buTIFGqJ+wTfETDfc/C7Zi1wRSEkPr0Uas
-         NPNRjropyhbvpx7wwZzxWPC1jRjrg24xwLcSYv3zkQQ4IDmqNXHAI4x3AqVnY7p4BBJP
-         tDf/mJhGM/uy27JUR2GXlwHs4d+Eur0mXWucNKJztwr1NiLeCqAv8ea+VQ0QL5Bp7uZ7
-         vwCKmFOunuH6QqUGiB4nlwluB7am5GKteIrWbHoC83Rf4wFLTMICNllQq0TbtP3ePqg4
-         cCKzdUbX2t3+D4L4d9u+IuIooZfeKZpFJnVuCpR80mWEC7536XxdYHITH200jXFXvMsq
-         JUJg==
-X-Gm-Message-State: AC+VfDzyMczlYS5KFgSFDGvbIPj4/I1e/h1Ufe7+k38G5K0lvV7RcD/c
-        xsuwUmKEB66Zkmx0iC2effK/m34r5AHSYW05eouGPbQX+j3vjfoSPbSymOpAs8hnV2IDlF6TlQN
-        W5qrCxKbF9GRrvl1OcA9SmeX+Qg==
-X-Received: by 2002:a05:6a20:3ca7:b0:121:bc20:f6c7 with SMTP id b39-20020a056a203ca700b00121bc20f6c7mr25834128pzj.19.1687745565660;
-        Sun, 25 Jun 2023 19:12:45 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5wcxGfN53h6dsr+wWOqZCl9CvqOw4NFsJ+DqE7HyvLS/BSMZ1rPtwqWZ9jfbJ0NMOOH8eQQQ==
-X-Received: by 2002:a05:6a20:3ca7:b0:121:bc20:f6c7 with SMTP id b39-20020a056a203ca700b00121bc20f6c7mr25834115pzj.19.1687745565360;
-        Sun, 25 Jun 2023 19:12:45 -0700 (PDT)
-Received: from [10.72.13.91] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id q10-20020a65684a000000b0053f06d09725sm2647645pgt.32.2023.06.25.19.12.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 Jun 2023 19:12:44 -0700 (PDT)
-Message-ID: <4c4f73d8-8238-6ab8-ae50-d83c1441ac05@redhat.com>
-Date:   Mon, 26 Jun 2023 10:12:39 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
-Content-Language: en-US
-To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc:     Gregory Farnum <gfarnum@redhat.com>,
-        Christian Brauner <brauner@kernel.org>, stgraber@ubuntu.com,
-        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
- <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com>
- <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
- <20230609-alufolie-gezaubert-f18ef17cda12@brauner>
- <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
- <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com>
- <CAJ4mKGby71qfb3gd696XH3AazeR0Qc_VGYupMznRH3Piky+VGA@mail.gmail.com>
- <977d8133-a55f-0667-dc12-aa6fd7d8c3e4@redhat.com>
- <CAEivzxcr99sERxZX17rZ5jW9YSzAWYvAjOOhBH+FqRoso2=yng@mail.gmail.com>
- <626175e2-ee91-0f1a-9e5d-e506aea366fa@redhat.com>
- <64241ff0-9af3-6817-478f-c24a0b9de9b3@redhat.com>
- <CAEivzxeF51ZEKhQ-0M35nooZ7_cZgk1-q75-YbkeWpZ9RuHG4A@mail.gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <CAEivzxeF51ZEKhQ-0M35nooZ7_cZgk1-q75-YbkeWpZ9RuHG4A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Sun, 25 Jun 2023 22:22:26 -0400
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2120.outbound.protection.outlook.com [40.107.117.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DF6918D;
+        Sun, 25 Jun 2023 19:22:24 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ud0KCepAa2AAhRzEOJKS7KaM5Gb6UHvkwugk7lnZBLDSK3d5Mw2s3tk/GCz9fxCLuD6df8eWu+IDpDSSckjiaS6bS7X4KlsdDqaKQEz3P2vQWN+5NtjBBj1ggkZhMKGc7HfBXcscdhQsBHQFydcEfsPmVUbi6cavRmIRifr+b6mWZl5HUczrySDL3N8KvnkyCNgyUP104sQ/z90/XaqC71gvKFjN6Qb1AsnS4lYzQIKppZ0q2X9e9ZkwiuSUHx2JdIqu+XEamQC8lSrz4aqUc5kWTSWJ46CMRw7eO0c8JU0PQ3Mv7SpCrnZB1B36TePGv1Mdvyt38EtfVvZxLe0BVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M1VZXuA5FY4aP11+wbi0TJZvIsm2JQmjpPOm1lMiyjI=;
+ b=QvTDy9n5Qrbztr697ZXBsPEq196xUjesQytYV2nWMYBmxFEZH6KH1+TJbrot52SsXfWkU7bdkIPVPJZiVhLTd+grvUp0r/cbwp7WJJ/Zw/+BGahwhfFm8Rkw1/xmyNrJqNqhy1mURrifA6gQXKnU+Ew9RgWEO6Dhfyygm9hZw1p/knFIgbM1snibq8di4SSa4+m/xq5sbu0/GKJ0JrYmwfBj8oZPVZjrV9IcufLyNsw8aF/imTv/5FLxYuxoVZv+5+gcMpQcgjU0xI93kHZcO4KjmaAMifRvFU8KueLBhvJ825YHIdLkHL0UBs7fllIkCGS5A1VvRP//ZuY6FM7Rsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M1VZXuA5FY4aP11+wbi0TJZvIsm2JQmjpPOm1lMiyjI=;
+ b=pJPSISTfERgBHhZMEq+CRzow+WCTcZymkb8mZFO8ycN9hoxCsVINW9uMWy+x+wUccsJTB7/WtAncQHDdSs2IrELsQusjdCG0Wd3adkZKv/zarFeUopN+kg4E/J2ArUo8gGleJH0HHWSKb0VZl+yeXIc3FNtYlyasHpZ6pDiIkm8C4+6ROs6ME46Xb7Gekyj21J2S6KXjKwyxfdRAXqoIV/qxhgXqrLKXl1dUG3Tbfxc1/5dqXLgxkOkyIbMw+th9XSgv8N9Hdz7VTsosTNAhp4JTc7M5PdMIt6URLCf3nCGSmzDU/sADVY1T09VepN98tN7zI2F3Djp4ul7q45ytwQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB6697.apcprd06.prod.outlook.com (2603:1096:400:451::6)
+ by TYZPR06MB6215.apcprd06.prod.outlook.com (2603:1096:400:33d::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.23; Mon, 26 Jun
+ 2023 02:22:21 +0000
+Received: from TYZPR06MB6697.apcprd06.prod.outlook.com
+ ([fe80::f652:a96b:482:409e]) by TYZPR06MB6697.apcprd06.prod.outlook.com
+ ([fe80::f652:a96b:482:409e%6]) with mapi id 15.20.6521.023; Mon, 26 Jun 2023
+ 02:22:21 +0000
+From:   Lu Hongfei <luhongfei@vivo.com>
+To:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     opensource.kernel@vivo.com, luhongfei@vivo.com
+Subject: [PATCH] fs: iomap: replace the ternary conditional operator with max_t()
+Date:   Mon, 26 Jun 2023 10:22:12 +0800
+Message-Id: <20230626022212.30297-1-luhongfei@vivo.com>
+X-Mailer: git-send-email 2.39.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0073.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:31a::18) To TYZPR06MB6697.apcprd06.prod.outlook.com
+ (2603:1096:400:451::6)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB6697:EE_|TYZPR06MB6215:EE_
+X-MS-Office365-Filtering-Correlation-Id: 59a5cb2c-51ef-4512-36e9-08db75ec2bf6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: rQnW5s3s3eqF6eXYojZ966ddSjDSsQ4fX0S0awi2r2KuNsO/FioLUNyOO31BeIv+vx0/siU7Wk0GC8wPrSydonY7nFTHFfSCUDVY4iT11nvL+Xrp6LHYtTyvGLlbI0J5icii02KDGsA3ge+jiVhS8x3eHVuWR8JW5y28TIORN6JT3DEk77S4VezSRtOH6aRvyFsl/W+q4YeTDgB4wbFzOrIudNsN6h+vR2gXksEbELIhg7837I37HQ7Z8a4+oWRKhBOF/1uAY9M8mPDYS0ZeQ7igp0ecCY9nihOMdiBqX1jgcTnW9Bi1fK/+Mx8NHDgri+9gXUz/boSqzFZebV2FjPxF/t3IoIY57S9aZiAOuAMKAZ6oTAT9fg16RxtgucssblOmlIS5GHpA9ZIucl7vzd5ho4NJafN06wOIuIC1s81rxQfPwYtROZZ2K2DVZeaVmRHfGoP/uDvXXx+WrIrpSPROb/KQy+WP2Koy5PaC5Cwv5EUQEGdUtH//GMCZZ/QNZSI8IShu8byyHv9jO/ua8HZbegMw3X9IwsVqHdO8QAcciO0clC2UK3D04Y1E6cFUemepi9L4pDr5EhmtDhvZ6+GnoOd3XO3rwOSXa8QRHjAdSMxNzBy+EsSF6wVvDIXx
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6697.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39850400004)(136003)(346002)(396003)(376002)(366004)(451199021)(8676002)(8936002)(66556008)(66946007)(41300700001)(316002)(66476007)(4326008)(6506007)(26005)(6512007)(1076003)(186003)(107886003)(2616005)(478600001)(110136005)(6666004)(52116002)(6486002)(2906002)(4744005)(5660300002)(38350700002)(38100700002)(36756003)(86362001)(83380400001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?opzszIhSluMuDS1yygl2L+OWslmMcscICaSckKS24DMyfz9q3h1etlFyCo3/?=
+ =?us-ascii?Q?7FG3ei7X2uFIQwZKyj4BGpl+vkWRnxKosqcNRPG72ASGne/7aGLIf4zE2jfj?=
+ =?us-ascii?Q?pUzScd1fOf00EiPM1rvBa0I1lVDQwqAWsRSF+1/vJTVt9yIaMprk3zGoNial?=
+ =?us-ascii?Q?VB4jDadKjKA4S46FGHYbxrPwkzc0dqYrS/WFpBwkrV2lNSA8iZyR1n2PV+Vl?=
+ =?us-ascii?Q?dbZU9Hx39zSIVYGW9hLVFf3bjbRpowSNVyrKcZhNZrSC+5T1UhbRhpIcje+K?=
+ =?us-ascii?Q?XlckC8AT/tuDxxcKBVWxyeXSzwy9HMyjEXNP7TdXhFnF4xzQ2rv5WeK9Qnnz?=
+ =?us-ascii?Q?V/NzYIfr1R4tezOM38+9GRBhgYvn8iKF54TkITKv/e2dM0AP3f1NOEpQyedX?=
+ =?us-ascii?Q?2iPplNZEd10WKxIWYC0v4La0UPj4vdpSkfnckjGQD1w3Li94AZ53scNA9Wh2?=
+ =?us-ascii?Q?Uar3GXtlpyZq/zz8hqKiBCFKN09f1NiUKACaX7PYlwZctSmvULocLp8qU5ZP?=
+ =?us-ascii?Q?lfoBoFbOZ7+QRs7jQou4qTbMhpjclAgvtJzTZl0ZCZF0QVjJ5M5dsHSjnW99?=
+ =?us-ascii?Q?MwUsNDCnhHKz9HhuMuzkRLCkk8nMqUJbtlWsNq/ptzkvgqLeHZymJxzfUxYl?=
+ =?us-ascii?Q?xLkWUtZ0/UzC31h0n9EaHiN5g5BTmNxAfPgxfmna8VHYFohAuZfHBVWp922K?=
+ =?us-ascii?Q?FgbBtOpztkgPLJYCl7N8M0QWxdh9jeGMtMRd36PI+kQafVLPj7VMy3Px2zZd?=
+ =?us-ascii?Q?kDWh/h3d4wBgQfuMc/Y96eFxrL8o30oOosrisafdXf4sLFsPiz+9t9+2ocFt?=
+ =?us-ascii?Q?2GUCVeWgoV0TYAzmR9zPmiWC7KlkXYBU29M9NQM0blX95yZ/ILA7LDtWM6//?=
+ =?us-ascii?Q?dOCIvjYD6429zoswsNyb5y0ycfc3VEmsMYVqCI+YrYeFnutQomp+RvaL4T2q?=
+ =?us-ascii?Q?t/bAopijd/6dLbeC2YZUT+RrJ6SCQzGTAUD2J7/L3tMHcgydo9U+vkCNFtZc?=
+ =?us-ascii?Q?V7nyBJ1VIrmfNtjshn+LJKJkvaPNqU61SOrz7k9TWq0miMPmQUS11ezDQ6lR?=
+ =?us-ascii?Q?eJL9AD66UeK5q0pYTrGJiH+ZGC6JSDjTE8pdsaEOTUlV6pQmT6nVQypTaYdU?=
+ =?us-ascii?Q?T/491YiOcpgY9FUgZAaQj4EYqkiCw3xOHv4XPSL6kG2UtL+HX4AiS3iGQjnx?=
+ =?us-ascii?Q?kQUk811iIClM/yKSW2yx0FHNORJy1qrNaVkVpByig0GeRpU1n9OhE0WMmJci?=
+ =?us-ascii?Q?43d+A9p4uDSWSfrbmMWHxnDqCzhVyY7+apXJtl8Prw8/hvooZuI1dAoAaKbd?=
+ =?us-ascii?Q?sgsBjQLgCxu78S92PQKXHsh9S9p1U2m3+T3ncCyj24w/g4oBhWzTnLF8iwfL?=
+ =?us-ascii?Q?GzDfLLVCRUXWBUr9YmuGr+2Qiyb0DQcaXwjv5aHNwb2kTAmPP/WmxD5g6efr?=
+ =?us-ascii?Q?kI+gUTKU/P1nO8vUSKn5RCLCys6JVE03eMPH1aWh4nSXhG4HeffWHWQjKR28?=
+ =?us-ascii?Q?/sleuoZPl55Ui8gBOILnoIlXJqcsS37+gKOyi/R37oUpdd+b1ilbmAPEoDxf?=
+ =?us-ascii?Q?HlDi5cBcOSomRuBM8IXmaLrAuz2UJtfmt0BPyBnV?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59a5cb2c-51ef-4512-36e9-08db75ec2bf6
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6697.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2023 02:22:21.5700
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: S6MMS7ms5UfbzlmA4CkgUSQFOmzfcNyfbRf/MLbLQC1cpcVFs1QWPcyxYq9Jx4A6SxRkd+3IZ1NayDUYVH70EQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6215
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+It would be better to replace the traditional ternary conditional
+operator with max_t() in iomap_iter
 
-On 6/24/23 15:11, Aleksandr Mikhalitsyn wrote:
-> On Sat, Jun 24, 2023 at 3:37 AM Xiubo Li <xiubli@redhat.com> wrote:
->> [...]
->>
->>   > > >
->>   > > > I thought about this too and came to the same conclusion, that
->> UID/GID
->>   > > > based
->>   > > > restriction can be applied dynamically, so detecting it on mount-time
->>   > > > helps not so much.
->>   > > >
->>   > > For this you please raise one PR to ceph first to support this, and in
->>   > > the PR we can discuss more for the MDS auth caps. And after the PR
->>   > > getting merged then in this patch series you need to check the
->>   > > corresponding option or flag to determine whether could the idmap
->>   > > mounting succeed.
->>   >
->>   > I'm sorry but I don't understand what we want to support here. Do we
->> want to
->>   > add some new ceph request that allows to check if UID/GID-based
->>   > permissions are applied for
->>   > a particular ceph client user?
->>
->> IMO we should prevent user to set UID/GID-based permisions caps from
->> ceph side.
->>
->> As I know currently there is no way to prevent users to set MDS auth
->> caps, IMO in ceph side at least we need one flag or option to disable
->> this once users want this fs cluster sever for idmap mounts use case.
-> How this should be visible from the user side? We introducing a new
-> kernel client mount option,
-> like "nomdscaps", then pass flag to the MDS and MDS should check that
-> MDS auth permissions
-> are not applied (on the mount time) and prevent them from being
-> applied later while session is active. Like that?
->
-> At the same time I'm thinking about protocol extension that adds 2
-> additional fields for UID/GID. This will allow to correctly
-> handle everything. I wanted to avoid any changes to the protocol or
-> server-side things. But if we want to change MDS side,
-> maybe it's better then to go this way?
+Signed-off-by: Lu Hongfei <luhongfei@vivo.com>
+---
+ fs/iomap/iter.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-There is another way:
-
-For each client it will have a dedicated client auth caps, something like:
-
-client.foo
-   key: *key*
-   caps: [mds] allow r, allow rw path=/bar
-   caps: [mon] allow r
-   caps: [osd] allow rw tag cephfs data=cephfs_a
-
-When mounting this client with idmap enabled, then we can just check the 
-above [mds] caps, if there has any UID/GID based permissions set, then 
-fail the mounting.
-
-That means this kind client couldn't be mounted with idmap enabled.
-
-Also we need to make sure that once there is a mount with idmap enabled, 
-the corresponding client caps couldn't be append the UID/GID based 
-permissions. This need a patch in ceph anyway IMO.
-
-Thanks
-
-- Xiubo
-
-
-
-
-
->
-> Thanks,
-> Alex
->
->> Thanks
->>
->> - Xiubo
->>
+diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
+index 79a0614eaab7..528fd196c50b 100644
+--- a/fs/iomap/iter.c
++++ b/fs/iomap/iter.c
+@@ -77,7 +77,7 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
+ 
+ 	if (iter->iomap.length && ops->iomap_end) {
+ 		ret = ops->iomap_end(iter->inode, iter->pos, iomap_length(iter),
+-				iter->processed > 0 ? iter->processed : 0,
++				max_t(s64, iter->processed, 0),
+ 				iter->flags, &iter->iomap);
+ 		if (ret < 0 && !iter->processed)
+ 			return ret;
+-- 
+2.39.0
 
