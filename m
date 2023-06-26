@@ -2,51 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 412B973E2ED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 17:12:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70D9473E2FB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 17:15:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229664AbjFZPMw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 11:12:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38986 "EHLO
+        id S230101AbjFZPP2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 11:15:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229495AbjFZPMv (ORCPT
+        with ESMTP id S229666AbjFZPP1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 11:12:51 -0400
+        Mon, 26 Jun 2023 11:15:27 -0400
 Received: from tarta.nabijaczleweli.xyz (unknown [139.28.40.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B19AD191;
-        Mon, 26 Jun 2023 08:12:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A5C6510CC;
+        Mon, 26 Jun 2023 08:15:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
-        s=202305; t=1687792367;
-        bh=kGDGl8d/NtOUzNS4kz09HsZ1PAtr9zSUnhGHz+Tg83g=;
+        s=202305; t=1687792524;
+        bh=dK4AKC1Fb5bvHwBamv1jG0anv/0r51d9fw3Gj5lpCG8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kCxU12SqMWZKgWtJFvVpoAU43xTs8qgADeTwSHMh36RYs2DQBLM7d1NwdilJ+7T5O
-         9ZgRJv4MHMSUsSgdcvAVBZfn4MBbnd+Ab3QLuRMDuFHurLsEX7l9zX7k54K+T1rm6D
-         hjGGUVjngkJN4xUQm01o6JwKFMTJ95Km9xrqkdVtqc4CUGwp2dHeAijCW6bYx3G/I6
-         bd5m/L00ADU5v/FAKNCsIUbifd9lLV/IVa4ya9V5jV6TRmNfyZgGXkUua1TXsYETdB
-         LWuzZbV3f4bfek4VD7aLP/wsb4xKwZYRZdcAhLmId8LtXk1+WvFgEfRtgq0nwxsBP9
-         B9Uc9pYiZJWxw==
+        b=ZoMmXk2TydUP/hBZyR5wY8hzqbBxQLHj2tcWHUYx8uCgf6FyHFWpV08Nv8MDlwng6
+         GFNIuEbraFndyQVKLtVYcWyq6kq/04ul/Y2/RDnIp3DJJTupiSraSD+TEv9o1z5ZIy
+         bMaVlBlD2hTwCNjZ9/mWui5LqfxFQ1C/R0/ZLPaKnM4LseCiEqjkcZByVzcOlhDg6k
+         a+xnB0Z++CKjsVeTjDFkiOzXnu2AJZpzSyZbAd6tC3cqee0//pqH0RZHtNPTaVFBkF
+         3Zx0Fpsrf/g1MFF7yua/npx+Zdsc+JOl8kdnxkfOVTMAwfkMDcrvkUzrCLdIpcQ4eZ
+         i38QvF9b5aDEw==
 Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
-        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id C5FDFEE2;
-        Mon, 26 Jun 2023 17:12:47 +0200 (CEST)
-Date:   Mon, 26 Jun 2023 17:12:46 +0200
+        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id E0588180E;
+        Mon, 26 Jun 2023 17:15:24 +0200 (CEST)
+Date:   Mon, 26 Jun 2023 17:15:23 +0200
 From:   Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
         <nabijaczleweli@nabijaczleweli.xyz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+To:     Jan Kara <jack@suse.cz>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: splice(-> FIFO) never wakes up inotify IN_MODIFY?
-Message-ID: <jbg6kfxwniksrgnmnxr7go5kml2iw3tucnnbe4pqhvi4in6wlo@z6m4tcanewmk>
+Message-ID: <sw26o55ax3cfaaqhlbd2qxkdroujnfxtbxrmt2rpjztmedz3mn@uauqn6hexwdq>
 References: <jbyihkyk5dtaohdwjyivambb2gffyjs3dodpofafnkkunxq7bu@jngkdxx65pux>
  <CAOQ4uxhut2NHc+MY-XOJay5B-OKXU2X5Fe0-6-RCMKt584ft5A@mail.gmail.com>
  <ndm45oojyc5swspfxejfq4nd635xnx5m35otsireckxp6heduh@2opifgi3b3cw>
- <CAOQ4uxgCrxMKO7ZgAriMkKU-aKnShN+CG0XqP-yYFiyR=Os82A@mail.gmail.com>
+ <vlzqpije6ltf2jga7btkccraxxnucxrcsqbskdnk6s2sarkitb@5huvtml62a5c>
+ <20230626135159.wzbtjgo6qryfet4e@quack3>
+ <bngangrplbxesizu5kbi442fw2et5dzh723nzxsqj2b2p5ikze@dtnajlktfc2g>
+ <20230626150001.rl7m7ngjsus4hzcs@quack3>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4262ouftleju4mv3"
+        protocol="application/pgp-signature"; boundary="ubfwuid2dhrghilf"
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgCrxMKO7ZgAriMkKU-aKnShN+CG0XqP-yYFiyR=Os82A@mail.gmail.com>
+In-Reply-To: <20230626150001.rl7m7ngjsus4hzcs@quack3>
 User-Agent: NeoMutt/20230517
 X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,PDS_RDNS_DYNAMIC_FP,
@@ -59,41 +62,81 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---4262ouftleju4mv3
-Content-Type: text/plain; charset=us-ascii
+--ubfwuid2dhrghilf
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 26, 2023 at 05:53:46PM +0300, Amir Goldstein wrote:
-> > So is it really true that the only way to poll a pipe is a
-> > sleep()/read(O_NONBLOCK) loop?
-> I don't think so, but inotify is not the way.
-So what is? What do the kernel developers recommend as a way to see if a
-file is written to, and that file happens to be a pipe?
+On Mon, Jun 26, 2023 at 05:00:01PM +0200, Jan Kara wrote:
+> On Mon 26-06-23 16:25:41, Ahelenia Ziemia=C5=84ska wrote:
+> > On Mon, Jun 26, 2023 at 03:51:59PM +0200, Jan Kara wrote:
+> > > On Mon 26-06-23 14:57:55, Ahelenia Ziemia=C5=84ska wrote:
+> > > > On Mon, Jun 26, 2023 at 02:19:42PM +0200, Ahelenia Ziemia=C5=84ska =
+wrote:
+> > > > > > splice(2) differentiates three different cases:
+> > > > > >         if (ipipe && opipe) {
+> > > > > > ...
+> > > > > >         if (ipipe) {
+> > > > > > ...
+> > > > > >         if (opipe) {
+> > > > > > ...
+> > > > > >=20
+> > > > > > IN_ACCESS will only be generated for non-pipe input
+> > > > > > IN_MODIFY will only be generated for non-pipe output
+> > > > > >
+> > > > > > Similarly FAN_ACCESS_PERM fanotify permission events
+> > > > > > will only be generated for non-pipe input.
+> > > > Sorry, I must've misunderstood this as "splicing to a pipe generates
+> > > > *ACCESS". Testing reveals this is not the case. So is it really true
+> > > > that the only way to poll a pipe is a sleep()/read(O_NONBLOCK) loop?
+> > > So why doesn't poll(3) work? AFAIK it should...
+> > poll returns instantly with revents=3DPOLLHUP for pipes that were closed
+> > by the last writer.
+> >=20
+> > Thus, you're either in a hot loop or you have to explicitly detect this
+> > and fall back to sleeping, which defeats the point of polling:
+> I see. There are two ways around this:
+>=20
+> a) open the file descriptor with O_RDWR (so there's always at least one
+> writer).
+Not allowed in the general case, since you need to be able to tail -f
+files you can't write to.
 
-FTR, I've opened the symmetric Debian#1039488:
-  https://bugs.debian.org/1039488
-against coreutils, since, if this is expected, and writing to a pipe
-should not generate write events on that pipe, then tail -f is currently
-broken on most systems.
+> b) when you get POLLHUP, just close the fd and open it again.
+Not allowed semantically, since tail -f follows the file, not the name.
 
---4262ouftleju4mv3
+> In these cases poll(3) will behave as you need (tested)...
+Alas, those are not applicable to the standard use-case.
+If only linux exposed a way to see if a file was written to!
+
+For reference with other implementations,
+this just works and is guaranteed to work under kqueue(2) EVFILT_READ
+(admittedly, kqueue(2) is an epoll(7)-style system and not an
+ inotify(7)-style one, but it solves the issue,
+ and that's what NetBSD tail -f uses).
+
+Maybe this is short-sighted but I don't actually really see why inotify
+is... expected? To only generate file-was-written events only for some
+writes?
+
+--ubfwuid2dhrghilf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmSZqu4ACgkQvP0LAY0m
-WPFzhBAAtraMjYl5wD7wo1KcX8HzPzhZ7Nipp3okNIWFts57AujFG3TsZmE0RYMk
-z1EiYu4GinBZj91uCY1Qy5WZIWJUoodn7eRe9SnO0O1gbWNGi0cEJHlT78CW7lz+
-lqWaw1ucQkgGekwR7ZriYQaonCoEWDsopHYNV2i2wAwt7p+t3vfQgfcEkq60Tnzh
-auSJvV0HcvE/N1dduX2QCuf6a5hWjdcKFP7GLAIeh+kqLRT+j6phL29JslvG8tCw
-Y2zsMcC4uHMRv/qPlC7efTiXLpxQgaoKO2ioO0i3fB7piNGfBthiQwkJzupa3Nft
-EVMxOMh62wrqMIIZHBQvo/vaSATJlKacvELW9A8yl124OI2dEPUStiIpRk/FMtfj
-CnU3Jby0OF8CO3RVA4z/yX6fS8PxIoBPByJEs3bP/sValymNa1ghgiH17XaXIt0n
-Iu+2QHdIgHhqzwCeNxd7XXpiq0IaHOBqRa8NepZpmoqNb9ZeifhHrr+MjoEqJ35O
-3HU4IMT2PMwrHZNjr6o3/xI3n1zoMI5/P+cm5Lz9Bb/cvwih3NpVXW6EappRIlja
-66oATckB5570/D+lMQEnDL2kKa5fcooBjIM+abCzCxmgtizbREJMzOzIwf+rjQE3
-FM5dwGEsA8K17CPm0lRVVwdPeFdxf0bgI36KJrGuQjLYLt+fS4k=
-=fp5P
+iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmSZq4sACgkQvP0LAY0m
+WPE6RQ//U1X3lkjqeC6XPN5pGQOzT8Fuyn3qjRdOPw3UdFFGRpoY6Yo3DrnsxXZD
+ubn/7v7cyMoA5ZQQcuCl+GUKzdXFx98ap+1d70i/eRrzQLzVN+gHi3n6SW2D+Pav
+NJFMB8UtIdGkegWL5kybDBGdUD9/S2SWVoIC2V9O9Zb/AeKf4UgSWf5lFxJWDRPV
+8KA6aNOBkLR0mQTzk39tTjZw7LnF2VV2Cu3ZJ6zjDUtuPgSlDEyNOOlk4WjZC+B1
+uv2dlRvW5SeMSuUxGkARdi5DzSiPmPaVlgypYd5FGTvwsuYvYB02Ci6r107WCpbB
+iz98V7dyL16VZjSvpL7N25vKYqjxMOXtuswbZ3yhJyGjt13289Pw5dlxvZ+rWK11
+Ui5G0wtbMCMdvV1mJinFH+08eefrK7aJ/CUxvXe88e/l3HZaUt6sLgIgUGxTZXbz
+ftGxpSWglTLXlTjD0EhVcbioUABkS/wtk1SEA7fZGXY6FycWXoZlzp0WzFM59lKB
+yChvaV94GsL/+EMgTn2/qQ1o4Y9wYj49mj2TPEaWUuV+keL2Sy6Rqsfq1jSClJMO
+mhc9HFycsDccCBcvHQLVD5lSiKkKJmih1otmhQe/uUfCQTNW6N2jLsGVV2tzVdpv
+sVLFsnnWtzQ8uHslhXIZSJkKDY5nStzkoMoOrxvHr1enYsNE1ZA=
+=rXDh
 -----END PGP SIGNATURE-----
 
---4262ouftleju4mv3--
+--ubfwuid2dhrghilf--
