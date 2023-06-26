@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 630B973DEDE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 14:20:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4EF973DEE7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Jun 2023 14:21:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230383AbjFZMUc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 08:20:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54374 "EHLO
+        id S229762AbjFZMVo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 08:21:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231197AbjFZMUF (ORCPT
+        with ESMTP id S229757AbjFZMU1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 08:20:05 -0400
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DC8C39B;
-        Mon, 26 Jun 2023 05:19:32 -0700 (PDT)
-X-AuditID: a67dfc5b-d85ff70000001748-f4-64997d6d30d7
+        Mon, 26 Jun 2023 08:20:27 -0400
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4E5CB1990;
+        Mon, 26 Jun 2023 05:20:05 -0700 (PDT)
+X-AuditID: a67dfc5b-d85ff70000001748-06-64997d6d445e
 From:   Byungchul Park <byungchul@sk.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel_team@skhynix.com, torvalds@linux-foundation.org,
@@ -42,44 +42,44 @@ Cc:     kernel_team@skhynix.com, torvalds@linux-foundation.org,
         gwan-gyeong.mun@intel.com, max.byungchul.park@gmail.com,
         boqun.feng@gmail.com, longman@redhat.com, hdanton@sina.com,
         her0gyugyu@gmail.com
-Subject: [PATCH v10 21/25] dept: Apply timeout consideration to hashed-waitqueue wait
-Date:   Mon, 26 Jun 2023 20:56:56 +0900
-Message-Id: <20230626115700.13873-22-byungchul@sk.com>
+Subject: [PATCH v10 22/25] dept: Apply timeout consideration to dma fence wait
+Date:   Mon, 26 Jun 2023 20:56:57 +0900
+Message-Id: <20230626115700.13873-23-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230626115700.13873-1-byungchul@sk.com>
 References: <20230626115700.13873-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSbUxTZxTHee7Lc2+rNTdV5yMum2nCJBoVGCwn0RD3wXBntmzJ1A9bjDT0
-        RhqhmlZ5S4ggRRQpEQZUgUwsWyHQibaQoFDFIm8iUpUwJIUALiJCYbK1oYK4FrMvJ7+c88/v
-        fPnztPI+G85rdWckvU6dosJyRu5db9mty76miSrrlkFJURT4/r3IQHWTDYP7ZiMCW3MuBTNd
-        CfCnfw7B8sAgDeZyN4Ibk2M0NHePI3DWn8fw/K8NMORbwNBXfhlDXm0ThqezKxR4KkopaLR/
-        B/1XLBR0BKYZMM9gqDLnUcHxmoKAtYEDa04ETNVXcrAyGQ1948MsOEd3wbVfPRjanX0MdLdO
-        UfD8bjWGcdsHFvq7exlwl5hY+GPegmHWb6XB6lvg4FlHDQW3jEHRmxUnBRf+WWWhx9QRpN9u
-        UzD0og3BvYsTFNhtwxg6fXMUOOzlNLyr60IwVezlIL8owEFVbjGCy/kVDAy+72HB6ImD5aVq
-        fGCf2Dm3QItGR7ro9Ncw4iMLEe9UjnGi8d4oJ9bYz4qO+p1ibfsMJd5Y9LGiveESFu2LpZxY
-        6B2iRM9wOxbnnzzhxN6ry8wPn/4k36+RUrRpkn5vfKI8+XFeEzpdzGX87TFROWiSLUQ8T4RY
-        0l8eWYhka+h+Y+JCjIUdZGQkQId4k7CdOEyvgnE5Twu168h078O10EbhCBkpGGdDzAgRZHrQ
-        iEOsEL4izRMTzEfp56TxVseaSBbctz22oBArhThy3uPCISkRCmTklevjZyJsJQ/qR5grSFGD
-        whqQUqtLS1VrU2L3JGfqtBl7kk6l2lGwVtbslZ9b0aL7RxcSeKRar4j67KpGyarTDJmpLkR4
-        WrVJ8cmSWaNUaNSZWZL+1HH92RTJ4ELbeEa1RRHjT9cohRPqM9JJSTot6f+/UrwsPAdlzfo7
-        q3pelh5aXQzMhr1wv+1pIXsjChib4nrCutG0smx6e2S649uEgfASb+y7DV8e8Ma3HMwqy6uN
-        +Ho++e77w4+SwvSXMppzVXX7Cnd9sWXb0VTz7+cM5JfEmCH8fdsOU9/mioHIQ8JyzLGx6Mpw
-        +zexE3EHP7xExdcXumx3rPIiFWNIVkfvpPUG9X+WuxbJUgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0iTYRTHe97L826rxcuyerErC5HsooHGgSQKujwUhX2IqIxc7SWXOm1T
-        S6Hwsm7abEpmXiqbsYZay+kHK1eiZS5LLcUspjiJzEsa2iRTs2n05fDjnP/5ffpLaIWZ9ZVo
-        tPGiTquKVmIZI9u/JX1DzPl8dZDRvh6yrwWB5+cVBops5RhaH5UhKK9KpaD/1W74OD6EYPJd
-        Cw15ua0I7rm7aKhq6EbgsKZhaPuyENo9IxicuZkY0ktsGN4PTlHguplDQZl9HzSZzBTUTvQx
-        kNePoTAvnfKObxRMWEo5sKT4Qa+1gIMp9yZwdnewUH/byYLj8zrIv+PCUONwMtBQ3UtB29Mi
-        DN3lMyw0NTQy0JptZOHhsBnD4LiFBotnhIMPtcUUPDZ4bQNTDgoujf1h4bWx1kv3Kyho//QM
-        wfMrPRTYyzsw1HuGKKi059Lw+8ErBL1Z3zm4eG2Cg8LULASZF28y0DL9mgWDKwQmfxXhbaGk
-        fmiEJobKs8QxXsyQN2aBPCno4ojh+WeOFNsTSKU1gJTU9FPk3qiHJfbSq5jYR3M4kvG9nSKu
-        jhpMhpubOdJ4a5IJW3FEFqoWozWJoi5wa4Qs8m26DcVlced+uIxUCnKzGUgqEfhgoXXAyM0y
-        5v2Fzs4JepZ9+NVCpfGrNyOT0HzJfKGv8eVcaBF/UOi83D33zPB+Ql+LAc+ynN8sVPX0MP+k
-        q4Syx7VzIql3/+ytGc2ygg8R0lx12IRkxWheKfLRaBNjVJrokI36qMgkrebcxpOxMXbkbY7l
-        /FR2NfrZtrsO8RKkXCAPWnlLrWBVifqkmDokSGilj3zJrzy1Qq5WJSWLutjjuoRoUV+HlkkY
-        5VL5nkNihII/pYoXo0QxTtT9v1ISqW8KIhnX7x5YOqYeP/N1JXSNvuhI2+L2tsA2dkGfPGyr
-        DgyJ53t2FcZVnG5vCsZW4wnT6WPhgjo/PKpv+VpTQoInM3Q6OQu7tCaF23p3RhomXRZ0I/Co
-        /wXf3wZnwUBOwOBen2+GL22pO9eETYfuWOxk5pXOrGWV4cGHcxZvDy+yKBl9pGpTAK3Tq/4C
-        5Kvx3TUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0xTdxjG/Z/L/5x21pzUyw6M6FKDJl5hUfNmzsXED/4THbpo1OgHbehR
+        qqWyoiguKgreqhDUAApMazGlFlAsqCjU1Co3FYGBtZJSJxMVuS3MVi7dpdT45c0vz/s8z6eH
+        p5VONpLX6vdIBr1ap8JyRt4/0Txff/CiJqbJJcDZMzHg/3iSgcIbpRharpcgKK08QkFP7Up4
+        EehDMNbUTENeTguCK687aais8yFwWI9iaHszCdr9gxgac05jSC+6gaG1N0iBN/ccBSX2n+BJ
+        tpkC58g7BvJ6MBTkpVOh856CEYuNA0taNHRZ8zkIvo6FRp+bBUfHXLh4yYuhxtHIQF1VFwVt
+        9wox+Er/Y+FJXQMDLWczWSgbMGPoDVhosPgHOfjdaaKgPCNU9CHooOD43/+yUJ/pDNHVmxS0
+        v6xGcP/kHxTYS90YHvr7KKiw59AwWlyLoCurn4NjZ0Y4KDiSheD0sVwGmv+pZyHDuxjGhgvx
+        8qXkYd8gTTIq9hFHwMSQx2aR3M3v5EjG/Q6OmOx7SYV1Dimq6aHIlSE/S+y2U5jYh85xxNjf
+        ThGvuwaTgWfPONJwYYxZG7VZ/oNG0mlTJMPCH7fJEx6N2dikNn6/57kNp6ESzohkvCgsEqu7
+        XfQXNl3rZcYZC7NFj2ckrE8RvhUrMt+yRiTnaaHoK/Fdw6NweLIQJ9Z6ysImRogWy//KosZZ
+        ISwRK0dN6HPpDLGk3Bn2yEJ69VNzWFcKi8WjXhceLxWF8zKx+Wkm8zkQIT6wephspDChCTak
+        1OpTEtVa3aIFCal67f4F8bsT7Si0K8vB4JYqNNSyzoUEHqkmKmKmX9AoWXVKcmqiC4k8rZqi
+        mDacp1EqNOrUA5Jh91bDXp2U7ELf8Izqa8V3gX0apbBDvUfaJUlJkuHLl+JlkWlIGf1b66uO
+        jT2W69r8VT9PvXPgTcTmD2/XyOJWPK7yde5M37S9bFn0su7RWPf61ZjT5W6s/6g69GfHiWJ3
+        xC/kUHzU2tbvzYFNp+Ydjqcbgxua9Nt86bd+zT3syMqfFWWsjIgxFt+eZXV/ulxHz0yKz74a
+        OVA4L9HavaTLU2CZELdi57CKSU5Qx86hDcnq/wHaIHOuUwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSf0iTeRzH7/t9nuf7PC4XD0vqodBiFEKRGWV8oIgiwieP6zqIO7grcrWH
+        XG6rNlsaBpYWnTVTyaZpMafsbLOyzT+snIi/l3dpabZkWdrPpenRNWlO66bRP29evD/v9/uv
+        D0cpbMxiTqPPkAx6lVZJZLRs58bc1bqTZerEztfroOhCIgQ/naOh4lYtgd6bTgS19acwBNqT
+        4cnkGILwPz0UWEp6EVQOP6OgvmMIgafmNIG+V/OhPzhBwFtynkBu1S0CD0enMfgvF2Nwun6C
+        7kIbhubQWxosAQLlllwckXcYQnYHC/acFTBSc4WF6eG14B0aYKD1qpcBz+AqKLvmJ9Do8dLQ
+        0TCCoe9uBYGh2q8MdHd00dBbZGbgxriNwOiknQJ7cIKFR81WDHV5kbX30x4MZ//7wkCnuTlC
+        1bcx9D+9h6Dp3AsMrtoBAq3BMQxuVwkFU3+1Ixgp+MDCmQshFspPFSA4f+YyDT0znQzk+ZMg
+        /LmCbNkkto5NUGKe+7jombTS4n2bIN658owV85oGWdHqOia6a1aKVY0BLFZ+DDKiy/EnEV0f
+        i1kx/0M/Fv0DjUQcf/CAFbtKw/Su2N9lm9SSVmOSDGs2p8rS2sIO5kgfl+l77CA5yMnmoyhO
+        4NcL1uuj9CwTPl7w+ULULMfwywS3+Q2Tj2QcxVfNE952tc0VFvA7hXbfjbkQza8Q6v4twLMs
+        5zcI9VNW9G10qeCsa57LREX8e3/b5nwFnySc9reQQiSzoh8cKEajN+lUGm1SgjE9LUuvyUw4
+        cFjnQpHPsZ+cLmpAn/qSWxDPIWW0PDGuVK1gVCZjlq4FCRyljJEv/GxRK+RqVdYJyXB4n+GY
+        VjK2oCUcrVwkT/lNSlXwB1UZUrokHZEM36+Yi1qcg6LLeQXhMyoafzTrtVUjgbK9hTteL+81
+        jCUvmfTW52b/OmOMLYl+uS7z6bgJF3elzO/ZuqV0z66bqzQJvO9S+FAgOrtta7fOm/rLxe3b
+        4hyWyod/+PfY02LLB2emqhfGhZ5Xx7tfOFtTSrObUtIPDHNHs813GnQ79nc0TT3/md9tUtLG
+        NNXalZTBqPofGOA1JDUDAAA=
 X-CFilter-Loop: Reflected
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
         SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -91,27 +91,35 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Now that CONFIG_DEPT_AGGRESSIVE_TIMEOUT_WAIT was introduced, apply the
-consideration to hashed-waitqueue wait, assuming an input 'ret' in
-___wait_var_event() macro is used as a timeout value.
+consideration to dma fence wait.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- include/linux/wait_bit.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma-buf/dma-fence.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/wait_bit.h b/include/linux/wait_bit.h
-index fe89282c3e96..3ef450d9a7c5 100644
---- a/include/linux/wait_bit.h
-+++ b/include/linux/wait_bit.h
-@@ -247,7 +247,7 @@ extern wait_queue_head_t *__var_waitqueue(void *p);
- 	struct wait_bit_queue_entry __wbq_entry;			\
- 	long __ret = ret; /* explicit shadow */				\
- 									\
--	sdt_might_sleep_start(NULL);					\
-+	sdt_might_sleep_start_timeout(NULL, __ret);			\
- 	init_wait_var_entry(&__wbq_entry, var,				\
- 			    exclusive ? WQ_FLAG_EXCLUSIVE : 0);		\
- 	for (;;) {							\
+diff --git a/drivers/dma-buf/dma-fence.c b/drivers/dma-buf/dma-fence.c
+index 1db4bc0e8adc..a1ede7b467cd 100644
+--- a/drivers/dma-buf/dma-fence.c
++++ b/drivers/dma-buf/dma-fence.c
+@@ -783,7 +783,7 @@ dma_fence_default_wait(struct dma_fence *fence, bool intr, signed long timeout)
+ 	cb.task = current;
+ 	list_add(&cb.base.node, &fence->cb_list);
+ 
+-	sdt_might_sleep_start(NULL);
++	sdt_might_sleep_start_timeout(NULL, timeout);
+ 	while (!test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags) && ret > 0) {
+ 		if (intr)
+ 			__set_current_state(TASK_INTERRUPTIBLE);
+@@ -887,7 +887,7 @@ dma_fence_wait_any_timeout(struct dma_fence **fences, uint32_t count,
+ 		}
+ 	}
+ 
+-	sdt_might_sleep_start(NULL);
++	sdt_might_sleep_start_timeout(NULL, timeout);
+ 	while (ret > 0) {
+ 		if (intr)
+ 			set_current_state(TASK_INTERRUPTIBLE);
 -- 
 2.17.1
 
