@@ -2,62 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C6C973F705
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 10:25:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4771173F75D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 10:34:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230012AbjF0IZ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 04:25:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33516 "EHLO
+        id S230222AbjF0Ief (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 04:34:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231859AbjF0IYz (ORCPT
+        with ESMTP id S229727AbjF0IeK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 04:24:55 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A35212B;
-        Tue, 27 Jun 2023 01:24:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Tue, 27 Jun 2023 04:34:10 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE7919A8;
+        Tue, 27 Jun 2023 01:34:08 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5DE2060FD8;
-        Tue, 27 Jun 2023 08:24:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA386C433CA;
-        Tue, 27 Jun 2023 08:24:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687854263;
-        bh=PN+dhNU90c6TSMh3/nk0lQ0xTCk2Ol9fv6nVZ+3C3Zs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jzpntFt4cDFZqdnwrhYYQu9Rl/AdiT/dgFwqBf9uhifEdWwBRB/S7RkW/lNEObdOD
-         veTLCh6DRqPTzJ6vgmoz+qoJmY6o62HH07i2GPye7qgYSTjk/7HbebRORp60zwhyKq
-         klfDw2Se8as5Kw0aL3AoWUhdQtPNPqzCykvpI6NNE/wnjUpFICvXM/jzQwClGPNnoJ
-         aN2t25b2FEPFSitFyPrzZdY2Y507lIck+lAdzzqbrgRFrVBh6tK5laCYTAPUdiXXL2
-         iLwRq19wb4oxMX/6BgEZyFIOcrsUg+4YGFRpNKVtFQhzDAaOWSSZ3udpE9ORPNxRK/
-         WDbv8eOaCDkPw==
-Date:   Tue, 27 Jun 2023 10:24:15 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Suren Baghdasaryan <surenb@google.com>, gregkh@linuxfoundation.org,
-        peterz@infradead.org, lujialin4@huawei.com,
-        lizefan.x@bytedance.com, hannes@cmpxchg.org, mingo@redhat.com,
-        ebiggers@kernel.org, oleg@redhat.com, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 1/2] kernfs: add kernfs_ops.free operation to free
- resources tied to the file
-Message-ID: <20230627-kanon-hievt-bfdb583ddaa6@brauner>
-References: <20230626201713.1204982-1-surenb@google.com>
- <ZJn1tQDgfmcE7mNG@slm.duckdns.org>
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 79CA12185A;
+        Tue, 27 Jun 2023 08:34:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1687854847; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=60UzWG/75gz4NOILHLeD/9PkhGjuoyZUVYU3uGZdrp0=;
+        b=d4VoKrCdfYSufabLKfmo5vzGpuNe5gtVTH+CtlSi6IUeD4RCSmqX/svx4rQzuWyVPLQZ/8
+        WSrOkluHzHTjdkigUqBKFuJZ70nggDYOwym90vnbT8KCPaYff+JvbsCSr5a0cmYcMTaCu3
+        oCJMA59hUNMJTM5vfboHBqOhZUKnGVg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1687854847;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=60UzWG/75gz4NOILHLeD/9PkhGjuoyZUVYU3uGZdrp0=;
+        b=o83Na7FRpIdvCG2qsO+9Jb1VrUW06rkj81rLnH0lKvQ9hoDNQ655rTxof0Cgm4IITsVhwf
+        SWY6NyFUNXJcZkCQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6456013276;
+        Tue, 27 Jun 2023 08:34:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id KrJ3GP+emmSiPwAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 27 Jun 2023 08:34:07 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id EA671A0762; Tue, 27 Jun 2023 10:34:06 +0200 (CEST)
+Date:   Tue, 27 Jun 2023 10:34:06 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Baokun Li <libaokun1@huawei.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com,
+        yukuai3@huawei.com
+Subject: Re: [PATCH] quota: fix race condition between dqput() and
+ dquot_mark_dquot_dirty()
+Message-ID: <20230627083406.hhjf55e2tqnwqaf6@quack3>
+References: <20230616085608.42435-1-libaokun1@huawei.com>
+ <20230616152824.ndpgvkegvvip2ahh@quack3>
+ <c8daf4a0-769f-f769-50f6-8b7063542499@huawei.com>
+ <20230622145620.hk3bdjxtlr64gtzl@quack3>
+ <b73894fc-0c7a-0503-25ad-ab5a9dfbd852@huawei.com>
+ <20230626130957.kvfli23djxc2opkq@quack3>
+ <2486ec73-55e0-00cb-fc76-97b9b285a9ce@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZJn1tQDgfmcE7mNG@slm.duckdns.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <2486ec73-55e0-00cb-fc76-97b9b285a9ce@huawei.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -65,25 +80,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 26, 2023 at 10:31:49AM -1000, Tejun Heo wrote:
-> On Mon, Jun 26, 2023 at 01:17:12PM -0700, Suren Baghdasaryan wrote:
-> > diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
-> > index 73f5c120def8..a7e404ff31bb 100644
-> > --- a/include/linux/kernfs.h
-> > +++ b/include/linux/kernfs.h
-> > @@ -273,6 +273,11 @@ struct kernfs_ops {
-> >  	 */
-> >  	int (*open)(struct kernfs_open_file *of);
-> >  	void (*release)(struct kernfs_open_file *of);
-> > +	/*
-> > +	 * Free resources tied to the lifecycle of the file, like a
-> > +	 * waitqueue used for polling.
-> > +	 */
-> > +	void (*free)(struct kernfs_open_file *of);
-> 
-> I think this can use a bit more commenting - ie. explain that release may be
-> called earlier than the actual freeing of the file and how that can lead to
-> problems. Othre than that, looks fine to me.
+Hello!
 
-It seems the more natural thing to do would be to introduce a ->drain()
-operation and order it before ->release(), no?
+On Mon 26-06-23 21:55:49, Baokun Li wrote:
+> On 2023/6/26 21:09, Jan Kara wrote:
+> > On Sun 25-06-23 15:56:10, Baokun Li wrote:
+> > > > > I think we can simply focus on the race between the DQ_ACTIVE_B flag and
+> > > > > the DQ_MOD_B flag, which is the core problem, because the same quota
+> > > > > should not have both flags. These two flags are protected by dq_list_lock
+> > > > > and dquot->dq_lock respectively, so it makes sense to add a
+> > > > > wait_on_dquot() to ensure the accuracy of DQ_ACTIVE_B.
+> > > > But the fundamental problem is not only the race with DQ_MOD_B setting. The
+> > > > dquot structure can be completely freed by the time
+> > > > dquot_claim_space_nodirty() calls dquot_mark_dquot_dirty() on it. That's
+> > > > why I think making __dquot_transfer() obey dquot_srcu rules is the right
+> > > > solution.
+> > > Yes, now I also think that making __dquot_transfer() obey dquot_srcu
+> > > rules is a better solution. But with inode->i_lock protection, why would
+> > > the dquot structure be completely freed?
+> > Well, when dquot_claim_space_nodirty() calls mark_all_dquot_dirty() it does
+> > not hold any locks (only dquot_srcu). So nothing prevents dquot_transfer()
+> > to go, swap dquot structure pointers and drop dquot references and after
+> > that mark_all_dquot_dirty() can use a stale pointer to call
+> > mark_dquot_dirty() on already freed memory.
+> > 
+> No, this doesn't look like it's going to happen.  The
+> mark_all_dquot_dirty() uses a pointer array pointer, the dquot in the
+> array is dynamically changing, so after swap dquot structure pointers,
+> mark_all_dquot_dirty() uses the new pointer, and the stale pointer is
+> always destroyed after swap, so there is no case of using the stale
+> pointer here.
+
+There is a case - CPU0 can prefetch the values from dquots[] array into its
+local cache, then CPU1 can update the dquots[] array (these writes can
+happily stay in CPU1 store cache invisible to other CPUs) and free the
+dquots via dqput(). Then CPU0 can pass the prefetched dquot pointers to
+mark_dquot_dirty(). There are no locks or memory barries preventing CPUs
+from ordering instructions and memory operations like this in the code...
+You can read Documentation/memory-barriers.txt about all the perils current
+CPU architecture brings wrt coordination of memory accesses among CPUs ;)
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
