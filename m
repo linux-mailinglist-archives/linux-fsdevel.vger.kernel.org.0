@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD20373F353
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 06:24:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F25A73F355
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 06:24:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230489AbjF0EYl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 00:24:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56350 "EHLO
+        id S230211AbjF0EYx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 00:24:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230272AbjF0EXt (ORCPT
+        with ESMTP id S230179AbjF0EYP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 00:23:49 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCC381999
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 21:23:40 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-bfae0f532e4so5218819276.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 21:23:40 -0700 (PDT)
+        Tue, 27 Jun 2023 00:24:15 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D95C819BA
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 21:23:42 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-bfec07e5eb0so4371919276.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 21:23:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1687839820; x=1690431820;
+        d=google.com; s=20221208; t=1687839822; x=1690431822;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S48dBfG0SWV0QU4tyl9ann+yNi8sxz8gZYLMNRkbGeY=;
-        b=uyhBbu35AtD8uFc7lNVRhrhL9FZssNEc1U3YlNjnS6/vWb6a5ERBcwBMaYSPxjJ/Mk
-         Qe5HTpNa5XqvLjiojjNbFmZN0xmWKkvRVR4N08jGcpfsLakGmZkxol+hWOUA2MEdPtG3
-         CCWMkRdx3oFd6/Dcq2ziTDhiHH5hTD+8UeRRw0fdTOeqAixqf3jfdQ7B3ZgYpw+aT0x0
-         7n1tbaJiroElOh+0zEGZhbUInAo3kZrsUt6r5yZG0ZhF8kLRGvyK6fttt1xmJKJlC+bc
-         8aGAiRC7PO3v1V82sW0UO8XGuG6YrM7whEZUcc8FMaVdHAxabZ1AEzNvmsHlLQ8otu9G
-         mugQ==
+        bh=Lr5SfBQGAifcALE2slHdUCY8qB9p3T7NgiAWq42Xuxc=;
+        b=HRPWGd1foVC0TIQog8by8o2V8v8sJUL0qEpF8wD/s++kmHcbLnW9YsASla9n/li/yn
+         jAVoOJuXYj+89+BkDU6C7DR87/c5I2Xe7AUt5OkB4Vx+il4OJL1UCe8wo1BahbtfS+tM
+         +TIjU6wTLeLvtbx3yRAqe+pxoXluESKq2T+f/WXJ7whSwwQzfC1S58nYgZEbfoxC42G2
+         cOxhlNeMNxCCBL8LKTRY8Gro4C7H4cVDDp7MvXisijQEL+ExlO4Z3Tomv0kO3XT8qUaT
+         oJlcEThRU2WvKg9M91CG55+zV88WNMwVprV9PiZ+i5YWzMxoB7iBW977umhZZsFn9Nyn
+         UwSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687839820; x=1690431820;
+        d=1e100.net; s=20221208; t=1687839822; x=1690431822;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S48dBfG0SWV0QU4tyl9ann+yNi8sxz8gZYLMNRkbGeY=;
-        b=OZgrDphJnLKGJcVwnBzdixIp4oMBLNWI2MFSnm4XlveC+cLlm4P0MeCHz9B4G3WmZT
-         ozzmQN8tzZczw6qllYgPo/YM8Wjrkb2KBw2zlhN8QNIzgzRbiTWLTtaDf4aYlEMlkK4/
-         +GGAix8RQ581zDqhizduY3wQzHr90uP4jSt+/LfWKxi6h9U3no/x2cXElwg3lJ75BEyN
-         80ehyvMc17uYLcuDcfV9nelvmdHHgihC8ZMhftDBlkUixmibhd3OwlnubHzulmX3Tl2H
-         Z7CEshZ7OobdZtZa9FsxnXViCb1/PFDQlx8DEfQX8tWq1GcoOVZMlPNq/nmhAL6E0S3U
-         1fxw==
-X-Gm-Message-State: AC+VfDzIXfjDkovms21nILmjVlJtaXLcPQwpFnDqm9wREzQlUYL26y0P
-        cA8gRS3L/pSC9ilXtZIfJg4mTxTAymU=
-X-Google-Smtp-Source: ACHHUZ7TRsCUwE2ZwvAugNjG47XxvELjQ1x8vS3tmisicM0hRabZmbuVIm5qRhxSsRS9QjFAyyEcLENdUAY=
+        bh=Lr5SfBQGAifcALE2slHdUCY8qB9p3T7NgiAWq42Xuxc=;
+        b=XiSeuFoalSHMMGoyCAym8Yh2bHL39mk6Gc8XY9QbCINhOkiqa/MoFLArCVd9CJS1Ef
+         CLVIHjKISHPk5keplRjfMCapgMYl0D/ha3kJdrL71ugRb5c69KDXFD7krZXpeZsz14Z/
+         BCjg8+IDgri0lAw1uiuaRtoK4wphrOzADjgyKR7iqnJF1slRPnp+urBbt0X+hr3oqrel
+         L+GDr6fBiHIrFI1A29NZ40WO7OOVrwHw4Gew269ZCp9MFEg9utwFWZOF7A1Ee3EMZYY7
+         OQLI6m915ekRGn65GjcRt1tcN3wdTC+B7V6xvV3/WSvKN7LkTckJrnXBemQJw2GdzPHY
+         wc+g==
+X-Gm-Message-State: AC+VfDxAeHzSAYlNKNRl7O+alE/EHypDcr1i3YQEB6y2TNXI6lHBHyHA
+        QeLw2jEm3w7IuwtAmKNhKgoebd0+8CE=
+X-Google-Smtp-Source: ACHHUZ7ZrkP2eGvIORpom8C2PklGU9Puo2bqG/qIQ+eaEnnHLQXFfj/ZvexRg0ciCojV4a3OpKeuYZMwT6k=
 X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:5075:f38d:ce2f:eb1b])
- (user=surenb job=sendgmr) by 2002:a25:e78a:0:b0:bc4:ef98:681c with SMTP id
- e132-20020a25e78a000000b00bc4ef98681cmr6584157ybh.13.1687839820015; Mon, 26
- Jun 2023 21:23:40 -0700 (PDT)
-Date:   Mon, 26 Jun 2023 21:23:20 -0700
+ (user=surenb job=sendgmr) by 2002:a25:d658:0:b0:bbb:8c13:ce26 with SMTP id
+ n85-20020a25d658000000b00bbb8c13ce26mr14013293ybg.11.1687839821918; Mon, 26
+ Jun 2023 21:23:41 -0700 (PDT)
+Date:   Mon, 26 Jun 2023 21:23:21 -0700
 In-Reply-To: <20230627042321.1763765-1-surenb@google.com>
 Mime-Version: 1.0
 References: <20230627042321.1763765-1-surenb@google.com>
 X-Mailer: git-send-email 2.41.0.162.gfafddb0af9-goog
-Message-ID: <20230627042321.1763765-8-surenb@google.com>
-Subject: [PATCH v3 7/8] mm: drop VMA lock before waiting for migration
+Message-ID: <20230627042321.1763765-9-surenb@google.com>
+Subject: [PATCH v3 8/8] mm: handle userfaults under VMA lock
 From:   Suren Baghdasaryan <surenb@google.com>
 To:     akpm@linux-foundation.org
 Cc:     willy@infradead.org, hannes@cmpxchg.org, mhocko@suse.com,
@@ -78,39 +78,134 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-migration_entry_wait does not need VMA lock, therefore it can be
-dropped before waiting.
+Enable handle_userfault to operate under VMA lock by releasing VMA lock
+instead of mmap_lock and retrying.
 
 Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 ---
- mm/memory.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ fs/userfaultfd.c | 42 ++++++++++++++++++++++--------------------
+ mm/memory.c      |  9 ---------
+ 2 files changed, 22 insertions(+), 29 deletions(-)
 
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 4e800bb7d2ab..b88632c404b6 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -277,17 +277,17 @@ static inline struct uffd_msg userfault_msg(unsigned long address,
+  * hugepmd ranges.
+  */
+ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
+-					 struct vm_area_struct *vma,
+-					 unsigned long address,
+-					 unsigned long flags,
+-					 unsigned long reason)
++					      struct vm_fault *vmf,
++					      unsigned long reason)
+ {
++	struct vm_area_struct *vma = vmf->vma;
+ 	pte_t *ptep, pte;
+ 	bool ret = true;
+ 
+-	mmap_assert_locked(ctx->mm);
++	if (!(vmf->flags & FAULT_FLAG_VMA_LOCK))
++		mmap_assert_locked(ctx->mm);
+ 
+-	ptep = hugetlb_walk(vma, address, vma_mmu_pagesize(vma));
++	ptep = hugetlb_walk(vma, vmf->address, vma_mmu_pagesize(vma));
+ 	if (!ptep)
+ 		goto out;
+ 
+@@ -308,10 +308,8 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
+ }
+ #else
+ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
+-					 struct vm_area_struct *vma,
+-					 unsigned long address,
+-					 unsigned long flags,
+-					 unsigned long reason)
++					      struct vm_fault *vmf,
++					      unsigned long reason)
+ {
+ 	return false;	/* should never get here */
+ }
+@@ -325,11 +323,11 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
+  * threads.
+  */
+ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
+-					 unsigned long address,
+-					 unsigned long flags,
++					 struct vm_fault *vmf,
+ 					 unsigned long reason)
+ {
+ 	struct mm_struct *mm = ctx->mm;
++	unsigned long address = vmf->address;
+ 	pgd_t *pgd;
+ 	p4d_t *p4d;
+ 	pud_t *pud;
+@@ -337,7 +335,8 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
+ 	pte_t *pte;
+ 	bool ret = true;
+ 
+-	mmap_assert_locked(mm);
++	if (!(vmf->flags & FAULT_FLAG_VMA_LOCK))
++		mmap_assert_locked(mm);
+ 
+ 	pgd = pgd_offset(mm, address);
+ 	if (!pgd_present(*pgd))
+@@ -445,7 +444,8 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+ 	 * Coredumping runs without mmap_lock so we can only check that
+ 	 * the mmap_lock is held, if PF_DUMPCORE was not set.
+ 	 */
+-	mmap_assert_locked(mm);
++	if (!(vmf->flags & FAULT_FLAG_VMA_LOCK))
++		mmap_assert_locked(mm);
+ 
+ 	ctx = vma->vm_userfaultfd_ctx.ctx;
+ 	if (!ctx)
+@@ -561,15 +561,17 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
+ 	spin_unlock_irq(&ctx->fault_pending_wqh.lock);
+ 
+ 	if (!is_vm_hugetlb_page(vma))
+-		must_wait = userfaultfd_must_wait(ctx, vmf->address, vmf->flags,
+-						  reason);
++		must_wait = userfaultfd_must_wait(ctx, vmf, reason);
+ 	else
+-		must_wait = userfaultfd_huge_must_wait(ctx, vma,
+-						       vmf->address,
+-						       vmf->flags, reason);
++		must_wait = userfaultfd_huge_must_wait(ctx, vmf, reason);
+ 	if (is_vm_hugetlb_page(vma))
+ 		hugetlb_vma_unlock_read(vma);
+-	mmap_read_unlock(mm);
++	if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
++		/* WARNING: VMA can't be used after this */
++		vma_end_read(vma);
++	} else
++		mmap_read_unlock(mm);
++	vmf->flags |= FAULT_FLAG_LOCK_DROPPED;
+ 
+ 	if (likely(must_wait && !READ_ONCE(ctx->released))) {
+ 		wake_up_poll(&ctx->fd_wqh, EPOLLIN);
 diff --git a/mm/memory.c b/mm/memory.c
-index 5caaa4c66ea2..bdf46fdc58d6 100644
+index bdf46fdc58d6..923c1576bd14 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -3715,8 +3715,18 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 	entry = pte_to_swp_entry(vmf->orig_pte);
- 	if (unlikely(non_swap_entry(entry))) {
- 		if (is_migration_entry(entry)) {
--			migration_entry_wait(vma->vm_mm, vmf->pmd,
--					     vmf->address);
-+			/* Save mm in case VMA lock is dropped */
-+			struct mm_struct *mm = vma->vm_mm;
-+
-+			if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
-+				/*
-+				 * No need to hold VMA lock for migration.
-+				 * WARNING: vma can't be used after this!
-+				 */
-+				vma_end_read(vma);
-+				ret |= VM_FAULT_COMPLETED;
-+			}
-+			migration_entry_wait(mm, vmf->pmd, vmf->address);
- 		} else if (is_device_exclusive_entry(entry)) {
- 			vmf->page = pfn_swap_entry_to_page(entry);
- 			ret = remove_device_exclusive_entry(vmf);
+@@ -5316,15 +5316,6 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
+ 	if (!vma_start_read(vma))
+ 		goto inval;
+ 
+-	/*
+-	 * Due to the possibility of userfault handler dropping mmap_lock, avoid
+-	 * it for now and fall back to page fault handling under mmap_lock.
+-	 */
+-	if (userfaultfd_armed(vma)) {
+-		vma_end_read(vma);
+-		goto inval;
+-	}
+-
+ 	/* Check since vm_start/vm_end might change before we lock the VMA */
+ 	if (unlikely(address < vma->vm_start || address >= vma->vm_end)) {
+ 		vma_end_read(vma);
 -- 
 2.41.0.178.g377b9f9a00-goog
 
