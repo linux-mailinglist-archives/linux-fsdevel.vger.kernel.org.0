@@ -2,82 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 39FFC73EFE0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 02:52:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6403B73F037
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 03:16:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229501AbjF0Awh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 20:52:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53932 "EHLO
+        id S229982AbjF0BQB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 21:16:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbjF0Awg (ORCPT
+        with ESMTP id S230016AbjF0BPu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 20:52:36 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0681D173E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 17:52:34 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id 41be03b00d2f7-517ab9a4a13so3061742a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 17:52:34 -0700 (PDT)
+        Mon, 26 Jun 2023 21:15:50 -0400
+X-Greylist: delayed 150 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 26 Jun 2023 18:15:49 PDT
+Received: from resqmta-h1p-028591.sys.comcast.net (resqmta-h1p-028591.sys.comcast.net [IPv6:2001:558:fd02:2446::9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53D7D198D
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 18:15:49 -0700 (PDT)
+Received: from resomta-h1p-028516.sys.comcast.net ([96.102.179.207])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 256/256 bits)
+        (Client did not present a certificate)
+        by resqmta-h1p-028591.sys.comcast.net with ESMTP
+        id DvA2q8zHX6ZQQDxGfqSs5f; Tue, 27 Jun 2023 01:13:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1687827154; x=1690419154;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ryIgHmsxKbcUplDve5SF6jrFgRG7g0+BvN6IyPF7cjU=;
-        b=Fjlv8dsycijP8Ftk+h4CTLvESS1SXtt7Vfbhug1oYtUrRVOwsIvit9I/0+dAV0CJ/g
-         +/NxSJ0rKKvX77CHt+Gf8kp7FIOuDNHtQg89UA+rPpaxbIM9S656mRks5jdsCApLtHVf
-         Iulv8Y4i7pk2v8GMxTrMxKWOE7QM9GhFOhkNxZ7W1yjl8mDM6JFc5LjNhFq0c/uInCFO
-         CJhqD257jPqBgbFRv5VALAFF6DT7rRe1OH4PIqIHM4Ql5jXgifCUhQSUPb5x3h4h/7mV
-         1YPV0aXAd8QiC4Nvljwp2kmA59G9YBGrfeVQl2NMBnG6i7pjK0TPwGO9aAWG/XkORFmG
-         qqoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687827154; x=1690419154;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ryIgHmsxKbcUplDve5SF6jrFgRG7g0+BvN6IyPF7cjU=;
-        b=aKIxqVRLumEXT6/Bdl+yFr8A0633aq2Vm4scBdzs+iMwLN/dLlnUH+uhkP998App/E
-         4QKBwKld4o/BMBD9e/VKCwAIK/W3ZAp9ReEnJhokPEyS6T1Vk1uYkYMQ0/xX3QgbW4xI
-         K6QzlrFRAG2UDWxS895TwKQ1EmIF1y33MLNqqTAkQNCWAZCZQm5vn6Vtujw3Ie40FAv9
-         BgseznIO5xtkJ8Yabuqn+cn+R8PM2ozlfJ1ZZ+uyJg+ftX4HdlmUneWBYSrU7rCk6uKv
-         AONt41o7iMnjQwY/woNOxn20nTS8yfIpwqLTgbXeoe5upBmiUe0zQaoQ1wmCEdPbtcsV
-         3zwA==
-X-Gm-Message-State: AC+VfDzHPyxJJKoU0IVR/VBEfgrooCd7zO5ohhdH643rA4idBqaR4gAA
-        Q93yiBy1OCoQep336qgsxx/A9A==
-X-Google-Smtp-Source: ACHHUZ7VJubfQ1j3any7oukdH5Ex6/ON903nuYp23JmVKrnnIhWWp745yjYaU9mvfrt1KkocKhnTHQ==
-X-Received: by 2002:a05:6a20:12cc:b0:126:d0e2:3fb4 with SMTP id v12-20020a056a2012cc00b00126d0e23fb4mr7397129pzg.56.1687827154328;
-        Mon, 26 Jun 2023 17:52:34 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-94-37.pa.vic.optusnet.com.au. [49.186.94.37])
-        by smtp.gmail.com with ESMTPSA id x21-20020aa793b5000000b00673e652985esm2911677pff.44.2023.06.26.17.52.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jun 2023 17:52:33 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qDwwZ-00GdH2-0w;
-        Tue, 27 Jun 2023 10:52:31 +1000
-Date:   Tue, 27 Jun 2023 10:52:31 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Marcelo Tosatti <mtosatti@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Valentin Schneider <vschneid@redhat.com>,
-        Leonardo Bras <leobras@redhat.com>,
-        Yair Podemsky <ypodemsk@redhat.com>, P J P <ppandit@redhat.com>
-Subject: Re: [PATCH] fs/buffer.c: remove per-CPU buffer_head lookup cache
-Message-ID: <ZJoyz3ho7eR1ljHV@dread.disaster.area>
-References: <ZJnTRfHND0Wi4YcU@tpad>
- <ZJndTjktg17nulcs@casper.infradead.org>
- <ZJofgZ/EHR8kFtth@dread.disaster.area>
- <ZJoppezn+EiLQvUm@casper.infradead.org>
+        d=comcastmailservice.net; s=20211018a; t=1687828397;
+        bh=lWIrrdBwU2Z2iSXjnUlbUEi7uBI4b1rraPxssPyuNw0=;
+        h=Received:Received:From:To:Subject:Date:MIME-Version:Message-ID:
+         Content-Type:Xfinity-Spam-Result;
+        b=ld4wwcPME9dVc+n2UjdZWZqFwnv1y3ca9BnFYY8uXUg5OGmXIpz4oRnmKLLRBQ3l9
+         5osCahyYRF4DS+m5fMUICXzSvqd3OKmekWo4E6F8BqKvq5/Vc2PmVoVa/madgUYgFG
+         /53HhQLKqyiI9Eo9ZBVRkIjX921uSVlCo/KVeYf2TfotAXd70+WEVmCbZMO9GrMJBg
+         7LSrCHB1NBdO87rl7/TBC27Wu7o+Zv9llZs3i6IDY/DPD3vYzLKw+TeD5aa/TeJyvz
+         Ub8XTs4lGyhMWBpJ63i3jyyOFBNyBAxC2E7M8VfvtxnNOSYGKQurDoX6uOG2eN4pCb
+         BrNQB47N/TVyw==
+Received: from localhost ([IPv6:2601:18c:9082:afd:219:d1ff:fe75:dc2f])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 256/256 bits)
+        (Client did not present a certificate)
+        by resomta-h1p-028516.sys.comcast.net with ESMTPSA
+        id DxGHq6r532VAEDxGJquU81; Tue, 27 Jun 2023 01:12:55 +0000
+X-Xfinity-VMeta: sc=0.00;st=legit
+From:   Matt Whitlock <kernel@mattwhitlock.name>
+To:     <linux-fsdevel@vger.kernel.org>
+Subject: [Reproducer] Corruption, possible race between splice and =?iso-8859-1?Q?FALLOC=5FFL=5FPUNCH=5FHOLE?=
+Date:   Mon, 26 Jun 2023 21:12:52 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZJoppezn+EiLQvUm@casper.infradead.org>
+Message-ID: <ec804f26-fa76-4fbe-9b1c-8fbbd829b735@mattwhitlock.name>
+User-Agent: Trojita/v0.7-595-g7738cd47; Qt/5.15.10; xcb; Linux; Gentoo Linux
+Content-Type: multipart/mixed;
+        boundary="trojita=_a96e5a88-7dc2-4bd2-9532-de033b9131da"
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        DKIM_VALID,MIME_QP_LONG_LINE,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,63 +57,134 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 01:13:25AM +0100, Matthew Wilcox wrote:
-> On Tue, Jun 27, 2023 at 09:30:09AM +1000, Dave Chinner wrote:
-> > On Mon, Jun 26, 2023 at 07:47:42PM +0100, Matthew Wilcox wrote:
-> > > On Mon, Jun 26, 2023 at 03:04:53PM -0300, Marcelo Tosatti wrote:
-> > > > Upon closer investigation, it was found that in current codebase, lookup_bh_lru
-> > > > is slower than __find_get_block_slow:
-> > > > 
-> > > >  114 ns per __find_get_block
-> > > >  68 ns per __find_get_block_slow
-> > > > 
-> > > > So remove the per-CPU buffer_head caching.
-> > > 
-> > > LOL.  That's amazing.  I can't even see why it's so expensive.  The
-> > > local_irq_disable(), perhaps?  Your test case is the best possible
-> > > one for lookup_bh_lru() where you're not even doing the copy.
-> > 
-> > I think it's even simpler than that.
-> > 
-> > i.e. the lookaside cache is being missed, so it's a pure cost and
-> > the code is always having to call __find_get_block_slow() anyway.
-> 
-> How does that happen?
-> 
-> __find_get_block(struct block_device *bdev, sector_t block, unsigned size)
-> {
->         struct buffer_head *bh = lookup_bh_lru(bdev, block, size);
-> 
->         if (bh == NULL) {
->                 /* __find_get_block_slow will mark the page accessed */
->                 bh = __find_get_block_slow(bdev, block);
->                 if (bh)
->                         bh_lru_install(bh);
-> 
-> The second (and all subsequent) calls to __find_get_block() should find
-> the BH in the LRU.
-> 
-> > IMO, this is an example of how lookaside caches are only a benefit
-> > if the working set of items largely fits in the lookaside cache and
-> > the cache lookup itself is much, much slower than a lookaside cache
-> > miss.
-> 
-> But the test code he posted always asks for the same buffer each time.
-> So it should find it in the lookaside cache?
+This is a multipart/mixed message in MIME format.
 
-Oh.
+--trojita=_a96e5a88-7dc2-4bd2-9532-de033b9131da
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-	for (i = 0; ....) {
-		bh = __find_get_block(bdev, 1, 512);
+Hello, all. I am experiencing a data corruption issue on Linux 6.1.24 when=20=
 
-That's a '1' being passed to __find_get_block, not 'i'.
+calling fallocate with FALLOC_FL_PUNCH_HOLE to punch out pages that have=20
+just been spliced into a pipe. It appears that the fallocate call can zero=20=
 
-/me goes and gets more coffee.
+out the pages that are sitting in the pipe buffer, before those pages are=20
+read from the pipe.
 
-Maybe it's CONFIG_PREEMPT_RT=y doing something to the locks that
-isn't obvious here...
+Simplified code excerpt (eliding error checking):
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+int fd =3D /* open file descriptor referring to some disk file */;
+for (off_t consumed =3D 0;;) {
+   ssize_t n =3D splice(fd, NULL, STDOUT_FILENO, NULL, SIZE_MAX, 0);
+   if (n <=3D 0) break;
+   consumed +=3D n;
+   fallocate(fd, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, 0, consumed);
+}
+
+Expected behavior:
+Punching holes in a file after splicing pages out of that file into a pipe=20=
+
+should not corrupt the spliced-out pages in the pipe buffer.
+
+Observed behavior:
+Some of the pages that have been spliced into the pipe get zeroed out by=20
+the subsequent fallocate call before they can be consumed from the read=20
+side of the pipe.
+
+
+Steps to reproduce:
+
+1. Save the attached ones.c, dontneed.c, and consume.c.
+
+2. gcc -o ones ones.c
+   gcc -o dontneed dontneed.c
+   gcc -o consume consume.c
+
+3. Fill a file with 32 MiB of 0xFF:
+   ./ones | head -c$((1<<25)) >testfile
+
+4. Evict the pages of the file from the page cache:
+   sync testfile && ./dontneed testfile
+
+5. Splice the file into a pipe, punching out batches of pages after=20
+splicing them:
+   ./consume testfile | hexdump -C
+
+The expected output from hexdump should show 32 MiB of 0xFF. Indeed, on my=20=
+
+system, if I omit the POSIX_FADV_DONTNEED advice, then I do get the=20
+expected output. However, if the pages of the file are not already present=20=
+
+in the page cache (i.e., if the splice call faults them in from disk), then=20=
+
+the hexdump output shows some pages full of 0xFF and some pages full of=20
+0x00.
+
+Note #1: I am running a fairly antiquated x86_64 system. You may need to=20
+use a file larger than 32 MiB to reproduce the misbehavior on a more modern=20=
+
+system. In particular, even I cannot reproduce the problem when I use 16=20
+MiB. Conversely, when I use a very large file (too large to fit entirely in=20=
+
+the page cache), then I don't need the "dontneed" call to reproduce the=20
+problem.
+
+Note #2: I am siting my test file on an XFS file system running on a=20
+hardware RAID volume at /dev/sda1. I'm not sure if that's relevant.
+--trojita=_a96e5a88-7dc2-4bd2-9532-de033b9131da
+Content-Type: text/x-csrc
+Content-Disposition: attachment;
+	filename=ones.c
+Content-Transfer-Encoding: base64
+
+I2luY2x1ZGUgPHN0cmluZy5oPgoKI2luY2x1ZGUgPGVycm5vLmg+CiNpbmNsdWRlIDxlcnJvci5o
+PgojaW5jbHVkZSA8ZmNudGwuaD4KI2luY2x1ZGUgPHN5c2V4aXRzLmg+CiNpbmNsdWRlIDx1bmlz
+dGQuaD4KCmludCBtYWluKCkgewoJY2hhciBidWZbNDA5Nl07CgltZW1zZXQoYnVmLCAweEZGLCBz
+aXplb2YgYnVmKTsKCWZvciAoOzspCgkJaWYgKHdyaXRlKFNURE9VVF9GSUxFTk8sIGJ1Ziwgc2l6
+ZW9mIGJ1ZikgPCAwKQoJCQllcnJvcihFWF9JT0VSUiwgZXJybm8sICJ3cml0ZSIpOwoJcmV0dXJu
+IEVYX09LOwp9Cg==
+
+--trojita=_a96e5a88-7dc2-4bd2-9532-de033b9131da
+Content-Type: text/x-csrc
+Content-Disposition: attachment;
+	filename=dontneed.c
+Content-Transfer-Encoding: base64
+
+I2luY2x1ZGUgPHN0ZGlvLmg+CgojaW5jbHVkZSA8ZXJybm8uaD4KI2luY2x1ZGUgPGVycm9yLmg+
+CiNpbmNsdWRlIDxmY250bC5oPgojaW5jbHVkZSA8c3lzZXhpdHMuaD4KI2luY2x1ZGUgPHVuaXN0
+ZC5oPgoKaW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKmFyZ3ZbXSkgewoJaWYgKGFyZ2MgPCAyKSB7
+CgkJcHJpbnRmKCJ1c2FnZTogJXMgPGZpbGU+IFsuLi5dXG4iLCBhcmdjID4gMCA/ICphcmd2IDog
+ImRvbnRuZWVkIik7CgkJcmV0dXJuIEVYX1VTQUdFOwoJfQoJaW50IHJldCA9IEVYX09LOwoJd2hp
+bGUgKCsrYXJndiwgLS1hcmdjID4gMCkgewoJCWludCBmZCA9IG9wZW4oKmFyZ3YsIE9fUkRPTkxZ
+KTsKCQlpZiAoZmQgPCAwKSB7CgkJCWVycm9yKDAsIGVycm5vLCAiJXMiLCAqYXJndik7CgkJCXJl
+dCA9IHJldCA/OiBFWF9OT0lOUFVUOwoJCQljb250aW51ZTsKCQl9CgkJaWYgKHBvc2l4X2ZhZHZp
+c2UoZmQsIDAsIDAsIFBPU0lYX0ZBRFZfRE9OVE5FRUQpIDwgMCkgewoJCQllcnJvcigwLCBlcnJu
+bywgIiVzOiBwb3NpeF9mYWR2aXNlIiwgKmFyZ3YpOwoJCQlyZXQgPSBFWF9PU0VSUjsKCQl9CgkJ
+aWYgKGNsb3NlKGZkKSA8IDApCgkJCWVycm9yKEVYX09TRVJSLCBlcnJubywgIiVzOiBjbG9zZSIs
+ICphcmd2KTsKCX0KCXJldHVybiByZXQ7Cn0K
+
+--trojita=_a96e5a88-7dc2-4bd2-9532-de033b9131da
+Content-Type: text/x-csrc
+Content-Disposition: attachment;
+	filename=consume.c
+Content-Transfer-Encoding: base64
+
+I2RlZmluZSBfR05VX1NPVVJDRQoKI2luY2x1ZGUgPHN0ZGludC5oPgoKI2luY2x1ZGUgPGVycm5v
+Lmg+CiNpbmNsdWRlIDxlcnJvci5oPgojaW5jbHVkZSA8ZmNudGwuaD4KI2luY2x1ZGUgPHN5c2V4
+aXRzLmg+CiNpbmNsdWRlIDx1bmlzdGQuaD4KCmludCBtYWluKGludCBhcmdjLCBjaGFyICphcmd2
+W10pIHsKCSsrYXJndiwgLS1hcmdjOwoJZG8gewoJCWNvbnN0IGNoYXIgKmZpbGVuYW1lID0gIjxz
+dGRpbj4iOwoJCWlmIChhcmdjID4gMCkgewoJCQljbG9zZShTVERJTl9GSUxFTk8pOwoJCQlpZiAo
+b3BlbihmaWxlbmFtZSA9ICphcmd2LCBPX1JEV1IpICE9IFNURElOX0ZJTEVOTykKCQkJCWVycm9y
+KEVYX05PSU5QVVQsIGVycm5vLCAiJXMiLCBmaWxlbmFtZSk7CgkJfQoJCWZvciAob2ZmX3QgY29u
+c3VtZWQgPSAwOzspIHsKCQkJc3NpemVfdCBuID0gc3BsaWNlKFNURElOX0ZJTEVOTywgTlVMTCwg
+U1RET1VUX0ZJTEVOTywgTlVMTCwgU0laRV9NQVgsIDApOwoJCQlpZiAobiA8PSAwKSB7CgkJCQlp
+ZiAobiA8IDApCgkJCQkJZXJyb3IoRVhfSU9FUlIsIGVycm5vLCAiJXM6IHNwbGljZSIsIGZpbGVu
+YW1lKTsKCQkJCWJyZWFrOwoJCQl9CgkJCWlmIChmYWxsb2NhdGUoU1RESU5fRklMRU5PLCBGQUxM
+T0NfRkxfUFVOQ0hfSE9MRSB8IEZBTExPQ19GTF9LRUVQX1NJWkUsIDAsIGNvbnN1bWVkICs9IG4p
+IDwgMCkKCQkJCWVycm9yKEVYX09TRVJSLCBlcnJubywgIiVzOiBmYWxsb2NhdGUiLCBmaWxlbmFt
+ZSk7CgkJfQoJCWlmIChhcmdjID4gMCAmJiB1bmxpbmsoZmlsZW5hbWUpIDwgMCkKCQkJZXJyb3Io
+RVhfT1NFUlIsIGVycm5vLCAiJXM6IHVubGluayIsIGZpbGVuYW1lKTsKCX0gd2hpbGUgKCsrYXJn
+diwgLS1hcmdjID4gMCk7CglyZXR1cm4gRVhfT0s7Cn0K
+
+--trojita=_a96e5a88-7dc2-4bd2-9532-de033b9131da--
+
