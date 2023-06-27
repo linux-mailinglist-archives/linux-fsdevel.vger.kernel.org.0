@@ -2,151 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DEA52740426
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 21:54:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB38274044C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 22:09:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230265AbjF0Tyl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 15:54:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57020 "EHLO
+        id S229501AbjF0UJ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 16:09:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjF0Tyk (ORCPT
+        with ESMTP id S229481AbjF0UJ0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 15:54:40 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE1452117
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 12:54:38 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-51bcf75c4acso2304a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 12:54:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1687895677; x=1690487677;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oyMtR3cHIPCcrX9Qmw6TUS4exz//e0byqhk5V1sO8fk=;
-        b=2GlDcJSRb8Sf7QlZ29iJIG113UXKJ0k1Wa9naaey4i1af+jilqW5+4dt7o2PUwztP8
-         qSwhqP/3oTAgRj0AcQRNlWBPWJ/huQLNNufJFTIVfvw/jV8xfn/zaSooX2E8S9liVWrD
-         /Km2uLvQvF7E79fOyLLEs8VnIJayGbSyUZEXnMTNp3qB5UVTWVLOzDATNPiM2cwsGr98
-         oNYmb/B4B4hF556uRQ5jbj3dR3wtEHyyqVJ3tMNLCNxGc/qRbLE4qlrv/z5nLj04TwRm
-         DyH9PJxxM0BA/Iz2E2HgJuGE5E7bvTC1ptTtc5lwuC7OHDm7ZeK51zGvoD4Hvwe0iaSd
-         KljQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687895677; x=1690487677;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oyMtR3cHIPCcrX9Qmw6TUS4exz//e0byqhk5V1sO8fk=;
-        b=aZbWUI3JaRYjKf6nx02fVT/p9BKqIfZHL0lB2vKw20tYS1mJfuKrKyNFD397WypbSY
-         S4L53dL997LeyBMQAAzSSSUnzRsMSFtK3h6M5yDEZX0OXUYrJzpq27N0EnfV4VD8bUhW
-         n7Ygsv2Rh2NWESGXJK2cOQ9zNZEGkD82kfVH3LagBKvR/Id+h+0uNKreJ7NpSOhT+XCj
-         M4UaFWXjbg2uJobwOjYwT/9E8lysLWV7IEZgZbwxhUpqWXMIXRbXGfRDEdPB8Avuv4v3
-         lOFfw/dmp7h4Z7IyqnK+FhAxkLNgh4awi2HSGUyPMnEFT9AoSGQAFKx9uQ+5GWFDBIiw
-         l18Q==
-X-Gm-Message-State: AC+VfDz1RUhxNXIvN+eIVFuVID5878rTwS1mcpsKjsNSNd67P22ytlAH
-        gd4NyB6VWstzBoorUCBHD3zrhzsidEf9phhKO3dazg==
-X-Google-Smtp-Source: ACHHUZ7raH1oUkiTxXalrd3pGeyqiAo4JUItij8HXQEL4Vw/n53rYAlsyi7qb4LsO/833WErhLsHUeBIQPoP/qWP1aU=
-X-Received: by 2002:a50:99d0:0:b0:519:7d2:e256 with SMTP id
- n16-20020a5099d0000000b0051907d2e256mr14597edb.0.1687895677218; Tue, 27 Jun
- 2023 12:54:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230626113156.1274521-1-usama.anjum@collabora.com>
- <20230626113156.1274521-3-usama.anjum@collabora.com> <ZJo/gOnTmwEQPLF8@gmail.com>
- <13ea54c0-25a3-285c-f47e-d6da11c91795@collabora.com> <CABb0KFGn=3oAYa+wsf=iWr1Ss=en9+m11JOijEibXJLFDAkvjQ@mail.gmail.com>
- <6ac9c60e-0a6b-110a-cace-97afbd9708a0@collabora.com>
-In-Reply-To: <6ac9c60e-0a6b-110a-cace-97afbd9708a0@collabora.com>
-From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
-Date:   Tue, 27 Jun 2023 21:54:25 +0200
-Message-ID: <CABb0KFH60U5RE9dLfCOEGp5=wLwwxpKaMdzQL8drYEmL3T_itw@mail.gmail.com>
-Subject: Re: [PATCH v21 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Andrei Vagin <avagin@gmail.com>, Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Tue, 27 Jun 2023 16:09:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F16E826B3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 13:08:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687896521;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=o49YVz6zjhepi8Xmg4g4xUo0hw9c73jq1r9IaIy9q2o=;
+        b=MrwusZ9PddY5Nae7pH4TlttYk74K8CU4aJnLmndXigJAhI55EuDZWLC2+3cphy1HsBE/F3
+        LXUA78IEh7Gq9qWCWgx/cybYDtYc1vMYdEU58JPwzeAKjhwpD32wQbemHxKB9y5hXEAedv
+        dVzI18JKB2LNxpr6DQQdu4AUIl13cuk=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-575-L8xX7TwjMq6D_ynhzpfbgQ-1; Tue, 27 Jun 2023 16:08:37 -0400
+X-MC-Unique: L8xX7TwjMq6D_ynhzpfbgQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EBAC8104D51F;
+        Tue, 27 Jun 2023 20:08:35 +0000 (UTC)
+Received: from tpad.localdomain (ovpn-112-2.gru2.redhat.com [10.97.112.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6B16340C6F5A;
+        Tue, 27 Jun 2023 20:08:35 +0000 (UTC)
+Received: by tpad.localdomain (Postfix, from userid 1000)
+        id CC6B8400E5693; Tue, 27 Jun 2023 14:53:52 -0300 (-03)
+Date:   Tue, 27 Jun 2023 14:53:52 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
         Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Leonardo Bras <leobras@redhat.com>,
+        Yair Podemsky <ypodemsk@redhat.com>, P J P <ppandit@redhat.com>
+Subject: Re: [PATCH] fs/buffer.c: remove per-CPU buffer_head lookup cache
+Message-ID: <ZJsiMPAZyxQlvrC7@tpad>
+References: <ZJnTRfHND0Wi4YcU@tpad>
+ <ZJndTjktg17nulcs@casper.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZJndTjktg17nulcs@casper.infradead.org>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 27 Jun 2023 at 21:20, Muhammad Usama Anjum
-<usama.anjum@collabora.com> wrote:
-> Thanks Micha=C5=82 for replying.
->
-> On 6/27/23 11:52=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
-> > On Tue, 27 Jun 2023 at 11:00, Muhammad Usama Anjum
-> > <usama.anjum@collabora.com> wrote:
-> >>
-> >> Hi Andrei and Michal,
-> >>
-> >> Lets resolve last two points. Please reply below.
-> >>
-> >> On 6/27/23 6:46=E2=80=AFAM, Andrei Vagin wrote:
-> > [...]
-> >>> And we need to report an address where it stopped scanning.
-> >>> We can do that by adding zero length vector.
-> >> I don't want to do multiplexing the ending address in vec. Can we add
-> >> end_addr variable in struct pm_scan_arg to always return the ending ad=
-dress?
-> >>
-> >> struct pm_scan_arg {
-> >>         ...
-> >>         _u64 end_addr;
-> >> };
-> >
-> > The idea to emit a zero-length entry for the end looks nice. This has
-> > the disadvantage that we'd need to either reserve one entry for the
-> > ending marker or stop the walk after the last entry is no longer
-> > matching.
-> This is ambiguous.
+On Mon, Jun 26, 2023 at 07:47:42PM +0100, Matthew Wilcox wrote:
+> On Mon, Jun 26, 2023 at 03:04:53PM -0300, Marcelo Tosatti wrote:
+> > Upon closer investigation, it was found that in current codebase, lookup_bh_lru
+> > is slower than __find_get_block_slow:
+> > 
+> >  114 ns per __find_get_block
+> >  68 ns per __find_get_block_slow
+> > 
+> > So remove the per-CPU buffer_head caching.
+> 
+> LOL.  That's amazing.  I can't even see why it's so expensive.  The
+> local_irq_disable(), perhaps?  Your test case is the best possible
+> one for lookup_bh_lru() where you're not even doing the copy.
 
-Can you explain? Both solutions would allow to return the restart
-point back to the caller (the second one would need to stop the walk
-as soon as the matching page range finishes -- that creates
-discontinuity).
+Oops, that was due to incorrect buffer size being looked up versus
+installed size. 
 
-> > Another solution would be to rewrite 'start' and 'len'. The caller
-> > would be forced to use non-const `pm_scan_arg`, but I expect the `vec`
-> > pointer would normally be written anyway (unless using only a
-> > statically-allocated buffer).
-> > Also, if the 'len' is replaced with 'end' that would make the ioctl
-> > easily restartable (just call again if start !=3D end).
-> Nice idea. But returning ending address in len seems a bit strange.
+About 15ns is due to irq disablement.
+6ns due to checking preempt is disabled (from __this_cpu_read).
 
-I mean that it would update `start` =3D start value for next call' and
-`len` =3D `len` - (new `start` - original `start`).
+So the actual numbers for the single block lookup are 
+(searching for the same block number repeatedly):
 
-By replacing `len` I meant to remove the field and add `end` instead
-to make the requested range use begin .. end (iterator range) style
-instead of start + len (buffer and length). In this version you only
-need to update `start` (or `begin` if you prefer).
+42 ns per __find_get_block
+68 ns per __find_get_block_slow
 
-Best Regards
-Micha=C5=82 Miros=C5=82aw
+And increases linearly as the test increases the number of blocks which 
+are searched for:
+
+	say mod 3 is
+
+	__find_get_block(blocknr=1)
+	__find_get_block(blocknr=2)
+	__find_get_block(blocknr=3)
+
+41 ns per __find_get_block  mod=1
+41 ns per __find_get_block  mod=2
+42 ns per __find_get_block  mod=3
+43 ns per __find_get_block  mod=4
+45 ns per __find_get_block  mod=5
+48 ns per __find_get_block  mod=6
+48 ns per __find_get_block  mod=7
+49 ns per __find_get_block  mod=8
+51 ns per __find_get_block  mod=9
+52 ns per __find_get_block  mod=10
+54 ns per __find_get_block  mod=11
+56 ns per __find_get_block  mod=12
+58 ns per __find_get_block  mod=13
+60 ns per __find_get_block  mod=14
+61 ns per __find_get_block  mod=15
+63 ns per __find_get_block  mod=16
+138 ns per __find_get_block  mod=17
+138 ns per __find_get_block  mod=18
+138 ns per __find_get_block  mod=19		<-- results from first patch, when
+						    lookup_bh_lru is a miss
+70 ns per __find_get_block_slow mod=1
+71 ns per __find_get_block_slow mod=2
+71 ns per __find_get_block_slow mod=3
+71 ns per __find_get_block_slow mod=4
+71 ns per __find_get_block_slow mod=5
+72 ns per __find_get_block_slow mod=6
+71 ns per __find_get_block_slow mod=7
+72 ns per __find_get_block_slow mod=8
+71 ns per __find_get_block_slow mod=9
+71 ns per __find_get_block_slow mod=10
+71 ns per __find_get_block_slow mod=11
+71 ns per __find_get_block_slow mod=12
+71 ns per __find_get_block_slow mod=13
+71 ns per __find_get_block_slow mod=14
+71 ns per __find_get_block_slow mod=15
+71 ns per __find_get_block_slow mod=16
+71 ns per __find_get_block_slow mod=17
+72 ns per __find_get_block_slow mod=18
+72 ns per __find_get_block_slow mod=19
+
+ls on home directory:
+hits: 2 misses: 91
+
+find on a linux-2.6 git tree:
+hits: 25453 misses: 51084
+
+make clean on a linux-2.6 git tree:
+hits: 247615 misses: 32855
+
+make on a linux-2.6 git tree:
+hits: 1410414 misses: 166896
+
+In more detail, where each bucket below indicates which index into
+per-CPU buffer lookup_bh_lru was found:
+
+hits idx1   idx2  ...                                                          idx16
+hits 139506 24299 21597 7462 15790 19108 6477 1349 1237 938 845 636 637 523 431 454 misses: 65773
+
+So i think it makes more sense to just disable the cache for isolated
+CPUs.
+
+> Reviewed-by: Matthew Wilcox (oracle) <willy@infradead.org>
+
+Thanks.
+
+
