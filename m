@@ -2,409 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B41B7401C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 18:57:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EF137401CE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 19:01:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230040AbjF0Q5Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 12:57:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38242 "EHLO
+        id S230004AbjF0RBI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 13:01:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229501AbjF0Q5X (ORCPT
+        with ESMTP id S229487AbjF0RBH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 12:57:23 -0400
-Received: from tarta.nabijaczleweli.xyz (unknown [139.28.40.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 55B2B10CF;
-        Tue, 27 Jun 2023 09:57:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
-        s=202305; t=1687885040;
-        bh=Az1W0LBoRrz7YW1u9PmFCtcve2J0qXsV3SeB7GMF0ps=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bto/E5jTK1/420ZGrPZSSsY7qNHL2Z4JofFpTcdv8BdbJ+gJiiCCEUR5qmewifHGR
-         EXfbSHI4Sim9KaLIvMpOjl4sYnvq60jlPUBMwHFJMVipYt+9Jl8UddMJP/76rptfsG
-         yKNsWalfXH9ybZdnEUjHKUaCB/kYmzuxCT8GrMbOJbrX8O32o6UeA0qNjeh7ERVIE3
-         KHP6YQTUxQ4dQ2orb8/ui+zqpwhuRqNxCku+ubFMzgUy1krQC7mcuOhClDz5olyt1f
-         6qdKCJc8RA+NHF0zdsqWDJ/lBJYlZtnfhs7o+mplYOXuo7nUCtlL4zhD+ZZbpHllfN
-         2/G4JOL0ApGnA==
-Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
-        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 9AE391A92;
-        Tue, 27 Jun 2023 18:57:20 +0200 (CEST)
-Date:   Tue, 27 Jun 2023 18:57:19 +0200
-From:   Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
-        <nabijaczleweli@nabijaczleweli.xyz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>,
-        Chung-Chiang Cheng <cccheng@synology.com>, ltp@vger.kernel.org
-Subject: [LTP PATCH] inotify13: new test for fs/splice.c functions vs pipes
- vs inotify
-Message-ID: <44neh3sog5jaskc4zy6lwnld7hussp5sslx4fun47fr45mxe3a@q2jgkjwlq74f>
-References: <cover.1687884029.git.nabijaczleweli@nabijaczleweli.xyz>
+        Tue, 27 Jun 2023 13:01:07 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2059.outbound.protection.outlook.com [40.107.244.59])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86751E5A;
+        Tue, 27 Jun 2023 10:01:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YUCUG5DGrAdR4w0KsZLnt7NTsR8vDkZpDq5uiJrkhaYu6rN8h0xoRc+ObHARJuvy2c7Zqdv1sqjSvUNo73dFTggeXsF5qEUBgME1nJL3XsnPCdSSgR6iJxAkdnRv9SEf1kbrJhVFMCzTLJLBrFff0fw13zBqTPzoDZwtmYY4E4VjI1S9Y47hWkV+57W1iLwdr9MZDuDgGO1JMwptLF/LiQ1YxNfUsFLDz29tbHw5t5iS/AWYZMTJkg7F4hz4DwxVT2tIMIojF4a+CYRmNo2odVEnnrV+GRwY2ksWxorYSCPnS1nn2HGUtveRHHAnW06Vyq69W792/QlIrV1Mum4sZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BBJy0LpU1VuHa/VdbjhCRamFKFh23vKKUGeV4YuYxjo=;
+ b=iI/GDFma4jkENPkv9fdeSCOjgLazxrN22ijO/REdXuE/voPt8rjxPKA/H8LIdyIplDK3RGP21uPQn129rieQBKgu/KpA240fXxrjF6sw/PRWMtqbWJbrYAHZELflm2ovtRbGlurtMUdOqaGHpUWztGAgSN0i44kBls+Im8yt3LvrIf9KHIRNIpxJ4+8KYOslfCCBEsUqyNaOk7usdNM2MHr2E0uSpBEsXORQhbx1GHVfrLiJ2ARCtRZY/DTAp1ynNqJfhe1kDMn23M7qygeGpsNCMBafvU6nQtfWUU+0Oqekt0LWe0cBhS2DTB6oAAyEqxQwNVQsGxkVnHUBlhKfhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BBJy0LpU1VuHa/VdbjhCRamFKFh23vKKUGeV4YuYxjo=;
+ b=ZwAGZfHU8Uytwdqld7IkFZ1cVpKg7rCAvJxLAOnBZIAc7jeMDnNVUbGp/SNn/g0ZA9dH0UnFnz4YF9OQAexyLWFNuhN5m2JRx0VBNgxVpKzgrcwyBi3OjTOpNDa7gVIsMh9SDZBXsmds+BwmuxCEztwePv4UB7iT6xsyAsCywDCl/vz8ZdqdtST592jRyzLSDMt7PeUceBCfASycvxT5fAgoWgG4q4zxkvIpcQ9Bqy3PYxb9G3+nSfkbBDjkhi8mfCL+lTBynAbysBPMH2/ghbmXl64svwAuE77N5PvdrY9TRKsAuN8mA0cMnZqoEgsh1FN7YzejRS44rpoXvHS7GQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BYAPR12MB2743.namprd12.prod.outlook.com (2603:10b6:a03:61::28)
+ by DM6PR12MB4369.namprd12.prod.outlook.com (2603:10b6:5:2a1::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.24; Tue, 27 Jun
+ 2023 17:00:58 +0000
+Received: from BYAPR12MB2743.namprd12.prod.outlook.com
+ ([fe80::ecb0:2f8e:c4bf:b471]) by BYAPR12MB2743.namprd12.prod.outlook.com
+ ([fe80::ecb0:2f8e:c4bf:b471%7]) with mapi id 15.20.6521.024; Tue, 27 Jun 2023
+ 17:00:58 +0000
+From:   Rahul Rameshbabu <rrameshbabu@nvidia.com>
+To:     "Arnd Bergmann" <arnd@arndb.de>
+Cc:     "Naresh Kamboju" <naresh.kamboju@linaro.org>,
+        "open list" <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, lkft-triage@lists.linaro.org,
+        linux-block <linux-block@vger.kernel.org>,
+        "LTP List" <ltp@lists.linux.it>, linux-mm <linux-mm@kvack.org>,
+        "Richard Cochran" <richardcochran@gmail.com>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>,
+        "Christian Brauner" <brauner@kernel.org>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        "Dan Carpenter" <dan.carpenter@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Maciek Machnikowski" <maciek@machnikowski.net>,
+        "Shuah Khan" <shuah@kernel.org>, "Jakub Kicinski" <kuba@kernel.org>
+Subject: Re: next: ltp: fs: read_all: block sda: the capability attribute
+ has been deprecated. - supervisor instruction fetch in kernel mode
+References: <CA+G9fYtKCZeAUTtwe69iK8Xcz1mOKQzwcy49wd+imZrfj6ifXA@mail.gmail.com>
+        <89dfc918-9757-4487-aa72-615f7029f6c1@app.fastmail.com>
+Date:   Tue, 27 Jun 2023 10:00:51 -0700
+In-Reply-To: <89dfc918-9757-4487-aa72-615f7029f6c1@app.fastmail.com> (Arnd
+        Bergmann's message of "Wed, 21 Jun 2023 16:08:50 +0200")
+Message-ID: <87y1k4suv0.fsf@nvidia.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR01CA0072.prod.exchangelabs.com (2603:10b6:a03:94::49)
+ To BYAPR12MB2743.namprd12.prod.outlook.com (2603:10b6:a03:61::28)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4v3npduv4blgoq7d"
-Content-Disposition: inline
-In-Reply-To: <cover.1687884029.git.nabijaczleweli@nabijaczleweli.xyz>
-User-Agent: NeoMutt/20230517
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR12MB2743:EE_|DM6PR12MB4369:EE_
+X-MS-Office365-Filtering-Correlation-Id: acd871dc-4065-4066-29c9-08db77301454
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: uQR5bUEeDR8bRPE7iCeSDB2ii2Sdk9Yo+7KDB1Hh7wfPRWUvFkSDtDG9HQtlT33J49nvS3z2MC/e8DkLsvxQhK+Z+KkayfEV+65CN2a9n7qD8AKTFn485njtVYUj9ss4qYFlsxB9EQ+LsJFv4DYGSw7TkGBkuwhQ3WODMy1jONl4XGOuWx+YEAOPWL03bFRLzVlAqD0NTTfwr2sSpnha9h9/d1WmXIkkPx9ZxqoqD1R+J9dawvt54inkPkNwEI8SzJVt6vD3rR8bH0rOa+9eOgWBGvtVi/zC9kyFPT5GDF2/eu1XAiAbXlQs75nspeqBF5Wl3Qg7MX1wc+hP4XF4PwrHvu5WQgJEg7ilJczJOLOQ8mHL3VeRPVmPwBhjhNH1Fcm5k5u2chamXxLy3Bjml90F4RlfqS5TWualpJDhkCNqGl2hXed6RwW5mu2oZB4S4nVf0sYrQpBqiXy2ZI6PJuET0Yx6GhJjpppvrvqCaEmTImWT6KgKDSvgdRCq+Iuv2uXAIXD8lCM3jwBidKLDonbZ5nRDcL9rLEzpEJ7HOpf5thItOOmVqhRaDebqiUL4
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB2743.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(136003)(396003)(39860400002)(376002)(366004)(451199021)(316002)(66556008)(66946007)(6916009)(66476007)(4326008)(478600001)(36756003)(8936002)(8676002)(5660300002)(7416002)(86362001)(54906003)(41300700001)(6486002)(2906002)(186003)(6506007)(6512007)(6666004)(26005)(83380400001)(38100700002)(2616005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?EiJlR6CJwwgPeVljC+tYpsG6j3x5p6ElCcgHmOs2t/+VzHwa3hufnfD1I8j8?=
+ =?us-ascii?Q?aXe75VWAHtbBhhUzmTvxNMimWSDH1SX2HTMERD6+nsqtcWrj2ZTzDbZ1DBIv?=
+ =?us-ascii?Q?moieo5CQX29WymDnNO+4h7TAuY2Gk7O/+UCY8u0aUa5ctCrDL4GFzuHt4sCZ?=
+ =?us-ascii?Q?1g5mtEs6FWs/7t14Os2d1eKoKcChU7CpZslpJZ/YzdAG4GoNOidjOJkEuXv5?=
+ =?us-ascii?Q?45ehgH6RDCwfMV/IcN/yzP51db7ap/R1zx/1wQxzwTxLkMQ6YiIjVDrHc76N?=
+ =?us-ascii?Q?AcdDGIOhYzPRVCFCjlmuokeuCJBSN86SEl5v7+kkR1JYuqbtBytQMISMNkQF?=
+ =?us-ascii?Q?TRhal2o+K1JVb/MvAGcpdWGKsavPuclScdfvVPp6KN0GRM0CWBVOBwm4aMu+?=
+ =?us-ascii?Q?DNPuOGFWAfblXta9GLUnd9ZOBKi2JCaDp0kvoEDICl1fd9O6Wv3bajflBk6+?=
+ =?us-ascii?Q?QqncGDFWoH81ZlsWEci+2Cjwx3u70cYyFJnBgs8vvM1eUjlV8Dbu+k7q4yGd?=
+ =?us-ascii?Q?iB1EkQc9ROchetUS4m1X/uYJoSKFIETzLi0UAIcaOAmtbBg/QkkYA6VIXZpJ?=
+ =?us-ascii?Q?aTa364Ddam5cA1sU01G9cc0O4BY2v+JD1CbcWBALOeRICsEY6pWCImAY8TT/?=
+ =?us-ascii?Q?AqjJbVtznIV3Q4JSX6P/zgNpgYEZ91Beb2RLQgCMK1PaDK/F0dGBTElrOmbt?=
+ =?us-ascii?Q?FTM8xmTzZvjkOJyj1sDpjC5jxe95pnbf8YT8OMkeDzN/pV+pfghqaovBy2Ip?=
+ =?us-ascii?Q?XqGRatuY4OKaWvSCEY6qLQGk+CAjzXDfK6qUpxRU9vyw5PdYBNQlovktYABr?=
+ =?us-ascii?Q?o3V+WCGeF6iuqIrc4Q5X/F5F99UH4KkzzbryKzifYrm71kmkFPOieF4pvXwt?=
+ =?us-ascii?Q?zNGi5AMX2D0Xpuj6LMIt6RVyF4yoBIJK067ao9LOhubsKdwdD9Yorqjdi0Iw?=
+ =?us-ascii?Q?T3oJnp03/jHtLCVUAwVisPjyaT4T8guIArWGHwXRnMqylRupdcV48jIxH2Vf?=
+ =?us-ascii?Q?ZmLy94LCqgIjtbWP5YP3fL76T11EWwEO88SykWFjhqa5QUWb+sd/YtjmX5lI?=
+ =?us-ascii?Q?7FzJUuYCmZijLvtFC1LcPruLFymB7qmja1MFZyext45ZeuA+IHscKXOEc9/N?=
+ =?us-ascii?Q?Q3+pCdXYPCyaNsFjba9CWEEEEU+aTeABjL8FBXlRxcIXfu8ApQdcKsjvS1lj?=
+ =?us-ascii?Q?rSmNZWzt9OTMuD9wYaYlyFQYD9Opkzikpfe4774kNQLKU2nyIkGFGgnDfcNu?=
+ =?us-ascii?Q?evRVDr9czF+HjXlpJa4JmN1KzaHTJj1b4KJmYkwXqMEZhXieHRf8AiwuAiul?=
+ =?us-ascii?Q?cMlMBAQD4X1M9C012F5dyYLf5bSUwmi4qZEfm139NhKSZvz2n1TWsSqaQ3OH?=
+ =?us-ascii?Q?ZTjP7289mCxUCGpBqjAnhbGSnqxpBDbSGpw51Dy6xVr5DD8BvxGg797K5jXD?=
+ =?us-ascii?Q?xXSlj2G1CNtQoc6jcRH1COPDgwCdKJQGAIH78H12/JQqBJr/W668hCsXpGWj?=
+ =?us-ascii?Q?gsQN7QSM5fgGdJVWNlHU6pYaqJOTgD1IDfM5AYHt8LLK9dUNs25fPPf1w7aQ?=
+ =?us-ascii?Q?8qi9qnreuXB4mHHnqaxquK64+j2HW6LmBiXDUpxN?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: acd871dc-4065-4066-29c9-08db77301454
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB2743.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2023 17:00:58.7888
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UJC5OKIHw49xlIGm9rHZrOcNsXcKDVubrjgKKUIA3ZROFaHICXD6Kdr/9gWGrP96HWGzHrf4Hm9pbs+Om3yg1Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4369
 X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,PDS_RDNS_DYNAMIC_FP,
-        RDNS_DYNAMIC,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=no autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, 21 Jun, 2023 16:08:50 +0200 "Arnd Bergmann" <arnd@arndb.de> wrote:
+> On Wed, Jun 21, 2023, at 16:01, Naresh Kamboju wrote:
+>> While running LTP fs testing on x86_64 device the following kernel BUG:
+>> notice with Linux next-20230621.
+>>
+>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>>
+>> Steps to reproduce:
+>>
+>> # cd /opt/ltp
+>> # ./runltp -f fs
+>>
+>> Test log:
+>> ======
+>> read_all.c:687: TPASS: Finished reading files
+>> Summary:
+>> passed   1
+>> failed   0
+>> broken   0
+>> skipped  0
+>> warnings 0
+>> tst_test.c:1558: TINFO: Timeout per run is 0h 06m 40s
+>> read_all.c:568: TINFO: Worker timeout set to 10% of max_runtime: 1000ms
+>> [ 1344.664349] block sda: the capability attribute has been deprecated.
+>
+> I think the oops is unrelated to the line above
+>
+>> [ 1344.679885] BUG: kernel NULL pointer dereference, address: 0000000000000000
+>> [ 1344.686839] #PF: supervisor instruction fetch in kernel mode
+>> [ 1344.692490] #PF: error_code(0x0010) - not-present page
+>> [ 1344.697620] PGD 8000000105569067 P4D 8000000105569067 PUD 1056ed067 PMD 0
+>> [ 1344.704494] Oops: 0010 [#1] PREEMPT SMP PTI
+>> [ 1344.708680] CPU: 0 PID: 5649 Comm: read_all Not tainted
+>> 6.4.0-rc7-next-20230621 #1
+>> [ 1344.716245] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+>> 2.5 11/26/2020
+>> [ 1344.723629] RIP: 0010:0x0
+>> [ 1344.726257] Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+>> [ 1344.732780] RSP: 0018:ffff98d38123bd38 EFLAGS: 00010286
+>> [ 1344.737998] RAX: 0000000000000000 RBX: ffffffffbea38720 RCX: 0000000000000000
+>> [ 1344.745123] RDX: ffff979e42e31000 RSI: ffffffffbea38720 RDI: ffff979e40371900
+>> [ 1344.752246] RBP: ffff98d38123bd48 R08: ffff979e4080a0f0 R09: 0000000000000001
+>> [ 1344.759371] R10: ffff979e42e31000 R11: 0000000000000000 R12: ffff979e42e31000
+>> [ 1344.766495] R13: 0000000000000001 R14: ffff979e432dd2f8 R15: ffff979e432dd2d0
+>> [ 1344.773621] FS:  00007ff745d4b740(0000) GS:ffff97a1a7a00000(0000)
+>> knlGS:0000000000000000
+>> [ 1344.781704] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [ 1344.787442] CR2: ffffffffffffffd6 CR3: 000000010563c004 CR4: 00000000003706f0
+>> [ 1344.794587] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> [ 1344.801733] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>> [ 1344.808857] Call Trace:
+>> [ 1344.811301]  <TASK>
+>> [ 1344.813399]  ? show_regs+0x6e/0x80
+>> [ 1344.816804]  ? __die+0x29/0x70
+>> [ 1344.819857]  ? page_fault_oops+0x154/0x470
+>> [ 1344.823957]  ? do_user_addr_fault+0x355/0x6c0
+>> [ 1344.828314]  ? exc_page_fault+0x6e/0x170
+>> [ 1344.832239]  ? asm_exc_page_fault+0x2b/0x30
+>> [ 1344.836420]  max_phase_adjustment_show+0x23/0x50
+>
+> The function is newly added by commit c3b60ab7a4dff ("ptp: Add 
+> getmaxphase callback to ptp_clock_info"), adding everyone from
+> that patch to Cc.
+>
+>      Arnd
 
---4v3npduv4blgoq7d
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The issue is that we introduce a new sysfs node that depends on a
+hardware capability not all PTP devices support. On PTP devices that do
+not support this capability, this leads to the NULL pointer dereference
+since the driver callback for the functionality if not implemented. I
+will submit a fix to the net mailing list along with the appropriate
+recipients.
 
-The only one that passes on 6.1.27-1 is sendfile_file_to_pipe.
-
-Link: https://lore.kernel.org/linux-fsdevel/jbyihkyk5dtaohdwjyivambb2gffyjs=
-3dodpofafnkkunxq7bu@jngkdxx65pux/t/#u
-Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xyz>
----
-Formatted to clang-format defaults. Put the original Fixes:ed SHA in the
-metadata, that's probably fine, right?
-
- testcases/kernel/syscalls/inotify/.gitignore  |   1 +
- testcases/kernel/syscalls/inotify/inotify13.c | 246 ++++++++++++++++++
- 2 files changed, 247 insertions(+)
- create mode 100644 testcases/kernel/syscalls/inotify/inotify13.c
-
-diff --git a/testcases/kernel/syscalls/inotify/.gitignore b/testcases/kerne=
-l/syscalls/inotify/.gitignore
-index f6e5c546a..b597ea63f 100644
---- a/testcases/kernel/syscalls/inotify/.gitignore
-+++ b/testcases/kernel/syscalls/inotify/.gitignore
-@@ -10,3 +10,4 @@
- /inotify10
- /inotify11
- /inotify12
-+/inotify13
-diff --git a/testcases/kernel/syscalls/inotify/inotify13.c b/testcases/kern=
-el/syscalls/inotify/inotify13.c
-new file mode 100644
-index 000000000..c34f1dc9f
---- /dev/null
-+++ b/testcases/kernel/syscalls/inotify/inotify13.c
-@@ -0,0 +1,246 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*\
-+ * Verify splice-family functions (and sendfile) generate IN_ACCESS
-+ * for what they read and IN_MODIFY for what they write.
-+ *
-+ * Regression test for 983652c69199 and
-+ * https://lore.kernel.org/linux-fsdevel/jbyihkyk5dtaohdwjyivambb2gffyjs3d=
-odpofafnkkunxq7bu@jngkdxx65pux/t/#u
-+ */
-+
-+#define _GNU_SOURCE
-+#include "config.h"
-+
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <stdlib.h>
-+#include <fcntl.h>
-+#include <stdbool.h>
-+#include <inttypes.h>
-+#include <signal.h>
-+#include <sys/mman.h>
-+#include <sys/sendfile.h>
-+
-+#include "tst_test.h"
-+#include "tst_safe_macros.h"
-+#include "inotify.h"
-+
-+#if defined(HAVE_SYS_INOTIFY_H)
-+#include <sys/inotify.h>
-+
-+
-+static int pipes[2] =3D {-1, -1};
-+static int inotify =3D -1;
-+static int memfd =3D -1;
-+static int data_pipes[2] =3D {-1, -1};
-+
-+static void watch_rw(int fd) {
-+  char buf[64];
-+  sprintf(buf, "/proc/self/fd/%d", fd);
-+  SAFE_MYINOTIFY_ADD_WATCH(inotify, buf, IN_ACCESS | IN_MODIFY);
-+}
-+
-+static int compar(const void *l, const void *r) {
-+  const struct inotify_event *lie =3D l;
-+  const struct inotify_event *rie =3D r;
-+  return lie->wd - rie->wd;
-+}
-+
-+static void get_events(size_t evcnt, struct inotify_event evs[static evcnt=
-]) {
-+  struct inotify_event tail, *itr =3D evs;
-+  for (size_t left =3D evcnt; left; --left)
-+    SAFE_READ(true, inotify, itr++, sizeof(struct inotify_event));
-+
-+  TEST(read(inotify, &tail, sizeof(struct inotify_event)));
-+  if (TST_RET !=3D -1)
-+    tst_brk(TFAIL, "expect %zu events", evcnt);
-+  if (TST_ERR !=3D EAGAIN)
-+    tst_brk(TFAIL | TTERRNO, "expected EAGAIN");
-+
-+  qsort(evs, evcnt, sizeof(struct inotify_event), compar);
-+}
-+
-+static void expect_event(struct inotify_event *ev, int wd, uint32_t mask) {
-+  if (ev->wd !=3D wd)
-+    tst_brk(TFAIL, "expect event for wd %d got %d", wd, ev->wd);
-+  if (ev->mask !=3D mask)
-+    tst_brk(TFAIL, "expect event with mask %" PRIu32 " got %" PRIu32 "", m=
-ask,
-+            ev->mask);
-+}
-+
-+#define F2P(splice)                                                       =
-     \
-+  SAFE_WRITE(SAFE_WRITE_RETRY, memfd, __func__, sizeof(__func__));        =
-     \
-+  SAFE_LSEEK(memfd, 0, SEEK_SET);                                         =
-     \
-+  watch_rw(memfd);                                                        =
-     \
-+  watch_rw(pipes[0]);                                                     =
-     \
-+  TEST(splice);                                                           =
-     \
-+  if (TST_RET =3D=3D -1)                                                  =
-         \
-+    tst_brk(TBROK | TERRNO, #splice);                                     =
-     \
-+  if (TST_RET !=3D sizeof(__func__))                                      =
-       \
-+    tst_brk(TBROK, #splice ": %" PRId64 "", TST_RET);                     =
-     \
-+                                                                          =
-     \
-+  /*expecting: IN_ACCESS memfd, IN_MODIFY pipes[0]*/                      =
-     \
-+  struct inotify_event events[2];                                         =
-     \
-+  get_events(ARRAY_SIZE(events), events);                                 =
-     \
-+  expect_event(events + 0, 1, IN_ACCESS);                                 =
-     \
-+  expect_event(events + 1, 2, IN_MODIFY);                                 =
-     \
-+                                                                          =
-     \
-+  char buf[sizeof(__func__)];                                             =
-     \
-+  SAFE_READ(true, pipes[0], buf, sizeof(__func__));                       =
-     \
-+  if (memcmp(buf, __func__, sizeof(__func__)))                            =
-     \
-+    tst_brk(TFAIL, "buf contents bad");
-+static void splice_file_to_pipe(void) {
-+  F2P(splice(memfd, NULL, pipes[1], NULL, 128 * 1024 * 1024, 0));
-+}
-+static void sendfile_file_to_pipe(void) {
-+  F2P(sendfile(pipes[1], memfd, NULL, 128 * 1024 * 1024));
-+}
-+
-+static void splice_pipe_to_file(void) {
-+  SAFE_WRITE(SAFE_WRITE_RETRY, pipes[1], __func__, sizeof(__func__));
-+  watch_rw(pipes[0]);
-+  watch_rw(memfd);
-+  TEST(splice(pipes[0], NULL, memfd, NULL, 128 * 1024 * 1024, 0));
-+  if(TST_RET =3D=3D -1)
-+		tst_brk(TBROK | TERRNO, "splice");
-+	if(TST_RET !=3D sizeof(__func__))
-+		tst_brk(TBROK, "splice: %" PRId64 "", TST_RET);
-+
-+	// expecting: IN_ACCESS pipes[0], IN_MODIFY memfd
-+	struct inotify_event events[2];
-+	get_events(ARRAY_SIZE(events), events);
-+	expect_event(events + 0, 1, IN_ACCESS);
-+	expect_event(events + 1, 2, IN_MODIFY);
-+
-+  char buf[sizeof(__func__)];
-+  SAFE_LSEEK(memfd, 0, SEEK_SET);
-+  SAFE_READ(true, memfd, buf, sizeof(__func__));
-+  if (memcmp(buf, __func__, sizeof(__func__)))
-+                tst_brk(TFAIL, "buf contents bad");
-+}
-+
-+#define P2P(splice)                                                       =
-     \
-+  SAFE_WRITE(SAFE_WRITE_RETRY, data_pipes[1], __func__, sizeof(__func__));=
-     \
-+  watch_rw(data_pipes[0]);                                                =
-     \
-+  watch_rw(pipes[1]);                                                     =
-     \
-+  TEST(splice);                                                           =
-     \
-+  if (TST_RET =3D=3D -1)                                                  =
-         \
-+                tst_brk(TBROK | TERRNO, #splice);                         =
-     \
-+  if (TST_RET !=3D sizeof(__func__))                                      =
-       \
-+                tst_brk(TBROK, #splice ": %" PRId64 "", TST_RET);         =
-     \
-+                                                                          =
-     \
-+  /* expecting: IN_ACCESS data_pipes[0], IN_MODIFY pipes[1] */            =
-     \
-+  struct inotify_event events[2];                                         =
-     \
-+  get_events(ARRAY_SIZE(events), events);                                 =
-     \
-+  expect_event(events + 0, 1, IN_ACCESS);                                 =
-     \
-+  expect_event(events + 1, 2, IN_MODIFY);                                 =
-     \
-+                                                                          =
-     \
-+  char buf[sizeof(__func__)];                                             =
-     \
-+  SAFE_READ(true, pipes[0], buf, sizeof(__func__));                       =
-     \
-+  if (memcmp(buf, __func__, sizeof(__func__)))                            =
-     \
-+                tst_brk(TFAIL, "buf contents bad");
-+static void splice_pipe_to_pipe(void) {
-+  P2P(splice(data_pipes[0], NULL, pipes[1], NULL, 128 * 1024 * 1024, 0));
-+}
-+static void tee_pipe_to_pipe(void) {
-+  P2P(tee(data_pipes[0], pipes[1], 128 * 1024 * 1024, 0));
-+}
-+
-+static char vmsplice_pipe_to_mem_dt[32 * 1024];
-+static void vmsplice_pipe_to_mem(void) {
-+  memcpy(vmsplice_pipe_to_mem_dt, __func__, sizeof(__func__));
-+  watch_rw(pipes[0]);
-+  TEST(vmsplice(pipes[1],
-+                &(struct iovec){.iov_base =3D vmsplice_pipe_to_mem_dt,
-+                                .iov_len =3D sizeof(vmsplice_pipe_to_mem_d=
-t)},
-+                1, SPLICE_F_GIFT));
-+  if (TST_RET =3D=3D -1)
-+    tst_brk(TBROK | TERRNO, "vmsplice");
-+  if (TST_RET !=3D sizeof(vmsplice_pipe_to_mem_dt))
-+    tst_brk(TBROK, "vmsplice: %" PRId64 "", TST_RET);
-+
-+  // expecting: IN_MODIFY pipes[0]
-+  struct inotify_event event;
-+  get_events(1, &event);
-+  expect_event(&event, 1, IN_MODIFY);
-+
-+  char buf[sizeof(__func__)];
-+  SAFE_READ(true, pipes[0], buf, sizeof(__func__));
-+  if (memcmp(buf, __func__, sizeof(__func__)))
-+    tst_brk(TFAIL, "buf contents bad");
-+}
-+
-+static void vmsplice_mem_to_pipe(void) {
-+  char buf[sizeof(__func__)];
-+  SAFE_WRITE(SAFE_WRITE_RETRY, pipes[1], __func__, sizeof(__func__));
-+  watch_rw(pipes[1]);
-+  TEST(vmsplice(pipes[0],
-+                &(struct iovec){.iov_base =3D buf, .iov_len =3D sizeof(buf=
-)}, 1,
-+                0));
-+  if (TST_RET =3D=3D -1)
-+    tst_brk(TBROK | TERRNO, "vmsplice");
-+  if (TST_RET !=3D sizeof(buf))
-+    tst_brk(TBROK, "vmsplice: %" PRId64 "", TST_RET);
-+
-+  // expecting: IN_ACCESS pipes[1]
-+  struct inotify_event event;
-+  get_events(1, &event);
-+  expect_event(&event, 1, IN_ACCESS);
-+  if (memcmp(buf, __func__, sizeof(__func__)))
-+    tst_brk(TFAIL, "buf contents bad");
-+}
-+
-+typedef void (*tests_f)(void);
-+#define TEST_F(f) { f, #f }
-+static const struct {
-+        tests_f f;
-+        const char *n;
-+} tests[] =3D {
-+    TEST_F(splice_file_to_pipe),  TEST_F(sendfile_file_to_pipe),
-+    TEST_F(splice_pipe_to_file),  TEST_F(splice_pipe_to_pipe),
-+    TEST_F(tee_pipe_to_pipe),     TEST_F(vmsplice_pipe_to_mem),
-+    TEST_F(vmsplice_mem_to_pipe),
-+};
-+
-+static void run_test(unsigned int n)
-+{
-+	tst_res(TINFO, "%s", tests[n].n);
-+
-+	SAFE_PIPE2(pipes, O_CLOEXEC);
-+	SAFE_PIPE2(data_pipes, O_CLOEXEC);
-+	inotify =3D SAFE_MYINOTIFY_INIT1(IN_NONBLOCK | IN_CLOEXEC);
-+	if((memfd =3D memfd_create(__func__, MFD_CLOEXEC)) =3D=3D -1)
-+		tst_brk(TCONF | TERRNO, "memfd");
-+	tests[n].f();
-+	tst_res(TPASS, "=D0=BE=D0=BA");
-+}
-+
-+static void cleanup(void)
-+{
-+	if (memfd !=3D -1)
-+		SAFE_CLOSE(memfd);
-+	if (inotify !=3D -1)
-+		SAFE_CLOSE(inotify);
-+	if (pipes[0] !=3D -1)
-+		SAFE_CLOSE(pipes[0]);
-+	if (pipes[1] !=3D -1)
-+		SAFE_CLOSE(pipes[1]);
-+	if (data_pipes[0] !=3D -1)
-+		SAFE_CLOSE(data_pipes[0]);
-+	if (data_pipes[1] !=3D -1)
-+		SAFE_CLOSE(data_pipes[1]);
-+}
-+
-+static struct tst_test test =3D {
-+	.max_runtime =3D 10,
-+	.cleanup =3D cleanup,
-+	.test =3D run_test,
-+	.tcnt =3D ARRAY_SIZE(tests),
-+	.tags =3D (const struct tst_tag[]) {
-+		{"linux-git", "983652c69199"},
-+		{}
-+	},
-+};
-+
-+#else
-+	TST_TEST_TCONF("system doesn't have required inotify support");
-+#endif
---=20
-2.39.2
-
---4v3npduv4blgoq7d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmSbFO8ACgkQvP0LAY0m
-WPELXQ/7BGRYTRNstpUy6RLExHSe9+7+yMo0QQECDoSiHTULBobosVJFZiNoQJEN
-EByPIojnmd6m5NAFWKPVblLe1fnSmSbnT5IR0XRO8wMHxgl9VLc2wPa7NA9500tv
-9wXOHs7X5hpw0lw/FAXHcDWrc4Etqjn4hMfdgaewY+JhwIDyBTlG98+fcg5p+GBs
-MRYPqq3w5TAmJ5+mQKU+vEWQkLVXkEoeK23Kd6kIVVjigYktssCFUvH5Y5wp5M52
-f/5B00KobjpBbi4PvWPVJFWBnZNj1YVPd2h0Z7EAsxE/ExOUyUjDBSjwf3YzAzTf
-Y4WbzOY/z+/I9TL6aBN6coJS/P5Y4mKKmSrIoU4g7XmBOTLAth/kJ6QMDrnWZp1Q
-WzUu7iC9beSVby3xsr4SUbTd6rWgNSMVEgYRrE+MzQu14GzT6VW5LFSQX+JsrjpX
-92pCkNpQyo9mLm/9UwJRiCIdPmCSfyBihDSbW8gWVQ8z6rdpKJNGuc1RF/pwnpN4
-iuW6EgL2wOiKmVh6HaZebGM2sV5XuLr+aGrlUp3fJWIkkFL8b/U7yY9m5Fab62E7
-GTuytPMyPPWT3YkKZLnacUbE4Pf+bFVtj3XpAdoA+b+v+Q2lcm46bIMllLEgNojJ
-CgCnqzjbAQ629zLBHYyOTywM32+HZEAgvnFfhRdzkmNIurY0Po8=
-=uPgK
------END PGP SIGNATURE-----
-
---4v3npduv4blgoq7d--
+-- Rahul Rameshbabu
