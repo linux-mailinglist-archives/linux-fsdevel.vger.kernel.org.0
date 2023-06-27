@@ -2,210 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 478497402D0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 20:03:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA5A57402D3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 20:05:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231855AbjF0SDd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 14:03:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40212 "EHLO
+        id S229977AbjF0SFx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 14:05:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231352AbjF0SDb (ORCPT
+        with ESMTP id S229841AbjF0SFu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 14:03:31 -0400
-Received: from mail-ua1-x92e.google.com (mail-ua1-x92e.google.com [IPv6:2607:f8b0:4864:20::92e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74641E5B;
-        Tue, 27 Jun 2023 11:03:30 -0700 (PDT)
-Received: by mail-ua1-x92e.google.com with SMTP id a1e0cc1a2514c-784f7f7deddso1404417241.3;
-        Tue, 27 Jun 2023 11:03:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687889009; x=1690481009;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UnGF7hW1RzNznswwuvCHQcYtw/RCT6vHLe0ato2wfTg=;
-        b=d38ul6ybkBlmaIIjHkncAdDDJh0KIRsNWwwvHwYwbBHKU+Xu3EfBWqAZS8jazRMQQN
-         Cw9pUdl82AUXoruwZQK1YawnXR07ukE3iLz5deZC6HKSU2WuZuQEIpfQJsUbcOm6mVxK
-         D0eE90h+qLtE6pnkAuVe5aATNTlknhVdHqwJ2TM4RHB+6S182KpzpYKCA/7c90x/FirT
-         L33fkhc/rA8qzpdMvjj6PdaW19eXr9DEdyMQXQRMBjaue3DMkwUuH1ATwYqe2M1DNsVh
-         yLEPWqLZv0bO3W6W/4ts5oxowpwXRFHnfBxO9fU4ufrzo+07gzUeKWJAzawpbV7qD4g0
-         UGuQ==
+        Tue, 27 Jun 2023 14:05:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CC78E5B
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 11:05:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687889103;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=tSkYJ/7LIQNDaVX+NaIEBpGI8gb9wj1heZwmzePGVd4=;
+        b=S9NMq8ii0x4oIOdoSLXLTjkr6rl/Wen0UgL6/pdPJwdEhTd/247HorhIMwX2TL2GwJpd/U
+        f4uXbxdVvJa65sgoc5kgWRhjQGt7C2CCGfziycxu4PfQfh+3yK/BYja2FY5adjo38Wy3TA
+        vxNQbbuvedooiZARo0Qfg1+XuSBNJ58=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-30-0HN0rDJNMmeDh8yE9BjIKw-1; Tue, 27 Jun 2023 14:05:01 -0400
+X-MC-Unique: 0HN0rDJNMmeDh8yE9BjIKw-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-9885a936d01so311745266b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 11:05:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687889009; x=1690481009;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UnGF7hW1RzNznswwuvCHQcYtw/RCT6vHLe0ato2wfTg=;
-        b=Z5hg0kYDZmy8jkFcREJA7ORRUDVPL4ttMt4uJwGRzUyVY+CFKwlmvQ0TMRHtjKndDk
-         Nz+xJCKI8weVrdD0gqBbZCT4LeG9kBuAL1W7ND76Pb0MDTUnVZL5BnH1We7D9FpuVUz0
-         Wvodz8+r9LSCjUQc3sw8tXnGM0oLuw4xI7Q95qJvSaYRPfDK+Fhu/0m4TyO+JUQ5a8kX
-         YVm+7dvPKjYYGJ05p05Ib1akdy+XuxirJxJrt9EksCB3O76qO9hlrUK37FUMFFy5u/N4
-         ILQpnFVLhmGJj28xO+qPU5F/Nf553mTMFwR5ORD2z/R8QGnUCCtkVI1HslSZpuTShZsF
-         OYGA==
-X-Gm-Message-State: AC+VfDzyyKbhfy3ZWIVo1FgwbhFqOUinQa6K82ZkpRuophr6JsbdBjsO
-        rWCKWgIw0k7RsVPDDR5DaiHQZlETTyaLbkk99X4=
-X-Google-Smtp-Source: ACHHUZ5W7Ud2Mh/ONm5AIRaqLRJqVe7z1xNd+UMK67Bhtk17zj2Hbqo61d9gMa7fLvANRVZJHji+DURVSLqK3bYiKg0=
-X-Received: by 2002:a05:6102:367a:b0:440:b1f3:b476 with SMTP id
- bg26-20020a056102367a00b00440b1f3b476mr14145323vsb.17.1687889009354; Tue, 27
- Jun 2023 11:03:29 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1687889100; x=1690481100;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tSkYJ/7LIQNDaVX+NaIEBpGI8gb9wj1heZwmzePGVd4=;
+        b=SZ+Bqg7pSeiVYa4XKE9Y/wIjSufbxAooK0toZYoDSYkW67mfbvPizbwfKoV/tYhRAm
+         jti6Eu1FaVarBMj3fE8wJtzf6dmrD039ftIQNDVowZ+W1av5LNg7XVifY7zz3ohhYs8b
+         HQ/vEn4z3BXJDfxiTFGQucYr5EBZ/3TIKHtkoWbM2qMC19lMK0Zv1J1XKqiXCGjarv10
+         QLsw/GF5eLXakYoNBSsExv0ebCgr5FraquWtkYT+XNV9kZamPJrCpBk751wFuiqBr4Fx
+         CQcjOPCwZFdxLbWLoB+AaUr1ou40g1T8jMnewWzmgSL0I8FymKLf4tx0fnLqLwKr83i4
+         3xug==
+X-Gm-Message-State: AC+VfDwFSgcV0uwqxhoTG1T0Von43A/x6QO2HCZ9fNwIFThnwk311rnY
+        2YSN+CT6vsV3d6ji3mr1q/XLmYQrIWIWGXsFaZqg1lks05Kvypz8EqM3bANB9c9JOij0SKtl2zT
+        NBWK2Q8j6sDESD2EZwTnS2B6WUw==
+X-Received: by 2002:a17:907:5c2:b0:974:55a2:cb0b with SMTP id wg2-20020a17090705c200b0097455a2cb0bmr28675572ejb.55.1687889100397;
+        Tue, 27 Jun 2023 11:05:00 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ7kFjsg3w3SaTOHLFA7v4tck3M1EXxx9ZydaHqAuSxq5qaEOkLVvrnRRwJvnqA7E61qVar7BQ==
+X-Received: by 2002:a17:907:5c2:b0:974:55a2:cb0b with SMTP id wg2-20020a17090705c200b0097455a2cb0bmr28675563ejb.55.1687889100133;
+        Tue, 27 Jun 2023 11:05:00 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id c15-20020a170906528f00b00982a352f078sm4737229ejm.124.2023.06.27.11.04.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Jun 2023 11:04:59 -0700 (PDT)
+Message-ID: <cedbd75d-4a0f-74fb-3a6e-547862cc431e@redhat.com>
+Date:   Tue, 27 Jun 2023 20:04:58 +0200
 MIME-Version: 1.0
-References: <CAOQ4uxh7i_s4R9pFJPENALdWGG5-dDhqPLEUXuJqSoHraktFiA@mail.gmail.com>
- <cover.1687884029.git.nabijaczleweli@nabijaczleweli.xyz>
-In-Reply-To: <cover.1687884029.git.nabijaczleweli@nabijaczleweli.xyz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 27 Jun 2023 21:03:17 +0300
-Message-ID: <CAOQ4uxg38PDSEWARiWpDBvuYC4szj3R3ZkoLkO76Ap6nKjTRTA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3+1] fanotify accounting for fs/splice.c
-To:     =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= 
-        <nabijaczleweli@nabijaczleweli.xyz>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>,
-        Chung-Chiang Cheng <cccheng@synology.com>, ltp@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH] fs/vboxsf: Replace kmap() with kmap_local_{page, folio}()
+To:     Matthew Wilcox <willy@infradead.org>,
+        Sumitra Sharma <sumitraartsy@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ira Weiny <ira.weiny@intel.com>,
+        Fabio <fmdefrancesco@gmail.com>, Deepak R Varma <drv@mailo.com>
+References: <20230627135115.GA452832@sumitra.com>
+ <ZJsg5GL79MIOzbRf@casper.infradead.org>
+Content-Language: en-US, nl
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <ZJsg5GL79MIOzbRf@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 7:55=E2=80=AFPM Ahelenia Ziemia=C5=84ska
-<nabijaczleweli@nabijaczleweli.xyz> wrote:
->
-> In 1/3 I've applied if/else if/else tree like you said,
-> and expounded a bit in the message.
->
-> This is less pretty now, however, since it turns out that
+Hi Matthew,
 
-If my advice turns out to be bad, then please drop it.
+On 6/27/23 19:48, Matthew Wilcox wrote:
+> On Tue, Jun 27, 2023 at 06:51:15AM -0700, Sumitra Sharma wrote:
+>> +++ b/fs/vboxsf/file.c
+>> @@ -234,7 +234,7 @@ static int vboxsf_read_folio(struct file *file, struct folio *folio)
+>>  	u8 *buf;
+>>  	int err;
+>>  
+>> -	buf = kmap(page);
+>> +	buf = kmap_local_folio(folio, off);
+> 
+> Did you test this?  'off' is the offset in the _file_.  Whereas
+> kmap_local_folio() takes the offset within the _folio_.  They have
+> different types (loff_t vs size_t) to warn you that they're different
+> things.
 
-> iter_file_splice_write() already marks the out fd as written because it
-> writes to it via vfs_iter_write(), and that sent a double notification.
->
-> $ git grep -F .splice_write | grep -v iter_file_splice_write
-> drivers/char/mem.c:     .splice_write   =3D splice_write_null,
-> drivers/char/virtio_console.c:  .splice_write =3D port_fops_splice_write,
-> fs/fuse/dev.c:  .splice_write   =3D fuse_dev_splice_write,
-> fs/gfs2/file.c: .splice_write   =3D gfs2_file_splice_write,
-> fs/gfs2/file.c: .splice_write   =3D gfs2_file_splice_write,
-> fs/overlayfs/file.c:    .splice_write   =3D ovl_splice_write,
-> net/socket.c:   .splice_write =3D generic_splice_sendpage,
-> scripts/coccinelle/api/stream_open.cocci:    .splice_write =3D splice_wri=
-te_f,
->
-> Of these, splice_write_null() doesn't mark out as written
-> (but it's for /dev/null so I think this is expected),
-> and I haven't been able to visually confirm whether
-> port_fops_splice_write() and generic_splice_sendpage() do.
->
-> All the others delegate to iter_file_splice_write().
->
 
-All this is very troubling to me.
-It translates to a mental model that I cannot remember and
-cannot maintain for fixes whose value are still questionable.
+Ah yes you are completely right, off is the offset in the file
+and buf should point to the *start* of a mapping of the page.
 
-IIUC, the only thing you need to change in do_splice() for
-making your use case work is to add fsnotify_modify()
-for the splice_pipe_to_pipe() case. Right?
+Regards,
 
-So either make the change that you need, or all the changes
-that are simple to follow without trying to make the world
-consistent - these pipe iterators business is really messy.
-I don't know if avoiding a double event (which is likely not visible)
-is worth the complicated code that is hard to understand.
+Hans
 
-> In 2/3 I fixed the vmsplice notification placement
-> (access from pipe, modify to pipe).
->
-> I'm following this up with an LTP patch, where only sendfile_file_to_pipe
-> passes on 6.1.27-1 and all tests pass on v6.4 + this patchset.
->
 
-Were these tests able to detect the double event?
-Maybe it's not visible because double consequent events get merged.
 
-> Ahelenia Ziemia=C5=84ska (3):
->   splice: always fsnotify_access(in), fsnotify_modify(out) on success
->   splice: fsnotify_access(fd)/fsnotify_modify(fd) in vmsplice
->   splice: fsnotify_access(in), fsnotify_modify(out) on success in tee
->
->  fs/splice.c | 43 +++++++++++++++++++++++++------------------
->  1 file changed, 25 insertions(+), 18 deletions(-)
->
->
-> Interdiff against v2:
-> diff --git a/fs/splice.c b/fs/splice.c
-> index 3234aaa6e957..0427f0a91c7d 100644
-> --- a/fs/splice.c
-> +++ b/fs/splice.c
-> @@ -1155,10 +1155,7 @@ long do_splice(struct file *in, loff_t *off_in, st=
-ruct file *out,
->                         flags |=3D SPLICE_F_NONBLOCK;
->
->                 ret =3D splice_pipe_to_pipe(ipipe, opipe, len, flags);
-> -               goto notify;
-> -       }
-> -
-> -       if (ipipe) {
-> +       } else if (ipipe) {
->                 if (off_in)
->                         return -ESPIPE;
->                 if (off_out) {
-> @@ -1188,10 +1185,10 @@ long do_splice(struct file *in, loff_t *off_in, s=
-truct file *out,
->                 else
->                         *off_out =3D offset;
->
-> -               goto notify;
-> -       }
-> -
-> -       if (opipe) {
-> +               // ->splice_write already marked out
-> +               // as modified via vfs_iter_write()
-> +               goto noaccessout;
-
-That's too ugly IMO.
-Are you claiming that the code in master is wrong?
-Because in master there is fsnotify_modify(out) for (ipipe) case.
-
-> +       } else if (opipe) {
->                 if (off_out)
->                         return -ESPIPE;
->                 if (off_in) {
-> @@ -1211,17 +1208,14 @@ long do_splice(struct file *in, loff_t *off_in, s=
-truct file *out,
->                         in->f_pos =3D offset;
->                 else
->                         *off_in =3D offset;
-> +       } else
-> +               return -EINVAL;
->
-> -               goto notify;
-> -       }
-> -
-> -       return -EINVAL;
-> -
-> -notify:
-> -       if (ret > 0) {
-> -               fsnotify_access(in);
-> +       if (ret > 0)
->                 fsnotify_modify(out);
-> -       }
-> +noaccessout:
-> +       if (ret > 0)
-> +               fsnotify_access(in);
->
-
-Not to mention that it should be nomodifyout, but I dislike this
-"common" code that it not common at all, so either just handle
-the pipe_to_pipe case to fix your use case or leave this code
-completely common ignoring the possible double events.
-
-Thanks,
-Amir.
