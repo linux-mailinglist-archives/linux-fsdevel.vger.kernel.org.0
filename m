@@ -2,248 +2,394 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C0AC1740550
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 22:53:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E53E3740559
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 22:59:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230179AbjF0Uxw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 16:53:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57212 "EHLO
+        id S229777AbjF0U7W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 16:59:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231240AbjF0Uxs (ORCPT
+        with ESMTP id S229482AbjF0U7V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 16:53:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ABA630CF
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 13:53:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 737DF6121C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 20:53:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 589AAC43391;
-        Tue, 27 Jun 2023 20:53:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687899203;
-        bh=VcvsaV4KxMlmRuP+vSOdBppGCMFeBmAT+SZOmu9unoY=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=cw5NBXwU6J6Nj5iOaHVocZ/cDPlNj14e5dIs4l65tiB8Jdsw6wcAUxjfHCTmsi0M7
-         t9C1wapA7FZz1Xyxc3Wc8rLM9jwJU/S78WNus8mKEONwjmc8OxuBqi23k8zyP5wvvI
-         xF5MRgg3VaK92hMXJHZ7hh+h4Mqow/9sjXxN0qOeWehWVanELcQ/u9MZ8YQ6JXQsPI
-         oYPX0eN7rLruCxw4rcvNwGxn8hGPd4YUI5caN7IhG/guEJ0SDhtGiGrK4smhmv43i5
-         82j1iJCDsPfvwQ4LnL0We+GedVfBcw5x1A+I67BS460YlCqlGkZCbdpNeZS5ocXw+s
-         Lm3g4L9xS5NvA==
-Subject: [PATCH v5 3/3] shmem: stable directory offsets
-From:   Chuck Lever <cel@kernel.org>
-To:     viro@zeniv.linux.org.uk, brauner@kernel.org, hughd@google.com,
-        akpm@linux-foundation.org
-Cc:     Chuck Lever <chuck.lever@oracle.com>, jlayton@redhat.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Date:   Tue, 27 Jun 2023 16:53:22 -0400
-Message-ID: <168789920248.157531.11502183761509096222.stgit@manet.1015granger.net>
-In-Reply-To: <168789864000.157531.11122232592994999253.stgit@manet.1015granger.net>
-References: <168789864000.157531.11122232592994999253.stgit@manet.1015granger.net>
-User-Agent: StGit/1.5
+        Tue, 27 Jun 2023 16:59:21 -0400
+Received: from tarta.nabijaczleweli.xyz (unknown [139.28.40.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C0F7FF2;
+        Tue, 27 Jun 2023 13:59:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
+        s=202305; t=1687899558;
+        bh=cCPA9gHUAzZnPeQczg3AkMUdgYMOFvdXzDxq+UdqXHk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=D7bdg+lMx7cOjryXowRwFAneeyhPYCFLmfGhYN0bjVSt055/r40I8hMOmYdzqMrZJ
+         OVyaW3q4KCF+R4HSgz5vPMqtvGl0R6dWmheY6BDofBXTUMBQJbpWbNJfK0dB1H/hCE
+         Hub+ZsTyLNVdQDVm5S/G4Mjka2yAe+YdC8RyM8Cf0DTFFsYPoTYCJLa3gBiqbusX6l
+         Q0zvi18BMRlK+7hU32/n0YqkIoaJ/jBMxPR2QEho/nmpQPPhg0L+qJjB1FCFKpoAUf
+         Qmd6qPwyqswfzSsHnmJSFl/ptw4Ej0o0licRAZan/WgedJVezJ1BeNvESd5fVhSxH2
+         mKyWWAPskjzvg==
+Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
+        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id CD80513AA;
+        Tue, 27 Jun 2023 22:59:18 +0200 (CEST)
+Date:   Tue, 27 Jun 2023 22:59:17 +0200
+From:   Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
+        <nabijaczleweli@nabijaczleweli.xyz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>,
+        Chung-Chiang Cheng <cccheng@synology.com>, ltp@lists.linux.it
+Subject: [LTP RFC PATCH v2] inotify13: new test for fs/splice.c functions vs
+ pipes vs inotify
+Message-ID: <ajkeyn2sy35h6ctfbupom4xg3ozoxxgsojdvu7vebac44zqped@ecnusnv6daxn>
+References: <CAOQ4uxifYoKdup6gzyW0iV=KFBzTWu5T8=zq8s8pFw2X3+5xRg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="aadmf3i7azbjbqpw"
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxifYoKdup6gzyW0iV=KFBzTWu5T8=zq8s8pFw2X3+5xRg@mail.gmail.com>
+User-Agent: NeoMutt/20230517
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,PDS_RDNS_DYNAMIC_FP,
+        RDNS_DYNAMIC,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Chuck Lever <chuck.lever@oracle.com>
 
-The current cursor-based directory offset mechanism doesn't work
-when a tmpfs filesystem is exported via NFS. This is because NFS
-clients do not open directories. Each server-side READDIR operation
-has to open the directory, read it, then close it. The cursor state
-for that directory, being associated strictly with the opened
-struct file, is thus discarded after each NFS READDIR operation.
+--aadmf3i7azbjbqpw
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Directory offsets are cached not only by NFS clients, but also by
-user space libraries on those clients. Essentially there is no way
-to invalidate those caches when directory offsets have changed on
-an NFS server after the offset-to-dentry mapping changes. Thus the
-whole application stack depends on unchanging directory offsets.
+The only one that passes on 6.1.27-1 is sendfile_file_to_pipe.
 
-The solution we've come up with is to make the directory offset for
-each file in a tmpfs filesystem stable for the life of the directory
-entry it represents.
-
-shmem_readdir() and shmem_dir_llseek() now use an xarray to map each
-directory offset (an loff_t integer) to the memory address of a
-struct dentry.
-
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Link: https://lore.kernel.org/linux-fsdevel/jbyihkyk5dtaohdwjyivambb2gffyjs=
+3dodpofafnkkunxq7bu@jngkdxx65pux/t/#u
+Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xyz>
 ---
- include/linux/shmem_fs.h |    1 +
- mm/shmem.c               |   47 +++++++++++++++++++++++++++++++++++++++-------
- 2 files changed, 41 insertions(+), 7 deletions(-)
+Whitespace-only changes against v1.
+Marking as RFC since we have no commit SHA to reference.
 
-diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index 9029abd29b1c..d2c67333028c 100644
---- a/include/linux/shmem_fs.h
-+++ b/include/linux/shmem_fs.h
-@@ -27,6 +27,7 @@ struct shmem_inode_info {
- 	atomic_t		stop_eviction;	/* hold when working on inode */
- 	struct timespec64	i_crtime;	/* file creation time */
- 	unsigned int		fsflags;	/* flags for FS_IOC_[SG]ETFLAGS */
-+	struct stable_offset_ctx dir_offsets;
- 	struct inode		vfs_inode;
- };
- 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 721f9fd064aa..5782fe1edc75 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2355,6 +2355,11 @@ static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
- #define shmem_initxattrs NULL
- #endif
- 
-+static struct stable_offset_ctx *shmem_so_ctx(struct inode *inode)
+I didn't find any style opinions in the repository, so I just let
+clang-format rip. Apparently, according to a /github wiki page/:
+  https://github.com/linux-test-project/ltp/wiki/Test-Writing-Guidelines#2-=
+coding-style
+which is /only referenced/ from a 2020 issue:
+  https://github.com/linux-test-project/ltp/issues/631
+LTP uses the kernel style.
+
+Could've fooled me, because the other inotify tests are definitely not
+in the kernel style.
+
+Re-formatted the whole file with the linux .clang-format.
+
+ testcases/kernel/syscalls/inotify/.gitignore  |   1 +
+ testcases/kernel/syscalls/inotify/inotify13.c | 260 ++++++++++++++++++
+ 2 files changed, 261 insertions(+)
+ create mode 100644 testcases/kernel/syscalls/inotify/inotify13.c
+
+diff --git a/testcases/kernel/syscalls/inotify/.gitignore b/testcases/kerne=
+l/syscalls/inotify/.gitignore
+index f6e5c546a..b597ea63f 100644
+--- a/testcases/kernel/syscalls/inotify/.gitignore
++++ b/testcases/kernel/syscalls/inotify/.gitignore
+@@ -10,3 +10,4 @@
+ /inotify10
+ /inotify11
+ /inotify12
++/inotify13
+diff --git a/testcases/kernel/syscalls/inotify/inotify13.c b/testcases/kern=
+el/syscalls/inotify/inotify13.c
+new file mode 100644
+index 000000000..8c2cd4cf1
+--- /dev/null
++++ b/testcases/kernel/syscalls/inotify/inotify13.c
+@@ -0,0 +1,260 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*\
++ * Verify splice-family functions (and sendfile) generate IN_ACCESS
++ * for what they read and IN_MODIFY for what they write.
++ *
++ * Regression test for 983652c69199 and
++ * https://lore.kernel.org/linux-fsdevel/jbyihkyk5dtaohdwjyivambb2gffyjs3d=
+odpofafnkkunxq7bu@jngkdxx65pux/t/#u
++ */
++
++#define _GNU_SOURCE
++#include "config.h"
++
++#include <stdio.h>
++#include <unistd.h>
++#include <stdlib.h>
++#include <fcntl.h>
++#include <stdbool.h>
++#include <inttypes.h>
++#include <signal.h>
++#include <sys/mman.h>
++#include <sys/sendfile.h>
++
++#include "tst_test.h"
++#include "tst_safe_macros.h"
++#include "inotify.h"
++
++#if defined(HAVE_SYS_INOTIFY_H)
++#include <sys/inotify.h>
++
++static int pipes[2] =3D { -1, -1 };
++static int inotify =3D -1;
++static int memfd =3D -1;
++static int data_pipes[2] =3D { -1, -1 };
++
++static void watch_rw(int fd)
 +{
-+	return &SHMEM_I(inode)->dir_offsets;
++	char buf[64];
++	sprintf(buf, "/proc/self/fd/%d", fd);
++	SAFE_MYINOTIFY_ADD_WATCH(inotify, buf, IN_ACCESS | IN_MODIFY);
 +}
 +
- static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block *sb,
- 				     struct inode *dir, umode_t mode, dev_t dev,
- 				     unsigned long flags)
-@@ -2410,7 +2415,8 @@ static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block
- 			/* Some things misbehave if size == 0 on a directory */
- 			inode->i_size = 2 * BOGO_DIRENT_SIZE;
- 			inode->i_op = &shmem_dir_inode_operations;
--			inode->i_fop = &simple_dir_operations;
-+			inode->i_fop = &stable_dir_operations;
-+			stable_offset_init(shmem_so_ctx(inode));
- 			break;
- 		case S_IFLNK:
- 			/*
-@@ -2950,7 +2956,10 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 		if (error && error != -EOPNOTSUPP)
- 			goto out_iput;
- 
--		error = 0;
-+		error = stable_offset_add(shmem_so_ctx(dir), dentry);
-+		if (error)
-+			goto out_iput;
++static int compar(const void *l, const void *r)
++{
++	const struct inotify_event *lie =3D l;
++	const struct inotify_event *rie =3D r;
++	return lie->wd - rie->wd;
++}
 +
- 		dir->i_size += BOGO_DIRENT_SIZE;
- 		dir->i_ctime = dir->i_mtime = current_time(dir);
- 		inode_inc_iversion(dir);
-@@ -3027,6 +3036,13 @@ static int shmem_link(struct dentry *old_dentry, struct inode *dir, struct dentr
- 			goto out;
- 	}
- 
-+	ret = stable_offset_add(shmem_so_ctx(dir), dentry);
-+	if (ret) {
-+		if (inode->i_nlink)
-+			shmem_free_inode(inode->i_sb);
-+		goto out;
++static void get_events(size_t evcnt, struct inotify_event evs[static evcnt=
+])
++{
++	struct inotify_event tail, *itr =3D evs;
++	for (size_t left =3D evcnt; left; --left)
++		SAFE_READ(true, inotify, itr++, sizeof(struct inotify_event));
++
++	TEST(read(inotify, &tail, sizeof(struct inotify_event)));
++	if (TST_RET !=3D -1)
++		tst_brk(TFAIL, ">%zu events", evcnt);
++	if (TST_ERR !=3D EAGAIN)
++		tst_brk(TFAIL | TTERRNO, "expected EAGAIN");
++
++	qsort(evs, evcnt, sizeof(struct inotify_event), compar);
++}
++
++static void expect_event(struct inotify_event *ev, int wd, uint32_t mask)
++{
++	if (ev->wd !=3D wd)
++		tst_brk(TFAIL, "expect event for wd %d got %d", wd, ev->wd);
++	if (ev->mask !=3D mask)
++		tst_brk(TFAIL,
++			"expect event with mask %" PRIu32 " got %" PRIu32 "",
++			mask, ev->mask);
++}
++
++#define F2P(splice)                                                      \
++	SAFE_WRITE(SAFE_WRITE_RETRY, memfd, __func__, sizeof(__func__)); \
++	SAFE_LSEEK(memfd, 0, SEEK_SET);                                  \
++	watch_rw(memfd);                                                 \
++	watch_rw(pipes[0]);                                              \
++	TEST(splice);                                                    \
++	if (TST_RET =3D=3D -1)                                               \
++		tst_brk(TBROK | TERRNO, #splice);                        \
++	if (TST_RET !=3D sizeof(__func__))                                 \
++		tst_brk(TBROK, #splice ": %" PRId64 "", TST_RET);        \
++                                                                         \
++	/* expecting: IN_ACCESS memfd, IN_MODIFY pipes[0] */             \
++	struct inotify_event events[2];                                  \
++	get_events(ARRAY_SIZE(events), events);                          \
++	expect_event(events + 0, 1, IN_ACCESS);                          \
++	expect_event(events + 1, 2, IN_MODIFY);                          \
++                                                                         \
++	char buf[sizeof(__func__)];                                      \
++	SAFE_READ(true, pipes[0], buf, sizeof(__func__));                \
++	if (memcmp(buf, __func__, sizeof(__func__)))                     \
++		tst_brk(TFAIL, "buf contents bad");
++static void splice_file_to_pipe(void)
++{
++	F2P(splice(memfd, NULL, pipes[1], NULL, 128 * 1024 * 1024, 0));
++}
++static void sendfile_file_to_pipe(void)
++{
++	F2P(sendfile(pipes[1], memfd, NULL, 128 * 1024 * 1024));
++}
++
++static void splice_pipe_to_file(void)
++{
++	SAFE_WRITE(SAFE_WRITE_RETRY, pipes[1], __func__, sizeof(__func__));
++	watch_rw(pipes[0]);
++	watch_rw(memfd);
++	TEST(splice(pipes[0], NULL, memfd, NULL, 128 * 1024 * 1024, 0));
++	if (TST_RET =3D=3D -1)
++		tst_brk(TBROK | TERRNO, "splice");
++	if (TST_RET !=3D sizeof(__func__))
++		tst_brk(TBROK, "splice: %" PRId64 "", TST_RET);
++
++	/* expecting: IN_ACCESS pipes[0], IN_MODIFY memfd */
++	struct inotify_event events[2];
++	get_events(ARRAY_SIZE(events), events);
++	expect_event(events + 0, 1, IN_ACCESS);
++	expect_event(events + 1, 2, IN_MODIFY);
++
++	char buf[sizeof(__func__)];
++	SAFE_LSEEK(memfd, 0, SEEK_SET);
++	SAFE_READ(true, memfd, buf, sizeof(__func__));
++	if (memcmp(buf, __func__, sizeof(__func__)))
++		tst_brk(TFAIL, "buf contents bad");
++}
++
++#define P2P(splice)                                                  \
++	SAFE_WRITE(SAFE_WRITE_RETRY, data_pipes[1], __func__,        \
++		   sizeof(__func__));                                \
++	watch_rw(data_pipes[0]);                                     \
++	watch_rw(pipes[1]);                                          \
++	TEST(splice);                                                \
++	if (TST_RET =3D=3D -1)                                           \
++		tst_brk(TBROK | TERRNO, #splice);                    \
++	if (TST_RET !=3D sizeof(__func__))                             \
++		tst_brk(TBROK, #splice ": %" PRId64 "", TST_RET);    \
++                                                                     \
++	/* expecting: IN_ACCESS data_pipes[0], IN_MODIFY pipes[1] */ \
++	struct inotify_event events[2];                              \
++	get_events(ARRAY_SIZE(events), events);                      \
++	expect_event(events + 0, 1, IN_ACCESS);                      \
++	expect_event(events + 1, 2, IN_MODIFY);                      \
++                                                                     \
++	char buf[sizeof(__func__)];                                  \
++	SAFE_READ(true, pipes[0], buf, sizeof(__func__));            \
++	if (memcmp(buf, __func__, sizeof(__func__)))                 \
++		tst_brk(TFAIL, "buf contents bad");
++static void splice_pipe_to_pipe(void)
++{
++	P2P(splice(data_pipes[0], NULL, pipes[1], NULL, 128 * 1024 * 1024, 0));
++}
++static void tee_pipe_to_pipe(void)
++{
++	P2P(tee(data_pipes[0], pipes[1], 128 * 1024 * 1024, 0));
++}
++
++static char vmsplice_pipe_to_mem_dt[32 * 1024];
++static void vmsplice_pipe_to_mem(void)
++{
++	memcpy(vmsplice_pipe_to_mem_dt, __func__, sizeof(__func__));
++	watch_rw(pipes[0]);
++	TEST(vmsplice(
++		pipes[1],
++		&(struct iovec){ .iov_base =3D vmsplice_pipe_to_mem_dt,
++				 .iov_len =3D sizeof(vmsplice_pipe_to_mem_dt) },
++		1, SPLICE_F_GIFT));
++	if (TST_RET =3D=3D -1)
++		tst_brk(TBROK | TERRNO, "vmsplice");
++	if (TST_RET !=3D sizeof(vmsplice_pipe_to_mem_dt))
++		tst_brk(TBROK, "vmsplice: %" PRId64 "", TST_RET);
++
++	/* expecting: IN_MODIFY pipes[0] */
++	struct inotify_event event;
++	get_events(1, &event);
++	expect_event(&event, 1, IN_MODIFY);
++
++	char buf[sizeof(__func__)];
++	SAFE_READ(true, pipes[0], buf, sizeof(__func__));
++	if (memcmp(buf, __func__, sizeof(__func__)))
++		tst_brk(TFAIL, "buf contents bad");
++}
++
++static void vmsplice_mem_to_pipe(void)
++{
++	char buf[sizeof(__func__)];
++	SAFE_WRITE(SAFE_WRITE_RETRY, pipes[1], __func__, sizeof(__func__));
++	watch_rw(pipes[1]);
++	TEST(vmsplice(pipes[0],
++		      &(struct iovec){ .iov_base =3D buf,
++				       .iov_len =3D sizeof(buf) },
++		      1, 0));
++	if (TST_RET =3D=3D -1)
++		tst_brk(TBROK | TERRNO, "vmsplice");
++	if (TST_RET !=3D sizeof(buf))
++		tst_brk(TBROK, "vmsplice: %" PRId64 "", TST_RET);
++
++	/* expecting: IN_ACCESS pipes[1] */
++	struct inotify_event event;
++	get_events(1, &event);
++	expect_event(&event, 1, IN_ACCESS);
++	if (memcmp(buf, __func__, sizeof(__func__)))
++		tst_brk(TFAIL, "buf contents bad");
++}
++
++typedef void (*tests_f)(void);
++#define TEST_F(f)      \
++	{              \
++		f, #f, \
 +	}
++static const struct {
++	tests_f f;
++	const char *n;
++} tests[] =3D {
++	TEST_F(splice_file_to_pipe),  TEST_F(sendfile_file_to_pipe),
++	TEST_F(splice_pipe_to_file),  TEST_F(splice_pipe_to_pipe),
++	TEST_F(tee_pipe_to_pipe),     TEST_F(vmsplice_pipe_to_mem),
++	TEST_F(vmsplice_mem_to_pipe),
++};
 +
- 	dir->i_size += BOGO_DIRENT_SIZE;
- 	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(inode);
- 	inode_inc_iversion(dir);
-@@ -3045,6 +3061,8 @@ static int shmem_unlink(struct inode *dir, struct dentry *dentry)
- 	if (inode->i_nlink > 1 && !S_ISDIR(inode->i_mode))
- 		shmem_free_inode(inode->i_sb);
- 
-+	stable_offset_remove(shmem_so_ctx(dir), dentry);
++static void run_test(unsigned int n)
++{
++	tst_res(TINFO, "%s", tests[n].n);
 +
- 	dir->i_size -= BOGO_DIRENT_SIZE;
- 	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(inode);
- 	inode_inc_iversion(dir);
-@@ -3103,24 +3121,29 @@ static int shmem_rename2(struct mnt_idmap *idmap,
- {
- 	struct inode *inode = d_inode(old_dentry);
- 	int they_are_dirs = S_ISDIR(inode->i_mode);
-+	int error;
- 
- 	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
- 		return -EINVAL;
- 
- 	if (flags & RENAME_EXCHANGE)
--		return simple_rename_exchange(old_dir, old_dentry, new_dir, new_dentry);
-+		return stable_offset_rename_exchange(old_dir, old_dentry,
-+						     new_dir, new_dentry);
- 
- 	if (!simple_empty(new_dentry))
- 		return -ENOTEMPTY;
- 
- 	if (flags & RENAME_WHITEOUT) {
--		int error;
--
- 		error = shmem_whiteout(idmap, old_dir, old_dentry);
- 		if (error)
- 			return error;
- 	}
- 
-+	stable_offset_remove(shmem_so_ctx(old_dir), old_dentry);
-+	error = stable_offset_add(shmem_so_ctx(new_dir), old_dentry);
-+	if (error)
-+		return error;
++	SAFE_PIPE2(pipes, O_CLOEXEC);
++	SAFE_PIPE2(data_pipes, O_CLOEXEC);
++	inotify =3D SAFE_MYINOTIFY_INIT1(IN_NONBLOCK | IN_CLOEXEC);
++	if ((memfd =3D memfd_create(__func__, MFD_CLOEXEC)) =3D=3D -1)
++		tst_brk(TCONF | TERRNO, "memfd");
++	tests[n].f();
++	tst_res(TPASS, "=D0=BE=D0=BA");
++}
 +
- 	if (d_really_is_positive(new_dentry)) {
- 		(void) shmem_unlink(new_dir, new_dentry);
- 		if (they_are_dirs) {
-@@ -3164,19 +3187,23 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	if (error && error != -EOPNOTSUPP)
- 		goto out_iput;
- 
-+	error = stable_offset_add(shmem_so_ctx(dir), dentry);
-+	if (error)
-+		goto out_iput;
++static void cleanup(void)
++{
++	if (memfd !=3D -1)
++		SAFE_CLOSE(memfd);
++	if (inotify !=3D -1)
++		SAFE_CLOSE(inotify);
++	if (pipes[0] !=3D -1)
++		SAFE_CLOSE(pipes[0]);
++	if (pipes[1] !=3D -1)
++		SAFE_CLOSE(pipes[1]);
++	if (data_pipes[0] !=3D -1)
++		SAFE_CLOSE(data_pipes[0]);
++	if (data_pipes[1] !=3D -1)
++		SAFE_CLOSE(data_pipes[1]);
++}
 +
- 	inode->i_size = len-1;
- 	if (len <= SHORT_SYMLINK_LEN) {
- 		inode->i_link = kmemdup(symname, len, GFP_KERNEL);
- 		if (!inode->i_link) {
- 			error = -ENOMEM;
--			goto out_iput;
-+			goto out_remove_offset;
- 		}
- 		inode->i_op = &shmem_short_symlink_operations;
- 	} else {
- 		inode_nohighmem(inode);
- 		error = shmem_get_folio(inode, 0, &folio, SGP_WRITE);
- 		if (error)
--			goto out_iput;
-+			goto out_remove_offset;
- 		inode->i_mapping->a_ops = &shmem_aops;
- 		inode->i_op = &shmem_symlink_inode_operations;
- 		memcpy(folio_address(folio), symname, len);
-@@ -3191,6 +3218,9 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	d_instantiate(dentry, inode);
- 	dget(dentry);
- 	return 0;
++static struct tst_test test =3D {
++	.max_runtime =3D 10,
++	.cleanup =3D cleanup,
++	.test =3D run_test,
++	.tcnt =3D ARRAY_SIZE(tests),
++	.tags =3D (const struct tst_tag[]){ { "linux-git", "983652c69199" }, {} },
++};
 +
-+out_remove_offset:
-+	stable_offset_remove(shmem_so_ctx(dir), dentry);
- out_iput:
- 	iput(inode);
- 	return error;
-@@ -3920,6 +3950,8 @@ static void shmem_destroy_inode(struct inode *inode)
- {
- 	if (S_ISREG(inode->i_mode))
- 		mpol_free_shared_policy(&SHMEM_I(inode)->policy);
-+	if (S_ISDIR(inode->i_mode))
-+		stable_offset_destroy(shmem_so_ctx(inode));
- }
- 
- static void shmem_init_inode(void *foo)
-@@ -4000,6 +4032,7 @@ static const struct inode_operations shmem_dir_inode_operations = {
- 	.mknod		= shmem_mknod,
- 	.rename		= shmem_rename2,
- 	.tmpfile	= shmem_tmpfile,
-+	.get_so_ctx	= shmem_so_ctx,
- #endif
- #ifdef CONFIG_TMPFS_XATTR
- 	.listxattr	= shmem_listxattr,
++#else
++TST_TEST_TCONF("system doesn't have required inotify support");
++#endif
+--=20
+2.39.2
 
+--aadmf3i7azbjbqpw
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmSbTaUACgkQvP0LAY0m
+WPGNNRAAi6Lq2fRPTqF97WtfGi8Gfxt8iKcK1m8DKj9cHd4VbJNRZVl3FYvMOgAW
+Al8SkLG4oTHtYwBkEVDzWzTucc5SlyTHDebDEoW84H9HufMoTrobw2o8w4KSYLKr
+27nRXvBDqq7hWsiLe/5EZTM09HAvda/iCisL3TzWWdbwX1tMU6rOx5iLe2NoInyy
+b4vtyQAbSc+WcbzMMlF239KrwJx+2fxRnh0MyWVTap9nmoNbHmE3FBsdTTXYXxVn
+Fa7n78nuDKWyHCP24Lw9979Amn4DuFvm3IlIa4Du/Jc5NJil1tL+3C3RmiLw1sXv
+kmz3yjaiomm52JggY1/7dgZzebfu7XW0ULR6r8Wzr/VPtsHl0wJjxe3XXMv3VHDQ
+I/74GpC78RAZE6m6YCJHxqCpre6aGBn+DfTp4D7yunR0on9vAPx4BIeAruUCR+X2
+buXBLNHaz1N5SUHMNmY/fS4iDWH3MizsR0xAEqZ4npJYHBIcKJ11pX/SpPSJYZTv
+r7S5xuTbplOM1o0q8egDIcF9AOWFYZAfEXBTUCMY4Q387V4D8EcMlG7jwrrGkfO+
+xEs3qYhZjwjYfFhYDvTrcAd5vyoDOLx2q6rkJXs+3r4EymPA/YuB+3itTjPEVKJj
+uiBoV0coS/qMpPURsYSAUqIm/TkNB87Nsyt9U+NgXhDFLNuRz6c=
+=Mxnw
+-----END PGP SIGNATURE-----
+
+--aadmf3i7azbjbqpw--
