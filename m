@@ -2,172 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D66C740039
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 18:00:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4682974003C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 18:00:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232033AbjF0QAe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 12:00:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32988 "EHLO
+        id S232053AbjF0QAt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 12:00:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230384AbjF0QAc (ORCPT
+        with ESMTP id S230397AbjF0QAr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 12:00:32 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B3622D64
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 09:00:31 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-bfee679b7efso4636377276.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 09:00:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1687881630; x=1690473630;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9KkJfMIW232ztzAZaUdoyK+3frIKBC3oUzLc/0KyY7g=;
-        b=TSmneStqHeW3vCGRSk9XN9K/xAOpUNp9Vt2idzhSed8Jk+sSOVzUMYMfK5RbQI1ezV
-         xCcyNw+2DbcLe4wWwb+sZrHHbbktJgcRITbuZtz6oydu/tUcvwox4YrknRwXpzAlmJOP
-         orSU/BHf8zwqMob8Lmjh+Rk+lPb7uV7/TsKfBFQo78u+j2lducnvRLXzqme6BAOSma7C
-         wm+yNe+rT3S/dvG2NXgwRWysJw6pZHxyQcFfsx8v6zz6MvXxzLTh6RSn3eg7C+0+NnyJ
-         KA9VLZ5YOphRWjJmhl7NlekRjYrHPsGQNPRy+HRTD3mtoTXAsOZc7Mn6GtWgZTBQ0Ohc
-         Dgog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687881630; x=1690473630;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9KkJfMIW232ztzAZaUdoyK+3frIKBC3oUzLc/0KyY7g=;
-        b=JweWneWMKFPIztF1wtc9uckftVPGRBym9R9D37J0JGh9fS8Ae4MDbIb5myZ7i5S3dZ
-         pS8bMc1cX6dVhQhzeYax6HH7OUJik/Vbk0jEuDXtQZc7es/i7GBVTmGvCSOwd1guGpab
-         KRUORmBJq5EIMto530oZ8KM3wejfjVh33R7o1p6r+cMwmTQZNx1Od0233mf0UFjT0ZQR
-         nLdAeh/LCJldLOKBYDDz9V+ZvLuZ9JpokjFlQGALpTzP+ItDr6hWxvznHiEhV7Huw1oj
-         XH2Skb89I41O1IWRGU5nKGMHq8Zd8Gci/8UpcVlcElNMk8OivcRFNPXNnhMd6QsV3nK4
-         wT8w==
-X-Gm-Message-State: AC+VfDw7/uQXcwBKN6SU4zhFW4R5AK74885sZbs3gZImHwqJmuJIIhka
-        z2zTznTbK33yfly6/n2d+SPhaQZ950x4HiRo2AdbEQ==
-X-Google-Smtp-Source: ACHHUZ4+7sbj81UsRHmAbl9QlYt7ZZmVqNsMLkZDz17Ve/pdy6A0enKOXhe8I1iDZXgOZeytbthoVeE93RHK/qCLMik=
-X-Received: by 2002:a25:ca0b:0:b0:ba1:ce0d:a076 with SMTP id
- a11-20020a25ca0b000000b00ba1ce0da076mr30559075ybg.43.1687881630048; Tue, 27
- Jun 2023 09:00:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230627042321.1763765-1-surenb@google.com> <20230627042321.1763765-6-surenb@google.com>
- <ZJsBEk4OHlp39vEK@x1n>
-In-Reply-To: <ZJsBEk4OHlp39vEK@x1n>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Tue, 27 Jun 2023 09:00:18 -0700
-Message-ID: <CAJuCfpEdBtLo0iaAyKh0Ok_DqEGLkRaVGNxpteki7tkr7+kdJg@mail.gmail.com>
-Subject: Re: [PATCH v3 5/8] mm: make folio_lock_fault indicate the state of
- mmap_lock upon return
-To:     Peter Xu <peterx@redhat.com>
-Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
-        mhocko@suse.com, josef@toxicpanda.com, jack@suse.cz,
-        ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
-        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
-        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
-        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
-        apopple@nvidia.com, ying.huang@intel.com, david@redhat.com,
-        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        pasha.tatashin@soleen.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
+        Tue, 27 Jun 2023 12:00:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D22F330C3;
+        Tue, 27 Jun 2023 09:00:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6F4DB611D3;
+        Tue, 27 Jun 2023 16:00:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 265E3C433C8;
+        Tue, 27 Jun 2023 16:00:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687881644;
+        bh=+GcraKhz7wR5FRWp8QTf0ZwDivzumVRLKSa7P/eGsIw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=e5+5HCCGTB5EGLosVGCU5hMoto93SkODqq6yF7s+u9fuK4Jf12AUUT23+Trak8vsS
+         d6KnOTGBpBKdNhVCn9nJxu/iytXXt/DrlV6okVsFGkTpi5QL6+IBZmUs0341jrFtsF
+         Ms/s7pJnLzQQEJNELj/uK6OIQ9onmVmBZAwYQTk7+S/rEVzk/V9GvZR3fG6ngYWdBh
+         zy9c4hnYyZI209jCuE/AJGFQruSeTtH/eIEhfdk9FnqH5Jt3/ck4TNLgNHbPLVvv0b
+         0fDkhFY3MeTQ+w0tko+CvyYhgRLA2QyYlEwcxLssYsAv0YyfmjnKYicj10USQzqVVi
+         SJ3NMvKXt9DWw==
+Message-ID: <51e756daf978ba61fbc15f209effac5daf59137a.camel@kernel.org>
+Subject: Re: [PATCH 2/3] fd/locks: allow get the lock owner by F_OFD_GETLK
+From:   Jeff Layton <jlayton@kernel.org>
+To:     stsp <stsp2@yandex.ru>, Christian Brauner <brauner@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+Date:   Tue, 27 Jun 2023 12:00:42 -0400
+In-Reply-To: <0697f0d1-490b-6613-fea0-967a40861b25@yandex.ru>
+References: <5f644a24-90b5-a02f-b593-49336e8e0f5a@yandex.ru>
+         <2eb8566726e95a01536b61a3b8d0343379092b94.camel@kernel.org>
+         <d70b6831-3443-51d0-f64c-6f6996367a85@yandex.ru>
+         <d0c18369245db91a3b78017fabdc81417418af67.camel@kernel.org>
+         <ddb48e05-ab26-ae5d-86d5-01e47f0f0cd2@yandex.ru>
+         <e8c8c7d8bf871a0282f3e629d017c09ed38e2c5e.camel@kernel.org>
+         <9c0a7cde-da32-bc09-0724-5b1387909d18@yandex.ru>
+         <26dce201000d32fd3ca1ca5b5f8cd4f5ae0b38b2.camel@kernel.org>
+         <0188af4b-fc74-df61-8e00-5bc81bbcb1cc@yandex.ru>
+         <b7fd8146f9c758a8e16faeb371ca04a701e1a7b8.camel@kernel.org>
+         <20230623-paranoia-reinschauen-329185eac276@brauner>
+         <0697f0d1-490b-6613-fea0-967a40861b25@yandex.ru>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 8:32=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
->
-> On Mon, Jun 26, 2023 at 09:23:18PM -0700, Suren Baghdasaryan wrote:
-> > folio_lock_fault might drop mmap_lock before returning and to extend it
-> > to work with per-VMA locks, the callers will need to know whether the
-> > lock was dropped or is still held. Introduce new fault_flag to indicate
-> > whether the lock got dropped and store it inside vm_fault flags.
-> >
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> >  include/linux/mm_types.h | 1 +
-> >  mm/filemap.c             | 2 ++
-> >  2 files changed, 3 insertions(+)
-> >
-> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > index 79765e3dd8f3..6f0dbef7aa1f 100644
-> > --- a/include/linux/mm_types.h
-> > +++ b/include/linux/mm_types.h
-> > @@ -1169,6 +1169,7 @@ enum fault_flag {
-> >       FAULT_FLAG_UNSHARE =3D            1 << 10,
-> >       FAULT_FLAG_ORIG_PTE_VALID =3D     1 << 11,
-> >       FAULT_FLAG_VMA_LOCK =3D           1 << 12,
-> > +     FAULT_FLAG_LOCK_DROPPED =3D       1 << 13,
-> >  };
-> >
-> >  typedef unsigned int __bitwise zap_flags_t;
-> > diff --git a/mm/filemap.c b/mm/filemap.c
-> > index 87b335a93530..8ad06d69895b 100644
-> > --- a/mm/filemap.c
-> > +++ b/mm/filemap.c
-> > @@ -1723,6 +1723,7 @@ vm_fault_t __folio_lock_fault(struct folio *folio=
-, struct vm_fault *vmf)
-> >                       return VM_FAULT_RETRY;
-> >
-> >               mmap_read_unlock(mm);
-> > +             vmf->flags |=3D FAULT_FLAG_LOCK_DROPPED;
-> >               if (vmf->flags & FAULT_FLAG_KILLABLE)
-> >                       folio_wait_locked_killable(folio);
-> >               else
-> > @@ -1735,6 +1736,7 @@ vm_fault_t __folio_lock_fault(struct folio *folio=
-, struct vm_fault *vmf)
-> >               ret =3D __folio_lock_killable(folio);
-> >               if (ret) {
-> >                       mmap_read_unlock(mm);
-> > +                     vmf->flags |=3D FAULT_FLAG_LOCK_DROPPED;
-> >                       return VM_FAULT_RETRY;
-> >               }
-> >       } else {
->
-> IIRC we've discussed about this bits in previous version, and the consens=
-us
-> was that we don't need yet another flag?  Just to recap: I think relying =
-on
-> RETRY|COMPLETE would be enough for vma lock, as NOWAIT is only used by gu=
-p
-> while not affecting vma lockings, no?
+On Fri, 2023-06-23 at 22:18 +0500, stsp wrote:
+> 23.06.2023 20:25, Christian Brauner =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Wed, Jun 21, 2023 at 07:05:12AM -0400, Jeff Layton wrote:
+> > > On Wed, 2023-06-21 at 15:42 +0500, stsp wrote:
+> > > > 21.06.2023 15:35, Jeff Layton =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > > > > I don't think we can change this at this point.
+> > > > >=20
+> > > > > The bottom line (again) is that OFD locks are owned by the file
+> > > > > descriptor (much like with flock()), and since file descriptors c=
+an be
+> > > > > shared across multiple process it's impossible to say that some s=
+ingle
+> > > > > process owns it.
+> > > > What's the problem with 2 owners?
+> > > > Can't you get one of them, rather than
+> > > > meaningless -1?
+> > > > Compare this situation with read locks.
+> > > > They can overlap, so when you get an
+> > > > info about a read lock (except for the
+> > > > new F_UNLCK case), you get the info
+> > > > about *some* of the locks in that range.
+> > > > In the case of multiple owners, you
+> > > > likewise get the info about about some
+> > > > owner. If you iteratively send them a
+> > > > "please release this lock" message
+> > > > (eg in a form of SIGKILL), then you
+> > > > traverse all, and end up with the
+> > > > lock-free area.
+> > > > Is there really any problem here?
+> > > Yes. Ambiguous answers are worse than none at all.
+> > I agree.
+> >=20
+> > A few minor observations:
+> >=20
+> > SCM_RIGHTS have already been mentioned multiple times. But I'm not sure
+> > it's been mentioned explicitly but that trivially means it's possible t=
+o
+> > send an fd to a completely separate thread-group, then kill off the
+> > sending thread-group by killing their thread-group leader. Bad enough a=
+s
+> > the identifier is now useless. But it also means that at some later
+> > point that pid can be recycled.
+> Come on.
+> I never proposed anything like this.
+> Of course the returned pid should be
+> the pid of the current, actual owner,
+> or one of current owners.
+> If someone else proposed to return
+> stalled pids, then it wasn't me.
 
-Sorry for missing that point. I focused on making VMA locks being
-dropped for RETRY|COMPLETE and forgot to check after that change if
-RETRY|COMPLETE is enough indication to conclude that VMA lock is
-dropped. Looking at that now, I'm not sure that would be always true
-for file-backed page faults (including shmem_fault()), but we do not
-handle them under VMA locks for now anyway, so this indeed seems like
-a safe assumption. When Matthew implements file-backed support he
-needs to be careful to ensure this rule still holds. With your
-suggestions to drop the VMA lock at the place where we return RETRY
-this seems to indeed eliminate the need for FAULT_FLAG_LOCK_DROPPED
-and simplifies things. I'll try that approach and see if anything
-blows up.
 
->
-> As mentioned in the other reply, even COMPLETE won't appear for vma lock
-> path yet afaict, so mostly only RETRY matters here and it can 100% imply =
-a
-> lock release happened.  It's just that it's very easy to still cover
-> COMPLETE altogether in this case, being prepared for any possible shared
-> support on vma locks, IMHO.
+Beyond all of this, there is a long history of problems with the l_pid
+field as well with network filesystems, even with traditional POSIX
+locks. What should go into the l_pid when a traditional POSIX lock is
+held by a process on a separate host?
 
-Yes and I do introduce one place where we use COMPLETE with VMA locks,
-so will cover it the same way as for RETRY.
-Thanks,
-Suren.
+While POSIX mandates it, the l_pid is really sort of a "legacy" field
+that is really just for informational purposes only nowadays. It might
+have been a reliable bit of information back in the 1980's, but even
+since the 90's it was suspect as a source of information.
 
->
-> Thanks,
->
-> --
-> Peter Xu
->
+Even if you _know_ you hold a traditional POSIX lock, be careful
+trusting the information in that field.
+--=20
+Jeff Layton <jlayton@kernel.org>
