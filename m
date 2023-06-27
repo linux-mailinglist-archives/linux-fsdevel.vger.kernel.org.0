@@ -2,105 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EFA497400C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 18:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAD3E7400CE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 18:23:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231508AbjF0QV1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 12:21:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43420 "EHLO
+        id S230431AbjF0QXl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 12:23:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231725AbjF0QVL (ORCPT
+        with ESMTP id S229680AbjF0QXk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 12:21:11 -0400
-Received: from forward501b.mail.yandex.net (forward501b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d501])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEB9E30D6;
-        Tue, 27 Jun 2023 09:20:42 -0700 (PDT)
-Received: from mail-nwsmtp-smtp-production-main-18.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-18.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:5e29:0:640:6b8b:0])
-        by forward501b.mail.yandex.net (Yandex) with ESMTP id 7A4E75EDC6;
-        Tue, 27 Jun 2023 19:20:36 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-18.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id WKOEHL1WsiE0-MlTFllBQ;
-        Tue, 27 Jun 2023 19:20:35 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1687882835;
-        bh=oWCGWtFnCjNqqD1WMRbx7b1uArOcxMJZ0ZCi5PjthmM=;
-        h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-        b=Pchl2J5ejPI6wKGbXgDartG31TfSQMycg3aSNeNM2Bm7Df87pZj6SEi+eZOMWzf6E
-         Kr0RLEjiF+U2jeV1za7Sjj2TgPeRQaSkA7V0+HTK0rdlUqLUHlRdtmnjFo9nNELV1u
-         2FxnwE5p/ew7rDbsI/gCDHgJPtigabaCFnRQnrQs=
-Authentication-Results: mail-nwsmtp-smtp-production-main-18.iva.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <48c4333a-8c47-4bf9-322c-1621cd876968@yandex.ru>
-Date:   Tue, 27 Jun 2023 21:20:31 +0500
+        Tue, 27 Jun 2023 12:23:40 -0400
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4BBB26A9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 09:23:38 -0700 (PDT)
+Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-c11e2b31b95so3772643276.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 09:23:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1687883018; x=1690475018;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qymS9y/iBQJ/Nbtgv3hEJrG0PMa0rrPgMrPQ2j32eRU=;
+        b=cX6aE86FpHdfRFsdIIgbTpEgKD/Vu2YaitK2vLRrQg49v5sfKauLKa+/hmPC64QbWN
+         lZYVvZRR80L6HLdIU1vhGPGJgnwsxf1Bb1wEeoKAGrBVzk9Snfun7mghg9W+u+hgR67X
+         LKWGZLIeNqusorujboi2uhuN3vpDdOMs35gUGte5KRAInUeSoXLZgk1a1evNWDsoxNxs
+         w9Yfer2GlW92ulsQm+8CRdz7cjowDs3WNqV7wk0jO6lpXK1T/0JYTv0w9+eN9kPgEFGd
+         fPoLKr1qMrEYyPrEv4eyZ/0ZuMTU/sWbL0AjFqwNzLkgZd/fbZjfirILKN37PGDUIk+G
+         NM9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687883018; x=1690475018;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qymS9y/iBQJ/Nbtgv3hEJrG0PMa0rrPgMrPQ2j32eRU=;
+        b=IxuXUkNBWQEoHRmGAPgEdhYtydvPmxFyR+WN7HA1c8HYWk8LnynjzHo80vhfVEq+nv
+         FRgNuTS9BFhxjt2SiA7UDnXtSeNx1SkhYIy2EAzR2/EoBviLmtU04WmbCy6CagCfqddt
+         sYIuXlkdzTz6sbtbsQEGStOSlv0fe6kPlVmQ7Q120R5yR8xsAP5wtU0ejFFnGexFLfkv
+         O7c0R6u+3mF7dBizfRcgw/+B/n18d8Cc4fcCvGa1Zh1COySBQkehB8YH9AYLd8eudNzR
+         jD/63rjw6BHjTSenfnrCkJbP65LNXReOpJ/yW0JCkZlCpkwiec22YumHGqcxFhXcVYiH
+         6bzw==
+X-Gm-Message-State: AC+VfDzWNVLwr3++WyCSFQfDxKiQ9UdmJS/gm3Z+N+GXy8f7T+ZwaxwV
+        ouZTbMgiL3L899UAL2NMw9mxQIP1dxHqgLc2AXVU3A==
+X-Google-Smtp-Source: ACHHUZ55vtvWXDpDJ91JhVYJu5OqOdjEzz1lOxA79ilXOPa63gdyb/WDbHmi+KEDsz//Yk8mxcBPvYE5d1gzq1EXwZk=
+X-Received: by 2002:a05:6902:1342:b0:c1c:f99e:ef55 with SMTP id
+ g2-20020a056902134200b00c1cf99eef55mr6600031ybu.57.1687883017742; Tue, 27 Jun
+ 2023 09:23:37 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 2/3] fd/locks: allow get the lock owner by F_OFD_GETLK
-Content-Language: en-US
-To:     Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-References: <5f644a24-90b5-a02f-b593-49336e8e0f5a@yandex.ru>
- <2eb8566726e95a01536b61a3b8d0343379092b94.camel@kernel.org>
- <d70b6831-3443-51d0-f64c-6f6996367a85@yandex.ru>
- <d0c18369245db91a3b78017fabdc81417418af67.camel@kernel.org>
- <ddb48e05-ab26-ae5d-86d5-01e47f0f0cd2@yandex.ru>
- <e8c8c7d8bf871a0282f3e629d017c09ed38e2c5e.camel@kernel.org>
- <9c0a7cde-da32-bc09-0724-5b1387909d18@yandex.ru>
- <26dce201000d32fd3ca1ca5b5f8cd4f5ae0b38b2.camel@kernel.org>
- <0188af4b-fc74-df61-8e00-5bc81bbcb1cc@yandex.ru>
- <b7fd8146f9c758a8e16faeb371ca04a701e1a7b8.camel@kernel.org>
- <20230623-paranoia-reinschauen-329185eac276@brauner>
- <0697f0d1-490b-6613-fea0-967a40861b25@yandex.ru>
- <51e756daf978ba61fbc15f209effac5daf59137a.camel@kernel.org>
-From:   stsp <stsp2@yandex.ru>
-In-Reply-To: <51e756daf978ba61fbc15f209effac5daf59137a.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20230627042321.1763765-1-surenb@google.com> <20230627042321.1763765-8-surenb@google.com>
+ <ZJsFFzKG3W7UPCeo@x1n>
+In-Reply-To: <ZJsFFzKG3W7UPCeo@x1n>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Tue, 27 Jun 2023 09:23:26 -0700
+Message-ID: <CAJuCfpFC05vCwAONO7YxG=LhqteyYmOy1Nprg2NyjQ6hKaHgOA@mail.gmail.com>
+Subject: Re: [PATCH v3 7/8] mm: drop VMA lock before waiting for migration
+To:     Peter Xu <peterx@redhat.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
+        mhocko@suse.com, josef@toxicpanda.com, jack@suse.cz,
+        ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
+        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
+        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
+        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
+        apopple@nvidia.com, ying.huang@intel.com, david@redhat.com,
+        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        pasha.tatashin@soleen.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-27.06.2023 21:00, Jeff Layton пишет:
-> Beyond all of this, there is a long history of problems with the l_pid
-> field as well with network filesystems, even with traditional POSIX
-> locks. What should go into the l_pid when a traditional POSIX lock is
-> held by a process on a separate host?
+On Tue, Jun 27, 2023 at 8:49=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
 >
-> While POSIX mandates it, the l_pid is really sort of a "legacy" field
-> that is really just for informational purposes only nowadays. It might
-> have been a reliable bit of information back in the 1980's, but even
-> since the 90's it was suspect as a source of information.
+> On Mon, Jun 26, 2023 at 09:23:20PM -0700, Suren Baghdasaryan wrote:
+> > migration_entry_wait does not need VMA lock, therefore it can be
+> > dropped before waiting.
 >
-> Even if you _know_ you hold a traditional POSIX lock, be careful
-> trusting the information in that field.
-Thanks for info.
-Additional problem with multiple owners
-that I can think of, is that you don't know
-if more owners are present. And even if
-you use SIGKILL to "iterate", you still don't
-know if you got another owner of the prev
-lock, or maybe you got entirely different
-read lock with the same range from another
-owner.
+> Hmm, I'm not sure..
+>
+> Note that we're still dereferencing *vmf->pmd when waiting, while *pmd is
+> on the page table and IIUC only be guaranteed if the vma is still there.
+> If without both mmap / vma lock I don't see what makes sure the pgtable i=
+s
+> always there.  E.g. IIUC a race can happen where unmap() runs right after
+> vma_end_read() below but before pmdp_get_lockless() (inside
+> migration_entry_wait()), then pmdp_get_lockless() can read some random
+> things if the pgtable is freed.
 
-Still if you do "man fcntl" you'll see this:
+That sounds correct. I thought ptl would keep pmd stable but there is
+time between vma_end_read() and spin_lock(ptl) when it can be freed
+from under us. I think it would work if we do vma_end_read() after
+spin_lock(ptl) but that requires code refactoring. I'll probably drop
+this optimization from the patchset for now to keep things simple and
+will get back to it later.
 
-                pid_t l_pid;     /* PID of process blocking our lock
-
-                                    (set by F_GETLK and F_OFD_GETLK) */
-
-And no, its not my patch that did this. :)
-So unless properly documented, this would
-be treated as a bug. And it should _not_ be
-documented as "OFD locks has no owner by
-definition" or alike - no one buys that.
-
+>
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > ---
+> >  mm/memory.c | 14 ++++++++++++--
+> >  1 file changed, 12 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 5caaa4c66ea2..bdf46fdc58d6 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -3715,8 +3715,18 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >       entry =3D pte_to_swp_entry(vmf->orig_pte);
+> >       if (unlikely(non_swap_entry(entry))) {
+> >               if (is_migration_entry(entry)) {
+> > -                     migration_entry_wait(vma->vm_mm, vmf->pmd,
+> > -                                          vmf->address);
+> > +                     /* Save mm in case VMA lock is dropped */
+> > +                     struct mm_struct *mm =3D vma->vm_mm;
+> > +
+> > +                     if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
+> > +                             /*
+> > +                              * No need to hold VMA lock for migration=
+.
+> > +                              * WARNING: vma can't be used after this!
+> > +                              */
+> > +                             vma_end_read(vma);
+> > +                             ret |=3D VM_FAULT_COMPLETED;
+> > +                     }
+> > +                     migration_entry_wait(mm, vmf->pmd, vmf->address);
+> >               } else if (is_device_exclusive_entry(entry)) {
+> >                       vmf->page =3D pfn_swap_entry_to_page(entry);
+> >                       ret =3D remove_device_exclusive_entry(vmf);
+> > --
+> > 2.41.0.178.g377b9f9a00-goog
+> >
+>
+> --
+> Peter Xu
+>
