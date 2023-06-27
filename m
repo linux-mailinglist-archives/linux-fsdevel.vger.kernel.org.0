@@ -2,207 +2,343 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D64E740A1C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 09:58:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB9D0740B5D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 10:27:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232305AbjF1H6L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 03:58:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34152 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231539AbjF1Hzz (ORCPT
+        id S233717AbjF1I0u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 04:26:50 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:19555 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233537AbjF1IYn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 03:55:55 -0400
-Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75B8430EE
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 00:55:11 -0700 (PDT)
-Received: by mail-qk1-x72d.google.com with SMTP id af79cd13be357-7659924cd9bso370184585a.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 00:55:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1687938910; x=1690530910;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bHEtQ2wJjmvauaUesNJbaTs9laDotb9BZAcf/mJEhKc=;
-        b=B0xZwq+ES1wDrmiBK/m9JIrklY2l9dJZ1vXsjiTr7cfMeMGD6Xc2U1BgRHY732FQW6
-         AbDkI1I1k7hLvdtStJkfnyfJI8J44VNVJi6uWdrOD0si0B4hy0DF/w+I0TYw7hxm1iaX
-         IrN20z43+vzIJ11ZMZ2+dhcnT6wO8ps6lSnG4Ki1hKSqBlJ7H1ILMggU+LAalfsK6GQs
-         Fb3r8m7sGBUb9OFZkro9b1+GA/vWHRtmQNQD46xlw9Ns9vncaiwfMOzoH1IGmzIydPki
-         N8gUB1pfL4/8j4bSO6NgzVPUGaqkIqDXWRCcXhobnlwl64+u+8/sDGQHjXswEzMF9oga
-         nzZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687938910; x=1690530910;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bHEtQ2wJjmvauaUesNJbaTs9laDotb9BZAcf/mJEhKc=;
-        b=W6B1HJULxqdCqgsvzSGXADaMHFrUS/0XrzHBRtuigr4gI/OTc7LshDA4eePA0M2vqp
-         uJc4PYrT9M6Jk2MpBAWn1gS9RRlBgtwYs1lYuzZ52zP/uoxawc3qkNzI8UAxODi7w6qj
-         tFZA9fPnN4VE+BTDmmLD8k2uH3f1q0wQlVsLbGl5ZvrWEzzKr8HPSXATSfaB70nartCl
-         x0+xXp06Hys80UnRWvgPplkIAeEOUYiA8nYhjwzL/ISoAEdPQjIgF4rqU3lrkWO3kQen
-         uAVmcJXNFVOQb3/8yYNk2k0EKRTaG0ueSyenE8lHHuWQC9idyQloleXR+7fMJcmGssHt
-         sE3g==
-X-Gm-Message-State: AC+VfDzy7k2ggrtoLy204YezxP+9DNDoePbSeRRwzDble1WHrAl+BIWN
-        wFfesvorydwjguHMi048w0w/U1k4CDZALhu4NK7yA7I61cwRit7PviU4xQ==
-X-Google-Smtp-Source: ACHHUZ7oPxWxgKTjkcD/pMkzXjHroPoc0154QI5Hv1NcAZMIvWKxBZmhFgad6ttNvypRyPckzF2PABKURWpyjMsi0Xw=
-X-Received: by 2002:a5b:4c:0:b0:c17:afbd:71a9 with SMTP id e12-20020a5b004c000000b00c17afbd71a9mr8721564ybp.25.1687938415193;
- Wed, 28 Jun 2023 00:46:55 -0700 (PDT)
+        Wed, 28 Jun 2023 04:24:43 -0400
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230628055500epoutp015c31dade7091e06f76b8424255b7aa11~svPBCZ_HH2369523695epoutp01E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 05:55:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230628055500epoutp015c31dade7091e06f76b8424255b7aa11~svPBCZ_HH2369523695epoutp01E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1687931700;
+        bh=1L497XV2xfkrLQYU8FjUHzfomqpKDzGuWtK2Ad+0obs=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=cBt3IobsNwOF9GzmxLUNVS/Yv11NrXjiKMTvxFIioSNtB29JdxvkIZogIzWMvPQFw
+         iBboqFfNEe9skjlYeNkVw6OedonINBkwS5er3KG/iFkchdh/221xXXORQsbkEM0bbC
+         6sjw3aR8ZTog18Us2sZyHN6y7KSYbtiSn2X4UDmg=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20230628055459epcas5p2212b46d00ee1c65b745f574bb102ffa3~svPAYejX61872218722epcas5p2s;
+        Wed, 28 Jun 2023 05:54:59 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4QrW4y3zGTz4x9Q9; Wed, 28 Jun
+        2023 05:54:58 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E9.6E.06099.23BCB946; Wed, 28 Jun 2023 14:54:58 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20230627183950epcas5p1b924785633509f612ffa5d9616bfe447~smBhjHt543272832728epcas5p1D;
+        Tue, 27 Jun 2023 18:39:50 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230627183950epsmtrp2b960dbfe342e1c8adc07d1bb712d48b6~smBhhtUpl2845228452epsmtrp2I;
+        Tue, 27 Jun 2023 18:39:50 +0000 (GMT)
+X-AuditID: b6c32a4b-d308d700000017d3-51-649bcb32538c
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        09.39.34491.6FC2B946; Wed, 28 Jun 2023 03:39:50 +0900 (KST)
+Received: from green245.sa.corp.samsungelectronics.net (unknown
+        [107.99.41.245]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230627183946epsmtip218572e571ea16038ddda1594e34e3a6e~smBd8k8en0383803838epsmtip2Y;
+        Tue, 27 Jun 2023 18:39:46 +0000 (GMT)
+From:   Nitesh Shetty <nj.shetty@samsung.com>
+To:     Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        willy@infradead.org, hare@suse.de, djwong@kernel.org,
+        bvanassche@acm.org, ming.lei@redhat.com, dlemoal@kernel.org,
+        nitheshshetty@gmail.com, gost.dev@samsung.com,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v13 0/9] Implement copy offload support
+Date:   Wed, 28 Jun 2023 00:06:14 +0530
+Message-Id: <20230627183629.26571-1-nj.shetty@samsung.com>
+X-Mailer: git-send-email 2.35.1.500.gb896f729e2
 MIME-Version: 1.0
-References: <ZJn1tQDgfmcE7mNG@slm.duckdns.org> <20230627-kanon-hievt-bfdb583ddaa6@brauner>
- <CAJuCfpECKqYiekDK6Zw58w10n1T4Q3R+2nymfHX2ZGfQVDC3VQ@mail.gmail.com>
- <20230627-ausgaben-brauhaus-a33e292558d8@brauner> <ZJstlHU4Y3ZtiWJe@slm.duckdns.org>
- <CAJuCfpFUrPGVSnZ9+CmMz31GjRNN+tNf6nUmiCgx0Cs5ygD64A@mail.gmail.com>
- <CAJuCfpFe2OdBjZkwHW5UCFUbnQh7hbNeqs7B99PXMXdFNjKb5Q@mail.gmail.com>
- <CAJuCfpG2_trH2DuudX_E0CWfMxyTKfPWqJU14zjVxpTk6kPiWQ@mail.gmail.com>
- <ZJuSzlHfbLj3OjvM@slm.duckdns.org> <CAJuCfpGoNbLOLm08LWKPOgn05+FB1GEqeMTUSJUZpRmDYQSjpA@mail.gmail.com>
- <20230628-meisennest-redlich-c09e79fde7f7@brauner>
-In-Reply-To: <20230628-meisennest-redlich-c09e79fde7f7@brauner>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 28 Jun 2023 00:46:43 -0700
-Message-ID: <CAJuCfpHqZ=5a_2k==FsdBbwDCF7+s7Ji3aZ37LBqUgyXLMz7gA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] kernfs: add kernfs_ops.free operation to free
- resources tied to the file
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Tejun Heo <tj@kernel.org>, gregkh@linuxfoundation.org,
-        peterz@infradead.org, lujialin4@huawei.com,
-        lizefan.x@bytedance.com, hannes@cmpxchg.org, mingo@redhat.com,
-        ebiggers@kernel.org, oleg@redhat.com, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL,
-        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
-        version=3.4.6
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-        lindbergh.monkeyblade.net
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTVxzHOfe2t4VZcwEnhxoBazQRhLZa4EBESCTbzSAL6kaWJQvr6B1l
+        QNv1oWMzGayCgcpjICwWImw0QEHA8ZKHFYTJo8yxyQBBcThgQwuIEJiG1yiFzf8+v9f39zg5
+        bNwpj8Vlx8rUtFImjucRDozGziOe3sf6CiSCpXYuqjF34ahyLItAls4FgPLnX+Fosv0SQAOT
+        u9F4WzAyzRUw0Uh7M4Zu/ZCDIWPlXQzldAwBNDWox5Bp1At9n2pgoFumXgYaaCkkUFHpFAvp
+        hpsIVNa9jqGOXC2GmiaTAWpcKcJRteU5A/WM7kP9a91MtPKykAjZRw38HkY168dYVP/jHxlU
+        XbknNXBPQ9VWpBFUneFrqnUkiaBKMnOZVIZ2jqBeTI0yqOe3Bwkqs74CUHV9X1GLtW5U7eQs
+        FkF+GHdCSosltNKDlkXLJbGymCBe2NmoU1G+fgKhtzAA+fM8ZOIEOogXGh7h/VZs/OZheB7n
+        xPGaTVeEWKXi8U+eUMo1atpDKlepg3i0QhKvECl8VOIElUYW4yOj1YFCgeCY72bix3HSefNN
+        hkJ36ovl3mFGErgjTAf2bEiKYNeGGbOyE9kK4NPCd9KBwyYvANj98GdgM5YBHNGNsnYqcmaG
+        WLaACUBLWdW2kYLBJZ2OmQ7YbIL0gn0bbKt/D5mEwxutJVtSOGnAoXFmfivJmfSH9Tc5VlUG
+        eQjmr5YzrcwhA6HuxSXCmgJJPsz6w9HmdoS9VycZVsZJd6htKMCtkpBss4eNww+YtulC4X1D
+        G2ZjZ/isu357ai5cnDMRNj4PjVfKCVvxRQD1w3pgCwTDFHMWbm2Mk0dgTQvf5t4P88zVmK3x
+        bpixMrmtz4FN13b4ILxeU7yt7wqH/kneZgq2l3YxbPf9CGZa0pjZwF3/2j761/bR/9+5GOAV
+        wJVWqBJiaJWv4riMPv/fw0bLE2rB1v/wDGsCf47P+3QAjA06AGTjvD2cvS+/kzhxJOLEL2ml
+        PEqpiadVHcB388bf4tw3o+WbH0ymjhKKAgQiPz8/UcBxPyHPhfPbcIbEiYwRq+k4mlbQyp06
+        jG3PTcLoqtnTWhee9t0wx18dRM9W1/a6Hxi+d8OETUssgw+/ifwspAuU7uplH1VeDPdMrp9e
+        TZqoIvrnP4WLIc2KDGOs3vlzSqwYH/Pq4bZzDRdKLXdcc0LPGX85VJo2/ap67aflsr8f5WSx
+        Ii/wD0hMlgeHP4jkC8bXg8rzmi4XZvbzNfNhj9zWZ0diznyS9UanXaZri2yi+Gp1sGitjb3m
+        Ul3k2njafC2/csXe/6idCfY5p+QqmysWjHaWxPC3/4o3SZ9SopKy1lw/t+sNgQ0th3t7lg4+
+        Lnmy6/aq9MzMWWVS4nveAw3C1qHU7Pttq+93pmpbsi9PGMQbT/bfVVfifaKT/TyGSioWeuJK
+        lfhfO+84AagEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsWy7bCSvO43ndkpBh9/a1msP3WM2WL13X42
+        i9eHPzFaTPvwk9niyYF2RovLT/gsHuy3t9j7bjarxc0DO5ks9iyaxGSxcvVRJotJh64xWjy9
+        OovJYu8tbYuFbUtYLPbsPclicXnXHDaL+cueslt0X9/BZrH8+D8mi0OTm5ksdjxpZLTY9ns+
+        s8W61+9ZLE7ckrY4//c4q8XvH3PYHKQ9Ll/x9tg56y67x/l7G1k8Nq/Q8rh8ttRj06pONo/N
+        S+o9dt9sYPNY3DeZ1aO3+R2bx8ent1g83u+7yubRt2UVo8fm09UenzfJeWx68pYpQCCKyyYl
+        NSezLLVI3y6BK+PDqe0sBd3OFd9OXmdpYDxo2MXIySEhYCIx6c019i5GLg4hgd2MErPbFrJC
+        JCQllv09wgxhC0us/PccqqiZSeL2pFdMXYwcHGwC2hKn/3OAxEUEupglOne+YwFxmAW2MUt8
+        +PCFHaRIWMBcYst2XpBBLAKqEtP+rABbwCtgJdH9sZ0NpERCQF+i/74gRFhQ4uTMJywgYWYB
+        dYn184RAwswC8hLNW2czT2Dkn4WkahZC1SwkVQsYmVcxSqYWFOem5xYbFhjmpZbrFSfmFpfm
+        pesl5+duYgRHvZbmDsbtqz7oHWJk4mA8xCjBwawkwiv2Y3qKEG9KYmVValF+fFFpTmrxIUZp
+        DhYlcV7xF70pQgLpiSWp2ampBalFMFkmDk6pBqbFGSEnPmx6rm9xf3nM7jj+yWsnhq0puBwm
+        lsTfUbrF/Rirw/8HLPIezuteSvcx/wuNYdzuFHBVf+J+qWxGnYbOs0delHjxC8vpK39+MYn3
+        Ld8JS9vWPd71Tl1/np7bt5+xkZHj8lfxL0y/f4fdv/4yot1QJnzalv0fOd4wOyqJLz+d+Urh
+        pe/7SZ5nCpfcfDZPZ6LUws1PpzALz50qPN9h3z7f5lXbv20OZf9+84/pQg6eI/oCrrubryyc
+        5/tvxonLSy92Mhxacpdv3e7TfzRbjbc/+FXhvnTJ8YWKh6+vZXd+ub4reeNtKf3dra7tcwVb
+        I7kyRZhlrVzn6217WyG/skVS5X/qwcWl/z2ue/huVGIpzkg01GIuKk4EALJIwBdpAwAA
+X-CMS-MailID: 20230627183950epcas5p1b924785633509f612ffa5d9616bfe447
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230627183950epcas5p1b924785633509f612ffa5d9616bfe447
+References: <CGME20230627183950epcas5p1b924785633509f612ffa5d9616bfe447@epcas5p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 28, 2023 at 12:26=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> On Tue, Jun 27, 2023 at 08:09:46PM -0700, Suren Baghdasaryan wrote:
-> > On Tue, Jun 27, 2023 at 6:54=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote=
-:
-> > >
-> > > Hello,
-> > >
-> > > On Tue, Jun 27, 2023 at 02:58:08PM -0700, Suren Baghdasaryan wrote:
-> > > > Ok in kernfs_generic_poll() we are using kernfs_open_node.poll
-> > > > waitqueue head for polling and kernfs_open_node is freed from insid=
-e
-> > > > kernfs_unlink_open_file() which is called from kernfs_fop_release()=
-.
-> > > > So, it is destroyed only when the last fput() is done, unlike the
-> > > > ops->release() operation which we are using for destroying PSI
-> > > > trigger's waitqueue. So, it seems we still need an operation which
-> > > > would indicate that the file is truly going away.
-> > >
-> > > If we want to stay consistent with how kernfs behaves w.r.t. severing=
-, the
-> > > right thing to do would be preventing any future polling at severing =
-and
-> > > waking up everyone currently waiting, which sounds fine from cgroup b=
-ehavior
-> > > POV too.
-> >
-> > That's actually what we are currently doing for PSI triggers.
-> > ->release() is handled by cgroup_pressure_release() which signals the
-> > waiters, waits for RCU grace period to pass (per
-> > https://elixir.bootlin.com/linux/latest/source/include/linux/wait.h#L25=
-8)
-> > and then releases all the trigger resources including the waitqueue
-> > head. However as reported in
-> > https://lore.kernel.org/all/20230613062306.101831-1-lujialin4@huawei.co=
-m
-> > this does not save us from the synchronous polling case:
-> >
-> >                                                   do_select
-> >                                                       vfs_poll
-> > cgroup_pressure_release
-> >     psi_trigger_destroy
-> >         wake_up_pollfree(&t->event_wait) -> unblocks vfs_poll
-> >         synchronize_rcu()
-> >         kfree(t) -> frees waitqueue head
-> >                                                      poll_freewait()
-> > -> uses waitqueue head
-> >
-> >
-> > This happens because we release the resources associated with the file
-> > while there are still file users (the file's refcount is non-zero).
-> > And that happens because kernfs can call ->release() before the last
-> > fput().
-> >
-> > >
-> > > Now, the challenge is designing an interface which is difficult to ma=
-ke
-> > > mistake with. IOW, it'd be great if kernfs wraps poll call so that se=
-vering
-> > > is implemented without kernfs users doing anything, or at least make =
-it
-> > > pretty obvious what the correct usage pattern is.
-> > >
-> > > > Christian's suggestion to rename current ops->release() operation i=
-nto
-> > > > ops->drain() (or ops->flush() per Matthew's request) and introduce =
-a
-> > > > "new" ops->release() which is called only when the last fput() is d=
-one
-> > > > seems sane to me. Would everyone be happy with that approach?
-> > >
-> > > I'm not sure I'd go there. The contract is that once ->release() is c=
-alled,
-> > > the code backing that file can go away (e.g. rmmod'd). It really shou=
-ld
-> > > behave just like the last put from kernfs users' POV.
-> >
-> > I 100% agree with the above statement.
-> >
-> > > For this specific fix,
-> > > it's safe because we know the ops is always built into the kernel and=
- won't
-> > > go away but it'd be really bad if the interface says "this is a norma=
-l thing
-> > > to do". We'd be calling into rmmod'd text pages in no time.
-> > >
-> > > So, I mean, even for temporary fix, we have to make it abundantly cle=
-ar that
-> > > this is not for usual usage and can only be used if the code backing =
-the ops
-> > > is built into the kernel and so on.
-> >
-> > I think the root cause of this problem is that ->release() in kernfs
-> > does not adhere to the common rule that ->release() is called only
-> > when the file is going away and has no users left. Am I wrong?
->
-> So imho, ultimately this all comes down to rmdir() having special
-> semantics in kernfs. On any regular filesystem an rmdir() on a directory
-> which is still referenced by a struct file doesn't trigger an
-> f_op->release() operation. It's just that directory is unlinked and
-> you get some sort of errno like ENOENT when you try to create new files
-> in there or whatever. The actual f_op->release) however is triggered
-> on last fput().
->
-> But in essence, kernfs treats an rmdir() operation as being equivalent
-> to a final fput() such that it somehow magically kills all file
-> references. And that's just wrong and not supported.
+The patch series covers the points discussed in past and most recently
+in LSFMM'23[0].
+We have covered the initial agreed requirements in this patchset and
+further additional features suggested by community.
 
-Thanks for the explanation, Christian!
-If kernfs is special and needs different rules for calling
-f_op->release() then fine, but I need an operation which tells me
-there are no users of the file so that I can free the resources.
-What's the best way to do that?
+This is next iteration of our previous patchset v12[1].
+We have changed the token based approach to request based approach,
+instead of storing the info in token. We now try to merge the copy bio's
+in request layer and send it to driver.
+So this design works only for request based storage drivers.
 
->
-> --
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to kernel-team+unsubscribe@android.com.
->
+Overall series supports:
+========================
+	1. Driver
+		- NVMe Copy command (single NS, TP 4065), including support
+		in nvme-target (for block and file backend).
+
+	2. Block layer
+		- Block-generic copy (REQ_OP_COPY_DST/SRC), operation with
+                  interface accommodating two block-devs
+                - Merging copy requests in request layer
+		- Emulation, for in-kernel user when offload is natively 
+                absent
+		- dm-linear support (for cases not requiring split)
+
+	3. User-interface
+		- copy_file_range
+
+Testing
+=======
+	Copy offload can be tested on:
+	a. QEMU: NVME simple copy (TP 4065). By setting nvme-ns
+		parameters mssrl,mcl, msrc. For more info [2].
+	b. Null block device
+        c. NVMe Fabrics loopback.
+	d. blktests[3] (tests block/035-038, nvme/050-053)
+
+	Emulation can be tested on any device.
+
+	fio[4].
+
+Infra and plumbing:
+===================
+        We populate copy_file_range callback in def_blk_fops. 
+        For devices that support copy-offload, use __blkdev_copy_offload to
+        achieve in-device copy.
+        However for cases, where device doesn't support offload,
+        fallback to generic_copy_file_range.
+        For in-kernel users (like NVMe fabrics), we use blkdev_issue_copy
+        which implements its own emulation, as fd is not available.
+        Modify checks in generic_copy_file_range to support block-device.
+
+Blktests[3]
+======================
+	tests/block/035,036: Runs copy offload and emulation on block
+                              device.
+	tests/block/037,038: Runs copy offload and emulation on null
+                              block device.
+        tests/nvme/050-053: Create a loop backed fabrics device and
+                              run copy offload and emulation.
+
+Future Work
+===========
+	- loopback device copy offload support
+	- upstream fio to use copy offload
+	- upstream blktest to test copy offload
+
+	These are to be taken up after this minimal series is agreed upon.
+
+Additional links:
+=================
+	[0] https://lore.kernel.org/linux-nvme/CA+1E3rJ7BZ7LjQXXTdX+-0Edz=zT14mmPGMiVCzUgB33C60tbQ@mail.gmail.com/
+            https://lore.kernel.org/linux-nvme/f0e19ae4-b37a-e9a3-2be7-a5afb334a5c3@nvidia.com/
+            https://lore.kernel.org/linux-nvme/20230113094648.15614-1-nj.shetty@samsung.com/
+	[1] https://lore.kernel.org/linux-block/20230605121732.28468-1-nj.shetty@samsung.com/T/#m4db1801c86a5490dc736266609f8458fd52b9eb5
+	[2] https://qemu-project.gitlab.io/qemu/system/devices/nvme.html#simple-copy
+	[3] https://github.com/nitesh-shetty/blktests/tree/feat/copy_offload/v13
+	[4] https://github.com/vincentkfu/fio/commits/copyoffload-3.35-v13
+
+Changes since v12:
+=================
+        - block,nvme: Replaced token based approach with request based
+          single namespace capable approach (Christoph Hellwig)
+
+Changes since v11:
+=================
+        - Documentation: Improved documentation (Damien Le Moal)
+        - block,nvme: ssize_t return values (Darrick J. Wong)
+        - block: token is allocated to SECTOR_SIZE (Matthew Wilcox)
+        - block: mem leak fix (Maurizio Lombardi)
+
+Changes since v10:
+=================
+        - NVMeOF: optimization in NVMe fabrics (Chaitanya Kulkarni)
+        - NVMeOF: sparse warnings (kernel test robot)
+
+Changes since v9:
+=================
+        - null_blk, improved documentation, minor fixes(Chaitanya Kulkarni)
+        - fio, expanded testing and minor fixes (Vincent Fu)
+
+Changes since v8:
+=================
+        - null_blk, copy_max_bytes_hw is made config fs parameter
+          (Damien Le Moal)
+        - Negative error handling in copy_file_range (Christian Brauner)
+        - minor fixes, better documentation (Damien Le Moal)
+        - fio upgraded to 3.34 (Vincent Fu)
+
+Changes since v7:
+=================
+        - null block copy offload support for testing (Damien Le Moal)
+        - adding direct flag check for copy offload to block device,
+	  as we are using generic_copy_file_range for cached cases.
+        - Minor fixes
+
+Changes since v6:
+=================
+        - copy_file_range instead of ioctl for direct block device
+        - Remove support for multi range (vectored) copy
+        - Remove ioctl interface for copy.
+        - Remove offload support in dm kcopyd.
+
+Changes since v5:
+=================
+	- Addition of blktests (Chaitanya Kulkarni)
+        - Minor fix for fabrics file backed path
+        - Remove buggy zonefs copy file range implementation.
+
+Changes since v4:
+=================
+	- make the offload and emulation design asynchronous (Hannes
+	  Reinecke)
+	- fabrics loopback support
+	- sysfs naming improvements (Damien Le Moal)
+	- use kfree() instead of kvfree() in cio_await_completion
+	  (Damien Le Moal)
+	- use ranges instead of rlist to represent range_entry (Damien
+	  Le Moal)
+	- change argument ordering in blk_copy_offload suggested (Damien
+	  Le Moal)
+	- removed multiple copy limit and merged into only one limit
+	  (Damien Le Moal)
+	- wrap overly long lines (Damien Le Moal)
+	- other naming improvements and cleanups (Damien Le Moal)
+	- correctly format the code example in description (Damien Le
+	  Moal)
+	- mark blk_copy_offload as static (kernel test robot)
+	
+Changes since v3:
+=================
+	- added copy_file_range support for zonefs
+	- added documentation about new sysfs entries
+	- incorporated review comments on v3
+	- minor fixes
+
+Changes since v2:
+=================
+	- fixed possible race condition reported by Damien Le Moal
+	- new sysfs controls as suggested by Damien Le Moal
+	- fixed possible memory leak reported by Dan Carpenter, lkp
+	- minor fixes
+
+Changes since v1:
+=================
+	- sysfs documentation (Greg KH)
+        - 2 bios for copy operation (Bart Van Assche, Mikulas Patocka,
+          Martin K. Petersen, Douglas Gilbert)
+        - better payload design (Darrick J. Wong)
+
+
+Nitesh Shetty (9):
+  block: Introduce queue limits for copy-offload support
+  block: Add copy offload support infrastructure
+  block: add emulation for copy
+  fs, block: copy_file_range for def_blk_ops for direct block device
+  nvme: add copy offload support
+  nvmet: add copy command support for bdev and file ns
+  dm: Add support for copy offload
+  dm: Enable copy offload for dm-linear target
+  null_blk: add support for copy offload
+
+ Documentation/ABI/stable/sysfs-block |  33 +++
+ Documentation/block/null_blk.rst     |   5 +
+ block/blk-core.c                     |   5 +
+ block/blk-lib.c                      | 384 +++++++++++++++++++++++++++
+ block/blk-map.c                      |   4 +-
+ block/blk-merge.c                    |  21 ++
+ block/blk-settings.c                 |  24 ++
+ block/blk-sysfs.c                    |  63 +++++
+ block/blk.h                          |   9 +
+ block/elevator.h                     |   1 +
+ block/fops.c                         |  20 ++
+ drivers/block/null_blk/main.c        |  85 +++++-
+ drivers/block/null_blk/null_blk.h    |   1 +
+ drivers/md/dm-linear.c               |   1 +
+ drivers/md/dm-table.c                |  41 +++
+ drivers/md/dm.c                      |   7 +
+ drivers/nvme/host/constants.c        |   1 +
+ drivers/nvme/host/core.c             |  79 ++++++
+ drivers/nvme/host/trace.c            |  19 ++
+ drivers/nvme/target/admin-cmd.c      |   9 +-
+ drivers/nvme/target/io-cmd-bdev.c    |  62 +++++
+ drivers/nvme/target/io-cmd-file.c    |  52 ++++
+ drivers/nvme/target/nvmet.h          |   1 +
+ fs/read_write.c                      |   7 +-
+ include/linux/bio.h                  |   4 +-
+ include/linux/blk_types.h            |  26 ++
+ include/linux/blkdev.h               |  23 ++
+ include/linux/device-mapper.h        |   5 +
+ include/linux/nvme.h                 |  43 ++-
+ include/uapi/linux/fs.h              |   3 +
+ 30 files changed, 1025 insertions(+), 13 deletions(-)
+
+
+base-commit: 53cdf865f90ba922a854c65ed05b519f9d728424
+-- 
+2.35.1.500.gb896f729e2
+
