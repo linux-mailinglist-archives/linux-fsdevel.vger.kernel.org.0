@@ -2,133 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AC80A7406A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 00:50:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD1D87406B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 00:57:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230014AbjF0Wue (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 18:50:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33732 "EHLO
+        id S229995AbjF0W5c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 18:57:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229501AbjF0Wuc (ORCPT
+        with ESMTP id S229454AbjF0W5b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 18:50:32 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2077.outbound.protection.outlook.com [40.107.237.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEAB426B3;
-        Tue, 27 Jun 2023 15:50:27 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DYNlRsL+9CijMSvXt6e4GYTGtObY3Tzib+tPmCjsfLZH0z7qIzD8RHedNlkNP6h6jplxWie7ylG3Ry3IBzQau+yxb6vJWpi427QVJfI8RG8naSTDJeQE5pkZCeJcLatolfHpQjKDFLpHfo5V+Dk8bgoD7++8yu1QSV3txDzMeBx2sHVKwDZMYwbV9AInP0C/4vxKxnGz3Fea75Z2i8jGQahHAiWg9E62Xunv55Xo7qtLkPJIN7i1FfuLBO03UsewcbQJXtj98m0FkvFMEwc5KRIrvXADvIl7uh/TcE1UIkzaT+IpS7+QzCbpCJa6FP1owgFeJf2F6PLgxd0KbkTvfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m0xy0ko7wUqCRVQHUEFCzLdKZxjAZXd4y84HUM7fo8M=;
- b=Y1WFRJ287gVidWOMTtQ7+xMyncRrWviV/EwVRvHXcYhf55j00eP3UlYa7E2Ni691qlyikOstVsGFpXWzspCFaCSARsLO2BK+Com7WJTL2SSp6h/e4U7f+7LumQrPruoahgylD8Nhf7dE5ADRd5Q77ac7MlQKRe5ZAMuPWkV0qPMMwK6eB5sYMP49XRRAUdUf0yN2+BQRSHHkxAC+ny5rl0BAAEGEXxbcK/BY1GKkboHw5uaDvrzcDbyC9W9GJMwvnwPinAGW652T3PB3CMUgdeJafCe2JrHS1DO/y3lT7oYcHNN6a9R3hMw3MezkyyKeqsdWunpaL300OqXlFt2utA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m0xy0ko7wUqCRVQHUEFCzLdKZxjAZXd4y84HUM7fo8M=;
- b=L2cS82VZhZmftv0OHiz/77dyANRbIe4KGRIdCftxhR7AYNNA+mDsjRFy9sVU2//VsCkQaOqCO2bx27oaFYQTLZFLDMat1+Mgmme0Th94Bsr5ELvgrVJwKDYplH3Xw+Q1wl5EoydmJgrx/1PfpC0X5B8OpxIhpwiv8x7lrzcefNM/Owa0JMcf0uTHvyxoDX2VItim2jQNzr/epymMxeEhK8NVUC58+69zX7NjYhcPW2VfI66cVE3W1/fZvjQH8a5VpC9oRuiJc8qYcyrgscr7s2gRN8IRCibOVitz/BIutRXvF3AZBz/ydlSWOBJlEjwnGY7sx/iz3c6BWKK6rdAzJA==
-Received: from MW2PR12MB4667.namprd12.prod.outlook.com (2603:10b6:302:12::28)
- by MN2PR12MB4333.namprd12.prod.outlook.com (2603:10b6:208:1d3::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.24; Tue, 27 Jun
- 2023 22:50:25 +0000
-Received: from MW2PR12MB4667.namprd12.prod.outlook.com
- ([fe80::92c6:4b21:586d:dabc]) by MW2PR12MB4667.namprd12.prod.outlook.com
- ([fe80::92c6:4b21:586d:dabc%4]) with mapi id 15.20.6521.024; Tue, 27 Jun 2023
- 22:50:25 +0000
-From:   Chaitanya Kulkarni <chaitanyak@nvidia.com>
-To:     Lu Hongfei <luhongfei@vivo.com>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH] fs: iomap: Change the type of blocksize from 'int' to
- 'unsigned int' in iomap_file_buffered_write_punch_delalloc
-Thread-Topic: [PATCH] fs: iomap: Change the type of blocksize from 'int' to
- 'unsigned int' in iomap_file_buffered_write_punch_delalloc
-Thread-Index: AQHZqN8x8d8w79yS0kWj3Bz681z1u6+fQceA
-Date:   Tue, 27 Jun 2023 22:50:25 +0000
-Message-ID: <df06d21b-9ae2-1e07-53f9-152eb2966bb9@nvidia.com>
-References: <20230627100325.51290-1-luhongfei@vivo.com>
-In-Reply-To: <20230627100325.51290-1-luhongfei@vivo.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MW2PR12MB4667:EE_|MN2PR12MB4333:EE_
-x-ms-office365-filtering-correlation-id: 182ef9b8-54de-482d-6ae9-08db7760e5c3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: fT3MA5e/RUk5RXIPBngxJdKpbOMkfcDvq4upxNYcHoQ/jQFW/i73wlHq4ZNcINhKK+6DoQSjrdC7tbJE1FFnTvmUKKIIleHc6+QyPD8UARTWDzT5GJgoS2GaGh1KbejHl6KP+EA8UTwtRIOg4DNxIiohUqv+dwQFS7+yE+FLyL5rwH/muyjZB8/MuR8A15GnfoPAFqM+tz3f/FnH/+5ApcWAieWZCEJ76LeYkuR6IjsBXCS3S/fSEVUxTOixhI2AvIGLmLTM3U3vvDR1G+61f7mpFLeDgbG7SehiYeVF9jwf3d90PBYwRyjlBMtQuWBPzyhN5GrzIUZcpLFiH86bPS3lAeBg2+g8a/ThmnrBR9uYmlk/iFxAJyiZVIOtLJuiUaUrlVrW5aDi84BP8fKab8TmPMbWzaxE1XD7edBiAyTjYpIES2lEZW/axnBZKTrInKjzUixfOv0Ii6J7lt7JVAhUvNtpHaY6kprIXeNO3rTQLX8E2bkBAFhPxW1Z47rmZeKcXuMI50LCKcc74eW2v5d7aaWgo1S1VdJCsn+kkRtkpKQ7kPELD3SBiSrdDxzk3FOsn4EH+AlYnY6yJsGi/7BD4GLwGb18z8ySFu/ygxJEb+GYDwyMTdzrDCJcvfKZX+DEPHTscalpdVEmYou+g9FWHSuCcsZ0ZIslMhZ1A1AY0Y15X8qX3YH6Bc3tpQt3
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW2PR12MB4667.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(39860400002)(396003)(136003)(376002)(366004)(451199021)(31686004)(36756003)(6506007)(122000001)(76116006)(66476007)(5660300002)(316002)(86362001)(64756008)(6916009)(4326008)(8936002)(31696002)(66446008)(38070700005)(66556008)(38100700002)(41300700001)(66946007)(8676002)(91956017)(6486002)(6512007)(2906002)(53546011)(4744005)(186003)(71200400001)(478600001)(83380400001)(2616005)(54906003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MW4wUW9DZStiYmVNdys3aU5MRUNBdnBvS2U5SWltUjU0aWp3NVlIODEvbm45?=
- =?utf-8?B?RWluNUZxbEkzSmZTY3lXZkJOODM0dVNXT3Y2YmRHY0dJRWx1OXpmdzU4TFJh?=
- =?utf-8?B?cjdnaTUwMkhIQ2cvUHoyVnNvNjFEWFZNMXVLZzhTcW1EZFlnVE4za3JaNVlu?=
- =?utf-8?B?R0dCVTlHbHUrcHNQZFQ1elB1aXdGNkd2ZDIzVWJIdTVtdDRmblVtS1g5bm1u?=
- =?utf-8?B?aE50eFhGaEtsM2h6Ykc3WXQvWEJIZ1YwTWtDVG90ZTMxZGFWNGREeEl6MnB0?=
- =?utf-8?B?a1pidFVPRTdmK3ppcTk1YnlLeVFweExHUTNGWXkzUnFQRE45WHFzZGFwb3NB?=
- =?utf-8?B?RUxsbEdWTVpHVTBEYjhTVDdyYkxJd0lTOHhuUXB5K1kzZHRUSWVFeHVMM2dD?=
- =?utf-8?B?N1o0TndnN3R5VVoxSEtROURxVkwvOEVuQUFXcHFvNEpXRndKQjhwcWJuTzBa?=
- =?utf-8?B?Q3c1bkdPVXVjcWF0KzFxanFob2E5Z2V3L3ViUmdOVEExaTFBNHJGUXY4N2Z3?=
- =?utf-8?B?NVpqOU1UbTFMNXUzVXBFNGRabnlPd1dEeGJDV251dk9EOTNwWE9CY3diVTNw?=
- =?utf-8?B?WWt4V0syUDRDaEdYN2tFdERzN3RsMFlnQ24zVE9aVjlxVzU5QVVsSzlvMFVO?=
- =?utf-8?B?cU9tMm1XT2I3WjlOVExwTjZwc0JCemVqckVsNHVDdHYxM2t4dko4QWVvbDRi?=
- =?utf-8?B?STE4ejMxcjljeHgyNUNuZmVnN29ORGU5YzExRndRZU1TWlExaHNiNEE1clFQ?=
- =?utf-8?B?S2djdkxDRWxlSlc3RnhUK0s0VjJrZ1RibHVoeXhWZXRGaWNodHNCTnRXeVNq?=
- =?utf-8?B?QSthQ3luOWlNR0Fta25tbThTeFc0R1lVNktZbmZqN1BTZnlhb1FyTE1VMVFH?=
- =?utf-8?B?MWxZRjFZdzVyNlNoZDh5RSsrWkVJUWUwZWx0VjdVVmF0cEF3QzE5S1JyQWNn?=
- =?utf-8?B?K29Vc2hZd0NrM2JvQ3EvYTVQVnFDNFcrTTVSdzdjUHRCTnZiOVg2Uk9HU3Bs?=
- =?utf-8?B?Q2FNZnZBdlgxQW5PREtncUhBb1B0bmtMV2xFNkhJQUliWDJKcEVSbmNrbTEy?=
- =?utf-8?B?cW5vRjc1VVJLQnBRS25yK1A3V1FUWFBaOXhuYkduVnhBSG95UFZ2ZkZvVVJB?=
- =?utf-8?B?ZFF6aVhMRGcyWVl0SmJWMUd1Z3kzK3NCNmFzWDNwUzZuN1pvTjhub252RmY4?=
- =?utf-8?B?ZFRqSEFFaUNxZElYY3REc2JIT25aNTdINlRBWURPdDF0NUtjTkNXTld2MytB?=
- =?utf-8?B?ZnZlYndHL0wzeUtRVmtNYjZUaTNGWE9CM3BncVBVUUJBRmVvVE9jZ3M2MW1I?=
- =?utf-8?B?bWRkUUp0MFBsVnNLS1ByK05VTFRGQVpKSVhHQVR4a3FYLzBFc0ZFbFRjd2dI?=
- =?utf-8?B?T1FkT3Y5MlZlR1Z5RzYxSHUxQXNXL3FicHVDR1RWd1BONzBXZFlWMXJBTHVG?=
- =?utf-8?B?T0lPZ2o4dHNBZ3c5RktNNlhWclZYaVp4a0NyRnlka1B6aS84dmdsVUxSdkJw?=
- =?utf-8?B?TnZyOHV2MEZ0dlBpUXRxWXo1bTlnc0dHRTZVU29BY0llZ3ViU21uVERkdHg1?=
- =?utf-8?B?TEkwdGRrMUtSNjdFMmlySktLZ2x5VEVzZzR6ZlovMmh4dWYrSWJNd1pQQlVS?=
- =?utf-8?B?ZURXaDVBclBTS041YXBSd2hOQThmeTQrcUhsY0FwKzF3YXNmNC96UmpEbG1J?=
- =?utf-8?B?bXVYdUM1MXBqT0ErUnhiNDRoSkk5Rjg0cXI4cENTNkI0ZERpQjdNNjlBRFMr?=
- =?utf-8?B?ZTNnQTJubVpydGtOTWt2TXJqTklNSmpZK2NJQVdaWXlMS3p1d09jaVRLZVFK?=
- =?utf-8?B?TjYwaXBIa0IwMGE3ZmVLaW96RENOeXEwbVRnWjhFWUhWMW96RkhUYUhTa0lP?=
- =?utf-8?B?SnduNE9Hcy9RZEUza1gwTjJxL3M5WEJ0ZFRRZUtyRDZEekNMeUt3WVFBNEtn?=
- =?utf-8?B?WSsvZ0tjcHZ5eEl5MlErZkJLOUlWOUhKL2szRUF3T25VcjhBQTFQOEVyMnNU?=
- =?utf-8?B?L0NXZEpNSnVYb2luUEN5eTc4OW9IVlVHbndxVkVSSzJnZWhIdmVZbWxNTjhR?=
- =?utf-8?B?Ui9tOHBYN1BYdWVYdVZnRi8rNlVvNlNYcmtvaGhGNVRyVUpQcmFmem8vYXBj?=
- =?utf-8?B?Qk83a2YrRzF6dzBLeE4zakY4UDlNbXVGaHR6YVpRTjFVWktYa0RIeWVLbXkx?=
- =?utf-8?Q?99Vs5sc2wtuJLl9/nNXsPYcXW8A32tVMVDiBwRmNsvyg?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CDACCC7EBD4C7A43A5F5E220F0D05F00@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 27 Jun 2023 18:57:31 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A24982940;
+        Tue, 27 Jun 2023 15:57:28 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 444411F8AC;
+        Tue, 27 Jun 2023 22:57:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1687906647;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GEEbuR4SgcAhYDAVQkiILdHCrgZrt4xZaGwjOJMSplk=;
+        b=xGmRXkmLQ0kS1su/BnuAIkYfaI4bQlEcyyTbyDCTzdeTrDzCqQPTm6eb7A2/9oT/CjRcO8
+        p8pInZdIC1CN1xCzT0QJsiXYcFh708KhYXWCUL9Lmh7Vx+0Bm8AFt6ybwUj15jqQzbXNxQ
+        /rrkjDdeOF9drV+lz0ctnSUSWfZs0vw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1687906647;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GEEbuR4SgcAhYDAVQkiILdHCrgZrt4xZaGwjOJMSplk=;
+        b=WEkM3GvIqzX9ewMvatHIFrQSWIPJmlBqRjZlykntPMJs61kKJazdQSzh9L2miHVxGdCQ1d
+        V8Pa9sWkdwJSACDQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E569B13276;
+        Tue, 27 Jun 2023 22:57:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id k2C6NlZpm2RnbgAAMHmgww
+        (envelope-from <pvorel@suse.cz>); Tue, 27 Jun 2023 22:57:26 +0000
+Date:   Wed, 28 Jun 2023 00:57:25 +0200
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Ahelenia =?iso-8859-2?Q?Ziemia=F1ska?= 
+        <nabijaczleweli@nabijaczleweli.xyz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>,
+        Chung-Chiang Cheng <cccheng@synology.com>, ltp@vger.kernel.org
+Subject: Re: [LTP PATCH] inotify13: new test for fs/splice.c functions vs
+ pipes vs inotify
+Message-ID: <20230627225725.GB93981@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <cover.1687884029.git.nabijaczleweli@nabijaczleweli.xyz>
+ <44neh3sog5jaskc4zy6lwnld7hussp5sslx4fun47fr45mxe3a@q2jgkjwlq74f>
+ <CAOQ4uxifYoKdup6gzyW0iV=KFBzTWu5T8=zq8s8pFw2X3+5xRg@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MW2PR12MB4667.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 182ef9b8-54de-482d-6ae9-08db7760e5c3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2023 22:50:25.7940
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: H+Pm6MXp+/9GOfIy9CvLMsYjMe0O7LlYi2ge7s9/hEeaqSeeabUWHczgC05hOJ9pF8nex6pcGURhLnnRjlVD6w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4333
-X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxifYoKdup6gzyW0iV=KFBzTWu5T8=zq8s8pFw2X3+5xRg@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -136,21 +82,329 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gNi8yNy8yMyAwMzowMywgTHUgSG9uZ2ZlaSB3cm90ZToNCj4gVGhlIHJldHVybiB2YWx1ZSB0
-eXBlIG9mIGlfYmxvY2tzaXplKCkgaXMgJ3Vuc2lnbmVkIGludCcsIHNvIHRoZQ0KPiB0eXBlIG9m
-IGJsb2Nrc2l6ZSBoYXMgYmVlbiBtb2RpZmllZCBmcm9tICdpbnQnIHRvICd1bnNpZ25lZCBpbnQn
-DQo+IHRvIGVuc3VyZSBkYXRhIHR5cGUgY29uc2lzdGVuY3kuDQo+DQo+IFNpZ25lZC1vZmYtYnk6
-IEx1IEhvbmdmZWkgPGx1aG9uZ2ZlaUB2aXZvLmNvbT4NCj4gLS0tDQo+ICAgZnMvaW9tYXAvYnVm
-ZmVyZWQtaW8uYyB8IDIgKy0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEg
-ZGVsZXRpb24oLSkNCj4NCj4gZGlmZiAtLWdpdCBhL2ZzL2lvbWFwL2J1ZmZlcmVkLWlvLmMgYi9m
-cy9pb21hcC9idWZmZXJlZC1pby5jDQo+IGluZGV4IGE0ZmE4MWFmNjBkOS4uOTBlYTllMDljMWFl
-IDEwMDY0NA0KPiAtLS0gYS9mcy9pb21hcC9idWZmZXJlZC1pby5jDQo+ICsrKyBiL2ZzL2lvbWFw
-L2J1ZmZlcmVkLWlvLmMNCj4gQEAgLTEwNzYsNyArMTA3Niw3IEBAIGludCBpb21hcF9maWxlX2J1
-ZmZlcmVkX3dyaXRlX3B1bmNoX2RlbGFsbG9jKHN0cnVjdCBpbm9kZSAqaW5vZGUsDQo+ICAgew0K
-PiAgIAlsb2ZmX3QJCQlzdGFydF9ieXRlOw0KPiAgIAlsb2ZmX3QJCQllbmRfYnl0ZTsNCj4gLQlp
-bnQJCQlibG9ja3NpemUgPSBpX2Jsb2Nrc2l6ZShpbm9kZSk7DQo+ICsJdW5zaWduZWQgaW50CWJs
-b2Nrc2l6ZSA9IGlfYmxvY2tzaXplKGlub2RlKTsNCj4gICANCj4gICAJaWYgKGlvbWFwLT50eXBl
-ICE9IElPTUFQX0RFTEFMTE9DKQ0KPiAgIAkJcmV0dXJuIDA7DQoNCkluZGVlZCBhcyBwZXIgaW5j
-bHVkZS9saW51eC9mcy5oOg0KNzE5IHN0YXRpYyBpbmxpbmUgdW5zaWduZWQgaW50IGlfYmxvY2tz
-aXplKGNvbnN0IHN0cnVjdCBpbm9kZSAqbm9kZSkNCg0KTG9va3MgZ29vZC4NCg0KUmV2aWV3ZWQt
-Ynk6IENoYWl0YW55YSBLdWxrYXJuaSA8a2NoQG52aWRpYS5jb20+DQoNCi1jaw0KDQoNCg==
+> On Tue, Jun 27, 2023 at 7:57 PM Ahelenia Ziemiańska
+> <nabijaczleweli@nabijaczleweli.xyz> wrote:
+
+> > The only one that passes on 6.1.27-1 is sendfile_file_to_pipe.
+
+> > Link: https://lore.kernel.org/linux-fsdevel/jbyihkyk5dtaohdwjyivambb2gffyjs3dodpofafnkkunxq7bu@jngkdxx65pux/t/#u
+> > Signed-off-by: Ahelenia Ziemiańska <nabijaczleweli@nabijaczleweli.xyz>
+> > ---
+> > Formatted to clang-format defaults. Put the original Fixes:ed SHA in the
+> > metadata, that's probably fine, right?
+
+> No. The git commit is for the commits that fix the problem.
+> This can only be added after your fixes are merged.
+
+> I will let the LPT developers comment about style,
+> but I think LTP project wants tab indents.
+> I am personally unable to read this patch with so little indentation
+> and so much macroing.
+
+Yes, it's hard to read. Style formatting it would improve it little bit
+(make check-inotify13 is your friend, it complains a lot, also some spaces above
+if () would make it more readable), but there are other things, e.g. macros
+F2P(splice) and P2P(splice) should be functions (readability). Please have look
+at other inotify tests, they are fairly simple and easy to read.
+
+Also, this is a patch for LTP, you're supposed to post it also to LTP mailing
+list (ltp@lists.linux.it, you need to register to
+https://lists.linux.it/listinfo/ltp first).
+
+> >  testcases/kernel/syscalls/inotify/.gitignore  |   1 +
+> >  testcases/kernel/syscalls/inotify/inotify13.c | 246 ++++++++++++++++++
+> >  2 files changed, 247 insertions(+)
+> >  create mode 100644 testcases/kernel/syscalls/inotify/inotify13.c
+
+> > diff --git a/testcases/kernel/syscalls/inotify/.gitignore b/testcases/kernel/syscalls/inotify/.gitignore
+> > index f6e5c546a..b597ea63f 100644
+> > --- a/testcases/kernel/syscalls/inotify/.gitignore
+> > +++ b/testcases/kernel/syscalls/inotify/.gitignore
+> > @@ -10,3 +10,4 @@
+> >  /inotify10
+> >  /inotify11
+> >  /inotify12
+> > +/inotify13
+> > diff --git a/testcases/kernel/syscalls/inotify/inotify13.c b/testcases/kernel/syscalls/inotify/inotify13.c
+> > new file mode 100644
+> > index 000000000..c34f1dc9f
+> > --- /dev/null
+> > +++ b/testcases/kernel/syscalls/inotify/inotify13.c
+> > @@ -0,0 +1,246 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*\
+
+You need to add here:
+* [Description]
+
+> > + * Verify splice-family functions (and sendfile) generate IN_ACCESS
+> > + * for what they read and IN_MODIFY for what they write.
+> > + *
+> > + * Regression test for 983652c69199 and
+I guess there would be only 983652c69199 ("splice: report related fsnotify
+events").
+> > + * https://lore.kernel.org/linux-fsdevel/jbyihkyk5dtaohdwjyivambb2gffyjs3dodpofafnkkunxq7bu@jngkdxx65pux/t/#u
+This is some discussion, not a real patch. Not sure how much useful it is, until
+it results to fix accepted in the mainline kernel.
+
+> > + */
+> > +
+> > +#define _GNU_SOURCE
+> > +#include "config.h"
+> > +
+> > +#include <stdio.h>
+> > +#include <unistd.h>
+> > +#include <stdlib.h>
+> > +#include <fcntl.h>
+> > +#include <stdbool.h>
+> > +#include <inttypes.h>
+> > +#include <signal.h>
+> > +#include <sys/mman.h>
+> > +#include <sys/sendfile.h>
+> > +
+> > +#include "tst_test.h"
+> > +#include "tst_safe_macros.h"
+> > +#include "inotify.h"
+> > +
+> > +#if defined(HAVE_SYS_INOTIFY_H)
+> > +#include <sys/inotify.h>
+> > +
+> > +
+> > +static int pipes[2] = {-1, -1};
+> > +static int inotify = -1;
+> > +static int memfd = -1;
+> > +static int data_pipes[2] = {-1, -1};
+> > +
+> > +static void watch_rw(int fd) {
+> > +  char buf[64];
+> > +  sprintf(buf, "/proc/self/fd/%d", fd);
+> > +  SAFE_MYINOTIFY_ADD_WATCH(inotify, buf, IN_ACCESS | IN_MODIFY);
+> > +}
+> > +
+> > +static int compar(const void *l, const void *r) {
+> > +  const struct inotify_event *lie = l;
+> > +  const struct inotify_event *rie = r;
+> > +  return lie->wd - rie->wd;
+> > +}
+> > +
+> > +static void get_events(size_t evcnt, struct inotify_event evs[static evcnt]) {
+> > +  struct inotify_event tail, *itr = evs;
+> > +  for (size_t left = evcnt; left; --left)
+> > +    SAFE_READ(true, inotify, itr++, sizeof(struct inotify_event));
+> > +
+> > +  TEST(read(inotify, &tail, sizeof(struct inotify_event)));
+> > +  if (TST_RET != -1)
+> > +    tst_brk(TFAIL, "expect %zu events", evcnt);
+> > +  if (TST_ERR != EAGAIN)
+> > +    tst_brk(TFAIL | TTERRNO, "expected EAGAIN");
+> > +
+> > +  qsort(evs, evcnt, sizeof(struct inotify_event), compar);
+> > +}
+> > +
+> > +static void expect_event(struct inotify_event *ev, int wd, uint32_t mask) {
+> > +  if (ev->wd != wd)
+> > +    tst_brk(TFAIL, "expect event for wd %d got %d", wd, ev->wd);
+> > +  if (ev->mask != mask)
+> > +    tst_brk(TFAIL, "expect event with mask %" PRIu32 " got %" PRIu32 "", mask,
+> > +            ev->mask);
+> > +}
+> > +
+> > +#define F2P(splice)                                                            \
+> > +  SAFE_WRITE(SAFE_WRITE_RETRY, memfd, __func__, sizeof(__func__));             \
+> > +  SAFE_LSEEK(memfd, 0, SEEK_SET);                                              \
+> > +  watch_rw(memfd);                                                             \
+> > +  watch_rw(pipes[0]);                                                          \
+> > +  TEST(splice);                                                                \
+> > +  if (TST_RET == -1)                                                           \
+> > +    tst_brk(TBROK | TERRNO, #splice);                                          \
+> > +  if (TST_RET != sizeof(__func__))                                             \
+> > +    tst_brk(TBROK, #splice ": %" PRId64 "", TST_RET);                          \
+> > +                                                                               \
+> > +  /*expecting: IN_ACCESS memfd, IN_MODIFY pipes[0]*/                           \
+> > +  struct inotify_event events[2];                                              \
+> > +  get_events(ARRAY_SIZE(events), events);                                      \
+> > +  expect_event(events + 0, 1, IN_ACCESS);                                      \
+> > +  expect_event(events + 1, 2, IN_MODIFY);                                      \
+> > +                                                                               \
+> > +  char buf[sizeof(__func__)];                                                  \
+> > +  SAFE_READ(true, pipes[0], buf, sizeof(__func__));                            \
+> > +  if (memcmp(buf, __func__, sizeof(__func__)))                                 \
+> > +    tst_brk(TFAIL, "buf contents bad");
+> > +static void splice_file_to_pipe(void) {
+> > +  F2P(splice(memfd, NULL, pipes[1], NULL, 128 * 1024 * 1024, 0));
+> > +}
+> > +static void sendfile_file_to_pipe(void) {
+> > +  F2P(sendfile(pipes[1], memfd, NULL, 128 * 1024 * 1024));
+> > +}
+> > +
+> > +static void splice_pipe_to_file(void) {
+> > +  SAFE_WRITE(SAFE_WRITE_RETRY, pipes[1], __func__, sizeof(__func__));
+> > +  watch_rw(pipes[0]);
+> > +  watch_rw(memfd);
+> > +  TEST(splice(pipes[0], NULL, memfd, NULL, 128 * 1024 * 1024, 0));
+> > +  if(TST_RET == -1)
+> > +               tst_brk(TBROK | TERRNO, "splice");
+> > +       if(TST_RET != sizeof(__func__))
+> > +               tst_brk(TBROK, "splice: %" PRId64 "", TST_RET);
+> > +
+> > +       // expecting: IN_ACCESS pipes[0], IN_MODIFY memfd
+> > +       struct inotify_event events[2];
+> > +       get_events(ARRAY_SIZE(events), events);
+> > +       expect_event(events + 0, 1, IN_ACCESS);
+> > +       expect_event(events + 1, 2, IN_MODIFY);
+> > +
+> > +  char buf[sizeof(__func__)];
+> > +  SAFE_LSEEK(memfd, 0, SEEK_SET);
+> > +  SAFE_READ(true, memfd, buf, sizeof(__func__));
+> > +  if (memcmp(buf, __func__, sizeof(__func__)))
+> > +                tst_brk(TFAIL, "buf contents bad");
+> > +}
+> > +
+> > +#define P2P(splice)                                                            \
+> > +  SAFE_WRITE(SAFE_WRITE_RETRY, data_pipes[1], __func__, sizeof(__func__));     \
+> > +  watch_rw(data_pipes[0]);                                                     \
+> > +  watch_rw(pipes[1]);                                                          \
+> > +  TEST(splice);                                                                \
+> > +  if (TST_RET == -1)                                                           \
+> > +                tst_brk(TBROK | TERRNO, #splice);                              \
+> > +  if (TST_RET != sizeof(__func__))                                             \
+> > +                tst_brk(TBROK, #splice ": %" PRId64 "", TST_RET);              \
+> > +                                                                               \
+> > +  /* expecting: IN_ACCESS data_pipes[0], IN_MODIFY pipes[1] */                 \
+> > +  struct inotify_event events[2];                                              \
+> > +  get_events(ARRAY_SIZE(events), events);                                      \
+> > +  expect_event(events + 0, 1, IN_ACCESS);                                      \
+> > +  expect_event(events + 1, 2, IN_MODIFY);                                      \
+> > +                                                                               \
+> > +  char buf[sizeof(__func__)];                                                  \
+> > +  SAFE_READ(true, pipes[0], buf, sizeof(__func__));                            \
+> > +  if (memcmp(buf, __func__, sizeof(__func__)))                                 \
+> > +                tst_brk(TFAIL, "buf contents bad");
+> > +static void splice_pipe_to_pipe(void) {
+> > +  P2P(splice(data_pipes[0], NULL, pipes[1], NULL, 128 * 1024 * 1024, 0));
+> > +}
+> > +static void tee_pipe_to_pipe(void) {
+> > +  P2P(tee(data_pipes[0], pipes[1], 128 * 1024 * 1024, 0));
+> > +}
+> > +
+> > +static char vmsplice_pipe_to_mem_dt[32 * 1024];
+> > +static void vmsplice_pipe_to_mem(void) {
+> > +  memcpy(vmsplice_pipe_to_mem_dt, __func__, sizeof(__func__));
+> > +  watch_rw(pipes[0]);
+> > +  TEST(vmsplice(pipes[1],
+> > +                &(struct iovec){.iov_base = vmsplice_pipe_to_mem_dt,
+> > +                                .iov_len = sizeof(vmsplice_pipe_to_mem_dt)},
+> > +                1, SPLICE_F_GIFT));
+> > +  if (TST_RET == -1)
+> > +    tst_brk(TBROK | TERRNO, "vmsplice");
+> > +  if (TST_RET != sizeof(vmsplice_pipe_to_mem_dt))
+> > +    tst_brk(TBROK, "vmsplice: %" PRId64 "", TST_RET);
+> > +
+> > +  // expecting: IN_MODIFY pipes[0]
+> > +  struct inotify_event event;
+> > +  get_events(1, &event);
+> > +  expect_event(&event, 1, IN_MODIFY);
+> > +
+> > +  char buf[sizeof(__func__)];
+> > +  SAFE_READ(true, pipes[0], buf, sizeof(__func__));
+> > +  if (memcmp(buf, __func__, sizeof(__func__)))
+> > +    tst_brk(TFAIL, "buf contents bad");
+> > +}
+> > +
+> > +static void vmsplice_mem_to_pipe(void) {
+> > +  char buf[sizeof(__func__)];
+> > +  SAFE_WRITE(SAFE_WRITE_RETRY, pipes[1], __func__, sizeof(__func__));
+> > +  watch_rw(pipes[1]);
+> > +  TEST(vmsplice(pipes[0],
+> > +                &(struct iovec){.iov_base = buf, .iov_len = sizeof(buf)}, 1,
+> > +                0));
+> > +  if (TST_RET == -1)
+> > +    tst_brk(TBROK | TERRNO, "vmsplice");
+> > +  if (TST_RET != sizeof(buf))
+> > +    tst_brk(TBROK, "vmsplice: %" PRId64 "", TST_RET);
+> > +
+> > +  // expecting: IN_ACCESS pipes[1]
+> > +  struct inotify_event event;
+> > +  get_events(1, &event);
+> > +  expect_event(&event, 1, IN_ACCESS);
+> > +  if (memcmp(buf, __func__, sizeof(__func__)))
+> > +    tst_brk(TFAIL, "buf contents bad");
+> > +}
+> > +
+> > +typedef void (*tests_f)(void);
+> > +#define TEST_F(f) { f, #f }
+> > +static const struct {
+> > +        tests_f f;
+> > +        const char *n;
+> > +} tests[] = {
+> > +    TEST_F(splice_file_to_pipe),  TEST_F(sendfile_file_to_pipe),
+> > +    TEST_F(splice_pipe_to_file),  TEST_F(splice_pipe_to_pipe),
+> > +    TEST_F(tee_pipe_to_pipe),     TEST_F(vmsplice_pipe_to_mem),
+> > +    TEST_F(vmsplice_mem_to_pipe),
+> > +};
+> > +
+> > +static void run_test(unsigned int n)
+> > +{
+> > +       tst_res(TINFO, "%s", tests[n].n);
+> > +
+> > +       SAFE_PIPE2(pipes, O_CLOEXEC);
+> > +       SAFE_PIPE2(data_pipes, O_CLOEXEC);
+> > +       inotify = SAFE_MYINOTIFY_INIT1(IN_NONBLOCK | IN_CLOEXEC);
+> > +       if((memfd = memfd_create(__func__, MFD_CLOEXEC)) == -1)
+> > +               tst_brk(TCONF | TERRNO, "memfd");
+> > +       tests[n].f();
+
+> Normally, a test cases table would encode things like
+> the number of expected events and type of events.
+> The idea is that the test template has parametrized code
+> and not just a loop for test cases subroutines, but there
+> are many ways to write tests, so as long as it gets the job
+> done and is readable to humans, I don't mind.
+
+> Right now this test may do the job, but it is not readable
+> for this human ;-)
+> mostly because of the huge macros -
+> LTP is known for pretty large macros, but those are
+> for generic utilities and you have complete test cases
+> written as macros (templates).
+
++100. We strive for simple readable code, which is not this one.
+
+Kind regards,
+Petr
+
+> > +       tst_res(TPASS, "ок");
+> > +}
+> > +
+> > +static void cleanup(void)
+> > +{
+> > +       if (memfd != -1)
+> > +               SAFE_CLOSE(memfd);
+> > +       if (inotify != -1)
+> > +               SAFE_CLOSE(inotify);
+> > +       if (pipes[0] != -1)
+> > +               SAFE_CLOSE(pipes[0]);
+> > +       if (pipes[1] != -1)
+> > +               SAFE_CLOSE(pipes[1]);
+> > +       if (data_pipes[0] != -1)
+> > +               SAFE_CLOSE(data_pipes[0]);
+> > +       if (data_pipes[1] != -1)
+> > +               SAFE_CLOSE(data_pipes[1]);
+> > +}
+> > +
+
+> This cleanup does not happen for every test case -
+> it happens only at the end of all the tests IIRC.
+
+> > +static struct tst_test test = {
+> > +       .max_runtime = 10,
+> > +       .cleanup = cleanup,
+> > +       .test = run_test,
+> > +       .tcnt = ARRAY_SIZE(tests),
+> > +       .tags = (const struct tst_tag[]) {
+> > +               {"linux-git", "983652c69199"},
+
+> Leave this out for now.
+
+> Thanks,
+> Amir.
