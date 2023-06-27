@@ -2,113 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA5A57402D3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 20:05:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20F157402DB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 20:10:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229977AbjF0SFx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 14:05:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41268 "EHLO
+        id S229925AbjF0SK3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 14:10:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229841AbjF0SFu (ORCPT
+        with ESMTP id S229910AbjF0SK2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 14:05:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CC78E5B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 11:05:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1687889103;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tSkYJ/7LIQNDaVX+NaIEBpGI8gb9wj1heZwmzePGVd4=;
-        b=S9NMq8ii0x4oIOdoSLXLTjkr6rl/Wen0UgL6/pdPJwdEhTd/247HorhIMwX2TL2GwJpd/U
-        f4uXbxdVvJa65sgoc5kgWRhjQGt7C2CCGfziycxu4PfQfh+3yK/BYja2FY5adjo38Wy3TA
-        vxNQbbuvedooiZARo0Qfg1+XuSBNJ58=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-30-0HN0rDJNMmeDh8yE9BjIKw-1; Tue, 27 Jun 2023 14:05:01 -0400
-X-MC-Unique: 0HN0rDJNMmeDh8yE9BjIKw-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-9885a936d01so311745266b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 11:05:01 -0700 (PDT)
+        Tue, 27 Jun 2023 14:10:28 -0400
+Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C42D2976;
+        Tue, 27 Jun 2023 11:10:23 -0700 (PDT)
+Received: by mail-ua1-x92f.google.com with SMTP id a1e0cc1a2514c-783eef15004so1249161241.3;
+        Tue, 27 Jun 2023 11:10:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687889421; x=1690481421;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BxAO7TkpAopVR9RFBa3ieNMWyhRAiu+znyikTlS1Z8c=;
+        b=S9BFeKqM99KjDoFbnkBHX7/8AHDKJT+eQUCHhBmo31QVx/NLnXo0dWbYVh+wmbA6du
+         NDcGrFkPjA3FHlr4BaU79GX3HeApMPCTZU8A3WofOsB0tlLsG3ogtMVEsgnh6hV7KKSv
+         aXfxUKSTl2imkTZdrS1aDFIsyjs+hyjpUOAvKf1IluqvFAhw99Yvxhd3UDThpu4IKceY
+         N6K438qlgtuQA4AxmOawC6UvSW/gntAHYeq4YrZ6QBtRpP7UmqKXyg2zgYH2lgy4LTWl
+         AqqCUPoFdzGKIuWGt9tYq/cTBX5+SSsFTo9cvgWRxmbwhwyaQ5wsARdDKB2NN7qhu2I4
+         5SaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687889100; x=1690481100;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tSkYJ/7LIQNDaVX+NaIEBpGI8gb9wj1heZwmzePGVd4=;
-        b=SZ+Bqg7pSeiVYa4XKE9Y/wIjSufbxAooK0toZYoDSYkW67mfbvPizbwfKoV/tYhRAm
-         jti6Eu1FaVarBMj3fE8wJtzf6dmrD039ftIQNDVowZ+W1av5LNg7XVifY7zz3ohhYs8b
-         HQ/vEn4z3BXJDfxiTFGQucYr5EBZ/3TIKHtkoWbM2qMC19lMK0Zv1J1XKqiXCGjarv10
-         QLsw/GF5eLXakYoNBSsExv0ebCgr5FraquWtkYT+XNV9kZamPJrCpBk751wFuiqBr4Fx
-         CQcjOPCwZFdxLbWLoB+AaUr1ou40g1T8jMnewWzmgSL0I8FymKLf4tx0fnLqLwKr83i4
-         3xug==
-X-Gm-Message-State: AC+VfDwFSgcV0uwqxhoTG1T0Von43A/x6QO2HCZ9fNwIFThnwk311rnY
-        2YSN+CT6vsV3d6ji3mr1q/XLmYQrIWIWGXsFaZqg1lks05Kvypz8EqM3bANB9c9JOij0SKtl2zT
-        NBWK2Q8j6sDESD2EZwTnS2B6WUw==
-X-Received: by 2002:a17:907:5c2:b0:974:55a2:cb0b with SMTP id wg2-20020a17090705c200b0097455a2cb0bmr28675572ejb.55.1687889100397;
-        Tue, 27 Jun 2023 11:05:00 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ7kFjsg3w3SaTOHLFA7v4tck3M1EXxx9ZydaHqAuSxq5qaEOkLVvrnRRwJvnqA7E61qVar7BQ==
-X-Received: by 2002:a17:907:5c2:b0:974:55a2:cb0b with SMTP id wg2-20020a17090705c200b0097455a2cb0bmr28675563ejb.55.1687889100133;
-        Tue, 27 Jun 2023 11:05:00 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id c15-20020a170906528f00b00982a352f078sm4737229ejm.124.2023.06.27.11.04.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Jun 2023 11:04:59 -0700 (PDT)
-Message-ID: <cedbd75d-4a0f-74fb-3a6e-547862cc431e@redhat.com>
-Date:   Tue, 27 Jun 2023 20:04:58 +0200
+        d=1e100.net; s=20221208; t=1687889421; x=1690481421;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BxAO7TkpAopVR9RFBa3ieNMWyhRAiu+znyikTlS1Z8c=;
+        b=VgEz8TXsLD/b+ibNMMgNHrhKI2yIwL3kNhR3ixMPHHQ+gFonsPvF3ktyRrjgsvtJkX
+         CUvWOgGnpZ+7aFY53JacJWrUPzRvsYqdKDRrsmvapAPc8Bjgit7GnRNHjg3mqN1f8Uld
+         BFPfcvAV7TEnlVlfR/RQhKTnK18APeM504Cql8JCuzyC+RPjsKGWehpfKA0c2wIkHiRP
+         phKMR1NTmH/3IUT8WSY0j4lEwmFiZEeCKEtyZHdNQXlDONCpJYzKz2Zx53zVMZK9waYG
+         I6XU9mmI94Rg71UO0QaHN7YVxdqBEP+k/LGB/KdhMMhGKUMRhCkGcwU/ZOJWuNALPdwu
+         T7ew==
+X-Gm-Message-State: AC+VfDwR+tGx5kC28puG0BDDNBI8CmVN0PTh6N/nse43OlxpYBf4TLlZ
+        k5OjYsZfxiaeMyORS+sD/NxPyJwARhL+/P1loz8=
+X-Google-Smtp-Source: ACHHUZ7Zb8q/wCFi7zM0Qpj8qjr4TMQP1fy8LFuCyoWu+IF10Wr8+ar35SEqKibBYA4ztGVokdLySX7Aiz+qp9DZOso=
+X-Received: by 2002:a67:ff89:0:b0:440:d2dc:fbdf with SMTP id
+ v9-20020a67ff89000000b00440d2dcfbdfmr7661864vsq.9.1687889421090; Tue, 27 Jun
+ 2023 11:10:21 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH] fs/vboxsf: Replace kmap() with kmap_local_{page, folio}()
-To:     Matthew Wilcox <willy@infradead.org>,
-        Sumitra Sharma <sumitraartsy@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ira Weiny <ira.weiny@intel.com>,
-        Fabio <fmdefrancesco@gmail.com>, Deepak R Varma <drv@mailo.com>
-References: <20230627135115.GA452832@sumitra.com>
- <ZJsg5GL79MIOzbRf@casper.infradead.org>
-Content-Language: en-US, nl
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <ZJsg5GL79MIOzbRf@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <CAOQ4uxh7i_s4R9pFJPENALdWGG5-dDhqPLEUXuJqSoHraktFiA@mail.gmail.com>
+ <cover.1687884029.git.nabijaczleweli@nabijaczleweli.xyz> <8827a512f0974b9f261887d344c3b1ffde7b21e5.1687884031.git.nabijaczleweli@nabijaczleweli.xyz>
+In-Reply-To: <8827a512f0974b9f261887d344c3b1ffde7b21e5.1687884031.git.nabijaczleweli@nabijaczleweli.xyz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 27 Jun 2023 21:10:09 +0300
+Message-ID: <CAOQ4uxj3j7gMJSojkdfe+8fQrKtJtY7wBY1UOHtQUuQ_WMjObA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] splice: always fsnotify_access(in),
+ fsnotify_modify(out) on success
+To:     =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= 
+        <nabijaczleweli@nabijaczleweli.xyz>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>,
+        Chung-Chiang Cheng <cccheng@synology.com>, ltp@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Matthew,
+On Tue, Jun 27, 2023 at 7:55=E2=80=AFPM Ahelenia Ziemia=C5=84ska
+<nabijaczleweli@nabijaczleweli.xyz> wrote:
+>
+> The current behaviour caused an asymmetry where some write APIs
+> (write, sendfile) would notify the written-to/read-from objects,
+> but splice wouldn't.
+>
+> This affected userspace which uses inotify, most notably coreutils
+> tail -f, to monitor pipes.
+> If the pipe buffer had been filled by a splice-family function:
+>   * tail wouldn't know and thus wouldn't service the pipe, and
+>   * all writes to the pipe would block because it's full,
+> thus service was denied.
+> (For the particular case of tail -f this could be worked around
+>  with ---disable-inotify.)
+>
+> Fixes: 983652c69199 ("splice: report related fsnotify events")
+> Link: https://lore.kernel.org/linux-fsdevel/jbyihkyk5dtaohdwjyivambb2gffy=
+js3dodpofafnkkunxq7bu@jngkdxx65pux/t/#u
+> Link: https://bugs.debian.org/1039488
+> Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xy=
+z>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/splice.c | 31 ++++++++++++++-----------------
+>  1 file changed, 14 insertions(+), 17 deletions(-)
+>
+> diff --git a/fs/splice.c b/fs/splice.c
+> index 3e06611d19ae..e16f4f032d2f 100644
+> --- a/fs/splice.c
+> +++ b/fs/splice.c
+> @@ -1154,10 +1154,8 @@ long do_splice(struct file *in, loff_t *off_in, st=
+ruct file *out,
+>                 if ((in->f_flags | out->f_flags) & O_NONBLOCK)
+>                         flags |=3D SPLICE_F_NONBLOCK;
+>
+> -               return splice_pipe_to_pipe(ipipe, opipe, len, flags);
+> -       }
+> -
+> -       if (ipipe) {
+> +               ret =3D splice_pipe_to_pipe(ipipe, opipe, len, flags);
+> +       } else if (ipipe) {
+>                 if (off_in)
+>                         return -ESPIPE;
+>                 if (off_out) {
+> @@ -1182,18 +1180,15 @@ long do_splice(struct file *in, loff_t *off_in, s=
+truct file *out,
+>                 ret =3D do_splice_from(ipipe, out, &offset, len, flags);
+>                 file_end_write(out);
+>
+> -               if (ret > 0)
+> -                       fsnotify_modify(out);
+> -
+>                 if (!off_out)
+>                         out->f_pos =3D offset;
+>                 else
+>                         *off_out =3D offset;
+>
+> -               return ret;
+> -       }
+> -
+> -       if (opipe) {
+> +               // splice_write-> already marked out
+> +               // as modified via vfs_iter_write()
+> +               goto noaccessout;
+> +       } else if (opipe) {
+>                 if (off_out)
+>                         return -ESPIPE;
+>                 if (off_in) {
+> @@ -1209,18 +1204,20 @@ long do_splice(struct file *in, loff_t *off_in, s=
+truct file *out,
+>
+>                 ret =3D splice_file_to_pipe(in, opipe, &offset, len, flag=
+s);
+>
+> -               if (ret > 0)
+> -                       fsnotify_access(in);
+> -
+>                 if (!off_in)
+>                         in->f_pos =3D offset;
+>                 else
+>                         *off_in =3D offset;
+> +       } else
+> +               return -EINVAL;
+>
+> -               return ret;
+> -       }
+> +       if (ret > 0)
+> +               fsnotify_modify(out);
+> +noaccessout:
+> +       if (ret > 0)
+> +               fsnotify_access(in);
+>
 
-On 6/27/23 19:48, Matthew Wilcox wrote:
-> On Tue, Jun 27, 2023 at 06:51:15AM -0700, Sumitra Sharma wrote:
->> +++ b/fs/vboxsf/file.c
->> @@ -234,7 +234,7 @@ static int vboxsf_read_folio(struct file *file, struct folio *folio)
->>  	u8 *buf;
->>  	int err;
->>  
->> -	buf = kmap(page);
->> +	buf = kmap_local_folio(folio, off);
-> 
-> Did you test this?  'off' is the offset in the _file_.  Whereas
-> kmap_local_folio() takes the offset within the _folio_.  They have
-> different types (loff_t vs size_t) to warn you that they're different
-> things.
+As I wrote, I don't like this special case.
+I prefer that we generate double IN_MODIFY than
+having to maintain unreadable code.
 
+Let's see what Jan has to say about this.
 
-Ah yes you are completely right, off is the offset in the file
-and buf should point to the *start* of a mapping of the page.
-
-Regards,
-
-Hans
-
-
-
+Thanks,
+Amir.
