@@ -2,53 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6403B73F037
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 03:16:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5806773F032
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 03:14:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229982AbjF0BQB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Jun 2023 21:16:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34376 "EHLO
+        id S229992AbjF0BOB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Jun 2023 21:14:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230016AbjF0BPu (ORCPT
+        with ESMTP id S229888AbjF0BN6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Jun 2023 21:15:50 -0400
-X-Greylist: delayed 150 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 26 Jun 2023 18:15:49 PDT
-Received: from resqmta-h1p-028591.sys.comcast.net (resqmta-h1p-028591.sys.comcast.net [IPv6:2001:558:fd02:2446::9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53D7D198D
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 18:15:49 -0700 (PDT)
-Received: from resomta-h1p-028516.sys.comcast.net ([96.102.179.207])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 256/256 bits)
-        (Client did not present a certificate)
-        by resqmta-h1p-028591.sys.comcast.net with ESMTP
-        id DvA2q8zHX6ZQQDxGfqSs5f; Tue, 27 Jun 2023 01:13:17 +0000
+        Mon, 26 Jun 2023 21:13:58 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FBAC173B
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 18:13:56 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-656bc570a05so1036840b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 18:13:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=comcastmailservice.net; s=20211018a; t=1687828397;
-        bh=lWIrrdBwU2Z2iSXjnUlbUEi7uBI4b1rraPxssPyuNw0=;
-        h=Received:Received:From:To:Subject:Date:MIME-Version:Message-ID:
-         Content-Type:Xfinity-Spam-Result;
-        b=ld4wwcPME9dVc+n2UjdZWZqFwnv1y3ca9BnFYY8uXUg5OGmXIpz4oRnmKLLRBQ3l9
-         5osCahyYRF4DS+m5fMUICXzSvqd3OKmekWo4E6F8BqKvq5/Vc2PmVoVa/madgUYgFG
-         /53HhQLKqyiI9Eo9ZBVRkIjX921uSVlCo/KVeYf2TfotAXd70+WEVmCbZMO9GrMJBg
-         7LSrCHB1NBdO87rl7/TBC27Wu7o+Zv9llZs3i6IDY/DPD3vYzLKw+TeD5aa/TeJyvz
-         Ub8XTs4lGyhMWBpJ63i3jyyOFBNyBAxC2E7M8VfvtxnNOSYGKQurDoX6uOG2eN4pCb
-         BrNQB47N/TVyw==
-Received: from localhost ([IPv6:2601:18c:9082:afd:219:d1ff:fe75:dc2f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 256/256 bits)
-        (Client did not present a certificate)
-        by resomta-h1p-028516.sys.comcast.net with ESMTPSA
-        id DxGHq6r532VAEDxGJquU81; Tue, 27 Jun 2023 01:12:55 +0000
-X-Xfinity-VMeta: sc=0.00;st=legit
-From:   Matt Whitlock <kernel@mattwhitlock.name>
-To:     <linux-fsdevel@vger.kernel.org>
-Subject: [Reproducer] Corruption, possible race between splice and =?iso-8859-1?Q?FALLOC=5FFL=5FPUNCH=5FHOLE?=
-Date:   Mon, 26 Jun 2023 21:12:52 -0400
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687828436; x=1690420436;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MQ/IjqmtE16kQNQEnAAcOTmBTtwuTHwVotfjuZpxuOk=;
+        b=Qh0TdwgR7cXBEXeK5cmdtXosn/XHZ8bChAZlYL8hsZEzYoduf1shHWb2RecxQZPqSU
+         55krgRpDZFhTfysMsHQDkUAZN/Hy8ArK0LNqNRaPnPwhyEvKBgsQCMlI1t+T8e2m8Jnn
+         yS5m0VEHcx726/05Gh/CaTA+PBBY5HkCFo3lP3mpj3cpYcWS7MoE14Rqx2zXa9Dgh6eP
+         RzOu4++eXsf2wbFJ6ySIqQSLHaVfhmoErl9f8ohuehHLV8iLqmrpl2SGqUYAM4GqSy01
+         Bcr2IiFeqqaX3NMqn0dqGEXRXDy/wy6AeSBsLKv8mbvK1Ro+WWRzA1tE1ijjAFP4KcFs
+         Arww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687828436; x=1690420436;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MQ/IjqmtE16kQNQEnAAcOTmBTtwuTHwVotfjuZpxuOk=;
+        b=VRxexz5niSRo5Ox4B13nqcLOf235c7cQo4C2bMI9goJZc5O4tqKPgwOrs95jYB4QEH
+         dSPjOjeBYr+kgl1RyqwlM0/6SkkIqIc3wA/Y6ENXrWEIrGsfbMHHlgFuSbulO4nsxqmF
+         vJ3z7/7GoHbswkFNll1eijnITs1Y8vu89LdsxUdLhx7eL3oDGXtjY6H64O0sD/YObUv4
+         UUkJ8fMTwc20ftBjFZOfSxRubxF+WOC6HEKbhJLJ27tQnPZWc2fQTuDNVgzTcKTdjsIH
+         tk72acQWtp6zb+7eoSFK05AxksfJSnNM3HL8QWqRBupofiPLY3i7lTzD8lQkxUBidajt
+         Lkdg==
+X-Gm-Message-State: AC+VfDwGRhosjZYMzAhzqcno86iWwHueqJY1C0NK3cBuMym9Rdag8E9Q
+        rjnsSBz1zQD5SXsx7tJ2DCn1dQ==
+X-Google-Smtp-Source: ACHHUZ6Hji3PWg/+1y1c/8GC5/7oraS0lnPCcB+YX5+KRwILp3HpyMg3HHBinA0tMs9CT3eKf+vs5Q==
+X-Received: by 2002:a05:6a21:6d9c:b0:125:6443:4eb8 with SMTP id wl28-20020a056a216d9c00b0012564434eb8mr17562093pzb.5.1687828435896;
+        Mon, 26 Jun 2023 18:13:55 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id z15-20020a170903018f00b001a072aedec7sm4754717plg.75.2023.06.26.18.13.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Jun 2023 18:13:55 -0700 (PDT)
+Message-ID: <91e9064b-84e3-1712-0395-b017c7c4a964@kernel.dk>
+Date:   Mon, 26 Jun 2023 19:13:54 -0600
 MIME-Version: 1.0
-Message-ID: <ec804f26-fa76-4fbe-9b1c-8fbbd829b735@mattwhitlock.name>
-User-Agent: Trojita/v0.7-595-g7738cd47; Qt/5.15.10; xcb; Linux; Gentoo Linux
-Content-Type: multipart/mixed;
-        boundary="trojita=_a96e5a88-7dc2-4bd2-9532-de033b9131da"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,MIME_QP_LONG_LINE,SPF_HELO_PASS,SPF_PASS,
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [GIT PULL] bcachefs
+Content-Language: en-US
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+References: <20230626214656.hcp4puionmtoloat@moria.home.lan>
+ <aeb2690c-4f0a-003d-ba8b-fe06cd4142d1@kernel.dk>
+ <20230627000635.43azxbkd2uf3tu6b@moria.home.lan>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230627000635.43azxbkd2uf3tu6b@moria.home.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -57,134 +78,69 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a multipart/mixed message in MIME format.
+On 6/26/23 6:06?PM, Kent Overstreet wrote:
+> On Mon, Jun 26, 2023 at 05:11:29PM -0600, Jens Axboe wrote:
+>>> (Worth noting the bug causing the most test failures by a wide margin is
+>>> actually an io_uring bug that causes random umount failures in shutdown
+>>> tests. Would be great to get that looked at, it doesn't just affect
+>>> bcachefs).
+>>
+>> Maybe if you had told someone about that it could get looked at?
+> 
+> I'm more likely to report bugs to people who have a history of being
+> responsive...
 
---trojita=_a96e5a88-7dc2-4bd2-9532-de033b9131da
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+I maintain the code I put in the kernel, and generally respond to
+everything, and most certainly bug reports.
 
-Hello, all. I am experiencing a data corruption issue on Linux 6.1.24 when=20=
+>> What is the test case and what is going wrong?
+> 
+> Example: https://evilpiepirate.org/~testdashboard/c/82973f03c0683f7ecebe14dfaa2c3c9989dd29fc/xfstests.generic.388/log.br
+> 
+> I haven't personally seen it on xfs - Darrick knew something about it
+> but he's on vacation. If I track down a reproducer on xfs I'll let you
+> know.
+>
+> If you're wanting to dig into it on bcachefs, ktest is pretty easy to
+> get going: https://evilpiepirate.org/git/ktest.git
+> 
+>   $ ~/ktest/root_image create
+>   # from your kernel tree:
+>   $ ~/ktest/build-test-kernel run -ILP ~/ktest/tests/bcachefs/xfstests.ktest/generic/388
+> 
+> I have some debug code I can give you from when I was tracing it through
+> the mount path, I still have to find or recreate the part that tracked
+> it down to io_uring...
 
-calling fallocate with FALLOC_FL_PUNCH_HOLE to punch out pages that have=20
-just been spliced into a pipe. It appears that the fallocate call can zero=20=
+Doesn't reproduce for me with XFS. The above ktest doesn't work for me
+either:
 
-out the pages that are sitting in the pipe buffer, before those pages are=20
-read from the pipe.
+~/git/ktest/build-test-kernel run -ILP ~/git/ktest/tests/bcachefs/xfstests.ktest/generic/388
+realpath: /home/axboe/git/ktest/tests/bcachefs/xfstests.ktest/generic/388: Not a directory
+Error 1 at /home/axboe/git/ktest/build-test-kernel 262 from: ktest_test=$(realpath "$1"), exiting
 
-Simplified code excerpt (eliding error checking):
+and I suspect that should've been a space, but:
 
-int fd =3D /* open file descriptor referring to some disk file */;
-for (off_t consumed =3D 0;;) {
-   ssize_t n =3D splice(fd, NULL, STDOUT_FILENO, NULL, SIZE_MAX, 0);
-   if (n <=3D 0) break;
-   consumed +=3D n;
-   fallocate(fd, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, 0, consumed);
-}
+~/git/ktest/build-test-kernel run -ILP ~/git/ktest/tests/bcachefs/xfstests.ktest generic/388
+Running test xfstests.ktest on m1max at /home/axboe/git/linux-block
+No tests found
+TEST FAILED
 
-Expected behavior:
-Punching holes in a file after splicing pages out of that file into a pipe=20=
+If I just run generic/388 with bcachefs formatted drives, I get xfstests
+complaining as it tries to mount an XFS file system...
 
-should not corrupt the spliced-out pages in the pipe buffer.
+As a side note, I do get these when compiling:
 
-Observed behavior:
-Some of the pages that have been spliced into the pipe get zeroed out by=20
-the subsequent fallocate call before they can be consumed from the read=20
-side of the pipe.
+fs/bcachefs/alloc_background.c: In function ‘bch2_check_alloc_info’:
+fs/bcachefs/alloc_background.c:1526:1: warning: the frame size of 2640 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+ 1526 | }
+      | ^
+fs/bcachefs/reflink.c: In function ‘bch2_remap_range’:
+fs/bcachefs/reflink.c:388:1: warning: the frame size of 2352 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+  388 | }
+      | ^
 
 
-Steps to reproduce:
-
-1. Save the attached ones.c, dontneed.c, and consume.c.
-
-2. gcc -o ones ones.c
-   gcc -o dontneed dontneed.c
-   gcc -o consume consume.c
-
-3. Fill a file with 32 MiB of 0xFF:
-   ./ones | head -c$((1<<25)) >testfile
-
-4. Evict the pages of the file from the page cache:
-   sync testfile && ./dontneed testfile
-
-5. Splice the file into a pipe, punching out batches of pages after=20
-splicing them:
-   ./consume testfile | hexdump -C
-
-The expected output from hexdump should show 32 MiB of 0xFF. Indeed, on my=20=
-
-system, if I omit the POSIX_FADV_DONTNEED advice, then I do get the=20
-expected output. However, if the pages of the file are not already present=20=
-
-in the page cache (i.e., if the splice call faults them in from disk), then=20=
-
-the hexdump output shows some pages full of 0xFF and some pages full of=20
-0x00.
-
-Note #1: I am running a fairly antiquated x86_64 system. You may need to=20
-use a file larger than 32 MiB to reproduce the misbehavior on a more modern=20=
-
-system. In particular, even I cannot reproduce the problem when I use 16=20
-MiB. Conversely, when I use a very large file (too large to fit entirely in=20=
-
-the page cache), then I don't need the "dontneed" call to reproduce the=20
-problem.
-
-Note #2: I am siting my test file on an XFS file system running on a=20
-hardware RAID volume at /dev/sda1. I'm not sure if that's relevant.
---trojita=_a96e5a88-7dc2-4bd2-9532-de033b9131da
-Content-Type: text/x-csrc
-Content-Disposition: attachment;
-	filename=ones.c
-Content-Transfer-Encoding: base64
-
-I2luY2x1ZGUgPHN0cmluZy5oPgoKI2luY2x1ZGUgPGVycm5vLmg+CiNpbmNsdWRlIDxlcnJvci5o
-PgojaW5jbHVkZSA8ZmNudGwuaD4KI2luY2x1ZGUgPHN5c2V4aXRzLmg+CiNpbmNsdWRlIDx1bmlz
-dGQuaD4KCmludCBtYWluKCkgewoJY2hhciBidWZbNDA5Nl07CgltZW1zZXQoYnVmLCAweEZGLCBz
-aXplb2YgYnVmKTsKCWZvciAoOzspCgkJaWYgKHdyaXRlKFNURE9VVF9GSUxFTk8sIGJ1Ziwgc2l6
-ZW9mIGJ1ZikgPCAwKQoJCQllcnJvcihFWF9JT0VSUiwgZXJybm8sICJ3cml0ZSIpOwoJcmV0dXJu
-IEVYX09LOwp9Cg==
-
---trojita=_a96e5a88-7dc2-4bd2-9532-de033b9131da
-Content-Type: text/x-csrc
-Content-Disposition: attachment;
-	filename=dontneed.c
-Content-Transfer-Encoding: base64
-
-I2luY2x1ZGUgPHN0ZGlvLmg+CgojaW5jbHVkZSA8ZXJybm8uaD4KI2luY2x1ZGUgPGVycm9yLmg+
-CiNpbmNsdWRlIDxmY250bC5oPgojaW5jbHVkZSA8c3lzZXhpdHMuaD4KI2luY2x1ZGUgPHVuaXN0
-ZC5oPgoKaW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKmFyZ3ZbXSkgewoJaWYgKGFyZ2MgPCAyKSB7
-CgkJcHJpbnRmKCJ1c2FnZTogJXMgPGZpbGU+IFsuLi5dXG4iLCBhcmdjID4gMCA/ICphcmd2IDog
-ImRvbnRuZWVkIik7CgkJcmV0dXJuIEVYX1VTQUdFOwoJfQoJaW50IHJldCA9IEVYX09LOwoJd2hp
-bGUgKCsrYXJndiwgLS1hcmdjID4gMCkgewoJCWludCBmZCA9IG9wZW4oKmFyZ3YsIE9fUkRPTkxZ
-KTsKCQlpZiAoZmQgPCAwKSB7CgkJCWVycm9yKDAsIGVycm5vLCAiJXMiLCAqYXJndik7CgkJCXJl
-dCA9IHJldCA/OiBFWF9OT0lOUFVUOwoJCQljb250aW51ZTsKCQl9CgkJaWYgKHBvc2l4X2ZhZHZp
-c2UoZmQsIDAsIDAsIFBPU0lYX0ZBRFZfRE9OVE5FRUQpIDwgMCkgewoJCQllcnJvcigwLCBlcnJu
-bywgIiVzOiBwb3NpeF9mYWR2aXNlIiwgKmFyZ3YpOwoJCQlyZXQgPSBFWF9PU0VSUjsKCQl9CgkJ
-aWYgKGNsb3NlKGZkKSA8IDApCgkJCWVycm9yKEVYX09TRVJSLCBlcnJubywgIiVzOiBjbG9zZSIs
-ICphcmd2KTsKCX0KCXJldHVybiByZXQ7Cn0K
-
---trojita=_a96e5a88-7dc2-4bd2-9532-de033b9131da
-Content-Type: text/x-csrc
-Content-Disposition: attachment;
-	filename=consume.c
-Content-Transfer-Encoding: base64
-
-I2RlZmluZSBfR05VX1NPVVJDRQoKI2luY2x1ZGUgPHN0ZGludC5oPgoKI2luY2x1ZGUgPGVycm5v
-Lmg+CiNpbmNsdWRlIDxlcnJvci5oPgojaW5jbHVkZSA8ZmNudGwuaD4KI2luY2x1ZGUgPHN5c2V4
-aXRzLmg+CiNpbmNsdWRlIDx1bmlzdGQuaD4KCmludCBtYWluKGludCBhcmdjLCBjaGFyICphcmd2
-W10pIHsKCSsrYXJndiwgLS1hcmdjOwoJZG8gewoJCWNvbnN0IGNoYXIgKmZpbGVuYW1lID0gIjxz
-dGRpbj4iOwoJCWlmIChhcmdjID4gMCkgewoJCQljbG9zZShTVERJTl9GSUxFTk8pOwoJCQlpZiAo
-b3BlbihmaWxlbmFtZSA9ICphcmd2LCBPX1JEV1IpICE9IFNURElOX0ZJTEVOTykKCQkJCWVycm9y
-KEVYX05PSU5QVVQsIGVycm5vLCAiJXMiLCBmaWxlbmFtZSk7CgkJfQoJCWZvciAob2ZmX3QgY29u
-c3VtZWQgPSAwOzspIHsKCQkJc3NpemVfdCBuID0gc3BsaWNlKFNURElOX0ZJTEVOTywgTlVMTCwg
-U1RET1VUX0ZJTEVOTywgTlVMTCwgU0laRV9NQVgsIDApOwoJCQlpZiAobiA8PSAwKSB7CgkJCQlp
-ZiAobiA8IDApCgkJCQkJZXJyb3IoRVhfSU9FUlIsIGVycm5vLCAiJXM6IHNwbGljZSIsIGZpbGVu
-YW1lKTsKCQkJCWJyZWFrOwoJCQl9CgkJCWlmIChmYWxsb2NhdGUoU1RESU5fRklMRU5PLCBGQUxM
-T0NfRkxfUFVOQ0hfSE9MRSB8IEZBTExPQ19GTF9LRUVQX1NJWkUsIDAsIGNvbnN1bWVkICs9IG4p
-IDwgMCkKCQkJCWVycm9yKEVYX09TRVJSLCBlcnJubywgIiVzOiBmYWxsb2NhdGUiLCBmaWxlbmFt
-ZSk7CgkJfQoJCWlmIChhcmdjID4gMCAmJiB1bmxpbmsoZmlsZW5hbWUpIDwgMCkKCQkJZXJyb3Io
-RVhfT1NFUlIsIGVycm5vLCAiJXM6IHVubGluayIsIGZpbGVuYW1lKTsKCX0gd2hpbGUgKCsrYXJn
-diwgLS1hcmdjID4gMCk7CglyZXR1cm4gRVhfT0s7Cn0K
-
---trojita=_a96e5a88-7dc2-4bd2-9532-de033b9131da--
+-- 
+Jens Axboe
 
