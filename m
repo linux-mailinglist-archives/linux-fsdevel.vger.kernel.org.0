@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D5C27401BC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 18:56:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B41B7401C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 18:57:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230002AbjF0Q4F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 12:56:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37236 "EHLO
+        id S230040AbjF0Q5Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 12:57:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229777AbjF0Q4C (ORCPT
+        with ESMTP id S229501AbjF0Q5X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 12:56:02 -0400
+        Tue, 27 Jun 2023 12:57:23 -0400
 Received: from tarta.nabijaczleweli.xyz (unknown [139.28.40.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DC27018C;
-        Tue, 27 Jun 2023 09:55:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 55B2B10CF;
+        Tue, 27 Jun 2023 09:57:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
-        s=202305; t=1687884956;
-        bh=izqD3jT+ADWBX3rn8DQFe67pMsMvDJNKvE2GgEtMe7s=;
+        s=202305; t=1687885040;
+        bh=Az1W0LBoRrz7YW1u9PmFCtcve2J0qXsV3SeB7GMF0ps=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CfHLC6O0JAaN2qNDtJDzq4Gz/M5XN6XtFNQmfupTu66xUWMV5oPWGWAbtwX3Py7yu
-         1tOOCa4UaHEOzQptUN1dJeoxRQ8XT5HAOjbFS+/GRntcepqlX0tKIDgk9MsgZwEQsr
-         IUxgNj7FFFPN7CBFpJwWDjL0EATSvlyg93KRax6n+ftB0MzQG4uc54WyWdmbvomfma
-         U9Y8N+63Obc3b1YUQsxzT/EiHxN6b6U2CDDcHITQEc2ZSCV44JNwByM42BuxSDP803
-         K1QsxMTi2Z4+pbozxfaUr8yKAT/iGz4Ajtih/7wiyniZurlp82qwHxOkuuMtZum3o9
-         XeJ7DT8gi6REA==
+        b=bto/E5jTK1/420ZGrPZSSsY7qNHL2Z4JofFpTcdv8BdbJ+gJiiCCEUR5qmewifHGR
+         EXfbSHI4Sim9KaLIvMpOjl4sYnvq60jlPUBMwHFJMVipYt+9Jl8UddMJP/76rptfsG
+         yKNsWalfXH9ybZdnEUjHKUaCB/kYmzuxCT8GrMbOJbrX8O32o6UeA0qNjeh7ERVIE3
+         KHP6YQTUxQ4dQ2orb8/ui+zqpwhuRqNxCku+ubFMzgUy1krQC7mcuOhClDz5olyt1f
+         6qdKCJc8RA+NHF0zdsqWDJ/lBJYlZtnfhs7o+mplYOXuo7nUCtlL4zhD+ZZbpHllfN
+         2/G4JOL0ApGnA==
 Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
-        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 375471A90;
-        Tue, 27 Jun 2023 18:55:56 +0200 (CEST)
-Date:   Tue, 27 Jun 2023 18:55:55 +0200
+        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 9AE391A92;
+        Tue, 27 Jun 2023 18:57:20 +0200 (CEST)
+Date:   Tue, 27 Jun 2023 18:57:19 +0200
 From:   Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
         <nabijaczleweli@nabijaczleweli.xyz>
 To:     Amir Goldstein <amir73il@gmail.com>
@@ -37,14 +37,13 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jan Kara <jack@suse.cz>,
         Chung-Chiang Cheng <cccheng@synology.com>, ltp@vger.kernel.org
-Subject: [PATCH v3 3/3] splice: fsnotify_access(in), fsnotify_modify(out) on
- success in tee
-Message-ID: <080710f0a1a5c0f124bfa6cc2569b976e0365a91.1687884031.git.nabijaczleweli@nabijaczleweli.xyz>
-References: <CAOQ4uxh7i_s4R9pFJPENALdWGG5-dDhqPLEUXuJqSoHraktFiA@mail.gmail.com>
- <cover.1687884029.git.nabijaczleweli@nabijaczleweli.xyz>
+Subject: [LTP PATCH] inotify13: new test for fs/splice.c functions vs pipes
+ vs inotify
+Message-ID: <44neh3sog5jaskc4zy6lwnld7hussp5sslx4fun47fr45mxe3a@q2jgkjwlq74f>
+References: <cover.1687884029.git.nabijaczleweli@nabijaczleweli.xyz>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zo6f34h56mk2beb3"
+        protocol="application/pgp-signature"; boundary="4v3npduv4blgoq7d"
 Content-Disposition: inline
 In-Reply-To: <cover.1687884029.git.nabijaczleweli@nabijaczleweli.xyz>
 User-Agent: NeoMutt/20230517
@@ -59,62 +58,353 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---zo6f34h56mk2beb3
+--4v3npduv4blgoq7d
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Same logic applies here: this can fill up the pipe, and pollers that rely
-on getting IN_MODIFY notifications never wake up.
+The only one that passes on 6.1.27-1 is sendfile_file_to_pipe.
 
-Fixes: 983652c69199 ("splice: report related fsnotify events")
 Link: https://lore.kernel.org/linux-fsdevel/jbyihkyk5dtaohdwjyivambb2gffyjs=
 3dodpofafnkkunxq7bu@jngkdxx65pux/t/#u
-Link: https://bugs.debian.org/1039488
 Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xyz>
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/splice.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Formatted to clang-format defaults. Put the original Fixes:ed SHA in the
+metadata, that's probably fine, right?
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 0eb36e93c030..2ecfccbda956 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -1815,6 +1815,11 @@ long do_tee(struct file *in, struct file *out, size_=
-t len, unsigned int flags)
- 		}
- 	}
-=20
-+	if (ret > 0) {
-+		fsnotify_access(in);
-+		fsnotify_modify(out);
-+	}
+ testcases/kernel/syscalls/inotify/.gitignore  |   1 +
+ testcases/kernel/syscalls/inotify/inotify13.c | 246 ++++++++++++++++++
+ 2 files changed, 247 insertions(+)
+ create mode 100644 testcases/kernel/syscalls/inotify/inotify13.c
+
+diff --git a/testcases/kernel/syscalls/inotify/.gitignore b/testcases/kerne=
+l/syscalls/inotify/.gitignore
+index f6e5c546a..b597ea63f 100644
+--- a/testcases/kernel/syscalls/inotify/.gitignore
++++ b/testcases/kernel/syscalls/inotify/.gitignore
+@@ -10,3 +10,4 @@
+ /inotify10
+ /inotify11
+ /inotify12
++/inotify13
+diff --git a/testcases/kernel/syscalls/inotify/inotify13.c b/testcases/kern=
+el/syscalls/inotify/inotify13.c
+new file mode 100644
+index 000000000..c34f1dc9f
+--- /dev/null
++++ b/testcases/kernel/syscalls/inotify/inotify13.c
+@@ -0,0 +1,246 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*\
++ * Verify splice-family functions (and sendfile) generate IN_ACCESS
++ * for what they read and IN_MODIFY for what they write.
++ *
++ * Regression test for 983652c69199 and
++ * https://lore.kernel.org/linux-fsdevel/jbyihkyk5dtaohdwjyivambb2gffyjs3d=
+odpofafnkkunxq7bu@jngkdxx65pux/t/#u
++ */
 +
- 	return ret;
- }
-=20
++#define _GNU_SOURCE
++#include "config.h"
++
++#include <stdio.h>
++#include <unistd.h>
++#include <stdlib.h>
++#include <fcntl.h>
++#include <stdbool.h>
++#include <inttypes.h>
++#include <signal.h>
++#include <sys/mman.h>
++#include <sys/sendfile.h>
++
++#include "tst_test.h"
++#include "tst_safe_macros.h"
++#include "inotify.h"
++
++#if defined(HAVE_SYS_INOTIFY_H)
++#include <sys/inotify.h>
++
++
++static int pipes[2] =3D {-1, -1};
++static int inotify =3D -1;
++static int memfd =3D -1;
++static int data_pipes[2] =3D {-1, -1};
++
++static void watch_rw(int fd) {
++  char buf[64];
++  sprintf(buf, "/proc/self/fd/%d", fd);
++  SAFE_MYINOTIFY_ADD_WATCH(inotify, buf, IN_ACCESS | IN_MODIFY);
++}
++
++static int compar(const void *l, const void *r) {
++  const struct inotify_event *lie =3D l;
++  const struct inotify_event *rie =3D r;
++  return lie->wd - rie->wd;
++}
++
++static void get_events(size_t evcnt, struct inotify_event evs[static evcnt=
+]) {
++  struct inotify_event tail, *itr =3D evs;
++  for (size_t left =3D evcnt; left; --left)
++    SAFE_READ(true, inotify, itr++, sizeof(struct inotify_event));
++
++  TEST(read(inotify, &tail, sizeof(struct inotify_event)));
++  if (TST_RET !=3D -1)
++    tst_brk(TFAIL, "expect %zu events", evcnt);
++  if (TST_ERR !=3D EAGAIN)
++    tst_brk(TFAIL | TTERRNO, "expected EAGAIN");
++
++  qsort(evs, evcnt, sizeof(struct inotify_event), compar);
++}
++
++static void expect_event(struct inotify_event *ev, int wd, uint32_t mask) {
++  if (ev->wd !=3D wd)
++    tst_brk(TFAIL, "expect event for wd %d got %d", wd, ev->wd);
++  if (ev->mask !=3D mask)
++    tst_brk(TFAIL, "expect event with mask %" PRIu32 " got %" PRIu32 "", m=
+ask,
++            ev->mask);
++}
++
++#define F2P(splice)                                                       =
+     \
++  SAFE_WRITE(SAFE_WRITE_RETRY, memfd, __func__, sizeof(__func__));        =
+     \
++  SAFE_LSEEK(memfd, 0, SEEK_SET);                                         =
+     \
++  watch_rw(memfd);                                                        =
+     \
++  watch_rw(pipes[0]);                                                     =
+     \
++  TEST(splice);                                                           =
+     \
++  if (TST_RET =3D=3D -1)                                                  =
+         \
++    tst_brk(TBROK | TERRNO, #splice);                                     =
+     \
++  if (TST_RET !=3D sizeof(__func__))                                      =
+       \
++    tst_brk(TBROK, #splice ": %" PRId64 "", TST_RET);                     =
+     \
++                                                                          =
+     \
++  /*expecting: IN_ACCESS memfd, IN_MODIFY pipes[0]*/                      =
+     \
++  struct inotify_event events[2];                                         =
+     \
++  get_events(ARRAY_SIZE(events), events);                                 =
+     \
++  expect_event(events + 0, 1, IN_ACCESS);                                 =
+     \
++  expect_event(events + 1, 2, IN_MODIFY);                                 =
+     \
++                                                                          =
+     \
++  char buf[sizeof(__func__)];                                             =
+     \
++  SAFE_READ(true, pipes[0], buf, sizeof(__func__));                       =
+     \
++  if (memcmp(buf, __func__, sizeof(__func__)))                            =
+     \
++    tst_brk(TFAIL, "buf contents bad");
++static void splice_file_to_pipe(void) {
++  F2P(splice(memfd, NULL, pipes[1], NULL, 128 * 1024 * 1024, 0));
++}
++static void sendfile_file_to_pipe(void) {
++  F2P(sendfile(pipes[1], memfd, NULL, 128 * 1024 * 1024));
++}
++
++static void splice_pipe_to_file(void) {
++  SAFE_WRITE(SAFE_WRITE_RETRY, pipes[1], __func__, sizeof(__func__));
++  watch_rw(pipes[0]);
++  watch_rw(memfd);
++  TEST(splice(pipes[0], NULL, memfd, NULL, 128 * 1024 * 1024, 0));
++  if(TST_RET =3D=3D -1)
++		tst_brk(TBROK | TERRNO, "splice");
++	if(TST_RET !=3D sizeof(__func__))
++		tst_brk(TBROK, "splice: %" PRId64 "", TST_RET);
++
++	// expecting: IN_ACCESS pipes[0], IN_MODIFY memfd
++	struct inotify_event events[2];
++	get_events(ARRAY_SIZE(events), events);
++	expect_event(events + 0, 1, IN_ACCESS);
++	expect_event(events + 1, 2, IN_MODIFY);
++
++  char buf[sizeof(__func__)];
++  SAFE_LSEEK(memfd, 0, SEEK_SET);
++  SAFE_READ(true, memfd, buf, sizeof(__func__));
++  if (memcmp(buf, __func__, sizeof(__func__)))
++                tst_brk(TFAIL, "buf contents bad");
++}
++
++#define P2P(splice)                                                       =
+     \
++  SAFE_WRITE(SAFE_WRITE_RETRY, data_pipes[1], __func__, sizeof(__func__));=
+     \
++  watch_rw(data_pipes[0]);                                                =
+     \
++  watch_rw(pipes[1]);                                                     =
+     \
++  TEST(splice);                                                           =
+     \
++  if (TST_RET =3D=3D -1)                                                  =
+         \
++                tst_brk(TBROK | TERRNO, #splice);                         =
+     \
++  if (TST_RET !=3D sizeof(__func__))                                      =
+       \
++                tst_brk(TBROK, #splice ": %" PRId64 "", TST_RET);         =
+     \
++                                                                          =
+     \
++  /* expecting: IN_ACCESS data_pipes[0], IN_MODIFY pipes[1] */            =
+     \
++  struct inotify_event events[2];                                         =
+     \
++  get_events(ARRAY_SIZE(events), events);                                 =
+     \
++  expect_event(events + 0, 1, IN_ACCESS);                                 =
+     \
++  expect_event(events + 1, 2, IN_MODIFY);                                 =
+     \
++                                                                          =
+     \
++  char buf[sizeof(__func__)];                                             =
+     \
++  SAFE_READ(true, pipes[0], buf, sizeof(__func__));                       =
+     \
++  if (memcmp(buf, __func__, sizeof(__func__)))                            =
+     \
++                tst_brk(TFAIL, "buf contents bad");
++static void splice_pipe_to_pipe(void) {
++  P2P(splice(data_pipes[0], NULL, pipes[1], NULL, 128 * 1024 * 1024, 0));
++}
++static void tee_pipe_to_pipe(void) {
++  P2P(tee(data_pipes[0], pipes[1], 128 * 1024 * 1024, 0));
++}
++
++static char vmsplice_pipe_to_mem_dt[32 * 1024];
++static void vmsplice_pipe_to_mem(void) {
++  memcpy(vmsplice_pipe_to_mem_dt, __func__, sizeof(__func__));
++  watch_rw(pipes[0]);
++  TEST(vmsplice(pipes[1],
++                &(struct iovec){.iov_base =3D vmsplice_pipe_to_mem_dt,
++                                .iov_len =3D sizeof(vmsplice_pipe_to_mem_d=
+t)},
++                1, SPLICE_F_GIFT));
++  if (TST_RET =3D=3D -1)
++    tst_brk(TBROK | TERRNO, "vmsplice");
++  if (TST_RET !=3D sizeof(vmsplice_pipe_to_mem_dt))
++    tst_brk(TBROK, "vmsplice: %" PRId64 "", TST_RET);
++
++  // expecting: IN_MODIFY pipes[0]
++  struct inotify_event event;
++  get_events(1, &event);
++  expect_event(&event, 1, IN_MODIFY);
++
++  char buf[sizeof(__func__)];
++  SAFE_READ(true, pipes[0], buf, sizeof(__func__));
++  if (memcmp(buf, __func__, sizeof(__func__)))
++    tst_brk(TFAIL, "buf contents bad");
++}
++
++static void vmsplice_mem_to_pipe(void) {
++  char buf[sizeof(__func__)];
++  SAFE_WRITE(SAFE_WRITE_RETRY, pipes[1], __func__, sizeof(__func__));
++  watch_rw(pipes[1]);
++  TEST(vmsplice(pipes[0],
++                &(struct iovec){.iov_base =3D buf, .iov_len =3D sizeof(buf=
+)}, 1,
++                0));
++  if (TST_RET =3D=3D -1)
++    tst_brk(TBROK | TERRNO, "vmsplice");
++  if (TST_RET !=3D sizeof(buf))
++    tst_brk(TBROK, "vmsplice: %" PRId64 "", TST_RET);
++
++  // expecting: IN_ACCESS pipes[1]
++  struct inotify_event event;
++  get_events(1, &event);
++  expect_event(&event, 1, IN_ACCESS);
++  if (memcmp(buf, __func__, sizeof(__func__)))
++    tst_brk(TFAIL, "buf contents bad");
++}
++
++typedef void (*tests_f)(void);
++#define TEST_F(f) { f, #f }
++static const struct {
++        tests_f f;
++        const char *n;
++} tests[] =3D {
++    TEST_F(splice_file_to_pipe),  TEST_F(sendfile_file_to_pipe),
++    TEST_F(splice_pipe_to_file),  TEST_F(splice_pipe_to_pipe),
++    TEST_F(tee_pipe_to_pipe),     TEST_F(vmsplice_pipe_to_mem),
++    TEST_F(vmsplice_mem_to_pipe),
++};
++
++static void run_test(unsigned int n)
++{
++	tst_res(TINFO, "%s", tests[n].n);
++
++	SAFE_PIPE2(pipes, O_CLOEXEC);
++	SAFE_PIPE2(data_pipes, O_CLOEXEC);
++	inotify =3D SAFE_MYINOTIFY_INIT1(IN_NONBLOCK | IN_CLOEXEC);
++	if((memfd =3D memfd_create(__func__, MFD_CLOEXEC)) =3D=3D -1)
++		tst_brk(TCONF | TERRNO, "memfd");
++	tests[n].f();
++	tst_res(TPASS, "=D0=BE=D0=BA");
++}
++
++static void cleanup(void)
++{
++	if (memfd !=3D -1)
++		SAFE_CLOSE(memfd);
++	if (inotify !=3D -1)
++		SAFE_CLOSE(inotify);
++	if (pipes[0] !=3D -1)
++		SAFE_CLOSE(pipes[0]);
++	if (pipes[1] !=3D -1)
++		SAFE_CLOSE(pipes[1]);
++	if (data_pipes[0] !=3D -1)
++		SAFE_CLOSE(data_pipes[0]);
++	if (data_pipes[1] !=3D -1)
++		SAFE_CLOSE(data_pipes[1]);
++}
++
++static struct tst_test test =3D {
++	.max_runtime =3D 10,
++	.cleanup =3D cleanup,
++	.test =3D run_test,
++	.tcnt =3D ARRAY_SIZE(tests),
++	.tags =3D (const struct tst_tag[]) {
++		{"linux-git", "983652c69199"},
++		{}
++	},
++};
++
++#else
++	TST_TEST_TCONF("system doesn't have required inotify support");
++#endif
 --=20
 2.39.2
 
---zo6f34h56mk2beb3
+--4v3npduv4blgoq7d
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmSbFJoACgkQvP0LAY0m
-WPExtQ/8DSkgj9PMvR7+6k/3ErXOyZwe4IbU9KqbhQNj1vCKQ0xrNEBgYd4drFsm
-4JpisqSL0s7oRk0+Wkat7+XsdVRhM1d9j+7HqSeJ6Zb/xU+ImAaPD5vH+DBFD8iP
-DAkyqo6x7letILnL4IeDi5ybBWB+k1G+UgVl41F7U7Z6//N2btNutatYYpFS6OJ7
-3/7T4e6A7oSr/xkybSZVVpJ0G0DdwAOQ+8wFgEXs+4+ruT0KhYI6/YX8BKhv8kaT
-ACCQcaqayISBr6pAcLtIljcIk2SnZef9r1aH+rLf5CZdfSiTYVyKD/oKD6QMjNuG
-tWLbVrEKJ2vwWrsLy5fVduVzUAfFoW5yUMkF2mzyK9QysOJp9xtDJHohMWqUAukn
-MRAjVMdzCh6KKtgShQljYnwstSlBpsJMrAba2N7P04vdBQIGSzrsIZUNfTjPbuT7
-dAeYZzSb/tZja7/iWFg9LFKn4CrYGOom06LNiPv2EtdXnFiGIngo4JBwNTAVBSiA
-NQYn5HE99rgBG+FiBRMpHu2a1yqyLDOVZC6kvaQqskGoTVeJvU0LWPMXPh1e+2GK
-5nZEWwcn1UoXOkIlG5Bl71li87eGHpuV7DTzWviPj/bq2QzrTsyfB4Uoe1aHOqG5
-ufPu7VVmaCvrdThJsveMulYVdnutwTk5vmIqbJeGeNzMzofrbwc=
-=EEwd
+iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmSbFO8ACgkQvP0LAY0m
+WPELXQ/7BGRYTRNstpUy6RLExHSe9+7+yMo0QQECDoSiHTULBobosVJFZiNoQJEN
+EByPIojnmd6m5NAFWKPVblLe1fnSmSbnT5IR0XRO8wMHxgl9VLc2wPa7NA9500tv
+9wXOHs7X5hpw0lw/FAXHcDWrc4Etqjn4hMfdgaewY+JhwIDyBTlG98+fcg5p+GBs
+MRYPqq3w5TAmJ5+mQKU+vEWQkLVXkEoeK23Kd6kIVVjigYktssCFUvH5Y5wp5M52
+f/5B00KobjpBbi4PvWPVJFWBnZNj1YVPd2h0Z7EAsxE/ExOUyUjDBSjwf3YzAzTf
+Y4WbzOY/z+/I9TL6aBN6coJS/P5Y4mKKmSrIoU4g7XmBOTLAth/kJ6QMDrnWZp1Q
+WzUu7iC9beSVby3xsr4SUbTd6rWgNSMVEgYRrE+MzQu14GzT6VW5LFSQX+JsrjpX
+92pCkNpQyo9mLm/9UwJRiCIdPmCSfyBihDSbW8gWVQ8z6rdpKJNGuc1RF/pwnpN4
+iuW6EgL2wOiKmVh6HaZebGM2sV5XuLr+aGrlUp3fJWIkkFL8b/U7yY9m5Fab62E7
+GTuytPMyPPWT3YkKZLnacUbE4Pf+bFVtj3XpAdoA+b+v+Q2lcm46bIMllLEgNojJ
+CgCnqzjbAQ629zLBHYyOTywM32+HZEAgvnFfhRdzkmNIurY0Po8=
+=uPgK
 -----END PGP SIGNATURE-----
 
---zo6f34h56mk2beb3--
+--4v3npduv4blgoq7d--
