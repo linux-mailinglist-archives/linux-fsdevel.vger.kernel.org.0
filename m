@@ -2,159 +2,429 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A9716740315
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 20:20:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EF3674036A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 20:32:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230167AbjF0SUw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 14:20:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50476 "EHLO
+        id S231494AbjF0ScI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 14:32:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230007AbjF0SUv (ORCPT
+        with ESMTP id S231372AbjF0Sbh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 14:20:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 675FFDD
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 11:20:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1687890003;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QA/qzvzGetcCbbR+btLCD+i0WzBbqFbQ1AZROAITRL8=;
-        b=GdI5S9Gvf4RyECkq1J3qbEoRtYN+EuhBH2Pr+U0ozviwApla9FuOmHwT5LNlg7YZWRUtFp
-        6z4kiirUoeYAEJb8IaL9skcaECCzyLn0QRKNxEmIcVsBOdTuNjxq0JSE3ceCivkPb8k/VJ
-        hERl+cg8W+FR0qGkPAs8UOWKtllsOtc=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-433-aMi2azduPvmTHKYF5ywK0g-1; Tue, 27 Jun 2023 14:20:02 -0400
-X-MC-Unique: aMi2azduPvmTHKYF5ywK0g-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-98e40d91fdfso265356066b.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 11:20:02 -0700 (PDT)
+        Tue, 27 Jun 2023 14:31:37 -0400
+Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A78D430CF;
+        Tue, 27 Jun 2023 11:31:12 -0700 (PDT)
+Received: by mail-ua1-x92b.google.com with SMTP id a1e0cc1a2514c-78f6a9800c9so1702148241.3;
+        Tue, 27 Jun 2023 11:31:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687890671; x=1690482671;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M+O48OjU/IUexRRWWS35B+8H7eX2rz5tEnV5kqlvttg=;
+        b=qdsBwFXzDTaJXiWEmH2Zr6L/JDkoanKXKWWghL0NJLXdodQewlEnZEerjKpjY/lm7y
+         v+ewLUhmHd1LazXL2ZPc7UdBpTgkqsw6JpHnRJXEf0v3BK+xKisylNXicCK6DaAomnO3
+         dTOSmabrdGASfElfJnoxlE0iVi5gJOVgX9qySUR2Ulqzm+Nr423BBmlHWvEcsdcmbsXJ
+         lHsQ21qLWm3Pxk58dm07mlIeMNcnYbRpPJbW0SBc3nnzWDoWY4rSZGUXdpfAdxWe2O7D
+         hz8vYFpBNeMhQ1tUKcAsYLyNLDNBSiOdcaUFH2/KGB5nZWane5eupKfI+xd5/FYeLO4I
+         WBeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687890001; x=1690482001;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QA/qzvzGetcCbbR+btLCD+i0WzBbqFbQ1AZROAITRL8=;
-        b=AS5x0WX6I/V7m/z3uynsysYA/On2qIX6JGXuzPdnDMVOqeZozTF4BcM6l5U450JpLB
-         2EmvAIP64nBodnb7S9p1rY3k4Wy55DNjnRpUs2IVQ6U5AE8AEHu7w3yVJKqqqH7R7JN2
-         pKEqeBnB2nAzS9CH3dZWUJLRRsnZ9WsBEbByKZlpNr5Bvmq4+UXwpDgsiO7LhEQDHSKW
-         Pc8zMslWHUASkN1E+QKuTwTOoVjObFVCMhjmwVqjwa7Whvt7il550tnNS6ioPYzwCsE1
-         ZC68d1ij33AVEgPLoG4PeLM8N/DsGqhrcgyF+RGXjebwSKLj79BGcz6s33ER7DWJ8ARM
-         yUEA==
-X-Gm-Message-State: AC+VfDyXzoMQGDgkKVmk82RB6+MLOBcVUypQKBb9r81uwBW7e5+X84Ev
-        zOu2r0uWEcX2OU8xNz8wdoOeQuPbmcr9din9Yh6+BUvrlpkTegYHnbhsB5FYd1XJRArrT2pr0Kk
-        kc/zH7i0wIwELghaNmRpOVG/4wA==
-X-Received: by 2002:a17:907:6e0f:b0:992:1309:be3a with SMTP id sd15-20020a1709076e0f00b009921309be3amr2783192ejc.0.1687890001092;
-        Tue, 27 Jun 2023 11:20:01 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ65ihjTp3Ah5fR3hDKFgPeZaPbvDZ/9mQbYcWwQHsjW8c4MrLp+u66qGKu8iJo3p+yxvpy40w==
-X-Received: by 2002:a17:907:6e0f:b0:992:1309:be3a with SMTP id sd15-20020a1709076e0f00b009921309be3amr2783183ejc.0.1687890000832;
-        Tue, 27 Jun 2023 11:20:00 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id o10-20020a17090637ca00b00992025654c2sm1389506ejc.150.2023.06.27.11.20.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Jun 2023 11:20:00 -0700 (PDT)
-Message-ID: <32fb03bf-be43-d416-4a32-b30a0c339496@redhat.com>
-Date:   Tue, 27 Jun 2023 20:19:59 +0200
+        d=1e100.net; s=20221208; t=1687890671; x=1690482671;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M+O48OjU/IUexRRWWS35B+8H7eX2rz5tEnV5kqlvttg=;
+        b=TQ5PirdqgEuU8Jkas7hMkLI8A5Z3huUR60C56aODzae8lVQz6xsKbyvLvKKcgLeOIH
+         5Crh4+LK1oQLMTUB1ugg0vo4u9GhZnjzyP43I1NMNya7tvXZ64XIq1V1xoxkNVwg5wo4
+         UJ0WrSUsGiYKBXBvuZxFkE/w3BOFAsYay2W0CdgtK5GB2fPfp74Fo2+kNisU/u3eEplQ
+         44cqFI19ciyMXW5crOSahKjXaW4rmLtN4l/znDCfxlzhpcHDKIEMh/Lp1fUm5QK04805
+         n8KHkYfZHOjbPY6/mmhXxnl87VTmcaLcMYA3/vKmXXbPZf8OT+BD7w67jl1+u/wTFEBr
+         n+ug==
+X-Gm-Message-State: AC+VfDy7wDXpmqi/DmNFJ1kZC7bQqWwSot1JM4spDmdD5E9vGEPV+GVF
+        HV0ANxO19uciAN+21XQfz1e4D6V6NhHJcJ45pkM=
+X-Google-Smtp-Source: ACHHUZ5VMexi5Z2Qng12sy4+UBcuvqmM66S+2Lj0H4iJzEwVkyl60PgkOiAzZS9sZHP1l7NApuJrhq3buU055G744og=
+X-Received: by 2002:a05:6102:11f6:b0:443:59e3:f4f8 with SMTP id
+ e22-20020a05610211f600b0044359e3f4f8mr3889523vsg.29.1687890671553; Tue, 27
+ Jun 2023 11:31:11 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH] fs/vboxsf: Replace kmap() with kmap_local_{page, folio}()
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Sumitra Sharma <sumitraartsy@gmail.com>,
+References: <cover.1687884029.git.nabijaczleweli@nabijaczleweli.xyz> <44neh3sog5jaskc4zy6lwnld7hussp5sslx4fun47fr45mxe3a@q2jgkjwlq74f>
+In-Reply-To: <44neh3sog5jaskc4zy6lwnld7hussp5sslx4fun47fr45mxe3a@q2jgkjwlq74f>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 27 Jun 2023 21:31:00 +0300
+Message-ID: <CAOQ4uxifYoKdup6gzyW0iV=KFBzTWu5T8=zq8s8pFw2X3+5xRg@mail.gmail.com>
+Subject: Re: [LTP PATCH] inotify13: new test for fs/splice.c functions vs
+ pipes vs inotify
+To:     =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= 
+        <nabijaczleweli@nabijaczleweli.xyz>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ira Weiny <ira.weiny@intel.com>,
-        Fabio <fmdefrancesco@gmail.com>, Deepak R Varma <drv@mailo.com>
-References: <20230627135115.GA452832@sumitra.com>
- <6a566e51-6288-f782-2fa5-f9b0349b6d7c@redhat.com>
- <ZJsgWQb+tOqtQuKL@casper.infradead.org>
- <3baed0e0-db2c-906c-5256-1d83d59794e9@redhat.com>
-Content-Language: en-US, nl
-In-Reply-To: <3baed0e0-db2c-906c-5256-1d83d59794e9@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        Jan Kara <jack@suse.cz>,
+        Chung-Chiang Cheng <cccheng@synology.com>, ltp@vger.kernel.org,
+        Petr Vorel <pvorel@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Tue, Jun 27, 2023 at 7:57=E2=80=AFPM Ahelenia Ziemia=C5=84ska
+<nabijaczleweli@nabijaczleweli.xyz> wrote:
+>
+> The only one that passes on 6.1.27-1 is sendfile_file_to_pipe.
+>
+> Link: https://lore.kernel.org/linux-fsdevel/jbyihkyk5dtaohdwjyivambb2gffy=
+js3dodpofafnkkunxq7bu@jngkdxx65pux/t/#u
+> Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xy=
+z>
+> ---
+> Formatted to clang-format defaults. Put the original Fixes:ed SHA in the
+> metadata, that's probably fine, right?
 
-On 6/27/23 20:10, Hans de Goede wrote:
-> Hi Matthew,
-> 
-> On 6/27/23 19:46, Matthew Wilcox wrote:
->> On Tue, Jun 27, 2023 at 04:34:51PM +0200, Hans de Goede wrote:
->>> Hi,
->>>
->>> On 6/27/23 15:51, Sumitra Sharma wrote:
->>>> kmap() has been deprecated in favor of the kmap_local_page() due to high
->>>> cost, restricted mapping space, the overhead of a global lock for
->>>> synchronization, and making the process sleep in the absence of free
->>>> slots.
->>>>
->>>> kmap_local_{page, folio}() is faster than kmap() and offers thread-local
->>>> and CPU-local mappings, can take pagefaults in a local kmap region and
->>>> preserves preemption by saving the mappings of outgoing tasks and
->>>> restoring those of the incoming one during a context switch.
->>>>
->>>> The difference between kmap_local_page() and kmap_local_folio() consist
->>>> only in the first taking a pointer to a page and the second taking two
->>>> arguments, a pointer to a folio and the byte offset within the folio which
->>>> identifies the page.
->>>>
->>>> The mappings are kept thread local in the functions 'vboxsf_read_folio',
->>>> 'vboxsf_writepage', 'vboxsf_write_end' in file.c
->>>>
->>>> Suggested-by: Ira Weiny <ira.weiny@intel.com>
->>>> Signed-off-by: Sumitra Sharma <sumitraartsy@gmail.com>
->>>
->>> Thanks, patch looks good to me:
->>
->> It doesn't look great to me, tbh.  It's generally an antipattern to map
->> the page/folio up at the top and then pass the virtual address down to
->> the bottom.  Usually we want to work in terms of physical addresses
->> as long as possible.  I see the vmmdev_hgcm_function_parameter can
->> take physical addresses; does it work to simply use the phys_addr
->> instead of the linear_addr?  I see this commentary:
->>
->>        /** Deprecated Doesn't work, use PAGELIST. */
->>         VMMDEV_HGCM_PARM_TYPE_PHYSADDR           = 3,
->>
->> so, um, can we use
->>         /** Physical addresses of locked pages for a buffer. */
->>         VMMDEV_HGCM_PARM_TYPE_PAGELIST           = 10,
->>
->> and convert vboxsf_read_folio() to pass the folio down to vboxsf_read()
->> which converts it to a PAGELIST (however one does that)?
-> 
-> 
-> It has been a long time since I looked at this code in detail. I don't
-> think you can just use different types when making virtualbox hypervisor
-> calls and then expect the hypervisor to say sure that another way to
-> represent a memory buffer, I'll take that instead.
+No. The git commit is for the commits that fix the problem.
+This can only be added after your fixes are merged.
 
-Ok correction to this, drivers/virt/vboxguest/vboxguest_utils.c actually
-already translates the VMMDEV_HGCM_PARM_TYPE_LINADDR_KERNEL_IN /
-VMMDEV_HGCM_PARM_TYPE_LINADDR_KERNEL_OUT buffers used by vboxsf_write()/
-vboxsf_read() to PAGELIST-s before passing them to the hypervisor
-using page_to_phys(virt_to_page()) so we map a page and then call
-page_to_phys(virt_to_page()) on it which indeed is quite inefficient.
+I will let the LPT developers comment about style,
+but I think LTP project wants tab indents.
+I am personally unable to read this patch with so little indentation
+and so much macroing.
 
-That still leaves the problem that I have very little time to look into
-this though ...
+>
+>  testcases/kernel/syscalls/inotify/.gitignore  |   1 +
+>  testcases/kernel/syscalls/inotify/inotify13.c | 246 ++++++++++++++++++
+>  2 files changed, 247 insertions(+)
+>  create mode 100644 testcases/kernel/syscalls/inotify/inotify13.c
+>
+> diff --git a/testcases/kernel/syscalls/inotify/.gitignore b/testcases/ker=
+nel/syscalls/inotify/.gitignore
+> index f6e5c546a..b597ea63f 100644
+> --- a/testcases/kernel/syscalls/inotify/.gitignore
+> +++ b/testcases/kernel/syscalls/inotify/.gitignore
+> @@ -10,3 +10,4 @@
+>  /inotify10
+>  /inotify11
+>  /inotify12
+> +/inotify13
+> diff --git a/testcases/kernel/syscalls/inotify/inotify13.c b/testcases/ke=
+rnel/syscalls/inotify/inotify13.c
+> new file mode 100644
+> index 000000000..c34f1dc9f
+> --- /dev/null
+> +++ b/testcases/kernel/syscalls/inotify/inotify13.c
+> @@ -0,0 +1,246 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*\
+> + * Verify splice-family functions (and sendfile) generate IN_ACCESS
+> + * for what they read and IN_MODIFY for what they write.
+> + *
+> + * Regression test for 983652c69199 and
+> + * https://lore.kernel.org/linux-fsdevel/jbyihkyk5dtaohdwjyivambb2gffyjs=
+3dodpofafnkkunxq7bu@jngkdxx65pux/t/#u
+> + */
+> +
+> +#define _GNU_SOURCE
+> +#include "config.h"
+> +
+> +#include <stdio.h>
+> +#include <unistd.h>
+> +#include <stdlib.h>
+> +#include <fcntl.h>
+> +#include <stdbool.h>
+> +#include <inttypes.h>
+> +#include <signal.h>
+> +#include <sys/mman.h>
+> +#include <sys/sendfile.h>
+> +
+> +#include "tst_test.h"
+> +#include "tst_safe_macros.h"
+> +#include "inotify.h"
+> +
+> +#if defined(HAVE_SYS_INOTIFY_H)
+> +#include <sys/inotify.h>
+> +
+> +
+> +static int pipes[2] =3D {-1, -1};
+> +static int inotify =3D -1;
+> +static int memfd =3D -1;
+> +static int data_pipes[2] =3D {-1, -1};
+> +
+> +static void watch_rw(int fd) {
+> +  char buf[64];
+> +  sprintf(buf, "/proc/self/fd/%d", fd);
+> +  SAFE_MYINOTIFY_ADD_WATCH(inotify, buf, IN_ACCESS | IN_MODIFY);
+> +}
+> +
+> +static int compar(const void *l, const void *r) {
+> +  const struct inotify_event *lie =3D l;
+> +  const struct inotify_event *rie =3D r;
+> +  return lie->wd - rie->wd;
+> +}
+> +
+> +static void get_events(size_t evcnt, struct inotify_event evs[static evc=
+nt]) {
+> +  struct inotify_event tail, *itr =3D evs;
+> +  for (size_t left =3D evcnt; left; --left)
+> +    SAFE_READ(true, inotify, itr++, sizeof(struct inotify_event));
+> +
+> +  TEST(read(inotify, &tail, sizeof(struct inotify_event)));
+> +  if (TST_RET !=3D -1)
+> +    tst_brk(TFAIL, "expect %zu events", evcnt);
+> +  if (TST_ERR !=3D EAGAIN)
+> +    tst_brk(TFAIL | TTERRNO, "expected EAGAIN");
+> +
+> +  qsort(evs, evcnt, sizeof(struct inotify_event), compar);
+> +}
+> +
+> +static void expect_event(struct inotify_event *ev, int wd, uint32_t mask=
+) {
+> +  if (ev->wd !=3D wd)
+> +    tst_brk(TFAIL, "expect event for wd %d got %d", wd, ev->wd);
+> +  if (ev->mask !=3D mask)
+> +    tst_brk(TFAIL, "expect event with mask %" PRIu32 " got %" PRIu32 "",=
+ mask,
+> +            ev->mask);
+> +}
+> +
+> +#define F2P(splice)                                                     =
+       \
+> +  SAFE_WRITE(SAFE_WRITE_RETRY, memfd, __func__, sizeof(__func__));      =
+       \
+> +  SAFE_LSEEK(memfd, 0, SEEK_SET);                                       =
+       \
+> +  watch_rw(memfd);                                                      =
+       \
+> +  watch_rw(pipes[0]);                                                   =
+       \
+> +  TEST(splice);                                                         =
+       \
+> +  if (TST_RET =3D=3D -1)                                                =
+           \
+> +    tst_brk(TBROK | TERRNO, #splice);                                   =
+       \
+> +  if (TST_RET !=3D sizeof(__func__))                                    =
+         \
+> +    tst_brk(TBROK, #splice ": %" PRId64 "", TST_RET);                   =
+       \
+> +                                                                        =
+       \
+> +  /*expecting: IN_ACCESS memfd, IN_MODIFY pipes[0]*/                    =
+       \
+> +  struct inotify_event events[2];                                       =
+       \
+> +  get_events(ARRAY_SIZE(events), events);                               =
+       \
+> +  expect_event(events + 0, 1, IN_ACCESS);                               =
+       \
+> +  expect_event(events + 1, 2, IN_MODIFY);                               =
+       \
+> +                                                                        =
+       \
+> +  char buf[sizeof(__func__)];                                           =
+       \
+> +  SAFE_READ(true, pipes[0], buf, sizeof(__func__));                     =
+       \
+> +  if (memcmp(buf, __func__, sizeof(__func__)))                          =
+       \
+> +    tst_brk(TFAIL, "buf contents bad");
+> +static void splice_file_to_pipe(void) {
+> +  F2P(splice(memfd, NULL, pipes[1], NULL, 128 * 1024 * 1024, 0));
+> +}
+> +static void sendfile_file_to_pipe(void) {
+> +  F2P(sendfile(pipes[1], memfd, NULL, 128 * 1024 * 1024));
+> +}
+> +
+> +static void splice_pipe_to_file(void) {
+> +  SAFE_WRITE(SAFE_WRITE_RETRY, pipes[1], __func__, sizeof(__func__));
+> +  watch_rw(pipes[0]);
+> +  watch_rw(memfd);
+> +  TEST(splice(pipes[0], NULL, memfd, NULL, 128 * 1024 * 1024, 0));
+> +  if(TST_RET =3D=3D -1)
+> +               tst_brk(TBROK | TERRNO, "splice");
+> +       if(TST_RET !=3D sizeof(__func__))
+> +               tst_brk(TBROK, "splice: %" PRId64 "", TST_RET);
+> +
+> +       // expecting: IN_ACCESS pipes[0], IN_MODIFY memfd
+> +       struct inotify_event events[2];
+> +       get_events(ARRAY_SIZE(events), events);
+> +       expect_event(events + 0, 1, IN_ACCESS);
+> +       expect_event(events + 1, 2, IN_MODIFY);
+> +
+> +  char buf[sizeof(__func__)];
+> +  SAFE_LSEEK(memfd, 0, SEEK_SET);
+> +  SAFE_READ(true, memfd, buf, sizeof(__func__));
+> +  if (memcmp(buf, __func__, sizeof(__func__)))
+> +                tst_brk(TFAIL, "buf contents bad");
+> +}
+> +
+> +#define P2P(splice)                                                     =
+       \
+> +  SAFE_WRITE(SAFE_WRITE_RETRY, data_pipes[1], __func__, sizeof(__func__)=
+);     \
+> +  watch_rw(data_pipes[0]);                                              =
+       \
+> +  watch_rw(pipes[1]);                                                   =
+       \
+> +  TEST(splice);                                                         =
+       \
+> +  if (TST_RET =3D=3D -1)                                                =
+           \
+> +                tst_brk(TBROK | TERRNO, #splice);                       =
+       \
+> +  if (TST_RET !=3D sizeof(__func__))                                    =
+         \
+> +                tst_brk(TBROK, #splice ": %" PRId64 "", TST_RET);       =
+       \
+> +                                                                        =
+       \
+> +  /* expecting: IN_ACCESS data_pipes[0], IN_MODIFY pipes[1] */          =
+       \
+> +  struct inotify_event events[2];                                       =
+       \
+> +  get_events(ARRAY_SIZE(events), events);                               =
+       \
+> +  expect_event(events + 0, 1, IN_ACCESS);                               =
+       \
+> +  expect_event(events + 1, 2, IN_MODIFY);                               =
+       \
+> +                                                                        =
+       \
+> +  char buf[sizeof(__func__)];                                           =
+       \
+> +  SAFE_READ(true, pipes[0], buf, sizeof(__func__));                     =
+       \
+> +  if (memcmp(buf, __func__, sizeof(__func__)))                          =
+       \
+> +                tst_brk(TFAIL, "buf contents bad");
+> +static void splice_pipe_to_pipe(void) {
+> +  P2P(splice(data_pipes[0], NULL, pipes[1], NULL, 128 * 1024 * 1024, 0))=
+;
+> +}
+> +static void tee_pipe_to_pipe(void) {
+> +  P2P(tee(data_pipes[0], pipes[1], 128 * 1024 * 1024, 0));
+> +}
+> +
+> +static char vmsplice_pipe_to_mem_dt[32 * 1024];
+> +static void vmsplice_pipe_to_mem(void) {
+> +  memcpy(vmsplice_pipe_to_mem_dt, __func__, sizeof(__func__));
+> +  watch_rw(pipes[0]);
+> +  TEST(vmsplice(pipes[1],
+> +                &(struct iovec){.iov_base =3D vmsplice_pipe_to_mem_dt,
+> +                                .iov_len =3D sizeof(vmsplice_pipe_to_mem=
+_dt)},
+> +                1, SPLICE_F_GIFT));
+> +  if (TST_RET =3D=3D -1)
+> +    tst_brk(TBROK | TERRNO, "vmsplice");
+> +  if (TST_RET !=3D sizeof(vmsplice_pipe_to_mem_dt))
+> +    tst_brk(TBROK, "vmsplice: %" PRId64 "", TST_RET);
+> +
+> +  // expecting: IN_MODIFY pipes[0]
+> +  struct inotify_event event;
+> +  get_events(1, &event);
+> +  expect_event(&event, 1, IN_MODIFY);
+> +
+> +  char buf[sizeof(__func__)];
+> +  SAFE_READ(true, pipes[0], buf, sizeof(__func__));
+> +  if (memcmp(buf, __func__, sizeof(__func__)))
+> +    tst_brk(TFAIL, "buf contents bad");
+> +}
+> +
+> +static void vmsplice_mem_to_pipe(void) {
+> +  char buf[sizeof(__func__)];
+> +  SAFE_WRITE(SAFE_WRITE_RETRY, pipes[1], __func__, sizeof(__func__));
+> +  watch_rw(pipes[1]);
+> +  TEST(vmsplice(pipes[0],
+> +                &(struct iovec){.iov_base =3D buf, .iov_len =3D sizeof(b=
+uf)}, 1,
+> +                0));
+> +  if (TST_RET =3D=3D -1)
+> +    tst_brk(TBROK | TERRNO, "vmsplice");
+> +  if (TST_RET !=3D sizeof(buf))
+> +    tst_brk(TBROK, "vmsplice: %" PRId64 "", TST_RET);
+> +
+> +  // expecting: IN_ACCESS pipes[1]
+> +  struct inotify_event event;
+> +  get_events(1, &event);
+> +  expect_event(&event, 1, IN_ACCESS);
+> +  if (memcmp(buf, __func__, sizeof(__func__)))
+> +    tst_brk(TFAIL, "buf contents bad");
+> +}
+> +
+> +typedef void (*tests_f)(void);
+> +#define TEST_F(f) { f, #f }
+> +static const struct {
+> +        tests_f f;
+> +        const char *n;
+> +} tests[] =3D {
+> +    TEST_F(splice_file_to_pipe),  TEST_F(sendfile_file_to_pipe),
+> +    TEST_F(splice_pipe_to_file),  TEST_F(splice_pipe_to_pipe),
+> +    TEST_F(tee_pipe_to_pipe),     TEST_F(vmsplice_pipe_to_mem),
+> +    TEST_F(vmsplice_mem_to_pipe),
+> +};
+> +
+> +static void run_test(unsigned int n)
+> +{
+> +       tst_res(TINFO, "%s", tests[n].n);
+> +
+> +       SAFE_PIPE2(pipes, O_CLOEXEC);
+> +       SAFE_PIPE2(data_pipes, O_CLOEXEC);
+> +       inotify =3D SAFE_MYINOTIFY_INIT1(IN_NONBLOCK | IN_CLOEXEC);
+> +       if((memfd =3D memfd_create(__func__, MFD_CLOEXEC)) =3D=3D -1)
+> +               tst_brk(TCONF | TERRNO, "memfd");
+> +       tests[n].f();
 
-Regards,
+Normally, a test cases table would encode things like
+the number of expected events and type of events.
+The idea is that the test template has parametrized code
+and not just a loop for test cases subroutines, but there
+are many ways to write tests, so as long as it gets the job
+done and is readable to humans, I don't mind.
 
-Hans
+Right now this test may do the job, but it is not readable
+for this human ;-)
+mostly because of the huge macros -
+LTP is known for pretty large macros, but those are
+for generic utilities and you have complete test cases
+written as macros (templates).
 
+> +       tst_res(TPASS, "=D0=BE=D0=BA");
+> +}
+> +
+> +static void cleanup(void)
+> +{
+> +       if (memfd !=3D -1)
+> +               SAFE_CLOSE(memfd);
+> +       if (inotify !=3D -1)
+> +               SAFE_CLOSE(inotify);
+> +       if (pipes[0] !=3D -1)
+> +               SAFE_CLOSE(pipes[0]);
+> +       if (pipes[1] !=3D -1)
+> +               SAFE_CLOSE(pipes[1]);
+> +       if (data_pipes[0] !=3D -1)
+> +               SAFE_CLOSE(data_pipes[0]);
+> +       if (data_pipes[1] !=3D -1)
+> +               SAFE_CLOSE(data_pipes[1]);
+> +}
+> +
 
+This cleanup does not happen for every test case -
+it happens only at the end of all the tests IIRC.
+
+> +static struct tst_test test =3D {
+> +       .max_runtime =3D 10,
+> +       .cleanup =3D cleanup,
+> +       .test =3D run_test,
+> +       .tcnt =3D ARRAY_SIZE(tests),
+> +       .tags =3D (const struct tst_tag[]) {
+> +               {"linux-git", "983652c69199"},
+
+Leave this out for now.
+
+Thanks,
+Amir.
