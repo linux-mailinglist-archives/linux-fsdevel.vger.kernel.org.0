@@ -2,58 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 06B72740305
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 20:16:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9716740315
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 20:20:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229680AbjF0SQI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 14:16:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47570 "EHLO
+        id S230167AbjF0SUw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 14:20:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231484AbjF0SPf (ORCPT
+        with ESMTP id S230007AbjF0SUv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 14:15:35 -0400
-Received: from resqmta-h1p-028588.sys.comcast.net (resqmta-h1p-028588.sys.comcast.net [IPv6:2001:558:fd02:2446::a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3501C30F0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 11:15:13 -0700 (PDT)
-Received: from resomta-h1p-027916.sys.comcast.net ([96.102.179.203])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 256/256 bits)
-        (Client did not present a certificate)
-        by resqmta-h1p-028588.sys.comcast.net with ESMTP
-        id EBPIqj9f5qqnBEDDbqtiMX; Tue, 27 Jun 2023 18:15:11 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=comcastmailservice.net; s=20211018a; t=1687889711;
-        bh=wEwFJy1tz/xg01w4rSRHtJBUcjeLgVU/WBhe3MVixsw=;
-        h=Received:Received:From:To:Subject:Date:MIME-Version:Message-ID:
-         Content-Type:Xfinity-Spam-Result;
-        b=aLjz7q+b/Hgp03nDoa59M57s/2z9JlAVpQyDsuSLxh8sA4Zgnoi0HO354vgdEJDOx
-         4onREOkJD7uYj+Grb+TuQD+LFDo/6aZ6vJwaKI83L09jMd2p4NKbRPVn3ST3k7AyCz
-         GdbjInLzdju3eAhqNFdiVmhVHzGA4wmQcKtWo0VeuzjZolUbJa0AF4lEDqh65MfJiQ
-         Ejtz7JSVxYFkOxsxz4klJSObbbJKPLQx1iVY+1ToiZNbU0bWIll+lNs++3fFXCMpTu
-         8V3jrtPiuicyQDcoZ22vX1nxBeeuxqgmyJqCdzKupYlRZC8+TTCQoKhIdJP6V6ZK5x
-         V200UfEXVP2jA==
-Received: from localhost ([IPv6:2601:18c:9082:afd:219:d1ff:fe75:dc2f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 256/256 bits)
-        (Client did not present a certificate)
-        by resomta-h1p-027916.sys.comcast.net with ESMTPSA
-        id EDD8qVxPvQLmDEDDAqoWo3; Tue, 27 Jun 2023 18:14:48 +0000
-X-Xfinity-VMeta: sc=0.00;st=legit
-From:   Matt Whitlock <kernel@mattwhitlock.name>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     <linux-fsdevel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [Reproducer] Corruption, possible race between splice and =?iso-8859-1?Q?FALLOC=5FFL=5FPUNCH=5FHOLE?=
-Date:   Tue, 27 Jun 2023 14:14:41 -0400
+        Tue, 27 Jun 2023 14:20:51 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 675FFDD
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 11:20:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687890003;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QA/qzvzGetcCbbR+btLCD+i0WzBbqFbQ1AZROAITRL8=;
+        b=GdI5S9Gvf4RyECkq1J3qbEoRtYN+EuhBH2Pr+U0ozviwApla9FuOmHwT5LNlg7YZWRUtFp
+        6z4kiirUoeYAEJb8IaL9skcaECCzyLn0QRKNxEmIcVsBOdTuNjxq0JSE3ceCivkPb8k/VJ
+        hERl+cg8W+FR0qGkPAs8UOWKtllsOtc=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-433-aMi2azduPvmTHKYF5ywK0g-1; Tue, 27 Jun 2023 14:20:02 -0400
+X-MC-Unique: aMi2azduPvmTHKYF5ywK0g-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-98e40d91fdfso265356066b.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 11:20:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687890001; x=1690482001;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QA/qzvzGetcCbbR+btLCD+i0WzBbqFbQ1AZROAITRL8=;
+        b=AS5x0WX6I/V7m/z3uynsysYA/On2qIX6JGXuzPdnDMVOqeZozTF4BcM6l5U450JpLB
+         2EmvAIP64nBodnb7S9p1rY3k4Wy55DNjnRpUs2IVQ6U5AE8AEHu7w3yVJKqqqH7R7JN2
+         pKEqeBnB2nAzS9CH3dZWUJLRRsnZ9WsBEbByKZlpNr5Bvmq4+UXwpDgsiO7LhEQDHSKW
+         Pc8zMslWHUASkN1E+QKuTwTOoVjObFVCMhjmwVqjwa7Whvt7il550tnNS6ioPYzwCsE1
+         ZC68d1ij33AVEgPLoG4PeLM8N/DsGqhrcgyF+RGXjebwSKLj79BGcz6s33ER7DWJ8ARM
+         yUEA==
+X-Gm-Message-State: AC+VfDyXzoMQGDgkKVmk82RB6+MLOBcVUypQKBb9r81uwBW7e5+X84Ev
+        zOu2r0uWEcX2OU8xNz8wdoOeQuPbmcr9din9Yh6+BUvrlpkTegYHnbhsB5FYd1XJRArrT2pr0Kk
+        kc/zH7i0wIwELghaNmRpOVG/4wA==
+X-Received: by 2002:a17:907:6e0f:b0:992:1309:be3a with SMTP id sd15-20020a1709076e0f00b009921309be3amr2783192ejc.0.1687890001092;
+        Tue, 27 Jun 2023 11:20:01 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ65ihjTp3Ah5fR3hDKFgPeZaPbvDZ/9mQbYcWwQHsjW8c4MrLp+u66qGKu8iJo3p+yxvpy40w==
+X-Received: by 2002:a17:907:6e0f:b0:992:1309:be3a with SMTP id sd15-20020a1709076e0f00b009921309be3amr2783183ejc.0.1687890000832;
+        Tue, 27 Jun 2023 11:20:00 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id o10-20020a17090637ca00b00992025654c2sm1389506ejc.150.2023.06.27.11.20.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Jun 2023 11:20:00 -0700 (PDT)
+Message-ID: <32fb03bf-be43-d416-4a32-b30a0c339496@redhat.com>
+Date:   Tue, 27 Jun 2023 20:19:59 +0200
 MIME-Version: 1.0
-Message-ID: <858f34c7-6f9c-499d-b0b4-fecce16541a7@mattwhitlock.name>
-In-Reply-To: <ZJp4Df8MnU8F3XAt@dread.disaster.area>
-References: <ec804f26-fa76-4fbe-9b1c-8fbbd829b735@mattwhitlock.name>
- <ZJp4Df8MnU8F3XAt@dread.disaster.area>
-User-Agent: Trojita/v0.7-595-g7738cd47; Qt/5.15.10; xcb; Linux; Gentoo Linux
-Content-Type: multipart/mixed;
-        boundary="trojita=_f24de9da-24be-4bda-8ff8-71f55c350df9"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,MIME_QP_LONG_LINE,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH] fs/vboxsf: Replace kmap() with kmap_local_{page, folio}()
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Sumitra Sharma <sumitraartsy@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ira Weiny <ira.weiny@intel.com>,
+        Fabio <fmdefrancesco@gmail.com>, Deepak R Varma <drv@mailo.com>
+References: <20230627135115.GA452832@sumitra.com>
+ <6a566e51-6288-f782-2fa5-f9b0349b6d7c@redhat.com>
+ <ZJsgWQb+tOqtQuKL@casper.infradead.org>
+ <3baed0e0-db2c-906c-5256-1d83d59794e9@redhat.com>
+Content-Language: en-US, nl
+In-Reply-To: <3baed0e0-db2c-906c-5256-1d83d59794e9@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -61,133 +87,74 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a multipart/mixed message in MIME format.
+Hi,
 
---trojita=_f24de9da-24be-4bda-8ff8-71f55c350df9
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+On 6/27/23 20:10, Hans de Goede wrote:
+> Hi Matthew,
+> 
+> On 6/27/23 19:46, Matthew Wilcox wrote:
+>> On Tue, Jun 27, 2023 at 04:34:51PM +0200, Hans de Goede wrote:
+>>> Hi,
+>>>
+>>> On 6/27/23 15:51, Sumitra Sharma wrote:
+>>>> kmap() has been deprecated in favor of the kmap_local_page() due to high
+>>>> cost, restricted mapping space, the overhead of a global lock for
+>>>> synchronization, and making the process sleep in the absence of free
+>>>> slots.
+>>>>
+>>>> kmap_local_{page, folio}() is faster than kmap() and offers thread-local
+>>>> and CPU-local mappings, can take pagefaults in a local kmap region and
+>>>> preserves preemption by saving the mappings of outgoing tasks and
+>>>> restoring those of the incoming one during a context switch.
+>>>>
+>>>> The difference between kmap_local_page() and kmap_local_folio() consist
+>>>> only in the first taking a pointer to a page and the second taking two
+>>>> arguments, a pointer to a folio and the byte offset within the folio which
+>>>> identifies the page.
+>>>>
+>>>> The mappings are kept thread local in the functions 'vboxsf_read_folio',
+>>>> 'vboxsf_writepage', 'vboxsf_write_end' in file.c
+>>>>
+>>>> Suggested-by: Ira Weiny <ira.weiny@intel.com>
+>>>> Signed-off-by: Sumitra Sharma <sumitraartsy@gmail.com>
+>>>
+>>> Thanks, patch looks good to me:
+>>
+>> It doesn't look great to me, tbh.  It's generally an antipattern to map
+>> the page/folio up at the top and then pass the virtual address down to
+>> the bottom.  Usually we want to work in terms of physical addresses
+>> as long as possible.  I see the vmmdev_hgcm_function_parameter can
+>> take physical addresses; does it work to simply use the phys_addr
+>> instead of the linear_addr?  I see this commentary:
+>>
+>>        /** Deprecated Doesn't work, use PAGELIST. */
+>>         VMMDEV_HGCM_PARM_TYPE_PHYSADDR           = 3,
+>>
+>> so, um, can we use
+>>         /** Physical addresses of locked pages for a buffer. */
+>>         VMMDEV_HGCM_PARM_TYPE_PAGELIST           = 10,
+>>
+>> and convert vboxsf_read_folio() to pass the folio down to vboxsf_read()
+>> which converts it to a PAGELIST (however one does that)?
+> 
+> 
+> It has been a long time since I looked at this code in detail. I don't
+> think you can just use different types when making virtualbox hypervisor
+> calls and then expect the hypervisor to say sure that another way to
+> represent a memory buffer, I'll take that instead.
 
-On Tuesday, 27 June 2023 01:47:57 EDT, Dave Chinner wrote:
-> On Mon, Jun 26, 2023 at 09:12:52PM -0400, Matt Whitlock wrote:
->> Hello, all. I am experiencing a data corruption issue on Linux 6.1.24 when=
+Ok correction to this, drivers/virt/vboxguest/vboxguest_utils.c actually
+already translates the VMMDEV_HGCM_PARM_TYPE_LINADDR_KERNEL_IN /
+VMMDEV_HGCM_PARM_TYPE_LINADDR_KERNEL_OUT buffers used by vboxsf_write()/
+vboxsf_read() to PAGELIST-s before passing them to the hypervisor
+using page_to_phys(virt_to_page()) so we map a page and then call
+page_to_phys(virt_to_page()) on it which indeed is quite inefficient.
 
->> calling fallocate with FALLOC_FL_PUNCH_HOLE to punch out pages that have
->> just been spliced into a pipe. It appears that the fallocate call can zero=
+That still leaves the problem that I have very little time to look into
+this though ...
 
->> out the pages that are sitting in the pipe buffer, before those pages are
->> read from the pipe.
->>=20
->> Simplified code excerpt (eliding error checking):
->>=20
->> int fd =3D /* open file descriptor referring to some disk file */;
->> for (off_t consumed =3D 0;;) {
->>   ssize_t n =3D splice(fd, NULL, STDOUT_FILENO, NULL, SIZE_MAX, 0);
->>   if (n <=3D 0) break;
->>   consumed +=3D n;
->>   fallocate(fd, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, 0, consumed);
->> }
->
-> Huh. Never seen that pattern before - what are you trying to
-> implement with this?
+Regards,
 
-It's part of a tool I wrote that implements an indefinitely expandable=20
-user-space pipe buffer backed by an unlinked-on-creation disk file. It's=20
-very useful as a shim in a pipeline between a process that produces a large=20=
+Hans
 
-but finite amount of data quickly and a process that consumes data slowly.=20=
-
-My canonical use case is in my nightly backup cronjob, where I have 'tar=20
--c' piped into 'xz' piped into a tool that uploads its stdin to an Amazon=20
-S3-compatible data store. I insert my diskbuffer tool between tar and xz so=20=
-
-that the tar process can complete as quickly as possible (thus achieving a=20=
-
-snapshot as close to atomic as practically possible without freezing the=20
-file system) and the xz process can take its sweet time crunching the=20
-tarball down as small as possible, yet the disk space consumed by the=20
-temporary (uncompressed) tarball can be released progressively as xz=20
-consumes the tarball, and all of the disk space will be released=20
-automatically if the pipeline dies, such as if the system is rebooted=20
-during a backup run.
-
-Conceptually:
-
-tar -c /home | diskbuffer /var/tmp | xz -9e | s3upload ...
-
-The 'diskbuffer' tool creates an unlinked temporary file (using=20
-O_TMPFILE|O_EXCL) in the specified directory and then enters a loop,=20
-splicing bytes from stdin into the file and splicing bytes from the file=20
-into stdout, incrementally punching out the file as it successfully splices=20=
-
-to stdout.
-
-Source code for the tool is attached. (It has a bit more functionality than=20=
-
-I have described here.)
-
-
---trojita=_f24de9da-24be-4bda-8ff8-71f55c350df9
-Content-Type: text/x-csrc
-Content-Disposition: attachment;
-	filename=diskbuffer.c
-Content-Transfer-Encoding: base64
-
-I2RlZmluZSBfR05VX1NPVVJDRQoKI2luY2x1ZGUgPGxpbWl0cy5oPgojaW5jbHVkZSA8c3RkYm9v
-bC5oPgojaW5jbHVkZSA8c3RkaW8uaD4KI2luY2x1ZGUgPHN0ZGxpYi5oPgojaW5jbHVkZSA8c3Ry
-aW5nLmg+CgojaW5jbHVkZSA8ZXJybm8uaD4KI2luY2x1ZGUgPGVycm9yLmg+CiNpbmNsdWRlIDxm
-Y250bC5oPgojaW5jbHVkZSA8cG9sbC5oPgojaW5jbHVkZSA8c3lzZXhpdHMuaD4KI2luY2x1ZGUg
-PHVuaXN0ZC5oPgojaW5jbHVkZSA8c3lzL3N0YXQuaD4KI2luY2x1ZGUgPHN5cy9zdGF0ZnMuaD4K
-I2luY2x1ZGUgPHN5cy90eXBlcy5oPgoKCnN0YXRpYyBpbmxpbmUgc2l6ZV90IHNwbGljZV9sZW4o
-b2ZmX3QgbGVuKSB7CglyZXR1cm4gKHNpemVfdCkgKGxlbiA+IElOVF9NQVggPyBJTlRfTUFYIDog
-bGVuKTsKfQoKaW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKmFyZ3ZbXSkgewoJYm9vbCBkZWZlciA9
-IGZhbHNlLCBrZWVwID0gZmFsc2U7CglpZiAoYXJnYyA+IDEgJiYgc3RyY21wKGFyZ3ZbMV0sICIt
-LWRlZmVyIikgPT0gMCkgewoJCWRlZmVyID0gdHJ1ZTsKCQlhcmd2WzFdID0gYXJndlswXTsKCQkt
-LWFyZ2MsICsrYXJndjsKCX0KCWlmIChhcmdjID4gMSAmJiBzdHJjbXAoYXJndlsxXSwgIi0ta2Vl
-cCIpID09IDApIHsKCQlrZWVwID0gdHJ1ZTsKCQlhcmd2WzFdID0gYXJndlswXTsKCQktLWFyZ2Ms
-ICsrYXJndjsKCX0KCWlmIChhcmdjID4gMiB8fCBrZWVwICYmIGFyZ2MgPCAyKSB7CgkJZnByaW50
-ZihzdGRlcnIsICJ1c2FnZTogJXMgWy0tZGVmZXJdIHsgWzx0bXBkaXI+XSB8IC0ta2VlcCA8Zmls
-ZT4gfVxuIiwgYXJndlswXSk7CgkJcmV0dXJuIEVYX1VTQUdFOwoJfQoJY29uc3QgY2hhciAqcGF0
-aDsKCWludCBmZDsKCWlmIChrZWVwKSB7CgkJaWYgKChmZCA9IG9wZW4oYXJndlsxXSwgT19SRFdS
-IHwgT19DUkVBVCB8IE9fRVhDTCwgMDY2NikpIDwgMCkgewoJCQllcnJvcihFWF9OT0lOUFVULCBl
-cnJubywgIiVzIiwgYXJndlsxXSk7CgkJfQoJfQoJZWxzZSB7CgkJaWYgKGFyZ2MgPiAxKSB7CgkJ
-CXBhdGggPSBhcmd2WzFdOwoJCX0KCQllbHNlIGlmICghKHBhdGggPSBnZXRlbnYoIlRNUERJUiIp
-KSkgewoJCQlwYXRoID0gIi90bXAiOwoJCX0KCQlpZiAoKGZkID0gb3BlbihwYXRoLCBPX1JEV1Ig
-fCBPX1RNUEZJTEUgfCBPX0VYQ0wsIDAwMDApKSA8IDApIHsKCQkJZXJyb3IoRVhfTk9JTlBVVCwg
-ZXJybm8sICIlcyIsIHBhdGgpOwoJCX0KCX0KCglib29sIGVvZiA9IGZhbHNlLCBwdW5jaCA9ICFr
-ZWVwOwoJb2ZmX3Qgbl9pbiA9IDAsIG5fb3V0ID0gMCwgbWF4ID0gMCwgbWFzayA9IDA7Cglmb3Ig
-KDs7KSB7CgkJb2ZmX3Qgbl9idWYgPSBuX2luIC0gbl9vdXQ7CgkJaWYgKG5fYnVmID09IG1heCkg
-ewoJCQlzdHJ1Y3Qgc3RhdGZzIGY7CgkJCWlmIChmc3RhdGZzKGZkLCAmZikgPCAwKSB7CgkJCQll
-cnJvcihFWF9OT0lOUFVULCBlcnJubywgIiVzIiwgcGF0aCk7CgkJCX0KCQkJbWF4ID0gZi5mX2Jh
-dmFpbCAvIDIgKiBmLmZfYnNpemU7CgkJCW1hc2sgPSB+KChvZmZfdCkgZi5mX2JzaXplIC0gMSk7
-CgkJfQoJCXN0cnVjdCBwb2xsZmQgcGZkc1syXSA9IHsgfTsKCQluZmRzX3QgbmZkcyA9IDA7CgkJ
-aWYgKCFlb2YgJiYgbl9idWYgPCBtYXgpIHsKCQkJcGZkc1tuZmRzXS5mZCA9IFNURElOX0ZJTEVO
-TzsKCQkJcGZkc1tuZmRzXS5ldmVudHMgPSBQT0xMSU47CgkJCSsrbmZkczsKCQl9CgkJaWYgKG5f
-YnVmID4gMCAmJiAoIWRlZmVyIHx8IGVvZikpIHsKCQkJcGZkc1tuZmRzXS5mZCA9IFNURE9VVF9G
-SUxFTk87CgkJCXBmZHNbbmZkc10uZXZlbnRzID0gUE9MTE9VVDsKCQkJKytuZmRzOwoJCX0KCQlp
-ZiAobmZkcyA9PSAwKSB7CgkJCWlmIChlb2YpIHsKCQkJCWJyZWFrOwoJCQl9CgkJCXNsZWVwKDEp
-OwoJCQljb250aW51ZTsKCQl9CgkJaWYgKHBvbGwocGZkcywgbmZkcywgLTEpID4gMCkgewoJCQlm
-b3IgKG5mZHNfdCBpID0gMDsgaSA8IG5mZHM7ICsraSkgewoJCQkJaWYgKHBmZHNbaV0ucmV2ZW50
-cykgewoJCQkJCWlmIChwZmRzW2ldLmZkID09IFNURElOX0ZJTEVOTykgewoJCQkJCQlzc2l6ZV90
-IG4gPSBzcGxpY2UoU1RESU5fRklMRU5PLCBOVUxMLCBmZCwgJm5faW4sIHNwbGljZV9sZW4obWF4
-IC0gbl9idWYpLCBTUExJQ0VfRl9NT1ZFIHwgU1BMSUNFX0ZfTk9OQkxPQ0sgfCBTUExJQ0VfRl9N
-T1JFKTsKCQkJCQkJaWYgKG4gPD0gMCkgewoJCQkJCQkJaWYgKG4gPT0gMCkgewoJCQkJCQkJCWVv
-ZiA9IHRydWU7CgkJCQkJCQl9CgkJCQkJCQllbHNlIGlmIChlcnJubyAhPSBFQUdBSU4pIHsKCQkJ
-CQkJCQllcnJvcihFWF9JT0VSUiwgZXJybm8sICIlczogc3BsaWNlIiwgIjxzdGRpbj4iKTsKCQkJ
-CQkJCX0KCQkJCQkJfQoJCQkJCQllbHNlIHsKCQkJCQkJCW5fYnVmICs9IG47CgkJCQkJCX0KCQkJ
-CQl9CgkJCQkJZWxzZSBpZiAocGZkc1tpXS5mZCA9PSBTVERPVVRfRklMRU5PKSB7CgkJCQkJCXNz
-aXplX3QgbiA9IHNwbGljZShmZCwgTlVMTCwgU1RET1VUX0ZJTEVOTywgTlVMTCwgc3BsaWNlX2xl
-bihuX2J1ZiksIFNQTElDRV9GX01PVkUgfCBTUExJQ0VfRl9OT05CTE9DSyB8IFNQTElDRV9GX01P
-UkUpOwoJCQkJCQlpZiAobiA8PSAwKSB7CgkJCQkJCQlpZiAobiA8IDAgJiYgZXJybm8gIT0gRUFH
-QUlOKSB7CgkJCQkJCQkJZXJyb3IoRVhfSU9FUlIsIGVycm5vLCAiJXM6IHNwbGljZSIsICI8c3Rk
-b3V0PiIpOwoJCQkJCQkJfQoJCQkJCQl9CgkJCQkJCWVsc2UgaWYgKCgobl9vdXQgKz0gbikgJiBt
-YXNrKSAmJiBwdW5jaCAmJiBmYWxsb2NhdGUoZmQsIEZBTExPQ19GTF9QVU5DSF9IT0xFIHwgRkFM
-TE9DX0ZMX0tFRVBfU0laRSwgMCwgbl9vdXQgJiBtYXNrKSA8IDApIHsKCQkJCQkJCWlmIChlcnJu
-byAhPSBFT1BOT1RTVVBQICYmIGVycm5vICE9IEVOT1NZUykgewoJCQkJCQkJCWVycm9yKEVYX0lP
-RVJSLCBlcnJubywgIiVzOiBmYWxsb2NhdGUiLCBwYXRoKTsKCQkJCQkJCX0KCQkJCQkJCWZwcmlu
-dGYoc3RkZXJyLCAiV0FSTklORzogdGVtcCBmaWxlIGluICVzIGRvZXMgbm90IHN1cHBvcnQgRkFM
-TE9DX0ZMX1BVTkNIX0hPTEVcbiIsIHBhdGgpOwoJCQkJCQkJcHVuY2ggPSBmYWxzZTsKCQkJCQkJ
-fQoJCQkJCX0KCQkJCX0KCQkJfQoJCX0KCQllbHNlIGlmIChlcnJubyAhPSBFSU5UUikgewoJCQll
-cnJvcihFWF9PU0VSUiwgZXJybm8sICJwb2xsIik7CgkJfQoJfQoJcmV0dXJuIEVYX09LOwp9Cg==
-
---trojita=_f24de9da-24be-4bda-8ff8-71f55c350df9--
 
