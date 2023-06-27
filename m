@@ -2,141 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 31CB5740386
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 20:42:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FB17740398
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 20:52:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230145AbjF0Smb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 14:42:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34122 "EHLO
+        id S231217AbjF0Swp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 14:52:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjF0Sma (ORCPT
+        with ESMTP id S231202AbjF0Swo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 14:42:30 -0400
-Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C55610FE;
-        Tue, 27 Jun 2023 11:42:29 -0700 (PDT)
-Received: by mail-oi1-x235.google.com with SMTP id 5614622812f47-3a0423ea749so3950862b6e.0;
-        Tue, 27 Jun 2023 11:42:29 -0700 (PDT)
+        Tue, 27 Jun 2023 14:52:44 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 359E919A8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 11:52:43 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-51db8a4dc60so1314a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 11:52:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687891349; x=1690483349;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5QW7db0ayiyIii0yaz366+aZQikC9TPomjktNVfLgKA=;
-        b=lTr0hPUu+VSVtxwnzjFuIRI9fc2sezvUzFVC3QJLaIUaPBLttHamZsk0+Na3/KhHum
-         T1GmICHTIIx7C8O4sKGGK/ME2bplCuDjHc0yJC/t/ECBWLFqR8IOPaDtfAUm6IJWis8p
-         E+mZ6PcUkk8PlwmxtxskER3VPhYzmBW8U+9EI0mUotQw7jiwQkev/lxkpGr/n0mGzPQQ
-         dodKIJVJGzSXEi0kYRhOFE5eu+uvvEemXy30zh6pKiqN2jepRPZUbd7lU9BwpLLHOjXH
-         rRt/Au0fKNeDsWkF1ix2x+SOUPNHd0mIQd1uZwRLaPbUIajqifgjIfOysAm2KmQKl46A
-         TXaQ==
+        d=google.com; s=20221208; t=1687891961; x=1690483961;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zrMUD+bzjYq5U/OlRQ46C95vvZ+AhNRjqJFLfHa8n58=;
+        b=Lwjol0KzgSFyHrtVjCTTjkFPYma+RQF77JRbL0wBs9NJOySx0p1L2f3KoQOq2wtYew
+         bTbS4LUyDDLndkY34CBSLWvRzEdphSFvMUqTZGeF54WZZxThj2qDyI+xzBCFM4pogR7W
+         6bazPitMsZvcEA2YauBwiyijlOt2eO2AU6tgt0np1VbzJ0e1mNjUm9eEqWYW+z1kIExA
+         Z01Z8niT6EkjqiZzq1atZgnkgvSbxGXUcTwbQbaWqN4xOUMT4xyf3shnyJrljigB3h2A
+         KL/F/itIeavYuh/huelf/SLkHAf8a+Z3lf6f75s5Rw9smZoquAjZxv8gONeapQ66QuF+
+         fv8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687891349; x=1690483349;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1687891961; x=1690483961;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5QW7db0ayiyIii0yaz366+aZQikC9TPomjktNVfLgKA=;
-        b=eZ9Tn6GRUnMnsGS/ui9+whIkst60SA30EihE9rd3PE0UYK5X5+dSCen1usAeRqQUdz
-         y2wqOqkNc7dKt0faMpcO+Bs+1AxpUyKTKjfpYFHuYesUXJrca8BUmZDKzZI+Z4tXP7fD
-         OVjNU288hqwztdqwGskB/CEMDSfFIwD1ZaTDH+p8XcRBNtNEw8yVFIDIZyyK6AlaKJRU
-         cx3DP0B41VTcLfO8Xq4Bzac+3e7AbhGqhtvjXFeBh1WAdEeZ5ng8LEM2iqjmR8US5HiB
-         gss5qUGY167FiIX+65KF9wZ1wSTQwlXq2xyjfNFShP/vEJg5JDMNJAnpTMRyo6Mbbfnr
-         jf6w==
-X-Gm-Message-State: AC+VfDwI251HV+EzAHW5d0k3aoDrhG/Oi8KMIR73OQfBqc5jrtu4jeMt
-        v4rRGAXXVFbYKdP5IBmGXgg=
-X-Google-Smtp-Source: ACHHUZ6Nem7zk+ecNK+zPI3edbqWlsf/eKM6nf8cVKttdKKTAVbChIQpM1KyrDscALmG9R98ekyIWg==
-X-Received: by 2002:a05:6808:2202:b0:3a1:aa90:d486 with SMTP id bd2-20020a056808220200b003a1aa90d486mr19289571oib.26.1687891348535;
-        Tue, 27 Jun 2023 11:42:28 -0700 (PDT)
-Received: from localhost (dhcp-72-235-13-41.hawaiiantel.net. [72.235.13.41])
-        by smtp.gmail.com with ESMTPSA id 14-20020a630b0e000000b0054fb537ca5dsm5919490pgl.92.2023.06.27.11.42.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jun 2023 11:42:27 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Tue, 27 Jun 2023 08:42:28 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Suren Baghdasaryan <surenb@google.com>, gregkh@linuxfoundation.org,
-        peterz@infradead.org, lujialin4@huawei.com,
-        lizefan.x@bytedance.com, hannes@cmpxchg.org, mingo@redhat.com,
-        ebiggers@kernel.org, oleg@redhat.com, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 1/2] kernfs: add kernfs_ops.free operation to free
- resources tied to the file
-Message-ID: <ZJstlHU4Y3ZtiWJe@slm.duckdns.org>
-References: <20230626201713.1204982-1-surenb@google.com>
- <ZJn1tQDgfmcE7mNG@slm.duckdns.org>
- <20230627-kanon-hievt-bfdb583ddaa6@brauner>
- <CAJuCfpECKqYiekDK6Zw58w10n1T4Q3R+2nymfHX2ZGfQVDC3VQ@mail.gmail.com>
- <20230627-ausgaben-brauhaus-a33e292558d8@brauner>
+        bh=zrMUD+bzjYq5U/OlRQ46C95vvZ+AhNRjqJFLfHa8n58=;
+        b=PKTG3gU/MPIXYZBAlqgTJ9Ukfs6uaAg3UbS0OLkez1BWU1mNG74BfIzbYp+b092JJj
+         ZWAR9CfYvCBuY1YsNSiPKh3kKioq5rLmJD7PMVCd3ZOlC0FsrEGpSEj0vfuckiTRnPys
+         H4ZoIBadSj752jVgMz5Ys/bnCtKOSqbjdvaEy/0zEAz3yrtgM/Pyrn+SGm47PEI4CcKN
+         huHvoUPbtvqAQTHgAY2AazusB2d4p1bV9GCEJKvqDKfX6lOTZpD0YHID4cVVhTDMdhYz
+         chFM50vGKs1qswfolpzfE1ksWt5atchbfaDOkrGGSoX3PRTMzmO8Dq7qai/PMyU9IFE8
+         q4zw==
+X-Gm-Message-State: AC+VfDwaMoQ9vfTBu9g1WFcHmqmvQLyT8znlpT3FKUYkjyUupK2gdaZz
+        tDzgDL8996sCycdlaF44Q3LTNlipatjmm48ZPY7KcA==
+X-Google-Smtp-Source: ACHHUZ4NqtygUkoF7LzNQuMwk4m82VidiZ4IS+yy+S4o+fhpUQ0AL4Z3k4FCruDAhBmmEv8MVBz6pucYVp9kK7qXtpc=
+X-Received: by 2002:a50:a6c3:0:b0:506:90c4:b63b with SMTP id
+ f3-20020a50a6c3000000b0050690c4b63bmr12556edc.4.1687891961572; Tue, 27 Jun
+ 2023 11:52:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230627-ausgaben-brauhaus-a33e292558d8@brauner>
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+References: <20230626113156.1274521-1-usama.anjum@collabora.com>
+ <20230626113156.1274521-3-usama.anjum@collabora.com> <ZJo/gOnTmwEQPLF8@gmail.com>
+ <13ea54c0-25a3-285c-f47e-d6da11c91795@collabora.com>
+In-Reply-To: <13ea54c0-25a3-285c-f47e-d6da11c91795@collabora.com>
+From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+Date:   Tue, 27 Jun 2023 20:52:30 +0200
+Message-ID: <CABb0KFGn=3oAYa+wsf=iWr1Ss=en9+m11JOijEibXJLFDAkvjQ@mail.gmail.com>
+Subject: Re: [PATCH v21 2/5] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     Andrei Vagin <avagin@gmail.com>, Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello, Christian.
+On Tue, 27 Jun 2023 at 11:00, Muhammad Usama Anjum
+<usama.anjum@collabora.com> wrote:
+>
+> Hi Andrei and Michal,
+>
+> Lets resolve last two points. Please reply below.
+>
+> On 6/27/23 6:46=E2=80=AFAM, Andrei Vagin wrote:
+[...]
+> > And we need to report an address where it stopped scanning.
+> > We can do that by adding zero length vector.
+> I don't want to do multiplexing the ending address in vec. Can we add
+> end_addr variable in struct pm_scan_arg to always return the ending addre=
+ss?
+>
+> struct pm_scan_arg {
+>         ...
+>         _u64 end_addr;
+> };
 
-On Tue, Jun 27, 2023 at 07:30:26PM +0200, Christian Brauner wrote:
-...
-> ->release() was added in
-> 
->     commit 0e67db2f9fe91937e798e3d7d22c50a8438187e1
->     kernfs: add kernfs_ops->open/release() callbacks
-> 
->     Add ->open/release() methods to kernfs_ops.  ->open() is called when
->     the file is opened and ->release() when the file is either released or
->     severed.  These callbacks can be used, for example, to manage
->     persistent caching objects over multiple seq_file iterations.
-> 
->     Signed-off-by: Tejun Heo <tj@kernel.org>
->     Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->     Acked-by: Acked-by: Zefan Li <lizefan@huawei.com>
-> 
-> which mentions "either releases or severed" which imho already points to
-> separate methods.
+The idea to emit a zero-length entry for the end looks nice. This has
+the disadvantage that we'd need to either reserve one entry for the
+ending marker or stop the walk after the last entry is no longer
+matching.
 
-This is because kernfs has revoking operation which doesn't exist for other
-filesystems. Other filesystem implemenations can't just say "I'm done. Bye!"
-and go away. Even if the underlying filesystem has completely failed, the
-code still has to remain attached and keep aborting operations.
+Another solution would be to rewrite 'start' and 'len'. The caller
+would be forced to use non-const `pm_scan_arg`, but I expect the `vec`
+pointer would normally be written anyway (unless using only a
+statically-allocated buffer).
+Also, if the 'len' is replaced with 'end' that would make the ioctl
+easily restartable (just call again if start !=3D end).
 
-However, kernfs serves as the midlayer to a lot of device drivers and other
-internal subsystems and it'd be really inconvenient for each of them to have
-to implement "I want to go away but I gotta wait out this user who's holding
-onto my tuning knob file". So, kernfs exposes a revoke or severing semantics
-something that's exposing interface through kernfs wants to stop doing so.
-
-If you look at it from file operation implementation POV, this seems exactly
-like ->release. All open files are shutdown and there won't be any future
-operations. After all, revoke is forced closing of all fd's. So, for most
-users, treating severing just like ->release is the right thing to do.
-
-The PSI file which caused this is a special case because it attaches
-something to its kernfs file which outlives the severing operation bypassing
-kernfs infra. A more complete way to fix this would be supporting the
-required behavior from kernfs side, so that the PSI file operates on kernfs
-interface which knows the severing event and detaches properly. That said,
-currently, this is very much an one-off.
-
-Suren, if you're interested, it might make sense to pipe poll through kernfs
-properly so that it has its kernfs operation and kernfs can sever it. That
-said, as this is a fix for something which is currently causing crashes,
-it'd be better to merge this simpler fix first no matter what.
-
-Thanks.
-
--- 
-tejun
+Best Regards
+Micha=C5=82 Miros=C5=82aw
