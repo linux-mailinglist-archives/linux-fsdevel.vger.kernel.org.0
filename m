@@ -2,161 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C11627402E8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 20:11:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F09877402FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 20:13:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230152AbjF0SLU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 14:11:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42386 "EHLO
+        id S229676AbjF0SMz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 14:12:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231140AbjF0SLJ (ORCPT
+        with ESMTP id S230104AbjF0SMA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 14:11:09 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E23F10CE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 11:10:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1687889428;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=z1oQi2KaYXrd+f3vuquWTL1ELXYHBXVTrRL2XLD93Lo=;
-        b=C8x3+YDONAmwV3uTMWE8smtoha7DMK+oGdMvrUwh2jPmuT7CQt0RWiIuEhcNPa+Ceg3XT+
-        BD0VkR0CvY8rhGZbXIZibCroRxwQoCRxtOR5pUcE0kSpbkSJUatMNoOgryIXqT7o0a0d2+
-        PKhL3bDdnYRa8p7F2h2n8enFWDEcR/Q=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-103-ggfyZrebP5KmAaa9F-PKhg-1; Tue, 27 Jun 2023 14:10:27 -0400
-X-MC-Unique: ggfyZrebP5KmAaa9F-PKhg-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-9877da14901so352216766b.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 11:10:27 -0700 (PDT)
+        Tue, 27 Jun 2023 14:12:00 -0400
+Received: from mail-vs1-xe32.google.com (mail-vs1-xe32.google.com [IPv6:2607:f8b0:4864:20::e32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BB292D57;
+        Tue, 27 Jun 2023 11:11:48 -0700 (PDT)
+Received: by mail-vs1-xe32.google.com with SMTP id ada2fe7eead31-443628ee79dso914430137.1;
+        Tue, 27 Jun 2023 11:11:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687889507; x=1690481507;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AQrySK1ZT+LbbRMNZlZ2lWn/isV1vrbKMhcsTS1OQBo=;
+        b=ccscMLZMEwPohsP0JL0F0FqIN8zX0+vDczPhemjc6yR/jzlE4nT8d6b6k92Vguqt4d
+         NESTNiXaU1ZEduS+rja8/5KnMT02uHBmx+PiS19hu+O10kphzNynKJF/GO6rbGL6PcTD
+         XlyoSgihlwPqX0TIDgifW7fG9zonE2kjltpP+tXy56upzsOijWOnx8wDjXFsnqQ5nFs1
+         cGZ2Nj0iSu5AoXQk6zb77Dt89hpFM+vNyzErzp5VFJg91zRDBa4m6eQ16lc9+VDc3NtQ
+         4HHjBg/L4qk6e7X047uUZt34MrJ1hWCg+XcHlqRGX5WZuBE4vIL1kgvt6YLh8/CC7C7I
+         /8/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687889426; x=1690481426;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z1oQi2KaYXrd+f3vuquWTL1ELXYHBXVTrRL2XLD93Lo=;
-        b=EouOfogdHIxa5id9OFthVSWrFo66c0ge0Mp3a69jOCnLM52xumBIeOpTSC/7e2r0zb
-         A4p9St7igatkTbp2lG/N/EwCGSv0dxYy2GbTC09+DLfzPJDtI1OmchsjCHzdVGJPoITn
-         glo7F0BxqjH2wpzSuWF8OxZSQ+1RXJLDpfoFOdZXqX/V3+Ok52lvOMP6jSFA6Ian4Ng2
-         oGo5HU1Bonnojg8svkP1V9+r+mQATQEe2K58ctarSGNDlunhPCZvdS2NnMwxGBJNkok5
-         mYUb7fex19wCimoW5+HMrGE4eWGo3zUQ3gOBedIw0aU8u69BK27G/n0mDzFzCHAgf+zO
-         4Y7A==
-X-Gm-Message-State: AC+VfDzWeA2nyDJOvaqwrKVIeBEsr2a8Fx866eE4jF3OzLenN/7o9yDZ
-        v8wXIi/0mIGtgcOGKgpwoRNaHlpGxkQRpIw9E4h3ab9k/uiYLeG3crb0TflfZepLUCC7F8Lp/Gi
-        0X5jljXSkWYF5j56q1YUrIln8MFWjBYKs6Q==
-X-Received: by 2002:a17:907:983:b0:96f:a935:8997 with SMTP id bf3-20020a170907098300b0096fa9358997mr29234333ejc.12.1687889425895;
-        Tue, 27 Jun 2023 11:10:25 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ6INRW2y8Q5zI6TRLagxBRL2eTS9hWLifUjpylvWUa307GQqhEPkpQptCzCXUsdzhMwGqBArw==
-X-Received: by 2002:a17:907:983:b0:96f:a935:8997 with SMTP id bf3-20020a170907098300b0096fa9358997mr29234317ejc.12.1687889425568;
-        Tue, 27 Jun 2023 11:10:25 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id c15-20020a170906170f00b00986211f35bdsm4765742eje.80.2023.06.27.11.10.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Jun 2023 11:10:25 -0700 (PDT)
-Message-ID: <3baed0e0-db2c-906c-5256-1d83d59794e9@redhat.com>
-Date:   Tue, 27 Jun 2023 20:10:23 +0200
+        d=1e100.net; s=20221208; t=1687889507; x=1690481507;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AQrySK1ZT+LbbRMNZlZ2lWn/isV1vrbKMhcsTS1OQBo=;
+        b=Bki/LSu4lHJSQTAGPK1cPx3tn3eCSqn5QlbwFB99eRZi3lzmCUvl5fAIfiL63Bk6HZ
+         sOtDWa7z7tOYU2JijQy8mm9RBGNk2rfJsp+eHS74LHdtyfGYkRSWHnUGWQBtS5z2Sp/3
+         jHNswGe0lti2WRcJKwWctha+Y5Egp9jamFF0B2Ha9yony7HpzOgybz7tnfKSp/YZP001
+         tnKegXtw4PaQfsOuRcO8bWqFpcwZz30ApXNhwn57c8AamBwkRQRk+JdvNTxPlYAX+jBl
+         3gfwhMX8rsGv7V+c0DA6XhAvi8/USmYRPx/lZ3TDiDNFKLihZgiCvkMzy5ONXdVOZgjR
+         aXIQ==
+X-Gm-Message-State: AC+VfDwXmEWccLDzS13Mts2sQQbtCGAGM85wXfRcFvw4iOmL5sAeqUp+
+        d8NyEDiJ4LFd+PDiRtb34sIWVYvU2y40jWt7IGs=
+X-Google-Smtp-Source: ACHHUZ7g3WdXBL8i2HWww82h1ZkvwZgKVpE6YLuuxJPjlHuKztlRK9wvZ2F43bYjSZNa0fHvzlm7DkhK1z5BSRbDhaY=
+X-Received: by 2002:a05:6102:1cf:b0:43d:c0d5:ed27 with SMTP id
+ s15-20020a05610201cf00b0043dc0d5ed27mr15223175vsq.32.1687889506864; Tue, 27
+ Jun 2023 11:11:46 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH] fs/vboxsf: Replace kmap() with kmap_local_{page, folio}()
-Content-Language: en-US, nl
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Sumitra Sharma <sumitraartsy@gmail.com>,
+References: <CAOQ4uxh7i_s4R9pFJPENALdWGG5-dDhqPLEUXuJqSoHraktFiA@mail.gmail.com>
+ <cover.1687884029.git.nabijaczleweli@nabijaczleweli.xyz> <4206d7388fdbee87053c9655919096225a461423.1687884031.git.nabijaczleweli@nabijaczleweli.xyz>
+In-Reply-To: <4206d7388fdbee87053c9655919096225a461423.1687884031.git.nabijaczleweli@nabijaczleweli.xyz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 27 Jun 2023 21:11:35 +0300
+Message-ID: <CAOQ4uxj5hvSKUURaspF3hDPA99y_+0GAv0OWsVPPhhKKtcJe8w@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] splice: fsnotify_access(fd)/fsnotify_modify(fd) in vmsplice
+To:     =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= 
+        <nabijaczleweli@nabijaczleweli.xyz>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ira Weiny <ira.weiny@intel.com>,
-        Fabio <fmdefrancesco@gmail.com>, Deepak R Varma <drv@mailo.com>
-References: <20230627135115.GA452832@sumitra.com>
- <6a566e51-6288-f782-2fa5-f9b0349b6d7c@redhat.com>
- <ZJsgWQb+tOqtQuKL@casper.infradead.org>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <ZJsgWQb+tOqtQuKL@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        Jan Kara <jack@suse.cz>,
+        Chung-Chiang Cheng <cccheng@synology.com>, ltp@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Matthew,
+On Tue, Jun 27, 2023 at 7:55=E2=80=AFPM Ahelenia Ziemia=C5=84ska
+<nabijaczleweli@nabijaczleweli.xyz> wrote:
+>
+> Same logic applies here: this can fill up the pipe and pollers that rely
+> on getting IN_MODIFY notifications never wake up.
+>
+> Fixes: 983652c69199 ("splice: report related fsnotify events")
+> Link: https://lore.kernel.org/linux-fsdevel/jbyihkyk5dtaohdwjyivambb2gffy=
+js3dodpofafnkkunxq7bu@jngkdxx65pux/t/#u
+> Link: https://bugs.debian.org/1039488
+> Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xy=
+z>
 
-On 6/27/23 19:46, Matthew Wilcox wrote:
-> On Tue, Jun 27, 2023 at 04:34:51PM +0200, Hans de Goede wrote:
->> Hi,
->>
->> On 6/27/23 15:51, Sumitra Sharma wrote:
->>> kmap() has been deprecated in favor of the kmap_local_page() due to high
->>> cost, restricted mapping space, the overhead of a global lock for
->>> synchronization, and making the process sleep in the absence of free
->>> slots.
->>>
->>> kmap_local_{page, folio}() is faster than kmap() and offers thread-local
->>> and CPU-local mappings, can take pagefaults in a local kmap region and
->>> preserves preemption by saving the mappings of outgoing tasks and
->>> restoring those of the incoming one during a context switch.
->>>
->>> The difference between kmap_local_page() and kmap_local_folio() consist
->>> only in the first taking a pointer to a page and the second taking two
->>> arguments, a pointer to a folio and the byte offset within the folio which
->>> identifies the page.
->>>
->>> The mappings are kept thread local in the functions 'vboxsf_read_folio',
->>> 'vboxsf_writepage', 'vboxsf_write_end' in file.c
->>>
->>> Suggested-by: Ira Weiny <ira.weiny@intel.com>
->>> Signed-off-by: Sumitra Sharma <sumitraartsy@gmail.com>
->>
->> Thanks, patch looks good to me:
-> 
-> It doesn't look great to me, tbh.  It's generally an antipattern to map
-> the page/folio up at the top and then pass the virtual address down to
-> the bottom.  Usually we want to work in terms of physical addresses
-> as long as possible.  I see the vmmdev_hgcm_function_parameter can
-> take physical addresses; does it work to simply use the phys_addr
-> instead of the linear_addr?  I see this commentary:
-> 
->        /** Deprecated Doesn't work, use PAGELIST. */
->         VMMDEV_HGCM_PARM_TYPE_PHYSADDR           = 3,
-> 
-> so, um, can we use
->         /** Physical addresses of locked pages for a buffer. */
->         VMMDEV_HGCM_PARM_TYPE_PAGELIST           = 10,
-> 
-> and convert vboxsf_read_folio() to pass the folio down to vboxsf_read()
-> which converts it to a PAGELIST (however one does that)?
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-
-It has been a long time since I looked at this code in detail. I don't
-think you can just use different types when making virtualbox hypervisor
-calls and then expect the hypervisor to say sure that another way to
-represent a memory buffer, I'll take that instead.
-
-After I upstreamed vboxsf support VirtualBox upstream did do some
-further optimizations to speed up vboxsf. So there may be something
-there which allows passing a physical address to the hypervisor,
-but I don't have the time to dive into this.
-
-When I upstreamed this the idea was that VirtualBox upstream
-would see the benefits of having the guest drivers upstream and would
-help with upstream maintenance. But unfortunately this never materialized
-and they are still doing their own out of tree thing even for
-their guest drivers.
-
-TL;DR: for now I believe that it is best to just keep the code as
-is and do a straight forward folio conversion.
-
-Regards,
-
-Hans
-
-
-
-
+> ---
+>  fs/splice.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/splice.c b/fs/splice.c
+> index e16f4f032d2f..0eb36e93c030 100644
+> --- a/fs/splice.c
+> +++ b/fs/splice.c
+> @@ -1346,6 +1346,9 @@ static long vmsplice_to_user(struct file *file, str=
+uct iov_iter *iter,
+>                 pipe_unlock(pipe);
+>         }
+>
+> +       if (ret > 0)
+> +               fsnotify_access(file);
+> +
+>         return ret;
+>  }
+>
+> @@ -1375,8 +1378,10 @@ static long vmsplice_to_pipe(struct file *file, st=
+ruct iov_iter *iter,
+>         if (!ret)
+>                 ret =3D iter_to_pipe(iter, pipe, buf_flag);
+>         pipe_unlock(pipe);
+> -       if (ret > 0)
+> +       if (ret > 0) {
+>                 wakeup_pipe_readers(pipe);
+> +               fsnotify_modify(file);
+> +       }
+>         return ret;
+>  }
+>
+> --
+> 2.39.2
+>
