@@ -2,60 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E25A7400E8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 18:26:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EA3F740121
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 18:28:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232464AbjF0Q0Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 12:26:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46992 "EHLO
+        id S232353AbjF0Q2i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 12:28:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232353AbjF0QZ4 (ORCPT
+        with ESMTP id S231949AbjF0Q2W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 12:25:56 -0400
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A7113A94
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 09:25:33 -0700 (PDT)
-Received: by mail-yb1-xb36.google.com with SMTP id 3f1490d57ef6-bcb6dbc477eso3256667276.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 09:25:33 -0700 (PDT)
+        Tue, 27 Jun 2023 12:28:22 -0400
+Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4E2A35BF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 09:27:39 -0700 (PDT)
+Received: by mail-ot1-x333.google.com with SMTP id 46e09a7af769-6b5d57d7db9so3716140a34.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 09:27:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1687883133; x=1690475133;
+        d=google.com; s=20221208; t=1687883238; x=1690475238;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lDkDtON3xA4+F8vtKwdyt0Cb+vC6O2XyaPx6nYDr30w=;
-        b=X6snxaNMmFdmrlwXA1r+rWEnPpxhXBOdUXB32SinFWGecalIuvydZgA4uCeL6IUz7d
-         Eq5zXGAACQbSVivY8YD1kyq1LSsuF3iLxcsUpAo/FnKcrh7aF4Ya4ABpSyK5S+cNEWHr
-         DOjGe+cb2ct444qTHSI3zpiIIJpwOCkz95+2Ig4A9mg+xXYmo6ERWbZBylZ5+mlKGKcA
-         g40+Q6LUyowuGPZrDvGFCfAMDv18Ag7c/E1dXqEy0CNiweCj6atSqKVlguSJlRDfLnlZ
-         VbwLP3fgmzSOHWm7lvW2glLATbcPjgS/AWTO7/ifqk5VpUnccC7OInb6uS/kVup1A/Xw
-         RXAg==
+        bh=pJFRdvLZEJUWCkL2EK4nO+CExAHFvCuxR6yO/np/Csg=;
+        b=itTKOTQ86SntEjnwzI4JoX0BexZJ1pu/XpytRxK4zPckna0jMVyksw9xu+EJszLZeP
+         8uFIG0vTobqWN5ctzM/QeA/zhhBpfP8gK7w4NzNLu21ddFYzQd5uCJdZLIkHRhDjsPEt
+         cS6icMdVzW99rSPmL/p3rwoFz4jR+q2+SnMdZVLC6e712lumkhlu36B+3aINvRmEV8H3
+         iPdVy1BUeFBDfdR/QZozT86M6pj52wygB6XXH+6+jFI2kelNI3P10IjmAvJtMlLstYA+
+         90GTZKwcFW30u72Q7hXfvi0YvmHa6e7Ovz5y4CwphiczY10m7mo2NMV22k3w/QjhePPk
+         1H8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687883133; x=1690475133;
+        d=1e100.net; s=20221208; t=1687883238; x=1690475238;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lDkDtON3xA4+F8vtKwdyt0Cb+vC6O2XyaPx6nYDr30w=;
-        b=epHp+a20E6LWk5L3UVDTHT7RCiLLOLHI8nphdll3b/nQgDHpRxBWxJmQW7R5w+vMis
-         N+Ma4lrVUZ7S3Q+5C9N+7q2d/sqPT3sxCatbXAeguon2ZcHLxr3HA66JKmrXEs/B/mHt
-         HOt6vh0Mi1yQaPo0fOIWEPQOgmybGcl01K1qaEJ6751E5+mr3h0sLkfLVSNTU3s0KG56
-         PcWEIgUYdnOivpJyfMRLg3zLO9mnD92QCxbKZeGOgk9bJJ0G7oHzzJG5VjIXcR9RRqLT
-         ThfSFF3mP6hM8k00lFAo85x3kkhHr6TyZpLmUdBIoLo/DU/n1FfbuIL9etciLYHcAMW2
-         cVfA==
-X-Gm-Message-State: AC+VfDz+iGcbvh1TbwmALWXTb8DFJYZgYQInhy+R8azsR1Es5NZB/xKC
-        Vu1rP5Tz0vKJ2aP/dXnAzHhsKyd/R9YLSg4JQAlznQ==
-X-Google-Smtp-Source: ACHHUZ4Y0wXppiTElvuAQyrvaw1Rt5xvz0WJCqHc4E1s6TkXzbVBuroEcRXXEB76wbwOGiqFOyDa1NiwB8I46kUAQyI=
-X-Received: by 2002:a25:dc82:0:b0:c11:38e5:a00f with SMTP id
- y124-20020a25dc82000000b00c1138e5a00fmr7200954ybe.58.1687883132876; Tue, 27
- Jun 2023 09:25:32 -0700 (PDT)
+        bh=pJFRdvLZEJUWCkL2EK4nO+CExAHFvCuxR6yO/np/Csg=;
+        b=C2UZ3I/aKzr7B+bkJXDbq/0JUyJt8rnPr3m/CpPFPQrfazo5uwydP1+oUh33NJrPXU
+         WZZWPVL2TInvTnprI2V6Sa5z2wzsWPkgWcc4h0+ir98xOZgCXAf3Y4Tdtcrp3Z7+URZZ
+         AfYLv1V6Jigo/e/6fe0PjA7SzCXJAMHyyj7O25yMNWjBvAIv01oRSg1fPqkRbaI2QMr3
+         SuAWJYgHmL9v54d8JFzASoy0egEvfJhSv1Up5jF2/xCVA++mDyYP/4Ht2zz8gJV4v5yG
+         YM9Vh5F99cyB8O6H3s7fKne56z7Sw8StUY58e4xrgr3vXmK0jRRbX1ep6yzpF1/L1rON
+         XJUw==
+X-Gm-Message-State: AC+VfDzlbBgTYlb2uuPujzjkdfqJJRJoxYr/Ke1Z47bhlk6/0byXG/Vt
+        FaUlOOFJUfPeCH5seg5GNTrhbW4OoMMquxZ4XX4eMg==
+X-Google-Smtp-Source: ACHHUZ57VoQ12kfJ5zjAGQLFgpBtvhsvnVdfU8lZ1iezcQnh18vfcwTjU+DhFqTazNLmGcrrtgw2UT9xzFgboNl4Akw=
+X-Received: by 2002:a9d:7510:0:b0:6b7:397a:6342 with SMTP id
+ r16-20020a9d7510000000b006b7397a6342mr7691290otk.16.1687883237932; Tue, 27
+ Jun 2023 09:27:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230627042321.1763765-1-surenb@google.com> <20230627042321.1763765-4-surenb@google.com>
- <ZJr/+83t9ndwHCd6@x1n>
-In-Reply-To: <ZJr/+83t9ndwHCd6@x1n>
+References: <20230627042321.1763765-1-surenb@google.com> <20230627042321.1763765-5-surenb@google.com>
+ <ZJr+vlkIpaHWj1xg@x1n>
+In-Reply-To: <ZJr+vlkIpaHWj1xg@x1n>
 From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Tue, 27 Jun 2023 09:25:21 -0700
-Message-ID: <CAJuCfpFpMiPrGfj1ndsgPDOqEs_mZ_iH0P_JnyjMGBzMPCS7TA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/8] mm: drop per-VMA lock in handle_mm_fault if
- retrying or when finished
+Date:   Tue, 27 Jun 2023 09:27:07 -0700
+Message-ID: <CAJuCfpFFVvdwJUzZHrBZYS7YgQkphudCNKB6m55XigFXfJGRCg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/8] mm: replace folio_lock_or_retry with folio_lock_fault
 To:     Peter Xu <peterx@redhat.com>
 Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
         mhocko@suse.com, josef@toxicpanda.com, jack@suse.cz,
@@ -82,127 +81,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 8:28=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
+On Tue, Jun 27, 2023 at 8:22=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
 >
-> On Mon, Jun 26, 2023 at 09:23:16PM -0700, Suren Baghdasaryan wrote:
-> > handle_mm_fault returning VM_FAULT_RETRY or VM_FAULT_COMPLETED means
-> > mmap_lock has been released. However with per-VMA locks behavior is
-> > different and the caller should still release it. To make the
-> > rules consistent for the caller, drop the per-VMA lock before returning
-> > from handle_mm_fault when page fault should be retried or is completed.
+> On Mon, Jun 26, 2023 at 09:23:17PM -0700, Suren Baghdasaryan wrote:
+> > Change folio_lock_or_retry to accept vm_fault struct and return the
+> > vm_fault_t directly. This will be used later to return additional
+> > information about the state of the mmap_lock upon return from this
+> > function.
 > >
+> > Suggested-by: Matthew Wilcox <willy@infradead.org>
 > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> >  arch/arm64/mm/fault.c   |  3 ++-
-> >  arch/powerpc/mm/fault.c |  3 ++-
-> >  arch/s390/mm/fault.c    |  3 ++-
-> >  arch/x86/mm/fault.c     |  3 ++-
-> >  mm/memory.c             | 12 +++++++++++-
-> >  5 files changed, 19 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> > index 6045a5117ac1..89f84e9ea1ff 100644
-> > --- a/arch/arm64/mm/fault.c
-> > +++ b/arch/arm64/mm/fault.c
-> > @@ -601,7 +601,8 @@ static int __kprobes do_page_fault(unsigned long fa=
-r, unsigned long esr,
-> >               goto lock_mmap;
-> >       }
-> >       fault =3D handle_mm_fault(vma, addr, mm_flags | FAULT_FLAG_VMA_LO=
-CK, regs);
-> > -     vma_end_read(vma);
-> > +     if (!(fault & (VM_FAULT_RETRY | VM_FAULT_COMPLETED)))
-> > +             vma_end_read(vma);
-> >
-> >       if (!(fault & VM_FAULT_RETRY)) {
-> >               count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-> > diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
-> > index 531177a4ee08..4697c5dca31c 100644
-> > --- a/arch/powerpc/mm/fault.c
-> > +++ b/arch/powerpc/mm/fault.c
-> > @@ -494,7 +494,8 @@ static int ___do_page_fault(struct pt_regs *regs, u=
-nsigned long address,
-> >       }
-> >
-> >       fault =3D handle_mm_fault(vma, address, flags | FAULT_FLAG_VMA_LO=
-CK, regs);
-> > -     vma_end_read(vma);
-> > +     if (!(fault & (VM_FAULT_RETRY | VM_FAULT_COMPLETED)))
-> > +             vma_end_read(vma);
-> >
-> >       if (!(fault & VM_FAULT_RETRY)) {
-> >               count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-> > diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
-> > index b65144c392b0..cccefe41038b 100644
-> > --- a/arch/s390/mm/fault.c
-> > +++ b/arch/s390/mm/fault.c
-> > @@ -418,7 +418,8 @@ static inline vm_fault_t do_exception(struct pt_reg=
-s *regs, int access)
-> >               goto lock_mmap;
-> >       }
-> >       fault =3D handle_mm_fault(vma, address, flags | FAULT_FLAG_VMA_LO=
-CK, regs);
-> > -     vma_end_read(vma);
-> > +     if (!(fault & (VM_FAULT_RETRY | VM_FAULT_COMPLETED)))
-> > +             vma_end_read(vma);
-> >       if (!(fault & VM_FAULT_RETRY)) {
-> >               count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-> >               goto out;
-> > diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> > index e4399983c50c..d69c85c1c04e 100644
-> > --- a/arch/x86/mm/fault.c
-> > +++ b/arch/x86/mm/fault.c
-> > @@ -1347,7 +1347,8 @@ void do_user_addr_fault(struct pt_regs *regs,
-> >               goto lock_mmap;
-> >       }
-> >       fault =3D handle_mm_fault(vma, address, flags | FAULT_FLAG_VMA_LO=
-CK, regs);
-> > -     vma_end_read(vma);
-> > +     if (!(fault & (VM_FAULT_RETRY | VM_FAULT_COMPLETED)))
-> > +             vma_end_read(vma);
-> >
-> >       if (!(fault & VM_FAULT_RETRY)) {
-> >               count_vm_vma_lock_event(VMA_LOCK_SUCCESS);
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index f69fbc251198..9011ad63c41b 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -5086,7 +5086,17 @@ static vm_fault_t __handle_mm_fault(struct vm_ar=
-ea_struct *vma,
-> >               }
-> >       }
-> >
-> > -     return handle_pte_fault(&vmf);
-> > +     ret =3D handle_pte_fault(&vmf);
-> > +     if (ret & (VM_FAULT_RETRY | VM_FAULT_COMPLETED)) {
-> > +             /*
-> > +              * In case of VM_FAULT_RETRY or VM_FAULT_COMPLETED we mig=
-ht
-> > +              * be still holding per-VMA lock to keep the vma stable a=
-s long
-> > +              * as possible. Drop it before returning.
-> > +              */
-> > +             if (vmf.flags & FAULT_FLAG_VMA_LOCK)
-> > +                     vma_end_read(vma);
-> > +     }
 >
-> This smells hackish.. I'd think better we just release the lock at the
-> place where we'll return RETRY, and AFAIU swap is the only place vma lock
-> returns a RETRY with current code base?
+> The patch looks all fine to me except on the renaming..
 >
-> do_swap_page():
->         if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
-> +               vma_end_read(vma);
->                 ret =3D VM_FAULT_RETRY;
->                 goto out;
->         }
+> *_fault() makes me think of a fault handler, while *_lock_or_retry() was
+> there for years and it still sounds better than the new one to me.
 >
-> I.e., I don't think VM_FAULT_COMPLETED can even be returned with vma lock
-> paths yet as it doesn't yet support VM_SHARED.
+> Can we still come up with a better renaming, or just keep the name?
 
-Ack.
+I thought about alternatives but could not find anything better. I can
+keep the old name if that is preferred.
 
+>
+> Thanks,
 >
 > --
 > Peter Xu
+>
+> --
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to kernel-team+unsubscribe@android.com.
 >
