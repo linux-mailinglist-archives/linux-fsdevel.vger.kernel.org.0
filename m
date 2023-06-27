@@ -2,68 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4567874003E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 18:01:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8814774004B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 18:05:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232058AbjF0QBW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 12:01:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33576 "EHLO
+        id S232078AbjF0QFu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 12:05:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231946AbjF0QBU (ORCPT
+        with ESMTP id S231989AbjF0QFt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 12:01:20 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3AD62D63
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 09:01:19 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id 3f1490d57ef6-bacf685150cso4664387276.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 09:01:19 -0700 (PDT)
+        Tue, 27 Jun 2023 12:05:49 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EFE52D5E
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 09:05:44 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-676f16e0bc4so1611119b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 09:05:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1687881679; x=1690473679;
+        d=google.com; s=20221208; t=1687881944; x=1690473944;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oZ/aZnCB2+YlDU+Ga0O4oZcR0sxHQ0xYMLAmmJhI0Q4=;
-        b=XjG+cMncQkL546mb3ZvTLEPSRSb5MAObCihNdAofp7Nk4A0b9YcIh5enoJRE6qc81Z
-         Dn9+WV+fE5c4+rB1BtMdtu7bYxunG623p32EAqdGJ775l+sE3f3H2gMprP2uR8QvZ/Ic
-         lD2uKf6ClFO9Luxh4lPthS9YegmL6EOs8bk9nLORbez2Layf/gdNc6wpp4MlxLDmqoSl
-         fLbO+LNIlW7HBBti5U+qXyVSH0C+8qQj477UNo5z9l4/TcyXJSHU0QqwyxBy70/VovBv
-         Lk4794ZdkPuXIqm5pSAM6VX3jOM5e2W3j2wpJqY+DK7WM0cBWznroTSUdjqoqiBaCkvd
-         2X5Q==
+        bh=q26ddN6EaiG+6pUfPDCx1Slx/RD6peq9xPMgzmc1DZ0=;
+        b=GjHZ1FPL4Uf5eOs8kydNy5ZtRjtHSLXq4QEouhq/SzL/NIX/VYDhx2RV5DZs3iVInm
+         3l/6uAlkL6DIwiurz1xhs1cnC2fUZnsGFoxg6boimRtdXBRh1ObuA2j9AjK6dmkiu87G
+         DlrF/l3ezbzmGpdqLW8zujMOqsy/0bCV0BgEhxViprPgs0TZT3u7T2Mfv/J8SkJULIKq
+         LYeEKM5YertQUMrf4P2rcVHxDM7XOLvPqR3ci14/Z+TLxf9yoZlotgXdnKuooHOZ1Uaw
+         89dzVGLYaJtIPecoAmy6jYXmQBIPSQwHj3O6s9HoVghYcej8/RP0Cwy2VvRmCpd8TrRE
+         IQ1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687881679; x=1690473679;
+        d=1e100.net; s=20221208; t=1687881944; x=1690473944;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oZ/aZnCB2+YlDU+Ga0O4oZcR0sxHQ0xYMLAmmJhI0Q4=;
-        b=hNowHjU7tzEkj085ZCIYJg1UvywyI7G8aBxUMDYIiJ5NsMnYZK9dPo+P0ahxEvaxNt
-         ikW/wLHNNPriFyW/sob3ma6PyKxN7XUq5b21WzDuISN/B+gJ5WrW9j9ENToz7AtzE1Es
-         Gr7AXT/8Erx6mAea7d23IeDxZDLhaAvpYN40bAM03h17AWx0BfPZztqxEjur9S4oTIHx
-         WKXsIYHLVf6ALFJvPC9khMc5UsCzCzg9vnuK+CnrgJc8I+JlzJx6UYDNDhtK9Ndeb5g9
-         BYl9PP9qzLdPFJ0NDsj4Jg/J9RLxOR8B4iW83NzNqp9Ek7Ij4G51BuuwAaHeGetCP0/N
-         Q9zg==
-X-Gm-Message-State: AC+VfDzeDXYeDqlEDDQXeoCV5uhQIQ/AyLANA848H7olfjAVY4sCf/vd
-        Lm7e2ovx3TOylivXJot3KiC0MCZuiZX8kFahy57lnw==
-X-Google-Smtp-Source: ACHHUZ6ZNyLbJUC0sWAhuJrS2pBneYTQJbWBg2QwCk+NwNZhIgHbBthpc7Ncxu18cJTwHgpgcvZ/A2lM4fDE9eXpSKI=
-X-Received: by 2002:a25:ac27:0:b0:ba6:b486:84ed with SMTP id
- w39-20020a25ac27000000b00ba6b48684edmr27217909ybi.20.1687881677605; Tue, 27
- Jun 2023 09:01:17 -0700 (PDT)
+        bh=q26ddN6EaiG+6pUfPDCx1Slx/RD6peq9xPMgzmc1DZ0=;
+        b=Pu6hoSKbq2LqVKBmlq6rOKY+30KlLpHJ1C59VwdixpvyqHTlKkzjXhtgKqXAL7FWWG
+         oC5kDt41sAkFp245W06IUSKccT4JFPUaa+DYpDPlvCEbfG/xKZSH6HJgIneDMNv6Cz4j
+         uKM3lxAeVZMocLnsbyq0NyCiR+cjQPg6YXVIMroT/hScErKx8bQEljQSog2S59M60I2a
+         brn3yJC/0Wug4brJbZZ48QPd0q6r4ALTbw5kPMdjFfzlAY9RJxV4P+F7NztrGu2+wmLS
+         F+ii4YMhzUCbBlKx7iut58eQfADMzPxLZHrN/jP8c1ycoEE1mKrEsSpS/x4t34Q7Vo3q
+         xHsQ==
+X-Gm-Message-State: AC+VfDwSZP/dlXb1H7I94Q8tPSQhfMbhHMu/sAcfM5QWQS61HffvSNJx
+        fueYDe2YQwJ8OlDL/YA0XKbqCVJsZ0ZvrvxPSi3nrQ==
+X-Google-Smtp-Source: ACHHUZ7qNIqz25NqhtZvximqJ6qWhiZHpcocQ+RiSDrTYZkluHctdAXLi6rX/cQ8We3t7qgOBbM6dTOpUrhhLyaiYk0=
+X-Received: by 2002:a05:6a20:4286:b0:125:9d7f:3c03 with SMTP id
+ o6-20020a056a20428600b001259d7f3c03mr11721657pzj.23.1687881943704; Tue, 27
+ Jun 2023 09:05:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230627042321.1763765-1-surenb@google.com> <20230627042321.1763765-6-surenb@google.com>
- <871qhx2uot.fsf@nvdebian.thelocal>
-In-Reply-To: <871qhx2uot.fsf@nvdebian.thelocal>
+References: <20230627042321.1763765-1-surenb@google.com> <20230627042321.1763765-7-surenb@google.com>
+ <ZJsDMRkFRz11R0dt@x1n>
+In-Reply-To: <ZJsDMRkFRz11R0dt@x1n>
 From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Tue, 27 Jun 2023 09:01:06 -0700
-Message-ID: <CAJuCfpG=g0TgOMx17H4oEkVfOm1HU1yaSmDeOboX5SO68wp=oA@mail.gmail.com>
-Subject: Re: [PATCH v3 5/8] mm: make folio_lock_fault indicate the state of
- mmap_lock upon return
-To:     Alistair Popple <apopple@nvidia.com>
+Date:   Tue, 27 Jun 2023 09:05:32 -0700
+Message-ID: <CAJuCfpFNTj-1q=ZrNKO=4=VdBwiq_mTHWnXo0_QKi=AgCOo9yw@mail.gmail.com>
+Subject: Re: [PATCH v3 6/8] mm: handle swap page faults under per-VMA lock
+To:     Peter Xu <peterx@redhat.com>
 Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
         mhocko@suse.com, josef@toxicpanda.com, jack@suse.cz,
         ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
         michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
         vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
         punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
-        peterx@redhat.com, ying.huang@intel.com, david@redhat.com,
+        apopple@nvidia.com, ying.huang@intel.com, david@redhat.com,
         yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
         viro@zeniv.linux.org.uk, brauner@kernel.org,
         pasha.tatashin@soleen.com, linux-mm@kvack.org,
@@ -82,63 +81,181 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 1:09=E2=80=AFAM Alistair Popple <apopple@nvidia.com=
-> wrote:
+On Tue, Jun 27, 2023 at 8:41=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
 >
->
-> Suren Baghdasaryan <surenb@google.com> writes:
->
-> > folio_lock_fault might drop mmap_lock before returning and to extend it
-> > to work with per-VMA locks, the callers will need to know whether the
-> > lock was dropped or is still held. Introduce new fault_flag to indicate
-> > whether the lock got dropped and store it inside vm_fault flags.
+> On Mon, Jun 26, 2023 at 09:23:19PM -0700, Suren Baghdasaryan wrote:
+> > When page fault is handled under per-VMA lock protection, all swap page
+> > faults are retried with mmap_lock because folio_lock_fault (formerly
+> > known as folio_lock_or_retry) had to drop and reacquire mmap_lock
+> > if folio could not be immediately locked.
+> > Follow the same pattern as mmap_lock to drop per-VMA lock when waiting
+> > for folio in folio_lock_fault and retrying once folio is available.
+> > With this obstacle removed, enable do_swap_page to operate under
+> > per-VMA lock protection. Drivers implementing ops->migrate_to_ram might
+> > still rely on mmap_lock, therefore we have to fall back to mmap_lock in
+> > that particular case.
+> > Note that the only time do_swap_page calls synchronous swap_readpage
+> > is when SWP_SYNCHRONOUS_IO is set, which is only set for
+> > QUEUE_FLAG_SYNCHRONOUS devices: brd, zram and nvdimms (both btt and
+> > pmem). Therefore we don't sleep in this path, and there's no need to
+> > drop the mmap or per-VMA lock.
 > >
 > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 > > ---
-> >  include/linux/mm_types.h | 1 +
-> >  mm/filemap.c             | 2 ++
-> >  2 files changed, 3 insertions(+)
+> >  mm/filemap.c | 24 ++++++++++++++++--------
+> >  mm/memory.c  | 21 ++++++++++++++-------
+> >  2 files changed, 30 insertions(+), 15 deletions(-)
 > >
-> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > index 79765e3dd8f3..6f0dbef7aa1f 100644
-> > --- a/include/linux/mm_types.h
-> > +++ b/include/linux/mm_types.h
-> > @@ -1169,6 +1169,7 @@ enum fault_flag {
-> >       FAULT_FLAG_UNSHARE =3D            1 << 10,
-> >       FAULT_FLAG_ORIG_PTE_VALID =3D     1 << 11,
-> >       FAULT_FLAG_VMA_LOCK =3D           1 << 12,
-> > +     FAULT_FLAG_LOCK_DROPPED =3D       1 << 13,
->
-> Minor nit but this should also be added to the enum documentation
-> comment above this.
-
-Thanks! Sounds like we will be dripping the new flag, so hopefully I
-won't need to document it :)
-
->
-> >  };
-> >
-> >  typedef unsigned int __bitwise zap_flags_t;
 > > diff --git a/mm/filemap.c b/mm/filemap.c
-> > index 87b335a93530..8ad06d69895b 100644
+> > index 8ad06d69895b..683f11f244cd 100644
 > > --- a/mm/filemap.c
 > > +++ b/mm/filemap.c
-> > @@ -1723,6 +1723,7 @@ vm_fault_t __folio_lock_fault(struct folio *folio=
-, struct vm_fault *vmf)
+> > @@ -1703,12 +1703,14 @@ static int __folio_lock_async(struct folio *fol=
+io, struct wait_page_queue *wait)
+> >   * Return values:
+> >   * 0 - folio is locked.
+> >   * VM_FAULT_RETRY - folio is not locked.
+> > - *     mmap_lock has been released (mmap_read_unlock(), unless flags h=
+ad both
+> > - *     FAULT_FLAG_ALLOW_RETRY and FAULT_FLAG_RETRY_NOWAIT set, in
+> > - *     which case mmap_lock is still held.
+> > + *     FAULT_FLAG_LOCK_DROPPED bit in vmf flags will be set if mmap_lo=
+ck or
+>
+> This "FAULT_FLAG_LOCK_DROPPED" should belong to that patch when introduce=
+d.
+> But again I still think this flag as a whole with that patch is not neede=
+d
+> and should be dropped, unless I miss something important..
+>
+> > + *     per-VMA lock got dropped. mmap_lock/per-VMA lock is dropped whe=
+n
+> > + *     function fails to lock the folio, unless flags had both
+> > + *     FAULT_FLAG_ALLOW_RETRY and FAULT_FLAG_RETRY_NOWAIT set, in whic=
+h case
+> > + *     the lock is still held.
+> >   *
+> >   * If neither ALLOW_RETRY nor KILLABLE are set, will always return 0
+> > - * with the folio locked and the mmap_lock unperturbed.
+> > + * with the folio locked and the mmap_lock/per-VMA lock unperturbed.
+> >   */
+> >  vm_fault_t __folio_lock_fault(struct folio *folio, struct vm_fault *vm=
+f)
+> >  {
+> > @@ -1716,13 +1718,16 @@ vm_fault_t __folio_lock_fault(struct folio *fol=
+io, struct vm_fault *vmf)
+> >
+> >       if (fault_flag_allow_retry_first(vmf->flags)) {
+> >               /*
+> > -              * CAUTION! In this case, mmap_lock is not released
+> > -              * even though return VM_FAULT_RETRY.
+> > +              * CAUTION! In this case, mmap_lock/per-VMA lock is not
+> > +              * released even though returning VM_FAULT_RETRY.
+> >                */
+> >               if (vmf->flags & FAULT_FLAG_RETRY_NOWAIT)
 > >                       return VM_FAULT_RETRY;
 > >
-> >               mmap_read_unlock(mm);
-> > +             vmf->flags |=3D FAULT_FLAG_LOCK_DROPPED;
+> > -             mmap_read_unlock(mm);
+> > +             if (vmf->flags & FAULT_FLAG_VMA_LOCK)
+> > +                     vma_end_read(vmf->vma);
+> > +             else
+> > +                     mmap_read_unlock(mm);
+> >               vmf->flags |=3D FAULT_FLAG_LOCK_DROPPED;
 > >               if (vmf->flags & FAULT_FLAG_KILLABLE)
 > >                       folio_wait_locked_killable(folio);
-> >               else
-> > @@ -1735,6 +1736,7 @@ vm_fault_t __folio_lock_fault(struct folio *folio=
-, struct vm_fault *vmf)
+> > @@ -1735,7 +1740,10 @@ vm_fault_t __folio_lock_fault(struct folio *foli=
+o, struct vm_fault *vmf)
+> >
 > >               ret =3D __folio_lock_killable(folio);
 > >               if (ret) {
-> >                       mmap_read_unlock(mm);
-> > +                     vmf->flags |=3D FAULT_FLAG_LOCK_DROPPED;
+> > -                     mmap_read_unlock(mm);
+> > +                     if (vmf->flags & FAULT_FLAG_VMA_LOCK)
+> > +                             vma_end_read(vmf->vma);
+> > +                     else
+> > +                             mmap_read_unlock(mm);
+> >                       vmf->flags |=3D FAULT_FLAG_LOCK_DROPPED;
 > >                       return VM_FAULT_RETRY;
 > >               }
-> >       } else {
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 3c2acafcd7b6..5caaa4c66ea2 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -3712,11 +3712,6 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >       if (!pte_unmap_same(vmf))
+> >               goto out;
+> >
+> > -     if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
+>
+> So if with my imagination, here we'll already have the vma_read_end() and
+> this patch will remove it, which makes sense.  Then...
+>
+> > -             ret =3D VM_FAULT_RETRY;
+> > -             goto out;
+> > -     }
+> > -
+> >       entry =3D pte_to_swp_entry(vmf->orig_pte);
+> >       if (unlikely(non_swap_entry(entry))) {
+> >               if (is_migration_entry(entry)) {
+> > @@ -3726,6 +3721,15 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >                       vmf->page =3D pfn_swap_entry_to_page(entry);
+> >                       ret =3D remove_device_exclusive_entry(vmf);
+> >               } else if (is_device_private_entry(entry)) {
+> > +                     if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
+> > +                             /*
+> > +                              * migrate_to_ram is not yet ready to ope=
+rate
+> > +                              * under VMA lock.
+> > +                              */
+>
+> ... here we probably just do vma_read_end(), then...
+>
+> > +                             ret |=3D VM_FAULT_RETRY;
+> > +                             goto out;
+> > +                     }
+> > +
+> >                       vmf->page =3D pfn_swap_entry_to_page(entry);
+> >                       vmf->pte =3D pte_offset_map_lock(vma->vm_mm, vmf-=
+>pmd,
+> >                                       vmf->address, &vmf->ptl);
+> > @@ -5089,9 +5093,12 @@ static vm_fault_t __handle_mm_fault(struct vm_ar=
+ea_struct *vma,
+> >               /*
+> >                * In case of VM_FAULT_RETRY or VM_FAULT_COMPLETED we mig=
+ht
+> >                * be still holding per-VMA lock to keep the vma stable a=
+s long
+> > -              * as possible. Drop it before returning.
+> > +              * as possible. In this situation vmf.flags has
+> > +              * FAULT_FLAG_VMA_LOCK set and FAULT_FLAG_LOCK_DROPPED un=
+set.
+> > +              * Drop the lock before returning when this happens.
+> >                */
+> > -             if (vmf.flags & FAULT_FLAG_VMA_LOCK)
+> > +             if ((vmf.flags & (FAULT_FLAG_VMA_LOCK | FAULT_FLAG_LOCK_D=
+ROPPED)) =3D=3D
+> > +                 FAULT_FLAG_VMA_LOCK)
+> >                       vma_end_read(vma);
+>
+> This whole chunk should have been dropped altogether with my comment in
+> previous patch, iiuc, and it should be no-op anyway for swap case.  For t=
+he
+> real "waiting for page lock during swapin" phase we should always 100%
+> release the vma lock in folio_lock_or_retry() - just like mmap lock.
+
+Yep, we drop FAULT_FLAG_LOCK_DROPPED, release vma lock when we return
+RETRY and that makes all this unnecessary. I just need to make sure we
+do not access VMA after we drop its lock since we will be releasing it
+now earlier than before.
+
+>
+> Thanks,
+>
+> >       }
+> >       return ret;
+> > --
+> > 2.41.0.178.g377b9f9a00-goog
+> >
+>
+> --
+> Peter Xu
 >
