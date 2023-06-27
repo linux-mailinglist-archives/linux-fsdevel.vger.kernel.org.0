@@ -2,62 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 765A7740023
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 17:55:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D66C740039
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 18:00:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231946AbjF0PzU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 11:55:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59174 "EHLO
+        id S232033AbjF0QAe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 12:00:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231390AbjF0PzS (ORCPT
+        with ESMTP id S230384AbjF0QAc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 11:55:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4248C297D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 08:54:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1687881269;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=blfaz25JTx0Gq1i5rQOIktQT2cQ83yiOEY0rptX8I8M=;
-        b=cq0ytByFsBVljszirNtFNbWecwqTsnoUAcZcjUpjm0bcwNTs7Q25Sy0I2m++qWL+P0I8JJ
-        OdmqPaiL3919H9aDdXy532ByT3bAVSuxJ0NQWn5SZaijyY/QAp5/o0TfPZcDOhLAg879z2
-        Aj2AuVKiDat4e9vTYWW0YPlPKW+3cp0=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-584-1PSk3D_6O2C9nAgVuFIfVQ-1; Tue, 27 Jun 2023 11:54:28 -0400
-X-MC-Unique: 1PSk3D_6O2C9nAgVuFIfVQ-1
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-402fa256023so343621cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 08:54:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687881267; x=1690473267;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        Tue, 27 Jun 2023 12:00:32 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B3622D64
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 09:00:31 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-bfee679b7efso4636377276.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 09:00:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1687881630; x=1690473630;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=blfaz25JTx0Gq1i5rQOIktQT2cQ83yiOEY0rptX8I8M=;
-        b=Y9Bi+1nFKRlqENGgfI0hoVB382H/9Hee2m28OhKL6j2HN0C3Pcl1OJ/UgmuqHJsNT9
-         J/uSMj0ZIx/laXCNz1Vo1hZQ1ZnznsfktK1ECzzrwitu8SJtChJJfBqyUvXGPr0Ij3si
-         89kOGBizB8Oq5JldEl+nTUmBxZpYkmae71jiNslGA5BmZ78iR8TLLbpat3E01EohJe8Q
-         Ktg4Fg83MMuEi/6XeGP6cV9/sHuci7d7kB+Yjy/a5+FWXiYKsjnVj0Yh/BGvAgJljF27
-         uCmw+ewJvRiSDPI/Rlbr20zZXAjZg/8zjj38EvM3yL0sMw6ItffrVwQVTWplKXauHyOt
-         C94g==
-X-Gm-Message-State: AC+VfDzcBAQTqVGVG0fSgoaK0vh5juEA30WpPrp6Xv5lVfOnydqA3FpK
-        3F72VkEm23V1dWZC3VhLNOJ2UHtW0VkWyDbG2k+/Skmt4ZpJFBDO1Qnlb8t7UNRRyFbmlKjMjw4
-        TxsjQkXyZIUCtQsKmWXGqRAZN0A==
-X-Received: by 2002:ac8:5a86:0:b0:400:adc0:8306 with SMTP id c6-20020ac85a86000000b00400adc08306mr5934135qtc.4.1687881267435;
-        Tue, 27 Jun 2023 08:54:27 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ6el5jb9Izv6sojg638+Y+Ior7huYvpR+V+d70FMxnJoZyY0xlHgXUXCJu9qNQlG8K5lr0aQA==
-X-Received: by 2002:ac8:5a86:0:b0:400:adc0:8306 with SMTP id c6-20020ac85a86000000b00400adc08306mr5934118qtc.4.1687881267160;
-        Tue, 27 Jun 2023 08:54:27 -0700 (PDT)
-Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
-        by smtp.gmail.com with ESMTPSA id cg13-20020a05622a408d00b003f4ed0ca698sm4677898qtb.49.2023.06.27.08.54.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jun 2023 08:54:26 -0700 (PDT)
-Date:   Tue, 27 Jun 2023 11:54:24 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Suren Baghdasaryan <surenb@google.com>
+        bh=9KkJfMIW232ztzAZaUdoyK+3frIKBC3oUzLc/0KyY7g=;
+        b=TSmneStqHeW3vCGRSk9XN9K/xAOpUNp9Vt2idzhSed8Jk+sSOVzUMYMfK5RbQI1ezV
+         xCcyNw+2DbcLe4wWwb+sZrHHbbktJgcRITbuZtz6oydu/tUcvwox4YrknRwXpzAlmJOP
+         orSU/BHf8zwqMob8Lmjh+Rk+lPb7uV7/TsKfBFQo78u+j2lducnvRLXzqme6BAOSma7C
+         wm+yNe+rT3S/dvG2NXgwRWysJw6pZHxyQcFfsx8v6zz6MvXxzLTh6RSn3eg7C+0+NnyJ
+         KA9VLZ5YOphRWjJmhl7NlekRjYrHPsGQNPRy+HRTD3mtoTXAsOZc7Mn6GtWgZTBQ0Ohc
+         Dgog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687881630; x=1690473630;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9KkJfMIW232ztzAZaUdoyK+3frIKBC3oUzLc/0KyY7g=;
+        b=JweWneWMKFPIztF1wtc9uckftVPGRBym9R9D37J0JGh9fS8Ae4MDbIb5myZ7i5S3dZ
+         pS8bMc1cX6dVhQhzeYax6HH7OUJik/Vbk0jEuDXtQZc7es/i7GBVTmGvCSOwd1guGpab
+         KRUORmBJq5EIMto530oZ8KM3wejfjVh33R7o1p6r+cMwmTQZNx1Od0233mf0UFjT0ZQR
+         nLdAeh/LCJldLOKBYDDz9V+ZvLuZ9JpokjFlQGALpTzP+ItDr6hWxvznHiEhV7Huw1oj
+         XH2Skb89I41O1IWRGU5nKGMHq8Zd8Gci/8UpcVlcElNMk8OivcRFNPXNnhMd6QsV3nK4
+         wT8w==
+X-Gm-Message-State: AC+VfDw7/uQXcwBKN6SU4zhFW4R5AK74885sZbs3gZImHwqJmuJIIhka
+        z2zTznTbK33yfly6/n2d+SPhaQZ950x4HiRo2AdbEQ==
+X-Google-Smtp-Source: ACHHUZ4+7sbj81UsRHmAbl9QlYt7ZZmVqNsMLkZDz17Ve/pdy6A0enKOXhe8I1iDZXgOZeytbthoVeE93RHK/qCLMik=
+X-Received: by 2002:a25:ca0b:0:b0:ba1:ce0d:a076 with SMTP id
+ a11-20020a25ca0b000000b00ba1ce0da076mr30559075ybg.43.1687881630048; Tue, 27
+ Jun 2023 09:00:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230627042321.1763765-1-surenb@google.com> <20230627042321.1763765-6-surenb@google.com>
+ <ZJsBEk4OHlp39vEK@x1n>
+In-Reply-To: <ZJsBEk4OHlp39vEK@x1n>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Tue, 27 Jun 2023 09:00:18 -0700
+Message-ID: <CAJuCfpEdBtLo0iaAyKh0Ok_DqEGLkRaVGNxpteki7tkr7+kdJg@mail.gmail.com>
+Subject: Re: [PATCH v3 5/8] mm: make folio_lock_fault indicate the state of
+ mmap_lock upon return
+To:     Peter Xu <peterx@redhat.com>
 Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
         mhocko@suse.com, josef@toxicpanda.com, jack@suse.cz,
         ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
@@ -70,175 +69,105 @@ Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
         pasha.tatashin@soleen.com, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-team@android.com
-Subject: Re: [PATCH v3 8/8] mm: handle userfaults under VMA lock
-Message-ID: <ZJsGMDqcYopSW8QL@x1n>
-References: <20230627042321.1763765-1-surenb@google.com>
- <20230627042321.1763765-9-surenb@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230627042321.1763765-9-surenb@google.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 26, 2023 at 09:23:21PM -0700, Suren Baghdasaryan wrote:
-> Enable handle_userfault to operate under VMA lock by releasing VMA lock
-> instead of mmap_lock and retrying.
+On Tue, Jun 27, 2023 at 8:32=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
+>
+> On Mon, Jun 26, 2023 at 09:23:18PM -0700, Suren Baghdasaryan wrote:
+> > folio_lock_fault might drop mmap_lock before returning and to extend it
+> > to work with per-VMA locks, the callers will need to know whether the
+> > lock was dropped or is still held. Introduce new fault_flag to indicate
+> > whether the lock got dropped and store it inside vm_fault flags.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > ---
+> >  include/linux/mm_types.h | 1 +
+> >  mm/filemap.c             | 2 ++
+> >  2 files changed, 3 insertions(+)
+> >
+> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> > index 79765e3dd8f3..6f0dbef7aa1f 100644
+> > --- a/include/linux/mm_types.h
+> > +++ b/include/linux/mm_types.h
+> > @@ -1169,6 +1169,7 @@ enum fault_flag {
+> >       FAULT_FLAG_UNSHARE =3D            1 << 10,
+> >       FAULT_FLAG_ORIG_PTE_VALID =3D     1 << 11,
+> >       FAULT_FLAG_VMA_LOCK =3D           1 << 12,
+> > +     FAULT_FLAG_LOCK_DROPPED =3D       1 << 13,
+> >  };
+> >
+> >  typedef unsigned int __bitwise zap_flags_t;
+> > diff --git a/mm/filemap.c b/mm/filemap.c
+> > index 87b335a93530..8ad06d69895b 100644
+> > --- a/mm/filemap.c
+> > +++ b/mm/filemap.c
+> > @@ -1723,6 +1723,7 @@ vm_fault_t __folio_lock_fault(struct folio *folio=
+, struct vm_fault *vmf)
+> >                       return VM_FAULT_RETRY;
+> >
+> >               mmap_read_unlock(mm);
+> > +             vmf->flags |=3D FAULT_FLAG_LOCK_DROPPED;
+> >               if (vmf->flags & FAULT_FLAG_KILLABLE)
+> >                       folio_wait_locked_killable(folio);
+> >               else
+> > @@ -1735,6 +1736,7 @@ vm_fault_t __folio_lock_fault(struct folio *folio=
+, struct vm_fault *vmf)
+> >               ret =3D __folio_lock_killable(folio);
+> >               if (ret) {
+> >                       mmap_read_unlock(mm);
+> > +                     vmf->flags |=3D FAULT_FLAG_LOCK_DROPPED;
+> >                       return VM_FAULT_RETRY;
+> >               }
+> >       } else {
+>
+> IIRC we've discussed about this bits in previous version, and the consens=
+us
+> was that we don't need yet another flag?  Just to recap: I think relying =
+on
+> RETRY|COMPLETE would be enough for vma lock, as NOWAIT is only used by gu=
+p
+> while not affecting vma lockings, no?
 
-This mostly good to me (besides the new DROP flag.. of course), thanks.
-Still some nitpicks below.
+Sorry for missing that point. I focused on making VMA locks being
+dropped for RETRY|COMPLETE and forgot to check after that change if
+RETRY|COMPLETE is enough indication to conclude that VMA lock is
+dropped. Looking at that now, I'm not sure that would be always true
+for file-backed page faults (including shmem_fault()), but we do not
+handle them under VMA locks for now anyway, so this indeed seems like
+a safe assumption. When Matthew implements file-backed support he
+needs to be careful to ensure this rule still holds. With your
+suggestions to drop the VMA lock at the place where we return RETRY
+this seems to indeed eliminate the need for FAULT_FLAG_LOCK_DROPPED
+and simplifies things. I'll try that approach and see if anything
+blows up.
 
-> 
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
->  fs/userfaultfd.c | 42 ++++++++++++++++++++++--------------------
->  mm/memory.c      |  9 ---------
->  2 files changed, 22 insertions(+), 29 deletions(-)
-> 
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index 4e800bb7d2ab..b88632c404b6 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -277,17 +277,17 @@ static inline struct uffd_msg userfault_msg(unsigned long address,
->   * hugepmd ranges.
->   */
->  static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
-> -					 struct vm_area_struct *vma,
-> -					 unsigned long address,
-> -					 unsigned long flags,
-> -					 unsigned long reason)
-> +					      struct vm_fault *vmf,
-> +					      unsigned long reason)
->  {
-> +	struct vm_area_struct *vma = vmf->vma;
->  	pte_t *ptep, pte;
->  	bool ret = true;
->  
-> -	mmap_assert_locked(ctx->mm);
-> +	if (!(vmf->flags & FAULT_FLAG_VMA_LOCK))
-> +		mmap_assert_locked(ctx->mm);
+>
+> As mentioned in the other reply, even COMPLETE won't appear for vma lock
+> path yet afaict, so mostly only RETRY matters here and it can 100% imply =
+a
+> lock release happened.  It's just that it's very easy to still cover
+> COMPLETE altogether in this case, being prepared for any possible shared
+> support on vma locks, IMHO.
 
-Maybe we can have a helper asserting proper vma protector locks (mmap for
-!VMA_LOCK and vma read lock for VMA_LOCK)?  It basically tells the context
-the vma is still safe to access.
+Yes and I do introduce one place where we use COMPLETE with VMA locks,
+so will cover it the same way as for RETRY.
+Thanks,
+Suren.
 
->  
-> -	ptep = hugetlb_walk(vma, address, vma_mmu_pagesize(vma));
-> +	ptep = hugetlb_walk(vma, vmf->address, vma_mmu_pagesize(vma));
->  	if (!ptep)
->  		goto out;
->  
-> @@ -308,10 +308,8 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
->  }
->  #else
->  static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
-> -					 struct vm_area_struct *vma,
-> -					 unsigned long address,
-> -					 unsigned long flags,
-> -					 unsigned long reason)
-> +					      struct vm_fault *vmf,
-> +					      unsigned long reason)
->  {
->  	return false;	/* should never get here */
->  }
-> @@ -325,11 +323,11 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
->   * threads.
->   */
->  static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
-> -					 unsigned long address,
-> -					 unsigned long flags,
-> +					 struct vm_fault *vmf,
->  					 unsigned long reason)
->  {
->  	struct mm_struct *mm = ctx->mm;
-> +	unsigned long address = vmf->address;
->  	pgd_t *pgd;
->  	p4d_t *p4d;
->  	pud_t *pud;
-> @@ -337,7 +335,8 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
->  	pte_t *pte;
->  	bool ret = true;
->  
-> -	mmap_assert_locked(mm);
-> +	if (!(vmf->flags & FAULT_FLAG_VMA_LOCK))
-> +		mmap_assert_locked(mm);
-
-(the assert helper can also be used here)
-
->  
->  	pgd = pgd_offset(mm, address);
->  	if (!pgd_present(*pgd))
-> @@ -445,7 +444,8 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
->  	 * Coredumping runs without mmap_lock so we can only check that
->  	 * the mmap_lock is held, if PF_DUMPCORE was not set.
->  	 */
-> -	mmap_assert_locked(mm);
-> +	if (!(vmf->flags & FAULT_FLAG_VMA_LOCK))
-> +		mmap_assert_locked(mm);
->  
->  	ctx = vma->vm_userfaultfd_ctx.ctx;
->  	if (!ctx)
-> @@ -561,15 +561,17 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
->  	spin_unlock_irq(&ctx->fault_pending_wqh.lock);
->  
->  	if (!is_vm_hugetlb_page(vma))
-> -		must_wait = userfaultfd_must_wait(ctx, vmf->address, vmf->flags,
-> -						  reason);
-> +		must_wait = userfaultfd_must_wait(ctx, vmf, reason);
->  	else
-> -		must_wait = userfaultfd_huge_must_wait(ctx, vma,
-> -						       vmf->address,
-> -						       vmf->flags, reason);
-> +		must_wait = userfaultfd_huge_must_wait(ctx, vmf, reason);
->  	if (is_vm_hugetlb_page(vma))
->  		hugetlb_vma_unlock_read(vma);
-> -	mmap_read_unlock(mm);
-> +	if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
-> +		/* WARNING: VMA can't be used after this */
-> +		vma_end_read(vma);
-> +	} else
-> +		mmap_read_unlock(mm);
-
-I also think maybe we should have a helper mm_release_fault_lock() just
-release different locks for with/without VMA_LOCK.  It can also be used in
-the other patch of folio_lock_or_retry().
-
-> +	vmf->flags |= FAULT_FLAG_LOCK_DROPPED;
->  
->  	if (likely(must_wait && !READ_ONCE(ctx->released))) {
->  		wake_up_poll(&ctx->fd_wqh, EPOLLIN);
-> diff --git a/mm/memory.c b/mm/memory.c
-> index bdf46fdc58d6..923c1576bd14 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -5316,15 +5316,6 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
->  	if (!vma_start_read(vma))
->  		goto inval;
->  
-> -	/*
-> -	 * Due to the possibility of userfault handler dropping mmap_lock, avoid
-> -	 * it for now and fall back to page fault handling under mmap_lock.
-> -	 */
-> -	if (userfaultfd_armed(vma)) {
-> -		vma_end_read(vma);
-> -		goto inval;
-> -	}
-> -
->  	/* Check since vm_start/vm_end might change before we lock the VMA */
->  	if (unlikely(address < vma->vm_start || address >= vma->vm_end)) {
->  		vma_end_read(vma);
-> -- 
-> 2.41.0.178.g377b9f9a00-goog
-> 
-
--- 
-Peter Xu
-
+>
+> Thanks,
+>
+> --
+> Peter Xu
+>
