@@ -2,97 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AF42C73F33A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 06:16:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BB8B73F345
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 06:23:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229655AbjF0EQR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 00:16:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55124 "EHLO
+        id S230073AbjF0EX2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 00:23:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229501AbjF0EQP (ORCPT
+        with ESMTP id S229501AbjF0EX1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 00:16:15 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA07C10FC;
-        Mon, 26 Jun 2023 21:16:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=YhN2HKlUxU0jShSahcjs57oeXS5v5uX1UIbvGoMaO4E=; b=Ej5m6KyWeYLWWpQNQM8Zb/OAra
-        Z0TO4meR/mGllCmUl09CRh9qhElkXJpSDQrvKZuKb0rQi1EoceGSYfBwOTAP9s09XStXlaaeUzz+Z
-        tmg8QYPCs33DGTj+5W1LQbLc9YYILcxJIta5y8QfGA21LOhueaJmHF3ljukfSH6CFt0aYQBNXW2A/
-        UbtX6kE5UCjvZCvfIJLnUsYAl2nAq7hnmKgHgQ4reKksPy8zqKrvq5xv0J/ob+QncVr9ivUolDFMy
-        ndoNxfAyu53/bj7OXOzB4A5pkzgLq8P76IgsmRETh79UYCA9q/8hjGdjXY5N/72FtRv8MwsPpJRvf
-        gSvIfApA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qE07g-00BfWP-35;
-        Tue, 27 Jun 2023 04:16:12 +0000
-Date:   Mon, 26 Jun 2023 21:16:12 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.com>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH 04/12] writeback: Simplify the loops in
- write_cache_pages()
-Message-ID: <ZJpijNd4G+JdVyhl@infradead.org>
-References: <20230626173521.459345-1-willy@infradead.org>
- <20230626173521.459345-5-willy@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230626173521.459345-5-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+        Tue, 27 Jun 2023 00:23:27 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D6B5DC
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 21:23:25 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-bff1f2780ebso4143174276.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 21:23:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1687839805; x=1690431805;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JWV/DPfsr/X1EdWkyMfUvUzcNXJIr36UfbN56sh3Nho=;
+        b=x2iMPg4XRNf8vHFsb9oj4O2ZELGqekijMqu5JGOH1XL1vViWwwWC9MBkqH9HHe4btJ
+         c19XM2XqaHIdWyVgEShFN+FKhTNvVvVMcM9KPGdA2PpIKlKOFfjWIxX/FTRQ+Egzz2Xk
+         iDOHnC+luY1cdNvUBatfG4vVVioTEVkMxkAuGqGmuEGGYxJfP+4hqSMSdMsuJhdGFwBo
+         ha0yY/DE1KDekc0YbbEhrbK/ZfuDdaU+y21gTEGJNm3OiwsK0/m5w1uhZ73NmyB1jFRp
+         VEn2awGEL5+iVwgxI+McDtpysZ6sRcaia6mf8ZdScFiYwaVc51h/mR4Ayui/LnJG+dff
+         b0iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687839805; x=1690431805;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JWV/DPfsr/X1EdWkyMfUvUzcNXJIr36UfbN56sh3Nho=;
+        b=gbl4CvyWJ1rnhPZFAOBcIHyREp3gTAxjoC1cT7e63D+v19ptXNoEsKr+Vt+txggc7N
+         zOzmeHY1m5h0OBjaQVABbIrJs+mK2njDlX+dCD8/xcPBfT55HlBslb6i2+cqrgke6+h3
+         ldsKUVEuD1OEVa0UI2+Gg953LalumgaJbmwLdWqcT+S4pe6kP/ghCqV3pR9SnUvd6T9t
+         opZD9O5vkpMA9YIGulHYbBr4lBqRA1+zG0BGn9OVPP/miY0+SA0+T0cFMs/Z0Rr/cdcN
+         EF8pIuFuKaH31OqEN2+G2S0i1XEFl7BFgET0kkT5qTsJug0PtTHIZYIXHGOEt4e18r1g
+         kf/w==
+X-Gm-Message-State: AC+VfDw2qIbZ3O03ykD2T5rgEZKMM6qdXupe1zl/9uHQflXdA9RCAOyl
+        k5y7LNm7Z3qXZytEu8XpnkWwzwWHoqI=
+X-Google-Smtp-Source: ACHHUZ4u6ae4giQurDsZzes45mdptlCJHkYuWzppgrpk7yqVJyIQ6870iCQnB4NEEH0e6arLfrBAiMgLNp0=
+X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:5075:f38d:ce2f:eb1b])
+ (user=surenb job=sendgmr) by 2002:a5b:ccd:0:b0:bd1:7934:b4fe with SMTP id
+ e13-20020a5b0ccd000000b00bd17934b4femr13504050ybr.13.1687839804822; Mon, 26
+ Jun 2023 21:23:24 -0700 (PDT)
+Date:   Mon, 26 Jun 2023 21:23:13 -0700
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.41.0.162.gfafddb0af9-goog
+Message-ID: <20230627042321.1763765-1-surenb@google.com>
+Subject: [PATCH v3 0/8] Per-VMA lock support for swap and userfaults
+From:   Suren Baghdasaryan <surenb@google.com>
+To:     akpm@linux-foundation.org
+Cc:     willy@infradead.org, hannes@cmpxchg.org, mhocko@suse.com,
+        josef@toxicpanda.com, jack@suse.cz, ldufour@linux.ibm.com,
+        laurent.dufour@fr.ibm.com, michel@lespinasse.org,
+        liam.howlett@oracle.com, jglisse@google.com, vbabka@suse.cz,
+        minchan@google.com, dave@stgolabs.net, punit.agrawal@bytedance.com,
+        lstoakes@gmail.com, hdanton@sina.com, apopple@nvidia.com,
+        peterx@redhat.com, ying.huang@intel.com, david@redhat.com,
+        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        pasha.tatashin@soleen.com, surenb@google.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 26, 2023 at 06:35:13PM +0100, Matthew Wilcox (Oracle) wrote:
-> Collapse the two nested loops into one.  This is needed as a step
-> towards turning this into an iterator.
-> ---
->  mm/page-writeback.c | 94 ++++++++++++++++++++++-----------------------
->  1 file changed, 47 insertions(+), 47 deletions(-)
-> 
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 54f2972dab45..68f28eeb15ed 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2461,6 +2461,7 @@ int write_cache_pages(struct address_space *mapping,
->  		      void *data)
->  {
->  	int error;
-> +	int i = 0;
->  
->  	if (wbc->range_cyclic) {
->  		wbc->index = mapping->writeback_index; /* prev offset */
-> @@ -2478,65 +2479,64 @@ int write_cache_pages(struct address_space *mapping,
->  	folio_batch_init(&wbc->fbatch);
->  	wbc->err = 0;
->  
-> +	for (;;) {
-> +		struct folio *folio;
->  
-> +		if (i == wbc->fbatch.nr) {
-> +			writeback_get_batch(mapping, wbc);
-> +			i = 0;
-> +		}
->  		if (wbc->fbatch.nr == 0)
->  			break;
-> +		folio = wbc->fbatch.folios[i++];
+When per-VMA locks were introduced in [1] several types of page faults
+would still fall back to mmap_lock to keep the patchset simple. Among them
+are swap and userfault pages. The main reason for skipping those cases was
+the fact that mmap_lock could be dropped while handling these faults and
+that required additional logic to be implemented.
+Implement the mechanism to allow per-VMA locks to be dropped for these
+cases.
+First, change handle_mm_fault to drop per-VMA locks when returning
+VM_FAULT_RETRY or VM_FAULT_COMPLETED to be consistent with the way
+mmap_lock is handled. Then change folio_lock_or_retry (and rename it to
+folio_lock_fault) to accept vm_fault, which will be used to indicate
+mmap_lock/per-VMA lock's state upon exit. Finally allow swap and uffd
+page faults to be handled under per-VMA locks by dropping per-VMA locks
+when waiting for a folio, the same way it's done under mmap_lock.
+Naturally, once VMA lock is dropped that VMA should be assumed unstable
+and can't be used.
 
-Did you consider moving what is currently the "i" local variable
-into strut writeback_control as well?  Then writeback_get_batch
-could return the current folio, and we could hae a much nicer loop
-here by moving all of the above into writeback_get_batch:
+Changes since v2 posted at [2]
+- Moved prerequisite patches to the beginning (first 2 patches)
+- Added a new patch 3/8 to make per-VMA locks consistent with mmap_locks
+by dropping it on VM_FAULT_RETRY or VM_FAULT_COMPLETED.
+- Implemented folio_lock_fault in 4/8, per Matthew Wilcox
+- Replaced VM_FAULT_VMA_UNLOCKED with FAULT_FLAG_LOCK_DROPPED vmf_flag in
+5/8.
+- Merged swap page fault handling patch with the one implementing wait for
+a folio into 6/8, per Peter Xu
 
-	while ((folio = writeback_get_batch(mapping, wbc))) {
+Note: patch 3/8 will cause a trivial merge conflict in arch/arm64/mm/fault.c
+when applied over mm-unstable branch due to a patch from ARM64 tree [3]
+which is missing in mm-unstable.
 
-(and yes, writeback_get_batch probably needs a better name with that)
+[1] https://lore.kernel.org/all/20230227173632.3292573-1-surenb@google.com/
+[2] https://lore.kernel.org/all/20230609005158.2421285-1-surenb@google.com/
+[3] https://lore.kernel.org/all/20230524131305.2808-1-jszhang@kernel.org/
+
+Suren Baghdasaryan (8):
+  swap: remove remnants of polling from read_swap_cache_async
+  mm: add missing VM_FAULT_RESULT_TRACE name for VM_FAULT_COMPLETED
+  mm: drop per-VMA lock in handle_mm_fault if retrying or when finished
+  mm: replace folio_lock_or_retry with folio_lock_fault
+  mm: make folio_lock_fault indicate the state of mmap_lock upon return
+  mm: handle swap page faults under per-VMA lock
+  mm: drop VMA lock before waiting for migration
+  mm: handle userfaults under VMA lock
+
+ arch/arm64/mm/fault.c    |  3 +-
+ arch/powerpc/mm/fault.c  |  3 +-
+ arch/s390/mm/fault.c     |  3 +-
+ arch/x86/mm/fault.c      |  3 +-
+ fs/userfaultfd.c         | 42 +++++++++++++------------
+ include/linux/mm_types.h |  4 ++-
+ include/linux/pagemap.h  | 13 ++++----
+ mm/filemap.c             | 55 +++++++++++++++++++--------------
+ mm/madvise.c             |  4 +--
+ mm/memory.c              | 66 +++++++++++++++++++++++++---------------
+ mm/swap.h                |  1 -
+ mm/swap_state.c          | 12 +++-----
+ 12 files changed, 120 insertions(+), 89 deletions(-)
+
+-- 
+2.41.0.178.g377b9f9a00-goog
+
