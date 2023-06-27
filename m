@@ -2,62 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1529673F42C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 08:02:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE97173F44F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 08:14:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229728AbjF0GCd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 02:02:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53490 "EHLO
+        id S229909AbjF0GOs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 02:14:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229699AbjF0GCZ (ORCPT
+        with ESMTP id S229799AbjF0GOr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 02:02:25 -0400
-Received: from mail-vk1-xa2c.google.com (mail-vk1-xa2c.google.com [IPv6:2607:f8b0:4864:20::a2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37F841BEC;
-        Mon, 26 Jun 2023 23:02:24 -0700 (PDT)
-Received: by mail-vk1-xa2c.google.com with SMTP id 71dfb90a1353d-47dcb8a5e89so236773e0c.0;
-        Mon, 26 Jun 2023 23:02:24 -0700 (PDT)
+        Tue, 27 Jun 2023 02:14:47 -0400
+Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABE3F1FD7;
+        Mon, 26 Jun 2023 23:14:33 -0700 (PDT)
+Received: by mail-qk1-x72f.google.com with SMTP id af79cd13be357-766fd5f9536so76220685a.3;
+        Mon, 26 Jun 2023 23:14:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687845743; x=1690437743;
+        d=gmail.com; s=20221208; t=1687846473; x=1690438473;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Y5dvk1R75OBQO1y2Ih8lBMCAI5bqmNywon30Fjv9uYI=;
-        b=pvDisVWqvpE6QGxAqe7G+xS35NrUJRtekEDynHd+zwxkHvvaG3haCALNkeXe7Rx14M
-         XzsP3b7ycN76JwUR27FRwxETKaYOcpTWYNK10je1fCQ/6DSc6gjGSDID2mBsYjZIAeGL
-         pzHlQFtbR3Gyt43BXf5ZFxhx3KUTD0zgQ0tI049lodo+5HSBT23KsN6gYIY+WOUcT8Y5
-         3ufZGHtO1xygayIylzcuS2KvSrJgKqMECf/Ydb3L9tGflivIHf4E+8px81U0XHwTfMMO
-         sK7hb4fAOSBVErAZOpnCpZLikFYk0MbkevqIP8flH9W3Phr7SbECoYy6dh+C3zX8JsGG
-         cN1w==
+        bh=CGKfpXjOg1tRmeU1bzxCkZN0igEieCKHd+4ulvvFBzg=;
+        b=pUkPvrqhV6xLpR8mQZ9DQ2t4UXEXPecGbPFIepdjEdAdE8kvtT452MN3VtKQvk1n9O
+         HJismjo+zS1eFwhf3eOBkwJsqBPIMo0DkGDba6VScAZXU9pfPQxQZ64uHShtRtT6dn60
+         8xYjIxNxW5TLxp5H8v7KS5UI7eRcF/WhF4yR4JrMEKTZNctAQYI92F/5k9tDNFSKSVC7
+         /Hl4PqWVrskTEcAB7Gta6epp+LePkm/sndx19YP8QxnRiUbFXAydlJVo0Sd5BEKWRIhr
+         x2TWWjj5S3El15n/UUA1aOQpPherXeN99k19VvyWgQuQsGX1zQhDLMIuphXQbSDWCHVI
+         V7mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687845743; x=1690437743;
+        d=1e100.net; s=20221208; t=1687846473; x=1690438473;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Y5dvk1R75OBQO1y2Ih8lBMCAI5bqmNywon30Fjv9uYI=;
-        b=bqjgvpfRpvGbFUHfdU9BlRMfsYptuh9mLTAGMysxSZwg5dixi/y6NFQGTlCZIW6LcN
-         ikqIrSeoGi9lMK1FDZzol4n60FnZ5XAmyOISR2//8flbA2E6btCrIapV8oF0DOSyXLJ3
-         qjpnvxdUF9CsKIv3Eyn97xKBD8ENKBVDpGVWdslqj1PHaKr9G8haqhzts9/sWr2WbTxl
-         4Nm/rj1+XcxV+/MFAa7cWy9VbT0Gt3PfDfltpBgdc3rPYmGdw08h4GwzgkMy8S6bhOWM
-         WiasaLQcMSsOtPy4CqNLRuMJcxTQl9wWvKZ2VafHB4o/RZ7hXIVx/9VDiP3erys4u/N0
-         UzYQ==
-X-Gm-Message-State: AC+VfDz7dqZWf4kXuB7yiDwOzPCwKmiDzms2Fyoiz+BJw0+K0+fNWHby
-        wJNxPHFau2BpCVIEWV51qR/TNHlbTXj8bCl+X44=
-X-Google-Smtp-Source: ACHHUZ7S23OxBIzYQoAJe3MeOSJiJWbRlWpQ17Gjn+tztPcB62kDqlAA0Nxb9ma2BtQdBV9Lwa/REo0ftLU5qbYkQ4M=
-X-Received: by 2002:a1f:2917:0:b0:46e:96f3:20e6 with SMTP id
- p23-20020a1f2917000000b0046e96f320e6mr7216115vkp.7.1687845743195; Mon, 26 Jun
- 2023 23:02:23 -0700 (PDT)
+        bh=CGKfpXjOg1tRmeU1bzxCkZN0igEieCKHd+4ulvvFBzg=;
+        b=Ch7/NUYJGCeV1aRQRbjhUwLN1uYNPyjQJAMxpSsCg8DZ9vYbfwlexcpLJxCo8T9NsM
+         468MfS9FAUhnCbtOhNndhWT8YxaYcVymiw8K57psSKEWCtNmw2j2ZOdcuuN8LxYs8HuP
+         QIXoGYF/5sHyZ+5s71yhbXdekI5N1lRnIoOvGKOk0TBWoKhWLR5+xdM8No8mQSP1bdJi
+         d2O2D1+T9/tSfFWSNPhDEq9kG9mAUjoi42DBUJmj+zOmI3PWSWzNLxUlePiJaJOY4P6F
+         Nvf00nXALIFqdeEHJS0GWrXu4g7ZbfGiTkPlgMy6mh3I96mSvjDGhXTy/o10YPKpzuTc
+         toEg==
+X-Gm-Message-State: AC+VfDywPiLEUOGxHhGYGhdG+Z9msNW4Ft9CvCkUkpA0RP1WMzQYMZAi
+        utJfKHUSNdWIy9Ndj5eW4INSo2VF+sbeL6lH9PoC8kQ4/Go=
+X-Google-Smtp-Source: ACHHUZ4tPxAG2M/3+Wgt79gfG1OXKB1kV60hz6KxwcieZ9rVIKX3U44C0wA/7xmzJJFiRQ8gl0VVeIR2+VVKoTMQgdo=
+X-Received: by 2002:a05:620a:b5d:b0:765:a99c:96f3 with SMTP id
+ x29-20020a05620a0b5d00b00765a99c96f3mr3813534qkg.28.1687846472623; Mon, 26
+ Jun 2023 23:14:32 -0700 (PDT)
 MIME-Version: 1.0
 References: <CAOQ4uxj_DLm8_stRJPR7i8bp9aJ5VtjzWqHL2egCTKe3M-6KSw@mail.gmail.com>
- <al4pxc2uftonry5vyunx5qblllbaakjsehrc74fbbk7pxddyv7@gn3k55eldmmp>
-In-Reply-To: <al4pxc2uftonry5vyunx5qblllbaakjsehrc74fbbk7pxddyv7@gn3k55eldmmp>
+ <pw3ljisf6ctpku2o44bdy3aaqdt4ofnedrdt4a4qylhasxsli6@wxhy3nsjcwn4>
+In-Reply-To: <pw3ljisf6ctpku2o44bdy3aaqdt4ofnedrdt4a4qylhasxsli6@wxhy3nsjcwn4>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 27 Jun 2023 09:02:12 +0300
-Message-ID: <CAOQ4uxjis1CbC+ZMXrr3ez4b=X4PRSWE6NVN=vFgukJOjuGPqQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] splice: always fsnotify_access(in),
- fsnotify_modify(out) on success
-To:     =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= 
-        <nabijaczleweli@nabijaczleweli.xyz>
+Date:   Tue, 27 Jun 2023 09:14:21 +0300
+Message-ID: <CAOQ4uxh7i_s4R9pFJPENALdWGG5-dDhqPLEUXuJqSoHraktFiA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] fanotify accounting for fs/splice.c
+To:     =?UTF-8?B?0L3QsNCx?= <nabijaczleweli@nabijaczleweli.xyz>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -75,116 +73,78 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 2:09=E2=80=AFAM Ahelenia Ziemia=C5=84ska
-<nabijaczleweli@nabijaczleweli.xyz> wrote:
+On Tue, Jun 27, 2023 at 2:08=E2=80=AFAM =D0=BD=D0=B0=D0=B1 <nabijaczleweli@=
+nabijaczleweli.xyz> wrote:
 >
-> The current behaviour caused an asymmetry where some write APIs
-> (write, sendfile) would notify the written-to/read-from objects,
-> but splice wouldn't.
+> "people just forget to add inotify hooks to their I/O routines as a rule"=
+?
+> Guess what I did, fully knowing that some are missing in this file :)
 >
-> This affected userspace which used inotify, like coreutils tail -f.
+> =3D=3D> te.c <=3D=3D
+> #define _GNU_SOURCE
+> #include <fcntl.h>
+> #include <stdio.h>
+> int main() {
+>   ssize_t rd, acc =3D 0;
+>   while ((rd =3D tee(0, 1, 128 * 1024 * 1024, 0)) > 0)
+>     acc +=3D rd;
+>   fprintf(stderr, "te=3D%zd: %m\n", acc);
+> }
 >
-
-typo: uses?
-
-But this comment is not very clear IMO.
-Please imagine that the reader is a distro maintainer or coreutils maintain=
-er
-How are they supposed to react to this comment?
-Is this an important fix for them to backport??
-How does this change actually affect tail -f?
-Does it fix a bug in tail -f?
-As far as I understand from our last conversation, the answer is
-that it does not fix a bug in tail -f and it won't affect tail -f at all -
-it would *allow* tail -f to be changed in a way that could improve
-some use cases. Right? improve in what way exactly.
-
-The simplest way to explain this fix perhaps would be to link to
-a patch to tail and explain how the kernel+tail fixes improve a
-use case.
-
-
-> Fixes: 983652c69199 ("splice: report related fsnotify events")
-> Link: https://lore.kernel.org/linux-fsdevel/jbyihkyk5dtaohdwjyivambb2gffy=
-js3dodpofafnkkunxq7bu@jngkdxx65pux/t/#u
-> Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xy=
-z>
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> ---
-> No changes since v1 (except in the message).
+> =3D=3D> vm.c <=3D=3D
+> #define _GNU_SOURCE
+> #include <fcntl.h>
+> #include <stdio.h>
+> #include <string.h>
+> static char sb[1024 * 1024];
+> int main() {
+>   memcpy(sb, "=C5=BCupan", sizeof("=C5=BCupan"));
+>   ssize_t rd =3D
+>       vmsplice(1, &(struct iovec){.iov_base =3D sb, .iov_len =3D sizeof(s=
+b)}, 1,
+>                SPLICE_F_GIFT);
+>   fprintf(stderr, "vm=3D%zd: %m\n", rd);
+> }
 >
->  fs/splice.c | 21 ++++++++++++---------
->  1 file changed, 12 insertions(+), 9 deletions(-)
 >
-> diff --git a/fs/splice.c b/fs/splice.c
-> index 3e06611d19ae..94fae24f9d54 100644
-> --- a/fs/splice.c
-> +++ b/fs/splice.c
-> @@ -1154,7 +1154,8 @@ long do_splice(struct file *in, loff_t *off_in, str=
-uct file *out,
->                 if ((in->f_flags | out->f_flags) & O_NONBLOCK)
->                         flags |=3D SPLICE_F_NONBLOCK;
+> echo zupa | ./te > fifo tees a few times and then blocks when the pipe
+> fills, at which point we get into the broken state.
 >
-> -               return splice_pipe_to_pipe(ipipe, opipe, len, flags);
-> +               ret =3D splice_pipe_to_pipe(ipipe, opipe, len, flags);
-> +               goto notify;
->         }
+> Similarly, ./vm > fifo (with the default 64k F_GETPIPE_SZ) enters that
+> same state instantly.
 >
->         if (ipipe) {
-> @@ -1182,15 +1183,12 @@ long do_splice(struct file *in, loff_t *off_in, s=
-truct file *out,
->                 ret =3D do_splice_from(ipipe, out, &offset, len, flags);
->                 file_end_write(out);
+> With 2/3 and 3/3, they instead do
+>   1: mask=3D2, cook=3D0, len=3D0, name=3D
+>   rd=3D80
+>   1: mask=3D2, cook=3D0, len=3D0, name=3D
+>   rd=3D80
+>   ...
+> in a loop, as-expected, and
+>   # ./vm > fifo
+>   vm=3D65200: Success
+>   1: mask=3D2, cook=3D0, len=3D0, name=3D
+>   rd=3D65200
 >
-> -               if (ret > 0)
-> -                       fsnotify_modify(out);
-> -
->                 if (!off_out)
->                         out->f_pos =3D offset;
->                 else
->                         *off_out =3D offset;
->
-> -               return ret;
-> +               goto notify;
->         }
->
->         if (opipe) {
-> @@ -1209,18 +1207,23 @@ long do_splice(struct file *in, loff_t *off_in, s=
-truct file *out,
->
->                 ret =3D splice_file_to_pipe(in, opipe, &offset, len, flag=
-s);
->
-> -               if (ret > 0)
-> -                       fsnotify_access(in);
-> -
->                 if (!off_in)
->                         in->f_pos =3D offset;
->                 else
->                         *off_in =3D offset;
->
-> -               return ret;
-> +               goto notify;
->         }
->
->         return -EINVAL;
-> +
-> +notify:
-> +       if (ret > 0) {
-> +               fsnotify_access(in);
-> +               fsnotify_modify(out);
-> +       }
-> +
-> +       return ret;
->  }
+> I took the liberty of marking 2/3 and 3/3 as Fixes: of the original
+> fanotify-in-splice commit as well, I think they fit the bill.
 >
 
-Sorry I haven't noticed this in the first review, but goto is not really ne=
-eded.
-We make the three cases if{}else if{}else if{}
-and return -EINVAL in the else case.
+Thank you for doing this thorough research on all the variants!
 
-It's not really that important, just a bit nicer IMO, so as you wish.
+It would be great if you could add test coverage for these syscalls.
+
+Simplest would be to clone an LTP inotify test, e.g.
+ltp/testcases/kernel/syscalls/inotify/inotify01
+
+for the different splice syscall variants (sendfile as well).
+
+LTP already has other tests for all those syscalls, so there are plenty
+of examples of how to use the LTP helpers to test those syscalls.
+
+You can either clone one inotify test per syscall, or clone one inotify
+test that creates a fifo instead of a file that inotify watches
+and use a test cases array for the different syscalls to test
+(see example of test cases array in inotify10 test).
 
 Thanks,
 Amir.
