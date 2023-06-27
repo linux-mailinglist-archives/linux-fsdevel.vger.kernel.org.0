@@ -2,166 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A1E873F4D4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 08:52:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4F3073F671
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 10:06:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230064AbjF0GwN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 02:52:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46570 "EHLO
+        id S230063AbjF0IGJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 04:06:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229799AbjF0GwM (ORCPT
+        with ESMTP id S229569AbjF0IGH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 02:52:12 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F367D109;
-        Mon, 26 Jun 2023 23:52:08 -0700 (PDT)
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35R6lkxi014094;
-        Tue, 27 Jun 2023 06:51:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=pp1; bh=ljMzO1E71unERBxVtqDA2RJAX7kAFF0nnhouWnI+x8Y=;
- b=Bb6b4LU5d1BFCqwd3S0uR+rF7w/+MRWWr/bg1agFbyVE8b6L2zkomk7FK5cVINKNdmpe
- jffL4TbyHvSVh+l+vzEab5PVmWi2WscmXX7/tAhFhCTiH7k9YjU2wqvNdDBG4MDKSjXP
- Ic7Kfg1o4i7H91OXfN9Nh7na3IYZvxKchHSquFSd3s+icQPu+I7Hm0bSujsbemCxNjfo
- wwp1KV93bC0Kk2mTEESk+7vEU5qgKEQc66Bj5XdDauwf1k+Wih+DatPX5QxyrpDsTfwB
- 7xW6XKdtj3t0agiOqXprtIacepjTASe8JJyA4PzTbNhGYUq9YrkBvTlPbHzlN5yhyPQK yw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3rfttc82ep-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Jun 2023 06:51:50 +0000
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 35R6mRKu015631;
-        Tue, 27 Jun 2023 06:51:50 GMT
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3rfttc82ds-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Jun 2023 06:51:50 +0000
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 35R3onYl010114;
-        Tue, 27 Jun 2023 06:51:48 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-        by ppma01fra.de.ibm.com (PPS) with ESMTPS id 3rdr451aec-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Jun 2023 06:51:47 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-        by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 35R6pjn342271132
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Jun 2023 06:51:45 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 75DAD2004B;
-        Tue, 27 Jun 2023 06:51:45 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2881320043;
-        Tue, 27 Jun 2023 06:51:42 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.169])
-        by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-        Tue, 27 Jun 2023 06:51:41 +0000 (GMT)
-Date:   Tue, 27 Jun 2023 12:21:38 +0530
-From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To:     Guoqing Jiang <guoqing.jiang@linux.dev>
-Cc:     linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Tue, 27 Jun 2023 04:06:07 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2054.outbound.protection.outlook.com [40.107.220.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ACD8CC;
+        Tue, 27 Jun 2023 01:06:03 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ETeoG8ebn0jb9YHMIgerJ5slQOHDONynfAiJXtdMk9MCE70WvXG3XayPQTiJRlx3bnxVuJDJKlOjPNF1CDhqHdAmT0lGqLo+/7ekyuCr7jBOkVYkiikBdh+jh4qTAdbLVl4wqjN1zlARgDfSo0fE7P8QYkiylRoCYVq6U6ai8/FCoSMC6tNlUFf9G2llTO5zcQkwPfioBc1R4O/opuu7dtdZDlfzDjCEQp7yNDf2VG9e9051slIVWXWiqu9eDq8/Lt7ely+qTGZ9IiZqljDf03Kwh3uP+zaveWhdJuPTHQqBXdITAsko+Kx6ip9TJDfysWVce360C2iYjCsrGZaATw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lnSbjIee3hIiRWIMo/mmBEbUyKXpeqV7uo5iAfWtavQ=;
+ b=YjkM1/MkF4m4yqmKJuBX2g9do7ZyXYxoTE+zm2/8XM+nCDwif9gnxddb3FzwpRUfkCFLJBBlBwehwTl9gfydTT5Smj9mvZ6CvTR/PAnnarYmFr3OxAFj0lvaI5Sk95Ja/C4ZSjCd5zSkJtUUuBuU0W7PEvkxcKraxEVAxqDNhnN2q9237vKkNMfBvvbKWRB3NQ2n/ZC+fFCE3SekIb1dwqRp9/lggYeKPqi96vp8FRoWeb4j3/77UdyJPK4hGspk/rlaOOj6gGh5Y6XuhtMjMQP9oPTzoxOi7QB/v8rL0keCrmpFhKIlL5m1eh9+XCli90BV6Hk9YJcP6tkPj2m9HA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lnSbjIee3hIiRWIMo/mmBEbUyKXpeqV7uo5iAfWtavQ=;
+ b=M87L/Ya6FKuoMpLdpsMYLogrHObV6iu2r3GslamZ7GzcZPSmU20fbF9NTU0ObS41uvq3b0N/HTyQ6ZQuX7Y7VHuavAzz3g/IHI2El10EJYNA5jeMDXg2jJsuFeyfw8YT0dbvrVwkLF4Bi071OkGVoG1lNs2kbqWXE8XVdzN7/l7Am7Fk7wfZ1EoMLgh4ELKN1jgzkU2g8JxDp3oMVwJ0D2btJt85nw45yQuPNVxvyMGJsSV7RU9fIhMxSa9SrUJ4+tW0mBQybfdbmm1BStD6tr6V97L3zC5cZ3Jru31HvccOZdAgVmZm9CjI1K+atjv1nvdMJG24EaHRWACF2ZKT8w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BYAPR12MB3176.namprd12.prod.outlook.com (2603:10b6:a03:134::26)
+ by DS7PR12MB8203.namprd12.prod.outlook.com (2603:10b6:8:e1::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.24; Tue, 27 Jun
+ 2023 08:06:00 +0000
+Received: from BYAPR12MB3176.namprd12.prod.outlook.com
+ ([fe80::6cea:921f:eb00:c1e7]) by BYAPR12MB3176.namprd12.prod.outlook.com
+ ([fe80::6cea:921f:eb00:c1e7%6]) with mapi id 15.20.6521.024; Tue, 27 Jun 2023
+ 08:05:59 +0000
+References: <20230627042321.1763765-1-surenb@google.com>
+ <20230627042321.1763765-8-surenb@google.com>
+User-agent: mu4e 1.8.13; emacs 28.2
+From:   Alistair Popple <apopple@nvidia.com>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
+        mhocko@suse.com, josef@toxicpanda.com, jack@suse.cz,
+        ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
+        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
+        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
+        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
+        peterx@redhat.com, ying.huang@intel.com, david@redhat.com,
+        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        pasha.tatashin@soleen.com, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>,
-        Kemeng Shi <shikemeng@huaweicloud.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>
-Subject: Re: [PATCH v2 09/12] ext4: Ensure ext4_mb_prefetch_fini() is called
- for all prefetched BGs
-Message-ID: <ZJqG+rEl9DATNRIX@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <cover.1685449706.git.ojaswin@linux.ibm.com>
- <05e648ae04ec5b754207032823e9c1de9a54f87a.1685449706.git.ojaswin@linux.ibm.com>
- <c3173405-713d-d2eb-bd9c-af8b8c747533@linux.dev>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c3173405-713d-d2eb-bd9c-af8b8c747533@linux.dev>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: pIP5lKK82fE7DkKe64js4SX9CTWH7DqX
-X-Proofpoint-ORIG-GUID: nsge9KerDHTbCxBtf8Qx2XrdE4HLaU4K
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        kernel-team@android.com
+Subject: Re: [PATCH v3 7/8] mm: drop VMA lock before waiting for migration
+Date:   Tue, 27 Jun 2023 18:02:10 +1000
+In-reply-to: <20230627042321.1763765-8-surenb@google.com>
+Message-ID: <875y792uu7.fsf@nvdebian.thelocal>
+Content-Type: text/plain
+X-ClientProxiedBy: SYAPR01CA0017.ausprd01.prod.outlook.com (2603:10c6:1::29)
+ To BYAPR12MB3176.namprd12.prod.outlook.com (2603:10b6:a03:134::26)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-06-27_03,2023-06-26_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- impostorscore=0 adultscore=0 lowpriorityscore=0 spamscore=0 mlxscore=0
- phishscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
- definitions=main-2306270061
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR12MB3176:EE_|DS7PR12MB8203:EE_
+X-MS-Office365-Filtering-Correlation-Id: 36319030-02f2-4ef8-eb9f-08db76e55788
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: UIXvKXzSY+bfZrS2/XiFgiE5S7dOin4jlDMpYPYkSDQbxUtOzCLKhL64+8548Ivz64Nsak/34WGFBtDHP4JtS1AF3w/oUzT4qfLaYLZvXg4x0EqjfnFFhto4FEUJZwaojIkSuzuE+RHRCOz8mPYGSpe5cndCSKvXjXedyCXI2MGHssNjR/DtQgQZ11hfwB1maanyRf8KitVt07R9Mw07cOdm5XakL8QFsHEkT0smCJgtzpqOY0MkxRnoiZuxo0JLzrdd6Ow6PAHZTudfQoApECArabFMR6xEqOcYSj5/BG77ESbH6ruEaTalEKrIV+p5YNKF8rz76jdK/1zP9LFUElC29je5xdWB5AMDiQ6WuhfMGncmL/9tXrID1nz4fc9UbV5eFI2qV7LmsoCsL00iKMHdCZcgCC03gARsmoI8YPdGXEHudm6jn+Qbx05Y/WRz2QNdcvEJMiaV/1iEJmdjPo6MUMWq/65SMsm1JmkwHc+k1Ib/IApngmx81BHb7S0jBQy8FxUfXW3UKZw282WxjXhwHyoeWL1yIul3kx9u4ED+x4/WLGAr66CXFhBtfrWR
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB3176.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(396003)(39860400002)(376002)(366004)(136003)(451199021)(7406005)(7416002)(5660300002)(66946007)(66556008)(4326008)(66476007)(6916009)(478600001)(316002)(8676002)(8936002)(2906002)(86362001)(41300700001)(6486002)(186003)(9686003)(6506007)(6512007)(26005)(6666004)(38100700002)(83380400001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+9ikwiMcL3Bz2H50byXAgrZp84YG0XNqu9rUrGsxFjH38EZ4Z8unyaqngZYX?=
+ =?us-ascii?Q?3cSTkVsr9mwLcLSw8+YOJNwFEfA9gwtxjZbjnaxI/O91RBhL6VptWqTEA4n7?=
+ =?us-ascii?Q?VDifJ0zbidFnSBjXg+OMdLHhIaAAjoebOba5fJQVH0O7wEhAbGHjhxEPKRZA?=
+ =?us-ascii?Q?xRCxRUtDH9fphHcXNICgQs20MaFEcU5DCI+m4eWkBoJqMnRJJrm4tOl9vnhL?=
+ =?us-ascii?Q?XXgY1bmnz0LS83ZOHWOzUe5GHPDoEOFlc62osTT+zkyQR4DPTPrXUPjVLWo1?=
+ =?us-ascii?Q?c3dl62T1zA/9lEtpV5tpUg+G+4c1LRGVonlSK5GR5kvu762RsccdZoLBDWjg?=
+ =?us-ascii?Q?2OsjStwocLFkYOVpmtcy1zVdyHs9xxYzTR7PfB7ZOA7Ksr0zhIa4qcmKQERS?=
+ =?us-ascii?Q?F2Suo5SXpBKKq+fkYly4XyX3h01vk/eLCkNBIv1kTwq4tZ/rw56aXcQWiIfe?=
+ =?us-ascii?Q?QodGUjrmL0e1gzvDy53CMNmyDltxzleE/LyPFAvP1OdEjhZckpFrgejE3756?=
+ =?us-ascii?Q?Vjt0jIGerf02kWJqbmoXx4jWpRzVoVH8QDkigXBzVQWe1qR/CoTMgnPA/NMM?=
+ =?us-ascii?Q?lhznYY4gW0t3ilkvwcpbazIJTonK8iztP4tOXraF//Z35yVquS5Iw3KMRcg9?=
+ =?us-ascii?Q?5n7FB3hZwhkc3ofoaKPwC3irsnXwLiVhuTpw/VaFaP8DtLs1OsOErmkK5tVH?=
+ =?us-ascii?Q?4LUM0q2F+QiDYrmsG7IjcP+aAoxF6zp5slP+JXTojbO6dT6hiYFi9h0GURpO?=
+ =?us-ascii?Q?fUJTFIyHzNR7kCv/Qo5wSQqpG6AMKOJNCX8k/t9bIDASJV4nJbFnQGeLZW74?=
+ =?us-ascii?Q?cvLYMYvuGRIwSJYN8+VLNxbcb6cxBiAahmbtoxtr7kWa5E2/9oRcLYHVivdC?=
+ =?us-ascii?Q?hijM+465AfmDVlGjtbXBRKgKSYp2rztFJvRggNeeW7/C554yC2FPhrMP2s7n?=
+ =?us-ascii?Q?y6feFDi5J7pdOzOYoK38YU0uqwA6jCl6aSTMeZ7VRjOh/PQHDhJyMagrty5n?=
+ =?us-ascii?Q?TeNqJi+MgRqVa/DD2xc7XrfRX0Y1EHZ/U4AyWWvhJsA7Z+fR2K8oYLGmpeTR?=
+ =?us-ascii?Q?R0kDnkg5GyznYIa4GkV4adItHzA5yFsUeJEH9HGjHMnpmAA3GQrxslLa/ZSx?=
+ =?us-ascii?Q?XoHgq8waKmUky4TD+vTyCMIkt2BNTV0qed5eVGdZhAr11Xkc1LAwu31u8hZV?=
+ =?us-ascii?Q?muazZqFNib29i2N7NSberKZYs2Rb0pOtoAJlEvC9RxrrGZVxpymkFZc4dhlb?=
+ =?us-ascii?Q?1OFUuLlwcw1z5Nvu5IcGKZHvZP6/A0Xwwup4H+Tu18VTsgeXM8N8cqhz32di?=
+ =?us-ascii?Q?jXAQBZ1Bn8u5rtoqlovcTYab4vhPFa7VSWOa8tl6LGQWP0HBUaygLphZKI8/?=
+ =?us-ascii?Q?aJOPtKk6mHn0emrfVp0nDG0yp9OjeWpoaKymu6cnbooHFS+Z7dIRCEcky9H4?=
+ =?us-ascii?Q?KhWnMycPPqjOosE4tRFjFgGAtkbUCoJt15pl3IZFtSV5MPsnxR8RCovXE+iH?=
+ =?us-ascii?Q?2gJ5YoEu7Umc5ho8BdvpwYl778/YcHM1SNSJSZ00mqjttmF36GS+O9HOAaal?=
+ =?us-ascii?Q?a7I90Eps/PSGANgVcONEOFfjjrupAOdS8FDy77GT?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36319030-02f2-4ef8-eb9f-08db76e55788
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB3176.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2023 08:05:59.3038
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: akimAM5jy3SsMpAhGPOGqqMovQzSo4PsZe5xeGyZOtFe5gt4c65K6NZX7Yeq3vyzO+Vy3lCwitueXcNAdNLrSg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8203
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 10:00:57PM +0800, Guoqing Jiang wrote:
-> Hello,
-> 
-> On 5/30/23 20:33, Ojaswin Mujoo wrote:
-> > Before this patch, the call stack in ext4_run_li_request is as follows:
-> > 
-> >    /*
-> >     * nr = no. of BGs we want to fetch (=s_mb_prefetch)
-> >     * prefetch_ios = no. of BGs not uptodate after
-> >     * 		    ext4_read_block_bitmap_nowait()
-> >     */
-> >    next_group = ext4_mb_prefetch(sb, group, nr, prefetch_ios);
-> >    ext4_mb_prefetch_fini(sb, next_group prefetch_ios);
-> > 
-> > ext4_mb_prefetch_fini() will only try to initialize buddies for BGs in
-> > range [next_group - prefetch_ios, next_group). This is incorrect since
-> > sometimes (prefetch_ios < nr), which causes ext4_mb_prefetch_fini() to
-> > incorrectly ignore some of the BGs that might need initialization. This
-> > issue is more notable now with the previous patch enabling "fetching" of
-> > BLOCK_UNINIT BGs which are marked buffer_uptodate by default.
-> > 
-> > Fix this by passing nr to ext4_mb_prefetch_fini() instead of
-> > prefetch_ios so that it considers the right range of groups.
-> 
-> Thanks for the series.
-> 
-> > Similarly, make sure we don't pass nr=0 to ext4_mb_prefetch_fini() in
-> > ext4_mb_regular_allocator() since we might have prefetched BLOCK_UNINIT
-> > groups that would need buddy initialization.
-> 
-> Seems ext4_mb_prefetch_fini can't be called by ext4_mb_regular_allocator
-> if nr is 0.
 
-Hi Guoqing,
+Suren Baghdasaryan <surenb@google.com> writes:
 
-Sorry I was on vacation so didn't get a chance to reply to this sooner.
-Let me explain what I meant by that statement in the commit message.
+> migration_entry_wait does not need VMA lock, therefore it can be
+> dropped before waiting.
+>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> ---
+>  mm/memory.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+>
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 5caaa4c66ea2..bdf46fdc58d6 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -3715,8 +3715,18 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>  	entry = pte_to_swp_entry(vmf->orig_pte);
+>  	if (unlikely(non_swap_entry(entry))) {
+>  		if (is_migration_entry(entry)) {
+> -			migration_entry_wait(vma->vm_mm, vmf->pmd,
+> -					     vmf->address);
+> +			/* Save mm in case VMA lock is dropped */
+> +			struct mm_struct *mm = vma->vm_mm;
+> +
+> +			if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
+> +				/*
+> +				 * No need to hold VMA lock for migration.
+> +				 * WARNING: vma can't be used after this!
+> +				 */
+> +				vma_end_read(vma);
+> +				ret |= VM_FAULT_COMPLETED;
 
-So basically, the prefetch_ios output argument is incremented whenever
-ext4_mb_prefetch() reads a block group with !buffer_uptodate(bh).
-However, for BLOCK_UNINIT BGs the buffer is marked uptodate after
-initialization and hence prefetch_ios is not incremented when such BGs
-are prefetched. 
+Doesn't this need to also set FAULT_FLAG_LOCK_DROPPED to ensure we don't
+call vma_end_read() again in __handle_mm_fault()?
 
-This leads to nr becoming 0 due to the following line (removed in this patch):
+> +			}
+> +			migration_entry_wait(mm, vmf->pmd, vmf->address);
+>  		} else if (is_device_exclusive_entry(entry)) {
+>  			vmf->page = pfn_swap_entry_to_page(entry);
+>  			ret = remove_device_exclusive_entry(vmf);
 
-				if (prefetch_ios == curr_ios)
-					nr = 0;
-
-hence ext4_mb_prefetch_fini() would never pre initialise the corresponding 
-buddy structures. Instead, these structures would then get initialized
-probably at a later point during the slower allocation criterias. The
-motivation of making sure the BLOCK_UNINIT BGs' buddies are pre
-initialized is so the faster allocation criterias can utilize the data
-to make better decisions.
-
-Regards,
-ojaswin
-
-> 
-> https://elixir.bootlin.com/linux/v6.4-rc5/source/fs/ext4/mballoc.c#L2816
-> 
-> Am I miss something?
-> 
-> Thanks,
-> Guoqing
-> 
