@@ -2,230 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B14473F469
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 08:20:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 275F773F47E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 08:26:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230161AbjF0GUc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 02:20:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60944 "EHLO
+        id S230360AbjF0G0R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 02:26:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229647AbjF0GUZ (ORCPT
+        with ESMTP id S230376AbjF0GZ7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 02:20:25 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C30AB99
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 23:20:24 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id 98e67ed59e1d1-262ec7b261bso1552428a91.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Jun 2023 23:20:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1687846824; x=1690438824;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OpHw1QDmEHx/Q28CDegBguPn7MiNP2UVGDtHMJ0+VaY=;
-        b=4oDV2LPC3PUNVaSWUo/A3usF0IsC5xn2HUf04m0EFO+cQvYmCEaDvpOZ4ynCHQM7gf
-         a8ViXxsQdcdEihu7IkrlD0ZdfYEdP0dDU5YGoCjioCnPI4d3kJFPrcCBqHJbYcGIYfFk
-         MMja2IOqv8dfeD0meHBrLe5/GCKGgiGU5mc7fJAFP1pkkIXELi2m0lRLBskVxCxRKC4B
-         G2c08CSmRGPcwyPBIaxJfZ+B6DDyDr6lvuE6N8b99pPvHmrhDeTmvypli3RryQiWoX/h
-         UN6GxLv3UR12/mPXmewHShdOXXlZN+pJj7ddrbulLaPujqCaZYWJopfzmHx9PFp7FX7C
-         pKzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687846824; x=1690438824;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OpHw1QDmEHx/Q28CDegBguPn7MiNP2UVGDtHMJ0+VaY=;
-        b=YINTfauwCVxtJH+DQvMWy322f64ZVfg0wtltk6DxuduJqzFws4/1AGMOfudee3+L7k
-         a+9E0zyZ/1RqfgkRWNWefi4RXmS3KUueVKdSbeO+0XXL6WgQ053fMMjjJKqYKwmJb8bg
-         jUAPRJF98v/BHJQdKO0VlGFFpjZdL0gRPJ8xQUzZ0jsUzFo2vyMSaHKZb8DAmQdTH9si
-         TzBk6nQm6J0j34OjGs4gk6ZrlYGZVsJb5kM8HKI4cT5ou8AtwyYoeOdQonuI1SuuOI9I
-         T3nRp4WXpAuP8q7l1SPIFIGqp88i3ywf2nmLODnxKbzWXso8nA3ZwG5xB0G+wrh0jPon
-         gGAw==
-X-Gm-Message-State: AC+VfDyRIbREQJSSH3iIhx3lIZ6p31oEx3Mc1MU26U4h0DVdxQZwp2Xa
-        MYA/jS1nmNyPMTSQ5uxjy2D9sg==
-X-Google-Smtp-Source: ACHHUZ5q0L4ILWE12lYi9ixbt5lpxLi6IrFLNxsWcp9qqTYF4DOpdcPeYWrXe4KERaaHpe0Zb/yPaQ==
-X-Received: by 2002:a17:90a:1906:b0:25e:a8ab:9157 with SMTP id 6-20020a17090a190600b0025ea8ab9157mr28909265pjg.22.1687846824202;
-        Mon, 26 Jun 2023 23:20:24 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-94-37.pa.vic.optusnet.com.au. [49.186.94.37])
-        by smtp.gmail.com with ESMTPSA id o6-20020a17090a744600b00262d9b4b527sm4248928pjk.52.2023.06.26.23.20.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jun 2023 23:20:23 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qE23p-00Gisw-0r;
-        Tue, 27 Jun 2023 16:20:21 +1000
-Date:   Tue, 27 Jun 2023 16:20:21 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matt Whitlock <kernel@mattwhitlock.name>
-Cc:     linux-fsdevel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-Subject: Re: [Reproducer] Corruption, possible race between splice and
- FALLOC_FL_PUNCH_HOLE
-Message-ID: <ZJp/pVQntJjEy3Lj@dread.disaster.area>
-References: <ec804f26-fa76-4fbe-9b1c-8fbbd829b735@mattwhitlock.name>
- <ZJp4Df8MnU8F3XAt@dread.disaster.area>
+        Tue, 27 Jun 2023 02:25:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C5F2272C;
+        Mon, 26 Jun 2023 23:25:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8557F6100E;
+        Tue, 27 Jun 2023 06:25:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61516C433C8;
+        Tue, 27 Jun 2023 06:25:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1687847141;
+        bh=G+F0E2NcaLt8e1QCrT2yY6Id7JkiDTVt7DBza4Bc/dg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=p5XvuwFfrqNnOwm9y1fTdCNvb5JbWJefenTltGV07r8SGY9J08p6MIEbptiY/uwkC
+         US5xTwvT+G5A8rL/dC3GzkZblQxIE240V0y+Psc6WBXDCwZmxmDqwQxkqEk7aYdmzd
+         zE/2SXVui3/GzPlRnRS/FQFr8Usb0Hp6mwZtaj3Y=
+Date:   Tue, 27 Jun 2023 08:25:39 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     tj@kernel.org, peterz@infradead.org, lujialin4@huawei.com,
+        lizefan.x@bytedance.com, hannes@cmpxchg.org, mingo@redhat.com,
+        ebiggers@kernel.org, oleg@redhat.com, akpm@linux-foundation.org,
+        viro@zeniv.linux.org.uk, brauner@kernel.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH 1/2] kernfs: add kernfs_ops.free operation to free
+ resources tied to the file
+Message-ID: <2023062757-hardening-confusion-6f4e@gregkh>
+References: <20230626201713.1204982-1-surenb@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZJp4Df8MnU8F3XAt@dread.disaster.area>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230626201713.1204982-1-surenb@google.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 03:47:57PM +1000, Dave Chinner wrote:
-> On Mon, Jun 26, 2023 at 09:12:52PM -0400, Matt Whitlock wrote:
-> > Hello, all. I am experiencing a data corruption issue on Linux 6.1.24 when
-> > calling fallocate with FALLOC_FL_PUNCH_HOLE to punch out pages that have
-> > just been spliced into a pipe. It appears that the fallocate call can zero
-> > out the pages that are sitting in the pipe buffer, before those pages are
-> > read from the pipe.
-> > 
-> > Simplified code excerpt (eliding error checking):
-> > 
-> > int fd = /* open file descriptor referring to some disk file */;
-> > for (off_t consumed = 0;;) {
-> >   ssize_t n = splice(fd, NULL, STDOUT_FILENO, NULL, SIZE_MAX, 0);
-> >   if (n <= 0) break;
-> >   consumed += n;
-> >   fallocate(fd, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, 0, consumed);
-> > }
-> 
-> Huh. Never seen that pattern before - what are you trying to
-> implement with this?
-> 
-> > Expected behavior:
-> > Punching holes in a file after splicing pages out of that file into a pipe
-> > should not corrupt the spliced-out pages in the pipe buffer.
-> 
-> splice is a nasty, tricky beast that should never have been
-> inflicted on the world...
-> 
-> > Observed behavior:
-> > Some of the pages that have been spliced into the pipe get zeroed out by the
-> > subsequent fallocate call before they can be consumed from the read side of
-> > the pipe.
-> 
-> Which implies the splice is not copying the page cache pages but
-> simply taking a reference to them.
-> 
-> > 
-> > 
-> > Steps to reproduce:
-> > 
-> > 1. Save the attached ones.c, dontneed.c, and consume.c.
-> > 
-> > 2. gcc -o ones ones.c
-> >   gcc -o dontneed dontneed.c
-> >   gcc -o consume consume.c
-> > 
-> > 3. Fill a file with 32 MiB of 0xFF:
-> >   ./ones | head -c$((1<<25)) >testfile
-> >
-> > 4. Evict the pages of the file from the page cache:
-> >   sync testfile && ./dontneed testfile
-> 
-> To save everyone some time, this one liner:
-> 
-> # xfs_io -ft -c "pwrite -S 0xff 0 32M" -c fsync -c "fadvise -d 0 32M" testfile
-> 
-> Does the same thing as steps 3 and 4. I also reproduced it with much
-> smaller files - 1MB is large enough to see multiple corruption
-> events every time I've run it.
-> 
-> > 5. Splice the file into a pipe, punching out batches of pages after splicing
-> > them:
-> >   ./consume testfile | hexdump -C
-> > 
-> > The expected output from hexdump should show 32 MiB of 0xFF. Indeed, on my
-> > system, if I omit the POSIX_FADV_DONTNEED advice, then I do get the expected
-> > output. However, if the pages of the file are not already present in the
-> > page cache (i.e., if the splice call faults them in from disk), then the
-> > hexdump output shows some pages full of 0xFF and some pages full of 0x00.
-> 
-> Like so:
-> 
-> 00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-> *
-> 01b0a000  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
-> *
-> 01b10000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-> *
-> 01b12000  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
-> *
-> 01b18000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-> *
-> 01b19000  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
-> *
-> 01b20000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-> *
-> 01b22000  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
-> *
-> 01b24000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-> *
-> 01b25000  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
-> *
-> 01b28000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-> *
-> 01b29000  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
-> *
-> 01b2c000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-> 
-> Hmmm. the corruption, more often than not, starts on a high-order
-> aligned file offset. Tracing indicates data is being populated in
-> the page cache by readahead, which would be using high-order folios
-> in XFS.
-> 
-> All the splice operations are return byte counts that are 4kB
-> aligned, so punch is doing filesystem block aligned punches. The
-> extent freeing traces indicate the filesystem is removing exactly
-> the right ranges from the file, and so the page cache invalidation
-> calls it is doing are also going to be for the correct ranges.
-> 
-> This smells of a partial high-order folio invalidation problem,
-> or at least a problem with splice working on pages rather than
-> folios the two not being properly coherent as a result of partial
-> folio invalidation.
-> 
-> To confirm, I removed all the mapping_set_large_folios() calls in
-> XFS, and the data corruption goes away. Hence, at minimum, large
-> folios look like a trigger for the problem.
-> 
-> Willy, over to you.
+On Mon, Jun 26, 2023 at 01:17:12PM -0700, Suren Baghdasaryan wrote:
+> kernfs_ops.release operation can be called from kernfs_drain_open_files
+> which is not tied to the file's real lifecycle. Introduce a new kernfs_ops
+> free operation which is called only when the last fput() of the file is
+> performed and therefore is strictly tied to the file's lifecycle. This
+> operation will be used for freeing resources tied to the file, like
+> waitqueues used for polling the file.
 
-Just to follow up, splice ends up in the iov_iter code with
-ITER_PIPE as the destination. We then end up with
-copy_page_to_iter(), which if the iter is a pipe spits out to
-copy_page_to_iter_pipe(). This does does not copy the page contents,
-it simply grabs a reference to the page and then stuffs it into the
-pipe buffer where it then sits until it is read.
+This is confusing, shouldn't release be the "last" time the file is
+handled and then all resources attached to it freed?  Why do we need
+another callback, shouldn't release handle this?
 
-IOWs, the splice to pipe operation is taking a reference to the
-pagei cache page, then we drop all the locks that protect it, return
-to userspace which then triggers an invalidation of the page
-with a hole punch, and the data disappears from the page that is
-referenced in the pipe.
 
-So copy_page_to_iter_pipe() is simply broken. It's making the
-assumption that it can just take a reference to a page cache page
-and the state/contents of the page will not change until the page
-is released (i.e. consumed by a pipe reader). This is not true
-for file-backed pages - if the page is not locked, then anything
-can happen to it while it is sitting on the pipe...
+> 
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> ---
+>  fs/kernfs/file.c       | 8 +++++---
+>  include/linux/kernfs.h | 5 +++++
+>  2 files changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
+> index 40c4661f15b7..acc52d23d8f6 100644
+> --- a/fs/kernfs/file.c
+> +++ b/fs/kernfs/file.c
+> @@ -766,7 +766,7 @@ static int kernfs_fop_open(struct inode *inode, struct file *file)
+>  
+>  /* used from release/drain to ensure that ->release() is called exactly once */
+>  static void kernfs_release_file(struct kernfs_node *kn,
+> -				struct kernfs_open_file *of)
+> +				struct kernfs_open_file *of, bool final)
 
-Why this requires large folios to trigger is something I don't
-understand - the code looks broken even for single page objects in
-the page cache. It's probably just a timing issue that high order
-folios tickle much more easily with different readahead and
-invalidation patterns.
+Adding flags to functions like this are a pain, now we need to look it
+up every time to see what that bool means.
 
-Anyway, this needs iov_iter/folio expertise at this point...
+And when we do, we see that it is not documented here so we have no idea
+of what it is :(
 
-Cheers,
+This is not going to be maintainable as-is, sorry.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+>  {
+>  	/*
+>  	 * @of is guaranteed to have no other file operations in flight and
+> @@ -787,6 +787,8 @@ static void kernfs_release_file(struct kernfs_node *kn,
+>  		of->released = true;
+>  		of_on(of)->nr_to_release--;
+>  	}
+> +	if (final && kn->attr.ops->free)
+> +		kn->attr.ops->free(of);
+>  }
+>  
+>  static int kernfs_fop_release(struct inode *inode, struct file *filp)
+> @@ -798,7 +800,7 @@ static int kernfs_fop_release(struct inode *inode, struct file *filp)
+>  		struct mutex *mutex;
+>  
+>  		mutex = kernfs_open_file_mutex_lock(kn);
+> -		kernfs_release_file(kn, of);
+> +		kernfs_release_file(kn, of, true);
+>  		mutex_unlock(mutex);
+>  	}
+>  
+> @@ -852,7 +854,7 @@ void kernfs_drain_open_files(struct kernfs_node *kn)
+>  		}
+>  
+>  		if (kn->flags & KERNFS_HAS_RELEASE)
+> -			kernfs_release_file(kn, of);
+> +			kernfs_release_file(kn, of, false);
+
+Why isn't this also the "last" time things are touched here?  why is it
+false?
+
+
+>  	}
+>  
+>  	WARN_ON_ONCE(on->nr_mmapped || on->nr_to_release);
+> diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
+> index 73f5c120def8..a7e404ff31bb 100644
+> --- a/include/linux/kernfs.h
+> +++ b/include/linux/kernfs.h
+> @@ -273,6 +273,11 @@ struct kernfs_ops {
+>  	 */
+>  	int (*open)(struct kernfs_open_file *of);
+>  	void (*release)(struct kernfs_open_file *of);
+> +	/*
+> +	 * Free resources tied to the lifecycle of the file, like a
+> +	 * waitqueue used for polling.
+> +	 */
+> +	void (*free)(struct kernfs_open_file *of);
+
+I agree with Tejun, this needs to be documented much better and show how
+you really should never need to use this :)
+
+thanks,
+
+greg k-h
