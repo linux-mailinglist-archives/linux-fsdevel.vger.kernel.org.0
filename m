@@ -2,54 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DD56740554
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 22:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0AC1740550
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Jun 2023 22:53:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231532AbjF0UyO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 16:54:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57288 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231665AbjF0Uxw (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S230179AbjF0Uxw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Tue, 27 Jun 2023 16:53:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E9212D54
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 13:53:32 -0700 (PDT)
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57212 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231240AbjF0Uxs (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Jun 2023 16:53:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ABA630CF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 13:53:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D3F2D61228
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 20:53:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 956B7C433C8;
-        Tue, 27 Jun 2023 20:53:16 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 737DF6121C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Jun 2023 20:53:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 589AAC43391;
+        Tue, 27 Jun 2023 20:53:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687899197;
-        bh=e4I/gNHDIjpSKufk2xxM8B41vPKw1FE7ZKuVtO31ayU=;
+        s=k20201202; t=1687899203;
+        bh=VcvsaV4KxMlmRuP+vSOdBppGCMFeBmAT+SZOmu9unoY=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ZQx/UsZypzNmJsOCaPFJvsSA0E291nghrjaD7ve+fzrq+xkHa/7XJDDqfcKkSYv2Q
-         eAe3J7BAwoTKcVVd8JYKBImzZC32NK0j36dAN1Ho94daTL6oubGB405E++oI5toTvk
-         8VKGxUiMbXSUCs1qhvoGFqulorX+BB2Z1QUXXgSusNJlDp2SUzj3HjlSjwEp2oTLuB
-         y2WJuNFgVwRtS1KrvnDVptZWnPytWz6kGBx+Zx1BRI6T71oyatywrVOj3sI32gqpIb
-         GNkTTDOEUKmOHSX1X+x33gZDbWncW0mxsOG1nxypWOBkvIC/TS5c9ahPNQ2qvyAFCg
-         t6ScQt8hZF0Og==
-Subject: [PATCH v5 2/3] shmem: Refactor shmem_symlink()
+        b=cw5NBXwU6J6Nj5iOaHVocZ/cDPlNj14e5dIs4l65tiB8Jdsw6wcAUxjfHCTmsi0M7
+         t9C1wapA7FZz1Xyxc3Wc8rLM9jwJU/S78WNus8mKEONwjmc8OxuBqi23k8zyP5wvvI
+         xF5MRgg3VaK92hMXJHZ7hh+h4Mqow/9sjXxN0qOeWehWVanELcQ/u9MZ8YQ6JXQsPI
+         oYPX0eN7rLruCxw4rcvNwGxn8hGPd4YUI5caN7IhG/guEJ0SDhtGiGrK4smhmv43i5
+         82j1iJCDsPfvwQ4LnL0We+GedVfBcw5x1A+I67BS460YlCqlGkZCbdpNeZS5ocXw+s
+         Lm3g4L9xS5NvA==
+Subject: [PATCH v5 3/3] shmem: stable directory offsets
 From:   Chuck Lever <cel@kernel.org>
 To:     viro@zeniv.linux.org.uk, brauner@kernel.org, hughd@google.com,
         akpm@linux-foundation.org
-Cc:     Jeff Layton <jlayton@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Chuck Lever <chuck.lever@oracle.com>, jlayton@redhat.com,
+Cc:     Chuck Lever <chuck.lever@oracle.com>, jlayton@redhat.com,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Date:   Tue, 27 Jun 2023 16:53:15 -0400
-Message-ID: <168789919571.157531.3616549508867843146.stgit@manet.1015granger.net>
+Date:   Tue, 27 Jun 2023 16:53:22 -0400
+Message-ID: <168789920248.157531.11502183761509096222.stgit@manet.1015granger.net>
 In-Reply-To: <168789864000.157531.11122232592994999253.stgit@manet.1015granger.net>
 References: <168789864000.157531.11122232592994999253.stgit@manet.1015granger.net>
 User-Agent: StGit/1.5
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -60,62 +59,191 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-De-duplicate the error handling paths. No change in behavior is
-expected.
+The current cursor-based directory offset mechanism doesn't work
+when a tmpfs filesystem is exported via NFS. This is because NFS
+clients do not open directories. Each server-side READDIR operation
+has to open the directory, read it, then close it. The cursor state
+for that directory, being associated strictly with the opened
+struct file, is thus discarded after each NFS READDIR operation.
 
-Suggested-by: Jeff Layton <jlayton@kernel.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Directory offsets are cached not only by NFS clients, but also by
+user space libraries on those clients. Essentially there is no way
+to invalidate those caches when directory offsets have changed on
+an NFS server after the offset-to-dentry mapping changes. Thus the
+whole application stack depends on unchanging directory offsets.
+
+The solution we've come up with is to make the directory offset for
+each file in a tmpfs filesystem stable for the life of the directory
+entry it represents.
+
+shmem_readdir() and shmem_dir_llseek() now use an xarray to map each
+directory offset (an loff_t integer) to the memory address of a
+struct dentry.
+
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- mm/shmem.c |   19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+ include/linux/shmem_fs.h |    1 +
+ mm/shmem.c               |   47 +++++++++++++++++++++++++++++++++++++++-------
+ 2 files changed, 41 insertions(+), 7 deletions(-)
 
+diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+index 9029abd29b1c..d2c67333028c 100644
+--- a/include/linux/shmem_fs.h
++++ b/include/linux/shmem_fs.h
+@@ -27,6 +27,7 @@ struct shmem_inode_info {
+ 	atomic_t		stop_eviction;	/* hold when working on inode */
+ 	struct timespec64	i_crtime;	/* file creation time */
+ 	unsigned int		fsflags;	/* flags for FS_IOC_[SG]ETFLAGS */
++	struct stable_offset_ctx dir_offsets;
+ 	struct inode		vfs_inode;
+ };
+ 
 diff --git a/mm/shmem.c b/mm/shmem.c
-index e40a08c5c6d7..721f9fd064aa 100644
+index 721f9fd064aa..5782fe1edc75 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -3161,26 +3161,22 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
+@@ -2355,6 +2355,11 @@ static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
+ #define shmem_initxattrs NULL
+ #endif
  
- 	error = security_inode_init_security(inode, dir, &dentry->d_name,
- 					     shmem_initxattrs, NULL);
--	if (error && error != -EOPNOTSUPP) {
--		iput(inode);
--		return error;
--	}
-+	if (error && error != -EOPNOTSUPP)
++static struct stable_offset_ctx *shmem_so_ctx(struct inode *inode)
++{
++	return &SHMEM_I(inode)->dir_offsets;
++}
++
+ static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block *sb,
+ 				     struct inode *dir, umode_t mode, dev_t dev,
+ 				     unsigned long flags)
+@@ -2410,7 +2415,8 @@ static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block
+ 			/* Some things misbehave if size == 0 on a directory */
+ 			inode->i_size = 2 * BOGO_DIRENT_SIZE;
+ 			inode->i_op = &shmem_dir_inode_operations;
+-			inode->i_fop = &simple_dir_operations;
++			inode->i_fop = &stable_dir_operations;
++			stable_offset_init(shmem_so_ctx(inode));
+ 			break;
+ 		case S_IFLNK:
+ 			/*
+@@ -2950,7 +2956,10 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 		if (error && error != -EOPNOTSUPP)
+ 			goto out_iput;
+ 
+-		error = 0;
++		error = stable_offset_add(shmem_so_ctx(dir), dentry);
++		if (error)
++			goto out_iput;
++
+ 		dir->i_size += BOGO_DIRENT_SIZE;
+ 		dir->i_ctime = dir->i_mtime = current_time(dir);
+ 		inode_inc_iversion(dir);
+@@ -3027,6 +3036,13 @@ static int shmem_link(struct dentry *old_dentry, struct inode *dir, struct dentr
+ 			goto out;
+ 	}
+ 
++	ret = stable_offset_add(shmem_so_ctx(dir), dentry);
++	if (ret) {
++		if (inode->i_nlink)
++			shmem_free_inode(inode->i_sb);
++		goto out;
++	}
++
+ 	dir->i_size += BOGO_DIRENT_SIZE;
+ 	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(inode);
+ 	inode_inc_iversion(dir);
+@@ -3045,6 +3061,8 @@ static int shmem_unlink(struct inode *dir, struct dentry *dentry)
+ 	if (inode->i_nlink > 1 && !S_ISDIR(inode->i_mode))
+ 		shmem_free_inode(inode->i_sb);
+ 
++	stable_offset_remove(shmem_so_ctx(dir), dentry);
++
+ 	dir->i_size -= BOGO_DIRENT_SIZE;
+ 	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(inode);
+ 	inode_inc_iversion(dir);
+@@ -3103,24 +3121,29 @@ static int shmem_rename2(struct mnt_idmap *idmap,
+ {
+ 	struct inode *inode = d_inode(old_dentry);
+ 	int they_are_dirs = S_ISDIR(inode->i_mode);
++	int error;
+ 
+ 	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
+ 		return -EINVAL;
+ 
+ 	if (flags & RENAME_EXCHANGE)
+-		return simple_rename_exchange(old_dir, old_dentry, new_dir, new_dentry);
++		return stable_offset_rename_exchange(old_dir, old_dentry,
++						     new_dir, new_dentry);
+ 
+ 	if (!simple_empty(new_dentry))
+ 		return -ENOTEMPTY;
+ 
+ 	if (flags & RENAME_WHITEOUT) {
+-		int error;
+-
+ 		error = shmem_whiteout(idmap, old_dir, old_dentry);
+ 		if (error)
+ 			return error;
+ 	}
+ 
++	stable_offset_remove(shmem_so_ctx(old_dir), old_dentry);
++	error = stable_offset_add(shmem_so_ctx(new_dir), old_dentry);
++	if (error)
++		return error;
++
+ 	if (d_really_is_positive(new_dentry)) {
+ 		(void) shmem_unlink(new_dir, new_dentry);
+ 		if (they_are_dirs) {
+@@ -3164,19 +3187,23 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 	if (error && error != -EOPNOTSUPP)
+ 		goto out_iput;
+ 
++	error = stable_offset_add(shmem_so_ctx(dir), dentry);
++	if (error)
 +		goto out_iput;
- 
++
  	inode->i_size = len-1;
  	if (len <= SHORT_SYMLINK_LEN) {
  		inode->i_link = kmemdup(symname, len, GFP_KERNEL);
  		if (!inode->i_link) {
--			iput(inode);
--			return -ENOMEM;
-+			error = -ENOMEM;
-+			goto out_iput;
+ 			error = -ENOMEM;
+-			goto out_iput;
++			goto out_remove_offset;
  		}
  		inode->i_op = &shmem_short_symlink_operations;
  	} else {
  		inode_nohighmem(inode);
  		error = shmem_get_folio(inode, 0, &folio, SGP_WRITE);
--		if (error) {
--			iput(inode);
--			return error;
--		}
-+		if (error)
-+			goto out_iput;
+ 		if (error)
+-			goto out_iput;
++			goto out_remove_offset;
  		inode->i_mapping->a_ops = &shmem_aops;
  		inode->i_op = &shmem_symlink_inode_operations;
  		memcpy(folio_address(folio), symname, len);
-@@ -3195,6 +3191,9 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
+@@ -3191,6 +3218,9 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
  	d_instantiate(dentry, inode);
  	dget(dentry);
  	return 0;
-+out_iput:
-+	iput(inode);
-+	return error;
++
++out_remove_offset:
++	stable_offset_remove(shmem_so_ctx(dir), dentry);
+ out_iput:
+ 	iput(inode);
+ 	return error;
+@@ -3920,6 +3950,8 @@ static void shmem_destroy_inode(struct inode *inode)
+ {
+ 	if (S_ISREG(inode->i_mode))
+ 		mpol_free_shared_policy(&SHMEM_I(inode)->policy);
++	if (S_ISDIR(inode->i_mode))
++		stable_offset_destroy(shmem_so_ctx(inode));
  }
  
- static void shmem_put_link(void *arg)
+ static void shmem_init_inode(void *foo)
+@@ -4000,6 +4032,7 @@ static const struct inode_operations shmem_dir_inode_operations = {
+ 	.mknod		= shmem_mknod,
+ 	.rename		= shmem_rename2,
+ 	.tmpfile	= shmem_tmpfile,
++	.get_so_ctx	= shmem_so_ctx,
+ #endif
+ #ifdef CONFIG_TMPFS_XATTR
+ 	.listxattr	= shmem_listxattr,
 
 
