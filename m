@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AF85F74123F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 15:24:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B8A874124B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 15:25:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231890AbjF1NYW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 09:24:22 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:19164 "EHLO
+        id S231974AbjF1NYe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 09:24:34 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:19165 "EHLO
         szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231847AbjF1NYU (ORCPT
+        with ESMTP id S231835AbjF1NYX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 09:24:20 -0400
-Received: from dggpeml500021.china.huawei.com (unknown [172.30.72.57])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Qrj345pnmz1HC5r;
-        Wed, 28 Jun 2023 21:24:00 +0800 (CST)
+        Wed, 28 Jun 2023 09:24:23 -0400
+Received: from dggpeml500021.china.huawei.com (unknown [172.30.72.54])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Qrj3529Chz1HC8N;
+        Wed, 28 Jun 2023 21:24:01 +0800 (CST)
 Received: from huawei.com (10.175.127.227) by dggpeml500021.china.huawei.com
  (7.185.36.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 28 Jun
- 2023 21:24:16 +0800
+ 2023 21:24:17 +0800
 From:   Baokun Li <libaokun1@huawei.com>
 To:     <jack@suse.cz>
 CC:     <linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>,
         <yangerkun@huawei.com>, <chengzhihao1@huawei.com>,
         <yukuai3@huawei.com>, <libaokun1@huawei.com>
-Subject: [PATCH v2 1/7] quota: factor out dquot_write_dquot()
-Date:   Wed, 28 Jun 2023 21:21:49 +0800
-Message-ID: <20230628132155.1560425-2-libaokun1@huawei.com>
+Subject: [PATCH v2 2/7] quota: add new global dquot list releasing_dquots
+Date:   Wed, 28 Jun 2023 21:21:50 +0800
+Message-ID: <20230628132155.1560425-3-libaokun1@huawei.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20230628132155.1560425-1-libaokun1@huawei.com>
 References: <20230628132155.1560425-1-libaokun1@huawei.com>
@@ -42,84 +42,79 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Refactor out dquot_write_dquot() to reduce duplicate code.
+Add a new global dquot list that obeys the following rules:
 
+ 1). A dquot is added to this list when its last reference count is about
+     to be dropped.
+ 2). The reference count of the dquot in the list is greater than or equal
+     to 1 ( due to possible race with dqget()).
+ 3). When a dquot is removed from this list, a reference count is always
+     subtracted, and if the reference count is then 0, the dquot is added
+     to the free_dquots list.
+
+This list is used to safely perform the final cleanup before releasing
+the last reference count, to avoid various contention issues caused by
+performing cleanup directly in dqput(), and to avoid the performance impact
+caused by calling synchronize_srcu(&dquot_srcu) directly in dqput(). Here
+it is just defining the list and implementing the corresponding operation
+function, which we will use later.
+
+Suggested-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Baokun Li <libaokun1@huawei.com>
 ---
- fs/quota/dquot.c | 39 ++++++++++++++++-----------------------
- 1 file changed, 16 insertions(+), 23 deletions(-)
+ fs/quota/dquot.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
 diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index e3e4f4047657..108ba9f1e420 100644
+index 108ba9f1e420..a8b43b5b5623 100644
 --- a/fs/quota/dquot.c
 +++ b/fs/quota/dquot.c
-@@ -628,6 +628,18 @@ int dquot_scan_active(struct super_block *sb,
- }
- EXPORT_SYMBOL(dquot_scan_active);
+@@ -226,12 +226,21 @@ static void put_quota_format(struct quota_format_type *fmt)
+ /*
+  * Dquot List Management:
+  * The quota code uses four lists for dquot management: the inuse_list,
+- * free_dquots, dqi_dirty_list, and dquot_hash[] array. A single dquot
+- * structure may be on some of those lists, depending on its current state.
++ * releasing_dquots, free_dquots, dqi_dirty_list, and dquot_hash[] array.
++ * A single dquot structure may be on some of those lists, depending on
++ * its current state.
+  *
+  * All dquots are placed to the end of inuse_list when first created, and this
+  * list is used for invalidate operation, which must look at every dquot.
+  *
++ * When the last reference of a dquot will be dropped, the dquot will be
++ * added to releasing_dquots. We'd then queue work item which would call
++ * synchronize_srcu() and after that perform the final cleanup of all the
++ * dquots on the list. Both releasing_dquots and free_dquots use the
++ * dq_free list_head in the dquot struct. when a dquot is removed from
++ * releasing_dquots, a reference count is always subtracted, and if
++ * dq_count == 0 at that point, the dquot will be added to the free_dquots.
++ *
+  * Unused dquots (dq_count == 0) are added to the free_dquots list when freed,
+  * and this list is searched whenever we need an available dquot.  Dquots are
+  * removed from the list as soon as they are used again, and
+@@ -250,6 +259,7 @@ static void put_quota_format(struct quota_format_type *fmt)
  
-+static inline int dquot_write_dquot(struct dquot *dquot)
+ static LIST_HEAD(inuse_list);
+ static LIST_HEAD(free_dquots);
++static LIST_HEAD(releasing_dquots);
+ static unsigned int dq_hash_bits, dq_hash_mask;
+ static struct hlist_head *dquot_hash;
+ 
+@@ -305,6 +315,13 @@ static inline void put_dquot_last(struct dquot *dquot)
+ 	dqstats_inc(DQST_FREE_DQUOTS);
+ }
+ 
++static inline void put_releasing_dquots(struct dquot *dquot)
 +{
-+	int ret = dquot->dq_sb->dq_op->write_dquot(dquot);
-+	if (ret < 0) {
-+		quota_error(dquot->dq_sb, "Can't write quota structure "
-+			    "(error %d). Quota may get out of sync!", ret);
-+		/* Clear dirty bit anyway to avoid infinite loop. */
-+		clear_dquot_dirty(dquot);
-+	}
-+	return ret;
++	list_add_tail(&dquot->dq_free, &releasing_dquots);
++	/* dquot will be moved to free_dquots during shrink. */
++	dqstats_inc(DQST_FREE_DQUOTS);
 +}
 +
- /* Write all dquot structures to quota files */
- int dquot_writeback_dquots(struct super_block *sb, int type)
+ static inline void remove_free_dquot(struct dquot *dquot)
  {
-@@ -658,16 +670,9 @@ int dquot_writeback_dquots(struct super_block *sb, int type)
- 			 * use count */
- 			dqgrab(dquot);
- 			spin_unlock(&dq_list_lock);
--			err = sb->dq_op->write_dquot(dquot);
--			if (err) {
--				/*
--				 * Clear dirty bit anyway to avoid infinite
--				 * loop here.
--				 */
--				clear_dquot_dirty(dquot);
--				if (!ret)
--					ret = err;
--			}
-+			err = dquot_write_dquot(dquot);
-+			if (err && !ret)
-+				ret = err;
- 			dqput(dquot);
- 			spin_lock(&dq_list_lock);
- 		}
-@@ -765,8 +770,6 @@ static struct shrinker dqcache_shrinker = {
-  */
- void dqput(struct dquot *dquot)
- {
--	int ret;
--
- 	if (!dquot)
- 		return;
- #ifdef CONFIG_QUOTA_DEBUG
-@@ -794,17 +797,7 @@ void dqput(struct dquot *dquot)
- 	if (dquot_dirty(dquot)) {
- 		spin_unlock(&dq_list_lock);
- 		/* Commit dquot before releasing */
--		ret = dquot->dq_sb->dq_op->write_dquot(dquot);
--		if (ret < 0) {
--			quota_error(dquot->dq_sb, "Can't write quota structure"
--				    " (error %d). Quota may get out of sync!",
--				    ret);
--			/*
--			 * We clear dirty bit anyway, so that we avoid
--			 * infinite loop here
--			 */
--			clear_dquot_dirty(dquot);
--		}
-+		dquot_write_dquot(dquot);
- 		goto we_slept;
- 	}
- 	if (test_bit(DQ_ACTIVE_B, &dquot->dq_flags)) {
+ 	if (list_empty(&dquot->dq_free))
 -- 
 2.31.1
 
