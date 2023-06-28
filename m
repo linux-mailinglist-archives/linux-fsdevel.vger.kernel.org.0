@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 39D6374155C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 17:37:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85DEE741550
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 17:37:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232283AbjF1Pcc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 11:32:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60844 "EHLO
+        id S232267AbjF1Pc3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 11:32:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232238AbjF1PcR (ORCPT
+        with ESMTP id S232237AbjF1PcR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 28 Jun 2023 11:32:17 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB8B12713;
-        Wed, 28 Jun 2023 08:32:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08CA52728;
+        Wed, 28 Jun 2023 08:32:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=Y3NvaUq2249b1rQUIlkJw0hqbZfV+rhFDosLqAAfO14=; b=hm9NV0S/AzFOxIxFGFhPs1W3kz
-        mKwMu8JPOoJqpbayBuwTr37HTBmPeyGwCp7BKt+7LRdlDLDwBztWL9/CEEo27De/6IfIXYjlyJgI/
-        qZAEbAtJZRrDMrP/GlHWCEL64o2gLYS9SRyCBalc5ysiqRRccfBXF0u9cjylXG8LOv1xF0cJ0Tvc6
-        ZPNLo7TRchxtvwEkGfAecwjTaqHDBmSQ6PlM+BoIYco5VwAE/n0e7YdJQd+KhOejmippGA/WZr1iL
-        ctM9gALO9yhSvAM+5GE3HAg35FXxkp27DGCobXpN5IQKZwPYwhsvxYbgFMJVnmoi6qY/NNgosTiMZ
-        P69C1zJA==;
+        bh=LcDc0H6zoBs18aKmyXsHcP1XOIqUzH3TPTBSNaCP85U=; b=XtwQ3J6r3aD2UL9OJVshlNS5sq
+        7tAFY5W89qsJiLRL0Y2t6medd6KBM4HwolyLlUP+UGg7XxW+O6cS5DbCj2AUAhNAghfkwNfM0sA0+
+        XUmwRdygKTb0Vw68QQ7IUgV5hktQQipifFQNiAKu4Y+B0w4d1iaNXBLR90mr5uFAWfvPlX2XfZLbZ
+        zYnD2XU1nwvdPwpAJLK/p0wM+ntJNJT5IUwse1smN/WmCassoQ85tRkD9iO5zudgLCgBdfx8AQpqJ
+        vRn/B5sTmZv8nCs86epOoG5a0ocAG6CpdkgGTAZsM3fbnye/SOmQUM5l3o6U49pMrmwyGlW4LyuGA
+        X9XLXAdA==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qEX9L-00G04o-0M;
-        Wed, 28 Jun 2023 15:32:07 +0000
+        id 1qEX9O-00G068-2E;
+        Wed, 28 Jun 2023 15:32:11 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
 Cc:     Matthew Wilcox <willy@infradead.org>, linux-btrfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 06/23] btrfs: reduce debug spam from submit_compressed_extents
-Date:   Wed, 28 Jun 2023 17:31:27 +0200
-Message-Id: <20230628153144.22834-7-hch@lst.de>
+Subject: [PATCH 07/23] btrfs: remove the return value from submit_uncompressed_range
+Date:   Wed, 28 Jun 2023 17:31:28 +0200
+Message-Id: <20230628153144.22834-8-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230628153144.22834-1-hch@lst.de>
 References: <20230628153144.22834-1-hch@lst.de>
@@ -53,89 +53,66 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move the printk that is supposed to help to debug failures in
-submit_one_async_extent into submit_one_async_extent and make it
-coniditonal on actually having an error condition instead of spamming
-the log unconditionally.
+The return value from submit_uncompressed_range is ignored, and that's
+fine because the error reporting happens through the mapping and
+ordered_extent.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/inode.c | 33 +++++++++++++--------------------
- 1 file changed, 13 insertions(+), 20 deletions(-)
+ fs/btrfs/inode.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
 diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index d746b0fe0f994b..0f709f766b6a94 100644
+index 0f709f766b6a94..c6845b0591b77e 100644
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -1181,11 +1181,11 @@ static int submit_uncompressed_range(struct btrfs_inode *inode,
- 	return ret;
+@@ -1126,9 +1126,9 @@ static void free_async_extent_pages(struct async_extent *async_extent)
+ 	async_extent->pages = NULL;
  }
  
--static int submit_one_async_extent(struct btrfs_inode *inode,
--				   struct async_chunk *async_chunk,
--				   struct async_extent *async_extent,
--				   u64 *alloc_hint)
-+static void submit_one_async_extent(struct async_chunk *async_chunk,
-+				    struct async_extent *async_extent,
-+				    u64 *alloc_hint)
+-static int submit_uncompressed_range(struct btrfs_inode *inode,
+-				     struct async_extent *async_extent,
+-				     struct page *locked_page)
++static void submit_uncompressed_range(struct btrfs_inode *inode,
++				      struct async_extent *async_extent,
++				      struct page *locked_page)
  {
-+	struct btrfs_inode *inode = async_chunk->inode;
- 	struct extent_io_tree *io_tree = &inode->io_tree;
- 	struct btrfs_root *root = inode->root;
- 	struct btrfs_fs_info *fs_info = root->fs_info;
-@@ -1279,7 +1279,7 @@ static int submit_one_async_extent(struct btrfs_inode *inode,
- 	if (async_chunk->blkcg_css)
- 		kthread_associate_blkcg(NULL);
- 	kfree(async_extent);
--	return ret;
-+	return;
+ 	u64 start = async_extent->start;
+ 	u64 end = async_extent->start + async_extent->ram_size - 1;
+@@ -1153,7 +1153,7 @@ static int submit_uncompressed_range(struct btrfs_inode *inode,
+ 			     &nr_written, NULL, CFR_KEEP_LOCKED);
+ 	/* Inline extent inserted, page gets unlocked and everything is done */
+ 	if (page_started)
+-		return 0;
++		return;
  
- out_free_reserve:
- 	btrfs_dec_block_group_reservations(fs_info, ins.objectid);
-@@ -1293,7 +1293,13 @@ static int submit_one_async_extent(struct btrfs_inode *inode,
- 				     PAGE_UNLOCK | PAGE_START_WRITEBACK |
- 				     PAGE_END_WRITEBACK);
- 	free_async_extent_pages(async_extent);
--	goto done;
-+	if (async_chunk->blkcg_css)
-+		kthread_associate_blkcg(NULL);
-+	btrfs_debug(fs_info,
-+"async extent submission failed root=%lld inode=%llu start=%llu len=%llu ret=%d",
-+		    root->root_key.objectid, btrfs_ino(inode), start,
-+		    async_extent->ram_size, ret);
-+	kfree(async_extent);
- }
- 
- /*
-@@ -1303,28 +1309,15 @@ static int submit_one_async_extent(struct btrfs_inode *inode,
-  */
- static noinline void submit_compressed_extents(struct async_chunk *async_chunk)
- {
--	struct btrfs_inode *inode = async_chunk->inode;
--	struct btrfs_fs_info *fs_info = inode->root->fs_info;
- 	struct async_extent *async_extent;
- 	u64 alloc_hint = 0;
--	int ret = 0;
- 
- 	while (!list_empty(&async_chunk->extents)) {
--		u64 extent_start;
--		u64 ram_size;
--
- 		async_extent = list_entry(async_chunk->extents.next,
- 					  struct async_extent, list);
- 		list_del(&async_extent->list);
--		extent_start = async_extent->start;
--		ram_size = async_extent->ram_size;
- 
--		ret = submit_one_async_extent(inode, async_chunk, async_extent,
--					      &alloc_hint);
--		btrfs_debug(fs_info,
--"async extent submission failed root=%lld inode=%llu start=%llu len=%llu ret=%d",
--			    inode->root->root_key.objectid,
--			    btrfs_ino(inode), extent_start, ram_size, ret);
-+		submit_one_async_extent(async_chunk, async_extent, &alloc_hint);
+ 	if (ret < 0) {
+ 		btrfs_cleanup_ordered_extents(inode, locked_page, start, end - start + 1);
+@@ -1171,14 +1171,13 @@ static int submit_uncompressed_range(struct btrfs_inode *inode,
+ 			mapping_set_error(locked_page->mapping, ret);
+ 			unlock_page(locked_page);
+ 		}
+-		return ret;
++		return;
  	}
+ 
+ 	/* All pages will be unlocked, including @locked_page */
+ 	wbc_attach_fdatawrite_inode(&wbc, &inode->vfs_inode);
+-	ret = extent_write_locked_range(&inode->vfs_inode, start, end, &wbc);
++	extent_write_locked_range(&inode->vfs_inode, start, end, &wbc);
+ 	wbc_detach_inode(&wbc);
+-	return ret;
  }
+ 
+ static void submit_one_async_extent(struct async_chunk *async_chunk,
+@@ -1215,7 +1214,7 @@ static void submit_one_async_extent(struct async_chunk *async_chunk,
+ 
+ 	/* We have fall back to uncompressed write */
+ 	if (!async_extent->pages) {
+-		ret = submit_uncompressed_range(inode, async_extent, locked_page);
++		submit_uncompressed_range(inode, async_extent, locked_page);
+ 		goto done;
+ 	}
  
 -- 
 2.39.2
