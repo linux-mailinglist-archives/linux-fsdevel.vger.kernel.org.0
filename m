@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B826374151A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 17:37:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0524B741558
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 17:37:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232397AbjF1Pcx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 11:32:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60914 "EHLO
+        id S232374AbjF1PdD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 11:33:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232322AbjF1Pck (ORCPT
+        with ESMTP id S232369AbjF1Pcu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 11:32:40 -0400
+        Wed, 28 Jun 2023 11:32:50 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C826E2690;
-        Wed, 28 Jun 2023 08:32:38 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDD0F2979;
+        Wed, 28 Jun 2023 08:32:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=D+Oa6Jx9+3YAgFpxJAjbhlYziAbEOo8V8qTVMG1/XKE=; b=IHYwHm+vjVHFYDPFr4A4s6eUol
-        N5vxZKqfsc4SYiq4wJI9WsYERZwS4Qfgphc472y6V4ou7xyDdsuHuDPIu7agIQceg7q75CXaz8KLn
-        YDjbPsH6MKWbf38NPKPM3EF7s0pwRkLu4lyICUbU4sQ3W1ANtHNi0Lz6muDPp5yWMoxOChd0NpIgZ
-        tSwGMKi7TGuVkpQHIWAW7oBNuh2zl9XAB9usYuPtU/2r+IHH8QYi7CaKknxadyfyDGMPgUrZPIPNa
-        G+1rvjqBVev/xg70H93lSlYu2nA1bwxh3rST08mIdNXuYsuEisYUnPflKmOVFin3gzKjfweJca4Fi
-        cn9kKI2g==;
+        bh=oWSLZv12x05QP3p0AQrKmp5Y2EJAD7LcPxF5Vt7GEF8=; b=T/z/rrYf+BURpRoG7MkvJpXTNw
+        qCXpZvDJyOfAR2Nf1tINAnHvbLul+bCw6b4JUiwc6s0a03Fzxq4efg7bDGARWtv/70jHjEsAbpSLJ
+        VMzbDly3irlt8UyLdf8Z1i/zN+Ind3ps5cr1yIL+WKJ4mh+iQzjzpKDM0RrodNxIjaEM9pTZBZThr
+        GQFLsE7pwAh2pwKD9PNWj/A2In/++yWbZ3+6e/rXGQgYrFfEtn13PeZ3LJcHCVkeJNSRA/rzCkQWR
+        9l72JCxQ9cIJZprvAHNis0HbXzw9SfI1B0LYnJJx5B0yShS9Wi4BAV/nJMSge6hWgbiHo+StLFtZb
+        IL+wgRJw==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qEX9o-00G0AW-0x;
-        Wed, 28 Jun 2023 15:32:36 +0000
+        id 1qEX9r-00G0Bt-1B;
+        Wed, 28 Jun 2023 15:32:39 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
 Cc:     Matthew Wilcox <willy@infradead.org>, linux-btrfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 15/23] btrfs: streamline compress_file_range
-Date:   Wed, 28 Jun 2023 17:31:36 +0200
-Message-Id: <20230628153144.22834-16-hch@lst.de>
+Subject: [PATCH 16/23] btrfs: further simplify the compress or not logic in compress_file_range
+Date:   Wed, 28 Jun 2023 17:31:37 +0200
+Message-Id: <20230628153144.22834-17-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230628153144.22834-1-hch@lst.de>
 References: <20230628153144.22834-1-hch@lst.de>
@@ -53,235 +53,139 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Reorder compress_file_range so that the main compression flow happens
-straight line and not in branches.  To do this ensure that pages is
-always zeroed before a page allocation happens, which allows the
-cleanup_and_bail_uncompressed label to clean up the page allocations
-as needed.
+Currently the logic whether to compress or not in compress_file_range is
+a bit convoluted because it tries to share code for creating inline
+extents for the compressible [1] path and the bail to uncompressed path.
+
+But the latter isn't needed at all, because cow_file_range as called by
+submit_uncompressed_range will already create inline extents as needed,
+so there is no need to have special handling for it if we can live with
+the fact that it will be called a bit later in the ->ordered_func of the
+workqueue instead of right now.
+
+[1] there is undocumented logic that creates an uncompressed inline
+extent outside of the shall not compress logic if total_in is too small.
+This logic isn't explained in comments or any commit log I could find,
+so I've preserved it.  Documentation explaining it would be appreciated
+if anyone understands this code.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/inode.c | 165 +++++++++++++++++++++++------------------------
- 1 file changed, 81 insertions(+), 84 deletions(-)
+ fs/btrfs/inode.c | 51 ++++++++++++++++--------------------------------
+ 1 file changed, 17 insertions(+), 34 deletions(-)
 
 diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 09f8c6f2f4bf88..e7c05d07ff50f8 100644
+index e7c05d07ff50f8..560682a5d9d7aa 100644
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -841,10 +841,11 @@ static void compress_file_range(struct btrfs_work *work)
- 	u64 actual_end;
- 	u64 i_size;
- 	int ret = 0;
--	struct page **pages = NULL;
-+	struct page **pages;
- 	unsigned long nr_pages;
- 	unsigned long total_compressed = 0;
+@@ -847,7 +847,6 @@ static void compress_file_range(struct btrfs_work *work)
  	unsigned long total_in = 0;
-+	unsigned int poff;
+ 	unsigned int poff;
  	int i;
- 	int will_compress;
+-	int will_compress;
  	int compress_type = fs_info->compress_type;
-@@ -867,6 +868,7 @@ static void compress_file_range(struct btrfs_work *work)
+ 	int redirty = 0;
+ 
+@@ -867,7 +866,6 @@ static void compress_file_range(struct btrfs_work *work)
+ 	barrier();
  	actual_end = min_t(u64, i_size, end + 1);
  again:
- 	will_compress = 0;
-+	pages = NULL;
+-	will_compress = 0;
+ 	pages = NULL;
  	nr_pages = (end >> PAGE_SHIFT) - (start >> PAGE_SHIFT) + 1;
  	nr_pages = min_t(unsigned long, nr_pages, BTRFS_MAX_COMPRESSED_PAGES);
- 
-@@ -910,66 +912,62 @@ static void compress_file_range(struct btrfs_work *work)
- 	ret = 0;
- 
- 	/*
--	 * we do compression for mount -o compress and when the
--	 * inode has not been flagged as nocompress.  This flag can
--	 * change at any time if we discover bad compression ratios.
-+	 * We do compression for mount -o compress and when the inode has not
-+	 * been flagged as nocompress.  This flag can change at any time if we
-+	 * discover bad compression ratios.
+@@ -917,14 +915,12 @@ static void compress_file_range(struct btrfs_work *work)
+ 	 * discover bad compression ratios.
  	 */
--	if (inode_need_compress(inode, start, end)) {
--		WARN_ON(pages);
--		pages = kcalloc(nr_pages, sizeof(struct page *), GFP_NOFS);
--		if (!pages) {
--			/* just bail out to the uncompressed code */
--			nr_pages = 0;
--			goto cont;
--		}
-+	if (!inode_need_compress(inode, start, end))
-+		goto cont;
+ 	if (!inode_need_compress(inode, start, end))
+-		goto cont;
++		goto cleanup_and_bail_uncompressed;
  
--		if (inode->defrag_compress)
--			compress_type = inode->defrag_compress;
--		else if (inode->prop_compress)
--			compress_type = inode->prop_compress;
-+	pages = kcalloc(nr_pages, sizeof(struct page *), GFP_NOFS);
-+	if (!pages) {
-+		/* just bail out to the uncompressed code */
-+		nr_pages = 0;
-+		goto cont;
-+	}
- 
--		/*
--		 * we need to call clear_page_dirty_for_io on each
--		 * page in the range.  Otherwise applications with the file
--		 * mmap'd can wander in and change the page contents while
--		 * we are compressing them.
--		 *
--		 * If the compression fails for any reason, we set the pages
--		 * dirty again later on.
--		 *
--		 * Note that the remaining part is redirtied, the start pointer
--		 * has moved, the end is the original one.
--		 */
--		if (!redirty) {
--			extent_range_clear_dirty_for_io(&inode->vfs_inode, start, end);
--			redirty = 1;
--		}
-+	if (inode->defrag_compress)
-+		compress_type = inode->defrag_compress;
-+	else if (inode->prop_compress)
-+		compress_type = inode->prop_compress;
-+
-+	/*
-+	 * We need to call clear_page_dirty_for_io on each page in the range.
-+	 * Otherwise applications with the file mmap'd can wander in and change
-+	 * the page contents while we are compressing them.
-+	 *
-+	 * If the compression fails for any reason, we set the pages dirty again
-+	 * later on.
-+	 *
-+	 * Note that the remaining part is redirtied, the start pointer has
-+	 * moved, the end is the original one.
-+	 */
-+	if (!redirty) {
-+		extent_range_clear_dirty_for_io(&inode->vfs_inode, start, end);
-+		redirty = 1;
-+	}
- 
--		/* Compression level is applied here and only here */
--		ret = btrfs_compress_pages(
--			compress_type | (fs_info->compress_level << 4),
--					   mapping, start,
--					   pages,
--					   &nr_pages,
--					   &total_in,
--					   &total_compressed);
-+	/* Compression level is applied here and only here */
-+	ret = btrfs_compress_pages(compress_type |
-+				   (fs_info->compress_level << 4),
-+				   mapping, start, pages, &nr_pages, &total_in,
-+				   &total_compressed);
-+	if (ret)
-+		goto cont;
- 
--		if (!ret) {
--			unsigned long offset = offset_in_page(total_compressed);
--			struct page *page = pages[nr_pages - 1];
-+	/*
-+	 * Zero the tail end of the last page, as we might be sending it down
-+	 * to disk.
-+	 */
-+	poff = offset_in_page(total_compressed);
-+	if (poff)
-+		memzero_page(pages[nr_pages - 1], poff, PAGE_SIZE - poff);
-+	will_compress = 1;
- 
--			/* zero the tail end of the last page, we might be
--			 * sending it down to disk
--			 */
--			if (offset)
--				memzero_page(page, offset, PAGE_SIZE - offset);
--			will_compress = 1;
--		}
+ 	pages = kcalloc(nr_pages, sizeof(struct page *), GFP_NOFS);
+-	if (!pages) {
++	if (!pages)
+ 		/* just bail out to the uncompressed code */
+-		nr_pages = 0;
+-		goto cont;
 -	}
- cont:
++		goto cleanup_and_bail_uncompressed;
+ 
+ 	if (inode->defrag_compress)
+ 		compress_type = inode->defrag_compress;
+@@ -953,7 +949,7 @@ static void compress_file_range(struct btrfs_work *work)
+ 				   mapping, start, pages, &nr_pages, &total_in,
+ 				   &total_compressed);
+ 	if (ret)
+-		goto cont;
++		goto cleanup_and_bail_uncompressed;
+ 
  	/*
+ 	 * Zero the tail end of the last page, as we might be sending it down
+@@ -962,24 +958,22 @@ static void compress_file_range(struct btrfs_work *work)
+ 	poff = offset_in_page(total_compressed);
+ 	if (poff)
+ 		memzero_page(pages[nr_pages - 1], poff, PAGE_SIZE - poff);
+-	will_compress = 1;
+ 
+-cont:
+ 	/*
++	 * Try to create an inline extent.
++	 *
++	 * If we didn't compress the entire range, try to create an uncompressed
++	 * inline extent, else a compressed one.
++	 *
  	 * Check cow_file_range() for why we don't even try to create inline
--	 * extent for subpage case.
-+	 * extent for the subpage case.
+ 	 * extent for the subpage case.
  	 */
  	if (start == 0 && fs_info->sectorsize == PAGE_SIZE) {
- 		/* lets try to make an inline extent */
-@@ -1028,39 +1026,38 @@ static void compress_file_range(struct btrfs_work *work)
- 		}
- 	}
- 
--	if (will_compress) {
--		/*
--		 * we aren't doing an inline extent round the compressed size
--		 * up to a block size boundary so the allocator does sane
--		 * things
--		 */
--		total_compressed = ALIGN(total_compressed, blocksize);
-+	if (!will_compress)
-+		goto cleanup_and_bail_uncompressed;
- 
--		/*
--		 * one last check to make sure the compression is really a
--		 * win, compare the page count read with the blocks on disk,
--		 * compression must free at least one sector size
--		 */
--		total_in = round_up(total_in, fs_info->sectorsize);
--		if (total_compressed + blocksize <= total_in) {
--			/*
--			 * The async work queues will take care of doing actual
--			 * allocation on disk for these compressed pages, and
--			 * will submit them to the elevator.
+-		/* lets try to make an inline extent */
+-		if (ret || total_in < actual_end) {
+-			/* we didn't compress the entire range, try
+-			 * to make an uncompressed inline extent.
 -			 */
--			add_async_extent(async_chunk, start, total_in,
--					total_compressed, pages, nr_pages,
--					compress_type);
+-			ret = cow_file_range_inline(inode, actual_end,
+-						    0, BTRFS_COMPRESS_NONE,
+-						    NULL, false);
++		if (total_in < actual_end) {
++			ret = cow_file_range_inline(inode, actual_end, 0,
++						    BTRFS_COMPRESS_NONE, NULL,
++						    false);
+ 		} else {
+-			/* try making a compressed inline extent */
+ 			ret = cow_file_range_inline(inode, actual_end,
+ 						    total_compressed,
+ 						    compress_type, pages,
+@@ -1009,26 +1003,15 @@ static void compress_file_range(struct btrfs_work *work)
+ 						     PAGE_UNLOCK |
+ 						     PAGE_START_WRITEBACK |
+ 						     PAGE_END_WRITEBACK);
 -
--			if (start + total_in < end) {
--				start += total_in;
--				pages = NULL;
--				cond_resched();
--				goto again;
--			}
--			return;
--		}
-+	/*
-+	 * We aren't doing an inline extent. Round the compressed size up to a
-+	 * block size boundary so the allocator does sane things.
-+	 */
-+	total_compressed = ALIGN(total_compressed, blocksize);
-+
-+	/*
-+	 * One last check to make sure the compression is really a win, compare
-+	 * the page count read with the blocks on disk, compression must free at
-+	 * least one sector.
-+	 */
-+	total_in = round_up(total_in, fs_info->sectorsize);
-+	if (total_compressed + blocksize > total_in)
-+		goto cleanup_and_bail_uncompressed;
-+
-+	/*
-+	 * The async work queues will take care of doing actual allocation on
-+	 * disk for these compressed pages, and will submit the bios.
-+	 */
-+	add_async_extent(async_chunk, start, total_in, total_compressed, pages,
-+			 nr_pages, compress_type);
-+	if (start + total_in < end) {
-+		start += total_in;
-+		cond_resched();
-+		goto again;
- 	}
-+	return;
-+
-+cleanup_and_bail_uncompressed:
- 	if (pages) {
- 		/*
- 		 * the compression code ran but failed to make things smaller,
-@@ -1081,7 +1078,7 @@ static void compress_file_range(struct btrfs_work *work)
- 			inode->flags |= BTRFS_INODE_NOCOMPRESS;
+-			/*
+-			 * Ensure we only free the compressed pages if we have
+-			 * them allocated, as we can still reach here with
+-			 * inode_need_compress() == false.
+-			 */
+-			if (pages) {
+-				for (i = 0; i < nr_pages; i++) {
+-					WARN_ON(pages[i]->mapping);
+-					put_page(pages[i]);
+-				}
+-				kfree(pages);
++			for (i = 0; i < nr_pages; i++) {
++				WARN_ON(pages[i]->mapping);
++				put_page(pages[i]);
+ 			}
++			kfree(pages);
+ 			return;
  		}
  	}
--cleanup_and_bail_uncompressed:
-+
+ 
+-	if (!will_compress)
+-		goto cleanup_and_bail_uncompressed;
+-
  	/*
- 	 * No compression, but we still need to write the pages in the file
- 	 * we've been given so far.  redirty the locked page if it corresponds
+ 	 * We aren't doing an inline extent. Round the compressed size up to a
+ 	 * block size boundary so the allocator does sane things.
 -- 
 2.39.2
 
