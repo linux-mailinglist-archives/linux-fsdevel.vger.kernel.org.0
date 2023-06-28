@@ -2,89 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 85AA2741978
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 22:34:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBB337419D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 22:46:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231708AbjF1Uej (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 16:34:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36780 "EHLO
+        id S231582AbjF1Uob (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 16:44:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbjF1Uei (ORCPT
+        with ESMTP id S231398AbjF1UoZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 16:34:38 -0400
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C13519B6;
-        Wed, 28 Jun 2023 13:34:37 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-666ecf9a0ceso142892b3a.2;
-        Wed, 28 Jun 2023 13:34:37 -0700 (PDT)
+        Wed, 28 Jun 2023 16:44:25 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CCF8273C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 13:44:18 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1b3ecb17721so683705ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 13:44:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687984477; x=1690576477;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ipbLnYvlGYQvDEihyiPuXfdid6qmlxbdUrEvPFMafw4=;
-        b=opSL76LDc984zvWM3786OidbBT25+1HD1mQMziNNFfP4Zsljw5U+R1LwpfgRjqakdu
-         lyO3voeeVszuMA+bdl57FtM0OiOwdjEhMGusRh8PrEwfT+W94UMOraQg8L2LqPIZzDp5
-         nLnAxenahvm+RDN1eQWrhVw+chYXpSUC5++RVkiMEDXV2tKxMQkMlIdbYtS882Wp3wAq
-         3UqdPomtMd0EEcrYiQQZw8VYnUHvixfbxCSUKSZgILtO98HCfujdnQMHBg2enLrGn11M
-         FqODDg+KVXkLLJxNQLt1RyfgE/1C3D9Kg+00mZoAc9V4Y02ZyUFj27JJsXB3fDudmRsQ
-         vwXw==
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687985058; x=1690577058;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ejsKIyVRBFan8VJ9IKuG6jAxQwsigCKUHf+edp4flfk=;
+        b=mBe4zOsrI2jrJH45CDZ+NoK4Ynp7o8trm5fFOz+/0bMUk5Sa4k5xVTWcvtfVGlXqb+
+         f0BHD7t9cPoMEJe/sr9pgTBeJKUiJ/YK5kKAKYuUAZfyjejopmbDZYmedX8ClE91tIOP
+         Mwc5XiMakJf2L3vreUoGP3r/YSJnqBY2iMJpWh3h+eIMLZSO96z8auHPdd+96b1d9zok
+         e9taQrwkzo9yJys0Pio9hsB0LnIDYRGqC0G7Yf95mmxp3QYmoqdRPbFtmaDXK94uLCdN
+         UG5Ko2ylS5KNnxRgHWv4/lhdyr8Oa0HkrbWNjEr/iico6IppyaVq9Ok9KMOkpE+hK5xI
+         dDaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687984477; x=1690576477;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ipbLnYvlGYQvDEihyiPuXfdid6qmlxbdUrEvPFMafw4=;
-        b=FxxGFXPvgGmDUhbtw7YmCewW8BkpLPeHUirq+tNPTz4vbzWI03GA98ty/XHBmPzDFx
-         GhnY6miNONDh9qP3jLX/gbAbnDoZc2Ks1Vwp9+YHjy47VGmV+fVrthDHceTKTswKFqva
-         VWWYy9FCpeovd9ZOSsRH9WhA/Sv5bkM99bsApv4s1YgdI0QTcmCrTx479Wu8AvcK5Ga4
-         5bX3W/G3Id1qiGaOePDpXcV34h+En4Z1+pLAzh6pk4kVVZiF+EmAaAcVncqdIdvrjjYy
-         aDmQUMO/Vwws/M0xA2vUrL3tiXMG2cgdxCkXV8Wuu6cBHduu1UOGpdZgUWk/tBXA+gjL
-         tBSg==
-X-Gm-Message-State: AC+VfDwh3jLk2vYtK6LDK83INmfEdTOrw0DZkzJm5Xm/n0HqsJAR2MzD
-        yX44mA7w2R2dY8yCuZtrPpY=
-X-Google-Smtp-Source: ACHHUZ6XkIRJQTHMzWEX1lQu8qkb9AYZLxxYyonQGrQyP+vNh08KhF9U2TY5f8OQbw13ohu8/8LZ8Q==
-X-Received: by 2002:a05:6a20:3249:b0:12c:30b0:6225 with SMTP id hm9-20020a056a20324900b0012c30b06225mr2243475pzc.36.1687984476662;
-        Wed, 28 Jun 2023 13:34:36 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:400::5:7961])
-        by smtp.gmail.com with ESMTPSA id s1-20020aa78281000000b0065a1b05193asm7367724pfm.185.2023.06.28.13.34.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jun 2023 13:34:36 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Wed, 28 Jun 2023 10:34:34 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Christian Brauner <brauner@kernel.org>, peterz@infradead.org,
-        lujialin4@huawei.com, lizefan.x@bytedance.com, hannes@cmpxchg.org,
-        mingo@redhat.com, ebiggers@kernel.org, oleg@redhat.com,
-        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 1/2] kernfs: add kernfs_ops.free operation to free
- resources tied to the file
-Message-ID: <ZJyZWtK4nihRkTME@slm.duckdns.org>
-References: <CAJuCfpGoNbLOLm08LWKPOgn05+FB1GEqeMTUSJUZpRmDYQSjpA@mail.gmail.com>
- <20230628-meisennest-redlich-c09e79fde7f7@brauner>
- <CAJuCfpHqZ=5a_2k==FsdBbwDCF7+s7Ji3aZ37LBqUgyXLMz7gA@mail.gmail.com>
- <20230628-faden-qualvoll-6c33b570f54c@brauner>
- <CAJuCfpF=DjwpWuhugJkVzet2diLkf8eagqxjR8iad39odKdeYQ@mail.gmail.com>
- <20230628-spotten-anzweifeln-e494d16de48a@brauner>
- <ZJx1nkqbQRVCaKgF@slm.duckdns.org>
- <CAJuCfpEFo6WowJ_4XPXH+=D4acFvFqEa4Fuc=+qF8=Jkhn=3pA@mail.gmail.com>
- <2023062845-stabilize-boogieman-1925@gregkh>
- <CAJuCfpFqYytC+5GY9X+jhxiRvhAyyNd27o0=Nbmt_Wc5LFL1Sw@mail.gmail.com>
+        d=1e100.net; s=20221208; t=1687985058; x=1690577058;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ejsKIyVRBFan8VJ9IKuG6jAxQwsigCKUHf+edp4flfk=;
+        b=Mvm5tIaLfrxoZrxDRPjRwT5J6hKzqb9RU8uatBsVk1XqPZpWdq4E47RSZll022FzAp
+         lFiAnok8u+qSgyKIXSCNVahTI5iQcBWPGLw0Umz/5L2R87bXParJd1IT6IjycyMo2bFD
+         sTR/vGBmtjTFixkpXDMe2q0PATKYzG3zQCg1BGeUWSrJgCla4lSxiQmqqdNWQclbCCin
+         pxi8wyj5qDX/3p2ZGO2JbND21p9yh9Rq2+ysE0pHYZQJLNrI0VPReAiLDo6RNQTEdtbw
+         P4ZT3ysRGBvIKfSmZ0FxOp7YqWhjEf/WmaVRCPJZnTi3YNX0jDHiwObTccf4E1zb0Rce
+         uYbw==
+X-Gm-Message-State: AC+VfDxEbZy6GQzNGHEbRKBP/GMzmUdokD4qKvPIInfK0kWpI/9gW8T+
+        GEZUJuwsQYbECJMjWHi6oSlNIw==
+X-Google-Smtp-Source: ACHHUZ53mbHNFgI8GCEXV6OHDatzKRTaQZh/XOOmI00YVS41O32qDosm0pHM0a/937YX5tFl8tB+AA==
+X-Received: by 2002:a17:902:f688:b0:1ad:e3a8:3c4 with SMTP id l8-20020a170902f68800b001ade3a803c4mr42420454plg.4.1687985058005;
+        Wed, 28 Jun 2023 13:44:18 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 15-20020a17090a0ccf00b0025bfda134ccsm8878153pjt.16.2023.06.28.13.44.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Jun 2023 13:44:17 -0700 (PDT)
+Message-ID: <e1570c46-68da-22b7-5322-f34f3c2958d9@kernel.dk>
+Date:   Wed, 28 Jun 2023 14:44:15 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJuCfpFqYytC+5GY9X+jhxiRvhAyyNd27o0=Nbmt_Wc5LFL1Sw@mail.gmail.com>
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [GIT PULL] bcachefs
+Content-Language: en-US
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Christian Brauner <brauner@kernel.org>
+References: <20230627000635.43azxbkd2uf3tu6b@moria.home.lan>
+ <91e9064b-84e3-1712-0395-b017c7c4a964@kernel.dk>
+ <20230627020525.2vqnt2pxhtgiddyv@moria.home.lan>
+ <b92ea170-d531-00f3-ca7a-613c05dcbf5f@kernel.dk>
+ <23922545-917a-06bd-ec92-ff6aa66118e2@kernel.dk>
+ <20230627201524.ool73bps2lre2tsz@moria.home.lan>
+ <c06a9e0b-8f3e-4e47-53d0-b4854a98cc44@kernel.dk>
+ <20230628040114.oz46icbsjpa4egpp@moria.home.lan>
+ <b02657af-5bbb-b46b-cea0-ee89f385f3c1@kernel.dk>
+ <4b863e62-4406-53e4-f96a-f4d1daf098ab@kernel.dk>
+ <20230628175204.oeek4nnqx7ltlqmg@moria.home.lan>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230628175204.oeek4nnqx7ltlqmg@moria.home.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -92,27 +87,50 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello, Suren.
+On 6/28/23 11:52?AM, Kent Overstreet wrote:
+> On Wed, Jun 28, 2023 at 10:57:02AM -0600, Jens Axboe wrote:
+>> I discussed this with Christian offline. I have a patch that is pretty
+>> simple, but it does mean that you'd wait for delayed fput flush off
+>> umount. Which seems kind of iffy.
+>>
+>> I think we need to back up a bit and consider if the kill && umount
+>> really is sane. If you kill a task that has open files, then any fput
+>> from that task will end up being delayed. This means that the umount may
+>> very well fail.
+>>
+>> It'd be handy if we could have umount wait for that to finish, but I'm
+>> not at all confident this is a sane solution for all cases. And as
+>> discussed, we have no way to even identify which files we'd need to
+>> flush out of the delayed list.
+>>
+>> Maybe the test case just needs fixing? Christian suggested lazy/detach
+>> umount and wait for sb release. There's an fsnotify hook for that,
+>> fsnotify_sb_delete(). Obviously this is a bit more involved, but seems
+>> to me that this would be the way to make it more reliable when killing
+>> of tasks with open files are involved.
+> 
+> No, this is a real breakage. Any time we introduce unexpected
+> asynchrony there's the potential for breakage: case in point, there was
+> a filesystem that made rm asynchronous, then there were scripts out
+> there that deleted until df showed under some threshold.. whoops...
 
-On Wed, Jun 28, 2023 at 01:12:23PM -0700, Suren Baghdasaryan wrote:
-> AFAIU all other files that handle polling rely on f_op->release()
-> being called after all the users are gone, therefore they can safely
-> free their resources. However kernfs can call ->release() while there
-> are still active users of the file. I can't use that operation for
-> resource cleanup therefore I was suggesting to add a new operation
-> which would be called only after the last fput() and would guarantee
-> no users. Again, I'm not an expert in this, so there might be a better
-> way to handle it. Please advise.
+This is nothing new - any fput done from an exiting task will end up
+being deferred. The window may be a bit wider now or a bit different,
+but it's the same window. If an application assumes it can kill && wait
+on a task and be guaranteed that the files are released as soon as wait
+returns, it is mistaken. That is NOT the case.
 
-So, w/ kernfs, the right thing to do is making sure that whatever is exposed
-to the kernfs user is terminated on removal - ie. after kernfs_ops->release
-is called, the ops table should be considered dead and there shouldn't be
-anything left to clean up from the kernfs user side. You can add abstraction
-kernfs so that kernfs can terminate the calls coming down from the higher
-layers on its own. That's how every other operation is handled and what
-should happen with the psi polling too.
+> this would break anyone that does fuser; umount; and making the umount
+> lazy just moves the race to the next thing that uses the block device.
+> 
+> I'd like to know how delayed_fput() avoids this.
 
-Thanks.
+What is "this" here? The delayed fput list is processed async, so it's
+really down to timing for the size of the window. Either the 388 test is
+fixed so that it monitors for sb release like Christian described, or we
+can paper around it with a sync and sleep or something like that. The
+former would obviously be a lot more reliable.
 
 -- 
-tejun
+Jens Axboe
+
