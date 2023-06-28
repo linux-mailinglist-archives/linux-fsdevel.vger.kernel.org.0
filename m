@@ -2,82 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A55C74174C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 19:37:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB57874177D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 19:52:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231547AbjF1RhC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 13:37:02 -0400
-Received: from resqmta-a1p-077723.sys.comcast.net ([96.103.146.57]:57259 "EHLO
-        resqmta-a1p-077723.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231142AbjF1RhA (ORCPT
+        id S231969AbjF1RwS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 13:52:18 -0400
+Received: from out-9.mta0.migadu.com ([91.218.175.9]:56292 "EHLO
+        out-9.mta0.migadu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231726AbjF1RwK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 13:37:00 -0400
-Received: from resomta-a1p-077059.sys.comcast.net ([96.103.145.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 256/256 bits)
-        (Client did not present a certificate)
-        by resqmta-a1p-077723.sys.comcast.net with ESMTP
-        id EW6OqczzO8VViEZ5Aq7529; Wed, 28 Jun 2023 17:35:56 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=comcastmailservice.net; s=20211018a; t=1687973756;
-        bh=s096MvujZjpOa9UyFJzRpfx/VZM1M4KtcrFaPgfqFpA=;
-        h=Received:Received:From:To:Subject:Date:MIME-Version:Message-ID:
-         Content-Type:Xfinity-Spam-Result;
-        b=NDFuzWZxJfsiMtvQ/98XTseRdNSzQpbp9rxvvDK2bXRZ5drrTeVGTN8yJSQCMfOoa
-         AtIEUcOhtpPCHaw5bYpVaWQhg1el6Nn9FwDgHlW4PffStCY5zWCWK6Qgx6mMSIWtxq
-         2stBBwWngW0jCKTPmHq0PGBsZU9/eJVxPGllFzgSJWU/BCZi9HZaMJPnT1M/XxsQti
-         jwdqxGiliUaTOWl7MOD/pH7Oa2XWmNe/yisMunBQ50d9u4jQqxWtcDKKjucCgipfm7
-         wyUp/BJzXpxEd066pzD5LXIGcw2oZ3nBHLHCF6mkkbiyfUFeCntUYVY2aW4o+djDpC
-         lTeUpc3tXhYow==
-Received: from localhost ([IPv6:2601:18c:9082:afd:219:d1ff:fe75:dc2f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 256/256 bits)
-        (Client did not present a certificate)
-        by resomta-a1p-077059.sys.comcast.net with ESMTPSA
-        id EZ4iqF7Y1FQYAEZ4jq75Mm; Wed, 28 Jun 2023 17:35:32 +0000
-X-Xfinity-VMeta: sc=-100.00;st=legit
-From:   Matt Whitlock <kernel@mattwhitlock.name>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        <linux-fsdevel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [Reproducer] Corruption, possible race between splice and =?iso-8859-1?Q?FALLOC=5FFL=5FPUNCH=5FHOLE?=
-Date:   Wed, 28 Jun 2023 13:35:27 -0400
+        Wed, 28 Jun 2023 13:52:10 -0400
+Date:   Wed, 28 Jun 2023 13:52:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1687974729;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3wb1kX6L9/pLjHJdQokUyimNTJMnyAUv+LwDyu/SD5A=;
+        b=NF2SPqayC4BiclJHcHAIBaBByf4KV5Q43ZH0e95617IhssmKgWnWUFtxGyotr/gKZhsNm1
+        RN+KQcxyvA5BGAeqHSlWP2WprMri89bMWLGDEt7y92eH+lt1bEABpnImsptiWCu8Qw+EWG
+        RijQZcqgyot80L03bXHj53Ze3srap7k=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Christian Brauner <brauner@kernel.org>
+Subject: Re: [GIT PULL] bcachefs
+Message-ID: <20230628175204.oeek4nnqx7ltlqmg@moria.home.lan>
+References: <20230627000635.43azxbkd2uf3tu6b@moria.home.lan>
+ <91e9064b-84e3-1712-0395-b017c7c4a964@kernel.dk>
+ <20230627020525.2vqnt2pxhtgiddyv@moria.home.lan>
+ <b92ea170-d531-00f3-ca7a-613c05dcbf5f@kernel.dk>
+ <23922545-917a-06bd-ec92-ff6aa66118e2@kernel.dk>
+ <20230627201524.ool73bps2lre2tsz@moria.home.lan>
+ <c06a9e0b-8f3e-4e47-53d0-b4854a98cc44@kernel.dk>
+ <20230628040114.oz46icbsjpa4egpp@moria.home.lan>
+ <b02657af-5bbb-b46b-cea0-ee89f385f3c1@kernel.dk>
+ <4b863e62-4406-53e4-f96a-f4d1daf098ab@kernel.dk>
 MIME-Version: 1.0
-Message-ID: <a60594ef-ff85-498f-a1c4-0fcb9586621c@mattwhitlock.name>
-In-Reply-To: <3299543.1687933850@warthog.procyon.org.uk>
-References: <ZJq6nJBoX1m6Po9+@casper.infradead.org>
- <ec804f26-fa76-4fbe-9b1c-8fbbd829b735@mattwhitlock.name>
- <ZJp4Df8MnU8F3XAt@dread.disaster.area>
- <3299543.1687933850@warthog.procyon.org.uk>
-User-Agent: Trojita/v0.7-595-g7738cd47; Qt/5.15.10; xcb; Linux; Gentoo Linux
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4b863e62-4406-53e4-f96a-f4d1daf098ab@kernel.dk>
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wednesday, 28 June 2023 02:30:50 EDT, David Howells wrote:
-> Matthew Wilcox <willy@infradead.org> wrote:
->
->>>> Expected behavior:
->>>> Punching holes in a file after splicing pages out of that=20
->>>> file into a pipe
->>>> should not corrupt the spliced-out pages in the pipe buffer.
->
-> I think this bit is the key.  Why would this be the expected behaviour?
+On Wed, Jun 28, 2023 at 10:57:02AM -0600, Jens Axboe wrote:
+> I discussed this with Christian offline. I have a patch that is pretty
+> simple, but it does mean that you'd wait for delayed fput flush off
+> umount. Which seems kind of iffy.
+> 
+> I think we need to back up a bit and consider if the kill && umount
+> really is sane. If you kill a task that has open files, then any fput
+> from that task will end up being delayed. This means that the umount may
+> very well fail.
+> 
+> It'd be handy if we could have umount wait for that to finish, but I'm
+> not at all confident this is a sane solution for all cases. And as
+> discussed, we have no way to even identify which files we'd need to
+> flush out of the delayed list.
+> 
+> Maybe the test case just needs fixing? Christian suggested lazy/detach
+> umount and wait for sb release. There's an fsnotify hook for that,
+> fsnotify_sb_delete(). Obviously this is a bit more involved, but seems
+> to me that this would be the way to make it more reliable when killing
+> of tasks with open files are involved.
 
-Why? Because SPLICE_F_MOVE exists. Even though that flag is a no-op as of=20
-Linux 2.6.21, its existence implies that calling splice() *without*=20
-specifying SPLICE_F_MOVE performs a *copy*. The kernel is, of course, free=20=
+No, this is a real breakage. Any time we introduce unexpected
+asynchrony there's the potential for breakage: case in point, there was
+a filesystem that made rm asynchronous, then there were scripts out
+there that deleted until df showed under some threshold.. whoops...
 
-*not* to copy pages in pursuit of better performance, but it must behave as=20=
+this would break anyone that does fuser; umount; and making the umount
+lazy just moves the race to the next thing that uses the block device.
 
-though it did copy unless SPLICE_F_MOVE is specified, in which case=20
-userspace is explicitly acknowledging that subsequent modification of the=20
-spliced pages may impact the spliced data. Effectively, SPLICE_F_MOVE is a=20=
-
-promise by userspace that the moved pages will not be subsequently=20
-modified, and if they are, then all bets are off.
-
-In other words, the currently implemented behavior is appropriate for=20
-SPLICE_F_MOVE, but it is not appropriate for ~SPLICE_F_MOVE.
+I'd like to know how delayed_fput() avoids this.
