@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE7C5741521
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 17:37:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C55374153D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 17:37:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232415AbjF1Pdp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 11:33:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32804 "EHLO
+        id S231588AbjF1Pdn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 11:33:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232429AbjF1PdD (ORCPT
+        with ESMTP id S232427AbjF1PdF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 11:33:03 -0400
+        Wed, 28 Jun 2023 11:33:05 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEF8E2713;
-        Wed, 28 Jun 2023 08:33:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B3CB2D62;
+        Wed, 28 Jun 2023 08:33:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=chok8CbnygTGU4+BjwiSJTAKUtXt5cAc3nHU6IX1dKg=; b=Qxpb1SBjrS351UEWgPXEytbDNy
-        SEPDU5Ofxd2zEnVIQ4QJnOm6KOqYH3qnaWVTlqAMOMZ+lWtnqDfHWUvwzQ7gucS4RPNwrEaMTs1Cx
-        atGM9xLrKJ3r9FuAcj+2yioOjUA4UeZdjySQo0+FzekRA4hmilXPlszUEOCEPIvgU69RDWYqtcwyZ
-        lnEE4mwHxWpn+2c2gd4wm79lsJl/DWtVMolaVlTEj50Dxlsnggt8aW3vPhmtM3zNfgyziqQOtvQh1
-        yJr6GVPDXHWrYe2oFOY+8I+5rWENvWVkNHtIy+/4cdjuSVNxK+txdkUMqtWFIT3glEfKiDxsbylPM
-        hbLUW1cw==;
+        bh=yQ5/EYqh6+7ElCFQh/cPZvm0jOmok7mMWkqAn5adj+Q=; b=GjOCK+Yk0gPnEnIK/bOhw0H4CU
+        x+oK1pZnspyDScImnM0MHM++VFu/WzVLjafUF7cq3IGqRBWY+6khvsF9C6jCQo01TXYCf1TYeIj8I
+        7qSTMESgU9htmvPzgy3PAuTFCrUHZ+00OyGumOyrNkk/OHZ/FLZ/6YmdSCjuGZzgYVtyXzwfNSOnN
+        IoG45jUzpRgj/BkOA3c2sl3pvj3kZ6kpfecZtq3VTjdpHQCWOE6pSin0i7Pj843ZdR4fV1HlNaNyL
+        lKe3lpUqlFrfvObEW5Vfm1cbpUpWgf+BMYhiJqFOL0w5FToDS0OwMabe0O1txjKQ201YaErqTn9+n
+        KDx73vbA==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qEXAA-00G0H0-37;
-        Wed, 28 Jun 2023 15:32:59 +0000
+        id 1qEXAE-00G0Hu-17;
+        Wed, 28 Jun 2023 15:33:02 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
 Cc:     Matthew Wilcox <willy@infradead.org>, linux-btrfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 22/23] btrfs: fix zoned handling in submit_uncompressed_range
-Date:   Wed, 28 Jun 2023 17:31:43 +0200
-Message-Id: <20230628153144.22834-23-hch@lst.de>
+Subject: [PATCH 23/23] mm: remove folio_account_redirty
+Date:   Wed, 28 Jun 2023 17:31:44 +0200
+Message-Id: <20230628153144.22834-24-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230628153144.22834-1-hch@lst.de>
 References: <20230628153144.22834-1-hch@lst.de>
@@ -53,133 +53,110 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-For zoned file systems we need to use run_delalloc_zoned to submit
-writeback, as we need to write out partial allocations when running into
-zone active limits.
+Fold folio_account_redirty into folio_redirty_for_writepage now
+that all other users except for the also unused account_page_redirty
+wrapper are gone.
 
-submit_uncompressed_range currently always calls cow_file_range to
-allocate blocks and thus misses the active zone limits handling.  Fix
-this by passing the pages_dirty argument to run_delalloc_zoned and always
-using it from submit_uncompressed_range as it does the right thing for
-zoned and non-zone file systems.
-
-To account for the fact that run_delalloc_zoned is now also used for
-non-zoned file systems rename it to run_delalloc_cow, and add comment
-describing it.
-
-Fixes: 42c011000963 ("btrfs: zoned: introduce dedicated data write path for zoned filesystems")
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/inode.c | 52 +++++++++++++++++++-----------------------------
- 1 file changed, 20 insertions(+), 32 deletions(-)
+ include/linux/writeback.h |  5 ----
+ mm/page-writeback.c       | 49 +++++++++++----------------------------
+ 2 files changed, 14 insertions(+), 40 deletions(-)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index ae5166d33253a5..2079bf48629b59 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -125,12 +125,10 @@ static struct kmem_cache *btrfs_inode_cachep;
- static int btrfs_setsize(struct inode *inode, struct iattr *attr);
- static int btrfs_truncate(struct btrfs_inode *inode, bool skip_writeback);
+diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+index fba937999fbfd3..083387c00f0c8b 100644
+--- a/include/linux/writeback.h
++++ b/include/linux/writeback.h
+@@ -375,11 +375,6 @@ void tag_pages_for_writeback(struct address_space *mapping,
+ 			     pgoff_t start, pgoff_t end);
  
--#define CFR_KEEP_LOCKED		(1 << 0)
--#define CFR_NOINLINE		(1 << 1)
--static noinline int cow_file_range(struct btrfs_inode *inode,
--				   struct page *locked_page,
--				   u64 start, u64 end, u64 *done_offset,
--				   u32 flags);
-+static noinline int run_delalloc_cow(struct btrfs_inode *inode,
-+				     struct page *locked_page, u64 start,
-+				     u64 end, struct writeback_control *wbc,
-+				     bool pages_dirty);
- static struct extent_map *create_io_em(struct btrfs_inode *inode, u64 start,
- 				       u64 len, u64 orig_start, u64 block_start,
- 				       u64 block_len, u64 orig_block_len,
-@@ -1071,19 +1069,9 @@ static void submit_uncompressed_range(struct btrfs_inode *inode,
- 		.no_cgroup_owner	= 1,
- 	};
+ bool filemap_dirty_folio(struct address_space *mapping, struct folio *folio);
+-void folio_account_redirty(struct folio *folio);
+-static inline void account_page_redirty(struct page *page)
+-{
+-	folio_account_redirty(page_folio(page));
+-}
+ bool folio_redirty_for_writepage(struct writeback_control *, struct folio *);
+ bool redirty_page_for_writepage(struct writeback_control *, struct page *);
  
--	/*
--	 * Call cow_file_range() to run the delalloc range directly, since we
--	 * won't go to NOCOW or async path again.
--	 *
--	 * Also we call cow_file_range() with @unlock_page == 0, so that we
--	 * can directly submit them without interruption.
--	 */
--	ret = cow_file_range(inode, locked_page, start, end, NULL,
--			     CFR_KEEP_LOCKED);
--	/* Inline extent inserted, page gets unlocked and everything is done */
--	if (ret == 1)
--		return;
--
-+	wbc_attach_fdatawrite_inode(&wbc, &inode->vfs_inode);
-+	ret = run_delalloc_cow(inode, locked_page, start, end, &wbc, false);
-+	wbc_detach_inode(&wbc);
- 	if (ret < 0) {
- 		btrfs_cleanup_ordered_extents(inode, locked_page, start, end - start + 1);
- 		if (locked_page) {
-@@ -1100,14 +1088,7 @@ static void submit_uncompressed_range(struct btrfs_inode *inode,
- 			mapping_set_error(locked_page->mapping, ret);
- 			unlock_page(locked_page);
- 		}
--		return;
- 	}
--
--	/* All pages will be unlocked, including @locked_page */
--	wbc_attach_fdatawrite_inode(&wbc, &inode->vfs_inode);
--	extent_write_locked_range(&inode->vfs_inode, NULL, start, end, &wbc,
--				  false);
--	wbc_detach_inode(&wbc);
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index db794399900734..56074637ef4fe0 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -1193,7 +1193,7 @@ static void wb_update_write_bandwidth(struct bdi_writeback *wb,
+ 	 * write_bandwidth = ---------------------------------------------------
+ 	 *                                          period
+ 	 *
+-	 * @written may have decreased due to folio_account_redirty().
++	 * @written may have decreased due to folio_redirty_for_writepage().
+ 	 * Avoid underflowing @bw calculation.
+ 	 */
+ 	bw = written - min(written, wb->written_stamp);
+@@ -2709,37 +2709,6 @@ bool filemap_dirty_folio(struct address_space *mapping, struct folio *folio)
  }
+ EXPORT_SYMBOL(filemap_dirty_folio);
  
- static void submit_one_async_extent(struct async_chunk *async_chunk,
-@@ -1290,6 +1271,8 @@ static u64 get_extent_allocation_hint(struct btrfs_inode *inode, u64 start,
-  * btrfs_cleanup_ordered_extents(). See btrfs_run_delalloc_range() for
-  * example.
-  */
-+#define CFR_KEEP_LOCKED		(1 << 0)
-+#define CFR_NOINLINE		(1 << 1)
- static noinline int cow_file_range(struct btrfs_inode *inode,
- 				   struct page *locked_page, u64 start, u64 end,
- 				   u64 *done_offset, u32 flags)
-@@ -1715,9 +1698,14 @@ static bool run_delalloc_compressed(struct btrfs_inode *inode,
- 	return true;
- }
- 
--static noinline int run_delalloc_zoned(struct btrfs_inode *inode,
--				       struct page *locked_page, u64 start,
--				       u64 end, struct writeback_control *wbc)
-+/*
-+ * Run the delalloc range from start to end, and write back any dirty pages
-+ * covered by the range.
-+ */
-+static noinline int run_delalloc_cow(struct btrfs_inode *inode,
-+				     struct page *locked_page, u64 start,
-+				     u64 end, struct writeback_control *wbc,
-+				     bool pages_dirty)
+-/**
+- * folio_account_redirty - Manually account for redirtying a page.
+- * @folio: The folio which is being redirtied.
+- *
+- * Most filesystems should call folio_redirty_for_writepage() instead
+- * of this fuction.  If your filesystem is doing writeback outside the
+- * context of a writeback_control(), it can call this when redirtying
+- * a folio, to de-account the dirty counters (NR_DIRTIED, WB_DIRTIED,
+- * tsk->nr_dirtied), so that they match the written counters (NR_WRITTEN,
+- * WB_WRITTEN) in long term. The mismatches will lead to systematic errors
+- * in balanced_dirty_ratelimit and the dirty pages position control.
+- */
+-void folio_account_redirty(struct folio *folio)
+-{
+-	struct address_space *mapping = folio->mapping;
+-
+-	if (mapping && mapping_can_writeback(mapping)) {
+-		struct inode *inode = mapping->host;
+-		struct bdi_writeback *wb;
+-		struct wb_lock_cookie cookie = {};
+-		long nr = folio_nr_pages(folio);
+-
+-		wb = unlocked_inode_to_wb_begin(inode, &cookie);
+-		current->nr_dirtied -= nr;
+-		node_stat_mod_folio(folio, NR_DIRTIED, -nr);
+-		wb_stat_mod(wb, WB_DIRTIED, -nr);
+-		unlocked_inode_to_wb_end(inode, &cookie);
+-	}
+-}
+-EXPORT_SYMBOL(folio_account_redirty);
+-
+ /**
+  * folio_redirty_for_writepage - Decline to write a dirty folio.
+  * @wbc: The writeback control.
+@@ -2755,13 +2724,23 @@ EXPORT_SYMBOL(folio_account_redirty);
+ bool folio_redirty_for_writepage(struct writeback_control *wbc,
+ 		struct folio *folio)
  {
- 	u64 done_offset = end;
- 	int ret;
-@@ -1727,9 +1715,8 @@ static noinline int run_delalloc_zoned(struct btrfs_inode *inode,
- 				     &done_offset, CFR_KEEP_LOCKED);
- 		if (ret)
- 			return ret;
--
- 		extent_write_locked_range(&inode->vfs_inode, locked_page, start,
--					  done_offset, wbc, true);
-+					  done_offset, wbc, pages_dirty);
- 		start = done_offset + 1;
- 	}
+-	bool ret;
++	struct address_space *mapping = folio->mapping;
+ 	long nr = folio_nr_pages(folio);
++	bool ret;
  
-@@ -2295,7 +2282,8 @@ int btrfs_run_delalloc_range(struct btrfs_inode *inode, struct page *locked_page
- 		return 1;
+ 	wbc->pages_skipped += nr;
+-	ret = filemap_dirty_folio(folio->mapping, folio);
+-	folio_account_redirty(folio);
++	ret = filemap_dirty_folio(mapping, folio);
++	if (mapping && mapping_can_writeback(mapping)) {
++		struct inode *inode = mapping->host;
++		struct bdi_writeback *wb;
++		struct wb_lock_cookie cookie = {};
  
- 	if (zoned)
--		ret = run_delalloc_zoned(inode, locked_page, start, end, wbc);
-+		ret = run_delalloc_cow(inode, locked_page, start, end, wbc,
-+				       true);
- 	else
- 		ret = cow_file_range(inode, locked_page, start, end, NULL, 0);
- 
++		wb = unlocked_inode_to_wb_begin(inode, &cookie);
++		current->nr_dirtied -= nr;
++		node_stat_mod_folio(folio, NR_DIRTIED, -nr);
++		wb_stat_mod(wb, WB_DIRTIED, -nr);
++		unlocked_inode_to_wb_end(inode, &cookie);
++	}
+ 	return ret;
+ }
+ EXPORT_SYMBOL(folio_redirty_for_writepage);
 -- 
 2.39.2
 
