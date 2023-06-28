@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6565C741725
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 19:26:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A950741728
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 19:27:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232105AbjF1R0K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 13:26:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43808 "EHLO
+        id S231422AbjF1R0m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 13:26:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232114AbjF1RZz (ORCPT
+        with ESMTP id S232131AbjF1RZ4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 13:25:55 -0400
+        Wed, 28 Jun 2023 13:25:56 -0400
 Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 571C31FF5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 10:25:42 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-57320c10635so519327b3.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 10:25:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B00C12102
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 10:25:44 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-5704e551e8bso462447b3.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 10:25:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1687973141; x=1690565141;
+        d=google.com; s=20221208; t=1687973144; x=1690565144;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xs/kXC7xcHrq9c07EUAAvOT83+rro6HC4rZ5AGfMFCA=;
-        b=3gplJzXJhBY6iff0MITaQg7qq1fbPjAqgCxVk48TLjKNSRk2ZVcYwl9B6ys4XThx6f
-         4IdWWG0uKl6jF+dmFqO4p08c7kHuPcS9TL5P/uGpBMbVMyrYimn/Of87aoPfQAiqOVfS
-         QMswoUkYhkicP3xt1gz73zQ8oeo8QqEbKdXFe4gLWWjmwICm2jDUAYYFk1yzdYFSabjA
-         4PyPp8TADBs4TtABQ6fFSIDwNgJWO/Lg16mBxHi80pof6pmgch5a6OE6+/Deo/nQKs6J
-         VkyihG41HS4jHC6qBw0I8NjkgWHola51sBbUKa06EMV+qVzS56YMvtCbbg1yWN2hssRp
-         kErw==
+        bh=oD5hhI9l4Jf87DrZhgC9LlLYP4fwxMSCMPLIWpUYiKs=;
+        b=MhkAySfkftL2P4BiqUnPcVvmpQvk/auH3LM7Z+ueqGc1NfLH7/HLo0jTbZXA1VBccI
+         MPcn3IPYjRbtN8+PS8/WHGstetjsvYpAjB7wiPzwBwA8WrUeLSwMo3QonXvzVRty79ZB
+         fRpfwoTvHml/EijbQiE610yUvpg+YKk8ds2myvs7Iaz02mVp+//6pTH44iU75MwgifSq
+         GqZmgUdybSD1Qfo62qK8Rt2zHT3/1u/rMj1Tj+s5rzDAYW+Y65erL0beG/ik/HH+W9b0
+         FfPThQsgjlORcaRtantGIZZAxCbaworyNXS0Ixo143Gu7hHDPB0CcHfBEhoO6N2MxhF+
+         xccg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687973141; x=1690565141;
+        d=1e100.net; s=20221208; t=1687973144; x=1690565144;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xs/kXC7xcHrq9c07EUAAvOT83+rro6HC4rZ5AGfMFCA=;
-        b=gxcuU8G7SEcDR/aKGde6lYM4yiDnWHCKrbf/21rOHSL7ABV0y2OkhDtTQUoV4YReYQ
-         kQ5vqAiK+0xZHFMEJwamXyJmXI7k49R4yrnvNW02ZYTV8RlvMKKztRy7rCnbeRD9QACj
-         mSOhd87xArAVZUYuned0ZJ8yW+mqAaBwCMlB299PhhisPwgCVvc5kYr6kSugunqKi9Ux
-         b5NG9tg8kSTjHiLoP50ieVoMV5VMgF52V2YNI4WAA7/O5Px5hVedgZwH/GwtLbCkiKAy
-         lh/l18FFxK05CeCHdmhfc5UU4ca5He4ssY6rrK/NHevQZ/wbhAsvdC2Rrgt11F2nrzBK
-         icsQ==
-X-Gm-Message-State: AC+VfDzb9jr4FAjtXlkb62B1kvQFDv0qq48n6YoWz8XQVXOBYur4RjIk
-        xy27p/OZhDeaq3UXwfgy74BmZ/juFSE=
-X-Google-Smtp-Source: ACHHUZ4DmmL1KbXoJUcLTcsqVboHZrBXg1e+ydt0kho9DvtJokDrg9K4gqv8lq1COe4UurCVTdxS896v+mk=
+        bh=oD5hhI9l4Jf87DrZhgC9LlLYP4fwxMSCMPLIWpUYiKs=;
+        b=QcSpd1RgcoQxGWd1Idl9EY/XPpikR1r7pjvBP9bqnTXmOWtxbxauQOJByKvLYK+sUf
+         Gy4bZOxm6IR5FNENsDqj6FjOiZyhB0Sl/6mceeCkB8kUDD9r1YS+A3rQFgzT9Vhtj2mc
+         flq5NOoVfW0QTlaWG85+hublrdRA6V8XElI3HwzBMF5DQ2QPyOCmOq9hNM2UWkoe+lNw
+         5UDWBwaYYqxaR+YQihU7OddGmDYR1UuWYjH+3vMrtDndJdS351JF6vNja6h5Hnj/M9qH
+         n18T/9N8dDnGNkdHuMk9Ac7fXUezfUd1fHKnPkGfDT0e/tM+7haozvBIjldA67kt/41K
+         pKtw==
+X-Gm-Message-State: AC+VfDxKAFWN33XNnHvbT/f/aXekCnZJb1LjxPnBmdUQkw48CshKFvEg
+        a0avMCrNrNjq5QPjz4eGQhpWFvZNrdI=
+X-Google-Smtp-Source: ACHHUZ4No9DOKnC41jadwjTwUmerxqhcl1cZj6cyLHnTgWAWhGX3rU1mn98pnnUeCN9J0h+uWTD8lD/fZdg=
 X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:eea3:e898:7d7a:1125])
- (user=surenb job=sendgmr) by 2002:a81:e247:0:b0:56d:502:9eb0 with SMTP id
- z7-20020a81e247000000b0056d05029eb0mr13999020ywl.6.1687973141513; Wed, 28 Jun
- 2023 10:25:41 -0700 (PDT)
-Date:   Wed, 28 Jun 2023 10:25:27 -0700
+ (user=surenb job=sendgmr) by 2002:a81:af0c:0:b0:55d:6af3:1e2c with SMTP id
+ n12-20020a81af0c000000b0055d6af31e2cmr13786933ywh.3.1687973143932; Wed, 28
+ Jun 2023 10:25:43 -0700 (PDT)
+Date:   Wed, 28 Jun 2023 10:25:28 -0700
 In-Reply-To: <20230628172529.744839-1-surenb@google.com>
 Mime-Version: 1.0
 References: <20230628172529.744839-1-surenb@google.com>
 X-Mailer: git-send-email 2.41.0.162.gfafddb0af9-goog
-Message-ID: <20230628172529.744839-5-surenb@google.com>
-Subject: [PATCH v5 4/6] mm: change folio_lock_or_retry to use vm_fault directly
+Message-ID: <20230628172529.744839-6-surenb@google.com>
+Subject: [PATCH v5 5/6] mm: handle swap page faults under per-VMA lock
 From:   Suren Baghdasaryan <surenb@google.com>
 To:     akpm@linux-foundation.org
 Cc:     willy@infradead.org, hannes@cmpxchg.org, mhocko@suse.com,
@@ -78,158 +78,142 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Change folio_lock_or_retry to accept vm_fault struct and return the
-vm_fault_t directly.
+When page fault is handled under per-VMA lock protection, all swap page
+faults are retried with mmap_lock because folio_lock_or_retry has to drop
+and reacquire mmap_lock if folio could not be immediately locked.
+Follow the same pattern as mmap_lock to drop per-VMA lock when waiting
+for folio and retrying once folio is available.
+With this obstacle removed, enable do_swap_page to operate under
+per-VMA lock protection. Drivers implementing ops->migrate_to_ram might
+still rely on mmap_lock, therefore we have to fall back to mmap_lock in
+that particular case.
+Note that the only time do_swap_page calls synchronous swap_readpage
+is when SWP_SYNCHRONOUS_IO is set, which is only set for
+QUEUE_FLAG_SYNCHRONOUS devices: brd, zram and nvdimms (both btt and
+pmem). Therefore we don't sleep in this path, and there's no need to
+drop the mmap or per-VMA lock.
 
-Suggested-by: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 Acked-by: Peter Xu <peterx@redhat.com>
 ---
- include/linux/pagemap.h |  9 ++++-----
- mm/filemap.c            | 22 ++++++++++++----------
- mm/memory.c             | 14 ++++++--------
- 3 files changed, 22 insertions(+), 23 deletions(-)
+ include/linux/mm.h | 13 +++++++++++++
+ mm/filemap.c       | 17 ++++++++---------
+ mm/memory.c        | 16 ++++++++++------
+ 3 files changed, 31 insertions(+), 15 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index a56308a9d1a4..59d070c55c97 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -896,8 +896,7 @@ static inline bool wake_page_match(struct wait_page_queue *wait_page,
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index fec149585985..bbaec479bf98 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -723,6 +723,14 @@ static inline void vma_mark_detached(struct vm_area_struct *vma, bool detached)
+ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
+ 					  unsigned long address);
  
- void __folio_lock(struct folio *folio);
- int __folio_lock_killable(struct folio *folio);
--bool __folio_lock_or_retry(struct folio *folio, struct mm_struct *mm,
--				unsigned int flags);
-+vm_fault_t __folio_lock_or_retry(struct folio *folio, struct vm_fault *vmf);
- void unlock_page(struct page *page);
- void folio_unlock(struct folio *folio);
++static inline void release_fault_lock(struct vm_fault *vmf)
++{
++	if (vmf->flags & FAULT_FLAG_VMA_LOCK)
++		vma_end_read(vmf->vma);
++	else
++		mmap_read_unlock(vmf->vma->vm_mm);
++}
++
+ #else /* CONFIG_PER_VMA_LOCK */
  
-@@ -1001,11 +1000,11 @@ static inline int folio_lock_killable(struct folio *folio)
-  * Return value and mmap_lock implications depend on flags; see
-  * __folio_lock_or_retry().
-  */
--static inline bool folio_lock_or_retry(struct folio *folio,
--		struct mm_struct *mm, unsigned int flags)
-+static inline vm_fault_t folio_lock_or_retry(struct folio *folio,
-+					     struct vm_fault *vmf)
- {
- 	might_sleep();
--	return folio_trylock(folio) || __folio_lock_or_retry(folio, mm, flags);
-+	return folio_trylock(folio) ? 0 : __folio_lock_or_retry(folio, vmf);
- }
+ static inline void vma_init_lock(struct vm_area_struct *vma) {}
+@@ -736,6 +744,11 @@ static inline void vma_assert_write_locked(struct vm_area_struct *vma) {}
+ static inline void vma_mark_detached(struct vm_area_struct *vma,
+ 				     bool detached) {}
+ 
++static inline void release_fault_lock(struct vm_fault *vmf)
++{
++	mmap_read_unlock(vmf->vma->vm_mm);
++}
++
+ #endif /* CONFIG_PER_VMA_LOCK */
  
  /*
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 00f01d8ead47..52bcf12dcdbf 100644
+index 52bcf12dcdbf..d4d8f474e0c5 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1701,32 +1701,34 @@ static int __folio_lock_async(struct folio *folio, struct wait_page_queue *wait)
- 
- /*
+@@ -1703,27 +1703,26 @@ static int __folio_lock_async(struct folio *folio, struct wait_page_queue *wait)
   * Return values:
-- * true - folio is locked; mmap_lock is still held.
-- * false - folio is not locked.
-+ * 0 - folio is locked.
-+ * VM_FAULT_RETRY - folio is not locked.
-  *     mmap_lock has been released (mmap_read_unlock(), unless flags had both
-  *     FAULT_FLAG_ALLOW_RETRY and FAULT_FLAG_RETRY_NOWAIT set, in
-  *     which case mmap_lock is still held.
+  * 0 - folio is locked.
+  * VM_FAULT_RETRY - folio is not locked.
+- *     mmap_lock has been released (mmap_read_unlock(), unless flags had both
+- *     FAULT_FLAG_ALLOW_RETRY and FAULT_FLAG_RETRY_NOWAIT set, in
+- *     which case mmap_lock is still held.
++ *     mmap_lock or per-VMA lock has been released (mmap_read_unlock() or
++ *     vma_end_read()), unless flags had both FAULT_FLAG_ALLOW_RETRY and
++ *     FAULT_FLAG_RETRY_NOWAIT set, in which case the lock is still held.
   *
-- * If neither ALLOW_RETRY nor KILLABLE are set, will always return true
-+ * If neither ALLOW_RETRY nor KILLABLE are set, will always return 0
-  * with the folio locked and the mmap_lock unperturbed.
+  * If neither ALLOW_RETRY nor KILLABLE are set, will always return 0
+- * with the folio locked and the mmap_lock unperturbed.
++ * with the folio locked and the mmap_lock/per-VMA lock is left unperturbed.
   */
--bool __folio_lock_or_retry(struct folio *folio, struct mm_struct *mm,
--			 unsigned int flags)
-+vm_fault_t __folio_lock_or_retry(struct folio *folio, struct vm_fault *vmf)
+ vm_fault_t __folio_lock_or_retry(struct folio *folio, struct vm_fault *vmf)
  {
-+	struct mm_struct *mm = vmf->vma->vm_mm;
-+	unsigned int flags = vmf->flags;
-+
+-	struct mm_struct *mm = vmf->vma->vm_mm;
+ 	unsigned int flags = vmf->flags;
+ 
  	if (fault_flag_allow_retry_first(flags)) {
  		/*
- 		 * CAUTION! In this case, mmap_lock is not released
--		 * even though return 0.
-+		 * even though return VM_FAULT_RETRY.
+-		 * CAUTION! In this case, mmap_lock is not released
+-		 * even though return VM_FAULT_RETRY.
++		 * CAUTION! In this case, mmap_lock/per-VMA lock is not
++		 * released even though returning VM_FAULT_RETRY.
  		 */
  		if (flags & FAULT_FLAG_RETRY_NOWAIT)
--			return false;
-+			return VM_FAULT_RETRY;
+ 			return VM_FAULT_RETRY;
  
- 		mmap_read_unlock(mm);
+-		mmap_read_unlock(mm);
++		release_fault_lock(vmf);
  		if (flags & FAULT_FLAG_KILLABLE)
  			folio_wait_locked_killable(folio);
  		else
- 			folio_wait_locked(folio);
--		return false;
-+		return VM_FAULT_RETRY;
- 	}
- 	if (flags & FAULT_FLAG_KILLABLE) {
- 		bool ret;
-@@ -1734,13 +1736,13 @@ bool __folio_lock_or_retry(struct folio *folio, struct mm_struct *mm,
+@@ -1735,7 +1734,7 @@ vm_fault_t __folio_lock_or_retry(struct folio *folio, struct vm_fault *vmf)
+ 
  		ret = __folio_lock_killable(folio);
  		if (ret) {
- 			mmap_read_unlock(mm);
--			return false;
-+			return VM_FAULT_RETRY;
+-			mmap_read_unlock(mm);
++			release_fault_lock(vmf);
+ 			return VM_FAULT_RETRY;
  		}
  	} else {
- 		__folio_lock(folio);
- 	}
- 
--	return true;
-+	return 0;
- }
- 
- /**
 diff --git a/mm/memory.c b/mm/memory.c
-index f14d45957b83..345080052003 100644
+index 345080052003..4fb8ecfc6d13 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -3568,6 +3568,7 @@ static vm_fault_t remove_device_exclusive_entry(struct vm_fault *vmf)
- 	struct folio *folio = page_folio(vmf->page);
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct mmu_notifier_range range;
-+	vm_fault_t ret;
+@@ -3712,12 +3712,6 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 	if (!pte_unmap_same(vmf))
+ 		goto out;
  
- 	/*
- 	 * We need a reference to lock the folio because we don't hold
-@@ -3580,9 +3581,10 @@ static vm_fault_t remove_device_exclusive_entry(struct vm_fault *vmf)
- 	if (!folio_try_get(folio))
- 		return 0;
- 
--	if (!folio_lock_or_retry(folio, vma->vm_mm, vmf->flags)) {
-+	ret = folio_lock_or_retry(folio, vmf);
-+	if (ret) {
- 		folio_put(folio);
--		return VM_FAULT_RETRY;
-+		return ret;
- 	}
- 	mmu_notifier_range_init_owner(&range, MMU_NOTIFY_EXCLUSIVE, 0,
- 				vma->vm_mm, vmf->address & PAGE_MASK,
-@@ -3704,7 +3706,6 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 	bool exclusive = false;
- 	swp_entry_t entry;
- 	pte_t pte;
--	int locked;
- 	vm_fault_t ret = 0;
- 	void *shadow = NULL;
- 
-@@ -3826,12 +3827,9 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 		goto out_release;
- 	}
- 
--	locked = folio_lock_or_retry(folio, vma->vm_mm, vmf->flags);
--
--	if (!locked) {
--		ret |= VM_FAULT_RETRY;
-+	ret |= folio_lock_or_retry(folio, vmf);
-+	if (ret & VM_FAULT_RETRY)
- 		goto out_release;
+-	if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
+-		ret = VM_FAULT_RETRY;
+-		vma_end_read(vma);
+-		goto out;
 -	}
- 
- 	if (swapcache) {
- 		/*
+-
+ 	entry = pte_to_swp_entry(vmf->orig_pte);
+ 	if (unlikely(non_swap_entry(entry))) {
+ 		if (is_migration_entry(entry)) {
+@@ -3727,6 +3721,16 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 			vmf->page = pfn_swap_entry_to_page(entry);
+ 			ret = remove_device_exclusive_entry(vmf);
+ 		} else if (is_device_private_entry(entry)) {
++			if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
++				/*
++				 * migrate_to_ram is not yet ready to operate
++				 * under VMA lock.
++				 */
++				vma_end_read(vma);
++				ret = VM_FAULT_RETRY;
++				goto out;
++			}
++
+ 			vmf->page = pfn_swap_entry_to_page(entry);
+ 			vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
+ 					vmf->address, &vmf->ptl);
 -- 
 2.41.0.162.gfafddb0af9-goog
 
