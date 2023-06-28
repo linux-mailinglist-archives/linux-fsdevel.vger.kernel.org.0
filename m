@@ -2,171 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 192D4741BC9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 00:41:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C203741C03
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 00:55:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230315AbjF1Wlq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 18:41:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46758 "EHLO
+        id S230519AbjF1Wzq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 18:55:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbjF1Wli (ORCPT
+        with ESMTP id S231497AbjF1Wzn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 18:41:38 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D56A8271B
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 15:41:32 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id 98e67ed59e1d1-262e04a6f66so43434a91.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 15:41:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1687992092; x=1690584092;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xLXUl2Tk0+P6DRD+I41VSis+LbcCFfMCosnmOvt+AFQ=;
-        b=BjOxi0YKXWP6xbtMC4KqXMsjQXant5uSjCSys7eCT3rBvFh1C7uDBUqM67RzMdsC5J
-         blTYSX15XpEef2iRiEobTv+4Bj+Nbq/Fy+KtEUn97fpXHIlF9qmECWomjtriQspvRt3T
-         F0+9qSXfYzvmPMKOTbI1ptpMSgoK5HLs2jnnOQ7WAL4evI9SL0HHsA2pOEHgAhsHDlGD
-         WJvBMK6jjmdq5ZXSHFFzo6N7BKDUmiV/I2iXGwEDO6qSc9ri2I9QyWqMRnV1IBnhVFHV
-         0EJAPf2ZG1ZiC/6blZ3D5sjNmUNXkQM4ufqkTmEnQwnatUfvajmj4AjalcVT/bSJWet3
-         82mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687992092; x=1690584092;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xLXUl2Tk0+P6DRD+I41VSis+LbcCFfMCosnmOvt+AFQ=;
-        b=M/g1lyAn/J8widxWTizTJrtn6t/fgbV9rZCVNT59XomMH5VpIY3HN32iK03gkAJneV
-         55QZBKWjzFsrAGPd3M4OfKjhebOjlNFKvEUAlNBluz3y2Lbl3BVK4VLy1KahpiLo7JXt
-         7P4YefCYSwCTbX//MJlPPELjWVIS3RNpCIxqZAtXes97sJZbhX6n2+UBoytpf7GwFScA
-         +5TGNfPwjJOnI/bKtLKOXjHH8ozY/vlgA2i/evliVcqDxcXSJHcIgEDRh7QOdS/edLE8
-         CjxXmT47hz62zjvBMab0fu9WlMZ3MajfxWeRBkv1gbUDOqjkfWmKZQHwjfZ+lEbgJFWf
-         oWZQ==
-X-Gm-Message-State: AC+VfDwm8JnmFtE3rNDaFfxyXZS6T3tu4KAkCU7Nb9EXKg3yr3GHsMwS
-        tfY91n1FMJFscOaKznKdEi8+Pw==
-X-Google-Smtp-Source: ACHHUZ7tOUKSmzmwCQwlobHgf6cBQy3Jl13bsk3DWngxyvHraXdF5J+s+D9fyVAIQ2FaD9EF7RG5rw==
-X-Received: by 2002:a17:90a:c685:b0:262:ecd9:ed09 with SMTP id n5-20020a17090ac68500b00262ecd9ed09mr7829994pjt.33.1687992092277;
-        Wed, 28 Jun 2023 15:41:32 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-94-37.pa.vic.optusnet.com.au. [49.186.94.37])
-        by smtp.gmail.com with ESMTPSA id co21-20020a17090afe9500b00262dbf8648esm7014384pjb.34.2023.06.28.15.41.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jun 2023 15:41:31 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qEdqr-00HOhv-0A;
-        Thu, 29 Jun 2023 08:41:29 +1000
-Date:   Thu, 29 Jun 2023 08:41:29 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Matt Whitlock <kernel@mattwhitlock.name>,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [Reproducer] Corruption, possible race between splice and
- FALLOC_FL_PUNCH_HOLE
-Message-ID: <ZJy3GdhU8LOabvoC@dread.disaster.area>
-References: <ZJvsJJKMPyM77vPv@dread.disaster.area>
- <ZJq6nJBoX1m6Po9+@casper.infradead.org>
- <ec804f26-fa76-4fbe-9b1c-8fbbd829b735@mattwhitlock.name>
- <ZJp4Df8MnU8F3XAt@dread.disaster.area>
- <3299543.1687933850@warthog.procyon.org.uk>
- <3388728.1687944804@warthog.procyon.org.uk>
+        Wed, 28 Jun 2023 18:55:43 -0400
+Received: from out-15.mta0.migadu.com (out-15.mta0.migadu.com [91.218.175.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 269A7273B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 15:55:28 -0700 (PDT)
+Date:   Wed, 28 Jun 2023 18:55:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1687992926;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NC7io3hJiGazy/1nLRyLYY/aZGU1OCwphLLIBbRfFVc=;
+        b=u44xIlYolPHdvyZbmi/QCzn6vZPbW5FX79/HnVCpNxVXIKZiP2IR1cDolNo/S9hCb9fpLo
+        g3uwlLoc3p7WAk/kI+JJj3gOL9BJVGuHBBfLks+T8IxjbiXUKVfH8na30X+R+dwPSSx5za
+        viuWG+OpYuc9LGzRgkPkz9lUHGnKIVM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [GIT PULL] bcachefs
+Message-ID: <20230628225514.n3xtlgmjkgapgnrd@moria.home.lan>
+References: <20230627201524.ool73bps2lre2tsz@moria.home.lan>
+ <c06a9e0b-8f3e-4e47-53d0-b4854a98cc44@kernel.dk>
+ <20230628040114.oz46icbsjpa4egpp@moria.home.lan>
+ <b02657af-5bbb-b46b-cea0-ee89f385f3c1@kernel.dk>
+ <4b863e62-4406-53e4-f96a-f4d1daf098ab@kernel.dk>
+ <20230628175204.oeek4nnqx7ltlqmg@moria.home.lan>
+ <e1570c46-68da-22b7-5322-f34f3c2958d9@kernel.dk>
+ <2e635579-37ba-ddfc-a2ab-e6c080ab4971@kernel.dk>
+ <20230628221342.4j3gr3zscnsu366p@moria.home.lan>
+ <d697ec27-8008-2eb6-0950-f612a602dcf5@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3388728.1687944804@warthog.procyon.org.uk>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <d697ec27-8008-2eb6-0950-f612a602dcf5@kernel.dk>
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 28, 2023 at 10:33:24AM +0100, David Howells wrote:
-> Dave Chinner <david@fromorbit.com> wrote:
-> 
-> > On Wed, Jun 28, 2023 at 07:30:50AM +0100, David Howells wrote:
-> > > Matthew Wilcox <willy@infradead.org> wrote:
-> > > > > > Expected behavior:
-> > > > > > Punching holes in a file after splicing pages out of that file into
-> > > > > > a pipe should not corrupt the spliced-out pages in the pipe buffer.
-> > > 
-> > > I think this bit is the key.  Why would this be the expected behaviour?
-> > > As you say, splice is allowed to stuff parts of the pagecache into a pipe
-> > > and these may get transferred, say, to a network card at the end to
-> > > transmit directly from.  It's a form of direct I/O.
-> 
-> Actually, it's a form of zerocopy, not direct I/O.
-> 
-> > > If someone has the pages mmapped, they can change the data that will be
-> > > transmitted; if someone does a write(), they can change that data too.
-> > > The point of splice is to avoid the copy - but it comes with a tradeoff.
+On Wed, Jun 28, 2023 at 04:33:55PM -0600, Jens Axboe wrote:
+> On 6/28/23 4:13?PM, Kent Overstreet wrote:
+> > On Wed, Jun 28, 2023 at 03:17:43PM -0600, Jens Axboe wrote:
+> >> Case in point, just changed my reproducer to use aio instead of
+> >> io_uring. Here's the full script:
+> >>
+> >> #!/bin/bash
+> >>
+> >> DEV=/dev/nvme1n1
+> >> MNT=/data
+> >> ITER=0
+> >>
+> >> while true; do
+> >> 	echo loop $ITER
+> >> 	sudo mount $DEV $MNT
+> >> 	fio --name=test --ioengine=aio --iodepth=2 --filename=$MNT/foo --size=1g --buffered=1 --overwrite=0 --numjobs=12 --minimal --rw=randread --output=/dev/null &
+> >> 	Y=$(($RANDOM % 3))
+> >> 	X=$(($RANDOM % 10))
+> >> 	VAL="$Y.$X"
+> >> 	sleep $VAL
+> >> 	ps -e | grep fio > /dev/null 2>&1
+> >> 	while [ $? -eq 0 ]; do
+> >> 		killall -9 fio > /dev/null 2>&1
+> >> 		echo will wait
+> >> 		wait > /dev/null 2>&1
+> >> 		echo done waiting
+> >> 		ps -e | grep "fio " > /dev/null 2>&1
+> >> 	done
+> >> 	sudo umount /data
+> >> 	if [ $? -ne 0 ]; then
+> >> 		break
+> >> 	fi
+> >> 	((ITER++))
+> >> done
+> >>
+> >> and if I run that, fails on the first umount attempt in that loop:
+> >>
+> >> axboe@m1max-kvm ~> bash test2.sh
+> >> loop 0
+> >> will wait
+> >> done waiting
+> >> umount: /data: target is busy.
+> >>
+> >> So yeah, this is _nothing_ new. I really don't think trying to address
+> >> this in the kernel is the right approach, it'd be a lot saner to harden
+> >> the xfstest side to deal with the umount a bit more sanely. There are
+> >> obviously tons of other ways that a mount could get pinned, which isn't
+> >> too relevant here since the bdev and mount point are basically exclusive
+> >> to the test being run. But the kill and delayed fput is enough to make
+> >> that case imho.
 > > 
-> > I wouldn't call "post-splice filesystem modifications randomly
-> > corrupts pipe data" a tradeoff. I call that a bug.
+> > Uh, count me very much not in favor of hacking around bugs elsewhere.
+> > 
+> > Al, do you know if this has been considered before? We've got fput()
+> > being called from aio completion, which often runs out of a worqueue (if
+> > not a workqueue, a bottom half of some sort - what happens then, I
+> > wonder) - so the effect is that it goes on the global list, not the task
+> > work list.
+> > 
+> > hence, kill -9ing a process doing aio (or io_uring io, for extra
+> > reasons) causes umount to fail with -EBUSY.
+> > 
+> > and since there's no mechanism for userspace to deal with this besides
+> > sleep and retry, this seems pretty gross.
 > 
-> Would you consider it a kernel bug, then, if you use sendmsg(MSG_ZEROCOPY) to
-> send some data from a file mmapping that some other userspace then corrupts by
-> altering the file before the kernel has managed to send it?
+> But there is, as Christian outlined. I would not call it pretty or
+> intuitive, but you can in fact make it work just fine and not just for
+> the deferred fput() case but also in the presence of other kinds of
+> pins. Of which there are of course many.
 
-Yes.
+No, because as I explained that just defers the race until when you next
+try to use the device, since with lazy umount the device will still be
+use when umount returns.
 
-We had this exact discussion a few months ago w.r.t. OTW checksums
-being invalid because data was changing mid-checksum.
+What you'd want is a lazy, synchronous umount, and AFAIK that doesn't
+exist.
 
-I consider that a bug, and in most cases this is avoided by the
-hardware checksum offloads. i.e. the checksum doesn't occur until
-after the data is DMAd to the hardware out of the referenced page
-so it is immune to tearing caused by 3rd party access to the data.
-
-That doesn't mean the data being delivered is valid or correct;
-fundamentally this is a use-after-free situation.
-
-> Anyway, if you think the splice thing is a bug, we have to fix splice from a
-> buffered file that is shared-writably mmapped as well as fixing
-> fallocate()-driven mangling.  There are a number of options:
+> > I'd be willing to tackle this for aio since I know that code...
 > 
->  (0) Document the bug as a feature: "If this is a problem, don't use splice".
-
-That's the primary issue right now - the behaviour is not documented
-anywhere.
-
+> But it's not aio (or io_uring or whatever), it's simply the fact that
+> doing an fput() from an exiting task (for example) will end up being
+> done async. And hence waiting for task exits is NOT enough to ensure
+> that all file references have been released.
 > 
->  (1) Always copy the data into the pipe.
+> Since there are a variety of other reasons why a mount may be pinned and
+> fail to umount, perhaps it's worth considering that changing this
+> behavior won't buy us that much. Especially since it's been around for
+> more than 10 years:
 
-We always copy non-pipe data. Only pipes are considered special
-here...
+Because it seems that before io_uring the race was quite a bit harder to
+hit - I only started seeing it when things started switching over to
+io_uring. generic/388 used to pass reliably for me (pre backpointers),
+now it doesn't.
 
->  (2) Always unmap and steal the pages from the pagecache, copying if we can't.
+> commit 4a9d4b024a3102fc083c925c242d98ac27b1c5f6
+> Author: Al Viro <viro@zeniv.linux.org.uk>
+> Date:   Sun Jun 24 09:56:45 2012 +0400
+> 
+>     switch fput to task_work_add
+> 
+> though that commit message goes on to read:
+> 
+>     We are guaranteed that __fput() will be done before we return
+>     to userland (or exit).  Note that for fput() from a kernel
+>     thread we get an async behaviour; it's almost always OK, but
+>     sometimes you might need to have __fput() completed before
+>     you do anything else.  There are two mechanisms for that -
+>     a general barrier (flush_delayed_fput()) and explicit
+>     __fput_sync().  Both should be used with care (as was the
+>     case for fput() from kernel threads all along).  See comments
+>     in fs/file_table.c for details.
+> 
+> where that first sentence isn't true if the task is indeed exiting. I
+> guess you can say that it is as it doesn't return to userland, but
+> splitting hairs. Though the commit in question doesn't seem to handle
+> that case, but assuming that came in with a later fixup.
+> 
+> It is true if the task_work gets added, as that will get run before
+> returning to userspace.
 
-That's effectively the definition of SPLICE_F_GIFT behaviour, yes?
+Yes, AIO seems to very much be the exceptional case that wasn't
+originally considered.
 
->  (3) R/O-protect any PTEs mapping those pages and implement CoW.
+> If a case were to be made that we also guarantee that fput has been done
+> by the time to task returns to userspace, or exits,
 
-Another mechanism for stable pages, but can we do CoW for kernel
-only mappings easily?
+And that does seem to be the intent of the original code, no?
 
->  (4) Disallow splice() from any region that's mmapped, disallow mmap() on or
->      make page_mkwrite wait for any region that's currently spliced.  Disallow
->      fallocate() on or make fallocate() wait for any pages that are spliced.
+> then we'd probably want to move that deferred fput list to the
+> task_struct and ensure that it gets run if the task exits rather than
+> have a global deferred list. Currently we have:
+>
+> 
+> 1) If kthread or in interrupt
+> 	1a) add to global fput list
+> 2) task_work_add if not. If that fails, goto 1a.
+> 
+> which would then become:
+> 
+> 1) If kthread or in interrupt
+> 	1a) add to global fput list
+> 2) task_work_add if not. If that fails, we know task is existing. add to
+>    per-task defer list to be run at a convenient time before task has
+>    exited.
 
-fallocate() is already protected against splice(2) operations via
-exclusive i_rwsem, mapping->invalidate_lock, DIO drains and internal
-filesystem locking.
-
-The problem is that splicing to a pipe hands page cache pages to a
-pipe that is not under the control (or is even visible) to the
-filesystem, so the filesystem can do *nothing* to serialise against
-these anonymous references that the pipe holds to page caceh pages.
-
-So the filesystem would require a page/folio based synchronisation
-mechanism, kinda like writeback and stable pages, and we'd have to
-issue that wait everywhere we currently have a folio_wait_stable()
-IO barrier. fallocate() would also need this, too.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+no, it becomes:
+ if we're running in a user task, or if we're doing an operation on
+ behalf of a user task, add to the user task's deferred list: otherwise
+ add to global deferred list.
