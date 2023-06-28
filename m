@@ -2,133 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B58217407D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 03:54:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1431C7407E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 03:58:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231175AbjF1By1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Jun 2023 21:54:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54288 "EHLO
+        id S229718AbjF1B60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Jun 2023 21:58:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229645AbjF1By0 (ORCPT
+        with ESMTP id S231217AbjF1B6Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Jun 2023 21:54:26 -0400
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A763C2111;
-        Tue, 27 Jun 2023 18:54:25 -0700 (PDT)
-Received: by mail-qk1-x72c.google.com with SMTP id af79cd13be357-7659924cd9bso346533485a.1;
-        Tue, 27 Jun 2023 18:54:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687917264; x=1690509264;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n0MVrDy8BC1VnZ5USZJqaLNtQbygF6zhnK+O+s/tz1M=;
-        b=beLe2IAe4ALEHVCEEp7ti+HifRhB8JISUuJR9mQdDKWrXu5q3NdZp/3y8FFgQ6OJ5S
-         9zw4gEyWvSBxuHFa/Y1NWrl5X7jNGm26hGrFPd/CIhHAyPbQ4ez+yCftSlcgeSb3u6WF
-         ad1Fke/gZaSQMKlPp0aF94UkmQQ46pNryDbJHp9j65OhZABBYya/irPIaXZLKypIz7u+
-         jEfYUvOKj9Z4+Xc9WHXvPjOqnyi548hx7+xtZOwt6zI2gu15Co3LWtf6+JaiSB/sihYv
-         6OlP2q4YXv7QceFk8f34cqIV/0Alxx3wGXIoO8v6tuT+rEjXx47++djXJdixE91aMI3K
-         /gPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687917264; x=1690509264;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n0MVrDy8BC1VnZ5USZJqaLNtQbygF6zhnK+O+s/tz1M=;
-        b=hhVZulAy2y7TqK2S35jYJcwz1LbOXLvQrcHXElmH/35PNWLFm0q9dnVUZYxDebTVzJ
-         T5ySzOZnYHTN1uz2+xyoThigtQpk5fxuyxnGr/ZOGF22Gdke19KBK0Xq6aJgcU/ayqej
-         MC5jqcukTmqTDbs/3QuXUx0j7ErC+HXmoJsUkLqDIIGTz1L15oN+h5FRtAq+0dgf9q0q
-         dstm80iwBAcemTU5G7TdvRnUvu19fFxt7+f+oCJT3Il/OGLQH9ltifBEANP+q4rik2+b
-         TJHMCyFt62kSWSjv23MY4EZrJ1LPN4DtZ07Zdam49dWBOiqqxI9lfUfBuZPnmKbAC4cA
-         Erlw==
-X-Gm-Message-State: AC+VfDx7nVQEt0oeWWDM6xQAtp0dTatMUGypdkU/Jsxcts1u39eEfraA
-        kXHUIdXl4/9kxkW1SjmjA6M=
-X-Google-Smtp-Source: ACHHUZ79PaTAOc3M6mEP9l5t4Nqqa/QEhBY2ElF3wMjvkTp9RnxeVB4wcdrrl4Ro+sP/Ix7FUX4zdw==
-X-Received: by 2002:a05:620a:4549:b0:763:b4d7:51c1 with SMTP id u9-20020a05620a454900b00763b4d751c1mr35357500qkp.50.1687917264455;
-        Tue, 27 Jun 2023 18:54:24 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:400::5:311b])
-        by smtp.gmail.com with ESMTPSA id 8-20020a17090a004800b00262af345953sm8490764pjb.4.2023.06.27.18.54.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jun 2023 18:54:23 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Tue, 27 Jun 2023 15:54:22 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     Christian Brauner <brauner@kernel.org>, gregkh@linuxfoundation.org,
-        peterz@infradead.org, lujialin4@huawei.com,
-        lizefan.x@bytedance.com, hannes@cmpxchg.org, mingo@redhat.com,
-        ebiggers@kernel.org, oleg@redhat.com, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 1/2] kernfs: add kernfs_ops.free operation to free
- resources tied to the file
-Message-ID: <ZJuSzlHfbLj3OjvM@slm.duckdns.org>
-References: <20230626201713.1204982-1-surenb@google.com>
- <ZJn1tQDgfmcE7mNG@slm.duckdns.org>
- <20230627-kanon-hievt-bfdb583ddaa6@brauner>
- <CAJuCfpECKqYiekDK6Zw58w10n1T4Q3R+2nymfHX2ZGfQVDC3VQ@mail.gmail.com>
- <20230627-ausgaben-brauhaus-a33e292558d8@brauner>
- <ZJstlHU4Y3ZtiWJe@slm.duckdns.org>
- <CAJuCfpFUrPGVSnZ9+CmMz31GjRNN+tNf6nUmiCgx0Cs5ygD64A@mail.gmail.com>
- <CAJuCfpFe2OdBjZkwHW5UCFUbnQh7hbNeqs7B99PXMXdFNjKb5Q@mail.gmail.com>
- <CAJuCfpG2_trH2DuudX_E0CWfMxyTKfPWqJU14zjVxpTk6kPiWQ@mail.gmail.com>
+        Tue, 27 Jun 2023 21:58:25 -0400
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2108.outbound.protection.outlook.com [40.107.117.108])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D9C8DA;
+        Tue, 27 Jun 2023 18:58:23 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Y8Nj1OIsropm4MECdLXeBaIsDaMXxOlZAxIqgbqk9lS9t5xrct4mhHodoTKVVjQiZG0XHnyLjlxlqgIbMZuXQn7UWhzGAvWXgV4CRCHXJA6PlVE2ZkaRkmxzoziQ3XNqreMQwksrwuCQUayETyfnhFVXKDaBS2XSv7I8hVbOa3KNURsQ6Nz1QDncuZql9iuV2/3A0TnTrwQZSH0Bx0HIcuvfmk7j40vlqYVFEa5wXz4XcP2P/yMe97kmSEJ4BAo0dAlGGMEiPQGsYRzsr0FHZUmr1ajSyYuUeI4vEaIQc9C59e6wnetK99hgi6BniT0aGKprLk2hdlpiCtRpBvSwbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zzsK2C7yTU8Ti6IoXo8eyCzEtGIyWD0f4lV7mru94wI=;
+ b=nXkXAEcPGKO3p6qJJF1u3AewadcisaFBg/NlANI08zFbTa4Yu2MsA6IU876WDbPp4Cnt1ThdqdIcF6IRBgPjCkohMOVah0WOp8qLCh7+wMuUJP9YfXZm7a9XBvZkE8nl6j99+8NoAmXcndD+9E44cGlabIt9rcrCzfO2vqWMVHMR+eJ16v6RmPbUMcUmB7j99z8OpJebMXfj0xW4gKRS8gW7dbk6u12agW/n4KrTFneVfoXeikOYbKrEDmIvNX31gvGw7QEu7SfutHaK6+tY+QiHl3CQwHTyB+4nwWEeok716/Qf44QCgvwM1TetTv9kiCLq5XQkSHALy2yZPxN0Iw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zzsK2C7yTU8Ti6IoXo8eyCzEtGIyWD0f4lV7mru94wI=;
+ b=UAIc4xuhLSLOkHpiVnH9JlWkrb917kfDRLDqtHrUdioJ62PSycQj0qG+fM1tfz+nS+7DUwcE6kZZlxKpWt/i9SgViylogBiTfdb7gSAp4nb4TLyuXYVWuEnfWIsj2PPYdfXRim5tiIbJdpMdlqfJOBlbnwSeFc05gMtJdJBxizM+bXE0506KpGEH8dy4vOOKnDEtsXjClu8Gh1GGx27Cxb+8REw58Ckcz9wKAcwmGPi3JdjT38yAgRD9bnAhcZkakRYQMCv42qDUt6aFW4Tx9TPj43TPmox53mwEbBdPBavnDRCeEj1GnOQ86DEe64lHox/n5r943pBWOybpwkHNfw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB6697.apcprd06.prod.outlook.com (2603:1096:400:451::6)
+ by PSAPR06MB4518.apcprd06.prod.outlook.com (2603:1096:301:89::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.26; Wed, 28 Jun
+ 2023 01:58:15 +0000
+Received: from TYZPR06MB6697.apcprd06.prod.outlook.com
+ ([fe80::f652:a96b:482:409e]) by TYZPR06MB6697.apcprd06.prod.outlook.com
+ ([fe80::f652:a96b:482:409e%6]) with mapi id 15.20.6521.023; Wed, 28 Jun 2023
+ 01:58:15 +0000
+From:   Lu Hongfei <luhongfei@vivo.com>
+To:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     opensource.kernel@vivo.com, luhongfei@vivo.com
+Subject: [PATCH v2] fs: iomap: Change the type of blocksize from 'int' to 'unsigned int' in iomap_file_buffered_write_punch_delalloc
+Date:   Wed, 28 Jun 2023 09:58:03 +0800
+Message-Id: <20230628015803.58517-1-luhongfei@vivo.com>
+X-Mailer: git-send-email 2.39.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0149.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::29) To TYZPR06MB6697.apcprd06.prod.outlook.com
+ (2603:1096:400:451::6)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJuCfpG2_trH2DuudX_E0CWfMxyTKfPWqJU14zjVxpTk6kPiWQ@mail.gmail.com>
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB6697:EE_|PSAPR06MB4518:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7fb26ad7-479a-4cb8-b42f-08db777b230b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: /AuG6m1OuATbWRyF2Vr2qqFTLbN4BOvz+r9yoY7l9PE39NQcOS3xAuIsPkIFwKRAc6XhITjjkaQZi4sgXbejTUC6JiWZ2YaJV5mY93vZQfxoM4URGLmPkO1EDpN8TBeLY/plOBaRFH8gIbqRHca+ci54ehhnpm3C3eHzXKmcFVUvAKiaZw9c0FRSk6w7fmJevtwJTyk/YfM1zAlpwha15Cu3MEQvnh4ZA38khoSJAJHL2Erxw1htp6Nf7cni17XB8ZKc/ueA5EA9j4LDss3jWRH82u6sqnTduyGJZdgKk4JVeP/8x+F9/aGmyUPtpcfxnnVlUPbcy3AI2dLzjLJahWaRtlUdhh0rgIyOyxF1C0RWONqDDKOrY1BcmIbSPHSWf27w2GTCEcc/JAq781f65G+5or43TKXBmbD3UimJ9sWvFnks+7y+S/Z5iXLjckRQK1vvhDVr1olysM/WtDDQMOu5kdpem25sTBgSRRQHMT3AK10/tsgOa5tlU+c8AuWuCBe6c0mrFsP04KwOjFc1Wp3+j0PQkM4VVfUCqnHXAQq4FqGWyKLszQkRAsuxPh5Cw6N5bVvF4+AGaCDdHZJ0WmhdyaPeHlcxmuHkHKceVt9AFRYbOxFl5R6pcpGsf1XX
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6697.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39850400004)(346002)(396003)(376002)(366004)(136003)(451199021)(107886003)(6486002)(2616005)(83380400001)(110136005)(6666004)(52116002)(1076003)(4744005)(6512007)(186003)(6506007)(26005)(2906002)(478600001)(36756003)(5660300002)(38350700002)(316002)(4326008)(66946007)(38100700002)(8936002)(41300700001)(8676002)(66476007)(86362001)(66556008);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?WzgtLJhMJQZ5OiPiSpI5O+TH6t7XQuovep9axev6NtLRWVfv8mX9E+jBNK5P?=
+ =?us-ascii?Q?BXD2rnJoqPdGQJRYqkz0w0NY9izpiSIK+C0pY+QGXEUAeeW/Ej1UOvxyeTZA?=
+ =?us-ascii?Q?Vil5TQDXd3rhMiD6MSHZrJenFihKJxWkbvxpc2pgPt3YRRN4iTH0BYVio79g?=
+ =?us-ascii?Q?2UV85jP5oUVR+t+CcpkcrUuIOv2ik8MLIEGeq7zepuS/Xafy0APMaxaUgG2k?=
+ =?us-ascii?Q?OSv6H3DSrd7GyG7ssh2unXiG0r4clD6FQLumio/oQ9vdh9FZP/0LlTXX02jv?=
+ =?us-ascii?Q?3Dx07+Z+LC+7+LugYCjORuFrtpcEr7F9wc9nKdoX4qX2HgEL5JfXuPuOzaGq?=
+ =?us-ascii?Q?j09otrJ6HCav6LuKqaw5P1mB7fm9f5+58lMvfklYiYtUDW6+kllpB1EKRFC3?=
+ =?us-ascii?Q?bteP2/8fsLBANmJS84rFe1+gaRMgt4o3l93c+bPOiUFJJ1QTA5lwN3myVUj3?=
+ =?us-ascii?Q?ziT4SXOx+zIFcCrbgm833uCdyqRspozQZvXaFJvugTmq0thztaY6hgsHiIGl?=
+ =?us-ascii?Q?IrwcrA8xyuMgr6yfrWXJiAVgjy2vC8g/gv01Sc63nBydqoivUza16OCgv7O4?=
+ =?us-ascii?Q?RClgOmIhr6zd0E5vZ8rH8vb6qmsm+qxM2F0kZU8OJFqnerNuHcD7m/s/qm19?=
+ =?us-ascii?Q?lR2cJvPz0EhXwkNST448183gDHUqDSo+W3CNFa0dE0WGLCjjFrA2S5tO6gb2?=
+ =?us-ascii?Q?/mwhkgfq9ZKcG9o+++cNrW8nQFK9dmc8jXHzQb5Qmm6+hC19oy3WuEh6UyUl?=
+ =?us-ascii?Q?AXNYIe9sbH+TPl3WhuSQcdiFoWYDD+1XIt2gnYCENyhGUkY2aZghMHuPqCRQ?=
+ =?us-ascii?Q?vBb0LWwe8LrFcA9cI73AVWDMMV23E0W8i3OjovvAtAGF92mVNDz03qs+DxKi?=
+ =?us-ascii?Q?iNf1BsglaudY66nCX+nafwi/lq5ayMPpkbaaDKk/ck6wnutGHl9yOMzjslWc?=
+ =?us-ascii?Q?tetBEY7niMoW4uwABGdGa5G+hDqc8FG7kHXNc6qBteavE/sqEB5cAvczRLku?=
+ =?us-ascii?Q?EVWJ6O69SJKHVzZB14FhLqyqyfj35uLNcGoB/jELm77uIU6KafX1kW6/ndUc?=
+ =?us-ascii?Q?jErtexcCralFMcNnGP9DbDaiFXs7IZLDyFWumHEKkdgdvQBvbQo1bUOOoA3B?=
+ =?us-ascii?Q?yXeMjNREZmIcblY1COY21fxXOLiylyf+EWh0r3ShoVI0UsHNm35ZZAuh5WaJ?=
+ =?us-ascii?Q?yjj3DoZWvKYJu2Go8IY3f3a3FQPQ1VEjpV9P0/YcpiPudRQM/Tt6zskSr7lE?=
+ =?us-ascii?Q?u7Xv6lko5dOv7t2zAE1B/RuxsE64PXemMJg6bebzLNiMUG3LTZj7FcYxvFzx?=
+ =?us-ascii?Q?zH9W+4NuoxrrStQgepPR0CenyTByTrbHa9/JlieR3G/Mk9DaJyBFEI0f5b4W?=
+ =?us-ascii?Q?HPccbtZrvJxwPb+3fF4Wn8njCPjk9wgWUH104Uta6XIQBobmuhBnlEHpOrdp?=
+ =?us-ascii?Q?s86fPmORE5xo68cnI05cTwwJnz+VbBFn1aF4cXsn8/x8XKb0fycYy3Q1fky2?=
+ =?us-ascii?Q?9SMBHHN+De4bisf+qCatO/6mxaxQrWOHXDxZSK/0TDBtPimgTCHO3//s7JAd?=
+ =?us-ascii?Q?+RBejTjcobg27hQdZ0fYAPrUYKcYdNhj5qVb3VmJ?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7fb26ad7-479a-4cb8-b42f-08db777b230b
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6697.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2023 01:58:15.7628
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ASBtTFLuKElU7klo+17UVzOEEIGeycB91udGxujPajTFzfqPBB3vjz6xM12Ozd61ZqRDHt1ZFvXFebMRNp0iEw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PSAPR06MB4518
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+The return value type of i_blocksize() is 'unsigned int', so the
+type of blocksize has been modified from 'int' to 'unsigned int'
+to ensure data type consistency.
 
-On Tue, Jun 27, 2023 at 02:58:08PM -0700, Suren Baghdasaryan wrote:
-> Ok in kernfs_generic_poll() we are using kernfs_open_node.poll
-> waitqueue head for polling and kernfs_open_node is freed from inside
-> kernfs_unlink_open_file() which is called from kernfs_fop_release().
-> So, it is destroyed only when the last fput() is done, unlike the
-> ops->release() operation which we are using for destroying PSI
-> trigger's waitqueue. So, it seems we still need an operation which
-> would indicate that the file is truly going away.
+Signed-off-by: Lu Hongfei <luhongfei@vivo.com>
+---
+The modifications made compared to the previous version are as follows:
+1. Keep the alignment of the variable names.
 
-If we want to stay consistent with how kernfs behaves w.r.t. severing, the
-right thing to do would be preventing any future polling at severing and
-waking up everyone currently waiting, which sounds fine from cgroup behavior
-POV too.
+ fs/iomap/buffered-io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Now, the challenge is designing an interface which is difficult to make
-mistake with. IOW, it'd be great if kernfs wraps poll call so that severing
-is implemented without kernfs users doing anything, or at least make it
-pretty obvious what the correct usage pattern is.
-
-> Christian's suggestion to rename current ops->release() operation into
-> ops->drain() (or ops->flush() per Matthew's request) and introduce a
-> "new" ops->release() which is called only when the last fput() is done
-> seems sane to me. Would everyone be happy with that approach?
-
-I'm not sure I'd go there. The contract is that once ->release() is called,
-the code backing that file can go away (e.g. rmmod'd). It really should
-behave just like the last put from kernfs users' POV. For this specific fix,
-it's safe because we know the ops is always built into the kernel and won't
-go away but it'd be really bad if the interface says "this is a normal thing
-to do". We'd be calling into rmmod'd text pages in no time.
-
-So, I mean, even for temporary fix, we have to make it abundantly clear that
-this is not for usual usage and can only be used if the code backing the ops
-is built into the kernel and so on.
-
-Thanks.
-
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index a4fa81af60d9..37e3daeffc0a 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1076,7 +1076,7 @@ int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
+ {
+ 	loff_t			start_byte;
+ 	loff_t			end_byte;
+-	int			blocksize = i_blocksize(inode);
++	unsigned int		blocksize = i_blocksize(inode);
+ 
+ 	if (iomap->type != IOMAP_DELALLOC)
+ 		return 0;
 -- 
-tejun
+2.39.0
+
