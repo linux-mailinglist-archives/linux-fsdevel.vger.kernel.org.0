@@ -2,101 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 24F76740D6E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 11:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98235740D76
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 11:48:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231684AbjF1Jro (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 05:47:44 -0400
-Received: from dfw.source.kernel.org ([139.178.84.217]:50020 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232964AbjF1J16 (ORCPT
+        id S231781AbjF1JsC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 05:48:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:51051 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233791AbjF1JeU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 05:27:58 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        Wed, 28 Jun 2023 05:34:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687944811;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=QMzisq1grZMezPf2xhSzRVCRVpvAbjFhFL5SGPZabPI=;
+        b=AXoEFKMxhFKkD1dv2s19a3frUKi6tEtr5rO7xd1h8nMz48slSKz0QC2qQsB5p7BuQGJDiK
+        bT3bdEwcCZXgivLAhZj4j+puvJYwc4tF/a7SwVfNQ2U6KJV5T/1MbQFfzv5LcEXHPA4R4N
+        VP5viDJTPM60i+slMzWJDS8GLnkhkAg=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-182-O3B7MN5bN5mYZqfaAwh67g-1; Wed, 28 Jun 2023 05:33:27 -0400
+X-MC-Unique: O3B7MN5bN5mYZqfaAwh67g-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C915F612A8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 09:27:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39153C433C8;
-        Wed, 28 Jun 2023 09:27:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687944477;
-        bh=rwnsv21g32JXiXNswsAfY6WiuF/kxcFFNhiJt6w5NV8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=W8QPF17cVXIk64x3bFK8BmFHVEYVWAecEqhFNLbAia3vKgHQUEDMb5ABR/fGFm5Qz
-         My6q2IpyBrChae1t1XVnspNmB24sf0niTXaRsfGhzLcztg4yi+EQaROL4weaKeEBou
-         eOus+K1H7qtzIDx5FOCnXzZjvoS6PyBbcSOm8V2F03/fmgF8PV5yph3J0wMFJbTnUC
-         h29mO76+sMiqjPBVeHzBsy8OIQtYDjh8TzeGY3TkQZYUW9s+G0Ph38nBU4eeqx8V80
-         ttTiZYgqI+5qtSHPIaYUxgjbqzaaFE585DJQw3MCwhgKj5Bd6FMf/Ox6WF23SBAdSp
-         WerYGy47T4z1g==
-Date:   Wed, 28 Jun 2023 11:27:52 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Chuck Lever <cel@kernel.org>
-Cc:     viro@zeniv.linux.org.uk, hughd@google.com,
-        akpm@linux-foundation.org, Chuck Lever <chuck.lever@oracle.com>,
-        jlayton@redhat.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] libfs: Add directory operations for stable offsets
-Message-ID: <20230628-geldentwertung-weggehen-97e784bde4f4@brauner>
-References: <168789864000.157531.11122232592994999253.stgit@manet.1015granger.net>
- <168789918896.157531.14644838088821804546.stgit@manet.1015granger.net>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0C8C287323C;
+        Wed, 28 Jun 2023 09:33:27 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7BE7340C2063;
+        Wed, 28 Jun 2023 09:33:25 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <ZJvsJJKMPyM77vPv@dread.disaster.area>
+References: <ZJvsJJKMPyM77vPv@dread.disaster.area> <ZJq6nJBoX1m6Po9+@casper.infradead.org> <ec804f26-fa76-4fbe-9b1c-8fbbd829b735@mattwhitlock.name> <ZJp4Df8MnU8F3XAt@dread.disaster.area> <3299543.1687933850@warthog.procyon.org.uk>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        Matt Whitlock <kernel@mattwhitlock.name>,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [Reproducer] Corruption, possible race between splice and FALLOC_FL_PUNCH_HOLE
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <168789918896.157531.14644838088821804546.stgit@manet.1015granger.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3388727.1687944804.1@warthog.procyon.org.uk>
+Date:   Wed, 28 Jun 2023 10:33:24 +0100
+Message-ID: <3388728.1687944804@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 04:53:09PM -0400, Chuck Lever wrote:
-> From: Chuck Lever <chuck.lever@oracle.com>
+Dave Chinner <david@fromorbit.com> wrote:
+
+> On Wed, Jun 28, 2023 at 07:30:50AM +0100, David Howells wrote:
+> > Matthew Wilcox <willy@infradead.org> wrote:
+> > > > > Expected behavior:
+> > > > > Punching holes in a file after splicing pages out of that file into
+> > > > > a pipe should not corrupt the spliced-out pages in the pipe buffer.
+> > 
+> > I think this bit is the key.  Why would this be the expected behaviour?
+> > As you say, splice is allowed to stuff parts of the pagecache into a pipe
+> > and these may get transferred, say, to a network card at the end to
+> > transmit directly from.  It's a form of direct I/O.
+
+Actually, it's a form of zerocopy, not direct I/O.
+
+> > If someone has the pages mmapped, they can change the data that will be
+> > transmitted; if someone does a write(), they can change that data too.
+> > The point of splice is to avoid the copy - but it comes with a tradeoff.
 > 
-> Create a vector of directory operations in fs/libfs.c that handles
-> directory seeks and readdir via stable offsets instead of the
-> current cursor-based mechanism.
-> 
-> For the moment these are unused.
-> 
-> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-> ---
+> I wouldn't call "post-splice filesystem modifications randomly
+> corrupts pipe data" a tradeoff. I call that a bug.
 
-Could we just drop the "stable_" prefix and just have:
+Would you consider it a kernel bug, then, if you use sendmsg(MSG_ZEROCOPY) to
+send some data from a file mmapping that some other userspace then corrupts by
+altering the file before the kernel has managed to send it?
 
-// internal helpers
-offset_dir_emit()
-offset_get()
-offset_set()
-offset_dir_llseek()
-find_next_offset()
-I'd also collapse offset_iterate_dir() into offset_readdir().
+Anyway, if you think the splice thing is a bug, we have to fix splice from a
+buffered file that is shared-writably mmapped as well as fixing
+fallocate()-driven mangling.  There are a number of options:
 
-// exported and published helpers
-simple_offset_init()
-simple_offset_add()
-simple_offset_rename_exchange()
-simple_offset_destroy()
+ (0) Document the bug as a feature: "If this is a problem, don't use splice".
 
-struct offset_ctx *(*get_offset)(struct inode *inode);
+ (1) Always copy the data into the pipe.
 
-const struct file_operations simple_offset_dir_operations;
+ (2) Always unmap and steal the pages from the pagecache, copying if we can't.
 
->  fs/libfs.c         |  252 ++++++++++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/fs.h |   19 ++++
->  2 files changed, 271 insertions(+)
-> 
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index 89cf614a3271..9940dce049e6 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -239,6 +239,258 @@ const struct inode_operations simple_dir_inode_operations = {
->  };
->  EXPORT_SYMBOL(simple_dir_inode_operations);
->  
-> +static struct stable_offset_ctx *stable_ctx_get(struct inode *inode)
-> +{
-> +	return inode->i_op->get_so_ctx(inode);
-> +}
+ (3) R/O-protect any PTEs mapping those pages and implement CoW.
 
-I would suggest to get rid of this helper. It just needlessly hides that
-all we do is inode->i_op->().
+ (4) Disallow splice() from any region that's mmapped, disallow mmap() on or
+     make page_mkwrite wait for any region that's currently spliced.  Disallow
+     fallocate() on or make fallocate() wait for any pages that are spliced.
+
+With recent changes, I think there are only two places that need fixing:
+filemap_splice_read() and shmem_splice_read().  However, I wonder what
+performance effect of having to do a PTE hunt in splice() will be.
+
+And then there's vmsplice()...
+
+Also, I do wonder what happens if you do MSG_ZEROCOPY to a loopback network
+address and then splice out of the other end.  I'm guessing you'll get the
+zerocopied pages out into your pipe as I think it just moves the sent skbuffs
+to the receive queue on the other end.
+
+David
+
