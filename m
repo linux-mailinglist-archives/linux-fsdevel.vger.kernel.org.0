@@ -2,196 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D9FD741C26
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 01:06:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A075741C38
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 01:11:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231578AbjF1XGG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 19:06:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57666 "EHLO
+        id S231719AbjF1XLW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 19:11:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231416AbjF1XGC (ORCPT
+        with ESMTP id S230311AbjF1XLV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 19:06:02 -0400
-Received: from mail-oi1-f205.google.com (mail-oi1-f205.google.com [209.85.167.205])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 367E610FE
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 16:06:00 -0700 (PDT)
-Received: by mail-oi1-f205.google.com with SMTP id 5614622812f47-39ec7630322so126812b6e.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 16:06:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687993559; x=1690585559;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        Wed, 28 Jun 2023 19:11:21 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FDE22102
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 16:11:20 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id 41be03b00d2f7-51f64817809so14980a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 16:11:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687993880; x=1690585880;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=K+HZZJTaP1niJAASeD1Z5YiUeNBbVaSIkYrwhZkkWGE=;
-        b=ZAAHhjSOauUl+KnMd5Pts9G8wdtN/Vn91L1IJSC3P8Nvx4wjt6DoL3vOc5nXNzFmo2
-         fYh6S0OaI+KlZqNTgPt+ngfgm8TH/YZnuREsCNoySN7jlquKkj5+Gv9Q//IcTokIkb9d
-         IOX9zMHXa5guZEO0vp5FqpwC9rhIOIzR9m0VNIVSM6WFLqHC/4MAGXy7Cauyk3LVlg6N
-         O5r9DUZETLzguaFe7/k6h+O/6XgraVxRyegNGD/xj0DPVgQnei1KWimOYn/xPs4NUI7+
-         YJsJN/YhtKRsMVpZWsVOW5A1lFbThmgqepsGb9jBPa2YpXv1MozM6tirjj4cJdQwfPXP
-         LBTg==
-X-Gm-Message-State: AC+VfDxLZr5wp6Pz68vgfMCD9ukLbMAtOnAKk2iYdmsQXRdCTxKJWGAI
-        m1wmGS6XYNMGYQZXviU0NHsgAoObN6DiPbfJMexy+Qyax3kRcEj9cA==
-X-Google-Smtp-Source: ACHHUZ45uBzCfUUWpNuv+u0VAEYoN5K9kHXgLHorzGiwGb8GomNpLnMqlak7GVneuBrWBaRN+kdVdwjaMcPrpOvOZcySWavRKOcz
+        bh=4mAlkGVC6JAtru60kOWkScqz21y3nSrjMBZrOZwK24E=;
+        b=cCIiVFLSsDYMimXtqEXoM+Cwm7kWQe+PDnQmI/r9gx2thYq34e2jU4iltQdf/3vYy8
+         QnIYAvwgmzoIWALeH3BHoF0IH+uKmXZwvV3TrxFlvhVmCOGqFq1d6MMgjiAfNk6OF5sP
+         FYe7r/yFOFOPf0Kj2F7sUQLsb+76nZhyGW9ifgK744pLvJVvNQYkQUoRQxFQu2h77y1D
+         rpfsjPmubMS93n3KDBiP2f9TyDAJjqUY+MPSkdBIu8tBQGFkgjSd1dzJEaI6L8y/QMyB
+         UWo8i2pYo1Tj6YlCRUnxzZgQwiN+tGgIY9IzOHCM19u0opIiJHUTZsWd9FYEhu7Dh8wt
+         pm9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687993880; x=1690585880;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4mAlkGVC6JAtru60kOWkScqz21y3nSrjMBZrOZwK24E=;
+        b=BczPsPRzIbh2FZTD/5ZYoiX8LtqVDaER53dQkm/CLf7Fj160UTcfPb3oMWg5VqJhcw
+         wSl/5RNCaRDYVTRVNd2a/HiWMiUWOALEG6LMSx9lSA53cOb1BayyXb1Uf0Q9V6MXD0LR
+         OY3BuhxfLVCCFns+TGP1drCGqGOEtMDHvelryNKltFPbR/EjIZqWHNpFV2H8n0nnHYyY
+         YgitxRlQBQcQObx2nGb0X1QsnBm9fEoIkVj3FZb/H8/6IxpqarhMG6OElJZatYpdGrRF
+         AZnDz7knVzENpB1lRI8m1+emxsvGMUd+X451XyTAmF6Rb9po8eN9OXGiwvjzkXpoO3Vb
+         LNIw==
+X-Gm-Message-State: AC+VfDxSnaXEtLNs50QLr9/eU9TayUrdk3Zlb9OSyGZzpHERsMIY49IF
+        /xoEua1OI9ADm+Uv+OlP80emqg==
+X-Google-Smtp-Source: ACHHUZ52vvH0sBl7aB+MXWrJbIo0E155xerI4JAzF4CriPP7IF1ldJmlmPEt/LqVoltEI+VEPuvh2Q==
+X-Received: by 2002:a17:902:ecc6:b0:1ae:1364:6086 with SMTP id a6-20020a170902ecc600b001ae13646086mr43838204plh.2.1687993879969;
+        Wed, 28 Jun 2023 16:11:19 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c085:21e8::106b? ([2620:10d:c090:400::5:e20])
+        by smtp.gmail.com with ESMTPSA id j3-20020a170902da8300b001ab13f1fa82sm2857083plx.85.2023.06.28.16.11.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Jun 2023 16:11:19 -0700 (PDT)
+Message-ID: <5f94327d-29e6-0707-95c1-8e6f0ebfd08b@kernel.dk>
+Date:   Wed, 28 Jun 2023 17:11:17 -0600
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:1987:b0:3a0:6079:3201 with SMTP id
- bj7-20020a056808198700b003a060793201mr5356926oib.8.1687993559555; Wed, 28 Jun
- 2023 16:05:59 -0700 (PDT)
-Date:   Wed, 28 Jun 2023 16:05:59 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008023b805ff38a0af@google.com>
-Subject: [syzbot] [reiserfs?] general protection fault in __hrtimer_run_queues (3)
-From:   syzbot <syzbot+f13a9546e229c1a6e378@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [GIT PULL] bcachefs
+Content-Language: en-US
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+References: <20230627020525.2vqnt2pxhtgiddyv@moria.home.lan>
+ <b92ea170-d531-00f3-ca7a-613c05dcbf5f@kernel.dk>
+ <23922545-917a-06bd-ec92-ff6aa66118e2@kernel.dk>
+ <20230627201524.ool73bps2lre2tsz@moria.home.lan>
+ <c06a9e0b-8f3e-4e47-53d0-b4854a98cc44@kernel.dk>
+ <20230628040114.oz46icbsjpa4egpp@moria.home.lan>
+ <b02657af-5bbb-b46b-cea0-ee89f385f3c1@kernel.dk>
+ <20230628175421.funhhfbx5kdvhclx@moria.home.lan>
+ <4d3efe17-e114-96c1-dca8-a100cc6f7fc6@kernel.dk>
+ <131fdf9b-bd31-fc0d-8fe9-8f68592306e5@kernel.dk>
+ <20230628230407.nvi7us7eeya4yl2s@moria.home.lan>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230628230407.nvi7us7eeya4yl2s@moria.home.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 6/28/23 5:04 PM, Kent Overstreet wrote:
+> On Wed, Jun 28, 2023 at 04:14:44PM -0600, Jens Axboe wrote:
+>> Got a whole bunch more running that aio reproducer I sent earlier. I'm
+>> sure a lot of these are dupes, sending them here for completeness.
+> 
+> Are you running 'echo scan > /sys/kernel/debug/kmemleak' while the test
+> is running? I see a lot of spurious leaks when I do that that go away if
+> I scan after everything's shut down.
 
-syzbot found the following issue on:
+Nope, and they remain in there. The cat dump I took was an hour later.
 
-HEAD commit:    e8f75c0270d9 Merge tag 'x86_sgx_for_v6.5' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13710670a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a98ec7f738e43bd4
-dashboard link: https://syzkaller.appspot.com/bug?extid=f13a9546e229c1a6e378
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1227af7b280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13803daf280000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f27c1d41217a/disk-e8f75c02.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/843ae5d5c810/vmlinux-e8f75c02.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/da48bc4c0ec1/bzImage-e8f75c02.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/667a76526623/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f13a9546e229c1a6e378@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: global-out-of-bounds in lookup_object lib/debugobjects.c:195 [inline]
-BUG: KASAN: global-out-of-bounds in debug_object_deactivate lib/debugobjects.c:785 [inline]
-BUG: KASAN: global-out-of-bounds in debug_object_deactivate+0x27b/0x300 lib/debugobjects.c:771
-Read of size 8 at addr ffffffff8a49cd78 by task kauditd/27
-
-CPU: 1 PID: 27 Comm: kauditd Not tainted 6.4.0-syzkaller-01406-ge8f75c0270d9 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
- print_address_description.constprop.0+0x2c/0x3c0 mm/kasan/report.c:351
- print_report mm/kasan/report.c:462 [inline]
- kasan_report+0x11c/0x130 mm/kasan/report.c:572
- lookup_object lib/debugobjects.c:195 [inline]
- debug_object_deactivate lib/debugobjects.c:785 [inline]
- debug_object_deactivate+0x27b/0x300 lib/debugobjects.c:771
- debug_hrtimer_deactivate kernel/time/hrtimer.c:427 [inline]
- debug_deactivate kernel/time/hrtimer.c:483 [inline]
- __run_hrtimer kernel/time/hrtimer.c:1656 [inline]
- __hrtimer_run_queues+0x3f3/0xbe0 kernel/time/hrtimer.c:1752
- hrtimer_interrupt+0x320/0x7b0 kernel/time/hrtimer.c:1814
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1098 [inline]
- __sysvec_apic_timer_interrupt+0x14a/0x430 arch/x86/kernel/apic/apic.c:1115
- sysvec_apic_timer_interrupt+0x92/0xc0 arch/x86/kernel/apic/apic.c:1109
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:645
-RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x70 kernel/kcov.c:200
-Code: 66 d4 8f 02 66 0f 1f 44 00 00 f3 0f 1e fa 48 8b be b0 01 00 00 e8 b0 ff ff ff 31 c0 c3 66 66 2e 0f 1f 84 00 00 00 00 00 66 90 <f3> 0f 1e fa 65 8b 05 3d 3a 7f 7e 89 c1 48 8b 34 24 81 e1 00 01 00
-RSP: 0018:ffffc90000a3faa8 EFLAGS: 00000293
-
-RAX: 0000000000000000 RBX: 0000000000000200 RCX: 0000000000000000
-RDX: ffff88801724bb80 RSI: ffffffff81686965 RDI: 0000000000000007
-RBP: ffffffff8d26a498 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000200 R11: 205d373254202020 R12: 0000000000000000
-R13: ffffffff8d26a440 R14: dffffc0000000000 R15: 0000000000000001
- console_emit_next_record arch/x86/include/asm/irqflags.h:42 [inline]
- console_flush_all+0x61b/0xcc0 kernel/printk/printk.c:2933
- console_unlock+0xb8/0x1f0 kernel/printk/printk.c:3007
- vprintk_emit+0x1bd/0x600 kernel/printk/printk.c:2307
- vprintk+0x84/0xa0 kernel/printk/printk_safe.c:50
- _printk+0xbf/0xf0 kernel/printk/printk.c:2328
- kauditd_printk_skb kernel/audit.c:536 [inline]
- kauditd_hold_skb+0x1fb/0x240 kernel/audit.c:571
- kauditd_send_queue+0x220/0x280 kernel/audit.c:756
- kauditd_thread+0x617/0xaa0 kernel/audit.c:880
- kthread+0x344/0x440 kernel/kthread.c:379
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
- </TASK>
-
-The buggy address belongs to the variable:
- ds.0+0x218/0x580
-
-The buggy address belongs to the physical page:
-page:ffffea0000292700 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xa49c
-flags: 0xfff00000001000(reserved|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xffffffff()
-raw: 00fff00000001000 ffffea0000292708 ffffea0000292708 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner info is not present (never set?)
-
-Memory state around the buggy address:
- ffffffff8a49cc00: f9 f9 f9 f9 00 00 00 00 03 f9 f9 f9 f9 f9 f9 f9
- ffffffff8a49cc80: 07 f9 f9 f9 f9 f9 f9 f9 00 00 00 00 00 05 f9 f9
->ffffffff8a49cd00: f9 f9 f9 f9 00 00 03 f9 f9 f9 f9 f9 00 00 01 f9
-                                                                ^
- ffffffff8a49cd80: f9 f9 f9 f9 00 00 00 00 00 00 00 00 06 f9 f9 f9
- ffffffff8a49ce00: f9 f9 f9 f9 00 00 00 03 f9 f9 f9 f9 00 00 00 00
-==================================================================
-----------------
-Code disassembly (best guess):
-   0:	66 d4                	data16 (bad)
-   2:	8f 02                	popq   (%rdx)
-   4:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
-   a:	f3 0f 1e fa          	endbr64
-   e:	48 8b be b0 01 00 00 	mov    0x1b0(%rsi),%rdi
-  15:	e8 b0 ff ff ff       	callq  0xffffffca
-  1a:	31 c0                	xor    %eax,%eax
-  1c:	c3                   	retq
-  1d:	66 66 2e 0f 1f 84 00 	data16 nopw %cs:0x0(%rax,%rax,1)
-  24:	00 00 00 00
-  28:	66 90                	xchg   %ax,%ax
-* 2a:	f3 0f 1e fa          	endbr64 <-- trapping instruction
-  2e:	65 8b 05 3d 3a 7f 7e 	mov    %gs:0x7e7f3a3d(%rip),%eax        # 0x7e7f3a72
-  35:	89 c1                	mov    %eax,%ecx
-  37:	48 8b 34 24          	mov    (%rsp),%rsi
-  3b:	81                   	.byte 0x81
-  3c:	e1 00                	loope  0x3e
-  3e:	01 00                	add    %eax,(%rax)
+-- 
+Jens Axboe
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
