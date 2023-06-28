@@ -2,132 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A4C97417FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 20:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC40E741802
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 20:28:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231693AbjF1SYl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 14:24:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49310 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231986AbjF1SYj (ORCPT
+        id S231208AbjF1S2Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 14:28:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:48069 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230401AbjF1S2Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 14:24:39 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CF491BE8;
-        Wed, 28 Jun 2023 11:24:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=rZ7tW+lP5VbpS09o8l8H9B+pWyICkkk7HcLmzLLVSYE=; b=jLIna+47HDapmlKg2krsqqOn5u
-        LaxSJ37gnbaRB7oSlZEOHwBRws4MDZKwLLN+LcRVt8hOBi7MkzgUi+C9O2raUKUlMilwnio8IY1cn
-        kJgPP+F+IgqgQ0vfi9aHP5q2042JXQSvTgXFkDZOBYoMXiLgcYpB+Y1vNth5ec8nd6wnZ3+1A4AFO
-        j3ACuczFst0UWGk/5CbnMDu3uKXO318BI1YSfe/S2/G2KiO9mnV0WAKbXZt/cqJy17UK4meO+14XZ
-        7z9+2P7+fkF59UClddYhILm8VYpfQkh/TQKjNpH8Bg1w8Hu5rh5D8R2UYWLqKsbytogEkvJqvP/w8
-        Tzp8N4ig==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qEZq5-00GO51-0t;
-        Wed, 28 Jun 2023 18:24:25 +0000
-Date:   Wed, 28 Jun 2023 11:24:25 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
-        j.granados@samsung.com, patches@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mcgrof@kernel.org
-Subject: [GIT PULL] sysctl changes for v6.5-rc1
-Message-ID: <ZJx62RvS9TwjUUCi@bombadil.infradead.org>
+        Wed, 28 Jun 2023 14:28:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687976854;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/rj34s/fUvdigcX1+hTWUHyuQ+LEjY4NckG6dmprRpg=;
+        b=TIwNwMz/E8WAiuR4YRn5spqSuDsmjYWR7hk1GnCd6q5wdpQLsi/j8AatXXgfkKoZnvjdQL
+        CN4IrxbkK82Ckbb/Ic7+dTDJd8DYY1UKWt6OmWUBbJl+kVp0q26hgHXsu1cdMO+RLpykPg
+        TvwDJSgfLp4ZJBPU7EOPpfgxs/0ev9Y=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-418-bojcX7VlMZea6izeeIl3XA-1; Wed, 28 Jun 2023 14:27:28 -0400
+X-MC-Unique: bojcX7VlMZea6izeeIl3XA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 10096800CAC;
+        Wed, 28 Jun 2023 18:27:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2D804111F3B0;
+        Wed, 28 Jun 2023 18:27:27 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <a60594ef-ff85-498f-a1c4-0fcb9586621c@mattwhitlock.name>
+References: <a60594ef-ff85-498f-a1c4-0fcb9586621c@mattwhitlock.name> <ZJq6nJBoX1m6Po9+@casper.infradead.org> <ec804f26-fa76-4fbe-9b1c-8fbbd829b735@mattwhitlock.name> <ZJp4Df8MnU8F3XAt@dread.disaster.area> <3299543.1687933850@warthog.procyon.org.uk>
+To:     Matt Whitlock <kernel@mattwhitlock.name>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [Reproducer] Corruption, possible race between splice and FALLOC_FL_PUNCH_HOLE
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-        lindbergh.monkeyblade.net
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3695108.1687976846.1@warthog.procyon.org.uk>
+Date:   Wed, 28 Jun 2023 19:27:26 +0100
+Message-ID: <3695109.1687976846@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit f1fcbaa18b28dec10281551dfe6ed3a3ed80e3d6:
+Matt Whitlock <kernel@mattwhitlock.name> wrote:
 
-  Linux 6.4-rc2 (2023-05-14 12:51:40 -0700)
+> In other words, the currently implemented behavior is appropriate for
+> SPLICE_F_MOVE, but it is not appropriate for ~SPLICE_F_MOVE.
 
-are available in the Git repository at:
+The problems with SPLICE_F_MOVE is that it's only applicable to splicing *out*
+of a pipe.  By the time you get that far the pages can already be corrupted by
+a shared-writable mmap or write().
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/ tags/v6.5-rc1-sysctl-next
+David
 
-for you to fetch changes up to 2f2665c13af4895b26761107c2f637c2f112d8e9:
-
-  sysctl: replace child with an enumeration (2023-06-18 02:32:54 -0700)
-
-----------------------------------------------------------------
-v6.5-rc1-sysctl-next
-
-The changes queued up for v6.5-rc1 for sysctl are in line with
-prior efforts to stop usage of deprecated routines which incur
-recursion and also make it hard to remove the empty array element
-in each sysctl array declaration. The most difficult user to modify
-was parport which required a bit of re-thinking of how to declare shared
-sysctls there, Joel Granados has stepped up to the plate to do most of
-this work and eventual removal of register_sysctl_table(). That work
-ended up saving us about 1465 bytes according to bloat-o-meter. Since
-we gained a few bloat-o-meter karma points I moved two rather small
-sysctl arrays from kernel/sysctl.c leaving us only two more sysctl
-arrays to move left.
-
-Most changes have been tested on linux-next for about a month. The last
-straggler patches are a minor parport fix, changes to the sysctl
-kernel selftest so to verify correctness and prevent regressions for
-the future change he made to provide an alternative solution for the
-special sysctl mount point target which was using the now deprecated
-sysctl child element.
-
-This is all prep work to now finally be able to remove the empty
-array element in all sysctl declarations / registrations which is
-expected to save us a bit of bytes all over the kernel. That work
-will be tested early after v6.5-rc1 is out.
-
-----------------------------------------------------------------
-Joel Granados (16):
-      parport: Move magic number "15" to a define
-      parport: Remove register_sysctl_table from parport_proc_register
-      parport: Remove register_sysctl_table from parport_device_proc_register
-      parport: Remove register_sysctl_table from parport_default_proc_register
-      parport: Removed sysctl related defines
-      sysctl: stop exporting register_sysctl_table
-      sysctl: Refactor base paths registrations
-      sysctl: Remove register_sysctl_table
-      parport: plug a sysctl register leak
-      test_sysctl: Fix test metadata getters
-      test_sysctl: Group node sysctl test under one func
-      test_sysctl: Add an unregister sysctl test
-      test_sysctl: Add an option to prevent test skip
-      test_sysclt: Test for registering a mount point
-      sysctl: Remove debugging dump_stack
-      sysctl: replace child with an enumeration
-
-Luis Chamberlain (4):
-      sysctl: remove empty dev table
-      signal: move show_unhandled_signals sysctl to its own file
-      sysctl: move umh sysctl registration to its own file
-      sysctl: move security keys sysctl registration to its own file
-
- drivers/parport/procfs.c                 | 185 ++++++++++++-----------
- drivers/parport/share.c                  |   2 +-
- fs/proc/proc_sysctl.c                    | 244 +++----------------------------
- fs/sysctls.c                             |   5 +-
- include/linux/key.h                      |   3 -
- include/linux/parport.h                  |   2 +
- include/linux/sysctl.h                   |  45 ++----
- include/linux/umh.h                      |   2 -
- kernel/signal.c                          |  23 +++
- kernel/sysctl.c                          |  40 +----
- kernel/umh.c                             |  11 +-
- lib/test_sysctl.c                        |  91 +++++++++++-
- scripts/check-sysctl-docs                |  10 --
- security/keys/sysctl.c                   |   7 +
- tools/testing/selftests/sysctl/sysctl.sh | 115 +++++++++++----
- 15 files changed, 351 insertions(+), 434 deletions(-)
