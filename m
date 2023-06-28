@@ -2,210 +2,382 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D77747415FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 18:03:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A8E2741642
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 18:22:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231953AbjF1QDf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 12:03:35 -0400
-Received: from 139-28-40-42.artus.net.pl ([139.28.40.42]:55712 "EHLO
-        tarta.nabijaczleweli.xyz" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S230425AbjF1QDb (ORCPT
+        id S231733AbjF1QWj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 12:22:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37914 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230304AbjF1QWi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 12:03:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
-        s=202305; t=1687968207;
-        bh=H89eKS6J7cZfio0FgmlRYvKGVSwe9xd5Odkri+vpPGc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lyP55kt8ofkUXdl1DPqdFR5uUcrdGPGPqBg6DNO5nCYIONynedyZ22xjgXVLQ5/+D
-         a3ee3jHoAXMS/E0e3/dz98Bo6ECuJZ1Ifzd41oyk1cUCn3uiMI3MYo2DXy1xQQ8Xs9
-         lqZXB2Q9sNVNBsQLKUCD9W6tB8p36vhym2T4+NmC0Px2NrMSslOBkoaqsvlCt4yLVI
-         ussGwLduyhfQ8ADtT3kfzFjEiBd+5dXsuCj3Kf1UDvqdtT8Pb/b4umk7Hcblelmk1T
-         N8+Zf9eKNS8IbdmaqmrLvYU2zKuACUcCKf8Brl4RtzT7FcXJojbAO9UbzY4YAdeoMO
-         J5JNFyoHklHQg==
-Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
-        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 767CB173C;
-        Wed, 28 Jun 2023 18:03:27 +0200 (CEST)
-Date:   Wed, 28 Jun 2023 18:03:26 +0200
-From:   Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
-        <nabijaczleweli@nabijaczleweli.xyz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>,
-        Chung-Chiang Cheng <cccheng@synology.com>, ltp@lists.linux.it,
-        Petr Vorel <pvorel@suse.cz>
-Subject: Re: [LTP RFC PATCH v3] inotify13: new test for fs/splice.c functions
- vs pipes vs inotify
-Message-ID: <ychkzjlukpzb4h24dxtvesnvq3tgjrtqcfed6xlorzpy24xk43@zdips4bvrsii>
-References: <ajkeyn2sy35h6ctfbupom4xg3ozoxxgsojdvu7vebac44zqped@ecnusnv6daxn>
- <f4mzakro6yp7dlq25h3mbm3ecbkuebwlengdln47y4w5wfqwo2@3hasgbhltgvg>
- <CAOQ4uxg4mGpqCMCnJcNSK9vQXU1hx8XPQDEcL0+3yM7AF9V9-A@mail.gmail.com>
+        Wed, 28 Jun 2023 12:22:38 -0400
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C7502123
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 09:22:36 -0700 (PDT)
+Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-c15a5ed884dso4431829276.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 09:22:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1687969355; x=1690561355;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=coAlCBDwBad1PcdB7ZeOiPMCqqbtBTETcXG8fdky4dU=;
+        b=oZ+RVs6yYI6qZTJvkzfnTrvanL6/+0H2TGOChie0Nu//HaNIGehxeem1FzSer5XncX
+         7aFwLEiuLhUl6eY+pJg3RjKyYldwKSJkW5m3r5bs+tGpE8zmRiUmkd6muhX8xAuFRax3
+         WtxDIygwQaJ/0J+/hRvzSz0o9kS6J1e4N3l+vKxmLh8qn5gbbg7YTDZBTMjC4tMjP1/P
+         Wo6/XeLH3+xegMLcw5cb2jxX/gJIeH6C+Dinqgojq4bbeXR3T/AG9jkYJgdqwwxEqxDp
+         Jvdrn3ke73ta64PfjgtZE0WJP/njAgw4g5vki934jv/8vQfzFQajnnfDPD/DaF3ZtRcI
+         22Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687969355; x=1690561355;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=coAlCBDwBad1PcdB7ZeOiPMCqqbtBTETcXG8fdky4dU=;
+        b=C2DEkYsiHS0+6q3Ki7afyal21Bdo3zvd1UTTrejn4MgoDSe2pH3RP/F5UpEIi9P7Mm
+         oVykeTz44FV/kBhTEVudTgvJtiOja2F8StMWaO3m6tjUqOZCMFczOgbpGCBi0Vsgda2y
+         ozcEtSF7YGaaJ6YRADH93p20Qbqo2PmhIxnyX4Wbi/lu2kObKHbsDj9had+4shLw7DPI
+         9YoUJ1wVzRhntvhjuJOZqn3KgfjDJruE+XHj6HIO6Oakl8grlkjdCbXpMCe8DJP0K9SO
+         4UrCFPGHCK9t74JsrFugJiwibZ7XM9sTQ8P7SggNS97ve0lIcm7OlS+pP1huEWJpd6kf
+         vCbA==
+X-Gm-Message-State: AC+VfDzZTldUehqM4wlISvFuarnrPo7g3QkxAa760UBuofgFnt2UOizl
+        t1k1mndwam0wBnjKd6oUd+QohJQyExBP7/5tU5FHaA==
+X-Google-Smtp-Source: ACHHUZ7+KEVfGiV0yc+Cuk2Gjs7uLcMzKgQN74u947OIe1u5KEmq3+iwieLvBbKQn+DZDak5VZ/FF71xjMFkCuyOswE=
+X-Received: by 2002:a25:db49:0:b0:bcd:9c9a:a257 with SMTP id
+ g70-20020a25db49000000b00bcd9c9aa257mr2452929ybf.57.1687969355346; Wed, 28
+ Jun 2023 09:22:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7ui7ewvobyxz6sd5"
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxg4mGpqCMCnJcNSK9vQXU1hx8XPQDEcL0+3yM7AF9V9-A@mail.gmail.com>
-User-Agent: NeoMutt/20230517
+References: <20230628071800.544800-1-surenb@google.com> <20230628071800.544800-7-surenb@google.com>
+ <ZJw8Z3E3d4dHPDuZ@x1n>
+In-Reply-To: <ZJw8Z3E3d4dHPDuZ@x1n>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Wed, 28 Jun 2023 09:22:24 -0700
+Message-ID: <CAJuCfpGRresZRacCSDU=E+CNDkGfMwO2u-oTB_H30cASzFgNtA@mail.gmail.com>
+Subject: Re: [PATCH v4 6/6] mm: handle userfaults under VMA lock
+To:     Peter Xu <peterx@redhat.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
+        mhocko@suse.com, josef@toxicpanda.com, jack@suse.cz,
+        ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
+        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
+        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
+        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
+        apopple@nvidia.com, ying.huang@intel.com, david@redhat.com,
+        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        pasha.tatashin@soleen.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+        lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Jun 28, 2023 at 6:58=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
+>
+> On Wed, Jun 28, 2023 at 12:18:00AM -0700, Suren Baghdasaryan wrote:
+> > Enable handle_userfault to operate under VMA lock by releasing VMA lock
+> > instead of mmap_lock and retrying. Note that FAULT_FLAG_RETRY_NOWAIT
+> > should never be used when handling faults under per-VMA lock protection
+> > because that would break the assumption that lock is dropped on retry.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>
+> Besides the NOWAIT typo all look sane.  Since there seems to need at leas=
+t
+> one more version I'll still comment on a few things..
+>
+> > ---
+> >  fs/userfaultfd.c   | 39 ++++++++++++++++++---------------------
+> >  include/linux/mm.h | 39 +++++++++++++++++++++++++++++++++++++++
+> >  mm/filemap.c       |  8 --------
+> >  mm/memory.c        |  9 ---------
+> >  4 files changed, 57 insertions(+), 38 deletions(-)
+> >
+> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> > index 4e800bb7d2ab..d019e7df6f15 100644
+> > --- a/fs/userfaultfd.c
+> > +++ b/fs/userfaultfd.c
+> > @@ -277,17 +277,16 @@ static inline struct uffd_msg userfault_msg(unsig=
+ned long address,
+> >   * hugepmd ranges.
+> >   */
+> >  static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *=
+ctx,
+> > -                                      struct vm_area_struct *vma,
+> > -                                      unsigned long address,
+> > -                                      unsigned long flags,
+> > -                                      unsigned long reason)
+> > +                                           struct vm_fault *vmf,
+> > +                                           unsigned long reason)
+> >  {
+> > +     struct vm_area_struct *vma =3D vmf->vma;
+> >       pte_t *ptep, pte;
+> >       bool ret =3D true;
+> >
+> > -     mmap_assert_locked(ctx->mm);
+> > +     assert_fault_locked(ctx->mm, vmf);
+>
+> AFAIU ctx->mm must be the same as vma->vm_mm here, so maybe we can also
+> drop *ctx here altogether if we've already dropped plenty.
 
---7ui7ewvobyxz6sd5
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ack. I was not sure if the ctx->mm would always be the same as vmf->mm.
 
-On Wed, Jun 28, 2023 at 08:30:15AM +0300, Amir Goldstein wrote:
-> On Wed, Jun 28, 2023 at 3:21=E2=80=AFAM Ahelenia Ziemia=C5=84ska
-> > diff --git a/testcases/kernel/syscalls/inotify/inotify13.c b/testcases/=
-kernel/syscalls/inotify/inotify13.c
-> > new file mode 100644
-> > index 000000000..97f88053e
-> > --- /dev/null
-> > +++ b/testcases/kernel/syscalls/inotify/inotify13.c
-> > @@ -0,0 +1,282 @@
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +/*\
-> > + * [Description]
-> > + * Verify splice-family functions (and sendfile) generate IN_ACCESS
-> > + * for what they read and IN_MODIFY for what they write.
-> > + *
-> > + * Regression test for 983652c69199 ("splice: report related fsnotify =
-events") and
-> > + * https://lore.kernel.org/linux-fsdevel/jbyihkyk5dtaohdwjyivambb2gffy=
-js3dodpofafnkkunxq7bu@jngkdxx65pux/t/#u
-> The process of posting a test for the fix that was not yet merged
-> is indeed a chicken and egg situation.
->=20
-> What I usually do is post a draft test (like this) and link
-> to the post of the LTP test (and maybe a branch on github)
-> when posting the fix, to say how I tested the fix.
-https://git.sr.ht/~nabijaczleweli/ltp/commit/v4 for now.
+>
+> >
+> > -     ptep =3D hugetlb_walk(vma, address, vma_mmu_pagesize(vma));
+> > +     ptep =3D hugetlb_walk(vma, vmf->address, vma_mmu_pagesize(vma));
+> >       if (!ptep)
+> >               goto out;
+> >
+> > @@ -308,10 +307,8 @@ static inline bool userfaultfd_huge_must_wait(stru=
+ct userfaultfd_ctx *ctx,
+> >  }
+> >  #else
+> >  static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *=
+ctx,
+> > -                                      struct vm_area_struct *vma,
+> > -                                      unsigned long address,
+> > -                                      unsigned long flags,
+> > -                                      unsigned long reason)
+> > +                                           struct vm_fault *vmf,
+> > +                                           unsigned long reason)
+> >  {
+> >       return false;   /* should never get here */
+> >  }
+> > @@ -325,11 +322,11 @@ static inline bool userfaultfd_huge_must_wait(str=
+uct userfaultfd_ctx *ctx,
+> >   * threads.
+> >   */
+> >  static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
+> > -                                      unsigned long address,
+> > -                                      unsigned long flags,
+> > +                                      struct vm_fault *vmf,
+> >                                        unsigned long reason)
+> >  {
+> >       struct mm_struct *mm =3D ctx->mm;
+> > +     unsigned long address =3D vmf->address;
+> >       pgd_t *pgd;
+> >       p4d_t *p4d;
+> >       pud_t *pud;
+> > @@ -337,7 +334,7 @@ static inline bool userfaultfd_must_wait(struct use=
+rfaultfd_ctx *ctx,
+> >       pte_t *pte;
+> >       bool ret =3D true;
+> >
+> > -     mmap_assert_locked(mm);
+> > +     assert_fault_locked(mm, vmf);
+> >
+> >       pgd =3D pgd_offset(mm, address);
+> >       if (!pgd_present(*pgd))
+> > @@ -445,7 +442,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, u=
+nsigned long reason)
+> >        * Coredumping runs without mmap_lock so we can only check that
+> >        * the mmap_lock is held, if PF_DUMPCORE was not set.
+> >        */
+> > -     mmap_assert_locked(mm);
+> > +     assert_fault_locked(mm, vmf);
+> >
+> >       ctx =3D vma->vm_userfaultfd_ctx.ctx;
+> >       if (!ctx)
+> > @@ -522,8 +519,11 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, =
+unsigned long reason)
+> >        * and wait.
+> >        */
+> >       ret =3D VM_FAULT_RETRY;
+> > -     if (vmf->flags & FAULT_FLAG_RETRY_NOWAIT)
+> > +     if (vmf->flags & FAULT_FLAG_RETRY_NOWAIT) {
+> > +             /* Per-VMA lock is expected to be dropped on VM_FAULT_RET=
+RY */
+> > +             BUG_ON(vmf->flags & FAULT_FLAG_RETRY_NOWAIT);
+>
+> Here is not the only place that we can have FAULT_FLAG_RETRY_NOWAIT.
+> E.g. folio_lock_or_retry() can also get it, so check here may or may not
+> help much.
+>
+> The other thing is please consider not using BUG_ON if possible.
+> WARN_ON_ONCE() is IMHO always more preferred if the kernel can still try =
+to
+> run even if it triggers.
 
-> I would then put it in my TODO to re-post the LTP
-> test once the kernel fix has been merged.
-Yep.
+Ack.
 
-> > +static int compar(const void *l, const void *r)
+>
+> I'd rather drop this change, leaving space for future when vma lock may b=
+e
+> supported in gup paths with NOWAIT, then here it'll work naturally, afaiu=
+.
+> If we really want a sanity check, maybe the best place is when entering
+> handle_mm_fault(), to be explicit, sanitize_fault_flags().
+
+That sounds like a good idea. Thanks!
+
+>
+> >               goto out;
+> > +     }
+> >
+> >       /* take the reference before dropping the mmap_lock */
+> >       userfaultfd_ctx_get(ctx);
+> > @@ -561,15 +561,12 @@ vm_fault_t handle_userfault(struct vm_fault *vmf,=
+ unsigned long reason)
+> >       spin_unlock_irq(&ctx->fault_pending_wqh.lock);
+> >
+> >       if (!is_vm_hugetlb_page(vma))
+> > -             must_wait =3D userfaultfd_must_wait(ctx, vmf->address, vm=
+f->flags,
+> > -                                               reason);
+> > +             must_wait =3D userfaultfd_must_wait(ctx, vmf, reason);
+> >       else
+> > -             must_wait =3D userfaultfd_huge_must_wait(ctx, vma,
+> > -                                                    vmf->address,
+> > -                                                    vmf->flags, reason=
+);
+> > +             must_wait =3D userfaultfd_huge_must_wait(ctx, vmf, reason=
+);
+> >       if (is_vm_hugetlb_page(vma))
+> >               hugetlb_vma_unlock_read(vma);
+> > -     mmap_read_unlock(mm);
+> > +     release_fault_lock(vmf);
+> >
+> >       if (likely(must_wait && !READ_ONCE(ctx->released))) {
+> >               wake_up_poll(&ctx->fd_wqh, EPOLLIN);
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index fec149585985..70bb2f923e33 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -705,6 +705,17 @@ static inline bool vma_try_start_write(struct vm_a=
+rea_struct *vma)
+> >       return true;
+> >  }
+> >
+> > +static inline void vma_assert_locked(struct vm_area_struct *vma)
 > > +{
-> > +       const struct inotify_event *lie =3D l;
-> > +       const struct inotify_event *rie =3D r;
+> > +     int mm_lock_seq;
 > > +
-> > +       return lie->wd - rie->wd;
+> > +     if (__is_vma_write_locked(vma, &mm_lock_seq))
+> > +             return;
+> > +
+> > +     lockdep_assert_held(&vma->vm_lock->lock);
+> > +     VM_BUG_ON_VMA(!rwsem_is_locked(&vma->vm_lock->lock), vma);
 > > +}
 > > +
-> > +static void get_events(size_t evcnt, struct inotify_event evs[static e=
-vcnt])
+> >  static inline void vma_assert_write_locked(struct vm_area_struct *vma)
+> >  {
+> >       int mm_lock_seq;
+> > @@ -723,6 +734,23 @@ static inline void vma_mark_detached(struct vm_are=
+a_struct *vma, bool detached)
+> >  struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
+> >                                         unsigned long address);
+> >
+> > +static inline
+> > +void assert_fault_locked(struct mm_struct *mm, struct vm_fault *vmf)
 > > +{
-> > +       struct inotify_event tail, *itr =3D evs;
-> > +
-> > +       for (size_t left =3D evcnt; left; --left)
-> > +               SAFE_READ(true, inotify, itr++, sizeof(struct inotify_e=
-vent));
-> > +
-> > +       TEST(read(inotify, &tail, sizeof(struct inotify_event)));
-> > +       if (TST_RET !=3D -1)
-> > +               tst_brk(TFAIL, ">%zu events", evcnt);
-> > +       if (TST_ERR !=3D EAGAIN)
-> > +               tst_brk(TFAIL | TTERRNO, "expected EAGAIN");
-> > +
-> > +       qsort(evs, evcnt, sizeof(struct inotify_event), compar);
+> > +     if (vmf->flags & FAULT_FLAG_VMA_LOCK)
+> > +             vma_assert_locked(vmf->vma);
+> > +     else
+> > +             mmap_assert_locked(mm);
 > > +}
 > > +
-> > +static void expect_transfer(const char *name, size_t size)
+> > +static inline void release_fault_lock(struct vm_fault *vmf)
 > > +{
-> > +       if (TST_RET =3D=3D -1)
-> > +               tst_brk(TBROK | TERRNO, "%s", name);
-> > +       if ((size_t)TST_RET !=3D size)
-> > +               tst_brk(TBROK, "%s: %ld !=3D %zu", name, TST_RET, size);
+> > +     if (vmf->flags & FAULT_FLAG_VMA_LOCK)
+> > +             vma_end_read(vmf->vma);
+> > +     else
+> > +             mmap_read_unlock(vmf->vma->vm_mm);
 > > +}
 > > +
-> > +static void expect_event(struct inotify_event *ev, int wd, uint32_t ma=
-sk)
+> >  #else /* CONFIG_PER_VMA_LOCK */
+> >
+> >  static inline void vma_init_lock(struct vm_area_struct *vma) {}
+> > @@ -736,6 +764,17 @@ static inline void vma_assert_write_locked(struct =
+vm_area_struct *vma) {}
+> >  static inline void vma_mark_detached(struct vm_area_struct *vma,
+> >                                    bool detached) {}
+> >
+> > +static inline
+> > +void assert_fault_locked(struct mm_struct *mm, struct vm_fault *vmf)
 > > +{
-> > +       if (ev->wd !=3D wd)
-> > +               tst_brk(TFAIL, "expect event for wd %d got %d", wd, ev-=
->wd);
-> > +       if (ev->mask !=3D mask)
-> > +               tst_brk(TFAIL,
-> > +                       "expect event with mask %" PRIu32 " got %" PRIu=
-32 "",
-> > +                       mask, ev->mask);
+> > +     mmap_assert_locked(mm);
 > > +}
 > > +
-> > +// write to file, rewind, transfer accd'g to f2p, read from pipe
-> > +// expecting: IN_ACCESS memfd, IN_MODIFY pipes[0]
-> > +static void file_to_pipe(const char *name, ssize_t (*f2p)(void))
+> > +static inline void release_fault_lock(struct vm_fault *vmf)
 > > +{
-> > +       struct inotify_event events[2];
-> > +       char buf[strlen(name)];
+> > +     mmap_read_unlock(vmf->vma->vm_mm);
+> > +}
 > > +
-> > +       SAFE_WRITE(SAFE_WRITE_RETRY, memfd, name, strlen(name));
-> > +       SAFE_LSEEK(memfd, 0, SEEK_SET);
-> > +       watch_rw(memfd);
-> > +       watch_rw(pipes[0]);
-> > +       TEST(f2p());
-> > +       expect_transfer(name, strlen(name));
-> > +
-> > +       get_events(ARRAY_SIZE(events), events);
-> > +       expect_event(events + 0, 1, IN_ACCESS);
-> > +       expect_event(events + 1, 2, IN_MODIFY);
-> So what I meant to say is that if there are double events that
-> usually get merged (unless reader was fast enough to read the
-> first event), this is something that I could live with, but encoding
-> an expectation for a double event, that's not at all what I meant.
->=20
-> But anyway, I see that you've found a way to work around
-> this problem, so at least the test can expect and get a single event.
-I've tried (admittedly, not all that hard) to read a double out modify
-event in this case with the v4 kernel patchset and haven't managed it.
+> >  #endif /* CONFIG_PER_VMA_LOCK */
+> >
+> >  /*
+> > diff --git a/mm/filemap.c b/mm/filemap.c
+> > index 7ee078e1a0d2..d4d8f474e0c5 100644
+> > --- a/mm/filemap.c
+> > +++ b/mm/filemap.c
+> > @@ -1699,14 +1699,6 @@ static int __folio_lock_async(struct folio *foli=
+o, struct wait_page_queue *wait)
+> >       return ret;
+> >  }
+> >
+> > -static void release_fault_lock(struct vm_fault *vmf)
+> > -{
+> > -     if (vmf->flags & FAULT_FLAG_VMA_LOCK)
+> > -             vma_end_read(vmf->vma);
+> > -     else
+> > -             mmap_read_unlock(vmf->vma->vm_mm);
+> > -}
+>
+> The movement is fine but may not be the cleanest.  It'll be nicer to me i=
+f
+> it's put at the right place when introduced - after all in the same serie=
+s.
 
-> I think you are missing expect_no_more_events() here to
-> verify that you won't get double events.
-get_events() reads precisely N events, then tries to read another,
-and fails if that succeeds.
+Ack.
 
-Maybe a better name would be "get_events_exact()".
+Thanks for the review!
 
-> See test inotify12 as an example for a test that encodes
-> expect_events per test case and also verifies there are no
-> unexpected extra events.
->=20
-> That's also an example of a more generic test template,
-> but your test cases are all a bit different from each other is
-> subtle ways, so I trust you will find the best balance between
-> putting generic parameterized code in the run_test() template
-> and putting code in the test case subroutine.
-Yes, that's indeed an optics issue: it looks like there's more, but
-the only actually "common" bit of the test drivers is that they all
-read events in the middle: the set-up before is different, and the
-additional post-conditions are different.
-
-We /could/ encode the expected events in the test array, but then
-that would put the expected events away from the code that generates
-them, which is more code, and more confusing for no good reason I
-think.
-
---7ui7ewvobyxz6sd5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmScWcsACgkQvP0LAY0m
-WPF5eQ/+LoxhH0H8RkCh+velixumpSekw5xdU9bjN6xNL9Xj39OXfoVVSX3Uwndc
-/20JuN5ozy2mMMdyDHfNv0OW5MDJQu//O3Wth5S0cQFE5kArkNOxp9K59ap9WXdw
-oMbvCu2I11dmS5S9kEdUFnHfgt3gqb4BSv1eq8vXSOeP995j6jSlH2d6e1/fOw2T
-QGX3X9pkyR6ZIEA59Wr8S44QoEu/hzQJAGQTHjNYh3AD5EbV78N9uW1kWn4sXAqQ
-Bpd1Me/DErTbf/2MBvvLSNj56P3SUEmj9sy69Ub0KMIJ0nLVJ4xNhdwVe58oWtt9
-OhMqJmxm+me5ze6stLM1rsD3Brhe9XhxMTSaE35xVpTu+qvy2/7j9OqikbsHFQzW
-yh7pxcCe0atc2nMYMtsXnyWjpp0ojqtFrgUGUUcnihYJSof9fWTOYHICYVZFh75Q
-e1OL+ZeZZbaaUHOritJuVodbYspEAmBsgCThe/cuZv65FHKjxkstlsFFuRGCjwnI
-UlW+XVd06IjjtMdgQj8v5H+sCMPR6lirXtCyKFOMPnyhJjoKTTcZSzQEu5Q/I9cr
-azHv8T8kfLZWceX8b3k80IW/+gZSQUCTucH+7preDq+XOE/bjvgbimSzL1nfF/Vg
-r9+49pGt54dJKws9ulHmcjA5+CRNwz2p4/69kLKxlV2DplT6r/k=
-=f6aD
------END PGP SIGNATURE-----
-
---7ui7ewvobyxz6sd5--
+>
+> Thanks,
+>
+> > -
+> >  /*
+> >   * Return values:
+> >   * 0 - folio is locked.
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 76c7907e7286..c6c759922f39 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -5294,15 +5294,6 @@ struct vm_area_struct *lock_vma_under_rcu(struct=
+ mm_struct *mm,
+> >       if (!vma_start_read(vma))
+> >               goto inval;
+> >
+> > -     /*
+> > -      * Due to the possibility of userfault handler dropping mmap_lock=
+, avoid
+> > -      * it for now and fall back to page fault handling under mmap_loc=
+k.
+> > -      */
+> > -     if (userfaultfd_armed(vma)) {
+> > -             vma_end_read(vma);
+> > -             goto inval;
+> > -     }
+> > -
+> >       /* Check since vm_start/vm_end might change before we lock the VM=
+A */
+> >       if (unlikely(address < vma->vm_start || address >=3D vma->vm_end)=
+) {
+> >               vma_end_read(vma);
+> > --
+> > 2.41.0.162.gfafddb0af9-goog
+> >
+>
+> --
+> Peter Xu
+>
