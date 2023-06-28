@@ -2,118 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D968740FAF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 13:08:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 333FE740F8D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 13:02:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231576AbjF1LIN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 07:08:13 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:51636 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231518AbjF1LIJ (ORCPT
+        id S230460AbjF1LCb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 07:02:31 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:49718 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S230378AbjF1LCa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 07:08:09 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 7CA7A1F8BE;
-        Wed, 28 Jun 2023 11:08:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1687950488;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AG7ZIcsXvWrO80s3KVhNL/4d1gbhKmpfq8tI2CThs2Y=;
-        b=njPHuxvS+CpjvvQMfW5UBER7+ce44ljnaaT0niTSSkz7sGpCMnUrZQ/UJc2A5hcGBPh7GN
-        caQzcMGMPrDBSxqhgRDL0LmuYbXAZHvGN9TL5EXvRNaiLKzp3dvRPcjbYZaVeN58LTJ2qB
-        lgPeObreP7Nll/jbrRFIV3DCLfPtmwM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1687950488;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AG7ZIcsXvWrO80s3KVhNL/4d1gbhKmpfq8tI2CThs2Y=;
-        b=+7a/8C/uTZ3PezOpZGSV3zHsGfUoqZIYhHHoDupO42ANs4s5+UCmcjDmutTf3H0ZQb2htf
-        1iaGf36cocrRtfBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3BA20138E8;
-        Wed, 28 Jun 2023 11:08:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id EWzRDZgUnGS5MAAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Wed, 28 Jun 2023 11:08:08 +0000
-Date:   Wed, 28 Jun 2023 13:01:40 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Nick Terrell <terrelln@fb.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] btrfs: port to new mount api
-Message-ID: <20230628110140.GC16168@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20230626-fs-btrfs-mount-api-v1-0-045e9735a00b@kernel.org>
- <b9028f9d-d947-3813-9677-c49bd2b72d53@wdc.com>
- <20230627140809.GA16168@suse.cz>
- <20230627-wahlunterlagen-zappeln-df12371cad14@brauner>
+        Wed, 28 Jun 2023 07:02:30 -0400
+X-UUID: 4308640215a311ee9cb5633481061a41-20230628
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=89B20YeAg/sOI5tG4Ue+qiZY0x7A1oBUW3Grt3g3ZCU=;
+        b=n+IxyXmA/vpGQ/x+aT8zShgmrAKvIwjk05Vapqo6Crr0MHy7Ym6vKwHAcEoYQG1jU78GZ6SAUzLSP5XARymogSX53BaKPu8YjQSpbW6ZaZTL7cztqrtKKAPgnSNxVA/JaWfxv5g+XaM0vPNzU1RNiJBDHvXSiJZyVjYczcZoQDQ=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.27,REQID:be728f6c-1bf8-4837-aa5f-643e8c048368,IP:0,U
+        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:100,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+        N:release,TS:100
+X-CID-INFO: VERSION:1.1.27,REQID:be728f6c-1bf8-4837-aa5f-643e8c048368,IP:0,URL
+        :0,TC:0,Content:0,EDM:0,RT:0,SF:100,FILE:0,BULK:0,RULE:Spam_GS981B3D,ACTIO
+        N:quarantine,TS:100
+X-CID-META: VersionHash:01c9525,CLOUDID:6c2d550d-26a8-467f-b838-f99719a9c083,B
+        ulkID:230628190225D6R83717,BulkQuantity:1,Recheck:0,SF:17|19|48|29|28,TC:n
+        il,Content:0,EDM:-3,IP:nil,URL:11|1,File:nil,Bulk:40,QS:nil,BEC:nil,COL:0,
+        OSI:0,OSA:0,AV:0,LES:1,SPR:NO
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_ASC,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_ULN,
+        TF_CID_SPAM_SNR,TF_CID_SPAM_SDM
+X-UUID: 4308640215a311ee9cb5633481061a41-20230628
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
+        (envelope-from <haibo.li@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1725509563; Wed, 28 Jun 2023 19:02:24 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 28 Jun 2023 19:02:23 +0800
+Received: from mszsdtlt102.gcn.mediatek.inc (10.16.4.142) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 28 Jun 2023 19:02:22 +0800
+From:   Haibo Li <haibo.li@mediatek.com>
+To:     <linux-kernel@vger.kernel.org>
+CC:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <xiaoming.yu@mediatek.com>,
+        Haibo Li <haibo.li@mediatek.com>
+Subject: [PATCH] mm/filemap.c:fix update prev_pos after one read request done
+Date:   Wed, 28 Jun 2023 19:02:20 +0800
+Message-ID: <20230628110220.120134-1-haibo.li@mediatek.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230627-wahlunterlagen-zappeln-df12371cad14@brauner>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 05:03:42PM +0200, Christian Brauner wrote:
-> On Tue, Jun 27, 2023 at 04:08:09PM +0200, David Sterba wrote:
-> > On Tue, Jun 27, 2023 at 11:51:01AM +0000, Johannes Thumshirn wrote:
-> > > On 26.06.23 16:19, Christian Brauner wrote:
-> > > > This whole thing ends up being close to a rewrite in some places. I
-> > > > haven't found a really elegant way to split this into smaller chunks.
-> > > 
-> > > You'll probably hate me for this, but you could split it up a bit by 
-> > > first doing the move of the old mount code into params.c and then do the
-> > > rewrite for the new mount API.
-> > 
-> > The patch needs more finer split than just that. Replacing the entire
-> > mount code like that will introduce bugs that users will hit for sure.
-> > We have some weird mount option combinations or constraints, and we
-> > don't have a 100% testsuite coverage.
-> > 
-> > The switch to the new API needs to be done in one patch, that's obvious,
-> > however all the code does not need to be in one patch. I suggest to
-> > split generic preparatory changes, add basic framework for the new API,
-> > then add the easy options, then by one the complicated ones, then do the
-> > switch, then do the cleanup and removal of the old code. Yes it's more
-> 
-> You can't support both apis. You either do a full switch or you have to
-> have a lot of dead and duplicatd code around that isn't used until the
-> switch is done. I might just miss what you mean though. So please
-> provide more details how you envision this to be done.
+ra->prev_pos tracks the last visited byte in the previous read request.
+It is used to check whether it is sequential read in
+ondemand_readahead and thus affects the readahead window.
 
-Temporarily there will be unused code from one or the other part, this
-is IMHO acceptable as it's supposed to make future debugging possible.
-If it's not understandable from my description above then I'll need to
-basically split the patch myself. I don't mind as the API conversion has
-been done by you, only the patch separation is my concern. I'll get to
-that eventually.
+From commit 06c0444290ce ("mm/filemap.c: generic_file_buffered_read()
+now uses find_get_pages_contig"),update logic of prev_pos is changed.
+It updates prev_pos after each returns from filemap_get_pages.
+But the read request from user may be not fully completed
+at this point.
+The updated prev_pos impacts the subsequent readahead window.
 
-> > work but if we have to debug anything in the future it'll be narrowed
-> > down to a few short patches.
-> 
-> I don't think you'll end up with a few short patches. That just not how
-> that works but again, I might just not see what you're seeing.
+The real problem is performance drop of fsck_msdos between linux-5.4
+and linux-5.15(also linux-6.4).
+Comparing to linux-5.4,It spends about 110% time and read 140% pages.
+The read pattern of fsck_msdos is not fully sequential.
 
-Yeah, we'd need something more concrete. I'm basing my suggestion on
-previous work in other areas where the first version was a big chunk of
-code replacing another one, and then we'd have to fix that one big
-commit repeatedly.  I've been burned too many times to let such things
-happen again.  This costs more time and distracts any current work so
-I'm taking the pessimistic attitude and try to do it right from the
-beginning, at some small cost like additional intermediate changes.
+Simplified read pattern of fsck_msdos likes below:
+1.read at page offset 0xa,size 0x1000
+2.read at other page offset like 0x20,size 0x1000
+3.read at page offset 0xa,size 0x4000
+4.read at page offset 0xe,size 0x1000
+
+Here is the read status on linux-6.4:
+1.after read at page offset 0xa,size 0x1000
+    ->page ofs 0xa go into pagecache
+2.after read at page offset 0x20,size 0x1000
+    ->page ofs 0x20 go into pagecache
+3.read at page offset 0xa,size 0x4000
+    ->filemap_get_pages read ofs 0xa from pagecache and returns
+    ->prev_pos is updated to 0xb and goto next loop
+    ->filemap_get_pages tends to read ofs 0xb,size 0x3000
+    ->initial_readahead case in ondemand_readahead since prev_pos is
+      the same as request ofs.
+    ->read 8 pages while async size is 5 pages
+      (PageReadahead flag at page 0xe)
+4.read at page offset 0xe,size 0x1000
+    ->hit page 0xe with PageReadahead flag set,double the ra_size.
+      read 16 pages while async size is 16 pages
+Now it reads 24 pages while actually uses 5 pages
+
+on linux-5.4:
+1.the same as 6.4
+2.the same as 6.4
+3.read at page offset 0xa,size 0x4000
+    ->read ofs 0xa from pagecache
+    ->read ofs 0xb,size 0x3000 using page_cache_sync_readahead
+      read 3 pages
+    ->prev_pos is updated to 0xd before generic_file_buffered_read
+      returns
+4.read at page offset 0xe,size 0x1000
+    ->initial_readahead case in ondemand_readahead since
+      request ofs-prev_pos==1
+    ->read 4 pages while async size is 3 pages
+
+Now it reads 7 pages while actually uses 5 pages.
+
+In above demo,the initial_readahead case is triggered by offset
+of user request on linux-5.4.
+While it may be triggered by update logic of prev_pos on linux-6.4.
+
+To fix the performance drop,update prev_pos after finishing one read
+request.
+
+Signed-off-by: Haibo Li <haibo.li@mediatek.com>
+---
+ mm/filemap.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 83dda76d1fc3..16b2054eee71 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2670,6 +2670,7 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+ 	int i, error = 0;
+ 	bool writably_mapped;
+ 	loff_t isize, end_offset;
++	loff_t last_pos = ra->prev_pos;
+ 
+ 	if (unlikely(iocb->ki_pos >= inode->i_sb->s_maxbytes))
+ 		return 0;
+@@ -2721,8 +2722,8 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+ 		 * When a read accesses the same folio several times, only
+ 		 * mark it as accessed the first time.
+ 		 */
+-		if (!pos_same_folio(iocb->ki_pos, ra->prev_pos - 1,
+-							fbatch.folios[0]))
++		if (!pos_same_folio(iocb->ki_pos, last_pos - 1,
++				    fbatch.folios[0]))
+ 			folio_mark_accessed(fbatch.folios[0]);
+ 
+ 		for (i = 0; i < folio_batch_count(&fbatch); i++) {
+@@ -2749,7 +2750,7 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+ 
+ 			already_read += copied;
+ 			iocb->ki_pos += copied;
+-			ra->prev_pos = iocb->ki_pos;
++			last_pos = iocb->ki_pos;
+ 
+ 			if (copied < bytes) {
+ 				error = -EFAULT;
+@@ -2763,7 +2764,7 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+ 	} while (iov_iter_count(iter) && iocb->ki_pos < isize && !error);
+ 
+ 	file_accessed(filp);
+-
++	ra->prev_pos = last_pos;
+ 	return already_read ? already_read : error;
+ }
+ EXPORT_SYMBOL_GPL(filemap_read);
+-- 
+2.25.1
+
