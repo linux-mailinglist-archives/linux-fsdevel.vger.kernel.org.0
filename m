@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C8F3741559
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 17:37:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 481BB741563
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 17:37:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232364AbjF1Pct (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 11:32:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60902 "EHLO
+        id S232328AbjF1Pcw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 11:32:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232292AbjF1Pcc (ORCPT
+        with ESMTP id S232311AbjF1Pcg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 11:32:32 -0400
+        Wed, 28 Jun 2023 11:32:36 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E34802110;
-        Wed, 28 Jun 2023 08:32:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AF3A268F;
+        Wed, 28 Jun 2023 08:32:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=xJ1qPIJfB3vnqEcbxhABSkV4Ss9+HxmJh6KO2xy1RwM=; b=aToMyk5kp3G+oyaR05SyvG45RM
-        YFwbeCyZajLKo8OxWD9LuMhDm3RX4hyuQONN2DTLG63hqDRxTb7x//SmiYIvbpqTVmOgU7N5YQhv5
-        6ohvtydKJfaf0dZ/fc4dQp/ZlFgadg0t6ETKYGRro6XDXo26eolUOKasOnYDPAER1PgiwytW8U2oO
-        0v5HjpDwJbwFcjt3YNZrtSrhs1NCXoikvJMsUhb8pUfCBf/zpCWb8blyrNRBl2Gtge58QXKDGwCCM
-        t3aa21HFltrmVW4qRJhnSrcRkKS4cXuYw0/e5K0jNJLzDFEzCwyzZshVmcTaORwjI6v7Ctxz9CRDk
-        EWBqzO8w==;
+        bh=B6Fz3GIuNoCACxA3ezmjCwn+xoSZbIPepw0++x2ObAA=; b=j0tWBvm1rnFENeLu0ylogbwyIU
+        u3WmCLvd5HeQ38foiJVSRC8CScMG3btoj6dN6ijZnlAz9NuuGN4HsXUo0r8b1yUpTg1szPyWYgD5y
+        p2zySF4RlzVpj0oIRgRvfjy5LVsOmANReNjE6UiQeSs1ZeVKJelAVCmWguCPOROmtaOrUr2W9fwOC
+        ci9a1UKsiIO8eXkIPdVAXzyFhCgrLrL3gDFE9wlA9WeJEHw/VeY4FphTpbiE+TjreuxrDUcR6x1MU
+        hY4WI9ZqTIdkrPGQYJMAT9LymoFpG4B6JK43NMubLXascaiNwFYkIskDrY8kcfnjm0UFUC5IUHHnM
+        MJuv7H3Q==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qEX9h-00G09M-1t;
-        Wed, 28 Jun 2023 15:32:30 +0000
+        id 1qEX9l-00G0A5-03;
+        Wed, 28 Jun 2023 15:32:33 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
 Cc:     Matthew Wilcox <willy@infradead.org>, linux-btrfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 13/23] btrfs: merge async_cow_start and compress_file_range
-Date:   Wed, 28 Jun 2023 17:31:34 +0200
-Message-Id: <20230628153144.22834-14-hch@lst.de>
+Subject: [PATCH 14/23] btrfs: merge submit_compressed_extents and async_cow_submit
+Date:   Wed, 28 Jun 2023 17:31:35 +0200
+Message-Id: <20230628153144.22834-15-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230628153144.22834-1-hch@lst.de>
 References: <20230628153144.22834-1-hch@lst.de>
@@ -53,86 +53,89 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is no good reason to have the simple async_cow_start wrapper,
-merge the argument conversion into the main compress_file_range function.
+The code in submit_compressed_extents just loops over the async_extents,
+and doesn't need to be conditional on an inode being present, as there
+won't be any async_extent in the list if we created and inline extent.
+Merge the two functions to simplify the logic.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/inode.c | 43 ++++++++++++++++---------------------------
- 1 file changed, 16 insertions(+), 27 deletions(-)
+ fs/btrfs/inode.c | 39 ++++++++++-----------------------------
+ 1 file changed, 10 insertions(+), 29 deletions(-)
 
 diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index f8fbcd359a304d..1e1d6584e1abaa 100644
+index 1e1d6584e1abaa..09f8c6f2f4bf88 100644
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -816,24 +816,22 @@ static inline void inode_should_defrag(struct btrfs_inode *inode,
+@@ -1289,25 +1289,6 @@ static void submit_one_async_extent(struct async_chunk *async_chunk,
+ 	kfree(async_extent);
  }
  
- /*
-- * we create compressed extents in two phases.  The first
-- * phase compresses a range of pages that have already been
-- * locked (both pages and state bits are locked).
-+ * Work queue call back to started compression on a file and pages.
-  *
-- * This is done inside an ordered work queue, and the compression
-- * is spread across many cpus.  The actual IO submission is step
-- * two, and the ordered work queue takes care of making sure that
-- * happens in the same order things were put onto the queue by
-- * writepages and friends.
-+ * This is done inside an ordered work queue, and the compression is spread
-+ * across many cpus.  The actual IO submission is step two, and the ordered work
-+ * queue takes care of making sure that happens in the same order things were
-+ * put onto the queue by writepages and friends.
-  *
-- * If this code finds it can't get good compression, it puts an
-- * entry onto the work queue to write the uncompressed bytes.  This
-- * makes sure that both compressed inodes and uncompressed inodes
-- * are written in the same order that the flusher thread sent them
-- * down.
-+ * If this code finds it can't get good compression, it puts an entry onto the
-+ * work queue to write the uncompressed bytes.  This makes sure that both
-+ * compressed inodes and uncompressed inodes are written in the same order that
-+ * the flusher thread sent them down.
-  */
--static noinline void compress_file_range(struct async_chunk *async_chunk)
-+static void compress_file_range(struct btrfs_work *work)
- {
-+	struct async_chunk *async_chunk =
-+		container_of(work, struct async_chunk, work);
- 	struct btrfs_inode *inode = async_chunk->inode;
- 	struct btrfs_fs_info *fs_info = inode->root->fs_info;
- 	struct address_space *mapping = inode->vfs_inode.i_mapping;
-@@ -1648,18 +1646,9 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- }
- 
- /*
-- * work queue call back to started compression on a file and pages
+-/*
+- * Phase two of compressed writeback.  This is the ordered portion of the code,
+- * which only gets called in the order the work was queued.  We walk all the
+- * async extents created by compress_file_range and send them down to the disk.
 - */
--static noinline void async_cow_start(struct btrfs_work *work)
+-static noinline void submit_compressed_extents(struct async_chunk *async_chunk)
 -{
--	struct async_chunk *async_chunk;
+-	struct async_extent *async_extent;
+-	u64 alloc_hint = 0;
 -
--	async_chunk = container_of(work, struct async_chunk, work);
--	compress_file_range(async_chunk);
+-	while (!list_empty(&async_chunk->extents)) {
+-		async_extent = list_entry(async_chunk->extents.next,
+-					  struct async_extent, list);
+-		list_del(&async_extent->list);
+-
+-		submit_one_async_extent(async_chunk, async_extent, &alloc_hint);
+-	}
 -}
 -
--/*
-- * work queue call back to submit previously compressed pages
-+ * Phase two of compressed writeback.  This is the ordered portion of the code,
-+ * which only gets called in the order the work was queued.  We walk all the
-+ * async extents created by compress_file_range and send them down to the disk.
-  */
- static noinline void async_cow_submit(struct btrfs_work *work)
+ static u64 get_extent_allocation_hint(struct btrfs_inode *inode, u64 start,
+ 				      u64 num_bytes)
  {
-@@ -1777,7 +1766,7 @@ static bool run_delalloc_compressed(struct btrfs_inode *inode,
- 			async_chunk[i].blkcg_css = NULL;
+@@ -1650,24 +1631,24 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
+  * which only gets called in the order the work was queued.  We walk all the
+  * async extents created by compress_file_range and send them down to the disk.
+  */
+-static noinline void async_cow_submit(struct btrfs_work *work)
++static noinline void submit_compressed_extents(struct btrfs_work *work)
+ {
+ 	struct async_chunk *async_chunk = container_of(work, struct async_chunk,
+ 						     work);
+ 	struct btrfs_fs_info *fs_info = btrfs_work_owner(work);
++	struct async_extent *async_extent;
+ 	unsigned long nr_pages;
++	u64 alloc_hint = 0;
+ 
+ 	nr_pages = (async_chunk->end - async_chunk->start + PAGE_SIZE) >>
+ 		PAGE_SHIFT;
+ 
+-	/*
+-	 * ->inode could be NULL if async_chunk_start has failed to compress,
+-	 * in which case we don't have anything to submit, yet we need to
+-	 * always adjust ->async_delalloc_pages as its paired with the init
+-	 * happening in run_delalloc_compressed
+-	 */
+-	if (async_chunk->inode)
+-		submit_compressed_extents(async_chunk);
++	while (!list_empty(&async_chunk->extents)) {
++		async_extent = list_entry(async_chunk->extents.next,
++					  struct async_extent, list);
++		list_del(&async_extent->list);
++		submit_one_async_extent(async_chunk, async_extent, &alloc_hint);
++	}
+ 
+ 	/* atomic_sub_return implies a barrier */
+ 	if (atomic_sub_return(nr_pages, &fs_info->async_delalloc_pages) <
+@@ -1767,7 +1748,7 @@ static bool run_delalloc_compressed(struct btrfs_inode *inode,
  		}
  
--		btrfs_init_work(&async_chunk[i].work, async_cow_start,
-+		btrfs_init_work(&async_chunk[i].work, compress_file_range,
- 				async_cow_submit, async_cow_free);
+ 		btrfs_init_work(&async_chunk[i].work, compress_file_range,
+-				async_cow_submit, async_cow_free);
++				submit_compressed_extents, async_cow_free);
  
  		nr_pages = DIV_ROUND_UP(cur_end - start, PAGE_SIZE);
+ 		atomic_add(nr_pages, &fs_info->async_delalloc_pages);
 -- 
 2.39.2
 
