@@ -2,174 +2,219 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 28791741BBA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 00:24:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1614B741BC4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 00:34:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230315AbjF1WYB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 18:24:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44672 "EHLO
+        id S231175AbjF1WeB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 18:34:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbjF1WYA (ORCPT
+        with ESMTP id S229620AbjF1Wd7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 18:24:00 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C61472134;
-        Wed, 28 Jun 2023 15:23:58 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3fba545d743so582095e9.0;
-        Wed, 28 Jun 2023 15:23:58 -0700 (PDT)
+        Wed, 28 Jun 2023 18:33:59 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FC3726B9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 15:33:58 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-676cc97ca74so9634b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 15:33:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687991037; x=1690583037;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eJSQ2cbgDZSmh5RuRHhUwD3ZZOJfvX+ur0GE22ML6KI=;
-        b=IAeB7RM8oKj2Ma9uUqLnb4e119QOYrBBnvem6Foysew6wIo0xM+jtRjyw3BgfHN2SF
-         sNQCmPf+wiZmuzA6RfcHIPX88vaQeB934RdAQnkv4fKAnRUpcjhEzwDdCrWVT4yw+qwl
-         uRYefMOSDeFVnLZBnjtJYoFORQKCJOKMKAwmRe2TqKIoyVrrxURlmFz4rN3GyvrKUVKE
-         BFttYYRZ6gYSsg64oNGnxVb62HJNTx5TjK0YZihM843Kgo+5R/MeOzhfmZ3Jqrwmi0U7
-         ngRGb1gK8eNmZP9Nmk4z4Ur7PWnrcuyRaX9Yd3UMIo95hG70sujIu7cpW8JH/khb/Mjm
-         zFBA==
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1687991638; x=1690583638;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0oW5BXhQovw4TV6zdZd424J+I/WFKk4cAc5zD1n255c=;
+        b=c9gdujX9zi75jg4hmjr8oFrVx/hG1FqUKaICQS9v4vWmbwHtPoIvFmN2HPuH1nKOmH
+         Pr1msq3OxLAmq2VcgBoES9iaK9Zc8z+b5ZQZd71b7s5lgDlgAHwyTujMIW1MRU8a4rr2
+         p4/A8htbaVVzcTDo2KN3o+qS2x186ciX4lMjB8XYBjVnPZZh9ljhVdjpitMuL4FYAxBM
+         qGV5qyKojK31W9x0w3Y5llYh7hoHMKOqibL5dsKzLQhJs5KSD1DmJqhmRHbLM5tbRk6E
+         S9JurP+nkWdOKQDd9z/CfYnXAE2hhs8knpCXHLcZ978FdyBF8flULECq7F+jYV0tgouY
+         dGxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687991037; x=1690583037;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eJSQ2cbgDZSmh5RuRHhUwD3ZZOJfvX+ur0GE22ML6KI=;
-        b=YF4wkPkk6HmpOfkZQV2JPMBJKyXlPlGRiF6lxCrxrEmcPUp1dpl+rjc/YSaS3Vh76s
-         tY8+IUAkFkpSawqsmS6d6PJpqfKJeBDu0RY/WYEtdiQorMcRv+wjFJYw61rX3TIPvt5E
-         EkMtoDmhF6hTzR4W2mkYAInv3x9tk+TPi8cHoHF16KvoPnSgBWAkGtEnCjIgvrm4Pbcg
-         OFT30IXpZoFlxS7uOf0aTX7L+8WDK6SalQq0OeIzdTn02i5CSjzL87wSkt3i8qvzUXYM
-         BtpVW85eExgYptAqTCQkBmXnhyBabAf2fuxQyqlHBt8yZplVcwZEaIfdVGe8il/OGTsX
-         xHpw==
-X-Gm-Message-State: AC+VfDw/Huab8irpNYi7BQB5puHMiCtELeCYS9r76/AOgq1dkohy/xnu
-        B6CbDazpogY9EooO2BliX/yl+iL595g=
-X-Google-Smtp-Source: ACHHUZ5kOHdlPw1OGXW6fZxr/hv7DLmJTCXyIxcloHSLI27O6GzkGcfxQJToG70wWFjyiRiIYkmZng==
-X-Received: by 2002:a7b:c5d7:0:b0:3f8:c70e:7ed1 with SMTP id n23-20020a7bc5d7000000b003f8c70e7ed1mr31957944wmk.20.1687991036884;
-        Wed, 28 Jun 2023 15:23:56 -0700 (PDT)
-Received: from suse.localnet (host-87-3-108-126.retail.telecomitalia.it. [87.3.108.126])
-        by smtp.gmail.com with ESMTPSA id n17-20020a5d6611000000b003140fff4f75sm1983877wru.17.2023.06.28.15.23.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jun 2023 15:23:55 -0700 (PDT)
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Sumitra Sharma <sumitraartsy@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ira Weiny <ira.weiny@intel.com>, Deepak R Varma <drv@mailo.com>
-Subject: Re: [PATCH] fs/vboxsf: Replace kmap() with kmap_local_{page, folio}()
-Date:   Thu, 29 Jun 2023 00:23:54 +0200
-Message-ID: <6924669.18pcnM708K@suse>
-In-Reply-To: <ZJxqmEVKoxxftfXM@casper.infradead.org>
-References: <20230627135115.GA452832@sumitra.com> <ZJxqmEVKoxxftfXM@casper.infradead.org>
+        d=1e100.net; s=20221208; t=1687991638; x=1690583638;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0oW5BXhQovw4TV6zdZd424J+I/WFKk4cAc5zD1n255c=;
+        b=YYB+ZHeUvtO3O5VKGZvXPJrdl5onw1V+QVTma2OaFFI2ohLkVfljQorQUw0Rhmw47Y
+         0x8ogAiXcEVrjBazbBNySTNHkroYreKbwHWZTtx9IyQWr0vqtNIdBYhHMXjMHHH85H3I
+         FvqnXOxkDXDB8AM1kGcZcTfTPAeVfB1Q+3L2roN2e2uvxDh74556BDR/J6js4JSshXIW
+         0LoIvLxJ1mkw4HK+xAq9QtJ3G7VaL5MJFVa/eyyi/nP47gdBfYnMEAA2MHikfui7XljP
+         2hAIzOjui492mmbrRR44HTIPrPWQQ1Y8haWAWJE/2VZ4Ic0XbovrhWfg/ktM3ug3NCTt
+         GxLw==
+X-Gm-Message-State: AC+VfDze3EIqrXmZmz7aT7HUzt5/rQ18ahtzyWbFhPMMl1QXyCsngkmh
+        iM5Sb3ZDtBLdx14Cr+Wd4ib6+A==
+X-Google-Smtp-Source: ACHHUZ65sNYPaxFEj9KlTSH6RYDS3nDfKpKwX6XXCBSTl0TgMRiDzLaDCl/l714R9NkUA/tbNESVpw==
+X-Received: by 2002:a05:6a20:8f04:b0:121:b5af:acbc with SMTP id b4-20020a056a208f0400b00121b5afacbcmr38497363pzk.3.1687991637811;
+        Wed, 28 Jun 2023 15:33:57 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id z6-20020aa791c6000000b0065434edd521sm1236833pfa.196.2023.06.28.15.33.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Jun 2023 15:33:56 -0700 (PDT)
+Message-ID: <d697ec27-8008-2eb6-0950-f612a602dcf5@kernel.dk>
+Date:   Wed, 28 Jun 2023 16:33:55 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [GIT PULL] bcachefs
+Content-Language: en-US
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <b92ea170-d531-00f3-ca7a-613c05dcbf5f@kernel.dk>
+ <23922545-917a-06bd-ec92-ff6aa66118e2@kernel.dk>
+ <20230627201524.ool73bps2lre2tsz@moria.home.lan>
+ <c06a9e0b-8f3e-4e47-53d0-b4854a98cc44@kernel.dk>
+ <20230628040114.oz46icbsjpa4egpp@moria.home.lan>
+ <b02657af-5bbb-b46b-cea0-ee89f385f3c1@kernel.dk>
+ <4b863e62-4406-53e4-f96a-f4d1daf098ab@kernel.dk>
+ <20230628175204.oeek4nnqx7ltlqmg@moria.home.lan>
+ <e1570c46-68da-22b7-5322-f34f3c2958d9@kernel.dk>
+ <2e635579-37ba-ddfc-a2ab-e6c080ab4971@kernel.dk>
+ <20230628221342.4j3gr3zscnsu366p@moria.home.lan>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230628221342.4j3gr3zscnsu366p@moria.home.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On mercoled=EC 28 giugno 2023 19:15:04 CEST Matthew Wilcox wrote:
-> Here's a more comprehensive read_folio patch.  It's not at all
-> efficient, but then if we wanted an efficient vboxsf, we'd implement
-> vboxsf_readahead() and actually do an async call with deferred setting
-> of the uptodate flag.
-> I can consult with anyone who wants to do all
-> this work.
+On 6/28/23 4:13?PM, Kent Overstreet wrote:
+> On Wed, Jun 28, 2023 at 03:17:43PM -0600, Jens Axboe wrote:
+>> Case in point, just changed my reproducer to use aio instead of
+>> io_uring. Here's the full script:
+>>
+>> #!/bin/bash
+>>
+>> DEV=/dev/nvme1n1
+>> MNT=/data
+>> ITER=0
+>>
+>> while true; do
+>> 	echo loop $ITER
+>> 	sudo mount $DEV $MNT
+>> 	fio --name=test --ioengine=aio --iodepth=2 --filename=$MNT/foo --size=1g --buffered=1 --overwrite=0 --numjobs=12 --minimal --rw=randread --output=/dev/null &
+>> 	Y=$(($RANDOM % 3))
+>> 	X=$(($RANDOM % 10))
+>> 	VAL="$Y.$X"
+>> 	sleep $VAL
+>> 	ps -e | grep fio > /dev/null 2>&1
+>> 	while [ $? -eq 0 ]; do
+>> 		killall -9 fio > /dev/null 2>&1
+>> 		echo will wait
+>> 		wait > /dev/null 2>&1
+>> 		echo done waiting
+>> 		ps -e | grep "fio " > /dev/null 2>&1
+>> 	done
+>> 	sudo umount /data
+>> 	if [ $? -ne 0 ]; then
+>> 		break
+>> 	fi
+>> 	((ITER++))
+>> done
+>>
+>> and if I run that, fails on the first umount attempt in that loop:
+>>
+>> axboe@m1max-kvm ~> bash test2.sh
+>> loop 0
+>> will wait
+>> done waiting
+>> umount: /data: target is busy.
+>>
+>> So yeah, this is _nothing_ new. I really don't think trying to address
+>> this in the kernel is the right approach, it'd be a lot saner to harden
+>> the xfstest side to deal with the umount a bit more sanely. There are
+>> obviously tons of other ways that a mount could get pinned, which isn't
+>> too relevant here since the bdev and mount point are basically exclusive
+>> to the test being run. But the kill and delayed fput is enough to make
+>> that case imho.
+> 
+> Uh, count me very much not in favor of hacking around bugs elsewhere.
+> 
+> Al, do you know if this has been considered before? We've got fput()
+> being called from aio completion, which often runs out of a worqueue (if
+> not a workqueue, a bottom half of some sort - what happens then, I
+> wonder) - so the effect is that it goes on the global list, not the task
+> work list.
+> 
+> hence, kill -9ing a process doing aio (or io_uring io, for extra
+> reasons) causes umount to fail with -EBUSY.
+> 
+> and since there's no mechanism for userspace to deal with this besides
+> sleep and retry, this seems pretty gross.
 
-Interesting...
-=20
-> I haven't even compiled this, just trying to show the direction this
-> should take.
->=20
-> diff --git a/fs/vboxsf/file.c b/fs/vboxsf/file.c
-> index 2307f8037efc..f1af9a7bd3d8 100644
-> --- a/fs/vboxsf/file.c
-> +++ b/fs/vboxsf/file.c
-> @@ -227,26 +227,31 @@ const struct inode_operations vboxsf_reg_iops =3D {
->=20
->  static int vboxsf_read_folio(struct file *file, struct folio *folio)
->  {
-> -	struct page *page =3D &folio->page;
->  	struct vboxsf_handle *sf_handle =3D file->private_data;
-> -	loff_t off =3D page_offset(page);
-> -	u32 nread =3D PAGE_SIZE;
-> -	u8 *buf;
-> +	loff_t pos =3D folio_pos(folio);
-> +	size_t offset =3D 0;
->  	int err;
->=20
-> -	buf =3D kmap(page);
-> +	do {
+But there is, as Christian outlined. I would not call it pretty or
+intuitive, but you can in fact make it work just fine and not just for
+the deferred fput() case but also in the presence of other kinds of
+pins. Of which there are of course many.
 
-Please let me understand why you are calling vboxsf_read() in a loop, a=20
-PAGE_SIZE at a time.
+> I'd be willing to tackle this for aio since I know that code...
 
-I have had only few minutes (whereas I'd need more time) to look at this co=
-de.
+But it's not aio (or io_uring or whatever), it's simply the fact that
+doing an fput() from an exiting task (for example) will end up being
+done async. And hence waiting for task exits is NOT enough to ensure
+that all file references have been released.
 
-If I understand the current code it reads a single page at offset zero of a=
-=20
-folio and then memset() with zeros from &buf[nread] up to the end of the pa=
-ge.=20
-Then it seems that this function currently assume that the folio doesn't ne=
-ed=20
-to be read until "offset < folio_size(folio)" becomes false.
+Since there are a variety of other reasons why a mount may be pinned and
+fail to umount, perhaps it's worth considering that changing this
+behavior won't buy us that much. Especially since it's been around for
+more than 10 years:
 
-Does it imply that the folio is always one page sized? Doesn't it? I'm sure=
-ly=20
-missing some basics... =20
+commit 4a9d4b024a3102fc083c925c242d98ac27b1c5f6
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Sun Jun 24 09:56:45 2012 +0400
 
-> +		u8 *buf =3D kmap_local_folio(folio, offset);
-> +		u32 nread =3D PAGE_SIZE;
->=20
-> -	err =3D vboxsf_read(sf_handle->root, sf_handle->handle, off, &nread,=20
-buf);
-> -	if (err =3D=3D 0) {
-> -		memset(&buf[nread], 0, PAGE_SIZE - nread);
-> -		flush_dcache_page(page);
-> -		SetPageUptodate(page);
-> -	} else {
-> -		SetPageError(page);
-> -	}
-> +		err =3D vboxsf_read(sf_handle->root, sf_handle->handle, pos,
-> +				&nread, buf);
-> +		if (nread < PAGE_SIZE)
-> +			memset(&buf[nread], 0, PAGE_SIZE - nread);
-> +		kunmap_local(buf);
-> +		if (err)
-> +			break;
-> +		offset +=3D PAGE_SIZE;
-> +		pos +=3D PAGE_SIZE;
-> +	} while (offset < folio_size(folio);
->=20
-> -	kunmap(page);
-> -	unlock_page(page);
-> +	if (!err) {
-> +		flush_dcache_folio(folio);
-> +		folio_mark_uptodate(folio);
-> +	}
-> +	folio_unlock(folio);
+    switch fput to task_work_add
 
-Shouldn't we call folio_lock() to lock the folio to be able to unlock with=
-=20
-folio_unlock()?
-=20
-If so, I can't find any neither a folio_lock() or a page_lock() in this=20
-filesystem.=20
+though that commit message goes on to read:
 
-Again sorry for not understanding, can you please explain it?
+    We are guaranteed that __fput() will be done before we return
+    to userland (or exit).  Note that for fput() from a kernel
+    thread we get an async behaviour; it's almost always OK, but
+    sometimes you might need to have __fput() completed before
+    you do anything else.  There are two mechanisms for that -
+    a general barrier (flush_delayed_fput()) and explicit
+    __fput_sync().  Both should be used with care (as was the
+    case for fput() from kernel threads all along).  See comments
+    in fs/file_table.c for details.
 
->  	return err;
->  }
+where that first sentence isn't true if the task is indeed exiting. I
+guess you can say that it is as it doesn't return to userland, but
+splitting hairs. Though the commit in question doesn't seem to handle
+that case, but assuming that came in with a later fixup.
 
-Thanks,
+It is true if the task_work gets added, as that will get run before
+returning to userspace.
 
-=46abio
+If a case were to be made that we also guarantee that fput has been done
+by the time to task returns to userspace, or exits, then we'd probably
+want to move that deferred fput list to the task_struct and ensure that
+it gets run if the task exits rather than have a global deferred list.
+Currently we have:
 
+1) If kthread or in interrupt
+	1a) add to global fput list
+2) task_work_add if not. If that fails, goto 1a.
+
+which would then become:
+
+1) If kthread or in interrupt
+	1a) add to global fput list
+2) task_work_add if not. If that fails, we know task is existing. add to
+   per-task defer list to be run at a convenient time before task has
+   exited.
+
+and seems a lot saner than hacking around this in umount specifically.
+
+-- 
+Jens Axboe
 
