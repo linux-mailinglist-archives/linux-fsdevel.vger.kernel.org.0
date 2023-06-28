@@ -2,125 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A09E741BB4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 00:17:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28791741BBA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 00:24:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230219AbjF1WRq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 18:17:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43988 "EHLO
+        id S230315AbjF1WYB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 18:24:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229865AbjF1WRp (ORCPT
+        with ESMTP id S229469AbjF1WYA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 18:17:45 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8F732116
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 15:17:42 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1b8033987baso279245ad.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 15:17:42 -0700 (PDT)
+        Wed, 28 Jun 2023 18:24:00 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C61472134;
+        Wed, 28 Jun 2023 15:23:58 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3fba545d743so582095e9.0;
+        Wed, 28 Jun 2023 15:23:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1687990662; x=1690582662;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5/gmMRiFqqJ+Lsen9zPMWgthjvjxQcSheMjSUphDCJM=;
-        b=d7qH+KgoGAPGoTPMx8m9/Hrt2b2VhaNypZ0WskDBHIdCwRRA3rLkNrUKBcdYP/gaAQ
-         cpg+gX+EJN+pJZV89Z9d3qtV6vK/gNa/Xrze+KmjqYRYPSLqYIPaXVgDS8sMJVClXX58
-         +5GBew/ctHMLeRIQkcFt4aCXGAexxGGSBVUrLxweWn/gxH8moGmYR09JW+c5t1y1fRhE
-         D5Ooipzsf5QL+/Mq3YSxTGjD6DVi5m4rP85kaPBMGM4ZzK3n2mjqECtZmyRSppC9m061
-         ovlLAvcUzXPhIeB554pIVlA2GLV5y6Wp96uaWhkDEIlq0v56TkbntwytQpp4n/Cm4W0d
-         P2Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687990662; x=1690582662;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1687991037; x=1690583037;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5/gmMRiFqqJ+Lsen9zPMWgthjvjxQcSheMjSUphDCJM=;
-        b=TpQ9OsgsXZh5aBc7hJWtLJdaWqielPIUi+Lb+P2hQe97puD2PcMhGrygcQvieMWer9
-         wQ/JZhISnau2OcyQWWLnVvAgyKWTd6tQ+nm8eqmPRPEPMCk07zRxuSkbeQq+n7bfAofm
-         oPRwWZNndKd2rIMDMnOW2ITwWwu/V3xUTrLESEm/kSjrFP1rfOLrisCsB+5sr2umIRJq
-         3/lV/TWu/sN5PvY2CbB3gP74pEZ9NTL+NAYgrYrypa9O/TeinNsYdumlGvB8lQ8QgmQ3
-         xhJlNAG9LcgpwI4n1arYz32OFt239ocD7XxSaNqkYzwbbjUDFR6aPTRd6T3w79asWqY2
-         10eg==
-X-Gm-Message-State: AC+VfDxPQbDRwFERAs+9zJBNCm01tFS4YGtECf7nR06209W01elaOpsg
-        820I3pXLTtF3wUafzHZIfm0MzA==
-X-Google-Smtp-Source: ACHHUZ6unZGfFsyCYjaAJZn7z1KDMKA76rEnPDR2xxlmcqL/XcD52Nbw4Xu57xIEJ5a+D7GMLvWbjQ==
-X-Received: by 2002:a17:90a:fe14:b0:262:fc6f:88c7 with SMTP id ck20-20020a17090afe1400b00262fc6f88c7mr3217158pjb.23.1687990662075;
-        Wed, 28 Jun 2023 15:17:42 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-94-37.pa.vic.optusnet.com.au. [49.186.94.37])
-        by smtp.gmail.com with ESMTPSA id 12-20020a17090a194c00b00253305f36c4sm10685355pjh.18.2023.06.28.15.17.41
+        bh=eJSQ2cbgDZSmh5RuRHhUwD3ZZOJfvX+ur0GE22ML6KI=;
+        b=IAeB7RM8oKj2Ma9uUqLnb4e119QOYrBBnvem6Foysew6wIo0xM+jtRjyw3BgfHN2SF
+         sNQCmPf+wiZmuzA6RfcHIPX88vaQeB934RdAQnkv4fKAnRUpcjhEzwDdCrWVT4yw+qwl
+         uRYefMOSDeFVnLZBnjtJYoFORQKCJOKMKAwmRe2TqKIoyVrrxURlmFz4rN3GyvrKUVKE
+         BFttYYRZ6gYSsg64oNGnxVb62HJNTx5TjK0YZihM843Kgo+5R/MeOzhfmZ3Jqrwmi0U7
+         ngRGb1gK8eNmZP9Nmk4z4Ur7PWnrcuyRaX9Yd3UMIo95hG70sujIu7cpW8JH/khb/Mjm
+         zFBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687991037; x=1690583037;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eJSQ2cbgDZSmh5RuRHhUwD3ZZOJfvX+ur0GE22ML6KI=;
+        b=YF4wkPkk6HmpOfkZQV2JPMBJKyXlPlGRiF6lxCrxrEmcPUp1dpl+rjc/YSaS3Vh76s
+         tY8+IUAkFkpSawqsmS6d6PJpqfKJeBDu0RY/WYEtdiQorMcRv+wjFJYw61rX3TIPvt5E
+         EkMtoDmhF6hTzR4W2mkYAInv3x9tk+TPi8cHoHF16KvoPnSgBWAkGtEnCjIgvrm4Pbcg
+         OFT30IXpZoFlxS7uOf0aTX7L+8WDK6SalQq0OeIzdTn02i5CSjzL87wSkt3i8qvzUXYM
+         BtpVW85eExgYptAqTCQkBmXnhyBabAf2fuxQyqlHBt8yZplVcwZEaIfdVGe8il/OGTsX
+         xHpw==
+X-Gm-Message-State: AC+VfDw/Huab8irpNYi7BQB5puHMiCtELeCYS9r76/AOgq1dkohy/xnu
+        B6CbDazpogY9EooO2BliX/yl+iL595g=
+X-Google-Smtp-Source: ACHHUZ5kOHdlPw1OGXW6fZxr/hv7DLmJTCXyIxcloHSLI27O6GzkGcfxQJToG70wWFjyiRiIYkmZng==
+X-Received: by 2002:a7b:c5d7:0:b0:3f8:c70e:7ed1 with SMTP id n23-20020a7bc5d7000000b003f8c70e7ed1mr31957944wmk.20.1687991036884;
+        Wed, 28 Jun 2023 15:23:56 -0700 (PDT)
+Received: from suse.localnet (host-87-3-108-126.retail.telecomitalia.it. [87.3.108.126])
+        by smtp.gmail.com with ESMTPSA id n17-20020a5d6611000000b003140fff4f75sm1983877wru.17.2023.06.28.15.23.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jun 2023 15:17:41 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qEdTm-00HOGV-0w;
-        Thu, 29 Jun 2023 08:17:38 +1000
-Date:   Thu, 29 Jun 2023 08:17:38 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Matt Whitlock <kernel@mattwhitlock.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [Reproducer] Corruption, possible race between splice and
- FALLOC_FL_PUNCH_HOLE
-Message-ID: <ZJyxguAkaTMc+UM2@dread.disaster.area>
-References: <a60594ef-ff85-498f-a1c4-0fcb9586621c@mattwhitlock.name>
- <ZJq6nJBoX1m6Po9+@casper.infradead.org>
- <ec804f26-fa76-4fbe-9b1c-8fbbd829b735@mattwhitlock.name>
- <ZJp4Df8MnU8F3XAt@dread.disaster.area>
- <3299543.1687933850@warthog.procyon.org.uk>
- <3695109.1687976846@warthog.procyon.org.uk>
+        Wed, 28 Jun 2023 15:23:55 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Sumitra Sharma <sumitraartsy@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ira Weiny <ira.weiny@intel.com>, Deepak R Varma <drv@mailo.com>
+Subject: Re: [PATCH] fs/vboxsf: Replace kmap() with kmap_local_{page, folio}()
+Date:   Thu, 29 Jun 2023 00:23:54 +0200
+Message-ID: <6924669.18pcnM708K@suse>
+In-Reply-To: <ZJxqmEVKoxxftfXM@casper.infradead.org>
+References: <20230627135115.GA452832@sumitra.com> <ZJxqmEVKoxxftfXM@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3695109.1687976846@warthog.procyon.org.uk>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 28, 2023 at 07:27:26PM +0100, David Howells wrote:
-> Matt Whitlock <kernel@mattwhitlock.name> wrote:
-> 
-> > In other words, the currently implemented behavior is appropriate for
-> > SPLICE_F_MOVE, but it is not appropriate for ~SPLICE_F_MOVE.
-> 
-> The problems with SPLICE_F_MOVE is that it's only applicable to splicing *out*
-> of a pipe.  By the time you get that far the pages can already be corrupted by
-> a shared-writable mmap or write().
+On mercoled=EC 28 giugno 2023 19:15:04 CEST Matthew Wilcox wrote:
+> Here's a more comprehensive read_folio patch.  It's not at all
+> efficient, but then if we wanted an efficient vboxsf, we'd implement
+> vboxsf_readahead() and actually do an async call with deferred setting
+> of the uptodate flag.
+> I can consult with anyone who wants to do all
+> this work.
 
-That's not documented in the man page.
+Interesting...
+=20
+> I haven't even compiled this, just trying to show the direction this
+> should take.
+>=20
+> diff --git a/fs/vboxsf/file.c b/fs/vboxsf/file.c
+> index 2307f8037efc..f1af9a7bd3d8 100644
+> --- a/fs/vboxsf/file.c
+> +++ b/fs/vboxsf/file.c
+> @@ -227,26 +227,31 @@ const struct inode_operations vboxsf_reg_iops =3D {
+>=20
+>  static int vboxsf_read_folio(struct file *file, struct folio *folio)
+>  {
+> -	struct page *page =3D &folio->page;
+>  	struct vboxsf_handle *sf_handle =3D file->private_data;
+> -	loff_t off =3D page_offset(page);
+> -	u32 nread =3D PAGE_SIZE;
+> -	u8 *buf;
+> +	loff_t pos =3D folio_pos(folio);
+> +	size_t offset =3D 0;
+>  	int err;
+>=20
+> -	buf =3D kmap(page);
+> +	do {
 
-Indeed, I think Matt's point - and mine, too, for that matter - is
-that the splice(2) man page documents *none* of this
-"copy-by-reference" behaviour or it's side effects. All the man page
-documents is that the data is *copied in kernel-space* rather than
-needing kernel->user->kernel data movement to copy it from one fd to
-the other.
+Please let me understand why you are calling vboxsf_read() in a loop, a=20
+PAGE_SIZE at a time.
 
-The man page *heavily implies* that splice is a "fast immediate
-data copy". It most definitely does not describe any "zero-copy with
-whacky post-completion data stream corrupting side effects"
-mechanisms. There's not even an entry in the "notes" or "bugs"
-section to warn users that they cannot trust the contents of the
-source or destination pipe to be what they think they might be as
-the "data copy" implied by the pipe buffer might not occur until
-some arbitrary time in the future.
+I have had only few minutes (whereas I'd need more time) to look at this co=
+de.
 
-Hence, according to the man page, what it is doing right now
-definitely contrary to the behaviour implied by the documentation...
+If I understand the current code it reads a single page at offset zero of a=
+=20
+folio and then memset() with zeros from &buf[nread] up to the end of the pa=
+ge.=20
+Then it seems that this function currently assume that the folio doesn't ne=
+ed=20
+to be read until "offset < folio_size(folio)" becomes false.
 
-i.e. If the data that is "copied" to the destination pipe is not
-resolved until some future action by some 3rd party process is
-performed, then the man page must tell users they cannot use this
-for any sort of data stream where they require the data being
-transferred needs to remain stable as of the time of the splice
-operation.
+Does it imply that the folio is always one page sized? Doesn't it? I'm sure=
+ly=20
+missing some basics... =20
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> +		u8 *buf =3D kmap_local_folio(folio, offset);
+> +		u32 nread =3D PAGE_SIZE;
+>=20
+> -	err =3D vboxsf_read(sf_handle->root, sf_handle->handle, off, &nread,=20
+buf);
+> -	if (err =3D=3D 0) {
+> -		memset(&buf[nread], 0, PAGE_SIZE - nread);
+> -		flush_dcache_page(page);
+> -		SetPageUptodate(page);
+> -	} else {
+> -		SetPageError(page);
+> -	}
+> +		err =3D vboxsf_read(sf_handle->root, sf_handle->handle, pos,
+> +				&nread, buf);
+> +		if (nread < PAGE_SIZE)
+> +			memset(&buf[nread], 0, PAGE_SIZE - nread);
+> +		kunmap_local(buf);
+> +		if (err)
+> +			break;
+> +		offset +=3D PAGE_SIZE;
+> +		pos +=3D PAGE_SIZE;
+> +	} while (offset < folio_size(folio);
+>=20
+> -	kunmap(page);
+> -	unlock_page(page);
+> +	if (!err) {
+> +		flush_dcache_folio(folio);
+> +		folio_mark_uptodate(folio);
+> +	}
+> +	folio_unlock(folio);
+
+Shouldn't we call folio_lock() to lock the folio to be able to unlock with=
+=20
+folio_unlock()?
+=20
+If so, I can't find any neither a folio_lock() or a page_lock() in this=20
+filesystem.=20
+
+Again sorry for not understanding, can you please explain it?
+
+>  	return err;
+>  }
+
+Thanks,
+
+=46abio
+
+
