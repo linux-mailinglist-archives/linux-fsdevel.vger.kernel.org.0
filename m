@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A97A374151D
+	by mail.lfdr.de (Postfix) with ESMTP id 61AAE74151C
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 17:37:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232244AbjF1PcU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 11:32:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60812 "EHLO
+        id S232235AbjF1Pc2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 11:32:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232220AbjF1PcE (ORCPT
+        with ESMTP id S232234AbjF1PcH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 11:32:04 -0400
+        Wed, 28 Jun 2023 11:32:07 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D89472110;
-        Wed, 28 Jun 2023 08:32:03 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DBA626AB;
+        Wed, 28 Jun 2023 08:32:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=bO9tOc0j9/dZluOR3Y1G+XOqcPGQ2FwtMsXfQlry8Vw=; b=AjnFoZ0dkGsHEAkJhiS6CYT0C3
-        JoRKdUPSi4ODap8ki5muKE0Z5J2btOAqKXfqwBVob0AAtcG35zvJG8sb/BItdiFuGBjZi41j8qPhW
-        XqgW5i946yJAE9ynIvY5cYLiB/24rLua5CtstCxMqk9GXL9veYp1aQ1ceEzovFCtfSeKYNf6Kwj+U
-        kUoBi7WjAx19VJn0xETJrAS2EP2Xh7ybBRbzNonJhxIpDsD8NYpUjL4LBMFcTyDJXECIySsyvrXXP
-        BYBZuxpDo+wH/PtoMSgbpJ3+Qdgm/Qz180BkIBCQiFJZY+E5jEvmqVv+jN/XxrNWy0bF+RWRNOVBh
-        uSPvIbpg==;
+        bh=Dg1yxeg5xlrkS1kEyPQLp/xQuMm+hYqoqp8Zg193E/s=; b=Ni5TN9nUC0JctF33Q+uoNVhB76
+        BdmAwkfQuBVswApL+L6z5n5eG7J/b1rea+a067IpAqhH+glv2fZAGXciPXpCe9STJj0R4LADWXkEr
+        /JssMBSTqKatFPjbxbdZrhtWnx8xhn5sPDluXwHa86zllTao7rgAIxOEDu0+wsmvb6KtIdkEvlGcD
+        i+VJhk8vvf2OX4o6WLSMxo4p3Qc39YMm6w2ObUBENM5PXRPDBFSFuCbwwjNAXii5htuDODZrCW6lm
+        wNLo3cPchK+lAhbgOJMpi9S1PM+N0HABtt/qAo6V9F+2MMXT04gyp58Pl89o5ZcZOE52xbaO+WoTs
+        VSW9i99A==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qEX9E-00G03q-38;
-        Wed, 28 Jun 2023 15:32:01 +0000
+        id 1qEX9H-00G04D-2m;
+        Wed, 28 Jun 2023 15:32:04 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
 Cc:     Matthew Wilcox <willy@infradead.org>, linux-btrfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 04/23] btrfs: remove btrfs_writepage_endio_finish_ordered
-Date:   Wed, 28 Jun 2023 17:31:25 +0200
-Message-Id: <20230628153144.22834-5-hch@lst.de>
+Subject: [PATCH 05/23] btrfs: remove end_extent_writepage
+Date:   Wed, 28 Jun 2023 17:31:26 +0200
+Message-Id: <20230628153144.22834-6-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230628153144.22834-1-hch@lst.de>
 References: <20230628153144.22834-1-hch@lst.de>
@@ -53,134 +53,205 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-btrfs_writepage_endio_finish_ordered is a small wrapper around
-btrfs_mark_ordered_io_finished that just changs the argument passing
-slightly, and adds a tracepoint.
+end_extent_writepage is a small helper that combines a call to
+btrfs_mark_ordered_io_finished with conditional error-only calls to
+btrfs_page_clear_uptodate and mapping_set_error with a somewhat
+unfortunate calling convention that passes and inclusive end instead
+of the len expected by the underlying functions.
 
-Move the tracpoint to btrfs_mark_ordered_io_finished, which means
-it now also covers the error handling in btrfs_cleanup_ordered_extent
-and switch all callers to just call btrfs_mark_ordered_io_finished
-directly.
+Remove end_extent_writepage and open code it in the 4 callers. Out
+of those two already are error-only and thus don't need the extra
+conditional, and one already has the mapping_set_error, so a duplicate
+call can be avoided.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/btrfs_inode.h  |  3 ---
- fs/btrfs/extent_io.c    | 17 ++++++++---------
- fs/btrfs/inode.c        |  9 ---------
- fs/btrfs/ordered-data.c |  4 ++++
- 4 files changed, 12 insertions(+), 21 deletions(-)
+ fs/btrfs/extent_io.c | 44 +++++++++++++++-----------------------------
+ fs/btrfs/extent_io.h |  2 --
+ fs/btrfs/inode.c     | 42 ++++++++++++++++++++++--------------------
+ 3 files changed, 37 insertions(+), 51 deletions(-)
 
-diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
-index d47a927b3504d6..90e60ad9db6200 100644
---- a/fs/btrfs/btrfs_inode.h
-+++ b/fs/btrfs/btrfs_inode.h
-@@ -501,9 +501,6 @@ int btrfs_run_delalloc_range(struct btrfs_inode *inode, struct page *locked_page
- 			     u64 start, u64 end, int *page_started,
- 			     unsigned long *nr_written, struct writeback_control *wbc);
- int btrfs_writepage_cow_fixup(struct page *page);
--void btrfs_writepage_endio_finish_ordered(struct btrfs_inode *inode,
--					  struct page *page, u64 start,
--					  u64 end, bool uptodate);
- int btrfs_encoded_io_compression_from_extent(struct btrfs_fs_info *fs_info,
- 					     int compress_type);
- int btrfs_encoded_read_regular_fill_pages(struct btrfs_inode *inode,
 diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 36c3ae947ae8e0..af05237dc2f186 100644
+index af05237dc2f186..5a4f5fc09a2354 100644
 --- a/fs/btrfs/extent_io.c
 +++ b/fs/btrfs/extent_io.c
-@@ -473,17 +473,15 @@ void end_extent_writepage(struct page *page, int err, u64 start, u64 end)
- 	struct btrfs_inode *inode;
- 	const bool uptodate = (err == 0);
- 	int ret = 0;
-+	u32 len = end + 1 - start;
- 
-+	ASSERT(end + 1 - start <= U32_MAX);
- 	ASSERT(page && page->mapping);
- 	inode = BTRFS_I(page->mapping->host);
--	btrfs_writepage_endio_finish_ordered(inode, page, start, end, uptodate);
-+	btrfs_mark_ordered_io_finished(inode, page, start, len, uptodate);
- 
- 	if (!uptodate) {
- 		const struct btrfs_fs_info *fs_info = inode->root->fs_info;
--		u32 len;
--
--		ASSERT(end + 1 - start <= U32_MAX);
--		len = end + 1 - start;
- 
- 		btrfs_page_clear_uptodate(fs_info, page, start, len);
- 		ret = err < 0 ? err : -EIO;
-@@ -1328,6 +1326,7 @@ static noinline_for_stack int __extent_writepage_io(struct btrfs_inode *inode,
- 
- 	bio_ctrl->end_io_func = end_bio_extent_writepage;
- 	while (cur <= end) {
-+		u32 len = end - cur + 1;
- 		u64 disk_bytenr;
- 		u64 em_end;
- 		u64 dirty_range_start = cur;
-@@ -1335,8 +1334,8 @@ static noinline_for_stack int __extent_writepage_io(struct btrfs_inode *inode,
- 		u32 iosize;
- 
- 		if (cur >= i_size) {
--			btrfs_writepage_endio_finish_ordered(inode, page, cur,
--							     end, true);
-+			btrfs_mark_ordered_io_finished(inode, page, cur, len,
-+						       true);
- 			/*
- 			 * This range is beyond i_size, thus we don't need to
- 			 * bother writing back.
-@@ -1345,7 +1344,7 @@ static noinline_for_stack int __extent_writepage_io(struct btrfs_inode *inode,
- 			 * writeback the sectors with subpage dirty bits,
- 			 * causing writeback without ordered extent.
- 			 */
--			btrfs_page_clear_dirty(fs_info, page, cur, end + 1 - cur);
-+			btrfs_page_clear_dirty(fs_info, page, cur, len);
- 			break;
- 		}
- 
-@@ -1356,7 +1355,7 @@ static noinline_for_stack int __extent_writepage_io(struct btrfs_inode *inode,
- 			continue;
- 		}
- 
--		em = btrfs_get_extent(inode, NULL, 0, cur, end - cur + 1);
-+		em = btrfs_get_extent(inode, NULL, 0, cur, len);
- 		if (IS_ERR(em)) {
- 			ret = PTR_ERR_OR_ZERO(em);
- 			goto out_error;
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index cddf54bc330c44..b158db44b268a6 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -3385,15 +3385,6 @@ int btrfs_finish_ordered_io(struct btrfs_ordered_extent *ordered)
- 	return btrfs_finish_one_ordered(ordered);
+@@ -466,29 +466,6 @@ static void end_page_read(struct page *page, bool uptodate, u64 start, u32 len)
+ 		btrfs_subpage_end_reader(fs_info, page, start, len);
  }
  
--void btrfs_writepage_endio_finish_ordered(struct btrfs_inode *inode,
--					  struct page *page, u64 start,
--					  u64 end, bool uptodate)
--{
--	trace_btrfs_writepage_end_io_hook(inode, start, end, uptodate);
+-/* lots and lots of room for performance fixes in the end_bio funcs */
 -
--	btrfs_mark_ordered_io_finished(inode, page, start, end + 1 - start, uptodate);
+-void end_extent_writepage(struct page *page, int err, u64 start, u64 end)
+-{
+-	struct btrfs_inode *inode;
+-	const bool uptodate = (err == 0);
+-	int ret = 0;
+-	u32 len = end + 1 - start;
+-
+-	ASSERT(end + 1 - start <= U32_MAX);
+-	ASSERT(page && page->mapping);
+-	inode = BTRFS_I(page->mapping->host);
+-	btrfs_mark_ordered_io_finished(inode, page, start, len, uptodate);
+-
+-	if (!uptodate) {
+-		const struct btrfs_fs_info *fs_info = inode->root->fs_info;
+-
+-		btrfs_page_clear_uptodate(fs_info, page, start, len);
+-		ret = err < 0 ? err : -EIO;
+-		mapping_set_error(page->mapping, ret);
+-	}
 -}
 -
  /*
-  * Verify the checksum for a single sector without any extra action that depend
-  * on the type of I/O.
-diff --git a/fs/btrfs/ordered-data.c b/fs/btrfs/ordered-data.c
-index a629532283bc33..109e80ed25b669 100644
---- a/fs/btrfs/ordered-data.c
-+++ b/fs/btrfs/ordered-data.c
-@@ -410,6 +410,10 @@ void btrfs_mark_ordered_io_finished(struct btrfs_inode *inode,
- 	unsigned long flags;
- 	u64 cur = file_offset;
+  * after a writepage IO is done, we need to:
+  * clear the uptodate bits on error
+@@ -1431,7 +1408,6 @@ static int __extent_writepage(struct page *page, struct btrfs_bio_ctrl *bio_ctrl
+ 	struct folio *folio = page_folio(page);
+ 	struct inode *inode = page->mapping->host;
+ 	const u64 page_start = page_offset(page);
+-	const u64 page_end = page_start + PAGE_SIZE - 1;
+ 	int ret;
+ 	int nr = 0;
+ 	size_t pg_offset;
+@@ -1475,8 +1451,13 @@ static int __extent_writepage(struct page *page, struct btrfs_bio_ctrl *bio_ctrl
+ 		set_page_writeback(page);
+ 		end_page_writeback(page);
+ 	}
+-	if (ret)
+-		end_extent_writepage(page, ret, page_start, page_end);
++	if (ret) {
++		btrfs_mark_ordered_io_finished(BTRFS_I(inode), page, page_start,
++					       PAGE_SIZE, !ret);
++		btrfs_page_clear_uptodate(btrfs_sb(inode->i_sb), page,
++					  page_start, PAGE_SIZE);
++		mapping_set_error(page->mapping, ret);
++	}
+ 	unlock_page(page);
+ 	ASSERT(ret <= 0);
+ 	return ret;
+@@ -2194,6 +2175,7 @@ int extent_write_locked_range(struct inode *inode, u64 start, u64 end,
  
-+	trace_btrfs_writepage_end_io_hook(inode, file_offset,
-+					  file_offset + num_bytes - 1,
-+					  uptodate);
-+
- 	spin_lock_irqsave(&tree->lock, flags);
- 	while (cur < file_offset + num_bytes) {
- 		u64 entry_end;
+ 	while (cur <= end) {
+ 		u64 cur_end = min(round_down(cur, PAGE_SIZE) + PAGE_SIZE - 1, end);
++		u32 cur_len = cur_end + 1 - cur;
+ 		struct page *page;
+ 		int nr = 0;
+ 
+@@ -2217,9 +2199,13 @@ int extent_write_locked_range(struct inode *inode, u64 start, u64 end,
+ 			set_page_writeback(page);
+ 			end_page_writeback(page);
+ 		}
+-		if (ret)
+-			end_extent_writepage(page, ret, cur, cur_end);
+-		btrfs_page_unlock_writer(fs_info, page, cur, cur_end + 1 - cur);
++		if (ret) {
++			btrfs_mark_ordered_io_finished(BTRFS_I(inode), page,
++						       cur, cur_len, !ret);
++			btrfs_page_clear_uptodate(fs_info, page, cur, cur_len);
++			mapping_set_error(page->mapping, ret);
++		}
++		btrfs_page_unlock_writer(fs_info, page, cur, cur_len);
+ 		if (ret < 0) {
+ 			found_error = true;
+ 			first_error = ret;
+diff --git a/fs/btrfs/extent_io.h b/fs/btrfs/extent_io.h
+index 285754154fdc5c..8d11e17c0be9fa 100644
+--- a/fs/btrfs/extent_io.h
++++ b/fs/btrfs/extent_io.h
+@@ -276,8 +276,6 @@ void btrfs_clear_buffer_dirty(struct btrfs_trans_handle *trans,
+ 
+ int btrfs_alloc_page_array(unsigned int nr_pages, struct page **page_array);
+ 
+-void end_extent_writepage(struct page *page, int err, u64 start, u64 end);
+-
+ #ifdef CONFIG_BTRFS_FS_RUN_SANITY_TESTS
+ bool find_lock_delalloc_range(struct inode *inode,
+ 			     struct page *locked_page, u64 *start,
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index b158db44b268a6..d746b0fe0f994b 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -426,11 +426,10 @@ static inline void btrfs_cleanup_ordered_extents(struct btrfs_inode *inode,
+ 
+ 	while (index <= end_index) {
+ 		/*
+-		 * For locked page, we will call end_extent_writepage() on it
+-		 * in run_delalloc_range() for the error handling.  That
+-		 * end_extent_writepage() function will call
+-		 * btrfs_mark_ordered_io_finished() to clear page Ordered and
+-		 * run the ordered extent accounting.
++		 * For locked page, we will call btrfs_mark_ordered_io_finished
++		 * through btrfs_mark_ordered_io_finished() on it
++		 * in run_delalloc_range() for the error handling, which will
++		 * clear page Ordered and run the ordered extent accounting.
+ 		 *
+ 		 * Here we can't just clear the Ordered bit, or
+ 		 * btrfs_mark_ordered_io_finished() would skip the accounting
+@@ -1160,11 +1159,16 @@ static int submit_uncompressed_range(struct btrfs_inode *inode,
+ 		btrfs_cleanup_ordered_extents(inode, locked_page, start, end - start + 1);
+ 		if (locked_page) {
+ 			const u64 page_start = page_offset(locked_page);
+-			const u64 page_end = page_start + PAGE_SIZE - 1;
+ 
+ 			set_page_writeback(locked_page);
+ 			end_page_writeback(locked_page);
+-			end_extent_writepage(locked_page, ret, page_start, page_end);
++			btrfs_mark_ordered_io_finished(inode, locked_page,
++						       page_start, PAGE_SIZE,
++						       !ret);
++			btrfs_page_clear_uptodate(inode->root->fs_info,
++						  locked_page, page_start,
++						  PAGE_SIZE);
++			mapping_set_error(locked_page->mapping, ret);
+ 			unlock_page(locked_page);
+ 		}
+ 		return ret;
+@@ -2841,23 +2845,19 @@ struct btrfs_writepage_fixup {
+ 
+ static void btrfs_writepage_fixup_worker(struct btrfs_work *work)
+ {
+-	struct btrfs_writepage_fixup *fixup;
++	struct btrfs_writepage_fixup *fixup =
++		container_of(work, struct btrfs_writepage_fixup, work);
+ 	struct btrfs_ordered_extent *ordered;
+ 	struct extent_state *cached_state = NULL;
+ 	struct extent_changeset *data_reserved = NULL;
+-	struct page *page;
+-	struct btrfs_inode *inode;
+-	u64 page_start;
+-	u64 page_end;
++	struct page *page = fixup->page;
++	struct btrfs_inode *inode = fixup->inode;
++	struct btrfs_fs_info *fs_info = inode->root->fs_info;
++	u64 page_start = page_offset(page);
++	u64 page_end = page_offset(page) + PAGE_SIZE - 1;
+ 	int ret = 0;
+ 	bool free_delalloc_space = true;
+ 
+-	fixup = container_of(work, struct btrfs_writepage_fixup, work);
+-	page = fixup->page;
+-	inode = fixup->inode;
+-	page_start = page_offset(page);
+-	page_end = page_offset(page) + PAGE_SIZE - 1;
+-
+ 	/*
+ 	 * This is similar to page_mkwrite, we need to reserve the space before
+ 	 * we take the page lock.
+@@ -2950,10 +2950,12 @@ static void btrfs_writepage_fixup_worker(struct btrfs_work *work)
+ 		 * to reflect the errors and clean the page.
+ 		 */
+ 		mapping_set_error(page->mapping, ret);
+-		end_extent_writepage(page, ret, page_start, page_end);
++		btrfs_mark_ordered_io_finished(inode, page, page_start,
++					       PAGE_SIZE, !ret);
++		btrfs_page_clear_uptodate(fs_info, page, page_start, PAGE_SIZE);
+ 		clear_page_dirty_for_io(page);
+ 	}
+-	btrfs_page_clear_checked(inode->root->fs_info, page, page_start, PAGE_SIZE);
++	btrfs_page_clear_checked(fs_info, page, page_start, PAGE_SIZE);
+ 	unlock_page(page);
+ 	put_page(page);
+ 	kfree(fixup);
 -- 
 2.39.2
 
