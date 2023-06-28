@@ -2,148 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 946A274196A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 22:19:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85AA2741978
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 22:34:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230498AbjF1UTM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 16:19:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34844 "EHLO
+        id S231708AbjF1Uej (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 16:34:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232026AbjF1UTE (ORCPT
+        with ESMTP id S229626AbjF1Uei (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 16:19:04 -0400
-Received: from tarta.nabijaczleweli.xyz (unknown [139.28.40.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7777B1FEF;
-        Wed, 28 Jun 2023 13:18:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
-        s=202305; t=1687983534;
-        bh=PbluAP57CpIIaXvOGapkwKIW8x93+/qYk4SdJ04NFh0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=d1DrQqJx8leEoEgyi77wUmYtSGjlxtSq8XHdLNZniH5D6YKy2B4iYXbny+ib940lJ
-         vTYaVFQ6swp5NBCrEkueU4ymaFtF5S0cEqO4e+fVgk4yYM4Cg0HmSl8x33uZiYY3io
-         UYwFuCrgxosWW29M9dqURFQVEYNdOAfDhkZkmN5HrpZ/oVBej4xw1xuis0oY5nDYjY
-         nV3s3pp1uNQc+2G0zwa/cnMqNjyfUQElCtNr9yC/VoslqWQ+sl2jM631HsKyGPejS/
-         85SO3x+jcrhZP4kNl09Xy0E1LP3HC+9h8hZqj8b5zZnPVHrikzbGSImX628p1O6rk5
-         MrD3dZW21wdrg==
-Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
-        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 3218115CA;
-        Wed, 28 Jun 2023 22:18:54 +0200 (CEST)
-Date:   Wed, 28 Jun 2023 22:18:53 +0200
-From:   Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
-        <nabijaczleweli@nabijaczleweli.xyz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>,
-        Chung-Chiang Cheng <cccheng@synology.com>, ltp@lists.linux.it
-Subject: Re: [PATCH v4 1/3] splice: always fsnotify_access(in),
- fsnotify_modify(out) on success
-Message-ID: <3nfsszygfgzpli4xvwuwpli5ozpqtcnlij737qid6riwramjkv@pj23p6q5tzrb>
-References: <t5az5bvpfqd3rrwla43437r5vplmkujdytixcxgm7sc4hojspg@jcc63stk66hz>
- <cover.1687898895.git.nabijaczleweli@nabijaczleweli.xyz>
- <e770188fd86595c6f39d4da86d906a824f8abca3.1687898895.git.nabijaczleweli@nabijaczleweli.xyz>
- <CAOQ4uxjQcn9DUo_Z2LGTgG0SOViy8h5=ST_A5v1v=gdFLwj6Hw@mail.gmail.com>
- <q2nwpf74fngjdlhukkxvlxuz3xkaaq4aup7hzpqjkqlmlthag5@dsx6m7cgk5yt>
- <CAOQ4uxh-ALXa0N-aZzVtO9E5e6C5++OOnkbL=aPSwRbF=DL1Pw@mail.gmail.com>
+        Wed, 28 Jun 2023 16:34:38 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C13519B6;
+        Wed, 28 Jun 2023 13:34:37 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-666ecf9a0ceso142892b3a.2;
+        Wed, 28 Jun 2023 13:34:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687984477; x=1690576477;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ipbLnYvlGYQvDEihyiPuXfdid6qmlxbdUrEvPFMafw4=;
+        b=opSL76LDc984zvWM3786OidbBT25+1HD1mQMziNNFfP4Zsljw5U+R1LwpfgRjqakdu
+         lyO3voeeVszuMA+bdl57FtM0OiOwdjEhMGusRh8PrEwfT+W94UMOraQg8L2LqPIZzDp5
+         nLnAxenahvm+RDN1eQWrhVw+chYXpSUC5++RVkiMEDXV2tKxMQkMlIdbYtS882Wp3wAq
+         3UqdPomtMd0EEcrYiQQZw8VYnUHvixfbxCSUKSZgILtO98HCfujdnQMHBg2enLrGn11M
+         FqODDg+KVXkLLJxNQLt1RyfgE/1C3D9Kg+00mZoAc9V4Y02ZyUFj27JJsXB3fDudmRsQ
+         vwXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687984477; x=1690576477;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ipbLnYvlGYQvDEihyiPuXfdid6qmlxbdUrEvPFMafw4=;
+        b=FxxGFXPvgGmDUhbtw7YmCewW8BkpLPeHUirq+tNPTz4vbzWI03GA98ty/XHBmPzDFx
+         GhnY6miNONDh9qP3jLX/gbAbnDoZc2Ks1Vwp9+YHjy47VGmV+fVrthDHceTKTswKFqva
+         VWWYy9FCpeovd9ZOSsRH9WhA/Sv5bkM99bsApv4s1YgdI0QTcmCrTx479Wu8AvcK5Ga4
+         5bX3W/G3Id1qiGaOePDpXcV34h+En4Z1+pLAzh6pk4kVVZiF+EmAaAcVncqdIdvrjjYy
+         aDmQUMO/Vwws/M0xA2vUrL3tiXMG2cgdxCkXV8Wuu6cBHduu1UOGpdZgUWk/tBXA+gjL
+         tBSg==
+X-Gm-Message-State: AC+VfDwh3jLk2vYtK6LDK83INmfEdTOrw0DZkzJm5Xm/n0HqsJAR2MzD
+        yX44mA7w2R2dY8yCuZtrPpY=
+X-Google-Smtp-Source: ACHHUZ6XkIRJQTHMzWEX1lQu8qkb9AYZLxxYyonQGrQyP+vNh08KhF9U2TY5f8OQbw13ohu8/8LZ8Q==
+X-Received: by 2002:a05:6a20:3249:b0:12c:30b0:6225 with SMTP id hm9-20020a056a20324900b0012c30b06225mr2243475pzc.36.1687984476662;
+        Wed, 28 Jun 2023 13:34:36 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:400::5:7961])
+        by smtp.gmail.com with ESMTPSA id s1-20020aa78281000000b0065a1b05193asm7367724pfm.185.2023.06.28.13.34.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Jun 2023 13:34:36 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Wed, 28 Jun 2023 10:34:34 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>, peterz@infradead.org,
+        lujialin4@huawei.com, lizefan.x@bytedance.com, hannes@cmpxchg.org,
+        mingo@redhat.com, ebiggers@kernel.org, oleg@redhat.com,
+        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH 1/2] kernfs: add kernfs_ops.free operation to free
+ resources tied to the file
+Message-ID: <ZJyZWtK4nihRkTME@slm.duckdns.org>
+References: <CAJuCfpGoNbLOLm08LWKPOgn05+FB1GEqeMTUSJUZpRmDYQSjpA@mail.gmail.com>
+ <20230628-meisennest-redlich-c09e79fde7f7@brauner>
+ <CAJuCfpHqZ=5a_2k==FsdBbwDCF7+s7Ji3aZ37LBqUgyXLMz7gA@mail.gmail.com>
+ <20230628-faden-qualvoll-6c33b570f54c@brauner>
+ <CAJuCfpF=DjwpWuhugJkVzet2diLkf8eagqxjR8iad39odKdeYQ@mail.gmail.com>
+ <20230628-spotten-anzweifeln-e494d16de48a@brauner>
+ <ZJx1nkqbQRVCaKgF@slm.duckdns.org>
+ <CAJuCfpEFo6WowJ_4XPXH+=D4acFvFqEa4Fuc=+qF8=Jkhn=3pA@mail.gmail.com>
+ <2023062845-stabilize-boogieman-1925@gregkh>
+ <CAJuCfpFqYytC+5GY9X+jhxiRvhAyyNd27o0=Nbmt_Wc5LFL1Sw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kq2jxxetonbh2epl"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxh-ALXa0N-aZzVtO9E5e6C5++OOnkbL=aPSwRbF=DL1Pw@mail.gmail.com>
-User-Agent: NeoMutt/20230517
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,PDS_RDNS_DYNAMIC_FP,
-        RDNS_DYNAMIC,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <CAJuCfpFqYytC+5GY9X+jhxiRvhAyyNd27o0=Nbmt_Wc5LFL1Sw@mail.gmail.com>
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello, Suren.
 
---kq2jxxetonbh2epl
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jun 28, 2023 at 01:12:23PM -0700, Suren Baghdasaryan wrote:
+> AFAIU all other files that handle polling rely on f_op->release()
+> being called after all the users are gone, therefore they can safely
+> free their resources. However kernfs can call ->release() while there
+> are still active users of the file. I can't use that operation for
+> resource cleanup therefore I was suggesting to add a new operation
+> which would be called only after the last fput() and would guarantee
+> no users. Again, I'm not an expert in this, so there might be a better
+> way to handle it. Please advise.
 
-On Wed, Jun 28, 2023 at 09:38:03PM +0300, Amir Goldstein wrote:
-> On Wed, Jun 28, 2023 at 8:09=E2=80=AFPM Ahelenia Ziemia=C5=84ska
-> <nabijaczleweli@nabijaczleweli.xyz> wrote:
-> > On Wed, Jun 28, 2023 at 09:33:43AM +0300, Amir Goldstein wrote:
-> > > I think we need to add a rule to fanotify_events_supported() to ban
-> > > sb/mount marks on SB_KERNMOUNT and backport this
-> > > fix to LTS kernels (I will look into it) and then we can fine tune
-> > > the s_fsnotify_connectors optimization in fsnotify_parent() for
-> > > the SB_KERNMOUNT special case.
-> > > This may be able to save your patch for the faith of NACKed
-> > > for performance regression.
-> > This goes over my head, but if Jan says it makes sense
-> > then it must do.
-> Here you go:
-> https://github.com/amir73il/linux/commits/fsnotify_pipe
->=20
-> I ended up using SB_NOUSER which is narrower than
-> SB_KERNMOUNT.
->=20
-> Care to test?
-> 1) Functionally - that I did not break your tests.
-) | gzip -d > inotify13; chmod +x inotify13; exec ./inotify13
-tst_test.c:1560: TINFO: Timeout per run is 0h 00m 30s
-inotify13.c:260: TINFO: file_to_pipe
-inotify13.c:269: TPASS: =D0=BE=D0=BA
-inotify13.c:260: TINFO: file_to_pipe
-inotify13.c:269: TPASS: =D0=BE=D0=BA
-inotify13.c:260: TINFO: splice_pipe_to_file
-inotify13.c:269: TPASS: =D0=BE=D0=BA
-inotify13.c:260: TINFO: pipe_to_pipe
-inotify13.c:269: TPASS: =D0=BE=D0=BA
-inotify13.c:260: TINFO: pipe_to_pipe
-inotify13.c:269: TPASS: =D0=BE=D0=BA
-inotify13.c:260: TINFO: vmsplice_pipe_to_mem
-inotify13.c:269: TPASS: =D0=BE=D0=BA
-inotify13.c:260: TINFO: vmsplice_mem_to_pipe
-inotify13.c:269: TPASS: =D0=BE=D0=BA
+So, w/ kernfs, the right thing to do is making sure that whatever is exposed
+to the kernfs user is terminated on removal - ie. after kernfs_ops->release
+is called, the ops table should be considered dead and there shouldn't be
+anything left to clean up from the kernfs user side. You can add abstraction
+kernfs so that kernfs can terminate the calls coming down from the higher
+layers on its own. That's how every other operation is handled and what
+should happen with the psi polling too.
 
-Summary:
-passed   7
-failed   0
-broken   0
-skipped  0
-warnings 0
+Thanks.
 
-The discrete tests from before also work as expected,
-both to a fifo and an anon pipe.
-
-> 2) Optimization - that when one anon pipe has an inotify watch
-> write to another anon pipe stops at fsnotify_inode_has_watchers()
-> and does not get to fsnotify().
-Yes, I can confirm this as well: fsnotify_parent() only continues to
-fsnotify() for the watched pipe; writes to other pipes early-exit.
-
-To validate the counterfactual, I reverted "fsnotify: optimize the case
-of anonymous pipe with no watches" and fsnotify() was being called
-for each anon pipe write, so long as any anon pipe watches were registered.
-
---kq2jxxetonbh2epl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmSclaoACgkQvP0LAY0m
-WPGEbg//cj23PmCJ73Ev+PmMefCpRtuYucdcpi5l3icLi2aAsM6rjVn9RzHgj/nj
-DYif2JzFoHk4lwsBcx5v2t0aZXAadUFPq8RmrTfplNfsaMcGkCboCOYIRZ8FCnH8
-tAuZREZl7mO/8byRzFnSIBiDzPdi/y7WAglnRZpYIGq6LYPD65cQq6Xx83f8d0vi
-avzT3S8+jTV9npgfqsuPX6aN9tvVLD/rb70H6eiQT8tLK3IjogU7yPrc7GtqKFN1
-jseFtY5Y2R2IfDgbJmMheRQ23vo2R2Avjls1zLk9m6v0HxHnBGUjTYfwpNX1PNjI
-1OfbxzNTGmhUpF1shVAljZ3HMQbrYSyKyaWY0zCOaj0h2QVRtC+li5xqIt6o9oTZ
-an7on2xShO2UylU9rEnb+pPll9r68zSki5N2nwhIyv/BQDGzao4eNMFMVNknn35b
-Nr3xGh0HHUOgbA09PbtrfNU/x22aGs1XVVXLPfWpbuFaz9xUkaeqArEIdHg/yZ2y
-nEKwi1cqfE4di2p06obnaODlcvOrGm+2yimd9g6Sdvc9TejfyoeT0wJeD+VJaEiI
-zdJQaB8RIR58jI4YCrJ8zIbpn5EPR04+p4qls0dRleWw6jeZxn+weVScVkuH9q01
-mSjPLuYuSHTXeCUyiIjPGtrxvX3LbW4FZGiP17jX8S1IpkKjMt0=
-=c7nN
------END PGP SIGNATURE-----
-
---kq2jxxetonbh2epl--
+-- 
+tejun
