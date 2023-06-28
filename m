@@ -2,69 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C49B7416B8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 18:48:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A6697416BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Jun 2023 18:49:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231750AbjF1Qr2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 12:47:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40734 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231909AbjF1Qq5 (ORCPT
+        id S230428AbjF1Qsc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 12:48:32 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:51484 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229626AbjF1QsI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 12:46:57 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2F709F;
-        Wed, 28 Jun 2023 09:46:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=3p/6gRPbT1vLbxvPSCsO+AS87133UTz2Te2olPWVMi0=; b=fBygq+OhZHpmm+FqYPB0SYYJxs
-        dkbSjX05mOg23yGibUfOMg7pvQ3le6IenSufrhalSwYSBW71vyRKtYLwC8vlc8cWL79BMLCHOsjj8
-        5xkOKENSvOAR3j6C/cc11U3c8oDVlC84kqFkuSlN/rcCeX5kTlogHb9o1DA0gjBmyWPOIp6yOdsud
-        AR8ksLyJ+cIp0crVLcb1X5U3Kg8B2PfSe8ftdn/x4qr8hWVdMdboCnweNPv9nnlJolQBZXHi8yhE5
-        kgkgLc3gigu0XQxdPJOmT9Hl8kqZ42JwqSbmHd1AXDoXEpg9KetuWWyf7yjezUdlhkFnxsfhesijf
-        SiFgptQw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qEYJO-00407Q-O0; Wed, 28 Jun 2023 16:46:34 +0000
-Date:   Wed, 28 Jun 2023 17:46:34 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Yangtao Li <frank.li@vivo.com>
-Cc:     axboe@kernel.dk, song@kernel.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, xiang@kernel.org, chao@kernel.org,
-        huyue2@coolpad.com, jefflexu@linux.alibaba.com, hch@infradead.org,
-        djwong@kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 1/7] block: add queue_logical_block_mask() and
- bdev_logical_block_mask()
-Message-ID: <ZJxj6odz49iB5Mmm@casper.infradead.org>
-References: <20230628093500.68779-1-frank.li@vivo.com>
+        Wed, 28 Jun 2023 12:48:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687970837;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rP7oTLZXnrKdM7Uf6r5o7yLX5pLrMAahCaLybcdGA/I=;
+        b=Suw+rs4PYG2/ieTzDI/lRMXK9KwK4bR8f0pRjaQ7lzCFq8aL6USWs4YuUfoctpPNxIHoNT
+        mIDCdFn9oPD9E7FpdtByYhE7DLOQzP0nvqDZsVYX7Szy1OB/DIYjGs9ah+AdleoG+N+pon
+        nRrDj0EzexwKCoNwPwZw5ME+tmqX+SY=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-135-u7lECdk3PDa-CP_7NcUoGA-1; Wed, 28 Jun 2023 12:47:16 -0400
+X-MC-Unique: u7lECdk3PDa-CP_7NcUoGA-1
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4009ad15222so86891cf.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 09:47:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687970836; x=1690562836;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rP7oTLZXnrKdM7Uf6r5o7yLX5pLrMAahCaLybcdGA/I=;
+        b=Kf/IU77gpAUqtLiJV2anB7Wh5Af88LWPq2fRHpAu5Rzex6HgiAPJjCSU+jupX5KfwQ
+         FqyBrnHsXivKNdBWT9RP3Du/B0xnedZ2gvlCSt8OQfm4IeaAyEEnTAvVqoLS8t6CJU8W
+         Ta0rd+rmeXCfxnoFLGULnRpfowizBDmp01Y4u+d6EKvJ6loijA3vSds0VDiWie0wnsTq
+         +6jeg1ooA+qPD6PUxarIIaatcBSGgRh/cxr9/Vn2StU/oz9+KdE6+sqkr/sAnDuOJGL4
+         HPt1CPFav5yy5yOVJv/yaQWA09fNqiVUWLNfwHoUOwfSb1VWx6+/ypO8+8PKknGQE6Im
+         vjkQ==
+X-Gm-Message-State: AC+VfDzLVcm9Rkp8KNH8gBKnq/vlF7B77dXijj3gi0nE1kSv7lDtLjW/
+        M7TLRYC0hs85Bunjfiz2XelCWBOQSevKJnkdKkKgsXH3cGMPhwfxPFxND+BhLYhDfSzgOfiaVyw
+        MXHsBW6ucQ/rCdv58Z3fIYswZJQ==
+X-Received: by 2002:a05:622a:1827:b0:400:a9a4:8517 with SMTP id t39-20020a05622a182700b00400a9a48517mr11519367qtc.4.1687970835964;
+        Wed, 28 Jun 2023 09:47:15 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5LY9IyT/sYyokB/ZS4mBtNEaOWQAWl0KHBcBGkRFXhA9IA4rTLIiYa9kmVOKNwHngvfuwDCg==
+X-Received: by 2002:a05:622a:1827:b0:400:a9a4:8517 with SMTP id t39-20020a05622a182700b00400a9a48517mr11519338qtc.4.1687970835728;
+        Wed, 28 Jun 2023 09:47:15 -0700 (PDT)
+Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
+        by smtp.gmail.com with ESMTPSA id r15-20020ac85e8f000000b00403214e8862sm1027423qtx.33.2023.06.28.09.47.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Jun 2023 09:47:15 -0700 (PDT)
+Date:   Wed, 28 Jun 2023 12:47:13 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
+        mhocko@suse.com, josef@toxicpanda.com, jack@suse.cz,
+        ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
+        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
+        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
+        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
+        apopple@nvidia.com, ying.huang@intel.com, david@redhat.com,
+        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        pasha.tatashin@soleen.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com
+Subject: Re: [PATCH v4 6/6] mm: handle userfaults under VMA lock
+Message-ID: <ZJxkEVWMAXnz8Y9D@x1n>
+References: <20230628071800.544800-1-surenb@google.com>
+ <20230628071800.544800-7-surenb@google.com>
+ <ZJw8Z3E3d4dHPDuZ@x1n>
+ <CAJuCfpGRresZRacCSDU=E+CNDkGfMwO2u-oTB_H30cASzFgNtA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230628093500.68779-1-frank.li@vivo.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-        lindbergh.monkeyblade.net
+In-Reply-To: <CAJuCfpGRresZRacCSDU=E+CNDkGfMwO2u-oTB_H30cASzFgNtA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 28, 2023 at 05:34:54PM +0800, Yangtao Li wrote:
-> Introduce queue_logical_block_mask() and bdev_logical_block_mask()
-> to simplify code, which replace (queue_logical_block_size(q) - 1)
-> and (bdev_logical_block_size(bdev) - 1).
+On Wed, Jun 28, 2023 at 09:22:24AM -0700, Suren Baghdasaryan wrote:
+> Ack. I was not sure if the ctx->mm would always be the same as vmf->mm.
 
-The thing is that I know what queue_logical_block_size - 1 does.
-That's the low bits.  _Which_ bits are queue_logical_block_mask?
-The high bits or the low bits?  And before you say "It's obviously",
-we have both ways round in the kernel today.
+Feel free to look at the entrance of handle_userfault(), where there's:
 
-I am not in favour of this change.  I might be in favour of bool
-queue_logical_block_aligned(q, x), but even then it doesn't seem worth
-the bits.
+	struct vm_area_struct *vma = vmf->vma;
+	struct mm_struct *mm = vma->vm_mm;
+	struct userfaultfd_ctx *ctx;
+        ...
+	ctx = vma->vm_userfaultfd_ctx.ctx;
+        ...
+	BUG_ON(ctx->mm != mm);
+        ...
+
+So I think we should be safe.  Thanks,
+
+-- 
+Peter Xu
+
