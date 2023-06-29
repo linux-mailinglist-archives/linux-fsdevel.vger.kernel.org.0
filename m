@@ -2,138 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9000F7429AF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 17:31:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F5EC7429C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 17:35:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230504AbjF2PbU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jun 2023 11:31:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54828 "EHLO
+        id S232088AbjF2Pf5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jun 2023 11:35:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232351AbjF2PbS (ORCPT
+        with ESMTP id S231862AbjF2Pfz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jun 2023 11:31:18 -0400
-Received: from out-56.mta1.migadu.com (out-56.mta1.migadu.com [95.215.58.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 688FE2703
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 08:31:15 -0700 (PDT)
-Date:   Thu, 29 Jun 2023 11:31:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1688052673;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BLCCCtn3D5Nn10IbdfuE4yo3zVRj7DsJGkX8XNLTb+0=;
-        b=hTyWt/Om1RZwzElx6kX2n/DJ9mCVQMdKVsoq35UHoHXkwta8JfPqm2TZvKGvbL18tNzFS7
-        //0Ie8gUcyphJKUhvhK6q2gV64Q2vxARZun20Cb7RRq5grI6rcyE6mrK7P5BRpXYkQ/opj
-        Bkhx6mHzjup5Y0Jg9YgqCRrK/f82jLk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [GIT PULL] bcachefs
-Message-ID: <20230629153108.wyn32bvaxmztnakl@moria.home.lan>
-References: <e1570c46-68da-22b7-5322-f34f3c2958d9@kernel.dk>
- <2e635579-37ba-ddfc-a2ab-e6c080ab4971@kernel.dk>
- <20230628221342.4j3gr3zscnsu366p@moria.home.lan>
- <d697ec27-8008-2eb6-0950-f612a602dcf5@kernel.dk>
- <20230628225514.n3xtlgmjkgapgnrd@moria.home.lan>
- <1e2134f1-f48b-1459-a38e-eac9597cd64a@kernel.dk>
- <20230628235018.ttvtzpfe42fri4yq@moria.home.lan>
- <ZJzXs6C8G2SL10vq@dread.disaster.area>
- <d6546c44-04db-cbca-1523-a914670a607f@kernel.dk>
- <20230629-fragen-dennoch-fb5265aaba23@brauner>
+        Thu, 29 Jun 2023 11:35:55 -0400
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B57419BA
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 08:35:54 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 4D6ED5C00A1;
+        Thu, 29 Jun 2023 11:35:51 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Thu, 29 Jun 2023 11:35:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        cc:cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
+        1688052951; x=1688139351; bh=JzhI/U4sIbHQH3o1bYQPhyqslbW1lDfwXTP
+        1/xM+Hc4=; b=CBRu2KNOrT11zhOldbBNerMRqXeiSl2NW7jR/K2fUUdiM7o2L3q
+        JMCC6gZhWQFcDa1QO22QD6qw+46GCn7HX5fxAPbm0IC2p3FKUej1J3KNDsgdTF89
+        027pVzr5charGw7ZvUqtHqYp6pM+9bEizkDSc8vXDpLMtLRzeGdmJn+m2MZBk32N
+        JVWzK8W3yg4alg4ChJAzLeCZT/cPzjhkcmFJfBQlzzCsWRJi+RkD0uF66ZUZYrQF
+        4lMCaW727xfJsRxrX3vmTxS1oDcPLWH+fjTNqxj/BqQPuax1llKocY4UEapVILSe
+        nD7dZZrEtNUC4jYA3GvDQDT20dAyD1cnofg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+        1688052951; x=1688139351; bh=JzhI/U4sIbHQH3o1bYQPhyqslbW1lDfwXTP
+        1/xM+Hc4=; b=Ti4DKNImRVN4GRGtB6YKU5eh7NQncoIynR/C4pjiS5TqiwT3MHF
+        sYocEGblVgNbRWlH6G78tyUXnpfChOmBmQFsAW8NVYacRWULLH3xB/4YiVz80apF
+        wEB9a+4wkozTSia0KwFOsajbmTQZrJnHqw8LQb26OEylmhTwikaNoVmrv3mTDYZl
+        pse5nMJW8gAv8sUDQy6cHHSEhXxDH8PTcci/YIF5dGMd4EJtcx8YZA0Rp932fNzI
+        wPKtpMIDhfUTnlF4lowIiNTWysBh20jBM1PudvSv5w0zifYQyPffydLzFhlzAYME
+        qwRaP4+wqz15TJaEqvKW57GneVbGjx/BYNA==
+X-ME-Sender: <xms:1qSdZOi12grKvhGQN9HeNorzn-SjqLLiTX0glyfmKONzPlIohW6--Q>
+    <xme:1qSdZPD_Y0jWQnhDsSoRl0YePKQJpKsqnyYUrXRf2QZghxeWLQi-BLFEJWepoPf8S
+    8M1eG8WdsP50CMA>
+X-ME-Received: <xmr:1qSdZGHxJbOpeI8c-QrR9mnXU_86rtVUBi4K-Yua7MHb8p4SpccJW6tY0wx0CAGpSBIDUmLOaoN7sMJc_814uz98AVuS61BiHePXGFuDNcIrlDBhmjR_>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrtdeggdeludcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfuvfevfhfhjggtgfesthekredttdefjeenucfhrhhomhepuegvrhhn
+    ugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
+    drfhhmqeenucggtffrrghtthgvrhhnpefgudevueevveeiudejveeffeejkeegvdduheek
+    vdefhfetgeegheekkeetleehgfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdr
+    shgthhhusggvrhhtsehfrghsthhmrghilhdrfhhm
+X-ME-Proxy: <xmx:1qSdZHRYVEYhpp4bahN4AoOoyRYotBKdKlAMHg3gAlPsyvrda6FzzQ>
+    <xmx:1qSdZLyllRjae0mFFxI1JTp-T7bO5E_71gq3zQRV962QO3Gj_qiGTw>
+    <xmx:1qSdZF4V1TykU_IQGRzdO7SusNeHGG6zJTGbIGxuHkeN7JNCbqj9aQ>
+    <xmx:16SdZNtynPtlpj99_joi0NQCFUeGerCEOQ4S5krU_Pi2bItAGb3-DA>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 29 Jun 2023 11:35:49 -0400 (EDT)
+Message-ID: <51e0eafe-2339-534a-fea0-68c9570483a4@fastmail.fm>
+Date:   Thu, 29 Jun 2023 17:35:47 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230629-fragen-dennoch-fb5265aaba23@brauner>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [fuse-devel] [RFC PATCH] fuse: invalidate page cache pages before
+ direct write
+Content-Language: en-US, de-DE
+To:     Hao Xu <hao.xu@linux.dev>, fuse-devel@lists.sourceforge.net
+Cc:     linux-fsdevel@vger.kernel.org, cgxu519@mykernel.net,
+        Wanpeng Li <wanpengli@tencent.com>, miklos@szeredi.hu
+References: <20230509080128.457489-1-hao.xu@linux.dev>
+ <0625d0cb-2a65-ffae-b072-e14a3f6c7571@linux.dev>
+ <7da6719c-23ee-736e-6787-1aad56d22e07@fastmail.fm>
+ <40ed526b-a5b0-cae1-0757-1bdfeb1002a6@linux.dev>
+From:   Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <40ed526b-a5b0-cae1-0757-1bdfeb1002a6@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 29, 2023 at 01:18:11PM +0200, Christian Brauner wrote:
-> On Wed, Jun 28, 2023 at 07:33:18PM -0600, Jens Axboe wrote:
-> > On 6/28/23 7:00?PM, Dave Chinner wrote:
-> > > On Wed, Jun 28, 2023 at 07:50:18PM -0400, Kent Overstreet wrote:
-> > >> On Wed, Jun 28, 2023 at 05:14:09PM -0600, Jens Axboe wrote:
-> > >>> On 6/28/23 4:55?PM, Kent Overstreet wrote:
-> > >>>>> But it's not aio (or io_uring or whatever), it's simply the fact that
-> > >>>>> doing an fput() from an exiting task (for example) will end up being
-> > >>>>> done async. And hence waiting for task exits is NOT enough to ensure
-> > >>>>> that all file references have been released.
-> > >>>>>
-> > >>>>> Since there are a variety of other reasons why a mount may be pinned and
-> > >>>>> fail to umount, perhaps it's worth considering that changing this
-> > >>>>> behavior won't buy us that much. Especially since it's been around for
-> > >>>>> more than 10 years:
-> > >>>>
-> > >>>> Because it seems that before io_uring the race was quite a bit harder to
-> > >>>> hit - I only started seeing it when things started switching over to
-> > >>>> io_uring. generic/388 used to pass reliably for me (pre backpointers),
-> > >>>> now it doesn't.
-> > >>>
-> > >>> I literally just pasted a script that hits it in one second with aio. So
-> > >>> maybe generic/388 doesn't hit it as easily, but it's surely TRIVIAL to
-> > >>> hit with aio. As demonstrated. The io_uring is not hard to bring into
-> > >>> parity on that front, here's one I posted earlier today for 6.5:
-> > >>>
-> > >>> https://lore.kernel.org/io-uring/20230628170953.952923-4-axboe@kernel.dk/
-> > >>>
-> > >>> Doesn't change the fact that you can easily hit this with io_uring or
-> > >>> aio, and probably more things too (didn't look any further). Is it a
-> > >>> realistic thing outside of funky tests? Probably not really, or at least
-> > >>> if those guys hit it they'd probably have the work-around hack in place
-> > >>> in their script already.
-> > >>>
-> > >>> But the fact is that it's been around for a decade. It's somehow a lot
-> > >>> easier to hit with bcachefs than XFS, which may just be because the
-> > >>> former has a bunch of workers and this may be deferring the delayed fput
-> > >>> work more. Just hand waving.
-> > >>
-> > >> Not sure what you're arguing here...?
-> > >>
-> > >> We've had a long standing bug, it's recently become much easier to hit
-> > >> (for multiple reasons); we seem to be in agreement on all that. All I'm
-> > >> saying is that the existence of that bug previously is not reason to fix
-> > >> it now.
-> > > 
-> > > I agree with Kent here  - the kernel bug needs to be fixed
-> > > regardless of how long it has been around. Blaming the messenger
-> > > (userspace, fstests, etc) and saying it should work around a
-> > > spurious, unpredictable, undesirable and user-undebuggable kernel
-> > > behaviour is not an acceptible solution here...
-> > 
-> > Not sure why you both are putting words in my mouth, I've merely been
-> > arguing pros and cons and the impact of this. I even linked the io_uring
-> > addition for ensuring that side will work better once the deferred fput
-> > is sorted out. I didn't like the idea of fixing this through umount, and
-> > even outlined how it could be fixed properly by ensuring we flush
-> > per-task deferred puts on task exit.
-> > 
-> > Do I think it's a big issue? Not at all, because a) nobody has reported
-> > it until now, and b) it's kind of a stupid case. If we can fix it with
+Hi Hao,
+
+On 6/29/23 14:00, Hao Xu wrote:
+> Hi Bernd,
 > 
-> Agreed.
+> On 6/27/23 02:23, Bernd Schubert wrote:
+>>
+>>
+>> On 6/8/23 09:17, Hao Xu wrote:
+>>> Ping...
+>>>
+>>> On 5/9/23 16:01, Hao Xu wrote:
+>>>> From: Hao Xu <howeyxu@tencent.com>
+>>>>
+>>>> In FOPEN_DIRECT_IO, page cache may still be there for a file, direct
+>>>> write should respect that and invalidate the corresponding pages so
+>>>> that page cache readers don't get stale data. Another thing this patch
+>>>> does is flush related pages to avoid its loss.
+>>>>
+>>>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+>>>> ---
+>>>>
+>>>> Reference:
+>>>> https://lore.kernel.org/linux-fsdevel/ee8380b3-683f-c526-5f10-1ce2ee6f79ad@linux.dev/#:~:text=I%20think%20this%20problem%20exists%20before%20this%20patchset
+>>>>
+>>>>   fs/fuse/file.c | 14 +++++++++++++-
+>>>>   1 file changed, 13 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>>>> index 89d97f6188e0..edc84c1dfc5c 100644
+>>>> --- a/fs/fuse/file.c
+>>>> +++ b/fs/fuse/file.c
+>>>> @@ -1490,7 +1490,8 @@ ssize_t fuse_direct_io(struct fuse_io_priv 
+>>>> *io, struct iov_iter *iter,
+>>>>       int write = flags & FUSE_DIO_WRITE;
+>>>>       int cuse = flags & FUSE_DIO_CUSE;
+>>>>       struct file *file = io->iocb->ki_filp;
+>>>> -    struct inode *inode = file->f_mapping->host;
+>>>> +    struct address_space *mapping = file->f_mapping;
+>>>> +    struct inode *inode = mapping->host;
+>>>>       struct fuse_file *ff = file->private_data;
+>>>>       struct fuse_conn *fc = ff->fm->fc;
+>>>>       size_t nmax = write ? fc->max_write : fc->max_read;
+>>>> @@ -1516,6 +1517,17 @@ ssize_t fuse_direct_io(struct fuse_io_priv 
+>>>> *io, struct iov_iter *iter,
+>>>>               inode_unlock(inode);
+>>>>       }
+>>>> +    res = filemap_write_and_wait_range(mapping, pos, pos + count - 1);
+>>>> +    if (res)
+>>>> +        return res;
+>>>> +
+>>>> +    if (write) {
+>>>> +        if (invalidate_inode_pages2_range(mapping,
+>>>> +                idx_from, idx_to)) {
+>>>> +            return -ENOTBLK;
+>>>> +        }
+>>>> +    }
+>>>> +
+>>>>       io->should_dirty = !write && user_backed_iter(iter);
+>>>>       while (count) {
+>>>>           ssize_t nres;
+>>>
+>>
+>> Is this part not working?
+>>
+>>      if (!cuse && fuse_range_is_writeback(inode, idx_from, idx_to)) {
+>>          if (!write)
+>>              inode_lock(inode);
+>>          fuse_sync_writes(inode);
+>>          if (!write)
+>>              inode_unlock(inode);
+>>      }
+>>
+>>
+> 
+> 
+> This code seems to be waiting for already triggered page cache writeback
+> requests, it's not related with the issue this patch tries to address.
+> The issue here is we should invalidate related page cache page before we
+> do direct write.
 
-yeah, the rest of this email that I snipped is _severely_ confused about
-what is going on here.
+oh, right, I just see it. I think you should move your 
+filemap_write_and_wait_range() call above that piece in order to ensure 
+it is send to the daemon/server side.
 
-Look, the main thing I want to say is - I'm not at all impressed by this
-continual evasiveness from you and Jens. It's a bug, it needs to be
-fixed.
 
-We are engineers. It is our literal job to do the hard work and solve
-the hard problems, and leave behind a system more robust and more
-reliable for the people who come after us to use.
-
-Not to kick the can down the line and leave lurking landmines in the
-form of "oh you just have to work around this like x..."
+Thanks,
+Bernd
