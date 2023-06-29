@@ -2,190 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CDB0E7423B1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 12:06:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E526D7423C8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 12:15:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232350AbjF2KGf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jun 2023 06:06:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46646 "EHLO
+        id S232283AbjF2KPa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jun 2023 06:15:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232097AbjF2KEa (ORCPT
+        with ESMTP id S232183AbjF2KOt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jun 2023 06:04:30 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C52534203
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 03:02:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688032920;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=F09uj+UaHNEb8AMaOUGwCKDcEHZfFZHJu8wPUUcwCrI=;
-        b=Su/RzV9hjVavr4r1zDSkVj2KE8pa1UImQIfgu0gb0IN/bEA6h5YTxj1y2+/ZoO7kv/qI4R
-        6623eIWwULDPK6VpYPgZZntIHFVzSzQJCX42r+sNvAT7NSSyDTBWvzAL3ieNfzEG/uxWG3
-        D8jKz24+F8uJGfxQeTC7zpPnav2G46w=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-209-hEOLKqC3Pb-wi-RdxYgMGg-1; Thu, 29 Jun 2023 06:01:56 -0400
-X-MC-Unique: hEOLKqC3Pb-wi-RdxYgMGg-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-988907e1b15so53219266b.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 03:01:55 -0700 (PDT)
+        Thu, 29 Jun 2023 06:14:49 -0400
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com [209.85.161.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0419F3591
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 03:14:03 -0700 (PDT)
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-558c1394636so647584eaf.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 03:14:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688032915; x=1690624915;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F09uj+UaHNEb8AMaOUGwCKDcEHZfFZHJu8wPUUcwCrI=;
-        b=P2KBqxaaKs7dxT/Bp9oH8AMcoAjyXJes0LdsAGGPotraCGhJc+PsFup809dAk+4npd
-         D7i3VKZ4ikUj5aLBhiKflIBVmCYMYHBc+2o8tAWZw7GPxv6A5tQaguMbu2FzPjIpzOD1
-         LKBvZsFvzuryQaunNIbFRYvDQUnW1soBWyHQuQ/frEZheoRT0ENtJ6hH8ZCRGD6iSVQc
-         70FcPMPpyABqV1UYViGZ+adC4EUgLzSRKVGwvAJR+NLgdJcnDCglFek+sEJxdUw3Z/Kw
-         0/NEy6BVWq1E9afSzhGXrlAKjeQgxQMZbenWrTCVRQ0ShJlxR4ya1PEmSUbeW6dtJjgp
-         1fkw==
-X-Gm-Message-State: AC+VfDwO+cKJbiwRJEbFWjf3gPrv1FkEwLz9uV9IHjQGtI0cbjfOnKfv
-        uKiuw56l9Zmcbqlu4o/dzONda1ADkbZpuv/YMI72jTmf4a4EAFvvl6NX5TRRE5R7rzhPt5QQ54j
-        gnSKRaq/FabbJe7+z2b/KdjT2fw==
-X-Received: by 2002:a17:907:983:b0:94e:2db:533e with SMTP id bf3-20020a170907098300b0094e02db533emr37548544ejc.49.1688032915023;
-        Thu, 29 Jun 2023 03:01:55 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ6YkB+iJ0ctUTC2IMrX9Nm0uHG7Qpkh7XlPlyhDmxJMCGzE+kp1VSLYHBbiRoSPJeaNxqGDpA==
-X-Received: by 2002:a17:907:983:b0:94e:2db:533e with SMTP id bf3-20020a170907098300b0094e02db533emr37548526ejc.49.1688032914761;
-        Thu, 29 Jun 2023 03:01:54 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:2a07:3a01:67e5:daf9:cec0:df6? (2001-1c00-2a07-3a01-67e5-daf9-cec0-0df6.cable.dynamic.v6.ziggo.nl. [2001:1c00:2a07:3a01:67e5:daf9:cec0:df6])
-        by smtp.gmail.com with ESMTPSA id rl14-20020a170907216e00b00992ab0262c9sm679883ejb.147.2023.06.29.03.01.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Jun 2023 03:01:54 -0700 (PDT)
-Message-ID: <3105fb11-b599-73c9-5a7b-895ef384a2e3@redhat.com>
-Date:   Thu, 29 Jun 2023 12:01:53 +0200
+        d=1e100.net; s=20221208; t=1688033642; x=1690625642;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nbTDt8O8YnKp6qSkf23f21/gUgnuCkFPdBbsf+Eovdg=;
+        b=JuMnH6glAeLYnGbfz/5TcH0rsNDNZzkKRlmB0g8ImHoXvPdI/NQOsjzMtxwrV1Kwdv
+         rSx0FW/Ld7/rvz+SYx/4ERnT3gbRm1KgX0inuvZZOF0mILaYdGS7PulG5Nt2sl4hMk8L
+         WWLkNuHWGJRYsRmXWcTm2MgokU2x4PSI5+cChGY9e/2nzYaVewhsxpraEY+GoR5FxSAr
+         LP/i3jO7TYBoKknnv1Z/SS0327xsa1HY3quAT5+Fcs60B3NTh722soJJUEAveMIB+Axm
+         qdooZhzaj6iglPLaLqRItEDNakJWgyWMnR0vdH5rJWQRf97MVotP7sybF7Xc40LjzMRD
+         MB5A==
+X-Gm-Message-State: AC+VfDwyTBhoF7YOmaGO1oFYhihzQ0zhakBuEhrsWLG1n8EOoXARC9cn
+        fg4N7lD4haM2WfcYnOHsRj227t1VGpMgElaa6aagRJiGdry+
+X-Google-Smtp-Source: ACHHUZ4TDuu4wLKEbVkIRWqidc5fW5oERyi9bovBtN9/nZFZ60TWvJocbnPLlZyHmb74xnJB42DcXz+4Db0kZUQihT94vE/CYU/x
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] fs/vboxsf: Replace kmap() with kmap_local_{page, folio}()
-Content-Language: en-US
-To:     Sumitra Sharma <sumitraartsy@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ira Weiny <ira.weiny@intel.com>,
-        Fabio <fmdefrancesco@gmail.com>, Deepak R Varma <drv@mailo.com>
-References: <20230627135115.GA452832@sumitra.com>
- <ZJxqmEVKoxxftfXM@casper.infradead.org> <20230629092844.GA456505@sumitra.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20230629092844.GA456505@sumitra.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Received: by 2002:a4a:d028:0:b0:563:47e5:d5a4 with SMTP id
+ w8-20020a4ad028000000b0056347e5d5a4mr2227835oor.0.1688033642417; Thu, 29 Jun
+ 2023 03:14:02 -0700 (PDT)
+Date:   Thu, 29 Jun 2023 03:14:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a015e205ff41f54a@google.com>
+Subject: [syzbot] Monthly btrfs report (Jun 2023)
+From:   syzbot <syzbot+list8679aaba80d87386e95e@syzkaller.appspotmail.com>
+To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Hello btrfs maintainers/developers,
 
-On 6/29/23 11:28, Sumitra Sharma wrote:
-> On Wed, Jun 28, 2023 at 06:15:04PM +0100, Matthew Wilcox wrote:
->> Here's a more comprehensive read_folio patch.  It's not at all
->> efficient, but then if we wanted an efficient vboxsf, we'd implement
->> vboxsf_readahead() and actually do an async call with deferred setting
->> of the uptodate flag.  I can consult with anyone who wants to do all
->> this work.
->>
->> I haven't even compiled this, just trying to show the direction this
->> should take.
->>
->> diff --git a/fs/vboxsf/file.c b/fs/vboxsf/file.c
->> index 2307f8037efc..f1af9a7bd3d8 100644
->> --- a/fs/vboxsf/file.c
->> +++ b/fs/vboxsf/file.c
->> @@ -227,26 +227,31 @@ const struct inode_operations vboxsf_reg_iops = {
->>  
->>  static int vboxsf_read_folio(struct file *file, struct folio *folio)
->>  {
->> -	struct page *page = &folio->page;
->>  	struct vboxsf_handle *sf_handle = file->private_data;
->> -	loff_t off = page_offset(page);
->> -	u32 nread = PAGE_SIZE;
->> -	u8 *buf;
->> +	loff_t pos = folio_pos(folio);
->> +	size_t offset = 0;
->>  	int err;
->>  
->> -	buf = kmap(page);
->> +	do {
->> +		u8 *buf = kmap_local_folio(folio, offset);
->> +		u32 nread = PAGE_SIZE;
->>  
->> -	err = vboxsf_read(sf_handle->root, sf_handle->handle, off, &nread, buf);
->> -	if (err == 0) {
->> -		memset(&buf[nread], 0, PAGE_SIZE - nread);
->> -		flush_dcache_page(page);
->> -		SetPageUptodate(page);
->> -	} else {
->> -		SetPageError(page);
->> -	}
->> +		err = vboxsf_read(sf_handle->root, sf_handle->handle, pos,
->> +				&nread, buf);
->> +		if (nread < PAGE_SIZE)
->> +			memset(&buf[nread], 0, PAGE_SIZE - nread);
->> +		kunmap_local(buf);
->> +		if (err)
->> +			break;
->> +		offset += PAGE_SIZE;
->> +		pos += PAGE_SIZE;
->> +	} while (offset < folio_size(folio);
->>  
->> -	kunmap(page);
->> -	unlock_page(page);
->> +	if (!err) {
->> +		flush_dcache_folio(folio);
->> +		folio_mark_uptodate(folio);
->> +	}
->> +	folio_unlock(folio);
->>  	return err;
->>  }
->>
-> 
-> Hi 
-> 
-> So, after reading the comments, I understood that the problem presented 
-> by Hans and Matthew is as follows:
-> 
-> 1) In the current code, the buffers used by vboxsf_write()/vboxsf_read() are 
-> translated to PAGELIST-s before passing to the hypervisor, 
-> but inefficiently— it first maps a page in vboxsf_read_folio() and then 
-> calls page_to_phys(virt_to_page()) in the function hgcm_call_init_linaddr(). 
-> 
-> The inefficiency in the current implementation arises due to the unnecessary 
-> mapping of a page in vboxsf_read_folio() because the mapping output, i.e. the 
-> linear address, is used deep down in file 'drivers/virt/vboxguest/vboxguest_utils.c'. 
-> Hence, the mapping must be done in this file; to do so, the folio must be passed 
-> until this point. It can be done by adding a new member, 'struct folio *folio', 
-> in the 'struct vmmdev_hgcm_function_parameter64'. 
+This is a 31-day syzbot report for the btrfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/btrfs
 
-struct vmmdev_hgcm_function_parameter64 is defined in
+During the period, 5 new issues were detected and 2 were fixed.
+In total, 52 issues are still open and 30 have been fixed so far.
 
-include/uapi/linux/vbox_vmmdev_types.h
+Some of the still happening issues:
 
-This is part of the userspace API of vboxguest which allows userspace
-to make (some) VirtualBox hypervisor request through a chardev.
+Ref  Crashes Repro Title
+<1>  3774    Yes   kernel BUG in close_ctree
+                   https://syzkaller.appspot.com/bug?extid=2665d678fffcc4608e18
+<2>  898     Yes   VFS: Busy inodes after unmount (use-after-free)
+                   https://syzkaller.appspot.com/bug?extid=0af00f6a2cba2058b5db
+<3>  573     Yes   WARNING in btrfs_space_info_update_bytes_may_use
+                   https://syzkaller.appspot.com/bug?extid=8edfa01e46fd9fe3fbfb
+<4>  550     Yes   WARNING in __kernel_write_iter
+                   https://syzkaller.appspot.com/bug?extid=12e098239d20385264d3
+<5>  273     Yes   kernel BUG at fs/inode.c:LINE! (2)
+                   https://syzkaller.appspot.com/bug?extid=c92c93d1f1aaaacdb9db
+<6>  223     Yes   WARNING in lookup_inline_extent_backref
+                   https://syzkaller.appspot.com/bug?extid=d6f9ff86c1d804ba2bc6
+<7>  208     Yes   WARNING in btrfs_remove_chunk
+                   https://syzkaller.appspot.com/bug?extid=e8582cc16881ec70a430
+<8>  197     Yes   WARNING in btrfs_chunk_alloc
+                   https://syzkaller.appspot.com/bug?extid=e8e56d5d31d38b5b47e7
+<9>  187     Yes   possible deadlock in btrfs_search_slot
+                   https://syzkaller.appspot.com/bug?extid=c06034aecf9f5eab1ac1
+<10> 162     Yes   kernel BUG in assertfail (2)
+                   https://syzkaller.appspot.com/bug?extid=c4614eae20a166c25bf0
 
-You can not just go and change this struct.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Note there already is a VMMDEV_HGCM_PARM_TYPE_PAGELIST type. So you
-could do the conversion from folio to pagelist (see the vboxguest code
-for how to do this) in the vboxsf_read() code (making it take a folio
-pointer as arg) and then directly pass the pagelist to the vbg_hgcm_call().
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-> The unused member 'phys_addr' in this struct can also be removed.
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-Again no you can NOT just go and make changes to an uapi header.
-
-Regards,
-
-Hans
-
+You may send multiple commands in a single email message.
