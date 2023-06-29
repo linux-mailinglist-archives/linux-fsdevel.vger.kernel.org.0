@@ -2,208 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D2CD742B11
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 19:13:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03FF1742B82
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 19:47:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232106AbjF2RNP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jun 2023 13:13:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53072 "EHLO
+        id S231638AbjF2Rrw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jun 2023 13:47:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229794AbjF2RNN (ORCPT
+        with ESMTP id S231208AbjF2Rrv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jun 2023 13:13:13 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 731593595
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 10:13:12 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id D817E5C02EC;
-        Thu, 29 Jun 2023 13:13:11 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Thu, 29 Jun 2023 13:13:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1688058791; x=1688145191; bh=a22mgjLBmXlIMbp14+vdOPZHk1sePLEC0De
-        5lXjKr6s=; b=ca3Q9X3/uxwK3sZ2ZmvBqa3AOJTGhZSXSruJb5hKpmHew2sdvh0
-        ZVql5fO5z5br7AVxip+6D+lRsvR2SUU2afIeKpmAooewFlM+s1dNoZJ+qReuI0H6
-        O4JyCEYGDbNAxvv/o2ux4Iaa+6n9RRDQC+ChNlYKpinLXZ2Kir+YXNqm/ii78IXE
-        glhCnsIE9ZB0eZBZIVvr7+GZsauL/KLhNVGGensij7GyA1FBYShmGDKDe7RY5ah2
-        D0lb/Q9/LHqqVi41kG9qsjWCcNCj5l9uoAHfk2cZXjMkEkNYYisgiPgIUCtAIxFU
-        czd6ZxW5zKoq6AtjZWF+LUuiR74iQyXZLig==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1688058791; x=1688145191; bh=a22mgjLBmXlIMbp14+vdOPZHk1sePLEC0De
-        5lXjKr6s=; b=ZlZaxNStotDHNucliwBA8Z2pGqH0u6H3wZb9t9vpqyqCVAEVnnm
-        KT7GHhZ/1fmL405IwpdEULvQAd28n/TwFCGMHIU+s9OOKBqDReEaQWfootESnk+U
-        YX4Wjo5cxHUM8D/dTfKWEdqvxcmEXTgcJtkolm+S8IAWT8O3zbg19sgf4u28wZQG
-        fcCBlhrNVqQ62BpEDwK4Gpk1Ev8se9kCRldnjA9dYTv5CbLH6asSXbDwQQObI1lp
-        mJlrtEN/H8bYBDJZaRnmLsYwaKr2zi2g7LjEYfIuaFRmyIMgyS2x9etbkV25haco
-        BXxBkjb5p+14m2fQXuwoi+SMbihOf2TztJw==
-X-ME-Sender: <xms:prudZHhf7uyEbj92JABDT6rNQgMmURu7xRo31f16OLMvd17P3TouTA>
-    <xme:prudZECS2mXJsPDGOuR3o0WIRsbLD1Jp1TgAUMszBtLB0_9fR-Tx5pXkHIl9J6yl4
-    2kVB1S3ybTTte49>
-X-ME-Received: <xmr:prudZHEd1gcRwgq-jWe0dSXT2wMEAjbLDlssD6Ff7cbGP1E4nHduvPMPl8ma92fPp1EarLnc3PBUmSpJWcE1qlL_BjcDKi9STghxSOf1wS2G2-xfymCe>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrtdeggdduuddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepkeehveekleekkeejhfehgeeftdffuddujeej
-    ieehheduueelleeghfeukeefvedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:prudZER7rRu48TnXVWHfn97Q4bdppVA4pW95yBSVRP-2YeCMoc7I0g>
-    <xmx:prudZExYkHxqGrzOGmMxEADj0vE1ipy_e4G-v-C03Y_oAfgV3Gi4jg>
-    <xmx:prudZK58wIc8RTSt69bvxVcbYod6R6C3JC_J37WEX9k7-7iXRykoFQ>
-    <xmx:p7udZOvhoXjQHSPbxGvzVkaCw5K3lQJsJjR1RvP16RyIk4RTS7TuDg>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 29 Jun 2023 13:13:10 -0400 (EDT)
-Message-ID: <1f0bf6c6-eac8-1a13-17b2-48cec5e991e2@fastmail.fm>
-Date:   Thu, 29 Jun 2023 19:13:07 +0200
+        Thu, 29 Jun 2023 13:47:51 -0400
+Received: from mail-oa1-f78.google.com (mail-oa1-f78.google.com [209.85.160.78])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E7901FC3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 10:47:48 -0700 (PDT)
+Received: by mail-oa1-f78.google.com with SMTP id 586e51a60fabf-1b34e23df61so371907fac.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 10:47:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688060867; x=1690652867;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fqeJGSO+6mKx9mSGLaZAKOae/381NKNuveT6K24vxfg=;
+        b=NWkGUHN4b8IKKQT6hAZqC53HgD0iD8OFk8IVEgn7l5sTvOVtW5h86REc7eRxCNxq6f
+         VQOjoUl0an6eZCb7ehxJQjxVbgqsdl7auzDlUP8H0o+13rxnqBfTWMS30MMuVUoTwbsx
+         9nHwk9n4pFAnz2M3yvpLADwQr9hTsUYaBaWb+bmPakUJJ8xGboK8YmQ2g8uv36mIkAwz
+         ri569/jFbewyH0mXRxVfTwlZgULtz2/4zvF0hPvEsUH5jEDvY/8lwoEsi1oIQMtYP3Md
+         XMoAGBuU/+7UGKwSqE2FmGOcG5oi7cMkTwR3LkkDXZ6AZXxd0kYLp4PThqy4pNm+3NgH
+         Vlzg==
+X-Gm-Message-State: AC+VfDxFPFf/KhXuOmvEw93bpGLk78JarMJrQHeHvK7+Pmu+ochmnYPE
+        rMj01IMZUbTGyGqOrN/cp3Rt13NXP47z6rplVYs5Tqc7TQj/
+X-Google-Smtp-Source: APBJJlH61aLO6HzohyCF4GOPTTpma/uLhk+bk4SmPwgDhoT8lQgiSxVIcpdBvVJ+qlI3IE+Y9rRRuPd6Qk3KhIpghv3yts8NFmVA
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [fuse-devel] [PATCH v2] fuse: add a new fuse init flag to relax
- restrictions in no cache mode
-Content-Language: en-US, de-DE
-To:     Hao Xu <hao.xu@linux.dev>, fuse-devel@lists.sourceforge.net
-Cc:     linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>,
-        cgxu519@mykernel.net, miklos@szeredi.hu
-References: <20230629081733.11309-1-hao.xu@linux.dev>
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <20230629081733.11309-1-hao.xu@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6870:6b96:b0:1b0:9643:6f69 with SMTP id
+ ms22-20020a0568706b9600b001b096436f69mr520078oab.4.1688060867287; Thu, 29 Jun
+ 2023 10:47:47 -0700 (PDT)
+Date:   Thu, 29 Jun 2023 10:47:47 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005a9fab05ff484cc4@google.com>
+Subject: [syzbot] [lsm?] [reiserfs?] general protection fault in fsnotify_perm
+From:   syzbot <syzbot+1d7062c505b34792ef90@syzkaller.appspotmail.com>
+To:     bpf@vger.kernel.org, jmorris@namei.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, paul@paul-moore.com,
+        reiserfs-devel@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    a92b7d26c743 Merge tag 'drm-fixes-2023-06-23' of git://ano..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16cd10e0a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=24ce1b2abaee24cc
+dashboard link: https://syzkaller.appspot.com/bug?extid=1d7062c505b34792ef90
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1066cc77280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=116850bf280000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f0158c6c02c9/disk-a92b7d26.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/91b4daaa4521/vmlinux-a92b7d26.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b5e6c2198af0/bzImage-a92b7d26.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/d48571c9b971/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1d7062c505b34792ef90@syzkaller.appspotmail.com
+
+general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+CPU: 0 PID: 4987 Comm: udevd Not tainted 6.4.0-rc7-syzkaller-00226-ga92b7d26c743 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+RIP: 0010:fsnotify_parent include/linux/fsnotify.h:62 [inline]
+RIP: 0010:fsnotify_file include/linux/fsnotify.h:99 [inline]
+RIP: 0010:fsnotify_perm.part.0+0x12e/0x610 include/linux/fsnotify.h:124
+Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 75 04 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b 5d 68 48 8d 7b 28 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 5c 04 00 00 4c 8b 73 28 be 08 00 00 00 4d 8d a6
+RSP: 0018:ffffc9000347fa00 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000005 RSI: ffffffff83cbf5e3 RDI: 0000000000000028
+RBP: ffff888067875bc0 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
+R13: ffff88802d0722d0 R14: ffff88802d07233c R15: 0000000000010000
+FS:  00007f538cf63c80(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f9b7c4d8718 CR3: 000000002eb3f000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ fsnotify_perm include/linux/fsnotify.h:108 [inline]
+ security_file_open+0x86/0xb0 security/security.c:2801
+ do_dentry_open+0x575/0x13f0 fs/open.c:907
+ do_open fs/namei.c:3636 [inline]
+ path_openat+0x1baa/0x2750 fs/namei.c:3791
+ do_filp_open+0x1ba/0x410 fs/namei.c:3818
+ do_sys_openat2+0x16d/0x4c0 fs/open.c:1356
+ do_sys_open fs/open.c:1372 [inline]
+ __do_sys_openat fs/open.c:1388 [inline]
+ __se_sys_openat fs/open.c:1383 [inline]
+ __x64_sys_openat+0x143/0x1f0 fs/open.c:1383
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f538cb169a4
+Code: 24 20 48 8d 44 24 30 48 89 44 24 28 64 8b 04 25 18 00 00 00 85 c0 75 2c 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 60 48 8b 15 55 a4 0d 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007fff8a905c40 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007f538cb169a4
+RDX: 0000000000080241 RSI: 00007fff8a906188 RDI: 00000000ffffff9c
+RBP: 00007fff8a906188 R08: 0000000000000004 R09: 0000000000000001
+R10: 00000000000001b6 R11: 0000000000000246 R12: 0000000000080241
+R13: 000056095d45972e R14: 0000000000000001 R15: 000056095e6332c0
+ </TASK>
+Modules linked in:
+----------------
+Code disassembly (best guess):
+   0:	48 89 fa             	mov    %rdi,%rdx
+   3:	48 c1 ea 03          	shr    $0x3,%rdx
+   7:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
+   b:	0f 85 75 04 00 00    	jne    0x486
+  11:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  18:	fc ff df
+  1b:	48 8b 5d 68          	mov    0x68(%rbp),%rbx
+  1f:	48 8d 7b 28          	lea    0x28(%rbx),%rdi
+  23:	48 89 fa             	mov    %rdi,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
+  2e:	0f 85 5c 04 00 00    	jne    0x490
+  34:	4c 8b 73 28          	mov    0x28(%rbx),%r14
+  38:	be 08 00 00 00       	mov    $0x8,%esi
+  3d:	4d                   	rex.WRB
+  3e:	8d                   	.byte 0x8d
+  3f:	a6                   	cmpsb  %es:(%rdi),%ds:(%rsi)
 
 
-On 6/29/23 10:17, Hao Xu wrote:
-> From: Hao Xu <howeyxu@tencent.com>
-> 
-> FOPEN_DIRECT_IO is usually set by fuse daemon to indicate need of strong
-> coherency, e.g. network filesystems. Thus shared mmap is disabled since
-> it leverages page cache and may write to it, which may cause
-> inconsistence. But FOPEN_DIRECT_IO can be used not for coherency but to
-> reduce memory footprint as well, e.g. reduce guest memory usage with
-> virtiofs. Therefore, add a new fuse init flag FUSE_DIRECT_IO_RELAX to
-> relax restrictions in that mode, currently, it allows shared mmap.
-> One thing to note is to make sure it doesn't break coherency in your
-> use case.
-> 
-> Signed-off-by: Hao Xu <howeyxu@tencent.com>
-> ---
-> 
-> v1 -> v2:
->      make the new flag a fuse init one rather than a open flag since it's
->      not common that different files in a filesystem has different
->      strategy of shared mmap.
-> 
->   fs/fuse/file.c            | 8 ++++++--
->   fs/fuse/fuse_i.h          | 3 +++
->   fs/fuse/inode.c           | 5 ++++-
->   include/uapi/linux/fuse.h | 1 +
->   4 files changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index bc4115288eec..871b66b54322 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -2478,14 +2478,18 @@ static const struct vm_operations_struct fuse_file_vm_ops = {
->   static int fuse_file_mmap(struct file *file, struct vm_area_struct *vma)
->   {
->   	struct fuse_file *ff = file->private_data;
-> +	struct fuse_conn *fc = ff->fm->fc;
->   
->   	/* DAX mmap is superior to direct_io mmap */
->   	if (FUSE_IS_DAX(file_inode(file)))
->   		return fuse_dax_mmap(file, vma);
->   
->   	if (ff->open_flags & FOPEN_DIRECT_IO) {
-> -		/* Can't provide the coherency needed for MAP_SHARED */
-> -		if (vma->vm_flags & VM_MAYSHARE)
-> +		/* Can't provide the coherency needed for MAP_SHARED
-> +		 * if FUSE_DIRECT_IO_RELAX isn't set.
-> +		 */
-> +		if (!(ff->open_flags & fc->direct_io_relax) &&
-> +		    vma->vm_flags & VM_MAYSHARE)
->   			return -ENODEV;
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-I'm confused here, the idea was that open_flags do not need additional 
-flags? Why is this not just
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-if (ff->open_flags & FOPEN_DIRECT_IO) {
-		/* Can't provide the coherency needed for MAP_SHARED */
-		if (vma->vm_flags & VM_MAYSHARE && !fc->direct_io_relax)
-			return -ENODEV;
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
->   
->   		invalidate_inode_pages2(file->f_mapping);
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 9b7fc7d3c7f1..d830c2360aef 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -792,6 +792,9 @@ struct fuse_conn {
->   	/* Is tmpfile not implemented by fs? */
->   	unsigned int no_tmpfile:1;
->   
-> +	/* relax restrictions in FOPEN_DIRECT_IO mode */
-> +	unsigned int direct_io_relax:1;
-> +
->   	/** The number of requests waiting for completion */
->   	atomic_t num_waiting;
->   
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index d66070af145d..049f9ee547d5 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1209,6 +1209,9 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
->   				fc->init_security = 1;
->   			if (flags & FUSE_CREATE_SUPP_GROUP)
->   				fc->create_supp_group = 1;
-> +
-> +			if (flags & FUSE_DIRECT_IO_RELAX)
-> +				fc->direct_io_relax = 1;
->   		} else {
->   			ra_pages = fc->max_read / PAGE_SIZE;
->   			fc->no_lock = 1;
-> @@ -1254,7 +1257,7 @@ void fuse_send_init(struct fuse_mount *fm)
->   		FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
->   		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
->   		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_INIT_EXT |
-> -		FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP;
-> +		FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP | FUSE_DIRECT_IO_RELAX;
->   #ifdef CONFIG_FUSE_DAX
->   	if (fm->fc->dax)
->   		flags |= FUSE_MAP_ALIGNMENT;
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index 1b9d0dfae72d..2da2acec6bf4 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -406,6 +406,7 @@ struct fuse_file_lock {
->   #define FUSE_SECURITY_CTX	(1ULL << 32)
->   #define FUSE_HAS_INODE_DAX	(1ULL << 33)
->   #define FUSE_CREATE_SUPP_GROUP	(1ULL << 34)
-> +#define FUSE_DIRECT_IO_RELAX	(1ULL << 35)
->   
->   /**
->    * CUSE INIT request/reply flags
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
 
-Thanks,
-Bernd
+If you want to undo deduplication, reply with:
+#syz undup
