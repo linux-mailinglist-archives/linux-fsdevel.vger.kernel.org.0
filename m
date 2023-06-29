@@ -2,162 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D7C7742297
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 10:49:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52A887422B3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 10:54:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232386AbjF2Itk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jun 2023 04:49:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56526 "EHLO
+        id S229632AbjF2IyI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jun 2023 04:54:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231272AbjF2ItM (ORCPT
+        with ESMTP id S231835AbjF2IyG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jun 2023 04:49:12 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2012C49E2;
-        Thu, 29 Jun 2023 01:45:42 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id AA7321F892;
-        Thu, 29 Jun 2023 08:45:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1688028341; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qpp+eteAanAusl2RdhSlDfGKBCbUSpm0x04ccu9yCqA=;
-        b=ttrFoC+STj0/u0pdDzeKR0HdhBNNRb0R4PhZUK+KKZNBXKjGQmARJstn6OyrNNVsFNQuFn
-        RXdRYCtXMVVJO0xjqvE+Z1v4eLNrvVbRhsZatBbYST1Xju+8lEs2/fJ2SBiO7UlM8vNUVK
-        BK/O52g5Mxk0B3jnxLR/uZMeKaHRDgY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1688028341;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qpp+eteAanAusl2RdhSlDfGKBCbUSpm0x04ccu9yCqA=;
-        b=B1I5LC/MLGhf18IWYapbh45QWue5BQBWp1qN/0ebxZqKvTI3+PgyokeqQdNKTYSIj2dGyw
-        yj08aLiWjjSZUnCg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 99319139FF;
-        Thu, 29 Jun 2023 08:45:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id l5deJbVEnWTAZwAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 29 Jun 2023 08:45:41 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 25F1CA0722; Thu, 29 Jun 2023 10:45:41 +0200 (CEST)
-Date:   Thu, 29 Jun 2023 10:45:41 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
-        <nabijaczleweli@nabijaczleweli.xyz>
-Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chung-Chiang Cheng <cccheng@synology.com>, ltp@lists.linux.it
-Subject: Re: [PATCH v4 0/3] fanotify accounting for fs/splice.c
-Message-ID: <20230629084541.5hjyskliqntcr5y4@quack3>
-References: <t5az5bvpfqd3rrwla43437r5vplmkujdytixcxgm7sc4hojspg@jcc63stk66hz>
- <cover.1687898895.git.nabijaczleweli@nabijaczleweli.xyz>
- <20230628113853.2b67fic5nvlisx3r@quack3>
- <ns6dcoilztzcutuduujfnbz5eggy3fk7z4t2bajy545zbay5d7@4bodludrpxe6>
+        Thu, 29 Jun 2023 04:54:06 -0400
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com [209.85.210.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF94210D5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 01:54:02 -0700 (PDT)
+Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-6b2ac1fe3d6so679499a34.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 01:54:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688028842; x=1690620842;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zEUG58nL5iLmeTt4LnH06pyXU55y46fgRDzs9ZfJaKw=;
+        b=ZPOw2O80bNooWGggWB4FsYzlQTsqWjQhfW4uXam2VSI/UBUYMGXPjKNmKeU32U/0j2
+         Hbtw8tjD0QG3y6IVY4Trekrm9WfMdEZqDAGkMHdYJiTTt72SDLmjcSs7hLobdAhzU0r8
+         1ZGffi12xCZWI1GJoy1IFE+4Dz9ZJMAn6obBkEdI+Smq6dIjRy9Iz2EVyNXBtnNpEaCi
+         4TL4xKOOU6gCV0hKXy5D9rtKv7H2KxM9lF5dp0/0QzBVZS2TlLb3/Sbp74aH3gFeJLLQ
+         Pk33bat+neFE4AkjVP0QPKuPcEUWttgMrS4/1QTyt4MoUaj8HS3n3ZRSaH7/Or3lwFQU
+         eR/A==
+X-Gm-Message-State: AC+VfDyI1AtUFwN5BHmRdDdGydqgXxpa8Es4TWfnicxvaGgAe2JBJudF
+        zif88OB6WgZefixcguFFIpC2vWF+5UvurOt0bG+s33Fg3Ril7i8=
+X-Google-Smtp-Source: ACHHUZ4oYdEE5FHWfiHBwn7fffeJLHHJch/YalC2dRBY7bZ2Hv371AeaSCXmkBauDLzffnM/TdG1hmxApe31kltI/KpGXjzScTS6
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ns6dcoilztzcutuduujfnbz5eggy3fk7z4t2bajy545zbay5d7@4bodludrpxe6>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Received: by 2002:a9d:7a94:0:b0:6b7:4aa6:77b3 with SMTP id
+ l20-20020a9d7a94000000b006b74aa677b3mr3616673otn.3.1688028842186; Thu, 29 Jun
+ 2023 01:54:02 -0700 (PDT)
+Date:   Thu, 29 Jun 2023 01:54:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000825f0d05ff40d7ca@google.com>
+Subject: [syzbot] Monthly reiserfs report (Jun 2023)
+From:   syzbot <syzbot+list27f0754ef9e5b00bcfe9@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi!
+Hello reiserfs maintainers/developers,
 
-On Wed 28-06-23 20:54:28, Ahelenia Ziemiańska wrote:
-> On Wed, Jun 28, 2023 at 01:38:53PM +0200, Jan Kara wrote:
-> > On Tue 27-06-23 22:50:46, Ahelenia Ziemiańska wrote:
-> > > Always generate modify out, access in for splice;
-> > > this gets automatically merged with no ugly special cases.
-> > > 
-> > > No changes to 2/3 or 3/3.
-> > Thanks for the patches Ahelena! The code looks fine to me but to be honest
-> > I still have one unresolved question so let me think about it loud here for
-> > documentation purposes :). Do we want fsnotify (any filesystem
-> > notification framework like inotify or fanotify) to actually generate
-> > events on FIFOs? FIFOs are virtual objects and are not part of the
-> > filesystem as such (well, the inode itself and the name is), hence
-> > *filesystem* notification framework does not seem like a great fit to watch
-> > for changes or accesses there. And if we say "yes" for FIFOs, then why not
-> > AF_UNIX sockets? Where do we draw the line? And is it all worth the
-> > trouble?
-> As a relative outsider (I haven't used inotify before this, and have not
->  been subjected to it or its peripheries before),
-> I interpreted inotify as being the Correct solution for:
->   1. stuff you can find in a normal
->      (non-/dev, you don't want to touch devices)
->      filesystem traversal
->   2. stuff you can open
-> where, going down the list in inode(7):
->   S_IFSOCK   can't open
->   S_IFLNK    can't open
->   S_IFREG    yes!
->   S_IFBLK    it's a device
->   S_IFDIR    yes!
->   S_IFCHR    it's a device
->   S_IFIFO    yes!
-> 
-> It appears that I'm not the only one who's interpreted it that way,
-> especially since neither regular files nor pipes are pollable.
-> (Though, under that same categorisation, I wouldn't be surprised
->  if anonymous pipes had been refused, for example, since those are
->  conventionally unnameable.)
-> 
-> To this end, I'd say we're leaving the line precisely where it was drawn
-> before, even if by accident.
+This is a 31-day syzbot report for the reiserfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/reiserfs
 
-I agree, although I'd note that there are S_IFREG inodes under /sys or
-/proc where it would be too difficult to provide fsnotify events (exactly
-because the file contents is not "data stored somewhere" but rather
-something "generated on the fly") so the illusion is not perfect already.
+During the period, 13 new issues were detected and 0 were fixed.
+In total, 84 issues are still open and 17 have been fixed so far.
 
-> > I understand the convenience of inotify working on FIFOs for the "tail -f"
-> > usecase but then wouldn't this better be fixed in tail(1) itself by using
-> > epoll(7) for FIFOs which, as I've noted in my other reply, does not have
-> > the problem that poll(2) has when there are no writers?
-> Yes, epoll in ET mode returns POLLHUP only once, but you /also/ need the
-> inotify anyway for regular files, which epoll refuses
-> (and, with -F, you may want both epoll for a pipe and inotify for the
->  directory it's contained in).
-> Is it possible to do? yes. Is it more annoying than just having pipes
-> report when they were written to? very much so.
-> 
-> inotify actually working(*) is presumably why coreutils tail doesn't use
-> epoll ‒ inotify already provides all required events(*), you can use the
-> same code for regular files and fifos, and with one fewer level of
-> indirection: there's just no need(*).
-> 
-> (*: except with a magic syscall only I use apparently)
+Some of the still happening issues:
 
-Yeah, I've slept to this and I still think adding fsnotify events to splice
-is a nicer option so feel free to add:
+Ref  Crashes Repro Title
+<1>  3597    Yes   possible deadlock in open_xa_dir
+                   https://syzkaller.appspot.com/bug?extid=8fb64a61fdd96b50f3b8
+<2>  2491    Yes   KASAN: null-ptr-deref Read in do_journal_end (2)
+                   https://syzkaller.appspot.com/bug?extid=845cd8e5c47f2a125683
+<3>  1474    Yes   kernel BUG in do_journal_begin_r
+                   https://syzkaller.appspot.com/bug?extid=2da5e132dd0268a9c0e4
+<4>  1394    Yes   kernel BUG at fs/reiserfs/journal.c:LINE!
+                   https://syzkaller.appspot.com/bug?extid=6820505ae5978f4f8f2f
+<5>  1197    Yes   WARNING in reiserfs_lookup
+                   https://syzkaller.appspot.com/bug?extid=392ac209604cc18792e5
+<6>  912     No    UBSAN: array-index-out-of-bounds in direntry_create_vi
+                   https://syzkaller.appspot.com/bug?extid=e5bb9eb00a5a5ed2a9a2
+<7>  861     Yes   possible deadlock in mnt_want_write_file
+                   https://syzkaller.appspot.com/bug?extid=1047e42179f502f2b0a2
+<8>  291     Yes   possible deadlock in reiserfs_ioctl
+                   https://syzkaller.appspot.com/bug?extid=79c303ad05f4041e0dad
+<9>  266     Yes   WARNING in journal_end
+                   https://syzkaller.appspot.com/bug?extid=d43f346675e449548021
+<10> 233     Yes   KASAN: out-of-bounds Read in leaf_paste_entries (2)
+                   https://syzkaller.appspot.com/bug?extid=38b79774b6c990637f95
 
-Acked-by: Jan Kara <jack@suse.cz>
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-to all kernel patches in your series. Since the changes are in splice code,
-Christian or Al Viro (who you already have on CC list) should be merging
-this so please make sure to also include them in the v5 submission.
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
