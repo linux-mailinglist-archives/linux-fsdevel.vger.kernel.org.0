@@ -2,182 +2,271 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F5EC7429C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 17:35:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30565742A00
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 17:55:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232088AbjF2Pf5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jun 2023 11:35:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56288 "EHLO
+        id S232288AbjF2Pzr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jun 2023 11:55:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231862AbjF2Pfz (ORCPT
+        with ESMTP id S231718AbjF2Pzp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jun 2023 11:35:55 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B57419BA
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 08:35:54 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 4D6ED5C00A1;
-        Thu, 29 Jun 2023 11:35:51 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Thu, 29 Jun 2023 11:35:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1688052951; x=1688139351; bh=JzhI/U4sIbHQH3o1bYQPhyqslbW1lDfwXTP
-        1/xM+Hc4=; b=CBRu2KNOrT11zhOldbBNerMRqXeiSl2NW7jR/K2fUUdiM7o2L3q
-        JMCC6gZhWQFcDa1QO22QD6qw+46GCn7HX5fxAPbm0IC2p3FKUej1J3KNDsgdTF89
-        027pVzr5charGw7ZvUqtHqYp6pM+9bEizkDSc8vXDpLMtLRzeGdmJn+m2MZBk32N
-        JVWzK8W3yg4alg4ChJAzLeCZT/cPzjhkcmFJfBQlzzCsWRJi+RkD0uF66ZUZYrQF
-        4lMCaW727xfJsRxrX3vmTxS1oDcPLWH+fjTNqxj/BqQPuax1llKocY4UEapVILSe
-        nD7dZZrEtNUC4jYA3GvDQDT20dAyD1cnofg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1688052951; x=1688139351; bh=JzhI/U4sIbHQH3o1bYQPhyqslbW1lDfwXTP
-        1/xM+Hc4=; b=Ti4DKNImRVN4GRGtB6YKU5eh7NQncoIynR/C4pjiS5TqiwT3MHF
-        sYocEGblVgNbRWlH6G78tyUXnpfChOmBmQFsAW8NVYacRWULLH3xB/4YiVz80apF
-        wEB9a+4wkozTSia0KwFOsajbmTQZrJnHqw8LQb26OEylmhTwikaNoVmrv3mTDYZl
-        pse5nMJW8gAv8sUDQy6cHHSEhXxDH8PTcci/YIF5dGMd4EJtcx8YZA0Rp932fNzI
-        wPKtpMIDhfUTnlF4lowIiNTWysBh20jBM1PudvSv5w0zifYQyPffydLzFhlzAYME
-        qwRaP4+wqz15TJaEqvKW57GneVbGjx/BYNA==
-X-ME-Sender: <xms:1qSdZOi12grKvhGQN9HeNorzn-SjqLLiTX0glyfmKONzPlIohW6--Q>
-    <xme:1qSdZPD_Y0jWQnhDsSoRl0YePKQJpKsqnyYUrXRf2QZghxeWLQi-BLFEJWepoPf8S
-    8M1eG8WdsP50CMA>
-X-ME-Received: <xmr:1qSdZGHxJbOpeI8c-QrR9mnXU_86rtVUBi4K-Yua7MHb8p4SpccJW6tY0wx0CAGpSBIDUmLOaoN7sMJc_814uz98AVuS61BiHePXGFuDNcIrlDBhmjR_>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrtdeggdeludcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfuvfevfhfhjggtgfesthekredttdefjeenucfhrhhomhepuegvrhhn
-    ugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
-    drfhhmqeenucggtffrrghtthgvrhhnpefgudevueevveeiudejveeffeejkeegvdduheek
-    vdefhfetgeegheekkeetleehgfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdr
-    shgthhhusggvrhhtsehfrghsthhmrghilhdrfhhm
-X-ME-Proxy: <xmx:1qSdZHRYVEYhpp4bahN4AoOoyRYotBKdKlAMHg3gAlPsyvrda6FzzQ>
-    <xmx:1qSdZLyllRjae0mFFxI1JTp-T7bO5E_71gq3zQRV962QO3Gj_qiGTw>
-    <xmx:1qSdZF4V1TykU_IQGRzdO7SusNeHGG6zJTGbIGxuHkeN7JNCbqj9aQ>
-    <xmx:16SdZNtynPtlpj99_joi0NQCFUeGerCEOQ4S5krU_Pi2bItAGb3-DA>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 29 Jun 2023 11:35:49 -0400 (EDT)
-Message-ID: <51e0eafe-2339-534a-fea0-68c9570483a4@fastmail.fm>
-Date:   Thu, 29 Jun 2023 17:35:47 +0200
+        Thu, 29 Jun 2023 11:55:45 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 538C235A3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 08:55:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1688054102;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2eueBEW3aL+xqYTSeuQ3xb53C/MZpWPSC4TMM2avShg=;
+        b=I2ypApkPFVwjxXcOxtxmhcyIKu80XUau7MdGxQntVLqvONwyAoX7atY9X5NZGwbHH8m1kA
+        rwQDMhJXzuY+ZjJUfGnY0D5iQ6h2OlXggvjT6J/XOJQaR5y6AI4/cNLinh9+CbnV/KQXsL
+        2T+H1UaM5OVrykYxatXxmdC44VG9/j0=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-381-pxvax7y_Nu26XJJKh4xM3A-1; Thu, 29 Jun 2023 11:54:59 -0400
+X-MC-Unique: pxvax7y_Nu26XJJKh4xM3A-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 66B8A280AA42;
+        Thu, 29 Jun 2023 15:54:39 +0000 (UTC)
+Received: from warthog.procyon.org.uk.com (unknown [10.42.28.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0EF7D4CD0C3;
+        Thu, 29 Jun 2023 15:54:37 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matt Whitlock <kernel@mattwhitlock.name>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@kvack.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH 1/4] splice: Fix corruption of spliced data after splice() returns
+Date:   Thu, 29 Jun 2023 16:54:30 +0100
+Message-ID: <20230629155433.4170837-2-dhowells@redhat.com>
+In-Reply-To: <20230629155433.4170837-1-dhowells@redhat.com>
+References: <20230629155433.4170837-1-dhowells@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [fuse-devel] [RFC PATCH] fuse: invalidate page cache pages before
- direct write
-Content-Language: en-US, de-DE
-To:     Hao Xu <hao.xu@linux.dev>, fuse-devel@lists.sourceforge.net
-Cc:     linux-fsdevel@vger.kernel.org, cgxu519@mykernel.net,
-        Wanpeng Li <wanpengli@tencent.com>, miklos@szeredi.hu
-References: <20230509080128.457489-1-hao.xu@linux.dev>
- <0625d0cb-2a65-ffae-b072-e14a3f6c7571@linux.dev>
- <7da6719c-23ee-736e-6787-1aad56d22e07@fastmail.fm>
- <40ed526b-a5b0-cae1-0757-1bdfeb1002a6@linux.dev>
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <40ed526b-a5b0-cae1-0757-1bdfeb1002a6@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Hao,
+Splicing data from, say, a file into a pipe currently leaves the source
+pages in the pipe after splice() returns - but this means that those pages
+can be subsequently modified by shared-writable mmap(), write(),
+fallocate(), etc. before they're consumed.
 
-On 6/29/23 14:00, Hao Xu wrote:
-> Hi Bernd,
-> 
-> On 6/27/23 02:23, Bernd Schubert wrote:
->>
->>
->> On 6/8/23 09:17, Hao Xu wrote:
->>> Ping...
->>>
->>> On 5/9/23 16:01, Hao Xu wrote:
->>>> From: Hao Xu <howeyxu@tencent.com>
->>>>
->>>> In FOPEN_DIRECT_IO, page cache may still be there for a file, direct
->>>> write should respect that and invalidate the corresponding pages so
->>>> that page cache readers don't get stale data. Another thing this patch
->>>> does is flush related pages to avoid its loss.
->>>>
->>>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
->>>> ---
->>>>
->>>> Reference:
->>>> https://lore.kernel.org/linux-fsdevel/ee8380b3-683f-c526-5f10-1ce2ee6f79ad@linux.dev/#:~:text=I%20think%20this%20problem%20exists%20before%20this%20patchset
->>>>
->>>>   fs/fuse/file.c | 14 +++++++++++++-
->>>>   1 file changed, 13 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->>>> index 89d97f6188e0..edc84c1dfc5c 100644
->>>> --- a/fs/fuse/file.c
->>>> +++ b/fs/fuse/file.c
->>>> @@ -1490,7 +1490,8 @@ ssize_t fuse_direct_io(struct fuse_io_priv 
->>>> *io, struct iov_iter *iter,
->>>>       int write = flags & FUSE_DIO_WRITE;
->>>>       int cuse = flags & FUSE_DIO_CUSE;
->>>>       struct file *file = io->iocb->ki_filp;
->>>> -    struct inode *inode = file->f_mapping->host;
->>>> +    struct address_space *mapping = file->f_mapping;
->>>> +    struct inode *inode = mapping->host;
->>>>       struct fuse_file *ff = file->private_data;
->>>>       struct fuse_conn *fc = ff->fm->fc;
->>>>       size_t nmax = write ? fc->max_write : fc->max_read;
->>>> @@ -1516,6 +1517,17 @@ ssize_t fuse_direct_io(struct fuse_io_priv 
->>>> *io, struct iov_iter *iter,
->>>>               inode_unlock(inode);
->>>>       }
->>>> +    res = filemap_write_and_wait_range(mapping, pos, pos + count - 1);
->>>> +    if (res)
->>>> +        return res;
->>>> +
->>>> +    if (write) {
->>>> +        if (invalidate_inode_pages2_range(mapping,
->>>> +                idx_from, idx_to)) {
->>>> +            return -ENOTBLK;
->>>> +        }
->>>> +    }
->>>> +
->>>>       io->should_dirty = !write && user_backed_iter(iter);
->>>>       while (count) {
->>>>           ssize_t nres;
->>>
->>
->> Is this part not working?
->>
->>      if (!cuse && fuse_range_is_writeback(inode, idx_from, idx_to)) {
->>          if (!write)
->>              inode_lock(inode);
->>          fuse_sync_writes(inode);
->>          if (!write)
->>              inode_unlock(inode);
->>      }
->>
->>
-> 
-> 
-> This code seems to be waiting for already triggered page cache writeback
-> requests, it's not related with the issue this patch tries to address.
-> The issue here is we should invalidate related page cache page before we
-> do direct write.
+Fix this by stealing the pages in splice() before they're added to the pipe
+if no one else is using them or has them mapped and copying them otherwise.
 
-oh, right, I just see it. I think you should move your 
-filemap_write_and_wait_range() call above that piece in order to ensure 
-it is send to the daemon/server side.
+Reported-by: Matt Whitlock <kernel@mattwhitlock.name>
+Link: https://lore.kernel.org/r/ec804f26-fa76-4fbe-9b1c-8fbbd829b735@mattwhitlock.name/
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: Dave Chinner <david@fromorbit.com>
+cc: Christoph Hellwig <hch@lst.de>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: linux-fsdevel@vger.kernel.org
+---
+ mm/filemap.c  | 92 ++++++++++++++++++++++++++++++++++++++++++++++++---
+ mm/internal.h |  4 +--
+ mm/shmem.c    |  8 +++--
+ 3 files changed, 95 insertions(+), 9 deletions(-)
 
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 9e44a49bbd74..a002df515966 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2838,15 +2838,87 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ }
+ EXPORT_SYMBOL(generic_file_read_iter);
+ 
++static inline void copy_folio_to_folio(struct folio *src, size_t src_offset,
++				       struct folio *dst, size_t dst_offset,
++				       size_t size)
++{
++	void *p, *q;
++
++	while (size > 0) {
++		size_t part = min3(PAGE_SIZE - src_offset % PAGE_SIZE,
++				   PAGE_SIZE - dst_offset % PAGE_SIZE,
++				   size);
++
++		p = kmap_local_folio(src, src_offset);
++		q = kmap_local_folio(dst, dst_offset);
++		memcpy(q, p, part);
++		kunmap_local(p);
++		kunmap_local(q);
++		src_offset += part;
++		dst_offset += part;
++		size -= part;
++	}
++}
++
+ /*
+- * Splice subpages from a folio into a pipe.
++ * Splice data from a folio into a pipe.  The folio is stolen if no one else is
++ * using it and copied otherwise.  We can't put the folio into the pipe still
++ * attached to the pagecache as that allows someone to modify it after the
++ * splice.
+  */
+-size_t splice_folio_into_pipe(struct pipe_inode_info *pipe,
+-			      struct folio *folio, loff_t fpos, size_t size)
++ssize_t splice_folio_into_pipe(struct pipe_inode_info *pipe,
++			       struct folio *folio, loff_t fpos, size_t size)
+ {
++	struct address_space *mapping;
++	struct folio *copy = NULL;
+ 	struct page *page;
++	unsigned int flags = 0;
++	ssize_t ret;
+ 	size_t spliced = 0, offset = offset_in_folio(folio, fpos);
+ 
++	folio_lock(folio);
++
++	mapping = folio_mapping(folio);
++	ret = -ENODATA;
++	if (!folio->mapping)
++		goto err_unlock; /* Truncated */
++	ret = -EIO;
++	if (!folio_test_uptodate(folio))
++		goto err_unlock;
++
++	/*
++	 * At least for ext2 with nobh option, we need to wait on writeback
++	 * completing on this folio, since we'll remove it from the pagecache.
++	 * Otherwise truncate wont wait on the folio, allowing the disk blocks
++	 * to be reused by someone else before we actually wrote our data to
++	 * them. fs corruption ensues.
++	 */
++	folio_wait_writeback(folio);
++
++	if (folio_has_private(folio) &&
++	    !filemap_release_folio(folio, GFP_KERNEL))
++		goto need_copy;
++
++	/* If we succeed in removing the mapping, set LRU flag and add it. */
++	if (remove_mapping(mapping, folio)) {
++		folio_unlock(folio);
++		flags = PIPE_BUF_FLAG_LRU;
++		goto add_to_pipe;
++	}
++
++need_copy:
++	folio_unlock(folio);
++
++	copy = folio_alloc(GFP_KERNEL, 0);
++	if (!copy)
++		return -ENOMEM;
++
++	size = min(size, PAGE_SIZE - offset % PAGE_SIZE);
++	copy_folio_to_folio(folio, offset, copy, 0, size);
++	folio = copy;
++	offset = 0;
++
++add_to_pipe:
+ 	page = folio_page(folio, offset / PAGE_SIZE);
+ 	size = min(size, folio_size(folio) - offset);
+ 	offset %= PAGE_SIZE;
+@@ -2861,6 +2933,7 @@ size_t splice_folio_into_pipe(struct pipe_inode_info *pipe,
+ 			.page	= page,
+ 			.offset	= offset,
+ 			.len	= part,
++			.flags	= flags,
+ 		};
+ 		folio_get(folio);
+ 		pipe->head++;
+@@ -2869,7 +2942,13 @@ size_t splice_folio_into_pipe(struct pipe_inode_info *pipe,
+ 		offset = 0;
+ 	}
+ 
++	if (copy)
++		folio_put(copy);
+ 	return spliced;
++
++err_unlock:
++	folio_unlock(folio);
++	return ret;
+ }
+ 
+ /**
+@@ -2947,7 +3026,7 @@ ssize_t filemap_splice_read(struct file *in, loff_t *ppos,
+ 
+ 		for (i = 0; i < folio_batch_count(&fbatch); i++) {
+ 			struct folio *folio = fbatch.folios[i];
+-			size_t n;
++			ssize_t n;
+ 
+ 			if (folio_pos(folio) >= end_offset)
+ 				goto out;
+@@ -2963,8 +3042,11 @@ ssize_t filemap_splice_read(struct file *in, loff_t *ppos,
+ 
+ 			n = min_t(loff_t, len, isize - *ppos);
+ 			n = splice_folio_into_pipe(pipe, folio, *ppos, n);
+-			if (!n)
++			if (n <= 0) {
++				if (n < 0)
++					error = n;
+ 				goto out;
++			}
+ 			len -= n;
+ 			total_spliced += n;
+ 			*ppos += n;
+diff --git a/mm/internal.h b/mm/internal.h
+index a7d9e980429a..ae395e0f31d5 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -881,8 +881,8 @@ struct migration_target_control {
+ /*
+  * mm/filemap.c
+  */
+-size_t splice_folio_into_pipe(struct pipe_inode_info *pipe,
+-			      struct folio *folio, loff_t fpos, size_t size);
++ssize_t splice_folio_into_pipe(struct pipe_inode_info *pipe,
++			       struct folio *folio, loff_t fpos, size_t size);
+ 
+ /*
+  * mm/vmalloc.c
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 2f2e0e618072..969931b0f00e 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2783,7 +2783,8 @@ static ssize_t shmem_file_splice_read(struct file *in, loff_t *ppos,
+ 	struct inode *inode = file_inode(in);
+ 	struct address_space *mapping = inode->i_mapping;
+ 	struct folio *folio = NULL;
+-	size_t total_spliced = 0, used, npages, n, part;
++	ssize_t n;
++	size_t total_spliced = 0, used, npages, part;
+ 	loff_t isize;
+ 	int error = 0;
+ 
+@@ -2844,8 +2845,11 @@ static ssize_t shmem_file_splice_read(struct file *in, loff_t *ppos,
+ 			n = splice_zeropage_into_pipe(pipe, *ppos, len);
+ 		}
+ 
+-		if (!n)
++		if (n <= 0) {
++			if (n < 0)
++				error = n;
+ 			break;
++		}
+ 		len -= n;
+ 		total_spliced += n;
+ 		*ppos += n;
 
-Thanks,
-Bernd
