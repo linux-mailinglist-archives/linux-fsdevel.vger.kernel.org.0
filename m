@@ -2,58 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C5A8F742EEE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 22:51:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29542742EF8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 22:51:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229742AbjF2UvC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jun 2023 16:51:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46022 "EHLO
+        id S232277AbjF2Uvv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jun 2023 16:51:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232242AbjF2Uu4 (ORCPT
+        with ESMTP id S230401AbjF2Uu6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jun 2023 16:50:56 -0400
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 732FD35A3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 13:50:54 -0700 (PDT)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-573a92296c7so9361507b3.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 13:50:54 -0700 (PDT)
+        Thu, 29 Jun 2023 16:50:58 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 786D73591
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 13:50:56 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-bfe702f99b8so945666276.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 13:50:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1688071853; x=1690663853;
+        d=google.com; s=20221208; t=1688071855; x=1690663855;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0eR1m0YpsGhZ6GlqZ9XuYhhV42VymJr50nJOc8nZiNo=;
-        b=3cQsv9mPUr/J47bNoSUJhw0yv5GwYe9VZP9mYSYio932WB5S45QeiLp3sUUgqKWWVH
-         dSxCe5jkZQeEy91/Za56iq/BaKt7D2eO5CKC5tFRQYXavX5XUCleRaiiLN/LYOpTc3Q5
-         TlyJDS6v9N9nUKx4AeHRICAHwHnZXdJB2EprVzPDgrV+x6B+GNNBpU5V0gfMamqVpbki
-         nvs6vizS27HjxtsanHmKiVM1v+306yk8JhmYhHT5HisNsno4bY2z/AyQxRY5mcHLj0/S
-         73GQMk4SEbiPfcHxLnui5ipf505zkiJKpuRvNi5XJnjd8ujS1kh0z5BvTGrPJHuMpVHk
-         xgHw==
+        bh=FDMn97NE4k9ts/MbSvQk7TIpBtwkvtlY8wmg3pzMxc0=;
+        b=b9ic7m0uviwwst/a/b6ej/KmTI1fbXLL05tIs7ZZktU/1u1vjioSSlgudRjzPPssiy
+         tp8Df963g7Gw9okHBP74jobr3AMGXd284bnbTndsz/MzbhN8YGVA8qDN4fDKB/ndeZVg
+         QJI4l1QU+fC4jjOAj9fa1B2eKR2xgGeEAW2jObEdLCiYk4pjpamRXhIA/AvCrm3AxS1A
+         S57uq/giJWwpOzsio0l1XJxDbLPkIQcot63aSrBC/XjE/hIXayLN7QhrNIf6De7X0ojG
+         MHaKy6jVInPl550XNyYzoiSALiiydqGt38OXbmQvLutW7JTQFw252iMVADLjBUBo1bab
+         iXag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688071853; x=1690663853;
+        d=1e100.net; s=20221208; t=1688071855; x=1690663855;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0eR1m0YpsGhZ6GlqZ9XuYhhV42VymJr50nJOc8nZiNo=;
-        b=dx1GhAipiUU3rdT235Kq+tDcFvUsUczFL7PjdxkyllB5CMrivniwIvBSExSL069OaJ
-         2NP25vjmlgVLmR1aYenlQctlRw1evcE8Wu0pCL+iLFpMiPceA9R2IOZ98UJsU+wTfywy
-         x0HTjsyrH2NI0c14QwE67YFh4h0/PkYyiFSqqrBDfrvUSFPy3vOgNM5O09Sr5B2VAXHW
-         zzHZ9Wqbv6DyYpk44ccohP9euS8MNNKBHD1VlCOEUTajBBPVuDbAN46FOSQMSl10XMHQ
-         wYZ7Ir5FIu3+Kk3ar9XIQJ8sJDmcrG4HhfK9FdmHBpjIsEscwG+fd+YUh0+gPaHqLLLt
-         wg9Q==
-X-Gm-Message-State: ABy/qLZGLXxpmB+JbWY8fJ5labqw627gMVIjArVUsTUJWN7zT0qirm+G
-        1iE3zEKdBvVy0HW/EflD6A1T5YxgI+VEVRjPyfxF
-X-Google-Smtp-Source: APBJJlGMR6Hew5dlxFm7tULAhbAWqjtH0IRMMwzkK9vijNpv3CfU43JDb01xtUzDErorDPisxqOLpILC+1eZPblYAKLk
+        bh=FDMn97NE4k9ts/MbSvQk7TIpBtwkvtlY8wmg3pzMxc0=;
+        b=T47fnMBeRrzNIlEEHLIvfrjYWUl3zo2ZN4NHdTzh66YwOxhTO3d8wnrYy3E7gjfaW2
+         apI81rzkg5JjJGcGTGLNhi68RzEh8GD5UIW1B0vAi2jPj3ny8tiN37hwP3s2fwDSEGGe
+         pLHp3108MkYckfYiAYrjjK5P3BY9uSEZa4XEyG61HvSDboL4wYxc1gKhTRdq6sJz2aM0
+         /okku7L1NhavFbiHNUIzlcaJ6scjpZnwr0Kt8uIeoiPbJyvKvddZa5SLJQWfTm5KYhWW
+         x1A8ehfhvG1AyDFqVK/bTgyCVATSKUWfN2cIgbu3dsqp8uh5lZOxyyQ6SI5UpREbbno7
+         AbwQ==
+X-Gm-Message-State: ABy/qLa9hq9chABm8TmaeQ9msn60GDR7XIMBJO4QsXByYroNjmx2trMQ
+        f6Oel0FyOcX0mPTZASSndxSOdE7MzzOkGaiFNQug
+X-Google-Smtp-Source: APBJJlFEeXNU5wkKYldS4vdZYkexQZAWshF/qAuKQS3UJdZOiHvOTMlytCrLVWGNw78bI6vNEGHYZeLbYDtkVMX51oUg
 X-Received: from axel.svl.corp.google.com ([2620:15c:2a3:200:e20f:5917:3efa:d4bb])
- (user=axelrasmussen job=sendgmr) by 2002:a0d:dfd0:0:b0:56c:e2da:f440 with
- SMTP id i199-20020a0ddfd0000000b0056ce2daf440mr4758ywe.0.1688071853655; Thu,
- 29 Jun 2023 13:50:53 -0700 (PDT)
-Date:   Thu, 29 Jun 2023 13:50:38 -0700
+ (user=axelrasmussen job=sendgmr) by 2002:a25:d243:0:b0:c38:b4b5:13d5 with
+ SMTP id j64-20020a25d243000000b00c38b4b513d5mr6655ybg.3.1688071855661; Thu,
+ 29 Jun 2023 13:50:55 -0700 (PDT)
+Date:   Thu, 29 Jun 2023 13:50:39 -0700
 In-Reply-To: <20230629205040.665834-1-axelrasmussen@google.com>
 Mime-Version: 1.0
 References: <20230629205040.665834-1-axelrasmussen@google.com>
 X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
-Message-ID: <20230629205040.665834-4-axelrasmussen@google.com>
-Subject: [PATCH v2 4/6] selftests/mm: refactor uffd_poll_thread to allow
- custom fault handlers
+Message-ID: <20230629205040.665834-5-axelrasmussen@google.com>
+Subject: [PATCH v2 5/6] selftests/mm: add uffd unit test for UFFDIO_POISON
 From:   Axel Rasmussen <axelrasmussen@google.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -81,98 +80,165 @@ Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Previously, we had "one fault handler to rule them all", which used
-several branches to deal with all of the scenarios required by all of
-the various tests.
+The test is pretty basic, and exercises UFFDIO_POISON straightforwardly.
+We register a region with userfaultfd, in missing fault mode. For each
+fault, we either UFFDIO_COPY a zeroed page (odd pages) or UFFDIO_POISON
+(even pages). We do this mix to test "something like a real use case",
+where guest memory would be some mix of poisoned and non-poisoned pages.
 
-In upcoming patches, I plan to add a new test, which has its own
-slightly different fault handling logic. Instead of continuing to add
-cruft to the existing fault handler, let's allow tests to define custom
-ones, separate from other tests.
+We read each page in the region, and assert that the odd pages are
+zeroed as expected, and the even pages yield a SIGBUS as expected.
+
+Why UFFDIO_COPY instead of UFFDIO_ZEROPAGE? Because hugetlb doesn't
+support UFFDIO_ZEROPAGE, and we don't want to have special case code.
 
 Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
 ---
- tools/testing/selftests/mm/uffd-common.c |  5 ++++-
- tools/testing/selftests/mm/uffd-common.h |  3 +++
- tools/testing/selftests/mm/uffd-stress.c | 12 +++++++-----
- 3 files changed, 14 insertions(+), 6 deletions(-)
+ tools/testing/selftests/mm/uffd-unit-tests.c | 117 +++++++++++++++++++
+ 1 file changed, 117 insertions(+)
 
-diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
-index ba20d7504022..02b89860e193 100644
---- a/tools/testing/selftests/mm/uffd-common.c
-+++ b/tools/testing/selftests/mm/uffd-common.c
-@@ -499,6 +499,9 @@ void *uffd_poll_thread(void *arg)
- 	int ret;
- 	char tmp_chr;
+diff --git a/tools/testing/selftests/mm/uffd-unit-tests.c b/tools/testing/selftests/mm/uffd-unit-tests.c
+index 04d91f144d1c..2709a34a39c5 100644
+--- a/tools/testing/selftests/mm/uffd-unit-tests.c
++++ b/tools/testing/selftests/mm/uffd-unit-tests.c
+@@ -951,6 +951,117 @@ static void uffd_zeropage_test(uffd_test_args_t *args)
+ 	uffd_test_pass();
+ }
  
-+	if (!args->handle_fault)
-+		args->handle_fault = uffd_handle_page_fault;
++static void uffd_register_poison(int uffd, void *addr, uint64_t len)
++{
++	uint64_t ioctls = 0;
++	uint64_t expected = (1 << _UFFDIO_COPY) | (1 << _UFFDIO_POISON);
 +
- 	pollfd[0].fd = uffd;
- 	pollfd[0].events = POLLIN;
- 	pollfd[1].fd = pipefd[cpu*2];
-@@ -527,7 +530,7 @@ void *uffd_poll_thread(void *arg)
- 			err("unexpected msg event %u\n", msg.event);
- 			break;
- 		case UFFD_EVENT_PAGEFAULT:
--			uffd_handle_page_fault(&msg, args);
-+			args->handle_fault(&msg, args);
- 			break;
- 		case UFFD_EVENT_FORK:
- 			close(uffd);
-diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/selftests/mm/uffd-common.h
-index 197f5262fe0d..7c4fa964c3b0 100644
---- a/tools/testing/selftests/mm/uffd-common.h
-+++ b/tools/testing/selftests/mm/uffd-common.h
-@@ -77,6 +77,9 @@ struct uffd_args {
- 	unsigned long missing_faults;
- 	unsigned long wp_faults;
- 	unsigned long minor_faults;
++	if (uffd_register_with_ioctls(uffd, addr, len, true,
++				      false, false, &ioctls))
++		err("poison register fail");
 +
-+	/* A custom fault handler; defaults to uffd_handle_page_fault. */
-+	void (*handle_fault)(struct uffd_msg *msg, struct uffd_args *args);
++	if ((ioctls & expected) != expected)
++		err("registered area doesn't support COPY and POISON ioctls");
++}
++
++static void do_uffdio_poison(int uffd, unsigned long offset)
++{
++	struct uffdio_poison uffdio_poison = { 0 };
++	int ret;
++	__s64 res;
++
++	uffdio_poison.range.start = (unsigned long) area_dst + offset;
++	uffdio_poison.range.len = page_size;
++	uffdio_poison.mode = 0;
++	ret = ioctl(uffd, UFFDIO_POISON, &uffdio_poison);
++	res = uffdio_poison.updated;
++
++	if (ret)
++		err("UFFDIO_POISON error: %"PRId64, (int64_t)res);
++	else if (res != page_size)
++		err("UFFDIO_POISON unexpected size: %"PRId64, (int64_t)res);
++}
++
++static void uffd_poison_handle_fault(
++	struct uffd_msg *msg, struct uffd_args *args)
++{
++	unsigned long offset;
++
++	if (msg->event != UFFD_EVENT_PAGEFAULT)
++		err("unexpected msg event %u", msg->event);
++
++	if (msg->arg.pagefault.flags &
++	    (UFFD_PAGEFAULT_FLAG_WP | UFFD_PAGEFAULT_FLAG_MINOR))
++		err("unexpected fault type %llu", msg->arg.pagefault.flags);
++
++	offset = (char *)(unsigned long)msg->arg.pagefault.address - area_dst;
++	offset &= ~(page_size-1);
++
++	/* Odd pages -> copy zeroed page; even pages -> poison. */
++	if (offset & page_size)
++		copy_page(uffd, offset, false);
++	else
++		do_uffdio_poison(uffd, offset);
++}
++
++static void uffd_poison_test(uffd_test_args_t *targs)
++{
++	pthread_t uffd_mon;
++	char c;
++	struct uffd_args args = { 0 };
++	struct sigaction act = { 0 };
++	unsigned long nr_sigbus = 0;
++	unsigned long nr;
++
++	fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
++
++	uffd_register_poison(uffd, area_dst, nr_pages * page_size);
++	memset(area_src, 0, nr_pages * page_size);
++
++	args.handle_fault = uffd_poison_handle_fault;
++	if (pthread_create(&uffd_mon, NULL, uffd_poll_thread, &args))
++		err("uffd_poll_thread create");
++
++	sigbuf = &jbuf;
++	act.sa_sigaction = sighndl;
++	act.sa_flags = SA_SIGINFO;
++	if (sigaction(SIGBUS, &act, 0))
++		err("sigaction");
++
++	for (nr = 0; nr < nr_pages; ++nr) {
++		unsigned long offset = nr * page_size;
++		const char *bytes = (const char *) area_dst + offset;
++		const char *i;
++
++		if (sigsetjmp(*sigbuf, 1)) {
++			/*
++			 * Access below triggered a SIGBUS, which was caught by
++			 * sighndl, which then jumped here. Count this SIGBUS,
++			 * and move on to next page.
++			 */
++			++nr_sigbus;
++			continue;
++		}
++
++		for (i = bytes; i < bytes + page_size; ++i) {
++			if (*i)
++				err("nonzero byte in area_dst (%p) at %p: %u",
++				    area_dst, i, *i);
++		}
++	}
++
++	if (write(pipefd[1], &c, sizeof(c)) != sizeof(c))
++		err("pipe write");
++	if (pthread_join(uffd_mon, NULL))
++		err("pthread_join()");
++
++	if (nr_sigbus != nr_pages / 2)
++		err("expected to receive %lu SIGBUS, actually received %lu",
++		    nr_pages / 2, nr_sigbus);
++
++	uffd_test_pass();
++}
++
+ /*
+  * Test the returned uffdio_register.ioctls with different register modes.
+  * Note that _UFFDIO_ZEROPAGE is tested separately in the zeropage test.
+@@ -1126,6 +1237,12 @@ uffd_test_case_t uffd_tests[] = {
+ 		UFFD_FEATURE_PAGEFAULT_FLAG_WP |
+ 		UFFD_FEATURE_WP_HUGETLBFS_SHMEM,
+ 	},
++	{
++		.name = "poison",
++		.uffd_fn = uffd_poison_test,
++		.mem_targets = MEM_ALL,
++		.uffd_feature_required = UFFD_FEATURE_POISON,
++	},
  };
  
- struct uffd_test_ops {
-diff --git a/tools/testing/selftests/mm/uffd-stress.c b/tools/testing/selftests/mm/uffd-stress.c
-index 995ff13e74c7..50b1224d72c7 100644
---- a/tools/testing/selftests/mm/uffd-stress.c
-+++ b/tools/testing/selftests/mm/uffd-stress.c
-@@ -189,10 +189,8 @@ static int stress(struct uffd_args *args)
- 				   locking_thread, (void *)cpu))
- 			return 1;
- 		if (bounces & BOUNCE_POLL) {
--			if (pthread_create(&uffd_threads[cpu], &attr,
--					   uffd_poll_thread,
--					   (void *)&args[cpu]))
--				return 1;
-+			if (pthread_create(&uffd_threads[cpu], &attr, uffd_poll_thread, &args[cpu]))
-+				err("uffd_poll_thread create");
- 		} else {
- 			if (pthread_create(&uffd_threads[cpu], &attr,
- 					   uffd_read_thread,
-@@ -247,9 +245,13 @@ static int userfaultfd_stress(void)
- {
- 	void *area;
- 	unsigned long nr;
--	struct uffd_args args[nr_cpus];
-+	struct uffd_args *args;
- 	uint64_t mem_size = nr_pages * page_size;
- 
-+	args = calloc(nr_cpus, sizeof(struct uffd_args));
-+	if (!args)
-+		err("allocating args array failed");
-+
- 	if (uffd_test_ctx_init(UFFD_FEATURE_WP_UNPOPULATED, NULL))
- 		err("context init failed");
- 
+ static void usage(const char *prog)
 -- 
 2.41.0.255.g8b1d071c50-goog
 
