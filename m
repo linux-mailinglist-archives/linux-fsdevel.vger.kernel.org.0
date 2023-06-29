@@ -2,58 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AF49C742EE8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 22:51:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2348B742EEF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 22:51:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231967AbjF2Uu5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jun 2023 16:50:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45960 "EHLO
+        id S231865AbjF2UvE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jun 2023 16:51:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232029AbjF2Uuy (ORCPT
+        with ESMTP id S232097AbjF2Uuz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jun 2023 16:50:54 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDB953583
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 13:50:50 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-569e7aec37bso9292727b3.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 13:50:50 -0700 (PDT)
+        Thu, 29 Jun 2023 16:50:55 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4F363594
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 13:50:52 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-bacfa4ef059so873360276.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 13:50:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1688071850; x=1690663850;
+        d=google.com; s=20221208; t=1688071852; x=1690663852;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R8jkAmCGbYNygAZgSop/zKP0BAnGYhZIuFEhOa1in5M=;
-        b=a8O0wagyUtUHav4dJ+0FTU4BfULv1hqXducKGWGQFuo+G+tIPjHy7DS1ADLv5ngmlB
-         RSngMc0CnR4cfT4Dl1/3ekbmm7f4jkeC6RGHf37xUtQNDImjBtBI9DhIP8Z9AdXeugxu
-         EEIqVXFJE09pcCYmkIu4KbepOYvezPBB0mUQ8g4biI54D+MfCLg+3QhsHFv6yxYBACnS
-         hW5iDv/qv08V0YHMgwph0e9b+5pGUlXVr84spJ6yslQMHWase0Q3RfrmBefxTbxnzdJF
-         i1oPLS3gMTFjIwMQZ2twKVJdYWAw+m3Lbi649+iUQ0hPFKbJ4IuR/hqznd3O1UEd0bUk
-         66bA==
+        bh=oot+BFijmfKZ0KO/nJIrIU5HcDe1IwfMU2NYWHhWcUA=;
+        b=dv8waobWVaNSUsOT47GOsDx8vV/iRkGODf8zThZKK4JKq0ZSnTrMWy7R3IAiX1fM4t
+         tegdL5nlYEw74WxJbU4ciZTSnZwOVQYCywDP/6JAHDEF3YVNRNQoSLNsxO+X0jE8+WLZ
+         4ib0DDeM9eP9xJoybwRbj9HMMqb5rE/qTj6br4mOJWTUvJsbEgikpTHZ4BkIpODJP7uS
+         FeOaZbb/LsG8QdVorLcYBayDjEa0cgjzLqqSuGqP5etuMwIPhztE5czIvy2CmabhCZfJ
+         vnsHoy7ITFctcEgQKTEC1tg/xVWWYMTZvhXULy5xYz0ZzCxTiOdKZ00s3BGxSv+HUqqN
+         HmAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688071850; x=1690663850;
+        d=1e100.net; s=20221208; t=1688071852; x=1690663852;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R8jkAmCGbYNygAZgSop/zKP0BAnGYhZIuFEhOa1in5M=;
-        b=I6NHZzbJ3iDK+EdRyAGhri57tGmeDn4SUxrAd9WCpVE3fGQBta4RllllP7308HZn+j
-         PW08w6MaYmRzfg+krLr2CHBgqAfHou9mj+IcA0EZNAwXKZw3CQyc9yvWwB8W5ZMFbHcs
-         DNUji30wyo1rP1mgG8DQ6PdWZqCZNkSAHXcDOtLrMdmUA+o2DE9cxgS5t8rHGxPOlxAy
-         u9hC5oHrO5xySa8JM08893PuOkGh7MRYiUtRYovgMGt+sXTdeUa+Us3NuyXDQo9HNCTQ
-         7veRtQY18qiRgevBZd+v0eMUCu01T/ExPaLBWtxaTPkZePBpAcHuCijh7T5IhZocM/44
-         wafQ==
-X-Gm-Message-State: ABy/qLYzVlCxcNiXH62oW84xqLTkgoZv7mXS8GPBgrIzrX+B1a/BD92c
-        Qz0sJtHRFTtU6C54zWAa28OB/6spOGbA1PV8UvVW
-X-Google-Smtp-Source: APBJJlEqqtwXeQ2F+CB5P4eAYTWY2GLrYOnygDGt3hdnYMvy8/GPfEVbxlgghXg+IFwNtZpThqff4X0A++LKH4Bo56yy
+        bh=oot+BFijmfKZ0KO/nJIrIU5HcDe1IwfMU2NYWHhWcUA=;
+        b=QuU7wCN+8nW9JRqi51q4p624GVDnDi1A/FKY0WnClOFVxCgHA4/ea5OcQZilVwlmyx
+         dY7zYEHCd4+DuTMBEyCZ4L9VCFEtXDibu3dK6ZbIwz0Zd2i8FPNWGsJauRriPv/XcGO4
+         62lI+w8/tD0oj8+UEAFIKpeY8RLGjsQmhvA4cFE0BHEfNTndTVlipTNUV8RXpDyOjBeJ
+         O9LOYtT3fh3shAyDKgmJ+6gbefDX9Vc7q4nwrPUeVb0erwY0HtGtJgqHtMk+EnwGIG60
+         hWjKOCV1joFsOpBg1u6Bufs/zwsfdqRogHdWL5UoDIlp4x2YOstwDkeJCxhdSWd/P3Wl
+         ScRA==
+X-Gm-Message-State: ABy/qLZqhSLqUwoImMkW6H6v4Uex5v2T3pYWjPjxNdCVigmcPc9ipu1g
+        F1WatXk+NCPl59ViOfNXeX/ZhCpm4mNgvO0iQspo
+X-Google-Smtp-Source: APBJJlG01gugR5pBeLSzgr9QaRAnN1lelWD28Wisa41iTTVqrwvQyIgcQU0WMKN/qYg/ivXFlgsOpx2irKkAZegi36c2
 X-Received: from axel.svl.corp.google.com ([2620:15c:2a3:200:e20f:5917:3efa:d4bb])
- (user=axelrasmussen job=sendgmr) by 2002:a25:738e:0:b0:bcc:285c:66ea with
- SMTP id o136-20020a25738e000000b00bcc285c66eamr5716ybc.3.1688071850044; Thu,
- 29 Jun 2023 13:50:50 -0700 (PDT)
-Date:   Thu, 29 Jun 2023 13:50:36 -0700
+ (user=axelrasmussen job=sendgmr) by 2002:a25:f621:0:b0:bc7:f6af:8cff with
+ SMTP id t33-20020a25f621000000b00bc7f6af8cffmr5650ybd.2.1688071852014; Thu,
+ 29 Jun 2023 13:50:52 -0700 (PDT)
+Date:   Thu, 29 Jun 2023 13:50:37 -0700
 In-Reply-To: <20230629205040.665834-1-axelrasmussen@google.com>
 Mime-Version: 1.0
 References: <20230629205040.665834-1-axelrasmussen@google.com>
 X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
-Message-ID: <20230629205040.665834-2-axelrasmussen@google.com>
-Subject: [PATCH v2 2/6] mm: userfaultfd: refactor hugetlb folio allocation /
- lookup code
+Message-ID: <20230629205040.665834-3-axelrasmussen@google.com>
+Subject: [PATCH v2 3/6] mm: userfaultfd: support UFFDIO_POISON for hugetlbfs
 From:   Axel Rasmussen <axelrasmussen@google.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -81,118 +80,97 @@ Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-At the top of `hugetlb_mfill_atomic_pte`, we need to get the folio we're
-going to be mapping. There are three basic cases we're dealing with
-here:
-
-1. We're doing a UFFDIO_CONTINUE, in which case we lookup an existing
-   folio in the pagecache, instead of allocating a new one.
-2. We need to allocate a new folio.
-3. We previously failed while populating our new folio, so we "returned"
-   a temporary folio using `foliop` and had our caller retry.
-
-In a future commit I'm going to add a fourth case for UFFDIO_POISON,
-where we aren't going to map a folio at all (newly allocated or
-otherwise). This end state will be simpler, and we can re-use a bit more
-code, if we stop using `if (...)` to distinguish the cases.
-
-So, refactor the cases so they share most of the same code, and instead
-switch to `goto` to skip some parts depending on the case at hand.
+The behavior here is the same as it is for anon/shmem. This is done
+separately because hugetlb pte marker handling is a bit different.
 
 Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
 ---
- mm/hugetlb.c | 53 +++++++++++++++++++++++++---------------------------
- 1 file changed, 25 insertions(+), 28 deletions(-)
+ mm/hugetlb.c     | 33 +++++++++++++++++++++++++++++++--
+ mm/userfaultfd.c |  6 +-----
+ 2 files changed, 32 insertions(+), 7 deletions(-)
 
 diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index bce28cca73a1..38711d49e4db 100644
+index 38711d49e4db..05abe88986b6 100644
 --- a/mm/hugetlb.c
 +++ b/mm/hugetlb.c
-@@ -6259,22 +6259,32 @@ int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
- 		if (IS_ERR(folio))
- 			goto out;
- 		folio_in_pagecache = true;
--	} else if (!*foliop) {
--		/* If a folio already exists, then it's UFFDIO_COPY for
--		 * a non-missing case. Return -EEXIST.
--		 */
--		if (vm_shared &&
--		    hugetlbfs_pagecache_present(h, dst_vma, dst_addr)) {
--			ret = -EEXIST;
--			goto out;
-+		goto ready;
-+	}
-+
-+	/* If a folio already exists, then it's UFFDIO_COPY for
-+	 * a non-missing case. Return -EEXIST.
-+	 */
-+	if (vm_shared && hugetlbfs_pagecache_present(h, dst_vma, dst_addr)) {
-+		ret = -EEXIST;
-+		if (*foliop) {
-+			folio_put(*foliop);
-+			*foliop = NULL;
- 		}
-+		goto out;
-+	}
- 
--		folio = alloc_hugetlb_folio(dst_vma, dst_addr, 0);
--		if (IS_ERR(folio)) {
--			ret = -ENOMEM;
--			goto out;
-+	folio = alloc_hugetlb_folio(dst_vma, dst_addr, 0);
-+	if (IS_ERR(folio)) {
-+		ret = -ENOMEM;
-+		if (*foliop) {
-+			folio_put(*foliop);
-+			*foliop = NULL;
- 		}
-+		goto out;
-+	}
- 
-+	if (!*foliop) {
- 		ret = copy_folio_from_user(folio, (const void __user *) src_addr,
- 					   false);
- 
-@@ -6302,22 +6312,7 @@ int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
- 			 */
- 			goto out;
- 		}
--	} else {
--		if (vm_shared &&
--		    hugetlbfs_pagecache_present(h, dst_vma, dst_addr)) {
--			folio_put(*foliop);
--			ret = -EEXIST;
--			*foliop = NULL;
--			goto out;
--		}
--
--		folio = alloc_hugetlb_folio(dst_vma, dst_addr, 0);
--		if (IS_ERR(folio)) {
--			folio_put(*foliop);
--			ret = -ENOMEM;
--			*foliop = NULL;
--			goto out;
--		}
-+	} else { /* Caller retried because we set *foliop previously */
- 		ret = copy_user_large_folio(folio, *foliop, dst_addr, dst_vma);
- 		folio_put(*foliop);
- 		*foliop = NULL;
-@@ -6327,6 +6322,8 @@ int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
- 		}
+@@ -6090,14 +6090,24 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
  	}
  
-+ready: /* `folio` ready to map (non-NULL, populated) */
+ 	entry = huge_ptep_get(ptep);
+-	/* PTE markers should be handled the same way as none pte */
+-	if (huge_pte_none_mostly(entry))
++	if (huge_pte_none_mostly(entry)) {
++		if (is_pte_marker(entry)) {
++			unsigned long marker = pte_marker_get(pte_to_swp_entry(entry));
 +
- 	/*
- 	 * The memory barrier inside __folio_mark_uptodate makes sure that
- 	 * preceding stores to the page contents become visible before
++			if (marker & PTE_MARKER_UFFD_POISON) {
++				ret = VM_FAULT_HWPOISON_LARGE;
++				goto out_mutex;
++			}
++		}
+ 		/*
++		 * Other PTE markers should be handled the same way as none PTE.
++		 *
+ 		 * hugetlb_no_page will drop vma lock and hugetlb fault
+ 		 * mutex internally, which make us return immediately.
+ 		 */
+ 		return hugetlb_no_page(mm, vma, mapping, idx, address, ptep,
+ 				      entry, flags);
++	}
+ 
+ 	ret = 0;
+ 
+@@ -6253,6 +6263,25 @@ int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
+ 	int writable;
+ 	bool folio_in_pagecache = false;
+ 
++	if (uffd_flags_mode_is(flags, MFILL_ATOMIC_POISON)) {
++		ptl = huge_pte_lock(h, dst_mm, dst_pte);
++
++		/* Don't overwrite any existing PTEs (even markers) */
++		if (!huge_pte_none(huge_ptep_get(dst_pte))) {
++			spin_unlock(ptl);
++			return -EEXIST;
++		}
++
++		_dst_pte = make_pte_marker(PTE_MARKER_UFFD_POISON);
++		set_huge_pte_at(dst_mm, dst_addr, dst_pte, _dst_pte);
++
++		/* No need to invalidate - it was non-present before */
++		update_mmu_cache(dst_vma, dst_addr, dst_pte);
++
++		spin_unlock(ptl);
++		return 0;
++	}
++
+ 	if (is_continue) {
+ 		ret = -EFAULT;
+ 		folio = filemap_lock_folio(mapping, idx);
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 87b62ca1e09e..4436cae1c7a8 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -381,12 +381,8 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
+ 	 * supported by hugetlb.  A PMD_SIZE huge pages may exist as used
+ 	 * by THP.  Since we can not reliably insert a zero page, this
+ 	 * feature is not supported.
+-	 *
+-	 * PTE marker handling for hugetlb is a bit special, so for now
+-	 * UFFDIO_POISON is not supported.
+ 	 */
+-	if (uffd_flags_mode_is(flags, MFILL_ATOMIC_ZEROPAGE) ||
+-	    uffd_flags_mode_is(flags, MFILL_ATOMIC_POISON)) {
++	if (uffd_flags_mode_is(flags, MFILL_ATOMIC_ZEROPAGE)) {
+ 		mmap_read_unlock(dst_mm);
+ 		return -EINVAL;
+ 	}
 -- 
 2.41.0.255.g8b1d071c50-goog
 
