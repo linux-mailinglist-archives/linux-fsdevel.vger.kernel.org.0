@@ -2,142 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C612741F36
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 06:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CD12741F3C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 06:29:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230293AbjF2EUy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jun 2023 00:20:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48780 "EHLO
+        id S231290AbjF2E3L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jun 2023 00:29:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229639AbjF2EUx (ORCPT
+        with ESMTP id S229639AbjF2E2u (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jun 2023 00:20:53 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9944319BA
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 21:20:51 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-977e0fbd742so28194266b.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 21:20:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688012450; x=1690604450;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tdBaY0/gRZeUGoG1Z64feUtdafy/8u45PWUchKhQa+0=;
-        b=STZOIwsFSLYeLownpXjCW10wM/2zuXPG1AgtP4DCR259UMbtubhpwSkTu/kTjIBZAW
-         ifI2jrAwOwF5i61+WDEsNtWoFiBYUYQ9z/7sH+va3XBurmAX2HrMHIvhwccygZUknQgz
-         SgIPWYskLWpyYbyx3KX/CaWLBTNT396t/xLqwyEQwOmOTcsn1Jzo/kuIN6BRzaX1K5c/
-         C41Q80oy6uCyySdM4ap6LwFL2HrZlfoe6ebAndvA1s7N675Lsae7xQEDaCHb+MYFZoX1
-         5VQxFJuHVgAMoTIMbzxiyi/j+3LhRVIju1xKUusAaRaza52JuYq98cFX2/J8XJb2XMR1
-         +4YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688012450; x=1690604450;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tdBaY0/gRZeUGoG1Z64feUtdafy/8u45PWUchKhQa+0=;
-        b=V+3YTX8MObWOnugx9c76PfbgHjJmC+djauz0J0TD778zLdAbaY0HM+/w6NPcOr8vL5
-         KXsBpPr+VEULoMVWuam1DPC1cOvVeQn/I7DXG3+DEbXX6TmAZtv7BOyi0sVDQGM5bLwu
-         RU5dzHzXmV8s/cCUdyLUqUIo2xl6hvx/GxDz6h0gyPs3L4OTcVLlaZqvZNLui55t5UNi
-         VdCc4B5lSHgbBYAzWUXGkJbjjSIInuCn8TaZUbbWYGMN6/z2Cs1yLejCIIL/JCCXuON4
-         xLGE578c74pEPfa9C/8himSeMJkVCZpphH5l2VAl3c1ntrHHjfYcdEi0WlQjmyIWKrlQ
-         4JcQ==
-X-Gm-Message-State: AC+VfDwWIx8aUNImOXlpcpTWSnmdh2y9kdTHkZG8tt2St+wu0yOZ3CCu
-        cp0pbi7SnfflHjdDiJ0cx5laVpBWqfI=
-X-Google-Smtp-Source: ACHHUZ7QDzSANjHU3LembVZGdKRdldnx4pZnlRlbTFWS0HipEIkzwt8tJ1SIcmLopqm6yx96pPxJPw==
-X-Received: by 2002:a17:907:d9e:b0:98e:419b:4cc2 with SMTP id go30-20020a1709070d9e00b0098e419b4cc2mr11137343ejc.3.1688012449863;
-        Wed, 28 Jun 2023 21:20:49 -0700 (PDT)
-Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id hk18-20020a170906c9d200b0099290e2c163sm1044398ejb.204.2023.06.28.21.20.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jun 2023 21:20:49 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     =?UTF-8?q?Ahelenia=20Ziemia=C5=84ska?= 
-        <nabijaczleweli@nabijaczleweli.xyz>,
-        Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: [RFC][PATCH] fanotify: disallow mount/sb marks on kernel internal pseudo fs
-Date:   Thu, 29 Jun 2023 07:20:44 +0300
-Message-Id: <20230629042044.25723-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 29 Jun 2023 00:28:50 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BDFE1FE8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 21:28:48 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-117-150.bstnma.fios.verizon.net [173.48.117.150])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 35T4SdNS028271
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 29 Jun 2023 00:28:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1688012921; bh=G1WywpSC7JbNF3VsEtkgr5IRIuWVWKPrradmgoLImzQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=hMd79orpIHdr7WocGloof1z2O9ZX12vsq9VbYdJ38vtZvIwjhMjKrgytgMH7FhN3i
+         0vxIbMbRlxg5jQtIPcbXHjAxmP2FJ/fEOX252QUk/cxkyY8QyIVgFOVe1oixmKmweb
+         tTIJBNjciUDhVqqz0Yn0h9LPl0z5ubaPGaqPOQ35h1xzvVjKduEG2/99IpFfogB7wh
+         w1+u4EnnqTfxch4fS3Be9CHidiTlQ9lfzeBpYU18hUGpTTBLKAPxjTyjxLl+rc88uM
+         ZNLNYPNatVwV1jRPVvhZfLu/fhUAzlbmLOxNxL6SN1Hgmvaj3lsyVZURI1IPnKAcPE
+         zn2pLhc0mGUEQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 1168B15C027F; Thu, 29 Jun 2023 00:28:39 -0400 (EDT)
+Date:   Thu, 29 Jun 2023 00:28:39 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     syzbot <syzbot+5407ecf3112f882d2ef3@syzkaller.appspotmail.com>
+Cc:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ext4?] KASAN: slab-use-after-free Read in __ext4_iget
+Message-ID: <20230629042839.GK8954@mit.edu>
+References: <000000000000ddfe0405fd7ef847@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000ddfe0405fd7ef847@google.com>
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SORTED_RECIPS,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hopefully, nobody is trying to abuse mount/sb marks for watching all
-anonymous pipes/inodes.
+#syz set subsystems: fs, reiserfs
 
-I cannot think of a good reason to allow this - it looks like an
-oversight that dated back to the original fanotify API.
+On Tue, Jun 06, 2023 at 05:11:06PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    a4d7d7011219 Merge tag 'spi-fix-v6.4-rc5' of git://git.ker..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1455f745280000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=7474de833c217bf4
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5407ecf3112f882d2ef3
+> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
 
-Link: https://lore.kernel.org/linux-fsdevel/20230628101132.kvchg544mczxv2pm@quack3/
-Fixes: d54f4fba889b ("fanotify: add API to attach/detach super block mark")
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
+The stack traces on this are... intersting.  The use-after free is
+coming when ext4_fill_super() tries to get the root inode, via
+iget_locked(sb, EXT2_ROOT_INO)
 
-Jan,
+> BUG: KASAN: slab-use-after-free in __ext4_iget+0x2f2/0x3f30 fs/ext4/inode.c:4700
+> Read of size 8 at addr ffff888078ca5550 by task syz-executor.5/26112
+	...
+>  __ext4_iget+0x2f2/0x3f30 fs/ext4/inode.c:4700
+>  __ext4_fill_super fs/ext4/super.c:5446 [inline]
+>  ext4_fill_super+0x545b/0x6c60 fs/ext4/super.c:5672
 
-As discussed, allowing sb/mount mark on anonymous pipes
-makes no sense and we should not allow it.
+However, we are getting back an object which is freed, and which was
+originally allocated by reiserfs(!):
 
-I've noted FAN_MARK_FILESYSTEM as the Fixes commit as a trigger to
-backport to maintained LTS kernels event though this dates back to day one
-with FAN_MARK_MOUNT. Not sure if we should keep the Fixes tag or not.
+> Allocated by task 20729:
+>  kasan_save_stack mm/kasan/common.c:45 [inline]
+>  kasan_set_track+0x4f/0x70 mm/kasan/common.c:52
+>  __kasan_slab_alloc+0x66/0x70 mm/kasan/common.c:328
+>  kasan_slab_alloc include/linux/kasan.h:186 [inline]
+>  slab_post_alloc_hook+0x68/0x3a0 mm/slab.h:711
+>  slab_alloc_node mm/slub.c:3451 [inline]
+>  slab_alloc mm/slub.c:3459 [inline]
+>  __kmem_cache_alloc_lru mm/slub.c:3466 [inline]
+>  kmem_cache_alloc_lru+0x11f/0x2e0 mm/slub.c:3482
+>  alloc_inode_sb include/linux/fs.h:2705 [inline]
+>  reiserfs_alloc_inode+0x2a/0xc0 fs/reiserfs/super.c:642
+>  alloc_inode fs/inode.c:260 [inline]
+>  iget5_locked+0xa0/0x270 fs/inode.c:1241
+>  reiserfs_fill_super+0x12e4/0x2620 fs/reiserfs/super.c:2053
+>  mount_bdev+0x2d0/0x3f0 fs/super.c:1380
 
-The reason this is an RFC and that I have not included also the
-optimization patch is because we may want to consider banning kernel
-internal inodes from fanotify and/or inotify altogether.
+There is no reproducer, but it seems to be triggering quite frequently
+(over once day --- 20 times since June 16, 2023 as of this writing).
+I've checked a number of the reports in the Syzkaller dashboard, and
+they are all quite similar; somehow ext4 is getting an inode which is
+freed, and whose memory was originally allocated by reiserfs.
 
-The tricky point in banning anonymous pipes from inotify, which
-could have existing users (?), but maybe not, so maybe this is
-something that we need to try out.
+I'm not sure if this is a reiserfs bug or a core VFS bug, since this
+seems to imply that an an old reiserfs inode was left on the
+inode_hashtable when a reiserfs file system was unmounted, and then
+the struct super was reused and returned for a fresh ext4 mount, and
+then when ext4 tried do an iget_locked(), it got the reserifs inode.
 
-I think we can easily get away with banning anonymous pipes from
-fanotify altogeter, but I would not like to get to into a situation
-where new applications will be written to rely on inotify for
-functionaly that fanotify is never going to have.
+That reiserfs inode was either freed and left on the inode_hashtable,
+or lifetime of the reiserfs root inode was allowed to last longer than
+the reiserfs superblock (maybe someone is playing RCU games?) and so
+since it was left on the inode_hashtable, the attempt to free reiserfs
+root inode raced with ext4's attempt to fetch the ext4 inode via
+iget_locked().
 
-Thoughts?
-Am I over thinking this?
+Perhaps one of the VFS or reiserfs maintainers could take a look?
 
-Amir.
-
- fs/notify/fanotify/fanotify_user.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 95d7d8790bc3..8240a3fdbef0 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1622,6 +1622,20 @@ static int fanotify_events_supported(struct fsnotify_group *group,
- 	    path->mnt->mnt_sb->s_type->fs_flags & FS_DISALLOW_NOTIFY_PERM)
- 		return -EINVAL;
- 
-+	/*
-+	 * mount and sb marks are not allowed on kernel internal pseudo fs,
-+	 * like pipe_mnt, because that would subscribe to events on all the
-+	 * anonynous pipes in the system.
-+	 *
-+	 * XXX: SB_NOUSER covers all of the internal pseudo fs whose objects
-+	 * are not exposed to user's mount namespace, but there are other
-+	 * SB_KERNMOUNT fs, like nsfs, debugfs, for which the value of
-+	 * allowing sb and mount mark is questionable.
-+	 */
-+	if (mark_type != FAN_MARK_INODE &&
-+	    path->mnt->mnt_sb->s_flags & SB_NOUSER)
-+		return -EINVAL;
-+
- 	/*
- 	 * We shouldn't have allowed setting dirent events and the directory
- 	 * flags FAN_ONDIR and FAN_EVENT_ON_CHILD in mask of non-dir inode,
--- 
-2.34.1
-
+       	       	  	   	      	       - Ted
