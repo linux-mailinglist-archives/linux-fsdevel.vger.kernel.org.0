@@ -2,124 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C6354742EFB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 22:51:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C6F9742F0B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 22:52:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231140AbjF2Uvw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jun 2023 16:51:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46032 "EHLO
+        id S232094AbjF2Uwh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jun 2023 16:52:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231823AbjF2Uu7 (ORCPT
+        with ESMTP id S231315AbjF2Uvw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jun 2023 16:50:59 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E40AF359C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 13:50:57 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-c118efd0c36so1740761276.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 13:50:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1688071857; x=1690663857;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yLzMk6njG0VUm6oo8ECi7NNqjOvlkj+YcLB9LCE7+MA=;
-        b=vd6FO9RKLDqV//QD3xfOnLM9ABYCd6dUPJXpRHT4NX5noS8/sUBwSo898iH3nVkB0i
-         DtNAyV+Pi6bgq0S9jGXWkBhQ9/YdQKbSPEohpFeN8NdUWPbX25v+l+vYnpTa7r6jcPht
-         dbVhBKQwNHFgV1WouNWGszv4XwOpqInDK4ouCSz6Ak/7s9gGDRqjeI3/ZhamBO61VWCa
-         Z6gPSDN+iIv39tWkyOgXo6urQM1zLyzmqO53tLfzCPB+LOgT197q6GD2uuEhk9CDZuub
-         vqBRd9kZ1XKyBS+VrCDyZJ59YXT8sSu0AY+uPtiN0Du5fb03DdmO0Rm9zeWUxhbXnaCv
-         j0ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688071857; x=1690663857;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yLzMk6njG0VUm6oo8ECi7NNqjOvlkj+YcLB9LCE7+MA=;
-        b=OKiYKtucT2rK9uyZU6MJZpo3maMng/6A4/gTK60+i6x2RMwvJESrba+lZF+13bmHho
-         KHPb//T16Uwy63Vm2mqLlmfQpr1yU9T5/s6zZcgWlOGcREW58py1S6Id9e5OAD+rCs1q
-         d3Dj1npXrflkVAV3bihk48b8UQA3xZALOTQLBmIcINX2JnWDIlsEMseGq/8HnUiRFvJt
-         7T+rCj5+9gcsie0CVc66LYFYyexV6959t3IVATXKt1u7vdn+828fvgx4cv9YgYunDA9s
-         K2rLI/BXlEzGeNxZt+goXohxUoJusf+g/vVuburiE5sfMEGOcRFs/ftRHP4ul3Ch9SWP
-         9Aig==
-X-Gm-Message-State: ABy/qLYwpnk57QygJOVE5oADjVS+3BCvaqq8zGn9wP1498sie2lEkWfa
-        DLPa4sNsi0qoHPUECMXhWx+Ec1P0AwWNuA4LVkhD
-X-Google-Smtp-Source: APBJJlFxXqx6n/8cIVb44SOqXuMVe8nfJc8KbVSjzubcNqQNTjaVwvxr+Cfitw1Wlj4qp7VAwfdaVDGWjSlIa4+NsAGc
-X-Received: from axel.svl.corp.google.com ([2620:15c:2a3:200:e20f:5917:3efa:d4bb])
- (user=axelrasmussen job=sendgmr) by 2002:a05:6902:1105:b0:bc3:cdb7:4ec8 with
- SMTP id o5-20020a056902110500b00bc3cdb74ec8mr74829ybu.6.1688071857157; Thu,
- 29 Jun 2023 13:50:57 -0700 (PDT)
-Date:   Thu, 29 Jun 2023 13:50:40 -0700
-In-Reply-To: <20230629205040.665834-1-axelrasmussen@google.com>
-Mime-Version: 1.0
-References: <20230629205040.665834-1-axelrasmussen@google.com>
-X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
-Message-ID: <20230629205040.665834-6-axelrasmussen@google.com>
-Subject: [PATCH v2 6/6] mm: userfaultfd: add basic documentation for UFFDIO_POISON
-From:   Axel Rasmussen <axelrasmussen@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Hugh Dickins <hughd@google.com>,
-        James Houghton <jthoughton@google.com>,
-        Jiaqi Yan <jiaqiyan@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "Mike Rapoport (IBM)" <rppt@kernel.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        Nadav Amit <namit@vmware.com>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        ZhangPeng <zhangpeng362@huawei.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org,
-        Axel Rasmussen <axelrasmussen@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        Thu, 29 Jun 2023 16:51:52 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFEB83585
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 13:51:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 251F761636
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 20:51:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8F9EAC433CA;
+        Thu, 29 Jun 2023 20:51:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688071897;
+        bh=GgNPf40wOcVrJ9Ny81Ltnqi3L1y1aw/oOZw5z7UYR8A=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=g496qCrOpPRixCONHsYBjLl10If1G+nd4W5xonPjorj0OC8ldaX01Fz67bpqUYHiQ
+         smhbWqyDPNiigvTgdehQyJOW6cBDa+E4n8yBNmLW3NmgpOuzbTGGNG4UoQkkf8tv7Z
+         wM3s43As0ynbPOEv/r6wlteaLJo4/rKYfksCruotfuV5Nbxl6KHZ00ARRGgTWq1N6t
+         f/nQhF3roEyY09osTPV+WN6rfKguIdfpbptG8f4uISLqDpoF/r3JeeoKeEhsTiMBdp
+         tUn/YakF4zVJBpAgKDJu+oE1YX0mrJvPsnYpATSb3iUVOcnB4B+cY3rbRG15GCywWN
+         QhPVEzpMY0eUA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 796D3C64457;
+        Thu, 29 Jun 2023 20:51:37 +0000 (UTC)
+Subject: Re: [GIT PULL] fsnotify changes for 6.5-rc1
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20230628151821.2henh5bzlk77bytp@quack3>
+References: <20230628151821.2henh5bzlk77bytp@quack3>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20230628151821.2henh5bzlk77bytp@quack3>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v6.5-rc1
+X-PR-Tracked-Commit-Id: 7b8c9d7bb4570ee4800642009c8f2d9756004552
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 18c9901d7435b20b13357907bac2c0e3b0fd4cd6
+Message-Id: <168807189749.21634.13494881695237580161.pr-tracker-bot@kernel.org>
+Date:   Thu, 29 Jun 2023 20:51:37 +0000
+To:     Jan Kara <jack@suse.cz>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Just describe the feature at a really basic level.
+The pull request you sent on Wed, 28 Jun 2023 17:18:21 +0200:
 
-Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
----
- Documentation/admin-guide/mm/userfaultfd.rst | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v6.5-rc1
 
-diff --git a/Documentation/admin-guide/mm/userfaultfd.rst b/Documentation/admin-guide/mm/userfaultfd.rst
-index 7c304e432205..b19053436369 100644
---- a/Documentation/admin-guide/mm/userfaultfd.rst
-+++ b/Documentation/admin-guide/mm/userfaultfd.rst
-@@ -244,6 +244,21 @@ write-protected (so future writes will also result in a WP fault). These ioctls
- support a mode flag (``UFFDIO_COPY_MODE_WP`` or ``UFFDIO_CONTINUE_MODE_WP``
- respectively) to configure the mapping this way.
- 
-+Memory Poisioning Emulation
-+---------------------------
-+
-+In response to a fault (either missing or minor), an action userspace can
-+take to "resolve" it is to issue a ``UFFDIO_POISON``. This will cause any
-+future faulters to either get a SIGBUS, or in KVM's case the guest will
-+receive an MCE as if there were hardware memory poisoning.
-+
-+This is used to emulate hardware memory poisoning. Imagine a VM running on a
-+machine which experiences a real hardware memory error. Later, we live migrate
-+the VM to another physical machine. Since we want the migration to be
-+transparent to the guest, we want that same address range to act as if it was
-+still poisoned, even though it's on a new physical host which ostentisbly
-+doesn't have a memory error in the exact same spot.
-+
- QEMU/KVM
- ========
- 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/18c9901d7435b20b13357907bac2c0e3b0fd4cd6
+
+Thank you!
+
 -- 
-2.41.0.255.g8b1d071c50-goog
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
