@@ -2,154 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 69E83741DAE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 03:41:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CC06741E0D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 04:14:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231446AbjF2BdX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 21:33:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42622 "EHLO
+        id S231450AbjF2COI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 22:14:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230449AbjF2BdV (ORCPT
+        with ESMTP id S231305AbjF2CN5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 21:33:21 -0400
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C33901B0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 18:33:20 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-657c4bcad0bso41940b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 18:33:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1688002400; x=1690594400;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7ThmVfXDix61iURcEU54u819vwIiq46rqbBRlmdFkhc=;
-        b=5Mk3qzY+GGwK5f0XG2PEP8F1bOz4F185+PKdeygae6A+UYODLBokJW+GNP3+PWHS8d
-         d5zNBixyu6zL01gbv6JgKD7lWAkyUdiTksr/IE/2IKZh4R8mZQMdOELxyyZKXqBTP6iW
-         p93JyFDpkAQy/KOLjmDyOR1rD34j2vVE7vTGUvjT/d/jh5WC1JItVDg7pHpjN2cMx10k
-         B5eAgCLH446/MgYszcNbhYm8qIdz0XdtO85g/G3S4bzzAxhLTxLZlHoJhJquNYmxuyX/
-         lclo4dreHZ+hMU1SiF7FOtsKdoHQEVeBv3t32cpMWtilpicKOC6PI6/V5EKwgq8rH0m7
-         0SIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688002400; x=1690594400;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ThmVfXDix61iURcEU54u819vwIiq46rqbBRlmdFkhc=;
-        b=J22pfD602dJFKdvW3yPDiTPpJ9DIb7BYsgUcA7roqLRKVEEA6LSuMBFNeikUq+gkYM
-         4oagUman+50+P4oPGUA2IfuxwpXieU2bAImGr6E0iJlFIsUGF2KHbwCNTRPHA9wU+JlH
-         h1BPg/DVsyP+VvYjR9CaEIP/uDxXj2QQpvBRBjxAaEgQIzWtXe/2EHdxf5+VggtNd9+9
-         KjB+TZutl2M1X62lNJugu1kt+oIelRj5y36rZPXCpm+Ef/lIrYbLwbRrPw423YdjqGp1
-         CKWXiySjvVJFZ8MA5CvYSNgLdi3lF12rVguhEd8NnaQSxBeEAVF7BhTagl+xJ1bwUKE9
-         ZHhw==
-X-Gm-Message-State: AC+VfDw3DTX4K8BcvuhGq+IVahDW8oiAzilgjjhP8Opo84YFUdPjrEH6
-        tCnZjNyK9vLbf1WncJGksXH72A==
-X-Google-Smtp-Source: ACHHUZ53nBn1+S49ohXzs5hHUpTioNTdZHS4ca3a2tM8yu35EDMUNWhK3xLR7CYm6Qbv+lAF238LRQ==
-X-Received: by 2002:a05:6a21:9985:b0:127:2dc1:c885 with SMTP id ve5-20020a056a21998500b001272dc1c885mr13915975pzb.4.1688002400208;
-        Wed, 28 Jun 2023 18:33:20 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id y11-20020a1709027c8b00b001b7e382dcdasm7951139pll.279.2023.06.28.18.33.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Jun 2023 18:33:19 -0700 (PDT)
-Message-ID: <d6546c44-04db-cbca-1523-a914670a607f@kernel.dk>
-Date:   Wed, 28 Jun 2023 19:33:18 -0600
+        Wed, 28 Jun 2023 22:13:57 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58EE130C4;
+        Wed, 28 Jun 2023 19:13:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1688004823; x=1719540823;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=KCw5v6yYPEevA+8tDWEVbKGLvtQ2GsYVbzNdHYMMNLc=;
+  b=lB4M4YAzpIO+LbcYUafCJJucf+UIYVp3qBhGbQz6HfgTeTmRvevGPQfd
+   95KPMhYwRgwSjPHkrVFfh/dO5tzv9os0/RRfTxb34AROVG8AxZD+SqGaT
+   kvGRH4VbN7DUHJKEnRDxOH4Y0AKYpmH0DtTLc9hwvm3kfsXppLQ+IzYfK
+   54MYcMR2sFgmA8FaFwcOHYJhsa7rQASYD5aCwVLU39EHvPwNATmjycPFC
+   HpWPaLPFHDpNdnjUejhLGVVTfxOF/Op4Oq8oqUM3gruU2e1YEasdXUXFr
+   4HZzKfoItbITv/AWx6FJ9UOpZrvfhRsxIJEP+uYNR/k/mi9KyqmhJ6Oz6
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10755"; a="428022226"
+X-IronPort-AV: E=Sophos;i="6.01,167,1684825200"; 
+   d="scan'208";a="428022226"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2023 19:13:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10755"; a="963831311"
+X-IronPort-AV: E=Sophos;i="6.01,167,1684825200"; 
+   d="scan'208";a="963831311"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmsmga006.fm.intel.com with ESMTP; 28 Jun 2023 19:13:41 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Wed, 28 Jun 2023 19:13:41 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27 via Frontend Transport; Wed, 28 Jun 2023 19:13:41 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.168)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.27; Wed, 28 Jun 2023 19:13:41 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VF+/KT1qRmKkRi02IvlHU7Zw1+yTn08IHyk+u/vsNpgfQ08mReJCYxsGpqdBWRCqrPJtFRLmO20ncGgjXU7StUscJhydIN7cOqvO9A453AFzaqlb/ipOXrz6SRFG29FExOKcqqUyahvMt1+3/NGlvEIcMP7fJ+A+SDXrFHmp1ok3uSL/isp86cRVHze9uHPhO8vPxEpsjg7cSavdKj5NzjGBudA13LHxhqaJZxA0XZW1ZXk2O9JibjM9/Qzjw2Irh+u3IChiXGUCFY4qo7WcFo9C+VUOJsspTsC4z+aiWn8AzfOA/dPMRRFJafFdNAD52pmWcMZJMPz7QvbUvBZEbw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Cg2rk7CHMWyYprzWfkjxlYB6/TkEYecxNA/ZmbINVy0=;
+ b=lpWozFfazE46VXAOlOHKX6mgF+pcXl+HlRjSt4LvUVaZ3BahUe45ODxVMvZkngAbhQJdJsizHbl/J0n5aMONWkLAV62fnUUGRhQDuwEdlnxm4DM2pL0aRPwmDS5FjeMY7LRaNktXOcWrQcXB77rTSzOj+BSmwYWy5N8eGvyDW3S5pMY28/GS08CaHIcxiV8l0g3Sb9sPGrgqXL1STPJKKTN6xyvTw4SFLeUd6eA/2n90fCeLe5O1+oUy6hJRvGIEgFzQC2Czy81rEhwwKtw/Q/rXh6s9NEbr/CEU3AyuLVSE+P9Y46SAgixwQaUx+8eB877FDmcoFvQauA6IJciPCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by DS7PR11MB6077.namprd11.prod.outlook.com (2603:10b6:8:87::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.26; Thu, 29 Jun
+ 2023 02:13:38 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::7237:cab8:f7f:52a5]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::7237:cab8:f7f:52a5%7]) with mapi id 15.20.6521.024; Thu, 29 Jun 2023
+ 02:13:37 +0000
+Date:   Wed, 28 Jun 2023 19:13:32 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>
+CC:     Sumitra Sharma <sumitraartsy@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Ira Weiny <ira.weiny@intel.com>,
+        "Deepak R Varma" <drv@mailo.com>
+Subject: Re: [PATCH] fs/vboxsf: Replace kmap() with kmap_local_{page, folio}()
+Message-ID: <649ce8cc8375e_92a162947@iweiny-mobl.notmuch>
+References: <20230627135115.GA452832@sumitra.com>
+ <ZJxqmEVKoxxftfXM@casper.infradead.org>
+ <6924669.18pcnM708K@suse>
+ <2882298.SvYEEZNnvj@suse>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2882298.SvYEEZNnvj@suse>
+X-ClientProxiedBy: SJ0PR13CA0235.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c1::30) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [GIT PULL] bcachefs
-Content-Language: en-US
-To:     Dave Chinner <david@fromorbit.com>,
-        Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <b02657af-5bbb-b46b-cea0-ee89f385f3c1@kernel.dk>
- <4b863e62-4406-53e4-f96a-f4d1daf098ab@kernel.dk>
- <20230628175204.oeek4nnqx7ltlqmg@moria.home.lan>
- <e1570c46-68da-22b7-5322-f34f3c2958d9@kernel.dk>
- <2e635579-37ba-ddfc-a2ab-e6c080ab4971@kernel.dk>
- <20230628221342.4j3gr3zscnsu366p@moria.home.lan>
- <d697ec27-8008-2eb6-0950-f612a602dcf5@kernel.dk>
- <20230628225514.n3xtlgmjkgapgnrd@moria.home.lan>
- <1e2134f1-f48b-1459-a38e-eac9597cd64a@kernel.dk>
- <20230628235018.ttvtzpfe42fri4yq@moria.home.lan>
- <ZJzXs6C8G2SL10vq@dread.disaster.area>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZJzXs6C8G2SL10vq@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|DS7PR11MB6077:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9ac830bc-8c0e-4346-c861-08db784672ec
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: wzaXjccjGAwHRl9HH0bLEPgB0B8w8DXQHF3xXZB9s/PnbVkeAgzDJv5ayrFhVrspwMTHZQrXer3LQHeWQvtvc+O6YRMDWdys0wbYBp1n32e+N+cX+9d9IxYbsoOUgutjMG/pgFc/CJHNxfqFmN9XD53wAIhm/RizCCbQWo34keKF8kIAi+V4hjeIvip0/TIDKZjeZpUQvzY4jTovNCM1dgBoNjpKs80mDI4Yl1b794OKKCxU+laIMySjZmuGyWv1O+Ez8kAWO8vtntEFpBDjv47nWuqG+W6wy2c9+fUemy99fOaF6JZ/Qvd9ClzuetFWnx3KcmDYmveO79y0eFS0oFtZxd0Ascv008YKdrq30NvAgkrmeH7iGDDcTtxuwrJojB1RaoHsw+/z+VJKtV1KFVfoiZYIOfS8vBbXtHhAGW98EqT2hStDiyumWzgNC28WoOoL5gpjq57/KqZ+NoQijwOhYTpNZm/tVG11wp4copD4AIZArXwRtJUckWjqx2zCCNZ7QCYwZL3rZVj6qnqZ2N4ebNQL/F1FqwEYc25ye49eRoEFNn3h6RGuoqKQ+PIG
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(366004)(39860400002)(396003)(136003)(346002)(376002)(451199021)(41300700001)(9686003)(5660300002)(44832011)(38100700002)(66476007)(316002)(4326008)(86362001)(8676002)(66556008)(8936002)(66946007)(82960400001)(6486002)(26005)(186003)(6506007)(2906002)(4744005)(6512007)(6666004)(54906003)(478600001)(110136005)(83380400001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?VGqqog+k33RergG5XUB9WmEcyVR1BMzhnIfiDR4PdZKeHcSu3G3VddAqf7?=
+ =?iso-8859-1?Q?lfcMQdBt/3rYntcFyS+mi2RfSABURNFwFH321A9iMNzye4WCLtdfXkfpNm?=
+ =?iso-8859-1?Q?J09pFk/Jio0e0uxzW4VYtPr4hdhuAR7G3inhEV1auOzc6gutPeAmc6c33j?=
+ =?iso-8859-1?Q?zXqO2cuytHjR2zbyNzm/W8tkyC/6AceMphXEhmPEg6w7GDEwsEURIc4ueZ?=
+ =?iso-8859-1?Q?WksGvCVyOlg11Mj7RAHry4eyPvNzQmZa2T/AT8LOI8eP3QOiWuibXIFw/+?=
+ =?iso-8859-1?Q?CecjIBfAU2WV6PRyC8cEX5FsZgel5QC0pguHcu8zVutZUWRY6m81q2kGxs?=
+ =?iso-8859-1?Q?nAbUF2JHMfY1ahCnrN7AlkwYQsZzj54tDoMh4PQDsaQB7Zj/fmWkoSlpbk?=
+ =?iso-8859-1?Q?ZWDlMmHTVmQ5TyMyC2rwXdHXtZhuExcibM73pWdpIlBFbBEz5/FnsC0j+X?=
+ =?iso-8859-1?Q?VnuyBXKpgGEtVulkpHvYsZ9OBRyMEZrboi/phvmlIKwlw1Zyty4GdhAaAu?=
+ =?iso-8859-1?Q?ymjdgupvSRTQRta5DFfTOdGt7r1isHqmq1TgJYEvufiKjgsFZuZgkIoPgw?=
+ =?iso-8859-1?Q?CmBs3aK60MUm+nn9GTRA7TVZevOSlyTDRDdCZK8epYCgxapgjp4OZ3MtaP?=
+ =?iso-8859-1?Q?RneSIsf0GIeUXDuLjCvWPCGZ4JwPo/Qm5vhaCCfOgYm/nRNPXAZkHjZtHw?=
+ =?iso-8859-1?Q?HNE46CSTi8TtmfTFdKgyloSvWxonUCF7Ss0kUibt4VNRjbJlTssLEaDBbR?=
+ =?iso-8859-1?Q?IVP4leIZViOAAfT1JhqKBSpOhhuTHZ0Lbg5FCT3tQhecDXd8vaNVDNLHa7?=
+ =?iso-8859-1?Q?MkWxwTTJgg9fx0LQmAUgQ7vHye300bZKrUZYj4kD0MY8pobGuOtZFSkMe7?=
+ =?iso-8859-1?Q?MBWBww8JWLDe+mVS9czTVsG6pPveegXmQjDMX+giuY177jlKvNb0Ciiwdp?=
+ =?iso-8859-1?Q?lnKkFDWwNBW46Cv4XoQpCGzTPxZlLwrJT5c9IvaJ+2SjEr8gFrRLUhLq5f?=
+ =?iso-8859-1?Q?rdPoRLnHFJO+KMZ4cbGU2vO9w2hRnUcyA4KE3MrqITTcPiRMQ2p5anW9WP?=
+ =?iso-8859-1?Q?lIV/5kEySBn47dTpGR5voB51hQbUAmwWjlxqnFqkVKDWuvpyiUQSPzjwx5?=
+ =?iso-8859-1?Q?QMexmMVl4Dyff5F5e1B+AdlqWyOHyhYvUdU9UwgYISoxFGnoK0rC+NDJoh?=
+ =?iso-8859-1?Q?UfG5/V9YwKcANlx49Tni/0SfdqIMOefKZbvrq1Pl/drOlnv7MSZUFQKwqs?=
+ =?iso-8859-1?Q?sYVrRvUzqPaOJZ+QlKfN8to1pnQqMyubrZ3AGJZPvVMmiuGyrq1rrWQ7Dy?=
+ =?iso-8859-1?Q?0nB3toJWg7JJn7IPSlgVtTRVeGbpbqZXl25tghMhgTcbGBsTJEVSY58qpN?=
+ =?iso-8859-1?Q?TcG1NFP+voak73IkOrNV/rZKikDyK4uz1FG8DskmAQ51JiS0GpRpntIj3Q?=
+ =?iso-8859-1?Q?4SNToFhp7tg22QIEKAb/+RVrl5YGsajoDI7VqRrduI8lJCY5mwnkx6iWao?=
+ =?iso-8859-1?Q?mIZYNC6zgXtb+OXHOz30h5Ud8ffR198xZOhARp1sOu23RgZLxd6jJdyQU/?=
+ =?iso-8859-1?Q?ClpTU6vxnyhn9My+6yHY4BworvpPsRPATX8Ynsp0kIbeYSRLZlfzpSP7WH?=
+ =?iso-8859-1?Q?9hWWDEWakmteTifqzCfTQGqvaWMHh1S07Y?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ac830bc-8c0e-4346-c861-08db784672ec
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2023 02:13:37.7712
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bfahqhs7xEJ1l0WFcUJSYagXOnM/hicPeUoZrPTL1/0LZIBZOjkn45lHaqQfDu7fxZF10ma5O/H+Y0JelgBxIg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6077
+X-OriginatorOrg: intel.com
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/28/23 7:00?PM, Dave Chinner wrote:
-> On Wed, Jun 28, 2023 at 07:50:18PM -0400, Kent Overstreet wrote:
->> On Wed, Jun 28, 2023 at 05:14:09PM -0600, Jens Axboe wrote:
->>> On 6/28/23 4:55?PM, Kent Overstreet wrote:
->>>>> But it's not aio (or io_uring or whatever), it's simply the fact that
->>>>> doing an fput() from an exiting task (for example) will end up being
->>>>> done async. And hence waiting for task exits is NOT enough to ensure
->>>>> that all file references have been released.
->>>>>
->>>>> Since there are a variety of other reasons why a mount may be pinned and
->>>>> fail to umount, perhaps it's worth considering that changing this
->>>>> behavior won't buy us that much. Especially since it's been around for
->>>>> more than 10 years:
->>>>
->>>> Because it seems that before io_uring the race was quite a bit harder to
->>>> hit - I only started seeing it when things started switching over to
->>>> io_uring. generic/388 used to pass reliably for me (pre backpointers),
->>>> now it doesn't.
->>>
->>> I literally just pasted a script that hits it in one second with aio. So
->>> maybe generic/388 doesn't hit it as easily, but it's surely TRIVIAL to
->>> hit with aio. As demonstrated. The io_uring is not hard to bring into
->>> parity on that front, here's one I posted earlier today for 6.5:
->>>
->>> https://lore.kernel.org/io-uring/20230628170953.952923-4-axboe@kernel.dk/
->>>
->>> Doesn't change the fact that you can easily hit this with io_uring or
->>> aio, and probably more things too (didn't look any further). Is it a
->>> realistic thing outside of funky tests? Probably not really, or at least
->>> if those guys hit it they'd probably have the work-around hack in place
->>> in their script already.
->>>
->>> But the fact is that it's been around for a decade. It's somehow a lot
->>> easier to hit with bcachefs than XFS, which may just be because the
->>> former has a bunch of workers and this may be deferring the delayed fput
->>> work more. Just hand waving.
->>
->> Not sure what you're arguing here...?
->>
->> We've had a long standing bug, it's recently become much easier to hit
->> (for multiple reasons); we seem to be in agreement on all that. All I'm
->> saying is that the existence of that bug previously is not reason to fix
->> it now.
+Fabio M. De Francesco wrote:
+> On giovedì 29 giugno 2023 00:23:54 CEST Fabio M. De Francesco wrote:
 > 
-> I agree with Kent here  - the kernel bug needs to be fixed
-> regardless of how long it has been around. Blaming the messenger
-> (userspace, fstests, etc) and saying it should work around a
-> spurious, unpredictable, undesirable and user-undebuggable kernel
-> behaviour is not an acceptible solution here...
+> [...]
+> 
+> > 
+> > Shouldn't we call folio_lock() to lock the folio to be able to unlock with
+> > folio_unlock()?
+> 
+> Sorry, I wanted to write "If so, I can't find either a folio_lock() or a 
+> page_lock() in this filesystem.".
 
-Not sure why you both are putting words in my mouth, I've merely been
-arguing pros and cons and the impact of this. I even linked the io_uring
-addition for ensuring that side will work better once the deferred fput
-is sorted out. I didn't like the idea of fixing this through umount, and
-even outlined how it could be fixed properly by ensuring we flush
-per-task deferred puts on task exit.
+Check the documentation for read_folio:
 
-Do I think it's a big issue? Not at all, because a) nobody has reported
-it until now, and b) it's kind of a stupid case. If we can fix it with
-minimal impact, should we? Yep. Particularly as the assumptions stated
-in the original commit I referenced were not even valid back then.
+	... "The filesystem should unlock the folio once the read has
+	completed, whether it was successful or not." ...
 
--- 
-Jens Axboe
-
+Ira
