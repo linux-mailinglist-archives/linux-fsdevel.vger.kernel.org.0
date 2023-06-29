@@ -2,96 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F556742F7C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 23:26:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3131974305E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 00:24:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231393AbjF2V0W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jun 2023 17:26:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55890 "EHLO
+        id S230054AbjF2WYe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jun 2023 18:24:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231499AbjF2V0V (ORCPT
+        with ESMTP id S229459AbjF2WYc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jun 2023 17:26:21 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AFF02D4E;
-        Thu, 29 Jun 2023 14:26:20 -0700 (PDT)
+        Thu, 29 Jun 2023 18:24:32 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 199252D62;
+        Thu, 29 Jun 2023 15:24:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=bQS0PiE1k5TMzQa6AP3znnR0sMcdBZTuUSLtC+nP2cw=; b=PdzRD67YmTAnA/wX7Gu0GM1sNl
-        xasvLLa8EB4oxixlkiy792Su9qU5uS723FW1i6lmttfd5CUH8sNBdujDho/fWj/VmiycfTuNW64zZ
-        hc3tGO9Z/9RXIhapvVpy7X4HL6qFx75MO52b5w/0r7EIW2HFdxoCImsQboW/TXKM7lZqU5xp27vnJ
-        VcK4RxJ8Z+chUT4GEw6KBUJ4HzKSUH7AnoECTEWUWpMp3B1ubKwdjIpa/ASHkbChuYCZ+WgWu5MV1
-        RwuS7f2jYcL5lpf1eldnXpQg8VvhPOn2pn5+sGhh54Bl10kcBTKMEcnw1LxsWv3iIarnW8n1wE7+E
-        Das9QysQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qEz9d-005Bk1-Ff; Thu, 29 Jun 2023 21:26:17 +0000
-Date:   Thu, 29 Jun 2023 22:26:17 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Cc:     butt3rflyh4ck <butterflyhuangxx@gmail.com>
-Subject: Re: [PATCH] reiserfs: Check the return value from __getblk()
-Message-ID: <ZJ32+b+3O8Z6cuRo@casper.infradead.org>
-References: <20230605142335.2883264-1-willy@infradead.org>
+        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=j73TsJ8p6bLbCGEbkQLwUvgvSOenhS26pj4KF68J9QY=; b=RxoPjxQGYLUgC54v7oHes1xDio
+        2Ifww8slldw/LrlgSJ/QP87+MQqsmgRDwFydFpk7HSUlbmSJt6D8H1tf0yFX8f27ufSzXOClu8DXp
+        6hNg+1J6D9WLx/4EnVGG+67QAGc05pph6ynErKeCVYDb85LtREBoLA4arq5L5VlZT14/B05fKRbXl
+        5PWg9Ip92QIfaN1CgjcJ7/67QF2aGFV91ghWWuKlcAAy2gYydHQnSbtGAbDiSRJ59lnBYWRaLOfya
+        tW45bGTBPhLIpe0uzgL59e3NvWkTGLWw8dU4cGgIKzpw5nM+TAUFpQNqkQrywy1W/i5QcygbAVkKb
+        2OO2FCnQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qF03m-002KrV-3B;
+        Thu, 29 Jun 2023 22:24:18 +0000
+Date:   Thu, 29 Jun 2023 15:24:18 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     arnd@arndb.de, matthieu.baerts@tessares.net, rdunlap@infradead.org,
+        ebiederm@xmission.com, keescook@chromium.org, yzaikin@google.com,
+        j.granados@samsung.com, patches@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mcgrof@kernel.org
+Subject: [GIT PULL] sysctl fixes for v6.5-rc1
+Message-ID: <ZJ4EkpN71LEsakct@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230605142335.2883264-1-willy@infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+The following changes since commit c6b0271053e7a5ae57511363213777f706b60489:
 
-I was expecting Jan to pick this one up, but it's not in his pull
-request that just got merged.  Looking at patches to reiserfs over the
-last few cycles, patches go in a few different ways; there doesn't seem
-to be a defined path.  Anyone want to take this one?
+  Merge tag 'fs_for_v6.5-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs (2023-06-29 13:39:51 -0700)
 
-On Mon, Jun 05, 2023 at 03:23:34PM +0100, Matthew Wilcox (Oracle) wrote:
-> __getblk() can return a NULL pointer if we run out of memory or if
-> we try to access beyond the end of the device; check it and handle it
-> appropriately.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Link: https://lore.kernel.org/lkml/CAFcO6XOacq3hscbXevPQP7sXRoYFz34ZdKPYjmd6k5sZuhGFDw@mail.gmail.com/
-> Tested-by: butt3rflyh4ck <butterflyhuangxx@gmail.com>
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2") # probably introduced in 2002
-> ---
->  fs/reiserfs/journal.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-> index 4d11d60f493c..dd58e0dca5e5 100644
-> --- a/fs/reiserfs/journal.c
-> +++ b/fs/reiserfs/journal.c
-> @@ -2326,7 +2326,7 @@ static struct buffer_head *reiserfs_breada(struct block_device *dev,
->  	int i, j;
->  
->  	bh = __getblk(dev, block, bufsize);
-> -	if (buffer_uptodate(bh))
-> +	if (!bh || buffer_uptodate(bh))
->  		return (bh);
->  
->  	if (block + BUFNR > max_block) {
-> @@ -2336,6 +2336,8 @@ static struct buffer_head *reiserfs_breada(struct block_device *dev,
->  	j = 1;
->  	for (i = 1; i < blocks; i++) {
->  		bh = __getblk(dev, block + i, bufsize);
-> +		if (!bh)
-> +			break;
->  		if (buffer_uptodate(bh)) {
->  			brelse(bh);
->  			break;
-> -- 
-> 2.39.2
-> 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/ tags/sysctl-6.5-rc1-fixes
+
+for you to fetch changes up to 554588e8e932e7a0fac7d3ae2132f2b727d9acfe:
+
+  sysctl: fix unused proc_cap_handler() function warning (2023-06-29 15:19:43 -0700)
+
+----------------------------------------------------------------
+sysctl-6.5-rc1-fixes
+
+Linus, included in this pull request is just a minor fix which
+Matthieu Baerts noted I had not picked up. I adjusted the Fixes
+commit ID to reflect the latest tree.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      sysctl: fix unused proc_cap_handler() function warning
+
+ kernel/umh.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
