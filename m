@@ -2,98 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 98146741CB5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 02:02:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7595741CDA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 02:19:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229933AbjF2ACH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 20:02:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51052 "EHLO
+        id S232102AbjF2ATt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 20:19:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232477AbjF2ACE (ORCPT
+        with ESMTP id S232190AbjF2ATo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 20:02:04 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0801EA3;
-        Wed, 28 Jun 2023 17:02:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=EesjQ1CwpnFXfNGbq1/L/h6YQv0U8+XJ4R+B/3hRf58=; b=b9KvWHJryQHvFPg9e871YaYOGm
-        mOHNYZR1oSDs4lZ0b6yeUJAn5qeh4RixIgKOSGIVwzGOcVc1XFqLywfdJ0+GBr7X0ivN+NNYeW+ql
-        i9qYgXsyy2/b4QRf/c6W5Nw5VyoVqrntD0jLwB7lsm9CBQtazTshb9SwcE8cbeF4z11ieWi8aFxS4
-        EUyoaSTcBrlaNjeVYuio8vOURpSeH2X24hvzCkMRxSo3UEQOxc2UFkRnRiwvnAOxrRRw+4ACnByTj
-        kmZ4/iyB90ugEP2lMVb3KHICvfHY4wTTiWulaL1VCGvSkb/kha9hSdF73dDRXoR7KfnWWlqFlzLcb
-        7PqLDyPQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qEf6l-004L0A-Tr; Thu, 29 Jun 2023 00:01:59 +0000
-Date:   Thu, 29 Jun 2023 01:01:59 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] writeback: Account the number of pages written back
-Message-ID: <ZJzJ9/HhKup+FKey@casper.infradead.org>
-References: <20230628185548.981888-1-willy@infradead.org>
- <ZJyr6GyVyvHxOpNB@dread.disaster.area>
+        Wed, 28 Jun 2023 20:19:44 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29C271FE5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 17:19:43 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-bff89873d34so100090276.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 17:19:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1687997982; x=1690589982;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nOCwhEjJx8m3P+uqoutMCex7br6Ar+jNddvYlIlOyow=;
+        b=wgd1l0e6NxvG1GpXVymBS3uJ69Blzs9EFo6/MXhliF4battkWVspUOPLIdzzMHC5Ro
+         gmsdw6hUkihqQ6GKX7nQ9twqe/F2drQsF9cpTryOoHtP02Onh8YYQcZux8Elx7c4f+Qg
+         xLz9w9Cs+QIy9HaZxfzyURb19BfFZLJDK1yiY/55vUdpd1tzKyzK6xXaIXHhxaUpwd0O
+         wzKEmbCXND8r1t/DXs0B2Xx/6Pe040lmSb1blovGw5fbxhjQ8Vh+K3vy2YkVsyjfCcCT
+         1oI4MrQjAQrsogmH4762py+PmEOhXhI3ocL06hr9MALERuHQVGcbr7T8bSNL3gUV/JBj
+         EovA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687997982; x=1690589982;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nOCwhEjJx8m3P+uqoutMCex7br6Ar+jNddvYlIlOyow=;
+        b=EGBKVPoZOD3cBF5dyu4Q461rDEqgcygPrQTDUd9UhkErq/cOQ8Etnh89Oi4DJzeWcu
+         Hxyaz/PARozAXCbOauJGTJqjxO9QO4AzeH5AH8w7FZw7x0srIYezqiD8xoQByTuE4UPM
+         T+RAUTezLmP24j4s7E+JMon5UON4+5UU2/W4JEoBwPjpDc5XnNU25A2W93VExdPlxrkq
+         0FWAAhsX719EvDiln57+1NGr4SyLqCiAj0MK2S2HAZusw7ZjMpAMcsFVOS6GZW4EvOiz
+         qzH+9nZwzQFYJL2VNd93kfebGQOdmqHZWBILor5aNrumURV4A19cuksUkXntk0k6u/ye
+         +IWA==
+X-Gm-Message-State: AC+VfDyFFpjnjkoYP9DIx7Mm9qY0NFpKI6BAohMBXjqIpKhzymzoMUvr
+        pe/BCSQ1x2lud7h800F7mfDC3TEVKZp1lREUvpvT2w==
+X-Google-Smtp-Source: ACHHUZ7U/sX1kQxj3Jm03KS0hnL5ZTZUFQ4b26UvL7OHyLyRT80mf67FkcvPkUx5YvOymCMLCMVJnqSMy1HkGbVY7h8=
+X-Received: by 2002:a25:37d6:0:b0:c1e:f730:6856 with SMTP id
+ e205-20020a2537d6000000b00c1ef7306856mr8608614yba.27.1687997982159; Wed, 28
+ Jun 2023 17:19:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZJyr6GyVyvHxOpNB@dread.disaster.area>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20230628172529.744839-1-surenb@google.com> <20230628172529.744839-7-surenb@google.com>
+ <ZJxulItq9iHi2Uew@x1n>
+In-Reply-To: <ZJxulItq9iHi2Uew@x1n>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Wed, 28 Jun 2023 17:19:31 -0700
+Message-ID: <CAJuCfpEPpdEScAG_UOiNfOTpue9ro0AP6414C4tBaK1rbVK7Hw@mail.gmail.com>
+Subject: Re: [PATCH v5 6/6] mm: handle userfaults under VMA lock
+To:     Peter Xu <peterx@redhat.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
+        mhocko@suse.com, josef@toxicpanda.com, jack@suse.cz,
+        ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
+        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
+        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
+        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
+        apopple@nvidia.com, ying.huang@intel.com, david@redhat.com,
+        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        pasha.tatashin@soleen.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 29, 2023 at 07:53:44AM +1000, Dave Chinner wrote:
-> On Wed, Jun 28, 2023 at 07:55:48PM +0100, Matthew Wilcox (Oracle) wrote:
-> > nr_to_write is a count of pages, so we need to decrease it by the number
-> > of pages in the folio we just wrote, not by 1.  Most callers specify
-> > either LONG_MAX or 1, so are unaffected, but writeback_sb_inodes()
-> > might end up writing 512x as many pages as it asked for.
-> > 
-> > Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
-> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > ---
-> >  mm/page-writeback.c | 8 +++++---
-> >  1 file changed, 5 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> > index 1d17fb1ec863..d3f42009bb70 100644
-> > --- a/mm/page-writeback.c
-> > +++ b/mm/page-writeback.c
-> > @@ -2434,6 +2434,7 @@ int write_cache_pages(struct address_space *mapping,
-> >  
-> >  		for (i = 0; i < nr_folios; i++) {
-> >  			struct folio *folio = fbatch.folios[i];
-> > +			unsigned long nr;
-> >  
-> >  			done_index = folio->index;
-> >  
-> > @@ -2471,6 +2472,7 @@ int write_cache_pages(struct address_space *mapping,
-> >  
-> >  			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
-> >  			error = writepage(folio, wbc, data);
-> > +			nr = folio_nr_pages(folio);
-> 
-> This should really be done before writepage() is called, right? By
-> the time the writepage() returns, the folio can be unlocked, the
-> entire write completed and the folio partially invalidated which may
-> try to split the folio...
-> 
-> Even if this can't happen (folio refcount is elevated, right?), it
-> makes much more sense to me to sample the size of the folio while it
-> is obviously locked and not going to change...
+On Wed, Jun 28, 2023 at 10:32=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote=
+:
+>
+> On Wed, Jun 28, 2023 at 10:25:29AM -0700, Suren Baghdasaryan wrote:
+> > Enable handle_userfault to operate under VMA lock by releasing VMA lock
+> > instead of mmap_lock and retrying. Note that FAULT_FLAG_RETRY_NOWAIT
+> > should never be used when handling faults under per-VMA lock protection
+> > because that would break the assumption that lock is dropped on retry.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>
+> Maybe the sanitize_fault_flags() changes suite more in patch 3, but not a
+> big deal I guess.
 
-It can't change because of the refcount we hold (that's put in the call
-to folio_batch_release()).  I didn't want to call it before the call to
-writepage() because that makes the compiler stick it on the stack instead
-of a local variable.  Also, when we transform this into an iterator (see
-patches posted yesterday), we'd have to stash it away in the iterator.
+IIUC FAULT_FLAG_RETRY_NOWAIT comes into play in this patchset only in
+the context of uffds, therefore that check seems to be needed when we
+enable per-VMA lock uffd support, which is this patch. Does that make
+sense?
+
+>
+> Acked-by: Peter Xu <peterx@redhat.com>
+
+Thanks!
+
+>
+> Thanks!
+>
+> --
+> Peter Xu
+>
