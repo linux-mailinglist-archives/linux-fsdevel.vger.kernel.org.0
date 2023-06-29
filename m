@@ -2,143 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04532741D6E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 03:00:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B5A7741D75
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 03:02:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231465AbjF2BAo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 21:00:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35890 "EHLO
+        id S231637AbjF2BCf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 21:02:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbjF2BAm (ORCPT
+        with ESMTP id S231522AbjF2BCc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 21:00:42 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC99D2132
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 18:00:40 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1b801e6ce85so832225ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 18:00:40 -0700 (PDT)
+        Wed, 28 Jun 2023 21:02:32 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DF952724
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 18:02:31 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-6686ef86110so104080b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 18:02:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1688000440; x=1690592440;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1688000551; x=1690592551;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YFSh4UQMxigzwwvL8diZTzDsQNOBblrcP22N90L84Vs=;
-        b=kCcBmQYr8egVuJFSES59uunr/I5DWWW/oVY38mczGq9tVtawHM54hG6vXq0XMkcXvw
-         Walcv4qUS5C/tNKmiS0r2O02x49/+QmbVMQZm5lmGrJS6+S8fr3vDTCceDeigPa4wze7
-         wNMdtjOvk6TNdR5NGk95jN8A19ZSo6zHnyLY7VSOBE8Q3fdqQwr+DZ3IZfKncZ87eNKR
-         8fVvodAsY9k+EaQ823GLrU4al1j6bu8T9+NVSHRAaMjRngyvx/6bqNYOQroUGh2F0QWc
-         LMvARJ/xA5WAVQYxU624wwuV3w8GYPQ2TUiiCmyK/f3fVn/u9ZEPXXvdgC6CjYDf6H8Q
-         gerQ==
+        bh=c2Qe9k1wI4NImJPimcE18OoLTXPGy2kmsiDzrgzIU0o=;
+        b=J9tin5TAWI6Bgtay2dLaEy44IRQA3vhqvyU+2EoptZC8ahj7cwaWWPEuofaZoRdb1L
+         Ln+kLqFTIG8TETXYx0275C8HLM7BNq+hiek1hmjXkjGlwk1Fh/awidoFpUP39JlhTfqI
+         XMUtdCGTn6hGybZ2a9kRZufwbNW4VZXvenqxeA1a330V+3x/yz0MFolEvZqsQo4RGr3R
+         hjaeFmuPbA6Qw5xVG9aJ4PJ9JX/aUzMO85m5YIG4wdRCsGLTjW+BBBsYKumeGXenujmF
+         aNvbaniIn25eUCcm4CWktgsiwfzMd8gomlhIpN5WEvFXOzsPB3nDb8FfTPHTBjvI9Qld
+         PvUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688000440; x=1690592440;
+        d=1e100.net; s=20221208; t=1688000551; x=1690592551;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YFSh4UQMxigzwwvL8diZTzDsQNOBblrcP22N90L84Vs=;
-        b=IGQQRBZsEoaQt2NHWMKTZAt+w7jneQwTLHluWrUCs4woAccQahNeLRdqs6rhcz0+TM
-         t3NJKtgl0/M7wG+/pd8QOG+1WpHw3msRvpHsOX+y67Tmdhx7F1e5hXgfApoIz7ff/Pij
-         R2W9iTBto4UGk1vVm9PYG392Yn1t6uwU4kir+u/ckbL+y/NFsjbKPf0s1w5v9kdOjPes
-         7jkOETD5uLUCnr06MZHeIyUWmGRYq0ejvpobqU0xvW6EaBB2VwRhc0+esU7IS9cW+p+O
-         70D1hox8ScaVczwPajzwuhq+t/T9omxTdNuepStp8KONivPDyIuCgpH+DBsQiBS3X1f4
-         w5PQ==
-X-Gm-Message-State: AC+VfDxE0Pg+EcwPaIxTeG/o6gn2cCK/SvvcAo3c5aTpZpKAid97c3Nm
-        bUYLTgXWdokIensXb5BViz/kCQ==
-X-Google-Smtp-Source: ACHHUZ7qSZvmo9NUERFxGeAPqZFDi+YuhlJdqnu8fHjovL+tHuyu4rUYhLvJ904+Q1hbaS+67nP7ag==
-X-Received: by 2002:a17:902:e551:b0:1b8:3936:7b64 with SMTP id n17-20020a170902e55100b001b839367b64mr4104977plf.1.1688000439787;
-        Wed, 28 Jun 2023 18:00:39 -0700 (PDT)
+        bh=c2Qe9k1wI4NImJPimcE18OoLTXPGy2kmsiDzrgzIU0o=;
+        b=j/7VnGuIFz3zb0xnN4anlrHg1PKZEQ4Qkg9aFzEDI9y/HD+rC6niNt8bWITA+2FzQf
+         gHQwdU9o0dUXjih0+0RFk5CFhrbrTi/fw/uTPi2JTSLTOMbNQNV9ve+UEEJgUNACPyey
+         h2Zw5nw3pd7Z3cX3UYgQnLZGQSRNhquDPxUTj9lrcO33pBPRbHoAf3xjJ3WbFu2DuKiJ
+         jTCDsQkjt7VBpR4cr6UbI9GnWR1S0aowREX1rucw+20/O43R9gJvMkjYvMglszZfZ3aG
+         PxNbBALjPFbw7yV/bAG1tA0gxawB58mRPCsGwCtMOhnapyYtCW3pYipNCqU1aqVPCD1y
+         wchg==
+X-Gm-Message-State: AC+VfDx8f/uzb32aFGn3xOKq9lhg80lR4mCst/xjSkbYpGUy2kKrcjgf
+        p0kGqWXyUCW92pueAAyZLOoStA==
+X-Google-Smtp-Source: ACHHUZ6+/87qKROJEzGsaCEegkUINIJxHr91lwvVXGaDx8yj/qGTlZI7YYxGc8Bj+5xHIEvscdyZ9g==
+X-Received: by 2002:a05:6a00:3996:b0:67e:bf65:ae61 with SMTP id fi22-20020a056a00399600b0067ebf65ae61mr5430342pfb.28.1688000551024;
+        Wed, 28 Jun 2023 18:02:31 -0700 (PDT)
 Received: from dread.disaster.area (pa49-186-94-37.pa.vic.optusnet.com.au. [49.186.94.37])
-        by smtp.gmail.com with ESMTPSA id t7-20020a1709028c8700b001b03842ab78sm8224744plo.89.2023.06.28.18.00.38
+        by smtp.gmail.com with ESMTPSA id d14-20020aa78e4e000000b0067acbc74977sm4282819pfr.96.2023.06.28.18.02.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jun 2023 18:00:38 -0700 (PDT)
+        Wed, 28 Jun 2023 18:02:30 -0700 (PDT)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
         (envelope-from <david@fromorbit.com>)
-        id 1qEg1T-00HR8i-1z;
-        Thu, 29 Jun 2023 11:00:35 +1000
-Date:   Thu, 29 Jun 2023 11:00:35 +1000
+        id 1qEg3I-00HRAH-0N;
+        Thu, 29 Jun 2023 11:02:28 +1000
+Date:   Thu, 29 Jun 2023 11:02:28 +1000
 From:   Dave Chinner <david@fromorbit.com>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Jens Axboe <axboe@kernel.dk>, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [GIT PULL] bcachefs
-Message-ID: <ZJzXs6C8G2SL10vq@dread.disaster.area>
-References: <b02657af-5bbb-b46b-cea0-ee89f385f3c1@kernel.dk>
- <4b863e62-4406-53e4-f96a-f4d1daf098ab@kernel.dk>
- <20230628175204.oeek4nnqx7ltlqmg@moria.home.lan>
- <e1570c46-68da-22b7-5322-f34f3c2958d9@kernel.dk>
- <2e635579-37ba-ddfc-a2ab-e6c080ab4971@kernel.dk>
- <20230628221342.4j3gr3zscnsu366p@moria.home.lan>
- <d697ec27-8008-2eb6-0950-f612a602dcf5@kernel.dk>
- <20230628225514.n3xtlgmjkgapgnrd@moria.home.lan>
- <1e2134f1-f48b-1459-a38e-eac9597cd64a@kernel.dk>
- <20230628235018.ttvtzpfe42fri4yq@moria.home.lan>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] writeback: Account the number of pages written back
+Message-ID: <ZJzYJEVJlymbLxco@dread.disaster.area>
+References: <20230628185548.981888-1-willy@infradead.org>
+ <ZJyr6GyVyvHxOpNB@dread.disaster.area>
+ <ZJzJ9/HhKup+FKey@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230628235018.ttvtzpfe42fri4yq@moria.home.lan>
+In-Reply-To: <ZJzJ9/HhKup+FKey@casper.infradead.org>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 28, 2023 at 07:50:18PM -0400, Kent Overstreet wrote:
-> On Wed, Jun 28, 2023 at 05:14:09PM -0600, Jens Axboe wrote:
-> > On 6/28/23 4:55?PM, Kent Overstreet wrote:
-> > >> But it's not aio (or io_uring or whatever), it's simply the fact that
-> > >> doing an fput() from an exiting task (for example) will end up being
-> > >> done async. And hence waiting for task exits is NOT enough to ensure
-> > >> that all file references have been released.
-> > >>
-> > >> Since there are a variety of other reasons why a mount may be pinned and
-> > >> fail to umount, perhaps it's worth considering that changing this
-> > >> behavior won't buy us that much. Especially since it's been around for
-> > >> more than 10 years:
+On Thu, Jun 29, 2023 at 01:01:59AM +0100, Matthew Wilcox wrote:
+> On Thu, Jun 29, 2023 at 07:53:44AM +1000, Dave Chinner wrote:
+> > On Wed, Jun 28, 2023 at 07:55:48PM +0100, Matthew Wilcox (Oracle) wrote:
+> > > nr_to_write is a count of pages, so we need to decrease it by the number
+> > > of pages in the folio we just wrote, not by 1.  Most callers specify
+> > > either LONG_MAX or 1, so are unaffected, but writeback_sb_inodes()
+> > > might end up writing 512x as many pages as it asked for.
 > > > 
-> > > Because it seems that before io_uring the race was quite a bit harder to
-> > > hit - I only started seeing it when things started switching over to
-> > > io_uring. generic/388 used to pass reliably for me (pre backpointers),
-> > > now it doesn't.
+> > > Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
+> > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > > ---
+> > >  mm/page-writeback.c | 8 +++++---
+> > >  1 file changed, 5 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> > > index 1d17fb1ec863..d3f42009bb70 100644
+> > > --- a/mm/page-writeback.c
+> > > +++ b/mm/page-writeback.c
+> > > @@ -2434,6 +2434,7 @@ int write_cache_pages(struct address_space *mapping,
+> > >  
+> > >  		for (i = 0; i < nr_folios; i++) {
+> > >  			struct folio *folio = fbatch.folios[i];
+> > > +			unsigned long nr;
+> > >  
+> > >  			done_index = folio->index;
+> > >  
+> > > @@ -2471,6 +2472,7 @@ int write_cache_pages(struct address_space *mapping,
+> > >  
+> > >  			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
+> > >  			error = writepage(folio, wbc, data);
+> > > +			nr = folio_nr_pages(folio);
 > > 
-> > I literally just pasted a script that hits it in one second with aio. So
-> > maybe generic/388 doesn't hit it as easily, but it's surely TRIVIAL to
-> > hit with aio. As demonstrated. The io_uring is not hard to bring into
-> > parity on that front, here's one I posted earlier today for 6.5:
+> > This should really be done before writepage() is called, right? By
+> > the time the writepage() returns, the folio can be unlocked, the
+> > entire write completed and the folio partially invalidated which may
+> > try to split the folio...
 > > 
-> > https://lore.kernel.org/io-uring/20230628170953.952923-4-axboe@kernel.dk/
-> > 
-> > Doesn't change the fact that you can easily hit this with io_uring or
-> > aio, and probably more things too (didn't look any further). Is it a
-> > realistic thing outside of funky tests? Probably not really, or at least
-> > if those guys hit it they'd probably have the work-around hack in place
-> > in their script already.
-> > 
-> > But the fact is that it's been around for a decade. It's somehow a lot
-> > easier to hit with bcachefs than XFS, which may just be because the
-> > former has a bunch of workers and this may be deferring the delayed fput
-> > work more. Just hand waving.
+> > Even if this can't happen (folio refcount is elevated, right?), it
+> > makes much more sense to me to sample the size of the folio while it
+> > is obviously locked and not going to change...
 > 
-> Not sure what you're arguing here...?
-> 
-> We've had a long standing bug, it's recently become much easier to hit
-> (for multiple reasons); we seem to be in agreement on all that. All I'm
-> saying is that the existence of that bug previously is not reason to fix
-> it now.
+> It can't change because of the refcount we hold (that's put in the call
+> to folio_batch_release()).  I didn't want to call it before the call to
+> writepage() because that makes the compiler stick it on the stack instead
+> of a local variable.
 
-I agree with Kent here  - the kernel bug needs to be fixed
-regardless of how long it has been around. Blaming the messenger
-(userspace, fstests, etc) and saying it should work around a
-spurious, unpredictable, undesirable and user-undebuggable kernel
-behaviour is not an acceptible solution here...
+I don't care for micro-optimisations when the result is code
+that looks dodgy and suspect and requires lots of additional
+thinking about to determine that it is safe.
 
-I don't care how the kernel bug gets fixed, I just want the spurious
-unmount failures when there are no userspace processes actively
-using the filesytsem to go away forever.
+> Also, when we transform this into an iterator (see
+> patches posted yesterday), we'd have to stash it away in the iterator.
+
+That's no big deal, either.
 
 -Dave.
 -- 
