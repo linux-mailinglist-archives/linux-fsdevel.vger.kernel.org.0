@@ -2,261 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 30ED174202C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 08:06:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 523C77420A1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 08:47:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231626AbjF2GGT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jun 2023 02:06:19 -0400
-Received: from mail-co1nam11on2057.outbound.protection.outlook.com ([40.107.220.57]:18305
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229539AbjF2GGQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jun 2023 02:06:16 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jVAbaj519kClc4Oc6DXTe3ml7zB6d6v6bvWkOhccBiNqtRrTsGknb9cs0uop50a9cKXy1LkPldEzFYHRL+6XyiZfqAQ5Sq6j0azEX8fbKzWnBmSxS4w6vWO2bBs07o0OvMq4xHFzRCRA5aM1m70M2YchbxRl8tkT8biTa0teC/ZfptcAby9R4ov+BXElq7WLqXu7STaMdfSROhtwq3ZdvqJb6VyAdBd40hEHwHIpov1ImCA3HU5UQfUgOnRTxRjpkBPREgpqaly3aVWUg5C5xer0W8ciosdsLQe/iv6lgNmetcdKAli5WlrHDt1rWzI9Ji4CvgtlUTOeP8NGNO1Jqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=F4zkZh4jdU2vRUCe4nqGab/6PhoV9gpf3v9BsepwWsE=;
- b=WZStf7B07jZc0fIO9QCRZrQV3CCpt3O0as+2d7Gtde0PVACKYYvsfXlpWKMZzNVo7hM1WmZQsH6RwAzaIXCRpFI6wktNkq4mxCfQ5VGjZQfacKTntIgS/MQTtTbjSubT8UnDfgHWmS5D2cw43G+nqp2JGcAWzKLs7n/Deb/VlTBNgwmnJrHWzk4zkhYHXaOGvonTLEvrR9zH53gDgoyL4ZKp65U6wZlyfy1FwVSlKnCNLFYAjD1bAPMt/YKF10/dFfEAQwzrDmE8FX82Qjjxmfae0/G+Gdvbm4LqTRwcevMiDoM+iVsFTrxJv5bjkTVMPJYpjPVw/iB3yObnx5vHGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F4zkZh4jdU2vRUCe4nqGab/6PhoV9gpf3v9BsepwWsE=;
- b=RBnbcgIAaAWCd8nhYgiAHrrZWscCOZBIqJqnd2YQf9EHjkzXoHHQ/+auzf53gdUfK9IRzgme6ya9DZCTKBl48p7/AcPYfccFNXtkDAIRKGRe1PI+r0xTnEshCHFYGbHNgsbTX6W9pb0GR0yEfYVva9yR5pihWM+EPS7IrdJ2O1A3xvo4fvaHnvvMMu4Rg61LllLhVfwTzJShHYwYhsnqdLF45e9RKePDHklrOibx/PQDiqR7QPcacNGj9mWOfW4vlw7BWHNC4CacSjVO5mTNZMDUD49HYYGwIpNIvj2IAXdqRii8qIEMo0xdjCE9u02iDv3aZ3Ll0CKy6uEzadL3tg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BYAPR12MB3176.namprd12.prod.outlook.com (2603:10b6:a03:134::26)
- by CH2PR12MB4295.namprd12.prod.outlook.com (2603:10b6:610:a7::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.24; Thu, 29 Jun
- 2023 06:06:13 +0000
-Received: from BYAPR12MB3176.namprd12.prod.outlook.com
- ([fe80::6cea:921f:eb00:c1e7]) by BYAPR12MB3176.namprd12.prod.outlook.com
- ([fe80::6cea:921f:eb00:c1e7%6]) with mapi id 15.20.6521.024; Thu, 29 Jun 2023
- 06:06:12 +0000
-References: <20230628172529.744839-1-surenb@google.com>
- <20230628172529.744839-6-surenb@google.com>
-User-agent: mu4e 1.8.13; emacs 28.2
-From:   Alistair Popple <apopple@nvidia.com>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
-        mhocko@suse.com, josef@toxicpanda.com, jack@suse.cz,
-        ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
-        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
-        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
-        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
-        peterx@redhat.com, ying.huang@intel.com, david@redhat.com,
-        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        pasha.tatashin@soleen.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH v5 5/6] mm: handle swap page faults under per-VMA lock
-Date:   Thu, 29 Jun 2023 16:04:58 +1000
-In-reply-to: <20230628172529.744839-6-surenb@google.com>
-Message-ID: <877crm246q.fsf@nvdebian.thelocal>
-Content-Type: text/plain
-X-ClientProxiedBy: SY2PR01CA0044.ausprd01.prod.outlook.com
- (2603:10c6:1:15::32) To BYAPR12MB3176.namprd12.prod.outlook.com
- (2603:10b6:a03:134::26)
+        id S231925AbjF2GrW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jun 2023 02:47:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232039AbjF2GrI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Jun 2023 02:47:08 -0400
+Received: from mail-oi1-f208.google.com (mail-oi1-f208.google.com [209.85.167.208])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BB0E358D
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 23:46:56 -0700 (PDT)
+Received: by mail-oi1-f208.google.com with SMTP id 5614622812f47-3a1e869ed0aso400160b6e.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 23:46:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688021216; x=1690613216;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=G7ab+kIFc4NfZgpCon9+cnUevyxh1afHJUp133YFjuo=;
+        b=K8gsvb+TI0CfRG2wSOuRMgWMxU4h5Bxs80VOh0JPNlbCClwcCYhm7lft4Qgppiu5BV
+         FJfzyaFZjvP7JQoLZTlmQd/HbqW2meXKb5OzykJulmVTtOALEGC8nZZHhbyEa2hGpEch
+         tGgnuPKGewbHdh6dheJG+jsmfS9tyBoMEz5dYX8aAht38wAxzHYT2P0QxbPGQYJ1AqvS
+         fsb4M3iEiKwuywo1VYZ5XQu/eKrcdTU5jHukWSDkdLBoZ3Wm1Yp0Gf3IoJYDHMpX1JtH
+         F//ay4EosuBw6U5luz+/kGB49k20bgPLNHWVa4l4iH092w2clm2o6hshvdkuVjYP2Geq
+         lS+A==
+X-Gm-Message-State: AC+VfDzcsFRVgIAxXy6tcLz7sIe2HwprHR1PqPpYzhnRInx+qWZLw2Kb
+        y3oG2q1i9oxsk5Av6ua5WKFjyb39XIW/Xt+v3gr1Utj3S1L5
+X-Google-Smtp-Source: ACHHUZ5uznqkOUZLG3MW49GlIq7/aK8P5lChwrOpRhSTc9ZnEY3hJJOeO/ek7Qx8uZhASuF0SBV1HVcxsXZx2w5Lz9HLY41nsWCm
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR12MB3176:EE_|CH2PR12MB4295:EE_
-X-MS-Office365-Filtering-Correlation-Id: 86dc9889-5d07-415d-6f0b-08db7866f0cf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Yw575ifdhl/gBvKQZKSVBPalu3Ep6KAEUNhojEocIiDIITJPLUTcqQukg+zA1AdIvnufBHCalOGYCo0eSbzadmnFINGwnxf2gLQj7B8a5d5jifSI4A/1du4rdWpUh7itD4xYPIHOGIab2oS2ofKzCk7EFX0YDnqbhh0YqToRHAzfhEXDH6ulIaSlVWfEx2VJlIP11Op4XFSZIbtOwUMFyGDwe9ULbJjkBFFXxIZ/AV1z6iYDdxMDSu+ulPtgjRgtOkn8M4nx2ByxXDmys7n/kClF2jisCFZp2kXO30/IHtDGbwhN+7Gx4loORyL8TlZib9oKWwhOAh5P6TjduwdNRnhyEqx8er07qxCetcG/zVTZ6HNpUmphj1R4JlL0ayvlQy+awMVJR8Q5y/RNnfCE4fnV5xF/uwK9+eEJIcNUw3k4MLj8WN126GK0UoSw3egadosBLqc9JgG3hNhGE0PdRhaXI9FBEgXaNqDTd3bW/1k9F4f3n3hlq7rylCEk5qT/w4hk8gFBnW1HES7RqOsJUXHDV0vHxWAzuhj80omFeT7Jy+yLwm42656cp1QY9unA
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB3176.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(39860400002)(396003)(136003)(346002)(366004)(451199021)(38100700002)(83380400001)(86362001)(478600001)(9686003)(6666004)(6486002)(4326008)(41300700001)(66556008)(316002)(8936002)(66946007)(66476007)(8676002)(6512007)(6506007)(186003)(6916009)(26005)(7406005)(7416002)(5660300002)(2906002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Wzf8fgKFLN0ziFu9TsV/ZRvENtnV3nBuFMeP1O3OFX6H9L4EZk+Ti0BRFYCd?=
- =?us-ascii?Q?bxCQMfSiJcTdNZ4slVMq2sDhj2xpgFdMVsG13sfwHx7nHnzgEuEDGLH0pcDu?=
- =?us-ascii?Q?ljhKDAdh3UZkhvCy9rqc/5xWE9cT0MA+MJWFZO6zGOcd2OlJGkvR/DmMFiph?=
- =?us-ascii?Q?WHfNRpoPjOyp/65tGcz1EAjQXlWcbMjTtC0PSXkJomlr+RygCmwWu69KUYyd?=
- =?us-ascii?Q?U0xDH2roMlHSIk7yShlVHxn0TnOgRRn4yEclcBzcO5sLnNtnBf5mtPMn6bDm?=
- =?us-ascii?Q?hDT73x/djkS3u1jLOHbmQrnFq3ARcS8kDT1TV75g1w71jmGj1E4jfobGIbkS?=
- =?us-ascii?Q?SB9pJ5OaLKuzO6N0KtS614XUTOuzFHp06vQ5MhEd54il/PJe16nWx/FJNVJn?=
- =?us-ascii?Q?My5gi+rECzwE1k7HrpbztfFUVLeAPlrCtyJP3FzGkjYDbRRQIFTGrp4U8XYM?=
- =?us-ascii?Q?lQCWl32Mf+GVeUGoFUag/rErVwPkm0MmyBBlHKt68/WGuOLPaiYhDtWx5YiW?=
- =?us-ascii?Q?6FRIDRbCyqFuAUFPR0h9jKWHjYXIWKYrt8LxTJ+vYfOtiKMeWyZjei315hqJ?=
- =?us-ascii?Q?9mqcpckZg1Nju0otWnVu35YGBJsWiVjuVjnaYzGlaOr3jU9VfLm3O4t3hO8M?=
- =?us-ascii?Q?LH2ISfqRmcobPJYhmVOKcm+7NYHbmIUa++6fstr5tqiV2BdgxpIEsOjnFGLz?=
- =?us-ascii?Q?lM7RuVjEVqWDo0T7aVgNCCB5QF+4ekOD3zzln9QL36e9M+6xwXMdoS1Kw9e/?=
- =?us-ascii?Q?bZO4u/96HNM/Eik9pbS3SEw40EzznVjZ4Nj+HGy5bSgmndLc6f22ujRTunzd?=
- =?us-ascii?Q?pffYC8QhRpV+miGQ/qjv/hJWsZiKB8wdVCdC34qb2vCx4Yi2egzWzzCfKJUa?=
- =?us-ascii?Q?m495UCU5H9hmaIxgz9YcUV80eu3ZGcDiTDD9XiljBXMT+05NcNX58xR8fnX1?=
- =?us-ascii?Q?soj7+ndOfQXdsWdv8HUMPXumKhZyp7XKgJ9K59cIeVe6bb379BI/dlz4c/BR?=
- =?us-ascii?Q?fyvI/DAXoXygLngb3rgw5zhnlN2zRfWRhAi023zgPiflXc6vUS99WRDEajZ1?=
- =?us-ascii?Q?DHCgEIJ1XMoEI23aBHy6RFJ7C+U1unpSQabk5kYB43q7plPWxQ9H3tIwjn3W?=
- =?us-ascii?Q?ge3AsiRIx5Amrq6kJmrg+nW5VEoS/mKw+jXnS6smj6YmqnrdTxM6zOCELuzR?=
- =?us-ascii?Q?2P+SRsowe7dNGx9M1JUjf9DTsMXz0xN/CuCGFPtAVPz8iiuCF94oAxKKh2ir?=
- =?us-ascii?Q?LAuMPuGMMxWkXCeFcxUAizvhC91wIRi4/hlSoMLzsD4vJnwLXLiDE5mT/GU2?=
- =?us-ascii?Q?ULM2OBQjz3MURN9I7Di8ghKWduxD5HzCuhPWqtfhoondTgBqjr5CgbsHPmx7?=
- =?us-ascii?Q?uSBEIn1F1+FDVp3Vl0Gx2722xy95rWiUJMLQywKaHAf9OkNkyNfrVWy5iFhD?=
- =?us-ascii?Q?ffbyadIiv/v89NijNBTpHY2R1Gf2Sq9kYvqPnDkJQ4SpNwbsOd02ucL5mFXc?=
- =?us-ascii?Q?5n7NdpgTv4qghg3/FYGwmOfmT3+AhtvyYLz0VvkWJrJsj6SmoMPLZjAIf1r7?=
- =?us-ascii?Q?Ew3mLGkYIr6ZpUjpQWBlISGboHK2P7W1Xrqb5ghm?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86dc9889-5d07-415d-6f0b-08db7866f0cf
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB3176.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2023 06:06:12.6978
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: luqmgXcvUMaBTgb9aFqMhN70B/K5rw/DkpzssimwxCwIBTsCgSXegcamXYuRhvo3TIGAQmLKpIYTeLTucO3N3w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4295
+X-Received: by 2002:aca:b9c6:0:b0:39e:ced7:602b with SMTP id
+ j189-20020acab9c6000000b0039eced7602bmr10002788oif.2.1688021215900; Wed, 28
+ Jun 2023 23:46:55 -0700 (PDT)
+Date:   Wed, 28 Jun 2023 23:46:55 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f27b1005ff3f1047@google.com>
+Subject: [syzbot] [btrfs?] kernel BUG in btrfs_run_defrag_inodes
+From:   syzbot <syzbot+afec8fb60a29eee6de33@syzkaller.appspotmail.com>
+To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
+        lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello,
 
-Looks good and passed the HMM selftests. So:
+syzbot found the following issue on:
 
-Tested-by: Alistair Popple <apopple@nvidia.com>
-Reviewed-by: Alistair Popple <apopple@nvidia.com>
+HEAD commit:    a92b7d26c743 Merge tag 'drm-fixes-2023-06-23' of git://ano..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1446e8e0a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e74b395fe4978721
+dashboard link: https://syzkaller.appspot.com/bug?extid=afec8fb60a29eee6de33
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
 
-Suren Baghdasaryan <surenb@google.com> writes:
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> When page fault is handled under per-VMA lock protection, all swap page
-> faults are retried with mmap_lock because folio_lock_or_retry has to drop
-> and reacquire mmap_lock if folio could not be immediately locked.
-> Follow the same pattern as mmap_lock to drop per-VMA lock when waiting
-> for folio and retrying once folio is available.
-> With this obstacle removed, enable do_swap_page to operate under
-> per-VMA lock protection. Drivers implementing ops->migrate_to_ram might
-> still rely on mmap_lock, therefore we have to fall back to mmap_lock in
-> that particular case.
-> Note that the only time do_swap_page calls synchronous swap_readpage
-> is when SWP_SYNCHRONOUS_IO is set, which is only set for
-> QUEUE_FLAG_SYNCHRONOUS devices: brd, zram and nvdimms (both btt and
-> pmem). Therefore we don't sleep in this path, and there's no need to
-> drop the mmap or per-VMA lock.
->
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> Acked-by: Peter Xu <peterx@redhat.com>
-> ---
->  include/linux/mm.h | 13 +++++++++++++
->  mm/filemap.c       | 17 ++++++++---------
->  mm/memory.c        | 16 ++++++++++------
->  3 files changed, 31 insertions(+), 15 deletions(-)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index fec149585985..bbaec479bf98 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -723,6 +723,14 @@ static inline void vma_mark_detached(struct vm_area_struct *vma, bool detached)
->  struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
->  					  unsigned long address);
->  
-> +static inline void release_fault_lock(struct vm_fault *vmf)
-> +{
-> +	if (vmf->flags & FAULT_FLAG_VMA_LOCK)
-> +		vma_end_read(vmf->vma);
-> +	else
-> +		mmap_read_unlock(vmf->vma->vm_mm);
-> +}
-> +
->  #else /* CONFIG_PER_VMA_LOCK */
->  
->  static inline void vma_init_lock(struct vm_area_struct *vma) {}
-> @@ -736,6 +744,11 @@ static inline void vma_assert_write_locked(struct vm_area_struct *vma) {}
->  static inline void vma_mark_detached(struct vm_area_struct *vma,
->  				     bool detached) {}
->  
-> +static inline void release_fault_lock(struct vm_fault *vmf)
-> +{
-> +	mmap_read_unlock(vmf->vma->vm_mm);
-> +}
-> +
->  #endif /* CONFIG_PER_VMA_LOCK */
->  
->  /*
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 52bcf12dcdbf..d4d8f474e0c5 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -1703,27 +1703,26 @@ static int __folio_lock_async(struct folio *folio, struct wait_page_queue *wait)
->   * Return values:
->   * 0 - folio is locked.
->   * VM_FAULT_RETRY - folio is not locked.
-> - *     mmap_lock has been released (mmap_read_unlock(), unless flags had both
-> - *     FAULT_FLAG_ALLOW_RETRY and FAULT_FLAG_RETRY_NOWAIT set, in
-> - *     which case mmap_lock is still held.
-> + *     mmap_lock or per-VMA lock has been released (mmap_read_unlock() or
-> + *     vma_end_read()), unless flags had both FAULT_FLAG_ALLOW_RETRY and
-> + *     FAULT_FLAG_RETRY_NOWAIT set, in which case the lock is still held.
->   *
->   * If neither ALLOW_RETRY nor KILLABLE are set, will always return 0
-> - * with the folio locked and the mmap_lock unperturbed.
-> + * with the folio locked and the mmap_lock/per-VMA lock is left unperturbed.
->   */
->  vm_fault_t __folio_lock_or_retry(struct folio *folio, struct vm_fault *vmf)
->  {
-> -	struct mm_struct *mm = vmf->vma->vm_mm;
->  	unsigned int flags = vmf->flags;
->  
->  	if (fault_flag_allow_retry_first(flags)) {
->  		/*
-> -		 * CAUTION! In this case, mmap_lock is not released
-> -		 * even though return VM_FAULT_RETRY.
-> +		 * CAUTION! In this case, mmap_lock/per-VMA lock is not
-> +		 * released even though returning VM_FAULT_RETRY.
->  		 */
->  		if (flags & FAULT_FLAG_RETRY_NOWAIT)
->  			return VM_FAULT_RETRY;
->  
-> -		mmap_read_unlock(mm);
-> +		release_fault_lock(vmf);
->  		if (flags & FAULT_FLAG_KILLABLE)
->  			folio_wait_locked_killable(folio);
->  		else
-> @@ -1735,7 +1734,7 @@ vm_fault_t __folio_lock_or_retry(struct folio *folio, struct vm_fault *vmf)
->  
->  		ret = __folio_lock_killable(folio);
->  		if (ret) {
-> -			mmap_read_unlock(mm);
-> +			release_fault_lock(vmf);
->  			return VM_FAULT_RETRY;
->  		}
->  	} else {
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 345080052003..4fb8ecfc6d13 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -3712,12 +3712,6 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  	if (!pte_unmap_same(vmf))
->  		goto out;
->  
-> -	if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
-> -		ret = VM_FAULT_RETRY;
-> -		vma_end_read(vma);
-> -		goto out;
-> -	}
-> -
->  	entry = pte_to_swp_entry(vmf->orig_pte);
->  	if (unlikely(non_swap_entry(entry))) {
->  		if (is_migration_entry(entry)) {
-> @@ -3727,6 +3721,16 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  			vmf->page = pfn_swap_entry_to_page(entry);
->  			ret = remove_device_exclusive_entry(vmf);
->  		} else if (is_device_private_entry(entry)) {
-> +			if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
-> +				/*
-> +				 * migrate_to_ram is not yet ready to operate
-> +				 * under VMA lock.
-> +				 */
-> +				vma_end_read(vma);
-> +				ret = VM_FAULT_RETRY;
-> +				goto out;
-> +			}
-> +
->  			vmf->page = pfn_swap_entry_to_page(entry);
->  			vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
->  					vmf->address, &vmf->ptl);
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/51be0f38ba27/disk-a92b7d26.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b31a945d3cb5/vmlinux-a92b7d26.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f0b145c24307/bzImage-a92b7d26.xz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+afec8fb60a29eee6de33@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+kernel BUG at fs/inode.c:1763!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 5767 Comm: btrfs-cleaner Not tainted 6.4.0-rc7-syzkaller-00226-ga92b7d26c743 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+RIP: 0010:iput+0x8e8/0x8f0 fs/inode.c:1763
+Code: e8 ff e9 b5 fb ff ff 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 46 fe ff ff 4c 89 e7 e8 c2 ec e8 ff e9 39 fe ff ff e8 c8 09 91 ff <0f> 0b 66 0f 1f 44 00 00 f3 0f 1e fa 55 41 57 41 56 53 48 89 f5 48
+RSP: 0018:ffffc90015e37c70 EFLAGS: 00010293
+RAX: ffffffff81fa7b28 RBX: 0000000000000040 RCX: ffff8880290cd940
+RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000000
+RBP: ffff888075690448 R08: ffffffff81fa72a3 R09: fffffbfff1cabba6
+R10: 0000000000000000 R11: dffffc0000000001 R12: dffffc0000000000
+R13: ffff8880214be130 R14: 0000000000000005 R15: ffff8880214be108
+FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f4c3eb6dd50 CR3: 000000002cd46000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __btrfs_run_defrag_inode fs/btrfs/defrag.c:282 [inline]
+ btrfs_run_defrag_inodes+0xa90/0xe20 fs/btrfs/defrag.c:328
+ cleaner_kthread+0x287/0x3c0 fs/btrfs/disk-io.c:1739
+ kthread+0x2b8/0x350 kernel/kthread.c:379
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:iput+0x8e8/0x8f0 fs/inode.c:1763
+Code: e8 ff e9 b5 fb ff ff 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 46 fe ff ff 4c 89 e7 e8 c2 ec e8 ff e9 39 fe ff ff e8 c8 09 91 ff <0f> 0b 66 0f 1f 44 00 00 f3 0f 1e fa 55 41 57 41 56 53 48 89 f5 48
+RSP: 0018:ffffc90015e37c70 EFLAGS: 00010293
+RAX: ffffffff81fa7b28 RBX: 0000000000000040 RCX: ffff8880290cd940
+RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000000
+RBP: ffff888075690448 R08: ffffffff81fa72a3 R09: fffffbfff1cabba6
+R10: 0000000000000000 R11: dffffc0000000001 R12: dffffc0000000000
+R13: ffff8880214be130 R14: 0000000000000005 R15: ffff8880214be108
+FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c02af7e000 CR3: 0000000036a4b000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
