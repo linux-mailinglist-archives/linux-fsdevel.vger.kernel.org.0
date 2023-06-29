@@ -2,57 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7DDA741C9D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 01:50:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98146741CB5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 02:02:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230082AbjF1Xu2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Jun 2023 19:50:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41640 "EHLO
+        id S229933AbjF2ACH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Jun 2023 20:02:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230311AbjF1Xu1 (ORCPT
+        with ESMTP id S232477AbjF2ACE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Jun 2023 19:50:27 -0400
-Received: from out-40.mta0.migadu.com (out-40.mta0.migadu.com [IPv6:2001:41d0:1004:224b::28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33C31183
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 16:50:25 -0700 (PDT)
-Date:   Wed, 28 Jun 2023 19:50:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1687996221;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QYqVEAA9OEPYN6MmQsZpr/+iIRJqLTbm33DiQIkPrP4=;
-        b=wln8/z/hUYd0U1TJSregv80KC19E7kXjHsLWHmjjzP8FtaFm67909l/sjNoWokzUT8oocy
-        1+95cZXTSNaSaiN3oAiqz54JPHKO1YcxDe7tPA+/dGUgbFdC65H8rzF51vl4n+CAtfqPpO
-        RIIfKswBYt9TRnkKabEqOqS5SyCrUio=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [GIT PULL] bcachefs
-Message-ID: <20230628235018.ttvtzpfe42fri4yq@moria.home.lan>
-References: <20230628040114.oz46icbsjpa4egpp@moria.home.lan>
- <b02657af-5bbb-b46b-cea0-ee89f385f3c1@kernel.dk>
- <4b863e62-4406-53e4-f96a-f4d1daf098ab@kernel.dk>
- <20230628175204.oeek4nnqx7ltlqmg@moria.home.lan>
- <e1570c46-68da-22b7-5322-f34f3c2958d9@kernel.dk>
- <2e635579-37ba-ddfc-a2ab-e6c080ab4971@kernel.dk>
- <20230628221342.4j3gr3zscnsu366p@moria.home.lan>
- <d697ec27-8008-2eb6-0950-f612a602dcf5@kernel.dk>
- <20230628225514.n3xtlgmjkgapgnrd@moria.home.lan>
- <1e2134f1-f48b-1459-a38e-eac9597cd64a@kernel.dk>
+        Wed, 28 Jun 2023 20:02:04 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0801EA3;
+        Wed, 28 Jun 2023 17:02:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=EesjQ1CwpnFXfNGbq1/L/h6YQv0U8+XJ4R+B/3hRf58=; b=b9KvWHJryQHvFPg9e871YaYOGm
+        mOHNYZR1oSDs4lZ0b6yeUJAn5qeh4RixIgKOSGIVwzGOcVc1XFqLywfdJ0+GBr7X0ivN+NNYeW+ql
+        i9qYgXsyy2/b4QRf/c6W5Nw5VyoVqrntD0jLwB7lsm9CBQtazTshb9SwcE8cbeF4z11ieWi8aFxS4
+        EUyoaSTcBrlaNjeVYuio8vOURpSeH2X24hvzCkMRxSo3UEQOxc2UFkRnRiwvnAOxrRRw+4ACnByTj
+        kmZ4/iyB90ugEP2lMVb3KHICvfHY4wTTiWulaL1VCGvSkb/kha9hSdF73dDRXoR7KfnWWlqFlzLcb
+        7PqLDyPQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qEf6l-004L0A-Tr; Thu, 29 Jun 2023 00:01:59 +0000
+Date:   Thu, 29 Jun 2023 01:01:59 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] writeback: Account the number of pages written back
+Message-ID: <ZJzJ9/HhKup+FKey@casper.infradead.org>
+References: <20230628185548.981888-1-willy@infradead.org>
+ <ZJyr6GyVyvHxOpNB@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1e2134f1-f48b-1459-a38e-eac9597cd64a@kernel.dk>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+In-Reply-To: <ZJyr6GyVyvHxOpNB@dread.disaster.area>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -60,80 +52,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 28, 2023 at 05:14:09PM -0600, Jens Axboe wrote:
-> On 6/28/23 4:55?PM, Kent Overstreet wrote:
-> >> But it's not aio (or io_uring or whatever), it's simply the fact that
-> >> doing an fput() from an exiting task (for example) will end up being
-> >> done async. And hence waiting for task exits is NOT enough to ensure
-> >> that all file references have been released.
-> >>
-> >> Since there are a variety of other reasons why a mount may be pinned and
-> >> fail to umount, perhaps it's worth considering that changing this
-> >> behavior won't buy us that much. Especially since it's been around for
-> >> more than 10 years:
+On Thu, Jun 29, 2023 at 07:53:44AM +1000, Dave Chinner wrote:
+> On Wed, Jun 28, 2023 at 07:55:48PM +0100, Matthew Wilcox (Oracle) wrote:
+> > nr_to_write is a count of pages, so we need to decrease it by the number
+> > of pages in the folio we just wrote, not by 1.  Most callers specify
+> > either LONG_MAX or 1, so are unaffected, but writeback_sb_inodes()
+> > might end up writing 512x as many pages as it asked for.
 > > 
-> > Because it seems that before io_uring the race was quite a bit harder to
-> > hit - I only started seeing it when things started switching over to
-> > io_uring. generic/388 used to pass reliably for me (pre backpointers),
-> > now it doesn't.
-> 
-> I literally just pasted a script that hits it in one second with aio. So
-> maybe generic/388 doesn't hit it as easily, but it's surely TRIVIAL to
-> hit with aio. As demonstrated. The io_uring is not hard to bring into
-> parity on that front, here's one I posted earlier today for 6.5:
-> 
-> https://lore.kernel.org/io-uring/20230628170953.952923-4-axboe@kernel.dk/
-> 
-> Doesn't change the fact that you can easily hit this with io_uring or
-> aio, and probably more things too (didn't look any further). Is it a
-> realistic thing outside of funky tests? Probably not really, or at least
-> if those guys hit it they'd probably have the work-around hack in place
-> in their script already.
-> 
-> But the fact is that it's been around for a decade. It's somehow a lot
-> easier to hit with bcachefs than XFS, which may just be because the
-> former has a bunch of workers and this may be deferring the delayed fput
-> work more. Just hand waving.
-
-Not sure what you're arguing here...?
-
-We've had a long standing bug, it's recently become much easier to hit
-(for multiple reasons); we seem to be in agreement on all that. All I'm
-saying is that the existence of that bug previously is not reason to fix
-it now.
-
-> >> then we'd probably want to move that deferred fput list to the
-> >> task_struct and ensure that it gets run if the task exits rather than
-> >> have a global deferred list. Currently we have:
-> >>
-> >>
-> >> 1) If kthread or in interrupt
-> >> 	1a) add to global fput list
-> >> 2) task_work_add if not. If that fails, goto 1a.
-> >>
-> >> which would then become:
-> >>
-> >> 1) If kthread or in interrupt
-> >> 	1a) add to global fput list
-> >> 2) task_work_add if not. If that fails, we know task is existing. add to
-> >>    per-task defer list to be run at a convenient time before task has
-> >>    exited.
+> > Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
+> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > ---
+> >  mm/page-writeback.c | 8 +++++---
+> >  1 file changed, 5 insertions(+), 3 deletions(-)
 > > 
-> > no, it becomes:
-> >  if we're running in a user task, or if we're doing an operation on
-> >  behalf of a user task, add to the user task's deferred list: otherwise
-> >  add to global deferred list.
+> > diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> > index 1d17fb1ec863..d3f42009bb70 100644
+> > --- a/mm/page-writeback.c
+> > +++ b/mm/page-writeback.c
+> > @@ -2434,6 +2434,7 @@ int write_cache_pages(struct address_space *mapping,
+> >  
+> >  		for (i = 0; i < nr_folios; i++) {
+> >  			struct folio *folio = fbatch.folios[i];
+> > +			unsigned long nr;
+> >  
+> >  			done_index = folio->index;
+> >  
+> > @@ -2471,6 +2472,7 @@ int write_cache_pages(struct address_space *mapping,
+> >  
+> >  			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
+> >  			error = writepage(folio, wbc, data);
+> > +			nr = folio_nr_pages(folio);
 > 
-> And how would the "on behalf of a user task" work in terms of being
-> in_interrupt()?
+> This should really be done before writepage() is called, right? By
+> the time the writepage() returns, the folio can be unlocked, the
+> entire write completed and the folio partially invalidated which may
+> try to split the folio...
+> 
+> Even if this can't happen (folio refcount is elevated, right?), it
+> makes much more sense to me to sample the size of the folio while it
+> is obviously locked and not going to change...
 
-I don't see any relation to in_interrupt?
-
-We'd have to add a version of fput() that takes an additional
-task_struct argument, and plumb that through the aio code - kioctx
-lifetime is tied to mm_struct, not task_struct, so we'd have to add a
-ref to the task_struct to kiocb.
-
-Which would probably be a good thing tbh, it'd let us e.g. account cpu
-time back to the original task when kiocb completion has to run out of a
-workqueue.
+It can't change because of the refcount we hold (that's put in the call
+to folio_batch_release()).  I didn't want to call it before the call to
+writepage() because that makes the compiler stick it on the stack instead
+of a local variable.  Also, when we transform this into an iterator (see
+patches posted yesterday), we'd have to stash it away in the iterator.
