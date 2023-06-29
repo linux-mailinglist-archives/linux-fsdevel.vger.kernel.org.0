@@ -2,52 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 523C77420A1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 08:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 553EA742203
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Jun 2023 10:22:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231925AbjF2GrW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jun 2023 02:47:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44672 "EHLO
+        id S231634AbjF2IV6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jun 2023 04:21:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232039AbjF2GrI (ORCPT
+        with ESMTP id S231987AbjF2IUx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jun 2023 02:47:08 -0400
-Received: from mail-oi1-f208.google.com (mail-oi1-f208.google.com [209.85.167.208])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BB0E358D
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 23:46:56 -0700 (PDT)
-Received: by mail-oi1-f208.google.com with SMTP id 5614622812f47-3a1e869ed0aso400160b6e.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Jun 2023 23:46:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688021216; x=1690613216;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=G7ab+kIFc4NfZgpCon9+cnUevyxh1afHJUp133YFjuo=;
-        b=K8gsvb+TI0CfRG2wSOuRMgWMxU4h5Bxs80VOh0JPNlbCClwcCYhm7lft4Qgppiu5BV
-         FJfzyaFZjvP7JQoLZTlmQd/HbqW2meXKb5OzykJulmVTtOALEGC8nZZHhbyEa2hGpEch
-         tGgnuPKGewbHdh6dheJG+jsmfS9tyBoMEz5dYX8aAht38wAxzHYT2P0QxbPGQYJ1AqvS
-         fsb4M3iEiKwuywo1VYZ5XQu/eKrcdTU5jHukWSDkdLBoZ3Wm1Yp0Gf3IoJYDHMpX1JtH
-         F//ay4EosuBw6U5luz+/kGB49k20bgPLNHWVa4l4iH092w2clm2o6hshvdkuVjYP2Geq
-         lS+A==
-X-Gm-Message-State: AC+VfDzcsFRVgIAxXy6tcLz7sIe2HwprHR1PqPpYzhnRInx+qWZLw2Kb
-        y3oG2q1i9oxsk5Av6ua5WKFjyb39XIW/Xt+v3gr1Utj3S1L5
-X-Google-Smtp-Source: ACHHUZ5uznqkOUZLG3MW49GlIq7/aK8P5lChwrOpRhSTc9ZnEY3hJJOeO/ek7Qx8uZhASuF0SBV1HVcxsXZx2w5Lz9HLY41nsWCm
+        Thu, 29 Jun 2023 04:20:53 -0400
+X-Greylist: delayed 63 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 29 Jun 2023 01:19:15 PDT
+Received: from esa3.hc1455-7.c3s2.iphmx.com (esa3.hc1455-7.c3s2.iphmx.com [207.54.90.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0666935BC
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 01:19:14 -0700 (PDT)
+X-IronPort-AV: E=McAfee;i="6600,9927,10755"; a="122675962"
+X-IronPort-AV: E=Sophos;i="6.01,168,1684767600"; 
+   d="scan'208";a="122675962"
+Received: from unknown (HELO yto-r1.gw.nic.fujitsu.com) ([218.44.52.217])
+  by esa3.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2023 17:18:10 +0900
+Received: from yto-m3.gw.nic.fujitsu.com (yto-nat-yto-m3.gw.nic.fujitsu.com [192.168.83.66])
+        by yto-r1.gw.nic.fujitsu.com (Postfix) with ESMTP id 72FA4DB4C2;
+        Thu, 29 Jun 2023 17:18:06 +0900 (JST)
+Received: from kws-ab4.gw.nic.fujitsu.com (kws-ab4.gw.nic.fujitsu.com [192.51.206.22])
+        by yto-m3.gw.nic.fujitsu.com (Postfix) with ESMTP id B97E8D9692;
+        Thu, 29 Jun 2023 17:18:05 +0900 (JST)
+Received: from irides.g08.fujitsu.local (unknown [10.167.234.230])
+        by kws-ab4.gw.nic.fujitsu.com (Postfix) with ESMTP id E94226C9C4;
+        Thu, 29 Jun 2023 17:17:59 +0900 (JST)
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org
+Cc:     dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
+        akpm@linux-foundation.org, djwong@kernel.org, mcgrof@kernel.org
+Subject: [PATCH v12 0/2] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
+Date:   Thu, 29 Jun 2023 16:16:49 +0800
+Message-Id: <20230629081651.253626-1-ruansy.fnst@fujitsu.com>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-X-Received: by 2002:aca:b9c6:0:b0:39e:ced7:602b with SMTP id
- j189-20020acab9c6000000b0039eced7602bmr10002788oif.2.1688021215900; Wed, 28
- Jun 2023 23:46:55 -0700 (PDT)
-Date:   Wed, 28 Jun 2023 23:46:55 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f27b1005ff3f1047@google.com>
-Subject: [syzbot] [btrfs?] kernel BUG in btrfs_run_defrag_inodes
-From:   syzbot <syzbot+afec8fb60a29eee6de33@syzkaller.appspotmail.com>
-To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-27720.005
+X-TM-AS-User-Approved-Sender: Yes
+X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-27720.005
+X-TMASE-Result: 10--9.126200-10.000000
+X-TMASE-MatchedRID: hVaMx/vKxVQoSt6MGxonhwrcxrzwsv5usnK72MaPSqdujEcOZiInj57V
+        Ny7+UW/9bDnaZmit5bheZNY97UagkJpOjqlsrZgYKsurITpSv+MQhNjZQYyI3Jsoi2XrUn/Js98
+        n9dYnJNNQSFbL1bvQASAHAopEd76vRWXiIgS5n2V4xdTY+QAKe3yk+v4CROBMf8DjiQCwSeDQ86
+        vbNAcB2g==
+X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,87 +60,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+This patchset is to add gracefully unbind support for pmem.
+Patch1 corrects the calculation of length and end of a given range.
+Patch2 introduces a new flag call MF_MEM_REMOVE, to let dax holder know
+it is a remove event.  With the help of notify_failure mechanism, we are
+able to shutdown the filesystem on the pmem gracefully.
 
-syzbot found the following issue on:
+Changes since v11:
+ Patch1:
+  1. correct the count calculation in xfs_failure_pgcnt().
+      (was a wrong fix in v11)
+ Patch2:
+  1. use new exclusive freeze_super/thaw_super API, to make sure the unbind
+      progress won't be disturbed by any other freezer.
 
-HEAD commit:    a92b7d26c743 Merge tag 'drm-fixes-2023-06-23' of git://ano..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1446e8e0a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e74b395fe4978721
-dashboard link: https://syzkaller.appspot.com/bug?extid=afec8fb60a29eee6de33
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+Shiyang Ruan (2):
+  xfs: fix the calculation for "end" and "length"
+  mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
 
-Unfortunately, I don't have any reproducer for this issue yet.
+ drivers/dax/super.c         |  3 +-
+ fs/xfs/xfs_notify_failure.c | 95 +++++++++++++++++++++++++++++++++----
+ include/linux/mm.h          |  1 +
+ mm/memory-failure.c         | 17 +++++--
+ 4 files changed, 101 insertions(+), 15 deletions(-)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/51be0f38ba27/disk-a92b7d26.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b31a945d3cb5/vmlinux-a92b7d26.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f0b145c24307/bzImage-a92b7d26.xz
+-- 
+2.40.1
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+afec8fb60a29eee6de33@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at fs/inode.c:1763!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 5767 Comm: btrfs-cleaner Not tainted 6.4.0-rc7-syzkaller-00226-ga92b7d26c743 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
-RIP: 0010:iput+0x8e8/0x8f0 fs/inode.c:1763
-Code: e8 ff e9 b5 fb ff ff 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 46 fe ff ff 4c 89 e7 e8 c2 ec e8 ff e9 39 fe ff ff e8 c8 09 91 ff <0f> 0b 66 0f 1f 44 00 00 f3 0f 1e fa 55 41 57 41 56 53 48 89 f5 48
-RSP: 0018:ffffc90015e37c70 EFLAGS: 00010293
-RAX: ffffffff81fa7b28 RBX: 0000000000000040 RCX: ffff8880290cd940
-RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000000
-RBP: ffff888075690448 R08: ffffffff81fa72a3 R09: fffffbfff1cabba6
-R10: 0000000000000000 R11: dffffc0000000001 R12: dffffc0000000000
-R13: ffff8880214be130 R14: 0000000000000005 R15: ffff8880214be108
-FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f4c3eb6dd50 CR3: 000000002cd46000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __btrfs_run_defrag_inode fs/btrfs/defrag.c:282 [inline]
- btrfs_run_defrag_inodes+0xa90/0xe20 fs/btrfs/defrag.c:328
- cleaner_kthread+0x287/0x3c0 fs/btrfs/disk-io.c:1739
- kthread+0x2b8/0x350 kernel/kthread.c:379
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:iput+0x8e8/0x8f0 fs/inode.c:1763
-Code: e8 ff e9 b5 fb ff ff 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 46 fe ff ff 4c 89 e7 e8 c2 ec e8 ff e9 39 fe ff ff e8 c8 09 91 ff <0f> 0b 66 0f 1f 44 00 00 f3 0f 1e fa 55 41 57 41 56 53 48 89 f5 48
-RSP: 0018:ffffc90015e37c70 EFLAGS: 00010293
-RAX: ffffffff81fa7b28 RBX: 0000000000000040 RCX: ffff8880290cd940
-RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000000
-RBP: ffff888075690448 R08: ffffffff81fa72a3 R09: fffffbfff1cabba6
-R10: 0000000000000000 R11: dffffc0000000001 R12: dffffc0000000000
-R13: ffff8880214be130 R14: 0000000000000005 R15: ffff8880214be108
-FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c02af7e000 CR3: 0000000036a4b000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
