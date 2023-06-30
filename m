@@ -2,79 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1745074379E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 10:40:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3615A7437C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 10:52:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232680AbjF3IkU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jun 2023 04:40:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46566 "EHLO
+        id S232614AbjF3Iwn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jun 2023 04:52:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232697AbjF3Ij7 (ORCPT
+        with ESMTP id S232594AbjF3Iwl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jun 2023 04:39:59 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE901BDB;
-        Fri, 30 Jun 2023 01:39:58 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f8735ac3e3so2548692e87.2;
-        Fri, 30 Jun 2023 01:39:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688114397; x=1690706397;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gj8sD4PQmFmIt0sWpLcMRcCBS/cUVC91KAMlJbfG4Sw=;
-        b=IF+x2Un0ialJwvRc2NJZ87xNlukX7lDwsStdmTu+xNU+6CvSPn0CyHPHZJUwE4jAL1
-         KFbaE2oHBh9eaBZShydJb2DBNgqHHSYbHVTPLGTcyeuQz1YkA7lv5i2L27Dby6ZKDMF6
-         0HeYvL8jCIS0qYZSeo0DFdF74NSEzx1HYXBPDnV2utmYtNfkvyHh5lkqD/wEsp/YnoOA
-         wPfodenPGnlFf0dX/bXaV49haiZfa/U+4OsfuMmsUJsjqT5UbuQlB+eMMYrDleHgHvao
-         WMgvQsI5461VZwAmIIn2HqNoUNc7Sw1ynA0j9V4LE8bBfHIDX3ZMhTJF6F9kmEPjcl2W
-         maDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688114397; x=1690706397;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gj8sD4PQmFmIt0sWpLcMRcCBS/cUVC91KAMlJbfG4Sw=;
-        b=LZCvRfgf8JrCuGyM7D+aeq5uggCCtKeBKKLGDoO59+XXO+19hZJ0I9Oq4ZPSFA15Oh
-         aUU555kNHIcUNGNNjXZZv5PxmlmDR7w7jti/AR8gBajP2bMG8gEmD98GGd0d6feLUGqe
-         x9nSb4Lrwsq/6rZXMwHdIuNubKrPuwJRztuLq0nY7ZyomT1wK31F7QPy8mi1bjIZ6UaR
-         KM9hj54S2dbPvDsuVeKj5H3aDju9Q/uINtoMxlXRUXQxEtE/mDW9FIc5qzdH4023/0Cp
-         Zzm1XxTyleaVLD16kQf8jVSUu9eO+YaWjlqjFIRcaf1Gfg4k3272+Sngb3TbgA9pULgM
-         FiMA==
-X-Gm-Message-State: ABy/qLas7zRh+impY47bN92reHSnf/SUj/jglwQiWDhA8+5rYb6ImDAv
-        udLmg3h6jZqnBTM9mub5KQE=
-X-Google-Smtp-Source: APBJJlGdd1jko5UZbV19KyqK5ZPkUF/xVq2+MvZOMbV5sekvFNXQJdzxBE4YinCaMesxPmIoqidSGg==
-X-Received: by 2002:ac2:4ec5:0:b0:4fb:7de4:c837 with SMTP id p5-20020ac24ec5000000b004fb7de4c837mr1650272lfr.68.1688114396551;
-        Fri, 30 Jun 2023 01:39:56 -0700 (PDT)
-Received: from lano-work.. ([80.120.136.76])
-        by smtp.gmail.com with ESMTPSA id 14-20020a05600c020e00b003fba92fad35sm6032789wmi.26.2023.06.30.01.39.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jun 2023 01:39:56 -0700 (PDT)
-From:   Norbert Lange <nolange79@gmail.com>
-X-Google-Original-From: Norbert Lange <norbert.lange@andritz.com>
-To:     Laurent Vivier <laurent@vivier.eu>, linux-kernel@vger.kernel.org
+        Fri, 30 Jun 2023 04:52:41 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D4AD2100;
+        Fri, 30 Jun 2023 01:52:38 -0700 (PDT)
+Received: from [192.168.100.1] ([82.142.8.70]) by mrelayeu.kundenserver.de
+ (mreue108 [213.165.67.119]) with ESMTPSA (Nemesis) id
+ 1MkpnF-1pl5BI3GhT-00mGBb; Fri, 30 Jun 2023 10:52:23 +0200
+Message-ID: <e8161622-beb0-d8d5-6501-f0bee76a372d@vivier.eu>
+Date:   Fri, 30 Jun 2023 10:52:22 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Content-Language: fr, en-US
+To:     Norbert Lange <nolange79@gmail.com>, linux-kernel@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>
 Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         containers@lists.linux-foundation.org, jan.kiszka@siemens.com,
         jannh@google.com, avagin@gmail.com, dima@arista.com,
-        James.Bottomley@HansenPartnership.com, christian.brauner@ubuntu.com
-Subject: Re: [PATCH v8 1/1] ns: add binfmt_misc to the user namespace
-Date:   Fri, 30 Jun 2023 10:38:52 +0200
-Message-Id: <20230630083852.3988-1-norbert.lange@andritz.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <8eb5498d-89f6-e39e-d757-404cc3cfaa5c@vivier.eu>
+        James.Bottomley@HansenPartnership.com
 References: <8eb5498d-89f6-e39e-d757-404cc3cfaa5c@vivier.eu>
-MIME-Version: 1.0
+ <20230630083852.3988-1-norbert.lange@andritz.com>
+From:   Laurent Vivier <laurent@vivier.eu>
+Subject: Re: [PATCH v8 1/1] ns: add binfmt_misc to the user namespace
+In-Reply-To: <20230630083852.3988-1-norbert.lange@andritz.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Provags-ID: V03:K1:e0YVNPL0r25RhOFx81Dnim/E7wqoqapfwh5+mxSQ2y8mxgc/ajI
+ IXHGv6dVnjSR2J2yewBHLQxG7IUtrF3fOt7Dqj+G5M9E3UmrtGDiQKD1s6cOAOKzRxAI8GG
+ +ro7bLchVrJVP4K/HPxJatjZllsMyom+tTm1pXRJK9Z1bkIhoV9uM7Niv+mXfHEBc1TI8Dd
+ H9f69gj+F8sF2VXwqgWiw==
+UI-OutboundReport: notjunk:1;M01:P0:ai4mzwQsgpU=;hJrSFSuBsuOtuwp59dlcpD2YVc4
+ etrQ2kmTxCMTW+2edqAn2hvCBkejUrqhiAFlqN6BDEnvtji6gDpqZYPEsX9OwTdi3psh33Jv4
+ lxSvI82WgiS/segrEGUzB3ywHVC4BSPyGqdp2WeOFzU2qacl2p0KW5xrdi/7gVhMIO5XYZjGC
+ lixQlstRUMr3wsK6xU9GAOWNMSx9I35e0pW5V1Hxq8Fu14zvQjpBGN7czQeibi2TAbPipoU3I
+ gGzBTFOFj9RfTkbfe5A4wr63u9/YwBkezg+jVf1vKFgA41w0xhJR2rm/Ik4sBT1KXAhdxsBiV
+ caI2x2Lp/sLUIaxEKWF85d3wh4T5F/fBNgW06wAoVG95zbqaOyaMrtdmQb6qpYyrSOEDMC74o
+ SOBDeCnQdGIFlCtxdnZtNkKRTkmWEz98fg6NXVEbsvp34ncA3d3iCRmd13K07eiJ2DH8noDKw
+ KBsA4A4NO/pO+Lu9QsokOtzhU5hyOUbV519KnE9B85ukmKlrXrQFVQSBtUuX8aiule9VYfqkw
+ OA8zQOLZFKf3PmQgiA3VPlAypQ6kIoEd3eo/y+WF5dUgLdzCDRlsytb1pkAJQ3ACUp+6JwZoB
+ KTBF09xS4HgohyZwcG2OuKWA/g3rqJHHsEtiM6tthzFoEBfrCiNC6GCXmdhVP6MN2KYKdZ7Hc
+ mlPdNnu+jzfH5+X8uhBsP2FAn2ql5Hk7YcRjXpEPcw==
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Any news on this? What remains to be done, who needs to be harrassed?
+Hi Norbert,
 
-Regards, Norbert
+Le 30/06/2023 à 10:38, Norbert Lange a écrit :
+> Any news on this? What remains to be done, who needs to be harrassed?
+> 
+> Regards, Norbert
+
+Christian was working on a new version but there is no update for 1 year.
+
+[PATCH v2 1/2] binfmt_misc: cleanup on filesystem umount
+https://lkml.org/lkml/2021/12/16/406
+[PATCH v2 2/2] binfmt_misc: enable sandboxed mounts
+https://lkml.org/lkml/2021/12/16/407
+
+And personally I don't have the time to work on this.
+
+Thanks,
+Laurent
