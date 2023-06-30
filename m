@@ -2,119 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6054B7432E0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 04:53:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC14A74331B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 05:21:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229578AbjF3CxJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jun 2023 22:53:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34760 "EHLO
+        id S231633AbjF3DV1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jun 2023 23:21:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbjF3CxI (ORCPT
+        with ESMTP id S232036AbjF3DVL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jun 2023 22:53:08 -0400
-Received: from out-50.mta0.migadu.com (out-50.mta0.migadu.com [91.218.175.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 746E330D1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 19:53:06 -0700 (PDT)
-Message-ID: <b588f7a9-7b0f-1b07-dad0-4f9c5fbe27ee@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1688093584;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WNYY2ch+AhQRhfGgtPdbuU80M2llLwBf2dvMDKLxqy0=;
-        b=iJ3NctfE2mlkrm+Blj7qCdegcIr2/jvqwCVJtfNNbhSEPF/HnYkaXPf3CgwPmlGrUn2KE3
-        JDTWXLY1JxHdDJ8BAxJBhlhlJ6B+UMOs7/M/w4Nq4NRXWl4maIlZrP6kQcK6XVc6ca5lGA
-        aZHPkONXc84t4xY7sk6gjD+B+GXoF3I=
-Date:   Fri, 30 Jun 2023 10:52:52 +0800
+        Thu, 29 Jun 2023 23:21:11 -0400
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 626423A91;
+        Thu, 29 Jun 2023 20:21:07 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=22;SR=0;TI=SMTPD_---0VmGYo1U_1688095261;
+Received: from 30.13.161.45(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VmGYo1U_1688095261)
+          by smtp.aliyun-inc.com;
+          Fri, 30 Jun 2023 11:21:02 +0800
+Message-ID: <bc37b040-701d-3b5a-5cf2-370c320affbb@linux.alibaba.com>
+Date:   Fri, 30 Jun 2023 11:20:59 +0800
 MIME-Version: 1.0
-Subject: Re: [fuse-devel] [PATCH v2] fuse: add a new fuse init flag to relax
- restrictions in no cache mode
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.12.0
+Subject: Re: [Linux-cachefs] [PATCH v7 2/2] mm, netfs, fscache: Stop read
+ optimisation when folio removed from pagecache
 Content-Language: en-US
-To:     Bernd Schubert <bernd.schubert@fastmail.fm>,
-        fuse-devel@lists.sourceforge.net
-Cc:     linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>,
-        cgxu519@mykernel.net, miklos@szeredi.hu
-References: <20230629081733.11309-1-hao.xu@linux.dev>
- <1f0bf6c6-eac8-1a13-17b2-48cec5e991e2@fastmail.fm>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <1f0bf6c6-eac8-1a13-17b2-48cec5e991e2@fastmail.fm>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Xiubo Li <xiubli@redhat.com>, David Howells <dhowells@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Shyam Prasad N <nspmangalore@gmail.com>,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, Rohith Surabattula <rohiths.msft@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-afs@lists.infradead.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Steve French <sfrench@samba.org>, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        Ilya Dryomov <idryomov@gmail.com>, linux-ext4@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, ceph-devel@vger.kernel.org
+References: <20230628104852.3391651-1-dhowells@redhat.com>
+ <20230628104852.3391651-3-dhowells@redhat.com>
+ <41e1c831-29de-8494-d925-6e2eb379567f@redhat.com>
+From:   Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <41e1c831-29de-8494-d925-6e2eb379567f@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Bernd,
 
-On 6/30/23 01:13, Bernd Schubert wrote:
+
+On 6/29/23 8:39 AM, Xiubo Li wrote:
 > 
-> 
-> On 6/29/23 10:17, Hao Xu wrote:
->> From: Hao Xu <howeyxu@tencent.com>
+> On 6/28/23 18:48, David Howells wrote:
+>> Fscache has an optimisation by which reads from the cache are skipped
+>> until
+>> we know that (a) there's data there to be read and (b) that data isn't
+>> entirely covered by pages resident in the netfs pagecache.  This is done
+>> with two flags manipulated by fscache_note_page_release():
 >>
->> FOPEN_DIRECT_IO is usually set by fuse daemon to indicate need of strong
->> coherency, e.g. network filesystems. Thus shared mmap is disabled since
->> it leverages page cache and may write to it, which may cause
->> inconsistence. But FOPEN_DIRECT_IO can be used not for coherency but to
->> reduce memory footprint as well, e.g. reduce guest memory usage with
->> virtiofs. Therefore, add a new fuse init flag FUSE_DIRECT_IO_RELAX to
->> relax restrictions in that mode, currently, it allows shared mmap.
->> One thing to note is to make sure it doesn't break coherency in your
->> use case.
+>>     if (...
+>>         test_bit(FSCACHE_COOKIE_HAVE_DATA, &cookie->flags) &&
+>>         test_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags))
+>>         clear_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags);
 >>
->> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+>> where the NO_DATA_TO_READ flag causes cachefiles_prepare_read() to
+>> indicate
+>> that netfslib should download from the server or clear the page instead.
+>>
+>> The fscache_note_page_release() function is intended to be called from
+>> ->releasepage() - but that only gets called if PG_private or PG_private_2
+>> is set - and currently the former is at the discretion of the network
+>> filesystem and the latter is only set whilst a page is being written
+>> to the
+>> cache, so sometimes we miss clearing the optimisation.
+>>
+>> Fix this by following Willy's suggestion[1] and adding an address_space
+>> flag, AS_RELEASE_ALWAYS, that causes filemap_release_folio() to always
+>> call
+>> ->release_folio() if it's set, even if PG_private or PG_private_2 aren't
+>> set.
+>>
+>> Note that this would require folio_test_private() and
+>> page_has_private() to
+>> become more complicated.  To avoid that, in the places[*] where these are
+>> used to conditionalise calls to filemap_release_folio() and
+>> try_to_release_page(), the tests are removed the those functions just
+>> jumped to unconditionally and the test is performed there.
+>>
+>> [*] There are some exceptions in vmscan.c where the check guards more
+>> than
+>> just a call to the releaser.  I've added a function,
+>> folio_needs_release()
+>> to wrap all the checks for that.
+>>
+>> AS_RELEASE_ALWAYS should be set if a non-NULL cookie is obtained from
+>> fscache and cleared in ->evict_inode() before
+>> truncate_inode_pages_final()
+>> is called.
+>>
+>> Additionally, the FSCACHE_COOKIE_NO_DATA_TO_READ flag needs to be cleared
+>> and the optimisation cancelled if a cachefiles object already contains
+>> data
+>> when we open it.
+>>
+>> Fixes: 1f67e6d0b188 ("fscache: Provide a function to note the release
+>> of a page")
+>> Fixes: 047487c947e8 ("cachefiles: Implement the I/O routines")
+>> Reported-by: Rohith Surabattula <rohiths.msft@gmail.com>
+>> Suggested-by: Matthew Wilcox <willy@infradead.org>
+>> Signed-off-by: David Howells <dhowells@redhat.com>
+>> cc: Matthew Wilcox <willy@infradead.org>
+>> cc: Linus Torvalds <torvalds@linux-foundation.org>
+>> cc: Steve French <sfrench@samba.org>
+>> cc: Shyam Prasad N <nspmangalore@gmail.com>
+>> cc: Rohith Surabattula <rohiths.msft@gmail.com>
+>> cc: Dave Wysochanski <dwysocha@redhat.com>
+>> cc: Dominique Martinet <asmadeus@codewreck.org>
+>> cc: Ilya Dryomov <idryomov@gmail.com>
+>> cc: linux-cachefs@redhat.com
+>> cc: linux-cifs@vger.kernel.org
+>> cc: linux-afs@lists.infradead.org
+>> cc: v9fs-developer@lists.sourceforge.net
+>> cc: ceph-devel@vger.kernel.org
+>> cc: linux-nfs@vger.kernel.org
+>> cc: linux-fsdevel@vger.kernel.org
+>> cc: linux-mm@kvack.org
 >> ---
 >>
->> v1 -> v2:
->>      make the new flag a fuse init one rather than a open flag since it's
->>      not common that different files in a filesystem has different
->>      strategy of shared mmap.
+>> Notes:
+>>      ver #7)
+>>       - Make NFS set AS_RELEASE_ALWAYS.
+>>           ver #4)
+>>       - Split out merging of
+>> folio_has_private()/filemap_release_folio() call
+>>         pairs into a preceding patch.
+>>       - Don't need to clear AS_RELEASE_ALWAYS in ->evict_inode().
+>>           ver #3)
+>>       - Fixed mapping_clear_release_always() to use clear_bit() not
+>> set_bit().
+>>       - Moved a '&&' to the correct line.
+>>           ver #2)
+>>       - Rewrote entirely according to Willy's suggestion[1].
 >>
->>   fs/fuse/file.c            | 8 ++++++--
->>   fs/fuse/fuse_i.h          | 3 +++
->>   fs/fuse/inode.c           | 5 ++++-
->>   include/uapi/linux/fuse.h | 1 +
->>   4 files changed, 14 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->> index bc4115288eec..871b66b54322 100644
->> --- a/fs/fuse/file.c
->> +++ b/fs/fuse/file.c
->> @@ -2478,14 +2478,18 @@ static const struct vm_operations_struct 
->> fuse_file_vm_ops = {
->>   static int fuse_file_mmap(struct file *file, struct vm_area_struct 
->> *vma)
->>   {
->>       struct fuse_file *ff = file->private_data;
->> +    struct fuse_conn *fc = ff->fm->fc;
->>       /* DAX mmap is superior to direct_io mmap */
->>       if (FUSE_IS_DAX(file_inode(file)))
->>           return fuse_dax_mmap(file, vma);
->>       if (ff->open_flags & FOPEN_DIRECT_IO) {
->> -        /* Can't provide the coherency needed for MAP_SHARED */
->> -        if (vma->vm_flags & VM_MAYSHARE)
->> +        /* Can't provide the coherency needed for MAP_SHARED
->> +         * if FUSE_DIRECT_IO_RELAX isn't set.
->> +         */
->> +        if (!(ff->open_flags & fc->direct_io_relax) &&
->> +            vma->vm_flags & VM_MAYSHARE)
->>               return -ENODEV;
+>>   fs/9p/cache.c           |  2 ++
+>>   fs/afs/internal.h       |  2 ++
+>>   fs/cachefiles/namei.c   |  2 ++
+>>   fs/ceph/cache.c         |  2 ++
+>>   fs/nfs/fscache.c        |  3 +++
+>>   fs/smb/client/fscache.c |  2 ++
+>>   include/linux/pagemap.h | 16 ++++++++++++++++
+>>   mm/internal.h           |  5 ++++-
+>>   8 files changed, 33 insertions(+), 1 deletion(-)
 > 
-> I'm confused here, the idea was that open_flags do not need additional 
-> flags? Why is this not just
+> Just one question. Shouldn't do this in 'fs/erofs/fscache.c' too ?
 > 
 
-sorry for this, seems I sent a WIP version by accident.., I'll fix it soon.
+Currently the read optimization is not used in fscache ondemand mode
+(used by erofs), though it may not be intended...
 
+cachefiles_ondemand_copen
+  if (size)
+    clear_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags);
+
+The read optimization is disabled as long as the backing file size is
+not 0 (which is the most case).  And thus currently erofs doesn't need
+to clear FSCACHE_COOKIE_NO_DATA_TO_READ in .release_folio().
+
+-- 
 Thanks,
-Hao
-
+Jingbo
