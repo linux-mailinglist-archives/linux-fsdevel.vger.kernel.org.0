@@ -2,65 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD546743E7F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 17:18:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C04C1743E92
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 17:20:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232410AbjF3PS1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jun 2023 11:18:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34744 "EHLO
+        id S232790AbjF3PUA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jun 2023 11:20:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232693AbjF3PSH (ORCPT
+        with ESMTP id S232862AbjF3PT0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jun 2023 11:18:07 -0400
+        Fri, 30 Jun 2023 11:19:26 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 806AA4481;
-        Fri, 30 Jun 2023 08:17:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ABFC2703;
+        Fri, 30 Jun 2023 08:19:20 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0B2F861782;
-        Fri, 30 Jun 2023 15:16:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C26AC433C0;
-        Fri, 30 Jun 2023 15:16:58 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 18F7361782;
+        Fri, 30 Jun 2023 15:19:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79C11C433C0;
+        Fri, 30 Jun 2023 15:19:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688138218;
-        bh=qe0xHIkPct8RIYm3UcNCeaQ58UYIh6kE56YDl8eC1Og=;
+        s=k20201202; t=1688138359;
+        bh=0OcMf9HI6oDlP5s96FA6hXvlby0mTwGL255F60fmJNY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BxQh7oQzoJhXiPMbjEKynnEptPn9WIEBf9QA+AnsIlsxCOJ+I66FAZvGRSsal+rIf
-         n+CrtWzjeDwcTVuGLgl/3e7025zwoi98yERxVKJXF/8DNM5uhahg82aICpME1036s2
-         EnXPNsHE+dCoM/VwiWLC60S3S5wn5cgume3YqUpd1pICPc04aqIjELd4ItDJJPOfD9
-         H2gyJ4YNwEc5NvE4uvB/feXcFYV5wrGccrEeecEYEPCUYQDfULwqCJ3jPzfqNhoA8H
-         5JhZN9Dwu4WLEdwLHdS9axtXZ8eq438MlGweaCGf+kRzUiF+rViKx/+DF32lp9milg
-         r73bA3lnH+qQw==
-Date:   Fri, 30 Jun 2023 08:16:57 -0700
+        b=Oq6SRXemZv3QPiYrxSGaCswEqBNCx4KmAFohDEmaVSWQhjF6v7shFbQLXFl7y9UUt
+         KhheirUrp06qdtMvnhiWU+Lejx3RY86tVjq03epKOAkw+hkExs3HaLwwk0iAfcRmtD
+         YK4ehi7CKWHgtMOXqOTjhnuQVCD4aUqezAdq1zeSFoq5GFcAlXDD7iG0Jtg+EtRrws
+         E7YYO1HUD1n2hwY4igPS/nBFtuuyzSj7sS70XDJLpJEotBepbevEc2/aABE3sEcqnw
+         W7rFpy30JPR4C7PLt76qUUA4sIcS81Muwb1Srh8zvHWwzdvSzcf82JEW+OrIEttNB7
+         lT/gMrs4D9vdg==
+Date:   Fri, 30 Jun 2023 08:19:19 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Ignat Korchagin <ignat@cloudflare.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Daniel Dao <dqminh@cloudflare.com>,
-        Dave Chinner <david@fromorbit.com>,
-        kernel-team <kernel-team@cloudflare.com>,
-        linux-fsdevel@vger.kernel.org,
-        Chandan Babu R <chandanrlinux@gmail.com>,
-        Leah Rumancik <lrumancik@google.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: Re: Backporting of series xfs/iomap: fix data corruption due to
- stale cached iomap
-Message-ID: <20230630151657.GJ11441@frogsfrogsfrogs>
-References: <CA+wXwBRdcjHW2zxDABdFU3c26mc1u+g6iWG7HrXJRL7Po3Qp0w@mail.gmail.com>
- <ZJ2yeJR5TB4AyQIn@casper.infradead.org>
- <20230629181408.GM11467@frogsfrogsfrogs>
- <CALrw=nFwbp06M7LB_Z0eFVPe29uFFUxAhKQ841GSDMtjP-JdXA@mail.gmail.com>
- <CAOQ4uxiD6a9GmKwagRpUWBPRWCczB52Tsu5m6_igDzTQSLcs0w@mail.gmail.com>
- <CALrw=nHH2u=+utzy8NfP6+fM6kOgtW0hdUHwK9-BWdYq+t-UoA@mail.gmail.com>
- <CAOQ4uxju10zrQhVDA5WS+vTSbuW17vOD6EGBBJUmZg8c95vsrA@mail.gmail.com>
+To:     zenghongling <zenghongling@kylinos.cn>
+Cc:     hch@infradead.org, darrick.wong@oracle.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhongling0719@126.com
+Subject: Re: [PATCH] fs: Optimize unixbench's file copy test
+Message-ID: <20230630151919.GK11441@frogsfrogsfrogs>
+References: <1688117303-8294-1-git-send-email-zenghongling@kylinos.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxju10zrQhVDA5WS+vTSbuW17vOD6EGBBJUmZg8c95vsrA@mail.gmail.com>
+In-Reply-To: <1688117303-8294-1-git-send-email-zenghongling@kylinos.cn>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -71,82 +56,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 30, 2023 at 04:05:36PM +0300, Amir Goldstein wrote:
-> On Fri, Jun 30, 2023 at 3:30 PM Ignat Korchagin <ignat@cloudflare.com> wrote:
-> >
-> > On Fri, Jun 30, 2023 at 11:39 AM Amir Goldstein <amir73il@gmail.com> wrote:
-> > >
-> > > On Thu, Jun 29, 2023 at 10:31 PM Ignat Korchagin <ignat@cloudflare.com> wrote:
-> > > >
-> > > > On Thu, Jun 29, 2023 at 7:14 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> > > > >
-> > > > > [add the xfs lts maintainers]
-> > > > >
-> > > > > On Thu, Jun 29, 2023 at 05:34:00PM +0100, Matthew Wilcox wrote:
-> > > > > > On Thu, Jun 29, 2023 at 05:09:41PM +0100, Daniel Dao wrote:
-> > > > > > > Hi Dave and Derrick,
-> > > > > > >
-> > > > > > > We are tracking down some corruptions on xfs for our rocksdb workload,
-> > > > > > > running on kernel 6.1.25. The corruptions were
-> > > > > > > detected by rocksdb block checksum. The workload seems to share some
-> > > > > > > similarities
-> > > > > > > with the multi-threaded write workload described in
-> > > > > > > https://lore.kernel.org/linux-fsdevel/20221129001632.GX3600936@dread.disaster.area/
-> > > > > > >
-> > > > > > > Can we backport the patch series to stable since it seemed to fix data
-> > > > > > > corruptions ?
-> > > > > >
-> > > > > > For clarity, are you asking for permission or advice about doing this
-> > > > > > yourself, or are you asking somebody else to do the backport for you?
-> > > > >
-> > > > > Nobody's officially committed to backporting and testing patches for
-> > > > > 6.1; are you (Cloudflare) volunteering?
-> > > >
-> > > > Yes, we have applied them on top of 6.1.36, will be gradually
-> > > > releasing to our servers and will report back if we see the issues go
-> > > > away
-> > > >
-> > >
-> > > Getting feedback back from Cloudflare production servers is awesome
-> > > but it's not enough.
-> > >
-> > > The standard for getting xfs LTS backports approved is:
-> > > 1. Test the backports against regressions with several rounds of fstests
-> > >     check -g auto on selected xfs configurations [1]
-> > > 2. Post the backport series to xfs list and get an ACK from upstream
-> > >     xfs maintainers
-> > >
-> > > We have volunteers doing this work for 5.4.y, 5.10.y and 5.15.y.
-> > > We do not yet have a volunteer to do that work for 6.1.y.
-> > >
-> > > The question is whether you (or your team) are volunteering to
-> > > do that work for 6.1.y xfs backports to help share the load?
-> >
-> > We are not a big team and apart from other internal project work our
-> > efforts are focused on fixing this issue in production, because it
-> > affects many teams and workloads. If we confirm that these patches fix
-> > the issue in production, we will definitely consider dedicating some
-> > work to ensure they are officially backported. But if not - we would
-> > be required to search for a fix first before we can commit to any
-> > work.
-> >
-> > So, IOW - can we come back to you a bit later on this after we get the
-> > feedback from production?
-> >
+On Fri, Jun 30, 2023 at 05:28:23PM +0800, zenghongling wrote:
+> The iomap_set_range_uptodate function checks if the file is a private
+> mapping,and if it is, it needs to do something about it.UnixBench's
+> file copy tests are mostly share mapping, such a check would reduce
+> file copy scores, so we added the unlikely macro for optimization.
+> and the score of file copy can be improved after branch optimization.
+> As follows:
 > 
-> Of course.
-> The volunteering question for 6.1.y is independent.
+> ./Run -c 8 -i 3 fstime fsbuffer fsdisk
 > 
-> When you decide that you have a series of backports
-> that proves to fix a real bug in production,
-> a way to test the series will be worked out.
+> Before the optimization
+> System Benchmarks Partial Index              BASELINE       RESULT    INDEX
+> File Copy 1024 bufsize 2000 maxblocks          3960.0     689276.0   1740.6
+> File Copy 256 bufsize 500 maxblocks            1655.0     204133.0   1233.4
+> File Copy 4096 bufsize 8000 maxblocks          5800.0    1526945.0   2632.7
+>                                                                    ========
+> System Benchmarks Index Score (Partial Only)                         1781.3
+> 
+> After the optimization
+> System Benchmarks Partial Index              BASELINE       RESULT    INDEX
+> File Copy 1024 bufsize 2000 maxblocks          3960.0     741524.0   1872.5
+> File Copy 256 bufsize 500 maxblocks            1655.0     208334.0   1258.8
+> File Copy 4096 bufsize 8000 maxblocks          5800.0    1641660.0   2830.4
+>                                                                    ========
+> System Benchmarks Index Score (Partial Only)                         1882.6
 
-/me notes that xfs/558 and xfs/559 (in fstests) are the functional tests
-for these patches that you're backporting; it would be useful to have a
-third party (i.e. not just the reporter and the author) confirm that the
-two fstests pass when real workloads are fixed.
+Kernel version?  And how does this intersect with the ongoing work to
+use large folios throughout iomap?
 
 --D
 
-> Thanks,
-> Amir.
+> Signed-off-by: zenghongling <zenghongling@kylinos.cn>
+> ---
+>  fs/iomap/buffered-io.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 53cd7b2..35a50c2 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -148,7 +148,7 @@ iomap_set_range_uptodate(struct page *page, unsigned off, unsigned len)
+>  	if (PageError(page))
+>  		return;
+>  
+> -	if (page_has_private(page))
+> +	if (unlikely(page_has_private(page)))
+>  		iomap_iop_set_range_uptodate(page, off, len);
+>  	else
+>  		SetPageUptodate(page);
+> -- 
+> 2.1.0
+> 
