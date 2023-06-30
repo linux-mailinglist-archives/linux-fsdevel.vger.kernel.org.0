@@ -2,143 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B52CB743623
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 09:46:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D1F17436E8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 10:21:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232403AbjF3Hq3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jun 2023 03:46:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55410 "EHLO
+        id S232449AbjF3IV3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jun 2023 04:21:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232357AbjF3HqZ (ORCPT
+        with ESMTP id S230158AbjF3IV1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jun 2023 03:46:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42EE619B5;
-        Fri, 30 Jun 2023 00:46:17 -0700 (PDT)
+        Fri, 30 Jun 2023 04:21:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AF90DF;
+        Fri, 30 Jun 2023 01:21:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C55E0616EC;
-        Fri, 30 Jun 2023 07:46:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD814C433C8;
-        Fri, 30 Jun 2023 07:46:15 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 09D4B616FD;
+        Fri, 30 Jun 2023 08:21:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAE79C433C0;
+        Fri, 30 Jun 2023 08:21:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688111176;
-        bh=FEyFCEh9AVWYVR5/3aJ4Wq2M5vu3WP7EgYsC+YbQcXU=;
+        s=k20201202; t=1688113285;
+        bh=3WdNh6Grs+kqer6cZpf6hfvo7NtN46ck2Nwqp04SL3M=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jCPcaVZGkOE/wdNx6lzkn6tm0El2fEy6PYCEevjGu10ZsFRHzHJIovamvvMhvarN3
-         dv6DXzwZsM9uCZ2/GuPATK9gFi3HWzOJUelhZHTHQ8+Z+3oMJUwElLTkaJqGfPzxcW
-         6fvQDdIEcZtfLGz8R/j1OSkPb5WsYABSiiggqMs9rVIMtiovXuHO5DgWWQl5ugx+ey
-         dHus8JVOF8QMBRnF/UbmYu6zS7ln3hk8MajwN9rnazSba/PhUILtr//l0u/gvph2Bp
-         CGEk4FKGFsziIaregYiPbwu1BXpv7jMp+ixpzIe+TUNWDIwz/7IkAy0a8XMJq1O6tm
-         +knllFsylLZdQ==
-Date:   Fri, 30 Jun 2023 00:46:14 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     syzbot <syzbot+94a8c779c6b238870393@syzkaller.appspotmail.com>,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [syzbot] [ext4?] general protection fault in
- ext4_put_io_end_defer
-Message-ID: <20230630074614.GC36542@sol.localdomain>
-References: <0000000000002a0b1305feeae5db@google.com>
- <20230629035714.GJ8954@mit.edu>
- <20230630074111.GB36542@sol.localdomain>
+        b=uoFiYN+b8NOjzxxfmch5nNhJF0KcD482ibkYZnlh79q3qu28yfegUQ3hOcg6T4uY+
+         4CcRTAQBTWKEnK7VtF00v0bU7BCcACcMQ8uODrS8q31CnV4RJ/N3y16ntO4FxuGxCH
+         SO+GSyJGX9yDa8Bl0snO11T6WU9sCoGIGfTrvGnlO8RJvsyUFbclbz8XJQwO7uRyVx
+         XX3GXlftgzXajYYDZ1Nt3gbfGQQwAMxnsiuZGjxXCpmlUB5BEAiSszbV6Qz/OZcx2c
+         lfpTZs23WKOdWd1igtiVjOulB7DtfhOfVvIIUuIEtzoq+ZS12OST7SrOhEX05LYffR
+         ICocUIUIwirXA==
+Date:   Fri, 30 Jun 2023 10:21:17 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     Tejun Heo <tj@kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
+        peterz@infradead.org, lujialin4@huawei.com,
+        lizefan.x@bytedance.com, hannes@cmpxchg.org, mingo@redhat.com,
+        ebiggers@kernel.org, oleg@redhat.com, akpm@linux-foundation.org,
+        viro@zeniv.linux.org.uk, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH 1/2] kernfs: add kernfs_ops.free operation to free
+ resources tied to the file
+Message-ID: <20230630-fegefeuer-urheber-0a25a219520d@brauner>
+References: <20230628-faden-qualvoll-6c33b570f54c@brauner>
+ <CAJuCfpF=DjwpWuhugJkVzet2diLkf8eagqxjR8iad39odKdeYQ@mail.gmail.com>
+ <20230628-spotten-anzweifeln-e494d16de48a@brauner>
+ <ZJx1nkqbQRVCaKgF@slm.duckdns.org>
+ <CAJuCfpEFo6WowJ_4XPXH+=D4acFvFqEa4Fuc=+qF8=Jkhn=3pA@mail.gmail.com>
+ <2023062845-stabilize-boogieman-1925@gregkh>
+ <CAJuCfpFqYytC+5GY9X+jhxiRvhAyyNd27o0=Nbmt_Wc5LFL1Sw@mail.gmail.com>
+ <ZJyZWtK4nihRkTME@slm.duckdns.org>
+ <CAJuCfpFKjhmti8k6OHoDHAu6dPvqP0jn8FFdSDPqmRfH97bkiQ@mail.gmail.com>
+ <CAJuCfpH3JcwADEYPBhzUcunj0dcgYNRo+0sODocdhbuXQsbsUQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230630074111.GB36542@sol.localdomain>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpH3JcwADEYPBhzUcunj0dcgYNRo+0sODocdhbuXQsbsUQ@mail.gmail.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 30, 2023 at 12:41:11AM -0700, Eric Biggers wrote:
-> On Wed, Jun 28, 2023 at 11:57:14PM -0400, Theodore Ts'o wrote:
-> > #syz set subsystems: crypto
-> > 
-> > On Sat, Jun 24, 2023 at 07:21:44PM -0700, syzbot wrote:
-> > > Hello,
-> > > 
-> > > syzbot found the following issue on:
-> > > 
-> > > HEAD commit:    f7efed9f38f8 Add linux-next specific files for 20230616
-> > > git tree:       linux-next
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=152e89f3280000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=60b1a32485a77c16
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=94a8c779c6b238870393
-> > > compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116af1eb280000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e22d2f280000
-> > 
-> > If you look at the reproducer, it's creating an AF_ALG (algorithm)
-> > socket and messing with it.  This is easier to see in the syz
-> > reproducer, but you can see exactly what it's doing in the C
-> > reproducer above:
-> > 
-> > # https://syzkaller.appspot.com/bug?id=4ee7656695de92cbd5820111379ae0698af0f475
-> > # See https://goo.gl/kgGztJ for information about syzkaller reproducers.
-> > #{"threaded":true,"repeat":true,"procs":1,"slowdown":1,"sandbox":"none","sandbox_arg":0,"netdev":true,"binfmt_misc":true,"close_fds":true,"vhci":true,"ieee802154":true,"sysctl":true,"swap":true,"tmpdir":true}
-> > r0 = socket$alg(0x26, 0x5, 0x0)
-> > bind$alg(r0, &(0x7f0000000280)={0x26, 'hash\x00', 0x0, 0x0, 'sha3-256-generic\x00'}, 0x58)
-> > r1 = accept4(r0, 0x0, 0x0, 0x0)
-> > recvmmsg$unix(r1, &(0x7f0000003700)=[{{0x0, 0x700, 0x0}}], 0x600, 0x0, 0x0)
-> > sendmsg$can_bcm(r1, &(0x7f0000000180)={0x0, 0x0, &(0x7f0000000140)={0x0}}, 0x400c800)
-> > 
-> > (0x26 is 38, or AF_ALG)
-> > 
-> > From looking at the stack trace, it looks like this is triggering a
-> > coredump, which presumably is the ext4 write that triggers the GPF in
-> > ext4_put_io_end_defer.  But given that the syz and C reproducer isn't
-> > doing anything ext4 related at all, and it's purely trying to use the
-> > AF_ALG socket to calculate SHA3 in the kernel (and the greek chorus
-> > cries out, "WHY?"[1]), I'm going to send this over to the crypto folks to
-> > investigate.
+On Thu, Jun 29, 2023 at 05:59:07PM -0700, Suren Baghdasaryan wrote:
+> On Wed, Jun 28, 2023 at 2:50 PM Suren Baghdasaryan <surenb@google.com> wrote:
+> >
+> > On Wed, Jun 28, 2023 at 1:34 PM Tejun Heo <tj@kernel.org> wrote:
+> > >
+> > > Hello, Suren.
+> > >
+> > > On Wed, Jun 28, 2023 at 01:12:23PM -0700, Suren Baghdasaryan wrote:
+> > > > AFAIU all other files that handle polling rely on f_op->release()
+> > > > being called after all the users are gone, therefore they can safely
+> > > > free their resources. However kernfs can call ->release() while there
+> > > > are still active users of the file. I can't use that operation for
+> > > > resource cleanup therefore I was suggesting to add a new operation
+> > > > which would be called only after the last fput() and would guarantee
+> > > > no users. Again, I'm not an expert in this, so there might be a better
+> > > > way to handle it. Please advise.
+> > >
+> > > So, w/ kernfs, the right thing to do is making sure that whatever is exposed
+> > > to the kernfs user is terminated on removal - ie. after kernfs_ops->release
+> > > is called, the ops table should be considered dead and there shouldn't be
+> > > anything left to clean up from the kernfs user side. You can add abstraction
+> > > kernfs so that kernfs can terminate the calls coming down from the higher
+> > > layers on its own. That's how every other operation is handled and what
+> > > should happen with the psi polling too.
+> >
+> > I'm not sure I understand. The waitqueue head we are freeing in
+> > ->release() can be accessed asynchronously and does not require any
+> > kernfs_op call. Here is a recap of that race:
+> >
+> >                                                 do_select
+> >                                                       vfs_poll
+> > cgroup_pressure_release
+> >     psi_trigger_destroy
+> >         wake_up_pollfree(&t->event_wait) -> unblocks vfs_poll
+> >         synchronize_rcu()
+> >         kfree(t) -> frees waitqueue head
+> >                                                      poll_freewait() -> UAF
+> >
+> > Note that poll_freewait() is not part of any kernel_op, so I'm not
+> > sure how adding an abstraction kernfs would help, but again, this is
+> > new territory for me and I might be missing something.
+> >
+> > On a different note, I think there might be an easy way to fix this.
+> > What if psi triggers reuse kernfs_open_node->poll waitqueue head?
+> > Since we are overriding the ->poll() method, that waitqueue head is
+> > unused AFAIKT. And best of all, its lifecycle is tied to the file's
+> > lifecycle, so it does not have the issue that trigger waitqueue head
+> > has. In the trigger I could simply store a pointer to that waitqueue
+> > and use it. Then in ->release() freeing trigger would not affect the
+> > waitqueue at all. Does that sound sane?
 > 
-> Just a couple weeks ago, commit c662b043cdca ("crypto: af_alg/hash: Support
-> MSG_SPLICE_PAGES") had many syzbot reports against it.  This particular report
-> is against next-20230616 which didn't include the fix commit b6d972f68983
-> ("crypto: af_alg/hash: Fix recvmsg() after sendmsg(MSG_MORE)").  So there's a
-> high chance this report is no longer valid.  I'll go ahead and invalidate it:
-> 
-> #syz invalid
-> 
-> > 
-> > Cheers,
-> > 
-> > 					- Ted
-> > 
-> > [1] TIL that AF_ALG exists.  Inquiring minds want to know:
-> >    * Why do we expose the AF_ALG userspace interface?
-> >    * Who uses it?
-> >    * Why do they use it?
-> >    * Is there a CONFIG option to disable it in the name of decreasing
-> >      the attack surface of the kernel?
-> >    * If not, should we add one?  :-)
-> 
-> AF_ALG has existed since 2010.  My understanding that its original purpose was
-> to expose hardware crypto accelerators to userspace.  Unfortunately, support for
-> exposing *any* crypto algorithm was included as well, which IMO was a mistake.
-> 
-> There are quite a few different userspace programs that use AF_ALG purely to get
-> at the CPU-based algorithm implementations, without any sort of intention to use
-> hardware crypto accelerator.  Probably because it seemed "easy".  Or "better"
-> because everything in the kernel is better, right?
-> 
-> It's controlled by the CONFIG_CRYPTO_USER_API_* options, with the hash support
-> in particular controlled by CONFIG_CRYPTO_USER_API_HASH.  Though good luck
-> disabling it on most systems, as systemd depends on it...
-> 
+> I think this approach is much cleaner and I'm guessing that's in line
+> with what Tejun was describing (maybe it's exactly what he was telling
+> me but it took time for me to get it). Posted the patch implementing
+> this approach here:
+> https://lore.kernel.org/all/20230630005612.1014540-1-surenb@google.com/
 
-Actually it turns out systemd has finally seen the light:
-https://github.com/systemd/systemd/commit/2c3794f4228162c9bfd9e10886590d9f5b1920d7
+I'm sure that how things work today in kernfs are there for a reason.A
 
-- Eric
+What I'm mostly reacting to is that there's a kernfs_ops->release()
+method which mirrors f_op->release() but can be called when there are
+still users which is counterintuitive for release semantics. And that
+ultimately caused this UAF issue which was rather subtle given how long
+it took to track down the root cause.
+
+A rmdir() isn't triggering a f_op->release() if there are still file
+references but it's apparently triggering a kernfs_ops->release(). It
+feels like this should at least be documented in struct kernfs_ops...
