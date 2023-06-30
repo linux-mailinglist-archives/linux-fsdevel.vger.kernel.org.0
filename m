@@ -2,143 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D1F17436E8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 10:21:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1745074379E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 10:40:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232449AbjF3IV3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jun 2023 04:21:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35852 "EHLO
+        id S232680AbjF3IkU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jun 2023 04:40:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230158AbjF3IV1 (ORCPT
+        with ESMTP id S232697AbjF3Ij7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jun 2023 04:21:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AF90DF;
-        Fri, 30 Jun 2023 01:21:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 09D4B616FD;
-        Fri, 30 Jun 2023 08:21:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAE79C433C0;
-        Fri, 30 Jun 2023 08:21:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688113285;
-        bh=3WdNh6Grs+kqer6cZpf6hfvo7NtN46ck2Nwqp04SL3M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uoFiYN+b8NOjzxxfmch5nNhJF0KcD482ibkYZnlh79q3qu28yfegUQ3hOcg6T4uY+
-         4CcRTAQBTWKEnK7VtF00v0bU7BCcACcMQ8uODrS8q31CnV4RJ/N3y16ntO4FxuGxCH
-         SO+GSyJGX9yDa8Bl0snO11T6WU9sCoGIGfTrvGnlO8RJvsyUFbclbz8XJQwO7uRyVx
-         XX3GXlftgzXajYYDZ1Nt3gbfGQQwAMxnsiuZGjxXCpmlUB5BEAiSszbV6Qz/OZcx2c
-         lfpTZs23WKOdWd1igtiVjOulB7DtfhOfVvIIUuIEtzoq+ZS12OST7SrOhEX05LYffR
-         ICocUIUIwirXA==
-Date:   Fri, 30 Jun 2023 10:21:17 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     Tejun Heo <tj@kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
-        peterz@infradead.org, lujialin4@huawei.com,
-        lizefan.x@bytedance.com, hannes@cmpxchg.org, mingo@redhat.com,
-        ebiggers@kernel.org, oleg@redhat.com, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 1/2] kernfs: add kernfs_ops.free operation to free
- resources tied to the file
-Message-ID: <20230630-fegefeuer-urheber-0a25a219520d@brauner>
-References: <20230628-faden-qualvoll-6c33b570f54c@brauner>
- <CAJuCfpF=DjwpWuhugJkVzet2diLkf8eagqxjR8iad39odKdeYQ@mail.gmail.com>
- <20230628-spotten-anzweifeln-e494d16de48a@brauner>
- <ZJx1nkqbQRVCaKgF@slm.duckdns.org>
- <CAJuCfpEFo6WowJ_4XPXH+=D4acFvFqEa4Fuc=+qF8=Jkhn=3pA@mail.gmail.com>
- <2023062845-stabilize-boogieman-1925@gregkh>
- <CAJuCfpFqYytC+5GY9X+jhxiRvhAyyNd27o0=Nbmt_Wc5LFL1Sw@mail.gmail.com>
- <ZJyZWtK4nihRkTME@slm.duckdns.org>
- <CAJuCfpFKjhmti8k6OHoDHAu6dPvqP0jn8FFdSDPqmRfH97bkiQ@mail.gmail.com>
- <CAJuCfpH3JcwADEYPBhzUcunj0dcgYNRo+0sODocdhbuXQsbsUQ@mail.gmail.com>
+        Fri, 30 Jun 2023 04:39:59 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE901BDB;
+        Fri, 30 Jun 2023 01:39:58 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f8735ac3e3so2548692e87.2;
+        Fri, 30 Jun 2023 01:39:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688114397; x=1690706397;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gj8sD4PQmFmIt0sWpLcMRcCBS/cUVC91KAMlJbfG4Sw=;
+        b=IF+x2Un0ialJwvRc2NJZ87xNlukX7lDwsStdmTu+xNU+6CvSPn0CyHPHZJUwE4jAL1
+         KFbaE2oHBh9eaBZShydJb2DBNgqHHSYbHVTPLGTcyeuQz1YkA7lv5i2L27Dby6ZKDMF6
+         0HeYvL8jCIS0qYZSeo0DFdF74NSEzx1HYXBPDnV2utmYtNfkvyHh5lkqD/wEsp/YnoOA
+         wPfodenPGnlFf0dX/bXaV49haiZfa/U+4OsfuMmsUJsjqT5UbuQlB+eMMYrDleHgHvao
+         WMgvQsI5461VZwAmIIn2HqNoUNc7Sw1ynA0j9V4LE8bBfHIDX3ZMhTJF6F9kmEPjcl2W
+         maDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688114397; x=1690706397;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Gj8sD4PQmFmIt0sWpLcMRcCBS/cUVC91KAMlJbfG4Sw=;
+        b=LZCvRfgf8JrCuGyM7D+aeq5uggCCtKeBKKLGDoO59+XXO+19hZJ0I9Oq4ZPSFA15Oh
+         aUU555kNHIcUNGNNjXZZv5PxmlmDR7w7jti/AR8gBajP2bMG8gEmD98GGd0d6feLUGqe
+         x9nSb4Lrwsq/6rZXMwHdIuNubKrPuwJRztuLq0nY7ZyomT1wK31F7QPy8mi1bjIZ6UaR
+         KM9hj54S2dbPvDsuVeKj5H3aDju9Q/uINtoMxlXRUXQxEtE/mDW9FIc5qzdH4023/0Cp
+         Zzm1XxTyleaVLD16kQf8jVSUu9eO+YaWjlqjFIRcaf1Gfg4k3272+Sngb3TbgA9pULgM
+         FiMA==
+X-Gm-Message-State: ABy/qLas7zRh+impY47bN92reHSnf/SUj/jglwQiWDhA8+5rYb6ImDAv
+        udLmg3h6jZqnBTM9mub5KQE=
+X-Google-Smtp-Source: APBJJlGdd1jko5UZbV19KyqK5ZPkUF/xVq2+MvZOMbV5sekvFNXQJdzxBE4YinCaMesxPmIoqidSGg==
+X-Received: by 2002:ac2:4ec5:0:b0:4fb:7de4:c837 with SMTP id p5-20020ac24ec5000000b004fb7de4c837mr1650272lfr.68.1688114396551;
+        Fri, 30 Jun 2023 01:39:56 -0700 (PDT)
+Received: from lano-work.. ([80.120.136.76])
+        by smtp.gmail.com with ESMTPSA id 14-20020a05600c020e00b003fba92fad35sm6032789wmi.26.2023.06.30.01.39.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Jun 2023 01:39:56 -0700 (PDT)
+From:   Norbert Lange <nolange79@gmail.com>
+X-Google-Original-From: Norbert Lange <norbert.lange@andritz.com>
+To:     Laurent Vivier <laurent@vivier.eu>, linux-kernel@vger.kernel.org
+Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org, jan.kiszka@siemens.com,
+        jannh@google.com, avagin@gmail.com, dima@arista.com,
+        James.Bottomley@HansenPartnership.com, christian.brauner@ubuntu.com
+Subject: Re: [PATCH v8 1/1] ns: add binfmt_misc to the user namespace
+Date:   Fri, 30 Jun 2023 10:38:52 +0200
+Message-Id: <20230630083852.3988-1-norbert.lange@andritz.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <8eb5498d-89f6-e39e-d757-404cc3cfaa5c@vivier.eu>
+References: <8eb5498d-89f6-e39e-d757-404cc3cfaa5c@vivier.eu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpH3JcwADEYPBhzUcunj0dcgYNRo+0sODocdhbuXQsbsUQ@mail.gmail.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 29, 2023 at 05:59:07PM -0700, Suren Baghdasaryan wrote:
-> On Wed, Jun 28, 2023 at 2:50 PM Suren Baghdasaryan <surenb@google.com> wrote:
-> >
-> > On Wed, Jun 28, 2023 at 1:34 PM Tejun Heo <tj@kernel.org> wrote:
-> > >
-> > > Hello, Suren.
-> > >
-> > > On Wed, Jun 28, 2023 at 01:12:23PM -0700, Suren Baghdasaryan wrote:
-> > > > AFAIU all other files that handle polling rely on f_op->release()
-> > > > being called after all the users are gone, therefore they can safely
-> > > > free their resources. However kernfs can call ->release() while there
-> > > > are still active users of the file. I can't use that operation for
-> > > > resource cleanup therefore I was suggesting to add a new operation
-> > > > which would be called only after the last fput() and would guarantee
-> > > > no users. Again, I'm not an expert in this, so there might be a better
-> > > > way to handle it. Please advise.
-> > >
-> > > So, w/ kernfs, the right thing to do is making sure that whatever is exposed
-> > > to the kernfs user is terminated on removal - ie. after kernfs_ops->release
-> > > is called, the ops table should be considered dead and there shouldn't be
-> > > anything left to clean up from the kernfs user side. You can add abstraction
-> > > kernfs so that kernfs can terminate the calls coming down from the higher
-> > > layers on its own. That's how every other operation is handled and what
-> > > should happen with the psi polling too.
-> >
-> > I'm not sure I understand. The waitqueue head we are freeing in
-> > ->release() can be accessed asynchronously and does not require any
-> > kernfs_op call. Here is a recap of that race:
-> >
-> >                                                 do_select
-> >                                                       vfs_poll
-> > cgroup_pressure_release
-> >     psi_trigger_destroy
-> >         wake_up_pollfree(&t->event_wait) -> unblocks vfs_poll
-> >         synchronize_rcu()
-> >         kfree(t) -> frees waitqueue head
-> >                                                      poll_freewait() -> UAF
-> >
-> > Note that poll_freewait() is not part of any kernel_op, so I'm not
-> > sure how adding an abstraction kernfs would help, but again, this is
-> > new territory for me and I might be missing something.
-> >
-> > On a different note, I think there might be an easy way to fix this.
-> > What if psi triggers reuse kernfs_open_node->poll waitqueue head?
-> > Since we are overriding the ->poll() method, that waitqueue head is
-> > unused AFAIKT. And best of all, its lifecycle is tied to the file's
-> > lifecycle, so it does not have the issue that trigger waitqueue head
-> > has. In the trigger I could simply store a pointer to that waitqueue
-> > and use it. Then in ->release() freeing trigger would not affect the
-> > waitqueue at all. Does that sound sane?
-> 
-> I think this approach is much cleaner and I'm guessing that's in line
-> with what Tejun was describing (maybe it's exactly what he was telling
-> me but it took time for me to get it). Posted the patch implementing
-> this approach here:
-> https://lore.kernel.org/all/20230630005612.1014540-1-surenb@google.com/
+Any news on this? What remains to be done, who needs to be harrassed?
 
-I'm sure that how things work today in kernfs are there for a reason.A
-
-What I'm mostly reacting to is that there's a kernfs_ops->release()
-method which mirrors f_op->release() but can be called when there are
-still users which is counterintuitive for release semantics. And that
-ultimately caused this UAF issue which was rather subtle given how long
-it took to track down the root cause.
-
-A rmdir() isn't triggering a f_op->release() if there are still file
-references but it's apparently triggering a kernfs_ops->release(). It
-feels like this should at least be documented in struct kernfs_ops...
+Regards, Norbert
