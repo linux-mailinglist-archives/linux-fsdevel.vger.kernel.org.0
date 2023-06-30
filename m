@@ -2,168 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ECCA3743F04
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 17:36:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EDBA743F0E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 17:39:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232813AbjF3Pga (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jun 2023 11:36:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50360 "EHLO
+        id S232890AbjF3Pjj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jun 2023 11:39:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232984AbjF3PgN (ORCPT
+        with ESMTP id S232568AbjF3Pjg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jun 2023 11:36:13 -0400
-Received: from mail-pl1-f206.google.com (mail-pl1-f206.google.com [209.85.214.206])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C1C644B5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jun 2023 08:35:59 -0700 (PDT)
-Received: by mail-pl1-f206.google.com with SMTP id d9443c01a7336-1b7f2239a04so19360655ad.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jun 2023 08:35:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688139359; x=1690731359;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        Fri, 30 Jun 2023 11:39:36 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7903E2D78
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jun 2023 08:39:32 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id ca18e2360f4ac-7748ca56133so24281539f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jun 2023 08:39:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1688139572; x=1690731572;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=dyyxruTMgopIXxdq7yS3dZbyVMmnSUAsRW7YyXZLY08=;
-        b=OgaucRpFYarQf7jIC+o2LMfn4obHjhU2QDWCPlhDAjAeLImTaWHuvAH6KhpmKDrgP0
-         Lt7H+Q92qvyxSAJ64FAl3JijwWLpeIK2LZRUgq546P+ZywedX9nmM1K5itQmgCenGi6+
-         2YTWfcUoE6jCqjqZ3h4xW2zU8uy2n+t7rLxlC0IajrtZjO+4c23YKcFoDWxiFfBOAbTP
-         eEC2x1WQdJWBrXybitqPsUXHmvjz5tzcmDI5H8sR8zYWPJcdOwjY0MPFZpsvDcWtWk4u
-         KvQXwMYKWa9dFH0OZ8vo96V+8E5eIHraNFqL8JJxwvVKct84SZOPirXdF8xy2nQ2Jjux
-         S92Q==
-X-Gm-Message-State: ABy/qLaFkSKF6XDwiqnygSor+PPAw4Vavewjxq4QnD5LutaUqBBjZdZH
-        R8oCkU98PpVK5CmGicHSMFT9ht3xxWpDxmqVB3FzecGzLJ1i
-X-Google-Smtp-Source: APBJJlF3ebJXLQIKZoe1XjMHV+bDnSpB2G7tCRRVY0FsjVs3HnS8Mcfz1+mB+wK3rEHqq5cM7DZ096OzP8ks0MB2fk8QdFq9R3h+
+        bh=GW4hZL9mt4ivrUPperLWHI1+1eLqsC5B64iKsS7Hy+Q=;
+        b=zaYlwpyqR1r+ylRi1/dLp+c0bQERixaHgbimhfhmJNvExYP2eGOgu8XnPw9vM8Hpjs
+         R/UcmdlbZLrh1XM0pnbfSojW6rollvwv0+PNPtVD8UEK5ob7zqGHxllt9cyX7ATSVFVF
+         RXMBYj155B6MqGnnx1zSj/T5+9HhABeQco03tqlI0QEPXLVNyoLvMc/sOEDIIRLSFN7k
+         I6WIAwX+qTU9JsijQBmlKOHfcbxMihndDF9oXu//eGUGLNhp+dwHH+8GlXY+Q+HHaI3z
+         lc7mPJnjoLPyyjLVPHXIsq+ixQj9M3Ee0ouIuB15+t+PBxK0nJlW30ioMK8NB12pwllH
+         RT8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688139572; x=1690731572;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GW4hZL9mt4ivrUPperLWHI1+1eLqsC5B64iKsS7Hy+Q=;
+        b=CIGNQZr+ZQlDRzBIhlYQxYn8u68QMlEz6Wu5KPwR8eNcnZh96bLs466cL9+zzQMEo2
+         pgzbmbRtm4lszPzoOnaKSaRPeaEwKeEHdqLb5wZMBTy4iQEBga85ThxsMYO6rREyY0qE
+         Nwy1S+x/S7DTtq7Lh291C7mQY8dssj6sYb4jXuSGc+YsCrEBnxdIJ77r2KsEJ7ftyEZ1
+         /4s91qwlyxwDWxXJsBFc0dT6b/rjfbbwITN9jSX48yx/L3faNrdYITvb1pvjda6VdoeY
+         2cjUmTyOFx92lLwmvrQYHYsl4H3IO4/KWobGmATuE3nvzzvqr/Bwhiq0QAGGRJR/03XC
+         PVhw==
+X-Gm-Message-State: ABy/qLYa30q9bF1txIEgaW0E2rIvFbTw/0+uDh1EwM9UrWhxkD3D14XM
+        OJMR4O7wDkSyuQRpzkBCzJOeew==
+X-Google-Smtp-Source: APBJJlGx0U82VVFMbma5VnBcP6dGqi3j+tVO+N0aGevcZzzCTGDk10Waj4U7AeCx8trU4YD9mdXzsQ==
+X-Received: by 2002:a05:6e02:2195:b0:345:ad39:ff3 with SMTP id j21-20020a056e02219500b00345ad390ff3mr3977556ila.3.1688139571782;
+        Fri, 30 Jun 2023 08:39:31 -0700 (PDT)
+Received: from [192.168.1.94] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id c18-20020a92c8d2000000b00345e4c4f53asm633703ilq.40.2023.06.30.08.39.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Jun 2023 08:39:31 -0700 (PDT)
+Message-ID: <36eda01e-502e-b93d-9098-77ed5a16f33c@kernel.dk>
+Date:   Fri, 30 Jun 2023 09:39:30 -0600
 MIME-Version: 1.0
-X-Received: by 2002:a17:903:258b:b0:1b8:550f:9e8 with SMTP id
- jb11-20020a170903258b00b001b8550f09e8mr1723833plb.3.1688139359033; Fri, 30
- Jun 2023 08:35:59 -0700 (PDT)
-Date:   Fri, 30 Jun 2023 08:35:58 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d39fe305ff5a928f@google.com>
-Subject: [syzbot] [selinux?] [reiserfs?] KASAN: wild-memory-access Read in inode_doinit_with_dentry
-From:   syzbot <syzbot+4cdfeccf2cf6f8ab36a4@syzkaller.appspotmail.com>
-To:     bpf@vger.kernel.org, eparis@parisplace.org, gpiccoli@igalia.com,
-        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, reiserfs-devel@vger.kernel.org,
-        selinux@vger.kernel.org, stephen.smalley.work@gmail.com,
-        syzkaller-bugs@googlegroups.com, tony.luck@intel.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [RFC PATCH 03/11] vfs: Use init_kiocb() to initialise new IOCBs
+Content-Language: en-US
+To:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Christoph Hellwig <hch@lst.de>,
+        Christian Brauner <christian@brauner.io>
+References: <20230630152524.661208-1-dhowells@redhat.com>
+ <20230630152524.661208-4-dhowells@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230630152524.661208-4-dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 6/30/23 9:25?AM, David Howells wrote:
+> diff --git a/io_uring/rw.c b/io_uring/rw.c
+> index 1bce2208b65c..1cade1567162 100644
+> --- a/io_uring/rw.c
+> +++ b/io_uring/rw.c
+> @@ -655,12 +655,13 @@ static bool need_complete_io(struct io_kiocb *req)
+>  		S_ISBLK(file_inode(req->file)->i_mode);
+>  }
+>  
+> -static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
+> +static int io_rw_init_file(struct io_kiocb *req, unsigned int io_direction)
+>  {
+>  	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+>  	struct kiocb *kiocb = &rw->kiocb;
+>  	struct io_ring_ctx *ctx = req->ctx;
+>  	struct file *file = req->file;
+> +	fmode_t mode = (io_direction == WRITE) ? FMODE_WRITE : FMODE_READ;
+>  	int ret;
+>  
+>  	if (unlikely(!file || !(file->f_mode & mode)))
 
-syzbot found the following issue on:
+Not ideal to add a branch here, probably better to just pass in both?
 
-HEAD commit:    6995e2de6891 Linux 6.4
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17d58757280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9536c93ce7915e58
-dashboard link: https://syzkaller.appspot.com/bug?extid=4cdfeccf2cf6f8ab36a4
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13b33b57280000
+> @@ -870,7 +871,7 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
+>  		iov_iter_restore(&s->iter, &s->iter_state);
+>  		iovec = NULL;
+>  	}
+> -	ret = io_rw_init_file(req, FMODE_WRITE);
+> +	ret = io_rw_init_file(req, WRITE);
+>  	if (unlikely(ret)) {
+>  		kfree(iovec);
+>  		return ret;
+> @@ -914,7 +915,6 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
+>  		__sb_writers_release(file_inode(req->file)->i_sb,
+>  					SB_FREEZE_WRITE);
+>  	}
+> -	kiocb->ki_flags |= IOCB_WRITE;
+>  
+>  	if (likely(req->file->f_op->write_iter))
+>  		ret2 = call_write_iter(req->file, kiocb, &s->iter);
+> 
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-6995e2de.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/95b0ee5a267d/vmlinux-6995e2de.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0e7c613d4a73/bzImage-6995e2de.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/86bf2b608923/mount_0.gz
+One concern here is that we're using IOCB_WRITE here to tell if
+sb_start_write() has been done or not, and hence whether
+kiocb_end_write() needs to be called. You know set it earlier, which
+means if we get a failure if we need to setup async data, then we know
+have IOCB_WRITE set at that point even though we did not call
+sb_start_write().
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4cdfeccf2cf6f8ab36a4@syzkaller.appspotmail.com
+-- 
+Jens Axboe
 
-==================================================================
-BUG: KASAN: wild-memory-access in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-BUG: KASAN: wild-memory-access in _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
-BUG: KASAN: wild-memory-access in __lock_acquire+0xf3d/0x5f30 kernel/locking/lockdep.c:5058
-Read of size 8 at addr 1fffffff86b9d550 by task syz-executor.2/5155
-
-CPU: 3 PID: 5155 Comm: syz-executor.2 Not tainted 6.4.0-syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
- print_report mm/kasan/report.c:465 [inline]
- kasan_report+0xec/0x130 mm/kasan/report.c:572
- check_region_inline mm/kasan/generic.c:181 [inline]
- kasan_check_range+0x141/0x190 mm/kasan/generic.c:187
- instrument_atomic_read include/linux/instrumented.h:68 [inline]
- _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
- __lock_acquire+0xf3d/0x5f30 kernel/locking/lockdep.c:5058
- lock_acquire kernel/locking/lockdep.c:5705 [inline]
- lock_acquire+0x1b1/0x520 kernel/locking/lockdep.c:5670
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
- spin_lock include/linux/spinlock.h:350 [inline]
- inode_doinit_with_dentry+0x1026/0x12d0 security/selinux/hooks.c:1510
- selinux_d_instantiate+0x27/0x30 security/selinux/hooks.c:6225
- security_d_instantiate+0x54/0xe0 security/security.c:3760
- d_instantiate fs/dcache.c:2034 [inline]
- d_instantiate+0x5e/0xa0 fs/dcache.c:2030
- __debugfs_create_file+0x20f/0x5e0 fs/debugfs/inode.c:445
- debugfs_hw_add+0x28b/0x370 net/mac80211/debugfs.c:670
- ieee80211_register_hw+0x23e3/0x40e0 net/mac80211/main.c:1395
- mac80211_hwsim_new_radio+0x26c1/0x4c10 drivers/net/wireless/virtual/mac80211_hwsim.c:5294
- hwsim_new_radio_nl+0xacf/0x1210 drivers/net/wireless/virtual/mac80211_hwsim.c:5974
- genl_family_rcv_msg_doit.isra.0+0x1e6/0x2d0 net/netlink/genetlink.c:968
- genl_family_rcv_msg net/netlink/genetlink.c:1048 [inline]
- genl_rcv_msg+0x4ff/0x7e0 net/netlink/genetlink.c:1065
- netlink_rcv_skb+0x165/0x440 net/netlink/af_netlink.c:2546
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1076
- netlink_unicast_kernel net/netlink/af_netlink.c:1339 [inline]
- netlink_unicast+0x547/0x7f0 net/netlink/af_netlink.c:1365
- netlink_sendmsg+0x925/0xe30 net/netlink/af_netlink.c:1913
- sock_sendmsg_nosec net/socket.c:724 [inline]
- sock_sendmsg+0xde/0x190 net/socket.c:747
- __sys_sendto+0x23a/0x340 net/socket.c:2144
- __do_sys_sendto net/socket.c:2156 [inline]
- __se_sys_sendto net/socket.c:2152 [inline]
- __x64_sys_sendto+0xe1/0x1b0 net/socket.c:2152
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f717603e2ac
-Code: fa fa ff ff 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28 48 8b 54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 f0 ff ff 77 34 89 ef 48 89 44 24 08 e8 20 fb ff ff 48 8b
-RSP: 002b:00007ffe75814790 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f7176cd4620 RCX: 00007f717603e2ac
-RDX: 0000000000000024 RSI: 00007f7176cd4670 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 00007ffe758147e4 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
-R13: 00007f7176cd4670 R14: 0000000000000003 R15: 0000000000000000
- </TASK>
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
