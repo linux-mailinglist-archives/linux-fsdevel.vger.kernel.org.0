@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1454E743276
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 04:04:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E740A743278
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 04:04:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231899AbjF3CEr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Jun 2023 22:04:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48616 "EHLO
+        id S230525AbjF3CEv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Jun 2023 22:04:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229493AbjF3CEo (ORCPT
+        with ESMTP id S231882AbjF3CEq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Jun 2023 22:04:44 -0400
+        Thu, 29 Jun 2023 22:04:46 -0400
 Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07E501FE7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 19:04:43 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-56938733c13so11684157b3.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 19:04:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CF9A1991
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 19:04:45 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-561eb6c66f6so11566637b3.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Jun 2023 19:04:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1688090682; x=1690682682;
+        d=google.com; s=20221208; t=1688090684; x=1690682684;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=T+U3NPNy+xyAlbM+feS8QAyMObapdpoy5/9PcF9TKLI=;
-        b=rvyDGGahsbSARiQKNJBvs5NaGYjXW8NZzm9dcWursQkpPyYTW87vOp0jaL/v9wFn72
-         bVCnSMsCL0Uww5Cz2gl4BTCbB3YOvEPgid/Pz/LzO8PDWuvfrJ2G8Jiylai9nQSwghqV
-         XTPn7m5a6XLji4dmREhc1FM19R1MCvpV3tbEnuzVLNravKUeqSKCb2E7NDFaKDZgK3oA
-         59VRX6qKLr9O5DBQxMvgWTxqC8FOrrGsqmH7OYYKLdSnJ0MiFxDdJVnxpCvmqod/rmwQ
-         xQnRBu3/xHvFBzDvleXzw2kra/qngRMyB/qMKcD/nmpoEBHDjoyDF9TWDoyXcI8GVjIk
-         1b0w==
+        bh=wxpT0wtXiDyXAkq9m4Ft7pVFAXex2TsyXSa3a6xpvEY=;
+        b=O6qrIABFeVKumQb4z+O4Rwoiry/zCXrDFmQqF+Gf2qqpRo3dr3IuEVNfNulzR2+kK5
+         e2f359XuQFnf5KHHVWh0sdLfRObOSqXo2wiGLj6SYF/QVu5Ag1Xc42AsiOD4EFRVI3D/
+         6WXUEdxIEuyZ0pcXaLJ6wNwP83t6XrfWjBfwoYQvysnINji0qB8vghNiKOp740Ul7Ukr
+         kmeYyHgwQ/HkRJAGRDgQT17Uk6XRL3V+GxjQ5EJ8pKYtf2xZ9C7jcOmmmprH0oLA/TvH
+         VfRZ7vZRznwMdcR48dtpA/zVhSiR/0T69uIXQOd6IX6RY44wnsHcF9ERl0Frpjr5dnO5
+         f7aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688090682; x=1690682682;
+        d=1e100.net; s=20221208; t=1688090684; x=1690682684;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T+U3NPNy+xyAlbM+feS8QAyMObapdpoy5/9PcF9TKLI=;
-        b=gQ0Cb7lrk1zfB9Hx5rxdnSxVepylumoeBfrxwrcvW2F8wrWjz0XD0JMQ7tWMyh72ly
-         2iCkUkhzUbMHLBiiQTrhHxgH9h62Z7jbra5k0yohJSz/uVhY1eYnvuy+P9vlXvbCczVQ
-         KhFPnEOo5ss4OKrrEhQcChfQr3uKgXxjvySw6H50rfFKrl6Q5A2Q+2b2KdWU40ucBElu
-         5URi+nHkdIngN11fHlZ3fDfm5ELjYncxAISZhoCki1qsyNhYQuU0txxrE+HeJdcZ3tj8
-         5fbpQRoJiH+h4I6fdFKojMzNs2CZcVyDn7lmEanwNCvrPvkDqYtEEwklanVlTWpdsV1d
-         uSzg==
-X-Gm-Message-State: ABy/qLbXNvsnM33GCGBI/miMqOPJYuvs0l3ZlSqWxV6ggKJYtx2jcwLH
-        H60El8ulX1XyNTc1nje9vBNyQVu0IeA=
-X-Google-Smtp-Source: APBJJlFHuVnY9FeKGILHpU4FVRKk28e82VnRW+1SQlAaSM9Gd4WVwIdiE5OHAJvPzkmeNDyyPG7JbAA7D7A=
+        bh=wxpT0wtXiDyXAkq9m4Ft7pVFAXex2TsyXSa3a6xpvEY=;
+        b=JrlmYfsl066RGSFt+GD5+O18nj4MV2tU9mNezwkLnnI//JhiP/djovhtM+39NXsiG0
+         H42BRKOSBUU8kAZoS77s32ca+me0qaahx1jqIugnb4ZC5vpZMCe21aVbD3gIDaGBsQ43
+         7CV/icIOojMKZXq/XZwk0SOMrImkjpBwNDYwYorB2GKOmGvbpu/qATf32EyWdN6BZkAV
+         hCqRmOmT+QCOgqNAqlXMCIWZjrr1/NdqSRZN+PM0ssnSXNaV/6V8vf+mDu44Fjxp/jgp
+         0QfUm30HRhsdaSu3rYVodDLU7AiXC+7Tz9MZfpwTqxVWeItEOmGfJi4eIaNCmflZPv4B
+         u2gQ==
+X-Gm-Message-State: ABy/qLbKJ02KMrq1W+qP7SlbgNxcR6XknqxcVYLNA9A3dTpNos/1Unkn
+        oLtB2SfXsndfUe/BCR0lk2U339YjnF8=
+X-Google-Smtp-Source: APBJJlFlO+/FPiatjPAMJcuTJU5ZkETGLKXrSfIwtCQca/pP1cHpPw/0ejIEECjWBi0brJ9r19L8sTxC/BM=
 X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:1f11:a3d0:19a9:16e5])
- (user=surenb job=sendgmr) by 2002:a0d:db8a:0:b0:576:f208:4d91 with SMTP id
- d132-20020a0ddb8a000000b00576f2084d91mr8639ywe.4.1688090682204; Thu, 29 Jun
- 2023 19:04:42 -0700 (PDT)
-Date:   Thu, 29 Jun 2023 19:04:30 -0700
+ (user=surenb job=sendgmr) by 2002:a81:d106:0:b0:576:b85b:7bd1 with SMTP id
+ w6-20020a81d106000000b00576b85b7bd1mr6970ywi.9.1688090684551; Thu, 29 Jun
+ 2023 19:04:44 -0700 (PDT)
+Date:   Thu, 29 Jun 2023 19:04:31 -0700
 In-Reply-To: <20230630020436.1066016-1-surenb@google.com>
 Mime-Version: 1.0
 References: <20230630020436.1066016-1-surenb@google.com>
 X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
-Message-ID: <20230630020436.1066016-2-surenb@google.com>
-Subject: [PATCH v6 1/6] swap: remove remnants of polling from read_swap_cache_async
+Message-ID: <20230630020436.1066016-3-surenb@google.com>
+Subject: [PATCH v6 2/6] mm: add missing VM_FAULT_RESULT_TRACE name for VM_FAULT_COMPLETED
 From:   Suren Baghdasaryan <surenb@google.com>
 To:     akpm@linux-foundation.org
 Cc:     willy@infradead.org, hannes@cmpxchg.org, mhocko@suse.com,
@@ -66,7 +66,7 @@ Cc:     willy@infradead.org, hannes@cmpxchg.org, mhocko@suse.com,
         viro@zeniv.linux.org.uk, brauner@kernel.org,
         pasha.tatashin@soleen.com, surenb@google.com, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com, Christoph Hellwig <hch@lst.de>
+        kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
@@ -78,116 +78,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit [1] introduced IO polling support duding swapin to reduce
-swap read latency for block devices that can be polled. However later
-commit [2] removed polling support. Therefore it seems safe to remove
-do_poll parameter in read_swap_cache_async and always call swap_readpage
-with synchronous=false waiting for IO completion in folio_lock_or_retry.
+VM_FAULT_RESULT_TRACE should contain an element for every vm_fault_reason
+to be used as flag_array inside trace_print_flags_seq(). The element
+for VM_FAULT_COMPLETED is missing, add it.
 
-[1] commit 23955622ff8d ("swap: add block io poll in swapin path")
-[2] commit 9650b453a3d4 ("block: ignore RWF_HIPRI hint for sync dio")
-
-Suggested-by: "Huang, Ying" <ying.huang@intel.com>
 Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Peter Xu <peterx@redhat.com>
 ---
- mm/madvise.c    |  4 ++--
- mm/swap.h       |  1 -
- mm/swap_state.c | 12 +++++-------
- 3 files changed, 7 insertions(+), 10 deletions(-)
+ include/linux/mm_types.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 886f06066622..ac6d92f74f6d 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -218,7 +218,7 @@ static int swapin_walk_pmd_entry(pmd_t *pmd, unsigned long start,
- 		ptep = NULL;
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index de10fc797c8e..39cd34b4dbaa 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -1077,7 +1077,8 @@ enum vm_fault_reason {
+ 	{ VM_FAULT_RETRY,               "RETRY" },	\
+ 	{ VM_FAULT_FALLBACK,            "FALLBACK" },	\
+ 	{ VM_FAULT_DONE_COW,            "DONE_COW" },	\
+-	{ VM_FAULT_NEEDDSYNC,           "NEEDDSYNC" }
++	{ VM_FAULT_NEEDDSYNC,           "NEEDDSYNC" },	\
++	{ VM_FAULT_COMPLETED,           "COMPLETED" }
  
- 		page = read_swap_cache_async(entry, GFP_HIGHUSER_MOVABLE,
--					     vma, addr, false, &splug);
-+					     vma, addr, &splug);
- 		if (page)
- 			put_page(page);
- 	}
-@@ -262,7 +262,7 @@ static void shmem_swapin_range(struct vm_area_struct *vma,
- 		rcu_read_unlock();
- 
- 		page = read_swap_cache_async(entry, mapping_gfp_mask(mapping),
--					     vma, addr, false, &splug);
-+					     vma, addr, &splug);
- 		if (page)
- 			put_page(page);
- 
-diff --git a/mm/swap.h b/mm/swap.h
-index 7c033d793f15..8a3c7a0ace4f 100644
---- a/mm/swap.h
-+++ b/mm/swap.h
-@@ -46,7 +46,6 @@ struct folio *filemap_get_incore_folio(struct address_space *mapping,
- struct page *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 				   struct vm_area_struct *vma,
- 				   unsigned long addr,
--				   bool do_poll,
- 				   struct swap_iocb **plug);
- struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 				     struct vm_area_struct *vma,
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index f8ea7015bad4..5a690c79cc13 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -527,15 +527,14 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
-  */
- struct page *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 				   struct vm_area_struct *vma,
--				   unsigned long addr, bool do_poll,
--				   struct swap_iocb **plug)
-+				   unsigned long addr, struct swap_iocb **plug)
- {
- 	bool page_was_allocated;
- 	struct page *retpage = __read_swap_cache_async(entry, gfp_mask,
- 			vma, addr, &page_was_allocated);
- 
- 	if (page_was_allocated)
--		swap_readpage(retpage, do_poll, plug);
-+		swap_readpage(retpage, false, plug);
- 
- 	return retpage;
- }
-@@ -630,7 +629,7 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
- 	struct swap_info_struct *si = swp_swap_info(entry);
- 	struct blk_plug plug;
- 	struct swap_iocb *splug = NULL;
--	bool do_poll = true, page_allocated;
-+	bool page_allocated;
- 	struct vm_area_struct *vma = vmf->vma;
- 	unsigned long addr = vmf->address;
- 
-@@ -638,7 +637,6 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
- 	if (!mask)
- 		goto skip;
- 
--	do_poll = false;
- 	/* Read a page_cluster sized and aligned cluster around offset. */
- 	start_offset = offset & ~mask;
- 	end_offset = offset | mask;
-@@ -670,7 +668,7 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
- 	lru_add_drain();	/* Push any new pages onto the LRU now */
- skip:
- 	/* The page was likely read above, so no need for plugging here */
--	return read_swap_cache_async(entry, gfp_mask, vma, addr, do_poll, NULL);
-+	return read_swap_cache_async(entry, gfp_mask, vma, addr, NULL);
- }
- 
- int init_swap_address_space(unsigned int type, unsigned long nr_pages)
-@@ -838,7 +836,7 @@ static struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
- skip:
- 	/* The page was likely read above, so no need for plugging here */
- 	return read_swap_cache_async(fentry, gfp_mask, vma, vmf->address,
--				     ra_info.win == 1, NULL);
-+				     NULL);
- }
- 
- /**
+ struct vm_special_mapping {
+ 	const char *name;	/* The name, e.g. "[vdso]". */
 -- 
 2.41.0.255.g8b1d071c50-goog
 
