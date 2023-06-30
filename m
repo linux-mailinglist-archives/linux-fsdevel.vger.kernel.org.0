@@ -2,81 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3615A7437C4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 10:52:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C32967437DC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 11:03:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232614AbjF3Iwn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jun 2023 04:52:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51716 "EHLO
+        id S230233AbjF3JDS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jun 2023 05:03:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232594AbjF3Iwl (ORCPT
+        with ESMTP id S229522AbjF3JDR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jun 2023 04:52:41 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D4AD2100;
-        Fri, 30 Jun 2023 01:52:38 -0700 (PDT)
-Received: from [192.168.100.1] ([82.142.8.70]) by mrelayeu.kundenserver.de
- (mreue108 [213.165.67.119]) with ESMTPSA (Nemesis) id
- 1MkpnF-1pl5BI3GhT-00mGBb; Fri, 30 Jun 2023 10:52:23 +0200
-Message-ID: <e8161622-beb0-d8d5-6501-f0bee76a372d@vivier.eu>
-Date:   Fri, 30 Jun 2023 10:52:22 +0200
+        Fri, 30 Jun 2023 05:03:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 487C710C;
+        Fri, 30 Jun 2023 02:03:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C9FDB61704;
+        Fri, 30 Jun 2023 09:03:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A7A3C433C0;
+        Fri, 30 Jun 2023 09:03:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688115795;
+        bh=BAEdB9AU2UhM5oIx7SMy+OVSnZV+XbGLw1XDnZhbfjQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=G3AWj7zC6tSuEDvbCtpbrqx0/vLrEbpPa5n0slRgbYVhKNidm5e6nZOqZKKpFXkks
+         G1j1Kn072ZE/kqYrA5VDJpnbhN1UXySSKshSHq0Rn8OOnmyCVRZXRfmEstJIFpBuY+
+         qjtvLg6LrI8++QgT0/4rUfkTYPrCyPL/2gLY9NnzBIwzUC9BiPIN0XZDqz43hkYYC/
+         JJKl4VWQcJnrMNbduVKBx8hDvtyE2v0TR9yzaYG1zNFOrgF8I60koQpbSEaRtv8dUr
+         0jcCi3faGa7ZUCBwVwIJ2c5CrXjjwwsw69T+EUICOzuAr9aHsBhqP7b92Abun9tdql
+         +2hYNuJZkulVQ==
+From:   Christian Brauner <brauner@kernel.org>
+To:     reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        butt3rflyh4ck <butterflyhuangxx@gmail.com>
+Subject: Re: [PATCH] reiserfs: Check the return value from __getblk()
+Date:   Fri, 30 Jun 2023 11:03:05 +0200
+Message-Id: <20230630-kerbholz-koiteich-a7395bc04eae@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ZJ32+b+3O8Z6cuRo@casper.infradead.org>
+References: <ZJ32+b+3O8Z6cuRo@casper.infradead.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Content-Language: fr, en-US
-To:     Norbert Lange <nolange79@gmail.com>, linux-kernel@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>
-Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        containers@lists.linux-foundation.org, jan.kiszka@siemens.com,
-        jannh@google.com, avagin@gmail.com, dima@arista.com,
-        James.Bottomley@HansenPartnership.com
-References: <8eb5498d-89f6-e39e-d757-404cc3cfaa5c@vivier.eu>
- <20230630083852.3988-1-norbert.lange@andritz.com>
-From:   Laurent Vivier <laurent@vivier.eu>
-Subject: Re: [PATCH v8 1/1] ns: add binfmt_misc to the user namespace
-In-Reply-To: <20230630083852.3988-1-norbert.lange@andritz.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1274; i=brauner@kernel.org; h=from:subject:message-id; bh=DCdt8XEWQ1l0xHmVcCmWOPuYByMfuib7CuZ1rw+h1tc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTMm2VbO5Oj/XrCxup3B3d05v6fUmTIMPlOg07CxR1TskSc DOef7ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI5NWMDD+/djrUxPhNcN9s/33jtB uiTxXWhcmFn77mXvrmZ+KmtB2MDP/XB8/fVvuryCWU79jM6tjTRUXnul1mXXyyXkTx2SoBeQYA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:e0YVNPL0r25RhOFx81Dnim/E7wqoqapfwh5+mxSQ2y8mxgc/ajI
- IXHGv6dVnjSR2J2yewBHLQxG7IUtrF3fOt7Dqj+G5M9E3UmrtGDiQKD1s6cOAOKzRxAI8GG
- +ro7bLchVrJVP4K/HPxJatjZllsMyom+tTm1pXRJK9Z1bkIhoV9uM7Niv+mXfHEBc1TI8Dd
- H9f69gj+F8sF2VXwqgWiw==
-UI-OutboundReport: notjunk:1;M01:P0:ai4mzwQsgpU=;hJrSFSuBsuOtuwp59dlcpD2YVc4
- etrQ2kmTxCMTW+2edqAn2hvCBkejUrqhiAFlqN6BDEnvtji6gDpqZYPEsX9OwTdi3psh33Jv4
- lxSvI82WgiS/segrEGUzB3ywHVC4BSPyGqdp2WeOFzU2qacl2p0KW5xrdi/7gVhMIO5XYZjGC
- lixQlstRUMr3wsK6xU9GAOWNMSx9I35e0pW5V1Hxq8Fu14zvQjpBGN7czQeibi2TAbPipoU3I
- gGzBTFOFj9RfTkbfe5A4wr63u9/YwBkezg+jVf1vKFgA41w0xhJR2rm/Ik4sBT1KXAhdxsBiV
- caI2x2Lp/sLUIaxEKWF85d3wh4T5F/fBNgW06wAoVG95zbqaOyaMrtdmQb6qpYyrSOEDMC74o
- SOBDeCnQdGIFlCtxdnZtNkKRTkmWEz98fg6NXVEbsvp34ncA3d3iCRmd13K07eiJ2DH8noDKw
- KBsA4A4NO/pO+Lu9QsokOtzhU5hyOUbV519KnE9B85ukmKlrXrQFVQSBtUuX8aiule9VYfqkw
- OA8zQOLZFKf3PmQgiA3VPlAypQ6kIoEd3eo/y+WF5dUgLdzCDRlsytb1pkAJQ3ACUp+6JwZoB
- KTBF09xS4HgohyZwcG2OuKWA/g3rqJHHsEtiM6tthzFoEBfrCiNC6GCXmdhVP6MN2KYKdZ7Hc
- mlPdNnu+jzfH5+X8uhBsP2FAn2ql5Hk7YcRjXpEPcw==
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Norbert,
+From: Matthew Wilcox <willy@infradead.org>
 
-Le 30/06/2023 à 10:38, Norbert Lange a écrit :
-> Any news on this? What remains to be done, who needs to be harrassed?
+On Thu, 29 Jun 2023 23:26:17 +0200, Matthew Wilcox wrote:
+> __getblk() can return a NULL pointer if we run out of memory or if
+> we try to access beyond the end of the device; check it and handle it
+> appropriately.
 > 
-> Regards, Norbert
+> [...]
 
-Christian was working on a new version but there is no update for 1 year.
+Willy's original commit with message id
+<20230605142335.2883264-1-willy@infradead.org> didn't show up on lore.
+Might be because reiserfs-devel isn't a list tracked by lore; not sure.
+So I grabbed this from somewhere else.
 
-[PATCH v2 1/2] binfmt_misc: cleanup on filesystem umount
-https://lkml.org/lkml/2021/12/16/406
-[PATCH v2 2/2] binfmt_misc: enable sandboxed mounts
-https://lkml.org/lkml/2021/12/16/407
+In any case, I picked this up now.
 
-And personally I don't have the time to work on this.
+---
 
-Thanks,
-Laurent
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] reiserfs: Check the return value from __getblk()
+      commit: https://git.kernel.org/vfs/vfs/c/958c5fee0047
