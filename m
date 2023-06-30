@@ -2,83 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C4EA7437E7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 11:08:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 149797437EF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 11:11:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231927AbjF3JHM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jun 2023 05:07:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55880 "EHLO
+        id S232361AbjF3JJG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jun 2023 05:09:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbjF3JHL (ORCPT
+        with ESMTP id S231315AbjF3JJC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jun 2023 05:07:11 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA0B510C;
-        Fri, 30 Jun 2023 02:07:10 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4358461703;
-        Fri, 30 Jun 2023 09:07:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48733C433C8;
-        Fri, 30 Jun 2023 09:07:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688116029;
-        bh=C+tUX9gfoFQb7OopzcGYBk3yW5e3tfFfCz9w7wqq7SU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QCK5SkuSB37sZIRSyEYPpK5nZNM954DnbX6W7/bfjbYpDPFi/XUkr/Kt5CEoYTX3F
-         8D5a8hRdFGNtHHvkpkfJ3IAKegqJ8ikveCqdOE35cT3/vf/s1uwCfO49EGAANusLAS
-         Psg3hyrz7ePW1R+WyjtS10WK1hO0d7OuJMF6QHsOdJ59Fbya7LBIXb9WzH9VrWEfS7
-         C3iqTRBDaciO4EfIw4YKvyRn9LhZPwJQBgWOBBDYoBEPEIi0AcPFn9yk+W4gmmksJD
-         wVjwoy6Xq2bhguKEGF8J1ksGfAlWWU1qA7LTP09EBnNdnaZ0IXvMBBYxvWEvhReAjr
-         VZLAve/esK79Q==
-Date:   Fri, 30 Jun 2023 11:06:59 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Laurent Vivier <laurent@vivier.eu>
-Cc:     Norbert Lange <nolange79@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        containers@lists.linux-foundation.org, jan.kiszka@siemens.com,
-        jannh@google.com, avagin@gmail.com, dima@arista.com,
-        James.Bottomley@HansenPartnership.com
-Subject: Re: [PATCH v8 1/1] ns: add binfmt_misc to the user namespace
-Message-ID: <20230630-hufen-herzallerliebst-fde8e7aecba0@brauner>
-References: <8eb5498d-89f6-e39e-d757-404cc3cfaa5c@vivier.eu>
- <20230630083852.3988-1-norbert.lange@andritz.com>
- <e8161622-beb0-d8d5-6501-f0bee76a372d@vivier.eu>
+        Fri, 30 Jun 2023 05:09:02 -0400
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02D9BE5E;
+        Fri, 30 Jun 2023 02:09:01 -0700 (PDT)
+From:   =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+        s=mail; t=1688116139;
+        bh=OOAKwOFfZgl3msnuVjn16jsWxbjqhfuBBnZpLziJnjI=;
+        h=From:Date:Subject:To:Cc:From;
+        b=nAHp3GNWH3bIQbbJ7B2nTlLTXY9Xq9hWNzqd0TfTgHy3IlpLDeWD+dqQm7O/eXYKH
+         0K/WErRYqTmvh7xyi3fti32K8jO6hhbiSopGvMb1wcI5VLDlClgpI9DBF50J9KHfdA
+         jEofzwLiPn0IJVU1BBMtLuj1xR1dkREs+FIaJFUk=
+Date:   Fri, 30 Jun 2023 11:08:53 +0200
+Subject: [PATCH] mm: make MEMFD_CREATE into a selectable config option
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e8161622-beb0-d8d5-6501-f0bee76a372d@vivier.eu>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Message-Id: <20230630-config-memfd-v1-1-9acc3ae38b5a@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAKSbnmQC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI2MDMyNL3eT8vLTMdN3c1Ny0FN2kVLPENAPjJPOU5EQloJaCotS0zAqwcdG
+ xtbUA9l1O0V4AAAA=
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Willy Tarreau <w@lwt.eu>,
+        Zhangjin Wu <falcon@tinylab.org>,
+        =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1688116137; l=2138;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=OOAKwOFfZgl3msnuVjn16jsWxbjqhfuBBnZpLziJnjI=;
+ b=kQBkkRFrqk5TKAAbU2s4iVjeJ2yAWu+HDlzAGyCqAqXUgKoaMED26dyk7Wz3UwkSiKAieqaCN
+ wukedK6JuBXC9N+wJRWyCzBe5NaSB5lv8wz20O/k+hugFZlrp9EiaeA
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 30, 2023 at 10:52:22AM +0200, Laurent Vivier wrote:
-> Hi Norbert,
-> 
-> Le 30/06/2023 à 10:38, Norbert Lange a écrit :
-> > Any news on this? What remains to be done, who needs to be harrassed?
-> > 
-> > Regards, Norbert
-> 
-> Christian was working on a new version but there is no update for 1 year.
-> 
-> [PATCH v2 1/2] binfmt_misc: cleanup on filesystem umount
-> https://lkml.org/lkml/2021/12/16/406
-> [PATCH v2 2/2] binfmt_misc: enable sandboxed mounts
-> https://lkml.org/lkml/2021/12/16/407
-> 
-> And personally I don't have the time to work on this.
+The memfd_create() syscall, enabled by CONFIG_MEMFD_CREATE, is useful on
+its own even when not required by CONFIG_TMPFS or CONFIG_HUGETLBFS.
 
-I've actually rebased this a few weeks ago:
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs.binfmt_misc
-It has Acks, it's done. The only thing back then was Kees had wanted to
-take this but never did. I'll ping him.
+Split it into its own proper bool option that can be enabled by users.
+
+Move that option into mm/ where the code itself also lies.
+Also add "select" statements to CONFIG_TMPFS and CONFIG_HUGETLBFS so
+they automatically enable CONFIG_MEMFD_CREATE as before.
+
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ fs/Kconfig | 5 ++---
+ mm/Kconfig | 3 +++
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/fs/Kconfig b/fs/Kconfig
+index 18d034ec7953..19975b104bc3 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -169,6 +169,7 @@ source "fs/sysfs/Kconfig"
+ config TMPFS
+ 	bool "Tmpfs virtual memory file system support (former shm fs)"
+ 	depends on SHMEM
++	select MEMFD_CREATE
+ 	help
+ 	  Tmpfs is a file system which keeps all files in virtual memory.
+ 
+@@ -240,6 +241,7 @@ config HUGETLBFS
+ 	bool "HugeTLB file system support"
+ 	depends on X86 || IA64 || SPARC64 || ARCH_SUPPORTS_HUGETLBFS || BROKEN
+ 	depends on (SYSFS || SYSCTL)
++	select MEMFD_CREATE
+ 	help
+ 	  hugetlbfs is a filesystem backing for HugeTLB pages, based on
+ 	  ramfs. For architectures that support it, say Y here and read
+@@ -264,9 +266,6 @@ config HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON
+ 	  enable HVO by default. It can be disabled via hugetlb_free_vmemmap=off
+ 	  (boot command line) or hugetlb_optimize_vmemmap (sysctl).
+ 
+-config MEMFD_CREATE
+-	def_bool TMPFS || HUGETLBFS
+-
+ config ARCH_HAS_GIGANTIC_PAGE
+ 	bool
+ 
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 09130434e30d..22acffd9009d 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -1144,6 +1144,9 @@ config KMAP_LOCAL_NON_LINEAR_PTE_ARRAY
+ config IO_MAPPING
+ 	bool
+ 
++config MEMFD_CREATE
++	bool "Enable memfd_create() system call" if EXPERT
++
+ config SECRETMEM
+ 	default y
+ 	bool "Enable memfd_secret() system call" if EXPERT
+
+---
+base-commit: e55e5df193d247a38a5e1ac65a5316a0adcc22fa
+change-id: 20230629-config-memfd-be6af03b7dca
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
