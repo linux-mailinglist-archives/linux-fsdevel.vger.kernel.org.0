@@ -2,109 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C04C1743E92
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 17:20:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71FC2743EBA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Jun 2023 17:26:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232790AbjF3PUA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Jun 2023 11:20:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35740 "EHLO
+        id S232926AbjF3P0a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Jun 2023 11:26:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232862AbjF3PT0 (ORCPT
+        with ESMTP id S232792AbjF3P01 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Jun 2023 11:19:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ABFC2703;
-        Fri, 30 Jun 2023 08:19:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        Fri, 30 Jun 2023 11:26:27 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD03B30C4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Jun 2023 08:25:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1688138735;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=mthXo3mgP7U+daoZuZFZnhRN3B6pNdnA/TCl+mKtp+A=;
+        b=NpXyhjb8TsGJy/YUMlaBwuyF9ZiqULJkAy5Z7ti03fQbBNDCk18hSfqZ3E8MccMpXdVyaC
+        lAcEJ8ubZio5+RtnroiLyQfO0CQ7YpAHHP40sj9E739eaYsyXnYUZneTB8IvQM9PH3VjNM
+        etulPSjkkQH9VFVfhvyvggXPKarQh0k=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-657-U7PU7gZfOQ2IVzmMF0LTDg-1; Fri, 30 Jun 2023 11:25:29 -0400
+X-MC-Unique: U7PU7gZfOQ2IVzmMF0LTDg-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 18F7361782;
-        Fri, 30 Jun 2023 15:19:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79C11C433C0;
-        Fri, 30 Jun 2023 15:19:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688138359;
-        bh=0OcMf9HI6oDlP5s96FA6hXvlby0mTwGL255F60fmJNY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Oq6SRXemZv3QPiYrxSGaCswEqBNCx4KmAFohDEmaVSWQhjF6v7shFbQLXFl7y9UUt
-         KhheirUrp06qdtMvnhiWU+Lejx3RY86tVjq03epKOAkw+hkExs3HaLwwk0iAfcRmtD
-         YK4ehi7CKWHgtMOXqOTjhnuQVCD4aUqezAdq1zeSFoq5GFcAlXDD7iG0Jtg+EtRrws
-         E7YYO1HUD1n2hwY4igPS/nBFtuuyzSj7sS70XDJLpJEotBepbevEc2/aABE3sEcqnw
-         W7rFpy30JPR4C7PLt76qUUA4sIcS81Muwb1Srh8zvHWwzdvSzcf82JEW+OrIEttNB7
-         lT/gMrs4D9vdg==
-Date:   Fri, 30 Jun 2023 08:19:19 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     zenghongling <zenghongling@kylinos.cn>
-Cc:     hch@infradead.org, darrick.wong@oracle.com,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zhongling0719@126.com
-Subject: Re: [PATCH] fs: Optimize unixbench's file copy test
-Message-ID: <20230630151919.GK11441@frogsfrogsfrogs>
-References: <1688117303-8294-1-git-send-email-zenghongling@kylinos.cn>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9FE6F8631DB;
+        Fri, 30 Jun 2023 15:25:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk.com (unknown [10.42.28.195])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9D6DD492B02;
+        Fri, 30 Jun 2023 15:25:26 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [RFC PATCH 00/11] iov_iter: Use I/O direction from kiocb, iomap & request rather than iov_iter
+Date:   Fri, 30 Jun 2023 16:25:13 +0100
+Message-ID: <20230630152524.661208-1-dhowells@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1688117303-8294-1-git-send-email-zenghongling@kylinos.cn>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 30, 2023 at 05:28:23PM +0800, zenghongling wrote:
-> The iomap_set_range_uptodate function checks if the file is a private
-> mapping,and if it is, it needs to do something about it.UnixBench's
-> file copy tests are mostly share mapping, such a check would reduce
-> file copy scores, so we added the unlikely macro for optimization.
-> and the score of file copy can be improved after branch optimization.
-> As follows:
-> 
-> ./Run -c 8 -i 3 fstime fsbuffer fsdisk
-> 
-> Before the optimization
-> System Benchmarks Partial Index              BASELINE       RESULT    INDEX
-> File Copy 1024 bufsize 2000 maxblocks          3960.0     689276.0   1740.6
-> File Copy 256 bufsize 500 maxblocks            1655.0     204133.0   1233.4
-> File Copy 4096 bufsize 8000 maxblocks          5800.0    1526945.0   2632.7
->                                                                    ========
-> System Benchmarks Index Score (Partial Only)                         1781.3
-> 
-> After the optimization
-> System Benchmarks Partial Index              BASELINE       RESULT    INDEX
-> File Copy 1024 bufsize 2000 maxblocks          3960.0     741524.0   1872.5
-> File Copy 256 bufsize 500 maxblocks            1655.0     208334.0   1258.8
-> File Copy 4096 bufsize 8000 maxblocks          5800.0    1641660.0   2830.4
->                                                                    ========
-> System Benchmarks Index Score (Partial Only)                         1882.6
+Hi Jens, Christoph,
 
-Kernel version?  And how does this intersect with the ongoing work to
-use large folios throughout iomap?
+Here are some patches to switch from using the I/O direction indication in the
+iov_iter struct to using the I/O direction flags to be found in the kiocb
+struct, the iomap_iter struct and the request struct.  The iterator's I/O
+direction is then only used in some internal checks.
 
---D
+The patches also add direction flags into iov_iter_extract_pages() so that it
+can perform some checks.  New constants are defined rather than using READ and
+WRITE so that a check can be made that one of them is specified.  The problem
+with the READ constant is that it is zero and is thus the same as no direction
+being specified - but if we're modifying the buffer contents (ie. reading into
+it), we need to know to set FOLL_WRITE.  Granted this would be the default if
+unspecified, but it seems better that this case should be explicit.
 
-> Signed-off-by: zenghongling <zenghongling@kylinos.cn>
-> ---
->  fs/iomap/buffered-io.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 53cd7b2..35a50c2 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -148,7 +148,7 @@ iomap_set_range_uptodate(struct page *page, unsigned off, unsigned len)
->  	if (PageError(page))
->  		return;
->  
-> -	if (page_has_private(page))
-> +	if (unlikely(page_has_private(page)))
->  		iomap_iop_set_range_uptodate(page, off, len);
->  	else
->  		SetPageUptodate(page);
-> -- 
-> 2.1.0
-> 
+There are also patches to make 9P and SCSI use iov_iter_extract_pages().
+
+I've pushed the patches here also:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-extract
+
+David
+
+David Howells (11):
+  iov_iter: Fix comment refs to iov_iter_get_pages/pages_alloc()
+  vfs: Set IOCB_WRITE in iocbs that we're going to write from
+  vfs: Use init_kiocb() to initialise new IOCBs
+  iov_iter: Use IOCB_WRITE rather than iterator direction
+  iov_iter: Use IOMAP_WRITE rather than iterator direction
+  iov_iter: Use op_is_write() rather than iterator direction
+  cifs: Drop the check using iov_iter_rw()
+  iov_iter: Drop iov_iter_rw() and fold in last user
+  iov_iter: Use I/O dir flags with iov_iter_extract_pages()
+  9p: Pin pages rather than ref'ing if appropriate
+  scsi: Use extract_iter_to_sg()
+
+ block/bio.c                       |  6 ++
+ block/blk-map.c                   |  5 +-
+ block/fops.c                      |  8 +--
+ crypto/af_alg.c                   |  5 +-
+ crypto/algif_hash.c               |  3 +-
+ drivers/block/loop.c              | 11 ++--
+ drivers/nvme/target/io-cmd-file.c |  5 +-
+ drivers/target/target_core_file.c |  2 +-
+ drivers/vhost/scsi.c              | 79 ++++++++------------------
+ fs/9p/vfs_addr.c                  |  2 +-
+ fs/affs/file.c                    |  4 +-
+ fs/aio.c                          |  9 ++-
+ fs/btrfs/ioctl.c                  |  4 +-
+ fs/cachefiles/io.c                | 10 ++--
+ fs/ceph/file.c                    |  6 +-
+ fs/dax.c                          |  6 +-
+ fs/direct-io.c                    | 28 ++++++----
+ fs/exfat/inode.c                  |  6 +-
+ fs/ext2/inode.c                   |  2 +-
+ fs/f2fs/file.c                    | 10 ++--
+ fs/fat/inode.c                    |  4 +-
+ fs/fuse/dax.c                     |  2 +-
+ fs/fuse/file.c                    |  8 +--
+ fs/hfs/inode.c                    |  2 +-
+ fs/hfsplus/inode.c                |  2 +-
+ fs/iomap/direct-io.c              |  4 +-
+ fs/jfs/inode.c                    |  2 +-
+ fs/nfs/direct.c                   |  2 +-
+ fs/nilfs2/inode.c                 |  2 +-
+ fs/ntfs3/inode.c                  |  2 +-
+ fs/ocfs2/aops.c                   |  2 +-
+ fs/orangefs/inode.c               |  2 +-
+ fs/read_write.c                   | 10 ++--
+ fs/reiserfs/inode.c               |  2 +-
+ fs/seq_file.c                     |  2 +-
+ fs/smb/client/smbdirect.c         |  9 ---
+ fs/splice.c                       |  2 +-
+ fs/udf/inode.c                    |  2 +-
+ include/linux/bio.h               | 18 +++++-
+ include/linux/fs.h                | 16 +++++-
+ include/linux/mm_types.h          |  2 +-
+ include/linux/uio.h               | 10 ++--
+ io_uring/rw.c                     | 10 ++--
+ lib/iov_iter.c                    | 14 ++++-
+ lib/scatterlist.c                 | 12 +++-
+ mm/filemap.c                      |  2 +-
+ mm/page_io.c                      |  4 +-
+ net/9p/trans_common.c             |  8 +--
+ net/9p/trans_common.h             |  2 +-
+ net/9p/trans_virtio.c             | 92 ++++++++++---------------------
+ 50 files changed, 221 insertions(+), 241 deletions(-)
+
