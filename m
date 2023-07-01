@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 064167447BF
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jul 2023 09:35:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F14777447C2
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jul 2023 09:35:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229612AbjGAHfd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Jul 2023 03:35:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60994 "EHLO
+        id S229799AbjGAHf4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Jul 2023 03:35:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbjGAHfa (ORCPT
+        with ESMTP id S229643AbjGAHfe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Jul 2023 03:35:30 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 784341B0;
-        Sat,  1 Jul 2023 00:35:29 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-6726d5d92afso1622946b3a.1;
-        Sat, 01 Jul 2023 00:35:29 -0700 (PDT)
+        Sat, 1 Jul 2023 03:35:34 -0400
+Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6646199;
+        Sat,  1 Jul 2023 00:35:32 -0700 (PDT)
+Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-1b07d97180dso2596490fac.3;
+        Sat, 01 Jul 2023 00:35:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688196928; x=1690788928;
+        d=gmail.com; s=20221208; t=1688196931; x=1690788931;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CfrcRZSVSc6FW1n1MsNyxKR20bTVgx4c9T+kFzqOa1Y=;
-        b=JkMO+EeB7TWOE7W9QKoHmH8W7iCPrZjQqvp66uxp/7zD0bvofSDW0F2mnGA6yjxk1/
-         oiKRTXah1NwQ/NJ6aCXTL9nGevQ1llhhZEiltwyvZOOFJMhuP3N6+rAPLjUpw9HfgpJb
-         LPYdA+1snOR4OkjMYLMWStvmN0nO9JAtxbi1fwsoPpycBM27MuxBCOU0bU13k7QX+ILr
-         vP+w2s56aLLUqL8ZKsRVFaFwlp9jfRDv3vUlXCU9EsMf6tFj9zATjXvLbJB16JOchmXI
-         t8J1Taof/3wU+XiVDKoSDwtZnY/CdOBLEfxsw+TDWx4ZvF5gdIOUAQrj4oqYHMZz8yBt
-         KAug==
+        bh=h43LX+LAxBuBFFPVFB6jb55GjVMsi0wQAMdNCc2VO9c=;
+        b=liWGhQ2v8DPvK9VsakBQEjHmzX9rAAbdkJn80DOpWpqIJw+GG+YwOgSYPMlJotIKlF
+         8mkex3g6fZ+ji75QN2Bdu8DpIkqCGer/8KslL7KtknU5ua74UlumtYNg0us0ZmvQiSZo
+         0lv16NVoBl5zlkbtu1ghEwKQ5UpHCdSd0LilMS3X27taQjRflG2qffPM8XJ6Zkr/70+C
+         xfHQBp5wBf/sYa+iXbanD9LRbuEpf4QDoWhAhLYWbBdEbeEfbp5tFC0iky4fmWrQnGTp
+         BLxIX7AG3xWdrYbR4Cnvj7CG7gBM8/Mu5UDUan6Sg4eIj02nYVYYXRzBD8//+9tl912B
+         Bldg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688196928; x=1690788928;
+        d=1e100.net; s=20221208; t=1688196931; x=1690788931;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CfrcRZSVSc6FW1n1MsNyxKR20bTVgx4c9T+kFzqOa1Y=;
-        b=dmuk4Eb1sAeGXNYWhDHUetL3H/uLtZcNlAGQFyt9uerii2n0gR/BA6QXwQcrDaqiSq
-         QwujuLeuQjoFKPU079sJeBchBHlj3AadRaOeqCbxjGsJN/vzY9E/Xbywr7j5REOm1Eag
-         qmfTJ21xf4BHPoVIN20e3DRU2BN5nbAZA7jhowAeYAEQW00H8ciRE1aIhE5W1THoe6wW
-         mH0mrXg8wpmQ7e3bvkC5BJGJ3Efz2QkcyMA6W/jwwlf/0q/5rNurZVBBIZbT74LIdMOa
-         k2Ft5Nr/ZFHkoGL52degbfOxisguaEJl7Cmvn7b53QoiuInPC5hxLB1Sa1wa1J7457Vg
-         I7Rg==
-X-Gm-Message-State: AC+VfDxw5SZdg/w6UZwe8F0IKnc0c/Rfl4mDVSTUY5b/hBH9YzhKUPAc
-        d+EEL3oUdnVP1yYV6KGitAm2gbZlpdY=
-X-Google-Smtp-Source: ACHHUZ4lqHz9MT/g7gUNPBOy4CAGK9iU55942CR0NdkIt9xEpN+iRavJLNCgE9cBSSKkRUMFazWxfg==
-X-Received: by 2002:a05:6a20:1612:b0:11d:9249:170e with SMTP id l18-20020a056a20161200b0011d9249170emr6580892pzj.12.1688196928216;
-        Sat, 01 Jul 2023 00:35:28 -0700 (PDT)
+        bh=h43LX+LAxBuBFFPVFB6jb55GjVMsi0wQAMdNCc2VO9c=;
+        b=Hu7nnVfTPWY6/EaemV21dpheoi3YOglan83FIT11Pt8FEjxh3jCKeKDRwsOspw15m3
+         7nzjg5NShUpekc8e3EcthzoSiUXBld0Ei0AwQV1NP/I3q1WifWyqVeEcsES5rLLpIToL
+         AD2IebmElkSsK5y6E6TNQxLioeD2Y5eTItM5dDHZqiSWyyXkq5qoTYjYAjmp9Byxghg3
+         OAFng9m1ufcboFBkWgw10oTiK8ux/MbXscJ4WxRidSstH4oZixiYQZ9c9Cu8DcjUaqvk
+         i3eoq+MtrmJlFLn+HknHgUzXFV9dhwy1xJFe65CoRerdlpsqs/MVQi02a/dgJ8U83gmv
+         yImA==
+X-Gm-Message-State: ABy/qLZbvyWduG0o/8nHAA4RQW9TYr/ckEfUydN8EAb0pFn94r1JPZ8U
+        x4uzsQ7cKE0NGVOdQP9z53Hh+vi/SLY=
+X-Google-Smtp-Source: APBJJlFWKBxoN+23envHRckVO/mfIK0JVzTCgPA3WMbuIvcdcqKQgBouVfJWhSME8BwlHyvFI6ryug==
+X-Received: by 2002:a05:6870:bacf:b0:1b0:2c0d:9aee with SMTP id js15-20020a056870bacf00b001b02c0d9aeemr7565267oab.14.1688196931454;
+        Sat, 01 Jul 2023 00:35:31 -0700 (PDT)
 Received: from dw-tp.localdomain ([49.207.232.207])
-        by smtp.gmail.com with ESMTPSA id h14-20020aa786ce000000b0063aa1763146sm8603414pfo.17.2023.07.01.00.35.25
+        by smtp.gmail.com with ESMTPSA id h14-20020aa786ce000000b0063aa1763146sm8603414pfo.17.2023.07.01.00.35.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Jul 2023 00:35:27 -0700 (PDT)
+        Sat, 01 Jul 2023 00:35:30 -0700 (PDT)
 From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To:     linux-xfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org,
@@ -60,9 +60,9 @@ Cc:     linux-fsdevel@vger.kernel.org,
         Andreas Gruenbacher <agruenba@redhat.com>,
         "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCHv11 2/8] iomap: Drop ifs argument from iomap_set_range_uptodate()
-Date:   Sat,  1 Jul 2023 13:04:35 +0530
-Message-Id: <d23a8d36820d1b5be0b2ffaa37ad07f816f73b01.1688188958.git.ritesh.list@gmail.com>
+Subject: [PATCHv11 3/8] iomap: Add some uptodate state handling helpers for ifs state bitmap
+Date:   Sat,  1 Jul 2023 13:04:36 +0530
+Message-Id: <04ba7f53e55649a908943b6c7c27ef333d47c71f.1688188958.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <cover.1688188958.git.ritesh.list@gmail.com>
 References: <cover.1688188958.git.ritesh.list@gmail.com>
@@ -78,162 +78,106 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-iomap_folio_state (ifs) can be derived directly from the folio, making it
-unnecessary to pass "ifs" as an argument to iomap_set_range_uptodate().
-This patch eliminates "ifs" argument from iomap_set_range_uptodate()
-function.
+This patch adds two of the helper routines ifs_is_fully_uptodate()
+and ifs_block_is_uptodate() for managing uptodate state of "ifs" state
+bitmap.
 
-Also, the definition of iomap_set_range_uptodate() and
-ifs_set_range_uptodate() functions are moved above ifs_alloc().
-In upcoming patches, we plan to introduce additional helper routines for
-handling dirty state, with the intention of consolidating all of "ifs"
-state handling routines at one place.
+In later patches ifs state bitmap array will also handle dirty state of all
+blocks of a folio. Hence this patch adds some helper routines for handling
+uptodate state of the ifs state bitmap.
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- fs/iomap/buffered-io.c | 67 +++++++++++++++++++++---------------------
- 1 file changed, 33 insertions(+), 34 deletions(-)
+ fs/iomap/buffered-io.c | 28 ++++++++++++++++++++--------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 2675a3e0ac1d..3ff7688b360a 100644
+index 3ff7688b360a..e45368e91eca 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -36,6 +36,33 @@ struct iomap_folio_state {
+@@ -36,6 +36,20 @@ struct iomap_folio_state {
  
  static struct bio_set iomap_ioend_bioset;
  
-+static void ifs_set_range_uptodate(struct folio *folio,
-+		struct iomap_folio_state *ifs, size_t off, size_t len)
++static inline bool ifs_is_fully_uptodate(struct folio *folio,
++		struct iomap_folio_state *ifs)
 +{
 +	struct inode *inode = folio->mapping->host;
-+	unsigned int first_blk = off >> inode->i_blkbits;
-+	unsigned int last_blk = (off + len - 1) >> inode->i_blkbits;
-+	unsigned int nr_blks = last_blk - first_blk + 1;
-+	unsigned long flags;
 +
-+	spin_lock_irqsave(&ifs->state_lock, flags);
-+	bitmap_set(ifs->state, first_blk, nr_blks);
-+	if (bitmap_full(ifs->state, i_blocks_per_folio(inode, folio)))
-+		folio_mark_uptodate(folio);
-+	spin_unlock_irqrestore(&ifs->state_lock, flags);
++	return bitmap_full(ifs->state, i_blocks_per_folio(inode, folio));
 +}
 +
-+static void iomap_set_range_uptodate(struct folio *folio, size_t off,
-+		size_t len)
++static inline bool ifs_block_is_uptodate(struct iomap_folio_state *ifs,
++		unsigned int block)
 +{
-+	struct iomap_folio_state *ifs = folio->private;
-+
-+	if (ifs)
-+		ifs_set_range_uptodate(folio, ifs, off, len);
-+	else
-+		folio_mark_uptodate(folio);
++	return test_bit(block, ifs->state);
 +}
 +
- static struct iomap_folio_state *ifs_alloc(struct inode *inode,
- 		struct folio *folio, unsigned int flags)
+ static void ifs_set_range_uptodate(struct folio *folio,
+ 		struct iomap_folio_state *ifs, size_t off, size_t len)
  {
-@@ -137,30 +164,6 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
- 	*lenp = plen;
- }
+@@ -47,7 +61,7 @@ static void ifs_set_range_uptodate(struct folio *folio,
  
--static void ifs_set_range_uptodate(struct folio *folio,
--		struct iomap_folio_state *ifs, size_t off, size_t len)
--{
--	struct inode *inode = folio->mapping->host;
--	unsigned first = off >> inode->i_blkbits;
--	unsigned last = (off + len - 1) >> inode->i_blkbits;
--	unsigned long flags;
--
--	spin_lock_irqsave(&ifs->state_lock, flags);
--	bitmap_set(ifs->state, first, last - first + 1);
+ 	spin_lock_irqsave(&ifs->state_lock, flags);
+ 	bitmap_set(ifs->state, first_blk, nr_blks);
 -	if (bitmap_full(ifs->state, i_blocks_per_folio(inode, folio)))
--		folio_mark_uptodate(folio);
--	spin_unlock_irqrestore(&ifs->state_lock, flags);
--}
--
--static void iomap_set_range_uptodate(struct folio *folio,
--		struct iomap_folio_state *ifs, size_t off, size_t len)
--{
--	if (ifs)
--		ifs_set_range_uptodate(folio, ifs, off, len);
--	else
--		folio_mark_uptodate(folio);
--}
--
- static void iomap_finish_folio_read(struct folio *folio, size_t offset,
- 		size_t len, int error)
- {
-@@ -170,7 +173,7 @@ static void iomap_finish_folio_read(struct folio *folio, size_t offset,
- 		folio_clear_uptodate(folio);
- 		folio_set_error(folio);
- 	} else {
--		iomap_set_range_uptodate(folio, ifs, offset, len);
-+		iomap_set_range_uptodate(folio, offset, len);
- 	}
- 
- 	if (!ifs || atomic_sub_and_test(len, &ifs->read_bytes_pending))
-@@ -206,7 +209,6 @@ struct iomap_readpage_ctx {
- static int iomap_read_inline_data(const struct iomap_iter *iter,
- 		struct folio *folio)
- {
--	struct iomap_folio_state *ifs;
- 	const struct iomap *iomap = iomap_iter_srcmap(iter);
- 	size_t size = i_size_read(iter->inode) - iomap->offset;
- 	size_t poff = offset_in_page(iomap->offset);
-@@ -224,15 +226,13 @@ static int iomap_read_inline_data(const struct iomap_iter *iter,
- 	if (WARN_ON_ONCE(size > iomap->length))
- 		return -EIO;
- 	if (offset > 0)
--		ifs = ifs_alloc(iter->inode, folio, iter->flags);
--	else
--		ifs = folio->private;
-+		ifs_alloc(iter->inode, folio, iter->flags);
- 
- 	addr = kmap_local_folio(folio, offset);
- 	memcpy(addr, iomap->inline_data, size);
- 	memset(addr + size, 0, PAGE_SIZE - poff - size);
- 	kunmap_local(addr);
--	iomap_set_range_uptodate(folio, ifs, offset, PAGE_SIZE - poff);
-+	iomap_set_range_uptodate(folio, offset, PAGE_SIZE - poff);
- 	return 0;
++	if (ifs_is_fully_uptodate(folio, ifs))
+ 		folio_mark_uptodate(folio);
+ 	spin_unlock_irqrestore(&ifs->state_lock, flags);
  }
- 
-@@ -269,7 +269,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 
- 	if (iomap_block_needs_zeroing(iter, pos)) {
- 		folio_zero_range(folio, poff, plen);
--		iomap_set_range_uptodate(folio, ifs, poff, plen);
-+		iomap_set_range_uptodate(folio, poff, plen);
- 		goto done;
- 	}
- 
-@@ -582,7 +582,7 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
- 			if (status)
- 				return status;
- 		}
--		iomap_set_range_uptodate(folio, ifs, poff, plen);
-+		iomap_set_range_uptodate(folio, poff, plen);
- 	} while ((block_start += plen) < block_end);
- 
- 	return 0;
-@@ -689,7 +689,6 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
- static size_t __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 		size_t copied, struct folio *folio)
+@@ -92,14 +106,12 @@ static struct iomap_folio_state *ifs_alloc(struct inode *inode,
+ static void ifs_free(struct folio *folio)
  {
--	struct iomap_folio_state *ifs = folio->private;
- 	flush_dcache_folio(folio);
+ 	struct iomap_folio_state *ifs = folio_detach_private(folio);
+-	struct inode *inode = folio->mapping->host;
+-	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
  
- 	/*
-@@ -705,7 +704,7 @@ static size_t __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+ 	if (!ifs)
+ 		return;
+ 	WARN_ON_ONCE(atomic_read(&ifs->read_bytes_pending));
+ 	WARN_ON_ONCE(atomic_read(&ifs->write_bytes_pending));
+-	WARN_ON_ONCE(bitmap_full(ifs->state, nr_blocks) !=
++	WARN_ON_ONCE(ifs_is_fully_uptodate(folio, ifs) !=
+ 			folio_test_uptodate(folio));
+ 	kfree(ifs);
+ }
+@@ -130,7 +142,7 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+ 
+ 		/* move forward for each leading block marked uptodate */
+ 		for (i = first; i <= last; i++) {
+-			if (!test_bit(i, ifs->state))
++			if (!ifs_block_is_uptodate(ifs, i))
+ 				break;
+ 			*pos += block_size;
+ 			poff += block_size;
+@@ -140,7 +152,7 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+ 
+ 		/* truncate len if we find any trailing uptodate block(s) */
+ 		for ( ; i <= last; i++) {
+-			if (test_bit(i, ifs->state)) {
++			if (ifs_block_is_uptodate(ifs, i)) {
+ 				plen -= (last - i + 1) * block_size;
+ 				last = i - 1;
+ 				break;
+@@ -444,7 +456,7 @@ bool iomap_is_partially_uptodate(struct folio *folio, size_t from, size_t count)
+ 	last = (from + count - 1) >> inode->i_blkbits;
+ 
+ 	for (i = first; i <= last; i++)
+-		if (!test_bit(i, ifs->state))
++		if (!ifs_block_is_uptodate(ifs, i))
+ 			return false;
+ 	return true;
+ }
+@@ -1620,7 +1632,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 	 * invalid, grab a new one.
  	 */
- 	if (unlikely(copied < len && !folio_test_uptodate(folio)))
- 		return 0;
--	iomap_set_range_uptodate(folio, ifs, offset_in_folio(folio, pos), len);
-+	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
- 	filemap_dirty_folio(inode->i_mapping, folio);
- 	return copied;
- }
+ 	for (i = 0; i < nblocks && pos < end_pos; i++, pos += len) {
+-		if (ifs && !test_bit(i, ifs->state))
++		if (ifs && !ifs_block_is_uptodate(ifs, i))
+ 			continue;
+ 
+ 		error = wpc->ops->map_blocks(wpc, inode, pos);
 -- 
 2.40.1
 
