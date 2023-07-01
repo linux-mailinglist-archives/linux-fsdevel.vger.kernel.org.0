@@ -2,53 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CFB97447BB
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jul 2023 09:35:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18D0C7447BC
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jul 2023 09:35:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229534AbjGAHf0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Jul 2023 03:35:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60982 "EHLO
+        id S229597AbjGAHfc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Jul 2023 03:35:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229501AbjGAHfY (ORCPT
+        with ESMTP id S229501AbjGAHf3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Jul 2023 03:35:24 -0400
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DDBB199;
-        Sat,  1 Jul 2023 00:35:23 -0700 (PDT)
-Received: by mail-oi1-x234.google.com with SMTP id 5614622812f47-3a1a47b33d8so2110466b6e.2;
-        Sat, 01 Jul 2023 00:35:23 -0700 (PDT)
+        Sat, 1 Jul 2023 03:35:29 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA7A5199;
+        Sat,  1 Jul 2023 00:35:26 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id 41be03b00d2f7-55adfa61199so1840534a12.2;
+        Sat, 01 Jul 2023 00:35:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688196922; x=1690788922;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=z46IE+Wb1Co+S9765aq/4PqiPsKv7xdaoquDMMnByas=;
-        b=bqXISYmLAOCxUFmdzWfUHdTmwjhiOkqcfVGtbCAaocPjuFqqVH2PvC1OiUR1xJMDsU
-         50vfaSkKBZWEp0PL+ZAxerkC9an3nkyqfafXi5gfCeAwTIBX0nvsetemSu4CSEtN9KXq
-         XRXn3QIqRegv2GHd8j4akxy7w4K2o9DH0FMZDYVg3U0jbGTM/KTzXA/j3V+og2XYEwk4
-         AUUpkRrEzHRb/WrJgjxWljH3fJKl7w6hP+PlXoZl7rD7C20E4g3jhh8SjO36jItiHkYL
-         +MaYxMtmWggMo92/kUKdzk9khnIl1osl8XXIBMbFlAv0u6aMcAJtBxFy9LlvcdTCaOwo
-         uONw==
+        d=gmail.com; s=20221208; t=1688196925; x=1690788925;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yTSBRxmT6EFcDgvBi8GZxfXilWylDwjfXz02P+8Pqkw=;
+        b=jksadR/at2jwGt3mgpwxnM2GydB/ERWEebNlJC/rjyz0Nq2n5/UXELhyTyY4kwjcKB
+         rHmg2R7FOu+S1auF6m92pNYHAJPKkDjRcC+BhF39V01RYZEj4KmTdDdiDaS1PlxXKhU8
+         3wwxhNGnyz/Q4RKzcDmqxojmKRaYdQEs5u+Q/ZmEb/XBkjgZVX5WBCL1hJ3YKY8bar5J
+         NbWa0GnMwJgTBAwKwSBPpp60CR2nCjYighZe+DW6N/fsAOYofFsowvMu5u95XYjYoNCy
+         jykPIs/iDVmolt9+B2RlP/MlHpSFTzcRWRQVrOB7WHPqCdfe7ESF44svZfM70RoqZfU4
+         LOVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688196922; x=1690788922;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z46IE+Wb1Co+S9765aq/4PqiPsKv7xdaoquDMMnByas=;
-        b=A85bxJOx/9yZdbjvLpk0eCRMa+DbJlyeJ1sfaIciOOwloiVMOKAaryhJqdnzaECqot
-         71/fidodFRrcPSkLXnm7iJTElF4zTZz7WSIsq5cLuDifc4VzNvmqv9NXxD6Afg0A0thD
-         C/F/P74n8FrpmmJOUoZR3Zlmru3ST/9uA6LlOE14Jm0XKCrHQzAJGHKV7gpE4YEPozAQ
-         QDZknO4i0FDjXwlpXlMX+poG0b1NK0SnmnDYqFITnKh6fWZQXy5O1071xC+s49Tc+GQM
-         4R4CVGbzBWS0FOxfuHRrpS8KYtdzFnPiGb5NsHYpQNdtOkEi3T9J23Snzy/kWOYOiJwd
-         p9cg==
-X-Gm-Message-State: AC+VfDw5+yidvO1XSN/bKgF0WJuecjcTB02bDjduR7u6skzVKP1gn6H3
-        Hydv1E7/jyhtWCrhCeKfUApV9W/7S24=
-X-Google-Smtp-Source: ACHHUZ5Te+3HnuKZ11DUjJFGAVp2yX2Wkjs1csWLOAC1qNAJQLYkcUeSa4hlZ1ZF87MoLEZ3SYaUjA==
-X-Received: by 2002:a05:6808:1827:b0:3a3:6c7d:a5cb with SMTP id bh39-20020a056808182700b003a36c7da5cbmr5933536oib.46.1688196921736;
-        Sat, 01 Jul 2023 00:35:21 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1688196925; x=1690788925;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yTSBRxmT6EFcDgvBi8GZxfXilWylDwjfXz02P+8Pqkw=;
+        b=EuxsUmBL9iu3xYh99MWFjDH20blMA/vkXoNLCklPSAT2JVDvyL4p8IbDUSTHUlzClD
+         Mph86B4qPqqabtN/KtF7NheyftAGDAX/yi6KT3LolnvaidGo5E8ETBAOniYkLwN4q8p2
+         xsYSkZr2nwp8LHQfqlNSPDv9AGK+eySZ2coui1xS0Q+I8lUaRhsgPTaZ3WDOdztCTqK9
+         uiHRY7ro7RO5LVurRnMSBmgC3F4BrvO1aQ7BoVSqKORw1mrBzva44SQiDEBkhWnZULHr
+         KCqcJTf3f4QLSm9uu3pPQQop9IMZ2qliShDZUFaErl1qPLg90ddAlAfunAJhvbmnY5NM
+         keRg==
+X-Gm-Message-State: AC+VfDyiI9oqyYtqaPVBUNdAMfVuwchlL7Pl6vJ2wXrAM43qa+/3B6cJ
+        jf/ifabhOB2UT4obVRCKA7s1zeyGdtU=
+X-Google-Smtp-Source: ACHHUZ5jd6w0YwxO/5MPs0agyV2/ONgGhkl/muD7fUnXDqs4fCUl9ScyFIy9dWv4NvhMEjCGSk1f9Q==
+X-Received: by 2002:a05:6a20:2a29:b0:125:4d74:cd67 with SMTP id e41-20020a056a202a2900b001254d74cd67mr4223665pzh.21.1688196925045;
+        Sat, 01 Jul 2023 00:35:25 -0700 (PDT)
 Received: from dw-tp.localdomain ([49.207.232.207])
-        by smtp.gmail.com with ESMTPSA id h14-20020aa786ce000000b0063aa1763146sm8603414pfo.17.2023.07.01.00.35.18
+        by smtp.gmail.com with ESMTPSA id h14-20020aa786ce000000b0063aa1763146sm8603414pfo.17.2023.07.01.00.35.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Jul 2023 00:35:21 -0700 (PDT)
+        Sat, 01 Jul 2023 00:35:24 -0700 (PDT)
 From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To:     linux-xfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org,
@@ -57,11 +58,14 @@ Cc:     linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         Brian Foster <bfoster@redhat.com>,
         Andreas Gruenbacher <agruenba@redhat.com>,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCHv11 0/8] iomap: Add support for per-block dirty state to improve write performance
-Date:   Sat,  1 Jul 2023 13:04:33 +0530
-Message-Id: <cover.1688188958.git.ritesh.list@gmail.com>
+        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCHv11 1/8] iomap: Rename iomap_page to iomap_folio_state and others
+Date:   Sat,  1 Jul 2023 13:04:34 +0530
+Message-Id: <b41b605a29e1306bc3cafa4e1c577c051e8dd8bd.1688188958.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <cover.1688188958.git.ritesh.list@gmail.com>
+References: <cover.1688188958.git.ritesh.list@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -74,73 +78,444 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello All,
+struct iomap_page actually tracks per-block state of a folio.
+Hence it make sense to rename some of these function names and data
+structures for e.g.
+1. struct iomap_page (iop) -> struct iomap_folio_state (ifs)
+2. iomap_page_create() -> ifs_alloc()
+3. iomap_page_release() -> ifs_free()
+4. iomap_iop_set_range_uptodate() -> ifs_set_range_uptodate()
+5. to_iomap_page() -> folio->private
 
-Please find PATCHv11 which adds per-block dirty tracking to iomap.
-As discussed earlier this is required to improve write performance and reduce
-write amplification for cases where either blocksize is less than pagesize (such
-as Power platform with 64k pagesize) or when we have a large folio (such as xfs
-which currently supports large folio).
+Since in later patches we are also going to add per-block dirty state
+tracking to iomap_folio_state. Hence this patch also renames "uptodate"
+& "uptodate_lock" members of iomap_folio_state to "state" and"state_lock".
 
-Thanks everyone for helping with reviews and suggestions.
+We don't really need to_iomap_page() function, instead directly open code
+it as folio->private;
 
-v10 -> v11:
-===========
-1. Dropped iomap_block_state enum. Thereby automatically addressing variables
-   names like first_blk etc. in bitmap handling functions.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+---
+ fs/iomap/buffered-io.c | 151 ++++++++++++++++++++---------------------
+ 1 file changed, 72 insertions(+), 79 deletions(-)
 
-Testing of v11:
-===============
-1. I have done fstests testing of v11 on my setup for x86 (1k & 4k bs),
-   arm (4k bs) and Power (4k bs) with xfstests. I haven't found any new
-   failures as such in my testing so far with xfstests.
-2. I have also done some random read/write testing using fio & haven't
-   observed any performance issues in my testing so far.
-
-<Perf data copy paste from previous version>
-=============================================
-Performance testing of below fio workload reveals ~16x performance
-improvement using nvme with XFS (4k blocksize) on Power (64K pagesize)
-FIO reported write bw scores improved from around ~28 MBps to ~452 MBps.
-
-1. <test_randwrite.fio>
-[global]
-	ioengine=psync
-	rw=randwrite
-	overwrite=1
-	pre_read=1
-	direct=0
-	bs=4k
-	size=1G
-	dir=./
-	numjobs=8
-	fdatasync=1
-	runtime=60
-	iodepth=64
-	group_reporting=1
-
-[fio-run]
-
-2. Also our internal performance team reported that this patch improves
-   their database workload performance by around ~83% (with XFS on Power)
-
-Ritesh Harjani (IBM) (8):
-  iomap: Rename iomap_page to iomap_folio_state and others
-  iomap: Drop ifs argument from iomap_set_range_uptodate()
-  iomap: Add some uptodate state handling helpers for ifs state bitmap
-  iomap: Fix possible overflow condition in iomap_write_delalloc_scan
-  iomap: Use iomap_punch_t typedef
-  iomap: Refactor iomap_write_delalloc_punch() function out
-  iomap: Allocate ifs in ->write_begin() early
-  iomap: Add per-block dirty state tracking to improve performance
-
- fs/gfs2/aops.c         |   2 +-
- fs/iomap/buffered-io.c | 402 ++++++++++++++++++++++++++++-------------
- fs/xfs/xfs_aops.c      |   2 +-
- fs/zonefs/file.c       |   2 +-
- include/linux/iomap.h  |   1 +
- 5 files changed, 281 insertions(+), 128 deletions(-)
-
---
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 063133ec77f4..2675a3e0ac1d 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -24,64 +24,57 @@
+ #define IOEND_BATCH_SIZE	4096
+ 
+ /*
+- * Structure allocated for each folio when block size < folio size
+- * to track sub-folio uptodate status and I/O completions.
++ * Structure allocated for each folio to track per-block uptodate state
++ * and I/O completions.
+  */
+-struct iomap_page {
++struct iomap_folio_state {
+ 	atomic_t		read_bytes_pending;
+ 	atomic_t		write_bytes_pending;
+-	spinlock_t		uptodate_lock;
+-	unsigned long		uptodate[];
++	spinlock_t		state_lock;
++	unsigned long		state[];
+ };
+ 
+-static inline struct iomap_page *to_iomap_page(struct folio *folio)
+-{
+-	if (folio_test_private(folio))
+-		return folio_get_private(folio);
+-	return NULL;
+-}
+-
+ static struct bio_set iomap_ioend_bioset;
+ 
+-static struct iomap_page *
+-iomap_page_create(struct inode *inode, struct folio *folio, unsigned int flags)
++static struct iomap_folio_state *ifs_alloc(struct inode *inode,
++		struct folio *folio, unsigned int flags)
+ {
+-	struct iomap_page *iop = to_iomap_page(folio);
++	struct iomap_folio_state *ifs = folio->private;
+ 	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
+ 	gfp_t gfp;
+ 
+-	if (iop || nr_blocks <= 1)
+-		return iop;
++	if (ifs || nr_blocks <= 1)
++		return ifs;
+ 
+ 	if (flags & IOMAP_NOWAIT)
+ 		gfp = GFP_NOWAIT;
+ 	else
+ 		gfp = GFP_NOFS | __GFP_NOFAIL;
+ 
+-	iop = kzalloc(struct_size(iop, uptodate, BITS_TO_LONGS(nr_blocks)),
++	ifs = kzalloc(struct_size(ifs, state, BITS_TO_LONGS(nr_blocks)),
+ 		      gfp);
+-	if (iop) {
+-		spin_lock_init(&iop->uptodate_lock);
++	if (ifs) {
++		spin_lock_init(&ifs->state_lock);
+ 		if (folio_test_uptodate(folio))
+-			bitmap_fill(iop->uptodate, nr_blocks);
+-		folio_attach_private(folio, iop);
++			bitmap_fill(ifs->state, nr_blocks);
++		folio_attach_private(folio, ifs);
+ 	}
+-	return iop;
++	return ifs;
+ }
+ 
+-static void iomap_page_release(struct folio *folio)
++static void ifs_free(struct folio *folio)
+ {
+-	struct iomap_page *iop = folio_detach_private(folio);
++	struct iomap_folio_state *ifs = folio_detach_private(folio);
+ 	struct inode *inode = folio->mapping->host;
+ 	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
+ 
+-	if (!iop)
++	if (!ifs)
+ 		return;
+-	WARN_ON_ONCE(atomic_read(&iop->read_bytes_pending));
+-	WARN_ON_ONCE(atomic_read(&iop->write_bytes_pending));
+-	WARN_ON_ONCE(bitmap_full(iop->uptodate, nr_blocks) !=
++	WARN_ON_ONCE(atomic_read(&ifs->read_bytes_pending));
++	WARN_ON_ONCE(atomic_read(&ifs->write_bytes_pending));
++	WARN_ON_ONCE(bitmap_full(ifs->state, nr_blocks) !=
+ 			folio_test_uptodate(folio));
+-	kfree(iop);
++	kfree(ifs);
+ }
+ 
+ /*
+@@ -90,7 +83,7 @@ static void iomap_page_release(struct folio *folio)
+ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+ 		loff_t *pos, loff_t length, size_t *offp, size_t *lenp)
+ {
+-	struct iomap_page *iop = to_iomap_page(folio);
++	struct iomap_folio_state *ifs = folio->private;
+ 	loff_t orig_pos = *pos;
+ 	loff_t isize = i_size_read(inode);
+ 	unsigned block_bits = inode->i_blkbits;
+@@ -105,12 +98,12 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+ 	 * per-block uptodate status and adjust the offset and length if needed
+ 	 * to avoid reading in already uptodate ranges.
+ 	 */
+-	if (iop) {
++	if (ifs) {
+ 		unsigned int i;
+ 
+ 		/* move forward for each leading block marked uptodate */
+ 		for (i = first; i <= last; i++) {
+-			if (!test_bit(i, iop->uptodate))
++			if (!test_bit(i, ifs->state))
+ 				break;
+ 			*pos += block_size;
+ 			poff += block_size;
+@@ -120,7 +113,7 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+ 
+ 		/* truncate len if we find any trailing uptodate block(s) */
+ 		for ( ; i <= last; i++) {
+-			if (test_bit(i, iop->uptodate)) {
++			if (test_bit(i, ifs->state)) {
+ 				plen -= (last - i + 1) * block_size;
+ 				last = i - 1;
+ 				break;
+@@ -144,26 +137,26 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+ 	*lenp = plen;
+ }
+ 
+-static void iomap_iop_set_range_uptodate(struct folio *folio,
+-		struct iomap_page *iop, size_t off, size_t len)
++static void ifs_set_range_uptodate(struct folio *folio,
++		struct iomap_folio_state *ifs, size_t off, size_t len)
+ {
+ 	struct inode *inode = folio->mapping->host;
+ 	unsigned first = off >> inode->i_blkbits;
+ 	unsigned last = (off + len - 1) >> inode->i_blkbits;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&iop->uptodate_lock, flags);
+-	bitmap_set(iop->uptodate, first, last - first + 1);
+-	if (bitmap_full(iop->uptodate, i_blocks_per_folio(inode, folio)))
++	spin_lock_irqsave(&ifs->state_lock, flags);
++	bitmap_set(ifs->state, first, last - first + 1);
++	if (bitmap_full(ifs->state, i_blocks_per_folio(inode, folio)))
+ 		folio_mark_uptodate(folio);
+-	spin_unlock_irqrestore(&iop->uptodate_lock, flags);
++	spin_unlock_irqrestore(&ifs->state_lock, flags);
+ }
+ 
+ static void iomap_set_range_uptodate(struct folio *folio,
+-		struct iomap_page *iop, size_t off, size_t len)
++		struct iomap_folio_state *ifs, size_t off, size_t len)
+ {
+-	if (iop)
+-		iomap_iop_set_range_uptodate(folio, iop, off, len);
++	if (ifs)
++		ifs_set_range_uptodate(folio, ifs, off, len);
+ 	else
+ 		folio_mark_uptodate(folio);
+ }
+@@ -171,16 +164,16 @@ static void iomap_set_range_uptodate(struct folio *folio,
+ static void iomap_finish_folio_read(struct folio *folio, size_t offset,
+ 		size_t len, int error)
+ {
+-	struct iomap_page *iop = to_iomap_page(folio);
++	struct iomap_folio_state *ifs = folio->private;
+ 
+ 	if (unlikely(error)) {
+ 		folio_clear_uptodate(folio);
+ 		folio_set_error(folio);
+ 	} else {
+-		iomap_set_range_uptodate(folio, iop, offset, len);
++		iomap_set_range_uptodate(folio, ifs, offset, len);
+ 	}
+ 
+-	if (!iop || atomic_sub_and_test(len, &iop->read_bytes_pending))
++	if (!ifs || atomic_sub_and_test(len, &ifs->read_bytes_pending))
+ 		folio_unlock(folio);
+ }
+ 
+@@ -213,7 +206,7 @@ struct iomap_readpage_ctx {
+ static int iomap_read_inline_data(const struct iomap_iter *iter,
+ 		struct folio *folio)
+ {
+-	struct iomap_page *iop;
++	struct iomap_folio_state *ifs;
+ 	const struct iomap *iomap = iomap_iter_srcmap(iter);
+ 	size_t size = i_size_read(iter->inode) - iomap->offset;
+ 	size_t poff = offset_in_page(iomap->offset);
+@@ -231,15 +224,15 @@ static int iomap_read_inline_data(const struct iomap_iter *iter,
+ 	if (WARN_ON_ONCE(size > iomap->length))
+ 		return -EIO;
+ 	if (offset > 0)
+-		iop = iomap_page_create(iter->inode, folio, iter->flags);
++		ifs = ifs_alloc(iter->inode, folio, iter->flags);
+ 	else
+-		iop = to_iomap_page(folio);
++		ifs = folio->private;
+ 
+ 	addr = kmap_local_folio(folio, offset);
+ 	memcpy(addr, iomap->inline_data, size);
+ 	memset(addr + size, 0, PAGE_SIZE - poff - size);
+ 	kunmap_local(addr);
+-	iomap_set_range_uptodate(folio, iop, offset, PAGE_SIZE - poff);
++	iomap_set_range_uptodate(folio, ifs, offset, PAGE_SIZE - poff);
+ 	return 0;
+ }
+ 
+@@ -260,7 +253,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+ 	loff_t pos = iter->pos + offset;
+ 	loff_t length = iomap_length(iter) - offset;
+ 	struct folio *folio = ctx->cur_folio;
+-	struct iomap_page *iop;
++	struct iomap_folio_state *ifs;
+ 	loff_t orig_pos = pos;
+ 	size_t poff, plen;
+ 	sector_t sector;
+@@ -269,20 +262,20 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+ 		return iomap_read_inline_data(iter, folio);
+ 
+ 	/* zero post-eof blocks as the page may be mapped */
+-	iop = iomap_page_create(iter->inode, folio, iter->flags);
++	ifs = ifs_alloc(iter->inode, folio, iter->flags);
+ 	iomap_adjust_read_range(iter->inode, folio, &pos, length, &poff, &plen);
+ 	if (plen == 0)
+ 		goto done;
+ 
+ 	if (iomap_block_needs_zeroing(iter, pos)) {
+ 		folio_zero_range(folio, poff, plen);
+-		iomap_set_range_uptodate(folio, iop, poff, plen);
++		iomap_set_range_uptodate(folio, ifs, poff, plen);
+ 		goto done;
+ 	}
+ 
+ 	ctx->cur_folio_in_bio = true;
+-	if (iop)
+-		atomic_add(plen, &iop->read_bytes_pending);
++	if (ifs)
++		atomic_add(plen, &ifs->read_bytes_pending);
+ 
+ 	sector = iomap_sector(iomap, pos);
+ 	if (!ctx->bio ||
+@@ -436,11 +429,11 @@ EXPORT_SYMBOL_GPL(iomap_readahead);
+  */
+ bool iomap_is_partially_uptodate(struct folio *folio, size_t from, size_t count)
+ {
+-	struct iomap_page *iop = to_iomap_page(folio);
++	struct iomap_folio_state *ifs = folio->private;
+ 	struct inode *inode = folio->mapping->host;
+ 	unsigned first, last, i;
+ 
+-	if (!iop)
++	if (!ifs)
+ 		return false;
+ 
+ 	/* Caller's range may extend past the end of this folio */
+@@ -451,7 +444,7 @@ bool iomap_is_partially_uptodate(struct folio *folio, size_t from, size_t count)
+ 	last = (from + count - 1) >> inode->i_blkbits;
+ 
+ 	for (i = first; i <= last; i++)
+-		if (!test_bit(i, iop->uptodate))
++		if (!test_bit(i, ifs->state))
+ 			return false;
+ 	return true;
+ }
+@@ -490,7 +483,7 @@ bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags)
+ 	 */
+ 	if (folio_test_dirty(folio) || folio_test_writeback(folio))
+ 		return false;
+-	iomap_page_release(folio);
++	ifs_free(folio);
+ 	return true;
+ }
+ EXPORT_SYMBOL_GPL(iomap_release_folio);
+@@ -507,12 +500,12 @@ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len)
+ 	if (offset == 0 && len == folio_size(folio)) {
+ 		WARN_ON_ONCE(folio_test_writeback(folio));
+ 		folio_cancel_dirty(folio);
+-		iomap_page_release(folio);
++		ifs_free(folio);
+ 	} else if (folio_test_large(folio)) {
+-		/* Must release the iop so the page can be split */
++		/* Must release the ifs so the page can be split */
+ 		WARN_ON_ONCE(!folio_test_uptodate(folio) &&
+ 			     folio_test_dirty(folio));
+-		iomap_page_release(folio);
++		ifs_free(folio);
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(iomap_invalidate_folio);
+@@ -547,7 +540,7 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+ 		size_t len, struct folio *folio)
+ {
+ 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+-	struct iomap_page *iop;
++	struct iomap_folio_state *ifs;
+ 	loff_t block_size = i_blocksize(iter->inode);
+ 	loff_t block_start = round_down(pos, block_size);
+ 	loff_t block_end = round_up(pos + len, block_size);
+@@ -559,8 +552,8 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+ 		return 0;
+ 	folio_clear_error(folio);
+ 
+-	iop = iomap_page_create(iter->inode, folio, iter->flags);
+-	if ((iter->flags & IOMAP_NOWAIT) && !iop && nr_blocks > 1)
++	ifs = ifs_alloc(iter->inode, folio, iter->flags);
++	if ((iter->flags & IOMAP_NOWAIT) && !ifs && nr_blocks > 1)
+ 		return -EAGAIN;
+ 
+ 	do {
+@@ -589,7 +582,7 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+ 			if (status)
+ 				return status;
+ 		}
+-		iomap_set_range_uptodate(folio, iop, poff, plen);
++		iomap_set_range_uptodate(folio, ifs, poff, plen);
+ 	} while ((block_start += plen) < block_end);
+ 
+ 	return 0;
+@@ -696,7 +689,7 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
+ static size_t __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+ 		size_t copied, struct folio *folio)
+ {
+-	struct iomap_page *iop = to_iomap_page(folio);
++	struct iomap_folio_state *ifs = folio->private;
+ 	flush_dcache_folio(folio);
+ 
+ 	/*
+@@ -712,7 +705,7 @@ static size_t __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+ 	 */
+ 	if (unlikely(copied < len && !folio_test_uptodate(folio)))
+ 		return 0;
+-	iomap_set_range_uptodate(folio, iop, offset_in_folio(folio, pos), len);
++	iomap_set_range_uptodate(folio, ifs, offset_in_folio(folio, pos), len);
+ 	filemap_dirty_folio(inode->i_mapping, folio);
+ 	return copied;
+ }
+@@ -1290,17 +1283,17 @@ EXPORT_SYMBOL_GPL(iomap_page_mkwrite);
+ static void iomap_finish_folio_write(struct inode *inode, struct folio *folio,
+ 		size_t len, int error)
+ {
+-	struct iomap_page *iop = to_iomap_page(folio);
++	struct iomap_folio_state *ifs = folio->private;
+ 
+ 	if (error) {
+ 		folio_set_error(folio);
+ 		mapping_set_error(inode->i_mapping, error);
+ 	}
+ 
+-	WARN_ON_ONCE(i_blocks_per_folio(inode, folio) > 1 && !iop);
+-	WARN_ON_ONCE(iop && atomic_read(&iop->write_bytes_pending) <= 0);
++	WARN_ON_ONCE(i_blocks_per_folio(inode, folio) > 1 && !ifs);
++	WARN_ON_ONCE(ifs && atomic_read(&ifs->write_bytes_pending) <= 0);
+ 
+-	if (!iop || atomic_sub_and_test(len, &iop->write_bytes_pending))
++	if (!ifs || atomic_sub_and_test(len, &ifs->write_bytes_pending))
+ 		folio_end_writeback(folio);
+ }
+ 
+@@ -1567,7 +1560,7 @@ iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t offset,
+  */
+ static void
+ iomap_add_to_ioend(struct inode *inode, loff_t pos, struct folio *folio,
+-		struct iomap_page *iop, struct iomap_writepage_ctx *wpc,
++		struct iomap_folio_state *ifs, struct iomap_writepage_ctx *wpc,
+ 		struct writeback_control *wbc, struct list_head *iolist)
+ {
+ 	sector_t sector = iomap_sector(&wpc->iomap, pos);
+@@ -1585,8 +1578,8 @@ iomap_add_to_ioend(struct inode *inode, loff_t pos, struct folio *folio,
+ 		bio_add_folio(wpc->ioend->io_bio, folio, len, poff);
+ 	}
+ 
+-	if (iop)
+-		atomic_add(len, &iop->write_bytes_pending);
++	if (ifs)
++		atomic_add(len, &ifs->write_bytes_pending);
+ 	wpc->ioend->io_size += len;
+ 	wbc_account_cgroup_owner(wbc, &folio->page, len);
+ }
+@@ -1612,7 +1605,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 		struct writeback_control *wbc, struct inode *inode,
+ 		struct folio *folio, u64 end_pos)
+ {
+-	struct iomap_page *iop = iomap_page_create(inode, folio, 0);
++	struct iomap_folio_state *ifs = ifs_alloc(inode, folio, 0);
+ 	struct iomap_ioend *ioend, *next;
+ 	unsigned len = i_blocksize(inode);
+ 	unsigned nblocks = i_blocks_per_folio(inode, folio);
+@@ -1620,7 +1613,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 	int error = 0, count = 0, i;
+ 	LIST_HEAD(submit_list);
+ 
+-	WARN_ON_ONCE(iop && atomic_read(&iop->write_bytes_pending) != 0);
++	WARN_ON_ONCE(ifs && atomic_read(&ifs->write_bytes_pending) != 0);
+ 
+ 	/*
+ 	 * Walk through the folio to find areas to write back. If we
+@@ -1628,7 +1621,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 	 * invalid, grab a new one.
+ 	 */
+ 	for (i = 0; i < nblocks && pos < end_pos; i++, pos += len) {
+-		if (iop && !test_bit(i, iop->uptodate))
++		if (ifs && !test_bit(i, ifs->state))
+ 			continue;
+ 
+ 		error = wpc->ops->map_blocks(wpc, inode, pos);
+@@ -1639,7 +1632,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 			continue;
+ 		if (wpc->iomap.type == IOMAP_HOLE)
+ 			continue;
+-		iomap_add_to_ioend(inode, pos, folio, iop, wpc, wbc,
++		iomap_add_to_ioend(inode, pos, folio, ifs, wpc, wbc,
+ 				 &submit_list);
+ 		count++;
+ 	}
+-- 
 2.40.1
 
