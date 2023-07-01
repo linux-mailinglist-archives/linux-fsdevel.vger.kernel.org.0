@@ -2,411 +2,236 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8052A7447CC
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jul 2023 09:36:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5DA5744995
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Jul 2023 16:22:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229490AbjGAHgc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Jul 2023 03:36:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32832 "EHLO
+        id S230475AbjGAOWA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Jul 2023 10:22:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229787AbjGAHf4 (ORCPT
+        with ESMTP id S230438AbjGAOV7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Jul 2023 03:35:56 -0400
-Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77727199;
-        Sat,  1 Jul 2023 00:35:48 -0700 (PDT)
-Received: by mail-oi1-x229.google.com with SMTP id 5614622812f47-39ed11d6a50so1951530b6e.2;
-        Sat, 01 Jul 2023 00:35:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688196947; x=1690788947;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pBs/SVDx8HJAgGEhcKk2jHgmyHp/mIRnKT9oVm91jRs=;
-        b=D/om7IVr3yJV4PwLn1yYdF4ZQVhS9k3TK05J5IfrXMIHvlA5el0S7cySegnpyfknyK
-         MPMN83c93FIaHwmLyDtxUn+MHPhRPFQ41H8LLdjk7Gj2M+ht7s4xkJuWyKh2r7sXKqsH
-         5RQhkffYqyTvAnMAJXtFAOnDURIkLCgohB8d+VvKs4ZpE+nekAYwmAh2fg5MQLJd0T3U
-         Tu6d0mEDrlGQH5GweXam10p3TItLg+MXPA8kSBDOzsCiHjZCGGbzWYzNUmW+9BbiE01K
-         EGaquu5mG1+x1+6luvxywlE1o0e2ieJeXjym7QtILKKTYKEeJO+iQMeCx0tVj9zQAliT
-         /dyQ==
+        Sat, 1 Jul 2023 10:21:59 -0400
+Received: from mail-pj1-f77.google.com (mail-pj1-f77.google.com [209.85.216.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0568E3C35
+        for <linux-fsdevel@vger.kernel.org>; Sat,  1 Jul 2023 07:21:54 -0700 (PDT)
+Received: by mail-pj1-f77.google.com with SMTP id 98e67ed59e1d1-262dc0bab18so2732851a91.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 01 Jul 2023 07:21:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688196947; x=1690788947;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pBs/SVDx8HJAgGEhcKk2jHgmyHp/mIRnKT9oVm91jRs=;
-        b=BcMQWptDMnFX28udX3dso6c5CCLe+QCZOKFNyQzLooNjkW3S7W3MPmZih8kgG80+zt
-         Z8letoxKz90VaSkp2M5//YCP3pXbLyQ8uv41Eacztyl8e+yh18HIJXearKwxbRU6Tdku
-         rESemGDgTb86cPdyoh/IYY5ylsiskYOQbQ1QtUE+z/u4geGbDooQ2sHARBWORlUhHgDV
-         v0FiItTt+PUewThouVrzC4IVuDz7wpt9MydA3uUSPwqsIz90QiP/TwmWlK35Af8sQnnl
-         UH73gKnYXwYhgIlggkctUAhM0fk86YBvxEddODsoTfRooUe2MH6VlV8sY34ehF69QVwH
-         MpoQ==
-X-Gm-Message-State: AC+VfDw+i+AjyGrjArGvdXgQnjHYLPRcOrdDSYOQ3HPIumVpFzLK6LPi
-        bomfPbb3Yqn70KZYPX3euMu9G9MDeSw=
-X-Google-Smtp-Source: ACHHUZ6MB6lqwzw4n4BIJrCaEL0BnmigltL63MRRK8IySNXQRBEC3BpQfVLqEUROX6sYTCcbybTHQQ==
-X-Received: by 2002:a05:6808:d4e:b0:399:8529:6726 with SMTP id w14-20020a0568080d4e00b0039985296726mr5961508oik.51.1688196947083;
-        Sat, 01 Jul 2023 00:35:47 -0700 (PDT)
-Received: from dw-tp.localdomain ([49.207.232.207])
-        by smtp.gmail.com with ESMTPSA id h14-20020aa786ce000000b0063aa1763146sm8603414pfo.17.2023.07.01.00.35.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Jul 2023 00:35:46 -0700 (PDT)
-From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To:     linux-xfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        Aravinda Herle <araherle@in.ibm.com>
-Subject: [PATCHv11 8/8] iomap: Add per-block dirty state tracking to improve performance
-Date:   Sat,  1 Jul 2023 13:04:41 +0530
-Message-Id: <bb0c58bf80dcdec96d7387bc439925fb14a5a496.1688188958.git.ritesh.list@gmail.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <cover.1688188958.git.ritesh.list@gmail.com>
-References: <cover.1688188958.git.ritesh.list@gmail.com>
+        d=1e100.net; s=20221208; t=1688221314; x=1690813314;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OT8IPwfbE64wzXdylWaPxtAqsU48uR9clEZjxfkIm00=;
+        b=bujngPEMfKT3fGTAKqcBxnvwDIDqa8xYd3R+w250Tq0Mz69yfxLcrlPm+MwQ42TclA
+         HnJ9Yl/C4ALNws0aE+JzVfw+fUO4sWLhu/rAjDmlA85sVnDTM+M7B8N4yknSTvtgsXPo
+         rOyEsLqrZ79MCKvBewnKLa53blv+scCE5zYJXq+wYpyKSmnOjkQ6QxBC5o5AFq1EkV1m
+         FALpcD/n9ImQdzpIjHdJgBZpx0nG1kptISwbfwSLUvhJI8F07yxkTi+5UUwNENpxSHM6
+         6P3J66eiFAcyk6OfDWCjUnXQbXfnE/8WLt4XSw/MD/G1koREpuGijDg7veuqGQHaG95q
+         HK2A==
+X-Gm-Message-State: ABy/qLbfz3IvXpaSuLbv7s5RFcLueUWSqvhuxOfmWRhTGftJd64QLCGR
+        uq7hsF5rQ8DWVpkc7xFayY5xGF3Up5/PR1ng8SbZp7aPm4oO
+X-Google-Smtp-Source: APBJJlH9bi9qfBOjoH2i36RqLtgB5R0q2IcMIeBbWh5J0+zMQVMH3/phBQXMUzmWT9cpoE/06oTWS+uRWTimSnEHfd6EpPaFALY5
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a17:902:f389:b0:1b2:436b:931d with SMTP id
+ f9-20020a170902f38900b001b2436b931dmr4212186ple.2.1688221313898; Sat, 01 Jul
+ 2023 07:21:53 -0700 (PDT)
+Date:   Sat, 01 Jul 2023 07:21:53 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b7a0c305ff6da727@google.com>
+Subject: [syzbot] [overlayfs?] KASAN: invalid-free in init_file
+From:   syzbot <syzbot+ada42aab05cf51b00e98@syzkaller.appspotmail.com>
+To:     amir73il@gmail.com, brauner@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When filesystem blocksize is less than folio size (either with
-mapping_large_folio_support() or with blocksize < pagesize) and when the
-folio is uptodate in pagecache, then even a byte write can cause
-an entire folio to be written to disk during writeback. This happens
-because we currently don't have a mechanism to track per-block dirty
-state within struct iomap_folio_state. We currently only track uptodate
-state.
+Hello,
 
-This patch implements support for tracking per-block dirty state in
-iomap_folio_state->state bitmap. This should help improve the filesystem
-write performance and help reduce write amplification.
+syzbot found the following issue on:
 
-Performance testing of below fio workload reveals ~16x performance
-improvement using nvme with XFS (4k blocksize) on Power (64K pagesize)
-FIO reported write bw scores improved from around ~28 MBps to ~452 MBps.
+HEAD commit:    1ef6663a587b Merge tag 'tag-chrome-platform-for-v6.5' of g..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=120fd3a8a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=33c8c2baba1cfc7e
+dashboard link: https://syzkaller.appspot.com/bug?extid=ada42aab05cf51b00e98
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=130a5670a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11aac680a80000
 
-1. <test_randwrite.fio>
-[global]
-	ioengine=psync
-	rw=randwrite
-	overwrite=1
-	pre_read=1
-	direct=0
-	bs=4k
-	size=1G
-	dir=./
-	numjobs=8
-	fdatasync=1
-	runtime=60
-	iodepth=64
-	group_reporting=1
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6561f5e7c861/disk-1ef6663a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/aed67f7d3a9d/vmlinux-1ef6663a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/baa651e2ed8e/bzImage-1ef6663a.xz
 
-[fio-run]
+The issue was bisected to:
 
-2. Also our internal performance team reported that this patch improves
-   their database workload performance by around ~83% (with XFS on Power)
+commit 62d53c4a1dfe347bd87ede46ffad38c9a3870338
+Author: Amir Goldstein <amir73il@gmail.com>
+Date:   Thu Jun 15 11:22:28 2023 +0000
 
-Reported-by: Aravinda Herle <araherle@in.ibm.com>
-Reported-by: Brian Foster <bfoster@redhat.com>
-Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+    fs: use backing_file container for internal files with "fake" f_path
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=156341e0a80000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=176341e0a80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=136341e0a80000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ada42aab05cf51b00e98@syzkaller.appspotmail.com
+Fixes: 62d53c4a1dfe ("fs: use backing_file container for internal files with "fake" f_path")
+
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fbb808467a9
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000005
+RBP: 00007ffdc0c78ff0 R08: 0000000000000001 R09: 00007fbb80800034
+R10: 000000007ffff000 R11: 0000000000000246 R12: 0000000000000006
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+==================================================================
+BUG: KASAN: invalid-free in init_file+0x195/0x200 fs/file_table.c:163
+Free of addr ffff88801ea5a800 by task syz-executor145/4991
+
+CPU: 0 PID: 4991 Comm: syz-executor145 Not tainted 6.4.0-syzkaller-01224-g1ef6663a587b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:351 [inline]
+ print_report+0x163/0x540 mm/kasan/report.c:462
+ kasan_report_invalid_free+0xeb/0x100 mm/kasan/report.c:537
+ ____kasan_slab_free+0xfb/0x120
+ kasan_slab_free include/linux/kasan.h:162 [inline]
+ slab_free_hook mm/slub.c:1781 [inline]
+ slab_free_freelist_hook mm/slub.c:1807 [inline]
+ slab_free mm/slub.c:3786 [inline]
+ kmem_cache_free+0x297/0x520 mm/slub.c:3808
+ init_file+0x195/0x200 fs/file_table.c:163
+ alloc_empty_backing_file+0x67/0xd0 fs/file_table.c:267
+ backing_file_open+0x26/0x100 fs/open.c:1166
+ ovl_open_realfile+0x1f6/0x350 fs/overlayfs/file.c:64
+ ovl_real_fdget_meta fs/overlayfs/file.c:122 [inline]
+ ovl_real_fdget fs/overlayfs/file.c:143 [inline]
+ ovl_splice_read+0x7cc/0x8c0 fs/overlayfs/file.c:430
+ splice_direct_to_actor+0x2a8/0x9a0 fs/splice.c:961
+ do_splice_direct+0x286/0x3d0 fs/splice.c:1070
+ do_sendfile+0x623/0x1070 fs/read_write.c:1254
+ __do_sys_sendfile64 fs/read_write.c:1322 [inline]
+ __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1308
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fbb808467a9
+Code: 28 c3 e8 2a 14 00 00 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdc0c78fe8 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fbb808467a9
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000005
+RBP: 00007ffdc0c78ff0 R08: 0000000000000001 R09: 00007fbb80800034
+R10: 000000007ffff000 R11: 0000000000000246 R12: 0000000000000006
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+
+Allocated by task 4991:
+ kasan_save_stack mm/kasan/common.c:45 [inline]
+ kasan_set_track+0x4f/0x70 mm/kasan/common.c:52
+ ____kasan_kmalloc mm/kasan/common.c:374 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:383
+ kmalloc include/linux/slab.h:559 [inline]
+ kzalloc include/linux/slab.h:680 [inline]
+ alloc_empty_backing_file+0x52/0xd0 fs/file_table.c:263
+ backing_file_open+0x26/0x100 fs/open.c:1166
+ ovl_open_realfile+0x1f6/0x350 fs/overlayfs/file.c:64
+ ovl_real_fdget_meta fs/overlayfs/file.c:122 [inline]
+ ovl_real_fdget fs/overlayfs/file.c:143 [inline]
+ ovl_splice_read+0x7cc/0x8c0 fs/overlayfs/file.c:430
+ splice_direct_to_actor+0x2a8/0x9a0 fs/splice.c:961
+ do_splice_direct+0x286/0x3d0 fs/splice.c:1070
+ do_sendfile+0x623/0x1070 fs/read_write.c:1254
+ __do_sys_sendfile64 fs/read_write.c:1322 [inline]
+ __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1308
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+The buggy address belongs to the object at ffff88801ea5a800
+ which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 0 bytes inside of
+ 480-byte region [ffff88801ea5a800, ffff88801ea5a9e0)
+
+The buggy address belongs to the physical page:
+page:ffffea00007a9600 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1ea58
+head:ffffea00007a9600 order:2 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+anon flags: 0xfff00000010200(slab|head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffffff()
+raw: 00fff00000010200 ffff888012441c80 0000000000000000 dead000000000001
+raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 2, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 733, tgid 733 (kworker/u4:0), ts 6534177535, free_ts 0
+ set_page_owner include/linux/page_owner.h:31 [inline]
+ post_alloc_hook+0x1e6/0x210 mm/page_alloc.c:1744
+ prep_new_page mm/page_alloc.c:1751 [inline]
+ get_page_from_freelist+0x320e/0x3390 mm/page_alloc.c:3523
+ __alloc_pages+0x255/0x670 mm/page_alloc.c:4794
+ alloc_slab_page+0x6a/0x160 mm/slub.c:1851
+ allocate_slab mm/slub.c:1998 [inline]
+ new_slab+0x84/0x2f0 mm/slub.c:2051
+ ___slab_alloc+0xa85/0x10a0 mm/slub.c:3192
+ __slab_alloc mm/slub.c:3291 [inline]
+ __slab_alloc_node mm/slub.c:3344 [inline]
+ slab_alloc_node mm/slub.c:3441 [inline]
+ __kmem_cache_alloc_node+0x1b8/0x290 mm/slub.c:3490
+ kmalloc_trace+0x2a/0xe0 mm/slab_common.c:1057
+ kmalloc include/linux/slab.h:559 [inline]
+ kzalloc include/linux/slab.h:680 [inline]
+ alloc_bprm+0x56/0x900 fs/exec.c:1512
+ kernel_execve+0x96/0xa10 fs/exec.c:1987
+ call_usermodehelper_exec_async+0x233/0x370 kernel/umh.c:110
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff88801ea5a700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88801ea5a780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88801ea5a800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+                   ^
+ ffff88801ea5a880: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff88801ea5a900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+
+
 ---
- fs/gfs2/aops.c         |   2 +-
- fs/iomap/buffered-io.c | 149 ++++++++++++++++++++++++++++++++++++++---
- fs/xfs/xfs_aops.c      |   2 +-
- fs/zonefs/file.c       |   2 +-
- include/linux/iomap.h  |   1 +
- 5 files changed, 142 insertions(+), 14 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
-index a5f4be6b9213..75efec3c3b71 100644
---- a/fs/gfs2/aops.c
-+++ b/fs/gfs2/aops.c
-@@ -746,7 +746,7 @@ static const struct address_space_operations gfs2_aops = {
- 	.writepages = gfs2_writepages,
- 	.read_folio = gfs2_read_folio,
- 	.readahead = gfs2_readahead,
--	.dirty_folio = filemap_dirty_folio,
-+	.dirty_folio = iomap_dirty_folio,
- 	.release_folio = iomap_release_folio,
- 	.invalidate_folio = iomap_invalidate_folio,
- 	.bmap = gfs2_bmap,
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index fb6c2b6a4358..2fd9413838de 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -25,7 +25,7 @@
- 
- typedef int (*iomap_punch_t)(struct inode *inode, loff_t offset, loff_t length);
- /*
-- * Structure allocated for each folio to track per-block uptodate state
-+ * Structure allocated for each folio to track per-block uptodate, dirty state
-  * and I/O completions.
-  */
- struct iomap_folio_state {
-@@ -78,6 +78,61 @@ static void iomap_set_range_uptodate(struct folio *folio, size_t off,
- 		folio_mark_uptodate(folio);
- }
- 
-+static inline bool ifs_block_is_dirty(struct folio *folio,
-+		struct iomap_folio_state *ifs, int block)
-+{
-+	struct inode *inode = folio->mapping->host;
-+	unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
-+
-+	return test_bit(block + blks_per_folio, ifs->state);
-+}
-+
-+static void ifs_clear_range_dirty(struct folio *folio,
-+		struct iomap_folio_state *ifs, size_t off, size_t len)
-+{
-+	struct inode *inode = folio->mapping->host;
-+	unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
-+	unsigned int first_blk = (off >> inode->i_blkbits);
-+	unsigned int last_blk = (off + len - 1) >> inode->i_blkbits;
-+	unsigned int nr_blks = last_blk - first_blk + 1;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&ifs->state_lock, flags);
-+	bitmap_clear(ifs->state, first_blk + blks_per_folio, nr_blks);
-+	spin_unlock_irqrestore(&ifs->state_lock, flags);
-+}
-+
-+static void iomap_clear_range_dirty(struct folio *folio, size_t off, size_t len)
-+{
-+	struct iomap_folio_state *ifs = folio->private;
-+
-+	if (ifs)
-+		ifs_clear_range_dirty(folio, ifs, off, len);
-+}
-+
-+static void ifs_set_range_dirty(struct folio *folio,
-+		struct iomap_folio_state *ifs, size_t off, size_t len)
-+{
-+	struct inode *inode = folio->mapping->host;
-+	unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
-+	unsigned int first_blk = (off >> inode->i_blkbits);
-+	unsigned int last_blk = (off + len - 1) >> inode->i_blkbits;
-+	unsigned int nr_blks = last_blk - first_blk + 1;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&ifs->state_lock, flags);
-+	bitmap_set(ifs->state, first_blk + blks_per_folio, nr_blks);
-+	spin_unlock_irqrestore(&ifs->state_lock, flags);
-+}
-+
-+static void iomap_set_range_dirty(struct folio *folio, size_t off, size_t len)
-+{
-+	struct iomap_folio_state *ifs = folio->private;
-+
-+	if (ifs)
-+		ifs_set_range_dirty(folio, ifs, off, len);
-+}
-+
- static struct iomap_folio_state *ifs_alloc(struct inode *inode,
- 		struct folio *folio, unsigned int flags)
- {
-@@ -93,14 +148,24 @@ static struct iomap_folio_state *ifs_alloc(struct inode *inode,
- 	else
- 		gfp = GFP_NOFS | __GFP_NOFAIL;
- 
--	ifs = kzalloc(struct_size(ifs, state, BITS_TO_LONGS(nr_blocks)),
--		      gfp);
--	if (ifs) {
--		spin_lock_init(&ifs->state_lock);
--		if (folio_test_uptodate(folio))
--			bitmap_fill(ifs->state, nr_blocks);
--		folio_attach_private(folio, ifs);
--	}
-+	/*
-+	 * ifs->state tracks two sets of state flags when the
-+	 * filesystem block size is smaller than the folio size.
-+	 * The first state tracks per-block uptodate and the
-+	 * second tracks per-block dirty state.
-+	 */
-+	ifs = kzalloc(struct_size(ifs, state,
-+		      BITS_TO_LONGS(2 * nr_blocks)), gfp);
-+	if (!ifs)
-+		return ifs;
-+
-+	spin_lock_init(&ifs->state_lock);
-+	if (folio_test_uptodate(folio))
-+		bitmap_set(ifs->state, 0, nr_blocks);
-+	if (folio_test_dirty(folio))
-+		bitmap_set(ifs->state, nr_blocks, nr_blocks);
-+	folio_attach_private(folio, ifs);
-+
- 	return ifs;
- }
- 
-@@ -523,6 +588,17 @@ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len)
- }
- EXPORT_SYMBOL_GPL(iomap_invalidate_folio);
- 
-+bool iomap_dirty_folio(struct address_space *mapping, struct folio *folio)
-+{
-+	struct inode *inode = mapping->host;
-+	size_t len = folio_size(folio);
-+
-+	ifs_alloc(inode, folio, 0);
-+	iomap_set_range_dirty(folio, 0, len);
-+	return filemap_dirty_folio(mapping, folio);
-+}
-+EXPORT_SYMBOL_GPL(iomap_dirty_folio);
-+
- static void
- iomap_write_failed(struct inode *inode, loff_t pos, unsigned len)
- {
-@@ -727,6 +803,7 @@ static size_t __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 	if (unlikely(copied < len && !folio_test_uptodate(folio)))
- 		return 0;
- 	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
-+	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
- 	filemap_dirty_folio(inode->i_mapping, folio);
- 	return copied;
- }
-@@ -891,6 +968,43 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
- }
- EXPORT_SYMBOL_GPL(iomap_file_buffered_write);
- 
-+static int iomap_write_delalloc_ifs_punch(struct inode *inode,
-+		struct folio *folio, loff_t start_byte, loff_t end_byte,
-+		iomap_punch_t punch)
-+{
-+	unsigned int first_blk, last_blk, i;
-+	loff_t last_byte;
-+	u8 blkbits = inode->i_blkbits;
-+	struct iomap_folio_state *ifs;
-+	int ret = 0;
-+
-+	/*
-+	 * When we have per-block dirty tracking, there can be
-+	 * blocks within a folio which are marked uptodate
-+	 * but not dirty. In that case it is necessary to punch
-+	 * out such blocks to avoid leaking any delalloc blocks.
-+	 */
-+	ifs = folio->private;
-+	if (!ifs)
-+		return ret;
-+
-+	last_byte = min_t(loff_t, end_byte - 1,
-+			folio_pos(folio) + folio_size(folio) - 1);
-+	first_blk = offset_in_folio(folio, start_byte) >> blkbits;
-+	last_blk = offset_in_folio(folio, last_byte) >> blkbits;
-+	for (i = first_blk; i <= last_blk; i++) {
-+		if (!ifs_block_is_dirty(folio, ifs, i)) {
-+			ret = punch(inode, folio_pos(folio) + (i << blkbits),
-+				    1 << blkbits);
-+			if (ret)
-+				return ret;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+
- static int iomap_write_delalloc_punch(struct inode *inode, struct folio *folio,
- 		loff_t *punch_start_byte, loff_t start_byte, loff_t end_byte,
- 		iomap_punch_t punch)
-@@ -907,6 +1021,13 @@ static int iomap_write_delalloc_punch(struct inode *inode, struct folio *folio,
- 		if (ret)
- 			return ret;
- 	}
-+
-+	/* Punch non-dirty blocks within folio */
-+	ret = iomap_write_delalloc_ifs_punch(inode, folio, start_byte,
-+			end_byte, punch);
-+	if (ret)
-+		return ret;
-+
- 	/*
- 	 * Make sure the next punch start is correctly bound to
- 	 * the end of this data range, not the end of the folio.
-@@ -1637,7 +1758,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 		struct writeback_control *wbc, struct inode *inode,
- 		struct folio *folio, u64 end_pos)
- {
--	struct iomap_folio_state *ifs = ifs_alloc(inode, folio, 0);
-+	struct iomap_folio_state *ifs = folio->private;
- 	struct iomap_ioend *ioend, *next;
- 	unsigned len = i_blocksize(inode);
- 	unsigned nblocks = i_blocks_per_folio(inode, folio);
-@@ -1645,6 +1766,11 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 	int error = 0, count = 0, i;
- 	LIST_HEAD(submit_list);
- 
-+	if (!ifs && nblocks > 1) {
-+		ifs = ifs_alloc(inode, folio, 0);
-+		iomap_set_range_dirty(folio, 0, folio_size(folio));
-+	}
-+
- 	WARN_ON_ONCE(ifs && atomic_read(&ifs->write_bytes_pending) != 0);
- 
- 	/*
-@@ -1653,7 +1779,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 	 * invalid, grab a new one.
- 	 */
- 	for (i = 0; i < nblocks && pos < end_pos; i++, pos += len) {
--		if (ifs && !ifs_block_is_uptodate(ifs, i))
-+		if (ifs && !ifs_block_is_dirty(folio, ifs, i))
- 			continue;
- 
- 		error = wpc->ops->map_blocks(wpc, inode, pos);
-@@ -1697,6 +1823,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 		}
- 	}
- 
-+	iomap_clear_range_dirty(folio, 0, end_pos - folio_pos(folio));
- 	folio_start_writeback(folio);
- 	folio_unlock(folio);
- 
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 451942fb38ec..2fca4b4e7fd8 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -578,7 +578,7 @@ const struct address_space_operations xfs_address_space_operations = {
- 	.read_folio		= xfs_vm_read_folio,
- 	.readahead		= xfs_vm_readahead,
- 	.writepages		= xfs_vm_writepages,
--	.dirty_folio		= filemap_dirty_folio,
-+	.dirty_folio		= iomap_dirty_folio,
- 	.release_folio		= iomap_release_folio,
- 	.invalidate_folio	= iomap_invalidate_folio,
- 	.bmap			= xfs_vm_bmap,
-diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
-index 132f01d3461f..e508c8e97372 100644
---- a/fs/zonefs/file.c
-+++ b/fs/zonefs/file.c
-@@ -175,7 +175,7 @@ const struct address_space_operations zonefs_file_aops = {
- 	.read_folio		= zonefs_read_folio,
- 	.readahead		= zonefs_readahead,
- 	.writepages		= zonefs_writepages,
--	.dirty_folio		= filemap_dirty_folio,
-+	.dirty_folio		= iomap_dirty_folio,
- 	.release_folio		= iomap_release_folio,
- 	.invalidate_folio	= iomap_invalidate_folio,
- 	.migrate_folio		= filemap_migrate_folio,
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index e2b836c2e119..eb9335c46bf3 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -264,6 +264,7 @@ bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
- struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos);
- bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags);
- void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len);
-+bool iomap_dirty_folio(struct address_space *mapping, struct folio *folio);
- int iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
- 		const struct iomap_ops *ops);
- int iomap_zero_range(struct inode *inode, loff_t pos, loff_t len,
--- 
-2.40.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
