@@ -2,118 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ADD53745EB5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 16:42:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 722FA745ED9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 16:43:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231296AbjGCOm3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jul 2023 10:42:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56998 "EHLO
+        id S230030AbjGCOng (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jul 2023 10:43:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231290AbjGCOm1 (ORCPT
+        with ESMTP id S230344AbjGCOnb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jul 2023 10:42:27 -0400
-Received: from tarta.nabijaczleweli.xyz (unknown [139.28.40.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 806B2E74;
-        Mon,  3 Jul 2023 07:42:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
-        s=202305; t=1688395342;
-        bh=SowbDY6YnsriPuN0djgR0SpF4itfDBztRXtp8moML7o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EsXuPnSi0xOmIDA9aB+N2jhQz9p0AOzj61HDIQTIJdzsnRWnGbDF/huwP1B2Kx+s4
-         GKbOd+IEDrPuqA8IYlgDBOn6HOsDRcDqUnEcUykq7eexZHfYx4Z3D/N8VYaI//nkFq
-         WJkt4AYUkUzX5FoP6FZzjhpdok8hVpqoRCs4WGx2pbfxIKqawO2xUiBirSXWlAmDpE
-         P8FV50NHcwz5rhWzafQCFhpJ2R+IRTIKCBssG8XeIt/RX5FLzqNjXl7fEXeVDbeqZB
-         +llvKsXyqOJZ9yQPPq7UR0PsOfrof+FV3TOpe1D5CNEgiM3y7YUE3X9IMLGbTYa4l6
-         iS2kXT2bbIGnA==
-Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
-        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 9D49F1DC4;
-        Mon,  3 Jul 2023 16:42:22 +0200 (CEST)
-Date:   Mon, 3 Jul 2023 16:42:21 +0200
-From:   Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
-        <nabijaczleweli@nabijaczleweli.xyz>
+        Mon, 3 Jul 2023 10:43:31 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70946199A
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jul 2023 07:43:16 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id ACE6521A44;
+        Mon,  3 Jul 2023 14:43:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1688395394; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=TuZDlXOE8Z1YaCJ7ElpxZRrG1BNpDjE6iOyqgGSwTcI=;
+        b=HHZJAoSGse/TGmXcbQ8DraQ54Qpv92cOuLSJ+l++HbICJLPxP6d7yZ07ejKtxf7KjqXFkH
+        P4Pf607y8/9KpSuh3L4Wb/ejDP9TxSufROefCQnzEMtUiSLSTIAuxBFMYqKqMSx6R8OEu4
+        WazcQgCMX6xm36+M3GjgE8+HGje/vBg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1688395394;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=TuZDlXOE8Z1YaCJ7ElpxZRrG1BNpDjE6iOyqgGSwTcI=;
+        b=zNo63mOG+7DE7kSyScla0ygG34AcyC3Mmu1/bLhkIq6fp74u/e9USYETIgHWxrpPNbNdZU
+        knjce6T0ZtEkfXBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A0C201358E;
+        Mon,  3 Jul 2023 14:43:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id L7A3J4LeomQuRgAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 03 Jul 2023 14:43:14 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 34904A0722; Mon,  3 Jul 2023 16:43:14 +0200 (CEST)
+From:   Jan Kara <jack@suse.cz>
 To:     Christian Brauner <brauner@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Chung-Chiang Cheng <cccheng@synology.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/3] splice: fsnotify_access(in), fsnotify_modify(out) on
- success in tee
-Message-ID: <10d76dd8c85017ae3cd047c9b9a32e26daefdaa2.1688393619.git.nabijaczleweli@nabijaczleweli.xyz>
-References: <cover.1688393619.git.nabijaczleweli@nabijaczleweli.xyz>
+Cc:     Dan Carpenter <dan.carpenter@linaro.org>,
+        <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH] fs: Drop pointless 'source' check from vfs_rename()
+Date:   Mon,  3 Jul 2023 16:43:06 +0200
+Message-Id: <20230703144306.32639-1-jack@suse.cz>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kdyjczppc4aawsdj"
-Content-Disposition: inline
-In-Reply-To: <cover.1688393619.git.nabijaczleweli@nabijaczleweli.xyz>
-User-Agent: NeoMutt/20230517
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,PDS_RDNS_DYNAMIC_FP,
-        RDNS_DYNAMIC,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=798; i=jack@suse.cz; h=from:subject; bh=GlyKpAqu9mbSXwRlpYQXbfH5IsE2U1kvv28OfU26mr0=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBkot50cV2pIjlNvsa2/LO0HzWp/698IgEiPU1Ecl0y 3pR3/d+JATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZKLedAAKCRCcnaoHP2RA2UScB/ 94z+SIZP+cwhdMRtmUXY3mR37mAD9FJursQnbexNwHUmNGLgGVXXOF/AsUHd93jMGaJLqifGWBzngH FOGMpu6mo4QACnkpUXQ/4AXRatCJ89hoKetkkEv2LD/zlF33Vj6vWme/gz2GCj5Cp/KX3wAJYR3YP5 05TafHbOdrW8GAhrnulCfUHox5JWxt9uZPD4OzKOirqJp4m3T8QMiWfbwddZ9SCt4UivHHF/DXEPFj 94SH9BZkz54G3J0ouNX4IjDoOfMAt+d6aUEQ+cAQ+/bXVXBZdGBJY2VV0+K0M4RRFQLIsWPOmYJ9ZW u2MZrAVAQxIbTxIg21piZGYBseYOsp
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+The check for 'source' being non-NULL before unlocking it is pointless
+as 'source' is guaranteed to exist in vfs_rename(). Drop it.
 
---kdyjczppc4aawsdj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Same logic applies here: this can fill up the pipe, and pollers that rely
-on getting IN_MODIFY notifications never wake up.
-
-Fixes: 983652c69199 ("splice: report related fsnotify events")
-Link: https://lore.kernel.org/linux-fsdevel/jbyihkyk5dtaohdwjyivambb2gffyjs=
-3dodpofafnkkunxq7bu@jngkdxx65pux/t/#u
-Link: https://bugs.debian.org/1039488
-Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xyz>
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Acked-by: Jan Kara <jack@suse.cz>
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/r/202307030026.9sE2pk2x-lkp@intel.com/
+Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/splice.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/namei.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 5deb12d743b1..c49909dbf3c5 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -1815,6 +1815,11 @@ long do_tee(struct file *in, struct file *out, size_=
-t len, unsigned int flags)
- 		}
+diff --git a/fs/namei.c b/fs/namei.c
+index 91171da719c5..e56ff39a79bc 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -4874,8 +4874,7 @@ int vfs_rename(struct renamedata *rd)
+ 			d_exchange(old_dentry, new_dentry);
  	}
-=20
-+	if (ret > 0) {
-+		fsnotify_access(in);
-+		fsnotify_modify(out);
-+	}
-+
- 	return ret;
- }
-=20
---=20
-2.39.2
+ out:
+-	if (source)
+-		inode_unlock(source);
++	inode_unlock(source);
+ 	if (target)
+ 		inode_unlock(target);
+ 	dput(new_dentry);
+-- 
+2.35.3
 
---kdyjczppc4aawsdj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmSi3k0ACgkQvP0LAY0m
-WPF9+Q/+J6bU/ve99xlYUDp9QIZx97GByxsAc60UTli80+/M2askRgboNzVMr54t
-WeQhhZ+c7qDVF5b6m6xBASK/cOF8jqSawpVZI7RY6FvxvaTl1gBxbaLdizgPIBc0
-FpMxenMxQ/fxAlCj4OAYJRjSyunx8JciUdCo8iq9PPa+wGVFYa8Di8UMwzeh60r5
-Yu+VQvsGvm74MpvZMhjtvQdljLMsdoZUx/fR4I4SIiyXP34sRm1wM+xOtlT9XO2H
-tm+6BizWGO0mvh6XDYeKRhgszHAKITKtH8RygIW+Vl7VrtqeUkNxh6g8XOKDQ/oK
-UlCnE8lWjXUq7iabebSTxBKUPSiCMMhe5tmQ77OL3RFq+frPLZV1uefCPkY/dHvP
-GjNnAp+vDMQ4kTN9sWK6TobWHVeN4ZQVK2EWm8jA4vTuNqp5DQTvc9pG43j/sXeC
-zXyUS9+KLuW6PBfJKqoULRnLgufbShCdp2EEdNpBqjgQWB8zMyYGbHq0WRVDvdfW
-46irAZjFq6Hcma5/MwRU/fcPRm0TZR4uoyqiSnny7BhGoS8aCDkED5Qe8jWQt2p2
-O4yuYvg5To59EL+oPrT5Oel3lRjjeysySFPEBpT3YDolvxaGnHeD1w5QVcitS5e1
-2Tx8PIUIN+/ho8iKkqJBqvrUr+Idn+VF7PGi2R0IeOuPwNSmiIc=
-=htXo
------END PGP SIGNATURE-----
-
---kdyjczppc4aawsdj--
