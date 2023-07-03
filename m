@@ -2,1522 +2,669 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD4F8745832
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 11:17:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C2BE745862
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 11:31:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231200AbjGCJRM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jul 2023 05:17:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58596 "EHLO
+        id S230024AbjGCJbJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jul 2023 05:31:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229698AbjGCJRH (ORCPT
+        with ESMTP id S229481AbjGCJbI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jul 2023 05:17:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21CC812C
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jul 2023 02:16:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688375780;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=SbDk57a1jqeG67LcA2+RWxjHEIv5HuirNtVaiIbPz/c=;
-        b=bhNT4Ak+kiTwmv7pmID2A3n9aW/gvBF+inmIvpCj55eWlVF4LXZ4pm9toUGqObyDHpo7Ob
-        ozxpfqFC4kWavISCUr9J5lF3Y4vA725iNBLzNWBOEuJkxvU3cPvPPL7jm2BWNIPuzDt/XH
-        jsbSYYy/B6bCA8OhkezLiEMi3Z67XB4=
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
- [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-499-5uxPJPDtNier2mJ2Kt008Q-1; Mon, 03 Jul 2023 05:16:19 -0400
-X-MC-Unique: 5uxPJPDtNier2mJ2Kt008Q-1
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-346083e0744so4545805ab.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jul 2023 02:16:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688375778; x=1690967778;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SbDk57a1jqeG67LcA2+RWxjHEIv5HuirNtVaiIbPz/c=;
-        b=IBqRspv+n2GDvFf9qY/PZD6NdV+mD7hdAxQ3bPHVm1dFNYUqC1+lBbvCGBTa/L8LBe
-         yElM74b7qGpMBkgLyVYjSSghdSRMfHpngADuhqqSuCDzvZ5nGE7aolGVvkyana0buf2h
-         LMQSqDhMo6WhWPkAJbDBV9VZdsweUf8bawL+I/rGtEkY99fRzDabE11NuBte+hvbgcnU
-         NDJCboUo9IpOXAOgRhu2U0VnxXPoI5NL5YgbzJIeYJBKW0SQp9ClETkcJLj2ICqnl9+F
-         tV3qXuktUawOq8c0mgajH6iQrILb9fX6p7lJtU2G5kuNsa21xzgMP4yb/62YAw3lDsri
-         rm1g==
-X-Gm-Message-State: ABy/qLa8RRRJkYSBeJt4gMD0Z6Tt6EFm6TDCtYnXzqYjnU+7O1TxtJ0m
-        yl/QPwPetaqxhR4U0limDZLw5dKZQDZfBLj8XIrUtsglqYKUthQh8I+o+qE9dy4enwte2W/5vFY
-        Es4fVW5o0ML8yp7558xtmipk9vXyL0yJUZDvE+fTxJA==
-X-Received: by 2002:a92:cf45:0:b0:342:1b4e:609a with SMTP id c5-20020a92cf45000000b003421b4e609amr9797654ilr.2.1688375777907;
-        Mon, 03 Jul 2023 02:16:17 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlFgIBYjuRgJ3DPdFUupIWffQFqgCB33SCYDACcTuVMB2AuI3SV5wsG766XyfP+yYrZt6qLHugyQUP51f+o0YfI=
-X-Received: by 2002:a92:cf45:0:b0:342:1b4e:609a with SMTP id
- c5-20020a92cf45000000b003421b4e609amr9797631ilr.2.1688375777387; Mon, 03 Jul
- 2023 02:16:17 -0700 (PDT)
+        Mon, 3 Jul 2023 05:31:08 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAB95CD;
+        Mon,  3 Jul 2023 02:31:00 -0700 (PDT)
+Received: from [192.168.43.110] (unknown [116.71.191.217])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 65E216606F57;
+        Mon,  3 Jul 2023 10:30:46 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1688376659;
+        bh=w0YKyzQE0llhRjeo3PCXYRlQ1d3QGoB4qd/RGVz6sos=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=OidjyY4PvZPf8xwFy1Cebaujb5ufeFlWana6wOekGuauXeIy6Sp7pbAgyMKlEjxCU
+         Cee/KL3B22KRXKEhszE5x/jDM9NCwWhS0Rd0rFieMGCEcGPFf7otZvArWCrRUdxkBJ
+         b1GwdmaWZs0FCvxlgjLMw2k6eUMEXu/G0ugAVfLwbtE3QD8I/M0HZ9IIs2auOPuFqd
+         dvdSTU1sShSAMO95gKvJ4RPeU8lCLC5owpQdngicC0Swuio1sgBqRYGlxAWwKNN9EC
+         bhpssWzj/WSSGWyhmY6wmnYgftXm5UVvO9gLqRJPImklzd7h60Exibe7e7wsQ7Vhfh
+         e34SZN9gTxXcg==
+Message-ID: <1705991c-ea7c-f78c-421d-2900463985ab@collabora.com>
+Date:   Mon, 3 Jul 2023 14:30:41 +0500
 MIME-Version: 1.0
-References: <20230626-fs-overlayfs-mount-api-param-v1-1-29afb997a19f@kernel.org>
- <CAOQ4uxiOsHEx30ERLYeLdnOdFG1rw_OnXo+rBbKCY-ZzNxV_uQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiOsHEx30ERLYeLdnOdFG1rw_OnXo+rBbKCY-ZzNxV_uQ@mail.gmail.com>
-From:   Alexander Larsson <alexl@redhat.com>
-Date:   Mon, 3 Jul 2023 11:16:06 +0200
-Message-ID: <CAL7ro1GgW-2gUhB=TBxwDAiybbQBbFabkU2tBNbBH85Q_KZWew@mail.gmail.com>
-Subject: Re: [PATCH] ovl: move all parameter handling into params.{c,h}
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: Re: [PATCH v22 2/5] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+References: <20230628095426.1886064-1-usama.anjum@collabora.com>
+ <20230628095426.1886064-3-usama.anjum@collabora.com>
+ <CABb0KFFDCZ9E3sTukmdk3jViOJmP33xOoVNg37ACoynD97ZpwA@mail.gmail.com>
+Content-Language: en-US
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <CABb0KFFDCZ9E3sTukmdk3jViOJmP33xOoVNg37ACoynD97ZpwA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 26, 2023 at 4:40=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Mon, Jun 26, 2023 at 1:23=E2=80=AFPM Christian Brauner <brauner@kernel=
-.org> wrote:
-> >
-> > While initially I thought that we couldn't move all new mount api
-> > handling into params.{c,h} it turns out it is possible. So this just
-> > moves a good chunk of code out of super.c and into params.{c,h}.
-> >
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >
->
-> Thank you for this cleanup!
->
-> Alex,
->
-> I took the liberty to resolve the conflicts with your branch, see:
->
-> https://github.com/amir73il/linux/commits/overlay-verity
+On 6/28/23 5:11 PM, Michał Mirosław wrote:
+> Hi Muhammad,
+> 
+> I'd really like to reduce the number of conditionals in this code by a
+> third. I believe it is possible if we agree to rework the API a bit
+> (making it always a GET operation with optional WP) and relax some of
+> the restrictions on the input values.
+I have discussed this multiple times in revisions that why we need the GET,
+GET+WP and WP operations. We cannot remove only WP operation. Please
+consult previous revisions on why we need exclusive WP operation without GET.
 
-Thanks, I took a look at this and it seems good. Updated my branch to this =
-too.
+> 
+> Also please include *all* changes you make in a patch in the changelog
+> - I just noticed e.g. a `mmu_notifier` code that I haven't seen before
+> in the review.
+mmu_notifier code was added v16. I'll try to write more longer specific
+changelog.
 
-> Thanks,
-> Amir.
->
-> > ---
-> >  fs/overlayfs/overlayfs.h |  41 +---
-> >  fs/overlayfs/params.c    | 532 +++++++++++++++++++++++++++++++++++++++=
-+++++++-
-> >  fs/overlayfs/params.h    |  42 ++++
-> >  fs/overlayfs/super.c     | 530 +--------------------------------------=
--------
-> >  4 files changed, 581 insertions(+), 564 deletions(-)
-> >
-> > diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> > index 5b6ac03af192..ece77737df8d 100644
-> > --- a/fs/overlayfs/overlayfs.h
-> > +++ b/fs/overlayfs/overlayfs.h
-> > @@ -70,14 +70,6 @@ enum {
-> >         OVL_XINO_ON,
-> >  };
-> >
-> > -/* The set of options that user requested explicitly via mount options=
- */
-> > -struct ovl_opt_set {
-> > -       bool metacopy;
-> > -       bool redirect;
-> > -       bool nfs_export;
-> > -       bool index;
-> > -};
-> > -
-> >  /*
-> >   * The tuple (fh,uuid) is a universal unique identifier for a copy up =
-origin,
-> >   * where:
-> > @@ -134,6 +126,12 @@ struct ovl_fh {
-> >  #define OVL_FH_FID_OFFSET      (OVL_FH_WIRE_OFFSET + \
-> >                                  offsetof(struct ovl_fb, fid))
-> >
-> > +/* Will this overlay be forced to mount/remount ro? */
-> > +static inline bool ovl_force_readonly(struct ovl_fs *ofs)
-> > +{
-> > +       return (!ovl_upper_mnt(ofs) || !ofs->workdir);
-> > +}
-> > +
-> >  extern const char *const ovl_xattr_table[][2];
-> >  static inline const char *ovl_xattr(struct ovl_fs *ofs, enum ovl_xattr=
- ox)
-> >  {
-> > @@ -367,30 +365,6 @@ static inline bool ovl_open_flags_need_copy_up(int=
- flags)
-> >         return ((OPEN_FMODE(flags) & FMODE_WRITE) || (flags & O_TRUNC))=
-;
-> >  }
-> >
-> > -
-> > -/* params.c */
-> > -#define OVL_MAX_STACK 500
-> > -
-> > -struct ovl_fs_context_layer {
-> > -       char *name;
-> > -       struct path path;
-> > -};
-> > -
-> > -struct ovl_fs_context {
-> > -       struct path upper;
-> > -       struct path work;
-> > -       size_t capacity;
-> > -       size_t nr; /* includes nr_data */
-> > -       size_t nr_data;
-> > -       struct ovl_opt_set set;
-> > -       struct ovl_fs_context_layer *lower;
-> > -};
-> > -
-> > -int ovl_parse_param_upperdir(const char *name, struct fs_context *fc,
-> > -                            bool workdir);
-> > -int ovl_parse_param_lowerdir(const char *name, struct fs_context *fc);
-> > -void ovl_parse_param_drop_lowerdir(struct ovl_fs_context *ctx);
-> > -
-> >  /* util.c */
-> >  int ovl_want_write(struct dentry *dentry);
-> >  void ovl_drop_write(struct dentry *dentry);
-> > @@ -790,3 +764,6 @@ int ovl_set_origin(struct ovl_fs *ofs, struct dentr=
-y *lower,
-> >
-> >  /* export.c */
-> >  extern const struct export_operations ovl_export_operations;
-> > +
-> > +/* super.c */
-> > +int ovl_fill_super(struct super_block *sb, struct fs_context *fc);
-> > diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
-> > index d17d6b483dd0..b8c2f6056a9a 100644
-> > --- a/fs/overlayfs/params.c
-> > +++ b/fs/overlayfs/params.c
-> > @@ -1,12 +1,124 @@
-> >  // SPDX-License-Identifier: GPL-2.0-only
-> >
-> >  #include <linux/fs.h>
-> > +#include <linux/module.h>
-> >  #include <linux/namei.h>
-> >  #include <linux/fs_context.h>
-> >  #include <linux/fs_parser.h>
-> >  #include <linux/posix_acl_xattr.h>
-> > +#include <linux/seq_file.h>
-> >  #include <linux/xattr.h>
-> >  #include "overlayfs.h"
-> > +#include "params.h"
-> > +
-> > +static bool ovl_redirect_dir_def =3D IS_ENABLED(CONFIG_OVERLAY_FS_REDI=
-RECT_DIR);
-> > +module_param_named(redirect_dir, ovl_redirect_dir_def, bool, 0644);
-> > +MODULE_PARM_DESC(redirect_dir,
-> > +                "Default to on or off for the redirect_dir feature");
-> > +
-> > +static bool ovl_redirect_always_follow =3D
-> > +       IS_ENABLED(CONFIG_OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW);
-> > +module_param_named(redirect_always_follow, ovl_redirect_always_follow,
-> > +                  bool, 0644);
-> > +MODULE_PARM_DESC(redirect_always_follow,
-> > +                "Follow redirects even if redirect_dir feature is turn=
-ed off");
-> > +
-> > +static bool ovl_xino_auto_def =3D IS_ENABLED(CONFIG_OVERLAY_FS_XINO_AU=
-TO);
-> > +module_param_named(xino_auto, ovl_xino_auto_def, bool, 0644);
-> > +MODULE_PARM_DESC(xino_auto,
-> > +                "Auto enable xino feature");
-> > +
-> > +static bool ovl_index_def =3D IS_ENABLED(CONFIG_OVERLAY_FS_INDEX);
-> > +module_param_named(index, ovl_index_def, bool, 0644);
-> > +MODULE_PARM_DESC(index,
-> > +                "Default to on or off for the inodes index feature");
-> > +
-> > +static bool ovl_nfs_export_def =3D IS_ENABLED(CONFIG_OVERLAY_FS_NFS_EX=
-PORT);
-> > +module_param_named(nfs_export, ovl_nfs_export_def, bool, 0644);
-> > +MODULE_PARM_DESC(nfs_export,
-> > +                "Default to on or off for the NFS export feature");
-> > +
-> > +static bool ovl_metacopy_def =3D IS_ENABLED(CONFIG_OVERLAY_FS_METACOPY=
-);
-> > +module_param_named(metacopy, ovl_metacopy_def, bool, 0644);
-> > +MODULE_PARM_DESC(metacopy,
-> > +                "Default to on or off for the metadata only copy up fe=
-ature");
-> > +
-> > +enum {
-> > +       Opt_lowerdir,
-> > +       Opt_upperdir,
-> > +       Opt_workdir,
-> > +       Opt_default_permissions,
-> > +       Opt_redirect_dir,
-> > +       Opt_index,
-> > +       Opt_uuid,
-> > +       Opt_nfs_export,
-> > +       Opt_userxattr,
-> > +       Opt_xino,
-> > +       Opt_metacopy,
-> > +       Opt_volatile,
-> > +};
-> > +
-> > +static const struct constant_table ovl_parameter_bool[] =3D {
-> > +       { "on",         true  },
-> > +       { "off",        false },
-> > +       {}
-> > +};
-> > +
-> > +static const struct constant_table ovl_parameter_xino[] =3D {
-> > +       { "off",        OVL_XINO_OFF  },
-> > +       { "auto",       OVL_XINO_AUTO },
-> > +       { "on",         OVL_XINO_ON   },
-> > +       {}
-> > +};
-> > +
-> > +const char *ovl_xino_mode(struct ovl_config *config)
-> > +{
-> > +       return ovl_parameter_xino[config->xino].name;
-> > +}
-> > +
-> > +static int ovl_xino_def(void)
-> > +{
-> > +       return ovl_xino_auto_def ? OVL_XINO_AUTO : OVL_XINO_OFF;
-> > +}
-> > +
-> > +const struct constant_table ovl_parameter_redirect_dir[] =3D {
-> > +       { "off",        OVL_REDIRECT_OFF      },
-> > +       { "follow",     OVL_REDIRECT_FOLLOW   },
-> > +       { "nofollow",   OVL_REDIRECT_NOFOLLOW },
-> > +       { "on",         OVL_REDIRECT_ON       },
-> > +       {}
-> > +};
-> > +
-> > +const char *ovl_redirect_mode(struct ovl_config *config)
-> > +{
-> > +       return ovl_parameter_redirect_dir[config->redirect_mode].name;
-> > +}
-> > +
-> > +static int ovl_redirect_mode_def(void)
-> > +{
-> > +       return ovl_redirect_dir_def       ? OVL_REDIRECT_ON :
-> > +              ovl_redirect_always_follow ? OVL_REDIRECT_FOLLOW :
-> > +                                           OVL_REDIRECT_NOFOLLOW;
-> > +}
-> > +
-> > +#define fsparam_string_empty(NAME, OPT) \
-> > +       __fsparam(fs_param_is_string, NAME, OPT, fs_param_can_be_empty,=
- NULL)
-> > +
-> > +const struct fs_parameter_spec ovl_parameter_spec[] =3D {
-> > +       fsparam_string_empty("lowerdir",    Opt_lowerdir),
-> > +       fsparam_string("upperdir",          Opt_upperdir),
-> > +       fsparam_string("workdir",           Opt_workdir),
-> > +       fsparam_flag("default_permissions", Opt_default_permissions),
-> > +       fsparam_enum("redirect_dir",        Opt_redirect_dir, ovl_param=
-eter_redirect_dir),
-> > +       fsparam_enum("index",               Opt_index, ovl_parameter_bo=
-ol),
-> > +       fsparam_enum("uuid",                Opt_uuid, ovl_parameter_boo=
-l),
-> > +       fsparam_enum("nfs_export",          Opt_nfs_export, ovl_paramet=
-er_bool),
-> > +       fsparam_flag("userxattr",           Opt_userxattr),
-> > +       fsparam_enum("xino",                Opt_xino, ovl_parameter_xin=
-o),
-> > +       fsparam_enum("metacopy",            Opt_metacopy, ovl_parameter=
-_bool),
-> > +       fsparam_flag("volatile",            Opt_volatile),
-> > +       {}
-> > +};
-> >
-> >  static ssize_t ovl_parse_param_split_lowerdirs(char *str)
-> >  {
-> > @@ -110,8 +222,8 @@ static int ovl_mount_dir(const char *name, struct p=
-ath *path)
-> >         return err;
-> >  }
-> >
-> > -int ovl_parse_param_upperdir(const char *name, struct fs_context *fc,
-> > -                            bool workdir)
-> > +static int ovl_parse_param_upperdir(const char *name, struct fs_contex=
-t *fc,
-> > +                                   bool workdir)
-> >  {
-> >         int err;
-> >         struct ovl_fs *ofs =3D fc->s_fs_info;
-> > @@ -154,7 +266,7 @@ int ovl_parse_param_upperdir(const char *name, stru=
-ct fs_context *fc,
-> >         return 0;
-> >  }
-> >
-> > -void ovl_parse_param_drop_lowerdir(struct ovl_fs_context *ctx)
-> > +static void ovl_parse_param_drop_lowerdir(struct ovl_fs_context *ctx)
-> >  {
-> >         for (size_t nr =3D 0; nr < ctx->nr; nr++) {
-> >                 path_put(&ctx->lower[nr].path);
-> > @@ -179,7 +291,7 @@ void ovl_parse_param_drop_lowerdir(struct ovl_fs_co=
-ntext *ctx)
-> >   *     Append data "/lower5" as data lower layer. This requires that
-> >   *     there's at least one regular lower layer present.
-> >   */
-> > -int ovl_parse_param_lowerdir(const char *name, struct fs_context *fc)
-> > +static int ovl_parse_param_lowerdir(const char *name, struct fs_contex=
-t *fc)
-> >  {
-> >         int err;
-> >         struct ovl_fs_context *ctx =3D fc->fs_private;
-> > @@ -387,3 +499,415 @@ int ovl_parse_param_lowerdir(const char *name, st=
-ruct fs_context *fc)
-> >         /* Intentionally don't realloc to a smaller size. */
-> >         return err;
-> >  }
-> > +
-> > +static int ovl_parse_param(struct fs_context *fc, struct fs_parameter =
-*param)
-> > +{
-> > +       int err =3D 0;
-> > +       struct fs_parse_result result;
-> > +       struct ovl_fs *ofs =3D fc->s_fs_info;
-> > +       struct ovl_config *config =3D &ofs->config;
-> > +       struct ovl_fs_context *ctx =3D fc->fs_private;
-> > +       int opt;
-> > +
-> > +       if (fc->purpose =3D=3D FS_CONTEXT_FOR_RECONFIGURE) {
-> > +               /*
-> > +                * On remount overlayfs has always ignored all mount
-> > +                * options no matter if malformed or not so for
-> > +                * backwards compatibility we do the same here.
-> > +                */
-> > +               if (fc->oldapi)
-> > +                       return 0;
-> > +
-> > +               /*
-> > +                * Give us the freedom to allow changing mount options
-> > +                * with the new mount api in the future. So instead of
-> > +                * silently ignoring everything we report a proper
-> > +                * error. This is only visible for users of the new
-> > +                * mount api.
-> > +                */
-> > +               return invalfc(fc, "No changes allowed in reconfigure")=
-;
-> > +       }
-> > +
-> > +       opt =3D fs_parse(fc, ovl_parameter_spec, param, &result);
-> > +       if (opt < 0)
-> > +               return opt;
-> > +
-> > +       switch (opt) {
-> > +       case Opt_lowerdir:
-> > +               err =3D ovl_parse_param_lowerdir(param->string, fc);
-> > +               break;
-> > +       case Opt_upperdir:
-> > +               fallthrough;
-> > +       case Opt_workdir:
-> > +               err =3D ovl_parse_param_upperdir(param->string, fc,
-> > +                                              (Opt_workdir =3D=3D opt)=
-);
-> > +               break;
-> > +       case Opt_default_permissions:
-> > +               config->default_permissions =3D true;
-> > +               break;
-> > +       case Opt_redirect_dir:
-> > +               config->redirect_mode =3D result.uint_32;
-> > +               if (config->redirect_mode =3D=3D OVL_REDIRECT_OFF) {
-> > +                       config->redirect_mode =3D ovl_redirect_always_f=
-ollow ?
-> > +                                               OVL_REDIRECT_FOLLOW :
-> > +                                               OVL_REDIRECT_NOFOLLOW;
-> > +               }
-> > +               ctx->set.redirect =3D true;
-> > +               break;
-> > +       case Opt_index:
-> > +               config->index =3D result.uint_32;
-> > +               ctx->set.index =3D true;
-> > +               break;
-> > +       case Opt_uuid:
-> > +               config->uuid =3D result.uint_32;
-> > +               break;
-> > +       case Opt_nfs_export:
-> > +               config->nfs_export =3D result.uint_32;
-> > +               ctx->set.nfs_export =3D true;
-> > +               break;
-> > +       case Opt_xino:
-> > +               config->xino =3D result.uint_32;
-> > +               break;
-> > +       case Opt_metacopy:
-> > +               config->metacopy =3D result.uint_32;
-> > +               ctx->set.metacopy =3D true;
-> > +               break;
-> > +       case Opt_volatile:
-> > +               config->ovl_volatile =3D true;
-> > +               break;
-> > +       case Opt_userxattr:
-> > +               config->userxattr =3D true;
-> > +               break;
-> > +       default:
-> > +               pr_err("unrecognized mount option \"%s\" or missing val=
-ue\n",
-> > +                      param->key);
-> > +               return -EINVAL;
-> > +       }
-> > +
-> > +       return err;
-> > +}
-> > +
-> > +static int ovl_get_tree(struct fs_context *fc)
-> > +{
-> > +       return get_tree_nodev(fc, ovl_fill_super);
-> > +}
-> > +
-> > +static inline void ovl_fs_context_free(struct ovl_fs_context *ctx)
-> > +{
-> > +       ovl_parse_param_drop_lowerdir(ctx);
-> > +       path_put(&ctx->upper);
-> > +       path_put(&ctx->work);
-> > +       kfree(ctx->lower);
-> > +       kfree(ctx);
-> > +}
-> > +
-> > +static void ovl_free(struct fs_context *fc)
-> > +{
-> > +       struct ovl_fs *ofs =3D fc->s_fs_info;
-> > +       struct ovl_fs_context *ctx =3D fc->fs_private;
-> > +
-> > +       /*
-> > +        * ofs is stored in the fs_context when it is initialized.
-> > +        * ofs is transferred to the superblock on a successful mount,
-> > +        * but if an error occurs before the transfer we have to free
-> > +        * it here.
-> > +        */
-> > +       if (ofs)
-> > +               ovl_free_fs(ofs);
-> > +
-> > +       if (ctx)
-> > +               ovl_fs_context_free(ctx);
-> > +}
-> > +
-> > +static int ovl_reconfigure(struct fs_context *fc)
-> > +{
-> > +       struct super_block *sb =3D fc->root->d_sb;
-> > +       struct ovl_fs *ofs =3D sb->s_fs_info;
-> > +       struct super_block *upper_sb;
-> > +       int ret =3D 0;
-> > +
-> > +       if (!(fc->sb_flags & SB_RDONLY) && ovl_force_readonly(ofs))
-> > +               return -EROFS;
-> > +
-> > +       if (fc->sb_flags & SB_RDONLY && !sb_rdonly(sb)) {
-> > +               upper_sb =3D ovl_upper_mnt(ofs)->mnt_sb;
-> > +               if (ovl_should_sync(ofs)) {
-> > +                       down_read(&upper_sb->s_umount);
-> > +                       ret =3D sync_filesystem(upper_sb);
-> > +                       up_read(&upper_sb->s_umount);
-> > +               }
-> > +       }
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static const struct fs_context_operations ovl_context_ops =3D {
-> > +       .parse_param =3D ovl_parse_param,
-> > +       .get_tree    =3D ovl_get_tree,
-> > +       .reconfigure =3D ovl_reconfigure,
-> > +       .free        =3D ovl_free,
-> > +};
-> > +
-> > +/*
-> > + * This is called during fsopen() and will record the user namespace o=
-f
-> > + * the caller in fc->user_ns since we've raised FS_USERNS_MOUNT. We'll
-> > + * need it when we actually create the superblock to verify that the
-> > + * process creating the superblock is in the same user namespace as
-> > + * process that called fsopen().
-> > + */
-> > +int ovl_init_fs_context(struct fs_context *fc)
-> > +{
-> > +       struct ovl_fs_context *ctx;
-> > +       struct ovl_fs *ofs;
-> > +
-> > +       ctx =3D kzalloc(sizeof(*ctx), GFP_KERNEL_ACCOUNT);
-> > +       if (!ctx)
-> > +               return -ENOMEM;
-> > +
-> > +       /*
-> > +        * By default we allocate for three lower layers. It's likely
-> > +        * that it'll cover most users.
-> > +        */
-> > +       ctx->lower =3D kmalloc_array(3, sizeof(*ctx->lower), GFP_KERNEL=
-_ACCOUNT);
-> > +       if (!ctx->lower)
-> > +               goto out_err;
-> > +       ctx->capacity =3D 3;
-> > +
-> > +       ofs =3D kzalloc(sizeof(struct ovl_fs), GFP_KERNEL);
-> > +       if (!ofs)
-> > +               goto out_err;
-> > +
-> > +       ofs->config.redirect_mode       =3D ovl_redirect_mode_def();
-> > +       ofs->config.index               =3D ovl_index_def;
-> > +       ofs->config.uuid                =3D true;
-> > +       ofs->config.nfs_export          =3D ovl_nfs_export_def;
-> > +       ofs->config.xino                =3D ovl_xino_def();
-> > +       ofs->config.metacopy            =3D ovl_metacopy_def;
-> > +
-> > +       fc->s_fs_info           =3D ofs;
-> > +       fc->fs_private          =3D ctx;
-> > +       fc->ops                 =3D &ovl_context_ops;
-> > +       return 0;
-> > +
-> > +out_err:
-> > +       ovl_fs_context_free(ctx);
-> > +       return -ENOMEM;
-> > +
-> > +}
-> > +
-> > +void ovl_free_fs(struct ovl_fs *ofs)
-> > +{
-> > +       struct vfsmount **mounts;
-> > +       unsigned i;
-> > +
-> > +       iput(ofs->workbasedir_trap);
-> > +       iput(ofs->indexdir_trap);
-> > +       iput(ofs->workdir_trap);
-> > +       dput(ofs->whiteout);
-> > +       dput(ofs->indexdir);
-> > +       dput(ofs->workdir);
-> > +       if (ofs->workdir_locked)
-> > +               ovl_inuse_unlock(ofs->workbasedir);
-> > +       dput(ofs->workbasedir);
-> > +       if (ofs->upperdir_locked)
-> > +               ovl_inuse_unlock(ovl_upper_mnt(ofs)->mnt_root);
-> > +
-> > +       /* Hack!  Reuse ofs->layers as a vfsmount array before freeing =
-it */
-> > +       mounts =3D (struct vfsmount **) ofs->layers;
-> > +       for (i =3D 0; i < ofs->numlayer; i++) {
-> > +               iput(ofs->layers[i].trap);
-> > +               mounts[i] =3D ofs->layers[i].mnt;
-> > +               kfree(ofs->layers[i].name);
-> > +       }
-> > +       kern_unmount_array(mounts, ofs->numlayer);
-> > +       kfree(ofs->layers);
-> > +       for (i =3D 0; i < ofs->numfs; i++)
-> > +               free_anon_bdev(ofs->fs[i].pseudo_dev);
-> > +       kfree(ofs->fs);
-> > +
-> > +       kfree(ofs->config.upperdir);
-> > +       kfree(ofs->config.workdir);
-> > +       if (ofs->creator_cred)
-> > +               put_cred(ofs->creator_cred);
-> > +       kfree(ofs);
-> > +}
-> > +
-> > +int ovl_fs_params_verify(const struct ovl_fs_context *ctx,
-> > +                        struct ovl_config *config)
-> > +{
-> > +       struct ovl_opt_set set =3D ctx->set;
-> > +
-> > +       if (ctx->nr_data > 0 && !config->metacopy) {
-> > +               pr_err("lower data-only dirs require metacopy support.\=
-n");
-> > +               return -EINVAL;
-> > +       }
-> > +
-> > +       /* Workdir/index are useless in non-upper mount */
-> > +       if (!config->upperdir) {
-> > +               if (config->workdir) {
-> > +                       pr_info("option \"workdir=3D%s\" is useless in =
-a non-upper mount, ignore\n",
-> > +                               config->workdir);
-> > +                       kfree(config->workdir);
-> > +                       config->workdir =3D NULL;
-> > +               }
-> > +               if (config->index && set.index) {
-> > +                       pr_info("option \"index=3Don\" is useless in a =
-non-upper mount, ignore\n");
-> > +                       set.index =3D false;
-> > +               }
-> > +               config->index =3D false;
-> > +       }
-> > +
-> > +       if (!config->upperdir && config->ovl_volatile) {
-> > +               pr_info("option \"volatile\" is meaningless in a non-up=
-per mount, ignoring it.\n");
-> > +               config->ovl_volatile =3D false;
-> > +       }
-> > +
-> > +       /*
-> > +        * This is to make the logic below simpler.  It doesn't make an=
-y other
-> > +        * difference, since redirect_dir=3Don is only used for upper.
-> > +        */
-> > +       if (!config->upperdir && config->redirect_mode =3D=3D OVL_REDIR=
-ECT_FOLLOW)
-> > +               config->redirect_mode =3D OVL_REDIRECT_ON;
-> > +
-> > +       /* Resolve metacopy -> redirect_dir dependency */
-> > +       if (config->metacopy && config->redirect_mode !=3D OVL_REDIRECT=
-_ON) {
-> > +               if (set.metacopy && set.redirect) {
-> > +                       pr_err("conflicting options: metacopy=3Don,redi=
-rect_dir=3D%s\n",
-> > +                              ovl_redirect_mode(config));
-> > +                       return -EINVAL;
-> > +               }
-> > +               if (set.redirect) {
-> > +                       /*
-> > +                        * There was an explicit redirect_dir=3D... tha=
-t resulted
-> > +                        * in this conflict.
-> > +                        */
-> > +                       pr_info("disabling metacopy due to redirect_dir=
-=3D%s\n",
-> > +                               ovl_redirect_mode(config));
-> > +                       config->metacopy =3D false;
-> > +               } else {
-> > +                       /* Automatically enable redirect otherwise. */
-> > +                       config->redirect_mode =3D OVL_REDIRECT_ON;
-> > +               }
-> > +       }
-> > +
-> > +       /* Resolve nfs_export -> index dependency */
-> > +       if (config->nfs_export && !config->index) {
-> > +               if (!config->upperdir &&
-> > +                   config->redirect_mode !=3D OVL_REDIRECT_NOFOLLOW) {
-> > +                       pr_info("NFS export requires \"redirect_dir=3Dn=
-ofollow\" on non-upper mount, falling back to nfs_export=3Doff.\n");
-> > +                       config->nfs_export =3D false;
-> > +               } else if (set.nfs_export && set.index) {
-> > +                       pr_err("conflicting options: nfs_export=3Don,in=
-dex=3Doff\n");
-> > +                       return -EINVAL;
-> > +               } else if (set.index) {
-> > +                       /*
-> > +                        * There was an explicit index=3Doff that resul=
-ted
-> > +                        * in this conflict.
-> > +                        */
-> > +                       pr_info("disabling nfs_export due to index=3Dof=
-f\n");
-> > +                       config->nfs_export =3D false;
-> > +               } else {
-> > +                       /* Automatically enable index otherwise. */
-> > +                       config->index =3D true;
-> > +               }
-> > +       }
-> > +
-> > +       /* Resolve nfs_export -> !metacopy dependency */
-> > +       if (config->nfs_export && config->metacopy) {
-> > +               if (set.nfs_export && set.metacopy) {
-> > +                       pr_err("conflicting options: nfs_export=3Don,me=
-tacopy=3Don\n");
-> > +                       return -EINVAL;
-> > +               }
-> > +               if (set.metacopy) {
-> > +                       /*
-> > +                        * There was an explicit metacopy=3Don that res=
-ulted
-> > +                        * in this conflict.
-> > +                        */
-> > +                       pr_info("disabling nfs_export due to metacopy=
-=3Don\n");
-> > +                       config->nfs_export =3D false;
-> > +               } else {
-> > +                       /*
-> > +                        * There was an explicit nfs_export=3Don that r=
-esulted
-> > +                        * in this conflict.
-> > +                        */
-> > +                       pr_info("disabling metacopy due to nfs_export=
-=3Don\n");
-> > +                       config->metacopy =3D false;
-> > +               }
-> > +       }
-> > +
-> > +
-> > +       /* Resolve userxattr -> !redirect && !metacopy dependency */
-> > +       if (config->userxattr) {
-> > +               if (set.redirect &&
-> > +                   config->redirect_mode !=3D OVL_REDIRECT_NOFOLLOW) {
-> > +                       pr_err("conflicting options: userxattr,redirect=
-_dir=3D%s\n",
-> > +                              ovl_redirect_mode(config));
-> > +                       return -EINVAL;
-> > +               }
-> > +               if (config->metacopy && set.metacopy) {
-> > +                       pr_err("conflicting options: userxattr,metacopy=
-=3Don\n");
-> > +                       return -EINVAL;
-> > +               }
-> > +               /*
-> > +                * Silently disable default setting of redirect and met=
-acopy.
-> > +                * This shall be the default in the future as well: the=
-se
-> > +                * options must be explicitly enabled if used together =
-with
-> > +                * userxattr.
-> > +                */
-> > +               config->redirect_mode =3D OVL_REDIRECT_NOFOLLOW;
-> > +               config->metacopy =3D false;
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +/**
-> > + * ovl_show_options
-> > + * @m: the seq_file handle
-> > + * @dentry: The dentry to query
-> > + *
-> > + * Prints the mount options for a given superblock.
-> > + * Returns zero; does not fail.
-> > + */
-> > +int ovl_show_options(struct seq_file *m, struct dentry *dentry)
-> > +{
-> > +       struct super_block *sb =3D dentry->d_sb;
-> > +       struct ovl_fs *ofs =3D sb->s_fs_info;
-> > +       size_t nr, nr_merged_lower =3D ofs->numlayer - ofs->numdatalaye=
-r;
-> > +       const struct ovl_layer *data_layers =3D &ofs->layers[nr_merged_=
-lower];
-> > +
-> > +       /* ofs->layers[0] is the upper layer */
-> > +       seq_printf(m, ",lowerdir=3D%s", ofs->layers[1].name);
-> > +       /* dump regular lower layers */
-> > +       for (nr =3D 2; nr < nr_merged_lower; nr++)
-> > +               seq_printf(m, ":%s", ofs->layers[nr].name);
-> > +       /* dump data lower layers */
-> > +       for (nr =3D 0; nr < ofs->numdatalayer; nr++)
-> > +               seq_printf(m, "::%s", data_layers[nr].name);
-> > +       if (ofs->config.upperdir) {
-> > +               seq_show_option(m, "upperdir", ofs->config.upperdir);
-> > +               seq_show_option(m, "workdir", ofs->config.workdir);
-> > +       }
-> > +       if (ofs->config.default_permissions)
-> > +               seq_puts(m, ",default_permissions");
-> > +       if (ofs->config.redirect_mode !=3D ovl_redirect_mode_def())
-> > +               seq_printf(m, ",redirect_dir=3D%s",
-> > +                          ovl_redirect_mode(&ofs->config));
-> > +       if (ofs->config.index !=3D ovl_index_def)
-> > +               seq_printf(m, ",index=3D%s", ofs->config.index ? "on" :=
- "off");
-> > +       if (!ofs->config.uuid)
-> > +               seq_puts(m, ",uuid=3Doff");
-> > +       if (ofs->config.nfs_export !=3D ovl_nfs_export_def)
-> > +               seq_printf(m, ",nfs_export=3D%s", ofs->config.nfs_expor=
-t ?
-> > +                                               "on" : "off");
-> > +       if (ofs->config.xino !=3D ovl_xino_def() && !ovl_same_fs(ofs))
-> > +               seq_printf(m, ",xino=3D%s", ovl_xino_mode(&ofs->config)=
-);
-> > +       if (ofs->config.metacopy !=3D ovl_metacopy_def)
-> > +               seq_printf(m, ",metacopy=3D%s",
-> > +                          ofs->config.metacopy ? "on" : "off");
-> > +       if (ofs->config.ovl_volatile)
-> > +               seq_puts(m, ",volatile");
-> > +       if (ofs->config.userxattr)
-> > +               seq_puts(m, ",userxattr");
-> > +       return 0;
-> > +}
-> > diff --git a/fs/overlayfs/params.h b/fs/overlayfs/params.h
-> > new file mode 100644
-> > index 000000000000..8750da68ab2a
-> > --- /dev/null
-> > +++ b/fs/overlayfs/params.h
-> > @@ -0,0 +1,42 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +
-> > +#include <linux/fs_context.h>
-> > +#include <linux/fs_parser.h>
-> > +
-> > +struct ovl_fs;
-> > +struct ovl_config;
-> > +
-> > +extern const struct fs_parameter_spec ovl_parameter_spec[];
-> > +extern const struct constant_table ovl_parameter_redirect_dir[];
-> > +
-> > +/* The set of options that user requested explicitly via mount options=
- */
-> > +struct ovl_opt_set {
-> > +       bool metacopy;
-> > +       bool redirect;
-> > +       bool nfs_export;
-> > +       bool index;
-> > +};
-> > +
-> > +#define OVL_MAX_STACK 500
-> > +
-> > +struct ovl_fs_context_layer {
-> > +       char *name;
-> > +       struct path path;
-> > +};
-> > +
-> > +struct ovl_fs_context {
-> > +       struct path upper;
-> > +       struct path work;
-> > +       size_t capacity;
-> > +       size_t nr; /* includes nr_data */
-> > +       size_t nr_data;
-> > +       struct ovl_opt_set set;
-> > +       struct ovl_fs_context_layer *lower;
-> > +};
-> > +
-> > +int ovl_init_fs_context(struct fs_context *fc);
-> > +void ovl_free_fs(struct ovl_fs *ofs);
-> > +int ovl_fs_params_verify(const struct ovl_fs_context *ctx,
-> > +                        struct ovl_config *config);
-> > +int ovl_show_options(struct seq_file *m, struct dentry *dentry);
-> > +const char *ovl_xino_mode(struct ovl_config *config);
-> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> > index c14c52560fd6..5b069f1a1e44 100644
-> > --- a/fs/overlayfs/super.c
-> > +++ b/fs/overlayfs/super.c
-> > @@ -19,6 +19,7 @@
-> >  #include <linux/fs_context.h>
-> >  #include <linux/fs_parser.h>
-> >  #include "overlayfs.h"
-> > +#include "params.h"
-> >
-> >  MODULE_AUTHOR("Miklos Szeredi <miklos@szeredi.hu>");
-> >  MODULE_DESCRIPTION("Overlay filesystem");
-> > @@ -27,38 +28,6 @@ MODULE_LICENSE("GPL");
-> >
-> >  struct ovl_dir_cache;
-> >
-> > -static bool ovl_redirect_dir_def =3D IS_ENABLED(CONFIG_OVERLAY_FS_REDI=
-RECT_DIR);
-> > -module_param_named(redirect_dir, ovl_redirect_dir_def, bool, 0644);
-> > -MODULE_PARM_DESC(redirect_dir,
-> > -                "Default to on or off for the redirect_dir feature");
-> > -
-> > -static bool ovl_redirect_always_follow =3D
-> > -       IS_ENABLED(CONFIG_OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW);
-> > -module_param_named(redirect_always_follow, ovl_redirect_always_follow,
-> > -                  bool, 0644);
-> > -MODULE_PARM_DESC(redirect_always_follow,
-> > -                "Follow redirects even if redirect_dir feature is turn=
-ed off");
-> > -
-> > -static bool ovl_index_def =3D IS_ENABLED(CONFIG_OVERLAY_FS_INDEX);
-> > -module_param_named(index, ovl_index_def, bool, 0644);
-> > -MODULE_PARM_DESC(index,
-> > -                "Default to on or off for the inodes index feature");
-> > -
-> > -static bool ovl_nfs_export_def =3D IS_ENABLED(CONFIG_OVERLAY_FS_NFS_EX=
-PORT);
-> > -module_param_named(nfs_export, ovl_nfs_export_def, bool, 0644);
-> > -MODULE_PARM_DESC(nfs_export,
-> > -                "Default to on or off for the NFS export feature");
-> > -
-> > -static bool ovl_xino_auto_def =3D IS_ENABLED(CONFIG_OVERLAY_FS_XINO_AU=
-TO);
-> > -module_param_named(xino_auto, ovl_xino_auto_def, bool, 0644);
-> > -MODULE_PARM_DESC(xino_auto,
-> > -                "Auto enable xino feature");
-> > -
-> > -static bool ovl_metacopy_def =3D IS_ENABLED(CONFIG_OVERLAY_FS_METACOPY=
-);
-> > -module_param_named(metacopy, ovl_metacopy_def, bool, 0644);
-> > -MODULE_PARM_DESC(metacopy,
-> > -                "Default to on or off for the metadata only copy up fe=
-ature");
-> > -
-> >  static struct dentry *ovl_d_real(struct dentry *dentry,
-> >                                  const struct inode *inode)
-> >  {
-> > @@ -211,43 +180,6 @@ static void ovl_destroy_inode(struct inode *inode)
-> >                 kfree(oi->lowerdata_redirect);
-> >  }
-> >
-> > -static void ovl_free_fs(struct ovl_fs *ofs)
-> > -{
-> > -       struct vfsmount **mounts;
-> > -       unsigned i;
-> > -
-> > -       iput(ofs->workbasedir_trap);
-> > -       iput(ofs->indexdir_trap);
-> > -       iput(ofs->workdir_trap);
-> > -       dput(ofs->whiteout);
-> > -       dput(ofs->indexdir);
-> > -       dput(ofs->workdir);
-> > -       if (ofs->workdir_locked)
-> > -               ovl_inuse_unlock(ofs->workbasedir);
-> > -       dput(ofs->workbasedir);
-> > -       if (ofs->upperdir_locked)
-> > -               ovl_inuse_unlock(ovl_upper_mnt(ofs)->mnt_root);
-> > -
-> > -       /* Hack!  Reuse ofs->layers as a vfsmount array before freeing =
-it */
-> > -       mounts =3D (struct vfsmount **) ofs->layers;
-> > -       for (i =3D 0; i < ofs->numlayer; i++) {
-> > -               iput(ofs->layers[i].trap);
-> > -               mounts[i] =3D ofs->layers[i].mnt;
-> > -               kfree(ofs->layers[i].name);
-> > -       }
-> > -       kern_unmount_array(mounts, ofs->numlayer);
-> > -       kfree(ofs->layers);
-> > -       for (i =3D 0; i < ofs->numfs; i++)
-> > -               free_anon_bdev(ofs->fs[i].pseudo_dev);
-> > -       kfree(ofs->fs);
-> > -
-> > -       kfree(ofs->config.upperdir);
-> > -       kfree(ofs->config.workdir);
-> > -       if (ofs->creator_cred)
-> > -               put_cred(ofs->creator_cred);
-> > -       kfree(ofs);
-> > -}
-> > -
-> >  static void ovl_put_super(struct super_block *sb)
-> >  {
-> >         struct ovl_fs *ofs =3D sb->s_fs_info;
-> > @@ -323,122 +255,6 @@ static int ovl_statfs(struct dentry *dentry, stru=
-ct kstatfs *buf)
-> >         return err;
-> >  }
-> >
-> > -/* Will this overlay be forced to mount/remount ro? */
-> > -static bool ovl_force_readonly(struct ovl_fs *ofs)
-> > -{
-> > -       return (!ovl_upper_mnt(ofs) || !ofs->workdir);
-> > -}
-> > -
-> > -static const struct constant_table ovl_parameter_redirect_dir[] =3D {
-> > -       { "off",        OVL_REDIRECT_OFF      },
-> > -       { "follow",     OVL_REDIRECT_FOLLOW   },
-> > -       { "nofollow",   OVL_REDIRECT_NOFOLLOW },
-> > -       { "on",         OVL_REDIRECT_ON       },
-> > -       {}
-> > -};
-> > -
-> > -static const char *ovl_redirect_mode(struct ovl_config *config)
-> > -{
-> > -       return ovl_parameter_redirect_dir[config->redirect_mode].name;
-> > -}
-> > -
-> > -static int ovl_redirect_mode_def(void)
-> > -{
-> > -       return ovl_redirect_dir_def ? OVL_REDIRECT_ON :
-> > -               ovl_redirect_always_follow ? OVL_REDIRECT_FOLLOW :
-> > -                                            OVL_REDIRECT_NOFOLLOW;
-> > -}
-> > -
-> > -static const struct constant_table ovl_parameter_xino[] =3D {
-> > -       { "off",        OVL_XINO_OFF  },
-> > -       { "auto",       OVL_XINO_AUTO },
-> > -       { "on",         OVL_XINO_ON   },
-> > -       {}
-> > -};
-> > -
-> > -static const char *ovl_xino_mode(struct ovl_config *config)
-> > -{
-> > -       return ovl_parameter_xino[config->xino].name;
-> > -}
-> > -
-> > -static inline int ovl_xino_def(void)
-> > -{
-> > -       return ovl_xino_auto_def ? OVL_XINO_AUTO : OVL_XINO_OFF;
-> > -}
-> > -
-> > -/**
-> > - * ovl_show_options
-> > - * @m: the seq_file handle
-> > - * @dentry: The dentry to query
-> > - *
-> > - * Prints the mount options for a given superblock.
-> > - * Returns zero; does not fail.
-> > - */
-> > -static int ovl_show_options(struct seq_file *m, struct dentry *dentry)
-> > -{
-> > -       struct super_block *sb =3D dentry->d_sb;
-> > -       struct ovl_fs *ofs =3D sb->s_fs_info;
-> > -       size_t nr, nr_merged_lower =3D ofs->numlayer - ofs->numdatalaye=
-r;
-> > -       const struct ovl_layer *data_layers =3D &ofs->layers[nr_merged_=
-lower];
-> > -
-> > -       /* ofs->layers[0] is the upper layer */
-> > -       seq_printf(m, ",lowerdir=3D%s", ofs->layers[1].name);
-> > -       /* dump regular lower layers */
-> > -       for (nr =3D 2; nr < nr_merged_lower; nr++)
-> > -               seq_printf(m, ":%s", ofs->layers[nr].name);
-> > -       /* dump data lower layers */
-> > -       for (nr =3D 0; nr < ofs->numdatalayer; nr++)
-> > -               seq_printf(m, "::%s", data_layers[nr].name);
-> > -       if (ofs->config.upperdir) {
-> > -               seq_show_option(m, "upperdir", ofs->config.upperdir);
-> > -               seq_show_option(m, "workdir", ofs->config.workdir);
-> > -       }
-> > -       if (ofs->config.default_permissions)
-> > -               seq_puts(m, ",default_permissions");
-> > -       if (ofs->config.redirect_mode !=3D ovl_redirect_mode_def())
-> > -               seq_printf(m, ",redirect_dir=3D%s",
-> > -                          ovl_redirect_mode(&ofs->config));
-> > -       if (ofs->config.index !=3D ovl_index_def)
-> > -               seq_printf(m, ",index=3D%s", ofs->config.index ? "on" :=
- "off");
-> > -       if (!ofs->config.uuid)
-> > -               seq_puts(m, ",uuid=3Doff");
-> > -       if (ofs->config.nfs_export !=3D ovl_nfs_export_def)
-> > -               seq_printf(m, ",nfs_export=3D%s", ofs->config.nfs_expor=
-t ?
-> > -                                               "on" : "off");
-> > -       if (ofs->config.xino !=3D ovl_xino_def() && !ovl_same_fs(ofs))
-> > -               seq_printf(m, ",xino=3D%s", ovl_xino_mode(&ofs->config)=
-);
-> > -       if (ofs->config.metacopy !=3D ovl_metacopy_def)
-> > -               seq_printf(m, ",metacopy=3D%s",
-> > -                          ofs->config.metacopy ? "on" : "off");
-> > -       if (ofs->config.ovl_volatile)
-> > -               seq_puts(m, ",volatile");
-> > -       if (ofs->config.userxattr)
-> > -               seq_puts(m, ",userxattr");
-> > -       return 0;
-> > -}
-> > -
-> > -static int ovl_reconfigure(struct fs_context *fc)
-> > -{
-> > -       struct super_block *sb =3D fc->root->d_sb;
-> > -       struct ovl_fs *ofs =3D sb->s_fs_info;
-> > -       struct super_block *upper_sb;
-> > -       int ret =3D 0;
-> > -
-> > -       if (!(fc->sb_flags & SB_RDONLY) && ovl_force_readonly(ofs))
-> > -               return -EROFS;
-> > -
-> > -       if (fc->sb_flags & SB_RDONLY && !sb_rdonly(sb)) {
-> > -               upper_sb =3D ovl_upper_mnt(ofs)->mnt_sb;
-> > -               if (ovl_should_sync(ofs)) {
-> > -                       down_read(&upper_sb->s_umount);
-> > -                       ret =3D sync_filesystem(upper_sb);
-> > -                       up_read(&upper_sb->s_umount);
-> > -               }
-> > -       }
-> > -
-> > -       return ret;
-> > -}
-> > -
-> >  static const struct super_operations ovl_super_operations =3D {
-> >         .alloc_inode    =3D ovl_alloc_inode,
-> >         .free_inode     =3D ovl_free_inode,
-> > @@ -450,262 +266,6 @@ static const struct super_operations ovl_super_op=
-erations =3D {
-> >         .show_options   =3D ovl_show_options,
-> >  };
-> >
-> > -enum {
-> > -       Opt_lowerdir,
-> > -       Opt_upperdir,
-> > -       Opt_workdir,
-> > -       Opt_default_permissions,
-> > -       Opt_redirect_dir,
-> > -       Opt_index,
-> > -       Opt_uuid,
-> > -       Opt_nfs_export,
-> > -       Opt_userxattr,
-> > -       Opt_xino,
-> > -       Opt_metacopy,
-> > -       Opt_volatile,
-> > -};
-> > -
-> > -static const struct constant_table ovl_parameter_bool[] =3D {
-> > -       { "on",         true  },
-> > -       { "off",        false },
-> > -       {}
-> > -};
-> > -
-> > -#define fsparam_string_empty(NAME, OPT) \
-> > -       __fsparam(fs_param_is_string, NAME, OPT, fs_param_can_be_empty,=
- NULL)
-> > -
-> > -static const struct fs_parameter_spec ovl_parameter_spec[] =3D {
-> > -       fsparam_string_empty("lowerdir",    Opt_lowerdir),
-> > -       fsparam_string("upperdir",          Opt_upperdir),
-> > -       fsparam_string("workdir",           Opt_workdir),
-> > -       fsparam_flag("default_permissions", Opt_default_permissions),
-> > -       fsparam_enum("redirect_dir",        Opt_redirect_dir, ovl_param=
-eter_redirect_dir),
-> > -       fsparam_enum("index",               Opt_index, ovl_parameter_bo=
-ol),
-> > -       fsparam_enum("uuid",                Opt_uuid, ovl_parameter_boo=
-l),
-> > -       fsparam_enum("nfs_export",          Opt_nfs_export, ovl_paramet=
-er_bool),
-> > -       fsparam_flag("userxattr",           Opt_userxattr),
-> > -       fsparam_enum("xino",                Opt_xino, ovl_parameter_xin=
-o),
-> > -       fsparam_enum("metacopy",            Opt_metacopy, ovl_parameter=
-_bool),
-> > -       fsparam_flag("volatile",            Opt_volatile),
-> > -       {}
-> > -};
-> > -
-> > -static int ovl_parse_param(struct fs_context *fc, struct fs_parameter =
-*param)
-> > -{
-> > -       int err =3D 0;
-> > -       struct fs_parse_result result;
-> > -       struct ovl_fs *ofs =3D fc->s_fs_info;
-> > -       struct ovl_config *config =3D &ofs->config;
-> > -       struct ovl_fs_context *ctx =3D fc->fs_private;
-> > -       int opt;
-> > -
-> > -       if (fc->purpose =3D=3D FS_CONTEXT_FOR_RECONFIGURE) {
-> > -               /*
-> > -                * On remount overlayfs has always ignored all mount
-> > -                * options no matter if malformed or not so for
-> > -                * backwards compatibility we do the same here.
-> > -                */
-> > -               if (fc->oldapi)
-> > -                       return 0;
-> > -
-> > -               /*
-> > -                * Give us the freedom to allow changing mount options
-> > -                * with the new mount api in the future. So instead of
-> > -                * silently ignoring everything we report a proper
-> > -                * error. This is only visible for users of the new
-> > -                * mount api.
-> > -                */
-> > -               return invalfc(fc, "No changes allowed in reconfigure")=
-;
-> > -       }
-> > -
-> > -       opt =3D fs_parse(fc, ovl_parameter_spec, param, &result);
-> > -       if (opt < 0)
-> > -               return opt;
-> > -
-> > -       switch (opt) {
-> > -       case Opt_lowerdir:
-> > -               err =3D ovl_parse_param_lowerdir(param->string, fc);
-> > -               break;
-> > -       case Opt_upperdir:
-> > -               fallthrough;
-> > -       case Opt_workdir:
-> > -               err =3D ovl_parse_param_upperdir(param->string, fc,
-> > -                                              (Opt_workdir =3D=3D opt)=
-);
-> > -               break;
-> > -       case Opt_default_permissions:
-> > -               config->default_permissions =3D true;
-> > -               break;
-> > -       case Opt_redirect_dir:
-> > -               config->redirect_mode =3D result.uint_32;
-> > -               if (config->redirect_mode =3D=3D OVL_REDIRECT_OFF) {
-> > -                       config->redirect_mode =3D ovl_redirect_always_f=
-ollow ?
-> > -                                               OVL_REDIRECT_FOLLOW :
-> > -                                               OVL_REDIRECT_NOFOLLOW;
-> > -               }
-> > -               ctx->set.redirect =3D true;
-> > -               break;
-> > -       case Opt_index:
-> > -               config->index =3D result.uint_32;
-> > -               ctx->set.index =3D true;
-> > -               break;
-> > -       case Opt_uuid:
-> > -               config->uuid =3D result.uint_32;
-> > -               break;
-> > -       case Opt_nfs_export:
-> > -               config->nfs_export =3D result.uint_32;
-> > -               ctx->set.nfs_export =3D true;
-> > -               break;
-> > -       case Opt_xino:
-> > -               config->xino =3D result.uint_32;
-> > -               break;
-> > -       case Opt_metacopy:
-> > -               config->metacopy =3D result.uint_32;
-> > -               ctx->set.metacopy =3D true;
-> > -               break;
-> > -       case Opt_volatile:
-> > -               config->ovl_volatile =3D true;
-> > -               break;
-> > -       case Opt_userxattr:
-> > -               config->userxattr =3D true;
-> > -               break;
-> > -       default:
-> > -               pr_err("unrecognized mount option \"%s\" or missing val=
-ue\n",
-> > -                      param->key);
-> > -               return -EINVAL;
-> > -       }
-> > -
-> > -       return err;
-> > -}
-> > -
-> > -static int ovl_fs_params_verify(const struct ovl_fs_context *ctx,
-> > -                               struct ovl_config *config)
-> > -{
-> > -       struct ovl_opt_set set =3D ctx->set;
-> > -
-> > -       if (ctx->nr_data > 0 && !config->metacopy) {
-> > -               pr_err("lower data-only dirs require metacopy support.\=
-n");
-> > -               return -EINVAL;
-> > -       }
-> > -
-> > -       /* Workdir/index are useless in non-upper mount */
-> > -       if (!config->upperdir) {
-> > -               if (config->workdir) {
-> > -                       pr_info("option \"workdir=3D%s\" is useless in =
-a non-upper mount, ignore\n",
-> > -                               config->workdir);
-> > -                       kfree(config->workdir);
-> > -                       config->workdir =3D NULL;
-> > -               }
-> > -               if (config->index && set.index) {
-> > -                       pr_info("option \"index=3Don\" is useless in a =
-non-upper mount, ignore\n");
-> > -                       set.index =3D false;
-> > -               }
-> > -               config->index =3D false;
-> > -       }
-> > -
-> > -       if (!config->upperdir && config->ovl_volatile) {
-> > -               pr_info("option \"volatile\" is meaningless in a non-up=
-per mount, ignoring it.\n");
-> > -               config->ovl_volatile =3D false;
-> > -       }
-> > -
-> > -       /*
-> > -        * This is to make the logic below simpler.  It doesn't make an=
-y other
-> > -        * difference, since redirect_dir=3Don is only used for upper.
-> > -        */
-> > -       if (!config->upperdir && config->redirect_mode =3D=3D OVL_REDIR=
-ECT_FOLLOW)
-> > -               config->redirect_mode =3D OVL_REDIRECT_ON;
-> > -
-> > -       /* Resolve metacopy -> redirect_dir dependency */
-> > -       if (config->metacopy && config->redirect_mode !=3D OVL_REDIRECT=
-_ON) {
-> > -               if (set.metacopy && set.redirect) {
-> > -                       pr_err("conflicting options: metacopy=3Don,redi=
-rect_dir=3D%s\n",
-> > -                              ovl_redirect_mode(config));
-> > -                       return -EINVAL;
-> > -               }
-> > -               if (set.redirect) {
-> > -                       /*
-> > -                        * There was an explicit redirect_dir=3D... tha=
-t resulted
-> > -                        * in this conflict.
-> > -                        */
-> > -                       pr_info("disabling metacopy due to redirect_dir=
-=3D%s\n",
-> > -                               ovl_redirect_mode(config));
-> > -                       config->metacopy =3D false;
-> > -               } else {
-> > -                       /* Automatically enable redirect otherwise. */
-> > -                       config->redirect_mode =3D OVL_REDIRECT_ON;
-> > -               }
-> > -       }
-> > -
-> > -       /* Resolve nfs_export -> index dependency */
-> > -       if (config->nfs_export && !config->index) {
-> > -               if (!config->upperdir &&
-> > -                   config->redirect_mode !=3D OVL_REDIRECT_NOFOLLOW) {
-> > -                       pr_info("NFS export requires \"redirect_dir=3Dn=
-ofollow\" on non-upper mount, falling back to nfs_export=3Doff.\n");
-> > -                       config->nfs_export =3D false;
-> > -               } else if (set.nfs_export && set.index) {
-> > -                       pr_err("conflicting options: nfs_export=3Don,in=
-dex=3Doff\n");
-> > -                       return -EINVAL;
-> > -               } else if (set.index) {
-> > -                       /*
-> > -                        * There was an explicit index=3Doff that resul=
-ted
-> > -                        * in this conflict.
-> > -                        */
-> > -                       pr_info("disabling nfs_export due to index=3Dof=
-f\n");
-> > -                       config->nfs_export =3D false;
-> > -               } else {
-> > -                       /* Automatically enable index otherwise. */
-> > -                       config->index =3D true;
-> > -               }
-> > -       }
-> > -
-> > -       /* Resolve nfs_export -> !metacopy dependency */
-> > -       if (config->nfs_export && config->metacopy) {
-> > -               if (set.nfs_export && set.metacopy) {
-> > -                       pr_err("conflicting options: nfs_export=3Don,me=
-tacopy=3Don\n");
-> > -                       return -EINVAL;
-> > -               }
-> > -               if (set.metacopy) {
-> > -                       /*
-> > -                        * There was an explicit metacopy=3Don that res=
-ulted
-> > -                        * in this conflict.
-> > -                        */
-> > -                       pr_info("disabling nfs_export due to metacopy=
-=3Don\n");
-> > -                       config->nfs_export =3D false;
-> > -               } else {
-> > -                       /*
-> > -                        * There was an explicit nfs_export=3Don that r=
-esulted
-> > -                        * in this conflict.
-> > -                        */
-> > -                       pr_info("disabling metacopy due to nfs_export=
-=3Don\n");
-> > -                       config->metacopy =3D false;
-> > -               }
-> > -       }
-> > -
-> > -
-> > -       /* Resolve userxattr -> !redirect && !metacopy dependency */
-> > -       if (config->userxattr) {
-> > -               if (set.redirect &&
-> > -                   config->redirect_mode !=3D OVL_REDIRECT_NOFOLLOW) {
-> > -                       pr_err("conflicting options: userxattr,redirect=
-_dir=3D%s\n",
-> > -                              ovl_redirect_mode(config));
-> > -                       return -EINVAL;
-> > -               }
-> > -               if (config->metacopy && set.metacopy) {
-> > -                       pr_err("conflicting options: userxattr,metacopy=
-=3Don\n");
-> > -                       return -EINVAL;
-> > -               }
-> > -               /*
-> > -                * Silently disable default setting of redirect and met=
-acopy.
-> > -                * This shall be the default in the future as well: the=
-se
-> > -                * options must be explicitly enabled if used together =
-with
-> > -                * userxattr.
-> > -                */
-> > -               config->redirect_mode =3D OVL_REDIRECT_NOFOLLOW;
-> > -               config->metacopy =3D false;
-> > -       }
-> > -
-> > -       return 0;
-> > -}
-> > -
-> >  #define OVL_WORKDIR_NAME "work"
-> >  #define OVL_INDEXDIR_NAME "index"
-> >
-> > @@ -1758,7 +1318,7 @@ static struct dentry *ovl_get_root(struct super_b=
-lock *sb,
-> >         return root;
-> >  }
-> >
-> > -static int ovl_fill_super(struct super_block *sb, struct fs_context *f=
-c)
-> > +int ovl_fill_super(struct super_block *sb, struct fs_context *fc)
-> >  {
-> >         struct ovl_fs *ofs =3D sb->s_fs_info;
-> >         struct ovl_fs_context *ctx =3D fc->fs_private;
-> > @@ -1919,92 +1479,6 @@ static int ovl_fill_super(struct super_block *sb=
-, struct fs_context *fc)
-> >         return err;
-> >  }
-> >
-> > -static int ovl_get_tree(struct fs_context *fc)
-> > -{
-> > -       return get_tree_nodev(fc, ovl_fill_super);
-> > -}
-> > -
-> > -static inline void ovl_fs_context_free(struct ovl_fs_context *ctx)
-> > -{
-> > -       ovl_parse_param_drop_lowerdir(ctx);
-> > -       path_put(&ctx->upper);
-> > -       path_put(&ctx->work);
-> > -       kfree(ctx->lower);
-> > -       kfree(ctx);
-> > -}
-> > -
-> > -static void ovl_free(struct fs_context *fc)
-> > -{
-> > -       struct ovl_fs *ofs =3D fc->s_fs_info;
-> > -       struct ovl_fs_context *ctx =3D fc->fs_private;
-> > -
-> > -       /*
-> > -        * ofs is stored in the fs_context when it is initialized.
-> > -        * ofs is transferred to the superblock on a successful mount,
-> > -        * but if an error occurs before the transfer we have to free
-> > -        * it here.
-> > -        */
-> > -       if (ofs)
-> > -               ovl_free_fs(ofs);
-> > -
-> > -       if (ctx)
-> > -               ovl_fs_context_free(ctx);
-> > -}
-> > -
-> > -static const struct fs_context_operations ovl_context_ops =3D {
-> > -       .parse_param =3D ovl_parse_param,
-> > -       .get_tree    =3D ovl_get_tree,
-> > -       .reconfigure =3D ovl_reconfigure,
-> > -       .free        =3D ovl_free,
-> > -};
-> > -
-> > -/*
-> > - * This is called during fsopen() and will record the user namespace o=
-f
-> > - * the caller in fc->user_ns since we've raised FS_USERNS_MOUNT. We'll
-> > - * need it when we actually create the superblock to verify that the
-> > - * process creating the superblock is in the same user namespace as
-> > - * process that called fsopen().
-> > - */
-> > -static int ovl_init_fs_context(struct fs_context *fc)
-> > -{
-> > -       struct ovl_fs_context *ctx;
-> > -       struct ovl_fs *ofs;
-> > -
-> > -       ctx =3D kzalloc(sizeof(*ctx), GFP_KERNEL_ACCOUNT);
-> > -       if (!ctx)
-> > -               return -ENOMEM;
-> > -
-> > -       /*
-> > -        * By default we allocate for three lower layers. It's likely
-> > -        * that it'll cover most users.
-> > -        */
-> > -       ctx->lower =3D kmalloc_array(3, sizeof(*ctx->lower), GFP_KERNEL=
-_ACCOUNT);
-> > -       if (!ctx->lower)
-> > -               goto out_err;
-> > -       ctx->capacity =3D 3;
-> > -
-> > -       ofs =3D kzalloc(sizeof(struct ovl_fs), GFP_KERNEL);
-> > -       if (!ofs)
-> > -               goto out_err;
-> > -
-> > -       ofs->config.redirect_mode =3D ovl_redirect_mode_def();
-> > -       ofs->config.index       =3D ovl_index_def;
-> > -       ofs->config.uuid        =3D true;
-> > -       ofs->config.nfs_export  =3D ovl_nfs_export_def;
-> > -       ofs->config.xino        =3D ovl_xino_def();
-> > -       ofs->config.metacopy    =3D ovl_metacopy_def;
-> > -
-> > -       fc->s_fs_info           =3D ofs;
-> > -       fc->fs_private          =3D ctx;
-> > -       fc->ops                 =3D &ovl_context_ops;
-> > -       return 0;
-> > -
-> > -out_err:
-> > -       ovl_fs_context_free(ctx);
-> > -       return -ENOMEM;
-> > -
-> > -}
-> > -
-> >  static struct file_system_type ovl_fs_type =3D {
-> >         .owner                  =3D THIS_MODULE,
-> >         .name                   =3D "overlay",
-> >
-> > ---
-> > base-commit: 62149a745eee03194f025021640c80b84353089b
-> > change-id: 20230625-fs-overlayfs-mount-api-param-993d1caa86ff
-> >
->
+> 
+> A general request from me would be to move all the page classification
+> code to one place. That would mean replacing:
+> 
+>> +               bitmap = PM_SCAN_FLAGS(is_written, false,
+>> +                                      pmd_present(*pmd), is_swap_pmd(*pmd),
+>> +                                      pmd_present(*pmd) && is_zero_pfn(pmd_pfn(*pmd)));
+> 
+> With:
+> 
+>        category_flags = pmd_page_category_flags(*pmd);
+> 
+> ... and adding a pmd_page_category_flags() and pte/hugepage versions
+> together at the top. The idea here is to separate concerns: split
+> classification of pages from the code acting on the classification
+> results and be able to easily understand (and review for correctness)
+> how corresponding classes are derived from PTE and PMD values.
+This is just a cosmetic change. I don't think we should keep on doing
+cosmetic change when code is already readable and obvious. At this rate I
+would keep doing cosmetic changes on the argument that we are making is
+more easier to read. I've been working on this patch and particularly
+task_mmu.c file from last 1 year. The current code is in same flavor as the
+rest of the `task_mmu.c` file. All the functions above are using #ifdef THP.
 
+> 
+> I'd prefer the naming of the functions and variables to follow that it
+> is a classification result, not a generic "bitmap" or "flags", so that
+> it's harder to confuse them with page flags as used elsewhere in the
+> kernel.
+> 
+> (inline review follows)
+> 
+> BTW, thanks for doing this!
+> 
+> On Wed, 28 Jun 2023 at 12:00, Muhammad Usama Anjum
+> <usama.anjum@collabora.com> wrote:
+> [...]
+>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>> index 507cd4e59d07..be747fb89827 100644
+>> --- a/fs/proc/task_mmu.c
+>> +++ b/fs/proc/task_mmu.c
+> [...]
+>> +#define PM_SCAN_REQUIRE_UFFD   (1ULL << 63)
+>> +
+>> +#define PM_SCAN_FOUND_MAX_PAGES        (1)
+>> +#define PM_SCAN_END_WALK       (-256)
+> [...]
+>> +static int pagemap_scan_test_walk(unsigned long start, unsigned long end,
+>> +                                 struct mm_walk *walk)
+>> +{
+>> +       struct pagemap_scan_private *p = walk->private;
+>> +       struct vm_area_struct *vma = walk->vma;
+>> +
+>> +       if ((p->flags & PM_SCAN_REQUIRE_UFFD) && (!userfaultfd_wp_async(vma) ||
+>> +           !userfaultfd_wp_use_markers(vma)))
+>> +               return -EPERM;
+> 
+> p->vma_can_wp = userfaultfd_wp_async(vma) && userfaultfd_wp_use_markers(vma);
+> 
+> And then use that in classification functions and for skipping WP for
+> pages not prepared for that. The PM_SCAN_REQUIRE_UFFD won't be needed
+> then.
+No we don't want to skip, but return error if a VMA isn't setup to use WP
+Async. Even after adding this new `vma_can_wp` variable. We'll have to
+check in every test_walk() if UFFD is initialized on the VMA for every VMA.
+At max, `vma_can_wp` can be setup to hold the true or false for
+PM_SCAN_REQUIRE_UFFD which makes it cosmetic change again.
 
---=20
-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D=
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D
- Alexander Larsson                                Red Hat, Inc
-       alexl@redhat.com         alexander.larsson@gmail.com
+> 
+>> +
+>> +       if (vma->vm_flags & VM_PFNMAP)
+>> +               return 1;
+> 
+> Why do we skip VM_PFNMAP vmas? This will skip over at least VDSO and
+> VVAR pages. Those two are not that big a problem, but it should be at
+> least documented what ranges are skipped and why.
+We are following pagemap_read(). We don't want to expose any additional
+information which pagemap_read() doesn't show.
 
+> 
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int pagemap_scan_output(unsigned long bitmap,
+>> +                              struct pagemap_scan_private *p,
+>> +                              unsigned long addr, unsigned int n_pages)
+>> +{
+>> +       struct page_region *cur_buf = &p->cur_buf;
+>> +
+>> +       if (!n_pages)
+>> +               return -EINVAL;
+> 
+> How can this happen?
+This was there to check validity of n_pages before proceeding. By doing
+static analysis, I can see that it isn't needed anymore and can be removed.
+
+> 
+>> +       bitmap &= p->return_mask;
+>> +
+>> +       if (cur_buf->flags == bitmap &&
+>> +           cur_buf->start + cur_buf->len * PAGE_SIZE == addr) {
+> 
+> BTW, maybe the ranges returned to the user could also use start .. end
+> form, and then this would be simplified to `cur->flags ==
+> categories_to_report && cur->end == addr`.
+> 
+>> +               cur_buf->len += n_pages;
+>> +               p->found_pages += n_pages;
+>> +       } else {
+>> +               if (cur_buf->len) {
+>> +                       if (p->vec_buf_index >= p->vec_buf_len)
+>> +                               return PM_SCAN_END_WALK;
+>> +
+>> +                       memcpy(&p->vec_buf[p->vec_buf_index], cur_buf,
+>> +                              sizeof(*p->vec_buf));
+>> +                       p->vec_buf_index++;
+>> +               }
+>> +
+>> +               cur_buf->start = addr;
+>> +               cur_buf->len = n_pages;
+>> +               cur_buf->flags = bitmap;
+>> +               p->found_pages += n_pages;
+>> +       }
+>> +
+>> +       if (p->found_pages == p->max_pages)
+>> +               return PM_SCAN_FOUND_MAX_PAGES;
+> 
+> Since we now return the address the walk ended at, what is the
+> difference for PM_SCAN_END_WALK and PM_SCAN_FOUND_MAX_PAGES, and do we
+> still need any of those instead of -ENOSPC or `n_pages !=
+> scan_output(...)` check?
+Yes, we need two different return codes from here to judge if we need to wp
+the current range or not. When PM_SCAN_FOUND_MAX_PAGES is returned we need
+to wp the current range. But when END_WALK is returned we don't need to
+perform wp and return.
+
+> 
+>> +static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
+>> +                                 unsigned long end, struct mm_walk *walk)
+>> +{
+>> +       bool is_written, flush = false, interesting = true;
+>> +       struct pagemap_scan_private *p = walk->private;
+>> +       struct vm_area_struct *vma = walk->vma;
+>> +       unsigned long bitmap, addr = end;
+>> +       pte_t *pte, *orig_pte, ptent;
+>> +       spinlock_t *ptl;
+>> +       int ret = 0;
+>> +
+>> +       arch_enter_lazy_mmu_mode();
+>> +
+>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>> +       ptl = pmd_trans_huge_lock(pmd, vma);
+>> +       if (ptl) {
+>> +               unsigned long n_pages = (end - start)/PAGE_SIZE;
+>> +
+>> +               if (n_pages > p->max_pages - p->found_pages)
+>> +                       n_pages = p->max_pages - p->found_pages;
+>> +
+>> +               is_written = !is_pmd_uffd_wp(*pmd);
+>> +
+>> +               bitmap = PM_SCAN_FLAGS(is_written, false,
+>> +                                      pmd_present(*pmd), is_swap_pmd(*pmd),
+>> +                                      pmd_present(*pmd) && is_zero_pfn(pmd_pfn(*pmd)));
+>> +
+>> +               if (IS_PM_SCAN_GET(p->flags))
+>> +                       interesting = pagemap_scan_is_interesting_page(bitmap, p);
+>> +
+>> +               if (interesting) {
+>> +                       /*
+>> +                        * Break huge page into small pages if the WP operation
+>> +                        * need to be performed is on a portion of the huge page.
+>> +                        */
+>> +                       if (is_written && IS_PM_SCAN_WP(p->flags) &&
+>> +                           n_pages < HPAGE_SIZE/PAGE_SIZE) {
+>> +                               spin_unlock(ptl);
+>> +
+>> +                               split_huge_pmd(vma, pmd, start);
+>> +                               goto process_smaller_pages;
+>> +                       }
+>> +
+>> +                       if (IS_PM_SCAN_GET(p->flags))
+>> +                               ret = pagemap_scan_output(bitmap, p, start, n_pages);
+>> +
+>> +                       if (IS_PM_SCAN_WP(p->flags) && is_written && ret >= 0) {
+>> +                               make_uffd_wp_pmd(vma, start, pmd);
+>> +                               flush_tlb_range(vma, start, end);
+>> +                       }
+>> +               }
+>> +
+>> +               spin_unlock(ptl);
+>> +               arch_leave_lazy_mmu_mode();
+>> +
+>> +               return ret;
+>> +       }
+> 
+> Could you split the THP code and use it here like:
+> 
+> enter_lazy_mmu();
+> 
+> ret = scan_thp(...);
+> if (ret != -ENOTTY) {
+>   leave_lazy_mmu();
+>   return ret;
+> }
+> 
+> To avoid having #ifdef here, it can be moved to the scan_thp() only
+> (either in the body or having a dummy `return -ENOTTY;` version in an
+> #else block).
+I'm following the flavour of code in this file as explained above. This
+isn't needed.
+
+> 
+> BTW, there's no `cond_resched()` in the THP case - is that intentional?
+AFAIU, processing of THP here is fast as compared to 512 iterations over
+smaller pages. So cond_resched() isn't present here. But overall, I've not
+seen cond_resched() being used after THPs.
+
+> 
+>> +
+>> +process_smaller_pages:
+>> +#endif
+>> +
+>> +       orig_pte = pte = pte_offset_map_lock(vma->vm_mm, pmd, start, &ptl);
+>> +       if (!pte) {
+>> +               walk->action = ACTION_AGAIN;
+>> +               return 0;
+>> +       }
+>> +
+>> +       for (addr = start; addr < end && !ret; pte++, addr += PAGE_SIZE) {
+>> +               ptent = ptep_get(pte);
+>> +               is_written = !is_pte_uffd_wp(ptent);
+>> +
+>> +               bitmap = PM_SCAN_FLAGS(is_written, pagemap_scan_is_file(vma, ptent, addr),
+>> +                                      pte_present(ptent), is_swap_pte(ptent),
+>> +                                      pte_present(ptent) && is_zero_pfn(pte_pfn(ptent)));
+>> +
+>> +               if (IS_PM_SCAN_GET(p->flags)) {
+>> +                       interesting = pagemap_scan_is_interesting_page(bitmap, p);
+> 
+> If we consider GET as always done, this can be:
+> 
+> if (!is_interesting) continue;
+> 
+> And that would simplify the code greatly.
+> 
+>> +                       if (interesting)
+>> +                               ret = pagemap_scan_output(bitmap, p, addr, 1);
+>> +               }
+>> +
+>> +               if (IS_PM_SCAN_WP(p->flags) && is_written && interesting &&
+>> +                   ret >= 0) {
+>> +                       make_uffd_wp_pte(vma, addr, pte);
+>> +                       flush = true;
+>> +               }
+>> +       }
+>> +
+>> +       if (flush)
+>> +               flush_tlb_range(vma, start, addr);
+> 
+> Would optimizing the TLB flush range be beneficial here? If yes, the
+> loop above could do:
+> 
+> flush_start = end;
+> flush_end = end;
+> ...
+> for (...) {
+>   if (mark_wp) {
+>     make_wp();
+>     if (flush_start > addr)
+>       flush_start = addr;
+>     flush_end = addr;
+>   }
+> }
+> 
+> to reduce the flushed range.
+Just tried this. There is some bug or hidden restriction. It isn't working.
+Maybe we can look at it latter. Reducing the flush size may actually be
+beneficial.
+
+> 
+>> +
+>> +       pte_unmap_unlock(orig_pte, ptl);
+>> +       arch_leave_lazy_mmu_mode();
+>> +
+>> +       cond_resched();
+>> +       return ret;
+>> +}
+>> +
+>> +#ifdef CONFIG_HUGETLB_PAGE
+>> +static int pagemap_scan_hugetlb_entry(pte_t *ptep, unsigned long hmask,
+>> +                                     unsigned long start, unsigned long end,
+>> +                                     struct mm_walk *walk)
+>> +{
+>> +       unsigned long n_pages = (end - start)/PAGE_SIZE;
+>> +       struct pagemap_scan_private *p = walk->private;
+>> +       struct vm_area_struct *vma = walk->vma;
+>> +       bool is_written, interesting = true;
+>> +       struct hstate *h = hstate_vma(vma);
+>> +       unsigned long bitmap;
+>> +       spinlock_t *ptl;
+>> +       int ret = 0;
+>> +       pte_t ptent;
+>> +
+>> +       if (IS_PM_SCAN_WP(p->flags) && n_pages < HPAGE_SIZE/PAGE_SIZE)
+>> +               return -EINVAL;
+> 
+> Shouldn't this be checked after the `n_pages` is reduced? BTW, maybe
+> check it only if the page `is_written` to avoid the conditional for
+> all walks where WP is not used?
+No, we (you and me) had reached to this current state after discussion. We
+are returning -EINVAL here for the user to understand that he had not
+passed the entire hugetlb page address range when specified WP op.
+
+> 
+>> +
+>> +       if (n_pages > p->max_pages - p->found_pages)
+>> +               n_pages = p->max_pages - p->found_pages;
+> [...]
+> 
+> Proposing the relaxed API (and, while at it, less generic constant and
+> field names) below.
+> 
+>> +static int pagemap_scan_args_valid(struct pm_scan_arg *arg, unsigned long start,
+>> +                                  unsigned long end, struct page_region __user *vec)
+>> +{
+>> +       /* Detect illegal size, flags, len and masks */
+>> +       if (arg->size != sizeof(struct pm_scan_arg))
+>> +               return -EINVAL;
+> 
+>> +       if (!arg->flags)
+>> +               return -EINVAL;
+>> +       if (arg->flags & ~PM_SCAN_OPS)
+>> +               return -EINVAL;
+> 
+> if (arg->flags & ~PM_SCAN_FLAGS)
+>   return -EINVAL;
+We need if (!flags) condition for the case when flag is zero.
+
+> 
+>> +       if (!(end - start))
+>> +               return -EINVAL;
+> 
+> Remove. Nothing bad will happen when trying to scan an empty range.
+We should return error. It is user's fault for not providing the correct range.
+
+> 
+>> +       if ((arg->required_mask | arg->anyof_mask | arg->excluded_mask |
+>> +            arg->return_mask) & ~PM_SCAN_BITS_ALL)
+>> +               return -EINVAL;
+> 
+> if ((...) & ~PM_SCAN_PAGE_CATEGORIES)
+>   return -EINVAL;
+> 
+>> +       if (!arg->required_mask && !arg->anyof_mask &&
+>> +           !arg->excluded_mask)
+>> +               return -EINVAL;
+> 
+> Remove. Will inspect all pages then.
+> 
+>> +       if (!arg->return_mask)
+>> +               return -EINVAL;
+> 
+> Remove. Will not return any ranges then. (But will WP, if requested.)
+> 
+>> +       /* Validate memory range */
+>> +       if (!IS_ALIGNED(start, PAGE_SIZE))
+>> +               return -EINVAL;
+>> +       if (!access_ok((void __user *)start, end - start))
+>> +               return -EFAULT;
+> 
+>> +       if (IS_PM_SCAN_GET(arg->flags)) {
+> 
+> Remove. Do GET always.
+> 
+>> +               if (arg->vec_len == 0)
+>> +                       return -EINVAL;
+> 
+> Remove. Will end the walk at the first matching page (and return its
+> address in `start`).
+> 
+>> +               if (!vec)
+>> +                       return -EINVAL;
+>> +               if (!access_ok((void __user *)vec,
+>> +                              arg->vec_len * sizeof(struct page_region)))
+>> +                       return -EFAULT;
+> 
+> Check only if vec_len != 0. BTW, return EFAULT for `!vec`.
+> 
+>> +       }
+>> +
+>> +       if (IS_PM_SCAN_WP(arg->flags) && !IS_PM_SCAN_GET(arg->flags) &&
+>> +           arg->max_pages)
+>> +               return -EINVAL;
+> 
+> With return_mask == 0, arg->max_pages will be ignored anyway. We can
+> just document that this limits the pages reported in the output
+> vector. (And from that follows that if not returning anything, the
+> value doesn't make a difference.)
+I'm sorry. I don't see any value in channgig the interface again. The
+interface is based on requirement, not the simplification of the code.
+
+> 
+> [...]
+>> +       p.max_pages = (arg.max_pages) ? arg.max_pages : ULONG_MAX;
+>> +       p.found_pages = 0;
+>> +       p.required_mask = arg.required_mask;
+>> +       p.anyof_mask = arg.anyof_mask;
+>> +       p.excluded_mask = arg.excluded_mask;
+>> +       p.return_mask = arg.return_mask;
+>> +       p.flags = arg.flags;
+>> +       p.flags |= ((p.required_mask | p.anyof_mask | p.excluded_mask) &
+>> +                   PAGE_IS_WRITTEN) ? PM_SCAN_REQUIRE_UFFD : 0;
+>> +       p.cur_buf.start = p.cur_buf.len = p.cur_buf.flags = 0;
+>> +       p.vec_buf = NULL;
+>> +       p.vec_buf_len = PAGEMAP_WALK_SIZE >> PAGE_SHIFT;
+> 
+> This needs to be less by 1 to account for the entry in p.cur_buf.
+No, that would be bug.
+
+> 
+>> +       /*
+>> +        * Allocate smaller buffer to get output from inside the page walk
+>> +        * functions and walk page range in PAGEMAP_WALK_SIZE size chunks. As
+>> +        * we want to return output to user in compact form where no two
+>> +        * consecutive regions should be continuous and have the same flags.
+>> +        * So store the latest element in p.cur_buf between different walks and
+>> +        * store the p.cur_buf at the end of the walk to the user buffer.
+>> +        */
+>> +       if (IS_PM_SCAN_GET(p.flags)) {
+> 
+> if (p.vec_len != 0)
+No, this is wrong.
+
+> 
+>> +               p.vec_buf = kmalloc_array(p.vec_buf_len, sizeof(*p.vec_buf),
+>> +                                         GFP_KERNEL);
+>> +               if (!p.vec_buf)
+>> +                       return -ENOMEM;
+>> +       }
+>> +
+>> +       if (IS_PM_SCAN_WP(p.flags)) {
+>> +               mmu_notifier_range_init(&range, MMU_NOTIFY_PROTECTION_VMA, 0,
+>> +                                       mm, start, end);
+>> +               mmu_notifier_invalidate_range_start(&range);
+>> +       }
+> 
+> Please add a comment why this is needed.
+This was added when we had left using change_pmd_range(). This is a
+notification that protection for the range has been changed.
+
+> 
+>> +       walk_start = walk_end = start;
+>> +       while (walk_end < end && !ret) {
+>> +               if (IS_PM_SCAN_GET(p.flags)) {
+> 
+> if (p.vec_len)
+> 
+>> +                       p.vec_buf_index = 0;
+>> +
+>> +                       /*
+>> +                        * All data is copied to cur_buf first. When more data
+>> +                        * is found, we push cur_buf to vec_buf and copy new
+>> +                        * data to cur_buf. Subtract 1 from length as the
+>> +                        * index of cur_buf isn't counted in length.
+>> +                        */
+>> +                       empty_slots = arg.vec_len - vec_index;
+>> +                       p.vec_buf_len = min(p.vec_buf_len, empty_slots - 1);
+>> +               }
+>> +
+>> +               ret = mmap_read_lock_killable(mm);
+>> +               if (ret)
+>> +                       goto return_status;
+> 
+> This could be _interruptible() now as we can return early overwriting
+> `start` so that userspace can detect that the walk was interrupted by
+> a signal (start != end).
+> 
+>> +               walk_end = min((walk_start + PAGEMAP_WALK_SIZE) & PAGEMAP_WALK_MASK, end);
+>> +
+>> +               ret = walk_page_range(mm, walk_start, walk_end,
+>> +                                     &pagemap_scan_ops, &p);
+>> +               mmap_read_unlock(mm);
+>> +
+>> +               if (ret && ret != PM_SCAN_FOUND_MAX_PAGES &&
+>> +                   ret != PM_SCAN_END_WALK)
+>> +                       goto return_status;
+> 
+> So now there is no difference in the two special error values.
+Inside pagemap_scan_pmd_entry() the purpose is different.
+
+> 
+>> +               walk_start = walk_end;
+>> +               if (IS_PM_SCAN_GET(p.flags) && p.vec_buf_index) {
+> 
+> `if (p.vec_buf_index)` should be enough, as if not reporting the
+> ranges, the index will never increase.
+Agreed. Will update.
+
+> 
+>> +                       if (copy_to_user(&vec[vec_index], p.vec_buf,
+>> +                                        p.vec_buf_index * sizeof(*p.vec_buf))) {
+>> +                               /*
+>> +                                * Return error even though the OP succeeded
+>> +                                */
+>> +                               ret = -EFAULT;
+>> +                               goto return_status;
+>> +                       }
+>> +                       vec_index += p.vec_buf_index;
+> 
+> p.vec_buf_index = 0;
+> 
+> ... so that there is no need to do that at every start of the loop iteration.
+Okay.
+
+> 
+>> +               }
+>> +       }
+>> +
+>> +       if (p.cur_buf.len) {
+>> +               if (copy_to_user(&vec[vec_index], &p.cur_buf, sizeof(p.cur_buf))) {
+>> +                       ret = -EFAULT;
+>> +                       goto return_status;
+>> +               }
+>> +               vec_index++;
+>> +       }
+>> +
+>> +       ret = vec_index;
+>> +
+>> +return_status:
+> 
+> The label name looks too narrowing, considering what is being done
+> here now. Maybe just 'out', as there is no other non-trivial exit path
+> from the function?
+Okay.
+
+> 
+>> +       arg.start = (unsigned long)walk_end;
+>> +       if (copy_to_user(&uarg->start, &arg.start, sizeof(arg.start)))
+>> +               ret = -EFAULT;
+>> +
+>> +       if (IS_PM_SCAN_WP(p.flags))
+>> +               mmu_notifier_invalidate_range_end(&range);
+> 
+> With removal of the OP_GET, there is only a single flag left. I don't
+> think it is useful then to hide it behind a macro. It should be
+> readable as `p.flags & PM_SCAN_DO_WP`.
+> 
+> [...]
+>> +/* Bits are set in flags of the page_region and masks in pm_scan_args */
+>> +#define PAGE_IS_WRITTEN                (1 << 0)
+>> +#define PAGE_IS_FILE           (1 << 1)
+>> +#define PAGE_IS_PRESENT                (1 << 2)
+>> +#define PAGE_IS_SWAPPED                (1 << 3)
+>> +#define PAGE_IS_PFNZERO                (1 << 4)
+> 
+> Please add PAGE_IS_UFFD_WP_ENABLED (or a shorter name) - this would be
+> populated from `p->vma_can_wp` in the `test_walk` implementation
+> above.
+> 
+> Best Regards
+> Michał Mirosław
+
+-- 
+BR,
+Muhammad Usama Anjum
