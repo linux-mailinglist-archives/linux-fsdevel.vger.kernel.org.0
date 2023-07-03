@@ -2,80 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C2BE745862
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 11:31:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3F3E745949
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 11:50:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230024AbjGCJbJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jul 2023 05:31:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38262 "EHLO
+        id S231298AbjGCJtw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jul 2023 05:49:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbjGCJbI (ORCPT
+        with ESMTP id S231195AbjGCJtr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jul 2023 05:31:08 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAB95CD;
-        Mon,  3 Jul 2023 02:31:00 -0700 (PDT)
-Received: from [192.168.43.110] (unknown [116.71.191.217])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 65E216606F57;
-        Mon,  3 Jul 2023 10:30:46 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1688376659;
-        bh=w0YKyzQE0llhRjeo3PCXYRlQ1d3QGoB4qd/RGVz6sos=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=OidjyY4PvZPf8xwFy1Cebaujb5ufeFlWana6wOekGuauXeIy6Sp7pbAgyMKlEjxCU
-         Cee/KL3B22KRXKEhszE5x/jDM9NCwWhS0Rd0rFieMGCEcGPFf7otZvArWCrRUdxkBJ
-         b1GwdmaWZs0FCvxlgjLMw2k6eUMEXu/G0ugAVfLwbtE3QD8I/M0HZ9IIs2auOPuFqd
-         dvdSTU1sShSAMO95gKvJ4RPeU8lCLC5owpQdngicC0Swuio1sgBqRYGlxAWwKNN9EC
-         bhpssWzj/WSSGWyhmY6wmnYgftXm5UVvO9gLqRJPImklzd7h60Exibe7e7wsQ7Vhfh
-         e34SZN9gTxXcg==
-Message-ID: <1705991c-ea7c-f78c-421d-2900463985ab@collabora.com>
-Date:   Mon, 3 Jul 2023 14:30:41 +0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: Re: [PATCH v22 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
-References: <20230628095426.1886064-1-usama.anjum@collabora.com>
- <20230628095426.1886064-3-usama.anjum@collabora.com>
- <CABb0KFFDCZ9E3sTukmdk3jViOJmP33xOoVNg37ACoynD97ZpwA@mail.gmail.com>
-Content-Language: en-US
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <CABb0KFFDCZ9E3sTukmdk3jViOJmP33xOoVNg37ACoynD97ZpwA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        Mon, 3 Jul 2023 05:49:47 -0400
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7E76C1B2;
+        Mon,  3 Jul 2023 02:49:40 -0700 (PDT)
+X-AuditID: a67dfc5b-d85ff70000001748-d9-64a299b1d587
+From:   Byungchul Park <byungchul@sk.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel_team@skhynix.com, torvalds@linux-foundation.org,
+        damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        mingo@redhat.com, peterz@infradead.org, will@kernel.org,
+        tglx@linutronix.de, rostedt@goodmis.org, joel@joelfernandes.org,
+        sashal@kernel.org, daniel.vetter@ffwll.ch, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
+        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, jack@suse.cz, jlayton@kernel.org,
+        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, rodrigosiqueiramelo@gmail.com,
+        melissa.srw@gmail.com, hamohammed.sa@gmail.com,
+        42.hyeyoo@gmail.com, chris.p.wilson@intel.com,
+        gwan-gyeong.mun@intel.com, max.byungchul.park@gmail.com,
+        boqun.feng@gmail.com, longman@redhat.com, hdanton@sina.com,
+        her0gyugyu@gmail.com
+Subject: [PATCH v10 rebased on v6.4 00/25] DEPT(Dependency Tracker)
+Date:   Mon,  3 Jul 2023 18:47:27 +0900
+Message-Id: <20230703094752.79269-1-byungchul@sk.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0iTexjH/f3eq6vF25LOW0HFQCKj0ih7ioig248gzMqCInK1l1xNjXlJ
+        OxaW09PxEmXpakrNKWup3TaDMlfL8t7FUnamqKVJJ9FpWRst7XS06J8vH/g8z/evL08pSpnZ
+        vCYuUdLFqbRKVkbLPFNLFtsum9WhOW4azueGgvfLGRqKb1Wy0HqzAkFl1SkMA3Wb4R/fEIKx
+        5y8pMBS0Iijp7aagqr4HgcN6moW2/mnQ7h1hoakgh4WM0lssvBocx9BVmI+hwrYVWs6ZMTj9
+        /9JgGGChyJCBJ+IDBr+lnANLejD0WY0cjPeGQVOPiwFH5yK4fKWLhRpHEw319/owtFUXs9BT
+        +YOBlvpGGlrP5zFwY9jMwqDPQoHFO8LBa6cJw239RFHW5/8YaMhzYsgqu4OhveMBgodn3mKw
+        VbpYeOIdwmC3FVDw7Vodgr6zHg4yc/0cFJ06iyAns5CGl98bGNB3rYCxr8XsutXkydAIRfT2
+        Y8ThM9Gk2SyS+8ZujugfdnLEZEsidmsIKa0ZwKRk1MsQW/nfLLGN5nMk29OOyfCLFxxpvDRG
+        k/52A942Z49sjVrSapIl3dK10bKYrIo6fLR6X4rpqx+no6GN2SiQF4XlovFRFfObXe983CSz
+        wgLR7fZTkxwkzBftee8nbmQ8Jfw1RbR+fM5OihnCevGN8cJPpoVg0Vmt/8lyYYXosmawv0rn
+        iRW3ndTksyh84cVPD4a5X2KW+Njqps+hKSYUUI4UmrjkWJVGu3xJTGqcJmXJwfhYG5qYjuXE
+        +N57aLR1Ry0SeKScKnf/WaJWMKrkhNTYWiTylDJIntF7Va2Qq1WpxyVd/H5dklZKqEVzeFr5
+        h3yZ75haIRxSJUpHJOmopPttMR84Ox0lPXV3XoxcWPs5bYZGfNW2K9R48m50AymYGxIcC/Ok
+        6OzTERHdG8febyoLf7rFXBjYkesYfGfvXbimY/pcT3PLqsRZ4a7xdc3bV0aOmA4HLc2cGblh
+        lSdqxyJt9U1/mON14YH6xk/SzpVl96NqnqW5v6XVbf8RYIjID0jpN4Rfj9odr6QTYlRhIZQu
+        QfU/cnbScjYDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSf0zMfxzHvd+fz+f9+XTfjo9kPvhuOG6MoazmNb5fsxm9Z/N7k9naOe4z
+        3VTsjkixuLv4RlbspB+4wrnVUe7a0A9OrZLWD0piidLQlOjb3Trl+1XMP889tsf2+OspMEEW
+        boagjzsoG+K0MSqiYBUbV5oW38nK14VYBudBxtkQ8A6dZiG3yEmg+XYhAmfJCQy91RHwwteH
+        YKShiYFMazOCvK7XDJTUdCKocJwk0NIzEVq9AwTqrGcImK4VEXj6aRRDx8XzGApdG6A+PR+D
+        x/+BhcxeAjmZJjw2HzH47QU82JPV0O3I5mG0KxTqOts4qLpcx0HFq0WQdaWDQHlFHQs197ox
+        tJTmEuh0/s9Bfc1jFpoz0ji49TmfwCefnQG7d4CHZx4bhmLzWC3l3/84qE3zYEi5fgdD68sy
+        BA9Ov8XgcrYRqPL2YXC7rAx8u1mNoPtcPw+Ws34eck6cQ3DGcpGFpu+1HJg7wmFkOJesXkmr
+        +gYYanYfphU+G0uf5Ev0fvZrnpofvOKpzXWIuh0L6bXyXkzzBr0cdRX8Q6hr8DxPU/tbMf3c
+        2MjTx5dGWNrTmok3/7lT8ZdOjtHHy4alq3YpolMKq/GB0qgjtmE/TkZ9a1NRgCCJYVLbOx8/
+        zkScL7W3+5lxDhZnS+6091wqUgiMeOoPyfGlgYyLKeIa6U32hZ/MimrJU2r+yUoxXGpzmMiv
+        6CypsNjDpCPBhiYUoGB9XHysVh8TvsS4LzohTn9kyZ79sS40dg77sdGMe2ioJaISiQJSBSrb
+        E/N0QZw23pgQW4kkgVEFK01dV3VBSp024ahs2K8xHIqRjZVopsCqpinXR8q7gsS92oPyPlk+
+        IBt+WywEzEhG7nTzjb+HNe2a0AXLv0yKiCzwB3gu5ExbFDa3AQVMT5xaNkwat876trY2cHv9
+        sas71kVpVleXlt9ctS1sTv/x2jL6cIWrZkoP6zv5sLvFavlapOr9QBOztkUliUWPkq0a4fkQ
+        TdqUFLLl2ZrvzmVNA2p1NL6bBIER9pKezepNk3erWGO0NnQhYzBqfwBW2XDWGAMAAA==
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
         SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -84,587 +86,279 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/28/23 5:11 PM, Michał Mirosław wrote:
-> Hi Muhammad,
-> 
-> I'd really like to reduce the number of conditionals in this code by a
-> third. I believe it is possible if we agree to rework the API a bit
-> (making it always a GET operation with optional WP) and relax some of
-> the restrictions on the input values.
-I have discussed this multiple times in revisions that why we need the GET,
-GET+WP and WP operations. We cannot remove only WP operation. Please
-consult previous revisions on why we need exclusive WP operation without GET.
+From now on, I can work on LKML again! I'm wondering if DEPT has been
+helping kernel debugging well even though it's a form of patches yet.
 
-> 
-> Also please include *all* changes you make in a patch in the changelog
-> - I just noticed e.g. a `mmu_notifier` code that I haven't seen before
-> in the review.
-mmu_notifier code was added v16. I'll try to write more longer specific
-changelog.
+I'm happy to see that DEPT reports a real problem in practice. See:
 
-> 
-> A general request from me would be to move all the page classification
-> code to one place. That would mean replacing:
-> 
->> +               bitmap = PM_SCAN_FLAGS(is_written, false,
->> +                                      pmd_present(*pmd), is_swap_pmd(*pmd),
->> +                                      pmd_present(*pmd) && is_zero_pfn(pmd_pfn(*pmd)));
-> 
-> With:
-> 
->        category_flags = pmd_page_category_flags(*pmd);
-> 
-> ... and adding a pmd_page_category_flags() and pte/hugepage versions
-> together at the top. The idea here is to separate concerns: split
-> classification of pages from the code acting on the classification
-> results and be able to easily understand (and review for correctness)
-> how corresponding classes are derived from PTE and PMD values.
-This is just a cosmetic change. I don't think we should keep on doing
-cosmetic change when code is already readable and obvious. At this rate I
-would keep doing cosmetic changes on the argument that we are making is
-more easier to read. I've been working on this patch and particularly
-task_mmu.c file from last 1 year. The current code is in same flavor as the
-rest of the `task_mmu.c` file. All the functions above are using #ifdef THP.
+   https://lore.kernel.org/lkml/6383cde5-cf4b-facf-6e07-1378a485657d@I-love.SAKURA.ne.jp/#t
+   https://lore.kernel.org/lkml/1674268856-31807-1-git-send-email-byungchul.park@lge.com/
 
-> 
-> I'd prefer the naming of the functions and variables to follow that it
-> is a classification result, not a generic "bitmap" or "flags", so that
-> it's harder to confuse them with page flags as used elsewhere in the
-> kernel.
-> 
-> (inline review follows)
-> 
-> BTW, thanks for doing this!
-> 
-> On Wed, 28 Jun 2023 at 12:00, Muhammad Usama Anjum
-> <usama.anjum@collabora.com> wrote:
-> [...]
->> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->> index 507cd4e59d07..be747fb89827 100644
->> --- a/fs/proc/task_mmu.c
->> +++ b/fs/proc/task_mmu.c
-> [...]
->> +#define PM_SCAN_REQUIRE_UFFD   (1ULL << 63)
->> +
->> +#define PM_SCAN_FOUND_MAX_PAGES        (1)
->> +#define PM_SCAN_END_WALK       (-256)
-> [...]
->> +static int pagemap_scan_test_walk(unsigned long start, unsigned long end,
->> +                                 struct mm_walk *walk)
->> +{
->> +       struct pagemap_scan_private *p = walk->private;
->> +       struct vm_area_struct *vma = walk->vma;
->> +
->> +       if ((p->flags & PM_SCAN_REQUIRE_UFFD) && (!userfaultfd_wp_async(vma) ||
->> +           !userfaultfd_wp_use_markers(vma)))
->> +               return -EPERM;
-> 
-> p->vma_can_wp = userfaultfd_wp_async(vma) && userfaultfd_wp_use_markers(vma);
-> 
-> And then use that in classification functions and for skipping WP for
-> pages not prepared for that. The PM_SCAN_REQUIRE_UFFD won't be needed
-> then.
-No we don't want to skip, but return error if a VMA isn't setup to use WP
-Async. Even after adding this new `vma_can_wp` variable. We'll have to
-check in every test_walk() if UFFD is initialized on the VMA for every VMA.
-At max, `vma_can_wp` can be setup to hold the true or false for
-PM_SCAN_REQUIRE_UFFD which makes it cosmetic change again.
+Nevertheless, I apologize for the lack of document. I promise to add it
+before it gets needed to use DEPT's APIs by users. For now, you can use
+DEPT just with CONFIG_DEPT on.
 
-> 
->> +
->> +       if (vma->vm_flags & VM_PFNMAP)
->> +               return 1;
-> 
-> Why do we skip VM_PFNMAP vmas? This will skip over at least VDSO and
-> VVAR pages. Those two are not that big a problem, but it should be at
-> least documented what ranges are skipped and why.
-We are following pagemap_read(). We don't want to expose any additional
-information which pagemap_read() doesn't show.
+---
 
-> 
->> +
->> +       return 0;
->> +}
->> +
->> +static int pagemap_scan_output(unsigned long bitmap,
->> +                              struct pagemap_scan_private *p,
->> +                              unsigned long addr, unsigned int n_pages)
->> +{
->> +       struct page_region *cur_buf = &p->cur_buf;
->> +
->> +       if (!n_pages)
->> +               return -EINVAL;
-> 
-> How can this happen?
-This was there to check validity of n_pages before proceeding. By doing
-static analysis, I can see that it isn't needed anymore and can be removed.
+Hi Linus and folks,
 
-> 
->> +       bitmap &= p->return_mask;
->> +
->> +       if (cur_buf->flags == bitmap &&
->> +           cur_buf->start + cur_buf->len * PAGE_SIZE == addr) {
-> 
-> BTW, maybe the ranges returned to the user could also use start .. end
-> form, and then this would be simplified to `cur->flags ==
-> categories_to_report && cur->end == addr`.
-> 
->> +               cur_buf->len += n_pages;
->> +               p->found_pages += n_pages;
->> +       } else {
->> +               if (cur_buf->len) {
->> +                       if (p->vec_buf_index >= p->vec_buf_len)
->> +                               return PM_SCAN_END_WALK;
->> +
->> +                       memcpy(&p->vec_buf[p->vec_buf_index], cur_buf,
->> +                              sizeof(*p->vec_buf));
->> +                       p->vec_buf_index++;
->> +               }
->> +
->> +               cur_buf->start = addr;
->> +               cur_buf->len = n_pages;
->> +               cur_buf->flags = bitmap;
->> +               p->found_pages += n_pages;
->> +       }
->> +
->> +       if (p->found_pages == p->max_pages)
->> +               return PM_SCAN_FOUND_MAX_PAGES;
-> 
-> Since we now return the address the walk ended at, what is the
-> difference for PM_SCAN_END_WALK and PM_SCAN_FOUND_MAX_PAGES, and do we
-> still need any of those instead of -ENOSPC or `n_pages !=
-> scan_output(...)` check?
-Yes, we need two different return codes from here to judge if we need to wp
-the current range or not. When PM_SCAN_FOUND_MAX_PAGES is returned we need
-to wp the current range. But when END_WALK is returned we don't need to
-perform wp and return.
+I've been developing a tool for detecting deadlock possibilities by
+tracking wait/event rather than lock(?) acquisition order to try to
+cover all synchonization machanisms. It's done on v6.4, the latest.
 
-> 
->> +static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
->> +                                 unsigned long end, struct mm_walk *walk)
->> +{
->> +       bool is_written, flush = false, interesting = true;
->> +       struct pagemap_scan_private *p = walk->private;
->> +       struct vm_area_struct *vma = walk->vma;
->> +       unsigned long bitmap, addr = end;
->> +       pte_t *pte, *orig_pte, ptent;
->> +       spinlock_t *ptl;
->> +       int ret = 0;
->> +
->> +       arch_enter_lazy_mmu_mode();
->> +
->> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->> +       ptl = pmd_trans_huge_lock(pmd, vma);
->> +       if (ptl) {
->> +               unsigned long n_pages = (end - start)/PAGE_SIZE;
->> +
->> +               if (n_pages > p->max_pages - p->found_pages)
->> +                       n_pages = p->max_pages - p->found_pages;
->> +
->> +               is_written = !is_pmd_uffd_wp(*pmd);
->> +
->> +               bitmap = PM_SCAN_FLAGS(is_written, false,
->> +                                      pmd_present(*pmd), is_swap_pmd(*pmd),
->> +                                      pmd_present(*pmd) && is_zero_pfn(pmd_pfn(*pmd)));
->> +
->> +               if (IS_PM_SCAN_GET(p->flags))
->> +                       interesting = pagemap_scan_is_interesting_page(bitmap, p);
->> +
->> +               if (interesting) {
->> +                       /*
->> +                        * Break huge page into small pages if the WP operation
->> +                        * need to be performed is on a portion of the huge page.
->> +                        */
->> +                       if (is_written && IS_PM_SCAN_WP(p->flags) &&
->> +                           n_pages < HPAGE_SIZE/PAGE_SIZE) {
->> +                               spin_unlock(ptl);
->> +
->> +                               split_huge_pmd(vma, pmd, start);
->> +                               goto process_smaller_pages;
->> +                       }
->> +
->> +                       if (IS_PM_SCAN_GET(p->flags))
->> +                               ret = pagemap_scan_output(bitmap, p, start, n_pages);
->> +
->> +                       if (IS_PM_SCAN_WP(p->flags) && is_written && ret >= 0) {
->> +                               make_uffd_wp_pmd(vma, start, pmd);
->> +                               flush_tlb_range(vma, start, end);
->> +                       }
->> +               }
->> +
->> +               spin_unlock(ptl);
->> +               arch_leave_lazy_mmu_mode();
->> +
->> +               return ret;
->> +       }
-> 
-> Could you split the THP code and use it here like:
-> 
-> enter_lazy_mmu();
-> 
-> ret = scan_thp(...);
-> if (ret != -ENOTTY) {
->   leave_lazy_mmu();
->   return ret;
-> }
-> 
-> To avoid having #ifdef here, it can be moved to the scan_thp() only
-> (either in the body or having a dummy `return -ENOTTY;` version in an
-> #else block).
-I'm following the flavour of code in this file as explained above. This
-isn't needed.
+Benifit:
 
-> 
-> BTW, there's no `cond_resched()` in the THP case - is that intentional?
-AFAIU, processing of THP here is fast as compared to 512 iterations over
-smaller pages. So cond_resched() isn't present here. But overall, I've not
-seen cond_resched() being used after THPs.
+	0. Works with all lock primitives.
+	1. Works with wait_for_completion()/complete().
+	2. Works with 'wait' on PG_locked.
+	3. Works with 'wait' on PG_writeback.
+	4. Works with swait/wakeup.
+	5. Works with waitqueue.
+	6. Works with wait_bit.
+	7. Multiple reports are allowed.
+	8. Deduplication control on multiple reports.
+	9. Withstand false positives thanks to 6.
+	10. Easy to tag any wait/event.
 
-> 
->> +
->> +process_smaller_pages:
->> +#endif
->> +
->> +       orig_pte = pte = pte_offset_map_lock(vma->vm_mm, pmd, start, &ptl);
->> +       if (!pte) {
->> +               walk->action = ACTION_AGAIN;
->> +               return 0;
->> +       }
->> +
->> +       for (addr = start; addr < end && !ret; pte++, addr += PAGE_SIZE) {
->> +               ptent = ptep_get(pte);
->> +               is_written = !is_pte_uffd_wp(ptent);
->> +
->> +               bitmap = PM_SCAN_FLAGS(is_written, pagemap_scan_is_file(vma, ptent, addr),
->> +                                      pte_present(ptent), is_swap_pte(ptent),
->> +                                      pte_present(ptent) && is_zero_pfn(pte_pfn(ptent)));
->> +
->> +               if (IS_PM_SCAN_GET(p->flags)) {
->> +                       interesting = pagemap_scan_is_interesting_page(bitmap, p);
-> 
-> If we consider GET as always done, this can be:
-> 
-> if (!is_interesting) continue;
-> 
-> And that would simplify the code greatly.
-> 
->> +                       if (interesting)
->> +                               ret = pagemap_scan_output(bitmap, p, addr, 1);
->> +               }
->> +
->> +               if (IS_PM_SCAN_WP(p->flags) && is_written && interesting &&
->> +                   ret >= 0) {
->> +                       make_uffd_wp_pte(vma, addr, pte);
->> +                       flush = true;
->> +               }
->> +       }
->> +
->> +       if (flush)
->> +               flush_tlb_range(vma, start, addr);
-> 
-> Would optimizing the TLB flush range be beneficial here? If yes, the
-> loop above could do:
-> 
-> flush_start = end;
-> flush_end = end;
-> ...
-> for (...) {
->   if (mark_wp) {
->     make_wp();
->     if (flush_start > addr)
->       flush_start = addr;
->     flush_end = addr;
->   }
-> }
-> 
-> to reduce the flushed range.
-Just tried this. There is some bug or hidden restriction. It isn't working.
-Maybe we can look at it latter. Reducing the flush size may actually be
-beneficial.
+Future work:
 
-> 
->> +
->> +       pte_unmap_unlock(orig_pte, ptl);
->> +       arch_leave_lazy_mmu_mode();
->> +
->> +       cond_resched();
->> +       return ret;
->> +}
->> +
->> +#ifdef CONFIG_HUGETLB_PAGE
->> +static int pagemap_scan_hugetlb_entry(pte_t *ptep, unsigned long hmask,
->> +                                     unsigned long start, unsigned long end,
->> +                                     struct mm_walk *walk)
->> +{
->> +       unsigned long n_pages = (end - start)/PAGE_SIZE;
->> +       struct pagemap_scan_private *p = walk->private;
->> +       struct vm_area_struct *vma = walk->vma;
->> +       bool is_written, interesting = true;
->> +       struct hstate *h = hstate_vma(vma);
->> +       unsigned long bitmap;
->> +       spinlock_t *ptl;
->> +       int ret = 0;
->> +       pte_t ptent;
->> +
->> +       if (IS_PM_SCAN_WP(p->flags) && n_pages < HPAGE_SIZE/PAGE_SIZE)
->> +               return -EINVAL;
-> 
-> Shouldn't this be checked after the `n_pages` is reduced? BTW, maybe
-> check it only if the page `is_written` to avoid the conditional for
-> all walks where WP is not used?
-No, we (you and me) had reached to this current state after discussion. We
-are returning -EINVAL here for the user to understand that he had not
-passed the entire hugetlb page address range when specified WP op.
+	0. To make it more stable.
+	1. To separates Dept from Lockdep.
+	2. To improves performance in terms of time and space.
+	3. To use Dept as a dependency engine for Lockdep.
+	4. To add any missing tags of wait/event in the kernel.
+	5. To deduplicate stack trace.
 
-> 
->> +
->> +       if (n_pages > p->max_pages - p->found_pages)
->> +               n_pages = p->max_pages - p->found_pages;
-> [...]
-> 
-> Proposing the relaxed API (and, while at it, less generic constant and
-> field names) below.
-> 
->> +static int pagemap_scan_args_valid(struct pm_scan_arg *arg, unsigned long start,
->> +                                  unsigned long end, struct page_region __user *vec)
->> +{
->> +       /* Detect illegal size, flags, len and masks */
->> +       if (arg->size != sizeof(struct pm_scan_arg))
->> +               return -EINVAL;
-> 
->> +       if (!arg->flags)
->> +               return -EINVAL;
->> +       if (arg->flags & ~PM_SCAN_OPS)
->> +               return -EINVAL;
-> 
-> if (arg->flags & ~PM_SCAN_FLAGS)
->   return -EINVAL;
-We need if (!flags) condition for the case when flag is zero.
+How to interpret reports:
 
-> 
->> +       if (!(end - start))
->> +               return -EINVAL;
-> 
-> Remove. Nothing bad will happen when trying to scan an empty range.
-We should return error. It is user's fault for not providing the correct range.
+	1. E(event) in each context cannot be triggered because of the
+	   W(wait) that cannot be woken.
+	2. The stack trace helping find the problematic code is located
+	   in each conext's detail.
 
-> 
->> +       if ((arg->required_mask | arg->anyof_mask | arg->excluded_mask |
->> +            arg->return_mask) & ~PM_SCAN_BITS_ALL)
->> +               return -EINVAL;
-> 
-> if ((...) & ~PM_SCAN_PAGE_CATEGORIES)
->   return -EINVAL;
-> 
->> +       if (!arg->required_mask && !arg->anyof_mask &&
->> +           !arg->excluded_mask)
->> +               return -EINVAL;
-> 
-> Remove. Will inspect all pages then.
-> 
->> +       if (!arg->return_mask)
->> +               return -EINVAL;
-> 
-> Remove. Will not return any ranges then. (But will WP, if requested.)
-> 
->> +       /* Validate memory range */
->> +       if (!IS_ALIGNED(start, PAGE_SIZE))
->> +               return -EINVAL;
->> +       if (!access_ok((void __user *)start, end - start))
->> +               return -EFAULT;
-> 
->> +       if (IS_PM_SCAN_GET(arg->flags)) {
-> 
-> Remove. Do GET always.
-> 
->> +               if (arg->vec_len == 0)
->> +                       return -EINVAL;
-> 
-> Remove. Will end the walk at the first matching page (and return its
-> address in `start`).
-> 
->> +               if (!vec)
->> +                       return -EINVAL;
->> +               if (!access_ok((void __user *)vec,
->> +                              arg->vec_len * sizeof(struct page_region)))
->> +                       return -EFAULT;
-> 
-> Check only if vec_len != 0. BTW, return EFAULT for `!vec`.
-> 
->> +       }
->> +
->> +       if (IS_PM_SCAN_WP(arg->flags) && !IS_PM_SCAN_GET(arg->flags) &&
->> +           arg->max_pages)
->> +               return -EINVAL;
-> 
-> With return_mask == 0, arg->max_pages will be ignored anyway. We can
-> just document that this limits the pages reported in the output
-> vector. (And from that follows that if not returning anything, the
-> value doesn't make a difference.)
-I'm sorry. I don't see any value in channgig the interface again. The
-interface is based on requirement, not the simplification of the code.
+Thanks,
+Byungchul
 
-> 
-> [...]
->> +       p.max_pages = (arg.max_pages) ? arg.max_pages : ULONG_MAX;
->> +       p.found_pages = 0;
->> +       p.required_mask = arg.required_mask;
->> +       p.anyof_mask = arg.anyof_mask;
->> +       p.excluded_mask = arg.excluded_mask;
->> +       p.return_mask = arg.return_mask;
->> +       p.flags = arg.flags;
->> +       p.flags |= ((p.required_mask | p.anyof_mask | p.excluded_mask) &
->> +                   PAGE_IS_WRITTEN) ? PM_SCAN_REQUIRE_UFFD : 0;
->> +       p.cur_buf.start = p.cur_buf.len = p.cur_buf.flags = 0;
->> +       p.vec_buf = NULL;
->> +       p.vec_buf_len = PAGEMAP_WALK_SIZE >> PAGE_SHIFT;
-> 
-> This needs to be less by 1 to account for the entry in p.cur_buf.
-No, that would be bug.
+---
 
-> 
->> +       /*
->> +        * Allocate smaller buffer to get output from inside the page walk
->> +        * functions and walk page range in PAGEMAP_WALK_SIZE size chunks. As
->> +        * we want to return output to user in compact form where no two
->> +        * consecutive regions should be continuous and have the same flags.
->> +        * So store the latest element in p.cur_buf between different walks and
->> +        * store the p.cur_buf at the end of the walk to the user buffer.
->> +        */
->> +       if (IS_PM_SCAN_GET(p.flags)) {
-> 
-> if (p.vec_len != 0)
-No, this is wrong.
+Changes from v9:
 
-> 
->> +               p.vec_buf = kmalloc_array(p.vec_buf_len, sizeof(*p.vec_buf),
->> +                                         GFP_KERNEL);
->> +               if (!p.vec_buf)
->> +                       return -ENOMEM;
->> +       }
->> +
->> +       if (IS_PM_SCAN_WP(p.flags)) {
->> +               mmu_notifier_range_init(&range, MMU_NOTIFY_PROTECTION_VMA, 0,
->> +                                       mm, start, end);
->> +               mmu_notifier_invalidate_range_start(&range);
->> +       }
-> 
-> Please add a comment why this is needed.
-This was added when we had left using change_pmd_range(). This is a
-notification that protection for the range has been changed.
+	1. Fix a bug. SDT tracking didn't work well because of my big
+	   mistake that I should've used waiter's map to indentify its
+	   class but it had been working with waker's one. FYI,
+	   PG_locked and PG_writeback weren't affected. They still
+	   worked well. (reported by YoungJun)
+	
+Changes from v8:
 
-> 
->> +       walk_start = walk_end = start;
->> +       while (walk_end < end && !ret) {
->> +               if (IS_PM_SCAN_GET(p.flags)) {
-> 
-> if (p.vec_len)
-> 
->> +                       p.vec_buf_index = 0;
->> +
->> +                       /*
->> +                        * All data is copied to cur_buf first. When more data
->> +                        * is found, we push cur_buf to vec_buf and copy new
->> +                        * data to cur_buf. Subtract 1 from length as the
->> +                        * index of cur_buf isn't counted in length.
->> +                        */
->> +                       empty_slots = arg.vec_len - vec_index;
->> +                       p.vec_buf_len = min(p.vec_buf_len, empty_slots - 1);
->> +               }
->> +
->> +               ret = mmap_read_lock_killable(mm);
->> +               if (ret)
->> +                       goto return_status;
-> 
-> This could be _interruptible() now as we can return early overwriting
-> `start` so that userspace can detect that the walk was interrupted by
-> a signal (start != end).
-> 
->> +               walk_end = min((walk_start + PAGEMAP_WALK_SIZE) & PAGEMAP_WALK_MASK, end);
->> +
->> +               ret = walk_page_range(mm, walk_start, walk_end,
->> +                                     &pagemap_scan_ops, &p);
->> +               mmap_read_unlock(mm);
->> +
->> +               if (ret && ret != PM_SCAN_FOUND_MAX_PAGES &&
->> +                   ret != PM_SCAN_END_WALK)
->> +                       goto return_status;
-> 
-> So now there is no difference in the two special error values.
-Inside pagemap_scan_pmd_entry() the purpose is different.
+	1. Fix build error by adding EXPORT_SYMBOL(PG_locked_map) and
+	   EXPORT_SYMBOL(PG_writeback_map) for kernel module build -
+	   appologize for that. (reported by kernel test robot)
+	2. Fix build error by removing header file's circular dependency
+	   that was caused by "atomic.h", "kernel.h" and "irqflags.h",
+	   which I introduced - appolgize for that. (reported by kernel
+	   test robot)
 
-> 
->> +               walk_start = walk_end;
->> +               if (IS_PM_SCAN_GET(p.flags) && p.vec_buf_index) {
-> 
-> `if (p.vec_buf_index)` should be enough, as if not reporting the
-> ranges, the index will never increase.
-Agreed. Will update.
+Changes from v7:
 
-> 
->> +                       if (copy_to_user(&vec[vec_index], p.vec_buf,
->> +                                        p.vec_buf_index * sizeof(*p.vec_buf))) {
->> +                               /*
->> +                                * Return error even though the OP succeeded
->> +                                */
->> +                               ret = -EFAULT;
->> +                               goto return_status;
->> +                       }
->> +                       vec_index += p.vec_buf_index;
-> 
-> p.vec_buf_index = 0;
-> 
-> ... so that there is no need to do that at every start of the loop iteration.
-Okay.
+	1. Fix a bug that cannot track rwlock dependency properly,
+	   introduced in v7. (reported by Boqun and lockdep selftest)
+	2. Track wait/event of PG_{locked,writeback} more aggressively
+	   assuming that when a bit of PG_{locked,writeback} is cleared
+	   there might be waits on the bit. (reported by Linus, Hillf
+	   and syzbot)
+	3. Fix and clean bad style code e.i. unnecessarily introduced
+	   a randome pattern and so on. (pointed out by Linux)
+	4. Clean code for applying DEPT to wait_for_completion().
 
-> 
->> +               }
->> +       }
->> +
->> +       if (p.cur_buf.len) {
->> +               if (copy_to_user(&vec[vec_index], &p.cur_buf, sizeof(p.cur_buf))) {
->> +                       ret = -EFAULT;
->> +                       goto return_status;
->> +               }
->> +               vec_index++;
->> +       }
->> +
->> +       ret = vec_index;
->> +
->> +return_status:
-> 
-> The label name looks too narrowing, considering what is being done
-> here now. Maybe just 'out', as there is no other non-trivial exit path
-> from the function?
-Okay.
+Changes from v6:
 
-> 
->> +       arg.start = (unsigned long)walk_end;
->> +       if (copy_to_user(&uarg->start, &arg.start, sizeof(arg.start)))
->> +               ret = -EFAULT;
->> +
->> +       if (IS_PM_SCAN_WP(p.flags))
->> +               mmu_notifier_invalidate_range_end(&range);
-> 
-> With removal of the OP_GET, there is only a single flag left. I don't
-> think it is useful then to hide it behind a macro. It should be
-> readable as `p.flags & PM_SCAN_DO_WP`.
-> 
-> [...]
->> +/* Bits are set in flags of the page_region and masks in pm_scan_args */
->> +#define PAGE_IS_WRITTEN                (1 << 0)
->> +#define PAGE_IS_FILE           (1 << 1)
->> +#define PAGE_IS_PRESENT                (1 << 2)
->> +#define PAGE_IS_SWAPPED                (1 << 3)
->> +#define PAGE_IS_PFNZERO                (1 << 4)
-> 
-> Please add PAGE_IS_UFFD_WP_ENABLED (or a shorter name) - this would be
-> populated from `p->vma_can_wp` in the `test_walk` implementation
-> above.
-> 
-> Best Regards
-> Michał Mirosław
+	1. Tie to task scheduler code to track sleep and try_to_wake_up()
+	   assuming sleeps cause waits, try_to_wake_up()s would be the
+	   events that those are waiting for, of course with proper DEPT
+	   annotations, sdt_might_sleep_weak(), sdt_might_sleep_strong()
+	   and so on. For these cases, class is classified at sleep
+	   entrance rather than the synchronization initialization code.
+	   Which would extremely reduce false alarms.
+	2. Remove the DEPT associated instance in each page struct for
+	   tracking dependencies by PG_locked and PG_writeback thanks to
+	   the 1. work above.
+	3. Introduce CONFIG_DEPT_AGGRESIVE_TIMEOUT_WAIT to suppress
+	   reports that waits with timeout set are involved, for those
+	   who don't like verbose reporting.
+	4. Add a mechanism to refill the internal memory pools on
+	   running out so that DEPT could keep working as long as free
+	   memory is available in the system.
+	5. Re-enable tracking hashed-waitqueue wait. That's going to no
+	   longer generate false positives because class is classified
+	   at sleep entrance rather than the waitqueue initailization.
+	6. Refactor to make it easier to port onto each new version of
+	   the kernel.
+	7. Apply DEPT to dma fence.
+	8. Do trivial optimizaitions.
+
+Changes from v5:
+
+	1. Use just pr_warn_once() rather than WARN_ONCE() on the lack
+	   of internal resources because WARN_*() printing stacktrace is
+	   too much for informing the lack. (feedback from Ted, Hyeonggon)
+	2. Fix trivial bugs like missing initializing a struct before
+	   using it.
+	3. Assign a different class per task when handling onstack
+	   variables for waitqueue or the like. Which makes Dept
+	   distinguish between onstack variables of different tasks so
+	   as to prevent false positives. (reported by Hyeonggon)
+	4. Make Dept aware of even raw_local_irq_*() to prevent false
+	   positives. (reported by Hyeonggon)
+	5. Don't consider dependencies between the events that might be
+	   triggered within __schedule() and the waits that requires
+	    __schedule(), real ones. (reported by Hyeonggon)
+	6. Unstage the staged wait that has prepare_to_wait_event()'ed
+	   *and* yet to get to __schedule(), if we encounter __schedule()
+	   in-between for another sleep, which is possible if e.g. a
+	   mutex_lock() exists in 'condition' of ___wait_event().
+	7. Turn on CONFIG_PROVE_LOCKING when CONFIG_DEPT is on, to rely
+	   on the hardirq and softirq entrance tracing to make Dept more
+	   portable for now.
+
+Changes from v4:
+
+	1. Fix some bugs that produce false alarms.
+	2. Distinguish each syscall context from another *for arm64*.
+	3. Make it not warn it but just print it in case Dept ring
+	   buffer gets exhausted. (feedback from Hyeonggon)
+	4. Explicitely describe "EXPERIMENTAL" and "Dept might produce
+	   false positive reports" in Kconfig. (feedback from Ted)
+
+Changes from v3:
+
+	1. Dept shouldn't create dependencies between different depths
+	   of a class that were indicated by *_lock_nested(). Dept
+	   normally doesn't but it does once another lock class comes
+	   in. So fixed it. (feedback from Hyeonggon)
+	2. Dept considered a wait as a real wait once getting to
+	   __schedule() even if it has been set to TASK_RUNNING by wake
+	   up sources in advance. Fixed it so that Dept doesn't consider
+	   the case as a real wait. (feedback from Jan Kara)
+	3. Stop tracking dependencies with a map once the event
+	   associated with the map has been handled. Dept will start to
+	   work with the map again, on the next sleep.
+
+Changes from v2:
+
+	1. Disable Dept on bit_wait_table[] in sched/wait_bit.c
+	   reporting a lot of false positives, which is my fault.
+	   Wait/event for bit_wait_table[] should've been tagged in a
+	   higher layer for better work, which is a future work.
+	   (feedback from Jan Kara)
+	2. Disable Dept on crypto_larval's completion to prevent a false
+	   positive.
+
+Changes from v1:
+
+	1. Fix coding style and typo. (feedback from Steven)
+	2. Distinguish each work context from another in workqueue.
+	3. Skip checking lock acquisition with nest_lock, which is about
+	   correct lock usage that should be checked by Lockdep.
+
+Changes from RFC(v0):
+
+	1. Prevent adding a wait tag at prepare_to_wait() but __schedule().
+	   (feedback from Linus and Matthew)
+	2. Use try version at lockdep_acquire_cpus_lock() annotation.
+	3. Distinguish each syscall context from another.
+
+Byungchul Park (25):
+  llist: Move llist_{head,node} definition to types.h
+  dept: Implement Dept(Dependency Tracker)
+  dept: Add single event dependency tracker APIs
+  dept: Add lock dependency tracker APIs
+  dept: Tie to Lockdep and IRQ tracing
+  dept: Add proc knobs to show stats and dependency graph
+  dept: Apply sdt_might_sleep_{start,end}() to
+    wait_for_completion()/complete()
+  dept: Apply sdt_might_sleep_{start,end}() to PG_{locked,writeback}
+    wait
+  dept: Apply sdt_might_sleep_{start,end}() to swait
+  dept: Apply sdt_might_sleep_{start,end}() to waitqueue wait
+  dept: Apply sdt_might_sleep_{start,end}() to hashed-waitqueue wait
+  dept: Distinguish each syscall context from another
+  dept: Distinguish each work from another
+  dept: Add a mechanism to refill the internal memory pools on running
+    out
+  locking/lockdep, cpu/hotplus: Use a weaker annotation in AP thread
+  dept: Apply sdt_might_sleep_{start,end}() to dma fence wait
+  dept: Track timeout waits separately with a new Kconfig
+  dept: Apply timeout consideration to wait_for_completion()/complete()
+  dept: Apply timeout consideration to swait
+  dept: Apply timeout consideration to waitqueue wait
+  dept: Apply timeout consideration to hashed-waitqueue wait
+  dept: Apply timeout consideration to dma fence wait
+  dept: Record the latest one out of consecutive waits of the same class
+  dept: Make Dept able to work with an external wgen
+  dept: Track the potential waits of PG_{locked,writeback}
+
+ arch/arm64/kernel/syscall.c         |    2 +
+ arch/x86/entry/common.c             |    4 +
+ drivers/dma-buf/dma-fence.c         |    5 +
+ include/linux/completion.h          |   30 +-
+ include/linux/dept.h                |  614 ++++++
+ include/linux/dept_ldt.h            |   77 +
+ include/linux/dept_sdt.h            |   66 +
+ include/linux/hardirq.h             |    3 +
+ include/linux/irqflags.h            |   22 +-
+ include/linux/llist.h               |    8 -
+ include/linux/local_lock_internal.h |    1 +
+ include/linux/lockdep.h             |  102 +-
+ include/linux/lockdep_types.h       |    3 +
+ include/linux/mm_types.h            |    3 +
+ include/linux/mutex.h               |    1 +
+ include/linux/page-flags.h          |  112 +-
+ include/linux/pagemap.h             |    7 +-
+ include/linux/percpu-rwsem.h        |    2 +-
+ include/linux/rtmutex.h             |    1 +
+ include/linux/rwlock_types.h        |    1 +
+ include/linux/rwsem.h               |    1 +
+ include/linux/sched.h               |    3 +
+ include/linux/seqlock.h             |    2 +-
+ include/linux/spinlock_types_raw.h  |    3 +
+ include/linux/srcu.h                |    2 +-
+ include/linux/swait.h               |    3 +
+ include/linux/types.h               |    8 +
+ include/linux/wait.h                |    3 +
+ include/linux/wait_bit.h            |    3 +
+ init/init_task.c                    |    2 +
+ init/main.c                         |    2 +
+ kernel/Makefile                     |    1 +
+ kernel/cpu.c                        |    2 +-
+ kernel/dependency/Makefile          |    4 +
+ kernel/dependency/dept.c            | 3167 +++++++++++++++++++++++++++
+ kernel/dependency/dept_hash.h       |   10 +
+ kernel/dependency/dept_internal.h   |   26 +
+ kernel/dependency/dept_object.h     |   13 +
+ kernel/dependency/dept_proc.c       |   93 +
+ kernel/exit.c                       |    1 +
+ kernel/fork.c                       |    2 +
+ kernel/locking/lockdep.c            |   23 +
+ kernel/module/main.c                |    4 +
+ kernel/sched/completion.c           |    2 +-
+ kernel/sched/core.c                 |    9 +
+ kernel/workqueue.c                  |    3 +
+ lib/Kconfig.debug                   |   37 +
+ lib/locking-selftest.c              |    2 +
+ mm/filemap.c                        |   18 +
+ mm/mm_init.c                        |    3 +
+ 50 files changed, 4461 insertions(+), 55 deletions(-)
+ create mode 100644 include/linux/dept.h
+ create mode 100644 include/linux/dept_ldt.h
+ create mode 100644 include/linux/dept_sdt.h
+ create mode 100644 kernel/dependency/Makefile
+ create mode 100644 kernel/dependency/dept.c
+ create mode 100644 kernel/dependency/dept_hash.h
+ create mode 100644 kernel/dependency/dept_internal.h
+ create mode 100644 kernel/dependency/dept_object.h
+ create mode 100644 kernel/dependency/dept_proc.c
 
 -- 
-BR,
-Muhammad Usama Anjum
+2.17.1
+
