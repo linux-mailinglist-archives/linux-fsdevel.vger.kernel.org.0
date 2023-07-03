@@ -2,129 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B466746106
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 18:55:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D8D8746112
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 19:01:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230467AbjGCQzp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jul 2023 12:55:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33186 "EHLO
+        id S230507AbjGCRBV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jul 2023 13:01:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229656AbjGCQzo (ORCPT
+        with ESMTP id S230465AbjGCRBT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jul 2023 12:55:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8C2FE6B;
-        Mon,  3 Jul 2023 09:55:42 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Mon, 3 Jul 2023 13:01:19 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC79EE58;
+        Mon,  3 Jul 2023 10:01:18 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 65E6460FD0;
-        Mon,  3 Jul 2023 16:55:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5D69C433C8;
-        Mon,  3 Jul 2023 16:55:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688403341;
-        bh=+fJdK3HbJTp3127pSMentEHV8HU0TkL+IOput1SVlfs=;
-        h=Date:From:To:Cc:Subject:From;
-        b=doJcfgFvg65ZIY4zzasSYIw9tktRSgBfr92j5ubHgMTnlSCNAtYplA0ODmBNmFI4r
-         Nd6sErebeD7BpRl0iqcTic2Ce03B1bpjcjFexWp5SlJzxXsOnZERJ+yy6jEeUXkks5
-         p/jZFqy/gDE8Ah7g3/BJBvlHtSan4PP+Nmfk2kAAEQcj2svpu9impWu0ApfBGw9I6y
-         4OJ3FUdZs1oODcBl+0NBXIfwBYLrDG2DsEkiIxK0kHw56LBDdIe0/OD2rz1r3SkFUZ
-         cVw3WqqPW2m0fYi8HetqON0NEdB1mLYUlehSps47BjB9O8a3avmcroaV6lCascAXM2
-         Evvc40MGDQbuQ==
-Date:   Mon, 3 Jul 2023 09:55:41 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     djwong@kernel.org
-Cc:     abaci@linux.alibaba.com, chandan.babu@oracle.com,
-        chandanrlinux@gmail.com, colin.i.king@gmail.com,
-        dchinner@redhat.com, hch@lst.de, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, ruansy.fnst@fujitsu.com,
-        wen.gang.wang@oracle.com, yang.lee@linux.alibaba.com
-Subject: [ANNOUNCE] xfs-linux: for-next updated to 34acceaa8818
-Message-ID: <168840330350.1303450.11213970633638533550.stg-ugh@frogsfrogsfrogs>
+        by smtp-out1.suse.de (Postfix) with ESMTPS id A906621ACE;
+        Mon,  3 Jul 2023 17:01:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1688403676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CxxA5KPOlxZoqVBuLA7u+rs+PuFzIjExMLh3T2z3dig=;
+        b=WwkmG+qaXYNQ/vu9q4F7pEj9wrt2bBvW6aP9mlVUwydMkr7hS3xU7fSguhVECWbugKFVwD
+        nFfsMv+fh+VCYPr0mUXkIt6MUoHAY0tHWAVVhgoa1E0ZsN/9yuDPQzhSeKss/q3dJUw1Ta
+        kHoy5ufRYv9txFxyUyUCkLRfw+3UDts=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1688403676;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CxxA5KPOlxZoqVBuLA7u+rs+PuFzIjExMLh3T2z3dig=;
+        b=RCvYdmMDKz+U+kgLqNfhNNngHIe4nuoTf2Nywg7oLIDSHSzTvjaJ7eJOx50qEZOlN3bDcL
+        q6LZq+rMlUQWdcBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 995451358E;
+        Mon,  3 Jul 2023 17:01:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id tSFmJdz+omSOEQAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 03 Jul 2023 17:01:16 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 2DC8AA0722; Mon,  3 Jul 2023 19:01:16 +0200 (CEST)
+Date:   Mon, 3 Jul 2023 19:01:16 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Baokun Li <libaokun1@huawei.com>
+Cc:     jack@suse.cz, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com,
+        yukuai3@huawei.com
+Subject: Re: [PATCH v3 0/5] quota: fix race condition between dqput() and
+ dquot_mark_dquot_dirty()
+Message-ID: <20230703170116.xikrectpzdc5dmux@quack3>
+References: <20230630110822.3881712-1-libaokun1@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230630110822.3881712-1-libaokun1@huawei.com>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+Hello!
 
-The for-next branch of the xfs-linux repository at:
+On Fri 30-06-23 19:08:17, Baokun Li wrote:
+> Hello Honza,
+> 
+> This is a solution that uses dquot_srcu to avoid race condition between
+> dqput() and dquot_mark_dquot_dirty(). I performed a 12+h fault injection
+> stress test (6 VMs, 4 test threads per VM) and have not found any problems.
+> And I tested the performance based on the next branch (5c875096d590), this
+> patch set didn't degrade performance, but rather had a ~5% improvement.
+> 
+> V1->V2:
+> 	Modify the solution to use dquot_srcu.
+> V2->V3:
+> 	Merge some patches, optimize descriptions.
+> 	Simplify solutions, and fix some spelling errors.
+> 
 
-git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+Thanks! I've added the patches to my tree.
 
-has just been updated.
+								Honza
 
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.
-
-The new head of the for-next branch is commit:
-
-34acceaa8818 xfs: Remove unneeded semicolon
-
-19 new commits:
-
-Colin Ian King (1):
-[347eb95b27eb] xfs: remove redundant initializations of pointers drop_leaf and save_leaf
-
-Darrick J. Wong (8):
-[63ef7a35912d] xfs: fix interval filtering in multi-step fsmap queries
-[7975aba19cba] xfs: fix integer overflows in the fsmap rtbitmap and logdev backends
-[d898137d789c] xfs: fix getfsmap reporting past the last rt extent
-[f045dd00328d] xfs: clean up the rtbitmap fsmap backend
-[a949a1c2a198] xfs: fix logdev fsmap query result filtering
-[3ee9351e7490] xfs: validate fsmap offsets specified in the query keys
-[75dc03453122] xfs: fix xfs_btree_query_range callers to initialize btree rec fully
-[2d7d1e7ea321] xfs: AGI length should be bounds checked
-
-Dave Chinner (8):
-[939bd50dfbe7] xfs: don't reverse order of items in bulk AIL insertion
-[b742d7b4f0e0] xfs: use deferred frees for btree block freeing
-[6a2a9d776c4a] xfs: pass alloc flags through to xfs_extent_busy_flush()
-[0853b5de42b4] xfs: allow extent free intents to be retried
-[8ebbf262d468] xfs: don't block in busy flushing when freeing extents
-[f1e1765aad7d] xfs: journal geometry is not properly bounds checked
-[edd8276dd702] xfs: AGF length has never been bounds checked
-[2bed0d82c2f7] xfs: fix bounds check in xfs_defer_agfl_block()
-
-Shiyang Ruan (1):
-[5cf32f63b0f4] xfs: fix the calculation for "end" and "length"
-
-Yang Li (1):
-[34acceaa8818] xfs: Remove unneeded semicolon
-
-Code Diffstat:
-
-fs/xfs/libxfs/xfs_ag.c             |   2 +-
-fs/xfs/libxfs/xfs_alloc.c          | 291 ++++++++++++++++++++++++-------------
-fs/xfs/libxfs/xfs_alloc.h          |  24 +--
-fs/xfs/libxfs/xfs_attr_leaf.c      |   2 -
-fs/xfs/libxfs/xfs_bmap.c           |   8 +-
-fs/xfs/libxfs/xfs_bmap_btree.c     |   3 +-
-fs/xfs/libxfs/xfs_ialloc.c         |  32 ++--
-fs/xfs/libxfs/xfs_ialloc_btree.c   |   3 +-
-fs/xfs/libxfs/xfs_refcount.c       |  22 +--
-fs/xfs/libxfs/xfs_refcount_btree.c |   8 +-
-fs/xfs/libxfs/xfs_rmap.c           |  10 +-
-fs/xfs/libxfs/xfs_sb.c             |  56 ++++++-
-fs/xfs/xfs_extent_busy.c           |  36 ++++-
-fs/xfs/xfs_extent_busy.h           |   6 +-
-fs/xfs/xfs_extfree_item.c          |  75 +++++++++-
-fs/xfs/xfs_fsmap.c                 | 261 +++++++++++++++++----------------
-fs/xfs/xfs_log.c                   |  47 ++----
-fs/xfs/xfs_notify_failure.c        |   9 +-
-fs/xfs/xfs_reflink.c               |   3 +-
-fs/xfs/xfs_trace.h                 |  25 ++++
-fs/xfs/xfs_trans_ail.c             |   2 +-
-21 files changed, 590 insertions(+), 335 deletions(-)
+> Baokun Li (5):
+>   quota: factor out dquot_write_dquot()
+>   quota: rename dquot_active() to inode_quota_active()
+>   quota: add new helper dquot_active()
+>   quota: fix dqput() to follow the guarantees dquot_srcu should provide
+>   quota: simplify drop_dquot_ref()
+> 
+>  fs/quota/dquot.c | 244 ++++++++++++++++++++++++-----------------------
+>  1 file changed, 125 insertions(+), 119 deletions(-)
+> 
+> -- 
+> 2.31.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
