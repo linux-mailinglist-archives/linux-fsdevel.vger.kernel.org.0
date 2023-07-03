@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F1F057457EF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 11:04:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2C267457F6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 11:04:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230418AbjGCJED (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jul 2023 05:04:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51806 "EHLO
+        id S230063AbjGCJEz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jul 2023 05:04:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230299AbjGCJDy (ORCPT
+        with ESMTP id S229942AbjGCJEw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jul 2023 05:03:54 -0400
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9076E43
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jul 2023 02:03:52 -0700 (PDT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-1b7ffab949fso57251845ad.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jul 2023 02:03:52 -0700 (PDT)
+        Mon, 3 Jul 2023 05:04:52 -0400
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23569E47
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jul 2023 02:04:50 -0700 (PDT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-67c2f6fb908so4302846b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jul 2023 02:04:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688375032; x=1690967032;
+        d=1e100.net; s=20221208; t=1688375089; x=1690967089;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=RE8LSychG4k/uRGiRu7xh8BUIXkRlq01gkyPncQ19GI=;
-        b=YhRU87gpuIXjRzH5+6eafMXssVagFT/oD3RfJIWcQ5XiNfzgx1QmuOXcby+wqAUE0Y
-         4BAvQgse8YN1YHsfzyaY7Ih/+6Qi2s6L3gKX5KvG0NHdBfg4ymTNM9az2wLyKhH6a4U/
-         +4ZTLZDiFcgzdBLmGeqbYY0jyS43uZkCluvUNG+cJuTJ0ZtPReHYyGz8LdEjt5DZjrSb
-         NqIqBhT6TQQLpseA2XDcilaKh5a3mmuojSr+9fYD2pfSmXtEO3Mjkahxibsz4koLiFEV
-         s625V0nOtNnn/LCURL+np136EipA7WuDZFCl68VsSWm/0qDWcLqCvzpfwq73SUILEJgd
-         bbBA==
-X-Gm-Message-State: ABy/qLZX0iCjqPwgFchvRcbcve0NLauwvB52dz/W2TQf6+ONlIGXnal5
-        6qwpFMQm+4E8vr71YiTj7NzPkRWEBTcZLZOtGEga6TBoed2o
-X-Google-Smtp-Source: APBJJlGgiSo7l8Xu2RlauE3GVDBEzAPKvzzZBhSGghuhfclcyczoWXKXtBcxWNc3wYwNrMIGADO75h6BHTlwLi9bv+Z940+0zzSb
+        bh=kVx9eJ7lsH7OWPjghDDm80QQAIcVt/pBZ958etilnpg=;
+        b=i5aSna/ukkgGzsSwonjw5gb4RQnlU4lY0LD0F2GddUbRLdVPrZwPYxKx6ij89sYXxq
+         YGItzKDckERi2/34LFNDhVsg0iL898nDDqL7GzK5sewIoUBxRy1Bqmprejb/LthXolzO
+         XO+zg2718xsdgvbgBARclVNnLHJ+kniSp7vOgRZB9NmE31sxFpIcOrFfELYmKBMGt3CB
+         RrMHzb3jjVP1mFI7DS/Pc9kpwbGjTnpvUKaRJyA6UutZCYkdkPwE8Sm3ffgbHs4e5F7N
+         IjQi6nWwhzknVR2mM0Y060GRQB54yOy+rtztmI8J5V4YlCD42meiSthXOm8LPFGQm5z6
+         p29Q==
+X-Gm-Message-State: ABy/qLYAxOU1XsIdHd12cVK9/V1uMEGe9eUCOSXMaPtkiWSo8HAg9RgP
+        Zfi2v+fBy0apkdgDIhmL8enA85V2SfNH2aR/OfHLjolivvht
+X-Google-Smtp-Source: APBJJlGIQG0GYOXadntONv+/ZeqLRnIS+g4mVVGfkn3rSBYgPO2Aqpf8ALHsQk5LusrwtcdpcVPbRRCEkE25PgWO+xlf5HGsl8Tz
 MIME-Version: 1.0
-X-Received: by 2002:a17:902:e5c5:b0:1b3:e4f1:1b3f with SMTP id
- u5-20020a170902e5c500b001b3e4f11b3fmr8323989plf.2.1688375032438; Mon, 03 Jul
- 2023 02:03:52 -0700 (PDT)
-Date:   Mon, 03 Jul 2023 02:03:52 -0700
+X-Received: by 2002:a05:6a00:139b:b0:682:24c1:2951 with SMTP id
+ t27-20020a056a00139b00b0068224c12951mr12916346pfg.0.1688375089558; Mon, 03
+ Jul 2023 02:04:49 -0700 (PDT)
+Date:   Mon, 03 Jul 2023 02:04:49 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000e649505ff917257@google.com>
-Subject: [syzbot] Monthly ntfs report (Jul 2023)
-From:   syzbot <syzbot+listbbc971fb2ba71e0cdf0c@syzkaller.appspotmail.com>
-To:     anton@tuxera.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+Message-ID: <00000000000075fd0505ff917517@google.com>
+Subject: [syzbot] Monthly fat report (Jul 2023)
+From:   syzbot <syzbot+list96b6ab127c02d379290b@syzkaller.appspotmail.com>
+To:     linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
         syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
@@ -55,38 +55,32 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello ntfs maintainers/developers,
+Hello fat maintainers/developers,
 
-This is a 31-day syzbot report for the ntfs subsystem.
+This is a 31-day syzbot report for the fat subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ntfs
+https://syzkaller.appspot.com/upstream/s/fat
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 24 issues are still open and 7 have been fixed so far.
+During the period, 3 new issues were detected and 0 were fixed.
+In total, 11 issues are still open and 20 have been fixed so far.
 
 Some of the still happening issues:
 
-Ref  Crashes Repro Title
-<1>  3110    Yes   possible deadlock in ntfs_read_folio
-                   https://syzkaller.appspot.com/bug?extid=8ef76b0b1f86c382ad37
-<2>  2554    Yes   kernel BUG at fs/ntfs/aops.c:LINE!
-                   https://syzkaller.appspot.com/bug?extid=6a5a7672f663cce8b156
-<3>  1043    Yes   kernel BUG in __ntfs_grab_cache_pages
-                   https://syzkaller.appspot.com/bug?extid=01b3ade7c86f7dd584d7
-<4>  488     Yes   possible deadlock in map_mft_record
-                   https://syzkaller.appspot.com/bug?extid=cb1fdea540b46f0ce394
-<5>  289     No    KASAN: use-after-free Read in ntfs_test_inode
-                   https://syzkaller.appspot.com/bug?extid=2751da923b5eb8307b0b
-<6>  157     Yes   KASAN: slab-out-of-bounds Read in ntfs_readdir
-                   https://syzkaller.appspot.com/bug?extid=d36761079ac1b585a6df
-<7>  156     No    possible deadlock in __ntfs_clear_inode
-                   https://syzkaller.appspot.com/bug?extid=5ebb8d0e9b8c47867596
-<8>  78      Yes   INFO: rcu detected stall in sys_mount (6)
-                   https://syzkaller.appspot.com/bug?extid=ee7d095f44a683a195f8
-<9>  15      Yes   kernel BUG in ntfs_iget
-                   https://syzkaller.appspot.com/bug?extid=d62e6bd2a2d05103d105
-<10> 13      Yes   KASAN: use-after-free Read in ntfs_attr_find (2)
-                   https://syzkaller.appspot.com/bug?extid=ef50f8eb00b54feb7ba2
+Ref Crashes Repro Title
+<1> 347     Yes   possible deadlock in filemap_fault
+                  https://syzkaller.appspot.com/bug?extid=7736960b837908f3a81d
+<2> 257     Yes   possible deadlock in exfat_get_block
+                  https://syzkaller.appspot.com/bug?extid=247e66a2c3ea756332c7
+<3> 181     Yes   possible deadlock in exfat_iterate
+                  https://syzkaller.appspot.com/bug?extid=38655f1298fefc58a904
+<4> 100     Yes   possible deadlock in exc_page_fault
+                  https://syzkaller.appspot.com/bug?extid=6d274a5dc4fa0974d4ad
+<5> 39      Yes   possible deadlock in do_user_addr_fault
+                  https://syzkaller.appspot.com/bug?extid=278098b0faaf0595072b
+<6> 2       Yes   KASAN: slab-use-after-free Write in collect_expired_timers
+                  https://syzkaller.appspot.com/bug?extid=fb8d39ebb665f80c2ec1
+<7> 1       Yes   BUG: corrupted list in __mark_inode_dirty
+                  https://syzkaller.appspot.com/bug?extid=4a16683f5520de8e47c4
 
 ---
 This report is generated by a bot. It may contain errors.
