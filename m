@@ -2,49 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F1A3474560B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 09:27:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE1A474560F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 09:28:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230427AbjGCH1v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jul 2023 03:27:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33222 "EHLO
+        id S230461AbjGCH2B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jul 2023 03:28:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230375AbjGCH1t (ORCPT
+        with ESMTP id S230476AbjGCH17 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jul 2023 03:27:49 -0400
+        Mon, 3 Jul 2023 03:27:59 -0400
 Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FE02E73;
-        Mon,  3 Jul 2023 00:27:24 -0700 (PDT)
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 701271D74;
-        Mon,  3 Jul 2023 07:22:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1688368931;
-        bh=D5iKNYHdfTlYuVyZq7hZxLedK3pQqQ8YbD1w2/CiIkM=;
-        h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=CI1shzojPy5vSQ43J+xYNHD1Gzp0EmNYBN5Mogs5S3EuABT2FjWh00R7QynsARaqy
-         L7Nmq6ppKhjiM2BncRx78NR9lx2quEERAFxeRoJLHNXG0vHRzRFzpn1MxA6fpxxEmF
-         Am2OoGIy/JyfpI/3JZUBFO6opPSLk7uzr8jti1/g=
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3A58E58;
+        Mon,  3 Jul 2023 00:27:55 -0700 (PDT)
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id D85EF1D1E;
-        Mon,  3 Jul 2023 07:27:22 +0000 (UTC)
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 3066D1D21;
+        Mon,  3 Jul 2023 07:22:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1688369242;
-        bh=D5iKNYHdfTlYuVyZq7hZxLedK3pQqQ8YbD1w2/CiIkM=;
+        d=paragon-software.com; s=mail; t=1688368962;
+        bh=q5eMVDMl8OohS/5+a1OTXjwPDE7CVMtEf2hDSqPpYdc=;
         h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=QLU2NYl/jPH9ptdm9LSZC8zXlU5D+m3dcAntTbIaWBkv4YUEl+TZvLtAyrmqWMP0X
-         0hjnpbirOKPB6D/3tyOtJXQ1+pbGGrisCNWVvD1n6B8kiABkXs1gxVlFPbqPIB2IZE
-         fPlsir8M7+6++8uLNS8rbBZrXuMMDSSB6h1J6jto=
+        b=RjkVAo7NwjKBmWEMvIlJsB79izFMwGHGw2m5t2MLac2t2fLRc9GuLr0ri2b88NDIf
+         hH8hwrRf88DIOVYe57oacRxXKLbO4OITZPNsbEmre3dkirQEhKAP3ewdj6gXk1mvGs
+         1W4Yk/9Wnnl1BzrR4wVnCieGQvtG1qTiiZLXRwIg=
 Received: from [192.168.211.138] (192.168.211.138) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Mon, 3 Jul 2023 10:27:22 +0300
-Message-ID: <18640b25-5018-ebf2-38d9-e750404cb66f@paragon-software.com>
-Date:   Mon, 3 Jul 2023 11:27:21 +0400
+ 15.1.2375.7; Mon, 3 Jul 2023 10:27:53 +0300
+Message-ID: <23596b4e-1a38-d944-3bba-de7d528c7bf6@paragon-software.com>
+Date:   Mon, 3 Jul 2023 11:27:52 +0400
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: [PATCH 6/8] fs/ntfs3: Add more attributes checks in mi_enum_attr()
+Subject: [PATCH 7/8] fs/ntfs3: fix deadlock in mark_as_free_ex
 Content-Language: en-US
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     <ntfs3@lists.linux.dev>
@@ -67,148 +57,42 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+Reported-by: syzbot+e94d98936a0ed08bde43@syzkaller.appspotmail.com
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
-  fs/ntfs3/record.c | 68 ++++++++++++++++++++++++++++++++++++-----------
-  1 file changed, 52 insertions(+), 16 deletions(-)
+  fs/ntfs3/fsntfs.c | 6 +++++-
+  1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ntfs3/record.c b/fs/ntfs3/record.c
-index cae939cb42cf..53629b1f65e9 100644
---- a/fs/ntfs3/record.c
-+++ b/fs/ntfs3/record.c
-@@ -199,8 +199,9 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, 
-struct ATTRIB *attr)
+diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
+index edb51dc12f65..fbfe21dbb425 100644
+--- a/fs/ntfs3/fsntfs.c
++++ b/fs/ntfs3/fsntfs.c
+@@ -2454,10 +2454,12 @@ void mark_as_free_ex(struct ntfs_sb_info *sbi, 
+CLST lcn, CLST len, bool trim)
   {
-      const struct MFT_REC *rec = mi->mrec;
-      u32 used = le32_to_cpu(rec->used);
--    u32 t32, off, asize;
-+    u32 t32, off, asize, prev_type;
-      u16 t16;
-+    u64 data_size, alloc_size, tot_size;
+      CLST end, i, zone_len, zlen;
+      struct wnd_bitmap *wnd = &sbi->used.bitmap;
++    bool dirty = false;
 
-      if (!attr) {
-          u32 total = le32_to_cpu(rec->total);
-@@ -219,6 +220,7 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, 
-struct ATTRIB *attr)
-          if (!is_rec_inuse(rec))
-              return NULL;
+      down_write_nested(&wnd->rw_lock, BITMAP_MUTEX_CLUSTERS);
+      if (!wnd_is_used(wnd, lcn, len)) {
+-        ntfs_set_state(sbi, NTFS_DIRTY_ERROR);
++        /* mark volume as dirty out of wnd->rw_lock */
++        dirty = true;
 
-+        prev_type = 0;
-          attr = Add2Ptr(rec, off);
-      } else {
-          /* Check if input attr inside record. */
-@@ -232,11 +234,11 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, 
-struct ATTRIB *attr)
-              return NULL;
-          }
+          end = lcn + len;
+          len = 0;
+@@ -2511,6 +2513,8 @@ void mark_as_free_ex(struct ntfs_sb_info *sbi, 
+CLST lcn, CLST len, bool trim)
 
--        if (off + asize < off) {
--            /* Overflow check. */
-+        /* Overflow check. */
-+        if (off + asize < off)
-              return NULL;
--        }
-
-+        prev_type = le32_to_cpu(attr->type);
-          attr = Add2Ptr(attr, asize);
-          off += asize;
-      }
-@@ -256,7 +258,11 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, 
-struct ATTRIB *attr)
-
-      /* 0x100 is last known attribute for now. */
-      t32 = le32_to_cpu(attr->type);
--    if ((t32 & 0xf) || (t32 > 0x100))
-+    if (!t32 || (t32 & 0xf) || (t32 > 0x100))
-+        return NULL;
-+
-+    /* attributes in record must be ordered by type */
-+    if (t32 < prev_type)
-          return NULL;
-
-      /* Check overflow and boundary. */
-@@ -265,16 +271,15 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, 
-struct ATTRIB *attr)
-
-      /* Check size of attribute. */
-      if (!attr->non_res) {
-+        /* Check resident fields. */
-          if (asize < SIZEOF_RESIDENT)
-              return NULL;
-
-          t16 = le16_to_cpu(attr->res.data_off);
--
-          if (t16 > asize)
-              return NULL;
-
--        t32 = le32_to_cpu(attr->res.data_size);
--        if (t16 + t32 > asize)
-+        if (t16 + le32_to_cpu(attr->res.data_size) > asize)
-              return NULL;
-
-          t32 = sizeof(short) * attr->name_len;
-@@ -284,21 +289,52 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, 
-struct ATTRIB *attr)
-          return attr;
-      }
-
--    /* Check some nonresident fields. */
--    if (attr->name_len &&
--        le16_to_cpu(attr->name_off) + sizeof(short) * attr->name_len >
--            le16_to_cpu(attr->nres.run_off)) {
-+    /* Check nonresident fields. */
-+    if (attr->non_res != 1)
-+        return NULL;
-+
-+    t16 = le16_to_cpu(attr->nres.run_off);
-+    if (t16 > asize)
-+        return NULL;
-+
-+    t32 = sizeof(short) * attr->name_len;
-+    if (t32 && le16_to_cpu(attr->name_off) + t32 > t16)
-+        return NULL;
-+
-+    /* Check start/end vcn. */
-+    if (le64_to_cpu(attr->nres.svcn) > le64_to_cpu(attr->nres.evcn) + 1)
-+        return NULL;
-+
-+    data_size = le64_to_cpu(attr->nres.data_size);
-+    if (le64_to_cpu(attr->nres.valid_size) > data_size)
-          return NULL;
--    }
-
--    if (attr->nres.svcn || !is_attr_ext(attr)) {
-+    alloc_size = le64_to_cpu(attr->nres.alloc_size);
-+    if (data_size > alloc_size)
-+        return NULL;
-+
-+    t32 = mi->sbi->cluster_mask;
-+    if (alloc_size & t32)
-+        return NULL;
-+
-+    if (!attr->nres.svcn && is_attr_ext(attr)) {
-+        /* First segment of sparse/compressed attribute */
-+        if (asize + 8 < SIZEOF_NONRESIDENT_EX)
-+            return NULL;
-+
-+        tot_size = le64_to_cpu(attr->nres.total_size);
-+        if (tot_size & t32)
-+            return NULL;
-+
-+        if (tot_size > alloc_size)
-+            return NULL;
-+    } else {
-          if (asize + 8 < SIZEOF_NONRESIDENT)
-              return NULL;
-
-          if (attr->nres.c_unit)
-              return NULL;
--    } else if (asize + 8 < SIZEOF_NONRESIDENT_EX)
--        return NULL;
-+    }
-
-      return attr;
+  out:
+      up_write(&wnd->rw_lock);
++    if (dirty)
++        ntfs_set_state(sbi, NTFS_DIRTY_ERROR);
   }
+
+  /*
 -- 
 2.34.1
+
 
