@@ -2,52 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A0E28745AA2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 12:56:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 572FF745AA9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 12:58:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230176AbjGCK4P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jul 2023 06:56:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36008 "EHLO
+        id S230367AbjGCK6A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jul 2023 06:58:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbjGCK4O (ORCPT
+        with ESMTP id S229585AbjGCK57 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jul 2023 06:56:14 -0400
+        Mon, 3 Jul 2023 06:57:59 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31213BE
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jul 2023 03:56:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCD53C4;
+        Mon,  3 Jul 2023 03:57:58 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B94A060ECA
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jul 2023 10:56:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C525C433C9;
-        Mon,  3 Jul 2023 10:56:10 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 52C4D60EE1;
+        Mon,  3 Jul 2023 10:57:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27ADFC433C7;
+        Mon,  3 Jul 2023 10:57:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688381772;
-        bh=JcSZaMuu9LH/CZwR0FvWrfVo7dMB/pwfu3IZSczSvh8=;
+        s=k20201202; t=1688381877;
+        bh=X6NTHK1V9hQ3u5YQ6AjJYZg0fYXUZsJMcSevMRkdaj8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Kn0Tylw/m+HS91oTUx11W3SZCUk93HwG/gX25HMfThZY2/UerLRDdmT/3w+E8QoJD
-         DQ9u+78L/STEcu2GUzkGSkFuX8rCJRSWXsQmXfocj+NVPp0SG2QSqbtvdJrFLRnC1U
-         SpcjsD/NSkXmBT1/vsh/lF5TUl9L46MjEByScJkwszTb+eL0/DLC1mWj8Jga75gl+8
-         8RnDAVRmMPCCRV+4GMgw91CWSbMlruY1fewWu29I6hGH43ZWb1DwgWKqn4n2Q4PztS
-         bcNU3JYVUVCAY0KZDdpTeuLXchnUfR2IwumitAmK1nQMfsYZcv2Sel2AYEQ6VTJQvD
-         XOQnob+QcwpHg==
-Date:   Mon, 3 Jul 2023 12:56:07 +0200
+        b=RkiF4/UPjK3AQx1uvID62TrA4kyplMqx9JwcK/quxoavokz+xAC4L2Zl3HdEDWC1s
+         DsSLBHqEqj3O/j6bf+32TgKkTcmVygdacEwoxqfrxjIQL9hqRtyTH24Ggj7rl6J/Et
+         P7+jORQrXGcdIJyaGY84kfOQSlrXgblO/qxS6cbqv/zGnr5ahmAKWL9JhvzWo3KBP5
+         cgx0LpM61tekxfVkTXMRgb2pcAF89WKlDabTXQPtOn1NQYAn5aLa8jTTqDbcQ1Ab2N
+         DBWxurZIT4/ZWZ4inYg898H/g0ZDPjTgIMqmA1PFEeTDpZAsmyHJ6hD37Nfd+Pv9f0
+         Hb0pieczgkV9g==
+Date:   Mon, 3 Jul 2023 12:57:53 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Chuck Lever <cel@kernel.org>
-Cc:     viro@zeniv.linux.org.uk, hughd@google.com,
-        akpm@linux-foundation.org, Chuck Lever <chuck.lever@oracle.com>,
-        jlayton@redhat.com, linux-mm@kvack.org,
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Kara <jack@suse.cz>,
+        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org,
+        "damien.lemoal" <damien.lemoal@opensource.wdc.com>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v7 1/3] libfs: Add directory operations for stable offsets
-Message-ID: <20230703-semester-geklagt-227cd899b31e@brauner>
-References: <168814723481.530310.17776748558242063239.stgit@manet.1015granger.net>
- <168814732984.530310.11190772066786107220.stgit@manet.1015granger.net>
+Subject: Re: [PATCH 15/79] bfs: switch to new ctime accessors
+Message-ID: <20230703-tauschen-kriegen-b0acf3b1f11f@brauner>
+References: <20230621144735.55953-1-jlayton@kernel.org>
+ <20230621144735.55953-14-jlayton@kernel.org>
+ <20230621164808.5lhujni7qb36hhtk@quack3>
+ <646b7283ede4945b335ad16aea5ff60e1361241e.camel@kernel.org>
+ <20230622123050.thpf7qdnmidq3thj@quack3>
+ <d316dca7c248693575dae3d8032e9e3332bbae7a.camel@kernel.org>
+ <20230622145747.lokguccxtrrpgb3b@quack3>
+ <20230623-kaffee-volumen-014cfa91a2ee@brauner>
+ <20230703-gebucht-improvisieren-6c9b66612f07@brauner>
+ <a05703b82a903f82efe32b9b358fc03b71fe7460.camel@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <168814732984.530310.11190772066786107220.stgit@manet.1015granger.net>
+In-Reply-To: <a05703b82a903f82efe32b9b358fc03b71fe7460.camel@kernel.org>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -58,150 +68,84 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 30, 2023 at 01:48:49PM -0400, Chuck Lever wrote:
-> From: Chuck Lever <chuck.lever@oracle.com>
+On Mon, Jul 03, 2023 at 06:46:33AM -0400, Jeff Layton wrote:
+> On Mon, 2023-07-03 at 12:12 +0200, Christian Brauner wrote:
+> > On Fri, Jun 23, 2023 at 02:33:26PM +0200, Christian Brauner wrote:
+> > > On Thu, Jun 22, 2023 at 04:57:47PM +0200, Jan Kara wrote:
+> > > > On Thu 22-06-23 08:51:58, Jeff Layton wrote:
+> > > > > On Thu, 2023-06-22 at 14:30 +0200, Jan Kara wrote:
+> > > > > > On Wed 21-06-23 12:57:19, Jeff Layton wrote:
+> > > > > > > On Wed, 2023-06-21 at 18:48 +0200, Jan Kara wrote:
+> > > > > > > > On Wed 21-06-23 10:45:28, Jeff Layton wrote:
+> > > > > > > > > In later patches, we're going to change how the ctime.tv_nsec field is
+> > > > > > > > > utilized. Switch to using accessor functions instead of raw accesses of
+> > > > > > > > > inode->i_ctime.
+> > > > > > > > > 
+> > > > > > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > > > > > 
+> > > > > > > > ...
+> > > > > > > > 
+> > > > > > > > > diff --git a/fs/bfs/inode.c b/fs/bfs/inode.c
+> > > > > > > > > index 1926bec2c850..c964316be32b 100644
+> > > > > > > > > --- a/fs/bfs/inode.c
+> > > > > > > > > +++ b/fs/bfs/inode.c
+> > > > > > > > > @@ -82,10 +82,10 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
+> > > > > > > > >  	inode->i_blocks = BFS_FILEBLOCKS(di);
+> > > > > > > > >  	inode->i_atime.tv_sec =  le32_to_cpu(di->i_atime);
+> > > > > > > > >  	inode->i_mtime.tv_sec =  le32_to_cpu(di->i_mtime);
+> > > > > > > > > -	inode->i_ctime.tv_sec =  le32_to_cpu(di->i_ctime);
+> > > > > > > > > +	inode_ctime_set_sec(inode, le32_to_cpu(di->i_ctime));
+> > > > > > > > >  	inode->i_atime.tv_nsec = 0;
+> > > > > > > > >  	inode->i_mtime.tv_nsec = 0;
+> > > > > > > > > -	inode->i_ctime.tv_nsec = 0;
+> > > > > > > > > +	inode_ctime_set_nsec(inode, 0);
+> > > > > > > > 
+> > > > > > > > So I'm somewhat wondering here - in other filesystem you construct
+> > > > > > > > timespec64 and then use inode_ctime_set(). Here you use
+> > > > > > > > inode_ctime_set_sec() + inode_ctime_set_nsec(). What's the benefit? It
+> > > > > > > > seems these two functions are not used that much some maybe we could just
+> > > > > > > > live with just inode_ctime_set() and constructing timespec64 when needed?
+> > > > > > > > 
+> > > > > > > > 								Honza
+> > > > > > > 
+> > > > > > > The main advantage is that by using that, I didn't need to do quite so
+> > > > > > > much of this conversion by hand. My coccinelle skills are pretty
+> > > > > > > primitive. I went with whatever conversion was going to give minimal
+> > > > > > > changes, to the existing accesses for the most part.
+> > > > > > > 
+> > > > > > > We could certainly do it the way you suggest, it just means having to
+> > > > > > > re-touch a lot of this code by hand, or someone with better coccinelle
+> > > > > > > chops suggesting a way to declare a temporary variables in place.
+> > > > > > 
+> > > > > > Well, maybe temporary variables aren't that convenient but we could provide
+> > > > > > function setting ctime from sec & nsec value without having to declare
+> > > > > > temporary timespec64? Attached is a semantic patch that should deal with
+> > > > > > that - at least it seems to handle all the cases I've found.
+> > > > > > 
+> > > > > 
+> > > > > Ok, let me try respinning this with your cocci script and see how it
+> > > > > looks.
+> > > > > 
+> > > > > Damien also suggested in a reply to the zonefs patch a preference for
+> > > > > the naming style you have above. Should I also rename these like?
+> > > > > 
+> > > > >     inode_ctime_peek -> inode_get_ctime
+> > > > >     inode_ctime_set -> inode_set_ctime
+> > > > > 
+> > > > > This would be the time to change it if that's preferred.
+> > > > 
+> > > > I don't really care much so whatever you decide is better :)
+> > > 
+> > > I have a mild preference for inode_{get,set}_ctime().
+> > 
+> > Jeff, did you plan on sending a v2 with this renamed or do you want me
+> > to pick this up now?
 > 
-> Create a vector of directory operations in fs/libfs.c that handles
-> directory seeks and readdir via stable offsets instead of the
-> current cursor-based mechanism.
-> 
-> For the moment these are unused.
-> 
-> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-> ---
->  Documentation/filesystems/locking.rst |    2 
->  Documentation/filesystems/vfs.rst     |    6 +
->  fs/libfs.c                            |  247 +++++++++++++++++++++++++++++++++
->  include/linux/fs.h                    |   18 ++
->  4 files changed, 272 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-> index ed148919e11a..6a928fee3400 100644
-> --- a/Documentation/filesystems/locking.rst
-> +++ b/Documentation/filesystems/locking.rst
-> @@ -85,6 +85,7 @@ prototypes::
->  			    struct dentry *dentry, struct fileattr *fa);
->  	int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
->  	struct posix_acl * (*get_acl)(struct mnt_idmap *, struct dentry *, int);
-> +	struct offset_ctx *(*get_offset_ctx)(struct inode *inode);
->  
->  locking rules:
->  	all may block
-> @@ -115,6 +116,7 @@ atomic_open:	shared (exclusive if O_CREAT is set in open flags)
->  tmpfile:	no
->  fileattr_get:	no or exclusive
->  fileattr_set:	exclusive
-> +get_offset_ctx: no
->  ==============	=============================================
->  
->  
-> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-> index cb2a97e49872..898d0b43109e 100644
-> --- a/Documentation/filesystems/vfs.rst
-> +++ b/Documentation/filesystems/vfs.rst
-> @@ -515,6 +515,7 @@ As of kernel 2.6.22, the following members are defined:
->  		int (*fileattr_set)(struct mnt_idmap *idmap,
->  				    struct dentry *dentry, struct fileattr *fa);
->  		int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
-> +	        struct offset_ctx *(*get_offset_ctx)(struct inode *inode);
->  	};
->  
->  Again, all methods are called without any locks being held, unless
-> @@ -675,7 +676,10 @@ otherwise noted.
->  	called on ioctl(FS_IOC_SETFLAGS) and ioctl(FS_IOC_FSSETXATTR) to
->  	change miscellaneous file flags and attributes.  Callers hold
->  	i_rwsem exclusive.  If unset, then fall back to f_op->ioctl().
-> -
-> +``get_offset_ctx``
-> +	called to get the offset context for a directory inode. A
-> +        filesystem must define this operation to use
-> +        simple_offset_dir_operations.
->  
->  The Address Space Object
->  ========================
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index 5b851315eeed..68b0000dc518 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -239,6 +239,253 @@ const struct inode_operations simple_dir_inode_operations = {
->  };
->  EXPORT_SYMBOL(simple_dir_inode_operations);
->  
-> +static void offset_set(struct dentry *dentry, unsigned long offset)
-> +{
-> +	dentry->d_fsdata = (void *)offset;
-> +}
-> +
-> +static unsigned long dentry2offset(struct dentry *dentry)
-> +{
-> +	return (unsigned long)dentry->d_fsdata;
-> +}
+> I'm working on a new set that I'll send out in a few days. Sorry it has
+> taken a while, I spent quite a bit of time trying to improve my
+> coccinelle chops for this.
 
-This looks fine to me and tmpfs xfstests seem happy too. Currently we
-use unsigned long in some places, and u32 in some other places. It's not
-a big deal but I would prefer if we kept this consistent and made it
-clear everywhere that the offset is a 32 bit unsigned and that the
-xarray's limit is U32_MAX. So I would like to fold the following change
-into this series unless there are objections:
+Absolutely no problem of course. I just wanted to check that I didn't
+pointlessly delay you by not taking care of this.
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 68b0000dc518..a7e56baf8bbd 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -239,14 +239,14 @@ const struct inode_operations simple_dir_inode_operations = {
- };
- EXPORT_SYMBOL(simple_dir_inode_operations);
-
--static void offset_set(struct dentry *dentry, unsigned long offset)
-+static void offset_set(struct dentry *dentry, u32 offset)
- {
--       dentry->d_fsdata = (void *)offset;
-+       dentry->d_fsdata = (void *)((uintptr_t)(offset));
- }
-
--static unsigned long dentry2offset(struct dentry *dentry)
-+static u32 dentry2offset(struct dentry *dentry)
- {
--       return (unsigned long)dentry->d_fsdata;
-+       return (u32)((uintptr_t)(dentry->d_fsdata));
- }
-
- /**
-@@ -296,12 +296,13 @@ int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry)
-  */
- void simple_offset_remove(struct offset_ctx *octx, struct dentry *dentry)
- {
--       unsigned long index = dentry2offset(dentry);
-+       u32 offset;
-
--       if (index == 0)
-+       offset = dentry2offset(dentry);
-+       if (offset == 0)
-                return;
-
--       xa_erase(&octx->xa, index);
-+       xa_erase(&octx->xa, offset);
-        offset_set(dentry, 0);
- }
-
-@@ -322,8 +323,8 @@ int simple_offset_rename_exchange(struct inode *old_dir,
- {
-        struct offset_ctx *old_ctx = old_dir->i_op->get_offset_ctx(old_dir);
-        struct offset_ctx *new_ctx = new_dir->i_op->get_offset_ctx(new_dir);
--       unsigned long old_index = dentry2offset(old_dentry);
--       unsigned long new_index = dentry2offset(new_dentry);
-+       u32 old_index = dentry2offset(old_dentry);
-+       u32 new_index = dentry2offset(new_dentry);
-        int ret;
-
-        simple_offset_remove(old_ctx, old_dentry);
-@@ -414,7 +415,7 @@ static struct dentry *offset_find_next(struct xa_state *xas)
-
- static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
- {
--       loff_t offset = dentry2offset(dentry);
-+       u32 offset = dentry2offset(dentry);
-        struct inode *inode = d_inode(dentry);
-
-        return ctx->actor(ctx, dentry->d_name.name, dentry->d_name.len, offset,
-
+Thanks!
