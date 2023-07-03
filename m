@@ -2,50 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 350607455FD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 09:26:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8587745607
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 09:26:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230143AbjGCH0R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jul 2023 03:26:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59534 "EHLO
+        id S230429AbjGCH0y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jul 2023 03:26:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229949AbjGCH0Q (ORCPT
+        with ESMTP id S230375AbjGCH0t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jul 2023 03:26:16 -0400
+        Mon, 3 Jul 2023 03:26:49 -0400
 Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5638E55;
-        Mon,  3 Jul 2023 00:26:08 -0700 (PDT)
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 27D1D1D74;
-        Mon,  3 Jul 2023 07:20:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1688368855;
-        bh=+eBsKb2HTBRR8iMsfkWgMdZnxlIJ4gxnl7NXRmJUV8k=;
-        h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=S0F7IwFq6c40h6gaEVdITZiroO+ZvZZ7+haTDwG7SUnO9xUWQul5u8vrjXJCUI2zF
-         c49G0p4igW/1KdgwlwzRA0U6GP0EaxMmxiZ9YTB66g9k9NaCAfXn+0e3f4Ix0J/KH0
-         XJZlEw2GHdOfNcWFHxLLz3BxujT5lf8W2i2kU15k=
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 756C9E7A;
+        Mon,  3 Jul 2023 00:26:39 -0700 (PDT)
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 970F41D1E;
-        Mon,  3 Jul 2023 07:26:06 +0000 (UTC)
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 134861D74;
+        Mon,  3 Jul 2023 07:21:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1688369166;
-        bh=+eBsKb2HTBRR8iMsfkWgMdZnxlIJ4gxnl7NXRmJUV8k=;
+        d=paragon-software.com; s=mail; t=1688368886;
+        bh=vlNC3aqT1PLyINaRjLgT5dt7keaunUkuSQDjNJ9mzS8=;
         h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=ZBp5rhznk1XyJ0MlCxs6qu+hl7QD7YL6ibfUhcXAbi0M2+qxtzaQou6K/7emjY8m7
-         o7dCJJpvZa699JIbR2dGdDTUsfbeieG5EPhehEcBTthpzsqZDK1hmx77LtbSxWdkgp
-         GpkZ3aiTrUf+R/FzV1q4EliIHaVDa2BpEuapv4Hk=
+        b=qF1ERGbXVCfRF81fRmeXF7le5tiNB5aw8lYBUUKRh7sxSiHitGOZ5U92gH6LVSV5N
+         7vVl257xtBbRv6qSnyHU5ND//ac6PFjXjLL1R3aWqyRXR8tpBn2J7V6FymwnVeVryC
+         jlSEGvv5l4ExEpdPCuQwNhGcX53Q3gsA9XFZX2eI=
 Received: from [192.168.211.138] (192.168.211.138) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Mon, 3 Jul 2023 10:26:06 +0300
-Message-ID: <a1aa84a5-29d4-a4f0-0b2d-200fb49b12d5@paragon-software.com>
-Date:   Mon, 3 Jul 2023 11:26:05 +0400
+ 15.1.2375.7; Mon, 3 Jul 2023 10:26:37 +0300
+Message-ID: <890222ac-1bd2-6817-7873-390801c5a172@paragon-software.com>
+Date:   Mon, 3 Jul 2023 11:26:36 +0400
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: [PATCH 4/8] fs/ntfs3: Don't allow to change label if volume is
- read-only
+Subject: [PATCH 5/8] fs/ntfs3: Use kvmalloc instead of kmalloc(...
+ __GFP_NOWARN)
 Content-Language: en-US
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     <ntfs3@lists.linux.dev>
@@ -70,28 +60,76 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
-  fs/ntfs3/super.c | 7 ++++++-
-  1 file changed, 6 insertions(+), 1 deletion(-)
+  fs/ntfs3/attrlist.c | 15 +++++++++++++--
+  fs/ntfs3/bitmap.c   |  3 ++-
+  fs/ntfs3/super.c    |  2 +-
+  3 files changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ntfs3/attrlist.c b/fs/ntfs3/attrlist.c
+index 42631b31adf1..7c01735d1219 100644
+--- a/fs/ntfs3/attrlist.c
++++ b/fs/ntfs3/attrlist.c
+@@ -52,7 +52,8 @@ int ntfs_load_attr_list(struct ntfs_inode *ni, struct 
+ATTRIB *attr)
+
+      if (!attr->non_res) {
+          lsize = le32_to_cpu(attr->res.data_size);
+-        le = kmalloc(al_aligned(lsize), GFP_NOFS | __GFP_NOWARN);
++        /* attr is resident: lsize < record_size (1K or 4K) */
++        le = kvmalloc(al_aligned(lsize), GFP_KERNEL);
+          if (!le) {
+              err = -ENOMEM;
+              goto out;
+@@ -80,7 +81,17 @@ int ntfs_load_attr_list(struct ntfs_inode *ni, struct 
+ATTRIB *attr)
+          if (err < 0)
+              goto out;
+
+-        le = kmalloc(al_aligned(lsize), GFP_NOFS | __GFP_NOWARN);
++        /* attr is nonresident.
++         * The worst case:
++         * 1T (2^40) extremely fragmented file.
++         * cluster = 4K (2^12) => 2^28 fragments
++         * 2^9 fragments per one record => 2^19 records
++         * 2^5 bytes of ATTR_LIST_ENTRY per one record => 2^24 bytes.
++         *
++         * the result is 16M bytes per attribute list.
++         * Use kvmalloc to allocate in range [several Kbytes - dozen 
+Mbytes]
++         */
++        le = kvmalloc(al_aligned(lsize), GFP_KERNEL);
+          if (!le) {
+              err = -ENOMEM;
+              goto out;
+diff --git a/fs/ntfs3/bitmap.c b/fs/ntfs3/bitmap.c
+index 107e808e06ea..d66055e30aff 100644
+--- a/fs/ntfs3/bitmap.c
++++ b/fs/ntfs3/bitmap.c
+@@ -659,7 +659,8 @@ int wnd_init(struct wnd_bitmap *wnd, struct 
+super_block *sb, size_t nbits)
+          wnd->bits_last = wbits;
+
+      wnd->free_bits =
+-        kcalloc(wnd->nwnd, sizeof(u16), GFP_NOFS | __GFP_NOWARN);
++        kvmalloc_array(wnd->nwnd, sizeof(u16), GFP_KERNEL | __GFP_ZERO);
++
+      if (!wnd->free_bits)
+          return -ENOMEM;
 
 diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index d24f2da36bb2..da739e509269 100644
+index da739e509269..0034952b9ccd 100644
 --- a/fs/ntfs3/super.c
 +++ b/fs/ntfs3/super.c
-@@ -489,7 +489,12 @@ static ssize_t ntfs3_label_write(struct file *file, 
-const char __user *buffer,
-      int err;
-      struct super_block *sb = pde_data(file_inode(file));
-      ssize_t ret = count;
--    u8 *label = kmalloc(count, GFP_NOFS);
-+    u8 *label;
-+
-+    if (sb_rdonly(sb))
-+        return -EROFS;
-+
-+    label = kmalloc(count, GFP_NOFS);
+@@ -1373,7 +1373,7 @@ static int ntfs_fill_super(struct super_block *sb, 
+struct fs_context *fc)
+      }
 
-      if (!label)
-          return -ENOMEM;
+      bytes = inode->i_size;
+-    sbi->def_table = t = kmalloc(bytes, GFP_NOFS | __GFP_NOWARN);
++    sbi->def_table = t = kvmalloc(bytes, GFP_KERNEL);
+      if (!t) {
+          err = -ENOMEM;
+          goto put_inode_out;
 -- 
 2.34.1
 
