@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C10D74594A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 11:50:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CC937458D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Jul 2023 11:49:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231277AbjGCJtv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jul 2023 05:49:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50056 "EHLO
+        id S231244AbjGCJtt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jul 2023 05:49:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229888AbjGCJtr (ORCPT
+        with ESMTP id S229834AbjGCJtq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jul 2023 05:49:47 -0400
+        Mon, 3 Jul 2023 05:49:46 -0400
 Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 650991A1;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7E1E9BE;
         Mon,  3 Jul 2023 02:49:40 -0700 (PDT)
-X-AuditID: a67dfc5b-d85ff70000001748-08-64a299b2432f
+X-AuditID: a67dfc5b-d85ff70000001748-16-64a299b26989
 From:   Byungchul Park <byungchul@sk.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel_team@skhynix.com, torvalds@linux-foundation.org,
@@ -41,44 +41,44 @@ Cc:     kernel_team@skhynix.com, torvalds@linux-foundation.org,
         gwan-gyeong.mun@intel.com, max.byungchul.park@gmail.com,
         boqun.feng@gmail.com, longman@redhat.com, hdanton@sina.com,
         her0gyugyu@gmail.com
-Subject: [PATCH v10 rebased on v6.4 03/25] dept: Add single event dependency tracker APIs
-Date:   Mon,  3 Jul 2023 18:47:30 +0900
-Message-Id: <20230703094752.79269-4-byungchul@sk.com>
+Subject: [PATCH v10 rebased on v6.4 04/25] dept: Add lock dependency tracker APIs
+Date:   Mon,  3 Jul 2023 18:47:31 +0900
+Message-Id: <20230703094752.79269-5-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230703094752.79269-1-byungchul@sk.com>
 References: <20230703094752.79269-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0xTZxjG/c7lO22146Qz4YhRSBMlYfECXvLGLMs0Ub7EkZCZLJvLsjX2
-        KM3KxYLlFgMOUFYBUYOlQEYBUxoolx38Q0Wwwwmi4SJWKYpVCF64T7Z2VNhci/OfN788z/s8
-        fz0yWnWdDZPpktJEQ5JGr8YKRjG7pmaLZKnVbu9+uQHOF20H71+FDFS1ODAMNjcicFw5RcHk
-        7VgY9s0gWOoboMFcNoigZuwpDVe6PQg67D9heDDxEbi88xh6y85iyKtrwXB/epmC0UsXKGiU
-        4uBeaS0FTv8rBsyTGCrNeVTgvKbAb2vgwJa7CcbtFRwsj0VDr+cRCx2PPwHLL6MYbnT0MtB9
-        dZyCB9erMHgc71i4132HgcHzxSw0zdVimPbZaLB55zkYclopaM0PFJ3+818WeoqdFJy+/CsF
-        rpF2BJ2FzymQHI8w3PLOUNAmldHwtv42gvGSWQ4KivwcVJ4qQXC24BIDA//0sJA/uguWFqvw
-        53vIrZl5muS3pZMOn5Uhd2sFcq3iKUfyOx9zxCqdIG32KFJ3Y5IiNQtelkgNP2MiLVzgiGnW
-        RZG5/n6O3ClfYsiEy0zFrz+s+FQr6nVG0bDtsx8UCV2lFWzKcGiGzxyei1wqE5LLBH6nUF3Y
-        zn3gvrE3bJAxHym43X46yGv5CKGt+GVAV8ho/sxqwf5HHw4aH/PfCFP111YCDL9JaHcsrASU
-        /C7B6jSz70vDhcZW54ou53cLLxZLUJBVgZ9RiwcHSwX+jFx4eG7k/8A64Te7mylFSita1YBU
-        uiRjokan37k1ITNJl7H1SHKihAKLsp1c/vYqWhg81IV4GVKvUbqza7QqVmNMzUzsQoKMVq9V
-        5o1Va1VKrSYzSzQkf284oRdTu9B6GaMOVcb40rUq/pgmTfxRFFNEwweXksnDctHe/dnGAxmR
-        BZb4Z++ytdVf4HMxI6uPD9v64vdugO/SNn9l3JHeXLR/Y5h0sTLZtDElZ0qIywrJuhneGeI3
-        HV11bKilOK5naqRu6g35OqfOMz30ImLPycXIg6asOfc+9ORh7N+08mJU7Mxi+cRyyPywvrM/
-        5+aXEQd/l1sObW4qf4XUTGqCJjqKNqRq/gOTtbUrTQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0hTcRjG+5/L/xxXi9OSPFhRjCIoMoOMtwsRRXToRhAURWWjHXSl07Yy
-        Z2nmrTInGtjSls1pa+rMOvahm7Im3grNckyLJSl2sSzL2mppl2n05eXH87zP8+lhSYWZDmc1
-        2qOiTquKU2IZJdu2KnOxVGxVR5orKCjMiwTft7MUmGsdGDpvVCNw3D5NwGDTRuj2DyEYbX9C
-        gqmoE0FZ30sSbjf3Iqi3Z2DoGpgKbt8whrai8xgyy2sxPP0wRoD34gUCqqWt8LjASoAz8JYC
-        0yCGy6ZMInjeERCwVTFgS58P/fYSBsb6lkJbr4eGxittNNS/WATFpV4MD+rbKGi+009A1z0z
-        hl7HHxoeN7dS0FlopKHmkxXDB7+NBJtvmIFnTgsBN7OCbTlff9PQYnQSkFNxiwD38/sIGs6+
-        IkByeDA0+oYIqJOKSPh5vQlBf/5HBrLzAgxcPp2P4Hz2RQqe/GqhIcsbBaM/zHjtKqFxaJgU
-        suqOC/V+CyU8svLC3ZKXjJDV8IIRLNIxoc6+UCh/MEgIZSM+WpCqzmFBGrnACLkf3YTwqaOD
-        EVovjVLCgNtEbJ+1R7ZaLcZpkkTdkjUHZLGughI6sTss2W+ak47cilwUwvLcMr697ws9zphb
-        wPf0BMhxDuXm8nXGN0FdxpLcmcm8/XM7Hjemc7v599fvTgQobj5/3zEyEZBzUbzFaaL/lc7h
-        q286J/QQbjn/+kc+GmdF8Mdb3IsLkMyCJlWhUI02KV6liYuK0B+ONWg1yREHE+IlFNyMLXWs
-        8A761rXRhTgWKafIe06UqRW0KklviHchniWVofLMvqtqhVytMqSIuoRo3bE4Ue9CM1lKGSbf
-        tEs8oOBiVEfFw6KYKOr+uwQbEp6OtOs2pc6UYvY3dpyy7FAYajwb9m0Ob3EebD40Y7pkr658
-        uPxadPLULWuM642O2qaMPMM0c+S2xOzPO+8Fdt+w4oQGz8qw3JbsJWlYP5AW873ii2v9m5Pl
-        EQ6Pl927qDhxdcHP1IeV6zaXprBpfqXlROvegdkrlRk5866tGExJr+w+oqT0saqlC0mdXvUX
-        eQqn0i8DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0xTZxjG933n2krNsQM502SaxlswU9jQvC7TkJi5E2cTdYlGiXHVcwKN
+        UEihINvIKlTFC0xNALlEobraAAqcYsYmdRUmiAToRqNgapWLG8RyCa4VBN0KxH/e/PI8T568
+        fzwsoW6klrF6Q7pkNOiSNLSSVI6GWT+RS6xitKV2FVw8Hw2Bf/NIKK+tocF9qxpBTcMJDCP3
+        v4LHQT+Cmc5uAooL3Qgq+58S0NDqQ+C059DQM7QYPIFxGtoLz9GQe62Whj9fzmLwFl3CUC1r
+        oeOCFYNr+h8SikdoKCvOxaEzjGHaVsWAzbwaBuylDMz2x0C77xEFzifroeSKl4YmZzsJrY0D
+        GHp+K6fBV/MfBR2tD0hwX8yn4OaYlYaXQRsBtsA4A3+5KjDUWUJFp169o6At34Xh1PV6DJ6+
+        Owju5j3HINc8oqEl4MfgkAsJeHPjPoKBglEGTp6fZqDsRAGCcyeLSOh+20aBxbsJZqbK6bjP
+        hRb/OCFYHJmCM1hBCg+tvPBr6VNGsNx9wggVsklw2KOEa00jWKicDFCCXHWGFuTJS4xwdtSD
+        hbGuLkZ4cHmGFIY8xXj38oPKL0QpSZ8hGTdu+1aZaAl9lzocefxnlxmZUbX6LFKwPBfL//TW
+        R7znZ01F1BzT3Fq+t3d6Xg/nVvKO/L9DupIluNOLePtEJz1nfMjt4fN+nwuxLMmt5m3meVRx
+        m3jZfGChcgVfXeear1Fwm/kXUwVojtWhiLfERy9kchV8wZtVC/wRf8/eS15Aqgr0QRVS6w0Z
+        yTp9UuyGxCyD/viGoynJMgrtyZY9G9+IJt3fNCOORZowVe/3laKa0mWkZSU3I54lNOGq3P6r
+        olol6rK+k4wph42mJCmtGS1nSU2k6tNgpqjmEnTp0jFJSpWM713MKpaZ0a4flzZ5Ww51ur/m
+        I7SvV7b9MRvRc2Qo1bEtezBhvym5fnAsbnH4lntT2eSZy9E31/wQPNgX9MTvrduuZZfsnJBH
+        sOn6fltsX9zwwBbtuqgjNtOOEnGreGVXype/1KbHrJ/Y2hD5WY7ztH93pD+svW9H+DEkLtln
+        uK3d/nFOW5kiIV9DpiXqYqIIY5ruf0PRll1LAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0hTcRTH+93H715Xi9sSvFRQLCywMgcaByyLgroEvSiKpKjlLjmbFlua
+        9oDVlunSkcKcr8pHraFmdTWycjWUzBWa5nImZik9lCx7TTLtsRX9c/hwvl8+nD8OSypK6Fms
+        NuWwqE9R65RYRsk2xpqWSEUVmqjM1mmQlxMF/m9ZFJReq8HQUVuNoKb+JAHDD9aBb2wEwUTb
+        ExLstg4E5QMvSKhv6Ufgcp7C0PV6Onj9oxg8trMYTJXXMHS+nySgryCfgGppAzw+V0GAe/wd
+        BfZhDCV2ExEYQwSMO6oYcBjDYdBZzMDkgAo8/d00NJ/30ODqXQRFF/owNLo8FLQ0DBLQdacU
+        Q3/Nbxoet7RS0JGXS8PVjxUY3o85SHD4Rxl46i4j4Lo5YMv8+ouGh7luAjIv3SDA+/wugntZ
+        rwiQaroxNPtHCKiTbCT8uPIAwaD1AwOnc8YZKDlpRXD2dAEFT34+pMHcFwMT30vxqliheWSU
+        FMx1RwTXWBklPKrghdvFLxjBfK+XEcqkVKHOGSFUNg4TQvkXPy1IVdlYkL7kM4Llg5cQPra3
+        M0Jr4QQlvPbaic1z4mXLNaJOmybql8btlSWaA9cdGgpLv+w2IiOqVlhQCMtz0fzLxgI6yJhb
+        yPf0jJNBDuXm8XW5bwN7GUtyZ6byzk9tOBjM5LbwWfeDJZaluHDeYfyLci6Gl4w7/ynn8tXX
+        3X81Idwy/s13KwqyIlDpK+rH55CsDE2pQqHalLRktVYXE2k4kJiRok2PTDiYLKHAyzhOTOY1
+        oG9d65oQxyLlNHnPsXKNglanGTKSmxDPkspQuWngokYh16gzjor6g3v0qTrR0IRms5QyTL5+
+        h7hXwe1XHxYPiOIhUf8/JdiQWUa01RW1ulS1afriwvqG2043O0f27Piz2p/ZldHeW/mOnCvS
+        Mut8q27S2Jl+bP7Xys9Y77HdNaqidtGLfNsTTL7VhTtGh1QXLb64BFuBJWnrhuTupKTd7e1h
+        kWERSeH7btp7J351rqmKt0xdMTaDu+/L7lmbsK8ornhlbXyDJnPbgi1KypCoVkWQeoP6D0Di
+        ZREuAwAA
 X-CFilter-Loop: Reflected
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
         SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -89,108 +89,97 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Wrapped the base APIs for easier annotation on wait and event. Start
-with supporting waiters on each single event. More general support for
-multiple events is a future work. Do more when the need arises.
-
-How to annotate (the simplest way):
-
-1. Initaialize a map for the interesting wait.
-
-   /*
-    * Recommand to place along with the wait instance.
-    */
-   struct dept_map my_wait;
-
-   /*
-    * Recommand to place in the initialization code.
-    */
-   sdt_map_init(&my_wait);
-
-2. Place the following at the wait code.
-
-   sdt_wait(&my_wait);
-
-3. Place the following at the event code.
-
-   sdt_event(&my_wait);
-
-That's it!
+Wrapped the base APIs for easier annotation on typical lock.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- include/linux/dept_sdt.h | 62 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
- create mode 100644 include/linux/dept_sdt.h
+ include/linux/dept_ldt.h | 77 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+ create mode 100644 include/linux/dept_ldt.h
 
-diff --git a/include/linux/dept_sdt.h b/include/linux/dept_sdt.h
+diff --git a/include/linux/dept_ldt.h b/include/linux/dept_ldt.h
 new file mode 100644
-index 000000000000..12a793b90c7e
+index 000000000000..062613e89fc3
 --- /dev/null
-+++ b/include/linux/dept_sdt.h
-@@ -0,0 +1,62 @@
++++ b/include/linux/dept_ldt.h
+@@ -0,0 +1,77 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * Single-event Dependency Tracker
++ * Lock Dependency Tracker
 + *
 + * Started by Byungchul Park <max.byungchul.park@gmail.com>:
 + *
 + *  Copyright (c) 2020 LG Electronics, Inc., Byungchul Park
 + */
 +
-+#ifndef __LINUX_DEPT_SDT_H
-+#define __LINUX_DEPT_SDT_H
++#ifndef __LINUX_DEPT_LDT_H
++#define __LINUX_DEPT_LDT_H
 +
-+#include <linux/kernel.h>
 +#include <linux/dept.h>
 +
 +#ifdef CONFIG_DEPT
-+#define sdt_map_init(m)							\
++#define LDT_EVT_L			1UL
++#define LDT_EVT_R			2UL
++#define LDT_EVT_W			1UL
++#define LDT_EVT_RW			(LDT_EVT_R | LDT_EVT_W)
++#define LDT_EVT_ALL			(LDT_EVT_L | LDT_EVT_RW)
++
++#define ldt_init(m, k, su, n)		dept_map_init(m, k, su, n)
++#define ldt_lock(m, sl, t, n, i)					\
 +	do {								\
-+		static struct dept_key __key;				\
-+		dept_map_init(m, &__key, 0, #m);			\
++		if (n)							\
++			dept_ecxt_enter_nokeep(m);			\
++		else if (t)						\
++			dept_ecxt_enter(m, LDT_EVT_L, i, "trylock", "unlock", sl);\
++		else {							\
++			dept_wait(m, LDT_EVT_L, i, "lock", sl);		\
++			dept_ecxt_enter(m, LDT_EVT_L, i, "lock", "unlock", sl);\
++		}							\
 +	} while (0)
 +
-+#define sdt_map_init_key(m, k)		dept_map_init(m, k, 0, #m)
-+
-+#define sdt_wait(m)							\
++#define ldt_rlock(m, sl, t, n, i, q)					\
 +	do {								\
-+		dept_request_event(m);					\
-+		dept_wait(m, 1UL, _THIS_IP_, __func__, 0);		\
++		if (n)							\
++			dept_ecxt_enter_nokeep(m);			\
++		else if (t)						\
++			dept_ecxt_enter(m, LDT_EVT_R, i, "read_trylock", "read_unlock", sl);\
++		else {							\
++			dept_wait(m, q ? LDT_EVT_RW : LDT_EVT_W, i, "read_lock", sl);\
++			dept_ecxt_enter(m, LDT_EVT_R, i, "read_lock", "read_unlock", sl);\
++		}							\
 +	} while (0)
 +
-+/*
-+ * sdt_might_sleep() and its family will be committed in __schedule()
-+ * when it actually gets to __schedule(). Both dept_request_event() and
-+ * dept_wait() will be performed on the commit.
-+ */
-+
-+/*
-+ * Use the code location as the class key if an explicit map is not used.
-+ */
-+#define sdt_might_sleep_start(m)					\
++#define ldt_wlock(m, sl, t, n, i)					\
 +	do {								\
-+		struct dept_map *__m = m;				\
-+		static struct dept_key __key;				\
-+		dept_stage_wait(__m, __m ? NULL : &__key, _THIS_IP_, __func__);\
++		if (n)							\
++			dept_ecxt_enter_nokeep(m);			\
++		else if (t)						\
++			dept_ecxt_enter(m, LDT_EVT_W, i, "write_trylock", "write_unlock", sl);\
++		else {							\
++			dept_wait(m, LDT_EVT_RW, i, "write_lock", sl);	\
++			dept_ecxt_enter(m, LDT_EVT_W, i, "write_lock", "write_unlock", sl);\
++		}							\
 +	} while (0)
 +
-+#define sdt_might_sleep_end()		dept_clean_stage()
++#define ldt_unlock(m, i)		dept_ecxt_exit(m, LDT_EVT_ALL, i)
 +
-+#define sdt_ecxt_enter(m)		dept_ecxt_enter(m, 1UL, _THIS_IP_, "start", "event", 0)
-+#define sdt_event(m)			dept_event(m, 1UL, _THIS_IP_, __func__)
-+#define sdt_ecxt_exit(m)		dept_ecxt_exit(m, 1UL, _THIS_IP_)
++#define ldt_downgrade(m, i)						\
++	do {								\
++		if (dept_ecxt_holding(m, LDT_EVT_W))			\
++			dept_map_ecxt_modify(m, LDT_EVT_W, NULL, LDT_EVT_R, i, "downgrade", "read_unlock", -1);\
++	} while (0)
++
++#define ldt_set_class(m, n, k, sl, i)	dept_map_ecxt_modify(m, LDT_EVT_ALL, k, 0UL, i, "lock_set_class", "(any)unlock", sl)
 +#else /* !CONFIG_DEPT */
-+#define sdt_map_init(m)			do { } while (0)
-+#define sdt_map_init_key(m, k)		do { (void)(k); } while (0)
-+#define sdt_wait(m)			do { } while (0)
-+#define sdt_might_sleep_start(m)	do { } while (0)
-+#define sdt_might_sleep_end()		do { } while (0)
-+#define sdt_ecxt_enter(m)		do { } while (0)
-+#define sdt_event(m)			do { } while (0)
-+#define sdt_ecxt_exit(m)		do { } while (0)
++#define ldt_init(m, k, su, n)		do { (void)(k); } while (0)
++#define ldt_lock(m, sl, t, n, i)	do { } while (0)
++#define ldt_rlock(m, sl, t, n, i, q)	do { } while (0)
++#define ldt_wlock(m, sl, t, n, i)	do { } while (0)
++#define ldt_unlock(m, i)		do { } while (0)
++#define ldt_downgrade(m, i)		do { } while (0)
++#define ldt_set_class(m, n, k, sl, i)	do { } while (0)
 +#endif
-+#endif /* __LINUX_DEPT_SDT_H */
++#endif /* __LINUX_DEPT_LDT_H */
 -- 
 2.17.1
 
