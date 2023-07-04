@@ -2,136 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 65B6E746E4F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 12:11:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51D7E746FB6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 13:19:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229915AbjGDKLA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jul 2023 06:11:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42144 "EHLO
+        id S230273AbjGDLTM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jul 2023 07:19:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231577AbjGDKK7 (ORCPT
+        with ESMTP id S230316AbjGDLTK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jul 2023 06:10:59 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 194E8FB;
-        Tue,  4 Jul 2023 03:10:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1688465458; x=1720001458;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rHrrDx8bBJniZaIxt6PHmJUfubmy9yZ+Qtw5G9Y30j0=;
-  b=Sn07xz/PcmCkZydUjmXSXSQ0vB/bSjSCkeinM2i5SLGezfSmt/0oXpfK
-   ibuMdpenbDdeVHVDS6i+ZpyOuwZSzzpVj0N84PiePvxcSZtYrrBi0o5zu
-   Lc+TJBRTVL/t71K96Kf8gC6dtdHlKcMlmeWq4qnTESn7Zmf+glapghQTQ
-   Fu4wS0LeGLi9SIvPJA7MA4cynJPLLOkyywaR2UAJi7rMU5Ts0FY/f+ndI
-   0uccZauO3brPZsJa8WSEHzBwIkctDnIYC4gIUQCT7S0JILteMUb/JlQTw
-   xsid5ozSPGT7cPZO/u9GSujvuUeexFY+i3uRGeMUaJHW/VGQWxmOU/zzw
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10760"; a="426769639"
-X-IronPort-AV: E=Sophos;i="6.01,180,1684825200"; 
-   d="scan'208";a="426769639"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2023 03:10:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10760"; a="965468731"
-X-IronPort-AV: E=Sophos;i="6.01,180,1684825200"; 
-   d="scan'208";a="965468731"
-Received: from lkp-server01.sh.intel.com (HELO 783282924a45) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 04 Jul 2023 03:10:50 -0700
-Received: from kbuild by 783282924a45 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qGczh-000IBb-27;
-        Tue, 04 Jul 2023 10:10:49 +0000
-Date:   Tue, 4 Jul 2023 18:10:32 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>
-Cc:     oe-kbuild-all@lists.linux.dev,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, Greg KH <greg@kroah.com>
-Subject: Re: [PATCH v22 4/5] mm/pagemap: add documentation of PAGEMAP_SCAN
- IOCTL
-Message-ID: <202307041808.b1eQDDHa-lkp@intel.com>
-References: <20230628095426.1886064-5-usama.anjum@collabora.com>
+        Tue, 4 Jul 2023 07:19:10 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B11E6199E
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jul 2023 04:18:35 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id BCAB3227A5;
+        Tue,  4 Jul 2023 11:18:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1688469513; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hye03PiA2kNMjv9ficz4Sho4/4UsihiFgkoDNSzas/Y=;
+        b=uFCccE9IVg9ib8rYose53C9Y8t+594RLGMhHqmseSIZmBsJnDZy+5SYGkENgYM/KjIJyMK
+        Y7VjC6m2xIPVxU00xML0PWsGlHHcLWjsZFretHzuGOCmzwLCEHbzz5NvXloAvh4mt7P0rE
+        XSHaD+I5symFGztAQEbSw+R3Jcyq2Og=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1688469513;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hye03PiA2kNMjv9ficz4Sho4/4UsihiFgkoDNSzas/Y=;
+        b=tJgwOqmJcf97hvewa7kcxKr2Fy6G3CBFy9QQ7JfVptc9Aigz7ce4abxBMfRpLYSmVwIrZS
+        wHDbHq5M9k3ZiMBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AE268133F7;
+        Tue,  4 Jul 2023 11:18:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Mah6KgkApGQ2DAAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 04 Jul 2023 11:18:33 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 33237A0722; Tue,  4 Jul 2023 13:18:33 +0200 (CEST)
+Date:   Tue, 4 Jul 2023 13:18:33 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
+        <nabijaczleweli@nabijaczleweli.xyz>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC][PATCH] fanotify: disallow mount/sb marks on kernel
+ internal pseudo fs
+Message-ID: <20230704111833.c6yqnu5b6fhzit3k@quack3>
+References: <20230629042044.25723-1-amir73il@gmail.com>
+ <20230630-kitzeln-sitzt-c6b4325362e5@brauner>
+ <CAOQ4uxheb7z=5ricKUz7JduQGVbxNRp-FNrViMtd0Dy6cAgOnQ@mail.gmail.com>
+ <20230703112551.7fvcyibdxwtmjucf@quack3>
+ <20230704-gedauert-beantragen-7334fb6b5cdf@brauner>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230628095426.1886064-5-usama.anjum@collabora.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230704-gedauert-beantragen-7334fb6b5cdf@brauner>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Muhammad,
+On Tue 04-07-23 11:58:07, Christian Brauner wrote:
+> On Mon, Jul 03, 2023 at 01:25:51PM +0200, Jan Kara wrote:
+> > On Sat 01-07-23 19:25:14, Amir Goldstein wrote:
+> > > On Fri, Jun 30, 2023 at 10:29 AM Christian Brauner <brauner@kernel.org> wrote:
+> > > >
+> > > > On Thu, Jun 29, 2023 at 07:20:44AM +0300, Amir Goldstein wrote:
+> > > > > Hopefully, nobody is trying to abuse mount/sb marks for watching all
+> > > > > anonymous pipes/inodes.
+> > > > >
+> > > > > I cannot think of a good reason to allow this - it looks like an
+> > > > > oversight that dated back to the original fanotify API.
+> > > > >
+> > > > > Link: https://lore.kernel.org/linux-fsdevel/20230628101132.kvchg544mczxv2pm@quack3/
+> > > > > Fixes: d54f4fba889b ("fanotify: add API to attach/detach super block mark")
+> > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > > > > ---
+> > > > >
+> > > > > Jan,
+> > > > >
+> > > > > As discussed, allowing sb/mount mark on anonymous pipes
+> > > > > makes no sense and we should not allow it.
+> > > > >
+> > > > > I've noted FAN_MARK_FILESYSTEM as the Fixes commit as a trigger to
+> > > > > backport to maintained LTS kernels event though this dates back to day one
+> > > > > with FAN_MARK_MOUNT. Not sure if we should keep the Fixes tag or not.
+> > > > >
+> > > > > The reason this is an RFC and that I have not included also the
+> > > > > optimization patch is because we may want to consider banning kernel
+> > > > > internal inodes from fanotify and/or inotify altogether.
+> > > > >
+> > > > > The tricky point in banning anonymous pipes from inotify, which
+> > > > > could have existing users (?), but maybe not, so maybe this is
+> > > > > something that we need to try out.
+> > > > >
+> > > > > I think we can easily get away with banning anonymous pipes from
+> > > > > fanotify altogeter, but I would not like to get to into a situation
+> > > > > where new applications will be written to rely on inotify for
+> > > > > functionaly that fanotify is never going to have.
+> > > > >
+> > > > > Thoughts?
+> > > > > Am I over thinking this?
+> > > > >
+> > > > > Amir.
+> > > > >
+> > > > >  fs/notify/fanotify/fanotify_user.c | 14 ++++++++++++++
+> > > > >  1 file changed, 14 insertions(+)
+> > > > >
+> > > > > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> > > > > index 95d7d8790bc3..8240a3fdbef0 100644
+> > > > > --- a/fs/notify/fanotify/fanotify_user.c
+> > > > > +++ b/fs/notify/fanotify/fanotify_user.c
+> > > > > @@ -1622,6 +1622,20 @@ static int fanotify_events_supported(struct fsnotify_group *group,
+> > > > >           path->mnt->mnt_sb->s_type->fs_flags & FS_DISALLOW_NOTIFY_PERM)
+> > > > >               return -EINVAL;
+> > > > >
+> > > > > +     /*
+> > > > > +      * mount and sb marks are not allowed on kernel internal pseudo fs,
+> > > > > +      * like pipe_mnt, because that would subscribe to events on all the
+> > > > > +      * anonynous pipes in the system.
+> > > >
+> > > > s/anonynous/anonymous/
+> > > >
+> > > > > +      *
+> > > > > +      * XXX: SB_NOUSER covers all of the internal pseudo fs whose objects
+> > > > > +      * are not exposed to user's mount namespace, but there are other
+> > > > > +      * SB_KERNMOUNT fs, like nsfs, debugfs, for which the value of
+> > > > > +      * allowing sb and mount mark is questionable.
+> > > > > +      */
+> > > > > +     if (mark_type != FAN_MARK_INODE &&
+> > > > > +         path->mnt->mnt_sb->s_flags & SB_NOUSER)
+> > > > > +             return -EINVAL;
+> > > >
+> > > 
+> > > On second thought, I am not sure about  the EINVAL error code here.
+> > > I used the same error code that Jan used for permission events on
+> > > proc fs, but the problem is that applications do not have a decent way
+> > > to differentiate between
+> > > "sb mark not supported by kernel" (i.e. < v4.20) vs.
+> > > "sb mark not supported by fs" (the case above)
+> > > 
+> > > same for permission events:
+> > > "kernel compiled without FANOTIFY_ACCESS_PERMISSIONS" vs.
+> > > "permission events not supported by fs" (procfs)
+> > > 
+> > > I have looked for other syscalls that react to SB_NOUSER and I've
+> > > found that mount also returns EINVAL.
+> > 
+> > We tend to return EINVAL both for invalid (combination of) flags as well as
+> > for flags applied to invalid objects in various calls. In practice there is
+> > rarely a difference.
+> > 
+> > > So far, fanotify_mark() and fanotify_init() mostly return EINVAL
+> > > for invalid flag combinations (also across the two syscalls),
+> > > but not because of the type of object being marked, except for
+> > > the special case of procfs and permission events.
+> > > 
+> > > mount(2) syscall OTOH, has many documented EINVAL cases
+> > > due to the type of source object (e.g. propagation type shared).
+> > > 
+> > > I know there is no standard and EINVAL can mean many
+> > > different things in syscalls, but I thought that maybe EACCES
+> > > would convey more accurately the message:
+> > > "The sb/mount of this fs is not accessible for placing a mark".
+> > > 
+> > > WDYT? worth changing?
+> > > worth changing procfs also?
+> > > We don't have that EINVAL for procfs documented in man page btw.
+> > 
+> > Well, EACCES translates to message "Permission denied" which as Christian
+> > writes is justifiable but frankly I find it more confusing. Because when I
+> > get "Permission denied", I go looking which permissions are wrong, perhaps
+> > suspecting SELinux or other LSM and don't think that object type / location
+> > is at fault.
+> > 
+> > I agree that with EINVAL it is impossible to distinguish "unsupported on
+> > this object only" vs "completely unknown flag" but it doesn't seem like a
+> > huge problem for userspace to me as I can think of workarounds even if
+> > userspace wants to do something else than "report error and bail".
+> 
+> Userspace is pretty used to the flood of EINVAL from the vfs apis so
+> they often have good workarounds. It doesn't mean it's something we
+> should just discount ofc. I think having ways to surface more
+> descriptive errors would overall be a good thing.
 
-kernel test robot noticed the following build warnings:
+Oh, I absolutely agree with that. I'm just not sure whether returning
+EACCES in this particular case is going to cause more or less confusion.
 
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on linus/master next-20230704]
-[cannot apply to v6.4]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Muhammad-Usama-Anjum/userfaultfd-UFFD_FEATURE_WP_ASYNC/20230628-180259
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20230628095426.1886064-5-usama.anjum%40collabora.com
-patch subject: [PATCH v22 4/5] mm/pagemap: add documentation of PAGEMAP_SCAN IOCTL
-reproduce: (https://download.01.org/0day-ci/archive/20230704/202307041808.b1eQDDHa-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202307041808.b1eQDDHa-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> Documentation/admin-guide/mm/pagemap.rst:238: WARNING: Unexpected indentation.
->> Documentation/admin-guide/mm/pagemap.rst:240: WARNING: Block quote ends without a blank line; unexpected unindent.
-
-vim +238 Documentation/admin-guide/mm/pagemap.rst
-
-   233	
-   234	The ``PAGEMAP_SCAN`` IOCTL on the pagemap file can be used to get or optionally
-   235	clear the info about page table entries. The following operations are supported
-   236	in this IOCTL:
-   237	- Get the information if the pages have been written to (``PAGE_IS_WRITTEN``),
- > 238	  file mapped (``PAGE_IS_FILE``), present (``PAGE_IS_PRESENT``), swapped
-   239	  (``PAGE_IS_SWAPPED``) or page has pfn zero (``PAGE_IS_PFNZERO``).
- > 240	- Find pages which have been written to and/or write protect the pages atomically
-   241	  (atomic ``PM_SCAN_OP_GET + PM_SCAN_OP_WP``)
-   242	
-
+								Honza
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
