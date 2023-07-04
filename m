@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 478B67471EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 14:57:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A1147471E1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 14:57:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231522AbjGDM5K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jul 2023 08:57:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56124 "EHLO
+        id S231510AbjGDM5I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jul 2023 08:57:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231475AbjGDM5H (ORCPT
+        with ESMTP id S229441AbjGDM5F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jul 2023 08:57:07 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E45B510C1;
+        Tue, 4 Jul 2023 08:57:05 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5B2B12E;
         Tue,  4 Jul 2023 05:57:04 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 9CCF92057B;
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 843E920571;
         Tue,  4 Jul 2023 12:57:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
         t=1688475423; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=4kLKXbH7Z9oxrfsS86756x47zmseM1dV/Y8LiCLoy6A=;
-        b=1NsHtBQvituf76wxtJwfJBbL2Tzo1neIrOUsXVd3S4gmW62PKmJDF231W0tc14xolwuPTQ
-        Q/HuMw8W/32xF4JmpitZqJk0TeLJ6jlCDSi0ivycTIGg3dwGsdiO4k44XsgBx3Fg3bYlSn
-        C/sZrMAG3dSQHCO72pg5HUeOHXewkYQ=
+        bh=LtayAV5T0tBVByT6zZ44nOPb8V5tXSVkxuDIXL3faJ0=;
+        b=Duy5fugiJmqDcIDpwsbYTPiA4IruxmPPijcS0WaD9OElGUyAEUmlma53ORRQLV40JgzbzK
+        UaFkS5V/S3hLlFh6GKsjqW/xqLk0pSE3Ngr+aBl+MmkIaomBJNnQi7QPRD3GBmNJtPUThl
+        bhejAQlSvLbpYVGjYbQIHYRolrXxxK8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
         s=susede2_ed25519; t=1688475423;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=4kLKXbH7Z9oxrfsS86756x47zmseM1dV/Y8LiCLoy6A=;
-        b=FLETSoCthEgeQYjbin9G95011rohTKnX2o6mkH6JhP2A286F4KRh1Q+LXhGE+3BIy5uddC
-        Kx051bm0ZLvtXMAw==
+        bh=LtayAV5T0tBVByT6zZ44nOPb8V5tXSVkxuDIXL3faJ0=;
+        b=pLKG5TNw/8Mra2nNSLGkoVJeHKs8nIKwgmkwbOHYCLdmNz89+ls+Siibr1V38bbFZE12gh
+        o+qF3lu/O5Lrv6Dw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 88B0413A90;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6F4F31346D;
         Tue,  4 Jul 2023 12:57:03 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id NBJ4IB8XpGRHQwAAMHmgww
+        id xqk2Gx8XpGRAQwAAMHmgww
         (envelope-from <jack@suse.cz>); Tue, 04 Jul 2023 12:57:03 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id E904DA0764; Tue,  4 Jul 2023 14:57:02 +0200 (CEST)
+        id EE456A0765; Tue,  4 Jul 2023 14:57:02 +0200 (CEST)
 From:   Jan Kara <jack@suse.cz>
 To:     <linux-fsdevel@vger.kernel.org>
 Cc:     <linux-block@vger.kernel.org>,
@@ -63,19 +63,19 @@ Cc:     <linux-block@vger.kernel.org>,
         Eric Biggers <ebiggers@google.com>,
         <linux-xfs@vger.kernel.org>, linux-btrfs@vger.kernel.org,
         Dmitry Vyukov <dvyukov@google.com>, Jan Kara <jack@suse.cz>
-Subject: [PATCH 2/6] fs: Block writes to mounted block devices
-Date:   Tue,  4 Jul 2023 14:56:50 +0200
-Message-Id: <20230704125702.23180-2-jack@suse.cz>
+Subject: [PATCH 3/6] xfs: Block writes to log device
+Date:   Tue,  4 Jul 2023 14:56:51 +0200
+Message-Id: <20230704125702.23180-3-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20230704122727.17096-1-jack@suse.cz>
 References: <20230704122727.17096-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=715; i=jack@suse.cz; h=from:subject; bh=1Lmzs2snC1snjsNOeiGEbZLZ2ocM2Sn53OgpAZM40yE=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBkpBcSptunr+jYP76j2WuFOQSZ56OM8jiAHFNFbohR DMY8nnuJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZKQXEgAKCRCcnaoHP2RA2VgkCA CSAv51n2YAI4cMP2AySqWYOtRvUd1mNEWdOBjXmqplGJ6E0ilAkvrBEuY3/0bkT800N2Y70fEzPV8d 972eCWgtPG4t0zrIp0eKqAdA95NzflI8nzL8ylZnXIFd87B7hDUZ1IxGknYqo016Cjd0o4ZSuWhSML xLp1MWi2gGIP9maISY8u/bJegw8z3vuuAIuEtkt39aFWpgEPtMMsYIsUKgf02GIkIxq2/nnVDOKNZA 4g71hSna1LDpgbYa6vWZrQF03EU/XdwjxzVzjULt3j5WWuiy8L9QjMvWarV7SpkZJcOv3Ui4/FQwKC uN8DvxVq4+4HkfACWePDePzMTNKi9V
+X-Developer-Signature: v=1; a=openpgp-sha256; l=792; i=jack@suse.cz; h=from:subject; bh=nhXkhndcPMW2C+uoE+VwcqIIQEbUdMbuuEt4QVO2k/Q=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBkpBcTQayx7dbOByhLrjumejN1JUQPoK85sd4AETva TsjocFOJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZKQXEwAKCRCcnaoHP2RA2VgoCA DQyETerLQPbUl9el+W2isQ3GPWuVGKOhq1DNPEDd2haY+G45LN9cI64qaXk8br1iB/LPwukLuPMv3Q V2ygL0uXAcCH8LzvnGBSHIQNrHqcpj6g+StWqdIrrxjY9Rs4nzXCMLLfyVv+59aVk6hzD0iiykK29c Y4AqrrZIzdXxaxLBGjyATLbJ80oPQu8ff5lhnSrMj58aCFWQX0uDYRBw8DgXOZldrSTvivy1wmtMSl BEBfwodl2YYmh8iEr9RmpbDK/vzd0ONTVOxTnRNNCsndncJ8Tqw9pBSJIL3O9vXOGVNNxba/cl78u+ RtG9pEBcwiK2qR//mTi4dz4ycxKt2s
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -83,27 +83,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ask block layer to block writes to block devices mounted by filesystems.
+Ask block layer to not allow other writers to open block device used
+for xfs log.
 
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- include/linux/blkdev.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/xfs/xfs_super.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index ca467525e6e4..a1fb90f3887e 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1471,7 +1471,8 @@ struct blk_holder_ops {
-  * as stored in sb->s_flags.
-  */
- #define sb_open_mode(flags) \
--	(BLK_OPEN_READ | (((flags) & SB_RDONLY) ? 0 : BLK_OPEN_WRITE))
-+	(BLK_OPEN_READ | BLK_OPEN_BLOCK_WRITES | \
-+	 (((flags) & SB_RDONLY) ? 0 : BLK_OPEN_WRITE))
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index b0fbf8ea7846..3808b4507552 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -396,8 +396,9 @@ xfs_blkdev_get(
+ {
+ 	int			error = 0;
  
- struct bdev_handle {
- 	struct block_device *bdev;
+-	*handlep = blkdev_get_by_path(name, BLK_OPEN_READ | BLK_OPEN_WRITE,
+-				      mp, &xfs_holder_ops);
++	*handlep = blkdev_get_by_path(name,
++			BLK_OPEN_READ | BLK_OPEN_WRITE | BLK_OPEN_BLOCK_WRITES,
++			mp, &xfs_holder_ops);
+ 	if (IS_ERR(*handlep)) {
+ 		error = PTR_ERR(*handlep);
+ 		xfs_warn(mp, "Invalid device [%s], error=%d", name, error);
 -- 
 2.35.3
 
