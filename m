@@ -2,73 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D65F747101
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 14:24:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C4A8747111
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 14:24:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231772AbjGDMXc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jul 2023 08:23:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39152 "EHLO
+        id S231707AbjGDMYF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jul 2023 08:24:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231661AbjGDMWs (ORCPT
+        with ESMTP id S231731AbjGDMXN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jul 2023 08:22:48 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CBDC10D8;
-        Tue,  4 Jul 2023 05:22:35 -0700 (PDT)
+        Tue, 4 Jul 2023 08:23:13 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D30151701;
+        Tue,  4 Jul 2023 05:22:37 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 5883020568;
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 5EB1B22872;
         Tue,  4 Jul 2023 12:22:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
         t=1688473346; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=MQxTCSeTg6wagW5tuWFhLvswNFlZbpUek4rOSe5trrE=;
-        b=C7Ch1FdLD4xgCfVB82D/Pjj8dtKMxh2T0JXylFKzB7VijdCP9rpjJrwz1AoVaD3iTx2QTN
-        d10QCWFioSaQfHm1DL44YuQ7qp46/w3yrbyLlpn95xxy7sG/hiLoMpqjvGZ9355JyxLNMK
-        OrX5bDJEbEEWi4cdlXq+F1qHlc2gA/M=
+        bh=epv0WU7Q4U27et91WPnFbrKixsesCGX2CbQ3cj/tlUI=;
+        b=ZXP60VJFhu+sbSfRhBfyow89T5mRzJLWGXBe9NFLM35Tuy46y6x0lRUby4XKhuc4XytGDg
+        2tKgg2EClD8twEoIDDdlLIhu0B0JFIQArAfb99N22sjDvrFAfqyPg6qp9N3XFveRoBPA9N
+        gu4FcAME0AZuEYY8ZeSTyOt0Kxunk/E=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
         s=susede2_ed25519; t=1688473346;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=MQxTCSeTg6wagW5tuWFhLvswNFlZbpUek4rOSe5trrE=;
-        b=kkwyLW8Z43c1K3AUAfFJBhL2dW39UMnhvBzHTBPV1OYVyCcCfUGLw1zKNRTIKqSwHRKWm2
-        7wo1ScOPy0m6S1Aw==
+        bh=epv0WU7Q4U27et91WPnFbrKixsesCGX2CbQ3cj/tlUI=;
+        b=5gm/5xDWhgcbVN8H7dqfNn8C4IUWd7ZVounn7/CM22b8Pkrzw9qPc1wkiSsrHnEcyM3d9q
+        sxGy2hfYoxUZ6HAg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 489AB1346D;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5295213A90;
         Tue,  4 Jul 2023 12:22:26 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id Msu2EQIPpGRBMAAAMHmgww
+        id CLYyFAIPpGRFMAAAMHmgww
         (envelope-from <jack@suse.cz>); Tue, 04 Jul 2023 12:22:26 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 0059AA0776; Tue,  4 Jul 2023 14:22:24 +0200 (CEST)
+        id 0631BA077C; Tue,  4 Jul 2023 14:22:25 +0200 (CEST)
 From:   Jan Kara <jack@suse.cz>
 To:     <linux-block@vger.kernel.org>
 Cc:     <linux-fsdevel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-pm@vger.kernel.org
-Subject: [PATCH 17/32] PM: hibernate: Convert to blkdev_get_handle_by_dev()
-Date:   Tue,  4 Jul 2023 14:21:44 +0200
-Message-Id: <20230704122224.16257-17-jack@suse.cz>
+Subject: [PATCH 18/32] PM: hibernate: Drop unused snapshot_test argument
+Date:   Tue,  4 Jul 2023 14:21:45 +0200
+Message-Id: <20230704122224.16257-18-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20230629165206.383-1-jack@suse.cz>
 References: <20230629165206.383-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3125; i=jack@suse.cz; h=from:subject; bh=ou4xyOI12JhBNyr0TQRO/mOTZ4/nsdMmvIuW5W7Bk/4=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBkpA7Zj/XDAC5VAg2XWqfvTw6JJlt/lNEIu3iYQkMa cX4ejhmJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZKQO2QAKCRCcnaoHP2RA2TYyB/ 9r0zspSMI9y3P9YTw8G+43irxTgZcyCBFkjnJxTVtd712SFi233iJyFwVmklUzIySemrw8UNhG/Csp YJAtfj2WX5ErVJN2HgmmBPJaT+PDmusZ+AHUScM2YLKbooi4xmpDFjIkKBOH/S12tr+tFr7z1A+lPG lpnjVCJ8VxnknewcLN/xaxiHVhjK2QbRnKVKGf14vSb7PPRVRvXC7Nnkogx0gZlD/Uqea/xe3cdSEb 3gWvYzkN/s3bnQ3QJy2wAmxGq/TPLgzlJ1et54mH4ZVBA9+J5b3wcDpxLHQMYVC95POBojgC2JGe/9 zUUDuYZiJYz+VDviRPyoP9NXITfc6D
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3450; i=jack@suse.cz; h=from:subject; bh=C34za05j7L6pDZccfR5nhpDFkY9rraFNuB4k5il1A0Q=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBkpA7a2u861YBiFQrIuVeFUr8gaAThZWEBvh68q52Z elKrY3qJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZKQO2gAKCRCcnaoHP2RA2cipCA DoMKrSeK3MaPvj+kMStdT1bAcaDBLlafKLWzIsh/zSwrWvV72yLtNPq5hEoLXplmozwcJLoYRvIFPn 8RH/oJaQLXU28DyR5cfikd9ZRCx3OqWfH/mfr1cTPlcZjJrOE64HVYsHIrejEn7HfKCwRGTcnDOxSy 7Ebp0R9WOzlOJGx5dwAEqwIGqkmqeizUT7GTgqvCBPHRkKZ+2T+NIpebOpl4En3lo9lvHyY9qRr+JD HZ6yOUlgXb3+0ciKxsOPIQkjZbNQLoJpbM7Ca7DFRipbapuHY64oOY7k4jLbkuPNnHbUNiZeIh77SK 61XfGa5LEg/ZIQmjeEaxVLtUUmumOR
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,101 +76,125 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert hibernation code to use blkdev_get_handle_by_dev().
+snapshot_test argument is now unused in swsusp_close() and
+load_image_and_restore(). Drop it
 
 CC: linux-pm@vger.kernel.org
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- kernel/power/swap.c | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
+ kernel/power/hibernate.c | 14 +++++++-------
+ kernel/power/power.h     |  2 +-
+ kernel/power/swap.c      |  6 +++---
+ 3 files changed, 11 insertions(+), 11 deletions(-)
 
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index f62e89d0d906..0cde44a850c7 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -684,7 +684,7 @@ static void power_down(void)
+ 		cpu_relax();
+ }
+ 
+-static int load_image_and_restore(bool snapshot_test)
++static int load_image_and_restore(void)
+ {
+ 	int error;
+ 	unsigned int flags;
+@@ -694,12 +694,12 @@ static int load_image_and_restore(bool snapshot_test)
+ 	lock_device_hotplug();
+ 	error = create_basic_memory_bitmaps();
+ 	if (error) {
+-		swsusp_close(snapshot_test);
++		swsusp_close();
+ 		goto Unlock;
+ 	}
+ 
+ 	error = swsusp_read(&flags);
+-	swsusp_close(snapshot_test);
++	swsusp_close();
+ 	if (!error)
+ 		error = hibernation_restore(flags & SF_PLATFORM_MODE);
+ 
+@@ -788,7 +788,7 @@ int hibernate(void)
+ 		pm_pr_dbg("Checking hibernation image\n");
+ 		error = swsusp_check(snapshot_test);
+ 		if (!error)
+-			error = load_image_and_restore(snapshot_test);
++			error = load_image_and_restore();
+ 	}
+ 	thaw_processes();
+ 
+@@ -952,7 +952,7 @@ static int software_resume(void)
+ 	/* The snapshot device should not be opened while we're running */
+ 	if (!hibernate_acquire()) {
+ 		error = -EBUSY;
+-		swsusp_close(false);
++		swsusp_close();
+ 		goto Unlock;
+ 	}
+ 
+@@ -973,7 +973,7 @@ static int software_resume(void)
+ 		goto Close_Finish;
+ 	}
+ 
+-	error = load_image_and_restore(false);
++	error = load_image_and_restore();
+ 	thaw_processes();
+  Finish:
+ 	pm_notifier_call_chain(PM_POST_RESTORE);
+@@ -987,7 +987,7 @@ static int software_resume(void)
+ 	pm_pr_dbg("Hibernation image not present or could not be loaded.\n");
+ 	return error;
+  Close_Finish:
+-	swsusp_close(false);
++	swsusp_close();
+ 	goto Finish;
+ }
+ 
+diff --git a/kernel/power/power.h b/kernel/power/power.h
+index 46eb14dc50c3..bebf049a51c1 100644
+--- a/kernel/power/power.h
++++ b/kernel/power/power.h
+@@ -172,7 +172,7 @@ int swsusp_check(bool snapshot_test);
+ extern void swsusp_free(void);
+ extern int swsusp_read(unsigned int *flags_p);
+ extern int swsusp_write(unsigned int flags);
+-void swsusp_close(bool snapshot_test);
++void swsusp_close(void);
+ #ifdef CONFIG_SUSPEND
+ extern int swsusp_unmark(void);
+ #endif
 diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-index f6ebcd00c410..fd90ecf15ee1 100644
+index fd90ecf15ee1..9ebac878497f 100644
 --- a/kernel/power/swap.c
 +++ b/kernel/power/swap.c
-@@ -222,7 +222,7 @@ int swsusp_swap_in_use(void)
+@@ -444,7 +444,7 @@ static int get_swap_writer(struct swap_map_handle *handle)
+ err_rel:
+ 	release_swap_writer(handle);
+ err_close:
+-	swsusp_close(false);
++	swsusp_close();
+ 	return ret;
+ }
+ 
+@@ -509,7 +509,7 @@ static int swap_writer_finish(struct swap_map_handle *handle,
+ 	if (error)
+ 		free_all_swap_pages(root_swap);
+ 	release_swap_writer(handle);
+-	swsusp_close(false);
++	swsusp_close();
+ 
+ 	return error;
+ }
+@@ -1567,7 +1567,7 @@ int swsusp_check(bool snapshot_test)
+  *	swsusp_close - close swap device.
   */
  
- static unsigned short root_swap = 0xffff;
--static struct block_device *hib_resume_bdev;
-+static struct bdev_handle *hib_resume_bdev_handle;
- 
- struct hib_bio_batch {
- 	atomic_t		count;
-@@ -276,7 +276,8 @@ static int hib_submit_io(blk_opf_t opf, pgoff_t page_off, void *addr,
- 	struct bio *bio;
- 	int error = 0;
- 
--	bio = bio_alloc(hib_resume_bdev, 1, opf, GFP_NOIO | __GFP_HIGH);
-+	bio = bio_alloc(hib_resume_bdev_handle->bdev, 1, opf,
-+			GFP_NOIO | __GFP_HIGH);
- 	bio->bi_iter.bi_sector = page_off * (PAGE_SIZE >> 9);
- 
- 	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
-@@ -356,14 +357,14 @@ static int swsusp_swap_check(void)
- 		return res;
- 	root_swap = res;
- 
--	hib_resume_bdev = blkdev_get_by_dev(swsusp_resume_device,
-+	hib_resume_bdev_handle = blkdev_get_handle_by_dev(swsusp_resume_device,
- 			BLK_OPEN_WRITE, NULL, NULL);
--	if (IS_ERR(hib_resume_bdev))
--		return PTR_ERR(hib_resume_bdev);
-+	if (IS_ERR(hib_resume_bdev_handle))
-+		return PTR_ERR(hib_resume_bdev_handle);
- 
--	res = set_blocksize(hib_resume_bdev, PAGE_SIZE);
-+	res = set_blocksize(hib_resume_bdev_handle->bdev, PAGE_SIZE);
- 	if (res < 0)
--		blkdev_put(hib_resume_bdev, NULL);
-+		blkdev_handle_put(hib_resume_bdev_handle);
- 
- 	return res;
- }
-@@ -1521,10 +1522,10 @@ int swsusp_check(bool snapshot_test)
- 	void *holder = snapshot_test ? &swsusp_holder : NULL;
- 	int error;
- 
--	hib_resume_bdev = blkdev_get_by_dev(swsusp_resume_device, BLK_OPEN_READ,
--					    holder, NULL);
--	if (!IS_ERR(hib_resume_bdev)) {
--		set_blocksize(hib_resume_bdev, PAGE_SIZE);
-+	hib_resume_bdev_handle = blkdev_get_handle_by_dev(swsusp_resume_device,
-+				BLK_OPEN_READ, holder, NULL);
-+	if (!IS_ERR(hib_resume_bdev_handle)) {
-+		set_blocksize(hib_resume_bdev_handle->bdev, PAGE_SIZE);
- 		clear_page(swsusp_header);
- 		error = hib_submit_io(REQ_OP_READ, swsusp_resume_block,
- 					swsusp_header, NULL);
-@@ -1549,11 +1550,11 @@ int swsusp_check(bool snapshot_test)
- 
- put:
- 		if (error)
--			blkdev_put(hib_resume_bdev, holder);
-+			blkdev_handle_put(hib_resume_bdev_handle);
- 		else
- 			pr_debug("Image signature found, resuming\n");
- 	} else {
--		error = PTR_ERR(hib_resume_bdev);
-+		error = PTR_ERR(hib_resume_bdev_handle);
- 	}
- 
- 	if (error)
-@@ -1568,12 +1569,12 @@ int swsusp_check(bool snapshot_test)
- 
- void swsusp_close(bool snapshot_test)
+-void swsusp_close(bool snapshot_test)
++void swsusp_close(void)
  {
--	if (IS_ERR(hib_resume_bdev)) {
-+	if (IS_ERR(hib_resume_bdev_handle)) {
+ 	if (IS_ERR(hib_resume_bdev_handle)) {
  		pr_debug("Image device not initialised\n");
- 		return;
- 	}
- 
--	blkdev_put(hib_resume_bdev, snapshot_test ? &swsusp_holder : NULL);
-+	blkdev_handle_put(hib_resume_bdev_handle);
- }
- 
- /**
 -- 
 2.35.3
 
