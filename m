@@ -2,109 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F1DB747510
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 17:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7692874754C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 17:29:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231703AbjGDPOH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jul 2023 11:14:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37240 "EHLO
+        id S231496AbjGDP3H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jul 2023 11:29:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231249AbjGDPOG (ORCPT
+        with ESMTP id S231650AbjGDP2e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jul 2023 11:14:06 -0400
-Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E4C710D5;
-        Tue,  4 Jul 2023 08:14:05 -0700 (PDT)
-Received: by mail-ua1-x92f.google.com with SMTP id a1e0cc1a2514c-791b8525b59so2175760241.1;
-        Tue, 04 Jul 2023 08:14:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688483644; x=1691075644;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=18US8w0C3qU4DiEkJ9jXYu7TawUKRfr7sw1OsNONIqI=;
-        b=AuTMDE0JpsWVSaY/Xb8ckUoOyH9PKudki3prIAQpOv/2YZ3iQwCJhapLPBD8kV6eha
-         s5FRu1FTHY69rDwqHzb7dqRWMMTMvt/nJrffomH/6XE/hPhMiITudicc2lDcKVyjBa2V
-         tXAS4Cbci5SGTBWGjGI/xcrQm3IQ7PYHTJPiVg6CUCkJhPIbmGct7DDICOQc2zHzNRTA
-         nwlStfUCuy9n+ueggtaH2E+9Qa6ySS3KObQlDBww1ClZnAHgXwNB/Ib46d/S+GikptzS
-         LCTAfeVnkqUrmGkALtXaymsNY5BkWt8UU6HLzPd7fNUlh04kfZB1iZEg4PwGQdkhO3RH
-         8E8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688483644; x=1691075644;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=18US8w0C3qU4DiEkJ9jXYu7TawUKRfr7sw1OsNONIqI=;
-        b=j4BU83vtgukS3d2vqoy7AI1MQv2r1TU4VDewNg4Y9HqEiWiruWCcqSrbAUHAT4rosC
-         jHe6ah9Q038MhtLGJKS02wCZ5pSf9U1L1BEiOtm6FAkAn/nMcRpym/H5sef0jGIwkrUV
-         tLwolxxlY2XsPKCaF0xbymfeCaY1Hq907coV8Zw6hxw6wNXfYr+nCLLPk802VL6TABR1
-         /AsvnTwig1HpADoh7G5FgZXLKdb21qGtFg8IZlz278T3+olPwVMLfgNcIELbi7EHQ4vC
-         7GZrgr+RAaWiPwJExR75DR3ii1+aoyX+IwH4hix33v79fnoUDre8FPgL3smYBJwkKbz1
-         9mSQ==
-X-Gm-Message-State: ABy/qLYYaEqttETdmdbFQB2UPWz44M2996XrXTgyWfN8F7EcifQNLmWD
-        izqIJKvoYu/BgJc4KxPT1fp2TRbEq1OOi0Fczsg=
-X-Google-Smtp-Source: APBJJlEf//tr/JzH2tEXtaLjx28hEl4Xu/NsRumDDcx/vKSvONN5yyLt61d78dw5Ndg+lpCdMt8+vcQ0I4Ae05d/Hno=
-X-Received: by 2002:a67:e8cc:0:b0:443:5981:72ad with SMTP id
- y12-20020a67e8cc000000b00443598172admr6919656vsn.24.1688483644488; Tue, 04
- Jul 2023 08:14:04 -0700 (PDT)
+        Tue, 4 Jul 2023 11:28:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EA8C1712;
+        Tue,  4 Jul 2023 08:28:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DC4B661290;
+        Tue,  4 Jul 2023 15:28:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF0ADC433C8;
+        Tue,  4 Jul 2023 15:28:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688484498;
+        bh=YJkeztYtJHBlga7WOYK+Vsp9QskuLTRhsuPX35DFWRk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TyDsjxUi9BW8G3KudpP+/pGIxrqF9uQh2xklkpKq10C/WJlPemj0joGV/4zZS4TgN
+         LQIDD3zEVoWJKdebWZsrWf/SqoafKAAm/+kXjwYuEMaqyXm3v0DwYRQ7nJAtE9d1N7
+         zhxHUwRw7P/QvRtCB5XOLVc4L3oEI231BCMGHpdf11ELvtM1YUAqUO3jRdLHkE+oJe
+         6S8BHXC1EGIPLWcLjoFWpG+nv9NLA+Gpta/M+QBQ0cP/d/oJ4Y0maxAciYvlZKnVKa
+         x1xX2pAdGkIiqiysp8O80qnw20ujxzp/9NhrG/UfZRcXRhcv7vvFMX2UKxMcQV+4Nm
+         UU+tS8FadQg1w==
+Date:   Tue, 4 Jul 2023 17:28:13 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Alexey Gladkov <legion@kernel.org>
+Cc:     Hou Tao <houtao@huaweicloud.com>, bpf@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: Re: [PATCH v1] fs: Add kfuncs to handle idmapped mounts
+Message-ID: <20230704-peitschen-inzwischen-7ad743c764e8@brauner>
+References: <c35fbb4cb0a3a9b4653f9a032698469d94ca6e9c.1688123230.git.legion@kernel.org>
+ <babdf7a8-9663-6d71-821a-34da2aff80e2@huaweicloud.com>
+ <ZKQ2kBiRDsQREw6f@example.org>
 MIME-Version: 1.0
-References: <20230626-fs-overlayfs-mount-api-param-v1-1-29afb997a19f@kernel.org>
- <CAOQ4uxiOsHEx30ERLYeLdnOdFG1rw_OnXo+rBbKCY-ZzNxV_uQ@mail.gmail.com> <CAL7ro1GgW-2gUhB=TBxwDAiybbQBbFabkU2tBNbBH85Q_KZWew@mail.gmail.com>
-In-Reply-To: <CAL7ro1GgW-2gUhB=TBxwDAiybbQBbFabkU2tBNbBH85Q_KZWew@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 4 Jul 2023 18:13:53 +0300
-Message-ID: <CAOQ4uxhkMYMnPL81RoWdnxCsiNtf-AbBVPcRj=hbo4vd8yp=QA@mail.gmail.com>
-Subject: Re: [PATCH] ovl: move all parameter handling into params.{c,h}
-To:     Alexander Larsson <alexl@redhat.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZKQ2kBiRDsQREw6f@example.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 3, 2023 at 12:16=E2=80=AFPM Alexander Larsson <alexl@redhat.com=
-> wrote:
->
-> On Mon, Jun 26, 2023 at 4:40=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
-m> wrote:
-> >
-> > On Mon, Jun 26, 2023 at 1:23=E2=80=AFPM Christian Brauner <brauner@kern=
-el.org> wrote:
+On Tue, Jul 04, 2023 at 05:11:12PM +0200, Alexey Gladkov wrote:
+> On Tue, Jul 04, 2023 at 07:42:53PM +0800, Hou Tao wrote:
+> > Hi,
+> > 
+> > On 6/30/2023 7:08 PM, Alexey Gladkov wrote:
+> > > Since the introduction of idmapped mounts, file handling has become
+> > > somewhat more complicated. If the inode has been found through an
+> > > idmapped mount the idmap of the vfsmount must be used to get proper
+> > > i_uid / i_gid. This is important, for example, to correctly take into
+> > > account idmapped files when caching, LSM or for an audit.
+> > 
+> > Could you please add a bpf selftest for these newly added kfuncs ?
 > > >
-> > > While initially I thought that we couldn't move all new mount api
-> > > handling into params.{c,h} it turns out it is possible. So this just
-> > > moves a good chunk of code out of super.c and into params.{c,h}.
-> > >
-> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > > Signed-off-by: Alexey Gladkov <legion@kernel.org>
 > > > ---
+> > >  fs/mnt_idmapping.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 69 insertions(+)
 > > >
-> >
-> > Thank you for this cleanup!
-> >
-> > Alex,
-> >
-> > I took the liberty to resolve the conflicts with your branch, see:
-> >
-> > https://github.com/amir73il/linux/commits/overlay-verity
->
-> Thanks, I took a look at this and it seems good. Updated my branch to thi=
-s too.
->
+> > > diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
+> > > index 4905665c47d0..ba98ce26b883 100644
+> > > --- a/fs/mnt_idmapping.c
+> > > +++ b/fs/mnt_idmapping.c
+> > > @@ -6,6 +6,7 @@
+> > >  #include <linux/mnt_idmapping.h>
+> > >  #include <linux/slab.h>
+> > >  #include <linux/user_namespace.h>
+> > > +#include <linux/bpf.h>
+> > >  
+> > >  #include "internal.h"
+> > >  
+> > > @@ -271,3 +272,71 @@ void mnt_idmap_put(struct mnt_idmap *idmap)
+> > >  		kfree(idmap);
+> > >  	}
+> > >  }
+> > > +
+> > > +__diag_push();
+> > > +__diag_ignore_all("-Wmissing-prototypes",
+> > > +		  "Global functions as their definitions will be in vmlinux BTF");
+> > > +
+> > > +/**
+> > > + * bpf_is_idmapped_mnt - check whether a mount is idmapped
+> > > + * @mnt: the mount to check
+> > > + *
+> > > + * Return: true if mount is mapped, false if not.
+> > > + */
+> > > +__bpf_kfunc bool bpf_is_idmapped_mnt(struct vfsmount *mnt)
+> > > +{
+> > > +	return is_idmapped_mnt(mnt);
+> > > +}
+> > > +
+> > > +/**
+> > > + * bpf_file_mnt_idmap - get file idmapping
+> > > + * @file: the file from which to get mapping
+> > > + *
+> > > + * Return: The idmap for the @file.
+> > > + */
+> > > +__bpf_kfunc struct mnt_idmap *bpf_file_mnt_idmap(struct file *file)
+> > > +{
+> > > +	return file_mnt_idmap(file);
+> > > +}
+> > 
+> > A dummy question here: the implementation of file_mnt_idmap() is
+> > file->f_path.mnt->mnt_idmap, so if the passed file is a BTF pointer, is
+> > there any reason why we could not do such dereference directly in bpf
+> > program ?
+> 
+> I wanted to provide a minimal API for bpf programs. I thought that this
+> interface is stable enough, but after reading Christian's answer, it looks
+> like I was wrong.
 
-FYI, I pushed this cleanup commit to overlayfs-next, so
-you can rebase overlay-verity v5 on top of that.
+It isn't even about stability per se. It's unlikely that if we change
+internal details that types or arguments to these helpers change. That's
+why we did the work of abstracting this all away in the first place and
+making this an opaque type.
 
-I will send this cleanup to Linus, so we have a clean slate for
-the 6.6 cycle.
+The wider point is that according to the docs, kfuncs claim to have
+equivalent status to EXPORT_SYMBOL_*() with the added complexity of
+maybe having to take out of tree bpf programs into account.
 
-Thanks,
-Amir.
+Right now, we can look at the in-kernel users of is_idmapped_mnt(),
+convert them and then kill this thing off if we wanted to. As soon as
+this is a kfunc such an endeavour becomes a measure of "f**** around and
+find out". That's an entirely avoidable conflict if we don't even expose
+it in the first place.
