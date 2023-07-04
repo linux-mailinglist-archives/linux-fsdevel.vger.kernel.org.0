@@ -2,61 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 637E674786B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 20:44:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2331C747874
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 20:49:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231450AbjGDSoU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jul 2023 14:44:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59938 "EHLO
+        id S231511AbjGDSt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jul 2023 14:49:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229539AbjGDSoT (ORCPT
+        with ESMTP id S229539AbjGDSt1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jul 2023 14:44:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 199FBE64;
-        Tue,  4 Jul 2023 11:44:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A1AAC6135E;
-        Tue,  4 Jul 2023 18:44:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97002C433C8;
-        Tue,  4 Jul 2023 18:44:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688496258;
-        bh=hDKl5t70qzP61QO0xHoDVX4sSDqQj16F4n8PIeWs4E8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LxErgMXJnp0cfmV+O5rxWWMIkmrE0JJHLuo8fzSAK5UfRQ5M5H/hf7nAoicKWAwmj
-         Ti35s8MkIfk9rLT8O0CU66OjHfqZepcY5JkHJuGxmVMmbn0QedXi0Oli4T7n0tx2dn
-         2apxqvgxtyxA7hLYyrhJjZXSQZANCCPRvs+vXyi6Ko1/f6/QrZipQYSFHFkxTPuyfB
-         vFxy0AcQfGCj7455j2ShPiqvuXcZNqmDvZ+uJOnifaWMUvOM3qMikocUj12or/Wu6S
-         oxogFZNsQ/C9Hrp/vEJs28m/nDT0FDF/M5HkFmFpBksziAWkaW5irizEvxEY4dEDkC
-         okLjDgZZxTsFQ==
-Date:   Tue, 4 Jul 2023 11:44:16 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Kees Cook <keescook@google.com>,
-        Ted Tso <tytso@mit.edu>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Alexander Popov <alex.popov@linux.com>,
-        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH 1/6] block: Add config option to not allow writing to
- mounted devices
-Message-ID: <20230704184416.GE1851@sol.localdomain>
-References: <20230704122727.17096-1-jack@suse.cz>
- <20230704125702.23180-1-jack@suse.cz>
+        Tue, 4 Jul 2023 14:49:27 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91EABE64;
+        Tue,  4 Jul 2023 11:49:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ohNOzyes+e4OostGrU+ZixNYfYaBWOr0ibzYC94ovbM=; b=lKjbGfDsnq2+0JpIMZjxf3skmE
+        v5azy4pkcGGtliPL4/7syjd4S+tA6eoy0UIS4WLE7imoaRj6Rcij0mNrFYiiQkQROubarPZ85dBZb
+        eY5soakeayn1oOFXrIFVWX4rEt2nfAKYs4lPHO+/RiN1dkWsKk/DMxiJGoeDoCq6kXIxRTUssz267
+        hVoRLGi6BcWEKXY+UJ1VOQuFR9impFPD2orAyo/LtQhguNlnUQD0sODBk42HLIGK0g3bUw7ZMJH2C
+        tRdOxIbKCGmzRha/mohw2QKW++5YSF1qHPAGS+xGbvy8MI683zjU2PisPiniAyz58sPv+qr3Wv3Dw
+        izD93Bjg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qGl5Y-009Nna-4h; Tue, 04 Jul 2023 18:49:24 +0000
+Date:   Tue, 4 Jul 2023 19:49:24 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org,
+        butt3rflyh4ck <butterflyhuangxx@gmail.com>
+Subject: Re: [PATCH] reiserfs: Check the return value from __getblk()
+Message-ID: <ZKRptMjtL6X74X1B@casper.infradead.org>
+References: <ZJ32+b+3O8Z6cuRo@casper.infradead.org>
+ <20230630-kerbholz-koiteich-a7395bc04eae@brauner>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230704125702.23180-1-jack@suse.cz>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <20230630-kerbholz-koiteich-a7395bc04eae@brauner>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -64,60 +52,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 04, 2023 at 02:56:49PM +0200, Jan Kara wrote:
-> Writing to mounted devices is dangerous and can lead to filesystem
-> corruption as well as crashes. Furthermore syzbot comes with more and
-> more involved examples how to corrupt block device under a mounted
-> filesystem leading to kernel crashes and reports we can do nothing
-> about. Add tracking of writers to each block device and a kernel cmdline
-> argument which controls whether writes to block devices open with
-> BLK_OPEN_BLOCK_WRITES flag are allowed. We will make filesystems use
-> this flag for used devices.
+On Fri, Jun 30, 2023 at 11:03:05AM +0200, Christian Brauner wrote:
+> From: Matthew Wilcox <willy@infradead.org>
 > 
-> Syzbot can use this cmdline argument option to avoid uninteresting
-> crashes. Also users whose userspace setup does not need writing to
-> mounted block devices can set this option for hardening.
+> On Thu, 29 Jun 2023 23:26:17 +0200, Matthew Wilcox wrote:
+> > __getblk() can return a NULL pointer if we run out of memory or if
+> > we try to access beyond the end of the device; check it and handle it
+> > appropriately.
+> > 
+> > [...]
 > 
-> Link: https://lore.kernel.org/all/60788e5d-5c7c-1142-e554-c21d709acfd9@linaro.org
-> Signed-off-by: Jan Kara <jack@suse.cz>
+> Willy's original commit with message id
+> <20230605142335.2883264-1-willy@infradead.org> didn't show up on lore.
+> Might be because reiserfs-devel isn't a list tracked by lore; not sure.
+> So I grabbed this from somewhere else.
+> 
+> In any case, I picked this up now.
+> 
 > ---
->  block/Kconfig             | 16 ++++++++++
->  block/bdev.c              | 63 ++++++++++++++++++++++++++++++++++++++-
->  include/linux/blk_types.h |  1 +
->  include/linux/blkdev.h    |  3 ++
->  4 files changed, 82 insertions(+), 1 deletion(-)
 > 
-> diff --git a/block/Kconfig b/block/Kconfig
-> index 86122e459fe0..8b4fa105b854 100644
-> --- a/block/Kconfig
-> +++ b/block/Kconfig
-> @@ -77,6 +77,22 @@ config BLK_DEV_INTEGRITY_T10
->  	select CRC_T10DIF
->  	select CRC64_ROCKSOFT
->  
-> +config BLK_DEV_WRITE_MOUNTED
-> +	bool "Allow writing to mounted block devices"
-> +	default y
-> +	help
-> +	When a block device is mounted, writing to its buffer cache very likely
-> +	going to cause filesystem corruption. It is also rather easy to crash
-> +	the kernel in this way since the filesystem has no practical way of
-> +	detecting these writes to buffer cache and verifying its metadata
-> +	integrity. However there are some setups that need this capability
-> +	like running fsck on read-only mounted root device, modifying some
-> +	features on mounted ext4 filesystem, and similar. If you say N, the
-> +	kernel will prevent processes from writing to block devices that are
-> +	mounted by filesystems which provides some more protection from runaway
-> +	priviledged processes. If in doubt, say Y. The configuration can be
-> +	overridden with bdev_allow_write_mounted boot option.
+> Applied to the vfs.misc branch of the vfs/vfs.git tree.
+> Patches in the vfs.misc branch should appear in linux-next soon.
+> 
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+> 
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
 
-Does this prevent the underlying storage from being written to?  Say if the
-mounted block device is /dev/sda1 and someone tries to write to /dev/sda in the
-region that contains sda1.
+Acked-by: Edward Shishkin <edward.shishkin@gmail.com>
 
-I *think* the answer is no, writes to /dev/sda are still allowed since the goal
-is just to prevent writes to the buffer cache of mounted block devices, not
-writes to the underlying storage.  That is really something that should be
-stated explicitly, though.
-
-- Eric
+was added in a response to the original, FYI
