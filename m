@@ -2,69 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 882C4746817
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 05:46:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C66C874684B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 06:21:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230486AbjGDDqS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jul 2023 23:46:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46578 "EHLO
+        id S230114AbjGDEU4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jul 2023 00:20:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230322AbjGDDp5 (ORCPT
+        with ESMTP id S229546AbjGDEUx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jul 2023 23:45:57 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A028C1B2
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jul 2023 20:45:28 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1b898cfa6a1so2004415ad.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jul 2023 20:45:28 -0700 (PDT)
+        Tue, 4 Jul 2023 00:20:53 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1339E1
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jul 2023 21:20:50 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1b3ecb17721so8320015ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jul 2023 21:20:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1688442328; x=1691034328;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        d=bytedance.com; s=google; t=1688444450; x=1691036450;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=MFeBrddeuJ5VLdpmCCc9Ly4sKMWZlJ9dQaH0OIDXyXU=;
-        b=j7xJWhzFM4GE3eR0BWlTsy0HOBZgoak2dvLTatqMXnZnLNlVtwEQEMD37hReh1XlxL
-         r7hBjmyn6FTskoa4La7xZKdevvzdRYT77+N3epv4gV4kf7cq17ylBfxUBggc5e3s855p
-         GBBkk0n7PQiIlJc4/4tEUrT3R4iVDw8hzgofihKHl2t9qpb1Wo/DBMbPRp1jN35Ysfyk
-         NehRpBrYeu3yLN9/0Wq7Sp995UEH4u6Jpn1UiV9vGd2Ip0zNqgcG1X9kw2r/e/NkF6jp
-         XN82IHgovy+BsnEHQ6hQjvSqng1pgoniLOJy363s3drrdrxX6tuIJ1PwqNuLdqN7Qt1x
-         0hhA==
+        bh=GQygWmEkN5we1RDXz7pkswh4Aib1XAu/CfaGHRydgSY=;
+        b=XeuQJZi5Fn6Y2V9hGSigVM6DlY0AfUTIFIISI4oYWBRMzWCz140HUa7CQjaNBi14bE
+         cHtd8fLDIrCGQBIfQGMwnS/brInUQYbP7hBcfyGRIQ1PjMp/HYkTtUH566cUrbR/ECQ/
+         xgdHBwtI/eZZjW8JzcYMKGfCZEk7y3wKjAqCcQ/GPr5gBl0a/ckeJOpen9Ef2juxuc3/
+         wEqaGSNOBlDbpHGogDBoCGy9PU9WR6GNvGNEKT/s6Kr2TWWm2I0aMPMLKNDBQdCYrtki
+         T6Etm7ZpcAKi7am901F1VomiYro58/OdqGB/tQsJF9HxpWuWHjmLtutUj9PpgNQY85My
+         tCog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688442328; x=1691034328;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        d=1e100.net; s=20221208; t=1688444450; x=1691036450;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MFeBrddeuJ5VLdpmCCc9Ly4sKMWZlJ9dQaH0OIDXyXU=;
-        b=DtTyUFN92gGuMnGGUnqZlCJosQtDysPXm6dsunei6mCfHp+Hmpimft/mhgeohoxvqQ
-         o9Ev3R/ICqsb/fO34V038vVZI8F3rBwT4PI6/Rmxiknxm7VuxSuTq2tsy5xIX0SgTrmj
-         6Wc/r1rbyGkcdHX5UURVsEvVODalZeKCKYS4fKSw2+Kl1TXgNlyKN0KAtZo5jGuYLyIY
-         p3a3F8hZUkrMdAdWnXqajEJMd8bybAgZV/O9xlripgmKTHvdhIgmlBx1OrWx2JjyBD3p
-         z5PJnnpzhMXlVaggvby4V15CSHmh9Uh5hVyLBMawVsBI1HCPcVKccCKhIbXxABBRlVPZ
-         a0ZA==
-X-Gm-Message-State: ABy/qLaJomg7yRWdb96zdRvNdOUCBS6fy3EqIhgi2rVsl46Zo5xR9GFs
-        4z7eDxYapYYlfq1LUMamrlEkzQ==
-X-Google-Smtp-Source: APBJJlF81QfMj+OzGuweGT/AC35DngvuObAYHLJM7qqWJeHFGWrQw9pznSu7LGwsdhDNw+giWeybWA==
-X-Received: by 2002:a17:902:b20b:b0:1ae:4567:2737 with SMTP id t11-20020a170902b20b00b001ae45672737mr12710934plr.2.1688442328020;
-        Mon, 03 Jul 2023 20:45:28 -0700 (PDT)
+        bh=GQygWmEkN5we1RDXz7pkswh4Aib1XAu/CfaGHRydgSY=;
+        b=KOxqdB2NFoQLX8ygXACKW9VDxTplq1ER+YbiJyZWyZA3oUKPri3rpnrtpZ9SmXfhqv
+         bhYsJ+aTmXDTm2AM9HaQBs4wTrxi5dLhLdUpBLdqrCM5Fnb6VM54IrvS/sGgL4BUlMBQ
+         uA/RJyjkI8LvSejjYwiSPchFaBZBevtyIFKYtOPz6NXJ0DbQBOQNlpmoGlGBAYGCE6X7
+         p+LkZdA83mdHUaR+DM2BiHxjdgmAvrBI5UIhJ/fxOMATneKbyNPKcIIetQOntIIrJgQA
+         rEbhNxgBAT9fUMAtDSM6MOILUXC+6mlWNbDQzugPaQpb1Yo9P2VV+q8Qa8GS7ybym0dh
+         t7Bw==
+X-Gm-Message-State: ABy/qLZHcgsgP8hvDZA27BYmVEJrtVW6RwOhTD2wX8LGzCgf1uzwaikE
+        yusQErEpO/vMw21XGW0Z1WW1hw==
+X-Google-Smtp-Source: APBJJlGoap5rgOO/5AFt7nvyzJipf1m4SqVj/7RLWlsyusW9U2QREChVOt6WzCmgKb9akbjSddWJzw==
+X-Received: by 2002:a17:903:94:b0:1ac:40f7:8b5a with SMTP id o20-20020a170903009400b001ac40f78b5amr12672869pld.3.1688444450336;
+        Mon, 03 Jul 2023 21:20:50 -0700 (PDT)
 Received: from [10.70.252.135] ([203.208.167.147])
-        by smtp.gmail.com with ESMTPSA id az10-20020a170902a58a00b001b1866f7b5csm15891733plb.138.2023.07.03.20.45.19
+        by smtp.gmail.com with ESMTPSA id j6-20020a170902c3c600b001b8918da8d1sm3233936plj.80.2023.07.03.21.20.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jul 2023 20:45:27 -0700 (PDT)
-Message-ID: <3efa68e0-b04f-5c11-4fe2-2db0784064fc@bytedance.com>
-Date:   Tue, 4 Jul 2023 11:45:16 +0800
+        Mon, 03 Jul 2023 21:20:49 -0700 (PDT)
+Message-ID: <38b14080-4ce5-d300-8a0a-c630bca6806b@bytedance.com>
+Date:   Tue, 4 Jul 2023 12:20:41 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
  Gecko/20100101 Thunderbird/102.12.0
 Subject: Re: [PATCH 24/29] mm: vmscan: make global slab shrink lockless
 Content-Language: en-US
-To:     paulmck@kernel.org, Dave Chinner <david@fromorbit.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org,
-        tkhai@ya.ru, roman.gushchin@linux.dev, djwong@kernel.org,
-        brauner@kernel.org, tytso@mit.edu, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        dm-devel@redhat.com, linux-raid@vger.kernel.org,
-        linux-bcache@vger.kernel.org,
+From:   Qi Zheng <zhengqi.arch@bytedance.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     paulmck@kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        akpm@linux-foundation.org, tkhai@ya.ru, roman.gushchin@linux.dev,
+        djwong@kernel.org, brauner@kernel.org, tytso@mit.edu,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, dm-devel@redhat.com,
+        linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
@@ -73,208 +74,235 @@ References: <20230622085335.77010-1-zhengqi.arch@bytedance.com>
  <20230622085335.77010-25-zhengqi.arch@bytedance.com>
  <cf0d9b12-6491-bf23-b464-9d01e5781203@suse.cz>
  <ZJU708VIyJ/3StAX@dread.disaster.area>
- <cc894c77-717a-4e9f-b649-48bab40e7c60@paulmck-laptop>
-From:   Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <cc894c77-717a-4e9f-b649-48bab40e7c60@paulmck-laptop>
+ <a21047bb-3b87-a50a-94a7-f3fa4847bc08@bytedance.com>
+ <ZJYaYv4pACmCaBoT@dread.disaster.area>
+ <a7baf44a-1eb8-d4e1-d112-93cf9cdb7beb@bytedance.com>
+In-Reply-To: <a7baf44a-1eb8-d4e1-d112-93cf9cdb7beb@bytedance.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Dave,
 
-
-On 2023/7/4 00:39, Paul E. McKenney wrote:
-> On Fri, Jun 23, 2023 at 04:29:39PM +1000, Dave Chinner wrote:
->> On Thu, Jun 22, 2023 at 05:12:02PM +0200, Vlastimil Babka wrote:
->>> On 6/22/23 10:53, Qi Zheng wrote:
->>>> @@ -1067,33 +1068,27 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
->>>>   	if (!mem_cgroup_disabled() && !mem_cgroup_is_root(memcg))
->>>>   		return shrink_slab_memcg(gfp_mask, nid, memcg, priority);
->>>>   
->>>> -	if (!down_read_trylock(&shrinker_rwsem))
->>>> -		goto out;
->>>> -
->>>> -	list_for_each_entry(shrinker, &shrinker_list, list) {
->>>> +	rcu_read_lock();
->>>> +	list_for_each_entry_rcu(shrinker, &shrinker_list, list) {
->>>>   		struct shrink_control sc = {
->>>>   			.gfp_mask = gfp_mask,
->>>>   			.nid = nid,
->>>>   			.memcg = memcg,
->>>>   		};
->>>>   
->>>> +		if (!shrinker_try_get(shrinker))
->>>> +			continue;
->>>> +		rcu_read_unlock();
+On 2023/6/24 19:08, Qi Zheng wrote:
+> Hi Dave,
+> 
+> On 2023/6/24 06:19, Dave Chinner wrote:
+>> On Fri, Jun 23, 2023 at 09:10:57PM +0800, Qi Zheng wrote:
+>>> On 2023/6/23 14:29, Dave Chinner wrote:
+>>>> On Thu, Jun 22, 2023 at 05:12:02PM +0200, Vlastimil Babka wrote:
+>>>>> On 6/22/23 10:53, Qi Zheng wrote:
+>>>> Yes, I suggested the IDR route because radix tree lookups under RCU
+>>>> with reference counted objects are a known safe pattern that we can
+>>>> easily confirm is correct or not.  Hence I suggested the unification
+>>>> + IDR route because it makes the life of reviewers so, so much
+>>>> easier...
 >>>
->>> I don't think you can do this unlock?
-> 
-> Sorry to be slow to respond here, this one fell through the cracks.
-> And thank you to Qi for reminding me!
-> 
-> If you do this unlock, you had jolly well better nail down the current
-> element (the one referenced by shrinker), for example, by acquiring an
-> explicit reference count on the object.  And presumably this is exactly
-> what shrinker_try_get() is doing.  And a look at your 24/29 confirms this,
-> at least assuming that shrinker->refcount is set to zero before the call
-> to synchronize_rcu() in free_module() *and* that synchronize_rcu() doesn't
-> start until *after* shrinker_put() calls complete().  Plus, as always,
-> the object must be removed from the list before the synchronize_rcu()
-> starts.  (On these parts of the puzzle, I defer to those more familiar
-> with this code path.  And I strongly suggest carefully commenting this
-> type of action-at-a-distance design pattern.)
-
-Yeah, I think I've done it like above. A more detailed timing diagram is
-below.
-
-> 
-> Why is this important?  Because otherwise that object might be freed
-> before you get to the call to rcu_read_lock() at the end of this loop.
-> And if that happens, list_for_each_entry_rcu() will be walking the
-> freelist, which is quite bad for the health and well-being of your kernel.
-> 
-> There are a few other ways to make this sort of thing work:
-> 
-> 1.	Defer the shrinker_put() to the beginning of the loop.
-> 	You would need a flag initially set to zero, and then set to
-> 	one just before (or just after) the rcu_read_lock() above.
-> 	You would also need another shrinker_old pointer to track the
-> 	old pointer.  Then at the top of the loop, if the flag is set,
-> 	invoke shrinker_put() on shrinker_old.	This ensures that the
-> 	previous shrinker structure stays around long enough to allow
-> 	the loop to find the next shrinker structure in the list.
-> 
-> 	This approach is attractive when the removal code path
-> 	can invoke shrinker_put() after the grace period ends.
-> 
-> 2.	Make shrinker_put() invoke call_rcu() when ->refcount reaches
-> 	zero, and have the callback function free the object.  This of
-> 	course requires adding an rcu_head structure to the shrinker
-> 	structure, which might or might not be a reasonable course of
-> 	action.  If adding that rcu_head is reasonable, this simplifies
-> 	the logic quite a bit.
-> 
-> 3.	For the shrinker-structure-removal code path, remove the shrinker
-> 	structure, then remove the initial count from ->refcount,
-> 	and then keep doing grace periods until ->refcount is zero,
-> 	then do one more.  Of course, if the result of removing the
-> 	initial count was zero, then only a single additional grace
-> 	period is required.
-> 
-> 	This would need to be carefully commented, as it is a bit
-> 	unconventional.
-
-Thanks for such a detailed addition!
-
-> 
-> There are probably many other ways, but just to give an idea of a few
-> other ways to do this.
-> 
->>>> +
->>>>   		ret = do_shrink_slab(&sc, shrinker, priority);
->>>>   		if (ret == SHRINK_EMPTY)
->>>>   			ret = 0;
->>>>   		freed += ret;
->>>> -		/*
->>>> -		 * Bail out if someone want to register a new shrinker to
->>>> -		 * prevent the registration from being stalled for long periods
->>>> -		 * by parallel ongoing shrinking.
->>>> -		 */
->>>> -		if (rwsem_is_contended(&shrinker_rwsem)) {
->>>> -			freed = freed ? : 1;
->>>> -			break;
->>>> -		}
->>>> -	}
->>>>   
->>>> -	up_read(&shrinker_rwsem);
->>>> -out:
->>>> +		rcu_read_lock();
->>>
->>> That new rcu_read_lock() won't help AFAIK, the whole
->>> list_for_each_entry_rcu() needs to be under the single rcu_read_lock() to be
->>> safe.
+>>> In fact, I originally planned to try the unification + IDR method you
+>>> suggested at the beginning. But in the case of CONFIG_MEMCG disabled,
+>>> the struct mem_cgroup is not even defined, and root_mem_cgroup and
+>>> shrinker_info will not be allocated.  This required more code 
+>>> changes, so
+>>> I ended up keeping the shrinker_list and implementing the above pattern.
 >>
->> Yeah, that's the pattern we've been taught and the one we can look
->> at and immediately say "this is safe".
+>> Yes. Go back and read what I originally said needed to be done
+>> first. In the case of CONFIG_MEMCG=n, a dummy root memcg still needs
+>> to exist that holds all of the global shrinkers. Then shrink_slab()
+>> is only ever passed a memcg that should be iterated.
 >>
->> This is a different pattern, as has been explained bi Qi, and I
->> think it *might* be safe.
->>
->> *However.*
->>
->> Right now I don't have time to go through a novel RCU list iteration
->> pattern it one step at to determine the correctness of the
->> algorithm. I'm mostly worried about list manipulations that can
->> occur outside rcu_read_lock() section bleeding into the RCU
->> critical section because rcu_read_lock() by itself is not a memory
->> barrier.
->>
->> Maybe Paul has seen this pattern often enough he could simply tell
->> us what conditions it is safe in. But for me to work that out from
->> first principles? I just don't have the time to do that right now.
+>> Yes, it needs changes external to the shrinker code itself to be
+>> made to work. And even if memcg's are not enabled, we can still use
+>> the memcg structures to ensure a common abstraction is used for the
+>> shrinker tracking infrastructure....
 > 
-> If the code does just the right sequence of things on the removal path
-> (remove, decrement reference, wait for reference to go to zero, wait for
-> grace period, free), then it would work.  If this is what is happening,
-> I would argue for more comments.  ;-)
+> Yeah, what I imagined before was to define a more concise struct
+> mem_cgroup in the case of CONFIG_MEMCG=n, then allocate a dummy root
+> memcg on system boot:
+> 
+> #ifdef !CONFIG_MEMCG
+> 
+> struct shrinker_info {
+>      struct rcu_head rcu;
+>      atomic_long_t *nr_deferred;
+>      unsigned long *map;
+>      int map_nr_max;
+> };
+> 
+> struct mem_cgroup_per_node {
+>      struct shrinker_info __rcu    *shrinker_info;
+> };
+> 
+> struct mem_cgroup {
+>      struct mem_cgroup_per_node *nodeinfo[];
+> };
+> 
+> #endif
 
-The order of the removal path is slightly different from this:
+These days I tried doing this:
 
-     shrink_slab                 unregister_shrinker
-     ===========                 ===================
-		
-    shrinker_try_get()
-    rcu_read_unlock()		
-                                 1. decrement initial reference
-				shrinker_put()
-				2. wait for reference to go to zero
-				wait_for_completion()
-    rcu_read_lock()
+1. CONFIG_MEMCG && !mem_cgroup_disabled()
 
-    shrinker_put()
-				3. remove the shrinker from list
-				list_del_rcu()
-                                 4. wait for grace period
-				kfree_rcu()/synchronize_rcu()
+    track all global shrinkers with root_mem_cgroup.
 
+2. CONFIG_MEMCG && mem_cgroup_disabled()
 
-    list_for_each_entry()
+    the root_mem_cgroup is also allocated in this case, so still use
+    root_mem_cgroup to track all global shrinkers.
 
-    shrinker_try_get()
-    rcu_read_unlock()
-				5. free the shrinker
+3. !CONFIG_MEMCG
 
-So the order is: decrement reference, wait for reference to go to zero,
-remove, wait for grace period, free.
+    allocate a dummy memcg during system startup (after cgroup_init())
+    and use it to track all global shrinkers
 
-I think this can work. And we can only do the *step 3* after we hold the
-RCU read lock again, right? Please let me know if I missed something.
+This works, but needs to modify the startup order of some subsystems,
+because some shrinkers will be registered before root_mem_cgroup is
+allocated, such as:
+
+1. rcu-kfree shrinker in rcu_init()
+2. super block shrinkers in vfs_caches_init()
+
+And cgroup_init() also depends on some file system infrastructure, so
+I made some changes (rough and unorganized):
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index e157efc54023..6a12d3d0064e 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4706,7 +4706,7 @@ static void __init init_mount_tree(void)
+
+  void __init mnt_init(void)
+  {
+-       int err;
++       //int err;
+
+         mnt_cache = kmem_cache_create("mnt_cache", sizeof(struct mount),
+                         0, SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT, 
+NULL);
+@@ -4725,15 +4725,7 @@ void __init mnt_init(void)
+         if (!mount_hashtable || !mountpoint_hashtable)
+                 panic("Failed to allocate mount hash table\n");
+
+-       kernfs_init();
+-
+-       err = sysfs_init();
+-       if (err)
+-               printk(KERN_WARNING "%s: sysfs_init error: %d\n",
+-                       __func__, err);
+-       fs_kobj = kobject_create_and_add("fs", NULL);
+-       if (!fs_kobj)
+-               printk(KERN_WARNING "%s: kobj create error\n", __func__);
+         shmem_init();
+         init_rootfs();
+         init_mount_tree();
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 7d9c2a63b7cd..d87c67f6f66e 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -119,6 +119,7 @@ static inline void call_rcu_hurry(struct rcu_head 
+*head, rcu_callback_t func)
+
+  /* Internal to kernel */
+  void rcu_init(void);
++void rcu_shrinker_init(void);
+  extern int rcu_scheduler_active;
+  void rcu_sched_clock_irq(int user);
+  void rcu_report_dead(unsigned int cpu);
+diff --git a/init/main.c b/init/main.c
+index ad920fac325c..4190fc6d10ad 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -1049,14 +1049,22 @@ void start_kernel(void)
+         security_init();
+         dbg_late_init();
+         net_ns_init();
++       kernfs_init();
++       if (sysfs_init())
++               printk(KERN_WARNING "%s: sysfs_init error\n",
++                       __func__);
++       fs_kobj = kobject_create_and_add("fs", NULL);
++       if (!fs_kobj)
++               printk(KERN_WARNING "%s: kobj create error\n", __func__);
++       proc_root_init();
++       cgroup_init();
+         vfs_caches_init();
+         pagecache_init();
+         signals_init();
+         seq_file_init();
+-       proc_root_init();
+         nsfs_init();
+         cpuset_init();
+-       cgroup_init();
++       rcu_shrinker_init();
+         taskstats_init_early();
+         delayacct_init();
+
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index d068ce3567fc..71a04ae8defb 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -4953,7 +4953,10 @@ static void __init kfree_rcu_batch_init(void)
+                 INIT_DELAYED_WORK(&krcp->page_cache_work, 
+fill_page_cache_func);
+                 krcp->initialized = true;
+         }
++}
+
++void __init rcu_shrinker_init(void)
++{
+         kfree_rcu_shrinker = shrinker_alloc(0, "rcu-kfree");
+         if (!kfree_rcu_shrinker) {
+                 pr_err("Failed to allocate kfree_rcu() shrinker!\n");
+
+I adjusted it step by step according to the errors reported, and there
+may be hidden problems (needs more review and testing).
+
+In addition, unifying the processing of global and memcg slab shrink
+does have many benefits:
+
+1. shrinker::nr_deferred can be removed
+2. shrinker_list can be removed
+3. simplifies the existing code logic and subsequent lockless processing
+
+But I'm still a bit apprehensive about modifying the boot order. :(
+
+What do you think about this?
 
 Thanks,
 Qi
 
+
 > 
-> 							Thanx, Paul
+> But I have a concern: if all global shrinkers are tracking with the
+> info->map of root memcg, a shrinker->id needs to be assigned to them,
+> which will cause info->map_nr_max to become larger than before, then
+> making the traversal of info->map slower.
 > 
->>> IIUC this is why Dave in [4] suggests unifying shrink_slab() with
->>> shrink_slab_memcg(), as the latter doesn't iterate the list but uses IDR.
 >>
->> Yes, I suggested the IDR route because radix tree lookups under RCU
->> with reference counted objects are a known safe pattern that we can
->> easily confirm is correct or not.  Hence I suggested the unification
->> + IDR route because it makes the life of reviewers so, so much
->> easier...
+>>> If the above pattern is not safe, I will go back to the unification +
+>>> IDR method.
 >>
->> Cheers,
+>> And that is exactly how we got into this mess in the first place....
+> 
+> I only found one similar pattern in the kernel:
+> 
+> fs/smb/server/oplock.c:find_same_lease_key/smb_break_all_levII_oplock/lookup_lease_in_table
+> 
+> But IIUC, the refcount here needs to be decremented after holding
+> rcu lock as I did above.
+> 
+> So regardless of whether we choose unification + IDR in the end, I still
+> want to confirm whether the pattern I implemented above is safe. :)
+> 
+> Thanks,
+> Qi
+> 
 >>
->> Dave.
->> -- 
->> Dave Chinner
->> david@fromorbit.com
+>> -Dave
