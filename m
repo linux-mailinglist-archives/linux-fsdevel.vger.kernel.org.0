@@ -2,104 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A635C7470E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 14:22:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EAA27470BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 14:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231648AbjGDMWp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jul 2023 08:22:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39110 "EHLO
+        id S231534AbjGDMWf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jul 2023 08:22:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231575AbjGDMWh (ORCPT
+        with ESMTP id S230482AbjGDMWe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jul 2023 08:22:37 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ACD110EC;
-        Tue,  4 Jul 2023 05:22:27 -0700 (PDT)
+        Tue, 4 Jul 2023 08:22:34 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9EC910E4;
+        Tue,  4 Jul 2023 05:22:26 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 5D9E422868;
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 4C7B022866;
         Tue,  4 Jul 2023 12:22:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
         t=1688473345; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Y5Z0PpLwK7LWiMwHAJV3g58wt4Pu7/r/oCMflfsspxI=;
-        b=Yfx9ztWkVatt0fVfNPxdamFDjV837Nu56ImHpS3yWvwdcdXXyeJ1ONnOd+6RA+xJckyxi2
-        Fr1h4BOlDMHKk2yJxxmlop9vtybjvkzPRI8sOxjaR75gWlVSNQjeXkVo/sHlsqPbUV+LJG
-        uG3Fi84JhxR4KPvRm9XoLJxwd0lLAD0=
+        bh=l/9tNwICvUuoTLkA/Gy/9VS1sV+XMpAvoque5APHO+Y=;
+        b=hIvXKyHLGq6INpq/5ZMcv1D8Go7SKKHbVm9SfbLZHD7E5lLf6RRKJSA6PiZUZA6xXo5pRk
+        yjZ6P2CXMd0gPQ/kslbbPX5vRbX7bI/+v1O62x3UCQ0f2S1hhVrpbCmYasCbTbJkx943Pj
+        6xKFsURWFEdrTynKCTY+QJhqw1Jq+QE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
         s=susede2_ed25519; t=1688473345;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Y5Z0PpLwK7LWiMwHAJV3g58wt4Pu7/r/oCMflfsspxI=;
-        b=vF6CF3OlMOzmEcsCihpnKLEsv6y6u4duYbSxFgbJ4TrA9OaJnML/9G2T1z6YHtiVQ3zwq6
-        zVCIM6qtTQOYAOBg==
+        bh=l/9tNwICvUuoTLkA/Gy/9VS1sV+XMpAvoque5APHO+Y=;
+        b=6EqbD6Z4X0yzKMBmMUuaoRqAyFEwmgpyS6su6syRsBMdNf6YnzxtPX+Qmh22k+p4/YIVc7
+        GlGT/YB0Yo/hPhDw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 433C713A97;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3BB4013A90;
         Tue,  4 Jul 2023 12:22:25 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id fiTSDwEPpGQQMAAAMHmgww
+        id xSONDgEPpGQPMAAAMHmgww
         (envelope-from <jack@suse.cz>); Tue, 04 Jul 2023 12:22:25 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 97B9EA0763; Tue,  4 Jul 2023 14:22:24 +0200 (CEST)
+        id 9C1D2A0764; Tue,  4 Jul 2023 14:22:24 +0200 (CEST)
 From:   Jan Kara <jack@suse.cz>
 To:     <linux-block@vger.kernel.org>
 Cc:     <linux-fsdevel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-        Alasdair Kergon <agk@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        David Sterba <dsterba@suse.com>, dm-devel@redhat.com,
-        drbd-dev@lists.linbit.com, Gao Xiang <xiang@kernel.org>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        jfs-discussion@lists.sourceforge.net,
-        Joern Engel <joern@lazybastard.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-xfs@vger.kernel.org,
-        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Minchan Kim <minchan@kernel.org>, ocfs2-devel@oss.oracle.com,
-        reiserfs-devel@vger.kernel.org,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Song Liu <song@kernel.org>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        target-devel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        xen-devel@lists.xenproject.org
-Subject: [PATCH 01/32] block: Provide blkdev_get_handle_* functions
-Date:   Tue,  4 Jul 2023 14:21:28 +0200
-Message-Id: <20230704122224.16257-1-jack@suse.cz>
+        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>
+Subject: [PATCH 02/32] block: Use file->f_flags for determining exclusive opens in file_to_blk_mode()
+Date:   Tue,  4 Jul 2023 14:21:29 +0200
+Message-Id: <20230704122224.16257-2-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20230629165206.383-1-jack@suse.cz>
 References: <20230629165206.383-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5599; i=jack@suse.cz; h=from:subject; bh=repJSb0/C5PfG8Cx5q/n/kNJZOabhc2tYWxiICNNTtg=; b=owGbwMvMwME4Z+4qdvsUh5uMp9WSGFKW8J3uuK2gorZt+knOzhX81snTGX/57phWXzfXM3w+50Xl rfb7OxmNWRgYORhkxRRZVkde1L42z6hra6iGDMwgViaQKQxcnAIwERsLDobphetsJoi99quKYIut26 wgv/K+lUS+secym02t85epsOp8rtu3acJMN1WFRiX1irKCnSu+LXh+rVyp65RAEGttl+XcP32mOR0n ZJYFm7orF8YFnhVftYzZjm2Rva3I0oqXdap/bUJr8qNjVVfHnBRiFEv0Ocgpck1jlTHfEWUu71NrKu 8EXrbnsfD7wm1qKHDqnnnD21y1n9OFHn8/7qJz4O19panPLvMxrOrNn970IcH6rnhQsq0ZS1v6JUfN RS5ah5XMXNI/c14+vVlVkPVI9n2HQNZlEfdsO13VFx17Z7f0vKnN9UZZ3Zii6WbsWS81/qefFs1Ljl +dK1sZIpSRdXfx+jksz9T4il4AAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1927; i=jack@suse.cz; h=from:subject; bh=PTBdwG8gfONrGSEGa9q/ZP/2NSFGyJEWjshLi4HwM8M=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBkpA7MZiGCgbc9cMHyz7m328ACV4/6aSDyLe/6pWD6 8KPnwoiJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZKQOzAAKCRCcnaoHP2RA2WRVB/ wLMkALrjdQvw8JJ1YAIkFbjrSf7wmZ1fGYCYGg/i/x3LV8xPntNWlBqLbselAg2rRiIeA8HEKEL3y8 R8GLzy4LHb1a59QE7GHtoVL89o9azj2ZvFo9B5I973lqbPJSq6Hdz9ThhvQUaagClKEut/R5IS82oJ pG6JtIbE3bB/r2fbgT5v0LBAJW1ngMmwUKTkB/mIx7KQaM6PMxhGVuNydOnDrHh/xR7yzIqxBlQGjH RZsmxP62TR8VwiEnfpP+spmhZgUFjDBGCABEl4Ie/Iodt5gNJXQLjFiO3WiEgdza6vp0soCyEAab9M zJtR5ybhQRE6gT8krJiE9Bv4mlbbrJ
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -107,164 +75,62 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Create struct bdev_handle that contains all parameters that need to be
-passed to blkdev_put() and provide blkdev_get_handle_* functions that
-return this structure instead of plain bdev pointer. This will
-eventually allow us to pass one more argument to blkdev_put() without
-too much hassle.
+Use file->f_flags instead of file->private_data for determining whether
+we should set BLK_OPEN_EXCL flag. This allows us to remove somewhat
+awkward setting of file->private_data before calling file_to_blk_mode()
+and it also makes following conversion to blkdev_get_handle_by_dev()
+simpler.
 
-CC: Alasdair Kergon <agk@redhat.com>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Anna Schumaker <anna@kernel.org>
-CC: Chao Yu <chao@kernel.org>
-CC: Christian Borntraeger <borntraeger@linux.ibm.com>
-CC: Coly Li <colyli@suse.de
-CC: "Darrick J. Wong" <djwong@kernel.org>
-CC: Dave Kleikamp <shaggy@kernel.org>
-CC: David Sterba <dsterba@suse.com>
-CC: dm-devel@redhat.com
-CC: drbd-dev@lists.linbit.com
-CC: Gao Xiang <xiang@kernel.org>
-CC: Jack Wang <jinpu.wang@ionos.com>
-CC: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: jfs-discussion@lists.sourceforge.net
-CC: Joern Engel <joern@lazybastard.org>
-CC: Joseph Qi <joseph.qi@linux.alibaba.com>
-CC: Kent Overstreet <kent.overstreet@gmail.com>
-CC: linux-bcache@vger.kernel.org
-CC: linux-btrfs@vger.kernel.org
-CC: linux-erofs@lists.ozlabs.org
-CC: <linux-ext4@vger.kernel.org>
-CC: linux-f2fs-devel@lists.sourceforge.net
-CC: linux-mm@kvack.org
-CC: linux-mtd@lists.infradead.org
-CC: linux-nfs@vger.kernel.org
-CC: linux-nilfs@vger.kernel.org
-CC: linux-nvme@lists.infradead.org
-CC: linux-pm@vger.kernel.org
-CC: linux-raid@vger.kernel.org
-CC: linux-s390@vger.kernel.org
-CC: linux-scsi@vger.kernel.org
-CC: linux-xfs@vger.kernel.org
-CC: "Md. Haris Iqbal" <haris.iqbal@ionos.com>
-CC: Mike Snitzer <snitzer@kernel.org>
-CC: Minchan Kim <minchan@kernel.org>
-CC: ocfs2-devel@oss.oracle.com
-CC: reiserfs-devel@vger.kernel.org
-CC: Sergey Senozhatsky <senozhatsky@chromium.org>
-CC: Song Liu <song@kernel.org>
-CC: Sven Schnelle <svens@linux.ibm.com>
-CC: target-devel@vger.kernel.org
-CC: Ted Tso <tytso@mit.edu>
-CC: Trond Myklebust <trond.myklebust@hammerspace.com>
-CC: xen-devel@lists.xenproject.org
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- block/bdev.c           | 47 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/blkdev.h | 10 +++++++++
- 2 files changed, 57 insertions(+)
+ block/fops.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/block/bdev.c b/block/bdev.c
-index 979e28a46b98..c75de5cac2bc 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -846,6 +846,24 @@ struct block_device *blkdev_get_by_dev(dev_t dev, blk_mode_t mode, void *holder,
- }
- EXPORT_SYMBOL(blkdev_get_by_dev);
- 
-+struct bdev_handle *blkdev_get_handle_by_dev(dev_t dev, blk_mode_t mode,
-+		void *holder, const struct blk_holder_ops *hops)
-+{
-+	struct bdev_handle *handle = kmalloc(sizeof(struct bdev_handle),
-+					     GFP_KERNEL);
-+	struct block_device *bdev;
-+
-+	if (!handle)
-+		return ERR_PTR(-ENOMEM);
-+	bdev = blkdev_get_by_dev(dev, mode, holder, hops);
-+	if (IS_ERR(bdev))
-+		return ERR_CAST(bdev);
-+	handle->bdev = bdev;
-+	handle->holder = holder;
-+	return handle;
-+}
-+EXPORT_SYMBOL(blkdev_get_handle_by_dev);
-+
- /**
-  * blkdev_get_by_path - open a block device by name
-  * @path: path to the block device to open
-@@ -884,6 +902,28 @@ struct block_device *blkdev_get_by_path(const char *path, blk_mode_t mode,
- }
- EXPORT_SYMBOL(blkdev_get_by_path);
- 
-+struct bdev_handle *blkdev_get_handle_by_path(const char *path, blk_mode_t mode,
-+		void *holder, const struct blk_holder_ops *hops)
-+{
-+	struct bdev_handle *handle;
-+	dev_t dev;
-+	int error;
-+
-+	error = lookup_bdev(path, &dev);
-+	if (error)
-+		return ERR_PTR(error);
-+
-+	handle = blkdev_get_handle_by_dev(dev, mode, holder, hops);
-+	if (!IS_ERR(handle) && (mode & BLK_OPEN_WRITE) &&
-+	    bdev_read_only(handle->bdev)) {
-+		blkdev_handle_put(handle);
-+		return ERR_PTR(-EACCES);
-+	}
-+
-+	return handle;
-+}
-+EXPORT_SYMBOL(blkdev_get_handle_by_path);
-+
- void blkdev_put(struct block_device *bdev, void *holder)
+diff --git a/block/fops.c b/block/fops.c
+index a286bf3325c5..b6aa470c09ae 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -478,7 +478,7 @@ blk_mode_t file_to_blk_mode(struct file *file)
+ 		mode |= BLK_OPEN_READ;
+ 	if (file->f_mode & FMODE_WRITE)
+ 		mode |= BLK_OPEN_WRITE;
+-	if (file->private_data)
++	if (file->f_flags & O_EXCL)
+ 		mode |= BLK_OPEN_EXCL;
+ 	if (file->f_flags & O_NDELAY)
+ 		mode |= BLK_OPEN_NDELAY;
+@@ -497,6 +497,7 @@ blk_mode_t file_to_blk_mode(struct file *file)
+ static int blkdev_open(struct inode *inode, struct file *filp)
  {
- 	struct gendisk *disk = bdev->bd_disk;
-@@ -920,6 +960,13 @@ void blkdev_put(struct block_device *bdev, void *holder)
- }
- EXPORT_SYMBOL(blkdev_put);
+ 	struct block_device *bdev;
++	blk_mode_t mode;
  
-+void blkdev_handle_put(struct bdev_handle *handle)
-+{
-+	blkdev_put(handle->bdev, handle->holder);
-+	kfree(handle);
-+}
-+EXPORT_SYMBOL(blkdev_handle_put);
-+
- /**
-  * lookup_bdev() - Look up a struct block_device by name.
-  * @pathname: Name of the block device in the filesystem.
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index ed44a997f629..a910e9997ddd 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1471,14 +1471,24 @@ struct blk_holder_ops {
- #define sb_open_mode(flags) \
- 	(BLK_OPEN_READ | (((flags) & SB_RDONLY) ? 0 : BLK_OPEN_WRITE))
+ 	/*
+ 	 * Preserve backwards compatibility and allow large file access
+@@ -507,18 +508,14 @@ static int blkdev_open(struct inode *inode, struct file *filp)
+ 	filp->f_flags |= O_LARGEFILE;
+ 	filp->f_mode |= FMODE_BUF_RASYNC;
  
-+struct bdev_handle {
-+	struct block_device *bdev;
-+	void *holder;
-+};
-+
- struct block_device *blkdev_get_by_dev(dev_t dev, blk_mode_t mode, void *holder,
- 		const struct blk_holder_ops *hops);
- struct block_device *blkdev_get_by_path(const char *path, blk_mode_t mode,
- 		void *holder, const struct blk_holder_ops *hops);
-+struct bdev_handle *blkdev_get_handle_by_dev(dev_t dev, blk_mode_t mode,
-+		void *holder, const struct blk_holder_ops *hops);
-+struct bdev_handle *blkdev_get_handle_by_path(const char *path, blk_mode_t mode,
-+		void *holder, const struct blk_holder_ops *hops);
- int bd_prepare_to_claim(struct block_device *bdev, void *holder,
- 		const struct blk_holder_ops *hops);
- void bd_abort_claiming(struct block_device *bdev, void *holder);
- void blkdev_put(struct block_device *bdev, void *holder);
-+void blkdev_handle_put(struct bdev_handle *handle);
+-	/*
+-	 * Use the file private data to store the holder for exclusive openes.
+-	 * file_to_blk_mode relies on it being present to set BLK_OPEN_EXCL.
+-	 */
+-	if (filp->f_flags & O_EXCL)
+-		filp->private_data = filp;
+-
+-	bdev = blkdev_get_by_dev(inode->i_rdev, file_to_blk_mode(filp),
+-				 filp->private_data, NULL);
++	mode = file_to_blk_mode(filp);
++	bdev = blkdev_get_by_dev(inode->i_rdev, mode,
++				 mode & BLK_OPEN_EXCL ? filp : NULL, NULL);
+ 	if (IS_ERR(bdev))
+ 		return PTR_ERR(bdev);
  
- /* just for blk-cgroup, don't use elsewhere */
- struct block_device *blkdev_get_no_open(dev_t dev);
++	if (mode & BLK_OPEN_EXCL)
++		filp->private_data = filp;
+ 	if (bdev_nowait(bdev))
+ 		filp->f_mode |= FMODE_NOWAIT;
+ 
 -- 
 2.35.3
 
