@@ -2,49 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2331C747874
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 20:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4B6D747880
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 20:59:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231511AbjGDSt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jul 2023 14:49:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60684 "EHLO
+        id S231583AbjGDS7R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jul 2023 14:59:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229539AbjGDSt1 (ORCPT
+        with ESMTP id S231454AbjGDS7P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jul 2023 14:49:27 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91EABE64;
-        Tue,  4 Jul 2023 11:49:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ohNOzyes+e4OostGrU+ZixNYfYaBWOr0ibzYC94ovbM=; b=lKjbGfDsnq2+0JpIMZjxf3skmE
-        v5azy4pkcGGtliPL4/7syjd4S+tA6eoy0UIS4WLE7imoaRj6Rcij0mNrFYiiQkQROubarPZ85dBZb
-        eY5soakeayn1oOFXrIFVWX4rEt2nfAKYs4lPHO+/RiN1dkWsKk/DMxiJGoeDoCq6kXIxRTUssz267
-        hVoRLGi6BcWEKXY+UJ1VOQuFR9impFPD2orAyo/LtQhguNlnUQD0sODBk42HLIGK0g3bUw7ZMJH2C
-        tRdOxIbKCGmzRha/mohw2QKW++5YSF1qHPAGS+xGbvy8MI683zjU2PisPiniAyz58sPv+qr3Wv3Dw
-        izD93Bjg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qGl5Y-009Nna-4h; Tue, 04 Jul 2023 18:49:24 +0000
-Date:   Tue, 4 Jul 2023 19:49:24 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org,
-        butt3rflyh4ck <butterflyhuangxx@gmail.com>
-Subject: Re: [PATCH] reiserfs: Check the return value from __getblk()
-Message-ID: <ZKRptMjtL6X74X1B@casper.infradead.org>
-References: <ZJ32+b+3O8Z6cuRo@casper.infradead.org>
- <20230630-kerbholz-koiteich-a7395bc04eae@brauner>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230630-kerbholz-koiteich-a7395bc04eae@brauner>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        Tue, 4 Jul 2023 14:59:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48B7510D5;
+        Tue,  4 Jul 2023 11:59:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C1D0461329;
+        Tue,  4 Jul 2023 18:59:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2C6E6C433C7;
+        Tue,  4 Jul 2023 18:59:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688497154;
+        bh=ddJHSNpCVBIXqy/KSUFOMWmBQV0kz7X2+arcZ5lGDTM=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=FWgkm/wJcUMg/hgCXeBumJ5NmiYhhm5h3V9QYZQQvZsnoG1pyyEbXQjVZWsIYz6oE
+         HLgwat1k67eAJxtwpQ1eVkHSs1G3e4TAXvogS4a5/0nOk0OZop+FdtxUFU6WX1dcVn
+         qTWKv/d7zACIvoOWIjJChQ8orNxuoINKHfCzITz735KceNFDbNUWIM7Ewd2EA1KoCd
+         bdBNFjSDnVGEnusUhmrCbXM927XcRJKBpFYrT7AxO7H7+hmYHOtaagACpS0/wTCpjc
+         122+yWNdXCYJw86yLFgc4ojl2X6wpZNqt4kcF6Oxyn5DS8Nljf6aeTikHcFigl3Nbh
+         KlZZ9UMidmFRQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1AD6EE5381B;
+        Tue,  4 Jul 2023 18:59:14 +0000 (UTC)
+Subject: Re: [GIT PULL] overlayfs update for 6.5 - part 2
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20230704165304.658275-1-amir73il@gmail.com>
+References: <20230704165304.658275-1-amir73il@gmail.com>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20230704165304.658275-1-amir73il@gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-update-6.5-2
+X-PR-Tracked-Commit-Id: 7fb7998b599a2e1f3744fbd34a3e7145da841ed1
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 538140ca602b1c5f3870bef051c93b491045f70a
+Message-Id: <168849715410.3035.5924590022911870576.pr-tracker-bot@kernel.org>
+Date:   Tue, 04 Jul 2023 18:59:14 +0000
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -52,34 +65,15 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 30, 2023 at 11:03:05AM +0200, Christian Brauner wrote:
-> From: Matthew Wilcox <willy@infradead.org>
-> 
-> On Thu, 29 Jun 2023 23:26:17 +0200, Matthew Wilcox wrote:
-> > __getblk() can return a NULL pointer if we run out of memory or if
-> > we try to access beyond the end of the device; check it and handle it
-> > appropriately.
-> > 
-> > [...]
-> 
-> Willy's original commit with message id
-> <20230605142335.2883264-1-willy@infradead.org> didn't show up on lore.
-> Might be because reiserfs-devel isn't a list tracked by lore; not sure.
-> So I grabbed this from somewhere else.
-> 
-> In any case, I picked this up now.
-> 
-> ---
-> 
-> Applied to the vfs.misc branch of the vfs/vfs.git tree.
-> Patches in the vfs.misc branch should appear in linux-next soon.
-> 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
-> 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
+The pull request you sent on Tue,  4 Jul 2023 19:53:04 +0300:
 
-Acked-by: Edward Shishkin <edward.shishkin@gmail.com>
+> git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-update-6.5-2
 
-was added in a response to the original, FYI
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/538140ca602b1c5f3870bef051c93b491045f70a
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
