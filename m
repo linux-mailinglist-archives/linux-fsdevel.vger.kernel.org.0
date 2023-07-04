@@ -2,79 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 51D7E746FB6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 13:19:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11C72747019
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 13:43:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230273AbjGDLTM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jul 2023 07:19:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39332 "EHLO
+        id S230521AbjGDLnJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jul 2023 07:43:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230316AbjGDLTK (ORCPT
+        with ESMTP id S230374AbjGDLnD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jul 2023 07:19:10 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B11E6199E
-        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jul 2023 04:18:35 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id BCAB3227A5;
-        Tue,  4 Jul 2023 11:18:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1688469513; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=hye03PiA2kNMjv9ficz4Sho4/4UsihiFgkoDNSzas/Y=;
-        b=uFCccE9IVg9ib8rYose53C9Y8t+594RLGMhHqmseSIZmBsJnDZy+5SYGkENgYM/KjIJyMK
-        Y7VjC6m2xIPVxU00xML0PWsGlHHcLWjsZFretHzuGOCmzwLCEHbzz5NvXloAvh4mt7P0rE
-        XSHaD+I5symFGztAQEbSw+R3Jcyq2Og=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1688469513;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=hye03PiA2kNMjv9ficz4Sho4/4UsihiFgkoDNSzas/Y=;
-        b=tJgwOqmJcf97hvewa7kcxKr2Fy6G3CBFy9QQ7JfVptc9Aigz7ce4abxBMfRpLYSmVwIrZS
-        wHDbHq5M9k3ZiMBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AE268133F7;
-        Tue,  4 Jul 2023 11:18:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Mah6KgkApGQ2DAAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 04 Jul 2023 11:18:33 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 33237A0722; Tue,  4 Jul 2023 13:18:33 +0200 (CEST)
-Date:   Tue, 4 Jul 2023 13:18:33 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
-        <nabijaczleweli@nabijaczleweli.xyz>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC][PATCH] fanotify: disallow mount/sb marks on kernel
- internal pseudo fs
-Message-ID: <20230704111833.c6yqnu5b6fhzit3k@quack3>
-References: <20230629042044.25723-1-amir73il@gmail.com>
- <20230630-kitzeln-sitzt-c6b4325362e5@brauner>
- <CAOQ4uxheb7z=5ricKUz7JduQGVbxNRp-FNrViMtd0Dy6cAgOnQ@mail.gmail.com>
- <20230703112551.7fvcyibdxwtmjucf@quack3>
- <20230704-gedauert-beantragen-7334fb6b5cdf@brauner>
+        Tue, 4 Jul 2023 07:43:03 -0400
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ADD3119;
+        Tue,  4 Jul 2023 04:43:01 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.143])
+        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4QwLWg24Y8z4f3p02;
+        Tue,  4 Jul 2023 19:42:55 +0800 (CST)
+Received: from [10.174.176.117] (unknown [10.174.176.117])
+        by APP2 (Coremail) with SMTP id Syh0CgCXf929BaRkmuBrNA--.48562S2;
+        Tue, 04 Jul 2023 19:42:57 +0800 (CST)
+Subject: Re: [PATCH v1] fs: Add kfuncs to handle idmapped mounts
+To:     Alexey Gladkov <legion@kernel.org>
+Cc:     bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Christian Brauner <brauner@kernel.org>
+References: <c35fbb4cb0a3a9b4653f9a032698469d94ca6e9c.1688123230.git.legion@kernel.org>
+From:   Hou Tao <houtao@huaweicloud.com>
+Message-ID: <babdf7a8-9663-6d71-821a-34da2aff80e2@huaweicloud.com>
+Date:   Tue, 4 Jul 2023 19:42:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
+In-Reply-To: <c35fbb4cb0a3a9b4653f9a032698469d94ca6e9c.1688123230.git.legion@kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230704-gedauert-beantragen-7334fb6b5cdf@brauner>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-CM-TRANSID: Syh0CgCXf929BaRkmuBrNA--.48562S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZw45CF17XF43Xr1DGF1DAwb_yoW5tw13pF
+        4FkFn5Cr40qryagw1fJFyF9F4YgF97C3WUZr1xW3s8Ar1qgr1ftF4Ik3Z8Xr4rJr4kGw18
+        WF1jgrWkury3JrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+        0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,134 +66,112 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 04-07-23 11:58:07, Christian Brauner wrote:
-> On Mon, Jul 03, 2023 at 01:25:51PM +0200, Jan Kara wrote:
-> > On Sat 01-07-23 19:25:14, Amir Goldstein wrote:
-> > > On Fri, Jun 30, 2023 at 10:29 AM Christian Brauner <brauner@kernel.org> wrote:
-> > > >
-> > > > On Thu, Jun 29, 2023 at 07:20:44AM +0300, Amir Goldstein wrote:
-> > > > > Hopefully, nobody is trying to abuse mount/sb marks for watching all
-> > > > > anonymous pipes/inodes.
-> > > > >
-> > > > > I cannot think of a good reason to allow this - it looks like an
-> > > > > oversight that dated back to the original fanotify API.
-> > > > >
-> > > > > Link: https://lore.kernel.org/linux-fsdevel/20230628101132.kvchg544mczxv2pm@quack3/
-> > > > > Fixes: d54f4fba889b ("fanotify: add API to attach/detach super block mark")
-> > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > > ---
-> > > > >
-> > > > > Jan,
-> > > > >
-> > > > > As discussed, allowing sb/mount mark on anonymous pipes
-> > > > > makes no sense and we should not allow it.
-> > > > >
-> > > > > I've noted FAN_MARK_FILESYSTEM as the Fixes commit as a trigger to
-> > > > > backport to maintained LTS kernels event though this dates back to day one
-> > > > > with FAN_MARK_MOUNT. Not sure if we should keep the Fixes tag or not.
-> > > > >
-> > > > > The reason this is an RFC and that I have not included also the
-> > > > > optimization patch is because we may want to consider banning kernel
-> > > > > internal inodes from fanotify and/or inotify altogether.
-> > > > >
-> > > > > The tricky point in banning anonymous pipes from inotify, which
-> > > > > could have existing users (?), but maybe not, so maybe this is
-> > > > > something that we need to try out.
-> > > > >
-> > > > > I think we can easily get away with banning anonymous pipes from
-> > > > > fanotify altogeter, but I would not like to get to into a situation
-> > > > > where new applications will be written to rely on inotify for
-> > > > > functionaly that fanotify is never going to have.
-> > > > >
-> > > > > Thoughts?
-> > > > > Am I over thinking this?
-> > > > >
-> > > > > Amir.
-> > > > >
-> > > > >  fs/notify/fanotify/fanotify_user.c | 14 ++++++++++++++
-> > > > >  1 file changed, 14 insertions(+)
-> > > > >
-> > > > > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> > > > > index 95d7d8790bc3..8240a3fdbef0 100644
-> > > > > --- a/fs/notify/fanotify/fanotify_user.c
-> > > > > +++ b/fs/notify/fanotify/fanotify_user.c
-> > > > > @@ -1622,6 +1622,20 @@ static int fanotify_events_supported(struct fsnotify_group *group,
-> > > > >           path->mnt->mnt_sb->s_type->fs_flags & FS_DISALLOW_NOTIFY_PERM)
-> > > > >               return -EINVAL;
-> > > > >
-> > > > > +     /*
-> > > > > +      * mount and sb marks are not allowed on kernel internal pseudo fs,
-> > > > > +      * like pipe_mnt, because that would subscribe to events on all the
-> > > > > +      * anonynous pipes in the system.
-> > > >
-> > > > s/anonynous/anonymous/
-> > > >
-> > > > > +      *
-> > > > > +      * XXX: SB_NOUSER covers all of the internal pseudo fs whose objects
-> > > > > +      * are not exposed to user's mount namespace, but there are other
-> > > > > +      * SB_KERNMOUNT fs, like nsfs, debugfs, for which the value of
-> > > > > +      * allowing sb and mount mark is questionable.
-> > > > > +      */
-> > > > > +     if (mark_type != FAN_MARK_INODE &&
-> > > > > +         path->mnt->mnt_sb->s_flags & SB_NOUSER)
-> > > > > +             return -EINVAL;
-> > > >
-> > > 
-> > > On second thought, I am not sure about  the EINVAL error code here.
-> > > I used the same error code that Jan used for permission events on
-> > > proc fs, but the problem is that applications do not have a decent way
-> > > to differentiate between
-> > > "sb mark not supported by kernel" (i.e. < v4.20) vs.
-> > > "sb mark not supported by fs" (the case above)
-> > > 
-> > > same for permission events:
-> > > "kernel compiled without FANOTIFY_ACCESS_PERMISSIONS" vs.
-> > > "permission events not supported by fs" (procfs)
-> > > 
-> > > I have looked for other syscalls that react to SB_NOUSER and I've
-> > > found that mount also returns EINVAL.
-> > 
-> > We tend to return EINVAL both for invalid (combination of) flags as well as
-> > for flags applied to invalid objects in various calls. In practice there is
-> > rarely a difference.
-> > 
-> > > So far, fanotify_mark() and fanotify_init() mostly return EINVAL
-> > > for invalid flag combinations (also across the two syscalls),
-> > > but not because of the type of object being marked, except for
-> > > the special case of procfs and permission events.
-> > > 
-> > > mount(2) syscall OTOH, has many documented EINVAL cases
-> > > due to the type of source object (e.g. propagation type shared).
-> > > 
-> > > I know there is no standard and EINVAL can mean many
-> > > different things in syscalls, but I thought that maybe EACCES
-> > > would convey more accurately the message:
-> > > "The sb/mount of this fs is not accessible for placing a mark".
-> > > 
-> > > WDYT? worth changing?
-> > > worth changing procfs also?
-> > > We don't have that EINVAL for procfs documented in man page btw.
-> > 
-> > Well, EACCES translates to message "Permission denied" which as Christian
-> > writes is justifiable but frankly I find it more confusing. Because when I
-> > get "Permission denied", I go looking which permissions are wrong, perhaps
-> > suspecting SELinux or other LSM and don't think that object type / location
-> > is at fault.
-> > 
-> > I agree that with EINVAL it is impossible to distinguish "unsupported on
-> > this object only" vs "completely unknown flag" but it doesn't seem like a
-> > huge problem for userspace to me as I can think of workarounds even if
-> > userspace wants to do something else than "report error and bail".
-> 
-> Userspace is pretty used to the flood of EINVAL from the vfs apis so
-> they often have good workarounds. It doesn't mean it's something we
-> should just discount ofc. I think having ways to surface more
-> descriptive errors would overall be a good thing.
+Hi,
 
-Oh, I absolutely agree with that. I'm just not sure whether returning
-EACCES in this particular case is going to cause more or less confusion.
+On 6/30/2023 7:08 PM, Alexey Gladkov wrote:
+> Since the introduction of idmapped mounts, file handling has become
+> somewhat more complicated. If the inode has been found through an
+> idmapped mount the idmap of the vfsmount must be used to get proper
+> i_uid / i_gid. This is important, for example, to correctly take into
+> account idmapped files when caching, LSM or for an audit.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Could you please add a bpf selftest for these newly added kfuncs ?
+>
+> Signed-off-by: Alexey Gladkov <legion@kernel.org>
+> ---
+>  fs/mnt_idmapping.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 69 insertions(+)
+>
+> diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
+> index 4905665c47d0..ba98ce26b883 100644
+> --- a/fs/mnt_idmapping.c
+> +++ b/fs/mnt_idmapping.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/mnt_idmapping.h>
+>  #include <linux/slab.h>
+>  #include <linux/user_namespace.h>
+> +#include <linux/bpf.h>
+>  
+>  #include "internal.h"
+>  
+> @@ -271,3 +272,71 @@ void mnt_idmap_put(struct mnt_idmap *idmap)
+>  		kfree(idmap);
+>  	}
+>  }
+> +
+> +__diag_push();
+> +__diag_ignore_all("-Wmissing-prototypes",
+> +		  "Global functions as their definitions will be in vmlinux BTF");
+> +
+> +/**
+> + * bpf_is_idmapped_mnt - check whether a mount is idmapped
+> + * @mnt: the mount to check
+> + *
+> + * Return: true if mount is mapped, false if not.
+> + */
+> +__bpf_kfunc bool bpf_is_idmapped_mnt(struct vfsmount *mnt)
+> +{
+> +	return is_idmapped_mnt(mnt);
+> +}
+> +
+> +/**
+> + * bpf_file_mnt_idmap - get file idmapping
+> + * @file: the file from which to get mapping
+> + *
+> + * Return: The idmap for the @file.
+> + */
+> +__bpf_kfunc struct mnt_idmap *bpf_file_mnt_idmap(struct file *file)
+> +{
+> +	return file_mnt_idmap(file);
+> +}
+
+A dummy question here: the implementation of file_mnt_idmap() is
+file->f_path.mnt->mnt_idmap, so if the passed file is a BTF pointer, is
+there any reason why we could not do such dereference directly in bpf
+program ?
+> +
+> +/**
+> + * bpf_inode_into_vfs_ids - map an inode's i_uid and i_gid down according to an idmapping
+> + * @idmap: idmap of the mount the inode was found from
+> + * @inode: inode to map
+> + *
+> + * The inode's i_uid and i_gid mapped down according to @idmap. If the inode's
+> + * i_uid or i_gid has no mapping INVALID_VFSUID or INVALID_VFSGID is returned in
+> + * the corresponding position.
+> + *
+> + * Return: A 64-bit integer containing the current GID and UID, and created as
+> + * such: *gid* **<< 32 \|** *uid*.
+> + */
+> +__bpf_kfunc uint64_t bpf_inode_into_vfs_ids(struct mnt_idmap *idmap,
+> +		const struct inode *inode)
+> +{
+> +	vfsuid_t vfsuid = i_uid_into_vfsuid(idmap, inode);
+> +	vfsgid_t vfsgid = i_gid_into_vfsgid(idmap, inode);
+> +
+> +	return (u64) __vfsgid_val(vfsgid) << 32 |
+> +		     __vfsuid_val(vfsuid);
+> +}
+> +
+> +__diag_pop();
+> +
+> +BTF_SET8_START(idmap_btf_ids)
+> +BTF_ID_FLAGS(func, bpf_is_idmapped_mnt)
+> +BTF_ID_FLAGS(func, bpf_file_mnt_idmap)
+> +BTF_ID_FLAGS(func, bpf_inode_into_vfs_ids)
+> +BTF_SET8_END(idmap_btf_ids)
+> +
+> +static const struct btf_kfunc_id_set idmap_kfunc_set = {
+> +	.owner = THIS_MODULE,
+> +	.set   = &idmap_btf_ids,
+> +};
+> +
+> +static int __init bpf_idmap_kfunc_init(void)
+> +{
+> +	return register_btf_kfunc_id_set(BPF_PROG_TYPE_UNSPEC, &idmap_kfunc_set);
+> +}
+> +
+Is BPF_PROG_TYPE_TRACING sufficient for your use case ? It seems
+BPF_PROG_TYPE_UNSPEC will make these kfuncs be available for all bpf
+program types.
+> +late_initcall(bpf_idmap_kfunc_init);
+
