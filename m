@@ -2,159 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BCCF37466ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 03:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 882C4746817
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Jul 2023 05:46:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229971AbjGDBlj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Jul 2023 21:41:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48436 "EHLO
+        id S230486AbjGDDqS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Jul 2023 23:46:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229698AbjGDBlh (ORCPT
+        with ESMTP id S230322AbjGDDp5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Jul 2023 21:41:37 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 254DAE4E;
-        Mon,  3 Jul 2023 18:41:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1688434896; x=1719970896;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=+5+xGinDoOC+dX1hr31DAy+3hygUp36IsuwlQ0lfwys=;
-  b=jSvP8QOm26HdG66KUoDiLVa6Dt9b3XJJEWYodVBpRd2UZGnqsk/5wcZP
-   Sp+fGHH/b34DjHmrQ4gU9lYLOjLWst+1Y5GoZJjAs24Bxc/tup5Joel+4
-   soNTAZshMP9rAvYy9zig1QANPSLq9MBaXWSGiXI7AkbdiKLbi74z1AvjL
-   78tu66Yf80SmwC7iRnQtysrCzGU7m73heVIEOx3idNITO+1Zu1nDH1fDO
-   hiOm2w+he741QbNMRV6+7x5v5i3e7cZ1DB3h+dztoZwlt1BKvEA6z3DDV
-   GsLunqBMGY1Dkb7wy1j8CbS8uKSNRgaIoE6Q52ccoNeeajVDeItjzrYUl
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10760"; a="352832219"
-X-IronPort-AV: E=Sophos;i="6.01,179,1684825200"; 
-   d="scan'208";a="352832219"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2023 18:41:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10760"; a="863240045"
-X-IronPort-AV: E=Sophos;i="6.01,179,1684825200"; 
-   d="scan'208";a="863240045"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmsmga001.fm.intel.com with ESMTP; 03 Jul 2023 18:41:35 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Mon, 3 Jul 2023 18:41:34 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27 via Frontend Transport; Mon, 3 Jul 2023 18:41:34 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.174)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.27; Mon, 3 Jul 2023 18:41:33 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=A29QJkA5YrAf21UhPoHHDWJXI3ZRZz5a6JfC65TN/mYxYxs/8rKrMUDE01ghRxoW5yJHxlsr/5xDFIX2H8OpOa1YShF2YQ2fa+b/x53NsVKGzPf7OOQZCwoOlxEKIDt3+775mJE19YiB/rziCHWj66KHh2beg1W8N+XYwqhO5uTFq5EY6T9bU2LvOZAqd6HCUnYG0BPjt6OWiqWtzMU2lRK8ZFiM5P58zKY3wFbevIpMFh16s7jd0DQUIzxxw5aSxDK4JtJ7o6rmafUiaoNHyF/ZHy1U6paYVL0SqrkaG9BjczfKnruAChAtnrgtmv7uU522CVX6Ur+g/KpQwIYs/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dv855n9ZI4L+4Gnj/IKLhKxQ9RahuSYBgFk/OwHDeBE=;
- b=ECMD10OqUC+hyY6Y7LVJAz8gejGiBk71xE8eHLv4e6bJrby6Q6cAEAA4zEJY6DbjYdHZWj5ekbDl7cGS40ZqQr4wvFkkynQkYMfyxjbDVp2XDqD7VjkpzUwf/T5ZmvSewchUPfhHU+xOzaXRJ/Ynf0zqYUaXlELN0Eh+OWipiuM+8gEChJJagNwT2HAvWnPWvY272ExivGAvIiy3PUXXC+4LgG1Bd8cOoO5d58Chac9lo5ROxNsFh39KSbZenDpcAxcXreGeN+Kjw426oPpEIIKy3wDfe8eKJKbYa7biFQPdPzCdcOp+w8Gn7IUDEnhG+QXF3szMtu5SPaoe9oc/cw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CO1PR11MB4820.namprd11.prod.outlook.com (2603:10b6:303:6f::8)
- by CY8PR11MB7265.namprd11.prod.outlook.com (2603:10b6:930:98::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6544.24; Tue, 4 Jul
- 2023 01:41:31 +0000
-Received: from CO1PR11MB4820.namprd11.prod.outlook.com
- ([fe80::e6c7:a86d:68d6:f2f3]) by CO1PR11MB4820.namprd11.prod.outlook.com
- ([fe80::e6c7:a86d:68d6:f2f3%5]) with mapi id 15.20.6544.024; Tue, 4 Jul 2023
- 01:41:31 +0000
-Message-ID: <d6957a20-db31-d6ac-8822-003bdb9cd747@intel.com>
-Date:   Tue, 4 Jul 2023 09:41:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Firefox/102.0 Thunderbird/102.12.0
-Subject: Re: [PATCH v2] readahead: Correct the start and size in
- ondemand_readahead()
-Content-Language: en-US
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-CC:     <akpm@linux-foundation.org>, <willy@infradead.org>,
-        <ackerleytng@google.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <oliver.sang@intel.com>
-References: <20230628044303.1412624-1-fengwei.yin@intel.com>
- <20230703184928.GB4378@monkey>
-From:   "Yin, Fengwei" <fengwei.yin@intel.com>
-In-Reply-To: <20230703184928.GB4378@monkey>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR01CA0186.apcprd01.prod.exchangelabs.com
- (2603:1096:4:189::14) To CO1PR11MB4820.namprd11.prod.outlook.com
- (2603:10b6:303:6f::8)
+        Mon, 3 Jul 2023 23:45:57 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A028C1B2
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Jul 2023 20:45:28 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1b898cfa6a1so2004415ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Jul 2023 20:45:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1688442328; x=1691034328;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MFeBrddeuJ5VLdpmCCc9Ly4sKMWZlJ9dQaH0OIDXyXU=;
+        b=j7xJWhzFM4GE3eR0BWlTsy0HOBZgoak2dvLTatqMXnZnLNlVtwEQEMD37hReh1XlxL
+         r7hBjmyn6FTskoa4La7xZKdevvzdRYT77+N3epv4gV4kf7cq17ylBfxUBggc5e3s855p
+         GBBkk0n7PQiIlJc4/4tEUrT3R4iVDw8hzgofihKHl2t9qpb1Wo/DBMbPRp1jN35Ysfyk
+         NehRpBrYeu3yLN9/0Wq7Sp995UEH4u6Jpn1UiV9vGd2Ip0zNqgcG1X9kw2r/e/NkF6jp
+         XN82IHgovy+BsnEHQ6hQjvSqng1pgoniLOJy363s3drrdrxX6tuIJ1PwqNuLdqN7Qt1x
+         0hhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688442328; x=1691034328;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MFeBrddeuJ5VLdpmCCc9Ly4sKMWZlJ9dQaH0OIDXyXU=;
+        b=DtTyUFN92gGuMnGGUnqZlCJosQtDysPXm6dsunei6mCfHp+Hmpimft/mhgeohoxvqQ
+         o9Ev3R/ICqsb/fO34V038vVZI8F3rBwT4PI6/Rmxiknxm7VuxSuTq2tsy5xIX0SgTrmj
+         6Wc/r1rbyGkcdHX5UURVsEvVODalZeKCKYS4fKSw2+Kl1TXgNlyKN0KAtZo5jGuYLyIY
+         p3a3F8hZUkrMdAdWnXqajEJMd8bybAgZV/O9xlripgmKTHvdhIgmlBx1OrWx2JjyBD3p
+         z5PJnnpzhMXlVaggvby4V15CSHmh9Uh5hVyLBMawVsBI1HCPcVKccCKhIbXxABBRlVPZ
+         a0ZA==
+X-Gm-Message-State: ABy/qLaJomg7yRWdb96zdRvNdOUCBS6fy3EqIhgi2rVsl46Zo5xR9GFs
+        4z7eDxYapYYlfq1LUMamrlEkzQ==
+X-Google-Smtp-Source: APBJJlF81QfMj+OzGuweGT/AC35DngvuObAYHLJM7qqWJeHFGWrQw9pznSu7LGwsdhDNw+giWeybWA==
+X-Received: by 2002:a17:902:b20b:b0:1ae:4567:2737 with SMTP id t11-20020a170902b20b00b001ae45672737mr12710934plr.2.1688442328020;
+        Mon, 03 Jul 2023 20:45:28 -0700 (PDT)
+Received: from [10.70.252.135] ([203.208.167.147])
+        by smtp.gmail.com with ESMTPSA id az10-20020a170902a58a00b001b1866f7b5csm15891733plb.138.2023.07.03.20.45.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jul 2023 20:45:27 -0700 (PDT)
+Message-ID: <3efa68e0-b04f-5c11-4fe2-2db0784064fc@bytedance.com>
+Date:   Tue, 4 Jul 2023 11:45:16 +0800
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB4820:EE_|CY8PR11MB7265:EE_
-X-MS-Office365-Filtering-Correlation-Id: 115231a3-3560-4428-4211-08db7c2fcac9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: mRcz1qpsw4HU/ZhSp+om1NOXjg4m3syfIRU14rZ4iO0nPaxGC/De9aOvvy4Qn3ZbTP0tRO+g8gVDfuXdXYTPA4BtVjVscK79apR/RiRS7hCettSX85oE7ljMSTqqlBMaebvP/aYpAT8fdyAMEARGQRzStx46QrAf73qnfdpHg+WCogmatLXW8xqJlszIpzcjQwYRma5cO+cAKC6cg3Ied/nK5oepzYSlTLI4VMz3tGyunOtl6b9Q80T6gKbu1tTPALpt/Ldv50unb8i67zMvIPlfM2JqMLEWZ872G4wxE6jVjcdzsNqDH5VpJSwHFIs3E2BySXeS+14N8MgptyKRtaqx3lVOm4u3cZmI6IhSndThq5KHE0Y5Bstwnswr8JO/tHCD4lTJggXk6iMnQWefR5JYjGZw9960F9af+6GtEJ0RMrCXJxa9k80CImIomnuyxPkrgMGxicLdUalFhBHg1bpGnxbz5todpARKM4s09jKpDUs777IV16LLb9YL9vsxEXNEGSXiI+KwWPZJ5eGXDUm8W4Jy+cwqe0TexcllIYeXJPhrnIdYun8ZttBPXfTMP8W3USU+n1K+t67gayglDgu5HR8vYB4f3BzNH9oyksyWE5woJ4VdksQNLd3+1zTqYfXmQ0wMO7iTcA6Nbj9s1g==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB4820.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(39860400002)(346002)(366004)(396003)(376002)(136003)(451199021)(31696002)(41300700001)(86362001)(38100700002)(6486002)(6666004)(2616005)(82960400001)(107886003)(83380400001)(186003)(6506007)(53546011)(26005)(6512007)(478600001)(2906002)(316002)(36756003)(66476007)(6916009)(4326008)(66946007)(66556008)(8936002)(8676002)(31686004)(5660300002)(43740500002)(45980500001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c2lmMWJYSUttTW8wc1JpN1B5NVZrQW8vRzdtanFaWEZsWUFGMmJQTXJZMG1U?=
- =?utf-8?B?V2I1Wm5SelgyN1E1aEJNK3ZoR29ZM3ZHaktZN3J5OFhYSk9lcjlIVnl6VS9n?=
- =?utf-8?B?QjBheWdJSVFIWEw5WGVUK1pPdStySFczVVdrTlY5L0k0Y0lBQnlIbENxZjg2?=
- =?utf-8?B?RStKV2FQb3h6TmxxV2swWGVGWS9xMndQWTROOFVKVXcwNHNLZi83YWRXd2Qz?=
- =?utf-8?B?K0tJOGMzVVQxZ040YzE1MVZvakEzbEZNblU5b1h0WHhJdzVtemhlWC8ybkFV?=
- =?utf-8?B?N2F1Y3lkNXZIbGtTRzFweWhYS2g4MmNZbE1MWHR5Nm9MZHBlby9YYVM0VHZl?=
- =?utf-8?B?Q1FoNkZNZi9TN1BhWi9keDB6ZEJkSExvUHh3WSs0WFNwN1ZzazByWjBIdXlt?=
- =?utf-8?B?MjQ5SWRVK2laZVJkTTR5cTdUTDRISjk5SFNHRjZoMUlYOWptSGgydVg2cXQ3?=
- =?utf-8?B?YmM4azZIdGg3VHdtR21Id0U5cytwc0Vqd2xoNHpSVXJ2SWlKemVweExlOU5x?=
- =?utf-8?B?L3BQQ1MvZkx6MCtuaDRabWN1VFh0NkNEb2NkaWU2ZFhFZ3NidTlhZTRlTC9N?=
- =?utf-8?B?ZlQvZ3E5SytMVDVsMGpqbEZaMjVwSWhCUnZweFY0eWcxcGNrZnR5ZVVOeVRI?=
- =?utf-8?B?aWxqZDFiY3pHR1VHY3R6cCtDeEN0TFFKdUJ0MXVBcG1RSnptandiVGVMZURh?=
- =?utf-8?B?RjNYV3M3bXNvYXNnTWUwbU5XN3RZQWZzYllXQTJZK3ZKczlaK0QvVTUyalQz?=
- =?utf-8?B?aFJteDhsNDd0Mkd4MGhFSVhSQzk4dklDRzlidUhBR0xaYzF0Q21KT29HKzFD?=
- =?utf-8?B?dWIyWHVpZExqbmxKTGt5bXFQNmhqM3hWdkhTOHdUcnU5ek1VQlZsSWo2MUlJ?=
- =?utf-8?B?bHA5MEFLUTE0QnNabWNkNi9VZjRqdmlHOUFuUTVIaGdzQm94ejZjWGlCejdU?=
- =?utf-8?B?cEEzN0pqd3FUZFJzV0xVY2g5dVpKTldZTUN1MHV0R0ZybzJDT0FLRWJYV2Rt?=
- =?utf-8?B?clpUaFpSNEpDT3AxOWxJZHM4VlFnRENqbUMrMFRrL2ZENS9IS3ZMS3BNQnUv?=
- =?utf-8?B?bXV1V2t1WFdwLzVUcTVTRXV0YUxBcnJmd1hLc29WNDlKV3Z2VlF4RE9nN2N4?=
- =?utf-8?B?ZXFIVEsyeVJ1elpleUEvU3cvSkw4TEZiS2hscThHUjJ6YktxQ1NhYVdvRkpp?=
- =?utf-8?B?WWovNCtiZjdYV0lCTi9hZmtxWUlnWk9QYzNIem1YUDFuZkE1dXowWUpBRmtN?=
- =?utf-8?B?M1Z4Y0NHVWFzR05KSHI0UTdBaVBORjB3MGNNZlhXNVhHRnhlQkhuSTRoand4?=
- =?utf-8?B?ejdSeWN0Z0gzT3libUFNRVJmZk5qUDdONGc5blFTaGI1WUNoYml5dVVJME1K?=
- =?utf-8?B?NDhVOVlJVWJZRlRvMEpqeGgxeG1zdTJYMk82RFQ2alRhZ2ppWDFReHdPSW9N?=
- =?utf-8?B?K01keFdKd3ZONjNaR1dXQnJBT0dBWnEzcEI0MEdJREJCTmFrdVIzMXlYbVVG?=
- =?utf-8?B?NzJBYVRjb1p3blhyZGEyalRPSWVFdDNNOVpaK3FzTm16VWVCd3gwODZPb3Az?=
- =?utf-8?B?TVpMNzJidmFqOGVlUmc5WlhyRlFzNmRBRUlDMkg5bFB4QWZSLzBnYXJRWlRB?=
- =?utf-8?B?M0Y1Y013OXRoZGxrWjc5S2pOY2QyRG4vM0dUTEcyTEtJWUtrczZidERZVGpj?=
- =?utf-8?B?WStnYnRkWUZtLzBZRkU0Q2JycUhyMlpScUJ3Q3BJMlVwYW0wV01lTHhhbU9C?=
- =?utf-8?B?VGF0SDUxRnJwMUx3QkJDYU9NU0NyRXkvaFBrU1RuY2JFVkdEeFF4NWwwWkRu?=
- =?utf-8?B?SmRWdWF0VUdDVFIrNkZTWHd6K1pUUW40SGE4MlV3SzYzL21XRzBLVTVhRVhi?=
- =?utf-8?B?cEE4MFhxWDVmQXo1Y1RDRDhQUWNreGp2SW14Q0xFSm9EdUJzWnBxOG03MmRJ?=
- =?utf-8?B?RTlrNmFnM1haSU5XZ1d4cUJVNmVrWTNRNnZXWjE5ME4xS0ZON3lVTThjd2FT?=
- =?utf-8?B?NlhJaFlDYjd1R0ViWnB6bWcwRnN2RG1qTXIzODhZNzBta0NhTkg0VTJZcHpx?=
- =?utf-8?B?R2pGemlvUzlSSk0zeTZuRjdidklVWThET0N5eVBWVGFQOXErcUYvcDJBbUYx?=
- =?utf-8?Q?xwDjTzi1fTWA84m8/uIWNqz6F?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 115231a3-3560-4428-4211-08db7c2fcac9
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB4820.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2023 01:41:31.3001
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: I3qs5zf4GB0ndpi6AIEN8XuI/zK3M7iHaiKir3zKH4WP1lYAS5tGrFJT9bT3eqF48g+oGW4knjChFzO9XJRWzg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7265
-X-OriginatorOrg: intel.com
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.12.0
+Subject: Re: [PATCH 24/29] mm: vmscan: make global slab shrink lockless
+Content-Language: en-US
+To:     paulmck@kernel.org, Dave Chinner <david@fromorbit.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org,
+        tkhai@ya.ru, roman.gushchin@linux.dev, djwong@kernel.org,
+        brauner@kernel.org, tytso@mit.edu, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        dm-devel@redhat.com, linux-raid@vger.kernel.org,
+        linux-bcache@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+References: <20230622085335.77010-1-zhengqi.arch@bytedance.com>
+ <20230622085335.77010-25-zhengqi.arch@bytedance.com>
+ <cf0d9b12-6491-bf23-b464-9d01e5781203@suse.cz>
+ <ZJU708VIyJ/3StAX@dread.disaster.area>
+ <cc894c77-717a-4e9f-b649-48bab40e7c60@paulmck-laptop>
+From:   Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <cc894c77-717a-4e9f-b649-48bab40e7c60@paulmck-laptop>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -163,64 +90,191 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-On 7/4/2023 2:49 AM, Mike Kravetz wrote:
-> On 06/28/23 12:43, Yin Fengwei wrote:
->> The commit
->> 9425c591e06a ("page cache: fix page_cache_next/prev_miss off by one")
->> updated the page_cache_next_miss() to return the index beyond
->> range.
->>
->> But it breaks the start/size of ra in ondemand_readahead() because
->> the offset by one is accumulated to readahead_index. As a consequence,
->> not best readahead order is picked.
->>
->> Tracing of the order parameter of filemap_alloc_folio() showed:
->>      page order    : count     distribution
->>         0          : 892073   |                                        |
->>         1          : 0        |                                        |
->>         2          : 65120457 |****************************************|
->>         3          : 32914005 |********************                    |
->>         4          : 33020991 |********************                    |
->> with 9425c591e06a9.
->>
->> With parent commit:
->>      page order    : count     distribution
->>         0          : 3417288  |****                                    |
->>         1          : 0        |                                        |
->>         2          : 877012   |*                                       |
->>         3          : 288      |                                        |
->>         4          : 5607522  |*******                                 |
->>         5          : 29974228 |****************************************|
->>
->> Fix the issue by removing the offset by one when page_cache_next_miss()
->> returns no gaps in the range.
->>
->> After the fix:
->>     page order     : count     distribution
->>         0          : 2598561  |***                                     |
->>         1          : 0        |                                        |
->>         2          : 687739   |                                        |
->>         3          : 288      |                                        |
->>         4          : 207210   |                                        |
->>         5          : 32628260 |****************************************|
->>
+On 2023/7/4 00:39, Paul E. McKenney wrote:
+> On Fri, Jun 23, 2023 at 04:29:39PM +1000, Dave Chinner wrote:
+>> On Thu, Jun 22, 2023 at 05:12:02PM +0200, Vlastimil Babka wrote:
+>>> On 6/22/23 10:53, Qi Zheng wrote:
+>>>> @@ -1067,33 +1068,27 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+>>>>   	if (!mem_cgroup_disabled() && !mem_cgroup_is_root(memcg))
+>>>>   		return shrink_slab_memcg(gfp_mask, nid, memcg, priority);
+>>>>   
+>>>> -	if (!down_read_trylock(&shrinker_rwsem))
+>>>> -		goto out;
+>>>> -
+>>>> -	list_for_each_entry(shrinker, &shrinker_list, list) {
+>>>> +	rcu_read_lock();
+>>>> +	list_for_each_entry_rcu(shrinker, &shrinker_list, list) {
+>>>>   		struct shrink_control sc = {
+>>>>   			.gfp_mask = gfp_mask,
+>>>>   			.nid = nid,
+>>>>   			.memcg = memcg,
+>>>>   		};
+>>>>   
+>>>> +		if (!shrinker_try_get(shrinker))
+>>>> +			continue;
+>>>> +		rcu_read_unlock();
+>>>
+>>> I don't think you can do this unlock?
 > 
-> Thank you for your detailed analysis!
+> Sorry to be slow to respond here, this one fell through the cracks.
+> And thank you to Qi for reminding me!
 > 
-> When the regression was initially discovered, I sent a patch to revert
-> commit 9425c591e06a.  Andrew has picked up this change.  And, Andrew has
-> also picked up this patch.
-Oh. I didn't notice that you sent revert patch. My understanding is that
-commit 9425c591e06a is a good change.
+> If you do this unlock, you had jolly well better nail down the current
+> element (the one referenced by shrinker), for example, by acquiring an
+> explicit reference count on the object.  And presumably this is exactly
+> what shrinker_try_get() is doing.  And a look at your 24/29 confirms this,
+> at least assuming that shrinker->refcount is set to zero before the call
+> to synchronize_rcu() in free_module() *and* that synchronize_rcu() doesn't
+> start until *after* shrinker_put() calls complete().  Plus, as always,
+> the object must be removed from the list before the synchronize_rcu()
+> starts.  (On these parts of the puzzle, I defer to those more familiar
+> with this code path.  And I strongly suggest carefully commenting this
+> type of action-at-a-distance design pattern.)
+
+Yeah, I think I've done it like above. A more detailed timing diagram is
+below.
 
 > 
-> I have not verified yet, but I suspect that this patch is going to cause
-> a regression because it depends on the behavior of page_cache_next_miss
-> in 9425c591e06a which has been reverted.
-Yes. If the 9425c591e06a was reverted, this patch could introduce regression.
-Which fixing do you prefer? reverting 9425c591e06a or this patch? Then we
-can suggest to Andrew to take it.
+> Why is this important?  Because otherwise that object might be freed
+> before you get to the call to rcu_read_lock() at the end of this loop.
+> And if that happens, list_for_each_entry_rcu() will be walking the
+> freelist, which is quite bad for the health and well-being of your kernel.
+> 
+> There are a few other ways to make this sort of thing work:
+> 
+> 1.	Defer the shrinker_put() to the beginning of the loop.
+> 	You would need a flag initially set to zero, and then set to
+> 	one just before (or just after) the rcu_read_lock() above.
+> 	You would also need another shrinker_old pointer to track the
+> 	old pointer.  Then at the top of the loop, if the flag is set,
+> 	invoke shrinker_put() on shrinker_old.	This ensures that the
+> 	previous shrinker structure stays around long enough to allow
+> 	the loop to find the next shrinker structure in the list.
+> 
+> 	This approach is attractive when the removal code path
+> 	can invoke shrinker_put() after the grace period ends.
+> 
+> 2.	Make shrinker_put() invoke call_rcu() when ->refcount reaches
+> 	zero, and have the callback function free the object.  This of
+> 	course requires adding an rcu_head structure to the shrinker
+> 	structure, which might or might not be a reasonable course of
+> 	action.  If adding that rcu_head is reasonable, this simplifies
+> 	the logic quite a bit.
+> 
+> 3.	For the shrinker-structure-removal code path, remove the shrinker
+> 	structure, then remove the initial count from ->refcount,
+> 	and then keep doing grace periods until ->refcount is zero,
+> 	then do one more.  Of course, if the result of removing the
+> 	initial count was zero, then only a single additional grace
+> 	period is required.
+> 
+> 	This would need to be carefully commented, as it is a bit
+> 	unconventional.
+
+Thanks for such a detailed addition!
+
+> 
+> There are probably many other ways, but just to give an idea of a few
+> other ways to do this.
+> 
+>>>> +
+>>>>   		ret = do_shrink_slab(&sc, shrinker, priority);
+>>>>   		if (ret == SHRINK_EMPTY)
+>>>>   			ret = 0;
+>>>>   		freed += ret;
+>>>> -		/*
+>>>> -		 * Bail out if someone want to register a new shrinker to
+>>>> -		 * prevent the registration from being stalled for long periods
+>>>> -		 * by parallel ongoing shrinking.
+>>>> -		 */
+>>>> -		if (rwsem_is_contended(&shrinker_rwsem)) {
+>>>> -			freed = freed ? : 1;
+>>>> -			break;
+>>>> -		}
+>>>> -	}
+>>>>   
+>>>> -	up_read(&shrinker_rwsem);
+>>>> -out:
+>>>> +		rcu_read_lock();
+>>>
+>>> That new rcu_read_lock() won't help AFAIK, the whole
+>>> list_for_each_entry_rcu() needs to be under the single rcu_read_lock() to be
+>>> safe.
+>>
+>> Yeah, that's the pattern we've been taught and the one we can look
+>> at and immediately say "this is safe".
+>>
+>> This is a different pattern, as has been explained bi Qi, and I
+>> think it *might* be safe.
+>>
+>> *However.*
+>>
+>> Right now I don't have time to go through a novel RCU list iteration
+>> pattern it one step at to determine the correctness of the
+>> algorithm. I'm mostly worried about list manipulations that can
+>> occur outside rcu_read_lock() section bleeding into the RCU
+>> critical section because rcu_read_lock() by itself is not a memory
+>> barrier.
+>>
+>> Maybe Paul has seen this pattern often enough he could simply tell
+>> us what conditions it is safe in. But for me to work that out from
+>> first principles? I just don't have the time to do that right now.
+> 
+> If the code does just the right sequence of things on the removal path
+> (remove, decrement reference, wait for reference to go to zero, wait for
+> grace period, free), then it would work.  If this is what is happening,
+> I would argue for more comments.  ;-)
+
+The order of the removal path is slightly different from this:
+
+     shrink_slab                 unregister_shrinker
+     ===========                 ===================
+		
+    shrinker_try_get()
+    rcu_read_unlock()		
+                                 1. decrement initial reference
+				shrinker_put()
+				2. wait for reference to go to zero
+				wait_for_completion()
+    rcu_read_lock()
+
+    shrinker_put()
+				3. remove the shrinker from list
+				list_del_rcu()
+                                 4. wait for grace period
+				kfree_rcu()/synchronize_rcu()
 
 
-Regards
-Yin, Fengwei
+    list_for_each_entry()
+
+    shrinker_try_get()
+    rcu_read_unlock()
+				5. free the shrinker
+
+So the order is: decrement reference, wait for reference to go to zero,
+remove, wait for grace period, free.
+
+I think this can work. And we can only do the *step 3* after we hold the
+RCU read lock again, right? Please let me know if I missed something.
+
+Thanks,
+Qi
+
+> 
+> 							Thanx, Paul
+> 
+>>> IIUC this is why Dave in [4] suggests unifying shrink_slab() with
+>>> shrink_slab_memcg(), as the latter doesn't iterate the list but uses IDR.
+>>
+>> Yes, I suggested the IDR route because radix tree lookups under RCU
+>> with reference counted objects are a known safe pattern that we can
+>> easily confirm is correct or not.  Hence I suggested the unification
+>> + IDR route because it makes the life of reviewers so, so much
+>> easier...
+>>
+>> Cheers,
+>>
+>> Dave.
+>> -- 
+>> Dave Chinner
+>> david@fromorbit.com
