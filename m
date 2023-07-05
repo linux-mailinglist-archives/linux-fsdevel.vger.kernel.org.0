@@ -2,306 +2,244 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A7446747BCB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 05:28:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3919F747BEE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 05:55:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230432AbjGED2L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Jul 2023 23:28:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36758 "EHLO
+        id S230255AbjGEDzo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Jul 2023 23:55:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230048AbjGED2F (ORCPT
+        with ESMTP id S229715AbjGEDzm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Jul 2023 23:28:05 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 329E510D5
-        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jul 2023 20:27:38 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-682a5465e9eso173062b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jul 2023 20:27:38 -0700 (PDT)
+        Tue, 4 Jul 2023 23:55:42 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80B5610E3
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jul 2023 20:55:38 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3fbd33a1819so248385e9.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jul 2023 20:55:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1688527657; x=1691119657;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NOwOUvz1NPkWlBxAp0GPGGO2Nrixl73uZn6xROfOEj8=;
-        b=ifLsYO8F2I4MBHVlF2Or5hf7tTNep81Mx+BsSk/nCvCzxaPTLrQYJUCegbZ71CLvqI
-         jnwmhHljMYjJqvknT1p7Cvh4o3Zetn0nbYVkcxdIejyVlEmEoOc51mjv2rm9Oe7hCkmi
-         BhkEzv2gsaM2VKlzfD2ZXlb5JXn4cFBH6rlbCG9Gisi0SSs52NHZD0JL0DYBTusr279z
-         ECt8JJbhMcUgBeDhNudIJn3gOdFaKif3GEH22u6ET+bb2NCPdK1crIBUZU+UjNX2cqQu
-         Xo1u3OB8WsD6YcqowSF12wIwDOJl+hjeHnPzPy5ZJwY8SE6f5Rm09aAg64VyQm7gLUPN
-         jgMw==
+        d=google.com; s=20221208; t=1688529337; x=1691121337;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kaO+Xx+AffiAOFAxmcebERanhAHdbOWTOJWXKAKt4bs=;
+        b=7wUNH7avrpxryyy6C9KEuNHJPJH10Qhk+QmpnP7wvg0Y0CYLwO/jYKY0d7XuXEYIWH
+         HefCN1SsmbswImVyio4B+emgVVu+F4sZTBje3g5jZKjAkvs2cQssqysZEBqlnv+5zbHU
+         QvaL23XspKrJjvyQMdGyvJx5toyYRllgOSVl1dAuyCI0qjg/DybEga/YbmGyYvvhwDHM
+         0vPcb5IupX+UXoebxoCu5iiOS3Z/SpNYO/pEZfrFPAPdo63A1eVBEdNI41qD2zHOCkVo
+         vUbMm2qDdis90mNM5Dz2hIh5Uz+wlnnIcRJgPXBtsdmffqvVxSM22j74kVP+U5hEgxQY
+         ejXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688527657; x=1691119657;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NOwOUvz1NPkWlBxAp0GPGGO2Nrixl73uZn6xROfOEj8=;
-        b=YpxpYL6FI3JoOOfwk0XDOLtKjvgftKHbw/eNQJwk3wu4H5SejsqZ4WmR1o195d+E1p
-         sTpxWChVplyl8XLyRA9bksnUlbj7kqYgUqya5stNy02l8Q4m6I1YZbkFquACcHY36E+E
-         vzAjQHBqt0YvCX0M1XMsz34tIpCK8QiznQvHnl8ENm3Bu1FVv7sohXL1KjgBrwXnvSrp
-         rpBt2q2zOU9ikRqGLjrG1vIj8El2WriicsDvnL9ftgV9q87jrJrmF7jCtpK2cJehLmx/
-         D4sm5lh4vWlF2pM0OT5X1/6Ra0PxNw4GSJql5lqKpSb08LoTNtoL/7xivWhMpFNJQ985
-         x0XQ==
-X-Gm-Message-State: ABy/qLZq0uxvoch74PdiJoKRTTCwMVoG62DKJTJRPzUcFou/6y+l4tUN
-        3VPcLk2X7yKJzXscI7XALbFTHg==
-X-Google-Smtp-Source: APBJJlHJ/xdp2D4mprG7cOjZwHFFckWD0OnUdfulMpel6EsGVgn6d2uqpP3j7nke+gBKkBfRchiLhg==
-X-Received: by 2002:a05:6a00:1f90:b0:675:8627:a291 with SMTP id bg16-20020a056a001f9000b006758627a291mr16245087pfb.3.1688527657628;
-        Tue, 04 Jul 2023 20:27:37 -0700 (PDT)
-Received: from [10.70.252.135] ([203.208.167.147])
-        by smtp.gmail.com with ESMTPSA id fe10-20020a056a002f0a00b0064fde7ae1ffsm13136627pfb.38.2023.07.04.20.27.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jul 2023 20:27:37 -0700 (PDT)
-Message-ID: <733af312-fb2d-3ec4-54c8-f154447c2051@bytedance.com>
-Date:   Wed, 5 Jul 2023 11:27:28 +0800
+        d=1e100.net; s=20221208; t=1688529337; x=1691121337;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kaO+Xx+AffiAOFAxmcebERanhAHdbOWTOJWXKAKt4bs=;
+        b=bkyfCu3/1vZNyeDQt+iNDHm0ZM1qhD4p6qMJNQ/jHKipeGO9D5MGRu0K2DG/ZifGBx
+         O/EoY1n4v/GB2x+r0t4gtYuO8HeQLrZAYeL0vU1QEQBPxZyROFd1nyoDbgaE5YmnyZQj
+         qHGSijqt4dOhOjG8pcz7+WZzc2Km7C8VpGt5Xy1Kuz7BKc9xI6dshVlj+j7sX2NwbKiq
+         qpqZzK9+ugvamD5YR9oJY0sZ9E8jLaka4PH03d8sqk+KUtCymruovQQQ5JEsMBjUOm66
+         6Zbv04+sgHdXVNzRbeAnVBgDjFHVbGmn0wutxNBG0yO/Rg5MAtRbkhta6WVdrDErhcua
+         Ki7g==
+X-Gm-Message-State: ABy/qLYShkHklX9idmMWi2lPoTDB6Z/xWp/LBvjKutwUjMJXxaeBxvVy
+        tw1gk6MFTdpytdA6vQwpFoeHje08vXdLqTJIBSgumw==
+X-Google-Smtp-Source: APBJJlETKlxByGVhbMEQprFacD+SpR4g71GUaaNIA3XyET1zsdvRYMBVqxEVTUUQsM8eboALav5uNE5Nuf6JasdXrXw=
+X-Received: by 2002:a05:600c:3ba3:b0:3f7:e59f:2183 with SMTP id
+ n35-20020a05600c3ba300b003f7e59f2183mr17526wms.5.1688529336872; Tue, 04 Jul
+ 2023 20:55:36 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.12.0
-Subject: Re: [PATCH 24/29] mm: vmscan: make global slab shrink lockless
-Content-Language: en-US
-From:   Qi Zheng <zhengqi.arch@bytedance.com>
-To:     paulmck@kernel.org, Dave Chinner <david@fromorbit.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org,
-        tkhai@ya.ru, roman.gushchin@linux.dev, djwong@kernel.org,
-        brauner@kernel.org, tytso@mit.edu, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        dm-devel@redhat.com, linux-raid@vger.kernel.org,
-        linux-bcache@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-References: <20230622085335.77010-1-zhengqi.arch@bytedance.com>
- <20230622085335.77010-25-zhengqi.arch@bytedance.com>
- <cf0d9b12-6491-bf23-b464-9d01e5781203@suse.cz>
- <ZJU708VIyJ/3StAX@dread.disaster.area>
- <cc894c77-717a-4e9f-b649-48bab40e7c60@paulmck-laptop>
- <3efa68e0-b04f-5c11-4fe2-2db0784064fc@bytedance.com>
-In-Reply-To: <3efa68e0-b04f-5c11-4fe2-2db0784064fc@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <00000000000008d0f405ff98fa21@google.com> <CAL3q7H4uHx14j91qNmXcghk-N-8yTC2mtF+5_9-SSg78jwmDLw@mail.gmail.com>
+In-Reply-To: <CAL3q7H4uHx14j91qNmXcghk-N-8yTC2mtF+5_9-SSg78jwmDLw@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 5 Jul 2023 05:55:24 +0200
+Message-ID: <CACT4Y+ZFU3sLjdW5oVLNH4=8BG3GadiQ69f1t1kSKY80xiCw4Q@mail.gmail.com>
+Subject: Re: [syzbot] [btrfs?] kernel BUG in merge_reloc_roots
+To:     Filipe Manana <fdmanana@kernel.org>
+Cc:     syzbot <syzbot+adac949c4246513f0dc6@syzkaller.appspotmail.com>,
+        clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL,
+        USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, 3 Jul 2023 at 22:30, Filipe Manana <fdmanana@kernel.org> wrote:
+>
+> On Mon, Jul 3, 2023 at 7:34=E2=80=AFPM syzbot
+> <syzbot+adac949c4246513f0dc6@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    b19edac5992d Merge tag 'nolibc.2023.06.22a' of git://gi=
+t.k..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D17e0cfe0a80=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D33c8c2baba1=
+cfc7e
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dadac949c42465=
+13f0dc6
+> > compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for D=
+ebian) 2.35.2
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1562a47f2=
+80000
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/e1a4f239105a/d=
+isk-b19edac5.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/25776c3e9785/vmli=
+nux-b19edac5.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/ca7e959d451d=
+/bzImage-b19edac5.xz
+> > mounted in repro #1: https://storage.googleapis.com/syzbot-assets/2926f=
+e9a4819/mount_0.gz
+> > mounted in repro #2: https://storage.googleapis.com/syzbot-assets/da38c=
+75be578/mount_17.gz
+> >
+> > The issue was bisected to:
+> >
+> > commit 751a27615ddaaf95519565d83bac65b8aafab9e8
+> > Author: Filipe Manana <fdmanana@suse.com>
+> > Date:   Thu Jun 8 10:27:49 2023 +0000
+> >
+> >     btrfs: do not BUG_ON() on tree mod log failures at btrfs_del_ptr()
+>
+> If the bisection is correct, then it means before that commit we would
+> hit a BUG_ON(), which is definitely not better...
+>
+> >
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D15196068=
+a80000
+> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D17196068=
+a80000
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D13196068a80=
+000
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
+> > Reported-by: syzbot+adac949c4246513f0dc6@syzkaller.appspotmail.com
+> > Fixes: 751a27615dda ("btrfs: do not BUG_ON() on tree mod log failures a=
+t btrfs_del_ptr()")
+> >
+> > assertion failed: 0, in fs/btrfs/relocation.c:2011
+> > ------------[ cut here ]------------
+> > kernel BUG at fs/btrfs/relocation.c:2011!
+>
+> I don't see how this can be related to removing the BUG_ON() in
+> del_ptr(), aborting the transaction and propagating the error up the
+> call chain.
+>
+> So it seems not hitting the BUG_ON()'s removed by that commit may
+> somehow trigger this assertion failure in an error path of relocation.
+>
+> But this assertion is in a path that is able to handle the error:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/f=
+s/btrfs/relocation.c?h=3Dv6.4#n2011
+>
+> The ASSERT(0) is there to make sure developers are notified of this
+> unexpected case.
+> Replacing it with a WARN_ON() would prevent the crash when
+> CONFIG_BTRFS_ASSERT=3Dy, but syzbot would still complain about a
+> warning/stack trace, even if it doesn't trigger a crash.
+>
+> So I'm not sure if we can keep syzbot always happy all the time for all c=
+ases.
+
+Hi Filipe,
+
+If this condition does not mean a kernel bug, then it shouldn't use WARN/BU=
+G.
+It's not about syzbot, it's about any automated and manual testing.
+If it aims at end users, then a readable message with pr_err stating
+what to do and where to report it would be more suitable/useful.
+
+But the current message suggests it's a kernel bug, no?
+Or at least it looks like developers couldn't think of a way how it
+can happen, so the comment can be updated as well now that we know how
+it can happen.
+
+/*
+* This is actually impossible without something
+* going really wrong (like weird race condition
+* or cosmic rays).
+*/
 
 
-On 2023/7/4 11:45, Qi Zheng wrote:
-> 
-> 
-> On 2023/7/4 00:39, Paul E. McKenney wrote:
->> On Fri, Jun 23, 2023 at 04:29:39PM +1000, Dave Chinner wrote:
->>> On Thu, Jun 22, 2023 at 05:12:02PM +0200, Vlastimil Babka wrote:
->>>> On 6/22/23 10:53, Qi Zheng wrote:
->>>>> @@ -1067,33 +1068,27 @@ static unsigned long shrink_slab(gfp_t 
->>>>> gfp_mask, int nid,
->>>>>       if (!mem_cgroup_disabled() && !mem_cgroup_is_root(memcg))
->>>>>           return shrink_slab_memcg(gfp_mask, nid, memcg, priority);
->>>>> -    if (!down_read_trylock(&shrinker_rwsem))
->>>>> -        goto out;
->>>>> -
->>>>> -    list_for_each_entry(shrinker, &shrinker_list, list) {
->>>>> +    rcu_read_lock();
->>>>> +    list_for_each_entry_rcu(shrinker, &shrinker_list, list) {
->>>>>           struct shrink_control sc = {
->>>>>               .gfp_mask = gfp_mask,
->>>>>               .nid = nid,
->>>>>               .memcg = memcg,
->>>>>           };
->>>>> +        if (!shrinker_try_get(shrinker))
->>>>> +            continue;
->>>>> +        rcu_read_unlock();
->>>>
->>>> I don't think you can do this unlock?
->>
->> Sorry to be slow to respond here, this one fell through the cracks.
->> And thank you to Qi for reminding me!
->>
->> If you do this unlock, you had jolly well better nail down the current
->> element (the one referenced by shrinker), for example, by acquiring an
->> explicit reference count on the object.  And presumably this is exactly
->> what shrinker_try_get() is doing.  And a look at your 24/29 confirms 
->> this,
->> at least assuming that shrinker->refcount is set to zero before the call
->> to synchronize_rcu() in free_module() *and* that synchronize_rcu() 
->> doesn't
->> start until *after* shrinker_put() calls complete().  Plus, as always,
->> the object must be removed from the list before the synchronize_rcu()
->> starts.  (On these parts of the puzzle, I defer to those more familiar
->> with this code path.  And I strongly suggest carefully commenting this
->> type of action-at-a-distance design pattern.)
-> 
-> Yeah, I think I've done it like above. A more detailed timing diagram is
-> below.
-> 
->>
->> Why is this important?  Because otherwise that object might be freed
->> before you get to the call to rcu_read_lock() at the end of this loop.
->> And if that happens, list_for_each_entry_rcu() will be walking the
->> freelist, which is quite bad for the health and well-being of your 
->> kernel.
->>
->> There are a few other ways to make this sort of thing work:
->>
->> 1.    Defer the shrinker_put() to the beginning of the loop.
->>     You would need a flag initially set to zero, and then set to
->>     one just before (or just after) the rcu_read_lock() above.
->>     You would also need another shrinker_old pointer to track the
->>     old pointer.  Then at the top of the loop, if the flag is set,
->>     invoke shrinker_put() on shrinker_old.    This ensures that the
->>     previous shrinker structure stays around long enough to allow
->>     the loop to find the next shrinker structure in the list.
->>
->>     This approach is attractive when the removal code path
->>     can invoke shrinker_put() after the grace period ends.
->>
->> 2.    Make shrinker_put() invoke call_rcu() when ->refcount reaches
->>     zero, and have the callback function free the object.  This of
->>     course requires adding an rcu_head structure to the shrinker
->>     structure, which might or might not be a reasonable course of
->>     action.  If adding that rcu_head is reasonable, this simplifies
->>     the logic quite a bit.
->>
->> 3.    For the shrinker-structure-removal code path, remove the shrinker
->>     structure, then remove the initial count from ->refcount,
->>     and then keep doing grace periods until ->refcount is zero,
->>     then do one more.  Of course, if the result of removing the
->>     initial count was zero, then only a single additional grace
->>     period is required.
->>
->>     This would need to be carefully commented, as it is a bit
->>     unconventional.
-> 
-> Thanks for such a detailed addition!
-> 
->>
->> There are probably many other ways, but just to give an idea of a few
->> other ways to do this.
->>
->>>>> +
->>>>>           ret = do_shrink_slab(&sc, shrinker, priority);
->>>>>           if (ret == SHRINK_EMPTY)
->>>>>               ret = 0;
->>>>>           freed += ret;
->>>>> -        /*
->>>>> -         * Bail out if someone want to register a new shrinker to
->>>>> -         * prevent the registration from being stalled for long 
->>>>> periods
->>>>> -         * by parallel ongoing shrinking.
->>>>> -         */
->>>>> -        if (rwsem_is_contended(&shrinker_rwsem)) {
->>>>> -            freed = freed ? : 1;
->>>>> -            break;
->>>>> -        }
->>>>> -    }
->>>>> -    up_read(&shrinker_rwsem);
->>>>> -out:
->>>>> +        rcu_read_lock();
->>>>
->>>> That new rcu_read_lock() won't help AFAIK, the whole
->>>> list_for_each_entry_rcu() needs to be under the single 
->>>> rcu_read_lock() to be
->>>> safe.
->>>
->>> Yeah, that's the pattern we've been taught and the one we can look
->>> at and immediately say "this is safe".
->>>
->>> This is a different pattern, as has been explained bi Qi, and I
->>> think it *might* be safe.
->>>
->>> *However.*
->>>
->>> Right now I don't have time to go through a novel RCU list iteration
->>> pattern it one step at to determine the correctness of the
->>> algorithm. I'm mostly worried about list manipulations that can
->>> occur outside rcu_read_lock() section bleeding into the RCU
->>> critical section because rcu_read_lock() by itself is not a memory
->>> barrier.
->>>
->>> Maybe Paul has seen this pattern often enough he could simply tell
->>> us what conditions it is safe in. But for me to work that out from
->>> first principles? I just don't have the time to do that right now.
->>
->> If the code does just the right sequence of things on the removal path
->> (remove, decrement reference, wait for reference to go to zero, wait for
->> grace period, free), then it would work.  If this is what is happening,
->> I would argue for more comments.  ;-)
-> 
-> The order of the removal path is slightly different from this:
-> 
->      shrink_slab                 unregister_shrinker
->      ===========                 ===================
-> 
->     shrinker_try_get()
->     rcu_read_unlock()
->                                  1. decrement initial reference
->                  shrinker_put()
->                  2. wait for reference to go to zero
->                  wait_for_completion()
->     rcu_read_lock()
-> 
->     shrinker_put()
->                  3. remove the shrinker from list
->                  list_del_rcu()
->                                  4. wait for grace period
->                  kfree_rcu()/synchronize_rcu()
-> 
-> 
->     list_for_each_entry()
-> 
->     shrinker_try_get()
->     rcu_read_unlock()
->                  5. free the shrinker
-> 
-> So the order is: decrement reference, wait for reference to go to zero,
-> remove, wait for grace period, free.
-> 
-> I think this can work. And we can only do the *step 3* after we hold the
-> RCU read lock again, right? Please let me know if I missed something.
 
-Oh, you are right, It would be better to move step 3 to step 1. We
-should first remove the shrinker from the shrinker_list to prevent
-other traversers from finding it again, otherwise the following
-situations may occur theoretically:
-
-CPU 0                 CPU 1
-
-shrinker_try_get()
-
-                       shrinker_try_get()
-
-shrinker_put()
-shrinker_try_get()
-                       shrinker_put()
-
-Thanks,
-Qi
-
-> 
-> Thanks,
-> Qi
-> 
->>
->>                             Thanx, Paul
->>
->>>> IIUC this is why Dave in [4] suggests unifying shrink_slab() with
->>>> shrink_slab_memcg(), as the latter doesn't iterate the list but uses 
->>>> IDR.
->>>
->>> Yes, I suggested the IDR route because radix tree lookups under RCU
->>> with reference counted objects are a known safe pattern that we can
->>> easily confirm is correct or not.  Hence I suggested the unification
->>> + IDR route because it makes the life of reviewers so, so much
->>> easier...
->>>
->>> Cheers,
->>>
->>> Dave.
->>> -- 
->>> Dave Chinner
->>> david@fromorbit.com
+> > invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> > CPU: 0 PID: 7243 Comm: syz-executor.3 Not tainted 6.4.0-syzkaller-01312=
+-gb19edac5992d #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
+ Google 05/27/2023
+> > RIP: 0010:merge_reloc_roots+0x98b/0x9a0 fs/btrfs/relocation.c:2011
+> > Code: cb d1 10 07 0f 0b e8 84 9d ed fd 48 c7 c7 60 45 2b 8b 48 c7 c6 c0=
+ 50 2b 8b 48 c7 c2 e0 45 2b 8b b9 db 07 00 00 e8 a5 d1 10 07 <0f> 0b e8 7e =
+12 13 07 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 41
+> > RSP: 0018:ffffc9000656f760 EFLAGS: 00010246
+> > RAX: 0000000000000032 RBX: ffff88806a59a030 RCX: a7b6d3c4bc715b00
+> > RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+> > RBP: ffffc9000656f870 R08: ffffffff816efd9c R09: fffff52000cadea1
+> > R10: 0000000000000000 R11: dffffc0000000001 R12: ffff888079e16558
+> > R13: ffff888079e16000 R14: ffff88806a59a000 R15: dffffc0000000000
+> > FS:  00007f62d8f56700(0000) GS:ffff8880b9800000(0000) knlGS:00000000000=
+00000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00007f7ba56f1000 CR3: 000000001a7d0000 CR4: 00000000003506f0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Call Trace:
+> >  <TASK>
+> >  relocate_block_group+0xa68/0xcd0 fs/btrfs/relocation.c:3751
+> >  btrfs_relocate_block_group+0x7ab/0xd70 fs/btrfs/relocation.c:4087
+> >  btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3283
+> >  __btrfs_balance+0x1b06/0x2690 fs/btrfs/volumes.c:4018
+> >  btrfs_balance+0xbdb/0x1120 fs/btrfs/volumes.c:4402
+> >  btrfs_ioctl_balance+0x496/0x7c0 fs/btrfs/ioctl.c:3604
+> >  vfs_ioctl fs/ioctl.c:51 [inline]
+> >  __do_sys_ioctl fs/ioctl.c:870 [inline]
+> >  __se_sys_ioctl+0xf8/0x170 fs/ioctl.c:856
+> >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+> >  do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+> >  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> > RIP: 0033:0x7f62d828c389
+> > Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89=
+ f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 =
+ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> > RSP: 002b:00007f62d8f56168 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> > RAX: ffffffffffffffda RBX: 00007f62d83abf80 RCX: 00007f62d828c389
+> > RDX: 00000000200003c0 RSI: 00000000c4009420 RDI: 0000000000000006
+> > RBP: 00007f62d82d7493 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> > R13: 00007ffedd8614bf R14: 00007f62d8f56300 R15: 0000000000022000
+> >  </TASK>
+> > Modules linked in:
+> > ---[ end trace 0000000000000000 ]---
+> > RIP: 0010:merge_reloc_roots+0x98b/0x9a0 fs/btrfs/relocation.c:2011
+> > Code: cb d1 10 07 0f 0b e8 84 9d ed fd 48 c7 c7 60 45 2b 8b 48 c7 c6 c0=
+ 50 2b 8b 48 c7 c2 e0 45 2b 8b b9 db 07 00 00 e8 a5 d1 10 07 <0f> 0b e8 7e =
+12 13 07 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 41
+> > RSP: 0018:ffffc9000656f760 EFLAGS: 00010246
+> > RAX: 0000000000000032 RBX: ffff88806a59a030 RCX: a7b6d3c4bc715b00
+> > RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+> > RBP: ffffc9000656f870 R08: ffffffff816efd9c R09: fffff52000cadea1
+> > R10: 0000000000000000 R11: dffffc0000000001 R12: ffff888079e16558
+> > R13: ffff888079e16000 R14: ffff88806a59a000 R15: dffffc0000000000
+> > FS:  00007f62d8f56700(0000) GS:ffff8880b9800000(0000) knlGS:00000000000=
+00000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00007f83ebdff000 CR3: 000000001a7d0000 CR4: 00000000003506f0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
