@@ -2,45 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EDFD2748CF6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 21:05:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96B08748CF9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 21:05:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233665AbjGETFT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jul 2023 15:05:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43724 "EHLO
+        id S233098AbjGETF2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jul 2023 15:05:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233563AbjGETE3 (ORCPT
+        with ESMTP id S233695AbjGETEp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jul 2023 15:04:29 -0400
+        Wed, 5 Jul 2023 15:04:45 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9E322126;
-        Wed,  5 Jul 2023 12:03:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D45142680;
+        Wed,  5 Jul 2023 12:03:45 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7ADA4616F4;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 21C72616D1;
+        Wed,  5 Jul 2023 19:03:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C835BC433C8;
         Wed,  5 Jul 2023 19:03:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51CF8C433C8;
-        Wed,  5 Jul 2023 19:03:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688583822;
-        bh=wSyYyxAOPkc4UMvoUTNmso9bOR6OW/Z0q8azn3XnLKk=;
+        s=k20201202; t=1688583824;
+        bh=1B+MgxeTUKiB+Aq5PTxF0CcPr9pCEwQhTlsh6cqIOdo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o8AAPs+uOhNW5p5ZVDmLjOlmDWrSdbUEMj85BxAkCXEad3noFFCw+u2lAfB8+67xl
-         EHH0Q7KmOJl5GFehxiCi9O/GivjvhQkrHYAKk1pc9+a8xeIJQGNFNL4ZKxdKCJdgW2
-         wtdkcqQ9bPP74wogVJiwPcLAcwMhoSwW7nZt0ydyE+ozUdZQEg0fsiQp/lbc7RvwV9
-         9GsRbywg0U0kF+WHw6AsFkEzPXDkYbDVFa0aiW05UINetBxnpPMEuGCSnuZqxtk0mg
-         NHK4vqSjEnaKyqAZP1EYwlnJCnNxR1HVLQ8dgwldJ0ARxQyXNelaFKkBjZK3T2pnST
-         WOKMcLaTKRpEQ==
+        b=WmsTGikntTcs585octjgzEvGQ4NF2m05+liXMeHd7YWRLAsj/EWPPr668pReigKWX
+         YZyp7UuLDK1/AYXJys666MxyTRACmx9TiSa3YjyQxI7oZq3/F79aQAXMpLWf6hg/18
+         I39raBK11jzCp//l9SZkPsDG+MsxNCWKnPPxtZsKMnAzkX/c2u3LteYNoACxQ8Mz3S
+         isJq20UqJE/y9hy4OF8kHrFteHDj9iSackwnExM8HFDUGyUNkDoPF4eWIxd1NSh5dZ
+         x8BDNmCqWOiHg+E7wPfo5+vWyKXFk9RnhXbqJGYfZOAlSap34gnK1KczLmSr4ObFom
+         YZxuY9ITV40Vg==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Christian Brauner <brauner@kernel.org>,
-        David Sterba <dsterba@suse.com>
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 23/92] affs: convert to ctime accessor functions
-Date:   Wed,  5 Jul 2023 15:00:48 -0400
-Message-ID: <20230705190309.579783-21-jlayton@kernel.org>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-afs@lists.infradead.org
+Subject: [PATCH v2 24/92] afs: convert to ctime accessor functions
+Date:   Wed,  5 Jul 2023 15:00:49 -0400
+Message-ID: <20230705190309.579783-22-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230705190309.579783-1-jlayton@kernel.org>
 References: <20230705185755.579053-1-jlayton@kernel.org>
@@ -61,79 +63,57 @@ In later patches, we're going to change how the inode's ctime field is
 used. Switch to using accessor functions instead of raw accesses of
 inode->i_ctime.
 
-Acked-by: David Sterba <dsterba@suse.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/affs/amigaffs.c |  6 +++---
- fs/affs/inode.c    | 16 ++++++++--------
- 2 files changed, 11 insertions(+), 11 deletions(-)
+ fs/afs/dynroot.c | 2 +-
+ fs/afs/inode.c   | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/affs/amigaffs.c b/fs/affs/amigaffs.c
-index 29f11e10a7c7..7ba93efc1143 100644
---- a/fs/affs/amigaffs.c
-+++ b/fs/affs/amigaffs.c
-@@ -60,7 +60,7 @@ affs_insert_hash(struct inode *dir, struct buffer_head *bh)
- 	mark_buffer_dirty_inode(dir_bh, dir);
- 	affs_brelse(dir_bh);
+diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
+index d7d9402ff718..95bcbd7654d1 100644
+--- a/fs/afs/dynroot.c
++++ b/fs/afs/dynroot.c
+@@ -88,7 +88,7 @@ struct inode *afs_iget_pseudo_dir(struct super_block *sb, bool root)
+ 	set_nlink(inode, 2);
+ 	inode->i_uid		= GLOBAL_ROOT_UID;
+ 	inode->i_gid		= GLOBAL_ROOT_GID;
+-	inode->i_ctime = inode->i_atime = inode->i_mtime = current_time(inode);
++	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
+ 	inode->i_blocks		= 0;
+ 	inode->i_generation	= 0;
  
--	dir->i_mtime = dir->i_ctime = current_time(dir);
-+	dir->i_mtime = inode_set_ctime_current(dir);
- 	inode_inc_iversion(dir);
- 	mark_inode_dirty(dir);
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 866bab860a88..6b636f43f548 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -90,7 +90,7 @@ static int afs_inode_init_from_status(struct afs_operation *op,
+ 	vnode->status = *status;
  
-@@ -114,7 +114,7 @@ affs_remove_hash(struct inode *dir, struct buffer_head *rem_bh)
+ 	t = status->mtime_client;
+-	inode->i_ctime = t;
++	inode_set_ctime_to_ts(inode, t);
+ 	inode->i_mtime = t;
+ 	inode->i_atime = t;
+ 	inode->i_flags |= S_NOATIME;
+@@ -206,7 +206,7 @@ static void afs_apply_status(struct afs_operation *op,
+ 	t = status->mtime_client;
+ 	inode->i_mtime = t;
+ 	if (vp->update_ctime)
+-		inode->i_ctime = op->ctime;
++		inode_set_ctime_to_ts(inode, op->ctime);
  
- 	affs_brelse(bh);
- 
--	dir->i_mtime = dir->i_ctime = current_time(dir);
-+	dir->i_mtime = inode_set_ctime_current(dir);
- 	inode_inc_iversion(dir);
- 	mark_inode_dirty(dir);
- 
-@@ -315,7 +315,7 @@ affs_remove_header(struct dentry *dentry)
- 	else
- 		clear_nlink(inode);
- 	affs_unlock_link(inode);
--	inode->i_ctime = current_time(inode);
-+	inode_set_ctime_current(inode);
- 	mark_inode_dirty(inode);
- 
- done:
-diff --git a/fs/affs/inode.c b/fs/affs/inode.c
-index 27f77a52c5c8..060746c63151 100644
---- a/fs/affs/inode.c
-+++ b/fs/affs/inode.c
-@@ -149,13 +149,13 @@ struct inode *affs_iget(struct super_block *sb, unsigned long ino)
- 		break;
+ 	if (vnode->status.data_version != status->data_version)
+ 		data_changed = true;
+@@ -252,7 +252,7 @@ static void afs_apply_status(struct afs_operation *op,
+ 		vnode->netfs.remote_i_size = status->size;
+ 		if (change_size) {
+ 			afs_set_i_size(vnode, status->size);
+-			inode->i_ctime = t;
++			inode_set_ctime_to_ts(inode, t);
+ 			inode->i_atime = t;
+ 		}
  	}
- 
--	inode->i_mtime.tv_sec = inode->i_atime.tv_sec = inode->i_ctime.tv_sec
--		       = (be32_to_cpu(tail->change.days) * 86400LL +
--		         be32_to_cpu(tail->change.mins) * 60 +
--			 be32_to_cpu(tail->change.ticks) / 50 +
--			 AFFS_EPOCH_DELTA) +
--			 sys_tz.tz_minuteswest * 60;
--	inode->i_mtime.tv_nsec = inode->i_ctime.tv_nsec = inode->i_atime.tv_nsec = 0;
-+	inode->i_mtime.tv_sec = inode->i_atime.tv_sec =
-+		inode_set_ctime(inode,
-+				(be32_to_cpu(tail->change.days) * 86400LL +
-+				 be32_to_cpu(tail->change.mins) * 60 +
-+				 be32_to_cpu(tail->change.ticks) / 50 + AFFS_EPOCH_DELTA)
-+				+ sys_tz.tz_minuteswest * 60, 0).tv_sec;
-+	inode->i_mtime.tv_nsec = inode->i_atime.tv_nsec = 0;
- 	affs_brelse(bh);
- 	unlock_new_inode(inode);
- 	return inode;
-@@ -314,7 +314,7 @@ affs_new_inode(struct inode *dir)
- 	inode->i_gid     = current_fsgid();
- 	inode->i_ino     = block;
- 	set_nlink(inode, 1);
--	inode->i_mtime   = inode->i_atime = inode->i_ctime = current_time(inode);
-+	inode->i_mtime   = inode->i_atime = inode_set_ctime_current(inode);
- 	atomic_set(&AFFS_I(inode)->i_opencnt, 0);
- 	AFFS_I(inode)->i_blkcnt = 0;
- 	AFFS_I(inode)->i_lc = NULL;
 -- 
 2.41.0
 
