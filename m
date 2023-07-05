@@ -2,190 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 081377483AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 14:00:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABAAF7483F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 14:14:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231847AbjGEMAt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jul 2023 08:00:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59584 "EHLO
+        id S229910AbjGEMOV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jul 2023 08:14:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230446AbjGEMAr (ORCPT
+        with ESMTP id S231417AbjGEMOQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jul 2023 08:00:47 -0400
-Received: from mail-pj1-f77.google.com (mail-pj1-f77.google.com [209.85.216.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4B09E7B
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jul 2023 05:00:45 -0700 (PDT)
-Received: by mail-pj1-f77.google.com with SMTP id 98e67ed59e1d1-263fd992ab2so35404a91.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jul 2023 05:00:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688558445; x=1691150445;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        Wed, 5 Jul 2023 08:14:16 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52D281BE3;
+        Wed,  5 Jul 2023 05:14:06 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-992ace062f3so793684666b.2;
+        Wed, 05 Jul 2023 05:14:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688559245; x=1691151245;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=VpenHbvdJzQxgfCS5scbblLnDf+ZQHvl9YuFMax7724=;
-        b=hhyE+7Oai1MI/D6Gvbi5z4e/KVbbgp3rzwch/uFPmazPeDSLGDS5S5L/5x8118giKa
-         GNW1K4TvlzsDn5nYKOXbzA4KLK/+6zsGqAINJg5xWdD6nkfYb+JUJIkK1eDi/MoLRSml
-         sSqdhqAWyXwzOV6SZ/h1iULmd0bvQuedo0zBRYTNxbsYtAg5NkMHlpNEiO/em1nmv5Rg
-         alfAW4YzB3CJT8kd4oberf6J9oJB/83fRWkvAJvNc614pPGMZbWyrd/89uKe/NlmTgiD
-         SrF55uJ+hkzOTgqNOWKmoVqfzRG3B+7710yzfXrAw6Aoc5TZVhzmgBtxJPGT7q8iCgsg
-         XqhQ==
-X-Gm-Message-State: ABy/qLY05dJQmasMejXYmUcQetA02jeU05HyBnkY46/GjeP727NIS8/+
-        1DUs4fFiyeXqFAzHdvvdbClsegt87zDoFGieM2hpW3+ai64T
-X-Google-Smtp-Source: APBJJlGjdj3nzwXgF+QJ+/AzUmplUcm6ibES17LCr8wRC1xuyPlyq+LtPIoeSAJgZDtwP5sBFlvzDJmL3lJKwACGvOqu6Hf8N9JW
+        bh=qVCmFjHaC5Q7tgfQxLEj1IWtVdSN5OY45YY+cpq9sww=;
+        b=rwoEVsxKkkb/pahIh4lS36eyTXKcTBxzwrbvGsewBgsbQlHuXRzaPNhO8Dlvtah6ky
+         /O8NwYvnVhiKod6rPUdn7LuOPr+B0t/w2gX8v3lgCQozp2ZmCbYGIzah71WrJQuKA+Wb
+         MC981jbVfI9i1x134iszUuyw3EzJm7zGWi4Eod7iKxkEHzB/+iDjh1T2NR0OCspPcYQT
+         5yLlRTRwF/RY2jKqLg0S6A19lh8rtFKdGmPCXUlEYbAY6AbCeNyG300GRU/J1a56ZpJf
+         Ue98YYU6Hbl6RHLWXBbapx7ZvwpjlXnUT1ACRr2JzQYH3qZC4otkmXy23sxJWiSFzcy+
+         3ZYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688559245; x=1691151245;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qVCmFjHaC5Q7tgfQxLEj1IWtVdSN5OY45YY+cpq9sww=;
+        b=D2leYW/jUQZlbNlEotYKhjEHnMk9jFETIZXKP0jXC/RHACoyoh1xn70m9WWY8Fz29c
+         Gmck1DltUcb0fo2N0CVoke9dJFBdedFaOWhsR1KviemZHNunMN+AxvnqspYHAddYJaNh
+         TV2qh7+hmmPtMvG3IrPmRQrWfsB28PmC9F4yZd0BDX5CbvBodRuMu4gyJEmDqFiUaCCK
+         oKZ5vr9ap4U4Q+HV2u+FiLiSonOJDhvfboylPAOS35Jbxx1o3aBud2n4wPpyoVN6fMgR
+         C+r5dToXzElITVDP7+86nSOY0YzfoXpltRzlTh3CZFFncAAJz2mtw3c0pn8mUBOsqDXR
+         MAxA==
+X-Gm-Message-State: AC+VfDzpGHzTTNNdjxyL9/FAjLQ8pim+zsT7Hdy2UMp/zJmFw907CzSb
+        CG8OJPr+I9Rv/dsH9cG2zt0=
+X-Google-Smtp-Source: APBJJlFYUYLTONYdXrktuv8ySB1OKfabZ3M5jyHBco12c9u5mJC4PwQn0Q+adwj/3bePcJfflxMYwg==
+X-Received: by 2002:a17:906:e48:b0:978:a186:464f with SMTP id q8-20020a1709060e4800b00978a186464fmr13000508eji.39.1688559244603;
+        Wed, 05 Jul 2023 05:14:04 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:4b35])
+        by smtp.gmail.com with ESMTPSA id t13-20020a1709063e4d00b00992ae4cf3c1sm8244801eji.186.2023.07.05.05.14.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jul 2023 05:14:04 -0700 (PDT)
+Message-ID: <f549492d-a4af-f517-7f12-9d469067a235@gmail.com>
+Date:   Wed, 5 Jul 2023 13:10:41 +0100
 MIME-Version: 1.0
-X-Received: by 2002:a17:90b:3c51:b0:261:22fb:4462 with SMTP id
- pm17-20020a17090b3c5100b0026122fb4462mr1595800pjb.3.1688558445211; Wed, 05
- Jul 2023 05:00:45 -0700 (PDT)
-Date:   Wed, 05 Jul 2023 05:00:45 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004f34d705ffbc2604@google.com>
-Subject: [syzbot] [overlayfs?] general protection fault in d_path
-From:   syzbot <syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com>
-To:     amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 01/11] io-wq: fix worker counting after worker received
+ exit signal
+To:     Hao Xu <hao.xu@linux.dev>, io-uring@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>, Wanpeng Li <wanpengli@tencent.com>,
+        linux-fsdevel@vger.kernel.org
+References: <20230609122031.183730-1-hao.xu@linux.dev>
+ <20230609122031.183730-2-hao.xu@linux.dev>
+Content-Language: en-US
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20230609122031.183730-2-hao.xu@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 6/9/23 13:20, Hao Xu wrote:
+> From: Hao Xu <howeyxu@tencent.com>
+> 
+> acct->nr_workers should be decremented when we break the loop in
+> io_wq_worker().
+> 
+> Fixes: 78f8876c2d9f ("io-wq: exclusively gate signal based exit on get_signal() return")
+> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+> ---
+>   io_uring/io-wq.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+> index b2715988791e..b70eebec2845 100644
+> --- a/io_uring/io-wq.c
+> +++ b/io_uring/io-wq.c
+> @@ -634,6 +634,10 @@ static int io_wq_worker(void *data)
+>   
+>   			if (!get_signal(&ksig))
+>   				continue;
+> +
+> +			raw_spin_lock(&wq->lock);
+> +			acct->nr_workers--;
+> +			raw_spin_unlock(&wq->lock);
 
-syzbot found the following issue on:
+Wouldn't it suffer the same race you fixed with the following?
 
-HEAD commit:    d528014517f2 Revert ".gitignore: ignore *.cover and *.mbx"
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14fad002a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1085b4238c9eb6ba
-dashboard link: https://syzkaller.appspot.com/bug?extid=a67fc5321ffb4b311c98
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+commit 767a65e9f31789d80e41edd03a802314905e8fbf
+Author: Hao Xu <haoxu@linux.alibaba.com>
+Date:   Sun Sep 12 03:40:52 2021 +0800
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fef94e788067/disk-d5280145.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/576412ea518b/vmlinux-d5280145.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/685a0e4be06b/bzImage-d5280145.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com
-
-general protection fault, probably for non-canonical address 0xdffffc000000000a: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000050-0x0000000000000057]
-CPU: 1 PID: 10127 Comm: syz-executor.3 Not tainted 6.4.0-syzkaller-11478-gd528014517f2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
-RIP: 0010:__lock_acquire+0x10d/0x7f70 kernel/locking/lockdep.c:5012
-Code: 85 75 18 00 00 83 3d 15 c8 2c 0d 00 48 89 9c 24 10 01 00 00 0f 84 f8 0f 00 00 83 3d 5c de b3 0b 00 74 34 48 89 d0 48 c1 e8 03 <42> 80 3c 00 00 74 1a 48 89 d7 e8 b4 51 79 00 48 8b 94 24 80 00 00
-RSP: 0018:ffffc900169be9e0 EFLAGS: 00010006
-RAX: 000000000000000a RBX: 1ffff92002d37d60 RCX: 0000000000000002
-RDX: 0000000000000050 RSI: 0000000000000000 RDI: 0000000000000050
-RBP: ffffc900169beca8 R08: dffffc0000000000 R09: 0000000000000001
-R10: dffffc0000000000 R11: fffffbfff1d2fe76 R12: 0000000000000000
-R13: 0000000000000001 R14: 0000000000000002 R15: ffff88802091d940
-FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa22a3fe000 CR3: 000000004b5e1000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- lock_acquire+0x1e3/0x520 kernel/locking/lockdep.c:5761
- seqcount_lockdep_reader_access+0x139/0x220 include/linux/seqlock.h:102
- get_fs_root_rcu fs/d_path.c:244 [inline]
- d_path+0x2f0/0x6e0 fs/d_path.c:286
- audit_log_d_path+0xd3/0x310 kernel/audit.c:2139
- dump_common_audit_data security/lsm_audit.c:224 [inline]
- common_lsm_audit+0x7cf/0x1a90 security/lsm_audit.c:458
- smack_log+0x421/0x540 security/smack/smack_access.c:383
- smk_tskacc+0x2ff/0x360 security/smack/smack_access.c:253
- smack_inode_getattr+0x203/0x270 security/smack/smack_lsm.c:1202
- security_inode_getattr+0xd3/0x120 security/security.c:2114
- vfs_getattr+0x25/0x70 fs/stat.c:167
- ovl_getattr+0x1b1/0xf70 fs/overlayfs/inode.c:174
- ima_check_last_writer security/integrity/ima/ima_main.c:171 [inline]
- ima_file_free+0x26e/0x4b0 security/integrity/ima/ima_main.c:203
- __fput+0x36a/0x950 fs/file_table.c:378
- task_work_run+0x24a/0x300 kernel/task_work.c:179
- exit_task_work include/linux/task_work.h:38 [inline]
- do_exit+0x68f/0x2290 kernel/exit.c:874
- do_group_exit+0x206/0x2c0 kernel/exit.c:1024
- get_signal+0x1709/0x17e0 kernel/signal.c:2877
- arch_do_signal_or_restart+0x91/0x670 arch/x86/kernel/signal.c:308
- exit_to_user_mode_loop+0x6a/0x100 kernel/entry/common.c:168
- exit_to_user_mode_prepare+0xb1/0x140 kernel/entry/common.c:204
- __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
- syscall_exit_to_user_mode+0x64/0x280 kernel/entry/common.c:297
- do_syscall_64+0x4d/0xc0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f7f3ca8c389
-Code: Unable to access opcode bytes at 0x7f7f3ca8c35f.
-RSP: 002b:00007f7f3d741168 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
-RAX: fffffffffffffffb RBX: 00007f7f3cbac050 RCX: 00007f7f3ca8c389
-RDX: 0000000000000000 RSI: 00000000200001c0 RDI: 0000000020000180
-RBP: 00007f7f3cad7493 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fff8432555f R14: 00007f7f3d741300 R15: 0000000000022000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__lock_acquire+0x10d/0x7f70 kernel/locking/lockdep.c:5012
-Code: 85 75 18 00 00 83 3d 15 c8 2c 0d 00 48 89 9c 24 10 01 00 00 0f 84 f8 0f 00 00 83 3d 5c de b3 0b 00 74 34 48 89 d0 48 c1 e8 03 <42> 80 3c 00 00 74 1a 48 89 d7 e8 b4 51 79 00 48 8b 94 24 80 00 00
-RSP: 0018:ffffc900169be9e0 EFLAGS: 00010006
-RAX: 000000000000000a RBX: 1ffff92002d37d60 RCX: 0000000000000002
-RDX: 0000000000000050 RSI: 0000000000000000 RDI: 0000000000000050
-RBP: ffffc900169beca8 R08: dffffc0000000000 R09: 0000000000000001
-R10: dffffc0000000000 R11: fffffbfff1d2fe76 R12: 0000000000000000
-R13: 0000000000000001 R14: 0000000000000002 R15: ffff88802091d940
-FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa22a3fe000 CR3: 000000004b5e1000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	85 75 18             	test   %esi,0x18(%rbp)
-   3:	00 00                	add    %al,(%rax)
-   5:	83 3d 15 c8 2c 0d 00 	cmpl   $0x0,0xd2cc815(%rip)        # 0xd2cc821
-   c:	48 89 9c 24 10 01 00 	mov    %rbx,0x110(%rsp)
-  13:	00
-  14:	0f 84 f8 0f 00 00    	je     0x1012
-  1a:	83 3d 5c de b3 0b 00 	cmpl   $0x0,0xbb3de5c(%rip)        # 0xbb3de7d
-  21:	74 34                	je     0x57
-  23:	48 89 d0             	mov    %rdx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 00 00       	cmpb   $0x0,(%rax,%r8,1) <-- trapping instruction
-  2f:	74 1a                	je     0x4b
-  31:	48 89 d7             	mov    %rdx,%rdi
-  34:	e8 b4 51 79 00       	callq  0x7951ed
-  39:	48                   	rex.W
-  3a:	8b                   	.byte 0x8b
-  3b:	94                   	xchg   %eax,%esp
-  3c:	24 80                	and    $0x80,%al
+     io-wq: fix potential race of acct->nr_workers
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Even more, seems we fail to decrement nr_workers when the loop condition
+fails, i.e.
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+	while (!test_bit(IO_WQ_BIT_EXIT, &wq->state)) {
 
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
 
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
+I.e. the patch looks legit, but what we currently have is a mess and we
+have more work to do.
 
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Pavel Begunkov
