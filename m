@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C732B748D22
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 21:07:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B4B0748D4B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 21:09:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233687AbjGETHS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jul 2023 15:07:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44000 "EHLO
+        id S233953AbjGETJA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jul 2023 15:09:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233375AbjGETGR (ORCPT
+        with ESMTP id S234034AbjGETIS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jul 2023 15:06:17 -0400
+        Wed, 5 Jul 2023 15:08:18 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0653273C;
-        Wed,  5 Jul 2023 12:04:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81FC51FD4;
+        Wed,  5 Jul 2023 12:04:58 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CED1161701;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3220A6170C;
+        Wed,  5 Jul 2023 19:04:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04510C433C8;
         Wed,  5 Jul 2023 19:04:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2D94C433C9;
-        Wed,  5 Jul 2023 19:04:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688583862;
-        bh=EE1pMrQ7eUtaCqd78aDEt+l5fcwyOfnOdSwd15ijX/A=;
+        s=k20201202; t=1688583863;
+        bh=XUGLj6vRT2nD6OcTnqWk1j5eSDsjuOt1nCtiIEhrnV0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gyAtYMycE2dNDYESwnLkyjwZ2jj7Wj2l2RbcnD8pGImfzoiHw4JLq17FhFfjhZ5rn
-         u90N7i5SUOWEwsJpAps+KyFTPl+odwR5AisrTwBzk5DbwenAUVE0S+rDNwHcOVKNxz
-         IpGRBrsFDqXdyP0EKogBhkafqbVs25wCr3f8fMyoAbHHB+9DedwZw10Tx+h8X2csQB
-         OJoWI8Bd4LkN2W0nQO19G7pk8AHZxarXXs7P9yz5kI4QZ1HFYCxBwEyauVzd2t8nK+
-         6fyvuk/SLiIsHo/n9uI5xYuef4rusM8rEzCo+Wpw+b3J6L9mqtZxl7OWv58wMAF5t3
-         FKY7zkSWSWt6Q==
+        b=KLOgOXVGV+KiWlI9cx0L7N77auOJqmGI5YUpgqp4j5nt8APesTi0+DLwaxbepOnOI
+         jMU3uM7XJqSkTTjXyh8rtglLHfrInkXQLJWt0WF0qROqd/wMH7HP/avbYMIMgaiw85
+         fqJ/5E3lBSDUUUp8dyhsfxM38NsBsXOMKSxb+t+Hgr1cCW2Rs8QIvogGv/B7071BQ1
+         CWpH/3dwS2GyJsoVnGWlvb8i+Cpt4Vzq5Pga5VZY7hvNObpAYIfxXsM7KVWGzKl4Dz
+         keJiXv0SfWRV9MWv5uqCNyyCGMSP8MKxDflrErIhi+rlZ6cN4oQPseIbND8vj6xsQi
+         axXz/PLKlqJhg==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Christian Brauner <brauner@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+        Christoph Hellwig <hch@infradead.org>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 44/92] fat: convert to ctime accessor functions
-Date:   Wed,  5 Jul 2023 15:01:09 -0400
-Message-ID: <20230705190309.579783-42-jlayton@kernel.org>
+Subject: [PATCH v2 45/92] freevxfs: convert to ctime accessor functions
+Date:   Wed,  5 Jul 2023 15:01:10 -0400
+Message-ID: <20230705190309.579783-43-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230705190309.579783-1-jlayton@kernel.org>
 References: <20230705185755.579053-1-jlayton@kernel.org>
@@ -63,49 +63,25 @@ inode->i_ctime.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/fat/inode.c | 7 ++++---
- fs/fat/misc.c  | 3 ++-
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ fs/freevxfs/vxfs_inode.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-index d99b8549ec8f..2be40ff8a74f 100644
---- a/fs/fat/inode.c
-+++ b/fs/fat/inode.c
-@@ -562,7 +562,7 @@ int fat_fill_inode(struct inode *inode, struct msdos_dir_entry *de)
- 			   & ~((loff_t)sbi->cluster_size - 1)) >> 9;
+diff --git a/fs/freevxfs/vxfs_inode.c b/fs/freevxfs/vxfs_inode.c
+index ceb6a12649ba..ac5d43b164b5 100644
+--- a/fs/freevxfs/vxfs_inode.c
++++ b/fs/freevxfs/vxfs_inode.c
+@@ -110,10 +110,9 @@ static inline void dip2vip_cpy(struct vxfs_sb_info *sbi,
+ 	inode->i_size = vip->vii_size;
  
- 	fat_time_fat2unix(sbi, &inode->i_mtime, de->time, de->date, 0);
--	inode->i_ctime = inode->i_mtime;
-+	inode_set_ctime_to_ts(inode, inode->i_mtime);
- 	if (sbi->options.isvfat) {
- 		fat_time_fat2unix(sbi, &inode->i_atime, 0, de->adate, 0);
- 		fat_time_fat2unix(sbi, &MSDOS_I(inode)->i_crtime, de->ctime,
-@@ -1407,8 +1407,9 @@ static int fat_read_root(struct inode *inode)
- 	MSDOS_I(inode)->mmu_private = inode->i_size;
+ 	inode->i_atime.tv_sec = vip->vii_atime;
+-	inode->i_ctime.tv_sec = vip->vii_ctime;
++	inode_set_ctime(inode, vip->vii_ctime, 0);
+ 	inode->i_mtime.tv_sec = vip->vii_mtime;
+ 	inode->i_atime.tv_nsec = 0;
+-	inode->i_ctime.tv_nsec = 0;
+ 	inode->i_mtime.tv_nsec = 0;
  
- 	fat_save_attrs(inode, ATTR_DIR);
--	inode->i_mtime.tv_sec = inode->i_atime.tv_sec = inode->i_ctime.tv_sec = 0;
--	inode->i_mtime.tv_nsec = inode->i_atime.tv_nsec = inode->i_ctime.tv_nsec = 0;
-+	inode->i_mtime.tv_sec = inode->i_atime.tv_sec = inode_set_ctime(inode,
-+									0, 0).tv_sec;
-+	inode->i_mtime.tv_nsec = inode->i_atime.tv_nsec = 0;
- 	set_nlink(inode, fat_subdirs(inode)+2);
- 
- 	return 0;
-diff --git a/fs/fat/misc.c b/fs/fat/misc.c
-index 7e5d6ae305f2..67006ea08db6 100644
---- a/fs/fat/misc.c
-+++ b/fs/fat/misc.c
-@@ -332,7 +332,8 @@ int fat_truncate_time(struct inode *inode, struct timespec64 *now, int flags)
- 	 * but ctime updates are ignored.
- 	 */
- 	if (flags & S_MTIME)
--		inode->i_mtime = inode->i_ctime = fat_truncate_mtime(sbi, now);
-+		inode->i_mtime = inode_set_ctime_to_ts(inode,
-+						       fat_truncate_mtime(sbi, now));
- 
- 	return 0;
- }
+ 	inode->i_blocks = vip->vii_blocks;
 -- 
 2.41.0
 
