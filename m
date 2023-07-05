@@ -2,52 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B4B32748D69
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 21:10:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 645A1748D90
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 21:12:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233827AbjGETK2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jul 2023 15:10:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49556 "EHLO
+        id S234220AbjGETMY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jul 2023 15:12:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233807AbjGETIn (ORCPT
+        with ESMTP id S233969AbjGETMB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jul 2023 15:08:43 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B0B71BC2;
-        Wed,  5 Jul 2023 12:05:40 -0700 (PDT)
+        Wed, 5 Jul 2023 15:12:01 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAFB94693;
+        Wed,  5 Jul 2023 12:06:36 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 78E46616F5;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 26CAB616F6;
+        Wed,  5 Jul 2023 19:05:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5E96C433C9;
         Wed,  5 Jul 2023 19:05:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58D04C433C8;
-        Wed,  5 Jul 2023 19:05:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688583900;
-        bh=D4PXifJos2kbOsXU6nvjdH1kYQlJwGcy8WjsipEzEik=;
+        s=k20201202; t=1688583902;
+        bh=4L4f2j1dXwzf+7ROukpRWmIKlAPq9hAU4+j8l9mv3ec=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mG3H3PEc9ZmdfSzPaWslswErvXr3CZmQQt1nL55o1yEsKIg/75QDN/TCflGiSJ3yP
-         YQcG27mucubVIt/jUjX1Bc2cQnsjAV0mzeNzPjnwR4M8T+iq9Cw3Gn3pFUB5xthBjn
-         N9dn1euzTJvXsTzhVo1w3B6xzqmfsoXbVZxvePl36H3HUZhSPagbmV4nRaBlxepKzK
-         8MCE6pZxqiaUVzWS79/ra6Sn1uwLMxktV3gRNZ5F8IEZx34B5G2+4yR+cTwz08v6Md
-         qJzgyxUb0mVNwj7tzllPbyR/QHqsjYTPECc314uITdBB4jkabli2dima6qJeLLFBG8
-         W/zvi6zKCYYtA==
+        b=FsRHi7/XSrEQ04l3pTxAs6fvpw/dr0VlD+PtIh2GXYf262SVbChPIRQx1bY2dhICw
+         pDD9WuuxW+SQKrg1L6Q3Y1vymeUP4a3WCFCbUYENVT8jGPNUkNHEIWmctBbLx7p4s4
+         Lle9utlMCkzLjgeZ8iT0+Hpwqgfi3nKHBWyzaQZ1YBeJ0Ch8PHnVWG/R9aE54KSuS2
+         eskMgt47uhF5IU2mUVXRbwfi24bHRrZWoPKwLI4kYHMVCap3W5jUf8IgwTrMHjA2O2
+         8PHdA2cOrZyL9euUcT763C8APBXZ5zj69AGX5ZkK5WpotGIpoMh6lRLeLb6uQ3iHWV
+         E3qP4H2pFzomA==
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
+To:     Christian Brauner <brauner@kernel.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 64/92] openpromfs: convert to ctime accessor functions
-Date:   Wed,  5 Jul 2023 15:01:29 -0400
-Message-ID: <20230705190309.579783-62-jlayton@kernel.org>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@lists.orangefs.org
+Subject: [PATCH v2 65/92] orangefs: convert to ctime accessor functions
+Date:   Wed,  5 Jul 2023 15:01:30 -0400
+Message-ID: <20230705190309.579783-63-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230705190309.579783-1-jlayton@kernel.org>
 References: <20230705185755.579053-1-jlayton@kernel.org>
  <20230705190309.579783-1-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -62,32 +65,42 @@ inode->i_ctime.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/openpromfs/inode.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/orangefs/namei.c          | 2 +-
+ fs/orangefs/orangefs-utils.c | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/openpromfs/inode.c b/fs/openpromfs/inode.c
-index f0b7f4d51a17..b2457cb97fa0 100644
---- a/fs/openpromfs/inode.c
-+++ b/fs/openpromfs/inode.c
-@@ -237,7 +237,7 @@ static struct dentry *openpromfs_lookup(struct inode *dir, struct dentry *dentry
- 	if (IS_ERR(inode))
- 		return ERR_CAST(inode);
- 	if (inode->i_state & I_NEW) {
--		inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-+		inode->i_mtime = inode->i_atime = inode_set_ctime_current(inode);
- 		ent_oi = OP_I(inode);
- 		ent_oi->type = ent_type;
- 		ent_oi->u = ent_data;
-@@ -387,8 +387,7 @@ static int openprom_fill_super(struct super_block *s, struct fs_context *fc)
- 		goto out_no_root;
- 	}
+diff --git a/fs/orangefs/namei.c b/fs/orangefs/namei.c
+index 77518e248cf7..c9dfd5c6a097 100644
+--- a/fs/orangefs/namei.c
++++ b/fs/orangefs/namei.c
+@@ -421,7 +421,7 @@ static int orangefs_rename(struct mnt_idmap *idmap,
+ 		     ret);
  
--	root_inode->i_mtime = root_inode->i_atime =
--		root_inode->i_ctime = current_time(root_inode);
-+	root_inode->i_mtime = root_inode->i_atime = inode_set_ctime_current(root_inode);
- 	root_inode->i_op = &openprom_inode_operations;
- 	root_inode->i_fop = &openprom_operations;
- 	root_inode->i_mode = S_IFDIR | S_IRUGO | S_IXUGO;
+ 	if (new_dentry->d_inode)
+-		new_dentry->d_inode->i_ctime = current_time(new_dentry->d_inode);
++		inode_set_ctime_current(d_inode(new_dentry));
+ 
+ 	op_release(new_op);
+ 	return ret;
+diff --git a/fs/orangefs/orangefs-utils.c b/fs/orangefs/orangefs-utils.c
+index 46b7dcff18ac..0a9fcfdf552f 100644
+--- a/fs/orangefs/orangefs-utils.c
++++ b/fs/orangefs/orangefs-utils.c
+@@ -361,11 +361,11 @@ int orangefs_inode_getattr(struct inode *inode, int flags)
+ 	    downcall.resp.getattr.attributes.atime;
+ 	inode->i_mtime.tv_sec = (time64_t)new_op->
+ 	    downcall.resp.getattr.attributes.mtime;
+-	inode->i_ctime.tv_sec = (time64_t)new_op->
+-	    downcall.resp.getattr.attributes.ctime;
++	inode_set_ctime(inode,
++			(time64_t)new_op->downcall.resp.getattr.attributes.ctime,
++			0);
+ 	inode->i_atime.tv_nsec = 0;
+ 	inode->i_mtime.tv_nsec = 0;
+-	inode->i_ctime.tv_nsec = 0;
+ 
+ 	/* special case: mark the root inode as sticky */
+ 	inode->i_mode = type | (is_root_handle(inode) ? S_ISVTX : 0) |
 -- 
 2.41.0
 
