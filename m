@@ -2,47 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 93905748D46
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 21:08:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1B66748D44
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 21:08:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233926AbjGETIy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jul 2023 15:08:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43970 "EHLO
+        id S233919AbjGETIx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jul 2023 15:08:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233945AbjGETII (ORCPT
+        with ESMTP id S233964AbjGETIK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jul 2023 15:08:08 -0400
+        Wed, 5 Jul 2023 15:08:10 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4C8B1FE0;
-        Wed,  5 Jul 2023 12:04:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7323F30E9;
+        Wed,  5 Jul 2023 12:04:49 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 658AD616FB;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 504B7616C4;
+        Wed,  5 Jul 2023 19:04:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B789BC433C9;
         Wed,  5 Jul 2023 19:04:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F714C433C7;
-        Wed,  5 Jul 2023 19:04:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688583886;
-        bh=Jw3LMAKGkOFsBOZVpJySAYN8+fhYTz3ENhYo/GQ/OLI=;
+        s=k20201202; t=1688583888;
+        bh=nz4OgBYlsMOKdpSoA1HyBKv/O9jg4R14AE4cRb0Uh3o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ti5fV8z4pDl8/2IziWx/TrQmtZnwPXVBjS0Nqs2h1e5ESQhKVX5J34spB7hE8+4Ju
-         DPEYYAkhkfvsMX3OCi+LK5WC1fCA75kaHHNC/Xd11yEOCPOTaJKWJKsc6gF2qtyqBJ
-         2cNYS+YBiaIqzYUZztNFNLesPP0aji0L8Cr8RvHuR22r9LCshRNEZIipbr89dx+Nyk
-         +GIzLLb4lFBY2ukzmGRfzrguAxD0RkZxUK+dNenFnx6FQBtVza2ikKY9tjIbem/Kn8
-         fTMsjPbO+XrUFKnV9kefmeSFJFysW+0UyWeJcjIHnqh8tQbLjX8Nm8xUp6cMi6znD7
-         JSOM6b0XqIS+g==
+        b=Kan5Cvx9lHLoy6XyRcibzCs0nKOnNBUGlFOzV8oieR+t/dvFwzCsGh20hoDsdk4uG
+         5nj1fIEwdvRV/XExVDTHN+tgIYw5xjbi3FNdnAXTzAidMKBG5gb3ZSOlqcAG5ynWW8
+         6DsZ2QUSoqTrENweGMCX5O6lnAQ3s7MO2oIJbJzXHMDzQe8P9H/NWaX8AFUX0dL7Im
+         vLaSjakV661euyKtWFPx4JWUfFKDcykpk30buOIZmPKjnjPC8FfxMbx4EZm0RdgEM/
+         xVkXZS9LEUeNTNDr/tEOQSa0Rehaw3Yci6yxUulcbc52vKrvjp9JKzVxpRc7+knZd1
+         jidF2E09cGkYw==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Christian Brauner <brauner@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>
+        Chuck Lever <chuck.lever@oracle.com>,
+        Neil Brown <neilb@suse.de>,
+        Olga Kornievskaia <kolga@netapp.com>,
+        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nfs@vger.kernel.org
-Subject: [PATCH v2 57/92] nfs: convert to ctime accessor functions
-Date:   Wed,  5 Jul 2023 15:01:22 -0400
-Message-ID: <20230705190309.579783-55-jlayton@kernel.org>
+Subject: [PATCH v2 58/92] nfsd: convert to ctime accessor functions
+Date:   Wed,  5 Jul 2023 15:01:23 -0400
+Message-ID: <20230705190309.579783-56-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230705190309.579783-1-jlayton@kernel.org>
 References: <20230705185755.579053-1-jlayton@kernel.org>
@@ -63,131 +65,39 @@ In later patches, we're going to change how the inode's ctime field is
 used. Switch to using accessor functions instead of raw accesses of
 inode->i_ctime.
 
+Acked-by: Chuck Lever <chuck.lever@oracle.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nfs/callback_proc.c |  2 +-
- fs/nfs/fscache.h       |  4 ++--
- fs/nfs/inode.c         | 20 ++++++++++----------
- 3 files changed, 13 insertions(+), 13 deletions(-)
+ fs/nfsd/nfsctl.c | 2 +-
+ fs/nfsd/vfs.c    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/nfs/callback_proc.c b/fs/nfs/callback_proc.c
-index c1eda73254e1..6bed1394d748 100644
---- a/fs/nfs/callback_proc.c
-+++ b/fs/nfs/callback_proc.c
-@@ -59,7 +59,7 @@ __be32 nfs4_callback_getattr(void *argp, void *resp,
- 	res->change_attr = delegation->change_attr;
- 	if (nfs_have_writebacks(inode))
- 		res->change_attr++;
--	res->ctime = inode->i_ctime;
-+	res->ctime = inode_get_ctime(inode);
- 	res->mtime = inode->i_mtime;
- 	res->bitmap[0] = (FATTR4_WORD0_CHANGE|FATTR4_WORD0_SIZE) &
- 		args->bitmap[0];
-diff --git a/fs/nfs/fscache.h b/fs/nfs/fscache.h
-index e1706e736c64..2dc64454492b 100644
---- a/fs/nfs/fscache.h
-+++ b/fs/nfs/fscache.h
-@@ -116,8 +116,8 @@ static inline void nfs_fscache_update_auxdata(struct nfs_fscache_inode_auxdata *
- 	memset(auxdata, 0, sizeof(*auxdata));
- 	auxdata->mtime_sec  = inode->i_mtime.tv_sec;
- 	auxdata->mtime_nsec = inode->i_mtime.tv_nsec;
--	auxdata->ctime_sec  = inode->i_ctime.tv_sec;
--	auxdata->ctime_nsec = inode->i_ctime.tv_nsec;
-+	auxdata->ctime_sec  = inode_get_ctime(inode).tv_sec;
-+	auxdata->ctime_nsec = inode_get_ctime(inode).tv_nsec;
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index 1b8b1aab9a15..a53c5660a8c4 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -1131,7 +1131,7 @@ static struct inode *nfsd_get_inode(struct super_block *sb, umode_t mode)
+ 	/* Following advice from simple_fill_super documentation: */
+ 	inode->i_ino = iunique(sb, NFSD_MaxReserved);
+ 	inode->i_mode = mode;
+-	inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
++	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
+ 	switch (mode & S_IFMT) {
+ 	case S_IFDIR:
+ 		inode->i_fop = &simple_dir_operations;
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index 8a2321d19194..40a68bae88fc 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -520,7 +520,7 @@ nfsd_setattr(struct svc_rqst *rqstp, struct svc_fh *fhp,
  
- 	if (NFS_SERVER(inode)->nfs_client->rpc_ops->version == 4)
- 		auxdata->change_attr = inode_peek_iversion_raw(inode);
-diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-index 8172dd4135a1..1283fdfa4b0a 100644
---- a/fs/nfs/inode.c
-+++ b/fs/nfs/inode.c
-@@ -514,7 +514,7 @@ nfs_fhget(struct super_block *sb, struct nfs_fh *fh, struct nfs_fattr *fattr)
+ 	nfsd_sanitize_attrs(inode, iap);
  
- 		memset(&inode->i_atime, 0, sizeof(inode->i_atime));
- 		memset(&inode->i_mtime, 0, sizeof(inode->i_mtime));
--		memset(&inode->i_ctime, 0, sizeof(inode->i_ctime));
-+		inode_set_ctime(inode, 0, 0);
- 		inode_set_iversion_raw(inode, 0);
- 		inode->i_size = 0;
- 		clear_nlink(inode);
-@@ -535,7 +535,7 @@ nfs_fhget(struct super_block *sb, struct nfs_fh *fh, struct nfs_fattr *fattr)
- 		else if (fattr_supported & NFS_ATTR_FATTR_MTIME)
- 			nfs_set_cache_invalid(inode, NFS_INO_INVALID_MTIME);
- 		if (fattr->valid & NFS_ATTR_FATTR_CTIME)
--			inode->i_ctime = fattr->ctime;
-+			inode_set_ctime_to_ts(inode, fattr->ctime);
- 		else if (fattr_supported & NFS_ATTR_FATTR_CTIME)
- 			nfs_set_cache_invalid(inode, NFS_INO_INVALID_CTIME);
- 		if (fattr->valid & NFS_ATTR_FATTR_CHANGE)
-@@ -731,7 +731,7 @@ void nfs_setattr_update_inode(struct inode *inode, struct iattr *attr,
- 		if ((attr->ia_valid & ATTR_GID) != 0)
- 			inode->i_gid = attr->ia_gid;
- 		if (fattr->valid & NFS_ATTR_FATTR_CTIME)
--			inode->i_ctime = fattr->ctime;
-+			inode_set_ctime_to_ts(inode, fattr->ctime);
- 		else
- 			nfs_set_cache_invalid(inode, NFS_INO_INVALID_CHANGE
- 					| NFS_INO_INVALID_CTIME);
-@@ -749,7 +749,7 @@ void nfs_setattr_update_inode(struct inode *inode, struct iattr *attr,
- 			nfs_set_cache_invalid(inode, NFS_INO_INVALID_ATIME);
+-	if (check_guard && guardtime != inode->i_ctime.tv_sec)
++	if (check_guard && guardtime != inode_get_ctime(inode).tv_sec)
+ 		return nfserr_notsync;
  
- 		if (fattr->valid & NFS_ATTR_FATTR_CTIME)
--			inode->i_ctime = fattr->ctime;
-+			inode_set_ctime_to_ts(inode, fattr->ctime);
- 		else
- 			nfs_set_cache_invalid(inode, NFS_INO_INVALID_CHANGE
- 					| NFS_INO_INVALID_CTIME);
-@@ -765,7 +765,7 @@ void nfs_setattr_update_inode(struct inode *inode, struct iattr *attr,
- 			nfs_set_cache_invalid(inode, NFS_INO_INVALID_MTIME);
- 
- 		if (fattr->valid & NFS_ATTR_FATTR_CTIME)
--			inode->i_ctime = fattr->ctime;
-+			inode_set_ctime_to_ts(inode, fattr->ctime);
- 		else
- 			nfs_set_cache_invalid(inode, NFS_INO_INVALID_CHANGE
- 					| NFS_INO_INVALID_CTIME);
-@@ -1444,11 +1444,11 @@ static void nfs_wcc_update_inode(struct inode *inode, struct nfs_fattr *fattr)
- 			nfs_set_cache_invalid(inode, NFS_INO_INVALID_XATTR);
- 	}
- 	/* If we have atomic WCC data, we may update some attributes */
--	ts = inode->i_ctime;
-+	ts = inode_get_ctime(inode);
- 	if ((fattr->valid & NFS_ATTR_FATTR_PRECTIME)
- 			&& (fattr->valid & NFS_ATTR_FATTR_CTIME)
- 			&& timespec64_equal(&ts, &fattr->pre_ctime)) {
--		inode->i_ctime = fattr->ctime;
-+		inode_set_ctime_to_ts(inode, fattr->ctime);
- 	}
- 
- 	ts = inode->i_mtime;
-@@ -1510,7 +1510,7 @@ static int nfs_check_inode_attributes(struct inode *inode, struct nfs_fattr *fat
- 		if ((fattr->valid & NFS_ATTR_FATTR_MTIME) && !timespec64_equal(&ts, &fattr->mtime))
- 			invalid |= NFS_INO_INVALID_MTIME;
- 
--		ts = inode->i_ctime;
-+		ts = inode_get_ctime(inode);
- 		if ((fattr->valid & NFS_ATTR_FATTR_CTIME) && !timespec64_equal(&ts, &fattr->ctime))
- 			invalid |= NFS_INO_INVALID_CTIME;
- 
-@@ -1997,7 +1997,7 @@ int nfs_post_op_update_inode_force_wcc_locked(struct inode *inode, struct nfs_fa
- 	}
- 	if ((fattr->valid & NFS_ATTR_FATTR_CTIME) != 0 &&
- 			(fattr->valid & NFS_ATTR_FATTR_PRECTIME) == 0) {
--		fattr->pre_ctime = inode->i_ctime;
-+		fattr->pre_ctime = inode_get_ctime(inode);
- 		fattr->valid |= NFS_ATTR_FATTR_PRECTIME;
- 	}
- 	if ((fattr->valid & NFS_ATTR_FATTR_MTIME) != 0 &&
-@@ -2190,7 +2190,7 @@ static int nfs_update_inode(struct inode *inode, struct nfs_fattr *fattr)
- 			save_cache_validity & NFS_INO_INVALID_MTIME;
- 
- 	if (fattr->valid & NFS_ATTR_FATTR_CTIME)
--		inode->i_ctime = fattr->ctime;
-+		inode_set_ctime_to_ts(inode, fattr->ctime);
- 	else if (fattr_supported & NFS_ATTR_FATTR_CTIME)
- 		nfsi->cache_validity |=
- 			save_cache_validity & NFS_INO_INVALID_CTIME;
+ 	/*
 -- 
 2.41.0
 
