@@ -2,177 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 399C874847F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 14:58:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED7B4748488
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 15:00:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232045AbjGEM6Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jul 2023 08:58:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55752 "EHLO
+        id S232068AbjGENAi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jul 2023 09:00:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231154AbjGEM6P (ORCPT
+        with ESMTP id S229493AbjGENAh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jul 2023 08:58:15 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0CD5DA;
-        Wed,  5 Jul 2023 05:58:14 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-9891c73e0fbso136081866b.1;
-        Wed, 05 Jul 2023 05:58:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688561893; x=1691153893;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AIZp05Hfv426kPlGeCqZ2clQ1popvUqLEfsP9qoz2zI=;
-        b=k4M/511uYJVvxigA5YCnJi4vyFeiSxMqW4xu4SrPU6dScT0xgpCs5O4MXL7flQJKkQ
-         2lpR4hyawqVt2tmBPEW6wh6Js/p0dgRMwwckljelkaC/4Lvoyg3XWQsebzs6dDaaP8yk
-         KoyeP96rgPpPCLiaAwmWWoeiiKTD5S9BtdIrH7fhP/CzXi/4hDA/2rCKPMW0A0TKUztG
-         o9UvaFkFzR4N7LpXll85yvIwLex2G88SBUEV1gNq15g3dKZLnHo2ATMrLD7zfFFsyK0a
-         RhZlw7Hs5YzqXpTPZ6gUXf//P4G1wOWR+oOihBfZYUlf0vHHivaKTh53TMWKBDCrXDlR
-         j/YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688561893; x=1691153893;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AIZp05Hfv426kPlGeCqZ2clQ1popvUqLEfsP9qoz2zI=;
-        b=UfnkPxkzimUeKstGxJ4Qt5GyI5LlH7uJ2rIKlheC0Jlk9SZHd9YgQsLGmnFKSMH252
-         oBTaJ+rqC7t1qNACdJnYOX/zBwlGRNQHRDJwgz3KsxncE43ercqu5a7zF7X7bofB9EN2
-         /sqTXIn+Yb8Xumc/QxL9uPBatsiZh19cECk5kutfY6uhbvfVHhvq2mXdfOZjFQe3DH0L
-         sbB2Iplr42FHcrP9m1K6FzEP1unmWHls2IxqJLR7unAoIr4VurDvTkR/Z1V2EKMpIGch
-         vM30dkzLtNGbDX6uN9tMdANtRvGptKFTKQsPlM2SVfmfRxkA4IksRgi2qZ/IcGjSq1+o
-         uPcw==
-X-Gm-Message-State: ABy/qLachvv9LbyL5oeti04jTBlSVLum4L2UmeQBKnGevYr6bu+PT3YE
-        VuLas5pYegbgGKspEbLv7sa7wfD3rhU=
-X-Google-Smtp-Source: APBJJlHwuP22vcLedYqB+E8cnSscA65/HpTnO32PrKLIdBul80aHWTPG/4KX1zsk/o5wBhTOM3cfUw==
-X-Received: by 2002:a17:906:151:b0:989:1a52:72a1 with SMTP id 17-20020a170906015100b009891a5272a1mr1832966ejh.28.1688561892992;
-        Wed, 05 Jul 2023 05:58:12 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:4b35])
-        by smtp.gmail.com with ESMTPSA id f5-20020a1709064dc500b0099342c87775sm5236548ejw.20.2023.07.05.05.58.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jul 2023 05:58:12 -0700 (PDT)
-Message-ID: <18d85f67-2952-3649-7716-eaf947f99123@gmail.com>
-Date:   Wed, 5 Jul 2023 13:54:45 +0100
+        Wed, 5 Jul 2023 09:00:37 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CC6BDA;
+        Wed,  5 Jul 2023 06:00:35 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 1EB711FDD2;
+        Wed,  5 Jul 2023 13:00:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1688562034; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=B43XnS/ZC1dC/Q82yVjjHxQcDLXFBbYmz36IV5qBZW4=;
+        b=oyEibUT1rTLVIdcA8+kOa4o0o7mcQcUcFrLDtxju7pCpVuGS35ZKXm6wjn1ciY+UgQU5VT
+        jzl0077R+cjRERPw49A9e1rcgV6V+unm4vE/5MlbjsRso8q49Y1Uj3Ua5ziT2NH9axGekX
+        RE4VKsGYGI3dPaAsHUNuyTVUInr+6J0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1688562034;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=B43XnS/ZC1dC/Q82yVjjHxQcDLXFBbYmz36IV5qBZW4=;
+        b=tReyCRoIyEJyNNW2hx+gbIb9Dz8Cl02PYpeWjq/j6tkU+gnhlAcPcGiVyycv63YUPCj4YS
+        qgmt2A26iRtaaUAg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0E62813460;
+        Wed,  5 Jul 2023 13:00:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id fQN/A3JppWTWXwAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 05 Jul 2023 13:00:34 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 99CBEA0707; Wed,  5 Jul 2023 15:00:33 +0200 (CEST)
+Date:   Wed, 5 Jul 2023 15:00:33 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Kees Cook <keescook@google.com>,
+        Ted Tso <tytso@mit.edu>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Alexander Popov <alex.popov@linux.com>,
+        Eric Biggers <ebiggers@google.com>, linux-xfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [PATCH 6/6] fs: Make bind mounts work with
+ bdev_allow_write_mounted=n
+Message-ID: <20230705130033.ttv6rdywj5bnxlzx@quack3>
+References: <20230704122727.17096-1-jack@suse.cz>
+ <20230704125702.23180-6-jack@suse.cz>
+ <20230704-fasching-wertarbeit-7c6ffb01c83d@brauner>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH 05/11] io-wq: add a new parameter for creating a new fixed
- worker
-Content-Language: en-US
-To:     Hao Xu <hao.xu@linux.dev>, io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Wanpeng Li <wanpengli@tencent.com>,
-        linux-fsdevel@vger.kernel.org
-References: <20230609122031.183730-1-hao.xu@linux.dev>
- <20230609122031.183730-6-hao.xu@linux.dev>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20230609122031.183730-6-hao.xu@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230704-fasching-wertarbeit-7c6ffb01c83d@brauner>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/9/23 13:20, Hao Xu wrote:
-> From: Hao Xu <howeyxu@tencent.com>
+On Tue 04-07-23 15:59:41, Christian Brauner wrote:
+> On Tue, Jul 04, 2023 at 02:56:54PM +0200, Jan Kara wrote:
+> > When we don't allow opening of mounted block devices for writing, bind
+> > mounting is broken because the bind mount tries to open the block device
 > 
-> Add a new parameter when creating new workers to indicate if users
-> want a normal or fixed worker.
+> Sorry, I'm going to be annoying now...
 > 
-> Signed-off-by: Hao Xu <howeyxu@tencent.com>
-> ---
->   io_uring/io-wq.c | 33 ++++++++++++++++++++-------------
->   1 file changed, 20 insertions(+), 13 deletions(-)
+> Afaict, the analysis is misleading but I'm happy to be corrected ofc.
+
+I'm not sure what your objection exactly is. Probably I was imprecise in my
+changelog description. What gets broken by not allowing RW open of a
+mounted block device is:
+
+mount -t ext4 /dev/sda1 /mnt1
+mount -t ext4 /dev/sda1 /mnt2
+
+The second mount should create another mount of the superblock created by
+the first mount but before that is done, get_tree_bdev() tries to open the
+block device and fails when only patches 1 & 2 are applied. This patch
+fixes that.
+
+> Finding an existing superblock is independent of mounts. get_tree_bdev()
+> and mount_bdev() are really only interested in finding a matching
+> superblock independent of whether or not a mount for it already exists.
+> IOW, if you had two filesystem contexts for the same block device with
+> different mount options:
 > 
-> diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-> index bf9e9af8d9ca..048856eef4d4 100644
-> --- a/io_uring/io-wq.c
-> +++ b/io_uring/io-wq.c
-[...]
->   
-> +static bool is_fixed_worker(struct io_worker *worker)
-> +{
-> +	return worker->flags & IO_WORKER_F_FIXED;
-> +} 
+> T1								T2
+> fd_fs = fsopen("ext4");						fd_fs = fsopen("ext4");
+> fsconfig(fd_fs, FSCONFIG_SET_STRING, "source", "/dev/sda");	fsconfig(fd_fs, FSCONFIG_SET_STRING, "source", "/dev/sda");
+> 
+> // create superblock
+> fsconfig(fd_fs, FSCONFIG_CMD_CREATE, ...)
+> 								// finds superblock of T1 if opts are compatible
+> 								fsconfig(fd_fs, FSCONFIG_CMD_CREATE, ...)
+> 
+> you should have the issue that you're describing.
 
-That's what I mentioned in the other comment.
+Correct, this will get broken when not allowing RW open for mounted block
+devices as well because the second fsconfig(fd_fs, FSCONFIG_CMD_CREATE,
+...) will fail to open the block device in get_tree_bdev(). But again this
+patch should fix that.
 
-> +
->   static void create_worker_cb(struct callback_head *cb)
->   {
->   	struct io_worker *worker;
-> @@ -331,7 +337,7 @@ static void create_worker_cb(struct callback_head *cb)
->   	}
->   	raw_spin_unlock(&wq->lock);
->   	if (do_create) {
-> -		create_io_worker(wq, worker->create_index);
-> +		create_io_worker(wq, worker->create_index, is_fixed_worker(worker));
->   	} else {
->   		atomic_dec(&acct->nr_running);
->   		io_worker_ref_put(wq);
-> @@ -398,6 +404,8 @@ static void io_wq_dec_running(struct io_worker *worker)
->   		return;
->   	if (!io_acct_run_queue(acct))
->   		return;
-> +	if (is_fixed_worker(worker))
-> +		return;
+> But for neither of them does a mount already exist as the first mount
+> here would only be created when:
+> 
+> T1								T2
+> fsmount(fd_fs);							fsmount(fd_fs);
+> 
+> is called at which point the whole superblock issue is already settled.
+> Afterwards, both mounts of both T1 and T2 refer to the same superblock -
+> as long as the fs and the mount options support this ofc.
 
-Aha, it's here. I was thinking about it a little bit more.
-Is it even correct? If you have a mixed fixed/non-fixed setup
-you presumably want non-fixed workers to kick in such situations.
-I don't remember this creation voodoo well, maybe Jens does have
-an idea.
+I guess the confusion comes from me calling "mount" an operation as
+performed by the mount(8) command but which is in fact multiple operations
+with the new mount API. Anyway, is the motivation of this patch clearer
+now?
 
->   
->   	atomic_inc(&acct->nr_running);
->   	atomic_inc(&wq->worker_refs);
-> @@ -601,11 +609,6 @@ static bool is_worker_exiting(struct io_worker *worker)
->   	return worker->flags & IO_WORKER_F_EXIT;
->   }
-[...]
-> -static bool create_io_worker(struct io_wq *wq, int index)
-> +static bool create_io_worker(struct io_wq *wq, int index, bool fixed)
->   {
->   	struct io_wq_acct *acct = &wq->acct[index];
->   	struct io_worker *worker;
-> @@ -833,10 +836,14 @@ static bool create_io_worker(struct io_wq *wq, int index)
->   	if (index == IO_WQ_ACCT_BOUND)
->   		worker->flags |= IO_WORKER_F_BOUND;
->   
-> +	if (fixed)
-> +		worker->flags |= IO_WORKER_F_FIXED;
-> +
->   	tsk = create_io_thread(io_wq_worker, worker, NUMA_NO_NODE);
->   	if (!IS_ERR(tsk)) {
-> -		io_init_new_worker(wq, worker, tsk);
-> -	} else if (!io_should_retry_thread(PTR_ERR(tsk))) {
-> +		if (!fixed)
-> +			io_init_new_worker(wq, worker, tsk);
-
-Why do we skip io_init_new_worker()? I assume you putting it
-into lists, but what about the rest? I.e.
-
-	tsk->worker_private = worker;
-	worker->task = tsk;
-	set_cpus_allowed_ptr(tsk, wq->cpu_mask);
-
-
-> +	} else if (fixed || !io_should_retry_thread(PTR_ERR(tsk))) {
->   		kfree(worker);
->   		goto fail;
->   	} else {
-> @@ -947,7 +954,7 @@ void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
->   	    !atomic_read(&acct->nr_running))) {
->   		bool did_create;
->   
-> -		did_create = io_wq_create_worker(wq, acct);
-> +		did_create = io_wq_create_worker(wq, acct, false);
->   		if (likely(did_create))
->   			return;
-
+								Honza
 -- 
-Pavel Begunkov
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
