@@ -2,54 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EBACE74853C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 15:43:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6A1C74855C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 15:46:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231658AbjGENnS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jul 2023 09:43:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48438 "EHLO
+        id S232331AbjGENq2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jul 2023 09:46:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbjGENnR (ORCPT
+        with ESMTP id S230268AbjGENq0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jul 2023 09:43:17 -0400
+        Wed, 5 Jul 2023 09:46:26 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F3C29F;
-        Wed,  5 Jul 2023 06:43:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1C80BA;
+        Wed,  5 Jul 2023 06:46:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AA3F16155C;
-        Wed,  5 Jul 2023 13:43:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A7A0C433C7;
-        Wed,  5 Jul 2023 13:43:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6756C61569;
+        Wed,  5 Jul 2023 13:46:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CBB4C433C8;
+        Wed,  5 Jul 2023 13:46:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688564595;
-        bh=duw1D6h+uyPcUCMj6Mt8JQm0m6whgvosyq2OGCmiDRw=;
+        s=k20201202; t=1688564784;
+        bh=fF4OTK0l/0gKFko4faovv/YXnqcMhxu3JD/4SmKhjkw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AKy467bWawZeUECKyQAdGwm95RQsxExVVE8LSz3s2sMgfXuB6koHl0/bg36bx/Csn
-         cL5ICe+5Vhoo8MdpGWWuCDGzA8ep3DmeGLJow7vaT6kIhb1YydPDr7Ztbbllf1OQo+
-         oP85Q7bOYTWv+/jab2q0zf2pzR78xiXGv2KSmmTwwH6MiEnzk2hqhpBm4orEAmBQte
-         Iwm4mAXkeOBZIu7cB6NCV7VaoSYkGD/RNoF1MUyxnGp/gBLQ14wj3hi/a7N9EQUCHY
-         4Lf4QtUwWHADPP46GW7ZNdkN0N2Gu3Qg5fb6eJ76EXl3lQhSaQ/K0Wo0glOWI9hPgr
-         g4N/UuNmXfnWQ==
-Date:   Wed, 5 Jul 2023 15:43:09 +0200
-From:   Alexey Gladkov <legion@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Hou Tao <houtao@huaweicloud.com>, bpf@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: Re: [PATCH v1] fs: Add kfuncs to handle idmapped mounts
-Message-ID: <ZKVzbQESW00w67qS@example.org>
-References: <c35fbb4cb0a3a9b4653f9a032698469d94ca6e9c.1688123230.git.legion@kernel.org>
- <babdf7a8-9663-6d71-821a-34da2aff80e2@huaweicloud.com>
- <ZKQ2kBiRDsQREw6f@example.org>
- <20230704-peitschen-inzwischen-7ad743c764e8@brauner>
+        b=Cnu6fNY96eKxSAg6ligcBUWu0R4BbWpP8c9+nAST6TkPS1KYK0YdxPGJiM3hWnXeY
+         u8zQDC/oLviyGtFrfpQZ8wpRi9LFELjqMCX5XiMzhb+XvGZRtYG5pipUNKhE7joI/S
+         wpBTuGUI807UsHESXyZRvHl8QYVMjc1VrHm6Nv0vrGd45mmh8pOryEdeZJ08l8oCmx
+         iSjEJFgZ9oVwaLOiStgwkDRjHk+T9cti+RO4M29ac7hYxUdEzrhnyKeQ2hX1cBCKaK
+         4iJrSbaATo3lOHyCcd1PMS0PFdGMxXk5T3/ES+oycwZ56/XTXIF0vdbRjv4mlGLJ1z
+         KwjlFjJMIlDVg==
+Date:   Wed, 5 Jul 2023 15:46:19 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Kees Cook <keescook@google.com>,
+        Ted Tso <tytso@mit.edu>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Alexander Popov <alex.popov@linux.com>,
+        Eric Biggers <ebiggers@google.com>, linux-xfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [PATCH 6/6] fs: Make bind mounts work with
+ bdev_allow_write_mounted=n
+Message-ID: <20230705-pumpwerk-vielversprechend-a4b1fd947b65@brauner>
+References: <20230704122727.17096-1-jack@suse.cz>
+ <20230704125702.23180-6-jack@suse.cz>
+ <20230704-fasching-wertarbeit-7c6ffb01c83d@brauner>
+ <20230705130033.ttv6rdywj5bnxlzx@quack3>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230704-peitschen-inzwischen-7ad743c764e8@brauner>
+In-Reply-To: <20230705130033.ttv6rdywj5bnxlzx@quack3>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -60,97 +65,78 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 04, 2023 at 05:28:13PM +0200, Christian Brauner wrote:
-> On Tue, Jul 04, 2023 at 05:11:12PM +0200, Alexey Gladkov wrote:
-> > On Tue, Jul 04, 2023 at 07:42:53PM +0800, Hou Tao wrote:
-> > > Hi,
-> > > 
-> > > On 6/30/2023 7:08 PM, Alexey Gladkov wrote:
-> > > > Since the introduction of idmapped mounts, file handling has become
-> > > > somewhat more complicated. If the inode has been found through an
-> > > > idmapped mount the idmap of the vfsmount must be used to get proper
-> > > > i_uid / i_gid. This is important, for example, to correctly take into
-> > > > account idmapped files when caching, LSM or for an audit.
-> > > 
-> > > Could you please add a bpf selftest for these newly added kfuncs ?
-> > > >
-> > > > Signed-off-by: Alexey Gladkov <legion@kernel.org>
-> > > > ---
-> > > >  fs/mnt_idmapping.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++
-> > > >  1 file changed, 69 insertions(+)
-> > > >
-> > > > diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
-> > > > index 4905665c47d0..ba98ce26b883 100644
-> > > > --- a/fs/mnt_idmapping.c
-> > > > +++ b/fs/mnt_idmapping.c
-> > > > @@ -6,6 +6,7 @@
-> > > >  #include <linux/mnt_idmapping.h>
-> > > >  #include <linux/slab.h>
-> > > >  #include <linux/user_namespace.h>
-> > > > +#include <linux/bpf.h>
-> > > >  
-> > > >  #include "internal.h"
-> > > >  
-> > > > @@ -271,3 +272,71 @@ void mnt_idmap_put(struct mnt_idmap *idmap)
-> > > >  		kfree(idmap);
-> > > >  	}
-> > > >  }
-> > > > +
-> > > > +__diag_push();
-> > > > +__diag_ignore_all("-Wmissing-prototypes",
-> > > > +		  "Global functions as their definitions will be in vmlinux BTF");
-> > > > +
-> > > > +/**
-> > > > + * bpf_is_idmapped_mnt - check whether a mount is idmapped
-> > > > + * @mnt: the mount to check
-> > > > + *
-> > > > + * Return: true if mount is mapped, false if not.
-> > > > + */
-> > > > +__bpf_kfunc bool bpf_is_idmapped_mnt(struct vfsmount *mnt)
-> > > > +{
-> > > > +	return is_idmapped_mnt(mnt);
-> > > > +}
-> > > > +
-> > > > +/**
-> > > > + * bpf_file_mnt_idmap - get file idmapping
-> > > > + * @file: the file from which to get mapping
-> > > > + *
-> > > > + * Return: The idmap for the @file.
-> > > > + */
-> > > > +__bpf_kfunc struct mnt_idmap *bpf_file_mnt_idmap(struct file *file)
-> > > > +{
-> > > > +	return file_mnt_idmap(file);
-> > > > +}
-> > > 
-> > > A dummy question here: the implementation of file_mnt_idmap() is
-> > > file->f_path.mnt->mnt_idmap, so if the passed file is a BTF pointer, is
-> > > there any reason why we could not do such dereference directly in bpf
-> > > program ?
+On Wed, Jul 05, 2023 at 03:00:33PM +0200, Jan Kara wrote:
+> On Tue 04-07-23 15:59:41, Christian Brauner wrote:
+> > On Tue, Jul 04, 2023 at 02:56:54PM +0200, Jan Kara wrote:
+> > > When we don't allow opening of mounted block devices for writing, bind
+> > > mounting is broken because the bind mount tries to open the block device
 > > 
-> > I wanted to provide a minimal API for bpf programs. I thought that this
-> > interface is stable enough, but after reading Christian's answer, it looks
-> > like I was wrong.
+> > Sorry, I'm going to be annoying now...
+> > 
+> > Afaict, the analysis is misleading but I'm happy to be corrected ofc.
 > 
-> It isn't even about stability per se. It's unlikely that if we change
-> internal details that types or arguments to these helpers change. That's
-> why we did the work of abstracting this all away in the first place and
-> making this an opaque type.
+> I'm not sure what your objection exactly is. Probably I was imprecise in my
+> changelog description. What gets broken by not allowing RW open of a
+> mounted block device is:
 > 
-> The wider point is that according to the docs, kfuncs claim to have
-> equivalent status to EXPORT_SYMBOL_*() with the added complexity of
-> maybe having to take out of tree bpf programs into account.
+> mount -t ext4 /dev/sda1 /mnt1
+> mount -t ext4 /dev/sda1 /mnt2
 > 
-> Right now, we can look at the in-kernel users of is_idmapped_mnt(),
-> convert them and then kill this thing off if we wanted to. As soon as
-> this is a kfunc such an endeavour becomes a measure of "f**** around and
-> find out". That's an entirely avoidable conflict if we don't even expose
-> it in the first place.
-> 
+> The second mount should create another mount of the superblock created by
+> the first mount but before that is done, get_tree_bdev() tries to open the
+> block device and fails when only patches 1 & 2 are applied. This patch
+> fixes that.
 
-I was hoping to make it possible to use is_idmapped_mnt or its equivalent
-to at least be able to distinguish a file with an idmapped mount from a
-regular one.
+My objection is that this has nothing to do with mounts but with
+superblocks. :) No mount need exist for this issue to appear. And I would
+prefer if we keep superblock and mount separate as this leads to unclear
+analysis and changelogs.
 
--- 
-Rgrds, legion
+> 
+> > Finding an existing superblock is independent of mounts. get_tree_bdev()
+> > and mount_bdev() are really only interested in finding a matching
+> > superblock independent of whether or not a mount for it already exists.
+> > IOW, if you had two filesystem contexts for the same block device with
+> > different mount options:
+> > 
+> > T1								T2
+> > fd_fs = fsopen("ext4");						fd_fs = fsopen("ext4");
+> > fsconfig(fd_fs, FSCONFIG_SET_STRING, "source", "/dev/sda");	fsconfig(fd_fs, FSCONFIG_SET_STRING, "source", "/dev/sda");
+> > 
+> > // create superblock
+> > fsconfig(fd_fs, FSCONFIG_CMD_CREATE, ...)
+> > 								// finds superblock of T1 if opts are compatible
+> > 								fsconfig(fd_fs, FSCONFIG_CMD_CREATE, ...)
+> > 
+> > you should have the issue that you're describing.
+> 
+> Correct, this will get broken when not allowing RW open for mounted block
+> devices as well because the second fsconfig(fd_fs, FSCONFIG_CMD_CREATE,
+> ...) will fail to open the block device in get_tree_bdev(). But again this
+> patch should fix that.
+> 
+> > But for neither of them does a mount already exist as the first mount
+> > here would only be created when:
+> > 
+> > T1								T2
+> > fsmount(fd_fs);							fsmount(fd_fs);
+> > 
+> > is called at which point the whole superblock issue is already settled.
+> > Afterwards, both mounts of both T1 and T2 refer to the same superblock -
+> > as long as the fs and the mount options support this ofc.
+> 
+> I guess the confusion comes from me calling "mount" an operation as
+> performed by the mount(8) command but which is in fact multiple operations
+> with the new mount API. Anyway, is the motivation of this patch clearer
+> now?
 
+I'm clear about what you're doing here. I would just like to not have
+mounts brought into the changelog. Even before the new mount api what
+you were describing was technically a superblock only issue. If someone
+reads the changelog I want them to be able to clearly see that this is a
+fix for superblocks, not mounts.
+
+Especially, since the code you touch really only has to to with
+superblocks.
+Let me - non ironically - return the question: Is my own request clearer
+now?
