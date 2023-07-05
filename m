@@ -2,178 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E3C4C747C41
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 07:08:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75362747D16
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 08:32:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230487AbjGEFIl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jul 2023 01:08:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47290 "EHLO
+        id S230488AbjGEGcp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jul 2023 02:32:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229715AbjGEFIk (ORCPT
+        with ESMTP id S229744AbjGEGco (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jul 2023 01:08:40 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 725B91700
-        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jul 2023 22:08:38 -0700 (PDT)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230705050836epoutp027d1b4aab3df48587f12b588ff97bd3ae~u4HgDCACB2068320683epoutp02b
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jul 2023 05:08:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230705050836epoutp027d1b4aab3df48587f12b588ff97bd3ae~u4HgDCACB2068320683epoutp02b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1688533716;
-        bh=4Ewd3gtlsRFOPjxmqq4oPNNNlKps69tnLeCMAL7g76s=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fHL2+HBO+rENRTAh52BBoUnyH+UfrKCoGp4vmS8HdV6zGo1LqMc2SqeiDynf3Mfqd
-         qTpbfiBydtbVePkxL96nFU46g2jU1U1rdwKMecyyY7EmTv4gDGeA4fGHkW7nurm9H8
-         uB9aV0QMJqeZWOA27nlG5nSpOKL4As2AJLb+mteQ=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20230705050836epcas5p1f1ad4f1ec0602b11a4b0b80cbffab182~u4Hfz3sLf1822118221epcas5p1n;
-        Wed,  5 Jul 2023 05:08:36 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.177]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4Qwnk964Wvz4x9QD; Wed,  5 Jul
-        2023 05:08:33 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        60.A7.57354.ACAF4A46; Wed,  5 Jul 2023 14:08:26 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20230705050825epcas5p3d58c4d83fc8c4768a261e54f56d8e492~u4HWYQfmK2595625956epcas5p3P;
-        Wed,  5 Jul 2023 05:08:25 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230705050825epsmtrp1b023a6b83f8a3b06f1bac5496ff18d94~u4HWXgKu11624916249epsmtrp1N;
-        Wed,  5 Jul 2023 05:08:25 +0000 (GMT)
-X-AuditID: b6c32a44-269fb7000001e00a-bc-64a4facad95f
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0F.42.34491.9CAF4A46; Wed,  5 Jul 2023 14:08:25 +0900 (KST)
-Received: from green245 (unknown [107.99.41.245]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230705050824epsmtip1fe377366da3ec3f0b1507392955dcf00~u4HVYzcLc0370203702epsmtip1c;
-        Wed,  5 Jul 2023 05:08:24 +0000 (GMT)
-Date:   Wed, 5 Jul 2023 10:35:10 +0530
-From:   Kanchan Joshi <joshi.k@samsung.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 03/32] block: Use blkdev_get_handle_by_dev() in
- blkdev_open()
-Message-ID: <20230705050510.GA28287@green245>
+        Wed, 5 Jul 2023 02:32:44 -0400
+Received: from mail-pf1-f207.google.com (mail-pf1-f207.google.com [209.85.210.207])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E042910E2
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Jul 2023 23:32:43 -0700 (PDT)
+Received: by mail-pf1-f207.google.com with SMTP id d2e1a72fcca58-665bd7fe2f4so5739313b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Jul 2023 23:32:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688538763; x=1691130763;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K7ajb0ygQowndos5PH/m9iSZCyUqKbxvWb8eFbZualU=;
+        b=XnSma1wTbBN5Qg3I82MQItqI3VVYgGuT2Ze8bvCJ4JqQAHiz3I7tZSQSQ3MDkuo6Fe
+         7RhXEnaanAbGZ6UK1Xd02crq7q+QTPesvqENqKNDGR5wwzNf1JaeoFWzmdiKjTfWXLqx
+         DYp8e9scCIydo3ToyAocz6EyPVXTrNkPj1o783qUH0Q1UWYzzR7TPIa10h2SEoJgrfn8
+         cE/XUM+V50dU8wUQaZuprn5M/bzkxp21aN24IO/tcpPT37h0BvO5FEZRJmND1Cje5Df4
+         6CqxXd4rHeXNAnWRXDM/AHlJeC10E20OxhbOm5QSVkZENeMRXClzBUeiSACe71SguBU0
+         MYEQ==
+X-Gm-Message-State: ABy/qLaO+487oZXGpOrn5nCSm+gP22nxx3CqcL55D50qyLrOCtPJ3jMc
+        4gCQRwTpv9UfjhrcmAmEi9ThtFmrT1zfVSmbW5uniL9W9iQ7
+X-Google-Smtp-Source: APBJJlEUtDixb+sOtE568PnxlFwyxGM5DafJ+L5kFzRPi8paC2VNe5S/Cety53Dm4TMLO00V79+hwWqXKeySF0qT/Mr/0X751iJw
 MIME-Version: 1.0
-In-Reply-To: <20230704122224.16257-3-jack@suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHKsWRmVeSWpSXmKPExsWy7bCmuu6pX0tSDBqn61isvtvPZnF6wiIm
-        i9nTm5ks9t7Sttiz9ySLA6vH5hVaHpfPlnqcWXCE3ePzJrkAlqhsm4zUxJTUIoXUvOT8lMy8
-        dFsl7+B453hTMwNDXUNLC3MlhbzE3FRbJRefAF23zBygpUoKZYk5pUChgMTiYiV9O5ui/NKS
-        VIWM/OISW6XUgpScApMCveLE3OLSvHS9vNQSK0MDAyNToMKE7Iz/z+6zFjziq/j3aSdjA+M+
-        ni5GTg4JAROJrrVrWboYuTiEBHYzSsw928cM4XxilHg2+TwThPONUWL98lvsMC13761hg0js
-        ZZR4fXg1I4TzjFHiw5JdTCBVLAIqEgtXrQOaxcHBJqApcWFyKUhYREBaYtaxlWD7mAVaGSUW
-        Xn3OCpIQFgiWeLL0Blgvr4CuxJR1n5ghbEGJkzOfsIDYnAJGEvePTgOLiwooSxzYdhzsPAmB
-        R+wSvX272SDOc5H4uGQDlC0s8er4FqizpSRe9rdB2ckSl2aeY4KwSyQe7zkIZdtLtJ7qB1vA
-        LJAh8f79HiibT6L39xMmkGckBHglOtqEIMoVJe5NesoKYYtLPJyxBMr2kJjXfAMadKsZJU41
-        L2GcwCg3C8k/s5CsgLCtJDo/NLHOAlrBDAyk5f84IExNifW79Bcwsq5ilEwtKM5NT002LTDM
-        Sy2Hx3Jyfu4mRnBC1HLZwXhj/j+9Q4xMHIyHGCU4mJVEeFd8X5wixJuSWFmVWpQfX1Sak1p8
-        iNEUGD8TmaVEk/OBKTmvJN7QxNLAxMzMzMTS2MxQSZz3devcFCGB9MSS1OzU1ILUIpg+Jg5O
-        qQamDT+SDzuJlq/I8DiRN4+7qVpcU9bU46WewpQvha/KT7VtmyfsW3P5TfOfc8fmPjYxMVYx
-        36a4TU7nBrdBkGb1Rh7PGTu45i2+1PDde4Z+10ZZn1XBPSs5HpqV3NSeHebbu6l4jlmixJSd
-        d2ImJqg/npnGcvBtX3gR58tlH8ImtdVddGqY/+voJpN9+udzu1LaJL6rX51tWFu3z9WF8+bt
-        26Xt/jbp+o8stKpjovlt4+/GHzLNyyz3i7hebGfUZM9W8s2PqT/jpZduV/rCf8Gi9TuXr/p4
-        /80Eve8pzjO2LWfpctpeHKy9cp7ht8N/rNPKk/2W73k4K9Oyw+9Nn8Fa56224roLvux8FL/g
-        d6ISS3FGoqEWc1FxIgBoib+LEQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsWy7bCSnO7JX0tSDFZeMrNYfbefzeL0hEVM
-        FrOnNzNZ7L2lbbFn70kWB1aPzSu0PC6fLfU4s+AIu8fnTXIBLFFcNimpOZllqUX6dglcGQ8f
-        f2ctmMJTcWymbQNjF1cXIyeHhICJxN17a9i6GLk4hAR2M0o8mPyWGSIhLtF87Qc7hC0ssfLf
-        c3aIoieMErefTGMFSbAIqEgsXLUOqIGDg01AU+LC5FKQsIiAtMSsYytZQOqZBVoZJQ7cf8YC
-        khAWCJZ4svQGE4jNK6ArMWXdJ2aIoasZJc5c+8kKkRCUODnzCVgDs4CZxLzND8EWMANNXf6P
-        AyTMKWAkcf/oNLBDRQWUJQ5sO840gVFwFpLuWUi6ZyF0L2BkXsUomVpQnJueW2xYYJiXWq5X
-        nJhbXJqXrpecn7uJERzeWpo7GLev+qB3iJGJg/EQowQHs5II74rvi1OEeFMSK6tSi/Lji0pz
-        UosPMUpzsCiJ84q/6E0REkhPLEnNTk0tSC2CyTJxcEo1MCW+eGluw+W8aqp6Q3OE5nRNRtG4
-        GwEcaYWWBkcVrObdT/fWYN0oz7PAUirmV3P6syNt5xflZNsduVF33f3GyvDvm9dGulVtX670
-        cd9a+ae7rWfvEWzIuxy24rXhPsPXiznWOSr9/W/3Z12yCPdn56kn7YLfSawW2iVhypI118P6
-        YcSUluxN/pdP6eRzeuv3N+pxPUzVXsFp4H6DdY/yjos/e6sWb+cTvx7KEtxw3HetqUd6r2P5
-        ESnXfYe+35yreNXU1XfiTaOWM6XeX9YseTW91bNVZl9LmsTO/ueTP9xeNvuFiOJHlYT1hblW
-        bVM+Sr/beHK6pqhpdo/yyqSf+dPERWWjl187f2DjET+rc0osxRmJhlrMRcWJAIrlqOXeAgAA
-X-CMS-MailID: 20230705050825epcas5p3d58c4d83fc8c4768a261e54f56d8e492
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----PcSJ1RlEyPKfjXIiTsweH-7MCPtMf9v3nlMrb72LWO-fIHxy=_a6ccd_"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230704122236epcas5p4f17ed438838d75c8229e4ab0ea009c37
-References: <20230629165206.383-1-jack@suse.cz>
-        <CGME20230704122236epcas5p4f17ed438838d75c8229e4ab0ea009c37@epcas5p4.samsung.com>
-        <20230704122224.16257-3-jack@suse.cz>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a62:7b0e:0:b0:668:7377:1fe3 with SMTP id
+ w14-20020a627b0e000000b0066873771fe3mr16356826pfc.2.1688538763341; Tue, 04
+ Jul 2023 23:32:43 -0700 (PDT)
+Date:   Tue, 04 Jul 2023 23:32:43 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002db68f05ffb791bc@google.com>
+Subject: [syzbot] [fs?] WARNING in handle_userfault
+From:   syzbot <syzbot+339b02f826caafd5f7a8@syzkaller.appspotmail.com>
+To:     brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-------PcSJ1RlEyPKfjXIiTsweH-7MCPtMf9v3nlMrb72LWO-fIHxy=_a6ccd_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+Hello,
 
-On Tue, Jul 04, 2023 at 02:21:30PM +0200, Jan Kara wrote:
->Convert blkdev_open() to use blkdev_get_handle_by_dev().
->
->Signed-off-by: Jan Kara <jack@suse.cz>
->---
-> block/fops.c | 17 +++++++++--------
-> 1 file changed, 9 insertions(+), 8 deletions(-)
->
->diff --git a/block/fops.c b/block/fops.c
->index b6aa470c09ae..d7f3b6e67a2f 100644
->--- a/block/fops.c
->+++ b/block/fops.c
->@@ -496,7 +496,7 @@ blk_mode_t file_to_blk_mode(struct file *file)
->
-> static int blkdev_open(struct inode *inode, struct file *filp)
-> {
->-	struct block_device *bdev;
->+	struct bdev_handle *handle;
-> 	blk_mode_t mode;
->
-> 	/*
->@@ -509,24 +509,25 @@ static int blkdev_open(struct inode *inode, struct file *filp)
-> 	filp->f_mode |= FMODE_BUF_RASYNC;
->
-> 	mode = file_to_blk_mode(filp);
->-	bdev = blkdev_get_by_dev(inode->i_rdev, mode,
->-				 mode & BLK_OPEN_EXCL ? filp : NULL, NULL);
->-	if (IS_ERR(bdev))
->-		return PTR_ERR(bdev);
->+	handle = blkdev_get_handle_by_dev(inode->i_rdev, mode,
->+			mode & BLK_OPEN_EXCL ? filp : NULL, NULL);
->+	if (IS_ERR(handle))
->+		return PTR_ERR(handle);
->
-> 	if (mode & BLK_OPEN_EXCL)
-> 		filp->private_data = filp;
+syzbot found the following issue on:
 
-Is this needed?
-This is getting overwritten after a couple of lines below.
+HEAD commit:    e1f6a8eaf1c2 Add linux-next specific files for 20230705
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17ceea78a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=347a3e7e531c1809
+dashboard link: https://syzkaller.appspot.com/bug?extid=339b02f826caafd5f7a8
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
 
->-	if (bdev_nowait(bdev))
->+	if (bdev_nowait(handle->bdev))
-> 		filp->f_mode |= FMODE_NOWAIT;
->
->-	filp->f_mapping = bdev->bd_inode->i_mapping;
->+	filp->f_mapping = handle->bdev->bd_inode->i_mapping;
-> 	filp->f_wb_err = filemap_sample_wb_err(filp->f_mapping);
->+	filp->private_data = handle;
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Here.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2d0435d8ff5d/disk-e1f6a8ea.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d28b2df82094/vmlinux-e1f6a8ea.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fb4e5bfa0a0f/bzImage-e1f6a8ea.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+339b02f826caafd5f7a8@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 15927 at include/linux/mmap_lock.h:71 mmap_assert_write_locked include/linux/mmap_lock.h:71 [inline]
+WARNING: CPU: 1 PID: 15927 at include/linux/mmap_lock.h:71 __is_vma_write_locked include/linux/mm.h:712 [inline]
+WARNING: CPU: 1 PID: 15927 at include/linux/mmap_lock.h:71 vma_assert_locked include/linux/mm.h:753 [inline]
+WARNING: CPU: 1 PID: 15927 at include/linux/mmap_lock.h:71 assert_fault_locked include/linux/mm.h:786 [inline]
+WARNING: CPU: 1 PID: 15927 at include/linux/mmap_lock.h:71 handle_userfault+0x149b/0x27a0 fs/userfaultfd.c:440
+Modules linked in:
+CPU: 1 PID: 15927 Comm: syz-executor.1 Not tainted 6.4.0-next-20230705-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+RIP: 0010:mmap_assert_write_locked include/linux/mmap_lock.h:71 [inline]
+RIP: 0010:__is_vma_write_locked include/linux/mm.h:712 [inline]
+RIP: 0010:vma_assert_locked include/linux/mm.h:753 [inline]
+RIP: 0010:assert_fault_locked include/linux/mm.h:786 [inline]
+RIP: 0010:handle_userfault+0x149b/0x27a0 fs/userfaultfd.c:440
+Code: ff 49 8d bc 24 a0 01 00 00 31 f6 e8 2f b9 23 08 31 ff 41 89 c5 89 c6 e8 c3 a2 87 ff 45 85 ed 0f 85 83 ed ff ff e8 95 a6 87 ff <0f> 0b e9 77 ed ff ff e8 89 a6 87 ff 49 8d bc 24 a0 01 00 00 be ff
+RSP: 0000:ffffc9000316fb68 EFLAGS: 00010212
+RAX: 0000000000000177 RBX: ffffc9000316fd88 RCX: ffffc9000be81000
+RDX: 0000000000040000 RSI: ffffffff81fd6ddb RDI: 0000000000000005
+RBP: 0000000000000200 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: ffff888023cc8000
+R13: 0000000000000000 R14: ffff88802c77af10 R15: ffff88802c77af00
+FS:  00007fa68c277700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020c067e0 CR3: 0000000045d25000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ do_anonymous_page mm/memory.c:4151 [inline]
+ do_pte_missing mm/memory.c:3671 [inline]
+ handle_pte_fault mm/memory.c:4949 [inline]
+ __handle_mm_fault+0x35ff/0x3cc0 mm/memory.c:5089
+ handle_mm_fault+0x3c2/0xa20 mm/memory.c:5254
+ do_user_addr_fault+0x2ed/0x13a0 arch/x86/mm/fault.c:1365
+ handle_page_fault arch/x86/mm/fault.c:1509 [inline]
+ exc_page_fault+0x98/0x170 arch/x86/mm/fault.c:1565
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
+RIP: 0033:0x7fa68b486dcf
+Code: a4 c3 80 fa 08 73 12 80 fa 04 73 1e 80 fa 01 77 26 72 05 0f b6 0e 88 0f c3 48 8b 4c 16 f8 48 8b 36 48 89 4c 17 f8 48 89 37 c3 <8b> 4c 16 fc 8b 36 89 4c 17 fc 89 37 c3 0f b7 4c 16 fe 0f b7 36 66
+RSP: 002b:00007fa68c277158 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 00007fa68b5ac050 RCX: 0000000000c06620
+RDX: 0000000000000004 RSI: 0000000020c067e0 RDI: 0000000000000000
+RBP: 00007fa68b4d7493 R08: 0000000000000004 R09: 0000000000000000
+R10: 0000000000000000 R11: 00000000200001c0 R12: 0000000000000000
+R13: 00007ffc0b167b2f R14: 00007fa68c277300 R15: 0000000000022000
+ </TASK>
 
 
-------PcSJ1RlEyPKfjXIiTsweH-7MCPtMf9v3nlMrb72LWO-fIHxy=_a6ccd_
-Content-Type: text/plain; charset="utf-8"
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-------PcSJ1RlEyPKfjXIiTsweH-7MCPtMf9v3nlMrb72LWO-fIHxy=_a6ccd_--
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
