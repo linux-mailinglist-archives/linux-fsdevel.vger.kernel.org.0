@@ -2,489 +2,634 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CA7A748BC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 20:24:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D86AC748C43
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 20:58:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233605AbjGESYo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jul 2023 14:24:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50908 "EHLO
+        id S233000AbjGES6g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jul 2023 14:58:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233499AbjGESY3 (ORCPT
+        with ESMTP id S229700AbjGES6e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jul 2023 14:24:29 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E2F41BE1
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jul 2023 11:24:06 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2b703c900e3so3551901fa.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jul 2023 11:24:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1688581441; x=1691173441;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qbd7RAFaA95+R8mZ/AXjac9HJjeSJJgR1WpgUAM/AL0=;
-        b=kVSIGzL352IB5Kbk25lgjcw5saC1YO10AdWs+QKyw4ELHQKHRM4XlZL1DbpD3H6jo9
-         cA5dTyV0Ub2isd663QDGIqwAHCmo3doSf+C0aqGbmqcGhpyw29l9hI9YJMdlhkNj+9fU
-         vpMafQ8UrtGim4HvTqImR9lpOCa3TXjC0rlH/ivRgJ8PkFxen/FIoQ0zqUNvl4c0r/dA
-         wGuUonsPYyql5i5IeCZHImVbWAns84E+WyuSZnVjERgZLBtPSmuQt47kgDSjKUqF+aap
-         kPlwgxgnXc0jV5S5Dgr/Rupgt+l9sFq1EzgISkmPrFtCnONkq9c6tedt1vg3Hw7DxTM5
-         uXNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688581441; x=1691173441;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qbd7RAFaA95+R8mZ/AXjac9HJjeSJJgR1WpgUAM/AL0=;
-        b=S/WNbQ+NPi1LXR73SFh0vwEENduvBGTTJow9TuAJrEw876033DX0L+m1kK2jLKoqvY
-         zEAAD3SiiTWM6+nKVOFJvWIsXitd3swe73yx/0cWtHryWYvtBn6MH83V6e3fER+J8r+M
-         qV182L2NQvC375CEXXiokb59Na3dZV6qfaLDSULPSNLvMQN+MA8lka/mreBoa5g1/IHQ
-         XhOTBuAjfXMzOaHAKOnl2bOqadbHENg+iumHUOZmhpVfRmTg/jmAx25ivJfmmZNsD+w9
-         ZUlAxAXBgnWCBhAUnMJB1eQreMmmibaRuMw6ou7ddiXxxx/zIv9TV21j7zUawabQuxjl
-         okvA==
-X-Gm-Message-State: ABy/qLYnPlTd5IMrD7AgPTLVPq2W+h/uufbgLzSxJwjncxIQZgRAXmUe
-        XSZqOSjje/cgIYNQqQmm6YX8LipNsyOVNitW3saA2g==
-X-Google-Smtp-Source: APBJJlEygUyErL6yJqO8bioc2L0eLzruugzCDJAI7Niw3GBLyD1hIJqcVX3vRU2ISDHjey093PUyZT/Id5A2ftxRTcc=
-X-Received: by 2002:a2e:9610:0:b0:2b6:d8ea:6650 with SMTP id
- v16-20020a2e9610000000b002b6d8ea6650mr9647325ljh.27.1688581439764; Wed, 05
- Jul 2023 11:23:59 -0700 (PDT)
+        Wed, 5 Jul 2023 14:58:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C6D171E;
+        Wed,  5 Jul 2023 11:58:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 479C1616D1;
+        Wed,  5 Jul 2023 18:58:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6490C433C8;
+        Wed,  5 Jul 2023 18:58:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688583511;
+        bh=0xs97Nw0Ki/BD4oxBMJBIFiVob4TDeDS1tgBnhC1Tm4=;
+        h=From:To:Subject:Date:From;
+        b=Uf/i/U8ZSa4UcQ1jcgnZqB1kMqkl9AeT9d45BD18S54++HyiDp/ty3RcWB0879l8q
+         F3Mu2mZpY2FBiRl2GspXfDaUssMvohbXgspdwZ9ynN+CuV9I6vDCyg+6dptCTbUeMc
+         y4nGOo3W/kSJKnEGr+CYvDsz8VL18/XkkpvTVpsDCHkwzTTbg1YrAhGkvN7lAvoJFd
+         u6jrgitdiwWye6WeH/hmaiqI3t9mX/fUSPjhiBafWPUl0h3dzbDobolXC02s8N4EG0
+         70T0KjO3GrNXgIWOscb8tzgSE3dkCSlH6aRHRKkPuZFD+yV/SVNnAYHFdu/E18SnrC
+         QEr0CaP+ES7iQ==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     jk@ozlabs.org, arnd@arndb.de, mpe@ellerman.id.au,
+        npiggin@gmail.com, christophe.leroy@csgroup.eu, hca@linux.ibm.com,
+        gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com,
+        gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
+        maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
+        cmllamas@google.com, surenb@google.com,
+        dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca,
+        leon@kernel.org, bwarrum@linux.ibm.com, rituagar@linux.ibm.com,
+        ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
+        linux_oss@crudebyte.com, dsterba@suse.com, dhowells@redhat.com,
+        marc.dionne@auristor.com, viro@zeniv.linux.org.uk,
+        raven@themaw.net, luisbg@kernel.org, salah.triki@gmail.com,
+        aivazian.tigran@gmail.com, ebiederm@xmission.com,
+        keescook@chromium.org, clm@fb.com, josef@toxicpanda.com,
+        xiubli@redhat.com, idryomov@gmail.com, jlayton@kernel.org,
+        jaharkes@cs.cmu.edu, coda@cs.cmu.edu, jlbec@evilplan.org,
+        hch@lst.de, nico@fluxnic.net, rafael@kernel.org, code@tyhicks.com,
+        ardb@kernel.org, xiang@kernel.org, chao@kernel.org,
+        huyue2@coolpad.com, jefflexu@linux.alibaba.com,
+        linkinjeon@kernel.org, sj1557.seo@samsung.com, jack@suse.com,
+        tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+        hirofumi@mail.parknet.co.jp, miklos@szeredi.hu,
+        rpeterso@redhat.com, agruenba@redhat.com, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        mikulas@artax.karlin.mff.cuni.cz, mike.kravetz@oracle.com,
+        muchun.song@linux.dev, dwmw2@infradead.org, shaggy@kernel.org,
+        tj@kernel.org, trond.myklebust@hammerspace.com, anna@kernel.org,
+        chuck.lever@oracle.com, neilb@suse.de, kolga@netapp.com,
+        Dai.Ngo@oracle.com, tom@talpey.com, konishi.ryusuke@gmail.com,
+        anton@tuxera.com, almaz.alexandrovich@paragon-software.com,
+        mark@fasheh.com, joseph.qi@linux.alibaba.com, me@bobcopeland.com,
+        hubcap@omnibond.com, martin@omnibond.com, amir73il@gmail.com,
+        mcgrof@kernel.org, yzaikin@google.com, tony.luck@intel.com,
+        gpiccoli@igalia.com, al@alarsen.net, sfrench@samba.org,
+        pc@manguebit.com, lsahlber@redhat.com, sprasad@microsoft.com,
+        senozhatsky@chromium.org, phillip@squashfs.org.uk,
+        rostedt@goodmis.org, mhiramat@kernel.org, dushistov@mail.ru,
+        hdegoede@redhat.com, djwong@kernel.org, dlemoal@kernel.org,
+        naohiro.aota@wdc.com, jth@kernel.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+        song@kernel.org, yhs@fb.com, john.fastabend@gmail.com,
+        kpsingh@kernel.org, sdf@google.com, haoluo@google.com,
+        jolsa@kernel.org, hughd@google.com, akpm@linux-foundation.org,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, john.johansen@canonical.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        jgross@suse.com, stern@rowland.harvard.edu, lrh2000@pku.edu.cn,
+        sebastian.reichel@collabora.com, wsa+renesas@sang-engineering.com,
+        quic_ugoswami@quicinc.com, quic_linyyuan@quicinc.com,
+        john@keeping.me.uk, error27@gmail.com, quic_uaggarwa@quicinc.com,
+        hayama@lineo.co.jp, jomajm@gmail.com, axboe@kernel.dk,
+        dhavale@google.com, dchinner@redhat.com, hannes@cmpxchg.org,
+        zhangpeng362@huawei.com, slava@dubeyko.com, gargaditya08@live.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, yifeliu@cs.stonybrook.edu,
+        madkar@cs.stonybrook.edu, ezk@cs.stonybrook.edu,
+        yuzhe@nfschina.com, willy@infradead.org, okanatov@gmail.com,
+        jeffxu@chromium.org, linux@treblig.org, mirimmad17@gmail.com,
+        yijiangshan@kylinos.cn, yang.yang29@zte.com.cn,
+        xu.xin16@zte.com.cn, chengzhihao1@huawei.com, shr@devkernel.io,
+        Liam.Howlett@Oracle.com, adobriyan@gmail.com,
+        chi.minghao@zte.com.cn, roberto.sassu@huawei.com,
+        linuszeng@tencent.com, bvanassche@acm.org, zohar@linux.ibm.com,
+        yi.zhang@huawei.com, trix@redhat.com, fmdefrancesco@gmail.com,
+        ebiggers@google.com, princekumarmaurya06@gmail.com,
+        chenzhongjin@huawei.com, riel@surriel.com,
+        shaozhengchao@huawei.com, jingyuwang_vip@163.com,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-usb@vger.kernel.org, v9fs@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+        autofs@vger.kernel.org, linux-mm@kvack.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, linux-um@lists.infradead.org,
+        linux-mtd@lists.infradead.org,
+        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
+        linux-unionfs@vger.kernel.org, linux-hardening@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org,
+        linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        bpf@vger.kernel.org, netdev@vger.kernel.org,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: [PATCH v2 00/89] fs: new accessors for inode->i_ctime
+Date:   Wed,  5 Jul 2023 14:58:09 -0400
+Message-ID: <20230705185812.579118-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-References: <20230629205040.665834-1-axelrasmussen@google.com> <CACw3F53p8szcxv7PSOSqN6ps3hHmRD4VQor3pLd0Cqrn-p2Ajw@mail.gmail.com>
-In-Reply-To: <CACw3F53p8szcxv7PSOSqN6ps3hHmRD4VQor3pLd0Cqrn-p2Ajw@mail.gmail.com>
-From:   Axel Rasmussen <axelrasmussen@google.com>
-Date:   Wed, 5 Jul 2023 11:23:23 -0700
-Message-ID: <CAJHvVcid5_W0AmfM1zUBmv_sPAHDqcROVAAf9HDK3iuxj4eXVQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] mm: userfaultfd: add new UFFDIO_POISON ioctl
-To:     Jiaqi Yan <jiaqiyan@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Hugh Dickins <hughd@google.com>,
-        James Houghton <jthoughton@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "Mike Rapoport (IBM)" <rppt@kernel.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        Nadav Amit <namit@vmware.com>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        ZhangPeng <zhangpeng362@huawei.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 5, 2023 at 11:18=E2=80=AFAM Jiaqi Yan <jiaqiyan@google.com> wro=
-te:
->
-> On Thu, Jun 29, 2023 at 1:50=E2=80=AFPM Axel Rasmussen <axelrasmussen@goo=
-gle.com> wrote:
-> >
-> > The basic idea here is to "simulate" memory poisoning for VMs. A VM
-> > running on some host might encounter a memory error, after which some
-> > page(s) are poisoned (i.e., future accesses SIGBUS). They expect that
-> > once poisoned, pages can never become "un-poisoned". So, when we live
-> > migrate the VM, we need to preserve the poisoned status of these pages.
-> >
-> > When live migrating, we try to get the guest running on its new host as
-> > quickly as possible. So, we start it running before all memory has been
-> > copied, and before we're certain which pages should be poisoned or not.
-> >
-> > So the basic way to use this new feature is:
-> >
-> > - On the new host, the guest's memory is registered with userfaultfd, i=
-n
-> >   either MISSING or MINOR mode (doesn't really matter for this purpose)=
-.
-> > - On any first access, we get a userfaultfd event. At this point we can
-> >   communicate with the old host to find out if the page was poisoned.
-> > - If so, we can respond with a UFFDIO_POISON - this places a swap marke=
-r
-> >   so any future accesses will SIGBUS. Because the pte is now "present",
-> >   future accesses won't generate more userfaultfd events, they'll just
-> >   SIGBUS directly.
-> >
-> > UFFDIO_POISON does not handle unmapping previously-present PTEs. This
->
-> A minor suggestion, would UFFDIO_HWPOISON be better? so that readers
-> won't be confused with CONFIG_PAGE_POISONING (a feature to fill the
-> pages with poison patterns after free).
+v2:
+- prepend patches to add missing ctime updates
+- add simple_rename_timestamp helper function
+- rename ctime accessor functions as inode_get_ctime/inode_set_ctime_*
+- drop individual inode_ctime_set_{sec,nsec} helpers
 
-I was a bit wary of using "HWPOISON" because this is more like
-"simulated" poisoning, not "real" hardware poisoning. :/
+I've been working on a patchset to change how the inode->i_ctime is
+accessed in order to give us conditional, high-res timestamps for the
+ctime and mtime. struct timespec64 has unused bits in it that we can use
+to implement this. In order to do that however, we need to wrap all
+accesses of inode->i_ctime to ensure that bits used as flags are
+appropriately handled.
 
-But, maybe folks feel that distinction is less important than the one
-you've raised here Jiaqi. I don't have the strongest opinion.
+The patchset starts with reposts of some missing ctime updates that I
+spotted in the tree. It then adds a new helper function for updating the
+timestamp after a successful rename, and new ctime accessor
+infrastructure.
 
->
-> > isn't needed, because during live migration we want to intercept
-> > all accesses with userfaultfd (not just writes, so WP mode isn't useful
-> > for this). So whether minor or missing mode is being used (or both), th=
-e
-> > PTE won't be present in any case, so handling that case isn't needed.
-> >
-> > Why return VM_FAULT_HWPOISON instead of VM_FAULT_SIGBUS when one of
-> > these markers is encountered? For "normal" userspace programs there
-> > isn't a big difference, both yield a SIGBUS. The difference for KVM is
-> > key though: VM_FAULT_HWPOISON will result in an MCE being injected into
-> > the guest (which is the behavior we want). With VM_FAULT_SIGBUS, the
-> > hypervisor would need to catch the SIGBUS and deal with the MCE
-> > injection itself.
-> >
-> > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
-> > ---
-> >  fs/userfaultfd.c                 | 63 ++++++++++++++++++++++++++++++++
-> >  include/linux/swapops.h          |  3 +-
-> >  include/linux/userfaultfd_k.h    |  4 ++
-> >  include/uapi/linux/userfaultfd.h | 25 +++++++++++--
-> >  mm/memory.c                      |  4 ++
-> >  mm/userfaultfd.c                 | 62 ++++++++++++++++++++++++++++++-
-> >  6 files changed, 156 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> > index 7cecd49e078b..c26a883399c9 100644
-> > --- a/fs/userfaultfd.c
-> > +++ b/fs/userfaultfd.c
-> > @@ -1965,6 +1965,66 @@ static int userfaultfd_continue(struct userfault=
-fd_ctx *ctx, unsigned long arg)
-> >         return ret;
-> >  }
-> >
-> > +static inline int userfaultfd_poison(struct userfaultfd_ctx *ctx, unsi=
-gned long arg)
-> > +{
-> > +       __s64 ret;
-> > +       struct uffdio_poison uffdio_poison;
-> > +       struct uffdio_poison __user *user_uffdio_poison;
-> > +       struct userfaultfd_wake_range range;
-> > +
-> > +       user_uffdio_poison =3D (struct uffdio_poison __user *)arg;
-> > +
-> > +       ret =3D -EAGAIN;
-> > +       if (atomic_read(&ctx->mmap_changing))
-> > +               goto out;
-> > +
-> > +       ret =3D -EFAULT;
-> > +       if (copy_from_user(&uffdio_poison, user_uffdio_poison,
-> > +                          /* don't copy the output fields */
-> > +                          sizeof(uffdio_poison) - (sizeof(__s64))))
-> > +               goto out;
-> > +
-> > +       ret =3D validate_range(ctx->mm, uffdio_poison.range.start,
-> > +                            uffdio_poison.range.len);
-> > +       if (ret)
-> > +               goto out;
-> > +
-> > +       ret =3D -EINVAL;
-> > +       /* double check for wraparound just in case. */
-> > +       if (uffdio_poison.range.start + uffdio_poison.range.len <=3D
-> > +           uffdio_poison.range.start) {
-> > +               goto out;
-> > +       }
-> > +       if (uffdio_poison.mode & ~UFFDIO_POISON_MODE_DONTWAKE)
-> > +               goto out;
-> > +
-> > +       if (mmget_not_zero(ctx->mm)) {
-> > +               ret =3D mfill_atomic_poison(ctx->mm, uffdio_poison.rang=
-e.start,
-> > +                                         uffdio_poison.range.len,
-> > +                                         &ctx->mmap_changing, 0);
-> > +               mmput(ctx->mm);
-> > +       } else {
-> > +               return -ESRCH;
-> > +       }
-> > +
-> > +       if (unlikely(put_user(ret, &user_uffdio_poison->updated)))
-> > +               return -EFAULT;
-> > +       if (ret < 0)
-> > +               goto out;
-> > +
-> > +       /* len =3D=3D 0 would wake all */
-> > +       BUG_ON(!ret);
-> > +       range.len =3D ret;
-> > +       if (!(uffdio_poison.mode & UFFDIO_POISON_MODE_DONTWAKE)) {
-> > +               range.start =3D uffdio_poison.range.start;
-> > +               wake_userfault(ctx, &range);
-> > +       }
-> > +       ret =3D range.len =3D=3D uffdio_poison.range.len ? 0 : -EAGAIN;
-> > +
-> > +out:
-> > +       return ret;
-> > +}
-> > +
-> >  static inline unsigned int uffd_ctx_features(__u64 user_features)
-> >  {
-> >         /*
-> > @@ -2066,6 +2126,9 @@ static long userfaultfd_ioctl(struct file *file, =
-unsigned cmd,
-> >         case UFFDIO_CONTINUE:
-> >                 ret =3D userfaultfd_continue(ctx, arg);
-> >                 break;
-> > +       case UFFDIO_POISON:
-> > +               ret =3D userfaultfd_poison(ctx, arg);
-> > +               break;
-> >         }
-> >         return ret;
-> >  }
-> > diff --git a/include/linux/swapops.h b/include/linux/swapops.h
-> > index 4c932cb45e0b..8259fee32421 100644
-> > --- a/include/linux/swapops.h
-> > +++ b/include/linux/swapops.h
-> > @@ -394,7 +394,8 @@ typedef unsigned long pte_marker;
-> >
-> >  #define  PTE_MARKER_UFFD_WP                    BIT(0)
-> >  #define  PTE_MARKER_SWAPIN_ERROR               BIT(1)
-> > -#define  PTE_MARKER_MASK                       (BIT(2) - 1)
-> > +#define  PTE_MARKER_UFFD_POISON                        BIT(2)
-> > +#define  PTE_MARKER_MASK                       (BIT(3) - 1)
-> >
-> >  static inline swp_entry_t make_pte_marker_entry(pte_marker marker)
-> >  {
-> > diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_=
-k.h
-> > index ac7b0c96d351..ac8c6854097c 100644
-> > --- a/include/linux/userfaultfd_k.h
-> > +++ b/include/linux/userfaultfd_k.h
-> > @@ -46,6 +46,7 @@ enum mfill_atomic_mode {
-> >         MFILL_ATOMIC_COPY,
-> >         MFILL_ATOMIC_ZEROPAGE,
-> >         MFILL_ATOMIC_CONTINUE,
-> > +       MFILL_ATOMIC_POISON,
-> >         NR_MFILL_ATOMIC_MODES,
-> >  };
-> >
-> > @@ -83,6 +84,9 @@ extern ssize_t mfill_atomic_zeropage(struct mm_struct=
- *dst_mm,
-> >  extern ssize_t mfill_atomic_continue(struct mm_struct *dst_mm, unsigne=
-d long dst_start,
-> >                                      unsigned long len, atomic_t *mmap_=
-changing,
-> >                                      uffd_flags_t flags);
-> > +extern ssize_t mfill_atomic_poison(struct mm_struct *dst_mm, unsigned =
-long start,
-> > +                                  unsigned long len, atomic_t *mmap_ch=
-anging,
-> > +                                  uffd_flags_t flags);
-> >  extern int mwriteprotect_range(struct mm_struct *dst_mm,
-> >                                unsigned long start, unsigned long len,
-> >                                bool enable_wp, atomic_t *mmap_changing)=
-;
-> > diff --git a/include/uapi/linux/userfaultfd.h b/include/uapi/linux/user=
-faultfd.h
-> > index 66dd4cd277bd..62151706c5a3 100644
-> > --- a/include/uapi/linux/userfaultfd.h
-> > +++ b/include/uapi/linux/userfaultfd.h
-> > @@ -39,7 +39,8 @@
-> >                            UFFD_FEATURE_MINOR_SHMEM |           \
-> >                            UFFD_FEATURE_EXACT_ADDRESS |         \
-> >                            UFFD_FEATURE_WP_HUGETLBFS_SHMEM |    \
-> > -                          UFFD_FEATURE_WP_UNPOPULATED)
-> > +                          UFFD_FEATURE_WP_UNPOPULATED |        \
-> > +                          UFFD_FEATURE_POISON)
-> >  #define UFFD_API_IOCTLS                                \
-> >         ((__u64)1 << _UFFDIO_REGISTER |         \
-> >          (__u64)1 << _UFFDIO_UNREGISTER |       \
-> > @@ -49,12 +50,14 @@
-> >          (__u64)1 << _UFFDIO_COPY |             \
-> >          (__u64)1 << _UFFDIO_ZEROPAGE |         \
-> >          (__u64)1 << _UFFDIO_WRITEPROTECT |     \
-> > -        (__u64)1 << _UFFDIO_CONTINUE)
-> > +        (__u64)1 << _UFFDIO_CONTINUE |         \
-> > +        (__u64)1 << _UFFDIO_POISON)
-> >  #define UFFD_API_RANGE_IOCTLS_BASIC            \
-> >         ((__u64)1 << _UFFDIO_WAKE |             \
-> >          (__u64)1 << _UFFDIO_COPY |             \
-> > +        (__u64)1 << _UFFDIO_WRITEPROTECT |     \
-> >          (__u64)1 << _UFFDIO_CONTINUE |         \
-> > -        (__u64)1 << _UFFDIO_WRITEPROTECT)
-> > +        (__u64)1 << _UFFDIO_POISON)
-> >
-> >  /*
-> >   * Valid ioctl command number range with this API is from 0x00 to
-> > @@ -71,6 +74,7 @@
-> >  #define _UFFDIO_ZEROPAGE               (0x04)
-> >  #define _UFFDIO_WRITEPROTECT           (0x06)
-> >  #define _UFFDIO_CONTINUE               (0x07)
-> > +#define _UFFDIO_POISON                 (0x08)
-> >  #define _UFFDIO_API                    (0x3F)
-> >
-> >  /* userfaultfd ioctl ids */
-> > @@ -91,6 +95,8 @@
-> >                                       struct uffdio_writeprotect)
-> >  #define UFFDIO_CONTINUE                _IOWR(UFFDIO, _UFFDIO_CONTINUE,=
- \
-> >                                       struct uffdio_continue)
-> > +#define UFFDIO_POISON          _IOWR(UFFDIO, _UFFDIO_POISON, \
-> > +                                     struct uffdio_poison)
-> >
-> >  /* read() structure */
-> >  struct uffd_msg {
-> > @@ -225,6 +231,7 @@ struct uffdio_api {
-> >  #define UFFD_FEATURE_EXACT_ADDRESS             (1<<11)
-> >  #define UFFD_FEATURE_WP_HUGETLBFS_SHMEM                (1<<12)
-> >  #define UFFD_FEATURE_WP_UNPOPULATED            (1<<13)
-> > +#define UFFD_FEATURE_POISON                    (1<<14)
-> >         __u64 features;
-> >
-> >         __u64 ioctls;
-> > @@ -321,6 +328,18 @@ struct uffdio_continue {
-> >         __s64 mapped;
-> >  };
-> >
-> > +struct uffdio_poison {
-> > +       struct uffdio_range range;
-> > +#define UFFDIO_POISON_MODE_DONTWAKE            ((__u64)1<<0)
-> > +       __u64 mode;
-> > +
-> > +       /*
-> > +        * Fields below here are written by the ioctl and must be at th=
-e end:
-> > +        * the copy_from_user will not read past here.
-> > +        */
-> > +       __s64 updated;
-> > +};
-> > +
-> >  /*
-> >   * Flags for the userfaultfd(2) system call itself.
-> >   */
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index d8a9a770b1f1..7fbda39e060d 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -3692,6 +3692,10 @@ static vm_fault_t handle_pte_marker(struct vm_fa=
-ult *vmf)
-> >         if (WARN_ON_ONCE(!marker))
-> >                 return VM_FAULT_SIGBUS;
-> >
-> > +       /* Poison emulation explicitly requested for this PTE. */
-> > +       if (marker & PTE_MARKER_UFFD_POISON)
-> > +               return VM_FAULT_HWPOISON;
-> > +
-> >         /* Higher priority than uffd-wp when data corrupted */
-> >         if (marker & PTE_MARKER_SWAPIN_ERROR)
-> >                 return VM_FAULT_SIGBUS;
-> > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > index a2bf37ee276d..87b62ca1e09e 100644
-> > --- a/mm/userfaultfd.c
-> > +++ b/mm/userfaultfd.c
-> > @@ -286,6 +286,51 @@ static int mfill_atomic_pte_continue(pmd_t *dst_pm=
-d,
-> >         goto out;
-> >  }
-> >
-> > +/* Handles UFFDIO_POISON for all non-hugetlb VMAs. */
-> > +static int mfill_atomic_pte_poison(pmd_t *dst_pmd,
-> > +                                  struct vm_area_struct *dst_vma,
-> > +                                  unsigned long dst_addr,
-> > +                                  uffd_flags_t flags)
-> > +{
-> > +       int ret;
-> > +       struct mm_struct *dst_mm =3D dst_vma->vm_mm;
-> > +       pte_t _dst_pte, *dst_pte;
-> > +       spinlock_t *ptl;
-> > +
-> > +       _dst_pte =3D make_pte_marker(PTE_MARKER_UFFD_POISON);
-> > +       dst_pte =3D pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl=
-);
-> > +
-> > +       if (vma_is_shmem(dst_vma)) {
-> > +               struct inode *inode;
-> > +               pgoff_t offset, max_off;
-> > +
-> > +               /* serialize against truncate with the page table lock =
-*/
-> > +               inode =3D dst_vma->vm_file->f_inode;
-> > +               offset =3D linear_page_index(dst_vma, dst_addr);
-> > +               max_off =3D DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE)=
-;
-> > +               ret =3D -EFAULT;
-> > +               if (unlikely(offset >=3D max_off))
-> > +                       goto out_unlock;
-> > +       }
-> > +
-> > +       ret =3D -EEXIST;
-> > +       /*
-> > +        * For now, we don't handle unmapping pages, so only support fi=
-lling in
-> > +        * none PTEs, or replacing PTE markers.
-> > +        */
-> > +       if (!pte_none_mostly(*dst_pte))
-> > +               goto out_unlock;
-> > +
-> > +       set_pte_at(dst_mm, dst_addr, dst_pte, _dst_pte);
-> > +
-> > +       /* No need to invalidate - it was non-present before */
-> > +       update_mmu_cache(dst_vma, dst_addr, dst_pte);
-> > +       ret =3D 0;
-> > +out_unlock:
-> > +       pte_unmap_unlock(dst_pte, ptl);
-> > +       return ret;
-> > +}
-> > +
-> >  static pmd_t *mm_alloc_pmd(struct mm_struct *mm, unsigned long address=
+The bulk of the patchset is individual conversions of different
+subsysteme to use the new infrastructure. Finally, the patchset renames
+the i_ctime field to __i_ctime to help ensure that I didn't miss
+anything.
+
+This should apply cleanly to linux-next as of this morning.
+
+Most of this conversion was done via 5 different coccinelle scripts, run
+in succession, with a large swath of by-hand conversions to clean up the
+remainder.
+
+The coccinelle scripts that were used are below:
+
+::::::::::::::
+cocci/ctime1.cocci
+::::::::::::::
+// convert as much to use inode_set_ctime_current as possible
+@@
+identifier timei;
+struct inode *inode;
+expression E1, E2;
+@@
+(
+- inode->i_ctime = E1 = E2 = current_time(timei)
++ E1 = E2 = inode_set_ctime_current(inode)
+|
+- inode->i_ctime = E1 = current_time(timei)
++ E1 = inode_set_ctime_current(inode)
+|
+- E1 = inode->i_ctime = current_time(timei)
++ E1 = inode_set_ctime_current(inode)
+|
+- inode->i_ctime = current_time(timei)
++ inode_set_ctime_current(inode)
 )
-> >  {
-> >         pgd_t *pgd;
-> > @@ -336,8 +381,12 @@ static __always_inline ssize_t mfill_atomic_hugetl=
-b(
-> >          * supported by hugetlb.  A PMD_SIZE huge pages may exist as us=
-ed
-> >          * by THP.  Since we can not reliably insert a zero page, this
-> >          * feature is not supported.
-> > +        *
-> > +        * PTE marker handling for hugetlb is a bit special, so for now
-> > +        * UFFDIO_POISON is not supported.
-> >          */
-> > -       if (uffd_flags_mode_is(flags, MFILL_ATOMIC_ZEROPAGE)) {
-> > +       if (uffd_flags_mode_is(flags, MFILL_ATOMIC_ZEROPAGE) ||
-> > +           uffd_flags_mode_is(flags, MFILL_ATOMIC_POISON)) {
-> >                 mmap_read_unlock(dst_mm);
-> >                 return -EINVAL;
-> >         }
-> > @@ -481,6 +530,9 @@ static __always_inline ssize_t mfill_atomic_pte(pmd=
-_t *dst_pmd,
-> >         if (uffd_flags_mode_is(flags, MFILL_ATOMIC_CONTINUE)) {
-> >                 return mfill_atomic_pte_continue(dst_pmd, dst_vma,
-> >                                                  dst_addr, flags);
-> > +       } else if (uffd_flags_mode_is(flags, MFILL_ATOMIC_POISON)) {
-> > +               return mfill_atomic_pte_poison(dst_pmd, dst_vma,
-> > +                                              dst_addr, flags);
-> >         }
-> >
-> >         /*
-> > @@ -702,6 +754,14 @@ ssize_t mfill_atomic_continue(struct mm_struct *ds=
-t_mm, unsigned long start,
-> >                             uffd_flags_set_mode(flags, MFILL_ATOMIC_CON=
-TINUE));
-> >  }
-> >
-> > +ssize_t mfill_atomic_poison(struct mm_struct *dst_mm, unsigned long st=
-art,
-> > +                           unsigned long len, atomic_t *mmap_changing,
-> > +                           uffd_flags_t flags)
-> > +{
-> > +       return mfill_atomic(dst_mm, start, 0, len, mmap_changing,
-> > +                           uffd_flags_set_mode(flags, MFILL_ATOMIC_POI=
-SON));
-> > +}
-> > +
-> >  long uffd_wp_range(struct vm_area_struct *dst_vma,
-> >                    unsigned long start, unsigned long len, bool enable_=
-wp)
-> >  {
-> > --
-> > 2.41.0.255.g8b1d071c50-goog
-> >
+
+@@
+struct inode *inode;
+expression E1, E2, E3;
+@@
+(
+- E1 = current_time(inode)
++ E1 = inode_set_ctime_current(inode)
+|
+- E1 = current_time(E3)
++ E1 = inode_set_ctime_current(inode)
+)
+...
+(
+- inode->i_ctime = E1;
+|
+- E2 = inode->i_ctime = E1;
++ E2 = E1;
+)
+::::::::::::::
+cocci/ctime2.cocci
+::::::::::::::
+// get the places that set individual timespec64 fields
+@@
+struct inode *inode;
+expression val, val2;
+@@
+- inode->i_ctime.tv_sec = val
++ inode_set_ctime(inode, val, val2)
+...
+- inode->i_ctime.tv_nsec = val2;
+
+// get places that just set the tv_sec
+@@
+struct inode *inode;
+expression sec, E1, E2, E3;
+@@
+(
+- E3 = inode->i_ctime.tv_sec = sec
++ E3 = inode_set_ctime(inode, sec, 0).tv_sec
+|
+- inode->i_ctime.tv_sec = sec
++ inode_set_ctime(inode, sec, 0)
+)
+<...
+(
+- inode->i_ctime.tv_nsec = 0;
+|
+- E1 = inode->i_ctime.tv_nsec = 0
++ E1 = 0
+|
+- inode->i_ctime.tv_nsec = E1 = 0
++ E1 = 0
+|
+- inode->i_ctime.tv_nsec = E1 = E2 = 0
++ E1 = E2 = 0
+)
+...>
+
+::::::::::::::
+cocci/ctime3.cocci
+::::::::::::::
+// convert places that set i_ctime to a timespec64 directly
+@@
+struct inode *inode;
+expression ts, E1, E2;
+@@
+(
+- inode->i_ctime = E1 = E2 = ts
++ E1 = E2 = inode_set_ctime_to_ts(inode, ts)
+|
+- inode->i_ctime = E1 = ts
++ E1 = inode_set_ctime_to_ts(inode, ts)
+|
+- inode->i_ctime = ts
++ inode_set_ctime_to_ts(inode, ts)
+)
+::::::::::::::
+cocci/ctime4.cocci
+::::::::::::::
+// catch places that set the i_ctime in an inode embedded in another structure
+@@
+expression E1, E2, E3;
+@@
+(
+- E3.i_ctime = E1 = E2 = current_time(&E3)
++ E1 = E2 = inode_set_ctime_current(&E3)
+|
+- E3.i_ctime = E1 = current_time(&E3)
++ E1 = inode_set_ctime_current(&E3)
+|
+- E1 = E3.i_ctime = current_time(&E3)
++ E1 = inode_set_ctime_current(&E3)
+|
+- E3.i_ctime = current_time(&E3)
++ inode_set_ctime_current(&E3)
+)
+::::::::::::::
+cocci/ctime5.cocci
+::::::::::::::
+// convert the remaining i_ctime accesses
+@@
+struct inode *inode;
+@@
+- inode->i_ctime
++ inode_get_ctime(inode)
+
+
+Jeff Layton (92):
+  ibmvmc: update ctime in conjunction with mtime on write
+  bfs: update ctime in addition to mtime when adding entries
+  efivarfs: update ctime when mtime changes on a write
+  exfat: ensure that ctime is updated whenever the mtime is
+  apparmor: update ctime whenever the mtime changes on an inode
+  cifs: update the ctime on a partial page write
+  fs: add ctime accessors infrastructure
+  fs: new helper: simple_rename_timestamp
+  btrfs: convert to simple_rename_timestamp
+  ubifs: convert to simple_rename_timestamp
+  shmem: convert to simple_rename_timestamp
+  exfat: convert to simple_rename_timestamp
+  ntfs3: convert to simple_rename_timestamp
+  reiserfs: convert to simple_rename_timestamp
+  spufs: convert to ctime accessor functions
+  s390: convert to ctime accessor functions
+  binderfs: convert to ctime accessor functions
+  infiniband: convert to ctime accessor functions
+  ibm: convert to ctime accessor functions
+  usb: convert to ctime accessor functions
+  9p: convert to ctime accessor functions
+  adfs: convert to ctime accessor functions
+  affs: convert to ctime accessor functions
+  afs: convert to ctime accessor functions
+  fs: convert to ctime accessor functions
+  autofs: convert to ctime accessor functions
+  befs: convert to ctime accessor functions
+  bfs: convert to ctime accessor functions
+  btrfs: convert to ctime accessor functions
+  ceph: convert to ctime accessor functions
+  coda: convert to ctime accessor functions
+  configfs: convert to ctime accessor functions
+  cramfs: convert to ctime accessor functions
+  debugfs: convert to ctime accessor functions
+  devpts: convert to ctime accessor functions
+  ecryptfs: convert to ctime accessor functions
+  efivarfs: convert to ctime accessor functions
+  efs: convert to ctime accessor functions
+  erofs: convert to ctime accessor functions
+  exfat: convert to ctime accessor functions
+  ext2: convert to ctime accessor functions
+  ext4: convert to ctime accessor functions
+  f2fs: convert to ctime accessor functions
+  fat: convert to ctime accessor functions
+  freevxfs: convert to ctime accessor functions
+  fuse: convert to ctime accessor functions
+  gfs2: convert to ctime accessor functions
+  hfs: convert to ctime accessor functions
+  hfsplus: convert to ctime accessor functions
+  hostfs: convert to ctime accessor functions
+  hpfs: convert to ctime accessor functions
+  hugetlbfs: convert to ctime accessor functions
+  isofs: convert to ctime accessor functions
+  jffs2: convert to ctime accessor functions
+  jfs: convert to ctime accessor functions
+  kernfs: convert to ctime accessor functions
+  nfs: convert to ctime accessor functions
+  nfsd: convert to ctime accessor functions
+  nilfs2: convert to ctime accessor functions
+  ntfs: convert to ctime accessor functions
+  ntfs3: convert to ctime accessor functions
+  ocfs2: convert to ctime accessor functions
+  omfs: convert to ctime accessor functions
+  openpromfs: convert to ctime accessor functions
+  orangefs: convert to ctime accessor functions
+  overlayfs: convert to ctime accessor functions
+  procfs: convert to ctime accessor functions
+  pstore: convert to ctime accessor functions
+  qnx4: convert to ctime accessor functions
+  qnx6: convert to ctime accessor functions
+  ramfs: convert to ctime accessor functions
+  reiserfs: convert to ctime accessor functions
+  romfs: convert to ctime accessor functions
+  smb: convert to ctime accessor functions
+  squashfs: convert to ctime accessor functions
+  sysv: convert to ctime accessor functions
+  tracefs: convert to ctime accessor functions
+  ubifs: convert to ctime accessor functions
+  udf: convert to ctime accessor functions
+  ufs: convert to ctime accessor functions
+  vboxsf: convert to ctime accessor functions
+  xfs: convert to ctime accessor functions
+  zonefs: convert to ctime accessor functions
+  linux: convert to ctime accessor functions
+  mqueue: convert to ctime accessor functions
+  bpf: convert to ctime accessor functions
+  shmem: convert to ctime accessor functions
+  sunrpc: convert to ctime accessor functions
+  apparmor: convert to ctime accessor functions
+  security: convert to ctime accessor functions
+  selinux: convert to ctime accessor functions
+  fs: rename i_ctime field to __i_ctime
+
+ arch/powerpc/platforms/cell/spufs/inode.c |  2 +-
+ arch/s390/hypfs/inode.c                   |  4 +-
+ drivers/android/binderfs.c                |  8 ++--
+ drivers/infiniband/hw/qib/qib_fs.c        |  3 +-
+ drivers/misc/ibmasm/ibmasmfs.c            |  2 +-
+ drivers/misc/ibmvmc.c                     |  2 +-
+ drivers/usb/core/devio.c                  | 16 +++----
+ drivers/usb/gadget/function/f_fs.c        |  3 +-
+ drivers/usb/gadget/legacy/inode.c         |  3 +-
+ fs/9p/vfs_inode.c                         |  4 +-
+ fs/9p/vfs_inode_dotl.c                    |  8 ++--
+ fs/adfs/inode.c                           |  4 +-
+ fs/affs/amigaffs.c                        |  6 +--
+ fs/affs/inode.c                           | 16 +++----
+ fs/afs/dynroot.c                          |  2 +-
+ fs/afs/inode.c                            |  6 +--
+ fs/attr.c                                 |  2 +-
+ fs/autofs/inode.c                         |  2 +-
+ fs/autofs/root.c                          |  6 +--
+ fs/bad_inode.c                            |  3 +-
+ fs/befs/linuxvfs.c                        |  2 +-
+ fs/bfs/dir.c                              | 16 +++----
+ fs/bfs/inode.c                            |  5 +--
+ fs/binfmt_misc.c                          |  3 +-
+ fs/btrfs/delayed-inode.c                  |  8 ++--
+ fs/btrfs/file.c                           | 21 ++++-----
+ fs/btrfs/inode.c                          | 54 ++++++++--------------
+ fs/btrfs/ioctl.c                          |  2 +-
+ fs/btrfs/reflink.c                        |  3 +-
+ fs/btrfs/transaction.c                    |  3 +-
+ fs/btrfs/tree-log.c                       |  4 +-
+ fs/btrfs/xattr.c                          |  4 +-
+ fs/ceph/acl.c                             |  2 +-
+ fs/ceph/caps.c                            |  2 +-
+ fs/ceph/inode.c                           | 17 ++++---
+ fs/ceph/snap.c                            |  2 +-
+ fs/ceph/xattr.c                           |  2 +-
+ fs/coda/coda_linux.c                      |  3 +-
+ fs/coda/dir.c                             |  2 +-
+ fs/coda/file.c                            |  2 +-
+ fs/coda/inode.c                           |  2 +-
+ fs/configfs/inode.c                       |  7 ++-
+ fs/cramfs/inode.c                         |  3 +-
+ fs/debugfs/inode.c                        |  3 +-
+ fs/devpts/inode.c                         |  6 +--
+ fs/ecryptfs/inode.c                       |  2 +-
+ fs/efivarfs/file.c                        |  2 +-
+ fs/efivarfs/inode.c                       |  2 +-
+ fs/efs/inode.c                            |  4 +-
+ fs/erofs/inode.c                          | 15 +++----
+ fs/exfat/file.c                           |  4 +-
+ fs/exfat/inode.c                          |  6 +--
+ fs/exfat/namei.c                          | 26 +++++------
+ fs/exfat/super.c                          |  3 +-
+ fs/ext2/acl.c                             |  2 +-
+ fs/ext2/dir.c                             |  6 +--
+ fs/ext2/ialloc.c                          |  2 +-
+ fs/ext2/inode.c                           | 10 ++---
+ fs/ext2/ioctl.c                           |  4 +-
+ fs/ext2/namei.c                           |  8 ++--
+ fs/ext2/super.c                           |  2 +-
+ fs/ext2/xattr.c                           |  2 +-
+ fs/ext4/acl.c                             |  2 +-
+ fs/ext4/ext4.h                            | 21 +++++++++
+ fs/ext4/extents.c                         | 12 ++---
+ fs/ext4/ialloc.c                          |  2 +-
+ fs/ext4/inline.c                          |  4 +-
+ fs/ext4/inode.c                           | 16 +++----
+ fs/ext4/ioctl.c                           |  9 ++--
+ fs/ext4/namei.c                           | 26 +++++------
+ fs/ext4/super.c                           |  2 +-
+ fs/ext4/xattr.c                           |  6 +--
+ fs/f2fs/dir.c                             |  8 ++--
+ fs/f2fs/f2fs.h                            |  4 +-
+ fs/f2fs/file.c                            | 20 ++++-----
+ fs/f2fs/inline.c                          |  2 +-
+ fs/f2fs/inode.c                           | 10 ++---
+ fs/f2fs/namei.c                           | 12 ++---
+ fs/f2fs/recovery.c                        |  4 +-
+ fs/f2fs/super.c                           |  2 +-
+ fs/f2fs/xattr.c                           |  2 +-
+ fs/fat/inode.c                            |  7 +--
+ fs/fat/misc.c                             |  3 +-
+ fs/freevxfs/vxfs_inode.c                  |  3 +-
+ fs/fuse/control.c                         |  2 +-
+ fs/fuse/dir.c                             |  8 ++--
+ fs/fuse/inode.c                           | 16 +++----
+ fs/gfs2/acl.c                             |  2 +-
+ fs/gfs2/bmap.c                            | 11 +++--
+ fs/gfs2/dir.c                             | 15 ++++---
+ fs/gfs2/file.c                            |  2 +-
+ fs/gfs2/glops.c                           |  4 +-
+ fs/gfs2/inode.c                           |  8 ++--
+ fs/gfs2/super.c                           |  4 +-
+ fs/gfs2/xattr.c                           |  8 ++--
+ fs/hfs/catalog.c                          |  8 ++--
+ fs/hfs/dir.c                              |  2 +-
+ fs/hfs/inode.c                            | 13 +++---
+ fs/hfs/sysdep.c                           |  4 +-
+ fs/hfsplus/catalog.c                      |  8 ++--
+ fs/hfsplus/dir.c                          |  6 +--
+ fs/hfsplus/inode.c                        | 16 ++++---
+ fs/hostfs/hostfs_kern.c                   |  3 +-
+ fs/hpfs/dir.c                             |  8 ++--
+ fs/hpfs/inode.c                           |  6 +--
+ fs/hpfs/namei.c                           | 26 ++++++-----
+ fs/hpfs/super.c                           |  5 ++-
+ fs/hugetlbfs/inode.c                      | 12 ++---
+ fs/inode.c                                | 26 +++++++++--
+ fs/isofs/inode.c                          |  8 ++--
+ fs/isofs/rock.c                           | 16 +++----
+ fs/jffs2/dir.c                            | 24 ++++++----
+ fs/jffs2/file.c                           |  3 +-
+ fs/jffs2/fs.c                             | 10 ++---
+ fs/jffs2/os-linux.h                       |  2 +-
+ fs/jfs/acl.c                              |  2 +-
+ fs/jfs/inode.c                            |  2 +-
+ fs/jfs/ioctl.c                            |  2 +-
+ fs/jfs/jfs_imap.c                         |  8 ++--
+ fs/jfs/jfs_inode.c                        |  4 +-
+ fs/jfs/namei.c                            | 24 +++++-----
+ fs/jfs/super.c                            |  2 +-
+ fs/jfs/xattr.c                            |  2 +-
+ fs/kernfs/inode.c                         |  5 +--
+ fs/libfs.c                                | 55 +++++++++++++++--------
+ fs/minix/bitmap.c                         |  2 +-
+ fs/minix/dir.c                            |  6 +--
+ fs/minix/inode.c                          | 10 ++---
+ fs/minix/itree_common.c                   |  4 +-
+ fs/minix/namei.c                          |  6 +--
+ fs/nfs/callback_proc.c                    |  2 +-
+ fs/nfs/fscache.h                          |  4 +-
+ fs/nfs/inode.c                            | 20 ++++-----
+ fs/nfsd/nfsctl.c                          |  2 +-
+ fs/nfsd/vfs.c                             |  2 +-
+ fs/nilfs2/dir.c                           |  6 +--
+ fs/nilfs2/inode.c                         | 12 ++---
+ fs/nilfs2/ioctl.c                         |  2 +-
+ fs/nilfs2/namei.c                         |  8 ++--
+ fs/nsfs.c                                 |  2 +-
+ fs/ntfs/inode.c                           | 15 ++++---
+ fs/ntfs/mft.c                             |  3 +-
+ fs/ntfs3/file.c                           |  6 +--
+ fs/ntfs3/frecord.c                        |  3 +-
+ fs/ntfs3/inode.c                          | 14 +++---
+ fs/ntfs3/namei.c                          | 11 ++---
+ fs/ntfs3/xattr.c                          |  4 +-
+ fs/ocfs2/acl.c                            |  6 +--
+ fs/ocfs2/alloc.c                          |  6 +--
+ fs/ocfs2/aops.c                           |  2 +-
+ fs/ocfs2/dir.c                            |  8 ++--
+ fs/ocfs2/dlmfs/dlmfs.c                    |  4 +-
+ fs/ocfs2/dlmglue.c                        |  7 ++-
+ fs/ocfs2/file.c                           | 16 ++++---
+ fs/ocfs2/inode.c                          | 12 ++---
+ fs/ocfs2/move_extents.c                   |  6 +--
+ fs/ocfs2/namei.c                          | 21 ++++-----
+ fs/ocfs2/refcounttree.c                   | 14 +++---
+ fs/ocfs2/xattr.c                          |  6 +--
+ fs/omfs/dir.c                             |  4 +-
+ fs/omfs/inode.c                           |  9 ++--
+ fs/openpromfs/inode.c                     |  5 +--
+ fs/orangefs/namei.c                       |  2 +-
+ fs/orangefs/orangefs-utils.c              |  6 +--
+ fs/overlayfs/file.c                       |  7 ++-
+ fs/overlayfs/util.c                       |  2 +-
+ fs/pipe.c                                 |  2 +-
+ fs/posix_acl.c                            |  2 +-
+ fs/proc/base.c                            |  2 +-
+ fs/proc/inode.c                           |  2 +-
+ fs/proc/proc_sysctl.c                     |  2 +-
+ fs/proc/self.c                            |  2 +-
+ fs/proc/thread_self.c                     |  2 +-
+ fs/pstore/inode.c                         |  4 +-
+ fs/qnx4/inode.c                           |  3 +-
+ fs/qnx6/inode.c                           |  3 +-
+ fs/ramfs/inode.c                          |  6 +--
+ fs/reiserfs/inode.c                       | 12 +++--
+ fs/reiserfs/ioctl.c                       |  4 +-
+ fs/reiserfs/namei.c                       | 18 +++-----
+ fs/reiserfs/stree.c                       |  4 +-
+ fs/reiserfs/super.c                       |  2 +-
+ fs/reiserfs/xattr.c                       |  5 ++-
+ fs/reiserfs/xattr_acl.c                   |  2 +-
+ fs/romfs/super.c                          |  4 +-
+ fs/smb/client/file.c                      |  4 +-
+ fs/smb/client/fscache.h                   |  5 ++-
+ fs/smb/client/inode.c                     | 14 +++---
+ fs/smb/client/smb2ops.c                   |  3 +-
+ fs/smb/server/smb2pdu.c                   |  8 ++--
+ fs/squashfs/inode.c                       |  2 +-
+ fs/stack.c                                |  2 +-
+ fs/stat.c                                 |  2 +-
+ fs/sysv/dir.c                             |  6 +--
+ fs/sysv/ialloc.c                          |  2 +-
+ fs/sysv/inode.c                           |  5 +--
+ fs/sysv/itree.c                           |  4 +-
+ fs/sysv/namei.c                           |  6 +--
+ fs/tracefs/inode.c                        |  2 +-
+ fs/ubifs/debug.c                          |  4 +-
+ fs/ubifs/dir.c                            | 39 ++++++----------
+ fs/ubifs/file.c                           | 16 ++++---
+ fs/ubifs/ioctl.c                          |  2 +-
+ fs/ubifs/journal.c                        |  4 +-
+ fs/ubifs/super.c                          |  4 +-
+ fs/ubifs/xattr.c                          |  6 +--
+ fs/udf/ialloc.c                           |  2 +-
+ fs/udf/inode.c                            | 17 ++++---
+ fs/udf/namei.c                            | 24 +++++-----
+ fs/ufs/dir.c                              |  6 +--
+ fs/ufs/ialloc.c                           |  2 +-
+ fs/ufs/inode.c                            | 23 +++++-----
+ fs/ufs/namei.c                            |  8 ++--
+ fs/vboxsf/utils.c                         |  4 +-
+ fs/xfs/libxfs/xfs_inode_buf.c             |  5 ++-
+ fs/xfs/libxfs/xfs_trans_inode.c           |  2 +-
+ fs/xfs/xfs_acl.c                          |  2 +-
+ fs/xfs/xfs_bmap_util.c                    |  6 ++-
+ fs/xfs/xfs_inode.c                        |  3 +-
+ fs/xfs/xfs_inode_item.c                   |  2 +-
+ fs/xfs/xfs_iops.c                         |  4 +-
+ fs/xfs/xfs_itable.c                       |  4 +-
+ fs/zonefs/super.c                         |  8 ++--
+ include/linux/fs.h                        | 49 +++++++++++++++++++-
+ include/linux/fs_stack.h                  |  2 +-
+ ipc/mqueue.c                              | 23 +++++-----
+ kernel/bpf/inode.c                        |  6 +--
+ mm/shmem.c                                | 26 +++++------
+ net/sunrpc/rpc_pipe.c                     |  2 +-
+ security/apparmor/apparmorfs.c            | 11 +++--
+ security/apparmor/policy_unpack.c         | 11 +++--
+ security/inode.c                          |  2 +-
+ security/selinux/selinuxfs.c              |  2 +-
+ 233 files changed, 901 insertions(+), 812 deletions(-)
+
+-- 
+2.41.0
+
