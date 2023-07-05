@@ -2,128 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B7A9874808F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 11:14:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 703177480E9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 11:34:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232033AbjGEJOv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jul 2023 05:14:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43184 "EHLO
+        id S231555AbjGEJeI convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Wed, 5 Jul 2023 05:34:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229901AbjGEJOu (ORCPT
+        with ESMTP id S229532AbjGEJeH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jul 2023 05:14:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB9451716
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jul 2023 02:14:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688548447;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=I9KObcq/9SecuVmm4CKMewq3+txouKYR5j2YkQYcKiE=;
-        b=UR2jKDxozHaJrKNvE9YcZBLbLXIuA8MXSy9lxsfBV+GeizoKdFYzSAVq/65zWLMGvRTNOH
-        5aDd7Q0gJZfpvpnZA87meWRZuapl5109VMh21kEdWz55/O1A4ZRSPHW1XQ8+AGV067hdiV
-        zHR+fz+nV0BL3uOM2SfSB1JYLUYBdU0=
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
- [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-632-UaWa-6bMM56zqLYchOS3tw-1; Wed, 05 Jul 2023 05:14:06 -0400
-X-MC-Unique: UaWa-6bMM56zqLYchOS3tw-1
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3459772e100so26465645ab.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Jul 2023 02:14:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688548446; x=1691140446;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I9KObcq/9SecuVmm4CKMewq3+txouKYR5j2YkQYcKiE=;
-        b=I4epU4+6o4xeRI4pQGYyIkA+SqPHj9nzhL0hqGPhi2fyAu2UBdswY2cz0wdWlrJzrb
-         zU1nV6eawOrwiG8bzGm3pp9suByGF4uO9u2epiITi+6RSnA7hiAKv8tzGevfqlz6Lnqm
-         vTmAFhssiCHnH1FSDtUOwDp9e+Zioy/WMWC5THUnVridWgEFCmni5x16zxoaBifdkNne
-         tnK80T1nh476jL25lTpo10JJxD5nmFdUHWjQGjFYbUvccpcw7S98+qWAx4kKgBRkVftv
-         CpCdWZPUlAp4z7hLSEZq/CYBjDmFnHgWib0KwK/GpA8saSwkM1rcUzRXoqZ8RvQtu17P
-         r7lg==
-X-Gm-Message-State: ABy/qLbEvH1X3U5a2wABL8AU+titfLjpFcuF9KXbvpS93GM+DY/lcd6A
-        eZDcWJJswYn17uucMM53MW1qKMh0uOqgcY+vDENwq4CaMOdRM9DtPEfKhqRagpqwLiTIeudiPm3
-        fOkJk6BEHUTtxp0CBFEPfzS1JgFZ1MVgHabXUtKZz0w==
-X-Received: by 2002:a92:d809:0:b0:345:6ffa:63c7 with SMTP id y9-20020a92d809000000b003456ffa63c7mr13304524ilm.32.1688548446204;
-        Wed, 05 Jul 2023 02:14:06 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlGKQ+5bkvgdDYPjsRcfDKzBh+CiwEjAZyS/bvVvWU80dbfQX28sQg9bP5Uj+kvZiRjbGJlXe8Ub1JjVpdx09U4=
-X-Received: by 2002:a92:d809:0:b0:345:6ffa:63c7 with SMTP id
- y9-20020a92d809000000b003456ffa63c7mr13304516ilm.32.1688548445956; Wed, 05
- Jul 2023 02:14:05 -0700 (PDT)
+        Wed, 5 Jul 2023 05:34:07 -0400
+X-Greylist: delayed 1089 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 05 Jul 2023 02:34:04 PDT
+Received: from mta22.hihonor.com (mta22.hihonor.com [81.70.192.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BD691711
+        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Jul 2023 02:34:04 -0700 (PDT)
+Received: from w012.hihonor.com (unknown [10.68.27.189])
+        by mta22.hihonor.com (SkyGuard) with ESMTPS id 4QwvCS4ycXzYl0V5;
+        Wed,  5 Jul 2023 17:15:48 +0800 (CST)
+Received: from a004.hihonor.com (10.68.27.131) by w012.hihonor.com
+ (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.21; Wed, 5 Jul
+ 2023 17:15:52 +0800
+Received: from a001.hihonor.com (10.68.28.182) by a004.hihonor.com
+ (10.68.27.131) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.21; Wed, 5 Jul
+ 2023 17:15:52 +0800
+Received: from a001.hihonor.com ([fe80::d540:a176:80f8:5fcf]) by
+ a001.hihonor.com ([fe80::d540:a176:80f8:5fcf%8]) with mapi id 15.02.1118.021;
+ Wed, 5 Jul 2023 17:15:52 +0800
+From:   gaoming <gaoming20@hihonor.com>
+To:     Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>
+CC:     "open list:EXFAT FILE SYSTEM" <linux-fsdevel@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        fengbaopeng <fengbaopeng@hihonor.com>,
+        gaoxu <gaoxu2@hihonor.com>,
+        wangfei 00014658 <wangfei66@hihonor.com>,
+        "shenchen 00013118" <harry.shen@hihonor.com>
+Subject: [PATCH] exfat: use kvmalloc_array/kvfree instead of
+ kmalloc_array/kfree
+Thread-Topic: [PATCH] exfat: use kvmalloc_array/kvfree instead of
+ kmalloc_array/kfree
+Thread-Index: AdmvHl4gs76xLNH6Sd+soB17KujxsA==
+Date:   Wed, 5 Jul 2023 09:15:52 +0000
+Message-ID: <4cec63dcd3c0443c928800ffeec9118c@hihonor.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.164.15.53]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20230626-fs-overlayfs-mount-api-param-v1-1-29afb997a19f@kernel.org>
- <CAOQ4uxiOsHEx30ERLYeLdnOdFG1rw_OnXo+rBbKCY-ZzNxV_uQ@mail.gmail.com>
- <CAL7ro1GgW-2gUhB=TBxwDAiybbQBbFabkU2tBNbBH85Q_KZWew@mail.gmail.com> <CAOQ4uxhkMYMnPL81RoWdnxCsiNtf-AbBVPcRj=hbo4vd8yp=QA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhkMYMnPL81RoWdnxCsiNtf-AbBVPcRj=hbo4vd8yp=QA@mail.gmail.com>
-From:   Alexander Larsson <alexl@redhat.com>
-Date:   Wed, 5 Jul 2023 11:13:54 +0200
-Message-ID: <CAL7ro1FomqdO22a+=pntO5cBhDpz6hp96PVa_q6FKU7jRgunpQ@mail.gmail.com>
-Subject: Re: [PATCH] ovl: move all parameter handling into params.{c,h}
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 4, 2023 at 5:14=E2=80=AFPM Amir Goldstein <amir73il@gmail.com> =
-wrote:
->
-> On Mon, Jul 3, 2023 at 12:16=E2=80=AFPM Alexander Larsson <alexl@redhat.c=
-om> wrote:
-> >
-> > On Mon, Jun 26, 2023 at 4:40=E2=80=AFPM Amir Goldstein <amir73il@gmail.=
-com> wrote:
-> > >
-> > > On Mon, Jun 26, 2023 at 1:23=E2=80=AFPM Christian Brauner <brauner@ke=
-rnel.org> wrote:
-> > > >
-> > > > While initially I thought that we couldn't move all new mount api
-> > > > handling into params.{c,h} it turns out it is possible. So this jus=
-t
-> > > > moves a good chunk of code out of super.c and into params.{c,h}.
-> > > >
-> > > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > > > ---
-> > > >
-> > >
-> > > Thank you for this cleanup!
-> > >
-> > > Alex,
-> > >
-> > > I took the liberty to resolve the conflicts with your branch, see:
-> > >
-> > > https://github.com/amir73il/linux/commits/overlay-verity
-> >
-> > Thanks, I took a look at this and it seems good. Updated my branch to t=
-his too.
-> >
->
-> FYI, I pushed this cleanup commit to overlayfs-next, so
-> you can rebase overlay-verity v5 on top of that.
+The call stack shown below is a scenario in the Linux 4.19 kernel.
+Allocating memory failed where exfat fs use kmalloc_array due 
+to system memory fragmentation, while the u-disk was inserted
+without recognition.
+Devices such as u-disk using the exfat file system are pluggable and may be
+insert into the system at any time.
+However, long-term running systems cannot guarantee the continuity of 
+physical memory. Therefore, it's necessary to address this issue.
 
-I rebased it and added some changes based on reviews from erics.
+Binder:2632_6: page allocation failure: order:4,
+mode:0x6040c0(GFP_KERNEL|__GFP_COMP), nodemask=(null)
+Call trace:
+[242178.097582]  dump_backtrace+0x0/0x4
+[242178.097589]  dump_stack+0xf4/0x134
+[242178.097598]  warn_alloc+0xd8/0x144
+[242178.097603]  __alloc_pages_nodemask+0x1364/0x1384
+[242178.097608]  kmalloc_order+0x2c/0x510
+[242178.097612]  kmalloc_order_trace+0x40/0x16c
+[242178.097618]  __kmalloc+0x360/0x408
+[242178.097624]  load_alloc_bitmap+0x160/0x284
+[242178.097628]  exfat_fill_super+0xa3c/0xe7c
+[242178.097635]  mount_bdev+0x2e8/0x3a0
+[242178.097638]  exfat_fs_mount+0x40/0x50
+[242178.097643]  mount_fs+0x138/0x2e8
+[242178.097649]  vfs_kern_mount+0x90/0x270
+[242178.097655]  do_mount+0x798/0x173c
+[242178.097659]  ksys_mount+0x114/0x1ac
+[242178.097665]  __arm64_sys_mount+0x24/0x34
+[242178.097671]  el0_svc_common+0xb8/0x1b8
+[242178.097676]  el0_svc_handler+0x74/0x90
+[242178.097681]  el0_svc+0x8/0x340
 
-> I will send this cleanup to Linus, so we have a clean slate for
-> the 6.6 cycle.
+By analyzing the exfat code,we found that continuous physical memory is
+not required here,so kvmalloc_array is used can solve this problem.
 
-Thanks.
+Signed-off-by: gaoming <gaoming20@hihonor.com>
+---
+ fs/exfat/balloc.c | 4 ++--
+ fs/exfat/dir.c    | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
---
-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D=
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D
- Alexander Larsson                                Red Hat, Inc
-       alexl@redhat.com         alexander.larsson@gmail.com
+diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c
+index 9f42f25fab92..a183558cb7a0 100644
+--- a/fs/exfat/balloc.c
++++ b/fs/exfat/balloc.c
+@@ -69,7 +69,7 @@ static int exfat_allocate_bitmap(struct super_block *sb,
+ 	}
+ 	sbi->map_sectors = ((need_map_size - 1) >>
+ 			(sb->s_blocksize_bits)) + 1;
+-	sbi->vol_amap = kmalloc_array(sbi->map_sectors,
++	sbi->vol_amap = kvmalloc_array(sbi->map_sectors,
+ 				sizeof(struct buffer_head *), GFP_KERNEL);
+ 	if (!sbi->vol_amap)
+ 		return -ENOMEM;
+@@ -84,7 +84,7 @@ static int exfat_allocate_bitmap(struct super_block *sb,
+ 			while (j < i)
+ 				brelse(sbi->vol_amap[j++]);
+ 
+-			kfree(sbi->vol_amap);
++			kvfree(sbi->vol_amap);
+ 			sbi->vol_amap = NULL;
+ 			return -EIO;
+ 		}
+diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+index 957574180a5e..5cbb78d0a2a2 100644
+--- a/fs/exfat/dir.c
++++ b/fs/exfat/dir.c
+@@ -649,7 +649,7 @@ int exfat_put_dentry_set(struct exfat_entry_set_cache *es, int sync)
+ 			brelse(es->bh[i]);
+ 
+ 	if (IS_DYNAMIC_ES(es))
+-		kfree(es->bh);
++		kvfree(es->bh);
+ 
+ 	return err;
+ }
+@@ -888,7 +888,7 @@ int exfat_get_dentry_set(struct exfat_entry_set_cache *es,
+ 
+ 	num_bh = EXFAT_B_TO_BLK_ROUND_UP(off + num_entries * DENTRY_SIZE, sb);
+ 	if (num_bh > ARRAY_SIZE(es->__bh)) {
+-		es->bh = kmalloc_array(num_bh, sizeof(*es->bh), GFP_KERNEL);
++		es->bh = kvmalloc_array(num_bh, sizeof(*es->bh), GFP_KERNEL);
+ 		if (!es->bh) {
+ 			brelse(bh);
+ 			return -ENOMEM;
+-- 
+2.17.1
 
