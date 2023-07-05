@@ -2,143 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BF3A274842B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 14:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 733A2748426
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 14:27:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231565AbjGEM3n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jul 2023 08:29:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44152 "EHLO
+        id S230477AbjGEM1i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jul 2023 08:27:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231407AbjGEM3m (ORCPT
+        with ESMTP id S231475AbjGEM1g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jul 2023 08:29:42 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C312B0;
-        Wed,  5 Jul 2023 05:29:40 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-98e011f45ffso653728866b.3;
-        Wed, 05 Jul 2023 05:29:40 -0700 (PDT)
+        Wed, 5 Jul 2023 08:27:36 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0892B19B7;
+        Wed,  5 Jul 2023 05:27:18 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id 38308e7fff4ca-2b70224ec56so4638911fa.3;
+        Wed, 05 Jul 2023 05:27:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688560179; x=1691152179;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Dc8VA3wsbqCNo86QVviqL+IZiWA8s57MBU3O/pEOqYc=;
-        b=POHujdyZhsLMjuYlHANrc0WYJ8GCyvdYXGsPZF8KAUPSpAyiikd+RnticqdQ87/6FO
-         g/tYCs7NE7/9reOxfRvSWL2A5DkTVKcfBH7SY9QkvyAeAFO0b0so/lw+SR23njpXNP+u
-         /3887f4cUANoAxJXuaQI+BJXiRQCMB0SQeoUb05NLqOGFXJ+kwsxo6CnaLDIDPmrfIqz
-         5Qgp7V0wI/e6UKkZfzRoHYgJ05zK2ywExt55Ux+XDOsiRuLszZbBWSncVWrquLFxvrJU
-         3Dabt9v0dsBBnzJq6FHcSqeez4GtRjj8UEXX3bcQaNLEGpdVmUQP95qox+ph1XevqTG9
-         G4bw==
+        d=googlemail.com; s=20221208; t=1688560037; x=1691152037;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kJSPvo6YE4Pcu6NTPEmUuQAJR6NuIEKWGUFTkdLT+Zo=;
+        b=UTbFIgtSqyOkhSCGJNKlGTjaxGvpn5dtHCeSvBlpWtR6h/m/YrlsO69lGKaEehKpTP
+         5lWeOk5AYuWrzSHbYH0GvKvUVMAA78peDOsBtGc4fZv1M6uYE7Yxg7hMyewtzmbgp+aJ
+         iKmh5DsDGYEFbeoqxouKvftPiPLPOjsjeZ9rLlrb8xo2+dPYGF5SEizkGd5bHU1PuhxM
+         LZkPFZ8u+qTeEtIFJILmKG0S2Gen+TNYgKJjwoehvNcoU2CZvR1y488B4QN+T21gxrkf
+         tr2Jj7ljHPluop6P6jcV9a8wuNaqEj7ydsiJcYzSfDg350qmYjSZ1iWv9mx3W3Xne3Nc
+         v4pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688560179; x=1691152179;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dc8VA3wsbqCNo86QVviqL+IZiWA8s57MBU3O/pEOqYc=;
-        b=BB+/vOq+ucniJAnih8RbzLeR40PssW+m+ki7noPig59crY+YKTykZkELPVwzsJqfjx
-         vtC+hUl/+SLEf57S9hCsHVi1Q6TjqFksOLIRp4Qihf5rg1T8OTnd2bqW0qQ7Us7YJGpa
-         PrXRkgd7Hff7mKrw6OWbxhraq/lX26SvfJzkuKsRiHUavje//fbEMQ8FXmgDR3UHPFHQ
-         /ngv5LBzplwlYvDcwgnYmmt0clNJscil+VMx30eX2RH4Ht5JXa9nejpZED6dDVuT7B+/
-         XXye/2INOZ3c6IyAVZNGW23RBRHaft7ssZP8d5RXZNIhp/gtZeLvdkcB0qsb1jfkftxZ
-         lybg==
-X-Gm-Message-State: ABy/qLZ9q5YD2Id0jjjlKsMX3LvcqFYcGoJqRJOIzFUpTGucO11avmQ3
-        hDA3Z5fGHC3PNamJ41d9m8Y=
-X-Google-Smtp-Source: APBJJlG+fgpUrk2ZFcfYJKTSk7YfIEe9CmxG85SOYUV/WI7+4riMRR4ADT0kGXvR62LVbenJ7dpm1A==
-X-Received: by 2002:a17:906:f2da:b0:967:21:5887 with SMTP id gz26-20020a170906f2da00b0096700215887mr10359723ejb.40.1688560178939;
-        Wed, 05 Jul 2023 05:29:38 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:310::2eef? ([2620:10d:c092:600::2:4b35])
-        by smtp.gmail.com with ESMTPSA id ec10-20020a170906b6ca00b009893650453fsm14765183ejb.173.2023.07.05.05.29.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jul 2023 05:29:38 -0700 (PDT)
-Message-ID: <4433fbc1-2b11-0aa0-f895-4a1d55832a75@gmail.com>
-Date:   Wed, 5 Jul 2023 13:26:14 +0100
+        d=1e100.net; s=20221208; t=1688560037; x=1691152037;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kJSPvo6YE4Pcu6NTPEmUuQAJR6NuIEKWGUFTkdLT+Zo=;
+        b=iKTWcuKBlaPPJFEBCDJSuHIuLbrBH6VqtMl9fZ+TywuWJbknx4uQfmSQY3lwJjyvJT
+         APoOcOGxVU6Q4tPu4BnogiDN2Zg88gPT6dNy3JCaOqDWvgfSSsAop2c9Njo9rio2Lyx0
+         mGLV4N6e5BbgP+f+C5jmYQ3z5G6ncqQXRgh4hTpbufJaXg4yehY8v+qaTaFGOkudir9e
+         +d13pDvBCJte4B+eG+DCiKFihJSUa9HlXyDcYNNbmzjdCbyA2P6rADcrPr4NGSih0IaA
+         PlYKL2YcMl1jIQEusNVsNRKrQnW7O0n9b+3z0hVJF4Fo3AHaDSQK0qr6QUJZG8bJMvJE
+         ri6g==
+X-Gm-Message-State: ABy/qLa34ZgMOI/NFbweQxd9w5J0a8JGb67RzFSJjb7906FSY9UcpGWI
+        XX0yMNpNwZSJ4qkxR19WZuweiTqtVID+l1xugLo=
+X-Google-Smtp-Source: APBJJlGzO5WUPFKyK5n9U5kWFV8e+yxrPXUKJMYEuJ/JQY/cddmT1oRTc7JJ/G8g9GoJxyG3MkVyCxqSbRFuyoh5isI=
+X-Received: by 2002:a2e:9899:0:b0:2b6:cff1:cd1c with SMTP id
+ b25-20020a2e9899000000b002b6cff1cd1cmr11143689ljj.34.1688560036469; Wed, 05
+ Jul 2023 05:27:16 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH 03/11] io-wq: add a new type io-wq worker
-Content-Language: en-US
-To:     Hao Xu <hao.xu@linux.dev>, io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Wanpeng Li <wanpengli@tencent.com>,
-        linux-fsdevel@vger.kernel.org
-References: <20230609122031.183730-1-hao.xu@linux.dev>
- <20230609122031.183730-4-hao.xu@linux.dev>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20230609122031.183730-4-hao.xu@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20230704122727.17096-1-jack@suse.cz>
+In-Reply-To: <20230704122727.17096-1-jack@suse.cz>
+From:   Mike Fleetwood <mike.fleetwood@googlemail.com>
+Date:   Wed, 5 Jul 2023 13:27:03 +0100
+Message-ID: <CAMU1PDj7f4RGBKLaN5zLFTTERnF9NFPq3RxuWygSWnzUthnKWQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/6 v2] block: Add config option to not allow writing
+ to mounted devices
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Kees Cook <keescook@google.com>,
+        Ted Tso <tytso@mit.edu>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Alexander Popov <alex.popov@linux.com>,
+        Eric Biggers <ebiggers@google.com>, linux-xfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/9/23 13:20, Hao Xu wrote:
-> From: Hao Xu <howeyxu@tencent.com>
-> 
-> Add a new type io-wq worker IO_WORKER_F_FIXED, this type of worker
-> exists during the whole io-wq lifecycle.
-> 
-> Signed-off-by: Hao Xu <howeyxu@tencent.com>
-> ---
->   io_uring/io-wq.c | 13 ++++++++++++-
->   1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-> index 1717f1465613..7326fef58ca7 100644
-> --- a/io_uring/io-wq.c
-> +++ b/io_uring/io-wq.c
-> @@ -30,6 +30,7 @@ enum {
->   	IO_WORKER_F_FREE	= 4,	/* worker on free list */
->   	IO_WORKER_F_BOUND	= 8,	/* is doing bounded work */
->   	IO_WORKER_F_EXIT	= 16,	/* worker is exiting */
-> +	IO_WORKER_F_FIXED	= 32,	/* is a fixed worker */
->   };
->   
->   enum {
-> @@ -598,6 +599,11 @@ static bool is_worker_exiting(struct io_worker *worker)
->   	return worker->flags & IO_WORKER_F_EXIT;
->   }
->   
-> +static bool is_fixed_worker(struct io_worker *worker)
-> +{
-> +	return worker->flags & IO_WORKER_F_FIXED;
-> +}
+On Tue, 4 Jul 2023 at 13:57, Jan Kara <jack@suse.cz> wrote:
+>
+> Hello!
+>
+> This is second version of the patches to add config option to not allow writing
+> to mounted block devices. For motivation why this is interesting see patch 1/6.
+> I've been testing the patches more extensively this time and I've found couple
+> of things that get broken by disallowing writes to mounted block devices:
+> 1) Bind mounts get broken because get_tree_bdev() / mount_bdev() first try to
+>    claim the bdev before searching whether it is already mounted. Patch 6
+>    reworks the mount code to avoid this problem.
+> 2) btrfs mounting is likely having the same problem as 1). It should be fixable
+>    AFAICS but for now I've left it alone until we settle on the rest of the
+>    series.
+> 3) "mount -o loop" gets broken because util-linux keeps the loop device open
+>    read-write when attempting to mount it. Hopefully fixable within util-linux.
+> 4) resize2fs online resizing gets broken because it tries to open the block
+>    device read-write only to call resizing ioctl. Trivial to fix within
+>    e2fsprogs.
+>
+> Likely there will be other breakage I didn't find yet but overall the breakage
+> looks minor enough that the option might be useful. Definitely good enough
+> for syzbot fuzzing and likely good enough for hardening of systems with
+> more tightened security.
 
-You move it up in Patch 5/11, I suggest to move it to the top of the
-file here.
+5) Online e2label will break because it directly writes to the ext2/3/4
+   superblock while the FS is mounted to set the new label.  Ext4 driver
+   will have to implement the SETFSLABEL ioctl() and e2label will have
+   to use it, matching what happens for online labelling of btrfs and
+   xfs.
 
-
->   static int io_wq_worker(void *data)
->   {
->   	struct io_worker *worker = data;
-> @@ -622,8 +628,13 @@ static int io_wq_worker(void *data)
->   		/*
->   		 * Last sleep timed out. Exit if we're not the last worker,
->   		 * or if someone modified our affinity.
-> +		 * Note: fixed worker always have same lifecycle as io-wq
-> +		 * itself, and cpu affinity setting doesn't work well for
-> +		 * fixed worker, they can be manually reset to cpu other than
-> +		 * the cpuset indicated by io_wq_worker_affinity()
->   		 */
-> -		if (last_timeout && (exit_mask || acct->nr_workers > 1)) {
-> +		if (!is_fixed_worker(worker) && last_timeout &&
-> +		    (exit_mask || acct->nr_workers > 1)) {
->   			acct->nr_workers--;
->   			raw_spin_unlock(&wq->lock);
->   			__set_current_state(TASK_RUNNING);
-
-If there is no work it'll continue to loop every
-WORKER_IDLE_TIMEOUT (5 * HZ), which sounds troublesome with many
-workers in the system.
-
-tm = is_fixed_worker(worker) ? MAX_SCHEDULE_TIMEOUT :  WORKER_IDLE_TIMEOUT;
-schedule_timeout(tm);
-
-Maybe?
-
--- 
-Pavel Begunkov
+Thanks,
+Mike
