@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 80993748C5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 20:59:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43467748C76
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Jul 2023 20:59:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233221AbjGES7D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jul 2023 14:59:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38704 "EHLO
+        id S233310AbjGES71 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jul 2023 14:59:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233179AbjGES65 (ORCPT
+        with ESMTP id S233179AbjGES7W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jul 2023 14:58:57 -0400
+        Wed, 5 Jul 2023 14:59:22 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 291511BC0;
-        Wed,  5 Jul 2023 11:58:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5080F199E;
+        Wed,  5 Jul 2023 11:59:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 32DDF616DB;
-        Wed,  5 Jul 2023 18:58:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 048E0C433BB;
-        Wed,  5 Jul 2023 18:58:31 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9BBA9616D8;
+        Wed,  5 Jul 2023 18:59:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEEF1C4167D;
+        Wed,  5 Jul 2023 18:58:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688583530;
-        bh=rS7mHrqZmoO2H68n3RxhES3IzDPLPysS3UyH3PinCQ8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aMKB7Eajzv0HN0RjiqoVKTtlq5KN/eWgB5BWIXdR4yS+qXLo9oJ2A8CvARGhR38SH
-         AGVvIkEZAbD+2gqh1hM5AgL3ExspR2noywBNBHZ/Zbz6Jipv98b24C+FbaNuj7Id30
-         /vjMmqLNAVgc3TMo2RGbDruAikPadReZuK3KcfWQJbROt+tSH7hONNDFEXZgGO8FCp
-         rZUVAJaTqC0bKLSAziTq7i3tC8AVeG/+sFMf01eIn4wnADMCMY5hp3fCv+if/Zhei+
-         dNlf5J971crJund4f35sQB+fqWVZ1Rv/WEt2CJNhYXge8soEVT4A/D9IhrSNkZ2pHG
-         dVcbUJJd2L7+A==
+        s=k20201202; t=1688583549;
+        bh=96h56beXLMAvkoYPxw1Hf+1T9dWrr7543/fVCrKiiH8=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=SV/pROPiikvWgbuJG9o5j/mdUiyRGcRaEJl1K0hVl0eCHK9Ob+YmgZ0cOVDNwxcd0
+         s3XXK3FiPaVML6VBfbeTny5HiSuKA0KEKAjFDlBtEkXvpck7V4KUAdjnzKCg5fiugt
+         aiOuDDRaoB7EF/ycBMYU5USexpq/ceGXPIb8HpDBW4vIvyY547qmZyivJt5T6PXA4H
+         rtd7d3FTcpVX0DGPx74bauINVbOI0AHI9Zym6FoqdyCXdEJPTgmmD/blFQIJoOkcln
+         fC0uEV1EXwoGgwuuPieKxDXph4tQwZUYbTrLEd3zCpi9KdekgoBzBb9kt9un4ZFr7M
+         0DXS4Kyxlm/3g==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     jk@ozlabs.org, arnd@arndb.de, mpe@ellerman.id.au,
         npiggin@gmail.com, christophe.leroy@csgroup.eu, hca@linux.ibm.com,
@@ -124,10 +124,9 @@ To:     jk@ozlabs.org, arnd@arndb.de, mpe@ellerman.id.au,
         bpf@vger.kernel.org, netdev@vger.kernel.org,
         apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
         selinux@vger.kernel.org
-Cc:     Jan Kara <jack@suse.cz>
-Subject: [PATCH v2 07/92] fs: add ctime accessors infrastructure
-Date:   Wed,  5 Jul 2023 14:58:10 -0400
-Message-ID: <20230705185812.579118-2-jlayton@kernel.org>
+Subject: [PATCH v2 08/92] fs: new helper: simple_rename_timestamp
+Date:   Wed,  5 Jul 2023 14:58:11 -0400
+Message-ID: <20230705185812.579118-3-jlayton@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230705185812.579118-1-jlayton@kernel.org>
 References: <20230705185812.579118-1-jlayton@kernel.org>
@@ -143,105 +142,97 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-struct timespec64 has unused bits in the tv_nsec field that can be used
-for other purposes. In future patches, we're going to change how the
-inode->i_ctime is accessed in certain inodes in order to make use of
-them. In order to do that safely though, we'll need to eradicate raw
-accesses of the inode->i_ctime field from the kernel.
+A rename potentially involves updating 4 different inode timestamps. Add
+a function that handles the details sanely, and convert the libfs.c
+callers to use it.
 
-Add new accessor functions for the ctime that we use to replace them.
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/inode.c         | 16 ++++++++++++++++
- include/linux/fs.h | 45 ++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 60 insertions(+), 1 deletion(-)
+ fs/libfs.c         | 36 +++++++++++++++++++++++++++---------
+ include/linux/fs.h |  2 ++
+ 2 files changed, 29 insertions(+), 9 deletions(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index d37fad91c8da..21b026d95b51 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2499,6 +2499,22 @@ struct timespec64 current_time(struct inode *inode)
+diff --git a/fs/libfs.c b/fs/libfs.c
+index a7e56baf8bbd..9ee79668c909 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -692,6 +692,31 @@ int simple_rmdir(struct inode *dir, struct dentry *dentry)
  }
- EXPORT_SYMBOL(current_time);
+ EXPORT_SYMBOL(simple_rmdir);
  
 +/**
-+ * inode_set_ctime_current - set the ctime to current_time
-+ * @inode: inode
++ * simple_rename_timestamp - update the various inode timestamps for rename
++ * @old_dir: old parent directory
++ * @old_dentry: dentry that is being renamed
++ * @new_dir: new parent directory
++ * @new_dentry: target for rename
 + *
-+ * Set the inode->i_ctime to the current value for the inode. Returns
-+ * the current value that was assigned to i_ctime.
++ * POSIX mandates that the old and new parent directories have their ctime and
++ * mtime updated, and that inodes of @old_dentry and @new_dentry (if any), have
++ * their ctime updated.
 + */
-+struct timespec64 inode_set_ctime_current(struct inode *inode)
++void simple_rename_timestamp(struct inode *old_dir, struct dentry *old_dentry,
++			     struct inode *new_dir, struct dentry *new_dentry)
 +{
-+	struct timespec64 now = current_time(inode);
++	struct inode *newino = d_inode(new_dentry);
 +
-+	inode_set_ctime(inode, now.tv_sec, now.tv_nsec);
-+	return now;
++	old_dir->i_mtime = inode_set_ctime_current(old_dir);
++	if (new_dir != old_dir)
++		new_dir->i_mtime = inode_set_ctime_current(new_dir);
++	inode_set_ctime_current(d_inode(old_dentry));
++	if (newino)
++		inode_set_ctime_current(newino);
 +}
-+EXPORT_SYMBOL(inode_set_ctime_current);
++EXPORT_SYMBOL_GPL(simple_rename_timestamp);
 +
- /**
-  * in_group_or_capable - check whether caller is CAP_FSETID privileged
-  * @idmap:	idmap of the mount @inode was found from
+ int simple_rename_exchange(struct inode *old_dir, struct dentry *old_dentry,
+ 			   struct inode *new_dir, struct dentry *new_dentry)
+ {
+@@ -707,11 +732,7 @@ int simple_rename_exchange(struct inode *old_dir, struct dentry *old_dentry,
+ 			inc_nlink(old_dir);
+ 		}
+ 	}
+-	old_dir->i_ctime = old_dir->i_mtime =
+-	new_dir->i_ctime = new_dir->i_mtime =
+-	d_inode(old_dentry)->i_ctime =
+-	d_inode(new_dentry)->i_ctime = current_time(old_dir);
+-
++	simple_rename_timestamp(old_dir, old_dentry, new_dir, new_dentry);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(simple_rename_exchange);
+@@ -720,7 +741,6 @@ int simple_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+ 		  struct dentry *old_dentry, struct inode *new_dir,
+ 		  struct dentry *new_dentry, unsigned int flags)
+ {
+-	struct inode *inode = d_inode(old_dentry);
+ 	int they_are_dirs = d_is_dir(old_dentry);
+ 
+ 	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE))
+@@ -743,9 +763,7 @@ int simple_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+ 		inc_nlink(new_dir);
+ 	}
+ 
+-	old_dir->i_ctime = old_dir->i_mtime = new_dir->i_ctime =
+-		new_dir->i_mtime = inode->i_ctime = current_time(old_dir);
+-
++	simple_rename_timestamp(old_dir, old_dentry, new_dir, new_dentry);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(simple_rename);
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 824accb89a91..bdfbd11a5811 100644
+index bdfbd11a5811..14e38bd900f1 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -1474,7 +1474,50 @@ static inline bool fsuidgid_has_mapping(struct super_block *sb,
- 	       kgid_has_mapping(fs_userns, kgid);
- }
- 
--extern struct timespec64 current_time(struct inode *inode);
-+struct timespec64 current_time(struct inode *inode);
-+struct timespec64 inode_set_ctime_current(struct inode *inode);
-+
-+/**
-+ * inode_get_ctime - fetch the current ctime from the inode
-+ * @inode: inode from which to fetch ctime
-+ *
-+ * Grab the current ctime from the inode and return it.
-+ */
-+static inline struct timespec64 inode_get_ctime(const struct inode *inode)
-+{
-+	return inode->i_ctime;
-+}
-+
-+/**
-+ * inode_set_ctime_to_ts - set the ctime in the inode
-+ * @inode: inode in which to set the ctime
-+ * @ts: value to set in the ctime field
-+ *
-+ * Set the ctime in @inode to @ts
-+ */
-+static inline struct timespec64 inode_set_ctime_to_ts(struct inode *inode,
-+						      struct timespec64 ts)
-+{
-+	inode->i_ctime = ts;
-+	return ts;
-+}
-+
-+/**
-+ * inode_set_ctime - set the ctime in the inode
-+ * @inode: inode in which to set the ctime
-+ * @sec: tv_sec value to set
-+ * @nsec: tv_nsec value to set
-+ *
-+ * Set the ctime in @inode to { @sec, @nsec }
-+ */
-+static inline struct timespec64 inode_set_ctime(struct inode *inode,
-+						time64_t sec, long nsec)
-+{
-+	struct timespec64 ts = { .tv_sec  = sec,
-+				 .tv_nsec = nsec };
-+
-+	return inode_set_ctime_to_ts(inode, ts);
-+}
- 
- /*
-  * Snapshotting support.
+@@ -2979,6 +2979,8 @@ extern int simple_open(struct inode *inode, struct file *file);
+ extern int simple_link(struct dentry *, struct inode *, struct dentry *);
+ extern int simple_unlink(struct inode *, struct dentry *);
+ extern int simple_rmdir(struct inode *, struct dentry *);
++void simple_rename_timestamp(struct inode *old_dir, struct dentry *old_dentry,
++			     struct inode *new_dir, struct dentry *new_dentry);
+ extern int simple_rename_exchange(struct inode *old_dir, struct dentry *old_dentry,
+ 				  struct inode *new_dir, struct dentry *new_dentry);
+ extern int simple_rename(struct mnt_idmap *, struct inode *,
 -- 
 2.41.0
 
