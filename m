@@ -2,145 +2,267 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 45538749F6A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 16:46:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 951A7749FBE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 16:50:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233386AbjGFOqX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 10:46:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35390 "EHLO
+        id S229775AbjGFOut (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 10:50:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233314AbjGFOqS (ORCPT
+        with ESMTP id S229640AbjGFOuf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 10:46:18 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B1121FDA;
-        Thu,  6 Jul 2023 07:46:11 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1b8a44ee159so3528185ad.3;
-        Thu, 06 Jul 2023 07:46:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688654770; x=1691246770;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sHK40quW1VFjXNzQRez3EQrvgJhxVXz9e4IagyBzLD8=;
-        b=c5n7Jg3Lsah3E/CXz4AWL/3gKXDM9ZEgZahf3gngVTi6Z/obI3gD4NZuHs28A4CGr0
-         9PujRmHWL1YnLDdyurHkU+Od10fZbC/nap2JGuE4HCWOo5gHAEQwVz2e8l2Eyq5CXnne
-         ulTFmJQVEJd6/p61XjGo963QxBtbcCiKerQxvNzoKfU9Ss+galO6ftKPVR+nLN2sYeCm
-         PsuOOHtoyc5RAV2bRww9ltgWX6Llo1X3d1VxO2Yfrro+mok6VNCb2V3rHY+N2JxvJ8+9
-         e2WogF6misfH1q2r/XnHJCpzTAfabsP9wa/BQ8130DJhC8fy6qtdN3Jaabv3fLp497uq
-         I2Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688654770; x=1691246770;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sHK40quW1VFjXNzQRez3EQrvgJhxVXz9e4IagyBzLD8=;
-        b=g4UjJspitdsJO6gph15nUhOHfvdVZz/2mQdCL7TI87ECeRgiNF/n8+3M7O+RI90Klf
-         VgPhovb8cjw2Gd7dd7kufA8cpmbdWpHkjIA00NthapUAGBuA2ooTORi8qXtlkrM4oRGo
-         6lXJY7B/MV8QcRB/YjCKTUgIN5ZsKQ9UWAhFO0bTRxtnCNekoQbAYZczzhgVklM73pho
-         1RtZ4aidlnzNW0zsy2g13YN42pbAFF2GIw78Qk7ID2b5GLS0maRJ5K/EIGewSpOYaKrm
-         AURu5Thb4onqk/lylJdbZ5QM3JCQE84apFHcLub9eX9929l0kTs9juJQ8LHg60Uawjw8
-         oUkA==
-X-Gm-Message-State: ABy/qLYNU0C7q+0TRE/EbrSWMBk5jAfSEKT7oX6bAR3VJmwepjKoJox7
-        fhr2adrBSeuldDQ14cdvseo=
-X-Google-Smtp-Source: APBJJlEYbuUW9q0fLRSQAUQCyF8zF5TtNNIK58nurBfcGgmcrQ8OiUV8MMepZet3d0GK5qR3+09+mw==
-X-Received: by 2002:a17:903:244e:b0:1b5:edd:e3c7 with SMTP id l14-20020a170903244e00b001b50edde3c7mr1945804pls.16.1688654770404;
-        Thu, 06 Jul 2023 07:46:10 -0700 (PDT)
-Received: from dw-tp ([49.207.232.207])
-        by smtp.gmail.com with ESMTPSA id ij24-20020a170902ab5800b001ac897026cesm1552555plb.102.2023.07.06.07.46.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jul 2023 07:46:09 -0700 (PDT)
-Date:   Thu, 06 Jul 2023 20:16:05 +0530
-Message-Id: <87jzvdjdxu.fsf@doe.com>
-From:   Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To:     linux-xfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Aravinda Herle <araherle@in.ibm.com>
-Subject: Re: [PATCHv11 8/8] iomap: Add per-block dirty state tracking to improve performance
-In-Reply-To: <bb0c58bf80dcdec96d7387bc439925fb14a5a496.1688188958.git.ritesh.list@gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Thu, 6 Jul 2023 10:50:35 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD0DC26B7;
+        Thu,  6 Jul 2023 07:49:56 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 3517C1F747;
+        Thu,  6 Jul 2023 14:49:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1688654995; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wGjkTKTRKcTLxySBxQpfGABMtzJRkFQxEj/NmakpahE=;
+        b=o5U4IH8LoASHDHPjz4GRDPG3GWidx1AeAJbERcrrW7IgBoizr2+xI8u6kH21PvjWO4u3cw
+        i0ysuBRsw5Qp3vqufih0of1e4skW6NCWGG3QNhqBLaUISP7kMGaKDMm+e+GycqaiXo7iR2
+        aYpBGJHLW9BroFxt2cobMO+itZwCIyE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1688654995;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wGjkTKTRKcTLxySBxQpfGABMtzJRkFQxEj/NmakpahE=;
+        b=ynuZM8TbSh6zphgfQYG58XFxrXh3XvXc9lyKbooZ8EX/kE1azle3mGUk7G0MoZQ4uyPu70
+        n1oHd2ArwJuLTDDQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 24722138FC;
+        Thu,  6 Jul 2023 14:49:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id YszbCJPUpmSMAQAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 06 Jul 2023 14:49:55 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 966A8A0707; Thu,  6 Jul 2023 16:49:54 +0200 (CEST)
+Date:   Thu, 6 Jul 2023 16:49:54 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Evgeniy Dushistov <dushistov@mail.ru>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 80/92] ufs: convert to ctime accessor functions
+Message-ID: <20230706144954.qywfdakgk2dxlegh@quack3>
+References: <20230705185755.579053-1-jlayton@kernel.org>
+ <20230705190309.579783-1-jlayton@kernel.org>
+ <20230705190309.579783-78-jlayton@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230705190309.579783-78-jlayton@kernel.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-"Ritesh Harjani (IBM)" <ritesh.list@gmail.com> writes:
+On Wed 05-07-23 15:01:45, Jeff Layton wrote:
+> In later patches, we're going to change how the inode's ctime field is
+> used. Switch to using accessor functions instead of raw accesses of
+> inode->i_ctime.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-> @@ -1637,7 +1758,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->  		struct writeback_control *wbc, struct inode *inode,
->  		struct folio *folio, u64 end_pos)
->  {
-> -	struct iomap_folio_state *ifs = ifs_alloc(inode, folio, 0);
-> +	struct iomap_folio_state *ifs = folio->private;
->  	struct iomap_ioend *ioend, *next;
->  	unsigned len = i_blocksize(inode);
->  	unsigned nblocks = i_blocks_per_folio(inode, folio);
-> @@ -1645,6 +1766,11 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->  	int error = 0, count = 0, i;
->  	LIST_HEAD(submit_list);
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/ufs/dir.c    |  6 +++---
+>  fs/ufs/ialloc.c |  2 +-
+>  fs/ufs/inode.c  | 23 +++++++++++++----------
+>  fs/ufs/namei.c  |  8 ++++----
+>  4 files changed, 21 insertions(+), 18 deletions(-)
+> 
+> diff --git a/fs/ufs/dir.c b/fs/ufs/dir.c
+> index 379d75796a5c..fd57f03b6c93 100644
+> --- a/fs/ufs/dir.c
+> +++ b/fs/ufs/dir.c
+> @@ -107,7 +107,7 @@ void ufs_set_link(struct inode *dir, struct ufs_dir_entry *de,
+>  	ufs_commit_chunk(page, pos, len);
+>  	ufs_put_page(page);
+>  	if (update_times)
+> -		dir->i_mtime = dir->i_ctime = current_time(dir);
+> +		dir->i_mtime = inode_set_ctime_current(dir);
+>  	mark_inode_dirty(dir);
+>  	ufs_handle_dirsync(dir);
+>  }
+> @@ -397,7 +397,7 @@ int ufs_add_link(struct dentry *dentry, struct inode *inode)
+>  	ufs_set_de_type(sb, de, inode->i_mode);
 >  
-> +	if (!ifs && nblocks > 1) {
-> +		ifs = ifs_alloc(inode, folio, 0);
-> +		iomap_set_range_dirty(folio, 0, folio_size(folio));
-> +	}
-> +
->  	WARN_ON_ONCE(ifs && atomic_read(&ifs->write_bytes_pending) != 0);
+>  	ufs_commit_chunk(page, pos, rec_len);
+> -	dir->i_mtime = dir->i_ctime = current_time(dir);
+> +	dir->i_mtime = inode_set_ctime_current(dir);
 >  
->  	/*
-> @@ -1653,7 +1779,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->  	 * invalid, grab a new one.
+>  	mark_inode_dirty(dir);
+>  	err = ufs_handle_dirsync(dir);
+> @@ -539,7 +539,7 @@ int ufs_delete_entry(struct inode *inode, struct ufs_dir_entry *dir,
+>  		pde->d_reclen = cpu_to_fs16(sb, to - from);
+>  	dir->d_ino = 0;
+>  	ufs_commit_chunk(page, pos, to - from);
+> -	inode->i_ctime = inode->i_mtime = current_time(inode);
+> +	inode->i_mtime = inode_set_ctime_current(inode);
+>  	mark_inode_dirty(inode);
+>  	err = ufs_handle_dirsync(inode);
+>  out:
+> diff --git a/fs/ufs/ialloc.c b/fs/ufs/ialloc.c
+> index 06bd84d555bd..a1e7bd9d1f98 100644
+> --- a/fs/ufs/ialloc.c
+> +++ b/fs/ufs/ialloc.c
+> @@ -292,7 +292,7 @@ struct inode *ufs_new_inode(struct inode *dir, umode_t mode)
+>  	inode_init_owner(&nop_mnt_idmap, inode, dir, mode);
+>  	inode->i_blocks = 0;
+>  	inode->i_generation = 0;
+> -	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
+> +	inode->i_mtime = inode->i_atime = inode_set_ctime_current(inode);
+>  	ufsi->i_flags = UFS_I(dir)->i_flags;
+>  	ufsi->i_lastfrag = 0;
+>  	ufsi->i_shadow = 0;
+> diff --git a/fs/ufs/inode.c b/fs/ufs/inode.c
+> index a4246c83a8cd..21a4779a2de5 100644
+> --- a/fs/ufs/inode.c
+> +++ b/fs/ufs/inode.c
+> @@ -296,7 +296,7 @@ ufs_inode_getfrag(struct inode *inode, unsigned index,
+>  
+>  	if (new)
+>  		*new = 1;
+> -	inode->i_ctime = current_time(inode);
+> +	inode_set_ctime_current(inode);
+>  	if (IS_SYNC(inode))
+>  		ufs_sync_inode (inode);
+>  	mark_inode_dirty(inode);
+> @@ -378,7 +378,7 @@ ufs_inode_getblock(struct inode *inode, u64 ind_block,
+>  	mark_buffer_dirty(bh);
+>  	if (IS_SYNC(inode))
+>  		sync_dirty_buffer(bh);
+> -	inode->i_ctime = current_time(inode);
+> +	inode_set_ctime_current(inode);
+>  	mark_inode_dirty(inode);
+>  out:
+>  	brelse (bh);
+> @@ -580,11 +580,12 @@ static int ufs1_read_inode(struct inode *inode, struct ufs_inode *ufs_inode)
+>  
+>  	inode->i_size = fs64_to_cpu(sb, ufs_inode->ui_size);
+>  	inode->i_atime.tv_sec = (signed)fs32_to_cpu(sb, ufs_inode->ui_atime.tv_sec);
+> -	inode->i_ctime.tv_sec = (signed)fs32_to_cpu(sb, ufs_inode->ui_ctime.tv_sec);
+> +	inode_set_ctime(inode,
+> +			(signed)fs32_to_cpu(sb, ufs_inode->ui_ctime.tv_sec),
+> +			0);
+>  	inode->i_mtime.tv_sec = (signed)fs32_to_cpu(sb, ufs_inode->ui_mtime.tv_sec);
+>  	inode->i_mtime.tv_nsec = 0;
+>  	inode->i_atime.tv_nsec = 0;
+> -	inode->i_ctime.tv_nsec = 0;
+>  	inode->i_blocks = fs32_to_cpu(sb, ufs_inode->ui_blocks);
+>  	inode->i_generation = fs32_to_cpu(sb, ufs_inode->ui_gen);
+>  	ufsi->i_flags = fs32_to_cpu(sb, ufs_inode->ui_flags);
+> @@ -626,10 +627,10 @@ static int ufs2_read_inode(struct inode *inode, struct ufs2_inode *ufs2_inode)
+>  
+>  	inode->i_size = fs64_to_cpu(sb, ufs2_inode->ui_size);
+>  	inode->i_atime.tv_sec = fs64_to_cpu(sb, ufs2_inode->ui_atime);
+> -	inode->i_ctime.tv_sec = fs64_to_cpu(sb, ufs2_inode->ui_ctime);
+> +	inode_set_ctime(inode, fs64_to_cpu(sb, ufs2_inode->ui_ctime),
+> +			fs32_to_cpu(sb, ufs2_inode->ui_ctimensec));
+>  	inode->i_mtime.tv_sec = fs64_to_cpu(sb, ufs2_inode->ui_mtime);
+>  	inode->i_atime.tv_nsec = fs32_to_cpu(sb, ufs2_inode->ui_atimensec);
+> -	inode->i_ctime.tv_nsec = fs32_to_cpu(sb, ufs2_inode->ui_ctimensec);
+>  	inode->i_mtime.tv_nsec = fs32_to_cpu(sb, ufs2_inode->ui_mtimensec);
+>  	inode->i_blocks = fs64_to_cpu(sb, ufs2_inode->ui_blocks);
+>  	inode->i_generation = fs32_to_cpu(sb, ufs2_inode->ui_gen);
+> @@ -726,7 +727,8 @@ static void ufs1_update_inode(struct inode *inode, struct ufs_inode *ufs_inode)
+>  	ufs_inode->ui_size = cpu_to_fs64(sb, inode->i_size);
+>  	ufs_inode->ui_atime.tv_sec = cpu_to_fs32(sb, inode->i_atime.tv_sec);
+>  	ufs_inode->ui_atime.tv_usec = 0;
+> -	ufs_inode->ui_ctime.tv_sec = cpu_to_fs32(sb, inode->i_ctime.tv_sec);
+> +	ufs_inode->ui_ctime.tv_sec = cpu_to_fs32(sb,
+> +						 inode_get_ctime(inode).tv_sec);
+>  	ufs_inode->ui_ctime.tv_usec = 0;
+>  	ufs_inode->ui_mtime.tv_sec = cpu_to_fs32(sb, inode->i_mtime.tv_sec);
+>  	ufs_inode->ui_mtime.tv_usec = 0;
+> @@ -770,8 +772,9 @@ static void ufs2_update_inode(struct inode *inode, struct ufs2_inode *ufs_inode)
+>  	ufs_inode->ui_size = cpu_to_fs64(sb, inode->i_size);
+>  	ufs_inode->ui_atime = cpu_to_fs64(sb, inode->i_atime.tv_sec);
+>  	ufs_inode->ui_atimensec = cpu_to_fs32(sb, inode->i_atime.tv_nsec);
+> -	ufs_inode->ui_ctime = cpu_to_fs64(sb, inode->i_ctime.tv_sec);
+> -	ufs_inode->ui_ctimensec = cpu_to_fs32(sb, inode->i_ctime.tv_nsec);
+> +	ufs_inode->ui_ctime = cpu_to_fs64(sb, inode_get_ctime(inode).tv_sec);
+> +	ufs_inode->ui_ctimensec = cpu_to_fs32(sb,
+> +					      inode_get_ctime(inode).tv_nsec);
+>  	ufs_inode->ui_mtime = cpu_to_fs64(sb, inode->i_mtime.tv_sec);
+>  	ufs_inode->ui_mtimensec = cpu_to_fs32(sb, inode->i_mtime.tv_nsec);
+>  
+> @@ -1205,7 +1208,7 @@ static int ufs_truncate(struct inode *inode, loff_t size)
+>  	truncate_setsize(inode, size);
+>  
+>  	ufs_truncate_blocks(inode);
+> -	inode->i_mtime = inode->i_ctime = current_time(inode);
+> +	inode->i_mtime = inode_set_ctime_current(inode);
+>  	mark_inode_dirty(inode);
+>  out:
+>  	UFSD("EXIT: err %d\n", err);
+> diff --git a/fs/ufs/namei.c b/fs/ufs/namei.c
+> index 36154b5aca6d..9cad29463791 100644
+> --- a/fs/ufs/namei.c
+> +++ b/fs/ufs/namei.c
+> @@ -153,7 +153,7 @@ static int ufs_link (struct dentry * old_dentry, struct inode * dir,
+>  	struct inode *inode = d_inode(old_dentry);
+>  	int error;
+>  
+> -	inode->i_ctime = current_time(inode);
+> +	inode_set_ctime_current(inode);
+>  	inode_inc_link_count(inode);
+>  	ihold(inode);
+>  
+> @@ -220,7 +220,7 @@ static int ufs_unlink(struct inode *dir, struct dentry *dentry)
+>  	if (err)
+>  		goto out;
+>  
+> -	inode->i_ctime = dir->i_ctime;
+> +	inode_set_ctime_to_ts(inode, inode_get_ctime(dir));
+>  	inode_dec_link_count(inode);
+>  	err = 0;
+>  out:
+> @@ -282,7 +282,7 @@ static int ufs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+>  		if (!new_de)
+>  			goto out_dir;
+>  		ufs_set_link(new_dir, new_de, new_page, old_inode, 1);
+> -		new_inode->i_ctime = current_time(new_inode);
+> +		inode_set_ctime_current(new_inode);
+>  		if (dir_de)
+>  			drop_nlink(new_inode);
+>  		inode_dec_link_count(new_inode);
+> @@ -298,7 +298,7 @@ static int ufs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+>  	 * Like most other Unix systems, set the ctime for inodes on a
+>   	 * rename.
 >  	 */
->  	for (i = 0; i < nblocks && pos < end_pos; i++, pos += len) {
-> -		if (ifs && !ifs_block_is_uptodate(ifs, i))
-> +		if (ifs && !ifs_block_is_dirty(folio, ifs, i))
->  			continue;
+> -	old_inode->i_ctime = current_time(old_inode);
+> +	inode_set_ctime_current(old_inode);
 >  
->  		error = wpc->ops->map_blocks(wpc, inode, pos);
-> @@ -1697,6 +1823,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->  		}
->  	}
->  
-> +	iomap_clear_range_dirty(folio, 0, end_pos - folio_pos(folio));
->  	folio_start_writeback(folio);
->  	folio_unlock(folio);
->  
-
-I think we should fold below change with this patch. 
-end_pos is calculated in iomap_do_writepage() such that it is either
-folio_pos(folio) + folio_size(folio), or if this value becomes more then
-isize, than end_pos is made isize.
-
-The current patch does not have a functional problem I guess. But in
-some cases where truncate races with writeback, it will end up marking
-more bits & later doesn't clear those. Hence I think we should correct
-it using below diff.
-
-I have added a WARN_ON_ONCE, but if you think it is obvious and not
-required, feel free to drop it.
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 2fd9413838de..6c03e5842d44 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1766,9 +1766,11 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
-        int error = 0, count = 0, i;
-        LIST_HEAD(submit_list);
-
-+       WARN_ON_ONCE(end_pos <= pos);
-+
-        if (!ifs && nblocks > 1) {
-                ifs = ifs_alloc(inode, folio, 0);
--               iomap_set_range_dirty(folio, 0, folio_size(folio));
-+               iomap_set_range_dirty(folio, 0, end_pos - pos);
-        }
-
-        WARN_ON_ONCE(ifs && atomic_read(&ifs->write_bytes_pending) != 0);
-
--ritesh
+>  	ufs_delete_entry(old_dir, old_de, old_page);
+>  	mark_inode_dirty(old_inode);
+> -- 
+> 2.41.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
