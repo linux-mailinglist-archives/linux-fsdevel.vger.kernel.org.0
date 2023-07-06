@@ -2,190 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE64574A36E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 19:49:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7188D74A3B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 20:26:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231626AbjGFRtT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 13:49:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45942 "EHLO
+        id S229694AbjGFSZ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 14:25:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230466AbjGFRtS (ORCPT
+        with ESMTP id S229774AbjGFSZ6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 13:49:18 -0400
-Received: from mail-vs1-xe2f.google.com (mail-vs1-xe2f.google.com [IPv6:2607:f8b0:4864:20::e2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B1C41994;
-        Thu,  6 Jul 2023 10:49:17 -0700 (PDT)
-Received: by mail-vs1-xe2f.google.com with SMTP id ada2fe7eead31-44523d9fd18so240874137.0;
-        Thu, 06 Jul 2023 10:49:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688665756; x=1691257756;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r7YVAvRgBwLU7VNNwMWt+QDw4y422q60OVOAo7u9pOs=;
-        b=scReaXK2EFyHrPuAAGDOm6MpiHph8fwS+r4Ddbll9B3Qni8YRGy393VlY7N/3oOKgh
-         EVcOBP/S0joD0zd16zBAGjd0dql8H/yUsBRW7FTZgozQLFowEskbufCIbjgBOg5a2bqE
-         eJfUlvkOU9u8+/TNvXJeRHf0A5MokHGkdRXB0eaWsgUnHpP9uFAKB2qEfNdoBHnUfWPp
-         GmEPZEZG+pq5dDqnsTGMlS5R9qmABAc9rIAHo0jXA9sB4GHzhTs+cN+RlLgb6V/IOVGw
-         EMNZDBUolZmRghKHMoxLMMfGtiURW7B633Xjtff9pgt6ynAbg4DwuuQ6/5B9O0eLXTas
-         nbcw==
+        Thu, 6 Jul 2023 14:25:58 -0400
+Received: from mail-pj1-f79.google.com (mail-pj1-f79.google.com [209.85.216.79])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C463B1BF8
+        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jul 2023 11:25:45 -0700 (PDT)
+Received: by mail-pj1-f79.google.com with SMTP id 98e67ed59e1d1-262d296873aso1718112a91.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jul 2023 11:25:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688665756; x=1691257756;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r7YVAvRgBwLU7VNNwMWt+QDw4y422q60OVOAo7u9pOs=;
-        b=euD11F1ACDQykFUVHemkSM7RlZ23rDO+8gLkXFlbSFKHYu2xe9QOGnbtvoqX+4cNFZ
-         TabHgO52WMaT+6FCCeWfgIx0GsL/fr7M4B0pKV2Fq6qoWeYI8gR54UUOMGNUh9g42CDI
-         fsOq7rCJRUZzyNBKISj7LJ637kT3DQg6pCtNE3L9VBWXcUk+ywnUUnPQ1aSAq3gMprEC
-         gWPTsH1PoPJ7c+GTcumkk5yIogX3Ub6kwDSOCjt3Sl96FPZYZGTvwrReKKfNwVeYuBU/
-         zipV0/h6yDR7W8KSW0LJJT6BuvRYi9avEiAs8tCkO/UZuVJUy23YBnPCoADi8R33Rgmm
-         RACQ==
-X-Gm-Message-State: ABy/qLZ7ofZ8OFRXGElmB7SMzlhwifeyb3qHM6eqdc12EVGDVWuCcV52
-        2bahdhoYgLXSzAUvVeFlEuskKSZPpywzxQjlUPg=
-X-Google-Smtp-Source: APBJJlFemOouqmN0uw4a9jmKiaVfqXFICB31VE/qNSt1sixAY+4Gc3eKenyPpqGoElIzTAxRfJp5bBHsgvgz/Ia+2EM=
-X-Received: by 2002:a67:e889:0:b0:445:110:acce with SMTP id
- x9-20020a67e889000000b004450110accemr1253493vsn.14.1688665756578; Thu, 06 Jul
- 2023 10:49:16 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1688667945; x=1691259945;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OZzgEZl6/g7psZ0E4d9jCKRJiroc9+4BEHoe0FwqD0A=;
+        b=kw+vs5vo0LiU/L4V20Z3QtyIDU5xRXS60jWX3zhjDGcziSI0QWssjxhrq6aOvjfX+s
+         OveKeUG9o/Lqph58hLP5b+fpVpW8T+v8L2Vxn5GeHoIFGGjJk/KXnnU/KyzByCPCvzg8
+         OLPtpOFg29WLxjXhSRTf1cLr12MKoHi3m+dqRhzrV0hbAqyFFh3ebWoSvRzByjmnQxWm
+         dFMtwjMTqF+/3CpfupQzY0omCh7Oj91nS24+I5M2COfPYKP8jdI/I5JyZ4XKyBhN5NEI
+         C2YfzAi5vuF4HN7FnS7+IfGKVfpHjH5WaQ+2qR5vkAkcrVmsDEzjMiaC8cmAOQW0U3yf
+         oTtQ==
+X-Gm-Message-State: ABy/qLaB1eapjuVWEyj9U9ojaIp/OWHcQ2EJhCAlN2KzXHcaTHcam1ql
+        pYw1AIu885QqzSLZzPSxziVT66eWWjnHO+jwKG/KOrwJJbkY
+X-Google-Smtp-Source: APBJJlERvrpoZOMihfbOTAEJysCghlB1JQkU8loiCXpqc2u7eML+so9n5tmRY1ZNli1dxl9JKH9Jdyj8VD5cudXSRC/XpN2FqPEo
 MIME-Version: 1.0
-References: <20230425132223.2608226-1-amir73il@gmail.com> <20230425132223.2608226-4-amir73il@gmail.com>
- <CAOQ4uxgX0Tx07q2gAzsB2kPsUm+MjsYw9BG4W7-h8ODNnqH_1A@mail.gmail.com> <CAOQ4uxhh6fh8spdBSxaPQCMK8OKGLjvi=JvwAM0J9vZaEeAgZg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhh6fh8spdBSxaPQCMK8OKGLjvi=JvwAM0J9vZaEeAgZg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 6 Jul 2023 20:49:05 +0300
-Message-ID: <CAOQ4uxgfTTQ5VAYTrQw0jkFVhiBRvTZ7hL9HU1MoPSCDCd_p6g@mail.gmail.com>
-Subject: Re: [RFC][PATCH 3/3] ovl: use persistent s_uuid with index=on
-To:     Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+X-Received: by 2002:a17:90b:1215:b0:263:347:25b3 with SMTP id
+ gl21-20020a17090b121500b00263034725b3mr2029757pjb.6.1688667944984; Thu, 06
+ Jul 2023 11:25:44 -0700 (PDT)
+Date:   Thu, 06 Jul 2023 11:25:44 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000126ec05ffd5a528@google.com>
+Subject: [syzbot] [ext4?] kernel BUG in ext4_enable_quotas
+From:   syzbot <syzbot+693985588d7a5e439483@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
+        syzkaller-bugs@googlegroups.com, trix@redhat.com, tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 6, 2023 at 1:14=E2=80=AFPM Amir Goldstein <amir73il@gmail.com> =
-wrote:
->
-> On Thu, Jul 6, 2023 at 10:19=E2=80=AFAM Amir Goldstein <amir73il@gmail.co=
-m> wrote:
-> >
-> > On Tue, Apr 25, 2023 at 4:22=E2=80=AFPM Amir Goldstein <amir73il@gmail.=
-com> wrote:
-> > >
-> > > With index=3Don, overlayfs instances are non-migratable, meaning that
-> > > the layers cannot be copied without breaking the index.
-> > >
-> > > So when indexdir exists, store a persistent uuid in xattr on the
-> > > indexdir to give the overlayfs instance a persistent identifier.
-> > >
-> > > This also makes f_fsid persistent and more reliable for reporting
-> > > fid info in fanotify events.
-> > >
-> > > With mount option uuid=3Dnogen, a persistent uuid is not be initializ=
-ed
-> > > on indexdir, but if a persistent uuid already exists, it will be used=
-.
-> > >
-> >
-> > This behavior (along with the grammatical mistakes) was changed in
-> > https://github.com/amir73il/linux/commits/ovl_encode_fid
-> >
-> > uuid=3Doff or uuid=3Dnull both set ovl fsid to null regardless of persi=
-stent
-> > uuid xattr.
-> >
->
-> Sorry, that was meant to say "set ovl uuid to null..."
-> when ovl uuid is null then ovl fsid is not null, it is the fsid of the
-> uppermost fs.
->
-> This creates a dilemma wrt backward compat.
->
-> With index=3Doff, the mounter has a choice between two sub-optimal option=
-s:
-> 1. persistent ovl fsid (of upper fs)
-> 2. unique ovl fsid (from random uuid)
->
-> If we change the default from legacy (1) to unique (2), that
-> could also break systems that rely on the persistent ovl fsid
-> of existing overlayfs layers.
->
-> With index=3Don, the choice is between:
-> 1. persistent ovl fsid (of upper fs)
-> 2. persistent and unique ovl fsid (from uuid xattr)
->
-> option (2) is superior, but still could break existing systems
-> that rely on (1) being persistent.
->
-> The decision to tie uuid xattr to the index dir and index=3Don
-> was rationalized in the commit message, but persistent and
-> unique fsid could also be implemented regardless of index=3Don.
->
-> I think I may have found a dignified way out of this mess:
-> - In ovl_fill_super(), check impure xattr on upper root dir
-> - If impure xattr does not exist (very likely new overlay),
->   uuid_gen() and write the persistent uuid xattr on upper fs root
-> - If uuid xattr is written or already exists, use that to initialize
->   s_uuid otherwise, leave it null
-> - in ovl_statfs(), override the upper fs fsid, only if ovl uuid is non-nu=
-ll
->
-> This gives:
-> 1. Old overlayfs deployments retain old behavior wrt null uuid
->     and upper fsid, as long as they have had at least one subdir
->     of root copied up or looked up to trigger ovl_fix_origin()
-> 2. New overlayfs deployments always generate and use a unique
->     and persistent uuid/fsid
-> 3. mount option uuid=3Doff/null (*) can be used to retain legacy behavior
->     on old/new overlayfs deployments (for whatever reason) and ignore
->     existing persistent uuid xattr
-> 4. mount option uuid=3Don can be used to force new behavior on an
->     existing overlayfs with impure xattr and without uuid xattr
->
-> (*) uuid=3Doff was originally introduced for the use case of copied layer=
-s.
->      That is similar to the use case of copying disk images and dropping
->      the old persistent ovl uuid makes sense in that case.
->
-> I will try to write this up.
->
+Hello,
 
-OK, this is what I got in overlayfs.rst:
+syzbot found the following issue on:
 
-UUID and fsid
--------------
+HEAD commit:    995b406c7e97 Merge tag 'csky-for-linus-6.5' of https://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15fdda4f280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=71a52faf60231bc7
+dashboard link: https://syzkaller.appspot.com/bug?extid=693985588d7a5e439483
+compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
 
-The UUID of overlayfs instance itself and the fsid reported by statfs(2) ar=
-e
-controlled by the "uuid" mount option, which supports these values:
+Unfortunately, I don't have any reproducer for this issue yet.
 
-- "null":
-    UUID of overlayfs in null, fsid is taken from upper most fs.
-- "off":
-    UUID of overlayfs in null, fsid is taken from upper most fs
-    and UUID of underlying layers not checked.
-- "on":
-    UUID of overlayfs in generated on first mount used to report a unique f=
-sid.
-    If upper filesystem supports xattrs, the UUID is stored in xattr
-    "trusted.overlay.uuid", making the fsid unique and persistent.
-- "auto": (default)
-    Upgrade to "uuid=3Don" on first time mount of new overlay filesystem.
-    Downgrade to "uuid=3Dnull" for existing overlay filesystems that were n=
-ever
-    mounted with "uuid=3Don".
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/01122b567c73/disk-995b406c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/75b7a37e981e/vmlinux-995b406c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/758b5afcf092/bzImage-995b406c.xz
 
-Pushed to:
-https://github.com/amir73il/linux/commits/ovl_encode_fid
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+693985588d7a5e439483@syzkaller.appspotmail.com
 
-Will post next week.
+------------[ cut here ]------------
+kernel BUG at fs/ext4/super.c:7010!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 27977 Comm: syz-executor.2 Not tainted 6.4.0-syzkaller-10098-g995b406c7e97 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+RIP: 0010:ext4_quota_enable fs/ext4/super.c:7010 [inline]
+RIP: 0010:ext4_enable_quotas+0xb7a/0xb90 fs/ext4/super.c:7057
+Code: ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 3a f7 ff ff 49 89 d6 48 89 df e8 03 10 99 ff 4c 89 f2 e9 27 f7 ff ff e8 46 60 40 ff <0f> 0b e8 3f 60 40 ff 0f 0b e8 18 6e 6e 08 0f 1f 84 00 00 00 00 00
+RSP: 0018:ffffc9000392f880 EFLAGS: 00010293
+RAX: ffffffff824b91aa RBX: 0000000000000000 RCX: ffff88803c1d8000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000392fa50 R08: ffffffff824b8aa4 R09: 1ffff11010674957
+R10: dffffc0000000000 R11: ffffed1010674958 R12: 0000000000000001
+R13: 0000000000000000 R14: ffff88807f545464 R15: dffffc0000000000
+FS:  00007f5112313700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000002007f000 CR3: 000000002cb28000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __ext4_fill_super fs/ext4/super.c:5562 [inline]
+ ext4_fill_super+0x6157/0x6ce0 fs/ext4/super.c:5696
+ get_tree_bdev+0x468/0x6c0 fs/super.c:1318
+ vfs_get_tree+0x8c/0x270 fs/super.c:1519
+ do_new_mount+0x28f/0xae0 fs/namespace.c:3335
+ do_mount fs/namespace.c:3675 [inline]
+ __do_sys_mount fs/namespace.c:3884 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3861
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f511168d8ba
+Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f5112312f88 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00000000000005d8 RCX: 00007f511168d8ba
+RDX: 0000000020000580 RSI: 00000000200005c0 RDI: 00007f5112312fe0
+RBP: 00007f5112313020 R08: 00007f5112313020 R09: 0000000001008002
+R10: 0000000001008002 R11: 0000000000000202 R12: 0000000020000580
+R13: 00000000200005c0 R14: 00007f5112312fe0 R15: 0000000020000100
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ext4_quota_enable fs/ext4/super.c:7010 [inline]
+RIP: 0010:ext4_enable_quotas+0xb7a/0xb90 fs/ext4/super.c:7057
+Code: ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 3a f7 ff ff 49 89 d6 48 89 df e8 03 10 99 ff 4c 89 f2 e9 27 f7 ff ff e8 46 60 40 ff <0f> 0b e8 3f 60 40 ff 0f 0b e8 18 6e 6e 08 0f 1f 84 00 00 00 00 00
+RSP: 0018:ffffc9000392f880 EFLAGS: 00010293
+RAX: ffffffff824b91aa RBX: 0000000000000000 RCX: ffff88803c1d8000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000392fa50 R08: ffffffff824b8aa4 R09: 1ffff11010674957
+R10: dffffc0000000000 R11: ffffed1010674958 R12: 0000000000000001
+R13: 0000000000000000 R14: ffff88807f545464 R15: dffffc0000000000
+FS:  00007f5112313700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2d324000 CR3: 000000002cb28000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-Thanks,
-Amir.
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
