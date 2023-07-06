@@ -2,272 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 49EB1749CD1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 14:57:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E10C749D1C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 15:10:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229613AbjGFM5g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 08:57:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58674 "EHLO
+        id S229617AbjGFNKr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 09:10:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbjGFM5f (ORCPT
+        with ESMTP id S229514AbjGFNKq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 08:57:35 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 870E91986;
-        Thu,  6 Jul 2023 05:57:34 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        Thu, 6 Jul 2023 09:10:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89DD71FC9;
+        Thu,  6 Jul 2023 06:10:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 41B19219A6;
-        Thu,  6 Jul 2023 12:57:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1688648253; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DaB1i/eVjGm82CcOaGtLXHKjYlR+vBQyld2q2wv94SI=;
-        b=T1nQESGafOfkoRRRhaJm/poP14mik5DvUOE1rH9aI93vyUdn/ZZ3bxetgzuKbit43Fs3rQ
-        nWKIt5gyRT52tTHed5zkLRftO2GMD2jRd5m0dD8dyMT35HCViDQEQIui9n4bxUVc+iODpz
-        /WnwK+Ien9gBIVKkX80Nv/rrkk/elKk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1688648253;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DaB1i/eVjGm82CcOaGtLXHKjYlR+vBQyld2q2wv94SI=;
-        b=2LVJpl4XlOHL60QqrV7MkIDkNOVeoZLN8Kg9iutwYXOhBc0Dv3H6YUOkmYalAsVVpxucF/
-        Jol7iowA2RHNtGDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2AABF138FC;
-        Thu,  6 Jul 2023 12:57:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id OSBmCj26pmQ7RwAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 06 Jul 2023 12:57:33 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id B5994A0707; Thu,  6 Jul 2023 14:57:32 +0200 (CEST)
-Date:   Thu, 6 Jul 2023 14:57:32 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 79/92] udf: convert to ctime accessor functions
-Message-ID: <20230706125732.efftdv4ydag3qvrw@quack3>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B0CFB6195C;
+        Thu,  6 Jul 2023 13:10:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D009C433C7;
+        Thu,  6 Jul 2023 13:10:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688649019;
+        bh=U4DQhi7mOPrGgIbuzx0vC/TJNm7AB04bsngGM1ZNiKY=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=hD8s3cacuL+rlBWEE+Y2STmdjnIe2imLtc3s8dw4ZBi02XMCOR+Uzpn5rn+z7Il59
+         oV8RrIID4kFpmzRqgk7vgpM1rCY0/PSQngyTKcahd28TuconlZPT3/heegUvR6KrP9
+         U8E9VsTCG/0uv1e5F0oa2RfVHiOrd2B6ym1GKJ9WCosHzReHdvae7YD72qdvEO3o0H
+         HCwAJDBqDmkYHrWNiXSna1aMPh3Wornxb+OH1I6QAidxfg0PzErwxosFufRhPNbs8q
+         B77t6zo5ytlZMqIM79muX1+UpGgun8zGq4Lw7g018DgqzKi84WJP8KfNOXeHp1V3VJ
+         0x7Al8QvkqQRA==
+Message-ID: <5290be64ba87d01938c578f49443ce41f9be5e77.camel@kernel.org>
+Subject: Re: [PATCH v2 42/92] ext4: convert to ctime accessor functions
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Date:   Thu, 06 Jul 2023 09:10:17 -0400
+In-Reply-To: <20230706123643.3pumra5f4fthz3qq@quack3>
 References: <20230705185755.579053-1-jlayton@kernel.org>
- <20230705190309.579783-1-jlayton@kernel.org>
- <20230705190309.579783-77-jlayton@kernel.org>
+         <20230705190309.579783-1-jlayton@kernel.org>
+         <20230705190309.579783-40-jlayton@kernel.org>
+         <20230706123643.3pumra5f4fthz3qq@quack3>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230705190309.579783-77-jlayton@kernel.org>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 05-07-23 15:01:44, Jeff Layton wrote:
-> In later patches, we're going to change how the inode's ctime field is
-> used. Switch to using accessor functions instead of raw accesses of
-> inode->i_ctime.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On Thu, 2023-07-06 at 14:36 +0200, Jan Kara wrote:
+> On Wed 05-07-23 15:01:07, Jeff Layton wrote:
+> > In later patches, we're going to change how the inode's ctime field is
+> > used. Switch to using accessor functions instead of raw accesses of
+> > inode->i_ctime.
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+>=20
+> Some comment below:
+>=20
+> > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> > index 0a2d55faa095..d502b930431b 100644
+> > --- a/fs/ext4/ext4.h
+> > +++ b/fs/ext4/ext4.h
+> > @@ -3823,6 +3823,27 @@ static inline int ext4_buffer_uptodate(struct bu=
+ffer_head *bh)
+> >  	return buffer_uptodate(bh);
+> >  }
+> > =20
+> > +static inline void ext4_inode_set_ctime(struct inode *inode, struct ex=
+t4_inode *raw_inode)
+> > +{
+> > +	struct timespec64 ctime =3D inode_get_ctime(inode);
+> > +
+> > +	if (EXT4_FITS_IN_INODE(raw_inode, EXT4_I(inode), i_ctime_extra)) {
+> > +		raw_inode->i_ctime =3D cpu_to_le32(ctime.tv_sec);
+> > +		raw_inode->i_ctime_extra =3D ext4_encode_extra_time(&ctime);
+> > +	} else {
+> > +		raw_inode->i_ctime =3D cpu_to_le32(clamp_t(int32_t, ctime.tv_sec, S3=
+2_MIN, S32_MAX));
+> > +	}
+> > +}
+> > +
+> > +static inline void ext4_inode_get_ctime(struct inode *inode, const str=
+uct ext4_inode *raw_inode)
+> > +{
+> > +	struct timespec64 ctime =3D { .tv_sec =3D (signed)le32_to_cpu(raw_ino=
+de->i_ctime) };
+> > +
+> > +	if (EXT4_FITS_IN_INODE(raw_inode, EXT4_I(inode), i_ctime_extra))
+> > +		ext4_decode_extra_time(&ctime, raw_inode->i_ctime_extra);
+> > +	inode_set_ctime(inode, ctime.tv_sec, ctime.tv_nsec);
+> > +}
+> > +
+>=20
+> This duplication is kind of unpleasant. I was looking into it for a while
+> and I think we can rather do some initial cleanup (attached patch 1) and
+> then your conversion patch would not need to duplicate the conversion cod=
+e
+> (see attached patch 2).
+>=20
+> =09
+>=20
 
-Looks good to me. Feel free to add:
+Thanks Jan. That looks fine at first glance. I'll plan to drop my ext4
+patch and replace it with these.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/udf/ialloc.c |  2 +-
->  fs/udf/inode.c  | 17 ++++++++++-------
->  fs/udf/namei.c  | 24 ++++++++++++------------
->  3 files changed, 23 insertions(+), 20 deletions(-)
-> 
-> diff --git a/fs/udf/ialloc.c b/fs/udf/ialloc.c
-> index 5f7ac8c84798..6b558cbbeb6b 100644
-> --- a/fs/udf/ialloc.c
-> +++ b/fs/udf/ialloc.c
-> @@ -100,7 +100,7 @@ struct inode *udf_new_inode(struct inode *dir, umode_t mode)
->  		iinfo->i_alloc_type = ICBTAG_FLAG_AD_SHORT;
->  	else
->  		iinfo->i_alloc_type = ICBTAG_FLAG_AD_LONG;
-> -	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-> +	inode->i_mtime = inode->i_atime = inode_set_ctime_current(inode);
->  	iinfo->i_crtime = inode->i_mtime;
->  	if (unlikely(insert_inode_locked(inode) < 0)) {
->  		make_bad_inode(inode);
-> diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-> index 28cdfc57d946..d089795074e8 100644
-> --- a/fs/udf/inode.c
-> +++ b/fs/udf/inode.c
-> @@ -910,7 +910,7 @@ static int inode_getblk(struct inode *inode, struct udf_map_rq *map)
->  	map->oflags = UDF_BLK_NEW | UDF_BLK_MAPPED;
->  	iinfo->i_next_alloc_block = map->lblk + 1;
->  	iinfo->i_next_alloc_goal = newblocknum + 1;
-> -	inode->i_ctime = current_time(inode);
-> +	inode_set_ctime_current(inode);
->  
->  	if (IS_SYNC(inode))
->  		udf_sync_inode(inode);
-> @@ -1298,7 +1298,7 @@ int udf_setsize(struct inode *inode, loff_t newsize)
->  			goto out_unlock;
->  	}
->  update_time:
-> -	inode->i_mtime = inode->i_ctime = current_time(inode);
-> +	inode->i_mtime = inode_set_ctime_current(inode);
->  	if (IS_SYNC(inode))
->  		udf_sync_inode(inode);
->  	else
-> @@ -1329,6 +1329,7 @@ static int udf_read_inode(struct inode *inode, bool hidden_inode)
->  	int bs = inode->i_sb->s_blocksize;
->  	int ret = -EIO;
->  	uint32_t uid, gid;
-> +	struct timespec64 ctime;
->  
->  reread:
->  	if (iloc->partitionReferenceNum >= sbi->s_partitions) {
-> @@ -1507,7 +1508,8 @@ static int udf_read_inode(struct inode *inode, bool hidden_inode)
->  
->  		udf_disk_stamp_to_time(&inode->i_atime, fe->accessTime);
->  		udf_disk_stamp_to_time(&inode->i_mtime, fe->modificationTime);
-> -		udf_disk_stamp_to_time(&inode->i_ctime, fe->attrTime);
-> +		udf_disk_stamp_to_time(&ctime, fe->attrTime);
-> +		inode_set_ctime_to_ts(inode, ctime);
->  
->  		iinfo->i_unique = le64_to_cpu(fe->uniqueID);
->  		iinfo->i_lenEAttr = le32_to_cpu(fe->lengthExtendedAttr);
-> @@ -1522,7 +1524,8 @@ static int udf_read_inode(struct inode *inode, bool hidden_inode)
->  		udf_disk_stamp_to_time(&inode->i_atime, efe->accessTime);
->  		udf_disk_stamp_to_time(&inode->i_mtime, efe->modificationTime);
->  		udf_disk_stamp_to_time(&iinfo->i_crtime, efe->createTime);
-> -		udf_disk_stamp_to_time(&inode->i_ctime, efe->attrTime);
-> +		udf_disk_stamp_to_time(&ctime, efe->attrTime);
-> +		inode_set_ctime_to_ts(inode, ctime);
->  
->  		iinfo->i_unique = le64_to_cpu(efe->uniqueID);
->  		iinfo->i_lenEAttr = le32_to_cpu(efe->lengthExtendedAttr);
-> @@ -1799,7 +1802,7 @@ static int udf_update_inode(struct inode *inode, int do_sync)
->  
->  		udf_time_to_disk_stamp(&fe->accessTime, inode->i_atime);
->  		udf_time_to_disk_stamp(&fe->modificationTime, inode->i_mtime);
-> -		udf_time_to_disk_stamp(&fe->attrTime, inode->i_ctime);
-> +		udf_time_to_disk_stamp(&fe->attrTime, inode_get_ctime(inode));
->  		memset(&(fe->impIdent), 0, sizeof(struct regid));
->  		strcpy(fe->impIdent.ident, UDF_ID_DEVELOPER);
->  		fe->impIdent.identSuffix[0] = UDF_OS_CLASS_UNIX;
-> @@ -1830,12 +1833,12 @@ static int udf_update_inode(struct inode *inode, int do_sync)
->  
->  		udf_adjust_time(iinfo, inode->i_atime);
->  		udf_adjust_time(iinfo, inode->i_mtime);
-> -		udf_adjust_time(iinfo, inode->i_ctime);
-> +		udf_adjust_time(iinfo, inode_get_ctime(inode));
->  
->  		udf_time_to_disk_stamp(&efe->accessTime, inode->i_atime);
->  		udf_time_to_disk_stamp(&efe->modificationTime, inode->i_mtime);
->  		udf_time_to_disk_stamp(&efe->createTime, iinfo->i_crtime);
-> -		udf_time_to_disk_stamp(&efe->attrTime, inode->i_ctime);
-> +		udf_time_to_disk_stamp(&efe->attrTime, inode_get_ctime(inode));
->  
->  		memset(&(efe->impIdent), 0, sizeof(efe->impIdent));
->  		strcpy(efe->impIdent.ident, UDF_ID_DEVELOPER);
-> diff --git a/fs/udf/namei.c b/fs/udf/namei.c
-> index a95579b043ab..ae55ab8859b6 100644
-> --- a/fs/udf/namei.c
-> +++ b/fs/udf/namei.c
-> @@ -365,7 +365,7 @@ static int udf_add_nondir(struct dentry *dentry, struct inode *inode)
->  	*(__le32 *)((struct allocDescImpUse *)iter.fi.icb.impUse)->impUse =
->  		cpu_to_le32(iinfo->i_unique & 0x00000000FFFFFFFFUL);
->  	udf_fiiter_write_fi(&iter, NULL);
-> -	dir->i_ctime = dir->i_mtime = current_time(dir);
-> +	dir->i_mtime = inode_set_ctime_current(dir);
->  	mark_inode_dirty(dir);
->  	udf_fiiter_release(&iter);
->  	udf_add_fid_counter(dir->i_sb, false, 1);
-> @@ -471,7 +471,7 @@ static int udf_mkdir(struct mnt_idmap *idmap, struct inode *dir,
->  	udf_fiiter_release(&iter);
->  	udf_add_fid_counter(dir->i_sb, true, 1);
->  	inc_nlink(dir);
-> -	dir->i_ctime = dir->i_mtime = current_time(dir);
-> +	dir->i_mtime = inode_set_ctime_current(dir);
->  	mark_inode_dirty(dir);
->  	d_instantiate_new(dentry, inode);
->  
-> @@ -523,8 +523,8 @@ static int udf_rmdir(struct inode *dir, struct dentry *dentry)
->  	inode->i_size = 0;
->  	inode_dec_link_count(dir);
->  	udf_add_fid_counter(dir->i_sb, true, -1);
-> -	inode->i_ctime = dir->i_ctime = dir->i_mtime =
-> -						current_time(inode);
-> +	dir->i_mtime = inode_set_ctime_to_ts(dir,
-> +					     inode_set_ctime_current(inode));
->  	mark_inode_dirty(dir);
->  	ret = 0;
->  end_rmdir:
-> @@ -555,11 +555,11 @@ static int udf_unlink(struct inode *dir, struct dentry *dentry)
->  		set_nlink(inode, 1);
->  	}
->  	udf_fiiter_delete_entry(&iter);
-> -	dir->i_ctime = dir->i_mtime = current_time(dir);
-> +	dir->i_mtime = inode_set_ctime_current(dir);
->  	mark_inode_dirty(dir);
->  	inode_dec_link_count(inode);
->  	udf_add_fid_counter(dir->i_sb, false, -1);
-> -	inode->i_ctime = dir->i_ctime;
-> +	inode_set_ctime_to_ts(inode, inode_get_ctime(dir));
->  	ret = 0;
->  end_unlink:
->  	udf_fiiter_release(&iter);
-> @@ -746,9 +746,9 @@ static int udf_link(struct dentry *old_dentry, struct inode *dir,
->  
->  	inc_nlink(inode);
->  	udf_add_fid_counter(dir->i_sb, false, 1);
-> -	inode->i_ctime = current_time(inode);
-> +	inode_set_ctime_current(inode);
->  	mark_inode_dirty(inode);
-> -	dir->i_ctime = dir->i_mtime = current_time(dir);
-> +	dir->i_mtime = inode_set_ctime_current(dir);
->  	mark_inode_dirty(dir);
->  	ihold(inode);
->  	d_instantiate(dentry, inode);
-> @@ -833,7 +833,7 @@ static int udf_rename(struct mnt_idmap *idmap, struct inode *old_dir,
->  	 * Like most other Unix systems, set the ctime for inodes on a
->  	 * rename.
->  	 */
-> -	old_inode->i_ctime = current_time(old_inode);
-> +	inode_set_ctime_current(old_inode);
->  	mark_inode_dirty(old_inode);
->  
->  	/*
-> @@ -861,13 +861,13 @@ static int udf_rename(struct mnt_idmap *idmap, struct inode *old_dir,
->  	}
->  
->  	if (new_inode) {
-> -		new_inode->i_ctime = current_time(new_inode);
-> +		inode_set_ctime_current(new_inode);
->  		inode_dec_link_count(new_inode);
->  		udf_add_fid_counter(old_dir->i_sb, S_ISDIR(new_inode->i_mode),
->  				    -1);
->  	}
-> -	old_dir->i_ctime = old_dir->i_mtime = current_time(old_dir);
-> -	new_dir->i_ctime = new_dir->i_mtime = current_time(new_dir);
-> +	old_dir->i_mtime = inode_set_ctime_current(old_dir);
-> +	new_dir->i_mtime = inode_set_ctime_current(new_dir);
->  	mark_inode_dirty(old_dir);
->  	mark_inode_dirty(new_dir);
->  
-> -- 
-> 2.41.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Cheers,
+--=20
+Jeff Layton <jlayton@kernel.org>
