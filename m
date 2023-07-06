@@ -2,73 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0691C749A24
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 13:01:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55C3B749A28
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 13:03:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231626AbjGFLBq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 07:01:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51526 "EHLO
+        id S232265AbjGFLDS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 07:03:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229945AbjGFLBp (ORCPT
+        with ESMTP id S229945AbjGFLDR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 07:01:45 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5A349F;
-        Thu,  6 Jul 2023 04:01:43 -0700 (PDT)
+        Thu, 6 Jul 2023 07:03:17 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 548DFDC;
+        Thu,  6 Jul 2023 04:03:15 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id A4AF82053A;
-        Thu,  6 Jul 2023 11:01:42 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 0DE7820540;
+        Thu,  6 Jul 2023 11:03:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1688641302; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1688641394; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=o59loy7P5goXuOwROmMcknoofaYv/jkeBlMR/y1cCV0=;
-        b=FWAiA/LEPTOaoX6hjmjZPnw3al59DSzqJD0InUjwaedy1kV8rmWk+iGWH9y0WGSPRbt/n4
-        ZHS5Zdg3/r9jovIw3Wglax+A9RiBHkAHMAy+o/SR1GlqiF2eYqu7lDy1TJAFMc9WeXrTbW
-        5PbQVeL2Lp0DwbiK7teRG9soy9qzJjs=
+        bh=5Rxs4LWmkhj0b9R1MhEn+qLcVOlphQJ/+uzFKEEqkG4=;
+        b=b7YFT1vHhmkk1HtJEJoGZRndYechby4Bjznmvi6XmEj5VFysrIghfm1dUCJK+1O8spvhbj
+        Dc2DtwUsAtiMJC3Y4OzuHloNw8teSf44AUHC6zeSTmn0p2hwXrDjMt5TnzGboepypNtDdn
+        u2GfsRLA3mMdInay1EjxnJuCIQHZFiw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1688641302;
+        s=susede2_ed25519; t=1688641394;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=o59loy7P5goXuOwROmMcknoofaYv/jkeBlMR/y1cCV0=;
-        b=1LwmpTqITJd4nmGxFJTomL7xzXPMO5OsYJxLHEe2nEWGWj7VSrTPFyDRLHFJoe4DWZZOw5
-        Qjmq8EmoMj22M3CQ==
+        bh=5Rxs4LWmkhj0b9R1MhEn+qLcVOlphQJ/+uzFKEEqkG4=;
+        b=H3DylN8BV70mVVN/53nsytAg8zlC+SAnRRrm96kmzXijljHwz4RD3UDlaPk4/So6JPPkRl
+        5nAhA2Zdbu2HdyBA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 93C0C138EE;
-        Thu,  6 Jul 2023 11:01:42 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EA8DF138EE;
+        Thu,  6 Jul 2023 11:03:13 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id ELQPJBafpmT8CAAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 06 Jul 2023 11:01:42 +0000
+        id v9BCOXGfpmTECQAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 06 Jul 2023 11:03:13 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 1ECC3A0707; Thu,  6 Jul 2023 13:01:42 +0200 (CEST)
-Date:   Thu, 6 Jul 2023 13:01:42 +0200
+        id 78115A0707; Thu,  6 Jul 2023 13:03:13 +0200 (CEST)
+Date:   Thu, 6 Jul 2023 13:03:13 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
+Cc:     Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.com>,
         Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 40/92] exfat: convert to ctime accessor functions
-Message-ID: <20230706110142.lxisom262crklz5u@quack3>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v2 41/92] ext2: convert to ctime accessor functions
+Message-ID: <20230706110313.kxiesbruvzrdsxzo@quack3>
 References: <20230705185755.579053-1-jlayton@kernel.org>
  <20230705190309.579783-1-jlayton@kernel.org>
- <20230705190309.579783-38-jlayton@kernel.org>
+ <20230705190309.579783-39-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230705190309.579783-38-jlayton@kernel.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+In-Reply-To: <20230705190309.579783-39-jlayton@kernel.org>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,7 +75,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 05-07-23 15:01:05, Jeff Layton wrote:
+On Wed 05-07-23 15:01:06, Jeff Layton wrote:
 > In later patches, we're going to change how the inode's ctime field is
 > used. Switch to using accessor functions instead of raw accesses of
 > inode->i_ctime.
@@ -90,167 +89,204 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  fs/exfat/file.c  |  4 ++--
->  fs/exfat/inode.c |  6 +++---
->  fs/exfat/namei.c | 21 +++++++++------------
->  fs/exfat/super.c |  3 +--
->  4 files changed, 15 insertions(+), 19 deletions(-)
+>  fs/ext2/acl.c    |  2 +-
+>  fs/ext2/dir.c    |  6 +++---
+>  fs/ext2/ialloc.c |  2 +-
+>  fs/ext2/inode.c  | 10 +++++-----
+>  fs/ext2/ioctl.c  |  4 ++--
+>  fs/ext2/namei.c  |  8 ++++----
+>  fs/ext2/super.c  |  2 +-
+>  fs/ext2/xattr.c  |  2 +-
+>  8 files changed, 18 insertions(+), 18 deletions(-)
 > 
-> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-> index 3cbd270e0cba..f40ecfeee3a4 100644
-> --- a/fs/exfat/file.c
-> +++ b/fs/exfat/file.c
-> @@ -22,7 +22,7 @@ static int exfat_cont_expand(struct inode *inode, loff_t size)
+> diff --git a/fs/ext2/acl.c b/fs/ext2/acl.c
+> index 82b17d7fc93f..7e54c31589c7 100644
+> --- a/fs/ext2/acl.c
+> +++ b/fs/ext2/acl.c
+> @@ -237,7 +237,7 @@ ext2_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+>  	error = __ext2_set_acl(inode, acl, type);
+>  	if (!error && update_mode) {
+>  		inode->i_mode = mode;
+> -		inode->i_ctime = current_time(inode);
+> +		inode_set_ctime_current(inode);
+>  		mark_inode_dirty(inode);
+>  	}
+>  	return error;
+> diff --git a/fs/ext2/dir.c b/fs/ext2/dir.c
+> index 42db804794bd..b335f17f682f 100644
+> --- a/fs/ext2/dir.c
+> +++ b/fs/ext2/dir.c
+> @@ -468,7 +468,7 @@ int ext2_set_link(struct inode *dir, struct ext2_dir_entry_2 *de,
+>  	ext2_set_de_type(de, inode);
+>  	ext2_commit_chunk(page, pos, len);
+>  	if (update_times)
+> -		dir->i_mtime = dir->i_ctime = current_time(dir);
+> +		dir->i_mtime = inode_set_ctime_current(dir);
+>  	EXT2_I(dir)->i_flags &= ~EXT2_BTREE_FL;
+>  	mark_inode_dirty(dir);
+>  	return ext2_handle_dirsync(dir);
+> @@ -555,7 +555,7 @@ int ext2_add_link (struct dentry *dentry, struct inode *inode)
+>  	de->inode = cpu_to_le32(inode->i_ino);
+>  	ext2_set_de_type (de, inode);
+>  	ext2_commit_chunk(page, pos, rec_len);
+> -	dir->i_mtime = dir->i_ctime = current_time(dir);
+> +	dir->i_mtime = inode_set_ctime_current(dir);
+>  	EXT2_I(dir)->i_flags &= ~EXT2_BTREE_FL;
+>  	mark_inode_dirty(dir);
+>  	err = ext2_handle_dirsync(dir);
+> @@ -606,7 +606,7 @@ int ext2_delete_entry(struct ext2_dir_entry_2 *dir, struct page *page)
+>  		pde->rec_len = ext2_rec_len_to_disk(to - from);
+>  	dir->inode = 0;
+>  	ext2_commit_chunk(page, pos, to - from);
+> -	inode->i_ctime = inode->i_mtime = current_time(inode);
+> +	inode->i_mtime = inode_set_ctime_current(inode);
+>  	EXT2_I(inode)->i_flags &= ~EXT2_BTREE_FL;
+>  	mark_inode_dirty(inode);
+>  	return ext2_handle_dirsync(inode);
+> diff --git a/fs/ext2/ialloc.c b/fs/ext2/ialloc.c
+> index 34cd5dc1da23..c24d0de95a83 100644
+> --- a/fs/ext2/ialloc.c
+> +++ b/fs/ext2/ialloc.c
+> @@ -546,7 +546,7 @@ struct inode *ext2_new_inode(struct inode *dir, umode_t mode,
+>  
+>  	inode->i_ino = ino;
+>  	inode->i_blocks = 0;
+> -	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
+> +	inode->i_mtime = inode->i_atime = inode_set_ctime_current(inode);
+>  	memset(ei->i_data, 0, sizeof(ei->i_data));
+>  	ei->i_flags =
+>  		ext2_mask_flags(mode, EXT2_I(dir)->i_flags & EXT2_FL_INHERITED);
+> diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+> index 75983215c7a1..1259995977d2 100644
+> --- a/fs/ext2/inode.c
+> +++ b/fs/ext2/inode.c
+> @@ -595,7 +595,7 @@ static void ext2_splice_branch(struct inode *inode,
+>  	if (where->bh)
+>  		mark_buffer_dirty_inode(where->bh, inode);
+>  
+> -	inode->i_ctime = current_time(inode);
+> +	inode_set_ctime_current(inode);
+>  	mark_inode_dirty(inode);
+>  }
+>  
+> @@ -1287,7 +1287,7 @@ static int ext2_setsize(struct inode *inode, loff_t newsize)
+>  	__ext2_truncate_blocks(inode, newsize);
+>  	filemap_invalidate_unlock(inode->i_mapping);
+>  
+> -	inode->i_mtime = inode->i_ctime = current_time(inode);
+> +	inode->i_mtime = inode_set_ctime_current(inode);
+>  	if (inode_needs_sync(inode)) {
+>  		sync_mapping_buffers(inode->i_mapping);
+>  		sync_inode_metadata(inode, 1);
+> @@ -1409,9 +1409,9 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
+>  	set_nlink(inode, le16_to_cpu(raw_inode->i_links_count));
+>  	inode->i_size = le32_to_cpu(raw_inode->i_size);
+>  	inode->i_atime.tv_sec = (signed)le32_to_cpu(raw_inode->i_atime);
+> -	inode->i_ctime.tv_sec = (signed)le32_to_cpu(raw_inode->i_ctime);
+> +	inode_set_ctime(inode, (signed)le32_to_cpu(raw_inode->i_ctime), 0);
+>  	inode->i_mtime.tv_sec = (signed)le32_to_cpu(raw_inode->i_mtime);
+> -	inode->i_atime.tv_nsec = inode->i_mtime.tv_nsec = inode->i_ctime.tv_nsec = 0;
+> +	inode->i_atime.tv_nsec = inode->i_mtime.tv_nsec = 0;
+>  	ei->i_dtime = le32_to_cpu(raw_inode->i_dtime);
+>  	/* We now have enough fields to check if the inode was active or not.
+>  	 * This is needed because nfsd might try to access dead inodes
+> @@ -1541,7 +1541,7 @@ static int __ext2_write_inode(struct inode *inode, int do_sync)
+>  	raw_inode->i_links_count = cpu_to_le16(inode->i_nlink);
+>  	raw_inode->i_size = cpu_to_le32(inode->i_size);
+>  	raw_inode->i_atime = cpu_to_le32(inode->i_atime.tv_sec);
+> -	raw_inode->i_ctime = cpu_to_le32(inode->i_ctime.tv_sec);
+> +	raw_inode->i_ctime = cpu_to_le32(inode_get_ctime(inode).tv_sec);
+>  	raw_inode->i_mtime = cpu_to_le32(inode->i_mtime.tv_sec);
+>  
+>  	raw_inode->i_blocks = cpu_to_le32(inode->i_blocks);
+> diff --git a/fs/ext2/ioctl.c b/fs/ext2/ioctl.c
+> index cc87d413eb43..44e04484e570 100644
+> --- a/fs/ext2/ioctl.c
+> +++ b/fs/ext2/ioctl.c
+> @@ -44,7 +44,7 @@ int ext2_fileattr_set(struct mnt_idmap *idmap,
+>  		(fa->flags & EXT2_FL_USER_MODIFIABLE);
+>  
+>  	ext2_set_inode_flags(inode);
+> -	inode->i_ctime = current_time(inode);
+> +	inode_set_ctime_current(inode);
+>  	mark_inode_dirty(inode);
+>  
+>  	return 0;
+> @@ -77,7 +77,7 @@ long ext2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  		}
+>  
+>  		inode_lock(inode);
+> -		inode->i_ctime = current_time(inode);
+> +		inode_set_ctime_current(inode);
+>  		inode->i_generation = generation;
+>  		inode_unlock(inode);
+>  
+> diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
+> index 937dd8f60f96..059517068adc 100644
+> --- a/fs/ext2/namei.c
+> +++ b/fs/ext2/namei.c
+> @@ -211,7 +211,7 @@ static int ext2_link (struct dentry * old_dentry, struct inode * dir,
 >  	if (err)
 >  		return err;
 >  
-> -	inode->i_ctime = inode->i_mtime = current_time(inode);
+> -	inode->i_ctime = current_time(inode);
+> +	inode_set_ctime_current(inode);
+>  	inode_inc_link_count(inode);
+>  	ihold(inode);
+>  
+> @@ -291,7 +291,7 @@ static int ext2_unlink(struct inode *dir, struct dentry *dentry)
+>  	if (err)
+>  		goto out;
+>  
+> -	inode->i_ctime = dir->i_ctime;
+> +	inode_set_ctime_to_ts(inode, inode_get_ctime(dir));
+>  	inode_dec_link_count(inode);
+>  	err = 0;
+>  out:
+> @@ -367,7 +367,7 @@ static int ext2_rename (struct mnt_idmap * idmap,
+>  		ext2_put_page(new_page, new_de);
+>  		if (err)
+>  			goto out_dir;
+> -		new_inode->i_ctime = current_time(new_inode);
+> +		inode_set_ctime_current(new_inode);
+>  		if (dir_de)
+>  			drop_nlink(new_inode);
+>  		inode_dec_link_count(new_inode);
+> @@ -383,7 +383,7 @@ static int ext2_rename (struct mnt_idmap * idmap,
+>  	 * Like most other Unix systems, set the ctime for inodes on a
+>   	 * rename.
+>  	 */
+> -	old_inode->i_ctime = current_time(old_inode);
+> +	inode_set_ctime_current(old_inode);
+>  	mark_inode_dirty(old_inode);
+>  
+>  	err = ext2_delete_entry(old_de, old_page);
+> diff --git a/fs/ext2/super.c b/fs/ext2/super.c
+> index 2959afc7541c..aaf3e3e88cb2 100644
+> --- a/fs/ext2/super.c
+> +++ b/fs/ext2/super.c
+> @@ -1572,7 +1572,7 @@ static ssize_t ext2_quota_write(struct super_block *sb, int type,
+>  	if (inode->i_size < off+len-towrite)
+>  		i_size_write(inode, off+len-towrite);
+>  	inode_inc_iversion(inode);
+> -	inode->i_mtime = inode->i_ctime = current_time(inode);
 > +	inode->i_mtime = inode_set_ctime_current(inode);
 >  	mark_inode_dirty(inode);
->  
->  	if (!IS_SYNC(inode))
-> @@ -290,7 +290,7 @@ int exfat_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
->  	}
->  
->  	if (attr->ia_valid & ATTR_SIZE)
-> -		inode->i_mtime = inode->i_ctime = current_time(inode);
-> +		inode->i_mtime = inode_set_ctime_current(inode);
->  
->  	setattr_copy(&nop_mnt_idmap, inode, attr);
->  	exfat_truncate_atime(&inode->i_atime);
-> diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
-> index 481dd338f2b8..13329baeafbc 100644
-> --- a/fs/exfat/inode.c
-> +++ b/fs/exfat/inode.c
-> @@ -355,7 +355,7 @@ static void exfat_write_failed(struct address_space *mapping, loff_t to)
->  
->  	if (to > i_size_read(inode)) {
->  		truncate_pagecache(inode, i_size_read(inode));
-> -		inode->i_mtime = inode->i_ctime = current_time(inode);
-> +		inode->i_mtime = inode_set_ctime_current(inode);
->  		exfat_truncate(inode);
->  	}
+>  	return len - towrite;
 >  }
-> @@ -398,7 +398,7 @@ static int exfat_write_end(struct file *file, struct address_space *mapping,
->  		exfat_write_failed(mapping, pos+len);
+> diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
+> index 8906ba479aaf..1c9187188d68 100644
+> --- a/fs/ext2/xattr.c
+> +++ b/fs/ext2/xattr.c
+> @@ -773,7 +773,7 @@ ext2_xattr_set2(struct inode *inode, struct buffer_head *old_bh,
 >  
->  	if (!(err < 0) && !(ei->attr & ATTR_ARCHIVE)) {
-> -		inode->i_mtime = inode->i_ctime = current_time(inode);
-> +		inode->i_mtime = inode_set_ctime_current(inode);
->  		ei->attr |= ATTR_ARCHIVE;
->  		mark_inode_dirty(inode);
->  	}
-> @@ -577,7 +577,7 @@ static int exfat_fill_inode(struct inode *inode, struct exfat_dir_entry *info)
->  
->  	inode->i_blocks = round_up(i_size_read(inode), sbi->cluster_size) >> 9;
->  	inode->i_mtime = info->mtime;
-> -	inode->i_ctime = info->mtime;
-> +	inode_set_ctime_to_ts(inode, info->mtime);
->  	ei->i_crtime = info->crtime;
->  	inode->i_atime = info->atime;
->  
-> diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-> index e91022ff80ef..c007de6ac1c7 100644
-> --- a/fs/exfat/namei.c
-> +++ b/fs/exfat/namei.c
-> @@ -569,7 +569,7 @@ static int exfat_create(struct mnt_idmap *idmap, struct inode *dir,
->  		goto unlock;
->  
->  	inode_inc_iversion(dir);
-> -	dir->i_ctime = dir->i_mtime = current_time(dir);
-> +	dir->i_mtime = inode_set_ctime_current(dir);
->  	if (IS_DIRSYNC(dir))
->  		exfat_sync_inode(dir);
->  	else
-> @@ -582,8 +582,7 @@ static int exfat_create(struct mnt_idmap *idmap, struct inode *dir,
->  		goto unlock;
->  
->  	inode_inc_iversion(inode);
-> -	inode->i_mtime = inode->i_atime = inode->i_ctime =
-> -		EXFAT_I(inode)->i_crtime = current_time(inode);
-> +	inode->i_mtime = inode->i_atime = EXFAT_I(inode)->i_crtime = inode_set_ctime_current(inode);
->  	exfat_truncate_atime(&inode->i_atime);
->  	/* timestamp is already written, so mark_inode_dirty() is unneeded. */
->  
-> @@ -817,7 +816,7 @@ static int exfat_unlink(struct inode *dir, struct dentry *dentry)
->  	ei->dir.dir = DIR_DELETED;
->  
->  	inode_inc_iversion(dir);
-> -	dir->i_mtime = dir->i_atime = dir->i_ctime = current_time(dir);
-> +	dir->i_mtime = dir->i_atime = inode_set_ctime_current(dir);
->  	exfat_truncate_atime(&dir->i_atime);
->  	if (IS_DIRSYNC(dir))
->  		exfat_sync_inode(dir);
-> @@ -825,7 +824,7 @@ static int exfat_unlink(struct inode *dir, struct dentry *dentry)
->  		mark_inode_dirty(dir);
->  
->  	clear_nlink(inode);
-> -	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-> +	inode->i_mtime = inode->i_atime = inode_set_ctime_current(inode);
->  	exfat_truncate_atime(&inode->i_atime);
->  	exfat_unhash_inode(inode);
->  	exfat_d_version_set(dentry, inode_query_iversion(dir));
-> @@ -852,7 +851,7 @@ static int exfat_mkdir(struct mnt_idmap *idmap, struct inode *dir,
->  		goto unlock;
->  
->  	inode_inc_iversion(dir);
-> -	dir->i_ctime = dir->i_mtime = current_time(dir);
-> +	dir->i_mtime = inode_set_ctime_current(dir);
->  	if (IS_DIRSYNC(dir))
->  		exfat_sync_inode(dir);
->  	else
-> @@ -866,8 +865,7 @@ static int exfat_mkdir(struct mnt_idmap *idmap, struct inode *dir,
->  		goto unlock;
->  
->  	inode_inc_iversion(inode);
-> -	inode->i_mtime = inode->i_atime = inode->i_ctime =
-> -		EXFAT_I(inode)->i_crtime = current_time(inode);
-> +	inode->i_mtime = inode->i_atime = EXFAT_I(inode)->i_crtime = inode_set_ctime_current(inode);
->  	exfat_truncate_atime(&inode->i_atime);
->  	/* timestamp is already written, so mark_inode_dirty() is unneeded. */
->  
-> @@ -979,7 +977,7 @@ static int exfat_rmdir(struct inode *dir, struct dentry *dentry)
->  	ei->dir.dir = DIR_DELETED;
->  
->  	inode_inc_iversion(dir);
-> -	dir->i_mtime = dir->i_atime = dir->i_ctime = current_time(dir);
-> +	dir->i_mtime = dir->i_atime = inode_set_ctime_current(dir);
->  	exfat_truncate_atime(&dir->i_atime);
->  	if (IS_DIRSYNC(dir))
->  		exfat_sync_inode(dir);
-> @@ -988,7 +986,7 @@ static int exfat_rmdir(struct inode *dir, struct dentry *dentry)
->  	drop_nlink(dir);
->  
->  	clear_nlink(inode);
-> -	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-> +	inode->i_mtime = inode->i_atime = inode_set_ctime_current(inode);
->  	exfat_truncate_atime(&inode->i_atime);
->  	exfat_unhash_inode(inode);
->  	exfat_d_version_set(dentry, inode_query_iversion(dir));
-> @@ -1353,8 +1351,7 @@ static int exfat_rename(struct mnt_idmap *idmap,
->  			exfat_warn(sb, "abnormal access to an inode dropped");
->  			WARN_ON(new_inode->i_nlink == 0);
->  		}
-> -		new_inode->i_ctime = EXFAT_I(new_inode)->i_crtime =
-> -			current_time(new_inode);
-> +		EXFAT_I(new_inode)->i_crtime = inode_set_ctime_current(new_inode);
->  	}
->  
->  unlock:
-> diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-> index 8c32460e031e..8e0ca4b0fc8f 100644
-> --- a/fs/exfat/super.c
-> +++ b/fs/exfat/super.c
-> @@ -379,8 +379,7 @@ static int exfat_read_root(struct inode *inode)
->  	ei->i_size_ondisk = i_size_read(inode);
->  
->  	exfat_save_attr(inode, ATTR_SUBDIR);
-> -	inode->i_mtime = inode->i_atime = inode->i_ctime = ei->i_crtime =
-> -		current_time(inode);
-> +	inode->i_mtime = inode->i_atime = ei->i_crtime = inode_set_ctime_current(inode);
->  	exfat_truncate_atime(&inode->i_atime);
->  	return 0;
->  }
+>  	/* Update the inode. */
+>  	EXT2_I(inode)->i_file_acl = new_bh ? new_bh->b_blocknr : 0;
+> -	inode->i_ctime = current_time(inode);
+> +	inode_set_ctime_current(inode);
+>  	if (IS_SYNC(inode)) {
+>  		error = sync_inode_metadata(inode, 1);
+>  		/* In case sync failed due to ENOSPC the inode was actually
 > -- 
 > 2.41.0
 > 
