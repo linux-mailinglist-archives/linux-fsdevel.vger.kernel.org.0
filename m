@@ -2,57 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DEEE774A0C4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 17:21:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ED7D74A0C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 17:21:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232316AbjGFPVL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 11:21:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58826 "EHLO
+        id S232646AbjGFPVb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 11:21:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231315AbjGFPVK (ORCPT
+        with ESMTP id S231315AbjGFPVa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 11:21:10 -0400
-Received: from out-37.mta0.migadu.com (out-37.mta0.migadu.com [91.218.175.37])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86E72173F
-        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jul 2023 08:21:07 -0700 (PDT)
-Date:   Thu, 6 Jul 2023 11:20:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1688656865;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=yhAoOQcwd+d4OLL39cP41fnoMThXfUILYjJ33i61aFU=;
-        b=QQmoeKEPL9xuySm8hbfJYwu3y419fER7BZmSfzAqdxmIB0txdzdDY15LCFe/FDNd1lSIVE
-        Q5tHXN+llY0W9YMu9YVO4zj6K4ak8CeYIs2MhtqqnuHv3ExJYR/JUQR42h8qJTnz1LvTVO
-        9znAKCiJI+R2fKeBsRk5IsX2isSOjjM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [GIT PULL] bcachefs
-Message-ID: <20230706152059.smhy7jdbim4qlr6f@moria.home.lan>
-References: <20230628221342.4j3gr3zscnsu366p@moria.home.lan>
- <d697ec27-8008-2eb6-0950-f612a602dcf5@kernel.dk>
- <20230628225514.n3xtlgmjkgapgnrd@moria.home.lan>
- <1e2134f1-f48b-1459-a38e-eac9597cd64a@kernel.dk>
- <20230628235018.ttvtzpfe42fri4yq@moria.home.lan>
- <ZJzXs6C8G2SL10vq@dread.disaster.area>
- <d6546c44-04db-cbca-1523-a914670a607f@kernel.dk>
- <20230629-fragen-dennoch-fb5265aaba23@brauner>
- <20230629153108.wyn32bvaxmztnakl@moria.home.lan>
- <20230630-aufwiegen-ausrollen-e240052c0aaa@brauner>
+        Thu, 6 Jul 2023 11:21:30 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94B891730;
+        Thu,  6 Jul 2023 08:21:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=zla1ImuYlSI5ZdeorNKDcqvlZHdC0vro7cklgNetIq4=; b=md2yoQbsnnELLcfX6YH8bFGdgD
+        sVm3mfyQyYUBNSKlDnq01v4epjnSUGYjdn0UcoSP/y4qznjsZ5DVvjb7Ednq5ebTwXF4vGlcRcNND
+        LHM0q+covQuGM7MQUrnz/4r6PTvLDf17t9LKMo0Y6QNTtcD9gSa8AKjWLG+0EX5OMku5iH7jLNtfR
+        TMZay13oaFnWOSnyEOQAeHrFwWMJkHxTimLAEwwF5Sc0FIlDLrpGOFofVyIet7FH6QyCxvzOjElFP
+        o0bo0vZKvhnQjryDZlVlhCzo9+Q5jmy5qcpOp9MZ4LG7iGYUVoJF3xPRmKLbhkyjS/ZyZqGZy/Tqe
+        zW+T7FUA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qHQn6-001zS5-18;
+        Thu, 06 Jul 2023 15:21:08 +0000
+Date:   Thu, 6 Jul 2023 08:21:08 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Christian Brauner <christian@brauner.io>
+Subject: Re: [RFC PATCH 01/11] iov_iter: Fix comment refs to
+ iov_iter_get_pages/pages_alloc()
+Message-ID: <ZKbb5Hawv6XYTAzJ@infradead.org>
+References: <20230630152524.661208-1-dhowells@redhat.com>
+ <20230630152524.661208-2-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230630-aufwiegen-ausrollen-e240052c0aaa@brauner>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+In-Reply-To: <20230630152524.661208-2-dhowells@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -60,36 +63,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 30, 2023 at 11:40:32AM +0200, Christian Brauner wrote:
-> We're all not very impressed with that's going on here. I think everyone
-> has made that pretty clear.
-> 
-> It's worrying that this reply is so quickly and happily turning to
-> "I'm a real engineer" and "you're confused" tropes and then isn't even
-> making a clear point. Going forward this should stop otherwise I'll
-> cease replying.
->
-> Nothing I said was confused. The discussion was initially trying to fix
-> this in umount and we're not going to fix async aio behavior in umount.
+On Fri, Jun 30, 2023 at 04:25:14PM +0100, David Howells wrote:
+>  	/*
+>  	 * FOLL_LONGTERM indicates that the page will be held for an indefinite
+>  	 * time period _often_ under userspace control.  This is in contrast to
+> -	 * iov_iter_get_pages(), whose usages are transient.
+> +	 * iov_iter_get_pages2(), whose usages are transient.
+>  	 */
 
-Christain, why on earth would we be trying to fix this in umount? All
-you posted was a stack trace and something handwavy about how fixing it
-in umount would be hard, and yes it would be! That's crazy!
-
-This is a basic lifetime issue, where we just need to make sure that
-refcounts are getting released at the appropriate place and not being
-delayed for arbitrarily long (i.e. the global delayed fput list, which
-honestly we should probably try to get rid of).
-
-Furthermore, when issues with fput have caused umount to fail in the
-past it's always been considered a bug - see the addition of
-__fput_sync(), if you do some searching you should be able to find
-multiple patches where this has been dealt with.
-
-> My earlier mail clearly said that io_uring can be changed by Jens pretty
-> quickly to not cause such test failures.
-
-Jens posted a fix that didn't actually fix anything, and after that it
-seemed neither of you were interested in actually fixing this. So based
-on that, maybe we need to consider switching fstests back to AIO just so
-we can get work done...
+I don't think this should refer to iov_iter_get_pages* at all.  The
+flag should document that actual get/pin_user interfaces and not refer
+to a (deprecated) interface built on top of it.
