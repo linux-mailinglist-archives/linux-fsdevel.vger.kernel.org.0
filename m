@@ -2,70 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BC77B749993
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 12:40:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98C6F74999A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 12:41:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231532AbjGFKk3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 06:40:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38280 "EHLO
+        id S229772AbjGFKlw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 06:41:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbjGFKk2 (ORCPT
+        with ESMTP id S229509AbjGFKlu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 06:40:28 -0400
+        Thu, 6 Jul 2023 06:41:50 -0400
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C8DF19B2;
-        Thu,  6 Jul 2023 03:40:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CACF3171A;
+        Thu,  6 Jul 2023 03:41:49 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id ED57C2019E;
-        Thu,  6 Jul 2023 10:40:25 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 809E92039C;
+        Thu,  6 Jul 2023 10:41:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1688640025; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1688640108; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=AtPqbv/I5XTvRHzRa1le0miyUrAIJk4DE9riJNaL0W4=;
-        b=kYlD/4Y11bqPwRxjACIaXhrUB5JS5c0IcjFm+K1U2d7mhFQ4NJX58DF+IjRMGdkMwXlfnt
-        kUWpbAZxfhsgQHbYqymse72ZrpUkQijkl8l6oOajA8mixabYyhpNIT5psP6n7kyWXboI/h
-        I6QcHlTlrHZk5Ds1ia0uxdnyE1rh9ro=
+        bh=WFDOykfedKgFhlqR22HMMVD2pfNBZ1bhgYlbvr0wgR4=;
+        b=OLQ+joYitJw2RRY4o5s236BotMqjCy2oj0QQ9Fv7GXLBmDXy12926yP+WQi2wX+VtdbwuK
+        f+/jBjzhx/W9l6HqhDHMukZHW57kPXeB7nUimdltyXo7QvafTY5TAL5Y6ld01GON42TkZv
+        hdKTqITJjgKN3l8nzwIQH33PNGU+mBk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1688640025;
+        s=susede2_ed25519; t=1688640108;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=AtPqbv/I5XTvRHzRa1le0miyUrAIJk4DE9riJNaL0W4=;
-        b=FPZWntPHr5F/tAZlUZEaLRKY0UnmVO17+4grDsFTYxmL+8MptQVtk4TuevTPery7QdcufA
-        u86dJcECBFjUuaDw==
+        bh=WFDOykfedKgFhlqR22HMMVD2pfNBZ1bhgYlbvr0wgR4=;
+        b=TJWH/UFh/gg7KbolCtBkuy9nF2QwoTkXbwZdKm09R9vnFMB5OT2XJIRLNmF6dYhmGrLB2z
+        2TO3XhehGVDLwQDA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DF1AC138FC;
-        Thu,  6 Jul 2023 10:40:25 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7448C138EE;
+        Thu,  6 Jul 2023 10:41:48 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id CtJ1NhmapmTZewAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 06 Jul 2023 10:40:25 +0000
+        id v5V/HGyapmSQfAAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 06 Jul 2023 10:41:48 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 7DE80A0707; Thu,  6 Jul 2023 12:40:25 +0200 (CEST)
-Date:   Thu, 6 Jul 2023 12:40:25 +0200
+        id 049ABA0707; Thu,  6 Jul 2023 12:41:48 +0200 (CEST)
+Date:   Thu, 6 Jul 2023 12:41:47 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     Christian Brauner <brauner@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Brad Warrum <bwarrum@linux.ibm.com>,
+        Ritu Agarwal <rituagar@linux.ibm.com>,
         Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev
-Subject: Re: [PATCH v2 13/92] ntfs3: convert to simple_rename_timestamp
-Message-ID: <20230706104025.gm66visyl3cer7vs@quack3>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 19/92] ibm: convert to ctime accessor functions
+Message-ID: <20230706104147.xtaqzmdvcxz7bg43@quack3>
 References: <20230705185755.579053-1-jlayton@kernel.org>
  <20230705190309.579783-1-jlayton@kernel.org>
- <20230705190309.579783-11-jlayton@kernel.org>
+ <20230705190309.579783-17-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230705190309.579783-11-jlayton@kernel.org>
+In-Reply-To: <20230705190309.579783-17-jlayton@kernel.org>
 X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -76,43 +78,51 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 05-07-23 15:00:38, Jeff Layton wrote:
-> A rename potentially involves updating 4 different inode timestamps.
-> Convert to the new simple_rename_timestamp helper function.
+On Wed 05-07-23 15:00:44, Jeff Layton wrote:
+> In later patches, we're going to change how the inode's ctime field is
+> used. Switch to using accessor functions instead of raw accesses of
+> inode->i_ctime.
 > 
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
 Looks good. Feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
-								Honza
+									Honza
 
 > ---
->  fs/ntfs3/namei.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
+>  drivers/misc/ibmasm/ibmasmfs.c | 2 +-
+>  drivers/misc/ibmvmc.c          | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
-> index 70f8c859e0ad..bfd986699f9e 100644
-> --- a/fs/ntfs3/namei.c
-> +++ b/fs/ntfs3/namei.c
-> @@ -324,14 +324,11 @@ static int ntfs_rename(struct mnt_idmap *idmap, struct inode *dir,
->  		/* Restore after failed rename failed too. */
->  		_ntfs_bad_inode(inode);
->  	} else if (!err) {
-> -		inode->i_ctime = dir->i_ctime = dir->i_mtime =
-> -			current_time(dir);
-> +		simple_rename_timestamp(dir, dentry, new_dir, new_dentry);
->  		mark_inode_dirty(inode);
->  		mark_inode_dirty(dir);
-> -		if (dir != new_dir) {
-> -			new_dir->i_mtime = new_dir->i_ctime = dir->i_ctime;
-> +		if (dir != new_dir)
->  			mark_inode_dirty(new_dir);
-> -		}
+> diff --git a/drivers/misc/ibmasm/ibmasmfs.c b/drivers/misc/ibmasm/ibmasmfs.c
+> index 35fec1bf1b3d..5867af9f592c 100644
+> --- a/drivers/misc/ibmasm/ibmasmfs.c
+> +++ b/drivers/misc/ibmasm/ibmasmfs.c
+> @@ -139,7 +139,7 @@ static struct inode *ibmasmfs_make_inode(struct super_block *sb, int mode)
+>  	if (ret) {
+>  		ret->i_ino = get_next_ino();
+>  		ret->i_mode = mode;
+> -		ret->i_atime = ret->i_mtime = ret->i_ctime = current_time(ret);
+> +		ret->i_atime = ret->i_mtime = inode_set_ctime_current(ret);
+>  	}
+>  	return ret;
+>  }
+> diff --git a/drivers/misc/ibmvmc.c b/drivers/misc/ibmvmc.c
+> index d7c7f0305257..2101eb12bcba 100644
+> --- a/drivers/misc/ibmvmc.c
+> +++ b/drivers/misc/ibmvmc.c
+> @@ -1124,7 +1124,7 @@ static ssize_t ibmvmc_write(struct file *file, const char *buffer,
+>  		goto out;
 >  
->  		if (IS_DIRSYNC(dir))
->  			ntfs_sync_inode(dir);
+>  	inode = file_inode(file);
+> -	inode->i_mtime = inode->i_ctime = current_time(inode);
+> +	inode->i_mtime = inode_set_ctime_current(inode);
+>  	mark_inode_dirty(inode);
+>  
+>  	dev_dbg(adapter->dev, "write: file = 0x%lx, count = 0x%lx\n",
 > -- 
 > 2.41.0
 > 
