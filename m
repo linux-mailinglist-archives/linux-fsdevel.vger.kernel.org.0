@@ -2,231 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 56FB5749636
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 09:20:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC179749650
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 09:24:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230321AbjGFHUS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 03:20:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42500 "EHLO
+        id S233792AbjGFHW5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 03:22:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233333AbjGFHUO (ORCPT
+        with ESMTP id S233518AbjGFHWw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 03:20:14 -0400
-Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CBBD1BD8;
-        Thu,  6 Jul 2023 00:20:11 -0700 (PDT)
-Received: by mail-vs1-xe2c.google.com with SMTP id ada2fe7eead31-44096f01658so125525137.0;
-        Thu, 06 Jul 2023 00:20:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688628010; x=1691220010;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/lmKgGO3f9SraLQnfsiu8hluMt7RG2bWCDPF7r5VmIo=;
-        b=NuILwJ3t87PFreXvL8nm+2rrx1kxQffj12I8iFKpSI38oqfPX6H2aZpQqjKXrcM7Jo
-         DAdCXs18BCH9ETVQFA/A/BDy1mhtw0rNwkUf5qENWEzHP5ScnXx1hP6ReexR8mCc/fas
-         eoUytP+LnYdlfPCYKbZC8r7MuZoVyXcjNtqhDUhsWr5GBnkltAv7jgrMs7ZZ39KBMa3p
-         phipTKvE+Al1Pe5K8KE9WFxQEpwVCb8M2sj11gIjUpI57o0uVCU/mXLUei4Dq5PeFIQa
-         Dakf67vS8m2ZLNl08VQChbXjlsjq6gAWcPxyEhImCChJwTAs81p+IpRlAuIaPFAgjfZB
-         wGlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688628010; x=1691220010;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/lmKgGO3f9SraLQnfsiu8hluMt7RG2bWCDPF7r5VmIo=;
-        b=O1IN4k7eXjdv2FOTwWQrwTagHQioIzG/gc2W139XB9F3gz05fAofUu6pbH/DpIgROn
-         jwKtX0PWp3voax0a3KuEElQrxZmvi+5VRpuvKe6pe+RgiI2cIvqqkJT4q5L6XuSZEa4X
-         F35LyaDrxP7mxR0CbMhQCbNVK1Fl6DdGkcgAswJFmNjKWf8WL6PaoMFHjHw+BnMzbAiL
-         lCzfLJOE8JyKAmVe0Ue0IWpdpvLuZJBo3rju274Td0RSuby2Dce/IIpGlg0IxUZirvxx
-         a0xHgsu0u8ArkYj8VAOIyfZoekj8QJ0BCOCJHwMAJf/O/Dbz63HF8KtWSo5eFkq91BIn
-         f9Dg==
-X-Gm-Message-State: ABy/qLZ4VNHnsuTmfyBzgwwc3mAjPsLTJcD6GaKvKjQl9aUW0g/MfRYw
-        Q0xwVuWm5iT18RJZEql7K8WlVBGgasUTTJNiEwE=
-X-Google-Smtp-Source: APBJJlFTQYvwXRV0Pgo4FXXI5krTk6ijbZPTmgLfiTzzOHOBbPdu4IixgK9ppBZdbsV3WLT6YzNBBd/ObN5JQ6zgE3A=
-X-Received: by 2002:a67:cf89:0:b0:437:e5ce:7e8f with SMTP id
- g9-20020a67cf89000000b00437e5ce7e8fmr602951vsm.4.1688628010307; Thu, 06 Jul
- 2023 00:20:10 -0700 (PDT)
+        Thu, 6 Jul 2023 03:22:52 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 282451BDB;
+        Thu,  6 Jul 2023 00:22:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4EE6A618A2;
+        Thu,  6 Jul 2023 07:22:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E585FC433C8;
+        Thu,  6 Jul 2023 07:22:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688628145;
+        bh=mTqcntv6zliRak8f606XrB+nqmgw/ljWWCMvyQDtXvY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MAmbIVETUw0vOf692rxyFJfdGnrGpcWcxdSoW0r9DoulOPBGqrh62lAt6ICkg5mkG
+         YJ0+2FzdZTOv0qewcd64QRKEaoCVCmzy0P15ObXBGToG2a8Lt1Eg3SO7GCaVtr4g1r
+         WiEf11Zqz/nB5kgOx+G8FHCSDpN8MDeRhsbgxjksisbxDMYGCQU5Srm14lbeuVKLs/
+         g2fv+8yYApJnVcBZK8AIG80F3SmOa7kz7AsNBGBxllGjfGTfFczSQWXPDI/y78+APW
+         njQCKej9nbugXPCr/3tDJufqbHogE6sdalPYxyvK0xNhwMtvHCtmqL9Uf60/tbH/zO
+         DKaXAwOtel/2g==
+Date:   Thu, 6 Jul 2023 09:22:20 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Hou Tao <houtao@huaweicloud.com>,
+        Alexey Gladkov <legion@kernel.org>, bpf <bpf@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v1] fs: Add kfuncs to handle idmapped mounts
+Message-ID: <20230706-raffgierig-geeilt-7cea6d731194@brauner>
+References: <c35fbb4cb0a3a9b4653f9a032698469d94ca6e9c.1688123230.git.legion@kernel.org>
+ <babdf7a8-9663-6d71-821a-34da2aff80e2@huaweicloud.com>
+ <20230704-anrollen-beenden-9187c7b1b570@brauner>
+ <CAADnVQLAhDepRpbbi_EU6Ca3wnuBtSuAPO9mE6pGoxj8i9=caQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20230425132223.2608226-1-amir73il@gmail.com> <20230425132223.2608226-4-amir73il@gmail.com>
-In-Reply-To: <20230425132223.2608226-4-amir73il@gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 6 Jul 2023 10:19:59 +0300
-Message-ID: <CAOQ4uxgX0Tx07q2gAzsB2kPsUm+MjsYw9BG4W7-h8ODNnqH_1A@mail.gmail.com>
-Subject: Re: [RFC][PATCH 3/3] ovl: use persistent s_uuid with index=on
-To:     Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-        lindbergh.monkeyblade.net
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQLAhDepRpbbi_EU6Ca3wnuBtSuAPO9mE6pGoxj8i9=caQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 25, 2023 at 4:22=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> With index=3Don, overlayfs instances are non-migratable, meaning that
-> the layers cannot be copied without breaking the index.
->
-> So when indexdir exists, store a persistent uuid in xattr on the
-> indexdir to give the overlayfs instance a persistent identifier.
->
-> This also makes f_fsid persistent and more reliable for reporting
-> fid info in fanotify events.
->
-> With mount option uuid=3Dnogen, a persistent uuid is not be initialized
-> on indexdir, but if a persistent uuid already exists, it will be used.
->
+On Wed, Jul 05, 2023 at 06:10:32PM -0700, Alexei Starovoitov wrote:
+> On Tue, Jul 4, 2023 at 6:01 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > > > +/**
+> > > > + * bpf_is_idmapped_mnt - check whether a mount is idmapped
+> > > > + * @mnt: the mount to check
+> > > > + *
+> > > > + * Return: true if mount is mapped, false if not.
+> > > > + */
+> > > > +__bpf_kfunc bool bpf_is_idmapped_mnt(struct vfsmount *mnt)
+> > > > +{
+> > > > +   return is_idmapped_mnt(mnt);
+> > > > +}
+> ...
+> >
+> > I don't want any of these helpers as kfuncs as they are peeking deeply
+> > into implementation details that we reserve to change. Specifically in
+> > the light of:
+> >
+> >     3. kfunc lifecycle expectations part b):
+> >
+> >     "Unlike with regular kernel symbols, this is expected behavior for BPF
+> >      symbols, and out-of-tree BPF programs that use kfuncs should be considered
+> >      relevant to discussions and decisions around modifying and removing those
+> >      kfuncs. The BPF community will take an active role in participating in
+> >      upstream discussions when necessary to ensure that the perspectives of such
+> >      users are taken into account."
+> >
+> > That's too much stability for my taste for these helpers. The helpers
+> > here exposed have been modified multiple times and once we wean off
+> > idmapped mounts from user namespaces completely they will change again.
+> > So I'm fine if they're traceable but not as kfuncs with any - even
+> > minimal - stability guarantees.
+> 
+> Christian,
+> That quote is taken out of context.
+> In the first place the Documentation/bpf/kfuncs.rst says:
+> "
+> kfuncs provide a kernel <-> kernel API, and thus are not bound by any of the
+> strict stability restrictions associated with kernel <-> user UAPIs. This means
+> they can be thought of as similar to EXPORT_SYMBOL_GPL, and can therefore be
+> modified or removed by a maintainer of the subsystem they're defined in when
+> it's deemed necessary.
+> "
+> 
+> bpf_get_file_vfs_ids is vfs related, so you guys decide when and how
+> to add/remove them. It's ok that you don't want this particular one
+> for whatever reason, but that reason shouldn't be 'stability guarantees'.
+> There are really none. The kernel kfuncs can change at any time.
+> There are plenty of examples in git log where we added and then
+> tweaked/removed kfuncs.
+> 
+> The doc also says:
+> "
+> As described above, while sometimes a maintainer may find that a kfunc must be
+> changed or removed immediately to accommodate some changes in their subsystem,
+> "
+> and git log of such cases proves the point.
+> 
+> The quote about out-of-tree bpf progs is necessary today, since
+> very few bpf progs are in-tree, so when maintainers of a subsystem
+> want to remove kfunc the program authors need something in the doc
+> to point to and explain why and how they use the kfunc otherwise
+> maintainers will just say 'go away. you're out-of-tree'.
+> The users need their voice to be heard. Even if the result is the same.
+> In other words the part you quoted is needed to make kfuncs usable.
+> Otherwise 'kfunc is 100% unstable and maintainers can rename it
+> every release just to make life of bpf prog writers harder'
+> becomes a real possibility in the minds of bpf users.
+> The kfunc doc makes it 100% clear that there are no stability guarantees.
+> So please don't say 'minimal stability'.
+> 
+> In your other reply:
+> 
+> > we can look at the in-kernel users of is_idmapped_mnt(),
+> > convert them and then kill this thing off if we wanted to.
+> 
+> you can absolutely do that even if is_idmapped_mnt() is exposed as a kfunc.
+> You'll just delete it with zero notice if you like.
+> Just like what you would do with a normal export_symbol.
+> The doc is pretty clear about it and there are examples where we did
+> such things.
 
-This behavior (along with the grammatical mistakes) was changed in
-https://github.com/amir73il/linux/commits/ovl_encode_fid
+I think I said it somewhere else: I'm not opposing your position on
+kfruncs in a sense I understand that's kinda the model that you have to
+push for. But you have to admit that this out-of-tree portion is very
+hard to swallow if you've been hit by out of tree modules and their
+complaints about removed EXPORT_SYMBOL*()s.
 
-uuid=3Doff or uuid=3Dnull both set ovl fsid to null regardless of persisten=
-t
-uuid xattr.
-
-Whether we need this backward compact option or not is to be determined.
-
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  fs/overlayfs/overlayfs.h |  3 +++
->  fs/overlayfs/super.c     |  7 +++++++
->  fs/overlayfs/util.c      | 41 ++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 51 insertions(+)
->
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index dcdb02d0ddf8..9927472a3aaa 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -36,6 +36,7 @@ enum ovl_xattr {
->         OVL_XATTR_IMPURE,
->         OVL_XATTR_NLINK,
->         OVL_XATTR_UPPER,
-> +       OVL_XATTR_UUID,
->         OVL_XATTR_METACOPY,
->         OVL_XATTR_PROTATTR,
->  };
-> @@ -431,6 +432,8 @@ bool ovl_already_copied_up(struct dentry *dentry, int=
- flags);
->  bool ovl_path_check_dir_xattr(struct ovl_fs *ofs, const struct path *pat=
-h,
->                               enum ovl_xattr ox);
->  bool ovl_path_check_origin_xattr(struct ovl_fs *ofs, const struct path *=
-path);
-> +bool ovl_init_uuid_xattr(struct super_block *sb, struct ovl_fs *ofs,
-> +                        struct dentry *upperdentry, bool set);
->
->  static inline bool ovl_check_origin_xattr(struct ovl_fs *ofs,
->                                           struct dentry *upperdentry)
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index ad2250f98b38..8364620e8722 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -1535,6 +1535,9 @@ static int ovl_get_indexdir(struct super_block *sb,=
- struct ovl_fs *ofs,
->                 if (err)
->                         pr_err("failed to verify index dir 'upper' xattr\=
-n");
->
-> +               /* Best effort get or set persistent uuid */
-> +               ovl_init_uuid_xattr(sb, ofs, ofs->indexdir, true);
-> +
->                 /* Cleanup bad/stale/orphan index entries */
->                 if (!err)
->                         err =3D ovl_indexdir_cleanup(ofs);
-> @@ -2052,6 +2055,10 @@ static int ovl_fill_super(struct super_block *sb, =
-void *data, int silent)
->                         ovl_uuid_str[ofs->config.uuid]);
->         }
->
-> +       /*
-> +        * This uuid may be overridden by a persistent uuid stored in xat=
-tr on
-> +        * index dir and it may be persisted in xattr on first index=3Don=
- mount.
-> +        */
->         if (ovl_want_uuid_gen(ofs))
->                 uuid_gen(&sb->s_uuid);
->
-> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> index 923d66d131c1..8902db4b2975 100644
-> --- a/fs/overlayfs/util.c
-> +++ b/fs/overlayfs/util.c
-> @@ -589,6 +589,45 @@ bool ovl_path_check_origin_xattr(struct ovl_fs *ofs,=
- const struct path *path)
->         return false;
->  }
->
-> +/*
-> + * Load persistent uuid from xattr into s_uuid if found, possibly overri=
-ding
-> + * the random generated value in s_uuid.
-> + * Otherwise, if @set is true and s_uuid contains a valid value, store t=
-his
-> + * value in xattr.
-> + */
-> +bool ovl_init_uuid_xattr(struct super_block *sb, struct ovl_fs *ofs,
-> +                        struct dentry *upperdentry, bool set)
-> +{
-> +       struct path path =3D {
-> +               .dentry =3D upperdentry,
-> +               .mnt =3D ovl_upper_mnt(ofs),
-> +       };
-> +       uuid_t uuid;
-> +       int res;
-> +
-> +       res =3D ovl_path_getxattr(ofs, &path, OVL_XATTR_UUID, uuid.b, UUI=
-D_SIZE);
-> +       if (res =3D=3D UUID_SIZE) {
-> +               uuid_copy(&sb->s_uuid, &uuid);
-> +               return true;
-> +       }
-> +
-> +       if (res =3D=3D -ENODATA) {
-> +               if (!set || uuid_is_null(&sb->s_uuid))
-> +                       return false;
-> +
-> +               res =3D ovl_setxattr(ofs, upperdentry, OVL_XATTR_UUID,
-> +                                  sb->s_uuid.b, UUID_SIZE);
-> +               if (res =3D=3D 0)
-> +                       return true;
-> +       } else {
-> +               set =3D false;
-> +       }
-> +
-> +       pr_warn("failed to %s uuid (%pd2, err=3D%i)\n",
-> +               set ? "set" : "get", upperdentry, res);
-> +       return false;
-> +}
-> +
->  bool ovl_path_check_dir_xattr(struct ovl_fs *ofs, const struct path *pat=
-h,
->                                enum ovl_xattr ox)
->  {
-> @@ -611,6 +650,7 @@ bool ovl_path_check_dir_xattr(struct ovl_fs *ofs, con=
-st struct path *path,
->  #define OVL_XATTR_IMPURE_POSTFIX       "impure"
->  #define OVL_XATTR_NLINK_POSTFIX                "nlink"
->  #define OVL_XATTR_UPPER_POSTFIX                "upper"
-> +#define OVL_XATTR_UUID_POSTFIX         "uuid"
->  #define OVL_XATTR_METACOPY_POSTFIX     "metacopy"
->  #define OVL_XATTR_PROTATTR_POSTFIX     "protattr"
->
-> @@ -625,6 +665,7 @@ const char *const ovl_xattr_table[][2] =3D {
->         OVL_XATTR_TAB_ENTRY(OVL_XATTR_IMPURE),
->         OVL_XATTR_TAB_ENTRY(OVL_XATTR_NLINK),
->         OVL_XATTR_TAB_ENTRY(OVL_XATTR_UPPER),
-> +       OVL_XATTR_TAB_ENTRY(OVL_XATTR_UUID),
->         OVL_XATTR_TAB_ENTRY(OVL_XATTR_METACOPY),
->         OVL_XATTR_TAB_ENTRY(OVL_XATTR_PROTATTR),
->  };
-> --
-> 2.34.1
->
+I'm still rather hesitant about this because I find it hard to figure
+out how this will go down in practice. But, especially with the internal
+idmapped mount api. This is a very hidden and abstracted away
+implementation around an opaque type and I'm not yet ready to let
+modules or bpf programs peek into it's implementation details. I hope
+that's understandable.
