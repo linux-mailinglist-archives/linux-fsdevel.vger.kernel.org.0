@@ -2,284 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B8E9674A0F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 17:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCEDC74A0FE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 17:29:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233387AbjGFP3O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 11:29:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35960 "EHLO
+        id S233469AbjGFP3p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 11:29:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233068AbjGFP3M (ORCPT
+        with ESMTP id S233732AbjGFP3m (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 11:29:12 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC18B1BE9;
-        Thu,  6 Jul 2023 08:29:05 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2b69dcf45faso13173001fa.0;
-        Thu, 06 Jul 2023 08:29:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688657344; x=1691249344;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oBODeVbuwojKcNDean02YI8ZZtZRDm3e6bJ2J8Lxr0U=;
-        b=IYHCv1vZDFCF/CIARfxXXPg4OFhzc7pMmcW5J4ydPupxPx6XC8PQF2+MNwm9jemhqR
-         A1NnJLadw2t+wieL4mzfewENFK1bDuvjHrIaerp5qL8sOs7DSPZVvKD+RdncL228c5QA
-         s6tUamFgZExNDSw2faCtd20bRHZPQD+oXqB0Z7qNHXbg0x8kk3Rb5mHx2sxgxfvnZeew
-         FYfAlqtgbGIcQa59P5LPkEVxiDM4loYPpdRwX94eY8Ekna1agwF8/B6cFzGDvkcZCWJ1
-         +BJQqkfe/PxrDhSCi/hMWxhbc3wYS1MGTT1WCA5ShX3sbqCTBuQzGc0h0mcQK5yArWpw
-         B+Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688657344; x=1691249344;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oBODeVbuwojKcNDean02YI8ZZtZRDm3e6bJ2J8Lxr0U=;
-        b=B5/MWuZ+weDgwW/OgpCRfzyDvRYOAEXTZ7rC7M7zqt/gABlJiLma8FHgMLXorOMNMp
-         Vjms03bK5UWvfpi88Yvr/P4T35AgCKQvXmfmQqyGlsGodQmHvZfNPNEykCS+3xYoByeC
-         CnqX+ShwrRzTlSNjzCFAUM82qQamMzS4yqHA1WINGbj2dz4va++9wzzJFh18eYdwA8Y4
-         43soOIwuC/kDCWX+REI6jWL/hkTV29WZHZa7LbicqphaSaLhvHNgQSXRR4XZUSNl+8ek
-         4yicGFLT1C++FjzlrB+Gjt1vG0T6JCXiDK91yIAg5//ZgZJ84DvK/7iEyfxOd/iP4YmV
-         wZAA==
-X-Gm-Message-State: ABy/qLZ2BOCL8PQ6qawtNkyEp7EP0NBMNigsyavKCduix4WKSALNHPJk
-        5zPk9agfjp+jbP7AeexrKfMiqYTbogeGq68H0AA=
-X-Google-Smtp-Source: APBJJlGy0JaoyhsfUnBmUh38vlqnXCeEGZmbHjk1W5mjihasxoCeEd9ZfPcFqvUU/c09asWw2GrojYyEkYTwZCSxiBY=
-X-Received: by 2002:a2e:960e:0:b0:2b6:ebc6:1e86 with SMTP id
- v14-20020a2e960e000000b002b6ebc61e86mr1696109ljh.47.1688657343931; Thu, 06
- Jul 2023 08:29:03 -0700 (PDT)
+        Thu, 6 Jul 2023 11:29:42 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C5261BF3;
+        Thu,  6 Jul 2023 08:29:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=VaWrOj7qxCfN/aR/+wlf6fU45vuCjby7Nm0Ri4aQJmw=; b=JaE/0fWXQgO2xj2f3aFJmBZT5Q
+        j6++1w0jrD7V6RkWJs3PDshW7GjlpZfvyQoTTJ1CWgonZ+2AktQ2W0WMpn0QR1xiTmqU319iICsGC
+        64kKXFo/nIsWzCAc8Lw66uKl2P9PtTuqTKQDsMNt7jFOA5TB1a6i1gnN8D7RNImMSYEq1hFweL5NN
+        OsN9HNt3EaMVo61D1E2z8zoD/Yc2hUlbIXLlqAOaYKzR7yZpvUAaLNm+TilvBWp1EB2Cm5KPpvMAz
+        k2dTNjwEazjsUUv4U4jC6XLDA+aFIhco1jmCE66xnS8Evo0WHqgKu3FkOk82Grau21wfT9osTZx/7
+        QTSa18og==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qHQv8-0020SQ-2T;
+        Thu, 06 Jul 2023 15:29:26 +0000
+Date:   Thu, 6 Jul 2023 08:29:26 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Christoph Hellwig <hch@lst.de>,
+        Christian Brauner <christian@brauner.io>
+Subject: Re: [RFC PATCH 03/11] vfs: Use init_kiocb() to initialise new IOCBs
+Message-ID: <ZKbd1vwqeCFnQcjU@infradead.org>
+References: <20230630152524.661208-1-dhowells@redhat.com>
+ <20230630152524.661208-4-dhowells@redhat.com>
 MIME-Version: 1.0
-References: <20230705185755.579053-1-jlayton@kernel.org> <20230705190309.579783-1-jlayton@kernel.org>
- <20230705190309.579783-72-jlayton@kernel.org>
-In-Reply-To: <20230705190309.579783-72-jlayton@kernel.org>
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 6 Jul 2023 10:28:52 -0500
-Message-ID: <CAH2r5mvF2TqT6pR7wp9WGHZJkf39hZyaBMBftqwi+SsGVz7RDA@mail.gmail.com>
-Subject: Re: [PATCH v2 74/92] smb: convert to ctime accessor functions
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230630152524.661208-4-dhowells@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Acked-by: Steve French <stfrench@microsoft.com>
+On Fri, Jun 30, 2023 at 04:25:16PM +0100, David Howells wrote:
+> A number of places that generate kiocbs didn't use init_sync_kiocb() to
+> initialise the new kiocb.  Fix these to always use init_kiocb().
+> 
+> Note that aio and io_uring pass information in through ki_filp through an
+> overlaid union before I can call init_kiocb(), so that gets reinitialised.
+> I don't think it clobbers anything else.
+> 
+> After this point, IOCB_WRITE is only set by init_kiocb().
 
-On Wed, Jul 5, 2023 at 2:42=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
-te:
->
-> In later patches, we're going to change how the inode's ctime field is
-> used. Switch to using accessor functions instead of raw accesses of
-> inode->i_ctime.
->
-> Acked-by: Tom Talpey <tom@talpey.com>
-> Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/smb/client/file.c    |  4 ++--
->  fs/smb/client/fscache.h |  5 +++--
->  fs/smb/client/inode.c   | 14 +++++++-------
->  fs/smb/client/smb2ops.c |  3 ++-
->  fs/smb/server/smb2pdu.c |  8 ++++----
->  5 files changed, 18 insertions(+), 16 deletions(-)
->
-> diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-> index 0a5fe8d5314b..689058e1b6e6 100644
-> --- a/fs/smb/client/file.c
-> +++ b/fs/smb/client/file.c
-> @@ -1085,7 +1085,7 @@ int cifs_close(struct inode *inode, struct file *fi=
-le)
->                     !test_bit(CIFS_INO_CLOSE_ON_LOCK, &cinode->flags) &&
->                     dclose) {
->                         if (test_and_clear_bit(CIFS_INO_MODIFIED_ATTR, &c=
-inode->flags)) {
-> -                               inode->i_ctime =3D inode->i_mtime =3D cur=
-rent_time(inode);
-> +                               inode->i_mtime =3D inode_set_ctime_curren=
-t(inode);
->                         }
->                         spin_lock(&cinode->deferred_lock);
->                         cifs_add_deferred_close(cfile, dclose);
-> @@ -2596,7 +2596,7 @@ static int cifs_partialpagewrite(struct page *page,=
- unsigned from, unsigned to)
->                                            write_data, to - from, &offset=
-);
->                 cifsFileInfo_put(open_file);
->                 /* Does mm or vfs already set times? */
-> -               inode->i_atime =3D inode->i_mtime =3D inode->i_ctime =3D =
-current_time(inode);
-> +               inode->i_atime =3D inode->i_mtime =3D inode_set_ctime_cur=
-rent(inode);
->                 if ((bytes_written > 0) && (offset))
->                         rc =3D 0;
->                 else if (bytes_written < 0)
-> diff --git a/fs/smb/client/fscache.h b/fs/smb/client/fscache.h
-> index 173999610997..a228964bc2ce 100644
-> --- a/fs/smb/client/fscache.h
-> +++ b/fs/smb/client/fscache.h
-> @@ -50,12 +50,13 @@ void cifs_fscache_fill_coherency(struct inode *inode,
->                                  struct cifs_fscache_inode_coherency_data=
- *cd)
+Nothing in this patch touches the VFS, so the subject line is
+wrong.  And I think we're better off splitting it into one per
+subsystem, which also allows documenting the exact changes.
+
+Which includes now setting the flags from f_iocb_flags and setting
+and I/O priority.  Please explain why this is harmless or even useful.
+
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index 37511d2b2caf..ea92235c5ba2 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -439,16 +439,17 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
+>  	}
+>  	atomic_set(&cmd->ref, 2);
+>  
+> -	iov_iter_bvec(&iter, rw, bvec, nr_bvec, blk_rq_bytes(rq));
+> +	iov_iter_bvec(&iter, rw == WRITE ? ITER_SOURCE : ITER_DEST,
+> +		      bvec, nr_bvec, blk_rq_bytes(rq));
+
+Given the cover letter I expect this is going to go away, but the
+changes would probably a lot more readable if you had a helper
+to convert from READ/WRITE to the iter flags inbetween.
+
+Or maybe do it the other way - add a helper to init the 
+
+> @@ -490,12 +491,12 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
+>  		return lo_fallocate(lo, rq, pos, FALLOC_FL_PUNCH_HOLE);
+>  	case REQ_OP_WRITE:
+>  		if (cmd->use_aio)
+> -			return lo_rw_aio(lo, cmd, pos, ITER_SOURCE);
+> +			return lo_rw_aio(lo, cmd, pos, WRITE);
+>  		else
+>  			return lo_write_simple(lo, rq, pos);
+>  	case REQ_OP_READ:
+>  		if (cmd->use_aio)
+> -			return lo_rw_aio(lo, cmd, pos, ITER_DEST);
+> +			return lo_rw_aio(lo, cmd, pos, READ);
+
+I don't think there is any need to pass the rw argument at all,
+lo_rw_aio can just do an op_is_write(req_op(rq))
+
+> -static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
+> +static int io_rw_init_file(struct io_kiocb *req, unsigned int io_direction)
 >  {
->         struct cifsInodeInfo *cifsi =3D CIFS_I(inode);
-> +       struct timespec64 ctime =3D inode_get_ctime(inode);
->
->         memset(cd, 0, sizeof(*cd));
->         cd->last_write_time_sec   =3D cpu_to_le64(cifsi->netfs.inode.i_mt=
-ime.tv_sec);
->         cd->last_write_time_nsec  =3D cpu_to_le32(cifsi->netfs.inode.i_mt=
-ime.tv_nsec);
-> -       cd->last_change_time_sec  =3D cpu_to_le64(cifsi->netfs.inode.i_ct=
-ime.tv_sec);
-> -       cd->last_change_time_nsec =3D cpu_to_le32(cifsi->netfs.inode.i_ct=
-ime.tv_nsec);
-> +       cd->last_change_time_sec  =3D cpu_to_le64(ctime.tv_sec);
-> +       cd->last_change_time_nsec  =3D cpu_to_le64(ctime.tv_nsec);
->  }
->
->
-> diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
-> index c3eeae07e139..218f03dd3f52 100644
-> --- a/fs/smb/client/inode.c
-> +++ b/fs/smb/client/inode.c
-> @@ -172,7 +172,7 @@ cifs_fattr_to_inode(struct inode *inode, struct cifs_=
-fattr *fattr)
->         else
->                 inode->i_atime =3D fattr->cf_atime;
->         inode->i_mtime =3D fattr->cf_mtime;
-> -       inode->i_ctime =3D fattr->cf_ctime;
-> +       inode_set_ctime_to_ts(inode, fattr->cf_ctime);
->         inode->i_rdev =3D fattr->cf_rdev;
->         cifs_nlink_fattr_to_inode(inode, fattr);
->         inode->i_uid =3D fattr->cf_uid;
-> @@ -1744,9 +1744,9 @@ int cifs_unlink(struct inode *dir, struct dentry *d=
-entry)
->                 cifs_inode =3D CIFS_I(inode);
->                 cifs_inode->time =3D 0;   /* will force revalidate to get=
- info
->                                            when needed */
-> -               inode->i_ctime =3D current_time(inode);
-> +               inode_set_ctime_current(inode);
->         }
-> -       dir->i_ctime =3D dir->i_mtime =3D current_time(dir);
-> +       dir->i_mtime =3D inode_set_ctime_current(dir);
->         cifs_inode =3D CIFS_I(dir);
->         CIFS_I(dir)->time =3D 0;  /* force revalidate of dir as well */
->  unlink_out:
-> @@ -2060,8 +2060,8 @@ int cifs_rmdir(struct inode *inode, struct dentry *=
-direntry)
->          */
->         cifsInode->time =3D 0;
->
-> -       d_inode(direntry)->i_ctime =3D inode->i_ctime =3D inode->i_mtime =
-=3D
-> -               current_time(inode);
-> +       inode_set_ctime_current(d_inode(direntry));
-> +       inode->i_mtime =3D inode_set_ctime_current(inode);
->
->  rmdir_exit:
->         free_dentry_path(page);
-> @@ -2267,8 +2267,8 @@ cifs_rename2(struct mnt_idmap *idmap, struct inode =
-*source_dir,
->         /* force revalidate to go get info when needed */
->         CIFS_I(source_dir)->time =3D CIFS_I(target_dir)->time =3D 0;
->
-> -       source_dir->i_ctime =3D source_dir->i_mtime =3D target_dir->i_cti=
-me =3D
-> -               target_dir->i_mtime =3D current_time(source_dir);
-> +       source_dir->i_mtime =3D target_dir->i_mtime =3D inode_set_ctime_t=
-o_ts(source_dir,
-> +                                                                        =
- inode_set_ctime_current(target_dir));
->
->  cifs_rename_exit:
->         kfree(info_buf_source);
-> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-> index 87abce010974..3cc3c4a71e32 100644
-> --- a/fs/smb/client/smb2ops.c
-> +++ b/fs/smb/client/smb2ops.c
-> @@ -1396,7 +1396,8 @@ smb2_close_getattr(const unsigned int xid, struct c=
-ifs_tcon *tcon,
->         if (file_inf.LastWriteTime)
->                 inode->i_mtime =3D cifs_NTtimeToUnix(file_inf.LastWriteTi=
-me);
->         if (file_inf.ChangeTime)
-> -               inode->i_ctime =3D cifs_NTtimeToUnix(file_inf.ChangeTime)=
-;
-> +               inode_set_ctime_to_ts(inode,
-> +                                     cifs_NTtimeToUnix(file_inf.ChangeTi=
-me));
->         if (file_inf.LastAccessTime)
->                 inode->i_atime =3D cifs_NTtimeToUnix(file_inf.LastAccessT=
-ime);
->
-> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-> index cf8822103f50..f9099831c8ff 100644
-> --- a/fs/smb/server/smb2pdu.c
-> +++ b/fs/smb/server/smb2pdu.c
-> @@ -4779,7 +4779,7 @@ static int find_file_posix_info(struct smb2_query_i=
-nfo_rsp *rsp,
->         file_info->LastAccessTime =3D cpu_to_le64(time);
->         time =3D ksmbd_UnixTimeToNT(inode->i_mtime);
->         file_info->LastWriteTime =3D cpu_to_le64(time);
-> -       time =3D ksmbd_UnixTimeToNT(inode->i_ctime);
-> +       time =3D ksmbd_UnixTimeToNT(inode_get_ctime(inode));
->         file_info->ChangeTime =3D cpu_to_le64(time);
->         file_info->DosAttributes =3D fp->f_ci->m_fattr;
->         file_info->Inode =3D cpu_to_le64(inode->i_ino);
-> @@ -5422,7 +5422,7 @@ int smb2_close(struct ksmbd_work *work)
->                 rsp->LastAccessTime =3D cpu_to_le64(time);
->                 time =3D ksmbd_UnixTimeToNT(inode->i_mtime);
->                 rsp->LastWriteTime =3D cpu_to_le64(time);
-> -               time =3D ksmbd_UnixTimeToNT(inode->i_ctime);
-> +               time =3D ksmbd_UnixTimeToNT(inode_get_ctime(inode));
->                 rsp->ChangeTime =3D cpu_to_le64(time);
->                 ksmbd_fd_put(work, fp);
->         } else {
-> @@ -5644,7 +5644,7 @@ static int set_file_basic_info(struct ksmbd_file *f=
-p,
->         if (file_info->ChangeTime)
->                 attrs.ia_ctime =3D ksmbd_NTtimeToUnix(file_info->ChangeTi=
-me);
->         else
-> -               attrs.ia_ctime =3D inode->i_ctime;
-> +               attrs.ia_ctime =3D inode_get_ctime(inode);
->
->         if (file_info->LastWriteTime) {
->                 attrs.ia_mtime =3D ksmbd_NTtimeToUnix(file_info->LastWrit=
-eTime);
-> @@ -5689,7 +5689,7 @@ static int set_file_basic_info(struct ksmbd_file *f=
-p,
->                         return -EACCES;
->
->                 inode_lock(inode);
-> -               inode->i_ctime =3D attrs.ia_ctime;
-> +               inode_set_ctime_to_ts(inode, attrs.ia_ctime);
->                 attrs.ia_valid &=3D ~ATTR_CTIME;
->                 rc =3D notify_change(idmap, dentry, &attrs, NULL);
->                 inode_unlock(inode);
-> --
-> 2.41.0
->
+>  	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+>  	struct kiocb *kiocb = &rw->kiocb;
+>  	struct io_ring_ctx *ctx = req->ctx;
+>  	struct file *file = req->file;
+> +	fmode_t mode = (io_direction == WRITE) ? FMODE_WRITE : FMODE_READ;
+>  	int ret;
+>  
+>  	if (unlikely(!file || !(file->f_mode & mode)))
 
+I'd just move this check into the two callers, that way you can hard
+code the mode instead of adding a conversion.
 
---=20
-Thanks,
-
-Steve
