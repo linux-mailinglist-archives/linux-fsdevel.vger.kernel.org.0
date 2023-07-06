@@ -2,157 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7188D74A3B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 20:26:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A375174A3D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 20:33:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229694AbjGFSZ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 14:25:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54712 "EHLO
+        id S232313AbjGFSdN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 14:33:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229774AbjGFSZ6 (ORCPT
+        with ESMTP id S229802AbjGFSdM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 14:25:58 -0400
-Received: from mail-pj1-f79.google.com (mail-pj1-f79.google.com [209.85.216.79])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C463B1BF8
-        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jul 2023 11:25:45 -0700 (PDT)
-Received: by mail-pj1-f79.google.com with SMTP id 98e67ed59e1d1-262d296873aso1718112a91.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jul 2023 11:25:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688667945; x=1691259945;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OZzgEZl6/g7psZ0E4d9jCKRJiroc9+4BEHoe0FwqD0A=;
-        b=kw+vs5vo0LiU/L4V20Z3QtyIDU5xRXS60jWX3zhjDGcziSI0QWssjxhrq6aOvjfX+s
-         OveKeUG9o/Lqph58hLP5b+fpVpW8T+v8L2Vxn5GeHoIFGGjJk/KXnnU/KyzByCPCvzg8
-         OLPtpOFg29WLxjXhSRTf1cLr12MKoHi3m+dqRhzrV0hbAqyFFh3ebWoSvRzByjmnQxWm
-         dFMtwjMTqF+/3CpfupQzY0omCh7Oj91nS24+I5M2COfPYKP8jdI/I5JyZ4XKyBhN5NEI
-         C2YfzAi5vuF4HN7FnS7+IfGKVfpHjH5WaQ+2qR5vkAkcrVmsDEzjMiaC8cmAOQW0U3yf
-         oTtQ==
-X-Gm-Message-State: ABy/qLaB1eapjuVWEyj9U9ojaIp/OWHcQ2EJhCAlN2KzXHcaTHcam1ql
-        pYw1AIu885QqzSLZzPSxziVT66eWWjnHO+jwKG/KOrwJJbkY
-X-Google-Smtp-Source: APBJJlERvrpoZOMihfbOTAEJysCghlB1JQkU8loiCXpqc2u7eML+so9n5tmRY1ZNli1dxl9JKH9Jdyj8VD5cudXSRC/XpN2FqPEo
+        Thu, 6 Jul 2023 14:33:12 -0400
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2117.outbound.protection.outlook.com [40.107.101.117])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA15F1BF8;
+        Thu,  6 Jul 2023 11:33:10 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=X6F2/aWYB2C6dXhV8WRJlR4aSjtDeg/egbSDBZE5kwepZZ2z+j0XntLkWF2j1KuiWC/cmYXxr651LntLeD0zciiJ7NSvGT53IgVrKfj0gBngcdV6/dxIukJUvDfcOeG9wWlYvIJHgqOI+UdSjYZOplfcaM7dkfwAIfeOYqLwfQpTswkT2gbmPFS+mPJDdQcj9WyI87s0e5TmQSEuZFeaErjY0oBjZKTyW/47YIrD/aZnuGOKn49+rv894zpX8sCZ0juJ8YN/Ql/pHivrqehP4CKIvYhlN9Wd4JJFYG2Y9z+L+1a9ilU+Z+mrRDqvORbQlHcGXmTBKy++ECZ5Cn27cQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=itrPSoeDsLJol9w/4FSUKciz+u6gsXsPKPZT36bXWFg=;
+ b=levksOjsMly1bKBRP0+j1gyY8q9k32G0eUa1SD/8KZ1nA89+GmMWWiUWeWweCCM6Mubf/+F61bisBjrUM2LrEOdIOOoINaxXdjbysSy51/wC1XIy9HpysUDzhVENK+WvOY9UVAlp9KvgjSNr9Yj6dvNvZXhUWmk5WmdajLPO7/LdA9f5z4RbzrsqflMLlDqnXjpetEzFv1KFbKlbskkRjYQxJamG0u8d+yBWziEx3QqdnX7lLu+V2ajZJv2irUgPZPRRT3IVgr11EhIDcyRHCBxHmD1bNZ8KsViWbkA7AWwgxjMxPiR9DeGJKNJzeCsp7kveUYZctQOCP51q7EmMTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=itrPSoeDsLJol9w/4FSUKciz+u6gsXsPKPZT36bXWFg=;
+ b=PIShxFydmxud9cf+pMurDEqcuJe+aIR6DgsT0zknrgxeSaxd/f6zHt7KxZ3bj5EhULC1bJ7JvYBMASR5bNuRrHBV9EN41D83F24hWfsVxpU2aUw4jRE+jvSA1Fcax2CsJ0wW4nozC0E5bX4xohMAj4NTFQQcLCtpttOQC7XPhEo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from DM6PR01MB5259.prod.exchangelabs.com (2603:10b6:5:68::27) by
+ CH3PR01MB8361.prod.exchangelabs.com (2603:10b6:610:17d::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6544.24; Thu, 6 Jul 2023 18:33:04 +0000
+Received: from DM6PR01MB5259.prod.exchangelabs.com
+ ([fe80::54e5:4e1d:aaf6:7c87]) by DM6PR01MB5259.prod.exchangelabs.com
+ ([fe80::54e5:4e1d:aaf6:7c87%4]) with mapi id 15.20.6565.016; Thu, 6 Jul 2023
+ 18:33:04 +0000
+Date:   Thu, 6 Jul 2023 11:33:00 -0700 (PDT)
+From:   "Lameter, Christopher" <cl@os.amperecomputing.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+cc:     David Rientjes <rientjes@google.com>,
+        syzbot <syzbot+cf0693aee9ea61dda749@syzkaller.appspotmail.com>,
+        42.hyeyoo@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
+        iamjoonsoo.kim@lge.com, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        penberg@kernel.org, reiserfs-devel@vger.kernel.org,
+        roman.gushchin@linux.dev, syzkaller-bugs@googlegroups.com,
+        Vlastimil Babka <vbabka@suse.cz>, Jan Kara <jack@suse.cz>
+Subject: Re: [syzbot] [mm?] [reiserfs?] kernel panic: stack is corrupted in
+ ___slab_alloc
+In-Reply-To: <CACT4Y+akPvTGG0WdPdSuUFU6ZuQkRbVZByiROzqwyPVd8Pz8fQ@mail.gmail.com>
+Message-ID: <61032955-4200-662b-ace8-bad47d337cdc@os.amperecomputing.com>
+References: <0000000000002373f005ff843b58@google.com> <1bb83e9d-6d7e-3c80-12f6-847bf2dc865e@google.com> <CACT4Y+akPvTGG0WdPdSuUFU6ZuQkRbVZByiROzqwyPVd8Pz8fQ@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-ClientProxiedBy: CH2PR19CA0008.namprd19.prod.outlook.com
+ (2603:10b6:610:4d::18) To DM6PR01MB5259.prod.exchangelabs.com
+ (2603:10b6:5:68::27)
 MIME-Version: 1.0
-X-Received: by 2002:a17:90b:1215:b0:263:347:25b3 with SMTP id
- gl21-20020a17090b121500b00263034725b3mr2029757pjb.6.1688667944984; Thu, 06
- Jul 2023 11:25:44 -0700 (PDT)
-Date:   Thu, 06 Jul 2023 11:25:44 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000126ec05ffd5a528@google.com>
-Subject: [syzbot] [ext4?] kernel BUG in ext4_enable_quotas
-From:   syzbot <syzbot+693985588d7a5e439483@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
-        syzkaller-bugs@googlegroups.com, trix@redhat.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR01MB5259:EE_|CH3PR01MB8361:EE_
+X-MS-Office365-Filtering-Correlation-Id: 56f38a5d-e88b-490f-885a-08db7e4f6f5e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: PBRjCtEAhULubq3swCHnImTv7qfsT6yTgJEyjUSYsnZN6aScD8mcFulwd7EBqIw7zCfoDPGuIkorZpaPoqEFJz44vGszNHGfIPni+VF27SEfvOkh0d4syR0qdjjQYckwsoUXaM3E7eWULAosmPgYHpz8TwDScdWwzuIldFRNsUVFfEV7d1RUk/HDKLFIYVycpfa3IbrMnwICSf8w+AouwIv4KSS6MrOrNSS2d9C2BLYvNhFluByagaQcJRpbkuYhjLLkV3JEi22+tkyJkb56fDk8eym0h62GGoF8MEU/8FzjtFbZ4T1+ZjIlZsiKl7k63wnInYUFukmB+4S+dLe0Ft8ELOgkNDBYxe97iCXTaVLKEI/JvAATPGGRss0mMm6gHQ2t9IhMRQnV9UkkvSnBdPD0qaMrbnJfz1utup/7/uggdXWOTDRKdYlob+x2d0VdhR2LBA8LexDMChsvmB8q0nXc1S2ZkNjX06nKWiSsnwPBtNZ8aUL3zzhJMVyOirgQulx1rTPPdEu6Gjjp6Mg9RNDBnJpRW8HoqTS/hAxb/vb7jYUNoelykYZwo7ziM7RA1bD4Z5FsAsErZTxw1gvzhmuWOqAHL22vtS1XPYwnlSGEIdhANQEBChRiN3TtY3fL
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR01MB5259.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(136003)(39850400004)(366004)(376002)(396003)(451199021)(316002)(41300700001)(4326008)(31686004)(66556008)(66476007)(66946007)(6916009)(86362001)(186003)(26005)(6506007)(6512007)(558084003)(31696002)(2616005)(2906002)(6666004)(6486002)(38100700002)(7416002)(5660300002)(478600001)(54906003)(8936002)(8676002)(101420200003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DHnArghEJc97KjTBPR2Br8CdM+AEVxMmB2oYnLyKIdJb2G529ACXMAbF7xtu?=
+ =?us-ascii?Q?c0gH2eKKGbiKIBH9mEL1xnDqQbU4iHplWGd/cF46yFG/cjP4CZnycRU5aAZ2?=
+ =?us-ascii?Q?k40tcserth2jJ/nEuuLiDNRn14uRA6JWZJJcMMmlSBPC7vXrnfk09wx6jJ2U?=
+ =?us-ascii?Q?zq3BAVPxQHIuj6OQiEc2IP6yLMzalcSy8LliMLpSQsrQzRCzE347Lo6J4W9z?=
+ =?us-ascii?Q?7vawZ/57LuczdwYznyYl5KhIEM+E0/yb5uOC4ty4B3x5RkIi2UVdEpDChBJ4?=
+ =?us-ascii?Q?ceD9ydDx88huWgim6l0QeVfVkNvUXEo+Ebdx8td2JoN0jiMCnr3HlDGIUjAi?=
+ =?us-ascii?Q?aZjD8e5wOdhKM2qvKC+rQDT9qU9LEQoZeqPi0S2D35ksLU9PG9jGn8vszPsQ?=
+ =?us-ascii?Q?iASAECbD82IvsfE7BpCPsp8AF1cSrwPzPnPBOyKIY4LBD/iGLD0ZLqTWIE3+?=
+ =?us-ascii?Q?mbRehEiXR6Uv/BSnehV4vCcsmbVMXMgnF2/4fnCvVgTFyqvNH6552vt/RZjq?=
+ =?us-ascii?Q?gTaeTcxc0wbYpDonUdAXZHj+i2sAPClH77u/wbTxQm0iixZbbkTfXxwWVLu3?=
+ =?us-ascii?Q?g2wgbD2iCvKKW/f8y0UL4sHT2aadMJYTfoBEfC9UAfIQc9gEJ6TERMyGMpmS?=
+ =?us-ascii?Q?r7w8aAKQef//NNj16584uZzePAzBnsKY3TVRZBucOdD81JXB5qNKvwjg/oo6?=
+ =?us-ascii?Q?nauzZD9xlP19iVxcGnDe3d37dYZWTePtEn8k9kcotxPgP2b+5gDKWYtx1nJ8?=
+ =?us-ascii?Q?81Jk4xmQSwyhsfzv2zyuKfYIdYLVnn05022Tu9FgolDuXKdYf1RcMUuRa5is?=
+ =?us-ascii?Q?P+28tuavRVFUhfsUFVyb54UZGa7NH+v46L5LiDhf58HCz82JePUBH+0yBgwf?=
+ =?us-ascii?Q?rHJGyKJNB/QSNW2MC1OPa1J/wdgp9vXmEqOmmS9JRoXOT9+gmlvttfSTLt5s?=
+ =?us-ascii?Q?gbh4f99rExkRjABCQr+EGxoBTVrd02+tg0+NamJVlZ9zh2LYex4mMrX/7Ei0?=
+ =?us-ascii?Q?h7o6XnTHNv6EDG5mzbYYmYUJGbOXjgj/41N16Bwh4f6CKvjY0eHDwxYFAtE0?=
+ =?us-ascii?Q?vUY6WBRwC4HNsm5RHIY8izB4EHJ77ZkKZ9j8IalvAYLdD0QFouKTJ2qSDMxw?=
+ =?us-ascii?Q?LUZlnRLnlbJh7noLiePyegY2sgHjgSZ9SHxHBmEPC8W53XkBl9h1H/OfZw0K?=
+ =?us-ascii?Q?kKFlWGSHKDaqu/5Z/2wXBt1OOH2CBz0z4U88EhQGwVnkkvBsP2xnJ1EG7iFr?=
+ =?us-ascii?Q?STc36jsFSe+VAdbfWqxygluuvWzK4k4EqfO6fQA+M/LpVaxmj2IJtVPFuJvU?=
+ =?us-ascii?Q?mSg8bNoSbUrxnHdom0rfubQVv9F4bidPJyq43cFw6WDazYC8HRhQImljFD/2?=
+ =?us-ascii?Q?15LQ+z4ipLwFjuQ/FG/RpZaM2xi0coUYwtWSGg659Tuto7SyksKjbOHKrOmU?=
+ =?us-ascii?Q?N5oAe29IsUHMiKUDPlvtUxNR3TpQjNneDvKWjtK1PwjQtu+7S3ZftDSB364z?=
+ =?us-ascii?Q?T8DBK3ufGvEDH6R4ouNjUzMtvXhD+JZRANUZH4EEqn0e13FHD1J6xU+V3bT2?=
+ =?us-ascii?Q?ZqvJKd6SkweH2Aju+xJrb2L2ABZTR0Y7MZ7C+U2zc5gpDK+f8QSgyxxi9Oh+?=
+ =?us-ascii?Q?aw=3D=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 56f38a5d-e88b-490f-885a-08db7e4f6f5e
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR01MB5259.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jul 2023 18:33:04.0247
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ttlrK+G6/xhhFsntafNPXSc+NRGXCxLMPTGep2uCaBFaNpR8rExrnTQ/yKIg598QskrKxysYdyQeL1ca8me2MZ/nEI6qJAGikzlhTrAasRk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR01MB8361
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Mon, 3 Jul 2023, Dmitry Vyukov wrote:
 
-syzbot found the following issue on:
+>> This is happening during while mounting reiserfs, so I'm inclined to think
+>> it's more of a reisterfs issue than a slab allocator issue :/
 
-HEAD commit:    995b406c7e97 Merge tag 'csky-for-linus-6.5' of https://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15fdda4f280000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=71a52faf60231bc7
-dashboard link: https://syzkaller.appspot.com/bug?extid=693985588d7a5e439483
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/01122b567c73/disk-995b406c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/75b7a37e981e/vmlinux-995b406c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/758b5afcf092/bzImage-995b406c.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+693985588d7a5e439483@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at fs/ext4/super.c:7010!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 27977 Comm: syz-executor.2 Not tainted 6.4.0-syzkaller-10098-g995b406c7e97 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
-RIP: 0010:ext4_quota_enable fs/ext4/super.c:7010 [inline]
-RIP: 0010:ext4_enable_quotas+0xb7a/0xb90 fs/ext4/super.c:7057
-Code: ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 3a f7 ff ff 49 89 d6 48 89 df e8 03 10 99 ff 4c 89 f2 e9 27 f7 ff ff e8 46 60 40 ff <0f> 0b e8 3f 60 40 ff 0f 0b e8 18 6e 6e 08 0f 1f 84 00 00 00 00 00
-RSP: 0018:ffffc9000392f880 EFLAGS: 00010293
-RAX: ffffffff824b91aa RBX: 0000000000000000 RCX: ffff88803c1d8000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000392fa50 R08: ffffffff824b8aa4 R09: 1ffff11010674957
-R10: dffffc0000000000 R11: ffffed1010674958 R12: 0000000000000001
-R13: 0000000000000000 R14: ffff88807f545464 R15: dffffc0000000000
-FS:  00007f5112313700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000002007f000 CR3: 000000002cb28000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __ext4_fill_super fs/ext4/super.c:5562 [inline]
- ext4_fill_super+0x6157/0x6ce0 fs/ext4/super.c:5696
- get_tree_bdev+0x468/0x6c0 fs/super.c:1318
- vfs_get_tree+0x8c/0x270 fs/super.c:1519
- do_new_mount+0x28f/0xae0 fs/namespace.c:3335
- do_mount fs/namespace.c:3675 [inline]
- __do_sys_mount fs/namespace.c:3884 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3861
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f511168d8ba
-Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f5112312f88 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00000000000005d8 RCX: 00007f511168d8ba
-RDX: 0000000020000580 RSI: 00000000200005c0 RDI: 00007f5112312fe0
-RBP: 00007f5112313020 R08: 00007f5112313020 R09: 0000000001008002
-R10: 0000000001008002 R11: 0000000000000202 R12: 0000000020000580
-R13: 00000000200005c0 R14: 00007f5112312fe0 R15: 0000000020000100
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ext4_quota_enable fs/ext4/super.c:7010 [inline]
-RIP: 0010:ext4_enable_quotas+0xb7a/0xb90 fs/ext4/super.c:7057
-Code: ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 3a f7 ff ff 49 89 d6 48 89 df e8 03 10 99 ff 4c 89 f2 e9 27 f7 ff ff e8 46 60 40 ff <0f> 0b e8 3f 60 40 ff 0f 0b e8 18 6e 6e 08 0f 1f 84 00 00 00 00 00
-RSP: 0018:ffffc9000392f880 EFLAGS: 00010293
-RAX: ffffffff824b91aa RBX: 0000000000000000 RCX: ffff88803c1d8000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000392fa50 R08: ffffffff824b8aa4 R09: 1ffff11010674957
-R10: dffffc0000000000 R11: ffffed1010674958 R12: 0000000000000001
-R13: 0000000000000000 R14: ffff88807f545464 R15: dffffc0000000000
-FS:  00007f5112313700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2d324000 CR3: 000000002cb28000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Have you tried to run with the "slub_debug" kernel option to figure out 
+what got corrupted?
