@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C3B2D74A105
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 17:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F0B174A10C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 17:32:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233767AbjGFPaj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 11:30:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37308 "EHLO
+        id S233748AbjGFPcG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 11:32:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233748AbjGFPai (ORCPT
+        with ESMTP id S232298AbjGFPcF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 11:30:38 -0400
+        Thu, 6 Jul 2023 11:32:05 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 559BC1BE8;
-        Thu,  6 Jul 2023 08:30:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C0DBBA;
+        Thu,  6 Jul 2023 08:32:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=wY5Dot1/zTMAJ+7vVNWs/yMvd7ZTGFOfgJeR2bahFjQ=; b=BTSyek31EkyyPudrxmynZoVthN
-        81KWr6uMtnlBbcKq8tTiT4/oN//7sPQ0IUO+/LCa93l+kiLgsCVrkBZe1tB0n7QFBCKuhIAvFK10p
-        n13Zryn1H3WWsvqTg7C7I7IJSTEs0sopsCb8K10HznqFkXscj+lpyQsaX37JCHieii+swEiwRnSWA
-        JHzgvaU73n1x7ULgjhfZVyOTFik7lvZ8l3ZUFHRoAxlUUy+d2nrIt96GfPJgBOXoHFSpkCP86iuU+
-        ALoVEjNSHGDfyGlACeQ0IsaYd24bkCCK3ClVrO+fwcVu/0F92ch134xa1t3tW2DKFQ7G03FUtfOkT
-        sOI9ztiw==;
+        bh=OcmDcA2w/L1lHnlZrwRLksnmZ52AfyCMFAOcR/tiwrg=; b=CnZWUl66G57JWeMq3Cumm9nGHy
+        v5NuUfSTp48+X5P0+Mpr6wABQnANv6kh5ZvyaKkxHVVXymOryBWC+NdeDQHFkgwlzl+sdXRKNfoES
+        dm6adObEyutfkZXL3b47P+961rwnxXp+05kxhnVkGsV7jjZRzwqHyd/QTB2MOsqpWIX+GD637oFjh
+        4KW7JsHk1PRz2zWxEgJOYgnkR9IKZfeKMlRO+4QAqo7ACn6RV8hfl6WOh5d/QRf6OZx3E9Mh8E+UJ
+        o6fdzAczPKvtWkSrAx24Bxq5YFmjMyz6Wv+u+n4gBXmxQ4CsxL+icvARitB0PgCKsZojcNI4K0Lfs
+        tGMUhcxQ==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qHQw8-0020gL-0X;
-        Thu, 06 Jul 2023 15:30:28 +0000
-Date:   Thu, 6 Jul 2023 08:30:28 -0700
+        id 1qHQxT-0020wj-1O;
+        Thu, 06 Jul 2023 15:31:51 +0000
+Date:   Thu, 6 Jul 2023 08:31:51 -0700
 From:   Christoph Hellwig <hch@infradead.org>
 To:     David Howells <dhowells@redhat.com>
 Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
@@ -44,15 +44,15 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Christoph Hellwig <hch@lst.de>,
         Christian Brauner <christian@brauner.io>
-Subject: Re: [RFC PATCH 06/11] iov_iter: Use op_is_write() rather than
- iterator direction
-Message-ID: <ZKbeFNG5bF5HbcgT@infradead.org>
+Subject: Re: [RFC PATCH 08/11] iov_iter: Drop iov_iter_rw() and fold in last
+ user
+Message-ID: <ZKbeZ3yq5y8ORCZH@infradead.org>
 References: <20230630152524.661208-1-dhowells@redhat.com>
- <20230630152524.661208-7-dhowells@redhat.com>
+ <20230630152524.661208-9-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230630152524.661208-7-dhowells@redhat.com>
+In-Reply-To: <20230630152524.661208-9-dhowells@redhat.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -64,9 +64,10 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 30, 2023 at 04:25:19PM +0100, David Howells wrote:
-> If a request struct is available, use op_is_write() instead of the iterator
-> direction.
+On Fri, Jun 30, 2023 at 04:25:21PM +0100, David Howells wrote:
+> Drop the last usage of iov_iter_rw() into __iov_iter_get_pages_alloc().
 
-s/iov_iter/block/ in the subject.
+Well, if we can't just drop this check entirely, the rest of the prep
+work is just churn and not actually very useful.  Shouldn't we go
+all the way and kill ITER_DEST/SOURCE?
 
