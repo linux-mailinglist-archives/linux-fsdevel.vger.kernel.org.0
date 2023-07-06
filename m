@@ -2,138 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C6F3E74A6A2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 00:16:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 799EE74A719
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 00:33:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231213AbjGFWQX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 18:16:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43174 "EHLO
+        id S231366AbjGFWda (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 18:33:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229807AbjGFWQW (ORCPT
+        with ESMTP id S229787AbjGFWd2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 18:16:22 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C34C10B
-        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jul 2023 15:16:21 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id 41be03b00d2f7-55b1238a024so980035a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jul 2023 15:16:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1688681780; x=1691273780;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gjIb6tmwnrF5Ll5QlyVKURdTTik2ZwZRo0YZWdDknVY=;
-        b=bZvfpaPZa+pHnR09Y+aAeUc7Qr+vZvwNZpk1Ayb7V0IF0xYybtIi29CMmEb7kUCMrW
-         caLuJtZ5etCFkRYKlNyYNHbKlDOHcWjY86RjrHXIBrLIIzVuEUaAR/RPkXysaS4qIeAY
-         prlQ68tS9AUIhZcP/LKKSXuD8YDeQ5OwIkqYtaQH3MfIkBec6T3GBDVKKtiUu+kcwZyr
-         mWqJ4IdpVZfjtvl8AQkjSUKRAi4F4ns6GqeX0QSiM5RS0G6blRUoueA8J3y3bjyRuqRW
-         BpDitM89+wJ8A3Ayb7cx0Lhv7vbRjw1m3kTOpH7X+UVEXkX2PP5RV9tGeGwyejaaYa0S
-         aIxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688681780; x=1691273780;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gjIb6tmwnrF5Ll5QlyVKURdTTik2ZwZRo0YZWdDknVY=;
-        b=NwFjWV1Rwd+7K/ASvtMZQP/d9L6kzx2iefOa6r5ag1WWciqHkPFzQkjtpb8X3UFhe5
-         ZSyjVuET26OWasgOWJoEtNiCB1ZvyLugCT34japYsR+SuBiOCfd1K6IZd5qIc5VqXDiz
-         A0k58o6ycIaIiwuhfQoMTle1eFVN3VBpgzws5tWhp+4/w5hEnKyi4F6FqL+fOpSAtURw
-         JQ9K7Ja3hr95jbZBzTkE7mulyd4pKeA1wI1/D1gFCH450waQzG1NQB7X8qVcZbe3elqP
-         mWBWMgrs5XMtgJOHO2tI32RRs8IkuRSlh4nP0a3KI7bwMkPxV2bq+dJWvZQ2IAWndj1n
-         khAw==
-X-Gm-Message-State: ABy/qLbPPJm2UVnwlsznp1EOC89ym7hvKfxICJjICTXynVZbQ7nzd/pt
-        dHkaRR7U6GBl6sYXPqzUUStREQ==
-X-Google-Smtp-Source: APBJJlG95Vu7cBkFRnhj6EVLKsbfAt9NNwkXNbcfsh1u774X+5XUkeD2DHbUN/D2dE3qoNhtVfWp/A==
-X-Received: by 2002:a05:6a20:6a1e:b0:127:6bda:a2ae with SMTP id p30-20020a056a206a1e00b001276bdaa2aemr3604919pzk.10.1688681780461;
-        Thu, 06 Jul 2023 15:16:20 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-214-123.pa.vic.optusnet.com.au. [49.186.214.123])
-        by smtp.gmail.com with ESMTPSA id u5-20020aa78385000000b0067777e960d9sm1703553pfm.155.2023.07.06.15.16.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jul 2023 15:16:19 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qHXGr-002yEM-1j;
-        Fri, 07 Jul 2023 08:16:17 +1000
-Date:   Fri, 7 Jul 2023 08:16:17 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Ritesh Harjani <ritesh.list@gmail.com>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Aravinda Herle <araherle@in.ibm.com>
-Subject: Re: [PATCHv11 8/8] iomap: Add per-block dirty state tracking to
- improve performance
-Message-ID: <ZKc9MUXq6dKkQvSP@dread.disaster.area>
-References: <bb0c58bf80dcdec96d7387bc439925fb14a5a496.1688188958.git.ritesh.list@gmail.com>
- <87jzvdjdxu.fsf@doe.com>
- <ZKb9DAKIE13XSrVf@casper.infradead.org>
+        Thu, 6 Jul 2023 18:33:28 -0400
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5C021FEC;
+        Thu,  6 Jul 2023 15:33:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=6ApKehk9sjLnBL9KOum4DRetfpp0w+Ls/P37y4uhWHc=; b=Ej/N7xjW/w9slmXCXVLOKFE6Wc
+        jBcQjoFRrct+YDKNNxs772xM6VyY3AfoMhJsNELKpHvrFC6HEu9mkLjFbSiMB0hPmhmJ0c+NV6v1N
+        DVcRbEdwc+8KTHn4ULL4Y2u7WKxSDbx/rXhOc1/oWO8JJWosYYUV7wRZKuLkaHXTmgT+oTqhOOiCa
+        3Zpbgh+FOmcKRtBWdGBqHM6OK7QLb1D4vPvGrdti5tcQPjMpQRGx1TJW1v0PZMCx0KdHTcsFafQVH
+        SjkPaLNm1LXG+nJm4hCrZLc3+esdwr/3VGhoNlrQjv01ivql96WHCzRxMztO20XgqN9zMH1NvL3ju
+        gXDlZC6g==;
+Received: from [191.205.188.225] (helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1qHXWy-009fM0-Qw; Fri, 07 Jul 2023 00:32:57 +0200
+Message-ID: <909cd44d-1f6a-2746-43fc-cb39676d17dd@igalia.com>
+Date:   Thu, 6 Jul 2023 19:32:50 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZKb9DAKIE13XSrVf@casper.infradead.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 1/2] btrfs: Introduce the virtual_fsid feature
+Content-Language: en-US
+To:     Qu Wenruo <quwenruo.btrfs@gmx.com>, Qu Wenruo <wqu@suse.com>,
+        dsterba@suse.com, Anand Jain <anand.jain@oracle.com>
+Cc:     clm@fb.com, josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
+        kernel@gpiccoli.net, kernel-dev@igalia.com, vivek@collabora.com,
+        ludovico.denittis@collabora.com, johns@valvesoftware.com,
+        linux-btrfs@vger.kernel.org
+References: <20230504170708.787361-1-gpiccoli@igalia.com>
+ <20230504170708.787361-2-gpiccoli@igalia.com>
+ <2892ff0d-9225-07b7-03e4-a3c96d0bff59@gmx.com>
+ <bc897780-2c81-fe1f-a8d4-148a08962a20@igalia.com>
+ <0d6dc2f3-75a5-bc72-f3b5-2a3749db1683@gmx.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <0d6dc2f3-75a5-bc72-f3b5-2a3749db1683@gmx.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 06, 2023 at 06:42:36PM +0100, Matthew Wilcox wrote:
-> On Thu, Jul 06, 2023 at 08:16:05PM +0530, Ritesh Harjani wrote:
-> > > @@ -1645,6 +1766,11 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
-> > >  	int error = 0, count = 0, i;
-> > >  	LIST_HEAD(submit_list);
-> > >  
-> > > +	if (!ifs && nblocks > 1) {
-> > > +		ifs = ifs_alloc(inode, folio, 0);
-> > > +		iomap_set_range_dirty(folio, 0, folio_size(folio));
-> > > +	}
-> > > +
-> > >  	WARN_ON_ONCE(ifs && atomic_read(&ifs->write_bytes_pending) != 0);
-> > >  
-> > >  	/*
-> > > @@ -1653,7 +1779,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
-> > >  	 * invalid, grab a new one.
-> > >  	 */
-> > >  	for (i = 0; i < nblocks && pos < end_pos; i++, pos += len) {
-> > > -		if (ifs && !ifs_block_is_uptodate(ifs, i))
-> > > +		if (ifs && !ifs_block_is_dirty(folio, ifs, i))
-> > >  			continue;
-> > >  
-> > >  		error = wpc->ops->map_blocks(wpc, inode, pos);
-> > > @@ -1697,6 +1823,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
-> > >  		}
-> > >  	}
-> > >  
-> > > +	iomap_clear_range_dirty(folio, 0, end_pos - folio_pos(folio));
-> > >  	folio_start_writeback(folio);
-> > >  	folio_unlock(folio);
-> > >  
-> > 
-> > I think we should fold below change with this patch. 
-> > end_pos is calculated in iomap_do_writepage() such that it is either
-> > folio_pos(folio) + folio_size(folio), or if this value becomes more then
-> > isize, than end_pos is made isize.
-> > 
-> > The current patch does not have a functional problem I guess. But in
-> > some cases where truncate races with writeback, it will end up marking
-> > more bits & later doesn't clear those. Hence I think we should correct
-> > it using below diff.
+On 05/07/2023 21:53, Qu Wenruo wrote:
+> [...]
+> Personally speaking, I would go one of the following solution:
 > 
-> I don't think this is the only place where we'll set dirty bits beyond
-> EOF.  For example, if we mmap the last partial folio in a file,
-> page_mkwrite will dirty the entire folio, but we won't write back
-> blocks past EOF.  I think we'd be better off clearing all the dirty
-> bits in the folio, even the ones past EOF.  What do you think?
+> - Keep the sysfs, but adds a refcount to the sysfs related structures
+>    If we still go register the sysfs interface, then we have to keep a
+>    refcount, or any of the same fsid got unmounted, we would remove the
+>    whole sysfs entry.
+> 
+> - Skip the sysfs entry completely for any fs with the new compat_ro flag
+>    This would your idea (III), but the sysfs interface itself is not that
+>    critical (we add and remove entries from time to time), so I believe
+>    it's feasible to hide the sysfs for certain features.
+> 
 
-Clear the dirty bits beyond EOF where we zero the data range beyond
-EOF in iomap_do_writepage() via folio_zero_segment()?
+Hi Qu, thanks for you prompt response.
+I've been trying to mess with btrfs sysfs to allow two same fsid
+co-existing, without success. For each corner case I handle, two more
+show-up heh
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Seems quite tricky and error-prone to have this "special-casing" of
+sysfs just to accommodate this feature.
+
+Are you strongly against keeping the previous idea, of a spoofed/virtual
+fsid, but applied to the compat_ro single_dev idea? This way, all of
+this sysfs situation (and other potentially hidden corner cases) would
+be avoided. That's like my suggestion (I).
+
+David / Anand, any thoughts/ideas? Thanks in advance!
+
+
+>> [...]
+>> Also, one last question/confirmation: you mentioned that "The better
+>> method to enable/disable a feature should be mkfs" - you mean the same
+>> way mkfs could be used to set features like "raid56" or "no-holes"?
+> 
+> Yes.
+> 
+>> [...]
+> I'm not familiar with metadata_uuid, but there are similar features like
+> seeding, which is only available in btrfstune, but not in mkfs.
+> 
+> It's not that uncommon, but yeah, you have found something we should
+> improve on.
+> 
+
+Thanks for confirming, I could implement it in both mkfs and btrfstune -
+seems the more consistent path.
+Cheers,
+
+
+Guilherme
