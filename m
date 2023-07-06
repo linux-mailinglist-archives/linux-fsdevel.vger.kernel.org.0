@@ -2,135 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5743774A69B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 00:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6F3E74A6A2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 00:16:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229996AbjGFWND (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 18:13:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42456 "EHLO
+        id S231213AbjGFWQX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 18:16:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjGFWNC (ORCPT
+        with ESMTP id S229807AbjGFWQW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 18:13:02 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 323951B6;
-        Thu,  6 Jul 2023 15:13:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=AOUdoCKv7lMKEBDeJuW8QLGANU11vjlDtc+UqVr1zFk=; b=oejr2bmq1uN3b7HrJx+ElPbSw5
-        we3jUSGkXPajsm1VTvHviFC3GwS/NaHsz1QsPFRkvaUq7r+rBdyS2errjC3EY1PRnVjcDpGUlgYvK
-        /1soI8bcSeGMJWZholjAS8+Qt+OwFn3a0aWHzps1cm/yKVnv/q2YxMXWdR874NBXlbeB4wr+Skl2c
-        nM3+qFNFe9U/hWkDh9MMQME0URBrMEUda85VjmrM7Gu5M5Eh2LxPzWYWt/Fbt8l1kSRtIAT4twoVr
-        jwlsg1lVsmOlMQlJWr5vCfx9rhtl9TtKl2S6xbuCXnbXSHWru+tXgvWDWT4P1WhYRdUGV2SMVYxDS
-        1rK8eJQg==;
-Received: from jlbec by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qHXDb-0035IK-0N;
-        Thu, 06 Jul 2023 22:12:55 +0000
-Date:   Thu, 6 Jul 2023 15:12:51 -0700
-From:   Joel Becker <jlbec@evilplan.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 32/92] configfs: convert to ctime accessor functions
-Message-ID: <ZKc8Y8IB4DShCPZf@google.com>
-Mail-Followup-To: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230705185755.579053-1-jlayton@kernel.org>
- <20230705190309.579783-1-jlayton@kernel.org>
- <20230705190309.579783-30-jlayton@kernel.org>
- <20230706105446.r32oft4i3cj5bk3y@quack3>
+        Thu, 6 Jul 2023 18:16:22 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C34C10B
+        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jul 2023 15:16:21 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id 41be03b00d2f7-55b1238a024so980035a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jul 2023 15:16:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1688681780; x=1691273780;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gjIb6tmwnrF5Ll5QlyVKURdTTik2ZwZRo0YZWdDknVY=;
+        b=bZvfpaPZa+pHnR09Y+aAeUc7Qr+vZvwNZpk1Ayb7V0IF0xYybtIi29CMmEb7kUCMrW
+         caLuJtZ5etCFkRYKlNyYNHbKlDOHcWjY86RjrHXIBrLIIzVuEUaAR/RPkXysaS4qIeAY
+         prlQ68tS9AUIhZcP/LKKSXuD8YDeQ5OwIkqYtaQH3MfIkBec6T3GBDVKKtiUu+kcwZyr
+         mWqJ4IdpVZfjtvl8AQkjSUKRAi4F4ns6GqeX0QSiM5RS0G6blRUoueA8J3y3bjyRuqRW
+         BpDitM89+wJ8A3Ayb7cx0Lhv7vbRjw1m3kTOpH7X+UVEXkX2PP5RV9tGeGwyejaaYa0S
+         aIxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688681780; x=1691273780;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gjIb6tmwnrF5Ll5QlyVKURdTTik2ZwZRo0YZWdDknVY=;
+        b=NwFjWV1Rwd+7K/ASvtMZQP/d9L6kzx2iefOa6r5ag1WWciqHkPFzQkjtpb8X3UFhe5
+         ZSyjVuET26OWasgOWJoEtNiCB1ZvyLugCT34japYsR+SuBiOCfd1K6IZd5qIc5VqXDiz
+         A0k58o6ycIaIiwuhfQoMTle1eFVN3VBpgzws5tWhp+4/w5hEnKyi4F6FqL+fOpSAtURw
+         JQ9K7Ja3hr95jbZBzTkE7mulyd4pKeA1wI1/D1gFCH450waQzG1NQB7X8qVcZbe3elqP
+         mWBWMgrs5XMtgJOHO2tI32RRs8IkuRSlh4nP0a3KI7bwMkPxV2bq+dJWvZQ2IAWndj1n
+         khAw==
+X-Gm-Message-State: ABy/qLbPPJm2UVnwlsznp1EOC89ym7hvKfxICJjICTXynVZbQ7nzd/pt
+        dHkaRR7U6GBl6sYXPqzUUStREQ==
+X-Google-Smtp-Source: APBJJlG95Vu7cBkFRnhj6EVLKsbfAt9NNwkXNbcfsh1u774X+5XUkeD2DHbUN/D2dE3qoNhtVfWp/A==
+X-Received: by 2002:a05:6a20:6a1e:b0:127:6bda:a2ae with SMTP id p30-20020a056a206a1e00b001276bdaa2aemr3604919pzk.10.1688681780461;
+        Thu, 06 Jul 2023 15:16:20 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-214-123.pa.vic.optusnet.com.au. [49.186.214.123])
+        by smtp.gmail.com with ESMTPSA id u5-20020aa78385000000b0067777e960d9sm1703553pfm.155.2023.07.06.15.16.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jul 2023 15:16:19 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qHXGr-002yEM-1j;
+        Fri, 07 Jul 2023 08:16:17 +1000
+Date:   Fri, 7 Jul 2023 08:16:17 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Ritesh Harjani <ritesh.list@gmail.com>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Aravinda Herle <araherle@in.ibm.com>
+Subject: Re: [PATCHv11 8/8] iomap: Add per-block dirty state tracking to
+ improve performance
+Message-ID: <ZKc9MUXq6dKkQvSP@dread.disaster.area>
+References: <bb0c58bf80dcdec96d7387bc439925fb14a5a496.1688188958.git.ritesh.list@gmail.com>
+ <87jzvdjdxu.fsf@doe.com>
+ <ZKb9DAKIE13XSrVf@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230706105446.r32oft4i3cj5bk3y@quack3>
-X-Burt-Line: Trees are cool.
-X-Red-Smith: Ninety feet between bases is perhaps as close as man has ever
- come to perfection.
-Sender: Joel Becker <jlbec@ftp.linux.org.uk>
-X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <ZKb9DAKIE13XSrVf@casper.infradead.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 06, 2023 at 12:54:46PM +0200, Jan Kara wrote:
-> On Wed 05-07-23 15:00:57, Jeff Layton wrote:
-> > In later patches, we're going to change how the inode's ctime field is
-> > used. Switch to using accessor functions instead of raw accesses of
-> > inode->i_ctime.
+On Thu, Jul 06, 2023 at 06:42:36PM +0100, Matthew Wilcox wrote:
+> On Thu, Jul 06, 2023 at 08:16:05PM +0530, Ritesh Harjani wrote:
+> > > @@ -1645,6 +1766,11 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+> > >  	int error = 0, count = 0, i;
+> > >  	LIST_HEAD(submit_list);
+> > >  
+> > > +	if (!ifs && nblocks > 1) {
+> > > +		ifs = ifs_alloc(inode, folio, 0);
+> > > +		iomap_set_range_dirty(folio, 0, folio_size(folio));
+> > > +	}
+> > > +
+> > >  	WARN_ON_ONCE(ifs && atomic_read(&ifs->write_bytes_pending) != 0);
+> > >  
+> > >  	/*
+> > > @@ -1653,7 +1779,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+> > >  	 * invalid, grab a new one.
+> > >  	 */
+> > >  	for (i = 0; i < nblocks && pos < end_pos; i++, pos += len) {
+> > > -		if (ifs && !ifs_block_is_uptodate(ifs, i))
+> > > +		if (ifs && !ifs_block_is_dirty(folio, ifs, i))
+> > >  			continue;
+> > >  
+> > >  		error = wpc->ops->map_blocks(wpc, inode, pos);
+> > > @@ -1697,6 +1823,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+> > >  		}
+> > >  	}
+> > >  
+> > > +	iomap_clear_range_dirty(folio, 0, end_pos - folio_pos(folio));
+> > >  	folio_start_writeback(folio);
+> > >  	folio_unlock(folio);
+> > >  
 > > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> 
-> Looks good. Feel free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-
-Agreed.
-
-Acked-by: Joel Becker <jlbec@evilplan.org>
-
-> 
-> 								Honza
-> 
-> > ---
-> >  fs/configfs/inode.c | 7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
+> > I think we should fold below change with this patch. 
+> > end_pos is calculated in iomap_do_writepage() such that it is either
+> > folio_pos(folio) + folio_size(folio), or if this value becomes more then
+> > isize, than end_pos is made isize.
 > > 
-> > diff --git a/fs/configfs/inode.c b/fs/configfs/inode.c
-> > index 1c15edbe70ff..fbdcb3582926 100644
-> > --- a/fs/configfs/inode.c
-> > +++ b/fs/configfs/inode.c
-> > @@ -88,8 +88,7 @@ int configfs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> >  static inline void set_default_inode_attr(struct inode * inode, umode_t mode)
-> >  {
-> >  	inode->i_mode = mode;
-> > -	inode->i_atime = inode->i_mtime =
-> > -		inode->i_ctime = current_time(inode);
-> > +	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
-> >  }
-> >  
-> >  static inline void set_inode_attr(struct inode * inode, struct iattr * iattr)
-> > @@ -99,7 +98,7 @@ static inline void set_inode_attr(struct inode * inode, struct iattr * iattr)
-> >  	inode->i_gid = iattr->ia_gid;
-> >  	inode->i_atime = iattr->ia_atime;
-> >  	inode->i_mtime = iattr->ia_mtime;
-> > -	inode->i_ctime = iattr->ia_ctime;
-> > +	inode_set_ctime_to_ts(inode, iattr->ia_ctime);
-> >  }
-> >  
-> >  struct inode *configfs_new_inode(umode_t mode, struct configfs_dirent *sd,
-> > @@ -172,7 +171,7 @@ struct inode *configfs_create(struct dentry *dentry, umode_t mode)
-> >  		return ERR_PTR(-ENOMEM);
-> >  
-> >  	p_inode = d_inode(dentry->d_parent);
-> > -	p_inode->i_mtime = p_inode->i_ctime = current_time(p_inode);
-> > +	p_inode->i_mtime = inode_set_ctime_current(p_inode);
-> >  	configfs_set_inode_lock_class(sd, inode);
-> >  	return inode;
-> >  }
-> > -- 
-> > 2.41.0
-> > 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> > The current patch does not have a functional problem I guess. But in
+> > some cases where truncate races with writeback, it will end up marking
+> > more bits & later doesn't clear those. Hence I think we should correct
+> > it using below diff.
+> 
+> I don't think this is the only place where we'll set dirty bits beyond
+> EOF.  For example, if we mmap the last partial folio in a file,
+> page_mkwrite will dirty the entire folio, but we won't write back
+> blocks past EOF.  I think we'd be better off clearing all the dirty
+> bits in the folio, even the ones past EOF.  What do you think?
 
+Clear the dirty bits beyond EOF where we zero the data range beyond
+EOF in iomap_do_writepage() via folio_zero_segment()?
+
+-Dave.
 -- 
-
-Life's Little Instruction Book #237
-
-	"Seek out the good in people."
-
-			http://www.jlbec.org/
-			jlbec@evilplan.org
+Dave Chinner
+david@fromorbit.com
