@@ -2,254 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 01F5E74A74E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 00:52:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB5D274A76E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 01:09:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232181AbjGFWv4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 18:51:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56968 "EHLO
+        id S231706AbjGFXJu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 19:09:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232199AbjGFWvZ (ORCPT
+        with ESMTP id S229778AbjGFXJt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 18:51:25 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA3772127
-        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jul 2023 15:51:07 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-c361777c7f7so3608028276.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Jul 2023 15:51:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1688683866; x=1691275866;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vNyM+7c0est1wcVkLGeYyWS2zFzaKr32nANrKlDiGpI=;
-        b=EK01mLypW26xwbB17tl+WVi77pgJ0OApJdOy0ZdOVv84/lYvfVuW7WowZ4rEK8f7WX
-         g4rTBFdn/gfopVFptl2AY7oR1MbOxcuKJ5NLlgJS4KZnwJQ/O9DYar58Cp6+LJtem2dz
-         7aV6c0xPB8rtx/DVLBBYyqqPk4Y5aP7bx24BzHZVQh7fjXNIuWh3WsjiPncdyuOWOy0f
-         szlc4nj/Zd3/Khbkib9ISdsge3HmKG+4el8u83yJEUvEUWR2sl14PZi/zm9NTrqicFDS
-         XKFqXwSRFH+ICd8i9r7ldw2FSna2YUHpUhgptiJGArRniVNPuiWl7n0jMNBuoRiJ6+di
-         6/Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688683866; x=1691275866;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vNyM+7c0est1wcVkLGeYyWS2zFzaKr32nANrKlDiGpI=;
-        b=cBDb0WWUvhS2PEWXT/PGACUTf5v0nX391HfyMadreLcbc7aT1+5MS4bims9YXzq2vL
-         dTuGB8Mia5nfjvN4D6VOL02j4vTlHnUMeYkuzA4l3Gs6DIHmDBStWMo2dAE0Xlu0XqgV
-         9JFk7NizZ3pEIMJmcgykwhyhKM+CB4Wd2TpGXRLSxDHD9yENiN9yDxVe9ul6Uc9RajiZ
-         Ze+Meog1sNtubWHmVk7hohpDjAWMMRnbARtAwQl2btw4X/pGnmgAjEu5etvi2gNoE6od
-         NRvhz4dar4AMimT5oFQBcPd9aWPkpUwRFwaKTyHuC507vDKzxDsUHxQLl3wRdAeexGJ7
-         2YdA==
-X-Gm-Message-State: ABy/qLZ4SdS3RVOP8NYCEOfa+lKtPtOjZ2hD9Xz7Ant40QHu3MdzxSTk
-        QDjkk1iyyoeLnqvvlLxCONGG4MDzKrRqOaFLn2+w
-X-Google-Smtp-Source: APBJJlHgoq6fX5m1+Roj1PD+nUlgNcdctSDPa98kXCzajWjYbfEt4nefdrt/24V9AOah7Hkvx+a3A+kIbPjrz61F6Iqg
-X-Received: from axel.svl.corp.google.com ([2620:15c:2a3:200:bec3:2b1c:87a:fca2])
- (user=axelrasmussen job=sendgmr) by 2002:a25:ab90:0:b0:bc4:a660:528f with
- SMTP id v16-20020a25ab90000000b00bc4a660528fmr39975ybi.5.1688683866544; Thu,
- 06 Jul 2023 15:51:06 -0700 (PDT)
-Date:   Thu,  6 Jul 2023 15:50:36 -0700
-In-Reply-To: <20230706225037.1164380-1-axelrasmussen@google.com>
-Mime-Version: 1.0
-References: <20230706225037.1164380-1-axelrasmussen@google.com>
-X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
-Message-ID: <20230706225037.1164380-9-axelrasmussen@google.com>
-Subject: [PATCH v3 8/8] selftests/mm: add uffd unit test for UFFDIO_POISON
-From:   Axel Rasmussen <axelrasmussen@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Brian Geffon <bgeffon@google.com>,
-        Christian Brauner <brauner@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Gaosheng Cui <cuigaosheng1@huawei.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Hugh Dickins <hughd@google.com>,
-        James Houghton <jthoughton@google.com>,
-        "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>,
-        Jiaqi Yan <jiaqiyan@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "Mike Rapoport (IBM)" <rppt@kernel.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        Nadav Amit <namit@vmware.com>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Peter Xu <peterx@redhat.com>,
-        Ryan Roberts <ryan.roberts@arm.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Suleiman Souhlal <suleiman@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        "T.J. Alumbaugh" <talumbau@google.com>,
-        Yu Zhao <yuzhao@google.com>,
-        ZhangPeng <zhangpeng362@huawei.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org,
-        Axel Rasmussen <axelrasmussen@google.com>
+        Thu, 6 Jul 2023 19:09:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AFE81723;
+        Thu,  6 Jul 2023 16:09:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D0902614AE;
+        Thu,  6 Jul 2023 23:09:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38C2BC433C8;
+        Thu,  6 Jul 2023 23:09:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688684987;
+        bh=Uuv++2ma5NDjs+bcuMRFWEcW6o+iWpjfQ5AjXPN6aes=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=VGPecl0dUu+eoBIkAvremADAHGcRgX1U5KN8szvk7xy2YHMQCoWkNwv+d7wW3VaiW
+         tG0oe0J04JDQ1yp/7Q/mMbGixqjLjjvCuzYDpf919EnJ3MwravembIGl0Rw2o6r1dy
+         dG7B4Xu2BIpQi4UqrmSwBHZg9a0WytEcVRfYWcm//uqLb08IsEIqrLaVnRqQqs2O9v
+         siWdJl8Gu2UIl3WigKm/leMlKcxwbM6VR2zlkvfUUwN0fKMfnV6fCaxvCViZv9NehO
+         3CauD4mb2A8RNn5FKbpa1iVhJQSvZOju9vcAyjB3Mmpu/VXqIDzmJ2ugQO1D+pvL+X
+         CTrMmlysZjmOw==
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-558a79941c6so891584eaf.3;
+        Thu, 06 Jul 2023 16:09:47 -0700 (PDT)
+X-Gm-Message-State: ABy/qLYS2NaRU7dwszkKfXoAKqhdprLR1ANGYfX/I7H0AJXzhKF0AgSh
+        6Mkp+q82KM1mLAO55E+RlMyBZfuw7lTROXRtTyM=
+X-Google-Smtp-Source: APBJJlECo6Iml4AOjDS5ZRWCl6DBjqmG2Xldifp3HJdosuJzXEvUQv9g5GMMZlzAAN77NstB/lbwfuh0C7xdo2unch0=
+X-Received: by 2002:a4a:3748:0:b0:563:69ba:5919 with SMTP id
+ r69-20020a4a3748000000b0056369ba5919mr2457082oor.4.1688684986300; Thu, 06 Jul
+ 2023 16:09:46 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ac9:5e07:0:b0:4e8:f6ff:2aab with HTTP; Thu, 6 Jul 2023
+ 16:09:45 -0700 (PDT)
+In-Reply-To: <4cec63dcd3c0443c928800ffeec9118c@hihonor.com>
+References: <4cec63dcd3c0443c928800ffeec9118c@hihonor.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Fri, 7 Jul 2023 08:09:45 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd89OqqqSPNBZjggexWCrnBD6V7rWE547iKejmeihHFAiw@mail.gmail.com>
+Message-ID: <CAKYAXd89OqqqSPNBZjggexWCrnBD6V7rWE547iKejmeihHFAiw@mail.gmail.com>
+Subject: Re: [PATCH] exfat: use kvmalloc_array/kvfree instead of kmalloc_array/kfree
+To:     gaoming <gaoming20@hihonor.com>
+Cc:     Sungjong Seo <sj1557.seo@samsung.com>,
+        "open list:EXFAT FILE SYSTEM" <linux-fsdevel@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        fengbaopeng <fengbaopeng@hihonor.com>,
+        gaoxu <gaoxu2@hihonor.com>,
+        wangfei 00014658 <wangfei66@hihonor.com>,
+        shenchen 00013118 <harry.shen@hihonor.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The test is pretty basic, and exercises UFFDIO_POISON straightforwardly.
-We register a region with userfaultfd, in missing fault mode. For each
-fault, we either UFFDIO_COPY a zeroed page (odd pages) or UFFDIO_POISON
-(even pages). We do this mix to test "something like a real use case",
-where guest memory would be some mix of poisoned and non-poisoned pages.
+2023-07-05 18:15 GMT+09:00, gaoming <gaoming20@hihonor.com>:
+> The call stack shown below is a scenario in the Linux 4.19 kernel.
+> Allocating memory failed where exfat fs use kmalloc_array due
+> to system memory fragmentation, while the u-disk was inserted
+> without recognition.
+> Devices such as u-disk using the exfat file system are pluggable and may be
+> insert into the system at any time.
+> However, long-term running systems cannot guarantee the continuity of
+> physical memory. Therefore, it's necessary to address this issue.
+>
+> Binder:2632_6: page allocation failure: order:4,
+> mode:0x6040c0(GFP_KERNEL|__GFP_COMP), nodemask=(null)
+> Call trace:
+> [242178.097582]  dump_backtrace+0x0/0x4
+> [242178.097589]  dump_stack+0xf4/0x134
+> [242178.097598]  warn_alloc+0xd8/0x144
+> [242178.097603]  __alloc_pages_nodemask+0x1364/0x1384
+> [242178.097608]  kmalloc_order+0x2c/0x510
+> [242178.097612]  kmalloc_order_trace+0x40/0x16c
+> [242178.097618]  __kmalloc+0x360/0x408
+> [242178.097624]  load_alloc_bitmap+0x160/0x284
+> [242178.097628]  exfat_fill_super+0xa3c/0xe7c
+> [242178.097635]  mount_bdev+0x2e8/0x3a0
+> [242178.097638]  exfat_fs_mount+0x40/0x50
+> [242178.097643]  mount_fs+0x138/0x2e8
+> [242178.097649]  vfs_kern_mount+0x90/0x270
+> [242178.097655]  do_mount+0x798/0x173c
+> [242178.097659]  ksys_mount+0x114/0x1ac
+> [242178.097665]  __arm64_sys_mount+0x24/0x34
+> [242178.097671]  el0_svc_common+0xb8/0x1b8
+> [242178.097676]  el0_svc_handler+0x74/0x90
+> [242178.097681]  el0_svc+0x8/0x340
+>
+> By analyzing the exfat code,we found that continuous physical memory is
+> not required here,so kvmalloc_array is used can solve this problem.
+>
+> Signed-off-by: gaoming <gaoming20@hihonor.com>
+> ---
+>  fs/exfat/balloc.c | 4 ++--
+>  fs/exfat/dir.c    | 4 ++--
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c
+> index 9f42f25fab92..a183558cb7a0 100644
+> --- a/fs/exfat/balloc.c
+> +++ b/fs/exfat/balloc.c
+> @@ -69,7 +69,7 @@ static int exfat_allocate_bitmap(struct super_block *sb,
+>  	}
+>  	sbi->map_sectors = ((need_map_size - 1) >>
+>  			(sb->s_blocksize_bits)) + 1;
+> -	sbi->vol_amap = kmalloc_array(sbi->map_sectors,
+> +	sbi->vol_amap = kvmalloc_array(sbi->map_sectors,
+>  				sizeof(struct buffer_head *), GFP_KERNEL);
+>  	if (!sbi->vol_amap)
+>  		return -ENOMEM;
+> @@ -84,7 +84,7 @@ static int exfat_allocate_bitmap(struct super_block *sb,
+>  			while (j < i)
+>  				brelse(sbi->vol_amap[j++]);
+>
+> -			kfree(sbi->vol_amap);
+> +			kvfree(sbi->vol_amap);
+>  			sbi->vol_amap = NULL;
+>  			return -EIO;
+>  		}
+> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+> index 957574180a5e..5cbb78d0a2a2 100644
+> --- a/fs/exfat/dir.c
+> +++ b/fs/exfat/dir.c
+> @@ -649,7 +649,7 @@ int exfat_put_dentry_set(struct exfat_entry_set_cache
+> *es, int sync)
+>  			brelse(es->bh[i]);
+>
+>  	if (IS_DYNAMIC_ES(es))
+> -		kfree(es->bh);
+> +		kvfree(es->bh);
+>
+>  	return err;
+>  }
+> @@ -888,7 +888,7 @@ int exfat_get_dentry_set(struct exfat_entry_set_cache
+> *es,
+>
+>  	num_bh = EXFAT_B_TO_BLK_ROUND_UP(off + num_entries * DENTRY_SIZE, sb);
+>  	if (num_bh > ARRAY_SIZE(es->__bh)) {
+> -		es->bh = kmalloc_array(num_bh, sizeof(*es->bh), GFP_KERNEL);
+> +		es->bh = kvmalloc_array(num_bh, sizeof(*es->bh), GFP_KERNEL);
+Could you please elaborate why you change this to kvmalloc_array also?
 
-We read each page in the region, and assert that the odd pages are
-zeroed as expected, and the even pages yield a SIGBUS as expected.
-
-Why UFFDIO_COPY instead of UFFDIO_ZEROPAGE? Because hugetlb doesn't
-support UFFDIO_ZEROPAGE, and we don't want to have special case code.
-
-Acked-by: Peter Xu <peterx@redhat.com>
-Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
----
- tools/testing/selftests/mm/uffd-unit-tests.c | 117 +++++++++++++++++++
- 1 file changed, 117 insertions(+)
-
-diff --git a/tools/testing/selftests/mm/uffd-unit-tests.c b/tools/testing/selftests/mm/uffd-unit-tests.c
-index 04d91f144d1c..2709a34a39c5 100644
---- a/tools/testing/selftests/mm/uffd-unit-tests.c
-+++ b/tools/testing/selftests/mm/uffd-unit-tests.c
-@@ -951,6 +951,117 @@ static void uffd_zeropage_test(uffd_test_args_t *args)
- 	uffd_test_pass();
- }
- 
-+static void uffd_register_poison(int uffd, void *addr, uint64_t len)
-+{
-+	uint64_t ioctls = 0;
-+	uint64_t expected = (1 << _UFFDIO_COPY) | (1 << _UFFDIO_POISON);
-+
-+	if (uffd_register_with_ioctls(uffd, addr, len, true,
-+				      false, false, &ioctls))
-+		err("poison register fail");
-+
-+	if ((ioctls & expected) != expected)
-+		err("registered area doesn't support COPY and POISON ioctls");
-+}
-+
-+static void do_uffdio_poison(int uffd, unsigned long offset)
-+{
-+	struct uffdio_poison uffdio_poison = { 0 };
-+	int ret;
-+	__s64 res;
-+
-+	uffdio_poison.range.start = (unsigned long) area_dst + offset;
-+	uffdio_poison.range.len = page_size;
-+	uffdio_poison.mode = 0;
-+	ret = ioctl(uffd, UFFDIO_POISON, &uffdio_poison);
-+	res = uffdio_poison.updated;
-+
-+	if (ret)
-+		err("UFFDIO_POISON error: %"PRId64, (int64_t)res);
-+	else if (res != page_size)
-+		err("UFFDIO_POISON unexpected size: %"PRId64, (int64_t)res);
-+}
-+
-+static void uffd_poison_handle_fault(
-+	struct uffd_msg *msg, struct uffd_args *args)
-+{
-+	unsigned long offset;
-+
-+	if (msg->event != UFFD_EVENT_PAGEFAULT)
-+		err("unexpected msg event %u", msg->event);
-+
-+	if (msg->arg.pagefault.flags &
-+	    (UFFD_PAGEFAULT_FLAG_WP | UFFD_PAGEFAULT_FLAG_MINOR))
-+		err("unexpected fault type %llu", msg->arg.pagefault.flags);
-+
-+	offset = (char *)(unsigned long)msg->arg.pagefault.address - area_dst;
-+	offset &= ~(page_size-1);
-+
-+	/* Odd pages -> copy zeroed page; even pages -> poison. */
-+	if (offset & page_size)
-+		copy_page(uffd, offset, false);
-+	else
-+		do_uffdio_poison(uffd, offset);
-+}
-+
-+static void uffd_poison_test(uffd_test_args_t *targs)
-+{
-+	pthread_t uffd_mon;
-+	char c;
-+	struct uffd_args args = { 0 };
-+	struct sigaction act = { 0 };
-+	unsigned long nr_sigbus = 0;
-+	unsigned long nr;
-+
-+	fcntl(uffd, F_SETFL, uffd_flags | O_NONBLOCK);
-+
-+	uffd_register_poison(uffd, area_dst, nr_pages * page_size);
-+	memset(area_src, 0, nr_pages * page_size);
-+
-+	args.handle_fault = uffd_poison_handle_fault;
-+	if (pthread_create(&uffd_mon, NULL, uffd_poll_thread, &args))
-+		err("uffd_poll_thread create");
-+
-+	sigbuf = &jbuf;
-+	act.sa_sigaction = sighndl;
-+	act.sa_flags = SA_SIGINFO;
-+	if (sigaction(SIGBUS, &act, 0))
-+		err("sigaction");
-+
-+	for (nr = 0; nr < nr_pages; ++nr) {
-+		unsigned long offset = nr * page_size;
-+		const char *bytes = (const char *) area_dst + offset;
-+		const char *i;
-+
-+		if (sigsetjmp(*sigbuf, 1)) {
-+			/*
-+			 * Access below triggered a SIGBUS, which was caught by
-+			 * sighndl, which then jumped here. Count this SIGBUS,
-+			 * and move on to next page.
-+			 */
-+			++nr_sigbus;
-+			continue;
-+		}
-+
-+		for (i = bytes; i < bytes + page_size; ++i) {
-+			if (*i)
-+				err("nonzero byte in area_dst (%p) at %p: %u",
-+				    area_dst, i, *i);
-+		}
-+	}
-+
-+	if (write(pipefd[1], &c, sizeof(c)) != sizeof(c))
-+		err("pipe write");
-+	if (pthread_join(uffd_mon, NULL))
-+		err("pthread_join()");
-+
-+	if (nr_sigbus != nr_pages / 2)
-+		err("expected to receive %lu SIGBUS, actually received %lu",
-+		    nr_pages / 2, nr_sigbus);
-+
-+	uffd_test_pass();
-+}
-+
- /*
-  * Test the returned uffdio_register.ioctls with different register modes.
-  * Note that _UFFDIO_ZEROPAGE is tested separately in the zeropage test.
-@@ -1126,6 +1237,12 @@ uffd_test_case_t uffd_tests[] = {
- 		UFFD_FEATURE_PAGEFAULT_FLAG_WP |
- 		UFFD_FEATURE_WP_HUGETLBFS_SHMEM,
- 	},
-+	{
-+		.name = "poison",
-+		.uffd_fn = uffd_poison_test,
-+		.mem_targets = MEM_ALL,
-+		.uffd_feature_required = UFFD_FEATURE_POISON,
-+	},
- };
- 
- static void usage(const char *prog)
--- 
-2.41.0.255.g8b1d071c50-goog
-
+Thanks.
+>  		if (!es->bh) {
+>  			brelse(bh);
+>  			return -ENOMEM;
+> --
+> 2.17.1
+>
+>
