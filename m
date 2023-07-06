@@ -2,103 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F08D74A062
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 17:05:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ADD374A089
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 17:12:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233753AbjGFPFk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 11:05:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51240 "EHLO
+        id S231566AbjGFPMt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 11:12:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233707AbjGFPFd (ORCPT
+        with ESMTP id S229641AbjGFPMs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 11:05:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3840C1725;
-        Thu,  6 Jul 2023 08:05:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 17A46609EB;
-        Thu,  6 Jul 2023 15:05:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9F0AC433C7;
-        Thu,  6 Jul 2023 15:05:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688655930;
-        bh=Rf7i8I+LfcJ8cIMf7wGyzUSCTROtn6GdIVE4P/kAZIU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=J3lqPtyW8zjsoC8LVCiAH9lmO1BOO+VQYiaQVEWmS2/RZiqBWnMsbTPPowJnafWTv
-         Ka7RcI3DOuM8pttkMqwV+J/H4vH7u3jt+YG68d+FzYX7OMm0U8nsVSlvEXxx1au3mS
-         Z8Pqsusg/Ijo6cTXX98lpWCjDS/74YEHkhOXEwsrYjy8mbm+JDtxesoCTq/YEJo6ZN
-         qu1ky9uRwZl49kpvoMal7dQuog4ETFc0BoI+iQETjaTQPHJFOvL4pJUcvBjAUZ2i+Q
-         kxzGPiKOI/HqoxML5p4AIKAAoqrUCf0BZh9epx4YoKoMT46ZwM4UajklZL7eapOOPR
-         ySIEL7GI1i7Lg==
-Message-ID: <6733eddd632b3a8e85518ef04dae3e28f600c961.camel@kernel.org>
-Subject: Re: [PATCH v2 84/92] linux: convert to ctime accessor functions
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 06 Jul 2023 11:05:28 -0400
-In-Reply-To: <20230706145321.ahfawgtukrmfgfdv@quack3>
-References: <20230705185755.579053-1-jlayton@kernel.org>
-         <20230705190309.579783-1-jlayton@kernel.org>
-         <20230705190309.579783-82-jlayton@kernel.org>
-         <20230706145321.ahfawgtukrmfgfdv@quack3>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Thu, 6 Jul 2023 11:12:48 -0400
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F3D7FC;
+        Thu,  6 Jul 2023 08:12:44 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R411e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0Vml4Kei_1688656357;
+Received: from 192.168.3.2(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Vml4Kei_1688656357)
+          by smtp.aliyun-inc.com;
+          Thu, 06 Jul 2023 23:12:39 +0800
+Message-ID: <4949c20e-177f-7952-7870-41f3b3fd791f@linux.alibaba.com>
+Date:   Thu, 6 Jul 2023 23:12:37 +0800
 MIME-Version: 1.0
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.12.0
+Subject: Re: [PATCH v2 39/92] erofs: convert to ctime accessor functions
+To:     Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+        Yue Hu <huyue2@coolpad.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org
+References: <20230705185755.579053-1-jlayton@kernel.org>
+ <20230705190309.579783-1-jlayton@kernel.org>
+ <20230705190309.579783-37-jlayton@kernel.org>
+ <20230706110007.dc4tpyt5e6wxi5pt@quack3>
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20230706110007.dc4tpyt5e6wxi5pt@quack3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2023-07-06 at 16:53 +0200, Jan Kara wrote:
-> On Wed 05-07-23 15:01:49, Jeff Layton wrote:
-> > In later patches, we're going to change how the inode's ctime field is
-> > used. Switch to using accessor functions instead of raw accesses of
-> > inode->i_ctime.
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
->=20
-> Looks good. Feel free to add:
->=20
-> Reviewed-by: Jan Kara <jack@suse.cz>
->=20
+Hi Jan,
+
+On 2023/7/6 19:00, Jan Kara wrote:
+> On Wed 05-07-23 15:01:04, Jeff Layton wrote:
+>> In later patches, we're going to change how the inode's ctime field is
+>> used. Switch to using accessor functions instead of raw accesses of
+>> inode->i_ctime.
+>>
+>> Acked-by: Gao Xiang <xiang@kernel.org>
+>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> 
+> Just one nit below:
+> 
+>> @@ -176,10 +175,10 @@ static void *erofs_read_inode(struct erofs_buf *buf,
+>>   		vi->chunkbits = sb->s_blocksize_bits +
+>>   			(vi->chunkformat & EROFS_CHUNK_FORMAT_BLKBITS_MASK);
+>>   	}
+>> -	inode->i_mtime.tv_sec = inode->i_ctime.tv_sec;
+>> -	inode->i_atime.tv_sec = inode->i_ctime.tv_sec;
+>> -	inode->i_mtime.tv_nsec = inode->i_ctime.tv_nsec;
+>> -	inode->i_atime.tv_nsec = inode->i_ctime.tv_nsec;
+>> +	inode->i_mtime.tv_sec = inode_get_ctime(inode).tv_sec;
+>> +	inode->i_atime.tv_sec = inode_get_ctime(inode).tv_sec;
+>> +	inode->i_mtime.tv_nsec = inode_get_ctime(inode).tv_nsec;
+>> +	inode->i_atime.tv_nsec = inode_get_ctime(inode).tv_nsec;
+> 
+> Isn't this just longer way to write:
+> 
+> 	inode->i_atime = inode->i_mtime = inode_get_ctime(inode);
+
+I'm fine with this.  I think we could use this (although I'm not sure
+if checkpatch will complain but personally I'm fine.)
+
+Thanks,
+Gao Xiang
+
+> 
+> ?
+> 
 > 								Honza
->=20
-
-I'll fix the subject line on this one too, which should be "fs_stack:".
-Many thanks for all of the review!
-
-> > ---
-> >  include/linux/fs_stack.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/include/linux/fs_stack.h b/include/linux/fs_stack.h
-> > index 54210a42c30d..010d39d0dc1c 100644
-> > --- a/include/linux/fs_stack.h
-> > +++ b/include/linux/fs_stack.h
-> > @@ -24,7 +24,7 @@ static inline void fsstack_copy_attr_times(struct ino=
-de *dest,
-> >  {
-> >  	dest->i_atime =3D src->i_atime;
-> >  	dest->i_mtime =3D src->i_mtime;
-> > -	dest->i_ctime =3D src->i_ctime;
-> > +	inode_set_ctime_to_ts(dest, inode_get_ctime(src));
-> >  }
-> > =20
-> >  #endif /* _LINUX_FS_STACK_H */
-> > --=20
-> > 2.41.0
-> >=20
-
---=20
-Jeff Layton <jlayton@kernel.org>
