@@ -2,76 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 410647492C8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 02:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7EF87492E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 03:10:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231508AbjGFAyW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Jul 2023 20:54:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37312 "EHLO
+        id S231539AbjGFBKr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Jul 2023 21:10:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbjGFAyR (ORCPT
+        with ESMTP id S229634AbjGFBKr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Jul 2023 20:54:17 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8119171A;
-        Wed,  5 Jul 2023 17:54:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.com;
- s=s31663417; t=1688604829; x=1689209629; i=quwenruo.btrfs@gmx.com;
- bh=sh0LGEKBi7t+gs431m83i8UhS/20EPhvC3QQhuDUgKw=;
- h=X-UI-Sender-Class:Date:To:Cc:References:From:Subject:In-Reply-To;
- b=pna0OjYVmEIBwguN/dDimLXnxk3J2ltwqVB5DZSxTCXzTAerYjyKRTs1n89wWO4yElAY6l5
- kOBaiwT2pOWZacwXDYHzetFyWitRpg2T8+8iLbYUNP1V8gqH1C0BH9ClQlETZLTdqT566gvwG
- GxDe6Jp/UKHd405/UgNl853Ki9xKEJJ0DYzDRmgwqkXQn0w+R/hfCWlf1wUTDDzJsL+e48NiN
- DC83Df1nFb5FqQH/d5DQ9UF3HIhKfBNz0k3+9WSyE6wV7fani7o9b8+EixdaBzRcoOiqAANke
- rliWJ6/6/ohKSlQfn7qgTva1iX15aOomy7V9MO9SYrEgv66QZFVA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MvbBu-1pyAzz0YLe-00scXF; Thu, 06
- Jul 2023 02:53:49 +0200
-Message-ID: <0d6dc2f3-75a5-bc72-f3b5-2a3749db1683@gmx.com>
-Date:   Thu, 6 Jul 2023 08:53:39 +0800
+        Wed, 5 Jul 2023 21:10:47 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B986B1995;
+        Wed,  5 Jul 2023 18:10:45 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2b6f943383eso1152661fa.2;
+        Wed, 05 Jul 2023 18:10:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688605844; x=1691197844;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MjwBdXF1omyqPra/29ms0Vi+bZo8i0ip6SKqToNp0PU=;
+        b=LtiEwjeo7A4AxPIu5X1SdLlGwHl6arlOHkl1ovK6lx9cew/YSsxEBzMObSEly4sRd1
+         0HRM/RmsTPW5+uiQ/hiUYda0KGJvGO8EMW4H0O+AGhWoyyrizYB5dAruupp82X+73DlT
+         Xez5SNgqH4fGnYb98Ov8Ca1gAqvDRCqElrxcHPJcKfc/YndH2wpCyjSsPRJ4HlP2Ax/d
+         QvIEdgnvlsEQo5e4tghY7in5tvjsHdAqVFh9QDyHO1YsPU4Xajeaw3IV6+iQ35gFYzib
+         k70MGNZBRlFmGN28Zpv/prbtnbRFj7y5K0Zt2Zc6st7yLyh8O3fN8jlB9jdZ4cWxxFzS
+         wruw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688605844; x=1691197844;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MjwBdXF1omyqPra/29ms0Vi+bZo8i0ip6SKqToNp0PU=;
+        b=P7W5HLW/I9lKV0doy/lz2JQnEJbyloJBWg79BGuQYCMOjv5UGGfHp3FAmpwJ0F+/O/
+         /R0WIr3LAPCSvB3zBZC/mJOQF2jKMU9oRyd0jFeJeDazSPnIKUGOKLeF08kD866YIB8X
+         YrZyT9QUz7RN4wpAGJV0kykz5bYdyrGSynZPK/s2LUYT4lJ7YpkPRvFKaHFEVzdA1zZS
+         2cD/A+B2XTpOHpcpMAJU5fMQzoH+/lq0pMXmH9Z3gXlS5l5X7jdEimCSMgVJ0pHEJ+wc
+         TTabl/5m4hGVao0a8njjXKahWZE/nlrkTRcF7s/4/YKwDiMIwXA7S/0OzplyfLxSKdQm
+         Cesw==
+X-Gm-Message-State: ABy/qLa5BgEugcKyN3BHx9hGzYDiN0CcxNcbRrSKHOc0wqTFOPtLeR6a
+        hR+1Svc0WsygKvOaDykXP2fq+XTW8GHe8+ysyVPL9rlu5qY=
+X-Google-Smtp-Source: APBJJlGpZnNx3Rr5Mhu3UgNSB4U3aY/o++mEbnMSFgvHz5GTZvONS6sD+RjI0haxyxDq5f00Bpfvx8rSylYNYo3W1dc=
+X-Received: by 2002:a2e:9dd5:0:b0:2b6:f8d0:7d3d with SMTP id
+ x21-20020a2e9dd5000000b002b6f8d07d3dmr184173ljj.49.1688605843533; Wed, 05 Jul
+ 2023 18:10:43 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        Qu Wenruo <wqu@suse.com>
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-fsdevel@vger.kernel.org, kernel@gpiccoli.net,
-        kernel-dev@igalia.com, vivek@collabora.com,
-        ludovico.denittis@collabora.com, johns@valvesoftware.com,
-        linux-btrfs@vger.kernel.org, Anand Jain <anand.jain@oracle.com>
-References: <20230504170708.787361-1-gpiccoli@igalia.com>
- <20230504170708.787361-2-gpiccoli@igalia.com>
- <2892ff0d-9225-07b7-03e4-a3c96d0bff59@gmx.com>
- <bc897780-2c81-fe1f-a8d4-148a08962a20@igalia.com>
-Content-Language: en-US
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-Subject: Re: [PATCH 1/2] btrfs: Introduce the virtual_fsid feature
-In-Reply-To: <bc897780-2c81-fe1f-a8d4-148a08962a20@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <c35fbb4cb0a3a9b4653f9a032698469d94ca6e9c.1688123230.git.legion@kernel.org>
+ <babdf7a8-9663-6d71-821a-34da2aff80e2@huaweicloud.com> <20230704-anrollen-beenden-9187c7b1b570@brauner>
+In-Reply-To: <20230704-anrollen-beenden-9187c7b1b570@brauner>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Wed, 5 Jul 2023 18:10:32 -0700
+Message-ID: <CAADnVQLAhDepRpbbi_EU6Ca3wnuBtSuAPO9mE6pGoxj8i9=caQ@mail.gmail.com>
+Subject: Re: [PATCH v1] fs: Add kfuncs to handle idmapped mounts
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Hou Tao <houtao@huaweicloud.com>,
+        Alexey Gladkov <legion@kernel.org>, bpf <bpf@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:hxVwijMo8bIMIsTtfR6C4mMTd0r40PTeZ+dTuUS+mZWdTe+LYah
- QA7i5rau5hGzKSoM3IBIs1cdqQ0PL43Pe4+WtiQV1bNhk8bGJQPUD0VLNiei2u1i05+ZJDw
- BwutkVKwCjxdVFKOj2Reg4yTwH9I/E7sEkwmTyJnRgQnaTE1Jm5VXC+uiUZ8eHMloimTINV
- CxCpxaYzZu1LjUCoqOurQ==
-UI-OutboundReport: notjunk:1;M01:P0:COQW6h5lxOs=;Flhr9mksVc6JWsiqUOF9Fz39qqM
- wHdm4M4I6qpTbCkSfIo2MhG3oGbgs60Bh8MQ8bA7eJ10ZLnf3lC08o44uzWLL95GNjxg30h1l
- IJTjeSckD3iWYNyB5S2VMIJeKR2GcZqhd7VkoKdb1G4GTIfgaqBSDU5G+kVHTVaxFwxOQLhQq
- en4pchxHb67k/k/3Nrrulwot07Q3N6uSJUYr2h1kYXeG4IBkFfHHdb+25nr+PdExg39Q01CuT
- p53Cq6xIMmbuC2d0+woKqMasIZ/Wk6tEIW4WhlCDpacmXCzM50OPNr+Ha3KTMkaecxsXOUuke
- oWrHJRm/CTaJ8z2vBy0vlj/GUf/AVmryWpCrV+9b+vGMD/V9HUiiBUWKaBF+UsHOK3TlFBMs6
- wtgbldlmF3fTM4/5L/9u5ddC2duvU6w9/EON+TMfp5ocB8GweRyfCZdypEsic8LXBzDBPMNWo
- qQL3sfYUCKqsGuGL135vCAG9a0ODQumLrQDgDKIL+aSVpylvQSVQgcUXiSDjhCJEj8pj34b16
- JlzdbbP/kEdApsvJ8Ez3Qo642o4tPVeRzS36XVLcsC6yi/R6IQ1PGHSa9iOpuvcSzRO8DQO2u
- 1thpFVCNesWoM/kM9B88rZG9hmoZi8PzL8QVqrCDFroWqEFGBpO/8ORugbYAqksmJFfeklI8h
- qPmjn7kb+VuKsjtatX8uqfxJ35NqfwxOd7dSNd7WrN4qG8ovD1sn/kc2FiPvbjUyLOETLrxLY
- VomaB+53aPq038vrlzKAf0POttqZuyHYhSVDjHhPiAb4+kV/EeYplxp2Z3gCrXTs1W9mtawAl
- ulaTH72sqNzWxQSG0WeUWC+oIzSsSXYArPELxGVTHfxoDC2goN3Yn8937G9aXQ1n7KphePoUY
- 9dGZW3iKzpU8o7JIgfZASE/+Q9JrR1HwpxpMLxcKETESmSYr1MUwmp/CIwkv4vPA/hZPI9Lzg
- 3XhvDCmsnUiEWb3GKlWfWCTe1Rw=
-X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,106 +73,96 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Jul 4, 2023 at 6:01=E2=80=AFAM Christian Brauner <brauner@kernel.or=
+g> wrote:
+>
+> > > +/**
+> > > + * bpf_is_idmapped_mnt - check whether a mount is idmapped
+> > > + * @mnt: the mount to check
+> > > + *
+> > > + * Return: true if mount is mapped, false if not.
+> > > + */
+> > > +__bpf_kfunc bool bpf_is_idmapped_mnt(struct vfsmount *mnt)
+> > > +{
+> > > +   return is_idmapped_mnt(mnt);
+> > > +}
+...
+>
+> I don't want any of these helpers as kfuncs as they are peeking deeply
+> into implementation details that we reserve to change. Specifically in
+> the light of:
+>
+>     3. kfunc lifecycle expectations part b):
+>
+>     "Unlike with regular kernel symbols, this is expected behavior for BP=
+F
+>      symbols, and out-of-tree BPF programs that use kfuncs should be cons=
+idered
+>      relevant to discussions and decisions around modifying and removing =
+those
+>      kfuncs. The BPF community will take an active role in participating =
+in
+>      upstream discussions when necessary to ensure that the perspectives =
+of such
+>      users are taken into account."
+>
+> That's too much stability for my taste for these helpers. The helpers
+> here exposed have been modified multiple times and once we wean off
+> idmapped mounts from user namespaces completely they will change again.
+> So I'm fine if they're traceable but not as kfuncs with any - even
+> minimal - stability guarantees.
 
+Christian,
+That quote is taken out of context.
+In the first place the Documentation/bpf/kfuncs.rst says:
+"
+kfuncs provide a kernel <-> kernel API, and thus are not bound by any of th=
+e
+strict stability restrictions associated with kernel <-> user UAPIs. This m=
+eans
+they can be thought of as similar to EXPORT_SYMBOL_GPL, and can therefore b=
+e
+modified or removed by a maintainer of the subsystem they're defined in whe=
+n
+it's deemed necessary.
+"
 
-On 2023/7/6 06:52, Guilherme G. Piccoli wrote:
-> On 05/05/2023 04:21, Qu Wenruo wrote:
->> [...]
->> I would prefer a much simpler but more explicit method.
->>
->> Just introduce a new compat_ro feature, maybe call it SINGLE_DEV.
->>
->> By this, we can avoid multiple meanings of the same super member, nor
->> need any special mount option.
->> Remember, mount option is never a good way to enable/disable a new feat=
-ure.
->>
->> The better method to enable/disable a feature should be mkfs and btrfst=
-une.
->>
->> Then go mostly the same of your patch, but maybe with something extra:
->>
->> - Disbale multi-dev code
->>     Include device add/replace/removal, this is already done in your
->>     patch.
->>
->> - Completely skip device scanning
->>     I see no reason to keep btrfs with SINGLE_DEV feature to be added t=
-o
->>     the device list at all.
->>     It only needs to be scanned at mount time, and never be kept in the
->>     in-memory device list.
->>
->
-> Hi Qu, I'm implementing this compat_ro idea of yours, but I'd like to
-> ask your input in some "design decisions" I'm facing here.
->
-> (a) I've skipped the device_list_add() step of adding the recent created
-> fs_devices struct to fs_uuids list, but I kept the btrfs_device creation
-> step. With that, the mount of two filesystems with same fsid fails..at
-> sysfs directory creation!
->
-> Of course - because it tries to add the same folder name to
-> /sys/fs/btrfs/ !!! I have some options here:
->
-> (I) Should I keep using a random generated fsid for single_dev devices,
-> in order we can mount many of them while not messing too much with the
-> code? I'd continue "piggybacking" on metadata_uuid idea if (I) is the
-> proper choice.
->
-> (II) Or maybe track down all fsid usage in the code (like this sysfs
-> case) and deal with that? In the sysfs case, we could change that folder
-> name to some other format, like fsid.NUM for single_dev devices, whereas
-> NUM is an incremental value for devices mounted with same fsid.
->
-> I'm not too fond of this alternative due to its complexity and "API"
-> breakage - userspace already expects /sys/fs/btrfs/ entries to be the fs=
-id.
->
-> (III) Should we hide the filesystem from sysfs (and other potential
-> conflicts that come from same fsid mounting points)? Seems a hideous
-> approach, due to API breakage and bug potentials.
+bpf_get_file_vfs_ids is vfs related, so you guys decide when and how
+to add/remove them. It's ok that you don't want this particular one
+for whatever reason, but that reason shouldn't be 'stability guarantees'.
+There are really none. The kernel kfuncs can change at any time.
+There are plenty of examples in git log where we added and then
+tweaked/removed kfuncs.
 
-Personally speaking, I would go one of the following solution:
+The doc also says:
+"
+As described above, while sometimes a maintainer may find that a kfunc must=
+ be
+changed or removed immediately to accommodate some changes in their subsyst=
+em,
+"
+and git log of such cases proves the point.
 
-- Keep the sysfs, but adds a refcount to the sysfs related structures
-   If we still go register the sysfs interface, then we have to keep a
-   refcount, or any of the same fsid got unmounted, we would remove the
-   whole sysfs entry.
+The quote about out-of-tree bpf progs is necessary today, since
+very few bpf progs are in-tree, so when maintainers of a subsystem
+want to remove kfunc the program authors need something in the doc
+to point to and explain why and how they use the kfunc otherwise
+maintainers will just say 'go away. you're out-of-tree'.
+The users need their voice to be heard. Even if the result is the same.
+In other words the part you quoted is needed to make kfuncs usable.
+Otherwise 'kfunc is 100% unstable and maintainers can rename it
+every release just to make life of bpf prog writers harder'
+becomes a real possibility in the minds of bpf users.
+The kfunc doc makes it 100% clear that there are no stability guarantees.
+So please don't say 'minimal stability'.
 
-- Skip the sysfs entry completely for any fs with the new compat_ro flag
-   This would your idea (III), but the sysfs interface itself is not that
-   critical (we add and remove entries from time to time), so I believe
-   it's feasible to hide the sysfs for certain features.
+In your other reply:
 
->
-> Maybe there are other choices, better than mine - lemme know if you have
-> some ideas!
->
-> Also, one last question/confirmation: you mentioned that "The better
-> method to enable/disable a feature should be mkfs" - you mean the same
-> way mkfs could be used to set features like "raid56" or "no-holes"?
+> we can look at the in-kernel users of is_idmapped_mnt(),
+> convert them and then kill this thing off if we wanted to.
 
-Yes.
-
->
-> By checking "mkfs.btrfs -O list-all", I don't see metadata_uuid for
-> example, which is confined to btrfstune it seems. I'm already modifying
-> btrfs-progs/mkfs, but since I'm emailing you, why not confirm, right? he=
-h
-
-I'm not familiar with metadata_uuid, but there are similar features like
-seeding, which is only available in btrfstune, but not in mkfs.
-
-It's not that uncommon, but yeah, you have found something we should
-improve on.
-
-Thanks,
-Qu
-
->
-> Thanks again for the advice and suggestions - much appreciated!
-> Cheers,
->
->
-> Guilherme
+you can absolutely do that even if is_idmapped_mnt() is exposed as a kfunc.
+You'll just delete it with zero notice if you like.
+Just like what you would do with a normal export_symbol.
+The doc is pretty clear about it and there are examples where we did
+such things.
