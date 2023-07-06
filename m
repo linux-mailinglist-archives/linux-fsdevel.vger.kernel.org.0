@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 37394749E44
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 15:55:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC7B1749E48
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 15:56:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232695AbjGFNzn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 09:55:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35158 "EHLO
+        id S232692AbjGFN4j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 09:56:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231366AbjGFNzm (ORCPT
+        with ESMTP id S232174AbjGFN4i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 09:55:42 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27F851BE3;
-        Thu,  6 Jul 2023 06:55:20 -0700 (PDT)
+        Thu, 6 Jul 2023 09:56:38 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 407DA1BC9;
+        Thu,  6 Jul 2023 06:56:37 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id C5F022277F;
-        Thu,  6 Jul 2023 13:55:18 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id E550022789;
+        Thu,  6 Jul 2023 13:56:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1688651718; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1688651795; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
         bh=XwvMPHSu7xNFjpf/tkeHJ2SIRv1M+NRRDyqHqUcYkIo=;
-        b=b8SqHJVH9ALTskCt9O4rsNLoxpn3giYYrUMszctCcLJzKuGK9qE6uTm/tMYNWgjUAHjQhi
-        x7VCChMaj+XVwZeae7io/NSGjoxG2PUDDTC8NAr0dKTW6Nit5G0/tBlBMyhBMaYBVorEdH
-        R6Ft4HK5XXzEuj+9b6ZnGkRDv+EbHIg=
+        b=SrPlnn8hoCWK28Iw5u0lS8EU4nUp8x4Xv8JO97SrSMK6nGaVC6dJy/9V8ObTwLFXscGwxW
+        tUAC2MwOJguZmwL0zRGXv+HNVJXGns77N1Ig/YnI210ErooqOSZasrroda8dOE9mf0K3N+
+        1tSyUZDBnIs/U9ViOmBAHTZhkcaTpbY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1688651718;
+        s=susede2_ed25519; t=1688651795;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
         bh=XwvMPHSu7xNFjpf/tkeHJ2SIRv1M+NRRDyqHqUcYkIo=;
-        b=513F7K7OruLAfUOTXjNW+VYK3b+OMtcbnip4h6ypWcVNegk2gI7J34PZjwGK72GjQ8lJWp
-        71MH2jekxP2yh4BQ==
+        b=Pn3Sv6sYCtR+EqmiPs05bo7/Lf5Ury4XfdWSkeX/RA/XVLctpf3gU9BKN+679zJRACOQNG
+        25IFR+kl8IZrhqBQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B66C7138EE;
-        Thu,  6 Jul 2023 13:55:18 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CD84E138EE;
+        Thu,  6 Jul 2023 13:56:35 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id rAOlLMbHpmTHZAAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 06 Jul 2023 13:55:18 +0000
+        id bxgrMhPIpmRfZQAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 06 Jul 2023 13:56:35 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 54CC3A0707; Thu,  6 Jul 2023 15:55:18 +0200 (CEST)
-Date:   Thu, 6 Jul 2023 15:55:18 +0200
+        id 66EBBA0707; Thu,  6 Jul 2023 15:56:35 +0200 (CEST)
+Date:   Thu, 6 Jul 2023 15:56:35 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     Christian Brauner <brauner@kernel.org>,
@@ -59,7 +59,7 @@ Cc:     Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         devel@lists.orangefs.org
 Subject: Re: [PATCH v2 65/92] orangefs: convert to ctime accessor functions
-Message-ID: <20230706135518.xjfzcvf224wfypeg@quack3>
+Message-ID: <20230706135635.jhz2dksvol5mfvp3@quack3>
 References: <20230705185755.579053-1-jlayton@kernel.org>
  <20230705190309.579783-1-jlayton@kernel.org>
  <20230705190309.579783-63-jlayton@kernel.org>
@@ -67,9 +67,9 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20230705190309.579783-63-jlayton@kernel.org>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
