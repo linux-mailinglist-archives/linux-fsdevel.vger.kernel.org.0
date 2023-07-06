@@ -2,71 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AC6CD749C7A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 14:49:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B1D2749CAE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Jul 2023 14:51:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232493AbjGFMti (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 08:49:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51170 "EHLO
+        id S232206AbjGFMvM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 08:51:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232394AbjGFMt0 (ORCPT
+        with ESMTP id S230087AbjGFMvJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 08:49:26 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5380E2113;
-        Thu,  6 Jul 2023 05:49:03 -0700 (PDT)
+        Thu, 6 Jul 2023 08:51:09 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C14411BDC;
+        Thu,  6 Jul 2023 05:50:46 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id E52FC21A09;
-        Thu,  6 Jul 2023 12:49:01 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 805101FE6D;
+        Thu,  6 Jul 2023 12:50:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1688647741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1688647845; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=O9Iz3ZNG190IHqyYubwQqM5KddSrFr4od49jRunlzxM=;
-        b=bIv0xpFmRr8u9GLnXU+wFzJDpdplMsjMKQ8mza9HVGv2rZOEBWz9v3W0KKe3zOkUy2qLz7
-        Q/JCoTqMq1sd1sIveP9jgp858gqZnufoYH6/FEp//SZ9KWPo4VeLt3QCrlZxS1SLUtgHW0
-        gCQ2ENdx2RzDcwAxZJpNQYVvcJgsMY8=
+        bh=m0tmldPz0+dDTJ2s0T/DzEzZUGUbqrRg9hgSmSJ6FUs=;
+        b=t/K5CbfjbtMsIk0e2qX/C9kdtDTiaTsp6pSw/9TNgEllEgBlWL+vK6JKTb0yWMjD0riYgJ
+        9MaHIHPgD+UXb4bxvDDrTEqVHZ+bUxxvOYQ3+CShw6Eb5n4u1xetjmrlvR1QwhC0gCxB+l
+        vnjE0qS2eIV5HBceEmYUwqs4jY4Gkmo=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1688647741;
+        s=susede2_ed25519; t=1688647845;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=O9Iz3ZNG190IHqyYubwQqM5KddSrFr4od49jRunlzxM=;
-        b=iBD9WGeE1V3icpkGsabzq0XVXpnDMXXd90zHbjejHSjO8PRtd1AVBL0kcSEi2IlwYwS+NK
-        efwa8Te/5NBRw0AQ==
+        bh=m0tmldPz0+dDTJ2s0T/DzEzZUGUbqrRg9hgSmSJ6FUs=;
+        b=+uUJJQHKLUNtq0CM9IqsZNdKDm3jMq+Vqoau3+T9Lf8zrg4rAf7woCOYryWSkhKgj0s5dP
+        ve+ojBv9a2EDUxAA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D5EF6138FC;
-        Thu,  6 Jul 2023 12:49:01 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5A0EB138FC;
+        Thu,  6 Jul 2023 12:50:45 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id AME4ND24pmStQgAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 06 Jul 2023 12:49:01 +0000
+        id 9Wj/FaW4pmTBQwAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 06 Jul 2023 12:50:45 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 7A2F1A0707; Thu,  6 Jul 2023 14:49:01 +0200 (CEST)
-Date:   Thu, 6 Jul 2023 14:49:01 +0200
+        id DAF8BA0707; Thu,  6 Jul 2023 14:50:44 +0200 (CEST)
+Date:   Thu, 6 Jul 2023 14:50:44 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     Christian Brauner <brauner@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 49/92] hfsplus: convert to ctime accessor functions
-Message-ID: <20230706124901.2xciykc7zncfryhx@quack3>
+Subject: Re: [PATCH v2 48/92] hfs: convert to ctime accessor functions
+Message-ID: <20230706125044.yuder555eqh3acjx@quack3>
 References: <20230705185755.579053-1-jlayton@kernel.org>
  <20230705190309.579783-1-jlayton@kernel.org>
- <20230705190309.579783-47-jlayton@kernel.org>
+ <20230705190309.579783-46-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230705190309.579783-47-jlayton@kernel.org>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+In-Reply-To: <20230705190309.579783-46-jlayton@kernel.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,7 +74,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 05-07-23 15:01:14, Jeff Layton wrote:
+On Wed 05-07-23 15:01:13, Jeff Layton wrote:
 > In later patches, we're going to change how the inode's ctime field is
 > used. Switch to using accessor functions instead of raw accesses of
 > inode->i_ctime.
@@ -88,151 +88,125 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  fs/hfsplus/catalog.c |  8 ++++----
->  fs/hfsplus/dir.c     |  6 +++---
->  fs/hfsplus/inode.c   | 16 +++++++++-------
->  3 files changed, 16 insertions(+), 14 deletions(-)
+>  fs/hfs/catalog.c |  8 ++++----
+>  fs/hfs/dir.c     |  2 +-
+>  fs/hfs/inode.c   | 13 ++++++-------
+>  fs/hfs/sysdep.c  |  4 +++-
+>  4 files changed, 14 insertions(+), 13 deletions(-)
 > 
-> diff --git a/fs/hfsplus/catalog.c b/fs/hfsplus/catalog.c
-> index 35472cba750e..e71ae2537eaa 100644
-> --- a/fs/hfsplus/catalog.c
-> +++ b/fs/hfsplus/catalog.c
-> @@ -312,7 +312,7 @@ int hfsplus_create_cat(u32 cnid, struct inode *dir,
+> diff --git a/fs/hfs/catalog.c b/fs/hfs/catalog.c
+> index d365bf0b8c77..632c226a3972 100644
+> --- a/fs/hfs/catalog.c
+> +++ b/fs/hfs/catalog.c
+> @@ -133,7 +133,7 @@ int hfs_cat_create(u32 cnid, struct inode *dir, const struct qstr *str, struct i
+>  		goto err1;
+>  
 >  	dir->i_size++;
->  	if (S_ISDIR(inode->i_mode))
->  		hfsplus_subfolders_inc(dir);
 > -	dir->i_mtime = dir->i_ctime = current_time(dir);
 > +	dir->i_mtime = inode_set_ctime_current(dir);
->  	hfsplus_mark_inode_dirty(dir, HFSPLUS_I_CAT_DIRTY);
->  
+>  	mark_inode_dirty(dir);
 >  	hfs_find_exit(&fd);
-> @@ -417,7 +417,7 @@ int hfsplus_delete_cat(u32 cnid, struct inode *dir, const struct qstr *str)
+>  	return 0;
+> @@ -269,7 +269,7 @@ int hfs_cat_delete(u32 cnid, struct inode *dir, const struct qstr *str)
+>  	}
+>  
 >  	dir->i_size--;
->  	if (type == HFSPLUS_FOLDER)
->  		hfsplus_subfolders_dec(dir);
 > -	dir->i_mtime = dir->i_ctime = current_time(dir);
 > +	dir->i_mtime = inode_set_ctime_current(dir);
->  	hfsplus_mark_inode_dirty(dir, HFSPLUS_I_CAT_DIRTY);
->  
->  	if (type == HFSPLUS_FILE || type == HFSPLUS_FOLDER) {
-> @@ -494,7 +494,7 @@ int hfsplus_rename_cat(u32 cnid,
+>  	mark_inode_dirty(dir);
+>  	res = 0;
+>  out:
+> @@ -337,7 +337,7 @@ int hfs_cat_move(u32 cnid, struct inode *src_dir, const struct qstr *src_name,
+>  	if (err)
+>  		goto out;
 >  	dst_dir->i_size++;
->  	if (type == HFSPLUS_FOLDER)
->  		hfsplus_subfolders_inc(dst_dir);
 > -	dst_dir->i_mtime = dst_dir->i_ctime = current_time(dst_dir);
 > +	dst_dir->i_mtime = inode_set_ctime_current(dst_dir);
+>  	mark_inode_dirty(dst_dir);
 >  
 >  	/* finally remove the old entry */
->  	err = hfsplus_cat_build_key(sb, src_fd.search_key,
-> @@ -511,7 +511,7 @@ int hfsplus_rename_cat(u32 cnid,
+> @@ -349,7 +349,7 @@ int hfs_cat_move(u32 cnid, struct inode *src_dir, const struct qstr *src_name,
+>  	if (err)
+>  		goto out;
 >  	src_dir->i_size--;
->  	if (type == HFSPLUS_FOLDER)
->  		hfsplus_subfolders_dec(src_dir);
 > -	src_dir->i_mtime = src_dir->i_ctime = current_time(src_dir);
 > +	src_dir->i_mtime = inode_set_ctime_current(src_dir);
+>  	mark_inode_dirty(src_dir);
 >  
->  	/* remove old thread entry */
->  	hfsplus_cat_build_key_with_cnid(sb, src_fd.search_key, cnid);
-> diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
-> index 56fb5f1312e7..f5c4b3e31a1c 100644
-> --- a/fs/hfsplus/dir.c
-> +++ b/fs/hfsplus/dir.c
-> @@ -346,7 +346,7 @@ static int hfsplus_link(struct dentry *src_dentry, struct inode *dst_dir,
->  	inc_nlink(inode);
->  	hfsplus_instantiate(dst_dentry, inode, cnid);
->  	ihold(inode);
-> -	inode->i_ctime = current_time(inode);
-> +	inode_set_ctime_current(inode);
->  	mark_inode_dirty(inode);
->  	sbi->file_count++;
->  	hfsplus_mark_mdb_dirty(dst_dir->i_sb);
-> @@ -405,7 +405,7 @@ static int hfsplus_unlink(struct inode *dir, struct dentry *dentry)
->  			hfsplus_delete_inode(inode);
->  	} else
->  		sbi->file_count--;
-> -	inode->i_ctime = current_time(inode);
-> +	inode_set_ctime_current(inode);
->  	mark_inode_dirty(inode);
->  out:
->  	mutex_unlock(&sbi->vh_mutex);
-> @@ -426,7 +426,7 @@ static int hfsplus_rmdir(struct inode *dir, struct dentry *dentry)
+>  	type = entry.type;
+> diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
+> index 3e1e3dcf0b48..b75c26045df4 100644
+> --- a/fs/hfs/dir.c
+> +++ b/fs/hfs/dir.c
+> @@ -263,7 +263,7 @@ static int hfs_remove(struct inode *dir, struct dentry *dentry)
 >  	if (res)
->  		goto out;
+>  		return res;
 >  	clear_nlink(inode);
 > -	inode->i_ctime = current_time(inode);
 > +	inode_set_ctime_current(inode);
->  	hfsplus_delete_inode(inode);
+>  	hfs_delete_inode(inode);
 >  	mark_inode_dirty(inode);
->  out:
-> diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-> index 7d1a675e037d..40c61ab4a918 100644
-> --- a/fs/hfsplus/inode.c
-> +++ b/fs/hfsplus/inode.c
-> @@ -267,7 +267,7 @@ static int hfsplus_setattr(struct mnt_idmap *idmap,
->  		}
->  		truncate_setsize(inode, attr->ia_size);
->  		hfsplus_file_truncate(inode);
-> -		inode->i_mtime = inode->i_ctime = current_time(inode);
-> +		inode->i_mtime = inode_set_ctime_current(inode);
->  	}
->  
->  	setattr_copy(&nop_mnt_idmap, inode, attr);
-> @@ -392,7 +392,7 @@ struct inode *hfsplus_new_inode(struct super_block *sb, struct inode *dir,
->  	inode->i_ino = sbi->next_cnid++;
->  	inode_init_owner(&nop_mnt_idmap, inode, dir, mode);
+>  	return 0;
+> diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
+> index 441d7fc952e3..ee349b72cfb3 100644
+> --- a/fs/hfs/inode.c
+> +++ b/fs/hfs/inode.c
+> @@ -200,7 +200,7 @@ struct inode *hfs_new_inode(struct inode *dir, const struct qstr *name, umode_t
+>  	inode->i_uid = current_fsuid();
+>  	inode->i_gid = current_fsgid();
 >  	set_nlink(inode, 1);
 > -	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
 > +	inode->i_mtime = inode->i_atime = inode_set_ctime_current(inode);
+>  	HFS_I(inode)->flags = 0;
+>  	HFS_I(inode)->rsrc_inode = NULL;
+>  	HFS_I(inode)->fs_blocks = 0;
+> @@ -355,8 +355,8 @@ static int hfs_read_inode(struct inode *inode, void *data)
+>  			inode->i_mode |= S_IWUGO;
+>  		inode->i_mode &= ~hsb->s_file_umask;
+>  		inode->i_mode |= S_IFREG;
+> -		inode->i_ctime = inode->i_atime = inode->i_mtime =
+> -				hfs_m_to_utime(rec->file.MdDat);
+> +		inode->i_atime = inode->i_mtime = inode_set_ctime_to_ts(inode,
+> +									hfs_m_to_utime(rec->file.MdDat));
+>  		inode->i_op = &hfs_file_inode_operations;
+>  		inode->i_fop = &hfs_file_operations;
+>  		inode->i_mapping->a_ops = &hfs_aops;
+> @@ -366,8 +366,8 @@ static int hfs_read_inode(struct inode *inode, void *data)
+>  		inode->i_size = be16_to_cpu(rec->dir.Val) + 2;
+>  		HFS_I(inode)->fs_blocks = 0;
+>  		inode->i_mode = S_IFDIR | (S_IRWXUGO & ~hsb->s_dir_umask);
+> -		inode->i_ctime = inode->i_atime = inode->i_mtime =
+> -				hfs_m_to_utime(rec->dir.MdDat);
+> +		inode->i_atime = inode->i_mtime = inode_set_ctime_to_ts(inode,
+> +									hfs_m_to_utime(rec->dir.MdDat));
+>  		inode->i_op = &hfs_dir_inode_operations;
+>  		inode->i_fop = &hfs_dir_operations;
+>  		break;
+> @@ -654,8 +654,7 @@ int hfs_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
 >  
->  	hip = HFSPLUS_I(inode);
->  	INIT_LIST_HEAD(&hip->open_dir_list);
-> @@ -523,7 +523,8 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
->  		inode->i_size = 2 + be32_to_cpu(folder->valence);
->  		inode->i_atime = hfsp_mt2ut(folder->access_date);
->  		inode->i_mtime = hfsp_mt2ut(folder->content_mod_date);
-> -		inode->i_ctime = hfsp_mt2ut(folder->attribute_mod_date);
-> +		inode_set_ctime_to_ts(inode,
-> +				      hfsp_mt2ut(folder->attribute_mod_date));
->  		HFSPLUS_I(inode)->create_date = folder->create_date;
->  		HFSPLUS_I(inode)->fs_blocks = 0;
->  		if (folder->flags & cpu_to_be16(HFSPLUS_HAS_FOLDER_COUNT)) {
-> @@ -564,7 +565,8 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd)
->  		}
->  		inode->i_atime = hfsp_mt2ut(file->access_date);
->  		inode->i_mtime = hfsp_mt2ut(file->content_mod_date);
-> -		inode->i_ctime = hfsp_mt2ut(file->attribute_mod_date);
-> +		inode_set_ctime_to_ts(inode,
-> +				      hfsp_mt2ut(file->attribute_mod_date));
->  		HFSPLUS_I(inode)->create_date = file->create_date;
->  	} else {
->  		pr_err("bad catalog entry used to create inode\n");
-> @@ -609,7 +611,7 @@ int hfsplus_cat_write_inode(struct inode *inode)
->  		hfsplus_cat_set_perms(inode, &folder->permissions);
->  		folder->access_date = hfsp_ut2mt(inode->i_atime);
->  		folder->content_mod_date = hfsp_ut2mt(inode->i_mtime);
-> -		folder->attribute_mod_date = hfsp_ut2mt(inode->i_ctime);
-> +		folder->attribute_mod_date = hfsp_ut2mt(inode_get_ctime(inode));
->  		folder->valence = cpu_to_be32(inode->i_size - 2);
->  		if (folder->flags & cpu_to_be16(HFSPLUS_HAS_FOLDER_COUNT)) {
->  			folder->subfolders =
-> @@ -644,7 +646,7 @@ int hfsplus_cat_write_inode(struct inode *inode)
->  			file->flags &= cpu_to_be16(~HFSPLUS_FILE_LOCKED);
->  		file->access_date = hfsp_ut2mt(inode->i_atime);
->  		file->content_mod_date = hfsp_ut2mt(inode->i_mtime);
-> -		file->attribute_mod_date = hfsp_ut2mt(inode->i_ctime);
-> +		file->attribute_mod_date = hfsp_ut2mt(inode_get_ctime(inode));
->  		hfs_bnode_write(fd.bnode, &entry, fd.entryoffset,
->  					 sizeof(struct hfsplus_cat_file));
+>  		truncate_setsize(inode, attr->ia_size);
+>  		hfs_file_truncate(inode);
+> -		inode->i_atime = inode->i_mtime = inode->i_ctime =
+> -						  current_time(inode);
+> +		inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
 >  	}
-> @@ -700,7 +702,7 @@ int hfsplus_fileattr_set(struct mnt_idmap *idmap,
->  	else
->  		hip->userflags &= ~HFSPLUS_FLG_NODUMP;
 >  
-> -	inode->i_ctime = current_time(inode);
-> +	inode_set_ctime_current(inode);
->  	mark_inode_dirty(inode);
->  
->  	return 0;
+>  	setattr_copy(&nop_mnt_idmap, inode, attr);
+> diff --git a/fs/hfs/sysdep.c b/fs/hfs/sysdep.c
+> index 2875961fdc10..dc27d418fbcd 100644
+> --- a/fs/hfs/sysdep.c
+> +++ b/fs/hfs/sysdep.c
+> @@ -28,7 +28,9 @@ static int hfs_revalidate_dentry(struct dentry *dentry, unsigned int flags)
+>  	/* fix up inode on a timezone change */
+>  	diff = sys_tz.tz_minuteswest * 60 - HFS_I(inode)->tz_secondswest;
+>  	if (diff) {
+> -		inode->i_ctime.tv_sec += diff;
+> +		struct timespec64 ctime = inode_get_ctime(inode);
+> +
+> +		inode_set_ctime(inode, ctime.tv_sec + diff, ctime.tv_nsec);
+>  		inode->i_atime.tv_sec += diff;
+>  		inode->i_mtime.tv_sec += diff;
+>  		HFS_I(inode)->tz_secondswest += diff;
 > -- 
 > 2.41.0
 > 
