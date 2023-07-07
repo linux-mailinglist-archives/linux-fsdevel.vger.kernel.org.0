@@ -2,57 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BA0974AD6D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 10:55:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD22E74ADB7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 11:18:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232449AbjGGIz0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jul 2023 04:55:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40742 "EHLO
+        id S232700AbjGGJSY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jul 2023 05:18:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232391AbjGGIzZ (ORCPT
+        with ESMTP id S231950AbjGGJSX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jul 2023 04:55:25 -0400
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC9892105
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jul 2023 01:55:24 -0700 (PDT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1b8a4571c1aso17821135ad.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jul 2023 01:55:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688720124; x=1691312124;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cP9O7wz2wVY1uz0Tz+tNVR7jOVmsLzGbSd5qvYHHqCA=;
-        b=l+g7FY0KCeHIdeH/XL9ngZ00KexdwRK1AR8rD2+BBl+tEE/iA3ts82YJ4RCGhTJCdS
-         KKtGJoZw38vbQZw4nE078oABANatEl5HeCA0J4i1qJq7OPOCC1m6nBVhLJXHS8Bbj29n
-         JtwBac6ZhM4SxOCgdgNHWv7KPFoYc1X1B5pTOzINoLTp2a87Nbzl9dYyDqBfon3qnC4r
-         3xpy450UsBEtlat3+1qvAH2qG+UZRub53YJxRcv+Kl4m6Z/tQ0E+q2aKpOkoyD7xVJHF
-         X1m307OUh2A5K+iv19cbLpaSrSEkYUo6qwVLCQkmKn/vIx72HSSvwSJzo3rNIJ9n7k3A
-         gIbg==
-X-Gm-Message-State: ABy/qLZ5XpNmWgheMoZdGJxtJAeybMs+GZTayCBDqjx7rBFSWcdYUa4s
-        8JG14101GbgqQbO6kRwdJJNEHrVlIXZqG0DqPrpIL6pcZIx/
-X-Google-Smtp-Source: APBJJlE3GQMXl1cHyHg5lh6Nt6ubMsGnT10l3ez2+JBHtCWT+vZpFky6rzT2FyrUgqeF+q0zYYmCWBHisoQaeXrNjkKwW/DiQAaD
+        Fri, 7 Jul 2023 05:18:23 -0400
+Received: from out-21.mta0.migadu.com (out-21.mta0.migadu.com [IPv6:2001:41d0:1004:224b::15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6BEB1FED
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jul 2023 02:18:19 -0700 (PDT)
+Date:   Fri, 7 Jul 2023 05:18:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1688721498;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=UBtSAf9M3yHlwuCRGGEsx8Cg1RJFv64iXVl/BM8QpOE=;
+        b=EeTSjl43WDyruqd7JEj/Zj/qAlPNIONzqHAnZR0eyeXoMZsId44d9/5+KsrD1ObzHR5cSl
+        4+5RzTdhNFzB1JZYhBoFbq4e/FoSdzUphgS6BMh9t4exsIw1XKVnzZt8RPEgDgH42geomZ
+        QRRXu12CM7rh2GX8jfuAyq1TPrTRxhI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+        dchinner@redhat.com, sandeen@redhat.com, willy@infradead.org,
+        tytso@mit.edu, bfoster@redhat.com, jack@suse.cz,
+        andreas.gruenbacher@gmail.com, peterz@infradead.org,
+        akpm@linux-foundation.org, dhowells@redhat.com
+Subject: Re: [GIT PULL] bcachefs
+Message-ID: <20230707091810.bamrvzcif7ncng46@moria.home.lan>
+References: <20230626214656.hcp4puionmtoloat@moria.home.lan>
+ <20230706155602.mnhsylo3pnief2of@moria.home.lan>
+ <20230706164055.GA2306489@perftesting>
+ <20230706173819.36c67pf42ba4gmv4@moria.home.lan>
+ <20230706211914.GB11476@frogsfrogsfrogs>
+ <20230707-badeverbot-gekettet-19ce3c238dac@brauner>
 MIME-Version: 1.0
-X-Received: by 2002:a17:902:c1cd:b0:1b3:bfa6:d064 with SMTP id
- c13-20020a170902c1cd00b001b3bfa6d064mr3877302plc.1.1688720124415; Fri, 07 Jul
- 2023 01:55:24 -0700 (PDT)
-Date:   Fri, 07 Jul 2023 01:55:24 -0700
-In-Reply-To: <2225033.1688717605@warthog.procyon.org.uk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000024166c05ffe1cbb0@google.com>
-Subject: Re: [syzbot] [ext4?] general protection fault in ext4_finish_bio
-From:   syzbot <syzbot+689ec3afb1ef07b766b2@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, boqun.feng@gmail.com,
-        dhowells@redhat.com, herbert@gondor.apana.org.au, kuba@kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, longman@redhat.com, mingo@redhat.com,
-        netdev@vger.kernel.org, peterz@infradead.org,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu, will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230707-badeverbot-gekettet-19ce3c238dac@brauner>
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -60,20 +59,64 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Jul 07, 2023 at 10:48:55AM +0200, Christian Brauner wrote:
+> > just merge it and let's move on to the next thing."
+> 
+> "and let the block and vfs maintainers and developers deal with the fallout"
+> 
+> is how that reads to others that deal with 65+ filesystems and counting.
+> 
+> The offlist thread that was started by Kent before this pr was sent has
+> seen people try to outline calmly what problems they currently still
+> have both maintenance wise and upstreaming wise. And it seems there's
+> just no way this can go over calmly but instead requires massive amounts
+> of defensive pushback and grandstanding.
+> 
+> Our main task here is to consider the concerns of people that constantly
+> review and rework massive amounts of generic code. And I can't in good
+> conscience see their concerns dismissed with snappy quotes.
+> 
+> I understand the impatience, I understand the excitement, I really do.
+> But not in this way where core people just drop off because they don't
+> want to deal with this anymore.
+> 
+> I've spent enough time on this thread.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Christain, the hostility I'm reading is in your steady passive
+aggressive accusations, and your patronizing attitude. It's not
+professional, and it's not called for.
 
-Reported-and-tested-by: syzbot+689ec3afb1ef07b766b2@syzkaller.appspotmail.com
+Can we please try to stay focused on the code, and the process, and the
+_actual_ concerns?
 
-Tested on:
+In that offlist thread, I don't recall much in the way of actual,
+concrete concerns. I do recall Christoph doing his usual schpiel; and to
+be clear, I cut short my interactions with Christoph because in nearly
+15 years of kernel development he's never been anything but hostile to
+anything I've posted, and the criticisms he posts tend to be vague and
+unaware of the surrounding discussion, not anything actionable.
 
-commit:         5133c9e5 Merge tag 'drm-next-2023-07-07' of git://anon..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=124f34d8a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f6b0c7ae2c9c303
-dashboard link: https://syzkaller.appspot.com/bug?extid=689ec3afb1ef07b766b2
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1624cf4f280000
+The most concrete concern from you in that offlist thread was "we don't
+want a repeat of ntfs", and when I asked you to elaborate you never
+responded.
 
-Note: testing is done by a robot and is best-effort only.
+Huh.
+
+And: this pull request is not some sudden thing, I have been steadily
+feeding prep work patches in and having ongoing discussions with other
+filesystem people, including presenting at LSF to gather feedback, since
+_well_ before you were the VFS maintainer.
+
+If you have anything concrete to share, any concrete concerns you'd like
+addressed - please share them! I'd love to work with you.
+
+I don't want the two of us to have a hostile, adversarial relationship;
+I appreciate the work you've been doing in the vfs, and I've told you
+that in the past.
+
+But it would help things if you would try to work with me, not against
+me, and try to understand that there's been past discussions and
+consensus that was built before you came along.
+
+Cheers,
+Kent
