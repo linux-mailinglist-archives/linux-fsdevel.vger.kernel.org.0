@@ -2,78 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CC46A74ACB1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 10:20:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 731E674AD52
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 10:49:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232844AbjGGIUb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jul 2023 04:20:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52012 "EHLO
+        id S231991AbjGGItE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jul 2023 04:49:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232795AbjGGIUa (ORCPT
+        with ESMTP id S229880AbjGGItD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jul 2023 04:20:30 -0400
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3004B1FD8
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jul 2023 01:20:29 -0700 (PDT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-262d69faef9so2236892a91.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jul 2023 01:20:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688718028; x=1691310028;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uN1UEoiyjNN/U7zWTps4glZc/qi7ZNLVVS2aoUJ2q4A=;
-        b=Ez/c8sfQiNT2x+nJUjTXL63z3U0KreQgGcI3B0SrDSkfqUKp+gUZFjwfX53zMeyJzh
-         7QKupzxVzdQHVd9nahdX4+RkIPUcotiAz0IrX5/9pNldnd4C0Dch4jnKUmDdkaxviKLU
-         DXTwOQcK75QcVA/dtp8Ow8xXT3d0KGG+AGfIjFBdBfba0CH4Lq0f+xTgMR4B2KrF+LY+
-         ymq+2TD9fK2lBwWJXEfdELBOTyV1YL9EqRGYS3BXsA2ySFdwgDSfOOi607gOGhvwbChV
-         syGLRbQmrVOtw2ZVVE34U6mfoc4KRLPvqxsTimKpPhmUrVtWcmOjWhJM0t0gHoru/Bxw
-         tnoA==
-X-Gm-Message-State: ABy/qLaa6hSgH6CV2JCFKvqzSMwK5+IECF4d5CgN6lMXhaD5LCcskIaO
-        kXjQi339zaeCUt/t5wrBVc7HnlaaKHj5QzfKFCjdsaZyQwpR
-X-Google-Smtp-Source: APBJJlE53elBOc0PVBkPt5sMuDbxYXfNijnU6gTgY9iSg9CUfuKQG7NUjF7iYEWUsnBRxcEyGfvev30rDbJTXm2Ub6F9tIUO/Zk8
+        Fri, 7 Jul 2023 04:49:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDEB01FCE;
+        Fri,  7 Jul 2023 01:49:02 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7B05861886;
+        Fri,  7 Jul 2023 08:49:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E626C433C7;
+        Fri,  7 Jul 2023 08:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688719741;
+        bh=Bp2gaXLnBG1Um7uLrVB3bxxujt1nzvLgFiFXO/CIaEI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rpsPBAogvfSbhngrpmukMVPwKoK7n+8X7JvrClKP6i0saGW36EMdUA5w6QfP5OS6m
+         xeL73Q+Kde5MB7YwNzh68pild7+eAGGaNUpA03Jx8zP2lcAGuG4NF+R0M95zhoMiZm
+         hd4oB11ck7SeWHlbC7fRdwyTQxn8pp8bTVT8J7JR6oNhEi2d97Wvm882bSqalkgdrr
+         ygCpNvs49SeddLushl1skZTkVemYfw6zMFRZ+iezI1DwDiuIfUJnoi5RkRfcGa/6AN
+         Nuy9Kt/iCxCoDtQcvuz/rN4UunXXi/P4lkr5KvZg+2gIFYji9Fsm/zQyFD7PESKGyq
+         5IFMjd1qotnTQ==
+Date:   Fri, 7 Jul 2023 10:48:55 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
+        Josef Bacik <josef@toxicpanda.com>,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+        dchinner@redhat.com, sandeen@redhat.com, willy@infradead.org,
+        tytso@mit.edu, bfoster@redhat.com, jack@suse.cz,
+        andreas.gruenbacher@gmail.com, peterz@infradead.org,
+        akpm@linux-foundation.org, dhowells@redhat.com
+Subject: Re: [GIT PULL] bcachefs
+Message-ID: <20230707-badeverbot-gekettet-19ce3c238dac@brauner>
+References: <20230626214656.hcp4puionmtoloat@moria.home.lan>
+ <20230706155602.mnhsylo3pnief2of@moria.home.lan>
+ <20230706164055.GA2306489@perftesting>
+ <20230706173819.36c67pf42ba4gmv4@moria.home.lan>
+ <20230706211914.GB11476@frogsfrogsfrogs>
 MIME-Version: 1.0
-X-Received: by 2002:a17:90a:ce8f:b0:262:e5e2:e5af with SMTP id
- g15-20020a17090ace8f00b00262e5e2e5afmr3633167pju.5.1688718028524; Fri, 07 Jul
- 2023 01:20:28 -0700 (PDT)
-Date:   Fri, 07 Jul 2023 01:20:28 -0700
-In-Reply-To: <2224784.1688717214@warthog.procyon.org.uk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000037530605ffe14e41@google.com>
-Subject: Re: [syzbot] [ext4?] general protection fault in ext4_finish_bio
-From:   syzbot <syzbot+689ec3afb1ef07b766b2@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, boqun.feng@gmail.com,
-        dhowells@redhat.com, herbert@gondor.apana.org.au, kuba@kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, longman@redhat.com, mingo@redhat.com,
-        netdev@vger.kernel.org, peterz@infradead.org,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu, will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230706211914.GB11476@frogsfrogsfrogs>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+> just merge it and let's move on to the next thing."
 
-syzbot tried to test the proposed patch but the build/boot failed:
+"and let the block and vfs maintainers and developers deal with the fallout"
 
-failed to checkout kernel repo git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/main: failed to run ["git" "fetch" "--force" "f569e972c8e9057ee9c286220c83a480ebf30cc5" "main"]: exit status 128
-fatal: couldn't find remote ref main
+is how that reads to others that deal with 65+ filesystems and counting.
 
+The offlist thread that was started by Kent before this pr was sent has
+seen people try to outline calmly what problems they currently still
+have both maintenance wise and upstreaming wise. And it seems there's
+just no way this can go over calmly but instead requires massive amounts
+of defensive pushback and grandstanding.
 
+Our main task here is to consider the concerns of people that constantly
+review and rework massive amounts of generic code. And I can't in good
+conscience see their concerns dismissed with snappy quotes.
 
-Tested on:
+I understand the impatience, I understand the excitement, I really do.
+But not in this way where core people just drop off because they don't
+want to deal with this anymore.
 
-commit:         [unknown 
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git main
-dashboard link: https://syzkaller.appspot.com/bug?extid=689ec3afb1ef07b766b2
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=136ff1b4a80000
-
+I've spent enough time on this thread.
