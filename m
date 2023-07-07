@@ -2,57 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DF3474B8F7
+	by mail.lfdr.de (Postfix) with ESMTP id F0BE174B8F8
 	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 23:56:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232966AbjGGV40 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jul 2023 17:56:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44318 "EHLO
+        id S232799AbjGGV42 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jul 2023 17:56:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230503AbjGGV4D (ORCPT
+        with ESMTP id S232604AbjGGV4W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jul 2023 17:56:03 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E95F268A
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jul 2023 14:55:55 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-573a92296c7so27589757b3.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jul 2023 14:55:55 -0700 (PDT)
+        Fri, 7 Jul 2023 17:56:22 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5217326A3
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jul 2023 14:55:57 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-c704df12425so636562276.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jul 2023 14:55:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1688766954; x=1691358954;
+        d=google.com; s=20221208; t=1688766956; x=1691358956;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7OMVl3YxFVN2A+Ry/UxbO1YmCHHRZcxw7VDxaJg9ek4=;
-        b=WinlA4xjLrm42Y0LrkLO833bYnLkHqw90W20NHsoyLZQtg1RvWlssOMFOMjd6VvSn3
-         iYv6kZ6oeM6LcpvIDaTEPpfcc8gSW/pj+FpAaO2nVo/YQ4FKqs5+alRw0RQFBHZ5C9Li
-         WwXNwLXfn0bdHjwb+FCiBwlKRuhOJzkac2hZ6zvt9v8rdPkWboNk13P08v0VELKTQZoF
-         0QcDn0IuZNiLfUlhg+XzK/7q28VwlIE5Lf3mwk8//FBbyC0xrc3lW7P3+clz4gUrnpYh
-         S59eoTTQlzeW4FwWK37lEymavNQ2LCOR9UtKZW+BbCcuM6gOcPJpGzfDLhFZE3wyjxHA
-         uahQ==
+        bh=gK2BPE6zTmiKkfK2gtxYAq2cBVrZ0W+ejTntqdgctKA=;
+        b=mSszojzKEahxrcX9TmdDeq6BffcUFhBof3Wfa2NSLReCESkfHCMI7XDPflqSMkDGpn
+         ouiK/1EZIjxsDpq0jMwqD9m1X62FyMq4nDzBgb6M7/ML2imJB1U5v1dc1l+ah8jMdnJe
+         PB5xOLeeNwdXhcD53UzfTcq44+hoXfPErYaXguCDFgNeDDRdB2ZRmDfpfqDhBFUErms9
+         b4UKo5d1K8Kn+ry9fkThfTtz75Zrd1GT+xA0NJx4QctBIIrNfwI5B6zi4Oqa1PV6Le9z
+         CZ6qPQtNTcVthIO6ODY++3/5NAu2trU9W9ps5V5xHMzx1D8Foq0j24NK0X2aUZ74o34R
+         JWeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688766954; x=1691358954;
+        d=1e100.net; s=20221208; t=1688766956; x=1691358956;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7OMVl3YxFVN2A+Ry/UxbO1YmCHHRZcxw7VDxaJg9ek4=;
-        b=W0SrgkGETZ0JRPR/gYVdgCDoustzJkWXRSrlyu5l/xtE9AsHFAOK3dgE2b+bGNGbUs
-         hgZgiuAwdybkJsaFvBuW4y38RRfLnS49i9ZLuz8G07WNlZYXtCZbVImH/SYxa6lkpcTp
-         jC8ZGoOzhvwbYeUSfZ3Tlqud8+3B85cZKbmNFQlo+ZMc7z31OA/YZYPVICs+347YKSaA
-         6y4MXJJEctmr2vxRLYKVR5DX5ekD7j7+zptrgCauCdUGO2hF0zvqBeGt7QLXhb7jMhDT
-         VLpZZjcGyLVx3ptG1eyHLnlpBDSbBuRArvf5BJPSp6pBDLQcqDLgHsdsPJH39nqJgc+6
-         JK/A==
-X-Gm-Message-State: ABy/qLaOpzAPYh084bDRpBOepaceV0G+bO0fTqC1rLIaT3LY+AgFbiiN
-        GpW7IU37e5p9tPJFaMS1bbz7UxqWGxxRwl/ztkuB
-X-Google-Smtp-Source: APBJJlEb1nGvsIgNN71uOPifboK21axP2OJKOqwVdFOinGjePMT+S3RRgV5WMxsRC8ogPCTBFhgiiAFAPJrAtTi306IK
+        bh=gK2BPE6zTmiKkfK2gtxYAq2cBVrZ0W+ejTntqdgctKA=;
+        b=JKgClJIflZt6ovEiraDSFoYs/mAEvAT9Qnzn2vQqh7areFcY3KwqLMtebm/WEhgaAh
+         xgBJZi3FWHEeJuOtY5NxFRSeeXEJIdxBlMJQtRIZjaM4czFs0/1ceZqxye3jLMfQkvtA
+         +R/yrlo+6agWamP/UaJGLsliH6y2wJ+d0FWuV4ly4IgbH2e0zDRP0LroZaQ9MX3eLkkm
+         4d/+r8WCPAPK4pk+j5FmrLusIa+AqiAKptQ8l4SBtv6Lu2cqFpBf5taggqAW/UwQcG8Z
+         1yizClSXgnjBI86XJRgaCucsFjEN88SefgwPBiYY+ouIBZGaxCoCyEPDUo8hI784G1hL
+         oqLA==
+X-Gm-Message-State: ABy/qLYA0BGYWhAjCNd+FvceLpmdfOyAwc58xk4Wr2eabvaY5Vfnm4x7
+        G4/BF6aj0/W/2rwSnjqILZuWK+UpWX/jKmS5V1b8
+X-Google-Smtp-Source: APBJJlFFlaqfrCAHxFCqM3Bx4zG+dvuvfGgO5ZnIbPvaXcko0/wlrp48kEZGBI/2IRBZ3QqzAWog232RIOlbEqwMvlQB
 X-Received: from axel.svl.corp.google.com ([2620:15c:2a3:200:c201:5125:39d1:ef3f])
- (user=axelrasmussen job=sendgmr) by 2002:a81:af1b:0:b0:573:6b9c:6fa1 with
- SMTP id n27-20020a81af1b000000b005736b9c6fa1mr41633ywh.1.1688766954512; Fri,
- 07 Jul 2023 14:55:54 -0700 (PDT)
-Date:   Fri,  7 Jul 2023 14:55:38 -0700
+ (user=axelrasmussen job=sendgmr) by 2002:a25:f448:0:b0:bac:adb8:a605 with
+ SMTP id p8-20020a25f448000000b00bacadb8a605mr43005ybe.2.1688766956303; Fri,
+ 07 Jul 2023 14:55:56 -0700 (PDT)
+Date:   Fri,  7 Jul 2023 14:55:39 -0700
 In-Reply-To: <20230707215540.2324998-1-axelrasmussen@google.com>
 Mime-Version: 1.0
 References: <20230707215540.2324998-1-axelrasmussen@google.com>
 X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
-Message-ID: <20230707215540.2324998-7-axelrasmussen@google.com>
-Subject: [PATCH v4 6/8] mm: userfaultfd: document and enable new UFFDIO_POISON feature
+Message-ID: <20230707215540.2324998-8-axelrasmussen@google.com>
+Subject: [PATCH v4 7/8] selftests/mm: refactor uffd_poll_thread to allow
+ custom fault handlers
 From:   Axel Rasmussen <axelrasmussen@google.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -97,75 +98,85 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Update the userfaultfd API to advertise this feature as part of feature
-flags and supported ioctls (returned upon registration).
+Previously, we had "one fault handler to rule them all", which used
+several branches to deal with all of the scenarios required by all of
+the various tests.
 
-Add basic documentation describing the new feature.
+In upcoming patches, I plan to add a new test, which has its own
+slightly different fault handling logic. Instead of continuing to add
+cruft to the existing fault handler, let's allow tests to define custom
+ones, separate from other tests.
 
-Acked-by: Peter Xu <peterx@redhat.com>
 Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
 ---
- Documentation/admin-guide/mm/userfaultfd.rst | 15 +++++++++++++++
- include/uapi/linux/userfaultfd.h             |  9 ++++++---
- 2 files changed, 21 insertions(+), 3 deletions(-)
+ tools/testing/selftests/mm/uffd-common.c | 5 ++++-
+ tools/testing/selftests/mm/uffd-common.h | 3 +++
+ tools/testing/selftests/mm/uffd-stress.c | 8 ++++----
+ 3 files changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/admin-guide/mm/userfaultfd.rst b/Documentation/admin-guide/mm/userfaultfd.rst
-index 7c304e432205..4349a8c2b978 100644
---- a/Documentation/admin-guide/mm/userfaultfd.rst
-+++ b/Documentation/admin-guide/mm/userfaultfd.rst
-@@ -244,6 +244,21 @@ write-protected (so future writes will also result in a WP fault). These ioctls
- support a mode flag (``UFFDIO_COPY_MODE_WP`` or ``UFFDIO_CONTINUE_MODE_WP``
- respectively) to configure the mapping this way.
+diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
+index ba20d7504022..02b89860e193 100644
+--- a/tools/testing/selftests/mm/uffd-common.c
++++ b/tools/testing/selftests/mm/uffd-common.c
+@@ -499,6 +499,9 @@ void *uffd_poll_thread(void *arg)
+ 	int ret;
+ 	char tmp_chr;
  
-+Memory Poisioning Emulation
-+---------------------------
++	if (!args->handle_fault)
++		args->handle_fault = uffd_handle_page_fault;
 +
-+In response to a fault (either missing or minor), an action userspace can
-+take to "resolve" it is to issue a ``UFFDIO_POISON``. This will cause any
-+future faulters to either get a SIGBUS, or in KVM's case the guest will
-+receive an MCE as if there were hardware memory poisoning.
+ 	pollfd[0].fd = uffd;
+ 	pollfd[0].events = POLLIN;
+ 	pollfd[1].fd = pipefd[cpu*2];
+@@ -527,7 +530,7 @@ void *uffd_poll_thread(void *arg)
+ 			err("unexpected msg event %u\n", msg.event);
+ 			break;
+ 		case UFFD_EVENT_PAGEFAULT:
+-			uffd_handle_page_fault(&msg, args);
++			args->handle_fault(&msg, args);
+ 			break;
+ 		case UFFD_EVENT_FORK:
+ 			close(uffd);
+diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/selftests/mm/uffd-common.h
+index 197f5262fe0d..7c4fa964c3b0 100644
+--- a/tools/testing/selftests/mm/uffd-common.h
++++ b/tools/testing/selftests/mm/uffd-common.h
+@@ -77,6 +77,9 @@ struct uffd_args {
+ 	unsigned long missing_faults;
+ 	unsigned long wp_faults;
+ 	unsigned long minor_faults;
 +
-+This is used to emulate hardware memory poisoning. Imagine a VM running on a
-+machine which experiences a real hardware memory error. Later, we live migrate
-+the VM to another physical machine. Since we want the migration to be
-+transparent to the guest, we want that same address range to act as if it was
-+still poisoned, even though it's on a new physical host which ostensibly
-+doesn't have a memory error in the exact same spot.
-+
- QEMU/KVM
- ========
++	/* A custom fault handler; defaults to uffd_handle_page_fault. */
++	void (*handle_fault)(struct uffd_msg *msg, struct uffd_args *args);
+ };
  
-diff --git a/include/uapi/linux/userfaultfd.h b/include/uapi/linux/userfaultfd.h
-index b5f07eacc697..62151706c5a3 100644
---- a/include/uapi/linux/userfaultfd.h
-+++ b/include/uapi/linux/userfaultfd.h
-@@ -39,7 +39,8 @@
- 			   UFFD_FEATURE_MINOR_SHMEM |		\
- 			   UFFD_FEATURE_EXACT_ADDRESS |		\
- 			   UFFD_FEATURE_WP_HUGETLBFS_SHMEM |	\
--			   UFFD_FEATURE_WP_UNPOPULATED)
-+			   UFFD_FEATURE_WP_UNPOPULATED |	\
-+			   UFFD_FEATURE_POISON)
- #define UFFD_API_IOCTLS				\
- 	((__u64)1 << _UFFDIO_REGISTER |		\
- 	 (__u64)1 << _UFFDIO_UNREGISTER |	\
-@@ -49,12 +50,14 @@
- 	 (__u64)1 << _UFFDIO_COPY |		\
- 	 (__u64)1 << _UFFDIO_ZEROPAGE |		\
- 	 (__u64)1 << _UFFDIO_WRITEPROTECT |	\
--	 (__u64)1 << _UFFDIO_CONTINUE)
-+	 (__u64)1 << _UFFDIO_CONTINUE |		\
-+	 (__u64)1 << _UFFDIO_POISON)
- #define UFFD_API_RANGE_IOCTLS_BASIC		\
- 	((__u64)1 << _UFFDIO_WAKE |		\
- 	 (__u64)1 << _UFFDIO_COPY |		\
-+	 (__u64)1 << _UFFDIO_WRITEPROTECT |	\
- 	 (__u64)1 << _UFFDIO_CONTINUE |		\
--	 (__u64)1 << _UFFDIO_WRITEPROTECT)
-+	 (__u64)1 << _UFFDIO_POISON)
+ struct uffd_test_ops {
+diff --git a/tools/testing/selftests/mm/uffd-stress.c b/tools/testing/selftests/mm/uffd-stress.c
+index 995ff13e74c7..73ebb97c7026 100644
+--- a/tools/testing/selftests/mm/uffd-stress.c
++++ b/tools/testing/selftests/mm/uffd-stress.c
+@@ -189,10 +189,8 @@ static int stress(struct uffd_args *args)
+ 				   locking_thread, (void *)cpu))
+ 			return 1;
+ 		if (bounces & BOUNCE_POLL) {
+-			if (pthread_create(&uffd_threads[cpu], &attr,
+-					   uffd_poll_thread,
+-					   (void *)&args[cpu]))
+-				return 1;
++			if (pthread_create(&uffd_threads[cpu], &attr, uffd_poll_thread, &args[cpu]))
++				err("uffd_poll_thread create");
+ 		} else {
+ 			if (pthread_create(&uffd_threads[cpu], &attr,
+ 					   uffd_read_thread,
+@@ -250,6 +248,8 @@ static int userfaultfd_stress(void)
+ 	struct uffd_args args[nr_cpus];
+ 	uint64_t mem_size = nr_pages * page_size;
  
- /*
-  * Valid ioctl command number range with this API is from 0x00 to
++	memset(args, 0, sizeof(struct uffd_args) * nr_cpus);
++
+ 	if (uffd_test_ctx_init(UFFD_FEATURE_WP_UNPOPULATED, NULL))
+ 		err("context init failed");
+ 
 -- 
 2.41.0.255.g8b1d071c50-goog
 
