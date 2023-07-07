@@ -2,63 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5636974B5C4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 19:26:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EC3674B5DC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 19:31:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232729AbjGGR0q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jul 2023 13:26:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48742 "EHLO
+        id S230206AbjGGRbF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jul 2023 13:31:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232517AbjGGR0m (ORCPT
+        with ESMTP id S229688AbjGGRbE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jul 2023 13:26:42 -0400
-Received: from out-54.mta1.migadu.com (out-54.mta1.migadu.com [IPv6:2001:41d0:203:375::36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52E992690
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jul 2023 10:26:37 -0700 (PDT)
-Date:   Fri, 7 Jul 2023 13:26:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1688750794;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=U+fhYBe98Yp7ck/ha/HJfr6SRjqVS7qBuG/PuLcCjCk=;
-        b=hNFNTvo4VaEOaCkebxW+T1dO0TA+w2qciZqmggXCIp6g/Kgr+/FZvCzYXpU+s6nleWS4oH
-        1fdVhrZMyV2Svzi9pwookzUFRUM1HTKunLLZv5hnf1y2vQ3uhJuzvO/iCvQQ9Q+dj18dbx
-        Kb4l+dO05VAKkxliVPv4znsiKaEn16M=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-        dchinner@redhat.com, sandeen@redhat.com, willy@infradead.org,
-        tytso@mit.edu, bfoster@redhat.com, jack@suse.cz,
-        andreas.gruenbacher@gmail.com, peterz@infradead.org,
-        akpm@linux-foundation.org, dhowells@redhat.com
-Subject: Re: [GIT PULL] bcachefs
-Message-ID: <20230707172626.zlpdwyyko4trwcff@moria.home.lan>
-References: <20230626214656.hcp4puionmtoloat@moria.home.lan>
- <20230706155602.mnhsylo3pnief2of@moria.home.lan>
- <20230706164055.GA2306489@perftesting>
- <20230706173819.36c67pf42ba4gmv4@moria.home.lan>
- <20230706211914.GB11476@frogsfrogsfrogs>
- <20230707-badeverbot-gekettet-19ce3c238dac@brauner>
- <20230707091810.bamrvzcif7ncng46@moria.home.lan>
- <30661670c55601ff475f2f0698c2be2958e45c38.camel@HansenPartnership.com>
- <20230707164808.nisoh3ia4xkdgjj3@moria.home.lan>
- <85ec096ee90e3d62ebb496b3faeb4dce25e3deab.camel@HansenPartnership.com>
+        Fri, 7 Jul 2023 13:31:04 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F0DD1BD2
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jul 2023 10:31:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=QLw4OXVx5tZdsXExTE106w94c8KQTJn96sQcUwp8c0c=; b=hiQezpd2lTB9s0eE3hpARueuI0
+        qucvkLV/luZ5wAvyfI8zqa7UU+zHxwPqddlf9BKxpbS5/jo/nSRBg2u5go82hTaidWfwQcCC3xrRp
+        s4454vbJB6svQdnbcVS7bU5FCM4PpxPmaTRY7jNg3VIf6418c+qutRJgCR8Ziy0NJHD6j7HnhrOTx
+        wQdKrBb3A0Ofe13BMg5gI/kKhzmwInXJC/deH/ijQt3beJuqbudWbraDhwTuI/9ueZJ7O1n5ZeR/7
+        pRH5B4We6L/GwQId+WUgKpuSmxg+yfC8ZW9yW387yA4Gmk0O29xGeFJNy/gA7KDLBd+XVlUZPou8p
+        uMKsRrCg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qHpIL-00CDYy-UC; Fri, 07 Jul 2023 17:31:01 +0000
+Date:   Fri, 7 Jul 2023 18:31:01 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Roi L <roeilev321_@outlook.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [char_dev] Invalid uses of cdev_add return value
+Message-ID: <ZKhL1Y6jyjcefGAf@casper.infradead.org>
+References: <PH0P220MB0460FF96CAD7BE766E439DE8DD2DA@PH0P220MB0460.NAMP220.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <85ec096ee90e3d62ebb496b3faeb4dce25e3deab.camel@HansenPartnership.com>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+In-Reply-To: <PH0P220MB0460FF96CAD7BE766E439DE8DD2DA@PH0P220MB0460.NAMP220.PROD.OUTLOOK.COM>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,38 +48,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 07, 2023 at 01:04:14PM -0400, James Bottomley wrote:
-> On Fri, 2023-07-07 at 12:48 -0400, Kent Overstreet wrote:
-> > On Fri, Jul 07, 2023 at 12:26:19PM -0400, James Bottomley wrote:
-> > > On Fri, 2023-07-07 at 05:18 -0400, Kent Overstreet wrote:
-> [...]
-> > > > In that offlist thread, I don't recall much in the way of actual,
-> > > > concrete concerns. I do recall Christoph doing his usual schpiel;
-> > > > and to be clear, I cut short my interactions with Christoph
-> > > > because in nearly 15 years of kernel development he's never been
-> > > > anything but hostile to anything I've posted, and the criticisms
-> > > > he posts tend to be vague and unaware of the surrounding
-> > > > discussion, not anything actionable.
-> > > 
-> > > This too is a red flag.  Working with difficult people is one of a
-> > > maintainer's jobs as well.  Christoph has done an enormous amount
-> > > of highly productive work over the years.  Sure, he's prickly and
-> > > sure there have been fights, but everyone except you seems to
-> > > manage to patch things up and accept his contributions.  If it were
-> > > just one personal problem it might be overlookable, but you seem to
-> > > be having major fights with the maintainer of every subsystem you
-> > > touch...
-> > 
-> > James, I will bend over backwards to work with people who will work
-> > to continue the technical discussion.
+On Fri, Jul 07, 2023 at 07:55:28PM +0300, Roi L wrote:
+> I hope I'm emailing the right place. I have recently noticed that there
+> are many invalid uses of `cdev_add`'s return value in the kernel source.
+> While `cdev_add` clearly mentions that it returns a negative value on
+> failure, many calls to this function check the return value as a
+> positive value.
 > 
-> You will?  Because that doesn't seem to align with your statement about
-> Christoph being "vague and unaware of the surrounding discussions" and
-> not posting "anything actionable" for the last 15 years.  No-one else
-> has that impression and we've almost all had run-ins with Christoph at
-> some point.
+> E.g. (/drivers/mtd/ubi/vmt.c:581)
+> ```
+> err = cdev_add(&vol->cdev, dev, 1);
+> if (err) {
+> 	ubi_err(ubi, "cannot add character device for volume %d, error %d",
+> 		vol_id, err);
 
-If I'm going to respond to this I'd have to start citing interactions
-and I don't want to dig things that deep in public.
+OK, what you're missing is that on success, cdev_add() returns zero.
+So in practice, there is no difference between 'if (err)' and
+'if (err < 0)'.  Both check for an error, as err can never be positive.
 
-Can we either try to resolve this privately or drop it?
+I happen to think it's good practice to check for err < 0 rather than
+just err, and it makes no difference at all on any CPU that I've ever
+encountered.  But patches to clean it up would be unwelcome churn.
+
+Thanks for checking rather than starting out by sending patches that
+would have to be rejected!
