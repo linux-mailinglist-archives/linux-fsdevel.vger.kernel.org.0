@@ -2,210 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ACFC874B707
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 21:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55D6074B785
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 21:56:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233034AbjGGTXL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jul 2023 15:23:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57602 "EHLO
+        id S229600AbjGGT4p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jul 2023 15:56:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233020AbjGGTXJ (ORCPT
+        with ESMTP id S229515AbjGGT4o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jul 2023 15:23:09 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49F8519AE;
-        Fri,  7 Jul 2023 12:23:08 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C1B1A61A53;
-        Fri,  7 Jul 2023 19:23:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63501C433C7;
-        Fri,  7 Jul 2023 19:23:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688757785;
-        bh=94A738552oPcNLUcdadUB8TIEGBu7Z7b4zP4i/CSZhk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tgLCFacDRH2vFBvGsS1BdApLvk5sLS7WaSV2sgoXnSapnBONfvmv9X8eKnvugMJHE
-         jqjgRwSKqOqTX8fmIldEGKg0KhXTvE0Bema9AGOztxJ3On1k5IAODVtjRLYQSXxP2D
-         t/ZQ+Qpmi+iWBisfwT5UB4sgtSMbE1mZirUi9Sv4DwscQ0HrO92bVw63QK67r9cxrQ
-         QxbM6U35zant3vdXmjw3fsF5Ss+czDaGBBWJvUTejeoPPj3ruozwzQAv9CaKvhOlKV
-         2nM3B31uev1RK+ZATSoyzNzgygragekkgVMBHp/70Fr46Mi/QGbs3iEtE2igexxk6o
-         AYNbqLhudXizg==
-From:   SeongJae Park <sj@kernel.org>
-To:     David Wysochanski <dwysocha@redhat.com>
-Cc:     Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Ilya Dryomov <idryomov@gmail.com>, linux-mm@kvack.org,
-        Daire Byrne <daire.byrne@gmail.com>,
-        SeongJae Park <sj@kernel.org>
-Subject: Re: [BUG mm-unstable] BUG: KASAN: use-after-free in shrink_folio_list+0x9f4/0x1ae0
-Date:   Fri,  7 Jul 2023 19:23:01 +0000
-Message-Id: <20230707192301.27308-1-sj@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <CALF+zO=nGdoxcT-ya3aaUCBi-4iKPo3kZyzcWYCKMCf4n2wVbA@mail.gmail.com>
-References: 
+        Fri, 7 Jul 2023 15:56:44 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 498C319A5
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jul 2023 12:56:43 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-991da766865so279842466b.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jul 2023 12:56:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1688759802; x=1691351802;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IxB32od6PqZJdUe5KvFRjX12BUZtWHFhrjYTDAzxhJY=;
+        b=F3bN+Y2C3obAkkXGRADKQLZ0LgNR3Npz0zPdisMg+57COAbWl3CQyMSuDgDchVJdzZ
+         WN2z1oeVhHRrKxCBeO9xm509lTqy5PjfMukjvh86Zzpgg7oqHp4oNhj2x3knnZ2WSLZb
+         QA48WYc4+R1bLExL+Zd/+sp939tEtUCOW2XjUJJFwBwz1X38NOFNJisP4pOWrdkXuscM
+         BO44X1ZPaItl/nKfbQzu9ytwMaEUEHdTXLfDMbZIbRs0fIQ59jpUVqEkvTlf0aKGFU/y
+         ykQQu72VxK/NchIJYzfbiZwX1G/m6/ZTrDdGXSLTvLF+KVytWN3t1M10MxPCHfA2Y35r
+         /CxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688759802; x=1691351802;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IxB32od6PqZJdUe5KvFRjX12BUZtWHFhrjYTDAzxhJY=;
+        b=Kvxvvjx6xrp5UPYDPh88enMzg488XpaIf91fMylZsg8tnmHOnvaccbQfox3jxWZgIK
+         N6shw9AJI3D4rSMDrfd4RHqTUEv0PTBh9wmHyP38pnvx2pXqv6dRt457RjZeCi1gFQSY
+         TNeD+zmAYESMkppfn65jAoIxTpZscBVfET81JE3WJ4nBSH4V68V/G0WorZPr/uWKy0UH
+         ETjuRZ4FvuMnYBxmF21w+3NxXaONT9Vzoo106q1AZlSoQAztPgbGBL1GwWsLamskY249
+         ss2jSJ7MO2wfITvfp4rOGghWZKXwXPNhxIUrAWQzp3yt3fxzRfyKje9MwLGyrf76L5YH
+         RddQ==
+X-Gm-Message-State: ABy/qLY3RQO/9OsJxZXfqK9QCSSLjM4OUYoVdoL/L5DYYbhbEKnhu7hz
+        R3FjIKEZyUV7kTvBUBctgukzQ67ZAcM5CUbTrbJDZQ==
+X-Google-Smtp-Source: APBJJlHAdK3upZeZZKgETPEKw5XJW8Xc+xy8QqYEJ3Ro+g0wfEDdzwJYTkqe5TzjQiBSgZWZtUSvFo1dCKCPY1EUESQ=
+X-Received: by 2002:a17:906:ca17:b0:96f:d780:5734 with SMTP id
+ jt23-20020a170906ca1700b0096fd7805734mr4451808ejb.65.1688759801563; Fri, 07
+ Jul 2023 12:56:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230706225037.1164380-1-axelrasmussen@google.com>
+ <20230706225037.1164380-5-axelrasmussen@google.com> <ZKgVISe0vkRKVZuG@x1n>
+In-Reply-To: <ZKgVISe0vkRKVZuG@x1n>
+From:   Axel Rasmussen <axelrasmussen@google.com>
+Date:   Fri, 7 Jul 2023 12:56:04 -0700
+Message-ID: <CAJHvVci8ZEdH2Nqft3bp6_PpFgqL2rqJDyPh_pVPx8oZAWfyqA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/8] mm: userfaultfd: add new UFFDIO_POISON ioctl
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Brian Geffon <bgeffon@google.com>,
+        Christian Brauner <brauner@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Gaosheng Cui <cuigaosheng1@huawei.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Hugh Dickins <hughd@google.com>,
+        James Houghton <jthoughton@google.com>,
+        "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>,
+        Jiaqi Yan <jiaqiyan@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        "Mike Rapoport (IBM)" <rppt@kernel.org>,
+        Muchun Song <muchun.song@linux.dev>,
+        Nadav Amit <namit@vmware.com>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Ryan Roberts <ryan.roberts@arm.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Suleiman Souhlal <suleiman@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        "T.J. Alumbaugh" <talumbau@google.com>,
+        Yu Zhao <yuzhao@google.com>,
+        ZhangPeng <zhangpeng362@huawei.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 7 Jul 2023 14:12:06 -0400 David Wysochanski <dwysocha@redhat.com> wrote:
-
-> On Fri, Jul 7, 2023 at 12:46 PM Hyeonggon Yoo <42.hyeyoo@gmail.com> wrote:
+On Fri, Jul 7, 2023 at 6:37=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
+>
+> On Thu, Jul 06, 2023 at 03:50:32PM -0700, Axel Rasmussen wrote:
+> > The basic idea here is to "simulate" memory poisoning for VMs. A VM
+> > running on some host might encounter a memory error, after which some
+> > page(s) are poisoned (i.e., future accesses SIGBUS). They expect that
+> > once poisoned, pages can never become "un-poisoned". So, when we live
+> > migrate the VM, we need to preserve the poisoned status of these pages.
 > >
-> > On Sat, Jul 8, 2023 at 1:39 AM Hyeonggon Yoo <42.hyeyoo@gmail.com> wrote:
-> > >
-> > > On Wed, Jun 28, 2023 at 11:48:52AM +0100, David Howells wrote:
-> > > > Fscache has an optimisation by which reads from the cache are skipped until
-> > > > we know that (a) there's data there to be read and (b) that data isn't
-> > > > entirely covered by pages resident in the netfs pagecache.  This is done
-> > > > with two flags manipulated by fscache_note_page_release():
-> > > >
-> > > >       if (...
-> > > >           test_bit(FSCACHE_COOKIE_HAVE_DATA, &cookie->flags) &&
-> > > >           test_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags))
-> > > >               clear_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags);
-> > > >
-> > > > where the NO_DATA_TO_READ flag causes cachefiles_prepare_read() to indicate
-> > > > that netfslib should download from the server or clear the page instead.
-> > > >
-> > > > The fscache_note_page_release() function is intended to be called from
-> > > > ->releasepage() - but that only gets called if PG_private or PG_private_2
-> > > > is set - and currently the former is at the discretion of the network
-> > > > filesystem and the latter is only set whilst a page is being written to the
-> > > > cache, so sometimes we miss clearing the optimisation.
-> > > >
-> > > > Fix this by following Willy's suggestion[1] and adding an address_space
-> > > > flag, AS_RELEASE_ALWAYS, that causes filemap_release_folio() to always call
-> > > > ->release_folio() if it's set, even if PG_private or PG_private_2 aren't
-> > > > set.
-> > > >
-> > > > Note that this would require folio_test_private() and page_has_private() to
-> > > > become more complicated.  To avoid that, in the places[*] where these are
-> > > > used to conditionalise calls to filemap_release_folio() and
-> > > > try_to_release_page(), the tests are removed the those functions just
-> > > > jumped to unconditionally and the test is performed there.
-> > > >
-> > > > [*] There are some exceptions in vmscan.c where the check guards more than
-> > > > just a call to the releaser.  I've added a function, folio_needs_release()
-> > > > to wrap all the checks for that.
-> > > >
-> > > > AS_RELEASE_ALWAYS should be set if a non-NULL cookie is obtained from
-> > > > fscache and cleared in ->evict_inode() before truncate_inode_pages_final()
-> > > > is called.
-> > > >
-> > > > Additionally, the FSCACHE_COOKIE_NO_DATA_TO_READ flag needs to be cleared
-> > > > and the optimisation cancelled if a cachefiles object already contains data
-> > > > when we open it.
-> > > >
-> > > > Fixes: 1f67e6d0b188 ("fscache: Provide a function to note the release of a page")
-> > > > Fixes: 047487c947e8 ("cachefiles: Implement the I/O routines")
-> > > > Reported-by: Rohith Surabattula <rohiths.msft@gmail.com>
-> > > > Suggested-by: Matthew Wilcox <willy@infradead.org>
-> > > > Signed-off-by: David Howells <dhowells@redhat.com>
-> > >
-> > > Hi David,
-> > >
-> > > I was bisecting a use-after-free BUG on the latest mm-unstable,
-> > > where HEAD is 347e208de0e4 ("rmap: pass the folio to __page_check_anon_rmap()").
-> > >
-> > > According to my bisection, this is the first bad commit.
-> > > Use-After-Free is triggered on reclamation path when swap is enabled.
+> > When live migrating, we try to get the guest running on its new host as
+> > quickly as possible. So, we start it running before all memory has been
+> > copied, and before we're certain which pages should be poisoned or not.
 > >
-> > This was originally occurred during kernel compilation but
-> > can easily be reproduced via:
+> > So the basic way to use this new feature is:
 > >
-> > stress-ng --bigheap $(nproc)
+> > - On the new host, the guest's memory is registered with userfaultfd, i=
+n
+> >   either MISSING or MINOR mode (doesn't really matter for this purpose)=
+.
+> > - On any first access, we get a userfaultfd event. At this point we can
+> >   communicate with the old host to find out if the page was poisoned.
+> > - If so, we can respond with a UFFDIO_POISON - this places a swap marke=
+r
+> >   so any future accesses will SIGBUS. Because the pte is now "present",
+> >   future accesses won't generate more userfaultfd events, they'll just
+> >   SIGBUS directly.
 > >
-> > > (and couldn't trigger without swap enabled)
-> > >
-> > > the config, KASAN splat, bisect log are attached.
-> > > hope this isn't too late :(
-> > >
-> > > > cc: Matthew Wilcox <willy@infradead.org>
-> > > > cc: Linus Torvalds <torvalds@linux-foundation.org>
-> > > > cc: Steve French <sfrench@samba.org>
-> > > > cc: Shyam Prasad N <nspmangalore@gmail.com>
-> > > > cc: Rohith Surabattula <rohiths.msft@gmail.com>
-> > > > cc: Dave Wysochanski <dwysocha@redhat.com>
-> > > > cc: Dominique Martinet <asmadeus@codewreck.org>
-> > > > cc: Ilya Dryomov <idryomov@gmail.com>
-> > > > cc: linux-cachefs@redhat.com
-> > > > cc: linux-cifs@vger.kernel.org
-> > > > cc: linux-afs@lists.infradead.org
-> > > > cc: v9fs-developer@lists.sourceforge.net
-> > > > cc: ceph-devel@vger.kernel.org
-> > > > cc: linux-nfs@vger.kernel.org
-> > > > cc: linux-fsdevel@vger.kernel.org
-> > > > cc: linux-mm@kvack.org
-> > > > ---
-> > > >
-> > > > Notes:
-> > > >     ver #7)
-> > > >      - Make NFS set AS_RELEASE_ALWAYS.
-> > > >
-> > > >     ver #4)
-> > > >      - Split out merging of folio_has_private()/filemap_release_folio() call
-> > > >        pairs into a preceding patch.
-> > > >      - Don't need to clear AS_RELEASE_ALWAYS in ->evict_inode().
-> > > >
-> > > >     ver #3)
-> > > >      - Fixed mapping_clear_release_always() to use clear_bit() not set_bit().
-> > > >      - Moved a '&&' to the correct line.
-> > > >
-> > > >     ver #2)
-> > > >      - Rewrote entirely according to Willy's suggestion[1].
-> > > >
-> > > >  fs/9p/cache.c           |  2 ++
-> > > >  fs/afs/internal.h       |  2 ++
-> > > >  fs/cachefiles/namei.c   |  2 ++
-> > > >  fs/ceph/cache.c         |  2 ++
-> > > >  fs/nfs/fscache.c        |  3 +++
-> > > >  fs/smb/client/fscache.c |  2 ++
-> > > >  include/linux/pagemap.h | 16 ++++++++++++++++
-> > > >  mm/internal.h           |  5 ++++-
-> > > >  8 files changed, 33 insertions(+), 1 deletion(-)
-> 
-> 
-> I think myself / Daire Byrne may have already tracked this down and I
-> found a 1-liner that fixed a similar crash in his environment.
-> 
-> Can you try this patch on top and let me know if it still crashes?
-> https://github.com/DaveWysochanskiRH/kernel/commit/902c990e311120179fa5de99d68364b2947b79ec
+> > UFFDIO_POISON does not handle unmapping previously-present PTEs. This
+> > isn't needed, because during live migration we want to intercept
+> > all accesses with userfaultfd (not just writes, so WP mode isn't useful
+> > for this). So whether minor or missing mode is being used (or both), th=
+e
+> > PTE won't be present in any case, so handling that case isn't needed.
+> >
+> > Similarly, UFFDIO_POISON won't replace existing PTE markers. This might
+> > be okay to do, but it seems to be safer to just refuse to overwrite any
+> > existing entry (like a UFFD_WP PTE marker).
+> >
+> > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+>
+> I agree the current behavior is not as clear, especially after hwpoison
+> introduced.
+>
+> uffdio-copy is special right now that it can overwrite a marker, so a bug=
+gy
+> userapp can also overwrite a poisoned entry, but it also means the userap=
+p
+> is broken already, so may not really matter much.
+>
+> While zeropage wasn't doing that. I think that was just overlooked - i
+> assume it has the same reasoning as uffdio-copy otherwise.. and no one ju=
+st
+> used zeropage over a wp marker yet, or just got it work-arounded by
+> unprotect+zeropage.
+>
+> Not yet sure whether it'll make sense to unify this a bit, but making the
+> new poison api to be strict look fine.  If you have any thoughts after
+> reading feel free to keep the discussion going, I can ack this one I thin=
+k
+> (besides my rename request in 1st patch):
 
-I also encountered this issue with my DAMON tests, and was trying to find a
-time slot for deep dive.  And I confirmed your fix works.  Thank you for this
-great work.  Please Cc me when you post the patch if possible.
+Agreed, it would be nice to unify things. In my v2 I had anon/shmem
+and hugetlbfs behaving differently in this respect, for the same
+reason - it was just overlooked / cargo culted from existing code. If
+nothing else I think a single ioctl should be consistent across memory
+types! Heh.
 
-Tested-by: SeongJae Park <sj@kernel.org>
+But I also think you're right and it's not exactly intentional that
+copy / zeropage / etc are different in this respect. Some unification
+would be nice, although I'm not 100% sure what that looks like
+concretely.
 
+My rule of thumb is, in cases where we can't imagine a real use case,
+it's better to be too strict rather than too loose. And in the future,
+it's less disruptive to loosen restrictions rather than tighten them
+(potentially breaking something which used to work).
 
-Thanks,
-SJ
+I'll leave untangling this to some future series, though.
 
-> 
-> 
+>
+> Acked-by: Peter Xu <peterx@redhat.com>
+>
+> --
+> Peter Xu
+>
