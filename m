@@ -2,97 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B6D6474B10E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 14:41:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26C3374B111
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 14:42:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231580AbjGGMlh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jul 2023 08:41:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34562 "EHLO
+        id S231909AbjGGMmI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jul 2023 08:42:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229661AbjGGMlg (ORCPT
+        with ESMTP id S229661AbjGGMmH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jul 2023 08:41:36 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E51E21BF4
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jul 2023 05:41:34 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 307F7218DF;
-        Fri,  7 Jul 2023 12:41:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1688733693; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type;
-        bh=FKZflhIKDb+EW/SUmn/J99mkdlUqwtCnQNrybGexVEM=;
-        b=pZ3S/vx3m56H/vVkgfXG0Fslo8oJA1GtlFHNI1rsH+TTTOnLqf/52F3IZBX/siW6hZ4MCY
-        4MO7yRrSP9+0fsabXvLsBewwKfaUwkfr0ckc0NZj6mhCjJqMOcAqBkeSauP23yFk80Amcv
-        ESQk8dhKqYu8Zs7tM1XjmlKDy1mpL6o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1688733693;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type;
-        bh=FKZflhIKDb+EW/SUmn/J99mkdlUqwtCnQNrybGexVEM=;
-        b=XSFufVJg/8vQ3UbehHxxblo+Bue/mELM6G7rZjEsMOxveBSI7o3+skXmpLoEzVZiqZfUxe
-        jO4Fdwvb0PaZxqAg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1D19F139E0;
-        Fri,  7 Jul 2023 12:41:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id p9cAB/0HqGQtQAAAMHmgww
-        (envelope-from <jack@suse.cz>); Fri, 07 Jul 2023 12:41:33 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 8327FA0717; Fri,  7 Jul 2023 14:41:32 +0200 (CEST)
-Date:   Fri, 7 Jul 2023 14:41:32 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>
-Subject: [GIT PULL] Fsnotify fix for 6.5-rc2
-Message-ID: <20230707124132.ixcwe6xhelmauh3h@quack3>
+        Fri, 7 Jul 2023 08:42:07 -0400
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5275119
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jul 2023 05:42:06 -0700 (PDT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-262e7132c74so2284506a91.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jul 2023 05:42:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688733726; x=1691325726;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lUqBEujz5nbXjhtTcXM4sJy1bnwdq+ycuuBKgf0Uvtg=;
+        b=B/ONP01xt/d4XzRLkXpe40Bn3vi4olSwaL2sFfDeKzrUoZK5cXc2EN1OhPJ5Uk38VD
+         mfS59u2Hqwxt5Jrl70aSmV2PcrloQNVtzfPIot/qKclyev4H3xEYKzJp0snqLldN3Ey6
+         AET/QMNYjAr6LRT0xuv5CQ2anozUQBo9IlFZTxfp9cBnehN0YE2wPQ77R9mroYfHNimR
+         oBFUwpnrTsCKdr+aWJzEZ2eKctXVW4giFL4OBhCZE4WTyoxouPEXP+K7nCS1ooXOyUyr
+         P3A9zzoPQJqAn9X9rwKSC4Fow2S4xeUp435t5NgWA5rgjTASOY3FxW24S+ApwdwO7TdV
+         w7Zw==
+X-Gm-Message-State: ABy/qLYN4K4xBfsWhbe/PrnmxdWPkIgT3phlNmR58oLZLFdFPsKEYMuy
+        9TKF+9o1PLBRHaZSHGgU2V8lQDPRO3aZ55BZ7BwKIu/okBWL
+X-Google-Smtp-Source: APBJJlECJnXtPr2xtoq5uwFD14f8DlGuwTmjGSTuzGMSR9Q8eJCf4rMY6TG/xg+vyQAOvrHpxF/AFXpdvnZ/1ppmc/72ld/Mx6rC
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a17:90b:310b:b0:262:ee24:348b with SMTP id
+ gc11-20020a17090b310b00b00262ee24348bmr3848381pjb.9.1688733726233; Fri, 07
+ Jul 2023 05:42:06 -0700 (PDT)
+Date:   Fri, 07 Jul 2023 05:42:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000df599905ffe4f5a1@google.com>
+Subject: [syzbot] Monthly udf report (Jul 2023)
+From:   syzbot <syzbot+list4719ae841ef3127b6b4d@syzkaller.appspotmail.com>
+To:     jack@suse.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-  Hello Linus,
+Hello udf maintainers/developers,
 
-  could you please pull from
+This is a 31-day syzbot report for the udf subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/udf
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v6.5-rc2
+During the period, 5 new issues were detected and 1 were fixed.
+In total, 18 issues are still open and 18 have been fixed so far.
 
-to get a fix for fanotify to disallow creating of mount or superblock marks
-for kernel internal pseudo filesystems.
+Some of the still happening issues:
 
-I'm sending the pull request early because I want to get the fix merged
-for this cycle and I will be on vacation with my family for next three
-weeks. Amir will be taking care of fsnotify subsystem during that time if
-anything comes up.
+Ref Crashes Repro Title
+<1> 780     Yes   WARNING in udf_truncate_extents
+                  https://syzkaller.appspot.com/bug?extid=43fc5ba6dcb33e3261ca
+<2> 60      Yes   KASAN: use-after-free Write in udf_close_lvid
+                  https://syzkaller.appspot.com/bug?extid=60864ed35b1073540d57
+<3> 5       Yes   KASAN: use-after-free Read in udf_finalize_lvid
+                  https://syzkaller.appspot.com/bug?extid=46073c22edd7f242c028
+<4> 4       Yes   WARNING in udf_setsize (2)
+                  https://syzkaller.appspot.com/bug?extid=db6df8c0f578bc11e50e
+<5> 3       Yes   WARNING in __udf_add_aext (2)
+                  https://syzkaller.appspot.com/bug?extid=e381e4c52ca8a53c3af7
 
-Top of the tree is 69562eb0bd3e. The full shortlog is:
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Amir Goldstein (1):
-      fanotify: disallow mount/sb marks on kernel internal pseudo fs
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-The diffstat is
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
- fs/notify/fanotify/fanotify_user.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-							Thanks
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+You may send multiple commands in a single email message.
