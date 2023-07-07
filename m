@@ -2,87 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 731E674AD52
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 10:49:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F0AC74AD68
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 10:54:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231991AbjGGItE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jul 2023 04:49:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36478 "EHLO
+        id S231594AbjGGIy4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jul 2023 04:54:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229880AbjGGItD (ORCPT
+        with ESMTP id S232396AbjGGIyy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jul 2023 04:49:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDEB01FCE;
-        Fri,  7 Jul 2023 01:49:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7B05861886;
-        Fri,  7 Jul 2023 08:49:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E626C433C7;
-        Fri,  7 Jul 2023 08:48:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688719741;
-        bh=Bp2gaXLnBG1Um7uLrVB3bxxujt1nzvLgFiFXO/CIaEI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rpsPBAogvfSbhngrpmukMVPwKoK7n+8X7JvrClKP6i0saGW36EMdUA5w6QfP5OS6m
-         xeL73Q+Kde5MB7YwNzh68pild7+eAGGaNUpA03Jx8zP2lcAGuG4NF+R0M95zhoMiZm
-         hd4oB11ck7SeWHlbC7fRdwyTQxn8pp8bTVT8J7JR6oNhEi2d97Wvm882bSqalkgdrr
-         ygCpNvs49SeddLushl1skZTkVemYfw6zMFRZ+iezI1DwDiuIfUJnoi5RkRfcGa/6AN
-         Nuy9Kt/iCxCoDtQcvuz/rN4UunXXi/P4lkr5KvZg+2gIFYji9Fsm/zQyFD7PESKGyq
-         5IFMjd1qotnTQ==
-Date:   Fri, 7 Jul 2023 10:48:55 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
-        Josef Bacik <josef@toxicpanda.com>,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-        dchinner@redhat.com, sandeen@redhat.com, willy@infradead.org,
-        tytso@mit.edu, bfoster@redhat.com, jack@suse.cz,
-        andreas.gruenbacher@gmail.com, peterz@infradead.org,
-        akpm@linux-foundation.org, dhowells@redhat.com
-Subject: Re: [GIT PULL] bcachefs
-Message-ID: <20230707-badeverbot-gekettet-19ce3c238dac@brauner>
-References: <20230626214656.hcp4puionmtoloat@moria.home.lan>
- <20230706155602.mnhsylo3pnief2of@moria.home.lan>
- <20230706164055.GA2306489@perftesting>
- <20230706173819.36c67pf42ba4gmv4@moria.home.lan>
- <20230706211914.GB11476@frogsfrogsfrogs>
+        Fri, 7 Jul 2023 04:54:54 -0400
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 282842116
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jul 2023 01:54:53 -0700 (PDT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1b8b29eb551so17790155ad.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jul 2023 01:54:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688720092; x=1691312092;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MQ6fgIhDLVZg04LxsAC2t0anmvaYhwdWlDV+pQJ8Auc=;
+        b=C6LCqPrdElt0qNjMtgyvjbkJL/TsQ2u3FWVPDeJTuB3NYtz/XeDnVc9ZrFP5GD3gZA
+         hfSX4mBrrE1f+IVZVKqzmFRQRASpBOogM6c47UIxJzqrdHzRn8lHxoKODWdXC/uPhbqt
+         rqPuHexZNCRxoSwsLs+41kodiPahvGfdyTPAcOR/IzwO3a3idR1v9UmzvaAK7rD5xK5d
+         GpURHt4ZuTQX96R+achQ+kETmCpM0Xk++IXEXDQQDedrhCemMfDzr8Jpo+BVXvwQCLpT
+         VGb9CfXuRtV+fipM5pBvo16QAPbGMM+eR5yiCvoz3uIE6X2k3IiTHGkkJaKDWD+l8++s
+         aAyA==
+X-Gm-Message-State: ABy/qLYFo9P9D7IQGW37cwgxRwOsZOzLp4M3sORg/R6SP3PKFFiCt4od
+        2OXshe+HRh5pX553eOTs8WWVIqpHgVCOz2H29CUoAIkw3L3Q
+X-Google-Smtp-Source: APBJJlH/6XUTd0vo2I6hYGqtjOXqugsdmlRs6OPKCWMF8oV9KCJpoI4Z+pjsIwuyh/eCQHgzTDqetM2K4JyPrJ5qEez8b5WEP5dr
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230706211914.GB11476@frogsfrogsfrogs>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a17:902:e843:b0:1b8:a70e:dd00 with SMTP id
+ t3-20020a170902e84300b001b8a70edd00mr4150807plg.6.1688720092614; Fri, 07 Jul
+ 2023 01:54:52 -0700 (PDT)
+Date:   Fri, 07 Jul 2023 01:54:52 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003ed80905ffe1c97e@google.com>
+Subject: [syzbot] Monthly f2fs report (Jul 2023)
+From:   syzbot <syzbot+listcf7fbb62c045af90dfd2@syzkaller.appspotmail.com>
+To:     chao@kernel.org, jaegeuk@kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> just merge it and let's move on to the next thing."
+Hello f2fs maintainers/developers,
 
-"and let the block and vfs maintainers and developers deal with the fallout"
+This is a 31-day syzbot report for the f2fs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/f2fs
 
-is how that reads to others that deal with 65+ filesystems and counting.
+During the period, 4 new issues were detected and 1 were fixed.
+In total, 11 issues are still open and 29 have been fixed so far.
 
-The offlist thread that was started by Kent before this pr was sent has
-seen people try to outline calmly what problems they currently still
-have both maintenance wise and upstreaming wise. And it seems there's
-just no way this can go over calmly but instead requires massive amounts
-of defensive pushback and grandstanding.
+Some of the still happening issues:
 
-Our main task here is to consider the concerns of people that constantly
-review and rework massive amounts of generic code. And I can't in good
-conscience see their concerns dismissed with snappy quotes.
+Ref Crashes Repro Title
+<1> 212     Yes   INFO: task hung in f2fs_balance_fs
+                  https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
+<2> 96      Yes   kernel BUG in f2fs_evict_inode
+                  https://syzkaller.appspot.com/bug?extid=e1246909d526a9d470fa
+<3> 49      Yes   possible deadlock in f2fs_file_mmap
+                  https://syzkaller.appspot.com/bug?extid=c0e3db4f9cd6e05cadd3
+<4> 4       Yes   WARNING: lock held when returning to user space in f2fs_write_single_data_page
+                  https://syzkaller.appspot.com/bug?extid=eb6201248f684e99b9f8
+<5> 1       Yes   general protection fault in f2fs_drop_extent_tree
+                  https://syzkaller.appspot.com/bug?extid=f4649be1be739e030111
 
-I understand the impatience, I understand the excitement, I really do.
-But not in this way where core people just drop off because they don't
-want to deal with this anymore.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-I've spent enough time on this thread.
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
