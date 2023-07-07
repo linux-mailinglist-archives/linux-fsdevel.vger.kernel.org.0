@@ -2,86 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5046F74A855
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 03:05:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA7D074A8BD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 04:05:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230504AbjGGBFJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Jul 2023 21:05:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36144 "EHLO
+        id S231460AbjGGCFZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Jul 2023 22:05:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbjGGBFI (ORCPT
+        with ESMTP id S230126AbjGGCFX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Jul 2023 21:05:08 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9677172B;
-        Thu,  6 Jul 2023 18:05:07 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2b701e1c80fso19747241fa.2;
-        Thu, 06 Jul 2023 18:05:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688691906; x=1691283906;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AYb8pkOBGP1EJ3nocPnr3UcOhKvcfSMeqRADnHqQHIQ=;
-        b=a6AAN4KQP1uNvrWfmMjQtDbf3TiayxiwhBRrfP1MV0DQrUQ1UjQw0Y10mzbP9ttqtA
-         3vCvil1gRMOgdX5mYLuNwekB64R740Kz675bOPHx7bylAq5dRPnwcFcUX/5PgCsP0MSQ
-         1/wdp+uLUkP0huNUl/g5ngKrQPEJhMzm8+ysfZ/Eeo5BIN86cuKraeztVzd82gsCVeSE
-         ne5pg1bMeww4o7tYx3sp4/3r0BGhX+mjyPA0yCP1VbmqQ/8uk/Hj1GCu423r9CIqHAWJ
-         lCcYX1gJSzpZt+2lEtDpx+I3ngoGPmMNIbvO2eeZ+hsIPL84F+0fdnOnnTLAULb75fwu
-         JFDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688691906; x=1691283906;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AYb8pkOBGP1EJ3nocPnr3UcOhKvcfSMeqRADnHqQHIQ=;
-        b=H2kY9FlfxkBLHQg2V0M++bvp6d2I8RnG/IHuVc9t6AqYuM17vkj9J24+Z27uv7ShN/
-         8DNZwna9I7V+6blAgvP6TgQ0/CTYpR8KP30gut6zdlexAxsQVAxvKoqWD/oj4vMYHFGo
-         CRe+jOgLZVpd3semwyRNHjyD6H4kPx9eySleIU4g/OSPd549ynFnBWW7X19KwsDubL7x
-         FtVU7c4OjISlb/5sqlFns5s4e4YD5wk3QM9M+BLHW6pebEJI2+kqkW8CJ7unJQcnZGh1
-         4AHrpMiImAzTvRPSqnt75rRqNZdjehYR0+Vh9mgUO9IMchSyrdJWbw9CjOOl5LTGfMzh
-         TwhA==
-X-Gm-Message-State: ABy/qLZt/VJDLHlVO771VOXnGN7QW8/daJfcv18rddRnOcfvqDLI6ofZ
-        k4soL+CD0NkxHbg93IPS00s2JaDlA0rgpYNnND2rUMTvupQ=
-X-Google-Smtp-Source: APBJJlGEVr3hVv7xnsr4Eu2o79CaQ4pQfHz/RROOupHu0mrsJa+ZG6dOt4pSO3yK9ERTc2upgBVrlUBMjKBM1+OE7rc=
-X-Received: by 2002:a2e:98c7:0:b0:2b6:e2c1:9816 with SMTP id
- s7-20020a2e98c7000000b002b6e2c19816mr2806645ljj.20.1688691905689; Thu, 06 Jul
- 2023 18:05:05 -0700 (PDT)
+        Thu, 6 Jul 2023 22:05:23 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB9BC1FC4
+        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Jul 2023 19:05:22 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-108-26-156-107.bstnma.fios.verizon.net [108.26.156.107])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 36724dQa006186
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 6 Jul 2023 22:04:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1688695484; bh=TsNvuPyUlL4Y8qN5hDRwSDMRTqYJrjD+Crx5PjiM7RE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=llAFptV0qus49wG9N9aii4eNOKcqrXwVjpnI1N2cKbafVw4DSo5wumqZHKa8iwbvP
+         8lxGmujROmsufDc364Ddv7gM9ebx71J+3CemcGOFwhyi2nG00fKxuR3Hye3C+EWcBC
+         8H+Yw9vmC6QMwl2CqpcUrn53eNsjmzfxH8RKMAZcRDWmCOkmHzIBPHgWXoIfHN8817
+         V4JXv5mkGrCt+XZmwui2KGFH3fag1jyDyvrL9kkF2ghRnPg6RuvKIAevSTdJI+AH77
+         Vqx4Z4SILF7Oji89JZDoxRBfGfTsgOUOl/BE3hqLVRx1ycLLx2rymWFuLf1uXNHyhX
+         E1QbjSr2iuvmw==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 9914215C0294; Thu,  6 Jul 2023 22:04:39 -0400 (EDT)
+Date:   Thu, 6 Jul 2023 22:04:39 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     Josef Bacik <josef@toxicpanda.com>, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcachefs@vger.kernel.org, djwong@kernel.org,
+        dchinner@redhat.com, sandeen@redhat.com, willy@infradead.org,
+        bfoster@redhat.com, jack@suse.cz, andreas.gruenbacher@gmail.com,
+        brauner@kernel.org, peterz@infradead.org,
+        akpm@linux-foundation.org, dhowells@redhat.com
+Subject: Re: [GIT PULL] bcachefs
+Message-ID: <20230707020439.GM1178919@mit.edu>
+References: <20230626214656.hcp4puionmtoloat@moria.home.lan>
+ <20230706155602.mnhsylo3pnief2of@moria.home.lan>
+ <20230706164055.GA2306489@perftesting>
+ <20230706173819.36c67pf42ba4gmv4@moria.home.lan>
 MIME-Version: 1.0
-References: <c35fbb4cb0a3a9b4653f9a032698469d94ca6e9c.1688123230.git.legion@kernel.org>
- <babdf7a8-9663-6d71-821a-34da2aff80e2@huaweicloud.com> <20230704-anrollen-beenden-9187c7b1b570@brauner>
- <CAADnVQLAhDepRpbbi_EU6Ca3wnuBtSuAPO9mE6pGoxj8i9=caQ@mail.gmail.com> <20230706-raffgierig-geeilt-7cea6d731194@brauner>
-In-Reply-To: <20230706-raffgierig-geeilt-7cea6d731194@brauner>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Thu, 6 Jul 2023 18:04:54 -0700
-Message-ID: <CAADnVQ+N4oiar+V7cKwTSZ9t8mnxnoVoXR3HCL8_65pLfZWwqA@mail.gmail.com>
-Subject: Re: [PATCH v1] fs: Add kfuncs to handle idmapped mounts
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Hou Tao <houtao@huaweicloud.com>,
-        Alexey Gladkov <legion@kernel.org>, bpf <bpf@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230706173819.36c67pf42ba4gmv4@moria.home.lan>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 6, 2023 at 12:22=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
-> push for. But you have to admit that this out-of-tree portion is very
-> hard to swallow if you've been hit by out of tree modules and their
-> complaints about removed EXPORT_SYMBOL*()s.
+On Thu, Jul 06, 2023 at 01:38:19PM -0400, Kent Overstreet wrote:
+> You, the btrfs developers, got started when Linux filesystem teams were
+> quite a bit bigger than they are now: I was at Google when Google had a
+> bunch of people working on ext4, and that was when ZFS had recently come
+> out and there was recognition that Linux needed an answer to ZFS and you
+> were able to ride that excitement. It's been a bit harder for me to get
+> something equally ambitions going, to be honest.
 
-I don't remember a single case where somebody complained so hard
-about unexport of a symbol that it was reinstated.
-Instead there are plenty of 'unexport foo' in every kernel release.
-Like commit 4bb218a65a43 ("fs: unexport buffer_check_dirty_writeback").
-Surely they break some oot mods, so what? Complaining doesn't help.
+Just to set the historical record straight, I think you're mixing up
+two stories here.
+
+*Btrfs* was started while I was at the IBM Linux Technology Center,
+and it was because there were folks from more than one companies that
+were concerned that there needed to be an answer to ZFS.  IBM hosted
+that meeting, but ultimately, never did contribute any developers to
+the btrfs effort.  That's because IBM had a fairly cold, hard
+examination of what their enterprise customers really wanted, and
+would be willing to pay $$$, and the decision was made at a corporate
+level (higher up than the Linux Technology Center, although I
+participated in the company-wide investigation) that *none* of OS's
+that IBM supported (AIX, zOS, Linux, etc.) needed ZFS-like features,
+because IBM's customers didn't need them.  The vast majority of what
+paying customers' workloads at the time was to run things like
+Websphere, and Oracle and DB/2, and these did not need fancy
+snapshots.  And things like integrity could be provided at other
+layers of the storage stack.
+
+As far as Google was concerned, yes, we had several software engineers
+working on ext4, but it had nothing to do with ZFS.  We had a solid
+business case for how replacing ext2 with ext4 (in nojournal mode,
+since the cluster file system handled data integrity and crash
+recovery) would save the company $XXX millions of dollars in storage
+TCO (total cost of ownership) dollars per year.
+
+In any case, at neither company was a "sense of excitement" something
+which drove the technical decisions.  It was all about Return on
+Investment (ROI).  As such, that's driven my bias towards ext4
+maintenance.
+
+I view part of my job is finding matches between interesting file
+system features that I would find technically interesting, and which
+would benefit the general ext4 user base, and specific business cases
+that would encourage the investment of several developers on file
+system technologies.
+
+Things like case insensitive file names, fscrypt, fsverity, etc.,
+where all started *after* I had found a business case that would
+interest one or more companies or divisions inside Google to put
+people on the project.  Smaller projects can get funded on the
+margins, sure.  But for anything big, that might require the focused
+attention of one or more developers for a quarter or more, I generally
+find the business case first, and often, that will inform the
+requirements for the feature.  In other words, not only am I ext4's
+maintainer, I'm also its product manager.
+
+Of course, this is not the only way you can drive technology forward.
+For example, at Sun Microsystems, ZFS was driven just by the techies,
+and initially, they hid the fact that the project was taking place,
+not asking the opinion of the finance and sales teams.  And so ZFS had
+quite a lot of very innovative technologies that pushed the industry
+forward, including inspiring btrfs.  Of course, Sun Microsystems
+didn't do all that well financially, until they were forced to sell
+themselves to the highest bidder.  So perhaps, it might be that this
+particular model is one that other companies, including IBM, Red Hat,
+Microsoft, Oracle, Facebook, etc., might choose to avoid emulating.
+
+Cheers,
+
+					- Ted
