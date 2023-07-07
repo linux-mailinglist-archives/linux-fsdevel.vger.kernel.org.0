@@ -2,98 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DA9F374AC14
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 09:39:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B4D574AC7F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 10:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229815AbjGGHjO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jul 2023 03:39:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35864 "EHLO
+        id S231962AbjGGIHt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jul 2023 04:07:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232446AbjGGHjN (ORCPT
+        with ESMTP id S229787AbjGGIHs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jul 2023 03:39:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90B3119B2;
-        Fri,  7 Jul 2023 00:39:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        Fri, 7 Jul 2023 04:07:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD5D5172B
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jul 2023 01:07:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1688717221;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=aT1O9BlEBxtT7uHpuo6KAf/C4BqVJdHsv1uVQtgiXH4=;
+        b=KEnB3AyUaF8N03SyXjCm/3lSHrSSLG5zTMnPJO5HtzcufGbBhRKwdMd/iNX244U/nu79Qs
+        3Ac5JUpoARLM9yOTMCxP/qnRBlk90vejhN9ds1BBOAM47zigD8FfJRVjxc43oKWkOOHAm7
+        CLZCsnYYzdr9f6sAUrc/hhqQmOML2MI=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-395-awU6C2hJPu-5QVduIKa6ZA-1; Fri, 07 Jul 2023 04:06:57 -0400
+X-MC-Unique: awU6C2hJPu-5QVduIKa6ZA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 263EC61652;
-        Fri,  7 Jul 2023 07:39:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2198C433C8;
-        Fri,  7 Jul 2023 07:39:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688715551;
-        bh=sCtUlKO6lNaOcSnDm95grpQl1WbLB7f58PF5sz3zFYw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iwrEvG5NYkKYotz+ITBfSw22HwN02kUvNG6SXQDjVRmEZfg/IqavlBqaSTBQZCgkv
-         oBoEh4pd/IqIW9j4ofoZiDrSPnF/J8lswEHESPtW34tET+O1b9W6pDu5GTfiraJQ0Y
-         i6fSTaEDupiqeRfyOK730uVi4V308SfGj2E2BrgXtS7RFLyYuF3jr+buYYu1iKW8dc
-         Z/YJv8UBI5v+u+CBGvPgYlg2/W/AmFadUlWxBwiWSly29KI1cC0JRPlWvECsExGHq1
-         FcfdTSHc9s9cGOMgW8vRPkpTqk1wUtzjZ8AgHsv8Kx/Vji7BiOd84PxXyToh7w1thT
-         /JsBh2uFnugiw==
-Date:   Fri, 7 Jul 2023 09:39:05 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Kees Cook <keescook@google.com>,
-        Ted Tso <tytso@mit.edu>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Alexander Popov <alex.popov@linux.com>,
-        Eric Biggers <ebiggers@google.com>, linux-xfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH 6/6] fs: Make bind mounts work with
- bdev_allow_write_mounted=n
-Message-ID: <20230707-mitangeklagt-erdumlaufbahn-688d4f493451@brauner>
-References: <20230704122727.17096-1-jack@suse.cz>
- <20230704125702.23180-6-jack@suse.cz>
- <ZKbj5v4VKroW7cFp@infradead.org>
- <20230706161255.t33v2yb3qrg4swcm@quack3>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2D46A10504AA;
+        Fri,  7 Jul 2023 08:06:57 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.195])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 257FE1121330;
+        Fri,  7 Jul 2023 08:06:55 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <000000000000554b8205ffdea64e@google.com>
+References: <000000000000554b8205ffdea64e@google.com>
+To:     syzbot <syzbot+689ec3afb1ef07b766b2@syzkaller.appspotmail.com>
+Cc:     dhowells@redhat.com, adilger.kernel@dilger.ca,
+        boqun.feng@gmail.com, herbert@gondor.apana.org.au, kuba@kernel.org,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, longman@redhat.com, mingo@redhat.com,
+        netdev@vger.kernel.org, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu, will@kernel.org
+Subject: Re: [syzbot] [ext4?] general protection fault in ext4_finish_bio
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230706161255.t33v2yb3qrg4swcm@quack3>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2224783.1688717214.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Fri, 07 Jul 2023 09:06:54 +0100
+Message-ID: <2224784.1688717214@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 06, 2023 at 06:12:55PM +0200, Jan Kara wrote:
-> On Thu 06-07-23 08:55:18, Christoph Hellwig wrote:
-> > On Tue, Jul 04, 2023 at 02:56:54PM +0200, Jan Kara wrote:
-> > > When we don't allow opening of mounted block devices for writing, bind
-> > > mounting is broken because the bind mount tries to open the block device
-> > > before finding the superblock for it already exists. Reorganize the
-> > > mounting code to first look whether the superblock for a particular
-> > > device is already mounted and open the block device only if it is not.
-> > 
-> > Warning: this might be a rathole.
-> > 
-> > I really hate how mount_bdev / get_tree_bdev try to deal with multiple
-> > mounts.
-> > 
-> > The idea to just open the device and work from there just feels very
-> > bogus.
-> > 
-> > There is really no good reason to have the bdev to find a superblock,
-> > the dev_t does just fine (and in fact I have a patch to remove
-> > the bdev based get_super and just use the dev_t based one all the
-> > time).  So I'd really like to actually turn this around and only
-> > open when we need to allocate a new super block.  That probably
-> > means tearning sget_fc apart a bit, so it will turn into a fair
-> > amount of work, but I think it's the right thing to do.
-> 
-> Well, this is exactly what this patch does - we use dev_t to lookup the
-> superblock in sget_fc() and we open the block device only if we cannot find
-> matching superblock and need to create a new one...
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
+t main
 
-Can you do this rework independent of the bdev_handle work that you're
-doing so this series doesn't depend on the other work and we can get
-the VFS bits merged for this?
+    crypto: algif/hash: Fix race between MORE and non-MORE sends
+    =
+
+    The 'MSG_MORE' state of the previous sendmsg() is fetched without the
+    socket lock held, so two sendmsg calls can race.  This can be seen wit=
+h a
+    large sendfile() as that now does a series of sendmsg() calls, and if =
+a
+    write() comes in on the same socket at an inopportune time, it can fli=
+p the
+    state.
+    =
+
+    Fix this by moving the fetch of ctx->more inside the socket lock.
+    =
+
+    Fixes: c662b043cdca ("crypto: af_alg/hash: Support MSG_SPLICE_PAGES")
+    Reported-by: syzbot+689ec3afb1ef07b766b2@syzkaller.appspotmail.com
+    Link: https://lore.kernel.org/r/000000000000554b8205ffdea64e@google.co=
+m/
+    Signed-off-by: David Howells <dhowells@redhat.com>
+    cc: Herbert Xu <herbert@gondor.apana.org.au>
+    cc: Paolo Abeni <pabeni@redhat.com>
+    cc: "David S. Miller" <davem@davemloft.net>
+    cc: Eric Dumazet <edumazet@google.com>
+    cc: Jakub Kicinski <kuba@kernel.org>
+    cc: linux-crypto@vger.kernel.org
+    cc: netdev@vger.kernel.org
+
+diff --git a/crypto/algif_hash.c b/crypto/algif_hash.c
+index 0ab43e149f0e..82c44d4899b9 100644
+--- a/crypto/algif_hash.c
++++ b/crypto/algif_hash.c
+@@ -68,13 +68,15 @@ static int hash_sendmsg(struct socket *sock, struct ms=
+ghdr *msg,
+ 	struct hash_ctx *ctx =3D ask->private;
+ 	ssize_t copied =3D 0;
+ 	size_t len, max_pages, npages;
+-	bool continuing =3D ctx->more, need_init =3D false;
++	bool continuing, need_init =3D false;
+ 	int err;
+ =
+
+ 	max_pages =3D min_t(size_t, ALG_MAX_PAGES,
+ 			  DIV_ROUND_UP(sk->sk_sndbuf, PAGE_SIZE));
+ =
+
+ 	lock_sock(sk);
++	continuing =3D ctx->more;
++
+ 	if (!continuing) {
+ 		/* Discard a previous request that wasn't marked MSG_MORE. */
+ 		hash_free_result(sk, ctx);
+
