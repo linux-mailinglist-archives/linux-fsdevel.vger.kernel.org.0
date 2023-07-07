@@ -2,194 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 66F0674B07B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 14:10:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2FEF74B086
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Jul 2023 14:16:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231492AbjGGMKB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Jul 2023 08:10:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51130 "EHLO
+        id S229757AbjGGMQi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Jul 2023 08:16:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230040AbjGGMKB (ORCPT
+        with ESMTP id S229642AbjGGMQi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Jul 2023 08:10:01 -0400
-Received: from mail-pj1-f78.google.com (mail-pj1-f78.google.com [209.85.216.78])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5388210C
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jul 2023 05:09:59 -0700 (PDT)
-Received: by mail-pj1-f78.google.com with SMTP id 98e67ed59e1d1-262cf62e9b4so2743479a91.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jul 2023 05:09:59 -0700 (PDT)
+        Fri, 7 Jul 2023 08:16:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CC8E1BEE
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jul 2023 05:15:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1688732151;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rhpDqg8pI0zX12ElS90vQT8QQV6E3FjtxWt9F4QgwcU=;
+        b=PSEl7yWW0g9KegAQ8cdyMvZHxxVFckOETksGXh1P2F54DjEhb5Vme0/ZTVhEQJJ/C5T6+W
+        qoo/q9rrgU1DV3xDwX1blSHMANGKpcAuzHWww91PI8bpba0k7nw4pWLeV92KeIKn26Rnyx
+        rvP6TchdxcOEbrsT8bR6ZxY6bj/XS6M=
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
+ [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-618-d0v8xx1pPjaqagMaQI2OoQ-1; Fri, 07 Jul 2023 08:15:48 -0400
+X-MC-Unique: d0v8xx1pPjaqagMaQI2OoQ-1
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-57a3620f8c0so19041337b3.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Jul 2023 05:15:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688731799; x=1691323799;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PI5ApXs2ZsjZ5d4mdhTHU0eytxqvGV+WP25cKrMce9g=;
-        b=icsyfPR3w8tCeG7yJF19n/BkVaBEQ/hCSBILjJDv8ePdEo10Z/PfBcXOgpRxu03mE3
-         oFcaMWALefGVkw6cgeny6iMxY+68tRtwdI0QXy6WOmn+WSXdxomrnU/cWBWdq4y4GrsI
-         Y214IuKm9DOANpbdoNrunFmnA0JhaMZB4YYt7h06ZUXBRWmjbSY4hGqNDean998hla1h
-         R/+StRQDw1st1K8yogRMmCrhOqrx+0Nze1Vf6cdH4rug74KekkT0kUcOZKRiO3gm3KWU
-         Kn5wON+3n2fhhDCTjYlu9qBQjoMVHmbg78OTjRWdUQC6NPvQpM2kckUPQXj8WuVR4VVh
-         6xYw==
-X-Gm-Message-State: ABy/qLZ3QiOHPqJOV1FB6Lwsjqo2CGHzt99UQfy0qSaFi7rX513Wh6QA
-        8JFdhmlCPMtnbAq1528atFc6X7+9/LMoeSW+otZ5I3SKpy54
-X-Google-Smtp-Source: APBJJlEkPiPGEAwT1NW5Be+lY9WbmPdCS+Em6ZYAz1iNcqNoXt84xdvqCKDYoj+oEntwbFaTKXS9KvFls1sND9+Lo0JyWiicbB0C
+        d=1e100.net; s=20221208; t=1688732148; x=1691324148;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rhpDqg8pI0zX12ElS90vQT8QQV6E3FjtxWt9F4QgwcU=;
+        b=SKEWT/DFDuL3YW5MyeGljfGy6lsuV/Pn+PKXEBgrXFa595bKGn6sqPKUEeeWNXG80i
+         2swJ7DAnt5h79ZCyew3XPJqpEyOMIO8OE1+EgAIMMQgU35ayYUoimrgd2qFC1pBNDedk
+         JLtj1xFoDss9WnrFABIgNXTiC2PnnFYVpHV1ZfGwR39b2Sb/qAb0OfTJbQNEpiu9+6bE
+         0gnjgxAUT1wFHyVtEIpLUh8M6I7W82ZcikAeokcMqOHxkCW7hKgPMPzSAImyzCuaSkUF
+         V6X3hmHcrONGbqHGuZmPrcySJA/2/N3STUsB0osU+VwC4/qKk5X1txI+z+vTRc3bxOO0
+         opvA==
+X-Gm-Message-State: ABy/qLZD1kVr73yJ5zaXEest/1k0kTljw+cKCooQ2O66ElKc8P1VrxRh
+        AIJKQA8ohFSLLYAL6bS8HDPGVB7yu1tDzKne2dDxwmkAGIp4hiAwaa8JrFlr0o0Hlk0K0PWXV56
+        EPvp03KBKsDgNHs++/upqQYJHWQ==
+X-Received: by 2002:a0d:f543:0:b0:570:81f1:7b49 with SMTP id e64-20020a0df543000000b0057081f17b49mr4993715ywf.6.1688732148084;
+        Fri, 07 Jul 2023 05:15:48 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlGBjLT+ie9QBkdDcFC6xSFGukVNoSHS7y0OfnI702mFH10yhnLmSvv9I4IBTSn5ORv7zoj+ig==
+X-Received: by 2002:a0d:f543:0:b0:570:81f1:7b49 with SMTP id e64-20020a0df543000000b0057081f17b49mr4993707ywf.6.1688732147833;
+        Fri, 07 Jul 2023 05:15:47 -0700 (PDT)
+Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
+        by smtp.gmail.com with ESMTPSA id n1-20020ac86741000000b00400c5f5e713sm1648278qtp.97.2023.07.07.05.15.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jul 2023 05:15:47 -0700 (PDT)
+Date:   Fri, 7 Jul 2023 08:18:28 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     Josef Bacik <josef@toxicpanda.com>, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcachefs@vger.kernel.org, djwong@kernel.org,
+        dchinner@redhat.com, sandeen@redhat.com, willy@infradead.org,
+        tytso@mit.edu, jack@suse.cz, andreas.gruenbacher@gmail.com,
+        brauner@kernel.org, peterz@infradead.org,
+        akpm@linux-foundation.org, dhowells@redhat.com
+Subject: Re: [GIT PULL] bcachefs
+Message-ID: <ZKgClE9AnmLZpXTM@bfoster>
+References: <20230626214656.hcp4puionmtoloat@moria.home.lan>
+ <20230706155602.mnhsylo3pnief2of@moria.home.lan>
+ <20230706164055.GA2306489@perftesting>
+ <20230706173819.36c67pf42ba4gmv4@moria.home.lan>
 MIME-Version: 1.0
-X-Received: by 2002:a17:90b:a4a:b0:263:c6b4:5267 with SMTP id
- gw10-20020a17090b0a4a00b00263c6b45267mr4122522pjb.7.1688731798795; Fri, 07
- Jul 2023 05:09:58 -0700 (PDT)
-Date:   Fri, 07 Jul 2023 05:09:58 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fcfb4a05ffe48213@google.com>
-Subject: [syzbot] [tomoyo?] [hfs?] general protection fault in
- tomoyo_check_acl (3)
-From:   syzbot <syzbot+28aaddd5a3221d7fd709@syzkaller.appspotmail.com>
-To:     jmorris@namei.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, paul@paul-moore.com,
-        penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
-        tomoyo-dev-en@lists.osdn.me
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230706173819.36c67pf42ba4gmv4@moria.home.lan>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Thu, Jul 06, 2023 at 01:38:19PM -0400, Kent Overstreet wrote:
+> On Thu, Jul 06, 2023 at 12:40:55PM -0400, Josef Bacik wrote:
+...
+> > I am really, really wanting you to succeed here Kent.  If the general consensus
+> > is you need to have some idiot review fs/bcachefs I will happily carve out some
+> > time and dig in.
+> 
+> That would be much appreciated - I'll owe you some beers next time I see
+> you. But before jumping in, let's see if we can get people who have
+> already worked with the code to say something.
+> 
 
-syzbot found the following issue on:
+I've been poking at bcachefs for several months or so now. I'm happy to
+chime in on my practical experience thus far, though I'm still not
+totally clear what folks are looking for on this front, in terms of
+actual review. I agree with Josef's sentiment that a thorough code
+review of the entire fs is not really practical. I've not done that and
+don't plan to in the short term.
 
-HEAD commit:    a901a3568fd2 Merge tag 'iomap-6.5-merge-1' of git://git.ke..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=15e4c8a4a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7406f415f386e786
-dashboard link: https://syzkaller.appspot.com/bug?extid=28aaddd5a3221d7fd709
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17b5bb80a80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10193ee7280000
+As it is, I have been able to dig into various areas of the code, learn
+some of the basic principles, diagnose/fix issues and get some of those
+fixes merged without too much trouble. IMO, the code is fairly well
+organized at a high level, reasonably well documented and
+debuggable/supportable. That isn't to say some of those things couldn't
+be improved (and I expect they will be), but these are more time and
+resource constraints than anything and so I don't see any major red
+flags in that regard. Some of my bigger personal gripes would be a lot
+of macro code generation stuff makes it a bit harder (but not
+impossible) for a novice to come up to speed, and similarly a bit more
+introductory/feature level documentation would be useful to help
+navigate areas of code without having to rely on Kent as much. The
+documentation that is available is still pretty good for gaining a high
+level understanding of the fs data structures, though I agree that more
+content on things like on-disk format would be really nice.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/119fd918f733/disk-a901a356.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/79f9ac119639/vmlinux-a901a356.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8bd8662e2869/bzImage-a901a356.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/8e36b52190bc/mount_0.gz
+Functionality wise I think it's inevitable that there will be some
+growing pains as user and developer base grows. For that reason I think
+having some kind of experimental status for a period of time is probably
+the right approach. Most of the issues I've dug into personally have
+been corner case type things, but experience shows that these are the
+sorts of things that eventually arise with more users. We've also
+briefly discussed things like whether bcachefs could take more advantage
+of some of the test coverage that btrfs already has in fstests, since
+the feature sets should largely overlap. That is TBD, but is something
+else that might be a good step towards further proving out reliability.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+28aaddd5a3221d7fd709@syzkaller.appspotmail.com
+Related to that, something I'm not sure I've seen described anywhere is
+the functional/production status of the filesystem itself (not
+necessarily the development status of the various features). For
+example, is the filesystem used in production at any level? If so, what
+kinds of deployments, workloads and use cases do you know about? How
+long have they been in use, etc.? I realize we may not have knowledge or
+permission to share details, but any general info about usage in the
+wild would be interesting.
 
-loop0: detected capacity change from 0 to 64
-hfs: unable to locate alternate MDB
-hfs: continuing without an alternate MDB
-general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-CPU: 0 PID: 5189 Comm: syz-executor307 Not tainted 6.4.0-syzkaller-10173-ga901a3568fd2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
-RIP: 0010:tomoyo_check_acl+0xb0/0x440 security/tomoyo/domain.c:173
-Code: 00 0f 85 64 03 00 00 49 8b 5d 00 49 39 dd 0f 84 fa 01 00 00 e8 71 fc b1 fd 48 8d 7b 18 48 89 f8 48 89 fa 48 c1 e8 03 83 e2 07 <0f> b6 04 28 38 d0 7f 08 84 c0 0f 85 f2 02 00 00 44 0f b6 73 18 31
-RSP: 0018:ffffc90003caf790 EFLAGS: 00010246
-RAX: 0000000000000003 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff83d2d25f RDI: 0000000000000018
-RBP: dffffc0000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: ffffc90003caf880
-R13: ffff888016f31410 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000555556ffa300(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc16e620c80 CR3: 0000000075643000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- tomoyo_path_permission security/tomoyo/file.c:586 [inline]
- tomoyo_path_permission+0x1ff/0x3a0 security/tomoyo/file.c:573
- tomoyo_check_open_permission+0x366/0x3a0 security/tomoyo/file.c:777
- tomoyo_file_open security/tomoyo/tomoyo.c:332 [inline]
- tomoyo_file_open+0xaa/0xd0 security/tomoyo/tomoyo.c:327
- security_file_open+0x49/0xb0 security/security.c:2797
- do_dentry_open+0x57a/0x17b0 fs/open.c:901
- do_open fs/namei.c:3636 [inline]
- path_openat+0x1b65/0x2710 fs/namei.c:3793
- do_filp_open+0x1ba/0x410 fs/namei.c:3820
- do_sys_openat2+0x160/0x1c0 fs/open.c:1407
- do_sys_open fs/open.c:1422 [inline]
- __do_sys_openat fs/open.c:1438 [inline]
- __se_sys_openat fs/open.c:1433 [inline]
- __x64_sys_openat+0x143/0x1f0 fs/open.c:1433
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fc16e647a19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 11 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcc752e608 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 000000000000e483 RCX: 00007fc16e647a19
-RDX: 0000000000141842 RSI: 0000000020000380 RDI: 00000000ffffff9c
-RBP: 0000000000000000 R08: 0000000000000260 R09: 00007ffcc752e630
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffcc752e62c
-R13: 00007ffcc752e660 R14: 00007ffcc752e640 R15: 00000000000000be
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:tomoyo_check_acl+0xb0/0x440 security/tomoyo/domain.c:173
-Code: 00 0f 85 64 03 00 00 49 8b 5d 00 49 39 dd 0f 84 fa 01 00 00 e8 71 fc b1 fd 48 8d 7b 18 48 89 f8 48 89 fa 48 c1 e8 03 83 e2 07 <0f> b6 04 28 38 d0 7f 08 84 c0 0f 85 f2 02 00 00 44 0f b6 73 18 31
-RSP: 0018:ffffc90003caf790 EFLAGS: 00010246
-RAX: 0000000000000003 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff83d2d25f RDI: 0000000000000018
-RBP: dffffc0000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: ffffc90003caf880
-R13: ffff888016f31410 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000555556ffa300(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055d594f5c028 CR3: 0000000075643000 CR4: 0000000000350ef0
-----------------
-Code disassembly (best guess):
-   0:	00 0f                	add    %cl,(%rdi)
-   2:	85 64 03 00          	test   %esp,0x0(%rbx,%rax,1)
-   6:	00 49 8b             	add    %cl,-0x75(%rcx)
-   9:	5d                   	pop    %rbp
-   a:	00 49 39             	add    %cl,0x39(%rcx)
-   d:	dd 0f                	fisttpll (%rdi)
-   f:	84 fa                	test   %bh,%dl
-  11:	01 00                	add    %eax,(%rax)
-  13:	00 e8                	add    %ch,%al
-  15:	71 fc                	jno    0x13
-  17:	b1 fd                	mov    $0xfd,%cl
-  19:	48 8d 7b 18          	lea    0x18(%rbx),%rdi
-  1d:	48 89 f8             	mov    %rdi,%rax
-  20:	48 89 fa             	mov    %rdi,%rdx
-  23:	48 c1 e8 03          	shr    $0x3,%rax
-  27:	83 e2 07             	and    $0x7,%edx
-* 2a:	0f b6 04 28          	movzbl (%rax,%rbp,1),%eax <-- trapping instruction
-  2e:	38 d0                	cmp    %dl,%al
-  30:	7f 08                	jg     0x3a
-  32:	84 c0                	test   %al,%al
-  34:	0f 85 f2 02 00 00    	jne    0x32c
-  3a:	44 0f b6 73 18       	movzbl 0x18(%rbx),%r14d
-  3f:	31                   	.byte 0x31
+The development process is fairly ad hoc, so I suspect that is something
+that would have to evolve if this lands upstream. Kent, did you have
+thoughts/plans around that? I don't mind contributing reviews where I
+can, but that means patches would be posted somewhere for feedback, etc.
+I suppose that has potential to slow things down, but also gives people
+a chance to see what's happening, review or ask questions, etc., which
+is another good way to learn or simply keep up with things.
 
+All in all I pretty much agree with Josef wrt to the merge request. ISTM
+the main issues right now are the external dependencies and
+development/community situation (i.e. bus factor). As above, I plan to
+continue contributions at least in terms of fixes and whatnot so long as
+$employer continues to allow me to dedicate at least some time to it and
+the community is functional ;), but it's not clear to me if that is
+sufficient to address the concerns here. WRT the dependencies, I agree
+it makes sense to be deliberate and for anything that is contentious,
+either just drop it or lift it into bcachefs for now to avoid the need
+to debate on these various fronts in the first place (and simplify the
+pull request as much as possible).
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+With those issues addressed, perhaps it would be helpful if other
+interested fs maintainers/devs could chime in with any thoughts on what
+they'd want to see in order to ack (but not necessarily "review") a new
+filesystem pull request..? I don't have the context of the off list
+thread, but from this thread ISTM that perhaps Josef and Darrick are
+close to being "soft" acks provided the external dependencies are worked
+out. Christoph sent a nak based on maintainer status. Kent, you can add
+me as a reviewer if 1. you think that will help and 2. if you plan to
+commit to some sort of more formalized development process that will
+facilitate review..? I don't know if that means an ack from Christoph,
+but perhaps it addresses the nak. I don't really expect anybody to
+review the entire codebase, but obviously it's available for anybody who
+might want to dig into certain areas in more detail..
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Brian
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
