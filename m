@@ -2,108 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 142A474BBCB
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jul 2023 06:31:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2059074BD24
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jul 2023 11:40:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232692AbjGHEbr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Jul 2023 00:31:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35882 "EHLO
+        id S229827AbjGHJkW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Jul 2023 05:40:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229631AbjGHEbq (ORCPT
+        with ESMTP id S229682AbjGHJkV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Jul 2023 00:31:46 -0400
-Received: from out-3.mta1.migadu.com (out-3.mta1.migadu.com [IPv6:2001:41d0:203:375::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14C832105
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Jul 2023 21:31:42 -0700 (PDT)
-Date:   Sat, 8 Jul 2023 00:31:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1688790701;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MPVT67gN7ujA4VBNbmeWyGDovqohI1BOlI1/KLrNAYc=;
-        b=AugBxODy4XO+i5cEvKSEgmKRdOkEPAC475o9lFSsYGCgHzFqs5SZZ5xK9iXAItWjtsSJ9m
-        1T/QAzs2ji9X9+JpW9lnEqR9Nxacz0AnWLIze+9Zher2QtyR5MxXLQl2n9kP6cP7HQaZ7w
-        oErGZkxYp7U0dCAobi9K9B8mUxkT8y4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Christian Brauner <brauner@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-        dchinner@redhat.com, sandeen@redhat.com, tytso@mit.edu,
-        bfoster@redhat.com, jack@suse.cz, andreas.gruenbacher@gmail.com,
-        peterz@infradead.org, akpm@linux-foundation.org,
-        dhowells@redhat.com
-Subject: Re: [GIT PULL] bcachefs
-Message-ID: <20230708043136.xj4u7mhklpblomqd@moria.home.lan>
-References: <20230626214656.hcp4puionmtoloat@moria.home.lan>
- <20230706155602.mnhsylo3pnief2of@moria.home.lan>
- <20230706164055.GA2306489@perftesting>
- <20230706173819.36c67pf42ba4gmv4@moria.home.lan>
- <20230706211914.GB11476@frogsfrogsfrogs>
- <20230707-badeverbot-gekettet-19ce3c238dac@brauner>
- <20230707091810.bamrvzcif7ncng46@moria.home.lan>
- <30661670c55601ff475f2f0698c2be2958e45c38.camel@HansenPartnership.com>
- <ZKjd7nQxvzRDA2tK@casper.infradead.org>
+        Sat, 8 Jul 2023 05:40:21 -0400
+Received: from mta22.hihonor.com (mta22.hihonor.com [81.70.192.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E11B1997;
+        Sat,  8 Jul 2023 02:40:18 -0700 (PDT)
+Received: from w011.hihonor.com (unknown [10.68.20.122])
+        by mta22.hihonor.com (SkyGuard) with ESMTPS id 4QylcC2ZsszYnR11;
+        Sat,  8 Jul 2023 17:40:11 +0800 (CST)
+Received: from a010.hihonor.com (10.68.16.52) by w011.hihonor.com
+ (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.21; Sat, 8 Jul
+ 2023 17:40:15 +0800
+Received: from a001.hihonor.com (10.68.28.182) by a010.hihonor.com
+ (10.68.16.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.21; Sat, 8 Jul
+ 2023 17:40:15 +0800
+Received: from a001.hihonor.com ([fe80::d540:a176:80f8:5fcf]) by
+ a001.hihonor.com ([fe80::d540:a176:80f8:5fcf%8]) with mapi id 15.02.1118.021;
+ Sat, 8 Jul 2023 17:40:15 +0800
+From:   gaoming <gaoming20@hihonor.com>
+To:     Namjae Jeon <linkinjeon@kernel.org>
+CC:     Sungjong Seo <sj1557.seo@samsung.com>,
+        "open list:EXFAT FILE SYSTEM" <linux-fsdevel@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        fengbaopeng <fengbaopeng@hihonor.com>,
+        gaoxu <gaoxu2@hihonor.com>,
+        "wangfei 00014658" <wangfei66@hihonor.com>,
+        shenchen 00013118 <harry.shen@hihonor.com>
+Subject: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRDSF0gZXhmYXQ6IHVzZSBrdm1hbGxvY19h?=
+ =?utf-8?Q?rray/kvfree_instead_of_kmalloc=5Farray/kfree?=
+Thread-Topic: =?utf-8?B?562U5aSNOiBbUEFUQ0hdIGV4ZmF0OiB1c2Uga3ZtYWxsb2NfYXJyYXkva3Zm?=
+ =?utf-8?Q?ree_instead_of_kmalloc=5Farray/kfree?=
+Thread-Index: AdmvHl4gs76xLNH6Sd+soB17KujxsAA/YeqAABcLFgD//5SzgP/9hYVQ
+Date:   Sat, 8 Jul 2023 09:40:15 +0000
+Message-ID: <21b8d8efcfe14573a7a8bc0f9887a84b@hihonor.com>
+References: <4cec63dcd3c0443c928800ffeec9118c@hihonor.com>
+ <CAKYAXd89OqqqSPNBZjggexWCrnBD6V7rWE547iKejmeihHFAiw@mail.gmail.com>
+ <1e196b9bc884495fb43bbb0975d88226@hihonor.com>
+ <CAKYAXd9XvMuicGASQ6dvMCPnuTvw0xdLB7dp3MRGK6O6Mvht_A@mail.gmail.com>
+In-Reply-To: <CAKYAXd9XvMuicGASQ6dvMCPnuTvw0xdLB7dp3MRGK6O6Mvht_A@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.164.15.53]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZKjd7nQxvzRDA2tK@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 08, 2023 at 04:54:22AM +0100, Matthew Wilcox wrote:
-> On Fri, Jul 07, 2023 at 12:26:19PM -0400, James Bottomley wrote:
-> > On Fri, 2023-07-07 at 05:18 -0400, Kent Overstreet wrote:
-> > > Christain, the hostility I'm reading is in your steady passive
-> > > aggressive accusations, and your patronizing attitude. It's not
-> > > professional, and it's not called for.
-> > 
-> > Can you not see that saying this is a huge red flag?  With you every
-> > disagreement becomes, as Josef said, "a hill to die on" and you then
-> > feel entitled to indulge in ad hominem attacks, like this, or be
-> > dismissive or try to bury whoever raised the objection in technical
-> > minutiae in the hope you can demonstrate you have a better grasp of the
-> > details than they do and therefore their observation shouldn't count.
-> > 
-> > One of a maintainer's jobs is to nurture and build a community and
-> > that's especially important at the inclusion of a new feature.  What
-> > we've seen from you implies you'd build a community of little Kents
-> > (basically an echo chamber of people who agree with you) and use them
-> > as a platform to attack any area of the kernel you didn't agree with
-> > technically (which, apparently, would be most of block and vfs with a
-> > bit of mm thrown in), leading to huge divisions and infighting.  Anyone
-> > who had the slightest disagreement with you would be out and would
-> > likely behave in the same way you do now leading to internal community
-> > schisms and more fighting on the lists.
-> > 
-> > We've spent years trying to improve the lists and make the community
-> > welcoming.  However technically brilliant a new feature is, it can't
-> > come with this sort of potential for community and reputational damage.
-> 
-> I don't think the lists are any better, tbh.  Yes, the LF has done a great
-> job of telling people not to use "bad words" any more.  But people are
-> still arseholes to each other.  They're just more subtle about it now.
-> I'm not going to enumerate the ways because that's pointless.
-
-I've long thought a more useful CoC would start with "always try to
-continue the technical conversation in good faith, always try to build
-off of what other people are saying; don't shut people down".
-
-The work we do has real consequences. There are consequences for the
-people doing the work, and consequences for the people that use our work
-if we screw things up. Things are bound to get heated at times; that's
-expected, and it's ok - as long as we can remember to keep doing the
-work and pushing forward.
+T2suIEp1c3QgZGVsZXRlIGV4ZmF0X2dldF9kZW50cnlfc2V0IG1vZGlmaWNhdGlvbi4NCldlIGhh
+dmUgY2hlY2tlZCB0aGUgbWVtIGFsbG9jYXRpb24gc2l6ZSByZWFsbHkgbm90IGV4Y2VlZHMgb25l
+IHBhZ2UuDQoNClRoYW5rcy4NCg0KLS0tLS3pgq7ku7bljp/ku7YtLS0tLQ0K5Y+R5Lu25Lq6OiBO
+YW1qYWUgSmVvbiA8bGlua2luamVvbkBrZXJuZWwub3JnPiANCuWPkemAgeaXtumXtDogMjAyM+W5
+tDfmnIg35pelIDExOjQ2DQrmlLbku7bkuro6IGdhb21pbmcgPGdhb21pbmcyMEBoaWhvbm9yLmNv
+bT4NCuaKhOmAgTogU3VuZ2pvbmcgU2VvIDxzajE1NTcuc2VvQHNhbXN1bmcuY29tPjsgb3BlbiBs
+aXN0OkVYRkFUIEZJTEUgU1lTVEVNIDxsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZz47IG9w
+ZW4gbGlzdCA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47IGZlbmdiYW9wZW5nIDxmZW5n
+YmFvcGVuZ0BoaWhvbm9yLmNvbT47IGdhb3h1IDxnYW94dTJAaGlob25vci5jb20+OyB3YW5nZmVp
+IDAwMDE0NjU4IDx3YW5nZmVpNjZAaGlob25vci5jb20+OyBzaGVuY2hlbiAwMDAxMzExOCA8aGFy
+cnkuc2hlbkBoaWhvbm9yLmNvbT4NCuS4u+mimDogUmU6IOetlOWkjTogW1BBVENIXSBleGZhdDog
+dXNlIGt2bWFsbG9jX2FycmF5L2t2ZnJlZSBpbnN0ZWFkIG9mIGttYWxsb2NfYXJyYXkva2ZyZWUN
+Cg0KMjAyMy0wNy0wNyAxMToyNyBHTVQrMDk6MDAsIGdhb21pbmcgPGdhb21pbmcyMEBoaWhvbm9y
+LmNvbT46DQo+IGV4ZmF0X2dldF9kZW50cnlfc2V0IGNvdWxkIGJlIGNhbGxlZCBhZnRlciB0aGUg
+dS1kaXNrIGhhdmUgYmVlbiANCj4gaW5zZXJ0ZWQsIHRocm91Z2ggZXhmYXRfZmluZCwgX19leGZh
+dF93cml0ZV9pbm9kZSBmdW5jdGlvbnMuDQo+IFRoaXMgY291bGQgaGFwcGVuIGF0IGFueSB0aW1l
+LCB3aGljaCBzY2VuYXJpbyBjYW4gbm90IGd1YXJhbnRlZSB0aGUgDQo+IGNvbnRpbnVpdHkgb2Yg
+cGh5c2ljYWwgbWVtb3J5Lg0KPiBUaGlzIGJ1Z2ZpeCB3aWxsIGVuaGFuY2UgdGhlIHJvYnVzdG5l
+c3Mgb2YgZXhmYXQuDQpJJ20gc29ycnksIGJ1dCBJIHVuZGVyc3Rvb2QgdGhhdCBpdCB3YXMgY2hh
+bmdlZCBldmVuIHRob3VnaCB5b3UgZGlkbid0IGZpbmQgYW55IHBhcnRpY3VsYXIgcHJvYmxlbS4g
+SSB0aGluayB0aGVyZSB3aWxsIG5vdCBiZSBpc3N1ZXMgbGlrZSBhbGxvY2F0aW9uLWJpdG1hcCBh
+bGxvY2F0aW9uIGZhaWx1cmVzLiBJIHdpbGwgZGVsZXRlIHRoaXMgY29kZSBhbmQgYXBwbHkgaXQu
+IElmIHlvdSBkb24ndCBhZ3JlZSwgcGxlYXNlIGV4cGxhaW4gaG93IG11Y2ggbWVtb3J5IGlzIGFs
+bG9jYXRlZCBoZXJlLg0KVGhhbmtzLg0KPg0KPiBUaGFua3MuDQo+IC0tLS0t6YKu5Lu25Y6f5Lu2
+LS0tLS0NCj4g5Y+R5Lu25Lq6OiBOYW1qYWUgSmVvbiA8bGlua2luamVvbkBrZXJuZWwub3JnPg0K
+PiDlj5HpgIHml7bpl7Q6IDIwMjPlubQ35pyIN+aXpSA3OjEwDQo+IOaUtuS7tuS6ujogZ2FvbWlu
+ZyA8Z2FvbWluZzIwQGhpaG9ub3IuY29tPg0KPiDmioTpgIE6IFN1bmdqb25nIFNlbyA8c2oxNTU3
+LnNlb0BzYW1zdW5nLmNvbT47IG9wZW4gbGlzdDpFWEZBVCBGSUxFIFNZU1RFTSANCj4gPGxpbnV4
+LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnPjsgb3BlbiBsaXN0IA0KPiA8bGludXgta2VybmVsQHZn
+ZXIua2VybmVsLm9yZz47IGZlbmdiYW9wZW5nIDxmZW5nYmFvcGVuZ0BoaWhvbm9yLmNvbT47IA0K
+PiBnYW94dSA8Z2FveHUyQGhpaG9ub3IuY29tPjsgd2FuZ2ZlaQ0KPiAwMDAxNDY1OCA8d2FuZ2Zl
+aTY2QGhpaG9ub3IuY29tPjsgc2hlbmNoZW4gMDAwMTMxMTggDQo+IDxoYXJyeS5zaGVuQGhpaG9u
+b3IuY29tPg0KPiDkuLvpopg6IFJlOiBbUEFUQ0hdIGV4ZmF0OiB1c2Uga3ZtYWxsb2NfYXJyYXkv
+a3ZmcmVlIGluc3RlYWQgb2YgDQo+IGttYWxsb2NfYXJyYXkva2ZyZWUNCj4NCj4gMjAyMy0wNy0w
+NSAxODoxNSBHTVQrMDk6MDAsIGdhb21pbmcgPGdhb21pbmcyMEBoaWhvbm9yLmNvbT46DQo+PiBU
+aGUgY2FsbCBzdGFjayBzaG93biBiZWxvdyBpcyBhIHNjZW5hcmlvIGluIHRoZSBMaW51eCA0LjE5
+IGtlcm5lbC4NCj4+IEFsbG9jYXRpbmcgbWVtb3J5IGZhaWxlZCB3aGVyZSBleGZhdCBmcyB1c2Ug
+a21hbGxvY19hcnJheSBkdWUgdG8gDQo+PiBzeXN0ZW0gbWVtb3J5IGZyYWdtZW50YXRpb24sIHdo
+aWxlIHRoZSB1LWRpc2sgd2FzIGluc2VydGVkIHdpdGhvdXQgDQo+PiByZWNvZ25pdGlvbi4NCj4+
+IERldmljZXMgc3VjaCBhcyB1LWRpc2sgdXNpbmcgdGhlIGV4ZmF0IGZpbGUgc3lzdGVtIGFyZSBw
+bHVnZ2FibGUgYW5kIA0KPj4gbWF5IGJlIGluc2VydCBpbnRvIHRoZSBzeXN0ZW0gYXQgYW55IHRp
+bWUuDQo+PiBIb3dldmVyLCBsb25nLXRlcm0gcnVubmluZyBzeXN0ZW1zIGNhbm5vdCBndWFyYW50
+ZWUgdGhlIGNvbnRpbnVpdHkgb2YgDQo+PiBwaHlzaWNhbCBtZW1vcnkuIFRoZXJlZm9yZSwgaXQn
+cyBuZWNlc3NhcnkgdG8gYWRkcmVzcyB0aGlzIGlzc3VlLg0KPj4NCj4+IEJpbmRlcjoyNjMyXzY6
+IHBhZ2UgYWxsb2NhdGlvbiBmYWlsdXJlOiBvcmRlcjo0LCANCj4+IG1vZGU6MHg2MDQwYzAoR0ZQ
+X0tFUk5FTHxfX0dGUF9DT01QKSwgbm9kZW1hc2s9KG51bGwpIENhbGwgdHJhY2U6DQo+PiBbMjQy
+MTc4LjA5NzU4Ml0gIGR1bXBfYmFja3RyYWNlKzB4MC8weDQgWzI0MjE3OC4wOTc1ODldDQo+PiBk
+dW1wX3N0YWNrKzB4ZjQvMHgxMzQgWzI0MjE3OC4wOTc1OThdICB3YXJuX2FsbG9jKzB4ZDgvMHgx
+NDQgDQo+PiBbMjQyMTc4LjA5NzYwM10gIF9fYWxsb2NfcGFnZXNfbm9kZW1hc2srMHgxMzY0LzB4
+MTM4NA0KPj4gWzI0MjE3OC4wOTc2MDhdICBrbWFsbG9jX29yZGVyKzB4MmMvMHg1MTAgWzI0MjE3
+OC4wOTc2MTJdIA0KPj4ga21hbGxvY19vcmRlcl90cmFjZSsweDQwLzB4MTZjIFsyNDIxNzguMDk3
+NjE4XSAgX19rbWFsbG9jKzB4MzYwLzB4NDA4IA0KPj4gWzI0MjE3OC4wOTc2MjRdICBsb2FkX2Fs
+bG9jX2JpdG1hcCsweDE2MC8weDI4NCBbMjQyMTc4LjA5NzYyOF0gDQo+PiBleGZhdF9maWxsX3N1
+cGVyKzB4YTNjLzB4ZTdjIFsyNDIxNzguMDk3NjM1XSAgbW91bnRfYmRldisweDJlOC8weDNhMCAN
+Cj4+IFsyNDIxNzguMDk3NjM4XSAgZXhmYXRfZnNfbW91bnQrMHg0MC8weDUwIFsyNDIxNzguMDk3
+NjQzXQ0KPj4gbW91bnRfZnMrMHgxMzgvMHgyZTggWzI0MjE3OC4wOTc2NDldICB2ZnNfa2Vybl9t
+b3VudCsweDkwLzB4MjcwIA0KPj4gWzI0MjE3OC4wOTc2NTVdICBkb19tb3VudCsweDc5OC8weDE3
+M2MgWzI0MjE3OC4wOTc2NTldIA0KPj4ga3N5c19tb3VudCsweDExNC8weDFhYyBbMjQyMTc4LjA5
+NzY2NV0gIF9fYXJtNjRfc3lzX21vdW50KzB4MjQvMHgzNCANCj4+IFsyNDIxNzguMDk3NjcxXSAg
+ZWwwX3N2Y19jb21tb24rMHhiOC8weDFiOCBbMjQyMTc4LjA5NzY3Nl0NCj4+IGVsMF9zdmNfaGFu
+ZGxlcisweDc0LzB4OTAgWzI0MjE3OC4wOTc2ODFdICBlbDBfc3ZjKzB4OC8weDM0MA0KPj4NCj4+
+IEJ5IGFuYWx5emluZyB0aGUgZXhmYXQgY29kZSx3ZSBmb3VuZCB0aGF0IGNvbnRpbnVvdXMgcGh5
+c2ljYWwgbWVtb3J5IA0KPj4gaXMgbm90IHJlcXVpcmVkIGhlcmUsc28ga3ZtYWxsb2NfYXJyYXkg
+aXMgdXNlZCBjYW4gc29sdmUgdGhpcyBwcm9ibGVtLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IGdh
+b21pbmcgPGdhb21pbmcyMEBoaWhvbm9yLmNvbT4NCj4+IC0tLQ0KPj4gIGZzL2V4ZmF0L2JhbGxv
+Yy5jIHwgNCArKy0tDQo+PiAgZnMvZXhmYXQvZGlyLmMgICAgfCA0ICsrLS0NCj4+ICAyIGZpbGVz
+IGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCj4+DQo+PiBkaWZmIC0t
+Z2l0IGEvZnMvZXhmYXQvYmFsbG9jLmMgYi9mcy9leGZhdC9iYWxsb2MuYyBpbmRleA0KPj4gOWY0
+MmYyNWZhYjkyLi5hMTgzNTU4Y2I3YTAgMTAwNjQ0DQo+PiAtLS0gYS9mcy9leGZhdC9iYWxsb2Mu
+Yw0KPj4gKysrIGIvZnMvZXhmYXQvYmFsbG9jLmMNCj4+IEBAIC02OSw3ICs2OSw3IEBAIHN0YXRp
+YyBpbnQgZXhmYXRfYWxsb2NhdGVfYml0bWFwKHN0cnVjdCBzdXBlcl9ibG9jayANCj4+ICpzYiwN
+Cj4+ICAJfQ0KPj4gIAlzYmktPm1hcF9zZWN0b3JzID0gKChuZWVkX21hcF9zaXplIC0gMSkgPj4N
+Cj4+ICAJCQkoc2ItPnNfYmxvY2tzaXplX2JpdHMpKSArIDE7DQo+PiAtCXNiaS0+dm9sX2FtYXAg
+PSBrbWFsbG9jX2FycmF5KHNiaS0+bWFwX3NlY3RvcnMsDQo+PiArCXNiaS0+dm9sX2FtYXAgPSBr
+dm1hbGxvY19hcnJheShzYmktPm1hcF9zZWN0b3JzLA0KPj4gIAkJCQlzaXplb2Yoc3RydWN0IGJ1
+ZmZlcl9oZWFkICopLCBHRlBfS0VSTkVMKTsNCj4+ICAJaWYgKCFzYmktPnZvbF9hbWFwKQ0KPj4g
+IAkJcmV0dXJuIC1FTk9NRU07DQo+PiBAQCAtODQsNyArODQsNyBAQCBzdGF0aWMgaW50IGV4ZmF0
+X2FsbG9jYXRlX2JpdG1hcChzdHJ1Y3Qgc3VwZXJfYmxvY2sgDQo+PiAqc2IsDQo+PiAgCQkJd2hp
+bGUgKGogPCBpKQ0KPj4gIAkJCQlicmVsc2Uoc2JpLT52b2xfYW1hcFtqKytdKTsNCj4+DQo+PiAt
+CQkJa2ZyZWUoc2JpLT52b2xfYW1hcCk7DQo+PiArCQkJa3ZmcmVlKHNiaS0+dm9sX2FtYXApOw0K
+Pj4gIAkJCXNiaS0+dm9sX2FtYXAgPSBOVUxMOw0KPj4gIAkJCXJldHVybiAtRUlPOw0KPj4gIAkJ
+fQ0KPj4gZGlmZiAtLWdpdCBhL2ZzL2V4ZmF0L2Rpci5jIGIvZnMvZXhmYXQvZGlyLmMgaW5kZXgN
+Cj4+IDk1NzU3NDE4MGE1ZS4uNWNiYjc4ZDBhMmEyIDEwMDY0NA0KPj4gLS0tIGEvZnMvZXhmYXQv
+ZGlyLmMNCj4+ICsrKyBiL2ZzL2V4ZmF0L2Rpci5jDQo+PiBAQCAtNjQ5LDcgKzY0OSw3IEBAIGlu
+dCBleGZhdF9wdXRfZGVudHJ5X3NldChzdHJ1Y3QgDQo+PiBleGZhdF9lbnRyeV9zZXRfY2FjaGUg
+KmVzLCBpbnQgc3luYykNCj4+ICAJCQlicmVsc2UoZXMtPmJoW2ldKTsNCj4+DQo+PiAgCWlmIChJ
+U19EWU5BTUlDX0VTKGVzKSkNCj4+IC0JCWtmcmVlKGVzLT5iaCk7DQo+PiArCQlrdmZyZWUoZXMt
+PmJoKTsNCj4+DQo+PiAgCXJldHVybiBlcnI7DQo+PiAgfQ0KPj4gQEAgLTg4OCw3ICs4ODgsNyBA
+QCBpbnQgZXhmYXRfZ2V0X2RlbnRyeV9zZXQoc3RydWN0IA0KPj4gZXhmYXRfZW50cnlfc2V0X2Nh
+Y2hlICplcywNCj4+DQo+PiAgCW51bV9iaCA9IEVYRkFUX0JfVE9fQkxLX1JPVU5EX1VQKG9mZiAr
+IG51bV9lbnRyaWVzICogREVOVFJZX1NJWkUsIHNiKTsNCj4+ICAJaWYgKG51bV9iaCA+IEFSUkFZ
+X1NJWkUoZXMtPl9fYmgpKSB7DQo+PiAtCQllcy0+YmggPSBrbWFsbG9jX2FycmF5KG51bV9iaCwg
+c2l6ZW9mKCplcy0+YmgpLCBHRlBfS0VSTkVMKTsNCj4+ICsJCWVzLT5iaCA9IGt2bWFsbG9jX2Fy
+cmF5KG51bV9iaCwgc2l6ZW9mKCplcy0+YmgpLCBHRlBfS0VSTkVMKTsNCj4gQ291bGQgeW91IHBs
+ZWFzZSBlbGFib3JhdGUgd2h5IHlvdSBjaGFuZ2UgdGhpcyB0byBrdm1hbGxvY19hcnJheSBhbHNv
+Pw0KPg0KPiBUaGFua3MuDQo+PiAgCQlpZiAoIWVzLT5iaCkgew0KPj4gIAkJCWJyZWxzZShiaCk7
+DQo+PiAgCQkJcmV0dXJuIC1FTk9NRU07DQo+PiAtLQ0KPj4gMi4xNy4xDQo+Pg0KPj4NCj4NCg==
