@@ -2,39 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4225174BE09
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jul 2023 17:03:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA4ED74BE1B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jul 2023 17:23:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231360AbjGHPDl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Jul 2023 11:03:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53980 "EHLO
+        id S229828AbjGHPX1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Jul 2023 11:23:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230461AbjGHPDi (ORCPT
+        with ESMTP id S229706AbjGHPXY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Jul 2023 11:03:38 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D3C51723
-        for <linux-fsdevel@vger.kernel.org>; Sat,  8 Jul 2023 08:03:37 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-108-20-43-41.bstnma.fios.verizon.net [108.20.43.41])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 368F2oDH012499
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 8 Jul 2023 11:02:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1688828573; bh=s/ufTIvKew3KioKNVyg2UQzBrfALqHUfjES5Kq9/AZI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=b9gouVI84+rzgMfB1n/SAVxyHOS4azQtXTf1FGYOj4HaXIOk4+LD2xqQyF3BytTUi
-         kWlrn8Az+nlm6mfLjKCT11WsVZUmKAUp5PKALZalzCWib6Y5ugymFoIpUX7VwBBmrb
-         5eshRO9DFgc36A0pWpQyoBYNR1WlJG/JKEIqfaIaOCQTOrX6rUAn4dxkTtSslFpLNO
-         oUSkLXeitgD8lMy3p5sZ2y20ljh9URyckAwlZCg0kNwiHVqIfx51f4sNFstVX2AqhS
-         QDUE6rHWkKceQkQADBYmgdxhoXAj1eAjoFceBv52RIMAWmQa7yGhJzcgxE8Ci7c5wh
-         DoTFSaG5MakSg==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id E5DCA15C027F; Sat,  8 Jul 2023 11:02:49 -0400 (EDT)
-Date:   Sat, 8 Jul 2023 11:02:49 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
+        Sat, 8 Jul 2023 11:23:24 -0400
+Received: from out-33.mta1.migadu.com (out-33.mta1.migadu.com [IPv6:2001:41d0:203:375::21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FECB170C
+        for <linux-fsdevel@vger.kernel.org>; Sat,  8 Jul 2023 08:23:22 -0700 (PDT)
+Date:   Sat, 8 Jul 2023 11:23:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1688829799;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=JOmmsQd20h0V2vC6WmhrFR8UWMacra/J4pnHiQq9pxA=;
+        b=bIyqgh7L+yljJ/Yjy4eInVD+jv4A5tfpQX61SbWBMmsRbBY+jC/UgNQWqJucRik5qoC6Vo
+        ZJL61HktMnc6ECW+lx6nuSQfIFk/kIwy13JDLXtWaRStjmj8STuZJiVbP9qozW160z8O8i
+        mrVCoC2WcxSPKIlUPHYwtpXS7MFnf3M=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Theodore Ts'o <tytso@mit.edu>
 Cc:     Matthew Wilcox <willy@infradead.org>,
         James Bottomley <James.Bottomley@hansenpartnership.com>,
         Christian Brauner <brauner@kernel.org>,
@@ -46,9 +39,8 @@ Cc:     Matthew Wilcox <willy@infradead.org>,
         jack@suse.cz, andreas.gruenbacher@gmail.com, peterz@infradead.org,
         akpm@linux-foundation.org, dhowells@redhat.com
 Subject: Re: [GIT PULL] bcachefs
-Message-ID: <20230708150249.GO1178919@mit.edu>
-References: <20230626214656.hcp4puionmtoloat@moria.home.lan>
- <20230706155602.mnhsylo3pnief2of@moria.home.lan>
+Message-ID: <20230708152314.lcpepguue3imrt3i@moria.home.lan>
+References: <20230706155602.mnhsylo3pnief2of@moria.home.lan>
  <20230706164055.GA2306489@perftesting>
  <20230706173819.36c67pf42ba4gmv4@moria.home.lan>
  <20230706211914.GB11476@frogsfrogsfrogs>
@@ -57,39 +49,44 @@ References: <20230626214656.hcp4puionmtoloat@moria.home.lan>
  <30661670c55601ff475f2f0698c2be2958e45c38.camel@HansenPartnership.com>
  <ZKjd7nQxvzRDA2tK@casper.infradead.org>
  <20230708043136.xj4u7mhklpblomqd@moria.home.lan>
+ <20230708150249.GO1178919@mit.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230708043136.xj4u7mhklpblomqd@moria.home.lan>
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <20230708150249.GO1178919@mit.edu>
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 08, 2023 at 12:31:36AM -0400, Kent Overstreet wrote:
+On Sat, Jul 08, 2023 at 11:02:49AM -0400, Theodore Ts'o wrote:
+> On Sat, Jul 08, 2023 at 12:31:36AM -0400, Kent Overstreet wrote:
+> > 
+> > I've long thought a more useful CoC would start with "always try to
+> > continue the technical conversation in good faith, always try to build
+> > off of what other people are saying; don't shut people down".
 > 
-> I've long thought a more useful CoC would start with "always try to
-> continue the technical conversation in good faith, always try to build
-> off of what other people are saying; don't shut people down".
+> Kent, with all due respect, do you not always follow your suggested
+> formulation that you've stated above.  That is to say, you do not
+> always assume that your conversational partner is trying to raise
+> objections in good faith. 
 
-Kent, with all due respect, do you not always follow your suggested
-formulation that you've stated above.  That is to say, you do not
-always assume that your conversational partner is trying to raise
-objections in good faith.  You also want to assume that you are the
-smartest person in the room, and if they object, they are Obviously
-Wrong.
+Ted, how do you have a technical conversation with someone who refuses
+to say anything concrete, even when you ask them to elaborate on their
+objections, and instead just repeats the same vague non-answers?
 
-As a result, it's not pleasant to have a technical conversation with
-you, and as others have said, when someone like Christian Brauner has
-decided that it's too frustating to continue with the thread, given my
-observations of his past interaction with a wide variety of people,
-including some folks who have been traditionally regarded as
-"difficult to work with", it's a real red flag.
+> You also want to assume that you are the smartest person in the room,
+> and if they object, they are Obviously Wrong.
 
-Regards,
+Ok, now you're really reaching.
 
-					- Ted
+Anyone who's actually worked with me can tell you I am quick to consider
+other people's point of view and quick to admit when I'm wrong.
+
+All I ask is the same courtesy.
