@@ -2,131 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 31C2974BE08
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jul 2023 17:03:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4225174BE09
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Jul 2023 17:03:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229727AbjGHPDZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Jul 2023 11:03:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53550 "EHLO
+        id S231360AbjGHPDl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Jul 2023 11:03:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229658AbjGHPDX (ORCPT
+        with ESMTP id S230461AbjGHPDi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Jul 2023 11:03:23 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CBEF10CE
-        for <linux-fsdevel@vger.kernel.org>; Sat,  8 Jul 2023 08:02:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688828557;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=T3GRnokqrPVaYV/THcdBGlJffY7BDH+AcPJHejmPSVM=;
-        b=bUPOe8ftgS9nqFxx2l8gM7jwZ65gPpqg/kYq/npOY6e3L8n7uZpfCL17yfqIWUrg7ySeJw
-        R8kNfgTwhWW96uyC14G/81eHqoZ5HOsp5sp1hvTaDVvyH9SSzOlUtpgbWTjgP02DE+OP49
-        LZC2b6BPz98CVMjucr2wmv4UWfqB7f0=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-29-00jNi3UrPeCbG_OC1nG_mA-1; Sat, 08 Jul 2023 11:02:36 -0400
-X-MC-Unique: 00jNi3UrPeCbG_OC1nG_mA-1
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-402fa256023so6088851cf.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Jul 2023 08:02:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688828556; x=1691420556;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T3GRnokqrPVaYV/THcdBGlJffY7BDH+AcPJHejmPSVM=;
-        b=bAtsM7qDNo2SMeUlsM/vI0svBA+EaU9XLNIynqSmFImBDOqBUWSqxTXtjk8Udp5msc
-         Zp+0WWmN7GdZFYs7EIp4ww2BbBqd3pzl97ljaB7fd6/rNsPTwd6irmMJL2kQ/UoDUVDD
-         CkmyETNNYfNfskaypINO6YWY2A1PUAqD9D/hlSKbNS6EU2Ae0UtzFoqWty/G6bqmWg5/
-         0ZSP5NjP6odteviTUV15gLNG/wQYRFGPCc4N64khmpO6fb0sS0V5jZZfM5lQSF2NNJDW
-         gOwFvz7k3eNdYB9QWM1nIIOKqOzd1Cy01KxWtxi2aSZC/cfBOY8BcsSD/sCkPAGf3eQe
-         Y3hA==
-X-Gm-Message-State: ABy/qLbGKdXcBzBJnNEdl9HvK6QYa2XOZ/OEuG+DhwK3fmNMQtTict2m
-        3yuM4U2q2V0L95m/npAyBPIrdeFL1pgc6CXjZ4Cn+fzGHWKyBfg7iY1UvjZSUxPZhU9g12zVlqH
-        0K02xsKdadQ0AFu9Yx0xs3Kvd6w==
-X-Received: by 2002:a05:6214:b65:b0:634:cdae:9941 with SMTP id ey5-20020a0562140b6500b00634cdae9941mr8767606qvb.0.1688828556024;
-        Sat, 08 Jul 2023 08:02:36 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlGj53IzcQAPmiI/v43Lyk7eh+euAZZXrSV8HTK/l4O/V2y1GtOUmoqfRyODcRL3zSDwxMPZhQ==
-X-Received: by 2002:a05:6214:b65:b0:634:cdae:9941 with SMTP id ey5-20020a0562140b6500b00634cdae9941mr8767568qvb.0.1688828555801;
-        Sat, 08 Jul 2023 08:02:35 -0700 (PDT)
-Received: from xz-m1.local (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
-        by smtp.gmail.com with ESMTPSA id i4-20020a0cf484000000b0063013c621fasm3417890qvm.68.2023.07.08.08.02.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Jul 2023 08:02:35 -0700 (PDT)
-Date:   Sat, 8 Jul 2023 11:02:33 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Brian Geffon <bgeffon@google.com>,
+        Sat, 8 Jul 2023 11:03:38 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D3C51723
+        for <linux-fsdevel@vger.kernel.org>; Sat,  8 Jul 2023 08:03:37 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-108-20-43-41.bstnma.fios.verizon.net [108.20.43.41])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 368F2oDH012499
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 8 Jul 2023 11:02:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1688828573; bh=s/ufTIvKew3KioKNVyg2UQzBrfALqHUfjES5Kq9/AZI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=b9gouVI84+rzgMfB1n/SAVxyHOS4azQtXTf1FGYOj4HaXIOk4+LD2xqQyF3BytTUi
+         kWlrn8Az+nlm6mfLjKCT11WsVZUmKAUp5PKALZalzCWib6Y5ugymFoIpUX7VwBBmrb
+         5eshRO9DFgc36A0pWpQyoBYNR1WlJG/JKEIqfaIaOCQTOrX6rUAn4dxkTtSslFpLNO
+         oUSkLXeitgD8lMy3p5sZ2y20ljh9URyckAwlZCg0kNwiHVqIfx51f4sNFstVX2AqhS
+         QDUE6rHWkKceQkQADBYmgdxhoXAj1eAjoFceBv52RIMAWmQa7yGhJzcgxE8Ci7c5wh
+         DoTFSaG5MakSg==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id E5DCA15C027F; Sat,  8 Jul 2023 11:02:49 -0400 (EDT)
+Date:   Sat, 8 Jul 2023 11:02:49 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
         Christian Brauner <brauner@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Gaosheng Cui <cuigaosheng1@huawei.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Hugh Dickins <hughd@google.com>,
-        James Houghton <jthoughton@google.com>,
-        "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>,
-        Jiaqi Yan <jiaqiyan@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "Mike Rapoport (IBM)" <rppt@kernel.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        Nadav Amit <namit@vmware.com>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Ryan Roberts <ryan.roberts@arm.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Suleiman Souhlal <suleiman@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        "T.J. Alumbaugh" <talumbau@google.com>,
-        Yu Zhao <yuzhao@google.com>,
-        ZhangPeng <zhangpeng362@huawei.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 7/8] selftests/mm: refactor uffd_poll_thread to allow
- custom fault handlers
-Message-ID: <ZKl6ie4s/94TPCgm@xz-m1.local>
-References: <20230707215540.2324998-1-axelrasmussen@google.com>
- <20230707215540.2324998-8-axelrasmussen@google.com>
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+        dchinner@redhat.com, sandeen@redhat.com, bfoster@redhat.com,
+        jack@suse.cz, andreas.gruenbacher@gmail.com, peterz@infradead.org,
+        akpm@linux-foundation.org, dhowells@redhat.com
+Subject: Re: [GIT PULL] bcachefs
+Message-ID: <20230708150249.GO1178919@mit.edu>
+References: <20230626214656.hcp4puionmtoloat@moria.home.lan>
+ <20230706155602.mnhsylo3pnief2of@moria.home.lan>
+ <20230706164055.GA2306489@perftesting>
+ <20230706173819.36c67pf42ba4gmv4@moria.home.lan>
+ <20230706211914.GB11476@frogsfrogsfrogs>
+ <20230707-badeverbot-gekettet-19ce3c238dac@brauner>
+ <20230707091810.bamrvzcif7ncng46@moria.home.lan>
+ <30661670c55601ff475f2f0698c2be2958e45c38.camel@HansenPartnership.com>
+ <ZKjd7nQxvzRDA2tK@casper.infradead.org>
+ <20230708043136.xj4u7mhklpblomqd@moria.home.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230707215540.2324998-8-axelrasmussen@google.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20230708043136.xj4u7mhklpblomqd@moria.home.lan>
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 07, 2023 at 02:55:39PM -0700, Axel Rasmussen wrote:
-> Previously, we had "one fault handler to rule them all", which used
-> several branches to deal with all of the scenarios required by all of
-> the various tests.
+On Sat, Jul 08, 2023 at 12:31:36AM -0400, Kent Overstreet wrote:
 > 
-> In upcoming patches, I plan to add a new test, which has its own
-> slightly different fault handling logic. Instead of continuing to add
-> cruft to the existing fault handler, let's allow tests to define custom
-> ones, separate from other tests.
-> 
-> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+> I've long thought a more useful CoC would start with "always try to
+> continue the technical conversation in good faith, always try to build
+> off of what other people are saying; don't shut people down".
 
-Acked-by: Peter Xu <peterx@redhat.com>
+Kent, with all due respect, do you not always follow your suggested
+formulation that you've stated above.  That is to say, you do not
+always assume that your conversational partner is trying to raise
+objections in good faith.  You also want to assume that you are the
+smartest person in the room, and if they object, they are Obviously
+Wrong.
 
-PS: please remember to update manpage after it lands.  I still have a plan
-to update but not yet happening; if you happen to update before mine please
-feel free to update for whatever is missing.
+As a result, it's not pleasant to have a technical conversation with
+you, and as others have said, when someone like Christian Brauner has
+decided that it's too frustating to continue with the thread, given my
+observations of his past interaction with a wide variety of people,
+including some folks who have been traditionally regarded as
+"difficult to work with", it's a real red flag.
 
-Thanks!
+Regards,
 
--- 
-Peter Xu
-
+					- Ted
