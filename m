@@ -2,95 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 16D8E74C150
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jul 2023 08:51:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1032C74C156
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jul 2023 08:55:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230328AbjGIGvU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 9 Jul 2023 02:51:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34188 "EHLO
+        id S230211AbjGIGzL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 Jul 2023 02:55:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230191AbjGIGvT (ORCPT
+        with ESMTP id S229535AbjGIGzJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 9 Jul 2023 02:51:19 -0400
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E38691B0;
-        Sat,  8 Jul 2023 23:51:16 -0700 (PDT)
+        Sun, 9 Jul 2023 02:55:09 -0400
+Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22D76194;
+        Sat,  8 Jul 2023 23:55:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1688885473;
-        bh=fyZH/r5nTrPpM2AfEk5mFUkI1ZFvRJ9ak8CEwBQnokE=;
+        s=s201512; t=1688885698;
+        bh=RYnRkhoiWyoPGBS8qvwcJycA+ytn5C6WTnj7Eo5dpTU=;
         h=From:To:Cc:Subject:Date;
-        b=Utqq2I1O9DcmaKEzZefKSwuOuLj65hjxSOlc4XUIhdPnsKL5yFeWxBXPWgDxXFLgt
-         WUe6gISCrdVq5mHOQ3ZQLXSMxMpkVgvoFk6/b9VyGvFyHY07kc1z6UCQQjyn/Tz7+f
-         qADniFF7W1wECDM2bnL0VFOd/g4RHL85mMqfLkMM=
-Received: from linkpc.nju.edu.cn ([58.213.8.104])
-        by newxmesmtplogicsvrszc2-1.qq.com (NewEsmtp) with SMTP
-        id AB8AFC80; Sun, 09 Jul 2023 14:42:56 +0800
-X-QQ-mid: xmsmtpt1688884976tp3vj4aso
-Message-ID: <tencent_4D921A8D1F69E70C85C28875DC829E28EC09@qq.com>
-X-QQ-XMAILINFO: NzvgoOffVB4jt8SXukzjfjyKd9itsXsW6CWopDpFvoXdBu+tbt79EaFlhmtm+Y
-         epnaAttHwg4JfSduhDX8tBPIQDwMnudnWwoaSrfAZkBxUtPv/WyiPF2lKIsmiG0tX7E7r4BOGHv2
-         I4X+BvvY+NtOaQdd7l7wcDBaI6s61+J+1Od/35GNn4jI/MY8JoS6wRSOp9vxcN+i/2eKPnkOpgR+
-         MzVyDULVVX6sMhvJKKrM71GROxxm2JfIPBUA6Kt/kSRG1QK0ndQLeTYCxwKZePS4UlNPwlmj+C3q
-         VllOsi0ETyPGqooUQi5aKK5orc8FxJpB3X2aG9+p9QTl2+MBB1sso3342wQpvAVnHXbKT8aw9X23
-         eUA8tO5oNgl045Z+l77DcGRoIiiKnougDYFfzsdzuhUa5UrElymO7SeFv2psOKBN6XQQCrlVsEri
-         e8RwiCwUwdrMxj2yIdXQqiyBJfykKlk2r5hHV4A+NEb/9CYqPyuYKCpsEBn5kIg5s5n5qIH9lvfH
-         vudapz01GD5O58sxIs/oZrUWIAA/nozwF5SdMQ4z9B9QhBq131kwarlwh7YJClnGSHX01Or28/bE
-         Wb+mGh/JcmHDnyZnx4bjxZSQFohZ28bPjEaqnGlfl5+rGAB6xCz8YBbKbzUfHCp5wOFxhnRM5I7e
-         kNgjL/ZoXMnxFWpDfPUx9RHg6wOC2zf4awYb21PgfSb6IaIJoYXdYY/OWOWIHmwJyxK5cLa03SAC
-         BpdJ2lpf1wPL2UkTQI6D3oz8HMz2EmL8n6hN1vnlQtkfHo7vhQXoKUsHos2WLQhm48s/O8ZpXUek
-         HfoXi38oHphJgCVutPmKT1+HPLYJ/qvm8lfJdQ+YIP0fNOXCmfUhS2DfMl3tWQxdIj2Of30c8Iwt
-         PhwuJl6SAAW+WY+P/5jogJLDg3fj1qLUoegMKO25Qy2hg2TugYYvI/A7cEHv4dcNwG3JYTLJLhYJ
-         lMbnv2h3b0DHMGdkvozPeu5EzIbLWgrKkHSXi1YTUR6DpmYM+qx909ldUIaO1D/IT/U1Hgnzeafl
-         2ozrlfWGpikfzapfhR/gkl22A/PzE4KmgcKdhgrcyPl0759pqVoVk+caIWc9BMktkYPWbltw==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From:   Linke Li <lilinke99@foxmail.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Linke Li <lilinke99@gmail.com>
-Subject: [PATCH] isofs: fix undefined behavior in iso_date()
-Date:   Sun,  9 Jul 2023 14:42:55 +0800
-X-OQ-MSGID: <20230709064255.384407-1-lilinke99@foxmail.com>
+        b=sMqGuhMbvQghEJKme7cguoZfCY5k3AZxQX4EByRz1cbztENQOhWfFDLrqHJuyCqTP
+         gpDAat4+mRTBsjD7wWa8L69F+Fy8zPGBT4Zs/cnrxM6y12/6Gqo1UNcfFF9Ywl5M1v
+         lALrfd1tSK7PGHgQUdPf08GiXWxY5a8LgO9vdKzM=
+Received: from localhost.localdomain ([101.204.11.166])
+        by newxmesmtplogicsvrszc5-0.qq.com (NewEsmtp) with SMTP
+        id DB52CCC2; Sun, 09 Jul 2023 14:54:53 +0800
+X-QQ-mid: xmsmtpt1688885693tz3hyo0pa
+Message-ID: <tencent_7588DFD1F365950A757310D764517A14B306@qq.com>
+X-QQ-XMAILINFO: NMGzQWUSIfvTCJvJTNp4omwklKlrOQIfCb8xnUYbHI7xHSo18zpysdANv1MuoS
+         8ynPsLYwvLhHBy59rNSftYnoq8OrtdHIm4a1FWeoKhw1abB22J43xobsIlmtooTlUwfqV6B6/9kH
+         WGI5BUNQfYK0Y8iRpVQTjXqSL2Hh4NmanTIZcWxvJ5b785rr5PHekI287zrH2qvDG4AnwaMYCi7M
+         +fUBDMsG6BsEGikYW6pVpH/ZTwzChOrc7u94vI7KqCKHN6VynnB+FZi15PIlWpp8FUivo2N+0ksm
+         ZtWKuhVJN+x1+9EBCsY81ns+nfMUVCrBgPOTDK0sNv32zbY00TTJErM0VNt+LWxcZNjqbG6zzXYI
+         q02xcu6DsNGQIYtjbTWkOfcR+LRu+pB7m8aGeAXQeB/ixe9D2x4flG8c7uqwNQ3wouSo73fW8Ok+
+         ENIkuT1fXyPO6Lt9ncRHTqTSSIH50u4cRVKMc4/+TSPlS9ODI5n3KUrUr8y/3DbChHgz69ocmyqD
+         rdfEb+EUwXKjblf3p5rid+vrEPDOjyPGO6RDr0FiH9CCy8ERFC4zFvTG4j0AmAtBlffj1NlSZ6o6
+         YTgS80I/YzOpsZK839xESjexl46KUL5sIgqfo7c2ZrhRtgP++ApS8fyqkjtAZyRZwiGWDqIz+Rem
+         2xwGaVYExi/Z07gxlaAx1hc8G7pWvRbS7Ez8dkeO+tCsxMSwSsd0nQ88gREHjytEKvhBedNj4YgG
+         YP2hkwaKwKBexZpTU3dg3TX8w7rTPWNrbTcAt6F01Gcj/Fu5mjSdwxEoXVZ2YiutQLNixRGfu3i4
+         l1YWGJersjNDMgAjsaAnVONQZl4vNxAsI194qZabDIOLSNJBpTuScEKcxLQ4OyNUxiGxk+LmFe5T
+         HsR4jFLwv++hAYQysNNrI0HQ9AGC+xHXDJnPhwdAeda/3zB8uBFJH+7qRkwPXDwQHzbAD/y8FP86
+         A++qR9cmquuO1H5+7qKMotx7MeRSu3EdV9cm0OwFgtX/JzW3hVDdSMwrwcR9z4
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From:   wenyang.linux@foxmail.com
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Wen Yang <wenyang.linux@foxmail.com>,
+        Christoph Hellwig <hch@lst.de>, Dylan Yudaken <dylany@fb.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] eventfd: avoid overflow to ULLONG_MAX when ctx->count is 0
+Date:   Sun,  9 Jul 2023 14:54:51 +0800
+X-OQ-MSGID: <20230709065451.107710-1-wenyang.linux@foxmail.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,HELO_DYNAMIC_IPADDR,RCVD_IN_DNSWL_BLOCKED,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,RDNS_DYNAMIC,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
-X-Spam-Level: *
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        HELO_DYNAMIC_IPADDR,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,
+        RCVD_IN_MSPIKE_WL,RDNS_DYNAMIC,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Linke Li <lilinke99@gmail.com>
+From: Wen Yang <wenyang.linux@foxmail.com>
 
-Fix undefined behavior in the code by properly handling the left shift operaion.
-Instead of left-shifting a negative value, explicitly cast -1 to an unsigned int
-before the shift. This ensures well defined behavior and resolves any potential
-issues.
+For eventfd with flag EFD_SEMAPHORE, when its ctx->count is 0, calling
+eventfd_ctx_do_read will cause ctx->count to overflow to ULLONG_MAX.
 
-Signed-off-by: Linke Li <lilinke99@gmail.com>
+Fixes: cb289d6244a3 ("eventfd - allow atomic read and waitqueue remove")
+Signed-off-by: Wen Yang <wenyang.linux@foxmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Dylan Yudaken <dylany@fb.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
- fs/isofs/util.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/eventfd.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/isofs/util.c b/fs/isofs/util.c
-index e88dba721661..4c902901401a 100644
---- a/fs/isofs/util.c
-+++ b/fs/isofs/util.c
-@@ -37,7 +37,7 @@ int iso_date(u8 *p, int flag)
+diff --git a/fs/eventfd.c b/fs/eventfd.c
+index 8aa36cd37351..10a101df19cd 100644
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@ -189,7 +189,7 @@ void eventfd_ctx_do_read(struct eventfd_ctx *ctx, __u64 *cnt)
+ {
+ 	lockdep_assert_held(&ctx->wqh.lock);
  
- 		/* sign extend */
- 		if (tz & 0x80)
--			tz |= (-1 << 8);
-+			tz |= ((unsigned int)-1 << 8);
- 		
- 		/* 
- 		 * The timezone offset is unreliable on some disks,
+-	*cnt = (ctx->flags & EFD_SEMAPHORE) ? 1 : ctx->count;
++	*cnt = ((ctx->flags & EFD_SEMAPHORE) && ctx->count) ? 1 : ctx->count;
+ 	ctx->count -= *cnt;
+ }
+ EXPORT_SYMBOL_GPL(eventfd_ctx_do_read);
+@@ -269,6 +269,8 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
+ 		return -EFAULT;
+ 	if (ucnt == ULLONG_MAX)
+ 		return -EINVAL;
++	if ((ctx->flags & EFD_SEMAPHORE) && !ucnt)
++		return -EINVAL;
+ 	spin_lock_irq(&ctx->wqh.lock);
+ 	res = -EAGAIN;
+ 	if (ULLONG_MAX - ctx->count > ucnt)
 -- 
 2.25.1
 
