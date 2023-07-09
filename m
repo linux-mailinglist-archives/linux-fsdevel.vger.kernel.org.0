@@ -2,77 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C202774C041
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jul 2023 03:09:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B01A574C049
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jul 2023 03:16:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229689AbjGIBIz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Jul 2023 21:08:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56174 "EHLO
+        id S229729AbjGIBQi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Jul 2023 21:16:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjGIBIy (ORCPT
+        with ESMTP id S229436AbjGIBQg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Jul 2023 21:08:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7B571BC;
-        Sat,  8 Jul 2023 18:08:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 63EB260B6A;
-        Sun,  9 Jul 2023 01:08:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E62EC433C7;
-        Sun,  9 Jul 2023 01:08:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1688864932;
-        bh=k5nxP9jbAM1IeZ9Pjabku0MSbBxiNxaBsjdLI65+RGc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=aDLhQEW2U/Ce5YKFULJhO1iXzIZEfMh0qIsf91fXpGlDLKAGl3S4x1zHAzXaZBqJH
-         nDmSl0JnGqMiPVvyfXbiGQ7aK4uWDFVOT66Xf9WlGRZ+ubThBc9LOVAk+jKmRgDST6
-         vyy7ru4yQOv31Bb5r0zp+BxYYD2eUa+mISzsqUDQ=
-Date:   Sat, 8 Jul 2023 18:08:50 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Brian Geffon <bgeffon@google.com>,
+        Sat, 8 Jul 2023 21:16:36 -0400
+Received: from out-29.mta1.migadu.com (out-29.mta1.migadu.com [IPv6:2001:41d0:203:375::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18C161BC
+        for <linux-fsdevel@vger.kernel.org>; Sat,  8 Jul 2023 18:16:35 -0700 (PDT)
+Date:   Sat, 8 Jul 2023 21:16:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1688865393;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vI5pslL9S+8pP+XfH4J2qu5u8NmgfhAd3f1nmcMyzo4=;
+        b=iV6F0pQCKdjYUkWmH9MmMzLR+gS5pJupQvWAxWLQztjREXqkkW3ZyR4tbMOCxsAPnh+x7F
+        de26fNdWESSorXa7QZ+ZLpiHzRosx01XY2YPgYHQvXAos47PrAMuoqGaQwSPsnvVXhXeuG
+        EAeFnrB35AGutFz00vXhLGeMf38UqC0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
         Christian Brauner <brauner@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Gaosheng Cui <cuigaosheng1@huawei.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Hugh Dickins <hughd@google.com>,
-        James Houghton <jthoughton@google.com>,
-        "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>,
-        Jiaqi Yan <jiaqiyan@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "Mike Rapoport (IBM)" <rppt@kernel.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        Nadav Amit <namit@vmware.com>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Peter Xu <peterx@redhat.com>,
-        Ryan Roberts <ryan.roberts@arm.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Suleiman Souhlal <suleiman@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        "T.J. Alumbaugh" <talumbau@google.com>,
-        Yu Zhao <yuzhao@google.com>,
-        ZhangPeng <zhangpeng362@huawei.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 1/8] mm: make PTE_MARKER_SWAPIN_ERROR more general
-Message-Id: <20230708180850.bc938ab49fbfb38b83c367c8@linux-foundation.org>
-In-Reply-To: <20230707215540.2324998-2-axelrasmussen@google.com>
-References: <20230707215540.2324998-1-axelrasmussen@google.com>
-        <20230707215540.2324998-2-axelrasmussen@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+        dchinner@redhat.com, sandeen@redhat.com, tytso@mit.edu,
+        bfoster@redhat.com, jack@suse.cz, andreas.gruenbacher@gmail.com,
+        peterz@infradead.org, akpm@linux-foundation.org,
+        dhowells@redhat.com
+Subject: Re: [GIT PULL] bcachefs
+Message-ID: <20230709011626.4br4l6vkkvqmtque@moria.home.lan>
+References: <20230626214656.hcp4puionmtoloat@moria.home.lan>
+ <20230706155602.mnhsylo3pnief2of@moria.home.lan>
+ <20230706164055.GA2306489@perftesting>
+ <20230706173819.36c67pf42ba4gmv4@moria.home.lan>
+ <20230706211914.GB11476@frogsfrogsfrogs>
+ <20230707-badeverbot-gekettet-19ce3c238dac@brauner>
+ <20230707091810.bamrvzcif7ncng46@moria.home.lan>
+ <30661670c55601ff475f2f0698c2be2958e45c38.camel@HansenPartnership.com>
+ <ZKjd7nQxvzRDA2tK@casper.infradead.org>
+ <f8f36ffc1360daad3df907c901144144cbcba106.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f8f36ffc1360daad3df907c901144144cbcba106.camel@HansenPartnership.com>
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -81,72 +65,21 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri,  7 Jul 2023 14:55:33 -0700 Axel Rasmussen <axelrasmussen@google.com> wrote:
+On Sat, Jul 08, 2023 at 12:42:59PM -0400, James Bottomley wrote:
+> That's a bit of a straw man: I never said or implied "bad person".  I
+> gave two examples, one from direct list interaction and one quoted from
+> Kent of what I consider to be red flags behaviours on behalf of a
+> maintainer.
 
-> Future patches will re-use PTE_MARKER_SWAPIN_ERROR to implement
-> UFFDIO_POISON, so make some various preparations for that:
-> 
-> First, rename it to just PTE_MARKER_POISONED. The "SWAPIN" can be
-> confusing since we're going to re-use it for something not really
-> related to swap. This can be particularly confusing for things like
-> hugetlbfs, which doesn't support swap whatsoever. Also rename some
-> various helper functions.
-> 
-> Next, fix pte marker copying for hugetlbfs. Previously, it would WARN on
-> seeing a PTE_MARKER_SWAPIN_ERROR, since hugetlbfs doesn't support swap.
-> But, since we're going to re-use it, we want it to go ahead and copy it
-> just like non-hugetlbfs memory does today. Since the code to do this is
-> more complicated now, pull it out into a helper which can be re-used in
-> both places. While we're at it, also make it slightly more explicit in
-> its handling of e.g. uffd wp markers.
-> 
-> For non-hugetlbfs page faults, instead of returning VM_FAULT_SIGBUS for
-> an error entry, return VM_FAULT_HWPOISON. For most cases this change
-> doesn't matter, e.g. a userspace program would receive a SIGBUS either
-> way. But for UFFDIO_POISON, this change will let KVM guests get an MCE
-> out of the box, instead of giving a SIGBUS to the hypervisor and
-> requiring it to somehow inject an MCE.
-> 
-> Finally, for hugetlbfs faults, handle PTE_MARKER_POISONED, and return
-> VM_FAULT_HWPOISON_LARGE in such cases. Note that this can't happen today
-> because the lack of swap support means we'll never end up with such a
-> PTE anyway, but this behavior will be needed once such entries *can*
-> show up via UFFDIO_POISON.
-> 
-> --- a/include/linux/mm_inline.h
-> +++ b/include/linux/mm_inline.h
-> @@ -523,6 +523,25 @@ static inline bool mm_tlb_flush_nested(struct mm_struct *mm)
->  	return atomic_read(&mm->tlb_flush_pending) > 1;
->  }
->  
-> +/*
-> + * Computes the pte marker to copy from the given source entry into dst_vma.
-> + * If no marker should be copied, returns 0.
-> + * The caller should insert a new pte created with make_pte_marker().
-> + */
-> +static inline pte_marker copy_pte_marker(
-> +		swp_entry_t entry, struct vm_area_struct *dst_vma)
-> +{
-> +	pte_marker srcm = pte_marker_get(entry);
-> +	/* Always copy error entries. */
-> +	pte_marker dstm = srcm & PTE_MARKER_POISONED;
-> +
-> +	/* Only copy PTE markers if UFFD register matches. */
-> +	if ((srcm & PTE_MARKER_UFFD_WP) && userfaultfd_wp(dst_vma))
-> +		dstm |= PTE_MARKER_UFFD_WP;
-> +
-> +	return dstm;
-> +}
+You responded with a massive straw man about an army of little
+Kents - seriously, what the hell was that about?
 
-Breaks the build with CONFIG_MMU=n (arm allnoconfig).  pte_marker isn't
-defined.
+The only maintainers that I've had ongoing problems with have been Jens
+and Christoph, and there's more history to that than I want to get into.
 
-I'll slap #ifdef CONFIG_MMU around this function, but probably somethng more
-fine-grained could be used, like CONFIG_PTE_MARKER_UFFD_WP.  Please
-consider.
+If you're talking about _our_ disagreement, I was arguing that cut and
+pasting code from other repositories is a terrible workflow that's going
+to cause us problems down the road, especially for the Rust folks, and
+then afterwards you started hounding me in unrelated LKML discussions.
 
-btw, both copy_pte_marker() and pte_install_uffd_wp_if_needed() look
-far too large to justify inlining.  Please review the desirability of
-this.
-
-
+So clearly you took that personally, and I think maybe you still are.
