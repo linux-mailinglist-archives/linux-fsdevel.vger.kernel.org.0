@@ -2,48 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A3D074C6F8
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jul 2023 20:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 295E974C7FC
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jul 2023 22:06:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230519AbjGISWf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 9 Jul 2023 14:22:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50434 "EHLO
+        id S229921AbjGIUGD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 Jul 2023 16:06:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbjGISWf (ORCPT
+        with ESMTP id S229441AbjGIUGC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 9 Jul 2023 14:22:35 -0400
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A466EC;
-        Sun,  9 Jul 2023 11:22:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
-        t=1688926952; bh=/mzXwqYhhaEswyZUayjPFVq1MZwMJWSKNHX6GofhBfo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kUi+Q7ng8OGkIsJEI8Eh6pFJ/y49A02iZR4+6nAyx0EB0CzH/vzOkALcZo3oHp2qB
-         wjHF8lPPVt5ozJy7UvfKktMc89wZpNXa5AzFtZ/JUoo6flsuKM7RuR9aKLmkhEd3AY
-         u85aPxxjXG2Betc7k5uuWCYCMyQayMmVZQZ75yts=
-Date:   Sun, 9 Jul 2023 20:22:31 +0200
-From:   Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-To:     Willy Tarreau <w@1wt.eu>
-Cc:     Zhangjin Wu <falcon@tinylab.org>, arnd@arndb.de,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, shuah@kernel.org
-Subject: Re: [PATCH 0/2] proc: proc_setattr for /proc/$PID/net
-Message-ID: <74eddce8-4f59-40c8-bc49-38c286a3cbb0@t-8ch.de>
-References: <20230624-proc-net-setattr-v1-0-73176812adee@weissschuh.net>
- <20230630140609.263790-1-falcon@tinylab.org>
- <20230709092947.GF9321@1wt.eu>
- <3261fa5b-b239-48a2-b1a8-34f80567cde1@t-8ch.de>
- <20230709172753.GA22287@1wt.eu>
- <df91b1d3-2c66-4a6b-9a8a-544679bc09a8@t-8ch.de>
- <20230709180432.GA22685@1wt.eu>
+        Sun, 9 Jul 2023 16:06:02 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56241FE;
+        Sun,  9 Jul 2023 13:06:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=0pveTWgFRr5mN5v32TgV3qLTNvcCzrdqvG9KBp/LfDM=; b=CKvxMWf1oJIhSQLDpLkOVg107b
+        8gXWkpndkDR6J484pKeK9yBY6PVCcnX9DT31gBUbv/3Oj1JzGoqZRA+Gm9qYPzoaJ0XQIO5LzyqPK
+        thfGelT9Kdj9Tmn89+S+D2xa84QpAqrQSuSDPciNnd+2cbBKATfQzYVmPLHZ9uFPsZpqlO/H/bnN6
+        hKgcpXdx27TTyUJiTUEiDGidQN4dCRhDWbTdX/VY9IbFZxnuiSV5yM0Y8o4Zd9bJrZXydF/LHwa3P
+        ELmkUJocCfn9vqzgWpC+MooCN1wWFdQT54RS9YMVvkHOnXBNGYW3DPZ5G3UX/KPkFCQcFGgCFfAXq
+        s1LVW+jw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qIafF-00DyMr-3X; Sun, 09 Jul 2023 20:05:49 +0000
+Date:   Sun, 9 Jul 2023 21:05:49 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Wen Yang <wenyang.linux@foxmail.com>,
+        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Dylan Yudaken <dylany@fb.com>
+Subject: Re: [PATCH] eventfd: avoid overflow to ULLONG_MAX when ctx->count is
+ 0
+Message-ID: <ZKsTHWjJsvLw6kJo@casper.infradead.org>
+References: <tencent_7588DFD1F365950A757310D764517A14B306@qq.com>
+ <add93bba-5c63-7d7f-2034-2d25b7b44ada@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230709180432.GA22685@1wt.eu>
+In-Reply-To: <add93bba-5c63-7d7f-2034-2d25b7b44ada@web.de>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -51,60 +58,11 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023-07-09 20:04:32+0200, Willy Tarreau wrote:
-> On Sun, Jul 09, 2023 at 07:57:27PM +0200, Thomas Weißschuh wrote:
-> > On 2023-07-09 19:27:53+0200, Willy Tarreau wrote:
-> > > On Sun, Jul 09, 2023 at 07:10:58PM +0200, Thomas Weißschuh wrote:
-> > > > On 2023-07-09 11:29:47+0200, Willy Tarreau wrote:
-> > > > > On Fri, Jun 30, 2023 at 10:06:09PM +0800, Zhangjin Wu wrote:
-> > > > >> [..]
-> > > > > 
-> > > > > Now queued, thanks!
-> > > > > Willy
-> > > > 
-> > > > Don't we need an Ack from the fs maintainers for the patch to
-> > > > fs/proc/proc_net.c ?
-> > > > 
-> > > > Personally I expected this series to go in via the fs tree because of
-> > > > that patch.
-> > > 
-> > > Gasp! You're totally right, I confused it with a test only changing
-> > > the nolibc-test file, as the chmod_net test appeared as a dependency!
-> > > Let me drop it from the series and push again.
-> > 
-> > I think if this patch now also goes in via both the nolibc/rcu trees and
-> > the fs tree it would not be great.
-> >
-> > The best way forward would probably for you to rebase your tree on top
-> > of mainline after the fs tree has introduced both patches of the series
-> > into Linus' tree and then you can drop your copy of the test removal.
+On Sun, Jul 09, 2023 at 09:13:28PM +0200, Markus Elfring wrote:
+> > For eventfd with flag EFD_SEMAPHORE, when its ctx->count is 0, calling
+> > eventfd_ctx_do_read will cause ctx->count to overflow to ULLONG_MAX.
 > 
-> Yeah I agree.
-> 
-> > I want to keep both patches together because I expect the fs change to
-> > be backported and if it is backported on its own it will break
-> > nolibc-test in those trees.
-> 
-> OK but we can also fix the test regardless, and mark it for backport, no ?
+> Please choose an imperative change suggestion.
 
-That should work fine, too.
-Can you add the Fixes and Cc-stable tags in your tree and let the fs
-maintainers know?
-Or do you want me to split and resend the series?
-
-> > But maybe I'm overthinking it, nobody is running nolibc-test on
-> > non-mainline kernels anyways and both patches can be split.
-> 
-> I agree that we shouldn't grant too much importance to this test ;-)
-> I'm regularly seeing Sasha propose them for backports and am thinking
-> "ok it cannot hurt but I'm not convinced anyone will notice the fix".
-> 
-> > If they are to be kept together and go via fs an Ack on the nolibc-test
-> > patch is probably needed, too.
-> 
-> OK. Let's first see if someone from FS agrees on the change.
-
-Sounds good.
-
-
-Thomas
+Markus, stop this nitpicking.  It puts off contributors.  The changelog
+is perfectly clear.
