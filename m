@@ -2,147 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E2F074C418
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jul 2023 14:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C9C174C474
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Jul 2023 15:59:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230249AbjGIMcx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 9 Jul 2023 08:32:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51770 "EHLO
+        id S230115AbjGIN7T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 Jul 2023 09:59:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230206AbjGIMcw (ORCPT
+        with ESMTP id S230091AbjGIN7T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 9 Jul 2023 08:32:52 -0400
-Received: from mail-pj1-f78.google.com (mail-pj1-f78.google.com [209.85.216.78])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A5BE12A
-        for <linux-fsdevel@vger.kernel.org>; Sun,  9 Jul 2023 05:32:51 -0700 (PDT)
-Received: by mail-pj1-f78.google.com with SMTP id 98e67ed59e1d1-262f7a3bc80so5976904a91.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Jul 2023 05:32:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688905970; x=1691497970;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=R6EniVOaw9gyk03or5BKg9EbqyWrmMeOPg9KKXf8+m8=;
-        b=W/tPslyZirWsmb8sjXEyMmzpl7S/wYTj/E/4Lmpb/7k13QqUrF9W8/DoY79l8E5WJl
-         1EABBk/11IpqNnWXvOYtMZ0ExCKPbbec4MD5q9ZaIkuclq3aJfkda+jm1o6DJ8zWBPTX
-         pXR3/fCJ/PoLlJchb+SAgWmc/vjKHtNn9AAmtBkPtI1fdt+Da4TnkUC4ziSHJIBj0nRM
-         G3D/Qn+k+Afye4kNwwiCMGvzTzUDd0ubPG5omWOIRrTxZD//MQyEDkU8BoM/NQ+Zm5ZP
-         a7eqHxJ3Yc+be819UbRZmSiGEnuX6A7GHHj82zHUWyCgwOzPJUAUIoBdOHzEhLPtpWTv
-         IaNA==
-X-Gm-Message-State: ABy/qLZhRQQTSCIlUSAUT5u3s2N2pBpMwpOac3QCBnjtn1d1YLawNk+b
-        0XrQXlDs0cz8WUBK5Hf1wbFJFMvzjIB4nQ+YzWpYwQ6JgSPL
-X-Google-Smtp-Source: APBJJlE8NgIH1meEwWoDFpQ4FcvLOM9oqrIwO1KMptPMiwh3AXaM5TRaOFE/yHli6GD5tPlyAj4XzHsTNoKhBMJy1ISwiVD5YJCl
+        Sun, 9 Jul 2023 09:59:19 -0400
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 145B0C0;
+        Sun,  9 Jul 2023 06:59:15 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0VmvDNm8_1688911149;
+Received: from 30.0.148.243(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0VmvDNm8_1688911149)
+          by smtp.aliyun-inc.com;
+          Sun, 09 Jul 2023 21:59:10 +0800
+Message-ID: <ad525873-0061-3986-0d6d-e1a66f327e27@linux.alibaba.com>
+Date:   Sun, 9 Jul 2023 21:59:08 +0800
 MIME-Version: 1.0
-X-Received: by 2002:a17:90a:dc86:b0:262:d8e7:abff with SMTP id
- j6-20020a17090adc8600b00262d8e7abffmr9006179pjv.2.1688905970549; Sun, 09 Jul
- 2023 05:32:50 -0700 (PDT)
-Date:   Sun, 09 Jul 2023 05:32:50 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006f098a06000d10a5@google.com>
-Subject: [syzbot] [ntfs3?] UBSAN: array-index-out-of-bounds in truncate_inode_pages_final
-From:   syzbot <syzbot+e295147e14b474e4ad70@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.12.0
+Subject: Re: [PATCH v2 62/92] ocfs2: convert to ctime accessor functions
+Content-Language: en-US
+To:     Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
-        trix@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+        ocfs2-devel@lists.linux.dev
+References: <20230705185755.579053-1-jlayton@kernel.org>
+ <20230705190309.579783-1-jlayton@kernel.org>
+ <20230705190309.579783-60-jlayton@kernel.org>
+ <2033ce6a-761e-b891-42e0-2659506eb61d@linux.alibaba.com>
+ <4f7d791d516897e4b281a5bd3889e83ef7e2b52e.camel@kernel.org>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <4f7d791d516897e4b281a5bd3889e83ef7e2b52e.camel@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    e40939bbfc68 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=15866358a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c84f463eb74eab24
-dashboard link: https://syzkaller.appspot.com/bug?extid=e295147e14b474e4ad70
-compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=101c2da4a80000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/257596b75aaf/disk-e40939bb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9c75b8d61081/vmlinux-e40939bb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8f0233129f4f/Image-e40939bb.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/5b0c90b3f3a1/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e295147e14b474e4ad70@syzkaller.appspotmail.com
-
-ntfs3: loop0: Different NTFS sector size (1024) and media sector size (512).
-================================================================================
-UBSAN: array-index-out-of-bounds in ./include/linux/pagevec.h:126:2
-index 255 is out of range for type 'struct folio *[15]'
-CPU: 1 PID: 8246 Comm: syz-executor.0 Not tainted 6.4.0-rc7-syzkaller-ge40939bbfc68 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:233
- show_stack+0x2c/0x44 arch/arm64/kernel/stacktrace.c:240
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
- dump_stack+0x1c/0x28 lib/dump_stack.c:113
- ubsan_epilogue lib/ubsan.c:217 [inline]
- __ubsan_handle_out_of_bounds+0xfc/0x148 lib/ubsan.c:348
- folio_batch_add include/linux/pagevec.h:126 [inline]
- find_lock_entries+0x8fc/0xd84 mm/filemap.c:2127
- truncate_inode_pages_range+0x1b0/0xf74 mm/truncate.c:364
- truncate_inode_pages mm/truncate.c:449 [inline]
- truncate_inode_pages_final+0x90/0xc0 mm/truncate.c:484
- ntfs_evict_inode+0x20/0x48 fs/ntfs3/inode.c:1791
- evict+0x260/0x68c fs/inode.c:665
- iput_final fs/inode.c:1747 [inline]
- iput+0x734/0x818 fs/inode.c:1773
- ntfs_fill_super+0x327c/0x3990 fs/ntfs3/super.c:1267
- get_tree_bdev+0x360/0x54c fs/super.c:1303
- ntfs_fs_get_tree+0x28/0x38 fs/ntfs3/super.c:1455
- vfs_get_tree+0x90/0x274 fs/super.c:1510
- do_new_mount+0x25c/0x8c4 fs/namespace.c:3039
- path_mount+0x590/0xe04 fs/namespace.c:3369
- do_mount fs/namespace.c:3382 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount fs/namespace.c:3568 [inline]
- __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3568
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
- el0_svc_common+0x138/0x244 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:191
- el0_svc+0x4c/0x160 arch/arm64/kernel/entry-common.c:647
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:665
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
-================================================================================
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On 7/7/23 6:07 PM, Jeff Layton wrote:
+> On Fri, 2023-07-07 at 11:15 +0800, Joseph Qi wrote:
+>>
+>> On 7/6/23 3:01 AM, Jeff Layton wrote:
+>>> In later patches, we're going to change how the inode's ctime field is
+>>> used. Switch to using accessor functions instead of raw accesses of
+>>> inode->i_ctime.
+>>>
+>>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+>>> ---
+>>>  fs/ocfs2/acl.c          |  6 +++---
+>>>  fs/ocfs2/alloc.c        |  6 +++---
+>>>  fs/ocfs2/aops.c         |  2 +-
+>>>  fs/ocfs2/dir.c          |  8 ++++----
+>>>  fs/ocfs2/dlmfs/dlmfs.c  |  4 ++--
+>>>  fs/ocfs2/dlmglue.c      |  7 +++++--
+>>>  fs/ocfs2/file.c         | 16 +++++++++-------
+>>>  fs/ocfs2/inode.c        | 12 ++++++------
+>>>  fs/ocfs2/move_extents.c |  6 +++---
+>>>  fs/ocfs2/namei.c        | 21 +++++++++++----------
+>>>  fs/ocfs2/refcounttree.c | 14 +++++++-------
+>>>  fs/ocfs2/xattr.c        |  6 +++---
+>>>  12 files changed, 57 insertions(+), 51 deletions(-)
+>>>
+>>> diff --git a/fs/ocfs2/acl.c b/fs/ocfs2/acl.c
+>>> index 9fd03eaf15f8..e75137a8e7cb 100644
+>>> --- a/fs/ocfs2/acl.c
+>>> +++ b/fs/ocfs2/acl.c
+>>> @@ -191,10 +191,10 @@ static int ocfs2_acl_set_mode(struct inode *inode, struct buffer_head *di_bh,
+>>>  	}
+>>>  
+>>>  	inode->i_mode = new_mode;
+>>> -	inode->i_ctime = current_time(inode);
+>>> +	inode_set_ctime_current(inode);
+>>>  	di->i_mode = cpu_to_le16(inode->i_mode);
+>>> -	di->i_ctime = cpu_to_le64(inode->i_ctime.tv_sec);
+>>> -	di->i_ctime_nsec = cpu_to_le32(inode->i_ctime.tv_nsec);
+>>> +	di->i_ctime = cpu_to_le64(inode_get_ctime(inode).tv_sec);
+>>> +	di->i_ctime_nsec = cpu_to_le32(inode_get_ctime(inode).tv_nsec);
+>>>  	ocfs2_update_inode_fsync_trans(handle, inode, 0);
+>>>  
+>>>  	ocfs2_journal_dirty(handle, di_bh);
+>>> diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+>>> index 51c93929a146..aef58f1395c8 100644
+>>> --- a/fs/ocfs2/alloc.c
+>>> +++ b/fs/ocfs2/alloc.c
+>>> @@ -7436,10 +7436,10 @@ int ocfs2_truncate_inline(struct inode *inode, struct buffer_head *di_bh,
+>>>  	}
+>>>  
+>>>  	inode->i_blocks = ocfs2_inode_sector_count(inode);
+>>> -	inode->i_ctime = inode->i_mtime = current_time(inode);
+>>> +	inode->i_mtime = inode_set_ctime_current(inode);
+>>>  
+>>> -	di->i_ctime = di->i_mtime = cpu_to_le64(inode->i_ctime.tv_sec);
+>>> -	di->i_ctime_nsec = di->i_mtime_nsec = cpu_to_le32(inode->i_ctime.tv_nsec);
+>>> +	di->i_ctime = di->i_mtime = cpu_to_le64(inode_get_ctime(inode).tv_sec);
+>>> +	di->i_ctime_nsec = di->i_mtime_nsec = cpu_to_le32(inode_get_ctime(inode).tv_nsec);
+>>>  
+>>>  	ocfs2_update_inode_fsync_trans(handle, inode, 1);
+>>>  	ocfs2_journal_dirty(handle, di_bh);
+>>> diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+>>> index 8dfc284e85f0..0fdba30740ab 100644
+>>> --- a/fs/ocfs2/aops.c
+>>> +++ b/fs/ocfs2/aops.c
+>>> @@ -2048,7 +2048,7 @@ int ocfs2_write_end_nolock(struct address_space *mapping,
+>>>  		}
+>>>  		inode->i_blocks = ocfs2_inode_sector_count(inode);
+>>>  		di->i_size = cpu_to_le64((u64)i_size_read(inode));
+>>> -		inode->i_mtime = inode->i_ctime = current_time(inode);
+>>> +		inode->i_mtime = inode_set_ctime_current(inode);
+>>>  		di->i_mtime = di->i_ctime = cpu_to_le64(inode->i_mtime.tv_sec);
+>>>  		di->i_mtime_nsec = di->i_ctime_nsec = cpu_to_le32(inode->i_mtime.tv_nsec);
+>>>  		if (handle)
+>>> diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
+>>> index 694471fc46b8..8b123d543e6e 100644
+>>> --- a/fs/ocfs2/dir.c
+>>> +++ b/fs/ocfs2/dir.c
+>>> @@ -1658,7 +1658,7 @@ int __ocfs2_add_entry(handle_t *handle,
+>>>  				offset, ocfs2_dir_trailer_blk_off(dir->i_sb));
+>>>  
+>>>  		if (ocfs2_dirent_would_fit(de, rec_len)) {
+>>> -			dir->i_mtime = dir->i_ctime = current_time(dir);
+>>> +			dir->i_mtime = inode_set_ctime_current(dir);
+>>>  			retval = ocfs2_mark_inode_dirty(handle, dir, parent_fe_bh);
+>>>  			if (retval < 0) {
+>>>  				mlog_errno(retval);
+>>> @@ -2962,11 +2962,11 @@ static int ocfs2_expand_inline_dir(struct inode *dir, struct buffer_head *di_bh,
+>>>  	ocfs2_dinode_new_extent_list(dir, di);
+>>>  
+>>>  	i_size_write(dir, sb->s_blocksize);
+>>> -	dir->i_mtime = dir->i_ctime = current_time(dir);
+>>> +	dir->i_mtime = inode_set_ctime_current(dir);
+>>>  
+>>>  	di->i_size = cpu_to_le64(sb->s_blocksize);
+>>> -	di->i_ctime = di->i_mtime = cpu_to_le64(dir->i_ctime.tv_sec);
+>>> -	di->i_ctime_nsec = di->i_mtime_nsec = cpu_to_le32(dir->i_ctime.tv_nsec);
+>>> +	di->i_ctime = di->i_mtime = cpu_to_le64(inode_get_ctime(dir).tv_sec);
+>>> +	di->i_ctime_nsec = di->i_mtime_nsec = cpu_to_le32(inode_get_ctime(dir).tv_nsec);
+>>>  	ocfs2_update_inode_fsync_trans(handle, dir, 1);
+>>>  
+>>>  	/*
+>>> diff --git a/fs/ocfs2/dlmfs/dlmfs.c b/fs/ocfs2/dlmfs/dlmfs.c
+>>> index ba26c5567cff..81265123ce6c 100644
+>>> --- a/fs/ocfs2/dlmfs/dlmfs.c
+>>> +++ b/fs/ocfs2/dlmfs/dlmfs.c
+>>> @@ -337,7 +337,7 @@ static struct inode *dlmfs_get_root_inode(struct super_block *sb)
+>>>  	if (inode) {
+>>>  		inode->i_ino = get_next_ino();
+>>>  		inode_init_owner(&nop_mnt_idmap, inode, NULL, mode);
+>>> -		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
+>>> +		inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
+>>>  		inc_nlink(inode);
+>>>  
+>>>  		inode->i_fop = &simple_dir_operations;
+>>> @@ -360,7 +360,7 @@ static struct inode *dlmfs_get_inode(struct inode *parent,
+>>>  
+>>>  	inode->i_ino = get_next_ino();
+>>>  	inode_init_owner(&nop_mnt_idmap, inode, parent, mode);
+>>> -	inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
+>>> +	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
+>>>  
+>>>  	ip = DLMFS_I(inode);
+>>>  	ip->ip_conn = DLMFS_I(parent)->ip_conn;
+>>> diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+>>> index c28bc983a7b1..c3e2961ee5db 100644
+>>> --- a/fs/ocfs2/dlmglue.c
+>>> +++ b/fs/ocfs2/dlmglue.c
+>>> @@ -2162,6 +2162,7 @@ static void __ocfs2_stuff_meta_lvb(struct inode *inode)
+>>>  	struct ocfs2_inode_info *oi = OCFS2_I(inode);
+>>>  	struct ocfs2_lock_res *lockres = &oi->ip_inode_lockres;
+>>>  	struct ocfs2_meta_lvb *lvb;
+>>> +	struct timespec64 ctime = inode_get_ctime(inode);
+>>>  
+>>>  	lvb = ocfs2_dlm_lvb(&lockres->l_lksb);
+>>>  
+>>> @@ -2185,7 +2186,7 @@ static void __ocfs2_stuff_meta_lvb(struct inode *inode)
+>>>  	lvb->lvb_iatime_packed  =
+>>>  		cpu_to_be64(ocfs2_pack_timespec(&inode->i_atime));
+>>>  	lvb->lvb_ictime_packed =
+>>> -		cpu_to_be64(ocfs2_pack_timespec(&inode->i_ctime));
+>>> +		cpu_to_be64(ocfs2_pack_timespec(&ctime));
+>>>  	lvb->lvb_imtime_packed =
+>>>  		cpu_to_be64(ocfs2_pack_timespec(&inode->i_mtime));
+>>>  	lvb->lvb_iattr    = cpu_to_be32(oi->ip_attr);
+>>> @@ -2208,6 +2209,7 @@ static int ocfs2_refresh_inode_from_lvb(struct inode *inode)
+>>>  	struct ocfs2_inode_info *oi = OCFS2_I(inode);
+>>>  	struct ocfs2_lock_res *lockres = &oi->ip_inode_lockres;
+>>>  	struct ocfs2_meta_lvb *lvb;
+>>> +	struct timespec64 ctime;
+>>>  
+>>>  	mlog_meta_lvb(0, lockres);
+>>>  
+>>> @@ -2238,8 +2240,9 @@ static int ocfs2_refresh_inode_from_lvb(struct inode *inode)
+>>>  			      be64_to_cpu(lvb->lvb_iatime_packed));
+>>>  	ocfs2_unpack_timespec(&inode->i_mtime,
+>>>  			      be64_to_cpu(lvb->lvb_imtime_packed));
+>>> -	ocfs2_unpack_timespec(&inode->i_ctime,
+>>> +	ocfs2_unpack_timespec(&ctime,
+>>>  			      be64_to_cpu(lvb->lvb_ictime_packed));
+>>> +	inode_set_ctime_to_ts(inode, ctime);
+>>
+>> A quick glance, it seems not an equivalent replace.
+>>
+> 
+> 
+> How so?
+> 
+> The old code unpacked the time directly into the inode->i_ctime. The new
+> one unpacks it into a local timespec64 variable and then sets the
+> inode->i_ctime to that value. The result should still be the same.
+> 
+IC, it looks fine to me.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
