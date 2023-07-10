@@ -2,100 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E1F0374D1E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jul 2023 11:40:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 810E474D26D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jul 2023 11:59:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229702AbjGJJkI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jul 2023 05:40:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54752 "EHLO
+        id S232052AbjGJJ7K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jul 2023 05:59:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232981AbjGJJjY (ORCPT
+        with ESMTP id S232058AbjGJJ6v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jul 2023 05:39:24 -0400
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DE781BE1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 02:37:02 -0700 (PDT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-6826902bc8dso7521532b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 02:37:02 -0700 (PDT)
+        Mon, 10 Jul 2023 05:58:51 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE11D129
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 02:56:38 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-31434226a2eso5068110f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 02:56:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688982997; x=1691574997;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kxo6f4leuXFk8pF78YeuZhQwZuNDYfHXt3wH4Pqp5I8=;
+        b=GniF6jgEJS2WQWv65E+pLR1FddQDBSIsGiytSe0RL3z06pXU0nhMZtVeEJaalwws3U
+         HulmAiRP5r28dU8nGm0JokvgARWfPQNQtguWK/NZhoq/5RQaGhvdgg3JRLbigwal73Dj
+         CLUVJtn8E8v8xjCO2Sz2cY39r02qb+xgHJi3N0yvC83AIzaYPXL6batITn7mgaoW2h2O
+         FbdVAohVt6QJDp4ROYX1HL1+neATgqMySU5iZm9fsIUrOPberLWBOfwnVwS9e3h/OQv5
+         PUTj8vSfXwvYwOD9yMZp6qNhA4FvzvhmGWr44qfNZnO0MzgtkSdAvBzX6JswX+Pacn2s
+         XI2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688981811; x=1691573811;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lGkeIYsGthKQUf2MaWmyoWrTvnEbSMXFNdzeg05GToI=;
-        b=Yl0Ths3zhk7e/lyV9I7lYF1sv9aXl+9yI/OdgrbDWUSbamdlL8+FxE5tYTCFPklt8p
-         QVLiqdHwd21MG27I1494opyBOEbi6kJznLdqXyKMAi1XZ6tnUs4TC6PG+6NvT3ustj5E
-         0CndBRDixOvTpoNT0rv8j73QyzjwiHLJAAaESnJXtXBR7xAQtNXVMFpHgp8WqRsgZ3VI
-         AqZ445XBJDuX2jv9Dt5RVD09lg88ybxD55cDxkvybftawzz1cHs2zK4YqBS/8mm6gylU
-         oHRz3KJFW9xKs3GfxqXTG565qR5ro/MUB8AbJC9UGk7w6DgF4hpuEe/G7dpy1G6MPUhw
-         U6mA==
-X-Gm-Message-State: ABy/qLYSS6U24ehyLpKZ4tWCybbpvHhbKF/UWoFjIZJCXF4FiHdtMfht
-        O15B3O9GiNPNrEzpVAVGCYyB5NKO5MImS6SicPgxseE1ceBCLHw=
-X-Google-Smtp-Source: APBJJlHS+EA59J+trihIPNDVg9SP/uRmojJClqCjtBRYREURwXLwkZUSY1FNt0Ff6nIUki8yNpWV3bkFn4bQIv8v+fzvoTcZGg5+
+        d=1e100.net; s=20221208; t=1688982997; x=1691574997;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kxo6f4leuXFk8pF78YeuZhQwZuNDYfHXt3wH4Pqp5I8=;
+        b=OuLFAy8v5mPyfLD8ciE/aXxyQqXiRpdNJzQ44vRxtwrRNBWV/fNcOa53M/1DWolEg6
+         +Hn7QL3RuSNReZQ5vYrEY2b2j6TCpbZ7yOrycxcdFyJpVxdkDp/Tmf2zzz/dfsfvfNtT
+         rA2s99WdC0MFPxui1uqhTKhVXKDDec6eOJ3e2EF7C+b1wLGPZuEJW/71YyxkuQ3s9ZyM
+         OE+WbzYhallbUL6DGbTAeQfgg2/p4i2EkhZnDUtZZJpr3D0s3cJGbu/9Jfyv52VRgW03
+         5LuAboE2SKGP0ikFbs4o9Wpm+yIZ7DQPeV9K/5GkyG5xzN02rE3j3eK2rDQBPwIo7Th8
+         fW3w==
+X-Gm-Message-State: ABy/qLb9CBO0Hu6ZEzq629Jz2KVaPFFenLjSYADDHtj76jkQe4z9eHAT
+        NmMy3OUwbZhqX3rwOJWIJHbWmA==
+X-Google-Smtp-Source: APBJJlE4RKdYwtdNSj2M5c0AJZPi+ooia9Jv6ZuxVWbvTi6oBkrSMovPXcWiGubFT0BFzahcM8f38A==
+X-Received: by 2002:adf:ec50:0:b0:315:9993:1caa with SMTP id w16-20020adfec50000000b0031599931caamr4181286wrn.12.1688982997309;
+        Mon, 10 Jul 2023 02:56:37 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id y18-20020adfd092000000b0031424950a99sm11257569wrh.81.2023.07.10.02.56.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jul 2023 02:56:35 -0700 (PDT)
+Date:   Mon, 10 Jul 2023 12:56:30 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Linke Li <lilinke99@foxmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Linke Li <lilinke99@gmail.com>
+Subject: Re: [PATCH] isofs: fix undefined behavior in iso_date()
+Message-ID: <79582844-3178-451c-822e-a692bfd27e9c@moroto.mountain>
+References: <tencent_4D921A8D1F69E70C85C28875DC829E28EC09@qq.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6a00:3989:b0:67b:8602:aa10 with SMTP id
- fi9-20020a056a00398900b0067b8602aa10mr18148104pfb.0.1688981811466; Mon, 10
- Jul 2023 02:36:51 -0700 (PDT)
-Date:   Mon, 10 Jul 2023 02:36:51 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e7972006001eb8ff@google.com>
-Subject: [syzbot] Monthly fs report (Jul 2023)
-From:   syzbot <syzbot+list9b431a4a48d2fc317ca2@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_4D921A8D1F69E70C85C28875DC829E28EC09@qq.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello fs maintainers/developers,
+It looks like maybe there is an issue with "year" as well.
 
-This is a 31-day syzbot report for the fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/fs
+fs/isofs/util.c
+    19  int iso_date(u8 *p, int flag)
+    20  {
+    21          int year, month, day, hour, minute, second, tz;
+    22          int crtime;
+    23
+    24          year = p[0];
+                       ^^^^^
+year is 0-255.
 
-During the period, 5 new issues were detected and 1 were fixed.
-In total, 55 issues are still open and 324 have been fixed so far.
+    25          month = p[1];
+    26          day = p[2];
+    27          hour = p[3];
+    28          minute = p[4];
+    29          second = p[5];
+    30          if (flag == 0) tz = p[6]; /* High sierra has no time zone */
+    31          else tz = 0;
+    32          
+    33          if (year < 0) {
+                    ^^^^^^^^
+But this checks year for < 0 which is impossible.  Should it be:
 
-Some of the still happening issues:
+	year = (signed char)p[0];?
 
-Ref  Crashes Repro Title
-<1>  2662    Yes   BUG: sleeping function called from invalid context in __getblk_gfp
-                   https://syzkaller.appspot.com/bug?extid=69b40dc5fd40f32c199f
-<2>  2001    Yes   WARNING in firmware_fallback_sysfs
-                   https://syzkaller.appspot.com/bug?extid=95f2e2439b97575ec3c0
-<3>  1195    Yes   possible deadlock in input_event (2)
-                   https://syzkaller.appspot.com/bug?extid=d4c06e848a1c1f9f726f
-<4>  253     Yes   BUG: sleeping function called from invalid context in __bread_gfp
-                   https://syzkaller.appspot.com/bug?extid=5869fb71f59eac925756
-<5>  119     Yes   possible deadlock in pipe_write
-                   https://syzkaller.appspot.com/bug?extid=011e4ea1da6692cf881c
-<6>  75      No    possible deadlock in evdev_pass_values (2)
-                   https://syzkaller.appspot.com/bug?extid=13d3cb2a3dc61e6092f5
-<7>  59      Yes   INFO: task hung in eventpoll_release_file
-                   https://syzkaller.appspot.com/bug?extid=e6dab35a08df7f7aa260
-<8>  40      Yes   UBSAN: shift-out-of-bounds in minix_statfs
-                   https://syzkaller.appspot.com/bug?extid=5ad0824204c7bf9b67f2
-<9>  20      Yes   INFO: task hung in synchronize_rcu (4)
-                   https://syzkaller.appspot.com/bug?extid=222aa26d0a5dbc2e84fe
-<10> 18      Yes   INFO: rcu detected stall in sys_clock_adjtime
-                   https://syzkaller.appspot.com/bug?extid=25b7addb06e92c482190
+    34                  crtime = 0;
+    35          } else {
+    36                  crtime = mktime64(year+1900, month, day, hour, minute, second);
+    37
+    38                  /* sign extend */
+    39                  if (tz & 0x80)
+    40                          tz |= (-1 << 8);
+    41                  
+    42                  /*
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+regards,
+dan carpenter
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
