@@ -2,122 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9420074DF6B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jul 2023 22:38:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67E9174E025
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jul 2023 23:21:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231344AbjGJUiw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jul 2023 16:38:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47844 "EHLO
+        id S230195AbjGJVVZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jul 2023 17:21:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbjGJUit (ORCPT
+        with ESMTP id S229449AbjGJVVY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jul 2023 16:38:49 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CB81195;
-        Mon, 10 Jul 2023 13:38:49 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1b9e9765f2cso6389985ad.3;
-        Mon, 10 Jul 2023 13:38:49 -0700 (PDT)
+        Mon, 10 Jul 2023 17:21:24 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26661BC
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 14:21:23 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-31427ddd3fbso5160706f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 14:21:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689021528; x=1691613528;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AANwmYnIjrNG1ny8ADZlcMF6VhBoiSpdnMPHT/u0j+U=;
-        b=a9vlDHib/vMGEM7aj5ZziEIfVB9053U+yrZ7to7Yd8hR15TTgPRZXqM+aIlJDlWKPY
-         CrJBsGBouks3CfFEd3QRv1Yh7dQm6xNAOqgHHU3VN9DNSaL1+tpwRU5rlXJO9ismFxe4
-         Hq/4DleBOQdSXFD+XjWaDWY5xLt3mvgWf3U05EAxLNXXbn71AVZT33qR+hN/ZA7W5iti
-         j2FlnXR+XTocZTLDWBsxKRyv8pcEf/x0EXhFXyFuz/MUiowyCCXOmCwW+UUzggU47gSN
-         4bXR7XPV2Dca04qA0GJHy7NqllrEwRZPjVMgpFgoNDCPdqsRtEzr3a5JOoqHOKvIgcfJ
-         pOfA==
+        d=cloudflare.com; s=google; t=1689024081; x=1691616081;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lQ7g7+AcxoxnsFU8bE87IhRqS4UGLwwarsf5ft7ebmA=;
+        b=yCwPFgvX0n9bam2XVB10ULgOSxhmv+g7JycHWNA8yMYhmn0ps8ge9NQ3tNCS7CESD5
+         irL3pz5232n9hIz55m4ilJIzivoeRqjJ+4JSe2LSdQGjuVweKFAHwHvWrjPyPt4br3pj
+         er+R1xwuKZOE4MJ9o8230qKevoysi5u/1GFoI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689021528; x=1691613528;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1689024081; x=1691616081;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AANwmYnIjrNG1ny8ADZlcMF6VhBoiSpdnMPHT/u0j+U=;
-        b=jfc5ZugQLFri2Phl+plsTHes12Ah8ake1U3fyrvQZ6Bq1naVi6PE/3bPjpSijP2PID
-         0JzlE1eJa4WoGHWtZFjw6xqPnepn46RY+6mF5vb8gvP8e9OHZOwL6c0XAqSyqNtvR6zQ
-         4/UgFxGs7QgulX2+Kyo76cBU8jkkUXyl+g3pPV++yAGbleF2sGpvKb1H8xE/L1P/EwBg
-         VTUx1Y6b7jBADEOpo6LaJbnh6U0W5gOsYiceyGa9QYVKxKfsshGGDLAuup8hztn+IJxL
-         RONwK31w54a7YNd/M6mC4zxuz/3f8YPgpZjmDs1Z7jUF0nDn4G0myK2dt42edYruNAwm
-         BwUg==
-X-Gm-Message-State: ABy/qLa5hEe1qNwldFMg7/1YoXEwDykei4Yd9HVQweubANhpaFLYd7af
-        Qc+iO5VRpOQsgCfjOnBBafc=
-X-Google-Smtp-Source: APBJJlEZWuY/msbyREsMLqJ7pXCL+z6hIoLk4MAu/D5lqGRN52QX2Ydh0HXQ3I0i0YHXmtzXIStPwQ==
-X-Received: by 2002:a17:902:da92:b0:1b8:50ae:557 with SMTP id j18-20020a170902da9200b001b850ae0557mr12453868plx.36.1689021528394;
-        Mon, 10 Jul 2023 13:38:48 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:400::5:e2fe])
-        by smtp.gmail.com with ESMTPSA id y2-20020a1709029b8200b001b891259eddsm300297plp.197.2023.07.10.13.38.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jul 2023 13:38:48 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Mon, 10 Jul 2023 10:38:46 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Suren Baghdasaryan <surenb@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>, peterz@infradead.org,
-        lujialin4@huawei.com, lizefan.x@bytedance.com, hannes@cmpxchg.org,
-        mingo@redhat.com, ebiggers@kernel.org, oleg@redhat.com,
-        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 1/2] kernfs: add kernfs_ops.free operation to free
- resources tied to the file
-Message-ID: <ZKxsVuDqdr6IJeyv@slm.duckdns.org>
-References: <CAJuCfpF=DjwpWuhugJkVzet2diLkf8eagqxjR8iad39odKdeYQ@mail.gmail.com>
- <20230628-spotten-anzweifeln-e494d16de48a@brauner>
- <ZJx1nkqbQRVCaKgF@slm.duckdns.org>
- <CAJuCfpEFo6WowJ_4XPXH+=D4acFvFqEa4Fuc=+qF8=Jkhn=3pA@mail.gmail.com>
- <2023062845-stabilize-boogieman-1925@gregkh>
- <CAJuCfpFqYytC+5GY9X+jhxiRvhAyyNd27o0=Nbmt_Wc5LFL1Sw@mail.gmail.com>
- <ZJyZWtK4nihRkTME@slm.duckdns.org>
- <CAJuCfpFKjhmti8k6OHoDHAu6dPvqP0jn8FFdSDPqmRfH97bkiQ@mail.gmail.com>
- <CAJuCfpH3JcwADEYPBhzUcunj0dcgYNRo+0sODocdhbuXQsbsUQ@mail.gmail.com>
- <20230630-fegefeuer-urheber-0a25a219520d@brauner>
+        bh=lQ7g7+AcxoxnsFU8bE87IhRqS4UGLwwarsf5ft7ebmA=;
+        b=e5ELX186OAXcN0NuIWZ/UMkweukcrh4knI2MFcCt37B3qR2QcnA9KMF2W7Qwub02Z7
+         OmDa0u6YI/6A09sealyFQBZQ9vDe4vJShozMYCUOvqIt4maUA4K7iT6Y8ysZ7zKIsbN/
+         G0tORB2gI97wOKoVJSn+VV3Q9rthGWuj1j53vERvlNKZzByrHmg+2njoBjy3cx8kTKcy
+         Tf4BpDG3iKWgU85SlY/4X8EpgVk1aNSrXxeLg7G50jVFnQFU62tO5OMe6uCsdUOnGBHc
+         2lpMSEyxdlvOwQK7FSUd/xBBom8twXTtRj7yBtuqvBgLcU02/fycSdyB6jmDsogRvZW0
+         +Cfg==
+X-Gm-Message-State: ABy/qLY1Go+AsJw+7NuMshl9JGd3WqR8W53Gb1SyuPV3SYm+sU5hvArY
+        Il9jCMyPt4iFPswXDU12Fjq5BPLn533QHeqMe5qc6Q==
+X-Google-Smtp-Source: APBJJlH3SN2nYNIgBk+dLUzclEwhTNb+zVtBu430OguEMqwabY7Bek0J/Qh7N2bFBtm2SH0kohTsHRzGvRWA8Hi9jXs=
+X-Received: by 2002:a5d:6047:0:b0:313:e8f9:803 with SMTP id
+ j7-20020a5d6047000000b00313e8f90803mr12736503wrt.3.1689024081594; Mon, 10 Jul
+ 2023 14:21:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230630-fegefeuer-urheber-0a25a219520d@brauner>
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+References: <20230710183338.58531-1-ivan@cloudflare.com> <2023071039-negate-stalemate-6987@gregkh>
+In-Reply-To: <2023071039-negate-stalemate-6987@gregkh>
+From:   Ivan Babrou <ivan@cloudflare.com>
+Date:   Mon, 10 Jul 2023 14:21:10 -0700
+Message-ID: <CABWYdi39+TJd1qV3nWs_eYc7XMC0RvxG22ihfq7rzuPaNvn1cQ@mail.gmail.com>
+Subject: Re: [PATCH] kernfs: attach uuid for every kernfs and report it in fsid
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, kernel-team@cloudflare.com,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        Tejun Heo <tj@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+        Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Mon, Jul 10, 2023 at 12:40=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Jul 10, 2023 at 11:33:38AM -0700, Ivan Babrou wrote:
+> > The following two commits added the same thing for tmpfs:
+> >
+> > * commit 2b4db79618ad ("tmpfs: generate random sb->s_uuid")
+> > * commit 59cda49ecf6c ("shmem: allow reporting fanotify events with fil=
+e handles on tmpfs")
+> >
+> > Having fsid allows using fanotify, which is especially handy for cgroup=
+s,
+> > where one might be interested in knowing when they are created or remov=
+ed.
+> >
+> > Signed-off-by: Ivan Babrou <ivan@cloudflare.com>
+> > ---
+> >  fs/kernfs/mount.c | 13 ++++++++++++-
+> >  1 file changed, 12 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
+> > index d49606accb07..930026842359 100644
+> > --- a/fs/kernfs/mount.c
+> > +++ b/fs/kernfs/mount.c
+> > @@ -16,6 +16,8 @@
+> >  #include <linux/namei.h>
+> >  #include <linux/seq_file.h>
+> >  #include <linux/exportfs.h>
+> > +#include <linux/uuid.h>
+> > +#include <linux/statfs.h>
+> >
+> >  #include "kernfs-internal.h"
+> >
+> > @@ -45,8 +47,15 @@ static int kernfs_sop_show_path(struct seq_file *sf,=
+ struct dentry *dentry)
+> >       return 0;
+> >  }
+> >
+> > +int kernfs_statfs(struct dentry *dentry, struct kstatfs *buf)
+> > +{
+> > +     simple_statfs(dentry, buf);
+> > +     buf->f_fsid =3D uuid_to_fsid(dentry->d_sb->s_uuid.b);
+> > +     return 0;
+> > +}
+> > +
+> >  const struct super_operations kernfs_sops =3D {
+> > -     .statfs         =3D simple_statfs,
+> > +     .statfs         =3D kernfs_statfs,
+> >       .drop_inode     =3D generic_delete_inode,
+> >       .evict_inode    =3D kernfs_evict_inode,
+> >
+> > @@ -351,6 +360,8 @@ int kernfs_get_tree(struct fs_context *fc)
+> >               }
+> >               sb->s_flags |=3D SB_ACTIVE;
+> >
+> > +             uuid_gen(&sb->s_uuid);
+>
+> Since kernfs has as lot of nodes (like hundreds of thousands if not more
+> at times, being created at boot time), did you just slow down creating
+> them all, and increase the memory usage in a measurable way?
 
-On Fri, Jun 30, 2023 at 10:21:17AM +0200, Christian Brauner wrote:
-> What I'm mostly reacting to is that there's a kernfs_ops->release()
-> method which mirrors f_op->release() but can be called when there are
-> still users which is counterintuitive for release semantics. And that
-> ultimately caused this UAF issue which was rather subtle given how long
-> it took to track down the root cause.
-> 
-> A rmdir() isn't triggering a f_op->release() if there are still file
-> references but it's apparently triggering a kernfs_ops->release(). It
-> feels like this should at least be documented in struct kernfs_ops...
+This is just for the superblock, not every inode. The memory increase
+is one UUID per kernfs instance (there are maybe 10 of them on a basic
+system), which is trivial. Same goes for CPU usage.
 
-Oh yeah, better documentation would be great. The core part here is that
-kernfs is the layer which is implementing the revoke-like semantics
-specifically to allow kernfs users (the ones that implement kernfs_ops) can
-synchronously abort their involvement at will. So, from those users' POV,
-->release is being called when it should be. The problem here was that PSI
-was mixing objects from two layers with different lifetime rules, which
-obviously causes issues.
+> We were trying to slim things down, what userspace tools need this
+> change?  Who is going to use it, and what for?
 
-As Suren's new fix shows, the fix is just using the matching object whose
-lifetime is governed by kernfs. While this shows up in a subtle way for
-poll, for all other operations, this is almost completely transprent.
+The one concrete thing is ebpf_exporter:
 
-Thanks.
+* https://github.com/cloudflare/ebpf_exporter
 
--- 
-tejun
+I want to monitor cgroup changes, so that I can have an up to date map
+of inode -> cgroup path, so that I can resolve the value returned from
+bpf_get_current_cgroup_id() into something that a human can easily
+grasp (think system.slice/nginx.service). Currently I do a full sweep
+to build a map, which doesn't work if a cgroup is short lived, as it
+just disappears before I can resolve it. Unfortunately, systemd
+recycles cgroups on restart, changing inode number, so this is a very
+real issue.
+
+There's also this old wiki page from systemd:
+
+* https://freedesktop.org/wiki/Software/systemd/Optimizations
+
+Quoting from there:
+
+> Get rid of systemd-cgroups-agent. Currently, whenever a systemd cgroup ru=
+ns empty a tool "systemd-cgroups-agent" is invoked by the kernel which then=
+ notifies systemd about it. The need for this tool should really go away, w=
+hich will save a number of forked processes at boot, and should make things=
+ faster (especially shutdown). This requires introduction of a new kernel i=
+nterface to get notifications for cgroups running empty, for example via fa=
+notify() on cgroupfs.
+
+So a similar need to mine, but for different systemd-related needs.
+
+Initially I tried adding this for cgroup fs only, but the problem felt
+very generic, so I pivoted to having it in kernfs instead, so that any
+kernfs based filesystem would benefit.
+
+Given pretty much non-existing overhead and simplicity of this, I
+think it's a change worth doing, unless there's a good reason to not
+do it. I cc'd plenty of people to make sure it's not a bad decision.
+
+> There were some benchmarks people were doing with booting large memory
+> systems that you might want to reproduce here to verify that nothing is
+> going to be harmed.
+
+Skipping this given that overhead is per superblock and trivial.
