@@ -2,51 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B798974D6D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jul 2023 15:04:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A48BC74D759
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jul 2023 15:21:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232969AbjGJNEV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jul 2023 09:04:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49836 "EHLO
+        id S231389AbjGJNVA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jul 2023 09:21:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232312AbjGJNEJ (ORCPT
+        with ESMTP id S231624AbjGJNU7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jul 2023 09:04:09 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C406F268D;
-        Mon, 10 Jul 2023 06:03:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=Xa62x9tUe4HdESmmryNJxUBaFH7m3AqjBIhlcBkeDm8=; b=FFhwt7/0AsvUiMBzPstg+Qq1DT
-        bDT+M53lIT+ER0YOXK++7ZawneOi8wN4m2wfLwI8AMjAY7BqsAdxHqWxzQXE+Q9gytc9vko6ITMk7
-        ucmC0zUEI3vT/dDt2R3IAA+nqMefP7Tk49JuwBMTcr/8bxggh/VjfYaxtKfucpIesU+owRhV/AkRN
-        WQL+tpVAe5rWx4VGiHV93hkIShXBugd9eNe6aVsfYE3MEsJIx1sEPnjz9EYbaLJBa72GB+xCWIL0t
-        6Kz1L19a76SqED9GDggf+yRgGukriA3ijPyE1uOalPxb6/keeZGSNmwrlBKwDcHB9gyIZw6+ZRO13
-        TEV4AUeg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qIqXY-00EcXT-2T; Mon, 10 Jul 2023 13:02:56 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, Wang Yugui <wangyugui@e16-tech.com>,
+        Mon, 10 Jul 2023 09:20:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6B30E5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 06:20:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1688995208;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=BV4nji85a+mPY3kj67G42V3oBEYwbWqct70gcMhmixM=;
+        b=LMKvrPyvSnsu3PuA0fiUDuke9HjS2WPEJv3+jmiLJMMuZAGHiD9bWXP1KH51xOMtprv/OX
+        GQdvgfdgYNJ+W7EoFw/JCYg1kokNGS9oMycYNCR8pmZSaUT3nALh9p1fVO23r29D45rv1p
+        d9VdGIHW6hIzWO/O1frNbQqFYH0OCTA=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-547-zlYMORwPNjWzo7aVlznyZw-1; Mon, 10 Jul 2023 09:20:08 -0400
+X-MC-Unique: zlYMORwPNjWzo7aVlznyZw-1
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-55c1c7f872bso3292869a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 06:20:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688995206; x=1691587206;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BV4nji85a+mPY3kj67G42V3oBEYwbWqct70gcMhmixM=;
+        b=gfEEHtA8VVL94VqY+u6e/Kf1oHc7YG6o3jb/mFBuf5TgsUwio1pnKMb/QtP08nh8Gr
+         ua1bMbo2vXWLBDT5mE/vqpi0Kyucf8UuHSPIMFFDgbx2Qu/v0xtA3N1QG6/J4t6/4w0p
+         nrvYmPjrSHCzTbjEm1pSbdcI5zW9XZliQLxvC//6u7tF/anru+xiK88GZkG4euPKgm1e
+         uyx2RB8E0iOxybiPvNMDAvHloWNL9GtCqVtHDh7scbXXNqjKz98p4o0Ts2NMIU6hjzf8
+         0fpoPWupR1QCCQTn/dNNCZGXjudQrdSzMl2FmzngT1TxOLohQbUwm3qu3cJm8ril7aN9
+         0Mhw==
+X-Gm-Message-State: ABy/qLaPeWVjHoIWjH7EIL19v/8F1xb054ccVWxEjb6dfOqFSib1kdnV
+        aGAycjKb8SKe52sDmZ5Zzsy7+Inig23xSFZtiiKNnMP530v/8aBHkVMhqBsBmaAy5A0SL21s1A3
+        7n9PooKottUxKxMY48OVenGDG6JBDA6WoG39IqezeQkAJRo52/0CQ
+X-Received: by 2002:a17:902:7003:b0:1b3:d4ed:8306 with SMTP id y3-20020a170902700300b001b3d4ed8306mr10048106plk.19.1688995206246;
+        Mon, 10 Jul 2023 06:20:06 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlG8SeibqeafomP0ohyldI7j5j7dJgFlJrmuNkW6V0W3Pc+EoS6medukPetid8d+FD0HSmKSEh57NmZCbZ2N7rM=
+X-Received: by 2002:a17:902:7003:b0:1b3:d4ed:8306 with SMTP id
+ y3-20020a170902700300b001b3d4ed8306mr10048091plk.19.1688995205937; Mon, 10
+ Jul 2023 06:20:05 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230523085929.614A.409509F4@e16-tech.com> <20230528235314.7852.409509F4@e16-tech.com>
+In-Reply-To: <20230528235314.7852.409509F4@e16-tech.com>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Mon, 10 Jul 2023 15:19:54 +0200
+Message-ID: <CAHc6FU5YYADEE1m2skcZxOb5fC24JDcJvHtBoq6ZCttB3BhObA@mail.gmail.com>
+Subject: Re: [Cluster-devel] gfs2 write bandwidth regression on 6.4-rc3
+ compareto 5.15.y
+To:     Wang Yugui <wangyugui@e16-tech.com>
+Cc:     Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         Dave Chinner <david@fromorbit.com>,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J . Wong" <djwong@kernel.org>,
-        Kent Overstreet <kent.overstreet@linux.dev>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v4 9/9] iomap: Copy larger chunks from userspace
-Date:   Mon, 10 Jul 2023 14:02:53 +0100
-Message-Id: <20230710130253.3484695-10-willy@infradead.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20230710130253.3484695-1-willy@infradead.org>
-References: <20230710130253.3484695-1-willy@infradead.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -54,85 +81,78 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If we have a large folio, we can copy in larger chunks than PAGE_SIZE.
-Start at the maximum page cache size and shrink by half every time we
-hit the "we are short on memory" problem.
+Hi Wang Yugui,
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- fs/iomap/buffered-io.c | 32 +++++++++++++++++---------------
- 1 file changed, 17 insertions(+), 15 deletions(-)
+On Sun, May 28, 2023 at 5:53=E2=80=AFPM Wang Yugui <wangyugui@e16-tech.com>=
+ wrote:
+> Hi,
+>
+> > Hi,
+> >
+> > gfs2 write bandwidth regression on 6.4-rc3 compare to 5.15.y.
+> >
+> > we added  linux-xfs@ and linux-fsdevel@ because some related problem[1]
+> > and related patches[2].
+> >
+> > we compared 6.4-rc3(rather than 6.1.y) to 5.15.y because some related p=
+atches[2]
+> > work only for 6.4 now.
+> >
+> > [1] https://lore.kernel.org/linux-xfs/20230508172406.1CF3.409509F4@e16-=
+tech.com/
+> > [2] https://lore.kernel.org/linux-xfs/20230520163603.1794256-1-willy@in=
+fradead.org/
+> >
+> >
+> > test case:
+> > 1) PCIe3 SSD *4 with LVM
+> > 2) gfs2 lock_nolock
+> >     gfs2 attr(T) GFS2_AF_ORLOV
+> >    # chattr +T /mnt/test
+> > 3) fio
+> > fio --name=3Dglobal --rw=3Dwrite -bs=3D1024Ki -size=3D32Gi -runtime=3D3=
+0 -iodepth 1
+> > -ioengine sync -zero_buffers=3D1 -direct=3D0 -end_fsync=3D1 -numjobs=3D=
+1 \
+> >       -name write-bandwidth-1 -filename=3D/mnt/test/sub1/1.txt \
+> >       -name write-bandwidth-2 -filename=3D/mnt/test/sub2/1.txt \
+> >       -name write-bandwidth-3 -filename=3D/mnt/test/sub3/1.txt \
+> >       -name write-bandwidth-4 -filename=3D/mnt/test/sub4/1.txt
+> > 4) patches[2] are applied to 6.4-rc3.
+> >
+> >
+> > 5.15.y result
+> >       fio WRITE: bw=3D5139MiB/s (5389MB/s),
+> > 6.4-rc3 result
+> >       fio  WRITE: bw=3D2599MiB/s (2725MB/s)
+>
+> more test result:
+>
+> 5.17.0  WRITE: bw=3D4988MiB/s (5231MB/s)
+> 5.18.0  WRITE: bw=3D5165MiB/s (5416MB/s)
+> 5.19.0  WRITE: bw=3D5511MiB/s (5779MB/s)
+> 6.0.5   WRITE: bw=3D3055MiB/s (3203MB/s), WRITE: bw=3D3225MiB/s (3382MB/s=
+)
+> 6.1.30  WRITE: bw=3D2579MiB/s (2705MB/s)
+>
+> so this regression  happen in some code introduced in 6.0,
+> and maybe some minor regression in 6.1 too?
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 2d3e90f4d16e..f21f1f641c4a 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -769,6 +769,7 @@ static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
- static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- {
- 	loff_t length = iomap_length(iter);
-+	size_t chunk = PAGE_SIZE << MAX_PAGECACHE_ORDER;
- 	loff_t pos = iter->pos;
- 	ssize_t written = 0;
- 	long status = 0;
-@@ -777,15 +778,12 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 
- 	do {
- 		struct folio *folio;
--		struct page *page;
--		unsigned long offset;	/* Offset into pagecache page */
--		unsigned long bytes;	/* Bytes to write to page */
-+		size_t offset;		/* Offset into folio */
-+		size_t bytes;		/* Bytes to write to folio */
- 		size_t copied;		/* Bytes copied from user */
- 
--		offset = offset_in_page(pos);
--		bytes = min_t(unsigned long, PAGE_SIZE - offset,
--						iov_iter_count(i));
--again:
-+		offset = pos & (chunk - 1);
-+		bytes = min(chunk - offset, iov_iter_count(i));
- 		status = balance_dirty_pages_ratelimited_flags(mapping,
- 							       bdp_flags);
- 		if (unlikely(status))
-@@ -815,12 +813,14 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 		if (iter->iomap.flags & IOMAP_F_STALE)
- 			break;
- 
--		page = folio_file_page(folio, pos >> PAGE_SHIFT);
--		if (mapping_writably_mapped(mapping))
--			flush_dcache_page(page);
-+		offset = offset_in_folio(folio, pos);
-+		if (bytes > folio_size(folio) - offset)
-+			bytes = folio_size(folio) - offset;
- 
--		copied = copy_page_from_iter_atomic(page, offset, bytes, i);
-+		if (mapping_writably_mapped(mapping))
-+			flush_dcache_folio(folio);
- 
-+		copied = copy_folio_from_iter_atomic(folio, offset, bytes, i);
- 		status = iomap_write_end(iter, pos, bytes, copied, folio);
- 
- 		if (unlikely(copied != status))
-@@ -836,11 +836,13 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 			 */
- 			if (copied)
- 				bytes = copied;
--			goto again;
-+			if (chunk > PAGE_SIZE)
-+				chunk /= 2;
-+		} else {
-+			pos += status;
-+			written += status;
-+			length -= status;
- 		}
--		pos += status;
--		written += status;
--		length -= status;
- 	} while (iov_iter_count(i) && length);
- 
- 	if (status == -EAGAIN) {
--- 
-2.39.2
+thanks for this bug report. Bob has noticed a similar looking
+performance regression recently, and it turned out that commit
+e1fa9ea85ce8 ("gfs2: Stop using glock holder auto-demotion for now")
+inadvertently caused buffered writes to fall back to writing single
+pages instead of multiple pages at once. That patch was added in
+v5.18, so it doesn't perfectly align with the regression history
+you're reporting, but maybe there's something else going on that we're
+not aware of.
+
+In any case, the regression introduced by commit e1fa9ea85ce8 should
+be fixed by commit c8ed1b359312 ("gfs2: Fix duplicate
+should_fault_in_pages() call"), which ended up in v6.5-rc1.
+
+Could you please check where we end up with that fix?
+
+Thank you very much,
+Andreas
 
