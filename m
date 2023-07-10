@@ -2,101 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 663AA74CE8E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jul 2023 09:36:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE2FA74CEC2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jul 2023 09:44:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230386AbjGJHgR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jul 2023 03:36:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41714 "EHLO
+        id S230433AbjGJHoC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jul 2023 03:44:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229659AbjGJHgQ (ORCPT
+        with ESMTP id S231435AbjGJHnz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jul 2023 03:36:16 -0400
-Received: from todd.t-8ch.de (todd.t-8ch.de [IPv6:2a01:4f8:c010:41de::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94254EC;
-        Mon, 10 Jul 2023 00:36:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
-        t=1688974570; bh=wtMH4x5k93+5UQkNxRZ4qkKRzT5QI5tjnFGasrZuo2U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=D/kTCuYSi/lR7oEx1oCIS8+4w5z4MlZrR+nxs2VaSfqBX4g6/9jOaYmstXSJ3ulWK
-         vEkZDVodH9IcixSiSXY6lkO+R1FKb8gx1aU3ZF5QjnwcXlicEWASUo2Uy7mNpNe+uC
-         fhWUBh0IrItdgKttpXyxdVMAibbDTwbO9wPrVN3s=
-Date:   Mon, 10 Jul 2023 09:36:09 +0200
-From:   Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-To:     Willy Tarreau <w@1wt.eu>
-Cc:     Zhangjin Wu <falcon@tinylab.org>, arnd@arndb.de,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, shuah@kernel.org
-Subject: Re: [PATCH 0/2] proc: proc_setattr for /proc/$PID/net
-Message-ID: <7d4163ad-f9bc-4361-ab8a-673eb9336b63@t-8ch.de>
-References: <20230624-proc-net-setattr-v1-0-73176812adee@weissschuh.net>
- <20230630140609.263790-1-falcon@tinylab.org>
- <20230709092947.GF9321@1wt.eu>
- <3261fa5b-b239-48a2-b1a8-34f80567cde1@t-8ch.de>
- <20230709172753.GA22287@1wt.eu>
- <df91b1d3-2c66-4a6b-9a8a-544679bc09a8@t-8ch.de>
- <20230709180432.GA22685@1wt.eu>
- <74eddce8-4f59-40c8-bc49-38c286a3cbb0@t-8ch.de>
- <ZKuuoB6fcAV3ucFM@1wt.eu>
+        Mon, 10 Jul 2023 03:43:55 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87ADC124
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 00:43:50 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f14865fcc0so3002e87.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 00:43:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1688975029; x=1691567029;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nS9m98kU7hDON5ryRvZOg6LMxfmYBsr98C/Sd1A13CI=;
+        b=RRqBnnb//nW6t3nRLasnJxQx/GuIxdAwXp2wOP+BcyAvcthgWgkd+sTtfie/kr9sAd
+         GEA+ScniPM6o+JkXSqNJOQPrsNrlUwGtSErq4Ck12+nVA1sryxW0D9j2QH2+W0Osm37g
+         wWZ41cJxErNPAQerVielB8/hlK1eqCAna5mAUYY1dO3atmeeNXzMNhTCbb2V12JU+rhO
+         VXztVnfWWTLxZRc43VtumJ69UvXhYIeU4FvO62r+Qk7YG3h679bl3vSofsRls4sGjdhb
+         hQ9Nbyuq5rvLS3xQB2FtQOB4lM9k+CkCX9t940ApquPV0ZZfzq+i5NLGjwJvT9hbo8jm
+         TpyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688975029; x=1691567029;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nS9m98kU7hDON5ryRvZOg6LMxfmYBsr98C/Sd1A13CI=;
+        b=XPunE6UNAAhCnhzqaFF+nwoErUGjtmC56tFX0U4ocFzIHMNXYRZh65Y2pSurWDqiq9
+         n7x21mqP29pYVFuSpfv8M6xVImsDDxuTUD26UalaqGUE7KpTjRcmKTA1RhR0RImJTJ9F
+         WtIoxWQYgDZ8ICjnS4zav2r85sfo5n13MtuDYZ04mNam9D2DsCwtEBnw3HTSfTMObO0n
+         rYpv+o8rGYTtJ3Rff4W5MnUaIICdhcnUz1XX2HJhrlFNEoqGk8gYE6xMfeP2IiSvuPty
+         KENkx2lFYbGdILqDNUmdnz3LX2lL8hlB/A8B2T/gH/rIW4T4//0hC71Kcf7AvOXz8ydJ
+         WTtg==
+X-Gm-Message-State: ABy/qLZHYDoRlAiInPvhGgmdySvtFklNvC2Ye9AJgd08iMI4pHcQK5U1
+        ZRw63+f+5kd5ylmTQiBBbuwLrNE1w453uEDt+8Bf05qfct2ikmv67+Xcuw==
+X-Google-Smtp-Source: APBJJlG5VAfVRlULynbvxJ7b5YEii6Bpwwntm0JXdb0Ee51roYMqD4NIWeivc+EFp+fX/qxqkVDlqpnoKHZ0tC3zfmY=
+X-Received: by 2002:a05:6512:480d:b0:4ec:5157:bb37 with SMTP id
+ eo13-20020a056512480d00b004ec5157bb37mr66299lfb.2.1688975028537; Mon, 10 Jul
+ 2023 00:43:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZKuuoB6fcAV3ucFM@1wt.eu>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <0000000000002373f005ff843b58@google.com> <1bb83e9d-6d7e-3c80-12f6-847bf2dc865e@google.com>
+ <CACT4Y+akPvTGG0WdPdSuUFU6ZuQkRbVZByiROzqwyPVd8Pz8fQ@mail.gmail.com> <61032955-4200-662b-ace8-bad47d337cdc@os.amperecomputing.com>
+In-Reply-To: <61032955-4200-662b-ace8-bad47d337cdc@os.amperecomputing.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 10 Jul 2023 09:43:36 +0200
+Message-ID: <CACT4Y+YAyK02ORyzS79ub+XOK6x5LV8_2k4aztwzjP=0dm--RQ@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] [reiserfs?] kernel panic: stack is corrupted in ___slab_alloc
+To:     "Lameter, Christopher" <cl@os.amperecomputing.com>
+Cc:     David Rientjes <rientjes@google.com>,
+        syzbot <syzbot+cf0693aee9ea61dda749@syzkaller.appspotmail.com>,
+        42.hyeyoo@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
+        iamjoonsoo.kim@lge.com, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        penberg@kernel.org, reiserfs-devel@vger.kernel.org,
+        roman.gushchin@linux.dev, syzkaller-bugs@googlegroups.com,
+        Vlastimil Babka <vbabka@suse.cz>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023-07-10 09:09:20+0200, Willy Tarreau wrote:
-> On Sun, Jul 09, 2023 at 08:22:31PM +0200, Thomas Weißschuh wrote:
-> > On 2023-07-09 20:04:32+0200, Willy Tarreau wrote:
+On Thu, 6 Jul 2023 at 20:33, Lameter, Christopher
+<cl@os.amperecomputing.com> wrote:
+>
+> On Mon, 3 Jul 2023, Dmitry Vyukov wrote:
+>
+> >> This is happening during while mounting reiserfs, so I'm inclined to think
+> >> it's more of a reisterfs issue than a slab allocator issue :/
+>
+> Have you tried to run with the "slub_debug" kernel option to figure out
+> what got corrupted?
 
-> [..]
-
-> > That should work fine, too.
-> > Can you add the Fixes and Cc-stable tags in your tree and let the fs
-> > maintainers know?
-> 
-> OK here's what it's like now, let me know if you'd prefer any change:
-> 
->   commit 8c2e51e174ed0f998b6bd90244324a4966a55efc
->   Author: Thomas Weißschuh <linux@weissschuh.net>
->   Date:   Sat Jun 24 12:30:46 2023 +0200
-> 
->     selftests/nolibc: drop test chmod_net
->     
->     The test relies on /proc/$PID/net to allow chmod() operations.
->     It is the only file or directory in /proc/$PID/ to allow this and a bug.
->     That bug will be fixed in the next patch in the series and therefore
->     the test would start failing.
-
-As the patch is now standalone the part "fixed in the next patch in the
-series" is not accurate anymore.
-Maybe only "When this bug gets fixed the test would start failing"?
-
->     Link: https://lore.kernel.org/lkml/d0d111ef-edae-4760-83fb-36db84278da1@t-8ch.de/
->     Fixes: b4844fa0bdb4 ("selftests/nolibc: implement a few tests for various syscalls")
-
-+ Cc: stable@vger.kernel.org
-
-The Fixes tag alone is not enough to trigger the formalized backport
-process. It may be picked up anyways through heuristics but that would
-only be luck.
-
->     Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
->     Tested-by: Zhangjin Wu <falcon@tinylab.org>
->     Signed-off-by: Willy Tarreau <w@1wt.eu>
-> 
-> > Or do you want me to split and resend the series?
-> 
-> Not needed, thank you.
-
-Thanks!
-
-Thomas
+Can slub_debug detect anything that KASAN can't?
+I would assume KASAN can detect more bugs (e.g. stack/globals) and
+report way better. And it was already enabled in the config.
