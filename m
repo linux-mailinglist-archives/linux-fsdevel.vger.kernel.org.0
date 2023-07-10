@@ -2,183 +2,224 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67E9174E025
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jul 2023 23:21:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D092474E0CE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 00:00:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230195AbjGJVVZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jul 2023 17:21:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40322 "EHLO
+        id S230049AbjGJWAg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jul 2023 18:00:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjGJVVY (ORCPT
+        with ESMTP id S230018AbjGJWAf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jul 2023 17:21:24 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26661BC
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 14:21:23 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-31427ddd3fbso5160706f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 14:21:23 -0700 (PDT)
+        Mon, 10 Jul 2023 18:00:35 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B51B120
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 15:00:33 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-9891c73e0fbso994977666b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 15:00:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google; t=1689024081; x=1691616081;
+        d=google.com; s=20221208; t=1689026432; x=1691618432;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lQ7g7+AcxoxnsFU8bE87IhRqS4UGLwwarsf5ft7ebmA=;
-        b=yCwPFgvX0n9bam2XVB10ULgOSxhmv+g7JycHWNA8yMYhmn0ps8ge9NQ3tNCS7CESD5
-         irL3pz5232n9hIz55m4ilJIzivoeRqjJ+4JSe2LSdQGjuVweKFAHwHvWrjPyPt4br3pj
-         er+R1xwuKZOE4MJ9o8230qKevoysi5u/1GFoI=
+        bh=QfZzCSrgvGz9BGtS4wsvtCeE34B7/lj4xCbe4JnIP2Q=;
+        b=IELdvlh9d5ofdqTbS2z8RhDc+X1hOJTuBZf0ZbiY48jlt9lPfkJVZe/Wb+ANJ63yBp
+         3tbyTl8zoOZLeyBV+rFCAm3x940PyUDWPt8floL10TItqyH+FrB/lAGZJtOMKZtZt+LE
+         AXebzx74RigJZLsDEDj+71KrNZ7AIkM3jSIZhPTcrbtV9iT+zovNNmAfibmyJQAcAG3s
+         gar9gMyoH8kJeZoRZEbQRzmJOZpL3w6TvRyJ05iXZGAzAKumLDVIkbWrwobqCp/EnIhf
+         WQ1hrqXvH6LHXODojzsxf3hq+oeedejJX94Hat/Qve2IHSIsFzVJsuq7ZMf2QnUCPaxw
+         LZVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689024081; x=1691616081;
+        d=1e100.net; s=20221208; t=1689026432; x=1691618432;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lQ7g7+AcxoxnsFU8bE87IhRqS4UGLwwarsf5ft7ebmA=;
-        b=e5ELX186OAXcN0NuIWZ/UMkweukcrh4knI2MFcCt37B3qR2QcnA9KMF2W7Qwub02Z7
-         OmDa0u6YI/6A09sealyFQBZQ9vDe4vJShozMYCUOvqIt4maUA4K7iT6Y8ysZ7zKIsbN/
-         G0tORB2gI97wOKoVJSn+VV3Q9rthGWuj1j53vERvlNKZzByrHmg+2njoBjy3cx8kTKcy
-         Tf4BpDG3iKWgU85SlY/4X8EpgVk1aNSrXxeLg7G50jVFnQFU62tO5OMe6uCsdUOnGBHc
-         2lpMSEyxdlvOwQK7FSUd/xBBom8twXTtRj7yBtuqvBgLcU02/fycSdyB6jmDsogRvZW0
-         +Cfg==
-X-Gm-Message-State: ABy/qLY1Go+AsJw+7NuMshl9JGd3WqR8W53Gb1SyuPV3SYm+sU5hvArY
-        Il9jCMyPt4iFPswXDU12Fjq5BPLn533QHeqMe5qc6Q==
-X-Google-Smtp-Source: APBJJlH3SN2nYNIgBk+dLUzclEwhTNb+zVtBu430OguEMqwabY7Bek0J/Qh7N2bFBtm2SH0kohTsHRzGvRWA8Hi9jXs=
-X-Received: by 2002:a5d:6047:0:b0:313:e8f9:803 with SMTP id
- j7-20020a5d6047000000b00313e8f90803mr12736503wrt.3.1689024081594; Mon, 10 Jul
- 2023 14:21:21 -0700 (PDT)
+        bh=QfZzCSrgvGz9BGtS4wsvtCeE34B7/lj4xCbe4JnIP2Q=;
+        b=NtRzRrA6zMCLWWfjtutve3o1ro0ZLYt9yBbdo7iJzDIZ8YKVov5VGdw7RfcpMjOjTb
+         R1Gh+3NulxzkgK4kMojGEk6jTAih66CCCDOGkQOTd2502PGEs29rSE4DqUYcy7Rx7SYr
+         QYffuWQZMZTd7dSmMNDg93NzZ8ehZU/i53M6ArJ8KUI/QvliryYewl6NtAKf94+ovKap
+         yOmg9QZWEqg6BvPf4t5o5lbXm1r4cWU/PoGbRu0OuSySCd7oGl/eX4VJtqHGeGY35/UR
+         91Tgd29dB2wQhdGqqQ6yOkWccJMEzfXMRED6og5jJbTBB7EtTr+rHQ2czY8s/PuLpa7N
+         YEag==
+X-Gm-Message-State: ABy/qLavnId1hJ/TKKJHF5P/MlZ3ewPCY5MvRkh4o3cQ89pgwcnw128O
+        gsNhfzDWCi/NpcdmuM4YWi2js3Yh1Lh8DeblakjwSQ==
+X-Google-Smtp-Source: APBJJlF6PnMVGMOTSmSf3fdPKR5ba1hPx/zIlHrvaJ4KBennSkMIDBj6INtn7vwYR7M3C9Di2GejevZRUk2uTbDHu9g=
+X-Received: by 2002:a17:907:c29:b0:993:e85c:4ad6 with SMTP id
+ ga41-20020a1709070c2900b00993e85c4ad6mr13335087ejc.7.1689026431632; Mon, 10
+ Jul 2023 15:00:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230710183338.58531-1-ivan@cloudflare.com> <2023071039-negate-stalemate-6987@gregkh>
-In-Reply-To: <2023071039-negate-stalemate-6987@gregkh>
-From:   Ivan Babrou <ivan@cloudflare.com>
-Date:   Mon, 10 Jul 2023 14:21:10 -0700
-Message-ID: <CABWYdi39+TJd1qV3nWs_eYc7XMC0RvxG22ihfq7rzuPaNvn1cQ@mail.gmail.com>
-Subject: Re: [PATCH] kernfs: attach uuid for every kernfs and report it in fsid
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, kernel-team@cloudflare.com,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
-        Zefan Li <lizefan.x@bytedance.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
+References: <20230707215540.2324998-1-axelrasmussen@google.com>
+ <20230707215540.2324998-2-axelrasmussen@google.com> <20230708180850.bc938ab49fbfb38b83c367c8@linux-foundation.org>
+ <CAJHvVcgfN5RVXJ_f3tN2UinV_kWCMyCY_g5oKm=BtgQJz-e7gA@mail.gmail.com>
+In-Reply-To: <CAJHvVcgfN5RVXJ_f3tN2UinV_kWCMyCY_g5oKm=BtgQJz-e7gA@mail.gmail.com>
+From:   Axel Rasmussen <axelrasmussen@google.com>
+Date:   Mon, 10 Jul 2023 14:59:55 -0700
+Message-ID: <CAJHvVch5j=J=d-TqC1bgN6bKLrr0N3W7cwSOAqHf8O3axqapwA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/8] mm: make PTE_MARKER_SWAPIN_ERROR more general
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Brian Geffon <bgeffon@google.com>,
+        Christian Brauner <brauner@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Gaosheng Cui <cuigaosheng1@huawei.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Hugh Dickins <hughd@google.com>,
+        James Houghton <jthoughton@google.com>,
+        "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>,
+        Jiaqi Yan <jiaqiyan@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        "Mike Rapoport (IBM)" <rppt@kernel.org>,
+        Muchun Song <muchun.song@linux.dev>,
+        Nadav Amit <namit@vmware.com>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Peter Xu <peterx@redhat.com>,
+        Ryan Roberts <ryan.roberts@arm.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Suleiman Souhlal <suleiman@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        "T.J. Alumbaugh" <talumbau@google.com>,
+        Yu Zhao <yuzhao@google.com>,
+        ZhangPeng <zhangpeng362@huawei.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 10, 2023 at 12:40=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Mon, Jul 10, 2023 at 10:19=E2=80=AFAM Axel Rasmussen
+<axelrasmussen@google.com> wrote:
 >
-> On Mon, Jul 10, 2023 at 11:33:38AM -0700, Ivan Babrou wrote:
-> > The following two commits added the same thing for tmpfs:
+> On Sat, Jul 8, 2023 at 6:08=E2=80=AFPM Andrew Morton <akpm@linux-foundati=
+on.org> wrote:
 > >
-> > * commit 2b4db79618ad ("tmpfs: generate random sb->s_uuid")
-> > * commit 59cda49ecf6c ("shmem: allow reporting fanotify events with fil=
-e handles on tmpfs")
+> > On Fri,  7 Jul 2023 14:55:33 -0700 Axel Rasmussen <axelrasmussen@google=
+.com> wrote:
 > >
-> > Having fsid allows using fanotify, which is especially handy for cgroup=
-s,
-> > where one might be interested in knowing when they are created or remov=
-ed.
+> > > Future patches will re-use PTE_MARKER_SWAPIN_ERROR to implement
+> > > UFFDIO_POISON, so make some various preparations for that:
+> > >
+> > > First, rename it to just PTE_MARKER_POISONED. The "SWAPIN" can be
+> > > confusing since we're going to re-use it for something not really
+> > > related to swap. This can be particularly confusing for things like
+> > > hugetlbfs, which doesn't support swap whatsoever. Also rename some
+> > > various helper functions.
+> > >
+> > > Next, fix pte marker copying for hugetlbfs. Previously, it would WARN=
+ on
+> > > seeing a PTE_MARKER_SWAPIN_ERROR, since hugetlbfs doesn't support swa=
+p.
+> > > But, since we're going to re-use it, we want it to go ahead and copy =
+it
+> > > just like non-hugetlbfs memory does today. Since the code to do this =
+is
+> > > more complicated now, pull it out into a helper which can be re-used =
+in
+> > > both places. While we're at it, also make it slightly more explicit i=
+n
+> > > its handling of e.g. uffd wp markers.
+> > >
+> > > For non-hugetlbfs page faults, instead of returning VM_FAULT_SIGBUS f=
+or
+> > > an error entry, return VM_FAULT_HWPOISON. For most cases this change
+> > > doesn't matter, e.g. a userspace program would receive a SIGBUS eithe=
+r
+> > > way. But for UFFDIO_POISON, this change will let KVM guests get an MC=
+E
+> > > out of the box, instead of giving a SIGBUS to the hypervisor and
+> > > requiring it to somehow inject an MCE.
+> > >
+> > > Finally, for hugetlbfs faults, handle PTE_MARKER_POISONED, and return
+> > > VM_FAULT_HWPOISON_LARGE in such cases. Note that this can't happen to=
+day
+> > > because the lack of swap support means we'll never end up with such a
+> > > PTE anyway, but this behavior will be needed once such entries *can*
+> > > show up via UFFDIO_POISON.
+> > >
+> > > --- a/include/linux/mm_inline.h
+> > > +++ b/include/linux/mm_inline.h
+> > > @@ -523,6 +523,25 @@ static inline bool mm_tlb_flush_nested(struct mm=
+_struct *mm)
+> > >       return atomic_read(&mm->tlb_flush_pending) > 1;
+> > >  }
+> > >
+> > > +/*
+> > > + * Computes the pte marker to copy from the given source entry into =
+dst_vma.
+> > > + * If no marker should be copied, returns 0.
+> > > + * The caller should insert a new pte created with make_pte_marker()=
+.
+> > > + */
+> > > +static inline pte_marker copy_pte_marker(
+> > > +             swp_entry_t entry, struct vm_area_struct *dst_vma)
+> > > +{
+> > > +     pte_marker srcm =3D pte_marker_get(entry);
+> > > +     /* Always copy error entries. */
+> > > +     pte_marker dstm =3D srcm & PTE_MARKER_POISONED;
+> > > +
+> > > +     /* Only copy PTE markers if UFFD register matches. */
+> > > +     if ((srcm & PTE_MARKER_UFFD_WP) && userfaultfd_wp(dst_vma))
+> > > +             dstm |=3D PTE_MARKER_UFFD_WP;
+> > > +
+> > > +     return dstm;
+> > > +}
 > >
-> > Signed-off-by: Ivan Babrou <ivan@cloudflare.com>
-> > ---
-> >  fs/kernfs/mount.c | 13 ++++++++++++-
-> >  1 file changed, 12 insertions(+), 1 deletion(-)
+> > Breaks the build with CONFIG_MMU=3Dn (arm allnoconfig).  pte_marker isn=
+'t
+> > defined.
 > >
-> > diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
-> > index d49606accb07..930026842359 100644
-> > --- a/fs/kernfs/mount.c
-> > +++ b/fs/kernfs/mount.c
-> > @@ -16,6 +16,8 @@
-> >  #include <linux/namei.h>
-> >  #include <linux/seq_file.h>
-> >  #include <linux/exportfs.h>
-> > +#include <linux/uuid.h>
-> > +#include <linux/statfs.h>
-> >
-> >  #include "kernfs-internal.h"
-> >
-> > @@ -45,8 +47,15 @@ static int kernfs_sop_show_path(struct seq_file *sf,=
- struct dentry *dentry)
-> >       return 0;
-> >  }
-> >
-> > +int kernfs_statfs(struct dentry *dentry, struct kstatfs *buf)
-> > +{
-> > +     simple_statfs(dentry, buf);
-> > +     buf->f_fsid =3D uuid_to_fsid(dentry->d_sb->s_uuid.b);
-> > +     return 0;
-> > +}
-> > +
-> >  const struct super_operations kernfs_sops =3D {
-> > -     .statfs         =3D simple_statfs,
-> > +     .statfs         =3D kernfs_statfs,
-> >       .drop_inode     =3D generic_delete_inode,
-> >       .evict_inode    =3D kernfs_evict_inode,
-> >
-> > @@ -351,6 +360,8 @@ int kernfs_get_tree(struct fs_context *fc)
-> >               }
-> >               sb->s_flags |=3D SB_ACTIVE;
-> >
-> > +             uuid_gen(&sb->s_uuid);
+> > I'll slap #ifdef CONFIG_MMU around this function, but probably somethng=
+ more
+> > fine-grained could be used, like CONFIG_PTE_MARKER_UFFD_WP.  Please
+> > consider.
 >
-> Since kernfs has as lot of nodes (like hundreds of thousands if not more
-> at times, being created at boot time), did you just slow down creating
-> them all, and increase the memory usage in a measurable way?
+> Whoops, sorry about this. This function "ought" to be in
+> include/linux/swapops.h where it would be inside a #ifdef CONFIG_MMU
+> anyway, but it can't be because it uses userfaultfd_wp() so there'd be
+> a circular include. I think just wrapping it in CONFIG_MMU is the
+> right way.
+>
+> But, this has also made me realize we need to not advertise
+> UFFDIO_POISON as supported unless we have CONFIG_MMU. I don't want
+> HAVE_ARCH_USERFAULTFD_WP for that, because it's only enabled on
+> x86_64, whereas I want to support at least arm64 as well. I don't see
+> a strong reason not to just use CONFIG_MMU for this too; this feature
+> depends on the API in swapops.h, which uses that ifdef, so I don't see
+> a lot of value out of creating a new but equivalent config option.
 
-This is just for the superblock, not every inode. The memory increase
-is one UUID per kernfs instance (there are maybe 10 of them on a basic
-system), which is trivial. Same goes for CPU usage.
+Actually, I'm being silly. CONFIG_USERFAULTFD depends on CONFIG_MMU,
+so we don't need to worry about most of this.
 
-> We were trying to slim things down, what userspace tools need this
-> change?  Who is going to use it, and what for?
+Andrew's fix to just wrap the helper in CONFIG_MMU is enough.
 
-The one concrete thing is ebpf_exporter:
+>
+> I'll make the needed changes (and also address Peter's comment above)
+> and send out a v5.
+>
+> >
+> > btw, both copy_pte_marker() and pte_install_uffd_wp_if_needed() look
+> > far too large to justify inlining.  Please review the desirability of
+> > this.
 
-* https://github.com/cloudflare/ebpf_exporter
+As far as inlining goes, I'm not opposed to un-inlining this, I was
+mainly copying that pattern from existing helpers in swapops.h.
 
-I want to monitor cgroup changes, so that I can have an up to date map
-of inode -> cgroup path, so that I can resolve the value returned from
-bpf_get_current_cgroup_id() into something that a human can easily
-grasp (think system.slice/nginx.service). Currently I do a full sweep
-to build a map, which doesn't work if a cgroup is short lived, as it
-just disappears before I can resolve it. Unfortunately, systemd
-recycles cgroups on restart, changing inode number, so this is a very
-real issue.
+One question is, if it weren't inline, where should it go? There is no
+mm/swapops.c which I would say is otherwise the proper place for it. I
+don't see any other good place for the functions to go. The one I'm
+introducing isn't userfaultfd-specific so userfaultfd.c seems wrong.
 
-There's also this old wiki page from systemd:
-
-* https://freedesktop.org/wiki/Software/systemd/Optimizations
-
-Quoting from there:
-
-> Get rid of systemd-cgroups-agent. Currently, whenever a systemd cgroup ru=
-ns empty a tool "systemd-cgroups-agent" is invoked by the kernel which then=
- notifies systemd about it. The need for this tool should really go away, w=
-hich will save a number of forked processes at boot, and should make things=
- faster (especially shutdown). This requires introduction of a new kernel i=
-nterface to get notifications for cgroups running empty, for example via fa=
-notify() on cgroupfs.
-
-So a similar need to mine, but for different systemd-related needs.
-
-Initially I tried adding this for cgroup fs only, but the problem felt
-very generic, so I pivoted to having it in kernfs instead, so that any
-kernfs based filesystem would benefit.
-
-Given pretty much non-existing overhead and simplicity of this, I
-think it's a change worth doing, unless there's a good reason to not
-do it. I cc'd plenty of people to make sure it's not a bad decision.
-
-> There were some benchmarks people were doing with booting large memory
-> systems that you might want to reproduce here to verify that nothing is
-> going to be harmed.
-
-Skipping this given that overhead is per superblock and trivial.
+> >
+> >
