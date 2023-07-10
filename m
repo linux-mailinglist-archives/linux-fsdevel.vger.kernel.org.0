@@ -2,157 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A48BC74D759
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jul 2023 15:21:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A4A774D769
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jul 2023 15:22:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231389AbjGJNVA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jul 2023 09:21:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34152 "EHLO
+        id S231625AbjGJNWj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jul 2023 09:22:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231624AbjGJNU7 (ORCPT
+        with ESMTP id S231513AbjGJNWg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jul 2023 09:20:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6B30E5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 06:20:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688995208;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BV4nji85a+mPY3kj67G42V3oBEYwbWqct70gcMhmixM=;
-        b=LMKvrPyvSnsu3PuA0fiUDuke9HjS2WPEJv3+jmiLJMMuZAGHiD9bWXP1KH51xOMtprv/OX
-        GQdvgfdgYNJ+W7EoFw/JCYg1kokNGS9oMycYNCR8pmZSaUT3nALh9p1fVO23r29D45rv1p
-        d9VdGIHW6hIzWO/O1frNbQqFYH0OCTA=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-547-zlYMORwPNjWzo7aVlznyZw-1; Mon, 10 Jul 2023 09:20:08 -0400
-X-MC-Unique: zlYMORwPNjWzo7aVlznyZw-1
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-55c1c7f872bso3292869a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 06:20:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688995206; x=1691587206;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BV4nji85a+mPY3kj67G42V3oBEYwbWqct70gcMhmixM=;
-        b=gfEEHtA8VVL94VqY+u6e/Kf1oHc7YG6o3jb/mFBuf5TgsUwio1pnKMb/QtP08nh8Gr
-         ua1bMbo2vXWLBDT5mE/vqpi0Kyucf8UuHSPIMFFDgbx2Qu/v0xtA3N1QG6/J4t6/4w0p
-         nrvYmPjrSHCzTbjEm1pSbdcI5zW9XZliQLxvC//6u7tF/anru+xiK88GZkG4euPKgm1e
-         uyx2RB8E0iOxybiPvNMDAvHloWNL9GtCqVtHDh7scbXXNqjKz98p4o0Ts2NMIU6hjzf8
-         0fpoPWupR1QCCQTn/dNNCZGXjudQrdSzMl2FmzngT1TxOLohQbUwm3qu3cJm8ril7aN9
-         0Mhw==
-X-Gm-Message-State: ABy/qLaPeWVjHoIWjH7EIL19v/8F1xb054ccVWxEjb6dfOqFSib1kdnV
-        aGAycjKb8SKe52sDmZ5Zzsy7+Inig23xSFZtiiKNnMP530v/8aBHkVMhqBsBmaAy5A0SL21s1A3
-        7n9PooKottUxKxMY48OVenGDG6JBDA6WoG39IqezeQkAJRo52/0CQ
-X-Received: by 2002:a17:902:7003:b0:1b3:d4ed:8306 with SMTP id y3-20020a170902700300b001b3d4ed8306mr10048106plk.19.1688995206246;
-        Mon, 10 Jul 2023 06:20:06 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlG8SeibqeafomP0ohyldI7j5j7dJgFlJrmuNkW6V0W3Pc+EoS6medukPetid8d+FD0HSmKSEh57NmZCbZ2N7rM=
-X-Received: by 2002:a17:902:7003:b0:1b3:d4ed:8306 with SMTP id
- y3-20020a170902700300b001b3d4ed8306mr10048091plk.19.1688995205937; Mon, 10
- Jul 2023 06:20:05 -0700 (PDT)
+        Mon, 10 Jul 2023 09:22:36 -0400
+Received: from tarta.nabijaczleweli.xyz (unknown [139.28.40.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4E82BFA;
+        Mon, 10 Jul 2023 06:22:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
+        s=202305; t=1688995347;
+        bh=S42i91srJauPHv7nLTKa96Nt33BGWfPrr0AmwrhyPgU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bsGRzJft09o0RYEMCirnoIy1WrdBam0Rfv/R7FPmtRneollNJULiv/kf8RsQkIIwz
+         1xS44c0uuW0xjqwJLYZSDOWVWHr8Xa5HlpduTRhVERORQkoyu8OQRECFzW6y/0ryBN
+         dMdVairKLsTwy1PQjW1hidwNdCBTdv2hFAcsFZVVdhyrKPXohnFZ5xDqE6jvhidxi7
+         PybZqhxcGJHUtpeg1AZoaxXjOnqfl5ODNnOubwn+bCyLi17pIVS+xODeTy4mE5u3c6
+         9aK10vVQcSFS8eBJq4oq0Jdta0pRpUb+IMVCTOOSkRtCUt3KWPxgmZlhCDRtEc0f6d
+         /d5T01obWU9Dw==
+Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
+        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 688D12CCA;
+        Mon, 10 Jul 2023 15:22:27 +0200 (CEST)
+Date:   Mon, 10 Jul 2023 15:22:26 +0200
+From:   Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
+        <nabijaczleweli@nabijaczleweli.xyz>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        David Howells <dhowells@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Pending splice(file -> FIFO) excludes all other FIFO operations
+ forever (was: ... always blocks read(FIFO), regardless of O_NONBLOCK on read
+ side?)
+Message-ID: <5osglsw36dla3mubtpsmdwdid4fsdacplyd6acx2igo4atogdg@yur3idyim3cc>
+References: <qyohloajo5pvnql3iadez4fzgiuztmx7hgokizp546lrqw3axt@ui5s6kfizj3j>
+ <CAHk-=wgmLd78uSLU9A9NspXyTM9s6C23OVDiN2YjA-d8_S0zRg@mail.gmail.com>
+ <20230707-konsens-ruckartig-211a4fb24e27@brauner>
+ <CAHk-=whHXogGiPkGFwQQBtn364M4caVNcBTs7hLNfa_X67ouzA@mail.gmail.com>
+ <zu7gnignulf7qqnoblpzjbu6cx5xtk2qum2uqr7q52ahxjbtdx@4ergovgpfuxt>
+ <CAHk-=wjEC_Rh8+-rtEi8C45upO-Ffw=M_i1211qS_3AvWZCbOg@mail.gmail.com>
+ <ltbgocygx4unco6ssoiszwsgjmztyuxkqja3omvvyqvpii6dac@5abamn33galn>
+ <CAHk-=wimmqG_wvSRtMiKPeGGDL816n65u=Mq2+H3-=uM2U6FmA@mail.gmail.com>
+ <ayhdkedfibrhqrqi7bhzvkwz4yj44cmpcnzeop3dfqiujeheq3@dmgcirri46ut>
+ <gnj4drf7llod4voaaasoh5jdlq545gduishrbc3ql3665pw7qy@ytd5ykxc4gsr>
 MIME-Version: 1.0
-References: <20230523085929.614A.409509F4@e16-tech.com> <20230528235314.7852.409509F4@e16-tech.com>
-In-Reply-To: <20230528235314.7852.409509F4@e16-tech.com>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Mon, 10 Jul 2023 15:19:54 +0200
-Message-ID: <CAHc6FU5YYADEE1m2skcZxOb5fC24JDcJvHtBoq6ZCttB3BhObA@mail.gmail.com>
-Subject: Re: [Cluster-devel] gfs2 write bandwidth regression on 6.4-rc3
- compareto 5.15.y
-To:     Wang Yugui <wangyugui@e16-tech.com>
-Cc:     Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xal4bth6dik3niji"
+Content-Disposition: inline
+In-Reply-To: <gnj4drf7llod4voaaasoh5jdlq545gduishrbc3ql3665pw7qy@ytd5ykxc4gsr>
+User-Agent: NeoMutt/20230517
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RDNS_DYNAMIC,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Wang Yugui,
 
-On Sun, May 28, 2023 at 5:53=E2=80=AFPM Wang Yugui <wangyugui@e16-tech.com>=
- wrote:
-> Hi,
->
-> > Hi,
-> >
-> > gfs2 write bandwidth regression on 6.4-rc3 compare to 5.15.y.
-> >
-> > we added  linux-xfs@ and linux-fsdevel@ because some related problem[1]
-> > and related patches[2].
-> >
-> > we compared 6.4-rc3(rather than 6.1.y) to 5.15.y because some related p=
-atches[2]
-> > work only for 6.4 now.
-> >
-> > [1] https://lore.kernel.org/linux-xfs/20230508172406.1CF3.409509F4@e16-=
-tech.com/
-> > [2] https://lore.kernel.org/linux-xfs/20230520163603.1794256-1-willy@in=
-fradead.org/
-> >
-> >
-> > test case:
-> > 1) PCIe3 SSD *4 with LVM
-> > 2) gfs2 lock_nolock
-> >     gfs2 attr(T) GFS2_AF_ORLOV
-> >    # chattr +T /mnt/test
-> > 3) fio
-> > fio --name=3Dglobal --rw=3Dwrite -bs=3D1024Ki -size=3D32Gi -runtime=3D3=
-0 -iodepth 1
-> > -ioengine sync -zero_buffers=3D1 -direct=3D0 -end_fsync=3D1 -numjobs=3D=
-1 \
-> >       -name write-bandwidth-1 -filename=3D/mnt/test/sub1/1.txt \
-> >       -name write-bandwidth-2 -filename=3D/mnt/test/sub2/1.txt \
-> >       -name write-bandwidth-3 -filename=3D/mnt/test/sub3/1.txt \
-> >       -name write-bandwidth-4 -filename=3D/mnt/test/sub4/1.txt
-> > 4) patches[2] are applied to 6.4-rc3.
-> >
-> >
-> > 5.15.y result
-> >       fio WRITE: bw=3D5139MiB/s (5389MB/s),
-> > 6.4-rc3 result
-> >       fio  WRITE: bw=3D2599MiB/s (2725MB/s)
->
-> more test result:
->
-> 5.17.0  WRITE: bw=3D4988MiB/s (5231MB/s)
-> 5.18.0  WRITE: bw=3D5165MiB/s (5416MB/s)
-> 5.19.0  WRITE: bw=3D5511MiB/s (5779MB/s)
-> 6.0.5   WRITE: bw=3D3055MiB/s (3203MB/s), WRITE: bw=3D3225MiB/s (3382MB/s=
-)
-> 6.1.30  WRITE: bw=3D2579MiB/s (2705MB/s)
->
-> so this regression  happen in some code introduced in 6.0,
-> and maybe some minor regression in 6.1 too?
+--xal4bth6dik3niji
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-thanks for this bug report. Bob has noticed a similar looking
-performance regression recently, and it turned out that commit
-e1fa9ea85ce8 ("gfs2: Stop using glock holder auto-demotion for now")
-inadvertently caused buffered writes to fall back to writing single
-pages instead of multiple pages at once. That patch was added in
-v5.18, so it doesn't perfectly align with the regression history
-you're reporting, but maybe there's something else going on that we're
-not aware of.
+On Mon, Jul 10, 2023 at 12:33:07AM +0200, Ahelenia Ziemia=C5=84ska wrote:
+> On Sun, Jul 09, 2023 at 03:03:22AM +0200, Ahelenia Ziemia=C5=84ska wrote:
+> > On Sat, Jul 08, 2023 at 01:06:56PM -0700, Linus Torvalds wrote:
+> > > I guess combined with something like
+> > >=20
+> > >         if (!(in->f_mode & FMODE_NOWAIT))
+> > >                 return -EINVAL;
+> > >=20
+> > > it might all work.
+> > Yes, that makes the splice instantly -EINVAL for ttys, but doesn't
+> > affect the socketpair() case above, which still blocks forever.
+> This also triggers for regular file -> pipe splices,
+> which is probably a no-go.
+Actually, that's only the case for regular files on some filesystems?
+I originally tested on tmpfs, and now on vfat, ramfs, procfs, and sysfs,
+and none have FMODE_NOWAIT set.
 
-In any case, the regression introduced by commit e1fa9ea85ce8 should
-be fixed by commit c8ed1b359312 ("gfs2: Fix duplicate
-should_fault_in_pages() call"), which ended up in v6.5-rc1.
+Conversely, ext4 and XFS files both have FMODE_NOWAIT set,
+and behave like blockdevs incl. the filemap_splice_read() oddities below.
 
-Could you please check where we end up with that fix?
+Indeed, it looks like Some filesystems
+(btrfs/ext4/f2fs/ocfs2/xfs, blockdevs, /dev/{null,zero,random,urandom},
+ pipes, tun/tap)
+set FMODE_NOWAIT, but that's by far not All of them, so maybe
+  /* File is capable of returning -EAGAIN if I/O will block */
+is not the right check for regular files.
 
-Thank you very much,
-Andreas
+> filemap_get_pages() does use and inspect IOCB_NOWAIT if set in
+> filemap_splice_read(), but it appears to not really make much sense,
+> inasmuch it returns EAGAIN for the first splice() from a
+> blockdev and then instantly return with data on the next go-around.
+Indeed, this is inconsistent to both:
+  * readv2(off=3D-1, RWF_NOWAIT), which always returns EAGAIN, and
+  * fcntl(0, F_SETFL, O_NONBLOCK), read(), which always reads.
 
+Thus,
+> This doesn't really make much sense =E2=80=92 and open(2) says blockdevs
+> don't have O_NONBLOCK semantics, so I'm assuming this is not supposed
+> to be exposed to userspace =E2=80=92 so I'm not setting it in the diff.
+not specifying IOCB_NOWAIT in filemap_splice_read() provides consistent
+semantics to "file is read as-if it had O_NONBLOCK set".
+
+
+I've tentatively updated the check to
+		if (!((in->f_mode & FMODE_NOWAIT) || S_ISREG(in->f_inode->i_mode)))
+(with the reasoning, as previously, that regular files don't /have/ a
+ distinct O_NONBLOCK mode, because they always behave non-blockingly)
+and with that
+> I've tested this for:
+  * regular file: works as expected
+
+--xal4bth6dik3niji
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmSsBg8ACgkQvP0LAY0m
+WPFELBAAsKXo6ppXGhW9vySYaO+M2PtLSXb5TV5WswRFexjAKdmhOk8HxN8y9Gsl
+Mn06eqPLgNwnnn7+LiLCmx3HpvTU3tRICDlDjHeuaunW7ILXyLbHNB2D6GQPb0zf
+QzkYohRuPmZllG3IG/7OceHEHHNtMHy23/IwzA+EbYBblTjGFjQLWh4nZxf5jQEt
+ZcJxg+D8tcR+xydWIRx3r8E8dhv7esm357mDi/r8Kyelx+fKTzQGTDxmgqpCi0ps
+FJqgLNzJC+q/2C+zPUQ9dAqmM6qGM39c/csVBNcAn9z3QoOmB1vXaDFe+Arfo9Er
+M0kqoT2r+zUksP67vU2e0w3ypbEWgx23zU87Diz4Y43ig9yiMmtZeGuC6kNF+AWp
+qj3rxBYW6d41YWSyTU7tSfK18mg+owfp9TyamKya6YE5xfSxKLkESOF+zkZMr+7y
+Naqahbm5WFTGgcl6k50dKF81dXWBKij3s3QBai53sXYZrKUv0is9ObEO489aSAYk
+mlQCeFIVPYnUM/aj79tYBkk8zKmpNRZDbwMg5EatQsaUfd8v2xotU0alSYWsjmli
+YrUQDo7OzyA7U6GPwtrx9LLyRh4IrSPdvkpnymjvR0V/rOujGeD1MmAqjRQnbLKL
+Jo0CtS0NC9iaY7c/xKK9i4kNTkUgtypuOmk2mLuab5mOwCBpzAk=
+=65Ez
+-----END PGP SIGNATURE-----
+
+--xal4bth6dik3niji--
