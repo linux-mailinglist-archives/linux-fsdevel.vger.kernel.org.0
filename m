@@ -2,146 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A4A774D769
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jul 2023 15:22:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92A6274D7A9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Jul 2023 15:32:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231625AbjGJNWj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jul 2023 09:22:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36346 "EHLO
+        id S232473AbjGJNct (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jul 2023 09:32:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231513AbjGJNWg (ORCPT
+        with ESMTP id S231307AbjGJNcq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jul 2023 09:22:36 -0400
-Received: from tarta.nabijaczleweli.xyz (unknown [139.28.40.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4E82BFA;
-        Mon, 10 Jul 2023 06:22:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
-        s=202305; t=1688995347;
-        bh=S42i91srJauPHv7nLTKa96Nt33BGWfPrr0AmwrhyPgU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bsGRzJft09o0RYEMCirnoIy1WrdBam0Rfv/R7FPmtRneollNJULiv/kf8RsQkIIwz
-         1xS44c0uuW0xjqwJLYZSDOWVWHr8Xa5HlpduTRhVERORQkoyu8OQRECFzW6y/0ryBN
-         dMdVairKLsTwy1PQjW1hidwNdCBTdv2hFAcsFZVVdhyrKPXohnFZ5xDqE6jvhidxi7
-         PybZqhxcGJHUtpeg1AZoaxXjOnqfl5ODNnOubwn+bCyLi17pIVS+xODeTy4mE5u3c6
-         9aK10vVQcSFS8eBJq4oq0Jdta0pRpUb+IMVCTOOSkRtCUt3KWPxgmZlhCDRtEc0f6d
-         /d5T01obWU9Dw==
-Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
-        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id 688D12CCA;
-        Mon, 10 Jul 2023 15:22:27 +0200 (CEST)
-Date:   Mon, 10 Jul 2023 15:22:26 +0200
-From:   Ahelenia =?utf-8?Q?Ziemia=C5=84ska?= 
-        <nabijaczleweli@nabijaczleweli.xyz>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Pending splice(file -> FIFO) excludes all other FIFO operations
- forever (was: ... always blocks read(FIFO), regardless of O_NONBLOCK on read
- side?)
-Message-ID: <5osglsw36dla3mubtpsmdwdid4fsdacplyd6acx2igo4atogdg@yur3idyim3cc>
-References: <qyohloajo5pvnql3iadez4fzgiuztmx7hgokizp546lrqw3axt@ui5s6kfizj3j>
- <CAHk-=wgmLd78uSLU9A9NspXyTM9s6C23OVDiN2YjA-d8_S0zRg@mail.gmail.com>
- <20230707-konsens-ruckartig-211a4fb24e27@brauner>
- <CAHk-=whHXogGiPkGFwQQBtn364M4caVNcBTs7hLNfa_X67ouzA@mail.gmail.com>
- <zu7gnignulf7qqnoblpzjbu6cx5xtk2qum2uqr7q52ahxjbtdx@4ergovgpfuxt>
- <CAHk-=wjEC_Rh8+-rtEi8C45upO-Ffw=M_i1211qS_3AvWZCbOg@mail.gmail.com>
- <ltbgocygx4unco6ssoiszwsgjmztyuxkqja3omvvyqvpii6dac@5abamn33galn>
- <CAHk-=wimmqG_wvSRtMiKPeGGDL816n65u=Mq2+H3-=uM2U6FmA@mail.gmail.com>
- <ayhdkedfibrhqrqi7bhzvkwz4yj44cmpcnzeop3dfqiujeheq3@dmgcirri46ut>
- <gnj4drf7llod4voaaasoh5jdlq545gduishrbc3ql3665pw7qy@ytd5ykxc4gsr>
+        Mon, 10 Jul 2023 09:32:46 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFBD1E4E;
+        Mon, 10 Jul 2023 06:32:22 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3fbd33a57dcso50256825e9.0;
+        Mon, 10 Jul 2023 06:32:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688995933; x=1691587933;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IR/SjE3dnPHVw8ShE8Nrh5c0DK3TvPTsEq2pK74lhTU=;
+        b=jJ08xw6Sd75S+VY6zBE37HsFMCDDufSujSy1vAgE4Xl6A210EoV0z/b4RGILd95a/n
+         e1Jh+2CLNG5q524XO4llB0SYlsP7fHoR/iQy0ivw5Av8NT02qcnxCDnB6Gssw54kcL2c
+         QWGuXOLbTFy0d2oCrzqCMLUDzhErP+2elSNtE0ynl8CJOlOGGy7R0tLUBZ6gXfG1BIdj
+         nqeFbLPDCJ/3v+lFq0bfm1b2Ri8YDFmX7qbDYKoceXaNKuwq0umwq4/OzpJJlgA17mDh
+         OM2qWJDUDkSkT2C0j5B7z7/VKcLo3L/UZijFbBi9R337Zyq6nSd+ZG5C3jWbFSLS5Nmq
+         uwlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688995933; x=1691587933;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IR/SjE3dnPHVw8ShE8Nrh5c0DK3TvPTsEq2pK74lhTU=;
+        b=SYgVpvei9efTmnP6K1CkmSqz5bd9Pc3rTEE24dKf+UbbnTzUgGu8QHsL/ywkVNTpDH
+         7Mpdh/Y23hQZTQs64KtBLyCC+NxqXOym5YuiTpo4N1vSPAz/Wf/ycNrxot75KCrrDXBd
+         Ia2u7mda3C7ZifIhXYJHrtZ5WaqaNDtMhiX00qyCwHZrU2U1uojqmFwzCZF0rPgu4jF6
+         2JaiHta7iJVkwVRtBrmNI0ewoDnclyh6uwWUfC1BBITyDsnJ1hwxkXzPFSCv8Fue8RwV
+         8NLJ+yY9LFhLe6V8UhF5VS5ZQzy0wwMsQ/7U07kUSc6vaaKBcbsVTDc4Ho4IQlswsOsN
+         vq5w==
+X-Gm-Message-State: ABy/qLZARwv4cRs/YiERdDT2GIG31nXGq/07PXNrz60DIN/YytqHGmZZ
+        v47fSbINwdSW8AU6vbfHF38=
+X-Google-Smtp-Source: APBJJlHp/reV1NQnpTUVodd0zvT0GImMygco6EqeJKUKBWA9rOC6Zjr37LIBaNF+LSKmjhoasRPUDA==
+X-Received: by 2002:a1c:cc0d:0:b0:3fb:b1fd:4183 with SMTP id h13-20020a1ccc0d000000b003fbb1fd4183mr12526041wmb.12.1688995932642;
+        Mon, 10 Jul 2023 06:32:12 -0700 (PDT)
+Received: from amir-ThinkPad-T480.ctera.local (bzq-166-168-31-246.red.bezeqint.net. [31.168.166.246])
+        by smtp.gmail.com with ESMTPSA id n7-20020a5d67c7000000b0030ae3a6be4asm11789263wrw.72.2023.07.10.06.32.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jul 2023 06:32:12 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Sasha Levin <sashal@kernel.org>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 5.15] fanotify: disallow mount/sb marks on kernel internal pseudo fs
+Date:   Mon, 10 Jul 2023 16:32:05 +0300
+Message-Id: <20230710133205.1154168-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xal4bth6dik3niji"
-Content-Disposition: inline
-In-Reply-To: <gnj4drf7llod4voaaasoh5jdlq545gduishrbc3ql3665pw7qy@ytd5ykxc4gsr>
-User-Agent: NeoMutt/20230517
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RDNS_DYNAMIC,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+commit 69562eb0bd3e6bb8e522a7b254334e0fb30dff0c upstream.
 
---xal4bth6dik3niji
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hopefully, nobody is trying to abuse mount/sb marks for watching all
+anonymous pipes/inodes.
 
-On Mon, Jul 10, 2023 at 12:33:07AM +0200, Ahelenia Ziemia=C5=84ska wrote:
-> On Sun, Jul 09, 2023 at 03:03:22AM +0200, Ahelenia Ziemia=C5=84ska wrote:
-> > On Sat, Jul 08, 2023 at 01:06:56PM -0700, Linus Torvalds wrote:
-> > > I guess combined with something like
-> > >=20
-> > >         if (!(in->f_mode & FMODE_NOWAIT))
-> > >                 return -EINVAL;
-> > >=20
-> > > it might all work.
-> > Yes, that makes the splice instantly -EINVAL for ttys, but doesn't
-> > affect the socketpair() case above, which still blocks forever.
-> This also triggers for regular file -> pipe splices,
-> which is probably a no-go.
-Actually, that's only the case for regular files on some filesystems?
-I originally tested on tmpfs, and now on vfat, ramfs, procfs, and sysfs,
-and none have FMODE_NOWAIT set.
+I cannot think of a good reason to allow this - it looks like an
+oversight that dated back to the original fanotify API.
 
-Conversely, ext4 and XFS files both have FMODE_NOWAIT set,
-and behave like blockdevs incl. the filemap_splice_read() oddities below.
+Link: https://lore.kernel.org/linux-fsdevel/20230628101132.kvchg544mczxv2pm@quack3/
+Fixes: 0ff21db9fcc3 ("fanotify: hooks the fanotify_mark syscall to the vfsmount code")
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Reviewed-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Message-Id: <20230629042044.25723-1-amir73il@gmail.com>
+[backport to 5.x.y]
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
 
-Indeed, it looks like Some filesystems
-(btrfs/ext4/f2fs/ocfs2/xfs, blockdevs, /dev/{null,zero,random,urandom},
- pipes, tun/tap)
-set FMODE_NOWAIT, but that's by far not All of them, so maybe
-  /* File is capable of returning -EAGAIN if I/O will block */
-is not the right check for regular files.
+Greg,
 
-> filemap_get_pages() does use and inspect IOCB_NOWAIT if set in
-> filemap_splice_read(), but it appears to not really make much sense,
-> inasmuch it returns EAGAIN for the first splice() from a
-> blockdev and then instantly return with data on the next go-around.
-Indeed, this is inconsistent to both:
-  * readv2(off=3D-1, RWF_NOWAIT), which always returns EAGAIN, and
-  * fcntl(0, F_SETFL, O_NONBLOCK), read(), which always reads.
+This 5.15 backport should cleanly apply to all 5.x.y LTS kernels.
+It will NOT apply to 4.x.y kernels.
 
-Thus,
-> This doesn't really make much sense =E2=80=92 and open(2) says blockdevs
-> don't have O_NONBLOCK semantics, so I'm assuming this is not supposed
-> to be exposed to userspace =E2=80=92 so I'm not setting it in the diff.
-not specifying IOCB_NOWAIT in filemap_splice_read() provides consistent
-semantics to "file is read as-if it had O_NONBLOCK set".
+The original upstream commit should apply cleanly to 6.x.y stable
+kernels.
 
+Thanks,
+Amir.
 
-I've tentatively updated the check to
-		if (!((in->f_mode & FMODE_NOWAIT) || S_ISREG(in->f_inode->i_mode)))
-(with the reasoning, as previously, that regular files don't /have/ a
- distinct O_NONBLOCK mode, because they always behave non-blockingly)
-and with that
-> I've tested this for:
-  * regular file: works as expected
+ fs/notify/fanotify/fanotify_user.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
---xal4bth6dik3niji
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmSsBg8ACgkQvP0LAY0m
-WPFELBAAsKXo6ppXGhW9vySYaO+M2PtLSXb5TV5WswRFexjAKdmhOk8HxN8y9Gsl
-Mn06eqPLgNwnnn7+LiLCmx3HpvTU3tRICDlDjHeuaunW7ILXyLbHNB2D6GQPb0zf
-QzkYohRuPmZllG3IG/7OceHEHHNtMHy23/IwzA+EbYBblTjGFjQLWh4nZxf5jQEt
-ZcJxg+D8tcR+xydWIRx3r8E8dhv7esm357mDi/r8Kyelx+fKTzQGTDxmgqpCi0ps
-FJqgLNzJC+q/2C+zPUQ9dAqmM6qGM39c/csVBNcAn9z3QoOmB1vXaDFe+Arfo9Er
-M0kqoT2r+zUksP67vU2e0w3ypbEWgx23zU87Diz4Y43ig9yiMmtZeGuC6kNF+AWp
-qj3rxBYW6d41YWSyTU7tSfK18mg+owfp9TyamKya6YE5xfSxKLkESOF+zkZMr+7y
-Naqahbm5WFTGgcl6k50dKF81dXWBKij3s3QBai53sXYZrKUv0is9ObEO489aSAYk
-mlQCeFIVPYnUM/aj79tYBkk8zKmpNRZDbwMg5EatQsaUfd8v2xotU0alSYWsjmli
-YrUQDo7OzyA7U6GPwtrx9LLyRh4IrSPdvkpnymjvR0V/rOujGeD1MmAqjRQnbLKL
-Jo0CtS0NC9iaY7c/xKK9i4kNTkUgtypuOmk2mLuab5mOwCBpzAk=
-=65Ez
------END PGP SIGNATURE-----
-
---xal4bth6dik3niji--
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 84ec851211d9..0e2a0eb7cb9e 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -1337,8 +1337,11 @@ static int fanotify_test_fid(struct path *path, __kernel_fsid_t *fsid)
+ 	return 0;
+ }
+ 
+-static int fanotify_events_supported(struct path *path, __u64 mask)
++static int fanotify_events_supported(struct path *path, __u64 mask,
++				     unsigned int flags)
+ {
++	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
++
+ 	/*
+ 	 * Some filesystems such as 'proc' acquire unusual locks when opening
+ 	 * files. For them fanotify permission events have high chances of
+@@ -1350,6 +1353,21 @@ static int fanotify_events_supported(struct path *path, __u64 mask)
+ 	if (mask & FANOTIFY_PERM_EVENTS &&
+ 	    path->mnt->mnt_sb->s_type->fs_flags & FS_DISALLOW_NOTIFY_PERM)
+ 		return -EINVAL;
++
++	/*
++	 * mount and sb marks are not allowed on kernel internal pseudo fs,
++	 * like pipe_mnt, because that would subscribe to events on all the
++	 * anonynous pipes in the system.
++	 *
++	 * SB_NOUSER covers all of the internal pseudo fs whose objects are not
++	 * exposed to user's mount namespace, but there are other SB_KERNMOUNT
++	 * fs, like nsfs, debugfs, for which the value of allowing sb and mount
++	 * mark is questionable. For now we leave them alone.
++	 */
++	if (mark_type != FAN_MARK_INODE &&
++	    path->mnt->mnt_sb->s_flags & SB_NOUSER)
++		return -EINVAL;
++
+ 	return 0;
+ }
+ 
+@@ -1476,7 +1494,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 		goto fput_and_out;
+ 
+ 	if (flags & FAN_MARK_ADD) {
+-		ret = fanotify_events_supported(&path, mask);
++		ret = fanotify_events_supported(&path, mask, flags);
+ 		if (ret)
+ 			goto path_put_and_out;
+ 	}
+-- 
+2.16.5
