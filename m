@@ -2,79 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C742374F334
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 17:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DA6874F344
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 17:24:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230306AbjGKPTm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jul 2023 11:19:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38812 "EHLO
+        id S231919AbjGKPYQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jul 2023 11:24:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231936AbjGKPTg (ORCPT
+        with ESMTP id S231846AbjGKPYO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jul 2023 11:19:36 -0400
-Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com [209.85.167.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A72DCE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jul 2023 08:19:35 -0700 (PDT)
-Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-39cdf9f9d10so4071140b6e.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jul 2023 08:19:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689088775; x=1691680775;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pTtBSm5A66Jo82Yazz35b6XHkBkcKwYtbgU11r2+uAY=;
-        b=bB6yIF9GABMvg54DJ2H66aMabc1SK/94bQWOhNKb0OP9UlT1msH0r1M9fZ4Yw03+yc
-         Xn17TDYK8ldCjBjkzTsBwexr6TpF4goYUXtf05RuAuIzpnbo2mYp0jmt46mM1iNkDfJf
-         HNEk4J6WSUpME52M3t/cLJ3M1SZ2tUz14wJVT/R5656QMPD/TqQei4QQLDpMvoPQecZF
-         BmzmZ7UV6YqFXKZ/FA8VbJSCKs1B/JTiy6MQNC7eVayA2xcCSywVBKlbvWiSI99eBKCT
-         yX7Hjn9lbsVz/y9oTNXK9Sj3ahiGnmrscmmkhGGqIX3axpEbQ8ZTDZ1leHbG6SbCoZJ+
-         plUQ==
-X-Gm-Message-State: ABy/qLYOCBDAHUfUqScFt2tCyqHuhispjTj5WR5ROH+SNMhDEvqY48+c
-        2JnDL1Kep05T5c9SV5kqb64YYCRlgwFrFMeo+WLoWe6rsRvT
-X-Google-Smtp-Source: APBJJlEHVpKNs8sWL9JLFboB6JbTMukgEFC+f6weICeuWD+h2WkluGryx6SaGSJvxSySUZqP8Aq+bTVJw2kCn/BGwduQA1aoRIAf
+        Tue, 11 Jul 2023 11:24:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FA5B10D4;
+        Tue, 11 Jul 2023 08:24:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0D3C96155C;
+        Tue, 11 Jul 2023 15:24:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46E26C433C8;
+        Tue, 11 Jul 2023 15:23:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689089052;
+        bh=nyE4suotIowU8lKnKt+Umw+WI2Pk9iMcLZepBf+apY8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oEo8yqXLBQcJ016nZmVI6o/nx3t9By5un0RV4fbIKnHDk0VPSpp+yaNMirBtqzWpT
+         bol75aJRCGOWCT+N9yMrkrQVwEwDB8XWpgODtk3yI+ILPLq5smsYwABPzHWMi/M7KG
+         kUQJPylWrx/7Ql611uTnEHF8Ca7MkikIUy5rcrlWGkGARPI3nHILM6AFuZYEin+imM
+         n1HaEaVU7q0NQmuz7v6I6ZbkSVwp4NjRBykveJpCllqGcxPS/L657fKrCDqE1FNaLz
+         6d5tD55ouC0ebYXHDNhkXWIbv52u/QY77xgQ0vpiUD4ePJr/j3HQZKSAuDU9No0IwC
+         1j5Imns1pImTQ==
+Date:   Tue, 11 Jul 2023 17:23:50 +0200
+From:   Alexey Gladkov <legion@kernel.org>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, LKML <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        christian@brauner.io, Rich Felker <dalias@libc.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Helge Deller <deller@gmx.de>,
+        David Howells <dhowells@redhat.com>, fenghua.yu@intel.com,
+        firoz.khan@linaro.org, Florian Weimer <fweimer@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>, glebfm@altlinux.org,
+        gor@linux.ibm.com, hare@suse.com, heiko.carstens@de.ibm.com,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>, jhogan@kernel.org,
+        Kim Phillips <kim.phillips@arm.com>, ldv@altlinux.org,
+        linux-alpha@vger.kernel.org,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linuxppc-dev@lists.ozlabs.org, Andy Lutomirski <luto@kernel.org>,
+        Matt Turner <mattst88@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Namhyung Kim <namhyung@kernel.org>, paul.burton@mips.com,
+        Paul Mackerras <paulus@samba.org>,
+        Peter Zijlstra <peterz@infradead.org>, ralf@linux-mips.org,
+        rth@twiddle.net, schwidefsky@de.ibm.com,
+        sparclinux@vger.kernel.org, stefan@agner.ch,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, tycho@tycho.ws,
+        Will Deacon <will@kernel.org>, x86@kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>
+Subject: Re: [PATCH v3 2/5] fs: Add fchmodat4()
+Message-ID: <ZK10BmqxjL/Njbmj@example.org>
+References: <87o8pscpny.fsf@oldenburg2.str.redhat.com>
+ <cover.1689074739.git.legion@kernel.org>
+ <d11b93ad8e3b669afaff942e25c3fca65c6a983c.1689074739.git.legion@kernel.org>
+ <83363cbb-2431-4520-81a9-0d71f420cb36@app.fastmail.com>
+ <20230711-demolieren-nilpferd-80ffe47563ad@brauner>
+ <ZK1QNRidZuGcfOSd@example.org>
+ <20230711-verpennen-turnier-717bb9682e19@brauner>
 MIME-Version: 1.0
-X-Received: by 2002:aca:3443:0:b0:39e:ced7:602b with SMTP id
- b64-20020aca3443000000b0039eced7602bmr1872936oia.2.1689088773399; Tue, 11 Jul
- 2023 08:19:33 -0700 (PDT)
-Date:   Tue, 11 Jul 2023 08:19:33 -0700
-In-Reply-To: <000000000000e55d2005fd59d6c9@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000552b56060037a019@google.com>
-Subject: Re: [syzbot] [ext4?] WARNING: locking bug in ext4_move_extents
-From:   syzbot <syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230711-verpennen-turnier-717bb9682e19@brauner>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this issue to:
+On Tue, Jul 11, 2023 at 04:01:03PM +0200, Christian Brauner wrote:
+> On Tue, Jul 11, 2023 at 02:51:01PM +0200, Alexey Gladkov wrote:
+> > On Tue, Jul 11, 2023 at 01:52:01PM +0200, Christian Brauner wrote:
+> > > On Tue, Jul 11, 2023 at 01:42:19PM +0200, Arnd Bergmann wrote:
+> > > > On Tue, Jul 11, 2023, at 13:25, Alexey Gladkov wrote:
+> > > > > From: Palmer Dabbelt <palmer@sifive.com>
+> > > > >
+> > > > > On the userspace side fchmodat(3) is implemented as a wrapper
+> > > > > function which implements the POSIX-specified interface. This
+> > > > > interface differs from the underlying kernel system call, which does not
+> > > > > have a flags argument. Most implementations require procfs [1][2].
+> > > > >
+> > > > > There doesn't appear to be a good userspace workaround for this issue
+> > > > > but the implementation in the kernel is pretty straight-forward.
+> > > > >
+> > > > > The new fchmodat4() syscall allows to pass the AT_SYMLINK_NOFOLLOW flag,
+> > > > > unlike existing fchmodat.
+> > > > >
+> > > > > [1] 
+> > > > > https://sourceware.org/git/?p=glibc.git;a=blob;f=sysdeps/unix/sysv/linux/fchmodat.c;h=17eca54051ee28ba1ec3f9aed170a62630959143;hb=a492b1e5ef7ab50c6fdd4e4e9879ea5569ab0a6c#l35
+> > > > > [2] 
+> > > > > https://git.musl-libc.org/cgit/musl/tree/src/stat/fchmodat.c?id=718f363bc2067b6487900eddc9180c84e7739f80#n28
+> > > > >
+> > > > > Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+> > > > > Signed-off-by: Alexey Gladkov <legion@kernel.org>
+> > > > 
+> > > > I don't know the history of why we ended up with the different
+> > > > interface, or whether this was done intentionally in the kernel
+> > > > or if we want this syscall.
+> > > > 
+> > > > Assuming this is in fact needed, I double-checked that the
+> > > > implementation looks correct to me and is portable to all the
+> > > > architectures, without the need for a compat wrapper.
+> > > > 
+> > > > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> > > 
+> > > The system call itself is useful afaict. But please,
+> > > 
+> > > s/fchmodat4/fchmodat2/
+> > 
+> > Sure. I will.
+> 
+> Thanks. Can you also wire this up for every architecture, please?
+> I don't see that this has been done in this series.
 
-commit aff3bea95388299eec63440389b4545c8041b357
-Author: Theodore Ts'o <tytso@mit.edu>
-Date:   Wed May 24 03:49:51 2023 +0000
+Sure. I have already added in all architectures as far as I can tell:
 
-    ext4: add lockdep annotations for i_data_sem for ea_inode's
+$ diff -s <(find arch/ -name '*.tbl' |sort -u) <(git grep -lw fchmodat2 arch/ |sort -u)
+Files /dev/fd/63 and /dev/fd/62 are identical
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14abf682a80000
-start commit:   3f01e9fed845 Merge tag 'linux-watchdog-6.5-rc2' of git://w..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=16abf682a80000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12abf682a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=150188feee7071a7
-dashboard link: https://syzkaller.appspot.com/bug?extid=7f4a6f7f7051474e40ad
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d8f2b0a80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1061e6b0a80000
+-- 
+Rgrds, legion
 
-Reported-by: syzbot+7f4a6f7f7051474e40ad@syzkaller.appspotmail.com
-Fixes: aff3bea95388 ("ext4: add lockdep annotations for i_data_sem for ea_inode's")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
