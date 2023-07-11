@@ -2,145 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AF6C74F0F4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 16:01:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3351174F109
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 16:04:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233208AbjGKOBX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jul 2023 10:01:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41078 "EHLO
+        id S233242AbjGKOEK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jul 2023 10:04:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233182AbjGKOBV (ORCPT
+        with ESMTP id S233239AbjGKOEI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jul 2023 10:01:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B77DBB0;
-        Tue, 11 Jul 2023 07:01:19 -0700 (PDT)
+        Tue, 11 Jul 2023 10:04:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4428D12A;
+        Tue, 11 Jul 2023 07:04:07 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 554A861504;
-        Tue, 11 Jul 2023 14:01:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADD1DC433C7;
-        Tue, 11 Jul 2023 14:01:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689084078;
-        bh=cdE+rFjbrFVLmzVrU6vfdc/Au2vs/4K/KtQWUN2iOVE=;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CD98C61505;
+        Tue, 11 Jul 2023 14:04:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC663C433C8;
+        Tue, 11 Jul 2023 14:04:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1689084246;
+        bh=hkjM3kAIgQB2MsZK32Y0LnSzvU+OKdW0pajbNogIOCY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uFC0KFw6/M6i8iNMypafGbl8Cu47AhRfSYX/xpea89PI4ZoMwe92EJqP3skNe1e6r
-         wdNiag9bpyADI4zIDbvsfEfC5gi5cG0LiI+uy+iziLVFM+p32F6ViRjBHJmXzejh3K
-         hGryvnrWcowWB4v9G6Utb47tLMTtfXf0Jk5KlXTXblJ68+Ehl7NBgEro6SYLZcBbuG
-         SEhMMw8zZvhNH953cv8zDMYVJb4nE9cNKmW9VcGjlVykyXZpRuOY205drYPWTtbPxy
-         Nee7XyVCXNFnj+xKEgPCEgPFhFOWJaEQgr+bospaDMUJydxlVz0ktUF8W7K96PF8x7
-         FoGj2nXcIV0Uw==
-Date:   Tue, 11 Jul 2023 16:01:03 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Alexey Gladkov <legion@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, LKML <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        christian@brauner.io, Rich Felker <dalias@libc.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Helge Deller <deller@gmx.de>,
-        David Howells <dhowells@redhat.com>, fenghua.yu@intel.com,
-        firoz.khan@linaro.org, Florian Weimer <fweimer@redhat.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>, glebfm@altlinux.org,
-        gor@linux.ibm.com, hare@suse.com, heiko.carstens@de.ibm.com,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>, jhogan@kernel.org,
-        Kim Phillips <kim.phillips@arm.com>, ldv@altlinux.org,
-        linux-alpha@vger.kernel.org,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org, Andy Lutomirski <luto@kernel.org>,
-        Matt Turner <mattst88@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Michal Simek <monstr@monstr.eu>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Namhyung Kim <namhyung@kernel.org>, paul.burton@mips.com,
-        Paul Mackerras <paulus@samba.org>,
-        Peter Zijlstra <peterz@infradead.org>, ralf@linux-mips.org,
-        rth@twiddle.net, schwidefsky@de.ibm.com,
-        sparclinux@vger.kernel.org, stefan@agner.ch,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, tycho@tycho.ws,
-        Will Deacon <will@kernel.org>, x86@kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>
-Subject: Re: [PATCH v3 2/5] fs: Add fchmodat4()
-Message-ID: <20230711-verpennen-turnier-717bb9682e19@brauner>
-References: <87o8pscpny.fsf@oldenburg2.str.redhat.com>
- <cover.1689074739.git.legion@kernel.org>
- <d11b93ad8e3b669afaff942e25c3fca65c6a983c.1689074739.git.legion@kernel.org>
- <83363cbb-2431-4520-81a9-0d71f420cb36@app.fastmail.com>
- <20230711-demolieren-nilpferd-80ffe47563ad@brauner>
- <ZK1QNRidZuGcfOSd@example.org>
+        b=n9y6shDSvExiH8umQsf+SFCjEhlxKpJcK1FITT1X9fxWaBcy/PBj6GNyONmVduAK7
+         VrN+5V1Cp/gDD5e/zaI0L7WDA3s767ezmniJorTsn3GXlqUFZeSrma97UopLdgpudB
+         7GEQmf3i8/WAon5QrBgT3kivHV+TBb+xGvmBcNmI=
+Date:   Tue, 11 Jul 2023 16:04:03 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Ivan Babrou <ivan@cloudflare.com>
+Cc:     linux-fsdevel@vger.kernel.org, kernel-team@cloudflare.com,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        Tejun Heo <tj@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+        Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH] kernfs: attach uuid for every kernfs and report it in
+ fsid
+Message-ID: <2023071159-unsigned-salvation-405d@gregkh>
+References: <20230710183338.58531-1-ivan@cloudflare.com>
+ <2023071039-negate-stalemate-6987@gregkh>
+ <CABWYdi39+TJd1qV3nWs_eYc7XMC0RvxG22ihfq7rzuPaNvn1cQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZK1QNRidZuGcfOSd@example.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABWYdi39+TJd1qV3nWs_eYc7XMC0RvxG22ihfq7rzuPaNvn1cQ@mail.gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 11, 2023 at 02:51:01PM +0200, Alexey Gladkov wrote:
-> On Tue, Jul 11, 2023 at 01:52:01PM +0200, Christian Brauner wrote:
-> > On Tue, Jul 11, 2023 at 01:42:19PM +0200, Arnd Bergmann wrote:
-> > > On Tue, Jul 11, 2023, at 13:25, Alexey Gladkov wrote:
-> > > > From: Palmer Dabbelt <palmer@sifive.com>
-> > > >
-> > > > On the userspace side fchmodat(3) is implemented as a wrapper
-> > > > function which implements the POSIX-specified interface. This
-> > > > interface differs from the underlying kernel system call, which does not
-> > > > have a flags argument. Most implementations require procfs [1][2].
-> > > >
-> > > > There doesn't appear to be a good userspace workaround for this issue
-> > > > but the implementation in the kernel is pretty straight-forward.
-> > > >
-> > > > The new fchmodat4() syscall allows to pass the AT_SYMLINK_NOFOLLOW flag,
-> > > > unlike existing fchmodat.
-> > > >
-> > > > [1] 
-> > > > https://sourceware.org/git/?p=glibc.git;a=blob;f=sysdeps/unix/sysv/linux/fchmodat.c;h=17eca54051ee28ba1ec3f9aed170a62630959143;hb=a492b1e5ef7ab50c6fdd4e4e9879ea5569ab0a6c#l35
-> > > > [2] 
-> > > > https://git.musl-libc.org/cgit/musl/tree/src/stat/fchmodat.c?id=718f363bc2067b6487900eddc9180c84e7739f80#n28
-> > > >
-> > > > Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-> > > > Signed-off-by: Alexey Gladkov <legion@kernel.org>
-> > > 
-> > > I don't know the history of why we ended up with the different
-> > > interface, or whether this was done intentionally in the kernel
-> > > or if we want this syscall.
-> > > 
-> > > Assuming this is in fact needed, I double-checked that the
-> > > implementation looks correct to me and is portable to all the
-> > > architectures, without the need for a compat wrapper.
-> > > 
-> > > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > The system call itself is useful afaict. But please,
-> > 
-> > s/fchmodat4/fchmodat2/
+On Mon, Jul 10, 2023 at 02:21:10PM -0700, Ivan Babrou wrote:
+> On Mon, Jul 10, 2023 at 12:40 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Mon, Jul 10, 2023 at 11:33:38AM -0700, Ivan Babrou wrote:
+> > > The following two commits added the same thing for tmpfs:
+> > >
+> > > * commit 2b4db79618ad ("tmpfs: generate random sb->s_uuid")
+> > > * commit 59cda49ecf6c ("shmem: allow reporting fanotify events with file handles on tmpfs")
+> > >
+> > > Having fsid allows using fanotify, which is especially handy for cgroups,
+> > > where one might be interested in knowing when they are created or removed.
+> > >
+> > > Signed-off-by: Ivan Babrou <ivan@cloudflare.com>
+> > > ---
+> > >  fs/kernfs/mount.c | 13 ++++++++++++-
+> > >  1 file changed, 12 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
+> > > index d49606accb07..930026842359 100644
+> > > --- a/fs/kernfs/mount.c
+> > > +++ b/fs/kernfs/mount.c
+> > > @@ -16,6 +16,8 @@
+> > >  #include <linux/namei.h>
+> > >  #include <linux/seq_file.h>
+> > >  #include <linux/exportfs.h>
+> > > +#include <linux/uuid.h>
+> > > +#include <linux/statfs.h>
+> > >
+> > >  #include "kernfs-internal.h"
+> > >
+> > > @@ -45,8 +47,15 @@ static int kernfs_sop_show_path(struct seq_file *sf, struct dentry *dentry)
+> > >       return 0;
+> > >  }
+> > >
+> > > +int kernfs_statfs(struct dentry *dentry, struct kstatfs *buf)
+> > > +{
+> > > +     simple_statfs(dentry, buf);
+> > > +     buf->f_fsid = uuid_to_fsid(dentry->d_sb->s_uuid.b);
+> > > +     return 0;
+> > > +}
+> > > +
+> > >  const struct super_operations kernfs_sops = {
+> > > -     .statfs         = simple_statfs,
+> > > +     .statfs         = kernfs_statfs,
+> > >       .drop_inode     = generic_delete_inode,
+> > >       .evict_inode    = kernfs_evict_inode,
+> > >
+> > > @@ -351,6 +360,8 @@ int kernfs_get_tree(struct fs_context *fc)
+> > >               }
+> > >               sb->s_flags |= SB_ACTIVE;
+> > >
+> > > +             uuid_gen(&sb->s_uuid);
+> >
+> > Since kernfs has as lot of nodes (like hundreds of thousands if not more
+> > at times, being created at boot time), did you just slow down creating
+> > them all, and increase the memory usage in a measurable way?
 > 
-> Sure. I will.
+> This is just for the superblock, not every inode. The memory increase
+> is one UUID per kernfs instance (there are maybe 10 of them on a basic
+> system), which is trivial. Same goes for CPU usage.
 
-Thanks. Can you also wire this up for every architecture, please?
-I don't see that this has been done in this series.
+Ah, ok, my fault, thanks for clearing that up.
+
+thanks,
+
+greg k-h
