@@ -2,119 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AAD874F683
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 19:06:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDAAF74F6F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 19:21:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231241AbjGKRGO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jul 2023 13:06:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55948 "EHLO
+        id S232743AbjGKRVF convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jul 2023 13:21:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229928AbjGKRGN (ORCPT
+        with ESMTP id S232529AbjGKRVC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jul 2023 13:06:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D3DCB7;
-        Tue, 11 Jul 2023 10:05:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D31DE61575;
-        Tue, 11 Jul 2023 17:05:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 738DBC433CA;
-        Tue, 11 Jul 2023 17:05:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689095158;
-        bh=/dly5nbaWfwT5KcM51jbms5tjAC68wuJHQC6spfOCes=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MKNiTx0nlXElPNltIH7tVxIYhrH4+PpUD8Dc07/k0Izs3ugMZnUi2in8BaO6VbEdl
-         ry06e5Y33ljoJtzy9osjg2fP4KzV1XbFyEnd7gsG2FIA+RZaLpIe1KkEJHEp9ozM1h
-         EOaLqah9uSCy954cvFhCywNC7IULAlNbcI8NGThYVj4RTqUgmq/J7MW4IPf0RYVQwC
-         iEkSYyAxCJ4VKuJ+m5vcT+TMCnEQM6cKi28dCVN6H+n+FarUeWuBakNOTMmZtmooWW
-         /OA4qpwMaSysa1sQ5LrLbF/l0rN0S2BYe0e4yjaK54AdqbeNEjtyo/zE81SpWj2Nbb
-         YPkf5nTcal/NQ==
-Date:   Tue, 11 Jul 2023 19:05:44 +0200
-From:   Christian Brauner <brauner@kernel.org>
+        Tue, 11 Jul 2023 13:21:02 -0400
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB2FB2128;
+        Tue, 11 Jul 2023 10:20:12 -0700 (PDT)
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-47e96ddc863so3763980e0c.0;
+        Tue, 11 Jul 2023 10:20:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689095988; x=1691687988;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r1E8sshrAsRaTXfo6weNCw3VfVLbTLnqtK1Z13Sm9Os=;
+        b=JioxtvJ6bGiiSrfyFO8yP95NKTiLWcFvzOWMbT8bEtMqGkxvChQOSMILPx93uC8NYs
+         F91lEmKpQFfBp5FsSU7fIfmiIRnZ46Rj/GyghlglyO+eAJ936xDBT66t2t3+jn7//Jrj
+         sWgTHs0cErJhkqlFEubYEr5ITUbxxy78A6Q4cyiA7vn7Lg29hwuuvq2P7Lfy2Uu2g27w
+         fOYyEVYRnZbxE1DJxDtISdd4VFF2LemFOsLUsQT8s70pqAA1cH2ZCYPMT+o8QSQLYkoG
+         xjqQY0rSgYgTGJ7JDPjQlwfR0mncvli6Q5GJw461aJUSrQ8ply3KJx8xMS9tIz2M++bU
+         8YaA==
+X-Gm-Message-State: ABy/qLYF0d6IYekG7CsRApXaL+g1v7yOrNS2T/MyG59N5U/MNV5Bu1r7
+        PUnm9DfOCaJk1qzs0/AeLxWkyURnj8AUIvjY+xk=
+X-Google-Smtp-Source: APBJJlHvjqSOXNmdmDvle0026k90GDtUYnPqvi6JX9yQULKCWL0XAYOjkAe7gIe04qveWs0x8fU9K4aaoqcGOl9T0Z0=
+X-Received: by 2002:a05:6122:d15:b0:47a:e101:b25 with SMTP id
+ az21-20020a0561220d1500b0047ae1010b25mr6414180vkb.3.1689095987477; Tue, 11
+ Jul 2023 10:19:47 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1689074739.git.legion@kernel.org> <cover.1689092120.git.legion@kernel.org>
+ <22294b3b68050a70eaaa962eff46b8672bc2f7e8.1689092120.git.legion@kernel.org>
+In-Reply-To: <22294b3b68050a70eaaa962eff46b8672bc2f7e8.1689092120.git.legion@kernel.org>
+From:   Namhyung Kim <namhyung@kernel.org>
+Date:   Tue, 11 Jul 2023 10:19:35 -0700
+Message-ID: <CAM9d7chAqGwy0WmR67TucFjRq+Aa7zQnayvwMCqd5-meVHkP5g@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] tools headers UAPI: Sync files changed by new
+ fchmodat2 syscall
 To:     Alexey Gladkov <legion@kernel.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
         linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, James.Bottomley@HansenPartnership.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        axboe@kernel.dk, benh@kernel.crashing.org, borntraeger@de.ibm.com,
-        bp@alien8.de, catalin.marinas@arm.com, christian@brauner.io,
-        dalias@libc.org, davem@davemloft.net, deepa.kernel@gmail.com,
-        deller@gmx.de, dhowells@redhat.com, fenghua.yu@intel.com,
-        fweimer@redhat.com, geert@linux-m68k.org, glebfm@altlinux.org,
-        gor@linux.ibm.com, hare@suse.com, hpa@zytor.com,
-        ink@jurassic.park.msu.ru, jhogan@kernel.org, kim.phillips@arm.com,
-        ldv@altlinux.org, linux-alpha@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux@armlinux.org.uk,
-        linuxppc-dev@lists.ozlabs.org, luto@kernel.org, mattst88@gmail.com,
-        mingo@redhat.com, monstr@monstr.eu, mpe@ellerman.id.au,
-        namhyung@kernel.org, paulus@samba.org, peterz@infradead.org,
-        ralf@linux-mips.org, sparclinux@vger.kernel.org, stefan@agner.ch,
-        tglx@linutronix.de, tony.luck@intel.com, tycho@tycho.ws,
-        will@kernel.org, x86@kernel.org, ysato@users.sourceforge.jp,
-        Palmer Dabbelt <palmer@sifive.com>
-Subject: Re: [PATCH v4 2/5] fs: Add fchmodat2()
-Message-ID: <20230711-spendabel-lotosblume-f08d23a83ebf@brauner>
-References: <cover.1689074739.git.legion@kernel.org>
- <cover.1689092120.git.legion@kernel.org>
- <f2a846ef495943c5d101011eebcf01179d0c7b61.1689092120.git.legion@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f2a846ef495943c5d101011eebcf01179d0c7b61.1689092120.git.legion@kernel.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+        viro@zeniv.linux.org.uk, Palmer Dabbelt <palmer@sifive.com>,
+        James.Bottomley@hansenpartnership.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, axboe@kernel.dk,
+        benh@kernel.crashing.org, borntraeger@de.ibm.com, bp@alien8.de,
+        catalin.marinas@arm.com, christian@brauner.io, dalias@libc.org,
+        davem@davemloft.net, deepa.kernel@gmail.com, deller@gmx.de,
+        dhowells@redhat.com, fenghua.yu@intel.com, fweimer@redhat.com,
+        geert@linux-m68k.org, glebfm@altlinux.org, gor@linux.ibm.com,
+        hare@suse.com, hpa@zytor.com, ink@jurassic.park.msu.ru,
+        jhogan@kernel.org, kim.phillips@arm.com, ldv@altlinux.org,
+        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux@armlinux.org.uk, linuxppc-dev@lists.ozlabs.org,
+        luto@kernel.org, mattst88@gmail.com, mingo@redhat.com,
+        monstr@monstr.eu, mpe@ellerman.id.au, paulus@samba.org,
+        peterz@infradead.org, ralf@linux-mips.org,
+        sparclinux@vger.kernel.org, stefan@agner.ch, tglx@linutronix.de,
+        tony.luck@intel.com, tycho@tycho.ws, will@kernel.org,
+        x86@kernel.org, ysato@users.sourceforge.jp
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 11, 2023 at 06:16:04PM +0200, Alexey Gladkov wrote:
-> On the userspace side fchmodat(3) is implemented as a wrapper
-> function which implements the POSIX-specified interface. This
-> interface differs from the underlying kernel system call, which does not
-> have a flags argument. Most implementations require procfs [1][2].
-> 
-> There doesn't appear to be a good userspace workaround for this issue
-> but the implementation in the kernel is pretty straight-forward.
-> 
-> The new fchmodat2() syscall allows to pass the AT_SYMLINK_NOFOLLOW flag,
-> unlike existing fchmodat.
-> 
-> [1] https://sourceware.org/git/?p=glibc.git;a=blob;f=sysdeps/unix/sysv/linux/fchmodat.c;h=17eca54051ee28ba1ec3f9aed170a62630959143;hb=a492b1e5ef7ab50c6fdd4e4e9879ea5569ab0a6c#l35
-> [2] https://git.musl-libc.org/cgit/musl/tree/src/stat/fchmodat.c?id=718f363bc2067b6487900eddc9180c84e7739f80#n28
-> 
-> Co-developed-by: Palmer Dabbelt <palmer@sifive.com>
+Hello,
+
+On Tue, Jul 11, 2023 at 9:18 AM Alexey Gladkov <legion@kernel.org> wrote:
+>
+> From: Palmer Dabbelt <palmer@sifive.com>
+>
+> That add support for this new syscall in tools such as 'perf trace'.
+>
 > Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 > Signed-off-by: Alexey Gladkov <legion@kernel.org>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  fs/open.c                | 18 ++++++++++++++----
->  include/linux/syscalls.h |  2 ++
->  2 files changed, 16 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/open.c b/fs/open.c
-> index 0c55c8e7f837..39a7939f0d00 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -671,11 +671,11 @@ SYSCALL_DEFINE2(fchmod, unsigned int, fd, umode_t, mode)
->  	return err;
->  }
->  
-> -static int do_fchmodat(int dfd, const char __user *filename, umode_t mode)
-> +static int do_fchmodat(int dfd, const char __user *filename, umode_t mode, int lookup_flags)
+>  tools/include/uapi/asm-generic/unistd.h             | 5 ++++-
+>  tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl | 2 ++
+>  tools/perf/arch/powerpc/entry/syscalls/syscall.tbl  | 2 ++
+>  tools/perf/arch/s390/entry/syscalls/syscall.tbl     | 2 ++
+>  tools/perf/arch/x86/entry/syscalls/syscall_64.tbl   | 2 ++
+>  5 files changed, 12 insertions(+), 1 deletion(-)
 
-Should all be unsigned instead of int here for flags. We also had a
-documentation update to that effect but smh never sent it.
-user_path_at() itself takes an unsigned as well.
+It'd be nice if you route this patch separately through the
+perf tools tree.  We can add this after the kernel change
+is accepted.
 
-I'll fix that up though.
+Thanks,
+Namhyung
+
+
+>
+> diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
+> index dd7d8e10f16d..76b5922b0d39 100644
+> --- a/tools/include/uapi/asm-generic/unistd.h
+> +++ b/tools/include/uapi/asm-generic/unistd.h
+> @@ -817,8 +817,11 @@ __SYSCALL(__NR_futex_waitv, sys_futex_waitv)
+>  #define __NR_set_mempolicy_home_node 450
+>  __SYSCALL(__NR_set_mempolicy_home_node, sys_set_mempolicy_home_node)
+>
+> +#define __NR_fchmodat2 452
+> +__SYSCALL(__NR_fchmodat2, sys_fchmodat2)
+> +
+>  #undef __NR_syscalls
+> -#define __NR_syscalls 451
+> +#define __NR_syscalls 453
+>
+>  /*
+>   * 32 bit systems traditionally used different
+> diff --git a/tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl b/tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl
+> index 3f1886ad9d80..434728af4eaa 100644
+> --- a/tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl
+> +++ b/tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl
+> @@ -365,3 +365,5 @@
+>  448    n64     process_mrelease                sys_process_mrelease
+>  449    n64     futex_waitv                     sys_futex_waitv
+>  450    common  set_mempolicy_home_node         sys_set_mempolicy_home_node
+> +# 451 reserved for cachestat
+> +452    n64     fchmodat2                       sys_fchmodat2
+> diff --git a/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl b/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
+> index a0be127475b1..6b70b6705bd7 100644
+> --- a/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
+> +++ b/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
+> @@ -537,3 +537,5 @@
+>  448    common  process_mrelease                sys_process_mrelease
+>  449    common  futex_waitv                     sys_futex_waitv
+>  450    nospu   set_mempolicy_home_node         sys_set_mempolicy_home_node
+> +# 451 reserved for cachestat
+> +452    common  fchmodat2                       sys_fchmodat2
+> diff --git a/tools/perf/arch/s390/entry/syscalls/syscall.tbl b/tools/perf/arch/s390/entry/syscalls/syscall.tbl
+> index b68f47541169..0ed90c9535b0 100644
+> --- a/tools/perf/arch/s390/entry/syscalls/syscall.tbl
+> +++ b/tools/perf/arch/s390/entry/syscalls/syscall.tbl
+> @@ -453,3 +453,5 @@
+>  448  common    process_mrelease        sys_process_mrelease            sys_process_mrelease
+>  449  common    futex_waitv             sys_futex_waitv                 sys_futex_waitv
+>  450  common    set_mempolicy_home_node sys_set_mempolicy_home_node     sys_set_mempolicy_home_node
+> +# 451 reserved for cachestat
+> +452  common    fchmodat2               sys_fchmodat2                   sys_fchmodat2
+> diff --git a/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl b/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
+> index c84d12608cd2..a008724a1f48 100644
+> --- a/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
+> +++ b/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
+> @@ -372,6 +372,8 @@
+>  448    common  process_mrelease        sys_process_mrelease
+>  449    common  futex_waitv             sys_futex_waitv
+>  450    common  set_mempolicy_home_node sys_set_mempolicy_home_node
+> +# 451 reserved for cachestat
+> +452    common  fchmodat2               sys_fchmodat2
+>
+>  #
+>  # Due to a historical design error, certain syscalls are numbered differently
+> --
+> 2.33.8
+>
