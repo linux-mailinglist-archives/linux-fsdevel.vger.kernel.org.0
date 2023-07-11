@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 434D874EF7C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 14:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 603EC74EF7F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 14:54:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231791AbjGKMxu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jul 2023 08:53:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55132 "EHLO
+        id S231345AbjGKMyH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jul 2023 08:54:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232415AbjGKMxp (ORCPT
+        with ESMTP id S232329AbjGKMxu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jul 2023 08:53:45 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A702133;
-        Tue, 11 Jul 2023 05:53:40 -0700 (PDT)
+        Tue, 11 Jul 2023 08:53:50 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53078E49;
+        Tue, 11 Jul 2023 05:53:48 -0700 (PDT)
 Received: from localhost.localdomain (unknown [119.155.40.122])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7A8EE6607013;
-        Tue, 11 Jul 2023 13:53:31 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B61B5660217D;
+        Tue, 11 Jul 2023 13:53:39 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1689080019;
-        bh=5buco7QtB4jur/NsS/yDxCuMSRfJbuncKSNIdEednz0=;
+        s=mail; t=1689080027;
+        bh=e3RwcWLS0DN4jGAQ1nXg3KEjRQ1a6mnaZglmii6vuAs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KRhaIK0/lH6VM/ilTrYSbtRQVut/Epn7J34PfRsOOuTr6NIzzLcBZ60c0h1ZXin47
-         wcVGslNjEOBColL26OJcDZEM9ZIvMbn8f2g4lwh/uVkU0YS85ITOx0780Z1ovfrOUd
-         aEdw0kpimCLl4TuTfaasIkJHqveQjkrkGB9wF9dL/W9j8DPe9oEzXuHF/NTFf5RS7q
-         uunzXTXufas3r3/GaJsTql7s7/mzSHQk6tcUv2Ne70zkCRhqVtft+MTjoo0Ys8+QE5
-         X3gYO0UTJEOW20/Q5yO+Lhqa6bKireAobpVXp/FqjIN1dHe9AwB4yl+h5GNHjgJLht
-         w3MfsEIOHXvSg==
+        b=MdARlwDFQDKScisXGCtEwJ9rzc9ku5dA1jLj2OZ1T00ExwO5tt2SmfX1hEFuAsd9+
+         6LeHKU7sHQoFP2XdfPRRF6vEThylU/M7M/rM9KfOsOqm8k5/fgryA8ToQZ2t9iiJge
+         cq3UOpVkRrhLNthVwSvFMjCp2MlXgw7HH+aj6Loi8jrF4WkHUqFK2Un4CafgcVW7sH
+         4A+iRmTMYrZpp5i/iKd+Gi5wyO6V04TBMnvbK579rqxsQJEnsn7ZzaQee8t0K7eA6y
+         jPDvLFjgWAvV6USfK7nDQqjt3QHIky7ng7QUfXfC47leRaLQQTb4aNMXAyRfyuggIu
+         JnpJFXyQF1ldw==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
 To:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -59,9 +59,9 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
         Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: [PATCH v24 3/5] tools headers UAPI: Update linux/fs.h with the kernel sources
-Date:   Tue, 11 Jul 2023 17:52:39 +0500
-Message-Id: <20230711125241.1587820-4-usama.anjum@collabora.com>
+Subject: [PATCH v24 4/5] mm/pagemap: add documentation of PAGEMAP_SCAN IOCTL
+Date:   Tue, 11 Jul 2023 17:52:40 +0500
+Message-Id: <20230711125241.1587820-5-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230711125241.1587820-1-usama.anjum@collabora.com>
 References: <20230711125241.1587820-1-usama.anjum@collabora.com>
@@ -77,84 +77,97 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-New IOCTL and macros has been added in the kernel sources. Update the
-tools header file as well.
+Add some explanation and method to use write-protection and written-to
+on memory range.
 
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
 Changes in v21:
-- Update tools/include/uapi/linux/fs.h
+- Update according to changed interface
+
+Changes in v20:
+- Add new flag in documentation
 
 Changes in v19:
-- Update fs.h accourding to precious patch
----
- tools/include/uapi/linux/fs.h | 55 +++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+- Improved documentatiom with punctuation marks
 
-diff --git a/tools/include/uapi/linux/fs.h b/tools/include/uapi/linux/fs.h
-index b7b56871029c..ac684d99e68f 100644
---- a/tools/include/uapi/linux/fs.h
-+++ b/tools/include/uapi/linux/fs.h
-@@ -305,4 +305,59 @@ typedef int __bitwise __kernel_rwf_t;
- #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
- 			 RWF_APPEND)
- 
-+/* Pagemap ioctl */
-+#define PAGEMAP_SCAN	_IOWR('f', 16, struct pm_scan_arg)
+Changes in v16:
+- Update the documentation
+
+Changes in v11:
+- Add more documentation
+
+rst
+---
+ Documentation/admin-guide/mm/pagemap.rst | 58 ++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
+
+diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
+index c8f380271cad..4bdad8eff009 100644
+--- a/Documentation/admin-guide/mm/pagemap.rst
++++ b/Documentation/admin-guide/mm/pagemap.rst
+@@ -227,3 +227,61 @@ Before Linux 3.11 pagemap bits 55-60 were used for "page-shift" (which is
+ always 12 at most architectures). Since Linux 3.11 their meaning changes
+ after first clear of soft-dirty bits. Since Linux 4.2 they are used for
+ flags unconditionally.
 +
-+/* Bits are set in flags of the page_region and masks in pm_scan_args */
-+#define PAGE_IS_WRITTEN		(1 << 0)
-+#define PAGE_IS_FILE		(1 << 1)
-+#define PAGE_IS_PRESENT		(1 << 2)
-+#define PAGE_IS_SWAPPED		(1 << 3)
-+#define PAGE_IS_PFNZERO		(1 << 4)
++Pagemap Scan IOCTL
++==================
 +
-+/*
-+ * struct page_region - Page region with flags
-+ * @start:	Start of the region
-+ * @len:	Length of the region in pages
-+ * @bitmap:	Bits sets for the region
-+ */
-+struct page_region {
-+	__u64 start;
-+	__u64 len;
-+	__u64 flags;
-+};
++The ``PAGEMAP_SCAN`` IOCTL on the pagemap file can be used to get or optionally
++clear the info about page table entries. The following operations are supported
++in this IOCTL:
++- Get the information if the pages have been written to (``PAGE_IS_WRITTEN``),
++  file mapped (``PAGE_IS_FILE``), present (``PAGE_IS_PRESENT``), swapped
++  (``PAGE_IS_SWAPPED``) or page has pfn zero (``PAGE_IS_PFNZERO``).
++- Find pages which have been written to and/or write protect the pages atomically
++  (atomic ``PM_SCAN_OP_GET + PM_SCAN_OP_WP``)
 +
-+/*
-+ * struct pm_scan_arg - Pagemap ioctl argument
-+ * @size:		Size of the structure
-+ * @flags:		Flags for the IOCTL
-+ * @start:		Starting address of the region
-+ *			(Ending address of the walk is also returned in it)
-+ * @end:		Ending address of the region
-+ * @vec:		Address of page_region struct array for output
-+ * @vec_len:		Length of the page_region struct array
-+ * @max_pages:		Optional max return pages
-+ * @required_mask:	Required mask - All of these bits have to be set in the PTE
-+ * @anyof_mask:		Any mask - Any of these bits are set in the PTE
-+ * @excluded_mask:	Exclude mask - None of these bits are set in the PTE
-+ * @return_mask:	Bits that are to be reported in page_region
-+ */
-+struct pm_scan_arg {
-+	__u64 size;
-+	__u64 flags;
-+	__u64 start;
-+	__u64 end;
-+	__u64 vec;
-+	__u64 vec_len;
-+	__u64 max_pages;
-+	__u64 required_mask;
-+	__u64 anyof_mask;
-+	__u64 excluded_mask;
-+	__u64 return_mask;
-+};
++The ``struct pm_scan_arg`` is used as the argument of the IOCTL.
++ 1. The size of the ``struct pm_scan_arg`` must be specified in the ``size``
++    field. This field will be helpful in recognizing the structure if extensions
++    are done later.
++ 2. The flags can be specified in the ``flags`` field. The ``PM_SCAN_OP_GET``
++    and ``PM_SCAN_OP_WP`` are the only added flags at this time.
++ 3. The range is specified through ``start`` and ``end``.
++ 4. The output buffer of ``struct page_region`` array and size is specified in
++    ``vec`` and ``vec_len``.
++ 5. The optional maximum requested pages are specified in the ``max_pages``.
++ 6. The masks are specified in ``required_mask``, ``anyof_mask``,
++    ``excluded_ mask`` and ``return_mask``.
++    1.  To find if ``PAGE_IS_WRITTEN`` flag is set for pages which have
++        ``PAGE_IS_FILE`` set and ``PAGE_IS_SWAPPED`` unset, ``required_mask``
++        is set to ``PAGE_IS_FILE``, ``exclude_mask`` is set to
++        ``PAGE_IS_SWAPPED`` and ``return_mask`` is set to ``PAGE_IS_WRITTEN``.
++        The output buffer in ``vec`` and length must be specified in ``vec_len``.
++    2. To find pages which have either ``PAGE_IS_FILE`` or ``PAGE_IS_SWAPPED``
++       set, ``anyof_masks`` is set to  ``PAGE_IS_FILE | PAGE_IS_SWAPPED``.
++    3. To find written pages and engage write protect, ``PAGE_IS_WRITTEN`` is
++       specified in ``required_mask`` and ``return_mask``. In addition to
++       specifying the output buffer in ``vec`` and length in ``vec_len``, the
++       ``PM_SCAN_OP_WP`` is specified in ``flags`` to perform write protect
++       on the range as well.
 +
-+/* Supported flags */
-+#define PM_SCAN_OP_GET	(1 << 0)
-+#define PM_SCAN_OP_WP	(1 << 1)
++The ``PAGE_IS_WRITTEN`` flag can be considered as the better and correct
++alternative of soft-dirty flag. It doesn't get affected by housekeeping chores
++(VMA merging) of the kernel and hence the user can find the true soft-dirty pages
++only. This IOCTL adds the atomic way to find which pages have been written and
++write protect those pages again. This kind of operation is needed to efficiently
++find out which pages have changed in the memory.
 +
- #endif /* _UAPI_LINUX_FS_H */
++To get information about which pages have been written to or optionally write
++protect the pages, following must be performed first in order:
++ 1. The userfaultfd file descriptor is created with ``userfaultfd`` syscall.
++ 2. The ``UFFD_FEATURE_WP_UNPOPULATED`` and ``UFFD_FEATURE_WP_ASYNC`` features
++    are set by ``UFFDIO_API`` IOCTL.
++ 3. The memory range is registered with ``UFFDIO_REGISTER_MODE_WP`` mode
++    through ``UFFDIO_REGISTER`` IOCTL.
++ 4. Then any part of the registered memory or the whole memory region must
++    be write protected using ``PAGEMAP_SCAN`` IOCTL with flag ``PM_SCAN_OP_WP``
++    or the ``UFFDIO_WRITEPROTECT`` IOCTL can be used. Both of these perform the
++    same operation. The former is better in terms of performance.
++ 5. Now the ``PAGEMAP_SCAN`` IOCTL can be used to either just find pages which
++    have been written to and/or optionally write protect the pages as well.
 -- 
 2.39.2
 
