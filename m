@@ -2,44 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D3AD74E2AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 02:42:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE47574E2C5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 02:47:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229811AbjGKAmw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jul 2023 20:42:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40430 "EHLO
+        id S230018AbjGKAr1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jul 2023 20:47:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbjGKAmv (ORCPT
+        with ESMTP id S229825AbjGKAr0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jul 2023 20:42:51 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9F981B0;
-        Mon, 10 Jul 2023 17:42:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=HpuCUZb2f48UIm658h4OAVOVtyttzCpjEbk83B2wiGI=; b=Cf/Fqi85CIj4+9JriBAdxLX0BW
-        V2hQexU7UDKxBXIX6HGyWVd0diKb7Gigwjqec6afVqK5MKsn+2zrGrjuUqn2oNeWhZRVLHNM0oc2m
-        BhKh4jP6I5BgCKS5W5wSvZKGRKjsYtusB34q9ShINya9DtwAQpruIVWIO9BO3qmLGEt8ZA2gqvTvv
-        hKKGqIv2GfpWEsi8/U4tAybfOxdT1l9WphhydYpHFFo0pYAYv+mzmG7kccoEthvE+r/72yn+EKIfM
-        V5cynfAT4vmZTDcTvha4sCmCHVGWR/y8IYozl6wGucvBIjUYPVxgdkzDcEWkeX/IQKmxiJB82B8UF
-        2YlxKBiw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qJ1Sn-00F77Z-H8; Tue, 11 Jul 2023 00:42:45 +0000
-Date:   Tue, 11 Jul 2023 01:42:45 +0100
-From:   Matthew Wilcox <willy@infradead.org>
+        Mon, 10 Jul 2023 20:47:26 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97826AF
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 17:47:25 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1b8ad907ba4so25361425ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 17:47:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1689036445; x=1691628445;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QSJ4o+Lrgv9bVrzUJLTl/861qqJsTQQarDnBk/c55Fc=;
+        b=f9L5Bi+TDfF8dSNl1Xp6x6Qt6+xr7LcVgpQDg9YPs215B0P65lnZAK4QVoG4EhvoPz
+         CIBAuUvugM/YUgffDBa8SXNgKl3f3E4hYR5hKzO65Y0ff2lKnSEPpJwS+OHz9olqZiwe
+         ZPs6j0C5n+mObYbwkUhR9u0O3cYzkglw8AILahrUxZyfbZu80oe47k03BeTxOBYx1Djg
+         d3ZcfblJpWGSMzOdy+JKwO19Q2JGRKa9wjpizeb701yFjMFaakifdAyvEees+i+mmqLm
+         WjXBZ9/xIk6fdT1XuZUm+Xchl1L2mAQfdu53ZJMs7vos25KUWg+Hn8vqikIgowEkKwTp
+         W5aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689036445; x=1691628445;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QSJ4o+Lrgv9bVrzUJLTl/861qqJsTQQarDnBk/c55Fc=;
+        b=l3ngy1mOrc/motbC/KCgIyWzEt6Z1i6mj8mOzRVsvdtrLhpzpH0H3WAqI5w8SghK5O
+         XYsbMEOniuGPV60AwIsKCl6L+X28nwRY+rJb1ucYZwKo1dWvureNu/zxPKojKQFVIEJC
+         PHkJrDcuuQZgWKyh80P6rEDPVNfrqrf+gIITMlXoK4CqQUN8hawNOtGgAPVKOTZLGY+J
+         ELqjKsubKEMnp/9rM4HHnP84RbzZOqfpqd6W6S0+1QVb+MGlbctBPQ2wWmw3lMc7h3xo
+         8oWOHHNulCx+4fykn0odHpe7LyyVhEtzyjFqgu/+L3FAGb6v+23TpL5Lw6liNYI8Ckxx
+         kmZg==
+X-Gm-Message-State: ABy/qLblpOU8Sfv6qbNBVXlJhEnBRtdAc+aYM2+tDF8Dz/LFdlLG4Y5f
+        chwaP1U/hMiAvG6bgijLO9kLS/RIrRs2T4wI3iQ=
+X-Google-Smtp-Source: APBJJlHEWV+eZ+6RMc+5adTNnbPd7hwg9iC6ISXb8BEOQMES5BfGqajGT1gDl8TwSxVBsHb3cCOF/g==
+X-Received: by 2002:a17:902:e80d:b0:1b8:b436:bef3 with SMTP id u13-20020a170902e80d00b001b8b436bef3mr12716814plg.24.1689036445024;
+        Mon, 10 Jul 2023 17:47:25 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-246-40.pa.nsw.optusnet.com.au. [49.180.246.40])
+        by smtp.gmail.com with ESMTPSA id d4-20020a170902854400b001aad714400asm475138plo.229.2023.07.10.17.47.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jul 2023 17:47:24 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qJ1XF-004avJ-2L;
+        Tue, 11 Jul 2023 10:47:21 +1000
+Date:   Tue, 11 Jul 2023 10:47:21 +1000
+From:   Dave Chinner <david@fromorbit.com>
 To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         Wang Yugui <wangyugui@e16-tech.com>,
-        Dave Chinner <david@fromorbit.com>,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J . Wong" <djwong@kernel.org>,
         Kent Overstreet <kent.overstreet@linux.dev>,
         Christoph Hellwig <hch@lst.de>
 Subject: Re: [PATCH v4 7/9] filemap: Allow __filemap_get_folio to allocate
  large folios
-Message-ID: <ZKylhWKed7Zraclk@casper.infradead.org>
+Message-ID: <ZKymmc7viDIjd7Mm@dread.disaster.area>
 References: <20230710130253.3484695-1-willy@infradead.org>
  <20230710130253.3484695-8-willy@infradead.org>
  <ZKybP22DRs1w4G3a@bombadil.infradead.org>
@@ -49,10 +75,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <ZKygcP5efM2AE/nr@bombadil.infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -72,14 +98,20 @@ On Mon, Jul 10, 2023 at 05:21:04PM -0700, Luis Chamberlain wrote:
 > from the start and if there are situations where perhaps a a
 > not-so-aggressive high order may be desriable. How do we know?
 
-The page cache trusts the filesystem to make a good guess.  Dave had some
-ideas about how XFS might make different guesses from the one in this
-patchset, and I encourage people to experiment with different algorithms.
+Decades of experience optimising IO and allocation on extent based
+filesystems tell us this is the right thing to do. i.e. we should
+always attempt to allocate the largest contiguous range possible for
+the current operation being performed. This almost always results in
+the minimum amount of metadata and overhead to index and manage the
+data being stored.
 
-Intuitively "size of the write" is probably not a bad guess.  If userspace
-is writing 400kB in a single write, it proabbly makes sense to writeback
-& age and eventually reclaim that entire 400kB at the same time.  If we
-guess wrong, the downside probably isn't too bad either.
+There are relatively few situations where this is not the right
+thing to do, but that is where per-inode behavioural control options
+like extent size hints come into play....
 
-But we need data!  And merging this patch set & gathering real world
-experience with it is a good start.
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
