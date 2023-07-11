@@ -2,246 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EDFEF74F7DC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 20:15:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA17774F87F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 21:43:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231646AbjGKSPU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jul 2023 14:15:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60524 "EHLO
+        id S230463AbjGKTnA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jul 2023 15:43:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229616AbjGKSPT (ORCPT
+        with ESMTP id S229512AbjGKTm7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jul 2023 14:15:19 -0400
-Received: from out203-205-221-164.mail.qq.com (out203-205-221-164.mail.qq.com [203.205.221.164])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D73D710F2;
-        Tue, 11 Jul 2023 11:15:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1689099302;
-        bh=nvlXLtHpMBPCVmgilaVkOP61WlhExjq63x1MWlHuXJU=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=s3qSjF17/0N423y8N7qQ1cNwTPtXy9Q4d+0+w0cvh79BaeGpqS0f8J8/VFAkQosw2
-         gRswHTmtjA/GISMy3fn9+MDawPGdW7zQ9xjPQd+0lfDRh5YnpC9f89UbyQ6DTlzllD
-         u5CAJkQoa7/MHL2hyTeaQodEHg0Jkva5q9ypcffw=
-Received: from [IPV6:240e:331:c24:b000:834a:7cef:6ef:2fd5] ([240e:331:c24:b000:834a:7cef:6ef:2fd5])
-        by newxmesmtplogicsvrszb6-0.qq.com (NewEsmtp) with SMTP
-        id 3BB22495; Wed, 12 Jul 2023 02:14:59 +0800
-X-QQ-mid: xmsmtpt1689099299tpc3g3wl5
-Message-ID: <tencent_8B551E757BD0C0E46A7A23B3AA5FD4336206@qq.com>
-X-QQ-XMAILINFO: NKv2G1wnhDBnUs4C74227OijJNwyVi8WJOHGbv8zemIKtCS6pSuAD/BQNlrvHE
-         WExDMBbFeM3H0h/TOEcTRiPzQ2ImrkBLnrwiaZBFuCucVkht0JUHf38AMokgwNSL962nqGmJ77PF
-         gkQ2NP4kovz2JkZip0BFOd3RnV4uR/AD3B0drRzPdK5VwnSOYV9Z5XVPq0nAKryMnYCEeuhoTsaN
-         JyZldX3tJ9aFIrUIkIMKjHeht+9leMl4Cl3YowmRqJ2PxZ4USkESuzSAwGqiv67biw5NhvVdw12r
-         Z+bsNhyYXcCF/NVvLaEGKsD4mq3gmwcni4JUinsN3ynVJxWP1upOj/Gpyf/Qx4ckSsTz7P63HTBd
-         lEu6YMWnXq6xi8JbELqzAGleu4VIwvHrYMTlELZy7YxDAsRn3wY8ApgYnqOnN1V4Q2nc3ZK66h1w
-         3IUCrFDbzn+0SfNE0EPTlCoxxV8iVE+mpDzN1vrZ9SyWIR2d+7Kz+0OUah1UDuz1XAcVPdVz0Q4y
-         wYA+KjPLwTEOVUH+8kBq7WziQhop8OfjkMbbcvOt7ppl6IzFKR816oz7DVHzkpFPwj+ECd81RjWt
-         7SjTDEcCish4bOpQm3JuumjEBwV7GjA+gYknbzE9bNDHC1ouPlIlOUmQaXsMKkYnUYFgoEr0CLZD
-         uokrAVceu8EzEemvIgABrTA/6C/zQ6TyQEw978W/r4AWxmuwX5L6ZABOg4BB5fIBM9DQ9nb1WbbR
-         w8M/7j6tCsH/RUslxF/PGJfteJ9An6/2XxqIjNPhubousIunkaskUXjFuwvq60rqgHjX3bYjsuni
-         qgr8Lw4xJD9TO4R8rd+za/mrizlDDzWLkAEt0znIreZ8Gx84CayQWqOQJHC91tdfcs9MjdfGcSM0
-         NkDb4DWl+WTZ+R35z7JtpREwZVpMhmHRh2nFHmIjo079x/YvRfMTvkMSzfhtJNJgGeIeeIg9oiU+
-         3RX6uaZjBeaiLhNv2z6RMmQuKm2Y53TIjXcqcUsqAcXgshXhsyHanl33fJxMwgzhkFbPuP3Gc3kH
-         1nTujw0ZO6W1IRKj1Daa6Bsebsel8=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-OQ-MSGID: <13e8f36b-3e01-f17e-1025-d52c8c63928d@foxmail.com>
-Date:   Wed, 12 Jul 2023 02:14:58 +0800
+        Tue, 11 Jul 2023 15:42:59 -0400
+Received: from mail-vk1-xa35.google.com (mail-vk1-xa35.google.com [IPv6:2607:f8b0:4864:20::a35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 546CE19B;
+        Tue, 11 Jul 2023 12:42:56 -0700 (PDT)
+Received: by mail-vk1-xa35.google.com with SMTP id 71dfb90a1353d-47e4521e5baso2333340e0c.1;
+        Tue, 11 Jul 2023 12:42:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689104575; x=1691696575;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dqxaqXmw1tu3QWdtuOVOPVnF0rhjoVkY2FJ4msGP/FE=;
+        b=WCXxjiX35VIFpR0nhf5xN1cKqwvEe0aVJDmIXwy5y293z47OG3Hx8HJlUrAFw/hjFN
+         pOr8FVTMdX0qwE6i7UKoJ1bVn+fqYysno/V/wnLgh3aFLVP7TKFvo/5IyX+FG3nEX16+
+         OBFdpHvbfxXtTQjgmUngDLNjEL3u4KZnbVOntpXvaVf3OpH19Zex/xseSnpZAwbay+yL
+         thSo1fZ6zUGGJ4TDftaPNHW5df4OCCTf/o+J5S5lRPYdBfJeRceJdqr0mU4KAD4eO7rr
+         GmwZbjcRsrAqUpmh5C2uVP4CA74PUA/Silw7HAREHHV7vWJTbneD0/BHcOgkaYlVISEv
+         STvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689104575; x=1691696575;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dqxaqXmw1tu3QWdtuOVOPVnF0rhjoVkY2FJ4msGP/FE=;
+        b=U6pxITtXDdxn+yXvK3d09+hhk2qRqEnkGs7apWYfFHNhCrkBdqACk+jMEr3FQa/1a6
+         leSMFcrPT/5lr2IQXaAO7ppto69wi6c3pfn6lvZc04R8grfxHWlWdInZttKernkiCw/h
+         IsysD3ZxIw5iquwHfVeerUJRUhGcvykJgX5ZpYFC4PfqKlV2xavCCx1trqQjQT/ZyLDX
+         McRrolmkHbechzDIHnlAsU69k2hejGGn4+56vgt+2fzNW6iHOxfP/nz83RGOx+Y/3E5m
+         4UVj7b9ZKUAMOyppd6AuTDAMLFj8GObAheoLOk1Czg9pT5rSt05ySKjekwKobOUzZl1J
+         npmQ==
+X-Gm-Message-State: ABy/qLaQLiisTAb2t/uBgGjK+2b8PVTy5KD7LqbWBW9nKsYvJLovFayF
+        5S83nNnhskKSaWq38wY2t8PjeO9QKFyp56SmmQo=
+X-Google-Smtp-Source: APBJJlFESZwse+XBzfdEG7gPgKtm+dr9PqBvDRHkx0QyDpPtucriutBokoi6nHj9mpK7MC+ZT1zx1fvPJQ5h6dotD6o=
+X-Received: by 2002:a1f:5842:0:b0:476:3544:773 with SMTP id
+ m63-20020a1f5842000000b0047635440773mr8354569vkb.11.1689104575315; Tue, 11
+ Jul 2023 12:42:55 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] eventfd: avoid overflow to ULLONG_MAX when ctx->count is
- 0
-Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Dylan Yudaken <dylany@fb.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
+References: <20230711125241.1587820-1-usama.anjum@collabora.com> <20230711125241.1587820-3-usama.anjum@collabora.com>
+In-Reply-To: <20230711125241.1587820-3-usama.anjum@collabora.com>
+From:   Andrei Vagin <avagin@gmail.com>
+Date:   Tue, 11 Jul 2023 12:42:44 -0700
+Message-ID: <CANaxB-zvYpKw-aeF8nd_spARdkV29H7ZJDDhusnmqOPZX1xXtw@mail.gmail.com>
+Subject: Re: [PATCH v24 2/5] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
         Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <tencent_7588DFD1F365950A757310D764517A14B306@qq.com>
- <20230710-fahrbahn-flocken-03818a6b2e91@brauner>
- <tencent_BCEA8520DBC99F741C6666BF8167B32A2007@qq.com>
- <20230711-legalisieren-qualvoll-c578e099c65a@brauner>
-From:   Wen Yang <wenyang.linux@foxmail.com>
-In-Reply-To: <20230711-legalisieren-qualvoll-c578e099c65a@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_MUA_MOZILLA,
-        FREEMAIL_FROM,HELO_DYNAMIC_IPADDR,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,
-        RDNS_DYNAMIC,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ***
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Jul 11, 2023 at 5:53=E2=80=AFAM Muhammad Usama Anjum
+<usama.anjum@collabora.com> wrote:
 
-On 2023/7/11 17:39, Christian Brauner wrote:
-> On Mon, Jul 10, 2023 at 11:02:33PM +0800, Wen Yang wrote:
->> On 2023/7/10 22:12, Christian Brauner wrote:
->>> On Sun, Jul 09, 2023 at 02:54:51PM +0800, wenyang.linux@foxmail.com wrote:
->>>> From: Wen Yang <wenyang.linux@foxmail.com>
->>>>
->>>> For eventfd with flag EFD_SEMAPHORE, when its ctx->count is 0, calling
->>>> eventfd_ctx_do_read will cause ctx->count to overflow to ULLONG_MAX.
->>>>
->>>> Fixes: cb289d6244a3 ("eventfd - allow atomic read and waitqueue remove")
->>>> Signed-off-by: Wen Yang <wenyang.linux@foxmail.com>
->>>> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
->>>> Cc: Jens Axboe <axboe@kernel.dk>
->>>> Cc: Christian Brauner <brauner@kernel.org>
->>>> Cc: Christoph Hellwig <hch@lst.de>
->>>> Cc: Dylan Yudaken <dylany@fb.com>
->>>> Cc: David Woodhouse <dwmw@amazon.co.uk>
->>>> Cc: Matthew Wilcox <willy@infradead.org>
->>>> Cc: linux-fsdevel@vger.kernel.org
->>>> Cc: linux-kernel@vger.kernel.org
->>>> ---
->>> So this looks ok but I would like to see an analysis how the overflow
->>> can happen. I'm looking at the callers and it seems that once ctx->count
->>> hits 0 eventfd_read() won't call eventfd_ctx_do_read() anymore. So is
->>> there a caller that can call directly or indirectly
->>> eventfd_ctx_do_read() on a ctx->count == 0?
->> eventfd_read() ensures that ctx->count is not 0 before calling
->> eventfd_ctx_do_read() and it is correct.
->>
->> But it is not appropriate for eventfd_ctx_remove_wait_queue() to call
->> eventfd_ctx_do_read() unconditionally,
->>
->> as it may not only causes ctx->count to overflow, but also unnecessarily
->> calls wake_up_locked_poll().
->>
->>
->> I am sorry for just adding the following string in the patch:
->> Fixes: cb289d6244a3 ("eventfd - allow atomic read and waitqueue remove")
->>
->>
->> Looking forward to your suggestions.
->>
->> --
->>
->> Best wishes,
->>
->> Wen
->>
->>
->>> I'm just slightly skeptical about patches that fix issues without an
->>> analysis how this can happen.
->>>
->>>>    fs/eventfd.c | 4 +++-
->>>>    1 file changed, 3 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/eventfd.c b/fs/eventfd.c
->>>> index 8aa36cd37351..10a101df19cd 100644
->>>> --- a/fs/eventfd.c
->>>> +++ b/fs/eventfd.c
->>>> @@ -189,7 +189,7 @@ void eventfd_ctx_do_read(struct eventfd_ctx *ctx, __u64 *cnt)
->>>>    {
->>>>    	lockdep_assert_held(&ctx->wqh.lock);
->>>> -	*cnt = (ctx->flags & EFD_SEMAPHORE) ? 1 : ctx->count;
->>>> +	*cnt = ((ctx->flags & EFD_SEMAPHORE) && ctx->count) ? 1 : ctx->count;
->>>>    	ctx->count -= *cnt;
->>>>    }
->>>>    EXPORT_SYMBOL_GPL(eventfd_ctx_do_read);
->>>> @@ -269,6 +269,8 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
->>>>    		return -EFAULT;
->>>>    	if (ucnt == ULLONG_MAX)
->>>>    		return -EINVAL;
->>>> +	if ((ctx->flags & EFD_SEMAPHORE) && !ucnt)
->>>> +		return -EINVAL;
-> Hm, why is bit necessary though? What's wrong with specifying ucnt == 0
-> with EFD_SEMAPHORE? This also looks like a (very low potential) uapi
-> break.
+<snip>
 
+> +static int pagemap_scan_pte_hole(unsigned long addr, unsigned long end,
+> +                                int depth, struct mm_walk *walk)
+> +{
+> +       unsigned long n_pages =3D (end - addr)/PAGE_SIZE;
+> +       struct pagemap_scan_private *p =3D walk->private;
+> +       struct vm_area_struct *vma =3D walk->vma;
+> +       int ret =3D 0;
+> +
+> +       if (!vma)
+> +               return 0;
+> +
+> +       if (IS_PM_SCAN_GET(p->flags)) {
+> +               if (n_pages > p->max_pages - p->found_pages)
+> +                       n_pages =3D p->max_pages - p->found_pages;
+> +
+> +               ret =3D pagemap_scan_output(PM_SCAN_FLAGS(false, false, f=
+alse,
+> +                                         false, false), p, addr, n_pages=
+);
 
-Thank you for your careful review.
+Why do we report holes unconditionally?
 
-As you pointed out, this may break the uapi.
-Although manaul has the following description (man 2 eventfd):
-*  The file descriptor is readable (the select(2) readfds argument; the 
-poll(2) POLLIN flag) if the counter has a value greater than 0.
-*  The file descriptor is writable (the select(2) writefds argument; the 
-poll(2) POLLOUT flag) if it is possible to write a value of at least "1" 
-without blocking.
+> +       }
+> +
+> +       if (IS_PM_SCAN_WP(p->flags) &&
+> +           uffd_wp_range(vma, addr, end - addr, true) < 0)
+> +               ret =3D -EINVAL;
+> +
+> +       return ret;
+> +}
 
-But it does not specify that the ucnt cannot be zero, so we can only 
-delete the two lines of code above
-
-Could we propose another patch specifically to address the issue you 
-have identified?
-
-Since there are indeed some corner scenes when ucnt is 0 and ctx->count 
-is also 0:
-
-
-static ssize_t eventfd_write(struct file *file, const char __user *buf, 
-size_t count,
-                              loff_t *ppos)
-{
-...
-         if (ULLONG_MAX - ctx->count > ucnt)
-                 res = sizeof(ucnt);                 ---> always > 0
-...
-         if (likely(res > 0)) {
-                 ctx->count += ucnt;                 ---> unnecessary 
-addition of 0
-                 current->in_eventfd = 1;            ---> May affect 
-eventfd_signal()
-                 if (waitqueue_active(&ctx->wqh))
-                         wake_up_locked_poll(&ctx->wqh, EPOLLIN);  ---> 
-heavyweight wakeup
-                 current->in_eventfd = 0;
-         }
-...
-}
-
-
-static __poll_t eventfd_poll(struct file *file, poll_table *wait)
-{
-...
-         count = READ_ONCE(ctx->count);
-
-         if (count > 0)
-                 events |= EPOLLIN;    ---> If count is 0, all previous 
-operations are wasted
-
-         if (count == ULLONG_MAX)
-                 events |= EPOLLERR;
-         if (ULLONG_MAX - 1 > count)
-                 events |= EPOLLOUT;
-
-         return events;
-}
-
-Could we optimize it like this?
-
-static ssize_t eventfd_write(struct file *file, const char __user *buf, 
-size_t count,
-                              loff_t *ppos)
-{
-...
-         if (likely(res > 0)) {
-                 ctx->count += ucnt;
-                 if (ctx->count) {                       ---> avoiding 
-unnecessary heavyweight operations
-                         current->in_eventfd = 1;
-                         if (waitqueue_active(&ctx->wqh))
-wake_up_locked_poll(&ctx->wqh, EPOLLIN);
-                         current->in_eventfd = 0;
-                 }
-         }
-...
-}
-
-
---
-
-Best wishes,
-
-Wen
-
-
-
+Thanks,
+Andrei
