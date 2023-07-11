@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA16174E9DA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 11:07:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE7EA74EAE2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 11:40:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230264AbjGKJHs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jul 2023 05:07:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40292 "EHLO
+        id S230259AbjGKJkb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jul 2023 05:40:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbjGKJHq (ORCPT
+        with ESMTP id S230263AbjGKJkP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jul 2023 05:07:46 -0400
+        Tue, 11 Jul 2023 05:40:15 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 493FCE5C;
-        Tue, 11 Jul 2023 02:07:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39762170F;
+        Tue, 11 Jul 2023 02:40:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D186A6136C;
-        Tue, 11 Jul 2023 09:07:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 558BEC433C7;
-        Tue, 11 Jul 2023 09:07:39 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CC1C461447;
+        Tue, 11 Jul 2023 09:40:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 477B3C433C9;
+        Tue, 11 Jul 2023 09:40:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689066461;
-        bh=F9j7QSkCdEGLHSTYKupjSgHRjPvmMCsP/Dnn5N7amao=;
+        s=k20201202; t=1689068402;
+        bh=tNg5RzXLNkj13iWCpf81KjQRIluq/j+Mh+/AaKjhV/s=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CXir5RtXPR1h/1vENjENygKXbfM+5LZPSFNVaUI/IVb252c7CCGzFqcOQGKyfW9nt
-         44m/DTsuw2i1oBA26bzQrxtocX/pQBw22Qq7TSagMMmeAHCygFQ/kHYuVtdd1lvMOU
-         SWg9HgbsRe0SMd/C3TlI6eAq8VTs2w89oRQByNKBEeY47j2FWraO4gyn7EBqZ3B3j/
-         XDdzCejUoJUQ+e9ShQQOd47b8f9Vm1mIbFBcyuXN5NY2hf+Z3kWYh01djIH6QU/v4U
-         XCZXGxttGtXNKCgvUUTeT2dH44fQhB+JxIVl9IaZqxeeQrYtu+0/cFtUbGw8juSKL6
-         af0PBlU04G20w==
-Date:   Tue, 11 Jul 2023 11:07:36 +0200
+        b=bGra2pZm/V7ttpDbB7qkBlkdjQedgI8dz0ghqBuEaWTNp81KbQ9QqMQBvADDFrJTm
+         rd19VmGqeEza7LHOcT2YcXgsiJSK18vn3fQjSrfNYeddqBB9zXS787bTU+s6smgYj2
+         i6UpTBwnn1JyUwwOSetFKXw3c7+kWtzCLMmgjsCdr+WAcSQWWJyXrIGxMk4kKN2mPr
+         VHesNz+Vtjc+KQZGZRxhp2x5Rb+NV1vcqYNqfQedbXrL8uKIRGvfpRcy+mUcU6Rcai
+         tReD7NUj8qIIBgjq05dLwV5a6PiCsh3IstcbYMMY9wtPg6+wiaaPBRmobvzAugfWqC
+         57on1kUGPjpPA==
+Date:   Tue, 11 Jul 2023 11:39:57 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     Wen Yang <wenyang.linux@foxmail.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -44,7 +44,7 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] eventfd: avoid overflow to ULLONG_MAX when ctx->count is
  0
-Message-ID: <20230711-kroll-wellen-f6a9059e943d@brauner>
+Message-ID: <20230711-legalisieren-qualvoll-c578e099c65a@brauner>
 References: <tencent_7588DFD1F365950A757310D764517A14B306@qq.com>
  <20230710-fahrbahn-flocken-03818a6b2e91@brauner>
  <tencent_BCEA8520DBC99F741C6666BF8167B32A2007@qq.com>
@@ -96,34 +96,6 @@ On Mon, Jul 10, 2023 at 11:02:33PM +0800, Wen Yang wrote:
 > 
 > as it may not only causes ctx->count to overflow, but also unnecessarily
 > calls wake_up_locked_poll().
-
-Hm, so I think you're right and an underflow can be triggered for at
-least three subsystems:
-
-(1) virt/kvm/eventfd.c
-(2) drivers/vfio/virqfd.c
-(3) drivers/virt/acrn/irqfd.c
-
-where (2) and (3) are just modeled after (1). The eventfd must've been
-set to EFD_SEMAPHORE and ctx->count must been or decremented zero. The
-only way I can see the _underflow_ happening is if the irqfd is shutdown
-through an ioctl() like KVM_IRQFD with KVM_IRQFD_FLAG_DEASSIGN raised
-while ctx->count is zero:
-
-kvm_vm_ioctl()
--> kvm_irqfd()
-   -> kvm_irqfd_deassign()
-      -> irqfd_deactivate()
-         -> irqfd_shutdown()
-            -> eventfd_ctx_remove_wait_queue(&cnt)
-
-which would underflow @cnt and cause a spurious wakeup. Userspace would
-still read one because of EFD_SEMAPHORE semantics and wouldn't notice
-the underflow.
-
-I think it's probably not that bad because afaict, this really can only
-happen when (1)-(3) are shutdown. But we should still fix it ofc.
-
 > 
 > 
 > I am sorry for just adding the following string in the patch:
@@ -131,8 +103,39 @@ happen when (1)-(3) are shutdown. But we should still fix it ofc.
 > 
 > 
 > Looking forward to your suggestions.
+> 
+> --
+> 
+> Best wishes,
+> 
+> Wen
+> 
+> 
+> > I'm just slightly skeptical about patches that fix issues without an
+> > analysis how this can happen.
+> > 
+> > >   fs/eventfd.c | 4 +++-
+> > >   1 file changed, 3 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/fs/eventfd.c b/fs/eventfd.c
+> > > index 8aa36cd37351..10a101df19cd 100644
+> > > --- a/fs/eventfd.c
+> > > +++ b/fs/eventfd.c
+> > > @@ -189,7 +189,7 @@ void eventfd_ctx_do_read(struct eventfd_ctx *ctx, __u64 *cnt)
+> > >   {
+> > >   	lockdep_assert_held(&ctx->wqh.lock);
+> > > -	*cnt = (ctx->flags & EFD_SEMAPHORE) ? 1 : ctx->count;
+> > > +	*cnt = ((ctx->flags & EFD_SEMAPHORE) && ctx->count) ? 1 : ctx->count;
+> > >   	ctx->count -= *cnt;
+> > >   }
+> > >   EXPORT_SYMBOL_GPL(eventfd_ctx_do_read);
+> > > @@ -269,6 +269,8 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
+> > >   		return -EFAULT;
+> > >   	if (ucnt == ULLONG_MAX)
+> > >   		return -EINVAL;
+> > > +	if ((ctx->flags & EFD_SEMAPHORE) && !ucnt)
+> > > +		return -EINVAL;
 
-What I usually look for is some callchain/analysis that explain under
-what circumstance what this is fixing can happen. That makes life for
-reviewers a lot easier because they don't have to dig out that work
-themselves which takes time.
+Hm, why is bit necessary though? What's wrong with specifying ucnt == 0
+with EFD_SEMAPHORE? This also looks like a (very low potential) uapi
+break.
