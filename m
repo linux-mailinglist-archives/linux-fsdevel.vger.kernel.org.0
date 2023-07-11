@@ -2,63 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 45E1674E5ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 06:37:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFBB474E5F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 06:37:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230395AbjGKEg7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jul 2023 00:36:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44988 "EHLO
+        id S230467AbjGKEhJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jul 2023 00:37:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230292AbjGKEgy (ORCPT
+        with ESMTP id S230314AbjGKEg4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jul 2023 00:36:54 -0400
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 080F7E42
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 21:36:29 -0700 (PDT)
-Received: by mail-oi1-x22c.google.com with SMTP id 5614622812f47-38c35975545so4636613b6e.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 21:36:29 -0700 (PDT)
+        Tue, 11 Jul 2023 00:36:56 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF84A139
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 21:36:31 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-6686ef86110so2784763b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 21:36:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1689050188; x=1691642188;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nq3lPXWT5aXljLcGjDhakg0e9OKm0kYjlfzX3G1YySM=;
-        b=U/k0gmhKprSH8HHPSLhEKtiEwMpj3UCthlCHSjtbF4pXeTx53Jd5X+28zSCp3EQVWN
-         gXH2/NxX1zWMZCkwtk1MolZBOeamaf25jM/L7DL/3kmjblno55kjVz0wZa6B6lfv2fEY
-         gYjG8h/brzAri8nVPWa/vxt9zxQcmjY+Yv3+TGwJuhyLNCOHN+3PR5VG8+qY/EixG2AY
-         OV/2xCqVSI81tQmCUeAcc1ZyLSQo8kSipb74slZE04gzTTzObNMQVx6jfu9EojvDiX+X
-         Q7NDao/lscWvdSB3CkmJM9vpJyKRn4RqjJ7mDz85hJYD2PixQfn3Xx3V7DzZNj/Lofcy
-         q+CA==
+        d=bytedance.com; s=google; t=1689050191; x=1691642191;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o2fbpRc1gP3OYJFiewDVSSan5FPPeq6w2nLF2ekKLbg=;
+        b=RQesib1xN1ZmHsPS1BZxb8GFBw3bLOQP+UTjbpSvqSu+zXCUbswMRRjAQVntHnffgk
+         2E7MeVDBV3pc5dYbmgSn6MIm2amFwKOtJplCxUPOs4k2kU3oM5T7RL+2F9ANb+ranU8N
+         cTamzNqo/wgS45OeJK1zXiqykdKVk4JG6kyQnw8eJDpaUqPUIkUPzbNhzXXwt17/i6dg
+         koxv3ey5vV36NfWt0COANNWYLYE5QEZNoTZyYAyTVobEvSdbLe/RxfNmvTFEo+Olk8Dn
+         BNMc0q1bCu/CaaEV8YEzXStHiJ5nkGZrRC5Gn+FtESHQPWr5TV0cdYOfjYn8FB/MEZYv
+         N43w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689050188; x=1691642188;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nq3lPXWT5aXljLcGjDhakg0e9OKm0kYjlfzX3G1YySM=;
-        b=bTXWLYSnA23mRpFi0sVK2J/SMH+F9hPmt9WrClwbwNnhRidc3GWR8KSP4ibuw4H3vG
-         XVm/mOahXnLOLdtBTFYrlld139veaoyP1FFXp4zc5IyzyoIOQlmBQkx6NYBeETGASQjv
-         In0lT2OZfxPt/+wYoIRw12ddbfF/i7maNpW5ZH+bplgpLDuVbmGwbT+eD/oTvr4kifDS
-         SRNc44+QxwDsCmzdvSpV8NKptK5NsPSTnnU05m+qDagGcwSmUWfIHl5HWcDnUuj2fYkk
-         Gcae0i1P1o/3u2JZ5t+JXKyiCMtzUeZA8P6UxakeMNJcFlenfWwFs/Mv1nuKzeRdBkt6
-         iK2A==
-X-Gm-Message-State: ABy/qLbUbpLB4pAZBCvjskcJDcBt0Bcz5sK+sYpmdDHpna16UMezBmYW
-        u0IZEvCyI6KIWMoJDtY51jQF6rR0eNuuCLwAp/3Mgw==
-X-Google-Smtp-Source: APBJJlG/BcxDe+NZs8OlImStJRESCa7bKcOOGDXXexFkijj4ysQOckROCY3jTsXmvPKD+bullkwFKg==
-X-Received: by 2002:a05:6358:9910:b0:134:ddad:2b4f with SMTP id w16-20020a056358991000b00134ddad2b4fmr14191945rwa.18.1689050188217;
-        Mon, 10 Jul 2023 21:36:28 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689050191; x=1691642191;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o2fbpRc1gP3OYJFiewDVSSan5FPPeq6w2nLF2ekKLbg=;
+        b=Y5hyKsUQMvYkA4vZ7SM/wIwWXrQ8UUIxCOmDeYPG/lSkUpdJ4hOPBIsD50g1BdXbQt
+         eCpyznz6ak4lbTp93r1hSyviN3BP4D5GoMCwHYtxwplPa9rWepQg+Xx54oVhFEX+zFpz
+         5bg6tBH3lUXZzTejuM3Zo1AsFH7znz0caAgUloFE2rZbyPZi0Uk6EYJ1i7hMfwOY1r+t
+         aZ2ZlY92V3vvlT1vXajblWM88S9+/bJsiKOGGBCTU9r6LUQ5tdwEfaXNISnogCDqmn0K
+         NSBbPPacxkuLPMXAae94NAAWrAXJonw2k7jOAlHX3cKOktW/8OuVoY2TUIwOF3lTimnz
+         KSOQ==
+X-Gm-Message-State: ABy/qLZZWKbKDF2t/ll9azcFO2yN+NIlxtjKJQvoRh2ZrjKBQPDT5S2S
+        MiZEvhRvyi8qwQkvGSweEvPIUQ==
+X-Google-Smtp-Source: APBJJlH4Z539tozKrapAxAT/lMBr/3gs+hikaUOY++P9Tu6dKkQgiDYYm65yDeiYW5QBvBYNqbJcOA==
+X-Received: by 2002:a05:6a21:900c:b0:130:74c8:b501 with SMTP id tq12-20020a056a21900c00b0013074c8b501mr8444984pzb.30.1689050191294;
+        Mon, 10 Jul 2023 21:36:31 -0700 (PDT)
 Received: from localhost.localdomain ([139.177.225.236])
-        by smtp.gmail.com with ESMTPSA id ij9-20020a170902ab4900b001b9de67285dsm755259plb.156.2023.07.10.21.36.25
+        by smtp.gmail.com with ESMTPSA id ij9-20020a170902ab4900b001b9de67285dsm755259plb.156.2023.07.10.21.36.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jul 2023 21:36:27 -0700 (PDT)
+        Mon, 10 Jul 2023 21:36:30 -0700 (PDT)
 From:   Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>,
         Jonathan Corbet <corbet@lwn.net>,
         linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     me@jcix.top, Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-Subject: [PATCH 0/5] FUSE consistency improvements
-Date:   Tue, 11 Jul 2023 12:34:00 +0800
-Message-Id: <20230711043405.66256-1-zhangjiachen.jaycee@bytedance.com>
+Subject: [PATCH 1/5] fuse: check attributes staleness on fuse_iget()
+Date:   Tue, 11 Jul 2023 12:34:01 +0800
+Message-Id: <20230711043405.66256-2-zhangjiachen.jaycee@bytedance.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20230711043405.66256-1-zhangjiachen.jaycee@bytedance.com>
+References: <20230711043405.66256-1-zhangjiachen.jaycee@bytedance.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -71,47 +74,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patchset resends some patches that related to FUSE consistency
-improvements in the mailing list.
+Function fuse_direntplus_link() might call fuse_iget() to initialize a new
+fuse_inode and change its attributes. If fi->attr_version is always
+initialized with 0, even if the attributes returned by the FUSE_READDIR
+request is staled, as the new fi->attr_version is 0, fuse_change_attributes
+will still set the staled attributes to inode. This wrong behaviour may
+cause file size inconsistency even when there is no changes from
+server-side.
 
-The 1st patch fixes a staleness-checking issue, which is the v2 version
-of the patch[1].
+To reproduce the issue, consider the following 2 programs (A and B) are
+running concurrently,
 
-The 2nd patch is a resend version of the patch[2] with its commit message
-rewritten.
+        A                                               B
+----------------------------------      --------------------------------
+{ /fusemnt/dir/f is a file path in a fuse mount, the size of f is 0. }
 
-The 3rd and 4th patches are new versions of the patch[3] and the patch[4],
-FUSE filesystems are able to implement the close-to-open (CTO) consistency
-semantics with the help of these two patches. The 5th patch is a new
-patch which improves the explanation of FUSE cache mode and consistency
-models in the documentation.
+readdir(/fusemnt/dir) start
+//Daemon set size 0 to f direntry
+                                        fallocate(f, 1024)
+                                        stat(f) // B see size 1024
+                                        echo 2 > /proc/sys/vm/drop_caches
+readdir(/fusemnt/dir) reply to kernel
+Kernel set 0 to the I_NEW inode
 
+                                        stat(f) // B see size 0
 
-[1] [PATCH] fuse: initialize attr_version of new fuse inodes by fc->attr_version,
-https://lore.kernel.org/lkml/20221111093702.80975-1-zhangjiachen.jaycee@bytedance.com/
-[2] [PATCH] fuse: invalidate dentry on EEXIST creates or ENOENT deletes,
-https://lore.kernel.org/lkml/20220805131823.83544-1-zhangjiachen.jaycee@bytedance.com/
-[3] [PATCH] fuse: add FOPEN_INVAL_ATTR,
-https://lore.kernel.org/lkml/20220608104202.19461-1-zhangjiachen.jaycee@bytedance.com/
-[4] [PATCH] fuse: writeback_cache consistency enhancement (writeback_cache_v2),
-https://lore.kernel.org/lkml/20220624055825.29183-1-zhangjiachen.jaycee@bytedance.com/
+In the above case, only program B is modifying the file size, however, B
+observes file size changing between the 2 'readonly' stat() calls. To fix
+this issue, we should make sure readdirplus still follows the rule of
+attr_version staleness checking even if the fi->attr_version is lost due to
+inode eviction. So this patch increases fc->attr_version on inode eviction,
+and compares request attr_version and the fc->attr_version when a
+FUSE_READDIRPLUS request is finished.
 
+Signed-off-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+---
+ fs/fuse/inode.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Jiachen Zhang (5):
-  fuse: check attributes staleness on fuse_iget()
-  fuse: invalidate dentry on EEXIST creates or ENOENT deletes
-  fuse: add FOPEN_INVAL_ATTR
-  fuse: writeback_cache consistency enhancement (writeback_cache_v2)
-  docs: fuse: improve FUSE consistency explanation
-
- Documentation/filesystems/fuse-io.rst | 32 +++++++++++++++--
- fs/fuse/dir.c                         | 11 +++---
- fs/fuse/file.c                        | 35 +++++++++++++++++++
- fs/fuse/fuse_i.h                      |  6 ++++
- fs/fuse/inode.c                       | 49 +++++++++++++++++++++++++--
- include/uapi/linux/fuse.h             | 11 +++++-
- 6 files changed, 135 insertions(+), 9 deletions(-)
-
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 660be31aaabc..3e0b1fb1db17 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -115,6 +115,7 @@ static void fuse_free_inode(struct inode *inode)
+ 
+ static void fuse_evict_inode(struct inode *inode)
+ {
++	struct fuse_conn *fc = get_fuse_conn(inode);
+ 	struct fuse_inode *fi = get_fuse_inode(inode);
+ 
+ 	/* Will write inode on close/munmap and in all other dirtiers */
+@@ -137,6 +138,8 @@ static void fuse_evict_inode(struct inode *inode)
+ 		WARN_ON(!list_empty(&fi->write_files));
+ 		WARN_ON(!list_empty(&fi->queued_writes));
+ 	}
++
++	atomic64_inc(&fc->attr_version);
+ }
+ 
+ static int fuse_reconfigure(struct fs_context *fsc)
+@@ -409,6 +412,10 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
+ 	fi->nlookup++;
+ 	spin_unlock(&fi->lock);
+ 	fuse_change_attributes(inode, attr, attr_valid, attr_version);
++	spin_lock(&fi->lock);
++	if (attr_version < atomic64_read(&fc->attr_version))
++		fuse_invalidate_attr(inode);
++	spin_unlock(&fi->lock);
+ 
+ 	return inode;
+ }
 -- 
 2.20.1
 
