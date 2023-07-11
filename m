@@ -2,223 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B332B74ED0B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 13:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0546874ED10
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 13:42:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230106AbjGKLmZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jul 2023 07:42:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59498 "EHLO
+        id S230253AbjGKLmn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jul 2023 07:42:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbjGKLmY (ORCPT
+        with ESMTP id S229868AbjGKLml (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jul 2023 07:42:24 -0400
-Received: from out-13.mta0.migadu.com (out-13.mta0.migadu.com [IPv6:2001:41d0:1004:224b::d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38CCF1A3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jul 2023 04:42:23 -0700 (PDT)
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1689075741;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WEcvjNdIwRRdNEdy4CUUCneNVXfs1KxIIH3UVTTZbIk=;
-        b=G6fca/RPO9sgIcOT2MbnvMK6J2ikvBjtOsQbgRc4A3jl4KLXCsPVfp8BSFgbwivYrgR+hr
-        dcZNcu7lV45Ki1z/XtREwawNsLGsR+x0ufw+H7nqzqGMzE/2Gl8aWydSj8Bd4P47XhL/Yx
-        FNZUIe5yWg4kiN8mMnhnkOWiGHyffKM=
-From:   Hao Xu <hao.xu@linux.dev>
-To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-Subject: [PATCH 3/3] io_uring: add support for getdents
-Date:   Tue, 11 Jul 2023 19:40:27 +0800
-Message-Id: <20230711114027.59945-4-hao.xu@linux.dev>
-In-Reply-To: <20230711114027.59945-1-hao.xu@linux.dev>
-References: <20230711114027.59945-1-hao.xu@linux.dev>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+        Tue, 11 Jul 2023 07:42:41 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D0AD136;
+        Tue, 11 Jul 2023 04:42:40 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id AD2745C00F7;
+        Tue, 11 Jul 2023 07:42:39 -0400 (EDT)
+Received: from imap50 ([10.202.2.100])
+  by compute6.internal (MEProxy); Tue, 11 Jul 2023 07:42:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1689075759; x=1689162159; bh=ky
+        TmtQ94Bg/o37lAnBcJXDTnDF6sa4YBDC0JstTG714=; b=gtbNFIQOOkHrxN4hav
+        3oP75lU8LQIOux8o5t1A5AOT8qTdAHI6+c7vrM3YQYWCs+3Nvg1F6BV3TJiabDbY
+        /lXbBNsBsvuqNoe3LWFMQguuPW/4jLxyoK8UKxCLRCMTjb8dFVI+k/KhcgEgF3hh
+        BJEbGQ0C/HfJt5EbhoLJBxYDleV5FWApLKvxP/bzBcAkhLhGeuG0+EztHuCii3u7
+        9am+quXZGw0H+jB0lYD2YmevjzE1S5Z//PFOyUTNCPBE9689ZD+dLJbhhgz4ltLX
+        6nFwDrZZqcFexWYmSu0PcLC1/4D094rs0bzkVrYM4Seu9WrrvgGxOVeqoI8QZjn/
+        XSiQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1689075759; x=1689162159; bh=kyTmtQ94Bg/o3
+        7lAnBcJXDTnDF6sa4YBDC0JstTG714=; b=niWM8aPrJQ5hUolpkCao6rVenQnZU
+        fiqKidavvngPC7ZINAQdDWhz7uO6cKH2+hXj97e23ZSlXztW4CJ0sQELSp/H/IDW
+        WFOfAuXlhVv+TeQ9w3CrU6IDnDnCe9LGpRs6OPMW1isAyJEy8CfANJZmxe7aUO7Q
+        jlydbKZqDE0kuHhuSz4itPYSxqukguzNL6dmNBeuSp/IbSo2cSgrkgysoFwbZIk4
+        sHSqrqGFXU7XbEyzCpPm5ExUg4RNDV+bjRq1l8+zrIvtCCpE/CQK9ZTvcdD3933K
+        bF4vkMScH3PuNUqAWY8+4UJixDteqtPG+g9UoczsjcIEKlPMKOs2iwXYw==
+X-ME-Sender: <xms:L0CtZE_ne_WMkwdReZ1uX6hVQXRgra0DwO81qcNdsWgl-VlL6RG_vw>
+    <xme:L0CtZMuSXN5qY_cvffFveWSGpbFtBT6A8885nHXC6QAL0huplJuHHLoj3bAkBnD-p
+    A8YGF0mxhW4s8ZMPgc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrfedtgdegfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpefffeefudevhfehgfejudffudfhjeeftdfhfedtffehieelgfekveeifedujeej
+    ueenucffohhmrghinhepshhouhhrtggvfigrrhgvrdhorhhgpdhmuhhslhdqlhhisggtrd
+    horhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhep
+    rghrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:L0CtZKA60S1lK1ry3X0RUBKJmw1LUKh5HdAgQOWfNo6aPOtcCbZ4DA>
+    <xmx:L0CtZEciJY2v9IPE5RUZv9dqBQUmMtLJ7-W1k9onN63j_twqjf2iNQ>
+    <xmx:L0CtZJMmU91hK7ySJQdpLpwkSXsBEOk1uEzWBnYJ984RtoacQ_aXqg>
+    <xmx:L0CtZOm5YB5ORfEYjlZfFUpkaGr4dE2Y2hFDo2mNqiECJPXpHejjzA>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 3F8831700089; Tue, 11 Jul 2023 07:42:39 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-531-gfdfa13a06d-fm-20230703.001-gfdfa13a0
+Mime-Version: 1.0
+Message-Id: <83363cbb-2431-4520-81a9-0d71f420cb36@app.fastmail.com>
+In-Reply-To: <d11b93ad8e3b669afaff942e25c3fca65c6a983c.1689074739.git.legion@kernel.org>
+References: <87o8pscpny.fsf@oldenburg2.str.redhat.com>
+ <cover.1689074739.git.legion@kernel.org>
+ <d11b93ad8e3b669afaff942e25c3fca65c6a983c.1689074739.git.legion@kernel.org>
+Date:   Tue, 11 Jul 2023 13:42:19 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Alexey Gladkov" <legion@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>
+Cc:     "Palmer Dabbelt" <palmer@sifive.com>,
+        "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Arnaldo Carvalho de Melo" <acme@kernel.org>,
+        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
+        "Jens Axboe" <axboe@kernel.dk>,
+        "Benjamin Herrenschmidt" <benh@kernel.crashing.org>,
+        "Christian Borntraeger" <borntraeger@de.ibm.com>,
+        "Borislav Petkov" <bp@alien8.de>,
+        "Catalin Marinas" <catalin.marinas@arm.com>, christian@brauner.io,
+        "Rich Felker" <dalias@libc.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Deepa Dinamani" <deepa.kernel@gmail.com>,
+        "Helge Deller" <deller@gmx.de>,
+        "David Howells" <dhowells@redhat.com>, fenghua.yu@intel.com,
+        firoz.khan@linaro.org, "Florian Weimer" <fweimer@redhat.com>,
+        "Geert Uytterhoeven" <geert@linux-m68k.org>, glebfm@altlinux.org,
+        gor@linux.ibm.com, hare@suse.com, heiko.carstens@de.ibm.com,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Ivan Kokshaysky" <ink@jurassic.park.msu.ru>, jhogan@kernel.org,
+        "Kim Phillips" <kim.phillips@arm.com>, ldv@altlinux.org,
+        linux-alpha@vger.kernel.org,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, "Russell King" <linux@armlinux.org.uk>,
+        linuxppc-dev@lists.ozlabs.org, "Andy Lutomirski" <luto@kernel.org>,
+        "Matt Turner" <mattst88@gmail.com>,
+        "Ingo Molnar" <mingo@redhat.com>,
+        "Michal Simek" <monstr@monstr.eu>,
+        "Michael Ellerman" <mpe@ellerman.id.au>,
+        "Namhyung Kim" <namhyung@kernel.org>, paul.burton@mips.com,
+        "Paul Mackerras" <paulus@samba.org>,
+        "Peter Zijlstra" <peterz@infradead.org>, ralf@linux-mips.org,
+        rth@twiddle.net, schwidefsky@de.ibm.com,
+        sparclinux@vger.kernel.org, stefan@agner.ch,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Tony Luck" <tony.luck@intel.com>, tycho@tycho.ws,
+        "Will Deacon" <will@kernel.org>, x86@kernel.org,
+        "Yoshinori Sato" <ysato@users.sourceforge.jp>
+Subject: Re: [PATCH v3 2/5] fs: Add fchmodat4()
+Content-Type: text/plain
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Hao Xu <howeyxu@tencent.com>
+On Tue, Jul 11, 2023, at 13:25, Alexey Gladkov wrote:
+> From: Palmer Dabbelt <palmer@sifive.com>
+>
+> On the userspace side fchmodat(3) is implemented as a wrapper
+> function which implements the POSIX-specified interface. This
+> interface differs from the underlying kernel system call, which does not
+> have a flags argument. Most implementations require procfs [1][2].
+>
+> There doesn't appear to be a good userspace workaround for this issue
+> but the implementation in the kernel is pretty straight-forward.
+>
+> The new fchmodat4() syscall allows to pass the AT_SYMLINK_NOFOLLOW flag,
+> unlike existing fchmodat.
+>
+> [1] 
+> https://sourceware.org/git/?p=glibc.git;a=blob;f=sysdeps/unix/sysv/linux/fchmodat.c;h=17eca54051ee28ba1ec3f9aed170a62630959143;hb=a492b1e5ef7ab50c6fdd4e4e9879ea5569ab0a6c#l35
+> [2] 
+> https://git.musl-libc.org/cgit/musl/tree/src/stat/fchmodat.c?id=718f363bc2067b6487900eddc9180c84e7739f80#n28
+>
+> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+> Signed-off-by: Alexey Gladkov <legion@kernel.org>
 
-This add support for getdents64 to io_uring, acting exactly like the
-syscall: the directory is iterated from it's current's position as
-stored in the file struct, and the file's position is updated exactly as
-if getdents64 had been called.
+I don't know the history of why we ended up with the different
+interface, or whether this was done intentionally in the kernel
+or if we want this syscall.
 
-For filesystems that support NOWAIT in iterate_shared(), try to use it
-first; if a user already knows the filesystem they use do not support
-nowait they can force async through IOSQE_ASYNC in the sqe flags,
-avoiding the need to bounce back through a useless EAGAIN return.
+Assuming this is in fact needed, I double-checked that the
+implementation looks correct to me and is portable to all the
+architectures, without the need for a compat wrapper.
 
-Co-developed-by: Dominique Martinet <asmadeus@codewreck.org>
-Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
-Signed-off-by: Hao Xu <howeyxu@tencent.com>
----
- include/uapi/linux/io_uring.h |  7 ++++
- io_uring/fs.c                 | 60 +++++++++++++++++++++++++++++++++++
- io_uring/fs.h                 |  3 ++
- io_uring/opdef.c              |  8 +++++
- 4 files changed, 78 insertions(+)
-
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 08720c7bd92f..6c0d521135a6 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -65,6 +65,7 @@ struct io_uring_sqe {
- 		__u32		xattr_flags;
- 		__u32		msg_ring_flags;
- 		__u32		uring_cmd_flags;
-+		__u32		getdents_flags;
- 	};
- 	__u64	user_data;	/* data to be passed back at completion time */
- 	/* pack this to avoid bogus arm OABI complaints */
-@@ -235,6 +236,7 @@ enum io_uring_op {
- 	IORING_OP_URING_CMD,
- 	IORING_OP_SEND_ZC,
- 	IORING_OP_SENDMSG_ZC,
-+	IORING_OP_GETDENTS,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
-@@ -273,6 +275,11 @@ enum io_uring_op {
-  */
- #define SPLICE_F_FD_IN_FIXED	(1U << 31) /* the last bit of __u32 */
- 
-+/*
-+ * sqe->getdents_flags
-+ */
-+#define IORING_GETDENTS_REWIND	(1U << 0)
-+
- /*
-  * POLL_ADD flags. Note that since sqe->poll_events is the flag space, the
-  * command flags for POLL_ADD are stored in sqe->len.
-diff --git a/io_uring/fs.c b/io_uring/fs.c
-index f6a69a549fd4..77f00577e09c 100644
---- a/io_uring/fs.c
-+++ b/io_uring/fs.c
-@@ -47,6 +47,13 @@ struct io_link {
- 	int				flags;
- };
- 
-+struct io_getdents {
-+	struct file			*file;
-+	struct linux_dirent64 __user	*dirent;
-+	unsigned int			count;
-+	int				flags;
-+};
-+
- int io_renameat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_rename *ren = io_kiocb_to_cmd(req, struct io_rename);
-@@ -291,3 +298,56 @@ void io_link_cleanup(struct io_kiocb *req)
- 	putname(sl->oldpath);
- 	putname(sl->newpath);
- }
-+
-+int io_getdents_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-+{
-+	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
-+
-+	if (READ_ONCE(sqe->off) != 0)
-+		return -EINVAL;
-+
-+	gd->dirent = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	gd->count = READ_ONCE(sqe->len);
-+
-+	return 0;
-+}
-+
-+int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
-+{
-+	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
-+	struct file *file;
-+	unsigned long getdents_flags = 0;
-+	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
-+	bool should_lock = false;
-+	int ret;
-+
-+	if (force_nonblock) {
-+		if (!(req->file->f_mode & FMODE_NOWAIT))
-+			return -EAGAIN;
-+
-+		getdents_flags = DIR_CONTEXT_F_NOWAIT;
-+	}
-+
-+	file = req->file;
-+	if (file && (file->f_mode & FMODE_ATOMIC_POS)) {
-+		if (file_count(file) > 1)
-+			should_lock = true;
-+	}
-+	if (should_lock) {
-+		if (!force_nonblock)
-+			mutex_lock(&file->f_pos_lock);
-+		else if (!mutex_trylock(&file->f_pos_lock))
-+			return -EAGAIN;
-+	}
-+
-+	ret = vfs_getdents(file, gd->dirent, gd->count, getdents_flags);
-+	if (should_lock)
-+		mutex_unlock(&file->f_pos_lock);
-+
-+	if (ret == -EAGAIN && force_nonblock)
-+		return -EAGAIN;
-+
-+	io_req_set_res(req, ret, 0);
-+	return 0;
-+}
-+
-diff --git a/io_uring/fs.h b/io_uring/fs.h
-index 0bb5efe3d6bb..f83a6f3a678d 100644
---- a/io_uring/fs.h
-+++ b/io_uring/fs.h
-@@ -18,3 +18,6 @@ int io_symlinkat(struct io_kiocb *req, unsigned int issue_flags);
- int io_linkat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
- int io_linkat(struct io_kiocb *req, unsigned int issue_flags);
- void io_link_cleanup(struct io_kiocb *req);
-+
-+int io_getdents_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-+int io_getdents(struct io_kiocb *req, unsigned int issue_flags);
-diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-index 3b9c6489b8b6..1bae6b2a8d0b 100644
---- a/io_uring/opdef.c
-+++ b/io_uring/opdef.c
-@@ -428,6 +428,11 @@ const struct io_issue_def io_issue_defs[] = {
- 		.prep			= io_eopnotsupp_prep,
- #endif
- 	},
-+	[IORING_OP_GETDENTS] = {
-+		.needs_file		= 1,
-+		.prep			= io_getdents_prep,
-+		.issue			= io_getdents,
-+	},
- };
- 
- 
-@@ -648,6 +653,9 @@ const struct io_cold_def io_cold_defs[] = {
- 		.fail			= io_sendrecv_fail,
- #endif
- 	},
-+	[IORING_OP_GETDENTS] = {
-+		.name			= "GETDENTS",
-+	},
- };
- 
- const char *io_uring_get_opcode(u8 opcode)
--- 
-2.25.1
-
+Acked-by: Arnd Bergmann <arnd@arndb.de>
