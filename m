@@ -2,218 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7783F74E3A2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 03:43:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 106C974E3C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 03:53:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230049AbjGKBnV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Jul 2023 21:43:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47694 "EHLO
+        id S230182AbjGKBxu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Jul 2023 21:53:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229925AbjGKBnT (ORCPT
+        with ESMTP id S229577AbjGKBxt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Jul 2023 21:43:19 -0400
-X-Greylist: delayed 310 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 10 Jul 2023 18:43:14 PDT
-Received: from bongo.yew.relay.mailchannels.net (bongo.yew.relay.mailchannels.net [23.83.220.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 539FFE3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 18:43:13 -0700 (PDT)
-X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id 5EAF95C1FE3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jul 2023 01:38:00 +0000 (UTC)
-Received: from pdx1-sub0-mail-a234.dreamhost.com (unknown [127.0.0.6])
-        (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id C89345C1FD5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jul 2023 01:37:59 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1689039479; a=rsa-sha256;
-        cv=none;
-        b=Eepe0L+JeueNalBbNPX01tuZGhgDvaRYSl4yb8P6Mz7FoDG9x7f2vp5GCxWV4FoYE4fD2/
-        OCM3DawntNTRsk+cd0aplXsAjeil8ryT1r4GqzzQf3IjVw5EKrMub3jKBJZQub4oJj2SPO
-        sQz0KwdXB8mQCs+B9fOCrnfbyb/PVRJha9fN2S3k7gYJlTSMLN4kBkrCJgTbSyGkHj2KhB
-        awf8Oja3LPavjuubxpgxLDjfO9wYyL6Q3ttHaqCo3WPX+xFWyMyTPS3hgqklponGsq/xQq
-        YLNdswhmD0aS4hwkPflMu4ImsSjcfk9XkNT/pedsH8/7ZhUfEqQNwllDermTjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-        s=arc-2022; t=1689039479;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references:dkim-signature;
-        bh=5PpiEQMklI816ebRSrfaSOe/p+XsnMxbP2nT9Lvxh7E=;
-        b=to4hU8cJzlO8PDPWiTowg/cG0e1zYc+tbmBWaD8SHJ/3or4C+JoJvxD46BIJptwrFriLCu
-        tOTQF0uRQELQ4l7z9/UAjdmOqLjodgBdDqt2WFOqCpRm87RWu4FvUWhg2NzkbnrI57GAr2
-        Cu5VM4C749gMxY43ERrvtPcultl6oCwVS0LLo2eMJgtP8AseLnehvU+5YOg/7nCo6iGl15
-        c8d/2qYDMTGoAWwjSunKzSB6mICQrwj8F1d0A891EmSu82kBraJBNQnv5rBl7qGe28oG5s
-        qV7uRJ789TOVXvQ7Rnzgj0RclunfTH/CpjOHvyMHYNFeI8PTmeiGhBU4rUrlag==
-ARC-Authentication-Results: i=1;
-        rspamd-7d9c4d5c9b-8hgvc;
-        auth=pass smtp.auth=dreamhost smtp.mailfrom=kjlx@templeofstupid.com
-X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
-X-MC-Relay: Good
-X-MailChannels-SenderId: dreamhost|x-authsender|kjlx@templeofstupid.com
-X-MailChannels-Auth-Id: dreamhost
-X-Cooperative-Soft: 1809e47444d762d3_1689039480058_1462993165
-X-MC-Loop-Signature: 1689039480057:3270341153
-X-MC-Ingress-Time: 1689039480057
-Received: from pdx1-sub0-mail-a234.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-        by 100.127.59.40 (trex/6.9.1);
-        Tue, 11 Jul 2023 01:38:00 +0000
-Received: from kmjvbox (unknown [71.198.86.198])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kjlx@templeofstupid.com)
-        by pdx1-sub0-mail-a234.dreamhost.com (Postfix) with ESMTPSA id 4R0NmR3q93zH9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 18:37:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=templeofstupid.com;
-        s=dreamhost; t=1689039479;
-        bh=5PpiEQMklI816ebRSrfaSOe/p+XsnMxbP2nT9Lvxh7E=;
-        h=Date:From:To:Cc:Subject:Content-Type;
-        b=GnyelvYY+4t170d0F5+gLLM5nhFNtQejR4H0kvM4fklyug0IWxbWM7kdASi4snYoL
-         yspaikeJEA1iZZXTgSMcsx4wOcyYpvtXjf5oyYEYvuaYIN16AT9x2gmj0kMMP5ojas
-         XgiqBUfHSxCpnNSuF9E4JBsR4+xfmmCgV5i+odjM=
-Received: from johansen (uid 1000)
-        (envelope-from kjlx@templeofstupid.com)
-        id e0085
-        by kmjvbox (DragonFly Mail Agent v0.12);
-        Mon, 10 Jul 2023 18:37:23 -0700
-Date:   Mon, 10 Jul 2023 18:37:23 -0700
-From:   Krister Johansen <kjlx@templeofstupid.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        German Maglione <gmaglione@redhat.com>,
-        Greg Kurz <groug@kaod.org>, Max Reitz <mreitz@redhat.com>
-Subject: [RFC PATCH 2/2] fuse: ensure that submounts lookup their root
-Message-ID: <69bb95c34deb25f56b3b842528edcb40a098d38d.1689038902.git.kjlx@templeofstupid.com>
-References: <cover.1689038902.git.kjlx@templeofstupid.com>
+        Mon, 10 Jul 2023 21:53:49 -0400
+Received: from mail-pl1-f206.google.com (mail-pl1-f206.google.com [209.85.214.206])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E42DB6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 18:53:47 -0700 (PDT)
+Received: by mail-pl1-f206.google.com with SMTP id d9443c01a7336-1b88decb2a9so85102425ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Jul 2023 18:53:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689040426; x=1691632426;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MgFPXQ8D4Hg7lbUv1V/6m4r7uD/Fzh2LAEZUXUXNtBk=;
+        b=DtwmuSQqAEUDXvTN0CzHg38LSbGtQxLMzYYTfqvuoEa7nbi/RFNG6glg3YWOrj861k
+         5Resfe+lWymXArEIEVNcEMh7z1HnIxtcmJHAB0LMDo/a3X58HMEneziex8Ze5h+ggF3r
+         OB5HAmK787GFioP4LP19lR2uVnGG0ybThW2nocNbqQ4uy5RXyizBl/GVgNGXNleWDhS6
+         Dmw8AOjzH++xOhND2j8a6thLFrYSfdQaqDonLLZBRnaV1acdtBSMMIJF6KboerPDewQr
+         JYWqjpsQl90Lr8x5OReZJQahKOt7ey9H6UT5IovRc+6A40f1sAlrj3C8zhwQVXzLdhKO
+         Xg1A==
+X-Gm-Message-State: ABy/qLYnKq3b2m6scqU8zy2elFOivsL8h07Zc72OVfGYqibG0iGH7foo
+        VmX31n8GDHU9SPCHuBjtIWbqtge4LSCEnTTYbB/y2AvKBeNd
+X-Google-Smtp-Source: APBJJlENDWFc0+lL6ohczLjG5T+JNrFBua6b/Jrk5GfKVdt7O3MLJ2njSpp6SMyhG04IdPCd4ztN+pxqXN71CC6BPnoc6qF2TK7+
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1689038902.git.kjlx@templeofstupid.com>
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a17:902:ab81:b0:1b9:e97b:99e9 with SMTP id
+ f1-20020a170902ab8100b001b9e97b99e9mr1701115plr.3.1689040426671; Mon, 10 Jul
+ 2023 18:53:46 -0700 (PDT)
+Date:   Mon, 10 Jul 2023 18:53:46 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a4a46106002c5e42@google.com>
+Subject: [syzbot] [bpf?] [reiserfs?] WARNING: locking bug in corrupted (2)
+From:   syzbot <syzbot+3779764ddb7a3e19437f@syzkaller.appspotmail.com>
+To:     andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+        daniel@iogearbox.net, davem@davemloft.net, haoluo@google.com,
+        hawk@kernel.org, jack@suse.cz, john.fastabend@gmail.com,
+        jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        luto@kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org,
+        peterz@infradead.org, reiserfs-devel@vger.kernel.org,
+        sdf@google.com, song@kernel.org, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, yhs@fb.com, yukuai3@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Prior to this commit, the submount code assumed that the inode for the
-root filesystem could not be evicted.  When eviction occurs the server
-may forget the inode.  This author has observed a submount get an EBADF
-from a virtiofsd server that resulted from the sole dentry / inode
-pair getting evicted from a mount namespace and superblock where they
-were originally referenced.  The dentry shrinker triggered a forget
-after killing the dentry with the last reference.
+Hello,
 
-As a result, a container that was also using this submount failed to
-access its filesystem because it had borrowed the reference instead of
-taking its own when setting up its superblock for the submount.
+syzbot found the following issue on:
 
-Fix by ensuring that submount superblock configuration looks up the
-nodeid for the submount as well.
+HEAD commit:    c17414a273b8 Merge tag 'sh-for-v6.5-tag1' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13cc4baca80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7ad417033279f15a
+dashboard link: https://syzkaller.appspot.com/bug?extid=3779764ddb7a3e19437f
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12bbd544a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13fd50b0a80000
 
-Signed-off-by: Krister Johansen <kjlx@templeofstupid.com>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ea495e93586c/disk-c17414a2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/bdb03e817e47/vmlinux-c17414a2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/20ba23616f1f/bzImage-c17414a2.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/98d086ce1a87/mount_0.gz
+
+The issue was bisected to:
+
+commit 2acf15b94d5b8ea8392c4b6753a6ffac3135cd78
+Author: Yu Kuai <yukuai3@huawei.com>
+Date:   Fri Jul 2 04:07:43 2021 +0000
+
+    reiserfs: add check for root_inode in reiserfs_fill_super
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=143b663ca80000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=163b663ca80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=123b663ca80000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3779764ddb7a3e19437f@syzkaller.appspotmail.com
+Fixes: 2acf15b94d5b ("reiserfs: add check for root_inode in reiserfs_fill_super")
+
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(depth >= MAX_LOCK_DEPTH)
+WARNING: CPU: 0 PID: 0 at kernel/locking/lockdep.c:5045 __lock_acquire+0x164b/0x5e20 kernel/locking/lockdep.c:5045
+Modules linked in:
+CPU: 0 PID: 0 Comm:  Not tainted 6.4.0-syzkaller-12069-gc17414a273b8 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+RIP: 0010:__lock_acquire+0x164b/0x5e20 kernel/locking/lockdep.c:5045
+Code: d2 0f 85 be 47 00 00 44 8b 3d 0d b3 44 0d 45 85 ff 0f 85 40 f8 ff ff 48 c7 c6 40 9f 6c 8a 48 c7 c7 e0 6e 6c 8a e8 b5 46 e6 ff <0f> 0b e9 29 f8 ff ff 48 8d 7d f8 48 b8 00 00 00 00 00 fc ff df 48
+RSP: 0018:ffffc90000007ca8 EFLAGS: 00010082
+RAX: 0000000000000000 RBX: 1ffff92000000fc7 RCX: 0000000000000000
+RDX: ffff8880779d5940 RSI: ffffffff814c34f7 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: ffff8880779d5940
+R13: ffff8880b982b898 R14: 0000000000000000 R15: 0000000000000000
+FS:  00005555573b8300(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffde3197000 CR3: 00000000173e2000 CR4: 0000000000350ef0
+Call Trace:
+ <IRQ>
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 0 at kernel/rcu/tree_plugin.h:431 arch_local_irq_enable arch/x86/include/asm/irqflags.h:78 [inline]
+WARNING: CPU: 0 PID: 0 at kernel/rcu/tree_plugin.h:431 arch_local_irq_restore arch/x86/include/asm/irqflags.h:135 [inline]
+WARNING: CPU: 0 PID: 0 at kernel/rcu/tree_plugin.h:431 rcu_read_unlock_special kernel/rcu/tree_plugin.h:678 [inline]
+WARNING: CPU: 0 PID: 0 at kernel/rcu/tree_plugin.h:431 __rcu_read_unlock+0x24b/0x570 kernel/rcu/tree_plugin.h:426
+Modules linked in:
+CPU: 0 PID: 0 Comm:  Not tainted 6.4.0-syzkaller-12069-gc17414a273b8 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+RIP: 0010:__rcu_read_unlock+0x24b/0x570 kernel/rcu/tree_plugin.h:431
+Code: 00 e8 49 4f df ff 4d 85 f6 74 05 e8 cf c3 1c 00 9c 58 f6 c4 02 0f 85 78 02 00 00 4d 85 f6 0f 84 83 fe ff ff fb e9 7d fe ff ff <0f> 0b 5b 5d 41 5c 41 5d 41 5e c3 e8 25 50 69 00 e9 2a fe ff ff e8
+RSP: 0018:ffffc900000079d8 EFLAGS: 00010096
+RAX: 00000000ffff8880 RBX: ffff8880779d5940 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8192bb90 RDI: ffff8880779d5d7c
+RBP: ffff8880779d5940 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: ffff8880779d5940
+R13: ffffc90000007bf8 R14: 0000000000000000 R15: ffffc90000007a98
+FS:  00005555573b8300(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffde3197000 CR3: 00000000173e2000 CR4: 0000000000350ef0
+Call Trace:
+ <IRQ>
+ rcu_read_unlock include/linux/rcupdate.h:781 [inline]
+ is_bpf_text_address+0x85/0x1b0 kernel/bpf/core.c:721
+ kernel_text_address kernel/extable.c:125 [inline]
+ kernel_text_address+0x3d/0x80 kernel/extable.c:94
+ __kernel_text_address+0xd/0x30 kernel/extable.c:79
+ show_trace_log_lvl+0x1c7/0x390 arch/x86/kernel/dumpstack.c:259
+ __warn+0xe6/0x390 kernel/panic.c:671
+ __report_bug lib/bug.c:199 [inline]
+ report_bug+0x2da/0x500 lib/bug.c:219
+ handle_bug+0x3c/0x70 arch/x86/kernel/traps.c:324
+ exc_invalid_op+0x18/0x50 arch/x86/kernel/traps.c:345
+ asm_exc_invalid_op+0x1a/0x20 arch/x86/include/asm/idtentry.h:568
+RIP: 0010:__lock_acquire+0x164b/0x5e20 kernel/locking/lockdep.c:5045
+Code: d2 0f 85 be 47 00 00 44 8b 3d 0d b3 44 0d 45 85 ff 0f 85 40 f8 ff ff 48 c7 c6 40 9f 6c 8a 48 c7 c7 e0 6e 6c 8a e8 b5 46 e6 ff <0f> 0b e9 29 f8 ff ff 48 8d 7d f8 48 b8 00 00 00 00 00 fc ff df 48
+RSP: 0018:ffffc90000007ca8 EFLAGS: 00010082
+RAX: 0000000000000000 RBX: 1ffff92000000fc7 RCX: 0000000000000000
+RDX: ffff8880779d5940 RSI: ffffffff814c34f7 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: ffff8880779d5940
+R13: ffff8880b982b898 R14: 0000000000000000 R15: 0000000000000000
+ lock_acquire kernel/locking/lockdep.c:5761 [inline]
+ lock_acquire+0x1b1/0x520 kernel/locking/lockdep.c:5726
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0x3d/0x60 kernel/locking/spinlock.c:162
+ hrtimer_interrupt+0x107/0x7b0 kernel/time/hrtimer.c:1795
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1098 [inline]
+ __sysvec_apic_timer_interrupt+0x14a/0x430 arch/x86/kernel/apic/apic.c:1115
+ sysvec_apic_timer_interrupt+0x92/0xc0 arch/x86/kernel/apic/apic.c:1109
+ </IRQ>
+
+
 ---
- fs/fuse/dir.c    | 10 +++++-----
- fs/fuse/fuse_i.h |  6 ++++++
- fs/fuse/inode.c  | 32 ++++++++++++++++++++++++++++----
- 3 files changed, 39 insertions(+), 9 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index bdf5526a0733..fe6b3fd4a49c 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -193,11 +193,11 @@ static void fuse_lookup_init(struct fuse_conn *fc, struct fuse_args *args,
- 	args->out_args[0].value = outarg;
- }
- 
--static int fuse_dentry_revalidate_lookup(struct fuse_mount *fm,
--					 struct dentry *entry,
--					 struct inode *inode,
--					 struct fuse_entry_out *outarg,
--					 bool *lookedup)
-+int fuse_dentry_revalidate_lookup(struct fuse_mount *fm,
-+				  struct dentry *entry,
-+				  struct inode *inode,
-+				  struct fuse_entry_out *outarg,
-+				  bool *lookedup)
- {
- 	struct dentry *parent;
- 	struct fuse_forget_link *forget;
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 9b7fc7d3c7f1..77b123eddb6d 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -1309,6 +1309,12 @@ void fuse_dax_dontcache(struct inode *inode, unsigned int flags);
- bool fuse_dax_check_alignment(struct fuse_conn *fc, unsigned int map_alignment);
- void fuse_dax_cancel_work(struct fuse_conn *fc);
- 
-+/* dir.c */
-+int fuse_dentry_revalidate_lookup(struct fuse_mount *fm, struct dentry *entry,
-+				  struct inode *inode,
-+				  struct fuse_entry_out *outarg,
-+				  bool *lookedup);
-+
- /* ioctl.c */
- long fuse_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
- long fuse_file_compat_ioctl(struct file *file, unsigned int cmd,
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index f19d748890f0..1032e4b05d9c 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1441,6 +1441,10 @@ static int fuse_fill_super_submount(struct super_block *sb,
- 	struct super_block *parent_sb = parent_fi->inode.i_sb;
- 	struct fuse_attr root_attr;
- 	struct inode *root;
-+	struct inode *parent;
-+	struct dentry *pdent;
-+	bool lookedup = false;
-+	int ret;
- 
- 	fuse_sb_defaults(sb);
- 	fm->sb = sb;
-@@ -1456,14 +1460,34 @@ static int fuse_fill_super_submount(struct super_block *sb,
- 	if (parent_sb->s_subtype && !sb->s_subtype)
- 		return -ENOMEM;
- 
-+	/*
-+	 * It is necessary to lookup the parent_if->nodeid in case the dentry
-+	 * that triggered the automount of the submount is later evicted.
-+	 * If this dentry is evicted without the lookup count getting increased
-+	 * on the submount root, then the server can subsequently forget this
-+	 * nodeid which leads to errors when trying to access the root of the
-+	 * submount.
-+	 */
-+	parent = &parent_fi->inode;
-+	pdent = d_find_alias(parent);
-+	if (pdent) {
-+		struct fuse_entry_out outarg;
-+
-+		ret = fuse_dentry_revalidate_lookup(fm, pdent, parent, &outarg,
-+						    &lookedup);
-+		dput(pdent);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
- 	fuse_fill_attr_from_inode(&root_attr, parent_fi);
- 	root = fuse_iget(sb, parent_fi->nodeid, 0, &root_attr, 0, 0);
- 	/*
--	 * This inode is just a duplicate, so it is not looked up and
--	 * its nlookup should not be incremented.  fuse_iget() does
--	 * that, though, so undo it here.
-+	 * fuse_iget() sets nlookup to 1 at creation time.  If this nodeid was
-+	 * not successfully looked up then decrement the count.
- 	 */
--	get_fuse_inode(root)->nlookup--;
-+	if (!lookedup)
-+		get_fuse_inode(root)->nlookup--;
- 	sb->s_d_op = &fuse_dentry_operations;
- 	sb->s_root = d_make_root(root);
- 	if (!sb->s_root)
--- 
-2.25.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
