@@ -2,156 +2,263 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DA6874F344
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 17:24:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5257E74F3A5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 17:36:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231919AbjGKPYQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jul 2023 11:24:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41162 "EHLO
+        id S232752AbjGKPgr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jul 2023 11:36:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231846AbjGKPYO (ORCPT
+        with ESMTP id S232660AbjGKPgN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jul 2023 11:24:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FA5B10D4;
-        Tue, 11 Jul 2023 08:24:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0D3C96155C;
-        Tue, 11 Jul 2023 15:24:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46E26C433C8;
-        Tue, 11 Jul 2023 15:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689089052;
-        bh=nyE4suotIowU8lKnKt+Umw+WI2Pk9iMcLZepBf+apY8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oEo8yqXLBQcJ016nZmVI6o/nx3t9By5un0RV4fbIKnHDk0VPSpp+yaNMirBtqzWpT
-         bol75aJRCGOWCT+N9yMrkrQVwEwDB8XWpgODtk3yI+ILPLq5smsYwABPzHWMi/M7KG
-         kUQJPylWrx/7Ql611uTnEHF8Ca7MkikIUy5rcrlWGkGARPI3nHILM6AFuZYEin+imM
-         n1HaEaVU7q0NQmuz7v6I6ZbkSVwp4NjRBykveJpCllqGcxPS/L657fKrCDqE1FNaLz
-         6d5tD55ouC0ebYXHDNhkXWIbv52u/QY77xgQ0vpiUD4ePJr/j3HQZKSAuDU9No0IwC
-         1j5Imns1pImTQ==
-Date:   Tue, 11 Jul 2023 17:23:50 +0200
-From:   Alexey Gladkov <legion@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, LKML <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        christian@brauner.io, Rich Felker <dalias@libc.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Helge Deller <deller@gmx.de>,
-        David Howells <dhowells@redhat.com>, fenghua.yu@intel.com,
-        firoz.khan@linaro.org, Florian Weimer <fweimer@redhat.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>, glebfm@altlinux.org,
-        gor@linux.ibm.com, hare@suse.com, heiko.carstens@de.ibm.com,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>, jhogan@kernel.org,
-        Kim Phillips <kim.phillips@arm.com>, ldv@altlinux.org,
-        linux-alpha@vger.kernel.org,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linuxppc-dev@lists.ozlabs.org, Andy Lutomirski <luto@kernel.org>,
-        Matt Turner <mattst88@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Michal Simek <monstr@monstr.eu>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Namhyung Kim <namhyung@kernel.org>, paul.burton@mips.com,
-        Paul Mackerras <paulus@samba.org>,
-        Peter Zijlstra <peterz@infradead.org>, ralf@linux-mips.org,
-        rth@twiddle.net, schwidefsky@de.ibm.com,
-        sparclinux@vger.kernel.org, stefan@agner.ch,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, tycho@tycho.ws,
-        Will Deacon <will@kernel.org>, x86@kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>
-Subject: Re: [PATCH v3 2/5] fs: Add fchmodat4()
-Message-ID: <ZK10BmqxjL/Njbmj@example.org>
-References: <87o8pscpny.fsf@oldenburg2.str.redhat.com>
- <cover.1689074739.git.legion@kernel.org>
- <d11b93ad8e3b669afaff942e25c3fca65c6a983c.1689074739.git.legion@kernel.org>
- <83363cbb-2431-4520-81a9-0d71f420cb36@app.fastmail.com>
- <20230711-demolieren-nilpferd-80ffe47563ad@brauner>
- <ZK1QNRidZuGcfOSd@example.org>
- <20230711-verpennen-turnier-717bb9682e19@brauner>
+        Tue, 11 Jul 2023 11:36:13 -0400
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fa9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 506B91711
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jul 2023 08:36:05 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4R0lMR2ptWzMqPNh;
+        Tue, 11 Jul 2023 15:36:03 +0000 (UTC)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4R0lMQ2NDgz7c7;
+        Tue, 11 Jul 2023 17:36:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1689089763;
+        bh=PWURGYRuHISzTiSalmUSLUcYsg4A7DqCIVPScz344JY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=SHXQgkQ2l4Z2F0mX3qPLGfKADm9kawDWiRbZA/Rqg9HwHvW287D5A66a1uJAieSkd
+         MiejnSe9DEQ9ERlJdr+V624h2j2VvWqp89ngm5Z0agPteFrZJjPD2PBiA7/8DraewE
+         HFKXqmo8XRlfn/EPsDkZijjTHnGMqIndzzR0d0Xk=
+Message-ID: <a426acc5-87e8-265c-4b63-393683f3cdeb@digikod.net>
+Date:   Tue, 11 Jul 2023 17:36:01 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230711-verpennen-turnier-717bb9682e19@brauner>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: 
+Subject: Re: [PATCH v12 03/11] proc: Use lsmids instead of lsm names for attrs
+Content-Language: en-US
+To:     Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org
+Cc:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20230629195535.2590-1-casey@schaufler-ca.com>
+ <20230629195535.2590-4-casey@schaufler-ca.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20230629195535.2590-4-casey@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 11, 2023 at 04:01:03PM +0200, Christian Brauner wrote:
-> On Tue, Jul 11, 2023 at 02:51:01PM +0200, Alexey Gladkov wrote:
-> > On Tue, Jul 11, 2023 at 01:52:01PM +0200, Christian Brauner wrote:
-> > > On Tue, Jul 11, 2023 at 01:42:19PM +0200, Arnd Bergmann wrote:
-> > > > On Tue, Jul 11, 2023, at 13:25, Alexey Gladkov wrote:
-> > > > > From: Palmer Dabbelt <palmer@sifive.com>
-> > > > >
-> > > > > On the userspace side fchmodat(3) is implemented as a wrapper
-> > > > > function which implements the POSIX-specified interface. This
-> > > > > interface differs from the underlying kernel system call, which does not
-> > > > > have a flags argument. Most implementations require procfs [1][2].
-> > > > >
-> > > > > There doesn't appear to be a good userspace workaround for this issue
-> > > > > but the implementation in the kernel is pretty straight-forward.
-> > > > >
-> > > > > The new fchmodat4() syscall allows to pass the AT_SYMLINK_NOFOLLOW flag,
-> > > > > unlike existing fchmodat.
-> > > > >
-> > > > > [1] 
-> > > > > https://sourceware.org/git/?p=glibc.git;a=blob;f=sysdeps/unix/sysv/linux/fchmodat.c;h=17eca54051ee28ba1ec3f9aed170a62630959143;hb=a492b1e5ef7ab50c6fdd4e4e9879ea5569ab0a6c#l35
-> > > > > [2] 
-> > > > > https://git.musl-libc.org/cgit/musl/tree/src/stat/fchmodat.c?id=718f363bc2067b6487900eddc9180c84e7739f80#n28
-> > > > >
-> > > > > Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-> > > > > Signed-off-by: Alexey Gladkov <legion@kernel.org>
-> > > > 
-> > > > I don't know the history of why we ended up with the different
-> > > > interface, or whether this was done intentionally in the kernel
-> > > > or if we want this syscall.
-> > > > 
-> > > > Assuming this is in fact needed, I double-checked that the
-> > > > implementation looks correct to me and is portable to all the
-> > > > architectures, without the need for a compat wrapper.
-> > > > 
-> > > > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> > > 
-> > > The system call itself is useful afaict. But please,
-> > > 
-> > > s/fchmodat4/fchmodat2/
-> > 
-> > Sure. I will.
+
+On 29/06/2023 21:55, Casey Schaufler wrote:
+> Use the LSM ID number instead of the LSM name to identify which
+> security module's attibute data should be shown in /proc/self/attr.
+> The security_[gs]etprocattr() functions have been changed to expect
+> the LSM ID. The change from a string comparison to an integer comparison
+> in these functions will provide a minor performance improvement.
 > 
-> Thanks. Can you also wire this up for every architecture, please?
-> I don't see that this has been done in this series.
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> Cc: linux-fsdevel@vger.kernel.org
 
-Sure. I have already added in all architectures as far as I can tell:
+Reviewed-by: Mickaël Salaün <mic@digikod.net>
 
-$ diff -s <(find arch/ -name '*.tbl' |sort -u) <(git grep -lw fchmodat2 arch/ |sort -u)
-Files /dev/fd/63 and /dev/fd/62 are identical
-
--- 
-Rgrds, legion
-
+> ---
+>   fs/proc/base.c           | 29 +++++++++++++++--------------
+>   fs/proc/internal.h       |  2 +-
+>   include/linux/security.h | 11 +++++------
+>   security/security.c      | 15 +++++++--------
+>   4 files changed, 28 insertions(+), 29 deletions(-)
+> 
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 05452c3b9872..f999bb5c497b 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -97,6 +97,7 @@
+>   #include <linux/resctrl.h>
+>   #include <linux/cn_proc.h>
+>   #include <linux/ksm.h>
+> +#include <uapi/linux/lsm.h>
+>   #include <trace/events/oom.h>
+>   #include "internal.h"
+>   #include "fd.h"
+> @@ -146,10 +147,10 @@ struct pid_entry {
+>   	NOD(NAME, (S_IFREG|(MODE)),			\
+>   		NULL, &proc_single_file_operations,	\
+>   		{ .proc_show = show } )
+> -#define ATTR(LSM, NAME, MODE)				\
+> +#define ATTR(LSMID, NAME, MODE)				\
+>   	NOD(NAME, (S_IFREG|(MODE)),			\
+>   		NULL, &proc_pid_attr_operations,	\
+> -		{ .lsm = LSM })
+> +		{ .lsmid = LSMID })
+>   
+>   /*
+>    * Count the number of hardlinks for the pid_entry table, excluding the .
+> @@ -2730,7 +2731,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
+>   	if (!task)
+>   		return -ESRCH;
+>   
+> -	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
+> +	length = security_getprocattr(task, PROC_I(inode)->op.lsmid,
+>   				      file->f_path.dentry->d_name.name,
+>   				      &p);
+>   	put_task_struct(task);
+> @@ -2788,7 +2789,7 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+>   	if (rv < 0)
+>   		goto out_free;
+>   
+> -	rv = security_setprocattr(PROC_I(inode)->op.lsm,
+> +	rv = security_setprocattr(PROC_I(inode)->op.lsmid,
+>   				  file->f_path.dentry->d_name.name, page,
+>   				  count);
+>   	mutex_unlock(&current->signal->cred_guard_mutex);
+> @@ -2837,27 +2838,27 @@ static const struct inode_operations proc_##LSM##_attr_dir_inode_ops = { \
+>   
+>   #ifdef CONFIG_SECURITY_SMACK
+>   static const struct pid_entry smack_attr_dir_stuff[] = {
+> -	ATTR("smack", "current",	0666),
+> +	ATTR(LSM_ID_SMACK, "current",	0666),
+>   };
+>   LSM_DIR_OPS(smack);
+>   #endif
+>   
+>   #ifdef CONFIG_SECURITY_APPARMOR
+>   static const struct pid_entry apparmor_attr_dir_stuff[] = {
+> -	ATTR("apparmor", "current",	0666),
+> -	ATTR("apparmor", "prev",	0444),
+> -	ATTR("apparmor", "exec",	0666),
+> +	ATTR(LSM_ID_APPARMOR, "current",	0666),
+> +	ATTR(LSM_ID_APPARMOR, "prev",		0444),
+> +	ATTR(LSM_ID_APPARMOR, "exec",		0666),
+>   };
+>   LSM_DIR_OPS(apparmor);
+>   #endif
+>   
+>   static const struct pid_entry attr_dir_stuff[] = {
+> -	ATTR(NULL, "current",		0666),
+> -	ATTR(NULL, "prev",		0444),
+> -	ATTR(NULL, "exec",		0666),
+> -	ATTR(NULL, "fscreate",		0666),
+> -	ATTR(NULL, "keycreate",		0666),
+> -	ATTR(NULL, "sockcreate",	0666),
+> +	ATTR(LSM_ID_UNDEF, "current",	0666),
+> +	ATTR(LSM_ID_UNDEF, "prev",		0444),
+> +	ATTR(LSM_ID_UNDEF, "exec",		0666),
+> +	ATTR(LSM_ID_UNDEF, "fscreate",	0666),
+> +	ATTR(LSM_ID_UNDEF, "keycreate",	0666),
+> +	ATTR(LSM_ID_UNDEF, "sockcreate",	0666),
+>   #ifdef CONFIG_SECURITY_SMACK
+>   	DIR("smack",			0555,
+>   	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
+> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+> index 9dda7e54b2d0..a889d9ef9584 100644
+> --- a/fs/proc/internal.h
+> +++ b/fs/proc/internal.h
+> @@ -92,7 +92,7 @@ union proc_op {
+>   	int (*proc_show)(struct seq_file *m,
+>   		struct pid_namespace *ns, struct pid *pid,
+>   		struct task_struct *task);
+> -	const char *lsm;
+> +	int lsmid;
+>   };
+>   
+>   struct proc_inode {
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 569b1d8ab002..945101b0d404 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -470,10 +470,9 @@ int security_sem_semctl(struct kern_ipc_perm *sma, int cmd);
+>   int security_sem_semop(struct kern_ipc_perm *sma, struct sembuf *sops,
+>   			unsigned nsops, int alter);
+>   void security_d_instantiate(struct dentry *dentry, struct inode *inode);
+> -int security_getprocattr(struct task_struct *p, const char *lsm, const char *name,
+> +int security_getprocattr(struct task_struct *p, int lsmid, const char *name,
+>   			 char **value);
+> -int security_setprocattr(const char *lsm, const char *name, void *value,
+> -			 size_t size);
+> +int security_setprocattr(int lsmid, const char *name, void *value, size_t size);
+>   int security_netlink_send(struct sock *sk, struct sk_buff *skb);
+>   int security_ismaclabel(const char *name);
+>   int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
+> @@ -1332,14 +1331,14 @@ static inline void security_d_instantiate(struct dentry *dentry,
+>   					  struct inode *inode)
+>   { }
+>   
+> -static inline int security_getprocattr(struct task_struct *p, const char *lsm,
+> +static inline int security_getprocattr(struct task_struct *p, int lsmid,
+>   				       const char *name, char **value)
+>   {
+>   	return -EINVAL;
+>   }
+>   
+> -static inline int security_setprocattr(const char *lsm, char *name,
+> -				       void *value, size_t size)
+> +static inline int security_setprocattr(int lsmid, char *name, void *value,
+> +				       size_t size)
+>   {
+>   	return -EINVAL;
+>   }
+> diff --git a/security/security.c b/security/security.c
+> index 5a699e47478b..d942b0c8e32f 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -3801,7 +3801,7 @@ EXPORT_SYMBOL(security_d_instantiate);
+>   /**
+>    * security_getprocattr() - Read an attribute for a task
+>    * @p: the task
+> - * @lsm: LSM name
+> + * @lsmid: LSM identification
+>    * @name: attribute name
+>    * @value: attribute value
+>    *
+> @@ -3809,13 +3809,13 @@ EXPORT_SYMBOL(security_d_instantiate);
+>    *
+>    * Return: Returns the length of @value on success, a negative value otherwise.
+>    */
+> -int security_getprocattr(struct task_struct *p, const char *lsm,
+> -			 const char *name, char **value)
+> +int security_getprocattr(struct task_struct *p, int lsmid, const char *name,
+> +			 char **value)
+>   {
+>   	struct security_hook_list *hp;
+>   
+>   	hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
+> -		if (lsm != NULL && strcmp(lsm, hp->lsmid->name))
+> +		if (lsmid != 0 && lsmid != hp->lsmid->id)
+>   			continue;
+>   		return hp->hook.getprocattr(p, name, value);
+>   	}
+> @@ -3824,7 +3824,7 @@ int security_getprocattr(struct task_struct *p, const char *lsm,
+>   
+>   /**
+>    * security_setprocattr() - Set an attribute for a task
+> - * @lsm: LSM name
+> + * @lsmid: LSM identification
+>    * @name: attribute name
+>    * @value: attribute value
+>    * @size: attribute value size
+> @@ -3834,13 +3834,12 @@ int security_getprocattr(struct task_struct *p, const char *lsm,
+>    *
+>    * Return: Returns bytes written on success, a negative value otherwise.
+>    */
+> -int security_setprocattr(const char *lsm, const char *name, void *value,
+> -			 size_t size)
+> +int security_setprocattr(int lsmid, const char *name, void *value, size_t size)
+>   {
+>   	struct security_hook_list *hp;
+>   
+>   	hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
+> -		if (lsm != NULL && strcmp(lsm, hp->lsmid->name))
+> +		if (lsmid != 0 && lsmid != hp->lsmid->id)
+>   			continue;
+>   		return hp->hook.setprocattr(name, value, size);
+>   	}
