@@ -2,64 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 89C1274E758
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 08:31:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78F7874E7BE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Jul 2023 09:15:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230233AbjGKGbS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jul 2023 02:31:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56910 "EHLO
+        id S230273AbjGKHPm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jul 2023 03:15:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229558AbjGKGbR (ORCPT
+        with ESMTP id S229990AbjGKHPk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jul 2023 02:31:17 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C701A106;
-        Mon, 10 Jul 2023 23:31:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=lnokq8DdyPRMmu46JCX5/4McvQ4esjcepLUiQ7Bewn8=; b=lnFgX6wFlTLNfqS5/V8BtwhTjK
-        /T4/kD6QlDfQPM8JWz6tHPKXJDmWeWY6kuy5daQVWpFMZPL9jughTKA20Bj60Kqu52PxwuCwZSjHm
-        B+GQpjLdArNn9qvQ0GjE4a/Mq+IzJBktBiU/WxOhd0i7QKFMsFyiXqYM8+jT3tzTOZyzfS2Ud7lkM
-        UqiJOUTVtuR3YP6DPpH9/MPN9V0UKQIm2VczuYcE2fK4SsiR/uK8XjrErVc+jGVGpBoj/bEdgxDBd
-        uO/nv+3fuLH87JavbTD7TPWj0ruY3QsqtzbyShMNa9XW2VxjUYiCmrwVDQOM73RzbRtIYLue+SQ/a
-        dBHC549w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qJ6u4-00DstB-27;
-        Tue, 11 Jul 2023 06:31:16 +0000
-Date:   Mon, 10 Jul 2023 23:31:16 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Wang Yugui <wangyugui@e16-tech.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Kent Overstreet <kent.overstreet@linux.dev>
-Subject: Re: [PATCH v4 2/9] iov_iter: Add copy_folio_from_iter_atomic()
-Message-ID: <ZKz3NP2/UNysc1+e@infradead.org>
-References: <20230710130253.3484695-1-willy@infradead.org>
- <20230710130253.3484695-3-willy@infradead.org>
+        Tue, 11 Jul 2023 03:15:40 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F785CE
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jul 2023 00:15:34 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-66f3fc56ef4so4136206b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jul 2023 00:15:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1689059734; x=1691651734;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d4BQ4wTcz2ZUTX5UO6CgJKEdU05ydslf2Dnv0DUxPe8=;
+        b=Nqfdvl7rXarXx+hZfpG6gu3DaOZtr8ERFL/iz/q+5ZOnwjRv2vO+lUgGYjkeEV1D7D
+         rhCygc/2UeqXwLAY4Bq8PfD6tza1+OYAHTIvvKnneJ44witfk2s2atQUuGRBkisCnQTH
+         8K0ljpxZCGkrM9G5vrTTz0edHZPJLBirz1zxAYT6+DXmMcISelmzr/TeaBrvDz6Pyq0A
+         19XGHWmQroCxVK8FPf4WR5clZJ1iu/TWwug0tZpNgQNX9r0zg2D5nVFpG6pJzGLv5ECX
+         /jbeXHLPp8f2R3bYfnjrRhQepi/qlRXK5iV4ws/eu0oWFPsqXo5OaFKr3gKNPUiVuS/A
+         Uplg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689059734; x=1691651734;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=d4BQ4wTcz2ZUTX5UO6CgJKEdU05ydslf2Dnv0DUxPe8=;
+        b=VU6L52MNHba7xx1uXDCturXUXwGhgA6m+if/6E6nqx6i//K7RqIXMH2ogmoo3xI2mS
+         viepUTqPpCD9BLvJZiz5QRJZQ21Oba0MGJALCpRESAhSx7fu+3hoT5Hmp2lJW/CyKUmG
+         Rf9WfqlW6/vLDbaafepSo3ULNZRjmFJOpC+u7fXFFXUEgZguWjMh3hSV9ztFKxhiDkLc
+         Y8UeeoKiqlWj1YpGINZ5Lfv5XhifBNC6+NNk9dSsj3+n7r3NCw3HuQJSzmOsrVQgE/NE
+         zWhloC+f7jvoZG1F7aQpUq90iu8HOgUufwSLzJmWzedPav08r3UiGC5Ih9yvoCIg5DT5
+         NeXA==
+X-Gm-Message-State: ABy/qLb0/50L4tlpRENqsYLaNm9CBbYfRsvTZsz3rPefqxJsiNImvZvJ
+        x/86UsAwcGP9S/HKapMkDckd8w==
+X-Google-Smtp-Source: APBJJlF2jvPM9/iA5YdftgyiGiVvbJOJoIELEmWsn9DVn+t41v1OItFyJxn0J8NH4eG7HU45wkS+RQ==
+X-Received: by 2002:a17:90a:d80d:b0:263:161c:9e9c with SMTP id a13-20020a17090ad80d00b00263161c9e9cmr26706553pjv.12.1689059733720;
+        Tue, 11 Jul 2023 00:15:33 -0700 (PDT)
+Received: from [10.3.208.155] ([61.213.176.14])
+        by smtp.gmail.com with ESMTPSA id u11-20020a17090a890b00b00263987a50fcsm7319231pjn.22.2023.07.11.00.15.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Jul 2023 00:15:33 -0700 (PDT)
+Message-ID: <5a2d4d3f-9d9d-0ce9-c5a0-fb9bd64b9f48@bytedance.com>
+Date:   Tue, 11 Jul 2023 15:15:29 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230710130253.3484695-3-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.13.0
+Subject: Re: [PATCH 5/5] docs: fuse: improve FUSE consistency explanation
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     me@jcix.top
+References: <20230711043405.66256-1-zhangjiachen.jaycee@bytedance.com>
+ <20230711043405.66256-6-zhangjiachen.jaycee@bytedance.com>
+ <36b37893-c297-dab0-df2d-eeacfa1e06c0@infradead.org>
+From:   Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+In-Reply-To: <36b37893-c297-dab0-df2d-eeacfa1e06c0@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 10, 2023 at 02:02:46PM +0100, Matthew Wilcox (Oracle) wrote:
-> Add a folio wrapper around copy_page_from_iter_atomic().
 
-As mentioned in the previous patch it would probably be a lot more
-obvious if the folio version was the based implementation and the
-page variant the wrapper.  But I'm not going to delay the series for
-it.
+On 2023/7/11 12:42, Randy Dunlap wrote:
+> Hi--
+> 
+> On 7/10/23 21:34, Jiachen Zhang wrote:
+>> Signed-off-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+>> ---
+>>   Documentation/filesystems/fuse-io.rst | 32 +++++++++++++++++++++++++--
+>>   1 file changed, 30 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/filesystems/fuse-io.rst b/Documentation/filesystems/fuse-io.rst
+>> index 255a368fe534..cdd292dd2e9c 100644
+>> --- a/Documentation/filesystems/fuse-io.rst
+>> +++ b/Documentation/filesystems/fuse-io.rst
+> 
+>> @@ -24,7 +31,8 @@ after any writes to the file.  All mmap modes are supported.
+>>   The cached mode has two sub modes controlling how writes are handled.  The
+>>   write-through mode is the default and is supported on all kernels.  The
+>>   writeback-cache mode may be selected by the FUSE_WRITEBACK_CACHE flag in the
+>> -FUSE_INIT reply.
+>> +FUSE_INIT reply. In either modes, if the FOPEN_KEEP_CACHE flag is not set in
+> 
+>                         either mode,
+> 
+>> +the FUSE_OPEN, cached pages of the file will be invalidated immediatedly.
+> 
+>                                                                 immediately.
+> 
+>>   
+>>   In write-through mode each write is immediately sent to userspace as one or more
+>>   WRITE requests, as well as updating any cached pages (and caching previously
+>> @@ -38,7 +46,27 @@ reclaim on memory pressure) or explicitly (invoked by close(2), fsync(2) and
+>>   when the last ref to the file is being released on munmap(2)).  This mode
+>>   assumes that all changes to the filesystem go through the FUSE kernel module
+>>   (size and atime/ctime/mtime attributes are kept up-to-date by the kernel), so
+>> -it's generally not suitable for network filesystems.  If a partial page is
+>> +it's generally not suitable for network filesystems (you can consider the
+>> +writeback-cache-v2 mode mentioned latter for them).  If a partial page is
+> 
+>                                       later
+> 
+>>   written, then the page needs to be first read from userspace.  This means, that
+>>   even for files opened for O_WRONLY it is possible that READ requests will be
+>>   generated by the kernel.
+> 
+> 
+
+
+Thanks, Randy. I will fix them in the next version.
+
+Jiachen
