@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 48340751254
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 23:12:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B78675126C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 23:13:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232597AbjGLVMX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jul 2023 17:12:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37468 "EHLO
+        id S233066AbjGLVNi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jul 2023 17:13:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232714AbjGLVMA (ORCPT
+        with ESMTP id S233103AbjGLVMf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jul 2023 17:12:00 -0400
-Received: from out-50.mta1.migadu.com (out-50.mta1.migadu.com [95.215.58.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA89B1FD8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 14:11:38 -0700 (PDT)
+        Wed, 12 Jul 2023 17:12:35 -0400
+Received: from out-30.mta1.migadu.com (out-30.mta1.migadu.com [IPv6:2001:41d0:203:375::1e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17E362D54
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 14:11:55 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1689196297;
+        t=1689196298;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=R1CKn2DNdt+nUP3OEYLc0FEKerxTzeneNiYGijAjw4w=;
-        b=iMqu0obzSgUxk8RiueeHDbBtL62R5JTfm/Rvt3yepO0VtiMBp2l9Pe+w+ub+Aw7y5oxkGP
-        x1hANWCxxV7ZCUopFQ47MI2eh+jhp8aajnfxmeDl+kcmMOlLXZSm6g7U++/vMuDWbKwC4e
-        saeHq0eVtW/Fnowq3D8gC5RqnLQVeX0=
+        bh=FQIFhUqpaGDOWzE1yHnvTxX4EVy7v8panA3oqA36kSA=;
+        b=DuRaDz8oKa7WhaBdL3TSBM/C20dZYJhltRM8sbfKp0t5CEqxOQnbhbTXHDch0TXpNWiWOT
+        HlUoONNwjSA+t9fvp5k6w8fyp6pxL22ZBoYPwa/dEQbLxoOU4KkMCjUs8O3BOmo1pQ0O20
+        sqWLZy4zHvQG/vEpVSvzhmTPJei8u+w=
 From:   Kent Overstreet <kent.overstreet@linux.dev>
 To:     linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     Christopher James Halse Rogers <raof@ubuntu.com>,
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
         Kent Overstreet <kent.overstreet@linux.dev>
-Subject: [PATCH 08/20] stacktrace: Export stack_trace_save_tsk
-Date:   Wed, 12 Jul 2023 17:11:03 -0400
-Message-Id: <20230712211115.2174650-9-kent.overstreet@linux.dev>
+Subject: [PATCH 09/20] lib/string_helpers: string_get_size() now returns characters wrote
+Date:   Wed, 12 Jul 2023 17:11:04 -0400
+Message-Id: <20230712211115.2174650-10-kent.overstreet@linux.dev>
 In-Reply-To: <20230712211115.2174650-1-kent.overstreet@linux.dev>
 References: <20230712211115.2174650-1-kent.overstreet@linux.dev>
 MIME-Version: 1.0
@@ -49,37 +49,62 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christopher James Halse Rogers <raof@ubuntu.com>
+From: Kent Overstreet <kent.overstreet@gmail.com>
 
-The bcachefs module wants it, and there doesn't seem to be any
-reason it shouldn't be exported like the other functions.
+printbuf now needs to know the number of characters that would have been
+written if the buffer was too small, like snprintf(); this changes
+string_get_size() to return the the return value of snprintf().
 
-Signed-off-by: Christopher James Halse Rogers <raof@ubuntu.com>
 Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 ---
- kernel/stacktrace.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/string_helpers.h |  4 ++--
+ lib/string_helpers.c           | 10 ++++++----
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/stacktrace.c b/kernel/stacktrace.c
-index 9ed5ce9894..4f65824879 100644
---- a/kernel/stacktrace.c
-+++ b/kernel/stacktrace.c
-@@ -151,6 +151,7 @@ unsigned int stack_trace_save_tsk(struct task_struct *tsk, unsigned long *store,
- 	put_task_stack(tsk);
- 	return c.len;
- }
-+EXPORT_SYMBOL_GPL(stack_trace_save_tsk);
+diff --git a/include/linux/string_helpers.h b/include/linux/string_helpers.h
+index fae6beaaa2..44148f8feb 100644
+--- a/include/linux/string_helpers.h
++++ b/include/linux/string_helpers.h
+@@ -23,8 +23,8 @@ enum string_size_units {
+ 	STRING_UNITS_2,		/* use binary powers of 2^10 */
+ };
  
- /**
-  * stack_trace_save_regs - Save a stack trace based on pt_regs into a storage array
-@@ -301,6 +302,7 @@ unsigned int stack_trace_save_tsk(struct task_struct *task,
- 	save_stack_trace_tsk(task, &trace);
- 	return trace.nr_entries;
- }
-+EXPORT_SYMBOL_GPL(stack_trace_save_tsk);
+-void string_get_size(u64 size, u64 blk_size, enum string_size_units units,
+-		     char *buf, int len);
++int string_get_size(u64 size, u64 blk_size, enum string_size_units units,
++		    char *buf, int len);
  
- /**
-  * stack_trace_save_regs - Save a stack trace based on pt_regs into a storage array
+ int parse_int_array_user(const char __user *from, size_t count, int **array);
+ 
+diff --git a/lib/string_helpers.c b/lib/string_helpers.c
+index 230020a2e0..b9a34eb386 100644
+--- a/lib/string_helpers.c
++++ b/lib/string_helpers.c
+@@ -31,9 +31,11 @@
+  * giving the size in the required units.  @buf should have room for
+  * at least 9 bytes and will always be zero terminated.
+  *
++ * Return value: number of characters of output that would have been written
++ * (which may be greater than len, if output was truncated).
+  */
+-void string_get_size(u64 size, u64 blk_size, const enum string_size_units units,
+-		     char *buf, int len)
++int string_get_size(u64 size, u64 blk_size, const enum string_size_units units,
++		    char *buf, int len)
+ {
+ 	static const char *const units_10[] = {
+ 		"B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"
+@@ -126,8 +128,8 @@ void string_get_size(u64 size, u64 blk_size, const enum string_size_units units,
+ 	else
+ 		unit = units_str[units][i];
+ 
+-	snprintf(buf, len, "%u%s %s", (u32)size,
+-		 tmp, unit);
++	return snprintf(buf, len, "%u%s %s", (u32)size,
++			tmp, unit);
+ }
+ EXPORT_SYMBOL(string_get_size);
+ 
 -- 
 2.40.1
 
