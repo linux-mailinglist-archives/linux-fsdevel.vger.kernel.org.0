@@ -2,38 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F2B1B75126A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 23:13:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54A80751259
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 23:13:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233055AbjGLVNg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jul 2023 17:13:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37884 "EHLO
+        id S232587AbjGLVMh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jul 2023 17:12:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233100AbjGLVMe (ORCPT
+        with ESMTP id S232766AbjGLVMC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jul 2023 17:12:34 -0400
-Received: from out-62.mta1.migadu.com (out-62.mta1.migadu.com [IPv6:2001:41d0:203:375::3e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E7062D58
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 14:11:56 -0700 (PDT)
+        Wed, 12 Jul 2023 17:12:02 -0400
+Received: from out-27.mta1.migadu.com (out-27.mta1.migadu.com [IPv6:2001:41d0:203:375::1b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29F992139
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 14:11:42 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1689196299;
+        t=1689196300;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=FgPTsx8pxcoWZIr644eHDkqshUBzFFLPFWwXDp/ZtBk=;
-        b=MaadSe8HAdi5l+GroqZDTiy6Zc9HYZcts9hC2RyMeG8K2XIJm69E1XG5u6QYQa+hjTLtHP
-        e24oHmWBgTXlsCfT77PoeFe276ZwnbrDfympEOTD60FMh5VFXOsxQtMVjae4CxTiW9/zv2
-        Tw9k+sD22DrofRML8nSy90QSwb5I7v4=
+        bh=/zrRAhLqNEKhRrIoVgPZyeRn+CDbvH7B3D4IIgSyFSc=;
+        b=H2CyNxWGCE3tivzrg2wKis0Fi1baP6oPMbzsQ9Vph9f3q/hlsngS4aMYt/197qAIh8IcH1
+        5SfVqNPTjdnhOXSN3oB7KxOEWArW+m2E5FnG/AzvN/yw14BF1ZU23+aXp6Tp2TfMzTqyX9
+        aeXA4uTnJ/+mhn5UXz88dfILMGDoxTM=
 From:   Kent Overstreet <kent.overstreet@linux.dev>
 To:     linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
-        Christopher James Halse Rogers <raof@ubuntu.com>
-Subject: [PATCH 10/20] lib: Export errname
-Date:   Wed, 12 Jul 2023 17:11:05 -0400
-Message-Id: <20230712211115.2174650-11-kent.overstreet@linux.dev>
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Waiman Long <longman@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>
+Subject: [PATCH 11/20] locking/osq: Export osq_(lock|unlock)
+Date:   Wed, 12 Jul 2023 17:11:06 -0400
+Message-Id: <20230712211115.2174650-12-kent.overstreet@linux.dev>
 In-Reply-To: <20230712211115.2174650-1-kent.overstreet@linux.dev>
 References: <20230712211115.2174650-1-kent.overstreet@linux.dev>
 MIME-Version: 1.0
@@ -49,25 +52,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-errname() returns the name of an errcode; this functionality is
-otherwise only available for error pointers via %pE - bcachefs uses this
-for better error messages.
+These are used by bcachefs's six locks.
 
-Signed-off-by: Christopher James Halse Rogers <raof@ubuntu.com>
 Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
 ---
- lib/errname.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/locking/osq_lock.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/lib/errname.c b/lib/errname.c
-index 67739b174a..dd1b998552 100644
---- a/lib/errname.c
-+++ b/lib/errname.c
-@@ -228,3 +228,4 @@ const char *errname(int err)
+diff --git a/kernel/locking/osq_lock.c b/kernel/locking/osq_lock.c
+index d5610ad52b..b752ec5cc6 100644
+--- a/kernel/locking/osq_lock.c
++++ b/kernel/locking/osq_lock.c
+@@ -203,6 +203,7 @@ bool osq_lock(struct optimistic_spin_queue *lock)
  
- 	return err > 0 ? name + 1 : name;
+ 	return false;
  }
-+EXPORT_SYMBOL(errname);
++EXPORT_SYMBOL_GPL(osq_lock);
+ 
+ void osq_unlock(struct optimistic_spin_queue *lock)
+ {
+@@ -230,3 +231,4 @@ void osq_unlock(struct optimistic_spin_queue *lock)
+ 	if (next)
+ 		WRITE_ONCE(next->locked, 1);
+ }
++EXPORT_SYMBOL_GPL(osq_unlock);
 -- 
 2.40.1
 
