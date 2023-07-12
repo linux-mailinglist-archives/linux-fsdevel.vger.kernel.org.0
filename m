@@ -2,60 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 37BD7750A20
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 15:55:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65B54750A3C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 15:59:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232206AbjGLNzQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jul 2023 09:55:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37150 "EHLO
+        id S231975AbjGLN7x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jul 2023 09:59:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231302AbjGLNzP (ORCPT
+        with ESMTP id S231364AbjGLN7w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jul 2023 09:55:15 -0400
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5035FEA;
-        Wed, 12 Jul 2023 06:55:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1689170111;
-        bh=HJopHCxgdC/P9Az81VBbwel01VSXYlHpTRZwX3QQzRM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=JNIs4QJs1nUkZfcgV5CEHh1Daaw6piuGzTl9+EJxscY8+s/7AkdIFa+ZhSxWcXJGP
-         RKSlXZThzH0l4lDMe9zwQxOEMHV+vS6/jHjSKLOVb++fXtM9pHsyk3HdUJ6lLV6wBV
-         gsCLe1+JAMJOHLlHBCjT7bI+UEtmgh5MkKhoIOGCJLlkWKm/XuJh3jbQuXSJ0AH3k4
-         y/JKbhf5K2gzCGE8kySxFOZT4IZL11JdLhQ4ihONjOdkuWu3150f9PiCv4VaYAQYls
-         iASfLD//SL6HqcD9l33iBUZACF9O+1GL/jiRDNEbdgXWxQTN9TmCQxbWUubtwfQKuF
-         xqy74p9VXX+pA==
-Received: from biznet-home.integral.gnuweeb.org (unknown [182.253.126.105])
-        by gnuweeb.org (Postfix) with ESMTPSA id 940DD24AA80;
-        Wed, 12 Jul 2023 20:55:06 +0700 (WIB)
-Date:   Wed, 12 Jul 2023 20:55:01 +0700
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To:     Hao Xu <hao.xu@linux.dev>
-Cc:     io-uring Mailing List <io-uring@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Linux Fsdevel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Wanpeng Li <wanpengli@tencent.com>
-Subject: Re: [PATCH 1/3] fs: split off vfs_getdents function of getdents64
- syscall
-Message-ID: <ZK6wtZrwCRKoa3X8@biznet-home.integral.gnuweeb.org>
-References: <20230711114027.59945-1-hao.xu@linux.dev>
- <20230711114027.59945-2-hao.xu@linux.dev>
- <ZK1S3s/hOLOq0Ym+@biznet-home.integral.gnuweeb.org>
- <d7c071e7-8ee1-a236-77d6-88b1b3937a98@linux.dev>
+        Wed, 12 Jul 2023 09:59:52 -0400
+Received: from mail-ua1-x92e.google.com (mail-ua1-x92e.google.com [IPv6:2607:f8b0:4864:20::92e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6653C10C7;
+        Wed, 12 Jul 2023 06:59:51 -0700 (PDT)
+Received: by mail-ua1-x92e.google.com with SMTP id a1e0cc1a2514c-796d78b3f68so2290875241.0;
+        Wed, 12 Jul 2023 06:59:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689170390; x=1691762390;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=la7xD6v4M8WAlisTF+ijLkx9gxv01PJflmUjfs8N44g=;
+        b=hkoJF0iT6tOtmhignEwpFUrvcXpQp1ZyK84MCiIoBdRwnVbfaHNecu4NOA0STWpU1x
+         w+w7h3/jaODj4pP/JiS5oJgfcAoQoqLfmJ6PpI9inys63dr1nJLaZR5hT28K7/Ppaje+
+         pWHa7VmkmCAIch7XAScY1HBcY8jGCanzoQqejRDuL92noz5pw8zEJlfIGDOzQBH9iNTy
+         jTlfbnfnztn086ToOzEBcEcInVXsuXmyMckjdLslg2ao/BAhf+UP34oi/vYhwNQ/nKyc
+         2AsVP107fqXnuqVem9M8R6SfUhomZhMbImcEz2w/HedgT1HHMWzURVQPIqotU30Ap6Fv
+         1s+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689170390; x=1691762390;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=la7xD6v4M8WAlisTF+ijLkx9gxv01PJflmUjfs8N44g=;
+        b=Ze0Txo4aWy7gc25Yl8CJVRMBAZu/n4wkz9vq8apfDAMkHE7wTrfqU0mtUA5OMFrbW4
+         A71cXfEXHyjNyhmLiiJrEFmGvsK9ptAoaJGcl7ah9bj0Mw94sQEBpqVuO26gjPyMvLbA
+         GVSseLZcoPKuO5OlvamiKPSNJ69/VHZ6Tji34sHr3KbGzKnDNBz/Jen1V9w3t4CA+Qdy
+         345CMILH5keZbaLQ67L1QHNZUlO4CxiGta3dSv8Pg0yu8qA69eop8Wq5cqyzwn3pM/Ds
+         trDDIPb/PDmAS3TpP42LqzQMr3H1XcZZAvB+L3iVwuuxd9S3QBwY9vB0eyEOgPnvR5+N
+         DlyA==
+X-Gm-Message-State: ABy/qLb/W1y4A0RAYwCmtLhRJQsTjcbbS8TKaq1GSebKnlaN5lO9tCmU
+        ryFJRApsy8WsFCGOwV8ong81pp3sZMmCNIsV8KfS8mc+ndNitA==
+X-Google-Smtp-Source: APBJJlGHb8UgulGcSBJwSnFIW+aaN70f7DUA4/cb5cVFlzfQncuxlS8VeWHSjG/YwqF+isRC3pXWJkI44UVXWoEWq/Q=
+X-Received: by 2002:a67:eb15:0:b0:443:4302:b24b with SMTP id
+ a21-20020a67eb15000000b004434302b24bmr8424550vso.11.1689170390207; Wed, 12
+ Jul 2023 06:59:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d7c071e7-8ee1-a236-77d6-88b1b3937a98@linux.dev>
-X-Bpl:  hUx9VaHkTWcLO7S8CQCslj6OzqBx2hfLChRz45nPESx5VSB/xuJQVOKOB1zSXE3yc9ntP27bV1M1
+From:   Pintu Agarwal <pintu.ping@gmail.com>
+Date:   Wed, 12 Jul 2023 19:29:39 +0530
+Message-ID: <CAOuPNLizjBp_8ceKq=RLznXdsHD-+N55RoPh_D7_Mpkg7M-BwQ@mail.gmail.com>
+Subject: MTD: Lots of mtdblock warnings on bootup logs
+To:     open list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-fsdevel@kvack.org, ezequiel@collabora.com,
+        Miquel Raynal <miquel.raynal@bootlin.com>, bjorn@mork.no
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -63,35 +66,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 12, 2023 at 04:03:41PM +0800, Hao Xu wrote:
-> On 7/11/23 21:02, Ammar Faizi wrote:
-> > On Tue, Jul 11, 2023 at 07:40:25PM +0800, Hao Xu wrote:
-> > > Co-developed-by: Stefan Roesch <shr@fb.com>
-> > > Signed-off-by: Stefan Roesch <shr@fb.com>
-> > > Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
-> > > ---
-> > 
-> > Since you took this, it needs your Signed-off-by.
-> > 
-> 
-> Hi Ammar,
-> I just add this signed-off-by of Stefan to resolve the checkpatch complain,
-> no code change.
+Hi,
 
-Both, you and Stefan are required to sign-off. The submitter is also
-required to sign-off even if the submitter makes no code change.
+We are getting below warning messages in dmesg logs on a NAND device
+for every raw partition.
+Kernel: 5.15 ; arm64 ; NAND + ubi + squashfs
+We have some RAW partitions and one UBI partition (with ubifs/squashfs volumes).
 
-See https://www.kernel.org/doc/html/latest/process/submitting-patches.html:
-"""
-Any further SoBs (Signed-off-by:'s) following the author's SoB are from
-people handling and transporting the patch, but were not involved in its
-development. SoB chains should reflect the real route a patch took as it
-was propagated to the maintainers and ultimately to Linus, with the
-first SoB entry signalling primary authorship of a single author.
-"""
+We are seeing large numbers of these logs on the serial console that
+impact the boot time.
+[....]
+[    9.667240][    T9] Creating 58 MTD partitions on "1c98000.nand":
+[....]
+[   39.975707][  T519] mtdblock: MTD device 'uefi_a' is NAND, please
+consider using UBI block devices instead.
+[   39.975707][  T519] mtdblock: MTD device 'uefi_b' is NAND, please
+consider using UBI block devices instead.
+[....]
 
-It also applies to the maintainer when they apply your patches.
+This was added as part of this commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/drivers/mtd/mtdblock.c?h=v5.15.120&id=f41c9418c5898c01634675150696da290fb86796
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/drivers/mtd/mtdblock.c?h=v5.15.120&id=e07403a8c6be01857ff75060b2df9a1aa8320fe5
 
--- 
-Ammar Faizi
+I think this warning was decided after my last year's discussion about
+mtdblock vs ubiblock for squashfs.
 
+But these are raw NAND partitions and not mounted by us.
+
+What is the exact meaning of these warnings ?
+
+We have both these configs enabled:
+CONFIG_MTD_BLOCK=y
+CONFIG_MTD_UBI_BLOCK=y
+
+Through this warning, are we telling that only one of the above config
+should be enabled ?
+And the recommendation is to use ubi_block and disable mtd_block ?
+
+We are already using ubiblock for mounting squashfs volumes.
+But how to get rid of these warnings for raw NAND partitions ?
+
+Is there a way to avoid or we are missing something which we are not aware of?
+
+
+Thanks,
+Pintu
