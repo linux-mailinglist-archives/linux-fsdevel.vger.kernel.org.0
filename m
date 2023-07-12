@@ -2,61 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C0DE750649
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 13:39:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BDE7750869
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 14:35:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232140AbjGLLi7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jul 2023 07:38:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57624 "EHLO
+        id S233184AbjGLMfG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jul 2023 08:35:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232527AbjGLLix (ORCPT
+        with ESMTP id S232767AbjGLMfF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jul 2023 07:38:53 -0400
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fac])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F2DE1BE2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 04:38:36 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4R1G2z2HkhzMpnPD;
-        Wed, 12 Jul 2023 11:38:35 +0000 (UTC)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4R1G2y0VmBzMpr0r;
-        Wed, 12 Jul 2023 13:38:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1689161915;
-        bh=WKYepZWiuysWhTyUjDnyBuU4+gQ8j8tjmHlLfmEnR2Q=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=FnaAPh5dYrQKOkoIGkLCOlskjMOnK9aGYHsnDLH2pa043qQ4wZ+R6QPHTVgWZ1eZm
-         c/PZGmMqDAj8QCVJj+3lGQKPwEc+O9BEWO6qup/R1ZDpeLVrgSed2+YKgpijN5+izo
-         XmK4X5iWVds1jEC0JctIsV6BzcXHQoDPxnYNZFMY=
-Message-ID: <35048daf-a369-7fa0-3ad6-56901a2c22bc@digikod.net>
-Date:   Wed, 12 Jul 2023 13:38:33 +0200
+        Wed, 12 Jul 2023 08:35:05 -0400
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DAE310F3;
+        Wed, 12 Jul 2023 05:35:03 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.153])
+        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4R1HJ11sRdz4f3mn9;
+        Wed, 12 Jul 2023 20:34:57 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+        by APP4 (Coremail) with SMTP id gCh0CgCXaK_xna5klTM2Nw--.23925S3;
+        Wed, 12 Jul 2023 20:34:59 +0800 (CST)
+Subject: Re: [PATCH v5 02/11] block: Block Device Filtering Mechanism
+To:     Yu Kuai <yukuai1@huaweicloud.com>,
+        Sergei Shtepa <sergei.shtepa@veeam.com>, axboe@kernel.dk,
+        hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
+Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+        willy@infradead.org, dlemoal@kernel.org, linux@weissschuh.net,
+        jack@suse.cz, ming.lei@redhat.com, linux-block@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Donald Buczek <buczek@molgen.mpg.de>,
+        "yukuai (C)" <yukuai3@huawei.com>
+References: <20230612135228.10702-1-sergei.shtepa@veeam.com>
+ <20230612135228.10702-3-sergei.shtepa@veeam.com>
+ <f935840e-12a7-c37b-183c-27e2d83990ea@huaweicloud.com>
+ <eca5a778-6795-fc03-7ae0-fe06f514af85@huaweicloud.com>
+From:   Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <2ab36e73-a612-76a8-9c20-f5e11c67bcc3@huaweicloud.com>
+Date:   Wed, 12 Jul 2023 20:34:57 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [RFC 0/4] Landlock: ioctl support
-Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack@google.com>
-Cc:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Jeff Xu <jeffxu@chromium.org>,
-        Dmitry Torokhov <dtor@google.com>,
-        linux-security-module@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20230502171755.9788-1-gnoack3000@gmail.com>
- <1cb74c81-3c88-6569-5aff-154b8cf626fa@digikod.net>
- <20230510.c667268d844f@gnoack.org>
- <d4f1395c-d2d4-1860-3a02-2a0c023dd761@digikod.net>
- <ZK6JhyiC0Z0vwu0u@google.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <ZK6JhyiC0Z0vwu0u@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <eca5a778-6795-fc03-7ae0-fe06f514af85@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+X-CM-TRANSID: gCh0CgCXaK_xna5klTM2Nw--.23925S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KryDGr4fXrWxZry8WFyUZFb_yoW8Ar48pr
+        95XayUJrWUXFn5Ww1qgF1UtFyFvF1UJw1DZryIqa43JrsFyrnFga17Wr9Y93sxCr48GrW7
+        Zr1jvrsxZwsxJFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+        6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+        4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+        c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+        AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+        17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+        IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq
+        3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+        nIWIevJa73UjIFyTuYvjfUOmhFUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -64,69 +73,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi,
 
-On 12/07/2023 13:08, Günther Noack wrote:
-> Hello!
+在 2023/07/12 18:04, Yu Kuai 写道:
+> Hi,
 > 
-> On Sat, Jun 17, 2023 at 11:47:55AM +0200, Mickaël Salaün wrote:
->>>> We should also think about batch operations on FD (see the
->>>> close_range syscall), for instance to deny all IOCTLs on inherited
->>>> or received FDs.
->>>
->>> Hm, you mean a landlock_fd_rights_limit_range() syscall to limit the
->>> rights for an entire range of FDs?
->>>
->>> I have to admit, I'm not familiar with the real-life use cases of
->>> close_range().  In most programs I work with, it's difficult to reason
->>> about their ordering once the program has really started to run. So I
->>> imagine that close_range() is mostly used to "sanitize" the open file
->>> descriptors at the start of main(), and you have a similar use case in
->>> mind for this one as well?
->>>
->>> If it's just about closing the range from 0 to 2, I'm not sure it's
->>> worth adding a custom syscall. :)
->>
->> The advantage of this kind of range is to efficiently manage all potential
->> FDs, and the main use case is to close (or change, see the flags) everything
->> *except" 0-2 (i.e. 3-~0), and then avoid a lot of (potentially useless)
->> syscalls.
->>
->> The Landlock interface doesn't need to be a syscall. We could just add a new
->> rule type which could take a FD range and restrict them when calling
->> landlock_restrict_self(). Something like this:
->> struct landlock_fd_attr {
->>      __u64 allowed_access;
->>      __u32 first;
->>      __u32 last;
->> }
+> 在 2023/07/11 10:02, Yu Kuai 写道:
 > 
-> FYI, regarding the idea of dropping rights on already-opened files:
-> I'm starting to have doubts about how feasible this is in practice.
+>>> +static bool submit_bio_filter(struct bio *bio)
+>>> +{
+>>> +    if (bio_flagged(bio, BIO_FILTERED))
+>>> +        return false;
+>>> +
+>>> +    bio_set_flag(bio, BIO_FILTERED);
+>>> +    return bio->bi_bdev->bd_filter->ops->submit_bio(bio);
+>>> +}
+>>> +
+>>>   static void __submit_bio(struct bio *bio)
+>>>   {
+>>> +    /*
+>>> +     * If there is a filter driver attached, check if the BIO needs 
+>>> to go to
+>>> +     * the filter driver first, which can then pass on the bio or 
+>>> consume it.
+>>> +     */
+>>> +    if (bio->bi_bdev->bd_filter && submit_bio_filter(bio))
+>>> +        return;
+>>> +
+>>>       if (unlikely(!blk_crypto_bio_prep(&bio)))
+>>>           return;
 > 
-> The "obvious" approach is to just remove the access rights from the security
-> blob flags on the struct file.
+> ...
 > 
-> But these opened "struct file"s might be shared with other processes already,
-> and mutating them in place would have undesired side effects on other processes.
+>>> +static void __blkfilter_detach(struct block_device *bdev)
+>>> +{
+>>> +    struct blkfilter *flt = bdev->bd_filter;
+>>> +    const struct blkfilter_operations *ops = flt->ops;
+>>> +
+>>> +    bdev->bd_filter = NULL;
+>>> +    ops->detach(flt);
+>>> +    module_put(ops->owner);
+>>> +}
+>>> +
+>>> +void blkfilter_detach(struct block_device *bdev)
+>>> +{
+>>> +    if (bdev->bd_filter) {
+>>> +        blk_mq_freeze_queue(bdev->bd_queue);
 > 
-> For example, if brltty uses ioctls on the terminal and then one of the programs
-> running in that terminal drops ioctl rights on that open file, it would affect
-> brltty as well, because both the Landlocked program and brltty use the same
-> struct file.
-> 
-> It could be technically stored next to the file descriptor list, where the
-> close-on-exec flag is also stored, but that seems more cumbersome than I had
-> hoped.  I don't have a good approach for that idea yet, so I'll drop it for now.
+> And this is not sate as well, for bio-based device, q_usage_counter is
+> not grabbed while submit_bio_filter() is called, hence there is a risk
+> of uaf from submit_bio_filter().
 
-Indeed, as discussed in another thread (patch v9 network support), I now 
-think that file descriptors should not be touched nor restricted by 
-Landlock. Even if there are file *descriptions* and file descriptors, 
-Landlock should focus on what user space cannot already do (i.e. close 
-file descriptors). Already acquired file descriptors should be a concern 
-for user space sandboxers and the whole system/services.
+And there is another question, can blkfilter_detach() from
+del_gendisk/delete_partiton and ioctl concurrent? I think it's a
+problem.
 
+Thanks,
+Kuai
 > 
-> Ideas are welcome. :)
+> Thanks,
+> Kuai
 > 
-> —Günther
+> .
 > 
+
