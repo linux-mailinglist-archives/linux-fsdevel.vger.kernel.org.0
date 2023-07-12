@@ -2,47 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DF29174FD52
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 04:55:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7684A74FD81
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 05:12:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231534AbjGLCzN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Jul 2023 22:55:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52866 "EHLO
+        id S231765AbjGLDMg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Jul 2023 23:12:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230431AbjGLCzM (ORCPT
+        with ESMTP id S231641AbjGLDMd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Jul 2023 22:55:12 -0400
-Received: from out-44.mta1.migadu.com (out-44.mta1.migadu.com [IPv6:2001:41d0:203:375::2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BEE092
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jul 2023 19:55:10 -0700 (PDT)
-Date:   Tue, 11 Jul 2023 22:54:59 -0400
+        Tue, 11 Jul 2023 23:12:33 -0400
+Received: from out-50.mta0.migadu.com (out-50.mta0.migadu.com [IPv6:2001:41d0:1004:224b::32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 625CE10DD
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Jul 2023 20:12:32 -0700 (PDT)
+Message-ID: <2e2afc83-ac1d-ab52-79c5-cb7c537cfcd9@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1689130508;
+        t=1689131550;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=TTgHrkQbrOC29sIfg7iHJUorOfkvxKlboJsQf7mIrxU=;
-        b=mTmqTlC5d94/roVOtTFLQXurZA6y6KmI52x4dfnpPlRTta7KCLo2TIlwd+9GlLG0GNGgSI
-        MpwFDiVwHDFQpFlpRmLJkehzAEvV1y2djUkQA6yU4B8SbIGFV+Ptuek0VRnEB+0qzgcEWr
-        oWGkBjhHacreUf5IrFnMRgWnm63fJMY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org, djwong@kernel.org,
-        dchinner@redhat.com, sandeen@redhat.com, willy@infradead.org,
-        josef@toxicpanda.com, tytso@mit.edu, bfoster@redhat.com,
-        jack@suse.cz, andreas.gruenbacher@gmail.com, brauner@kernel.org,
-        peterz@infradead.org, akpm@linux-foundation.org,
-        dhowells@redhat.com, snitzer@kernel.org
-Subject: Re: [GIT PULL] bcachefs
-Message-ID: <20230712025459.dbzcjtkb4zem4pdn@moria.home.lan>
-References: <20230626214656.hcp4puionmtoloat@moria.home.lan>
- <20230706155602.mnhsylo3pnief2of@moria.home.lan>
+        bh=ZLrNEUYM50f2mtC0bFeVJy+/kJ1y6MmF0pi4RVU6gNo=;
+        b=K7TTDt29BV35qWoI2LUYGU9VqXNVmACuwUQ5VDr0LP3QPC2Gvr479NW1JnkwPumkMAv2Qy
+        R2KiY+ZhQygHFziStt160BpjhJ+XBhCMcxR5TGBXDac2NhnBXOzbMQb8FXHQs96kyoDqJ+
+        dc1TqKTouM/pAw0hr27kZ2KUZfRy1wQ=
+Date:   Wed, 12 Jul 2023 11:12:20 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230706155602.mnhsylo3pnief2of@moria.home.lan>
+Subject: Re: [PATCH v3 0/3] io_uring getdents
+Content-Language: en-US
+To:     Dominique Martinet <asmadeus@codewreck.org>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+References: <20230711114027.59945-1-hao.xu@linux.dev>
+ <ZK3qKrlOiLxS/ZEK@dread.disaster.area>
+ <5264f776-a5fd-4878-1b4c-7fe9f9a61b51@kernel.dk>
+ <ZK35dZN7pYg0VuF0@codewreck.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
+In-Reply-To: <ZK35dZN7pYg0VuF0@codewreck.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Migadu-Flow: FLOW_OUT
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
@@ -54,80 +58,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-So: looks like we missed the merge window. Boo :)
+On 7/12/23 08:53, Dominique Martinet wrote:
+> Jens Axboe wrote on Tue, Jul 11, 2023 at 05:51:46PM -0600:
+>>> So what filesystem actually uses this new NOWAIT functionality?
+>>> Unless I'm blind (quite possibly) I don't see any filesystem
+>>> implementation of this functionality in the patch series.
+> 
+> I had implemented this for kernfs and libfs (so sysfs, debugfs, possibly
+> tmpfs/proc?) in v2
+> 
+> The patch as of v2's mail has a bug, but my branch has it fixed as of
+> https://github.com/martinetd/linux/commits/io_uring_getdents
 
-Summing up discussions from today's cabal meeting, other off list
-discussions, and this thread:
+I see, I'll try this, those in v2 causes issues when I boot my VM with them.
 
- - bcachefs is now marked EXPERIMENTAL
+> 
+> (I guess these aren't "real" enough though)
+> 
+>>> I know I posted a prototype for XFS to use it, and I expected that
+>>> it would become part of this patch series to avoid the "we don't add
+>>> unused code to the kernel" problem. i.e. the authors would take the
+>>> XFS prototype, make it work, add support into for the new io_uring
+>>> operation to fsstress in fstests and then use that to stress test
+>>> the new infrastructure before it gets merged....
+>>>
+>>> But I don't see any of this?
+>>
+>> That would indeed be great if we could get NOWAIT, that might finally
+>> convince me that it's worth plumbing up! Do you have a link to that
+>> prototype? That seems like what should be the base for this, and be an
+>> inspiration for other file systems to get efficient getdents via this
+>> (rather than io-wq punt, which I'm not a huge fan of...).
+> 
+> the xfs poc was in this mail:
+> https://lore.kernel.org/all/20230501071603.GE2155823@dread.disaster.area/
+> 
+> I never spent time debugging it, but it should definitely be workable
+> 
 
- - Brian Foster will be listed as a reviewer
-
- - Josef's stepping up to do some code review, focusing on vfs-interacty
-   bits. I'm hoping to do at least some of this in a format where Josef
-   peppers me with questions and we turn that into new code
-   documentation, so others can directly benefit: if anyone has an area
-   they work on and would like to see documented in bcachefs, we'll take
-   a look at that too.
-
- - Prereq patch series has been pruned down a bit more; also Mike
-   Snitzer suggested putting those patches in their own branch:
-
-   https://evilpiepirate.org/git/bcachefs.git/log/?h=bcachefs-prereqs
-
-   "iov_iter: copy_folio_from_iter_atomic()" was dropped and replaced
-   with willy's "iov_iter: Handle compound highmem pages in
-   copy_page_from_iter_atomic()"; he said he'd try to send this for -rc4
-   since it's technically a bug fix; in the meantime, it'll be getting
-   more testing from my users.
-
-   The two lockdep patches have been dropped for now; the
-   bcachefs-for-upstream branch is switched back to
-   lockdep_set_novalidate_class() for btree node locks. 
-
-   six locks, mean and variance have been moved into fs/bcachefs/ for
-   now; this means there's a new prereq patch to export
-   osq_(lock|unlock)
-
-   The remaining prereq patches are pretty trivial, with the exception
-   of "block: Don't block on s_umount from __invalidate_super()". I
-   would like to get a reviewed-by for that patch, and it wouldn't hurt
-   for others.
-
-   previously posting:
-   https://lore.kernel.org/linux-bcachefs/20230509165657.1735798-1-kent.overstreet@linux.dev/T/#m34397a4d39f5988cc0b635e29f70a6170927746f
-
- - Code review was talked about a bit earlier in the thread: for the
-   moment I'm just posting big stuff, but I'd like to aim for making
-   sure all patches (including mine) hit the linux-bcachefs mailing list
-   in the future:
-
-   https://lore.kernel.org/linux-bcachefs/20230709171551.2349961-1-kent.overstreet@linux.dev/T/
-
- - We also talked quite a bit about the QA process. I'm going to work on
-   finally publishing ktest/ktestci, which is my test infrastructure
-   that myself and a few other people are using - I'd like to see it
-   used more widely.
-
-   For now, here's the test dashboard for the bcachefs-for-upstream
-   branch:
-   https://evilpiepirate.org/~testdashboard/ci?branch=bcachefs-for-upstream
-
- - Also: not directly related to upstreaming, but relevant for the
-   community: we talked about getting together a meeting with some of
-   the btrfs people to gather design input, ideas, and lessons learned.
-
-   If anyone would be interested in working on and improving the multi
-   device capabilities of bcachefs in particular, this would be a great
-   time to get involved. That stuff is in good shape and seeing a lot of
-   active use - it's one of bcachefs's major drawing points - and I want
-   it to be even better.
-
-And here's the branch I intend to re-submit next merge window, as it
-currently sits:
-https://evilpiepirate.org/git/bcachefs.git/log/?h=bcachefs-for-upstream
-
-Please chime in if I forgot anything important... :)
-
-Cheers,
-Kent
