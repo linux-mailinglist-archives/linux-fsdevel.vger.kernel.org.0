@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A1A4D751262
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 23:13:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 791B875125A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 23:13:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232776AbjGLVMl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jul 2023 17:12:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37822 "EHLO
+        id S229512AbjGLVMo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jul 2023 17:12:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232892AbjGLVMV (ORCPT
+        with ESMTP id S232943AbjGLVMY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jul 2023 17:12:21 -0400
-Received: from out-52.mta1.migadu.com (out-52.mta1.migadu.com [IPv6:2001:41d0:203:375::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 141F826A3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 14:11:45 -0700 (PDT)
+        Wed, 12 Jul 2023 17:12:24 -0400
+Received: from out-41.mta1.migadu.com (out-41.mta1.migadu.com [95.215.58.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E135126B1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 14:11:46 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1689196304;
+        t=1689196305;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5eXxZII/AY+4X/BxaYnmkLZzUciXf9EGOnTBvq8dyQQ=;
-        b=JmsjQ2ajsBYN3QOblqtRMGTF5kTXZyMU6AdekvlvzukOKlyd/dutSqxvKv5t5RWAgQWpgM
-        7Gv9ZJdbcozKP4osvPilzfhGaThul1hTjIWDql/qV8P4XoZuQN6CWcA8f/LNhh9yW5ZmMw
-        gB+thTgZixIl8jLYzHr+5vwIp8lR1hs=
+        bh=3bOiJuZA7MMn1dUAKvZtsb+DsEd9kjQVDcRKBJgcodE=;
+        b=c/TQhQifd2bG9jqyz1yUnKFrIEOakPDHeeO1oK5IBJDq1VPONAP28akM3gIsyeIR854AJG
+        3qqejI0s0GzfMz4gSD2rvZX7XdPyRuqTYK2mb2P6AXLbnKkGlBkVt+j3Mw8c6BWVgjkaNr
+        PUN0XpbTfIjd+ambQYaCpGpRqSu5TDs=
 From:   Kent Overstreet <kent.overstreet@linux.dev>
 To:     linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Kent Overstreet <kent.overstreet@linux.dev>
-Subject: [PATCH 15/20] closures: closure_nr_remaining()
-Date:   Wed, 12 Jul 2023 17:11:10 -0400
-Message-Id: <20230712211115.2174650-16-kent.overstreet@linux.dev>
+Subject: [PATCH 16/20] closures: Add a missing include
+Date:   Wed, 12 Jul 2023 17:11:11 -0400
+Message-Id: <20230712211115.2174650-17-kent.overstreet@linux.dev>
 In-Reply-To: <20230712211115.2174650-1-kent.overstreet@linux.dev>
 References: <20230712211115.2174650-1-kent.overstreet@linux.dev>
 MIME-Version: 1.0
@@ -48,37 +48,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Factor out a new helper, which returns the number of events outstanding.
+Fixes building in userspace.
 
 Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 ---
- include/linux/closure.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ lib/closure.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/closure.h b/include/linux/closure.h
-index 36b4a83f9b..722a586bb2 100644
---- a/include/linux/closure.h
-+++ b/include/linux/closure.h
-@@ -172,6 +172,11 @@ void __closure_wake_up(struct closure_waitlist *list);
- bool closure_wait(struct closure_waitlist *list, struct closure *cl);
- void __closure_sync(struct closure *cl);
- 
-+static inline unsigned closure_nr_remaining(struct closure *cl)
-+{
-+	return atomic_read(&cl->remaining) & CLOSURE_REMAINING_MASK;
-+}
-+
- /**
-  * closure_sync - sleep until a closure a closure has nothing left to wait on
-  *
-@@ -180,7 +185,7 @@ void __closure_sync(struct closure *cl);
-  */
- static inline void closure_sync(struct closure *cl)
- {
--	if ((atomic_read(&cl->remaining) & CLOSURE_REMAINING_MASK) != 1)
-+	if (closure_nr_remaining(cl) != 1)
- 		__closure_sync(cl);
- }
+diff --git a/lib/closure.c b/lib/closure.c
+index b38ded00b9..0855e698ce 100644
+--- a/lib/closure.c
++++ b/lib/closure.c
+@@ -9,6 +9,7 @@
+ #include <linux/closure.h>
+ #include <linux/debugfs.h>
+ #include <linux/export.h>
++#include <linux/rcupdate.h>
+ #include <linux/seq_file.h>
+ #include <linux/sched/debug.h>
  
 -- 
 2.40.1
