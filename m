@@ -2,150 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7EB2751074
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 20:25:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B91347510C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 20:54:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232266AbjGLSZ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jul 2023 14:25:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37136 "EHLO
+        id S232054AbjGLSyh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jul 2023 14:54:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232049AbjGLSZ5 (ORCPT
+        with ESMTP id S231782AbjGLSyg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jul 2023 14:25:57 -0400
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9436F1BEC;
-        Wed, 12 Jul 2023 11:25:54 -0700 (PDT)
-Received: by mail-vs1-xe31.google.com with SMTP id ada2fe7eead31-440b53841a4so1752176137.3;
-        Wed, 12 Jul 2023 11:25:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689186353; x=1691778353;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9sOcI2jxuVJp353RgogKNfvCVFy7OwS+eMp4jITy9DY=;
-        b=kggsOn6JcSO57G7NFHcUbcsHJOaMIK5tz1Mxw/dr95Sj8bB41AgzwvX0PcQm9Uwm3V
-         zYtTkNvklyoK++BatlmLLgCo9PlvV6NeJVRKWjcVw+IUlCTAXDBt0lWS4QBpuZT3ooAO
-         pSQCpdXFq2/T7F735GQEuInuPJdHTDtWkl4toBR1TAJ5zxgB8Nikggw88ts1nhxp/RCL
-         /bC+p0sVVo8jiztLH2xJbvkYdWWFTw9GKmgnJOSWHwI/2YWajkOEJ6WvpF0mrn1Ssbxc
-         eQr2kziE3zttEIVWwlNKTA1nnKGRiX28DUQj1iCrtnc2B1okbRMzZLuJiuNW0ZL+o4kp
-         WoZA==
+        Wed, 12 Jul 2023 14:54:36 -0400
+Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com [209.85.210.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BAF91FC0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 11:54:34 -0700 (PDT)
+Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-6b86d2075f0so8425326a34.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 11:54:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689186353; x=1691778353;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9sOcI2jxuVJp353RgogKNfvCVFy7OwS+eMp4jITy9DY=;
-        b=hYm09VOWIbQxttLZ0PVKeyGyGwi/iQOhc0oawY/3tjG8NkYgpJ1s8+ipo7QYb8dwjl
-         z5u48JUqyndiFawAuksOY0rIx1lkOPBvBQ3hDhP8QPTzcU3Ll2Kc1pXcDAipCv+A74Y6
-         I4uD5ZtoAJ4qLpoUTZJf6CdT8TjH53XEHveSeUtW0O7EILcrOJ7ejKJCLRs9E8Y/3jH3
-         CU2aeAdFrWgl1zkERzU0cM9Wqr1khQhh/mHj/C0fNVNhtC5L4RJuvfImda3D1u97wTmS
-         4InBmjGPiDxMKjcidM+yL8iRK1TrUORf6wiuGkE9ceEYKvjyAgz1VxnX5jYuwRgI1nPn
-         24fA==
-X-Gm-Message-State: ABy/qLYIAuze3xq132a0ZAMqRHXw47J2u6DN1t4+DenfSuCywuRzoqwD
-        yQbYxBlO+RPibu7FILqbpvN9ojY3KG5YIT5dotc=
-X-Google-Smtp-Source: APBJJlHyRxqI+3+chJwIFnAoBNpNOha/JYdUdI8l5xO8mEtpGJFTnFIwYDBcfPZI75Pja6vysb+v/1GzB2oqO6hPIdw=
-X-Received: by 2002:a67:eb84:0:b0:443:7572:598b with SMTP id
- e4-20020a67eb84000000b004437572598bmr6648863vso.13.1689186353314; Wed, 12 Jul
- 2023 11:25:53 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689188073; x=1691780073;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iZMH+f/qQs35ft7PcSxeJWZ8yv3i3Olk8Bn6x6Aux/0=;
+        b=Xx4MNlhlxVH/670UTDSvQpFKLzZC1GY/KpgNCca5hoyuSTCg7+41bAkbGwtFnrX6Zl
+         ZNXzE3b1pRzhPIuNLDRCjk8/hjBQZawPuU9VVYko08PCDB1tdgDEnSOkhZv/ZbUd0Qso
+         XqQDKA5xZVAD0fkOCh9sbUKdvOMw2kMEFxsv02tBxreZnukIec+R3XZTct9qTogIV0c5
+         v851QH3wQ0bVEVD/zg0hTJV1tQ8Jqw/YzCQFAWF13TGYV66C+0aKDRKmSeI5sxBKlnoh
+         mKK9bTkTpfdFTNhUqMqDK2cj1/1yA6S7H5YMjSNL0ZX88siVbr/+chplB7/XVZsdwcmh
+         EuTA==
+X-Gm-Message-State: ABy/qLZpOcQ+Db5/DkXUf01ERDpISw2IIwc7m6lPFmVpeV1ptXdNTD8r
+        xiKzdQcaXEZPothWLKJ2Ck2h4/pi6z9JHg6ljJM4wTVf38zp
+X-Google-Smtp-Source: APBJJlFsJIcb0rdx4JjgRS1wq5NhoTjU9MPmFzmv1EP3Vle1AIKr62xgl7dheKEiVE6GkXdOnIQBkcJkfp2R0puLgy6N5pzwWkeT
 MIME-Version: 1.0
-References: <CAOuPNLizjBp_8ceKq=RLznXdsHD-+N55RoPh_D7_Mpkg7M-BwQ@mail.gmail.com>
- <877cr5yzjc.fsf@miraculix.mork.no>
-In-Reply-To: <877cr5yzjc.fsf@miraculix.mork.no>
-From:   Pintu Agarwal <pintu.ping@gmail.com>
-Date:   Wed, 12 Jul 2023 23:55:41 +0530
-Message-ID: <CAOuPNLhUtVtrOQQ1Z_rA0NAerG5PSfA26=hoenuCtCBDvz1CJA@mail.gmail.com>
-Subject: Re: MTD: Lots of mtdblock warnings on bootup logs
-To:     =?UTF-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        linux-fsdevel@kvack.org, ezequiel@collabora.com,
-        Miquel Raynal <miquel.raynal@bootlin.com>
+X-Received: by 2002:a05:6830:2056:b0:6af:a3de:5d26 with SMTP id
+ f22-20020a056830205600b006afa3de5d26mr6113119otp.7.1689188073476; Wed, 12 Jul
+ 2023 11:54:33 -0700 (PDT)
+Date:   Wed, 12 Jul 2023 11:54:33 -0700
+In-Reply-To: <000000000000881d0606004541d1@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001416bb06004ebf53@google.com>
+Subject: Re: [syzbot] [fs?] INFO: task hung in pipe_release (4)
+From:   syzbot <syzbot+f527b971b4bdc8e79f9e@syzkaller.appspotmail.com>
+To:     bpf@vger.kernel.org, brauner@kernel.org, davem@davemloft.net,
+        dhowells@redhat.com, dsahern@kernel.org, edumazet@google.com,
+        kuba@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        pabeni@redhat.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Bjorn and Miquel,
+syzbot has bisected this issue to:
 
-Thank you so much for your help!
-Please see my reply inline.
+commit 7ac7c987850c3ec617c778f7bd871804dc1c648d
+Author: David Howells <dhowells@redhat.com>
+Date:   Mon May 22 12:11:22 2023 +0000
 
-On Wed, 12 Jul 2023 at 19:58, Bj=C3=B8rn Mork <bjorn@mork.no> wrote:
->
-> Pintu Agarwal <pintu.ping@gmail.com> writes:
->
-> > Kernel: 5.15 ; arm64 ; NAND + ubi + squashfs
-> > We have some RAW partitions and one UBI partition (with ubifs/squashfs =
-volumes).
-> >
-> > We are seeing large numbers of these logs on the serial console that
-> > impact the boot time.
-> > [....]
-> > [    9.667240][    T9] Creating 58 MTD partitions on "1c98000.nand":
-> > [....]
-> > [   39.975707][  T519] mtdblock: MTD device 'uefi_a' is NAND, please
-> > consider using UBI block devices instead.
-> > [   39.975707][  T519] mtdblock: MTD device 'uefi_b' is NAND, please
-> > consider using UBI block devices instead.
-> > [....]
-> >
-> > This was added as part of this commit:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit=
-/drivers/mtd/mtdblock.c?h=3Dv5.15.120&id=3Df41c9418c5898c01634675150696da29=
-0fb86796
-> > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit=
-/drivers/mtd/mtdblock.c?h=3Dv5.15.120&id=3De07403a8c6be01857ff75060b2df9a1a=
-a8320fe5
->
-> You have 5.15.what exactly?  commit f41c9418c5898 was added in v5.15.46.
-> Your log looks like it is missing.
->
-My exact Kernel version is: 5.15.78
-And I see that the below commit is also present:
-commit f41c9418c5898c01634675150696da290fb86796
-mtdblock: warn if opened on NAND
+    udp: Convert udp_sendpage() to use MSG_SPLICE_PAGES
 
-> FWIW, commit f41c9418c5898 was supposed to fix exactly that problem with
-> commit e07403a8c6be01.
->
-> But to catch actual mounts it will still warn if the mtdblock device is
-> opened.  This can obviously cause false positives if you e.g have some
-> script reading from the mtdblock devices.  If you are running v5.15.46 or
-> later then there *is* something accessing those devices. You'll have to
-> figure out what it is and stop it to avoid the warning.
->
-You mean, if someone is using "mount .. /dev/mtdblock*" then only we
-get these warnings ?
-Or, if someone is trying to access the node using open("/dev/mtdblock*") .
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15853bcaa80000
+start commit:   3f01e9fed845 Merge tag 'linux-watchdog-6.5-rc2' of git://w..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17853bcaa80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13853bcaa80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=150188feee7071a7
+dashboard link: https://syzkaller.appspot.com/bug?extid=f527b971b4bdc8e79f9e
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a86682a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1520ab6ca80000
 
-But in this case, there should be only 1,2,3 entries but here I am
-seeing for all the NAND partitions.
-Or, is it possible that systemd-udevd is trying to access these nodes ?
+Reported-by: syzbot+f527b971b4bdc8e79f9e@syzkaller.appspotmail.com
+Fixes: 7ac7c987850c ("udp: Convert udp_sendpage() to use MSG_SPLICE_PAGES")
 
-Can we use ubiblock for mount ubifs (rw) volumes, or here we have to
-use mtdblock ?
-We have a mixture of squashfs (ro) and ubifs (rw) ubi volumes.
-Currently, we are using the ubiblock way of mounting for squashfs but
-mtdblock mounting for ubifs.
-
->> CONFIG_MTD_BLOCK=3Dy
->> CONFIG_MTD_UBI_BLOCK=3Dy
->>
-> If you don't need both, then yes.
-
-We actually need both of them because of several dependencies.
-
-There are few applications that are trying to read content from /proc/mtd.
-Is this also a problem if we disable MTD_BLOCK ?
-
-
-Thanks,
-Pintu
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
