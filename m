@@ -2,70 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BDE7750869
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 14:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B0B57508E9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 14:56:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233184AbjGLMfG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jul 2023 08:35:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51360 "EHLO
+        id S232333AbjGLM4w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jul 2023 08:56:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232767AbjGLMfF (ORCPT
+        with ESMTP id S231908AbjGLM4v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jul 2023 08:35:05 -0400
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DAE310F3;
-        Wed, 12 Jul 2023 05:35:03 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.30.67.153])
-        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4R1HJ11sRdz4f3mn9;
-        Wed, 12 Jul 2023 20:34:57 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-        by APP4 (Coremail) with SMTP id gCh0CgCXaK_xna5klTM2Nw--.23925S3;
-        Wed, 12 Jul 2023 20:34:59 +0800 (CST)
-Subject: Re: [PATCH v5 02/11] block: Block Device Filtering Mechanism
-To:     Yu Kuai <yukuai1@huaweicloud.com>,
-        Sergei Shtepa <sergei.shtepa@veeam.com>, axboe@kernel.dk,
-        hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-        willy@infradead.org, dlemoal@kernel.org, linux@weissschuh.net,
-        jack@suse.cz, ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Donald Buczek <buczek@molgen.mpg.de>,
-        "yukuai (C)" <yukuai3@huawei.com>
-References: <20230612135228.10702-1-sergei.shtepa@veeam.com>
- <20230612135228.10702-3-sergei.shtepa@veeam.com>
- <f935840e-12a7-c37b-183c-27e2d83990ea@huaweicloud.com>
- <eca5a778-6795-fc03-7ae0-fe06f514af85@huaweicloud.com>
-From:   Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <2ab36e73-a612-76a8-9c20-f5e11c67bcc3@huaweicloud.com>
-Date:   Wed, 12 Jul 2023 20:34:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 12 Jul 2023 08:56:51 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75151173B;
+        Wed, 12 Jul 2023 05:56:50 -0700 (PDT)
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36CCqls1015912;
+        Wed, 12 Jul 2023 12:56:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=DM/+bB1GI+w8sbgcaGTj8NxYs1rqWPKdOCH7h7tAdIo=;
+ b=g1g0qgYYWFBC65sFjn+7gX8CLn9MVITi7fhPiRh/PSebXXipBlXrE/TL4m6TbqJKdKvH
+ 0KLmMi8vyP7I3319wMJBva1a9Fjat+r3MQH91TpFebbC+8CN9Y5ZjOTeMOBrgM1FHy+i
+ nqqGANA6KjOPSgA1w4xfsZUU+U/aqoboGUb4wYu6QuETUhuC3b6LamdO1UTCyo9RkYv6
+ iXYMEboB/ylgfcQbfIe2IEcEMAsoXNC8Bocv13DSDpXuZGa8cVphPdGQOPa/7SfrK7H+
+ xu5DJ50g2YwegcaqSa0COUpLVVaLn8xJFsSDmm6XURXZT/jRbZ0VOoNV/mzL6BRhOnRH pA== 
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3rsvjbr2yt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 12 Jul 2023 12:56:42 +0000
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 36C8V7gi022696;
+        Wed, 12 Jul 2023 12:56:40 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+        by ppma06fra.de.ibm.com (PPS) with ESMTPS id 3rpy2e9wts-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 12 Jul 2023 12:56:40 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+        by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 36CCuaIV17171110
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Jul 2023 12:56:36 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 73DA22004B;
+        Wed, 12 Jul 2023 12:56:36 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2C31620043;
+        Wed, 12 Jul 2023 12:56:36 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
+        by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+        Wed, 12 Jul 2023 12:56:36 +0000 (GMT)
+Date:   Wed, 12 Jul 2023 14:56:34 +0200
+From:   Alexander Gordeev <agordeev@linux.ibm.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH v2 16/92] s390: convert to ctime accessor functions
+Message-ID: <ZK6jApBgBnDk14cj@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+References: <20230705185755.579053-1-jlayton@kernel.org>
+ <20230705190309.579783-1-jlayton@kernel.org>
+ <20230705190309.579783-14-jlayton@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <eca5a778-6795-fc03-7ae0-fe06f514af85@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: gCh0CgCXaK_xna5klTM2Nw--.23925S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KryDGr4fXrWxZry8WFyUZFb_yoW8Ar48pr
-        95XayUJrWUXFn5Ww1qgF1UtFyFvF1UJw1DZryIqa43JrsFyrnFga17Wr9Y93sxCr48GrW7
-        Zr1jvrsxZwsxJFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-        6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-        4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-        c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-        AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-        17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-        IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq
-        3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-        nIWIevJa73UjIFyTuYvjfUOmhFUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230705190309.579783-14-jlayton@kernel.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 7G4j4JOmKqSKxejA7tF4iKaz0fhE4HzW
+X-Proofpoint-ORIG-GUID: 7G4j4JOmKqSKxejA7tF4iKaz0fhE4HzW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-12_08,2023-07-11_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 phishscore=0 clxscore=1011 spamscore=0 suspectscore=0
+ mlxlogscore=542 adultscore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2307120112
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,67 +91,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Wed, Jul 05, 2023 at 03:00:41PM -0400, Jeff Layton wrote:
+> In later patches, we're going to change how the inode's ctime field is
+> used. Switch to using accessor functions instead of raw accesses of
+> inode->i_ctime.
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  arch/s390/hypfs/inode.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/s390/hypfs/inode.c b/arch/s390/hypfs/inode.c
+> index ee919bfc8186..5feef8da406b 100644
+> --- a/arch/s390/hypfs/inode.c
+> +++ b/arch/s390/hypfs/inode.c
+> @@ -53,7 +53,7 @@ static void hypfs_update_update(struct super_block *sb)
+>  	struct inode *inode = d_inode(sb_info->update_file);
+>  
+>  	sb_info->last_update = ktime_get_seconds();
+> -	inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
+> +	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
+>  }
+>  
+>  /* directory tree removal functions */
+> @@ -101,7 +101,7 @@ static struct inode *hypfs_make_inode(struct super_block *sb, umode_t mode)
+>  		ret->i_mode = mode;
+>  		ret->i_uid = hypfs_info->uid;
+>  		ret->i_gid = hypfs_info->gid;
+> -		ret->i_atime = ret->i_mtime = ret->i_ctime = current_time(ret);
+> +		ret->i_atime = ret->i_mtime = inode_set_ctime_current(ret);
+>  		if (S_ISDIR(mode))
+>  			set_nlink(ret, 2);
+>  	}
 
-在 2023/07/12 18:04, Yu Kuai 写道:
-> Hi,
-> 
-> 在 2023/07/11 10:02, Yu Kuai 写道:
-> 
->>> +static bool submit_bio_filter(struct bio *bio)
->>> +{
->>> +    if (bio_flagged(bio, BIO_FILTERED))
->>> +        return false;
->>> +
->>> +    bio_set_flag(bio, BIO_FILTERED);
->>> +    return bio->bi_bdev->bd_filter->ops->submit_bio(bio);
->>> +}
->>> +
->>>   static void __submit_bio(struct bio *bio)
->>>   {
->>> +    /*
->>> +     * If there is a filter driver attached, check if the BIO needs 
->>> to go to
->>> +     * the filter driver first, which can then pass on the bio or 
->>> consume it.
->>> +     */
->>> +    if (bio->bi_bdev->bd_filter && submit_bio_filter(bio))
->>> +        return;
->>> +
->>>       if (unlikely(!blk_crypto_bio_prep(&bio)))
->>>           return;
-> 
-> ...
-> 
->>> +static void __blkfilter_detach(struct block_device *bdev)
->>> +{
->>> +    struct blkfilter *flt = bdev->bd_filter;
->>> +    const struct blkfilter_operations *ops = flt->ops;
->>> +
->>> +    bdev->bd_filter = NULL;
->>> +    ops->detach(flt);
->>> +    module_put(ops->owner);
->>> +}
->>> +
->>> +void blkfilter_detach(struct block_device *bdev)
->>> +{
->>> +    if (bdev->bd_filter) {
->>> +        blk_mq_freeze_queue(bdev->bd_queue);
-> 
-> And this is not sate as well, for bio-based device, q_usage_counter is
-> not grabbed while submit_bio_filter() is called, hence there is a risk
-> of uaf from submit_bio_filter().
-
-And there is another question, can blkfilter_detach() from
-del_gendisk/delete_partiton and ioctl concurrent? I think it's a
-problem.
-
-Thanks,
-Kuai
-> 
-> Thanks,
-> Kuai
-> 
-> .
-> 
-
+Acked-by: Alexander Gordeev <agordeev@linux.ibm.com>
