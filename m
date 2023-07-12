@@ -2,133 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1802B750D80
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 18:06:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99F65750DA1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 18:11:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232553AbjGLQGv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jul 2023 12:06:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43558 "EHLO
+        id S232392AbjGLQLH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jul 2023 12:11:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232769AbjGLQGu (ORCPT
+        with ESMTP id S232208AbjGLQLG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jul 2023 12:06:50 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBF381BE4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 09:06:47 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4fb96e2b573so11506612e87.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 09:06:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1689178006; x=1691770006;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8X6ArMXh62A5UxRR3ZN+q1CvObhoeb8ltfmXU1xj+zw=;
-        b=V0Mwyzpfv5NHo344FebMkemb4OkDhqesSJzk3oLJrC1sXingJzi/DqoHJPX3cM7/kU
-         /daZbGumusx7p3ETz9bL+dV7+a249DzrdJ5ucaxUqFs1cH4q4UNK1aBbCP0kRMVezgvK
-         Gb0u18D1omT5qk875/bvJSIuyWWXlLKu5WnA0OT929rTcOY7rHqZVsWOvIcdQTq+Q4TI
-         Xty8IQiQ2uEFjkBqRHhjaYUeIIjdk3TlKuW6ZBNL29/kZI8LKdOXvAAi+FiRNxSMUXsG
-         92h/diWQ5jGfG/Pc/9JTOLcLZ2bS8Hyd3sIfxIs/rFITeR6YjIQmonhcUevYE5m/zN7s
-         SmPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689178006; x=1691770006;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8X6ArMXh62A5UxRR3ZN+q1CvObhoeb8ltfmXU1xj+zw=;
-        b=QHBPEcxnKQyNINLvwk72nI+ikCw+tWCLTCtk7E0MbJDs52wiSi0kIycU8yEgJjnJwK
-         BHCnWkjtnFwaJ6FdRsS600bG9CWu1X8l0+0x5+aSeZZpYzEUUJFEXdl0W+XQxdMYrjz1
-         2PrjZO8chMAnvno6gLyP7Wv64PFNiZgCxfrbBLC9DKDb8lXBRh3WjLOJNXG/QaezExqY
-         UJDxvgIYZWIBqa7XsfHMfLK4BuITCRdCmu2lCgAFILWti5dNrv7k65DfPi19H3GJ+a2v
-         DVPCYq6R91BwKYHuYdZL2dlUkyfMRFA5pi+mi6kovqfI8mLqgGAFsbh0UiwSkpEb4D9g
-         /fDQ==
-X-Gm-Message-State: ABy/qLYTcNVx5ZZBLlniMuecR5sb574Ej+dAVofEBsRSzVVb82a0wVyA
-        PGfQjSfCOTyqjH8FiiPyAPh7zCoww/B15Aeqj3uhmQ==
-X-Google-Smtp-Source: APBJJlHjPtNIqZNhhKZT3JSG1orBAozCwd3+TwwvFjulJuToD7D5iIrA7grwKZQU8Z67qc0UJ0oDxWof6WbkdfMRi3A=
-X-Received: by 2002:ac2:5b1d:0:b0:4fb:7a90:1abe with SMTP id
- v29-20020ac25b1d000000b004fb7a901abemr15797051lfn.49.1689178006211; Wed, 12
- Jul 2023 09:06:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230629165206.383-1-jack@suse.cz> <20230704122224.16257-1-jack@suse.cz>
- <ZKbgAG5OoHVyUKOG@infradead.org>
-In-Reply-To: <ZKbgAG5OoHVyUKOG@infradead.org>
-From:   Haris Iqbal <haris.iqbal@ionos.com>
-Date:   Wed, 12 Jul 2023 18:06:35 +0200
-Message-ID: <CAJpMwyiUcw+mH0sZa8f8UJsaSZ7NSE65s2gZDEia+pASyP_gJQ@mail.gmail.com>
-Subject: Re: [PATCH 01/32] block: Provide blkdev_get_handle_* functions
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Alasdair Kergon <agk@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        David Sterba <dsterba@suse.com>, dm-devel@redhat.com,
-        drbd-dev@lists.linbit.com, Gao Xiang <xiang@kernel.org>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        jfs-discussion@lists.sourceforge.net,
-        Joern Engel <joern@lazybastard.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-xfs@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>,
-        Minchan Kim <minchan@kernel.org>, ocfs2-devel@oss.oracle.com,
-        reiserfs-devel@vger.kernel.org,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Song Liu <song@kernel.org>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        target-devel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        xen-devel@lists.xenproject.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        Wed, 12 Jul 2023 12:11:06 -0400
+Received: from nautica.notk.org (nautica.notk.org [91.121.71.147])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB9C510FA;
+        Wed, 12 Jul 2023 09:11:04 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 9C522C024; Wed, 12 Jul 2023 18:11:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1689178263; bh=DACiLjAb3AxPaF1XXgn3qSxuUGuVuveN9I8X5nP9hrg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Awe2b9hjp+1Vo4EojeNxTVULmjWG9L6gPgEqyIS1lyEfLr0z4DKlY17Yoncm+f7IS
+         qyzpvwn9zY1KhRiBJIhbJsDKo8aUJn34ROPhCV2xEhFhZQmtmwAERLSaL+ZsRiJ86w
+         laEi553UW1CPYbf8tyKKXaghsoQLuEhenru/wrH1U3Iybt1QPFeoSjXUm565ITNBoa
+         CbxpUAdwypMBBPXLdrBgX+YskRow8GgunUAU2tKRBlNdPfiaB1yDEBDRvP4rkqja41
+         N/nDl4iHFAH52IAzEZAi0Rk5I14jz5ZINZ8CXlh6kQ8MqAHDGFeu6Oa6ha4ZZDtJiT
+         O1KougDBlfAYQ==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id 276DDC009;
+        Wed, 12 Jul 2023 18:10:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1689178262; bh=DACiLjAb3AxPaF1XXgn3qSxuUGuVuveN9I8X5nP9hrg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=E5z/a8SiZtnpMsSTm/QCmABSzZr/jEga/M6ieJtKFvysF64sk/LtbjU2r4I1sSOjp
+         7fHTuKaqYfooSq6mxaJJYbzkVT6ZTd/La5cwEoJNl/zcEiRt7V5BwXq/tba/bxjnM7
+         /cZMBAiMkVEG9/vibzQpmVJ1WfVWHmNsOnl+xzBuyEfwe8y8MhqMCg/jFO/69NG3yz
+         O4EWqVSoZVZSFqkHJMbRW8ELqvLuAw1t+ZVNQ0rGE8Oa+vyhO59XtssHTU3NGeg8dM
+         EmZih2csq0HhVyxpcfva3MoLz3wDwj2pvFahV492PRlG7LevgCBlnCavPGLKRjz8IL
+         Ji2Zig2N/5pQQ==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id c9b915ae;
+        Wed, 12 Jul 2023 16:10:56 +0000 (UTC)
+Date:   Thu, 13 Jul 2023 01:10:41 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Hao Xu <hao.xu@linux.dev>
+Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+Subject: Re: [PATCH 3/3] io_uring: add support for getdents
+Message-ID: <ZK7QgRyUIHNC8Nk6@codewreck.org>
+References: <20230711114027.59945-1-hao.xu@linux.dev>
+ <20230711114027.59945-4-hao.xu@linux.dev>
+ <ZK1H568bvIzcsB6J@codewreck.org>
+ <858c3f16-ffb3-217e-b5d6-fcc63ef9c401@linux.dev>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <858c3f16-ffb3-217e-b5d6-fcc63ef9c401@linux.dev>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 6, 2023 at 5:38=E2=80=AFPM Christoph Hellwig <hch@infradead.org=
-> wrote:
->
-> On Tue, Jul 04, 2023 at 02:21:28PM +0200, Jan Kara wrote:
-> > Create struct bdev_handle that contains all parameters that need to be
-> > passed to blkdev_put() and provide blkdev_get_handle_* functions that
-> > return this structure instead of plain bdev pointer. This will
-> > eventually allow us to pass one more argument to blkdev_put() without
-> > too much hassle.
->
-> Can we use the opportunity to come up with better names?  blkdev_get_*
-> was always a rather horrible naming convention for something that
-> ends up calling into ->open.
->
-> What about:
->
-> struct bdev_handle *bdev_open_by_dev(dev_t dev, blk_mode_t mode, void *ho=
-lder,
->                 const struct blk_holder_ops *hops);
-> struct bdev_handle *bdev_open_by_path(dev_t dev, blk_mode_t mode,
->                 void *holder, const struct blk_holder_ops *hops);
-> void bdev_release(struct bdev_handle *handle);
+Hao Xu wrote on Wed, Jul 12, 2023 at 03:53:24PM +0800:
+> > > +		if (file_count(file) > 1)
+> > 
+> > I was curious about this so I found it's basically what __fdget_pos does
+> > before deciding it should take the f_pos_lock, and as such this is
+> > probably correct... But if someone can chime in here: what guarantees
+> > someone else won't __fdget_pos (or equivalent through this) the file
+> > again between this and the vfs_getdents call?
+> > That second get would make file_count > 1 and it would lock, but lock
+> > hadn't been taken here so the other call could get the lock without
+> > waiting and both would process getdents or seek or whatever in
+> > parallel.
+> > 
+> 
+> This file_count(file) is atomic_read, so I believe no race condition here.
 
-+1 to this.
-Also, if we are removing "handle" from the function, should the name
-of the structure it returns also change? Would something like bdev_ctx
-be better?
+I don't see how that helps in the presence of another thread getting the
+lock after we possibly issued a getdents without the lock, e.g.
 
-(Apologies for the previous non-plaintext email)
+t1 call io_uring getdents here
+t1 sees file_count(file) == 1 and skips getting lock
+t1 starts issuing vfs_getdents [... processing]
+t2 calls either io_uring getdents or getdents64 syscall
+t2 gets the lock, since it wasn't taken by t1 it can be obtained
+t2 issues another vfs_getdents
 
->
-> ?
+Christian raised the same issue so I'll leave this to his part of the
+thread for reply, but I hope that clarified my concern.
+
+
+-----
+
+BTW I forgot to point out: this dropped the REWIND bit from my patch; I
+believe some form of "seek" is necessary for real applications to make
+use of this (for example, a web server could keep the fd open in a LRU
+and keep issuing readdir over and over again everytime it gets an
+indexing request); not having rewind means it'd need to close and
+re-open the fd everytime which doesn't seem optimal.
+
+A previous iteration discussed that real seek is difficult and not
+necessarily needed to I settled for rewind, but was there a reason you
+decided to stop handling that?
+
+My very egoistical personal use case won't require it, so I can just say
+I don't care here, but it would be nice to have a reason explained at
+some point
+
+-- 
+Dominique Martinet | Asmadeus
