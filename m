@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 81EB0750075
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 09:53:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F76A7500A5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Jul 2023 10:03:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231859AbjGLHxh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jul 2023 03:53:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37116 "EHLO
+        id S231200AbjGLIDI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jul 2023 04:03:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229718AbjGLHxg (ORCPT
+        with ESMTP id S230321AbjGLIC2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jul 2023 03:53:36 -0400
-Received: from out-8.mta0.migadu.com (out-8.mta0.migadu.com [IPv6:2001:41d0:1004:224b::8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 007F8E6F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 00:53:34 -0700 (PDT)
-Message-ID: <858c3f16-ffb3-217e-b5d6-fcc63ef9c401@linux.dev>
+        Wed, 12 Jul 2023 04:02:28 -0400
+Received: from out-25.mta0.migadu.com (out-25.mta0.migadu.com [IPv6:2001:41d0:1004:224b::19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 354A61FE7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 01:01:16 -0700 (PDT)
+Message-ID: <95e2b151-ac0e-b0f6-567f-9bc9a802e0da@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1689148413;
+        t=1689148867;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=FC42AF7xix5hDLWrq2t7lf71x97Aeew4iatdDcbvI/k=;
-        b=kuZPChWNeKsG/KDgvuhXuMbYLYihVnXzPB1re2KFiq9BTKXFiU/NkrZtGW/8seNtjL1CDD
-        bpbeaocDtE/qkypWN5rDO6eFejmZpHE7E/ZvaogBBDqQesB0ESGD0FwEKfFWx4Hsa3CYEQ
-        pjhJd/86jh13krreotIQnwrkS5ndPmo=
-Date:   Wed, 12 Jul 2023 15:53:24 +0800
+        bh=6yj6XybnIwDjNgThNnuY+kBs95bcm6g2Kc+E77PmFOY=;
+        b=Y9y/MEH6IoMOYMAlPSeWdpieOMU1x+VwYG4N3g+CfS1IvMxlZEKvxBzK0pLTZyygyh88OP
+        acLZ4OqH/4zTqF34Cbw10Q3sGAnkYii7geNQy19bg7zxtS80KM6yKW5ty6LEgrN/ARgB6U
+        zxgxGrNVYIAzyLwIWwg/dCd5l8X1N3Q=
+Date:   Wed, 12 Jul 2023 16:01:00 +0800
 MIME-Version: 1.0
 Subject: Re: [PATCH 3/3] io_uring: add support for getdents
 Content-Language: en-US
@@ -101,6 +101,12 @@ On 7/11/23 20:15, Dominique Martinet wrote:
 > 
 > If file is NULL here things will just blow up in vfs_getdents anyway,
 > let's remove the useless check
+
+Sorry, forgot this one. Actually I think the file NULL check is not 
+necessary here since it has been done in general code path in 
+io_assign_file()
+
+
 > 
 >> +		if (file_count(file) > 1)
 > 
@@ -114,11 +120,6 @@ On 7/11/23 20:15, Dominique Martinet wrote:
 > waiting and both would process getdents or seek or whatever in
 > parallel.
 > 
-
-Hi Dominique,
-
-This file_count(file) is atomic_read, so I believe no race condition here.
-
 > 
 > That aside I don't see any obvious problem with this.
 > 
