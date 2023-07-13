@@ -2,94 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ACC64751A04
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 09:37:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBE37751BBE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 10:37:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231549AbjGMHhU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 03:37:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53882 "EHLO
+        id S234010AbjGMIhG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 04:37:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbjGMHhT (ORCPT
+        with ESMTP id S233993AbjGMIgd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 03:37:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89224C1;
-        Thu, 13 Jul 2023 00:37:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1BE2F61A3F;
-        Thu, 13 Jul 2023 07:37:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4078C433C8;
-        Thu, 13 Jul 2023 07:37:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689233837;
-        bh=PBcpfrd4eyPK/MBk1PnMg3e/QAH6Rjvk6p84J7Vxn3s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hcn7RW6H46BHJdk4Nd06Xh27EHMDQzHazyRRAFTM6WzRMHZUtfYRX4mspqoOunLzP
-         4GjG8T4itjME+KrZJCPsHCcxVbQ3JgbQ2ReTn6B2R11cWCGp6jV0Yiwm/Am21wkIG7
-         HwgzByIaM4I5X52zY76KmqLu1CYeVSi5kdBPG3oBxiwSlbC+7TKuqRPlaxtO+mbiMZ
-         js1bfM31NiRtFjDB0TcC3j6AMcvFtc3WbcagiRKxNjyCnIUC8gCPaRFnZLM5BLCDBR
-         vwQK0ZKQL9cKfSVe5n7h+qtZCqgh6ZAKC+r96AEPP0rx6fJ3Rmyf8C/HGSTH0myJ/M
-         gyu67ekyWYeCQ==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>, linux-fsdevel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>, stable@vger.kernel.org
-Subject: Re: [PATCH v2] attr: block mode changes of symlinks
-Date:   Thu, 13 Jul 2023 09:37:03 +0200
-Message-Id: <20230713-solarstrom-autopilot-41444d363fa1@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230712-vfs-chmod-symlinks-v2-1-08cfb92b61dd@kernel.org>
-References: <20230712-vfs-chmod-symlinks-v2-1-08cfb92b61dd@kernel.org>
+        Thu, 13 Jul 2023 04:36:33 -0400
+Received: from mail.ettrick.pl (mail.ettrick.pl [141.94.21.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E71D26B6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jul 2023 01:30:09 -0700 (PDT)
+Received: by mail.ettrick.pl (Postfix, from userid 1002)
+        id D89AD2654F; Thu, 13 Jul 2023 08:10:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ettrick.pl; s=mail;
+        t=1689235901; bh=V4qwQGqC7KpJoyielzRpnopuINFIOvKXsSgJ3ZENIXU=;
+        h=Date:From:To:Subject:From;
+        b=CoboXy+St+bOU2rMHmjHAuDmiH5uiQaa39Fe52VJLrvW9XeG5n3oMk0xNbMPBROuN
+         U2nxy9MpvCCEiqYzFtLXsogLrvpXU+AgSzfk673euAEw1td09bnw7+4y75SsQBNNQ8
+         cuu/sHVD5bdWXOZwRxE1ipkukkBwtXkVyedCdfECckpfO5bizyQBMChuU4dN6eWrfo
+         ShTlHZMvxd4WCkQgWzc1tzzoSu6n7k8qJRgwIcpMHhwi6I6VO7cn0YLdoAd35u4H7l
+         N4rkGP+u+QRslbT/33q94zOf+X4t7JPjui6b+Cry0BHszzlq8+gj6Y2gJ/pASWVSIQ
+         8dX+yAxOsRZZQ==
+Received: by mail.ettrick.pl for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jul 2023 08:10:39 GMT
+Message-ID: <20230713064500-0.1.a.39fh.0.b292trnjpg@ettrick.pl>
+Date:   Thu, 13 Jul 2023 08:10:39 GMT
+From:   "Norbert Karecki" <norbert.karecki@ettrick.pl>
+To:     <linux-fsdevel@vger.kernel.org>
+Subject: Fotowoltaika - propozycja instalacji
+X-Mailer: mail.ettrick.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1251; i=brauner@kernel.org; h=from:subject:message-id; bh=PBcpfrd4eyPK/MBk1PnMg3e/QAH6Rjvk6p84J7Vxn3s=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSsXznzrck76fSdJZGrQxKXm0Xo7JLuWnUy+9ihp0tnrzwR p6z7pqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiTlEM/wwny1z8/HtZy7z3G/tj05 +9Xr+r3551Vvzh6w08QrZHdsQxMrzZaebV8odpat3iuSdKD2zhmH7mylMHRZPk/MM9mwrflzIAAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=2.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_ABUSE_SURBL,URIBL_CSS_A autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Level: **
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 12 Jul 2023 20:58:49 +0200, Christian Brauner wrote:
-> Changing the mode of symlinks is meaningless as the vfs doesn't take the
-> mode of a symlink into account during path lookup permission checking.
-> 
-> However, the vfs doesn't block mode changes on symlinks. This however,
-> has lead to an untenable mess roughly classifiable into the following
-> two categories:
-> 
-> [...]
+Dzie=C5=84 dobry,
+=20
+Czy rozwa=C5=BCali Pa=C5=84stwo monta=C5=BC systemu fotowoltaicznego?
+=20
+Instalacja fotowoltaiczna jest najlepszym sposobem na obni=C5=BCenie wyso=
+ko=C5=9Bci rachunk=C3=B3w za pr=C4=85d (pozostaj=C4=85 tylko op=C5=82aty =
+sta=C5=82e) i zabezpieczenie si=C4=99 przed rosn=C4=85cymi cenami energii=
+ elektrycznej. Jest to w pe=C5=82ni odnawialne i bezemisyjne =C5=BAr=C3=B3=
+d=C5=82o energii, dzi=C4=99ki czemu przyczyniamy si=C4=99 do ochrony =C5=9B=
+rodowiska naturalnego.
+=20
+Dzia=C5=82amy od wielu lat na rynku energetycznym. Przygotujemy projekt, =
+wycen=C4=99 oraz kompleksowo wykonamy i zg=C5=82osimy realizacj=C4=99 do =
+zak=C5=82adu energetycznego.=20
+=20
+Czy chc=C4=85 Pa=C5=84stwo pozna=C4=87 nasz=C4=85 propozycj=C4=99? =20
 
-Let's get this into -next and see whether there's any obvious immediate
-fallout because of this.
 
----
-
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] attr: block mode changes of symlinks
-      https://git.kernel.org/vfs/vfs/c/6be357f00aad
+Pozdrawiam
+Norbert Karecki
