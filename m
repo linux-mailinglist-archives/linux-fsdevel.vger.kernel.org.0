@@ -2,62 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 794D97524A4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 16:08:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 502847524AD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 16:10:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234610AbjGMOIl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 10:08:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56946 "EHLO
+        id S234344AbjGMOKm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 10:10:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234347AbjGMOIj (ORCPT
+        with ESMTP id S232568AbjGMOKk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 10:08:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC0C0212D;
-        Thu, 13 Jul 2023 07:08:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Thu, 13 Jul 2023 10:10:40 -0400
+X-Greylist: delayed 4442 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 13 Jul 2023 07:10:39 PDT
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B8B6212D;
+        Thu, 13 Jul 2023 07:10:39 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6B7866153E;
-        Thu, 13 Jul 2023 14:08:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51FE8C433C7;
-        Thu, 13 Jul 2023 14:08:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689257317;
-        bh=M6iQ7DIWqL8Vjkb3xqZQG/pYMBGCLoNvN0tEMGDbGZU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S9MMjI99SWsrm6RM/w2eQ/eOrCS+DPlN8cQ2jcQYttC8Jl2X5+vD09L7+Qlkuuiqp
-         esRvmew3/jVF/7PZYVgEkowfYkPA5Q7EIYQ6FHZg6bcHZ3kJO2yrYAlUS9lUYgol1P
-         uzz0XGnCGa9vlUPmglbFK18PPZbK973kLuQotM6RWx2DIu8gX2OHHRI65Gu1ulhSlF
-         U9CPcu/yReL8XOLu/xeaANNJn0v+qhGFuclnvp865lJ+Tx7HKkwX7UqwSCto4F0fgS
-         1aoU0pdLMAcfOfMETiR3E/UxANCHaIRpaJ6imOwgGVFVKoIDZI6kkZFuj9b3iZXYLT
-         mgE+xjbSkhCNw==
-Date:   Thu, 13 Jul 2023 16:08:31 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
-        Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>,
+        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4R1xMw0SSlz9sRm;
+        Thu, 13 Jul 2023 16:10:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+        t=1689257436;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=DsJX/tFpbTwtQ2LSeMQrzi9/53b88Qdy1opjeZwYFME=;
+        b=LgbtBXv50U/WMflAcuUJfocHrynxphke7hl5cwiqpeOPrJIN49aI0t3xCmzdx6NFv6CFIv
+        b/P0NDXnaWETV00yq6QxV4DkZR+Yh1kZuLx4L8og/bxJ4S+mxJYAfpIB4SuvCAjKBWmNKf
+        87urlpwu7g3GpG8hDcrCtOD0BoAFBJ+ksUfUbINpqvtLX14kRqWnjkygwxup85wVgWpIS8
+        ft8FwM6lCVVF6gZfpjZeC6V4Mc19VCxvwSm1MvZ50K+XjAYx/El9FiT4M2Yc/SJDOp/SLe
+        WUZZMu2YXRjZKZIXXG/NvEpcp55H23dT6b1xfW28rjq8poauQhKlXhoasgVhvg==
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Christian Brauner <brauner@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Dave Chinner <dchinner@redhat.com>,
         xu xin <cgel.zte@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@devkernel.io>,
+        "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
         Zhihao Cheng <chengzhihao1@huawei.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Stefan Roesch <shr@devkernel.io>,
         Janis Danisevskis <jdanis@google.com>,
-        Kees Cook <keescook@chromium.org>, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] procfs: block chmod on /proc/thread-self/comm
-Message-ID: <20230713-agenda-umlaufen-ef31df2ef1d1@brauner>
-References: <20230713-unerschrocken-kutschieren-9be3c8958b5d@brauner>
- <nbzkbbahgsds4s4ujmkvno7w42xxy7gkpsrtw7lay3253uabzu@iqgtepoo4fgo>
+        Kees Cook <keescook@chromium.org>
+Cc:     =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
+        Aleksa Sarai <cyphar@cyphar.com>, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2] procfs: block chmod on /proc/thread-self/comm
+Date:   Fri, 14 Jul 2023 00:09:58 +1000
+Message-ID: <20230713141001.27046-1-cyphar@cyphar.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <nbzkbbahgsds4s4ujmkvno7w42xxy7gkpsrtw7lay3253uabzu@iqgtepoo4fgo>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4R1xMw0SSlz9sRm
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -66,31 +62,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 14, 2023 at 12:00:51AM +1000, Aleksa Sarai wrote:
-> On 2023-07-13, Christian Brauner <brauner@kernel.org> wrote:
-> > > > diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
-> > > > index 486334981e60..08f0969208eb 100644
-> > > > --- a/tools/testing/selftests/nolibc/nolibc-test.c
-> > > > +++ b/tools/testing/selftests/nolibc/nolibc-test.c
-> > > > @@ -580,6 +580,10 @@ int run_syscall(int min, int max)
-> > > >  		CASE_TEST(chmod_net);         EXPECT_SYSZR(proc, chmod("/proc/self/net", 0555)); break;
-> > > >  		CASE_TEST(chmod_self);        EXPECT_SYSER(proc, chmod("/proc/self", 0555), -1, EPERM); break;
-> > > >  		CASE_TEST(chown_self);        EXPECT_SYSER(proc, chown("/proc/self", 0, 0), -1, EPERM); break;
-> > > > +		CASE_TEST(chmod_self_comm);   EXPECT_SYSER(proc, chmod("/proc/self/comm", 0777), -1, EPERM); break;
-> > > > +		CASE_TEST(chmod_tid_comm);    EXPECT_SYSER(proc, chmod("/proc/thread-self/comm", 0777), -1, EPERM); break;
-> > > > +		CASE_TEST(chmod_self_environ);EXPECT_SYSER(proc, chmod("/proc/self/environ", 0777), -1, EPERM); break;
-> > > > +		CASE_TEST(chmod_tid_environ); EXPECT_SYSER(proc, chmod("/proc/thread-self/environ", 0777), -1, EPERM); break;
-> > 
-> > > 
-> > > I'm not a big fan of this, it abuses the nolibc testsuite to test core
-> > > kernel functionality.
-> > 
-> > Yes, this should be dropped.
-> > We need a minimal patch to fix this. This just makes backporting harder
-> > and any test doesn't need to be backported.
-> 
-> Alright, I'll drop it in v2 (though I'm not sure why there are tests for
-> /proc/self and /proc/self/net then).
+Due to an oversight in commit 1b3044e39a89 ("procfs: fix pthread
+cross-thread naming if !PR_DUMPABLE") in switching from REG to NOD,
+chmod operations on /proc/thread-self/comm were no longer blocked as
+they are on almost all other procfs files.
 
-If you wanted to add tests as a separate patch they should very likely
-go into tools/testing/selftets/proc.
+A very similar situation with /proc/self/environ was used to as a root
+exploit a long time ago, but procfs has SB_I_NOEXEC so this is simply a
+correctness issue.
+
+Ref: https://lwn.net/Articles/191954/
+Ref: 6d76fa58b050 ("Don't allow chmod() on the /proc/<pid>/ files")
+Fixes: 1b3044e39a89 ("procfs: fix pthread cross-thread naming if !PR_DUMPABLE")
+Cc: stable@vger.kernel.org # v4.7+
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+---
+v2: removed nolibc selftests as per review
+v1: <https://lore.kernel.org/linux-fsdevel/20230713121907.9693-1-cyphar@cyphar.com/>
+---
+ fs/proc/base.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 05452c3b9872..7394229816f3 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3583,7 +3583,8 @@ static int proc_tid_comm_permission(struct mnt_idmap *idmap,
+ }
+ 
+ static const struct inode_operations proc_tid_comm_inode_operations = {
+-		.permission = proc_tid_comm_permission,
++		.setattr	= proc_setattr,
++		.permission	= proc_tid_comm_permission,
+ };
+ 
+ /*
+-- 
+2.41.0
+
