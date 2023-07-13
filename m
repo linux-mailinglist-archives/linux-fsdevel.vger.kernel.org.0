@@ -2,109 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 26833752160
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 14:38:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DE6E7521CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 14:49:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234527AbjGMMiU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 08:38:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53040 "EHLO
+        id S234831AbjGMMt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 08:49:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjGMMiT (ORCPT
+        with ESMTP id S234892AbjGMMtM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 08:38:19 -0400
-X-Greylist: delayed 101 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 13 Jul 2023 05:38:17 PDT
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6D1FC213C;
-        Thu, 13 Jul 2023 05:38:17 -0700 (PDT)
-Received: (from willy@localhost)
-        by mail.home.local (8.17.1/8.17.1/Submit) id 36DCZRRM027222;
-        Thu, 13 Jul 2023 14:35:27 +0200
-Date:   Thu, 13 Jul 2023 14:35:27 +0200
-From:   Willy Tarreau <w@1wt.eu>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>,
+        Thu, 13 Jul 2023 08:49:12 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E68DD30E0;
+        Thu, 13 Jul 2023 05:48:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C76CD610A0;
+        Thu, 13 Jul 2023 12:48:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D52ECC433C7;
+        Thu, 13 Jul 2023 12:48:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689252525;
+        bh=tmijwWm6ESORLzsPn45u413P6RTnuxpjAXkT3JhcMWM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dBqYnKHUTKDVlqXtIu/EGAuBAu6w3azr0i5RyYe+m6dIQ7BAZrfSpBuAi3XQiX4g0
+         Jcpc48OKW6DXOeUx7+RrNDm1vC7CXzaPZNUu7daJ08lZzlSrn9chLbgKQaDJKM5YSz
+         s5OBAyr/Aj3+SWfuyclLn3KvCoc+p5up7ZviS8JNIj5673tdfJs3UMvekIyGW+TFTt
+         6tpRM06iTeIt42IUURUwHaCaHlXW1tQGeQ7UyKh4TjZKzeRPTPUI8pBkoNWV0KK58Q
+         0Bo1I2MDhq4SNqKU3ZBmWxkGYtJy7MYF0wO2/49auhM4Qu4wSFHlszw7ejz4K3oT1X
+         R3JAPGw8A6v+A==
+Date:   Thu, 13 Jul 2023 14:48:39 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Wang Ming <machel@vivo.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Dave Chinner <dchinner@redhat.com>,
-        xu xin <cgel.zte@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@devkernel.io>,
+        Xiaokai Ran <ran.xiaokai@zte.com.cn>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        xu xin <xu.xin16@zte.com.cn>,
         Zhihao Cheng <chengzhihao1@huawei.com>,
         "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
-        Janis Danisevskis <jdanis@google.com>,
-        Kees Cook <keescook@chromium.org>, stable@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>
-Subject: Re: [PATCH] procfs: block chmod on /proc/thread-self/comm
-Message-ID: <ZK/vj5qnkaeBt6cR@1wt.eu>
-References: <20230713121907.9693-1-cyphar@cyphar.com>
+        opensource.kernel@vivo.com
+Subject: Re: [PATCH v1] fs: proc: Add error checking for d_hash_and_lookup()
+Message-ID: <20230713-hinhalten-spinnen-7d1c9d0b5200@brauner>
+References: <20230713113303.6512-1-machel@vivo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230713121907.9693-1-cyphar@cyphar.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230713113303.6512-1-machel@vivo.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-+Cc Thomas Weiﬂschuh <thomas@t-8ch.de> as this seems quite related to
-his finding about /proc/self/net:
-
-  https://lore.kernel.org/lkml/20230624-proc-net-setattr-v1-0-73176812adee@weissschuh.net/#b
-
-On Thu, Jul 13, 2023 at 10:19:04PM +1000, Aleksa Sarai wrote:
-> Due to an oversight in commit 1b3044e39a89 ("procfs: fix pthread
-> cross-thread naming if !PR_DUMPABLE") in switching from REG to NOD,
-> chmod operations on /proc/thread-self/comm were no longer blocked as
-> they are on almost all other procfs files.
+On Thu, Jul 13, 2023 at 07:32:48PM +0800, Wang Ming wrote:
+> In case of failure, d_hash_and_lookup() returns NULL or an error
+> pointer. The proc_fill_cache() needs to add the handling of the
+> error pointer returned by d_hash_and_lookup().
 > 
-> A very similar situation with /proc/self/environ was used to as a root
-> exploit a long time ago, but procfs has SB_I_NOEXEC so this is simply a
-> correctness issue.
-> 
-> Ref: https://lwn.net/Articles/191954/
-> Ref: 6d76fa58b050 ("Don't allow chmod() on the /proc/<pid>/ files")
-> Fixes: 1b3044e39a89 ("procfs: fix pthread cross-thread naming if !PR_DUMPABLE")
-> Cc: stable@vger.kernel.org # v4.7+
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> Signed-off-by: Wang Ming <machel@vivo.com>
 > ---
->  fs/proc/base.c                               | 3 ++-
->  tools/testing/selftests/nolibc/nolibc-test.c | 4 ++++
->  2 files changed, 6 insertions(+), 1 deletion(-)
+>  fs/proc/base.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 05452c3b9872..7394229816f3 100644
+> index bbc998fd2a2f..4c0e8329b318 100644
 > --- a/fs/proc/base.c
 > +++ b/fs/proc/base.c
-> @@ -3583,7 +3583,8 @@ static int proc_tid_comm_permission(struct mnt_idmap *idmap,
->  }
+> @@ -2071,6 +2071,8 @@ bool proc_fill_cache(struct file *file, struct dir_context *ctx,
+>  	ino_t ino = 1;
 >  
->  static const struct inode_operations proc_tid_comm_inode_operations = {
-> -		.permission = proc_tid_comm_permission,
-> +		.setattr	= proc_setattr,
-> +		.permission	= proc_tid_comm_permission,
->  };
->  
->  /*
-> diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
-> index 486334981e60..08f0969208eb 100644
-> --- a/tools/testing/selftests/nolibc/nolibc-test.c
-> +++ b/tools/testing/selftests/nolibc/nolibc-test.c
-> @@ -580,6 +580,10 @@ int run_syscall(int min, int max)
->  		CASE_TEST(chmod_net);         EXPECT_SYSZR(proc, chmod("/proc/self/net", 0555)); break;
->  		CASE_TEST(chmod_self);        EXPECT_SYSER(proc, chmod("/proc/self", 0555), -1, EPERM); break;
->  		CASE_TEST(chown_self);        EXPECT_SYSER(proc, chown("/proc/self", 0, 0), -1, EPERM); break;
-> +		CASE_TEST(chmod_self_comm);   EXPECT_SYSER(proc, chmod("/proc/self/comm", 0777), -1, EPERM); break;
-> +		CASE_TEST(chmod_tid_comm);    EXPECT_SYSER(proc, chmod("/proc/thread-self/comm", 0777), -1, EPERM); break;
-> +		CASE_TEST(chmod_self_environ);EXPECT_SYSER(proc, chmod("/proc/self/environ", 0777), -1, EPERM); break;
-> +		CASE_TEST(chmod_tid_environ); EXPECT_SYSER(proc, chmod("/proc/thread-self/environ", 0777), -1, EPERM); break;
->  		CASE_TEST(chroot_root);       EXPECT_SYSZR(euid0, chroot("/")); break;
->  		CASE_TEST(chroot_blah);       EXPECT_SYSER(1, chroot("/proc/self/blah"), -1, ENOENT); break;
->  		CASE_TEST(chroot_exe);        EXPECT_SYSER(proc, chroot("/proc/self/exe"), -1, ENOTDIR); break;
-> -- 
-> 2.41.0
+>  	child = d_hash_and_lookup(dir, &qname);
+> +	if (IS_ERR(child))
+> +		goto end_instantiate;
+
+As procfs doesn't have a separate dentry hash function this doesn't make
+much sense. It will always be either NULL or valid.
