@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E7217522EF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 15:06:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA0937522F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 15:06:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235192AbjGMNGO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 09:06:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41794 "EHLO
+        id S235213AbjGMNGP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 09:06:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234372AbjGMNFw (ORCPT
+        with ESMTP id S234454AbjGMNFx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 09:05:52 -0400
+        Thu, 13 Jul 2023 09:05:53 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 617263A8E;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84D512D69;
         Thu, 13 Jul 2023 06:04:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=ZOkQVTJJYdXe/u2csdGqahKYBWo+lvzD5ymfs7yQGIc=; b=3bUjfMwEEHlLAcqaJRpRhI2RUn
-        ScmA+KKqf2RUCTbmcrRDpO7nltbKGTKMD+CQZisIlPz+xqgajGzilCbQQ30tOdK9D7Ll9oRcEJf7c
-        V+imnDA8VIKtY43fHmPz3HaABn19EzokCx0/1BpgHS7Gh9SQKd+zN51dkN46wBZOavoCWMkjZAuNA
-        J1EphwDGup6OozQjRojShLJ9WYaZiq/NAqgKEiJMmA7uek9fFO2cdTyw8TBP9HDgaCvdmUq4aLVra
-        e5Fv1Rut/ZDZzUt41aUuO23+eFh5PHyG2sMaat1BeAyx+4HhJHI2PgLGv07idXlw2zsH+d3HSPwab
-        LvYBPoDQ==;
+        bh=KiumRusWz96B87ESESC631Rxm43rrn0KaIEpbGiF1MQ=; b=faiY4qzc/kzVE4hBHuyUM2oBxc
+        GrhfMGIuBQ4HitF4AdK32QBCQSUXlXKlGtIZHdPA0Gu4Lyx+dZgISpKWV6i4JYe/SLNkgXcTSVM3Y
+        AHsoJMQuahqG8SFnR3C5J7kJPGgr/glJ/M8SCqosauo/qVg73AKaScevAEkdDwdeBBRZpOl7464yP
+        nGo1b6RpRmh7GJd6LH3DkSyu/TnBFAV4eaqQGnqKAtsmCESu6XBoPdyt5ms6bRoanfLJJjjsrDkTk
+        RBAQCX8BuSRGbN5VkGcfDyca7CC2AOxP6MLQ/1DEOd5Ii5qszz5ggEQqn7SfdSYXk4JTQyxcwugpq
+        ftT59pjw==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qJvzu-003LVX-1B;
-        Thu, 13 Jul 2023 13:04:42 +0000
+        id 1qJvzw-003LY2-28;
+        Thu, 13 Jul 2023 13:04:45 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
 Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 3/9] btrfs: fix an error handling corner case in cow_file_range
-Date:   Thu, 13 Jul 2023 15:04:25 +0200
-Message-Id: <20230713130431.4798-4-hch@lst.de>
+Subject: [PATCH 4/9] btrfs: move the cow_fixup earlier in writepages handling
+Date:   Thu, 13 Jul 2023 15:04:26 +0200
+Message-Id: <20230713130431.4798-5-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230713130431.4798-1-hch@lst.de>
 References: <20230713130431.4798-1-hch@lst.de>
@@ -52,48 +52,99 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When the call to btrfs_reloc_clone_csums in cow_file_range returns an
-error, we jump to the out_unlock label with the extent_reserved variable
-set to false.   The cleanup at the label will then call
-extent_clear_unlock_delalloc on the range from start to end.  But we've
-already added cur_alloc_size to start, so there might no range be left
-from the newly increment start to end.  Move the check for start < end
-so that it is reached by also for the !extent_reserved case.
+btrfs has a special fixup for pages that are marked dirty without having
+space reserved for them.  But the place where is is run means it can't
+work for I/O that isn't kicked off inline from __extent_writepage, most
+notable compressed I/O and I/O to zoned file systems.
 
-Fixes: a315e68f6e8b ("Btrfs: fix invalid attempt to free reserved space on failure to cow range")
+Move the fixup earlier based on not findining any delalloc range in the
+I/O tree to cover this case as well instead of relying on the fairly
+obscure fallthrough behavior that calls __extent_write_page_io even when
+no delalloc space was found.
+
+Fixes: c8b978188c9a ("Btrfs: Add zlib compression support")
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/inode.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ fs/btrfs/extent_io.c | 31 +++++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index ae1bda58004b26..20bee7f8dae01c 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -1548,8 +1548,6 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 					     clear_bits,
- 					     page_ops);
- 		start += cur_alloc_size;
--		if (start >= end)
--			return ret;
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 2ae3badaf36df6..d8185582b9f4b0 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -1153,6 +1153,7 @@ static noinline_for_stack int writepage_delalloc(struct btrfs_inode *inode,
+ 	u64 delalloc_start = page_start;
+ 	u64 delalloc_end = page_end;
+ 	u64 delalloc_to_write = 0;
++	bool found_delalloc = false;
+ 	int ret = 0;
+ 
+ 	while (delalloc_start < page_end) {
+@@ -1169,6 +1170,22 @@ static noinline_for_stack int writepage_delalloc(struct btrfs_inode *inode,
+ 			return ret;
+ 
+ 		delalloc_start = delalloc_end + 1;
++		found_delalloc = true;
++	}
++
++	/*
++	 * If we did not find any delalloc range in the io_tree, this must be
++	 * the rare case of dirtying pages through get_user_pages without
++	 * calling into ->page_mkwrite.
++	 * While these are in the process of being fixed by switching to
++	 * pin_user_pages, some are still around and need to be worked around
++	 * by creating a delalloc reservation in a fixup worker, and waiting
++	 * us to be called again with that reservation.
++	 */
++	if (!found_delalloc && btrfs_writepage_cow_fixup(page)) {
++		redirty_page_for_writepage(wbc, page);
++		unlock_page(page);
++		return 1;
  	}
  
  	/*
-@@ -1558,9 +1556,11 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 	 * space_info's bytes_may_use counter, reserved in
- 	 * btrfs_check_data_free_space().
- 	 */
--	extent_clear_unlock_delalloc(inode, start, end, locked_page,
--				     clear_bits | EXTENT_CLEAR_DATA_RESV,
--				     page_ops);
-+	if (start < end) {
-+		clear_bits |= EXTENT_CLEAR_DATA_RESV;
-+		extent_clear_unlock_delalloc(inode, start, end, locked_page,
-+					     clear_bits, page_ops);
-+	}
- 	return ret;
- }
+@@ -1274,14 +1291,6 @@ static noinline_for_stack int __extent_writepage_io(struct btrfs_inode *inode,
+ 	int ret = 0;
+ 	int nr = 0;
  
+-	ret = btrfs_writepage_cow_fixup(page);
+-	if (ret) {
+-		/* Fixup worker will requeue */
+-		redirty_page_for_writepage(bio_ctrl->wbc, page);
+-		unlock_page(page);
+-		return 1;
+-	}
+-
+ 	bio_ctrl->end_io_func = end_bio_extent_writepage;
+ 	while (cur <= end) {
+ 		u32 len = end - cur + 1;
+@@ -1421,9 +1430,6 @@ static int __extent_writepage(struct page *page, struct btrfs_bio_ctrl *bio_ctrl
+ 		goto done;
+ 
+ 	ret = __extent_writepage_io(BTRFS_I(inode), page, bio_ctrl, i_size, &nr);
+-	if (ret == 1)
+-		return 0;
+-
+ 	bio_ctrl->wbc->nr_to_write--;
+ 
+ done:
+@@ -2176,8 +2182,6 @@ void extent_write_locked_range(struct inode *inode, struct page *locked_page,
+ 
+ 		ret = __extent_writepage_io(BTRFS_I(inode), page, &bio_ctrl,
+ 					    i_size, &nr);
+-		if (ret == 1)
+-			goto next_page;
+ 
+ 		/* Make sure the mapping tag for page dirty gets cleared. */
+ 		if (nr == 0) {
+@@ -2193,7 +2197,6 @@ void extent_write_locked_range(struct inode *inode, struct page *locked_page,
+ 		btrfs_page_unlock_writer(fs_info, page, cur, cur_len);
+ 		if (ret < 0)
+ 			found_error = true;
+-next_page:
+ 		put_page(page);
+ 		cur = cur_end + 1;
+ 	}
 -- 
 2.39.2
 
