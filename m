@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 03B95752D91
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 01:03:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3EDE752D97
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 01:03:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234143AbjGMXCo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 19:02:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46090 "EHLO
+        id S234527AbjGMXDB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 19:03:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234458AbjGMXCR (ORCPT
+        with ESMTP id S234538AbjGMXCW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 19:02:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94E69359E;
-        Thu, 13 Jul 2023 16:01:41 -0700 (PDT)
+        Thu, 13 Jul 2023 19:02:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D95C83A81;
+        Thu, 13 Jul 2023 16:01:47 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1F0B161A8D;
-        Thu, 13 Jul 2023 23:01:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D1B3C611A0;
-        Thu, 13 Jul 2023 23:01:34 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4DEAA61BAC;
+        Thu, 13 Jul 2023 23:01:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC92CC433C7;
+        Thu, 13 Jul 2023 23:01:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689289300;
-        bh=aa5qbguHFcu6OOlBUAepw2+xHt44QiNWyfL22OUBSqs=;
+        s=k20201202; t=1689289306;
+        bh=o469Gn6TRoUgWK1yzrc9Tq+Zw/B6gpe2ALD+iBBNLtc=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=BikyFRuCdOODbIqFMPk9kNKNlEo0dYJ6zt4FyqFTbTjpdmiUktdW71dJkcCNhfnr6
-         IH8wNPwLcwjFwqbPM9ABFfIZZoaAAjZWuXcaDgVP/9O9ow8exs0ur2EO1mxw06CUVs
-         OIVi6P2uBcHxFX31zL/bkUGRt7Vk6GxZq50OE6iR5Xkgc+XbbqUbUANDiMMWaLTCgU
-         9YSpAieiO+VbSduJMVGrLCDzqj6M76cg/ERleiQQWLvjl1lRNaDYvlOMtASHc3hRxY
-         3zxwROtQCWYj4ZhKhLitrJ1WKe8G5IuDdn4pkmXKWnP8iuqxCuy46i0Jj0SbW9jVX2
-         AHP5DZp2LCIgA==
+        b=Dmuulj7MQ5xrcZlRvkmqqt0cLhw9gHOygWjyV1GMrQh2qQIas328YpVrvgYa/9YlE
+         jdjzasvIwgr2pzbKhJ6bkYvRUPUJ7Cf222d3QWzBNDDOHRreW6B5jNpd7hZSqUP0DG
+         1om1BOfqMHiJVAzIrAkBkZ7yM8hkiudMOoj8eyWVmH/DEftijdI9AG0uCRfjjSpArl
+         vRWtCQtjZeUK6XAELF1K+qzyF9p42KVVOnsGhDho4Iisz00CdwAYHBxCcwNy70X3P4
+         ejK2Xi/B3UJqCd5vzE2APsFaUo7z38B+tdOnS4hwn6rB/d8Dd39Uv5VG/MGE7hJNYJ
+         1OevplbSpgwNg==
 From:   Jeff Layton <jlayton@kernel.org>
-Date:   Thu, 13 Jul 2023 19:00:54 -0400
-Subject: [PATCH v5 5/8] xfs: XFS_ICHGTIME_CREATE is unused
+Date:   Thu, 13 Jul 2023 19:00:55 -0400
+Subject: [PATCH v5 6/8] xfs: switch to multigrain timestamps
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230713-mgctime-v5-5-9eb795d2ae37@kernel.org>
+Message-Id: <20230713-mgctime-v5-6-9eb795d2ae37@kernel.org>
 References: <20230713-mgctime-v5-0-9eb795d2ae37@kernel.org>
 In-Reply-To: <20230713-mgctime-v5-0-9eb795d2ae37@kernel.org>
 To:     Eric Van Hensbergen <ericvh@kernel.org>,
@@ -103,24 +103,24 @@ Cc:     Dave Chinner <david@fromorbit.com>, v9fs@lists.linux.dev,
         linux-mm@kvack.org, linux-xfs@vger.kernel.org,
         Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1284; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=aa5qbguHFcu6OOlBUAepw2+xHt44QiNWyfL22OUBSqs=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBksIIuYLDaeyv+0bFKxMDi4TCGl7qNqh97QkbqR
- 7MnTf0XpqqJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZLCCLgAKCRAADmhBGVaC
- FdKeD/90gpS8fulOOgQezr1N2uNArvD5brmGxA6b7tTzZSvcpOejwinrQKvQhs+PxBZDriYQCQh
- OwxNuTnA93R76ZkHT+sLOHGoGBQ6UBAtkzGtxH9v1fgcuhwappw6969ZTeRpLIIWBZ0MFdVDXTe
- YFcM04RAjErJxaPi7Kt5ULpq1V7YIjHa0dovLbQ7frkm24o+WlVOqKpXRct7ZQqa2k6bkGFkhed
- NZPwy8zsD4D/ZthBftUASAETJsO1x4cs1v02gmv4U6YR4J39mE20H8TT+918pwwZU/VSIOj1M8H
- Oirc7oG/xtEnVFeE6nGc9DoXtvpO3IUf1FdW5mKKcKqLzZoKXfj3gk1gLXOX0mdQ2JHPZcGc49+
- LHI8cuBfrkN/yVk5aVMC/t0fyaM1xcR+wuz2sQL3b3ax5gG8hx3oSg5INanDl7BDUq7lbtQYpHC
- 44+w5XUDYxIFpjAozvDGpAzbAsZNp/fmKeaNAFZ0DPSY2csmopw1l3HzeL2s29LE29J+DbWrN4Q
- dQtkbmyLS83Mo3Rus7OEOTowcfLEdmVZ4nlYwkUBpsAbUeo3Gpzvy+DYU8t8ma/Kb96NS7sEx81
- 5WULDzoq4LwO4MreHRa/DvZr0oyyhT5qcmZWNWLeSdaA0x6eEh2hzaWN9VBX+UNVXANgJRn57fJ
- LrcnCGwsCj+PM0g==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2342; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=o469Gn6TRoUgWK1yzrc9Tq+Zw/B6gpe2ALD+iBBNLtc=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBksIIusPIfg6vbYZi6rm+r8gNys41rCFzK3/3ia
+ PhemQOJxaiJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZLCCLgAKCRAADmhBGVaC
+ FThOEACcN1l8TjhunRlKxfjl4GEZ1QeEwjtNX4gydoy2OgNjHxlnhXUZMCY77aPaf+2xc/lyobv
+ SSRfjCTqzzl07bwmqkVIo3y7Dxq50Z45QXZK6iuErpWLxQrjjTiVuEtnmMRRLuu+5ZC8MNq74xP
+ cQDdCkZZMe73bLkpfyCPFksXYk2bv+JK0B+CzboQyXxWRMjctEtcDAPG4JYms7znxF1dSXoVylL
+ /J0KhIQ/r2ezXNSqhAMPT2r6o68iDUtaiUytMhVuc0W6TjfSeBLNDmKDnkzC3PKN996ImbU3ZIf
+ b9SMQeCUPEp075x9xcKTdGaEUG1n5P9oJfoFKiV24GIHsQGpFrwdSqL0TygTRvcayvSudZTAzW4
+ p72Ki0HJ0dZv94qlRvtNf2K69SVBBzryWi3A60MH2db12+d0IpOYFAd8U2R+0L4Oq+yUbcbSfmz
+ W2m+cpeKx0IHdjswC4j0Z6FLkR10k+EDV8ekrW4hkiCtShHlCKR7NqQOevac0gCVYlpGY1SzZlz
+ n2AzdLF7/bZeZMuQyjmso7Fa44qUoVkL89Xa9HEUbpMj8IYhxNGK7hy2jUfl2k45+Xtew7aOMFn
+ jJQ+eCf7d2aslrHcY+jo6SqVZa88+8H4i8F5gVH9xF5kxLuy0AfSoJZuN7Q63Rb0/Rmi66tBkCi
+ H+1guzkn1J2LjCw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -129,42 +129,72 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Nothing ever sets this flag, which makes sense since the create time is
-set at inode instantiation and is never changed. Remove it and the
-handling of it in xfs_trans_ichgtime.
+Enable multigrain timestamps, which should ensure that there is an
+apparent change to the timestamp whenever it has been written after
+being actively observed via getattr.
+
+Also, anytime the mtime changes, the ctime must also change, and those
+are now the only two options for xfs_trans_ichgtime. Have that function
+unconditionally bump the ctime, and warn if XFS_ICHGTIME_CHG is ever not
+set.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/xfs/libxfs/xfs_shared.h      | 2 --
- fs/xfs/libxfs/xfs_trans_inode.c | 2 --
- 2 files changed, 4 deletions(-)
+ fs/xfs/libxfs/xfs_trans_inode.c | 6 +++---
+ fs/xfs/xfs_iops.c               | 4 ++--
+ fs/xfs/xfs_super.c              | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/fs/xfs/libxfs/xfs_shared.h b/fs/xfs/libxfs/xfs_shared.h
-index c4381388c0c1..8989fff21723 100644
---- a/fs/xfs/libxfs/xfs_shared.h
-+++ b/fs/xfs/libxfs/xfs_shared.h
-@@ -126,8 +126,6 @@ void	xfs_log_get_max_trans_res(struct xfs_mount *mp,
-  */
- #define	XFS_ICHGTIME_MOD	0x1	/* data fork modification timestamp */
- #define	XFS_ICHGTIME_CHG	0x2	/* inode field change timestamp */
--#define	XFS_ICHGTIME_CREATE	0x4	/* inode create timestamp */
--
- 
- /*
-  * Symlink decoding/encoding functions
 diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
-index 6b2296ff248a..0c9df8df6d4a 100644
+index 0c9df8df6d4a..86f5ffce2d89 100644
 --- a/fs/xfs/libxfs/xfs_trans_inode.c
 +++ b/fs/xfs/libxfs/xfs_trans_inode.c
-@@ -68,8 +68,6 @@ xfs_trans_ichgtime(
+@@ -62,12 +62,12 @@ xfs_trans_ichgtime(
+ 	ASSERT(tp);
+ 	ASSERT(xfs_isilocked(ip, XFS_ILOCK_EXCL));
+ 
+-	tv = current_time(inode);
++	/* If the mtime changes, then ctime must also change */
++	WARN_ON_ONCE(!(flags & XFS_ICHGTIME_CHG));
+ 
++	tv = inode_set_ctime_current(inode);
+ 	if (flags & XFS_ICHGTIME_MOD)
  		inode->i_mtime = tv;
- 	if (flags & XFS_ICHGTIME_CHG)
- 		inode_set_ctime_to_ts(inode, tv);
--	if (flags & XFS_ICHGTIME_CREATE)
--		ip->i_crtime = tv;
+-	if (flags & XFS_ICHGTIME_CHG)
+-		inode_set_ctime_to_ts(inode, tv);
  }
  
  /*
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 3a9363953ef2..3f89ef5a2820 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -573,10 +573,10 @@ xfs_vn_getattr(
+ 	stat->gid = vfsgid_into_kgid(vfsgid);
+ 	stat->ino = ip->i_ino;
+ 	stat->atime = inode->i_atime;
+-	stat->mtime = inode->i_mtime;
+-	stat->ctime = inode_get_ctime(inode);
+ 	stat->blocks = XFS_FSB_TO_BB(mp, ip->i_nblocks + ip->i_delayed_blks);
+ 
++	fill_mg_cmtime(request_mask, inode, stat);
++
+ 	if (xfs_has_v3inodes(mp)) {
+ 		if (request_mask & STATX_BTIME) {
+ 			stat->result_mask |= STATX_BTIME;
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index 818510243130..4b10edb2c972 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -2009,7 +2009,7 @@ static struct file_system_type xfs_fs_type = {
+ 	.init_fs_context	= xfs_init_fs_context,
+ 	.parameters		= xfs_fs_parameters,
+ 	.kill_sb		= kill_block_super,
+-	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
++	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
+ };
+ MODULE_ALIAS_FS("xfs");
+ 
 
 -- 
 2.41.0
