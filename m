@@ -2,55 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B464D751796
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 06:40:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 322407517A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 06:42:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233679AbjGMEkR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 00:40:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42476 "EHLO
+        id S233845AbjGMEmL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 00:42:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232133AbjGMEkQ (ORCPT
+        with ESMTP id S233659AbjGMEmK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 00:40:16 -0400
-Received: from out-5.mta1.migadu.com (out-5.mta1.migadu.com [IPv6:2001:41d0:203:375::5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D3D3E69
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 21:40:14 -0700 (PDT)
-Message-ID: <077f4874-015b-a534-4a29-de877b735e38@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1689223213;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=git7KZMGpcoyXjLF+BIDp31/p7iLby/qgJrULfG9e6g=;
-        b=OCKSYom9t8/EedSo3Iw1M4pc/i6LMRJTyoRVH3c8eoln0nk1J1rhXO4XRSzDy+Iou1COCk
-        b1rSvr0B3Fm+jVKYifMHG7m+AR0Go3gq3SIjSsRsJdMaSoFF2FQQs5CemEETc3eptXRCCD
-        bgF2a0objtV0MepM3RB3bNtcMyBoklA=
-Date:   Thu, 13 Jul 2023 12:40:05 +0800
-MIME-Version: 1.0
-Subject: Re: [PATCH 3/3] io_uring: add support for getdents
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Thu, 13 Jul 2023 00:42:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56A6019B9;
+        Wed, 12 Jul 2023 21:42:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E9A0E619B0;
+        Thu, 13 Jul 2023 04:42:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C57AC433C8;
+        Thu, 13 Jul 2023 04:42:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689223328;
+        bh=eykB0apE7Xtvo5kC4MX3hePLLE/Wk4V+dfp++PZB/LM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rTCMvPQzs1N43zu/PfsS27WZpGjCTw4Z1vl2ea4LIrVbOcXoJkenx3UTNchJFW2z3
+         WdP3fnxixTNpB+GvUDRU1uOXt6T6DduX5qnWPbvf31WD265RfqmP07PwPhhGuO1yCh
+         lrhMyyKhM2RSgsfNGebrf3xlr4Z688Qp3MY4GHrwS4UzyQ8JD1JJdRH4XJ8XGSGQOe
+         zbFfyTdDIA2iNROJyNXFb0VedorSmQzyKww7+CBCnr1MqR3ZuDj45GIckazW1qQ7kl
+         /giYHYk2by6rFDEB54/JBbB9gyw3bv1JkHLEnPXCphsZQF0+Y/1w6Z9SDhOPcI/meY
+         4jHtD7Cp/Bu+w==
+Date:   Wed, 12 Jul 2023 21:42:07 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Wang Yugui <wangyugui@e16-tech.com>,
         Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-References: <20230711114027.59945-1-hao.xu@linux.dev>
- <20230711114027.59945-4-hao.xu@linux.dev> <ZK1H568bvIzcsB6J@codewreck.org>
- <858c3f16-ffb3-217e-b5d6-fcc63ef9c401@linux.dev>
- <ZK7QgRyUIHNC8Nk6@codewreck.org>
- <bb89b1f8-dfdc-8912-b874-d552bc4b5f9d@linux.dev>
-In-Reply-To: <bb89b1f8-dfdc-8912-b874-d552bc4b5f9d@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        Christoph Hellwig <hch@infradead.org>,
+        Kent Overstreet <kent.overstreet@linux.dev>
+Subject: Re: [PATCH v4 1/9] iov_iter: Handle compound highmem pages in
+ copy_page_from_iter_atomic()
+Message-ID: <20230713044207.GH108251@frogsfrogsfrogs>
+References: <20230710130253.3484695-1-willy@infradead.org>
+ <20230710130253.3484695-2-willy@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230710130253.3484695-2-willy@infradead.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -59,86 +60,80 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/13/23 12:05, Hao Xu wrote:
+On Mon, Jul 10, 2023 at 02:02:45PM +0100, Matthew Wilcox (Oracle) wrote:
+> copy_page_from_iter_atomic() already handles !highmem compound
+> pages correctly, but if we are passed a highmem compound page,
+> each base page needs to be mapped & unmapped individually.
 > 
-> On 7/13/23 00:10, Dominique Martinet wrote:
->> Hao Xu wrote on Wed, Jul 12, 2023 at 03:53:24PM +0800:
->>>>> +        if (file_count(file) > 1)
->>>> I was curious about this so I found it's basically what __fdget_pos 
->>>> does
->>>> before deciding it should take the f_pos_lock, and as such this is
->>>> probably correct... But if someone can chime in here: what guarantees
->>>> someone else won't __fdget_pos (or equivalent through this) the file
->>>> again between this and the vfs_getdents call?
->>>> That second get would make file_count > 1 and it would lock, but lock
->>>> hadn't been taken here so the other call could get the lock without
->>>> waiting and both would process getdents or seek or whatever in
->>>> parallel.
->>>>
->>> This file_count(file) is atomic_read, so I believe no race condition 
->>> here.
->> I don't see how that helps in the presence of another thread getting the
->> lock after we possibly issued a getdents without the lock, e.g.
->>
->> t1 call io_uring getdents here
->> t1 sees file_count(file) == 1 and skips getting lock
->> t1 starts issuing vfs_getdents [... processing]
->> t2 calls either io_uring getdents or getdents64 syscall
->> t2 gets the lock, since it wasn't taken by t1 it can be obtained
->> t2 issues another vfs_getdents
->>
->> Christian raised the same issue so I'll leave this to his part of the
->> thread for reply, but I hope that clarified my concern.
-> 
-> 
-> Hi Dominique,
-> 
-> Ah, I misunderstood your question, sorry. The thing is f_count is 
-> init-ed to be 1,
-> 
-> and normal uring requests do fdget first, so I think it's ok for normal 
-> requests.
-> 
-> What Christian points out is issue with fixed file, that is indeed a 
-> problem I think.
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-After re-think of it, I think there is no race in fixed file case as
-well, because the f_count is always >1
+Yikes.  Does this want a fixes tag?
 
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-> 
-> 
->>
->> -----
->>
->> BTW I forgot to point out: this dropped the REWIND bit from my patch; I
->> believe some form of "seek" is necessary for real applications to make
->> use of this (for example, a web server could keep the fd open in a LRU
->> and keep issuing readdir over and over again everytime it gets an
->> indexing request); not having rewind means it'd need to close and
->> re-open the fd everytime which doesn't seem optimal.
->>
->> A previous iteration discussed that real seek is difficult and not
->> necessarily needed to I settled for rewind, but was there a reason you
->> decided to stop handling that?
->>
->> My very egoistical personal use case won't require it, so I can just say
->> I don't care here, but it would be nice to have a reason explained at
->> some point
-> 
-> 
-> Yes, like Al pointed out, getdents with an offset is not the right way 
-> to do it,
-> 
-> So a way to do seek is a must. But like what I said in the cover-letter, 
-> I do think the right thing is to
-> 
-> import lseek/llseek to io_uring, not increment the complex of getdents.
-> 
-> 
-> Thanks,
-> 
-> Hao
-> 
-> 
+--D
 
+> ---
+>  lib/iov_iter.c | 43 ++++++++++++++++++++++++++++---------------
+>  1 file changed, 28 insertions(+), 15 deletions(-)
+> 
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index b667b1e2f688..c728b6e4fb18 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -566,24 +566,37 @@ size_t iov_iter_zero(size_t bytes, struct iov_iter *i)
+>  }
+>  EXPORT_SYMBOL(iov_iter_zero);
+>  
+> -size_t copy_page_from_iter_atomic(struct page *page, unsigned offset, size_t bytes,
+> -				  struct iov_iter *i)
+> +size_t copy_page_from_iter_atomic(struct page *page, unsigned offset,
+> +		size_t bytes, struct iov_iter *i)
+>  {
+> -	char *kaddr = kmap_atomic(page), *p = kaddr + offset;
+> -	if (!page_copy_sane(page, offset, bytes)) {
+> -		kunmap_atomic(kaddr);
+> +	size_t n, copied = 0;
+> +
+> +	if (!page_copy_sane(page, offset, bytes))
+>  		return 0;
+> -	}
+> -	if (WARN_ON_ONCE(!i->data_source)) {
+> -		kunmap_atomic(kaddr);
+> +	if (WARN_ON_ONCE(!i->data_source))
+>  		return 0;
+> -	}
+> -	iterate_and_advance(i, bytes, base, len, off,
+> -		copyin(p + off, base, len),
+> -		memcpy_from_iter(i, p + off, base, len)
+> -	)
+> -	kunmap_atomic(kaddr);
+> -	return bytes;
+> +
+> +	do {
+> +		char *p;
+> +
+> +		n = bytes - copied;
+> +		if (PageHighMem(page)) {
+> +			page += offset / PAGE_SIZE;
+> +			offset %= PAGE_SIZE;
+> +			n = min_t(size_t, n, PAGE_SIZE - offset);
+> +		}
+> +
+> +		p = kmap_atomic(page) + offset;
+> +		iterate_and_advance(i, n, base, len, off,
+> +			copyin(p + off, base, len),
+> +			memcpy_from_iter(i, p + off, base, len)
+> +		)
+> +		kunmap_atomic(p);
+> +		copied += n;
+> +		offset += n;
+> +	} while (PageHighMem(page) && copied != bytes && n > 0);
+> +
+> +	return copied;
+>  }
+>  EXPORT_SYMBOL(copy_page_from_iter_atomic);
+>  
+> -- 
+> 2.39.2
+> 
