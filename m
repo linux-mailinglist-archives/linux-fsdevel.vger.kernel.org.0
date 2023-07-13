@@ -2,58 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 47C07751794
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 06:38:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B464D751796
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 06:40:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233486AbjGMEiH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 00:38:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42130 "EHLO
+        id S233679AbjGMEkR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 00:40:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232133AbjGMEiG (ORCPT
+        with ESMTP id S232133AbjGMEkQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 00:38:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3039E69;
-        Wed, 12 Jul 2023 21:38:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4AF6F619B0;
-        Thu, 13 Jul 2023 04:38:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A4A3C433C7;
-        Thu, 13 Jul 2023 04:38:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689223084;
-        bh=wke16a/EnSnVp+bFevxTgFeJfHXzevgvFiWdBS6vTq0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=d2xGk3OcvS5PZSDBwS8LqaKyqDr8qbu+YDbJPABsh0mRiCCtU6KJ7+DtkdmrubZHR
-         Lg0pC6Pg5zVjHiTYfMdx3wiQqbogHKOKxXeAANVhQguy6OHyxLrKiZAarW6L5tIYXh
-         2B09RhjZmGLd1dwsOO5NqoFd+PPQcTvkQM5StH/l/4qh5HkHXYxjs9ESLXLh6uzk/S
-         FD5qCNqoJr5IWpqe4rCQFL7+fnsRRC8Ylt/YyukGrAR6UcbzGAnV2DqV/P/nvI3sAQ
-         NVyhITfaZlaeQbJSNtOlIMXdO7hRj+VFOigzpHfvLqeZv1V0TAXn/T9gjd0MfZLqiV
-         tdCqldZHyI2uQ==
-Date:   Wed, 12 Jul 2023 21:38:04 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Ritesh Harjani <ritesh.list@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Aravinda Herle <araherle@in.ibm.com>,
-        Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCHv11 8/8] iomap: Add per-block dirty state tracking to
- improve performance
-Message-ID: <20230713043804.GG108251@frogsfrogsfrogs>
-References: <ZKdUN7ALMSCKPBV/@casper.infradead.org>
- <87cz0z4okc.fsf@doe.com>
+        Thu, 13 Jul 2023 00:40:16 -0400
+Received: from out-5.mta1.migadu.com (out-5.mta1.migadu.com [IPv6:2001:41d0:203:375::5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D3D3E69
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 21:40:14 -0700 (PDT)
+Message-ID: <077f4874-015b-a534-4a29-de877b735e38@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1689223213;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=git7KZMGpcoyXjLF+BIDp31/p7iLby/qgJrULfG9e6g=;
+        b=OCKSYom9t8/EedSo3Iw1M4pc/i6LMRJTyoRVH3c8eoln0nk1J1rhXO4XRSzDy+Iou1COCk
+        b1rSvr0B3Fm+jVKYifMHG7m+AR0Go3gq3SIjSsRsJdMaSoFF2FQQs5CemEETc3eptXRCCD
+        bgF2a0objtV0MepM3RB3bNtcMyBoklA=
+Date:   Thu, 13 Jul 2023 12:40:05 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87cz0z4okc.fsf@doe.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+Subject: Re: [PATCH 3/3] io_uring: add support for getdents
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+References: <20230711114027.59945-1-hao.xu@linux.dev>
+ <20230711114027.59945-4-hao.xu@linux.dev> <ZK1H568bvIzcsB6J@codewreck.org>
+ <858c3f16-ffb3-217e-b5d6-fcc63ef9c401@linux.dev>
+ <ZK7QgRyUIHNC8Nk6@codewreck.org>
+ <bb89b1f8-dfdc-8912-b874-d552bc4b5f9d@linux.dev>
+In-Reply-To: <bb89b1f8-dfdc-8912-b874-d552bc4b5f9d@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -62,121 +59,86 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 10, 2023 at 11:49:15PM +0530, Ritesh Harjani wrote:
-> Matthew Wilcox <willy@infradead.org> writes:
+On 7/13/23 12:05, Hao Xu wrote:
 > 
-> Sorry for the delayed response. I am currently on travel.
+> On 7/13/23 00:10, Dominique Martinet wrote:
+>> Hao Xu wrote on Wed, Jul 12, 2023 at 03:53:24PM +0800:
+>>>>> +        if (file_count(file) > 1)
+>>>> I was curious about this so I found it's basically what __fdget_pos 
+>>>> does
+>>>> before deciding it should take the f_pos_lock, and as such this is
+>>>> probably correct... But if someone can chime in here: what guarantees
+>>>> someone else won't __fdget_pos (or equivalent through this) the file
+>>>> again between this and the vfs_getdents call?
+>>>> That second get would make file_count > 1 and it would lock, but lock
+>>>> hadn't been taken here so the other call could get the lock without
+>>>> waiting and both would process getdents or seek or whatever in
+>>>> parallel.
+>>>>
+>>> This file_count(file) is atomic_read, so I believe no race condition 
+>>> here.
+>> I don't see how that helps in the presence of another thread getting the
+>> lock after we possibly issued a getdents without the lock, e.g.
+>>
+>> t1 call io_uring getdents here
+>> t1 sees file_count(file) == 1 and skips getting lock
+>> t1 starts issuing vfs_getdents [... processing]
+>> t2 calls either io_uring getdents or getdents64 syscall
+>> t2 gets the lock, since it wasn't taken by t1 it can be obtained
+>> t2 issues another vfs_getdents
+>>
+>> Christian raised the same issue so I'll leave this to his part of the
+>> thread for reply, but I hope that clarified my concern.
 > 
-> > On Fri, Jul 07, 2023 at 08:16:17AM +1000, Dave Chinner wrote:
-> >> On Thu, Jul 06, 2023 at 06:42:36PM +0100, Matthew Wilcox wrote:
-> >> > On Thu, Jul 06, 2023 at 08:16:05PM +0530, Ritesh Harjani wrote:
-> >> > > > @@ -1645,6 +1766,11 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
-> >> > > >  	int error = 0, count = 0, i;
-> >> > > >  	LIST_HEAD(submit_list);
-> >> > > >  
-> >> > > > +	if (!ifs && nblocks > 1) {
-> >> > > > +		ifs = ifs_alloc(inode, folio, 0);
-> >> > > > +		iomap_set_range_dirty(folio, 0, folio_size(folio));
-> >> > > > +	}
-> >> > > > +
-> >> > > >  	WARN_ON_ONCE(ifs && atomic_read(&ifs->write_bytes_pending) != 0);
-> >> > > >  
-> >> > > >  	/*
-> >> > > > @@ -1653,7 +1779,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
-> >> > > >  	 * invalid, grab a new one.
-> >> > > >  	 */
-> >> > > >  	for (i = 0; i < nblocks && pos < end_pos; i++, pos += len) {
-> >> > > > -		if (ifs && !ifs_block_is_uptodate(ifs, i))
-> >> > > > +		if (ifs && !ifs_block_is_dirty(folio, ifs, i))
-> >> > > >  			continue;
-> >> > > >  
-> >> > > >  		error = wpc->ops->map_blocks(wpc, inode, pos);
-> >> > > > @@ -1697,6 +1823,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
-> >> > > >  		}
-> >> > > >  	}
-> >> > > >  
-> >> > > > +	iomap_clear_range_dirty(folio, 0, end_pos - folio_pos(folio));
-> >> > > >  	folio_start_writeback(folio);
-> >> > > >  	folio_unlock(folio);
-> >> > > >  
-> >> > > 
-> >> > > I think we should fold below change with this patch. 
-> >> > > end_pos is calculated in iomap_do_writepage() such that it is either
-> >> > > folio_pos(folio) + folio_size(folio), or if this value becomes more then
-> >> > > isize, than end_pos is made isize.
-> >> > > 
-> >> > > The current patch does not have a functional problem I guess. But in
-> >> > > some cases where truncate races with writeback, it will end up marking
-> >> > > more bits & later doesn't clear those. Hence I think we should correct
-> >> > > it using below diff.
-> >> > 
-> >> > I don't think this is the only place where we'll set dirty bits beyond
-> >> > EOF.  For example, if we mmap the last partial folio in a file,
-> >> > page_mkwrite will dirty the entire folio, but we won't write back
-> >> > blocks past EOF.  I think we'd be better off clearing all the dirty
-> >> > bits in the folio, even the ones past EOF.  What do you think?
 > 
-> Yup. I agree, it's better that way to clear all dirty bits in the folio.
-> Thanks for the suggestion & nice catch!! 
+> Hi Dominique,
 > 
-> >> 
-> >> Clear the dirty bits beyond EOF where we zero the data range beyond
-> >> EOF in iomap_do_writepage() via folio_zero_segment()?
-> >
-> > That would work, but I think it's simpler to change:
-> >
-> > -	iomap_clear_range_dirty(folio, 0, end_pos - folio_pos(folio));
-> > +	iomap_clear_range_dirty(folio, 0, folio_size(folio));
+> Ah, I misunderstood your question, sorry. The thing is f_count is 
+> init-ed to be 1,
 > 
-> Right. 
+> and normal uring requests do fdget first, so I think it's ok for normal 
+> requests.
 > 
-> @Darrick,
-> IMO, we should fold below change with Patch-8. If you like I can send a v12
-> with this change. I re-tested 1k-blocksize fstests on x86 with
-> below changes included and didn't find any surprise. Also v11 series
-> including the below folded change is cleanly applicable on your
-> iomap-for-next branch.
+> What Christian points out is issue with fixed file, that is indeed a 
+> problem I think.
 
-Yes, please fold this into v12.  I think Matthew might want to get these
-iomap folio changes out to for-next even sooner than -rc4.  If there's
-time during this week's ext4 call, let's talk about that.
+After re-think of it, I think there is no race in fixed file case as
+well, because the f_count is always >1
 
---D
 
 > 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index b6280e053d68..de212b6fe467 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1766,9 +1766,11 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->         int error = 0, count = 0, i;
->         LIST_HEAD(submit_list);
 > 
-> +       WARN_ON_ONCE(end_pos <= pos);
-> +
->         if (!ifs && nblocks > 1) {
->                 ifs = ifs_alloc(inode, folio, 0);
-> -               iomap_set_range_dirty(folio, 0, folio_size(folio));
-> +               iomap_set_range_dirty(folio, 0, end_pos - pos);
->         }
-> 
->         WARN_ON_ONCE(ifs && atomic_read(&ifs->write_bytes_pending) != 0);
-> @@ -1823,7 +1825,12 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->                 }
->         }
-> 
-> -       iomap_clear_range_dirty(folio, 0, end_pos - folio_pos(folio));
-> +       /*
-> +        * We can have dirty bits set past end of file in page_mkwrite path
-> +        * while mapping the last partial folio. Hence it's better to clear
-> +        * all the dirty bits in the folio here.
-> +        */
-> +       iomap_clear_range_dirty(folio, 0, folio_size(folio));
->         folio_start_writeback(folio);
->         folio_unlock(folio);
-> 
-> --
-> 2.30.2
+>>
+>> -----
+>>
+>> BTW I forgot to point out: this dropped the REWIND bit from my patch; I
+>> believe some form of "seek" is necessary for real applications to make
+>> use of this (for example, a web server could keep the fd open in a LRU
+>> and keep issuing readdir over and over again everytime it gets an
+>> indexing request); not having rewind means it'd need to close and
+>> re-open the fd everytime which doesn't seem optimal.
+>>
+>> A previous iteration discussed that real seek is difficult and not
+>> necessarily needed to I settled for rewind, but was there a reason you
+>> decided to stop handling that?
+>>
+>> My very egoistical personal use case won't require it, so I can just say
+>> I don't care here, but it would be nice to have a reason explained at
+>> some point
 > 
 > 
-> -ritesh
+> Yes, like Al pointed out, getdents with an offset is not the right way 
+> to do it,
+> 
+> So a way to do seek is a must. But like what I said in the cover-letter, 
+> I do think the right thing is to
+> 
+> import lseek/llseek to io_uring, not increment the complex of getdents.
+> 
+> 
+> Thanks,
+> 
+> Hao
+> 
+> 
+
