@@ -2,450 +2,298 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DA0C752D1A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 00:39:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C758752D37
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 00:50:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232453AbjGMWjM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 18:39:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37074 "EHLO
+        id S233535AbjGMWuO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 18:50:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232804AbjGMWjK (ORCPT
+        with ESMTP id S231829AbjGMWuN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 18:39:10 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 895E9211F;
-        Thu, 13 Jul 2023 15:39:07 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-4f4b2bc1565so2198055e87.2;
-        Thu, 13 Jul 2023 15:39:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689287946; x=1691879946;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Z1CXa0KxtpS7rY4GZRNcWYQlORpdkEpS4E3Wrwj0Mps=;
-        b=FjP5BIs7SvOniy3379PyfmZYD6L+uXxgPMkbqC9lrOB7EhHlc3r86DuA8AtROUNqab
-         1dsHx07wGHHG+9Kb7Rwd0zhUcXLGgjdEsN3q0GqOGBI2whOZ7M4kAWHT3pBhu8EOHr5E
-         kg8XoU2ZwTeprQF/eGYWAZriQ6usNz45WGMqHAusAgBSZh53fqlpNWaSoYfqVqfTbVpk
-         AfKZHQxXlhp6DNP4UJwgiHCFNWJ2JKWzNiM8/oTzmebZPs1gtqAWY24DrR9V1zlIGfG1
-         VqGpecI6bKi1f9bWYVl44gN1lBBUyRKU/8obU8+dhH+Cu/Rjv3wtPPhsJrC+IAoLpI3b
-         vE4Q==
+        Thu, 13 Jul 2023 18:50:13 -0400
+Received: from mail-oi1-f205.google.com (mail-oi1-f205.google.com [209.85.167.205])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E042D2D61
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jul 2023 15:50:09 -0700 (PDT)
+Received: by mail-oi1-f205.google.com with SMTP id 5614622812f47-39e94a06009so2121237b6e.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jul 2023 15:50:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689287946; x=1691879946;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z1CXa0KxtpS7rY4GZRNcWYQlORpdkEpS4E3Wrwj0Mps=;
-        b=EnkHWm3QN72OoksEr7Vg06BJZvQWIkHT+hlXZr12yQLL/3n1X96ss1wgIG/El3KSBo
-         5paFVCMEEt4WGjbsrgvlHgz3DOziu54RrkyWhE8kfdrPaTywihgBhNlo8zPia4E8Gt0G
-         UpB3DcrqKIaZlAyx2btgd9VDqZn6s6RSffQzhbyU6hEwcz1HcoqnPH7DxwCT7NhKL/co
-         SZgpCkNf8zmLPK4r6kqfG/LJCNYyQRgkBAmNrW8foPFQwVlDWs49ytNWsNEK7ksVF+x5
-         0W7EuLoyqc39QjU1XKmpSuKX/2gDLF7fZTvUIF8h8zmDF/phqUD0pTrj84kIS12tvWxf
-         GjAg==
-X-Gm-Message-State: ABy/qLbpn+m1M75ndoLZ0rPvezdrUmrt/gva4FLLXFjBiuI65wvc6Iid
-        x8gbT2vmJZadrGFG6VSuIGwjvI0nc1w=
-X-Google-Smtp-Source: APBJJlEYOqqZmrNfOxKcKgbQAevHHS2j4BMNeestZMHnYipYv8H2CPmTnXnvs+9zaynNuKrsts4cSQ==
-X-Received: by 2002:ac2:44cf:0:b0:4f8:5604:4b50 with SMTP id d15-20020ac244cf000000b004f856044b50mr2316243lfm.64.1689287945240;
-        Thu, 13 Jul 2023 15:39:05 -0700 (PDT)
-Received: from localhost ([2a02:168:633b:1:9d6a:15a4:c7d1:a0f0])
-        by smtp.gmail.com with ESMTPSA id b9-20020a056512024900b004fb738796casm1261354lfo.40.2023.07.13.15.39.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jul 2023 15:39:04 -0700 (PDT)
-Date:   Fri, 14 Jul 2023 00:38:29 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-        linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>
-Subject: Re: [PATCH v2 0/6] Landlock: ioctl support
-Message-ID: <20230713.470acd0e890b@gnoack.org>
-References: <20230623144329.136541-1-gnoack@google.com>
- <6dfc0198-9010-7c54-2699-d3b867249850@digikod.net>
- <ZK6/CF0RS5KPOVff@google.com>
- <f3d46406-4cae-cd5d-fb35-cfcbd64c0690@digikod.net>
+        d=1e100.net; s=20221208; t=1689288609; x=1691880609;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HiG7QsHYS4bYE/ecIBoQBPgtKp+SZ4lcp7NGeemCj58=;
+        b=fSnyQa5Yd9LBfHuYU6r1ygRPTyg65LR1Dgjnmty6WFj2UAkE+6ihJddjdaq01rIMIp
+         1ilR/zWXD9HPAPhnadFOxrnLvQrb92xy5Az1T8XsagbIJvH9yNg8IKo+P9YozIN2rGoC
+         vXxuJwBFUj8ck/dWcNTzP6zirrcAhntMRTO7p07A/lUD8HzOsnRMg5MvWbPk7ZduKtGg
+         ok+Q2HOzMCzWiPpgdBXcRxW5jH6/YUIL6X9EDH52ilgxS36huBvAuGmpqjUm+ibO1h7F
+         zNFlwbwRZNIHKPMOIGvwl0ByIuedDIP/TiXEzmp7bAvDo3JZpwtRwzgYypTAy/NPw6f9
+         gI3w==
+X-Gm-Message-State: ABy/qLYn9vJXp/CqbTz7W5p7th2Abiyg+O1WuMEVabKXE2rU4Z+POrYx
+        kmwaSNuj6TLvJynVmnV5atow+xk6GmWw01aH+hoxCuPRc/ts
+X-Google-Smtp-Source: APBJJlE0XhfdYLbBnrEKZH288NoziIdfo7puEoE2XhiCGqUo3BD5oLLpAklh578BZovdH/yokFdkGZjMXnii0ZsdxTd/LEIQgJlw
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f3d46406-4cae-cd5d-fb35-cfcbd64c0690@digikod.net>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6808:1308:b0:3a2:4d1d:2831 with SMTP id
+ y8-20020a056808130800b003a24d1d2831mr4083020oiv.3.1689288609163; Thu, 13 Jul
+ 2023 15:50:09 -0700 (PDT)
+Date:   Thu, 13 Jul 2023 15:50:09 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000078ee7e060066270b@google.com>
+Subject: [syzbot] [fat?] possible deadlock in lock_mm_and_find_vma
+From:   syzbot <syzbot+1741a5d9b79989c10bdc@syzkaller.appspotmail.com>
+To:     linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi!
+Hello,
 
-On Wed, Jul 12, 2023 at 07:48:29PM +0200, Mickaël Salaün wrote:
-> On 12/07/2023 16:56, Günther Noack wrote:
-> > On Wed, Jul 12, 2023 at 12:55:19PM +0200, Mickaël Salaün wrote:
-> > > Thinking more about this, this first step is too restrictive, which
-> > > might lead to dangerous situations.
-> > > 
-> > > My main concern is that this approach will deny innocuous or even "good"
-> > > IOCTL. For instance, if FIOCLEX is denied, this could leak file
-> > > descriptors and then introduce vulnerabilities.
-> > 
-> > This is a good point.
-> > 
-> > > As we discussed before, we cannot categorize all IOCTLs, but I think we
-> > > need to add exceptions for a subset of them, and maintain this list.
-> > > SELinux has some special handling within selinux_file_ioctl(), and we
-> > > should use that as a starting point. The do_vfs_ioctl() function is
-> > > another important place to look at. The main thing to keep in mind is
-> > > that Landlock's goal is to restrict access to data (e.g. FS, network,
-> > > IPC, bypass through other processes), not to restrict innocuous (at
-> > > least in theory) kernel features.
-> > > 
-> > > I think, at least all IOCTLs targeting file descriptors themselves should
-> > > always be allowed, similar to fcntl(2)'s F_SETFD and F_SETFL commands:
-> > > - FIOCLEX
-> > > - FIONCLEX
-> > > - FIONBIO
-> > > - FIOASYNC
-> > > 
-> > > Some others may not be a good idea:
-> > > - FIONREAD should be OK in theory but the VFS part only target regular
-> > > files and there is no access check according to the read right, which is
-> > > weird.
-> > > - FICLONE, FICLONERANGE, FIDEDUPRANGE: read/write actions.
-> > > 
-> > > We should add a built-time or run-time safeguard to be sure that future
-> > > FD IOCTLs will be added to this list. I'm not sure how to efficiently
-> > > implement such protection though.
-> > 
-> > I need to ponder it a bit.. :)  I also don't see an obvious solution yet how to
-> > tie these lists of ioctls together.
-> 
-> I guess it should be ok to manually watch the do_vfs_ioctl() changes, but
-> definitely not optimal.
-> 
-> > 
-> > 
-> > > I'm also wondering if we should not split the IOCTL access right into
-> > > three: mostly read, mostly write, and misc. _IOC_READ and _IOC_WRITE are
-> > > definitely not perfect, but tied to specific drivers (i.e. not a file
-> > > hierarchy but a block or character device) this might help until we get
-> > > a more fine-grained IOCTL access control. We should check if it's worth
-> > > it according to commonly used drivers. Looking at the TTY driver, most
-> > > IOCTLs are without read or write markers. Using this split could induce
-> > > a false sense of security, so it should be well motivated.
-> > 
-> > As it was pointed out by the LWN article that Jeff Xu pointed to [1], this
-> > read/write bit in the ioctl command number is only referring to whether the
-> > *argument pointer* to the ioctl is being read or written, but you can not use
-> > this bit to infer whether the ioctl itself performs a "reading" or "writing"
-> > access to the underlying file.
-> > 
-> > As the LWN article explains, SELinux has fallen for the same trap in the past,
-> > the post [2] has an example for an ioctl where the read/write bits for the
-> > argument are not related to what the underlying operation does.
-> > 
-> > It might be that you could potentially use the _IOC_READ and _IOC_WRITE bits to
-> > group smaller subsets of the ioctl cmd space, such as for a single device type.
-> > But then, the users would have to go through the list of supported ioctls one by
-> > one anyway, to ensure that this works for that subset.  If they are going
-> > through them one by one anyway, they might maybe just as well list them out in
-> > the filter rule...?
-> > 
-> > [1] https://lwn.net/Articles/428140
-> > [2] https://lwn.net/Articles/428142/
-> 
-> Right, I fell again in this trap, !_IOC_READ cannot even guarantee non-write
-> actions.
-> 
-> A useful split would be at least between devices and regular
-> files/directories, something like this:
-> - LANDLOCK_ACCESS_FS_IOCTL_DEV: allows IOCTLs on character or block devices,
-> which should be targeted on specific paths.
-> - LANDLOCK_ACCESS_FS_IOCTL_NODEV: allows IOCTLs on regular files,
-> directories, unix sockets, pipes, and symlinks. These are targeting
-> filesystems (e.g. ext4's fsverity) or common Linux file types.
+syzbot found the following issue on:
 
-To make sure we are on the same page, let me paraphrase:
+HEAD commit:    123212f53f3e Add linux-next specific files for 20230707
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1280756ca80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=15ec80b62f588543
+dashboard link: https://syzkaller.appspot.com/bug?extid=1741a5d9b79989c10bdc
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11571cbca80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=171b7dc2a80000
 
-You are suggesting that we should split the LANDLOCK_ACCESS_FS_IOCTL
-right into a LANDLOCK_ACCESS_FS_IOCTL_DEV part (for block and
-character devices) and a LANDLOCK_ACCESS_FS_IOCTL_NODEV part (for
-regular files, directories, named(!) unix sockets, named(!) pipes and
-symlinks)?  The check would presumably be done during the open(2) call
-and then store the access right on the freshly opened struct file?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/098f7ee2237c/disk-123212f5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/88defebbfc49/vmlinux-123212f5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d5e9343ec16a/bzImage-123212f5.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/4d36f82ce652/mount_0.gz
 
-If Landlock only checks the ioctl criteria during open(2), that would
-mean that file descriptors created through other means would be
-unaffected.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1741a5d9b79989c10bdc@syzkaller.appspotmail.com
 
-In particular, the protection would only apply to named pipes and Unix
-sockets which get newly opened through the file system, but it would
-not apply to pipes created through pipe(2) and Unix sockets created
-through socketpair(2)?
+======================================================
+WARNING: possible circular locking dependency detected
+6.4.0-next-20230707-syzkaller #0 Not tainted
+------------------------------------------------------
+syz-executor330/5073 is trying to acquire lock:
+ffff8880218527a0 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_lock_killable include/linux/mmap_lock.h:151 [inline]
+ffff8880218527a0 (&mm->mmap_lock){++++}-{3:3}, at: get_mmap_lock_carefully mm/memory.c:5293 [inline]
+ffff8880218527a0 (&mm->mmap_lock){++++}-{3:3}, at: lock_mm_and_find_vma+0x369/0x510 mm/memory.c:5344
 
-(It is more clearly a philosophy of "protecting resources", rather
-than a philosophy of limiting access to the thousands of potentially
-buggy ioctl implementations. - But I think it might be reasonable to
-permit unnamed pipes and socketpairs - they are useful mechanisms and
-seem harmless as long as their implementations don't have bugs.)
+but task is already holding lock:
+ffff888019f760e0 (&sbi->s_lock){+.+.}-{3:3}, at: exfat_iterate+0x117/0xb50 fs/exfat/dir.c:232
+
+which lock already depends on the new lock.
 
 
-> I think it makes sense because the underlying filesystems should already
-> check for read/write access, which is not the case for block/char devices.
-> Pipe and unix socket IOCTLs are quite specific but don't touch the
-> underlying filesystem, and it should be allowed to properly use them. It
-> should be noted that the pipe and socket IOCTL implementations don't care
-> about their file mode though; I guess the rationale might be that IOCTLs may
-> be required to (efficiently) either read or write.
-> 
+the existing dependency chain (in reverse order) is:
 
-I don't understand your remark about the read/write access.
+-> #2 (&sbi->s_lock){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:603 [inline]
+       __mutex_lock+0x12f/0x1350 kernel/locking/mutex.c:747
+       exfat_get_block+0x18d/0x16e0 fs/exfat/inode.c:280
+       do_mpage_readpage+0x768/0x1960 fs/mpage.c:234
+       mpage_readahead+0x344/0x580 fs/mpage.c:382
+       read_pages+0x1a2/0xd40 mm/readahead.c:160
+       page_cache_ra_unbounded+0x477/0x5e0 mm/readahead.c:269
+       do_page_cache_ra mm/readahead.c:299 [inline]
+       page_cache_ra_order+0x6ec/0xa00 mm/readahead.c:559
+       ondemand_readahead+0x6b3/0x1080 mm/readahead.c:681
+       page_cache_sync_ra+0x1c0/0x1f0 mm/readahead.c:708
+       page_cache_sync_readahead include/linux/pagemap.h:1230 [inline]
+       filemap_get_pages+0x28d/0x1660 mm/filemap.c:2564
+       filemap_read+0x365/0xc40 mm/filemap.c:2660
+       generic_file_read_iter+0x34c/0x450 mm/filemap.c:2839
+       __kernel_read+0x2ca/0x870 fs/read_write.c:428
+       integrity_kernel_read+0x7f/0xb0 security/integrity/iint.c:195
+       ima_calc_file_hash_tfm+0x2b9/0x3c0 security/integrity/ima/ima_crypto.c:485
+       ima_calc_file_shash security/integrity/ima/ima_crypto.c:516 [inline]
+       ima_calc_file_hash+0x198/0x4b0 security/integrity/ima/ima_crypto.c:573
+       ima_collect_measurement+0x5a8/0x6b0 security/integrity/ima/ima_api.c:289
+       process_measurement+0xd32/0x1940 security/integrity/ima/ima_main.c:345
+       ima_file_check+0xba/0x100 security/integrity/ima/ima_main.c:543
+       do_open fs/namei.c:3638 [inline]
+       path_openat+0x1588/0x2710 fs/namei.c:3793
+       do_filp_open+0x1ba/0x410 fs/namei.c:3820
+       do_sys_openat2+0x160/0x1c0 fs/open.c:1407
+       do_sys_open fs/open.c:1422 [inline]
+       __do_sys_openat fs/open.c:1438 [inline]
+       __se_sys_openat fs/open.c:1433 [inline]
+       __x64_sys_openat+0x143/0x1f0 fs/open.c:1433
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
-Pipes have a read end and a write end, where only one of the two
-operations should work.  Unix sockets are always bidirectional, if I
-remember this correctly.
+-> #1 (mapping.invalidate_lock#3){.+.+}-{3:3}:
+       down_read+0x9c/0x480 kernel/locking/rwsem.c:1520
+       filemap_invalidate_lock_shared include/linux/fs.h:826 [inline]
+       filemap_fault+0xba8/0x2490 mm/filemap.c:3291
+       __do_fault+0x107/0x600 mm/memory.c:4208
+       do_read_fault mm/memory.c:4557 [inline]
+       do_fault mm/memory.c:4680 [inline]
+       do_pte_missing mm/memory.c:3673 [inline]
+       handle_pte_fault mm/memory.c:4949 [inline]
+       __handle_mm_fault+0x2ac5/0x3dd0 mm/memory.c:5089
+       handle_mm_fault+0x2a1/0x9e0 mm/memory.c:5254
+       faultin_page mm/gup.c:952 [inline]
+       __get_user_pages+0x4d3/0x10e0 mm/gup.c:1235
+       __get_user_pages_locked mm/gup.c:1500 [inline]
+       __gup_longterm_locked+0x6f9/0x23e0 mm/gup.c:2194
+       pin_user_pages_remote+0xee/0x140 mm/gup.c:3335
+       process_vm_rw_single_vec mm/process_vm_access.c:105 [inline]
+       process_vm_rw_core.constprop.0+0x437/0x980 mm/process_vm_access.c:215
+       process_vm_rw+0x29c/0x300 mm/process_vm_access.c:283
+       __do_sys_process_vm_readv mm/process_vm_access.c:295 [inline]
+       __se_sys_process_vm_readv mm/process_vm_access.c:291 [inline]
+       __x64_sys_process_vm_readv+0xe3/0x1b0 mm/process_vm_access.c:291
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
-> Reading your following comments, this dev/nodev classification would be like
-> the *file type* item, but simpler and only for file descriptors accessible
-> through the filesystem, which I guess could be everything because of procfs…
-> 
-> This split might also help for the landlock_inode_attr properties, but it
-> would also be a bit redundant with the file type match…
+-> #0 (&mm->mmap_lock){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3142 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3261 [inline]
+       validate_chain kernel/locking/lockdep.c:3876 [inline]
+       __lock_acquire+0x2e9d/0x5e20 kernel/locking/lockdep.c:5144
+       lock_acquire kernel/locking/lockdep.c:5761 [inline]
+       lock_acquire+0x1b1/0x520 kernel/locking/lockdep.c:5726
+       down_read_killable+0x9f/0x4f0 kernel/locking/rwsem.c:1543
+       mmap_read_lock_killable include/linux/mmap_lock.h:151 [inline]
+       get_mmap_lock_carefully mm/memory.c:5293 [inline]
+       lock_mm_and_find_vma+0x369/0x510 mm/memory.c:5344
+       do_user_addr_fault+0x2c6/0x10a0 arch/x86/mm/fault.c:1387
+       handle_page_fault arch/x86/mm/fault.c:1509 [inline]
+       exc_page_fault+0x98/0x170 arch/x86/mm/fault.c:1565
+       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
+       filldir64+0x291/0x5d0 fs/readdir.c:335
+       dir_emit_dot include/linux/fs.h:3198 [inline]
+       dir_emit_dots include/linux/fs.h:3209 [inline]
+       exfat_iterate+0x577/0xb50 fs/exfat/dir.c:235
+       iterate_dir+0x20c/0x750 fs/readdir.c:67
+       __do_sys_getdents64 fs/readdir.c:369 [inline]
+       __se_sys_getdents64 fs/readdir.c:354 [inline]
+       __x64_sys_getdents64+0x13e/0x2c0 fs/readdir.c:354
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
-I agree that this dev/nodev classification seems like a simpler
-version of the *file type* item from below.
+other info that might help us debug this:
 
-> 
-> 
-> > 
-> > 
-> > I've also pondered more about the ioctl support. I have a work-in-progress patch
-> > set which filters ioctls according to various criteria, but it's not fully
-> > fleshed out yet.
-> > 
-> > In the big picture: I think that the main ways how we can build this differently
-> > are (a) the criteria on which to decide whether an ioctl is permitted, and (b)
-> > the time at which we evaluate these criteria (time of open() vs. time of
-> > ioctl()).  We can also evaluate the criteria at different times, depending on
-> > which criterium it is.
-> > 
-> > So:
-> > 
-> > (a) The criteria on which to decide that an ioctl is permitted:
-> > 
-> >      We have discussed the followowing ones so far:
-> > 
-> >      * The *ioctl cmd* (request) itself
-> >         - needs to be taken into account, obviously.
-> >         - ioctl cmds do not have an obvious ordering exposed to userspace,
-> >           so asking users to specify ranges is potentially difficult
-> >         - asking users to list all individual ioctls they do might result in
-> >           lists that are larger than I had thought. I've straced Firefox and
-> >           found that it did about 20-30 direct-rendering related ioctls, and most
-> >           of them were specific to my graphics card... o_O so I assume that there
-> >           are more of these for other graphics cards.
-> > 
-> >      * The *file device ID* (major / minor)
-> >         - specifying ranges is a good idea - ranges of device IDs are logically
-> >           grouped and the order is also exposed and documented to user space.
-> > 
-> >      * The *file type*, read from filp->f_mode
-> >         - includes regular files, directories, char devices, block devices,
-> >           fifos and sockets
-> >         - BUT this list of types in non-exhaustive:
-> >           - there are valid struct file objects which have special types and are
-> >             not distinguishable. They might not have a file type set in f_mode,
-> >             even.  Examples include pidfds, or the Landlock ruleset FD. -- so: we
-> >             do need a way to ignore file type altogether in an ioctl rule, so
-> >             that such "special" file types can still be matched in the rule.
-> > 
-> >      * The *file path*
-> >         - This can only really be checked against at open() time, imho.
-> >           Doing it during the ioctl is too late, because the file might
-> >           have been created in a different mount namespace, and then the
-> >           current thread can't really make that file work with ioctls.
-> >         - Not all open files *have* a file path (i.e. sockets, Landlock ruleset)
-> 
-> I think we can reach a lot through /proc/self/fd/
+Chain exists of:
+  &mm->mmap_lock --> mapping.invalidate_lock#3 --> &sbi->s_lock
 
-What I meant to say is: The struct file for some files does not refer
-to a path on the file system that the file was opened from ==> Using
-the file path as criterium does not cover all existing ioctl use
-cases.
+ Possible unsafe locking scenario:
 
-The thing that struck me about the above list of criteria is that each
-of them seems to have gaps.  As an example, take timerfds
-(timerfd_create(2)):
+       CPU0                    CPU1
+       ----                    ----
+  lock(&sbi->s_lock);
+                               lock(mapping.invalidate_lock#3);
+                               lock(&sbi->s_lock);
+  rlock(&mm->mmap_lock);
 
- * these do not get opened through a file system path, so the *file
-   path* can not restrict them.
- * they are not character or block devices and do not have a device ID.
- * they don't match any of the file types in filp->f_mode.
+ *** DEADLOCK ***
 
-So in order to permit the TFD_IOC_SET_TICKS ioctl on them, these three
-criteria can't be used to describe a timerfd.
+3 locks held by syz-executor330/5073:
+ #0: ffff88807a9d6ac8 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xd7/0xf0 fs/file.c:1047
+ #1: ffff888075236f90 (&sb->s_type->i_mutex_key#15){++++}-{3:3}, at: iterate_dir+0x545/0x750 fs/readdir.c:57
+ #2: ffff888019f760e0 (&sbi->s_lock){+.+.}-{3:3}, at: exfat_iterate+0x117/0xb50 fs/exfat/dir.c:232
 
-This is more important in an implementation where the criteria are
-checked in security_file_ioctl, rather than in security_file_open.  In
-an implementation where the criteria are only checked in
-security_file_open, it would anyway not be possible to restrict ioctls
-on the timerfd, and all files for which it would be possible, they
-must have a path in the file system when they end up in that hook, I
-suspect?
-
-> > (b) The time at which the criteria are checked:
-> > 
-> >      * During open():
-> >         - A check at this time is necessary to match against file paths, imho,
-> >           as we already to in the ioctl patch set I've sent.
-> > 
-> >      * During ioctl():
-> >         - A check at this time is *also* necessary, because without that, we will
-> >           not be able to restrict ioctls on TTYs and other file descriptors that
-> >           are obtained from other processes.
-
-For completeness: I forgot to list here: The other reason where a
-check during ioctl() is needed is the case as for the timerfd, the
-pipe(2) and socketpair(2), where a file is created through a simple
-syscall, but without spelling out a path.  If these kinds of files are
-in scope for ioctl protection, it can't be done during the open()
-check alone, I suspect?
-
-> As I explained before, I don't think we should care about inherited or
-> passed FDs. Other ways to get FDs (e.g. landlock_create_ruleset) should
-> probably not be a priority for now.
-
-I don't know what we should do about the "basic Unix tool" and
-TIOCSTI/TIOCLINUX case, where it is possible to gain control over the
-shell running in the tty that we get as stdout fd.
-
-I'm in that situation with the little web application I run at home,
-but the patch that you have sent for GNU tar at some point (and which
-we should really revive :)) has the same problem: If an attacker
-manages to do a Remote Code Execution in that tar process, they can
-ioctl(1, TIOCSTI, ...) their way out into the shell which invoked tar,
-and which is not restricted with tar's Landlock policy.
-
-(I don't really see tar create a pty/tty pair either and shovel data
-between them in a sidecar process or thread, just to protect against
-that.)
-
-Remark: For the specific TIOCSTI problem, I'm seeing a glimmer of
-light with this patch set which has appeared in the meantime:
-https://lore.kernel.org/all/20230710002645.v565c7xq5iddruse@begin/
-(This will still require that distributions flip that Kconfig option
-off, but the only(?) known user of TIOCSTI, BRLTTY, would continue
-working.)
-
-I would be more comfortable with doing the checks only at open(2) time
-if the above patch landed in distributions so that you would need to
-have CAP_SYS_ADMIN in order to use TIOCSTI.
-
-Do you think this is realistic?  If this does not get flipped by
-distributions, Landlock would continue to have these TIOCSTI problems
-on these platforms (unless its users do the pty/tty pair thing, but
-that seems like an unrealistic demand).
-
-
-> > The tentative approach I've taken in my own patch set and the WIP part so far is:
-> > 
-> >   (1) Do file path checks at open() time (modeled as a access_fs right)
-> >   (2) Do cmds, device ID and file type checks at ioctl() time.
-> >       This is modeled independently of the file path check. -- both checks need to
-> >       pass independently for an ioctl invocation to be permitted.
-> 
-> This looks good! However, see below an alternative approach for the rules
-> combination.
-> 
-> > 
-> > The API of that approach is:
-> >   * The ruleset attribute gets a new handled_misc field,
-> >     and when setting the first bit in it, it'll deny all ioctls
-> >     unless there is a special ioctl rule added for them
-> >     (and the path of the file was OK for ioctl at open time).
-> >   * A new rule type with an associated struct landlock_ioctl_attr -
-> >     that struct lets users define:
-> >       - the desired mask of file types (or 0 for "all")
-> >       - the designed device ID range
-> >       - the list of ioctl cmds to be permitted for such files
-> > 
-> > An open question is whether the ruleset attr's "handled_misc" field should
-> > rather be a "handled_ioctl_cmds" field, a set of restricted ioctl cmds
-> > (potentially [0, 2^32)).  I think that would be more consistent conceptually
-> > with how it was done for file system access rights, but obviously we can't model
-> > it as a bit field any more - it would have to be some other suitable
-> > representation of a set of integers, which also lets people say "all ioctls".
-> 
-> We might not need another ruleset's field because we can reuse the existing
-> FS access rights, including the new IOCTL one(s). The trick is just to
-> define a new way to match files (and optionally specific IOCTL commands),
-> hence the landlock_inode_attr proposal. As you explained, this type of rule
-> could match device IDs and file types.
-
-I have to think about it and maybe try it out in code.  This might be
-a better option if we go for doing the checks only at open(2) time.
-
-I do think that device IDs are often a better way to specify device
-files than their paths are.  Device IDs are a stable numbering scheme
-that won't change, whereas the structure of /dev can be defined by
-user space and is also often dynamically adding and removing devices.
-
-> An alternative way to identify such
-> properties would be to pass an FD and specify a subset of these properties
-> to match on. This would avoid some side channel issues, and could be used to
-> check for directory or file (as done for path_beneath) to avoid irrelevant
-> access rights.
-
-I don't fully understand what you mean here.  Do you mean to use an
-open device file as example for what to match?  I don't see how
-specifying the file type and device ID range as plain numbers could
-lead to a race condition.
+stack backtrace:
+CPU: 1 PID: 5073 Comm: syz-executor330 Not tainted 6.4.0-next-20230707-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/03/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
+ check_noncircular+0x2df/0x3b0 kernel/locking/lockdep.c:2195
+ check_prev_add kernel/locking/lockdep.c:3142 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3261 [inline]
+ validate_chain kernel/locking/lockdep.c:3876 [inline]
+ __lock_acquire+0x2e9d/0x5e20 kernel/locking/lockdep.c:5144
+ lock_acquire kernel/locking/lockdep.c:5761 [inline]
+ lock_acquire+0x1b1/0x520 kernel/locking/lockdep.c:5726
+ down_read_killable+0x9f/0x4f0 kernel/locking/rwsem.c:1543
+ mmap_read_lock_killable include/linux/mmap_lock.h:151 [inline]
+ get_mmap_lock_carefully mm/memory.c:5293 [inline]
+ lock_mm_and_find_vma+0x369/0x510 mm/memory.c:5344
+ do_user_addr_fault+0x2c6/0x10a0 arch/x86/mm/fault.c:1387
+ handle_page_fault arch/x86/mm/fault.c:1509 [inline]
+ exc_page_fault+0x98/0x170 arch/x86/mm/fault.c:1565
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
+RIP: 0010:filldir64+0x291/0x5d0 fs/readdir.c:335
+Code: 02 41 83 e7 01 44 89 fe e8 6c 61 99 ff 45 84 ff 0f 84 9a fe ff ff e9 40 ff ff ff e8 f9 64 99 ff 0f 01 cb 0f ae e8 48 8b 04 24 <49> 89 47 08 e8 e6 64 99 ff 4c 8b 7c 24 28 48 8b 7c 24 10 49 89 3f
+RSP: 0018:ffffc90003b0fbf8 EFLAGS: 00050293
+RAX: 0000000000000000 RBX: ffffc90003b0fe98 RCX: 0000000000000000
+RDX: ffff888021549dc0 RSI: ffffffff81eb8397 RDI: 0000000000000006
+RBP: 0000000000000018 R08: 0000000000000006 R09: 0000000000000000
+R10: 0000000000000018 R11: 0000000000000001 R12: 0000000000000001
+R13: 0000000000000018 R14: ffffffff8a865cc0 R15: 0000000000000000
+ dir_emit_dot include/linux/fs.h:3198 [inline]
+ dir_emit_dots include/linux/fs.h:3209 [inline]
+ exfat_iterate+0x577/0xb50 fs/exfat/dir.c:235
+ iterate_dir+0x20c/0x750 fs/readdir.c:67
+ __do_sys_getdents64 fs/readdir.c:369 [inline]
+ __se_sys_getdents64 fs/readdir.c:354 [inline]
+ __x64_sys_getdents64+0x13e/0x2c0 fs/readdir.c:354
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7ff0c3b4cab9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 71 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ff0bb6f7208 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
+RAX: ffffffffffffffda RBX: 00007ff0c3bd27b8 RCX: 00007ff0c3b4cab9
+RDX: 0000000000008008 RSI: 0000000000000000 RDI: 0000000000000006
+RBP: 00007ff0c3bd27b0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff0c3bd27bc
+R13: 00007ffe85f2080f R14: 00007ff0bb6f7300 R15: 0000000000022000
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	02 41 83             	add    -0x7d(%rcx),%al
+   3:	e7 01                	out    %eax,$0x1
+   5:	44 89 fe             	mov    %r15d,%esi
+   8:	e8 6c 61 99 ff       	callq  0xff996179
+   d:	45 84 ff             	test   %r15b,%r15b
+  10:	0f 84 9a fe ff ff    	je     0xfffffeb0
+  16:	e9 40 ff ff ff       	jmpq   0xffffff5b
+  1b:	e8 f9 64 99 ff       	callq  0xff996519
+  20:	0f 01 cb             	stac
+  23:	0f ae e8             	lfence
+  26:	48 8b 04 24          	mov    (%rsp),%rax
+* 2a:	49 89 47 08          	mov    %rax,0x8(%r15) <-- trapping instruction
+  2e:	e8 e6 64 99 ff       	callq  0xff996519
+  33:	4c 8b 7c 24 28       	mov    0x28(%rsp),%r15
+  38:	48 8b 7c 24 10       	mov    0x10(%rsp),%rdi
+  3d:	49 89 3f             	mov    %rdi,(%r15)
 
 
-> I suggest to first handle path_beneath and inode rules as a binary OR set of
-> rights (i.e. the sandboxed processes only needs one rule to match for the
-> defined action to be allowed). Then, with a way to identify inodes rules, we
-> could treat them as synthetic access rights and add a new allowed_inode
-> field to path_beneath rules and remove the IOCTL access rights from their
-> allowed_access field. This way, sandboxed processes would need both rules to
-> match.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-I'm not sure what the inode rule is.  Do you mean "ioctl rule"?
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-If yes, I do agree that a list of permitted ioctls is similar to the
-access rights flags that we already have, and it would have to get
-passed around in a similar fashion (as "synthetic access rights"),
-albeit using a different data structure.
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-I'm still skeptical of the API approach where we tie previously
-unrelated rules together, if that is what you mean here.  I find this
-difficult to explain and reason about.  But in doubt we'll see in the
-implementation how unwieldy it actually gets.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-> > The upside of that approach would be that it could also be used to selectively
-> > restrict specific known-evil ioctls, and letting all others continue to work.
-> > For example, sandboxing or sudo-like programs could filter out TIOCSTI and
-> > TIOCLINUX.
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
 
-By the way, selectively restricting known-bad ioctls is still not
-possible with the approach we discussed now, I think.  Maybe TIOCSTI
-is the only bad one... I hope.
-
-> > 
-> > I'd be interested in hearing your opinion about this (also from the Chromium
-> > side).
-> > 
-> > Thanks,
-> > —Günther
-> > 
-
-Thanks,
-–Günther
+If you want to undo deduplication, reply with:
+#syz undup
