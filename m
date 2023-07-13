@@ -2,96 +2,19118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3518C752485
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 16:01:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E0B77524B4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 16:11:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232847AbjGMOBO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 10:01:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53824 "EHLO
+        id S234823AbjGMOLu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 10:11:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232849AbjGMOBN (ORCPT
+        with ESMTP id S230424AbjGMOLr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 10:01:13 -0400
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050:0:465::101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FECD270F;
-        Thu, 13 Jul 2023 07:01:11 -0700 (PDT)
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4R1x8z5ySJz9sWC;
-        Thu, 13 Jul 2023 16:01:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-        t=1689256867;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xoZpC5tEyVOTQ6x0K7DEnPwvxgIBjqEXHKiZOKrXnL0=;
-        b=RafNTYVkuSE4BxJrsjFV5sGndm3C0bTsASsDMQLpI2Ka28pNDhpxtuUXkx3/XkWDVk1aAi
-        sG6wnN8oKoOuVtCXkQNev+E+2sKbWr/EC86bUTu7qqupDuxQTqeMtZFJk2kHWdLp2LAKCm
-        6jpjHcDrXD0XKTaIiRlJ2wpt4NB0Q853KscPqgJpYMmmfw+RmaWRd4IaQYdBV92invW7ZO
-        CcmV+nT+fx8uXL9mY7N8X9wKxv678T4PQXgJs4LtrYnmP4Dp1OJAND3MJ3XnCS5rOfim8z
-        KsDLtSGJGHABmP1ByFRGIAU0nXHPNVtqqBIoVSreuzN9oKfNTI87U2eKuwB8bg==
-Date:   Fri, 14 Jul 2023 00:00:51 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
-        Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>,
+        Thu, 13 Jul 2023 10:11:47 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AD962D47;
+        Thu, 13 Jul 2023 07:11:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689257495; x=1720793495;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=XNWYYL3FlO6jgsy6G5FfgkKut8RcHa54whQQj2eu8OE=;
+  b=ParyZp15+tqQgR0ueCeySGQs5f/3tQZEBDdx4nua756KG+IcmqnK3WSi
+   mF2ErJWc7DSJE0KFlumVXcTZttRSNiyfDWWDKMJ9tfwKvpfpoLuEKPEP6
+   8rzhNKzLlTypdzKy+ilxD2yQ+96C7cpxDeRiSJ7er7wzukmoVVvNn79L7
+   NnRoSiB69seDoAHxbT7pg4XeWaDgHAzoqVoH0Nqjz4Aq2HV0rR9f4UxUe
+   cbn/oB5oiEbqmVb/BKkfIzwpl8QGpta+s58caQy1Rx9KZWoLDU8c9Os+t
+   0OCN4iIY3eEAoti1qeO41Ao03HoNWUaLY66HleHEWUuWgPk6+SRL+V8R7
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10770"; a="368739385"
+X-IronPort-AV: E=Sophos;i="6.01,203,1684825200"; 
+   d="xz'341?yaml'341?scan'341,208,341";a="368739385"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2023 06:26:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10770"; a="699258892"
+X-IronPort-AV: E=Sophos;i="6.01,202,1684825200"; 
+   d="xz'341?yaml'341?scan'341,208,341";a="699258892"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orsmga006.jf.intel.com with ESMTP; 13 Jul 2023 06:26:17 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Thu, 13 Jul 2023 06:26:16 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Thu, 13 Jul 2023 06:26:16 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27 via Frontend Transport; Thu, 13 Jul 2023 06:26:16 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.168)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.27; Thu, 13 Jul 2023 06:26:15 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=d6F1eqG3nd2voXWJsAfkQJ4XQWe3rnHmFIMq4f6AT7nmoD42uNGAledfvJAKBxEykVGl75NRKMuUA12K/jmRQoY7UaQS2si3p0k9hHIe5whJ68fSWT1kwwlVaVThpBAziPrMysqdDtq/CZ6Ktc9mPJuamZp5e4Dvz4meK+O2oVguFE0JAGT3BJQ8T61tE66Bt244pTuikac9wNwpWrYhnibPS5puTWvKu8YIB4jQekIsHtJJRY+YZSOHqTssBfTDwOAA3wY+PQ/536VwWCn6RyBxogkZ2OZuQAzMGmNzcsa+Pxq9CvukKttRbb3cn1VNdYk+EvaagPuFH8v5+ktZaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IH7ZwtfpyEuvYzvBr+5g6v5y6np8ulnGz0WjV9cZeOY=;
+ b=CD2Exiqg7sA8rxf9J+7ZpGoFLZZgB/FIgf62/MkrMN2Fk6TWRp1lZGg/L2ErVlndSZMpyRT64B8f9PFXtfEjfGvAziB6OIG47e3+m8NJrh/433fquIXcWt1qmO/hgSEEBLkj0xFPaIHZSYgTqbnH8Tk/9+6TOPnW7xwUMnjMnpF54XfZDBIBARa0duAn4yHMvzgRrVBxgHIQijuOlYBx5ZM0q4MRj2NwgoymBNMlP3z3xdRz8MAigPEtE3ClE/1CUyXD9xmVL1PqtxmmhhPYfxqf0IHS6bAZWJU6kmA/XOTaXEugNFR8YFcF27/vpSfJXv+amjG9oM8Ivh85O4hxSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB6779.namprd11.prod.outlook.com (2603:10b6:510:1ca::17)
+ by SA2PR11MB5114.namprd11.prod.outlook.com (2603:10b6:806:114::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.20; Thu, 13 Jul
+ 2023 13:26:03 +0000
+Received: from PH8PR11MB6779.namprd11.prod.outlook.com
+ ([fe80::35cf:8518:48ea:b10a]) by PH8PR11MB6779.namprd11.prod.outlook.com
+ ([fe80::35cf:8518:48ea:b10a%7]) with mapi id 15.20.6588.017; Thu, 13 Jul 2023
+ 13:26:03 +0000
+Date:   Thu, 13 Jul 2023 21:25:46 +0800
+From:   kernel test robot <oliver.sang@intel.com>
+To:     Christoph Hellwig <hch@lst.de>
+CC:     <oe-lkp@lists.linux.dev>, <lkp@intel.com>,
+        <linux-kernel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        xu xin <cgel.zte@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@devkernel.io>,
-        Zhihao Cheng <chengzhihao1@huawei.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Janis Danisevskis <jdanis@google.com>,
-        Kees Cook <keescook@chromium.org>, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] procfs: block chmod on /proc/thread-self/comm
-Message-ID: <nbzkbbahgsds4s4ujmkvno7w42xxy7gkpsrtw7lay3253uabzu@iqgtepoo4fgo>
-References: <20230713-unerschrocken-kutschieren-9be3c8958b5d@brauner>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Hannes Reinecke <hare@suse.de>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        "Matthew Wilcox" <willy@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "Miklos Szeredi" <mszeredi@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
+        Xiubo Li <xiubli@redhat.com>, <cluster-devel@redhat.com>,
+        <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <ltp@lists.linux.it>, <oliver.sang@intel.com>
+Subject: [linus:master] [iomap]  219580eea1: ltp.writev07.fail
+Message-ID: <202307132107.2ce4ea2f-oliver.sang@intel.com>
+Content-Type: multipart/mixed; boundary="QCV+ZoLpb83y8C/3"
 Content-Disposition: inline
-In-Reply-To: <20230713-unerschrocken-kutschieren-9be3c8958b5d@brauner>
-X-Rspamd-Queue-Id: 4R1x8z5ySJz9sWC
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: SI2PR04CA0003.apcprd04.prod.outlook.com
+ (2603:1096:4:197::23) To PH8PR11MB6779.namprd11.prod.outlook.com
+ (2603:10b6:510:1ca::17)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB6779:EE_|SA2PR11MB5114:EE_
+X-MS-Office365-Filtering-Correlation-Id: 00ac14b4-6f4b-4c2a-0fab-08db83a4b3a7
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 0KZjBVrnh2AS/o/w4uoj/rTi0FoMxDNMAVaooTaztNPvhm5hsEDtWdE+2a3hoTXJ/bttuQWWqZFuTTywN5m/idPSsFA7xts16k9k3UqHqdVrCjVyw2miT9R4+72cdUtjv9pEFaA2T3oUQgjkOJ8y7mSNLZSe3Q1uKdiUjGlZuO48UDevru2ztZ02oJJsHzN10PNb5lGxQy/h7SwmdPwq7vTEaDY/PI219is7NciPUgyXbgPh6J+perJORUB+2l+BlffUlKKw/rCX6oZiCvWhno2oBOgSXVcI7EF437YAru0wRdRhWDr7qx+6kp1q9WgAtfcpq9x2Ls3Q+EJdBC8A92/pvLfiszbOSTF4IzZlxxE0k14GpygCJEI+B8J+OqYi6axugkJ/l6Wkxa9K6X7pitTbt37GXwA3lr8ril4Q5geb2gNTNepqewkKwCu5tnF7MnNTaCiyBekA8GHjuvBfZ8xJKZ8HTVS2kdeuW4TZkxC50hr/P0T2Jx8QY715S/cDI+idlqmS8YjUWY0rvjkzubMdx/voGapTI6KSlPLVXk5z1Js/XOf4oHkrzupun1BxcMdVsukV+gnE7MW+YQ9+v3R/P6F3u6PBG7kjIQJ2NtxDynaBqymugm+LfStTndwzbF+shVI9U/ext4CdoGGVxQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB6779.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(136003)(376002)(396003)(366004)(39860400002)(346002)(451199021)(83380400001)(41300700001)(2616005)(21490400003)(7416002)(186003)(36756003)(2906002)(38100700002)(5660300002)(26005)(82960400001)(235185007)(86362001)(66556008)(4326008)(107886003)(8936002)(8676002)(1076003)(66476007)(6506007)(316002)(54906003)(66946007)(44144004)(478600001)(6916009)(6486002)(966005)(6512007)(6666004)(2700100001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?8mpZOuughkNc9CZkDkHkBc1mT/v60nkRQWo+tlO/qobRUfm247vsxFF3Zvyz?=
+ =?us-ascii?Q?p4oW7NtitHIVrPTLd9WfIDTXt+gOYz17u/ucZ/lY2Na0BJdB2yxReaGMxge5?=
+ =?us-ascii?Q?D6UJEvehsVkREhyN1f9mibJr4xgIyXmB/QAeAdvem4VeaqJuxOGkFmpf9IdR?=
+ =?us-ascii?Q?LVdDQ2AP3VOTc0Bcex58Hbh3c/UuueyI+x0Pxu1IRmQ86jCROqBYhd1OIKih?=
+ =?us-ascii?Q?dgSfgm3CsZHbKWgcFrvy8j4khfxpPpz5RUAbgjdfFoGbeCOC9AmI5vFiSoqS?=
+ =?us-ascii?Q?dOuAQMIOJH8YIS3yA3Zb2g9HpsaPgZ8hGLo8HzHTsGb8FPVaktBuQ7lL6tEw?=
+ =?us-ascii?Q?ZPZQyvcoszquADL0EqlD5cg1I5LQf88tXymV7RvUY0JD32QZvCgeUhYuE/jj?=
+ =?us-ascii?Q?u++42vDOz4lBAQ5YmHxU4FanOyO4TA8f2kTGNWxwgtbOtb0ephvw2Zh611wP?=
+ =?us-ascii?Q?jOWzcMxXfC286P9eHtZo2Hzw8LeOqGoRuEC5aVGqQDhn9zuYp+U/lcwXotoV?=
+ =?us-ascii?Q?ts3y4/cv/uu+vRmdGKigWc592owAqIL8K7py5TMcficftiIpLGnpjZ+URNtc?=
+ =?us-ascii?Q?+traC+ZI0pCQmGU+KHf1PBKUCJyUqjxNDssty3+3n3z0HqWS5VEhfPn+btau?=
+ =?us-ascii?Q?H+NJim7uUH84yDYcAnbjlgjXMbrAdnqXoM2pzwproonb6e8gm7iq9Elz+kep?=
+ =?us-ascii?Q?Ia5Um+P5iLDnPwl31y+6t7+yvhcy/JK7jcb/9u+9hEFJ9uH+o0ObJ1GPjnMj?=
+ =?us-ascii?Q?EtFYXh0ly2KQ9ngKN4ZYqXTfXe3vUGHK2Axlqa8UTTUAi2eGQYyDS8lbcEbT?=
+ =?us-ascii?Q?HD/Qi+PfKrMDKngxnF/rWpPzhFNrTyLk042lYsVggdkvjMhDoYG1kUD7lKCb?=
+ =?us-ascii?Q?WLEUvIhHEeZ/TI35/Oquq997maI3vMs0B2AbXrWl8QpTdk1lpG687qj23H44?=
+ =?us-ascii?Q?N4ryNH9wWb5Wi3fpuNi5+L3e1Klh6GFg7SsGw1yXtmoH4LalS58fW5pd8Quy?=
+ =?us-ascii?Q?48S1SwYA6SW5EEst2KHblAZv/dv33RDnbcIxdQcS6jSQ2GWZc6C/TzVILODv?=
+ =?us-ascii?Q?M45DXZKfdQpo97nNGeo4LB9Iiuoz/m+HBfW1pX70NJxKACnS/08EgHvonHSK?=
+ =?us-ascii?Q?QZ9j/NOoNy1t8SEyiMTxUX/uuGDL2txzkzw1CPZ+002sxIqN81BD01EDSNjZ?=
+ =?us-ascii?Q?iCfaKmdeJC0unabwVn++/YuDDe0qEwgfW9TO316SvIlAAFxFejcF0b0QC3xJ?=
+ =?us-ascii?Q?wzFu1qFhkVjTPFud1KXWbQS0OlsrhhuYAf9eCjbF571MebXzfZVTjdvumVeA?=
+ =?us-ascii?Q?RxGIyRZS321baPg6shcFGpP0Q7w0xe0hwaGkuNlHVhDdSrWAXDT5/xt1+g0v?=
+ =?us-ascii?Q?ldMYFUUp0T6aqFkaEZauuNjbKpRkNSegBMgbUYakG3fiHLIX8FGBMHkikkmL?=
+ =?us-ascii?Q?mJGUKm04eKEpDth7OaotJyLDrlsUhrYDwqcSr66aWBszpi7+Y8HHZhrIGrSv?=
+ =?us-ascii?Q?aoYBfg7c/U/W2TlThkeU3mhazj7Pv2u1msxgsXUN9IhqokhdD0pTBxbNQS39?=
+ =?us-ascii?Q?FWIDzHlpLPamOfaG5+Ak3rM1wufEfJ6BCvHnBWPa?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00ac14b4-6f4b-4c2a-0fab-08db83a4b3a7
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB6779.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2023 13:26:02.6005
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qOnryrvoefRUkazKmvpG7jMGDjgYY9UVxm/K43Fwab+AJKs3rZ5GN5ZXdamtt0E5ZXShaAatamUV3IkCQ94g2A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5114
+X-OriginatorOrg: intel.com
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023-07-13, Christian Brauner <brauner@kernel.org> wrote:
-> > > diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
-> > > index 486334981e60..08f0969208eb 100644
-> > > --- a/tools/testing/selftests/nolibc/nolibc-test.c
-> > > +++ b/tools/testing/selftests/nolibc/nolibc-test.c
-> > > @@ -580,6 +580,10 @@ int run_syscall(int min, int max)
-> > >  		CASE_TEST(chmod_net);         EXPECT_SYSZR(proc, chmod("/proc/self/net", 0555)); break;
-> > >  		CASE_TEST(chmod_self);        EXPECT_SYSER(proc, chmod("/proc/self", 0555), -1, EPERM); break;
-> > >  		CASE_TEST(chown_self);        EXPECT_SYSER(proc, chown("/proc/self", 0, 0), -1, EPERM); break;
-> > > +		CASE_TEST(chmod_self_comm);   EXPECT_SYSER(proc, chmod("/proc/self/comm", 0777), -1, EPERM); break;
-> > > +		CASE_TEST(chmod_tid_comm);    EXPECT_SYSER(proc, chmod("/proc/thread-self/comm", 0777), -1, EPERM); break;
-> > > +		CASE_TEST(chmod_self_environ);EXPECT_SYSER(proc, chmod("/proc/self/environ", 0777), -1, EPERM); break;
-> > > +		CASE_TEST(chmod_tid_environ); EXPECT_SYSER(proc, chmod("/proc/thread-self/environ", 0777), -1, EPERM); break;
-> 
-> > 
-> > I'm not a big fan of this, it abuses the nolibc testsuite to test core
-> > kernel functionality.
-> 
-> Yes, this should be dropped.
-> We need a minimal patch to fix this. This just makes backporting harder
-> and any test doesn't need to be backported.
+--QCV+ZoLpb83y8C/3
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
 
-Alright, I'll drop it in v2 (though I'm not sure why there are tests for
-/proc/self and /proc/self/net then).
+
+
+Hello,
+
+kernel test robot noticed "ltp.writev07.fail" on:
+
+commit: 219580eea1eedefebd3f17c4b31a5226ff4c6a89 ("iomap: update ki_pos in iomap_file_buffered_write")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+
+[test failed on linus/master eb26cbb1a754ccde5d4d74527dad5ba051808fad]
+[test failed on linux-next/master e3262265625831348cfb3128d35907ead75d8bf7]
+
+in testcase: ltp
+version: ltp-x86_64-14c1f76-1_20230708
+with following parameters:
+
+	disk: 1HDD
+	fs: xfs
+	test: syscalls-02
+
+
+
+compiler: gcc-12
+test machine: 4 threads 1 sockets Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz (Ivy Bridge) with 8G memory
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202307132107.2ce4ea2f-oliver.sang@intel.com
+
+
+
+<<<test_start>>>
+tag=writev07 stime=1689215848
+cmdline="writev07"
+contacts=""
+analysis=exit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+writev07.c:50: TINFO: starting test with initial file offset: 0 
+writev07.c:73: TINFO: got EFAULT
+writev07.c:78: TFAIL: file was written to
+writev07.c:84: TPASS: offset stayed unchanged
+writev07.c:50: TINFO: starting test with initial file offset: 65 
+writev07.c:73: TINFO: got EFAULT
+writev07.c:78: TFAIL: file was written to
+writev07.c:84: TPASS: offset stayed unchanged
+writev07.c:50: TINFO: starting test with initial file offset: 4096 
+writev07.c:73: TINFO: got EFAULT
+writev07.c:80: TPASS: file stayed untouched
+writev07.c:84: TPASS: offset stayed unchanged
+writev07.c:50: TINFO: starting test with initial file offset: 4097 
+writev07.c:73: TINFO: got EFAULT
+writev07.c:80: TPASS: file stayed untouched
+writev07.c:84: TPASS: offset stayed unchanged
+
+Summary:
+passed   6
+failed   2
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status="ok"
+duration=0 termination_type=exited termination_id=1 corefile=no
+cutime=1 cstime=2
+<<<test_end>>>
+
+
+
+To reproduce:
+
+        git clone https://github.com/intel/lkp-tests.git
+        cd lkp-tests
+        sudo bin/lkp install job.yaml           # job file is attached in this email
+        bin/lkp split-job --compatible job.yaml # generate the yaml file for lkp run
+        sudo bin/lkp run generated-yaml-file
+
+        # if come across any failure that blocks the test,
+        # please remove ~/.lkp and /lkp dir to run from a clean state.
+
+
 
 -- 
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
+
+
+--QCV+ZoLpb83y8C/3
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: attachment;
+	filename="config-6.4.0-rc4-00169-g219580eea1ee"
+
+#
+# Automatically generated file; DO NOT EDIT.
+# Linux/x86_64 6.4.0-rc4 Kernel Configuration
+#
+CONFIG_CC_VERSION_TEXT="gcc-12 (Debian 12.2.0-14) 12.2.0"
+CONFIG_CC_IS_GCC=y
+CONFIG_GCC_VERSION=120200
+CONFIG_CLANG_VERSION=0
+CONFIG_AS_IS_GNU=y
+CONFIG_AS_VERSION=24000
+CONFIG_LD_IS_BFD=y
+CONFIG_LD_VERSION=24000
+CONFIG_LLD_VERSION=0
+CONFIG_CC_CAN_LINK=y
+CONFIG_CC_CAN_LINK_STATIC=y
+CONFIG_CC_HAS_ASM_GOTO_OUTPUT=y
+CONFIG_CC_HAS_ASM_GOTO_TIED_OUTPUT=y
+CONFIG_TOOLS_SUPPORT_RELR=y
+CONFIG_CC_HAS_ASM_INLINE=y
+CONFIG_CC_HAS_NO_PROFILE_FN_ATTR=y
+CONFIG_PAHOLE_VERSION=125
+CONFIG_CONSTRUCTORS=y
+CONFIG_IRQ_WORK=y
+CONFIG_BUILDTIME_TABLE_SORT=y
+CONFIG_THREAD_INFO_IN_TASK=y
+
+#
+# General setup
+#
+CONFIG_INIT_ENV_ARG_LIMIT=32
+# CONFIG_COMPILE_TEST is not set
+# CONFIG_WERROR is not set
+CONFIG_LOCALVERSION=""
+CONFIG_LOCALVERSION_AUTO=y
+CONFIG_BUILD_SALT=""
+CONFIG_HAVE_KERNEL_GZIP=y
+CONFIG_HAVE_KERNEL_BZIP2=y
+CONFIG_HAVE_KERNEL_LZMA=y
+CONFIG_HAVE_KERNEL_XZ=y
+CONFIG_HAVE_KERNEL_LZO=y
+CONFIG_HAVE_KERNEL_LZ4=y
+CONFIG_HAVE_KERNEL_ZSTD=y
+CONFIG_KERNEL_GZIP=y
+# CONFIG_KERNEL_BZIP2 is not set
+# CONFIG_KERNEL_LZMA is not set
+# CONFIG_KERNEL_XZ is not set
+# CONFIG_KERNEL_LZO is not set
+# CONFIG_KERNEL_LZ4 is not set
+# CONFIG_KERNEL_ZSTD is not set
+CONFIG_DEFAULT_INIT=""
+CONFIG_DEFAULT_HOSTNAME="(none)"
+CONFIG_SYSVIPC=y
+CONFIG_SYSVIPC_SYSCTL=y
+CONFIG_SYSVIPC_COMPAT=y
+CONFIG_POSIX_MQUEUE=y
+CONFIG_POSIX_MQUEUE_SYSCTL=y
+CONFIG_WATCH_QUEUE=y
+CONFIG_CROSS_MEMORY_ATTACH=y
+# CONFIG_USELIB is not set
+CONFIG_AUDIT=y
+CONFIG_HAVE_ARCH_AUDITSYSCALL=y
+CONFIG_AUDITSYSCALL=y
+
+#
+# IRQ subsystem
+#
+CONFIG_GENERIC_IRQ_PROBE=y
+CONFIG_GENERIC_IRQ_SHOW=y
+CONFIG_GENERIC_IRQ_EFFECTIVE_AFF_MASK=y
+CONFIG_GENERIC_PENDING_IRQ=y
+CONFIG_GENERIC_IRQ_MIGRATION=y
+CONFIG_GENERIC_IRQ_INJECTION=y
+CONFIG_HARDIRQS_SW_RESEND=y
+CONFIG_IRQ_DOMAIN=y
+CONFIG_IRQ_DOMAIN_HIERARCHY=y
+CONFIG_GENERIC_MSI_IRQ=y
+CONFIG_IRQ_MSI_IOMMU=y
+CONFIG_GENERIC_IRQ_MATRIX_ALLOCATOR=y
+CONFIG_GENERIC_IRQ_RESERVATION_MODE=y
+CONFIG_IRQ_FORCED_THREADING=y
+CONFIG_SPARSE_IRQ=y
+# CONFIG_GENERIC_IRQ_DEBUGFS is not set
+# end of IRQ subsystem
+
+CONFIG_CLOCKSOURCE_WATCHDOG=y
+CONFIG_ARCH_CLOCKSOURCE_INIT=y
+CONFIG_CLOCKSOURCE_VALIDATE_LAST_CYCLE=y
+CONFIG_GENERIC_TIME_VSYSCALL=y
+CONFIG_GENERIC_CLOCKEVENTS=y
+CONFIG_GENERIC_CLOCKEVENTS_BROADCAST=y
+CONFIG_GENERIC_CLOCKEVENTS_MIN_ADJUST=y
+CONFIG_GENERIC_CMOS_UPDATE=y
+CONFIG_HAVE_POSIX_CPU_TIMERS_TASK_WORK=y
+CONFIG_POSIX_CPU_TIMERS_TASK_WORK=y
+CONFIG_CONTEXT_TRACKING=y
+CONFIG_CONTEXT_TRACKING_IDLE=y
+
+#
+# Timers subsystem
+#
+CONFIG_TICK_ONESHOT=y
+CONFIG_NO_HZ_COMMON=y
+# CONFIG_HZ_PERIODIC is not set
+# CONFIG_NO_HZ_IDLE is not set
+CONFIG_NO_HZ_FULL=y
+CONFIG_CONTEXT_TRACKING_USER=y
+# CONFIG_CONTEXT_TRACKING_USER_FORCE is not set
+CONFIG_NO_HZ=y
+CONFIG_HIGH_RES_TIMERS=y
+CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US=125
+# end of Timers subsystem
+
+CONFIG_BPF=y
+CONFIG_HAVE_EBPF_JIT=y
+CONFIG_ARCH_WANT_DEFAULT_BPF_JIT=y
+
+#
+# BPF subsystem
+#
+CONFIG_BPF_SYSCALL=y
+CONFIG_BPF_JIT=y
+CONFIG_BPF_JIT_ALWAYS_ON=y
+CONFIG_BPF_JIT_DEFAULT_ON=y
+CONFIG_BPF_UNPRIV_DEFAULT_OFF=y
+# CONFIG_BPF_PRELOAD is not set
+# CONFIG_BPF_LSM is not set
+# end of BPF subsystem
+
+CONFIG_PREEMPT_BUILD=y
+# CONFIG_PREEMPT_NONE is not set
+CONFIG_PREEMPT_VOLUNTARY=y
+# CONFIG_PREEMPT is not set
+CONFIG_PREEMPT_COUNT=y
+CONFIG_PREEMPTION=y
+CONFIG_PREEMPT_DYNAMIC=y
+# CONFIG_SCHED_CORE is not set
+
+#
+# CPU/Task time and stats accounting
+#
+CONFIG_VIRT_CPU_ACCOUNTING=y
+CONFIG_VIRT_CPU_ACCOUNTING_GEN=y
+CONFIG_IRQ_TIME_ACCOUNTING=y
+CONFIG_HAVE_SCHED_AVG_IRQ=y
+CONFIG_BSD_PROCESS_ACCT=y
+CONFIG_BSD_PROCESS_ACCT_V3=y
+CONFIG_TASKSTATS=y
+CONFIG_TASK_DELAY_ACCT=y
+CONFIG_TASK_XACCT=y
+CONFIG_TASK_IO_ACCOUNTING=y
+# CONFIG_PSI is not set
+# end of CPU/Task time and stats accounting
+
+CONFIG_CPU_ISOLATION=y
+
+#
+# RCU Subsystem
+#
+CONFIG_TREE_RCU=y
+CONFIG_PREEMPT_RCU=y
+# CONFIG_RCU_EXPERT is not set
+CONFIG_TREE_SRCU=y
+CONFIG_TASKS_RCU_GENERIC=y
+CONFIG_TASKS_RCU=y
+CONFIG_TASKS_RUDE_RCU=y
+CONFIG_TASKS_TRACE_RCU=y
+CONFIG_RCU_STALL_COMMON=y
+CONFIG_RCU_NEED_SEGCBLIST=y
+CONFIG_RCU_NOCB_CPU=y
+# CONFIG_RCU_NOCB_CPU_DEFAULT_ALL is not set
+# CONFIG_RCU_LAZY is not set
+# end of RCU Subsystem
+
+CONFIG_IKCONFIG=y
+CONFIG_IKCONFIG_PROC=y
+# CONFIG_IKHEADERS is not set
+CONFIG_LOG_BUF_SHIFT=20
+CONFIG_LOG_CPU_MAX_BUF_SHIFT=12
+# CONFIG_PRINTK_INDEX is not set
+CONFIG_HAVE_UNSTABLE_SCHED_CLOCK=y
+
+#
+# Scheduler features
+#
+# CONFIG_UCLAMP_TASK is not set
+# end of Scheduler features
+
+CONFIG_ARCH_SUPPORTS_NUMA_BALANCING=y
+CONFIG_ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH=y
+CONFIG_CC_HAS_INT128=y
+CONFIG_CC_IMPLICIT_FALLTHROUGH="-Wimplicit-fallthrough=5"
+CONFIG_GCC11_NO_ARRAY_BOUNDS=y
+CONFIG_CC_NO_ARRAY_BOUNDS=y
+CONFIG_ARCH_SUPPORTS_INT128=y
+CONFIG_NUMA_BALANCING=y
+CONFIG_NUMA_BALANCING_DEFAULT_ENABLED=y
+CONFIG_CGROUPS=y
+CONFIG_PAGE_COUNTER=y
+# CONFIG_CGROUP_FAVOR_DYNMODS is not set
+CONFIG_MEMCG=y
+CONFIG_MEMCG_KMEM=y
+CONFIG_BLK_CGROUP=y
+CONFIG_CGROUP_WRITEBACK=y
+CONFIG_CGROUP_SCHED=y
+CONFIG_FAIR_GROUP_SCHED=y
+CONFIG_CFS_BANDWIDTH=y
+CONFIG_RT_GROUP_SCHED=y
+CONFIG_SCHED_MM_CID=y
+CONFIG_CGROUP_PIDS=y
+CONFIG_CGROUP_RDMA=y
+CONFIG_CGROUP_FREEZER=y
+CONFIG_CGROUP_HUGETLB=y
+CONFIG_CPUSETS=y
+CONFIG_PROC_PID_CPUSET=y
+CONFIG_CGROUP_DEVICE=y
+CONFIG_CGROUP_CPUACCT=y
+CONFIG_CGROUP_PERF=y
+CONFIG_CGROUP_BPF=y
+# CONFIG_CGROUP_MISC is not set
+# CONFIG_CGROUP_DEBUG is not set
+CONFIG_SOCK_CGROUP_DATA=y
+CONFIG_NAMESPACES=y
+CONFIG_UTS_NS=y
+CONFIG_TIME_NS=y
+CONFIG_IPC_NS=y
+CONFIG_USER_NS=y
+CONFIG_PID_NS=y
+CONFIG_NET_NS=y
+CONFIG_CHECKPOINT_RESTORE=y
+CONFIG_SCHED_AUTOGROUP=y
+CONFIG_RELAY=y
+CONFIG_BLK_DEV_INITRD=y
+CONFIG_INITRAMFS_SOURCE=""
+CONFIG_RD_GZIP=y
+CONFIG_RD_BZIP2=y
+CONFIG_RD_LZMA=y
+CONFIG_RD_XZ=y
+CONFIG_RD_LZO=y
+CONFIG_RD_LZ4=y
+CONFIG_RD_ZSTD=y
+# CONFIG_BOOT_CONFIG is not set
+CONFIG_INITRAMFS_PRESERVE_MTIME=y
+CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y
+# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
+CONFIG_LD_ORPHAN_WARN=y
+CONFIG_LD_ORPHAN_WARN_LEVEL="warn"
+CONFIG_SYSCTL=y
+CONFIG_HAVE_UID16=y
+CONFIG_SYSCTL_EXCEPTION_TRACE=y
+CONFIG_HAVE_PCSPKR_PLATFORM=y
+CONFIG_EXPERT=y
+CONFIG_UID16=y
+CONFIG_MULTIUSER=y
+CONFIG_SGETMASK_SYSCALL=y
+CONFIG_SYSFS_SYSCALL=y
+CONFIG_FHANDLE=y
+CONFIG_POSIX_TIMERS=y
+CONFIG_PRINTK=y
+CONFIG_BUG=y
+CONFIG_ELF_CORE=y
+CONFIG_PCSPKR_PLATFORM=y
+CONFIG_BASE_FULL=y
+CONFIG_FUTEX=y
+CONFIG_FUTEX_PI=y
+CONFIG_EPOLL=y
+CONFIG_SIGNALFD=y
+CONFIG_TIMERFD=y
+CONFIG_EVENTFD=y
+CONFIG_SHMEM=y
+CONFIG_AIO=y
+CONFIG_IO_URING=y
+CONFIG_ADVISE_SYSCALLS=y
+CONFIG_MEMBARRIER=y
+CONFIG_KALLSYMS=y
+# CONFIG_KALLSYMS_SELFTEST is not set
+CONFIG_KALLSYMS_ALL=y
+CONFIG_KALLSYMS_ABSOLUTE_PERCPU=y
+CONFIG_KALLSYMS_BASE_RELATIVE=y
+CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE=y
+CONFIG_KCMP=y
+CONFIG_RSEQ=y
+CONFIG_CACHESTAT_SYSCALL=y
+# CONFIG_DEBUG_RSEQ is not set
+# CONFIG_EMBEDDED is not set
+CONFIG_HAVE_PERF_EVENTS=y
+CONFIG_GUEST_PERF_EVENTS=y
+# CONFIG_PC104 is not set
+
+#
+# Kernel Performance Events And Counters
+#
+CONFIG_PERF_EVENTS=y
+# CONFIG_DEBUG_PERF_USE_VMALLOC is not set
+# end of Kernel Performance Events And Counters
+
+CONFIG_SYSTEM_DATA_VERIFICATION=y
+CONFIG_PROFILING=y
+CONFIG_TRACEPOINTS=y
+# end of General setup
+
+CONFIG_64BIT=y
+CONFIG_X86_64=y
+CONFIG_X86=y
+CONFIG_INSTRUCTION_DECODER=y
+CONFIG_OUTPUT_FORMAT="elf64-x86-64"
+CONFIG_LOCKDEP_SUPPORT=y
+CONFIG_STACKTRACE_SUPPORT=y
+CONFIG_MMU=y
+CONFIG_ARCH_MMAP_RND_BITS_MIN=28
+CONFIG_ARCH_MMAP_RND_BITS_MAX=32
+CONFIG_ARCH_MMAP_RND_COMPAT_BITS_MIN=8
+CONFIG_ARCH_MMAP_RND_COMPAT_BITS_MAX=16
+CONFIG_GENERIC_ISA_DMA=y
+CONFIG_GENERIC_CSUM=y
+CONFIG_GENERIC_BUG=y
+CONFIG_GENERIC_BUG_RELATIVE_POINTERS=y
+CONFIG_ARCH_MAY_HAVE_PC_FDC=y
+CONFIG_GENERIC_CALIBRATE_DELAY=y
+CONFIG_ARCH_HAS_CPU_RELAX=y
+CONFIG_ARCH_HIBERNATION_POSSIBLE=y
+CONFIG_ARCH_SUSPEND_POSSIBLE=y
+CONFIG_AUDIT_ARCH=y
+CONFIG_KASAN_SHADOW_OFFSET=0xdffffc0000000000
+CONFIG_HAVE_INTEL_TXT=y
+CONFIG_X86_64_SMP=y
+CONFIG_ARCH_SUPPORTS_UPROBES=y
+CONFIG_FIX_EARLYCON_MEM=y
+CONFIG_PGTABLE_LEVELS=5
+CONFIG_CC_HAS_SANE_STACKPROTECTOR=y
+
+#
+# Processor type and features
+#
+CONFIG_SMP=y
+CONFIG_X86_FEATURE_NAMES=y
+CONFIG_X86_X2APIC=y
+CONFIG_X86_MPPARSE=y
+# CONFIG_GOLDFISH is not set
+# CONFIG_X86_CPU_RESCTRL is not set
+CONFIG_X86_EXTENDED_PLATFORM=y
+# CONFIG_X86_NUMACHIP is not set
+# CONFIG_X86_VSMP is not set
+CONFIG_X86_UV=y
+# CONFIG_X86_GOLDFISH is not set
+# CONFIG_X86_INTEL_MID is not set
+CONFIG_X86_INTEL_LPSS=y
+# CONFIG_X86_AMD_PLATFORM_DEVICE is not set
+CONFIG_IOSF_MBI=y
+# CONFIG_IOSF_MBI_DEBUG is not set
+CONFIG_X86_SUPPORTS_MEMORY_FAILURE=y
+# CONFIG_SCHED_OMIT_FRAME_POINTER is not set
+CONFIG_HYPERVISOR_GUEST=y
+CONFIG_PARAVIRT=y
+# CONFIG_PARAVIRT_DEBUG is not set
+CONFIG_PARAVIRT_SPINLOCKS=y
+CONFIG_X86_HV_CALLBACK_VECTOR=y
+# CONFIG_XEN is not set
+CONFIG_KVM_GUEST=y
+CONFIG_ARCH_CPUIDLE_HALTPOLL=y
+# CONFIG_PVH is not set
+CONFIG_PARAVIRT_TIME_ACCOUNTING=y
+CONFIG_PARAVIRT_CLOCK=y
+# CONFIG_JAILHOUSE_GUEST is not set
+# CONFIG_ACRN_GUEST is not set
+# CONFIG_INTEL_TDX_GUEST is not set
+# CONFIG_MK8 is not set
+# CONFIG_MPSC is not set
+# CONFIG_MCORE2 is not set
+# CONFIG_MATOM is not set
+CONFIG_GENERIC_CPU=y
+CONFIG_X86_INTERNODE_CACHE_SHIFT=6
+CONFIG_X86_L1_CACHE_SHIFT=6
+CONFIG_X86_TSC=y
+CONFIG_X86_CMPXCHG64=y
+CONFIG_X86_CMOV=y
+CONFIG_X86_MINIMUM_CPU_FAMILY=64
+CONFIG_X86_DEBUGCTLMSR=y
+CONFIG_IA32_FEAT_CTL=y
+CONFIG_X86_VMX_FEATURE_NAMES=y
+CONFIG_PROCESSOR_SELECT=y
+CONFIG_CPU_SUP_INTEL=y
+# CONFIG_CPU_SUP_AMD is not set
+# CONFIG_CPU_SUP_HYGON is not set
+# CONFIG_CPU_SUP_CENTAUR is not set
+# CONFIG_CPU_SUP_ZHAOXIN is not set
+CONFIG_HPET_TIMER=y
+CONFIG_HPET_EMULATE_RTC=y
+CONFIG_DMI=y
+CONFIG_BOOT_VESA_SUPPORT=y
+CONFIG_MAXSMP=y
+CONFIG_NR_CPUS_RANGE_BEGIN=8192
+CONFIG_NR_CPUS_RANGE_END=8192
+CONFIG_NR_CPUS_DEFAULT=8192
+CONFIG_NR_CPUS=8192
+CONFIG_SCHED_CLUSTER=y
+CONFIG_SCHED_SMT=y
+CONFIG_SCHED_MC=y
+CONFIG_SCHED_MC_PRIO=y
+CONFIG_X86_LOCAL_APIC=y
+CONFIG_X86_IO_APIC=y
+CONFIG_X86_REROUTE_FOR_BROKEN_BOOT_IRQS=y
+CONFIG_X86_MCE=y
+CONFIG_X86_MCELOG_LEGACY=y
+CONFIG_X86_MCE_INTEL=y
+CONFIG_X86_MCE_THRESHOLD=y
+CONFIG_X86_MCE_INJECT=m
+
+#
+# Performance monitoring
+#
+CONFIG_PERF_EVENTS_INTEL_UNCORE=m
+CONFIG_PERF_EVENTS_INTEL_RAPL=m
+CONFIG_PERF_EVENTS_INTEL_CSTATE=m
+# end of Performance monitoring
+
+CONFIG_X86_16BIT=y
+CONFIG_X86_ESPFIX64=y
+CONFIG_X86_VSYSCALL_EMULATION=y
+CONFIG_X86_IOPL_IOPERM=y
+CONFIG_MICROCODE=y
+CONFIG_MICROCODE_INTEL=y
+CONFIG_MICROCODE_LATE_LOADING=y
+CONFIG_X86_MSR=y
+CONFIG_X86_CPUID=y
+CONFIG_X86_5LEVEL=y
+CONFIG_X86_DIRECT_GBPAGES=y
+# CONFIG_X86_CPA_STATISTICS is not set
+CONFIG_NUMA=y
+# CONFIG_AMD_NUMA is not set
+CONFIG_X86_64_ACPI_NUMA=y
+CONFIG_NUMA_EMU=y
+CONFIG_NODES_SHIFT=10
+CONFIG_ARCH_SPARSEMEM_ENABLE=y
+CONFIG_ARCH_SPARSEMEM_DEFAULT=y
+# CONFIG_ARCH_MEMORY_PROBE is not set
+CONFIG_ARCH_PROC_KCORE_TEXT=y
+CONFIG_ILLEGAL_POINTER_VALUE=0xdead000000000000
+CONFIG_X86_PMEM_LEGACY_DEVICE=y
+CONFIG_X86_PMEM_LEGACY=m
+CONFIG_X86_CHECK_BIOS_CORRUPTION=y
+# CONFIG_X86_BOOTPARAM_MEMORY_CORRUPTION_CHECK is not set
+CONFIG_MTRR=y
+CONFIG_MTRR_SANITIZER=y
+CONFIG_MTRR_SANITIZER_ENABLE_DEFAULT=1
+CONFIG_MTRR_SANITIZER_SPARE_REG_NR_DEFAULT=1
+CONFIG_X86_PAT=y
+CONFIG_ARCH_USES_PG_UNCACHED=y
+CONFIG_X86_UMIP=y
+CONFIG_CC_HAS_IBT=y
+CONFIG_X86_KERNEL_IBT=y
+CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS=y
+CONFIG_X86_INTEL_TSX_MODE_OFF=y
+# CONFIG_X86_INTEL_TSX_MODE_ON is not set
+# CONFIG_X86_INTEL_TSX_MODE_AUTO is not set
+# CONFIG_X86_SGX is not set
+CONFIG_EFI=y
+CONFIG_EFI_STUB=y
+CONFIG_EFI_HANDOVER_PROTOCOL=y
+CONFIG_EFI_MIXED=y
+# CONFIG_EFI_FAKE_MEMMAP is not set
+CONFIG_EFI_RUNTIME_MAP=y
+# CONFIG_HZ_100 is not set
+# CONFIG_HZ_250 is not set
+# CONFIG_HZ_300 is not set
+CONFIG_HZ_1000=y
+CONFIG_HZ=1000
+CONFIG_SCHED_HRTICK=y
+CONFIG_KEXEC=y
+CONFIG_KEXEC_FILE=y
+CONFIG_ARCH_HAS_KEXEC_PURGATORY=y
+# CONFIG_KEXEC_SIG is not set
+CONFIG_CRASH_DUMP=y
+CONFIG_KEXEC_JUMP=y
+CONFIG_PHYSICAL_START=0x1000000
+CONFIG_RELOCATABLE=y
+CONFIG_RANDOMIZE_BASE=y
+CONFIG_X86_NEED_RELOCS=y
+CONFIG_PHYSICAL_ALIGN=0x200000
+CONFIG_DYNAMIC_MEMORY_LAYOUT=y
+CONFIG_RANDOMIZE_MEMORY=y
+CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING=0xa
+# CONFIG_ADDRESS_MASKING is not set
+CONFIG_HOTPLUG_CPU=y
+CONFIG_BOOTPARAM_HOTPLUG_CPU0=y
+# CONFIG_DEBUG_HOTPLUG_CPU0 is not set
+# CONFIG_COMPAT_VDSO is not set
+CONFIG_LEGACY_VSYSCALL_XONLY=y
+# CONFIG_LEGACY_VSYSCALL_NONE is not set
+# CONFIG_CMDLINE_BOOL is not set
+CONFIG_MODIFY_LDT_SYSCALL=y
+# CONFIG_STRICT_SIGALTSTACK_SIZE is not set
+CONFIG_HAVE_LIVEPATCH=y
+CONFIG_LIVEPATCH=y
+# end of Processor type and features
+
+CONFIG_CC_HAS_SLS=y
+CONFIG_CC_HAS_RETURN_THUNK=y
+CONFIG_CC_HAS_ENTRY_PADDING=y
+CONFIG_FUNCTION_PADDING_CFI=11
+CONFIG_FUNCTION_PADDING_BYTES=16
+CONFIG_SPECULATION_MITIGATIONS=y
+CONFIG_PAGE_TABLE_ISOLATION=y
+# CONFIG_RETPOLINE is not set
+CONFIG_CPU_IBRS_ENTRY=y
+# CONFIG_SLS is not set
+CONFIG_ARCH_HAS_ADD_PAGES=y
+CONFIG_ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE=y
+
+#
+# Power management and ACPI options
+#
+CONFIG_ARCH_HIBERNATION_HEADER=y
+CONFIG_SUSPEND=y
+CONFIG_SUSPEND_FREEZER=y
+# CONFIG_SUSPEND_SKIP_SYNC is not set
+CONFIG_HIBERNATE_CALLBACKS=y
+CONFIG_HIBERNATION=y
+CONFIG_HIBERNATION_SNAPSHOT_DEV=y
+CONFIG_PM_STD_PARTITION=""
+CONFIG_PM_SLEEP=y
+CONFIG_PM_SLEEP_SMP=y
+# CONFIG_PM_AUTOSLEEP is not set
+# CONFIG_PM_USERSPACE_AUTOSLEEP is not set
+# CONFIG_PM_WAKELOCKS is not set
+CONFIG_PM=y
+CONFIG_PM_DEBUG=y
+# CONFIG_PM_ADVANCED_DEBUG is not set
+# CONFIG_PM_TEST_SUSPEND is not set
+CONFIG_PM_SLEEP_DEBUG=y
+# CONFIG_DPM_WATCHDOG is not set
+# CONFIG_PM_TRACE_RTC is not set
+CONFIG_PM_CLK=y
+# CONFIG_WQ_POWER_EFFICIENT_DEFAULT is not set
+# CONFIG_ENERGY_MODEL is not set
+CONFIG_ARCH_SUPPORTS_ACPI=y
+CONFIG_ACPI=y
+CONFIG_ACPI_LEGACY_TABLES_LOOKUP=y
+CONFIG_ARCH_MIGHT_HAVE_ACPI_PDC=y
+CONFIG_ACPI_SYSTEM_POWER_STATES_SUPPORT=y
+# CONFIG_ACPI_DEBUGGER is not set
+CONFIG_ACPI_SPCR_TABLE=y
+# CONFIG_ACPI_FPDT is not set
+CONFIG_ACPI_LPIT=y
+CONFIG_ACPI_SLEEP=y
+CONFIG_ACPI_REV_OVERRIDE_POSSIBLE=y
+CONFIG_ACPI_EC_DEBUGFS=m
+CONFIG_ACPI_AC=y
+CONFIG_ACPI_BATTERY=y
+CONFIG_ACPI_BUTTON=y
+CONFIG_ACPI_VIDEO=m
+CONFIG_ACPI_FAN=y
+CONFIG_ACPI_TAD=m
+CONFIG_ACPI_DOCK=y
+CONFIG_ACPI_CPU_FREQ_PSS=y
+CONFIG_ACPI_PROCESSOR_CSTATE=y
+CONFIG_ACPI_PROCESSOR_IDLE=y
+CONFIG_ACPI_CPPC_LIB=y
+CONFIG_ACPI_PROCESSOR=y
+CONFIG_ACPI_IPMI=m
+CONFIG_ACPI_HOTPLUG_CPU=y
+CONFIG_ACPI_PROCESSOR_AGGREGATOR=m
+CONFIG_ACPI_THERMAL=y
+CONFIG_ACPI_PLATFORM_PROFILE=m
+CONFIG_ARCH_HAS_ACPI_TABLE_UPGRADE=y
+CONFIG_ACPI_TABLE_UPGRADE=y
+# CONFIG_ACPI_DEBUG is not set
+CONFIG_ACPI_PCI_SLOT=y
+CONFIG_ACPI_CONTAINER=y
+CONFIG_ACPI_HOTPLUG_MEMORY=y
+CONFIG_ACPI_HOTPLUG_IOAPIC=y
+CONFIG_ACPI_SBS=m
+CONFIG_ACPI_HED=y
+# CONFIG_ACPI_CUSTOM_METHOD is not set
+CONFIG_ACPI_BGRT=y
+# CONFIG_ACPI_REDUCED_HARDWARE_ONLY is not set
+CONFIG_ACPI_NFIT=m
+# CONFIG_NFIT_SECURITY_DEBUG is not set
+CONFIG_ACPI_NUMA=y
+CONFIG_ACPI_HMAT=y
+CONFIG_HAVE_ACPI_APEI=y
+CONFIG_HAVE_ACPI_APEI_NMI=y
+CONFIG_ACPI_APEI=y
+CONFIG_ACPI_APEI_GHES=y
+CONFIG_ACPI_APEI_PCIEAER=y
+CONFIG_ACPI_APEI_MEMORY_FAILURE=y
+CONFIG_ACPI_APEI_EINJ=m
+# CONFIG_ACPI_APEI_ERST_DEBUG is not set
+# CONFIG_ACPI_DPTF is not set
+CONFIG_ACPI_WATCHDOG=y
+CONFIG_ACPI_EXTLOG=m
+CONFIG_ACPI_ADXL=y
+# CONFIG_ACPI_CONFIGFS is not set
+# CONFIG_ACPI_PFRUT is not set
+CONFIG_ACPI_PCC=y
+# CONFIG_ACPI_FFH is not set
+# CONFIG_PMIC_OPREGION is not set
+CONFIG_ACPI_PRMT=y
+CONFIG_X86_PM_TIMER=y
+
+#
+# CPU Frequency scaling
+#
+CONFIG_CPU_FREQ=y
+CONFIG_CPU_FREQ_GOV_ATTR_SET=y
+CONFIG_CPU_FREQ_GOV_COMMON=y
+CONFIG_CPU_FREQ_STAT=y
+CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE=y
+# CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE is not set
+# CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE is not set
+# CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL is not set
+CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
+CONFIG_CPU_FREQ_GOV_POWERSAVE=y
+CONFIG_CPU_FREQ_GOV_USERSPACE=y
+CONFIG_CPU_FREQ_GOV_ONDEMAND=y
+CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
+CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
+
+#
+# CPU frequency scaling drivers
+#
+CONFIG_X86_INTEL_PSTATE=y
+# CONFIG_X86_PCC_CPUFREQ is not set
+# CONFIG_X86_AMD_PSTATE is not set
+# CONFIG_X86_AMD_PSTATE_UT is not set
+CONFIG_X86_ACPI_CPUFREQ=m
+# CONFIG_X86_POWERNOW_K8 is not set
+# CONFIG_X86_SPEEDSTEP_CENTRINO is not set
+CONFIG_X86_P4_CLOCKMOD=m
+
+#
+# shared options
+#
+CONFIG_X86_SPEEDSTEP_LIB=m
+# end of CPU Frequency scaling
+
+#
+# CPU Idle
+#
+CONFIG_CPU_IDLE=y
+# CONFIG_CPU_IDLE_GOV_LADDER is not set
+CONFIG_CPU_IDLE_GOV_MENU=y
+# CONFIG_CPU_IDLE_GOV_TEO is not set
+CONFIG_CPU_IDLE_GOV_HALTPOLL=y
+CONFIG_HALTPOLL_CPUIDLE=y
+# end of CPU Idle
+
+CONFIG_INTEL_IDLE=y
+# end of Power management and ACPI options
+
+#
+# Bus options (PCI etc.)
+#
+CONFIG_PCI_DIRECT=y
+CONFIG_PCI_MMCONFIG=y
+CONFIG_MMCONF_FAM10H=y
+# CONFIG_PCI_CNB20LE_QUIRK is not set
+# CONFIG_ISA_BUS is not set
+CONFIG_ISA_DMA_API=y
+# end of Bus options (PCI etc.)
+
+#
+# Binary Emulations
+#
+CONFIG_IA32_EMULATION=y
+# CONFIG_X86_X32_ABI is not set
+CONFIG_COMPAT_32=y
+CONFIG_COMPAT=y
+CONFIG_COMPAT_FOR_U64_ALIGNMENT=y
+# end of Binary Emulations
+
+CONFIG_HAVE_KVM=y
+CONFIG_HAVE_KVM_PFNCACHE=y
+CONFIG_HAVE_KVM_IRQCHIP=y
+CONFIG_HAVE_KVM_IRQFD=y
+CONFIG_HAVE_KVM_IRQ_ROUTING=y
+CONFIG_HAVE_KVM_DIRTY_RING=y
+CONFIG_HAVE_KVM_DIRTY_RING_TSO=y
+CONFIG_HAVE_KVM_DIRTY_RING_ACQ_REL=y
+CONFIG_HAVE_KVM_EVENTFD=y
+CONFIG_KVM_MMIO=y
+CONFIG_KVM_ASYNC_PF=y
+CONFIG_HAVE_KVM_MSI=y
+CONFIG_HAVE_KVM_CPU_RELAX_INTERCEPT=y
+CONFIG_KVM_VFIO=y
+CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT=y
+CONFIG_KVM_COMPAT=y
+CONFIG_HAVE_KVM_IRQ_BYPASS=y
+CONFIG_HAVE_KVM_NO_POLL=y
+CONFIG_KVM_XFER_TO_GUEST_WORK=y
+CONFIG_HAVE_KVM_PM_NOTIFIER=y
+CONFIG_KVM_GENERIC_HARDWARE_ENABLING=y
+CONFIG_VIRTUALIZATION=y
+CONFIG_KVM=m
+# CONFIG_KVM_WERROR is not set
+CONFIG_KVM_INTEL=m
+# CONFIG_KVM_AMD is not set
+CONFIG_KVM_SMM=y
+# CONFIG_KVM_XEN is not set
+CONFIG_AS_AVX512=y
+CONFIG_AS_SHA1_NI=y
+CONFIG_AS_SHA256_NI=y
+CONFIG_AS_TPAUSE=y
+CONFIG_AS_GFNI=y
+
+#
+# General architecture-dependent options
+#
+CONFIG_CRASH_CORE=y
+CONFIG_KEXEC_CORE=y
+CONFIG_HAVE_IMA_KEXEC=y
+CONFIG_HOTPLUG_SMT=y
+CONFIG_GENERIC_ENTRY=y
+CONFIG_KPROBES=y
+CONFIG_JUMP_LABEL=y
+# CONFIG_STATIC_KEYS_SELFTEST is not set
+# CONFIG_STATIC_CALL_SELFTEST is not set
+CONFIG_OPTPROBES=y
+CONFIG_KPROBES_ON_FTRACE=y
+CONFIG_UPROBES=y
+CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS=y
+CONFIG_ARCH_USE_BUILTIN_BSWAP=y
+CONFIG_KRETPROBES=y
+CONFIG_KRETPROBE_ON_RETHOOK=y
+CONFIG_USER_RETURN_NOTIFIER=y
+CONFIG_HAVE_IOREMAP_PROT=y
+CONFIG_HAVE_KPROBES=y
+CONFIG_HAVE_KRETPROBES=y
+CONFIG_HAVE_OPTPROBES=y
+CONFIG_HAVE_KPROBES_ON_FTRACE=y
+CONFIG_ARCH_CORRECT_STACKTRACE_ON_KRETPROBE=y
+CONFIG_HAVE_FUNCTION_ERROR_INJECTION=y
+CONFIG_HAVE_NMI=y
+CONFIG_TRACE_IRQFLAGS_SUPPORT=y
+CONFIG_TRACE_IRQFLAGS_NMI_SUPPORT=y
+CONFIG_HAVE_ARCH_TRACEHOOK=y
+CONFIG_HAVE_DMA_CONTIGUOUS=y
+CONFIG_GENERIC_SMP_IDLE_THREAD=y
+CONFIG_ARCH_HAS_FORTIFY_SOURCE=y
+CONFIG_ARCH_HAS_SET_MEMORY=y
+CONFIG_ARCH_HAS_SET_DIRECT_MAP=y
+CONFIG_HAVE_ARCH_THREAD_STRUCT_WHITELIST=y
+CONFIG_ARCH_WANTS_DYNAMIC_TASK_STRUCT=y
+CONFIG_ARCH_WANTS_NO_INSTR=y
+CONFIG_HAVE_ASM_MODVERSIONS=y
+CONFIG_HAVE_REGS_AND_STACK_ACCESS_API=y
+CONFIG_HAVE_RSEQ=y
+CONFIG_HAVE_RUST=y
+CONFIG_HAVE_FUNCTION_ARG_ACCESS_API=y
+CONFIG_HAVE_HW_BREAKPOINT=y
+CONFIG_HAVE_MIXED_BREAKPOINTS_REGS=y
+CONFIG_HAVE_USER_RETURN_NOTIFIER=y
+CONFIG_HAVE_PERF_EVENTS_NMI=y
+CONFIG_HAVE_HARDLOCKUP_DETECTOR_PERF=y
+CONFIG_HAVE_PERF_REGS=y
+CONFIG_HAVE_PERF_USER_STACK_DUMP=y
+CONFIG_HAVE_ARCH_JUMP_LABEL=y
+CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE=y
+CONFIG_MMU_GATHER_TABLE_FREE=y
+CONFIG_MMU_GATHER_RCU_TABLE_FREE=y
+CONFIG_MMU_GATHER_MERGE_VMAS=y
+CONFIG_MMU_LAZY_TLB_REFCOUNT=y
+CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG=y
+CONFIG_ARCH_HAS_NMI_SAFE_THIS_CPU_OPS=y
+CONFIG_HAVE_ALIGNED_STRUCT_PAGE=y
+CONFIG_HAVE_CMPXCHG_LOCAL=y
+CONFIG_HAVE_CMPXCHG_DOUBLE=y
+CONFIG_ARCH_WANT_COMPAT_IPC_PARSE_VERSION=y
+CONFIG_ARCH_WANT_OLD_COMPAT_IPC=y
+CONFIG_HAVE_ARCH_SECCOMP=y
+CONFIG_HAVE_ARCH_SECCOMP_FILTER=y
+CONFIG_SECCOMP=y
+CONFIG_SECCOMP_FILTER=y
+# CONFIG_SECCOMP_CACHE_DEBUG is not set
+CONFIG_HAVE_ARCH_STACKLEAK=y
+CONFIG_HAVE_STACKPROTECTOR=y
+CONFIG_STACKPROTECTOR=y
+CONFIG_STACKPROTECTOR_STRONG=y
+CONFIG_ARCH_SUPPORTS_LTO_CLANG=y
+CONFIG_ARCH_SUPPORTS_LTO_CLANG_THIN=y
+CONFIG_LTO_NONE=y
+CONFIG_ARCH_SUPPORTS_CFI_CLANG=y
+CONFIG_HAVE_ARCH_WITHIN_STACK_FRAMES=y
+CONFIG_HAVE_CONTEXT_TRACKING_USER=y
+CONFIG_HAVE_CONTEXT_TRACKING_USER_OFFSTACK=y
+CONFIG_HAVE_VIRT_CPU_ACCOUNTING_GEN=y
+CONFIG_HAVE_IRQ_TIME_ACCOUNTING=y
+CONFIG_HAVE_MOVE_PUD=y
+CONFIG_HAVE_MOVE_PMD=y
+CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE=y
+CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD=y
+CONFIG_HAVE_ARCH_HUGE_VMAP=y
+CONFIG_HAVE_ARCH_HUGE_VMALLOC=y
+CONFIG_ARCH_WANT_HUGE_PMD_SHARE=y
+CONFIG_HAVE_ARCH_SOFT_DIRTY=y
+CONFIG_HAVE_MOD_ARCH_SPECIFIC=y
+CONFIG_MODULES_USE_ELF_RELA=y
+CONFIG_HAVE_IRQ_EXIT_ON_IRQ_STACK=y
+CONFIG_HAVE_SOFTIRQ_ON_OWN_STACK=y
+CONFIG_SOFTIRQ_ON_OWN_STACK=y
+CONFIG_ARCH_HAS_ELF_RANDOMIZE=y
+CONFIG_HAVE_ARCH_MMAP_RND_BITS=y
+CONFIG_HAVE_EXIT_THREAD=y
+CONFIG_ARCH_MMAP_RND_BITS=28
+CONFIG_HAVE_ARCH_MMAP_RND_COMPAT_BITS=y
+CONFIG_ARCH_MMAP_RND_COMPAT_BITS=8
+CONFIG_HAVE_ARCH_COMPAT_MMAP_BASES=y
+CONFIG_PAGE_SIZE_LESS_THAN_64KB=y
+CONFIG_PAGE_SIZE_LESS_THAN_256KB=y
+CONFIG_HAVE_OBJTOOL=y
+CONFIG_HAVE_JUMP_LABEL_HACK=y
+CONFIG_HAVE_NOINSTR_HACK=y
+CONFIG_HAVE_NOINSTR_VALIDATION=y
+CONFIG_HAVE_UACCESS_VALIDATION=y
+CONFIG_HAVE_STACK_VALIDATION=y
+CONFIG_HAVE_RELIABLE_STACKTRACE=y
+CONFIG_OLD_SIGSUSPEND3=y
+CONFIG_COMPAT_OLD_SIGACTION=y
+CONFIG_COMPAT_32BIT_TIME=y
+CONFIG_HAVE_ARCH_VMAP_STACK=y
+CONFIG_VMAP_STACK=y
+CONFIG_HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET=y
+CONFIG_RANDOMIZE_KSTACK_OFFSET=y
+# CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT is not set
+CONFIG_ARCH_HAS_STRICT_KERNEL_RWX=y
+CONFIG_STRICT_KERNEL_RWX=y
+CONFIG_ARCH_HAS_STRICT_MODULE_RWX=y
+CONFIG_STRICT_MODULE_RWX=y
+CONFIG_HAVE_ARCH_PREL32_RELOCATIONS=y
+CONFIG_ARCH_USE_MEMREMAP_PROT=y
+# CONFIG_LOCK_EVENT_COUNTS is not set
+CONFIG_ARCH_HAS_MEM_ENCRYPT=y
+CONFIG_HAVE_STATIC_CALL=y
+CONFIG_HAVE_STATIC_CALL_INLINE=y
+CONFIG_HAVE_PREEMPT_DYNAMIC=y
+CONFIG_HAVE_PREEMPT_DYNAMIC_CALL=y
+CONFIG_ARCH_WANT_LD_ORPHAN_WARN=y
+CONFIG_ARCH_SUPPORTS_DEBUG_PAGEALLOC=y
+CONFIG_ARCH_SUPPORTS_PAGE_TABLE_CHECK=y
+CONFIG_ARCH_HAS_ELFCORE_COMPAT=y
+CONFIG_ARCH_HAS_PARANOID_L1D_FLUSH=y
+CONFIG_DYNAMIC_SIGFRAME=y
+CONFIG_ARCH_HAS_NONLEAF_PMD_YOUNG=y
+
+#
+# GCOV-based kernel profiling
+#
+# CONFIG_GCOV_KERNEL is not set
+CONFIG_ARCH_HAS_GCOV_PROFILE_ALL=y
+# end of GCOV-based kernel profiling
+
+CONFIG_HAVE_GCC_PLUGINS=y
+CONFIG_GCC_PLUGINS=y
+# CONFIG_GCC_PLUGIN_LATENT_ENTROPY is not set
+CONFIG_FUNCTION_ALIGNMENT_4B=y
+CONFIG_FUNCTION_ALIGNMENT_16B=y
+CONFIG_FUNCTION_ALIGNMENT=16
+# end of General architecture-dependent options
+
+CONFIG_RT_MUTEXES=y
+CONFIG_BASE_SMALL=0
+CONFIG_MODULE_SIG_FORMAT=y
+CONFIG_MODULES=y
+# CONFIG_MODULE_DEBUG is not set
+CONFIG_MODULE_FORCE_LOAD=y
+CONFIG_MODULE_UNLOAD=y
+# CONFIG_MODULE_FORCE_UNLOAD is not set
+# CONFIG_MODULE_UNLOAD_TAINT_TRACKING is not set
+# CONFIG_MODVERSIONS is not set
+# CONFIG_MODULE_SRCVERSION_ALL is not set
+CONFIG_MODULE_SIG=y
+# CONFIG_MODULE_SIG_FORCE is not set
+CONFIG_MODULE_SIG_ALL=y
+# CONFIG_MODULE_SIG_SHA1 is not set
+# CONFIG_MODULE_SIG_SHA224 is not set
+CONFIG_MODULE_SIG_SHA256=y
+# CONFIG_MODULE_SIG_SHA384 is not set
+# CONFIG_MODULE_SIG_SHA512 is not set
+CONFIG_MODULE_SIG_HASH="sha256"
+CONFIG_MODULE_COMPRESS_NONE=y
+# CONFIG_MODULE_COMPRESS_GZIP is not set
+# CONFIG_MODULE_COMPRESS_XZ is not set
+# CONFIG_MODULE_COMPRESS_ZSTD is not set
+# CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS is not set
+CONFIG_MODPROBE_PATH="/sbin/modprobe"
+# CONFIG_TRIM_UNUSED_KSYMS is not set
+CONFIG_MODULES_TREE_LOOKUP=y
+CONFIG_BLOCK=y
+CONFIG_BLOCK_LEGACY_AUTOLOAD=y
+CONFIG_BLK_CGROUP_RWSTAT=y
+CONFIG_BLK_CGROUP_PUNT_BIO=y
+CONFIG_BLK_DEV_BSG_COMMON=y
+CONFIG_BLK_ICQ=y
+CONFIG_BLK_DEV_BSGLIB=y
+CONFIG_BLK_DEV_INTEGRITY=y
+CONFIG_BLK_DEV_INTEGRITY_T10=m
+# CONFIG_BLK_DEV_ZONED is not set
+CONFIG_BLK_DEV_THROTTLING=y
+# CONFIG_BLK_DEV_THROTTLING_LOW is not set
+CONFIG_BLK_WBT=y
+CONFIG_BLK_WBT_MQ=y
+# CONFIG_BLK_CGROUP_IOLATENCY is not set
+# CONFIG_BLK_CGROUP_IOCOST is not set
+# CONFIG_BLK_CGROUP_IOPRIO is not set
+CONFIG_BLK_DEBUG_FS=y
+# CONFIG_BLK_SED_OPAL is not set
+# CONFIG_BLK_INLINE_ENCRYPTION is not set
+
+#
+# Partition Types
+#
+# CONFIG_PARTITION_ADVANCED is not set
+CONFIG_MSDOS_PARTITION=y
+CONFIG_EFI_PARTITION=y
+# end of Partition Types
+
+CONFIG_BLK_MQ_PCI=y
+CONFIG_BLK_MQ_VIRTIO=y
+CONFIG_BLK_PM=y
+CONFIG_BLOCK_HOLDER_DEPRECATED=y
+CONFIG_BLK_MQ_STACKING=y
+
+#
+# IO Schedulers
+#
+CONFIG_MQ_IOSCHED_DEADLINE=y
+CONFIG_MQ_IOSCHED_KYBER=y
+CONFIG_IOSCHED_BFQ=y
+CONFIG_BFQ_GROUP_IOSCHED=y
+# CONFIG_BFQ_CGROUP_DEBUG is not set
+# end of IO Schedulers
+
+CONFIG_PREEMPT_NOTIFIERS=y
+CONFIG_PADATA=y
+CONFIG_ASN1=y
+CONFIG_UNINLINE_SPIN_UNLOCK=y
+CONFIG_ARCH_SUPPORTS_ATOMIC_RMW=y
+CONFIG_MUTEX_SPIN_ON_OWNER=y
+CONFIG_RWSEM_SPIN_ON_OWNER=y
+CONFIG_LOCK_SPIN_ON_OWNER=y
+CONFIG_ARCH_USE_QUEUED_SPINLOCKS=y
+CONFIG_QUEUED_SPINLOCKS=y
+CONFIG_ARCH_USE_QUEUED_RWLOCKS=y
+CONFIG_QUEUED_RWLOCKS=y
+CONFIG_ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE=y
+CONFIG_ARCH_HAS_SYNC_CORE_BEFORE_USERMODE=y
+CONFIG_ARCH_HAS_SYSCALL_WRAPPER=y
+CONFIG_FREEZER=y
+
+#
+# Executable file formats
+#
+CONFIG_BINFMT_ELF=y
+CONFIG_COMPAT_BINFMT_ELF=y
+CONFIG_ELFCORE=y
+CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS=y
+CONFIG_BINFMT_SCRIPT=y
+CONFIG_BINFMT_MISC=m
+CONFIG_COREDUMP=y
+# end of Executable file formats
+
+#
+# Memory Management options
+#
+CONFIG_ZPOOL=y
+CONFIG_SWAP=y
+CONFIG_ZSWAP=y
+# CONFIG_ZSWAP_DEFAULT_ON is not set
+# CONFIG_ZSWAP_COMPRESSOR_DEFAULT_DEFLATE is not set
+CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZO=y
+# CONFIG_ZSWAP_COMPRESSOR_DEFAULT_842 is not set
+# CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4 is not set
+# CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4HC is not set
+# CONFIG_ZSWAP_COMPRESSOR_DEFAULT_ZSTD is not set
+CONFIG_ZSWAP_COMPRESSOR_DEFAULT="lzo"
+CONFIG_ZSWAP_ZPOOL_DEFAULT_ZBUD=y
+# CONFIG_ZSWAP_ZPOOL_DEFAULT_Z3FOLD is not set
+# CONFIG_ZSWAP_ZPOOL_DEFAULT_ZSMALLOC is not set
+CONFIG_ZSWAP_ZPOOL_DEFAULT="zbud"
+CONFIG_ZBUD=y
+# CONFIG_Z3FOLD is not set
+CONFIG_ZSMALLOC=y
+CONFIG_ZSMALLOC_STAT=y
+CONFIG_ZSMALLOC_CHAIN_SIZE=8
+
+#
+# SLAB allocator options
+#
+# CONFIG_SLAB is not set
+CONFIG_SLUB=y
+# CONFIG_SLUB_TINY is not set
+CONFIG_SLAB_MERGE_DEFAULT=y
+CONFIG_SLAB_FREELIST_RANDOM=y
+# CONFIG_SLAB_FREELIST_HARDENED is not set
+# CONFIG_SLUB_STATS is not set
+CONFIG_SLUB_CPU_PARTIAL=y
+# end of SLAB allocator options
+
+CONFIG_SHUFFLE_PAGE_ALLOCATOR=y
+# CONFIG_COMPAT_BRK is not set
+CONFIG_SPARSEMEM=y
+CONFIG_SPARSEMEM_EXTREME=y
+CONFIG_SPARSEMEM_VMEMMAP_ENABLE=y
+CONFIG_SPARSEMEM_VMEMMAP=y
+CONFIG_ARCH_WANT_OPTIMIZE_VMEMMAP=y
+CONFIG_HAVE_FAST_GUP=y
+CONFIG_NUMA_KEEP_MEMINFO=y
+CONFIG_MEMORY_ISOLATION=y
+CONFIG_EXCLUSIVE_SYSTEM_RAM=y
+CONFIG_HAVE_BOOTMEM_INFO_NODE=y
+CONFIG_ARCH_ENABLE_MEMORY_HOTPLUG=y
+CONFIG_ARCH_ENABLE_MEMORY_HOTREMOVE=y
+CONFIG_MEMORY_HOTPLUG=y
+# CONFIG_MEMORY_HOTPLUG_DEFAULT_ONLINE is not set
+CONFIG_MEMORY_HOTREMOVE=y
+CONFIG_MHP_MEMMAP_ON_MEMORY=y
+CONFIG_SPLIT_PTLOCK_CPUS=4
+CONFIG_ARCH_ENABLE_SPLIT_PMD_PTLOCK=y
+CONFIG_MEMORY_BALLOON=y
+CONFIG_BALLOON_COMPACTION=y
+CONFIG_COMPACTION=y
+CONFIG_COMPACT_UNEVICTABLE_DEFAULT=1
+CONFIG_PAGE_REPORTING=y
+CONFIG_MIGRATION=y
+CONFIG_DEVICE_MIGRATION=y
+CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION=y
+CONFIG_ARCH_ENABLE_THP_MIGRATION=y
+CONFIG_CONTIG_ALLOC=y
+CONFIG_PHYS_ADDR_T_64BIT=y
+CONFIG_MMU_NOTIFIER=y
+CONFIG_KSM=y
+CONFIG_DEFAULT_MMAP_MIN_ADDR=4096
+CONFIG_ARCH_SUPPORTS_MEMORY_FAILURE=y
+CONFIG_MEMORY_FAILURE=y
+CONFIG_HWPOISON_INJECT=m
+CONFIG_ARCH_WANT_GENERAL_HUGETLB=y
+CONFIG_ARCH_WANTS_THP_SWAP=y
+CONFIG_TRANSPARENT_HUGEPAGE=y
+CONFIG_TRANSPARENT_HUGEPAGE_ALWAYS=y
+# CONFIG_TRANSPARENT_HUGEPAGE_MADVISE is not set
+CONFIG_THP_SWAP=y
+# CONFIG_READ_ONLY_THP_FOR_FS is not set
+CONFIG_NEED_PER_CPU_EMBED_FIRST_CHUNK=y
+CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK=y
+CONFIG_USE_PERCPU_NUMA_NODE_ID=y
+CONFIG_HAVE_SETUP_PER_CPU_AREA=y
+CONFIG_FRONTSWAP=y
+# CONFIG_CMA is not set
+# CONFIG_MEM_SOFT_DIRTY is not set
+CONFIG_GENERIC_EARLY_IOREMAP=y
+CONFIG_DEFERRED_STRUCT_PAGE_INIT=y
+CONFIG_PAGE_IDLE_FLAG=y
+CONFIG_IDLE_PAGE_TRACKING=y
+CONFIG_ARCH_HAS_CACHE_LINE_SIZE=y
+CONFIG_ARCH_HAS_CURRENT_STACK_POINTER=y
+CONFIG_ARCH_HAS_PTE_DEVMAP=y
+CONFIG_ARCH_HAS_ZONE_DMA_SET=y
+CONFIG_ZONE_DMA=y
+CONFIG_ZONE_DMA32=y
+CONFIG_ZONE_DEVICE=y
+CONFIG_GET_FREE_REGION=y
+CONFIG_DEVICE_PRIVATE=y
+CONFIG_VMAP_PFN=y
+CONFIG_ARCH_USES_HIGH_VMA_FLAGS=y
+CONFIG_ARCH_HAS_PKEYS=y
+CONFIG_VM_EVENT_COUNTERS=y
+# CONFIG_PERCPU_STATS is not set
+# CONFIG_GUP_TEST is not set
+# CONFIG_DMAPOOL_TEST is not set
+CONFIG_ARCH_HAS_PTE_SPECIAL=y
+CONFIG_SECRETMEM=y
+# CONFIG_ANON_VMA_NAME is not set
+# CONFIG_USERFAULTFD is not set
+# CONFIG_LRU_GEN is not set
+CONFIG_ARCH_SUPPORTS_PER_VMA_LOCK=y
+CONFIG_PER_VMA_LOCK=y
+
+#
+# Data Access Monitoring
+#
+# CONFIG_DAMON is not set
+# end of Data Access Monitoring
+# end of Memory Management options
+
+CONFIG_NET=y
+CONFIG_NET_INGRESS=y
+CONFIG_NET_EGRESS=y
+CONFIG_SKB_EXTENSIONS=y
+
+#
+# Networking options
+#
+CONFIG_PACKET=y
+CONFIG_PACKET_DIAG=m
+CONFIG_UNIX=y
+CONFIG_UNIX_SCM=y
+CONFIG_AF_UNIX_OOB=y
+CONFIG_UNIX_DIAG=m
+CONFIG_TLS=m
+CONFIG_TLS_DEVICE=y
+# CONFIG_TLS_TOE is not set
+CONFIG_XFRM=y
+CONFIG_XFRM_OFFLOAD=y
+CONFIG_XFRM_ALGO=y
+CONFIG_XFRM_USER=y
+# CONFIG_XFRM_USER_COMPAT is not set
+# CONFIG_XFRM_INTERFACE is not set
+CONFIG_XFRM_SUB_POLICY=y
+CONFIG_XFRM_MIGRATE=y
+CONFIG_XFRM_STATISTICS=y
+CONFIG_XFRM_AH=m
+CONFIG_XFRM_ESP=m
+CONFIG_XFRM_IPCOMP=m
+# CONFIG_NET_KEY is not set
+CONFIG_XDP_SOCKETS=y
+# CONFIG_XDP_SOCKETS_DIAG is not set
+CONFIG_NET_HANDSHAKE=y
+CONFIG_INET=y
+CONFIG_IP_MULTICAST=y
+CONFIG_IP_ADVANCED_ROUTER=y
+CONFIG_IP_FIB_TRIE_STATS=y
+CONFIG_IP_MULTIPLE_TABLES=y
+CONFIG_IP_ROUTE_MULTIPATH=y
+CONFIG_IP_ROUTE_VERBOSE=y
+CONFIG_IP_ROUTE_CLASSID=y
+CONFIG_IP_PNP=y
+CONFIG_IP_PNP_DHCP=y
+# CONFIG_IP_PNP_BOOTP is not set
+# CONFIG_IP_PNP_RARP is not set
+CONFIG_NET_IPIP=m
+CONFIG_NET_IPGRE_DEMUX=m
+CONFIG_NET_IP_TUNNEL=m
+CONFIG_NET_IPGRE=m
+CONFIG_NET_IPGRE_BROADCAST=y
+CONFIG_IP_MROUTE_COMMON=y
+CONFIG_IP_MROUTE=y
+CONFIG_IP_MROUTE_MULTIPLE_TABLES=y
+CONFIG_IP_PIMSM_V1=y
+CONFIG_IP_PIMSM_V2=y
+CONFIG_SYN_COOKIES=y
+CONFIG_NET_IPVTI=m
+CONFIG_NET_UDP_TUNNEL=m
+# CONFIG_NET_FOU is not set
+# CONFIG_NET_FOU_IP_TUNNELS is not set
+CONFIG_INET_AH=m
+CONFIG_INET_ESP=m
+CONFIG_INET_ESP_OFFLOAD=m
+# CONFIG_INET_ESPINTCP is not set
+CONFIG_INET_IPCOMP=m
+CONFIG_INET_TABLE_PERTURB_ORDER=16
+CONFIG_INET_XFRM_TUNNEL=m
+CONFIG_INET_TUNNEL=m
+CONFIG_INET_DIAG=m
+CONFIG_INET_TCP_DIAG=m
+CONFIG_INET_UDP_DIAG=m
+CONFIG_INET_RAW_DIAG=m
+# CONFIG_INET_DIAG_DESTROY is not set
+CONFIG_TCP_CONG_ADVANCED=y
+CONFIG_TCP_CONG_BIC=m
+CONFIG_TCP_CONG_CUBIC=y
+CONFIG_TCP_CONG_WESTWOOD=m
+CONFIG_TCP_CONG_HTCP=m
+CONFIG_TCP_CONG_HSTCP=m
+CONFIG_TCP_CONG_HYBLA=m
+CONFIG_TCP_CONG_VEGAS=m
+CONFIG_TCP_CONG_NV=m
+CONFIG_TCP_CONG_SCALABLE=m
+CONFIG_TCP_CONG_LP=m
+CONFIG_TCP_CONG_VENO=m
+CONFIG_TCP_CONG_YEAH=m
+CONFIG_TCP_CONG_ILLINOIS=m
+CONFIG_TCP_CONG_DCTCP=m
+# CONFIG_TCP_CONG_CDG is not set
+CONFIG_TCP_CONG_BBR=m
+CONFIG_DEFAULT_CUBIC=y
+# CONFIG_DEFAULT_RENO is not set
+CONFIG_DEFAULT_TCP_CONG="cubic"
+CONFIG_TCP_MD5SIG=y
+CONFIG_IPV6=y
+CONFIG_IPV6_ROUTER_PREF=y
+CONFIG_IPV6_ROUTE_INFO=y
+CONFIG_IPV6_OPTIMISTIC_DAD=y
+CONFIG_INET6_AH=m
+CONFIG_INET6_ESP=m
+CONFIG_INET6_ESP_OFFLOAD=m
+# CONFIG_INET6_ESPINTCP is not set
+CONFIG_INET6_IPCOMP=m
+CONFIG_IPV6_MIP6=m
+# CONFIG_IPV6_ILA is not set
+CONFIG_INET6_XFRM_TUNNEL=m
+CONFIG_INET6_TUNNEL=m
+CONFIG_IPV6_VTI=m
+CONFIG_IPV6_SIT=m
+CONFIG_IPV6_SIT_6RD=y
+CONFIG_IPV6_NDISC_NODETYPE=y
+CONFIG_IPV6_TUNNEL=m
+CONFIG_IPV6_GRE=m
+CONFIG_IPV6_MULTIPLE_TABLES=y
+# CONFIG_IPV6_SUBTREES is not set
+CONFIG_IPV6_MROUTE=y
+CONFIG_IPV6_MROUTE_MULTIPLE_TABLES=y
+CONFIG_IPV6_PIMSM_V2=y
+# CONFIG_IPV6_SEG6_LWTUNNEL is not set
+# CONFIG_IPV6_SEG6_HMAC is not set
+# CONFIG_IPV6_RPL_LWTUNNEL is not set
+# CONFIG_IPV6_IOAM6_LWTUNNEL is not set
+CONFIG_NETLABEL=y
+# CONFIG_MPTCP is not set
+CONFIG_NETWORK_SECMARK=y
+CONFIG_NET_PTP_CLASSIFY=y
+CONFIG_NETWORK_PHY_TIMESTAMPING=y
+CONFIG_NETFILTER=y
+CONFIG_NETFILTER_ADVANCED=y
+CONFIG_BRIDGE_NETFILTER=m
+
+#
+# Core Netfilter Configuration
+#
+CONFIG_NETFILTER_INGRESS=y
+CONFIG_NETFILTER_EGRESS=y
+CONFIG_NETFILTER_SKIP_EGRESS=y
+CONFIG_NETFILTER_NETLINK=m
+CONFIG_NETFILTER_FAMILY_BRIDGE=y
+CONFIG_NETFILTER_FAMILY_ARP=y
+CONFIG_NETFILTER_BPF_LINK=y
+# CONFIG_NETFILTER_NETLINK_HOOK is not set
+# CONFIG_NETFILTER_NETLINK_ACCT is not set
+CONFIG_NETFILTER_NETLINK_QUEUE=m
+CONFIG_NETFILTER_NETLINK_LOG=m
+CONFIG_NETFILTER_NETLINK_OSF=m
+CONFIG_NF_CONNTRACK=m
+CONFIG_NF_LOG_SYSLOG=m
+CONFIG_NETFILTER_CONNCOUNT=m
+CONFIG_NF_CONNTRACK_MARK=y
+CONFIG_NF_CONNTRACK_SECMARK=y
+CONFIG_NF_CONNTRACK_ZONES=y
+CONFIG_NF_CONNTRACK_PROCFS=y
+CONFIG_NF_CONNTRACK_EVENTS=y
+CONFIG_NF_CONNTRACK_TIMEOUT=y
+CONFIG_NF_CONNTRACK_TIMESTAMP=y
+CONFIG_NF_CONNTRACK_LABELS=y
+CONFIG_NF_CONNTRACK_OVS=y
+CONFIG_NF_CT_PROTO_DCCP=y
+CONFIG_NF_CT_PROTO_GRE=y
+CONFIG_NF_CT_PROTO_SCTP=y
+CONFIG_NF_CT_PROTO_UDPLITE=y
+CONFIG_NF_CONNTRACK_AMANDA=m
+CONFIG_NF_CONNTRACK_FTP=m
+CONFIG_NF_CONNTRACK_H323=m
+CONFIG_NF_CONNTRACK_IRC=m
+CONFIG_NF_CONNTRACK_BROADCAST=m
+CONFIG_NF_CONNTRACK_NETBIOS_NS=m
+CONFIG_NF_CONNTRACK_SNMP=m
+CONFIG_NF_CONNTRACK_PPTP=m
+CONFIG_NF_CONNTRACK_SANE=m
+CONFIG_NF_CONNTRACK_SIP=m
+CONFIG_NF_CONNTRACK_TFTP=m
+CONFIG_NF_CT_NETLINK=m
+CONFIG_NF_CT_NETLINK_TIMEOUT=m
+CONFIG_NF_CT_NETLINK_HELPER=m
+CONFIG_NETFILTER_NETLINK_GLUE_CT=y
+CONFIG_NF_NAT=m
+CONFIG_NF_NAT_AMANDA=m
+CONFIG_NF_NAT_FTP=m
+CONFIG_NF_NAT_IRC=m
+CONFIG_NF_NAT_SIP=m
+CONFIG_NF_NAT_TFTP=m
+CONFIG_NF_NAT_REDIRECT=y
+CONFIG_NF_NAT_MASQUERADE=y
+CONFIG_NF_NAT_OVS=y
+CONFIG_NETFILTER_SYNPROXY=m
+CONFIG_NF_TABLES=m
+CONFIG_NF_TABLES_INET=y
+CONFIG_NF_TABLES_NETDEV=y
+CONFIG_NFT_NUMGEN=m
+CONFIG_NFT_CT=m
+CONFIG_NFT_CONNLIMIT=m
+CONFIG_NFT_LOG=m
+CONFIG_NFT_LIMIT=m
+CONFIG_NFT_MASQ=m
+CONFIG_NFT_REDIR=m
+CONFIG_NFT_NAT=m
+# CONFIG_NFT_TUNNEL is not set
+CONFIG_NFT_QUEUE=m
+CONFIG_NFT_QUOTA=m
+CONFIG_NFT_REJECT=m
+CONFIG_NFT_REJECT_INET=m
+CONFIG_NFT_COMPAT=m
+CONFIG_NFT_HASH=m
+CONFIG_NFT_FIB=m
+CONFIG_NFT_FIB_INET=m
+# CONFIG_NFT_XFRM is not set
+CONFIG_NFT_SOCKET=m
+# CONFIG_NFT_OSF is not set
+# CONFIG_NFT_TPROXY is not set
+# CONFIG_NFT_SYNPROXY is not set
+CONFIG_NF_DUP_NETDEV=m
+CONFIG_NFT_DUP_NETDEV=m
+CONFIG_NFT_FWD_NETDEV=m
+CONFIG_NFT_FIB_NETDEV=m
+# CONFIG_NFT_REJECT_NETDEV is not set
+# CONFIG_NF_FLOW_TABLE is not set
+CONFIG_NETFILTER_XTABLES=y
+# CONFIG_NETFILTER_XTABLES_COMPAT is not set
+
+#
+# Xtables combined modules
+#
+CONFIG_NETFILTER_XT_MARK=m
+CONFIG_NETFILTER_XT_CONNMARK=m
+
+#
+# Xtables targets
+#
+CONFIG_NETFILTER_XT_TARGET_AUDIT=m
+CONFIG_NETFILTER_XT_TARGET_CHECKSUM=m
+CONFIG_NETFILTER_XT_TARGET_CLASSIFY=m
+CONFIG_NETFILTER_XT_TARGET_CONNMARK=m
+CONFIG_NETFILTER_XT_TARGET_CONNSECMARK=m
+CONFIG_NETFILTER_XT_TARGET_CT=m
+CONFIG_NETFILTER_XT_TARGET_DSCP=m
+CONFIG_NETFILTER_XT_TARGET_HL=m
+CONFIG_NETFILTER_XT_TARGET_HMARK=m
+CONFIG_NETFILTER_XT_TARGET_IDLETIMER=m
+# CONFIG_NETFILTER_XT_TARGET_LED is not set
+CONFIG_NETFILTER_XT_TARGET_LOG=m
+CONFIG_NETFILTER_XT_TARGET_MARK=m
+CONFIG_NETFILTER_XT_NAT=m
+CONFIG_NETFILTER_XT_TARGET_NETMAP=m
+CONFIG_NETFILTER_XT_TARGET_NFLOG=m
+CONFIG_NETFILTER_XT_TARGET_NFQUEUE=m
+CONFIG_NETFILTER_XT_TARGET_NOTRACK=m
+CONFIG_NETFILTER_XT_TARGET_RATEEST=m
+CONFIG_NETFILTER_XT_TARGET_REDIRECT=m
+CONFIG_NETFILTER_XT_TARGET_MASQUERADE=m
+CONFIG_NETFILTER_XT_TARGET_TEE=m
+CONFIG_NETFILTER_XT_TARGET_TPROXY=m
+CONFIG_NETFILTER_XT_TARGET_TRACE=m
+CONFIG_NETFILTER_XT_TARGET_SECMARK=m
+CONFIG_NETFILTER_XT_TARGET_TCPMSS=m
+CONFIG_NETFILTER_XT_TARGET_TCPOPTSTRIP=m
+
+#
+# Xtables matches
+#
+CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=m
+CONFIG_NETFILTER_XT_MATCH_BPF=m
+CONFIG_NETFILTER_XT_MATCH_CGROUP=m
+CONFIG_NETFILTER_XT_MATCH_CLUSTER=m
+CONFIG_NETFILTER_XT_MATCH_COMMENT=m
+CONFIG_NETFILTER_XT_MATCH_CONNBYTES=m
+CONFIG_NETFILTER_XT_MATCH_CONNLABEL=m
+CONFIG_NETFILTER_XT_MATCH_CONNLIMIT=m
+CONFIG_NETFILTER_XT_MATCH_CONNMARK=m
+CONFIG_NETFILTER_XT_MATCH_CONNTRACK=m
+CONFIG_NETFILTER_XT_MATCH_CPU=m
+CONFIG_NETFILTER_XT_MATCH_DCCP=m
+CONFIG_NETFILTER_XT_MATCH_DEVGROUP=m
+CONFIG_NETFILTER_XT_MATCH_DSCP=m
+CONFIG_NETFILTER_XT_MATCH_ECN=m
+CONFIG_NETFILTER_XT_MATCH_ESP=m
+CONFIG_NETFILTER_XT_MATCH_HASHLIMIT=m
+CONFIG_NETFILTER_XT_MATCH_HELPER=m
+CONFIG_NETFILTER_XT_MATCH_HL=m
+# CONFIG_NETFILTER_XT_MATCH_IPCOMP is not set
+CONFIG_NETFILTER_XT_MATCH_IPRANGE=m
+CONFIG_NETFILTER_XT_MATCH_IPVS=m
+# CONFIG_NETFILTER_XT_MATCH_L2TP is not set
+CONFIG_NETFILTER_XT_MATCH_LENGTH=m
+CONFIG_NETFILTER_XT_MATCH_LIMIT=m
+CONFIG_NETFILTER_XT_MATCH_MAC=m
+CONFIG_NETFILTER_XT_MATCH_MARK=m
+CONFIG_NETFILTER_XT_MATCH_MULTIPORT=m
+# CONFIG_NETFILTER_XT_MATCH_NFACCT is not set
+CONFIG_NETFILTER_XT_MATCH_OSF=m
+CONFIG_NETFILTER_XT_MATCH_OWNER=m
+CONFIG_NETFILTER_XT_MATCH_POLICY=m
+CONFIG_NETFILTER_XT_MATCH_PHYSDEV=m
+CONFIG_NETFILTER_XT_MATCH_PKTTYPE=m
+CONFIG_NETFILTER_XT_MATCH_QUOTA=m
+CONFIG_NETFILTER_XT_MATCH_RATEEST=m
+CONFIG_NETFILTER_XT_MATCH_REALM=m
+CONFIG_NETFILTER_XT_MATCH_RECENT=m
+CONFIG_NETFILTER_XT_MATCH_SCTP=m
+CONFIG_NETFILTER_XT_MATCH_SOCKET=m
+CONFIG_NETFILTER_XT_MATCH_STATE=m
+CONFIG_NETFILTER_XT_MATCH_STATISTIC=m
+CONFIG_NETFILTER_XT_MATCH_STRING=m
+CONFIG_NETFILTER_XT_MATCH_TCPMSS=m
+# CONFIG_NETFILTER_XT_MATCH_TIME is not set
+# CONFIG_NETFILTER_XT_MATCH_U32 is not set
+# end of Core Netfilter Configuration
+
+# CONFIG_IP_SET is not set
+CONFIG_IP_VS=m
+CONFIG_IP_VS_IPV6=y
+# CONFIG_IP_VS_DEBUG is not set
+CONFIG_IP_VS_TAB_BITS=12
+
+#
+# IPVS transport protocol load balancing support
+#
+CONFIG_IP_VS_PROTO_TCP=y
+CONFIG_IP_VS_PROTO_UDP=y
+CONFIG_IP_VS_PROTO_AH_ESP=y
+CONFIG_IP_VS_PROTO_ESP=y
+CONFIG_IP_VS_PROTO_AH=y
+CONFIG_IP_VS_PROTO_SCTP=y
+
+#
+# IPVS scheduler
+#
+CONFIG_IP_VS_RR=m
+CONFIG_IP_VS_WRR=m
+CONFIG_IP_VS_LC=m
+CONFIG_IP_VS_WLC=m
+CONFIG_IP_VS_FO=m
+CONFIG_IP_VS_OVF=m
+CONFIG_IP_VS_LBLC=m
+CONFIG_IP_VS_LBLCR=m
+CONFIG_IP_VS_DH=m
+CONFIG_IP_VS_SH=m
+# CONFIG_IP_VS_MH is not set
+CONFIG_IP_VS_SED=m
+CONFIG_IP_VS_NQ=m
+# CONFIG_IP_VS_TWOS is not set
+
+#
+# IPVS SH scheduler
+#
+CONFIG_IP_VS_SH_TAB_BITS=8
+
+#
+# IPVS MH scheduler
+#
+CONFIG_IP_VS_MH_TAB_INDEX=12
+
+#
+# IPVS application helper
+#
+CONFIG_IP_VS_FTP=m
+CONFIG_IP_VS_NFCT=y
+CONFIG_IP_VS_PE_SIP=m
+
+#
+# IP: Netfilter Configuration
+#
+CONFIG_NF_DEFRAG_IPV4=m
+CONFIG_NF_SOCKET_IPV4=m
+CONFIG_NF_TPROXY_IPV4=m
+CONFIG_NF_TABLES_IPV4=y
+CONFIG_NFT_REJECT_IPV4=m
+CONFIG_NFT_DUP_IPV4=m
+CONFIG_NFT_FIB_IPV4=m
+CONFIG_NF_TABLES_ARP=y
+CONFIG_NF_DUP_IPV4=m
+CONFIG_NF_LOG_ARP=m
+CONFIG_NF_LOG_IPV4=m
+CONFIG_NF_REJECT_IPV4=m
+CONFIG_NF_NAT_SNMP_BASIC=m
+CONFIG_NF_NAT_PPTP=m
+CONFIG_NF_NAT_H323=m
+CONFIG_IP_NF_IPTABLES=m
+CONFIG_IP_NF_MATCH_AH=m
+CONFIG_IP_NF_MATCH_ECN=m
+CONFIG_IP_NF_MATCH_RPFILTER=m
+CONFIG_IP_NF_MATCH_TTL=m
+CONFIG_IP_NF_FILTER=m
+CONFIG_IP_NF_TARGET_REJECT=m
+CONFIG_IP_NF_TARGET_SYNPROXY=m
+CONFIG_IP_NF_NAT=m
+CONFIG_IP_NF_TARGET_MASQUERADE=m
+CONFIG_IP_NF_TARGET_NETMAP=m
+CONFIG_IP_NF_TARGET_REDIRECT=m
+CONFIG_IP_NF_MANGLE=m
+CONFIG_IP_NF_TARGET_ECN=m
+CONFIG_IP_NF_TARGET_TTL=m
+CONFIG_IP_NF_RAW=m
+CONFIG_IP_NF_SECURITY=m
+CONFIG_IP_NF_ARPTABLES=m
+CONFIG_IP_NF_ARPFILTER=m
+CONFIG_IP_NF_ARP_MANGLE=m
+# end of IP: Netfilter Configuration
+
+#
+# IPv6: Netfilter Configuration
+#
+CONFIG_NF_SOCKET_IPV6=m
+CONFIG_NF_TPROXY_IPV6=m
+CONFIG_NF_TABLES_IPV6=y
+CONFIG_NFT_REJECT_IPV6=m
+CONFIG_NFT_DUP_IPV6=m
+CONFIG_NFT_FIB_IPV6=m
+CONFIG_NF_DUP_IPV6=m
+CONFIG_NF_REJECT_IPV6=m
+CONFIG_NF_LOG_IPV6=m
+CONFIG_IP6_NF_IPTABLES=m
+CONFIG_IP6_NF_MATCH_AH=m
+CONFIG_IP6_NF_MATCH_EUI64=m
+CONFIG_IP6_NF_MATCH_FRAG=m
+CONFIG_IP6_NF_MATCH_OPTS=m
+CONFIG_IP6_NF_MATCH_HL=m
+CONFIG_IP6_NF_MATCH_IPV6HEADER=m
+CONFIG_IP6_NF_MATCH_MH=m
+CONFIG_IP6_NF_MATCH_RPFILTER=m
+CONFIG_IP6_NF_MATCH_RT=m
+# CONFIG_IP6_NF_MATCH_SRH is not set
+# CONFIG_IP6_NF_TARGET_HL is not set
+CONFIG_IP6_NF_FILTER=m
+CONFIG_IP6_NF_TARGET_REJECT=m
+CONFIG_IP6_NF_TARGET_SYNPROXY=m
+CONFIG_IP6_NF_MANGLE=m
+CONFIG_IP6_NF_RAW=m
+CONFIG_IP6_NF_SECURITY=m
+CONFIG_IP6_NF_NAT=m
+CONFIG_IP6_NF_TARGET_MASQUERADE=m
+CONFIG_IP6_NF_TARGET_NPT=m
+# end of IPv6: Netfilter Configuration
+
+CONFIG_NF_DEFRAG_IPV6=m
+CONFIG_NF_TABLES_BRIDGE=m
+# CONFIG_NFT_BRIDGE_META is not set
+CONFIG_NFT_BRIDGE_REJECT=m
+# CONFIG_NF_CONNTRACK_BRIDGE is not set
+CONFIG_BRIDGE_NF_EBTABLES=m
+CONFIG_BRIDGE_EBT_BROUTE=m
+CONFIG_BRIDGE_EBT_T_FILTER=m
+CONFIG_BRIDGE_EBT_T_NAT=m
+CONFIG_BRIDGE_EBT_802_3=m
+CONFIG_BRIDGE_EBT_AMONG=m
+CONFIG_BRIDGE_EBT_ARP=m
+CONFIG_BRIDGE_EBT_IP=m
+CONFIG_BRIDGE_EBT_IP6=m
+CONFIG_BRIDGE_EBT_LIMIT=m
+CONFIG_BRIDGE_EBT_MARK=m
+CONFIG_BRIDGE_EBT_PKTTYPE=m
+CONFIG_BRIDGE_EBT_STP=m
+CONFIG_BRIDGE_EBT_VLAN=m
+CONFIG_BRIDGE_EBT_ARPREPLY=m
+CONFIG_BRIDGE_EBT_DNAT=m
+CONFIG_BRIDGE_EBT_MARK_T=m
+CONFIG_BRIDGE_EBT_REDIRECT=m
+CONFIG_BRIDGE_EBT_SNAT=m
+CONFIG_BRIDGE_EBT_LOG=m
+CONFIG_BRIDGE_EBT_NFLOG=m
+# CONFIG_BPFILTER is not set
+# CONFIG_IP_DCCP is not set
+CONFIG_IP_SCTP=m
+# CONFIG_SCTP_DBG_OBJCNT is not set
+# CONFIG_SCTP_DEFAULT_COOKIE_HMAC_MD5 is not set
+CONFIG_SCTP_DEFAULT_COOKIE_HMAC_SHA1=y
+# CONFIG_SCTP_DEFAULT_COOKIE_HMAC_NONE is not set
+CONFIG_SCTP_COOKIE_HMAC_MD5=y
+CONFIG_SCTP_COOKIE_HMAC_SHA1=y
+CONFIG_INET_SCTP_DIAG=m
+# CONFIG_RDS is not set
+# CONFIG_TIPC is not set
+# CONFIG_ATM is not set
+# CONFIG_L2TP is not set
+CONFIG_STP=m
+CONFIG_GARP=m
+CONFIG_MRP=m
+CONFIG_BRIDGE=m
+CONFIG_BRIDGE_IGMP_SNOOPING=y
+CONFIG_BRIDGE_VLAN_FILTERING=y
+# CONFIG_BRIDGE_MRP is not set
+# CONFIG_BRIDGE_CFM is not set
+# CONFIG_NET_DSA is not set
+CONFIG_VLAN_8021Q=m
+CONFIG_VLAN_8021Q_GVRP=y
+CONFIG_VLAN_8021Q_MVRP=y
+CONFIG_LLC=m
+# CONFIG_LLC2 is not set
+# CONFIG_ATALK is not set
+# CONFIG_X25 is not set
+# CONFIG_LAPB is not set
+# CONFIG_PHONET is not set
+# CONFIG_6LOWPAN is not set
+# CONFIG_IEEE802154 is not set
+CONFIG_NET_SCHED=y
+
+#
+# Queueing/Scheduling
+#
+CONFIG_NET_SCH_HTB=m
+CONFIG_NET_SCH_HFSC=m
+CONFIG_NET_SCH_PRIO=m
+CONFIG_NET_SCH_MULTIQ=m
+CONFIG_NET_SCH_RED=m
+CONFIG_NET_SCH_SFB=m
+CONFIG_NET_SCH_SFQ=m
+CONFIG_NET_SCH_TEQL=m
+CONFIG_NET_SCH_TBF=m
+# CONFIG_NET_SCH_CBS is not set
+# CONFIG_NET_SCH_ETF is not set
+CONFIG_NET_SCH_MQPRIO_LIB=m
+# CONFIG_NET_SCH_TAPRIO is not set
+CONFIG_NET_SCH_GRED=m
+CONFIG_NET_SCH_NETEM=m
+CONFIG_NET_SCH_DRR=m
+CONFIG_NET_SCH_MQPRIO=m
+# CONFIG_NET_SCH_SKBPRIO is not set
+CONFIG_NET_SCH_CHOKE=m
+CONFIG_NET_SCH_QFQ=m
+CONFIG_NET_SCH_CODEL=m
+CONFIG_NET_SCH_FQ_CODEL=y
+# CONFIG_NET_SCH_CAKE is not set
+CONFIG_NET_SCH_FQ=m
+CONFIG_NET_SCH_HHF=m
+CONFIG_NET_SCH_PIE=m
+# CONFIG_NET_SCH_FQ_PIE is not set
+CONFIG_NET_SCH_INGRESS=m
+CONFIG_NET_SCH_PLUG=m
+# CONFIG_NET_SCH_ETS is not set
+CONFIG_NET_SCH_DEFAULT=y
+# CONFIG_DEFAULT_FQ is not set
+# CONFIG_DEFAULT_CODEL is not set
+CONFIG_DEFAULT_FQ_CODEL=y
+# CONFIG_DEFAULT_SFQ is not set
+# CONFIG_DEFAULT_PFIFO_FAST is not set
+CONFIG_DEFAULT_NET_SCH="fq_codel"
+
+#
+# Classification
+#
+CONFIG_NET_CLS=y
+CONFIG_NET_CLS_BASIC=m
+CONFIG_NET_CLS_ROUTE4=m
+CONFIG_NET_CLS_FW=m
+CONFIG_NET_CLS_U32=m
+CONFIG_CLS_U32_PERF=y
+CONFIG_CLS_U32_MARK=y
+CONFIG_NET_CLS_FLOW=m
+CONFIG_NET_CLS_CGROUP=y
+CONFIG_NET_CLS_BPF=m
+CONFIG_NET_CLS_FLOWER=m
+CONFIG_NET_CLS_MATCHALL=m
+CONFIG_NET_EMATCH=y
+CONFIG_NET_EMATCH_STACK=32
+CONFIG_NET_EMATCH_CMP=m
+CONFIG_NET_EMATCH_NBYTE=m
+CONFIG_NET_EMATCH_U32=m
+CONFIG_NET_EMATCH_META=m
+CONFIG_NET_EMATCH_TEXT=m
+# CONFIG_NET_EMATCH_CANID is not set
+# CONFIG_NET_EMATCH_IPT is not set
+CONFIG_NET_CLS_ACT=y
+CONFIG_NET_ACT_POLICE=m
+CONFIG_NET_ACT_GACT=m
+CONFIG_GACT_PROB=y
+CONFIG_NET_ACT_MIRRED=m
+CONFIG_NET_ACT_SAMPLE=m
+# CONFIG_NET_ACT_IPT is not set
+CONFIG_NET_ACT_NAT=m
+CONFIG_NET_ACT_PEDIT=m
+CONFIG_NET_ACT_SIMP=m
+CONFIG_NET_ACT_SKBEDIT=m
+CONFIG_NET_ACT_CSUM=m
+# CONFIG_NET_ACT_MPLS is not set
+CONFIG_NET_ACT_VLAN=m
+CONFIG_NET_ACT_BPF=m
+# CONFIG_NET_ACT_CONNMARK is not set
+# CONFIG_NET_ACT_CTINFO is not set
+CONFIG_NET_ACT_SKBMOD=m
+# CONFIG_NET_ACT_IFE is not set
+CONFIG_NET_ACT_TUNNEL_KEY=m
+# CONFIG_NET_ACT_GATE is not set
+# CONFIG_NET_TC_SKB_EXT is not set
+CONFIG_NET_SCH_FIFO=y
+CONFIG_DCB=y
+CONFIG_DNS_RESOLVER=m
+# CONFIG_BATMAN_ADV is not set
+CONFIG_OPENVSWITCH=m
+CONFIG_OPENVSWITCH_GRE=m
+CONFIG_VSOCKETS=m
+CONFIG_VSOCKETS_DIAG=m
+CONFIG_VSOCKETS_LOOPBACK=m
+CONFIG_VIRTIO_VSOCKETS=m
+CONFIG_VIRTIO_VSOCKETS_COMMON=m
+CONFIG_HYPERV_VSOCKETS=m
+CONFIG_NETLINK_DIAG=m
+CONFIG_MPLS=y
+CONFIG_NET_MPLS_GSO=y
+CONFIG_MPLS_ROUTING=m
+CONFIG_MPLS_IPTUNNEL=m
+CONFIG_NET_NSH=y
+# CONFIG_HSR is not set
+CONFIG_NET_SWITCHDEV=y
+CONFIG_NET_L3_MASTER_DEV=y
+# CONFIG_QRTR is not set
+# CONFIG_NET_NCSI is not set
+CONFIG_PCPU_DEV_REFCNT=y
+CONFIG_MAX_SKB_FRAGS=17
+CONFIG_RPS=y
+CONFIG_RFS_ACCEL=y
+CONFIG_SOCK_RX_QUEUE_MAPPING=y
+CONFIG_XPS=y
+CONFIG_CGROUP_NET_PRIO=y
+CONFIG_CGROUP_NET_CLASSID=y
+CONFIG_NET_RX_BUSY_POLL=y
+CONFIG_BQL=y
+CONFIG_BPF_STREAM_PARSER=y
+CONFIG_NET_FLOW_LIMIT=y
+
+#
+# Network testing
+#
+CONFIG_NET_PKTGEN=m
+CONFIG_NET_DROP_MONITOR=y
+# end of Network testing
+# end of Networking options
+
+# CONFIG_HAMRADIO is not set
+CONFIG_CAN=m
+CONFIG_CAN_RAW=m
+CONFIG_CAN_BCM=m
+CONFIG_CAN_GW=m
+# CONFIG_CAN_J1939 is not set
+# CONFIG_CAN_ISOTP is not set
+# CONFIG_BT is not set
+# CONFIG_AF_RXRPC is not set
+# CONFIG_AF_KCM is not set
+CONFIG_STREAM_PARSER=y
+# CONFIG_MCTP is not set
+CONFIG_FIB_RULES=y
+CONFIG_WIRELESS=y
+CONFIG_CFG80211=m
+# CONFIG_NL80211_TESTMODE is not set
+# CONFIG_CFG80211_DEVELOPER_WARNINGS is not set
+# CONFIG_CFG80211_CERTIFICATION_ONUS is not set
+CONFIG_CFG80211_REQUIRE_SIGNED_REGDB=y
+CONFIG_CFG80211_USE_KERNEL_REGDB_KEYS=y
+CONFIG_CFG80211_DEFAULT_PS=y
+# CONFIG_CFG80211_DEBUGFS is not set
+CONFIG_CFG80211_CRDA_SUPPORT=y
+# CONFIG_CFG80211_WEXT is not set
+CONFIG_MAC80211=m
+CONFIG_MAC80211_HAS_RC=y
+CONFIG_MAC80211_RC_MINSTREL=y
+CONFIG_MAC80211_RC_DEFAULT_MINSTREL=y
+CONFIG_MAC80211_RC_DEFAULT="minstrel_ht"
+# CONFIG_MAC80211_MESH is not set
+CONFIG_MAC80211_LEDS=y
+CONFIG_MAC80211_DEBUGFS=y
+# CONFIG_MAC80211_MESSAGE_TRACING is not set
+# CONFIG_MAC80211_DEBUG_MENU is not set
+CONFIG_MAC80211_STA_HASH_MAX_SIZE=0
+CONFIG_RFKILL=m
+CONFIG_RFKILL_LEDS=y
+CONFIG_RFKILL_INPUT=y
+# CONFIG_RFKILL_GPIO is not set
+CONFIG_NET_9P=y
+CONFIG_NET_9P_FD=y
+CONFIG_NET_9P_VIRTIO=y
+# CONFIG_NET_9P_DEBUG is not set
+# CONFIG_CAIF is not set
+CONFIG_CEPH_LIB=m
+# CONFIG_CEPH_LIB_PRETTYDEBUG is not set
+CONFIG_CEPH_LIB_USE_DNS_RESOLVER=y
+# CONFIG_NFC is not set
+CONFIG_PSAMPLE=m
+# CONFIG_NET_IFE is not set
+CONFIG_LWTUNNEL=y
+CONFIG_LWTUNNEL_BPF=y
+CONFIG_DST_CACHE=y
+CONFIG_GRO_CELLS=y
+CONFIG_SOCK_VALIDATE_XMIT=y
+CONFIG_NET_SELFTESTS=y
+CONFIG_NET_SOCK_MSG=y
+CONFIG_PAGE_POOL=y
+CONFIG_PAGE_POOL_STATS=y
+CONFIG_FAILOVER=m
+CONFIG_ETHTOOL_NETLINK=y
+
+#
+# Device Drivers
+#
+CONFIG_HAVE_EISA=y
+# CONFIG_EISA is not set
+CONFIG_HAVE_PCI=y
+CONFIG_PCI=y
+CONFIG_PCI_DOMAINS=y
+CONFIG_PCIEPORTBUS=y
+CONFIG_HOTPLUG_PCI_PCIE=y
+CONFIG_PCIEAER=y
+CONFIG_PCIEAER_INJECT=m
+CONFIG_PCIE_ECRC=y
+CONFIG_PCIEASPM=y
+CONFIG_PCIEASPM_DEFAULT=y
+# CONFIG_PCIEASPM_POWERSAVE is not set
+# CONFIG_PCIEASPM_POWER_SUPERSAVE is not set
+# CONFIG_PCIEASPM_PERFORMANCE is not set
+CONFIG_PCIE_PME=y
+CONFIG_PCIE_DPC=y
+# CONFIG_PCIE_PTM is not set
+# CONFIG_PCIE_EDR is not set
+CONFIG_PCI_MSI=y
+CONFIG_PCI_QUIRKS=y
+# CONFIG_PCI_DEBUG is not set
+# CONFIG_PCI_REALLOC_ENABLE_AUTO is not set
+CONFIG_PCI_STUB=y
+CONFIG_PCI_PF_STUB=m
+CONFIG_PCI_ATS=y
+CONFIG_PCI_LOCKLESS_CONFIG=y
+CONFIG_PCI_IOV=y
+CONFIG_PCI_PRI=y
+CONFIG_PCI_PASID=y
+# CONFIG_PCI_P2PDMA is not set
+CONFIG_PCI_LABEL=y
+CONFIG_PCI_HYPERV=m
+# CONFIG_PCIE_BUS_TUNE_OFF is not set
+CONFIG_PCIE_BUS_DEFAULT=y
+# CONFIG_PCIE_BUS_SAFE is not set
+# CONFIG_PCIE_BUS_PERFORMANCE is not set
+# CONFIG_PCIE_BUS_PEER2PEER is not set
+CONFIG_VGA_ARB=y
+CONFIG_VGA_ARB_MAX_GPUS=64
+CONFIG_HOTPLUG_PCI=y
+CONFIG_HOTPLUG_PCI_ACPI=y
+CONFIG_HOTPLUG_PCI_ACPI_IBM=m
+# CONFIG_HOTPLUG_PCI_CPCI is not set
+CONFIG_HOTPLUG_PCI_SHPC=y
+
+#
+# PCI controller drivers
+#
+CONFIG_VMD=y
+CONFIG_PCI_HYPERV_INTERFACE=m
+
+#
+# Cadence-based PCIe controllers
+#
+# end of Cadence-based PCIe controllers
+
+#
+# DesignWare-based PCIe controllers
+#
+# CONFIG_PCI_MESON is not set
+# CONFIG_PCIE_DW_PLAT_HOST is not set
+# end of DesignWare-based PCIe controllers
+
+#
+# Mobiveil-based PCIe controllers
+#
+# end of Mobiveil-based PCIe controllers
+# end of PCI controller drivers
+
+#
+# PCI Endpoint
+#
+# CONFIG_PCI_ENDPOINT is not set
+# end of PCI Endpoint
+
+#
+# PCI switch controller drivers
+#
+# CONFIG_PCI_SW_SWITCHTEC is not set
+# end of PCI switch controller drivers
+
+# CONFIG_CXL_BUS is not set
+# CONFIG_PCCARD is not set
+# CONFIG_RAPIDIO is not set
+
+#
+# Generic Driver Options
+#
+CONFIG_AUXILIARY_BUS=y
+# CONFIG_UEVENT_HELPER is not set
+CONFIG_DEVTMPFS=y
+CONFIG_DEVTMPFS_MOUNT=y
+# CONFIG_DEVTMPFS_SAFE is not set
+CONFIG_STANDALONE=y
+CONFIG_PREVENT_FIRMWARE_BUILD=y
+
+#
+# Firmware loader
+#
+CONFIG_FW_LOADER=y
+CONFIG_FW_LOADER_DEBUG=y
+CONFIG_FW_LOADER_PAGED_BUF=y
+CONFIG_FW_LOADER_SYSFS=y
+CONFIG_EXTRA_FIRMWARE=""
+CONFIG_FW_LOADER_USER_HELPER=y
+# CONFIG_FW_LOADER_USER_HELPER_FALLBACK is not set
+# CONFIG_FW_LOADER_COMPRESS is not set
+CONFIG_FW_CACHE=y
+# CONFIG_FW_UPLOAD is not set
+# end of Firmware loader
+
+CONFIG_ALLOW_DEV_COREDUMP=y
+# CONFIG_DEBUG_DRIVER is not set
+# CONFIG_DEBUG_DEVRES is not set
+# CONFIG_DEBUG_TEST_DRIVER_REMOVE is not set
+CONFIG_HMEM_REPORTING=y
+# CONFIG_TEST_ASYNC_DRIVER_PROBE is not set
+CONFIG_GENERIC_CPU_AUTOPROBE=y
+CONFIG_GENERIC_CPU_VULNERABILITIES=y
+CONFIG_REGMAP=y
+CONFIG_REGMAP_I2C=m
+CONFIG_REGMAP_SPI=m
+CONFIG_DMA_SHARED_BUFFER=y
+# CONFIG_DMA_FENCE_TRACE is not set
+# CONFIG_FW_DEVLINK_SYNC_STATE_TIMEOUT is not set
+# end of Generic Driver Options
+
+#
+# Bus devices
+#
+# CONFIG_MHI_BUS is not set
+# CONFIG_MHI_BUS_EP is not set
+# end of Bus devices
+
+CONFIG_CONNECTOR=y
+CONFIG_PROC_EVENTS=y
+
+#
+# Firmware Drivers
+#
+
+#
+# ARM System Control and Management Interface Protocol
+#
+# end of ARM System Control and Management Interface Protocol
+
+CONFIG_EDD=m
+# CONFIG_EDD_OFF is not set
+CONFIG_FIRMWARE_MEMMAP=y
+CONFIG_DMIID=y
+CONFIG_DMI_SYSFS=y
+CONFIG_DMI_SCAN_MACHINE_NON_EFI_FALLBACK=y
+# CONFIG_ISCSI_IBFT is not set
+CONFIG_FW_CFG_SYSFS=y
+# CONFIG_FW_CFG_SYSFS_CMDLINE is not set
+CONFIG_SYSFB=y
+# CONFIG_SYSFB_SIMPLEFB is not set
+# CONFIG_GOOGLE_FIRMWARE is not set
+
+#
+# EFI (Extensible Firmware Interface) Support
+#
+CONFIG_EFI_ESRT=y
+CONFIG_EFI_VARS_PSTORE=y
+CONFIG_EFI_VARS_PSTORE_DEFAULT_DISABLE=y
+CONFIG_EFI_SOFT_RESERVE=y
+CONFIG_EFI_DXE_MEM_ATTRIBUTES=y
+CONFIG_EFI_RUNTIME_WRAPPERS=y
+# CONFIG_EFI_BOOTLOADER_CONTROL is not set
+# CONFIG_EFI_CAPSULE_LOADER is not set
+# CONFIG_EFI_TEST is not set
+# CONFIG_APPLE_PROPERTIES is not set
+# CONFIG_RESET_ATTACK_MITIGATION is not set
+# CONFIG_EFI_RCI2_TABLE is not set
+# CONFIG_EFI_DISABLE_PCI_DMA is not set
+CONFIG_EFI_EARLYCON=y
+CONFIG_EFI_CUSTOM_SSDT_OVERLAYS=y
+# CONFIG_EFI_DISABLE_RUNTIME is not set
+# CONFIG_EFI_COCO_SECRET is not set
+# end of EFI (Extensible Firmware Interface) Support
+
+CONFIG_UEFI_CPER=y
+CONFIG_UEFI_CPER_X86=y
+
+#
+# Tegra firmware driver
+#
+# end of Tegra firmware driver
+# end of Firmware Drivers
+
+# CONFIG_GNSS is not set
+# CONFIG_MTD is not set
+# CONFIG_OF is not set
+CONFIG_ARCH_MIGHT_HAVE_PC_PARPORT=y
+CONFIG_PARPORT=m
+CONFIG_PARPORT_PC=m
+CONFIG_PARPORT_SERIAL=m
+# CONFIG_PARPORT_PC_FIFO is not set
+# CONFIG_PARPORT_PC_SUPERIO is not set
+CONFIG_PARPORT_1284=y
+CONFIG_PNP=y
+# CONFIG_PNP_DEBUG_MESSAGES is not set
+
+#
+# Protocols
+#
+CONFIG_PNPACPI=y
+CONFIG_BLK_DEV=y
+CONFIG_BLK_DEV_NULL_BLK=m
+# CONFIG_BLK_DEV_FD is not set
+CONFIG_CDROM=m
+# CONFIG_BLK_DEV_PCIESSD_MTIP32XX is not set
+CONFIG_ZRAM=m
+CONFIG_ZRAM_DEF_COMP_LZORLE=y
+# CONFIG_ZRAM_DEF_COMP_LZO is not set
+CONFIG_ZRAM_DEF_COMP="lzo-rle"
+CONFIG_ZRAM_WRITEBACK=y
+# CONFIG_ZRAM_MEMORY_TRACKING is not set
+# CONFIG_ZRAM_MULTI_COMP is not set
+CONFIG_BLK_DEV_LOOP=m
+CONFIG_BLK_DEV_LOOP_MIN_COUNT=0
+# CONFIG_BLK_DEV_DRBD is not set
+CONFIG_BLK_DEV_NBD=m
+CONFIG_BLK_DEV_RAM=m
+CONFIG_BLK_DEV_RAM_COUNT=16
+CONFIG_BLK_DEV_RAM_SIZE=16384
+CONFIG_CDROM_PKTCDVD=m
+CONFIG_CDROM_PKTCDVD_BUFFERS=8
+# CONFIG_CDROM_PKTCDVD_WCACHE is not set
+# CONFIG_ATA_OVER_ETH is not set
+CONFIG_VIRTIO_BLK=m
+CONFIG_BLK_DEV_RBD=m
+# CONFIG_BLK_DEV_UBLK is not set
+
+#
+# NVME Support
+#
+CONFIG_NVME_CORE=m
+CONFIG_BLK_DEV_NVME=m
+CONFIG_NVME_MULTIPATH=y
+# CONFIG_NVME_VERBOSE_ERRORS is not set
+# CONFIG_NVME_HWMON is not set
+# CONFIG_NVME_FC is not set
+# CONFIG_NVME_TCP is not set
+# CONFIG_NVME_AUTH is not set
+# CONFIG_NVME_TARGET is not set
+# end of NVME Support
+
+#
+# Misc devices
+#
+# CONFIG_AD525X_DPOT is not set
+# CONFIG_DUMMY_IRQ is not set
+# CONFIG_IBM_ASM is not set
+# CONFIG_PHANTOM is not set
+CONFIG_TIFM_CORE=m
+CONFIG_TIFM_7XX1=m
+# CONFIG_ICS932S401 is not set
+CONFIG_ENCLOSURE_SERVICES=m
+# CONFIG_SGI_XP is not set
+CONFIG_HP_ILO=m
+# CONFIG_SGI_GRU is not set
+CONFIG_APDS9802ALS=m
+CONFIG_ISL29003=m
+CONFIG_ISL29020=m
+CONFIG_SENSORS_TSL2550=m
+CONFIG_SENSORS_BH1770=m
+CONFIG_SENSORS_APDS990X=m
+# CONFIG_HMC6352 is not set
+# CONFIG_DS1682 is not set
+# CONFIG_LATTICE_ECP3_CONFIG is not set
+# CONFIG_SRAM is not set
+# CONFIG_DW_XDATA_PCIE is not set
+# CONFIG_PCI_ENDPOINT_TEST is not set
+# CONFIG_XILINX_SDFEC is not set
+# CONFIG_C2PORT is not set
+
+#
+# EEPROM support
+#
+# CONFIG_EEPROM_AT24 is not set
+# CONFIG_EEPROM_AT25 is not set
+CONFIG_EEPROM_LEGACY=m
+CONFIG_EEPROM_MAX6875=m
+CONFIG_EEPROM_93CX6=m
+# CONFIG_EEPROM_93XX46 is not set
+# CONFIG_EEPROM_IDT_89HPESX is not set
+# CONFIG_EEPROM_EE1004 is not set
+# end of EEPROM support
+
+# CONFIG_CB710_CORE is not set
+
+#
+# Texas Instruments shared transport line discipline
+#
+# CONFIG_TI_ST is not set
+# end of Texas Instruments shared transport line discipline
+
+# CONFIG_SENSORS_LIS3_I2C is not set
+# CONFIG_ALTERA_STAPL is not set
+CONFIG_INTEL_MEI=m
+CONFIG_INTEL_MEI_ME=m
+# CONFIG_INTEL_MEI_TXE is not set
+# CONFIG_INTEL_MEI_GSC is not set
+# CONFIG_INTEL_MEI_HDCP is not set
+# CONFIG_INTEL_MEI_PXP is not set
+# CONFIG_VMWARE_VMCI is not set
+# CONFIG_GENWQE is not set
+# CONFIG_ECHO is not set
+# CONFIG_BCM_VK is not set
+# CONFIG_MISC_ALCOR_PCI is not set
+# CONFIG_MISC_RTSX_PCI is not set
+# CONFIG_MISC_RTSX_USB is not set
+# CONFIG_UACCE is not set
+CONFIG_PVPANIC=y
+# CONFIG_PVPANIC_MMIO is not set
+# CONFIG_PVPANIC_PCI is not set
+# CONFIG_GP_PCI1XXXX is not set
+# end of Misc devices
+
+#
+# SCSI device support
+#
+CONFIG_SCSI_MOD=y
+CONFIG_RAID_ATTRS=m
+CONFIG_SCSI_COMMON=y
+CONFIG_SCSI=y
+CONFIG_SCSI_DMA=y
+CONFIG_SCSI_NETLINK=y
+CONFIG_SCSI_PROC_FS=y
+
+#
+# SCSI support type (disk, tape, CD-ROM)
+#
+CONFIG_BLK_DEV_SD=m
+CONFIG_CHR_DEV_ST=m
+CONFIG_BLK_DEV_SR=m
+CONFIG_CHR_DEV_SG=m
+CONFIG_BLK_DEV_BSG=y
+CONFIG_CHR_DEV_SCH=m
+CONFIG_SCSI_ENCLOSURE=m
+CONFIG_SCSI_CONSTANTS=y
+CONFIG_SCSI_LOGGING=y
+CONFIG_SCSI_SCAN_ASYNC=y
+
+#
+# SCSI Transports
+#
+CONFIG_SCSI_SPI_ATTRS=m
+CONFIG_SCSI_FC_ATTRS=m
+CONFIG_SCSI_ISCSI_ATTRS=m
+CONFIG_SCSI_SAS_ATTRS=m
+CONFIG_SCSI_SAS_LIBSAS=m
+CONFIG_SCSI_SAS_ATA=y
+CONFIG_SCSI_SAS_HOST_SMP=y
+CONFIG_SCSI_SRP_ATTRS=m
+# end of SCSI Transports
+
+CONFIG_SCSI_LOWLEVEL=y
+# CONFIG_ISCSI_TCP is not set
+# CONFIG_ISCSI_BOOT_SYSFS is not set
+# CONFIG_SCSI_CXGB3_ISCSI is not set
+# CONFIG_SCSI_CXGB4_ISCSI is not set
+# CONFIG_SCSI_BNX2_ISCSI is not set
+# CONFIG_BE2ISCSI is not set
+# CONFIG_BLK_DEV_3W_XXXX_RAID is not set
+# CONFIG_SCSI_HPSA is not set
+# CONFIG_SCSI_3W_9XXX is not set
+# CONFIG_SCSI_3W_SAS is not set
+# CONFIG_SCSI_ACARD is not set
+# CONFIG_SCSI_AACRAID is not set
+# CONFIG_SCSI_AIC7XXX is not set
+# CONFIG_SCSI_AIC79XX is not set
+# CONFIG_SCSI_AIC94XX is not set
+# CONFIG_SCSI_MVSAS is not set
+# CONFIG_SCSI_MVUMI is not set
+# CONFIG_SCSI_ADVANSYS is not set
+# CONFIG_SCSI_ARCMSR is not set
+# CONFIG_SCSI_ESAS2R is not set
+CONFIG_MEGARAID_NEWGEN=y
+CONFIG_MEGARAID_MM=m
+CONFIG_MEGARAID_MAILBOX=m
+CONFIG_MEGARAID_LEGACY=m
+CONFIG_MEGARAID_SAS=m
+CONFIG_SCSI_MPT3SAS=m
+CONFIG_SCSI_MPT2SAS_MAX_SGE=128
+CONFIG_SCSI_MPT3SAS_MAX_SGE=128
+# CONFIG_SCSI_MPT2SAS is not set
+# CONFIG_SCSI_MPI3MR is not set
+# CONFIG_SCSI_SMARTPQI is not set
+# CONFIG_SCSI_HPTIOP is not set
+# CONFIG_SCSI_BUSLOGIC is not set
+# CONFIG_SCSI_MYRB is not set
+# CONFIG_SCSI_MYRS is not set
+# CONFIG_VMWARE_PVSCSI is not set
+CONFIG_HYPERV_STORAGE=m
+# CONFIG_LIBFC is not set
+# CONFIG_SCSI_SNIC is not set
+# CONFIG_SCSI_DMX3191D is not set
+# CONFIG_SCSI_FDOMAIN_PCI is not set
+CONFIG_SCSI_ISCI=m
+# CONFIG_SCSI_IPS is not set
+# CONFIG_SCSI_INITIO is not set
+# CONFIG_SCSI_INIA100 is not set
+# CONFIG_SCSI_PPA is not set
+# CONFIG_SCSI_IMM is not set
+# CONFIG_SCSI_STEX is not set
+# CONFIG_SCSI_SYM53C8XX_2 is not set
+# CONFIG_SCSI_IPR is not set
+# CONFIG_SCSI_QLOGIC_1280 is not set
+# CONFIG_SCSI_QLA_FC is not set
+# CONFIG_SCSI_QLA_ISCSI is not set
+# CONFIG_SCSI_LPFC is not set
+# CONFIG_SCSI_DC395x is not set
+# CONFIG_SCSI_AM53C974 is not set
+# CONFIG_SCSI_WD719X is not set
+CONFIG_SCSI_DEBUG=m
+# CONFIG_SCSI_PMCRAID is not set
+# CONFIG_SCSI_PM8001 is not set
+# CONFIG_SCSI_BFA_FC is not set
+# CONFIG_SCSI_VIRTIO is not set
+# CONFIG_SCSI_CHELSIO_FCOE is not set
+CONFIG_SCSI_DH=y
+CONFIG_SCSI_DH_RDAC=y
+CONFIG_SCSI_DH_HP_SW=y
+CONFIG_SCSI_DH_EMC=y
+CONFIG_SCSI_DH_ALUA=y
+# end of SCSI device support
+
+CONFIG_ATA=m
+CONFIG_SATA_HOST=y
+CONFIG_PATA_TIMINGS=y
+CONFIG_ATA_VERBOSE_ERROR=y
+CONFIG_ATA_FORCE=y
+CONFIG_ATA_ACPI=y
+# CONFIG_SATA_ZPODD is not set
+CONFIG_SATA_PMP=y
+
+#
+# Controllers with non-SFF native interface
+#
+CONFIG_SATA_AHCI=m
+CONFIG_SATA_MOBILE_LPM_POLICY=0
+CONFIG_SATA_AHCI_PLATFORM=m
+# CONFIG_AHCI_DWC is not set
+# CONFIG_SATA_INIC162X is not set
+# CONFIG_SATA_ACARD_AHCI is not set
+# CONFIG_SATA_SIL24 is not set
+CONFIG_ATA_SFF=y
+
+#
+# SFF controllers with custom DMA interface
+#
+# CONFIG_PDC_ADMA is not set
+# CONFIG_SATA_QSTOR is not set
+# CONFIG_SATA_SX4 is not set
+CONFIG_ATA_BMDMA=y
+
+#
+# SATA SFF controllers with BMDMA
+#
+CONFIG_ATA_PIIX=m
+# CONFIG_SATA_DWC is not set
+# CONFIG_SATA_MV is not set
+# CONFIG_SATA_NV is not set
+# CONFIG_SATA_PROMISE is not set
+# CONFIG_SATA_SIL is not set
+# CONFIG_SATA_SIS is not set
+# CONFIG_SATA_SVW is not set
+# CONFIG_SATA_ULI is not set
+# CONFIG_SATA_VIA is not set
+# CONFIG_SATA_VITESSE is not set
+
+#
+# PATA SFF controllers with BMDMA
+#
+# CONFIG_PATA_ALI is not set
+# CONFIG_PATA_AMD is not set
+# CONFIG_PATA_ARTOP is not set
+# CONFIG_PATA_ATIIXP is not set
+# CONFIG_PATA_ATP867X is not set
+# CONFIG_PATA_CMD64X is not set
+# CONFIG_PATA_CYPRESS is not set
+# CONFIG_PATA_EFAR is not set
+# CONFIG_PATA_HPT366 is not set
+# CONFIG_PATA_HPT37X is not set
+# CONFIG_PATA_HPT3X2N is not set
+# CONFIG_PATA_HPT3X3 is not set
+# CONFIG_PATA_IT8213 is not set
+# CONFIG_PATA_IT821X is not set
+# CONFIG_PATA_JMICRON is not set
+# CONFIG_PATA_MARVELL is not set
+# CONFIG_PATA_NETCELL is not set
+# CONFIG_PATA_NINJA32 is not set
+# CONFIG_PATA_NS87415 is not set
+# CONFIG_PATA_OLDPIIX is not set
+# CONFIG_PATA_OPTIDMA is not set
+# CONFIG_PATA_PDC2027X is not set
+# CONFIG_PATA_PDC_OLD is not set
+# CONFIG_PATA_RADISYS is not set
+# CONFIG_PATA_RDC is not set
+# CONFIG_PATA_SCH is not set
+# CONFIG_PATA_SERVERWORKS is not set
+# CONFIG_PATA_SIL680 is not set
+# CONFIG_PATA_SIS is not set
+# CONFIG_PATA_TOSHIBA is not set
+# CONFIG_PATA_TRIFLEX is not set
+# CONFIG_PATA_VIA is not set
+# CONFIG_PATA_WINBOND is not set
+
+#
+# PIO-only SFF controllers
+#
+# CONFIG_PATA_CMD640_PCI is not set
+# CONFIG_PATA_MPIIX is not set
+# CONFIG_PATA_NS87410 is not set
+# CONFIG_PATA_OPTI is not set
+# CONFIG_PATA_RZ1000 is not set
+# CONFIG_PATA_PARPORT is not set
+
+#
+# Generic fallback / legacy drivers
+#
+# CONFIG_PATA_ACPI is not set
+CONFIG_ATA_GENERIC=m
+# CONFIG_PATA_LEGACY is not set
+CONFIG_MD=y
+CONFIG_BLK_DEV_MD=y
+CONFIG_MD_AUTODETECT=y
+CONFIG_MD_LINEAR=m
+CONFIG_MD_RAID0=m
+CONFIG_MD_RAID1=m
+CONFIG_MD_RAID10=m
+CONFIG_MD_RAID456=m
+# CONFIG_MD_MULTIPATH is not set
+CONFIG_MD_FAULTY=m
+# CONFIG_BCACHE is not set
+CONFIG_BLK_DEV_DM_BUILTIN=y
+CONFIG_BLK_DEV_DM=m
+CONFIG_DM_DEBUG=y
+CONFIG_DM_BUFIO=m
+# CONFIG_DM_DEBUG_BLOCK_MANAGER_LOCKING is not set
+CONFIG_DM_BIO_PRISON=m
+CONFIG_DM_PERSISTENT_DATA=m
+# CONFIG_DM_UNSTRIPED is not set
+CONFIG_DM_CRYPT=m
+CONFIG_DM_SNAPSHOT=m
+CONFIG_DM_THIN_PROVISIONING=m
+CONFIG_DM_CACHE=m
+CONFIG_DM_CACHE_SMQ=m
+CONFIG_DM_WRITECACHE=m
+# CONFIG_DM_EBS is not set
+CONFIG_DM_ERA=m
+# CONFIG_DM_CLONE is not set
+CONFIG_DM_MIRROR=m
+CONFIG_DM_LOG_USERSPACE=m
+CONFIG_DM_RAID=m
+CONFIG_DM_ZERO=m
+CONFIG_DM_MULTIPATH=m
+CONFIG_DM_MULTIPATH_QL=m
+CONFIG_DM_MULTIPATH_ST=m
+# CONFIG_DM_MULTIPATH_HST is not set
+# CONFIG_DM_MULTIPATH_IOA is not set
+CONFIG_DM_DELAY=m
+# CONFIG_DM_DUST is not set
+CONFIG_DM_UEVENT=y
+CONFIG_DM_FLAKEY=m
+CONFIG_DM_VERITY=m
+# CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG is not set
+# CONFIG_DM_VERITY_FEC is not set
+CONFIG_DM_SWITCH=m
+CONFIG_DM_LOG_WRITES=m
+CONFIG_DM_INTEGRITY=m
+CONFIG_DM_AUDIT=y
+# CONFIG_TARGET_CORE is not set
+# CONFIG_FUSION is not set
+
+#
+# IEEE 1394 (FireWire) support
+#
+CONFIG_FIREWIRE=m
+CONFIG_FIREWIRE_OHCI=m
+CONFIG_FIREWIRE_SBP2=m
+CONFIG_FIREWIRE_NET=m
+# CONFIG_FIREWIRE_NOSY is not set
+# end of IEEE 1394 (FireWire) support
+
+CONFIG_MACINTOSH_DRIVERS=y
+CONFIG_MAC_EMUMOUSEBTN=y
+CONFIG_NETDEVICES=y
+CONFIG_MII=y
+CONFIG_NET_CORE=y
+# CONFIG_BONDING is not set
+CONFIG_DUMMY=m
+# CONFIG_WIREGUARD is not set
+# CONFIG_EQUALIZER is not set
+# CONFIG_NET_FC is not set
+# CONFIG_IFB is not set
+# CONFIG_NET_TEAM is not set
+# CONFIG_MACVLAN is not set
+# CONFIG_IPVLAN is not set
+# CONFIG_VXLAN is not set
+# CONFIG_GENEVE is not set
+# CONFIG_BAREUDP is not set
+# CONFIG_GTP is not set
+# CONFIG_AMT is not set
+# CONFIG_MACSEC is not set
+CONFIG_NETCONSOLE=m
+CONFIG_NETCONSOLE_DYNAMIC=y
+CONFIG_NETPOLL=y
+CONFIG_NET_POLL_CONTROLLER=y
+CONFIG_TUN=m
+# CONFIG_TUN_VNET_CROSS_LE is not set
+CONFIG_VETH=m
+CONFIG_VIRTIO_NET=m
+# CONFIG_NLMON is not set
+# CONFIG_NET_VRF is not set
+# CONFIG_VSOCKMON is not set
+# CONFIG_ARCNET is not set
+CONFIG_ETHERNET=y
+CONFIG_MDIO=y
+# CONFIG_NET_VENDOR_3COM is not set
+CONFIG_NET_VENDOR_ADAPTEC=y
+# CONFIG_ADAPTEC_STARFIRE is not set
+CONFIG_NET_VENDOR_AGERE=y
+# CONFIG_ET131X is not set
+CONFIG_NET_VENDOR_ALACRITECH=y
+# CONFIG_SLICOSS is not set
+CONFIG_NET_VENDOR_ALTEON=y
+# CONFIG_ACENIC is not set
+# CONFIG_ALTERA_TSE is not set
+CONFIG_NET_VENDOR_AMAZON=y
+# CONFIG_ENA_ETHERNET is not set
+# CONFIG_NET_VENDOR_AMD is not set
+CONFIG_NET_VENDOR_AQUANTIA=y
+# CONFIG_AQTION is not set
+CONFIG_NET_VENDOR_ARC=y
+CONFIG_NET_VENDOR_ASIX=y
+# CONFIG_SPI_AX88796C is not set
+CONFIG_NET_VENDOR_ATHEROS=y
+# CONFIG_ATL2 is not set
+# CONFIG_ATL1 is not set
+# CONFIG_ATL1E is not set
+# CONFIG_ATL1C is not set
+# CONFIG_ALX is not set
+# CONFIG_CX_ECAT is not set
+CONFIG_NET_VENDOR_BROADCOM=y
+# CONFIG_B44 is not set
+# CONFIG_BCMGENET is not set
+# CONFIG_BNX2 is not set
+# CONFIG_CNIC is not set
+# CONFIG_TIGON3 is not set
+# CONFIG_BNX2X is not set
+# CONFIG_SYSTEMPORT is not set
+# CONFIG_BNXT is not set
+CONFIG_NET_VENDOR_CADENCE=y
+# CONFIG_MACB is not set
+CONFIG_NET_VENDOR_CAVIUM=y
+# CONFIG_THUNDER_NIC_PF is not set
+# CONFIG_THUNDER_NIC_VF is not set
+# CONFIG_THUNDER_NIC_BGX is not set
+# CONFIG_THUNDER_NIC_RGX is not set
+CONFIG_CAVIUM_PTP=y
+# CONFIG_LIQUIDIO is not set
+# CONFIG_LIQUIDIO_VF is not set
+CONFIG_NET_VENDOR_CHELSIO=y
+# CONFIG_CHELSIO_T1 is not set
+# CONFIG_CHELSIO_T3 is not set
+# CONFIG_CHELSIO_T4 is not set
+# CONFIG_CHELSIO_T4VF is not set
+CONFIG_NET_VENDOR_CISCO=y
+# CONFIG_ENIC is not set
+CONFIG_NET_VENDOR_CORTINA=y
+CONFIG_NET_VENDOR_DAVICOM=y
+# CONFIG_DM9051 is not set
+# CONFIG_DNET is not set
+CONFIG_NET_VENDOR_DEC=y
+# CONFIG_NET_TULIP is not set
+CONFIG_NET_VENDOR_DLINK=y
+# CONFIG_DL2K is not set
+# CONFIG_SUNDANCE is not set
+CONFIG_NET_VENDOR_EMULEX=y
+# CONFIG_BE2NET is not set
+CONFIG_NET_VENDOR_ENGLEDER=y
+# CONFIG_TSNEP is not set
+CONFIG_NET_VENDOR_EZCHIP=y
+CONFIG_NET_VENDOR_FUNGIBLE=y
+# CONFIG_FUN_ETH is not set
+CONFIG_NET_VENDOR_GOOGLE=y
+# CONFIG_GVE is not set
+CONFIG_NET_VENDOR_HUAWEI=y
+# CONFIG_HINIC is not set
+CONFIG_NET_VENDOR_I825XX=y
+CONFIG_NET_VENDOR_INTEL=y
+# CONFIG_E100 is not set
+CONFIG_E1000=y
+CONFIG_E1000E=y
+CONFIG_E1000E_HWTS=y
+CONFIG_IGB=y
+CONFIG_IGB_HWMON=y
+# CONFIG_IGBVF is not set
+CONFIG_IXGBE=y
+CONFIG_IXGBE_HWMON=y
+# CONFIG_IXGBE_DCB is not set
+# CONFIG_IXGBE_IPSEC is not set
+# CONFIG_IXGBEVF is not set
+CONFIG_I40E=y
+# CONFIG_I40E_DCB is not set
+# CONFIG_I40EVF is not set
+# CONFIG_ICE is not set
+# CONFIG_FM10K is not set
+CONFIG_IGC=y
+# CONFIG_JME is not set
+CONFIG_NET_VENDOR_ADI=y
+# CONFIG_ADIN1110 is not set
+CONFIG_NET_VENDOR_LITEX=y
+CONFIG_NET_VENDOR_MARVELL=y
+# CONFIG_MVMDIO is not set
+# CONFIG_SKGE is not set
+# CONFIG_SKY2 is not set
+# CONFIG_OCTEON_EP is not set
+# CONFIG_PRESTERA is not set
+CONFIG_NET_VENDOR_MELLANOX=y
+# CONFIG_MLX4_EN is not set
+# CONFIG_MLX5_CORE is not set
+# CONFIG_MLXSW_CORE is not set
+# CONFIG_MLXFW is not set
+CONFIG_NET_VENDOR_MICREL=y
+# CONFIG_KS8842 is not set
+# CONFIG_KS8851 is not set
+# CONFIG_KS8851_MLL is not set
+# CONFIG_KSZ884X_PCI is not set
+CONFIG_NET_VENDOR_MICROCHIP=y
+# CONFIG_ENC28J60 is not set
+# CONFIG_ENCX24J600 is not set
+# CONFIG_LAN743X is not set
+# CONFIG_VCAP is not set
+CONFIG_NET_VENDOR_MICROSEMI=y
+CONFIG_NET_VENDOR_MICROSOFT=y
+# CONFIG_MICROSOFT_MANA is not set
+CONFIG_NET_VENDOR_MYRI=y
+# CONFIG_MYRI10GE is not set
+# CONFIG_FEALNX is not set
+CONFIG_NET_VENDOR_NI=y
+# CONFIG_NI_XGE_MANAGEMENT_ENET is not set
+CONFIG_NET_VENDOR_NATSEMI=y
+# CONFIG_NATSEMI is not set
+# CONFIG_NS83820 is not set
+CONFIG_NET_VENDOR_NETERION=y
+# CONFIG_S2IO is not set
+CONFIG_NET_VENDOR_NETRONOME=y
+# CONFIG_NFP is not set
+CONFIG_NET_VENDOR_8390=y
+# CONFIG_NE2K_PCI is not set
+CONFIG_NET_VENDOR_NVIDIA=y
+# CONFIG_FORCEDETH is not set
+CONFIG_NET_VENDOR_OKI=y
+# CONFIG_ETHOC is not set
+CONFIG_NET_VENDOR_PACKET_ENGINES=y
+# CONFIG_HAMACHI is not set
+# CONFIG_YELLOWFIN is not set
+CONFIG_NET_VENDOR_PENSANDO=y
+# CONFIG_IONIC is not set
+CONFIG_NET_VENDOR_QLOGIC=y
+# CONFIG_QLA3XXX is not set
+# CONFIG_QLCNIC is not set
+# CONFIG_NETXEN_NIC is not set
+# CONFIG_QED is not set
+CONFIG_NET_VENDOR_BROCADE=y
+# CONFIG_BNA is not set
+CONFIG_NET_VENDOR_QUALCOMM=y
+# CONFIG_QCOM_EMAC is not set
+# CONFIG_RMNET is not set
+CONFIG_NET_VENDOR_RDC=y
+# CONFIG_R6040 is not set
+CONFIG_NET_VENDOR_REALTEK=y
+# CONFIG_ATP is not set
+# CONFIG_8139CP is not set
+# CONFIG_8139TOO is not set
+CONFIG_R8169=y
+CONFIG_NET_VENDOR_RENESAS=y
+CONFIG_NET_VENDOR_ROCKER=y
+# CONFIG_ROCKER is not set
+CONFIG_NET_VENDOR_SAMSUNG=y
+# CONFIG_SXGBE_ETH is not set
+CONFIG_NET_VENDOR_SEEQ=y
+CONFIG_NET_VENDOR_SILAN=y
+# CONFIG_SC92031 is not set
+CONFIG_NET_VENDOR_SIS=y
+# CONFIG_SIS900 is not set
+# CONFIG_SIS190 is not set
+CONFIG_NET_VENDOR_SOLARFLARE=y
+# CONFIG_SFC is not set
+# CONFIG_SFC_FALCON is not set
+# CONFIG_SFC_SIENA is not set
+CONFIG_NET_VENDOR_SMSC=y
+# CONFIG_EPIC100 is not set
+# CONFIG_SMSC911X is not set
+# CONFIG_SMSC9420 is not set
+CONFIG_NET_VENDOR_SOCIONEXT=y
+CONFIG_NET_VENDOR_STMICRO=y
+# CONFIG_STMMAC_ETH is not set
+CONFIG_NET_VENDOR_SUN=y
+# CONFIG_HAPPYMEAL is not set
+# CONFIG_SUNGEM is not set
+# CONFIG_CASSINI is not set
+# CONFIG_NIU is not set
+CONFIG_NET_VENDOR_SYNOPSYS=y
+# CONFIG_DWC_XLGMAC is not set
+CONFIG_NET_VENDOR_TEHUTI=y
+# CONFIG_TEHUTI is not set
+CONFIG_NET_VENDOR_TI=y
+# CONFIG_TI_CPSW_PHY_SEL is not set
+# CONFIG_TLAN is not set
+CONFIG_NET_VENDOR_VERTEXCOM=y
+# CONFIG_MSE102X is not set
+CONFIG_NET_VENDOR_VIA=y
+# CONFIG_VIA_RHINE is not set
+# CONFIG_VIA_VELOCITY is not set
+CONFIG_NET_VENDOR_WANGXUN=y
+# CONFIG_NGBE is not set
+# CONFIG_TXGBE is not set
+CONFIG_NET_VENDOR_WIZNET=y
+# CONFIG_WIZNET_W5100 is not set
+# CONFIG_WIZNET_W5300 is not set
+CONFIG_NET_VENDOR_XILINX=y
+# CONFIG_XILINX_EMACLITE is not set
+# CONFIG_XILINX_AXI_EMAC is not set
+# CONFIG_XILINX_LL_TEMAC is not set
+# CONFIG_FDDI is not set
+# CONFIG_HIPPI is not set
+# CONFIG_NET_SB1000 is not set
+CONFIG_PHYLINK=y
+CONFIG_PHYLIB=y
+CONFIG_SWPHY=y
+# CONFIG_LED_TRIGGER_PHY is not set
+CONFIG_FIXED_PHY=y
+# CONFIG_SFP is not set
+
+#
+# MII PHY device drivers
+#
+# CONFIG_AMD_PHY is not set
+# CONFIG_ADIN_PHY is not set
+# CONFIG_ADIN1100_PHY is not set
+# CONFIG_AQUANTIA_PHY is not set
+CONFIG_AX88796B_PHY=y
+# CONFIG_BROADCOM_PHY is not set
+# CONFIG_BCM54140_PHY is not set
+# CONFIG_BCM7XXX_PHY is not set
+# CONFIG_BCM84881_PHY is not set
+# CONFIG_BCM87XX_PHY is not set
+# CONFIG_CICADA_PHY is not set
+# CONFIG_CORTINA_PHY is not set
+# CONFIG_DAVICOM_PHY is not set
+# CONFIG_ICPLUS_PHY is not set
+# CONFIG_LXT_PHY is not set
+# CONFIG_INTEL_XWAY_PHY is not set
+# CONFIG_LSI_ET1011C_PHY is not set
+# CONFIG_MARVELL_PHY is not set
+# CONFIG_MARVELL_10G_PHY is not set
+# CONFIG_MARVELL_88X2222_PHY is not set
+# CONFIG_MAXLINEAR_GPHY is not set
+# CONFIG_MEDIATEK_GE_PHY is not set
+# CONFIG_MICREL_PHY is not set
+# CONFIG_MICROCHIP_T1S_PHY is not set
+# CONFIG_MICROCHIP_PHY is not set
+# CONFIG_MICROCHIP_T1_PHY is not set
+# CONFIG_MICROSEMI_PHY is not set
+# CONFIG_MOTORCOMM_PHY is not set
+# CONFIG_NATIONAL_PHY is not set
+# CONFIG_NXP_CBTX_PHY is not set
+# CONFIG_NXP_C45_TJA11XX_PHY is not set
+# CONFIG_NXP_TJA11XX_PHY is not set
+# CONFIG_NCN26000_PHY is not set
+# CONFIG_QSEMI_PHY is not set
+CONFIG_REALTEK_PHY=y
+# CONFIG_RENESAS_PHY is not set
+# CONFIG_ROCKCHIP_PHY is not set
+# CONFIG_SMSC_PHY is not set
+# CONFIG_STE10XP is not set
+# CONFIG_TERANETICS_PHY is not set
+# CONFIG_DP83822_PHY is not set
+# CONFIG_DP83TC811_PHY is not set
+# CONFIG_DP83848_PHY is not set
+# CONFIG_DP83867_PHY is not set
+# CONFIG_DP83869_PHY is not set
+# CONFIG_DP83TD510_PHY is not set
+# CONFIG_VITESSE_PHY is not set
+# CONFIG_XILINX_GMII2RGMII is not set
+# CONFIG_MICREL_KS8995MA is not set
+# CONFIG_PSE_CONTROLLER is not set
+CONFIG_CAN_DEV=m
+CONFIG_CAN_VCAN=m
+# CONFIG_CAN_VXCAN is not set
+CONFIG_CAN_NETLINK=y
+CONFIG_CAN_CALC_BITTIMING=y
+# CONFIG_CAN_CAN327 is not set
+# CONFIG_CAN_KVASER_PCIEFD is not set
+CONFIG_CAN_SLCAN=m
+# CONFIG_CAN_C_CAN is not set
+# CONFIG_CAN_CC770 is not set
+# CONFIG_CAN_CTUCANFD_PCI is not set
+# CONFIG_CAN_IFI_CANFD is not set
+# CONFIG_CAN_M_CAN is not set
+# CONFIG_CAN_PEAK_PCIEFD is not set
+# CONFIG_CAN_SJA1000 is not set
+# CONFIG_CAN_SOFTING is not set
+
+#
+# CAN SPI interfaces
+#
+# CONFIG_CAN_HI311X is not set
+# CONFIG_CAN_MCP251X is not set
+# CONFIG_CAN_MCP251XFD is not set
+# end of CAN SPI interfaces
+
+#
+# CAN USB interfaces
+#
+# CONFIG_CAN_8DEV_USB is not set
+# CONFIG_CAN_EMS_USB is not set
+# CONFIG_CAN_ESD_USB is not set
+# CONFIG_CAN_ETAS_ES58X is not set
+# CONFIG_CAN_GS_USB is not set
+# CONFIG_CAN_KVASER_USB is not set
+# CONFIG_CAN_MCBA_USB is not set
+# CONFIG_CAN_PEAK_USB is not set
+# CONFIG_CAN_UCAN is not set
+# end of CAN USB interfaces
+
+# CONFIG_CAN_DEBUG_DEVICES is not set
+CONFIG_MDIO_DEVICE=y
+CONFIG_MDIO_BUS=y
+CONFIG_FWNODE_MDIO=y
+CONFIG_ACPI_MDIO=y
+CONFIG_MDIO_DEVRES=y
+# CONFIG_MDIO_BITBANG is not set
+# CONFIG_MDIO_BCM_UNIMAC is not set
+# CONFIG_MDIO_MVUSB is not set
+# CONFIG_MDIO_THUNDER is not set
+
+#
+# MDIO Multiplexers
+#
+
+#
+# PCS device drivers
+#
+# end of PCS device drivers
+
+# CONFIG_PLIP is not set
+# CONFIG_PPP is not set
+# CONFIG_SLIP is not set
+CONFIG_USB_NET_DRIVERS=y
+# CONFIG_USB_CATC is not set
+# CONFIG_USB_KAWETH is not set
+# CONFIG_USB_PEGASUS is not set
+# CONFIG_USB_RTL8150 is not set
+CONFIG_USB_RTL8152=y
+# CONFIG_USB_LAN78XX is not set
+CONFIG_USB_USBNET=y
+CONFIG_USB_NET_AX8817X=y
+CONFIG_USB_NET_AX88179_178A=y
+# CONFIG_USB_NET_CDCETHER is not set
+# CONFIG_USB_NET_CDC_EEM is not set
+# CONFIG_USB_NET_CDC_NCM is not set
+# CONFIG_USB_NET_HUAWEI_CDC_NCM is not set
+# CONFIG_USB_NET_CDC_MBIM is not set
+# CONFIG_USB_NET_DM9601 is not set
+# CONFIG_USB_NET_SR9700 is not set
+# CONFIG_USB_NET_SR9800 is not set
+# CONFIG_USB_NET_SMSC75XX is not set
+# CONFIG_USB_NET_SMSC95XX is not set
+# CONFIG_USB_NET_GL620A is not set
+# CONFIG_USB_NET_NET1080 is not set
+# CONFIG_USB_NET_PLUSB is not set
+# CONFIG_USB_NET_MCS7830 is not set
+# CONFIG_USB_NET_RNDIS_HOST is not set
+# CONFIG_USB_NET_CDC_SUBSET is not set
+# CONFIG_USB_NET_ZAURUS is not set
+# CONFIG_USB_NET_CX82310_ETH is not set
+# CONFIG_USB_NET_KALMIA is not set
+# CONFIG_USB_NET_QMI_WWAN is not set
+# CONFIG_USB_HSO is not set
+# CONFIG_USB_NET_INT51X1 is not set
+# CONFIG_USB_IPHETH is not set
+# CONFIG_USB_SIERRA_NET is not set
+# CONFIG_USB_NET_CH9200 is not set
+# CONFIG_USB_NET_AQC111 is not set
+# CONFIG_WLAN is not set
+# CONFIG_WAN is not set
+
+#
+# Wireless WAN
+#
+# CONFIG_WWAN is not set
+# end of Wireless WAN
+
+# CONFIG_VMXNET3 is not set
+# CONFIG_FUJITSU_ES is not set
+CONFIG_HYPERV_NET=y
+# CONFIG_NETDEVSIM is not set
+CONFIG_NET_FAILOVER=m
+# CONFIG_ISDN is not set
+
+#
+# Input device support
+#
+CONFIG_INPUT=y
+CONFIG_INPUT_LEDS=y
+CONFIG_INPUT_FF_MEMLESS=m
+CONFIG_INPUT_SPARSEKMAP=m
+# CONFIG_INPUT_MATRIXKMAP is not set
+CONFIG_INPUT_VIVALDIFMAP=y
+
+#
+# Userland interfaces
+#
+CONFIG_INPUT_MOUSEDEV=y
+# CONFIG_INPUT_MOUSEDEV_PSAUX is not set
+CONFIG_INPUT_MOUSEDEV_SCREEN_X=1024
+CONFIG_INPUT_MOUSEDEV_SCREEN_Y=768
+CONFIG_INPUT_JOYDEV=m
+CONFIG_INPUT_EVDEV=y
+# CONFIG_INPUT_EVBUG is not set
+
+#
+# Input Device Drivers
+#
+CONFIG_INPUT_KEYBOARD=y
+# CONFIG_KEYBOARD_ADP5588 is not set
+# CONFIG_KEYBOARD_ADP5589 is not set
+# CONFIG_KEYBOARD_APPLESPI is not set
+CONFIG_KEYBOARD_ATKBD=y
+# CONFIG_KEYBOARD_QT1050 is not set
+# CONFIG_KEYBOARD_QT1070 is not set
+# CONFIG_KEYBOARD_QT2160 is not set
+# CONFIG_KEYBOARD_DLINK_DIR685 is not set
+# CONFIG_KEYBOARD_LKKBD is not set
+# CONFIG_KEYBOARD_GPIO is not set
+# CONFIG_KEYBOARD_GPIO_POLLED is not set
+# CONFIG_KEYBOARD_TCA6416 is not set
+# CONFIG_KEYBOARD_TCA8418 is not set
+# CONFIG_KEYBOARD_MATRIX is not set
+# CONFIG_KEYBOARD_LM8323 is not set
+# CONFIG_KEYBOARD_LM8333 is not set
+# CONFIG_KEYBOARD_MAX7359 is not set
+# CONFIG_KEYBOARD_MCS is not set
+# CONFIG_KEYBOARD_MPR121 is not set
+# CONFIG_KEYBOARD_NEWTON is not set
+# CONFIG_KEYBOARD_OPENCORES is not set
+# CONFIG_KEYBOARD_SAMSUNG is not set
+# CONFIG_KEYBOARD_STOWAWAY is not set
+# CONFIG_KEYBOARD_SUNKBD is not set
+# CONFIG_KEYBOARD_TM2_TOUCHKEY is not set
+# CONFIG_KEYBOARD_XTKBD is not set
+# CONFIG_KEYBOARD_CYPRESS_SF is not set
+CONFIG_INPUT_MOUSE=y
+CONFIG_MOUSE_PS2=y
+CONFIG_MOUSE_PS2_ALPS=y
+CONFIG_MOUSE_PS2_BYD=y
+CONFIG_MOUSE_PS2_LOGIPS2PP=y
+CONFIG_MOUSE_PS2_SYNAPTICS=y
+CONFIG_MOUSE_PS2_SYNAPTICS_SMBUS=y
+CONFIG_MOUSE_PS2_CYPRESS=y
+CONFIG_MOUSE_PS2_LIFEBOOK=y
+CONFIG_MOUSE_PS2_TRACKPOINT=y
+CONFIG_MOUSE_PS2_ELANTECH=y
+CONFIG_MOUSE_PS2_ELANTECH_SMBUS=y
+CONFIG_MOUSE_PS2_SENTELIC=y
+# CONFIG_MOUSE_PS2_TOUCHKIT is not set
+CONFIG_MOUSE_PS2_FOCALTECH=y
+CONFIG_MOUSE_PS2_VMMOUSE=y
+CONFIG_MOUSE_PS2_SMBUS=y
+CONFIG_MOUSE_SERIAL=m
+# CONFIG_MOUSE_APPLETOUCH is not set
+# CONFIG_MOUSE_BCM5974 is not set
+CONFIG_MOUSE_CYAPA=m
+CONFIG_MOUSE_ELAN_I2C=m
+CONFIG_MOUSE_ELAN_I2C_I2C=y
+CONFIG_MOUSE_ELAN_I2C_SMBUS=y
+CONFIG_MOUSE_VSXXXAA=m
+# CONFIG_MOUSE_GPIO is not set
+CONFIG_MOUSE_SYNAPTICS_I2C=m
+# CONFIG_MOUSE_SYNAPTICS_USB is not set
+# CONFIG_INPUT_JOYSTICK is not set
+# CONFIG_INPUT_TABLET is not set
+# CONFIG_INPUT_TOUCHSCREEN is not set
+CONFIG_INPUT_MISC=y
+# CONFIG_INPUT_AD714X is not set
+# CONFIG_INPUT_BMA150 is not set
+# CONFIG_INPUT_E3X0_BUTTON is not set
+# CONFIG_INPUT_PCSPKR is not set
+# CONFIG_INPUT_MMA8450 is not set
+# CONFIG_INPUT_APANEL is not set
+# CONFIG_INPUT_GPIO_BEEPER is not set
+# CONFIG_INPUT_GPIO_DECODER is not set
+# CONFIG_INPUT_GPIO_VIBRA is not set
+# CONFIG_INPUT_ATLAS_BTNS is not set
+# CONFIG_INPUT_ATI_REMOTE2 is not set
+# CONFIG_INPUT_KEYSPAN_REMOTE is not set
+# CONFIG_INPUT_KXTJ9 is not set
+# CONFIG_INPUT_POWERMATE is not set
+# CONFIG_INPUT_YEALINK is not set
+# CONFIG_INPUT_CM109 is not set
+CONFIG_INPUT_UINPUT=y
+# CONFIG_INPUT_PCF8574 is not set
+# CONFIG_INPUT_PWM_BEEPER is not set
+# CONFIG_INPUT_PWM_VIBRA is not set
+# CONFIG_INPUT_GPIO_ROTARY_ENCODER is not set
+# CONFIG_INPUT_DA7280_HAPTICS is not set
+# CONFIG_INPUT_ADXL34X is not set
+# CONFIG_INPUT_IMS_PCU is not set
+# CONFIG_INPUT_IQS269A is not set
+# CONFIG_INPUT_IQS626A is not set
+# CONFIG_INPUT_IQS7222 is not set
+# CONFIG_INPUT_CMA3000 is not set
+# CONFIG_INPUT_IDEAPAD_SLIDEBAR is not set
+# CONFIG_INPUT_DRV260X_HAPTICS is not set
+# CONFIG_INPUT_DRV2665_HAPTICS is not set
+# CONFIG_INPUT_DRV2667_HAPTICS is not set
+CONFIG_RMI4_CORE=m
+CONFIG_RMI4_I2C=m
+CONFIG_RMI4_SPI=m
+CONFIG_RMI4_SMB=m
+CONFIG_RMI4_F03=y
+CONFIG_RMI4_F03_SERIO=m
+CONFIG_RMI4_2D_SENSOR=y
+CONFIG_RMI4_F11=y
+CONFIG_RMI4_F12=y
+CONFIG_RMI4_F30=y
+CONFIG_RMI4_F34=y
+# CONFIG_RMI4_F3A is not set
+CONFIG_RMI4_F55=y
+
+#
+# Hardware I/O ports
+#
+CONFIG_SERIO=y
+CONFIG_ARCH_MIGHT_HAVE_PC_SERIO=y
+CONFIG_SERIO_I8042=y
+CONFIG_SERIO_SERPORT=y
+# CONFIG_SERIO_CT82C710 is not set
+# CONFIG_SERIO_PARKBD is not set
+# CONFIG_SERIO_PCIPS2 is not set
+CONFIG_SERIO_LIBPS2=y
+CONFIG_SERIO_RAW=m
+CONFIG_SERIO_ALTERA_PS2=m
+# CONFIG_SERIO_PS2MULT is not set
+CONFIG_SERIO_ARC_PS2=m
+CONFIG_HYPERV_KEYBOARD=m
+# CONFIG_SERIO_GPIO_PS2 is not set
+# CONFIG_USERIO is not set
+# CONFIG_GAMEPORT is not set
+# end of Hardware I/O ports
+# end of Input device support
+
+#
+# Character devices
+#
+CONFIG_TTY=y
+CONFIG_VT=y
+CONFIG_CONSOLE_TRANSLATIONS=y
+CONFIG_VT_CONSOLE=y
+CONFIG_VT_CONSOLE_SLEEP=y
+CONFIG_HW_CONSOLE=y
+CONFIG_VT_HW_CONSOLE_BINDING=y
+CONFIG_UNIX98_PTYS=y
+# CONFIG_LEGACY_PTYS is not set
+CONFIG_LEGACY_TIOCSTI=y
+CONFIG_LDISC_AUTOLOAD=y
+
+#
+# Serial drivers
+#
+CONFIG_SERIAL_EARLYCON=y
+CONFIG_SERIAL_8250=y
+# CONFIG_SERIAL_8250_DEPRECATED_OPTIONS is not set
+CONFIG_SERIAL_8250_PNP=y
+# CONFIG_SERIAL_8250_16550A_VARIANTS is not set
+# CONFIG_SERIAL_8250_FINTEK is not set
+CONFIG_SERIAL_8250_CONSOLE=y
+CONFIG_SERIAL_8250_DMA=y
+CONFIG_SERIAL_8250_PCILIB=y
+CONFIG_SERIAL_8250_PCI=y
+CONFIG_SERIAL_8250_EXAR=y
+CONFIG_SERIAL_8250_NR_UARTS=64
+CONFIG_SERIAL_8250_RUNTIME_UARTS=4
+CONFIG_SERIAL_8250_EXTENDED=y
+CONFIG_SERIAL_8250_MANY_PORTS=y
+# CONFIG_SERIAL_8250_PCI1XXXX is not set
+CONFIG_SERIAL_8250_SHARE_IRQ=y
+# CONFIG_SERIAL_8250_DETECT_IRQ is not set
+CONFIG_SERIAL_8250_RSA=y
+CONFIG_SERIAL_8250_DWLIB=y
+CONFIG_SERIAL_8250_DW=y
+# CONFIG_SERIAL_8250_RT288X is not set
+CONFIG_SERIAL_8250_LPSS=y
+CONFIG_SERIAL_8250_MID=y
+CONFIG_SERIAL_8250_PERICOM=y
+
+#
+# Non-8250 serial port support
+#
+# CONFIG_SERIAL_MAX3100 is not set
+# CONFIG_SERIAL_MAX310X is not set
+# CONFIG_SERIAL_UARTLITE is not set
+CONFIG_SERIAL_CORE=y
+CONFIG_SERIAL_CORE_CONSOLE=y
+# CONFIG_SERIAL_JSM is not set
+# CONFIG_SERIAL_LANTIQ is not set
+# CONFIG_SERIAL_SCCNXP is not set
+# CONFIG_SERIAL_SC16IS7XX is not set
+# CONFIG_SERIAL_ALTERA_JTAGUART is not set
+# CONFIG_SERIAL_ALTERA_UART is not set
+CONFIG_SERIAL_ARC=m
+CONFIG_SERIAL_ARC_NR_PORTS=1
+# CONFIG_SERIAL_RP2 is not set
+# CONFIG_SERIAL_FSL_LPUART is not set
+# CONFIG_SERIAL_FSL_LINFLEXUART is not set
+# CONFIG_SERIAL_SPRD is not set
+# end of Serial drivers
+
+CONFIG_SERIAL_MCTRL_GPIO=y
+CONFIG_SERIAL_NONSTANDARD=y
+# CONFIG_MOXA_INTELLIO is not set
+# CONFIG_MOXA_SMARTIO is not set
+CONFIG_SYNCLINK_GT=m
+CONFIG_N_HDLC=m
+CONFIG_N_GSM=m
+CONFIG_NOZOMI=m
+# CONFIG_NULL_TTY is not set
+CONFIG_HVC_DRIVER=y
+# CONFIG_SERIAL_DEV_BUS is not set
+# CONFIG_TTY_PRINTK is not set
+CONFIG_PRINTER=m
+# CONFIG_LP_CONSOLE is not set
+CONFIG_PPDEV=m
+CONFIG_VIRTIO_CONSOLE=m
+CONFIG_IPMI_HANDLER=m
+CONFIG_IPMI_DMI_DECODE=y
+CONFIG_IPMI_PLAT_DATA=y
+CONFIG_IPMI_PANIC_EVENT=y
+CONFIG_IPMI_PANIC_STRING=y
+CONFIG_IPMI_DEVICE_INTERFACE=m
+CONFIG_IPMI_SI=m
+CONFIG_IPMI_SSIF=m
+CONFIG_IPMI_WATCHDOG=m
+CONFIG_IPMI_POWEROFF=m
+CONFIG_HW_RANDOM=y
+CONFIG_HW_RANDOM_TIMERIOMEM=m
+CONFIG_HW_RANDOM_INTEL=m
+# CONFIG_HW_RANDOM_AMD is not set
+# CONFIG_HW_RANDOM_BA431 is not set
+CONFIG_HW_RANDOM_VIA=m
+CONFIG_HW_RANDOM_VIRTIO=y
+# CONFIG_HW_RANDOM_XIPHERA is not set
+# CONFIG_APPLICOM is not set
+# CONFIG_MWAVE is not set
+CONFIG_DEVMEM=y
+CONFIG_NVRAM=y
+CONFIG_DEVPORT=y
+CONFIG_HPET=y
+CONFIG_HPET_MMAP=y
+# CONFIG_HPET_MMAP_DEFAULT is not set
+CONFIG_HANGCHECK_TIMER=m
+CONFIG_UV_MMTIMER=m
+CONFIG_TCG_TPM=y
+CONFIG_HW_RANDOM_TPM=y
+CONFIG_TCG_TIS_CORE=y
+CONFIG_TCG_TIS=y
+# CONFIG_TCG_TIS_SPI is not set
+# CONFIG_TCG_TIS_I2C is not set
+# CONFIG_TCG_TIS_I2C_CR50 is not set
+CONFIG_TCG_TIS_I2C_ATMEL=m
+CONFIG_TCG_TIS_I2C_INFINEON=m
+CONFIG_TCG_TIS_I2C_NUVOTON=m
+CONFIG_TCG_NSC=m
+CONFIG_TCG_ATMEL=m
+CONFIG_TCG_INFINEON=m
+CONFIG_TCG_CRB=y
+# CONFIG_TCG_VTPM_PROXY is not set
+# CONFIG_TCG_TIS_ST33ZP24_I2C is not set
+# CONFIG_TCG_TIS_ST33ZP24_SPI is not set
+CONFIG_TELCLOCK=m
+# CONFIG_XILLYBUS is not set
+# CONFIG_XILLYUSB is not set
+# end of Character devices
+
+#
+# I2C support
+#
+CONFIG_I2C=y
+CONFIG_ACPI_I2C_OPREGION=y
+CONFIG_I2C_BOARDINFO=y
+CONFIG_I2C_COMPAT=y
+CONFIG_I2C_CHARDEV=m
+CONFIG_I2C_MUX=m
+
+#
+# Multiplexer I2C Chip support
+#
+# CONFIG_I2C_MUX_GPIO is not set
+# CONFIG_I2C_MUX_LTC4306 is not set
+# CONFIG_I2C_MUX_PCA9541 is not set
+# CONFIG_I2C_MUX_PCA954x is not set
+# CONFIG_I2C_MUX_REG is not set
+CONFIG_I2C_MUX_MLXCPLD=m
+# end of Multiplexer I2C Chip support
+
+CONFIG_I2C_HELPER_AUTO=y
+CONFIG_I2C_SMBUS=m
+CONFIG_I2C_ALGOBIT=y
+CONFIG_I2C_ALGOPCA=m
+
+#
+# I2C Hardware Bus support
+#
+
+#
+# PC SMBus host controller drivers
+#
+# CONFIG_I2C_ALI1535 is not set
+# CONFIG_I2C_ALI1563 is not set
+# CONFIG_I2C_ALI15X3 is not set
+# CONFIG_I2C_AMD756 is not set
+# CONFIG_I2C_AMD8111 is not set
+# CONFIG_I2C_AMD_MP2 is not set
+CONFIG_I2C_I801=m
+CONFIG_I2C_ISCH=m
+CONFIG_I2C_ISMT=m
+CONFIG_I2C_PIIX4=m
+CONFIG_I2C_NFORCE2=m
+CONFIG_I2C_NFORCE2_S4985=m
+# CONFIG_I2C_NVIDIA_GPU is not set
+# CONFIG_I2C_SIS5595 is not set
+# CONFIG_I2C_SIS630 is not set
+CONFIG_I2C_SIS96X=m
+CONFIG_I2C_VIA=m
+CONFIG_I2C_VIAPRO=m
+
+#
+# ACPI drivers
+#
+CONFIG_I2C_SCMI=m
+
+#
+# I2C system bus drivers (mostly embedded / system-on-chip)
+#
+# CONFIG_I2C_CBUS_GPIO is not set
+CONFIG_I2C_DESIGNWARE_CORE=m
+# CONFIG_I2C_DESIGNWARE_SLAVE is not set
+CONFIG_I2C_DESIGNWARE_PLATFORM=m
+CONFIG_I2C_DESIGNWARE_BAYTRAIL=y
+# CONFIG_I2C_DESIGNWARE_PCI is not set
+# CONFIG_I2C_EMEV2 is not set
+# CONFIG_I2C_GPIO is not set
+# CONFIG_I2C_OCORES is not set
+CONFIG_I2C_PCA_PLATFORM=m
+CONFIG_I2C_SIMTEC=m
+# CONFIG_I2C_XILINX is not set
+
+#
+# External I2C/SMBus adapter drivers
+#
+# CONFIG_I2C_DIOLAN_U2C is not set
+# CONFIG_I2C_CP2615 is not set
+CONFIG_I2C_PARPORT=m
+# CONFIG_I2C_PCI1XXXX is not set
+# CONFIG_I2C_ROBOTFUZZ_OSIF is not set
+# CONFIG_I2C_TAOS_EVM is not set
+# CONFIG_I2C_TINY_USB is not set
+
+#
+# Other I2C/SMBus bus drivers
+#
+CONFIG_I2C_MLXCPLD=m
+# CONFIG_I2C_VIRTIO is not set
+# end of I2C Hardware Bus support
+
+CONFIG_I2C_STUB=m
+# CONFIG_I2C_SLAVE is not set
+# CONFIG_I2C_DEBUG_CORE is not set
+# CONFIG_I2C_DEBUG_ALGO is not set
+# CONFIG_I2C_DEBUG_BUS is not set
+# end of I2C support
+
+# CONFIG_I3C is not set
+CONFIG_SPI=y
+# CONFIG_SPI_DEBUG is not set
+CONFIG_SPI_MASTER=y
+# CONFIG_SPI_MEM is not set
+
+#
+# SPI Master Controller Drivers
+#
+# CONFIG_SPI_ALTERA is not set
+# CONFIG_SPI_AXI_SPI_ENGINE is not set
+# CONFIG_SPI_BITBANG is not set
+# CONFIG_SPI_BUTTERFLY is not set
+# CONFIG_SPI_CADENCE is not set
+# CONFIG_SPI_DESIGNWARE is not set
+# CONFIG_SPI_GPIO is not set
+# CONFIG_SPI_LM70_LLP is not set
+# CONFIG_SPI_MICROCHIP_CORE is not set
+# CONFIG_SPI_MICROCHIP_CORE_QSPI is not set
+# CONFIG_SPI_LANTIQ_SSC is not set
+# CONFIG_SPI_OC_TINY is not set
+# CONFIG_SPI_PCI1XXXX is not set
+# CONFIG_SPI_PXA2XX is not set
+# CONFIG_SPI_SC18IS602 is not set
+# CONFIG_SPI_SIFIVE is not set
+# CONFIG_SPI_MXIC is not set
+# CONFIG_SPI_XCOMM is not set
+# CONFIG_SPI_XILINX is not set
+# CONFIG_SPI_ZYNQMP_GQSPI is not set
+# CONFIG_SPI_AMD is not set
+
+#
+# SPI Multiplexer support
+#
+# CONFIG_SPI_MUX is not set
+
+#
+# SPI Protocol Masters
+#
+# CONFIG_SPI_SPIDEV is not set
+# CONFIG_SPI_LOOPBACK_TEST is not set
+# CONFIG_SPI_TLE62X0 is not set
+# CONFIG_SPI_SLAVE is not set
+CONFIG_SPI_DYNAMIC=y
+# CONFIG_SPMI is not set
+# CONFIG_HSI is not set
+CONFIG_PPS=y
+# CONFIG_PPS_DEBUG is not set
+
+#
+# PPS clients support
+#
+# CONFIG_PPS_CLIENT_KTIMER is not set
+CONFIG_PPS_CLIENT_LDISC=m
+CONFIG_PPS_CLIENT_PARPORT=m
+CONFIG_PPS_CLIENT_GPIO=m
+
+#
+# PPS generators support
+#
+
+#
+# PTP clock support
+#
+CONFIG_PTP_1588_CLOCK=y
+CONFIG_PTP_1588_CLOCK_OPTIONAL=y
+# CONFIG_DP83640_PHY is not set
+# CONFIG_PTP_1588_CLOCK_INES is not set
+CONFIG_PTP_1588_CLOCK_KVM=m
+# CONFIG_PTP_1588_CLOCK_IDT82P33 is not set
+# CONFIG_PTP_1588_CLOCK_IDTCM is not set
+# CONFIG_PTP_1588_CLOCK_VMW is not set
+# end of PTP clock support
+
+CONFIG_PINCTRL=y
+# CONFIG_DEBUG_PINCTRL is not set
+# CONFIG_PINCTRL_AMD is not set
+# CONFIG_PINCTRL_CY8C95X0 is not set
+# CONFIG_PINCTRL_MCP23S08 is not set
+# CONFIG_PINCTRL_SX150X is not set
+
+#
+# Intel pinctrl drivers
+#
+# CONFIG_PINCTRL_BAYTRAIL is not set
+# CONFIG_PINCTRL_CHERRYVIEW is not set
+# CONFIG_PINCTRL_LYNXPOINT is not set
+# CONFIG_PINCTRL_ALDERLAKE is not set
+# CONFIG_PINCTRL_BROXTON is not set
+# CONFIG_PINCTRL_CANNONLAKE is not set
+# CONFIG_PINCTRL_CEDARFORK is not set
+# CONFIG_PINCTRL_DENVERTON is not set
+# CONFIG_PINCTRL_ELKHARTLAKE is not set
+# CONFIG_PINCTRL_EMMITSBURG is not set
+# CONFIG_PINCTRL_GEMINILAKE is not set
+# CONFIG_PINCTRL_ICELAKE is not set
+# CONFIG_PINCTRL_JASPERLAKE is not set
+# CONFIG_PINCTRL_LAKEFIELD is not set
+# CONFIG_PINCTRL_LEWISBURG is not set
+# CONFIG_PINCTRL_METEORLAKE is not set
+# CONFIG_PINCTRL_SUNRISEPOINT is not set
+# CONFIG_PINCTRL_TIGERLAKE is not set
+# end of Intel pinctrl drivers
+
+#
+# Renesas pinctrl drivers
+#
+# end of Renesas pinctrl drivers
+
+CONFIG_GPIOLIB=y
+CONFIG_GPIOLIB_FASTPATH_LIMIT=512
+CONFIG_GPIO_ACPI=y
+# CONFIG_DEBUG_GPIO is not set
+CONFIG_GPIO_SYSFS=y
+CONFIG_GPIO_CDEV=y
+CONFIG_GPIO_CDEV_V1=y
+
+#
+# Memory mapped GPIO drivers
+#
+# CONFIG_GPIO_AMDPT is not set
+# CONFIG_GPIO_DWAPB is not set
+# CONFIG_GPIO_EXAR is not set
+# CONFIG_GPIO_GENERIC_PLATFORM is not set
+CONFIG_GPIO_ICH=m
+# CONFIG_GPIO_MB86S7X is not set
+# CONFIG_GPIO_VX855 is not set
+# CONFIG_GPIO_AMD_FCH is not set
+# end of Memory mapped GPIO drivers
+
+#
+# Port-mapped I/O GPIO drivers
+#
+# CONFIG_GPIO_F7188X is not set
+# CONFIG_GPIO_IT87 is not set
+# CONFIG_GPIO_SCH is not set
+# CONFIG_GPIO_SCH311X is not set
+# CONFIG_GPIO_WINBOND is not set
+# CONFIG_GPIO_WS16C48 is not set
+# end of Port-mapped I/O GPIO drivers
+
+#
+# I2C GPIO expanders
+#
+# CONFIG_GPIO_FXL6408 is not set
+# CONFIG_GPIO_MAX7300 is not set
+# CONFIG_GPIO_MAX732X is not set
+# CONFIG_GPIO_PCA953X is not set
+# CONFIG_GPIO_PCA9570 is not set
+# CONFIG_GPIO_PCF857X is not set
+# CONFIG_GPIO_TPIC2810 is not set
+# end of I2C GPIO expanders
+
+#
+# MFD GPIO expanders
+#
+# CONFIG_GPIO_ELKHARTLAKE is not set
+# end of MFD GPIO expanders
+
+#
+# PCI GPIO expanders
+#
+# CONFIG_GPIO_AMD8111 is not set
+# CONFIG_GPIO_BT8XX is not set
+# CONFIG_GPIO_ML_IOH is not set
+# CONFIG_GPIO_PCI_IDIO_16 is not set
+# CONFIG_GPIO_PCIE_IDIO_24 is not set
+# CONFIG_GPIO_RDC321X is not set
+# end of PCI GPIO expanders
+
+#
+# SPI GPIO expanders
+#
+# CONFIG_GPIO_MAX3191X is not set
+# CONFIG_GPIO_MAX7301 is not set
+# CONFIG_GPIO_MC33880 is not set
+# CONFIG_GPIO_PISOSR is not set
+# CONFIG_GPIO_XRA1403 is not set
+# end of SPI GPIO expanders
+
+#
+# USB GPIO expanders
+#
+# end of USB GPIO expanders
+
+#
+# Virtual GPIO drivers
+#
+# CONFIG_GPIO_AGGREGATOR is not set
+# CONFIG_GPIO_LATCH is not set
+# CONFIG_GPIO_MOCKUP is not set
+# CONFIG_GPIO_VIRTIO is not set
+# CONFIG_GPIO_SIM is not set
+# end of Virtual GPIO drivers
+
+# CONFIG_W1 is not set
+CONFIG_POWER_RESET=y
+# CONFIG_POWER_RESET_RESTART is not set
+CONFIG_POWER_SUPPLY=y
+# CONFIG_POWER_SUPPLY_DEBUG is not set
+CONFIG_POWER_SUPPLY_HWMON=y
+# CONFIG_IP5XXX_POWER is not set
+# CONFIG_TEST_POWER is not set
+# CONFIG_CHARGER_ADP5061 is not set
+# CONFIG_BATTERY_CW2015 is not set
+# CONFIG_BATTERY_DS2780 is not set
+# CONFIG_BATTERY_DS2781 is not set
+# CONFIG_BATTERY_DS2782 is not set
+# CONFIG_BATTERY_SAMSUNG_SDI is not set
+# CONFIG_BATTERY_SBS is not set
+# CONFIG_CHARGER_SBS is not set
+# CONFIG_MANAGER_SBS is not set
+# CONFIG_BATTERY_BQ27XXX is not set
+# CONFIG_BATTERY_MAX17040 is not set
+# CONFIG_BATTERY_MAX17042 is not set
+# CONFIG_CHARGER_MAX8903 is not set
+# CONFIG_CHARGER_LP8727 is not set
+# CONFIG_CHARGER_GPIO is not set
+# CONFIG_CHARGER_LT3651 is not set
+# CONFIG_CHARGER_LTC4162L is not set
+# CONFIG_CHARGER_MAX77976 is not set
+# CONFIG_CHARGER_BQ2415X is not set
+# CONFIG_CHARGER_BQ24257 is not set
+# CONFIG_CHARGER_BQ24735 is not set
+# CONFIG_CHARGER_BQ2515X is not set
+# CONFIG_CHARGER_BQ25890 is not set
+# CONFIG_CHARGER_BQ25980 is not set
+# CONFIG_CHARGER_BQ256XX is not set
+# CONFIG_BATTERY_GAUGE_LTC2941 is not set
+# CONFIG_BATTERY_GOLDFISH is not set
+# CONFIG_BATTERY_RT5033 is not set
+# CONFIG_CHARGER_RT9455 is not set
+# CONFIG_CHARGER_BD99954 is not set
+# CONFIG_BATTERY_UG3105 is not set
+CONFIG_HWMON=y
+CONFIG_HWMON_VID=m
+# CONFIG_HWMON_DEBUG_CHIP is not set
+
+#
+# Native drivers
+#
+CONFIG_SENSORS_ABITUGURU=m
+CONFIG_SENSORS_ABITUGURU3=m
+# CONFIG_SENSORS_AD7314 is not set
+CONFIG_SENSORS_AD7414=m
+CONFIG_SENSORS_AD7418=m
+CONFIG_SENSORS_ADM1025=m
+CONFIG_SENSORS_ADM1026=m
+CONFIG_SENSORS_ADM1029=m
+CONFIG_SENSORS_ADM1031=m
+# CONFIG_SENSORS_ADM1177 is not set
+CONFIG_SENSORS_ADM9240=m
+CONFIG_SENSORS_ADT7X10=m
+# CONFIG_SENSORS_ADT7310 is not set
+CONFIG_SENSORS_ADT7410=m
+CONFIG_SENSORS_ADT7411=m
+CONFIG_SENSORS_ADT7462=m
+CONFIG_SENSORS_ADT7470=m
+CONFIG_SENSORS_ADT7475=m
+# CONFIG_SENSORS_AHT10 is not set
+# CONFIG_SENSORS_AQUACOMPUTER_D5NEXT is not set
+# CONFIG_SENSORS_AS370 is not set
+CONFIG_SENSORS_ASC7621=m
+# CONFIG_SENSORS_AXI_FAN_CONTROL is not set
+CONFIG_SENSORS_K8TEMP=m
+CONFIG_SENSORS_APPLESMC=m
+CONFIG_SENSORS_ASB100=m
+CONFIG_SENSORS_ATXP1=m
+# CONFIG_SENSORS_CORSAIR_CPRO is not set
+# CONFIG_SENSORS_CORSAIR_PSU is not set
+# CONFIG_SENSORS_DRIVETEMP is not set
+CONFIG_SENSORS_DS620=m
+CONFIG_SENSORS_DS1621=m
+# CONFIG_SENSORS_DELL_SMM is not set
+CONFIG_SENSORS_I5K_AMB=m
+CONFIG_SENSORS_F71805F=m
+CONFIG_SENSORS_F71882FG=m
+CONFIG_SENSORS_F75375S=m
+CONFIG_SENSORS_FSCHMD=m
+# CONFIG_SENSORS_FTSTEUTATES is not set
+CONFIG_SENSORS_GL518SM=m
+CONFIG_SENSORS_GL520SM=m
+CONFIG_SENSORS_G760A=m
+# CONFIG_SENSORS_G762 is not set
+# CONFIG_SENSORS_HIH6130 is not set
+CONFIG_SENSORS_IBMAEM=m
+CONFIG_SENSORS_IBMPEX=m
+CONFIG_SENSORS_I5500=m
+CONFIG_SENSORS_CORETEMP=m
+CONFIG_SENSORS_IT87=m
+CONFIG_SENSORS_JC42=m
+# CONFIG_SENSORS_POWR1220 is not set
+CONFIG_SENSORS_LINEAGE=m
+# CONFIG_SENSORS_LTC2945 is not set
+# CONFIG_SENSORS_LTC2947_I2C is not set
+# CONFIG_SENSORS_LTC2947_SPI is not set
+# CONFIG_SENSORS_LTC2990 is not set
+# CONFIG_SENSORS_LTC2992 is not set
+CONFIG_SENSORS_LTC4151=m
+CONFIG_SENSORS_LTC4215=m
+# CONFIG_SENSORS_LTC4222 is not set
+CONFIG_SENSORS_LTC4245=m
+# CONFIG_SENSORS_LTC4260 is not set
+CONFIG_SENSORS_LTC4261=m
+# CONFIG_SENSORS_MAX1111 is not set
+# CONFIG_SENSORS_MAX127 is not set
+CONFIG_SENSORS_MAX16065=m
+CONFIG_SENSORS_MAX1619=m
+CONFIG_SENSORS_MAX1668=m
+CONFIG_SENSORS_MAX197=m
+# CONFIG_SENSORS_MAX31722 is not set
+# CONFIG_SENSORS_MAX31730 is not set
+# CONFIG_SENSORS_MAX31760 is not set
+# CONFIG_SENSORS_MAX6620 is not set
+# CONFIG_SENSORS_MAX6621 is not set
+CONFIG_SENSORS_MAX6639=m
+CONFIG_SENSORS_MAX6650=m
+CONFIG_SENSORS_MAX6697=m
+# CONFIG_SENSORS_MAX31790 is not set
+# CONFIG_SENSORS_MC34VR500 is not set
+CONFIG_SENSORS_MCP3021=m
+# CONFIG_SENSORS_TC654 is not set
+# CONFIG_SENSORS_TPS23861 is not set
+# CONFIG_SENSORS_MR75203 is not set
+# CONFIG_SENSORS_ADCXX is not set
+CONFIG_SENSORS_LM63=m
+# CONFIG_SENSORS_LM70 is not set
+CONFIG_SENSORS_LM73=m
+CONFIG_SENSORS_LM75=m
+CONFIG_SENSORS_LM77=m
+CONFIG_SENSORS_LM78=m
+CONFIG_SENSORS_LM80=m
+CONFIG_SENSORS_LM83=m
+CONFIG_SENSORS_LM85=m
+CONFIG_SENSORS_LM87=m
+CONFIG_SENSORS_LM90=m
+CONFIG_SENSORS_LM92=m
+CONFIG_SENSORS_LM93=m
+CONFIG_SENSORS_LM95234=m
+CONFIG_SENSORS_LM95241=m
+CONFIG_SENSORS_LM95245=m
+CONFIG_SENSORS_PC87360=m
+CONFIG_SENSORS_PC87427=m
+# CONFIG_SENSORS_NCT6683 is not set
+CONFIG_SENSORS_NCT6775_CORE=m
+CONFIG_SENSORS_NCT6775=m
+# CONFIG_SENSORS_NCT6775_I2C is not set
+# CONFIG_SENSORS_NCT7802 is not set
+# CONFIG_SENSORS_NCT7904 is not set
+# CONFIG_SENSORS_NPCM7XX is not set
+# CONFIG_SENSORS_NZXT_KRAKEN2 is not set
+# CONFIG_SENSORS_NZXT_SMART2 is not set
+# CONFIG_SENSORS_OCC_P8_I2C is not set
+# CONFIG_SENSORS_OXP is not set
+CONFIG_SENSORS_PCF8591=m
+# CONFIG_PMBUS is not set
+# CONFIG_SENSORS_SBTSI is not set
+# CONFIG_SENSORS_SBRMI is not set
+CONFIG_SENSORS_SHT15=m
+CONFIG_SENSORS_SHT21=m
+# CONFIG_SENSORS_SHT3x is not set
+# CONFIG_SENSORS_SHT4x is not set
+# CONFIG_SENSORS_SHTC1 is not set
+CONFIG_SENSORS_SIS5595=m
+CONFIG_SENSORS_DME1737=m
+CONFIG_SENSORS_EMC1403=m
+# CONFIG_SENSORS_EMC2103 is not set
+# CONFIG_SENSORS_EMC2305 is not set
+CONFIG_SENSORS_EMC6W201=m
+CONFIG_SENSORS_SMSC47M1=m
+CONFIG_SENSORS_SMSC47M192=m
+CONFIG_SENSORS_SMSC47B397=m
+CONFIG_SENSORS_SCH56XX_COMMON=m
+CONFIG_SENSORS_SCH5627=m
+CONFIG_SENSORS_SCH5636=m
+# CONFIG_SENSORS_STTS751 is not set
+# CONFIG_SENSORS_SMM665 is not set
+# CONFIG_SENSORS_ADC128D818 is not set
+CONFIG_SENSORS_ADS7828=m
+# CONFIG_SENSORS_ADS7871 is not set
+CONFIG_SENSORS_AMC6821=m
+CONFIG_SENSORS_INA209=m
+CONFIG_SENSORS_INA2XX=m
+# CONFIG_SENSORS_INA238 is not set
+# CONFIG_SENSORS_INA3221 is not set
+# CONFIG_SENSORS_TC74 is not set
+CONFIG_SENSORS_THMC50=m
+CONFIG_SENSORS_TMP102=m
+# CONFIG_SENSORS_TMP103 is not set
+# CONFIG_SENSORS_TMP108 is not set
+CONFIG_SENSORS_TMP401=m
+CONFIG_SENSORS_TMP421=m
+# CONFIG_SENSORS_TMP464 is not set
+# CONFIG_SENSORS_TMP513 is not set
+CONFIG_SENSORS_VIA_CPUTEMP=m
+CONFIG_SENSORS_VIA686A=m
+CONFIG_SENSORS_VT1211=m
+CONFIG_SENSORS_VT8231=m
+# CONFIG_SENSORS_W83773G is not set
+CONFIG_SENSORS_W83781D=m
+CONFIG_SENSORS_W83791D=m
+CONFIG_SENSORS_W83792D=m
+CONFIG_SENSORS_W83793=m
+CONFIG_SENSORS_W83795=m
+# CONFIG_SENSORS_W83795_FANCTRL is not set
+CONFIG_SENSORS_W83L785TS=m
+CONFIG_SENSORS_W83L786NG=m
+CONFIG_SENSORS_W83627HF=m
+CONFIG_SENSORS_W83627EHF=m
+# CONFIG_SENSORS_XGENE is not set
+
+#
+# ACPI drivers
+#
+CONFIG_SENSORS_ACPI_POWER=m
+CONFIG_SENSORS_ATK0110=m
+# CONFIG_SENSORS_ASUS_WMI is not set
+# CONFIG_SENSORS_ASUS_EC is not set
+CONFIG_THERMAL=y
+# CONFIG_THERMAL_NETLINK is not set
+# CONFIG_THERMAL_STATISTICS is not set
+CONFIG_THERMAL_EMERGENCY_POWEROFF_DELAY_MS=0
+CONFIG_THERMAL_HWMON=y
+CONFIG_THERMAL_ACPI=y
+CONFIG_THERMAL_WRITABLE_TRIPS=y
+CONFIG_THERMAL_DEFAULT_GOV_STEP_WISE=y
+# CONFIG_THERMAL_DEFAULT_GOV_FAIR_SHARE is not set
+# CONFIG_THERMAL_DEFAULT_GOV_USER_SPACE is not set
+CONFIG_THERMAL_GOV_FAIR_SHARE=y
+CONFIG_THERMAL_GOV_STEP_WISE=y
+CONFIG_THERMAL_GOV_BANG_BANG=y
+CONFIG_THERMAL_GOV_USER_SPACE=y
+# CONFIG_THERMAL_EMULATION is not set
+
+#
+# Intel thermal drivers
+#
+CONFIG_INTEL_POWERCLAMP=m
+CONFIG_X86_THERMAL_VECTOR=y
+CONFIG_INTEL_TCC=y
+CONFIG_X86_PKG_TEMP_THERMAL=m
+# CONFIG_INTEL_SOC_DTS_THERMAL is not set
+
+#
+# ACPI INT340X thermal drivers
+#
+# CONFIG_INT340X_THERMAL is not set
+# end of ACPI INT340X thermal drivers
+
+CONFIG_INTEL_PCH_THERMAL=m
+# CONFIG_INTEL_TCC_COOLING is not set
+# CONFIG_INTEL_HFI_THERMAL is not set
+# end of Intel thermal drivers
+
+CONFIG_WATCHDOG=y
+CONFIG_WATCHDOG_CORE=y
+# CONFIG_WATCHDOG_NOWAYOUT is not set
+CONFIG_WATCHDOG_HANDLE_BOOT_ENABLED=y
+CONFIG_WATCHDOG_OPEN_TIMEOUT=0
+CONFIG_WATCHDOG_SYSFS=y
+# CONFIG_WATCHDOG_HRTIMER_PRETIMEOUT is not set
+
+#
+# Watchdog Pretimeout Governors
+#
+# CONFIG_WATCHDOG_PRETIMEOUT_GOV is not set
+
+#
+# Watchdog Device Drivers
+#
+CONFIG_SOFT_WATCHDOG=m
+CONFIG_WDAT_WDT=m
+# CONFIG_XILINX_WATCHDOG is not set
+# CONFIG_ZIIRAVE_WATCHDOG is not set
+# CONFIG_CADENCE_WATCHDOG is not set
+# CONFIG_DW_WATCHDOG is not set
+# CONFIG_MAX63XX_WATCHDOG is not set
+# CONFIG_ACQUIRE_WDT is not set
+# CONFIG_ADVANTECH_WDT is not set
+# CONFIG_ADVANTECH_EC_WDT is not set
+CONFIG_ALIM1535_WDT=m
+CONFIG_ALIM7101_WDT=m
+# CONFIG_EBC_C384_WDT is not set
+# CONFIG_EXAR_WDT is not set
+CONFIG_F71808E_WDT=m
+# CONFIG_SP5100_TCO is not set
+CONFIG_SBC_FITPC2_WATCHDOG=m
+# CONFIG_EUROTECH_WDT is not set
+CONFIG_IB700_WDT=m
+CONFIG_IBMASR=m
+# CONFIG_WAFER_WDT is not set
+CONFIG_I6300ESB_WDT=y
+CONFIG_IE6XX_WDT=m
+CONFIG_ITCO_WDT=y
+CONFIG_ITCO_VENDOR_SUPPORT=y
+CONFIG_IT8712F_WDT=m
+CONFIG_IT87_WDT=m
+CONFIG_HP_WATCHDOG=m
+CONFIG_HPWDT_NMI_DECODING=y
+# CONFIG_SC1200_WDT is not set
+# CONFIG_PC87413_WDT is not set
+CONFIG_NV_TCO=m
+# CONFIG_60XX_WDT is not set
+# CONFIG_CPU5_WDT is not set
+CONFIG_SMSC_SCH311X_WDT=m
+# CONFIG_SMSC37B787_WDT is not set
+# CONFIG_TQMX86_WDT is not set
+CONFIG_VIA_WDT=m
+CONFIG_W83627HF_WDT=m
+CONFIG_W83877F_WDT=m
+CONFIG_W83977F_WDT=m
+CONFIG_MACHZ_WDT=m
+# CONFIG_SBC_EPX_C3_WATCHDOG is not set
+CONFIG_INTEL_MEI_WDT=m
+# CONFIG_NI903X_WDT is not set
+# CONFIG_NIC7018_WDT is not set
+# CONFIG_MEN_A21_WDT is not set
+
+#
+# PCI-based Watchdog Cards
+#
+CONFIG_PCIPCWATCHDOG=m
+CONFIG_WDTPCI=m
+
+#
+# USB-based Watchdog Cards
+#
+# CONFIG_USBPCWATCHDOG is not set
+CONFIG_SSB_POSSIBLE=y
+# CONFIG_SSB is not set
+CONFIG_BCMA_POSSIBLE=y
+# CONFIG_BCMA is not set
+
+#
+# Multifunction device drivers
+#
+CONFIG_MFD_CORE=y
+# CONFIG_MFD_AS3711 is not set
+# CONFIG_MFD_SMPRO is not set
+# CONFIG_PMIC_ADP5520 is not set
+# CONFIG_MFD_AAT2870_CORE is not set
+# CONFIG_MFD_BCM590XX is not set
+# CONFIG_MFD_BD9571MWV is not set
+# CONFIG_MFD_AXP20X_I2C is not set
+# CONFIG_MFD_MADERA is not set
+# CONFIG_PMIC_DA903X is not set
+# CONFIG_MFD_DA9052_SPI is not set
+# CONFIG_MFD_DA9052_I2C is not set
+# CONFIG_MFD_DA9055 is not set
+# CONFIG_MFD_DA9062 is not set
+# CONFIG_MFD_DA9063 is not set
+# CONFIG_MFD_DA9150 is not set
+# CONFIG_MFD_DLN2 is not set
+# CONFIG_MFD_MC13XXX_SPI is not set
+# CONFIG_MFD_MC13XXX_I2C is not set
+# CONFIG_MFD_MP2629 is not set
+# CONFIG_MFD_INTEL_QUARK_I2C_GPIO is not set
+CONFIG_LPC_ICH=m
+CONFIG_LPC_SCH=m
+CONFIG_MFD_INTEL_LPSS=y
+CONFIG_MFD_INTEL_LPSS_ACPI=y
+CONFIG_MFD_INTEL_LPSS_PCI=y
+# CONFIG_MFD_INTEL_PMC_BXT is not set
+# CONFIG_MFD_IQS62X is not set
+# CONFIG_MFD_JANZ_CMODIO is not set
+# CONFIG_MFD_KEMPLD is not set
+# CONFIG_MFD_88PM800 is not set
+# CONFIG_MFD_88PM805 is not set
+# CONFIG_MFD_88PM860X is not set
+# CONFIG_MFD_MAX14577 is not set
+# CONFIG_MFD_MAX77693 is not set
+# CONFIG_MFD_MAX77843 is not set
+# CONFIG_MFD_MAX8907 is not set
+# CONFIG_MFD_MAX8925 is not set
+# CONFIG_MFD_MAX8997 is not set
+# CONFIG_MFD_MAX8998 is not set
+# CONFIG_MFD_MT6360 is not set
+# CONFIG_MFD_MT6370 is not set
+# CONFIG_MFD_MT6397 is not set
+# CONFIG_MFD_MENF21BMC is not set
+# CONFIG_MFD_OCELOT is not set
+# CONFIG_EZX_PCAP is not set
+# CONFIG_MFD_VIPERBOARD is not set
+# CONFIG_MFD_RETU is not set
+# CONFIG_MFD_PCF50633 is not set
+# CONFIG_MFD_SY7636A is not set
+# CONFIG_MFD_RDC321X is not set
+# CONFIG_MFD_RT4831 is not set
+# CONFIG_MFD_RT5033 is not set
+# CONFIG_MFD_RT5120 is not set
+# CONFIG_MFD_RC5T583 is not set
+# CONFIG_MFD_SI476X_CORE is not set
+CONFIG_MFD_SM501=m
+CONFIG_MFD_SM501_GPIO=y
+# CONFIG_MFD_SKY81452 is not set
+# CONFIG_MFD_SYSCON is not set
+# CONFIG_MFD_TI_AM335X_TSCADC is not set
+# CONFIG_MFD_LP3943 is not set
+# CONFIG_MFD_LP8788 is not set
+# CONFIG_MFD_TI_LMU is not set
+# CONFIG_MFD_PALMAS is not set
+# CONFIG_TPS6105X is not set
+# CONFIG_TPS65010 is not set
+# CONFIG_TPS6507X is not set
+# CONFIG_MFD_TPS65086 is not set
+# CONFIG_MFD_TPS65090 is not set
+# CONFIG_MFD_TI_LP873X is not set
+# CONFIG_MFD_TPS6586X is not set
+# CONFIG_MFD_TPS65910 is not set
+# CONFIG_MFD_TPS65912_I2C is not set
+# CONFIG_MFD_TPS65912_SPI is not set
+# CONFIG_TWL4030_CORE is not set
+# CONFIG_TWL6040_CORE is not set
+# CONFIG_MFD_WL1273_CORE is not set
+# CONFIG_MFD_LM3533 is not set
+# CONFIG_MFD_TQMX86 is not set
+CONFIG_MFD_VX855=m
+# CONFIG_MFD_ARIZONA_I2C is not set
+# CONFIG_MFD_ARIZONA_SPI is not set
+# CONFIG_MFD_WM8400 is not set
+# CONFIG_MFD_WM831X_I2C is not set
+# CONFIG_MFD_WM831X_SPI is not set
+# CONFIG_MFD_WM8350_I2C is not set
+# CONFIG_MFD_WM8994 is not set
+# CONFIG_MFD_ATC260X_I2C is not set
+# CONFIG_MFD_INTEL_M10_BMC_SPI is not set
+# end of Multifunction device drivers
+
+# CONFIG_REGULATOR is not set
+CONFIG_RC_CORE=m
+CONFIG_LIRC=y
+CONFIG_RC_MAP=m
+CONFIG_RC_DECODERS=y
+CONFIG_IR_IMON_DECODER=m
+CONFIG_IR_JVC_DECODER=m
+CONFIG_IR_MCE_KBD_DECODER=m
+CONFIG_IR_NEC_DECODER=m
+CONFIG_IR_RC5_DECODER=m
+CONFIG_IR_RC6_DECODER=m
+# CONFIG_IR_RCMM_DECODER is not set
+CONFIG_IR_SANYO_DECODER=m
+# CONFIG_IR_SHARP_DECODER is not set
+CONFIG_IR_SONY_DECODER=m
+# CONFIG_IR_XMP_DECODER is not set
+CONFIG_RC_DEVICES=y
+CONFIG_IR_ENE=m
+CONFIG_IR_FINTEK=m
+# CONFIG_IR_IGORPLUGUSB is not set
+# CONFIG_IR_IGUANA is not set
+# CONFIG_IR_IMON is not set
+# CONFIG_IR_IMON_RAW is not set
+CONFIG_IR_ITE_CIR=m
+# CONFIG_IR_MCEUSB is not set
+CONFIG_IR_NUVOTON=m
+# CONFIG_IR_REDRAT3 is not set
+CONFIG_IR_SERIAL=m
+CONFIG_IR_SERIAL_TRANSMITTER=y
+# CONFIG_IR_STREAMZAP is not set
+# CONFIG_IR_TOY is not set
+# CONFIG_IR_TTUSBIR is not set
+CONFIG_IR_WINBOND_CIR=m
+# CONFIG_RC_ATI_REMOTE is not set
+# CONFIG_RC_LOOPBACK is not set
+# CONFIG_RC_XBOX_DVD is not set
+
+#
+# CEC support
+#
+# CONFIG_MEDIA_CEC_SUPPORT is not set
+# end of CEC support
+
+CONFIG_MEDIA_SUPPORT=m
+CONFIG_MEDIA_SUPPORT_FILTER=y
+CONFIG_MEDIA_SUBDRV_AUTOSELECT=y
+
+#
+# Media device types
+#
+# CONFIG_MEDIA_CAMERA_SUPPORT is not set
+# CONFIG_MEDIA_ANALOG_TV_SUPPORT is not set
+# CONFIG_MEDIA_DIGITAL_TV_SUPPORT is not set
+# CONFIG_MEDIA_RADIO_SUPPORT is not set
+# CONFIG_MEDIA_SDR_SUPPORT is not set
+# CONFIG_MEDIA_PLATFORM_SUPPORT is not set
+# CONFIG_MEDIA_TEST_SUPPORT is not set
+# end of Media device types
+
+#
+# Media drivers
+#
+
+#
+# Drivers filtered as selected at 'Filter media drivers'
+#
+
+#
+# Media drivers
+#
+# CONFIG_MEDIA_USB_SUPPORT is not set
+# CONFIG_MEDIA_PCI_SUPPORT is not set
+# end of Media drivers
+
+#
+# Media ancillary drivers
+#
+# end of Media ancillary drivers
+
+#
+# Graphics support
+#
+CONFIG_APERTURE_HELPERS=y
+CONFIG_VIDEO_CMDLINE=y
+CONFIG_VIDEO_NOMODESET=y
+# CONFIG_AGP is not set
+CONFIG_INTEL_GTT=m
+CONFIG_VGA_SWITCHEROO=y
+CONFIG_DRM=m
+CONFIG_DRM_MIPI_DSI=y
+CONFIG_DRM_KMS_HELPER=m
+# CONFIG_DRM_DEBUG_DP_MST_TOPOLOGY_REFS is not set
+# CONFIG_DRM_DEBUG_MODESET_LOCK is not set
+CONFIG_DRM_FBDEV_EMULATION=y
+CONFIG_DRM_FBDEV_OVERALLOC=100
+# CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM is not set
+CONFIG_DRM_LOAD_EDID_FIRMWARE=y
+CONFIG_DRM_DISPLAY_HELPER=m
+CONFIG_DRM_DISPLAY_DP_HELPER=y
+CONFIG_DRM_DISPLAY_HDCP_HELPER=y
+CONFIG_DRM_DISPLAY_HDMI_HELPER=y
+CONFIG_DRM_DP_AUX_CHARDEV=y
+# CONFIG_DRM_DP_CEC is not set
+CONFIG_DRM_TTM=m
+CONFIG_DRM_BUDDY=m
+CONFIG_DRM_VRAM_HELPER=m
+CONFIG_DRM_TTM_HELPER=m
+CONFIG_DRM_GEM_SHMEM_HELPER=m
+
+#
+# I2C encoder or helper chips
+#
+# CONFIG_DRM_I2C_CH7006 is not set
+# CONFIG_DRM_I2C_SIL164 is not set
+# CONFIG_DRM_I2C_NXP_TDA998X is not set
+# CONFIG_DRM_I2C_NXP_TDA9950 is not set
+# end of I2C encoder or helper chips
+
+#
+# ARM devices
+#
+# end of ARM devices
+
+# CONFIG_DRM_RADEON is not set
+# CONFIG_DRM_AMDGPU is not set
+# CONFIG_DRM_NOUVEAU is not set
+CONFIG_DRM_I915=m
+CONFIG_DRM_I915_FORCE_PROBE=""
+CONFIG_DRM_I915_CAPTURE_ERROR=y
+CONFIG_DRM_I915_COMPRESS_ERROR=y
+CONFIG_DRM_I915_USERPTR=y
+# CONFIG_DRM_I915_GVT_KVMGT is not set
+
+#
+# drm/i915 Debugging
+#
+# CONFIG_DRM_I915_WERROR is not set
+# CONFIG_DRM_I915_DEBUG is not set
+# CONFIG_DRM_I915_DEBUG_MMIO is not set
+# CONFIG_DRM_I915_SW_FENCE_DEBUG_OBJECTS is not set
+# CONFIG_DRM_I915_SW_FENCE_CHECK_DAG is not set
+# CONFIG_DRM_I915_DEBUG_GUC is not set
+# CONFIG_DRM_I915_SELFTEST is not set
+# CONFIG_DRM_I915_LOW_LEVEL_TRACEPOINTS is not set
+# CONFIG_DRM_I915_DEBUG_VBLANK_EVADE is not set
+# CONFIG_DRM_I915_DEBUG_RUNTIME_PM is not set
+# end of drm/i915 Debugging
+
+#
+# drm/i915 Profile Guided Optimisation
+#
+CONFIG_DRM_I915_REQUEST_TIMEOUT=20000
+CONFIG_DRM_I915_FENCE_TIMEOUT=10000
+CONFIG_DRM_I915_USERFAULT_AUTOSUSPEND=250
+CONFIG_DRM_I915_HEARTBEAT_INTERVAL=2500
+CONFIG_DRM_I915_PREEMPT_TIMEOUT=640
+CONFIG_DRM_I915_PREEMPT_TIMEOUT_COMPUTE=7500
+CONFIG_DRM_I915_MAX_REQUEST_BUSYWAIT=8000
+CONFIG_DRM_I915_STOP_TIMEOUT=100
+CONFIG_DRM_I915_TIMESLICE_DURATION=1
+# end of drm/i915 Profile Guided Optimisation
+
+# CONFIG_DRM_VGEM is not set
+# CONFIG_DRM_VKMS is not set
+# CONFIG_DRM_VMWGFX is not set
+# CONFIG_DRM_GMA500 is not set
+# CONFIG_DRM_UDL is not set
+CONFIG_DRM_AST=m
+# CONFIG_DRM_MGAG200 is not set
+CONFIG_DRM_QXL=m
+CONFIG_DRM_VIRTIO_GPU=m
+CONFIG_DRM_VIRTIO_GPU_KMS=y
+CONFIG_DRM_PANEL=y
+
+#
+# Display Panels
+#
+# CONFIG_DRM_PANEL_AUO_A030JTN01 is not set
+# CONFIG_DRM_PANEL_ORISETECH_OTA5601A is not set
+# CONFIG_DRM_PANEL_RASPBERRYPI_TOUCHSCREEN is not set
+# CONFIG_DRM_PANEL_WIDECHIPS_WS2401 is not set
+# end of Display Panels
+
+CONFIG_DRM_BRIDGE=y
+CONFIG_DRM_PANEL_BRIDGE=y
+
+#
+# Display Interface Bridges
+#
+# CONFIG_DRM_ANALOGIX_ANX78XX is not set
+# end of Display Interface Bridges
+
+# CONFIG_DRM_ETNAVIV is not set
+CONFIG_DRM_BOCHS=m
+CONFIG_DRM_CIRRUS_QEMU=m
+# CONFIG_DRM_GM12U320 is not set
+# CONFIG_DRM_PANEL_MIPI_DBI is not set
+# CONFIG_DRM_SIMPLEDRM is not set
+# CONFIG_TINYDRM_HX8357D is not set
+# CONFIG_TINYDRM_ILI9163 is not set
+# CONFIG_TINYDRM_ILI9225 is not set
+# CONFIG_TINYDRM_ILI9341 is not set
+# CONFIG_TINYDRM_ILI9486 is not set
+# CONFIG_TINYDRM_MI0283QT is not set
+# CONFIG_TINYDRM_REPAPER is not set
+# CONFIG_TINYDRM_ST7586 is not set
+# CONFIG_TINYDRM_ST7735R is not set
+# CONFIG_DRM_VBOXVIDEO is not set
+# CONFIG_DRM_GUD is not set
+# CONFIG_DRM_SSD130X is not set
+# CONFIG_DRM_HYPERV is not set
+# CONFIG_DRM_LEGACY is not set
+CONFIG_DRM_PANEL_ORIENTATION_QUIRKS=y
+
+#
+# Frame buffer Devices
+#
+CONFIG_FB_NOTIFY=y
+CONFIG_FB=y
+# CONFIG_FIRMWARE_EDID is not set
+CONFIG_FB_CFB_FILLRECT=y
+CONFIG_FB_CFB_COPYAREA=y
+CONFIG_FB_CFB_IMAGEBLIT=y
+CONFIG_FB_SYS_FILLRECT=m
+CONFIG_FB_SYS_COPYAREA=m
+CONFIG_FB_SYS_IMAGEBLIT=m
+# CONFIG_FB_FOREIGN_ENDIAN is not set
+CONFIG_FB_SYS_FOPS=m
+CONFIG_FB_DEFERRED_IO=y
+# CONFIG_FB_MODE_HELPERS is not set
+CONFIG_FB_TILEBLITTING=y
+
+#
+# Frame buffer hardware drivers
+#
+# CONFIG_FB_CIRRUS is not set
+# CONFIG_FB_PM2 is not set
+# CONFIG_FB_CYBER2000 is not set
+# CONFIG_FB_ARC is not set
+# CONFIG_FB_ASILIANT is not set
+# CONFIG_FB_IMSTT is not set
+# CONFIG_FB_VGA16 is not set
+# CONFIG_FB_UVESA is not set
+CONFIG_FB_VESA=y
+CONFIG_FB_EFI=y
+# CONFIG_FB_N411 is not set
+# CONFIG_FB_HGA is not set
+# CONFIG_FB_OPENCORES is not set
+# CONFIG_FB_S1D13XXX is not set
+# CONFIG_FB_NVIDIA is not set
+# CONFIG_FB_RIVA is not set
+# CONFIG_FB_I740 is not set
+# CONFIG_FB_LE80578 is not set
+# CONFIG_FB_MATROX is not set
+# CONFIG_FB_RADEON is not set
+# CONFIG_FB_ATY128 is not set
+# CONFIG_FB_ATY is not set
+# CONFIG_FB_S3 is not set
+# CONFIG_FB_SAVAGE is not set
+# CONFIG_FB_SIS is not set
+# CONFIG_FB_VIA is not set
+# CONFIG_FB_NEOMAGIC is not set
+# CONFIG_FB_KYRO is not set
+# CONFIG_FB_3DFX is not set
+# CONFIG_FB_VOODOO1 is not set
+# CONFIG_FB_VT8623 is not set
+# CONFIG_FB_TRIDENT is not set
+# CONFIG_FB_ARK is not set
+# CONFIG_FB_PM3 is not set
+# CONFIG_FB_CARMINE is not set
+# CONFIG_FB_SM501 is not set
+# CONFIG_FB_SMSCUFX is not set
+# CONFIG_FB_UDL is not set
+# CONFIG_FB_IBM_GXT4500 is not set
+# CONFIG_FB_VIRTUAL is not set
+# CONFIG_FB_METRONOME is not set
+# CONFIG_FB_MB862XX is not set
+CONFIG_FB_HYPERV=m
+# CONFIG_FB_SIMPLE is not set
+# CONFIG_FB_SSD1307 is not set
+# CONFIG_FB_SM712 is not set
+# end of Frame buffer Devices
+
+#
+# Backlight & LCD device support
+#
+CONFIG_LCD_CLASS_DEVICE=m
+# CONFIG_LCD_L4F00242T03 is not set
+# CONFIG_LCD_LMS283GF05 is not set
+# CONFIG_LCD_LTV350QV is not set
+# CONFIG_LCD_ILI922X is not set
+# CONFIG_LCD_ILI9320 is not set
+# CONFIG_LCD_TDO24M is not set
+# CONFIG_LCD_VGG2432A4 is not set
+CONFIG_LCD_PLATFORM=m
+# CONFIG_LCD_AMS369FG06 is not set
+# CONFIG_LCD_LMS501KF03 is not set
+# CONFIG_LCD_HX8357 is not set
+# CONFIG_LCD_OTM3225A is not set
+CONFIG_BACKLIGHT_CLASS_DEVICE=y
+# CONFIG_BACKLIGHT_KTD253 is not set
+# CONFIG_BACKLIGHT_KTZ8866 is not set
+# CONFIG_BACKLIGHT_PWM is not set
+CONFIG_BACKLIGHT_APPLE=m
+# CONFIG_BACKLIGHT_QCOM_WLED is not set
+# CONFIG_BACKLIGHT_SAHARA is not set
+# CONFIG_BACKLIGHT_ADP8860 is not set
+# CONFIG_BACKLIGHT_ADP8870 is not set
+# CONFIG_BACKLIGHT_LM3630A is not set
+# CONFIG_BACKLIGHT_LM3639 is not set
+CONFIG_BACKLIGHT_LP855X=m
+# CONFIG_BACKLIGHT_GPIO is not set
+# CONFIG_BACKLIGHT_LV5207LP is not set
+# CONFIG_BACKLIGHT_BD6107 is not set
+# CONFIG_BACKLIGHT_ARCXCNN is not set
+# end of Backlight & LCD device support
+
+CONFIG_HDMI=y
+
+#
+# Console display driver support
+#
+CONFIG_VGA_CONSOLE=y
+CONFIG_DUMMY_CONSOLE=y
+CONFIG_DUMMY_CONSOLE_COLUMNS=80
+CONFIG_DUMMY_CONSOLE_ROWS=25
+CONFIG_FRAMEBUFFER_CONSOLE=y
+# CONFIG_FRAMEBUFFER_CONSOLE_LEGACY_ACCELERATION is not set
+CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
+CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
+# CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER is not set
+# end of Console display driver support
+
+CONFIG_LOGO=y
+# CONFIG_LOGO_LINUX_MONO is not set
+# CONFIG_LOGO_LINUX_VGA16 is not set
+CONFIG_LOGO_LINUX_CLUT224=y
+# end of Graphics support
+
+# CONFIG_DRM_ACCEL is not set
+# CONFIG_SOUND is not set
+CONFIG_HID_SUPPORT=y
+CONFIG_HID=y
+CONFIG_HID_BATTERY_STRENGTH=y
+CONFIG_HIDRAW=y
+CONFIG_UHID=m
+CONFIG_HID_GENERIC=y
+
+#
+# Special HID drivers
+#
+CONFIG_HID_A4TECH=m
+# CONFIG_HID_ACCUTOUCH is not set
+CONFIG_HID_ACRUX=m
+# CONFIG_HID_ACRUX_FF is not set
+CONFIG_HID_APPLE=m
+# CONFIG_HID_APPLEIR is not set
+CONFIG_HID_ASUS=m
+CONFIG_HID_AUREAL=m
+CONFIG_HID_BELKIN=m
+# CONFIG_HID_BETOP_FF is not set
+# CONFIG_HID_BIGBEN_FF is not set
+CONFIG_HID_CHERRY=m
+# CONFIG_HID_CHICONY is not set
+# CONFIG_HID_CORSAIR is not set
+# CONFIG_HID_COUGAR is not set
+# CONFIG_HID_MACALLY is not set
+CONFIG_HID_CMEDIA=m
+# CONFIG_HID_CP2112 is not set
+# CONFIG_HID_CREATIVE_SB0540 is not set
+CONFIG_HID_CYPRESS=m
+CONFIG_HID_DRAGONRISE=m
+# CONFIG_DRAGONRISE_FF is not set
+# CONFIG_HID_EMS_FF is not set
+# CONFIG_HID_ELAN is not set
+CONFIG_HID_ELECOM=m
+# CONFIG_HID_ELO is not set
+# CONFIG_HID_EVISION is not set
+CONFIG_HID_EZKEY=m
+# CONFIG_HID_FT260 is not set
+CONFIG_HID_GEMBIRD=m
+CONFIG_HID_GFRM=m
+# CONFIG_HID_GLORIOUS is not set
+# CONFIG_HID_HOLTEK is not set
+# CONFIG_HID_VIVALDI is not set
+# CONFIG_HID_GT683R is not set
+CONFIG_HID_KEYTOUCH=m
+CONFIG_HID_KYE=m
+# CONFIG_HID_UCLOGIC is not set
+CONFIG_HID_WALTOP=m
+# CONFIG_HID_VIEWSONIC is not set
+# CONFIG_HID_VRC2 is not set
+# CONFIG_HID_XIAOMI is not set
+CONFIG_HID_GYRATION=m
+CONFIG_HID_ICADE=m
+CONFIG_HID_ITE=m
+CONFIG_HID_JABRA=m
+CONFIG_HID_TWINHAN=m
+CONFIG_HID_KENSINGTON=m
+CONFIG_HID_LCPOWER=m
+CONFIG_HID_LED=m
+CONFIG_HID_LENOVO=m
+# CONFIG_HID_LETSKETCH is not set
+CONFIG_HID_LOGITECH=m
+CONFIG_HID_LOGITECH_DJ=m
+CONFIG_HID_LOGITECH_HIDPP=m
+# CONFIG_LOGITECH_FF is not set
+# CONFIG_LOGIRUMBLEPAD2_FF is not set
+# CONFIG_LOGIG940_FF is not set
+# CONFIG_LOGIWHEELS_FF is not set
+CONFIG_HID_MAGICMOUSE=y
+# CONFIG_HID_MALTRON is not set
+# CONFIG_HID_MAYFLASH is not set
+# CONFIG_HID_MEGAWORLD_FF is not set
+# CONFIG_HID_REDRAGON is not set
+CONFIG_HID_MICROSOFT=m
+CONFIG_HID_MONTEREY=m
+CONFIG_HID_MULTITOUCH=m
+# CONFIG_HID_NINTENDO is not set
+CONFIG_HID_NTI=m
+# CONFIG_HID_NTRIG is not set
+CONFIG_HID_ORTEK=m
+CONFIG_HID_PANTHERLORD=m
+# CONFIG_PANTHERLORD_FF is not set
+# CONFIG_HID_PENMOUNT is not set
+CONFIG_HID_PETALYNX=m
+CONFIG_HID_PICOLCD=m
+CONFIG_HID_PICOLCD_FB=y
+CONFIG_HID_PICOLCD_BACKLIGHT=y
+CONFIG_HID_PICOLCD_LCD=y
+CONFIG_HID_PICOLCD_LEDS=y
+CONFIG_HID_PICOLCD_CIR=y
+CONFIG_HID_PLANTRONICS=m
+# CONFIG_HID_PXRC is not set
+# CONFIG_HID_RAZER is not set
+CONFIG_HID_PRIMAX=m
+# CONFIG_HID_RETRODE is not set
+# CONFIG_HID_ROCCAT is not set
+CONFIG_HID_SAITEK=m
+CONFIG_HID_SAMSUNG=m
+# CONFIG_HID_SEMITEK is not set
+# CONFIG_HID_SIGMAMICRO is not set
+# CONFIG_HID_SONY is not set
+CONFIG_HID_SPEEDLINK=m
+# CONFIG_HID_STEAM is not set
+CONFIG_HID_STEELSERIES=m
+CONFIG_HID_SUNPLUS=m
+CONFIG_HID_RMI=m
+CONFIG_HID_GREENASIA=m
+# CONFIG_GREENASIA_FF is not set
+CONFIG_HID_HYPERV_MOUSE=m
+CONFIG_HID_SMARTJOYPLUS=m
+# CONFIG_SMARTJOYPLUS_FF is not set
+CONFIG_HID_TIVO=m
+CONFIG_HID_TOPSEED=m
+# CONFIG_HID_TOPRE is not set
+CONFIG_HID_THINGM=m
+CONFIG_HID_THRUSTMASTER=m
+# CONFIG_THRUSTMASTER_FF is not set
+# CONFIG_HID_UDRAW_PS3 is not set
+# CONFIG_HID_U2FZERO is not set
+# CONFIG_HID_WACOM is not set
+CONFIG_HID_WIIMOTE=m
+CONFIG_HID_XINMO=m
+CONFIG_HID_ZEROPLUS=m
+# CONFIG_ZEROPLUS_FF is not set
+CONFIG_HID_ZYDACRON=m
+CONFIG_HID_SENSOR_HUB=y
+CONFIG_HID_SENSOR_CUSTOM_SENSOR=m
+CONFIG_HID_ALPS=m
+# CONFIG_HID_MCP2221 is not set
+# end of Special HID drivers
+
+#
+# HID-BPF support
+#
+# CONFIG_HID_BPF is not set
+# end of HID-BPF support
+
+#
+# USB HID support
+#
+CONFIG_USB_HID=y
+# CONFIG_HID_PID is not set
+# CONFIG_USB_HIDDEV is not set
+# end of USB HID support
+
+CONFIG_I2C_HID=m
+# CONFIG_I2C_HID_ACPI is not set
+# CONFIG_I2C_HID_OF is not set
+
+#
+# Intel ISH HID support
+#
+# CONFIG_INTEL_ISH_HID is not set
+# end of Intel ISH HID support
+
+#
+# AMD SFH HID Support
+#
+# CONFIG_AMD_SFH_HID is not set
+# end of AMD SFH HID Support
+
+CONFIG_USB_OHCI_LITTLE_ENDIAN=y
+CONFIG_USB_SUPPORT=y
+CONFIG_USB_COMMON=y
+# CONFIG_USB_LED_TRIG is not set
+# CONFIG_USB_ULPI_BUS is not set
+# CONFIG_USB_CONN_GPIO is not set
+CONFIG_USB_ARCH_HAS_HCD=y
+CONFIG_USB=y
+CONFIG_USB_PCI=y
+CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
+
+#
+# Miscellaneous USB options
+#
+CONFIG_USB_DEFAULT_PERSIST=y
+# CONFIG_USB_FEW_INIT_RETRIES is not set
+# CONFIG_USB_DYNAMIC_MINORS is not set
+# CONFIG_USB_OTG is not set
+# CONFIG_USB_OTG_PRODUCTLIST is not set
+# CONFIG_USB_OTG_DISABLE_EXTERNAL_HUB is not set
+CONFIG_USB_LEDS_TRIGGER_USBPORT=y
+CONFIG_USB_AUTOSUSPEND_DELAY=2
+CONFIG_USB_MON=y
+
+#
+# USB Host Controller Drivers
+#
+# CONFIG_USB_C67X00_HCD is not set
+CONFIG_USB_XHCI_HCD=y
+# CONFIG_USB_XHCI_DBGCAP is not set
+CONFIG_USB_XHCI_PCI=y
+# CONFIG_USB_XHCI_PCI_RENESAS is not set
+# CONFIG_USB_XHCI_PLATFORM is not set
+CONFIG_USB_EHCI_HCD=y
+CONFIG_USB_EHCI_ROOT_HUB_TT=y
+CONFIG_USB_EHCI_TT_NEWSCHED=y
+CONFIG_USB_EHCI_PCI=y
+# CONFIG_USB_EHCI_FSL is not set
+# CONFIG_USB_EHCI_HCD_PLATFORM is not set
+# CONFIG_USB_OXU210HP_HCD is not set
+# CONFIG_USB_ISP116X_HCD is not set
+# CONFIG_USB_MAX3421_HCD is not set
+CONFIG_USB_OHCI_HCD=y
+CONFIG_USB_OHCI_HCD_PCI=y
+# CONFIG_USB_OHCI_HCD_PLATFORM is not set
+CONFIG_USB_UHCI_HCD=y
+# CONFIG_USB_SL811_HCD is not set
+# CONFIG_USB_R8A66597_HCD is not set
+# CONFIG_USB_HCD_TEST_MODE is not set
+
+#
+# USB Device Class drivers
+#
+# CONFIG_USB_ACM is not set
+# CONFIG_USB_PRINTER is not set
+# CONFIG_USB_WDM is not set
+# CONFIG_USB_TMC is not set
+
+#
+# NOTE: USB_STORAGE depends on SCSI but BLK_DEV_SD may
+#
+
+#
+# also be needed; see USB_STORAGE Help for more info
+#
+CONFIG_USB_STORAGE=m
+# CONFIG_USB_STORAGE_DEBUG is not set
+# CONFIG_USB_STORAGE_REALTEK is not set
+# CONFIG_USB_STORAGE_DATAFAB is not set
+# CONFIG_USB_STORAGE_FREECOM is not set
+# CONFIG_USB_STORAGE_ISD200 is not set
+# CONFIG_USB_STORAGE_USBAT is not set
+# CONFIG_USB_STORAGE_SDDR09 is not set
+# CONFIG_USB_STORAGE_SDDR55 is not set
+# CONFIG_USB_STORAGE_JUMPSHOT is not set
+# CONFIG_USB_STORAGE_ALAUDA is not set
+# CONFIG_USB_STORAGE_ONETOUCH is not set
+# CONFIG_USB_STORAGE_KARMA is not set
+# CONFIG_USB_STORAGE_CYPRESS_ATACB is not set
+# CONFIG_USB_STORAGE_ENE_UB6250 is not set
+# CONFIG_USB_UAS is not set
+
+#
+# USB Imaging devices
+#
+# CONFIG_USB_MDC800 is not set
+# CONFIG_USB_MICROTEK is not set
+# CONFIG_USBIP_CORE is not set
+
+#
+# USB dual-mode controller drivers
+#
+# CONFIG_USB_CDNS_SUPPORT is not set
+# CONFIG_USB_MUSB_HDRC is not set
+# CONFIG_USB_DWC3 is not set
+# CONFIG_USB_DWC2 is not set
+# CONFIG_USB_CHIPIDEA is not set
+# CONFIG_USB_ISP1760 is not set
+
+#
+# USB port drivers
+#
+# CONFIG_USB_SERIAL is not set
+
+#
+# USB Miscellaneous drivers
+#
+# CONFIG_USB_USS720 is not set
+# CONFIG_USB_EMI62 is not set
+# CONFIG_USB_EMI26 is not set
+# CONFIG_USB_ADUTUX is not set
+# CONFIG_USB_SEVSEG is not set
+# CONFIG_USB_LEGOTOWER is not set
+# CONFIG_USB_LCD is not set
+# CONFIG_USB_CYPRESS_CY7C63 is not set
+# CONFIG_USB_CYTHERM is not set
+# CONFIG_USB_IDMOUSE is not set
+# CONFIG_USB_APPLEDISPLAY is not set
+# CONFIG_APPLE_MFI_FASTCHARGE is not set
+# CONFIG_USB_SISUSBVGA is not set
+# CONFIG_USB_LD is not set
+# CONFIG_USB_TRANCEVIBRATOR is not set
+# CONFIG_USB_IOWARRIOR is not set
+# CONFIG_USB_TEST is not set
+# CONFIG_USB_EHSET_TEST_FIXTURE is not set
+# CONFIG_USB_ISIGHTFW is not set
+# CONFIG_USB_YUREX is not set
+# CONFIG_USB_EZUSB_FX2 is not set
+# CONFIG_USB_HUB_USB251XB is not set
+# CONFIG_USB_HSIC_USB3503 is not set
+# CONFIG_USB_HSIC_USB4604 is not set
+# CONFIG_USB_LINK_LAYER_TEST is not set
+# CONFIG_USB_CHAOSKEY is not set
+
+#
+# USB Physical Layer drivers
+#
+# CONFIG_NOP_USB_XCEIV is not set
+# CONFIG_USB_GPIO_VBUS is not set
+# CONFIG_USB_ISP1301 is not set
+# end of USB Physical Layer drivers
+
+# CONFIG_USB_GADGET is not set
+CONFIG_TYPEC=y
+# CONFIG_TYPEC_TCPM is not set
+CONFIG_TYPEC_UCSI=y
+# CONFIG_UCSI_CCG is not set
+CONFIG_UCSI_ACPI=y
+# CONFIG_UCSI_STM32G0 is not set
+# CONFIG_TYPEC_TPS6598X is not set
+# CONFIG_TYPEC_RT1719 is not set
+# CONFIG_TYPEC_STUSB160X is not set
+# CONFIG_TYPEC_WUSB3801 is not set
+
+#
+# USB Type-C Multiplexer/DeMultiplexer Switch support
+#
+# CONFIG_TYPEC_MUX_FSA4480 is not set
+# CONFIG_TYPEC_MUX_GPIO_SBU is not set
+# CONFIG_TYPEC_MUX_PI3USB30532 is not set
+# end of USB Type-C Multiplexer/DeMultiplexer Switch support
+
+#
+# USB Type-C Alternate Mode drivers
+#
+# CONFIG_TYPEC_DP_ALTMODE is not set
+# end of USB Type-C Alternate Mode drivers
+
+# CONFIG_USB_ROLE_SWITCH is not set
+CONFIG_MMC=m
+CONFIG_MMC_BLOCK=m
+CONFIG_MMC_BLOCK_MINORS=8
+CONFIG_SDIO_UART=m
+# CONFIG_MMC_TEST is not set
+
+#
+# MMC/SD/SDIO Host Controller Drivers
+#
+# CONFIG_MMC_DEBUG is not set
+CONFIG_MMC_SDHCI=m
+CONFIG_MMC_SDHCI_IO_ACCESSORS=y
+CONFIG_MMC_SDHCI_PCI=m
+CONFIG_MMC_RICOH_MMC=y
+CONFIG_MMC_SDHCI_ACPI=m
+CONFIG_MMC_SDHCI_PLTFM=m
+# CONFIG_MMC_SDHCI_F_SDH30 is not set
+# CONFIG_MMC_WBSD is not set
+# CONFIG_MMC_TIFM_SD is not set
+# CONFIG_MMC_SPI is not set
+# CONFIG_MMC_CB710 is not set
+# CONFIG_MMC_VIA_SDMMC is not set
+# CONFIG_MMC_VUB300 is not set
+# CONFIG_MMC_USHC is not set
+# CONFIG_MMC_USDHI6ROL0 is not set
+CONFIG_MMC_CQHCI=m
+# CONFIG_MMC_HSQ is not set
+# CONFIG_MMC_TOSHIBA_PCI is not set
+# CONFIG_MMC_MTK is not set
+# CONFIG_MMC_SDHCI_XENON is not set
+# CONFIG_SCSI_UFSHCD is not set
+# CONFIG_MEMSTICK is not set
+CONFIG_NEW_LEDS=y
+CONFIG_LEDS_CLASS=y
+# CONFIG_LEDS_CLASS_FLASH is not set
+# CONFIG_LEDS_CLASS_MULTICOLOR is not set
+# CONFIG_LEDS_BRIGHTNESS_HW_CHANGED is not set
+
+#
+# LED drivers
+#
+# CONFIG_LEDS_APU is not set
+CONFIG_LEDS_LM3530=m
+# CONFIG_LEDS_LM3532 is not set
+# CONFIG_LEDS_LM3642 is not set
+# CONFIG_LEDS_PCA9532 is not set
+# CONFIG_LEDS_GPIO is not set
+CONFIG_LEDS_LP3944=m
+# CONFIG_LEDS_LP3952 is not set
+# CONFIG_LEDS_LP50XX is not set
+# CONFIG_LEDS_PCA955X is not set
+# CONFIG_LEDS_PCA963X is not set
+# CONFIG_LEDS_DAC124S085 is not set
+# CONFIG_LEDS_PWM is not set
+# CONFIG_LEDS_BD2606MVV is not set
+# CONFIG_LEDS_BD2802 is not set
+CONFIG_LEDS_INTEL_SS4200=m
+CONFIG_LEDS_LT3593=m
+# CONFIG_LEDS_TCA6507 is not set
+# CONFIG_LEDS_TLC591XX is not set
+# CONFIG_LEDS_LM355x is not set
+# CONFIG_LEDS_IS31FL319X is not set
+
+#
+# LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)
+#
+CONFIG_LEDS_BLINKM=m
+CONFIG_LEDS_MLXCPLD=m
+# CONFIG_LEDS_MLXREG is not set
+# CONFIG_LEDS_USER is not set
+# CONFIG_LEDS_NIC78BX is not set
+# CONFIG_LEDS_TI_LMU_COMMON is not set
+
+#
+# Flash and Torch LED drivers
+#
+
+#
+# RGB LED drivers
+#
+
+#
+# LED Triggers
+#
+CONFIG_LEDS_TRIGGERS=y
+CONFIG_LEDS_TRIGGER_TIMER=m
+CONFIG_LEDS_TRIGGER_ONESHOT=m
+# CONFIG_LEDS_TRIGGER_DISK is not set
+CONFIG_LEDS_TRIGGER_HEARTBEAT=m
+CONFIG_LEDS_TRIGGER_BACKLIGHT=m
+# CONFIG_LEDS_TRIGGER_CPU is not set
+# CONFIG_LEDS_TRIGGER_ACTIVITY is not set
+CONFIG_LEDS_TRIGGER_DEFAULT_ON=m
+
+#
+# iptables trigger is under Netfilter config (LED target)
+#
+CONFIG_LEDS_TRIGGER_TRANSIENT=m
+CONFIG_LEDS_TRIGGER_CAMERA=m
+# CONFIG_LEDS_TRIGGER_PANIC is not set
+# CONFIG_LEDS_TRIGGER_NETDEV is not set
+# CONFIG_LEDS_TRIGGER_PATTERN is not set
+# CONFIG_LEDS_TRIGGER_AUDIO is not set
+# CONFIG_LEDS_TRIGGER_TTY is not set
+
+#
+# Simple LED drivers
+#
+# CONFIG_ACCESSIBILITY is not set
+# CONFIG_INFINIBAND is not set
+CONFIG_EDAC_ATOMIC_SCRUB=y
+CONFIG_EDAC_SUPPORT=y
+CONFIG_EDAC=y
+CONFIG_EDAC_LEGACY_SYSFS=y
+# CONFIG_EDAC_DEBUG is not set
+CONFIG_EDAC_GHES=y
+CONFIG_EDAC_E752X=m
+CONFIG_EDAC_I82975X=m
+CONFIG_EDAC_I3000=m
+CONFIG_EDAC_I3200=m
+CONFIG_EDAC_IE31200=m
+CONFIG_EDAC_X38=m
+CONFIG_EDAC_I5400=m
+CONFIG_EDAC_I7CORE=m
+CONFIG_EDAC_I5100=m
+CONFIG_EDAC_I7300=m
+CONFIG_EDAC_SBRIDGE=m
+CONFIG_EDAC_SKX=m
+# CONFIG_EDAC_I10NM is not set
+CONFIG_EDAC_PND2=m
+# CONFIG_EDAC_IGEN6 is not set
+CONFIG_RTC_LIB=y
+CONFIG_RTC_MC146818_LIB=y
+CONFIG_RTC_CLASS=y
+CONFIG_RTC_HCTOSYS=y
+CONFIG_RTC_HCTOSYS_DEVICE="rtc0"
+# CONFIG_RTC_SYSTOHC is not set
+# CONFIG_RTC_DEBUG is not set
+CONFIG_RTC_NVMEM=y
+
+#
+# RTC interfaces
+#
+CONFIG_RTC_INTF_SYSFS=y
+CONFIG_RTC_INTF_PROC=y
+CONFIG_RTC_INTF_DEV=y
+# CONFIG_RTC_INTF_DEV_UIE_EMUL is not set
+# CONFIG_RTC_DRV_TEST is not set
+
+#
+# I2C RTC drivers
+#
+# CONFIG_RTC_DRV_ABB5ZES3 is not set
+# CONFIG_RTC_DRV_ABEOZ9 is not set
+# CONFIG_RTC_DRV_ABX80X is not set
+CONFIG_RTC_DRV_DS1307=m
+# CONFIG_RTC_DRV_DS1307_CENTURY is not set
+CONFIG_RTC_DRV_DS1374=m
+# CONFIG_RTC_DRV_DS1374_WDT is not set
+CONFIG_RTC_DRV_DS1672=m
+CONFIG_RTC_DRV_MAX6900=m
+CONFIG_RTC_DRV_RS5C372=m
+CONFIG_RTC_DRV_ISL1208=m
+CONFIG_RTC_DRV_ISL12022=m
+CONFIG_RTC_DRV_X1205=m
+CONFIG_RTC_DRV_PCF8523=m
+# CONFIG_RTC_DRV_PCF85063 is not set
+# CONFIG_RTC_DRV_PCF85363 is not set
+CONFIG_RTC_DRV_PCF8563=m
+CONFIG_RTC_DRV_PCF8583=m
+CONFIG_RTC_DRV_M41T80=m
+CONFIG_RTC_DRV_M41T80_WDT=y
+CONFIG_RTC_DRV_BQ32K=m
+# CONFIG_RTC_DRV_S35390A is not set
+CONFIG_RTC_DRV_FM3130=m
+# CONFIG_RTC_DRV_RX8010 is not set
+CONFIG_RTC_DRV_RX8581=m
+CONFIG_RTC_DRV_RX8025=m
+CONFIG_RTC_DRV_EM3027=m
+# CONFIG_RTC_DRV_RV3028 is not set
+# CONFIG_RTC_DRV_RV3032 is not set
+# CONFIG_RTC_DRV_RV8803 is not set
+# CONFIG_RTC_DRV_SD3078 is not set
+
+#
+# SPI RTC drivers
+#
+# CONFIG_RTC_DRV_M41T93 is not set
+# CONFIG_RTC_DRV_M41T94 is not set
+# CONFIG_RTC_DRV_DS1302 is not set
+# CONFIG_RTC_DRV_DS1305 is not set
+# CONFIG_RTC_DRV_DS1343 is not set
+# CONFIG_RTC_DRV_DS1347 is not set
+# CONFIG_RTC_DRV_DS1390 is not set
+# CONFIG_RTC_DRV_MAX6916 is not set
+# CONFIG_RTC_DRV_R9701 is not set
+CONFIG_RTC_DRV_RX4581=m
+# CONFIG_RTC_DRV_RS5C348 is not set
+# CONFIG_RTC_DRV_MAX6902 is not set
+# CONFIG_RTC_DRV_PCF2123 is not set
+# CONFIG_RTC_DRV_MCP795 is not set
+CONFIG_RTC_I2C_AND_SPI=y
+
+#
+# SPI and I2C RTC drivers
+#
+CONFIG_RTC_DRV_DS3232=m
+CONFIG_RTC_DRV_DS3232_HWMON=y
+# CONFIG_RTC_DRV_PCF2127 is not set
+CONFIG_RTC_DRV_RV3029C2=m
+# CONFIG_RTC_DRV_RV3029_HWMON is not set
+# CONFIG_RTC_DRV_RX6110 is not set
+
+#
+# Platform RTC drivers
+#
+CONFIG_RTC_DRV_CMOS=y
+CONFIG_RTC_DRV_DS1286=m
+CONFIG_RTC_DRV_DS1511=m
+CONFIG_RTC_DRV_DS1553=m
+# CONFIG_RTC_DRV_DS1685_FAMILY is not set
+CONFIG_RTC_DRV_DS1742=m
+CONFIG_RTC_DRV_DS2404=m
+CONFIG_RTC_DRV_STK17TA8=m
+# CONFIG_RTC_DRV_M48T86 is not set
+CONFIG_RTC_DRV_M48T35=m
+CONFIG_RTC_DRV_M48T59=m
+CONFIG_RTC_DRV_MSM6242=m
+CONFIG_RTC_DRV_BQ4802=m
+CONFIG_RTC_DRV_RP5C01=m
+
+#
+# on-CPU RTC drivers
+#
+# CONFIG_RTC_DRV_FTRTC010 is not set
+
+#
+# HID Sensor RTC drivers
+#
+# CONFIG_RTC_DRV_GOLDFISH is not set
+CONFIG_DMADEVICES=y
+# CONFIG_DMADEVICES_DEBUG is not set
+
+#
+# DMA Devices
+#
+CONFIG_DMA_ENGINE=y
+CONFIG_DMA_VIRTUAL_CHANNELS=y
+CONFIG_DMA_ACPI=y
+# CONFIG_ALTERA_MSGDMA is not set
+CONFIG_INTEL_IDMA64=m
+# CONFIG_INTEL_IDXD is not set
+# CONFIG_INTEL_IDXD_COMPAT is not set
+CONFIG_INTEL_IOATDMA=m
+# CONFIG_PLX_DMA is not set
+# CONFIG_XILINX_XDMA is not set
+# CONFIG_AMD_PTDMA is not set
+# CONFIG_QCOM_HIDMA_MGMT is not set
+# CONFIG_QCOM_HIDMA is not set
+CONFIG_DW_DMAC_CORE=y
+CONFIG_DW_DMAC=m
+CONFIG_DW_DMAC_PCI=y
+# CONFIG_DW_EDMA is not set
+CONFIG_HSU_DMA=y
+# CONFIG_SF_PDMA is not set
+# CONFIG_INTEL_LDMA is not set
+
+#
+# DMA Clients
+#
+CONFIG_ASYNC_TX_DMA=y
+CONFIG_DMATEST=m
+CONFIG_DMA_ENGINE_RAID=y
+
+#
+# DMABUF options
+#
+CONFIG_SYNC_FILE=y
+# CONFIG_SW_SYNC is not set
+# CONFIG_UDMABUF is not set
+# CONFIG_DMABUF_MOVE_NOTIFY is not set
+# CONFIG_DMABUF_DEBUG is not set
+# CONFIG_DMABUF_SELFTESTS is not set
+# CONFIG_DMABUF_HEAPS is not set
+# CONFIG_DMABUF_SYSFS_STATS is not set
+# end of DMABUF options
+
+CONFIG_DCA=m
+# CONFIG_AUXDISPLAY is not set
+# CONFIG_PANEL is not set
+# CONFIG_UIO is not set
+CONFIG_VFIO=m
+CONFIG_VFIO_CONTAINER=y
+CONFIG_VFIO_IOMMU_TYPE1=m
+CONFIG_VFIO_NOIOMMU=y
+CONFIG_VFIO_VIRQFD=y
+CONFIG_VFIO_PCI_CORE=m
+CONFIG_VFIO_PCI_MMAP=y
+CONFIG_VFIO_PCI_INTX=y
+CONFIG_VFIO_PCI=m
+# CONFIG_VFIO_PCI_VGA is not set
+# CONFIG_VFIO_PCI_IGD is not set
+CONFIG_IRQ_BYPASS_MANAGER=m
+# CONFIG_VIRT_DRIVERS is not set
+CONFIG_VIRTIO_ANCHOR=y
+CONFIG_VIRTIO=y
+CONFIG_VIRTIO_PCI_LIB=y
+CONFIG_VIRTIO_PCI_LIB_LEGACY=y
+CONFIG_VIRTIO_MENU=y
+CONFIG_VIRTIO_PCI=y
+CONFIG_VIRTIO_PCI_LEGACY=y
+# CONFIG_VIRTIO_PMEM is not set
+CONFIG_VIRTIO_BALLOON=m
+# CONFIG_VIRTIO_MEM is not set
+CONFIG_VIRTIO_INPUT=m
+# CONFIG_VIRTIO_MMIO is not set
+CONFIG_VIRTIO_DMA_SHARED_BUFFER=m
+# CONFIG_VDPA is not set
+CONFIG_VHOST_IOTLB=m
+CONFIG_VHOST_TASK=y
+CONFIG_VHOST=m
+CONFIG_VHOST_MENU=y
+CONFIG_VHOST_NET=m
+CONFIG_VHOST_VSOCK=m
+# CONFIG_VHOST_CROSS_ENDIAN_LEGACY is not set
+
+#
+# Microsoft Hyper-V guest support
+#
+CONFIG_HYPERV=y
+# CONFIG_HYPERV_VTL_MODE is not set
+CONFIG_HYPERV_TIMER=y
+CONFIG_HYPERV_UTILS=m
+CONFIG_HYPERV_BALLOON=m
+# end of Microsoft Hyper-V guest support
+
+# CONFIG_GREYBUS is not set
+# CONFIG_COMEDI is not set
+# CONFIG_STAGING is not set
+# CONFIG_CHROME_PLATFORMS is not set
+# CONFIG_MELLANOX_PLATFORM is not set
+CONFIG_SURFACE_PLATFORMS=y
+# CONFIG_SURFACE3_WMI is not set
+# CONFIG_SURFACE_3_POWER_OPREGION is not set
+# CONFIG_SURFACE_GPE is not set
+# CONFIG_SURFACE_HOTPLUG is not set
+# CONFIG_SURFACE_PRO3_BUTTON is not set
+CONFIG_X86_PLATFORM_DEVICES=y
+CONFIG_ACPI_WMI=m
+CONFIG_WMI_BMOF=m
+# CONFIG_HUAWEI_WMI is not set
+# CONFIG_UV_SYSFS is not set
+CONFIG_MXM_WMI=m
+# CONFIG_NVIDIA_WMI_EC_BACKLIGHT is not set
+# CONFIG_XIAOMI_WMI is not set
+# CONFIG_GIGABYTE_WMI is not set
+# CONFIG_YOGABOOK_WMI is not set
+CONFIG_ACERHDF=m
+# CONFIG_ACER_WIRELESS is not set
+CONFIG_ACER_WMI=m
+# CONFIG_ADV_SWBUTTON is not set
+CONFIG_APPLE_GMUX=m
+CONFIG_ASUS_LAPTOP=m
+# CONFIG_ASUS_WIRELESS is not set
+# CONFIG_ASUS_WMI is not set
+# CONFIG_ASUS_TF103C_DOCK is not set
+# CONFIG_MERAKI_MX100 is not set
+CONFIG_EEEPC_LAPTOP=m
+# CONFIG_X86_PLATFORM_DRIVERS_DELL is not set
+CONFIG_AMILO_RFKILL=m
+CONFIG_FUJITSU_LAPTOP=m
+CONFIG_FUJITSU_TABLET=m
+# CONFIG_GPD_POCKET_FAN is not set
+# CONFIG_X86_PLATFORM_DRIVERS_HP is not set
+# CONFIG_WIRELESS_HOTKEY is not set
+# CONFIG_IBM_RTL is not set
+CONFIG_IDEAPAD_LAPTOP=m
+# CONFIG_LENOVO_YMC is not set
+CONFIG_SENSORS_HDAPS=m
+# CONFIG_THINKPAD_ACPI is not set
+# CONFIG_THINKPAD_LMI is not set
+# CONFIG_INTEL_ATOMISP2_PM is not set
+# CONFIG_INTEL_IFS is not set
+# CONFIG_INTEL_SAR_INT1092 is not set
+CONFIG_INTEL_PMC_CORE=m
+
+#
+# Intel Speed Select Technology interface support
+#
+# CONFIG_INTEL_SPEED_SELECT_INTERFACE is not set
+# end of Intel Speed Select Technology interface support
+
+CONFIG_INTEL_WMI=y
+# CONFIG_INTEL_WMI_SBL_FW_UPDATE is not set
+CONFIG_INTEL_WMI_THUNDERBOLT=m
+
+#
+# Intel Uncore Frequency Control
+#
+# CONFIG_INTEL_UNCORE_FREQ_CONTROL is not set
+# end of Intel Uncore Frequency Control
+
+CONFIG_INTEL_HID_EVENT=m
+CONFIG_INTEL_VBTN=m
+# CONFIG_INTEL_INT0002_VGPIO is not set
+CONFIG_INTEL_OAKTRAIL=m
+# CONFIG_INTEL_PUNIT_IPC is not set
+CONFIG_INTEL_RST=m
+# CONFIG_INTEL_SMARTCONNECT is not set
+CONFIG_INTEL_TURBO_MAX_3=y
+# CONFIG_INTEL_VSEC is not set
+# CONFIG_MSI_EC is not set
+CONFIG_MSI_LAPTOP=m
+CONFIG_MSI_WMI=m
+# CONFIG_PCENGINES_APU2 is not set
+# CONFIG_BARCO_P50_GPIO is not set
+CONFIG_SAMSUNG_LAPTOP=m
+CONFIG_SAMSUNG_Q10=m
+CONFIG_TOSHIBA_BT_RFKILL=m
+# CONFIG_TOSHIBA_HAPS is not set
+# CONFIG_TOSHIBA_WMI is not set
+CONFIG_ACPI_CMPC=m
+CONFIG_COMPAL_LAPTOP=m
+# CONFIG_LG_LAPTOP is not set
+CONFIG_PANASONIC_LAPTOP=m
+CONFIG_SONY_LAPTOP=m
+CONFIG_SONYPI_COMPAT=y
+# CONFIG_SYSTEM76_ACPI is not set
+CONFIG_TOPSTAR_LAPTOP=m
+# CONFIG_SERIAL_MULTI_INSTANTIATE is not set
+CONFIG_MLX_PLATFORM=m
+CONFIG_INTEL_IPS=m
+# CONFIG_INTEL_SCU_PCI is not set
+# CONFIG_INTEL_SCU_PLATFORM is not set
+# CONFIG_SIEMENS_SIMATIC_IPC is not set
+# CONFIG_WINMATE_FM07_KEYS is not set
+CONFIG_P2SB=y
+CONFIG_HAVE_CLK=y
+CONFIG_HAVE_CLK_PREPARE=y
+CONFIG_COMMON_CLK=y
+# CONFIG_LMK04832 is not set
+# CONFIG_COMMON_CLK_MAX9485 is not set
+# CONFIG_COMMON_CLK_SI5341 is not set
+# CONFIG_COMMON_CLK_SI5351 is not set
+# CONFIG_COMMON_CLK_SI544 is not set
+# CONFIG_COMMON_CLK_CDCE706 is not set
+# CONFIG_COMMON_CLK_CS2000_CP is not set
+# CONFIG_COMMON_CLK_PWM is not set
+# CONFIG_XILINX_VCU is not set
+# CONFIG_HWSPINLOCK is not set
+
+#
+# Clock Source drivers
+#
+CONFIG_CLKEVT_I8253=y
+CONFIG_I8253_LOCK=y
+CONFIG_CLKBLD_I8253=y
+# end of Clock Source drivers
+
+CONFIG_MAILBOX=y
+CONFIG_PCC=y
+# CONFIG_ALTERA_MBOX is not set
+CONFIG_IOMMU_IOVA=y
+CONFIG_IOMMU_API=y
+CONFIG_IOMMU_SUPPORT=y
+
+#
+# Generic IOMMU Pagetable Support
+#
+# end of Generic IOMMU Pagetable Support
+
+# CONFIG_IOMMU_DEBUGFS is not set
+# CONFIG_IOMMU_DEFAULT_DMA_STRICT is not set
+CONFIG_IOMMU_DEFAULT_DMA_LAZY=y
+# CONFIG_IOMMU_DEFAULT_PASSTHROUGH is not set
+CONFIG_IOMMU_DMA=y
+# CONFIG_AMD_IOMMU is not set
+CONFIG_DMAR_TABLE=y
+CONFIG_INTEL_IOMMU=y
+# CONFIG_INTEL_IOMMU_SVM is not set
+# CONFIG_INTEL_IOMMU_DEFAULT_ON is not set
+CONFIG_INTEL_IOMMU_FLOPPY_WA=y
+CONFIG_INTEL_IOMMU_SCALABLE_MODE_DEFAULT_ON=y
+CONFIG_INTEL_IOMMU_PERF_EVENTS=y
+# CONFIG_IOMMUFD is not set
+CONFIG_IRQ_REMAP=y
+CONFIG_HYPERV_IOMMU=y
+# CONFIG_VIRTIO_IOMMU is not set
+
+#
+# Remoteproc drivers
+#
+# CONFIG_REMOTEPROC is not set
+# end of Remoteproc drivers
+
+#
+# Rpmsg drivers
+#
+# CONFIG_RPMSG_QCOM_GLINK_RPM is not set
+# CONFIG_RPMSG_VIRTIO is not set
+# end of Rpmsg drivers
+
+# CONFIG_SOUNDWIRE is not set
+
+#
+# SOC (System On Chip) specific Drivers
+#
+
+#
+# Amlogic SoC drivers
+#
+# end of Amlogic SoC drivers
+
+#
+# Broadcom SoC drivers
+#
+# end of Broadcom SoC drivers
+
+#
+# NXP/Freescale QorIQ SoC drivers
+#
+# end of NXP/Freescale QorIQ SoC drivers
+
+#
+# fujitsu SoC drivers
+#
+# end of fujitsu SoC drivers
+
+#
+# i.MX SoC drivers
+#
+# end of i.MX SoC drivers
+
+#
+# Enable LiteX SoC Builder specific drivers
+#
+# end of Enable LiteX SoC Builder specific drivers
+
+# CONFIG_WPCM450_SOC is not set
+
+#
+# Qualcomm SoC drivers
+#
+# end of Qualcomm SoC drivers
+
+# CONFIG_SOC_TI is not set
+
+#
+# Xilinx SoC drivers
+#
+# end of Xilinx SoC drivers
+# end of SOC (System On Chip) specific Drivers
+
+# CONFIG_PM_DEVFREQ is not set
+# CONFIG_EXTCON is not set
+# CONFIG_MEMORY is not set
+# CONFIG_IIO is not set
+CONFIG_NTB=m
+# CONFIG_NTB_MSI is not set
+# CONFIG_NTB_AMD is not set
+# CONFIG_NTB_IDT is not set
+# CONFIG_NTB_INTEL is not set
+# CONFIG_NTB_EPF is not set
+# CONFIG_NTB_SWITCHTEC is not set
+# CONFIG_NTB_PINGPONG is not set
+# CONFIG_NTB_TOOL is not set
+# CONFIG_NTB_PERF is not set
+# CONFIG_NTB_TRANSPORT is not set
+CONFIG_PWM=y
+CONFIG_PWM_SYSFS=y
+# CONFIG_PWM_DEBUG is not set
+# CONFIG_PWM_CLK is not set
+# CONFIG_PWM_DWC is not set
+CONFIG_PWM_LPSS=m
+CONFIG_PWM_LPSS_PCI=m
+CONFIG_PWM_LPSS_PLATFORM=m
+# CONFIG_PWM_PCA9685 is not set
+
+#
+# IRQ chip support
+#
+# end of IRQ chip support
+
+# CONFIG_IPACK_BUS is not set
+# CONFIG_RESET_CONTROLLER is not set
+
+#
+# PHY Subsystem
+#
+# CONFIG_GENERIC_PHY is not set
+# CONFIG_USB_LGM_PHY is not set
+# CONFIG_PHY_CAN_TRANSCEIVER is not set
+
+#
+# PHY drivers for Broadcom platforms
+#
+# CONFIG_BCM_KONA_USB2_PHY is not set
+# end of PHY drivers for Broadcom platforms
+
+# CONFIG_PHY_PXA_28NM_HSIC is not set
+# CONFIG_PHY_PXA_28NM_USB2 is not set
+# CONFIG_PHY_INTEL_LGM_EMMC is not set
+# end of PHY Subsystem
+
+CONFIG_POWERCAP=y
+CONFIG_INTEL_RAPL_CORE=m
+CONFIG_INTEL_RAPL=m
+CONFIG_IDLE_INJECT=y
+# CONFIG_MCB is not set
+
+#
+# Performance monitor support
+#
+# end of Performance monitor support
+
+CONFIG_RAS=y
+# CONFIG_RAS_CEC is not set
+# CONFIG_USB4 is not set
+
+#
+# Android
+#
+# CONFIG_ANDROID_BINDER_IPC is not set
+# end of Android
+
+CONFIG_LIBNVDIMM=m
+CONFIG_BLK_DEV_PMEM=m
+CONFIG_ND_CLAIM=y
+CONFIG_ND_BTT=m
+CONFIG_BTT=y
+CONFIG_ND_PFN=m
+CONFIG_NVDIMM_PFN=y
+CONFIG_NVDIMM_DAX=y
+CONFIG_NVDIMM_KEYS=y
+# CONFIG_NVDIMM_SECURITY_TEST is not set
+CONFIG_DAX=y
+CONFIG_DEV_DAX=m
+CONFIG_DEV_DAX_PMEM=m
+CONFIG_DEV_DAX_HMEM=m
+CONFIG_DEV_DAX_HMEM_DEVICES=y
+CONFIG_DEV_DAX_KMEM=m
+CONFIG_NVMEM=y
+CONFIG_NVMEM_SYSFS=y
+
+#
+# Layout Types
+#
+# CONFIG_NVMEM_LAYOUT_SL28_VPD is not set
+# CONFIG_NVMEM_LAYOUT_ONIE_TLV is not set
+# end of Layout Types
+
+# CONFIG_NVMEM_RMEM is not set
+
+#
+# HW tracing support
+#
+# CONFIG_STM is not set
+# CONFIG_INTEL_TH is not set
+# end of HW tracing support
+
+# CONFIG_FPGA is not set
+# CONFIG_SIOX is not set
+# CONFIG_SLIMBUS is not set
+# CONFIG_INTERCONNECT is not set
+# CONFIG_COUNTER is not set
+# CONFIG_MOST is not set
+# CONFIG_PECI is not set
+# CONFIG_HTE is not set
+# end of Device Drivers
+
+#
+# File systems
+#
+CONFIG_DCACHE_WORD_ACCESS=y
+# CONFIG_VALIDATE_FS_PARSER is not set
+CONFIG_FS_IOMAP=y
+CONFIG_LEGACY_DIRECT_IO=y
+CONFIG_EXT2_FS=m
+# CONFIG_EXT2_FS_XATTR is not set
+# CONFIG_EXT3_FS is not set
+CONFIG_EXT4_FS=y
+CONFIG_EXT4_FS_POSIX_ACL=y
+CONFIG_EXT4_FS_SECURITY=y
+# CONFIG_EXT4_DEBUG is not set
+CONFIG_JBD2=y
+# CONFIG_JBD2_DEBUG is not set
+CONFIG_FS_MBCACHE=y
+# CONFIG_REISERFS_FS is not set
+# CONFIG_JFS_FS is not set
+CONFIG_XFS_FS=m
+CONFIG_XFS_SUPPORT_V4=y
+CONFIG_XFS_SUPPORT_ASCII_CI=y
+CONFIG_XFS_QUOTA=y
+CONFIG_XFS_POSIX_ACL=y
+CONFIG_XFS_RT=y
+CONFIG_XFS_DRAIN_INTENTS=y
+CONFIG_XFS_ONLINE_SCRUB=y
+# CONFIG_XFS_ONLINE_REPAIR is not set
+CONFIG_XFS_DEBUG=y
+CONFIG_XFS_ASSERT_FATAL=y
+# CONFIG_GFS2_FS is not set
+CONFIG_OCFS2_FS=m
+CONFIG_OCFS2_FS_O2CB=m
+CONFIG_OCFS2_FS_STATS=y
+CONFIG_OCFS2_DEBUG_MASKLOG=y
+# CONFIG_OCFS2_DEBUG_FS is not set
+CONFIG_BTRFS_FS=m
+CONFIG_BTRFS_FS_POSIX_ACL=y
+# CONFIG_BTRFS_FS_CHECK_INTEGRITY is not set
+# CONFIG_BTRFS_FS_RUN_SANITY_TESTS is not set
+# CONFIG_BTRFS_DEBUG is not set
+# CONFIG_BTRFS_ASSERT is not set
+# CONFIG_BTRFS_FS_REF_VERIFY is not set
+# CONFIG_NILFS2_FS is not set
+CONFIG_F2FS_FS=m
+CONFIG_F2FS_STAT_FS=y
+CONFIG_F2FS_FS_XATTR=y
+CONFIG_F2FS_FS_POSIX_ACL=y
+# CONFIG_F2FS_FS_SECURITY is not set
+# CONFIG_F2FS_CHECK_FS is not set
+# CONFIG_F2FS_FAULT_INJECTION is not set
+# CONFIG_F2FS_FS_COMPRESSION is not set
+CONFIG_F2FS_IOSTAT=y
+# CONFIG_F2FS_UNFAIR_RWSEM is not set
+CONFIG_FS_DAX=y
+CONFIG_FS_DAX_PMD=y
+CONFIG_FS_POSIX_ACL=y
+CONFIG_EXPORTFS=y
+CONFIG_EXPORTFS_BLOCK_OPS=y
+CONFIG_FILE_LOCKING=y
+CONFIG_FS_ENCRYPTION=y
+CONFIG_FS_ENCRYPTION_ALGS=y
+# CONFIG_FS_VERITY is not set
+CONFIG_FSNOTIFY=y
+CONFIG_DNOTIFY=y
+CONFIG_INOTIFY_USER=y
+CONFIG_FANOTIFY=y
+CONFIG_FANOTIFY_ACCESS_PERMISSIONS=y
+CONFIG_QUOTA=y
+CONFIG_QUOTA_NETLINK_INTERFACE=y
+# CONFIG_QUOTA_DEBUG is not set
+CONFIG_QUOTA_TREE=y
+# CONFIG_QFMT_V1 is not set
+CONFIG_QFMT_V2=y
+CONFIG_QUOTACTL=y
+CONFIG_AUTOFS4_FS=y
+CONFIG_AUTOFS_FS=y
+CONFIG_FUSE_FS=m
+CONFIG_CUSE=m
+# CONFIG_VIRTIO_FS is not set
+CONFIG_OVERLAY_FS=m
+# CONFIG_OVERLAY_FS_REDIRECT_DIR is not set
+# CONFIG_OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW is not set
+# CONFIG_OVERLAY_FS_INDEX is not set
+# CONFIG_OVERLAY_FS_XINO_AUTO is not set
+# CONFIG_OVERLAY_FS_METACOPY is not set
+
+#
+# Caches
+#
+CONFIG_NETFS_SUPPORT=m
+# CONFIG_NETFS_STATS is not set
+# CONFIG_FSCACHE is not set
+# end of Caches
+
+#
+# CD-ROM/DVD Filesystems
+#
+# CONFIG_ISO9660_FS is not set
+CONFIG_UDF_FS=m
+# end of CD-ROM/DVD Filesystems
+
+#
+# DOS/FAT/EXFAT/NT Filesystems
+#
+CONFIG_FAT_FS=m
+CONFIG_MSDOS_FS=m
+CONFIG_VFAT_FS=m
+CONFIG_FAT_DEFAULT_CODEPAGE=437
+CONFIG_FAT_DEFAULT_IOCHARSET="ascii"
+# CONFIG_FAT_DEFAULT_UTF8 is not set
+# CONFIG_EXFAT_FS is not set
+# CONFIG_NTFS_FS is not set
+# CONFIG_NTFS3_FS is not set
+# end of DOS/FAT/EXFAT/NT Filesystems
+
+#
+# Pseudo filesystems
+#
+CONFIG_PROC_FS=y
+CONFIG_PROC_KCORE=y
+CONFIG_PROC_VMCORE=y
+CONFIG_PROC_VMCORE_DEVICE_DUMP=y
+CONFIG_PROC_SYSCTL=y
+CONFIG_PROC_PAGE_MONITOR=y
+CONFIG_PROC_CHILDREN=y
+CONFIG_PROC_PID_ARCH_STATUS=y
+CONFIG_KERNFS=y
+CONFIG_SYSFS=y
+CONFIG_TMPFS=y
+CONFIG_TMPFS_POSIX_ACL=y
+CONFIG_TMPFS_XATTR=y
+# CONFIG_TMPFS_INODE64 is not set
+CONFIG_HUGETLBFS=y
+CONFIG_HUGETLB_PAGE=y
+CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP=y
+# CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON is not set
+CONFIG_MEMFD_CREATE=y
+CONFIG_ARCH_HAS_GIGANTIC_PAGE=y
+CONFIG_CONFIGFS_FS=y
+CONFIG_EFIVAR_FS=y
+# end of Pseudo filesystems
+
+CONFIG_MISC_FILESYSTEMS=y
+# CONFIG_ORANGEFS_FS is not set
+# CONFIG_ADFS_FS is not set
+# CONFIG_AFFS_FS is not set
+# CONFIG_ECRYPT_FS is not set
+# CONFIG_HFS_FS is not set
+# CONFIG_HFSPLUS_FS is not set
+# CONFIG_BEFS_FS is not set
+# CONFIG_BFS_FS is not set
+# CONFIG_EFS_FS is not set
+CONFIG_CRAMFS=m
+CONFIG_CRAMFS_BLOCKDEV=y
+CONFIG_SQUASHFS=m
+# CONFIG_SQUASHFS_FILE_CACHE is not set
+CONFIG_SQUASHFS_FILE_DIRECT=y
+CONFIG_SQUASHFS_DECOMP_SINGLE=y
+# CONFIG_SQUASHFS_CHOICE_DECOMP_BY_MOUNT is not set
+CONFIG_SQUASHFS_COMPILE_DECOMP_SINGLE=y
+# CONFIG_SQUASHFS_COMPILE_DECOMP_MULTI is not set
+# CONFIG_SQUASHFS_COMPILE_DECOMP_MULTI_PERCPU is not set
+CONFIG_SQUASHFS_XATTR=y
+CONFIG_SQUASHFS_ZLIB=y
+# CONFIG_SQUASHFS_LZ4 is not set
+CONFIG_SQUASHFS_LZO=y
+CONFIG_SQUASHFS_XZ=y
+# CONFIG_SQUASHFS_ZSTD is not set
+# CONFIG_SQUASHFS_4K_DEVBLK_SIZE is not set
+# CONFIG_SQUASHFS_EMBEDDED is not set
+CONFIG_SQUASHFS_FRAGMENT_CACHE_SIZE=3
+# CONFIG_VXFS_FS is not set
+CONFIG_MINIX_FS=m
+# CONFIG_OMFS_FS is not set
+# CONFIG_HPFS_FS is not set
+# CONFIG_QNX4FS_FS is not set
+# CONFIG_QNX6FS_FS is not set
+# CONFIG_ROMFS_FS is not set
+CONFIG_PSTORE=y
+CONFIG_PSTORE_DEFAULT_KMSG_BYTES=10240
+CONFIG_PSTORE_DEFLATE_COMPRESS=y
+# CONFIG_PSTORE_LZO_COMPRESS is not set
+# CONFIG_PSTORE_LZ4_COMPRESS is not set
+# CONFIG_PSTORE_LZ4HC_COMPRESS is not set
+# CONFIG_PSTORE_842_COMPRESS is not set
+# CONFIG_PSTORE_ZSTD_COMPRESS is not set
+CONFIG_PSTORE_COMPRESS=y
+CONFIG_PSTORE_DEFLATE_COMPRESS_DEFAULT=y
+CONFIG_PSTORE_COMPRESS_DEFAULT="deflate"
+# CONFIG_PSTORE_CONSOLE is not set
+# CONFIG_PSTORE_PMSG is not set
+# CONFIG_PSTORE_FTRACE is not set
+CONFIG_PSTORE_RAM=m
+# CONFIG_PSTORE_BLK is not set
+# CONFIG_SYSV_FS is not set
+# CONFIG_UFS_FS is not set
+# CONFIG_EROFS_FS is not set
+CONFIG_NETWORK_FILESYSTEMS=y
+CONFIG_NFS_FS=y
+# CONFIG_NFS_V2 is not set
+CONFIG_NFS_V3=y
+CONFIG_NFS_V3_ACL=y
+CONFIG_NFS_V4=m
+# CONFIG_NFS_SWAP is not set
+CONFIG_NFS_V4_1=y
+CONFIG_NFS_V4_2=y
+CONFIG_PNFS_FILE_LAYOUT=m
+CONFIG_PNFS_BLOCK=m
+CONFIG_PNFS_FLEXFILE_LAYOUT=m
+CONFIG_NFS_V4_1_IMPLEMENTATION_ID_DOMAIN="kernel.org"
+# CONFIG_NFS_V4_1_MIGRATION is not set
+CONFIG_NFS_V4_SECURITY_LABEL=y
+CONFIG_ROOT_NFS=y
+# CONFIG_NFS_USE_LEGACY_DNS is not set
+CONFIG_NFS_USE_KERNEL_DNS=y
+CONFIG_NFS_DEBUG=y
+CONFIG_NFS_DISABLE_UDP_SUPPORT=y
+# CONFIG_NFS_V4_2_READ_PLUS is not set
+CONFIG_NFSD=m
+# CONFIG_NFSD_V2 is not set
+CONFIG_NFSD_V3_ACL=y
+CONFIG_NFSD_V4=y
+CONFIG_NFSD_PNFS=y
+# CONFIG_NFSD_BLOCKLAYOUT is not set
+CONFIG_NFSD_SCSILAYOUT=y
+# CONFIG_NFSD_FLEXFILELAYOUT is not set
+# CONFIG_NFSD_V4_2_INTER_SSC is not set
+CONFIG_NFSD_V4_SECURITY_LABEL=y
+CONFIG_GRACE_PERIOD=y
+CONFIG_LOCKD=y
+CONFIG_LOCKD_V4=y
+CONFIG_NFS_ACL_SUPPORT=y
+CONFIG_NFS_COMMON=y
+CONFIG_NFS_V4_2_SSC_HELPER=y
+CONFIG_SUNRPC=y
+CONFIG_SUNRPC_GSS=m
+CONFIG_SUNRPC_BACKCHANNEL=y
+CONFIG_RPCSEC_GSS_KRB5=m
+CONFIG_RPCSEC_GSS_KRB5_CRYPTOSYSTEM=y
+# CONFIG_RPCSEC_GSS_KRB5_ENCTYPES_DES is not set
+CONFIG_RPCSEC_GSS_KRB5_ENCTYPES_AES_SHA1=y
+# CONFIG_RPCSEC_GSS_KRB5_ENCTYPES_CAMELLIA is not set
+# CONFIG_RPCSEC_GSS_KRB5_ENCTYPES_AES_SHA2 is not set
+CONFIG_SUNRPC_DEBUG=y
+# CONFIG_CEPH_FS is not set
+CONFIG_CIFS=m
+CONFIG_CIFS_STATS2=y
+CONFIG_CIFS_ALLOW_INSECURE_LEGACY=y
+CONFIG_CIFS_UPCALL=y
+CONFIG_CIFS_XATTR=y
+CONFIG_CIFS_POSIX=y
+CONFIG_CIFS_DEBUG=y
+# CONFIG_CIFS_DEBUG2 is not set
+# CONFIG_CIFS_DEBUG_DUMP_KEYS is not set
+CONFIG_CIFS_DFS_UPCALL=y
+# CONFIG_CIFS_SWN_UPCALL is not set
+# CONFIG_SMB_SERVER is not set
+CONFIG_SMBFS=m
+# CONFIG_CODA_FS is not set
+# CONFIG_AFS_FS is not set
+# CONFIG_9P_FS is not set
+CONFIG_NLS=y
+CONFIG_NLS_DEFAULT="utf8"
+CONFIG_NLS_CODEPAGE_437=y
+CONFIG_NLS_CODEPAGE_737=m
+CONFIG_NLS_CODEPAGE_775=m
+CONFIG_NLS_CODEPAGE_850=m
+CONFIG_NLS_CODEPAGE_852=m
+CONFIG_NLS_CODEPAGE_855=m
+CONFIG_NLS_CODEPAGE_857=m
+CONFIG_NLS_CODEPAGE_860=m
+CONFIG_NLS_CODEPAGE_861=m
+CONFIG_NLS_CODEPAGE_862=m
+CONFIG_NLS_CODEPAGE_863=m
+CONFIG_NLS_CODEPAGE_864=m
+CONFIG_NLS_CODEPAGE_865=m
+CONFIG_NLS_CODEPAGE_866=m
+CONFIG_NLS_CODEPAGE_869=m
+CONFIG_NLS_CODEPAGE_936=m
+CONFIG_NLS_CODEPAGE_950=m
+CONFIG_NLS_CODEPAGE_932=m
+CONFIG_NLS_CODEPAGE_949=m
+CONFIG_NLS_CODEPAGE_874=m
+CONFIG_NLS_ISO8859_8=m
+CONFIG_NLS_CODEPAGE_1250=m
+CONFIG_NLS_CODEPAGE_1251=m
+CONFIG_NLS_ASCII=y
+CONFIG_NLS_ISO8859_1=m
+CONFIG_NLS_ISO8859_2=m
+CONFIG_NLS_ISO8859_3=m
+CONFIG_NLS_ISO8859_4=m
+CONFIG_NLS_ISO8859_5=m
+CONFIG_NLS_ISO8859_6=m
+CONFIG_NLS_ISO8859_7=m
+CONFIG_NLS_ISO8859_9=m
+CONFIG_NLS_ISO8859_13=m
+CONFIG_NLS_ISO8859_14=m
+CONFIG_NLS_ISO8859_15=m
+CONFIG_NLS_KOI8_R=m
+CONFIG_NLS_KOI8_U=m
+CONFIG_NLS_MAC_ROMAN=m
+CONFIG_NLS_MAC_CELTIC=m
+CONFIG_NLS_MAC_CENTEURO=m
+CONFIG_NLS_MAC_CROATIAN=m
+CONFIG_NLS_MAC_CYRILLIC=m
+CONFIG_NLS_MAC_GAELIC=m
+CONFIG_NLS_MAC_GREEK=m
+CONFIG_NLS_MAC_ICELAND=m
+CONFIG_NLS_MAC_INUIT=m
+CONFIG_NLS_MAC_ROMANIAN=m
+CONFIG_NLS_MAC_TURKISH=m
+CONFIG_NLS_UTF8=m
+# CONFIG_DLM is not set
+# CONFIG_UNICODE is not set
+CONFIG_IO_WQ=y
+# end of File systems
+
+#
+# Security options
+#
+CONFIG_KEYS=y
+# CONFIG_KEYS_REQUEST_CACHE is not set
+CONFIG_PERSISTENT_KEYRINGS=y
+CONFIG_TRUSTED_KEYS=y
+CONFIG_TRUSTED_KEYS_TPM=y
+CONFIG_ENCRYPTED_KEYS=y
+# CONFIG_USER_DECRYPTED_DATA is not set
+# CONFIG_KEY_DH_OPERATIONS is not set
+# CONFIG_KEY_NOTIFICATIONS is not set
+# CONFIG_SECURITY_DMESG_RESTRICT is not set
+CONFIG_SECURITY=y
+CONFIG_SECURITYFS=y
+CONFIG_SECURITY_NETWORK=y
+CONFIG_SECURITY_NETWORK_XFRM=y
+# CONFIG_SECURITY_PATH is not set
+CONFIG_INTEL_TXT=y
+CONFIG_LSM_MMAP_MIN_ADDR=65535
+CONFIG_HAVE_HARDENED_USERCOPY_ALLOCATOR=y
+CONFIG_HARDENED_USERCOPY=y
+CONFIG_FORTIFY_SOURCE=y
+# CONFIG_STATIC_USERMODEHELPER is not set
+CONFIG_SECURITY_SELINUX=y
+CONFIG_SECURITY_SELINUX_BOOTPARAM=y
+CONFIG_SECURITY_SELINUX_DEVELOP=y
+CONFIG_SECURITY_SELINUX_AVC_STATS=y
+CONFIG_SECURITY_SELINUX_SIDTAB_HASH_BITS=9
+CONFIG_SECURITY_SELINUX_SID2STR_CACHE_SIZE=256
+# CONFIG_SECURITY_SMACK is not set
+# CONFIG_SECURITY_TOMOYO is not set
+# CONFIG_SECURITY_APPARMOR is not set
+# CONFIG_SECURITY_LOADPIN is not set
+CONFIG_SECURITY_YAMA=y
+# CONFIG_SECURITY_SAFESETID is not set
+# CONFIG_SECURITY_LOCKDOWN_LSM is not set
+# CONFIG_SECURITY_LANDLOCK is not set
+CONFIG_INTEGRITY=y
+CONFIG_INTEGRITY_SIGNATURE=y
+CONFIG_INTEGRITY_ASYMMETRIC_KEYS=y
+CONFIG_INTEGRITY_TRUSTED_KEYRING=y
+# CONFIG_INTEGRITY_PLATFORM_KEYRING is not set
+CONFIG_INTEGRITY_AUDIT=y
+CONFIG_IMA=y
+# CONFIG_IMA_KEXEC is not set
+CONFIG_IMA_MEASURE_PCR_IDX=10
+CONFIG_IMA_LSM_RULES=y
+CONFIG_IMA_NG_TEMPLATE=y
+# CONFIG_IMA_SIG_TEMPLATE is not set
+CONFIG_IMA_DEFAULT_TEMPLATE="ima-ng"
+CONFIG_IMA_DEFAULT_HASH_SHA1=y
+# CONFIG_IMA_DEFAULT_HASH_SHA256 is not set
+# CONFIG_IMA_DEFAULT_HASH_SHA512 is not set
+CONFIG_IMA_DEFAULT_HASH="sha1"
+CONFIG_IMA_WRITE_POLICY=y
+CONFIG_IMA_READ_POLICY=y
+CONFIG_IMA_APPRAISE=y
+# CONFIG_IMA_ARCH_POLICY is not set
+# CONFIG_IMA_APPRAISE_BUILD_POLICY is not set
+CONFIG_IMA_APPRAISE_BOOTPARAM=y
+# CONFIG_IMA_APPRAISE_MODSIG is not set
+CONFIG_IMA_TRUSTED_KEYRING=y
+# CONFIG_IMA_BLACKLIST_KEYRING is not set
+# CONFIG_IMA_LOAD_X509 is not set
+CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS=y
+CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS=y
+# CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT is not set
+# CONFIG_IMA_DISABLE_HTABLE is not set
+# CONFIG_EVM is not set
+CONFIG_DEFAULT_SECURITY_SELINUX=y
+# CONFIG_DEFAULT_SECURITY_DAC is not set
+CONFIG_LSM="landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf"
+
+#
+# Kernel hardening options
+#
+
+#
+# Memory initialization
+#
+CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN=y
+CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO_BARE=y
+CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO=y
+# CONFIG_INIT_STACK_NONE is not set
+# CONFIG_INIT_STACK_ALL_PATTERN is not set
+CONFIG_INIT_STACK_ALL_ZERO=y
+# CONFIG_GCC_PLUGIN_STACKLEAK is not set
+# CONFIG_INIT_ON_ALLOC_DEFAULT_ON is not set
+# CONFIG_INIT_ON_FREE_DEFAULT_ON is not set
+CONFIG_CC_HAS_ZERO_CALL_USED_REGS=y
+# CONFIG_ZERO_CALL_USED_REGS is not set
+# end of Memory initialization
+
+CONFIG_RANDSTRUCT_NONE=y
+# CONFIG_RANDSTRUCT_FULL is not set
+# CONFIG_RANDSTRUCT_PERFORMANCE is not set
+# end of Kernel hardening options
+# end of Security options
+
+CONFIG_XOR_BLOCKS=m
+CONFIG_ASYNC_CORE=m
+CONFIG_ASYNC_MEMCPY=m
+CONFIG_ASYNC_XOR=m
+CONFIG_ASYNC_PQ=m
+CONFIG_ASYNC_RAID6_RECOV=m
+CONFIG_CRYPTO=y
+
+#
+# Crypto core or helper
+#
+CONFIG_CRYPTO_ALGAPI=y
+CONFIG_CRYPTO_ALGAPI2=y
+CONFIG_CRYPTO_AEAD=y
+CONFIG_CRYPTO_AEAD2=y
+CONFIG_CRYPTO_SKCIPHER=y
+CONFIG_CRYPTO_SKCIPHER2=y
+CONFIG_CRYPTO_HASH=y
+CONFIG_CRYPTO_HASH2=y
+CONFIG_CRYPTO_RNG=y
+CONFIG_CRYPTO_RNG2=y
+CONFIG_CRYPTO_RNG_DEFAULT=y
+CONFIG_CRYPTO_AKCIPHER2=y
+CONFIG_CRYPTO_AKCIPHER=y
+CONFIG_CRYPTO_KPP2=y
+CONFIG_CRYPTO_KPP=m
+CONFIG_CRYPTO_ACOMP2=y
+CONFIG_CRYPTO_MANAGER=y
+CONFIG_CRYPTO_MANAGER2=y
+CONFIG_CRYPTO_USER=m
+CONFIG_CRYPTO_MANAGER_DISABLE_TESTS=y
+CONFIG_CRYPTO_NULL=y
+CONFIG_CRYPTO_NULL2=y
+CONFIG_CRYPTO_PCRYPT=m
+CONFIG_CRYPTO_CRYPTD=y
+CONFIG_CRYPTO_AUTHENC=m
+# CONFIG_CRYPTO_TEST is not set
+CONFIG_CRYPTO_SIMD=y
+# end of Crypto core or helper
+
+#
+# Public-key cryptography
+#
+CONFIG_CRYPTO_RSA=y
+CONFIG_CRYPTO_DH=m
+# CONFIG_CRYPTO_DH_RFC7919_GROUPS is not set
+CONFIG_CRYPTO_ECC=m
+CONFIG_CRYPTO_ECDH=m
+# CONFIG_CRYPTO_ECDSA is not set
+# CONFIG_CRYPTO_ECRDSA is not set
+# CONFIG_CRYPTO_SM2 is not set
+# CONFIG_CRYPTO_CURVE25519 is not set
+# end of Public-key cryptography
+
+#
+# Block ciphers
+#
+CONFIG_CRYPTO_AES=y
+# CONFIG_CRYPTO_AES_TI is not set
+CONFIG_CRYPTO_ANUBIS=m
+# CONFIG_CRYPTO_ARIA is not set
+CONFIG_CRYPTO_BLOWFISH=m
+CONFIG_CRYPTO_BLOWFISH_COMMON=m
+CONFIG_CRYPTO_CAMELLIA=m
+CONFIG_CRYPTO_CAST_COMMON=m
+CONFIG_CRYPTO_CAST5=m
+CONFIG_CRYPTO_CAST6=m
+CONFIG_CRYPTO_DES=m
+CONFIG_CRYPTO_FCRYPT=m
+CONFIG_CRYPTO_KHAZAD=m
+CONFIG_CRYPTO_SEED=m
+CONFIG_CRYPTO_SERPENT=m
+CONFIG_CRYPTO_SM4=m
+CONFIG_CRYPTO_SM4_GENERIC=m
+CONFIG_CRYPTO_TEA=m
+CONFIG_CRYPTO_TWOFISH=m
+CONFIG_CRYPTO_TWOFISH_COMMON=m
+# end of Block ciphers
+
+#
+# Length-preserving ciphers and modes
+#
+# CONFIG_CRYPTO_ADIANTUM is not set
+CONFIG_CRYPTO_ARC4=m
+CONFIG_CRYPTO_CHACHA20=m
+CONFIG_CRYPTO_CBC=y
+CONFIG_CRYPTO_CFB=y
+CONFIG_CRYPTO_CTR=y
+CONFIG_CRYPTO_CTS=m
+CONFIG_CRYPTO_ECB=y
+# CONFIG_CRYPTO_HCTR2 is not set
+# CONFIG_CRYPTO_KEYWRAP is not set
+CONFIG_CRYPTO_LRW=m
+# CONFIG_CRYPTO_OFB is not set
+CONFIG_CRYPTO_PCBC=m
+CONFIG_CRYPTO_XTS=m
+# end of Length-preserving ciphers and modes
+
+#
+# AEAD (authenticated encryption with associated data) ciphers
+#
+# CONFIG_CRYPTO_AEGIS128 is not set
+# CONFIG_CRYPTO_CHACHA20POLY1305 is not set
+CONFIG_CRYPTO_CCM=m
+CONFIG_CRYPTO_GCM=y
+CONFIG_CRYPTO_SEQIV=y
+CONFIG_CRYPTO_ECHAINIV=m
+CONFIG_CRYPTO_ESSIV=m
+# end of AEAD (authenticated encryption with associated data) ciphers
+
+#
+# Hashes, digests, and MACs
+#
+CONFIG_CRYPTO_BLAKE2B=m
+CONFIG_CRYPTO_CMAC=m
+CONFIG_CRYPTO_GHASH=y
+CONFIG_CRYPTO_HMAC=y
+CONFIG_CRYPTO_MD4=m
+CONFIG_CRYPTO_MD5=y
+CONFIG_CRYPTO_MICHAEL_MIC=m
+# CONFIG_CRYPTO_POLY1305 is not set
+CONFIG_CRYPTO_RMD160=m
+CONFIG_CRYPTO_SHA1=y
+CONFIG_CRYPTO_SHA256=y
+CONFIG_CRYPTO_SHA512=y
+CONFIG_CRYPTO_SHA3=m
+CONFIG_CRYPTO_SM3=m
+CONFIG_CRYPTO_SM3_GENERIC=m
+# CONFIG_CRYPTO_STREEBOG is not set
+CONFIG_CRYPTO_VMAC=m
+CONFIG_CRYPTO_WP512=m
+CONFIG_CRYPTO_XCBC=m
+CONFIG_CRYPTO_XXHASH=m
+# end of Hashes, digests, and MACs
+
+#
+# CRCs (cyclic redundancy checks)
+#
+CONFIG_CRYPTO_CRC32C=y
+CONFIG_CRYPTO_CRC32=m
+CONFIG_CRYPTO_CRCT10DIF=y
+CONFIG_CRYPTO_CRC64_ROCKSOFT=m
+# end of CRCs (cyclic redundancy checks)
+
+#
+# Compression
+#
+CONFIG_CRYPTO_DEFLATE=y
+CONFIG_CRYPTO_LZO=y
+# CONFIG_CRYPTO_842 is not set
+# CONFIG_CRYPTO_LZ4 is not set
+# CONFIG_CRYPTO_LZ4HC is not set
+# CONFIG_CRYPTO_ZSTD is not set
+# end of Compression
+
+#
+# Random number generation
+#
+CONFIG_CRYPTO_ANSI_CPRNG=m
+CONFIG_CRYPTO_DRBG_MENU=y
+CONFIG_CRYPTO_DRBG_HMAC=y
+CONFIG_CRYPTO_DRBG_HASH=y
+CONFIG_CRYPTO_DRBG_CTR=y
+CONFIG_CRYPTO_DRBG=y
+CONFIG_CRYPTO_JITTERENTROPY=y
+# end of Random number generation
+
+#
+# Userspace interface
+#
+CONFIG_CRYPTO_USER_API=y
+# CONFIG_CRYPTO_USER_API_HASH is not set
+CONFIG_CRYPTO_USER_API_SKCIPHER=y
+CONFIG_CRYPTO_USER_API_RNG=y
+# CONFIG_CRYPTO_USER_API_RNG_CAVP is not set
+CONFIG_CRYPTO_USER_API_AEAD=y
+CONFIG_CRYPTO_USER_API_ENABLE_OBSOLETE=y
+# CONFIG_CRYPTO_STATS is not set
+# end of Userspace interface
+
+CONFIG_CRYPTO_HASH_INFO=y
+
+#
+# Accelerated Cryptographic Algorithms for CPU (x86)
+#
+# CONFIG_CRYPTO_CURVE25519_X86 is not set
+CONFIG_CRYPTO_AES_NI_INTEL=y
+CONFIG_CRYPTO_BLOWFISH_X86_64=m
+CONFIG_CRYPTO_CAMELLIA_X86_64=m
+CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64=m
+CONFIG_CRYPTO_CAMELLIA_AESNI_AVX2_X86_64=m
+CONFIG_CRYPTO_CAST5_AVX_X86_64=m
+CONFIG_CRYPTO_CAST6_AVX_X86_64=m
+# CONFIG_CRYPTO_DES3_EDE_X86_64 is not set
+CONFIG_CRYPTO_SERPENT_SSE2_X86_64=m
+CONFIG_CRYPTO_SERPENT_AVX_X86_64=m
+CONFIG_CRYPTO_SERPENT_AVX2_X86_64=m
+# CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64 is not set
+# CONFIG_CRYPTO_SM4_AESNI_AVX2_X86_64 is not set
+CONFIG_CRYPTO_TWOFISH_X86_64=m
+CONFIG_CRYPTO_TWOFISH_X86_64_3WAY=m
+CONFIG_CRYPTO_TWOFISH_AVX_X86_64=m
+# CONFIG_CRYPTO_ARIA_AESNI_AVX_X86_64 is not set
+# CONFIG_CRYPTO_ARIA_AESNI_AVX2_X86_64 is not set
+# CONFIG_CRYPTO_ARIA_GFNI_AVX512_X86_64 is not set
+CONFIG_CRYPTO_CHACHA20_X86_64=m
+# CONFIG_CRYPTO_AEGIS128_AESNI_SSE2 is not set
+# CONFIG_CRYPTO_NHPOLY1305_SSE2 is not set
+# CONFIG_CRYPTO_NHPOLY1305_AVX2 is not set
+# CONFIG_CRYPTO_BLAKE2S_X86 is not set
+# CONFIG_CRYPTO_POLYVAL_CLMUL_NI is not set
+# CONFIG_CRYPTO_POLY1305_X86_64 is not set
+CONFIG_CRYPTO_SHA1_SSSE3=y
+CONFIG_CRYPTO_SHA256_SSSE3=y
+CONFIG_CRYPTO_SHA512_SSSE3=m
+# CONFIG_CRYPTO_SM3_AVX_X86_64 is not set
+CONFIG_CRYPTO_GHASH_CLMUL_NI_INTEL=m
+CONFIG_CRYPTO_CRC32C_INTEL=m
+CONFIG_CRYPTO_CRC32_PCLMUL=m
+CONFIG_CRYPTO_CRCT10DIF_PCLMUL=m
+# end of Accelerated Cryptographic Algorithms for CPU (x86)
+
+# CONFIG_CRYPTO_HW is not set
+CONFIG_ASYMMETRIC_KEY_TYPE=y
+CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE=y
+CONFIG_X509_CERTIFICATE_PARSER=y
+# CONFIG_PKCS8_PRIVATE_KEY_PARSER is not set
+CONFIG_PKCS7_MESSAGE_PARSER=y
+# CONFIG_PKCS7_TEST_KEY is not set
+CONFIG_SIGNED_PE_FILE_VERIFICATION=y
+# CONFIG_FIPS_SIGNATURE_SELFTEST is not set
+
+#
+# Certificates for signature checking
+#
+CONFIG_MODULE_SIG_KEY="certs/signing_key.pem"
+CONFIG_MODULE_SIG_KEY_TYPE_RSA=y
+# CONFIG_MODULE_SIG_KEY_TYPE_ECDSA is not set
+CONFIG_SYSTEM_TRUSTED_KEYRING=y
+CONFIG_SYSTEM_TRUSTED_KEYS=""
+# CONFIG_SYSTEM_EXTRA_CERTIFICATE is not set
+# CONFIG_SECONDARY_TRUSTED_KEYRING is not set
+CONFIG_SYSTEM_BLACKLIST_KEYRING=y
+CONFIG_SYSTEM_BLACKLIST_HASH_LIST=""
+# CONFIG_SYSTEM_REVOCATION_LIST is not set
+# CONFIG_SYSTEM_BLACKLIST_AUTH_UPDATE is not set
+# end of Certificates for signature checking
+
+CONFIG_BINARY_PRINTF=y
+
+#
+# Library routines
+#
+CONFIG_RAID6_PQ=m
+CONFIG_RAID6_PQ_BENCHMARK=y
+# CONFIG_PACKING is not set
+CONFIG_BITREVERSE=y
+CONFIG_GENERIC_STRNCPY_FROM_USER=y
+CONFIG_GENERIC_STRNLEN_USER=y
+CONFIG_GENERIC_NET_UTILS=y
+CONFIG_CORDIC=m
+# CONFIG_PRIME_NUMBERS is not set
+CONFIG_RATIONAL=y
+CONFIG_GENERIC_PCI_IOMAP=y
+CONFIG_GENERIC_IOMAP=y
+CONFIG_ARCH_USE_CMPXCHG_LOCKREF=y
+CONFIG_ARCH_HAS_FAST_MULTIPLIER=y
+CONFIG_ARCH_USE_SYM_ANNOTATIONS=y
+
+#
+# Crypto library routines
+#
+CONFIG_CRYPTO_LIB_UTILS=y
+CONFIG_CRYPTO_LIB_AES=y
+CONFIG_CRYPTO_LIB_ARC4=m
+CONFIG_CRYPTO_LIB_GF128MUL=y
+CONFIG_CRYPTO_LIB_BLAKE2S_GENERIC=y
+CONFIG_CRYPTO_ARCH_HAVE_LIB_CHACHA=m
+CONFIG_CRYPTO_LIB_CHACHA_GENERIC=m
+# CONFIG_CRYPTO_LIB_CHACHA is not set
+# CONFIG_CRYPTO_LIB_CURVE25519 is not set
+CONFIG_CRYPTO_LIB_DES=m
+CONFIG_CRYPTO_LIB_POLY1305_RSIZE=11
+# CONFIG_CRYPTO_LIB_POLY1305 is not set
+# CONFIG_CRYPTO_LIB_CHACHA20POLY1305 is not set
+CONFIG_CRYPTO_LIB_SHA1=y
+CONFIG_CRYPTO_LIB_SHA256=y
+# end of Crypto library routines
+
+CONFIG_CRC_CCITT=y
+CONFIG_CRC16=y
+CONFIG_CRC_T10DIF=y
+CONFIG_CRC64_ROCKSOFT=m
+CONFIG_CRC_ITU_T=m
+CONFIG_CRC32=y
+# CONFIG_CRC32_SELFTEST is not set
+CONFIG_CRC32_SLICEBY8=y
+# CONFIG_CRC32_SLICEBY4 is not set
+# CONFIG_CRC32_SARWATE is not set
+# CONFIG_CRC32_BIT is not set
+CONFIG_CRC64=m
+# CONFIG_CRC4 is not set
+CONFIG_CRC7=m
+CONFIG_LIBCRC32C=m
+CONFIG_CRC8=m
+CONFIG_XXHASH=y
+# CONFIG_RANDOM32_SELFTEST is not set
+CONFIG_ZLIB_INFLATE=y
+CONFIG_ZLIB_DEFLATE=y
+CONFIG_LZO_COMPRESS=y
+CONFIG_LZO_DECOMPRESS=y
+CONFIG_LZ4_DECOMPRESS=y
+CONFIG_ZSTD_COMMON=y
+CONFIG_ZSTD_COMPRESS=m
+CONFIG_ZSTD_DECOMPRESS=y
+CONFIG_XZ_DEC=y
+CONFIG_XZ_DEC_X86=y
+CONFIG_XZ_DEC_POWERPC=y
+CONFIG_XZ_DEC_IA64=y
+CONFIG_XZ_DEC_ARM=y
+CONFIG_XZ_DEC_ARMTHUMB=y
+CONFIG_XZ_DEC_SPARC=y
+# CONFIG_XZ_DEC_MICROLZMA is not set
+CONFIG_XZ_DEC_BCJ=y
+# CONFIG_XZ_DEC_TEST is not set
+CONFIG_DECOMPRESS_GZIP=y
+CONFIG_DECOMPRESS_BZIP2=y
+CONFIG_DECOMPRESS_LZMA=y
+CONFIG_DECOMPRESS_XZ=y
+CONFIG_DECOMPRESS_LZO=y
+CONFIG_DECOMPRESS_LZ4=y
+CONFIG_DECOMPRESS_ZSTD=y
+CONFIG_GENERIC_ALLOCATOR=y
+CONFIG_REED_SOLOMON=m
+CONFIG_REED_SOLOMON_ENC8=y
+CONFIG_REED_SOLOMON_DEC8=y
+CONFIG_TEXTSEARCH=y
+CONFIG_TEXTSEARCH_KMP=m
+CONFIG_TEXTSEARCH_BM=m
+CONFIG_TEXTSEARCH_FSM=m
+CONFIG_INTERVAL_TREE=y
+CONFIG_XARRAY_MULTI=y
+CONFIG_ASSOCIATIVE_ARRAY=y
+CONFIG_HAS_IOMEM=y
+CONFIG_HAS_IOPORT=y
+CONFIG_HAS_IOPORT_MAP=y
+CONFIG_HAS_DMA=y
+CONFIG_DMA_OPS=y
+CONFIG_NEED_SG_DMA_LENGTH=y
+CONFIG_NEED_DMA_MAP_STATE=y
+CONFIG_ARCH_DMA_ADDR_T_64BIT=y
+CONFIG_SWIOTLB=y
+# CONFIG_DMA_API_DEBUG is not set
+# CONFIG_DMA_MAP_BENCHMARK is not set
+CONFIG_SGL_ALLOC=y
+CONFIG_CHECK_SIGNATURE=y
+CONFIG_CPUMASK_OFFSTACK=y
+# CONFIG_FORCE_NR_CPUS is not set
+CONFIG_CPU_RMAP=y
+CONFIG_DQL=y
+CONFIG_GLOB=y
+# CONFIG_GLOB_SELFTEST is not set
+CONFIG_NLATTR=y
+CONFIG_CLZ_TAB=y
+CONFIG_IRQ_POLL=y
+CONFIG_MPILIB=y
+CONFIG_SIGNATURE=y
+CONFIG_OID_REGISTRY=y
+CONFIG_UCS2_STRING=y
+CONFIG_HAVE_GENERIC_VDSO=y
+CONFIG_GENERIC_GETTIMEOFDAY=y
+CONFIG_GENERIC_VDSO_TIME_NS=y
+CONFIG_FONT_SUPPORT=y
+# CONFIG_FONTS is not set
+CONFIG_FONT_8x8=y
+CONFIG_FONT_8x16=y
+CONFIG_SG_POOL=y
+CONFIG_ARCH_HAS_PMEM_API=y
+CONFIG_MEMREGION=y
+CONFIG_ARCH_HAS_CPU_CACHE_INVALIDATE_MEMREGION=y
+CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE=y
+CONFIG_ARCH_HAS_COPY_MC=y
+CONFIG_ARCH_STACKWALK=y
+CONFIG_STACKDEPOT=y
+CONFIG_STACKDEPOT_ALWAYS_INIT=y
+CONFIG_SBITMAP=y
+# end of Library routines
+
+CONFIG_ASN1_ENCODER=y
+
+#
+# Kernel hacking
+#
+
+#
+# printk and dmesg options
+#
+CONFIG_PRINTK_TIME=y
+CONFIG_PRINTK_CALLER=y
+# CONFIG_STACKTRACE_BUILD_ID is not set
+CONFIG_CONSOLE_LOGLEVEL_DEFAULT=7
+CONFIG_CONSOLE_LOGLEVEL_QUIET=4
+CONFIG_MESSAGE_LOGLEVEL_DEFAULT=4
+CONFIG_BOOT_PRINTK_DELAY=y
+CONFIG_DYNAMIC_DEBUG=y
+CONFIG_DYNAMIC_DEBUG_CORE=y
+CONFIG_SYMBOLIC_ERRNAME=y
+CONFIG_DEBUG_BUGVERBOSE=y
+# end of printk and dmesg options
+
+CONFIG_DEBUG_KERNEL=y
+CONFIG_DEBUG_MISC=y
+
+#
+# Compile-time checks and compiler options
+#
+CONFIG_DEBUG_INFO=y
+CONFIG_AS_HAS_NON_CONST_LEB128=y
+# CONFIG_DEBUG_INFO_NONE is not set
+# CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT is not set
+CONFIG_DEBUG_INFO_DWARF4=y
+# CONFIG_DEBUG_INFO_DWARF5 is not set
+CONFIG_DEBUG_INFO_REDUCED=y
+CONFIG_DEBUG_INFO_COMPRESSED_NONE=y
+# CONFIG_DEBUG_INFO_COMPRESSED_ZLIB is not set
+# CONFIG_DEBUG_INFO_SPLIT is not set
+CONFIG_PAHOLE_HAS_SPLIT_BTF=y
+CONFIG_PAHOLE_HAS_LANG_EXCLUDE=y
+# CONFIG_GDB_SCRIPTS is not set
+CONFIG_FRAME_WARN=8192
+CONFIG_STRIP_ASM_SYMS=y
+# CONFIG_READABLE_ASM is not set
+# CONFIG_HEADERS_INSTALL is not set
+CONFIG_DEBUG_SECTION_MISMATCH=y
+CONFIG_SECTION_MISMATCH_WARN_ONLY=y
+# CONFIG_DEBUG_FORCE_FUNCTION_ALIGN_64B is not set
+CONFIG_OBJTOOL=y
+# CONFIG_VMLINUX_MAP is not set
+# CONFIG_DEBUG_FORCE_WEAK_PER_CPU is not set
+# end of Compile-time checks and compiler options
+
+#
+# Generic Kernel Debugging Instruments
+#
+CONFIG_MAGIC_SYSRQ=y
+CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE=0x1
+CONFIG_MAGIC_SYSRQ_SERIAL=y
+CONFIG_MAGIC_SYSRQ_SERIAL_SEQUENCE=""
+CONFIG_DEBUG_FS=y
+CONFIG_DEBUG_FS_ALLOW_ALL=y
+# CONFIG_DEBUG_FS_DISALLOW_MOUNT is not set
+# CONFIG_DEBUG_FS_ALLOW_NONE is not set
+CONFIG_HAVE_ARCH_KGDB=y
+# CONFIG_KGDB is not set
+CONFIG_ARCH_HAS_UBSAN_SANITIZE_ALL=y
+CONFIG_UBSAN=y
+# CONFIG_UBSAN_TRAP is not set
+CONFIG_CC_HAS_UBSAN_BOUNDS=y
+CONFIG_UBSAN_BOUNDS=y
+CONFIG_UBSAN_ONLY_BOUNDS=y
+CONFIG_UBSAN_SHIFT=y
+# CONFIG_UBSAN_DIV_ZERO is not set
+# CONFIG_UBSAN_BOOL is not set
+# CONFIG_UBSAN_ENUM is not set
+# CONFIG_UBSAN_ALIGNMENT is not set
+CONFIG_UBSAN_SANITIZE_ALL=y
+# CONFIG_TEST_UBSAN is not set
+CONFIG_HAVE_ARCH_KCSAN=y
+CONFIG_HAVE_KCSAN_COMPILER=y
+# end of Generic Kernel Debugging Instruments
+
+#
+# Networking Debugging
+#
+# CONFIG_NET_DEV_REFCNT_TRACKER is not set
+# CONFIG_NET_NS_REFCNT_TRACKER is not set
+# CONFIG_DEBUG_NET is not set
+# end of Networking Debugging
+
+#
+# Memory Debugging
+#
+CONFIG_PAGE_EXTENSION=y
+# CONFIG_DEBUG_PAGEALLOC is not set
+CONFIG_SLUB_DEBUG=y
+# CONFIG_SLUB_DEBUG_ON is not set
+CONFIG_PAGE_OWNER=y
+# CONFIG_PAGE_TABLE_CHECK is not set
+# CONFIG_PAGE_POISONING is not set
+# CONFIG_DEBUG_PAGE_REF is not set
+# CONFIG_DEBUG_RODATA_TEST is not set
+CONFIG_ARCH_HAS_DEBUG_WX=y
+# CONFIG_DEBUG_WX is not set
+CONFIG_GENERIC_PTDUMP=y
+# CONFIG_PTDUMP_DEBUGFS is not set
+CONFIG_HAVE_DEBUG_KMEMLEAK=y
+CONFIG_DEBUG_KMEMLEAK=y
+CONFIG_DEBUG_KMEMLEAK_MEM_POOL_SIZE=16000
+# CONFIG_DEBUG_KMEMLEAK_DEFAULT_OFF is not set
+CONFIG_DEBUG_KMEMLEAK_AUTO_SCAN=y
+# CONFIG_PER_VMA_LOCK_STATS is not set
+# CONFIG_DEBUG_OBJECTS is not set
+# CONFIG_SHRINKER_DEBUG is not set
+# CONFIG_DEBUG_STACK_USAGE is not set
+# CONFIG_SCHED_STACK_END_CHECK is not set
+CONFIG_ARCH_HAS_DEBUG_VM_PGTABLE=y
+# CONFIG_DEBUG_VM is not set
+# CONFIG_DEBUG_VM_PGTABLE is not set
+CONFIG_ARCH_HAS_DEBUG_VIRTUAL=y
+# CONFIG_DEBUG_VIRTUAL is not set
+CONFIG_DEBUG_MEMORY_INIT=y
+# CONFIG_DEBUG_PER_CPU_MAPS is not set
+CONFIG_HAVE_ARCH_KASAN=y
+CONFIG_HAVE_ARCH_KASAN_VMALLOC=y
+CONFIG_CC_HAS_KASAN_GENERIC=y
+CONFIG_CC_HAS_WORKING_NOSANITIZE_ADDRESS=y
+CONFIG_KASAN=y
+CONFIG_KASAN_GENERIC=y
+# CONFIG_KASAN_OUTLINE is not set
+CONFIG_KASAN_INLINE=y
+CONFIG_KASAN_STACK=y
+CONFIG_KASAN_VMALLOC=y
+# CONFIG_KASAN_MODULE_TEST is not set
+CONFIG_HAVE_ARCH_KFENCE=y
+# CONFIG_KFENCE is not set
+CONFIG_HAVE_ARCH_KMSAN=y
+# end of Memory Debugging
+
+CONFIG_DEBUG_SHIRQ=y
+
+#
+# Debug Oops, Lockups and Hangs
+#
+CONFIG_PANIC_ON_OOPS=y
+CONFIG_PANIC_ON_OOPS_VALUE=1
+CONFIG_PANIC_TIMEOUT=0
+CONFIG_LOCKUP_DETECTOR=y
+CONFIG_SOFTLOCKUP_DETECTOR=y
+# CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC is not set
+CONFIG_HARDLOCKUP_DETECTOR_PERF=y
+CONFIG_HARDLOCKUP_CHECK_TIMESTAMP=y
+CONFIG_HARDLOCKUP_DETECTOR=y
+CONFIG_BOOTPARAM_HARDLOCKUP_PANIC=y
+CONFIG_DETECT_HUNG_TASK=y
+CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=480
+# CONFIG_BOOTPARAM_HUNG_TASK_PANIC is not set
+CONFIG_WQ_WATCHDOG=y
+# CONFIG_TEST_LOCKUP is not set
+# end of Debug Oops, Lockups and Hangs
+
+#
+# Scheduler Debugging
+#
+CONFIG_SCHED_DEBUG=y
+CONFIG_SCHED_INFO=y
+CONFIG_SCHEDSTATS=y
+# end of Scheduler Debugging
+
+# CONFIG_DEBUG_TIMEKEEPING is not set
+# CONFIG_DEBUG_PREEMPT is not set
+
+#
+# Lock Debugging (spinlocks, mutexes, etc...)
+#
+CONFIG_LOCK_DEBUGGING_SUPPORT=y
+# CONFIG_PROVE_LOCKING is not set
+# CONFIG_LOCK_STAT is not set
+# CONFIG_DEBUG_RT_MUTEXES is not set
+# CONFIG_DEBUG_SPINLOCK is not set
+# CONFIG_DEBUG_MUTEXES is not set
+# CONFIG_DEBUG_WW_MUTEX_SLOWPATH is not set
+# CONFIG_DEBUG_RWSEMS is not set
+# CONFIG_DEBUG_LOCK_ALLOC is not set
+CONFIG_DEBUG_ATOMIC_SLEEP=y
+# CONFIG_DEBUG_LOCKING_API_SELFTESTS is not set
+CONFIG_LOCK_TORTURE_TEST=m
+# CONFIG_WW_MUTEX_SELFTEST is not set
+# CONFIG_SCF_TORTURE_TEST is not set
+# CONFIG_CSD_LOCK_WAIT_DEBUG is not set
+# end of Lock Debugging (spinlocks, mutexes, etc...)
+
+# CONFIG_NMI_CHECK_CPU is not set
+# CONFIG_DEBUG_IRQFLAGS is not set
+CONFIG_STACKTRACE=y
+# CONFIG_WARN_ALL_UNSEEDED_RANDOM is not set
+# CONFIG_DEBUG_KOBJECT is not set
+
+#
+# Debug kernel data structures
+#
+CONFIG_DEBUG_LIST=y
+# CONFIG_DEBUG_PLIST is not set
+# CONFIG_DEBUG_SG is not set
+# CONFIG_DEBUG_NOTIFIERS is not set
+CONFIG_BUG_ON_DATA_CORRUPTION=y
+# CONFIG_DEBUG_MAPLE_TREE is not set
+# end of Debug kernel data structures
+
+# CONFIG_DEBUG_CREDENTIALS is not set
+
+#
+# RCU Debugging
+#
+CONFIG_TORTURE_TEST=m
+# CONFIG_RCU_SCALE_TEST is not set
+CONFIG_RCU_TORTURE_TEST=m
+# CONFIG_RCU_REF_SCALE_TEST is not set
+CONFIG_RCU_CPU_STALL_TIMEOUT=60
+CONFIG_RCU_EXP_CPU_STALL_TIMEOUT=0
+# CONFIG_RCU_CPU_STALL_CPUTIME is not set
+# CONFIG_RCU_TRACE is not set
+# CONFIG_RCU_EQS_DEBUG is not set
+# end of RCU Debugging
+
+# CONFIG_DEBUG_WQ_FORCE_RR_CPU is not set
+# CONFIG_CPU_HOTPLUG_STATE_CONTROL is not set
+CONFIG_LATENCYTOP=y
+# CONFIG_DEBUG_CGROUP_REF is not set
+CONFIG_USER_STACKTRACE_SUPPORT=y
+CONFIG_NOP_TRACER=y
+CONFIG_HAVE_RETHOOK=y
+CONFIG_RETHOOK=y
+CONFIG_HAVE_FUNCTION_TRACER=y
+CONFIG_HAVE_FUNCTION_GRAPH_TRACER=y
+CONFIG_HAVE_DYNAMIC_FTRACE=y
+CONFIG_HAVE_DYNAMIC_FTRACE_WITH_REGS=y
+CONFIG_HAVE_DYNAMIC_FTRACE_WITH_DIRECT_CALLS=y
+CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS=y
+CONFIG_HAVE_DYNAMIC_FTRACE_NO_PATCHABLE=y
+CONFIG_HAVE_FTRACE_MCOUNT_RECORD=y
+CONFIG_HAVE_SYSCALL_TRACEPOINTS=y
+CONFIG_HAVE_FENTRY=y
+CONFIG_HAVE_OBJTOOL_MCOUNT=y
+CONFIG_HAVE_OBJTOOL_NOP_MCOUNT=y
+CONFIG_HAVE_C_RECORDMCOUNT=y
+CONFIG_HAVE_BUILDTIME_MCOUNT_SORT=y
+CONFIG_BUILDTIME_MCOUNT_SORT=y
+CONFIG_TRACER_MAX_TRACE=y
+CONFIG_TRACE_CLOCK=y
+CONFIG_RING_BUFFER=y
+CONFIG_EVENT_TRACING=y
+CONFIG_CONTEXT_SWITCH_TRACER=y
+CONFIG_TRACING=y
+CONFIG_GENERIC_TRACER=y
+CONFIG_TRACING_SUPPORT=y
+CONFIG_FTRACE=y
+# CONFIG_BOOTTIME_TRACING is not set
+CONFIG_FUNCTION_TRACER=y
+CONFIG_FUNCTION_GRAPH_TRACER=y
+CONFIG_DYNAMIC_FTRACE=y
+CONFIG_DYNAMIC_FTRACE_WITH_REGS=y
+CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS=y
+CONFIG_DYNAMIC_FTRACE_WITH_ARGS=y
+# CONFIG_FPROBE is not set
+CONFIG_FUNCTION_PROFILER=y
+CONFIG_STACK_TRACER=y
+# CONFIG_IRQSOFF_TRACER is not set
+# CONFIG_PREEMPT_TRACER is not set
+CONFIG_SCHED_TRACER=y
+CONFIG_HWLAT_TRACER=y
+# CONFIG_OSNOISE_TRACER is not set
+# CONFIG_TIMERLAT_TRACER is not set
+# CONFIG_MMIOTRACE is not set
+CONFIG_FTRACE_SYSCALLS=y
+CONFIG_TRACER_SNAPSHOT=y
+# CONFIG_TRACER_SNAPSHOT_PER_CPU_SWAP is not set
+CONFIG_BRANCH_PROFILE_NONE=y
+# CONFIG_PROFILE_ANNOTATED_BRANCHES is not set
+# CONFIG_BLK_DEV_IO_TRACE is not set
+CONFIG_KPROBE_EVENTS=y
+# CONFIG_KPROBE_EVENTS_ON_NOTRACE is not set
+CONFIG_UPROBE_EVENTS=y
+CONFIG_BPF_EVENTS=y
+CONFIG_DYNAMIC_EVENTS=y
+CONFIG_PROBE_EVENTS=y
+CONFIG_BPF_KPROBE_OVERRIDE=y
+CONFIG_FTRACE_MCOUNT_RECORD=y
+CONFIG_FTRACE_MCOUNT_USE_CC=y
+CONFIG_TRACING_MAP=y
+CONFIG_SYNTH_EVENTS=y
+# CONFIG_USER_EVENTS is not set
+CONFIG_HIST_TRIGGERS=y
+# CONFIG_TRACE_EVENT_INJECT is not set
+# CONFIG_TRACEPOINT_BENCHMARK is not set
+CONFIG_RING_BUFFER_BENCHMARK=m
+# CONFIG_TRACE_EVAL_MAP_FILE is not set
+# CONFIG_FTRACE_RECORD_RECURSION is not set
+# CONFIG_FTRACE_STARTUP_TEST is not set
+# CONFIG_FTRACE_SORT_STARTUP_TEST is not set
+# CONFIG_RING_BUFFER_STARTUP_TEST is not set
+# CONFIG_RING_BUFFER_VALIDATE_TIME_DELTAS is not set
+# CONFIG_PREEMPTIRQ_DELAY_TEST is not set
+# CONFIG_SYNTH_EVENT_GEN_TEST is not set
+# CONFIG_KPROBE_EVENT_GEN_TEST is not set
+# CONFIG_HIST_TRIGGERS_DEBUG is not set
+# CONFIG_RV is not set
+CONFIG_PROVIDE_OHCI1394_DMA_INIT=y
+# CONFIG_SAMPLES is not set
+CONFIG_HAVE_SAMPLE_FTRACE_DIRECT=y
+CONFIG_HAVE_SAMPLE_FTRACE_DIRECT_MULTI=y
+CONFIG_ARCH_HAS_DEVMEM_IS_ALLOWED=y
+CONFIG_STRICT_DEVMEM=y
+# CONFIG_IO_STRICT_DEVMEM is not set
+
+#
+# x86 Debugging
+#
+CONFIG_EARLY_PRINTK_USB=y
+CONFIG_X86_VERBOSE_BOOTUP=y
+CONFIG_EARLY_PRINTK=y
+CONFIG_EARLY_PRINTK_DBGP=y
+CONFIG_EARLY_PRINTK_USB_XDBC=y
+# CONFIG_EFI_PGT_DUMP is not set
+# CONFIG_DEBUG_TLBFLUSH is not set
+CONFIG_HAVE_MMIOTRACE_SUPPORT=y
+# CONFIG_X86_DECODER_SELFTEST is not set
+CONFIG_IO_DELAY_0X80=y
+# CONFIG_IO_DELAY_0XED is not set
+# CONFIG_IO_DELAY_UDELAY is not set
+# CONFIG_IO_DELAY_NONE is not set
+CONFIG_DEBUG_BOOT_PARAMS=y
+# CONFIG_CPA_DEBUG is not set
+# CONFIG_DEBUG_ENTRY is not set
+# CONFIG_DEBUG_NMI_SELFTEST is not set
+# CONFIG_X86_DEBUG_FPU is not set
+# CONFIG_PUNIT_ATOM_DEBUG is not set
+CONFIG_UNWINDER_ORC=y
+# CONFIG_UNWINDER_FRAME_POINTER is not set
+# end of x86 Debugging
+
+#
+# Kernel Testing and Coverage
+#
+# CONFIG_KUNIT is not set
+# CONFIG_NOTIFIER_ERROR_INJECTION is not set
+CONFIG_FUNCTION_ERROR_INJECTION=y
+# CONFIG_FAULT_INJECTION is not set
+CONFIG_ARCH_HAS_KCOV=y
+CONFIG_CC_HAS_SANCOV_TRACE_PC=y
+# CONFIG_KCOV is not set
+CONFIG_RUNTIME_TESTING_MENU=y
+# CONFIG_TEST_DHRY is not set
+# CONFIG_LKDTM is not set
+# CONFIG_TEST_MIN_HEAP is not set
+# CONFIG_TEST_DIV64 is not set
+# CONFIG_BACKTRACE_SELF_TEST is not set
+# CONFIG_TEST_REF_TRACKER is not set
+# CONFIG_RBTREE_TEST is not set
+# CONFIG_REED_SOLOMON_TEST is not set
+# CONFIG_INTERVAL_TREE_TEST is not set
+# CONFIG_PERCPU_TEST is not set
+# CONFIG_ATOMIC64_SELFTEST is not set
+# CONFIG_ASYNC_RAID6_TEST is not set
+# CONFIG_TEST_HEXDUMP is not set
+# CONFIG_STRING_SELFTEST is not set
+# CONFIG_TEST_STRING_HELPERS is not set
+# CONFIG_TEST_KSTRTOX is not set
+# CONFIG_TEST_PRINTF is not set
+# CONFIG_TEST_SCANF is not set
+# CONFIG_TEST_BITMAP is not set
+# CONFIG_TEST_UUID is not set
+# CONFIG_TEST_XARRAY is not set
+# CONFIG_TEST_MAPLE_TREE is not set
+# CONFIG_TEST_RHASHTABLE is not set
+# CONFIG_TEST_IDA is not set
+# CONFIG_TEST_LKM is not set
+# CONFIG_TEST_BITOPS is not set
+# CONFIG_TEST_VMALLOC is not set
+# CONFIG_TEST_USER_COPY is not set
+# CONFIG_TEST_BPF is not set
+# CONFIG_TEST_BLACKHOLE_DEV is not set
+# CONFIG_FIND_BIT_BENCHMARK is not set
+# CONFIG_TEST_FIRMWARE is not set
+# CONFIG_TEST_SYSCTL is not set
+# CONFIG_TEST_UDELAY is not set
+# CONFIG_TEST_STATIC_KEYS is not set
+# CONFIG_TEST_DYNAMIC_DEBUG is not set
+# CONFIG_TEST_KMOD is not set
+# CONFIG_TEST_MEMCAT_P is not set
+# CONFIG_TEST_LIVEPATCH is not set
+# CONFIG_TEST_MEMINIT is not set
+# CONFIG_TEST_HMM is not set
+# CONFIG_TEST_FREE_PAGES is not set
+# CONFIG_TEST_FPU is not set
+# CONFIG_TEST_CLOCKSOURCE_WATCHDOG is not set
+CONFIG_ARCH_USE_MEMTEST=y
+# CONFIG_MEMTEST is not set
+# CONFIG_HYPERV_TESTING is not set
+# end of Kernel Testing and Coverage
+
+#
+# Rust hacking
+#
+# end of Rust hacking
+# end of Kernel hacking
+
+--QCV+ZoLpb83y8C/3
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: attachment; filename="job-script"
+
+#!/bin/sh
+
+export_top_env()
+{
+	export suite='ltp'
+	export testcase='ltp'
+	export category='functional'
+	export need_memory='4G'
+	export timeout='30m'
+	export job_origin='ltp-syscalls.yaml'
+	export queue_cmdline_keys='branch
+commit
+kbuild_queue_analysis'
+	export queue='validate'
+	export testbox='lkp-ivb-d04'
+	export tbox_group='lkp-ivb-d04'
+	export submit_id='64af58a49059a466f9a2e363'
+	export job_file='/lkp/jobs/queued/validate/lkp-ivb-d04/ltp-1HDD-xfs-syscalls-02-debian-12-x86_64-20220629.cgz-219580eea1ee-20230713-26361-87hbl0-1.yaml'
+	export id='cc98887aed0655f26e0a089e187a1059efc1905e'
+	export queuer_version='/zday/lkp'
+	export model='Ivy Bridge'
+	export nr_node=1
+	export nr_cpu=4
+	export memory='8G'
+	export nr_ssd_partitions=1
+	export nr_hdd_partitions=4
+	export ssd_partitions='/dev/disk/by-id/ata-INTEL_SSDSC2KB240G8_BTYF836606UQ240AGN-part1'
+	export hdd_partitions='/dev/disk/by-id/ata-WDC_WD20EZRX-00D8PB0_WD-WCC4M0KTT6NK-part2 /dev/disk/by-id/ata-WDC_WD20EZRX-00D8PB0_WD-WCC4M0KTT6NK-part3 /dev/disk/by-id/ata-WDC_WD20EZRX-00D8PB0_WD-WCC4M0KTT6NK-part4 /dev/disk/by-id/ata-WDC_WD20EZRX-00D8PB0_WD-WCC4M0KTT6NK-part5'
+	export rootfs_partition='/dev/disk/by-id/ata-WDC_WD20EZRX-00D8PB0_WD-WCC4M0KTT6NK-part1'
+	export brand='Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz'
+	export commit='219580eea1eedefebd3f17c4b31a5226ff4c6a89'
+	export netconsole_port=6676
+	export ucode='0x21'
+	export need_kconfig_hw='{"R8169"=>"y"}
+SATA_AHCI
+DRM_I915'
+	export need_kconfig='BLK_DEV_SD
+SCSI
+{"BLOCK"=>"y"}
+SATA_AHCI
+SATA_AHCI_PLATFORM
+ATA
+{"PCI"=>"y"}
+XFS_FS
+BLK_DEV_LOOP
+{"CAN"=>"m"}
+{"CAN_DEV"=>"m"}
+{"CAN_RAW"=>"m"}
+{"CAN_VCAN"=>"m"}
+{"MINIX_FS"=>"m"}
+{"EXPERT"=>"y"}
+{"CHECKPOINT_RESTORE"=>"y"}'
+	export rootfs='debian-12-x86_64-20220629.cgz'
+	export initrds='linux_headers'
+	export kconfig='x86_64-rhel-8.3-ltp'
+	export enqueue_time='2023-07-13 09:51:34 +0800'
+	export _id='64af58a49059a466f9a2e363'
+	export _rt='/result/ltp/1HDD-xfs-syscalls-02/lkp-ivb-d04/debian-12-x86_64-20220629.cgz/x86_64-rhel-8.3-ltp/gcc-12/219580eea1eedefebd3f17c4b31a5226ff4c6a89'
+	export compiler='gcc-12'
+	export head_commit='2fef4b291ae0214c24fd421650a003d40e2f7087'
+	export base_commit='6995e2de6891c724bfeb2db33d7b87775f913ad1'
+	export branch='linus/master'
+	export user='lkp'
+	export LKP_SERVER='internal-lkp-server'
+	export scheduler_version='/lkp/lkp/src'
+	export arch='x86_64'
+	export max_uptime=6000
+	export initrd='/osimage/debian/debian-12-x86_64-20220629.cgz'
+	export bootloader_append='root=/dev/ram0
+RESULT_ROOT=/result/ltp/1HDD-xfs-syscalls-02/lkp-ivb-d04/debian-12-x86_64-20220629.cgz/x86_64-rhel-8.3-ltp/gcc-12/219580eea1eedefebd3f17c4b31a5226ff4c6a89/3
+BOOT_IMAGE=/pkg/linux/x86_64-rhel-8.3-ltp/gcc-12/219580eea1eedefebd3f17c4b31a5226ff4c6a89/vmlinuz-6.4.0-rc4-00169-g219580eea1ee
+branch=linus/master
+job=/lkp/jobs/scheduled/lkp-ivb-d04/ltp-1HDD-xfs-syscalls-02-debian-12-x86_64-20220629.cgz-219580eea1ee-20230713-26361-87hbl0-1.yaml
+user=lkp
+ARCH=x86_64
+kconfig=x86_64-rhel-8.3-ltp
+commit=219580eea1eedefebd3f17c4b31a5226ff4c6a89
+nmi_watchdog=0
+max_uptime=6000
+LKP_SERVER=internal-lkp-server
+nokaslr
+selinux=0
+debug
+apic=debug
+sysrq_always_enabled
+rcupdate.rcu_cpu_stall_timeout=100
+net.ifnames=0
+printk.devkmsg=on
+panic=-1
+softlockup_panic=1
+nmi_watchdog=panic
+oops=panic
+load_ramdisk=2
+prompt_ramdisk=0
+drbd.minor_count=8
+systemd.log_level=err
+ignore_loglevel
+console=tty0
+earlyprintk=ttyS0,115200
+console=ttyS0,115200
+vga=normal
+rw'
+	export modules_initrd='/pkg/linux/x86_64-rhel-8.3-ltp/gcc-12/219580eea1eedefebd3f17c4b31a5226ff4c6a89/modules.cgz'
+	export linux_headers_initrd='/pkg/linux/x86_64-rhel-8.3-ltp/gcc-12/219580eea1eedefebd3f17c4b31a5226ff4c6a89/linux-headers.cgz'
+	export bm_initrd='/osimage/deps/debian-12-x86_64-20220629.cgz/run-ipconfig_20221125.cgz,/osimage/deps/debian-12-x86_64-20220629.cgz/lkp_20221125.cgz,/osimage/deps/debian-12-x86_64-20220629.cgz/rsync-rootfs_20221125.cgz,/osimage/deps/debian-12-x86_64-20220629.cgz/fs_20221125.cgz,/osimage/deps/debian-12-x86_64-20220629.cgz/ltp_20230708.cgz,/osimage/pkg/debian-12-x86_64-20220629.cgz/ltp-x86_64-14c1f76-1_20230708.cgz,/osimage/deps/debian-12-x86_64-20220629.cgz/hw_20230326.cgz'
+	export ucode_initrd='/osimage/ucode/intel-ucode-20230406.cgz'
+	export lkp_initrd='/osimage/user/lkp/lkp-x86_64.cgz'
+	export site='inn'
+	export LKP_CGI_PORT=80
+	export LKP_CIFS_PORT=139
+	export job_initrd='/lkp/jobs/scheduled/lkp-ivb-d04/ltp-1HDD-xfs-syscalls-02-debian-12-x86_64-20220629.cgz-219580eea1ee-20230713-26361-87hbl0-1.cgz'
+	export last_kernel='6.4.0-10963-g2fef4b291ae0'
+	export acpi_rsdp='0x000f0490'
+	export repeat_to=6
+	export kbuild_queue_analysis=1
+	export kernel='/pkg/linux/x86_64-rhel-8.3-ltp/gcc-12/219580eea1eedefebd3f17c4b31a5226ff4c6a89/vmlinuz-6.4.0-rc4-00169-g219580eea1ee'
+	export result_root='/result/ltp/1HDD-xfs-syscalls-02/lkp-ivb-d04/debian-12-x86_64-20220629.cgz/x86_64-rhel-8.3-ltp/gcc-12/219580eea1eedefebd3f17c4b31a5226ff4c6a89/3'
+
+	[ -n "$LKP_SRC" ] ||
+	export LKP_SRC=/lkp/${user:-lkp}/src
+}
+
+run_job()
+{
+	echo $$ > $TMP/run-job.pid
+
+	. $LKP_SRC/lib/http.sh
+	. $LKP_SRC/lib/job.sh
+	. $LKP_SRC/lib/env.sh
+
+	export_top_env
+
+	run_setup nr_hdd=1 $LKP_SRC/setup/disk
+
+	run_setup fs='xfs' $LKP_SRC/setup/fs
+
+	run_setup $LKP_SRC/setup/sanity-check
+
+	run_monitor $LKP_SRC/monitors/wrapper kmsg
+	run_monitor $LKP_SRC/monitors/wrapper heartbeat
+	run_monitor $LKP_SRC/monitors/wrapper meminfo
+	run_monitor $LKP_SRC/monitors/wrapper kmemleak
+	run_monitor $LKP_SRC/monitors/wrapper oom-killer
+	run_monitor $LKP_SRC/monitors/plain/watchdog
+
+	run_test test='syscalls-02' $LKP_SRC/tests/wrapper ltp
+}
+
+extract_stats()
+{
+	export stats_part_begin=
+	export stats_part_end=
+
+	env test='syscalls-02' $LKP_SRC/stats/wrapper ltp
+	$LKP_SRC/stats/wrapper kmsg
+	$LKP_SRC/stats/wrapper meminfo
+	$LKP_SRC/stats/wrapper kmemleak
+
+	$LKP_SRC/stats/wrapper time ltp.time
+	$LKP_SRC/stats/wrapper dmesg
+	$LKP_SRC/stats/wrapper kmsg
+	$LKP_SRC/stats/wrapper last_state
+	$LKP_SRC/stats/wrapper stderr
+	$LKP_SRC/stats/wrapper time
+}
+
+"$@"
+
+--QCV+ZoLpb83y8C/3
+Content-Type: application/x-xz
+Content-Disposition: attachment; filename="dmesg.xz"
+Content-Transfer-Encoding: base64
+
+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
+
+--QCV+ZoLpb83y8C/3
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: attachment; filename="ltp"
+Content-Transfer-Encoding: quoted-printable
+
+/usr/bin/mkisofs
+2023-07-13 02:31:49 ln -sf /usr/sbin/iptables-nft /usr/bin/iptables
+2023-07-13 02:31:49 ln -sf /usr/sbin/ip6tables-nft /usr/bin/ip6tables
+make: Entering directory '/usr/src/linux-headers-x86_64-rhel-8.3-ltp-219580=
+eea1eedefebd3f17c4b31a5226ff4c6a89-bpf'
+  CC [M]  /lkp/benchmarks/ltp/testcases/kernel/syscalls/delete_module/dummy=
+_del_mod.o
+  CC [M]  /lkp/benchmarks/ltp/testcases/kernel/syscalls/delete_module/dummy=
+_del_mod_dep.o
+  MODPOST /lkp/benchmarks/ltp/testcases/kernel/syscalls/delete_module/Modul=
+e.symvers
+  CC [M]  /lkp/benchmarks/ltp/testcases/kernel/syscalls/delete_module/dummy=
+_del_mod.mod.o
+  CC [M]  /lkp/benchmarks/ltp/testcases/kernel/syscalls/delete_module/dummy=
+_del_mod_dep.mod.o
+  LD [M]  /lkp/benchmarks/ltp/testcases/kernel/syscalls/delete_module/dummy=
+_del_mod.ko
+  LD [M]  /lkp/benchmarks/ltp/testcases/kernel/syscalls/delete_module/dummy=
+_del_mod_dep.ko
+make: Leaving directory '/usr/src/linux-headers-x86_64-rhel-8.3-ltp-219580e=
+ea1eedefebd3f17c4b31a5226ff4c6a89-bpf'
+<<<test_start>>>
+tag=3Dftruncate04
+ftruncate04 0 exclude
+<<<test_end>>>
+2023-07-13 02:31:59 export LTP_RUNTIME_MUL=3D2
+2023-07-13 02:31:59 ./runltp -f syscalls-02 -d /fs/sda2/tmpdir
+INFO: creating /lkp/benchmarks/ltp/output directory
+INFO: creating /lkp/benchmarks/ltp/results directory
+Checking for required user/group ids
+
+'root' user id and group found.
+'nobody' user id and group found.
+'bin' user id and group found.
+'daemon' user id and group found.
+Users group found.
+Sys group found.
+Required users/groups exist.
+If some fields are empty or look unusual you may have an old version.
+Compare to the current minimal requirements in Documentation/Changes.
+
+/etc/os-release
+PRETTY_NAME=3D"Debian GNU/Linux bookworm/sid"
+NAME=3D"Debian GNU/Linux"
+VERSION_CODENAME=3Dbookworm
+ID=3Ddebian
+HOME_URL=3D"https://www.debian.org/"
+SUPPORT_URL=3D"https://www.debian.org/support"
+BUG_REPORT_URL=3D"https://bugs.debian.org/"
+
+uname:
+Linux lkp-ivb-d04 6.4.0-rc4-00169-g219580eea1ee #1 SMP PREEMPT_DYNAMIC Thu =
+Jul 13 03:30:54 CST 2023 x86_64 GNU/Linux
+
+/proc/cmdline
+ip=3D::::lkp-ivb-d04::dhcp root=3D/dev/ram0 RESULT_ROOT=3D/result/ltp/1HDD-=
+xfs-syscalls-02/lkp-ivb-d04/debian-12-x86_64-20220629.cgz/x86_64-rhel-8.3-l=
+tp/gcc-12/219580eea1eedefebd3f17c4b31a5226ff4c6a89/3 BOOT_IMAGE=3D/pkg/linu=
+x/x86_64-rhel-8.3-ltp/gcc-12/219580eea1eedefebd3f17c4b31a5226ff4c6a89/vmlin=
+uz-6.4.0-rc4-00169-g219580eea1ee branch=3Dlinus/master job=3D/lkp/jobs/sche=
+duled/lkp-ivb-d04/ltp-1HDD-xfs-syscalls-02-debian-12-x86_64-20220629.cgz-21=
+9580eea1ee-20230713-26361-87hbl0-1.yaml user=3Dlkp ARCH=3Dx86_64 kconfig=3D=
+x86_64-rhel-8.3-ltp commit=3D219580eea1eedefebd3f17c4b31a5226ff4c6a89 nmi_w=
+atchdog=3D0 max_uptime=3D6000 LKP_SERVER=3Dinternal-lkp-server nokaslr seli=
+nux=3D0 debug apic=3Ddebug sysrq_always_enabled rcupdate.rcu_cpu_stall_time=
+out=3D100 net.ifnames=3D0 printk.devkmsg=3Don panic=3D-1 softlockup_panic=
+=3D1 nmi_watchdog=3Dpanic oops=3Dpanic load_ramdisk=3D2 prompt_ramdisk=3D0 =
+drbd.minor_count=3D8 systemd.log_level=3Derr ignore_loglevel console=3Dtty0=
+ earlyprintk=3DttyS0,115200 console=3DttyS0,115200 vga=3Dnormal rw acpi_rsd=
+p=3D0x000f0490
+
+Gnu C                  gcc (Debian 12.2.0-14) 12.2.0
+Clang                =20
+Gnu make               4.3
+util-linux             2.38.1
+mount                  linux 2.38.1 (libmount 2.38.1: selinux, smack, btrfs=
+, verity, namespaces, assert, debug)
+modutils               30
+e2fsprogs              1.46.6-rc1
+Linux C Library        gnu/libc.so.6
+Dynamic linker (ldd)   2.36
+Procps                 3.3.17
+Net-tools              2.10
+iproute2               1.0.1
+iputils                20221126
+ethtool                6.1
+Kbd                    loadkeys:
+Sh-utils               9.1
+Modules Loaded         xfs dm_mod netconsole btrfs blake2b_generic xor raid=
+6_pq zstd_compress libcrc32c sd_mod t10_pi crc64_rocksoft_generic crc64_roc=
+ksoft sg crc64 kvm_intel ipmi_devintf ipmi_msghandler i915 kvm intel_rapl_m=
+sr intel_rapl_common ahci x86_pkg_temp_thermal coretemp intel_powerclamp wm=
+i_bmof irqbypass crc32_pclmul crct10dif_pclmul crc32c_intel libahci drm_bud=
+dy intel_gtt ghash_clmulni_intel sha512_ssse3 rapl drm_display_helper intel=
+_cstate intel_uncore libata lpc_ich drm_kms_helper i2c_i801 i2c_smbus sysco=
+pyarea sysfillrect mei_me sysimgblt mei ttm video wmi binfmt_misc fuse drm =
+ip_tables
+
+free reports:
+               total        used        free      shared  buff/cache   avai=
+lable
+Mem:         6924884      918852     2871488        5316     3134544     27=
+97748
+Swap:              0           0           0
+
+cpuinfo:
+Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Address sizes:                   36 bits physical, 48 bits virtual
+Byte Order:                      Little Endian
+CPU(s):                          4
+On-line CPU(s) list:             0-3
+Vendor ID:                       GenuineIntel
+BIOS Vendor ID:                  Intel(R) Corporation
+Model name:                      Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz
+BIOS Model name:                 Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz   =
+                     CPU @ 3.3GHz
+BIOS CPU family:                 206
+CPU family:                      6
+Model:                           58
+Thread(s) per core:              2
+Core(s) per socket:              2
+Socket(s):                       1
+Stepping:                        9
+CPU(s) scaling MHz:              100%
+CPU max MHz:                     3300.0000
+CPU min MHz:                     1600.0000
+BogoMIPS:                        6584.82
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic se=
+p mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm p=
+be syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xt=
+opology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vm=
+x est tm2 ssse3 cx16 xtpr pdcm pcid sse4_1 sse4_2 popcnt tsc_deadline_timer=
+ xsave avx f16c lahf_lm cpuid_fault epb pti ssbd ibrs ibpb stibp tpr_shadow=
+ flexpriority ept vpid fsgsbase smep erms xsaveopt dtherm arat pln pts vnmi=
+ md_clear flush_l1d
+Virtualization:                  VT-x
+L1d cache:                       64 KiB (2 instances)
+L1i cache:                       64 KiB (2 instances)
+L2 cache:                        512 KiB (2 instances)
+L3 cache:                        3 MiB (1 instance)
+NUMA node(s):                    1
+NUMA node0 CPU(s):               0-3
+Vulnerability Itlb multihit:     KVM: Mitigation: VMX disabled
+Vulnerability L1tf:              Mitigation; PTE Inversion; VMX conditional=
+ cache flushes, SMT vulnerable
+Vulnerability Mds:               Mitigation; Clear CPU buffers; SMT vulnera=
+ble
+Vulnerability Meltdown:          Mitigation; PTI
+Vulnerability Mmio stale data:   Unknown: No mitigations
+Vulnerability Retbleed:          Not affected
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disab=
+led via prctl
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and _=
+_user pointer sanitization
+Vulnerability Spectre v2:        Vulnerable, IBPB: conditional, IBRS_FW, ST=
+IBP: conditional, RSB filling, PBRSB-eIBRS: Not affected
+Vulnerability Srbds:             Not affected
+Vulnerability Tsx async abort:   Not affected
+
+available filesystems:
+autofs bdev binfmt_misc bpf btrfs cgroup cgroup2 configfs cpuset debugfs de=
+vpts devtmpfs efivarfs ext3 ext4 fuse fuseblk fusectl hugetlbfs mqueue nfs =
+nfs4 pipefs proc pstore ramfs rpc_pipefs securityfs sockfs sysfs tmpfs trac=
+efs xfs
+
+mounted filesystems (/proc/mounts):
+rootfs / rootfs rw 0 0
+proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+devtmpfs /dev devtmpfs rw,nosuid,size=3D4096k,nr_inodes=3D729755,mode=3D755=
+ 0 0
+securityfs /sys/kernel/security securityfs rw,nosuid,nodev,noexec,relatime =
+0 0
+tmpfs /dev/shm tmpfs rw,nosuid,nodev 0 0
+devpts /dev/pts devpts rw,nosuid,noexec,relatime,gid=3D5,mode=3D620,ptmxmod=
+e=3D000 0 0
+tmpfs /run tmpfs rw,nosuid,nodev,size=3D1384980k,nr_inodes=3D819200,mode=3D=
+755 0 0
+tmpfs /run/lock tmpfs rw,nosuid,nodev,noexec,relatime,size=3D5120k 0 0
+cgroup2 /sys/fs/cgroup cgroup2 rw,nosuid,nodev,noexec,relatime,nsdelegate,m=
+emory_recursiveprot 0 0
+pstore /sys/fs/pstore pstore rw,nosuid,nodev,noexec,relatime 0 0
+bpf /sys/fs/bpf bpf rw,nosuid,nodev,noexec,relatime,mode=3D700 0 0
+systemd-1 /proc/sys/fs/binfmt_misc autofs rw,relatime,fd=3D30,pgrp=3D1,time=
+out=3D0,minproto=3D5,maxproto=3D5,direct,pipe_ino=3D241 0 0
+hugetlbfs /dev/hugepages hugetlbfs rw,relatime,pagesize=3D2M 0 0
+mqueue /dev/mqueue mqueue rw,nosuid,nodev,noexec,relatime 0 0
+debugfs /sys/kernel/debug debugfs rw,nosuid,nodev,noexec,relatime 0 0
+tracefs /sys/kernel/tracing tracefs rw,nosuid,nodev,noexec,relatime 0 0
+fusectl /sys/fs/fuse/connections fusectl rw,nosuid,nodev,noexec,relatime 0 =
+0
+configfs /sys/kernel/config configfs rw,nosuid,nodev,noexec,relatime 0 0
+ramfs /run/credentials/systemd-sysctl.service ramfs ro,nosuid,nodev,noexec,=
+relatime,mode=3D700 0 0
+ramfs /run/credentials/systemd-sysusers.service ramfs ro,nosuid,nodev,noexe=
+c,relatime,mode=3D700 0 0
+ramfs /run/credentials/systemd-tmpfiles-setup-dev.service ramfs ro,nosuid,n=
+odev,noexec,relatime,mode=3D700 0 0
+ramfs /run/credentials/systemd-tmpfiles-setup.service ramfs ro,nosuid,nodev=
+,noexec,relatime,mode=3D700 0 0
+binfmt_misc /proc/sys/fs/binfmt_misc binfmt_misc rw,nosuid,nodev,noexec,rel=
+atime 0 0
+sunrpc /run/rpc_pipefs rpc_pipefs rw,relatime 0 0
+tmp /tmp tmpfs rw 0 0
+/dev/sda1 /opt/rootfs btrfs rw,relatime,space_cache,subvolid=3D5,subvol=3D/=
+ 0 0
+/dev/sda2 /fs/sda2 xfs rw,relatime,attr2,inode64,logbufs=3D8,logbsize=3D32k=
+,noquota 0 0
+
+mounted filesystems (df):
+Filesystem     Type      Size  Used Avail Use% Mounted on
+devtmpfs       devtmpfs  4.0M     0  4.0M   0% /dev
+tmpfs          tmpfs     3.4G     0  3.4G   0% /dev/shm
+tmpfs          tmpfs     1.4G  600K  1.4G   1% /run
+tmpfs          tmpfs     5.0M     0  5.0M   0% /run/lock
+tmp            tmpfs     3.4G  360K  3.4G   1% /tmp
+/dev/sda1      btrfs     400G   11G  388G   3% /opt/rootfs
+/dev/sda2      xfs       300G  339M  300G   1% /fs/sda2
+
+AppArmor disabled
+
+SELinux mode: unknown
+no big block device was specified on commandline.
+Tests which require a big block device are disabled.
+You can specify it with option -z
+COMMAND:    /lkp/benchmarks/ltp/bin/ltp-pan   -e -S   -a 3935     -n 3935 -=
+p -f /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/alltests -l /lkp/benchmarks/ltp/results=
+/LTP_RUN_ON-2023_07_13-02h_31m_59s.log  -C /lkp/benchmarks/ltp/output/LTP_R=
+UN_ON-2023_07_13-02h_31m_59s.failed -T /lkp/benchmarks/ltp/output/LTP_RUN_O=
+N-2023_07_13-02h_31m_59s.tconf
+LOG File: /lkp/benchmarks/ltp/results/LTP_RUN_ON-2023_07_13-02h_31m_59s.log
+FAILED COMMAND File: /lkp/benchmarks/ltp/output/LTP_RUN_ON-2023_07_13-02h_3=
+1m_59s.failed
+TCONF COMMAND File: /lkp/benchmarks/ltp/output/LTP_RUN_ON-2023_07_13-02h_31=
+m_59s.tconf
+Running tests.......
+<<<test_start>>>
+tag=3Daccept02 stime=3D1689215521
+cmdline=3D"accept02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+tst_buffers.c:55: TINFO: Test is using guarded buffers
+accept02.c:131: TINFO: Starting listener on port: 58831
+accept02.c:75: TPASS: Multicast group was not copied: EADDRNOTAVAIL (99)
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dadd_key02 stime=3D1689215521
+cmdline=3D"add_key02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+add_key02.c:59: TPASS: received expected EFAULT with key type 'asymmetric'
+add_key02.c:59: TPASS: received expected EFAULT with key type 'cifs.idmap'
+add_key02.c:59: TPASS: received expected EFAULT with key type 'cifs.spnego'
+add_key02.c:59: TPASS: received expected EFAULT with key type 'pkcs7_test'
+add_key02.c:59: TPASS: received expected EFAULT with key type 'rxrpc'
+add_key02.c:59: TPASS: received expected EFAULT with key type 'rxrpc_s'
+add_key02.c:59: TPASS: received expected EFAULT with key type 'user'
+add_key02.c:59: TPASS: received expected EFAULT with key type 'logon'
+add_key02.c:59: TPASS: received expected EFAULT with key type 'big_key'
+
+Summary:
+passed   9
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dadd_key05 stime=3D1689215521
+cmdline=3D"add_key05"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_buffers.c:55: TINFO: Test is using guarded buffers
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+add_key05.c:50: TINFO: Created user ltp_add_key05_0
+add_key05.c:191: TINFO: User: 0, UID: 1091
+add_key05.c:88: TINFO: test max bytes under unprivileged user
+add_key05.c:113: TPASS: add_key(test_inv) failed as expected: EDQUOT (122)
+add_key05.c:136: TPASS: add_key(test_max) succeeded as expected
+add_key05.c:139: TPASS: allow reaching the max bytes exactly
+add_key05.c:50: TINFO: Created user ltp_add_key05_1
+add_key05.c:191: TINFO: User: 1, UID: 1092
+add_key05.c:149: TINFO: test max keys under unprivileged user
+add_key05.c:167: TPASS: add_key(test_invalid_key) failed as expected: EDQUO=
+T (122)
+add_key05.c:174: TPASS: allow reaching the max key(200) exactly
+userdel: ltp_add_key05_1 mail spool (/var/mail/ltp_add_key05_1) not found
+userdel: ltp_add_key05_1 home directory (/home/ltp_add_key05_1) not found
+userdel: ltp_add_key05_0 mail spool (/var/mail/ltp_add_key05_0) not found
+userdel: ltp_add_key05_0 home directory (/home/ltp_add_key05_0) not found
+
+Summary:
+passed   5
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D1 cstime=3D42
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dadjtimex01 stime=3D1689215521
+cmdline=3D"adjtimex01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_buffers.c:55: TINFO: Test is using guarded buffers
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+adjtimex01.c:24: TPASS: adjtimex() with mode 0x403f=20
+adjtimex01.c:33: TPASS: adjtimex() with mode 0x8001=20
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dalarm06 stime=3D1689215521
+cmdline=3D"alarm06"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+alarm06.c:35: TPASS: alarm(0) passed
+alarm06.c:40: TPASS: alarms_received =3D=3D 0 (0)
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D3 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dbpf_prog07 stime=3D1689215524
+cmdline=3D"bpf_prog07"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_buffers.c:55: TINFO: Test is using guarded buffers
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+bpf_common.c:16: TINFO: Raising RLIMIT_MEMLOCK to 10485760
+tst_capability.c:29: TINFO: Dropping CAP_SYS_ADMIN(21)
+tst_capability.c:29: TINFO: Dropping CAP_BPF(39)
+bpf_common.c:39: TCONF: Hint: check also /proc/sys/kernel/unprivileged_bpf_=
+disabled
+bpf_common.c:40: TCONF: bpf() requires CAP_SYS_ADMIN or CAP_BPF on this sys=
+tem: EPERM (1)
+
+Summary:
+passed   0
+failed   0
+broken   0
+skipped  2
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D9 termination_type=3Dexited termination_id=3D32 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dcapset02 stime=3D1689215533
+cmdline=3D"capset02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_buffers.c:55: TINFO: Test is using guarded buffers
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+capset02.c:65: TPASS: capset() with bad address header : EFAULT (14)
+capset02.c:65: TPASS: capset() with bad address data : EFAULT (14)
+capset02.c:65: TPASS: capset() with bad version : EINVAL (22)
+capset02.c:65: TPASS: capset() with bad value data(when pE is not in pP) : =
+EPERM (1)
+capset02.c:65: TPASS: capset() with bad value data(when pP is not in old pP=
+) : EPERM (1)
+capset02.c:65: TPASS: capset() with bad value data(when pI is not in boundi=
+ng set or old pI) : EPERM (1)
+
+Summary:
+passed   6
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dchdir04 stime=3D1689215533
+cmdline=3D"chdir04"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+chdir04.c:29: TPASS: chdir() : ENAMETOOLONG (36)
+chdir04.c:29: TPASS: chdir() : ENOENT (2)
+chdir04.c:29: TPASS: chdir() : EFAULT (14)
+
+Summary:
+passed   3
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dchmod03 stime=3D1689215533
+cmdline=3D"chmod03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+chmod03.c:42: TPASS: chmod(testfile, 1777) passed
+chmod03.c:54: TPASS: stat(testfile) mode=3D101777
+chmod03.c:42: TPASS: chmod(testdir_3, 1777) passed
+chmod03.c:54: TPASS: stat(testdir_3) mode=3D41777
+
+Summary:
+passed   4
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dchmod05 stime=3D1689215533
+cmdline=3D"chmod05"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+chmod05.c:76: TINFO: Found unused GID 11: SUCCESS (0)
+chmod05.c:65: TPASS: Functionality of chmod(testdir, 043777) successful
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dchown03 stime=3D1689215533
+cmdline=3D"chown03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+chown03.c:63: TPASS: chown(chown03_testfile, -1, 65534) passed
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dchown05 stime=3D1689215533
+cmdline=3D"chown05"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+chown05.c:42: TPASS: chown(testfile, 700, 701), change owner/group ids pass=
+ed
+chown05.c:42: TPASS: chown(testfile, 702, -1), change owner id only passed
+chown05.c:42: TPASS: chown(testfile, 703, 701), change owner id only passed
+chown05.c:42: TPASS: chown(testfile, -1, 704), change group id only passed
+chown05.c:42: TPASS: chown(testfile, 703, 705), change group id only passed
+chown05.c:42: TPASS: chown(testfile, -1, -1), no change passed
+
+Summary:
+passed   6
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dchown05_16 stime=3D1689215533
+cmdline=3D"chown05_16"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/chown/../utils/compat_tst_16=
+.h:153: TCONF: 16-bit version of chown() is not supported on your platform
+
+Summary:
+passed   0
+failed   0
+broken   0
+skipped  1
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D32 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dclock_gettime04 stime=3D1689215533
+cmdline=3D"clock_gettime04"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+vdso_helpers.c:76: TINFO: Couldn't find vdso_gettime64()
+clock_gettime04.c:183: TPASS: CLOCK_REALTIME: Difference between successive=
+ readings is reasonable for following variants:
+clock_gettime04.c:188: TINFO: 	- vDSO or syscall with libc spec
+clock_gettime04.c:188: TINFO: 	- syscall with old kernel spec
+clock_gettime04.c:188: TINFO: 	- vDSO with old kernel spec
+clock_gettime04.c:188: TINFO: 	- gettimeofday
+clock_gettime04.c:183: TPASS: CLOCK_REALTIME_COARSE: Difference between suc=
+cessive readings is reasonable for following variants:
+clock_gettime04.c:188: TINFO: 	- vDSO or syscall with libc spec
+clock_gettime04.c:188: TINFO: 	- syscall with old kernel spec
+clock_gettime04.c:188: TINFO: 	- vDSO with old kernel spec
+clock_gettime04.c:183: TPASS: CLOCK_MONOTONIC: Difference between successiv=
+e readings is reasonable for following variants:
+clock_gettime04.c:188: TINFO: 	- vDSO or syscall with libc spec
+clock_gettime04.c:188: TINFO: 	- syscall with old kernel spec
+clock_gettime04.c:188: TINFO: 	- vDSO with old kernel spec
+clock_gettime04.c:183: TPASS: CLOCK_MONOTONIC_COARSE: Difference between su=
+ccessive readings is reasonable for following variants:
+clock_gettime04.c:188: TINFO: 	- vDSO or syscall with libc spec
+clock_gettime04.c:188: TINFO: 	- syscall with old kernel spec
+clock_gettime04.c:188: TINFO: 	- vDSO with old kernel spec
+clock_gettime04.c:183: TPASS: CLOCK_MONOTONIC_RAW: Difference between succe=
+ssive readings is reasonable for following variants:
+clock_gettime04.c:188: TINFO: 	- vDSO or syscall with libc spec
+clock_gettime04.c:188: TINFO: 	- syscall with old kernel spec
+clock_gettime04.c:188: TINFO: 	- vDSO with old kernel spec
+clock_gettime04.c:183: TPASS: CLOCK_BOOTTIME: Difference between successive=
+ readings is reasonable for following variants:
+clock_gettime04.c:188: TINFO: 	- vDSO or syscall with libc spec
+clock_gettime04.c:188: TINFO: 	- syscall with old kernel spec
+clock_gettime04.c:188: TINFO: 	- vDSO with old kernel spec
+
+Summary:
+passed   6
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D2 cstime=3D8
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dleapsec01 stime=3D1689215533
+cmdline=3D"leapsec01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+leapsec01.c:130: TINFO: test start at 02:32:13.509565144
+leapsec01.c:100: TINFO: now is     02:32:13.509673059
+leapsec01.c:104: TINFO: sleep until 02:32:14.509673059
+leapsec01.c:112: TINFO: now is     02:32:14.509758080
+leapsec01.c:115: TINFO: hrtimer early expiration is not detected.
+leapsec01.c:138: TINFO: scheduling leap second 00:00:00.000000000
+leapsec01.c:144: TINFO: setting time to        23:59:58.000000000
+leapsec01.c:88: TINFO: 23:59:58.000310000 adjtimex: clock synchronized
+leapsec01.c:88: TINFO: 23:59:58.000383000 adjtimex: clock synchronized
+leapsec01.c:88: TINFO: 23:59:58.000535000 adjtimex: clock synchronized
+leapsec01.c:88: TINFO: 23:59:58.000624000 adjtimex: clock synchronized
+leapsec01.c:88: TINFO: 23:59:58.500829000 adjtimex: clock synchronized
+leapsec01.c:88: TINFO: 23:59:59.001007000 adjtimex: insert leap second
+leapsec01.c:88: TINFO: 23:59:59.501176000 adjtimex: insert leap second
+leapsec01.c:88: TINFO: 00:00:00.001349000 adjtimex: leap second has occurre=
+d
+leapsec01.c:88: TINFO: 23:59:59.506191000 adjtimex: leap second in progress
+leapsec01.c:88: TINFO: 00:00:00.006367000 adjtimex: leap second has occurre=
+d
+leapsec01.c:88: TINFO: 00:00:00.506525000 adjtimex: leap second has occurre=
+d
+leapsec01.c:88: TINFO: 00:00:01.006715000 adjtimex: leap second has occurre=
+d
+leapsec01.c:88: TINFO: 00:00:01.506906000 adjtimex: leap second has occurre=
+d
+leapsec01.c:88: TINFO: 00:00:02.007096000 adjtimex: leap second has occurre=
+d
+leapsec01.c:100: TINFO: now is     00:00:02.507326420
+leapsec01.c:104: TINFO: sleep until 00:00:03.507326420
+leapsec01.c:112: TINFO: now is     00:00:03.507391690
+leapsec01.c:115: TINFO: hrtimer early expiration is not detected.
+leapsec01.c:88: TINFO: 00:00:03.507484000 adjtimex: leap second has occurre=
+d
+leapsec01.c:88: TINFO: 00:00:03.507523000 adjtimex: clock synchronized
+leapsec01.c:170: TINFO: restoring time to 02:32:19.017118412
+leapsec01.c:100: TINFO: now is     02:32:19.017836714
+leapsec01.c:104: TINFO: sleep until 02:32:20.017836714
+leapsec01.c:112: TINFO: now is     02:32:20.017916288
+leapsec01.c:115: TINFO: hrtimer early expiration is not detected.
+leapsec01.c:177: TPASS: No errors were reported during this test!
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D7 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dclock_settime03 stime=3D1689215540
+cmdline=3D"clock_settime03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+clock_settime03.c:35: TINFO: Testing variant: syscall with old kernel spec
+clock_settime03.c:103: TPASS: clock_settime(): Y2038 test passed
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D3 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dclose_range02 stime=3D1689215543
+cmdline=3D"close_range02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+close_range02.c:52: TPASS: close_range(4, 100, 0) passed
+close_range02.c:54: TPASS: fcntl(4, F_GETFD) : EBADF (9)
+close_range02.c:56: TPASS: fcntl(100, F_GETFD) : EBADF (9)
+close_range02.c:59: TPASS: close_range(4, 3, 0) : EINVAL (22)
+close_range02.c:62: TPASS: close_range(3, ~0U, ~0U) : EINVAL (22)
+close_range02.c:65: TPASS: close_range(~0U, ~0U, 0) passed
+close_range02.c:71: TPASS: close_range(4, 4, CLOSE_RANGE_CLOEXEC): SUCCESS =
+(0)
+close_range02.c:79: TPASS: FD_CLOEXEC was set on 4
+close_range02.c:88: TPASS: close_range(4, 4, CLOSE_RANGE_UNSHARE): SUCCESS =
+(0)
+close_range02.c:95: TPASS: fcntl(4, F_GETFD) : EBADF (9)
+close_range02.c:102: TPASS: 4 is open passed
+
+Summary:
+passed   11
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D1 cstime=3D4
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dcreat04 stime=3D1689215543
+cmdline=3D"creat04"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+creat04.c:49: TPASS: call failed with EACCES as expected
+creat04.c:49: TPASS: call failed with EACCES as expected
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D5
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dcreat08 stime=3D1689215543
+cmdline=3D"creat08"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+creat08.c:44: TINFO: User nobody: uid =3D 65534, gid =3D 65534
+creat08.c:46: TINFO: Found unused GID 11: SUCCESS (0)
+creat08.c:62: TPASS: dir_a/nosetgid: Owned by correct group
+creat08.c:73: TPASS: dir_a/nosetgid: Setgid bit not set
+creat08.c:62: TPASS: dir_a/setgid: Owned by correct group
+creat08.c:71: TPASS: dir_a/setgid: Setgid bit is set
+creat08.c:62: TPASS: dir_b/nosetgid: Owned by correct group
+creat08.c:73: TPASS: dir_b/nosetgid: Setgid bit not set
+creat08.c:62: TPASS: dir_b/setgid: Owned by correct group
+creat08.c:66: TINFO: dir_b/setgid: Skipping setgid bit check
+creat08.c:62: TPASS: dir_b/root_setgid: Owned by correct group
+creat08.c:71: TPASS: dir_b/root_setgid: Setgid bit is set
+
+Summary:
+passed   9
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D4
+<<<test_end>>>
+<<<test_start>>>
+tag=3Depoll_wait01 stime=3D1689215543
+cmdline=3D"epoll_wait01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+epoll_wait01.c:46: TINFO: Pipe buffer size is 65536 bytes
+epoll_wait01.c:128: TPASS: epoll_wait() epollout
+epoll_wait01.c:166: TPASS: epoll_wait() epollin
+epoll_wait01.c:213: TPASS: epoll_wait() epollio
+
+Summary:
+passed   3
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Depoll_pwait03 stime=3D1689215543
+cmdline=3D"epoll_pwait03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+epoll_pwait_var.h:38: TINFO: Test epoll_pwait()
+tst_timer_test.c:357: TINFO: CLOCK_MONOTONIC resolution 1ns
+tst_timer_test.c:369: TINFO: prctl(PR_GET_TIMERSLACK) =3D 50us
+tst_test.c:1566: TINFO: Updating max runtime to 0h 00m 09s
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 48s
+tst_timer_test.c:263: TINFO: do_epoll_pwait() sleeping for 1000us 500 itera=
+tions, threshold 450.01us
+tst_timer_test.c:305: TINFO: min 1025us, max 1482us, median 1059us, trunc m=
+ean 1058.11us (discarded 25)
+tst_timer_test.c:326: TPASS: Measured times are within thresholds
+tst_timer_test.c:263: TINFO: do_epoll_pwait() sleeping for 2000us 500 itera=
+tions, threshold 450.01us
+tst_timer_test.c:305: TINFO: min 2035us, max 2662us, median 2059us, trunc m=
+ean 2058.20us (discarded 25)
+tst_timer_test.c:326: TPASS: Measured times are within thresholds
+tst_timer_test.c:263: TINFO: do_epoll_pwait() sleeping for 5000us 300 itera=
+tions, threshold 450.04us
+tst_timer_test.c:305: TINFO: min 5020us, max 5116us, median 5064us, trunc m=
+ean 5062.08us (discarded 15)
+tst_timer_test.c:326: TPASS: Measured times are within thresholds
+tst_timer_test.c:263: TINFO: do_epoll_pwait() sleeping for 10000us 100 iter=
+ations, threshold 450.33us
+tst_timer_test.c:305: TINFO: min 10028us, max 10397us, median 10070us, trun=
+c mean 10069.06us (discarded 5)
+tst_timer_test.c:326: TPASS: Measured times are within thresholds
+tst_timer_test.c:263: TINFO: do_epoll_pwait() sleeping for 25000us 50 itera=
+tions, threshold 451.29us
+tst_timer_test.c:305: TINFO: min 25027us, max 25109us, median 25074us, trun=
+c mean 25071.46us (discarded 2)
+tst_timer_test.c:326: TPASS: Measured times are within thresholds
+tst_timer_test.c:263: TINFO: do_epoll_pwait() sleeping for 100000us 10 iter=
+ations, threshold 537.00us
+tst_timer_test.c:305: TINFO: min 100117us, max 100256us, median 100129us, t=
+runc mean 100130.22us (discarded 1)
+tst_timer_test.c:326: TPASS: Measured times are within thresholds
+tst_timer_test.c:263: TINFO: do_epoll_pwait() sleeping for 1000000us 2 iter=
+ations, threshold 4400.00us
+tst_timer_test.c:305: TINFO: min 1000974us, max 1000995us, median 1000974us=
+, trunc mean 1000974.00us (discarded 1)
+tst_timer_test.c:326: TPASS: Measured times are within thresholds
+epoll_pwait_var.h:40: TINFO: Test epoll_pwait2()
+tst_timer_test.c:357: TINFO: CLOCK_MONOTONIC resolution 1ns
+tst_timer_test.c:369: TINFO: prctl(PR_GET_TIMERSLACK) =3D 50us
+tst_test.c:1566: TINFO: Updating max runtime to 0h 00m 09s
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 48s
+tst_timer_test.c:263: TINFO: do_epoll_pwait() sleeping for 1000us 500 itera=
+tions, threshold 450.01us
+tst_timer_test.c:305: TINFO: min 1027us, max 2116us, median 1059us, trunc m=
+ean 1057.91us (discarded 25)
+tst_timer_test.c:326: TPASS: Measured times are within thresholds
+tst_timer_test.c:263: TINFO: do_epoll_pwait() sleeping for 2000us 500 itera=
+tions, threshold 450.01us
+tst_timer_test.c:305: TINFO: min 2014us, max 3116us, median 2060us, trunc m=
+ean 2057.90us (discarded 25)
+tst_timer_test.c:326: TPASS: Measured times are within thresholds
+tst_timer_test.c:263: TINFO: do_epoll_pwait() sleeping for 5000us 300 itera=
+tions, threshold 450.04us
+tst_timer_test.c:305: TINFO: min 5016us, max 5088us, median 5064us, trunc m=
+ean 5061.69us (discarded 15)
+tst_timer_test.c:326: TPASS: Measured times are within thresholds
+tst_timer_test.c:263: TINFO: do_epoll_pwait() sleeping for 10000us 100 iter=
+ations, threshold 450.33us
+tst_timer_test.c:305: TINFO: min 10023us, max 10231us, median 10069us, trun=
+c mean 10067.14us (discarded 5)
+tst_timer_test.c:326: TPASS: Measured times are within thresholds
+tst_timer_test.c:263: TINFO: do_epoll_pwait() sleeping for 25000us 50 itera=
+tions, threshold 451.29us
+tst_timer_test.c:305: TINFO: min 25048us, max 25293us, median 25071us, trun=
+c mean 25069.92us (discarded 2)
+tst_timer_test.c:326: TPASS: Measured times are within thresholds
+tst_timer_test.c:263: TINFO: do_epoll_pwait() sleeping for 100000us 10 iter=
+ations, threshold 537.00us
+tst_timer_test.c:305: TINFO: min 100039us, max 100259us, median 100122us, t=
+runc mean 100112.56us (discarded 1)
+tst_timer_test.c:326: TPASS: Measured times are within thresholds
+tst_timer_test.c:263: TINFO: do_epoll_pwait() sleeping for 1000000us 2 iter=
+ations, threshold 4400.00us
+tst_timer_test.c:305: TINFO: min 1000659us, max 1001004us, median 1000659us=
+, trunc mean 1000659.00us (discarded 1)
+tst_timer_test.c:326: TPASS: Measured times are within thresholds
+
+Summary:
+passed   14
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D17 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D2 cstime=3D23
+<<<test_end>>>
+<<<test_start>>>
+tag=3Deventfd2_03 stime=3D1689215560
+cmdline=3D"eventfd2_03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+eventfd2_03.c:38: TINFO: [4361] posting 1 on fd=3D4
+eventfd2_03.c:41: TINFO: [4361] waiting on fd=3D5
+eventfd2_03.c:38: TINFO: [4362] posting 1 on fd=3D5
+eventfd2_03.c:41: TINFO: [4362] waiting on fd=3D4
+eventfd2_03.c:44: TINFO: [4362] posting 5 on fd=3D5
+eventfd2_03.c:47: TINFO: [4362] waiting 5 times on fd=3D4
+eventfd2_03.c:44: TINFO: [4361] posting 5 on fd=3D4
+eventfd2_03.c:47: TINFO: [4361] waiting 5 times on fd=3D5
+eventfd2_03.c:54: TPASS: [4362] received all events
+eventfd2_03.c:54: TPASS: [4361] received all events
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dexecve03 stime=3D1689215560
+cmdline=3D"execve03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+execve03.c:124: TPASS: execve failed as expected: ENAMETOOLONG (36)
+execve03.c:124: TPASS: execve failed as expected: ENOENT (2)
+execve03.c:124: TPASS: execve failed as expected: ENOTDIR (20)
+execve03.c:124: TPASS: execve failed as expected: EFAULT (14)
+execve03.c:124: TPASS: execve failed as expected: EACCES (13)
+execve03.c:124: TPASS: execve failed as expected: ENOEXEC (8)
+
+Summary:
+passed   6
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfchdir01 stime=3D1689215560
+cmdline=3D"fchdir01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+fchdir01.c:20: TPASS: fchdir(fd) passed
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfchmod01 stime=3D1689215560
+cmdline=3D"fchmod01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+fchmod01.c:40: TPASS: Functionality of fchmod(4, 0) successful
+fchmod01.c:40: TPASS: Functionality of fchmod(4, 07) successful
+fchmod01.c:40: TPASS: Functionality of fchmod(4, 070) successful
+fchmod01.c:40: TPASS: Functionality of fchmod(4, 0700) successful
+fchmod01.c:40: TPASS: Functionality of fchmod(4, 0777) successful
+fchmod01.c:40: TPASS: Functionality of fchmod(4, 02777) successful
+fchmod01.c:40: TPASS: Functionality of fchmod(4, 04777) successful
+fchmod01.c:40: TPASS: Functionality of fchmod(4, 06777) successful
+
+Summary:
+passed   8
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfchown01 stime=3D1689215560
+cmdline=3D"fchown01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+fchown01.c:31: TPASS: fchown(4, 0, 0) passed
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfcntl03 stime=3D1689215560
+cmdline=3D"fcntl03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+fcntl03.c:32: TPASS: fcntl(fcntl03_4373, F_GETFD, 0) returned 0
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfcntl05 stime=3D1689215560
+cmdline=3D"fcntl05"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+fcntl05.c:42: TPASS: fcntl(4, F_GETLK, &flocks) passed
+fcntl05.c:43: TPASS: flocks.l_type =3D=3D F_UNLCK (2)
+fcntl05.c:44: TPASS: flocks.l_whence =3D=3D SEEK_CUR (1)
+fcntl05.c:45: TPASS: flocks.l_start =3D=3D 0 (0)
+fcntl05.c:46: TPASS: flocks.l_len =3D=3D 0 (0)
+fcntl05.c:47: TPASS: flocks.l_pid =3D=3D pid (4375)
+
+Summary:
+passed   6
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfcntl09 stime=3D1689215560
+cmdline=3D"fcntl09"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+fcntl09     1  TPASS  :  fcntl(./file_4376, F_SETLK, &flocks) flocks.l_type=
+ =3D F_WRLCK returned 0
+fcntl09     2  TPASS  :  fcntl(./file_4376, F_SETLK, &flocks) flocks.l_type=
+ =3D F_UNLCK returned 0
+fcntl09     1  TPASS  :  fcntl(./file_4376, F_SETLK, &flocks) flocks.l_type=
+ =3D F_RDLCK returned 0
+fcntl09     2  TPASS  :  fcntl(./file_4376, F_SETLK, &flocks) flocks.l_type=
+ =3D F_UNLCK returned 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D1 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfcntl12 stime=3D1689215561
+cmdline=3D"fcntl12"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+fcntl12.c:39: TPASS: fcntl(1, F_DUPFD, 1) : EMFILE (24)
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D18
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfcntl12_64 stime=3D1689215561
+cmdline=3D"fcntl12_64"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+fcntl12.c:39: TPASS: fcntl(1, F_DUPFD, 1) : EMFILE (24)
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D21
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfcntl14 stime=3D1689215561
+cmdline=3D"fcntl14"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+fcntl14     0  TINFO  :  Enter block 1: without mandatory locking
+fcntl14     1  TPASS  :  testcase:1 PASSED
+fcntl14     2  TPASS  :  testcase:2 PASSED
+fcntl14     3  TPASS  :  testcase:3 PASSED
+fcntl14     4  TPASS  :  testcase:4 PASSED
+fcntl14     5  TPASS  :  testcase:5 PASSED
+fcntl14     6  TPASS  :  testcase:6 PASSED
+fcntl14     7  TPASS  :  testcase:7 PASSED
+fcntl14     8  TPASS  :  testcase:8 PASSED
+fcntl14     9  TPASS  :  testcase:9 PASSED
+fcntl14    10  TPASS  :  testcase:10 PASSED
+fcntl14    11  TPASS  :  testcase:11 PASSED
+fcntl14    12  TPASS  :  testcase:12 PASSED
+fcntl14    13  TPASS  :  testcase:13 PASSED
+fcntl14    14  TPASS  :  testcase:14 PASSED
+fcntl14    15  TPASS  :  testcase:15 PASSED
+fcntl14    16  TPASS  :  testcase:16 PASSED
+fcntl14    17  TPASS  :  testcase:17 PASSED
+fcntl14    18  TPASS  :  testcase:18 PASSED
+fcntl14    19  TPASS  :  testcase:19 PASSED
+fcntl14    20  TPASS  :  testcase:20 PASSED
+fcntl14    21  TPASS  :  testcase:21 PASSED
+fcntl14    22  TPASS  :  testcase:22 PASSED
+fcntl14    23  TPASS  :  testcase:23 PASSED
+fcntl14    24  TPASS  :  testcase:24 PASSED
+fcntl14    25  TPASS  :  testcase:25 PASSED
+fcntl14    26  TPASS  :  testcase:26 PASSED
+fcntl14    27  TPASS  :  testcase:27 PASSED
+fcntl14    28  TPASS  :  testcase:28 PASSED
+fcntl14    29  TPASS  :  testcase:29 PASSED
+fcntl14    30  TPASS  :  testcase:30 PASSED
+fcntl14    31  TPASS  :  testcase:31 PASSED
+fcntl14    32  TPASS  :  testcase:32 PASSED
+fcntl14    33  TPASS  :  testcase:33 PASSED
+fcntl14    34  TPASS  :  testcase:34 PASSED
+fcntl14    35  TPASS  :  testcase:35 PASSED
+fcntl14    36  TPASS  :  testcase:36 PASSED
+fcntl14    37  TPASS  :  Block 1, test 1 PASSED
+fcntl14    38  TPASS  :  testcase:37 PASSED
+fcntl14    39  TPASS  :  testcase:38 PASSED
+fcntl14    40  TPASS  :  testcase:39 PASSED
+fcntl14    41  TPASS  :  testcase:40 PASSED
+fcntl14    42  TPASS  :  testcase:41 PASSED
+fcntl14    43  TPASS  :  testcase:42 PASSED
+fcntl14    44  TPASS  :  testcase:43 PASSED
+fcntl14    45  TPASS  :  testcase:44 PASSED
+fcntl14    46  TPASS  :  testcase:45 PASSED
+fcntl14    47  TPASS  :  Block 1, test 2 PASSED
+fcntl14     0  TINFO  :  Exit block 1
+fcntl14     0  TINFO  :  Enter block 2: with mandatory locking
+fcntl14    48  TPASS  :  testcase:1 PASSED
+fcntl14    49  TPASS  :  testcase:2 PASSED
+fcntl14    50  TPASS  :  testcase:3 PASSED
+fcntl14    51  TPASS  :  testcase:4 PASSED
+fcntl14    52  TPASS  :  testcase:5 PASSED
+fcntl14    53  TPASS  :  testcase:6 PASSED
+fcntl14    54  TPASS  :  testcase:7 PASSED
+fcntl14    55  TPASS  :  testcase:8 PASSED
+fcntl14    56  TPASS  :  testcase:9 PASSED
+fcntl14    57  TPASS  :  testcase:10 PASSED
+fcntl14    58  TPASS  :  testcase:11 PASSED
+fcntl14    59  TPASS  :  testcase:12 PASSED
+fcntl14    60  TPASS  :  testcase:13 PASSED
+fcntl14    61  TPASS  :  testcase:14 PASSED
+fcntl14    62  TPASS  :  testcase:15 PASSED
+fcntl14    63  TPASS  :  testcase:16 PASSED
+fcntl14    64  TPASS  :  testcase:17 PASSED
+fcntl14    65  TPASS  :  testcase:18 PASSED
+fcntl14    66  TPASS  :  testcase:19 PASSED
+fcntl14    67  TPASS  :  testcase:20 PASSED
+fcntl14    68  TPASS  :  testcase:21 PASSED
+fcntl14    69  TPASS  :  testcase:22 PASSED
+fcntl14    70  TPASS  :  testcase:23 PASSED
+fcntl14    71  TPASS  :  testcase:24 PASSED
+fcntl14    72  TPASS  :  testcase:25 PASSED
+fcntl14    73  TPASS  :  testcase:26 PASSED
+fcntl14    74  TPASS  :  testcase:27 PASSED
+fcntl14    75  TPASS  :  testcase:28 PASSED
+fcntl14    76  TPASS  :  testcase:29 PASSED
+fcntl14    77  TPASS  :  testcase:30 PASSED
+fcntl14    78  TPASS  :  testcase:31 PASSED
+fcntl14    79  TPASS  :  testcase:32 PASSED
+fcntl14    80  TPASS  :  testcase:33 PASSED
+fcntl14    81  TPASS  :  testcase:34 PASSED
+fcntl14    82  TPASS  :  testcase:35 PASSED
+fcntl14    83  TPASS  :  testcase:36 PASSED
+fcntl14    84  TPASS  :  Block 2, test 1 PASSED
+fcntl14    85  TPASS  :  testcase:37 PASSED
+fcntl14    86  TPASS  :  testcase:38 PASSED
+fcntl14    87  TPASS  :  testcase:39 PASSED
+fcntl14    88  TPASS  :  testcase:40 PASSED
+fcntl14    89  TPASS  :  testcase:41 PASSED
+fcntl14    90  TPASS  :  testcase:42 PASSED
+fcntl14    91  TPASS  :  testcase:43 PASSED
+fcntl14    92  TPASS  :  testcase:44 PASSED
+fcntl14    93  TPASS  :  testcase:45 PASSED
+fcntl14    94  TPASS  :  Block 2, test 2 PASSED
+fcntl14     0  TINFO  :  Exit block 2
+fcntl14     0  TINFO  :  Enter block 3
+fcntl14    95  TPASS  :  Test with negative whence locking PASSED
+fcntl14     0  TINFO  :  Exit block 3
+fcntl14     0  TINFO  :  Enter block 4
+fcntl14    96  TPASS  :  Test of locks on file PASSED
+fcntl14     0  TINFO  :  Exit block 4
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D7 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D1 cstime=3D79
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfcntl18 stime=3D1689215568
+cmdline=3D"fcntl18"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+fcntl18     0  TINFO  :  Enter block 1
+fcntl18     1  TPASS  :  Test F_GETLK: for errno EFAULT PASSED
+fcntl18     0  TINFO  :  Block 1 PASSED
+fcntl18     0  TINFO  :  Exit block 1
+fcntl18     0  TINFO  :  Enter block 2
+fcntl18     2  TPASS  :  Test F_GETLK: for errno EFAULT PASSED
+fcntl18     0  TINFO  :  Block 2 PASSED
+fcntl18     0  TINFO  :  Exit block 2
+fcntl18     0  TINFO  :  Enter block 3
+fcntl18     3  TPASS  :  Test for errno EINVAL PASSED
+fcntl18     0  TINFO  :  Block 3 PASSED
+fcntl18     0  TINFO  :  Exit block 3
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfcntl21 stime=3D1689215568
+cmdline=3D"fcntl21"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+fcntl21     0  TINFO  :  Enter block 1
+fcntl21     0  TINFO  :  Test block 1: PASSED
+fcntl21     0  TINFO  :  Exit block 1
+fcntl21     0  TINFO  :  Enter block 2
+fcntl21     0  TINFO  :  Test block 2: PASSED
+fcntl21     0  TINFO  :  Exit block 2
+fcntl21     0  TINFO  :  Enter block 3
+fcntl21     0  TINFO  :  Test block 3 : PASSED
+fcntl21     0  TINFO  :  Exit block 3
+fcntl21     0  TINFO  :  Enter block 4
+fcntl21     0  TINFO  :  Test block 4: PASSED
+fcntl21     0  TINFO  :  Exit block 4
+fcntl21     0  TINFO  :  Enter block 5
+fcntl21     0  TINFO  :  Test block 5: PASSED
+fcntl21     0  TINFO  :  Exit block 5
+fcntl21     0  TINFO  :  Enter block 6
+fcntl21     0  TINFO  :  Test block 6 PASSED
+fcntl21     0  TINFO  :  Exit block 6
+fcntl21     0  TINFO  :  Enter block 7
+fcntl21     0  TINFO  :  Test block 7: PASSED
+fcntl21     0  TINFO  :  Exit block 7
+fcntl21     0  TINFO  :  Enter block 8
+fcntl21     0  TINFO  :  Test block 8: PASSED
+fcntl21     0  TINFO  :  Exit block 8
+fcntl21     0  TINFO  :  Enter block 9
+fcntl21     0  TINFO  :  Test block 9: PASSED
+fcntl21     0  TINFO  :  Exit block 9
+fcntl21     0  TINFO  :  Enter block 10
+fcntl21     0  TINFO  :  Test block 10: PASSED
+fcntl21     0  TINFO  :  Exit block 10
+fcntl21     0  TINFO  :  Enter block 11
+fcntl21     0  TINFO  :  Test block 11: PASSED
+fcntl21     0  TINFO  :  Exit block 11
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfcntl25_64 stime=3D1689215568
+cmdline=3D"fcntl25_64"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+fcntl25     1  TPASS  :  fcntl(tfile_4558, F_SETLEASE, F_WRLCK)
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D1 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfcntl27 stime=3D1689215568
+cmdline=3D"fcntl27"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+fcntl27     1  TPASS  :  fcntl(fd, F_SETLEASE, F_RDLCK) succeeded
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfcntl30 stime=3D1689215568
+cmdline=3D"fcntl30"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+fcntl30.c:25: TPASS: fcntl(fds[1], F_GETPIPE_SZ) returned 65536
+fcntl30.c:27: TPASS: fcntl(fds[1], F_SETPIPE_SZ, max_size_unpriv) returned =
+1048576
+fcntl30.c:28: TPASS: fcntl(fds[1], F_GETPIPE_SZ) returned 1048576
+fcntl30.c:29: TPASS: Expect: new pipe size (1048576) >=3D requested size (1=
+048576)
+
+Summary:
+passed   4
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfcntl31_64 stime=3D1689215568
+cmdline=3D"fcntl31_64"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+fcntl31     0  TINFO  :  default io events signal is SIGIO
+fcntl31     1  TPASS  :  fcntl test F_GETOWN, F_SETOWN for process ID succe=
+ss
+fcntl31     0  TINFO  :  default io events signal is SIGIO
+fcntl31     2  TPASS  :  fcntl test F_GETOWN, F_SETOWN for process group ID=
+ success
+fcntl31     0  TINFO  :  default io events signal is SIGIO
+fcntl31     3  TPASS  :  fcntl test F_GETOWN_EX, F_SETOWN_EX for thread ID =
+success
+fcntl31     0  TINFO  :  default io events signal is SIGIO
+fcntl31     4  TPASS  :  fcntl test F_GETOWN_EX, F_SETOWN_EX for process ID=
+ success
+fcntl31     0  TINFO  :  default io events signal is SIGIO
+fcntl31     5  TPASS  :  fcntl test F_GETOWN_EX, F_SETOWN_EX for process gr=
+oup ID success
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfcntl36 stime=3D1689215568
+cmdline=3D"fcntl36"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+fcntl36.c:288: TINFO: OFD read lock vs OFD write lock
+fcntl36.c:366: TPASS: Access between threads synchronized
+fcntl36.c:288: TINFO: OFD write lock vs POSIX write lock
+fcntl36.c:366: TPASS: Access between threads synchronized
+fcntl36.c:288: TINFO: OFD read lock vs POSIX write lock
+fcntl36.c:366: TPASS: Access between threads synchronized
+fcntl36.c:288: TINFO: OFD write lock vs POSIX read lock
+fcntl36.c:366: TPASS: Access between threads synchronized
+fcntl36.c:288: TINFO: OFD write lock vs OFD write lock
+fcntl36.c:366: TPASS: Access between threads synchronized
+fcntl36.c:288: TINFO: OFD r/w lock vs POSIX write lock
+fcntl36.c:366: TPASS: Access between threads synchronized
+fcntl36.c:288: TINFO: OFD r/w lock vs POSIX read lock
+fcntl36.c:366: TPASS: Access between threads synchronized
+
+Summary:
+passed   7
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D7 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D273 cstime=3D1913
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfcntl39_64 stime=3D1689215575
+cmdline=3D"fcntl39_64"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_kconfig.c:87: TINFO: Parsing kernel config '/proc/config.gz'
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+fcntl39.c:74: TINFO: Testing no DN_RENAME on rename from parent to subdir
+fcntl39.c:80: TPASS: No event on parent as expected
+fcntl39.c:85: TPASS: No event on subdir as expected
+fcntl39.c:88: TINFO: Testing DN_RENAME on rename of subdir itself
+fcntl39.c:92: TPASS: Got event on parent as expected
+fcntl39.c:99: TPASS: No event on subdir as expected
+
+Summary:
+passed   4
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D4
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dflistxattr01 stime=3D1689215575
+cmdline=3D"flistxattr01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+flistxattr01.c:64: TPASS: flistxattr() succeeded
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D1 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfork04 stime=3D1689215575
+cmdline=3D"fork04"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+fork04      1  TPASS  :  Env var TERM unchanged after fork(): getenv() does=
+ not find variable set
+fork04      2  TPASS  :  Env var NoTSetzWq unchanged after fork(): getenv()=
+ does not find variable set
+fork04      3  TPASS  :  Env var TESTPROG unchanged after fork(): FRKTCS04
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfork05 stime=3D1689215575
+cmdline=3D"fork05"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+fork05      0  TINFO  :  %fs test only for ix86
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfsconfig01 stime=3D1689215575
+cmdline=3D"fsconfig01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext2
+tst_supported_fs_types.c:55: TINFO: mkfs.ext2 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext3
+tst_supported_fs_types.c:55: TINFO: mkfs.ext3 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext4
+tst_supported_fs_types.c:55: TINFO: mkfs.ext4 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports xfs
+tst_supported_fs_types.c:55: TINFO: mkfs.xfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports btrfs
+tst_supported_fs_types.c:55: TINFO: mkfs.btrfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports vfat
+tst_supported_fs_types.c:55: TINFO: mkfs.vfat does exist
+tst_supported_fs_types.c:116: TINFO: Filesystem exfat is not supported
+tst_supported_fs_types.c:120: TINFO: FUSE does support ntfs
+tst_supported_fs_types.c:55: TINFO: mkfs.ntfs does exist
+tst_supported_fs_types.c:165: TINFO: Skipping FUSE based ntfs as requested =
+by the test
+tst_supported_fs_types.c:90: TINFO: Kernel supports tmpfs
+tst_supported_fs_types.c:42: TINFO: mkfs is not needed for tmpfs
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext2 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext2 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+fsconfig01.c:40: TCONF: fsconfig(FSCONFIG_SET_PATH) not supported
+fsconfig01.c:48: TCONF: fsconfig(FSCONFIG_SET_PATH_EMPTY) not supported
+fsconfig01.c:56: TCONF: fsconfig(FSCONFIG_SET_FD) not supported
+fsconfig01.c:77: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fsc2on=
+ZkN/mntpoint
+fsconfig01.c:78: TPASS: fsconfig() passed
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext3 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext3 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+fsconfig01.c:77: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fsc2on=
+ZkN/mntpoint
+fsconfig01.c:78: TPASS: fsconfig() passed
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext4 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext4 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+fsconfig01.c:77: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fsc2on=
+ZkN/mntpoint
+fsconfig01.c:78: TPASS: fsconfig() passed
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on xfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with xfs opts=3D'' extra opts=
+=3D''
+fsconfig01.c:77: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fsc2on=
+ZkN/mntpoint
+fsconfig01.c:78: TPASS: fsconfig() passed
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on btrfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with btrfs opts=3D'' extra op=
+ts=3D''
+fsconfig01.c:40: TCONF: fsconfig(FSCONFIG_SET_PATH) not supported
+fsconfig01.c:48: TCONF: fsconfig(FSCONFIG_SET_PATH_EMPTY) not supported
+fsconfig01.c:56: TCONF: fsconfig(FSCONFIG_SET_FD) not supported
+fsconfig01.c:77: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fsc2on=
+ZkN/mntpoint
+fsconfig01.c:78: TPASS: fsconfig() passed
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on vfat =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with vfat opts=3D'' extra opt=
+s=3D''
+fsconfig01.c:40: TCONF: fsconfig(FSCONFIG_SET_PATH) not supported
+fsconfig01.c:48: TCONF: fsconfig(FSCONFIG_SET_PATH_EMPTY) not supported
+fsconfig01.c:56: TCONF: fsconfig(FSCONFIG_SET_FD) not supported
+fsconfig01.c:77: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fsc2on=
+ZkN/mntpoint
+fsconfig01.c:78: TPASS: fsconfig() passed
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on tmpfs =3D=3D=3D
+tst_test.c:1093: TINFO: Skipping mkfs for TMPFS filesystem
+fsconfig01.c:77: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fsc2on=
+ZkN/mntpoint
+fsconfig01.c:78: TPASS: fsconfig() passed
+
+Summary:
+passed   7
+failed   0
+broken   0
+skipped  9
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D4 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D3 cstime=3D126
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfspick02 stime=3D1689215579
+cmdline=3D"fspick02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext2
+tst_supported_fs_types.c:55: TINFO: mkfs.ext2 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext3
+tst_supported_fs_types.c:55: TINFO: mkfs.ext3 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext4
+tst_supported_fs_types.c:55: TINFO: mkfs.ext4 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports xfs
+tst_supported_fs_types.c:55: TINFO: mkfs.xfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports btrfs
+tst_supported_fs_types.c:55: TINFO: mkfs.btrfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports vfat
+tst_supported_fs_types.c:55: TINFO: mkfs.vfat does exist
+tst_supported_fs_types.c:116: TINFO: Filesystem exfat is not supported
+tst_supported_fs_types.c:120: TINFO: FUSE does support ntfs
+tst_supported_fs_types.c:55: TINFO: mkfs.ntfs does exist
+tst_supported_fs_types.c:165: TINFO: Skipping FUSE based ntfs as requested =
+by the test
+tst_supported_fs_types.c:90: TINFO: Kernel supports tmpfs
+tst_supported_fs_types.c:42: TINFO: mkfs is not needed for tmpfs
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext2 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext2 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fspWa5hw7/mntpoint fstyp=3Dext2 flags=3D0
+fspick02.c:42: TPASS: invalid-fd: fspick() failed as expected: EBADF (9)
+fspick02.c:42: TPASS: invalid-path: fspick() failed as expected: ENOENT (2)
+fspick02.c:42: TPASS: invalid-flags: fspick() failed as expected: EINVAL (2=
+2)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext3 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext3 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fspWa5hw7/mntpoint fstyp=3Dext3 flags=3D0
+fspick02.c:42: TPASS: invalid-fd: fspick() failed as expected: EBADF (9)
+fspick02.c:42: TPASS: invalid-path: fspick() failed as expected: ENOENT (2)
+fspick02.c:42: TPASS: invalid-flags: fspick() failed as expected: EINVAL (2=
+2)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext4 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext4 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fspWa5hw7/mntpoint fstyp=3Dext4 flags=3D0
+fspick02.c:42: TPASS: invalid-fd: fspick() failed as expected: EBADF (9)
+fspick02.c:42: TPASS: invalid-path: fspick() failed as expected: ENOENT (2)
+fspick02.c:42: TPASS: invalid-flags: fspick() failed as expected: EINVAL (2=
+2)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on xfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with xfs opts=3D'' extra opts=
+=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fspWa5hw7/mntpoint fstyp=3Dxfs flags=3D0
+fspick02.c:42: TPASS: invalid-fd: fspick() failed as expected: EBADF (9)
+fspick02.c:42: TPASS: invalid-path: fspick() failed as expected: ENOENT (2)
+fspick02.c:42: TPASS: invalid-flags: fspick() failed as expected: EINVAL (2=
+2)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on btrfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with btrfs opts=3D'' extra op=
+ts=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fspWa5hw7/mntpoint fstyp=3Dbtrfs flags=3D0
+fspick02.c:42: TPASS: invalid-fd: fspick() failed as expected: EBADF (9)
+fspick02.c:42: TPASS: invalid-path: fspick() failed as expected: ENOENT (2)
+fspick02.c:42: TPASS: invalid-flags: fspick() failed as expected: EINVAL (2=
+2)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on vfat =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with vfat opts=3D'' extra opt=
+s=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fspWa5hw7/mntpoint fstyp=3Dvfat flags=3D0
+fspick02.c:42: TPASS: invalid-fd: fspick() failed as expected: EBADF (9)
+fspick02.c:42: TPASS: invalid-path: fspick() failed as expected: ENOENT (2)
+fspick02.c:42: TPASS: invalid-flags: fspick() failed as expected: EINVAL (2=
+2)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on tmpfs =3D=3D=3D
+tst_test.c:1093: TINFO: Skipping mkfs for TMPFS filesystem
+tst_test.c:1074: TINFO: Limiting tmpfs size to 32MB
+tst_test.c:1107: TINFO: Mounting ltp-tmpfs to /fs/sda2/tmpdir/ltp-i4m7SNAjJ=
+Q/LTP_fspWa5hw7/mntpoint fstyp=3Dtmpfs flags=3D0
+fspick02.c:42: TPASS: invalid-fd: fspick() failed as expected: EBADF (9)
+fspick02.c:42: TPASS: invalid-path: fspick() failed as expected: ENOENT (2)
+fspick02.c:42: TPASS: invalid-flags: fspick() failed as expected: EINVAL (2=
+2)
+
+Summary:
+passed   21
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D4 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D4 cstime=3D146
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfstat02_64 stime=3D1689215583
+cmdline=3D"fstat02_64"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+fstat02.c:30: TPASS: fstat(fildes, &stat_buf) passed
+fstat02.c:31: TPASS: stat_buf.st_uid =3D=3D user_id (0)
+fstat02.c:32: TPASS: stat_buf.st_gid =3D=3D group_id (0)
+fstat02.c:33: TPASS: stat_buf.st_size =3D=3D FILE_SIZE (1024)
+fstat02.c:34: TPASS: stat_buf.st_mode & 0777 =3D=3D FILE_MODE (420)
+fstat02.c:35: TPASS: stat_buf.st_nlink =3D=3D NLINK (2)
+
+Summary:
+passed   6
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dftruncate01 stime=3D1689215583
+cmdline=3D"ftruncate01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+ftruncate01.c:65: TINFO: Truncated length smaller than file size
+ftruncate01.c:60: TPASS: ftruncate() succeeded
+ftruncate01.c:74: TINFO: Truncated length exceeds file size
+ftruncate01.c:60: TPASS: ftruncate() succeeded
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D4
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dftruncate01_64 stime=3D1689215583
+cmdline=3D"ftruncate01_64"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+ftruncate01.c:65: TINFO: Truncated length smaller than file size
+ftruncate01.c:60: TPASS: ftruncate() succeeded
+ftruncate01.c:74: TINFO: Truncated length exceeds file size
+ftruncate01.c:60: TPASS: ftruncate() succeeded
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dgetcwd01 stime=3D1689215583
+cmdline=3D"getcwd01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+getcwd01.c:62: TPASS: getcwd() failed as expected: EFAULT (14)
+getcwd01.c:62: TPASS: getcwd() failed as expected: ENOMEM (12)
+getcwd01.c:62: TPASS: getcwd() failed as expected: EINVAL (22)
+getcwd01.c:62: TPASS: getcwd() failed as expected: ERANGE (34)
+getcwd01.c:62: TPASS: getcwd() failed as expected: ERANGE (34)
+
+Summary:
+passed   5
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dgetdents01 stime=3D1689215583
+cmdline=3D"getdents01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_buffers.c:55: TINFO: Test is using guarded buffers
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+getdents.h:148: TINFO: Testing the SYS_getdents syscall
+getdents01.c:92: TINFO: Found '.'
+getdents01.c:92: TINFO: Found '..'
+getdents01.c:92: TINFO: Found 'dir'
+getdents01.c:92: TINFO: Found 'file'
+getdents01.c:92: TINFO: Found 'symlink'
+getdents01.c:126: TPASS: All entries found
+getdents.h:151: TINFO: Testing the SYS_getdents64 syscall
+getdents01.c:92: TINFO: Found '.'
+getdents01.c:92: TINFO: Found '..'
+getdents01.c:92: TINFO: Found 'dir'
+getdents01.c:92: TINFO: Found 'file'
+getdents01.c:92: TINFO: Found 'symlink'
+getdents01.c:126: TPASS: All entries found
+getdents.h:157: TCONF: libc getdents() is not implemented
+getdents.h:162: TINFO: Testing libc getdents64()
+getdents01.c:92: TINFO: Found '.'
+getdents01.c:92: TINFO: Found '..'
+getdents01.c:92: TINFO: Found 'dir'
+getdents01.c:92: TINFO: Found 'file'
+getdents01.c:92: TINFO: Found 'symlink'
+getdents01.c:126: TPASS: All entries found
+
+Summary:
+passed   3
+failed   0
+broken   0
+skipped  1
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D1 cstime=3D4
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dgetegid01 stime=3D1689215583
+cmdline=3D"getegid01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+getegid01    1  TPASS  :  getegid returned 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dgetgid03_16 stime=3D1689215583
+cmdline=3D"getgid03_16"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/getgid/../utils/compat_tst_1=
+6.h:99: TCONF: 16-bit version of getgid() is not supported on your platform
+
+Summary:
+passed   0
+failed   0
+broken   0
+skipped  1
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D32 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dgetgroups01_16 stime=3D1689215583
+cmdline=3D"getgroups01_16"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+getgroups01_16    1  TCONF  :  /tmp/lkp/ltp/src/ltp/testcases/kernel/syscal=
+ls/getgroups/../utils/compat_16.h:82: 16-bit version of getgroups() is not =
+supported on your platform
+getgroups01_16    2  TCONF  :  /tmp/lkp/ltp/src/ltp/testcases/kernel/syscal=
+ls/getgroups/../utils/compat_16.h:82: Remaining cases not appropriate for c=
+onfiguration
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D32 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dgethostid01 stime=3D1689215583
+cmdline=3D"gethostid01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+gethostid01.c:55: TINFO: get original hostid: 8323328
+gethostid01.c:37: TPASS: set hostid to 0 passed
+gethostid01.c:44: TPASS: hostid is 0, expected 0
+gethostid01.c:37: TPASS: set hostid to 65535 passed
+gethostid01.c:44: TPASS: hostid is 65535, expected 65535
+gethostid01.c:60: TPASS: set hostid to 8323328 passed
+
+Summary:
+passed   5
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D4
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dgetpgid02 stime=3D1689215583
+cmdline=3D"getpgid02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+getpgid02.c:27: TPASS: getpgid(-99) : ESRCH (3)
+getpgid02.c:28: TPASS: getpgid(4194304) : ESRCH (3)
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dgetpid02 stime=3D1689215583
+cmdline=3D"getpid02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+getpid02.c:37: TPASS: child getppid() =3D=3D parent getpid() (5056)
+getpid02.c:50: TPASS: child getpid() =3D=3D parent fork() (5057)
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dgetppid02 stime=3D1689215583
+cmdline=3D"getppid02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+getppid02.c:31: TPASS: getppid() returned parent pid (5059)
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D1 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dgetrandom01 stime=3D1689215584
+cmdline=3D"getrandom01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+getrandom01.c:20: TPASS: getrandom returned -1: EFAULT (14)
+getrandom01.c:20: TPASS: getrandom returned -1: EFAULT (14)
+getrandom01.c:20: TPASS: getrandom returned -1: EFAULT (14)
+getrandom01.c:20: TPASS: getrandom returned -1: EFAULT (14)
+
+Summary:
+passed   4
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dgetrandom02 stime=3D1689215584
+cmdline=3D"getrandom02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+getrandom02.c:59: TPASS: getrandom returned 64
+getrandom02.c:59: TPASS: getrandom returned 64
+getrandom02.c:59: TPASS: getrandom returned 64
+getrandom02.c:59: TPASS: getrandom returned 64
+
+Summary:
+passed   4
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dgetrandom04 stime=3D1689215584
+cmdline=3D"getrandom04"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+getrandom04.c:28: TPASS: getrandom returned 100
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dgetresuid03 stime=3D1689215584
+cmdline=3D"getresuid03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+getresuid03    1  TPASS  :  Functionality of getresuid() successful
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dgetsockname01 stime=3D1689215584
+cmdline=3D"getsockname01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+getsockname01    1  TPASS  :  bad file descriptor successful
+getsockname01    2  TPASS  :  bad file descriptor successful
+getsockname01    3  TPASS  :  invalid socket buffer successful
+getsockname01    4  TPASS  :  invalid aligned salen successful
+getsockname01    5  TPASS  :  invalid unaligned salen successful
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dgettid01 stime=3D1689215584
+cmdline=3D"gettid01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+gettid01    1  TPASS  :  gettid() returned 5069
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dgetxattr02 stime=3D1689215584
+cmdline=3D"getxattr02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+getxattr02    1  TPASS  :  expected behavior: TEST_ERRNO=3DENODATA(61): No =
+data available
+getxattr02    2  TPASS  :  expected behavior: TEST_ERRNO=3DENODATA(61): No =
+data available
+getxattr02    3  TPASS  :  expected behavior: TEST_ERRNO=3DENODATA(61): No =
+data available
+getxattr02    4  TPASS  :  expected behavior: TEST_ERRNO=3DENODATA(61): No =
+data available
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dioctl04 stime=3D1689215584
+cmdline=3D"ioctl04"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext2 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+ioctl04.c:26: TPASS: BLKROGET returned 0
+ioctl04.c:39: TPASS: BLKROGET returned 1
+ioctl04.c:50: TPASS: Mounting RO device RW failed: EACCES (13)
+ioctl04.c:61: TPASS: Mounting RO device RO works
+
+Summary:
+passed   4
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D10
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dioctl08 stime=3D1689215584
+cmdline=3D"ioctl08"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with btrfs opts=3D'' extra op=
+ts=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_iocPhUAYk/mnt_point fstyp=3Dbtrfs flags=3D0
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+ioctl08.c:92: TPASS: ioctl(FIDEDUPERANGE) ended with SUCCESS as expected
+ioctl08.c:92: TPASS: ioctl(FIDEDUPERANGE) ended with SUCCESS as expected
+ioctl08.c:92: TPASS: ioctl(FIDEDUPERANGE) ended with EINVAL as expected
+
+Summary:
+passed   3
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D1 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D1 cstime=3D26
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dioctl_loop01 stime=3D1689215585
+cmdline=3D"ioctl_loop01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+ioctl_loop01.c:85: TPASS: /sys/block/loop0/loop/partscan =3D 0
+ioctl_loop01.c:86: TPASS: /sys/block/loop0/loop/autoclear =3D 0
+ioctl_loop01.c:87: TPASS: /sys/block/loop0/loop/backing_file =3D '/fs/sda2/=
+tmpdir/ltp-i4m7SNAjJQ/LTP_iocSpWM2e/test.img'
+ioctl_loop01.c:57: TPASS: get expected lo_flag 12
+ioctl_loop01.c:59: TPASS: /sys/block/loop0/loop/partscan =3D 1
+ioctl_loop01.c:60: TPASS: /sys/block/loop0/loop/autoclear =3D 1
+ioctl_loop01.c:69: TPASS: access /dev/loop0p1 succeeds
+ioctl_loop01.c:75: TPASS: access /sys/block/loop0/loop0p1 succeeds
+ioctl_loop01.c:91: TINFO: Test flag can be clear
+ioctl_loop01.c:57: TPASS: get expected lo_flag 8
+ioctl_loop01.c:59: TPASS: /sys/block/loop0/loop/partscan =3D 1
+ioctl_loop01.c:60: TPASS: /sys/block/loop0/loop/autoclear =3D 0
+ioctl_loop01.c:69: TPASS: access /dev/loop0p1 succeeds
+ioctl_loop01.c:75: TPASS: access /sys/block/loop0/loop0p1 succeeds
+
+Summary:
+passed   13
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D1 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D1 cstime=3D22
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dioctl_ns02 stime=3D1689215586
+cmdline=3D"ioctl_ns02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+ioctl_ns02.c:42: TPASS: NS_GET_PARENT fails with EINVAL
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dinotify01 stime=3D1689215586
+cmdline=3D"inotify01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+inotify01.c:116: TPASS: get event: wd=3D1 mask=3D04 cookie=3D0 len=3D0
+inotify01.c:116: TPASS: get event: wd=3D1 mask=3D20 cookie=3D0 len=3D0
+inotify01.c:116: TPASS: get event: wd=3D1 mask=3D01 cookie=3D0 len=3D0
+inotify01.c:116: TPASS: get event: wd=3D1 mask=3D10 cookie=3D0 len=3D0
+inotify01.c:116: TPASS: get event: wd=3D1 mask=3D20 cookie=3D0 len=3D0
+inotify01.c:116: TPASS: get event: wd=3D1 mask=3D02 cookie=3D0 len=3D0
+inotify01.c:116: TPASS: get event: wd=3D1 mask=3D08 cookie=3D0 len=3D0
+
+Summary:
+passed   7
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dinotify06 stime=3D1689215586
+cmdline=3D"inotify06"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 22m 30s
+inotify06.c:97: TPASS: kernel survived inotify beating
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D1 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D79
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfanotify01 stime=3D1689215587
+cmdline=3D"fanotify01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext2 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fanvybtnt/fs_mnt fstyp=3Dext2 flags=3D0
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+fanotify01.c:92: TINFO: Test #0: inode mark events
+fanotify01.c:294: TPASS: got event: mask=3D31 pid=3D5131 fd=3D5
+fanotify01.c:294: TPASS: got event: mask=3D11 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D10 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D2a pid=3D5131 fd=3D6
+fanotify01.c:294: TPASS: got event: mask=3Da pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D20 pid=3D5131 fd=3D8
+fanotify01.c:294: TPASS: got event: mask=3Db pid=3D5131 fd=3D7
+fanotify01.c:294: TPASS: got event: mask=3D9 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D2 pid=3D5131 fd=3D10
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D9
+fanotify01.c:92: TINFO: Test #1: mount mark events
+fanotify01.c:294: TPASS: got event: mask=3D31 pid=3D5131 fd=3D5
+fanotify01.c:294: TPASS: got event: mask=3D11 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D10 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D2a pid=3D5131 fd=3D6
+fanotify01.c:294: TPASS: got event: mask=3Da pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D20 pid=3D5131 fd=3D8
+fanotify01.c:294: TPASS: got event: mask=3Db pid=3D5131 fd=3D7
+fanotify01.c:294: TPASS: got event: mask=3D9 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D2 pid=3D5131 fd=3D10
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D9
+fanotify01.c:92: TINFO: Test #2: filesystem mark events
+fanotify01.c:294: TPASS: got event: mask=3D31 pid=3D5131 fd=3D5
+fanotify01.c:294: TPASS: got event: mask=3D11 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D10 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D2a pid=3D5131 fd=3D6
+fanotify01.c:294: TPASS: got event: mask=3Da pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D20 pid=3D5131 fd=3D8
+fanotify01.c:294: TPASS: got event: mask=3Db pid=3D5131 fd=3D7
+fanotify01.c:294: TPASS: got event: mask=3D9 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D2 pid=3D5131 fd=3D10
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D9
+fanotify01.c:92: TINFO: Test #3: inode mark events (FAN_REPORT_FID)
+fanotify01.c:294: TPASS: got event: mask=3D31 pid=3D5131 fd=3D-1
+fanotify01.c:294: TPASS: got event: mask=3D11 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D10 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D2a pid=3D5131 fd=3D-1
+fanotify01.c:294: TPASS: got event: mask=3Da pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D20 pid=3D5131 fd=3D-1
+fanotify01.c:294: TPASS: got event: mask=3Db pid=3D5131 fd=3D-1
+fanotify01.c:294: TPASS: got event: mask=3D9 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D2 pid=3D5131 fd=3D-1
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D-1
+fanotify01.c:92: TINFO: Test #4: mount mark events (FAN_REPORT_FID)
+fanotify01.c:294: TPASS: got event: mask=3D31 pid=3D5131 fd=3D-1
+fanotify01.c:294: TPASS: got event: mask=3D11 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D10 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D2a pid=3D5131 fd=3D-1
+fanotify01.c:294: TPASS: got event: mask=3Da pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D20 pid=3D5131 fd=3D-1
+fanotify01.c:294: TPASS: got event: mask=3Db pid=3D5131 fd=3D-1
+fanotify01.c:294: TPASS: got event: mask=3D9 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D2 pid=3D5131 fd=3D-1
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D-1
+fanotify01.c:92: TINFO: Test #5: filesystem mark events (FAN_REPORT_FID)
+fanotify01.c:294: TPASS: got event: mask=3D31 pid=3D5131 fd=3D-1
+fanotify01.c:294: TPASS: got event: mask=3D11 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D10 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D2a pid=3D5131 fd=3D-1
+fanotify01.c:294: TPASS: got event: mask=3Da pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D20 pid=3D5131 fd=3D-1
+fanotify01.c:294: TPASS: got event: mask=3Db pid=3D5131 fd=3D-1
+fanotify01.c:294: TPASS: got event: mask=3D9 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D-2
+fanotify01.c:294: TPASS: got event: mask=3D2 pid=3D5131 fd=3D-1
+fanotify01.c:294: TPASS: got event: mask=3D8 pid=3D5131 fd=3D-1
+
+Summary:
+passed   72
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D1 cstime=3D9
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfanotify08 stime=3D1689215587
+cmdline=3D"fanotify08"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+fanotify08.c:39: TPASS: not set close_on_exec
+fanotify08.c:39: TPASS: set close_on_exec
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfanotify16 stime=3D1689215587
+cmdline=3D"fanotify16"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext2
+tst_supported_fs_types.c:55: TINFO: mkfs.ext2 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext3
+tst_supported_fs_types.c:55: TINFO: mkfs.ext3 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext4
+tst_supported_fs_types.c:55: TINFO: mkfs.ext4 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports xfs
+tst_supported_fs_types.c:55: TINFO: mkfs.xfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports btrfs
+tst_supported_fs_types.c:55: TINFO: mkfs.btrfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports vfat
+tst_supported_fs_types.c:55: TINFO: mkfs.vfat does exist
+tst_supported_fs_types.c:116: TINFO: Filesystem exfat is not supported
+tst_supported_fs_types.c:120: TINFO: FUSE does support ntfs
+tst_supported_fs_types.c:55: TINFO: mkfs.ntfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports tmpfs
+tst_supported_fs_types.c:42: TINFO: mkfs is not needed for tmpfs
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext2 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext2 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fanf0XHVr/fs_mnt fstyp=3Dext2 flags=3D0
+fanotify16.c:271: TINFO: Test #0: FAN_REPORT_DFID_NAME monitor filesystem f=
+or create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D e693d1ec.694fcfb5.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D e693d1ec.694fcfb5.cd91.249=
+09e09.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D e693d1ec.694fcf=
+b5.cd92.24909e0a.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5159 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5159 fd=3D-1 name=3D=
+'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5159 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5159 fd=3D-1 name=3D'=
+test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #1: FAN_REPORT_DFID_NAME monitor directories =
+for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D e693d1ec.694fcfb5.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D e693d1ec.694fcfb5.2f71.249=
+09e0b.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D e693d1ec.694fcf=
+b5.2f72.24909e0c.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5159 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5159 fd=3D-1 name=3D=
+'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5159 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5159 fd=3D-1 name=3D'=
+test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #2: FAN_REPORT_DIR_FID monitor filesystem for=
+ create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D e693d1ec.694fcfb5.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D e693d1ec.694fcfb5.56f9.249=
+09e0d.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D e693d1ec.694fcf=
+b5.56fa.24909e0e.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D3e8 pid=3D5159 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D2a8 pid=3D5159 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5159 fd=3D-1 name=3D=
+'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #3: FAN_REPORT_DIR_FID monitor directories fo=
+r create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D e693d1ec.694fcfb5.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D e693d1ec.694fcfb5.dd61.249=
+09e0f.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D e693d1ec.694fcf=
+b5.dd62.24909e10.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D3e8 pid=3D5159 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D2a8 pid=3D5159 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5159 fd=3D-1 name=3D=
+'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #4: FAN_REPORT_DFID_FID monitor filesystem fo=
+r create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D e693d1ec.694fcfb5.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D e693d1ec.694fcfb5.fd1.2490=
+9e11.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D e693d1ec.694fcf=
+b5.fd2.24909e12.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D3c0 pid=3D5159 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D280 pid=3D5159 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D3 info_len=3D28=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5159 fd=3D-1 name=3D=
+'' len=3D80; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5159 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D400002c0 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #5: FAN_REPORT_DFID_FID monitor directories f=
+or create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D e693d1ec.694fcfb5.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D e693d1ec.694fcfb5.5ee1.249=
+09e13.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D e693d1ec.694fcf=
+b5.5ee2.24909e14.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D3c0 pid=3D5159 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D280 pid=3D5159 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D3 info_len=3D28=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5159 fd=3D-1 name=3D=
+'' len=3D80; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5159 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #6: FAN_REPORT_DFID_NAME_FID monitor filesyst=
+em for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D e693d1ec.694fcfb5.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D e693d1ec.694fcfb5.4f11.249=
+09e15.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D e693d1ec.694fcf=
+b5.4f12.24909e16.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5159 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5159 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D280 pid=3D5159 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5159 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5159 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000280 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #7: FAN_REPORT_DFID_NAME_FID monitor director=
+ies for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D e693d1ec.694fcfb5.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D e693d1ec.694fcfb5.11ca1.24=
+909e17.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D e693d1ec.694fcf=
+b5.11ca2.24909e18.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5159 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5159 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D280 pid=3D5159 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5159 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #8: FAN_REPORT_DFID_NAME_TARGET monitor files=
+ystem for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D e693d1ec.694fcfb5.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D e693d1ec.694fcfb5.a609.249=
+09e19.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D e693d1ec.694fcf=
+b5.a60a.24909e1a.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5159 fd=3D-1 name=
+=3D'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5159 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5159 fd=3D-1 name=
+=3D'test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5159 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #9: FAN_REPORT_DFID_NAME_TARGET monitor direc=
+tories for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D e693d1ec.694fcfb5.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D e693d1ec.694fcfb5.56f9.249=
+09e1b.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D e693d1ec.694fcf=
+b5.56fa.24909e1c.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5159 fd=3D-1 name=
+=3D'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5159 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5159 fd=3D-1 name=
+=3D'test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000040 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #10: FAN_REPORT_DFID_NAME_FID monitor filesys=
+tem for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D e693d1ec.694fcfb5.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D e693d1ec.694fcfb5.5ee1.249=
+09e1d.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D e693d1ec.694fcf=
+b5.5ee2.24909e1e.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5159 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5159 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5159 fd=3D-1 n=
+ame=3D'test_file1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5159 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5159 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D8 pid=3D5159 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c30 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000c00 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D50000000 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D40000040 pid=3D5159 fd=3D-1 =
+name=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D=
+8
+fanotify16.c:732: TPASS: got event #11: mask=3D40000280 pid=3D5159 fd=3D-1 =
+name=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D=
+8
+fanotify16.c:271: TINFO: Test #11: FAN_REPORT_DFID_NAME_FID monitor directo=
+ries for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D e693d1ec.694fcfb5.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D e693d1ec.694fcfb5.4f11.249=
+09e1f.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D e693d1ec.694fcf=
+b5.4f12.24909e20.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5159 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5159 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5159 fd=3D-1 n=
+ame=3D'test_file1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5159 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5159 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D50000000 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D10 info_len=3D40 fh_len=3D=
+8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D50000000 pid=3D5159 fd=3D-1 =
+name=3D'test_dir2' len=3D64; info #0: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #11: mask=3D40000280 pid=3D5159 fd=3D-1 =
+name=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D=
+8
+fanotify16.c:271: TINFO: Test #12: FAN_REPORT_DFID_NAME_TARGET monitor file=
+system for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D e693d1ec.694fcfb5.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D e693d1ec.694fcfb5.4f11.249=
+09e21.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D e693d1ec.694fcf=
+b5.4f12.24909e22.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5159 fd=3D-1 name=
+=3D'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5159 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5159 fd=3D-1 n=
+ame=3D'test_file1' len=3D132; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D288 pid=3D5159 fd=3D-1 name=
+=3D'test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5159 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D50000000 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D132; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #10: info #0: info_type=3D2 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5159 fd=3D-1 =
+name=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D=
+8
+fanotify16.c:271: TINFO: Test #13: FAN_REPORT_DFID_NAME_TARGET monitor dire=
+ctories for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D e693d1ec.694fcfb5.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D e693d1ec.694fcfb5.7699.249=
+09e23.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D e693d1ec.694fcf=
+b5.769a.24909e24.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5159 fd=3D-1 name=
+=3D'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5159 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5159 fd=3D-1 n=
+ame=3D'test_file1' len=3D132; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D288 pid=3D5159 fd=3D-1 name=
+=3D'test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D50000000 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D12 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D50000000 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #10: info #0: info_type=3D2 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5159 fd=3D-1 =
+name=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D=
+8
+fanotify16.c:271: TINFO: Test #14: FAN_REPORT_DFID_NAME_FID monitor directo=
+ries and ignore FAN_RENAME events to/from temp directory
+fanotify.h:120: TINFO: fid(fs_mnt) =3D e693d1ec.694fcfb5.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D e693d1ec.694fcfb5.8669.249=
+09e25.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D e693d1ec.694fcf=
+b5.866a.24909e26.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5159 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5159 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5159 fd=3D-1 n=
+ame=3D'test_file1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5159 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5159 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000280 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #15: FAN_REPORT_DFID_NAME_FID monitor filesys=
+tem and ignore FAN_RENAME events to/from temp directory
+fanotify.h:120: TINFO: fid(fs_mnt) =3D e693d1ec.694fcfb5.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D e693d1ec.694fcfb5.fd1.2490=
+9e27.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D e693d1ec.694fcf=
+b5.fd2.24909e28.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5159 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5159 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5159 fd=3D-1 n=
+ame=3D'test_file1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5159 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5159 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D8 pid=3D5159 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c30 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000c00 pid=3D5159 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5159 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5159 fd=3D-1 =
+name=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D=
+8
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext3 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext3 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fanf0XHVr/fs_mnt fstyp=3Dext3 flags=3D0
+fanotify16.c:271: TINFO: Test #0: FAN_REPORT_DFID_NAME monitor filesystem f=
+or create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 5e95456f.b406b4ee.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 5e95456f.b406b4ee.2f71.193=
+8d79b.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 5e95456f.b406b4=
+ee.2f72.4f7e6701.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5173 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5173 fd=3D-1 name=3D=
+'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5173 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5173 fd=3D-1 name=3D'=
+test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #1: FAN_REPORT_DFID_NAME monitor directories =
+for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 5e95456f.b406b4ee.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 5e95456f.b406b4ee.2f71.c65=
+32ca3.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 5e95456f.b406b4=
+ee.2f72.6dcce247.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5173 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5173 fd=3D-1 name=3D=
+'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5173 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5173 fd=3D-1 name=3D'=
+test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #2: FAN_REPORT_DIR_FID monitor filesystem for=
+ create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 5e95456f.b406b4ee.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 5e95456f.b406b4ee.2f71.615=
+cd1f8.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 5e95456f.b406b4=
+ee.2f72.85e432b3.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D3e8 pid=3D5173 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D2a8 pid=3D5173 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5173 fd=3D-1 name=3D=
+'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #3: FAN_REPORT_DIR_FID monitor directories fo=
+r create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 5e95456f.b406b4ee.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 5e95456f.b406b4ee.2f71.9c8=
+cabca.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 5e95456f.b406b4=
+ee.2f72.282990d.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D3e8 pid=3D5173 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D2a8 pid=3D5173 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5173 fd=3D-1 name=3D=
+'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #4: FAN_REPORT_DFID_FID monitor filesystem fo=
+r create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 5e95456f.b406b4ee.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 5e95456f.b406b4ee.2f71.ccd=
+2ccc9.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 5e95456f.b406b4=
+ee.2f72.37079dac.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D3c0 pid=3D5173 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D280 pid=3D5173 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D3 info_len=3D28=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5173 fd=3D-1 name=3D=
+'' len=3D80; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5173 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D400002c0 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #5: FAN_REPORT_DFID_FID monitor directories f=
+or create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 5e95456f.b406b4ee.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 5e95456f.b406b4ee.2f71.697=
+b4e34.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 5e95456f.b406b4=
+ee.2f72.e75cfcc9.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D3c0 pid=3D5173 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D280 pid=3D5173 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D3 info_len=3D28=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5173 fd=3D-1 name=3D=
+'' len=3D80; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5173 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #6: FAN_REPORT_DFID_NAME_FID monitor filesyst=
+em for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 5e95456f.b406b4ee.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 5e95456f.b406b4ee.2f71.816=
+4d719.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 5e95456f.b406b4=
+ee.2f72.d0bb6fdd.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5173 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5173 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D280 pid=3D5173 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5173 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5173 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000280 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #7: FAN_REPORT_DFID_NAME_FID monitor director=
+ies for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 5e95456f.b406b4ee.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 5e95456f.b406b4ee.2f71.52b=
+6ed52.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 5e95456f.b406b4=
+ee.2f72.e746184d.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5173 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5173 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D280 pid=3D5173 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5173 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #8: FAN_REPORT_DFID_NAME_TARGET monitor files=
+ystem for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 5e95456f.b406b4ee.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 5e95456f.b406b4ee.2f71.a83=
+d2fa2.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 5e95456f.b406b4=
+ee.2f72.6eaf775e.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5173 fd=3D-1 name=
+=3D'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5173 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5173 fd=3D-1 name=
+=3D'test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5173 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #9: FAN_REPORT_DFID_NAME_TARGET monitor direc=
+tories for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 5e95456f.b406b4ee.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 5e95456f.b406b4ee.2f71.844=
+43949.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 5e95456f.b406b4=
+ee.2f72.4c0deae8.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5173 fd=3D-1 name=
+=3D'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5173 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5173 fd=3D-1 name=
+=3D'test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000040 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #10: FAN_REPORT_DFID_NAME_FID monitor filesys=
+tem for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 5e95456f.b406b4ee.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 5e95456f.b406b4ee.2f71.3ad=
+8103d.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 5e95456f.b406b4=
+ee.2f72.a10d5bb9.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5173 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5173 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5173 fd=3D-1 n=
+ame=3D'test_file1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5173 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5173 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D8 pid=3D5173 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c30 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000c00 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D50000000 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D40000040 pid=3D5173 fd=3D-1 =
+name=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D=
+8
+fanotify16.c:732: TPASS: got event #11: mask=3D40000280 pid=3D5173 fd=3D-1 =
+name=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D=
+8
+fanotify16.c:271: TINFO: Test #11: FAN_REPORT_DFID_NAME_FID monitor directo=
+ries for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 5e95456f.b406b4ee.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 5e95456f.b406b4ee.2f71.eed=
+a03bd.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 5e95456f.b406b4=
+ee.2f72.d3bb96bd.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5173 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5173 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5173 fd=3D-1 n=
+ame=3D'test_file1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5173 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5173 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D50000000 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D10 info_len=3D40 fh_len=3D=
+8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D50000000 pid=3D5173 fd=3D-1 =
+name=3D'test_dir2' len=3D64; info #0: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #11: mask=3D40000280 pid=3D5173 fd=3D-1 =
+name=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D=
+8
+fanotify16.c:271: TINFO: Test #12: FAN_REPORT_DFID_NAME_TARGET monitor file=
+system for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 5e95456f.b406b4ee.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 5e95456f.b406b4ee.2f71.7f3=
+5710e.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 5e95456f.b406b4=
+ee.2f72.ca7bbe34.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5173 fd=3D-1 name=
+=3D'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5173 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5173 fd=3D-1 n=
+ame=3D'test_file1' len=3D132; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D288 pid=3D5173 fd=3D-1 name=
+=3D'test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5173 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D50000000 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D132; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #10: info #0: info_type=3D2 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5173 fd=3D-1 =
+name=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D=
+8
+fanotify16.c:271: TINFO: Test #13: FAN_REPORT_DFID_NAME_TARGET monitor dire=
+ctories for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 5e95456f.b406b4ee.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 5e95456f.b406b4ee.2f71.159=
+8a816.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 5e95456f.b406b4=
+ee.2f72.df905033.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5173 fd=3D-1 name=
+=3D'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5173 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5173 fd=3D-1 n=
+ame=3D'test_file1' len=3D132; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D288 pid=3D5173 fd=3D-1 name=
+=3D'test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D50000000 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D12 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D50000000 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #10: info #0: info_type=3D2 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5173 fd=3D-1 =
+name=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D=
+8
+fanotify16.c:271: TINFO: Test #14: FAN_REPORT_DFID_NAME_FID monitor directo=
+ries and ignore FAN_RENAME events to/from temp directory
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 5e95456f.b406b4ee.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 5e95456f.b406b4ee.2f71.366=
+4a80b.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 5e95456f.b406b4=
+ee.2f72.1d994258.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5173 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5173 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5173 fd=3D-1 n=
+ame=3D'test_file1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5173 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5173 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000280 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #15: FAN_REPORT_DFID_NAME_FID monitor filesys=
+tem and ignore FAN_RENAME events to/from temp directory
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 5e95456f.b406b4ee.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 5e95456f.b406b4ee.2f71.7ec=
+274f0.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 5e95456f.b406b4=
+ee.2f72.9786a7ff.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5173 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5173 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5173 fd=3D-1 n=
+ame=3D'test_file1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5173 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5173 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D8 pid=3D5173 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c30 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000c00 pid=3D5173 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5173 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5173 fd=3D-1 =
+name=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D=
+8
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext4 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext4 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fanf0XHVr/fs_mnt fstyp=3Dext4 flags=3D0
+fanotify16.c:271: TINFO: Test #0: FAN_REPORT_DFID_NAME monitor filesystem f=
+or create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 3e43a82f.5b781036.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 3e43a82f.5b781036.7e82.4a3=
+acfc1.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 3e43a82f.5b7810=
+36.7e83.5d4f27b3.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5186 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5186 fd=3D-1 name=3D=
+'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5186 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5186 fd=3D-1 name=3D'=
+test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #1: FAN_REPORT_DFID_NAME monitor directories =
+for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 3e43a82f.5b781036.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 3e43a82f.5b781036.7e82.bda=
+f1c5e.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 3e43a82f.5b7810=
+36.7e83.c9171c2b.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5186 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5186 fd=3D-1 name=3D=
+'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5186 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5186 fd=3D-1 name=3D'=
+test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #2: FAN_REPORT_DIR_FID monitor filesystem for=
+ create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 3e43a82f.5b781036.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 3e43a82f.5b781036.7e82.ca5=
+6933c.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 3e43a82f.5b7810=
+36.7e83.c3bbc75e.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D3e8 pid=3D5186 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D2a8 pid=3D5186 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5186 fd=3D-1 name=3D=
+'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #3: FAN_REPORT_DIR_FID monitor directories fo=
+r create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 3e43a82f.5b781036.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 3e43a82f.5b781036.7e82.178=
+55295.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 3e43a82f.5b7810=
+36.7e83.93837c70.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D3e8 pid=3D5186 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D2a8 pid=3D5186 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5186 fd=3D-1 name=3D=
+'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #4: FAN_REPORT_DFID_FID monitor filesystem fo=
+r create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 3e43a82f.5b781036.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 3e43a82f.5b781036.7e82.1d3=
+a21b4.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 3e43a82f.5b7810=
+36.7e83.bce3673a.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D3c0 pid=3D5186 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D280 pid=3D5186 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D3 info_len=3D28=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5186 fd=3D-1 name=3D=
+'' len=3D80; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5186 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D400002c0 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #5: FAN_REPORT_DFID_FID monitor directories f=
+or create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 3e43a82f.5b781036.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 3e43a82f.5b781036.7e82.f96=
+755e9.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 3e43a82f.5b7810=
+36.7e83.4a4400f.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D3c0 pid=3D5186 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D280 pid=3D5186 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D3 info_len=3D28=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5186 fd=3D-1 name=3D=
+'' len=3D80; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5186 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #6: FAN_REPORT_DFID_NAME_FID monitor filesyst=
+em for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 3e43a82f.5b781036.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 3e43a82f.5b781036.7e82.24a=
+a0070.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 3e43a82f.5b7810=
+36.7e83.eb9c0e5.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5186 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5186 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D280 pid=3D5186 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5186 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5186 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000280 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #7: FAN_REPORT_DFID_NAME_FID monitor director=
+ies for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 3e43a82f.5b781036.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 3e43a82f.5b781036.7e82.c03=
+5a49.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 3e43a82f.5b7810=
+36.7e83.dd8c14e0.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5186 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5186 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D280 pid=3D5186 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5186 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #8: FAN_REPORT_DFID_NAME_TARGET monitor files=
+ystem for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 3e43a82f.5b781036.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 3e43a82f.5b781036.7e82.983=
+e80f7.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 3e43a82f.5b7810=
+36.7e83.1098a573.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5186 fd=3D-1 name=
+=3D'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5186 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5186 fd=3D-1 name=
+=3D'test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5186 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #9: FAN_REPORT_DFID_NAME_TARGET monitor direc=
+tories for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 3e43a82f.5b781036.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 3e43a82f.5b781036.7e82.acb=
+4a888.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 3e43a82f.5b7810=
+36.7e83.4d1db3f3.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5186 fd=3D-1 name=
+=3D'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5186 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5186 fd=3D-1 name=
+=3D'test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000040 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #10: FAN_REPORT_DFID_NAME_FID monitor filesys=
+tem for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 3e43a82f.5b781036.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 3e43a82f.5b781036.7e82.ea1=
+04d58.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 3e43a82f.5b7810=
+36.7e83.67eb8b52.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5186 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5186 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5186 fd=3D-1 n=
+ame=3D'test_file1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5186 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5186 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D8 pid=3D5186 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c30 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000c00 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D50000000 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D40000040 pid=3D5186 fd=3D-1 =
+name=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D=
+8
+fanotify16.c:732: TPASS: got event #11: mask=3D40000280 pid=3D5186 fd=3D-1 =
+name=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D=
+8
+fanotify16.c:271: TINFO: Test #11: FAN_REPORT_DFID_NAME_FID monitor directo=
+ries for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 3e43a82f.5b781036.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 3e43a82f.5b781036.7e82.437=
+591b0.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 3e43a82f.5b7810=
+36.7e83.23794490.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5186 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5186 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5186 fd=3D-1 n=
+ame=3D'test_file1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5186 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5186 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D50000000 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D10 info_len=3D40 fh_len=3D=
+8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D50000000 pid=3D5186 fd=3D-1 =
+name=3D'test_dir2' len=3D64; info #0: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #11: mask=3D40000280 pid=3D5186 fd=3D-1 =
+name=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D=
+8
+fanotify16.c:271: TINFO: Test #12: FAN_REPORT_DFID_NAME_TARGET monitor file=
+system for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 3e43a82f.5b781036.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 3e43a82f.5b781036.7e82.47e=
+90226.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 3e43a82f.5b7810=
+36.7e83.6f8152ab.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5186 fd=3D-1 name=
+=3D'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5186 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5186 fd=3D-1 n=
+ame=3D'test_file1' len=3D132; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D288 pid=3D5186 fd=3D-1 name=
+=3D'test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5186 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D50000000 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D132; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #10: info #0: info_type=3D2 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5186 fd=3D-1 =
+name=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D=
+8
+fanotify16.c:271: TINFO: Test #13: FAN_REPORT_DFID_NAME_TARGET monitor dire=
+ctories for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 3e43a82f.5b781036.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 3e43a82f.5b781036.7e82.fc6=
+526ee.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 3e43a82f.5b7810=
+36.7e83.75e45bcd.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5186 fd=3D-1 name=
+=3D'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5186 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5186 fd=3D-1 n=
+ame=3D'test_file1' len=3D132; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D288 pid=3D5186 fd=3D-1 name=
+=3D'test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D50000000 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D12 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D50000000 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #10: info #0: info_type=3D2 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5186 fd=3D-1 =
+name=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D=
+8
+fanotify16.c:271: TINFO: Test #14: FAN_REPORT_DFID_NAME_FID monitor directo=
+ries and ignore FAN_RENAME events to/from temp directory
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 3e43a82f.5b781036.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 3e43a82f.5b781036.7e82.1e6=
+a9327.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 3e43a82f.5b7810=
+36.7e83.d19ab76d.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5186 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5186 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5186 fd=3D-1 n=
+ame=3D'test_file1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5186 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5186 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000280 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #15: FAN_REPORT_DFID_NAME_FID monitor filesys=
+tem and ignore FAN_RENAME events to/from temp directory
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 3e43a82f.5b781036.2.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 3e43a82f.5b781036.7e82.3a7=
+006c3.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 3e43a82f.5b7810=
+36.7e83.b9728090.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5186 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5186 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5186 fd=3D-1 n=
+ame=3D'test_file1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5186 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5186 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D8 pid=3D5186 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c30 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000c00 pid=3D5186 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5186 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5186 fd=3D-1 =
+name=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D=
+8
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on xfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with xfs opts=3D'' extra opts=
+=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fanf0XHVr/fs_mnt fstyp=3Dxfs flags=3D0
+fanotify16.c:271: TINFO: Test #0: FAN_REPORT_DFID_NAME monitor filesystem f=
+or create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.80.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.40080.0.82ab8ff7...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.40081.0.d=
+f8b65dd...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5202 fd=3D-1 name=
+=3D'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5202 fd=3D-1 name=3D=
+'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5202 fd=3D-1 name=
+=3D'test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5202 fd=3D-1 name=3D'=
+test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:271: TINFO: Test #1: FAN_REPORT_DFID_NAME monitor directories =
+for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.80.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.a0080.0.19e4eac7...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.a0081.0.6=
+796c727...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5202 fd=3D-1 name=
+=3D'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5202 fd=3D-1 name=3D=
+'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5202 fd=3D-1 name=
+=3D'test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5202 fd=3D-1 name=3D'=
+test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:271: TINFO: Test #2: FAN_REPORT_DIR_FID monitor filesystem for=
+ create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.80.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.c0080.0.501a70b2...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.c0081.0.1=
+250b49c...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #1: mask=3D3e8 pid=3D5202 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D2a8 pid=3D5202 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5202 fd=3D-1 name=3D=
+'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:271: TINFO: Test #3: FAN_REPORT_DIR_FID monitor directories fo=
+r create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.80.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.84.0.9052d860...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.85.0.9741=
+2668...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #1: mask=3D3e8 pid=3D5202 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D2a8 pid=3D5202 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5202 fd=3D-1 name=3D=
+'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:271: TINFO: Test #4: FAN_REPORT_DFID_FID monitor filesystem fo=
+r create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.80.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.40060.0.4a357a84...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.40061.0.c=
+bdef48e...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #1: mask=3D3c0 pid=3D5202 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D280 pid=3D5202 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D3 info_len=3D32=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5202 fd=3D-1 name=3D=
+'' len=3D88; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5202 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D400002c0 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:271: TINFO: Test #5: FAN_REPORT_DFID_FID monitor directories f=
+or create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.80.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.a0060.0.22e9e143...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.a0061.0.6=
+0759294...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #1: mask=3D3c0 pid=3D5202 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D280 pid=3D5202 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D3 info_len=3D32=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5202 fd=3D-1 name=3D=
+'' len=3D88; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5202 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:271: TINFO: Test #6: FAN_REPORT_DFID_NAME_FID monitor filesyst=
+em for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.80.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.c00c0.0.23bc46ac...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.c00c1.0.6=
+7a75341...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5202 fd=3D-1 name=
+=3D'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5202 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D280 pid=3D5202 fd=3D-1 name=
+=3D'test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5202 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5202 fd=3D-1 name=3D'=
+test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #9: mask=3D40000280 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:271: TINFO: Test #7: FAN_REPORT_DFID_NAME_FID monitor director=
+ies for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.80.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.84.0.9052d861...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.85.0.9741=
+2669...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5202 fd=3D-1 name=
+=3D'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5202 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D280 pid=3D5202 fd=3D-1 name=
+=3D'test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5202 fd=3D-1 name=3D'=
+test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:271: TINFO: Test #8: FAN_REPORT_DFID_NAME_TARGET monitor files=
+ystem for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.80.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.400c0.0.3ac8d166...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.400c1.0.f=
+2509d3a...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5202 fd=3D-1 name=
+=3D'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5202 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5202 fd=3D-1 name=
+=3D'test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5202 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:271: TINFO: Test #9: FAN_REPORT_DFID_NAME_TARGET monitor direc=
+tories for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.80.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.a0060.0.22e9e144...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.a0061.0.6=
+0759295...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5202 fd=3D-1 name=
+=3D'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5202 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5202 fd=3D-1 name=
+=3D'test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000040 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:271: TINFO: Test #10: FAN_REPORT_DFID_NAME_FID monitor filesys=
+tem for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.80.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.c0100.0.50bb273c...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.c0101.0.e=
+89bb190...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5202 fd=3D-1 name=
+=3D'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5202 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5202 fd=3D-1 n=
+ame=3D'test_file1' len=3D112; info #1: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5202 fd=3D-1 name=
+=3D'test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5202 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D8 pid=3D5202 fd=3D-1 name=3D'=
+test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c30 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D40000c00 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #9: mask=3D50000000 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D112; info #1: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:732: TPASS: got event #10: mask=3D40000040 pid=3D5202 fd=3D-1 =
+name=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D=
+12
+fanotify16.c:732: TPASS: got event #11: mask=3D40000280 pid=3D5202 fd=3D-1 =
+name=3D'test_dir2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D=
+12
+fanotify16.c:271: TINFO: Test #11: FAN_REPORT_DFID_NAME_FID monitor directo=
+ries for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.80.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.84.0.9052d862...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.85.0.9741=
+266a...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5202 fd=3D-1 name=
+=3D'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5202 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5202 fd=3D-1 n=
+ame=3D'test_file1' len=3D112; info #1: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5202 fd=3D-1 name=
+=3D'test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5202 fd=3D-1 name=3D'=
+test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D50000000 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D10 info_len=3D44 fh_len=3D=
+12
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #10: mask=3D50000000 pid=3D5202 fd=3D-1 =
+name=3D'test_dir2' len=3D68; info #0: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:732: TPASS: got event #11: mask=3D40000280 pid=3D5202 fd=3D-1 =
+name=3D'test_dir2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D=
+12
+fanotify16.c:271: TINFO: Test #12: FAN_REPORT_DFID_NAME_TARGET monitor file=
+system for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.80.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.40100.0.3ef22e7e...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.40101.0.5=
+605d3b1...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5202 fd=3D-1 name=
+=3D'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5202 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5202 fd=3D-1 n=
+ame=3D'test_file1' len=3D144; info #1: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D288 pid=3D5202 fd=3D-1 name=
+=3D'test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5202 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D50000000 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D144; info #1: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #10: info #0: info_type=3D2 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5202 fd=3D-1 =
+name=3D'test_dir2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=
+=3D12
+fanotify16.c:271: TINFO: Test #13: FAN_REPORT_DFID_NAME_TARGET monitor dire=
+ctories for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.80.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.a0080.0.19e4eac8...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.a0081.0.6=
+796c728...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5202 fd=3D-1 name=
+=3D'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5202 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5202 fd=3D-1 n=
+ame=3D'test_file1' len=3D144; info #1: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D288 pid=3D5202 fd=3D-1 name=
+=3D'test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D50000000 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D12 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #9: mask=3D50000000 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #10: info #0: info_type=3D2 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5202 fd=3D-1 =
+name=3D'test_dir2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=
+=3D12
+fanotify16.c:271: TINFO: Test #14: FAN_REPORT_DFID_NAME_FID monitor directo=
+ries and ignore FAN_RENAME events to/from temp directory
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.80.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.c0060.0.2400071d...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.c0061.0.6=
+88d90db...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5202 fd=3D-1 name=
+=3D'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5202 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5202 fd=3D-1 n=
+ame=3D'test_file1' len=3D112; info #1: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5202 fd=3D-1 name=
+=3D'test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5202 fd=3D-1 name=3D'=
+test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #9: mask=3D40000280 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:271: TINFO: Test #15: FAN_REPORT_DFID_NAME_FID monitor filesys=
+tem and ignore FAN_RENAME events to/from temp directory
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.80.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.84.0.9052d863...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.85.0.9741=
+266b...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5202 fd=3D-1 name=
+=3D'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5202 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5202 fd=3D-1 n=
+ame=3D'test_file1' len=3D112; info #1: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5202 fd=3D-1 name=
+=3D'test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5202 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D8 pid=3D5202 fd=3D-1 name=3D'=
+test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c30 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D40000c00 pid=3D5202 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5202 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5202 fd=3D-1 =
+name=3D'test_dir2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D=
+12
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on btrfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with btrfs opts=3D'' extra op=
+ts=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fanf0XHVr/fs_mnt fstyp=3Dbtrfs flags=3D0
+fanotify16.c:271: TINFO: Test #0: FAN_REPORT_DFID_NAME monitor filesystem f=
+or create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 297f3628.a7841d3f.100.0.5...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 297f3628.a7841d3f.102.0.5.=
+..
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 297f3628.a7841d=
+3f.103.0.5...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5241 fd=3D-1 name=
+=3D'test_file1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5241 fd=3D-1 name=3D=
+'test_file1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5241 fd=3D-1 name=
+=3D'test_file2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5241 fd=3D-1 name=3D'=
+test_file2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:271: TINFO: Test #1: FAN_REPORT_DFID_NAME monitor directories =
+for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 297f3628.a7841d3f.100.0.5...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 297f3628.a7841d3f.104.0.5.=
+..
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 297f3628.a7841d=
+3f.105.0.5...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5241 fd=3D-1 name=
+=3D'test_file1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5241 fd=3D-1 name=3D=
+'test_file1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5241 fd=3D-1 name=
+=3D'test_file2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5241 fd=3D-1 name=3D'=
+test_file2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:271: TINFO: Test #2: FAN_REPORT_DIR_FID monitor filesystem for=
+ create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 297f3628.a7841d3f.100.0.5...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 297f3628.a7841d3f.106.0.5.=
+..
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 297f3628.a7841d=
+3f.107.0.5...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #1: mask=3D3e8 pid=3D5241 fd=3D-1 name=
+=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #2: mask=3D2a8 pid=3D5241 fd=3D-1 name=
+=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5241 fd=3D-1 name=3D=
+'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:271: TINFO: Test #3: FAN_REPORT_DIR_FID monitor directories fo=
+r create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 297f3628.a7841d3f.100.0.5...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 297f3628.a7841d3f.108.0.5.=
+..
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 297f3628.a7841d=
+3f.109.0.5...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #1: mask=3D3e8 pid=3D5241 fd=3D-1 name=
+=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #2: mask=3D2a8 pid=3D5241 fd=3D-1 name=
+=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5241 fd=3D-1 name=3D=
+'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:271: TINFO: Test #4: FAN_REPORT_DFID_FID monitor filesystem fo=
+r create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 297f3628.a7841d3f.100.0.5...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 297f3628.a7841d3f.10a.0.5.=
+..
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 297f3628.a7841d=
+3f.10b.0.5...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #1: mask=3D3c0 pid=3D5241 fd=3D-1 name=
+=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #2: mask=3D280 pid=3D5241 fd=3D-1 name=
+=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D3 info_len=3D40=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5241 fd=3D-1 name=3D=
+'' len=3D104; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5241 fd=3D-1 name=
+=3D'' len=3D64; info #0: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #7: mask=3D400002c0 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:271: TINFO: Test #5: FAN_REPORT_DFID_FID monitor directories f=
+or create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 297f3628.a7841d3f.100.0.5...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 297f3628.a7841d3f.10c.0.5.=
+..
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 297f3628.a7841d=
+3f.10d.0.5...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #1: mask=3D3c0 pid=3D5241 fd=3D-1 name=
+=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #2: mask=3D280 pid=3D5241 fd=3D-1 name=
+=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D3 info_len=3D40=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5241 fd=3D-1 name=3D=
+'' len=3D104; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5241 fd=3D-1 n=
+ame=3D'' len=3D64; info #0: info_type=3D3 info_len=3D40 fh_len=3D20
+fanotify16.c:271: TINFO: Test #6: FAN_REPORT_DFID_NAME_FID monitor filesyst=
+em for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 297f3628.a7841d3f.100.0.5...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 297f3628.a7841d3f.10e.0.5.=
+..
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 297f3628.a7841d=
+3f.10f.0.5...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5241 fd=3D-1 name=
+=3D'test_file1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5241 fd=3D-1 name=3D=
+'test_file1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #3: mask=3D280 pid=3D5241 fd=3D-1 name=
+=3D'test_file2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5241 fd=3D-1 name=
+=3D'' len=3D64; info #0: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5241 fd=3D-1 name=3D'=
+test_file2' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:732: TPASS: got event #9: mask=3D40000280 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:271: TINFO: Test #7: FAN_REPORT_DFID_NAME_FID monitor director=
+ies for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 297f3628.a7841d3f.100.0.5...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 297f3628.a7841d3f.110.0.5.=
+..
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 297f3628.a7841d=
+3f.111.0.5...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5241 fd=3D-1 name=
+=3D'test_file1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5241 fd=3D-1 name=3D=
+'test_file1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #3: mask=3D280 pid=3D5241 fd=3D-1 name=
+=3D'test_file2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5241 fd=3D-1 name=3D'=
+test_file2' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:271: TINFO: Test #8: FAN_REPORT_DFID_NAME_TARGET monitor files=
+ystem for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 297f3628.a7841d3f.100.0.5...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 297f3628.a7841d3f.112.0.5.=
+..
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 297f3628.a7841d=
+3f.113.0.5...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D=
+20
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5241 fd=3D-1 name=
+=3D'test_file1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5241 fd=3D-1 name=3D=
+'test_file1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5241 fd=3D-1 name=
+=3D'test_file2' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5241 fd=3D-1 name=
+=3D'' len=3D64; info #0: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D=
+20
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir2' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D=
+20
+fanotify16.c:271: TINFO: Test #9: FAN_REPORT_DFID_NAME_TARGET monitor direc=
+tories for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 297f3628.a7841d3f.100.0.5...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 297f3628.a7841d3f.114.0.5.=
+..
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 297f3628.a7841d=
+3f.115.0.5...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D=
+20
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5241 fd=3D-1 name=
+=3D'test_file1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5241 fd=3D-1 name=3D=
+'test_file1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5241 fd=3D-1 name=
+=3D'test_file2' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #6: mask=3D40000040 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D=
+20
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir2' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D=
+20
+fanotify16.c:271: TINFO: Test #10: FAN_REPORT_DFID_NAME_FID monitor filesys=
+tem for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 297f3628.a7841d3f.100.0.5...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 297f3628.a7841d3f.116.0.5.=
+..
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 297f3628.a7841d=
+3f.117.0.5...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5241 fd=3D-1 name=
+=3D'test_file1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5241 fd=3D-1 name=3D=
+'test_file1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D5=
+2 fh_len=3D20
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5241 fd=3D-1 n=
+ame=3D'test_file1' len=3D128; info #1: info_type=3D12 info_len=3D52 fh_len=
+=3D20
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5241 fd=3D-1 name=
+=3D'test_file2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5241 fd=3D-1 name=
+=3D'' len=3D64; info #0: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #6: mask=3D8 pid=3D5241 fd=3D-1 name=3D'=
+test_file2' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c30 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #8: mask=3D40000c00 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D10 info_len=3D5=
+2 fh_len=3D20
+fanotify16.c:732: TPASS: got event #9: mask=3D50000000 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D128; info #1: info_type=3D12 info_len=3D52 fh_len=
+=3D20
+fanotify16.c:732: TPASS: got event #10: mask=3D40000040 pid=3D5241 fd=3D-1 =
+name=3D'test_dir1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D=
+20
+fanotify16.c:732: TPASS: got event #11: mask=3D40000280 pid=3D5241 fd=3D-1 =
+name=3D'test_dir2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D=
+20
+fanotify16.c:271: TINFO: Test #11: FAN_REPORT_DFID_NAME_FID monitor directo=
+ries for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 297f3628.a7841d3f.100.0.5...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 297f3628.a7841d3f.118.0.5.=
+..
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 297f3628.a7841d=
+3f.119.0.5...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5241 fd=3D-1 name=
+=3D'test_file1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5241 fd=3D-1 name=3D=
+'test_file1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D5=
+2 fh_len=3D20
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5241 fd=3D-1 n=
+ame=3D'test_file1' len=3D128; info #1: info_type=3D12 info_len=3D52 fh_len=
+=3D20
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5241 fd=3D-1 name=
+=3D'test_file2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5241 fd=3D-1 name=3D'=
+test_file2' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #8: mask=3D50000000 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D76; info #0: info_type=3D10 info_len=3D52 fh_len=3D=
+20
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:732: TPASS: got event #10: mask=3D50000000 pid=3D5241 fd=3D-1 =
+name=3D'test_dir2' len=3D76; info #0: info_type=3D12 info_len=3D52 fh_len=
+=3D20
+fanotify16.c:732: TPASS: got event #11: mask=3D40000280 pid=3D5241 fd=3D-1 =
+name=3D'test_dir2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D=
+20
+fanotify16.c:271: TINFO: Test #12: FAN_REPORT_DFID_NAME_TARGET monitor file=
+system for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 297f3628.a7841d3f.100.0.5...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 297f3628.a7841d3f.11a.0.5.=
+..
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 297f3628.a7841d=
+3f.11b.0.5...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D=
+20
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5241 fd=3D-1 name=
+=3D'test_file1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5241 fd=3D-1 name=3D=
+'test_file1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D5=
+2 fh_len=3D20
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5241 fd=3D-1 n=
+ame=3D'test_file1' len=3D168; info #1: info_type=3D12 info_len=3D52 fh_len=
+=3D20
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #4: mask=3D288 pid=3D5241 fd=3D-1 name=
+=3D'test_file2' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5241 fd=3D-1 name=
+=3D'' len=3D64; info #0: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D10 info_len=3D5=
+2 fh_len=3D20
+fanotify16.c:732: TPASS: got event #8: mask=3D50000000 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D168; info #1: info_type=3D12 info_len=3D52 fh_len=
+=3D20
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D=
+20
+fanotify16.c:706: TINFO: got event #10: info #0: info_type=3D2 info_len=3D5=
+2 fh_len=3D20
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5241 fd=3D-1 =
+name=3D'test_dir2' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=
+=3D20
+fanotify16.c:271: TINFO: Test #13: FAN_REPORT_DFID_NAME_TARGET monitor dire=
+ctories for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 297f3628.a7841d3f.100.0.5...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 297f3628.a7841d3f.11c.0.5.=
+..
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 297f3628.a7841d=
+3f.11d.0.5...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D=
+20
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5241 fd=3D-1 name=
+=3D'test_file1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5241 fd=3D-1 name=3D=
+'test_file1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D5=
+2 fh_len=3D20
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5241 fd=3D-1 n=
+ame=3D'test_file1' len=3D168; info #1: info_type=3D12 info_len=3D52 fh_len=
+=3D20
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #4: mask=3D288 pid=3D5241 fd=3D-1 name=
+=3D'test_file2' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D10 info_len=3D5=
+2 fh_len=3D20
+fanotify16.c:732: TPASS: got event #7: mask=3D50000000 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D=
+20
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D=
+20
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D12 info_len=3D5=
+2 fh_len=3D20
+fanotify16.c:732: TPASS: got event #9: mask=3D50000000 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir2' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D=
+20
+fanotify16.c:706: TINFO: got event #10: info #0: info_type=3D2 info_len=3D5=
+2 fh_len=3D20
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5241 fd=3D-1 =
+name=3D'test_dir2' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=
+=3D20
+fanotify16.c:271: TINFO: Test #14: FAN_REPORT_DFID_NAME_FID monitor directo=
+ries and ignore FAN_RENAME events to/from temp directory
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 297f3628.a7841d3f.100.0.5...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 297f3628.a7841d3f.11e.0.5.=
+..
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 297f3628.a7841d=
+3f.11f.0.5...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5241 fd=3D-1 name=
+=3D'test_file1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5241 fd=3D-1 name=3D=
+'test_file1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D5=
+2 fh_len=3D20
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5241 fd=3D-1 n=
+ame=3D'test_file1' len=3D128; info #1: info_type=3D12 info_len=3D52 fh_len=
+=3D20
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5241 fd=3D-1 name=
+=3D'test_file2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5241 fd=3D-1 name=3D'=
+test_file2' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:732: TPASS: got event #9: mask=3D40000280 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:271: TINFO: Test #15: FAN_REPORT_DFID_NAME_FID monitor filesys=
+tem and ignore FAN_RENAME events to/from temp directory
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 297f3628.a7841d3f.100.0.5...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 297f3628.a7841d3f.120.0.5.=
+..
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 297f3628.a7841d=
+3f.121.0.5...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5241 fd=3D-1 name=
+=3D'test_file1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5241 fd=3D-1 name=3D=
+'test_file1' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D5=
+2 fh_len=3D20
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5241 fd=3D-1 n=
+ame=3D'test_file1' len=3D128; info #1: info_type=3D12 info_len=3D52 fh_len=
+=3D20
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5241 fd=3D-1 name=
+=3D'test_file2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D20
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5241 fd=3D-1 name=
+=3D'' len=3D64; info #0: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D52=
+ fh_len=3D20
+fanotify16.c:732: TPASS: got event #6: mask=3D8 pid=3D5241 fd=3D-1 name=3D'=
+test_file2' len=3D116; info #1: info_type=3D1 info_len=3D40 fh_len=3D20
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c30 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #8: mask=3D40000c00 pid=3D5241 fd=3D-1 n=
+ame=3D'.' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D20
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5241 fd=3D-1 n=
+ame=3D'test_dir1' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D2=
+0
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5241 fd=3D-1 =
+name=3D'test_dir2' len=3D76; info #0: info_type=3D2 info_len=3D52 fh_len=3D=
+20
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on vfat =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with vfat opts=3D'' extra opt=
+s=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fanf0XHVr/fs_mnt fstyp=3Dvfat flags=3D0
+fanotify16.c:271: TINFO: Test #0: FAN_REPORT_DFID_NAME monitor filesystem f=
+or create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.1.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.72.b6a16970.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.73.5c0ce2=
+f7.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5243 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5243 fd=3D-1 name=3D=
+'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5243 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5243 fd=3D-1 name=3D'=
+test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #1: FAN_REPORT_DFID_NAME monitor directories =
+for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.1.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.74.b32e9b50.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.75.c3ff0c=
+b7.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5243 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5243 fd=3D-1 name=3D=
+'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5243 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5243 fd=3D-1 name=3D'=
+test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #2: FAN_REPORT_DIR_FID monitor filesystem for=
+ create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.1.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.76.d1c14542.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.77.cf3eec=
+fb.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D3e8 pid=3D5243 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D2a8 pid=3D5243 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5243 fd=3D-1 name=3D=
+'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #3: FAN_REPORT_DIR_FID monitor directories fo=
+r create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.1.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.78.fdd7cfd0.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.79.c42303=
+ff.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D3e8 pid=3D5243 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D2a8 pid=3D5243 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5243 fd=3D-1 name=3D=
+'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #4: FAN_REPORT_DFID_FID monitor filesystem fo=
+r create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.1.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.7a.fb6819c0.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.7b.844a34=
+1d.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D3c0 pid=3D5243 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D280 pid=3D5243 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D3 info_len=3D28=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5243 fd=3D-1 name=3D=
+'' len=3D80; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5243 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D400002c0 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #5: FAN_REPORT_DFID_FID monitor directories f=
+or create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.1.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.7c.53666f94.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.7d.246f9b=
+cb.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D3c0 pid=3D5243 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D280 pid=3D5243 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D3 info_len=3D28=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5243 fd=3D-1 name=3D=
+'' len=3D80; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5243 fd=3D-1 n=
+ame=3D'' len=3D52; info #0: info_type=3D3 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #6: FAN_REPORT_DFID_NAME_FID monitor filesyst=
+em for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.1.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.7e.141d7e42.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.7f.44b5c6=
+2d.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5243 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5243 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D280 pid=3D5243 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5243 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5243 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000280 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #7: FAN_REPORT_DFID_NAME_FID monitor director=
+ies for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.1.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.80.8eec396.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.81.8bf1dd=
+3.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5243 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5243 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D280 pid=3D5243 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5243 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #8: FAN_REPORT_DFID_NAME_TARGET monitor files=
+ystem for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.1.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.82.99e7f11c.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.83.4811c5=
+b1.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5243 fd=3D-1 name=
+=3D'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5243 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5243 fd=3D-1 name=
+=3D'test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5243 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #9: FAN_REPORT_DFID_NAME_TARGET monitor direc=
+tories for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.1.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.84.e3ef2a0.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.85.6ecc23=
+f9.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5243 fd=3D-1 name=
+=3D'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5243 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5243 fd=3D-1 name=
+=3D'test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000040 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:271: TINFO: Test #10: FAN_REPORT_DFID_NAME_FID monitor filesys=
+tem for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.1.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.86.53b0c10.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.87.2cb81b=
+75.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5243 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5243 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5243 fd=3D-1 n=
+ame=3D'test_file1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5243 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5243 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D8 pid=3D5243 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c30 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000c00 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D50000000 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D40000040 pid=3D5243 fd=3D-1 =
+name=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D=
+8
+fanotify16.c:732: TPASS: got event #11: mask=3D40000280 pid=3D5243 fd=3D-1 =
+name=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D=
+8
+fanotify16.c:271: TINFO: Test #11: FAN_REPORT_DFID_NAME_FID monitor directo=
+ries for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.1.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.88.bd2c0ba2.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.89.cb1594=
+e9.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5243 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5243 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5243 fd=3D-1 n=
+ame=3D'test_file1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5243 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5243 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D50000000 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D10 info_len=3D40 fh_len=3D=
+8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D50000000 pid=3D5243 fd=3D-1 =
+name=3D'test_dir2' len=3D64; info #0: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #11: mask=3D40000280 pid=3D5243 fd=3D-1 =
+name=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D=
+8
+fanotify16.c:271: TINFO: Test #12: FAN_REPORT_DFID_NAME_TARGET monitor file=
+system for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.1.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.8a.712ec542.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.8b.e0c70a=
+13.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5243 fd=3D-1 name=
+=3D'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5243 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5243 fd=3D-1 n=
+ame=3D'test_file1' len=3D132; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D288 pid=3D5243 fd=3D-1 name=
+=3D'test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5243 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D50000000 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D132; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #10: info #0: info_type=3D2 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5243 fd=3D-1 =
+name=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D=
+8
+fanotify16.c:271: TINFO: Test #13: FAN_REPORT_DFID_NAME_TARGET monitor dire=
+ctories for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.1.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.8c.909d642.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.8d.d42271=
+d5.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5243 fd=3D-1 name=
+=3D'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5243 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5243 fd=3D-1 n=
+ame=3D'test_file1' len=3D132; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D288 pid=3D5243 fd=3D-1 name=
+=3D'test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D50000000 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D12 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D50000000 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #10: info #0: info_type=3D2 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5243 fd=3D-1 =
+name=3D'test_dir2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D=
+8
+fanotify16.c:271: TINFO: Test #14: FAN_REPORT_DFID_NAME_FID monitor directo=
+ries and ignore FAN_RENAME events to/from temp directory
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.1.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.8e.77e3914.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.8f.79e9e9=
+09.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5243 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5243 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5243 fd=3D-1 n=
+ame=3D'test_file1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5243 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5243 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000280 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:271: TINFO: Test #15: FAN_REPORT_DFID_NAME_FID monitor filesys=
+tem and ignore FAN_RENAME events to/from temp directory
+fanotify.h:120: TINFO: fid(fs_mnt) =3D 700.0.1.0.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D 700.0.90.5e74755e.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D 700.0.91.827b09=
+9d.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5243 fd=3D-1 name=
+=3D'test_file1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5243 fd=3D-1 name=3D=
+'test_file1' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+0 fh_len=3D8
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5243 fd=3D-1 n=
+ame=3D'test_file1' len=3D104; info #1: info_type=3D12 info_len=3D40 fh_len=
+=3D8
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5243 fd=3D-1 name=
+=3D'test_file2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5243 fd=3D-1 name=
+=3D'' len=3D52; info #0: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D40=
+ fh_len=3D8
+fanotify16.c:732: TPASS: got event #6: mask=3D8 pid=3D5243 fd=3D-1 name=3D'=
+test_file2' len=3D92; info #1: info_type=3D1 info_len=3D28 fh_len=3D8
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c30 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #8: mask=3D40000c00 pid=3D5243 fd=3D-1 n=
+ame=3D'.' len=3D56; info #0: info_type=3D2 info_len=3D32 fh_len=3D8
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5243 fd=3D-1 n=
+ame=3D'test_dir1' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D8
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5243 fd=3D-1 =
+name=3D'test_dir2' len=3D64; info #0: info_type=3D2 info_len=3D40 fh_len=3D=
+8
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ntfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ntfs opts=3D'' extra opt=
+s=3D''
+The partition start sector was not specified for /dev/loop0 and it could no=
+t be obtained automatically.  It has been set to 0.
+The number of sectors per track was not specified for /dev/loop0 and it cou=
+ld not be obtained automatically.  It has been set to 0.
+The number of heads was not specified for /dev/loop0 and it could not be ob=
+tained automatically.  It has been set to 0.
+To boot from a device, Windows needs the 'partition start sector', the 'sec=
+tors per track' and the 'number of heads' to be set.
+Windows will not be able to boot from this device.
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fanf0XHVr/fs_mnt fstyp=3Dntfs flags=3D0
+tst_test.c:1107: TINFO: Trying FUSE...
+fanotify16.c:765: TCONF: FAN_REPORT_DIR_FID not supported on ntfs filesyste=
+m
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on tmpfs =3D=3D=3D
+tst_test.c:1093: TINFO: Skipping mkfs for TMPFS filesystem
+tst_test.c:1074: TINFO: Limiting tmpfs size to 32MB
+tst_test.c:1107: TINFO: Mounting ltp-tmpfs to /fs/sda2/tmpdir/ltp-i4m7SNAjJ=
+Q/LTP_fanf0XHVr/fs_mnt fstyp=3Dtmpfs flags=3D0
+fanotify16.c:271: TINFO: Test #0: FAN_REPORT_DFID_NAME monitor filesystem f=
+or create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D be558fec.2761e6db.30a7b5fb.1.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D be558fec.2761e6db.44cf1ab1=
+.3.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D be558fec.2761e6=
+db.c5f3edd7.4.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5362 fd=3D-1 name=
+=3D'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5362 fd=3D-1 name=3D=
+'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5362 fd=3D-1 name=
+=3D'test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5362 fd=3D-1 name=3D'=
+test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:271: TINFO: Test #1: FAN_REPORT_DFID_NAME monitor directories =
+for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D be558fec.2761e6db.30a7b5fb.1.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D be558fec.2761e6db.fca13949=
+.5.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D be558fec.2761e6=
+db.463860d5.6.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5362 fd=3D-1 name=
+=3D'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5362 fd=3D-1 name=3D=
+'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5362 fd=3D-1 name=
+=3D'test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5362 fd=3D-1 name=3D'=
+test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:271: TINFO: Test #2: FAN_REPORT_DIR_FID monitor filesystem for=
+ create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D be558fec.2761e6db.30a7b5fb.1.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D be558fec.2761e6db.9102fc5f=
+.7.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D be558fec.2761e6=
+db.f062c60e.8.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #1: mask=3D3e8 pid=3D5362 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D2a8 pid=3D5362 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5362 fd=3D-1 name=3D=
+'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:271: TINFO: Test #3: FAN_REPORT_DIR_FID monitor directories fo=
+r create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D be558fec.2761e6db.30a7b5fb.1.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D be558fec.2761e6db.93bc068d=
+.9.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D be558fec.2761e6=
+db.3de281b2.a.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #1: mask=3D3e8 pid=3D5362 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D2a8 pid=3D5362 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5362 fd=3D-1 name=3D=
+'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:271: TINFO: Test #4: FAN_REPORT_DFID_FID monitor filesystem fo=
+r create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D be558fec.2761e6db.30a7b5fb.1.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D be558fec.2761e6db.9fc6b0b2=
+.b.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D be558fec.2761e6=
+db.71d0b162.c.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #1: mask=3D3c0 pid=3D5362 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D280 pid=3D5362 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D3 info_len=3D32=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5362 fd=3D-1 name=3D=
+'' len=3D88; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5362 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D400002c0 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:271: TINFO: Test #5: FAN_REPORT_DFID_FID monitor directories f=
+or create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D be558fec.2761e6db.30a7b5fb.1.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D be558fec.2761e6db.6f54cd21=
+.d.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D be558fec.2761e6=
+db.47ecc51.e.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #1: mask=3D3c0 pid=3D5362 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D280 pid=3D5362 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D3 info_len=3D32=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D28 pid=3D5362 fd=3D-1 name=3D=
+'' len=3D88; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D400002c0 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5362 fd=3D-1 n=
+ame=3D'' len=3D56; info #0: info_type=3D3 info_len=3D32 fh_len=3D12
+fanotify16.c:271: TINFO: Test #6: FAN_REPORT_DFID_NAME_FID monitor filesyst=
+em for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D be558fec.2761e6db.30a7b5fb.1.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D be558fec.2761e6db.5add8c1.=
+f.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D be558fec.2761e6=
+db.11ac4f94.10.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5362 fd=3D-1 name=
+=3D'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5362 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D280 pid=3D5362 fd=3D-1 name=
+=3D'test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5362 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5362 fd=3D-1 name=3D'=
+test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #9: mask=3D40000280 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:271: TINFO: Test #7: FAN_REPORT_DFID_NAME_FID monitor director=
+ies for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D be558fec.2761e6db.30a7b5fb.1.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D be558fec.2761e6db.2e50420b=
+.11.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D be558fec.2761e6=
+db.e9adc35f.12.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5362 fd=3D-1 name=
+=3D'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5362 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D280 pid=3D5362 fd=3D-1 name=
+=3D'test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D8 pid=3D5362 fd=3D-1 name=3D'=
+test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:271: TINFO: Test #8: FAN_REPORT_DFID_NAME_TARGET monitor files=
+ystem for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D be558fec.2761e6db.30a7b5fb.1.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D be558fec.2761e6db.93aa376f=
+.13.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D be558fec.2761e6=
+db.4c310863.14.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5362 fd=3D-1 name=
+=3D'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5362 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5362 fd=3D-1 name=
+=3D'test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3Dc00 pid=3D5362 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000040 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D40000280 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:271: TINFO: Test #9: FAN_REPORT_DFID_NAME_TARGET monitor direc=
+tories for create/delete/move/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D be558fec.2761e6db.30a7b5fb.1.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D be558fec.2761e6db.414f16e0=
+.15.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D be558fec.2761e6=
+db.49eecfb4.16.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5362 fd=3D-1 name=
+=3D'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5362 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D288 pid=3D5362 fd=3D-1 name=
+=3D'test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D40000c30 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c00 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000040 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000280 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:271: TINFO: Test #10: FAN_REPORT_DFID_NAME_FID monitor filesys=
+tem for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D be558fec.2761e6db.30a7b5fb.1.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D be558fec.2761e6db.f1bda58b=
+.17.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D be558fec.2761e6=
+db.92cf9879.18.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5362 fd=3D-1 name=
+=3D'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5362 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5362 fd=3D-1 n=
+ame=3D'test_file1' len=3D112; info #1: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5362 fd=3D-1 name=
+=3D'test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5362 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D8 pid=3D5362 fd=3D-1 name=3D'=
+test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c30 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D40000c00 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #9: mask=3D50000000 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D112; info #1: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:732: TPASS: got event #10: mask=3D40000040 pid=3D5362 fd=3D-1 =
+name=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D=
+12
+fanotify16.c:732: TPASS: got event #11: mask=3D40000280 pid=3D5362 fd=3D-1 =
+name=3D'test_dir2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D=
+12
+fanotify16.c:271: TINFO: Test #11: FAN_REPORT_DFID_NAME_FID monitor directo=
+ries for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D be558fec.2761e6db.30a7b5fb.1.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D be558fec.2761e6db.924eb853=
+.19.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D be558fec.2761e6=
+db.6ad36377.1a.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5362 fd=3D-1 name=
+=3D'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5362 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5362 fd=3D-1 n=
+ame=3D'test_file1' len=3D112; info #1: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5362 fd=3D-1 name=
+=3D'test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5362 fd=3D-1 name=3D'=
+test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D50000000 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D10 info_len=3D44 fh_len=3D=
+12
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #10: mask=3D50000000 pid=3D5362 fd=3D-1 =
+name=3D'test_dir2' len=3D68; info #0: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:732: TPASS: got event #11: mask=3D40000280 pid=3D5362 fd=3D-1 =
+name=3D'test_dir2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D=
+12
+fanotify16.c:271: TINFO: Test #12: FAN_REPORT_DFID_NAME_TARGET monitor file=
+system for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D be558fec.2761e6db.30a7b5fb.1.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D be558fec.2761e6db.46fd7432=
+.1b.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D be558fec.2761e6=
+db.8e0fd714.1c.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5362 fd=3D-1 name=
+=3D'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5362 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5362 fd=3D-1 n=
+ame=3D'test_file1' len=3D144; info #1: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D288 pid=3D5362 fd=3D-1 name=
+=3D'test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5362 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D50000000 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D144; info #1: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #10: info #0: info_type=3D2 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5362 fd=3D-1 =
+name=3D'test_dir2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=
+=3D12
+fanotify16.c:271: TINFO: Test #13: FAN_REPORT_DFID_NAME_TARGET monitor dire=
+ctories for create/delete/move/rename/open/close
+fanotify.h:120: TINFO: fid(fs_mnt) =3D be558fec.2761e6db.30a7b5fb.1.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D be558fec.2761e6db.6a355036=
+.1d.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D be558fec.2761e6=
+db.da1e6a0.1e.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:706: TINFO: got event #0: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #1: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #1: mask=3D160 pid=3D5362 fd=3D-1 name=
+=3D'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5362 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5362 fd=3D-1 n=
+ame=3D'test_file1' len=3D144; info #1: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:706: TINFO: got event #4: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D288 pid=3D5362 fd=3D-1 name=
+=3D'test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D40000c30 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c00 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:706: TINFO: got event #7: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D50000000 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #8: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #9: info #0: info_type=3D12 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #9: mask=3D50000000 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D=
+12
+fanotify16.c:706: TINFO: got event #10: info #0: info_type=3D2 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5362 fd=3D-1 =
+name=3D'test_dir2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=
+=3D12
+fanotify16.c:271: TINFO: Test #14: FAN_REPORT_DFID_NAME_FID monitor directo=
+ries and ignore FAN_RENAME events to/from temp directory
+fanotify.h:120: TINFO: fid(fs_mnt) =3D be558fec.2761e6db.30a7b5fb.1.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D be558fec.2761e6db.6ba6eccd=
+.1f.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D be558fec.2761e6=
+db.e87a7f29.20.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5362 fd=3D-1 name=
+=3D'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5362 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5362 fd=3D-1 n=
+ame=3D'test_file1' len=3D112; info #1: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5362 fd=3D-1 name=
+=3D'test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #5: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3D8 pid=3D5362 fd=3D-1 name=3D'=
+test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D40000c30 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c00 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D40000040 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #9: mask=3D40000280 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:271: TINFO: Test #15: FAN_REPORT_DFID_NAME_FID monitor filesys=
+tem and ignore FAN_RENAME events to/from temp directory
+fanotify.h:120: TINFO: fid(fs_mnt) =3D be558fec.2761e6db.30a7b5fb.1.0...
+fanotify16.c:300: TINFO: Mounting fs_mnt/test_dir1 to /fs/sda2/tmpdir/ltp-i=
+4m7SNAjJQ/LTP_fanf0XHVr/fs_mnt/test_dir1 fstyp=3Dnone flags=3D1000
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1) =3D be558fec.2761e6db.e21159c.=
+21.0...
+fanotify.h:120: TINFO: fid(fs_mnt/test_dir1/test_file1) =3D be558fec.2761e6=
+db.6974158.22.0...
+fanotify16.c:437: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanf0=
+XHVr/fs_mnt/test_dir1
+fanotify16.c:732: TPASS: got event #0: mask=3D40000100 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #1: mask=3D140 pid=3D5362 fd=3D-1 name=
+=3D'test_file1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:706: TINFO: got event #2: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #2: mask=3D20 pid=3D5362 fd=3D-1 name=3D=
+'test_file1' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #3: info #0: info_type=3D10 info_len=3D4=
+4 fh_len=3D12
+fanotify16.c:732: TPASS: got event #3: mask=3D10000000 pid=3D5362 fd=3D-1 n=
+ame=3D'test_file1' len=3D112; info #1: info_type=3D12 info_len=3D44 fh_len=
+=3D12
+fanotify16.c:732: TPASS: got event #4: mask=3D280 pid=3D5362 fd=3D-1 name=
+=3D'test_file2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D12
+fanotify16.c:732: TPASS: got event #5: mask=3Dc00 pid=3D5362 fd=3D-1 name=
+=3D'' len=3D56; info #0: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:706: TINFO: got event #6: info #0: info_type=3D2 info_len=3D44=
+ fh_len=3D12
+fanotify16.c:732: TPASS: got event #6: mask=3D8 pid=3D5362 fd=3D-1 name=3D'=
+test_file2' len=3D100; info #1: info_type=3D1 info_len=3D32 fh_len=3D12
+fanotify16.c:732: TPASS: got event #7: mask=3D40000c30 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #8: mask=3D40000c00 pid=3D5362 fd=3D-1 n=
+ame=3D'.' len=3D60; info #0: info_type=3D2 info_len=3D36 fh_len=3D12
+fanotify16.c:732: TPASS: got event #9: mask=3D40000040 pid=3D5362 fd=3D-1 n=
+ame=3D'test_dir1' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D1=
+2
+fanotify16.c:732: TPASS: got event #10: mask=3D40000280 pid=3D5362 fd=3D-1 =
+name=3D'test_dir2' len=3D68; info #0: info_type=3D2 info_len=3D44 fh_len=3D=
+12
+
+Summary:
+passed   1078
+failed   0
+broken   0
+skipped  1
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D39 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D9 cstime=3D2278
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dfanotify22 stime=3D1689215626
+cmdline=3D"fanotify22"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext4 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fanNolx32/test_mnt fstyp=3Dext4 flags=3D0
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+fanotify.h:120: TINFO: fid(test_mnt/internal_dir/bad_dir) =3D d3e74fbd.c03e=
+7b36.7e82.42e21557.0...
+fanotify22.c:260: TINFO: Umounting /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/LTP_fanNo=
+lx32/test_mnt
+debugfs 1.46.6-rc1 (12-Sep-2022)
+fanotify22.c:262: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNA=
+jJQ/LTP_fanNolx32/test_mnt fstyp=3Dext4 flags=3D0
+fanotify.h:120: TINFO: fid(test_mnt) =3D d3e74fbd.c03e7b36.2.0.0...
+fanotify22.c:57: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fanNolx32/test_mnt fstyp=3Dext4 flags=3D21
+fanotify22.c:232: TPASS: Successfully received: Trigger abort
+fanotify22.c:232: TPASS: Successfully received: Lookup of inode with invali=
+d mode
+fanotify22.c:57: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fanNolx32/test_mnt fstyp=3Dext4 flags=3D21
+fanotify22.c:232: TPASS: Successfully received: Multiple error submission
+fanotify22.c:57: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_fanNolx32/test_mnt fstyp=3Dext4 flags=3D21
+fanotify22.c:232: TPASS: Successfully received: Multiple error submission 2
+
+Summary:
+passed   4
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D1 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D34
+<<<test_end>>>
+<<<test_start>>>
+tag=3Diopl01 stime=3D1689215627
+cmdline=3D"iopl01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_kconfig.c:87: TINFO: Parsing kernel config '/proc/config.gz'
+tst_lockdown.c:60: TINFO: Unable to determine system lockdown state
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+iopl01.c:39: TPASS: iopl() passed for level 0, returned 0
+iopl01.c:39: TPASS: iopl() passed for level 1, returned 0
+iopl01.c:39: TPASS: iopl() passed for level 2, returned 0
+iopl01.c:39: TPASS: iopl() passed for level 3, returned 0
+
+Summary:
+passed   4
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D7
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dio_destroy01 stime=3D1689215627
+cmdline=3D"io_destroy01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+io_destroy01.c:42: TPASS: io_destroy() failed as expected, returned -EINVAL
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D4
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dio_getevents01 stime=3D1689215627
+cmdline=3D"io_getevents01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_kconfig.c:87: TINFO: Parsing kernel config '/proc/config.gz'
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+io_getevents01.c:26: TPASS: io_getevents syscall with invalid ctx : EINVAL =
+(22)
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D1 cstime=3D6
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dio_setup01 stime=3D1689215627
+cmdline=3D"io_setup01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+io_setup01.c:66: TPASS: io_setup() passed as expected
+io_setup01.c:44: TPASS: io_setup() failed as expected, returned -EINVAL
+io_setup01.c:44: TPASS: io_setup() failed as expected, returned -EINVAL
+io_setup01.c:44: TPASS: io_setup() failed as expected, returned -EFAULT
+io_setup01.c:44: TPASS: io_setup() failed as expected, returned -EAGAIN/EWO=
+ULDBLOCK
+
+Summary:
+passed   5
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dkeyctl08 stime=3D1689215627
+cmdline=3D"keyctl08"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+keyctl08.c:22: TPASS: Denied access to .builtin_trusted_keys
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dlinkat01 stime=3D1689215627
+cmdline=3D"linkat01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+linkat01    1  TPASS  :  linkat is functionality correct
+linkat01    2  TPASS  :  linkat succeeded as expected
+linkat01    3  TPASS  :  linkat is functionality correct
+linkat01    4  TPASS  :  linkat is functionality correct
+linkat01    5  TPASS  :  linkat is functionality correct
+linkat01    6  TPASS  :  linkat succeeded as expected
+linkat01    7  TPASS  :  linkat is functionality correct
+linkat01    8  TPASS  :  linkat failed as expected: TEST_ERRNO=3DENOTDIR(20=
+): Not a directory
+linkat01    9  TPASS  :  linkat failed as expected: TEST_ERRNO=3DENOTDIR(20=
+): Not a directory
+linkat01   10  TPASS  :  linkat succeeded as expected
+linkat01   11  TPASS  :  linkat is functionality correct
+linkat01   12  TPASS  :  linkat failed as expected: TEST_ERRNO=3DEBADF(9): =
+Bad file descriptor
+linkat01   13  TPASS  :  linkat failed as expected: TEST_ERRNO=3DEBADF(9): =
+Bad file descriptor
+linkat01   14  TPASS  :  linkat succeeded as expected
+linkat01   15  TPASS  :  linkat is functionality correct
+linkat01   16  TPASS  :  linkat failed as expected: TEST_ERRNO=3DENOENT(2):=
+ No such file or directory
+linkat01   17  TPASS  :  linkat failed as expected: TEST_ERRNO=3DENOENT(2):=
+ No such file or directory
+linkat01   18  TPASS  :  linkat succeeded as expected
+linkat01   19  TPASS  :  linkat is functionality correct
+linkat01   20  TPASS  :  linkat failed as expected: TEST_ERRNO=3DEXDEV(18):=
+ Invalid cross-device link
+linkat01   21  TPASS  :  linkat failed as expected: TEST_ERRNO=3DEPERM(1): =
+Operation not permitted
+linkat01   22  TPASS  :  linkat failed as expected: TEST_ERRNO=3DEINVAL(22)=
+: Invalid argument
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D4
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dlistxattr01 stime=3D1689215627
+cmdline=3D"listxattr01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+listxattr01.c:63: TPASS: listxattr() succeeded
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dlistxattr02 stime=3D1689215627
+cmdline=3D"listxattr02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+listxattr02.c:72: TPASS: listxattr() failed as expected: ERANGE (34)
+listxattr02.c:72: TPASS: listxattr() failed as expected: ENOENT (2)
+listxattr02.c:72: TPASS: listxattr() failed as expected: EFAULT (14)
+listxattr02.c:72: TPASS: listxattr() failed as expected: ENAMETOOLONG (36)
+
+Summary:
+passed   4
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dlseek11 stime=3D1689215627
+cmdline=3D"lseek11"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+lseek11.c:162: TINFO: The block size is 4096
+lseek11.c:210: TPASS: The 0th test passed: SEEK_DATA from startblock 0 offs=
+et 0
+lseek11.c:210: TPASS: The 1th test passed: SEEK_DATA from startblock 0 offs=
+et 4
+lseek11.c:210: TPASS: The 2th test passed: SEEK_HOLE from startblock 0 offs=
+et 0
+lseek11.c:210: TPASS: The 3th test passed: SEEK_HOLE from startblock 0 offs=
+et 4
+lseek11.c:210: TPASS: The 4th test passed: SEEK_HOLE from startblock 1 offs=
+et 0
+lseek11.c:210: TPASS: The 5th test passed: SEEK_HOLE from startblock 1 offs=
+et 128
+lseek11.c:210: TPASS: The 6th test passed: SEEK_DATA from startblock 1 offs=
+et 0
+lseek11.c:210: TPASS: The 7th test passed: SEEK_DATA from startblock 10 off=
+set -1
+lseek11.c:210: TPASS: The 8th test passed: SEEK_DATA from startblock 10 off=
+set 0
+lseek11.c:210: TPASS: The 9th test passed: SEEK_DATA from startblock 10 off=
+set 4
+lseek11.c:210: TPASS: The 10th test passed: SEEK_HOLE from startblock 10 of=
+fset 0
+lseek11.c:210: TPASS: The 11th test passed: SEEK_HOLE from startblock 10 of=
+fset 4
+lseek11.c:210: TPASS: The 12th test passed: SEEK_HOLE from startblock 11 of=
+fset 128
+lseek11.c:210: TPASS: The 13th test passed: SEEK_DATA from startblock 11 of=
+fset 128
+lseek11.c:210: TPASS: The 14th test passed: SEEK_HOLE from startblock 30 of=
+fset -128
+
+Summary:
+passed   15
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D1 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmkdir03 stime=3D1689215628
+cmdline=3D"mkdir03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1004: TINFO: Mounting (null) to /fs/sda2/tmpdir/ltp-i4m7SNAjJQ/L=
+TP_mkdNxkhwn/mntpoint fstyp=3Dtmpfs flags=3D21
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+mkdir03.c:62: TPASS: mkdir() failed as expected: EFAULT (14)
+mkdir03.c:62: TPASS: mkdir() failed as expected: ENAMETOOLONG (36)
+mkdir03.c:62: TPASS: mkdir() failed as expected: EEXIST (17)
+mkdir03.c:62: TPASS: mkdir() failed as expected: ENOENT (2)
+mkdir03.c:62: TPASS: mkdir() failed as expected: ENOTDIR (20)
+mkdir03.c:62: TPASS: mkdir() failed as expected: ELOOP (40)
+mkdir03.c:62: TPASS: mkdir() failed as expected: EROFS (30)
+
+Summary:
+passed   7
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmkdir05 stime=3D1689215628
+cmdline=3D"mkdir05"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+mkdir05.c:45: TPASS: mkdir() functionality is correct
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmkdir09 stime=3D1689215628
+cmdline=3D"mkdir09"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext2
+tst_supported_fs_types.c:55: TINFO: mkfs.ext2 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext3
+tst_supported_fs_types.c:55: TINFO: mkfs.ext3 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext4
+tst_supported_fs_types.c:55: TINFO: mkfs.ext4 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports xfs
+tst_supported_fs_types.c:55: TINFO: mkfs.xfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports btrfs
+tst_supported_fs_types.c:55: TINFO: mkfs.btrfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports vfat
+tst_supported_fs_types.c:55: TINFO: mkfs.vfat does exist
+tst_supported_fs_types.c:116: TINFO: Filesystem exfat is not supported
+tst_supported_fs_types.c:120: TINFO: FUSE does support ntfs
+tst_supported_fs_types.c:55: TINFO: mkfs.ntfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports tmpfs
+tst_supported_fs_types.c:42: TINFO: mkfs is not needed for tmpfs
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext2 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext2 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_mkdiy350L/mntpoint fstyp=3Dext2 flags=3D0
+mkdir09.c:47: TPASS: [0] create dirs that already exist
+mkdir09.c:67: TPASS: [4] remove dirs that do not exist
+mkdir09.c:93: TPASS: [5] create/remove dirs
+mkdir09.c:47: TPASS: [3] create dirs that already exist
+mkdir09.c:67: TPASS: [1] remove dirs that do not exist
+mkdir09.c:93: TPASS: [2] create/remove dirs
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext3 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext3 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_mkdiy350L/mntpoint fstyp=3Dext3 flags=3D0
+mkdir09.c:67: TPASS: [1] remove dirs that do not exist
+mkdir09.c:47: TPASS: [0] create dirs that already exist
+mkdir09.c:47: TPASS: [3] create dirs that already exist
+mkdir09.c:67: TPASS: [4] remove dirs that do not exist
+mkdir09.c:93: TPASS: [5] create/remove dirs
+mkdir09.c:93: TPASS: [2] create/remove dirs
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext4 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext4 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_mkdiy350L/mntpoint fstyp=3Dext4 flags=3D0
+mkdir09.c:67: TPASS: [1] remove dirs that do not exist
+mkdir09.c:67: TPASS: [4] remove dirs that do not exist
+mkdir09.c:93: TPASS: [5] create/remove dirs
+mkdir09.c:47: TPASS: [3] create dirs that already exist
+mkdir09.c:93: TPASS: [2] create/remove dirs
+mkdir09.c:47: TPASS: [0] create dirs that already exist
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on xfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with xfs opts=3D'' extra opts=
+=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_mkdiy350L/mntpoint fstyp=3Dxfs flags=3D0
+mkdir09.c:47: TPASS: [3] create dirs that already exist
+mkdir09.c:67: TPASS: [4] remove dirs that do not exist
+mkdir09.c:93: TPASS: [5] create/remove dirs
+mkdir09.c:47: TPASS: [0] create dirs that already exist
+mkdir09.c:93: TPASS: [2] create/remove dirs
+mkdir09.c:67: TPASS: [1] remove dirs that do not exist
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on btrfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with btrfs opts=3D'' extra op=
+ts=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_mkdiy350L/mntpoint fstyp=3Dbtrfs flags=3D0
+mkdir09.c:93: TPASS: [2] create/remove dirs
+mkdir09.c:47: TPASS: [0] create dirs that already exist
+mkdir09.c:47: TPASS: [3] create dirs that already exist
+mkdir09.c:67: TPASS: [1] remove dirs that do not exist
+mkdir09.c:67: TPASS: [4] remove dirs that do not exist
+mkdir09.c:93: TPASS: [5] create/remove dirs
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on vfat =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with vfat opts=3D'' extra opt=
+s=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_mkdiy350L/mntpoint fstyp=3Dvfat flags=3D0
+mkdir09.c:47: TPASS: [3] create dirs that already exist
+mkdir09.c:67: TPASS: [4] remove dirs that do not exist
+mkdir09.c:93: TPASS: [2] create/remove dirs
+mkdir09.c:67: TPASS: [1] remove dirs that do not exist
+mkdir09.c:93: TPASS: [5] create/remove dirs
+mkdir09.c:47: TPASS: [0] create dirs that already exist
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ntfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ntfs opts=3D'' extra opt=
+s=3D''
+The partition start sector was not specified for /dev/loop0 and it could no=
+t be obtained automatically.  It has been set to 0.
+The number of sectors per track was not specified for /dev/loop0 and it cou=
+ld not be obtained automatically.  It has been set to 0.
+The number of heads was not specified for /dev/loop0 and it could not be ob=
+tained automatically.  It has been set to 0.
+To boot from a device, Windows needs the 'partition start sector', the 'sec=
+tors per track' and the 'number of heads' to be set.
+Windows will not be able to boot from this device.
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_mkdiy350L/mntpoint fstyp=3Dntfs flags=3D0
+tst_test.c:1107: TINFO: Trying FUSE...
+mkdir09.c:47: TPASS: [0] create dirs that already exist
+mkdir09.c:93: TPASS: [2] create/remove dirs
+mkdir09.c:67: TPASS: [4] remove dirs that do not exist
+mkdir09.c:67: TPASS: [1] remove dirs that do not exist
+mkdir09.c:47: TPASS: [3] create dirs that already exist
+mkdir09.c:93: TPASS: [5] create/remove dirs
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on tmpfs =3D=3D=3D
+tst_test.c:1093: TINFO: Skipping mkfs for TMPFS filesystem
+tst_test.c:1074: TINFO: Limiting tmpfs size to 32MB
+tst_test.c:1107: TINFO: Mounting ltp-tmpfs to /fs/sda2/tmpdir/ltp-i4m7SNAjJ=
+Q/LTP_mkdiy350L/mntpoint fstyp=3Dtmpfs flags=3D0
+mkdir09.c:93: TPASS: [2] create/remove dirs
+mkdir09.c:93: TPASS: [5] create/remove dirs
+mkdir09.c:67: TPASS: [4] remove dirs that do not exist
+mkdir09.c:67: TPASS: [1] remove dirs that do not exist
+mkdir09.c:47: TPASS: [0] create dirs that already exist
+mkdir09.c:47: TPASS: [3] create dirs that already exist
+
+Summary:
+passed   48
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D44 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D34 cstime=3D4050
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmknodat02 stime=3D1689215672
+cmdline=3D"mknodat02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+mknodat     0  TINFO  :  Found free device 0 '/dev/loop0'
+mknodat     0  TINFO  :  Formatting /dev/loop0 with ext2 opts=3D'' extra op=
+ts=3D''
+mknodat     0  TINFO  :  Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNA=
+jJQ/LTP_mkn4ADLFO/mntpoint fstyp=3Dext2 flags=3D1
+mknodat     1  TPASS  :  mknodat() returned the expected value: TEST_ERRNO=
+=3DSUCCESS(0): Success
+mknodat     2  TPASS  :  mknodat() returned the expected value: TEST_ERRNO=
+=3DSUCCESS(0): Success
+mknodat     3  TPASS  :  mknodat() returned the expected value: TEST_ERRNO=
+=3DSUCCESS(0): Success
+mknodat     4  TPASS  :  mknodat() returned the expected value: TEST_ERRNO=
+=3DEROFS(30): Read-only file system
+mknodat     5  TPASS  :  mknodat() returned the expected value: TEST_ERRNO=
+=3DEROFS(30): Read-only file system
+mknodat     6  TPASS  :  mknodat() returned the expected value: TEST_ERRNO=
+=3DEROFS(30): Read-only file system
+mknodat     7  TPASS  :  mknodat() returned the expected value: TEST_ERRNO=
+=3DELOOP(40): Too many levels of symbolic links
+mknodat     8  TPASS  :  mknodat() returned the expected value: TEST_ERRNO=
+=3DELOOP(40): Too many levels of symbolic links
+mknodat     9  TPASS  :  mknodat() returned the expected value: TEST_ERRNO=
+=3DELOOP(40): Too many levels of symbolic links
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D1 cstime=3D7
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmlock201 stime=3D1689215672
+cmdline=3D"mlock201"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+mlock201.c:127: TPASS: mlock2(0) succeeded in locking 1 pages
+mlock201.c:127: TPASS: mlock2(0) succeeded in locking 8 pages
+mlock201.c:127: TPASS: mlock2(0) succeeded in locking 3 pages
+mlock201.c:127: TPASS: mlock2(0) succeeded in locking 2 pages
+mlock201.c:127: TPASS: mlock2(1) succeeded in locking 0 pages
+mlock201.c:127: TPASS: mlock2(1) succeeded in locking 4 pages
+mlock201.c:127: TPASS: mlock2(1) succeeded in locking 1 pages
+mlock201.c:127: TPASS: mlock2(1) succeeded in locking 4 pages
+
+Summary:
+passed   8
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmmap02 stime=3D1689215672
+cmdline=3D"mmap02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+mmap02      1  TPASS  :  Functionality of mmap() successful
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmmap03 stime=3D1689215672
+cmdline=3D"mmap03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+mmap03      1  TPASS  :  mmap() functionality is correct
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmmap14 stime=3D1689215672
+cmdline=3D"mmap14"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+mmap14      1  TPASS  :  Functionality of mmap() successful
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmmap15 stime=3D1689215672
+cmdline=3D"mmap15"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+mmap15      1  TPASS  :  mmap into high region failed as expected: errno=3D=
+ENOMEM(12): Cannot allocate memory
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmove_mount02 stime=3D1689215672
+cmdline=3D"move_mount02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext2
+tst_supported_fs_types.c:55: TINFO: mkfs.ext2 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext3
+tst_supported_fs_types.c:55: TINFO: mkfs.ext3 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext4
+tst_supported_fs_types.c:55: TINFO: mkfs.ext4 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports xfs
+tst_supported_fs_types.c:55: TINFO: mkfs.xfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports btrfs
+tst_supported_fs_types.c:55: TINFO: mkfs.btrfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports vfat
+tst_supported_fs_types.c:55: TINFO: mkfs.vfat does exist
+tst_supported_fs_types.c:116: TINFO: Filesystem exfat is not supported
+tst_supported_fs_types.c:120: TINFO: FUSE does support ntfs
+tst_supported_fs_types.c:55: TINFO: mkfs.ntfs does exist
+tst_supported_fs_types.c:165: TINFO: Skipping FUSE based ntfs as requested =
+by the test
+tst_supported_fs_types.c:90: TINFO: Kernel supports tmpfs
+tst_supported_fs_types.c:42: TINFO: mkfs is not needed for tmpfs
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext2 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext2 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+move_mount02.c:80: TPASS: invalid-from-fd: move_mount() failed as expected:=
+ EBADF (9)
+move_mount02.c:80: TPASS: invalid-from-path: move_mount() failed as expecte=
+d: ENOENT (2)
+move_mount02.c:80: TPASS: invalid-to-fd: move_mount() failed as expected: E=
+BADF (9)
+move_mount02.c:80: TPASS: invalid-to-path: move_mount() failed as expected:=
+ ENOENT (2)
+move_mount02.c:80: TPASS: invalid-flags: move_mount() failed as expected: E=
+INVAL (22)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext3 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext3 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+move_mount02.c:80: TPASS: invalid-from-fd: move_mount() failed as expected:=
+ EBADF (9)
+move_mount02.c:80: TPASS: invalid-from-path: move_mount() failed as expecte=
+d: ENOENT (2)
+move_mount02.c:80: TPASS: invalid-to-fd: move_mount() failed as expected: E=
+BADF (9)
+move_mount02.c:80: TPASS: invalid-to-path: move_mount() failed as expected:=
+ ENOENT (2)
+move_mount02.c:80: TPASS: invalid-flags: move_mount() failed as expected: E=
+INVAL (22)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext4 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext4 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+move_mount02.c:80: TPASS: invalid-from-fd: move_mount() failed as expected:=
+ EBADF (9)
+move_mount02.c:80: TPASS: invalid-from-path: move_mount() failed as expecte=
+d: ENOENT (2)
+move_mount02.c:80: TPASS: invalid-to-fd: move_mount() failed as expected: E=
+BADF (9)
+move_mount02.c:80: TPASS: invalid-to-path: move_mount() failed as expected:=
+ ENOENT (2)
+move_mount02.c:80: TPASS: invalid-flags: move_mount() failed as expected: E=
+INVAL (22)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on xfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with xfs opts=3D'' extra opts=
+=3D''
+move_mount02.c:80: TPASS: invalid-from-fd: move_mount() failed as expected:=
+ EBADF (9)
+move_mount02.c:80: TPASS: invalid-from-path: move_mount() failed as expecte=
+d: ENOENT (2)
+move_mount02.c:80: TPASS: invalid-to-fd: move_mount() failed as expected: E=
+BADF (9)
+move_mount02.c:80: TPASS: invalid-to-path: move_mount() failed as expected:=
+ ENOENT (2)
+move_mount02.c:80: TPASS: invalid-flags: move_mount() failed as expected: E=
+INVAL (22)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on btrfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with btrfs opts=3D'' extra op=
+ts=3D''
+move_mount02.c:80: TPASS: invalid-from-fd: move_mount() failed as expected:=
+ EBADF (9)
+move_mount02.c:80: TPASS: invalid-from-path: move_mount() failed as expecte=
+d: ENOENT (2)
+move_mount02.c:80: TPASS: invalid-to-fd: move_mount() failed as expected: E=
+BADF (9)
+move_mount02.c:80: TPASS: invalid-to-path: move_mount() failed as expected:=
+ ENOENT (2)
+move_mount02.c:80: TPASS: invalid-flags: move_mount() failed as expected: E=
+INVAL (22)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on vfat =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with vfat opts=3D'' extra opt=
+s=3D''
+move_mount02.c:80: TPASS: invalid-from-fd: move_mount() failed as expected:=
+ EBADF (9)
+move_mount02.c:80: TPASS: invalid-from-path: move_mount() failed as expecte=
+d: ENOENT (2)
+move_mount02.c:80: TPASS: invalid-to-fd: move_mount() failed as expected: E=
+BADF (9)
+move_mount02.c:80: TPASS: invalid-to-path: move_mount() failed as expected:=
+ ENOENT (2)
+move_mount02.c:80: TPASS: invalid-flags: move_mount() failed as expected: E=
+INVAL (22)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on tmpfs =3D=3D=3D
+tst_test.c:1093: TINFO: Skipping mkfs for TMPFS filesystem
+move_mount02.c:80: TPASS: invalid-from-fd: move_mount() failed as expected:=
+ EBADF (9)
+move_mount02.c:80: TPASS: invalid-from-path: move_mount() failed as expecte=
+d: ENOENT (2)
+move_mount02.c:80: TPASS: invalid-to-fd: move_mount() failed as expected: E=
+BADF (9)
+move_mount02.c:80: TPASS: invalid-to-path: move_mount() failed as expected:=
+ ENOENT (2)
+move_mount02.c:80: TPASS: invalid-flags: move_mount() failed as expected: E=
+INVAL (22)
+
+Summary:
+passed   35
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D7 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D4 cstime=3D185
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmprotect01 stime=3D1689215679
+cmdline=3D"mprotect01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+mprotect01    1  TPASS  :  expected failure - errno =3D 12 : Cannot allocat=
+e memory
+mprotect01    2  TPASS  :  expected failure - errno =3D 22 : Invalid argume=
+nt
+mprotect01    3  TPASS  :  expected failure - errno =3D 13 : Permission den=
+ied
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D6
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmq_notify03 stime=3D1689215679
+cmdline=3D"mq_notify03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+mq_notify03.c:85: TPASS: mq_unlink(m_name) passed
+mq_notify03.c:57: TPASS: mq_notify(m, &sev) passed
+mq_notify03.c:58: TPASS: mq_notify(m, NULL) passed
+mq_notify03.c:64: TPASS: mq_notify(m, &sev) passed
+mq_notify03.c:65: TPASS: mq_send(m, msg, sizeof(msg), 1) passed
+mq_notify03.c:38: TPASS: (size_t) mq_receive(m, buf, sizeof(buf), NULL) pas=
+sed
+mq_notify03.c:40: TPASS: memcmp(buf, msg, sizeof(buf)) passed
+
+Summary:
+passed   7
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D8
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmq_timedsend01 stime=3D1689215679
+cmdline=3D"mq_timedsend01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+mq_timedsend01.c:153: TINFO: Testing variant: vDSO or syscall with libc spe=
+c
+mq_timedsend01.c:259: TPASS: mq_timedreceive() returned 0, priority 0, leng=
+th: 8192
+mq_timedsend01.c:259: TPASS: mq_timedreceive() returned 1, priority 0, leng=
+th: 8192
+mq_timedsend01.c:259: TPASS: mq_timedreceive() returned 8192, priority 0, l=
+ength: 8192
+mq_timedsend01.c:259: TPASS: mq_timedreceive() returned 1, priority 32767, =
+length: 8192
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EMSGSIZE (90=
+)
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EBADF (9)
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EBADF (9)
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EBADF (9)
+mq_timedsend01.c:259: TPASS: mq_timedreceive() returned 16, priority 0, len=
+gth: 8192
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EINVAL (22)
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EINVAL (22)
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 1/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 2/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 3/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 4/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 5/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 6/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 7/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 8/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 9/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 10/10 message
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EINVAL (22)
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 1/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 2/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 3/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 4/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 5/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 6/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 7/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 8/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 9/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 10/10 message
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EINVAL (22)
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 1/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 2/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 3/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 4/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 5/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 6/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 7/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 8/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 9/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 10/10 message
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: ETIMEDOUT (1=
+10)
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 1/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 2/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 3/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 4/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 5/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 6/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 7/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 8/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 9/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 10/10 message
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EINTR (4)
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 1/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 2/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 3/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 4/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 5/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 6/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 7/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 8/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 9/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 10/10 message
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EFAULT (14)
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EFAULT (14)
+mq_timedsend01.c:153: TINFO: Testing variant: syscall with old kernel spec
+mq_timedsend01.c:259: TPASS: mq_timedreceive() returned 0, priority 0, leng=
+th: 8192
+mq_timedsend01.c:259: TPASS: mq_timedreceive() returned 1, priority 0, leng=
+th: 8192
+mq_timedsend01.c:259: TPASS: mq_timedreceive() returned 8192, priority 0, l=
+ength: 8192
+mq_timedsend01.c:259: TPASS: mq_timedreceive() returned 1, priority 32767, =
+length: 8192
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EMSGSIZE (90=
+)
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EBADF (9)
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EBADF (9)
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EBADF (9)
+mq_timedsend01.c:259: TPASS: mq_timedreceive() returned 16, priority 0, len=
+gth: 8192
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EINVAL (22)
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EINVAL (22)
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 1/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 2/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 3/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 4/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 5/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 6/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 7/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 8/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 9/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 10/10 message
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EINVAL (22)
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 1/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 2/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 3/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 4/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 5/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 6/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 7/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 8/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 9/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 10/10 message
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EINVAL (22)
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 1/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 2/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 3/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 4/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 5/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 6/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 7/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 8/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 9/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 10/10 message
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: ETIMEDOUT (1=
+10)
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 1/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 2/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 3/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 4/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 5/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 6/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 7/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 8/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 9/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 10/10 message
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EINTR (4)
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 1/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 2/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 3/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 4/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 5/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 6/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 7/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 8/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 9/10 message
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/mq_timedsend/../utils/mq.h:7=
+0: TINFO: receive 10/10 message
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EFAULT (14)
+mq_timedsend01.c:210: TPASS: mq_timedsend() failed expectedly: EFAULT (14)
+
+Summary:
+passed   34
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D10
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmq_unlink01 stime=3D1689215679
+cmdline=3D"mq_unlink01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+mq_unlink01.c:76: TINFO: queue name /test_mqueue
+mq_unlink01.c:99: TPASS: mq_unlink returned 0: SUCCESS (0)
+mq_unlink01.c:76: TINFO: queue name /test_mqueue
+mq_unlink01.c:99: TPASS: mq_unlink returned -1: EACCES (13)
+mq_unlink01.c:76: TINFO: queue name /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+mq_unlink01.c:99: TPASS: mq_unlink returned -1: ENOENT (2)
+mq_unlink01.c:76: TINFO: queue name /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+mq_unlink01.c:99: TPASS: mq_unlink returned -1: ENAMETOOLONG (36)
+
+Summary:
+passed   4
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D7
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmremap04 stime=3D1689215679
+cmdline=3D"mremap04"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+mremap04    1  TPASS  :  mremap() failed, 'MREMAP_MAYMOVE flag unset', errn=
+o 12
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D5
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmsgctl02 stime=3D1689215679
+cmdline=3D"msgctl02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+msgctl02.c:34: TPASS: msgctl(IPC_SET) msg_qbytes - 1
+msgctl02.c:40: TPASS: msg_qbytes =3D 16383
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D1 cstime=3D6
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmsgrcv07 stime=3D1689215679
+cmdline=3D"msgrcv07"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+msgrcv07.c:68: TPASS: msgrcv(MSG_EXCEPT) succeeded
+msgrcv07.c:71: TPASS: MSG_EXCEPT excepted MSGTYPE2 and got MSGTYPE1
+msgrcv07.c:95: TPASS: msgrcv(MSG_NOERROR) succeeded
+msgrcv07.c:98: TPASS: MSG_NOERROR truncated message correctly
+msgrcv07.c:134: TPASS: msgrcv(0, MSG_COPY) succeeded
+msgrcv07.c:137: TPASS: MSG_COPY got MSGTYPE1 data correctly
+msgrcv07.c:148: TPASS: msgrcv(1, MSG_COPY) succeeded
+msgrcv07.c:151: TPASS: MSG_COPY got MSGTYPE2 data correctly
+msgrcv07.c:157: TPASS: Two messages still in queue
+msgrcv07.c:178: TPASS: msgrcv(zero_msgtyp) succeeded
+msgrcv07.c:181: TPASS: zero_msgtyp got the first message
+msgrcv07.c:200: TPASS: msgrcv(positive_msgtyp) succeeded
+msgrcv07.c:203: TPASS: msgtyp got the first message in the queue of type ms=
+gtyp
+msgrcv07.c:225: TPASS: msgrcv(negative_msgtyp) succeeded
+msgrcv07.c:228: TPASS: -msgtyp got the first message in the queue with the =
+lowest type
+
+Summary:
+passed   15
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmsgsnd05 stime=3D1689215679
+cmdline=3D"msgsnd05"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+msgsnd05.c:44: TPASS: msgsnd(7, 0x55fcb900d700, 1024, 2048) : EAGAIN/EWOULD=
+BLOCK (11)
+msgsnd05.c:44: TPASS: msgsnd(7, 0x55fcb900d700, 1024, 0) : EINTR (4)
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D4
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmsync03 stime=3D1689215679
+cmdline=3D"msync03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+msync03     1  TPASS  :  msync failed as expected: TEST_ERRNO=3DEBUSY(16): =
+Device or resource busy
+msync03     2  TPASS  :  msync failed as expected: TEST_ERRNO=3DEINVAL(22):=
+ Invalid argument
+msync03     3  TPASS  :  msync failed as expected: TEST_ERRNO=3DEINVAL(22):=
+ Invalid argument
+msync03     4  TPASS  :  msync failed as expected: TEST_ERRNO=3DEINVAL(22):=
+ Invalid argument
+msync03     5  TPASS  :  msync failed as expected: TEST_ERRNO=3DEINVAL(22):=
+ Invalid argument
+msync03     6  TPASS  :  msync failed as expected: TEST_ERRNO=3DENOMEM(12):=
+ Cannot allocate memory
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D1 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dopenat04 stime=3D1689215680
+cmdline=3D"openat04"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext2
+tst_supported_fs_types.c:55: TINFO: mkfs.ext2 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext3
+tst_supported_fs_types.c:55: TINFO: mkfs.ext3 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext4
+tst_supported_fs_types.c:55: TINFO: mkfs.ext4 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports xfs
+tst_supported_fs_types.c:55: TINFO: mkfs.xfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports btrfs
+tst_supported_fs_types.c:55: TINFO: mkfs.btrfs does exist
+tst_supported_fs_types.c:157: TINFO: Skipping vfat as requested by the test
+tst_supported_fs_types.c:157: TINFO: Skipping exfat as requested by the tes=
+t
+tst_supported_fs_types.c:157: TINFO: Skipping ntfs as requested by the test
+tst_supported_fs_types.c:90: TINFO: Kernel supports tmpfs
+tst_supported_fs_types.c:42: TINFO: mkfs is not needed for tmpfs
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext2 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext2 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+openat04.c:92: TINFO: User nobody: uid =3D 65534, gid =3D 65534
+openat04.c:94: TINFO: Found unused GID 11: SUCCESS (0)
+openat04.c:124: TPASS: buf.st_gid =3D=3D free_gid (11)
+openat04.c:129: TPASS: open.tmp: Setgid bit not set
+openat04.c:134: TPASS: open.tmp: S_IXGRP bit is not set
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext3 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext3 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+openat04.c:54: TCONF: Kernel does not support noacl feature
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext4 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext4 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+openat04.c:54: TCONF: Kernel does not support noacl feature
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on xfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with xfs opts=3D'' extra opts=
+=3D''
+openat04.c:54: TCONF: Kernel does not support noacl feature
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on btrfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with btrfs opts=3D'' extra op=
+ts=3D''
+openat04.c:92: TINFO: User nobody: uid =3D 65534, gid =3D 65534
+openat04.c:94: TINFO: Found unused GID 11: SUCCESS (0)
+openat04.c:124: TPASS: buf.st_gid =3D=3D free_gid (11)
+openat04.c:129: TPASS: open.tmp: Setgid bit not set
+openat04.c:134: TPASS: open.tmp: S_IXGRP bit is not set
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on tmpfs =3D=3D=3D
+tst_test.c:1093: TINFO: Skipping mkfs for TMPFS filesystem
+openat04.c:54: TCONF: Kernel does not support noacl feature
+
+Summary:
+passed   6
+failed   0
+broken   0
+skipped  4
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D3 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D4 cstime=3D119
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dmadvise09 stime=3D1689215683
+cmdline=3D"madvise09"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+madvise09.c:308: TCONF: '/sys/fs/cgroup/memory/' not present, CONFIG_MEMCG =
+missing?
+
+Summary:
+passed   0
+failed   0
+broken   0
+skipped  1
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D32 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dpidfd_open03 stime=3D1689215683
+cmdline=3D"pidfd_open03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+pidfd_open03.c:50: TPASS: pidfd_open() passed
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dpipe06 stime=3D1689215683
+cmdline=3D"pipe06"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+pipe06      1  TPASS  :  failed with EMFILE
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D12
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dpipe07 stime=3D1689215683
+cmdline=3D"pipe07"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+pipe07      0  TINFO  :  Found 4 files open
+pipe07      1  TPASS  :  Opened 510 pipes
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D18
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dpipe10 stime=3D1689215683
+cmdline=3D"pipe10"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+pipe10      1  TPASS  :  functionality is correct
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D1 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dpipe11 stime=3D1689215683
+cmdline=3D"pipe11"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+pipe11.c:69: TINFO: Reading 4096 per each of 1 children
+pipe11.c:50: TPASS: Child 6019 read pipe buffer correctly
+pipe11.c:69: TINFO: Reading 2048 per each of 2 children
+pipe11.c:50: TPASS: Child 6021 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6020 read pipe buffer correctly
+pipe11.c:69: TINFO: Reading 1365 per each of 3 children
+pipe11.c:50: TPASS: Child 6023 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6022 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6024 read pipe buffer correctly
+pipe11.c:69: TINFO: Reading 1024 per each of 4 children
+pipe11.c:50: TPASS: Child 6026 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6025 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6028 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6027 read pipe buffer correctly
+pipe11.c:69: TINFO: Reading 409 per each of 10 children
+pipe11.c:50: TPASS: Child 6029 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6031 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6030 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6032 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6033 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6034 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6036 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6038 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6035 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6037 read pipe buffer correctly
+pipe11.c:69: TINFO: Reading 81 per each of 50 children
+pipe11.c:50: TPASS: Child 6039 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6040 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6042 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6041 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6043 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6044 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6045 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6046 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6048 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6049 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6047 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6050 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6052 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6051 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6053 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6054 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6055 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6056 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6057 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6058 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6060 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6059 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6061 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6062 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6063 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6065 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6066 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6067 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6068 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6069 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6070 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6073 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6074 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6072 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6075 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6076 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6077 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6078 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6079 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6080 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6081 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6082 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6083 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6085 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6084 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6087 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6088 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6089 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6090 read pipe buffer correctly
+pipe11.c:50: TPASS: Child 6091 read pipe buffer correctly
+
+Summary:
+passed   70
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D1 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D41
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dpipe2_01 stime=3D1689215684
+cmdline=3D"pipe2_01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+pipe2_01.c:56: TINFO: Test pipe2 with 0 flag=20
+pipe2_01.c:64: TPASS: pipe2 fds[0] gets expected flag(0)
+pipe2_01.c:64: TPASS: pipe2 fds[1] gets expected flag(0)
+pipe2_01.c:56: TINFO: Test pipe2 using O_CLOEXEC flag=20
+pipe2_01.c:64: TPASS: pipe2 fds[0] gets expected flag(524288)
+pipe2_01.c:64: TPASS: pipe2 fds[1] gets expected flag(524288)
+pipe2_01.c:56: TINFO: Test pipe2 using O_DIRECT flag=20
+pipe2_01.c:64: TPASS: pipe2 fds[1] gets expected flag(16384)
+pipe2_01.c:56: TINFO: Test pipe2 using O_NONBLOCK flag=20
+pipe2_01.c:64: TPASS: pipe2 fds[0] gets expected flag(2048)
+pipe2_01.c:64: TPASS: pipe2 fds[1] gets expected flag(2048)
+
+Summary:
+passed   7
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D5
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dppoll01 stime=3D1689215684
+cmdline=3D"ppoll01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+ppoll01.c:199: TINFO: Testing variant: vDSO or syscall with libc spec
+ppoll01.c:246: TINFO: case NORMAL
+ppoll01.c:277: TPASS: revents=3D0x0005
+ppoll01.c:283: TPASS: ret: 1
+ppoll01.c:246: TINFO: case MASK_SIGNAL
+ppoll01.c:283: TPASS: ret: 0
+ppoll01.c:246: TINFO: case TIMEOUT
+ppoll01.c:283: TPASS: ret: 0
+ppoll01.c:246: TINFO: case FD_ALREADY_CLOSED
+ppoll01.c:277: TPASS: revents=3D0x0020
+ppoll01.c:283: TPASS: ret: 1
+ppoll01.c:246: TINFO: case SEND_SIGINT
+ppoll01.c:285: TPASS: ret: -1, errno: EINTR (4)
+ppoll01.c:246: TINFO: case SEND_SIGINT_RACE_TEST
+ppoll01.c:285: TPASS: ret: -1, errno: EINTR (4)
+ppoll01.c:246: TINFO: case INVALID_NFDS
+ppoll01.c:285: TPASS: ret: -1, errno: EINVAL (22)
+ppoll01.c:246: TINFO: case INVALID_FDS
+ppoll01.c:285: TPASS: ret: -1, errno: EFAULT (14)
+ppoll01.c:199: TINFO: Testing variant: syscall with old kernel spec
+ppoll01.c:246: TINFO: case NORMAL
+ppoll01.c:277: TPASS: revents=3D0x0005
+ppoll01.c:283: TPASS: ret: 1
+ppoll01.c:246: TINFO: case MASK_SIGNAL
+ppoll01.c:283: TPASS: ret: 0
+ppoll01.c:246: TINFO: case TIMEOUT
+ppoll01.c:283: TPASS: ret: 0
+ppoll01.c:246: TINFO: case FD_ALREADY_CLOSED
+ppoll01.c:277: TPASS: revents=3D0x0020
+ppoll01.c:283: TPASS: ret: 1
+ppoll01.c:246: TINFO: case SEND_SIGINT
+ppoll01.c:285: TPASS: ret: -1, errno: EINTR (4)
+ppoll01.c:246: TINFO: case SEND_SIGINT_RACE_TEST
+ppoll01.c:285: TPASS: ret: -1, errno: EINTR (4)
+ppoll01.c:246: TINFO: case INVALID_NFDS
+ppoll01.c:285: TPASS: ret: -1, errno: EINVAL (22)
+ppoll01.c:246: TINFO: case INVALID_FDS
+ppoll01.c:285: TPASS: ret: -1, errno: EFAULT (14)
+
+Summary:
+passed   20
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D6
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dpreadv01 stime=3D1689215684
+cmdline=3D"preadv01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_buffers.c:55: TINFO: Test is using guarded buffers
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+preadv01.c:80: TPASS: Preadv(2) read 64 bytes successfully with content 'a'=
+ expectedly
+preadv01.c:80: TPASS: Preadv(2) read 64 bytes successfully with content 'a'=
+ expectedly
+preadv01.c:80: TPASS: Preadv(2) read 32 bytes successfully with content 'b'=
+ expectedly
+
+Summary:
+passed   3
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dpreadv203_64 stime=3D1689215684
+cmdline=3D"preadv203_64"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+tst_test.c:1558: TINFO: Timeout per run is 0h 04m 30s
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext2
+tst_supported_fs_types.c:55: TINFO: mkfs.ext2 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext3
+tst_supported_fs_types.c:55: TINFO: mkfs.ext3 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext4
+tst_supported_fs_types.c:55: TINFO: mkfs.ext4 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports xfs
+tst_supported_fs_types.c:55: TINFO: mkfs.xfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports btrfs
+tst_supported_fs_types.c:55: TINFO: mkfs.btrfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports vfat
+tst_supported_fs_types.c:55: TINFO: mkfs.vfat does exist
+tst_supported_fs_types.c:116: TINFO: Filesystem exfat is not supported
+tst_supported_fs_types.c:120: TINFO: FUSE does support ntfs
+tst_supported_fs_types.c:55: TINFO: mkfs.ntfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports tmpfs
+tst_supported_fs_types.c:42: TINFO: mkfs is not needed for tmpfs
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext2 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext2 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_pre8yZVTp/mntpoint fstyp=3Dext2 flags=3D0
+preadv203.c:237: TCONF: preadv2(): EOPNOTSUPP (95)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext3 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext3 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_pre8yZVTp/mntpoint fstyp=3Dext3 flags=3D0
+preadv203.c:143: TINFO: Number of full_reads 84954, short reads 10, zero le=
+n reads 0, EAGAIN(s) 174471
+preadv203.c:194: TINFO: Cache dropped 1 times
+preadv203.c:180: TINFO: Number of writes 4735
+preadv203.c:222: TPASS: Got some EAGAIN
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext4 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext4 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_pre8yZVTp/mntpoint fstyp=3Dext4 flags=3D0
+preadv203.c:143: TINFO: Number of full_reads 7302, short reads 10, zero len=
+ reads 0, EAGAIN(s) 9662993
+preadv203.c:180: TINFO: Number of writes 3466790
+preadv203.c:194: TINFO: Cache dropped 118 times
+preadv203.c:222: TPASS: Got some EAGAIN
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on xfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with xfs opts=3D'' extra opts=
+=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_pre8yZVTp/mntpoint fstyp=3Dxfs flags=3D0
+preadv203.c:143: TINFO: Number of full_reads 26650, short reads 10, zero le=
+n reads 0, EAGAIN(s) 828716
+preadv203.c:180: TINFO: Number of writes 29346
+preadv203.c:194: TINFO: Cache dropped 9 times
+preadv203.c:222: TPASS: Got some EAGAIN
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on btrfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with btrfs opts=3D'' extra op=
+ts=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_pre8yZVTp/mntpoint fstyp=3Dbtrfs flags=3D0
+preadv203.c:143: TINFO: Number of full_reads 631, short reads 10, zero len =
+reads 0, EAGAIN(s) 148261
+preadv203.c:180: TINFO: Number of writes 266
+preadv203.c:194: TINFO: Cache dropped 1 times
+preadv203.c:222: TPASS: Got some EAGAIN
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on vfat =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with vfat opts=3D'' extra opt=
+s=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_pre8yZVTp/mntpoint fstyp=3Dvfat flags=3D0
+preadv203.c:237: TCONF: preadv2(): EOPNOTSUPP (95)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ntfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ntfs opts=3D'' extra opt=
+s=3D''
+The partition start sector was not specified for /dev/loop0 and it could no=
+t be obtained automatically.  It has been set to 0.
+The number of sectors per track was not specified for /dev/loop0 and it cou=
+ld not be obtained automatically.  It has been set to 0.
+The number of heads was not specified for /dev/loop0 and it could not be ob=
+tained automatically.  It has been set to 0.
+To boot from a device, Windows needs the 'partition start sector', the 'sec=
+tors per track' and the 'number of heads' to be set.
+Windows will not be able to boot from this device.
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_pre8yZVTp/mntpoint fstyp=3Dntfs flags=3D0
+tst_test.c:1107: TINFO: Trying FUSE...
+preadv203.c:237: TCONF: preadv2(): EOPNOTSUPP (95)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on tmpfs =3D=3D=3D
+tst_test.c:1093: TINFO: Skipping mkfs for TMPFS filesystem
+tst_test.c:1074: TINFO: Limiting tmpfs size to 32MB
+tst_test.c:1107: TINFO: Mounting ltp-tmpfs to /fs/sda2/tmpdir/ltp-i4m7SNAjJ=
+Q/LTP_pre8yZVTp/mntpoint fstyp=3Dtmpfs flags=3D0
+preadv203.c:237: TCONF: preadv2(): EOPNOTSUPP (95)
+
+Summary:
+passed   4
+failed   0
+broken   0
+skipped  4
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D98 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D672 cstime=3D10776
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dquotactl02 stime=3D1689215782
+cmdline=3D"quotactl02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_kconfig.c:87: TINFO: Parsing kernel config '/proc/config.gz'
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with xfs opts=3D'' extra opts=
+=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_quogHiX9U/mntpoint fstyp=3Dxfs flags=3D0
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+quotactl_syscall_var.h:27: TINFO: Test quotactl()
+quotactl02.c:119: TINFO: Test #0: QCMD(Q_XGETQSTAT, USRQUOTA) off
+quotactl02.h:64: TPASS: quotactl() succeeded to turn off xfs quota and get =
+xfs quota off status for user
+quotactl02.c:119: TINFO: Test #1: QCMD(Q_XGETQSTAT, USRQUOTA) on
+quotactl02.h:81: TPASS: quotactl() succeeded to turn on xfs quota and get x=
+fs quota on status for user
+quotactl02.c:119: TINFO: Test #2: QCMD(Q_XGETQUOTA, USRQUOTA) qlim
+quotactl02.h:145: TPASS: quotactl() succeeded to set and use Q_XGETQUOTA fo=
+r user to get xfs disk quota limits
+quotactl02.c:119: TINFO: Test #3: QCMD(Q_XGETNEXTQUOTA, USRQUOTA)
+quotactl02.h:145: TPASS: quotactl() succeeded to set and use Q_XGETNEXTQUOT=
+A for user to get xfs disk quota limits
+quotactl02.c:119: TINFO: Test #4: QCMD(Q_XGETQSTATV, USRQUOTA) off
+quotactl02.h:100: TPASS: quotactl() succeeded to turn off xfs quota and get=
+ xfs quota off statv for user
+quotactl02.c:119: TINFO: Test #5: QCMD(Q_XGETQSTATV, USRQUOTA) on
+quotactl02.h:119: TPASS: quotactl() succeeded to turn on xfs quota and get =
+xfs quota on statv for user
+quotactl02.c:119: TINFO: Test #6: QCMD(Q_XGETQSTAT, GRPQUOTA) off
+quotactl02.h:64: TPASS: quotactl() succeeded to turn off xfs quota and get =
+xfs quota off status for group
+quotactl02.c:119: TINFO: Test #7: QCMD(Q_XGETQSTAT, GRPQUOTA) on
+quotactl02.h:81: TPASS: quotactl() succeeded to turn on xfs quota and get x=
+fs quota on status for group
+quotactl02.c:119: TINFO: Test #8: QCMD(Q_XGETQUOTA, GRPQUOTA) qlim
+quotactl02.h:145: TPASS: quotactl() succeeded to set and use Q_XGETQUOTA fo=
+r group to get xfs disk quota limits
+quotactl02.c:119: TINFO: Test #9: QCMD(Q_XGETNEXTQUOTA, GRPQUOTA)
+quotactl02.h:145: TPASS: quotactl() succeeded to set and use Q_XGETNEXTQUOT=
+A for group to get xfs disk quota limits
+quotactl02.c:119: TINFO: Test #10: QCMD(Q_XGETQSTATV, GRPQUOTA) off
+quotactl02.h:100: TPASS: quotactl() succeeded to turn off xfs quota and get=
+ xfs quota off statv for group
+quotactl02.c:119: TINFO: Test #11: QCMD(Q_XGETQSTATV, GRPQUOTA) on
+quotactl02.h:119: TPASS: quotactl() succeeded to turn on xfs quota and get =
+xfs quota on statv for group
+quotactl_syscall_var.h:29: TINFO: Test quotactl_fd()
+quotactl02.c:119: TINFO: Test #0: QCMD(Q_XGETQSTAT, USRQUOTA) off
+quotactl02.h:64: TPASS: quotactl() succeeded to turn off xfs quota and get =
+xfs quota off status for user
+quotactl02.c:119: TINFO: Test #1: QCMD(Q_XGETQSTAT, USRQUOTA) on
+quotactl02.h:81: TPASS: quotactl() succeeded to turn on xfs quota and get x=
+fs quota on status for user
+quotactl02.c:119: TINFO: Test #2: QCMD(Q_XGETQUOTA, USRQUOTA) qlim
+quotactl02.h:145: TPASS: quotactl() succeeded to set and use Q_XGETQUOTA fo=
+r user to get xfs disk quota limits
+quotactl02.c:119: TINFO: Test #3: QCMD(Q_XGETNEXTQUOTA, USRQUOTA)
+quotactl02.h:145: TPASS: quotactl() succeeded to set and use Q_XGETNEXTQUOT=
+A for user to get xfs disk quota limits
+quotactl02.c:119: TINFO: Test #4: QCMD(Q_XGETQSTATV, USRQUOTA) off
+quotactl02.h:100: TPASS: quotactl() succeeded to turn off xfs quota and get=
+ xfs quota off statv for user
+quotactl02.c:119: TINFO: Test #5: QCMD(Q_XGETQSTATV, USRQUOTA) on
+quotactl02.h:119: TPASS: quotactl() succeeded to turn on xfs quota and get =
+xfs quota on statv for user
+quotactl02.c:119: TINFO: Test #6: QCMD(Q_XGETQSTAT, GRPQUOTA) off
+quotactl02.h:64: TPASS: quotactl() succeeded to turn off xfs quota and get =
+xfs quota off status for group
+quotactl02.c:119: TINFO: Test #7: QCMD(Q_XGETQSTAT, GRPQUOTA) on
+quotactl02.h:81: TPASS: quotactl() succeeded to turn on xfs quota and get x=
+fs quota on status for group
+quotactl02.c:119: TINFO: Test #8: QCMD(Q_XGETQUOTA, GRPQUOTA) qlim
+quotactl02.h:145: TPASS: quotactl() succeeded to set and use Q_XGETQUOTA fo=
+r group to get xfs disk quota limits
+quotactl02.c:119: TINFO: Test #9: QCMD(Q_XGETNEXTQUOTA, GRPQUOTA)
+quotactl02.h:145: TPASS: quotactl() succeeded to set and use Q_XGETNEXTQUOT=
+A for group to get xfs disk quota limits
+quotactl02.c:119: TINFO: Test #10: QCMD(Q_XGETQSTATV, GRPQUOTA) off
+quotactl02.h:100: TPASS: quotactl() succeeded to turn off xfs quota and get=
+ xfs quota off statv for group
+quotactl02.c:119: TINFO: Test #11: QCMD(Q_XGETQSTATV, GRPQUOTA) on
+quotactl02.h:119: TPASS: quotactl() succeeded to turn on xfs quota and get =
+xfs quota on statv for group
+
+Summary:
+passed   24
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D1 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D15
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dreaddir21 stime=3D1689215783
+cmdline=3D"readdir21"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+readdir21.c:70: TCONF: syscall(-1) __NR_readdir not supported on your arch
+
+Summary:
+passed   0
+failed   0
+broken   0
+skipped  1
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D32 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dreadlink03 stime=3D1689215783
+cmdline=3D"readlink03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+readlink03.c:86: TPASS: readlink() failed as expected: EACCES (13)
+readlink03.c:86: TPASS: readlink() failed as expected: EINVAL (22)
+readlink03.c:86: TPASS: readlink() failed as expected: EINVAL (22)
+readlink03.c:86: TPASS: readlink() failed as expected: ENAMETOOLONG (36)
+readlink03.c:86: TPASS: readlink() failed as expected: ENOENT (2)
+readlink03.c:86: TPASS: readlink() failed as expected: ENOTDIR (20)
+readlink03.c:86: TPASS: readlink() failed as expected: ELOOP (40)
+readlink03.c:86: TPASS: readlink() failed as expected: EFAULT (14)
+
+Summary:
+passed   8
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dreadv01 stime=3D1689215783
+cmdline=3D"readv01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_buffers.c:55: TINFO: Test is using guarded buffers
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+readv01.c:71: TPASS: readv() with 0 I/O vectors
+readv01.c:85: TPASS: readv() correctly read 0 bytes=20
+readv01.c:71: TPASS: readv() with NULL I/O vectors
+readv01.c:85: TPASS: readv() correctly read 64 bytes=20
+readv01.c:71: TPASS: readv() with too big I/O vectors
+readv01.c:85: TPASS: readv() correctly read 64 bytes=20
+readv01.c:71: TPASS: readv() with multiple I/O vectors
+readv01.c:85: TPASS: readv() correctly read 48 bytes=20
+readv01.c:71: TPASS: readv() with zero-len buffer
+readv01.c:85: TPASS: readv() correctly read 64 bytes=20
+
+Summary:
+passed   10
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Drecvmmsg01 stime=3D1689215783
+cmdline=3D"recvmmsg01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_buffers.c:55: TINFO: Test is using guarded buffers
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+recvmmsg01.c:102: TINFO: Testing variant: vDSO or syscall with libc spec
+recvmmsg01.c:92: TPASS: recvmmsg() bad socket file descriptor : EBADF (9)
+recvmmsg01.c:92: TPASS: recvmmsg() bad message vector address : EFAULT (14)
+recvmmsg01.c:92: TPASS: recvmmsg() negative seconds in timeout : EINVAL (22=
+)
+recvmmsg01.c:92: TPASS: recvmmsg() overflow in nanoseconds in timeout : EIN=
+VAL (22)
+recvmmsg01.c:92: TPASS: recvmmsg() bad timeout address : EFAULT (14)
+recvmmsg01.c:102: TINFO: Testing variant: syscall with old kernel spec
+recvmmsg01.c:92: TPASS: recvmmsg() bad socket file descriptor : EBADF (9)
+recvmmsg01.c:92: TPASS: recvmmsg() bad message vector address : EFAULT (14)
+recvmmsg01.c:92: TPASS: recvmmsg() negative seconds in timeout : EINVAL (22=
+)
+recvmmsg01.c:92: TPASS: recvmmsg() overflow in nanoseconds in timeout : EIN=
+VAL (22)
+recvmmsg01.c:92: TPASS: recvmmsg() bad timeout address : EFAULT (14)
+
+Summary:
+passed   10
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Drename10 stime=3D1689215783
+cmdline=3D"rename10"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext2
+tst_supported_fs_types.c:55: TINFO: mkfs.ext2 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext3
+tst_supported_fs_types.c:55: TINFO: mkfs.ext3 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext4
+tst_supported_fs_types.c:55: TINFO: mkfs.ext4 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports xfs
+tst_supported_fs_types.c:55: TINFO: mkfs.xfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports btrfs
+tst_supported_fs_types.c:55: TINFO: mkfs.btrfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports vfat
+tst_supported_fs_types.c:55: TINFO: mkfs.vfat does exist
+tst_supported_fs_types.c:116: TINFO: Filesystem exfat is not supported
+tst_supported_fs_types.c:120: TINFO: FUSE does support ntfs
+tst_supported_fs_types.c:55: TINFO: mkfs.ntfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports tmpfs
+tst_supported_fs_types.c:42: TINFO: mkfs is not needed for tmpfs
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext2 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext2 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_renAbR6Bw/mntpoint fstyp=3Dext2 flags=3D0
+rename10.c:31: TPASS: rename(TEMP_FILE, long_path) : ENAMETOOLONG (36)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext3 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext3 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_renAbR6Bw/mntpoint fstyp=3Dext3 flags=3D0
+rename10.c:31: TPASS: rename(TEMP_FILE, long_path) : ENAMETOOLONG (36)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext4 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext4 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_renAbR6Bw/mntpoint fstyp=3Dext4 flags=3D0
+rename10.c:31: TPASS: rename(TEMP_FILE, long_path) : ENAMETOOLONG (36)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on xfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with xfs opts=3D'' extra opts=
+=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_renAbR6Bw/mntpoint fstyp=3Dxfs flags=3D0
+rename10.c:31: TPASS: rename(TEMP_FILE, long_path) : ENAMETOOLONG (36)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on btrfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with btrfs opts=3D'' extra op=
+ts=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_renAbR6Bw/mntpoint fstyp=3Dbtrfs flags=3D0
+rename10.c:31: TPASS: rename(TEMP_FILE, long_path) : ENAMETOOLONG (36)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on vfat =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with vfat opts=3D'' extra opt=
+s=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_renAbR6Bw/mntpoint fstyp=3Dvfat flags=3D0
+rename10.c:31: TPASS: rename(TEMP_FILE, long_path) : ENAMETOOLONG (36)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ntfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ntfs opts=3D'' extra opt=
+s=3D''
+The partition start sector was not specified for /dev/loop0 and it could no=
+t be obtained automatically.  It has been set to 0.
+The number of sectors per track was not specified for /dev/loop0 and it cou=
+ld not be obtained automatically.  It has been set to 0.
+The number of heads was not specified for /dev/loop0 and it could not be ob=
+tained automatically.  It has been set to 0.
+To boot from a device, Windows needs the 'partition start sector', the 'sec=
+tors per track' and the 'number of heads' to be set.
+Windows will not be able to boot from this device.
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_renAbR6Bw/mntpoint fstyp=3Dntfs flags=3D0
+tst_test.c:1107: TINFO: Trying FUSE...
+rename10.c:31: TPASS: rename(TEMP_FILE, long_path) : ENAMETOOLONG (36)
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on tmpfs =3D=3D=3D
+tst_test.c:1093: TINFO: Skipping mkfs for TMPFS filesystem
+tst_test.c:1074: TINFO: Limiting tmpfs size to 32MB
+tst_test.c:1107: TINFO: Mounting ltp-tmpfs to /fs/sda2/tmpdir/ltp-i4m7SNAjJ=
+Q/LTP_renAbR6Bw/mntpoint fstyp=3Dtmpfs flags=3D0
+rename10.c:31: TPASS: rename(TEMP_FILE, long_path) : ENAMETOOLONG (36)
+
+Summary:
+passed   8
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D30 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D9 cstime=3D1709
+<<<test_end>>>
+<<<test_start>>>
+tag=3Drenameat202 stime=3D1689215813
+cmdline=3D"renameat202 -i 10"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+renameat202    1  TPASS  :  renameat2() test passed
+renameat202    1  TPASS  :  renameat2() test passed
+renameat202    1  TPASS  :  renameat2() test passed
+renameat202    1  TPASS  :  renameat2() test passed
+renameat202    1  TPASS  :  renameat2() test passed
+renameat202    1  TPASS  :  renameat2() test passed
+renameat202    1  TPASS  :  renameat2() test passed
+renameat202    1  TPASS  :  renameat2() test passed
+renameat202    1  TPASS  :  renameat2() test passed
+renameat202    1  TPASS  :  renameat2() test passed
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Drt_sigaction03 stime=3D1689215813
+cmdline=3D"rt_sigaction03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+rt_sigaction03    0  TINFO  :  Signal 34
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03    1  TPASS  :  rt_sigaction03 failure with sig: 34 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03    2  TPASS  :  rt_sigaction03 failure with sig: 34 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03    3  TPASS  :  rt_sigaction03 failure with sig: 34 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03    4  TPASS  :  rt_sigaction03 failure with sig: 34 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03    5  TPASS  :  rt_sigaction03 failure with sig: 34 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 35
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03    6  TPASS  :  rt_sigaction03 failure with sig: 35 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03    7  TPASS  :  rt_sigaction03 failure with sig: 35 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03    8  TPASS  :  rt_sigaction03 failure with sig: 35 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03    9  TPASS  :  rt_sigaction03 failure with sig: 35 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   10  TPASS  :  rt_sigaction03 failure with sig: 35 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 36
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   11  TPASS  :  rt_sigaction03 failure with sig: 36 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   12  TPASS  :  rt_sigaction03 failure with sig: 36 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   13  TPASS  :  rt_sigaction03 failure with sig: 36 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   14  TPASS  :  rt_sigaction03 failure with sig: 36 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   15  TPASS  :  rt_sigaction03 failure with sig: 36 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 37
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   16  TPASS  :  rt_sigaction03 failure with sig: 37 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   17  TPASS  :  rt_sigaction03 failure with sig: 37 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   18  TPASS  :  rt_sigaction03 failure with sig: 37 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   19  TPASS  :  rt_sigaction03 failure with sig: 37 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   20  TPASS  :  rt_sigaction03 failure with sig: 37 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 38
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   21  TPASS  :  rt_sigaction03 failure with sig: 38 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   22  TPASS  :  rt_sigaction03 failure with sig: 38 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   23  TPASS  :  rt_sigaction03 failure with sig: 38 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   24  TPASS  :  rt_sigaction03 failure with sig: 38 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   25  TPASS  :  rt_sigaction03 failure with sig: 38 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 39
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   26  TPASS  :  rt_sigaction03 failure with sig: 39 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   27  TPASS  :  rt_sigaction03 failure with sig: 39 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   28  TPASS  :  rt_sigaction03 failure with sig: 39 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   29  TPASS  :  rt_sigaction03 failure with sig: 39 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   30  TPASS  :  rt_sigaction03 failure with sig: 39 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 40
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   31  TPASS  :  rt_sigaction03 failure with sig: 40 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   32  TPASS  :  rt_sigaction03 failure with sig: 40 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   33  TPASS  :  rt_sigaction03 failure with sig: 40 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   34  TPASS  :  rt_sigaction03 failure with sig: 40 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   35  TPASS  :  rt_sigaction03 failure with sig: 40 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 41
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   36  TPASS  :  rt_sigaction03 failure with sig: 41 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   37  TPASS  :  rt_sigaction03 failure with sig: 41 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   38  TPASS  :  rt_sigaction03 failure with sig: 41 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   39  TPASS  :  rt_sigaction03 failure with sig: 41 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   40  TPASS  :  rt_sigaction03 failure with sig: 41 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 42
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   41  TPASS  :  rt_sigaction03 failure with sig: 42 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   42  TPASS  :  rt_sigaction03 failure with sig: 42 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   43  TPASS  :  rt_sigaction03 failure with sig: 42 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   44  TPASS  :  rt_sigaction03 failure with sig: 42 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   45  TPASS  :  rt_sigaction03 failure with sig: 42 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 43
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   46  TPASS  :  rt_sigaction03 failure with sig: 43 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   47  TPASS  :  rt_sigaction03 failure with sig: 43 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   48  TPASS  :  rt_sigaction03 failure with sig: 43 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   49  TPASS  :  rt_sigaction03 failure with sig: 43 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   50  TPASS  :  rt_sigaction03 failure with sig: 43 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 44
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   51  TPASS  :  rt_sigaction03 failure with sig: 44 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   52  TPASS  :  rt_sigaction03 failure with sig: 44 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   53  TPASS  :  rt_sigaction03 failure with sig: 44 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   54  TPASS  :  rt_sigaction03 failure with sig: 44 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   55  TPASS  :  rt_sigaction03 failure with sig: 44 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 45
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   56  TPASS  :  rt_sigaction03 failure with sig: 45 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   57  TPASS  :  rt_sigaction03 failure with sig: 45 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   58  TPASS  :  rt_sigaction03 failure with sig: 45 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   59  TPASS  :  rt_sigaction03 failure with sig: 45 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   60  TPASS  :  rt_sigaction03 failure with sig: 45 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 46
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   61  TPASS  :  rt_sigaction03 failure with sig: 46 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   62  TPASS  :  rt_sigaction03 failure with sig: 46 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   63  TPASS  :  rt_sigaction03 failure with sig: 46 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   64  TPASS  :  rt_sigaction03 failure with sig: 46 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   65  TPASS  :  rt_sigaction03 failure with sig: 46 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 47
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   66  TPASS  :  rt_sigaction03 failure with sig: 47 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   67  TPASS  :  rt_sigaction03 failure with sig: 47 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   68  TPASS  :  rt_sigaction03 failure with sig: 47 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   69  TPASS  :  rt_sigaction03 failure with sig: 47 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   70  TPASS  :  rt_sigaction03 failure with sig: 47 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 48
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   71  TPASS  :  rt_sigaction03 failure with sig: 48 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   72  TPASS  :  rt_sigaction03 failure with sig: 48 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   73  TPASS  :  rt_sigaction03 failure with sig: 48 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   74  TPASS  :  rt_sigaction03 failure with sig: 48 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   75  TPASS  :  rt_sigaction03 failure with sig: 48 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 49
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   76  TPASS  :  rt_sigaction03 failure with sig: 49 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   77  TPASS  :  rt_sigaction03 failure with sig: 49 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   78  TPASS  :  rt_sigaction03 failure with sig: 49 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   79  TPASS  :  rt_sigaction03 failure with sig: 49 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   80  TPASS  :  rt_sigaction03 failure with sig: 49 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 50
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   81  TPASS  :  rt_sigaction03 failure with sig: 50 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   82  TPASS  :  rt_sigaction03 failure with sig: 50 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   83  TPASS  :  rt_sigaction03 failure with sig: 50 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   84  TPASS  :  rt_sigaction03 failure with sig: 50 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   85  TPASS  :  rt_sigaction03 failure with sig: 50 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 51
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   86  TPASS  :  rt_sigaction03 failure with sig: 51 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   87  TPASS  :  rt_sigaction03 failure with sig: 51 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   88  TPASS  :  rt_sigaction03 failure with sig: 51 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   89  TPASS  :  rt_sigaction03 failure with sig: 51 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   90  TPASS  :  rt_sigaction03 failure with sig: 51 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 52
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   91  TPASS  :  rt_sigaction03 failure with sig: 52 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   92  TPASS  :  rt_sigaction03 failure with sig: 52 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   93  TPASS  :  rt_sigaction03 failure with sig: 52 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   94  TPASS  :  rt_sigaction03 failure with sig: 52 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03   95  TPASS  :  rt_sigaction03 failure with sig: 52 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 53
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   96  TPASS  :  rt_sigaction03 failure with sig: 53 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03   97  TPASS  :  rt_sigaction03 failure with sig: 53 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   98  TPASS  :  rt_sigaction03 failure with sig: 53 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03   99  TPASS  :  rt_sigaction03 failure with sig: 53 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03  100  TPASS  :  rt_sigaction03 failure with sig: 53 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 54
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  101  TPASS  :  rt_sigaction03 failure with sig: 54 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03  102  TPASS  :  rt_sigaction03 failure with sig: 54 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  103  TPASS  :  rt_sigaction03 failure with sig: 54 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  104  TPASS  :  rt_sigaction03 failure with sig: 54 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03  105  TPASS  :  rt_sigaction03 failure with sig: 54 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 55
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  106  TPASS  :  rt_sigaction03 failure with sig: 55 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03  107  TPASS  :  rt_sigaction03 failure with sig: 55 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  108  TPASS  :  rt_sigaction03 failure with sig: 55 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  109  TPASS  :  rt_sigaction03 failure with sig: 55 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03  110  TPASS  :  rt_sigaction03 failure with sig: 55 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 56
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  111  TPASS  :  rt_sigaction03 failure with sig: 56 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03  112  TPASS  :  rt_sigaction03 failure with sig: 56 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  113  TPASS  :  rt_sigaction03 failure with sig: 56 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  114  TPASS  :  rt_sigaction03 failure with sig: 56 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03  115  TPASS  :  rt_sigaction03 failure with sig: 56 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 57
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  116  TPASS  :  rt_sigaction03 failure with sig: 57 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03  117  TPASS  :  rt_sigaction03 failure with sig: 57 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  118  TPASS  :  rt_sigaction03 failure with sig: 57 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  119  TPASS  :  rt_sigaction03 failure with sig: 57 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03  120  TPASS  :  rt_sigaction03 failure with sig: 57 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 58
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  121  TPASS  :  rt_sigaction03 failure with sig: 58 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03  122  TPASS  :  rt_sigaction03 failure with sig: 58 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  123  TPASS  :  rt_sigaction03 failure with sig: 58 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  124  TPASS  :  rt_sigaction03 failure with sig: 58 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03  125  TPASS  :  rt_sigaction03 failure with sig: 58 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 59
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  126  TPASS  :  rt_sigaction03 failure with sig: 59 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03  127  TPASS  :  rt_sigaction03 failure with sig: 59 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  128  TPASS  :  rt_sigaction03 failure with sig: 59 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  129  TPASS  :  rt_sigaction03 failure with sig: 59 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03  130  TPASS  :  rt_sigaction03 failure with sig: 59 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 60
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  131  TPASS  :  rt_sigaction03 failure with sig: 60 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03  132  TPASS  :  rt_sigaction03 failure with sig: 60 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  133  TPASS  :  rt_sigaction03 failure with sig: 60 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  134  TPASS  :  rt_sigaction03 failure with sig: 60 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03  135  TPASS  :  rt_sigaction03 failure with sig: 60 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 61
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  136  TPASS  :  rt_sigaction03 failure with sig: 61 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03  137  TPASS  :  rt_sigaction03 failure with sig: 61 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  138  TPASS  :  rt_sigaction03 failure with sig: 61 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  139  TPASS  :  rt_sigaction03 failure with sig: 61 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03  140  TPASS  :  rt_sigaction03 failure with sig: 61 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 62
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  141  TPASS  :  rt_sigaction03 failure with sig: 62 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03  142  TPASS  :  rt_sigaction03 failure with sig: 62 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  143  TPASS  :  rt_sigaction03 failure with sig: 62 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  144  TPASS  :  rt_sigaction03 failure with sig: 62 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03  145  TPASS  :  rt_sigaction03 failure with sig: 62 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 63
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  146  TPASS  :  rt_sigaction03 failure with sig: 63 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03  147  TPASS  :  rt_sigaction03 failure with sig: 63 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  148  TPASS  :  rt_sigaction03 failure with sig: 63 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  149  TPASS  :  rt_sigaction03 failure with sig: 63 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03  150  TPASS  :  rt_sigaction03 failure with sig: 63 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  Signal 64
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  151  TPASS  :  rt_sigaction03 failure with sig: 64 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND=20
+rt_sigaction03  152  TPASS  :  rt_sigaction03 failure with sig: 64 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  153  TPASS  :  rt_sigaction03 failure with sig: 64 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_RESETHAND|SA_SIGINFO=20
+rt_sigaction03  154  TPASS  :  rt_sigaction03 failure with sig: 64 as expec=
+ted errno  =3D EINVAL : Invalid argument
+rt_sigaction03    0  TINFO  :  sa.sa_flags =3D SA_NOMASK=20
+rt_sigaction03  155  TPASS  :  rt_sigaction03 failure with sig: 64 as expec=
+ted errno  =3D EINVAL : Invalid argument
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Drt_sigprocmask02 stime=3D1689215813
+cmdline=3D"rt_sigprocmask02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+rt_sigprocmask02    1  TPASS  :  Got expected errno: TEST_ERRNO=3DEINVAL(22=
+): Invalid argument
+rt_sigprocmask02    2  TPASS  :  Got expected errno: TEST_ERRNO=3DEFAULT(14=
+): Bad address
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsbrk01 stime=3D1689215813
+cmdline=3D"sbrk01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+sbrk01      1  TPASS  :  sbrk - Increase by 8192 bytes returned 0x55839efa3=
+000
+sbrk01      2  TPASS  :  sbrk - Increase by -8192 bytes returned 0x55839efa=
+5000
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsched_get_priority_max02 stime=3D1689215813
+cmdline=3D"sched_get_priority_max02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+sched_get_priority_max02.c:23: TPASS: tst_syscall(__NR_sched_get_priority_m=
+ax, SCHED_INVALID) : EINVAL (22)
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsched_rr_get_interval03 stime=3D1689215813
+cmdline=3D"sched_rr_get_interval03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+sched_rr_get_interval03.c:53: TINFO: Testing variant: vDSO or syscall with =
+libc spec
+sched_rr_get_interval03.c:81: TPASS: sched_rr_get_interval(-1, 0x5636644cfd=
+28) : EINVAL (22)
+sched_rr_get_interval03.c:81: TPASS: sched_rr_get_interval(4194304, 0x56366=
+44cfd28) : ESRCH (3)
+sched_rr_get_interval03.c:72: TCONF: EFAULT skipped for libc_variant
+sched_rr_get_interval03.c:53: TINFO: Testing variant: syscall with old kern=
+el spec
+sched_rr_get_interval03.c:81: TPASS: sched_rr_get_interval(-1, 0x5636644cfd=
+28) : EINVAL (22)
+sched_rr_get_interval03.c:81: TPASS: sched_rr_get_interval(4194304, 0x56366=
+44cfd28) : ESRCH (3)
+sched_rr_get_interval03.c:81: TPASS: sched_rr_get_interval(0, 0x7fda024ca00=
+0) : EFAULT (14)
+
+Summary:
+passed   5
+failed   0
+broken   0
+skipped  1
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsched_setparam04 stime=3D1689215813
+cmdline=3D"sched_setparam04"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+sched_setparam04.c:48: TINFO: Testing libc variant
+sched_setparam04.c:58: TPASS: test with non-existing pid : ESRCH (3)
+sched_setparam04.c:58: TPASS: test invalid pid value : EINVAL (22)
+sched_setparam04.c:58: TPASS: test with invalid address for p : EINVAL (22)
+sched_setparam04.c:58: TPASS: test with invalid p.sched_priority : EINVAL (=
+22)
+sched_setparam04.c:48: TINFO: Testing syscall variant
+sched_setparam04.c:58: TPASS: test with non-existing pid : ESRCH (3)
+sched_setparam04.c:58: TPASS: test invalid pid value : EINVAL (22)
+sched_setparam04.c:58: TPASS: test with invalid address for p : EINVAL (22)
+sched_setparam04.c:58: TPASS: test with invalid p.sched_priority : EINVAL (=
+22)
+
+Summary:
+passed   8
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsched_getscheduler02 stime=3D1689215813
+cmdline=3D"sched_getscheduler02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+sched_getscheduler02.c:23: TINFO: Testing libc variant
+sched_getscheduler02.c:32: TPASS: sched_getscheduler(4194304) : ESRCH (3)
+sched_getscheduler02.c:23: TINFO: Testing syscall variant
+sched_getscheduler02.c:32: TPASS: sched_getscheduler(4194304) : ESRCH (3)
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D1 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsemctl03 stime=3D1689215813
+cmdline=3D"semctl03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+semctl03.c:92: TINFO: Testing variant: libc semctl()
+semctl03.c:83: TPASS: semctl() with invalid IPC command : EINVAL (22)
+semctl03.c:83: TPASS: semctl() with invalid sem id : EINVAL (22)
+semctl03.c:79: TCONF: EFAULT is skipped for libc variant
+semctl03.c:79: TCONF: EFAULT is skipped for libc variant
+semctl03.c:92: TINFO: Testing variant: __NR_semctl syscall
+semctl03.c:83: TPASS: semctl() with invalid IPC command : EINVAL (22)
+semctl03.c:83: TPASS: semctl() with invalid sem id : EINVAL (22)
+semctl03.c:83: TPASS: semctl() with invalid union arg : EFAULT (14)
+semctl03.c:83: TPASS: semctl() with invalid union arg : EFAULT (14)
+
+Summary:
+passed   6
+failed   0
+broken   0
+skipped  2
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsendfile03 stime=3D1689215813
+cmdline=3D"sendfile03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+sendfile03.c:53: TPASS: sendfile(..) with out_fd=3D-1 : EBADF (9)
+sendfile03.c:53: TPASS: sendfile(..) with out_fd=3DO_RDONLY : EBADF (9)
+sendfile03.c:53: TPASS: sendfile(..) with in_fd=3D-1 : EBADF (9)
+sendfile03.c:53: TPASS: sendfile(..) with out_fd=3DO_WRONLY : EBADF (9)
+
+Summary:
+passed   4
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsendfile08_64 stime=3D1689215813
+cmdline=3D"sendfile08_64"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+sendfile08.c:44: TPASS: sendfile() copies data correctly
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dset_robust_list01 stime=3D1689215813
+cmdline=3D"set_robust_list01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+set_robust_list01    1  TPASS  :  set_robust_list: retval =3D -1 (expected =
+-1), errno =3D 22 (expected 22)
+set_robust_list01    2  TPASS  :  set_robust_list: retval =3D 0 (expected 0=
+), errno =3D 0 (expected 0)
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dset_thread_area01 stime=3D1689215813
+cmdline=3D"set_thread_area01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+set_thread_area_01    1  TCONF  :  set_thread_area01.c:77: syscall(205) tes=
+ts[i].syscall not supported on your arch
+set_thread_area_01    2  TCONF  :  set_thread_area01.c:77: Remaining cases =
+not appropriate for configuration
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D32 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsetfsuid01_16 stime=3D1689215813
+cmdline=3D"setfsuid01_16"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/setfsuid/../utils/compat_tst=
+_16.h:114: TCONF: 16-bit version of setfsuid() is not supported on your pla=
+tform
+
+Summary:
+passed   0
+failed   0
+broken   0
+skipped  1
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D32 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsetegid02 stime=3D1689215813
+cmdline=3D"setegid02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+setegid02.c:29: TPASS: setegid(65534) : EPERM (1)
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsetgroups01_16 stime=3D1689215813
+cmdline=3D"setgroups01_16"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+setgroups01_16    1  TCONF  :  /tmp/lkp/ltp/src/ltp/testcases/kernel/syscal=
+ls/setgroups/../utils/compat_16.h:82: 16-bit version of getgroups() is not =
+supported on your platform
+setgroups01_16    2  TCONF  :  /tmp/lkp/ltp/src/ltp/testcases/kernel/syscal=
+ls/setgroups/../utils/compat_16.h:82: Remaining cases not appropriate for c=
+onfiguration
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D32 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsetitimer01 stime=3D1689215813
+cmdline=3D"setitimer01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_buffers.c:55: TINFO: Test is using guarded buffers
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+setitimer01.c:155: TINFO: clock low-resolution: 1000000ns, time step: 1000u=
+s
+setitimer01.c:66: TINFO: tc->which =3D ITIMER_REAL
+setitimer01.c:72: TINFO: Test begin time: 1689215814.71308s
+setitimer01.c:81: TPASS: sys_setitimer(tc->which, value, NULL) passed
+setitimer01.c:84: TPASS: sys_setitimer(tc->which, value, ovalue) passed
+setitimer01.c:86: TPASS: ovalue->it_interval.tv_sec =3D=3D time_sec (10)
+setitimer01.c:87: TPASS: ovalue->it_interval.tv_usec =3D=3D time_usec (3000=
+)
+setitimer01.c:89: TINFO: ovalue->it_value.tv_sec=3D10, ovalue->it_value.tv_=
+usec=3D2918
+setitimer01.c:114: TPASS: sys_setitimer(tc->which, value, NULL) passed
+setitimer01.c:128: TPASS: Child received signal: SIGALRM
+setitimer01.c:136: TINFO: Test end time: 1689215814.121423s
+setitimer01.c:66: TINFO: tc->which =3D ITIMER_VIRTUAL
+setitimer01.c:81: TPASS: sys_setitimer(tc->which, value, NULL) passed
+setitimer01.c:84: TPASS: sys_setitimer(tc->which, value, ovalue) passed
+setitimer01.c:86: TPASS: ovalue->it_interval.tv_sec =3D=3D time_sec (10)
+setitimer01.c:87: TPASS: ovalue->it_interval.tv_usec =3D=3D time_usec (3000=
+)
+setitimer01.c:89: TINFO: ovalue->it_value.tv_sec=3D10, ovalue->it_value.tv_=
+usec=3D4000
+setitimer01.c:114: TPASS: sys_setitimer(tc->which, value, NULL) passed
+setitimer01.c:128: TPASS: Child received signal: SIGVTALRM
+setitimer01.c:66: TINFO: tc->which =3D ITIMER_PROF
+setitimer01.c:81: TPASS: sys_setitimer(tc->which, value, NULL) passed
+setitimer01.c:84: TPASS: sys_setitimer(tc->which, value, ovalue) passed
+setitimer01.c:86: TPASS: ovalue->it_interval.tv_sec =3D=3D time_sec (10)
+setitimer01.c:87: TPASS: ovalue->it_interval.tv_usec =3D=3D time_usec (3000=
+)
+setitimer01.c:89: TINFO: ovalue->it_value.tv_sec=3D10, ovalue->it_value.tv_=
+usec=3D4000
+setitimer01.c:114: TPASS: sys_setitimer(tc->which, value, NULL) passed
+setitimer01.c:128: TPASS: Child received signal: SIGPROF
+
+Summary:
+passed   18
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D1 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D11 cstime=3D12
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsetitimer02 stime=3D1689215814
+cmdline=3D"setitimer02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_buffers.c:55: TINFO: Test is using guarded buffers
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+setitimer02.c:34: TPASS: sys_setitimer(ITIMER_REAL, value, (void *)-1) : EF=
+AULT (14)
+setitimer02.c:37: TPASS: sys_setitimer(ITIMER_VIRTUAL, value, (void *)-1) :=
+ EFAULT (14)
+setitimer02.c:40: TPASS: sys_setitimer(-ITIMER_PROF, value, ovalue) : EINVA=
+L (22)
+
+Summary:
+passed   3
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D6
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsetpgid01 stime=3D1689215814
+cmdline=3D"setpgid01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+setpgid01    1  TPASS  :  test setpgid(6808, 6808) success
+setpgid01    2  TPASS  :  test setpgid(0, 0) success
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D5
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsetregid04_16 stime=3D1689215814
+cmdline=3D"setregid04_16"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/setregid/../utils/compat_tst=
+_16.h:128: TCONF: 16-bit version of setregid() is not supported on your pla=
+tform
+
+Summary:
+passed   0
+failed   0
+broken   0
+skipped  1
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D32 corefile=3Dno
+cutime=3D0 cstime=3D6
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsetresuid05_16 stime=3D1689215814
+cmdline=3D"setresuid05_16"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/setresuid/../utils/compat_ts=
+t_16.h:133: TCONF: 16-bit version of setresuid() is not supported on your p=
+latform
+
+Summary:
+passed   0
+failed   0
+broken   0
+skipped  1
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D32 corefile=3Dno
+cutime=3D0 cstime=3D6
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsetreuid01_16 stime=3D1689215814
+cmdline=3D"setreuid01_16"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/setreuid/../utils/compat_tst=
+_16.h:124: TCONF: 16-bit version of setreuid() is not supported on your pla=
+tform
+
+Summary:
+passed   0
+failed   0
+broken   0
+skipped  1
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D32 corefile=3Dno
+cutime=3D0 cstime=3D7
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsetreuid05_16 stime=3D1689215814
+cmdline=3D"setreuid05_16"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+/tmp/lkp/ltp/src/ltp/testcases/kernel/syscalls/setreuid/../utils/compat_tst=
+_16.h:124: TCONF: 16-bit version of setreuid() is not supported on your pla=
+tform
+
+Summary:
+passed   0
+failed   0
+broken   0
+skipped  1
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D32 corefile=3Dno
+cutime=3D0 cstime=3D7
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsetsid01 stime=3D1689215814
+cmdline=3D"setsid01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+setsid01    1  TPASS  :  setsid SUCCESS to set errno to EPERM
+setsid01    1  TPASS  :  all misc tests passed
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D1 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D6
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsetsockopt01 stime=3D1689215815
+cmdline=3D"setsockopt01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+setsockopt01.c:66: TINFO: Testing invalid file descriptor
+setsockopt01.c:101: TPASS: setsockopt() returned the expected error: EBADF =
+(9)
+setsockopt01.c:66: TINFO: Testing non-socket file descriptor
+setsockopt01.c:101: TPASS: setsockopt() returned the expected error: ENOTSO=
+CK (88)
+setsockopt01.c:66: TINFO: Testing invalid option buffer
+setsockopt01.c:101: TPASS: setsockopt() returned the expected error: EFAULT=
+ (14)
+setsockopt01.c:66: TINFO: Testing invalid optlen
+setsockopt01.c:101: TPASS: setsockopt() returned the expected error: EINVAL=
+ (22)
+setsockopt01.c:66: TINFO: Testing invalid level
+setsockopt01.c:101: TPASS: setsockopt() returned the expected error: ENOPRO=
+TOOPT (92)
+setsockopt01.c:66: TINFO: Testing invalid option name (UDP)
+setsockopt01.c:101: TPASS: setsockopt() returned the expected error: ENOPRO=
+TOOPT (92)
+setsockopt01.c:66: TINFO: Testing invalid option name (IP)
+setsockopt01.c:101: TPASS: setsockopt() returned the expected error: ENOPRO=
+TOOPT (92)
+setsockopt01.c:66: TINFO: Testing invalid option name (TCP)
+setsockopt01.c:101: TPASS: setsockopt() returned the expected error: ENOPRO=
+TOOPT (92)
+
+Summary:
+passed   8
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsetuid04 stime=3D1689215815
+cmdline=3D"setuid04"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+setuid04.c:49: TPASS: open() returned errno EACCES
+setuid04.c:49: TPASS: open() returned errno EACCES
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D4
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsetxattr02 stime=3D1689215815
+cmdline=3D"setxattr02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+setxattr02.c:153: TPASS: setxattr(2) on testfile passed
+setxattr02.c:153: TPASS: setxattr(2) on testdir passed
+setxattr02.c:178: TPASS: setxattr(2) on symlink failed: EEXIST (17)
+setxattr02.c:178: TPASS: setxattr(2) on fifo failed: EPERM (1)
+setxattr02.c:178: TPASS: setxattr(2) on chr failed: EPERM (1)
+setxattr02.c:178: TPASS: setxattr(2) on blk failed: EPERM (1)
+setxattr02.c:178: TPASS: setxattr(2) on sock failed: EPERM (1)
+
+Summary:
+passed   7
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dshmctl02 stime=3D1689215815
+cmdline=3D"shmctl02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+shmctl02.c:109: TINFO: Testing variant: libc shmctl()
+shmctl02.c:97: TPASS: shmctl(3, 2, 0x5582c6ad3ca0) : EACCES (13)
+shmctl02.c:93: TCONF: EFAULT is skipped for libc variant
+shmctl02.c:93: TCONF: EFAULT is skipped for libc variant
+shmctl02.c:97: TPASS: shmctl(4, -1, 0x5582c6ad3ca0) : EINVAL (22)
+shmctl02.c:97: TPASS: shmctl(-1, 2, 0x5582c6ad3ca0) : EINVAL (22)
+shmctl02.c:97: TPASS: shmctl(5, 2, 0x5582c6ad3ca0) : EINVAL (22)
+shmctl02.c:97: TPASS: shmctl(2, 2, 0x5582c6ad3ca0) : EACCES (13)
+shmctl02.c:97: TPASS: shmctl(2, 0, (nil)) : EPERM (1)
+shmctl02.c:97: TPASS: shmctl(2, 1, 0x5582c6ad3ca0) : EPERM (1)
+shmctl02.c:97: TPASS: shmctl(2, 11, 0x5582c6ad3ca0) : EPERM (1)
+shmctl02.c:97: TPASS: shmctl(2, 12, 0x5582c6ad3ca0) : EPERM (1)
+shmctl02.c:109: TINFO: Testing variant: __NR_shmctl syscall
+shmctl02.c:97: TPASS: shmctl(7, 2, 0x5582c6ad3ca0) : EACCES (13)
+shmctl02.c:97: TPASS: shmctl(8, 1, 0xffffffffffffffff) : EFAULT (14)
+shmctl02.c:97: TPASS: shmctl(8, 2, 0xffffffffffffffff) : EFAULT (14)
+shmctl02.c:97: TPASS: shmctl(8, -1, 0x5582c6ad3ca0) : EINVAL (22)
+shmctl02.c:97: TPASS: shmctl(-1, 2, 0x5582c6ad3ca0) : EINVAL (22)
+shmctl02.c:97: TPASS: shmctl(9, 2, 0x5582c6ad3ca0) : EINVAL (22)
+shmctl02.c:97: TPASS: shmctl(6, 2, 0x5582c6ad3ca0) : EACCES (13)
+shmctl02.c:97: TPASS: shmctl(6, 0, (nil)) : EPERM (1)
+shmctl02.c:97: TPASS: shmctl(6, 1, 0x5582c6ad3ca0) : EPERM (1)
+shmctl02.c:97: TPASS: shmctl(6, 11, 0x5582c6ad3ca0) : EPERM (1)
+shmctl02.c:97: TPASS: shmctl(6, 12, 0x5582c6ad3ca0) : EPERM (1)
+
+Summary:
+passed   20
+failed   0
+broken   0
+skipped  2
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D1 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D4
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dshmdt02 stime=3D1689215816
+cmdline=3D"shmdt02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+shmdt02.c:35: TPASS: shmdt(non_attched_addr) : EINVAL (22)
+shmdt02.c:35: TPASS: shmdt(unaligned_addr) : EINVAL (22)
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsigaltstack02 stime=3D1689215816
+cmdline=3D"sigaltstack02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+sigaltstack02    1  TPASS  :  stgaltstack() fails, Invalid Flag value, errn=
+o:22
+sigaltstack02    2  TPASS  :  stgaltstack() fails, alternate stack is < MIN=
+SIGSTKSZ, errno:12
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsignalfd4_01 stime=3D1689215816
+cmdline=3D"signalfd4_01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+signalfd4_01    1  TPASS  :  signalfd4(SFD_CLOEXEC) Passed
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsigrelse01 stime=3D1689215816
+cmdline=3D"sigrelse01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+sigrelse01    1  TPASS  :  sigrelse() released all 55 signals under test.
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dstat01_64 stime=3D1689215816
+cmdline=3D"stat01_64"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+stat01.c:43: TPASS: stat(tc->pathname, &stat_buf) passed
+stat01.c:45: TPASS: stat_buf.st_uid =3D=3D user_id (65534)
+stat01.c:46: TPASS: stat_buf.st_gid =3D=3D group_id (0)
+stat01.c:47: TPASS: stat_buf.st_size =3D=3D FILE_SIZE (1024)
+stat01.c:48: TPASS: stat_buf.st_mode & MASK =3D=3D tc->mode (438)
+stat01.c:49: TPASS: stat_buf.st_nlink =3D=3D 1 (1)
+stat01.c:43: TPASS: stat(tc->pathname, &stat_buf) passed
+stat01.c:45: TPASS: stat_buf.st_uid =3D=3D user_id (65534)
+stat01.c:46: TPASS: stat_buf.st_gid =3D=3D group_id (0)
+stat01.c:47: TPASS: stat_buf.st_size =3D=3D FILE_SIZE (1024)
+stat01.c:48: TPASS: stat_buf.st_mode & MASK =3D=3D tc->mode (146)
+stat01.c:49: TPASS: stat_buf.st_nlink =3D=3D 1 (1)
+
+Summary:
+passed   12
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dstime02 stime=3D1689215816
+cmdline=3D"stime02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+stime_var.h:46: TINFO: Testing libc stime()
+stime_var.h:22: TCONF: libc stime() is not implemented
+stime_var.h:49: TINFO: Testing SYS_stime syscall
+stime_var.h:28: TCONF: syscall(-1) __NR_stime not supported on your arch
+stime_var.h:52: TINFO: Testing SYS_settimeofday syscall
+stime02.c:37: TPASS: stime(2) fails, Caller not root: EPERM (1)
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  2
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D1 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dsysctl03 stime=3D1689215816
+cmdline=3D"sysctl03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+sysctl03.c:72: TINFO: this test's results are based on potentially undocume=
+nted behavior in the kernel. read the NOTE in the source file for more deta=
+ils
+sysctl03.c:55: TCONF: syscall(156) __NR__sysctl not supported on your arch
+sysctl03.c:55: TCONF: syscall(156) __NR__sysctl not supported on your arch
+tst_test.c:1606: TINFO: Killed the leftover descendant processes
+
+Summary:
+passed   0
+failed   0
+broken   0
+skipped  2
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D32 corefile=3Dno
+cutime=3D0 cstime=3D4
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dtgkill02 stime=3D1689215816
+cmdline=3D"tgkill02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+tgkill02.c:55: TPASS: tgkill() failed with EAGAIN as expected
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dtimerfd01 stime=3D1689215816
+cmdline=3D"timerfd01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+timerfd01.c:153: TINFO: Testing variant: syscall with old kernel spec
+timerfd01.c:102: TINFO: testing CLOCK MONOTONIC
+timerfd01.c:106: TINFO: relative timer (100 ms)
+timerfd01.c:89: TPASS: got 1 tick(s)
+timerfd01.c:110: TINFO: absolute timer (100 ms)
+timerfd01.c:89: TPASS: got 1 tick(s)
+timerfd01.c:115: TINFO: sequential timer (50 ms)
+timerfd01.c:128: TPASS: Timer read back value is relative
+timerfd01.c:89: TPASS: got 3 tick(s)
+timerfd01.c:134: TINFO: testing with O_NONBLOCK
+timerfd01.c:89: TPASS: got 1 tick(s)
+timerfd01.c:146: TPASS: read failed with: EAGAIN/EWOULDBLOCK (11)
+timerfd01.c:102: TINFO: testing CLOCK REALTIME
+timerfd01.c:106: TINFO: relative timer (100 ms)
+timerfd01.c:89: TPASS: got 1 tick(s)
+timerfd01.c:110: TINFO: absolute timer (100 ms)
+timerfd01.c:89: TPASS: got 1 tick(s)
+timerfd01.c:115: TINFO: sequential timer (50 ms)
+timerfd01.c:128: TPASS: Timer read back value is relative
+timerfd01.c:89: TPASS: got 3 tick(s)
+timerfd01.c:134: TINFO: testing with O_NONBLOCK
+timerfd01.c:89: TPASS: got 1 tick(s)
+timerfd01.c:146: TPASS: read failed with: EAGAIN/EWOULDBLOCK (11)
+
+Summary:
+passed   12
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D1 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D4
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dtimerfd_create01 stime=3D1689215817
+cmdline=3D"timerfd_create01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+timerfd_create01    1  TPASS  :  timerfd_create() failed as expected: TEST_=
+ERRNO=3DEINVAL(22): Invalid argument
+timerfd_create01    2  TPASS  :  timerfd_create() failed as expected: TEST_=
+ERRNO=3DEINVAL(22): Invalid argument
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dtimer_create01 stime=3D1689215817
+cmdline=3D"timer_create01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+timer_create01.c:51: TINFO: Testing notification type: SIGEV_NONE
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_REALTIME
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_MONOTONIC
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_PROCESS_CP=
+UTIME_ID
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_THREAD_CPU=
+TIME_ID
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_BOOTTIME
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_BOOTTIME_A=
+LARM
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_REALTIME_A=
+LARM
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_TAI
+timer_create01.c:51: TINFO: Testing notification type: SIGEV_SIGNAL
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_REALTIME
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_MONOTONIC
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_PROCESS_CP=
+UTIME_ID
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_THREAD_CPU=
+TIME_ID
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_BOOTTIME
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_BOOTTIME_A=
+LARM
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_REALTIME_A=
+LARM
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_TAI
+timer_create01.c:51: TINFO: Testing notification type: SIGEV_THREAD
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_REALTIME
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_MONOTONIC
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_PROCESS_CP=
+UTIME_ID
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_THREAD_CPU=
+TIME_ID
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_BOOTTIME
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_BOOTTIME_A=
+LARM
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_REALTIME_A=
+LARM
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_TAI
+timer_create01.c:51: TINFO: Testing notification type: SIGEV_THREAD_ID
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_REALTIME
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_MONOTONIC
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_PROCESS_CP=
+UTIME_ID
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_THREAD_CPU=
+TIME_ID
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_BOOTTIME
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_BOOTTIME_A=
+LARM
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_REALTIME_A=
+LARM
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_TAI
+timer_create01.c:51: TINFO: Testing notification type: NULL
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_REALTIME
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_MONOTONIC
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_PROCESS_CP=
+UTIME_ID
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_THREAD_CPU=
+TIME_ID
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_BOOTTIME
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_BOOTTIME_A=
+LARM
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_REALTIME_A=
+LARM
+timer_create01.c:85: TPASS: Timer successfully created for CLOCK_TAI
+
+Summary:
+passed   40
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dtimer_settime01 stime=3D1689215817
+cmdline=3D"timer_settime01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+timer_settime01.c:85: TINFO: Testing variant: syscall with old kernel spec
+timer_settime01.c:96: TINFO: Testing for general initialization:
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_REALTIME) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_MONOTONIC) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_PROCESS_CPUTIME_ID) passe=
+d
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_THREAD_CPUTIME_ID) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_BOOTTIME) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_BOOTTIME_ALARM) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_REALTIME_ALARM) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_TAI) passed
+timer_settime01.c:96: TINFO: Testing for setting old_value:
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_REALTIME) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_MONOTONIC) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_PROCESS_CPUTIME_ID) passe=
+d
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_THREAD_CPUTIME_ID) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_BOOTTIME) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_BOOTTIME_ALARM) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_REALTIME_ALARM) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_TAI) passed
+timer_settime01.c:96: TINFO: Testing for using periodic timer:
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_REALTIME) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_MONOTONIC) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_PROCESS_CPUTIME_ID) passe=
+d
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_THREAD_CPUTIME_ID) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_BOOTTIME) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_BOOTTIME_ALARM) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_REALTIME_ALARM) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_TAI) passed
+timer_settime01.c:96: TINFO: Testing for using absolute time:
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_REALTIME) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_MONOTONIC) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_PROCESS_CPUTIME_ID) passe=
+d
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_THREAD_CPUTIME_ID) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_BOOTTIME) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_BOOTTIME_ALARM) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_REALTIME_ALARM) passed
+timer_settime01.c:165: TPASS: timer_settime(CLOCK_TAI) passed
+
+Summary:
+passed   32
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D2 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D156 cstime=3D4
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dtruncate02 stime=3D1689215819
+cmdline=3D"truncate02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+truncate02.c:89: TPASS: truncate(testfile, 256) succeeded
+truncate02.c:89: TPASS: truncate(testfile, 512) succeeded
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D3
+<<<test_end>>>
+<<<test_start>>>
+tag=3Duname01 stime=3D1689215819
+cmdline=3D"uname01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+uname01.c:21: TPASS: uname(&un) passed
+uname01.c:31: TPASS: sysname set to Linux
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dunshare02 stime=3D1689215819
+cmdline=3D"unshare02"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+unshare02.c:51: TPASS: unshare(-1) : EINVAL (22)
+unshare02.c:51: TPASS: unshare(CLONE_NEWNS) : EPERM (1)
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D4
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dumount03 stime=3D1689215819
+cmdline=3D"umount03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext2 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+umount03.c:43: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAjJQ=
+/LTP_umoTj9GNR/mntpoint fstyp=3Dext2 flags=3D0
+umount03.c:35: TPASS: umount() fails as expected: EPERM (1)
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D14
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dutime01 stime=3D1689215819
+cmdline=3D"utime01"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext2
+tst_supported_fs_types.c:55: TINFO: mkfs.ext2 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext3
+tst_supported_fs_types.c:55: TINFO: mkfs.ext3 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports ext4
+tst_supported_fs_types.c:55: TINFO: mkfs.ext4 does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports xfs
+tst_supported_fs_types.c:55: TINFO: mkfs.xfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports btrfs
+tst_supported_fs_types.c:55: TINFO: mkfs.btrfs does exist
+tst_supported_fs_types.c:157: TINFO: Skipping vfat as requested by the test
+tst_supported_fs_types.c:157: TINFO: Skipping exfat as requested by the tes=
+t
+tst_supported_fs_types.c:120: TINFO: FUSE does support ntfs
+tst_supported_fs_types.c:55: TINFO: mkfs.ntfs does exist
+tst_supported_fs_types.c:90: TINFO: Kernel supports tmpfs
+tst_supported_fs_types.c:42: TINFO: mkfs is not needed for tmpfs
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext2 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext2 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_utiA9AjU4/mntpoint fstyp=3Dext2 flags=3D0
+utime01.c:41: TPASS: stat_buf.st_atime =3D=3D utbuf.actime (1689215816)
+utime01.c:42: TPASS: stat_buf.st_mtime =3D=3D utbuf.modtime (1689215815)
+utime01.c:45: TPASS: utime(mntpoint/tmp_file, NULL) passed
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext3 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext3 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_utiA9AjU4/mntpoint fstyp=3Dext3 flags=3D0
+utime01.c:41: TPASS: stat_buf.st_atime =3D=3D utbuf.actime (1689215817)
+utime01.c:42: TPASS: stat_buf.st_mtime =3D=3D utbuf.modtime (1689215816)
+utime01.c:45: TPASS: utime(mntpoint/tmp_file, NULL) passed
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ext4 =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ext4 opts=3D'' extra opt=
+s=3D''
+mke2fs 1.46.6-rc1 (12-Sep-2022)
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_utiA9AjU4/mntpoint fstyp=3Dext4 flags=3D0
+utime01.c:41: TPASS: stat_buf.st_atime =3D=3D utbuf.actime (1689215817)
+utime01.c:42: TPASS: stat_buf.st_mtime =3D=3D utbuf.modtime (1689215816)
+utime01.c:45: TPASS: utime(mntpoint/tmp_file, NULL) passed
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on xfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with xfs opts=3D'' extra opts=
+=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_utiA9AjU4/mntpoint fstyp=3Dxfs flags=3D0
+utime01.c:41: TPASS: stat_buf.st_atime =3D=3D utbuf.actime (1689215818)
+utime01.c:42: TPASS: stat_buf.st_mtime =3D=3D utbuf.modtime (1689215817)
+utime01.c:45: TPASS: utime(mntpoint/tmp_file, NULL) passed
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on btrfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with btrfs opts=3D'' extra op=
+ts=3D''
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_utiA9AjU4/mntpoint fstyp=3Dbtrfs flags=3D0
+utime01.c:41: TPASS: stat_buf.st_atime =3D=3D utbuf.actime (1689215818)
+utime01.c:42: TPASS: stat_buf.st_mtime =3D=3D utbuf.modtime (1689215817)
+utime01.c:45: TPASS: utime(mntpoint/tmp_file, NULL) passed
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on ntfs =3D=3D=3D
+tst_test.c:1093: TINFO: Formatting /dev/loop0 with ntfs opts=3D'' extra opt=
+s=3D''
+The partition start sector was not specified for /dev/loop0 and it could no=
+t be obtained automatically.  It has been set to 0.
+The number of sectors per track was not specified for /dev/loop0 and it cou=
+ld not be obtained automatically.  It has been set to 0.
+The number of heads was not specified for /dev/loop0 and it could not be ob=
+tained automatically.  It has been set to 0.
+To boot from a device, Windows needs the 'partition start sector', the 'sec=
+tors per track' and the 'number of heads' to be set.
+Windows will not be able to boot from this device.
+tst_test.c:1107: TINFO: Mounting /dev/loop0 to /fs/sda2/tmpdir/ltp-i4m7SNAj=
+JQ/LTP_utiA9AjU4/mntpoint fstyp=3Dntfs flags=3D0
+tst_test.c:1107: TINFO: Trying FUSE...
+utime01.c:41: TPASS: stat_buf.st_atime =3D=3D utbuf.actime (1689215843)
+utime01.c:42: TPASS: stat_buf.st_mtime =3D=3D utbuf.modtime (1689215842)
+utime01.c:45: TPASS: utime(mntpoint/tmp_file, NULL) passed
+tst_test.c:1634: TINFO: =3D=3D=3D Testing on tmpfs =3D=3D=3D
+tst_test.c:1093: TINFO: Skipping mkfs for TMPFS filesystem
+tst_test.c:1074: TINFO: Limiting tmpfs size to 32MB
+tst_test.c:1107: TINFO: Mounting ltp-tmpfs to /fs/sda2/tmpdir/ltp-i4m7SNAjJ=
+Q/LTP_utiA9AjU4/mntpoint fstyp=3Dtmpfs flags=3D0
+utime01.c:41: TPASS: stat_buf.st_atime =3D=3D utbuf.actime (1689215844)
+utime01.c:42: TPASS: stat_buf.st_mtime =3D=3D utbuf.modtime (1689215843)
+utime01.c:45: TPASS: utime(mntpoint/tmp_file, NULL) passed
+
+Summary:
+passed   21
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D29 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D9 cstime=3D1860
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dwaitpid09 stime=3D1689215848
+cmdline=3D"waitpid09"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+waitpid09.c:66: TPASS: waitpid(pid, WNOHANG) =3D 0 for a running child
+waitpid09.c:106: TPASS: waitpid(pid, WNOHANG) =3D pid for an exited child
+waitpid09.c:126: TPASS: waitpid(-1, 0) =3D -1 with ECHILD if no children
+waitpid09.c:145: TPASS: waitpid(-1, WNOHANG) =3D -1 with ECHILD if no child=
+ren
+
+Summary:
+passed   4
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dwaitpid13 stime=3D1689215848
+cmdline=3D"waitpid13"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+waitpid_common.h:129: TINFO: Sending SIGCONT to 7075
+waitpid_common.h:129: TINFO: Sending SIGCONT to 7076
+waitpid_common.h:129: TINFO: Sending SIGCONT to 7077
+waitpid_common.h:129: TINFO: Sending SIGCONT to 7078
+waitpid_common.h:129: TINFO: Sending SIGCONT to 7071
+waitpid_common.h:129: TINFO: Sending SIGCONT to 7072
+waitpid_common.h:129: TINFO: Sending SIGCONT to 7073
+waitpid_common.h:129: TINFO: Sending SIGCONT to 7074
+waitpid13.c:70: TPASS: Test PASSED
+
+Summary:
+passed   1
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D5
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dwaitid04 stime=3D1689215848
+cmdline=3D"waitid04"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_buffers.c:55: TINFO: Test is using guarded buffers
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+waitid04.c:31: TPASS: waitid(P_ALL, pid_child, infop, WNOHANG | WEXITED) pa=
+ssed
+waitid04.c:33: TPASS: infop->si_pid =3D=3D 0 (0)
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dwritev07 stime=3D1689215848
+cmdline=3D"writev07"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+writev07.c:50: TINFO: starting test with initial file offset: 0=20
+writev07.c:73: TINFO: got EFAULT
+writev07.c:78: TFAIL: file was written to
+writev07.c:84: TPASS: offset stayed unchanged
+writev07.c:50: TINFO: starting test with initial file offset: 65=20
+writev07.c:73: TINFO: got EFAULT
+writev07.c:78: TFAIL: file was written to
+writev07.c:84: TPASS: offset stayed unchanged
+writev07.c:50: TINFO: starting test with initial file offset: 4096=20
+writev07.c:73: TINFO: got EFAULT
+writev07.c:80: TPASS: file stayed untouched
+writev07.c:84: TPASS: offset stayed unchanged
+writev07.c:50: TINFO: starting test with initial file offset: 4097=20
+writev07.c:73: TINFO: got EFAULT
+writev07.c:80: TPASS: file stayed untouched
+writev07.c:84: TPASS: offset stayed unchanged
+
+Summary:
+passed   6
+failed   2
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D1 corefile=3Dno
+cutime=3D1 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dcopy_file_range03 stime=3D1689215848
+cmdline=3D"copy_file_range03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 02m 30s
+copy_file_range.h:36: TINFO: Testing libc copy_file_range()
+copy_file_range03.c:50: TPASS: copy_file_range sucessfully updated the time=
+stamp
+copy_file_range.h:39: TINFO: Testing __NR_copy_file_range syscall
+copy_file_range03.c:50: TPASS: copy_file_range sucessfully updated the time=
+stamp
+
+Summary:
+passed   2
+failed   0
+broken   0
+skipped  0
+warnings 0
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D3 termination_type=3Dexited termination_id=3D0 corefile=3Dno
+cutime=3D0 cstime=3D2
+<<<test_end>>>
+<<<test_start>>>
+tag=3Dperf_event_open03 stime=3D1689215851
+cmdline=3D"perf_event_open03"
+contacts=3D""
+analysis=3Dexit
+<<<test_output>>>
+tst_test.c:1558: TINFO: Timeout per run is 0h 12m 30s
+perf_event_open03.c:41: TCONF: intel_pt is not available
+
+Summary:
+passed   0
+failed   0
+broken   0
+skipped  1
+warnings 0
+incrementing stop
+<<<execution_status>>>
+initiation_status=3D"ok"
+duration=3D0 termination_type=3Dexited termination_id=3D32 corefile=3Dno
+cutime=3D0 cstime=3D1
+<<<test_end>>>
+INFO: ltp-pan reported some tests FAIL
+LTP Version: 20230516-68-g9512c5da4
+
+       ###############################################################
+
+            Done executing testcases.
+            LTP Version:  20230516-68-g9512c5da4
+       ###############################################################
+
+
+--QCV+ZoLpb83y8C/3
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: attachment; filename="job.yaml"
+
+---
+
+#! jobs/ltp-syscalls.yaml
+suite: ltp
+testcase: ltp
+category: functional
+need_memory: 4G
+disk: 1HDD
+fs: xfs
+ltp:
+  test: syscalls-02
+timeout: 30m
+job_origin: ltp-syscalls.yaml
+
+#! queue options
+queue_cmdline_keys:
+- branch
+- commit
+queue: bisect
+testbox: lkp-ivb-d04
+tbox_group: lkp-ivb-d04
+submit_id: 64aefd429059a4535e14a946
+job_file: "/lkp/jobs/scheduled/lkp-ivb-d04/ltp-1HDD-xfs-syscalls-02-debian-12-x86_64-20220629.cgz-219580eea1ee-20230713-21342-ifxjig-0.yaml"
+id: 1e50d63bf527204f9400de4077cda2de69dc20cb
+queuer_version: "/zday/lkp"
+
+#! /db/releases/20230708003114/lkp-src/hosts/lkp-ivb-d04
+model: Ivy Bridge
+nr_node: 1
+nr_cpu: 4
+memory: 8G
+nr_ssd_partitions: 1
+nr_hdd_partitions: 4
+ssd_partitions: "/dev/disk/by-id/ata-INTEL_SSDSC2KB240G8_BTYF836606UQ240AGN-part1"
+hdd_partitions: "/dev/disk/by-id/ata-WDC_WD20EZRX-00D8PB0_WD-WCC4M0KTT6NK-part2 /dev/disk/by-id/ata-WDC_WD20EZRX-00D8PB0_WD-WCC4M0KTT6NK-part3
+  /dev/disk/by-id/ata-WDC_WD20EZRX-00D8PB0_WD-WCC4M0KTT6NK-part4 /dev/disk/by-id/ata-WDC_WD20EZRX-00D8PB0_WD-WCC4M0KTT6NK-part5"
+rootfs_partition: "/dev/disk/by-id/ata-WDC_WD20EZRX-00D8PB0_WD-WCC4M0KTT6NK-part1"
+brand: Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz
+
+#! /db/releases/20230708003114/lkp-src/include/category/functional
+kmsg:
+heartbeat:
+meminfo:
+kmemleak:
+
+#! /db/releases/20230708003114/lkp-src/include/category/ALL
+sanity-check:
+
+#! /db/releases/20230708003114/lkp-src/include/queue/cyclic
+commit: 219580eea1eedefebd3f17c4b31a5226ff4c6a89
+
+#! /db/releases/20230708003114/lkp-src/include/testbox/lkp-ivb-d04
+netconsole_port: 6676
+ucode: '0x21'
+need_kconfig_hw:
+- R8169: y
+- SATA_AHCI
+- DRM_I915
+
+#! /db/releases/20230708003114/lkp-src/include/disk/nr_hdd
+need_kconfig:
+- BLK_DEV_SD
+- SCSI
+- BLOCK: y
+- SATA_AHCI
+- SATA_AHCI_PLATFORM
+- ATA
+- PCI: y
+- XFS_FS
+- BLK_DEV_LOOP
+- CAN: m
+- CAN_DEV: m
+- CAN_RAW: m
+- CAN_VCAN: m
+- MINIX_FS: m
+- EXPERT: y
+- CHECKPOINT_RESTORE: y
+
+#! /db/releases/20230708003114/lkp-src/include/fs/OTHERS
+
+#! /db/releases/20230708003114/lkp-src/include/ltp
+rootfs: debian-12-x86_64-20220629.cgz
+initrds:
+- linux_headers
+kconfig: x86_64-rhel-8.3-ltp
+enqueue_time: 2023-07-13 03:21:40.740553487 +08:00
+_id: 64aefd429059a4535e14a946
+_rt: "/result/ltp/1HDD-xfs-syscalls-02/lkp-ivb-d04/debian-12-x86_64-20220629.cgz/x86_64-rhel-8.3-ltp/gcc-12/219580eea1eedefebd3f17c4b31a5226ff4c6a89"
+compiler: gcc-12
+head_commit: 2fef4b291ae0214c24fd421650a003d40e2f7087
+base_commit: 6995e2de6891c724bfeb2db33d7b87775f913ad1
+branch: linux-devel/devel-hourly-20230707-230815
+
+#! schedule options
+user: lkp
+LKP_SERVER: internal-lkp-server
+scheduler_version: "/lkp/lkp/src"
+arch: x86_64
+max_uptime: 6000
+initrd: "/osimage/debian/debian-12-x86_64-20220629.cgz"
+bootloader_append:
+- root=/dev/ram0
+- RESULT_ROOT=/result/ltp/1HDD-xfs-syscalls-02/lkp-ivb-d04/debian-12-x86_64-20220629.cgz/x86_64-rhel-8.3-ltp/gcc-12/219580eea1eedefebd3f17c4b31a5226ff4c6a89/0
+- BOOT_IMAGE=/pkg/linux/x86_64-rhel-8.3-ltp/gcc-12/219580eea1eedefebd3f17c4b31a5226ff4c6a89/vmlinuz-6.4.0-rc4-00169-g219580eea1ee
+- branch=linux-devel/devel-hourly-20230707-230815
+- job=/lkp/jobs/scheduled/lkp-ivb-d04/ltp-1HDD-xfs-syscalls-02-debian-12-x86_64-20220629.cgz-219580eea1ee-20230713-21342-ifxjig-0.yaml
+- user=lkp
+- ARCH=x86_64
+- kconfig=x86_64-rhel-8.3-ltp
+- commit=219580eea1eedefebd3f17c4b31a5226ff4c6a89
+- nmi_watchdog=0
+- max_uptime=6000
+- LKP_SERVER=internal-lkp-server
+- nokaslr
+- selinux=0
+- debug
+- apic=debug
+- sysrq_always_enabled
+- rcupdate.rcu_cpu_stall_timeout=100
+- net.ifnames=0
+- printk.devkmsg=on
+- panic=-1
+- softlockup_panic=1
+- nmi_watchdog=panic
+- oops=panic
+- load_ramdisk=2
+- prompt_ramdisk=0
+- drbd.minor_count=8
+- systemd.log_level=err
+- ignore_loglevel
+- console=tty0
+- earlyprintk=ttyS0,115200
+- console=ttyS0,115200
+- vga=normal
+- rw
+modules_initrd: "/pkg/linux/x86_64-rhel-8.3-ltp/gcc-12/219580eea1eedefebd3f17c4b31a5226ff4c6a89/modules.cgz"
+linux_headers_initrd: "/pkg/linux/x86_64-rhel-8.3-ltp/gcc-12/219580eea1eedefebd3f17c4b31a5226ff4c6a89/linux-headers.cgz"
+bm_initrd: "/osimage/deps/debian-12-x86_64-20220629.cgz/lkp_20221125.cgz,/osimage/deps/debian-12-x86_64-20220629.cgz/run-ipconfig_20221125.cgz,/osimage/deps/debian-12-x86_64-20220629.cgz/rsync-rootfs_20221125.cgz,/osimage/deps/debian-12-x86_64-20220629.cgz/fs_20221125.cgz,/osimage/deps/debian-12-x86_64-20220629.cgz/ltp_20230708.cgz,/osimage/pkg/debian-12-x86_64-20220629.cgz/ltp-x86_64-14c1f76-1_20230708.cgz,/osimage/deps/debian-12-x86_64-20220629.cgz/hw_20230326.cgz"
+ucode_initrd: "/osimage/ucode/intel-ucode-20230406.cgz"
+lkp_initrd: "/osimage/user/lkp/lkp-x86_64.cgz"
+site: inn
+
+#! /db/releases/20230708003114/lkp-src/include/site/inn
+LKP_CGI_PORT: 80
+LKP_CIFS_PORT: 139
+oom-killer:
+watchdog:
+job_initrd: "/lkp/jobs/scheduled/lkp-ivb-d04/ltp-1HDD-xfs-syscalls-02-debian-12-x86_64-20220629.cgz-219580eea1ee-20230713-21342-ifxjig-0.cgz"
+last_kernel: 6.5.0-rc1
+acpi_rsdp: '0x000f0490'
+
+#! user overrides
+kernel: "/pkg/linux/x86_64-rhel-8.3-ltp/gcc-12/219580eea1eedefebd3f17c4b31a5226ff4c6a89/vmlinuz-6.4.0-rc4-00169-g219580eea1ee"
+result_root: "/result/ltp/1HDD-xfs-syscalls-02/lkp-ivb-d04/debian-12-x86_64-20220629.cgz/x86_64-rhel-8.3-ltp/gcc-12/219580eea1eedefebd3f17c4b31a5226ff4c6a89/0"
+
+#! /db/releases/20230713011109/lkp-src/include/site/inn
+dequeue_time: 2023-07-13 03:47:41.230359152 +08:00
+job_state: finished
+loadavg: 2.80 2.70 1.40 1/228 7189
+start_time: '1689191529'
+end_time: '1689191868'
+version: "/lkp/lkp/.src-20230712-170834:b245d3d92ad7:24389102c44e"
+
+--QCV+ZoLpb83y8C/3
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: attachment; filename="reproduce"
+
+dmsetup remove_all
+wipefs -a --force /dev/sda2
+mkfs -t xfs -f -mreflink=0 /dev/sda2
+mkdir -p /fs/sda2
+modprobe xfs
+mount -t xfs -o inode64 /dev/sda2 /fs/sda2
+ln -sf /usr/sbin/iptables-nft /usr/bin/iptables
+ln -sf /usr/sbin/ip6tables-nft /usr/bin/ip6tables
+export LTP_RUNTIME_MUL=2
+./runltp -f syscalls-02 -d /fs/sda2/tmpdir
+
+--QCV+ZoLpb83y8C/3--
