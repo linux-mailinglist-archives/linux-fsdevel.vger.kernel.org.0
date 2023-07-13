@@ -2,110 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A30B97526A2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 17:21:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C4CE75272F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 17:34:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230442AbjGMPVl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 11:21:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54182 "EHLO
+        id S232238AbjGMPeF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 11:34:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229809AbjGMPVk (ORCPT
+        with ESMTP id S232007AbjGMPdw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 11:21:40 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49348B4;
-        Thu, 13 Jul 2023 08:21:39 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Thu, 13 Jul 2023 11:33:52 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD6981FD4;
+        Thu, 13 Jul 2023 08:33:51 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D3BF060C26;
-        Thu, 13 Jul 2023 15:21:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29396C433C8;
-        Thu, 13 Jul 2023 15:21:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689261698;
-        bh=sCUx5r2DZPKfzTRMP1CiZcMdAlioIinNWLALD/baR1A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gtlXRFf35r3ABG6O7A1f7oa74AK/iu9aoZ9HWGXimGfmO/feJhhSZ5ywjN/e0h1qZ
-         urcBI3CLd/JzHCXjRrjlL/q8VS/9yxed/4A+tUGjW4eemTxS0D34AHLpTvOGT2l46E
-         9or5s4or5qlc9YkF3/yxS2w9yAs/xbYNeer4NRACjB6TTQC3+EnO0F3XLE5wvxuMYv
-         wBfYMbQ7M4KAXvsqXwgDSF49mLS30o6m0zoRwBTARqGAshMUOEfA1T6JZJeQgd/yAv
-         ssZB5s1Stfz9GrFaJE7rwMkSI499MBuxxmgRk4TXKPxtENUQ7WfTOYKladSPSPfxot
-         HtBmCC+Dk8iOw==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Thomas Weissschuh <thomas@t-8ch.de>, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 5C41522185;
+        Thu, 13 Jul 2023 15:33:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1689262430; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZnsbM2wbDJKZoJO63kCqa7skAvyrvbFpqW+OFngO6J0=;
+        b=sV1pgtAi27tWlGMws6tV7hf/GEtyL/tfm4WbvICemOjJMuus/p2+X17CiUlFl/l1j+rjgD
+        xKsKyh+PUXOM5Mtqqoc/ExfUrXx6RAHwtZ6Lb7OFEryuzF6O5kA/QwwDb0pnIavlwHUUdU
+        pG3UxM2hej8IJ+lTSLLmhqbB30xUz/0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1689262430;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZnsbM2wbDJKZoJO63kCqa7skAvyrvbFpqW+OFngO6J0=;
+        b=9pXKKiCXJGy/exWne0PvxfT2nb5/QqIeeq771ADv8xv5NQVJ9/i551YInR/xTA9frjX5m8
+        AoqlkLi8oC3II5Bg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 42C8613489;
+        Thu, 13 Jul 2023 15:33:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id e3taEF4ZsGTsGAAAMHmgww
+        (envelope-from <chrubis@suse.cz>); Thu, 13 Jul 2023 15:33:50 +0000
+Date:   Thu, 13 Jul 2023 17:34:55 +0200
+From:   Cyril Hrubis <chrubis@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     kernel test robot <oliver.sang@intel.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>, cluster-devel@redhat.com,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Chao Yu <chao@kernel.org>, linux-fsdevel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Xiubo Li <xiubli@redhat.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        ltp@lists.linux.it, lkp@intel.com, Jens Axboe <axboe@kernel.dk>,
+        Christian Brauner <brauner@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Anna Schumaker <anna@kernel.org>, oe-lkp@lists.linux.dev,
         Andrew Morton <akpm@linux-foundation.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        xu xin <cgel.zte@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
-        Zhihao Cheng <chengzhihao1@huawei.com>,
-        Stefan Roesch <shr@devkernel.io>,
-        Janis Danisevskis <jdanis@google.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v2] procfs: block chmod on /proc/thread-self/comm
-Date:   Thu, 13 Jul 2023 17:21:29 +0200
-Message-Id: <20230713-shrimps-urlaub-80a9818b50d9@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230713141001.27046-1-cyphar@cyphar.com>
-References: <20230713141001.27046-1-cyphar@cyphar.com>
+        Hannes Reinecke <hare@suse.de>
+Subject: Re: [LTP] [linus:master] [iomap]  219580eea1: ltp.writev07.fail
+Message-ID: <ZLAZn_SBmoIFG5F5@yuki>
+References: <202307132107.2ce4ea2f-oliver.sang@intel.com>
+ <20230713150923.GA28246@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1886; i=brauner@kernel.org; h=from:subject:message-id; bh=sCUx5r2DZPKfzTRMP1CiZcMdAlioIinNWLALD/baR1A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRsECvbwnyq/KSC1PLGZEExz9i2R907S/4VfRLvenJGgrvP jyGto5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCKHrzIynBNocnhh1K/F7rK8OXWheK ZxW03aRcH0S2q3nnt5vDxlxvBP2ZfP30fkaUeZRtb596VaD/rs1upezD4f9iJgXqFu2AQWAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230713150923.GA28246@lst.de>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 14 Jul 2023 00:09:58 +1000, Aleksa Sarai wrote:
-> Due to an oversight in commit 1b3044e39a89 ("procfs: fix pthread
-> cross-thread naming if !PR_DUMPABLE") in switching from REG to NOD,
-> chmod operations on /proc/thread-self/comm were no longer blocked as
-> they are on almost all other procfs files.
-> 
-> A very similar situation with /proc/self/environ was used to as a root
-> exploit a long time ago, but procfs has SB_I_NOEXEC so this is simply a
-> correctness issue.
-> 
-> [...]
+Hi!
+> I can't reproduce this on current mainline.  Is this a robust failure
+> or flapping test?  Especiall as the FAIL conditions look rather
+> unrelated.
 
-Just to reiterate: The long term fix to avoid these odd behavioral bugs
-in the future is to remove the fallback to simple_setattr() we still
-have in notify_change() that happens when no setattr inode operation has
-been explicitly defined. To do this we need to change all filesystem
-that rely on this fallback to explicitly set simple_setattr() as their
-inode operation. Then notify_change() would simply return EOPNOTSUPP
-when no setattr iop is defined making such omissions pretty obvious.
+Actually the test is spot on, the difference is that previously the
+error was returned form the iomap_file_buffered_write() only if we
+failed with the first buffer from the iov, now we always return the
+error and we do not advance the offset.
 
-But that's a bigger patch. This is a backportable fix for this issue.
-Needs long soaking in -next ofc.
+The change that broke it:
 
----
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 063133ec77f4..550525a525c4 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -864,16 +864,19 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
+                .len            = iov_iter_count(i),
+                .flags          = IOMAP_WRITE,
+        };
+-       int ret;
++       ssize_t ret;
 
-Applied to the fs.proc.uapi branch of the vfs/vfs.git tree.
-Patches in the fs.proc.uapi branch should appear in linux-next soon.
+        if (iocb->ki_flags & IOCB_NOWAIT)
+                iter.flags |= IOMAP_NOWAIT;
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+        while ((ret = iomap_iter(&iter, ops)) > 0)
+                iter.processed = iomap_write_iter(&iter, i);
+-       if (iter.pos == iocb->ki_pos)
++
++       if (unlikely(ret < 0))
+                return ret;
+-       return iter.pos - iocb->ki_pos;
++       ret = iter.pos - iocb->ki_pos;
++       iocb->ki_pos += ret;
++       return ret;
+ }
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+I suppose that we shoudl fix is with something as:
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index adb92cdb24b0..bfb39f7bc303 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -872,11 +872,12 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
+        while ((ret = iomap_iter(&iter, ops)) > 0)
+                iter.processed = iomap_write_iter(&iter, i);
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: fs.proc.uapi
++       iocb->ki_pos += iter.pos - iocb->ki_pos;
++
+        if (unlikely(ret < 0))
+                return ret;
+-       ret = iter.pos - iocb->ki_pos;
+-       iocb->ki_pos += ret;
+-       return ret;
++
++       return iter.pos - iocb->ki_pos;
+ }
+ EXPORT_SYMBOL_GPL(iomap_file_buffered_write);
 
-[1/1] procfs: block chmod on /proc/thread-self/comm
-      https://git.kernel.org/vfs/vfs/c/ccf61486fe1e
+
+-- 
+Cyril Hrubis
+chrubis@suse.cz
