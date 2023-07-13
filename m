@@ -2,100 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DF5E57524D5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 16:14:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEF607524ED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 16:17:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235154AbjGMOOw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 10:14:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60602 "EHLO
+        id S231614AbjGMORY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 10:17:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235070AbjGMOOb (ORCPT
+        with ESMTP id S231166AbjGMORS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 10:14:31 -0400
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BCD902722;
-        Thu, 13 Jul 2023 07:14:27 -0700 (PDT)
-Received: (from willy@localhost)
-        by mail.home.local (8.17.1/8.17.1/Submit) id 36DEDqmj028510;
-        Thu, 13 Jul 2023 16:13:52 +0200
-Date:   Thu, 13 Jul 2023 16:13:52 +0200
-From:   Willy Tarreau <w@1wt.eu>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
-        Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        xu xin <cgel.zte@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@devkernel.io>,
-        Zhihao Cheng <chengzhihao1@huawei.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Janis Danisevskis <jdanis@google.com>,
-        Kees Cook <keescook@chromium.org>, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] procfs: block chmod on /proc/thread-self/comm
-Message-ID: <ZLAGoNkVyYHOtJSA@1wt.eu>
-References: <20230713-unerschrocken-kutschieren-9be3c8958b5d@brauner>
- <nbzkbbahgsds4s4ujmkvno7w42xxy7gkpsrtw7lay3253uabzu@iqgtepoo4fgo>
+        Thu, 13 Jul 2023 10:17:18 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 469A32721
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jul 2023 07:16:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1689257779;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EAEgJXo3oFHhbOe/67unGD8n1ytw1uGix+FjoJLnjGY=;
+        b=dJ3DqZz8VcwMR6brlswiwd8LQnOMQ1l/0KvXpmFISs8ADJh3MZWYto2GS5OWIb/fJOEx4Y
+        4BRbspUbPfJn0bcErLhF5vKzisnr+jJJS0dAw5CH68EvYUJxhc0VnUyl0RupZ3lViL9/9v
+        2RhF+9ZhMOQIAzb3y3LkY+F6iQ03upk=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-159-qbfGoh81PP6vmdkIzd8blg-1; Thu, 13 Jul 2023 10:16:05 -0400
+X-MC-Unique: qbfGoh81PP6vmdkIzd8blg-1
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1b89712d613so3275375ad.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jul 2023 07:16:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689257762; x=1691849762;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EAEgJXo3oFHhbOe/67unGD8n1ytw1uGix+FjoJLnjGY=;
+        b=fvFxi6JM+ZIGE46jqyfMFxuklw13NxwS6uuguv+JAnroM63wQrjQJd5A2DcMHa/Jv0
+         WzquGRY+hyXgbRQ3mSKfSXjjZ4GSqp0z3KVXzP5/pv7y3BgN2HV9OhsDcuqKgUPzYaXJ
+         wfjcmszlmr4MdQTl3rYSxWyADlrJ0mLMkJbsJh+DOLVwpsbkDDIXUHSRzrBS9y13OTPp
+         jzW4Rhb5E9ItwcoS4386YiGQoMoSqB4NgNS2EshYVWreE/86iu620Coc9AMmUS/zM/q6
+         Bmk/QQIjgC3G/aN5OLoNTfjLcY0Gejsq9jsXlsKRkR60K7F7Ar7E+saiWnkeerLvx1C+
+         lOkA==
+X-Gm-Message-State: ABy/qLalMBQxfXnPvtdaHQvXzz7Ggz0HO0BN7r2QkKrwNby2QxExVxyA
+        hmdosQLyecvmMk27CVFiL0u/Jbm+6qbZUKph5WhQpfIGxNp3pVl3aPNYTVWPVYWU0/Mi4I+VoT8
+        QqA1EEcCEtD+7TkwtDO895BY4stx0kCqxkJEmkpxb5w==
+X-Received: by 2002:a17:902:aa05:b0:1b6:93e8:3ddb with SMTP id be5-20020a170902aa0500b001b693e83ddbmr1092167plb.6.1689257762252;
+        Thu, 13 Jul 2023 07:16:02 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlFBoaT6AgcpqEK/+OjOPi7omBjJbJZjmH2NbMZ6kEeX+GmTB19WcUDmjBsTSqAYSC3VtjzZfK2p0sFXLNEHGc0=
+X-Received: by 2002:a17:902:aa05:b0:1b6:93e8:3ddb with SMTP id
+ be5-20020a170902aa0500b001b693e83ddbmr1092153plb.6.1689257761981; Thu, 13 Jul
+ 2023 07:16:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nbzkbbahgsds4s4ujmkvno7w42xxy7gkpsrtw7lay3253uabzu@iqgtepoo4fgo>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20230713135249.153796-1-jlayton@kernel.org>
+In-Reply-To: <20230713135249.153796-1-jlayton@kernel.org>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Thu, 13 Jul 2023 16:15:50 +0200
+Message-ID: <CAHc6FU6QQicrNDKWMQknP9YqKtEhhL0KbDCLACQ=v8P+tPQ5WQ@mail.gmail.com>
+Subject: Re: [PATCH] gfs2: fix timestamp handling on quota inodes
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     brauner@kernel.org, Bob Peterson <rpeterso@redhat.com>,
+        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 14, 2023 at 12:00:51AM +1000, Aleksa Sarai wrote:
-> On 2023-07-13, Christian Brauner <brauner@kernel.org> wrote:
-> > > > diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
-> > > > index 486334981e60..08f0969208eb 100644
-> > > > --- a/tools/testing/selftests/nolibc/nolibc-test.c
-> > > > +++ b/tools/testing/selftests/nolibc/nolibc-test.c
-> > > > @@ -580,6 +580,10 @@ int run_syscall(int min, int max)
-> > > >  		CASE_TEST(chmod_net);         EXPECT_SYSZR(proc, chmod("/proc/self/net", 0555)); break;
-> > > >  		CASE_TEST(chmod_self);        EXPECT_SYSER(proc, chmod("/proc/self", 0555), -1, EPERM); break;
-> > > >  		CASE_TEST(chown_self);        EXPECT_SYSER(proc, chown("/proc/self", 0, 0), -1, EPERM); break;
-> > > > +		CASE_TEST(chmod_self_comm);   EXPECT_SYSER(proc, chmod("/proc/self/comm", 0777), -1, EPERM); break;
-> > > > +		CASE_TEST(chmod_tid_comm);    EXPECT_SYSER(proc, chmod("/proc/thread-self/comm", 0777), -1, EPERM); break;
-> > > > +		CASE_TEST(chmod_self_environ);EXPECT_SYSER(proc, chmod("/proc/self/environ", 0777), -1, EPERM); break;
-> > > > +		CASE_TEST(chmod_tid_environ); EXPECT_SYSER(proc, chmod("/proc/thread-self/environ", 0777), -1, EPERM); break;
-> > 
-> > > 
-> > > I'm not a big fan of this, it abuses the nolibc testsuite to test core
-> > > kernel functionality.
-> > 
-> > Yes, this should be dropped.
-> > We need a minimal patch to fix this. This just makes backporting harder
-> > and any test doesn't need to be backported.
-> 
-> Alright, I'll drop it in v2 (though I'm not sure why there are tests for
-> /proc/self and /proc/self/net then).
+Jeff and Christian,
 
-In fact the goal was to rely on existing entries that were certain to
-return certain errors, as we are testing nolibc syscalls in limited
-environments, such as not being able to create a new file due to another
-syscall not being available yet. /proc is convenient to make a number
-of syscalls fail. That's how the problem was detected by the way :-)
+On Thu, Jul 13, 2023 at 3:52=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+> While these aren't generally visible from userland, it's best to be
+> consistent with timestamp handling. When adjusting the quota, update the
+> mtime and ctime like we would with a write operation on any other inode,
+> and avoid updating the atime which should only be done for reads.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/gfs2/quota.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Christian,
+>
+> Would you mind picking this into the vfs.ctime branch, assuming the GFS2
+> maintainers ack it? Andreas and I had discussed this privately, and I
+> think it makes sense as part of that series.
 
-I personally don't mind that much that tests would be added, provided
-they really test a new syscall+error combination each. As Thomas said,
-here we already have other tests for chmod+EPERM so these ones do not
-bring value here for the purpose of this specific test.
+Yes, please.
 
-With that in mind, if there is some perceived value in adding such
-tests, that's something we could discuss, either in this file as another
-category or (preferably) in a separate one, because the framework makes
-this easy. We could for example have a "proc-test" sub-project forked
-from this one to run various tests on /proc file permissions. This would
-respect a clean split, with nolibc-test assuming a valid kernel to test
-a libc, and proc-test assuming a valid libc to test the kernel. Just an
-idea.
+> Thanks,
+> Jeff
+>
+> diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
+> index 704192b73605..aa5fd06d47bc 100644
+> --- a/fs/gfs2/quota.c
+> +++ b/fs/gfs2/quota.c
+> @@ -871,7 +871,7 @@ static int gfs2_adjust_quota(struct gfs2_inode *ip, l=
+off_t loc,
+>                 size =3D loc + sizeof(struct gfs2_quota);
+>                 if (size > inode->i_size)
+>                         i_size_write(inode, size);
+> -               inode->i_mtime =3D inode->i_atime =3D current_time(inode)=
+;
+> +               inode->i_mtime =3D inode_set_ctime_current(inode);
+>                 mark_inode_dirty(inode);
+>                 set_bit(QDF_REFRESH, &qd->qd_flags);
+>         }
+> --
+> 2.41.0
+>
 
-Regards,
-willy
+Reviewed-by: Andreas Gruenbacher <agruenba@redhat.com>
+
+Thanks,
+Andreas
+
