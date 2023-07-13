@@ -2,74 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AAB4B7519BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 09:23:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACC64751A04
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 09:37:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234254AbjGMHXI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 03:23:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45024 "EHLO
+        id S231549AbjGMHhU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 03:37:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234273AbjGMHW5 (ORCPT
+        with ESMTP id S229455AbjGMHhT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 03:22:57 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE8F01BEC;
-        Thu, 13 Jul 2023 00:22:55 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4fb7769f15aso710743e87.0;
-        Thu, 13 Jul 2023 00:22:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689232974; x=1689837774;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZDO68jZT0ZTH+b3zqYQI1EKldxdKdxhzMhCjT6ca8vE=;
-        b=Ly/a27qbWm3qnzDRfYBv4iH4P6cijdUjadNRwoKPK/KhYArh0x6LsU/QDC05GBtclw
-         nESgKh9tkDdvPova6963LvehGtmrTTHXwBjx/K1/YNQnxCd1mG+2XiKXHmFnA5w8As7t
-         OJapWE0i1xt1GlMWVZd4aIcKEdFofW21+tSVOuypoO95mH/YJ/7MZSqTJLsbwrJZEXgp
-         LsCaEy8mJnnx2eLgLYw0YfLVC2MKdVQB/DsF/32i/Ez76hv2LhJSK4RYBaX+eTiUKhp3
-         hYkIJf+iXHSP4z9G0xlwztAJOa+fFFYMHSHVfxim3hT/HRJS2qGU1eUxz7d24YII0ZxI
-         Yy4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689232974; x=1689837774;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZDO68jZT0ZTH+b3zqYQI1EKldxdKdxhzMhCjT6ca8vE=;
-        b=d9svM6NHUje7o/cPcVNiAqxCIEfydGMaaeDJOJEcLKV+dzMn8VYn6AIm27ekhyBCCs
-         DK9JSMCO2aTXlJUh5e+pt6JmDYkYB0N94IxQ2tlxVTklYMkSa1WovxAyZN1CdZKAP5mm
-         h6C2TUe+7z/lVOCm1HBbbg5bSp99t5MieaBkzWueqaJnuQZwufr12iR8mQr4JHecnPGB
-         f9J+4gQMuZUvbpgeZLCytr4y0QG0ReQg31x+l+HhjfhyvJUsqKv5x1DqPjskkwJfTX65
-         ut5OkHh2cFZsT7TkdKbd4SbPr1hJ0sMyKKkq7Uy5xs/PAhlZIAta7ia+6jXNKn1KS71q
-         yVQQ==
-X-Gm-Message-State: ABy/qLazFQBx22PuBW7oOrBLX5dEOedM2p2PJ52cfPrV9YYcJuU819mG
-        gdxjzJ041Fkwici7Cs1oZkcgayA08Rzfz53JawjKWi/mwCk=
-X-Google-Smtp-Source: APBJJlEOOBWszTkJd6+V6um9Yfz8YUq3x98+y1I0ERzQRWEfxvaAa8YyMhs9UsBI55YAuP+TdqkwF0jZ3JKJEYm97Ko=
-X-Received: by 2002:ac2:5506:0:b0:4f8:586a:8af6 with SMTP id
- j6-20020ac25506000000b004f8586a8af6mr498554lfk.4.1689232973781; Thu, 13 Jul
- 2023 00:22:53 -0700 (PDT)
+        Thu, 13 Jul 2023 03:37:19 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89224C1;
+        Thu, 13 Jul 2023 00:37:18 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1BE2F61A3F;
+        Thu, 13 Jul 2023 07:37:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4078C433C8;
+        Thu, 13 Jul 2023 07:37:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689233837;
+        bh=PBcpfrd4eyPK/MBk1PnMg3e/QAH6Rjvk6p84J7Vxn3s=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Hcn7RW6H46BHJdk4Nd06Xh27EHMDQzHazyRRAFTM6WzRMHZUtfYRX4mspqoOunLzP
+         4GjG8T4itjME+KrZJCPsHCcxVbQ3JgbQ2ReTn6B2R11cWCGp6jV0Yiwm/Am21wkIG7
+         HwgzByIaM4I5X52zY76KmqLu1CYeVSi5kdBPG3oBxiwSlbC+7TKuqRPlaxtO+mbiMZ
+         js1bfM31NiRtFjDB0TcC3j6AMcvFtc3WbcagiRKxNjyCnIUC8gCPaRFnZLM5BLCDBR
+         vwQK0ZKQL9cKfSVe5n7h+qtZCqgh6ZAKC+r96AEPP0rx6fJ3Rmyf8C/HGSTH0myJ/M
+         gyu67ekyWYeCQ==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>, linux-fsdevel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>, stable@vger.kernel.org
+Subject: Re: [PATCH v2] attr: block mode changes of symlinks
+Date:   Thu, 13 Jul 2023 09:37:03 +0200
+Message-Id: <20230713-solarstrom-autopilot-41444d363fa1@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230712-vfs-chmod-symlinks-v2-1-08cfb92b61dd@kernel.org>
+References: <20230712-vfs-chmod-symlinks-v2-1-08cfb92b61dd@kernel.org>
 MIME-Version: 1.0
-References: <tencent_4D921A8D1F69E70C85C28875DC829E28EC09@qq.com> <ZKqc5Uj14C7ST21K@casper.infradead.org>
-In-Reply-To: <ZKqc5Uj14C7ST21K@casper.infradead.org>
-From:   linke li <lilinke99@gmail.com>
-Date:   Thu, 13 Jul 2023 15:22:42 +0800
-Message-ID: <CAKdjhyD8Nn+h77xGRcaHvDNA+Xw_UBzr7TBAoSs-=geUs+f0eQ@mail.gmail.com>
-Subject: Re: [PATCH] isofs: fix undefined behavior in iso_date()
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linke Li <lilinke99@foxmail.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1251; i=brauner@kernel.org; h=from:subject:message-id; bh=PBcpfrd4eyPK/MBk1PnMg3e/QAH6Rjvk6p84J7Vxn3s=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSsXznzrck76fSdJZGrQxKXm0Xo7JLuWnUy+9ihp0tnrzwR p6z7pqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiTlEM/wwny1z8/HtZy7z3G/tj05 +9Xr+r3551Vvzh6w08QrZHdsQxMrzZaebV8odpat3iuSdKD2zhmH7mylMHRZPk/MM9mwrflzIAAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks for your reply.
-> This certainly fixes the problem, but wouldn't it be easier to get the
-> compiler to do the work for us?
- I don't know which solution is better, but it does avoid this problem.
-Like
-    tz = (int)(signed char)p[6];
+On Wed, 12 Jul 2023 20:58:49 +0200, Christian Brauner wrote:
+> Changing the mode of symlinks is meaningless as the vfs doesn't take the
+> mode of a symlink into account during path lookup permission checking.
+> 
+> However, the vfs doesn't block mode changes on symlinks. This however,
+> has lead to an untenable mess roughly classifiable into the following
+> two categories:
+> 
+> [...]
+
+Let's get this into -next and see whether there's any obvious immediate
+fallout because of this.
+
+---
+
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] attr: block mode changes of symlinks
+      https://git.kernel.org/vfs/vfs/c/6be357f00aad
