@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BC6E751701
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 05:55:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0C56751704
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 05:55:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233764AbjGMDzf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jul 2023 23:55:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53830 "EHLO
+        id S233768AbjGMDzh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jul 2023 23:55:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233760AbjGMDz3 (ORCPT
+        with ESMTP id S232167AbjGMDzb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jul 2023 23:55:29 -0400
+        Wed, 12 Jul 2023 23:55:31 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 873401BF2;
-        Wed, 12 Jul 2023 20:55:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC7EF1FD7;
+        Wed, 12 Jul 2023 20:55:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=dJKZzviGYlfiGYN+f/pIQkUos4W3rI9n2ymwoSwEN4E=; b=O8wuDQaNnlTjc1xtfxNp+u8rnS
-        Ap0eYMhkM967U5HZdWTHyw9vqDYUSM1YXM6dXL7PDULiwGZyXgTNUuq20ah7k8RpTu2V3Y3Yb7KxP
-        3BPPsSUZAoDFil2dDgaLEKI28kZU5lm6PL/C9fSTnIhsGuNvt9c+nsAR7LYUGmUOt0m1t8WnhXny6
-        /gL8+3hrg3NbDijiSmztoUEzENKXaxhO/F/7M+zgh4i7e51x4V7G53dgRW7qsSF91Sj+4dGKCXiWZ
-        MgypbL7Dz0Fgms3laHpwK4wCk13rQHseo/6VYw2dbuGNshjlyw1mDcH4iHHmyV40rt/bB8K5007ha
-        AURiAvkw==;
+        bh=elFZct2zLYsO/DhALW8T/PkTJ32hYfvGI0lmoYqZOm8=; b=fCiRDDQ0vsrg84r3mAsPC/UJja
+        5X9ojaJStev+XTF+eZJYbr17rKhQEEX9Ks9wL4MCB6e7OI6ojgep5XBSuh/DBw8cfgfEvy2BmKc6u
+        Li69Ba8gh1z058APNhZq5Aim+JeSvfn8oczbZ4uMvAO4v7izUuF/mdeN/YyX/c+/D3ShMIyWMhaHy
+        t7H/nzZ29DsCV9n+Duqfz91bmWB+fVjVvJVRGMp+cqXowLegsfEb7Q9RgjYONN/HJhfmvQwB4DFzh
+        AK67mENltmR7LSdQ2RuuBlSfxaQqWnviR/iXAJKzBqP6VDC98loO+gHarV82dAFbYyh5TW3hzlwdr
+        Fwca4Cew==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qJnQA-00HMro-Mn; Thu, 13 Jul 2023 03:55:14 +0000
+        id 1qJnQA-00HMrq-Qg; Thu, 13 Jul 2023 03:55:14 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -35,9 +35,9 @@ Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
         ntfs3@lists.linux.dev, "Theodore Tso" <tytso@mit.edu>,
         Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org
-Subject: [PATCH 6/7] jbd2: Use a folio in jbd2_journal_write_metadata_buffer()
-Date:   Thu, 13 Jul 2023 04:55:11 +0100
-Message-Id: <20230713035512.4139457-7-willy@infradead.org>
+Subject: [PATCH 7/7] buffer: Remove set_bh_page()
+Date:   Thu, 13 Jul 2023 04:55:12 +0100
+Message-Id: <20230713035512.4139457-8-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230713035512.4139457-1-willy@infradead.org>
 References: <20230713035512.4139457-1-willy@infradead.org>
@@ -53,104 +53,53 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The primary goal here is removing the use of set_bh_page().
-Take the opportunity to switch from kmap_atomic() to kmap_local().
-This simplifies the function as the offset is already added to
-the pointer.
+With all users converted to folio_set_bh(), remove this function.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/jbd2/journal.c | 35 ++++++++++++++++-------------------
- 1 file changed, 16 insertions(+), 19 deletions(-)
+ fs/buffer.c                 | 15 ---------------
+ include/linux/buffer_head.h |  2 --
+ 2 files changed, 17 deletions(-)
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index fbce16fedaa4..1b5a45ab62b0 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -341,7 +341,7 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
- 	int do_escape = 0;
- 	char *mapped_data;
- 	struct buffer_head *new_bh;
--	struct page *new_page;
-+	struct folio *new_folio;
- 	unsigned int new_offset;
- 	struct buffer_head *bh_in = jh2bh(jh_in);
- 	journal_t *journal = transaction->t_journal;
-@@ -370,14 +370,14 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
- 	 */
- 	if (jh_in->b_frozen_data) {
- 		done_copy_out = 1;
--		new_page = virt_to_page(jh_in->b_frozen_data);
--		new_offset = offset_in_page(jh_in->b_frozen_data);
-+		new_folio = virt_to_folio(jh_in->b_frozen_data);
-+		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
- 	} else {
--		new_page = jh2bh(jh_in)->b_page;
--		new_offset = offset_in_page(jh2bh(jh_in)->b_data);
-+		new_folio = jh2bh(jh_in)->b_folio;
-+		new_offset = offset_in_folio(new_folio, jh2bh(jh_in)->b_data);
- 	}
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 587e4d4af9de..f0563ebae75f 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1539,21 +1539,6 @@ void invalidate_bh_lrus_cpu(void)
+ 	bh_lru_unlock();
+ }
  
--	mapped_data = kmap_atomic(new_page);
-+	mapped_data = kmap_local_folio(new_folio, new_offset);
- 	/*
- 	 * Fire data frozen trigger if data already wasn't frozen.  Do this
- 	 * before checking for escaping, as the trigger may modify the magic
-@@ -385,18 +385,17 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
- 	 * data in the buffer.
- 	 */
- 	if (!done_copy_out)
--		jbd2_buffer_frozen_trigger(jh_in, mapped_data + new_offset,
-+		jbd2_buffer_frozen_trigger(jh_in, mapped_data,
- 					   jh_in->b_triggers);
- 
- 	/*
- 	 * Check for escaping
- 	 */
--	if (*((__be32 *)(mapped_data + new_offset)) ==
--				cpu_to_be32(JBD2_MAGIC_NUMBER)) {
-+	if (*((__be32 *)mapped_data) == cpu_to_be32(JBD2_MAGIC_NUMBER)) {
- 		need_copy_out = 1;
- 		do_escape = 1;
- 	}
--	kunmap_atomic(mapped_data);
-+	kunmap_local(mapped_data);
- 
- 	/*
- 	 * Do we need to do a data copy?
-@@ -417,12 +416,10 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
- 		}
- 
- 		jh_in->b_frozen_data = tmp;
--		mapped_data = kmap_atomic(new_page);
--		memcpy(tmp, mapped_data + new_offset, bh_in->b_size);
--		kunmap_atomic(mapped_data);
-+		memcpy_from_folio(tmp, new_folio, new_offset, bh_in->b_size);
- 
--		new_page = virt_to_page(tmp);
--		new_offset = offset_in_page(tmp);
-+		new_folio = virt_to_folio(tmp);
-+		new_offset = offset_in_folio(new_folio, tmp);
- 		done_copy_out = 1;
- 
- 		/*
-@@ -438,12 +435,12 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
- 	 * copying, we can finally do so.
- 	 */
- 	if (do_escape) {
--		mapped_data = kmap_atomic(new_page);
--		*((unsigned int *)(mapped_data + new_offset)) = 0;
--		kunmap_atomic(mapped_data);
-+		mapped_data = kmap_local_folio(new_folio, new_offset);
-+		*((unsigned int *)mapped_data) = 0;
-+		kunmap_local(mapped_data);
- 	}
- 
--	set_bh_page(new_bh, new_page, new_offset);
-+	folio_set_bh(new_bh, new_folio, new_offset);
- 	new_bh->b_size = bh_in->b_size;
- 	new_bh->b_bdev = journal->j_dev;
- 	new_bh->b_blocknr = blocknr;
+-void set_bh_page(struct buffer_head *bh,
+-		struct page *page, unsigned long offset)
+-{
+-	bh->b_page = page;
+-	BUG_ON(offset >= PAGE_SIZE);
+-	if (PageHighMem(page))
+-		/*
+-		 * This catches illegal uses and preserves the offset:
+-		 */
+-		bh->b_data = (char *)(0 + offset);
+-	else
+-		bh->b_data = page_address(page) + offset;
+-}
+-EXPORT_SYMBOL(set_bh_page);
+-
+ void folio_set_bh(struct buffer_head *bh, struct folio *folio,
+ 		  unsigned long offset)
+ {
+diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+index a7377877ff4e..06566aee94ca 100644
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -194,8 +194,6 @@ void buffer_check_dirty_writeback(struct folio *folio,
+ void mark_buffer_dirty(struct buffer_head *bh);
+ void mark_buffer_write_io_error(struct buffer_head *bh);
+ void touch_buffer(struct buffer_head *bh);
+-void set_bh_page(struct buffer_head *bh,
+-		struct page *page, unsigned long offset);
+ void folio_set_bh(struct buffer_head *bh, struct folio *folio,
+ 		  unsigned long offset);
+ bool try_to_free_buffers(struct folio *);
 -- 
 2.39.2
 
