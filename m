@@ -2,80 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD4B5751651
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 04:31:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63ED77516B3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 05:21:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233550AbjGMCbj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Jul 2023 22:31:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53256 "EHLO
+        id S233545AbjGMDVL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Jul 2023 23:21:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233506AbjGMCbi (ORCPT
+        with ESMTP id S233421AbjGMDVJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Jul 2023 22:31:38 -0400
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99AB4E70
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 19:31:37 -0700 (PDT)
-Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-39eab5800bdso332362b6e.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 19:31:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689215497; x=1691807497;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ULMbfN3/nTfJ+25ppVCP/v7aeJsW1OOHpSx1JvllrA=;
-        b=JMO1uChfZPb7LetaoLbnugV4dgmDGT3546ItM/vGRV89cr05D+B/F0OpCT4pQ1fRkZ
-         3T+6wgr9EiXyjw/iUO23IJQXieGyMhDYvH7HPQ9OQKfHcOlANAzCObhTIEDuLYQNIKM5
-         xOlJfDmypbODBzQ2bJ2hKavfo6J2+arj/RKoEPS9BagkIdAsjBZ0yuD1f4wkaDGB1H2x
-         dNHAqRl9LG79JtVgqQfnxuz5qEPUhctK/2NLs5vdFVHCS+HKo3z2Jj9b38G1P/scdyYh
-         JyqVgHsXMpv361D50EE3n8lOltDFAqg4I7vPFvuqFmyyc88lm4Qxnysw5hx9uXs1ThH9
-         e01A==
-X-Gm-Message-State: ABy/qLbcvi7Czr+hDL3jvt5B5+HRufUdoxcHcqo/PuOAAGihIvAxWMvD
-        w7x1LsN8un8Htsa2gSTcaKp/yrwTFYaVYOhQQCm1oS3oTgqC
-X-Google-Smtp-Source: APBJJlH2K90jYu1C5y22SOZVw5Knm8A76T+Khq2Wzij5kK4T+YdlLIq/oPDVEuOx1Q49MiRQmeYaP51o6El+K48URannynX2pxY8
+        Wed, 12 Jul 2023 23:21:09 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6059810FC;
+        Wed, 12 Jul 2023 20:21:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=605YgMfajbHUM8zyPverYiNrP/gL/svBXPBHjEAyzKA=; b=BDiydvVJ4ED4g+lWwgib5QO/7H
+        QE/h5ih5ZbmG0yjhU0PPEXbHnulFBdGPWy/GGmjw9G1rAjAOYZW8kV7/ryaNP+H/Yw0aS5YW+VuBG
+        Dx6iikGUC33E/7DjrAwWYyYoqaCOmsyMg/daZ+KIdMkj4MLNoMNSVrGQVg8bctIhNbZDL2dty1ksW
+        ZyBtcyRrVxk8cumG5VATCfRokvtNqFSAjIA+/V71ACX9LOL1VqsiKkv7swjvjPtkFB85ByoY+KBRi
+        L6YypChaDTu2RDTBhQ9x84gcfgbMD5epaOhIFH+BSimfhR4jiBl3jBkJzkbF1SHW+8OlKN2gymFKq
+        I9EWrwxw==;
+Received: from [2601:1c2:980:9ec0::2764]
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1qJmt9-001oD3-2n;
+        Thu, 13 Jul 2023 03:21:07 +0000
+Message-ID: <670a325f-f066-d146-f738-e5db1ca029ee@infradead.org>
+Date:   Wed, 12 Jul 2023 20:21:05 -0700
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:2119:b0:3a4:1265:67e6 with SMTP id
- r25-20020a056808211900b003a4126567e6mr383381oiw.8.1689215496998; Wed, 12 Jul
- 2023 19:31:36 -0700 (PDT)
-Date:   Wed, 12 Jul 2023 19:31:36 -0700
-In-Reply-To: <000000000000fd3bbe05efb0d1fd@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a5d5ab060055215c@google.com>
-Subject: Re: [syzbot] [ntfs3?] WARNING in walk_component
-From:   syzbot <syzbot+eba014ac93ef29f83dc8@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org,
-        almaz.alexandrovich@paragon-software.com, davem@davemloft.net,
-        hughd@google.com, jiri@nvidia.com, kuba@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, ntfs3@lists.linux.dev,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 12/20] bcache: move closures to lib/
+Content-Language: en-US
+To:     Kent Overstreet <kent.overstreet@linux.dev>,
+        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Coly Li <colyli@suse.de>
+References: <20230712211115.2174650-1-kent.overstreet@linux.dev>
+ <20230712211115.2174650-13-kent.overstreet@linux.dev>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20230712211115.2174650-13-kent.overstreet@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+Hi,
 
-commit d772781964415c63759572b917e21c4f7ec08d9f
-Author: Jakub Kicinski <kuba@kernel.org>
-Date:   Fri Jan 6 06:33:54 2023 +0000
+LGTM.
+I have a couple of small nits below...
 
-    devlink: bump the instance index directly when iterating
+On 7/12/23 14:11, Kent Overstreet wrote:
+> From: Kent Overstreet <kent.overstreet@gmail.com>
+> 
+> Prep work for bcachefs - being a fork of bcache it also uses closures
+> 
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Acked-by: Coly Li <colyli@suse.de>
+> ---
+>  drivers/md/bcache/Kconfig                     | 10 +-----
+>  drivers/md/bcache/Makefile                    |  4 +--
+>  drivers/md/bcache/bcache.h                    |  2 +-
+>  drivers/md/bcache/super.c                     |  1 -
+>  drivers/md/bcache/util.h                      |  3 +-
+>  .../md/bcache => include/linux}/closure.h     | 17 +++++----
+>  lib/Kconfig                                   |  3 ++
+>  lib/Kconfig.debug                             |  9 +++++
+>  lib/Makefile                                  |  2 ++
+>  {drivers/md/bcache => lib}/closure.c          | 35 +++++++++----------
+>  10 files changed, 43 insertions(+), 43 deletions(-)
+>  rename {drivers/md/bcache => include/linux}/closure.h (97%)
+>  rename {drivers/md/bcache => lib}/closure.c (88%)
+> 
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12801432a80000
-start commit:   f3e8416619ce Merge tag 'soc-fixes-6.1-5' of git://git.kern..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b83f3e90d74765ea
-dashboard link: https://syzkaller.appspot.com/bug?extid=eba014ac93ef29f83dc8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=117d216b880000
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index ce51d4dc68..3ee25d5dae 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -1637,6 +1637,15 @@ config DEBUG_NOTIFIERS
+>  	  This is a relatively cheap check but if you care about maximum
+>  	  performance, say N.
+>  
+> +config DEBUG_CLOSURES
+> +	bool "Debug closures (bcache async widgits)"
 
-If the result looks correct, please mark the issue as fixed by replying with:
+	                                   widgets
 
-#syz fix: devlink: bump the instance index directly when iterating
+> +	depends on CLOSURES
+> +	select DEBUG_FS
+> +	help
+> +	Keeps all active closures in a linked list and provides a debugfs
+> +	interface to list them, which makes it possible to see asynchronous
+> +	operations that get stuck.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Indent those 3 help text lines with 2 additional spaces, please,
+as documented and as is done in (most of) the rest of this file.
+
+With those fixed:
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+thanks.
+-- 
+~Randy
