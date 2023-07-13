@@ -2,110 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 30B8F752517
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 16:27:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F02A75252E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 16:33:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229944AbjGMO1L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 10:27:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41834 "EHLO
+        id S230027AbjGMOdL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 10:33:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230005AbjGMO1J (ORCPT
+        with ESMTP id S230411AbjGMOdK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 10:27:09 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8067426B5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jul 2023 07:27:06 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3fba8e2aa52so7446095e9.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jul 2023 07:27:06 -0700 (PDT)
+        Thu, 13 Jul 2023 10:33:10 -0400
+Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67E3C213F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jul 2023 07:33:07 -0700 (PDT)
+Received: by mail-pg1-x54a.google.com with SMTP id 41be03b00d2f7-55c04f5827eso403222a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jul 2023 07:33:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689258425; x=1691850425;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PxQyfBDyp9L0H87NjuF/C5shA0jZRwDe5Ep7LksUpGA=;
-        b=lyyADvTRTCZYjkS+hGu8ZcpekL7ubco8ddA/U4p8sXAvMjxU/scSqXN8fMoPf/acrs
-         ymDzktU59IXkgLBWFyZro3HgIQnOeqyOvZBtqdi0BCVggDQLkcFxQ/PrjLTC+rsb1gn2
-         AZUFlZZAnec8s/iFK7WxxAopdSOGf70TeeevRikuhtPLb6/asiVHQFXbF5ycjdNIPzej
-         CVkpoxn68D59mep2SZJZFoLUWqVZVWDSYrdrkSQ/zFZ3D5tt7ksNEYgRrPecUzKqFaQA
-         23QqTczfiuJLk+NJlwsOGLQ3HaOmy3Hgeyv1rpcKo7P38SPejXaL+zyjm9o7wGcrVdCo
-         KWdQ==
+        d=google.com; s=20221208; t=1689258787; x=1691850787;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fr2vYa/Ch6xYV487nmzxcm8iM/FlpnkWVHQ5jynQTbg=;
+        b=jacaK9M2p8ae07DYtf3WTwW4sJ88AeR0PMoTM/K8Zom80G9CNsRED8/7OkNACpL4FI
+         vSrK+poAQrpW9b9XXAEX3N+/eJqGG0fl2uSilp/V2zhMmynFGmkNp19rQMAPCUIgro+L
+         8wZFnIyWuBTpd6inSk0jhwWPq/qOKDhiCmrdy2nICENUOLQPMx4zm5vkc1J+N+jf8F/9
+         NWijWeXBKP6nhRWfAZooF9dECtwpwP1B06LROVi+ZRGQWEPDlF+8FcWtS7IpVg38LWBC
+         sabPszkfHQCdZSa4qO28HKir4zE3m+cUi5LtAFjCZb9xEKl25slyjVF3CoaXZrvttifT
+         RnQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689258425; x=1691850425;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PxQyfBDyp9L0H87NjuF/C5shA0jZRwDe5Ep7LksUpGA=;
-        b=Uobq3F8eikih8xJFnQbU5VLhH2nRtJT7FuLnZfY2suk/AjB7xOrYA9AVkMqog2FQQl
-         hXSNu8yR3Nm0srSMhidbChcJDMNnM0A9YhNuMgvVx+M+OtpFOTQQZwcFEYu7ww0YOkG2
-         Zo8kPnX+4wMZ54Tm16KlOgWL5QE8F+KROVwo6OCIFMxFvdaKtpp5amq/S+0WJUkHeO4R
-         v41dpPdYEBS/dZR7+iNB+c0na1aIzufEQIr0owNe0mB7l8jw70DId2nHR9RqvuHDc5VM
-         aw257ODP65/nu+AWmoRt4LE4p9FiGvn2+ROYcCXo+j2ECcx4J1gzrHyvg40LJMzXgFjO
-         8hgA==
-X-Gm-Message-State: ABy/qLaefxZSIprPTLzkgnB6GvJV25vCBsSJeNwGMzqJUbwyZZeDYPG9
-        tekKmFKsJsKP6CN1Sex4q+GC7ldQQUnB29EzXQc=
-X-Google-Smtp-Source: APBJJlFEgqEOG5VUSLROkOBtduudA0q3XdNXVLgqDcYk1NQxcfJmrHVM1leqhzyFg1ZhYct7U868Eg==
-X-Received: by 2002:a7b:ca5a:0:b0:3f7:3991:e12e with SMTP id m26-20020a7bca5a000000b003f73991e12emr1661543wml.1.1689258425056;
-        Thu, 13 Jul 2023 07:27:05 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id p11-20020a1c740b000000b003fbe36a4ce6sm18432534wmc.10.2023.07.13.07.27.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jul 2023 07:27:03 -0700 (PDT)
-Date:   Thu, 13 Jul 2023 17:26:59 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Linke Li <lilinke99@foxmail.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Linke Li <lilinke99@gmail.com>
-Subject: Re: [PATCH] isofs: fix undefined behavior in iso_date()
-Message-ID: <c00d9b0f-69d7-4243-bf3d-cfa5cb18e495@kadam.mountain>
-References: <tencent_4D921A8D1F69E70C85C28875DC829E28EC09@qq.com>
- <79582844-3178-451c-822e-a692bfd27e9c@moroto.mountain>
- <aa811b76ac704140bfa98884c8d6f51e@AcuMS.aculab.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aa811b76ac704140bfa98884c8d6f51e@AcuMS.aculab.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        d=1e100.net; s=20221208; t=1689258787; x=1691850787;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fr2vYa/Ch6xYV487nmzxcm8iM/FlpnkWVHQ5jynQTbg=;
+        b=Xe3lGmf/FsufvZitWiEKSJDDAC2yprWQ6nfoPRVJwo5ZiqUry7wqv9EmuOBcKjIjP6
+         u/CYLoWMs4WUA90L1YSK+wSiFGSwXrSP1C0xLMFsweTotj/LLZrpauh6gglBcVCJb5FC
+         OilCq3Y/hWx/eLo+SrgRxUWKvRninN+mR/pQ470ouYLBUUJKEyzZFsP+/G+YyzgMffsn
+         Wzu5uPUoHM6q6Wn0p9rpl09J4GKlEALdxs1x6s1DMnJ3lrtijTJA48Q/J7AZrSEfWax4
+         1lm3XNvGBKslNncrdIYUxLjjVzU5Xecq7uf1dXBM30E40AczO1mGckJVDiXYb0uZ2xEd
+         OTKw==
+X-Gm-Message-State: ABy/qLavQjPRYGdrYNvmuKZEUFp3+uJFVw9w7qiLsd/zkZSp1Fwv7dkE
+        3Ts+B2vMUnhM0KaarkrxLRuBypwR0fo=
+X-Google-Smtp-Source: APBJJlFAAhWItEMB5PDxlVd4/XD0kDAeGPn5ZZPTnMU3ojU8FDM9Oji9AhkfLIh7rpZuc1o0H3AhYJQLwhY=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:b282:b0:1ba:1704:89d1 with SMTP id
+ u2-20020a170902b28200b001ba170489d1mr5846plr.10.1689258786828; Thu, 13 Jul
+ 2023 07:33:06 -0700 (PDT)
+Date:   Thu, 13 Jul 2023 07:33:05 -0700
+In-Reply-To: <20230713-vfs-eventfd-signal-v1-2-7fda6c5d212b@kernel.org>
+Mime-Version: 1.0
+References: <20230713-vfs-eventfd-signal-v1-0-7fda6c5d212b@kernel.org> <20230713-vfs-eventfd-signal-v1-2-7fda6c5d212b@kernel.org>
+Message-ID: <ZLAK+FA3qgbHW0YK@google.com>
+Subject: Re: [PATCH 2/2] eventfd: simplify eventfd_signal_mask()
+From:   Sean Christopherson <seanjc@google.com>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        Paul Durrant <paul@xen.org>, Oded Gabbay <ogabbay@kernel.org>,
+        Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
+        Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>,
+        Zhi Wang <zhi.a.wang@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Farman <farman@linux.ibm.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.ibm.com>,
+        Jason Herne <jjherne@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Diana Craciun <diana.craciun@oss.nxp.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>, Fei Li <fei1.li@intel.com>,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Shakeel Butt <shakeelb@google.com>,
+        Muchun Song <muchun.song@linux.dev>,
+        Kirti Wankhede <kwankhede@nvidia.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fpga@vger.kernel.org, intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-aio@kvack.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        io-uring@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 13, 2023 at 02:11:02PM +0000, David Laight wrote:
-> From: Dan Carpenter
-> > Sent: 10 July 2023 10:57
-> > 
-> > It looks like maybe there is an issue with "year" as well.
-> > 
-> > fs/isofs/util.c
-> >     19  int iso_date(u8 *p, int flag)
-> >     20  {
-> >     21          int year, month, day, hour, minute, second, tz;
-> >     22          int crtime;
-> >     23
-> >     24          year = p[0];
-> >                        ^^^^^
-> > year is 0-255.
-> ....
-> >     32
-> >     33          if (year < 0) {
-> >                     ^^^^^^^^
-> > But this checks year for < 0 which is impossible.  Should it be:
-> > 
-> > 	year = (signed char)p[0];?
-> 
-> Or not?
-> 
-> What happens in 2027 ?
-> I bet the value has to be treated an unsigned.
+On Thu, Jul 13, 2023, Christian Brauner wrote:
+> diff --git a/fs/eventfd.c b/fs/eventfd.c
+> index dc9e01053235..077be5da72bd 100644
+> --- a/fs/eventfd.c
+> +++ b/fs/eventfd.c
+> @@ -43,9 +43,10 @@ struct eventfd_ctx {
+>  	int id;
+>  };
+>  
+> -__u64 eventfd_signal_mask(struct eventfd_ctx *ctx, __u64 n, __poll_t mask)
+> +bool eventfd_signal_mask(struct eventfd_ctx *ctx, __poll_t mask)
+>  {
+>  	unsigned long flags;
+> +	__u64 n = 1;
+>  
+>  	/*
+>  	 * Deadlock or stack overflow issues can happen if we recurse here
+> @@ -68,7 +69,7 @@ __u64 eventfd_signal_mask(struct eventfd_ctx *ctx, __u64 n, __poll_t mask)
+>  	current->in_eventfd = 0;
+>  	spin_unlock_irqrestore(&ctx->wqh.lock, flags);
+>  
+> -	return n;
+> +	return n == 1;
+>  }
 
-Yeah.  Good point.  We could delete that if statement and pull the whole
-function in a tab.
+...
 
-regards,
-dan carpenter
+> @@ -58,13 +58,12 @@ static inline struct eventfd_ctx *eventfd_ctx_fdget(int fd)
+>  	return ERR_PTR(-ENOSYS);
+>  }
+>  
+> -static inline int eventfd_signal(struct eventfd_ctx *ctx)
+> +static inline bool eventfd_signal(struct eventfd_ctx *ctx)
+>  {
+>  	return -ENOSYS;
+>  }
+>  
+> -static inline int eventfd_signal_mask(struct eventfd_ctx *ctx, __u64 n,
+> -				      unsigned mask)
+> +static inline bool eventfd_signal_mask(struct eventfd_ctx *ctx, unsigned mask)
+>  {
+>  	return -ENOSYS;
 
+This will morph to "true" for what should be an error case.  One option would be
+to have eventfd_signal_mask() return 0/-errno instead of the count, but looking
+at all the callers, nothing ever actually consumes the result.
+
+KVMGT morphs failure into -EFAULT
+
+	if (vgpu->msi_trigger && eventfd_signal(vgpu->msi_trigger, 1) != 1)
+		return -EFAULT;
+
+but the only caller of that user ignores the return value.
+
+	if (vgpu_vreg(vgpu, i915_mmio_reg_offset(GEN8_MASTER_IRQ))
+			& ~GEN8_MASTER_IRQ_CONTROL)
+		inject_virtual_interrupt(vgpu);
+
+The sample driver in samples/vfio-mdev/mtty.c uses a similar pattern: prints an
+error but otherwise ignores the result.
+
+So why not return nothing?  That will simplify eventfd_signal_mask() a wee bit
+more, and eliminate that bizarre return value confusion for the ugly stubs, e.g.
+
+void eventfd_signal_mask(struct eventfd_ctx *ctx, unsigned mask)
+{
+	unsigned long flags;
+
+	/*
+	 * Deadlock or stack overflow issues can happen if we recurse here
+	 * through waitqueue wakeup handlers. If the caller users potentially
+	 * nested waitqueues with custom wakeup handlers, then it should
+	 * check eventfd_signal_allowed() before calling this function. If
+	 * it returns false, the eventfd_signal() call should be deferred to a
+	 * safe context.
+	 */
+	if (WARN_ON_ONCE(current->in_eventfd))
+		return;
+
+	spin_lock_irqsave(&ctx->wqh.lock, flags);
+	current->in_eventfd = 1;
+	if (ctx->count < ULLONG_MAX)
+		ctx->count++;
+	if (waitqueue_active(&ctx->wqh))
+		wake_up_locked_poll(&ctx->wqh, EPOLLIN | mask);
+	current->in_eventfd = 0;
+	spin_unlock_irqrestore(&ctx->wqh.lock, flags);
+}
+
+You could even go further and unify the real and stub versions of eventfd_signal().
