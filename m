@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 029EE752067
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 13:51:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CC3B7520AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 14:00:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233149AbjGMLvq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 07:51:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52292 "EHLO
+        id S234093AbjGMMAI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 08:00:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjGMLvp (ORCPT
+        with ESMTP id S233218AbjGMMAH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 07:51:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC500B4;
-        Thu, 13 Jul 2023 04:51:44 -0700 (PDT)
+        Thu, 13 Jul 2023 08:00:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EB8F2D45;
+        Thu, 13 Jul 2023 04:59:49 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7E89260E88;
-        Thu, 13 Jul 2023 11:51:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2441AC433C7;
-        Thu, 13 Jul 2023 11:51:41 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 89C2A61077;
+        Thu, 13 Jul 2023 11:59:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E91B6C433C7;
+        Thu, 13 Jul 2023 11:59:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689249103;
-        bh=7eNiqnL5o04b/srPhTHOLbn3kMJYAa19AC9efoHty4E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jAqnYKzyKyNcbNDT5tq4ZHXEuSzk0n3PH8JX8Mi/wnxuH4mJ8TV/uH2p9hw4aqX2u
-         eO5b+dUnLY3aDV8fPfZFGtwoqlnAAct5VV4z/aknvixceVz1KPLDk0KTj0w2pcl4iP
-         UeP7ZHWfF4l97JPmg9eCzYLPAZ/2167CnESNKrVqY7IZkcHZ2arl002uqEZjVzwJPo
-         VWig2DRWfLeRjSadqpHnSgYLzoOwJg2mkYKKwBfmNfBtED5sS7tIow/kur/DoxHKMY
-         n4/ew5bLr2iFp4AJnBMrQ6q1j2jJcgQ/0PtsDbL36h5vzlCPadE0Z8hoXFG/gZE1SZ
-         m/44XUMqGersw==
-Date:   Thu, 13 Jul 2023 13:51:39 +0200
+        s=k20201202; t=1689249587;
+        bh=ouScaK8v7+X9Png+HkEOnDttdXAuG7e8+D2RZ23vdxk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VlxwbmsSqPSxSwUe++eeDGP9hFq5f2E8zTJ+qFSvisVKxkiXmlj4KW3RgEpk5iN9i
+         rdoToqFf/V5NCxxB5O4LfAfFvS8tpt5M3R02/QCJoMZAaB4vw7A6RAzWOw5aiPMzQI
+         sCAlMB39uJmvgN5ipitFPGRgL8eSkNm0KtWkA/yaKoJTGlXKS71Go4dyZkvL0Gm8/h
+         4z+BuN5aueoLX3MMyuL3Kdb9bvHMe0KTfcDLeXbf/EefL/SIVehkwTZgjNHISDYVZU
+         o4tlYMvEV1TZoxPCQ+lheJdNwKPdUTSgStleI+JlWLayrrDqrregTPJ2E5sCB6ZAM7
+         8UkrmV3vlosDw==
 From:   Christian Brauner <brauner@kernel.org>
-To:     Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-Cc:     Willy Tarreau <w@1wt.eu>, Zhangjin Wu <falcon@tinylab.org>,
-        arnd@arndb.de, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        shuah@kernel.org
+To:     =?utf-8?q?Willy_Tarreau_=3Cw=401wt=2Eeu=3E=2C_Thomas_Wei=C3=9Fschuh_=3Cl?=@vger.kernel.org,
+        =?utf-8?q?inux=40weissschuh=2Enet=3E?=@vger.kernel.org
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Zhangjin Wu <falcon@tinylab.org>,
+        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>
 Subject: Re: [PATCH 0/2] proc: proc_setattr for /proc/$PID/net
-Message-ID: <20230713-walzwerk-flugaufnahme-680653f18f88@brauner>
+Date:   Thu, 13 Jul 2023 13:58:48 +0200
+Message-Id: <20230713-schwalben-anproben-6af2eac149fd@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230624-proc-net-setattr-v1-0-73176812adee@weissschuh.net>
 References: <20230624-proc-net-setattr-v1-0-73176812adee@weissschuh.net>
- <20230630140609.263790-1-falcon@tinylab.org>
- <20230709092947.GF9321@1wt.eu>
- <3261fa5b-b239-48a2-b1a8-34f80567cde1@t-8ch.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1510; i=brauner@kernel.org; h=from:subject:message-id; bh=ouScaK8v7+X9Png+HkEOnDttdXAuG7e8+D2RZ23vdxk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSsf/bxdUWs/+pZqS9ef/4U9WBnyL1td247iAvzdSTI2vLG HJye2FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCREj9GhuWu3buCRfKVtQ7fXcNkX/ n2T9WySfqt/0uzVXV8DqQ8P8Xwz3hHX8v637wyETwHcvg3xhsbizAt63AsmBl8t3nNtFXCHAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3261fa5b-b239-48a2-b1a8-34f80567cde1@t-8ch.de>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -61,20 +61,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 09, 2023 at 07:10:58PM +0200, Thomas Weißschuh wrote:
-> Hi Willy,
+On Sat, 24 Jun 2023 12:30:45 +0200, Thomas Weißschuh wrote:
+> /proc/$PID/net currently allows the setting of file attributes,
+> in contrast to other /proc/$PID/ files and directories.
 > 
-> On 2023-07-09 11:29:47+0200, Willy Tarreau wrote:
-> > On Fri, Jun 30, 2023 at 10:06:09PM +0800, Zhangjin Wu wrote:
-> >> [..]
-> > 
-> > Now queued, thanks!
-> > Willy
+> This would break the nolibc testsuite so the first patch in the series
+> removes the offending testcase.
+> The "fix" for nolibc-test is intentionally kept trivial as the series
+> will most likely go through the filesystem tree and if conflicts arise,
+> it is obvious on how to resolve them.
 > 
-> Don't we need an Ack from the fs maintainers for the patch to
-> fs/proc/proc_net.c ?
-> 
-> Personally I expected this series to go in via the fs tree because of
-> that patch.
+> [...]
 
-I don't necessarily see patches I'm not Cced on.
+I've picked both for now. Let me know if I should do something else.
+In any case, this needs long soaking in -next.
+
+---
+
+Applied to the fs.proc.net.uapi branch of the vfs/vfs.git tree.
+Patches in the fs.proc.net.uapi branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: fs.proc.net.uapi
+
+[1/2] selftests/nolibc: drop test chmod_net
+      https://git.kernel.org/vfs/vfs/c/49319832de90
+[2/2] proc: use generic setattr() for /proc/$PID/net
+      https://git.kernel.org/vfs/vfs/c/18e66ae67673
