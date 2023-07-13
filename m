@@ -2,54 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B09F75178F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 06:35:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 328BD751791
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 06:36:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233724AbjGMEfr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 00:35:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41110 "EHLO
+        id S233760AbjGMEgK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 00:36:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233887AbjGMEfj (ORCPT
+        with ESMTP id S233173AbjGMEgI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 00:35:39 -0400
-Received: from out-9.mta1.migadu.com (out-9.mta1.migadu.com [IPv6:2001:41d0:203:375::9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD7DB213C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Jul 2023 21:35:16 -0700 (PDT)
-Message-ID: <bb2aa872-c3fb-93f0-c0da-3a897f39347d@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1689222915;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=c6klrh59rWQ6J2FCmK1SmLHxhKSESr6uzI/AZ5wCkHE=;
-        b=biGk8zUQouiledIIofF3VyrBUK83SZXKN1mzNsa4PkYS89OSh2hMlBHKsq70Uo5XgssaP5
-        6X/lFlW+J+X0afBUCjKPz+QSXikBzcRfFQNT/m52VoUYSt79cOs+DWeqma+MGnytJH4a8d
-        hqFj835t/oILTmamataDBPpvdVefPcQ=
-Date:   Thu, 13 Jul 2023 12:35:07 +0800
+        Thu, 13 Jul 2023 00:36:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2471319BE;
+        Wed, 12 Jul 2023 21:36:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B6C47619B0;
+        Thu, 13 Jul 2023 04:36:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F536C433C8;
+        Thu, 13 Jul 2023 04:36:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689222966;
+        bh=9Vf66Ft1+ZYHc6n9EoSS+uw3LVH41Gz8WfEVRlTzP+c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MEafoZ4f22esYVxsB2Q8KU/cOTeF+szhTopOc7JixAwnNucKTeP4SRB9e9cC47AxT
+         ZSB1X8iKK4tdlfC7z+6PZyYqq8GgmQsNll+2N0zzvvEz9UXRHx+8dG3JehTGlfB60D
+         U8VVjqwVKYybdF2oJLrLXY0QDQyZ7N5eun48Agw96qVadxo9l00sOUfSnHrwJAa0DY
+         nlB+gm8VNnfm8cHa34n6/0iG5W7C8Cb44ea8rfyf0gpEXjUDRI7AKJS9B9/8vimtKX
+         UJY3x/7Uei9K+TnVCjWZKDnuHep8ylIynm6huLp6qvCqqVnVLeKjULvj/ZkhSpg0yX
+         1s70PQbP4dV3Q==
+Date:   Wed, 12 Jul 2023 21:36:05 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Aravinda Herle <araherle@in.ibm.com>
+Subject: Re: [PATCHv11 8/8] iomap: Add per-block dirty state tracking to
+ improve performance
+Message-ID: <20230713043605.GF108251@frogsfrogsfrogs>
+References: <cover.1688188958.git.ritesh.list@gmail.com>
+ <bb0c58bf80dcdec96d7387bc439925fb14a5a496.1688188958.git.ritesh.list@gmail.com>
 MIME-Version: 1.0
-Subject: Re: [PATCH 3/3] io_uring: add support for getdents
-Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-References: <20230711114027.59945-1-hao.xu@linux.dev>
- <20230711114027.59945-4-hao.xu@linux.dev>
- <20230712-alltag-abberufen-67a615152bee@brauner>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <20230712-alltag-abberufen-67a615152bee@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bb0c58bf80dcdec96d7387bc439925fb14a5a496.1688188958.git.ritesh.list@gmail.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,254 +61,344 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/12/23 23:27, Christian Brauner wrote:
-> On Tue, Jul 11, 2023 at 07:40:27PM +0800, Hao Xu wrote:
->> From: Hao Xu <howeyxu@tencent.com>
->>
->> This add support for getdents64 to io_uring, acting exactly like the
->> syscall: the directory is iterated from it's current's position as
->> stored in the file struct, and the file's position is updated exactly as
->> if getdents64 had been called.
->>
->> For filesystems that support NOWAIT in iterate_shared(), try to use it
->> first; if a user already knows the filesystem they use do not support
->> nowait they can force async through IOSQE_ASYNC in the sqe flags,
->> avoiding the need to bounce back through a useless EAGAIN return.
->>
->> Co-developed-by: Dominique Martinet <asmadeus@codewreck.org>
->> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
->> Signed-off-by: Hao Xu <howeyxu@tencent.com>
->> ---
->>   include/uapi/linux/io_uring.h |  7 ++++
->>   io_uring/fs.c                 | 60 +++++++++++++++++++++++++++++++++++
->>   io_uring/fs.h                 |  3 ++
->>   io_uring/opdef.c              |  8 +++++
->>   4 files changed, 78 insertions(+)
->>
->> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
->> index 08720c7bd92f..6c0d521135a6 100644
->> --- a/include/uapi/linux/io_uring.h
->> +++ b/include/uapi/linux/io_uring.h
->> @@ -65,6 +65,7 @@ struct io_uring_sqe {
->>   		__u32		xattr_flags;
->>   		__u32		msg_ring_flags;
->>   		__u32		uring_cmd_flags;
->> +		__u32		getdents_flags;
->>   	};
->>   	__u64	user_data;	/* data to be passed back at completion time */
->>   	/* pack this to avoid bogus arm OABI complaints */
->> @@ -235,6 +236,7 @@ enum io_uring_op {
->>   	IORING_OP_URING_CMD,
->>   	IORING_OP_SEND_ZC,
->>   	IORING_OP_SENDMSG_ZC,
->> +	IORING_OP_GETDENTS,
->>   
->>   	/* this goes last, obviously */
->>   	IORING_OP_LAST,
->> @@ -273,6 +275,11 @@ enum io_uring_op {
->>    */
->>   #define SPLICE_F_FD_IN_FIXED	(1U << 31) /* the last bit of __u32 */
->>   
->> +/*
->> + * sqe->getdents_flags
->> + */
->> +#define IORING_GETDENTS_REWIND	(1U << 0)
->> +
->>   /*
->>    * POLL_ADD flags. Note that since sqe->poll_events is the flag space, the
->>    * command flags for POLL_ADD are stored in sqe->len.
->> diff --git a/io_uring/fs.c b/io_uring/fs.c
->> index f6a69a549fd4..77f00577e09c 100644
->> --- a/io_uring/fs.c
->> +++ b/io_uring/fs.c
->> @@ -47,6 +47,13 @@ struct io_link {
->>   	int				flags;
->>   };
->>   
->> +struct io_getdents {
->> +	struct file			*file;
->> +	struct linux_dirent64 __user	*dirent;
->> +	unsigned int			count;
->> +	int				flags;
->> +};
->> +
->>   int io_renameat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>   {
->>   	struct io_rename *ren = io_kiocb_to_cmd(req, struct io_rename);
->> @@ -291,3 +298,56 @@ void io_link_cleanup(struct io_kiocb *req)
->>   	putname(sl->oldpath);
->>   	putname(sl->newpath);
->>   }
->> +
->> +int io_getdents_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->> +{
->> +	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
->> +
->> +	if (READ_ONCE(sqe->off) != 0)
->> +		return -EINVAL;
->> +
->> +	gd->dirent = u64_to_user_ptr(READ_ONCE(sqe->addr));
->> +	gd->count = READ_ONCE(sqe->len);
->> +
->> +	return 0;
->> +}
->> +
->> +int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
->> +{
->> +	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
->> +	struct file *file;
->> +	unsigned long getdents_flags = 0;
->> +	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
->> +	bool should_lock = false;
->> +	int ret;
->> +
->> +	if (force_nonblock) {
->> +		if (!(req->file->f_mode & FMODE_NOWAIT))
->> +			return -EAGAIN;
->> +
->> +		getdents_flags = DIR_CONTEXT_F_NOWAIT;
+On Sat, Jul 01, 2023 at 01:04:41PM +0530, Ritesh Harjani (IBM) wrote:
+> When filesystem blocksize is less than folio size (either with
+> mapping_large_folio_support() or with blocksize < pagesize) and when the
+> folio is uptodate in pagecache, then even a byte write can cause
+> an entire folio to be written to disk during writeback. This happens
+> because we currently don't have a mechanism to track per-block dirty
+> state within struct iomap_folio_state. We currently only track uptodate
+> state.
 > 
-> I mentioned this on the other patch but it seems really pointless to
-> have that extra flag. I would really like to hear a good reason for
-> this.
+> This patch implements support for tracking per-block dirty state in
+> iomap_folio_state->state bitmap. This should help improve the filesystem
+> write performance and help reduce write amplification.
 > 
->> +	}
->> +
->> +	file = req->file;
->> +	if (file && (file->f_mode & FMODE_ATOMIC_POS)) {
->> +		if (file_count(file) > 1)
+> Performance testing of below fio workload reveals ~16x performance
+> improvement using nvme with XFS (4k blocksize) on Power (64K pagesize)
+> FIO reported write bw scores improved from around ~28 MBps to ~452 MBps.
 > 
-> Assume we have a regular non-threaded process that just opens an fd to a
-> file. The process registers an async readdir request via that fd for the
-> file with io_uring and goes to do other stuff while waiting for the
-> result.
+> 1. <test_randwrite.fio>
+> [global]
+> 	ioengine=psync
+> 	rw=randwrite
+> 	overwrite=1
+> 	pre_read=1
+> 	direct=0
+> 	bs=4k
+> 	size=1G
+> 	dir=./
+> 	numjobs=8
+> 	fdatasync=1
+> 	runtime=60
+> 	iodepth=64
+> 	group_reporting=1
 > 
-> Some time later, io_uring gets to io_getdents() and the task is still
-> single threaded and the file hasn't been shared in the meantime. So
-> io_getdents() doesn't take the lock and starts the readdir() call.
+> [fio-run]
 > 
-> Concurrently, the process that registered the io_uring request was free
-> to do other stuff and issued a synchronous readdir() system call which
-> calls fdget_pos(). Since the fdtable still isn't shared it doesn't
-> increment f_count and doesn't acquire the mutex. Now there's another
-> concurrent readdir() going on.
+> 2. Also our internal performance team reported that this patch improves
+>    their database workload performance by around ~83% (with XFS on Power)
 > 
-> (Similar thing can happen if the process creates a thread for example.)
+> Reported-by: Aravinda Herle <araherle@in.ibm.com>
+> Reported-by: Brian Foster <bfoster@redhat.com>
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> ---
+>  fs/gfs2/aops.c         |   2 +-
+>  fs/iomap/buffered-io.c | 149 ++++++++++++++++++++++++++++++++++++++---
+>  fs/xfs/xfs_aops.c      |   2 +-
+>  fs/zonefs/file.c       |   2 +-
+>  include/linux/iomap.h  |   1 +
+>  5 files changed, 142 insertions(+), 14 deletions(-)
 > 
-> Two readdir() requests now proceed concurrently which is not intended.
-> Now to verify that this race can't happen with io_uring:
-> 
-> * regular fds:
->    It seems that io_uring calls fget() on each regular file descriptor
->    when an async request is registered. So that means that io_uring
->    always hold its own explicit reference here.
->    So as long as the original task is alive or another thread is alive
->    f_count is guaranteed to be > 1 and so the mutex would always be
->    acquired.
-> 
->    If the registering process dies right before io_uring gets to the
->    io_getdents() request no other process can steal the fd anymore and in
->    that case the readdir call would not lock. But that's fine.
-> 
-> * fixed fds:
->    I don't know the reference counting rules here. io_uring would need to
->    ensure that it's impossible for two async readdir requests via a fixed
->    fd to race because f_count is == 1.
-> 
->    Iiuc, if a process registers a file it opened as a fixed file and
->    immediately closes the fd afterwards - without anyone else holding a
->    reference to that file - and only uses the fixed fd going forward, the
->    f_count of that file in io_uring's fixed file table is always 1.
-> 
->    So one could issue any number of concurrent readdir requests with no
->    mutual exclusion. So for fixed files there definitely is a race, no?
+> diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
+> index a5f4be6b9213..75efec3c3b71 100644
+> --- a/fs/gfs2/aops.c
+> +++ b/fs/gfs2/aops.c
+> @@ -746,7 +746,7 @@ static const struct address_space_operations gfs2_aops = {
+>  	.writepages = gfs2_writepages,
+>  	.read_folio = gfs2_read_folio,
+>  	.readahead = gfs2_readahead,
+> -	.dirty_folio = filemap_dirty_folio,
+> +	.dirty_folio = iomap_dirty_folio,
+>  	.release_folio = iomap_release_folio,
+>  	.invalidate_folio = iomap_invalidate_folio,
+>  	.bmap = gfs2_bmap,
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index fb6c2b6a4358..2fd9413838de 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -25,7 +25,7 @@
+>  
+>  typedef int (*iomap_punch_t)(struct inode *inode, loff_t offset, loff_t length);
+>  /*
+> - * Structure allocated for each folio to track per-block uptodate state
+> + * Structure allocated for each folio to track per-block uptodate, dirty state
+>   * and I/O completions.
+>   */
+>  struct iomap_folio_state {
+> @@ -78,6 +78,61 @@ static void iomap_set_range_uptodate(struct folio *folio, size_t off,
+>  		folio_mark_uptodate(folio);
+>  }
+>  
+> +static inline bool ifs_block_is_dirty(struct folio *folio,
+> +		struct iomap_folio_state *ifs, int block)
+> +{
+> +	struct inode *inode = folio->mapping->host;
+> +	unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
+> +
+> +	return test_bit(block + blks_per_folio, ifs->state);
+> +}
+> +
+> +static void ifs_clear_range_dirty(struct folio *folio,
+> +		struct iomap_folio_state *ifs, size_t off, size_t len)
+> +{
+> +	struct inode *inode = folio->mapping->host;
+> +	unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
+> +	unsigned int first_blk = (off >> inode->i_blkbits);
+> +	unsigned int last_blk = (off + len - 1) >> inode->i_blkbits;
+> +	unsigned int nr_blks = last_blk - first_blk + 1;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&ifs->state_lock, flags);
+> +	bitmap_clear(ifs->state, first_blk + blks_per_folio, nr_blks);
 
-Hi Christian,
-The ref logic for fixed file is that it does fdget() when registering
-the file, and fdput() when unregistering it. So the ref in between is
-always > 1. The fixed file feature is to reduce frequent fdget/fdput,
-but it does call them at the register/unregister time.
+Much clearer now that these have been simplified.
+
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
 
 
+> +	spin_unlock_irqrestore(&ifs->state_lock, flags);
+> +}
+> +
+> +static void iomap_clear_range_dirty(struct folio *folio, size_t off, size_t len)
+> +{
+> +	struct iomap_folio_state *ifs = folio->private;
+> +
+> +	if (ifs)
+> +		ifs_clear_range_dirty(folio, ifs, off, len);
+> +}
+> +
+> +static void ifs_set_range_dirty(struct folio *folio,
+> +		struct iomap_folio_state *ifs, size_t off, size_t len)
+> +{
+> +	struct inode *inode = folio->mapping->host;
+> +	unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
+> +	unsigned int first_blk = (off >> inode->i_blkbits);
+> +	unsigned int last_blk = (off + len - 1) >> inode->i_blkbits;
+> +	unsigned int nr_blks = last_blk - first_blk + 1;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&ifs->state_lock, flags);
+> +	bitmap_set(ifs->state, first_blk + blks_per_folio, nr_blks);
+> +	spin_unlock_irqrestore(&ifs->state_lock, flags);
+> +}
+> +
+> +static void iomap_set_range_dirty(struct folio *folio, size_t off, size_t len)
+> +{
+> +	struct iomap_folio_state *ifs = folio->private;
+> +
+> +	if (ifs)
+> +		ifs_set_range_dirty(folio, ifs, off, len);
+> +}
+> +
+>  static struct iomap_folio_state *ifs_alloc(struct inode *inode,
+>  		struct folio *folio, unsigned int flags)
+>  {
+> @@ -93,14 +148,24 @@ static struct iomap_folio_state *ifs_alloc(struct inode *inode,
+>  	else
+>  		gfp = GFP_NOFS | __GFP_NOFAIL;
+>  
+> -	ifs = kzalloc(struct_size(ifs, state, BITS_TO_LONGS(nr_blocks)),
+> -		      gfp);
+> -	if (ifs) {
+> -		spin_lock_init(&ifs->state_lock);
+> -		if (folio_test_uptodate(folio))
+> -			bitmap_fill(ifs->state, nr_blocks);
+> -		folio_attach_private(folio, ifs);
+> -	}
+> +	/*
+> +	 * ifs->state tracks two sets of state flags when the
+> +	 * filesystem block size is smaller than the folio size.
+> +	 * The first state tracks per-block uptodate and the
+> +	 * second tracks per-block dirty state.
+> +	 */
+> +	ifs = kzalloc(struct_size(ifs, state,
+> +		      BITS_TO_LONGS(2 * nr_blocks)), gfp);
+> +	if (!ifs)
+> +		return ifs;
+> +
+> +	spin_lock_init(&ifs->state_lock);
+> +	if (folio_test_uptodate(folio))
+> +		bitmap_set(ifs->state, 0, nr_blocks);
+> +	if (folio_test_dirty(folio))
+> +		bitmap_set(ifs->state, nr_blocks, nr_blocks);
+> +	folio_attach_private(folio, ifs);
+> +
+>  	return ifs;
+>  }
+>  
+> @@ -523,6 +588,17 @@ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len)
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_invalidate_folio);
+>  
+> +bool iomap_dirty_folio(struct address_space *mapping, struct folio *folio)
+> +{
+> +	struct inode *inode = mapping->host;
+> +	size_t len = folio_size(folio);
+> +
+> +	ifs_alloc(inode, folio, 0);
+> +	iomap_set_range_dirty(folio, 0, len);
+> +	return filemap_dirty_folio(mapping, folio);
+> +}
+> +EXPORT_SYMBOL_GPL(iomap_dirty_folio);
+> +
+>  static void
+>  iomap_write_failed(struct inode *inode, loff_t pos, unsigned len)
+>  {
+> @@ -727,6 +803,7 @@ static size_t __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+>  	if (unlikely(copied < len && !folio_test_uptodate(folio)))
+>  		return 0;
+>  	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
+> +	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
+>  	filemap_dirty_folio(inode->i_mapping, folio);
+>  	return copied;
+>  }
+> @@ -891,6 +968,43 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_file_buffered_write);
+>  
+> +static int iomap_write_delalloc_ifs_punch(struct inode *inode,
+> +		struct folio *folio, loff_t start_byte, loff_t end_byte,
+> +		iomap_punch_t punch)
+> +{
+> +	unsigned int first_blk, last_blk, i;
+> +	loff_t last_byte;
+> +	u8 blkbits = inode->i_blkbits;
+> +	struct iomap_folio_state *ifs;
+> +	int ret = 0;
+> +
+> +	/*
+> +	 * When we have per-block dirty tracking, there can be
+> +	 * blocks within a folio which are marked uptodate
+> +	 * but not dirty. In that case it is necessary to punch
+> +	 * out such blocks to avoid leaking any delalloc blocks.
+> +	 */
+> +	ifs = folio->private;
+> +	if (!ifs)
+> +		return ret;
+> +
+> +	last_byte = min_t(loff_t, end_byte - 1,
+> +			folio_pos(folio) + folio_size(folio) - 1);
+> +	first_blk = offset_in_folio(folio, start_byte) >> blkbits;
+> +	last_blk = offset_in_folio(folio, last_byte) >> blkbits;
+> +	for (i = first_blk; i <= last_blk; i++) {
+> +		if (!ifs_block_is_dirty(folio, ifs, i)) {
+> +			ret = punch(inode, folio_pos(folio) + (i << blkbits),
+> +				    1 << blkbits);
+> +			if (ret)
+> +				return ret;
+> +		}
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +
+>  static int iomap_write_delalloc_punch(struct inode *inode, struct folio *folio,
+>  		loff_t *punch_start_byte, loff_t start_byte, loff_t end_byte,
+>  		iomap_punch_t punch)
+> @@ -907,6 +1021,13 @@ static int iomap_write_delalloc_punch(struct inode *inode, struct folio *folio,
+>  		if (ret)
+>  			return ret;
+>  	}
+> +
+> +	/* Punch non-dirty blocks within folio */
+> +	ret = iomap_write_delalloc_ifs_punch(inode, folio, start_byte,
+> +			end_byte, punch);
+> +	if (ret)
+> +		return ret;
+> +
+>  	/*
+>  	 * Make sure the next punch start is correctly bound to
+>  	 * the end of this data range, not the end of the folio.
+> @@ -1637,7 +1758,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+>  		struct writeback_control *wbc, struct inode *inode,
+>  		struct folio *folio, u64 end_pos)
+>  {
+> -	struct iomap_folio_state *ifs = ifs_alloc(inode, folio, 0);
+> +	struct iomap_folio_state *ifs = folio->private;
+>  	struct iomap_ioend *ioend, *next;
+>  	unsigned len = i_blocksize(inode);
+>  	unsigned nblocks = i_blocks_per_folio(inode, folio);
+> @@ -1645,6 +1766,11 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+>  	int error = 0, count = 0, i;
+>  	LIST_HEAD(submit_list);
+>  
+> +	if (!ifs && nblocks > 1) {
+> +		ifs = ifs_alloc(inode, folio, 0);
+> +		iomap_set_range_dirty(folio, 0, folio_size(folio));
+> +	}
+> +
+>  	WARN_ON_ONCE(ifs && atomic_read(&ifs->write_bytes_pending) != 0);
+>  
+>  	/*
+> @@ -1653,7 +1779,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+>  	 * invalid, grab a new one.
+>  	 */
+>  	for (i = 0; i < nblocks && pos < end_pos; i++, pos += len) {
+> -		if (ifs && !ifs_block_is_uptodate(ifs, i))
+> +		if (ifs && !ifs_block_is_dirty(folio, ifs, i))
+>  			continue;
+>  
+>  		error = wpc->ops->map_blocks(wpc, inode, pos);
+> @@ -1697,6 +1823,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+>  		}
+>  	}
+>  
+> +	iomap_clear_range_dirty(folio, 0, end_pos - folio_pos(folio));
+>  	folio_start_writeback(folio);
+>  	folio_unlock(folio);
+>  
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index 451942fb38ec..2fca4b4e7fd8 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -578,7 +578,7 @@ const struct address_space_operations xfs_address_space_operations = {
+>  	.read_folio		= xfs_vm_read_folio,
+>  	.readahead		= xfs_vm_readahead,
+>  	.writepages		= xfs_vm_writepages,
+> -	.dirty_folio		= filemap_dirty_folio,
+> +	.dirty_folio		= iomap_dirty_folio,
+>  	.release_folio		= iomap_release_folio,
+>  	.invalidate_folio	= iomap_invalidate_folio,
+>  	.bmap			= xfs_vm_bmap,
+> diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
+> index 132f01d3461f..e508c8e97372 100644
+> --- a/fs/zonefs/file.c
+> +++ b/fs/zonefs/file.c
+> @@ -175,7 +175,7 @@ const struct address_space_operations zonefs_file_aops = {
+>  	.read_folio		= zonefs_read_folio,
+>  	.readahead		= zonefs_readahead,
+>  	.writepages		= zonefs_writepages,
+> -	.dirty_folio		= filemap_dirty_folio,
+> +	.dirty_folio		= iomap_dirty_folio,
+>  	.release_folio		= iomap_release_folio,
+>  	.invalidate_folio	= iomap_invalidate_folio,
+>  	.migrate_folio		= filemap_migrate_folio,
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index e2b836c2e119..eb9335c46bf3 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -264,6 +264,7 @@ bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
+>  struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos);
+>  bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags);
+>  void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len);
+> +bool iomap_dirty_folio(struct address_space *mapping, struct folio *folio);
+>  int iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
+>  		const struct iomap_ops *ops);
+>  int iomap_zero_range(struct inode *inode, loff_t pos, loff_t len,
+> -- 
+> 2.40.1
 > 
-> All of that could ofc be simplified if we could just always acquire the
-> mutex in fdget_pos() and other places and drop that file_count(file) > 1
-> optimization everywhere. But I have no idea if the optimization for not
-> acquiring the mutex if f_count == 1 is worth it?
-> 
-> I hope I didn't confuse myself here.
-> 
-> Jens, do yo have any input here?
-> 
->> +			should_lock = true;
->> +	}
->> +	if (should_lock) {
->> +		if (!force_nonblock)
->> +			mutex_lock(&file->f_pos_lock);
->> +		else if (!mutex_trylock(&file->f_pos_lock))
->> +			return -EAGAIN;
->> +	}
-> 
-> Open-coding this seems extremely brittle with an invitation for subtle
-> bugs.
-
-Could you elaborate on this, I'm not sure that I understand it quite
-well. Sorry for my poor English.
-
-Thanks,
-Hao
-
-> 
->> +
->> +	ret = vfs_getdents(file, gd->dirent, gd->count, getdents_flags);
->> +	if (should_lock)
->> +		mutex_unlock(&file->f_pos_lock);
->> +
->> +	if (ret == -EAGAIN && force_nonblock)
->> +		return -EAGAIN;
->> +
->> +	io_req_set_res(req, ret, 0);
->> +	return 0;
->> +}
->> +
->> diff --git a/io_uring/fs.h b/io_uring/fs.h
->> index 0bb5efe3d6bb..f83a6f3a678d 100644
->> --- a/io_uring/fs.h
->> +++ b/io_uring/fs.h
->> @@ -18,3 +18,6 @@ int io_symlinkat(struct io_kiocb *req, unsigned int issue_flags);
->>   int io_linkat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
->>   int io_linkat(struct io_kiocb *req, unsigned int issue_flags);
->>   void io_link_cleanup(struct io_kiocb *req);
->> +
->> +int io_getdents_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
->> +int io_getdents(struct io_kiocb *req, unsigned int issue_flags);
->> diff --git a/io_uring/opdef.c b/io_uring/opdef.c
->> index 3b9c6489b8b6..1bae6b2a8d0b 100644
->> --- a/io_uring/opdef.c
->> +++ b/io_uring/opdef.c
->> @@ -428,6 +428,11 @@ const struct io_issue_def io_issue_defs[] = {
->>   		.prep			= io_eopnotsupp_prep,
->>   #endif
->>   	},
->> +	[IORING_OP_GETDENTS] = {
->> +		.needs_file		= 1,
->> +		.prep			= io_getdents_prep,
->> +		.issue			= io_getdents,
->> +	},
->>   };
->>   
->>   
->> @@ -648,6 +653,9 @@ const struct io_cold_def io_cold_defs[] = {
->>   		.fail			= io_sendrecv_fail,
->>   #endif
->>   	},
->> +	[IORING_OP_GETDENTS] = {
->> +		.name			= "GETDENTS",
->> +	},
->>   };
->>   
->>   const char *io_uring_get_opcode(u8 opcode)
->> -- 
->> 2.25.1
->>
-
