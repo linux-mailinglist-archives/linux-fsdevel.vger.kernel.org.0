@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 257147523FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 15:36:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22F6E752113
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Jul 2023 14:19:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234390AbjGMNgr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 09:36:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39878 "EHLO
+        id S234646AbjGMMT3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 08:19:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235076AbjGMNgo (ORCPT
+        with ESMTP id S234660AbjGMMT1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 09:36:44 -0400
-X-Greylist: delayed 2401 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 13 Jul 2023 06:36:37 PDT
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [IPv6:2001:67c:2050:0:465::103])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F81C2D40;
-        Thu, 13 Jul 2023 06:36:36 -0700 (PDT)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+        Thu, 13 Jul 2023 08:19:27 -0400
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D02E2691;
+        Thu, 13 Jul 2023 05:19:25 -0700 (PDT)
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4R1tvC4NGRz9sn9;
-        Thu, 13 Jul 2023 14:19:03 +0200 (CEST)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4R1tvY219Sz9scb;
+        Thu, 13 Jul 2023 14:19:21 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-        t=1689250743;
+        t=1689250761;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding;
         bh=xpxD6jJvH2NdvxBxxbA/xwwWPK026oBkIsxvhSiVppQ=;
-        b=J67hj0asCAtelzLhPQXRrS+E99al7I+BMNtQLJqGszQMeBH8Oi6tEK67X9nMQw4qlX7wnP
-        +LA3S4+9ltR61EsvICm2rmjjJXhQ3MkQ89Ht0WK+0Y2DpXvYW0cThade6zZUIV/YXFgiJD
-        3X888cF2MvyASCky3OlN1BCR1QiJprtt/kc5/V+OD2qO2Dsbhq6GtGsv5sozeysXT4uFdv
-        RexNELuNQXxbzZjT3OAHIVJrVyE0Z2GrrCDmMnlJ+EPOH+ntjEukAwcxeynzUATx00+/ec
-        O1KjlREZGDtSYA82dFoqVAaaphuq3Hv/WOjIPJKcrjfKmzjiwIYCZKXlsDEZ+A==
+        b=cylZYD1v3/ux3bOiBo3SI+1bkuoVoVNqjUBtUccqLVf/rjbGuRgjZ0Z6usXEm/u3ktL1v8
+        71xqGF6BjvRUpF2MnI9/7rMzhIJe/qPc8YUXWpj0UYEfTX9ESVdtOBLWqZLgY7p++dgdWJ
+        u3LO9hPOjKSXDO1Hdr9TLWSe9AaFE1cVOGBWKLQOC3KS9lCI8780JZMgKP2RRkDvY6wB8k
+        O/ESIRtcVJZPbUKsdZQMUgeQ8k77eFHC/zczIBMUoA+jhMfQO7oJ+Ey0zEVYj5s+ez7voJ
+        3U9095AoedknarhqdaeQj74FN+bFWJ21aH9h5d0W5dmoY/1l3hvYwrOffueUmA==
 From:   Aleksa Sarai <cyphar@cyphar.com>
 To:     Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <brauner@kernel.org>,
         Dave Chinner <dchinner@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, xu xin <cgel.zte@gmail.com>,
+        xu xin <cgel.zte@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@devkernel.io>,
+        Aleksa Sarai <cyphar@cyphar.com>,
         Zhihao Cheng <chengzhihao1@huawei.com>,
-        Chao Yu <chao@kernel.org>,
         "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
         Janis Danisevskis <jdanis@google.com>,
         Kees Cook <keescook@chromium.org>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org
 Subject: [PATCH] procfs: block chmod on /proc/thread-self/comm
-Date:   Thu, 13 Jul 2023 22:17:50 +1000
-Message-ID: <20230713121752.8039-1-cyphar@cyphar.com>
+Date:   Thu, 13 Jul 2023 22:19:04 +1000
+Message-ID: <20230713121907.9693-1-cyphar@cyphar.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Rspamd-Queue-Id: 4R1tvY219Sz9scb
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
