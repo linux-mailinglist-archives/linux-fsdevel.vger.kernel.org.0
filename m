@@ -2,80 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 57CE9753E82
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 17:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12126753EB4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 17:24:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236352AbjGNPLe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jul 2023 11:11:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43364 "EHLO
+        id S236358AbjGNPYv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jul 2023 11:24:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236299AbjGNPLd (ORCPT
+        with ESMTP id S235866AbjGNPYu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jul 2023 11:11:33 -0400
-Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com [209.85.210.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A99FE30E2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jul 2023 08:11:32 -0700 (PDT)
-Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-6b7550b41aaso3251834a34.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jul 2023 08:11:32 -0700 (PDT)
+        Fri, 14 Jul 2023 11:24:50 -0400
+Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 299E22D65
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jul 2023 08:24:48 -0700 (PDT)
+Received: by mail-oi1-x22c.google.com with SMTP id 5614622812f47-3a3b7fafd61so1633373b6e.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jul 2023 08:24:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1689348287; x=1691940287;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KKCPDDjyadziwl2/AK/7bwW5AQLCnpdzpQfQJ+yWANU=;
+        b=VkfHth5MNAZHQQpEhdDGh0pq0hoDNb/IkCyvJyfZlohZ7FEqc/tc2UlGQlp5P+ls2k
+         LP4Az77bQs/0UVX1KSsNiwTlKtw8ZJErPfpgp4NpbjjW9RxzvWKdoj5q9JZGtbqYKyMw
+         IkbeE1z0uT48kd4G5uv3BxnFhNNELaU6M+7XHRszPJ3LTmAtfce0FwO0kiq6qtWbZVLj
+         +GaUqzfPkfSAQcQuVfYKAUHYwjH4iU0nqNSXmWkPMWsXsceycWdUU7PI1Bdr+PTPu7X6
+         X/OpA3sg1LJmtBpK2xUftGMYHz3Z91vTuIVh4aBU1pURrsic+RJAvN3CFStnNYgOJO/U
+         rXPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689347492; x=1691939492;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CCLOxUsPk9gij7lrd4gl3ju7/pLr9suuyXvJ5OtLAUQ=;
-        b=b17w1jZpOiFdEVajao1gfQwOumI9yvEAeR6fhaHvUsdpDapG0BjRcHFxdjxUxAwRkB
-         J8wYnV7jwez4+3tMBlMQ8MDgos9Od6CBhedwFp8+pQSdff3dXbTiCfcnFceIOa0YyrVD
-         UilQMN0BdhP4cTQHlWa0o944JTjd1QTw0x6fXc3bEHfaFbsvhTePkGE3llMlhGC+sUbt
-         LMa+mUr5Of9nUtu2fiwXCyVGqevrQZ5GJuQtqFGYm1na8Y3LFz3O8h4Tyn2vvpurgr6U
-         wMwLNnG5ZknXFRPOE1L8+GiZ/cDsYgUjUHvmKwifTETRmfy/PUtmNq3wMDlxCXAmMCUm
-         Pjuw==
-X-Gm-Message-State: ABy/qLYPWY2jxM1riUXNTvzViswBAHaChInH7u/88bh5XQsdsOGxjHsO
-        41pRXncJ3XSs3GmoYjCDlm2Z1F4jCuLXRi5uKyFQ3owVQN/v
-X-Google-Smtp-Source: APBJJlE6TyCcdhAUrsmWbb8fvxPE8mWG/ukHNruZoQLsPGdacASBBgg9EA/N2Q99G1L6A2y+bsP1WGM7Wx8B6uHLvOQRaJVtfrE4
+        d=1e100.net; s=20221208; t=1689348287; x=1691940287;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KKCPDDjyadziwl2/AK/7bwW5AQLCnpdzpQfQJ+yWANU=;
+        b=ZXLWqUGME9hqNW1QhbARVgEdHYSeGfFrtFNAen6L4pYg9eee8LHdVAIaKX1MScpI3h
+         96M8/X8Hk9Tgc1kbBGMmbL1kSgDdrpJEbeQ+aSma2tf1oouCt6B6mYixT3z/kAs/UoNJ
+         K/tZm3Au4LyPuxpn57uo0XCCd+DASZH6qDEUkDGDiwb8sSqo/4oTjmuMlR0kzGKcIFf5
+         UBc0ulti0IQg+y1yYX9uT1DfBt//ZMBqRleXXDp7U3cxMCKywKPeeKTzdt/43pTk36Qu
+         s4jWHlQlh3ouj79sSw8vnLeJE9zobSGdzv4aGxI/tW3jjuEoKTCg10J6Wcw2wfkB9jJK
+         huWA==
+X-Gm-Message-State: ABy/qLYm/eNBGLhGLmyPpTG9N/8Y8/GBUj8vUTiCyLbfkQBqcmgld5a0
+        4iaX0DT1r3sfKfgMSYeWobnssMUy1bFRmPBQ/AY=
+X-Google-Smtp-Source: APBJJlH+MwWcaUVg/7akbj8keBMvf8gq7EKuq9vDRBoNFYJ4+ezTmB048XjMLkW7GX8JAT8v1K03Sg==
+X-Received: by 2002:a05:6808:2226:b0:3a3:eceb:7bbc with SMTP id bd38-20020a056808222600b003a3eceb7bbcmr7147567oib.54.1689348287397;
+        Fri, 14 Jul 2023 08:24:47 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-25-194.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.25.194])
+        by smtp.gmail.com with ESMTPSA id x19-20020a17090aa39300b00263154aab24sm1230248pjp.57.2023.07.14.08.24.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jul 2023 08:24:46 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1qKKez-0017NL-5i;
+        Fri, 14 Jul 2023 12:24:45 -0300
+Date:   Fri, 14 Jul 2023 12:24:45 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Alex Williamson <alex.williamson@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        linux-usb@vger.kernel.org, Matthew Rosato <mjrosato@linux.ibm.com>,
+        Paul Durrant <paul@xen.org>, Tom Rix <trix@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        dri-devel@lists.freedesktop.org, Michal Hocko <mhocko@kernel.org>,
+        linux-mm@kvack.org, Kirti Wankhede <kwankhede@nvidia.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Diana Craciun <diana.craciun@oss.nxp.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Fei Li <fei1.li@intel.com>, x86@kernel.org,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        intel-gfx@lists.freedesktop.org,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        linux-fpga@vger.kernel.org, Zhi Wang <zhi.a.wang@intel.com>,
+        Wu Hao <hao.wu@intel.com>, Jason Herne <jjherne@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-s390@vger.kernel.org,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linuxppc-dev@lists.ozlabs.org, Eric Auger <eric.auger@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, kvm@vger.kernel.org,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, cgroups@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        intel-gvt-dev@lists.freedesktop.org, io-uring@vger.kernel.org,
+        netdev@vger.kernel.org, Tony Krowiak <akrowiak@linux.ibm.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Muchun Song <muchun.song@linux.dev>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Moritz Fischer <mdf@kernel.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Xu Yilun <yilun.xu@intel.com>, jaz@semihalf.com
+Subject: Re: [PATCH 0/2] eventfd: simplify signal helpers
+Message-ID: <ZLFovYocElAD7gJ0@ziepe.ca>
+References: <20230630155936.3015595-1-jaz@semihalf.com>
+ <20230714-gauner-unsolidarisch-fc51f96c61e8@brauner>
 MIME-Version: 1.0
-X-Received: by 2002:a9d:7488:0:b0:6b8:8894:e4ac with SMTP id
- t8-20020a9d7488000000b006b88894e4acmr4268213otk.3.1689347492003; Fri, 14 Jul
- 2023 08:11:32 -0700 (PDT)
-Date:   Fri, 14 Jul 2023 08:11:31 -0700
-In-Reply-To: <0000000000005921ef05ffddc3b7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000029c576060073dd62@google.com>
-Subject: Re: [syzbot] [f2fs?] possible deadlock in f2fs_getxattr
-From:   syzbot <syzbot+e5600587fa9cbf8e3826@syzkaller.appspotmail.com>
-To:     chao@kernel.org, jaegeuk@kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230714-gauner-unsolidarisch-fc51f96c61e8@brauner>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this issue to:
+On Fri, Jul 14, 2023 at 09:05:21AM +0200, Christian Brauner wrote:
 
-commit 5eda1ad1aaffdfebdecf7a164e586060a210f74f
-Author: Jaegeuk Kim <jaegeuk@kernel.org>
-Date:   Wed Jun 28 08:00:56 2023 +0000
+> I have no skin in the game aside from having to drop this conversion
+> which I'm fine to do if there are actually users for this btu really,
+> that looks a lot like abusing an api that really wasn't designed for
+> this.
 
-    f2fs: fix deadlock in i_xattr_sem and inode page lock
+Yeah, I think so too. The ACPI thing should use its own FD if it wants
+to feed actual data..
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1177322aa80000
-start commit:   3f01e9fed845 Merge tag 'linux-watchdog-6.5-rc2' of git://w..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1377322aa80000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1577322aa80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=29fd3392a08741ef
-dashboard link: https://syzkaller.appspot.com/bug?extid=e5600587fa9cbf8e3826
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1336f364a80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=130a365aa80000
+Jason
 
-Reported-by: syzbot+e5600587fa9cbf8e3826@syzkaller.appspotmail.com
-Fixes: 5eda1ad1aaff ("f2fs: fix deadlock in i_xattr_sem and inode page lock")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
