@@ -2,151 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 12F3C753288
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 09:05:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F92A7532BF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 09:14:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234965AbjGNHFm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jul 2023 03:05:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46728 "EHLO
+        id S234267AbjGNHO2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jul 2023 03:14:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232382AbjGNHFl (ORCPT
+        with ESMTP id S235287AbjGNHO1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jul 2023 03:05:41 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4912B171D;
-        Fri, 14 Jul 2023 00:05:40 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C59AE61C37;
-        Fri, 14 Jul 2023 07:05:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72352C433C8;
-        Fri, 14 Jul 2023 07:05:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689318339;
-        bh=jyWvUrZcUvjNBBSZOzXCNGPPxcxV/q9OYHwe4H3B3Lw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=ukDx1eRh8ZivXqHNYBn5Q0ezu7jPxA8DBkgLn6Yr4ieEasOnILafdrjyXNGEm446B
-         vdoY8r4oSZIdNajc3UECepRL8sXl8WF1aY3nsBTYeT1jETstZ0f8AhW7bTRQc/52Qq
-         P+stCjuut9rZUb/FtZq2RC8GkYNcmH18gWUjcC/YVZwiCNSkJoOeVjb4/L8KcmM6xP
-         IeKh3hfbNuWYqjO1NcV70XYwdDRmrE9otI0QO8uXvZ2x+z2rjsCQR5r+pIi8kHOFqH
-         yUig3DyDnWCSEK1kxr9YLeu9ZSrBGXd6ZPFhVoSKNhVLjgUv6X+4bGRfk/gzLXxZ3w
-         K4WbhoY8kPy2A==
-Date:   Fri, 14 Jul 2023 09:05:21 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        linux-usb@vger.kernel.org, Matthew Rosato <mjrosato@linux.ibm.com>,
-        Paul Durrant <paul@xen.org>, Tom Rix <trix@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        dri-devel@lists.freedesktop.org, Michal Hocko <mhocko@kernel.org>,
-        linux-mm@kvack.org, Kirti Wankhede <kwankhede@nvidia.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Diana Craciun <diana.craciun@oss.nxp.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Fei Li <fei1.li@intel.com>, x86@kernel.org,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Ingo Molnar <mingo@redhat.com>,
-        intel-gfx@lists.freedesktop.org,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        linux-fpga@vger.kernel.org, Zhi Wang <zhi.a.wang@intel.com>,
-        Wu Hao <hao.wu@intel.com>, Jason Herne <jjherne@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-s390@vger.kernel.org,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linuxppc-dev@lists.ozlabs.org, Eric Auger <eric.auger@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, kvm@vger.kernel.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, cgroups@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        intel-gvt-dev@lists.freedesktop.org, io-uring@vger.kernel.org,
-        netdev@vger.kernel.org, Tony Krowiak <akrowiak@linux.ibm.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Moritz Fischer <mdf@kernel.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Xu Yilun <yilun.xu@intel.com>, jaz@semihalf.com
-Subject: Re: [PATCH 0/2] eventfd: simplify signal helpers
-Message-ID: <20230714-gauner-unsolidarisch-fc51f96c61e8@brauner>
+        Fri, 14 Jul 2023 03:14:27 -0400
+Received: from mail.208.org (unknown [183.242.55.162])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93F3230CA
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jul 2023 00:14:21 -0700 (PDT)
+Received: from mail.208.org (email.208.org [127.0.0.1])
+        by mail.208.org (Postfix) with ESMTP id 4R2N562c9FzBJYck
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jul 2023 15:14:18 +0800 (CST)
+Authentication-Results: mail.208.org (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=208.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=208.org; h=
+        content-transfer-encoding:content-type:message-id:user-agent
+        :references:in-reply-to:subject:to:from:date:mime-version; s=
+        dkim; t=1689318858; x=1691910859; bh=mJPR05Mlq6vXjU6nrDOaLf7AC+G
+        NK0Y1HzU7kJUXxcM=; b=wCuTZ2mi/h1LcH91SShJ/XTjrx/o6sYPkFFr7ls3I1n
+        X2Ga08YCzvz5HeaZDG9xANtOg3NvlELvysmzR/98KfW6teDkjrXRTiruV9S1vECA
+        NyFtMN1cO898xsmOWBKv9FlfZx8wsUp9y0y0xR7ndDFN13KN/8jZv40Z5Dq8WmJ5
+        WBAzIb/1vkVu42rqj57qSouC0nGBRLZULR7LG/B/NWBTDlqPV1EzAVwAGHEKxqBv
+        G0dqv71Ikyshe/77bevzzElOzRJjPNTELcKyFv/kxEkPFIANGWgLJ5Hcjjnn5NCx
+        JRgXfVSPjq/+9/alypuWx05J6iki3QvE0vps/K0naiA==
+X-Virus-Scanned: amavisd-new at mail.208.org
+Received: from mail.208.org ([127.0.0.1])
+        by mail.208.org (mail.208.org [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 3VZDOqymDiOY for <linux-fsdevel@vger.kernel.org>;
+        Fri, 14 Jul 2023 15:14:18 +0800 (CST)
+Received: from localhost (email.208.org [127.0.0.1])
+        by mail.208.org (Postfix) with ESMTPSA id 4R2N560RHwzBHXhl;
+        Fri, 14 Jul 2023 15:14:18 +0800 (CST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230630155936.3015595-1-jaz@semihalf.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Date:   Fri, 14 Jul 2023 15:14:18 +0800
+From:   huzhi001@208suo.com
+To:     dsterba@suse.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] VFS: Fix seven errors in bitmap.c
+In-Reply-To: <tencent_CE461BFFDACFEA943A778650FB672D9E3207@qq.com>
+References: <tencent_CE461BFFDACFEA943A778650FB672D9E3207@qq.com>
+User-Agent: Roundcube Webmail
+Message-ID: <80ff0222e0fc0b8e25ae4837b76bce2d@208suo.com>
+X-Sender: huzhi001@208suo.com
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-0.9 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RDNS_NONE,SPF_HELO_FAIL,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 13, 2023 at 11:10:54AM -0600, Alex Williamson wrote:
-> On Thu, 13 Jul 2023 12:05:36 +0200
-> Christian Brauner <brauner@kernel.org> wrote:
-> 
-> > Hey everyone,
-> > 
-> > This simplifies the eventfd_signal() and eventfd_signal_mask() helpers
-> > by removing the count argument which is effectively unused.
-> 
-> We have a patch under review which does in fact make use of the
-> signaling value:
-> 
-> https://lore.kernel.org/all/20230630155936.3015595-1-jaz@semihalf.com/
+The following checkpatch errors are removed:
+ERROR: space required after that ',' (ctx:VxV)
+ERROR: space required after that ',' (ctx:VxV)
+ERROR: space required after that ',' (ctx:VxV)
+ERROR: space required after that ',' (ctx:VxV)
+ERROR: space required after that ',' (ctx:VxV)
+ERROR: space required after that ',' (ctx:VxV)
+ERROR: space required after that ',' (ctx:VxV)
 
-Huh, thanks for the link.
+Signed-off-by: ZhiHu <huzhi001@208suo.com>
+---
+  fs/affs/bitmap.c | 8 ++++----
+  1 file changed, 4 insertions(+), 4 deletions(-)
 
-Quoting from
-https://patchwork.kernel.org/project/kvm/patch/20230307220553.631069-1-jaz@semihalf.com/#25266856
+diff --git a/fs/affs/bitmap.c b/fs/affs/bitmap.c
+index 5ba9ef2742f6..b1620b6ff8a9 100644
+--- a/fs/affs/bitmap.c
++++ b/fs/affs/bitmap.c
+@@ -87,19 +87,19 @@ affs_free_block(struct super_block *sb, u32 block)
+      return;
 
-> Reading an eventfd returns an 8-byte value, we generally only use it
-> as a counter, but it's been discussed previously and IIRC, it's possible
-> to use that value as a notification value.
+  err_free:
+-    affs_warning(sb,"affs_free_block","Trying to free block %u which is 
+already free", block);
++    affs_warning(sb, "affs_free_block", "Trying to free block %u which 
+is already free", block);
+      mutex_unlock(&sbi->s_bmlock);
+      return;
 
-So the goal is to pipe a specific value through eventfd? But it is
-explicitly a counter. The whole thing is written around a counter and
-each write and signal adds to the counter.
+  err_bh_read:
+-    affs_error(sb,"affs_free_block","Cannot read bitmap block %u", 
+bm->bm_key);
++    affs_error(sb, "affs_free_block", "Cannot read bitmap block %u", 
+bm->bm_key);
+      sbi->s_bmap_bh = NULL;
+      sbi->s_last_bmap = ~0;
+      mutex_unlock(&sbi->s_bmlock);
+      return;
 
-The consequences are pretty well described in the cover letter of
-v6 https://lore.kernel.org/all/20230630155936.3015595-1-jaz@semihalf.com/
+  err_range:
+-    affs_error(sb, "affs_free_block","Block %u outside partition", 
+block);
++    affs_error(sb, "affs_free_block", "Block %u outside partition", 
+block);
+  }
 
-> Since the eventfd counter is used as ACPI notification value
-> placeholder, the eventfd signaling needs to be serialized in order to
-> not end up with notification values being coalesced. Therefore ACPI
-> notification values are buffered and signalized one by one, when the
-> previous notification value has been consumed.
+  /*
+@@ -232,7 +232,7 @@ affs_alloc_block(struct inode *inode, u32 goal)
+      return blk;
 
-But isn't this a good indication that you really don't want an eventfd
-but something that's explicitly designed to associate specific data with
-a notification? Using eventfd in that manner requires serialization,
-buffering, and enforces ordering.
-
-I have no skin in the game aside from having to drop this conversion
-which I'm fine to do if there are actually users for this btu really,
-that looks a lot like abusing an api that really wasn't designed for
-this.
+  err_bh_read:
+-    affs_error(sb,"affs_read_block","Cannot read bitmap block %u", 
+bm->bm_key);
++    affs_error(sb, "affs_read_block", "Cannot read bitmap block %u", 
+bm->bm_key);
+      sbi->s_bmap_bh = NULL;
+      sbi->s_last_bmap = ~0;
+  err_full:
