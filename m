@@ -2,245 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 47CE9752DCB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 01:09:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 437EC752ED6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 03:44:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233189AbjGMXJq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 19:09:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52950 "EHLO
+        id S233910AbjGNBoE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 21:44:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229916AbjGMXJq (ORCPT
+        with ESMTP id S232624AbjGNBoD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 19:09:46 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E26B172C;
-        Thu, 13 Jul 2023 16:09:42 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7CA4B60A70;
-        Thu, 13 Jul 2023 23:09:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 992A5C433C8;
-        Thu, 13 Jul 2023 23:09:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689289780;
-        bh=BQUnTmDBddlxRHvOZ6/VzgVMFh5ycXpIlBQaFHVxBWY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=KO1cxiOL4XiocgTiv66xqzumu2NxX1I7gYuPmaYFGtcI/OoyvzyRE9YhoZd2cTTZW
-         vSY2O7BZlZgyHd3X9Koqjz4D8pIWoda3AQeVnjD7yk4bEQdMZTexHkAoqgBkUwwv/d
-         FqwRmM/FIukX4H1OLAMEWAuxwR9UyFwLigwkWJ46A6357oPWZZztXcj4GSN0cLFtgE
-         PQljHqIkqCobJyQpkXphEfJi2/k/N3Fx2nrAAhnzn0EFajPtXMqKyWo7TMIGMG4CU7
-         AA0hxtStKSTfQ7MuLFOod9xc97dfFoT0fJdMfj+hi3RAUCvwN2MWnIsOPy8L+iEbDm
-         546FMXW+pkf1Q==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     fstests@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [fstests PATCH] generic: add a test for multigrain timestamps
-Date:   Thu, 13 Jul 2023 19:09:39 -0400
-Message-ID: <20230713230939.367068-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.41.0
+        Thu, 13 Jul 2023 21:44:03 -0400
+Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com [209.85.161.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 850F635A7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jul 2023 18:43:36 -0700 (PDT)
+Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-5667dddaa5cso1751469eaf.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jul 2023 18:43:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689299004; x=1691891004;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vZnknvALMXVtBPX6Ukkpz2YO8donkHl1pxBhmFLF1B8=;
+        b=FfjLq5SLwLD6cFqC6773/uMfJbuRfYsQwt52b0oifDcK3UJHTu834HRPD+/nmUgjS0
+         VHFmp7JwgfqmTseKTIa5JiMJqLEfL3jP47wm3lwri0qbssuvnuNp0UzzPGuVlvsEKmDO
+         XJm+G7xVP+oubvfVT64D9QecQ6RaAC1mS0SRBzPGBwPJJ208O6KVqXtF4inVhCwftY3p
+         KVCAXFYdgOcoEeop3nPMoQTwGNuv0yUN4XM2C+SN3p/03UiMquQ1knwaThV5GRQZPCRK
+         eAp+jFE4aMhV8oxReOwTdGkaP4U1uCltioadjdMoS9ogDiRazoWKyTFGf2tYuqhr2m67
+         S0CA==
+X-Gm-Message-State: ABy/qLaie4tWTJAXJjSrP3xC6dRwC2HnHA2lFIL9GGKFwQ2zDEAOvvBd
+        PKSAxTEhntunZs6gl2vRh5bwLkdqxJ6qokMroxsK1D404apZ
+X-Google-Smtp-Source: APBJJlGd0eELYwyfN1ir0FVfQ1r8XO7T2Oqnv+pjSOFNSE8HMIz7hICE3gORb5V98Qrx8R+qp9PXum5hz1HF/XHIWmUmq950RZr6
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6870:a881:b0:1b3:99b4:3e46 with SMTP id
+ eb1-20020a056870a88100b001b399b43e46mr3253987oab.8.1689299004333; Thu, 13 Jul
+ 2023 18:43:24 -0700 (PDT)
+Date:   Thu, 13 Jul 2023 18:43:24 -0700
+In-Reply-To: <0000000000003735c9060061384a@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000012a70f0600689326@google.com>
+Subject: Re: [syzbot] [btrfs?] general protection fault in btrfs_finish_ordered_extent
+From:   syzbot <syzbot+5b82f0e951f8c2bcdb8f@syzkaller.appspotmail.com>
+To:     clm@fb.com, dsterba@suse.com, hch@lst.de,
+        johannes.thumshirn@wdc.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ensure that the mtime and ctime apparently change, even when there are
-multiple writes in quick succession. Older kernels didn't do this, but
-there are patches in flight that should help ensure it in the future.
+syzbot has bisected this issue to:
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- src/Makefile          |   2 +-
- src/mgctime.c         | 107 ++++++++++++++++++++++++++++++++++++++++++
- tests/generic/730     |  25 ++++++++++
- tests/generic/730.out |   1 +
- 4 files changed, 134 insertions(+), 1 deletion(-)
- create mode 100644 src/mgctime.c
- create mode 100755 tests/generic/730
- create mode 100644 tests/generic/730.out
+commit b41b6f6937dc89e072b334e8d814487cb4692770
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Wed May 31 07:54:09 2023 +0000
 
-This patchset is intended to test the new multigrain timestamp feature:
+    btrfs: use btrfs_finish_ordered_extent to complete direct writes
 
-    https://lore.kernel.org/linux-fsdevel/20230713-mgctime-v5-0-9eb795d2ae37@kernel.org/T/#t
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14761374a80000
+start commit:   1c7873e33645 mm: lock newly mapped VMA with corrected orde..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16761374a80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12761374a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9831e2c2660aae77
+dashboard link: https://syzkaller.appspot.com/bug?extid=5b82f0e951f8c2bcdb8f
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=109dcf08a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13dadfb4a80000
 
-I had originally attempted to write this as a shell script, but it was
-too slow, which made it falsely pass on unpatched kernels.
+Reported-by: syzbot+5b82f0e951f8c2bcdb8f@syzkaller.appspotmail.com
+Fixes: b41b6f6937dc ("btrfs: use btrfs_finish_ordered_extent to complete direct writes")
 
-All current filesystems will fail this, so we may want to wait until
-we are closer to merging the kernel series.
-
-diff --git a/src/Makefile b/src/Makefile
-index 24cd47479140..aff7d07466f0 100644
---- a/src/Makefile
-+++ b/src/Makefile
-@@ -33,7 +33,7 @@ LINUX_TARGETS = xfsctl bstat t_mtab getdevicesize preallo_rw_pattern_reader \
- 	attr_replace_test swapon mkswap t_attr_corruption t_open_tmpfiles \
- 	fscrypt-crypt-util bulkstat_null_ocount splice-test chprojid_fail \
- 	detached_mounts_propagation ext4_resize t_readdir_3 splice2pipe \
--	uuid_ioctl
-+	uuid_ioctl mgctime
- 
- EXTRA_EXECS = dmerror fill2attr fill2fs fill2fs_check scaleread.sh \
- 	      btrfs_crc32c_forged_name.py popdir.pl popattr.py
-diff --git a/src/mgctime.c b/src/mgctime.c
-new file mode 100644
-index 000000000000..38e22a8613ff
---- /dev/null
-+++ b/src/mgctime.c
-@@ -0,0 +1,107 @@
-+/*
-+ * Older Linux kernels always use coarse-grained timestamps, with a
-+ * resolution of around 1 jiffy. Writes that are done in quick succession
-+ * on those kernels apparent change to the ctime or mtime.
-+ *
-+ * Newer kernels attempt to ensure that fine-grained timestamps are used
-+ * when the mtime or ctime are queried from userland.
-+ *
-+ * Open a file and do a 1 byte write to it and then statx the mtime and ctime.
-+ * Do that in a loop 1000 times and ensure that the value is different from
-+ * the last.
-+ *
-+ * Copyright (c) 2023: Jeff Layton <jlayton@kernel.org>
-+ */
-+#define _GNU_SOURCE 1
-+#include <stdio.h>
-+#include <fcntl.h>
-+#include <errno.h>
-+#include <sys/stat.h>
-+#include <unistd.h>
-+#include <stdint.h>
-+#include <getopt.h>
-+#include <stdbool.h>
-+
-+#define NUM_WRITES 1000
-+
-+static int64_t statx_ts_cmp(struct statx_timestamp *ts1, struct statx_timestamp *ts2)
-+{
-+	int64_t ret = ts2->tv_sec - ts1->tv_sec;
-+
-+	if (ret)
-+		return ret;
-+
-+	ret = ts2->tv_nsec;
-+	ret -= ts1->tv_nsec;
-+
-+	return ret;
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	int ret, fd, i;
-+	struct statx stx = { };
-+	struct statx_timestamp ctime, mtime;
-+	bool verbose = false;
-+
-+	while ((i = getopt(argc, argv, "v")) != -1) {
-+		switch (i) {
-+		case 'v':
-+			verbose = true;
-+			break;
-+		}
-+	}
-+
-+	if (argc < 2) {
-+		errno = -EINVAL;
-+		perror("usage");
-+	}
-+
-+	fd = open(argv[1], O_WRONLY|O_CREAT|O_TRUNC, 0644);
-+	if (fd < 0) {
-+		perror("open");
-+		return 1;
-+	}
-+
-+	ret = statx(fd, "", AT_EMPTY_PATH, STATX_MTIME|STATX_CTIME, &stx);
-+	if (ret < 0) {
-+		perror("stat");
-+		return 1;
-+	}
-+
-+	ctime = stx.stx_ctime;
-+	mtime = stx.stx_mtime;
-+
-+	for (i = 0; i < NUM_WRITES; ++i) {
-+		ssize_t written;
-+
-+		written = write(fd, "a", 1);
-+		if (written < 0) {
-+			perror("write");
-+			return 1;
-+		}
-+
-+		ret = statx(fd, "", AT_EMPTY_PATH, STATX_MTIME|STATX_CTIME, &stx);
-+		if (ret < 0) {
-+			perror("stat");
-+			return 1;
-+		}
-+
-+		if (verbose)
-+			printf("%d: %llu.%u\n", i, stx.stx_ctime.tv_sec, stx.stx_ctime.tv_nsec);
-+
-+		if (!statx_ts_cmp(&ctime, &stx.stx_ctime)) {
-+			printf("Duplicate ctime after write!\n");
-+			return 1;
-+		}
-+
-+		if (!statx_ts_cmp(&mtime, &stx.stx_mtime)) {
-+			printf("Duplicate mtime after write!\n");
-+			return 1;
-+		}
-+
-+		ctime = stx.stx_ctime;
-+		mtime = stx.stx_mtime;
-+	}
-+	return 0;
-+}
-diff --git a/tests/generic/730 b/tests/generic/730
-new file mode 100755
-index 000000000000..c3f24aeb8534
---- /dev/null
-+++ b/tests/generic/730
-@@ -0,0 +1,25 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2023, Jeff Layton <jlayton@redhat.com>
-+#
-+# FS QA Test No. 730
-+#
-+# Multigrain time test
-+#
-+# Open a file, and do 1 byte writes to it, and statx the file for
-+# the ctime and mtime after each write. Ensure that they have changed
-+# since the previous write.
-+#
-+. ./common/preamble
-+_begin_fstest auto quick
-+
-+# Override the default cleanup function.
-+_require_test_program mgctime
-+
-+testfile="$TEST_DIR/test_mgtime_file.$$"
-+
-+$here/src/mgctime $testfile
-+
-+# success, all done
-+status=0
-+exit
-diff --git a/tests/generic/730.out b/tests/generic/730.out
-new file mode 100644
-index 000000000000..5dbea532d60f
---- /dev/null
-+++ b/tests/generic/730.out
-@@ -0,0 +1 @@
-+QA output created by 730
--- 
-2.41.0
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
