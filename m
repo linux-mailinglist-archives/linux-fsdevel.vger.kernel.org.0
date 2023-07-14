@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C31E752FAC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 05:03:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA1A2752FAD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 05:04:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234348AbjGNDDb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Jul 2023 23:03:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34846 "EHLO
+        id S234482AbjGNDEv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Jul 2023 23:04:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231547AbjGNDD3 (ORCPT
+        with ESMTP id S231547AbjGNDEu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Jul 2023 23:03:29 -0400
-Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CEAC2698
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jul 2023 20:03:28 -0700 (PDT)
-Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-576a9507a9bso39177267b3.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jul 2023 20:03:28 -0700 (PDT)
+        Thu, 13 Jul 2023 23:04:50 -0400
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 475242698
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jul 2023 20:04:45 -0700 (PDT)
+Received: by mail-yb1-xb34.google.com with SMTP id 3f1490d57ef6-c15a5ed884dso1329781276.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Jul 2023 20:04:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1689303808; x=1691895808;
+        d=google.com; s=20221208; t=1689303884; x=1691895884;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fxN91l7lJLjM7NpLet8IL3ScV61vQ1hMth4QWxYqNrg=;
-        b=A0/RP+8APT4/kBg7ktj/jqxRG5MOv3WH1MB2NKbU1pOA+l4QmvFOIYaQRxgSvBBi2i
-         6oHCj53LhYnwSQdDtBgWZrQKi09+5eqxwUvNEJ8zmhcnsSwiHzXPqT6f/T9fjIv+RVfc
-         E6MsiEZ5aPEd3agNcBwAcX2IVxAwcp24hZ3/GKOK/WVvjGCkfaozFQvpYlEX+HI3nm3R
-         emcu76/2LXoYiTkCTevSwVrfxivF01Y5/194KzvkeeDMaNnRRu1lNsQl1+6MTNIXgkHy
-         /Ol0xpSENABPYdlPRoQsuDjPvm/MjEUTE22qen2HfSnnTCzDryW/2LoGiMCI8NnbjHO6
-         7+tQ==
+        bh=v4BF5nL1hHerQt4XXkZr14C1Ft2qyucggxOLcgG/mUE=;
+        b=er6f9xnGJ2N0qzlavJE7C8fXy0dDvCJIhFU9ZDb6LeyXGIiBwWFjrgUF9waRAMHLUD
+         Vst9Hmnuhmj+GCUAbysAnoawRb/3DKTXo38GfLYjm70NzKHKxnUaNZ6o3FW7eBCZLZfO
+         S8PUAUbU1aBPRxWOhSxPigUFYDuqPh2xUVnHSS7AtXGGDA9KZw+G1k30WpArGVn4LkqC
+         IlIi5MyLf/lvWZnmSDrtKLxYs5OYoU+R+vC9NuKxZSrvipU8/qHupPGmY9OK0vBJyLQv
+         e9LTMSOJTGT8l3/L7efxA/y8rIFBGs2Po1DDtBlJxmzNyjAuh3UTa3ZE3O00moOUX53N
+         eTfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689303808; x=1691895808;
+        d=1e100.net; s=20221208; t=1689303884; x=1691895884;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fxN91l7lJLjM7NpLet8IL3ScV61vQ1hMth4QWxYqNrg=;
-        b=KBZLhdL/pWgl3o5Pd6/AFM7HbbdYGaqWiqzbUysvchRBBZbSK1xSyyN7YOVHC++3ib
-         qrpx3VULe5SRu/xiR84537vKRVMdMjiCMCb2aOBMUmcRNd/xFIQotLpyraSoQpKTfy0A
-         X3Tsu5hxGXIve1vhY2LSncg79+Fg9opuiWeyu/FhYOsSnQ0Hs76p04+ewSOGMKV/04Tc
-         fQlmMiyPb5+VgQFSydIFWfQuXQpNQBl61ZT89st28DrUcIdKXPaq+9VSfETEEs31XPR8
-         Mwg57kMg5p2Eb+NFgFm3c/kYsV9/rSuNH8BM+FC1nuH6yeIAsEg5vePUpAHqFGIXROK2
-         DiMg==
-X-Gm-Message-State: ABy/qLafzfNzZdu8KUCSDpfoozoB97VFtgxkom+bNLlG5cFQNJpPnOjD
-        DcyyaWNK0s6otJyEZOMRmnqTo5Vo+SgNawz7IJ9w1Jr9YUVbcfHLUPP16A==
-X-Google-Smtp-Source: APBJJlHzwxFLMxwMg7Tv6a7IZN2HUePraXebHJUYVxUVRdnEunNPkRhFem6/v8cF++psr+xoHxOPQWxH5LC/O8wXBDg=
-X-Received: by 2002:a81:4fc6:0:b0:57a:8de8:6eef with SMTP id
- d189-20020a814fc6000000b0057a8de86eefmr1648481ywb.24.1689303807652; Thu, 13
- Jul 2023 20:03:27 -0700 (PDT)
+        bh=v4BF5nL1hHerQt4XXkZr14C1Ft2qyucggxOLcgG/mUE=;
+        b=jksWiIsF+DOtuUyn4yw81C2gaTIzdNP8pvoUJH3vexQTV/J37fMZV/Ec96epsG2cgx
+         KbFtcws6qBPub2ZF9WSVmDCNhBZx4R0IezkFzLDuauJ5kJB6KQYB2y+nAiGd0vT0YIOm
+         PisA59W5/cnT2fXfOYlK4ra8zbfYCsr/Mqc4cp85WkyfwSHdXPQmEYgwsIsAevK5mRA1
+         KESPgbYyma5yDM+i+k1swYrTRd+XQrdcwxspdcU05LVBPhDlYtcc46TsH5SeA8xPzhjl
+         RFSoApyewdm5lj6/2Us4meXuUAi6OJrORCTgKc6Dg0zwU9s0BhjLg4yLSCd+SgkoAML2
+         Zfbw==
+X-Gm-Message-State: ABy/qLZfLseggU7obxHj3CHj7R7ohjb0wkq8uVCXtkSHfJt5/DbFo3Fp
+        TenAe9jt8O2cysWC4j3O4dexME2RGxcga5nh6ACHHQ==
+X-Google-Smtp-Source: APBJJlHEUo2Sn8En4kIzeIj2RFma+K5JyjK7OTmVvujsN42wdttyWHvEBiqedgRa4i59pb4h0DT40FytdkqdZ61/pek=
+X-Received: by 2002:a25:3491:0:b0:c85:d8b6:c21d with SMTP id
+ b139-20020a253491000000b00c85d8b6c21dmr2775730yba.31.1689303884251; Thu, 13
+ Jul 2023 20:04:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230711202047.3818697-1-willy@infradead.org> <20230711202047.3818697-3-willy@infradead.org>
-In-Reply-To: <20230711202047.3818697-3-willy@infradead.org>
+References: <20230711202047.3818697-1-willy@infradead.org> <20230711202047.3818697-4-willy@infradead.org>
+In-Reply-To: <20230711202047.3818697-4-willy@infradead.org>
 From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Thu, 13 Jul 2023 20:03:16 -0700
-Message-ID: <CAJuCfpEL0OH+SASV_fxuZrLmqwRB2wbV4zdTjiFQqSSzQDMXHQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/9] mm: Allow per-VMA locks on file-backed VMAs
+Date:   Thu, 13 Jul 2023 20:04:33 -0700
+Message-ID: <CAJuCfpHVwDty=qFfqALjb4ZovvKsEjuuvOBMXEYrCd-Jw8k7Qg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/9] mm: Move FAULT_FLAG_VMA_LOCK check from handle_mm_fault()
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     linux-mm@kvack.org, Arjun Roy <arjunroy@google.com>,
         Eric Dumazet <edumazet@google.com>,
@@ -72,56 +72,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 11, 2023 at 1:21=E2=80=AFPM Matthew Wilcox (Oracle)
+On Tue, Jul 11, 2023 at 1:20=E2=80=AFPM Matthew Wilcox (Oracle)
 <willy@infradead.org> wrote:
 >
-> The fault path will immediately fail in handle_mm_fault(), so this
-> is the minimal step which allows the per-VMA lock to be taken on
-> file-backed VMAs.  There may be a small performance reduction as a
-> little unnecessary work will be done on each page fault.  See later
-> patches for the improvement.
+> Handle a little more of the page fault path outside the mmap sem.
+> The hugetlb path doesn't need to check whether the VMA is anonymous;
+> the VM_HUGETLB flag is only set on hugetlbfs VMAs.  There should be no
+> performance change from the previous commit; this is simply a step to
+> ease bisection of any problems.
 >
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
 Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 
 > ---
->  mm/memory.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
+>  mm/hugetlb.c |  6 ++++++
+>  mm/memory.c  | 18 +++++++++---------
+>  2 files changed, 15 insertions(+), 9 deletions(-)
 >
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index e4a28ce0667f..109e1ff92bc8 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -6063,6 +6063,12 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, str=
+uct vm_area_struct *vma,
+>         int need_wait_lock =3D 0;
+>         unsigned long haddr =3D address & huge_page_mask(h);
+>
+> +       /* TODO: Handle faults under the VMA lock */
+> +       if (flags & FAULT_FLAG_VMA_LOCK) {
+> +               vma_end_read(vma);
+> +               return VM_FAULT_RETRY;
+> +       }
+> +
+>         /*
+>          * Serialize hugepage allocation and instantiation, so that we do=
+n't
+>          * get spurious allocation failures if two CPUs race to instantia=
+te
 > diff --git a/mm/memory.c b/mm/memory.c
-> index 2c7967632866..f2dcc695f54e 100644
+> index f2dcc695f54e..6eda5c5f2069 100644
 > --- a/mm/memory.c
 > +++ b/mm/memory.c
-> @@ -5247,6 +5247,11 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *=
-vma, unsigned long address,
->                 goto out;
->         }
+> @@ -4998,10 +4998,10 @@ static vm_fault_t handle_pte_fault(struct vm_faul=
+t *vmf)
+>  }
+>
+>  /*
+> - * By the time we get here, we already hold the mm semaphore
+> - *
+> - * The mmap_lock may have been released depending on flags and our
+> - * return value.  See filemap_fault() and __folio_lock_or_retry().
+> + * On entry, we hold either the VMA lock or the mmap_lock
+> + * (FAULT_FLAG_VMA_LOCK tells you which).  If VM_FAULT_RETRY is set in
+> + * the result, the mmap_lock is not held on exit.  See filemap_fault()
+> + * and __folio_lock_or_retry().
+>   */
+>  static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
+>                 unsigned long address, unsigned int flags)
+> @@ -5020,6 +5020,11 @@ static vm_fault_t __handle_mm_fault(struct vm_area=
+_struct *vma,
+>         p4d_t *p4d;
+>         vm_fault_t ret;
 >
 > +       if ((flags & FAULT_FLAG_VMA_LOCK) && !vma_is_anonymous(vma)) {
 > +               vma_end_read(vma);
 > +               return VM_FAULT_RETRY;
 > +       }
 > +
+>         pgd =3D pgd_offset(mm, address);
+>         p4d =3D p4d_alloc(mm, pgd, address);
+>         if (!p4d)
+> @@ -5247,11 +5252,6 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *=
+vma, unsigned long address,
+>                 goto out;
+>         }
+>
+> -       if ((flags & FAULT_FLAG_VMA_LOCK) && !vma_is_anonymous(vma)) {
+> -               vma_end_read(vma);
+> -               return VM_FAULT_RETRY;
+> -       }
+> -
 >         /*
 >          * Enable the memcg OOM handling for faults triggered in user
 >          * space.  Kernel faults are handled more gracefully.
-> @@ -5418,12 +5423,8 @@ struct vm_area_struct *lock_vma_under_rcu(struct m=
-m_struct *mm,
->         if (!vma)
->                 goto inval;
->
-> -       /* Only anonymous vmas are supported for now */
-> -       if (!vma_is_anonymous(vma))
-> -               goto inval;
-> -
->         /* find_mergeable_anon_vma uses adjacent vmas which are not locke=
-d */
-> -       if (!vma->anon_vma)
-> +       if (vma_is_anonymous(vma) && !vma->anon_vma)
->                 goto inval;
->
->         if (!vma_start_read(vma))
 > --
 > 2.39.2
 >
