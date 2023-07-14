@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 61FB07535AA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 10:51:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AED727535AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 10:51:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235650AbjGNIvz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jul 2023 04:51:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57142 "EHLO
+        id S235690AbjGNIv4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jul 2023 04:51:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235649AbjGNIvl (ORCPT
+        with ESMTP id S235666AbjGNIvy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jul 2023 04:51:41 -0400
+        Fri, 14 Jul 2023 04:51:54 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1AF226A5;
-        Fri, 14 Jul 2023 01:51:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 637C62702;
+        Fri, 14 Jul 2023 01:51:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=1Mmk0hcQiy9mntBXriZUXYSFGw90mYsBEkK5jJEnRzw=; b=MvTymamHN3zkqhNT1fE1Fvzzsc
-        ASvKE8XPmBuIxwjrNchNXRmjrGlnxlV1ai8QRgjl3okWwyCiUu9hs8VCnqVuVlbbVCTxoQIVkFUeO
-        yYI0gQ/bW77LmeNvjvnJjFd1cBs41thrORAO4gwJDM3t4SZ2q+9RAMQDkzoPDEfSvhn+HGoJX4bim
-        /nTX9ag1wru9WgucL5p7PHHwL5lx+jd7v24O00JPedhRyq7pSfURfz0TRXlD5owcJR8R6zan8/S+Y
-        fVwA4+Jh4fT35VnMIUKNHcrr4r6IliPCjQA8L3Pn3oGWtPBkzc5Sm9WKBE9qrPPTBkQAn72TvvMLz
-        +iZQnq0g==;
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=IgRNswv9gww1Ijnp4cSF7uAvKJ5XMzcE2orXIk8I3Qk=; b=3JRg7xuSfHRLdkh+jmfwOF6lYg
+        wQ14X1QMAMzlEj5+w2n8PIalDGV96GUjD6UbFqW+L5xkJNj/j94vKTNKTNerKgZDjPrsAbvDzzxHV
+        4/5q0MOIsWoRIAfUq/JXXoMM6KhlXR2hn0z/tX4agaBh+UiSrYoSbSUAAUaSLmTC14Ml50jHoXIkr
+        otmWHL/xeF4Q1T1vlJ/d3WWGmD3f8+TJRu9iiR3axKm8SIYq3FExBg8Py0N5SEuvbukCOkjk4G9v+
+        +D6oIQn3y2EWqUZfNBg6ut1rMQr94u6buHS6tSFicca9X/3xftkmGxVEHELdtWfyic+KWqMmrIA1a
+        l9YNioNw==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qKEWW-005aGS-0q;
-        Fri, 14 Jul 2023 08:51:36 +0000
+        id 1qKEWZ-005aIa-1w;
+        Fri, 14 Jul 2023 08:51:40 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     djwong@kernel.org
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel test robot <oliver.sang@intel.com>,
-        Cyril Hrubis <chrubis@suse.cz>
-Subject: [PATCH 1/2] iomap: fix a regression for partial write errors
-Date:   Fri, 14 Jul 2023 10:51:23 +0200
-Message-Id: <20230714085124.548920-1-hch@lst.de>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 2/2] iomap: micro optimize the ki_pos assignment in iomap_file_buffered_write
+Date:   Fri, 14 Jul 2023 10:51:24 +0200
+Message-Id: <20230714085124.548920-2-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230714085124.548920-1-hch@lst.de>
+References: <20230714085124.548920-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
@@ -51,31 +51,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When write* wrote some data it should return the amount of written data
-and not the error code that caused it to stop.  Fix a recent regression
-in iomap_file_buffered_write that caused it to return the errno instead.
+We have the new value for ki_pos right at hand in iter.pos, so assign
+that instead of recalculating it from ret.
 
-Fixes: 219580eea1ee ("iomap: update ki_pos in iomap_file_buffered_write")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Reported-by: Cyril Hrubis <chrubis@suse.cz>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
  fs/iomap/buffered-io.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index adb92cdb24b009..7cc9f7274883a5 100644
+index 7cc9f7274883a5..aa8967cca1a31b 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -872,7 +872,7 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
- 	while ((ret = iomap_iter(&iter, ops)) > 0)
- 		iter.processed = iomap_write_iter(&iter, i);
- 
--	if (unlikely(ret < 0))
-+	if (unlikely(iter.pos == iocb->ki_pos))
+@@ -875,7 +875,7 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
+ 	if (unlikely(iter.pos == iocb->ki_pos))
  		return ret;
  	ret = iter.pos - iocb->ki_pos;
- 	iocb->ki_pos += ret;
+-	iocb->ki_pos += ret;
++	iocb->ki_pos = iter.pos;
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(iomap_file_buffered_write);
 -- 
 2.39.2
 
