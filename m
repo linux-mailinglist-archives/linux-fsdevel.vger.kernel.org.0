@@ -2,368 +2,515 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D199753619
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 11:08:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 548B175372A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 11:54:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235154AbjGNJIP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jul 2023 05:08:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41870 "EHLO
+        id S234757AbjGNJyy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jul 2023 05:54:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235882AbjGNJII (ORCPT
+        with ESMTP id S234693AbjGNJyx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jul 2023 05:08:08 -0400
-Received: from esa11.hc1455-7.c3s2.iphmx.com (esa11.hc1455-7.c3s2.iphmx.com [207.54.90.137])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72CD730C5;
-        Fri, 14 Jul 2023 02:08:06 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6600,9927,10770"; a="103970061"
-X-IronPort-AV: E=Sophos;i="6.01,204,1684767600"; 
-   d="scan'208";a="103970061"
-Received: from unknown (HELO yto-r1.gw.nic.fujitsu.com) ([218.44.52.217])
-  by esa11.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2023 18:08:04 +0900
-Received: from yto-m2.gw.nic.fujitsu.com (yto-nat-yto-m2.gw.nic.fujitsu.com [192.168.83.65])
-        by yto-r1.gw.nic.fujitsu.com (Postfix) with ESMTP id 89711DAE0C;
-        Fri, 14 Jul 2023 18:08:01 +0900 (JST)
-Received: from kws-ab3.gw.nic.fujitsu.com (kws-ab3.gw.nic.fujitsu.com [192.51.206.21])
-        by yto-m2.gw.nic.fujitsu.com (Postfix) with ESMTP id BBC2BD67B6;
-        Fri, 14 Jul 2023 18:08:00 +0900 (JST)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-        by kws-ab3.gw.nic.fujitsu.com (Postfix) with ESMTP id 3C2E62007684E;
-        Fri, 14 Jul 2023 18:08:00 +0900 (JST)
-Received: from [192.168.50.5] (unknown [10.167.234.230])
-        by edo.cn.fujitsu.com (Postfix) with ESMTP id 384AA1A0071;
-        Fri, 14 Jul 2023 17:07:59 +0800 (CST)
-Message-ID: <2840406d-0b7d-9897-87f6-ef3627e9ed5d@fujitsu.com>
-Date:   Fri, 14 Jul 2023 17:07:58 +0800
+        Fri, 14 Jul 2023 05:54:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD9BFA7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jul 2023 02:54:51 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 53DAA61CC3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jul 2023 09:54:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0917C433C7;
+        Fri, 14 Jul 2023 09:54:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689328490;
+        bh=MnndG+64kR7REmcYPyi/J9o+3mXRGPft+wQsAz+qsBA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eSKm4+WmYQegIDDpl36dlnbSiuxntgMwXyWztAAodM7gz+7d1Dr8G1dzXrd/IrYAu
+         9OS+fudhQYZB4vKy+Vxupsm582en9ippcugwJYo01OQvZBIH/2gQ1MC8k6ih2CCvKd
+         8nL56Y3vjHIEkwh2QugH0Tl1FpTqz7Q9D/DUYtD31RbDGdVjTHq1ny/hDSLCjeovE7
+         UO4rGl/XwTuo9EwO6RnjOKAKlTpXXYD8TrCTL4YhndjtqISuk47dMw8tfiJj/9fmip
+         Sc9vcuZhmIiDdK9R527AgrzrpcrCwV4QAEdDKgqsno+jLcovV7y/2MnQ0f7SkDZETW
+         BRv37B9q2/aZA==
+Date:   Fri, 14 Jul 2023 11:54:45 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     cem@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, jack@suse.cz,
+        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+        linux-mm@kvack.org, djwong@kernel.org, hughd@google.com,
+        mcgrof@kernel.org
+Subject: Re: [PATCH 5/6] shmem: quota support
+Message-ID: <20230714-messtechnik-knieprobleme-5d0a3abb4413@brauner>
+References: <20230713134848.249779-1-cem@kernel.org>
+ <20230713134848.249779-6-cem@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v12 2/2] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-To:     djwong@kernel.org
-Cc:     linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
-        akpm@linux-foundation.org, mcgrof@kernel.org
-References: <20230629081651.253626-1-ruansy.fnst@fujitsu.com>
- <20230629081651.253626-3-ruansy.fnst@fujitsu.com>
-In-Reply-To: <20230629081651.253626-3-ruansy.fnst@fujitsu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-27750.005
-X-TM-AS-User-Approved-Sender: Yes
-X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-27750.005
-X-TMASE-Result: 10--19.497300-10.000000
-X-TMASE-MatchedRID: 00R5yCKmLzqPvrMjLFD6eI61Z+HJnvsO1QQ6Jx/fflZYC5LPd7BvbXWJ
-        7dvKS5ZkYsXN3CL0nEm3W71613vN7Ja3SiQKe1CZtT4jIeGRd/WTDZOVfIlqXsevg9JZNdIszIa
-        2RGUjJmiI2CAno9ubYWwWBQOse0fpkmoOfourmHQD2WXLXdz+Afi4nVERfgwdUFiDuGDvnz1576
-        my5Ixjujt8E1FvI1h+0htCm4AReYyKOc/QAD5CQYA7SSmAp7NEC5HdxA3MwScR34ro7k23nb8FH
-        rw7frluvDBM/avXIoa+GyEBMTgQ9t7Rfb2Mc0ONb/oIJuUAIuEFeeAjqMW+l4EBeX0uQ+npMBbl
-        t7zglMEb2wL6PXU3h0K3WEb5CMhwM8kGBcxKxM11e7Xbb6Im2knSHQovAWuA4Jg2aOOdYIKRcyU
-        BIWzD8RR7J3ZruAlBJ7WhME6YJBUSfBCDQJnFm/CW/PNRRp/ZgjDdudOPBHqe38zXnNg9Qw6+rP
-        zHX18bBfsWZGGl0AmdqC2fLtk9xL9ZdlL8eonaRjjVhf+j/woNlf30fAUOwiq2rl3dzGQ1A/3R8
-        k/14e0=
-X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230713134848.249779-6-cem@kernel.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Darrick,
-
-Thanks for applying the 1st patch.
-
-Now, since this patch is based on the new freeze_super()/thaw_super() 
-api[1], I'd like to ask what's the plan for this api?  It seems to have 
-missed the v6.5-rc1.
-
-[1] 
-https://lore.kernel.org/linux-xfs/168688010689.860947.1788875898367401950.stgit@frogsfrogsfrogs/
-
-
---
-Thanks,
-Ruan.
-
-
-在 2023/6/29 16:16, Shiyang Ruan 写道:
-> This patch is inspired by Dan's "mm, dax, pmem: Introduce
-> dev_pagemap_failure()"[1].  With the help of dax_holder and
-> ->notify_failure() mechanism, the pmem driver is able to ask filesystem
-> on it to unmap all files in use, and notify processes who are using
-> those files.
+On Thu, Jul 13, 2023 at 03:48:47PM +0200, cem@kernel.org wrote:
+> From: Carlos Maiolino <cem@kernel.org>
 > 
-> Call trace:
-> trigger unbind
->   -> unbind_store()
->    -> ... (skip)
->     -> devres_release_all()
->      -> kill_dax()
->       -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
->        -> xfs_dax_notify_failure()
->        `-> freeze_super()             // freeze (kernel call)
->        `-> do xfs rmap
->        ` -> mf_dax_kill_procs()
->        `  -> collect_procs_fsdax()    // all associated processes
->        `  -> unmap_and_kill()
->        ` -> invalidate_inode_pages2_range() // drop file's cache
->        `-> thaw_super()               // thaw (both kernel & user call)
+> Now the basic infra-structure is in place, enable quota support for tmpfs.
 > 
-> Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
-> event.  Use the exclusive freeze/thaw[2] to lock the filesystem to prevent
-> new dax mapping from being created.  Do not shutdown filesystem directly
-> if configuration is not supported, or if failure range includes metadata
-> area.  Make sure all files and processes(not only the current progress)
-> are handled correctly.  Also drop the cache of associated files before
-> pmem is removed.
+> This offers user and group quotas to tmpfs (project quotas will be added
+> later). Also, as other filesystems, the tmpfs quota is not supported
+> within user namespaces yet, so idmapping is not translated.
 > 
-> [1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
-> [2]: https://lore.kernel.org/linux-xfs/168688010689.860947.1788875898367401950.stgit@frogsfrogsfrogs/
-> 
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+> Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
 > ---
->   drivers/dax/super.c         |  3 +-
->   fs/xfs/xfs_notify_failure.c | 86 ++++++++++++++++++++++++++++++++++---
->   include/linux/mm.h          |  1 +
->   mm/memory-failure.c         | 17 ++++++--
->   4 files changed, 96 insertions(+), 11 deletions(-)
+>  Documentation/filesystems/tmpfs.rst |  15 +++
+>  include/linux/shmem_fs.h            |   8 ++
+>  mm/shmem.c                          | 180 ++++++++++++++++++++++++++--
+>  3 files changed, 195 insertions(+), 8 deletions(-)
 > 
-> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> index c4c4728a36e4..2e1a35e82fce 100644
-> --- a/drivers/dax/super.c
-> +++ b/drivers/dax/super.c
-> @@ -323,7 +323,8 @@ void kill_dax(struct dax_device *dax_dev)
->   		return;
->   
->   	if (dax_dev->holder_data != NULL)
-> -		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
-> +		dax_holder_notify_failure(dax_dev, 0, U64_MAX,
-> +				MF_MEM_PRE_REMOVE);
->   
->   	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
->   	synchronize_srcu(&dax_srcu);
-> diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
-> index 4a9bbd3fe120..f6ec56b76db6 100644
-> --- a/fs/xfs/xfs_notify_failure.c
-> +++ b/fs/xfs/xfs_notify_failure.c
-> @@ -22,6 +22,7 @@
->   
->   #include <linux/mm.h>
->   #include <linux/dax.h>
-> +#include <linux/fs.h>
->   
->   struct xfs_failure_info {
->   	xfs_agblock_t		startblock;
-> @@ -73,10 +74,16 @@ xfs_dax_failure_fn(
->   	struct xfs_mount		*mp = cur->bc_mp;
->   	struct xfs_inode		*ip;
->   	struct xfs_failure_info		*notify = data;
-> +	struct address_space		*mapping;
-> +	pgoff_t				pgoff;
-> +	unsigned long			pgcnt;
->   	int				error = 0;
->   
->   	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
->   	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
-> +		/* Continue the query because this isn't a failure. */
-> +		if (notify->mf_flags & MF_MEM_PRE_REMOVE)
-> +			return 0;
->   		notify->want_shutdown = true;
->   		return 0;
->   	}
-> @@ -92,14 +99,55 @@ xfs_dax_failure_fn(
->   		return 0;
->   	}
->   
-> -	error = mf_dax_kill_procs(VFS_I(ip)->i_mapping,
-> -				  xfs_failure_pgoff(mp, rec, notify),
-> -				  xfs_failure_pgcnt(mp, rec, notify),
-> -				  notify->mf_flags);
-> +	mapping = VFS_I(ip)->i_mapping;
-> +	pgoff = xfs_failure_pgoff(mp, rec, notify);
-> +	pgcnt = xfs_failure_pgcnt(mp, rec, notify);
+> diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
+> index f18f46be5c0c..0c7d8bd052f1 100644
+> --- a/Documentation/filesystems/tmpfs.rst
+> +++ b/Documentation/filesystems/tmpfs.rst
+> @@ -130,6 +130,21 @@ for emergency or testing purposes. The values you can set for shmem_enabled are:
+>      option, for testing
+>  ==  ============================================================
+>  
+> +tmpfs also supports quota with the following mount options
 > +
-> +	/* Continue the rmap query if the inode isn't a dax file. */
-> +	if (dax_mapping(mapping))
-> +		error = mf_dax_kill_procs(mapping, pgoff, pgcnt,
-> +					  notify->mf_flags);
+> +========  =============================================================
+> +quota     User and group quota accounting and enforcement is enabled on
+> +          the mount. Tmpfs is using hidden system quota files that are
+> +          initialized on mount.
+> +usrquota  User quota accounting and enforcement is enabled on the
+> +          mount.
+> +grpquota  Group quota accounting and enforcement is enabled on the
+> +          mount.
+> +========  =============================================================
 > +
-> +	/* Invalidate the cache in dax pages. */
-> +	if (notify->mf_flags & MF_MEM_PRE_REMOVE)
-> +		invalidate_inode_pages2_range(mapping, pgoff,
-> +					      pgoff + pgcnt - 1);
+> +Note that tmpfs quotas do not support user namespaces so no uid/gid
+> +translation is done if quotas are enabled inside user namespaces.
 > +
->   	xfs_irele(ip);
->   	return error;
->   }
->   
-> +static void
-> +xfs_dax_notify_failure_freeze(
-> +	struct xfs_mount	*mp)
+>  tmpfs has a mount option to set the NUMA memory allocation policy for
+>  all files in that instance (if CONFIG_NUMA is enabled) - which can be
+>  adjusted on the fly via 'mount -o remount ...'
+> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> index 7abfaf70b58a..1a568a0f542f 100644
+> --- a/include/linux/shmem_fs.h
+> +++ b/include/linux/shmem_fs.h
+> @@ -31,6 +31,9 @@ struct shmem_inode_info {
+>  	atomic_t		stop_eviction;	/* hold when working on inode */
+>  	struct timespec64	i_crtime;	/* file creation time */
+>  	unsigned int		fsflags;	/* flags for FS_IOC_[SG]ETFLAGS */
+> +#ifdef CONFIG_TMPFS_QUOTA
+> +	struct dquot		*i_dquot[MAXQUOTAS];
+> +#endif
+>  	struct inode		vfs_inode;
+>  };
+>  
+> @@ -184,4 +187,9 @@ extern int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
+>  #define SHMEM_QUOTA_MAX_SPC_LIMIT 0x7fffffffffffffffLL /* 2^63-1 */
+>  #define SHMEM_QUOTA_MAX_INO_LIMIT 0x7fffffffffffffffLL
+>  
+> +#ifdef CONFIG_TMPFS_QUOTA
+> +extern const struct dquot_operations shmem_quota_operations;
+> +extern struct quota_format_type shmem_quota_format;
+> +#endif /* CONFIG_TMPFS_QUOTA */
+> +
+>  #endif
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 2a7b8060b6f4..5022238dd68d 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -78,6 +78,7 @@ static struct vfsmount *shm_mnt;
+>  #include <uapi/linux/memfd.h>
+>  #include <linux/rmap.h>
+>  #include <linux/uuid.h>
+> +#include <linux/quotaops.h>
+>  
+>  #include <linux/uaccess.h>
+>  
+> @@ -116,11 +117,13 @@ struct shmem_options {
+>  	int huge;
+>  	int seen;
+>  	bool noswap;
+> +	unsigned short quota_types;
+>  #define SHMEM_SEEN_BLOCKS 1
+>  #define SHMEM_SEEN_INODES 2
+>  #define SHMEM_SEEN_HUGE 4
+>  #define SHMEM_SEEN_INUMS 8
+>  #define SHMEM_SEEN_NOSWAP 16
+> +#define SHMEM_SEEN_QUOTA 32
+>  };
+>  
+>  #ifdef CONFIG_TMPFS
+> @@ -212,7 +215,16 @@ static inline int shmem_inode_acct_block(struct inode *inode, long pages)
+>  		if (percpu_counter_compare(&sbinfo->used_blocks,
+>  					   sbinfo->max_blocks - pages) > 0)
+>  			goto unacct;
+> +
+> +		err = dquot_alloc_block_nodirty(inode, pages);
+> +		if (err)
+> +			goto unacct;
+> +
+>  		percpu_counter_add(&sbinfo->used_blocks, pages);
+> +	} else {
+> +		err = dquot_alloc_block_nodirty(inode, pages);
+> +		if (err)
+> +			goto unacct;
+>  	}
+>  
+>  	return 0;
+> @@ -227,6 +239,8 @@ static inline void shmem_inode_unacct_blocks(struct inode *inode, long pages)
+>  	struct shmem_inode_info *info = SHMEM_I(inode);
+>  	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
+>  
+> +	dquot_free_block_nodirty(inode, pages);
+> +
+>  	if (sbinfo->max_blocks)
+>  		percpu_counter_sub(&sbinfo->used_blocks, pages);
+>  	shmem_unacct_blocks(info->flags, pages);
+> @@ -255,6 +269,47 @@ bool vma_is_shmem(struct vm_area_struct *vma)
+>  static LIST_HEAD(shmem_swaplist);
+>  static DEFINE_MUTEX(shmem_swaplist_mutex);
+>  
+> +#ifdef CONFIG_TMPFS_QUOTA
+> +
+> +static int shmem_enable_quotas(struct super_block *sb,
+> +			       unsigned short quota_types)
 > +{
-> +	struct super_block 	*sb = mp->m_super;
+> +	int type, err = 0;
 > +
-> +	/* Wait until no one is holding the FREEZE_HOLDER_KERNEL. */
-> +	while (freeze_super(sb, FREEZE_HOLDER_KERNEL) != 0) {
-> +		// Shall we just wait, or print warning then return -EBUSY?
-> +		delay(HZ / 10);
+> +	sb_dqopt(sb)->flags |= DQUOT_QUOTA_SYS_FILE | DQUOT_NOLIST_DIRTY;
+> +	for (type = 0; type < SHMEM_MAXQUOTAS; type++) {
+> +		if (!(quota_types & (1 << type)))
+> +			continue;
+> +		err = dquot_load_quota_sb(sb, type, QFMT_SHMEM,
+> +					  DQUOT_USAGE_ENABLED |
+> +					  DQUOT_LIMITS_ENABLED);
+> +		if (err)
+> +			goto out_err;
 > +	}
+> +	return 0;
+> +
+> +out_err:
+> +	pr_warn("tmpfs: failed to enable quota tracking (type=%d, err=%d)\n",
+> +		type, err);
+> +	for (type--; type >= 0; type--)
+> +		dquot_quota_off(sb, type);
+> +	return err;
 > +}
 > +
-> +static void
-> +xfs_dax_notify_failure_thaw(
-> +	struct xfs_mount	*mp)
+> +static void shmem_disable_quotas(struct super_block *sb)
 > +{
-> +	struct super_block	*sb = mp->m_super;
-> +	int			error;
+> +	int type;
 > +
-> +	error = thaw_super(sb, FREEZE_HOLDER_KERNEL);
-> +	if (error)
-> +		xfs_emerg(mp, "still frozen after notify failure, err=%d",
-> +			  error);
-> +	/*
-> +	 * Also thaw userspace call anyway because the device is about to be
-> +	 * removed immediately.
-> +	 */
-> +	thaw_super(sb, FREEZE_HOLDER_USERSPACE);
+> +	for (type = 0; type < SHMEM_MAXQUOTAS; type++)
+> +		dquot_quota_off(sb, type);
 > +}
 > +
->   static int
->   xfs_dax_notify_ddev_failure(
->   	struct xfs_mount	*mp,
-> @@ -120,7 +168,7 @@ xfs_dax_notify_ddev_failure(
->   
->   	error = xfs_trans_alloc_empty(mp, &tp);
->   	if (error)
-> -		return error;
-> +		goto out;
->   
->   	for (; agno <= end_agno; agno++) {
->   		struct xfs_rmap_irec	ri_low = { };
-> @@ -165,11 +213,23 @@ xfs_dax_notify_ddev_failure(
->   	}
->   
->   	xfs_trans_cancel(tp);
+> +static struct dquot **shmem_get_dquots(struct inode *inode)
+> +{
+> +	return SHMEM_I(inode)->i_dquot;
+> +}
+> +#endif /* CONFIG_TMPFS_QUOTA */
 > +
-> +	/*
-> +	 * Determine how to shutdown the filesystem according to the
-> +	 * error code and flags.
-> +	 */
->   	if (error || notify.want_shutdown) {
->   		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
->   		if (!error)
->   			error = -EFSCORRUPTED;
-> -	}
-> +	} else if (mf_flags & MF_MEM_PRE_REMOVE)
-> +		xfs_force_shutdown(mp, SHUTDOWN_FORCE_UMOUNT);
-> +
-> +out:
-> +	/* Thaw the fs if it is freezed before. */
-> +	if (mf_flags & MF_MEM_PRE_REMOVE)
-> +		xfs_dax_notify_failure_thaw(mp);
-> +
->   	return error;
->   }
->   
-> @@ -197,6 +257,8 @@ xfs_dax_notify_failure(
->   
->   	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
->   	    mp->m_logdev_targp != mp->m_ddev_targp) {
-> +		if (mf_flags & MF_MEM_PRE_REMOVE)
-> +			return 0;
->   		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
->   		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
->   		return -EFSCORRUPTED;
-> @@ -210,6 +272,12 @@ xfs_dax_notify_failure(
->   	ddev_start = mp->m_ddev_targp->bt_dax_part_off;
->   	ddev_end = ddev_start + bdev_nr_bytes(mp->m_ddev_targp->bt_bdev) - 1;
->   
-> +	/* Notify failure on the whole device. */
-> +	if (offset == 0 && len == U64_MAX) {
-> +		offset = ddev_start;
-> +		len = bdev_nr_bytes(mp->m_ddev_targp->bt_bdev);
+>  /*
+>   * shmem_reserve_inode() performs bookkeeping to reserve a shmem inode, and
+>   * produces a novel ino for the newly allocated inode.
+> @@ -361,7 +416,6 @@ static void shmem_recalc_inode(struct inode *inode)
+>  	freed = info->alloced - info->swapped - inode->i_mapping->nrpages;
+>  	if (freed > 0) {
+>  		info->alloced -= freed;
+> -		inode->i_blocks -= freed * BLOCKS_PER_PAGE;
+>  		shmem_inode_unacct_blocks(inode, freed);
+>  	}
+>  }
+> @@ -379,7 +433,6 @@ bool shmem_charge(struct inode *inode, long pages)
+>  
+>  	spin_lock_irqsave(&info->lock, flags);
+>  	info->alloced += pages;
+> -	inode->i_blocks += pages * BLOCKS_PER_PAGE;
+>  	shmem_recalc_inode(inode);
+>  	spin_unlock_irqrestore(&info->lock, flags);
+>  
+> @@ -395,7 +448,6 @@ void shmem_uncharge(struct inode *inode, long pages)
+>  
+>  	spin_lock_irqsave(&info->lock, flags);
+>  	info->alloced -= pages;
+> -	inode->i_blocks -= pages * BLOCKS_PER_PAGE;
+>  	shmem_recalc_inode(inode);
+>  	spin_unlock_irqrestore(&info->lock, flags);
+>  
+> @@ -1141,6 +1193,21 @@ static int shmem_setattr(struct mnt_idmap *idmap,
+>  		}
+>  	}
+>  
+> +	if (is_quota_modification(idmap, inode, attr)) {
+> +		error = dquot_initialize(inode);
+> +		if (error)
+> +			return error;
 > +	}
 > +
->   	/* Ignore the range out of filesystem area */
->   	if (offset + len - 1 < ddev_start)
->   		return -ENXIO;
-> @@ -226,6 +294,12 @@ xfs_dax_notify_failure(
->   	if (offset + len - 1 > ddev_end)
->   		len = ddev_end - offset + 1;
->   
-> +	if (mf_flags & MF_MEM_PRE_REMOVE) {
-> +		xfs_info(mp, "device is about to be removed!");
-> +		/* Freeze fs to prevent new mappings from being created. */
-> +		xfs_dax_notify_failure_freeze(mp);
+> +	/* Transfer quota accounting */
+> +	if (i_uid_needs_update(idmap, attr, inode) ||
+> +	    i_gid_needs_update(idmap, attr, inode)) {
+> +		error = dquot_transfer(idmap, inode, attr);
+> +
+> +		if (error)
+> +			return error;
 > +	}
 > +
->   	return xfs_dax_notify_ddev_failure(mp, BTOBB(offset), BTOBB(len),
->   			mf_flags);
->   }
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 27ce77080c79..a80c255b88d2 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -3576,6 +3576,7 @@ enum mf_flags {
->   	MF_UNPOISON = 1 << 4,
->   	MF_SW_SIMULATED = 1 << 5,
->   	MF_NO_RETRY = 1 << 6,
-> +	MF_MEM_PRE_REMOVE = 1 << 7,
->   };
->   int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
->   		      unsigned long count, int mf_flags);
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 5b663eca1f29..483b75f2fcfb 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -688,7 +688,7 @@ static void add_to_kill_fsdax(struct task_struct *tsk, struct page *p,
->    */
->   static void collect_procs_fsdax(struct page *page,
->   		struct address_space *mapping, pgoff_t pgoff,
-> -		struct list_head *to_kill)
-> +		struct list_head *to_kill, bool pre_remove)
->   {
->   	struct vm_area_struct *vma;
->   	struct task_struct *tsk;
-> @@ -696,8 +696,15 @@ static void collect_procs_fsdax(struct page *page,
->   	i_mmap_lock_read(mapping);
->   	read_lock(&tasklist_lock);
->   	for_each_process(tsk) {
-> -		struct task_struct *t = task_early_kill(tsk, true);
-> +		struct task_struct *t = tsk;
->   
-> +		/*
-> +		 * Search for all tasks while MF_MEM_PRE_REMOVE, because the
-> +		 * current may not be the one accessing the fsdax page.
-> +		 * Otherwise, search for the current task.
-> +		 */
-> +		if (!pre_remove)
-> +			t = task_early_kill(tsk, true);
->   		if (!t)
->   			continue;
->   		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
-> @@ -1793,6 +1800,7 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
->   	dax_entry_t cookie;
->   	struct page *page;
->   	size_t end = index + count;
-> +	bool pre_remove = mf_flags & MF_MEM_PRE_REMOVE;
->   
->   	mf_flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
->   
-> @@ -1804,9 +1812,10 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
->   		if (!page)
->   			goto unlock;
->   
-> -		SetPageHWPoison(page);
-> +		if (!pre_remove)
-> +			SetPageHWPoison(page);
->   
-> -		collect_procs_fsdax(page, mapping, index, &to_kill);
-> +		collect_procs_fsdax(page, mapping, index, &to_kill, pre_remove);
->   		unmap_and_kill(&to_kill, page_to_pfn(page), mapping,
->   				index, mf_flags);
->   unlock:
+>  	setattr_copy(idmap, inode, attr);
+>  	if (attr->ia_valid & ATTR_MODE)
+>  		error = posix_acl_chmod(idmap, dentry, inode->i_mode);
+> @@ -1187,6 +1254,10 @@ static void shmem_evict_inode(struct inode *inode)
+>  	WARN_ON(inode->i_blocks);
+>  	shmem_free_inode(inode->i_sb);
+>  	clear_inode(inode);
+> +#ifdef CONFIG_TMPFS_QUOTA
+> +	dquot_free_inode(inode);
+> +	dquot_drop(inode);
+> +#endif
+>  }
+>  
+>  static int shmem_find_swap_entries(struct address_space *mapping,
+> @@ -1986,7 +2057,6 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+>  
+>  	spin_lock_irq(&info->lock);
+>  	info->alloced += folio_nr_pages(folio);
+> -	inode->i_blocks += (blkcnt_t)BLOCKS_PER_PAGE << folio_order(folio);
+>  	shmem_recalc_inode(inode);
+>  	spin_unlock_irq(&info->lock);
+>  	alloced = true;
+> @@ -2357,9 +2427,10 @@ static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
+>  #define shmem_initxattrs NULL
+>  #endif
+>  
+> -static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block *sb,
+> -				     struct inode *dir, umode_t mode, dev_t dev,
+> -				     unsigned long flags)
+> +static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
+> +					     struct super_block *sb,
+> +					     struct inode *dir, umode_t mode,
+> +					     dev_t dev, unsigned long flags)
+>  {
+>  	struct inode *inode;
+>  	struct shmem_inode_info *info;
+> @@ -2436,6 +2507,43 @@ static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block
+>  	return inode;
+>  }
+>  
+> +#ifdef CONFIG_TMPFS_QUOTA
+> +static struct inode *shmem_get_inode(struct mnt_idmap *idmap,
+> +				     struct super_block *sb, struct inode *dir,
+> +				     umode_t mode, dev_t dev, unsigned long flags)
+> +{
+> +	int err;
+> +	struct inode *inode;
+> +
+> +	inode = __shmem_get_inode(idmap, sb, dir, mode, dev, flags);
+> +	if (IS_ERR(inode))
+> +		return inode;
+> +
+> +	err = dquot_initialize(inode);
+> +	if (err)
+> +		goto errout;
+> +
+> +	err = dquot_alloc_inode(inode);
+> +	if (err) {
+> +		dquot_drop(inode);
+> +		goto errout;
+> +	}
+> +	return inode;
+> +
+> +errout:
+> +	inode->i_flags |= S_NOQUOTA;
+> +	iput(inode);
+> +	return ERR_PTR(err);
+> +}
+> +#else
+> +static inline struct inode *shmem_get_inode(struct mnt_idmap *idmap,
+> +				     struct super_block *sb, struct inode *dir,
+> +				     umode_t mode, dev_t dev, unsigned long flags)
+> +{
+> +	return __shmem_get_inode(idmap, sb, dir, mode, dev, flags);
+> +}
+> +#endif /* CONFIG_TMPFS_QUOTA */
+> +
+>  #ifdef CONFIG_USERFAULTFD
+>  int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
+>  			   struct vm_area_struct *dst_vma,
+> @@ -2538,7 +2646,6 @@ int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
+>  
+>  	spin_lock_irq(&info->lock);
+>  	info->alloced++;
+> -	inode->i_blocks += BLOCKS_PER_PAGE;
+>  	shmem_recalc_inode(inode);
+>  	spin_unlock_irq(&info->lock);
+>  
+> @@ -3516,6 +3623,7 @@ static ssize_t shmem_listxattr(struct dentry *dentry, char *buffer, size_t size)
+>  
+>  static const struct inode_operations shmem_short_symlink_operations = {
+>  	.getattr	= shmem_getattr,
+> +	.setattr	= shmem_setattr,
+>  	.get_link	= simple_get_link,
+>  #ifdef CONFIG_TMPFS_XATTR
+>  	.listxattr	= shmem_listxattr,
+> @@ -3524,6 +3632,7 @@ static const struct inode_operations shmem_short_symlink_operations = {
+>  
+>  static const struct inode_operations shmem_symlink_inode_operations = {
+>  	.getattr	= shmem_getattr,
+> +	.setattr	= shmem_setattr,
+>  	.get_link	= shmem_get_link,
+>  #ifdef CONFIG_TMPFS_XATTR
+>  	.listxattr	= shmem_listxattr,
+> @@ -3623,6 +3732,9 @@ enum shmem_param {
+>  	Opt_inode32,
+>  	Opt_inode64,
+>  	Opt_noswap,
+> +	Opt_quota,
+> +	Opt_usrquota,
+> +	Opt_grpquota,
+>  };
+>  
+>  static const struct constant_table shmem_param_enums_huge[] = {
+> @@ -3645,6 +3757,11 @@ const struct fs_parameter_spec shmem_fs_parameters[] = {
+>  	fsparam_flag  ("inode32",	Opt_inode32),
+>  	fsparam_flag  ("inode64",	Opt_inode64),
+>  	fsparam_flag  ("noswap",	Opt_noswap),
+> +#ifdef CONFIG_TMPFS_QUOTA
+> +	fsparam_flag  ("quota",		Opt_quota),
+> +	fsparam_flag  ("usrquota",	Opt_usrquota),
+> +	fsparam_flag  ("grpquota",	Opt_grpquota),
+> +#endif
+>  	{}
+>  };
+>  
+> @@ -3736,6 +3853,18 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
+>  		ctx->noswap = true;
+>  		ctx->seen |= SHMEM_SEEN_NOSWAP;
+>  		break;
+> +	case Opt_quota:
+> +		ctx->seen |= SHMEM_SEEN_QUOTA;
+> +		ctx->quota_types |= (QTYPE_MASK_USR | QTYPE_MASK_GRP);
+> +		break;
+> +	case Opt_usrquota:
+> +		ctx->seen |= SHMEM_SEEN_QUOTA;
+> +		ctx->quota_types |= QTYPE_MASK_USR;
+> +		break;
+> +	case Opt_grpquota:
+> +		ctx->seen |= SHMEM_SEEN_QUOTA;
+> +		ctx->quota_types |= QTYPE_MASK_GRP;
+> +		break;
+>  	}
+>  	return 0;
+
+I mentioned this in an earlier review; following the sequence:
+
+if (ctx->seen & SHMEM_SEEN_QUOTA)
+-> shmem_enable_quotas()
+   -> dquot_load_quota_sb()
+
+to then figure out that in dquot_load_quota_sb() we fail if
+sb->s_user_ns != &init_user_ns is too subtle for a filesystem that's
+mountable by unprivileged users. Every few months someone will end up
+stumbling upon this code and wonder where it's blocked. There isn't even
+a comment in the code.
+
+Aside from that it's also really unfriendly to users because they may go
+through setting up a tmpfs instances in the following way:
+
+        fd_fs = fsopen("tmpfs");
+
+User now enables quota:
+
+        fsconfig(fd_fs, ..., "quota", ...) = 0
+
+and goes on to set a bunch of other options:
+
+        fsconfig(fd_fs, ..., "inode64", ...) = 0
+        fsconfig(fd_fs, ..., "nr_inodes", ...) = 0
+        fsconfig(fd_fs, ..., "nr_blocks", ...) = 0
+        fsconfig(fd_fs, ..., "huge", ...) = 0
+        fsconfig(fd_fs, ..., "mode", ...) = 0
+        fsconfig(fd_fs, ..., "gid", ...) = 0
+
+everything seems dandy and they create the superblock:
+
+        fsconfig(fd_fs, FSCONFIG_CMD_CREATE, ...) = -EINVAL
+
+which fails.
+
+The user has not just performed 9 useless system calls they also have
+zero clue what mount option caused the failure.
+
+What this code really really should do is fail at:
+
+        fsconfig(fd_fs, ..., "quota", ...) = -EINVAL
+
+and log an error that the user can retrieve from the fs context. IOW,
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 083ce6b478e7..baca8bf44569 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3863,14 +3863,20 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
+                ctx->seen |= SHMEM_SEEN_NOSWAP;
+                break;
+        case Opt_quota:
++               if (fc->user_ns != &init_user_ns)
++                       return invalfc(fc, "Quotas in unprivileged tmpfs mounts unsupported");
+                ctx->seen |= SHMEM_SEEN_QUOTA;
+                ctx->quota_types |= (QTYPE_MASK_USR | QTYPE_MASK_GRP);
+                break;
+        case Opt_usrquota:
++               if (fc->user_ns != &init_user_ns)
++                       return invalfc(fc, "Quotas in unprivileged tmpfs mounts unsupported");
+                ctx->seen |= SHMEM_SEEN_QUOTA;
+                ctx->quota_types |= QTYPE_MASK_USR;
+                break;
+        case Opt_grpquota:
++               if (fc->user_ns != &init_user_ns)
++                       return invalfc(fc, "Quotas in unprivileged tmpfs mounts unsupported");
+                ctx->seen |= SHMEM_SEEN_QUOTA;
+                ctx->quota_types |= QTYPE_MASK_GRP;
+                break;
+
+This exactly what we already to for the "noswap" option btw.
+
+Could you fold these changes into the patch and resend, please?
+I synced with Andrew earlier and I'll be taking this series.
+
+---
+
+And btw, the *_SEEN_* logic for mount options is broken - but that's not
+specific to your patch. Imagine:
+
+        fd_fs = fsopen("tmpfs");
+        fsconfig(fd_fs, ..., "nr_inodes", 0, "1000") = 0
+
+Now ctx->inodes == 1000 and ctx->seen |= SHMEM_SEEN_INODES.
+
+Now the user does:
+
+        fsconfig(fd_fs, ..., "nr_inodes", 0, "-1234") = -EINVAL
+
+This fails, but:
+
+        ctx->inodes = memparse(param->string, &rest);
+        if (*rest)
+                goto bad_value;
+
+will set ctx->inodes to whatever memparse returns but leaves
+SHMEM_SEEN_INODES raised in ctx->seen. Now superblock creation may
+succeed with a garbage inode limit. This should affect other mount
+options as well.
