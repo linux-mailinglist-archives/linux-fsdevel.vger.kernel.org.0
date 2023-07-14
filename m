@@ -2,55 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 96E1B75317F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 07:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE743753183
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 07:50:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234924AbjGNFt3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jul 2023 01:49:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39562 "EHLO
+        id S234939AbjGNFuV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jul 2023 01:50:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234921AbjGNFt2 (ORCPT
+        with ESMTP id S231351AbjGNFuU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jul 2023 01:49:28 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93B6126BC;
-        Thu, 13 Jul 2023 22:49:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2664C61C17;
-        Fri, 14 Jul 2023 05:49:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49121C433C8;
-        Fri, 14 Jul 2023 05:49:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689313766;
-        bh=7DnQ3lPm58MYsorHdkMUvAqvzRj0azqqi5D765n2mkg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S579h9VF/gTjL7FvtkLYx19YYonmDP7oeWhNKTLavRhs6b3XqYHgciC57V+g2JAc6
-         XDYLHNlyHIPB90N1QlVqUjNVjTxyaOg6ZCus0W7CSpPcYIuqXGgDChAB8aTb7TWtxC
-         A2pqs2CMuucrYF7hFG6kcldXkI/W7HCnK06IDecW3moef29b2zPcK4doO2IUvh4Ydi
-         0igEQZt+pNQk3PsQyt1sm21qdsqaiCQ3xvKjameBVU14iiQVByJpgZfhVWgrRIZvu3
-         NRr/X6QyILlYhdnE6gydOJpJvUQX0oua2oHDN7N+GHaEOqaB3yLnswxVELldGyWbkQ
-         MFzFnxcJJdtjw==
-Date:   Thu, 13 Jul 2023 22:49:24 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Gabriel Krisman Bertazi <krisman@suse.de>
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
-        jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v2 7/7] f2fs: Enable negative dentries on
- case-insensitive lookup
-Message-ID: <20230714054924.GF913@sol.localdomain>
-References: <20230422000310.1802-1-krisman@suse.de>
- <20230422000310.1802-8-krisman@suse.de>
+        Fri, 14 Jul 2023 01:50:20 -0400
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 199712123;
+        Thu, 13 Jul 2023 22:50:15 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VnKW-Oq_1689313812;
+Received: from 30.221.157.198(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VnKW-Oq_1689313812)
+          by smtp.aliyun-inc.com;
+          Fri, 14 Jul 2023 13:50:13 +0800
+Message-ID: <ac961438-2d88-e7bb-d58f-10054478fb26@linux.alibaba.com>
+Date:   Fri, 14 Jul 2023 13:50:11 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230422000310.1802-8-krisman@suse.de>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.13.0
+Subject: Re: [PATCH 0/5] FUSE consistency improvements
+Content-Language: en-US
+To:     Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     me@jcix.top
+References: <20230711043405.66256-1-zhangjiachen.jaycee@bytedance.com>
+From:   Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20230711043405.66256-1-zhangjiachen.jaycee@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -58,44 +47,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 21, 2023 at 08:03:10PM -0400, Gabriel Krisman Bertazi wrote:
-> From: Gabriel Krisman Bertazi <krisman@collabora.com>
-> 
-> Instead of invalidating negative dentries during case-insensitive
-> lookups, mark them as such and let them be added to the dcache.
-> d_ci_revalidate is able to properly filter them out if necessary based
-> on the dentry casefold flag.
-> 
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> ---
->  fs/f2fs/namei.c | 23 ++---------------------
->  1 file changed, 2 insertions(+), 21 deletions(-)
-> 
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index 11fc4c8036a9..57ca7ea86509 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -564,17 +564,8 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
->  		goto out_iput;
->  	}
->  out_splice:
-> -#if IS_ENABLED(CONFIG_UNICODE)
-> -	if (!inode && IS_CASEFOLDED(dir)) {
-> -		/* Eventually we want to call d_add_ci(dentry, NULL)
-> -		 * for negative dentries in the encoding case as
-> -		 * well.  For now, prevent the negative dentry
-> -		 * from being cached.
-> -		 */
-> -		trace_f2fs_lookup_end(dir, dentry, ino, err);
-> -		return NULL;
-> -	}
-> -#endif
-> +	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
-> +		d_set_casefold_lookup(dentry);
 
-I wonder if a more consistent place for the above code would be earlier in
-f2fs_lookup(), next to the call to generic_set_encrypted_ci_d_ops()?  That's
-where the dentry_operations are set.  It's also next to f2fs_prepare_lookup()
-which is where DCACHE_NOKEY_NAME gets set if needed.
 
-- Eric
+On 7/11/23 12:34 PM, Jiachen Zhang wrote:
+> This patchset resends some patches that related to FUSE consistency
+> improvements in the mailing list.
+> 
+> The 1st patch fixes a staleness-checking issue, which is the v2 version
+> of the patch[1].
+> 
+> The 2nd patch is a resend version of the patch[2] with its commit message
+> rewritten.
+> 
+> The 3rd and 4th patches are new versions of the patch[3] and the patch[4],
+> FUSE filesystems are able to implement the close-to-open (CTO) consistency
+> semantics with the help of these two patches. The 5th patch is a new
+> patch which improves the explanation of FUSE cache mode and consistency
+> models in the documentation.
+> 
+
+Yeah our internal production environment will also benefit from this
+cache consistency enhancement.  It would be great if this feature could
+be improved and finally gets merged.
+
+
+-- 
+Thanks,
+Jingbo
