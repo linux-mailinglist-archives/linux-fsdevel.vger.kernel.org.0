@@ -2,57 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 57E0375386A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 12:40:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 200227538D6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Jul 2023 12:53:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235895AbjGNKkv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Jul 2023 06:40:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45600 "EHLO
+        id S235219AbjGNKxf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Jul 2023 06:53:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235948AbjGNKkt (ORCPT
+        with ESMTP id S234735AbjGNKxe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Jul 2023 06:40:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A623D2D7D
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jul 2023 03:40:48 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Fri, 14 Jul 2023 06:53:34 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9512130D1;
+        Fri, 14 Jul 2023 03:53:33 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 40F1761CE4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Jul 2023 10:40:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EDA1C433C7;
-        Fri, 14 Jul 2023 10:40:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689331247;
-        bh=McAF6OOvBTRjliiSqjAaea2L7Hppjte3npPE1j55d9Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jyhjUwyCzAGjLkYvRdPlRoaD0yDjf02kOoGB/IUtc2pBMnFj05McGDmEgmlnsI+v1
-         8ZJvYz3/1YMhtnZ48RV2LiqJFPKEPzmEXtShw4e5ln1HeljyMGpiRceBIvnZz6m2y4
-         EkNORX06d75v+FKFoYwGYqwzthnGtLxZpH6Kpn2kRQE11l4Xb3Dk08pQb986lHaxNi
-         ywDeWcCFt/7BskAwjhPuBmkZ9U3w56FUlRKmthprRmUYjARJvJfMRPkwpF+q2Hq7Mz
-         ukv+hc/d2+OYCgHf5wsvwkrIwzqPIp6o/y/lCjOo/VOn7IU16LFmznuZXB1O9/idmk
-         Cg/aCBGTRD9/A==
-Date:   Fri, 14 Jul 2023 12:40:42 +0200
-From:   Carlos Maiolino <cem@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        linux-mm@kvack.org, djwong@kernel.org, hughd@google.com,
-        mcgrof@kernel.org
-Subject: Re: [PATCH 5/6] shmem: quota support
-Message-ID: <20230714104042.ooih4eqd2t7wjkoc@andromeda>
-References: <20230713134848.249779-1-cem@kernel.org>
- <20230713134848.249779-6-cem@kernel.org>
- <V-TeE9XJsldIdG4LAdNamowXDhhAOwa8MwUQyN5xP05cErk5mEje-ZMEqjcyRRaOQ5I5SqZOdybV-YTRhCpDRg==@protonmail.internalid>
- <20230714-messtechnik-knieprobleme-5d0a3abb4413@brauner>
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 4FA4A22113;
+        Fri, 14 Jul 2023 10:53:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1689332012;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0qQY0pMf/UabBAcvhkGlUgib+9xhl7v6k8CF4e0RVcM=;
+        b=neMayiXn+Ro3eLm/nmp5aFdNYcam8bFb0D3F0bV2ZrkrvvPBCN6ndp9h3Fh1YR2pf6n24y
+        iz0TYWgtW1fQVPkgFZvNMuqSgi6fm3KBiBxPtyjp9zKlAjf+qM7jo7waDTHkBTEIddG1Pc
+        jGrcxYqBWTpQFfJWkFZ9S1P3JN6jE5c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1689332012;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0qQY0pMf/UabBAcvhkGlUgib+9xhl7v6k8CF4e0RVcM=;
+        b=F+7Y+yB92SLJegc4FRZD3HtAk4Wp0LEHVtC1EEWGpPrfzMj9nI7te9xDzYAVovYlrmhkGy
+        xeP9leyDppFvxGAA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 25411138F8;
+        Fri, 14 Jul 2023 10:53:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Kjo/CCwpsWSKIQAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Fri, 14 Jul 2023 10:53:32 +0000
+Date:   Fri, 14 Jul 2023 12:46:55 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     huzhi001@208suo.com
+Cc:     dsterba@suse.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] VFS: Fix seven errors in bitmap.c
+Message-ID: <20230714104655.GH20457@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <tencent_CE461BFFDACFEA943A778650FB672D9E3207@qq.com>
+ <80ff0222e0fc0b8e25ae4837b76bce2d@208suo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230714-messtechnik-knieprobleme-5d0a3abb4413@brauner>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <80ff0222e0fc0b8e25ae4837b76bce2d@208suo.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -60,139 +73,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Christian.
+On Fri, Jul 14, 2023 at 03:14:18PM +0800, huzhi001@208suo.com wrote:
+> The following checkpatch errors are removed:
+> ERROR: space required after that ',' (ctx:VxV)
+> ERROR: space required after that ',' (ctx:VxV)
+> ERROR: space required after that ',' (ctx:VxV)
+> ERROR: space required after that ',' (ctx:VxV)
+> ERROR: space required after that ',' (ctx:VxV)
+> ERROR: space required after that ',' (ctx:VxV)
+> ERROR: space required after that ',' (ctx:VxV)
 
-> > @@ -3736,6 +3853,18 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
-> >  		ctx->noswap = true;
-> >  		ctx->seen |= SHMEM_SEEN_NOSWAP;
-> >  		break;
-> > +	case Opt_quota:
-> > +		ctx->seen |= SHMEM_SEEN_QUOTA;
-> > +		ctx->quota_types |= (QTYPE_MASK_USR | QTYPE_MASK_GRP);
-> > +		break;
-> > +	case Opt_usrquota:
-> > +		ctx->seen |= SHMEM_SEEN_QUOTA;
-> > +		ctx->quota_types |= QTYPE_MASK_USR;
-> > +		break;
-> > +	case Opt_grpquota:
-> > +		ctx->seen |= SHMEM_SEEN_QUOTA;
-> > +		ctx->quota_types |= QTYPE_MASK_GRP;
-> > +		break;
-> >  	}
-> >  	return 0;
-> 
-> I mentioned this in an earlier review; following the sequence:
+The AFFS module gets only bug fixes (as can be seen in the MAINTAINERS
+file) or API updates, not coding style fixes.
 
-Ok, my apologies, I should have lost it in the noise.
+The sources have way more stylistic things that checkpatch does not like
+but we are not going to fix them:
 
-> 
-> if (ctx->seen & SHMEM_SEEN_QUOTA)
-> -> shmem_enable_quotas()
->    -> dquot_load_quota_sb()
-> 
-> to then figure out that in dquot_load_quota_sb() we fail if
-> sb->s_user_ns != &init_user_ns is too subtle for a filesystem that's
-> mountable by unprivileged users. Every few months someone will end up
-> stumbling upon this code and wonder where it's blocked. There isn't even
-> a comment in the code.
-> 
-> Aside from that it's also really unfriendly to users because they may go
-> through setting up a tmpfs instances in the following way:
-> 
->         fd_fs = fsopen("tmpfs");
-> 
-> User now enables quota:
-> 
->         fsconfig(fd_fs, ..., "quota", ...) = 0
-> 
-> and goes on to set a bunch of other options:
-> 
->         fsconfig(fd_fs, ..., "inode64", ...) = 0
->         fsconfig(fd_fs, ..., "nr_inodes", ...) = 0
->         fsconfig(fd_fs, ..., "nr_blocks", ...) = 0
->         fsconfig(fd_fs, ..., "huge", ...) = 0
->         fsconfig(fd_fs, ..., "mode", ...) = 0
->         fsconfig(fd_fs, ..., "gid", ...) = 0
-> 
-> everything seems dandy and they create the superblock:
-> 
->         fsconfig(fd_fs, FSCONFIG_CMD_CREATE, ...) = -EINVAL
-> 
-> which fails.
-> 
-> The user has not just performed 9 useless system calls they also have
-> zero clue what mount option caused the failure.
-> 
-> What this code really really should do is fail at:
-> 
->         fsconfig(fd_fs, ..., "quota", ...) = -EINVAL
-> 
-> and log an error that the user can retrieve from the fs context. IOW,
-> 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 083ce6b478e7..baca8bf44569 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -3863,14 +3863,20 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
->                 ctx->seen |= SHMEM_SEEN_NOSWAP;
->                 break;
->         case Opt_quota:
-> +               if (fc->user_ns != &init_user_ns)
-> +                       return invalfc(fc, "Quotas in unprivileged tmpfs mounts unsupported");
->                 ctx->seen |= SHMEM_SEEN_QUOTA;
->                 ctx->quota_types |= (QTYPE_MASK_USR | QTYPE_MASK_GRP);
->                 break;
->         case Opt_usrquota:
-> +               if (fc->user_ns != &init_user_ns)
-> +                       return invalfc(fc, "Quotas in unprivileged tmpfs mounts unsupported");
->                 ctx->seen |= SHMEM_SEEN_QUOTA;
->                 ctx->quota_types |= QTYPE_MASK_USR;
->                 break;
->         case Opt_grpquota:
-> +               if (fc->user_ns != &init_user_ns)
-> +                       return invalfc(fc, "Quotas in unprivileged tmpfs mounts unsupported");
->                 ctx->seen |= SHMEM_SEEN_QUOTA;
->                 ctx->quota_types |= QTYPE_MASK_GRP;
->                 break;
-> 
-> This exactly what we already to for the "noswap" option btw.
-> 
-> Could you fold these changes into the patch and resend, please?
-> I synced with Andrew earlier and I'll be taking this series.
-
-Thanks! I will sure do it, I'll update the patch, build, test and send it again
-in a few minutes.
-
-> 
-> ---
-> 
-> And btw, the *_SEEN_* logic for mount options is broken - but that's not
-> specific to your patch. Imagine:
-> 
->         fd_fs = fsopen("tmpfs");
->         fsconfig(fd_fs, ..., "nr_inodes", 0, "1000") = 0
-> 
-> Now ctx->inodes == 1000 and ctx->seen |= SHMEM_SEEN_INODES.
-> 
-> Now the user does:
-> 
->         fsconfig(fd_fs, ..., "nr_inodes", 0, "-1234") = -EINVAL
-> 
-> This fails, but:
-> 
->         ctx->inodes = memparse(param->string, &rest);
->         if (*rest)
->                 goto bad_value;
-> 
-> will set ctx->inodes to whatever memparse returns but leaves
-> SHMEM_SEEN_INODES raised in ctx->seen. Now superblock creation may
-> succeed with a garbage inode limit. This should affect other mount
-> options as well.
-
-Interesting. Thanks for the heads up. I'll look in more details into it when I
-start working for namespace support for quotas (as we spoke previously).
-
-Cheers.
-
--- 
-Carlos
+total: 0 errors, 1 warnings, 189 lines checked
+total: 1 errors, 5 warnings, 543 lines checked
+total: 7 errors, 4 warnings, 365 lines checked
+total: 1 errors, 1 warnings, 144 lines checked
+total: 2 errors, 13 warnings, 1009 lines checked
+total: 8 errors, 12 warnings, 422 lines checked
+total: 0 errors, 2 warnings, 584 lines checked
+total: 15 errors, 13 warnings, 681 lines checked
+total: 1 errors, 2 warnings, 77 lines checked
+total: 4 errors, 10 warnings, 328 lines checked
+total: 4 errors, 0 warnings, 148 lines checked
