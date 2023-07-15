@@ -2,111 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DF04C754777
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jul 2023 10:22:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 333F77548BD
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Jul 2023 15:28:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229621AbjGOIWV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Jul 2023 04:22:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42650 "EHLO
+        id S229927AbjGON2a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Jul 2023 09:28:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjGOIWU (ORCPT
+        with ESMTP id S229780AbjGON23 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Jul 2023 04:22:20 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A71E10EA;
-        Sat, 15 Jul 2023 01:22:19 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id 41be03b00d2f7-55bac17b442so2062503a12.3;
-        Sat, 15 Jul 2023 01:22:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689409338; x=1692001338;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=duMfgCIVZguOpNbI5H3U3sRMxh3NajpqrJJgjIxlh80=;
-        b=MZ8j0ij93zXF3W3UTnAe6nnwk+9oqv2cx/rm/8NLStnAIIy8kGlVamIFOfnOBlDtb7
-         jCn7hkrd2E980AZmssVFqht/5vjsLe7X2iJ437H1qc6Ad66xhdhEK4seZ3c6T5p8ISVh
-         Kow3tZc4QcbZ6jc/qtyT6+O0HWzZaZhGSxIi5pFPJjLy50ujTUcNSJ/PRhl4kTVTYaeD
-         VOak0N6SWDXhH55/5R4C7Xl9ngc+jtVFH4+Wn1uS3G+9H6FU+e3gtUGTiPnHjQYOy29C
-         eEknovIyqAyzExCUd8oAK3UzbSBi9LAdLFz1z6PCg+ll/P8kubSdSTCorDMarCPY0OJ0
-         cb0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689409338; x=1692001338;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=duMfgCIVZguOpNbI5H3U3sRMxh3NajpqrJJgjIxlh80=;
-        b=eCXI/Da4n1AdEp9HqGFrt1GbjUvrFBj9r5hYgRZyh221g1UwNieXtXVVOxbEGgrYgG
-         L4k8XpO1jTboG+kbQb7wka5ViWqbewjHcyrkgPC0f335EUn9QIed5bhhRoUEASgdyc+0
-         w/kJS4rDcyD+GbiIJLNhNArhtJGi4JbCSFp27N/8ty3qUaDz2Nl3E5JsWr60ITCJZlvK
-         fHi35Rp4nROjNf0QyvSs23ZKZpM+1jhUGuWnbVMUrR6pWQJ51fpvu9E3TIfkMtDyVND6
-         qN8fw2wFpIqQONEb5qZr70h1f7ivjV4N4U7eVsDvFIbNQVQm4tqi2nW9OSNDOTzEZuGx
-         4UmQ==
-X-Gm-Message-State: ABy/qLafNyip5AYTdL3BL3jpAie/EGoHCXVd9Ztr4WiZ2Sb4UFkoeJvn
-        cz4wI5e2xTDmx0BBZESDSQtT/UQYSdZoiA==
-X-Google-Smtp-Source: APBJJlEID4EUVjQa2syhpieWlxFb1XXFjXlLSZXWJiHFaWlbyo8z4NV2OMt3JmGXod9ZXjiyrlB8Dg==
-X-Received: by 2002:a17:90a:4592:b0:256:2efc:270e with SMTP id v18-20020a17090a459200b002562efc270emr6451406pjg.5.1689409338527;
-        Sat, 15 Jul 2023 01:22:18 -0700 (PDT)
-Received: from sandbox.. ([115.178.65.130])
-        by smtp.googlemail.com with ESMTPSA id e28-20020a63371c000000b0051b7d83ff22sm8743483pga.80.2023.07.15.01.22.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Jul 2023 01:22:18 -0700 (PDT)
-Sender: Leesoo Ahn <yisooan.dev@gmail.com>
-From:   Leesoo Ahn <lsahn@ooseel.net>
-X-Google-Original-From: Leesoo Ahn <lsahn@wewakecorp.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Leesoo Ahn <lsahn@wewakecorp.com>
-Subject: [PATCH v2] fs: inode: return proper error code in bmap()
-Date:   Sat, 15 Jul 2023 17:22:04 +0900
-Message-Id: <20230715082204.1598206-1-lsahn@wewakecorp.com>
-X-Mailer: git-send-email 2.34.1
+        Sat, 15 Jul 2023 09:28:29 -0400
+X-Greylist: delayed 399 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 15 Jul 2023 06:28:27 PDT
+Received: from mfwd26.mailplug.co.kr (mfwd26.mailplug.co.kr [14.49.37.226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B86C26AF
+        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Jul 2023 06:28:27 -0700 (PDT)
+Received: (qmail 5945 invoked from network); 15 Jul 2023 22:21:44 +0900
+Received: from m41.mailplug.com (121.156.118.41)
+        by 0 (qmail 1.03 + mailplug 2.0) with SMTP;
+        15 Jul 2023 22:20:44 +0900
+Received: (qmail 2918930 invoked from network); 15 Jul 2023 22:20:44 +0900
+Received: from unknown (HELO sslauth16) (lsahn@wewakecorp.com@211.253.39.90)
+        by 0 (qmail 1.03 + mailplug 2.0) with SMTP;
+        15 Jul 2023 22:20:44 +0900
+Message-ID: <ff0d7038-8a53-f183-fc3a-d69143e801a2@wewakecorp.com>
+Date:   Sat, 15 Jul 2023 22:20:43 +0900
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2] fs: inode: return proper error code in bmap()
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        Leesoo Ahn <lsahn@ooseel.net>, linux-fsdevel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+References: <20230715082204.1598206-1-lsahn@wewakecorp.com>
+ <cca223c5-b512-3913-a796-fa15341927ff@web.de>
+From:   Leesoo Ahn <lsahn@wewakecorp.com>
+In-Reply-To: <cca223c5-b512-3913-a796-fa15341927ff@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Return -EOPNOTSUPP instead of -EINVAL which has the meaning of
-the argument is an inappropriate value. The current error code doesn't
-make sense to represent that a file system doesn't support bmap operation.
+2023-07-15 오후 9:50에 Markus Elfring 이(가) 쓴 글:
+> 
+> * How do you think about to add the tag “Fixes”?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.5-rc1#n591I think the description is enough, but still open to listen for that 
+from others.
 
-Signed-off-by: Leesoo Ahn <lsahn@wewakecorp.com>
----
-Changes since v1:
-- Modify the comments of bmap()
-- Modify subject and description requested by Markus Elfring
-https://lore.kernel.org/lkml/20230715060217.1469690-1-lsahn@wewakecorp.com/
+> 
+> * Would you like to avoid a checkpatch warning by the specification
+> of the tag “From” before your improved change description?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.5-rc1#n499
+I use both emails and don't think that's a big deal. But if that 
+matters, I will post v3 for that or maintainers could sync up the email 
+of author by hands when they merge it.
 
- fs/inode.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index 8fefb69e1f84..697c51ed226a 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1831,13 +1831,13 @@ EXPORT_SYMBOL(iput);
-  *	4 in ``*block``, with disk block relative to the disk start that holds that
-  *	block of the file.
-  *
-- *	Returns -EINVAL in case of error, 0 otherwise. If mapping falls into a
-+ *	Returns -EOPNOTSUPP in case of error, 0 otherwise. If mapping falls into a
-  *	hole, returns 0 and ``*block`` is also set to 0.
-  */
- int bmap(struct inode *inode, sector_t *block)
- {
- 	if (!inode->i_mapping->a_ops->bmap)
--		return -EINVAL;
-+		return -EOPNOTSUPP;
- 
- 	*block = inode->i_mapping->a_ops->bmap(inode->i_mapping, *block);
- 	return 0;
--- 
-2.34.1
-
+thank you for your opinion,
+Leesoo
