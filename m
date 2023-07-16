@@ -2,34 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C88675540A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jul 2023 22:25:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76D797556CF
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jul 2023 22:54:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231971AbjGPUZx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Jul 2023 16:25:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48112 "EHLO
+        id S232988AbjGPUyU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Jul 2023 16:54:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231960AbjGPUZx (ORCPT
+        with ESMTP id S232977AbjGPUyT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Jul 2023 16:25:53 -0400
+        Sun, 16 Jul 2023 16:54:19 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E04E126;
-        Sun, 16 Jul 2023 13:25:52 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9030CE45;
+        Sun, 16 Jul 2023 13:54:18 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6F20060EB8;
-        Sun, 16 Jul 2023 20:25:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D635C433C7;
-        Sun, 16 Jul 2023 20:25:50 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2D85560E2C;
+        Sun, 16 Jul 2023 20:54:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40AB6C433C8;
+        Sun, 16 Jul 2023 20:54:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1689539150;
-        bh=b5jYpXaLjk37pPgAtcwsnC1KhoL/fjS2x3R3vWleLrM=;
+        s=korg; t=1689540857;
+        bh=dQJNXT7z4f+Rc/2+nxexWGiBHtZg0gmSSzhOCGso6Ks=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eWmzB9m93EbzH53kVw+FZziS5sXAfWrGt7sWwAiqFw+W99xTZwZMyH5yBF/rmvUVl
-         dkNVX+6J1vgjhJzZgCYK7+tcU9QdkvZA4CTTmN7MC3+dunoQbvuHCdxWWPLipPHBuN
-         7mZX7GrG+hlAcAxAXdsEIp5EE3Ip09pg90HVi+Lo=
+        b=m+j4jUT1KOs1iEc6lZKkRq9q0Wsa3q+rG3RH5Tj/+CeNOWRGquiCaeM8Jf0o2/76F
+         wIsbVBztJL/5lnrBFnECAwIHCnnmxhyhwbPlxToio9MV49TKtLRFwAJbk49VHDdENG
+         F0sMoAQoTIsgzn+l0vg4ICDLQnnNEYducfkFR79A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -39,20 +39,20 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.4 706/800] afs: Fix accidental truncation when storing data
-Date:   Sun, 16 Jul 2023 21:49:19 +0200
-Message-ID: <20230716195005.518850837@linuxfoundation.org>
+Subject: [PATCH 6.1 512/591] afs: Fix accidental truncation when storing data
+Date:   Sun, 16 Jul 2023 21:50:51 +0200
+Message-ID: <20230716194937.129813314@linuxfoundation.org>
 X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230716194949.099592437@linuxfoundation.org>
-References: <20230716194949.099592437@linuxfoundation.org>
+In-Reply-To: <20230716194923.861634455@linuxfoundation.org>
+References: <20230716194923.861634455@linuxfoundation.org>
 User-Agent: quilt/0.67
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -99,10 +99,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 8750b99c3f566..c1f4391ccd7c6 100644
+index 08fd456dde67c..3ecc212b62099 100644
 --- a/fs/afs/write.c
 +++ b/fs/afs/write.c
-@@ -413,17 +413,19 @@ static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter, loff_t
+@@ -381,17 +381,19 @@ static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter, loff_t
  	afs_op_set_vnode(op, 0, vnode);
  	op->file[0].dv_delta = 1;
  	op->file[0].modification = true;
