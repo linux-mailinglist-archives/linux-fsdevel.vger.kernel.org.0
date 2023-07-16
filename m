@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D1D8754F18
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jul 2023 16:50:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16702754F1A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jul 2023 16:52:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229736AbjGPOue (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Jul 2023 10:50:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36876 "EHLO
+        id S229795AbjGPOwd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Jul 2023 10:52:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229630AbjGPOud (ORCPT
+        with ESMTP id S229630AbjGPOwc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Jul 2023 10:50:33 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DAD61A1;
-        Sun, 16 Jul 2023 07:50:32 -0700 (PDT)
+        Sun, 16 Jul 2023 10:52:32 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB2E3137;
+        Sun, 16 Jul 2023 07:52:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689519032; x=1721055032;
+  t=1689519150; x=1721055150;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
   bh=T7FhqY0BU1HUaPgWFw91cagayl/GC8Rb31al0fZzyCk=;
-  b=hMbRwrrSTEIfTnLM5butoN/wWJl63bi8zfiTVRBBX/7pSfpTi2n8c4Hf
-   /zjQYvH9ZHcT8WZzWED7TsAJrBIsRXPB/Vi4HPplIUiHH/YuSyCN6fw6O
-   Pmo8xjD2n3DmG9WjMoEunCO5T8E5zO1OP0jw4bpHey70cq4OZn0YVQzmg
-   VKt7U4Yd7ZgUPZRxLpOYVlydDsb6sJ9bfyCwkVEN2km+X1j0Qcy2dxjrp
-   BoEQVzJQ7XfFYzuJ46rDeWmRJpATAA3EQfNmGx+eGIHP6vlSzT5BNxRo4
-   suTC9bXQ17nRmH/XW40vXCMbeYCp1Q8xJQQyaT3DEwURz15khlPJ3czpc
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10773"; a="365804113"
+  b=WCcvQkr4jXSkl88LnViU6ixr7f+YwBYNXeJ+X2rhrzxdlbqSLkgw1aQd
+   S8uTEJiLuFcepVQp4u3kSIFvNEaEJd55ad6G0Frt3qRrz9AnfiK/LUb0V
+   AdWYpOihpKkWhX6n3VGA32nhVfIUdu5dO6wPjnAhSh/OcdfCqT450OHO2
+   /MkvsGB1geC/VM573arow7dDeGhYsdm1PGnQ/jttCk7FJQGQaeK0l6a01
+   tfdMRGH2i0khoIuGW8PO8g0r+Xf5w58nnoZMr19erZXscPHnO3NX8Fk8V
+   5rudxjqOgPE4Ua6zXrTXIibrkor0A4Atpy0taLT0kivcjRo4qi7HIVF9e
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10773"; a="396580049"
 X-IronPort-AV: E=Sophos;i="6.01,210,1684825200"; 
-   d="scan'208";a="365804113"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2023 07:50:31 -0700
+   d="scan'208";a="396580049"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2023 07:52:30 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10773"; a="792955221"
+X-IronPort-AV: E=McAfee;i="6600,9927,10773"; a="969573131"
 X-IronPort-AV: E=Sophos;i="6.01,210,1684825200"; 
-   d="scan'208";a="792955221"
+   d="scan'208";a="969573131"
 Received: from linux-pnp-server-30.sh.intel.com ([10.239.146.163])
-  by fmsmga004.fm.intel.com with ESMTP; 16 Jul 2023 07:50:29 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 16 Jul 2023 07:52:27 -0700
 From:   "Zhu, Lipeng" <lipeng.zhu@intel.com>
-To:     lipeng.zhu@intel.com
-Cc:     akpm@linux-foundation.org, brauner@kernel.org,
+To:     akpm@linux-foundation.org
+Cc:     lipeng.zhu@inte.com, brauner@kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, pan.deng@intel.com, tianyou.li@intel.com,
         tim.c.chen@linux.intel.com, viro@zeniv.linux.org.uk,
-        yu.ma@intel.com
+        yu.ma@intel.com, "Zhu, Lipeng" <lipeng.zhu@intel.com>
 Subject: [PATCH v2] fs/address_space: add alignment padding for i_map and i_mmap_rwsem to mitigate a false sharing.
-Date:   Sun, 16 Jul 2023 22:54:51 +0800
-Message-Id: <20230716145450.20108-1-lipeng.zhu@intel.com>
+Date:   Sun, 16 Jul 2023 22:56:54 +0800
+Message-Id: <20230716145653.20122-1-lipeng.zhu@intel.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <PH7PR11MB6056EB3C6651A770BF0081699F3AA@PH7PR11MB6056.namprd11.prod.outlook.com>
 References: <PH7PR11MB6056EB3C6651A770BF0081699F3AA@PH7PR11MB6056.namprd11.prod.outlook.com>
@@ -56,8 +56,9 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
