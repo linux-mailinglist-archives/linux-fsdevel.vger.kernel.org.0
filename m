@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 42A0F7557A3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jul 2023 23:54:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 184237557B2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Jul 2023 23:55:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231138AbjGPVy5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Jul 2023 17:54:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53232 "EHLO
+        id S229468AbjGPVze (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Jul 2023 17:55:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230408AbjGPVyR (ORCPT
+        with ESMTP id S229679AbjGPVyw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Jul 2023 17:54:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9084BE6A;
-        Sun, 16 Jul 2023 14:53:48 -0700 (PDT)
+        Sun, 16 Jul 2023 17:54:52 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FA062694;
+        Sun, 16 Jul 2023 14:54:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1F3C060ED1;
-        Sun, 16 Jul 2023 21:53:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9FC2C433CD;
-        Sun, 16 Jul 2023 21:53:39 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4087F60EC9;
+        Sun, 16 Jul 2023 21:53:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1959C433C8;
+        Sun, 16 Jul 2023 21:53:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689544425;
-        bh=5itbN5XsI23hSHpvwvYCaA48pJH6cAkdAvMEghq3bJY=;
+        s=k20201202; t=1689544431;
+        bh=BgZhQzy1ZDJ87SbUj0QMsK2M0tcAHYl7N7+4HCzYWRs=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=B3WvwLPa0kPZ05606e24d+wKXy8XvpvoWS8YyXrjOnIukFSSQjhJyUhJjQ5PzlGRO
-         4fopiqdU0YF7x5/huJrF7KQ1A3IiNvr910mVOS+lL0aHGqvThP7j3SBISVrQihTTVN
-         KEK6mooqm4aeC+0i9FAeSvNEzSX6rjL3UmKdWHOUkmvJYeBnz5mEBlDTvMnwRnj+bT
-         f1pEcJrT7JyJS7kWKg3ntcxzSmPf160RwTF7Oe8QMN9pjhEuAmQMG89D/9zH8fjwgd
-         7YM/JEc3IOzMz8gZQmhtML7z2GKqPNIx+KgdLFhahrmLs+wlctaioJTYMx0LrobbP7
-         6FKUm+ZYqoDSA==
+        b=fE04IcJ78ZQnPaQ3Ay8Qv97lmyNvNGnu+scPqJDRUrC+f2FW8HVBB+nAVXt6SuF4n
+         wEiNofxMv5RUBs+gGJ/29J74O/wLqMmDNeroBCueNjPZFvW8Fb4xFf/WF9B28jb6qi
+         MmU+IdVfnXmbpses4PIle04Js9RHO2NYTDJIWnyjzG7O79o5Ms4XJR498cuPq5PFPY
+         Hj9tTGfKREuZbiaZp0GshqhBO42hw8caAkGtRit75FB8FZaQZcN9zrLiDnID+dqhJO
+         5es9YsMc/nZVOHMisUM1s65ZHso3ph6f0J2f9enn1dSpHEHw9yrdsWeurL/k1UKuk1
+         BghW7jueDS0vA==
 From:   Mark Brown <broonie@kernel.org>
-Date:   Sun, 16 Jul 2023 22:51:05 +0100
-Subject: [PATCH 09/35] arm64/cpufeature: Runtime detection of Guarded
- Control Stack (GCS)
+Date:   Sun, 16 Jul 2023 22:51:06 +0100
+Subject: [PATCH 10/35] arm64/mm: Allocate PIE slots for EL0 guarded control
+ stack
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230716-arm64-gcs-v1-9-bf567f93bba6@kernel.org>
+Message-Id: <20230716-arm64-gcs-v1-10-bf567f93bba6@kernel.org>
 References: <20230716-arm64-gcs-v1-0-bf567f93bba6@kernel.org>
 In-Reply-To: <20230716-arm64-gcs-v1-0-bf567f93bba6@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
@@ -69,111 +69,81 @@ Cc:     "H.J. Lu" <hjl.tools@gmail.com>,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-099c9
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3031; i=broonie@kernel.org;
- h=from:subject:message-id; bh=5itbN5XsI23hSHpvwvYCaA48pJH6cAkdAvMEghq3bJY=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBktGaWtHOw3enM4B5g54amxlUgz0T6xDyKMI+X9aWP
- sDgDapSJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZLRmlgAKCRAk1otyXVSH0DjsB/
- 0ftgZjkmfkC59iaeyPxrKWG/EPzbWppuZtL8wn2nYjEI3bKdPsmO0+WXETjIu9YHQORgfIW30ICk9U
- HmPWiGbezKYCwJ/zM3zsqbeXD87zxToeeKUH4htD7F9lMAbpaK9YOLJ596ay8x5+rjIlXdxvxnSv+V
- WBhYXp4H998g2hwxyzNly3XnI0XFqdKO4B1FhThymySJjhLOLi+08NAoJe+zsNJD4tHL+IF/J2EoHB
- WL4/ADcAuOeBMtWPKBRFOodh5DaZ9bZu1dUrVcFM1LJIJLtiPEyxaL9oa1AN7vV4WoDQod9H2+4gOB
- /CLOY7fL0loYFvUKiTy6SeyWF+d9AN
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2919; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=BgZhQzy1ZDJ87SbUj0QMsK2M0tcAHYl7N7+4HCzYWRs=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBktGaX/DeynJM1AQTo4tiA9qsSX7bFYQTdZophim53
+ cpiZhmKJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZLRmlwAKCRAk1otyXVSH0FLNB/
+ 9VWyeSNh/ecavajLIFERLxhuP1AWliN0iMrCdq6gbiMcwO9CmD0XAbdiwUralUNgcM711Andu7rY0f
+ YbGUReF+DooPBhY6noc45rkzMNqY2e/SwVlE0kxA3Iskf3B0dCiWSrHJwHxZ6twNdxZbeE9jsv2d29
+ oNXFtEEVPhRsG4ruMWG/CNdDlDwKLjCIXMc9nEA2wGjCS/nC7jvQklbYrTaTvAZhPeiI1Xs6vS7Zqb
+ U+m0c+b/vGCsIglBljirMn5knwBxnvmKJjgaT+iBrMDZITNVDzMhc27c41jt1Pe2qcdcIVbljYjp+n
+ d4WkF+gceF3YUsH3fRoFS/HBTDDW53
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a cpufeature for GCS, allowing other code to conditionally support it
-at runtime.
+Pages used for guarded control stacks need to be described to the hardware
+using the Permission Indirection Extension, GCS is not supported without
+PIE. In order to support copy on write for guarded stacks we allocate two
+values, one for active GCSs and one for GCS pages marked as read only prior
+to copy.
+
+Since the actual effect is defined using PIE the specific bit pattern used
+does not matter to the hardware but we choose two values which differ only
+in PTE_WRITE in order to help share code with non-PIE cases.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/include/asm/cpufeature.h |  6 ++++++
- arch/arm64/kernel/cpufeature.c      | 20 ++++++++++++++++++++
- arch/arm64/tools/cpucaps            |  1 +
- 3 files changed, 27 insertions(+)
+ arch/arm64/include/asm/pgtable-prot.h | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index 96e50227f940..189783142a96 100644
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -831,6 +831,12 @@ static inline bool system_supports_tlb_range(void)
- 		cpus_have_const_cap(ARM64_HAS_TLB_RANGE);
- }
+diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
+index eed814b00a38..b157ae0420ed 100644
+--- a/arch/arm64/include/asm/pgtable-prot.h
++++ b/arch/arm64/include/asm/pgtable-prot.h
+@@ -131,15 +131,23 @@ extern bool arm64_use_ng_mappings;
+ /* 6:                                PTE_PXN | PTE_WRITE            */
+ /* 7: PAGE_SHARED_EXEC               PTE_PXN | PTE_WRITE | PTE_USER */
+ /* 8: PAGE_KERNEL_ROX      PTE_UXN                                  */
+-/* 9:                      PTE_UXN |                       PTE_USER */
++/* 9: PAGE_GCS_RO          PTE_UXN |                       PTE_USER */
+ /* a: PAGE_KERNEL_EXEC     PTE_UXN |           PTE_WRITE            */
+-/* b:                      PTE_UXN |           PTE_WRITE | PTE_USER */
++/* b: PAGE_GCS             PTE_UXN |           PTE_WRITE | PTE_USER */
+ /* c: PAGE_KERNEL_RO       PTE_UXN | PTE_PXN                        */
+ /* d: PAGE_READONLY        PTE_UXN | PTE_PXN |             PTE_USER */
+ /* e: PAGE_KERNEL          PTE_UXN | PTE_PXN | PTE_WRITE            */
+ /* f: PAGE_SHARED          PTE_UXN | PTE_PXN | PTE_WRITE | PTE_USER */
  
-+static inline bool system_supports_gcs(void)
-+{
-+	return IS_ENABLED(CONFIG_ARM64_GCS) &&
-+		cpus_have_const_cap(ARM64_HAS_GCS);
-+}
++#define _PAGE_GCS	(_PAGE_DEFAULT | PTE_UXN | PTE_WRITE | PTE_USER)
++#define _PAGE_GCS_RO	(_PAGE_DEFAULT | PTE_UXN | PTE_USER)
 +
- int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
- bool try_emulate_mrs(struct pt_regs *regs, u32 isn);
- 
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index f9d456fe132d..92e730027d84 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -254,6 +254,8 @@ static const struct arm64_ftr_bits ftr_id_aa64pfr0[] = {
- };
- 
- static const struct arm64_ftr_bits ftr_id_aa64pfr1[] = {
-+	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_GCS),
-+		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR1_EL1_GCS_SHIFT, 4, 0),
- 	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_SME),
- 		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR1_EL1_SME_SHIFT, 4, 0),
- 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR1_EL1_MPAM_frac_SHIFT, 4, 0),
-@@ -2219,6 +2221,12 @@ static void cpu_enable_mops(const struct arm64_cpu_capabilities *__unused)
- 	sysreg_clear_set(sctlr_el1, 0, SCTLR_EL1_MSCEn);
- }
- 
-+static void cpu_enable_gcs(const struct arm64_cpu_capabilities *__unused)
-+{
-+	/* GCS is not currently used at EL1 */
-+	write_sysreg_s(0, SYS_GCSCR_EL1);
-+}
++#define PAGE_GCS	__pgprot(_PAGE_GCS)
++#define PAGE_GCS_RO	__pgprot(_PAGE_GCS_RO)
 +
- /* Internal helper functions to match cpu capability type */
- static bool
- cpucap_late_cpu_optional(const struct arm64_cpu_capabilities *cap)
-@@ -2715,6 +2723,18 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
- 		.min_field_value = ID_AA64MMFR2_EL1_EVT_IMP,
- 		.matches = has_cpuid_feature,
- 	},
-+	{
-+		.desc = "Guarded Control Stack (GCS)",
-+		.capability = ARM64_HAS_GCS,
-+		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-+		.sys_reg = SYS_ID_AA64PFR1_EL1,
-+		.sign = FTR_UNSIGNED,
-+		.field_pos = ID_AA64PFR1_EL1_GCS_SHIFT,
-+		.field_width = 4,
-+		.min_field_value = ID_AA64PFR1_EL1_GCS_IMP,
-+		.matches = has_cpuid_feature,
-+		.cpu_enable = cpu_enable_gcs,
-+	},
- 	{},
- };
+ #define PIE_E0	( \
++	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS),           PIE_GCS)  | \
++	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS_RO),        PIE_R)   | \
+ 	PIRx_ELx_PERM(pte_pi_index(_PAGE_EXECONLY),      PIE_X_O) | \
+ 	PIRx_ELx_PERM(pte_pi_index(_PAGE_READONLY_EXEC), PIE_RX)  | \
+ 	PIRx_ELx_PERM(pte_pi_index(_PAGE_SHARED_EXEC),   PIE_RWX) | \
+@@ -147,6 +155,8 @@ extern bool arm64_use_ng_mappings;
+ 	PIRx_ELx_PERM(pte_pi_index(_PAGE_SHARED),        PIE_RW))
  
-diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
-index c80ed4f3cbce..ab582f592131 100644
---- a/arch/arm64/tools/cpucaps
-+++ b/arch/arm64/tools/cpucaps
-@@ -26,6 +26,7 @@ HAS_ECV
- HAS_ECV_CNTPOFF
- HAS_EPAN
- HAS_EVT
-+HAS_GCS
- HAS_GENERIC_AUTH
- HAS_GENERIC_AUTH_ARCH_QARMA3
- HAS_GENERIC_AUTH_ARCH_QARMA5
+ #define PIE_E1	( \
++	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS),           PIE_RW)      | \
++	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS_RO),        PIE_R)      | \
+ 	PIRx_ELx_PERM(pte_pi_index(_PAGE_EXECONLY),      PIE_NONE_O) | \
+ 	PIRx_ELx_PERM(pte_pi_index(_PAGE_READONLY_EXEC), PIE_R)      | \
+ 	PIRx_ELx_PERM(pte_pi_index(_PAGE_SHARED_EXEC),   PIE_RW)     | \
 
 -- 
 2.30.2
