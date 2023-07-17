@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 45A8175628A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jul 2023 14:12:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C49647562CE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jul 2023 14:32:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231162AbjGQMMk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jul 2023 08:12:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44590 "EHLO
+        id S230464AbjGQMcf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jul 2023 08:32:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjGQMMj (ORCPT
+        with ESMTP id S230336AbjGQMcc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jul 2023 08:12:39 -0400
+        Mon, 17 Jul 2023 08:32:32 -0400
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE7E7D8;
-        Mon, 17 Jul 2023 05:12:34 -0700 (PDT)
-Received: from lhrpeml500005.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4R4LV44VTRz6823d;
-        Mon, 17 Jul 2023 20:09:16 +0800 (CST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F04A610CA;
+        Mon, 17 Jul 2023 05:32:29 -0700 (PDT)
+Received: from lhrpeml500005.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4R4Lxz5Rfsz6J6nS;
+        Mon, 17 Jul 2023 20:29:59 +0800 (CST)
 Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
  (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Mon, 17 Jul
- 2023 13:12:30 +0100
-Date:   Mon, 17 Jul 2023 13:12:30 +0100
+ 2023 13:32:26 +0100
+Date:   Mon, 17 Jul 2023 13:32:25 +0100
 From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
 To:     Mark Brown <broonie@kernel.org>
 CC:     Catalin Marinas <catalin.marinas@arm.com>,
@@ -50,18 +50,19 @@ CC:     Catalin Marinas <catalin.marinas@arm.com>,
         <linux-fsdevel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
         <linux-mm@kvack.org>, <linux-kselftest@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH 17/35] arm64/traps: Handle GCS exceptions
-Message-ID: <20230717131230.00003569@Huawei.com>
-In-Reply-To: <20230716-arm64-gcs-v1-17-bf567f93bba6@kernel.org>
+Subject: Re: [PATCH 26/35] arm64: Add Kconfig for Guarded Control Stack
+ (GCS)
+Message-ID: <20230717133225.00000ce7@Huawei.com>
+In-Reply-To: <20230716-arm64-gcs-v1-26-bf567f93bba6@kernel.org>
 References: <20230716-arm64-gcs-v1-0-bf567f93bba6@kernel.org>
-        <20230716-arm64-gcs-v1-17-bf567f93bba6@kernel.org>
+        <20230716-arm64-gcs-v1-26-bf567f93bba6@kernel.org>
 Organization: Huawei Technologies Research and Development (UK) Ltd.
 X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 MIME-Version: 1.0
 Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.202.227.76]
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
  lhrpeml500005.china.huawei.com (7.191.163.240)
 X-CFilter-Loop: Reflected
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
@@ -74,70 +75,49 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 16 Jul 2023 22:51:13 +0100
+On Sun, 16 Jul 2023 22:51:22 +0100
 Mark Brown <broonie@kernel.org> wrote:
 
-> A new exception code is defined for GCS specific faults other than
-> standard load/store faults, for example GCS token validation failures,
-> add handling for this. These faults are reported to userspace as
-> segfaults with code SEGV_CPERR (protection error), mirroring the
-> reporting for x86 shadow stack errors.
-> 
-> GCS faults due to memory load/store operations generate data aborts with
-> a flag set, these will be handled separately as part of the data abort
-> handling.
-> 
-> Since we do not currently enable GCS for EL1 we should not get any faults
-> there but while we're at it we wire things up there, treating any GCS
-> fault as fatal.
+> Provide a Kconfig option allowing the user to select if GCS support is
+> built into the kernel.
 > 
 > Signed-off-by: Mark Brown <broonie@kernel.org>
-
-See below.
-
 > ---
->  arch/arm64/include/asm/esr.h       | 26 +++++++++++++++++++++++++-
->  arch/arm64/include/asm/exception.h |  2 ++
->  arch/arm64/kernel/entry-common.c   | 23 +++++++++++++++++++++++
->  arch/arm64/kernel/traps.c          | 11 +++++++++++
->  4 files changed, 61 insertions(+), 1 deletion(-)
+>  arch/arm64/Kconfig | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
 > 
-> diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
-> index ae35939f395b..c5a72172fcf1 100644
-> --- a/arch/arm64/include/asm/esr.h
-> +++ b/arch/arm64/include/asm/esr.h
-...
-
-> @@ -382,6 +383,29 @@
->  #define ESR_ELx_MOPS_ISS_SRCREG(esr)	(((esr) & (UL(0x1f) << 5)) >> 5)
->  #define ESR_ELx_MOPS_ISS_SIZEREG(esr)	(((esr) & (UL(0x1f) << 0)) >> 0)
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 7856c3a3e35a..e1aeeda13c52 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -2091,6 +2091,25 @@ config ARM64_EPAN
+>  	  if the cpu does not implement the feature.
+>  endmenu # "ARMv8.7 architectural features"
 >  
-> +/* ISS field definitions for GCS */
-> +#define ESR_ELx_ExType_SHIFT	(20)
-> +#define ESR_ELx_ExType_MASK	GENMASK(23, 20)
-> +#define ESR_ELx_Raddr_SHIFT	(14)
-
-(10) ?
-
-> +#define ESR_ELx_Raddr_MASK	GENMASK(14, 10)
-> +#define ESR_ELx_Rn_SHIFT	(5)
-> +#define ESR_ELx_Rn_MASK		GENMASK(9, 5)
-
-I think this can also be ESR_ELx_RVALUE_MASK for some ExType
-Worth adding that as well?
-
-> +#define ESR_ELx_IT_SHIFT	(0)
-> +#define ESR_ELx_IT_MASK		GENMASK(4, 0)
+> +menu "v9.4 architectural features"
 > +
-> +#define ESR_ELx_ExType_DATA_CHECK	0
-> +#define ESR_ELx_ExType_EXLOCK		1
-> +#define ESR_ELx_ExType_STR		2
+> +config ARM64_GCS
+> +	bool "Enable support for Guarded Control Stack (GCS)"
+> +	default y
+> +	select ARCH_USES_HIGH_VMA_FLAGS
+> +	help
+> +	  Guarded Control Stack (GCS) provides support for a separate
+> +	  stack with restricted access which contains only return
+> +	  addresses.  This can be used to harden against some attacks
+> +	  by comparing return address used by the program with what is
+> +	  stored in the GCS, and may also be used to efficiently obtain
+> +	  the call stack for applications such as profiling.
 > +
-> +#define ESR_ELx_IT_RET			0
-> +#define ESR_ELx_IT_GCSPOPM		1
-> +#define ESR_ELx_IT_RET_KEYA		2
-> +#define ESR_ELx_IT_RET_KEYB		3
-> +#define ESR_ELx_IT_GCSSS1		4
-> +#define ESR_ELx_IT_GCSSS2		5
-> +#define ESR_ELx_IT_GCSPOPCX		6
-> +#define ESR_ELx_IT_GCSPOPX		7
+> +	  The feature is detected at runtime, and will remain disabled
+> +	  if the system does not implement the feature.
+> +
+> +endmenu # "2022 archiectural features"
+
+Inconsistent naming and spelling mistake.
+
+> +
+>  config ARM64_SVE
+>  	bool "ARM Scalable Vector Extension support"
+>  	default y
+> 
+
