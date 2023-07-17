@@ -2,52 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6985E756EEA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jul 2023 23:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 327C2756FA2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 00:12:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229993AbjGQVZA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jul 2023 17:25:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54760 "EHLO
+        id S229837AbjGQWMY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jul 2023 18:12:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229590AbjGQVY7 (ORCPT
+        with ESMTP id S230128AbjGQWMX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jul 2023 17:24:59 -0400
-Received: from mail-oa1-f80.google.com (mail-oa1-f80.google.com [209.85.160.80])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D80ADF3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jul 2023 14:24:57 -0700 (PDT)
-Received: by mail-oa1-f80.google.com with SMTP id 586e51a60fabf-1b07f55975bso7178282fac.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jul 2023 14:24:57 -0700 (PDT)
+        Mon, 17 Jul 2023 18:12:23 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B103E1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jul 2023 15:12:20 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-6686708c986so5125320b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jul 2023 15:12:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1689631939; x=1692223939;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nfZGdLayIsQ4EXLbarw1/OO0pNLBzQdwR1vEqsrzGII=;
+        b=Jk8Ffu+zgnI1CsgL7PShvnMc/G0hm1hbh3TPz5Fbc34BI/VC6K+YvpO0Dtz1Q06LcE
+         vf29m9vckcSQeAqUEVUy2hQg3wChzTMiZjPdUNSWsPB40TqlA/Z3Z90RDeI/5eGEIh5a
+         oHIWxzri1XJMuhuB2UIvkNGwKQM8BtpRM8RbCOHyQCc7eetsY5S+VbcO2iAUIljyLIvn
+         7DgUtRFxxg3tnphZnCaerMskJ/OIgXT3e8pOBne6YWSI+yYb8YG43ww6ejPC+GReMaLK
+         AQZU6DLVDF3nw8hq4CMA6FGa2JzmC2rObjfL+xz46TVHFpF838cUJw0/Qyn0hTY2P629
+         8fnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689629097; x=1692221097;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8F6dYdYGyG77zeOQWkKpbjAt/23bYlsRze36LBs/pcA=;
-        b=LCnH3d3X4LgVLMVBb1T6W0gdoSd3LofemI26264uOeT054GKucn0jbIPP72xM2q2ZX
-         H/t2T8cwJT1SRWBM+w2btpz0xeRk3HXTQjsC23aTyYCog69xGi6R6FwLY2XaMYjOsVMu
-         p6WVxnAaFfZaiIDZU5kX4ymslPow/EQ3Bqxh8Io13ioPeXWtW78HxtO50a2yglj4efwr
-         b3eegXwnKo1LGfX28jj+4nePh4uIA9uQcDft7kfiQ3Htg3XAzVdIgwY/j/nZ3eRula4r
-         tnAFhqXng6eV8d3hSfFHDgDgdLuINYTcgHVrV/QTXPbTon8rG1btwzefjOsxK0Nksgrf
-         gSqg==
-X-Gm-Message-State: ABy/qLblsKz0i9VhFyatEW65A3wuJrKKn3Bqi6V4VQD2hU96Md292ESZ
-        h+bZWhgEy2PTh6kP9Qcc09w1NiH//x0+5ReuzHcOTH3TPAHlYzx2RA==
-X-Google-Smtp-Source: APBJJlFfnVN0tiw5pMxMIgicNC3ThgxSDip01FdCAkF8cbx4VRdT1egGeb8LP03Vq/GGXE/fqS7cmaGtIZY6a0XvjuJxFqXIZovX
+        d=1e100.net; s=20221208; t=1689631939; x=1692223939;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nfZGdLayIsQ4EXLbarw1/OO0pNLBzQdwR1vEqsrzGII=;
+        b=NT1MkNrMq9qxK54EY4OUJrLFDPTSXRq+IlB/CNlggpHQxBmlSVLT3DLfaqu85T0h3V
+         uhri/NdOiVSRdJiosDvp51NaP094Uk2oxCX6CkDikat2Pbzmjx+DLA6E6AlGQGoK9ToV
+         +XqdujkQY6+8crXQ29woHDJ2VFuqMwIlGeQL9vg3Cgf7fza01KCrl8rSkR5tTV5/ZG0W
+         VOdqlxNu2WHAobXt9Tm2OPnGnhejWyt6mXwhq7mfN1KxtoHIvuPLMfu7zB6saaUXLzt+
+         wZkEg4mw6izL0ME3Upts2Ahn8rcDdcQhsuT0UdPaWFB0zOXKzvqJMdAOi37KPrt66FnG
+         Fi5Q==
+X-Gm-Message-State: ABy/qLYOFoGlUpGq37OmQ1LYgO21avjEY506C94dmqk4CB2M/1UUUcBk
+        0CXUvb6Q2YfLAnU+GazeIzq9XQ==
+X-Google-Smtp-Source: APBJJlGZQPlE97VCyl6VDpxaBgXkuk8Xeb/cb5kTAa5gNdx+KBrLI5Ve+dnBz8NdMBvhTebPf2Gh3g==
+X-Received: by 2002:a05:6a00:2307:b0:668:81c5:2f8a with SMTP id h7-20020a056a00230700b0066881c52f8amr19367164pfh.17.1689631939323;
+        Mon, 17 Jul 2023 15:12:19 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-25-194.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.25.194])
+        by smtp.gmail.com with ESMTPSA id q185-20020a632ac2000000b0055fedbf1938sm278952pgq.31.2023.07.17.15.12.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jul 2023 15:12:18 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1qLWS0-002PFZ-GX;
+        Mon, 17 Jul 2023 19:12:16 -0300
+Date:   Mon, 17 Jul 2023 19:12:16 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     Grzegorz Jaszczyk <jaz@semihalf.com>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        linux-usb@vger.kernel.org, Matthew Rosato <mjrosato@linux.ibm.com>,
+        Paul Durrant <paul@xen.org>, Tom Rix <trix@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        dri-devel@lists.freedesktop.org, Michal Hocko <mhocko@kernel.org>,
+        linux-mm@kvack.org, Kirti Wankhede <kwankhede@nvidia.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Diana Craciun <diana.craciun@oss.nxp.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Fei Li <fei1.li@intel.com>, x86@kernel.org,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        intel-gfx@lists.freedesktop.org,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        linux-fpga@vger.kernel.org, Zhi Wang <zhi.a.wang@intel.com>,
+        Wu Hao <hao.wu@intel.com>, Jason Herne <jjherne@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-s390@vger.kernel.org,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linuxppc-dev@lists.ozlabs.org, Eric Auger <eric.auger@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, kvm@vger.kernel.org,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, cgroups@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org,
+        intel-gvt-dev@lists.freedesktop.org, io-uring@vger.kernel.org,
+        netdev@vger.kernel.org, Tony Krowiak <akrowiak@linux.ibm.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Muchun Song <muchun.song@linux.dev>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Moritz Fischer <mdf@kernel.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Xu Yilun <yilun.xu@intel.com>,
+        Dominik Behr <dbehr@chromium.org>,
+        Marcin Wojtas <mw@semihalf.com>
+Subject: Re: [PATCH 0/2] eventfd: simplify signal helpers
+Message-ID: <ZLW8wEzkhBxd0O0L@ziepe.ca>
+References: <20230630155936.3015595-1-jaz@semihalf.com>
+ <20230714-gauner-unsolidarisch-fc51f96c61e8@brauner>
+ <CAH76GKPF4BjJLrzLBW8k12ATaAGADeMYc2NQ9+j0KgRa0pomUw@mail.gmail.com>
+ <20230717130831.0f18381a.alex.williamson@redhat.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:956a:b0:1a9:85e9:9376 with SMTP id
- v42-20020a056870956a00b001a985e99376mr9201371oal.0.1689629097183; Mon, 17 Jul
- 2023 14:24:57 -0700 (PDT)
-Date:   Mon, 17 Jul 2023 14:24:57 -0700
-In-Reply-To: <0000000000001bd66b05fcec6d92@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000023d0c70600b56e47@google.com>
-Subject: Re: [syzbot] [reiserfs?] possible deadlock in vfs_setxattr (2)
-From:   syzbot <syzbot+c98692bac73aedb459c3@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230717130831.0f18381a.alex.williamson@redhat.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,168 +133,18 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+On Mon, Jul 17, 2023 at 01:08:31PM -0600, Alex Williamson wrote:
 
-HEAD commit:    e40939bbfc68 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=117c0fa2a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c4a2640e4213bc2f
-dashboard link: https://syzkaller.appspot.com/bug?extid=c98692bac73aedb459c3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=107ec3faa80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15bc5646a80000
+> What would that mechanism be?  We've been iterating on getting the
+> serialization and buffering correct, but I don't know of another means
+> that combines the notification with a value, so we'd likely end up with
+> an eventfd only for notification and a separate ring buffer for
+> notification values.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9d87aa312c0e/disk-e40939bb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/22a11d32a8b2/vmlinux-e40939bb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0978b5788b52/Image-e40939bb.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/cd09072f381d/mount_0.gz
+All FDs do this. You just have to make a FD with custom
+file_operations that does what this wants. The uAPI shouldn't be able
+to tell if the FD is backing it with an eventfd or otherwise. Have the
+kernel return the FD instead of accepting it. Follow the basic design
+of eg mlx5vf_save_fops
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c98692bac73aedb459c3@syzkaller.appspotmail.com
-
-REISERFS (device loop0): Using tea hash to sort names
-REISERFS (device loop0): Created .reiserfs_priv - reserved for xattr storage.
-======================================================
-WARNING: possible circular locking dependency detected
-6.4.0-rc7-syzkaller-ge40939bbfc68 #0 Not tainted
-------------------------------------------------------
-syz-executor558/5970 is trying to acquire lock:
-ffff0000e0a782e0 (&type->i_mutex_dir_key#6){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:775 [inline]
-ffff0000e0a782e0 (&type->i_mutex_dir_key#6){+.+.}-{3:3}, at: vfs_setxattr+0x17c/0x344 fs/xattr.c:321
-
-but task is already holding lock:
-ffff0000c67ac460 (sb_writers#8){.+.+}-{0:0}, at: mnt_want_write+0x44/0x9c fs/namespace.c:394
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (sb_writers#8){.+.+}-{0:0}:
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1494 [inline]
-       sb_start_write+0x60/0x2ec include/linux/fs.h:1569
-       mnt_want_write_file+0x64/0x1e8 fs/namespace.c:438
-       reiserfs_ioctl+0x184/0x454 fs/reiserfs/ioctl.c:103
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:870 [inline]
-       __se_sys_ioctl fs/ioctl.c:856 [inline]
-       __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:856
-       __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
-       invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
-       el0_svc_common+0x138/0x244 arch/arm64/kernel/syscall.c:142
-       do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:191
-       el0_svc+0x4c/0x160 arch/arm64/kernel/entry-common.c:647
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:665
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
-
--> #1 (&sbi->lock){+.+.}-{3:3}:
-       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:603
-       __mutex_lock kernel/locking/mutex.c:747 [inline]
-       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:799
-       reiserfs_write_lock+0x7c/0xe8 fs/reiserfs/lock.c:27
-       reiserfs_lookup+0x128/0x45c fs/reiserfs/namei.c:364
-       __lookup_slow+0x250/0x374 fs/namei.c:1690
-       lookup_one_len+0x178/0x28c fs/namei.c:2742
-       reiserfs_lookup_privroot+0x8c/0x184 fs/reiserfs/xattr.c:976
-       reiserfs_fill_super+0x1bc0/0x2028 fs/reiserfs/super.c:2174
-       mount_bdev+0x274/0x370 fs/super.c:1380
-       get_super_block+0x44/0x58 fs/reiserfs/super.c:2601
-       legacy_get_tree+0xd4/0x16c fs/fs_context.c:610
-       vfs_get_tree+0x90/0x274 fs/super.c:1510
-       do_new_mount+0x25c/0x8c4 fs/namespace.c:3039
-       path_mount+0x590/0xe04 fs/namespace.c:3369
-       do_mount fs/namespace.c:3382 [inline]
-       __do_sys_mount fs/namespace.c:3591 [inline]
-       __se_sys_mount fs/namespace.c:3568 [inline]
-       __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3568
-       __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
-       invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
-       el0_svc_common+0x138/0x244 arch/arm64/kernel/syscall.c:142
-       do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:191
-       el0_svc+0x4c/0x160 arch/arm64/kernel/entry-common.c:647
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:665
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
-
--> #0 (&type->i_mutex_dir_key#6){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3113 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3232 [inline]
-       validate_chain kernel/locking/lockdep.c:3847 [inline]
-       __lock_acquire+0x3308/0x7604 kernel/locking/lockdep.c:5088
-       lock_acquire+0x23c/0x71c kernel/locking/lockdep.c:5705
-       down_write+0x50/0xc0 kernel/locking/rwsem.c:1573
-       inode_lock include/linux/fs.h:775 [inline]
-       vfs_setxattr+0x17c/0x344 fs/xattr.c:321
-       do_setxattr fs/xattr.c:630 [inline]
-       setxattr+0x208/0x29c fs/xattr.c:653
-       path_setxattr+0x17c/0x258 fs/xattr.c:672
-       __do_sys_setxattr fs/xattr.c:688 [inline]
-       __se_sys_setxattr fs/xattr.c:684 [inline]
-       __arm64_sys_setxattr+0xbc/0xd8 fs/xattr.c:684
-       __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
-       invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
-       el0_svc_common+0x138/0x244 arch/arm64/kernel/syscall.c:142
-       do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:191
-       el0_svc+0x4c/0x160 arch/arm64/kernel/entry-common.c:647
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:665
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
-
-other info that might help us debug this:
-
-Chain exists of:
-  &type->i_mutex_dir_key#6 --> &sbi->lock --> sb_writers#8
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(sb_writers#8);
-                               lock(&sbi->lock);
-                               lock(sb_writers#8);
-  lock(&type->i_mutex_dir_key#6);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor558/5970:
- #0: ffff0000c67ac460 (sb_writers#8){.+.+}-{0:0}, at: mnt_want_write+0x44/0x9c fs/namespace.c:394
-
-stack backtrace:
-CPU: 1 PID: 5970 Comm: syz-executor558 Not tainted 6.4.0-rc7-syzkaller-ge40939bbfc68 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/03/2023
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:233
- show_stack+0x2c/0x44 arch/arm64/kernel/stacktrace.c:240
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
- dump_stack+0x1c/0x28 lib/dump_stack.c:113
- print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2066
- check_noncircular+0x2cc/0x378 kernel/locking/lockdep.c:2188
- check_prev_add kernel/locking/lockdep.c:3113 [inline]
- check_prevs_add kernel/locking/lockdep.c:3232 [inline]
- validate_chain kernel/locking/lockdep.c:3847 [inline]
- __lock_acquire+0x3308/0x7604 kernel/locking/lockdep.c:5088
- lock_acquire+0x23c/0x71c kernel/locking/lockdep.c:5705
- down_write+0x50/0xc0 kernel/locking/rwsem.c:1573
- inode_lock include/linux/fs.h:775 [inline]
- vfs_setxattr+0x17c/0x344 fs/xattr.c:321
- do_setxattr fs/xattr.c:630 [inline]
- setxattr+0x208/0x29c fs/xattr.c:653
- path_setxattr+0x17c/0x258 fs/xattr.c:672
- __do_sys_setxattr fs/xattr.c:688 [inline]
- __se_sys_setxattr fs/xattr.c:684 [inline]
- __arm64_sys_setxattr+0xbc/0xd8 fs/xattr.c:684
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall+0x98/0x2c0 arch/arm64/kernel/syscall.c:52
- el0_svc_common+0x138/0x244 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x64/0x198 arch/arm64/kernel/syscall.c:191
- el0_svc+0x4c/0x160 arch/arm64/kernel/entry-common.c:647
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:665
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Jason
