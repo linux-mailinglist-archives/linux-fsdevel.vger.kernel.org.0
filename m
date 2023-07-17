@@ -2,52 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A904675621E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jul 2023 13:54:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45A8175628A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jul 2023 14:12:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229496AbjGQLyB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jul 2023 07:54:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59582 "EHLO
+        id S231162AbjGQMMk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jul 2023 08:12:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230029AbjGQLyA (ORCPT
+        with ESMTP id S229461AbjGQMMj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jul 2023 07:54:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD8C5131
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jul 2023 04:53:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6DA6961032
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jul 2023 11:53:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 398D7C433C8;
-        Mon, 17 Jul 2023 11:53:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689594833;
-        bh=/N8t0zn5r7/pIKRWGGNTxKX3iFdVKBgXPuSClztgPDA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ExsELo/VzdyI0l+5mEzyQHALjofX9VCkyI92vl7b6M3x0pgMCzy6M2r6aVSGxBW9L
-         i/KfrKemwznCNcmq18LfhibbbWIIgwA4a5Ah9mcg8Ze60b4JxhTmwFhdAF5faKDOuI
-         7QEmsZhVRVeQEibSBXrD70pDhnq7Spbhy3pc8Mdbg2UOA9WHPYugt/bamh5fXGcl3r
-         LyaMpopyuP5J7ibY2NB5sWNEkdGmLT4cNPgEf3y89LBYMxuXNh3dFGzUAyg+TTOCVT
-         IGFyf+aMOz6A5VJQ48kmsxPt1uEtUvk1gMRqmnpbMof+JcqHiT9Pn78AZYl0oDB9db
-         ULF3docgPeL9Q==
-From:   cem@kernel.org
-To:     linux-fsdevel@vger.kernel.org
-Cc:     jack@suse.cz, akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        linux-mm@kvack.org, djwong@kernel.org, hughd@google.com,
-        brauner@kernel.org, mcgrof@kernel.org
-Subject: [PATCH 6/6] Add default quota limit mount options
-Date:   Mon, 17 Jul 2023 13:52:19 +0200
-Message-Id: <20230717115212.208651-7-cem@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230717115212.208651-1-cem@kernel.org>
-References: <20230717115212.208651-1-cem@kernel.org>
+        Mon, 17 Jul 2023 08:12:39 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE7E7D8;
+        Mon, 17 Jul 2023 05:12:34 -0700 (PDT)
+Received: from lhrpeml500005.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4R4LV44VTRz6823d;
+        Mon, 17 Jul 2023 20:09:16 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Mon, 17 Jul
+ 2023 13:12:30 +0100
+Date:   Mon, 17 Jul 2023 13:12:30 +0100
+From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        James Morse <james.morse@arm.com>,
+        "Suzuki K Poulose" <suzuki.poulose@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Oleg Nesterov" <oleg@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        "Kees Cook" <keescook@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+        Deepak Gupta <debug@rivosinc.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-doc@vger.kernel.org>, <kvmarm@lists.linux.dev>,
+        <linux-fsdevel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH 17/35] arm64/traps: Handle GCS exceptions
+Message-ID: <20230717131230.00003569@Huawei.com>
+In-Reply-To: <20230716-arm64-gcs-v1-17-bf567f93bba6@kernel.org>
+References: <20230716-arm64-gcs-v1-0-bf567f93bba6@kernel.org>
+        <20230716-arm64-gcs-v1-17-bf567f93bba6@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.76]
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -56,265 +74,70 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Lukas Czerner <lczerner@redhat.com>
+On Sun, 16 Jul 2023 22:51:13 +0100
+Mark Brown <broonie@kernel.org> wrote:
 
-Allow system administrator to set default global quota limits at tmpfs
-mount time.
+> A new exception code is defined for GCS specific faults other than
+> standard load/store faults, for example GCS token validation failures,
+> add handling for this. These faults are reported to userspace as
+> segfaults with code SEGV_CPERR (protection error), mirroring the
+> reporting for x86 shadow stack errors.
+> 
+> GCS faults due to memory load/store operations generate data aborts with
+> a flag set, these will be handled separately as part of the data abort
+> handling.
+> 
+> Since we do not currently enable GCS for EL1 we should not get any faults
+> there but while we're at it we wire things up there, treating any GCS
+> fault as fatal.
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 
-Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
----
- Documentation/filesystems/tmpfs.rst | 34 +++++++++++-----
- include/linux/shmem_fs.h            |  8 ++++
- mm/shmem.c                          | 61 +++++++++++++++++++++++++++++
- mm/shmem_quota.c                    | 34 +++++++++++++++-
- 4 files changed, 127 insertions(+), 10 deletions(-)
+See below.
 
-diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
-index 0c7d8bd052f1..f843dbbeb589 100644
---- a/Documentation/filesystems/tmpfs.rst
-+++ b/Documentation/filesystems/tmpfs.rst
-@@ -132,15 +132,31 @@ for emergency or testing purposes. The values you can set for shmem_enabled are:
- 
- tmpfs also supports quota with the following mount options
- 
--========  =============================================================
--quota     User and group quota accounting and enforcement is enabled on
--          the mount. Tmpfs is using hidden system quota files that are
--          initialized on mount.
--usrquota  User quota accounting and enforcement is enabled on the
--          mount.
--grpquota  Group quota accounting and enforcement is enabled on the
--          mount.
--========  =============================================================
-+======================== =================================================
-+quota                    User and group quota accounting and enforcement
-+                         is enabled on the mount. Tmpfs is using hidden
-+                         system quota files that are initialized on mount.
-+usrquota                 User quota accounting and enforcement is enabled
-+                         on the mount.
-+grpquota                 Group quota accounting and enforcement is enabled
-+                         on the mount.
-+usrquota_block_hardlimit Set global user quota block hard limit.
-+usrquota_inode_hardlimit Set global user quota inode hard limit.
-+grpquota_block_hardlimit Set global group quota block hard limit.
-+grpquota_inode_hardlimit Set global group quota inode hard limit.
-+======================== =================================================
-+
-+None of the quota related mount options can be set or changed on remount.
-+
-+Quota limit parameters accept a suffix k, m or g for kilo, mega and giga
-+and can't be changed on remount. Default global quota limits are taking
-+effect for any and all user/group/project except root the first time the
-+quota entry for user/group/project id is being accessed - typically the
-+first time an inode with a particular id ownership is being created after
-+the mount. In other words, instead of the limits being initialized to zero,
-+they are initialized with the particular value provided with these mount
-+options. The limits can be changed for any user/group id at any time as they
-+normally can be.
- 
- Note that tmpfs quotas do not support user namespaces so no uid/gid
- translation is done if quotas are enabled inside user namespaces.
-diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index 1a568a0f542f..c0058f3bba70 100644
---- a/include/linux/shmem_fs.h
-+++ b/include/linux/shmem_fs.h
-@@ -42,6 +42,13 @@ struct shmem_inode_info {
- 	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | FS_NOATIME_FL)
- #define SHMEM_FL_INHERITED		(FS_NODUMP_FL | FS_NOATIME_FL)
- 
-+struct shmem_quota_limits {
-+	qsize_t usrquota_bhardlimit; /* Default user quota block hard limit */
-+	qsize_t usrquota_ihardlimit; /* Default user quota inode hard limit */
-+	qsize_t grpquota_bhardlimit; /* Default group quota block hard limit */
-+	qsize_t grpquota_ihardlimit; /* Default group quota inode hard limit */
-+};
-+
- struct shmem_sb_info {
- 	unsigned long max_blocks;   /* How many blocks are allowed */
- 	struct percpu_counter used_blocks;  /* How many are allocated */
-@@ -60,6 +67,7 @@ struct shmem_sb_info {
- 	spinlock_t shrinklist_lock;   /* Protects shrinklist */
- 	struct list_head shrinklist;  /* List of shinkable inodes */
- 	unsigned long shrinklist_len; /* Length of shrinklist */
-+	struct shmem_quota_limits qlimits; /* Default quota limits */
- };
- 
- static inline struct shmem_inode_info *SHMEM_I(struct inode *inode)
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 7c75f30309ff..bd02909bacd6 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -118,6 +118,7 @@ struct shmem_options {
- 	int seen;
- 	bool noswap;
- 	unsigned short quota_types;
-+	struct shmem_quota_limits qlimits;
- #define SHMEM_SEEN_BLOCKS 1
- #define SHMEM_SEEN_INODES 2
- #define SHMEM_SEEN_HUGE 4
-@@ -3735,6 +3736,10 @@ enum shmem_param {
- 	Opt_quota,
- 	Opt_usrquota,
- 	Opt_grpquota,
-+	Opt_usrquota_block_hardlimit,
-+	Opt_usrquota_inode_hardlimit,
-+	Opt_grpquota_block_hardlimit,
-+	Opt_grpquota_inode_hardlimit,
- };
- 
- static const struct constant_table shmem_param_enums_huge[] = {
-@@ -3761,6 +3766,10 @@ const struct fs_parameter_spec shmem_fs_parameters[] = {
- 	fsparam_flag  ("quota",		Opt_quota),
- 	fsparam_flag  ("usrquota",	Opt_usrquota),
- 	fsparam_flag  ("grpquota",	Opt_grpquota),
-+	fsparam_string("usrquota_block_hardlimit", Opt_usrquota_block_hardlimit),
-+	fsparam_string("usrquota_inode_hardlimit", Opt_usrquota_inode_hardlimit),
-+	fsparam_string("grpquota_block_hardlimit", Opt_grpquota_block_hardlimit),
-+	fsparam_string("grpquota_inode_hardlimit", Opt_grpquota_inode_hardlimit),
- #endif
- 	{}
- };
-@@ -3871,6 +3880,42 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
- 		ctx->seen |= SHMEM_SEEN_QUOTA;
- 		ctx->quota_types |= QTYPE_MASK_GRP;
- 		break;
-+	case Opt_usrquota_block_hardlimit:
-+		size = memparse(param->string, &rest);
-+		if (*rest || !size)
-+			goto bad_value;
-+		if (size > SHMEM_QUOTA_MAX_SPC_LIMIT)
-+			return invalfc(fc,
-+				       "User quota block hardlimit too large.");
-+		ctx->qlimits.usrquota_bhardlimit = size;
-+		break;
-+	case Opt_grpquota_block_hardlimit:
-+		size = memparse(param->string, &rest);
-+		if (*rest || !size)
-+			goto bad_value;
-+		if (size > SHMEM_QUOTA_MAX_SPC_LIMIT)
-+			return invalfc(fc,
-+				       "Group quota block hardlimit too large.");
-+		ctx->qlimits.grpquota_bhardlimit = size;
-+		break;
-+	case Opt_usrquota_inode_hardlimit:
-+		size = memparse(param->string, &rest);
-+		if (*rest || !size)
-+			goto bad_value;
-+		if (size > SHMEM_QUOTA_MAX_INO_LIMIT)
-+			return invalfc(fc,
-+				       "User quota inode hardlimit too large.");
-+		ctx->qlimits.usrquota_ihardlimit = size;
-+		break;
-+	case Opt_grpquota_inode_hardlimit:
-+		size = memparse(param->string, &rest);
-+		if (*rest || !size)
-+			goto bad_value;
-+		if (size > SHMEM_QUOTA_MAX_INO_LIMIT)
-+			return invalfc(fc,
-+				       "Group quota inode hardlimit too large.");
-+		ctx->qlimits.grpquota_ihardlimit = size;
-+		break;
- 	}
- 	return 0;
- 
-@@ -3984,6 +4029,18 @@ static int shmem_reconfigure(struct fs_context *fc)
- 		goto out;
- 	}
- 
-+#ifdef CONFIG_TMPFS_QUOTA
-+#define CHANGED_LIMIT(name)						\
-+	(ctx->qlimits.name## hardlimit &&				\
-+	(ctx->qlimits.name## hardlimit != sbinfo->qlimits.name## hardlimit))
-+
-+	if (CHANGED_LIMIT(usrquota_b) || CHANGED_LIMIT(usrquota_i) ||
-+	    CHANGED_LIMIT(grpquota_b) || CHANGED_LIMIT(grpquota_i)) {
-+		err = "Cannot change global quota limit on remount";
-+		goto out;
-+	}
-+#endif /* CONFIG_TMPFS_QUOTA */
-+
- 	if (ctx->seen & SHMEM_SEEN_HUGE)
- 		sbinfo->huge = ctx->huge;
- 	if (ctx->seen & SHMEM_SEEN_INUMS)
-@@ -4163,6 +4220,10 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
- 		sb->s_qcop = &dquot_quotactl_sysfile_ops;
- 		sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
- 
-+		/* Copy the default limits from ctx into sbinfo */
-+		memcpy(&sbinfo->qlimits, &ctx->qlimits,
-+		       sizeof(struct shmem_quota_limits));
-+
- 		if (shmem_enable_quotas(sb, ctx->quota_types))
- 			goto failed;
- 	}
-diff --git a/mm/shmem_quota.c b/mm/shmem_quota.c
-index c0b531e2ef68..e349c0901bce 100644
---- a/mm/shmem_quota.c
-+++ b/mm/shmem_quota.c
-@@ -166,6 +166,7 @@ static int shmem_acquire_dquot(struct dquot *dquot)
- {
- 	struct mem_dqinfo *info = sb_dqinfo(dquot->dq_sb, dquot->dq_id.type);
- 	struct rb_node **n = &((struct rb_root *)info->dqi_priv)->rb_node;
-+	struct shmem_sb_info *sbinfo = dquot->dq_sb->s_fs_info;
- 	struct rb_node *parent = NULL, *new_node = NULL;
- 	struct quota_id *new_entry, *entry;
- 	qid_t id = from_kqid(&init_user_ns, dquot->dq_id);
-@@ -195,6 +196,14 @@ static int shmem_acquire_dquot(struct dquot *dquot)
- 	}
- 
- 	new_entry->id = id;
-+	if (dquot->dq_id.type == USRQUOTA) {
-+		new_entry->bhardlimit = sbinfo->qlimits.usrquota_bhardlimit;
-+		new_entry->ihardlimit = sbinfo->qlimits.usrquota_ihardlimit;
-+	} else if (dquot->dq_id.type == GRPQUOTA) {
-+		new_entry->bhardlimit = sbinfo->qlimits.grpquota_bhardlimit;
-+		new_entry->ihardlimit = sbinfo->qlimits.grpquota_ihardlimit;
-+	}
-+
- 	new_node = &new_entry->node;
- 	rb_link_node(new_node, parent, n);
- 	rb_insert_color(new_node, (struct rb_root *)info->dqi_priv);
-@@ -224,6 +233,29 @@ static int shmem_acquire_dquot(struct dquot *dquot)
- 	return ret;
- }
- 
-+static bool shmem_is_empty_dquot(struct dquot *dquot)
-+{
-+	struct shmem_sb_info *sbinfo = dquot->dq_sb->s_fs_info;
-+	qsize_t bhardlimit;
-+	qsize_t ihardlimit;
-+
-+	if (dquot->dq_id.type == USRQUOTA) {
-+		bhardlimit = sbinfo->qlimits.usrquota_bhardlimit;
-+		ihardlimit = sbinfo->qlimits.usrquota_ihardlimit;
-+	} else if (dquot->dq_id.type == GRPQUOTA) {
-+		bhardlimit = sbinfo->qlimits.grpquota_bhardlimit;
-+		ihardlimit = sbinfo->qlimits.grpquota_ihardlimit;
-+	}
-+
-+	if (test_bit(DQ_FAKE_B, &dquot->dq_flags) ||
-+		(dquot->dq_dqb.dqb_curspace == 0 &&
-+		 dquot->dq_dqb.dqb_curinodes == 0 &&
-+		 dquot->dq_dqb.dqb_bhardlimit == bhardlimit &&
-+		 dquot->dq_dqb.dqb_ihardlimit == ihardlimit))
-+		return true;
-+
-+	return false;
-+}
- /*
-  * Store limits from dquot in the tree unless it's fake. If it is fake
-  * remove the id from the tree since there is no useful information in
-@@ -261,7 +293,7 @@ static int shmem_release_dquot(struct dquot *dquot)
- 	return -ENOENT;
- 
- found:
--	if (test_bit(DQ_FAKE_B, &dquot->dq_flags)) {
-+	if (shmem_is_empty_dquot(dquot)) {
- 		/* Remove entry from the tree */
- 		rb_erase(&entry->node, info->dqi_priv);
- 		kfree(entry);
--- 
-2.39.2
+> ---
+>  arch/arm64/include/asm/esr.h       | 26 +++++++++++++++++++++++++-
+>  arch/arm64/include/asm/exception.h |  2 ++
+>  arch/arm64/kernel/entry-common.c   | 23 +++++++++++++++++++++++
+>  arch/arm64/kernel/traps.c          | 11 +++++++++++
+>  4 files changed, 61 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
+> index ae35939f395b..c5a72172fcf1 100644
+> --- a/arch/arm64/include/asm/esr.h
+> +++ b/arch/arm64/include/asm/esr.h
+...
 
+> @@ -382,6 +383,29 @@
+>  #define ESR_ELx_MOPS_ISS_SRCREG(esr)	(((esr) & (UL(0x1f) << 5)) >> 5)
+>  #define ESR_ELx_MOPS_ISS_SIZEREG(esr)	(((esr) & (UL(0x1f) << 0)) >> 0)
+>  
+> +/* ISS field definitions for GCS */
+> +#define ESR_ELx_ExType_SHIFT	(20)
+> +#define ESR_ELx_ExType_MASK	GENMASK(23, 20)
+> +#define ESR_ELx_Raddr_SHIFT	(14)
+
+(10) ?
+
+> +#define ESR_ELx_Raddr_MASK	GENMASK(14, 10)
+> +#define ESR_ELx_Rn_SHIFT	(5)
+> +#define ESR_ELx_Rn_MASK		GENMASK(9, 5)
+
+I think this can also be ESR_ELx_RVALUE_MASK for some ExType
+Worth adding that as well?
+
+> +#define ESR_ELx_IT_SHIFT	(0)
+> +#define ESR_ELx_IT_MASK		GENMASK(4, 0)
+> +
+> +#define ESR_ELx_ExType_DATA_CHECK	0
+> +#define ESR_ELx_ExType_EXLOCK		1
+> +#define ESR_ELx_ExType_STR		2
+> +
+> +#define ESR_ELx_IT_RET			0
+> +#define ESR_ELx_IT_GCSPOPM		1
+> +#define ESR_ELx_IT_RET_KEYA		2
+> +#define ESR_ELx_IT_RET_KEYB		3
+> +#define ESR_ELx_IT_GCSSS1		4
+> +#define ESR_ELx_IT_GCSSS2		5
+> +#define ESR_ELx_IT_GCSPOPCX		6
+> +#define ESR_ELx_IT_GCSPOPX		7
