@@ -2,58 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ED25C756C6F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jul 2023 20:48:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 175C0756C9B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Jul 2023 20:57:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231283AbjGQSsV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Jul 2023 14:48:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43370 "EHLO
+        id S231479AbjGQS5k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Jul 2023 14:57:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229590AbjGQSsU (ORCPT
+        with ESMTP id S231455AbjGQS5j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Jul 2023 14:48:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A2E199;
-        Mon, 17 Jul 2023 11:48:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1FD11611E7;
-        Mon, 17 Jul 2023 18:48:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEBF0C433CD;
-        Mon, 17 Jul 2023 18:48:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1689619698;
-        bh=KMJqZG7kZ3B5FFTPNWgNWHYx6C6P5j2AOUjAg1aSwCE=;
+        Mon, 17 Jul 2023 14:57:39 -0400
+Received: from todd.t-8ch.de (todd.t-8ch.de [IPv6:2a01:4f8:c010:41de::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03FB0A6;
+        Mon, 17 Jul 2023 11:57:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
+        t=1689620255; bh=QjarRr5INc1/uxBbtmYZtobDq1CXveXr5bGBIPDVF4U=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AB5dsAaQMWdU2tx9h9C1Qsj+8Umi/53q5n/fAyFXgpb5J2QHCQ2U4XcTpdWYSHNXl
-         Cii8NSx93kxP42yTv6j6w0igBktXP6FcihyM6kMa9kbdFXnqQruxmS4xl4aekFaUqU
-         560d5jZCswiLbEJnWKkdkjo3ubiEiY8AJBLVXEec=
-Date:   Mon, 17 Jul 2023 20:48:15 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     Jan Kara <jack@suse.cz>, stable@vger.kernel.org,
-        patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-        srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-        Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH 6.4 000/800] 6.4.4-rc1 review
-Message-ID: <2023071702-cardboard-fleshy-35a3@gregkh>
-References: <20230716194949.099592437@linuxfoundation.org>
- <CA+G9fYsSE1q5UiCZxP+EW_QuhMsLqBmVUoRnJqR=59S+5JFEZA@mail.gmail.com>
+        b=kPKqI1qnUradqvDXY/avvWONP/9Ze67ruR6b0ZwL4zShoT/uWQPCbz617dIp11tlL
+         ea/fsf3n2wn4KmmU92EGRMF1wV/lDvKj8MTQkl5vb0Ffkme8Cr5OUNKHHfy5vRHm3/
+         V28DJR3CIEs2WXGaHJBcABrzwjIbwelBUJ8cAeKE=
+Date:   Mon, 17 Jul 2023 20:57:34 +0200
+From:   Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+To:     Sergei Shtepa <sergei.shtepa@veeam.com>
+Cc:     axboe@kernel.dk, hch@infradead.org, corbet@lwn.net,
+        snitzer@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+        dchinner@redhat.com, willy@infradead.org, dlemoal@kernel.org,
+        jack@suse.cz, ming.lei@redhat.com, linux-block@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Donald Buczek <buczek@molgen.mpg.de>
+Subject: Re: [PATCH v5 04/11] blksnap: header file of the module interface
+Message-ID: <822909b0-abd6-4e85-b739-41f8efa6feff@t-8ch.de>
+References: <20230612135228.10702-1-sergei.shtepa@veeam.com>
+ <20230612135228.10702-5-sergei.shtepa@veeam.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYsSE1q5UiCZxP+EW_QuhMsLqBmVUoRnJqR=59S+5JFEZA@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+In-Reply-To: <20230612135228.10702-5-sergei.shtepa@veeam.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -62,40 +48,96 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 17, 2023 at 11:23:40AM +0530, Naresh Kamboju wrote:
-> On Mon, 17 Jul 2023 at 01:24, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 6.4.4 release.
-> > There are 800 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Tue, 18 Jul 2023 19:48:07 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.4.4-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.4.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> 
-> Following kernel warnings / BUG noticed on qemu-arm64 while running
-> Kunit / KASAN tests while booting stable rc 6.4 kernel.
-> 
-> Similar issues have been reported on Linux next [1].
->  next: qemu-arm64: kernel BUG at fs/inode.c:1763!
-> [1] https://lore.kernel.org/linux-mm/5d48dd9a-1822-4917-a77e-193a48ed3bd8@kili.mountain/
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+On 2023-06-12 15:52:21+0200, Sergei Shtepa wrote:
 
-Does bisection help?
+> [..]
 
-thanks,
+> diff --git a/include/uapi/linux/blksnap.h b/include/uapi/linux/blksnap.h
+> new file mode 100644
+> index 000000000000..2fe3f2a43bc5
+> --- /dev/null
+> +++ b/include/uapi/linux/blksnap.h
+> @@ -0,0 +1,421 @@
 
-greg k-h
+> [..]
+
+> +/**
+> + * struct blksnap_snapshotinfo - Result for the command
+> + *	&blkfilter_ctl_blksnap.blkfilter_ctl_blksnap_snapshotinfo.
+> + *
+> + * @error_code:
+> + *	Zero if there were no errors while holding the snapshot.
+> + *	The error code -ENOSPC means that while holding the snapshot, a snapshot
+> + *	overflow situation has occurred. Other error codes mean other reasons
+> + *	for failure.
+> + *	The error code is reset when the device is added to a new snapshot.
+> + * @image:
+> + *	If the snapshot was taken, it stores the block device name of the
+> + *	image, or empty string otherwise.
+> + */
+> +struct blksnap_snapshotinfo {
+> +	__s32 error_code;
+> +	__u8 image[IMAGE_DISK_NAME_LEN];
+
+Nitpick:
+
+Seems a bit weird to have a signed error code that is always negative.
+Couldn't this be an unsigned number or directly return the error from
+the ioctl() itself?
+
+> +};
+> +
+> +/**
+> + * DOC: Interface for managing snapshots
+> + *
+> + * Control commands that are transmitted through the blksnap module interface.
+> + */
+> +enum blksnap_ioctl {
+> +	blksnap_ioctl_version,
+> +	blksnap_ioctl_snapshot_create,
+> +	blksnap_ioctl_snapshot_destroy,
+> +	blksnap_ioctl_snapshot_append_storage,
+> +	blksnap_ioctl_snapshot_take,
+> +	blksnap_ioctl_snapshot_collect,
+> +	blksnap_ioctl_snapshot_wait_event,
+> +};
+> +
+> +/**
+> + * struct blksnap_version - Module version.
+> + *
+> + * @major:
+> + *	Version major part.
+> + * @minor:
+> + *	Version minor part.
+> + * @revision:
+> + *	Revision number.
+> + * @build:
+> + *	Build number. Should be zero.
+> + */
+> +struct blksnap_version {
+> +	__u16 major;
+> +	__u16 minor;
+> +	__u16 revision;
+> +	__u16 build;
+> +};
+> +
+> +/**
+> + * define IOCTL_BLKSNAP_VERSION - Get module version.
+> + *
+> + * The version may increase when the API changes. But linking the user space
+> + * behavior to the version code does not seem to be a good idea.
+> + * To ensure backward compatibility, API changes should be made by adding new
+> + * ioctl without changing the behavior of existing ones. The version should be
+> + * used for logs.
+> + *
+> + * Return: 0 if succeeded, negative errno otherwise.
+> + */
+> +#define IOCTL_BLKSNAP_VERSION							\
+> +	_IOW(BLKSNAP, blksnap_ioctl_version, struct blksnap_version)
+
+Shouldn't this be _IOR()?
+
+  "_IOW means userland is writing and kernel is reading. _IOR
+  means userland is reading and kernel is writing."
+
+The other ioctl definitions seem to need a review, too.
