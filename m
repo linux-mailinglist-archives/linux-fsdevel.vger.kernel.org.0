@@ -2,59 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 085A47574B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 08:55:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 704B6757546
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 09:26:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231434AbjGRGzp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jul 2023 02:55:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53844 "EHLO
+        id S231709AbjGRH0u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jul 2023 03:26:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229705AbjGRGzo (ORCPT
+        with ESMTP id S231655AbjGRH0q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jul 2023 02:55:44 -0400
-Received: from out-17.mta1.migadu.com (out-17.mta1.migadu.com [IPv6:2001:41d0:203:375::11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 551CE1A8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Jul 2023 23:55:43 -0700 (PDT)
-Message-ID: <fd136d07-0da3-ce9c-9d49-6ab9a0e056bd@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1689663340;
+        Tue, 18 Jul 2023 03:26:46 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6BF8EC
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 00:26:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1689665163;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=byzEJ8KQDir+xTs9pfgOhNsoeOFRsWikoU7YhfIE5oo=;
-        b=oTO3y2PcfO14EfDH2drouQqLTF1iu3gLCOv6ePkBHxmqKsNQKDALb2Gm48b0kfCT0Fqvem
-        ZZfpZoHgRBP2VLe3sS+9qcsX0Esxc0UPmsVdAXc/9fEt5PXD6mTs5Gz01gCuXUTzt7gnHO
-        s+ExkqXjjdjv9I5wi6X4ch8QYtebr7U=
-Date:   Tue, 18 Jul 2023 14:55:03 +0800
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=a2DjjjM4FGyKHuuM5I0RdnKN+Rz/1iCrCtnKqTggf0w=;
+        b=d5oId6SnVsywQNkuBnO5jZkLcBsuCdRET3Me4HIYFNCNOruX4tNpozQABCTyZIeixq5GXj
+        XhiAbTZcqDjy4FhDLRFXNXCCqYjVyFVppABxCg8JQLJQNxLw4kiPybchrlPjyiJMj4Uotw
+        y8GF+nD5BVqLL4hM4iTbgpnGb8L1VUk=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-195-iBgJyNXFMd2Bc7GWA-cV6w-1; Tue, 18 Jul 2023 03:25:59 -0400
+X-MC-Unique: iBgJyNXFMd2Bc7GWA-cV6w-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-993b803c391so60399066b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 00:25:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689665158; x=1690269958;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a2DjjjM4FGyKHuuM5I0RdnKN+Rz/1iCrCtnKqTggf0w=;
+        b=hoK7j7IsjJEHvqExsxgY1u9dZJl7eC8+GGr1hKqEQLQtx2fra69mXVY9yh6CVUxhEQ
+         cQVk/0PpyzK9ouIw/kpH5GTEuacjz2M78bwPjScAVEe9/YczJo+wXI+EU8Tiy5yI38Wo
+         iOqvYSqyOsiByNxZS/HqUJJWsc8ir8Vt90PyV25Xcn7QcPlYxYpacrs+J10d1xbNVD3D
+         G1lp92l7Rm8i+9gJNN5WbiNuTWbUDG6UjBJBo9+TvmWwoPFDII9ZQ6Skj997WAFSwtc6
+         CPiAw+g+28X1XE7G7pAmlSVJv7tZErTC+cjiyKZio1RxPcB6apmtlwLV4ziaN/vsAG7q
+         Y21Q==
+X-Gm-Message-State: ABy/qLauN9w44CrXTdirhFjbtyaRfLmHuuYaE0eUFQTqPxgw8KDbwKwA
+        CNkFgxO4y+Gwui8Fid0TouDOa+08fLhE4rZuFHa8I7mihZwM/BiSmEhUHu5CS4jSv7AMBjggxfw
+        JuqeEXwqAkS/jyMILe+ourWHA1w==
+X-Received: by 2002:a17:906:54:b0:993:f349:c989 with SMTP id 20-20020a170906005400b00993f349c989mr10269303ejg.7.1689665158577;
+        Tue, 18 Jul 2023 00:25:58 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlGrcxToIhvi9pZkYvgvkHEy7/T+z+0ZGTKH6gDMN7h9Tf78M3vRIMAt9t7XyJ2PXGXp2U1Bjw==
+X-Received: by 2002:a17:906:54:b0:993:f349:c989 with SMTP id 20-20020a170906005400b00993f349c989mr10269288ejg.7.1689665158219;
+        Tue, 18 Jul 2023 00:25:58 -0700 (PDT)
+Received: from fedora.fritz.box ([2001:9e8:32ec:1b00:f440:b055:3d37:de8])
+        by smtp.gmail.com with ESMTPSA id n10-20020a170906378a00b00992025654c1sm632721ejc.179.2023.07.18.00.25.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jul 2023 00:25:57 -0700 (PDT)
+From:   Philipp Stanner <pstanner@redhat.com>
+To:     willy@infradead.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Philipp Stanner <pstanner@redhat.com>
+Subject: [PATCH v2] xarray: Document necessary flag in alloc functions
+Date:   Tue, 18 Jul 2023 09:25:34 +0200
+Message-ID: <20230718072533.4305-2-pstanner@redhat.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Subject: Re: [PATCH 3/3] io_uring: add support for getdents
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-References: <20230711114027.59945-1-hao.xu@linux.dev>
- <20230711114027.59945-4-hao.xu@linux.dev>
- <20230712-alltag-abberufen-67a615152bee@brauner>
- <bb2aa872-c3fb-93f0-c0da-3a897f39347d@linux.dev>
- <20230713-sitzt-zudem-67bc5d860cb4@brauner>
- <da88054b-c972-f4d1-fbdc-c6e10a9c559b@linux.dev>
- <20230713-verglast-pfuschen-50197f8be98b@brauner>
- <e76f0ab9-768e-2f8c-24f0-95a0dd375c98@linux.dev>
-In-Reply-To: <e76f0ab9-768e-2f8c-24f0-95a0dd375c98@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,60 +76,122 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/16/23 19:57, Hao Xu wrote:
-> On 7/13/23 23:14, Christian Brauner wrote:
-> 
->> Could someone with perf experience try and remove that f_count == 1
->> optimization from __fdget_pos() completely and make it always acquire
->> the mutex? I wonder what the performance impact of that is.
-> 
-> Hi Christian,
-> For your reference, I did a simple test: writed a c program that open a
-> directory which has 1000 empty files, then call sync getdents64 on it
-> repeatedly until we get all the entries. I run this program 10 times for
-> "with f_count==1
-> optimization" and "always do the lock" version.
-> Got below data:
-> with f_count==1:
-> 
-> time cost: 0.000379
-> time cost: 0.000116
-> time cost: 0.000090
-> time cost: 0.000101
-> time cost: 0.000095
-> time cost: 0.000092
-> time cost: 0.000092
-> time cost: 0.000095
-> time cost: 0.000092
-> time cost: 0.000121
-> time cost: 0.000092
-> 
-> time cost avg: 0.00009859999999999998
-> 
-> always do the lock:
-> time cost: 0.000095
-> time cost: 0.000099
-> time cost: 0.000123
-> time cost: 0.000124
-> time cost: 0.000092
-> time cost: 0.000099
-> time cost: 0.000092
-> time cost: 0.000092
-> time cost: 0.000093
-> time cost: 0.000094
->              time cost avg: 0.00010029999999999997
-> 
-> So about 1.724% increment
-> 
-> [1] the first run is not showed here since that try does real IO
->      and diff a lot.
-> [2] the time cost calculation is by gettimeofday()
-> [3] run it in a VM which has 2 CPUs and 1GB memory.
-> 
-> Regards,
-> Hao
+Adds a new line to the docstrings of functions wrapping __xa_alloc() and
+__xa_alloc_cyclic(), informing about the necessity of flag XA_FLAGS_ALLOC
+being set previously.
 
-Did another similar test for more times(100 rounds), about 1.4%
-increment. How about:
-if CONFIG_IO_URING: remove the f_count==1 logic
-else: do the old logic.
+The documentation so far says that functions wrapping __xa_alloc() and
+__xa_alloc_cyclic() are supposed to return either -ENOMEM or -EBUSY in
+case of an error. If the xarray has been initialized without the flag
+XA_FLAGS_ALLOC, however, they fail with a different, undocumented error
+code.
+
+As hinted at in Documentation/core-api/xarray.rst, wrappers around these
+functions should only be invoked when the flag has been set. The
+functions' documentation should reflect that as well.
+
+Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+---
+Version 2 of the proposed documentation update. As Matthew requested, I
+added the sentence to all functions wrapping the above mentioned two
+core functions.
+Additionally, I added it to themselves, too, as these functions can also
+be called by the user directly.
+I also rephrased the commit message so that the implemented change is
+mentioned first.
+---
+ include/linux/xarray.h | 18 ++++++++++++++++++
+ lib/xarray.c           |  6 ++++++
+ 2 files changed, 24 insertions(+)
+
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 741703b45f61..cb571dfcf4b1 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -856,6 +856,9 @@ static inline int __must_check xa_insert_irq(struct xarray *xa,
+  * stores the index into the @id pointer, then stores the entry at
+  * that index.  A concurrent lookup will not see an uninitialised @id.
+  *
++ * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
++ * in xa_init_flags().
++ *
+  * Context: Any context.  Takes and releases the xa_lock.  May sleep if
+  * the @gfp flags permit.
+  * Return: 0 on success, -ENOMEM if memory could not be allocated or
+@@ -886,6 +889,9 @@ static inline __must_check int xa_alloc(struct xarray *xa, u32 *id,
+  * stores the index into the @id pointer, then stores the entry at
+  * that index.  A concurrent lookup will not see an uninitialised @id.
+  *
++ * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
++ * in xa_init_flags().
++ *
+  * Context: Any context.  Takes and releases the xa_lock while
+  * disabling softirqs.  May sleep if the @gfp flags permit.
+  * Return: 0 on success, -ENOMEM if memory could not be allocated or
+@@ -916,6 +922,9 @@ static inline int __must_check xa_alloc_bh(struct xarray *xa, u32 *id,
+  * stores the index into the @id pointer, then stores the entry at
+  * that index.  A concurrent lookup will not see an uninitialised @id.
+  *
++ * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
++ * in xa_init_flags().
++ *
+  * Context: Process context.  Takes and releases the xa_lock while
+  * disabling interrupts.  May sleep if the @gfp flags permit.
+  * Return: 0 on success, -ENOMEM if memory could not be allocated or
+@@ -949,6 +958,9 @@ static inline int __must_check xa_alloc_irq(struct xarray *xa, u32 *id,
+  * The search for an empty entry will start at @next and will wrap
+  * around if necessary.
+  *
++ * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
++ * in xa_init_flags().
++ *
+  * Context: Any context.  Takes and releases the xa_lock.  May sleep if
+  * the @gfp flags permit.
+  * Return: 0 if the allocation succeeded without wrapping.  1 if the
+@@ -983,6 +995,9 @@ static inline int xa_alloc_cyclic(struct xarray *xa, u32 *id, void *entry,
+  * The search for an empty entry will start at @next and will wrap
+  * around if necessary.
+  *
++ * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
++ * in xa_init_flags().
++ *
+  * Context: Any context.  Takes and releases the xa_lock while
+  * disabling softirqs.  May sleep if the @gfp flags permit.
+  * Return: 0 if the allocation succeeded without wrapping.  1 if the
+@@ -1017,6 +1032,9 @@ static inline int xa_alloc_cyclic_bh(struct xarray *xa, u32 *id, void *entry,
+  * The search for an empty entry will start at @next and will wrap
+  * around if necessary.
+  *
++ * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
++ * in xa_init_flags().
++ *
+  * Context: Process context.  Takes and releases the xa_lock while
+  * disabling interrupts.  May sleep if the @gfp flags permit.
+  * Return: 0 if the allocation succeeded without wrapping.  1 if the
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 2071a3718f4e..73b3f8b33a56 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -1802,6 +1802,9 @@ EXPORT_SYMBOL(xa_get_order);
+  * stores the index into the @id pointer, then stores the entry at
+  * that index.  A concurrent lookup will not see an uninitialised @id.
+  *
++ * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
++ * in xa_init_flags().
++ *
+  * Context: Any context.  Expects xa_lock to be held on entry.  May
+  * release and reacquire xa_lock if @gfp flags permit.
+  * Return: 0 on success, -ENOMEM if memory could not be allocated or
+@@ -1850,6 +1853,9 @@ EXPORT_SYMBOL(__xa_alloc);
+  * The search for an empty entry will start at @next and will wrap
+  * around if necessary.
+  *
++ * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
++ * in xa_init_flags().
++ *
+  * Context: Any context.  Expects xa_lock to be held on entry.  May
+  * release and reacquire xa_lock if @gfp flags permit.
+  * Return: 0 if the allocation succeeded without wrapping.  1 if the
+-- 
+2.41.0
+
