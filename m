@@ -2,201 +2,302 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9958F758531
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 20:55:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4362775853D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 21:00:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230510AbjGRSzb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jul 2023 14:55:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43984 "EHLO
+        id S230128AbjGRTAS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jul 2023 15:00:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbjGRSza (ORCPT
+        with ESMTP id S229452AbjGRTAR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jul 2023 14:55:30 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA97D123;
-        Tue, 18 Jul 2023 11:55:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CB498616AC;
-        Tue, 18 Jul 2023 18:55:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FFD5C433C8;
-        Tue, 18 Jul 2023 18:55:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689706506;
-        bh=g90tmctGip5JZ/qUltLRa3L/ha79p8Mr36vMSarsNto=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hL9gb0hWnxYQ//PahNxf6ii3EcokNDZCUKPYDDX2Uj5Y9En1S9Qey0qZDQ2RW3P2p
-         dTTMDDmfmtisD08Vic4XKPtxlGRvJPgyq8Vz7vooyeMlS1DNpBL5LhEkFy/YxE3mnd
-         JGZwQRVkEFMazG6MnqCTiZ62Hf2mFE7KFIDZ1yzZpMPF9iQKXY403xt9uho3pljmBz
-         dmdQAiwMPBz8emAKbWggcfJxkiAAU719bIyF0/5kw/Nu71BoYVur9E70n5SstkziYs
-         8h5G21sSol6HTKBwHCSG9f3dVB8vIx3V2YTIARB0eTo6wi80Ose2YR2SPxc5OAnBn2
-         l/Cl4NVx1FtQA==
-Date:   Tue, 18 Jul 2023 19:54:57 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc:     "corbet@lwn.net" <corbet@lwn.net>,
-        "ardb@kernel.org" <ardb@kernel.org>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "debug@rivosinc.com" <debug@rivosinc.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "oleg@redhat.com" <oleg@redhat.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-        "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-        "hjl.tools@gmail.com" <hjl.tools@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "palmer@dabbelt.com" <palmer@dabbelt.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH 01/35] prctl: arch-agnostic prctl for shadow stack
-Message-ID: <45489f30-8bb7-45f1-ad09-28de4cebf406@sirena.org.uk>
-References: <20230716-arm64-gcs-v1-0-bf567f93bba6@kernel.org>
- <20230716-arm64-gcs-v1-1-bf567f93bba6@kernel.org>
- <3185fa6c37e54d26d66cd0e87e74fb5492399d78.camel@intel.com>
+        Tue, 18 Jul 2023 15:00:17 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A804DF0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 12:00:14 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4fbc0314a7bso9952033e87.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 12:00:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1689706813; x=1692298813;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6UbOGCU2/JGXoj2+oYnNloy150wr1V36J9pa6wEHF6Q=;
+        b=ReM/8JSrD9IBRqRHHryPL5pkEeoRbzf9A7tzhmtpEPj3bM2iEzmMEVig5Ew4iwrLlb
+         nDsW5YSKMNDkPws0esXwKg1IMhTcenNXmD/KxoTJF/HJhnnQy5iTbf5U+c2x9TEtKaKt
+         P+0lYopzWUkgxRiXcjWCVsugPjQtIQF6NQDZyWZMGx4cZa2Di6fFOw0UlEuMsT7tNTIb
+         g9NaVimaTXufRm3nrGAujuBP8GCGa44WaU0ntukhcO53KWiMPmxs2z8Pdn7NkaMv+5qA
+         cuaBSzG4XpCkAsgSHpdVcVujQbr30FRlRX97lnIzjbwWxmec8RH0keuGTDEodFpgfbp7
+         pYCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689706813; x=1692298813;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6UbOGCU2/JGXoj2+oYnNloy150wr1V36J9pa6wEHF6Q=;
+        b=YdSNwHRX4K+vVgJZCO5TI3bkrkIei/4Xspuz6m2uIeB2kg1SPJLALVeuyNYdza2LOY
+         EmhnG3pIRIZJgfj5vG1JuDGyz/zUz/mlP/R13v1xttMSkl9Jug+15QPBhn5pStbonx0R
+         1E2s03Oj/QhiDYATkIm7dSpHb8vTApl9y+Y1Ed0RWArfuVQ7HJNacvocIOrVgX1BCtES
+         P6t/FvQ73PuoOO9Gx4VBRoN0x4m0/y9dKEViOHwDCiUB/NUpjaOUgHd3kDsXKrh85Asm
+         k3zjQgiRUSCWlvXegzMPsHB4zhOswZQZyeAtA9v3CEhr44vDUc/DSsPqTLB1A+NnquSz
+         5bIg==
+X-Gm-Message-State: ABy/qLYZE0qdZbzT6Yi/s3ha+6uK/jbgwtqGJy+PqkRledyUods7aLGu
+        KHuriCmtAWF/O08Vd0TjJMs21Q==
+X-Google-Smtp-Source: APBJJlGkI/KZ8Tn983mRZDpMU0a5NKPZS7pJXHGg9aJRe2c+CWIbDdUGjyeXv4q9P45Zm+QKTtH84g==
+X-Received: by 2002:a05:6512:3e26:b0:4fd:cd11:2df9 with SMTP id i38-20020a0565123e2600b004fdcd112df9mr2353124lfv.64.1689706812849;
+        Tue, 18 Jul 2023 12:00:12 -0700 (PDT)
+Received: from mutt (c-9b0ee555.07-21-73746f28.bbcust.telenor.se. [85.229.14.155])
+        by smtp.gmail.com with ESMTPSA id g20-20020ac25394000000b004fb79feb288sm564647lfh.152.2023.07.18.12.00.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jul 2023 12:00:11 -0700 (PDT)
+Date:   Tue, 18 Jul 2023 21:00:10 +0200
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     Ian Kent <raven@themaw.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Tejun Heo <tj@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Minchan Kim <minchan@kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        elver@google.com, imran.f.khan@oracle.com
+Subject: Re: [PATCH 1/2] kernfs: dont take i_lock on inode attr read
+Message-ID: <20230718190009.GC411@mutt>
+References: <166606025456.13363.3829702374064563472.stgit@donald.themaw.net>
+ <166606036215.13363.1288735296954908554.stgit@donald.themaw.net>
+ <Y2BMonmS0SdOn5yh@slm.duckdns.org>
+ <20221221133428.GE69385@mutt>
+ <7815c8da-7d5f-c2c5-9dfd-7a77ac37c7f7@themaw.net>
+ <e25ee08c-7692-4042-9961-a499600f0a49@app.fastmail.com>
+ <9e35cf66-79ef-1f13-dc6b-b013c73a9fc6@themaw.net>
+ <db933d76-1432-f671-8712-d94de35277d8@themaw.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="KcrOI5lcfTfmau0e"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3185fa6c37e54d26d66cd0e87e74fb5492399d78.camel@intel.com>
-X-Cookie: Nothing happens.
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <db933d76-1432-f671-8712-d94de35277d8@themaw.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 2023-01-23 11:11, Ian Kent wrote:
+> 
+> On 29/12/22 21:07, Ian Kent wrote:
+> > 
+> > On 29/12/22 17:20, Arnd Bergmann wrote:
+> > > On Fri, Dec 23, 2022, at 00:11, Ian Kent wrote:
+> > > > On 21/12/22 21:34, Anders Roxell wrote:
+> > > > > On 2022-10-31 12:30, Tejun Heo wrote:
+> > > > > > On Tue, Oct 18, 2022 at 10:32:42AM +0800, Ian Kent wrote:
+> > > > > > > The kernfs write lock is held when the kernfs node inode attributes
+> > > > > > > are updated. Therefore, when either kernfs_iop_getattr() or
+> > > > > > > kernfs_iop_permission() are called the kernfs node inode attributes
+> > > > > > > won't change.
+> > > > > > > 
+> > > > > > > Consequently concurrent kernfs_refresh_inode() calls always copy the
+> > > > > > > same values from the kernfs node.
+> > > > > > > 
+> > > > > > > So there's no need to take the inode i_lock to get consistent values
+> > > > > > > for generic_fillattr() and generic_permission(), the
+> > > > > > > kernfs read lock
+> > > > > > > is sufficient.
+> > > > > > > 
+> > > > > > > Signed-off-by: Ian Kent <raven@themaw.net>
+> > > > > > Acked-by: Tejun Heo <tj@kernel.org>
+> > > > > Hi,
+> > > > > 
+> > > > > Building an allmodconfig arm64 kernel on yesterdays next-20221220 and
+> > > > > booting that in qemu I see the following "BUG: KCSAN: data-race in
+> > > > > set_nlink / set_nlink".
+> > > > 
+> > > > I'll check if I missed any places where set_link() could be
+> > > > called where the link count could be different.
+> > > > 
+> > > > 
+> > > > If there aren't any the question will then be can writing the
+> > > > same value to this location in multiple concurrent threads
+> > > > corrupt it?
+> > > I think the race that is getting reported for set_nlink()
+> > > is about this bit getting called simulatenously on multiple
+> > > CPUs with only the read lock held for the inode:
+> > > 
+> > >       /* Yes, some filesystems do change nlink from zero to one */
+> > >       if (inode->i_nlink == 0)
+> > > atomic_long_dec(&inode->i_sb->s_remove_count);
+> > >       inode->__i_nlink = nlink;
+> > > 
+> > > Since i_nlink and __i_nlink refer to the same memory location,
+> > > the 'inode->i_nlink == 0' check can be true for all of them
+> > > before the nonzero nlink value gets set, and this results in
+> > > s_remove_count being decremented more than once.
+> > 
+> > 
+> > Thanks for the comment Arnd.
+> 
+> 
+> Hello all,
+> 
+> 
+> I've been looking at this and after consulting Miklos and his pointing
+> 
+> out that it looks like a false positive the urgency dropped off a bit. So
+> 
+> apologies for taking so long to report back.
+> 
+> 
+> Anyway it needs some description of conclusions reached so far.
+> 
+> 
+> I'm still looking around but in short, kernfs will set directories to <# of
+> 
+> directory entries> + 2 unconditionally for directories. I can't yet find
+> 
+> any other places where i_nlink is set or changed and if there are none
+> 
+> then i_nlink will never be set to zero so the race should not occur.
+> 
+> 
+> Consequently my claim is this is a real false positive.
+> 
+> 
+> There are the file system operations that may be passed at mount time
+> 
+> but given the way kernfs sets i_nlink it pretty much dictates those
+> operations
+> 
+> (if there were any that modify it and there don't appear to be any) leave it
+> 
+> alone.
+> 
+> 
+> So it just doesn't make sense for users of kernfs to fiddle with i_nlink ...
 
---KcrOI5lcfTfmau0e
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On todays next tag, next-20230718 this KCSAN BUG poped up again. When I
+built an allmodconfig arm64 kernel and booted it in QEMU. Full log can
+be found http://ix.io/4AUd
 
-On Tue, Jul 18, 2023 at 05:45:01PM +0000, Edgecombe, Rick P wrote:
-> On Sun, 2023-07-16 at 22:50 +0100, Mark Brown wrote:
+[ 1694.987789][  T137] BUG: KCSAN: data-race in inode_permission / kernfs_refresh_inode
+[ 1694.992912][  T137] 
+[ 1694.994532][  T137] write to 0xffff00000bab6070 of 2 bytes by task 104 on cpu 0:
+[ 1694.999269][ T137] kernfs_refresh_inode (/home/anders/src/kernel/next/fs/kernfs/inode.c:171) 
+[ 1695.002707][ T137] kernfs_iop_permission (/home/anders/src/kernel/next/fs/kernfs/inode.c:289) 
+[ 1695.006148][ T137] inode_permission (/home/anders/src/kernel/next/fs/namei.c:461 /home/anders/src/kernel/next/fs/namei.c:528) 
+[ 1695.009420][ T137] link_path_walk (/home/anders/src/kernel/next/fs/namei.c:1720 /home/anders/src/kernel/next/fs/namei.c:2267) 
+[ 1695.012643][ T137] path_lookupat (/home/anders/src/kernel/next/fs/namei.c:2478 (discriminator 2)) 
+[ 1695.015781][ T137] filename_lookup (/home/anders/src/kernel/next/fs/namei.c:2508) 
+[ 1695.019059][ T137] vfs_statx (/home/anders/src/kernel/next/fs/stat.c:238) 
+[ 1695.022024][ T137] vfs_fstatat (/home/anders/src/kernel/next/fs/stat.c:276) 
+[ 1695.025067][ T137] __do_sys_newfstatat (/home/anders/src/kernel/next/fs/stat.c:446) 
+[ 1695.028497][ T137] __arm64_sys_newfstatat (/home/anders/src/kernel/next/fs/stat.c:440 /home/anders/src/kernel/next/fs/stat.c:440) 
+[ 1695.032080][ T137] el0_svc_common.constprop.0 (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:38 /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:52 /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:139) 
+[ 1695.035916][ T137] do_el0_svc (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:188) 
+[ 1695.038796][ T137] el0_svc (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:133 /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:144 /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:648) 
+[ 1695.041468][ T137] el0t_64_sync_handler (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:666) 
+[ 1695.044889][ T137] el0t_64_sync (/home/anders/src/kernel/next/arch/arm64/kernel/entry.S:591) 
+[ 1695.047904][  T137] 
+[ 1695.049511][  T137] 1 lock held by systemd-udevd/104:
+[ 1695.052837][ T137] #0: ffff000006681e08 (&root->kernfs_iattr_rwsem){++++}-{3:3}, at: kernfs_iop_permission (/home/anders/src/kernel/next/fs/kernfs/inode.c:288) 
+[ 1695.060241][  T137] irq event stamp: 82902
+[ 1695.063006][ T137] hardirqs last enabled at (82901): _raw_spin_unlock_irqrestore (/home/anders/src/kernel/next/arch/arm64/include/asm/alternative-macros.h:250 /home/anders/src/kernel/next/arch/arm64/include/asm/irqflags.h:27 /home/anders/src/kernel/next/arch/arm64/include/asm/irqflags.h:140 /home/anders/src/kernel/next/include/linux/spinlock_api_smp.h:151 /home/anders/src/kernel/next/kernel/locking/spinlock.c:194) 
+[ 1695.069673][ T137] hardirqs last disabled at (82902): el1_interrupt (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:472 /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:488) 
+[ 1695.075474][ T137] softirqs last enabled at (82792): fpsimd_restore_current_state (/home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:264 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1791) 
+[ 1695.082319][ T137] softirqs last disabled at (82790): fpsimd_restore_current_state (/home/anders/src/kernel/next/include/linux/bottom_half.h:20 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:242 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1784) 
+[ 1695.089049][  T137] 
+[ 1695.090659][  T137] read to 0xffff00000bab6070 of 2 bytes by task 137 on cpu 0:
+[ 1695.095374][ T137] inode_permission (/home/anders/src/kernel/next/fs/namei.c:532) 
+[ 1695.098655][ T137] link_path_walk (/home/anders/src/kernel/next/fs/namei.c:1720 /home/anders/src/kernel/next/fs/namei.c:2267) 
+[ 1695.101857][ T137] path_openat (/home/anders/src/kernel/next/fs/namei.c:3789 (discriminator 2)) 
+[ 1695.104885][ T137] do_filp_open (/home/anders/src/kernel/next/fs/namei.c:3820) 
+[ 1695.108006][ T137] do_sys_openat2 (/home/anders/src/kernel/next/fs/open.c:1418) 
+[ 1695.111290][ T137] __arm64_sys_openat (/home/anders/src/kernel/next/fs/open.c:1433) 
+[ 1695.114825][ T137] el0_svc_common.constprop.0 (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:38 /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:52 /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:139) 
+[ 1695.118662][ T137] do_el0_svc (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:188) 
+[ 1695.121555][ T137] el0_svc (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:133 /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:144 /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:648) 
+[ 1695.124207][ T137] el0t_64_sync_handler (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:666) 
+[ 1695.127590][ T137] el0t_64_sync (/home/anders/src/kernel/next/arch/arm64/kernel/entry.S:591) 
+[ 1695.130641][  T137] 
+[ 1695.132241][  T137] no locks held by systemd-udevd/137.
+[ 1695.135618][  T137] irq event stamp: 3246
+[ 1695.138519][ T137] hardirqs last enabled at (3245): seqcount_lockdep_reader_access (/home/anders/src/kernel/next/include/linux/seqlock.h:105) 
+[ 1695.145825][ T137] hardirqs last disabled at (3246): el1_interrupt (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:472 /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:488) 
+[ 1695.151942][ T137] softirqs last enabled at (3208): fpsimd_restore_current_state (/home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:264 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1791) 
+[ 1695.158950][ T137] softirqs last disabled at (3206): fpsimd_restore_current_state (/home/anders/src/kernel/next/include/linux/bottom_half.h:20 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:242 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1784) 
+[ 1695.166036][  T137] 
+[ 1695.167621][  T137] Reported by Kernel Concurrency Sanitizer on:
+[ 1695.179990][  T137] Hardware name: linux,dummy-virt (DT)
+[ 1695.183687][  T137] ==================================================================
 
-> > Three architectures (x86, aarch64, riscv) have announced support for
-> > shadow stack.=A0 This patch adds arch-agnostic prtcl support to enable
-> > /disable/get/set status of shadow stack and forward control (landing
-> > pad)
-> > flow cfi statuses.
+[...]
 
-> What is this about forward control flow? Seems to be just about shadow
-> stack.
+[ 1738.053819][  T104] BUG: KCSAN: data-race in set_nlink / set_nlink
+[ 1738.058223][  T104] 
+[ 1738.059865][  T104] read to 0xffff00000bab6918 of 4 bytes by task 108 on cpu 0:
+[ 1738.064916][ T104] set_nlink (/home/anders/src/kernel/next/fs/inode.c:369) 
+[ 1738.067845][ T104] kernfs_refresh_inode (/home/anders/src/kernel/next/fs/kernfs/inode.c:180) 
+[ 1738.071607][ T104] kernfs_iop_permission (/home/anders/src/kernel/next/fs/kernfs/inode.c:289) 
+[ 1738.075467][ T104] inode_permission (/home/anders/src/kernel/next/fs/namei.c:461 /home/anders/src/kernel/next/fs/namei.c:528) 
+[ 1738.078868][ T104] link_path_walk (/home/anders/src/kernel/next/fs/namei.c:1720 /home/anders/src/kernel/next/fs/namei.c:2267) 
+[ 1738.082270][ T104] path_lookupat (/home/anders/src/kernel/next/fs/namei.c:2478 (discriminator 2)) 
+[ 1738.085488][ T104] filename_lookup (/home/anders/src/kernel/next/fs/namei.c:2508) 
+[ 1738.089101][ T104] user_path_at_empty (/home/anders/src/kernel/next/fs/namei.c:2907) 
+[ 1738.092469][ T104] do_readlinkat (/home/anders/src/kernel/next/fs/stat.c:477) 
+[ 1738.095970][ T104] __arm64_sys_readlinkat (/home/anders/src/kernel/next/fs/stat.c:504 /home/anders/src/kernel/next/fs/stat.c:501 /home/anders/src/kernel/next/fs/stat.c:501) 
+[ 1738.099529][ T104] el0_svc_common.constprop.0 (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:38 /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:52 /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:139) 
+[ 1738.103696][ T104] do_el0_svc (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:188) 
+[ 1738.106560][ T104] el0_svc (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:133 /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:144 /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:648) 
+[ 1738.109613][ T104] el0t_64_sync_handler (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:666) 
+[ 1738.113035][ T104] el0t_64_sync (/home/anders/src/kernel/next/arch/arm64/kernel/entry.S:591) 
+[ 1738.116346][  T104] 
+[ 1738.117924][  T104] 1 lock held by systemd-udevd/108:
+[ 1738.121580][ T104] #0: ffff000006681e08 (&root->kernfs_iattr_rwsem){++++}-{3:3}, at: kernfs_iop_permission (/home/anders/src/kernel/next/fs/kernfs/inode.c:288) 
+[ 1738.129355][  T104] irq event stamp: 31000
+[ 1738.132088][ T104] hardirqs last enabled at (31000): seqcount_lockdep_reader_access (/home/anders/src/kernel/next/include/linux/seqlock.h:105) 
+[ 1738.139417][ T104] hardirqs last disabled at (30999): seqcount_lockdep_reader_access (/home/anders/src/kernel/next/include/linux/seqlock.h:104) 
+[ 1738.146781][ T104] softirqs last enabled at (30973): fpsimd_restore_current_state (/home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:264 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1791) 
+[ 1738.153891][ T104] softirqs last disabled at (30971): fpsimd_restore_current_state (/home/anders/src/kernel/next/include/linux/bottom_half.h:20 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:242 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1784) 
+[ 1738.161012][  T104] 
+[ 1738.162663][  T104] write to 0xffff00000bab6918 of 4 bytes by task 104 on cpu 0:
+[ 1738.167730][ T104] set_nlink (/home/anders/src/kernel/next/fs/inode.c:372) 
+[ 1738.170559][ T104] kernfs_refresh_inode (/home/anders/src/kernel/next/fs/kernfs/inode.c:180) 
+[ 1738.174355][ T104] kernfs_iop_permission (/home/anders/src/kernel/next/fs/kernfs/inode.c:289) 
+[ 1738.177829][ T104] inode_permission (/home/anders/src/kernel/next/fs/namei.c:461 /home/anders/src/kernel/next/fs/namei.c:528) 
+[ 1738.181403][ T104] link_path_walk (/home/anders/src/kernel/next/fs/namei.c:1720 /home/anders/src/kernel/next/fs/namei.c:2267) 
+[ 1738.184738][ T104] path_lookupat (/home/anders/src/kernel/next/fs/namei.c:2478 (discriminator 2)) 
+[ 1738.188268][ T104] filename_lookup (/home/anders/src/kernel/next/fs/namei.c:2508) 
+[ 1738.191865][ T104] vfs_statx (/home/anders/src/kernel/next/fs/stat.c:238) 
+[ 1738.196236][ T104] vfs_fstatat (/home/anders/src/kernel/next/fs/stat.c:276) 
+[ 1738.200120][ T104] __do_sys_newfstatat (/home/anders/src/kernel/next/fs/stat.c:446) 
+[ 1738.204095][ T104] __arm64_sys_newfstatat (/home/anders/src/kernel/next/fs/stat.c:440 /home/anders/src/kernel/next/fs/stat.c:440) 
+[ 1738.207676][ T104] el0_svc_common.constprop.0 (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:38 /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:52 /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:139) 
+[ 1738.211820][ T104] do_el0_svc (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:188) 
+[ 1738.214815][ T104] el0_svc (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:133 /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:144 /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:648) 
+[ 1738.217709][ T104] el0t_64_sync_handler (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:666) 
+[ 1738.221239][ T104] el0t_64_sync (/home/anders/src/kernel/next/arch/arm64/kernel/entry.S:591) 
+[ 1738.224502][  T104] 
+[ 1738.226090][  T104] 1 lock held by systemd-udevd/104:
+[ 1738.229747][ T104] #0: ffff000006681e08 (&root->kernfs_iattr_rwsem){++++}-{3:3}, at: kernfs_iop_permission (/home/anders/src/kernel/next/fs/kernfs/inode.c:288) 
+[ 1738.237504][  T104] irq event stamp: 108353
+[ 1738.240262][ T104] hardirqs last enabled at (108353): seqcount_lockdep_reader_access (/home/anders/src/kernel/next/include/linux/seqlock.h:105) 
+[ 1738.247443][ T104] hardirqs last disabled at (108352): seqcount_lockdep_reader_access (/home/anders/src/kernel/next/include/linux/seqlock.h:104) 
+[ 1738.254510][ T104] softirqs last enabled at (108326): fpsimd_restore_current_state (/home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:264 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1791) 
+[ 1738.262187][ T104] softirqs last disabled at (108324): fpsimd_restore_current_state (/home/anders/src/kernel/next/include/linux/bottom_half.h:20 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:242 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1784) 
+[ 1738.270239][  T104] 
+[ 1738.272140][  T104] Reported by Kernel Concurrency Sanitizer on:
+[ 1738.285185][  T104] Hardware name: linux,dummy-virt (DT)
+[ 1738.288703][  T104] ==================================================================
 
-Sorry, that's the original commit message - the original version of this
-also had support for controlling landing pads but I don't need that and
-cut them out of the series.  I forgot to update that bit of the commit
-message.
 
-> > [Rebased onto current kernels, renumbering to track other allocations
-> > =A0already upstream, dropping indirect LP, updating to pass arg to set
-> > =A0 by value, fix missing prototypes for weak functions and update
-> > title.
-> > =A0 -- broonie]
-
-> 1. PR_SET_SHADOW_STACK_STATUS seems like a strange name for the thing
-> actually doing the whole enabling of the feature which involves
-> allocating memory, etc. And in the future a growing array of different
-> things (enabling push, write, etc).
-
-I have no strong opinion on naming here.  _MODE?  I didn't find any
-discussions around this in the=20
-
-> 2. x86 only allows one enabling/disabling operation at a time. So you
-> can't enable shadow stack AND WRSS with one syscall, for example. This
-> is to make it so it's clear which operation failed. Also, since some
-> features depend on others (WRSS), there would need to be some ordering
-> and rollback logic.=A0There was some discussion about a batch enabling
-> arch_prctl() that could report failures independently, but it was
-> deemed premature optimization.
-
-I did see that the x86 implementation required a call per flag, the
-logic wasn't hugely obvious there - it didn't seem super helpful.
-There's nothing stopping userspace turning one flag at a time if it
-wants to, we just don't require it.  I wasn't overly concerned about the
-rollback logic since I was anticipating that the main complexity is the
-base enable and allocate, everything else would just be storing a mode.
-
-We can implement things with the one bit per call approach, I just
-didn't see much upside to it.  Perhaps I'm missing some case though.
-
-> 3. It only allows you to lock the whole feature, and not individual
-> subfeatures. For things like WRSS, it came up that there might be an
-> elf bit, like the shadow stack one, but that works a bit different.
-> Instead of only enabling shadow stack when ALL DSOs support the
-> feature, it would want to be enabled if ANY DSOs require it. So
-> userspace might want to do something like lock shadow stack, but leave
-> WRSS unlocked in case a dlopen() call came across a WRSS-requiring DSO.
-
-We could add either a second argument with the lock or a separate lock
-prctl() and matching query which takes the same bitmask, being able
-to lock per feature does give more flexibility to userspace in how we do
-the locking and isn't hugely more costly to implement.  My model for
-locking had been that there would be a final decision on what the
-features should be, I was modelling "can enable" as equivalent access to
-"is enabled" when it came to what was locked.
-
-> 4. To support CRIU, there needed to be a ptrace-only unlock feature.
-> The arch_prctl() has a special ptrace route to enforce that this unlock
-> is only coming from ptrace. Is there some way to do this with a regular
-> prctl()?
-
-For arm64 we need to add a regset to expose the GCS pointer anyway so
-the GCS mode is in there, though at the minute we prevent any changes at
-all via that mechanism it could be implemented later.  I'm not aware of
-any way for prctl() to tell if it is being invoked via ptrace so that'd
-need to be dealt with somehow.
-
-> 5. I see in the next patch there is hinted support for write and push
-> as well (although I can't find the implementation in the patches, am I
-> missing it?). X86 has something close enough to write, but not push.
-> What is the idea for when the features don't exactly match?
-
-The implementation is in "arm64/gcs: Implement shadow stack prctl()
-interface", it just boils down to turning on or off a register bit.
-
-> I think when Deepak originally brought up this unified prctl-based
-> interface, it seemed far away before we could tell if it *could* be
-> unified. Do either of you have any thoughts on whether the above points
-> could be incorporated?
-
-Other than the issue with CRIU I don't see any huge difficulty.
-
---KcrOI5lcfTfmau0e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmS24AAACgkQJNaLcl1U
-h9DxkQgAgZwa9pvR8VpxobsPn+zGULF2/Agz87ptksoCHAdiehLbLFMyBPdWVlPE
-VpUVG9yRkpPwF6CxIGr7eYT3bdZPRghlak/eJK+2vfEr9OBZrtn5jUDtLcYXHFEh
-4zY9eSZj4uM6IEH8PR/edFhVsRmngGx2xU0Y4yqcmKXBT2S4OdfrOQQvQkKQ15eG
-oZBMN4uX+3JFgQLViUMNpPj0bbkA+G4kab1alwOZiQZfZEqH1CRuPpk4CHu51Db9
-8bP7/Jy0QkCO19VmDm3NC8v3vAUoECs9iGx6GzsL41fRNlNMbEy2yyTxdz4Nu4YH
-/Fkhbx2eF0EG2nmwEzbQ+eAsBn/+eg==
-=rIz9
------END PGP SIGNATURE-----
-
---KcrOI5lcfTfmau0e--
+Cheers,
+Anders
