@@ -2,137 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 58BD9758265
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 18:47:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 404E2758353
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 19:17:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231752AbjGRQrd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jul 2023 12:47:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54656 "EHLO
+        id S232934AbjGRRRw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jul 2023 13:17:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230428AbjGRQr3 (ORCPT
+        with ESMTP id S232465AbjGRRRt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jul 2023 12:47:29 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58BC710D2;
-        Tue, 18 Jul 2023 09:47:28 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 02C3D21835;
-        Tue, 18 Jul 2023 16:47:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1689698847; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0gG/SrZGF5/s3yIgwzjFlba62tVC4bEASQFHFHTinDw=;
-        b=sCqIZIaeY+lZmLjsOPsAbQI7GvoRp+QnzyxAweo04VRhB02G7zlyPODdtnMibPbRArJBXD
-        EmKHbQr2G1Hg/mlor+k1OhYUl6g3r4QossnKRSkX+YcTTQxPScxqx/r35yGnTw3fNEyVf5
-        ghYS+pV/sSq88EFejZe58ccHS7UeR7E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1689698847;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0gG/SrZGF5/s3yIgwzjFlba62tVC4bEASQFHFHTinDw=;
-        b=5Agcg3CzsovgtmLs9P2htHWvOOKunhSV4WopA6/9BhjEF+Ts1aNnzWoRaa1U1bHqG+xwJc
-        Fil0WRvm5Z4c3BAA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C0405134B0;
-        Tue, 18 Jul 2023 16:47:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id llAuKR7CtmTiUwAAMHmgww
-        (envelope-from <krisman@suse.de>); Tue, 18 Jul 2023 16:47:26 +0000
-From:   Gabriel Krisman Bertazi <krisman@suse.de>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     brauner@kernel.org, tytso@mit.edu,
-        linux-f2fs-devel@lists.sourceforge.net, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [f2fs-dev] [PATCH v2 3/7] libfs: Validate negative dentries in
- case-insensitive directories
-References: <20230422000310.1802-1-krisman@suse.de>
-        <20230422000310.1802-4-krisman@suse.de>
-        <20230714050028.GC913@sol.localdomain>
-Date:   Tue, 18 Jul 2023 12:47:25 -0400
-In-Reply-To: <20230714050028.GC913@sol.localdomain> (Eric Biggers's message of
-        "Thu, 13 Jul 2023 22:00:28 -0700")
-Message-ID: <87pm4p5fqa.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+        Tue, 18 Jul 2023 13:17:49 -0400
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AD4A10CB
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 10:17:47 -0700 (PDT)
+Received: by mail-qk1-x735.google.com with SMTP id af79cd13be357-7659db6339eso267433885a.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 10:17:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20221208.gappssmtp.com; s=20221208; t=1689700666; x=1692292666;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aV119CUZzOJ+2nU7i7rciuokyHqqUtLofvwhyauU4aE=;
+        b=pwbsr1h9n5c57JlTUKfYRkR3tkRz6+C5pAreh/uVqEdLCTLkt4AcNCuiIyjtJsp/G4
+         Qkgdq/fsjPvyTf5hs7wKaiFe30IeO1bT5G7BfjcmyVHF7/QAzAXMchqoz9UEFinrpSfK
+         T6NYQYDDbvked0eX/2cwnozLsB9uKgQT0zyVDgYULwhJaINeLMnjJO3UI1+iM/2r9bpt
+         bHKVinmVHsaFXweOy3DgY+FDTLOHdo+uryF8YmiSbHSq+BLF5RLD0pWhUFRs6mXO30y4
+         CNWqv6zK4Qr93h1/6q5Zx8ndi3SpgMiKDT3KhnjzAYpxYrn1qA6YdGmVU8QScYathHWe
+         wL/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689700666; x=1692292666;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aV119CUZzOJ+2nU7i7rciuokyHqqUtLofvwhyauU4aE=;
+        b=eRGHWh5BTZfAPZ9tDMih58mFCLdoyh6jDXhRtM5cX5TuzuA4iWJ3O0nzI5raN34a59
+         o5eIrsitVeULfmHjTbih5EbRs0GAAXWepvGz67ydz23ayRohOhkvbC4Z4ea5yooMy5u5
+         pROw5kU3SNF3v9/x7ffC+vD8dIlMbZOznVZ1zqj3YHE2SU7zO8ChQHn85hQv1G0GZWCI
+         3xpbdMCFcnfMxAo3DxjOjJXDaF9YGU/Zdi9kKmK5MX9RV0G/9tGZvj94GqZsRKyrx340
+         CqLYeLmdku0uNsvREEr0vL4yCkMLqB5pgjSxR5y+/nDgtuj0z7MbSwVEQceYEqIq26KH
+         lMvQ==
+X-Gm-Message-State: ABy/qLYQSevkhHmdd1uds6FW7H5NRLwFq8R78hsmOuEcXdjhgLVJeCIU
+        /OjeFVgx7jXaolc7ylWvt1OnXw==
+X-Google-Smtp-Source: APBJJlGDUuhVj/w8ybkHZroC36GxyeamEhSgFgNnIh7eTvU2ikI04uPpSE9SekbO0HBCPu+Mlf5+og==
+X-Received: by 2002:a05:620a:d85:b0:765:6923:623e with SMTP id q5-20020a05620a0d8500b007656923623emr14824431qkl.29.1689700666088;
+        Tue, 18 Jul 2023 10:17:46 -0700 (PDT)
+Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id i3-20020a37c203000000b00767660afed5sm723261qkm.99.2023.07.18.10.17.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jul 2023 10:17:45 -0700 (PDT)
+Date:   Tue, 18 Jul 2023 13:17:44 -0400
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: small writeback fixes
+Message-ID: <20230718171744.GA843162@perftesting>
+References: <20230713130431.4798-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230713130431.4798-1-hch@lst.de>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eric Biggers <ebiggers@kernel.org> writes:
+On Thu, Jul 13, 2023 at 03:04:22PM +0200, Christoph Hellwig wrote:
+> Hi all,
+> 
+> this series has various fixes for bugs found in inspect or only triggered
+> with upcoming changes that are a fallout from my work on bound lifetimes
+> for the ordered extent and better confirming to expectations from the
+> common writeback code.
+> 
+> Note that this series builds on the "btrfs compressed writeback cleanups"
+> series sent out previously.
+> 
+> A git tree is also available here:
+> 
+>     git://git.infradead.org/users/hch/misc.git btrfs-writeback-fixes
+> 
+> Gitweb:
+> 
+>     http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/btrfs-writeback-fixes
+> 
+> Diffatat:
+>  extent_io.c |  182 ++++++++++++++++++++++++++++++++++++------------------------
+>  inode.c     |   16 +----
+>  2 files changed, 117 insertions(+), 81 deletions(-)
 
-> I notice that the existing vfat_revalidate_ci() in fs/fat/namei_vfat.c behaves
-> differently in the 'flags == 0' case:
->
->
-> 	/*
-> 	 * This may be nfsd (or something), anyway, we can't see the
-> 	 * intent of this. So, since this can be for creation, drop it.
-> 	 */
-> 	if (!flags)
-> 		return 0;
->
-> I don't know whether that's really needed, but have you thought about this?
+Just FYI I've been using these two series to see how the github CI stuff was
+working, and I keep tripping over a hang in generic/475.  It appears to be in
+the fixup worker, here's the sysrq w output
 
-Hi Eric,
+sysrq: Show Blocked State
+task:kworker/u4:5    state:D stack:0     pid:1713600 ppid:2      flags:0x00004000
+Workqueue: btrfs-fixup btrfs_work_helper
+Call Trace:
+ <TASK>
+ __schedule+0x533/0x1910
+ ? find_held_lock+0x2b/0x80
+ schedule+0x5e/0xd0
+ __reserve_bytes+0x4e2/0x830
+ ? __pfx_autoremove_wake_function+0x10/0x10
+ btrfs_reserve_data_bytes+0x54/0x170
+ btrfs_check_data_free_space+0x6a/0xf0
+ btrfs_delalloc_reserve_space+0x2b/0xe0
+ btrfs_writepage_fixup_worker+0x7e/0x4c0
+ btrfs_work_helper+0xff/0x410
+ process_one_work+0x26b/0x550
+ worker_thread+0x53/0x3a0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0xf5/0x130
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x2c/0x50
+ </TASK>
+task:kworker/u4:4    state:D stack:0     pid:2513631 ppid:2      flags:0x00004000
+Workqueue: events_unbound btrfs_async_reclaim_data_space
+Call Trace:
+ <TASK>
+ __schedule+0x533/0x1910
+ ? lock_acquire+0xca/0x2b0
+ schedule+0x5e/0xd0
+ schedule_timeout+0x1ad/0x1c0
+ __wait_for_common+0xbd/0x220
+ ? __pfx_schedule_timeout+0x10/0x10
+ btrfs_wait_ordered_extents+0x3e3/0x480
+ btrfs_wait_ordered_roots+0x184/0x260
+ flush_space+0x3de/0x6a0
+ ? btrfs_async_reclaim_data_space+0x52/0x180
+ ? lock_release+0xc9/0x270
+ btrfs_async_reclaim_data_space+0xff/0x180
+ process_one_work+0x26b/0x550
+ worker_thread+0x1eb/0x3a0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0xf5/0x130
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x2c/0x50
+ </TASK>
+task:kworker/u4:6    state:D stack:0     pid:2513783 ppid:2      flags:0x00004000
+Workqueue: btrfs-flush_delalloc btrfs_work_helper
+Call Trace:
+ <TASK>
+ __schedule+0x533/0x1910
+ schedule+0x5e/0xd0
+ btrfs_start_ordered_extent+0x153/0x210
+ ? __pfx_autoremove_wake_function+0x10/0x10
+ btrfs_run_ordered_extent_work+0x19/0x30
+ btrfs_work_helper+0xff/0x410
+ process_one_work+0x26b/0x550
+ worker_thread+0x53/0x3a0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0xf5/0x130
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x2c/0x50
+ </TASK>
 
-I didn't look much into it before because, as you know, the vfat
-case-insensitive implementation is completely different than the
-ext4/f2fs code. But I think you are on to something.
+We appear to be getting hung up because the ENOSPC stuff is flushing and waiting
+on ordered extents, and then the fixup worker is waiting on trying to reserve
+space.  My hunch is the page that's in the fixup worker is attached to an
+ordered extent.
 
-The original intent of this check was to safeguard against the case
-where d_revalidate would be called without nameidata from the filesystem
-helpers. The filesystems don't give the purpose of the lookup
-(nd->flags) so there is no way to tell if the dentry is being used for
-creation, and therefore we can't rely on the negative dentry for ci. The
-path is like this:
+I can pretty reliably reproduce this in the CI, so if you have trouble
+reproducing it let me know.  I'll dig into it later today, but I may not get to
+it before you do.  Thanks,
 
-lookup_one_len(...)
-  __lookup_hash(..., nd = NULL)
-     cached_lookup(...)
-       do_revalidate(parent, name, nd)
-         dentry->d_op->d_revalidate(parent, nd);
-
-Then !nd was dropped to pass flags directly around 2012, which
-overloaded the flags meaning. Which means, d_revalidate can
-still be called for creation without (LOOKUP_CREATE|...). For
-instance, in nfsd_create.  I wasn't considering this.
-
-This sucks, because we don't have enough information to avoid the name
-check in this case, so we'd also need memcmp there.  Except it won't be
-safe. because callers won't necessarily hold the parent lock in the path
-below.
-
- lookup_one_unlocked()
-   lookup_dcache()
-      d_revalidate()  // called unlocked
-
-Thus, I'll have to add a similar:
-
-  if (!flags)
-    return 0;
-
-Ahead of the is_creation check.  It will solve it.
-
-But i think the issue is in VFS.  the lookup_one_* functions should have
-proper lookup flags, such that d_revalidate can tell the purpose of the
-lookup.
-
--- 
-Gabriel Krisman Bertazi
+Josef
