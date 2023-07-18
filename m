@@ -2,123 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 45965758599
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 21:34:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1FC27585A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 21:37:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229816AbjGRTeR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jul 2023 15:34:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57014 "EHLO
+        id S230181AbjGRTh0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jul 2023 15:37:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229660AbjGRTeQ (ORCPT
+        with ESMTP id S229452AbjGRThZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jul 2023 15:34:16 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB1D7198D;
-        Tue, 18 Jul 2023 12:34:15 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        Tue, 18 Jul 2023 15:37:25 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D895A198D;
+        Tue, 18 Jul 2023 12:37:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 912B521228;
-        Tue, 18 Jul 2023 19:34:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1689708854; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nfRfgiokLRl5nqf7y5XFPbUJv0GuTL/H7C55bO7v3R4=;
-        b=cDrfz3Bxd3Nd94VFgL2JVO8njdKs183T68KwWa+HKUDHdGI4+lryOaPHUxSmejrApiOfr0
-        D/uaaLm82JxebaF1tnpXJdSInbh1FTMQsm7swQhggH66EAFEjvbzcBfkZ2xbh2zmJNftVM
-        4GEhE7V8Pw/YWR6lp0cAzGw+1yJPuSc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1689708854;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nfRfgiokLRl5nqf7y5XFPbUJv0GuTL/H7C55bO7v3R4=;
-        b=NQiOerI24agrAV49xPs4KDHdoE/FPKXqLjVaD+XVZCNr66B3f73Bp098UjLLk5Z9RLAmVl
-        RBcw3XRxPIsiOCAA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 57904134B0;
-        Tue, 18 Jul 2023 19:34:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id fVW6DzbptmQaIgAAMHmgww
-        (envelope-from <krisman@suse.de>); Tue, 18 Jul 2023 19:34:14 +0000
-From:   Gabriel Krisman Bertazi <krisman@suse.de>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
-        jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v2 4/7] libfs: Support revalidation of encrypted
- case-insensitive dentries
-References: <20230422000310.1802-1-krisman@suse.de>
-        <20230422000310.1802-5-krisman@suse.de>
-        <20230714053135.GD913@sol.localdomain>
-Date:   Tue, 18 Jul 2023 15:34:13 -0400
-In-Reply-To: <20230714053135.GD913@sol.localdomain> (Eric Biggers's message of
-        "Thu, 13 Jul 2023 22:31:35 -0700")
-Message-ID: <87h6q1580a.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 73F2060B59;
+        Tue, 18 Jul 2023 19:37:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06F4AC433C7;
+        Tue, 18 Jul 2023 19:37:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689709043;
+        bh=ZxtPv1D0nptmBko9s7OKhZDvD31woHBZFfU7oYY10b8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HMLY8kCEqG0wMS07BdWto8m0clJr2/78xvRh1w9dZf9yG8l29QftXXKHFF55EFsz3
+         rMx0ONDAp3wXEMIlVWX54Q8iMQycKnWpkwPHNUgvAd6rMgpv3P0Yoj8MIFKE/aOJ6F
+         LRmzXHn9sUf5TWmvjnegDi3yttbTb0Zz6AagJoP4t5CylB1YdgUOjZPrtgkqdRnacp
+         g4lHW0S/qAk6zPJYXKsgsuJglyVgIy3O5bIBW60emia1334fKYVwDNILv497vXIGse
+         MTMybqf0Swz27NUZmnrkgdv5Kv9IGHQvU3SGj3GplW2cBlx4sxBs/AzGXS1s65Y7jR
+         vKNy338gfsWYg==
+Date:   Tue, 18 Jul 2023 20:37:14 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc:     "corbet@lwn.net" <corbet@lwn.net>,
+        "ardb@kernel.org" <ardb@kernel.org>,
+        "maz@kernel.org" <maz@kernel.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "debug@rivosinc.com" <debug@rivosinc.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+        "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+        "hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "palmer@dabbelt.com" <palmer@dabbelt.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH 21/35] arm64/gcs: Implement shadow stack prctl() interface
+Message-ID: <22a53782-7c8b-409e-92b5-ce89e2a86e2d@sirena.org.uk>
+References: <20230716-arm64-gcs-v1-0-bf567f93bba6@kernel.org>
+ <20230716-arm64-gcs-v1-21-bf567f93bba6@kernel.org>
+ <2e1c24e343fb920e1f8616e083bba625717c384d.camel@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+LcC9ieUsmFeoYzA"
+Content-Disposition: inline
+In-Reply-To: <2e1c24e343fb920e1f8616e083bba625717c384d.camel@intel.com>
+X-Cookie: Nothing happens.
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eric Biggers <ebiggers@kernel.org> writes:
 
-> On Fri, Apr 21, 2023 at 08:03:07PM -0400, Gabriel Krisman Bertazi wrote:
->> From: Gabriel Krisman Bertazi <krisman@collabora.com>
->> 
->> Preserve the existing behavior for encrypted directories, by rejecting
->> negative dentries of encrypted+casefolded directories.  This allows
->> generic_ci_d_revalidate to be used by filesystems with both features
->> enabled, as long as the directory is either casefolded or encrypted, but
->> not both at the same time.
->> 
->> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
->> ---
->>  fs/libfs.c | 8 ++++++--
->>  1 file changed, 6 insertions(+), 2 deletions(-)
->> 
->> diff --git a/fs/libfs.c b/fs/libfs.c
->> index f8881e29c5d5..0886044db593 100644
->> --- a/fs/libfs.c
->> +++ b/fs/libfs.c
->> @@ -1478,6 +1478,9 @@ static inline int generic_ci_d_revalidate(struct dentry *dentry,
->>  		const struct inode *dir = READ_ONCE(parent->d_inode);
->>  
->>  		if (dir && needs_casefold(dir)) {
->> +			if (IS_ENCRYPTED(dir))
->> +				return 0;
->> +
->
-> Why not allow negative dentries in case-insensitive encrypted directories?
-> I can't think any reason why it wouldn't just work.
+--+LcC9ieUsmFeoYzA
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-TBH, I'm not familiar with the details of combined encrypted+casefold
-support to be confident it works.  This patch preserves the current
-behavior of disabling them for encrypted+casefold directories.
+On Tue, Jul 18, 2023 at 05:51:54PM +0000, Edgecombe, Rick P wrote:
+> On Sun, 2023-07-16 at 22:51 +0100, Mark Brown wrote:
 
-I suspect it might require extra work that I'm not focusing on this
-patchset.  For instance, what should be the order of
-fscrypt_d_revalidate and the checks I'm adding here? Note we will start
-creating negative dentries in casefold directories after patch 6/7, so
-unless we disable it here, we will start calling fscrypt_d_revalidate
-for negative+casefold.
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0g=
+cs =3D alloc_gcs(task->thread.gcspr_el0, size,
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A00, 0);
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0i=
+f (!gcs)
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0return -ENOMEM;
 
-Should I just drop this hunk?  Unless you are confident it works as is, I
-prefer to add this support in stages and keep negative dentries of
-encrypted+casefold directories disabled for now.
+> > +=A0=A0=A0=A0=A0=A0=A0task->thread.gcs_el0_mode =3D arg;
+> > +=A0=A0=A0=A0=A0=A0=A0if (task =3D=3D current)
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0gcs_set_el0_mode(task);
+> > +
 
--- 
-Gabriel Krisman Bertazi
+> Ah! So does this task =3D=3D current part mean this can be called from
+> another task via ptrace?
+
+Ugh, right.  So I had been worried about preemption rather than invoking
+prctl() via ptrace, though since ptrace can change the syscall invoked
+by a task it could cause prctl() to be invoked that way (but that should
+look like being run in the target process).
+
+I'm not aware of an interface specifically intended to remotely invoke
+prctls via ptrace but that doesn't mean there isn't one that I didn't
+find yet.  I can't remember why I'm aware of the task !=3D current case as
+a concern which is worrying me.
+
+> If so, then is the alloc_gcs() part on the wrong mm?
+
+Yes, it will be.  I'll add a check in there to reject attempts to enable
+GCS when task !=3D current.
+
+--+LcC9ieUsmFeoYzA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmS26eoACgkQJNaLcl1U
+h9CYygf+IDDkv7ACSKD5nM6hnqcKIlhFl4zq3viBlcIX0vXYzPVupOCAbCarTXX9
+8ONJZvPpTQjznNjMcmvWut8WU+hWOW/UvsbtftxjLJRyoioHPqwZHy7KVVYYWUwv
+FIGO+d+5I7UpABBVNJsdHFSGthvOxBPGzFMNqyi/0wO8rtRAlfdg+cmMkGgpxoel
+HEC4D5W7U+X5BEs1wnPKZZuvTvt5hbqeLbY4VSyKqfqjryTxnqebHLo5RzW3PKdH
+ZDcn47+rFqdw4kMF7gsLWp++R3fZXCO5PRO6B+Ok6A12Hh3ICV+MbVPdeDrzhfiw
+s1AEnkG+S/KEme6d6O1scSv5RQymhg==
+=hLC+
+-----END PGP SIGNATURE-----
+
+--+LcC9ieUsmFeoYzA--
