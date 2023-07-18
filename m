@@ -2,59 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AED197581A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 18:06:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5221A7581B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 18:08:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231583AbjGRQGI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jul 2023 12:06:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56112 "EHLO
+        id S231165AbjGRQIo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jul 2023 12:08:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230144AbjGRQGH (ORCPT
+        with ESMTP id S231919AbjGRQIj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jul 2023 12:06:07 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8D0C10A;
-        Tue, 18 Jul 2023 09:06:04 -0700 (PDT)
-Received: from [IPV6:2804:14c:483:8904:687c:23ec:f93d:512] (unknown [IPv6:2804:14c:483:8904:687c:23ec:f93d:512])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: rcardoso)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 4930A6607029;
-        Tue, 18 Jul 2023 17:05:54 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1689696363;
-        bh=C8iTup0IRWk1ApCxXh6WsQC4Fi3+46mdj+pQrQnXpw4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=SCoE1yUqe9jjdF5MmWrFxwB27tFFkSnV6jM+AGAfncICUODcJROLqXy+OWSNqdgbU
-         0ndEU4H1pfhTcB1YHn2PL6JxahPBKNEkjBe1E9bu3q3hX2Bu/mlX+NuSHf+MdT+Dcq
-         f4uCCyLFBvQfTIxiKiOZL8OgVtNf5lRnaJlqpAvU7Aumfxe5v8D18GGiJOzp6GKV0U
-         EEtFnT1yDt3hiBhmGcUyQQODxoOjwrVc1nOSO/DNxKNWYeCqNIMfO0/DiI1ZU4SU2A
-         W5CWhcxgPhFkfzZpbvLsZC5dAMds5GXA6ZJf54X3lqf+i4W3fztrnTvANXYvkFc5Iy
-         lQljiKjm+gFww==
-Message-ID: <27f881fc-5b85-01ef-53ab-4364372a1428@collabora.com>
-Date:   Tue, 18 Jul 2023 13:05:49 -0300
+        Tue, 18 Jul 2023 12:08:39 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6744CEE;
+        Tue, 18 Jul 2023 09:08:31 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3fbd33a57ddso54498635e9.1;
+        Tue, 18 Jul 2023 09:08:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689696510; x=1690301310;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1fI3tX3/6gY3OaD7M7m70A/zRULJw/Q3Ke9ZUvuxGPs=;
+        b=r1i2jYA/7qrYX7dZgBc5ZMQMq7I79Q9T3vRGoVMKYazNOReS9k7qo+BefbwNBT+ZPG
+         N5u+pNA18+dZASxRcDnTNmZ3FmIlgKETN7hGXjcPvqVSVc3IB4/a+8POaO1c3y2dqigz
+         flprATDyQc+lhfXRayOLRERRTh3UQuxPDHTcOTnZNEQBRGm0owqENgn8dqxjmLc5vHhK
+         /c8MHLL2kRXcHiL7ipTlE/k4pcELodoN4Jqycs13wB6oYXrMCFA9/0b5Ey9zGyVPIcrl
+         S1nGAQEdp70bxhCjKKtzuYAgnd0R+GP4ZTQNKN03i0CumsrPCsFAbTLBDoT6WeI7faDT
+         qWqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689696510; x=1690301310;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1fI3tX3/6gY3OaD7M7m70A/zRULJw/Q3Ke9ZUvuxGPs=;
+        b=TQLkj5VyBJ3Qnmu4gXGyi6qwTLOq215CHAvfzzemOKwYFgNz9PtYoKK7Xnz7IznH8o
+         x9f11yjDuuK5GJ6S2Z8KbwMJsl9G7kFiIPu6w35S5egmFfbhbOnMHLtuhs+GNKbr4dlI
+         PhD/viNn6tf0dbUFlB9wwyMbQ1ed6w6eeShX1rL86xiMnoSGI2JcQjl6BjGBaEeuzKkg
+         OaLM1wtBp0fZZBRkyCZ6Dff5IFLJ+GAVwkvS2n2nyN/u5olEaoVaQXgejXq14QHuJwne
+         kChIS221rPzTqi5O8qnTuEc7xuYSF4HLCcEJjTWSLPoPEAmVH72nqmgGVJXuA5jT04L1
+         MnFA==
+X-Gm-Message-State: ABy/qLaDH6mddeU8tnqfJnj07BElg6Dw+RrRnQWMhLAfSkg+hb7V8hGx
+        7+X27boS5CYRxEvw1W3aMp1zz6B4AzmqsxEpxGs=
+X-Google-Smtp-Source: APBJJlF3/wCmPIjfM+yq0aWOzc//envD1XP+gj9211VYN2qqwWTXp8RXoiqfBPWwPGDDJekxbQhbMN1Mle2n+ULzpec=
+X-Received: by 2002:a7b:c7da:0:b0:3fa:97ad:2ba5 with SMTP id
+ z26-20020a7bc7da000000b003fa97ad2ba5mr2434117wmk.31.1689696509367; Tue, 18
+ Jul 2023 09:08:29 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v25 0/5] Implement IOCTL to get and optionally clear info
- about PTEs
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
+References: <20230713101415.108875-1-usama.anjum@collabora.com>
+ <20230713101415.108875-3-usama.anjum@collabora.com> <CANaxB-zMhhi+kHZ+3w9yzogo6fKjR=swBkuA-s88Qs5oeLRAYQ@mail.gmail.com>
+ <c379c99f-2466-6056-4dd6-90d0a202c13c@collabora.com>
+In-Reply-To: <c379c99f-2466-6056-4dd6-90d0a202c13c@collabora.com>
+From:   Andrei Vagin <avagin@gmail.com>
+Date:   Tue, 18 Jul 2023 09:08:17 -0700
+Message-ID: <CANaxB-y2C+gu9Z5MyKQEZATU6dscd04+PeJNNgvhYLp+31_Nrw@mail.gmail.com>
+Subject: Re: [PATCH v25 2/5] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WC?= =?UTF-8?Q?aw?= 
-        <emmir@google.com>, Andrei Vagin <avagin@gmail.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
         Danylo Mocherniuk <mdanylo@google.com>,
         Paul Gofman <pgofman@codeweavers.com>,
         Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Shuah Khan <shuah@kernel.org>,
         Christian Brauner <brauner@kernel.org>,
         Yang Shi <shy828301@gmail.com>,
         Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@Oracle.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
         Yun Zhou <yun.zhou@windriver.com>,
         Suren Baghdasaryan <surenb@google.com>,
         Alex Sierra <alex.sierra@amd.com>,
@@ -66,418 +82,417 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
         Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-References: <20230713101415.108875-1-usama.anjum@collabora.com>
-Content-Language: en-US
-From:   Rogerio Alves <rogerio.cardoso@collabora.com>
-In-Reply-To: <20230713101415.108875-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Tested v25 here on linux-next branch next-20230710, did not see any 
-regressions with patch applied.
+On Tue, Jul 18, 2023 at 1:18=E2=80=AFAM Muhammad Usama Anjum
+<usama.anjum@collabora.com> wrote:
+>
+> On 7/17/23 10:26=E2=80=AFPM, Andrei Vagin wrote:
+> > On Thu, Jul 13, 2023 at 3:14=E2=80=AFAM Muhammad Usama Anjum
+> > <usama.anjum@collabora.com> wrote:
+> >>
+> >> This IOCTL, PAGEMAP_SCAN on pagemap file can be used to get and/or cle=
+ar
+> >> the info about page table entries. The following operations are suppor=
+ted
+> >> in this ioctl:
+> >> - Get the information if the pages have been written-to (PAGE_IS_WRITT=
+EN),
+> >>   file mapped (PAGE_IS_FILE), present (PAGE_IS_PRESENT), swapped
+> >>   (PAGE_IS_SWAPPED) or page has pfn zero (PAGE_IS_PFNZERO).
+> >> - Find pages which have been written-to and/or write protect the pages
+> >>   (atomic PM_SCAN_OP_GET + PM_SCAN_OP_WP)
+> >>
+> >> This IOCTL can be extended to get information about more PTE bits. The
+> >> entire address range passed by user [start, end) is scanned until eith=
+er
+> >> the user provided buffer is full or max_pages have been found.
+> >>
+> >
+> > Reviewed-by: Andrei Vagin <avagin@gmail.com>
+> Thank you.
+>
 
-TAP version 13
-1..92
-ok 1 sanity_tests_sd memory size must be valid
-ok 2 sanity_tests_sd output buffer must be specified
-ok 3 sanity_tests_sd output buffer size must be valid
-ok 4 sanity_tests_sd wrong flag specified
-ok 5 sanity_tests_sd flag has extra bits specified
-ok 6 sanity_tests_sd no selection mask is specified
-ok 7 sanity_tests_sd no return mask is specified
-ok 8 sanity_tests_sd wrong return mask specified
-ok 9 sanity_tests_sd mixture of correct and wrong flag
-ok 10 sanity_tests_sd PAGEMAP_BITS_ALL can be specified with PM_SCAN_OP_WP
-ok 11 sanity_tests_sd Clear area with larger vec size
-ok 12 sanity_tests_sd Repeated pattern of written and non-written pages
-ok 13 sanity_tests_sd Repeated pattern of written and non-written pages 
-in parts
-ok 14 sanity_tests_sd Repeated pattern of written and non-written pages 
-max_pages
-ok 15 sanity_tests_sd only get 2 written pages and clear them as well
-ok 16 sanity_tests_sd Two regions
-ok 17 sanity_tests_sd Smaller max_pages
-ok 18 Smaller vec 46 50
-ok 19 Page testing: all new pages must not be written (dirty)
-ok 20 Page testing: all pages must be written (dirty)
-ok 21 Page testing: all pages dirty other than first and the last one
-ok 22 Page testing: PM_SCAN_OP_WP
-ok 23 Page testing: only middle page dirty
-ok 24 Page testing: only two middle pages dirty
-ok 25 Large Page testing: all new pages must not be written (dirty)
-ok 26 Large Page testing: all pages must be written (dirty)
-ok 27 Large Page testing: all pages dirty other than first and the last one
-ok 28 Large Page testing: PM_SCAN_OP_WP
-ok 29 Large Page testing: only middle page dirty
-ok 30 Large Page testing: only two middle pages dirty
-ok 31 Huge page testing: all new pages must not be written (dirty)
-ok 32 Huge page testing: all pages must be written (dirty)
-ok 33 Huge page testing: all pages dirty other than first and the last one
-ok 34 Huge page testing: PM_SCAN_OP_WP
-ok 35 Huge page testing: only middle page dirty
-ok 36 Huge page testing: only two middle pages dirty
-ok 37 # SKIP Hugetlb shmem testing: all new pages must not be written 
-(dirty)
-ok 38 # SKIP Hugetlb shmem testing: all pages must be written (dirty)
-ok 39 # SKIP Hugetlb shmem testing: all pages dirty other than first and 
-the last one
-ok 40 # SKIP Hugetlb shmem testing: PM_SCAN_OP_WP
-ok 41 # SKIP Hugetlb shmem testing: only middle page dirty
-ok 42 # SKIP Hugetlb shmem testing: only two middle pages dirty
-ok 43 # SKIP Hugetlb mem testing: all new pages must not be written (dirty)
-ok 44 # SKIP Hugetlb mem testing: all pages must be written (dirty)
-ok 45 # SKIP Hugetlb mem testing: all pages dirty other than first and 
-the last one
-ok 46 # SKIP Hugetlb mem testing: PM_SCAN_OP_WP
-ok 47 # SKIP Hugetlb mem testing: only middle page dirty
-ok 48 # SKIP Hugetlb mem testing: only two middle pages dirty
-ok 49 File memory testing: all new pages must not be written (dirty)
-ok 50 File memory testing: all pages must be written (dirty)
-ok 51 File memory testing: all pages dirty other than first and the last one
-ok 52 File memory testing: PM_SCAN_OP_WP
-ok 53 File memory testing: only middle page dirty
-ok 54 File memory testing: only two middle pages dirty
-ok 55 File anonymous memory testing: all new pages must not be written 
-(dirty)
-ok 56 File anonymous memory testing: all pages must be written (dirty)
-ok 57 File anonymous memory testing: all pages dirty other than first 
-and the last one
-ok 58 File anonymous memory testing: PM_SCAN_OP_WP
-ok 59 File anonymous memory testing: only middle page dirty
-ok 60 File anonymous memory testing: only two middle pages dirty
-ok 61 hpage_unit_tests all new huge page must not be written (dirty)
-ok 62 hpage_unit_tests all the huge page must not be written
-ok 63 hpage_unit_tests all the huge page must be written and clear
-ok 64 hpage_unit_tests only middle page written
-ok 65 hpage_unit_tests clear first half of huge page
-ok 66 hpage_unit_tests clear first half of huge page with limited buffer
-ok 67 hpage_unit_tests clear second half huge page
-ok 68 hpage_unit_tests get half huge page
-ok 69 hpage_unit_tests get half huge page
-ok 70 Test test_simple
-ok 71 mprotect_tests Both pages written
-ok 72 mprotect_tests Both pages are not written (dirty)
-ok 73 mprotect_tests Both pages written after remap and mprotect
-ok 74 mprotect_tests Clear and make the pages written
-ok 75 transact_test count 192
-ok 76 transact_test count 0
-ok 77 transact_test Extra pages 130 (0.3%), extra thread faults 141.
-ok 78 sanity_tests WP op can be specified with !PAGE_IS_WRITTEN
-ok 79 sanity_tests required_mask specified
-ok 80 sanity_tests anyof_mask specified
-ok 81 sanity_tests excluded_mask specified
-ok 82 sanity_tests required_mask and anyof_mask specified
-ok 83 sanity_tests Get sd and present pages with anyof_mask
-ok 84 sanity_tests Get all the pages with required_mask
-ok 85 sanity_tests Get sd and present pages with required_mask and 
-anyof_mask
-ok 86 sanity_tests Don't get sd pages
-ok 87 sanity_tests Don't get present pages
-ok 88 sanity_tests Find written present pages with return mask
-ok 89 sanity_tests Memory mapped file
-ok 90 sanity_tests Read/write to memory
-ok 91 unmapped_region_tests Get status of pages
-ok 92 userfaultfd_tests all new pages must not be written (dirty)
-# Totals: pass:80 fail:0 xfail:0 xpass:0 skip:12 error:0
+<snip>
 
-On 7/13/23 07:14, Muhammad Usama Anjum wrote:
-> *Changes in v25*:
-> - Do proper filtering on hole as well (hole got missed earlier)
->
-> *Changes in v24*:
-> - Rebase on top of next-20230710
-> - Place WP markers in case of hole as well
->
-> *Changes in v23*:
-> - Set vec_buf_index in loop only when vec_buf_index is set
-> - Return -EFAULT instead of -EINVAL if vec is NULL
-> - Correctly return the walk ending address to the page granularity
->
-> *Changes in v22*:
-> - Interface change:
->    - Replace [start start + len) with [start, end)
->    - Return the ending address of the address walk in start
->
-> *Changes in v21*:
-> - Abort walk instead of returning error if WP is to be performed on
->    partial hugetlb
->
-> *Changes in v20*
-> - Correct PAGE_IS_FILE and add PAGE_IS_PFNZERO
->
-> *Changes in v19*
-> - Minor changes and interface updates
->
-> *Changes in v18*
-> - Rebase on top of next-20230613
-> - Minor updates
->
-> *Changes in v17*
-> - Rebase on top of next-20230606
-> - Minor improvements in PAGEMAP_SCAN IOCTL patch
->
-> *Changes in v16*
-> - Fix a corner case
-> - Add exclusive PM_SCAN_OP_WP back
->
-> *Changes in v15*
-> - Build fix (Add missed build fix in RESEND)
->
-> *Changes in v14*
-> - Fix build error caused by #ifdef added at last minute in some configs
->
-> *Changes in v13*
-> - Rebase on top of next-20230414
-> - Give-up on using uffd_wp_range() and write new helpers, flush tlb only
->    once
->
-> *Changes in v12*
-> - Update and other memory types to UFFD_FEATURE_WP_ASYNC
-> - Rebaase on top of next-20230406
-> - Review updates
->
-> *Changes in v11*
-> - Rebase on top of next-20230307
-> - Base patches on UFFD_FEATURE_WP_UNPOPULATED
-> - Do a lot of cosmetic changes and review updates
-> - Remove ENGAGE_WP + !GET operation as it can be performed with
->    UFFDIO_WRITEPROTECT
->
-> *Changes in v10*
-> - Add specific condition to return error if hugetlb is used with wp
->    async
-> - Move changes in tools/include/uapi/linux/fs.h to separate patch
-> - Add documentation
->
-> *Changes in v9:*
-> - Correct fault resolution for userfaultfd wp async
-> - Fix build warnings and errors which were happening on some configs
-> - Simplify pagemap ioctl's code
->
-> *Changes in v8:*
-> - Update uffd async wp implementation
-> - Improve PAGEMAP_IOCTL implementation
->
-> *Changes in v7:*
-> - Add uffd wp async
-> - Update the IOCTL to use uffd under the hood instead of soft-dirty
->    flags
->
-> *Motivation*
-> The real motivation for adding PAGEMAP_SCAN IOCTL is to emulate Windows
-> GetWriteWatch() syscall [1]. The GetWriteWatch{} retrieves the addresses of
-> the pages that are written to in a region of virtual memory.
->
-> This syscall is used in Windows applications and games etc. This syscall is
-> being emulated in pretty slow manner in userspace. Our purpose is to
-> enhance the kernel such that we translate it efficiently in a better way.
-> Currently some out of tree hack patches are being used to efficiently
-> emulate it in some kernels. We intend to replace those with these patches.
-> So the whole gaming on Linux can effectively get benefit from this. It
-> means there would be tons of users of this code.
->
-> CRIU use case [2] was mentioned by Andrei and Danylo:
->> Use cases for migrating sparse VMAs are binaries sanitized with ASAN,
->> MSAN or TSAN [3]. All of these sanitizers produce sparse mappings of
->> shadow memory [4]. Being able to migrate such binaries allows to highly
->> reduce the amount of work needed to identify and fix post-migration
->> crashes, which happen constantly.
-> Andrei's defines the following uses of this code:
-> * it is more granular and allows us to track changed pages more
->    effectively. The current interface can clear dirty bits for the entire
->    process only. In addition, reading info about pages is a separate
->    operation. It means we must freeze the process to read information
->    about all its pages, reset dirty bits, only then we can start dumping
->    pages. The information about pages becomes more and more outdated,
->    while we are processing pages. The new interface solves both these
->    downsides. First, it allows us to read pte bits and clear the
->    soft-dirty bit atomically. It means that CRIU will not need to freeze
->    processes to pre-dump their memory. Second, it clears soft-dirty bits
->    for a specified region of memory. It means CRIU will have actual info
->    about pages to the moment of dumping them.
-> * The new interface has to be much faster because basic page filtering
->    is happening in the kernel. With the old interface, we have to read
->    pagemap for each page.
->
-> *Implementation Evolution (Short Summary)*
->  From the definition of GetWriteWatch(), we feel like kernel's soft-dirty
-> feature can be used under the hood with some additions like:
-> * reset soft-dirty flag for only a specific region of memory instead of
-> clearing the flag for the entire process
-> * get and clear soft-dirty flag for a specific region atomically
->
-> So we decided to use ioctl on pagemap file to read or/and reset soft-dirty
-> flag. But using soft-dirty flag, sometimes we get extra pages which weren't
-> even written. They had become soft-dirty because of VMA merging and
-> VM_SOFTDIRTY flag. This breaks the definition of GetWriteWatch(). We were
-> able to by-pass this short coming by ignoring VM_SOFTDIRTY until David
-> reported that mprotect etc messes up the soft-dirty flag while ignoring
-> VM_SOFTDIRTY [5]. This wasn't happening until [6] got introduced. We
-> discussed if we can revert these patches. But we could not reach to any
-> conclusion. So at this point, I made couple of tries to solve this whole
-> VM_SOFTDIRTY issue by correcting the soft-dirty implementation:
-> * [7] Correct the bug fixed wrongly back in 2014. It had potential to cause
-> regression. We left it behind.
-> * [8] Keep a list of soft-dirty part of a VMA across splits and merges. I
-> got the reply don't increase the size of the VMA by 8 bytes.
->
-> At this point, we left soft-dirty considering it is too much delicate and
-> userfaultfd [9] seemed like the only way forward. From there onward, we
-> have been basing soft-dirty emulation on userfaultfd wp feature where
-> kernel resolves the faults itself when WP_ASYNC feature is used. It was
-> straight forward to add WP_ASYNC feature in userfautlfd. Now we get only
-> those pages dirty or written-to which are really written in reality. (PS
-> There is another WP_UNPOPULATED userfautfd feature is required which is
-> needed to avoid pre-faulting memory before write-protecting [9].)
->
-> All the different masks were added on the request of CRIU devs to create
-> interface more generic and better.
->
-> [1] https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-getwritewatch
-> [2] https://lore.kernel.org/all/20221014134802.1361436-1-mdanylo@google.com
-> [3] https://github.com/google/sanitizers
-> [4] https://github.com/google/sanitizers/wiki/AddressSanitizerAlgorithm#64-bit
-> [5] https://lore.kernel.org/all/bfcae708-db21-04b4-0bbe-712badd03071@redhat.com
-> [6] https://lore.kernel.org/all/20220725142048.30450-1-peterx@redhat.com/
-> [7] https://lore.kernel.org/all/20221122115007.2787017-1-usama.anjum@collabora.com
-> [8] https://lore.kernel.org/all/20221220162606.1595355-1-usama.anjum@collabora.com
-> [9] https://lore.kernel.org/all/20230306213925.617814-1-peterx@redhat.com
-> [10] https://lore.kernel.org/all/20230125144529.1630917-1-mdanylo@google.com
->
-> * Original Cover letter from v8*
-> Hello,
->
-> Note:
-> Soft-dirty pages and pages which have been written-to are synonyms. As
-> kernel already has soft-dirty feature inside which we have given up to
-> use, we are using written-to terminology while using UFFD async WP under
-> the hood.
->
-> This IOCTL, PAGEMAP_SCAN on pagemap file can be used to get and/or clear
-> the info about page table entries. The following operations are
-> supported in this ioctl:
-> - Get the information if the pages have been written-to (PAGE_IS_WRITTEN),
->    file mapped (PAGE_IS_FILE), present (PAGE_IS_PRESENT) or swapped
->    (PAGE_IS_SWAPPED).
-> - Write-protect the pages (PAGEMAP_WP_ENGAGE) to start finding which
->    pages have been written-to.
-> - Find pages which have been written-to and write protect the pages
->    (atomic PAGE_IS_WRITTEN + PAGEMAP_WP_ENGAGE)
->
-> It is possible to find and clear soft-dirty pages entirely in userspace.
-> But it isn't efficient:
-> - The mprotect and SIGSEGV handler for bookkeeping
-> - The userfaultfd wp (synchronous) with the handler for bookkeeping
->
-> Some benchmarks can be seen here[1]. This series adds features that weren't
-> present earlier:
-> - There is no atomic get soft-dirty/Written-to status and clear present in
->    the kernel.
-> - The pages which have been written-to can not be found in accurate way.
->    (Kernel's soft-dirty PTE bit + sof_dirty VMA bit shows more soft-dirty
->    pages than there actually are.)
->
-> Historically, soft-dirty PTE bit tracking has been used in the CRIU
-> project. The procfs interface is enough for finding the soft-dirty bit
-> status and clearing the soft-dirty bit of all the pages of a process.
-> We have the use case where we need to track the soft-dirty PTE bit for
-> only specific pages on-demand. We need this tracking and clear mechanism
-> of a region of memory while the process is running to emulate the
-> getWriteWatch() syscall of Windows.
->
-> *(Moved to using UFFD instead of soft-dirtyi feature to find pages which
-> have been written-to from v7 patch series)*:
-> Stop using the soft-dirty flags for finding which pages have been
-> written to. It is too delicate and wrong as it shows more soft-dirty
-> pages than the actual soft-dirty pages. There is no interest in
-> correcting it [2][3] as this is how the feature was written years ago.
-> It shouldn't be updated to changed behaviour. Peter Xu has suggested
-> using the async version of the UFFD WP [4] as it is based inherently
-> on the PTEs.
->
-> So in this patch series, I've added a new mode to the UFFD which is
-> asynchronous version of the write protect. When this variant of the
-> UFFD WP is used, the page faults are resolved automatically by the
-> kernel. The pages which have been written-to can be found by reading
-> pagemap file (!PM_UFFD_WP). This feature can be used successfully to
-> find which pages have been written to from the time the pages were
-> write protected. This works just like the soft-dirty flag without
-> showing any extra pages which aren't soft-dirty in reality.
->
-> The information related to pages if the page is file mapped, present and
-> swapped is required for the CRIU project [5][6]. The addition of the
-> required mask, any mask, excluded mask and return masks are also required
-> for the CRIU project [5].
->
-> The IOCTL returns the addresses of the pages which match the specific
-> masks. The page addresses are returned in struct page_region in a compact
-> form. The max_pages is needed to support a use case where user only wants
-> to get a specific number of pages. So there is no need to find all the
-> pages of interest in the range when max_pages is specified. The IOCTL
-> returns when the maximum number of the pages are found. The max_pages is
-> optional. If max_pages is specified, it must be equal or greater than the
-> vec_size. This restriction is needed to handle worse case when one
-> page_region only contains info of one page and it cannot be compacted.
-> This is needed to emulate the Windows getWriteWatch() syscall.
->
-> The patch series include the detailed selftest which can be used as an
-> example for the uffd async wp test and PAGEMAP_IOCTL. It shows the
-> interface usages as well.
->
-> [1] https://lore.kernel.org/lkml/54d4c322-cd6e-eefd-b161-2af2b56aae24@collabora.com/
-> [2] https://lore.kernel.org/all/20221220162606.1595355-1-usama.anjum@collabora.com
-> [3] https://lore.kernel.org/all/20221122115007.2787017-1-usama.anjum@collabora.com
-> [4] https://lore.kernel.org/all/Y6Hc2d+7eTKs7AiH@x1n
-> [5] https://lore.kernel.org/all/YyiDg79flhWoMDZB@gmail.com/
-> [6] https://lore.kernel.org/all/20221014134802.1361436-1-mdanylo@google.com/
->
-> Regards,
-> Muhammad Usama Anjum
->
-> Muhammad Usama Anjum (4):
->    fs/proc/task_mmu: Implement IOCTL to get and optionally clear info
->      about PTEs
->    tools headers UAPI: Update linux/fs.h with the kernel sources
->    mm/pagemap: add documentation of PAGEMAP_SCAN IOCTL
->    selftests: mm: add pagemap ioctl tests
->
-> Peter Xu (1):
->    userfaultfd: UFFD_FEATURE_WP_ASYNC
->
->   Documentation/admin-guide/mm/pagemap.rst     |   58 +
->   Documentation/admin-guide/mm/userfaultfd.rst |   35 +
->   fs/proc/task_mmu.c                           |  591 +++++++
->   fs/userfaultfd.c                             |   26 +-
->   include/linux/hugetlb.h                      |    1 +
->   include/linux/userfaultfd_k.h                |   21 +-
->   include/uapi/linux/fs.h                      |   55 +
->   include/uapi/linux/userfaultfd.h             |    9 +-
->   mm/hugetlb.c                                 |   34 +-
->   mm/memory.c                                  |   27 +-
->   tools/include/uapi/linux/fs.h                |   55 +
->   tools/testing/selftests/mm/.gitignore        |    2 +
->   tools/testing/selftests/mm/Makefile          |    3 +-
->   tools/testing/selftests/mm/config            |    1 +
->   tools/testing/selftests/mm/pagemap_ioctl.c   | 1464 ++++++++++++++++++
->   tools/testing/selftests/mm/run_vmtests.sh    |    4 +
->   16 files changed, 2362 insertions(+), 24 deletions(-)
->   create mode 100644 tools/testing/selftests/mm/pagemap_ioctl.c
->   mode change 100644 => 100755 tools/testing/selftests/mm/run_vmtests.sh
->
--- 
-Rogerio Alves Cardoso
-Consultant Senior Software Engineer
+> >> +#ifdef CONFIG_HUGETLB_PAGE
+> >> +static int pagemap_scan_hugetlb_entry(pte_t *ptep, unsigned long hmas=
+k,
+> >> +                                     unsigned long start, unsigned lo=
+ng end,
+> >> +                                     struct mm_walk *walk)
+> >> +{
+> >> +       unsigned long n_pages =3D (end - start)/PAGE_SIZE;
+> >> +       struct pagemap_scan_private *p =3D walk->private;
+> >> +       struct vm_area_struct *vma =3D walk->vma;
+> >> +       bool is_written, interesting =3D true;
+> >> +       struct hstate *h =3D hstate_vma(vma);
+> >> +       unsigned long bitmap;
+> >> +       spinlock_t *ptl;
+> >> +       int ret =3D 0;
+> >> +       pte_t ptent;
+> >> +
+> >> +       if (IS_PM_SCAN_WP(p->flags) && n_pages < HPAGE_SIZE/PAGE_SIZE)=
+ {
+> >> +               p->end_addr =3D start;
+> >> +               return -EINVAL;
+> >> +       }
+> >> +
+> >> +       if (n_pages > p->max_pages - p->found_pages)
+> >> +               n_pages =3D p->max_pages - p->found_pages;
+> >> +
+> >> +       if (IS_PM_SCAN_WP(p->flags)) {
+> >> +               i_mmap_lock_write(vma->vm_file->f_mapping);
+> >> +               ptl =3D huge_pte_lock(h, vma->vm_mm, ptep);
+> >> +       }
+> >> +
+> >> +       ptent =3D huge_ptep_get(ptep);
+> >> +       is_written =3D !is_huge_pte_uffd_wp(ptent);
+> >> +
+> >> +       bitmap =3D PM_SCAN_FLAGS(is_written, pagemap_scan_is_huge_file=
+(ptent),
+> >> +                              pte_present(ptent), is_swap_pte(ptent),
+> >> +                              pte_present(ptent) && is_zero_pfn(pte_p=
+fn(ptent)));
+> >> +
+> >> +       if (IS_PM_SCAN_GET(p->flags))
+> >> +               interesting =3D pagemap_scan_is_interesting_page(bitma=
+p, p);
+> >> +
+> >> +       if (interesting) {
+> >> +               /*
+> >> +                * Partial hugetlb page clear isn't supported
+> >> +                */
+> >> +               if (is_written && IS_PM_SCAN_WP(p->flags) &&
+> >> +                   n_pages < HPAGE_SIZE/PAGE_SIZE) {
+> >> +                       ret =3D PM_SCAN_END_WALK;
+> >> +                       p->end_addr =3D start;
+> >> +                       goto unlock_and_return;
+> >> +               }
+> >> +
+> >> +               if (IS_PM_SCAN_GET(p->flags))
+> >> +                       ret =3D pagemap_scan_output(bitmap, p, start, =
+n_pages);
+> >> +
+> >> +               if (IS_PM_SCAN_WP(p->flags) && is_written && ret >=3D =
+0) {
+> >> +                       make_uffd_wp_huge_pte(vma, start, ptep, ptent)=
+;
+> >> +                       flush_hugetlb_tlb_range(vma, start, end);
+> >> +               }
+> >> +       }
+> >> +
+> >> +unlock_and_return:
+> >> +       if (IS_PM_SCAN_WP(p->flags)) {
+> >> +               spin_unlock(ptl);
+> >> +               i_mmap_unlock_write(vma->vm_file->f_mapping);
+> >> +       }
+> >> +
+> >> +       return ret;
+> >> +}
+> >> +#else
+> >> +#define pagemap_scan_hugetlb_entry NULL
+> >> +#endif
+> >> +
+> >> +static int pagemap_scan_pte_hole(unsigned long addr, unsigned long en=
+d,
+> >> +                                int depth, struct mm_walk *walk)
+> >> +{
+> >> +       unsigned long n_pages =3D (end - addr)/PAGE_SIZE;
+> >> +       struct pagemap_scan_private *p =3D walk->private;
+> >> +       struct vm_area_struct *vma =3D walk->vma;
+> >> +       bool interesting =3D true;
+> >> +       unsigned long bitmap;
+> >> +       int ret =3D 0;
+> >> +
+> >> +       if (!vma)
+> >> +               return 0;
+> >> +
+> >> +       bitmap =3D PM_SCAN_FLAGS(false, false, false, false, false);
+> >> +
+> >> +       if (IS_PM_SCAN_GET(p->flags))
+> >> +               interesting =3D pagemap_scan_is_interesting_page(bitma=
+p, p);
+> >> +
+> >> +       if (interesting) {
+> >> +               if (IS_PM_SCAN_GET(p->flags)) {
+> >> +                       if (n_pages > p->max_pages - p->found_pages)
+> >> +                               n_pages =3D p->max_pages - p->found_pa=
+ges;
+> >> +
+> >> +                       ret =3D pagemap_scan_output(bitmap, p, addr, n=
+_pages);
+> >> +               }
+> >> +
+> >> +               if (IS_PM_SCAN_WP(p->flags) && !ret &&
+> >> +                   uffd_wp_range(vma, addr, end - addr, true) < 0)
+> >
+> > Why do we need to call uffd_wp_range for holes? Should we call
+> > flush_tlb_range after it?
 
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK
-Registered in England & Wales, no. 5513718
+Did you skip this question?
 
+> >
+> >> +                       ret =3D -EINVAL;
+> >> +       }
+> >> +
+> >> +       return ret;
+> >> +}
+> >> +
+> >> +static const struct mm_walk_ops pagemap_scan_ops =3D {
+> >> +       .test_walk =3D pagemap_scan_test_walk,
+> >> +       .pmd_entry =3D pagemap_scan_pmd_entry,
+> >> +       .pte_hole =3D pagemap_scan_pte_hole,
+> >> +       .hugetlb_entry =3D pagemap_scan_hugetlb_entry,
+> >> +};
+> >> +
+> >> +static int pagemap_scan_args_valid(struct pm_scan_arg *arg, unsigned =
+long start,
+> >> +                                  unsigned long end, struct page_regi=
+on __user *vec)
+> >> +{
+> >> +       /* Detect illegal size, flags, len and masks */
+> >> +       if (arg->size !=3D sizeof(struct pm_scan_arg))
+> >> +               return -EINVAL;
+> >> +       if (!arg->flags)
+> >> +               return -EINVAL;
+> >> +       if (arg->flags & ~PM_SCAN_OPS)
+> >> +               return -EINVAL;
+> >> +       if (!(end - start))
+> >> +               return -EINVAL;
+> >> +       if ((arg->required_mask | arg->anyof_mask | arg->excluded_mask=
+ |
+> >> +            arg->return_mask) & ~PM_SCAN_BITS_ALL)
+> >> +               return -EINVAL;
+> >> +       if (!arg->required_mask && !arg->anyof_mask &&
+> >> +           !arg->excluded_mask)
+> >> +               return -EINVAL;
+> >> +       if (!arg->return_mask)
+> >> +               return -EINVAL;
+> >> +
+> >> +       /* Validate memory range */
+> >> +       if (!IS_ALIGNED(start, PAGE_SIZE))
+> >> +               return -EINVAL;
+> >> +       if (!access_ok((void __user *)start, end - start))
+> >> +               return -EFAULT;
+> >> +
+> >> +       if (IS_PM_SCAN_GET(arg->flags)) {
+> >> +               if (arg->vec_len =3D=3D 0)
+> >> +                       return -EINVAL;
+> >> +               if (!vec)
+> >> +                       return -EFAULT;
+> >> +               if (!access_ok((void __user *)vec,
+> >> +                              arg->vec_len * sizeof(struct page_regio=
+n)))
+> >> +                       return -EFAULT;
+> >> +       }
+> >> +
+> >> +       if (IS_PM_SCAN_WP(arg->flags) && !IS_PM_SCAN_GET(arg->flags) &=
+&
+> >> +           arg->max_pages)
+> >> +               return -EINVAL;
+> >> +
+> >> +       return 0;
+> >> +}
+> >> +
+> >> +static long do_pagemap_scan(struct mm_struct *mm, unsigned long __arg=
+)
+> >> +{
+> >> +       struct pm_scan_arg __user *uarg =3D (struct pm_scan_arg __user=
+ *)__arg;
+> >> +       unsigned long long start, end, walk_start, walk_end;
+> >> +       unsigned long empty_slots, vec_index =3D 0;
+> >> +       struct mmu_notifier_range range;
+> >> +       struct page_region __user *vec;
+> >> +       struct pagemap_scan_private p;
+> >> +       struct pm_scan_arg arg;
+> >> +       int ret =3D 0;
+> >> +
+> >> +       if (copy_from_user(&arg, uarg, sizeof(arg)))
+> >> +               return -EFAULT;
+> >> +
+> >> +       start =3D untagged_addr((unsigned long)arg.start);
+> >> +       end =3D untagged_addr((unsigned long)arg.end);
+> >> +       vec =3D (struct page_region __user *)untagged_addr((unsigned l=
+ong)arg.vec);
+> >> +
+> >> +       ret =3D pagemap_scan_args_valid(&arg, start, end, vec);
+> >> +       if (ret)
+> >> +               return ret;
+> >> +
+> >> +       p.max_pages =3D (arg.max_pages) ? arg.max_pages : ULONG_MAX;
+> >> +       p.found_pages =3D 0;
+> >> +       p.required_mask =3D arg.required_mask;
+> >> +       p.anyof_mask =3D arg.anyof_mask;
+> >> +       p.excluded_mask =3D arg.excluded_mask;
+> >> +       p.return_mask =3D arg.return_mask;
+> >> +       p.flags =3D arg.flags;
+> >> +       p.flags |=3D ((p.required_mask | p.anyof_mask | p.excluded_mas=
+k) &
+> >> +                   PAGE_IS_WRITTEN) ? PM_SCAN_REQUIRE_UFFD : 0;
+> >> +       p.cur_buf.start =3D p.cur_buf.len =3D p.cur_buf.flags =3D 0;
+> >> +       p.vec_buf =3D NULL;
+> >> +       p.vec_buf_len =3D PAGEMAP_WALK_SIZE >> PAGE_SHIFT;
+> >> +       p.vec_buf_index =3D 0;
+> >> +       p.end_addr =3D 0;
+> >> +
+> >> +       /*
+> >> +        * Allocate smaller buffer to get output from inside the page =
+walk
+> >> +        * functions and walk page range in PAGEMAP_WALK_SIZE size chu=
+nks. As
+> >> +        * we want to return output to user in compact form where no t=
+wo
+> >> +        * consecutive regions should be continuous and have the same =
+flags.
+> >> +        * So store the latest element in p.cur_buf between different =
+walks and
+> >> +        * store the p.cur_buf at the end of the walk to the user buff=
+er.
+> >> +        */
+> >> +       if (IS_PM_SCAN_GET(p.flags)) {
+> >> +               p.vec_buf =3D kmalloc_array(p.vec_buf_len, sizeof(*p.v=
+ec_buf),
+> >> +                                         GFP_KERNEL);
+> >> +               if (!p.vec_buf)
+> >> +                       return -ENOMEM;
+> >> +       }
+> >> +
+> >> +       /*
+> >> +        * Protection change for the range is going to happen.
+> >> +        */
+> >> +       if (IS_PM_SCAN_WP(p.flags)) {
+> >> +               mmu_notifier_range_init(&range, MMU_NOTIFY_PROTECTION_=
+VMA, 0,
+> >> +                                       mm, start, end);
+> >> +               mmu_notifier_invalidate_range_start(&range);
+> >> +       }
+> >> +
+> >> +       walk_start =3D walk_end =3D start;
+> >> +       while (walk_end < end && !ret) {
+> >> +               if (IS_PM_SCAN_GET(p.flags)) {
+> >> +                       /*
+> >> +                        * All data is copied to cur_buf first. When m=
+ore data
+> >> +                        * is found, we push cur_buf to vec_buf and co=
+py new
+> >> +                        * data to cur_buf. Subtract 1 from length as =
+the
+> >> +                        * index of cur_buf isn't counted in length.
+> >> +                        */
+> >> +                       empty_slots =3D arg.vec_len - vec_index;
+> >> +                       p.vec_buf_len =3D min(p.vec_buf_len, empty_slo=
+ts - 1);
+> >> +               }
+> >> +
+> >
+> > I still don't understand why we don't want/need to check for pending si=
+gnals.
+> We haven't added it as other existing code such as mincore() and
+
+It doesn't convince me. There should be reasons to do or not to do
+certain things.
+We can't say how long this loop can be running, so it is the reason
+why we can want
+to check pending signals.
+
+> pagemap_read() don't have it either.
+
+I already explained that this case is different, because the size of
+the output buffer is
+limited for pagemap_read.
+
+> Also mmap_read_lock_killable would return error if there is some critical=
+ single pending.\
+
+It isn't completely true. It doesn't return errors in the fast path
+when it takes the lock right
+away. It checks signals only when it needs to wait for the lock.
+
+>
+> >
+> >> +               ret =3D mmap_read_lock_killable(mm);
+> >> +               if (ret)
+> >> +                       goto out;
+> >> +
+> >> +               walk_end =3D min((walk_start + PAGEMAP_WALK_SIZE) & PA=
+GEMAP_WALK_MASK, end);
+> >> +
+> >> +               ret =3D walk_page_range(mm, walk_start, walk_end,
+> >> +                                     &pagemap_scan_ops, &p);
+> >> +               mmap_read_unlock(mm);
+> >> +
+> >> +               if (ret =3D=3D PM_SCAN_FOUND_MAX_PAGES || ret =3D=3D P=
+M_SCAN_END_WALK)
+> >> +                       arg.start =3D p.end_addr;
+> >
+> > nit: this check can be moved out of the loop.
+> No, ret could get replaced by error if copy_to_user() fails. So we have t=
+o
+> do this before that.
+
+If we fail to copy a vector, it is a fatal error and it probably doesn't ma=
+tter
+what end address has been there. It is up to you to leave it here or not.
+
+>
+> >
+> >> +
+> >> +               if (ret && ret !=3D PM_SCAN_FOUND_MAX_PAGES &&
+> >> +                   ret !=3D PM_SCAN_END_WALK)
+> >> +                       goto out;
+> >> +
+> >> +               if (p.vec_buf_index) {
+> >> +                       if (copy_to_user(&vec[vec_index], p.vec_buf,
+> >> +                                        p.vec_buf_index * sizeof(*p.v=
+ec_buf))) {
+> >> +                               /*
+> >> +                                * Return error even though the OP suc=
+ceeded
+> >> +                                */
+> >> +                               ret =3D -EFAULT;
+> >> +                               goto out;
+> >> +                       }
+> >> +                       vec_index +=3D p.vec_buf_index;
+> >> +                       p.vec_buf_index =3D 0;
+> >> +               }
+> >> +               walk_start =3D walk_end;
+> >> +       }
+> >> +
+> >> +       if (p.cur_buf.len) {
+> >> +               if (copy_to_user(&vec[vec_index], &p.cur_buf, sizeof(p=
+.cur_buf))) {
+> >> +                       ret =3D -EFAULT;
+> >> +                       goto out;
+> >> +               }
+> >> +               vec_index++;
+> >> +       }
+> >> +
+> >> +       ret =3D vec_index;
+> >> +
+> >> +out:
+> >> +       if (!p.end_addr)
+> >> +               arg.start =3D walk_start;
+> >> +       if (copy_to_user(&uarg->start, &arg.start, sizeof(arg.start)))
+> >> +               ret =3D -EFAULT;
+> >> +
+> >> +       if (IS_PM_SCAN_WP(p.flags))
+> >> +               mmu_notifier_invalidate_range_end(&range);
+> >> +
+> >> +       kfree(p.vec_buf);
+> >> +       return ret;
+> >> +}
+> >> +
+
+Thanks,
+Andrei
