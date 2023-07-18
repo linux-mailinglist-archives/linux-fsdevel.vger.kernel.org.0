@@ -2,94 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 586F375876F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 23:46:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A494A758848
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 00:10:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230188AbjGRVqK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jul 2023 17:46:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53642 "EHLO
+        id S231210AbjGRWKr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jul 2023 18:10:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230002AbjGRVqI (ORCPT
+        with ESMTP id S230285AbjGRWKq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jul 2023 17:46:08 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83C931993
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 14:46:06 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-57a43b50c2fso41636557b3.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 14:46:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1689716766; x=1692308766;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=oZyVDwK3otNe1aFKsK5m2BlqgA8vBaRGLZSB3UKDdYk=;
-        b=AZqxtqXAjBOCZAEl39imvIBaER7BhGzflFaWl/m5Zz9t1dlz9kDUMuAszlEUshA3DO
-         2wfvkMQVW0bnovbxO8kZA6kos8l0u9EfPIhhqqtcAeojsex5yJz11T9SQgE81LRvoDpj
-         KBhp9+d4tePpBAm4b7W2m9i0RLQ2zO5dd/uLrhE4Hd0J7PIz/Aj4yGjyRBxOGde76pBg
-         /chcj0WXc8VFUdzGums3KjVVn1KFY/3bRN+FkGs9JB+yKZA67mPhvHQBPwy6Fj0Ao5HY
-         ufOURZ2cQP3iilRer+Plp9seqm+0y7KxyH5oVdhWQnBbPbOXcqsriTyrNAHrHaIi0BJ1
-         cPTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689716766; x=1692308766;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oZyVDwK3otNe1aFKsK5m2BlqgA8vBaRGLZSB3UKDdYk=;
-        b=lKCSLdJT/eIkAAXJ1ClHml+Gg2S4Vo4BULpsaEIHrs7yRvuQajFshLe/3Ysj+cwkgo
-         HfckEVX3tj4xeTvScRCq+IASYm4UPFKg0NDsnC78lhuMOFpVkL5Cqc5rPNKXCyyWoCcP
-         Lt1Z7OCa57mVoryzjlNqCETk3geXi3cbcnI+uug4rNTSVi99aJ7V9oJKcN3fYkmV3AZs
-         3zNJparmO0hBdXX0LcR2pTjZpUs8KEbnPeuhGKvuzdan6M4ldEA/p1FPCsAcb5qbi/bG
-         8Ov+98G2CxRgAgN9M0b3ZJDWjCiOOYIU0JLaoUXvg56usNhre4PAI9UYuVz/rNDnqmAJ
-         QzFA==
-X-Gm-Message-State: ABy/qLao1locspvKL6UIn1Eadfjzl8T9r8cpBHkrOxfwduScewOX1Dns
-        eAKZThLa1z5C4U++LCwO0K2TalsDiwZrciA=
-X-Google-Smtp-Source: APBJJlHdSd7OCAh4bUiKCrr5Fzb8ctcbPN9KVGaTCOvQpuKSQKH/lagJ588BacwVRKe8a2DfX/MHUTHa7Mxrl8A=
-X-Received: from robbarnes3.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:6451])
- (user=robbarnes job=sendgmr) by 2002:a81:e448:0:b0:573:87b9:7ee9 with SMTP id
- t8-20020a81e448000000b0057387b97ee9mr181676ywl.4.1689716765754; Tue, 18 Jul
- 2023 14:46:05 -0700 (PDT)
-Date:   Tue, 18 Jul 2023 21:45:40 +0000
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
-Message-ID: <20230718214540.1.I763efc30c57dcc0284d81f704ef581cded8960c8@changeid>
-Subject: [PATCH] fs: export emergency_sync
-From:   Rob Barnes <robbarnes@google.com>
-To:     bleung@chromium.org, linux-fsdevel@vger.kernel.org
-Cc:     Rob Barnes <robbarnes@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        Tue, 18 Jul 2023 18:10:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEF521998;
+        Tue, 18 Jul 2023 15:10:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 792276122C;
+        Tue, 18 Jul 2023 22:10:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B545C433C7;
+        Tue, 18 Jul 2023 22:10:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689718242;
+        bh=N9VprbmcyfsUGUzo3F8QagSXSUpuZxEJLOZz4+DJsd8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PuNa0R7001LENL2JRD37XvuwidpUxdIf0B9ioJPshgsa+WiqpKDW8R8g1hBEBdfUM
+         RCbwjD5W5l9Bd6m6m5o3cAAxyasl5fSYIxdJQZL5mJUzfagFbBqj1/Y7HzbnPDrSq/
+         cEK7/MtSWLIVrQGIC/nrl6B+z1nkQuEdi4grmH8cpnJzueVs4xGkFY/sATd5KLCmbD
+         FsT+XS6j1Imo1VbpTY0FRpthfugptFReBBQQ/d0IyXtYPUjfTRG8+3pY/DJH6nlvxB
+         RQFHii7kFOTxMEUNlcHv8m9+/AUy6aN/uACsh6es5Yd4+n4X92i6Z7CVoSfRj2UCX9
+         rt8gq3dXyjOGw==
+Date:   Tue, 18 Jul 2023 15:10:40 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Gabriel Krisman Bertazi <krisman@suse.de>
+Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
+        jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v2 4/7] libfs: Support revalidation of encrypted
+ case-insensitive dentries
+Message-ID: <20230718221040.GA1005@sol.localdomain>
+References: <20230422000310.1802-1-krisman@suse.de>
+ <20230422000310.1802-5-krisman@suse.de>
+ <20230714053135.GD913@sol.localdomain>
+ <87h6q1580a.fsf@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h6q1580a.fsf@suse.de>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-emergency_sync forces a filesystem sync in emergency situations.
-Export this function so it can be used by modules.
+On Tue, Jul 18, 2023 at 03:34:13PM -0400, Gabriel Krisman Bertazi wrote:
+> Eric Biggers <ebiggers@kernel.org> writes:
+> 
+> > On Fri, Apr 21, 2023 at 08:03:07PM -0400, Gabriel Krisman Bertazi wrote:
+> >> From: Gabriel Krisman Bertazi <krisman@collabora.com>
+> >> 
+> >> Preserve the existing behavior for encrypted directories, by rejecting
+> >> negative dentries of encrypted+casefolded directories.  This allows
+> >> generic_ci_d_revalidate to be used by filesystems with both features
+> >> enabled, as long as the directory is either casefolded or encrypted, but
+> >> not both at the same time.
+> >> 
+> >> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> >> ---
+> >>  fs/libfs.c | 8 ++++++--
+> >>  1 file changed, 6 insertions(+), 2 deletions(-)
+> >> 
+> >> diff --git a/fs/libfs.c b/fs/libfs.c
+> >> index f8881e29c5d5..0886044db593 100644
+> >> --- a/fs/libfs.c
+> >> +++ b/fs/libfs.c
+> >> @@ -1478,6 +1478,9 @@ static inline int generic_ci_d_revalidate(struct dentry *dentry,
+> >>  		const struct inode *dir = READ_ONCE(parent->d_inode);
+> >>  
+> >>  		if (dir && needs_casefold(dir)) {
+> >> +			if (IS_ENCRYPTED(dir))
+> >> +				return 0;
+> >> +
+> >
+> > Why not allow negative dentries in case-insensitive encrypted directories?
+> > I can't think any reason why it wouldn't just work.
+> 
+> TBH, I'm not familiar with the details of combined encrypted+casefold
+> support to be confident it works.This patch preserves the current
+> behavior of disabling them for encrypted+casefold directories.
 
-Signed-off-by: Rob Barnes <robbarnes@google.com>
----
+Not allowing that combination reduces the usefulness of this patchset.
+Note that Android's use of casefold is always combined with encryption.
 
- fs/sync.c | 1 +
- 1 file changed, 1 insertion(+)
+> I suspect it might require extra work that I'm not focusing on this
+> patchset.  For instance, what should be the order of
+> fscrypt_d_revalidate and the checks I'm adding here?
 
-diff --git a/fs/sync.c b/fs/sync.c
-index dc725914e1edb..b313db0ebb5ee 100644
---- a/fs/sync.c
-+++ b/fs/sync.c
-@@ -142,6 +142,7 @@ void emergency_sync(void)
- 		schedule_work(work);
- 	}
- }
-+EXPORT_SYMBOL(emergency_sync);
- 
- /*
-  * sync a single super
--- 
-2.41.0.255.g8b1d071c50-goog
+Why would order matter?  If either "feature" wants the dentry to be invalidated,
+then the dentry gets invalidated.
 
+> Note we will start creating negative dentries in casefold directories after
+> patch 6/7, so unless we disable it here, we will start calling
+> fscrypt_d_revalidate for negative+casefold.
+
+fscrypt_d_revalidate() only cares about the DCACHE_NOKEY_NAME flag, so that's
+not a problem.
+
+> 
+> Should I just drop this hunk?  Unless you are confident it works as is, I
+> prefer to add this support in stages and keep negative dentries of
+> encrypted+casefold directories disabled for now.
+
+Unless I'm missing something, I think you're overcomplicating it.  It should
+just work if you don't go out of your way to prohibit this case.  I.e., just
+don't add the IS_ENCRYPTED(dir) check to generic_ci_d_revalidate().
+
+- Eric
