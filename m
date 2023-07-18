@@ -2,56 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD415757C47
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 14:54:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9DAC757D44
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 15:21:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232273AbjGRMyb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jul 2023 08:54:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36812 "EHLO
+        id S232711AbjGRNVw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jul 2023 09:21:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232240AbjGRMya (ORCPT
+        with ESMTP id S232697AbjGRNVa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jul 2023 08:54:30 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DDACD2;
-        Tue, 18 Jul 2023 05:54:29 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 27F586155A;
-        Tue, 18 Jul 2023 12:54:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD82EC433C7;
-        Tue, 18 Jul 2023 12:54:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689684868;
-        bh=V2g39nCpYOscNbJKZ9rJmpSsa451hj9EPNRN51OdGRk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=hqhb6g5vJo+6+8W0RT9xDtqbOW4AnzhS1/KyN/dceFbd7YKpJbQPWq4/Cb6dq7CYf
-         yAjXM+mz0/w854eRtpX5wlAeE95iG/IjxMxlxrF8PmBKq+fUtbQibuknEfBBkvv/jA
-         A/iaq062saIeZ5/pg2QxPjXRMA5o+uYg7EyJLWRN8io5npshv7pVIjquFFNlQXDQ2i
-         5z7JfZZ16JSPS6SLwX3ZzneOuic2kNiDc0hYFpUuCbg+eHl7hbFHwpNebskPML4TS3
-         fZMHLLLRrsJNqVimjN1ZTBf057T2DRLf2nNm2rSq8TmEEHmHgaBomzWaDK0vlKWM26
-         11NGJGYZvLUxQ==
-Message-ID: <368e567a3a0a1a21ce37f5fba335068c50ab6f29.camel@kernel.org>
-Subject: Re: linux-next ext4 inode size 128 corrupted
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>,
+        Tue, 18 Jul 2023 09:21:30 -0400
+Received: from out-56.mta0.migadu.com (out-56.mta0.migadu.com [IPv6:2001:41d0:1004:224b::38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15C5F1A2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 06:21:24 -0700 (PDT)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1689686482;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=xxqfMK2nPb8oOVWsGMCPm9x0Lzb3LRQyVeHyfrKnzW0=;
+        b=qNPgFLYY5ahYxyJBCC2Ct0Kg8BZvNZK2Ci5PT/yAXwgKv5KyHPW9F5M3wVlEmg91h27/c0
+        SvcNv3MaR1SzKBEaFIPQaz1WaaEbT3tcye5GszSpIXIM4K/2PFr9ndx7wt0wFIJvy7nhfu
+        IZnevRZqMlDUxnD7NnpdoHsB/MB21+s=
+From:   Hao Xu <hao.xu@linux.dev>
+To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
         Christian Brauner <brauner@kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Tue, 18 Jul 2023 08:54:26 -0400
-In-Reply-To: <26cd770-469-c174-f741-063279cdf7e@google.com>
-References: <26cd770-469-c174-f741-063279cdf7e@google.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+Subject: [PATCH v4 0/5] io_uring getdents
+Date:   Tue, 18 Jul 2023 21:21:07 +0800
+Message-Id: <20230718132112.461218-1-hao.xu@linux.dev>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -60,112 +50,104 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2023-07-17 at 20:43 -0700, Hugh Dickins wrote:
-> Hi Jeff,
->=20
-> I've been unable to run my kernel builds on ext4 on loop0 on tmpfs
-> swapping load on linux-next recently, on one machine: various kinds
-> of havoc, most common symptoms being ext4_find_dest_de:2107 errors,
-> systemd-journald errors, segfaults.  But no problem observed running
-> on a more recent installation.
->=20
-> Bisected yesterday to 979492850abd ("ext4: convert to ctime accessor
-> functions").
->=20
-> I've mostly averted my eyes from the EXT4_INODE macro changes there,
-> but I think that's where the problem lies.  Reading the comment in
-> fs/ext4/ext4.h above EXT4_FITS_IN_INODE() led me to try "tune2fs -l"
-> and look at /etc/mke2fs.conf.  It's an old installation, its own
-> inodes are 256, but that old mke2fs.conf does default to 128 for small
-> FSes, and what I use for the load test is small.  Passing -I 256 to the
-> mkfs makes the problems go away.
->=20
-> (What's most alarming about the corruption is that it appears to extend
-> beyond just the throwaway test filesystem: segfaults on bash and libc.so
-> from the root filesystem.  But no permanent damage done there.)
->=20
-> One oddity I noticed in scrutinizing that commit, didn't help with
-> the issues above, but there's a hunk in ext4_rename() which changes
-> -	old.dir->i_ctime =3D old.dir->i_mtime =3D current_time(old.dir);
-> +	old.dir->i_mtime =3D inode_set_ctime_current(old.inode);
->=20
->=20
+From: Hao Xu <howeyxu@tencent.com>
 
-I suspect the problem here is the i_crtime, which lives wholly in the
-extended part of the inode. The old macros would just not store anything
-if the i_crtime didn't fit, but the new ones would still store the
-tv_sec field in that case, which could be a memory corruptor. This patch
-should fix it, and I'm testing it now.
+This series introduce getdents64 to io_uring, the code logic is similar
+with the snychronized version's. It first try nowait issue, and offload
+it to io-wq threads if the first try fails.
 
-Hugh, if you're able to give this a spin on your setup, then that would
-be most helpful. This is also in the "ctime" branch in my kernel.org
-tree if that helps. If this looks good, I'll ask Christian to fold this
-into the ext4 conversion patch.
+Tested it with a liburing case:
+https://github.com/HowHsu/liburing/blob/getdents/test/getdents2.c
 
-Thanks for the bug report!
+The test is controlled by the below script[2] which runs getdents2.t 100
+times and calulate the avg.
+The result show that io_uring version is about 3% faster:
 
----------------------------8<--------------------------
+python3 run_getdents.py
+    Average of sync: 0.1036849
+    Average of iouring: 0.1005568
 
-[PATCH] ext4: fix the time handling macros when ext4 is using small inodes
+(0.1036849-0.1005568)/0.1036849 = 3.017%
 
-If ext4 is using small on-disk inodes, then it may not be able to store
-fine grained timestamps. It also can't store the i_crtime at all in that
-case since that fully lives in the extended part of the inode.
+note:
+[1] the number of getdents call/request in io_uring and normal sync version
+are made sure to be same beforehand.
 
-979492850abd got the EXT4_EINODE_{GET,SET}_XTIME macros wrong, and would
-still store the tv_sec field of the i_crtime into the raw_inode, even
-when they were small, corrupting adjacent memory.
+[2] run_getdents.py
 
-This fixes those macros to skip setting anything in the raw_inode if the
-tv_sec field doesn't fit.=20
+```python3
 
-Cc: Jan Kara <jack@suse.cz>
-Fixes: 979492850abd ("ext4: convert to ctime accessor functions")
-Reported-by: Hugh Dickins <hughd@google.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ext4/ext4.h | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+import subprocess
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 2af347669db7..1e2259d9967d 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -900,8 +900,10 @@ do {										\
- #define EXT4_INODE_SET_CTIME(inode, raw_inode)					\
- 	EXT4_INODE_SET_XTIME_VAL(i_ctime, inode, raw_inode, inode_get_ctime(inode=
-))
-=20
--#define EXT4_EINODE_SET_XTIME(xtime, einode, raw_inode)			       \
--	EXT4_INODE_SET_XTIME_VAL(xtime, &((einode)->vfs_inode), raw_inode, (einod=
-e)->xtime)
-+#define EXT4_EINODE_SET_XTIME(xtime, einode, raw_inode)				\
-+	if (EXT4_FITS_IN_INODE(raw_inode, einode, xtime))			\
-+		EXT4_INODE_SET_XTIME_VAL(xtime, &((einode)->vfs_inode),		\
-+					 raw_inode, (einode)->xtime)
-=20
- #define EXT4_INODE_GET_XTIME_VAL(xtime, inode, raw_inode)			\
- 	(EXT4_FITS_IN_INODE(raw_inode, EXT4_I(inode), xtime ## _extra) ?	\
-@@ -922,9 +924,14 @@ do {										\
- 		EXT4_INODE_GET_XTIME_VAL(i_ctime, inode, raw_inode));		\
- } while (0)
-=20
--#define EXT4_EINODE_GET_XTIME(xtime, einode, raw_inode)			       \
--do {									       \
--	(einode)->xtime =3D EXT4_INODE_GET_XTIME_VAL(xtime, &(einode->vfs_inode),=
- raw_inode);	\
-+#define EXT4_EINODE_GET_XTIME(xtime, einode, raw_inode)				\
-+do {										\
-+	if (EXT4_FITS_IN_INODE(raw_inode, einode, xtime)) 			\
-+		(einode)->xtime =3D						\
-+			EXT4_INODE_GET_XTIME_VAL(xtime, &(einode->vfs_inode),	\
-+						 raw_inode);			\
-+	else									\
-+		(einode)->xtime =3D (struct timespec64){0, 0};			\
- } while (0)
-=20
- #define i_disk_version osd1.linux1.l_i_version
---=20
-2.41.0
+N = 100
+sum = 0.0
+args = ["/data/home/howeyxu/tmpdir", "sync"]
 
+for i in range(N):
+    output = subprocess.check_output(["./liburing/test/getdents2.t"] + args)
+    sum += float(output)
+
+average = sum / N
+print("Average of sync:", average)
+
+sum = 0.0
+args = ["/data/home/howeyxu/tmpdir", "iouring"]
+
+for i in range(N):
+    output = subprocess.check_output(["./liburing/test/getdents2.t"] + args)
+    sum += float(output)
+
+average = sum / N
+print("Average of iouring:", average)
+
+```
+
+v3->v4:
+ - add Dave's xfs nowait code and fix a deadlock problem, with some code
+   style tweak.
+ - disable fixed file to avoid a race problem for now
+ - add a test program.
+
+v2->v3:
+ - removed the kernfs patches
+ - add f_pos_lock logic
+ - remove the "reduce last EOF getdents try" optimization since
+   Dominique reports that doesn't make difference
+ - remove the rewind logic, I think the right way is to introduce lseek
+   to io_uring not to patch this logic to getdents.
+ - add Singed-off-by of Stefan Roesch for patch 1 since checkpatch
+   complained that Co-developed-by someone should be accompanied with
+   Signed-off-by same person, I can remove them if Stefan thinks that's
+   not proper.
+
+
+Dominique Martinet (1):
+  fs: split off vfs_getdents function of getdents64 syscall
+
+Hao Xu (4):
+  vfs_getdents/struct dir_context: add flags field
+  io_uring: add support for getdents
+  xfs: add NOWAIT semantics for readdir
+  disable fixed file for io_uring getdents for now
+
+ fs/internal.h                  |  8 +++++
+ fs/readdir.c                   | 36 ++++++++++++++++-----
+ fs/xfs/libxfs/xfs_da_btree.c   | 16 ++++++++++
+ fs/xfs/libxfs/xfs_da_btree.h   |  1 +
+ fs/xfs/libxfs/xfs_dir2_block.c |  7 ++--
+ fs/xfs/libxfs/xfs_dir2_priv.h  |  2 +-
+ fs/xfs/scrub/dir.c             |  2 +-
+ fs/xfs/scrub/readdir.c         |  2 +-
+ fs/xfs/xfs_dir2_readdir.c      | 58 +++++++++++++++++++++++++++-------
+ fs/xfs/xfs_inode.c             | 17 ++++++++++
+ fs/xfs/xfs_inode.h             | 15 +++++----
+ include/linux/fs.h             |  8 +++++
+ include/uapi/linux/io_uring.h  |  7 ++++
+ io_uring/fs.c                  | 57 +++++++++++++++++++++++++++++++++
+ io_uring/fs.h                  |  3 ++
+ io_uring/opdef.c               |  8 +++++
+ 16 files changed, 215 insertions(+), 32 deletions(-)
+
+-- 
+2.25.1
 
