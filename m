@@ -2,214 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AFD2758235
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 18:34:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58BD9758265
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 18:47:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233017AbjGRQeT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jul 2023 12:34:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46750 "EHLO
+        id S231752AbjGRQrd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jul 2023 12:47:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233009AbjGRQeQ (ORCPT
+        with ESMTP id S230428AbjGRQr3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jul 2023 12:34:16 -0400
-Received: from mx2.veeam.com (mx2.veeam.com [64.129.123.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3153124;
-        Tue, 18 Jul 2023 09:34:14 -0700 (PDT)
-Received: from mail.veeam.com (prgmbx01.amust.local [172.24.128.102])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 18 Jul 2023 12:47:29 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58BC710D2;
+        Tue, 18 Jul 2023 09:47:28 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mx2.veeam.com (Postfix) with ESMTPS id 4A31041087;
-        Tue, 18 Jul 2023 12:34:12 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com;
-        s=mx2-2022; t=1689698052;
-        bh=HupSvzm2vncOrOzzRtgKkwQ3ecploXR1dUcOc8VjTcY=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To:From;
-        b=Xfr8MtO0+Zi2DaBlCSpzeAykKnjx/XsIpmvblMY3k28janKsB5HiuMje4LAIaIbw5
-         06gEUAijroubdt4JN02gRmhyIx7LbR32zkCEs0XSi/LXTxhl003VbRKan84J2ddFsk
-         xt/F6ECKvcuYnhGrsvGSed2GcI3RPEd8wsztZHMcbytBGfkjsBCd9EOeZrWhiZNwtP
-         lQ28p2prZeN+aytMKbHjh1KTyhp3tlkd2CEPc6Q2AyLOfzpw/qSw+waj/zgMc42nc5
-         AFzm2arV/NPfColw9+5vzXg7ckh6NMkvQTVkOOBwJDf1Dw2X3RdGlQ59D9Jjfclatj
-         ++27WJliivqfQ==
-Received: from [172.24.10.107] (172.24.10.107) by prgmbx01.amust.local
- (172.24.128.102) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.16; Tue, 18 Jul
- 2023 18:34:05 +0200
-Message-ID: <fdebc267-249a-2345-ba60-476240c8cf63@veeam.com>
-Date:   Tue, 18 Jul 2023 18:33:58 +0200
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 02C3D21835;
+        Tue, 18 Jul 2023 16:47:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1689698847; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0gG/SrZGF5/s3yIgwzjFlba62tVC4bEASQFHFHTinDw=;
+        b=sCqIZIaeY+lZmLjsOPsAbQI7GvoRp+QnzyxAweo04VRhB02G7zlyPODdtnMibPbRArJBXD
+        EmKHbQr2G1Hg/mlor+k1OhYUl6g3r4QossnKRSkX+YcTTQxPScxqx/r35yGnTw3fNEyVf5
+        ghYS+pV/sSq88EFejZe58ccHS7UeR7E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1689698847;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0gG/SrZGF5/s3yIgwzjFlba62tVC4bEASQFHFHTinDw=;
+        b=5Agcg3CzsovgtmLs9P2htHWvOOKunhSV4WopA6/9BhjEF+Ts1aNnzWoRaa1U1bHqG+xwJc
+        Fil0WRvm5Z4c3BAA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C0405134B0;
+        Tue, 18 Jul 2023 16:47:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id llAuKR7CtmTiUwAAMHmgww
+        (envelope-from <krisman@suse.de>); Tue, 18 Jul 2023 16:47:26 +0000
+From:   Gabriel Krisman Bertazi <krisman@suse.de>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     brauner@kernel.org, tytso@mit.edu,
+        linux-f2fs-devel@lists.sourceforge.net, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH v2 3/7] libfs: Validate negative dentries in
+ case-insensitive directories
+References: <20230422000310.1802-1-krisman@suse.de>
+        <20230422000310.1802-4-krisman@suse.de>
+        <20230714050028.GC913@sol.localdomain>
+Date:   Tue, 18 Jul 2023 12:47:25 -0400
+In-Reply-To: <20230714050028.GC913@sol.localdomain> (Eric Biggers's message of
+        "Thu, 13 Jul 2023 22:00:28 -0700")
+Message-ID: <87pm4p5fqa.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v5 02/11] block: Block Device Filtering Mechanism
-Content-Language: en-US
-To:     Yu Kuai <yukuai1@huaweicloud.com>, <axboe@kernel.dk>,
-        <hch@infradead.org>, <corbet@lwn.net>, <snitzer@kernel.org>
-CC:     <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-        <dchinner@redhat.com>, <willy@infradead.org>, <dlemoal@kernel.org>,
-        <linux@weissschuh.net>, <jack@suse.cz>, <ming.lei@redhat.com>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        Donald Buczek <buczek@molgen.mpg.de>,
-        "yukuai (C)" <yukuai3@huawei.com>
-References: <20230612135228.10702-1-sergei.shtepa@veeam.com>
- <20230612135228.10702-3-sergei.shtepa@veeam.com>
- <f935840e-12a7-c37b-183c-27e2d83990ea@huaweicloud.com>
- <90f79cf3-86a2-02c0-1887-d3490f9848bb@veeam.com>
- <d929eaa7-61d6-c4c4-aabc-0124c3693e10@huaweicloud.com>
- <686b9999-c903-cff1-48ba-21324031da17@veeam.com>
- <fc740cf1-93a7-e438-e784-5209808981dc@huaweicloud.com>
-From:   Sergei Shtepa <sergei.shtepa@veeam.com>
-In-Reply-To: <fc740cf1-93a7-e438-e784-5209808981dc@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [172.24.10.107]
-X-ClientProxiedBy: colmbx01.amust.local (172.31.112.31) To
- prgmbx01.amust.local (172.24.128.102)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A292403155B677765
-X-Veeam-MMEX: True
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Eric Biggers <ebiggers@kernel.org> writes:
 
+> I notice that the existing vfat_revalidate_ci() in fs/fat/namei_vfat.c behaves
+> differently in the 'flags == 0' case:
+>
+>
+> 	/*
+> 	 * This may be nfsd (or something), anyway, we can't see the
+> 	 * intent of this. So, since this can be for creation, drop it.
+> 	 */
+> 	if (!flags)
+> 		return 0;
+>
+> I don't know whether that's really needed, but have you thought about this?
 
-On 7/18/23 14:32, Yu Kuai wrote:
-> Subject:
-> Re: [PATCH v5 02/11] block: Block Device Filtering Mechanism
-> From:
-> Yu Kuai <yukuai1@huaweicloud.com>
-> Date:
-> 7/18/23, 14:32
-> 
-> To:
-> Sergei Shtepa <sergei.shtepa@veeam.com>, Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
-> CC:
-> viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com, willy@infradead.org, dlemoal@kernel.org, linux@weissschuh.net, jack@suse.cz, ming.lei@redhat.com, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Donald Buczek <buczek@molgen.mpg.de>, "yukuai (C)" <yukuai3@huawei.com>
-> 
-> 
-> Hi,
-> 
-> 在 2023/07/18 19:25, Sergei Shtepa 写道:
->> Hi.
->>
->> On 7/18/23 03:37, Yu Kuai wrote:
->>> Subject:
->>> Re: [PATCH v5 02/11] block: Block Device Filtering Mechanism
->>> From:
->>> Yu Kuai <yukuai1@huaweicloud.com>
->>> Date:
->>> 7/18/23, 03:37
->>>
->>> To:
->>> Sergei Shtepa <sergei.shtepa@veeam.com>, Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
->>> CC:
->>> viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com, willy@infradead.org, dlemoal@kernel.org, linux@weissschuh.net, jack@suse.cz, ming.lei@redhat.com, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Donald Buczek <buczek@molgen.mpg.de>, "yukuai (C)" <yukuai3@huawei.com>
->>>
->>>
->>> Hi,
->>>
->>> 在 2023/07/17 22:39, Sergei Shtepa 写道:
->>>>
->>>>
->>>> On 7/11/23 04:02, Yu Kuai wrote:
->>>>> bdev_disk_changed() is not handled, where delete_partition() and
->>>>> add_partition() will be called, this means blkfilter for partiton will
->>>>> be removed after partition rescan. Am I missing something?
->>>>
->>>> Yes, when the bdev_disk_changed() is called, all disk block devices
->>>> are deleted and new ones are re-created. Therefore, the information
->>>> about the attached filters will be lost. This is equivalent to
->>>> removing the disk and adding it back.
->>>>
->>>> For the blksnap module, partition rescan will mean the loss of the
->>>> change trackers data. If a snapshot was created, then such
->>>> a partition rescan will cause the snapshot to be corrupted.
->>>>
->>>
->>> I haven't review blksnap code yet, but this sounds like a problem.
->>
->> I can't imagine a case where this could be a problem.
->> Partition rescan is possible only if the file system has not been
->> mounted on any of the disk partitions. Ioctl BLKRRPART will return
->> -EBUSY. Therefore, during normal operation of the system, rescan is
->> not performed.
->> And if the file systems have not been mounted, it is possible that
->> the disk partition structure has changed or the disk in the media
->> device has changed. In this case, it is better to detach the
->> filter, otherwise it may lead to incorrect operation of the module.
->>
->> We can add prechange/postchange callback functions so that the
->> filter can track rescan process. But at the moment, this is not
->> necessary for the blksnap module.
-> 
-> So you mean that blkfilter is only used for the case that partition
-> is mounted? (Or you mean that partition is opened)
-> 
-> Then, I think you mean that filter should only be used for the partition
-> that is opended? Otherwise, filter can be gone at any time since
-> partition rescan can be gone.
-> 
-> //user
-> 1. attach filter
->         // other context rescan partition
-> 2. mount fs
-> // user will found filter is gone.
+Hi Eric,
 
-Mmm...  The fact is that at the moment the user of the filter is the
-blksnap module. There are no other filter users yet. The blksnap module
-solves the problem of creating snapshots, primarily for backup purposes.
-Therefore, the main use case is to attach a filter for an already running
-system, where all partitions are marked up, file systems are mounted.
+I didn't look much into it before because, as you know, the vfat
+case-insensitive implementation is completely different than the
+ext4/f2fs code. But I think you are on to something.
 
-If the server is being serviced, during which the disk is being
-re-partitioned, then disabling the filter is normal. In this case, the
-change tracker will be reset, and at the next backup, the filter will be
-attached again.
+The original intent of this check was to safeguard against the case
+where d_revalidate would be called without nameidata from the filesystem
+helpers. The filesystems don't give the purpose of the lookup
+(nd->flags) so there is no way to tell if the dentry is being used for
+creation, and therefore we can't rely on the negative dentry for ci. The
+path is like this:
 
-But if I were still solving the problem of saving the filter when rescanning,
-then it is necessary to take into account the UUID and name of the partition
-(struct partition_meta_info). It is unacceptable that due to a change in the
-structure of partitions, the filter is attached to another partition by mistake.
-The changed() callback would also be good to add so that the filter receives
-a notification that the block device has been updated.
+lookup_one_len(...)
+  __lookup_hash(..., nd = NULL)
+     cached_lookup(...)
+       do_revalidate(parent, name, nd)
+         dentry->d_op->d_revalidate(parent, nd);
 
-But I'm not sure that this should be done, since if some code is not used in
-the kernel, then it should not be in the kernel.
+Then !nd was dropped to pass flags directly around 2012, which
+overloaded the flags meaning. Which means, d_revalidate can
+still be called for creation without (LOOKUP_CREATE|...). For
+instance, in nfsd_create.  I wasn't considering this.
 
-> 
-> Thanks,
-> Kuai
-> 
->>
->> Therefore, I will refrain from making changes for now.
->>
->>>
->>> possible solutions I have in mind:
->>>
->>> 1. Store blkfilter for each partition from bdev_disk_changed() before
->>> delete_partition(), and add blkfilter back after add_partition().
->>>
->>> 2. Store blkfilter from gendisk as a xarray, and protect it by
->>> 'open_mutex' like 'part_tbl', block_device can keep the pointer to
->>> reference blkfilter so that performance from fast path is ok, and the
->>> lifetime of blkfiter can be managed separately.
->>>
->>>> There was an idea to do filtering at the disk level,
->>>> but I abandoned it.
->>>> .
->>>>
->>> I think it's better to do filtering at the partition level as well.
->>>
->>> Thanks,
->>> Kuai
->>>
->> .
->>
-> 
+This sucks, because we don't have enough information to avoid the name
+check in this case, so we'd also need memcmp there.  Except it won't be
+safe. because callers won't necessarily hold the parent lock in the path
+below.
+
+ lookup_one_unlocked()
+   lookup_dcache()
+      d_revalidate()  // called unlocked
+
+Thus, I'll have to add a similar:
+
+  if (!flags)
+    return 0;
+
+Ahead of the is_creation check.  It will solve it.
+
+But i think the issue is in VFS.  the lookup_one_* functions should have
+proper lookup flags, such that d_revalidate can tell the purpose of the
+lookup.
+
+-- 
+Gabriel Krisman Bertazi
