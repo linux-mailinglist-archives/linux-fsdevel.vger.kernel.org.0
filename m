@@ -2,168 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B0E6C7579EB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 12:58:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3162D757A66
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 13:25:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230384AbjGRK6J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jul 2023 06:58:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55532 "EHLO
+        id S231367AbjGRLZh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jul 2023 07:25:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231950AbjGRK5t (ORCPT
+        with ESMTP id S230046AbjGRLZg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jul 2023 06:57:49 -0400
-Received: from mail-oi1-f207.google.com (mail-oi1-f207.google.com [209.85.167.207])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36188172E
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 03:57:44 -0700 (PDT)
-Received: by mail-oi1-f207.google.com with SMTP id 5614622812f47-3a3a8d12040so8933001b6e.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 03:57:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689677863; x=1692269863;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0ipw5rrA7DhZGkPbMudtw/52EsMRXKQJmWjHgh816E8=;
-        b=Aw2T7K8DRtyNEnkB4GLtsCHicT0NNuLJpG2Aoy1qYl4IJnl/nMKUUqK9DpsIfOj5zJ
-         iCgCmzR1+m7jk2YbLwa+DQd0+ZCHL/jQurCAE7x3Qu9vUiTYUzx0mdhnMujJCu84dcW/
-         APyInN1zBju82GR2E1hGfu4eJpVWuwpzYXskReds1Xn5f4bbRJAbJ9LvYUdh/F85v9+7
-         RM9aCL1tQ1NWYnU5yrLtSm4S9SwypeeMhWjTJ1hDG0/5gqJLLqwUuqYU0I7VwPZyIsMy
-         LBOStOhYB1H6Lt2btn4YuL6yjiUBqlOF9KRu2C3RaFQlTWp2ORLMWluTAwRUpU0wqUCq
-         Nf7g==
-X-Gm-Message-State: ABy/qLYD9NBwAA92ydsn2EvsAS/k0TzpRv4/g6unhvLIzAb33w9vVDQg
-        Hjyipgp+75tTj4KTkEfGl+rQkSvKI8yoPbpNO84yoq2/SGLVEP2nhA==
-X-Google-Smtp-Source: APBJJlFvvlQlBj8Qq0dfLeUzDZhkUGMmERNLlEbPHur16LKuBd+fMbnbe22a33lgdg6ycdWFxwHnI5gw1gx2R4LviuhU9OafDYKj
+        Tue, 18 Jul 2023 07:25:36 -0400
+Received: from mx4.veeam.com (mx4.veeam.com [104.41.138.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3354134;
+        Tue, 18 Jul 2023 04:25:34 -0700 (PDT)
+Received: from mail.veeam.com (prgmbx01.amust.local [172.24.128.102])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx4.veeam.com (Postfix) with ESMTPS id 9A21E2B574;
+        Tue, 18 Jul 2023 14:25:31 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com;
+        s=mx4-2022; t=1689679531;
+        bh=0HxCwL7XClDj65r1twmCt4r20koEqWHsoKc1IxOESRU=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To:From;
+        b=BfjxBu9FQIOFK6WtkjLQAN6Scoilhc6Eenjq8FiSTRx2yI8jjz9537XC5lSqmsVpM
+         OWxsf8bvRstmFDpvYngxNohd9XjQicBP0omr/Jn+wK2Qkogaxwlsp3e58dCYCtR1UT
+         OEBHOYqA36HSOoRjJXb9hA/2ud/KJq7uErGUFPIYISIyUVd48DHq5+LNdJXxAKEFk/
+         7qjGm9z7CUsjNJY0knr8HTcM54AiFJj4lRHCRpPjB80r15r5Hp8lsmV4ZIveJpfmI6
+         nYk5I019CBHXjq4xvH/nFwDPwgsu9JCR0wP/gcAfY03hShN9LPdH+33MqCDPOc27lq
+         cYLhLjVXaSHjQ==
+Received: from [172.24.10.107] (172.24.10.107) by prgmbx01.amust.local
+ (172.24.128.102) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.16; Tue, 18 Jul
+ 2023 13:25:25 +0200
+Message-ID: <686b9999-c903-cff1-48ba-21324031da17@veeam.com>
+Date:   Tue, 18 Jul 2023 13:25:16 +0200
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:198e:b0:3a1:e58d:aae0 with SMTP id
- bj14-20020a056808198e00b003a1e58daae0mr21182527oib.3.1689677863595; Tue, 18
- Jul 2023 03:57:43 -0700 (PDT)
-Date:   Tue, 18 Jul 2023 03:57:43 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d8352e0600c0c804@google.com>
-Subject: [syzbot] [hfs?] kernel BUG in hfsplus_show_options
-From:   syzbot <syzbot+98d3ceb7e01269e7bf4f@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v5 02/11] block: Block Device Filtering Mechanism
+Content-Language: en-US
+To:     Yu Kuai <yukuai1@huaweicloud.com>, <axboe@kernel.dk>,
+        <hch@infradead.org>, <corbet@lwn.net>, <snitzer@kernel.org>
+CC:     <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+        <dchinner@redhat.com>, <willy@infradead.org>, <dlemoal@kernel.org>,
+        <linux@weissschuh.net>, <jack@suse.cz>, <ming.lei@redhat.com>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        Donald Buczek <buczek@molgen.mpg.de>,
+        "yukuai (C)" <yukuai3@huawei.com>
+References: <20230612135228.10702-1-sergei.shtepa@veeam.com>
+ <20230612135228.10702-3-sergei.shtepa@veeam.com>
+ <f935840e-12a7-c37b-183c-27e2d83990ea@huaweicloud.com>
+ <90f79cf3-86a2-02c0-1887-d3490f9848bb@veeam.com>
+ <d929eaa7-61d6-c4c4-aabc-0124c3693e10@huaweicloud.com>
+From:   Sergei Shtepa <sergei.shtepa@veeam.com>
+In-Reply-To: <d929eaa7-61d6-c4c4-aabc-0124c3693e10@huaweicloud.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [172.24.10.107]
+X-ClientProxiedBy: colmbx01.amust.local (172.31.112.31) To
+ prgmbx01.amust.local (172.24.128.102)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A292403155B677761
+X-Veeam-MMEX: True
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hi.
 
-syzbot found the following issue on:
+On 7/18/23 03:37, Yu Kuai wrote:
+> Subject:
+> Re: [PATCH v5 02/11] block: Block Device Filtering Mechanism
+> From:
+> Yu Kuai <yukuai1@huaweicloud.com>
+> Date:
+> 7/18/23, 03:37
+> 
+> To:
+> Sergei Shtepa <sergei.shtepa@veeam.com>, Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
+> CC:
+> viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com, willy@infradead.org, dlemoal@kernel.org, linux@weissschuh.net, jack@suse.cz, ming.lei@redhat.com, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Donald Buczek <buczek@molgen.mpg.de>, "yukuai (C)" <yukuai3@huawei.com>
+> 
+> 
+> Hi,
+> 
+> 在 2023/07/17 22:39, Sergei Shtepa 写道:
+>>
+>>
+>> On 7/11/23 04:02, Yu Kuai wrote:
+>>> bdev_disk_changed() is not handled, where delete_partition() and
+>>> add_partition() will be called, this means blkfilter for partiton will
+>>> be removed after partition rescan. Am I missing something?
+>>
+>> Yes, when the bdev_disk_changed() is called, all disk block devices
+>> are deleted and new ones are re-created. Therefore, the information
+>> about the attached filters will be lost. This is equivalent to
+>> removing the disk and adding it back.
+>>
+>> For the blksnap module, partition rescan will mean the loss of the
+>> change trackers data. If a snapshot was created, then such
+>> a partition rescan will cause the snapshot to be corrupted.
+>>
+> 
+> I haven't review blksnap code yet, but this sounds like a problem.
 
-HEAD commit:    aeba456828b4 Add linux-next specific files for 20230718
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=111d6a62a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e7ec534f91cfce6c
-dashboard link: https://syzkaller.appspot.com/bug?extid=98d3ceb7e01269e7bf4f
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15ecf646a80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1476f30aa80000
+I can't imagine a case where this could be a problem.
+Partition rescan is possible only if the file system has not been
+mounted on any of the disk partitions. Ioctl BLKRRPART will return
+-EBUSY. Therefore, during normal operation of the system, rescan is
+not performed.
+And if the file systems have not been mounted, it is possible that
+the disk partition structure has changed or the disk in the media
+device has changed. In this case, it is better to detach the
+filter, otherwise it may lead to incorrect operation of the module.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/94f67a948e1d/disk-aeba4568.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9818a252eddd/vmlinux-aeba4568.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/fbf9befe9bc9/bzImage-aeba4568.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/d8265d21ad1c/mount_0.gz
+We can add prechange/postchange callback functions so that the
+filter can track rescan process. But at the moment, this is not
+necessary for the blksnap module. 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+98d3ceb7e01269e7bf4f@syzkaller.appspotmail.com
+Therefore, I will refrain from making changes for now.
 
-memfd_create() without MFD_EXEC nor MFD_NOEXEC_SEAL, pid=5032 'syz-executor324'
-loop0: detected capacity change from 0 to 1024
-detected buffer overflow in strnlen
-------------[ cut here ]------------
-kernel BUG at lib/string_helpers.c:1031!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 5032 Comm: syz-executor324 Not tainted 6.5.0-rc2-next-20230718-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/03/2023
-RIP: 0010:fortify_panic+0x1c/0x20 lib/string_helpers.c:1031
-Code: ba fd eb d7 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 53 48 89 fb e8 23 de 65 fd 48 89 de 48 c7 c7 00 2c c8 8a e8 e4 28 49 fd <0f> 0b 66 90 f3 0f 1e fa 41 55 41 54 55 53 48 89 fb e8 fe dd 65 fd
-RSP: 0018:ffffc90003a1f7b8 EFLAGS: 00010282
-RAX: 0000000000000023 RBX: ffffffff8a873580 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff816aad20 RDI: 0000000000000005
-RBP: ffff888019f16cb8 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000080000000 R11: 0000000000000001 R12: 1ffff92000743efa
-R13: 0000000000000004 R14: ffff888078fa69c0 R15: ffffc90003a1f7f0
-FS:  0000555556e72380(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000456b30 CR3: 0000000079883000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- strnlen include/linux/fortify-string.h:181 [inline]
- strscpy include/linux/fortify-string.h:324 [inline]
- hfsplus_show_options+0x658/0x740 fs/hfsplus/options.c:226
- show_mountinfo+0x671/0x990 fs/proc_namespace.c:191
- seq_read_iter+0xaf0/0x1280 fs/seq_file.c:272
- call_read_iter include/linux/fs.h:1911 [inline]
- copy_splice_read+0x418/0x8f0 fs/splice.c:366
- vfs_splice_read fs/splice.c:993 [inline]
- vfs_splice_read+0x2c8/0x3b0 fs/splice.c:962
- splice_direct_to_actor+0x2a5/0xa30 fs/splice.c:1069
- do_splice_direct+0x1af/0x280 fs/splice.c:1194
- do_sendfile+0xb88/0x1390 fs/read_write.c:1254
- __do_sys_sendfile64 fs/read_write.c:1322 [inline]
- __se_sys_sendfile64 fs/read_write.c:1308 [inline]
- __x64_sys_sendfile64+0x1d6/0x220 fs/read_write.c:1308
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f4339573a79
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffff9271428 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00007ffff9271430 RCX: 00007f4339573a79
-RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000004
-RBP: 00007f43395e7610 R08: 0000000000000000 R09: 65732f636f72702f
-R10: 0800000080004105 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffff9271668 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:fortify_panic+0x1c/0x20 lib/string_helpers.c:1031
-Code: ba fd eb d7 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 53 48 89 fb e8 23 de 65 fd 48 89 de 48 c7 c7 00 2c c8 8a e8 e4 28 49 fd <0f> 0b 66 90 f3 0f 1e fa 41 55 41 54 55 53 48 89 fb e8 fe dd 65 fd
-RSP: 0018:ffffc90003a1f7b8 EFLAGS: 00010282
-RAX: 0000000000000023 RBX: ffffffff8a873580 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff816aad20 RDI: 0000000000000005
-RBP: ffff888019f16cb8 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000080000000 R11: 0000000000000001 R12: 1ffff92000743efa
-R13: 0000000000000004 R14: ffff888078fa69c0 R15: ffffc90003a1f7f0
-FS:  0000555556e72380(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000456b30 CR3: 0000000079883000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> 
+> possible solutions I have in mind:
+> 
+> 1. Store blkfilter for each partition from bdev_disk_changed() before
+> delete_partition(), and add blkfilter back after add_partition().
+> 
+> 2. Store blkfilter from gendisk as a xarray, and protect it by
+> 'open_mutex' like 'part_tbl', block_device can keep the pointer to
+> reference blkfilter so that performance from fast path is ok, and the
+> lifetime of blkfiter can be managed separately.
+> 
+>> There was an idea to do filtering at the disk level,
+>> but I abandoned it.
+>> .
+>>
+> I think it's better to do filtering at the partition level as well.
+> 
+> Thanks,
+> Kuai
+> 
