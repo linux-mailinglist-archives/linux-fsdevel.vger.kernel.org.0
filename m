@@ -2,171 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 41D2E758180
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 17:56:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6CDB7583D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 19:49:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233808AbjGRP4u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jul 2023 11:56:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49942 "EHLO
+        id S232941AbjGRRtb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jul 2023 13:49:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233796AbjGRP4q (ORCPT
+        with ESMTP id S232704AbjGRRta (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jul 2023 11:56:46 -0400
-Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0953B19AF
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 08:56:41 -0700 (PDT)
-Received: by mail-qt1-x82a.google.com with SMTP id d75a77b69052e-403b6b7c0f7so42262781cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 08:56:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1689695800; x=1692287800;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tjh+qVHNBsaCt+fpZytXbv4JtN2Kf+QfiKBiC+OQp3c=;
-        b=bYsTsBY1ioUL9k8drjTPCTw/fEJ0EAlGX5g4owJLPMPxN2CHLKUwbHRdsGU8yNpkgq
-         tSJhCUQojCe7iZMsDT/aY34J1oz2QHRzCjLM+KqEBEo9M8BD2KOp45IRPvgTMkckJ6dq
-         H9fFQEgiHBZaevHiGZSqEfXqcoEtLjezHUCteBqtpUndGthYRfcrzEkhL4CGHaIFAcmx
-         6wdKboUdDaPeOVdQT0aOEr8C1+gySsRWrc1UqrjcLLXuhZDet2FHUgbuPzKGfDMScL/V
-         K78x7SFpD7MaWzPqAIp0HWYQyARw7uG7tneLlNjtBlR/Fv5UIeG6Vm/K9G6rR6HJEl7q
-         8oNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689695800; x=1692287800;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tjh+qVHNBsaCt+fpZytXbv4JtN2Kf+QfiKBiC+OQp3c=;
-        b=T7ZzIjyoNe0He1IxaxBSkDWvoyZE6jj9KoBGMUm/WSs3keZvdTA0uvIae/8bBPNWSY
-         Uxj30fVVUap3YKMx+WwBTWC7wl1BA8KLs0UCHSLzW52uQxIdCPDKpVql89RSEHNTRq9n
-         OzZMVjjDtewKg1arwou7lCIN40a7aVVfEzxqFbJezLOCXzdd+AjJrvam0fit72SacCFt
-         b28oNjoGrPpNF8kLDI9n/FjtNTZYPq0BIx019jAtzACEDIRqPMFoeyWJdf+i7gt4ab8w
-         XblDr8NapZ2FRknGx7X0doTv0+kNnjw2ux71E36yXYL6Agw5IxRI/UJxQxyAKT5ZU8th
-         +lXw==
-X-Gm-Message-State: ABy/qLbnT/wZQtgg96NQRbUyT8Q6mtOhL4pIanupyhAH5kEqfJnrU1ub
-        Et/NEwPveC/69NXrERo6aHrIrw==
-X-Google-Smtp-Source: APBJJlFA9677r6PhZxjwKlQ1fKWxhiNMVqP6N1YqyjTADbRS7wwnXs7xld1btAoYMOwt7mM3Vw+c9w==
-X-Received: by 2002:ac8:7dd0:0:b0:403:a814:ef4d with SMTP id c16-20020ac87dd0000000b00403a814ef4dmr21293071qte.49.1689695800050;
-        Tue, 18 Jul 2023 08:56:40 -0700 (PDT)
-Received: from ziepe.ca ([206.223.160.26])
-        by smtp.gmail.com with ESMTPSA id s21-20020ac87595000000b003e635f80e72sm727847qtq.48.2023.07.18.08.56.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jul 2023 08:56:39 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1qLn42-002YJT-5I;
-        Tue, 18 Jul 2023 12:56:38 -0300
-Date:   Tue, 18 Jul 2023 12:56:38 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     Grzegorz Jaszczyk <jaz@semihalf.com>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        linux-usb@vger.kernel.org, Matthew Rosato <mjrosato@linux.ibm.com>,
-        Paul Durrant <paul@xen.org>, Tom Rix <trix@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        dri-devel@lists.freedesktop.org, Michal Hocko <mhocko@kernel.org>,
-        linux-mm@kvack.org, Kirti Wankhede <kwankhede@nvidia.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Diana Craciun <diana.craciun@oss.nxp.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Fei Li <fei1.li@intel.com>, x86@kernel.org,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        intel-gfx@lists.freedesktop.org,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        linux-fpga@vger.kernel.org, Zhi Wang <zhi.a.wang@intel.com>,
-        Wu Hao <hao.wu@intel.com>, Jason Herne <jjherne@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-s390@vger.kernel.org,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linuxppc-dev@lists.ozlabs.org, Eric Auger <eric.auger@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, kvm@vger.kernel.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, cgroups@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        intel-gvt-dev@lists.freedesktop.org, io-uring@vger.kernel.org,
-        netdev@vger.kernel.org, Tony Krowiak <akrowiak@linux.ibm.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Moritz Fischer <mdf@kernel.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Xu Yilun <yilun.xu@intel.com>,
-        Dominik Behr <dbehr@chromium.org>,
-        Marcin Wojtas <mw@semihalf.com>
-Subject: Re: [PATCH 0/2] eventfd: simplify signal helpers
-Message-ID: <ZLa2NmwexoxPkS9a@ziepe.ca>
-References: <20230630155936.3015595-1-jaz@semihalf.com>
- <20230714-gauner-unsolidarisch-fc51f96c61e8@brauner>
- <CAH76GKPF4BjJLrzLBW8k12ATaAGADeMYc2NQ9+j0KgRa0pomUw@mail.gmail.com>
- <20230717130831.0f18381a.alex.williamson@redhat.com>
- <ZLW8wEzkhBxd0O0L@ziepe.ca>
- <20230717165203.4ee6b1e6.alex.williamson@redhat.com>
+        Tue, 18 Jul 2023 13:49:30 -0400
+X-Greylist: delayed 8317 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 18 Jul 2023 10:49:28 PDT
+Received: from diomedes.noc.ntua.gr (diomedes.noc.ntua.gr [IPv6:2001:648:2000:de::220])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0CA5FDC;
+        Tue, 18 Jul 2023 10:49:27 -0700 (PDT)
+Received: from danaos.cslab.ece.ntua.gr (danaos.cslab.ece.ntua.gr [147.102.3.1])
+        by diomedes.noc.ntua.gr (8.15.2/8.15.2) with ESMTP id 36IEXD69061138;
+        Tue, 18 Jul 2023 17:33:13 +0300 (EEST)
+        (envelope-from jimsiak@cslab.ece.ntua.gr)
+Received: from [147.102.3.213] (avalanche.cslab.ece.ntua.gr [147.102.3.213])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by danaos.cslab.ece.ntua.gr (Postfix) with ESMTPSA id E2E6720E3B;
+        Tue, 18 Jul 2023 17:33:12 +0300 (EEST)
+Message-ID: <79375b71-db2e-3e66-346b-254c90d915e2@cslab.ece.ntua.gr>
+Date:   Tue, 18 Jul 2023 17:33:12 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230717165203.4ee6b1e6.alex.williamson@redhat.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Content-Language: en-US
+From:   Dimitris Siakavaras <jimsiak@cslab.ece.ntua.gr>
+Subject: Using userfaultfd with KVM's async page fault handling causes
+ processes to hung waiting for mmap_lock to be released
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.6.1 (diomedes.noc.ntua.gr [147.102.222.220]); Tue, 18 Jul 2023 17:33:14 +0300 (EEST)
+X-Virus-Scanned: clamav-milter 0.101.4 at dkim.noc.ntua.gr
+X-Virus-Status: Clean
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 17, 2023 at 04:52:03PM -0600, Alex Williamson wrote:
-> On Mon, 17 Jul 2023 19:12:16 -0300
-> Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> 
-> > On Mon, Jul 17, 2023 at 01:08:31PM -0600, Alex Williamson wrote:
-> > 
-> > > What would that mechanism be?  We've been iterating on getting the
-> > > serialization and buffering correct, but I don't know of another means
-> > > that combines the notification with a value, so we'd likely end up with
-> > > an eventfd only for notification and a separate ring buffer for
-> > > notification values.  
-> > 
-> > All FDs do this. You just have to make a FD with custom
-> > file_operations that does what this wants. The uAPI shouldn't be able
-> > to tell if the FD is backing it with an eventfd or otherwise. Have the
-> > kernel return the FD instead of accepting it. Follow the basic design
-> > of eg mlx5vf_save_fops
-> 
-> Sure, userspace could poll on any fd and read a value from it, but at
-> that point we're essentially duplicating a lot of what eventfd provides
-> for a minor(?) semantic difference over how the counter value is
-> interpreted.  Using an actual eventfd allows the ACPI notification to
-> work as just another interrupt index within the existing vfio IRQ
-> uAPI.
+Hi, this is my first bug report so I apologise in advance for any 
+missing information and/or difficulty in explaining the problem in my 
+email. I am at your disposal to provide any other necessary information 
+or modify appropriately my email.
 
-Yes, duplicated, sort of, whatever the "ack" is to allow pushing a new
-value can be revised to run as part of the read.
+Problem: Using userfaultfd for a process that uses KVM and triggers the 
+asynchronous page fault handling results in processes to hung forever.
+Processor: AMD EPYC 7402 24-Core Processor
+Kernel version: 5.13 (the problem also occurs on 6.4.3 and 6.5-rc2)
 
-But I don't really view it as a minor difference. eventfd is a
-counter. It should not be abused otherwise, even if it can be made to
-work.
+Unfortunately, my execution environment involves a pretty complex set of 
+components to setup so it is not straightforward for me to share code 
+that can be used to reproduce the issue, so I will try to explain the 
+problem as clearly as possible.
 
-It really isn't an IRQ if it is pushing an async message w/data.
+I have two processes:
+1. A firecracker VM process (https://firecracker-microvm.github.io/) 
+which uses KVM.
+2. A second process that handles the userpage faults of the firecracker 
+process.
 
-Jason
+The race condition involves the released field of the userfaultfd_ctx 
+structure.
+More specifically:
+
+* Process 2 invokes the close() system call for the userfaultfd 
+descriptor, thus triggering the execution of userfaultfd_release() in 
+the kernel.
+   userfaultfd_release() contains the following lines of code:
+
+    WRITE_ONCE(ctx->released, true);
+
+     if (!mmget_not_zero(mm))
+         goto wakeup;
+
+     /*
+      * Flush page faults out of all CPUs. NOTE: all page faults
+      * must be retried without returning VM_FAULT_SIGBUS if
+      * userfaultfd_ctx_get() succeeds but vma->vma_userfault_ctx
+      * changes while handle_userfault released the mmap_lock. So
+      * it's critical that released is set to true (above), before
+      * taking the mmap_lock for writing.
+      */
+     mmap_write_lock(mm);
+
+* Process 1 is getting a page fault while running inside KVM_ENTRY. This 
+triggers the execution of kvm_tdp_page_fault(), and the following 
+function call chain is executed:
+
+kvm_tdp_page_fault() -> direct_page_fault() -> try_async_pf() -> 
+kvm_arch_setup_async_pf() -> kvm_setup_async_pf()
+
+kvm_setup_async_pf() adds in the workqueue function async_pf_execute:
+     INIT_WORK(&work->work, async_pf_execute);
+
+Then, the following function call chain is executed:
+async_pf_execute() -> get_user_pages_remote() -> 
+__get_user_pages_remote() -> __get_user_pages_locked() -> __get_user_pages()
+
+__get_user_pages() is called with mmap_lock taken and in there is the 
+following code:
+retry:
+         /*
+          * If we have a pending SIGKILL, don't keep faulting pages and
+          * potentially allocating memory.
+          */
+         if (fatal_signal_pending(current)) {
+             ret = -EINTR;
+             goto out;
+         }
+         cond_resched();
+
+         page = follow_page_mask(vma, start, foll_flags, &ctx);
+         if (!page) {
+             ret = faultin_page(vma, start, &foll_flags, locked);
+             switch (ret) {
+             case 0:
+                 goto retry;
+
+When faultin_page() is called here it will in turn call the following 
+chain of functions:
+
+faultin_page() -> handle_mm_fault() -> __handle__mm_fault() -> 
+handle_pte_fault() -> do_anonymous_page() -> handle_userfault()
+
+The final handle_userfault() function is the function used by 
+userfaultfd to handle the userfault. In this function we can find the 
+following code:
+
+if (unlikely(READ_ONCE(ctx->released))) {
+         /*
+          * Don't return VM_FAULT_SIGBUS in this case, so a non
+          * cooperative manager can close the uffd after the
+          * last UFFDIO_COPY, without risking to trigger an
+          * involuntary SIGBUS if the process was starting the
+          * userfaultfd while the userfaultfd was still armed
+          * (but after the last UFFDIO_COPY). If the uffd
+          * wasn't already closed when the userfault reached
+          * this point, that would normally be solved by
+          * userfaultfd_must_wait returning 'false'.
+          *
+          * If we were to return VM_FAULT_SIGBUS here, the non
+          * cooperative manager would be instead forced to
+          * always call UFFDIO_UNREGISTER before it can safely
+          * close the uffd.
+          */
+         ret = VM_FAULT_NOPAGE;
+         goto out;
+}
+
+The problem is that when ctx->released has been set to 1 by 
+userfaultfd_release() called by Process 2, handle_userfault() will 
+return VM_FAULT_NOPAGE due to the above if statement.
+This will result in VM_FAULT_NOPAGE returned by handle_mm_fault() in 
+faultin_page() and faultin_page() in turn will return 0.
+Getting back to the invocation of faultin_page() from __get_user_pages() 
+the "case 0:" statement will cause the execution to go back to the retry 
+label. Given that ctx->released never turns back to 0, this loop will 
+continue forever and Process 1 will be stuck calling faultin_page(), 
+getting 0 as return value, going back to retry, and so on.
+
+Given that Process 1 still holds the mmap_lock and will never release 
+it, process 2 will also hang in the call of mmap_write_lock(mm).
+
+This results in both processes being stuck in a deadlock/livelock situation.
+
+Unfortunately, I have only a minor knowledge of the mm kernel subsystem 
+so I am not able to provide a solution to the problem, but I hope 
+someone else with experience in kernel developing can come up with a 
+proper solution.
+
+Thank you very much,
+Best Regards,
+Dimitris Siakavaras
