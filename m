@@ -2,173 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 404E2758353
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 19:17:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE5EA758382
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Jul 2023 19:32:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232934AbjGRRRw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jul 2023 13:17:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48338 "EHLO
+        id S232850AbjGRRcR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jul 2023 13:32:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232465AbjGRRRt (ORCPT
+        with ESMTP id S230215AbjGRRcQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jul 2023 13:17:49 -0400
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AD4A10CB
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 10:17:47 -0700 (PDT)
-Received: by mail-qk1-x735.google.com with SMTP id af79cd13be357-7659db6339eso267433885a.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 10:17:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20221208.gappssmtp.com; s=20221208; t=1689700666; x=1692292666;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aV119CUZzOJ+2nU7i7rciuokyHqqUtLofvwhyauU4aE=;
-        b=pwbsr1h9n5c57JlTUKfYRkR3tkRz6+C5pAreh/uVqEdLCTLkt4AcNCuiIyjtJsp/G4
-         Qkgdq/fsjPvyTf5hs7wKaiFe30IeO1bT5G7BfjcmyVHF7/QAzAXMchqoz9UEFinrpSfK
-         T6NYQYDDbvked0eX/2cwnozLsB9uKgQT0zyVDgYULwhJaINeLMnjJO3UI1+iM/2r9bpt
-         bHKVinmVHsaFXweOy3DgY+FDTLOHdo+uryF8YmiSbHSq+BLF5RLD0pWhUFRs6mXO30y4
-         CNWqv6zK4Qr93h1/6q5Zx8ndi3SpgMiKDT3KhnjzAYpxYrn1qA6YdGmVU8QScYathHWe
-         wL/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689700666; x=1692292666;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aV119CUZzOJ+2nU7i7rciuokyHqqUtLofvwhyauU4aE=;
-        b=eRGHWh5BTZfAPZ9tDMih58mFCLdoyh6jDXhRtM5cX5TuzuA4iWJ3O0nzI5raN34a59
-         o5eIrsitVeULfmHjTbih5EbRs0GAAXWepvGz67ydz23ayRohOhkvbC4Z4ea5yooMy5u5
-         pROw5kU3SNF3v9/x7ffC+vD8dIlMbZOznVZ1zqj3YHE2SU7zO8ChQHn85hQv1G0GZWCI
-         3xpbdMCFcnfMxAo3DxjOjJXDaF9YGU/Zdi9kKmK5MX9RV0G/9tGZvj94GqZsRKyrx340
-         CqLYeLmdku0uNsvREEr0vL4yCkMLqB5pgjSxR5y+/nDgtuj0z7MbSwVEQceYEqIq26KH
-         lMvQ==
-X-Gm-Message-State: ABy/qLYQSevkhHmdd1uds6FW7H5NRLwFq8R78hsmOuEcXdjhgLVJeCIU
-        /OjeFVgx7jXaolc7ylWvt1OnXw==
-X-Google-Smtp-Source: APBJJlGDUuhVj/w8ybkHZroC36GxyeamEhSgFgNnIh7eTvU2ikI04uPpSE9SekbO0HBCPu+Mlf5+og==
-X-Received: by 2002:a05:620a:d85:b0:765:6923:623e with SMTP id q5-20020a05620a0d8500b007656923623emr14824431qkl.29.1689700666088;
-        Tue, 18 Jul 2023 10:17:46 -0700 (PDT)
-Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id i3-20020a37c203000000b00767660afed5sm723261qkm.99.2023.07.18.10.17.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jul 2023 10:17:45 -0700 (PDT)
-Date:   Tue, 18 Jul 2023 13:17:44 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: small writeback fixes
-Message-ID: <20230718171744.GA843162@perftesting>
-References: <20230713130431.4798-1-hch@lst.de>
+        Tue, 18 Jul 2023 13:32:16 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9508DB3;
+        Tue, 18 Jul 2023 10:32:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 167DF616A0;
+        Tue, 18 Jul 2023 17:32:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE2FFC433C7;
+        Tue, 18 Jul 2023 17:32:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689701534;
+        bh=axeb2oq3ugfHBp8V7r1e4++IvwdwAuve6L0DU/phV+Y=;
+        h=From:Date:Subject:To:Cc:From;
+        b=RGGHYKAdr9A1pP7KSCiMF8arJ7ePa1xy5wVRsQ8toGSZKsQAX/s28NQG1OYyQ8HNB
+         PXNUg2EZk7ZarV9f3H8m+d1Mhuvi5RDJsUz/xS6829UpLddV73HIdXeRL+D6ZFx32i
+         6X5FrOOHoVaat/QK9pYmYXG+zABEJpxYhyOXyhkXtuTaev+nob1frEnf7vXN06ZxuY
+         8bi+I/QD39orPeSov7EwjGheVsbcnrRTglOk1276rMbEMKnbSRfSFjHqeOFk/oubBl
+         0GBN48lUuOCmLIkochWE3O/XHUQuEzsOe8RHkb6NLGG66ceReDI++GvvwJf2lEha6+
+         Af6eXnBB07d/A==
+From:   Jeff Layton <jlayton@kernel.org>
+Date:   Tue, 18 Jul 2023 13:31:59 -0400
+Subject: [PATCH] ext4: fix the time handling macros when ext4 is using
+ small inodes
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230713130431.4798-1-hch@lst.de>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230718-ctime-v1-1-24e2f96dcdf3@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAI7MtmQC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI2MDc0ML3eSSzNxU3TRDE4OUxFQLcwvLFCWg2oKi1LTMCrA50bG1tQDzzuw
+ cVwAAAA==
+To:     Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2549; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=axeb2oq3ugfHBp8V7r1e4++IvwdwAuve6L0DU/phV+Y=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBktsydVvBKNzDju8jE+b0NYW+NkK39lUgCDtOnh
+ VRGrTTKhBOJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZLbMnQAKCRAADmhBGVaC
+ FV9uEAC+J5EE0zF76pogRmUja2GnRdskqbCVOTmRIXPfWiRGO3E8Kwcl2kEKknqmBO/9oLatu2D
+ vL3C2B4Fbr78VWkpOobK0qveTjWxvnBJk1KAtIASaXWiqzsRN1YztjAYUbT3u3St39996c7EKZe
+ 1mFdjwvrKqQXIpkJSLba41/iw6Snem/3DZNMKgA518hpfyetiwK3+FGg8NQ0TZ9ZSRjjQncklA6
+ LzjjB27Le1dhQ/X8TWViottRwmtWPqciS9tuVz7iQi82ijmxAr852f9ltYCaHYwLbL0h4U9au8U
+ MiO1pwqmjSvsrmLu2blvmMOLWWb/pukEe1rhSbxKuDxNrfCR8I4GP65i9Dxp5tV36Xl+CinlMRP
+ 2qZ/nxPfNKInKqF1tq84Eg8jRxCXJ/qNEqqQdSYjLB+Erpd6HHpJZKejinJyzpPF7rqAAt9hNA8
+ iudm6QXBcKO9WtjPkiiogrBicJPPzyPQ2tGBxcLCcdx8HBrrrBMc10xrNGZrsKPL//h2+5nZ3sU
+ BK2lWiiifimf6rbeG/eXyKU/r8AWxGKwJLyXYRg3iswI+1t4QN4HQMi90sN5ooVZgQAcuONbbUA
+ Lpa35rXQLXwYdP+jGOzUeEhhA57qXH2a2S5HuOjICAIHC1Om9LzqyzzovegzEGjOStTk4t4gPS4
+ 21wFYAISREwI9HA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 13, 2023 at 03:04:22PM +0200, Christoph Hellwig wrote:
-> Hi all,
-> 
-> this series has various fixes for bugs found in inspect or only triggered
-> with upcoming changes that are a fallout from my work on bound lifetimes
-> for the ordered extent and better confirming to expectations from the
-> common writeback code.
-> 
-> Note that this series builds on the "btrfs compressed writeback cleanups"
-> series sent out previously.
-> 
-> A git tree is also available here:
-> 
->     git://git.infradead.org/users/hch/misc.git btrfs-writeback-fixes
-> 
-> Gitweb:
-> 
->     http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/btrfs-writeback-fixes
-> 
-> Diffatat:
->  extent_io.c |  182 ++++++++++++++++++++++++++++++++++++------------------------
->  inode.c     |   16 +----
->  2 files changed, 117 insertions(+), 81 deletions(-)
+If ext4 is using small on-disk inodes, then it may not be able to store
+fine grained timestamps. It also can't store the i_crtime at all in that
+case since that fully lives in the extended part of the inode.
 
-Just FYI I've been using these two series to see how the github CI stuff was
-working, and I keep tripping over a hang in generic/475.  It appears to be in
-the fixup worker, here's the sysrq w output
+979492850abd got the EXT4_EINODE_{GET,SET}_XTIME macros wrong, and would
+still store the tv_sec field of the i_crtime into the raw_inode, even
+when they were small, corrupting adjacent memory.
 
-sysrq: Show Blocked State
-task:kworker/u4:5    state:D stack:0     pid:1713600 ppid:2      flags:0x00004000
-Workqueue: btrfs-fixup btrfs_work_helper
-Call Trace:
- <TASK>
- __schedule+0x533/0x1910
- ? find_held_lock+0x2b/0x80
- schedule+0x5e/0xd0
- __reserve_bytes+0x4e2/0x830
- ? __pfx_autoremove_wake_function+0x10/0x10
- btrfs_reserve_data_bytes+0x54/0x170
- btrfs_check_data_free_space+0x6a/0xf0
- btrfs_delalloc_reserve_space+0x2b/0xe0
- btrfs_writepage_fixup_worker+0x7e/0x4c0
- btrfs_work_helper+0xff/0x410
- process_one_work+0x26b/0x550
- worker_thread+0x53/0x3a0
- ? __pfx_worker_thread+0x10/0x10
- kthread+0xf5/0x130
- ? __pfx_kthread+0x10/0x10
- ret_from_fork+0x2c/0x50
- </TASK>
-task:kworker/u4:4    state:D stack:0     pid:2513631 ppid:2      flags:0x00004000
-Workqueue: events_unbound btrfs_async_reclaim_data_space
-Call Trace:
- <TASK>
- __schedule+0x533/0x1910
- ? lock_acquire+0xca/0x2b0
- schedule+0x5e/0xd0
- schedule_timeout+0x1ad/0x1c0
- __wait_for_common+0xbd/0x220
- ? __pfx_schedule_timeout+0x10/0x10
- btrfs_wait_ordered_extents+0x3e3/0x480
- btrfs_wait_ordered_roots+0x184/0x260
- flush_space+0x3de/0x6a0
- ? btrfs_async_reclaim_data_space+0x52/0x180
- ? lock_release+0xc9/0x270
- btrfs_async_reclaim_data_space+0xff/0x180
- process_one_work+0x26b/0x550
- worker_thread+0x1eb/0x3a0
- ? __pfx_worker_thread+0x10/0x10
- kthread+0xf5/0x130
- ? __pfx_kthread+0x10/0x10
- ret_from_fork+0x2c/0x50
- </TASK>
-task:kworker/u4:6    state:D stack:0     pid:2513783 ppid:2      flags:0x00004000
-Workqueue: btrfs-flush_delalloc btrfs_work_helper
-Call Trace:
- <TASK>
- __schedule+0x533/0x1910
- schedule+0x5e/0xd0
- btrfs_start_ordered_extent+0x153/0x210
- ? __pfx_autoremove_wake_function+0x10/0x10
- btrfs_run_ordered_extent_work+0x19/0x30
- btrfs_work_helper+0xff/0x410
- process_one_work+0x26b/0x550
- worker_thread+0x53/0x3a0
- ? __pfx_worker_thread+0x10/0x10
- kthread+0xf5/0x130
- ? __pfx_kthread+0x10/0x10
- ret_from_fork+0x2c/0x50
- </TASK>
+This fixes those macros to skip setting anything in the raw_inode if the
+tv_sec field doesn't fit, and to properly return a {0,0} timestamp when
+the raw_inode doesn't support it.
 
-We appear to be getting hung up because the ENOSPC stuff is flushing and waiting
-on ordered extents, and then the fixup worker is waiting on trying to reserve
-space.  My hunch is the page that's in the fixup worker is attached to an
-ordered extent.
+Cc: Jan Kara <jack@suse.cz>
+Fixes: 979492850abd ("ext4: convert to ctime accessor functions")
+Reported-by: Hugh Dickins <hughd@google.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ext4/ext4.h | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-I can pretty reliably reproduce this in the CI, so if you have trouble
-reproducing it let me know.  I'll dig into it later today, but I may not get to
-it before you do.  Thanks,
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 2af347669db7..1e2259d9967d 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -900,8 +900,10 @@ do {										\
+ #define EXT4_INODE_SET_CTIME(inode, raw_inode)					\
+ 	EXT4_INODE_SET_XTIME_VAL(i_ctime, inode, raw_inode, inode_get_ctime(inode))
+ 
+-#define EXT4_EINODE_SET_XTIME(xtime, einode, raw_inode)			       \
+-	EXT4_INODE_SET_XTIME_VAL(xtime, &((einode)->vfs_inode), raw_inode, (einode)->xtime)
++#define EXT4_EINODE_SET_XTIME(xtime, einode, raw_inode)				\
++	if (EXT4_FITS_IN_INODE(raw_inode, einode, xtime))			\
++		EXT4_INODE_SET_XTIME_VAL(xtime, &((einode)->vfs_inode),		\
++					 raw_inode, (einode)->xtime)
+ 
+ #define EXT4_INODE_GET_XTIME_VAL(xtime, inode, raw_inode)			\
+ 	(EXT4_FITS_IN_INODE(raw_inode, EXT4_I(inode), xtime ## _extra) ?	\
+@@ -922,9 +924,14 @@ do {										\
+ 		EXT4_INODE_GET_XTIME_VAL(i_ctime, inode, raw_inode));		\
+ } while (0)
+ 
+-#define EXT4_EINODE_GET_XTIME(xtime, einode, raw_inode)			       \
+-do {									       \
+-	(einode)->xtime = EXT4_INODE_GET_XTIME_VAL(xtime, &(einode->vfs_inode), raw_inode);	\
++#define EXT4_EINODE_GET_XTIME(xtime, einode, raw_inode)				\
++do {										\
++	if (EXT4_FITS_IN_INODE(raw_inode, einode, xtime)) 			\
++		(einode)->xtime =						\
++			EXT4_INODE_GET_XTIME_VAL(xtime, &(einode->vfs_inode),	\
++						 raw_inode);			\
++	else									\
++		(einode)->xtime = (struct timespec64){0, 0};			\
+ } while (0)
+ 
+ #define i_disk_version osd1.linux1.l_i_version
 
-Josef
+---
+base-commit: c62e19541f8bb39f1f340247f651afe4532243df
+change-id: 20230718-ctime-f140dae8789d
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
