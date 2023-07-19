@@ -2,125 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CFA5759C25
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 19:13:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D497759C2E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 19:14:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231322AbjGSRN1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 13:13:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48436 "EHLO
+        id S231289AbjGSROV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 13:14:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231263AbjGSRNO (ORCPT
+        with ESMTP id S231158AbjGSROU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 13:13:14 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F001D172E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 10:12:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1689786746;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zkcPX3Osb4OA2D5IidduaA2zXjGkNlWKrQ0mhSge49c=;
-        b=Ks93h3vtqS+uYmBR9wdp94NuYQOIw10HTA1wrD0Vi8kOR603y9p9aYfS6285k6gvUUZJCJ
-        IbExLWZmtckmvuAf3M+poNZUTwwaSjlfneAb8yT+DHQP7rGvbZqwpzHPWEazHUJMw6fgCL
-        Lblm47gR2vFKNgHNueyaLbmH/7ORU7M=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-623-cXuUs7jWPRCD0gHfQgs14Q-1; Wed, 19 Jul 2023 13:12:24 -0400
-X-MC-Unique: cXuUs7jWPRCD0gHfQgs14Q-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-94a355cf318so418666666b.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 10:12:24 -0700 (PDT)
+        Wed, 19 Jul 2023 13:14:20 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C069210CB
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 10:14:18 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-521ac15e333so586a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 10:14:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1689786857; x=1692378857;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kflaIto2ZRy9FWnKKeA2RV1so53nf9Q2TlLkLWYnNhM=;
+        b=7jt8a5ZQWinJTMLOsw76Ptd82nTpItUAmde9SVR7wLXITm2emnqVMqRjtd/0cT2Ocy
+         +g/b0COH/UoOS1SiDsnu6P9dn+S7qwCBEmvhjNsDWyx58HOsfS1rYJS+P4pNZYh5ls6j
+         YxonkfEkWc/zBUjIS5fSAkYJzxGaxBS4sfEA9iUbn/Uxo6bH3RJ/5m4pQ27F1P1VEpEf
+         AsvOsmek2U4OIi0U5mccr9RVZzSvn4w/Q8RwzJgXXMNwdR2KLUH/UybanHexn6gg1lTZ
+         73eM3Rz3Kl4PVhQGK4h2QlmPtrI0+CHdTlDbkEwySFMcGYvRvVbzLqN4MK+YAbERJQdE
+         hX4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689786743; x=1692378743;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zkcPX3Osb4OA2D5IidduaA2zXjGkNlWKrQ0mhSge49c=;
-        b=hFOz2fdy48lOgdQGCuEFg9KPsEoA+9DuWvkoH43YENpIDMhRLhsEEJNvS6nKHBakzD
-         Sx5rDWFBoj9AnCcMFefp+wbQV/AoclSSxwJ60cXNV3HiKnGUfM+lQd+jrZYS8L6NrwnJ
-         e0fpkwzswpWxikWjeY4HTlN8pcxtqU04nSKcO2QWE4yVqHDkj/hP9vXHwz23DeAc6sb6
-         BT73x5aOwxb7W2O6BX19o2eYiS7wq3CN7FiYXorvCGLHWUC4FKw/0JS/Ka3QD4xfep5F
-         9kV8nJRpNu8T0QYsd2Ir3SN5E/xeVDU8KD/iXkgqCpoCc7FKF4cyQ45UG7+j3JNc2FlK
-         UqKw==
-X-Gm-Message-State: ABy/qLbKeBAIrzgkJGnDEtogSBmONYs01eOLWIIOyjlEhwc6FFzQk73o
-        re3KyI/PV+zktJ5CHOkjWL8RSrCA03gpnWrsldIOU2RYZrXli20+6vqeQPqQySs8Rj4NNcxLCOf
-        aQjBZaN2SY49svXgnJfy1zEBD8w==
-X-Received: by 2002:a17:906:d84:b0:994:54ff:10f6 with SMTP id m4-20020a1709060d8400b0099454ff10f6mr2451599eji.30.1689786743728;
-        Wed, 19 Jul 2023 10:12:23 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlGz54zGhPvYMbmpFt53PQK6LgNX37cQEB9yNTieid5ItMiwID6yFOylHPqQjVFsqfqQ8BKwkQ==
-X-Received: by 2002:a17:906:d84:b0:994:54ff:10f6 with SMTP id m4-20020a1709060d8400b0099454ff10f6mr2451551eji.30.1689786743496;
-        Wed, 19 Jul 2023 10:12:23 -0700 (PDT)
-Received: from ?IPV6:2001:b07:6468:f312:5e2c:eb9a:a8b6:fd3e? ([2001:b07:6468:f312:5e2c:eb9a:a8b6:fd3e])
-        by smtp.googlemail.com with ESMTPSA id h24-20020a1709063c1800b00989828a42e8sm2589100ejg.154.2023.07.19.10.12.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jul 2023 10:12:21 -0700 (PDT)
-Message-ID: <095133d1-ad3a-8b5d-d000-10b0b377c7b3@redhat.com>
-Date:   Wed, 19 Jul 2023 19:12:18 +0200
+        d=1e100.net; s=20221208; t=1689786857; x=1692378857;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kflaIto2ZRy9FWnKKeA2RV1so53nf9Q2TlLkLWYnNhM=;
+        b=LIKw9Gs0dz5ppLVp5kXK5/5mAfTouZy1GfhEKAwd1YTeApKZOHZ41FpIqfmwjWmr3M
+         oZQbLIuuRRnvTHJEqukOmPf1cFDPnQtWZVNQrN5BXemMUqbjo47xwKSXE7qdRD+x6UeZ
+         Ttx+0qUI7+Wds1qIeBf6+yoXNaDZN1BJYfgoNJ1dPXvoGsl/0caNGEo/nqFdCJ1aLUjs
+         L8wPNtHBa//ZgGVZCgElavRFOkFVor/CuwzUzZ5lZUmHTd9lPmRVzggLJCz9Qn5TMaY4
+         aFr/muki5k29MqT2H7ZcXrQE3YumD+1WWe4EfCqGSobAib8fQa6vltE2uVY8O5eyiLZN
+         XpPw==
+X-Gm-Message-State: ABy/qLbaE+eSRybY7KoSNkTKL1IHwTPMx2o057sBNmzrBkCkfxwiI9hm
+        /p/LB25mTJJEeoh4OBJb83GC7Nr4SouZ6UotoWKNsvS103spEk7oQekzQg==
+X-Google-Smtp-Source: APBJJlGRSF0tEvXGE/is/Qajw4UR5pJnc/wD1guMNvVxbc7T5ofk/LmI5ZFD/CCrOen4zd1SJi9EmJc0BviY3nDh0Ak=
+X-Received: by 2002:a50:d783:0:b0:506:b280:4993 with SMTP id
+ w3-20020a50d783000000b00506b2804993mr1169edi.2.1689786857109; Wed, 19 Jul
+ 2023 10:14:17 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [RFC PATCH v11 02/29] KVM: Tweak kvm_hva_range and hva_handler_t
- to allow reusing for gfn ranges
-Content-Language: en-US
-To:     Sean Christopherson <seanjc@google.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
-        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20230718234512.1690985-1-seanjc@google.com>
- <20230718234512.1690985-3-seanjc@google.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-In-Reply-To: <20230718234512.1690985-3-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+References: <20230719170446.GR20457@twin.jikos.cz> <00000000000042a3ac0600da1f69@google.com>
+In-Reply-To: <00000000000042a3ac0600da1f69@google.com>
+From:   Aleksandr Nogikh <nogikh@google.com>
+Date:   Wed, 19 Jul 2023 19:14:05 +0200
+Message-ID: <CANp29Y4Dx3puutrowfZBzkHy1VpWHhQ6tZboBrwq_qNcFRrFGw@mail.gmail.com>
+Subject: Re: [syzbot] [btrfs?] [netfilter?] BUG: MAX_LOCKDEP_CHAIN_HLOCKS too
+ low! (2)
+To:     syzbot <syzbot+9bbbacfbf1e04d5221f7@syzkaller.appspotmail.com>
+Cc:     dsterba@suse.cz, bakmitopiacibubur@boga.indosterling.com,
+        clm@fb.com, davem@davemloft.net, dsahern@kernel.org,
+        dsterba@suse.com, fw@strlen.de, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, josef@toxicpanda.com, kadlec@netfilter.org,
+        kuba@kernel.org, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux@armlinux.org.uk,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
+        yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.5 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,PLING_QUERY,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL,
+        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/19/23 01:44, Sean Christopherson wrote:
-> Signed-off-by: Sean Christopherson<seanjc@google.com>
-> ---
->   virt/kvm/kvm_main.c | 34 +++++++++++++++++++---------------
->   1 file changed, 19 insertions(+), 15 deletions(-)
+On Wed, Jul 19, 2023 at 7:11=E2=80=AFPM syzbot
+<syzbot+9bbbacfbf1e04d5221f7@syzkaller.appspotmail.com> wrote:
+>
+> > On Wed, Jul 19, 2023 at 02:32:51AM -0700, syzbot wrote:
+> >> syzbot has found a reproducer for the following issue on:
+> >>
+> >> HEAD commit:    e40939bbfc68 Merge branch 'for-next/core' into for-ker=
+nelci
+> >> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/li=
+nux.git for-kernelci
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=3D15d92aaaa8=
+0000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc4a2640e42=
+13bc2f
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=3D9bbbacfbf1e0=
+4d5221f7
+> >> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for =
+Debian) 2.40
+> >> userspace arch: arm64
+> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D149b2d66=
+a80000
+> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1214348aa8=
+0000
+> >>
+> >> Downloadable assets:
+> >> disk image: https://storage.googleapis.com/syzbot-assets/9d87aa312c0e/=
+disk-e40939bb.raw.xz
+> >> vmlinux: https://storage.googleapis.com/syzbot-assets/22a11d32a8b2/vml=
+inux-e40939bb.xz
+> >> kernel image: https://storage.googleapis.com/syzbot-assets/0978b5788b5=
+2/Image-e40939bb.gz.xz
+> >
+> > #syz unset btrfs
+>
+> The following labels did not exist: btrfs
 
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+#syz set subsystems: netfilter
 
+>
+> >
+> > The MAX_LOCKDEP_CHAIN_HLOCKS bugs/warnings can be worked around by
+> > configuration, otherwise are considered invalid. This report has also
+> > 'netfilter' label so I'm not closing it right away.
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/syzkaller-bugs/00000000000042a3ac0600da1f69%40google.com.
