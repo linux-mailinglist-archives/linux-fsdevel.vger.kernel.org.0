@@ -2,87 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 24AB775A03D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 22:57:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5206F75A04B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 23:02:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229899AbjGSU46 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 16:56:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51444 "EHLO
+        id S230151AbjGSVCU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 17:02:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229679AbjGSU45 (ORCPT
+        with ESMTP id S229517AbjGSVCT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 16:56:57 -0400
-Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com [209.85.160.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E7E11FC0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 13:56:57 -0700 (PDT)
-Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-1b4685de17aso145355fac.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 13:56:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689800216; x=1692392216;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bSgmXQJXj8+l6xd1eXO+K0L6cRWB3Y5GD1jYosKwWVc=;
-        b=L3PyCtIEKxF7TCS0Hg5g121E9kzQrVbxev6N758i5aR+DVVHl85AXujYgOmX08MJS1
-         voPIi4paNb9XNFTTw1TXKOW0wAtmTvxb/ql3K1VA0vmyPVLFoXuwFGzb+wBqLpEfhEET
-         47pJXFQQSb1IA0nqFGtdiXPqkKnYYsJZy4dlMSPn9Dst/H8j+5T9QZ5TYtCXYTyMobqA
-         r5tSbq55Dq5B35XWUCbZ7ZkJ6bv/bbeZ/y7qO6Psot1YQVHsQubDSDMcsHGz65z8CQld
-         riLo28MrRCwqAkDtnEfBNl5ZViY6pClbpFwPpN6SgyB/ePv2OVWhZIHVF3u6tPGjcvKf
-         pgHw==
-X-Gm-Message-State: ABy/qLZf5jYaT7zBw3pLKUKths6M4GB5Xnif1isfKvWbC0nxNgugxoNQ
-        wLA4LKikUJAv6Agpf2AtVZri39IQcLivbHVzlg4MzORM2CXD
-X-Google-Smtp-Source: APBJJlHL/2woPtcjb3phQB8P1fcJgyAy+vgWMiymEFHeNcFv4e3SLTfG+UcxuTS+2Epbkzi9IZfanunLvf/Cm6JAPMwzlSLUrjPd
+        Wed, 19 Jul 2023 17:02:19 -0400
+Received: from resdmta-h1p-028482.sys.comcast.net (resdmta-h1p-028482.sys.comcast.net [IPv6:2001:558:fd02:2446::c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44A011BF0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 14:02:17 -0700 (PDT)
+Received: from resomta-h1p-027914.sys.comcast.net ([96.102.179.199])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 256/256 bits)
+        (Client did not present a certificate)
+        by resdmta-h1p-028482.sys.comcast.net with ESMTP
+        id M7Ctqb4JKKSvQMEJNqoJgG; Wed, 19 Jul 2023 21:02:17 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=comcastmailservice.net; s=20211018a; t=1689800537;
+        bh=xqMj+3VVjo+8UbUEghVnxRyNG8G2SG/j/lJTsRoSPsQ=;
+        h=Received:Received:From:To:Subject:Date:MIME-Version:Message-ID:
+         Content-Type:Xfinity-Spam-Result;
+        b=bpXpu4cnAsB+PwhqcFILiRYvifqY7YsP2R73EKJI/mMKcD03KK9zSgEvJY6V1eQxZ
+         O48cFGo04dxs1KwuFr1cY3DbMtWEe1nQSDLGquT9O4QJSrRkWsB5qHkrISkc8udFop
+         xX8gK89pqLTwxiERr5TO86isabaitAD0JLyO2yTNtu556ggcUmivNG8ODVsMbT/FkY
+         t7GUgbiEhC8FvQU8MleCzVQjkYwUQOFWfGkg9GygBTVlVR2OQyauOna1NpjEGxkXq/
+         dqq5U4T5JXdFj7RXtJJF5hJyBGJDiJQAwjU+qZHCEm7pZ0McW6d2ZsmZh1wcAZyiWR
+         Us2UjIZ1ynpeQ==
+Received: from localhost ([IPv6:2601:18c:9082:afd:219:d1ff:fe75:dc2f])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 256/256 bits)
+        (Client did not present a certificate)
+        by resomta-h1p-027914.sys.comcast.net with ESMTPSA
+        id MEJAqBpSU0WpqMEJCqnizK; Wed, 19 Jul 2023 21:02:12 +0000
+X-Xfinity-VMeta: sc=-100.00;st=legit
+From:   Matt Whitlock <kernel@mattwhitlock.name>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>, <netdev@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jens Axboe <axboe@kernel.dk>, <linux-fsdevel@kvack.org>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/4] splice: Fix corruption of spliced data after =?iso-8859-1?Q?splice()_returns?=
+Date:   Wed, 19 Jul 2023 17:02:04 -0400
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:956e:b0:1b0:19a6:2577 with SMTP id
- v46-20020a056870956e00b001b019a62577mr7863348oal.3.1689800216603; Wed, 19 Jul
- 2023 13:56:56 -0700 (PDT)
-Date:   Wed, 19 Jul 2023 13:56:56 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a6f5790600dd4565@google.com>
-Subject: [syzbot] Monthly kernfs report (Jul 2023)
-From:   syzbot <syzbot+list9048df0d7aae392b07d0@syzkaller.appspotmail.com>
-To:     gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+Message-ID: <6609f1b8-3264-4017-ac3c-84a01ea12690@mattwhitlock.name>
+In-Reply-To: <CAHk-=wiq95bWiWLyz96ombPfpy=PNrc2KKyzJ2d+WMrxi6=OVA@mail.gmail.com>
+References: <20230629155433.4170837-1-dhowells@redhat.com>
+ <20230629155433.4170837-2-dhowells@redhat.com>
+ <CAJfpegsJuvXJDcXpo9T19Gw0tDuvyOJdv44Y2bt04MEf1JLxGg@mail.gmail.com>
+ <c634a18e-9f2b-4746-bd8f-aa1d41e6ddf7@mattwhitlock.name>
+ <CAJfpegvq4M_Go7fHiWVBBkrK6h4ChLqQTd0+EOKbRWZDcVerWA@mail.gmail.com>
+ <ZLg9HbhOVnLk1ogA@casper.infradead.org>
+ <CAHk-=wiq95bWiWLyz96ombPfpy=PNrc2KKyzJ2d+WMrxi6=OVA@mail.gmail.com>
+User-Agent: Trojita/v0.7-595-g7738cd47; Qt/5.15.10; xcb; Linux; Gentoo Linux
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello kernfs maintainers/developers,
+On Wednesday, 19 July 2023 16:16:07 EDT, Linus Torvalds wrote:
+> The *ONLY* reason for splice() existing is for zero-copy.
 
-This is a 31-day syzbot report for the kernfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/kernfs
+The very first sentence of splice(2) reads: "splice() moves data between=20
+two file descriptors without copying between kernel address space and user=20=
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 7 issues are still open and 21 have been fixed so far.
+address space." Thus, it is not unreasonable to believe that the point of=20
+splice is to avoid copying between user-space and kernel-space.
 
-Some of the still happening issues:
+If you use read() and write(), then you're making two copies. If you use=20
+splice(), then you're making one copy (or zero, but that's an optimization=20=
 
-Ref Crashes Repro Title
-<1> 121     Yes   WARNING in kernfs_remove_by_name_ns (3)
-                  https://syzkaller.appspot.com/bug?extid=93cbdd0ab421adc5275d
-<2> 42      Yes   KASAN: use-after-free Read in kernfs_next_descendant_post (2)
-                  https://syzkaller.appspot.com/bug?extid=6bc35f3913193fe7f0d3
-<3> 33      Yes   KASAN: use-after-free Read in kernfs_add_one
-                  https://syzkaller.appspot.com/bug?extid=ef17b5b364116518fd65
+that should be invisible to the user).
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> And no, we don't start some kind of crazy "versioned zero-copy with
+> COW". That's a fundamental mistake.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+Agreed. splice() should steal the reference if it can, copy the page data=20
+if it must. Note that, even in the slow case where the page data must be=20
+copied, this still gives a better-than-50% speedup over read()+write()=20
+since an entire copy (and one syscall) is elided.
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+> IF YOU DON'T UNDERSTAND THE *POINT* OF SPLICE, DON'T USE SPLICE.
 
-You may send multiple commands in a single email message.
+Thanks for being so condescending. Your reputation is deserved.
+
