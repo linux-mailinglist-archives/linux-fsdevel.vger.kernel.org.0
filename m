@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BDE1758D56
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 07:53:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8196758D68
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 08:04:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229672AbjGSFxk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 01:53:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38166 "EHLO
+        id S230248AbjGSGEd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 02:04:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229464AbjGSFxj (ORCPT
+        with ESMTP id S230198AbjGSGEc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 01:53:39 -0400
+        Wed, 19 Jul 2023 02:04:32 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D1101BE4;
-        Tue, 18 Jul 2023 22:53:38 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 106461BFC;
+        Tue, 18 Jul 2023 23:04:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 04BD760DC4;
-        Wed, 19 Jul 2023 05:53:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67DC7C433C8;
-        Wed, 19 Jul 2023 05:53:35 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9CF0760CFB;
+        Wed, 19 Jul 2023 06:04:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4032DC433C8;
+        Wed, 19 Jul 2023 06:04:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689746017;
-        bh=aywEw/AmSRDj44TqyKHStE06G9Ia/QUCsNAlMJZIVQY=;
+        s=k20201202; t=1689746667;
+        bh=qtff+jhbek/HyVQDlEy7SuLeEWoJ/yCblRZxa9O90T4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Zoviut2a5oN8OG+pL0hvBPq7O9nZ6yilQHwGmc/l0QxiQzqvWelREUDCgf4/8YVdJ
-         bhC9B+9THF0RSOgfynBKs22ZGTn6L0+4gNQ1kNlmMrdSfdMon2gMt1N94jghVIpuy9
-         XOyRk+AZkz7eVOaizEfpoWnQQGT+/mh6niUZ60yvpBvqqgsZapCLOz3xYW1QSwFs+Z
-         izBwETlm/KEDVuONHCMZ85W3kit37b0klhXK0TZUzAGp1wuF+PjsHfvKi6GE3ljCyG
-         2sFI3g4TGg5I0rw8b1gqYlraooBnF/fFdf0ripFZHtVsKcEFsBXczEOogTRzkbJR6J
-         9yyV8SVTL7ilw==
-Date:   Wed, 19 Jul 2023 07:53:32 +0200
+        b=e+3N3QPGYmpRCPY6cvzGcag/0ype2GgST2FDrgOeJsECt0KtdfH5N3ttaAjE2g4ty
+         bc6SUfYoElbV7+tSh0ShQA9q6QbifHqdXRstBXC2YQ5ZHEVbmY1YAO4KpAje/fS1M6
+         lNGTfqaLuaAbxOdtzwzvW79PkbnhqAWa+tY67YORbpNy0JZPdav9XV3W41B8MGhLwc
+         OCR9G7QdTcujVapUJt2VyOYijVyj6pPHjG/zfp+NI8ZuQqtluNXaXyGGI8P0GoM2bM
+         /W0WqAnYnnkWVO5SqyEjpc3wvhTwJhqJ0P8NwfVUgZRZrOO2CMqckQhTGrxt49ajv7
+         GzPEjtLofpFLQ==
+Date:   Wed, 19 Jul 2023 08:04:22 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Bill O'Donnell <billodo@redhat.com>,
-        Rob Barnes <robbarnes@google.com>, bleung@chromium.org,
-        linux-fsdevel@vger.kernel.org,
+To:     Hao Xu <hao.xu@linux.dev>
+Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: export emergency_sync
-Message-ID: <20230719-zwinkert-raddampfer-6f11fdc0cf8f@brauner>
-References: <20230718214540.1.I763efc30c57dcc0284d81f704ef581cded8960c8@changeid>
- <ZLcOcr6N+Ty59rBD@redhat.com>
- <ad539fad-999b-46cd-9372-a196469b4631@roeck-us.net>
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+Subject: Re: [PATCH v4 0/5] io_uring getdents
+Message-ID: <20230719-sitzkissen-mehrverbrauch-612a4dfcdeb5@brauner>
+References: <20230718132112.461218-1-hao.xu@linux.dev>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ad539fad-999b-46cd-9372-a196469b4631@roeck-us.net>
+In-Reply-To: <20230718132112.461218-1-hao.xu@linux.dev>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -60,36 +60,59 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 09:08:06PM -0700, Guenter Roeck wrote:
-> On Tue, Jul 18, 2023 at 05:13:06PM -0500, Bill O'Donnell wrote:
-> > On Tue, Jul 18, 2023 at 09:45:40PM +0000, Rob Barnes wrote:
-> > > emergency_sync forces a filesystem sync in emergency situations.
-> > > Export this function so it can be used by modules.
-> > > 
-> > > Signed-off-by: Rob Barnes <robbarnes@google.com>
-> > 
-> > Example of an emergency situation?
+On Tue, Jul 18, 2023 at 09:21:07PM +0800, Hao Xu wrote:
+> From: Hao Xu <howeyxu@tencent.com>
 > 
-> An example from existing code in
-> drivers/firmware/arm_scmi/scmi_power_control.c:
+> This series introduce getdents64 to io_uring, the code logic is similar
+> with the snychronized version's. It first try nowait issue, and offload
+> it to io-wq threads if the first try fails.
 > 
-> static inline void
-> scmi_request_forceful_transition(struct scmi_syspower_conf *sc)
-> {
->         dev_dbg(sc->dev, "Serving forceful request:%d\n",
->                 sc->required_transition);
+> Tested it with a liburing case:
+> https://github.com/HowHsu/liburing/blob/getdents/test/getdents2.c
 > 
-> #ifndef MODULE
->         emergency_sync();
-> #endif
+> The test is controlled by the below script[2] which runs getdents2.t 100
+> times and calulate the avg.
+> The result show that io_uring version is about 3% faster:
 > 
-> Arguably emergency_sync() should also be called if the file is built
-> as module.
+> python3 run_getdents.py
+>     Average of sync: 0.1036849
+>     Average of iouring: 0.1005568
 > 
-> Either case, I think it would make sense to add an example to the commit
-> description.
+> (0.1036849-0.1005568)/0.1036849 = 3.017%
+> 
+> note:
+> [1] the number of getdents call/request in io_uring and normal sync version
+> are made sure to be same beforehand.
+> 
+> [2] run_getdents.py
+> 
+> ```python3
+> 
+> import subprocess
+> 
+> N = 100
+> sum = 0.0
+> args = ["/data/home/howeyxu/tmpdir", "sync"]
+> 
+> for i in range(N):
+>     output = subprocess.check_output(["./liburing/test/getdents2.t"] + args)
+>     sum += float(output)
+> 
+> average = sum / N
+> print("Average of sync:", average)
+> 
+> sum = 0.0
+> args = ["/data/home/howeyxu/tmpdir", "iouring"]
+> 
+> for i in range(N):
+>     output = subprocess.check_output(["./liburing/test/getdents2.t"] + args)
+>     sum += float(output)
+> 
+> average = sum / N
+> print("Average of iouring:", average)
+> 
+> ```
+> 
+> v3->v4:
 
-On vacation until next. Please add a proper rationale why and who this
-export is needed by in the commit message. As right now it looks like
-someone thought it would be good to have which is not enough for
-something to become an export.
+I'm out this week so will review next week.
