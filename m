@@ -2,130 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2313F758B3C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 04:14:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1A22758B6B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 04:35:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229853AbjGSCOi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Jul 2023 22:14:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48930 "EHLO
+        id S229960AbjGSCff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Jul 2023 22:35:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229797AbjGSCOg (ORCPT
+        with ESMTP id S229952AbjGSCfe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Jul 2023 22:14:36 -0400
-Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68F4E1BEE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 19:14:28 -0700 (PDT)
-Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-56fff21c2ebso65475657b3.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Jul 2023 19:14:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1689732867; x=1692324867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F9eL+vRLh2IMmmWxtSCYk4DtifazKKWTBnb901S3j94=;
-        b=E0qagBYe20SR0SALzjMEgzAAwWZNBuyNfIuFOB5oHd7/unduwTPDowOXpp+9jaIhsk
-         yWWws98rOg0AI15RrkDBVlvYl+q+EWOCtTO4U5wc9SPXFO1NrHsi1lJhfbpMLnVvCYSu
-         oaogCqHUw7nH2YLUiLkB73e/lfZwIXPUSJs7W+SWDWF5uZgcQ+XMineDaONtZ9cLz3x6
-         qFIwAxqXBML/rim1qQxNWhMp2wpGTXV7YkFVf+0lJR5qbVIjM/GxPwfH1ltdJggyZlow
-         mW571RQ0nZa7z2F/9ExiiTsk1vBPkwJLlWHYvCs5k2sRgQGq40SZGqPgHZcShBBgy7hi
-         TVaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689732867; x=1692324867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F9eL+vRLh2IMmmWxtSCYk4DtifazKKWTBnb901S3j94=;
-        b=HFiA27XiFjAqaxGo3RcnkWlXxlKlD6rPOW/ibFjlNfxg3Cbs+1P7DX9Y6Uypf+1BGf
-         RFYniUZ/hfYVmSQEnToxRhWjuyHghSSF/u6Q2OXlEJxa+G+LhUqHIzaef8ya4eISsMEC
-         WHBwM8M299PC7/jS/sx1lFCbGp5w4yonRxDBizZnEsN08ExqRHJT8eTDGcEm+bl4b0eM
-         QBmv0BWvXnqt9UgiTltqmbRa8fAvfdQlq1PsMPKw0WwV5PfVoATl8vJNuN+d2cCht4PI
-         LJLJw85gFUxi/qVvKeYHooHvEzycS4YYMjVdLohqvolm0+WEvHjYMS9gLzlMQ6C0Vg+b
-         C83Q==
-X-Gm-Message-State: ABy/qLbKMFuLFdgjG+VlaJygqVGQtv10wLt+x5+/z/IeW6wesqhRRVzk
-        uk2KqH63ZoLeJqelA8z/HkpzOjGgfXRvRGdLV4D/
-X-Google-Smtp-Source: APBJJlE6HrXGv8FiBWPESZXA4zS7WdaVXKrmS0y2QVal6eHwFQK9KIQhCzYsyt32AHunSvFteTt6TeRzQof/apGmOO8=
-X-Received: by 2002:a0d:e843:0:b0:56d:2ad0:cb45 with SMTP id
- r64-20020a0de843000000b0056d2ad0cb45mr17052519ywe.1.1689732867591; Tue, 18
- Jul 2023 19:14:27 -0700 (PDT)
+        Tue, 18 Jul 2023 22:35:34 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFF341FC0;
+        Tue, 18 Jul 2023 19:35:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689734130; x=1721270130;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MDteXjRKx7NmerjEa3yZjR1TrOfJzj9AzQhufP0RH3c=;
+  b=XCSsxxw1TEDQ5ssQk+3kMPoyVw4mdzz3MUGy3LtuEFmW2wmFmtPy985m
+   ME/rfI8+M88qoJKRkF1IzJUa/X2YGZ62LKPrwxj04klbHthSFqeiBKW5t
+   AtJKvamGsqj3b4hOPbd/8Jbcqbwbr+hAeUM4+Ue82eCZfEnA7wv20kaY0
+   JOFMqjRe8IPd+ahZi4BKtkPk0VBKNHk4t3Vq6m9WyGHWaBdfVGJzjC+oX
+   4k55zY67t4xYU3kPUYviUrSGA872ke2dVH8PtrLWDUAoZDh5inDBS6IXk
+   B/qyTTI2PmD1rywCEe1ZnmE89bW6Rh4xlJ827eq6A2YYCeOj0nu0UhXoq
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="452734658"
+X-IronPort-AV: E=Sophos;i="6.01,215,1684825200"; 
+   d="scan'208";a="452734658"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2023 19:35:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="717831095"
+X-IronPort-AV: E=Sophos;i="6.01,215,1684825200"; 
+   d="scan'208";a="717831095"
+Received: from lkp-server02.sh.intel.com (HELO 36946fcf73d7) ([10.239.97.151])
+  by orsmga007.jf.intel.com with ESMTP; 18 Jul 2023 19:35:26 -0700
+Received: from kbuild by 36946fcf73d7 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qLx2C-00044R-31;
+        Wed, 19 Jul 2023 02:35:24 +0000
+Date:   Wed, 19 Jul 2023 10:35:07 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Hao Xu <hao.xu@linux.dev>, io-uring@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+Subject: Re: [PATCH 4/5] xfs: add NOWAIT semantics for readdir
+Message-ID: <202307191021.L6wiZiE6-lkp@intel.com>
+References: <20230718132112.461218-5-hao.xu@linux.dev>
 MIME-Version: 1.0
-References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-12-seanjc@google.com>
-In-Reply-To: <20230718234512.1690985-12-seanjc@google.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 18 Jul 2023 22:14:16 -0400
-Message-ID: <CAHC9VhSUhthtS9W1QkqFd8Y+VHsGVXt1vZenYpqRtr7Gw51B3A@mail.gmail.com>
-Subject: Re: [RFC PATCH v11 11/29] security: Export security_inode_init_security_anon()
- for use by KVM
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230718132112.461218-5-hao.xu@linux.dev>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 7:48=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  security/security.c | 1 +
->  1 file changed, 1 insertion(+)
+Hi Hao,
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+kernel test robot noticed the following build warnings:
 
-> diff --git a/security/security.c b/security/security.c
-> index b720424ca37d..7fc78f0f3622 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1654,6 +1654,7 @@ int security_inode_init_security_anon(struct inode =
-*inode,
->         return call_int_hook(inode_init_security_anon, 0, inode, name,
->                              context_inode);
->  }
-> +EXPORT_SYMBOL_GPL(security_inode_init_security_anon);
->
->  #ifdef CONFIG_SECURITY_PATH
->  /**
-> --
-> 2.41.0.255.g8b1d071c50-goog
+[auto build test WARNING on xfs-linux/for-next]
+[also build test WARNING on linus/master v6.5-rc2 next-20230718]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
---
-paul-moore.com
+url:    https://github.com/intel-lab-lkp/linux/commits/Hao-Xu/fs-split-off-vfs_getdents-function-of-getdents64-syscall/20230718-212529
+base:   https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git for-next
+patch link:    https://lore.kernel.org/r/20230718132112.461218-5-hao.xu%40linux.dev
+patch subject: [PATCH 4/5] xfs: add NOWAIT semantics for readdir
+config: x86_64-randconfig-r012-20230718 (https://download.01.org/0day-ci/archive/20230719/202307191021.L6wiZiE6-lkp@intel.com/config)
+compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project.git 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+reproduce: (https://download.01.org/0day-ci/archive/20230719/202307191021.L6wiZiE6-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202307191021.L6wiZiE6-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> fs/xfs/libxfs/xfs_da_btree.c:2646:8: warning: variable 'buf_flags' set but not used [-Wunused-but-set-variable]
+           int                     buf_flags = 0;
+                                   ^
+   1 warning generated.
+
+
+vim +/buf_flags +2646 fs/xfs/libxfs/xfs_da_btree.c
+
+  2627	
+  2628	/*
+  2629	 * Get a buffer for the dir/attr block, fill in the contents.
+  2630	 */
+  2631	int
+  2632	xfs_da_read_buf(
+  2633		struct xfs_trans	*tp,
+  2634		struct xfs_inode	*dp,
+  2635		xfs_dablk_t		bno,
+  2636		unsigned int		flags,
+  2637		struct xfs_buf		**bpp,
+  2638		int			whichfork,
+  2639		const struct xfs_buf_ops *ops)
+  2640	{
+  2641		struct xfs_mount	*mp = dp->i_mount;
+  2642		struct xfs_buf		*bp;
+  2643		struct xfs_buf_map	map, *mapp = &map;
+  2644		int			nmap = 1;
+  2645		int			error;
+> 2646		int			buf_flags = 0;
+  2647	
+  2648		*bpp = NULL;
+  2649		error = xfs_dabuf_map(dp, bno, flags, whichfork, &mapp, &nmap);
+  2650		if (error || !nmap)
+  2651			goto out_free;
+  2652	
+  2653		/*
+  2654		 * NOWAIT semantics mean we don't wait on the buffer lock nor do we
+  2655		 * issue IO for this buffer if it is not already in memory. Caller will
+  2656		 * retry. This will return -EAGAIN if the buffer is in memory and cannot
+  2657		 * be locked, and no buffer and no error if it isn't in memory.  We
+  2658		 * translate both of those into a return state of -EAGAIN and *bpp =
+  2659		 * NULL.
+  2660		 */
+  2661		if (flags & XFS_DABUF_NOWAIT)
+  2662			buf_flags |= XBF_TRYLOCK | XBF_INCORE;
+  2663		error = xfs_trans_read_buf_map(mp, tp, mp->m_ddev_targp, mapp, nmap, 0,
+  2664				&bp, ops);
+  2665		if (error)
+  2666			goto out_free;
+  2667		if (!bp) {
+  2668			ASSERT(flags & XFS_DABUF_NOWAIT);
+  2669			error = -EAGAIN;
+  2670			goto out_free;
+  2671		}
+  2672	
+  2673		if (whichfork == XFS_ATTR_FORK)
+  2674			xfs_buf_set_ref(bp, XFS_ATTR_BTREE_REF);
+  2675		else
+  2676			xfs_buf_set_ref(bp, XFS_DIR_BTREE_REF);
+  2677		*bpp = bp;
+  2678	out_free:
+  2679		if (mapp != &map)
+  2680			kmem_free(mapp);
+  2681	
+  2682		return error;
+  2683	}
+  2684	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
