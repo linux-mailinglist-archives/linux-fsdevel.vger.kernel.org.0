@@ -2,65 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A2F43759CFE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 20:02:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D2ED759D3F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 20:27:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230112AbjGSSB6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 14:01:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44248 "EHLO
+        id S230336AbjGSS1R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 14:27:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230037AbjGSSB4 (ORCPT
+        with ESMTP id S230181AbjGSS1N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 14:01:56 -0400
-X-Greylist: delayed 150 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 19 Jul 2023 11:01:54 PDT
-Received: from resqmta-a1p-077437.sys.comcast.net (resqmta-a1p-077437.sys.comcast.net [IPv6:2001:558:fd01:2bb4::8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDCCA1FC1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 11:01:54 -0700 (PDT)
-Received: from resomta-a1p-076786.sys.comcast.net ([96.103.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 256/256 bits)
-        (Client did not present a certificate)
-        by resqmta-a1p-077437.sys.comcast.net with ESMTP
-        id M58wqCIfWihphMBSMqowug; Wed, 19 Jul 2023 17:59:22 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=comcastmailservice.net; s=20211018a; t=1689789562;
-        bh=/6lKYap9PZZRLrRmess6iU23U+m+a8OOtwMIqKZ8RIU=;
-        h=Received:Received:From:To:Subject:Date:MIME-Version:Message-ID:
-         Content-Type:Xfinity-Spam-Result;
-        b=I5lL4kFYbXQNcZbp14I88EAp8TPvcrzwLD4ASOhXUiC3YNKzmFT2Vgtl32uc/bG07
-         7Qur3wStIV93MD7Z8CvhOQKrD6lbt8t6aLw8Kob1O/RNptKP6o8eJsgPgmqcbkcS1b
-         Tjh7DWoK6mzg5Kxa3pHCp1XVaiu+egLF9HkuH35bv7h/Jud85pw0SvRn+YLHOlpMM5
-         B4LhcVTK3te0k+cS24axJUOEA6oMbrLzIWDPoOzzCkNmN4TyDbRXodg6Qbvk/cQnh+
-         oY2RBXWuXXkXDn1kpB7dR4ijQeIKSsebRTnErEy7aZ3kZw8Wbiuz5tf6l/M1woJVZj
-         bMCYrDf1vYn9Q==
-Received: from localhost ([IPv6:2601:18c:9082:afd:219:d1ff:fe75:dc2f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 256/256 bits)
-        (Client did not present a certificate)
-        by resomta-a1p-076786.sys.comcast.net with ESMTPSA
-        id MBSEqFdsmeadOMBSEqzqUD; Wed, 19 Jul 2023 17:59:18 +0000
-X-Xfinity-VMeta: sc=-100.00;st=legit
-From:   Matt Whitlock <kernel@mattwhitlock.name>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     David Howells <dhowells@redhat.com>, <netdev@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, <linux-fsdevel@kvack.org>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/4] splice: Fix corruption of spliced data after =?iso-8859-1?Q?splice()_returns?=
-Date:   Wed, 19 Jul 2023 13:59:13 -0400
+        Wed, 19 Jul 2023 14:27:13 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FECC1FE1;
+        Wed, 19 Jul 2023 11:27:08 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id B6A2F200A9;
+        Wed, 19 Jul 2023 18:27:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1689791226; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YhOyZ0ZdWLkpby1Iqtq7SFOqx2lnmUd32VWJ4JlD36g=;
+        b=q1pdcQZFX7fifseO0xceZtJzp64S4KFfju3lzq3XamQ4l+/jrkC9W9yY8ELdzRNXOKk9pm
+        BxzTE/f0OoOHt6g8jiCH/YXB2SKcw8cb7yjf3TDZcYy8TYspyfp2qdkRZzeqQfbICZTcP+
+        8b50YM1XhfVza9lBxrUkCPGEPW8NeKA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1689791226;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YhOyZ0ZdWLkpby1Iqtq7SFOqx2lnmUd32VWJ4JlD36g=;
+        b=7zQHJhTWV4xn+EbDtJEI8gXkRtL3feXW+bzV28gFBd4UZIC1ArWepTBVRpeIMHZKE7+4qB
+        Kzm9IpgtZrSQnuBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 74C9D1361C;
+        Wed, 19 Jul 2023 18:27:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id SwbvFvoquGS1QwAAMHmgww
+        (envelope-from <krisman@suse.de>); Wed, 19 Jul 2023 18:27:06 +0000
+From:   Gabriel Krisman Bertazi <krisman@suse.de>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
+        jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v2 4/7] libfs: Support revalidation of encrypted
+ case-insensitive dentries
+Organization: SUSE
+References: <20230422000310.1802-1-krisman@suse.de>
+        <20230422000310.1802-5-krisman@suse.de>
+        <20230714053135.GD913@sol.localdomain> <87h6q1580a.fsf@suse.de>
+        <20230718221040.GA1005@sol.localdomain>
+Date:   Wed, 19 Jul 2023 14:27:05 -0400
+In-Reply-To: <20230718221040.GA1005@sol.localdomain> (Eric Biggers's message
+        of "Tue, 18 Jul 2023 15:10:40 -0700")
+Message-ID: <874jlz69l2.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
-Message-ID: <c634a18e-9f2b-4746-bd8f-aa1d41e6ddf7@mattwhitlock.name>
-In-Reply-To: <CAJfpegsJuvXJDcXpo9T19Gw0tDuvyOJdv44Y2bt04MEf1JLxGg@mail.gmail.com>
-References: <20230629155433.4170837-1-dhowells@redhat.com>
- <20230629155433.4170837-2-dhowells@redhat.com>
- <CAJfpegsJuvXJDcXpo9T19Gw0tDuvyOJdv44Y2bt04MEf1JLxGg@mail.gmail.com>
-User-Agent: Trojita/v0.7-595-g7738cd47; Qt/5.15.10; xcb; Linux; Gentoo Linux
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,MIME_QP_LONG_LINE,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,T_SPF_HELO_TEMPERROR,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,20 +76,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wednesday, 19 July 2023 06:17:51 EDT, Miklos Szeredi wrote:
-> On Thu, 29 Jun 2023 at 17:56, David Howells <dhowells@redhat.com> wrote:
->>=20
->> Splicing data from, say, a file into a pipe currently leaves the source
->> pages in the pipe after splice() returns - but this means that those pages=
+Eric Biggers <ebiggers@kernel.org> writes:
 
->> can be subsequently modified by shared-writable mmap(), write(),
->> fallocate(), etc. before they're consumed.
+> Why would order matter?  If either "feature" wants the dentry to be invalidated,
+> then the dentry gets invalidated.
+
+For instance, I was wondering makes sense for instance to memcmp d_name for
+!DCACHE_NOKEY_NAME or if we wanted fscrypt_d_revalidate to come first.
+
+>> Note we will start creating negative dentries in casefold directories after
+>> patch 6/7, so unless we disable it here, we will start calling
+>> fscrypt_d_revalidate for negative+casefold.
 >
-> What is this trying to fix?   The above behavior is well known, so
-> it's not likely to be a problem.
+> fscrypt_d_revalidate() only cares about the DCACHE_NOKEY_NAME flag, so that's
+> not a problem.
 
-Respectfully, it's not well-known, as it's not documented. If the splice(2)=20=
+..I see now it is the first thing checked in fscrypt_d_revalidate.
 
-man page had mentioned that pages can be mutated after they're already=20
-ostensibly at rest in the output pipe buffer, then my nightly backups=20
-wouldn't have been incurring corruption silently for many months.
+>> Should I just drop this hunk?  Unless you are confident it works as is, I
+>> prefer to add this support in stages and keep negative dentries of
+>> encrypted+casefold directories disabled for now.
+>
+> Unless I'm missing something, I think you're overcomplicating it.
+
+Not overcomplicating. I'm just not familiar with fscrypt details enough to be
+sure I could enable it.  But yes, it seems safe.
+
+> It should
+> just work if you don't go out of your way to prohibit this case.  I.e., just
+> don't add the IS_ENCRYPTED(dir) check to generic_ci_d_revalidate().
+
+I'll drop the check. And resend.
+
+Thanks,
+
+-- 
+Gabriel Krisman Bertazi
