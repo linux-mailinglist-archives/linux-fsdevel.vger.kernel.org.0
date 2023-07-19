@@ -2,76 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F2BDF759068
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 10:37:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58FB97590BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 10:56:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230451AbjGSIhB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 04:37:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37410 "EHLO
+        id S230332AbjGSI4l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 04:56:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230402AbjGSIg7 (ORCPT
+        with ESMTP id S229561AbjGSI4k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 04:36:59 -0400
-Received: from mx1.veeam.com (mx1.veeam.com [216.253.77.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1268519B1;
-        Wed, 19 Jul 2023 01:36:49 -0700 (PDT)
-Received: from mail.veeam.com (prgmbx01.amust.local [172.24.128.102])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.veeam.com (Postfix) with ESMTPS id 5211E4247A;
-        Wed, 19 Jul 2023 04:36:46 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com;
-        s=mx1-2022; t=1689755806;
-        bh=wGCVKhkqJH+Yo7LufeZklucelDz+msotbtzEN6Hr8P0=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To:From;
-        b=b0tym7087WS5sdxCyrv3EV2zpaoRiGi3ekxt669mmHNcKFikaqhwLNEQX+e0l9gmH
-         U3bGI9EdrhhlVagIdk5CzOIo6lCiLeU6jbAPnUX8gZQYRfUdQQv/xkNyPz/xxw2eA1
-         FLz9qgNpPSZLpEfJZI5IR4ug8hL8iVnooW4AqFoyt49KPdoXvHc3fiPvrbdFSBrx5/
-         cWGuswVMpPWnRUdA7fQfthFBQsJLLA031X0YfmcUNsWhw68+C/6Pd0FdjkkWw6LcIV
-         RobDFJ5mpZoD9qruEAWpiveN2dNnj7iecoPk6XynlSWg3O8IlqHtWUVVUxq4XzrohS
-         +eHXbcHzHnfrA==
-Received: from [172.24.10.107] (172.24.10.107) by prgmbx01.amust.local
- (172.24.128.102) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.16; Wed, 19 Jul
- 2023 10:36:39 +0200
-Message-ID: <c33df221-968c-9f31-e545-27dd4e90729f@veeam.com>
-Date:   Wed, 19 Jul 2023 10:36:32 +0200
+        Wed, 19 Jul 2023 04:56:40 -0400
+Received: from out-34.mta1.migadu.com (out-34.mta1.migadu.com [IPv6:2001:41d0:203:375::22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86C7019F
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 01:56:38 -0700 (PDT)
+Message-ID: <f54d62e4-2ae4-5882-6107-71578a7f5c8f@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1689756996;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=VSA3F0uwCrJT24jM27htYOUi2fwt3Zqxz5cpMu6P9FE=;
+        b=KHc2qGBnqraA9xOqe1F0GHjOD9gaH9DFfKkdAMfHD/xTx1WWzqu/8cWe6sWA9B1RXnJa+K
+        9s4avczldHqJua1j4wnpmlmuuK43rwg0KOpW98ciJmu+fPPMo3orAqMNCYTR5PWrQd4vo8
+        cnacSJTQ5ecvneJ144Jatnjzby0HWqw=
+Date:   Wed, 19 Jul 2023 16:56:25 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v5 02/11] block: Block Device Filtering Mechanism
+Subject: Re: [PATCH 3/5] io_uring: add support for getdents
 Content-Language: en-US
-To:     Yu Kuai <yukuai1@huaweicloud.com>, <axboe@kernel.dk>,
-        <hch@infradead.org>, <corbet@lwn.net>, <snitzer@kernel.org>
-CC:     <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-        <dchinner@redhat.com>, <willy@infradead.org>, <dlemoal@kernel.org>,
-        <linux@weissschuh.net>, <jack@suse.cz>, <ming.lei@redhat.com>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        Donald Buczek <buczek@molgen.mpg.de>,
-        "yukuai (C)" <yukuai3@huawei.com>
-References: <20230612135228.10702-1-sergei.shtepa@veeam.com>
- <20230612135228.10702-3-sergei.shtepa@veeam.com>
- <f935840e-12a7-c37b-183c-27e2d83990ea@huaweicloud.com>
- <90f79cf3-86a2-02c0-1887-d3490f9848bb@veeam.com>
- <d929eaa7-61d6-c4c4-aabc-0124c3693e10@huaweicloud.com>
- <686b9999-c903-cff1-48ba-21324031da17@veeam.com>
- <fc740cf1-93a7-e438-e784-5209808981dc@huaweicloud.com>
- <fdebc267-249a-2345-ba60-476240c8cf63@veeam.com>
- <8257903a-1905-49c5-bed4-d15ca06c6d3b@huaweicloud.com>
-From:   Sergei Shtepa <sergei.shtepa@veeam.com>
-In-Reply-To: <8257903a-1905-49c5-bed4-d15ca06c6d3b@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [172.24.10.107]
-X-ClientProxiedBy: colmbx01.amust.local (172.31.112.31) To
- prgmbx01.amust.local (172.24.128.102)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A292403155B677661
-X-Veeam-MMEX: True
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
+To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+References: <20230718132112.461218-1-hao.xu@linux.dev>
+ <20230718132112.461218-4-hao.xu@linux.dev>
+In-Reply-To: <20230718132112.461218-4-hao.xu@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -80,179 +56,80 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 7/18/23 21:21, Hao Xu wrote:
+> From: Hao Xu <howeyxu@tencent.com>
+> 
+> This add support for getdents64 to io_uring, acting exactly like the
+> syscall: the directory is iterated from it's current's position as
+> stored in the file struct, and the file's position is updated exactly as
+> if getdents64 had been called.
+> 
+> For filesystems that support NOWAIT in iterate_shared(), try to use it
+> first; if a user already knows the filesystem they use do not support
+> nowait they can force async through IOSQE_ASYNC in the sqe flags,
+> avoiding the need to bounce back through a useless EAGAIN return.
+> 
+> Co-developed-by: Dominique Martinet <asmadeus@codewreck.org>
+> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+> ---
+>   include/uapi/linux/io_uring.h |  7 +++++
+>   io_uring/fs.c                 | 55 +++++++++++++++++++++++++++++++++++
+>   io_uring/fs.h                 |  3 ++
+>   io_uring/opdef.c              |  8 +++++
+>   4 files changed, 73 insertions(+)
+> 
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 36f9c73082de..b200b2600622 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -65,6 +65,7 @@ struct io_uring_sqe {
+>   		__u32		xattr_flags;
+>   		__u32		msg_ring_flags;
+>   		__u32		uring_cmd_flags;
+> +		__u32		getdents_flags;
 
+Looks this is not needed anymore, I'll remove this in next version.
 
-On 7/19/23 09:28, Yu Kuai wrote:
-> Subject:
-> Re: [PATCH v5 02/11] block: Block Device Filtering Mechanism
-> From:
-> Yu Kuai <yukuai1@huaweicloud.com>
-> Date:
-> 7/19/23, 09:28
-> 
-> To:
-> Sergei Shtepa <sergei.shtepa@veeam.com>, Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
-> CC:
-> viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com, willy@infradead.org, dlemoal@kernel.org, linux@weissschuh.net, jack@suse.cz, ming.lei@redhat.com, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Donald Buczek <buczek@molgen.mpg.de>, "yukuai (C)" <yukuai3@huawei.com>
-> 
-> 
-> Hi,
-> 
-> 在 2023/07/19 0:33, Sergei Shtepa 写道:
->>
->>
->> On 7/18/23 14:32, Yu Kuai wrote:
->>> Subject:
->>> Re: [PATCH v5 02/11] block: Block Device Filtering Mechanism
->>> From:
->>> Yu Kuai <yukuai1@huaweicloud.com>
->>> Date:
->>> 7/18/23, 14:32
->>>
->>> To:
->>> Sergei Shtepa <sergei.shtepa@veeam.com>, Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
->>> CC:
->>> viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com, willy@infradead.org, dlemoal@kernel.org, linux@weissschuh.net, jack@suse.cz, ming.lei@redhat.com, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Donald Buczek <buczek@molgen.mpg.de>, "yukuai (C)" <yukuai3@huawei.com>
->>>
->>>
->>> Hi,
->>>
->>> 在 2023/07/18 19:25, Sergei Shtepa 写道:
->>>> Hi.
->>>>
->>>> On 7/18/23 03:37, Yu Kuai wrote:
->>>>> Subject:
->>>>> Re: [PATCH v5 02/11] block: Block Device Filtering Mechanism
->>>>> From:
->>>>> Yu Kuai <yukuai1@huaweicloud.com>
->>>>> Date:
->>>>> 7/18/23, 03:37
->>>>>
->>>>> To:
->>>>> Sergei Shtepa <sergei.shtepa@veeam.com>, Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
->>>>> CC:
->>>>> viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com, willy@infradead.org, dlemoal@kernel.org, linux@weissschuh.net, jack@suse.cz, ming.lei@redhat.com, linux-block@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Donald Buczek <buczek@molgen.mpg.de>, "yukuai (C)" <yukuai3@huawei.com>
->>>>>
->>>>>
->>>>> Hi,
->>>>>
->>>>> 在 2023/07/17 22:39, Sergei Shtepa 写道:
->>>>>>
->>>>>>
->>>>>> On 7/11/23 04:02, Yu Kuai wrote:
->>>>>>> bdev_disk_changed() is not handled, where delete_partition() and
->>>>>>> add_partition() will be called, this means blkfilter for partiton will
->>>>>>> be removed after partition rescan. Am I missing something?
->>>>>>
->>>>>> Yes, when the bdev_disk_changed() is called, all disk block devices
->>>>>> are deleted and new ones are re-created. Therefore, the information
->>>>>> about the attached filters will be lost. This is equivalent to
->>>>>> removing the disk and adding it back.
->>>>>>
->>>>>> For the blksnap module, partition rescan will mean the loss of the
->>>>>> change trackers data. If a snapshot was created, then such
->>>>>> a partition rescan will cause the snapshot to be corrupted.
->>>>>>
->>>>>
->>>>> I haven't review blksnap code yet, but this sounds like a problem.
->>>>
->>>> I can't imagine a case where this could be a problem.
->>>> Partition rescan is possible only if the file system has not been
->>>> mounted on any of the disk partitions. Ioctl BLKRRPART will return
->>>> -EBUSY. Therefore, during normal operation of the system, rescan is
->>>> not performed.
->>>> And if the file systems have not been mounted, it is possible that
->>>> the disk partition structure has changed or the disk in the media
->>>> device has changed. In this case, it is better to detach the
->>>> filter, otherwise it may lead to incorrect operation of the module.
->>>>
->>>> We can add prechange/postchange callback functions so that the
->>>> filter can track rescan process. But at the moment, this is not
->>>> necessary for the blksnap module.
->>>
->>> So you mean that blkfilter is only used for the case that partition
->>> is mounted? (Or you mean that partition is opened)
->>>
->>> Then, I think you mean that filter should only be used for the partition
->>> that is opended? Otherwise, filter can be gone at any time since
->>> partition rescan can be gone.
->>>
->>> //user
->>> 1. attach filter
->>>          // other context rescan partition
->>> 2. mount fs
->>> // user will found filter is gone.
->>
->> Mmm...  The fact is that at the moment the user of the filter is the
->> blksnap module. There are no other filter users yet. The blksnap module
->> solves the problem of creating snapshots, primarily for backup purposes.
->> Therefore, the main use case is to attach a filter for an already running
->> system, where all partitions are marked up, file systems are mounted.
->>
->> If the server is being serviced, during which the disk is being
->> re-partitioned, then disabling the filter is normal. In this case, the
->> change tracker will be reset, and at the next backup, the filter will be
->> attached again.
-> 
-> Thanks for the explanation, I was thinking that blkshap can replace
-> dm-snapshot.
+>   	};
+>   	__u64	user_data;	/* data to be passed back at completion time */
+>   	/* pack this to avoid bogus arm OABI complaints */
+> @@ -235,6 +236,7 @@ enum io_uring_op {
+>   	IORING_OP_URING_CMD,
+>   	IORING_OP_SEND_ZC,
+>   	IORING_OP_SENDMSG_ZC,
+> +	IORING_OP_GETDENTS,
+>   
+>   	/* this goes last, obviously */
+>   	IORING_OP_LAST,
+> @@ -273,6 +275,11 @@ enum io_uring_op {
+>    */
+>   #define SPLICE_F_FD_IN_FIXED	(1U << 31) /* the last bit of __u32 */
+>   
+> +/*
+> + * sqe->getdents_flags
+> + */
+> +#define IORING_GETDENTS_REWIND	(1U << 0)
 
-Thanks!
-At the moment I am creating blksnap with the Veeam product needs in mind.
-I would be glad if blksnap would be useful in other products as well.
-If you have any thoughts/questions/suggestions/comments, then write to me
-directly. I'll be happy to discuss everything.
-To work on the patch, I use the branch here
-Link: https://github.com/SergeiShtepa/linux/tree/blksnap-master
-The user-space libs, tools and tests, compatible with the upstream is here
-Link: https://github.com/veeam/blksnap/tree/stable-v2.0
-Perhaps it will be useful to you.
+ditto
 
-> 
-> Thanks,
-> Kuai
-> 
->>
->> But if I were still solving the problem of saving the filter when rescanning,
->> then it is necessary to take into account the UUID and name of the partition
->> (struct partition_meta_info). It is unacceptable that due to a change in the
->> structure of partitions, the filter is attached to another partition by mistake.
->> The changed() callback would also be good to add so that the filter receives
->> a notification that the block device has been updated.
->>
->> But I'm not sure that this should be done, since if some code is not used in
->> the kernel, then it should not be in the kernel.
->>
->>>
->>> Thanks,
->>> Kuai
->>>
->>>>
->>>> Therefore, I will refrain from making changes for now.
->>>>
->>>>>
->>>>> possible solutions I have in mind:
->>>>>
->>>>> 1. Store blkfilter for each partition from bdev_disk_changed() before
->>>>> delete_partition(), and add blkfilter back after add_partition().
->>>>>
->>>>> 2. Store blkfilter from gendisk as a xarray, and protect it by
->>>>> 'open_mutex' like 'part_tbl', block_device can keep the pointer to
->>>>> reference blkfilter so that performance from fast path is ok, and the
->>>>> lifetime of blkfiter can be managed separately.
->>>>>
->>>>>> There was an idea to do filtering at the disk level,
->>>>>> but I abandoned it.
->>>>>> .
->>>>>>
->>>>> I think it's better to do filtering at the partition level as well.
->>>>>
->>>>> Thanks,
->>>>> Kuai
->>>>>
->>>> .
->>>>
->>>
->> .
->>
-> 
+> +
+>   /*
+>    * POLL_ADD flags. Note that since sqe->poll_events is the flag space, the
+>    * command flags for POLL_ADD are stored in sqe->len.
+> diff --git a/io_uring/fs.c b/io_uring/fs.c
+> index f6a69a549fd4..480f25677fed 100644
+> --- a/io_uring/fs.c
+> +++ b/io_uring/fs.c
+> @@ -47,6 +47,13 @@ struct io_link {
+>   	int				flags;
+>   };
+>   
+> +struct io_getdents {
+> +	struct file			*file;
+> +	struct linux_dirent64 __user	*dirent;
+> +	unsigned int			count;
+> +	int				flags;
+
+ditto
+
