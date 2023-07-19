@@ -2,161 +2,265 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E931759CB9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 19:47:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8148C759CCD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 19:49:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230293AbjGSRrt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 13:47:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36906 "EHLO
+        id S229712AbjGSRt3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 13:49:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229988AbjGSRrr (ORCPT
+        with ESMTP id S229477AbjGSRt2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 13:47:47 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AA731FD9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 10:47:44 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-c926075a50cso1740889276.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 10:47:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1689788864; x=1692380864;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZrpSlfvy8CWa29HQgq0qreuIOXt/Wldn9lf0s+IQ19g=;
-        b=ArpFLxX4pd+nE6yhxk4kfQsyY2cBj0283wyB2UFD4pQNpbkrc+ZAbqxw+z+OgClanI
-         8Bmj2Z7j2c1NhNgCvBdv83cjgOHHCOOMDHYftHtZeAL3vo412/Xbeep/S+CdApdBGNVE
-         aduoGH7mk12lxFjmYh58eVW/1Ksc0OT9NLaSC1w5eMBSYs+0sTNoL7N0w3aZ0n2P+aH0
-         VnFxLOrHPJ9r2ezOXOfj0cBYblwBN0Ye2w9Cgtba6HWxXo2yyLAo7PNbRfr5GAzKlZhF
-         ic8thdmStV5nJQreXCY0jlMVC8WTwDKkeNH3l7/QHaf5X+Z1Dsac59JBXIEJlOoDRy4l
-         I3Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689788864; x=1692380864;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZrpSlfvy8CWa29HQgq0qreuIOXt/Wldn9lf0s+IQ19g=;
-        b=jE1wr9rQWA/QgNRoXrhdgvDKurMkmTquIo51c/TDpn6AekA2jtjTBBKx9jXLkJpgps
-         uGNT4KLLzqbwbrC3jBOorlMTmYFYifktEBXeHhxMT4j3sxGjOa++4NRs6vFZXbEolx3q
-         n0uIGcNzIDQqMiz7Lc/QNA0lqfj0FpQkdYSPZLZmwotghwkNbRBI57+nP38IQmg+KGOy
-         b96lmw1JRD1LaUXA+pQOSgHCyxPU6WhHBUhLxpX09bYi3Dldfsmpxm7NKSWxlDYAVh4l
-         QV9BFbys0Ycfo9rDSFqifHMjFwHNgEIfGruQ0quR94UrAFexQWd9ph3JC3mDYm83LR0l
-         e2fg==
-X-Gm-Message-State: ABy/qLbl2bkqHYRdS4SBWD9mr0O7N/qwZ0/lrJJvhkByGizz0xdsYHQY
-        NJoIVFscdeKjralQWpu0RNUFEgzGZQ8=
-X-Google-Smtp-Source: APBJJlFlYUVvIIObTojpJ8UchQ4CwQtQGAVrCh++KpJ7LgJpdZRIA9xQwbGLQUVWTMKWnIrBZUJv99cvfhs=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:f509:0:b0:ca3:3341:6315 with SMTP id
- a9-20020a25f509000000b00ca333416315mr42238ybe.0.1689788863726; Wed, 19 Jul
- 2023 10:47:43 -0700 (PDT)
-Date:   Wed, 19 Jul 2023 10:47:41 -0700
-In-Reply-To: <CAGtprH9a2jX-hdww9GPuMrO9noNeXkoqE8oejtVn2vD0AZa3zA@mail.gmail.com>
-Mime-Version: 1.0
-References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-13-seanjc@google.com>
- <CAGtprH9a2jX-hdww9GPuMrO9noNeXkoqE8oejtVn2vD0AZa3zA@mail.gmail.com>
-Message-ID: <ZLghvU4QzE0PtfNG@google.com>
-Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-From:   Sean Christopherson <seanjc@google.com>
-To:     Vishal Annapurve <vannapurve@google.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+        Wed, 19 Jul 2023 13:49:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E92F71BFC;
+        Wed, 19 Jul 2023 10:49:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7A475617DA;
+        Wed, 19 Jul 2023 17:49:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED892C433CC;
+        Wed, 19 Jul 2023 17:49:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689788965;
+        bh=TofL5mVzu4C/L4DjUgcoScJUatOY9WWJm39F2sRjLVA=;
+        h=From:Date:Subject:To:Cc:From;
+        b=M034Za2FpW+3EVQIYQV9e+UNrwnzM0OFEBHI5xZM8XNf10pNn2jgVmpspUcSED7k1
+         gE2BR2p/q/amX6xVJgiJx6jxye3buwriRegJSeOdaynSyyqbZYyAjDBR+v2tKorAhP
+         Mj8K9J3zDDNljla4lTfzi+CrTxfn2YD6HBOjMtjuqiKP4PJPG89iRWsydRnQklHYQI
+         LdR4M5flasvqCmrhHiQ6GnYmTILyCotCz5Dgce0s/0SdtU2hG/eB1PDFDFqFeUHsuH
+         Rqa2NFkjch9MTNH30iJ0uHYD4z3DFHtR/0TYZ+mRGmex8Ka3P9h3e/POO18iGJji1s
+         NsUEcpTuxfX8w==
+From:   Jeff Layton <jlayton@kernel.org>
+Date:   Wed, 19 Jul 2023 13:49:11 -0400
+Subject: [PATCH] nfsd: inherit required unset default acls from effective
+ set
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230719-nfsd-acl-v1-1-eb0faf3d2917@kernel.org>
+X-B4-Tracking: v=1; b=H4sIABYiuGQC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI2MDc0NL3by04hTdxOQcXdPEJDNDU2PzVJNUMyWg8oKi1LTMCrBR0bG1tQD
+ Py8EXWgAAAA==
+To:     Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>,
+        Olga Kornievskaia <kolga@netapp.com>,
+        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>
+Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ondrej Valousek <ondrej.valousek@diasemi.com>,
+        Andreas Gruenbacher <agruen@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5602; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=TofL5mVzu4C/L4DjUgcoScJUatOY9WWJm39F2sRjLVA=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBkuCIksAhStJp5YfqvzC4PrwHM8Qp/38l9X3ORH
+ c5w6CCYOrqJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZLgiJAAKCRAADmhBGVaC
+ FeCeEACTdAWKldLHFGC/yGeQFZ8WJx+2V7YcLBlfOiS7Y+U4xHAjdwHWQgNGaCClL1z4mjC6gfg
+ fpQluIPRHsLSQdVEKOMPdets7mNlJYuRs+q53TJMWb/qBoYjV1cpw02MQjsswbivKPGM/YHlMJx
+ NM+wCOg0Id0Rd770SP6WRgCe3X2rPN003Yki674T4qn0JYCx62sTxHOUnbIVkE/g8BrRxGu2cdp
+ bIEOJjbp3ggOUdIHhQ89gsh55F3SSq7Ci1Yd3sYiRGetOJPXsruucizMpAZFqrlRFrTG9bBysFj
+ /xNfJhX0naXnDdHckj3gR0mKFNaGgaB+J0X//LiOFLJPEjFeNkD4MeP+Vu0AjkxlLq+kFq735SF
+ OSEmXHFTjbDLnrx//U6UJu6gVI3ltvOCYkveFvRf99V8uKUS/XIRT+3EjfN40zaBElvZCkkj+tm
+ 0noYmTiz1G+/5dzh47YC5umCNWaeIiivrUW0OmLvorHZhSYx156WUMaTikDOD/lmThwTEEDsu0u
+ l78MSXWSzSkd8SRcWU5kNCJ7uf20ex1MyzHE+L+dH76YVMPRSc6jCCyzuzEh+X5Yg3Lg7vXeE7q
+ tgEZVl/VljXgS71CM9wiilSQR5x0NTWzaAsLCTQp/tgGMauKBCBJbJH4l49bd32kxyawG1Rh23l
+ a3CWFCJZeTMdEhw==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 19, 2023, Vishal Annapurve wrote:
-> On Tue, Jul 18, 2023 at 4:49=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> > ...
-> > +static int kvm_gmem_error_page(struct address_space *mapping, struct p=
-age *page)
-> > +{
-> > +       struct list_head *gmem_list =3D &mapping->private_list;
-> > +       struct kvm_memory_slot *slot;
-> > +       struct kvm_gmem *gmem;
-> > +       unsigned long index;
-> > +       pgoff_t start, end;
-> > +       gfn_t gfn;
-> > +
-> > +       filemap_invalidate_lock_shared(mapping);
-> > +
-> > +       start =3D page->index;
-> > +       end =3D start + thp_nr_pages(page);
-> > +
-> > +       list_for_each_entry(gmem, gmem_list, entry) {
-> > +               xa_for_each_range(&gmem->bindings, index, slot, start, =
-end - 1) {
-> > +                       for (gfn =3D start; gfn < end; gfn++) {
-> > +                               if (WARN_ON_ONCE(gfn < slot->base_gfn |=
-|
-> > +                                               gfn >=3D slot->base_gfn=
- + slot->npages))
-> > +                                       continue;
-> > +
-> > +                               /*
-> > +                                * FIXME: Tell userspace that the *priv=
-ate*
-> > +                                * memory encountered an error.
-> > +                                */
-> > +                               send_sig_mceerr(BUS_MCEERR_AR,
-> > +                                               (void __user *)gfn_to_h=
-va_memslot(slot, gfn),
-> > +                                               PAGE_SHIFT, current);
->=20
-> Does it make sense to replicate what happens with MCE handling on
-> tmpfs backed guest memory:
-> 1) Unmap gpa from guest
-> 2) On the next guest EPT fault, exit to userspace to handle/log the
-> mce error for the gpa.
+A well-formed NFSv4 ACL will always contain OWNER@/GROUP@/EVERYONE@
+ACEs, but there is no requirement for inheritable entries for those
+entities. POSIX ACLs must always have owner/group/other entries, even for a
+default ACL.
 
-Hmm, yes, that would be much better.  Ah, and kvm_gmem_get_pfn() needs to c=
-heck
-folio_test_hwpoison() and potentially PageHWPoison().  E.g. if the folio is=
- huge,
-KVM needs to restrict the mapping to order-0 (target page isn't poisoned), =
-or
-return KVM_PFN_ERR_HWPOISON (taget page IS poisoned).
+nfsd builds the default ACL from inheritable ACEs, but the current code
+just leaves any unspecified ACEs zeroed out. The result is that adding a
+default user or group ACE to an inode can leave it with unwanted deny
+entries.
 
-Alternatively, KVM could punch a hole in kvm_gmem_error_page(), but I don't=
- think
-we want to do that because that would prevent forwarding the #MC to the gue=
-st.
+For instance, a newly created directory with no acl will look something
+like this:
+
+	# NFSv4 translation by server
+	A::OWNER@:rwaDxtTcCy
+	A::GROUP@:rxtcy
+	A::EVERYONE@:rxtcy
+
+	# POSIX ACL of underlying file
+	user::rwx
+	group::r-x
+	other::r-x
+
+...if I then add new v4 ACE:
+
+	nfs4_setfacl -a A:fd:1000:rwx /mnt/local/test
+
+...I end up with a result like this today:
+
+	user::rwx
+	user:1000:rwx
+	group::r-x
+	mask::rwx
+	other::r-x
+	default:user::---
+	default:user:1000:rwx
+	default:group::---
+	default:mask::rwx
+	default:other::---
+
+	A::OWNER@:rwaDxtTcCy
+	A::1000:rwaDxtcy
+	A::GROUP@:rxtcy
+	A::EVERYONE@:rxtcy
+	D:fdi:OWNER@:rwaDx
+	A:fdi:OWNER@:tTcCy
+	A:fdi:1000:rwaDxtcy
+	A:fdi:GROUP@:tcy
+	A:fdi:EVERYONE@:tcy
+
+...which is not at all expected. Adding a single inheritable allow ACE
+should not result in everyone else losing access.
+
+The setfacl command solves a silimar issue by copying owner/group/other
+entries from the effective ACL when none of them are set:
+
+    "If a Default ACL entry is created, and the  Default  ACL  contains  no
+     owner,  owning group,  or  others  entry,  a  copy of the ACL owner,
+     owning group, or others entry is added to the Default ACL.
+
+Having nfsd do the same provides a more sane result (with no deny ACEs
+in the resulting set):
+
+	user::rwx
+	user:1000:rwx
+	group::r-x
+	mask::rwx
+	other::r-x
+	default:user::rwx
+	default:user:1000:rwx
+	default:group::r-x
+	default:mask::rwx
+	default:other::r-x
+
+	A::OWNER@:rwaDxtTcCy
+	A::1000:rwaDxtcy
+	A::GROUP@:rxtcy
+	A::EVERYONE@:rxtcy
+	A:fdi:OWNER@:rwaDxtTcCy
+	A:fdi:1000:rwaDxtcy
+	A:fdi:GROUP@:rxtcy
+	A:fdi:EVERYONE@:rxtcy
+
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=2136452
+Reported-by: Ondrej Valousek <ondrej.valousek@diasemi.com>
+Suggested-by: Andreas Gruenbacher <agruen@redhat.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/nfsd/nfs4acl.c | 32 +++++++++++++++++++++++++++++---
+ 1 file changed, 29 insertions(+), 3 deletions(-)
+
+diff --git a/fs/nfsd/nfs4acl.c b/fs/nfsd/nfs4acl.c
+index 518203821790..64e45551d1b6 100644
+--- a/fs/nfsd/nfs4acl.c
++++ b/fs/nfsd/nfs4acl.c
+@@ -441,7 +441,8 @@ struct posix_ace_state_array {
+  * calculated so far: */
+ 
+ struct posix_acl_state {
+-	int empty;
++	bool empty;
++	unsigned char valid;
+ 	struct posix_ace_state owner;
+ 	struct posix_ace_state group;
+ 	struct posix_ace_state other;
+@@ -457,7 +458,7 @@ init_state(struct posix_acl_state *state, int cnt)
+ 	int alloc;
+ 
+ 	memset(state, 0, sizeof(struct posix_acl_state));
+-	state->empty = 1;
++	state->empty = true;
+ 	/*
+ 	 * In the worst case, each individual acl could be for a distinct
+ 	 * named user or group, but we don't know which, so we allocate
+@@ -624,7 +625,7 @@ static void process_one_v4_ace(struct posix_acl_state *state,
+ 	u32 mask = ace->access_mask;
+ 	int i;
+ 
+-	state->empty = 0;
++	state->empty = false;
+ 
+ 	switch (ace2type(ace)) {
+ 	case ACL_USER_OBJ:
+@@ -633,6 +634,7 @@ static void process_one_v4_ace(struct posix_acl_state *state,
+ 		} else {
+ 			deny_bits(&state->owner, mask);
+ 		}
++		state->valid |= ACL_USER_OBJ;
+ 		break;
+ 	case ACL_USER:
+ 		i = find_uid(state, ace->who_uid);
+@@ -655,6 +657,7 @@ static void process_one_v4_ace(struct posix_acl_state *state,
+ 			deny_bits_array(state->users, mask);
+ 			deny_bits_array(state->groups, mask);
+ 		}
++		state->valid |= ACL_GROUP_OBJ;
+ 		break;
+ 	case ACL_GROUP:
+ 		i = find_gid(state, ace->who_gid);
+@@ -686,6 +689,7 @@ static void process_one_v4_ace(struct posix_acl_state *state,
+ 			deny_bits_array(state->users, mask);
+ 			deny_bits_array(state->groups, mask);
+ 		}
++		state->valid |= ACL_OTHER;
+ 	}
+ }
+ 
+@@ -726,6 +730,28 @@ static int nfs4_acl_nfsv4_to_posix(struct nfs4_acl *acl,
+ 		if (!(ace->flag & NFS4_ACE_INHERIT_ONLY_ACE))
+ 			process_one_v4_ace(&effective_acl_state, ace);
+ 	}
++
++	/*
++	 * At this point, the default ACL may have zeroed-out entries for owner,
++	 * group and other. That usually results in a non-sensical resulting ACL
++	 * that denies all access except to any ACE that was explicitly added.
++	 *
++	 * The setfacl command solves a similar problem with this logic:
++	 *
++	 * "If  a  Default  ACL  entry is created, and the Default ACL contains
++	 *  no owner, owning group, or others entry,  a  copy of  the  ACL
++	 *  owner, owning group, or others entry is added to the Default ACL."
++	 *
++	 * If none of the requisite ACEs were set, and some explicit user or group
++	 * ACEs were, copy the requisite entries from the effective set.
++	 */
++	if (!default_acl_state.valid &&
++	    (default_acl_state.users->n || default_acl_state.groups->n)) {
++		default_acl_state.owner = effective_acl_state.owner;
++		default_acl_state.group = effective_acl_state.group;
++		default_acl_state.other = effective_acl_state.other;
++	}
++
+ 	*pacl = posix_state_to_acl(&effective_acl_state, flags);
+ 	if (IS_ERR(*pacl)) {
+ 		ret = PTR_ERR(*pacl);
+
+---
+base-commit: 9d985ab8ed33176c3c0380b7de589ea2ae51a48d
+change-id: 20230719-nfsd-acl-5ab61537e4e6
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
