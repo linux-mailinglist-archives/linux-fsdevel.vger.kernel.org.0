@@ -2,98 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B29375A2A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 01:12:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14B1C75A2B0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 01:17:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230118AbjGSXMg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 19:12:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59844 "EHLO
+        id S229751AbjGSXR2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 19:17:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229571AbjGSXMf (ORCPT
+        with ESMTP id S229557AbjGSXR1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 19:12:35 -0400
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [IPv6:2a0a:51c0:0:237:300::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FC401701;
-        Wed, 19 Jul 2023 16:12:34 -0700 (PDT)
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-        (envelope-from <fw@strlen.de>)
-        id 1qMGL1-0003Yx-B2; Thu, 20 Jul 2023 01:12:07 +0200
-Date:   Thu, 20 Jul 2023 01:12:07 +0200
-From:   Florian Westphal <fw@strlen.de>
-To:     Aleksandr Nogikh <nogikh@google.com>
-Cc:     syzbot <syzbot+9bbbacfbf1e04d5221f7@syzkaller.appspotmail.com>,
-        dsterba@suse.cz, bakmitopiacibubur@boga.indosterling.com,
-        clm@fb.com, davem@davemloft.net, dsahern@kernel.org,
-        dsterba@suse.com, fw@strlen.de, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, josef@toxicpanda.com, kadlec@netfilter.org,
-        kuba@kernel.org, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux@armlinux.org.uk,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
-        yoshfuji@linux-ipv6.org
-Subject: Re: [syzbot] [btrfs?] [netfilter?] BUG: MAX_LOCKDEP_CHAIN_HLOCKS too
- low! (2)
-Message-ID: <20230719231207.GF32192@breakpoint.cc>
-References: <20230719170446.GR20457@twin.jikos.cz>
- <00000000000042a3ac0600da1f69@google.com>
- <CANp29Y4Dx3puutrowfZBzkHy1VpWHhQ6tZboBrwq_qNcFRrFGw@mail.gmail.com>
+        Wed, 19 Jul 2023 19:17:27 -0400
+Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com [209.85.160.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72ADA1FF1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 16:17:26 -0700 (PDT)
+Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-1ba5121da9eso306696fac.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 16:17:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689808646; x=1692400646;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e1T8DF+F7vOu3DoEylx/F408HNedc0v0qwNsF2STayI=;
+        b=QjzKyK/sEHPGu7nfi7M5WUVyHiXpKJ7CHfDsAa6bS2R4KycTZ39SyOVwE/3/FzFAD5
+         eaeNyNFUlkTFkrVceuyWKXSttWsrIkEiKbf9l2MeCWMMVgIXxVy714rD37AJiXLEsbS/
+         DNhEWhmfR30C1Y89wg18LjfOl79o1SNwSDie9lI+Wz30EdUp9uCUwueIY/xhHMCX3GTU
+         OVJQHrkOxtBcyLR+qg3feY/RXbAx8TNZ6sqnjUht4qnd+JYCFQ7g4bJ93bQNXptj7H+k
+         cOZDPvR6/lh6hpQ+A8iFSoeIiwzvNIRKE4o/4rFgPEIUHkQ0pz9qk6mSSR09+fnU7pTw
+         f4Dg==
+X-Gm-Message-State: ABy/qLayp/g1PeeWE04JHBGF+2snX8bJG9/lU21dkQ9wZoPe7GS4jHhu
+        C3+1X3B8ZZz2Ft7Fij07QdmdFDkjU38zShIGRR+we//jUV/UT8w=
+X-Google-Smtp-Source: APBJJlHMdLIXEL5Z8pdzgF175WqoG6dc7Y9NRR89CqmCQgk0XwW4ggjoNBaRaxQUix9DhPrlC4MibSaHlLDSHIOP015wMq4PiWAd
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANp29Y4Dx3puutrowfZBzkHy1VpWHhQ6tZboBrwq_qNcFRrFGw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,PLING_QUERY,
-        RCVD_IN_DNSWL_MED,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6870:8c32:b0:1b0:e98:1637 with SMTP id
+ ec50-20020a0568708c3200b001b00e981637mr4261353oab.10.1689808645863; Wed, 19
+ Jul 2023 16:17:25 -0700 (PDT)
+Date:   Wed, 19 Jul 2023 16:17:25 -0700
+In-Reply-To: <566ffabfcc5a7de71205ec4e97245ca2@disroot.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001341b80600df3c7a@google.com>
+Subject: Re: [syzbot] [hfs?] kernel BUG in hfsplus_show_options
+From:   syzbot <syzbot+98d3ceb7e01269e7bf4f@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sel4@disroot.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Aleksandr Nogikh <nogikh@google.com> wrote:
-> On Wed, Jul 19, 2023 at 7:11 PM syzbot
-> <syzbot+9bbbacfbf1e04d5221f7@syzkaller.appspotmail.com> wrote:
-> >
-> > > On Wed, Jul 19, 2023 at 02:32:51AM -0700, syzbot wrote:
-> > >> syzbot has found a reproducer for the following issue on:
-> > >>
-> > >> HEAD commit:    e40939bbfc68 Merge branch 'for-next/core' into for-kernelci
-> > >> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> > >> console output: https://syzkaller.appspot.com/x/log.txt?x=15d92aaaa80000
-> > >> kernel config:  https://syzkaller.appspot.com/x/.config?x=c4a2640e4213bc2f
-> > >> dashboard link: https://syzkaller.appspot.com/bug?extid=9bbbacfbf1e04d5221f7
-> > >> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > >> userspace arch: arm64
-> > >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149b2d66a80000
-> > >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1214348aa80000
-> > >>
-> > >> Downloadable assets:
-> > >> disk image: https://storage.googleapis.com/syzbot-assets/9d87aa312c0e/disk-e40939bb.raw.xz
-> > >> vmlinux: https://storage.googleapis.com/syzbot-assets/22a11d32a8b2/vmlinux-e40939bb.xz
-> > >> kernel image: https://storage.googleapis.com/syzbot-assets/0978b5788b52/Image-e40939bb.gz.xz
-> > >
-> > > #syz unset btrfs
-> >
-> > The following labels did not exist: btrfs
-> 
-> #syz set subsystems: netfilter
+Hello,
 
-I don't see any netfilter involvement here.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-The repro just creates a massive amount of team devices.
+failed to apply patch:
+checking file include/linux/fortify-string.h
+patch: **** unexpected end of file in patch
 
-At the time it hits the LOCKDEP limits on my test vm it has
-created ~2k team devices, system load is at +14 because udev
-is also busy spawing hotplug scripts for the new devices.
 
-After reboot and suspending the running reproducer after about 1500
-devices (before hitting lockdep limits), followed by 'ip link del' for
-the team devices gets the lockdep entries down to ~8k (from 40k),
-which is in the range that it has on this VM after a fresh boot.
 
-So as far as I can see this workload is just pushing lockdep
-past what it can handle with the configured settings and is
-not triggering any actual bug.
+Tested on:
+
+commit:         aeba4568 Add linux-next specific files for 20230718
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+dashboard link: https://syzkaller.appspot.com/bug?extid=98d3ceb7e01269e7bf4f
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=123c341aa80000
+
