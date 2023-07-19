@@ -2,128 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 723E7759F69
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 22:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95FF2759FF3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 22:38:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229812AbjGSUQd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 16:16:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52580 "EHLO
+        id S230151AbjGSUiL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 16:38:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230133AbjGSUQb (ORCPT
+        with ESMTP id S229786AbjGSUiJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 16:16:31 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19AFE1FED
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 13:16:28 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4fb5bcb9a28so11933044e87.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 13:16:28 -0700 (PDT)
+        Wed, 19 Jul 2023 16:38:09 -0400
+Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF1432684
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 13:37:45 -0700 (PDT)
+Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-1b05d63080cso45707fac.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 13:37:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1689797786; x=1692389786;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ReDr3/cUrrY5O6f157kS0Oes02zkOeh4YD/h5uR7Jps=;
-        b=coi65PEzCV7rCDEfL1mpkcR6k+K28LAsBIXeiZTCZLjyw2Hy4j+ku4FXsXBZCMuun9
-         P4YFf7zHA3iWFEyAOCYUleRCXXLr6ChxfuWsEDVI8+N1e2T11Lo54fctsXWy4wHwot4X
-         ek09n/z1vP6HGncPkGB8YnuM4OcDKlXEa7zZM=
+        d=cloudflare.com; s=google; t=1689799065; x=1692391065;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1yalhP6R+1z0UDsb9+7HJFdN5dchw61s0+06SJ8cM6k=;
+        b=KuRKkiicFarGSCBqnr3LP7ne8/CcZXp61/wOUdOrRxindvG65FMP54jxAQljSUmMRu
+         0ImZCsR+QPc+umybUE+Ax3vYzbRHxuZ4QhZLWo1MjdmFKXWanAOl3Foy+M/ZSaMSlJ8C
+         sXf0djcu0QzTJcW9L78VBSTXlbebdDb3RiQqc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689797786; x=1692389786;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ReDr3/cUrrY5O6f157kS0Oes02zkOeh4YD/h5uR7Jps=;
-        b=lXJiScFUXDhkGu1bBlMZyEcH7vvFlmQKwpqqke3ybOPUr2wX91zxGl8ZSe65XOmE2E
-         LnpR9vt8eBkHTRkrjxDiNjDq2nvYkzEQilk6rIx3EcmGnTva0aL0Hvuoj+HSVx7k04LM
-         cY3GqJ+W6fsDieyvETTxssNoUV5dK8Xg7cuksAZnbXE315n7ja27Wy0UuuQKZRBODFFB
-         YZgptA6mrxf+HWYwbe9y0o5IU9jO+a88EGbum0ir6fbe0CKV+jZWKs9rcytBcNKIjhjC
-         V8koX8rmNPDEhTgvrMCHZ5HzpZaFewe/4HDxid/VqZhsDTFJEm4pMN2rgEz8INKYLxU0
-         Xflw==
-X-Gm-Message-State: ABy/qLZBjdB+GK/f8pfSzNMJQ7u2eCTVqJOb2Evr510aTKf7cRX0fT1e
-        lYOkweje+GtSyOCaVR2L107u2OK2NvTb5AX9AEAtjys/
-X-Google-Smtp-Source: APBJJlFH9rYOCA5wXS6hri5AbW1s4HzihMfW8TFnMKDTqXJoiRByerHh4o7Fh0tC009FQcakqXtkNg==
-X-Received: by 2002:a05:6512:370f:b0:4f8:7503:2041 with SMTP id z15-20020a056512370f00b004f875032041mr566500lfr.37.1689797786103;
-        Wed, 19 Jul 2023 13:16:26 -0700 (PDT)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id c9-20020ac24149000000b004fdc7a53310sm1101575lfi.148.2023.07.19.13.16.25
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jul 2023 13:16:25 -0700 (PDT)
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-4fb761efa7aso32492e87.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 13:16:25 -0700 (PDT)
-X-Received: by 2002:a05:6512:368c:b0:4fb:85ad:b6e2 with SMTP id
- d12-20020a056512368c00b004fb85adb6e2mr613569lfs.50.1689797784754; Wed, 19 Jul
- 2023 13:16:24 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689799065; x=1692391065;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1yalhP6R+1z0UDsb9+7HJFdN5dchw61s0+06SJ8cM6k=;
+        b=hNUebrjDGWLzgNPmiuhI5/T+iPXSb3UG1Cz2rpG6/HDgYLBJdM+rkZ8QJIE3x2Z2fp
+         yOdg7wud9jw0ZSFBDpPsqro9AebIuWIeWzEnYJBMUsqOFs0Lg+ihWetmoIuJ2+5GmNmy
+         AgAs0R2xnudWEHChyqN4+tlJyfIxPccLYT+RRq9RsPzIjIPDYBAcjkuQbil39HKea5Uk
+         6xadH5lAnenad5cc5lCI3We5l9YYw8wb4kqXkN8r0fHasQcHVC4WaPnRotl9TvLrnLWQ
+         U/ojjFhrGosvlLjvEOS4SiKLt6j6YZcsHnGw1xU6SB6LPY3hxg8s+Atkfykt4l5iusac
+         9rSw==
+X-Gm-Message-State: ABy/qLaamKXs9IhA0lRGn/97z4gqb/M9l9UwLPkOPcfMMSXeyWkQEVtn
+        Fi2vvP2pJLLWEQmuskOqPamXjUMDkPa2mBWE/jar4A==
+X-Google-Smtp-Source: APBJJlEajt4aVc6CuRc8TCx+yM+UYYfOrW0NRG2NsLH3+frhp/KMJRs6pc+HGpPbRnF5/LFCbQ1GEjdPFY+oFOOshCk=
+X-Received: by 2002:a05:6808:1441:b0:3a4:1319:9af1 with SMTP id
+ x1-20020a056808144100b003a413199af1mr24407262oiv.51.1689799064974; Wed, 19
+ Jul 2023 13:37:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230629155433.4170837-1-dhowells@redhat.com> <20230629155433.4170837-2-dhowells@redhat.com>
- <CAJfpegsJuvXJDcXpo9T19Gw0tDuvyOJdv44Y2bt04MEf1JLxGg@mail.gmail.com>
- <c634a18e-9f2b-4746-bd8f-aa1d41e6ddf7@mattwhitlock.name> <CAJfpegvq4M_Go7fHiWVBBkrK6h4ChLqQTd0+EOKbRWZDcVerWA@mail.gmail.com>
- <ZLg9HbhOVnLk1ogA@casper.infradead.org>
-In-Reply-To: <ZLg9HbhOVnLk1ogA@casper.infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 19 Jul 2023 13:16:07 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiq95bWiWLyz96ombPfpy=PNrc2KKyzJ2d+WMrxi6=OVA@mail.gmail.com>
-Message-ID: <CAHk-=wiq95bWiWLyz96ombPfpy=PNrc2KKyzJ2d+WMrxi6=OVA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/4] splice: Fix corruption of spliced data after
- splice() returns
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Matt Whitlock <kernel@mattwhitlock.name>,
-        David Howells <dhowells@redhat.com>, netdev@vger.kernel.org,
+References: <CA+wXwBRdcjHW2zxDABdFU3c26mc1u+g6iWG7HrXJRL7Po3Qp0w@mail.gmail.com>
+ <ZJ2yeJR5TB4AyQIn@casper.infradead.org> <20230629181408.GM11467@frogsfrogsfrogs>
+ <CALrw=nFwbp06M7LB_Z0eFVPe29uFFUxAhKQ841GSDMtjP-JdXA@mail.gmail.com>
+ <CAOQ4uxiD6a9GmKwagRpUWBPRWCczB52Tsu5m6_igDzTQSLcs0w@mail.gmail.com>
+ <CALrw=nHH2u=+utzy8NfP6+fM6kOgtW0hdUHwK9-BWdYq+t-UoA@mail.gmail.com>
+ <CAOQ4uxju10zrQhVDA5WS+vTSbuW17vOD6EGBBJUmZg8c95vsrA@mail.gmail.com> <20230630151657.GJ11441@frogsfrogsfrogs>
+In-Reply-To: <20230630151657.GJ11441@frogsfrogsfrogs>
+From:   Ignat Korchagin <ignat@cloudflare.com>
+Date:   Wed, 19 Jul 2023 21:37:33 +0100
+Message-ID: <CALrw=nFv82aODZ0URzknqnZavyjCxV1vKOP9oYijfSdyaYEQ3g@mail.gmail.com>
+Subject: Re: Backporting of series xfs/iomap: fix data corruption due to stale
+ cached iomap
+To:     "Darrick J. Wong" <djwong@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Daniel Dao <dqminh@cloudflare.com>,
         Dave Chinner <david@fromorbit.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@kvack.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+        kernel-team <kernel-team@cloudflare.com>,
+        linux-fsdevel@vger.kernel.org,
+        Chandan Babu R <chandanrlinux@gmail.com>,
+        Leah Rumancik <lrumancik@google.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Fred Lawler <fred@cloudflare.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 19 Jul 2023 at 12:44, Matthew Wilcox <willy@infradead.org> wrote:
+On Fri, Jun 30, 2023 at 4:17=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
 >
-> So what's the API that provides the semantics of _copying_?
+> On Fri, Jun 30, 2023 at 04:05:36PM +0300, Amir Goldstein wrote:
+> > On Fri, Jun 30, 2023 at 3:30=E2=80=AFPM Ignat Korchagin <ignat@cloudfla=
+re.com> wrote:
+> > >
+> > > On Fri, Jun 30, 2023 at 11:39=E2=80=AFAM Amir Goldstein <amir73il@gma=
+il.com> wrote:
+> > > >
+> > > > On Thu, Jun 29, 2023 at 10:31=E2=80=AFPM Ignat Korchagin <ignat@clo=
+udflare.com> wrote:
+> > > > >
+> > > > > On Thu, Jun 29, 2023 at 7:14=E2=80=AFPM Darrick J. Wong <djwong@k=
+ernel.org> wrote:
+> > > > > >
+> > > > > > [add the xfs lts maintainers]
+> > > > > >
+> > > > > > On Thu, Jun 29, 2023 at 05:34:00PM +0100, Matthew Wilcox wrote:
+> > > > > > > On Thu, Jun 29, 2023 at 05:09:41PM +0100, Daniel Dao wrote:
+> > > > > > > > Hi Dave and Derrick,
+> > > > > > > >
+> > > > > > > > We are tracking down some corruptions on xfs for our rocksd=
+b workload,
+> > > > > > > > running on kernel 6.1.25. The corruptions were
+> > > > > > > > detected by rocksdb block checksum. The workload seems to s=
+hare some
+> > > > > > > > similarities
+> > > > > > > > with the multi-threaded write workload described in
+> > > > > > > > https://lore.kernel.org/linux-fsdevel/20221129001632.GX3600=
+936@dread.disaster.area/
+> > > > > > > >
+> > > > > > > > Can we backport the patch series to stable since it seemed =
+to fix data
+> > > > > > > > corruptions ?
+> > > > > > >
+> > > > > > > For clarity, are you asking for permission or advice about do=
+ing this
+> > > > > > > yourself, or are you asking somebody else to do the backport =
+for you?
+> > > > > >
+> > > > > > Nobody's officially committed to backporting and testing patche=
+s for
+> > > > > > 6.1; are you (Cloudflare) volunteering?
+> > > > >
+> > > > > Yes, we have applied them on top of 6.1.36, will be gradually
+> > > > > releasing to our servers and will report back if we see the issue=
+s go
+> > > > > away
+> > > > >
+> > > >
+> > > > Getting feedback back from Cloudflare production servers is awesome
+> > > > but it's not enough.
+> > > >
+> > > > The standard for getting xfs LTS backports approved is:
+> > > > 1. Test the backports against regressions with several rounds of fs=
+tests
+> > > >     check -g auto on selected xfs configurations [1]
+> > > > 2. Post the backport series to xfs list and get an ACK from upstrea=
+m
+> > > >     xfs maintainers
+> > > >
+> > > > We have volunteers doing this work for 5.4.y, 5.10.y and 5.15.y.
+> > > > We do not yet have a volunteer to do that work for 6.1.y.
+> > > >
+> > > > The question is whether you (or your team) are volunteering to
+> > > > do that work for 6.1.y xfs backports to help share the load?
 
-It's called "read()" and "write()".
+Circling back on this. So far it seems that the patchset in question
+does fix the issues of rocksdb corruption as we haven't seen them for
+some time on our test group. We're happy to dedicate some efforts now
+to get them officially backported to 6.1 according to the process. We
+did try basic things with kdevops and would like to learn more. Fred
+(cc-ed here) is happy to drive the effort and be the primary contact
+on this. Could you, please, guide us/him on the process?
 
-Seriously.
+> > > We are not a big team and apart from other internal project work our
+> > > efforts are focused on fixing this issue in production, because it
+> > > affects many teams and workloads. If we confirm that these patches fi=
+x
+> > > the issue in production, we will definitely consider dedicating some
+> > > work to ensure they are officially backported. But if not - we would
+> > > be required to search for a fix first before we can commit to any
+> > > work.
+> > >
+> > > So, IOW - can we come back to you a bit later on this after we get th=
+e
+> > > feedback from production?
+> > >
+> >
+> > Of course.
+> > The volunteering question for 6.1.y is independent.
+> >
+> > When you decide that you have a series of backports
+> > that proves to fix a real bug in production,
+> > a way to test the series will be worked out.
+>
+> /me notes that xfs/558 and xfs/559 (in fstests) are the functional tests
+> for these patches that you're backporting; it would be useful to have a
+> third party (i.e. not just the reporter and the author) confirm that the
+> two fstests pass when real workloads are fixed.
+>
+> --D
+>
+> > Thanks,
+> > Amir.
 
-The *ONLY* reason for splice() existing is for zero-copy. If you don't
-want zero-copy (aka "copy by reference"), don't use splice.
-
-Stop arguing against it. If you don't want zero-copy, you use read()
-and write(). It really is that simple.
-
-And no, we don't start some kind of crazy "versioned zero-copy with
-COW". That's a fundamental mistake. It's a mistake that has been done
-- several times - and made perhaps most famous by Hurd, that made that
-a big thing.
-
-And yes, this has been documented *forever*. It may not have been
-documented on the first line, because IT WAS SO OBVIOUS. The whole
-reason splice() is fast is because it avoids the actual copy, and does
-a copy-by-reference.
-
-That's still a copy. But a copy-by-reference is a special thing. If
-you don't know what copy-by-reference is, or don't want it, don't use
-splice().
-
-I don't know how many different ways I can say the same thing.
-
-IF YOU DON'T WANT ZERO-COPY, DON'T USE SPLICE.
-
-IF YOU DON'T UNDERSTAND THE DIFFERENCE BETWEEN COPY-BY-VALUE AND
-COPY-BY-REFERENCE, DON'T USE SPLICE.
-
-IF YOU DON'T UNDERSTAND THE *POINT* OF SPLICE, DON'T USE SPLICE.
-
-It's kind of a bit like pointers in C: if you don't understand
-pointers but use them anyway, you're going to have a hard time. That's
-not the fault of the pointers. Pointers are very very powerful. But if
-you are used to languages that only do copy-by-value, you are going to
-think they are bad things.
-
-                  Linus
+Ignat
