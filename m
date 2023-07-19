@@ -2,98 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5206F75A04B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 23:02:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B00775A06C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 23:16:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230151AbjGSVCU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 17:02:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53470 "EHLO
+        id S229635AbjGSVQg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 17:16:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbjGSVCT (ORCPT
+        with ESMTP id S229471AbjGSVQg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 17:02:19 -0400
-Received: from resdmta-h1p-028482.sys.comcast.net (resdmta-h1p-028482.sys.comcast.net [IPv6:2001:558:fd02:2446::c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44A011BF0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 14:02:17 -0700 (PDT)
-Received: from resomta-h1p-027914.sys.comcast.net ([96.102.179.199])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 256/256 bits)
-        (Client did not present a certificate)
-        by resdmta-h1p-028482.sys.comcast.net with ESMTP
-        id M7Ctqb4JKKSvQMEJNqoJgG; Wed, 19 Jul 2023 21:02:17 +0000
+        Wed, 19 Jul 2023 17:16:36 -0400
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12FA11FC1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 14:16:35 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-573a92296c7so1496707b3.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 14:16:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=comcastmailservice.net; s=20211018a; t=1689800537;
-        bh=xqMj+3VVjo+8UbUEghVnxRyNG8G2SG/j/lJTsRoSPsQ=;
-        h=Received:Received:From:To:Subject:Date:MIME-Version:Message-ID:
-         Content-Type:Xfinity-Spam-Result;
-        b=bpXpu4cnAsB+PwhqcFILiRYvifqY7YsP2R73EKJI/mMKcD03KK9zSgEvJY6V1eQxZ
-         O48cFGo04dxs1KwuFr1cY3DbMtWEe1nQSDLGquT9O4QJSrRkWsB5qHkrISkc8udFop
-         xX8gK89pqLTwxiERr5TO86isabaitAD0JLyO2yTNtu556ggcUmivNG8ODVsMbT/FkY
-         t7GUgbiEhC8FvQU8MleCzVQjkYwUQOFWfGkg9GygBTVlVR2OQyauOna1NpjEGxkXq/
-         dqq5U4T5JXdFj7RXtJJF5hJyBGJDiJQAwjU+qZHCEm7pZ0McW6d2ZsmZh1wcAZyiWR
-         Us2UjIZ1ynpeQ==
-Received: from localhost ([IPv6:2601:18c:9082:afd:219:d1ff:fe75:dc2f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 256/256 bits)
-        (Client did not present a certificate)
-        by resomta-h1p-027914.sys.comcast.net with ESMTPSA
-        id MEJAqBpSU0WpqMEJCqnizK; Wed, 19 Jul 2023 21:02:12 +0000
-X-Xfinity-VMeta: sc=-100.00;st=legit
-From:   Matt Whitlock <kernel@mattwhitlock.name>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>, <netdev@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Jens Axboe <axboe@kernel.dk>, <linux-fsdevel@kvack.org>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/4] splice: Fix corruption of spliced data after =?iso-8859-1?Q?splice()_returns?=
-Date:   Wed, 19 Jul 2023 17:02:04 -0400
-MIME-Version: 1.0
-Message-ID: <6609f1b8-3264-4017-ac3c-84a01ea12690@mattwhitlock.name>
-In-Reply-To: <CAHk-=wiq95bWiWLyz96ombPfpy=PNrc2KKyzJ2d+WMrxi6=OVA@mail.gmail.com>
-References: <20230629155433.4170837-1-dhowells@redhat.com>
- <20230629155433.4170837-2-dhowells@redhat.com>
- <CAJfpegsJuvXJDcXpo9T19Gw0tDuvyOJdv44Y2bt04MEf1JLxGg@mail.gmail.com>
- <c634a18e-9f2b-4746-bd8f-aa1d41e6ddf7@mattwhitlock.name>
- <CAJfpegvq4M_Go7fHiWVBBkrK6h4ChLqQTd0+EOKbRWZDcVerWA@mail.gmail.com>
- <ZLg9HbhOVnLk1ogA@casper.infradead.org>
- <CAHk-=wiq95bWiWLyz96ombPfpy=PNrc2KKyzJ2d+WMrxi6=OVA@mail.gmail.com>
-User-Agent: Trojita/v0.7-595-g7738cd47; Qt/5.15.10; xcb; Linux; Gentoo Linux
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        d=google.com; s=20221208; t=1689801394; x=1690406194;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=F9BpFuhMTkAOIbHVpXjSO4oTM9iSvRhAIZS7PoLmzJ4=;
+        b=2rWGTRMAxnD6VeFPQEreW2HWSQArB4kLh/AVFJFeMRRu/b0qI1M/YvEqYUK8drstJH
+         c/O7qo/G7EcS+Ij4KHSS9CoygJOHy5gj8wp3xmV/RasyNFdsxhTWXIzN3WjKFi628Z7Z
+         rIt976xfybkKpbGh6/5efs/pvr+MjFRMYiTTM3VrAUGQ+YfVC370lk74ULcnEvsN3CDB
+         NRDaruRhWjr9gF9nA4RyHuIkv2SMzlJxCucuDfduj2L9I5lcjVw2w2ZwfBjwrBYDCZD4
+         R2llbtpO92RHOF1V8NVsi+Zl+Wv+rxrxnQsvjkVz34oPQHrkFZaceYSPBoWmhKHdwQq6
+         pRsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689801394; x=1690406194;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F9BpFuhMTkAOIbHVpXjSO4oTM9iSvRhAIZS7PoLmzJ4=;
+        b=ewTk61jygyPlfPnCtnfBLgzZ9T26IZ4AF53BPUCN4nxP6rjplFf7vzSFRNVnZImHuc
+         wsd1t2kT1p+WbJGn5H9mNax/RLnV1j09jJAoR7aqcjWBvV5zeESBZPmOoSTYPgIywo8r
+         adKAfhZ11sn7w9yKN4kgMykwpCc/0jmRhLB232Q7BcHrg27I034AZ4u+vEdvBbX09Gwo
+         n8nsGhno1tImUoFWyrxrdT2Lg+MsfxH0l+y9VIVJISWZSSOfIQWub51WJXUp3Xj3fWab
+         dphMfRmSi14IsP3HT3Bfd4g5AzVMN3C6SQTs8aLE9C1wjpF8g/EVYz3Cp9u8QvuUjmCu
+         plEg==
+X-Gm-Message-State: ABy/qLbtjtv4vi4XVi9cDHpVGbW1tufSI06N6Yn79XZVG/hFrRAqpNoa
+        g0G770C92Qfy2iIyZQeJeIr+lmTObI+uvt8qdyYd
+X-Google-Smtp-Source: APBJJlHreOXAS0H9GQPXpAnmR0dGnAWP0KSY+RuBCP7YUswW95L59jjmKDrqfTpSNj9UEciNANfkAkMJF+8kz9Tkf4LV
+X-Received: from axel.svl.corp.google.com ([2620:15c:2a3:200:2c07:36ef:118f:86cf])
+ (user=axelrasmussen job=sendgmr) by 2002:a81:430c:0:b0:555:cd45:bc3a with
+ SMTP id q12-20020a81430c000000b00555cd45bc3amr198551ywa.9.1689801394300; Wed,
+ 19 Jul 2023 14:16:34 -0700 (PDT)
+Date:   Wed, 19 Jul 2023 14:16:31 -0700
+In-Reply-To: <79375b71-db2e-3e66-346b-254c90d915e2@cslab.ece.ntua.gr>
+Mime-Version: 1.0
+References: <79375b71-db2e-3e66-346b-254c90d915e2@cslab.ece.ntua.gr>
+X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
+Message-ID: <20230719211631.890995-1-axelrasmussen@google.com>
+Subject: Re: Using userfaultfd with KVM's async page fault handling causes
+ processes to hung waiting for mmap_lock to be released
+From:   Axel Rasmussen <axelrasmussen@google.com>
+To:     Dimitris Siakavaras <jimsiak@cslab.ece.ntua.gr>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peter Xu <peterx@redhat.com>,
+        linux-mm@kvack.org, Axel Rasmussen <axelrasmussen@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wednesday, 19 July 2023 16:16:07 EDT, Linus Torvalds wrote:
-> The *ONLY* reason for splice() existing is for zero-copy.
+Thanks for the detailed report Dimitris! I've CCed the MM mailing list and some
+folks who work on userfaultfd.
 
-The very first sentence of splice(2) reads: "splice() moves data between=20
-two file descriptors without copying between kernel address space and user=20=
+I took a look at this today, but I haven't quite come up with a solution.
 
-address space." Thus, it is not unreasonable to believe that the point of=20
-splice is to avoid copying between user-space and kernel-space.
+I thought it might be as easy as changing userfaultfd_release() to set released
+*after* taking the lock. But no such luck, the ordering is what it is to deal
+with another subtle case:
 
-If you use read() and write(), then you're making two copies. If you use=20
-splice(), then you're making one copy (or zero, but that's an optimization=20=
 
-that should be invisible to the user).
+	WRITE_ONCE(ctx->released, true);
 
-> And no, we don't start some kind of crazy "versioned zero-copy with
-> COW". That's a fundamental mistake.
+	if (!mmget_not_zero(mm))
+		goto wakeup;
 
-Agreed. splice() should steal the reference if it can, copy the page data=20
-if it must. Note that, even in the slow case where the page data must be=20
-copied, this still gives a better-than-50% speedup over read()+write()=20
-since an entire copy (and one syscall) is elided.
+	/*
+	 * Flush page faults out of all CPUs. NOTE: all page faults
+	 * must be retried without returning VM_FAULT_SIGBUS if
+	 * userfaultfd_ctx_get() succeeds but vma->vma_userfault_ctx
+	 * changes while handle_userfault released the mmap_lock. So
+	 * it's critical that released is set to true (above), before
+	 * taking the mmap_lock for writing.
+	 */
+	mmap_write_lock(mm);
 
-> IF YOU DON'T UNDERSTAND THE *POINT* OF SPLICE, DON'T USE SPLICE.
-
-Thanks for being so condescending. Your reputation is deserved.
-
+I think perhaps the right thing to do is to have handle_userfault() release
+mmap_lock when it returns VM_FAULT_NOPAGE, and to have GUP deal with that
+appropriately? But, some investigation is required to be sure that's okay to do
+in the other non-GUP ways we can end up in handle_userfault().
