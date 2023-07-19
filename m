@@ -2,132 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D497759C2E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 19:14:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8982759C4D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 19:22:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231289AbjGSROV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 13:14:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50042 "EHLO
+        id S231311AbjGSRWK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 13:22:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231158AbjGSROU (ORCPT
+        with ESMTP id S229552AbjGSRWJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 13:14:20 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C069210CB
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 10:14:18 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-521ac15e333so586a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 10:14:18 -0700 (PDT)
+        Wed, 19 Jul 2023 13:22:09 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 272D9189
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 10:22:08 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-9891c73e0fbso227326466b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 10:22:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1689786857; x=1692378857;
+        d=google.com; s=20221208; t=1689787326; x=1692379326;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kflaIto2ZRy9FWnKKeA2RV1so53nf9Q2TlLkLWYnNhM=;
-        b=7jt8a5ZQWinJTMLOsw76Ptd82nTpItUAmde9SVR7wLXITm2emnqVMqRjtd/0cT2Ocy
-         +g/b0COH/UoOS1SiDsnu6P9dn+S7qwCBEmvhjNsDWyx58HOsfS1rYJS+P4pNZYh5ls6j
-         YxonkfEkWc/zBUjIS5fSAkYJzxGaxBS4sfEA9iUbn/Uxo6bH3RJ/5m4pQ27F1P1VEpEf
-         AsvOsmek2U4OIi0U5mccr9RVZzSvn4w/Q8RwzJgXXMNwdR2KLUH/UybanHexn6gg1lTZ
-         73eM3Rz3Kl4PVhQGK4h2QlmPtrI0+CHdTlDbkEwySFMcGYvRvVbzLqN4MK+YAbERJQdE
-         hX4A==
+        bh=muf27eIntjXr3Sa3gdcQLPN4y9AYfVWt2TffDnLSMcw=;
+        b=yA9Vox816zD+aJ/FVd+gHS1eUUrpLebV0UPRWoTOQXRhwbDjiEzKfZKLt7ZPO+mtvH
+         SaibLGPqQv8DRVnknibkmwFWbPPfcXmr6c+ujgDGBFuCW/F/BitDoK4IVXsvCkVTbM2a
+         UUXFrIHyb9EtmF0G0jSo223YyW0H9eb4QyBBeSzBXy3UqItMc2tyGgaUGUFrdupt+8A5
+         dLZgmELLzzoUW2SKSL+4MBdgHsq0BaZC4v7p3QuLBtrY+JwzHEa0w4RaSfJgn6bTpTvs
+         oKq8cg7sWg40yA0HzTTcfPzlRvV46kkywbP49vwd3eHSPLgVvqkoTlu6Tp2eaYz6GzrZ
+         sQlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689786857; x=1692378857;
+        d=1e100.net; s=20221208; t=1689787326; x=1692379326;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kflaIto2ZRy9FWnKKeA2RV1so53nf9Q2TlLkLWYnNhM=;
-        b=LIKw9Gs0dz5ppLVp5kXK5/5mAfTouZy1GfhEKAwd1YTeApKZOHZ41FpIqfmwjWmr3M
-         oZQbLIuuRRnvTHJEqukOmPf1cFDPnQtWZVNQrN5BXemMUqbjo47xwKSXE7qdRD+x6UeZ
-         Ttx+0qUI7+Wds1qIeBf6+yoXNaDZN1BJYfgoNJ1dPXvoGsl/0caNGEo/nqFdCJ1aLUjs
-         L8wPNtHBa//ZgGVZCgElavRFOkFVor/CuwzUzZ5lZUmHTd9lPmRVzggLJCz9Qn5TMaY4
-         aFr/muki5k29MqT2H7ZcXrQE3YumD+1WWe4EfCqGSobAib8fQa6vltE2uVY8O5eyiLZN
-         XpPw==
-X-Gm-Message-State: ABy/qLbaE+eSRybY7KoSNkTKL1IHwTPMx2o057sBNmzrBkCkfxwiI9hm
-        /p/LB25mTJJEeoh4OBJb83GC7Nr4SouZ6UotoWKNsvS103spEk7oQekzQg==
-X-Google-Smtp-Source: APBJJlGRSF0tEvXGE/is/Qajw4UR5pJnc/wD1guMNvVxbc7T5ofk/LmI5ZFD/CCrOen4zd1SJi9EmJc0BviY3nDh0Ak=
-X-Received: by 2002:a50:d783:0:b0:506:b280:4993 with SMTP id
- w3-20020a50d783000000b00506b2804993mr1169edi.2.1689786857109; Wed, 19 Jul
- 2023 10:14:17 -0700 (PDT)
+        bh=muf27eIntjXr3Sa3gdcQLPN4y9AYfVWt2TffDnLSMcw=;
+        b=ANAf9G288oToB2q8zEJlAQKXm/lsA8R1CWapv2HJZhZkdDWlrM1bTUUHi7qR+H2gG3
+         yl/w00sUcZX1MJ+ukY+Cyg0RzpSkMp+xi6O/ycI/iX/9T29/RjI6DVLp6VDrplc+6+Pt
+         6lMCc6K6hxvs7Bvhe2EpTFqLghO1T11jf5WrAm9nHeWnC6zBjvH8+KfVWwGqM3tRO0wA
+         NEvgZgP4aUvLx65o/ENJJ8V8uHLih1uWJkUMJAXr2bYVs3b+HU8nWULLfSCyQ5fr/hjs
+         gRQW/bOKJp6T290t9dySexORR642icHDg9zrCLcSXOT5PyZzOvZA90+nCCYepGZWOjfM
+         E46A==
+X-Gm-Message-State: ABy/qLZmajyWVzGooB6UcjGlEiK48pVLJ7O9qJhvYmii3XeHAerhL9kI
+        G+b5xAQoMv022op1kwWz+je3mofA6/EhkylVzSYwQA==
+X-Google-Smtp-Source: APBJJlHLONYvTW7m5Fbx16RlTb/fOqinzIvyTzihLXJQXLhrTmtvBuSogp90ZclD7PbARqJZdKXYR/WVY9tuMb+Y5tE=
+X-Received: by 2002:a17:906:292:b0:97e:17cc:cc95 with SMTP id
+ 18-20020a170906029200b0097e17cccc95mr3045374ejf.36.1689787326540; Wed, 19 Jul
+ 2023 10:22:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230719170446.GR20457@twin.jikos.cz> <00000000000042a3ac0600da1f69@google.com>
-In-Reply-To: <00000000000042a3ac0600da1f69@google.com>
-From:   Aleksandr Nogikh <nogikh@google.com>
-Date:   Wed, 19 Jul 2023 19:14:05 +0200
-Message-ID: <CANp29Y4Dx3puutrowfZBzkHy1VpWHhQ6tZboBrwq_qNcFRrFGw@mail.gmail.com>
-Subject: Re: [syzbot] [btrfs?] [netfilter?] BUG: MAX_LOCKDEP_CHAIN_HLOCKS too
- low! (2)
-To:     syzbot <syzbot+9bbbacfbf1e04d5221f7@syzkaller.appspotmail.com>
-Cc:     dsterba@suse.cz, bakmitopiacibubur@boga.indosterling.com,
-        clm@fb.com, davem@davemloft.net, dsahern@kernel.org,
-        dsterba@suse.com, fw@strlen.de, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, josef@toxicpanda.com, kadlec@netfilter.org,
-        kuba@kernel.org, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux@armlinux.org.uk,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
-        yoshfuji@linux-ipv6.org
+References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-13-seanjc@google.com>
+In-Reply-To: <20230718234512.1690985-13-seanjc@google.com>
+From:   Vishal Annapurve <vannapurve@google.com>
+Date:   Wed, 19 Jul 2023 10:21:55 -0700
+Message-ID: <CAGtprH9a2jX-hdww9GPuMrO9noNeXkoqE8oejtVn2vD0AZa3zA@mail.gmail.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.5 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,PLING_QUERY,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL,
-        USER_IN_DEF_SPF_WL autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 19, 2023 at 7:11=E2=80=AFPM syzbot
-<syzbot+9bbbacfbf1e04d5221f7@syzkaller.appspotmail.com> wrote:
->
-> > On Wed, Jul 19, 2023 at 02:32:51AM -0700, syzbot wrote:
-> >> syzbot has found a reproducer for the following issue on:
-> >>
-> >> HEAD commit:    e40939bbfc68 Merge branch 'for-next/core' into for-ker=
-nelci
-> >> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/li=
-nux.git for-kernelci
-> >> console output: https://syzkaller.appspot.com/x/log.txt?x=3D15d92aaaa8=
-0000
-> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc4a2640e42=
-13bc2f
-> >> dashboard link: https://syzkaller.appspot.com/bug?extid=3D9bbbacfbf1e0=
-4d5221f7
-> >> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for =
-Debian) 2.40
-> >> userspace arch: arm64
-> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D149b2d66=
-a80000
-> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1214348aa8=
-0000
-> >>
-> >> Downloadable assets:
-> >> disk image: https://storage.googleapis.com/syzbot-assets/9d87aa312c0e/=
-disk-e40939bb.raw.xz
-> >> vmlinux: https://storage.googleapis.com/syzbot-assets/22a11d32a8b2/vml=
-inux-e40939bb.xz
-> >> kernel image: https://storage.googleapis.com/syzbot-assets/0978b5788b5=
-2/Image-e40939bb.gz.xz
-> >
-> > #syz unset btrfs
->
-> The following labels did not exist: btrfs
+On Tue, Jul 18, 2023 at 4:49=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+> ...
+> +static int kvm_gmem_error_page(struct address_space *mapping, struct pag=
+e *page)
+> +{
+> +       struct list_head *gmem_list =3D &mapping->private_list;
+> +       struct kvm_memory_slot *slot;
+> +       struct kvm_gmem *gmem;
+> +       unsigned long index;
+> +       pgoff_t start, end;
+> +       gfn_t gfn;
+> +
+> +       filemap_invalidate_lock_shared(mapping);
+> +
+> +       start =3D page->index;
+> +       end =3D start + thp_nr_pages(page);
+> +
+> +       list_for_each_entry(gmem, gmem_list, entry) {
+> +               xa_for_each_range(&gmem->bindings, index, slot, start, en=
+d - 1) {
+> +                       for (gfn =3D start; gfn < end; gfn++) {
+> +                               if (WARN_ON_ONCE(gfn < slot->base_gfn ||
+> +                                               gfn >=3D slot->base_gfn +=
+ slot->npages))
+> +                                       continue;
+> +
+> +                               /*
+> +                                * FIXME: Tell userspace that the *privat=
+e*
+> +                                * memory encountered an error.
+> +                                */
+> +                               send_sig_mceerr(BUS_MCEERR_AR,
+> +                                               (void __user *)gfn_to_hva=
+_memslot(slot, gfn),
+> +                                               PAGE_SHIFT, current);
 
-#syz set subsystems: netfilter
+Does it make sense to replicate what happens with MCE handling on
+tmpfs backed guest memory:
+1) Unmap gpa from guest
+2) On the next guest EPT fault, exit to userspace to handle/log the
+mce error for the gpa.
 
->
-> >
-> > The MAX_LOCKDEP_CHAIN_HLOCKS bugs/warnings can be worked around by
-> > configuration, otherwise are considered invalid. This report has also
-> > 'netfilter' label so I'm not closing it right away.
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgi=
-d/syzkaller-bugs/00000000000042a3ac0600da1f69%40google.com.
+IIUC, such MCEs could be asynchronous and "current" might not always
+be the intended recipient of this signal.
+
+> +                       }
+> +               }
+> +       }
+> +
+> +       filemap_invalidate_unlock_shared(mapping);
+> +
+> +       return 0;
+> +}
+> +
