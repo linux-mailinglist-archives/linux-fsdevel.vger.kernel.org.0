@@ -2,144 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4836475A2EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 01:48:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4877D75A2F5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 01:52:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229569AbjGSXsk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 19:48:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42418 "EHLO
+        id S229628AbjGSXw4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 19:52:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbjGSXsj (ORCPT
+        with ESMTP id S229463AbjGSXw4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 19:48:39 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20A73E69
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 16:48:38 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-51e2a6a3768so175407a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 16:48:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1689810516; x=1692402516;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xITvYVSy1BHIKVEC9gx23jBZUjPhKEXUypo/Br0I0Ws=;
-        b=Gpn6lr2cnqwjd7UovGs55F3RPrjfk9ENOwukZh1gYHEYwKbalfFiVSfSpSthCFV3o5
-         dFJkKll7NlioZAdV2ZQ4f1k42jmeE84ZkxlYj5YXWwmkUjZSwmotm95g6h+39Bt0Rc6k
-         zNFzq8gU4OSlJ6WR7uEVc8KBnEjp79rfHMuoE=
+        Wed, 19 Jul 2023 19:52:56 -0400
+Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 580A1E69
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 16:52:55 -0700 (PDT)
+Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-560c7abdbdcso460161eaf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 16:52:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689810516; x=1692402516;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xITvYVSy1BHIKVEC9gx23jBZUjPhKEXUypo/Br0I0Ws=;
-        b=MwhR5FKsPdou2vUPAiNqlaXRFj0UlJwYkB+tKNA2NrZgkIlna99LLLqu+iv6C0B4VB
-         ddeGFQ83rrP8K8wiXwgSvbAZnT2XaNLor/AaiY61Bwd1e+qNSy+1tZGGGITR70E3giTZ
-         7yqU91tXWntfVxVNmGHmzBaWZ1SP0vENbtJu/iaic3W5GAS6jtf0Msh+gZWijSqCY81J
-         z+Tez5NLeOEnF4nlwL3gMqa+IPqe/wtRfZI4Kccg98SUlEGBy0x9M08Vjv5Zf94QgGlf
-         KP9bjWx8j1PlHe4RfrNR/Zy2mK7JPchhWQosJKuSGA5HIzHClKnkc1n+XPYsF75kElML
-         IwjA==
-X-Gm-Message-State: ABy/qLZl/NBzAq3q4LusBgHgbFOyp995I4oH/AZZAtKnQcqA7lc9Visd
-        GTXxQaIoSxT1FrAGahWKZiNCwb8vZgL7tsCWSBTL8z1n
-X-Google-Smtp-Source: APBJJlGOd7FABwymG+cQZRGOxFocdzJfW+zm7WW7a+CYQvfpvb/gYZ9Q/ajyAZFVG+OuAf0PaPpzCg==
-X-Received: by 2002:aa7:da03:0:b0:521:d770:4743 with SMTP id r3-20020aa7da03000000b00521d7704743mr309063eds.20.1689810516537;
-        Wed, 19 Jul 2023 16:48:36 -0700 (PDT)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id r23-20020aa7c157000000b0051e166f342asm3245676edp.66.2023.07.19.16.48.35
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jul 2023 16:48:35 -0700 (PDT)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-51e429e1eabso155998a12.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 16:48:35 -0700 (PDT)
-X-Received: by 2002:aa7:cd52:0:b0:521:aeba:c6c8 with SMTP id
- v18-20020aa7cd52000000b00521aebac6c8mr3187409edw.39.1689810514772; Wed, 19
- Jul 2023 16:48:34 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689810774; x=1692402774;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A9gJwVZwzQg0baOMHo3naKFdZASs/9RCrT4IGNjRFMc=;
+        b=ZWT+5DDT2j/c+iPqykEeuMQH6WRcw6g1JGy7MeQdoPa1bCporgcwKFo1CygCuA5mZL
+         cdDF10aTXQPOmH1jy53urg5jZbpoWT0I/7RKFKzZvNc2WprFkXpIGzxkKuBpGMmBgQ1V
+         GnOelb8f8gz57k7CTDSgWGI4uZaiEhu2ggqw3foAWX1vmvLBIZrvj0Z2tdRSsKl5+5pc
+         z8AGEFq2aKo0L+VLlDieJlAI0fhsnI/NIme3E8iT/YzLeLDubihSW9Xu5o7ZlMJFX5Ai
+         37cMgJw8YsNrtgKr71u//cGy0c6WpQYCk+zDus/G1dJWlbrAL0Rr+cOeJJWMbe9iXK0p
+         gnXA==
+X-Gm-Message-State: ABy/qLa0ByOPuP923U1+ubEN1aCwIO3s1wIylRGwv9pwISRucoARI8p3
+        npA3fRCLvUx5F2ZBpVFpwcAfvwGH6U8QYv81nI6Dr4Ko25sd8+4=
+X-Google-Smtp-Source: APBJJlF3aS+sqsqnzDE8uhYbIzzKieuKgZfPG27IJi0z++r3NRFpF4nI8tTNRI4l65VIRweYXLw4hXHCqKFpqjH2f6jRroFGM3d9
 MIME-Version: 1.0
-References: <20230629155433.4170837-1-dhowells@redhat.com> <20230629155433.4170837-2-dhowells@redhat.com>
- <CAJfpegsJuvXJDcXpo9T19Gw0tDuvyOJdv44Y2bt04MEf1JLxGg@mail.gmail.com>
- <c634a18e-9f2b-4746-bd8f-aa1d41e6ddf7@mattwhitlock.name> <CAJfpegvq4M_Go7fHiWVBBkrK6h4ChLqQTd0+EOKbRWZDcVerWA@mail.gmail.com>
- <ZLg9HbhOVnLk1ogA@casper.infradead.org> <CAHk-=wiq95bWiWLyz96ombPfpy=PNrc2KKyzJ2d+WMrxi6=OVA@mail.gmail.com>
- <6609f1b8-3264-4017-ac3c-84a01ea12690@mattwhitlock.name> <CAHk-=wh7OY=7ocTFY8styG8GgQ1coWxds=b09acHZG4t36OxWg@mail.gmail.com>
-In-Reply-To: <CAHk-=wh7OY=7ocTFY8styG8GgQ1coWxds=b09acHZG4t36OxWg@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 19 Jul 2023 16:48:17 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wguPaB+O0cSZaT-Zi1o+h0FccqL91s7rDokwkruNHE2BQ@mail.gmail.com>
-Message-ID: <CAHk-=wguPaB+O0cSZaT-Zi1o+h0FccqL91s7rDokwkruNHE2BQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/4] splice: Fix corruption of spliced data after
- splice() returns
-To:     Matt Whitlock <kernel@mattwhitlock.name>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>, netdev@vger.kernel.org,
-        Dave Chinner <david@fromorbit.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@kvack.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+X-Received: by 2002:a05:6808:3011:b0:39e:b6a2:98c7 with SMTP id
+ ay17-20020a056808301100b0039eb6a298c7mr7704963oib.8.1689810774760; Wed, 19
+ Jul 2023 16:52:54 -0700 (PDT)
+Date:   Wed, 19 Jul 2023 16:52:54 -0700
+In-Reply-To: <1fa2f7f07ebff31ddc24bbbd9ec47cc9@disroot.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f7a4210600dfba8c@google.com>
+Subject: Re: [syzbot] [hfs?] kernel BUG in hfsplus_show_options
+From:   syzbot <syzbot+98d3ceb7e01269e7bf4f@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sel4@disroot.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 19 Jul 2023 at 16:20, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> If you want "one-copy", what you can do is:
->
->  - mmap() the file data (zero copy, not stable yet)
->
->  - use "write()" to write the data to the network. This will copy it
-> to the skbs before the write() call returns and that copy makes it
-> stable.
->
-> Alternatively, if you want to be more than a bit odd, you _can_ do the
-> zero-copy on the write side, by doing
->
->  - read the file data (one copy, now it's stable)
->
->  - vmsplice() to the kernel buffer (zero copy)
->
->  - splice() to the network (zero copy at least for the good cases)
+Hello,
 
-Actually, I guess technically there's a third way:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
- - mmap the input (zero copy)
+Reported-and-tested-by: syzbot+98d3ceb7e01269e7bf4f@syzkaller.appspotmail.com
 
- - write() to a pipe (one copy)
+Tested on:
 
- - splice() to the network (zero copy)
+commit:         aeba4568 Add linux-next specific files for 20230718
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=14ccebe4a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e7ec534f91cfce6c
+dashboard link: https://syzkaller.appspot.com/bug?extid=98d3ceb7e01269e7bf4f
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=144204aea80000
 
-which doesn't seem to really have any sane use cases, but who knows...
-It avoids the user buffer management of the vmsplice() model, and
-while you cannot do anything to the data in user space *before* it is
-stable (because it only becomes stable as it is copied to the pipe
-buffers by the 'write()' system call), you could use "tee()" to
-duplicate the now stable stream and perhaps log it or create a
-checksum after-the-fact.
-
-Another use-case would be if you want to send the *same* stable stream
-to two different network connections, while still only having one
-copy. You can't do that with plain splice() - because the data isn't
-guaranteed to be stable, and the two network connections might see
-different streams. You can't do that with the 'mmap and then
-write-to-socket' approach, because the two writes not only copy twice,
-they might copy different data.
-
-And while you *can* do it with the "read+vmsplice()" approach, maybe
-the "write to pipe() in order to avoid any user space buffer issues"
-model is better. And "tee()" avoids the overhead of doing multiple
-vmsplice() calls on the same buffer.
-
-I dunno.
-
-What I *am* trying to say is that "splice()" is actually kind of
-designed for people to do these kinds of combinations. But very very
-few people actually do it.
-
-For example, the "tee()" system call exists, but it is crazy hard to
-use, I'm not sure it has ever actually been used for anything real.
-
-               Linus
+Note: testing is done by a robot and is best-effort only.
