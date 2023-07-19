@@ -2,59 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 71879759E58
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 21:20:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 025AB759ECF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 21:37:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230183AbjGSTUL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 15:20:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48722 "EHLO
+        id S230398AbjGSThQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 15:37:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbjGSTUK (ORCPT
+        with ESMTP id S231337AbjGSThD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 15:20:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04B89199A;
-        Wed, 19 Jul 2023 12:20:10 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8D24B617E1;
-        Wed, 19 Jul 2023 19:20:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E70D4C433C8;
-        Wed, 19 Jul 2023 19:20:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689794408;
-        bh=RyGFReZIp3EwbsBtVHroy017/Y1zNF/0hF406X35kIU=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=TzkOpYMHPcgHUFiEn82rW7z6PG81MHbR+GQgzZvy9e/Yo45nU4T+YoHp+DU2g4dSe
-         xJPrl7gad712Z97diMFOWHQ3Z58eqbAeuSfySjNCAYsWz+M6kviv0kOpYtJxCpcSKC
-         Omjdq79YJYPisvpI+muTs2NFiNOtwn+5aU2qvSidMK2mbq6d5RwMjFsn/H8bheYyBj
-         UYR4/JTju9Na/3oyKoR/94mHbjrTn78psPprHR/sKajHZ2Ny4FdJa77TWpeRsQwb5F
-         bBtQmbc3UhK0iPY4SzipzfZnXdsvlVTehGusvUbuJM4Pr07cqctOsm9MORlz/FF+2T
-         tRGPH6jLZ1dew==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C91E6E21EFA;
-        Wed, 19 Jul 2023 19:20:08 +0000 (UTC)
-Subject: Re: [GIT PULL] fuse update for 6.5
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <ZLfxJKGLH8IpG7Ja@miu.piliscsaba.redhat.com>
-References: <ZLfxJKGLH8IpG7Ja@miu.piliscsaba.redhat.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZLfxJKGLH8IpG7Ja@miu.piliscsaba.redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-update-6.5
-X-PR-Tracked-Commit-Id: 6a567e920fd0451bf29abc418df96c3365925770
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: bfa3037d828050896ae52f6467b6ca2489ae6fb1
-Message-Id: <168979440877.1405.4496489658250733171.pr-tracker-bot@kernel.org>
-Date:   Wed, 19 Jul 2023 19:20:08 +0000
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        Wed, 19 Jul 2023 15:37:03 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 387941FEC
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 12:36:19 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2b708e49059so115236331fa.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 12:36:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1689795345; x=1692387345;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rtl6gXXMYsoBnIpPYfSTqQ6nm1s8Hn5GW+fEct1ALRE=;
+        b=Zhw4JJ4K/38BOlZM21pHWDopKnx38TCDNfnXcKZHpT7uRqEqXE9WONINOAv9x6yiUj
+         z+XUsIZz2aKcBKEiQPUdSZ4hejspiaLEcEvoQjmfzw/3G5HXTxgK4A9mvFZ//TIcP2A6
+         YyRF2CDGgYyMaztEqeHFfJfxRmV3g4oGKIn6g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689795345; x=1692387345;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rtl6gXXMYsoBnIpPYfSTqQ6nm1s8Hn5GW+fEct1ALRE=;
+        b=E697xAwjMsG+eE3HfydENhe0AeaQbeydUbSZ16ayfEzCjff3msi8dH0DFVYuFlXSl2
+         QLZ/D1C/ZskKVGwCBBHSBRAuP2kenMFllEWHx5WC3wIJfUHM7mK4pQz3eVFxbO8fIZXY
+         oQVao7PLPqyqDYlzLMKudxvqhxwgJAkmVIPOBksX5+gDrDl6PKucleUBv+76n/rPgzoF
+         gcM7Kve8+RezU/y4SaVpU4fkNcV1Wp5/9+hRSyOT14eFL0adzrDm1nl5QPFL/Y8i+3L6
+         noz2QkEaLZFxU7EzsvzXxEAlgBmBds6VFtUo8THm7j74dzs+WVPHVK1OLG1AOldY/5ID
+         on7g==
+X-Gm-Message-State: ABy/qLYNw+H9LbeyzQuRUmrYMMCPiUNwJL6+ybhMz0nMsgG5uRC8M8cz
+        bNYcmu2kWkhBygCyagSz51fo+t/HYVfX2Dq/66SBZg==
+X-Google-Smtp-Source: APBJJlF263loCbf4G/vbjQ8OkGORJrA6h2pTRLBd08SnNbJHsNdGQLjuleOM0+lhq7ys4UZ/gSu7iS5raBbyA9YXqQA=
+X-Received: by 2002:a2e:9584:0:b0:2b6:e2c1:980f with SMTP id
+ w4-20020a2e9584000000b002b6e2c1980fmr643994ljh.36.1689795345357; Wed, 19 Jul
+ 2023 12:35:45 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230629155433.4170837-1-dhowells@redhat.com> <20230629155433.4170837-2-dhowells@redhat.com>
+ <CAJfpegsJuvXJDcXpo9T19Gw0tDuvyOJdv44Y2bt04MEf1JLxGg@mail.gmail.com> <c634a18e-9f2b-4746-bd8f-aa1d41e6ddf7@mattwhitlock.name>
+In-Reply-To: <c634a18e-9f2b-4746-bd8f-aa1d41e6ddf7@mattwhitlock.name>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 19 Jul 2023 21:35:33 +0200
+Message-ID: <CAJfpegvq4M_Go7fHiWVBBkrK6h4ChLqQTd0+EOKbRWZDcVerWA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/4] splice: Fix corruption of spliced data after
+ splice() returns
+To:     Matt Whitlock <kernel@mattwhitlock.name>
+Cc:     David Howells <dhowells@redhat.com>, netdev@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@kvack.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,15 +73,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Wed, 19 Jul 2023 16:20:20 +0200:
+On Wed, 19 Jul 2023 at 19:59, Matt Whitlock <kernel@mattwhitlock.name> wrot=
+e:
+>
+> On Wednesday, 19 July 2023 06:17:51 EDT, Miklos Szeredi wrote:
+> > On Thu, 29 Jun 2023 at 17:56, David Howells <dhowells@redhat.com> wrote=
+:
+> >>
+> >> Splicing data from, say, a file into a pipe currently leaves the sourc=
+e
+> >> pages in the pipe after splice() returns - but this means that those p=
+ages
+> >> can be subsequently modified by shared-writable mmap(), write(),
+> >> fallocate(), etc. before they're consumed.
+> >
+> > What is this trying to fix?   The above behavior is well known, so
+> > it's not likely to be a problem.
+>
+> Respectfully, it's not well-known, as it's not documented. If the splice(=
+2)
+> man page had mentioned that pages can be mutated after they're already
+> ostensibly at rest in the output pipe buffer, then my nightly backups
+> wouldn't have been incurring corruption silently for many months.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-update-6.5
+splice(2):
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/bfa3037d828050896ae52f6467b6ca2489ae6fb1
+       Though we talk of copying, actual copies are generally avoided.
+The kernel does this by implementing a pipe buffer as a set  of
+refer=E2=80=90
+       ence-counted  pointers  to  pages  of kernel memory.  The
+kernel creates "copies" of pages in a buffer by creating new pointers
+(for the
+       output buffer) referring to the pages, and increasing the
+reference counts for the pages: only pointers are copied, not the
+pages of the
+       buffer.
 
-Thank you!
+While not explicitly stating that the contents of the pages can change
+after being spliced, this can easily be inferred from the above
+semantics.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Thanks,
+Miklos
