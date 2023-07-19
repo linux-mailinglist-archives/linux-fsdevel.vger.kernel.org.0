@@ -2,144 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FD1975A1AB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 00:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B29375A2A9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 01:12:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230219AbjGSWTs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 18:19:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53700 "EHLO
+        id S230118AbjGSXMg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 19:12:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230041AbjGSWTo (ORCPT
+        with ESMTP id S229571AbjGSXMf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 18:19:44 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C5351FE2;
-        Wed, 19 Jul 2023 15:19:43 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id E143C201F4;
-        Wed, 19 Jul 2023 22:19:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1689805181; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6/tW1jwjtYiYuyuYvkAhhibnCktQlXT3ch84n1xLpug=;
-        b=cEnkxHe+UsuyjDVj6XL5wA6Z+bkAQihPivpsmBcqpWrLtLB9l19KFwPYhFQncP0bcmLDEV
-        Ev92yZwoOcQMc3r8FDuZku4ylbc18jj1qEuRHFmfTOk4PCToTb8XYblgNuFgRFxDIv/ozU
-        QF2uNP3Rasvt9E5zX5HSx27GEF0Eqzw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1689805181;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6/tW1jwjtYiYuyuYvkAhhibnCktQlXT3ch84n1xLpug=;
-        b=b8Bv98GohOXdHX3r1XFWI6y9b+HDUH7BvRGIw8kIvwIcdV7glP1Vkrh36PjIR0v2y53ZVQ
-        njf7ikKKpaoUC1Cg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A8F181361C;
-        Wed, 19 Jul 2023 22:19:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id nCZ8I31huGQuJgAAMHmgww
-        (envelope-from <krisman@suse.de>); Wed, 19 Jul 2023 22:19:41 +0000
-From:   Gabriel Krisman Bertazi <krisman@suse.de>
-To:     viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
-        ebiggers@kernel.org, jaegeuk@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Gabriel Krisman Bertazi <krisman@suse.de>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: [PATCH v3 7/7] f2fs: Enable negative dentries on case-insensitive lookup
-Date:   Wed, 19 Jul 2023 18:19:18 -0400
-Message-ID: <20230719221918.8937-8-krisman@suse.de>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230719221918.8937-1-krisman@suse.de>
-References: <20230719221918.8937-1-krisman@suse.de>
+        Wed, 19 Jul 2023 19:12:35 -0400
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [IPv6:2a0a:51c0:0:237:300::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FC401701;
+        Wed, 19 Jul 2023 16:12:34 -0700 (PDT)
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+        (envelope-from <fw@strlen.de>)
+        id 1qMGL1-0003Yx-B2; Thu, 20 Jul 2023 01:12:07 +0200
+Date:   Thu, 20 Jul 2023 01:12:07 +0200
+From:   Florian Westphal <fw@strlen.de>
+To:     Aleksandr Nogikh <nogikh@google.com>
+Cc:     syzbot <syzbot+9bbbacfbf1e04d5221f7@syzkaller.appspotmail.com>,
+        dsterba@suse.cz, bakmitopiacibubur@boga.indosterling.com,
+        clm@fb.com, davem@davemloft.net, dsahern@kernel.org,
+        dsterba@suse.com, fw@strlen.de, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, josef@toxicpanda.com, kadlec@netfilter.org,
+        kuba@kernel.org, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux@armlinux.org.uk,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
+        yoshfuji@linux-ipv6.org
+Subject: Re: [syzbot] [btrfs?] [netfilter?] BUG: MAX_LOCKDEP_CHAIN_HLOCKS too
+ low! (2)
+Message-ID: <20230719231207.GF32192@breakpoint.cc>
+References: <20230719170446.GR20457@twin.jikos.cz>
+ <00000000000042a3ac0600da1f69@google.com>
+ <CANp29Y4Dx3puutrowfZBzkHy1VpWHhQ6tZboBrwq_qNcFRrFGw@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CANp29Y4Dx3puutrowfZBzkHy1VpWHhQ6tZboBrwq_qNcFRrFGw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,PLING_QUERY,
+        RCVD_IN_DNSWL_MED,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Gabriel Krisman Bertazi <krisman@collabora.com>
+Aleksandr Nogikh <nogikh@google.com> wrote:
+> On Wed, Jul 19, 2023 at 7:11 PM syzbot
+> <syzbot+9bbbacfbf1e04d5221f7@syzkaller.appspotmail.com> wrote:
+> >
+> > > On Wed, Jul 19, 2023 at 02:32:51AM -0700, syzbot wrote:
+> > >> syzbot has found a reproducer for the following issue on:
+> > >>
+> > >> HEAD commit:    e40939bbfc68 Merge branch 'for-next/core' into for-kernelci
+> > >> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> > >> console output: https://syzkaller.appspot.com/x/log.txt?x=15d92aaaa80000
+> > >> kernel config:  https://syzkaller.appspot.com/x/.config?x=c4a2640e4213bc2f
+> > >> dashboard link: https://syzkaller.appspot.com/bug?extid=9bbbacfbf1e04d5221f7
+> > >> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > >> userspace arch: arm64
+> > >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149b2d66a80000
+> > >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1214348aa80000
+> > >>
+> > >> Downloadable assets:
+> > >> disk image: https://storage.googleapis.com/syzbot-assets/9d87aa312c0e/disk-e40939bb.raw.xz
+> > >> vmlinux: https://storage.googleapis.com/syzbot-assets/22a11d32a8b2/vmlinux-e40939bb.xz
+> > >> kernel image: https://storage.googleapis.com/syzbot-assets/0978b5788b52/Image-e40939bb.gz.xz
+> > >
+> > > #syz unset btrfs
+> >
+> > The following labels did not exist: btrfs
+> 
+> #syz set subsystems: netfilter
 
-Instead of invalidating negative dentries during case-insensitive
-lookups, mark them as such and let them be added to the dcache.
-d_ci_revalidate is able to properly filter them out if necessary based
-on the dentry casefold flag.
+I don't see any netfilter involvement here.
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+The repro just creates a massive amount of team devices.
 
----
-Changes since v2:
-  - Move dentry flag set closer to fscrypt code (Eric)
----
- fs/f2fs/namei.c | 25 ++++---------------------
- 1 file changed, 4 insertions(+), 21 deletions(-)
+At the time it hits the LOCKDEP limits on my test vm it has
+created ~2k team devices, system load is at +14 because udev
+is also busy spawing hotplug scripts for the new devices.
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index bee0568888da..fef8e2e77f75 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -533,6 +533,10 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 
- 	err = f2fs_prepare_lookup(dir, dentry, &fname);
- 	generic_set_encrypted_ci_d_ops(dentry);
-+
-+	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
-+		d_set_casefold_lookup(dentry);
-+
- 	if (err == -ENOENT)
- 		goto out_splice;
- 	if (err)
-@@ -578,17 +582,6 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 		goto out_iput;
- 	}
- out_splice:
--#if IS_ENABLED(CONFIG_UNICODE)
--	if (!inode && IS_CASEFOLDED(dir)) {
--		/* Eventually we want to call d_add_ci(dentry, NULL)
--		 * for negative dentries in the encoding case as
--		 * well.  For now, prevent the negative dentry
--		 * from being cached.
--		 */
--		trace_f2fs_lookup_end(dir, dentry, ino, err);
--		return NULL;
--	}
--#endif
- 	new = d_splice_alias(inode, dentry);
- 	trace_f2fs_lookup_end(dir, !IS_ERR_OR_NULL(new) ? new : dentry,
- 				ino, IS_ERR(new) ? PTR_ERR(new) : err);
-@@ -641,16 +634,6 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
- 	f2fs_delete_entry(de, page, dir, inode);
- 	f2fs_unlock_op(sbi);
- 
--#if IS_ENABLED(CONFIG_UNICODE)
--	/* VFS negative dentries are incompatible with Encoding and
--	 * Case-insensitiveness. Eventually we'll want avoid
--	 * invalidating the dentries here, alongside with returning the
--	 * negative dentries at f2fs_lookup(), when it is better
--	 * supported by the VFS for the CI case.
--	 */
--	if (IS_CASEFOLDED(dir))
--		d_invalidate(dentry);
--#endif
- 	if (IS_DIRSYNC(dir))
- 		f2fs_sync_fs(sbi->sb, 1);
- fail:
--- 
-2.41.0
+After reboot and suspending the running reproducer after about 1500
+devices (before hitting lockdep limits), followed by 'ip link del' for
+the team devices gets the lockdep entries down to ~8k (from 40k),
+which is in the range that it has on this VM after a fresh boot.
 
+So as far as I can see this workload is just pushing lockdep
+past what it can handle with the configured settings and is
+not triggering any actual bug.
