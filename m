@@ -2,134 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 58FB97590BA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 10:56:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD6077590F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 11:03:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230332AbjGSI4l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 04:56:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47032 "EHLO
+        id S230368AbjGSJDF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 05:03:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229561AbjGSI4k (ORCPT
+        with ESMTP id S230135AbjGSJCg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 04:56:40 -0400
-Received: from out-34.mta1.migadu.com (out-34.mta1.migadu.com [IPv6:2001:41d0:203:375::22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86C7019F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 01:56:38 -0700 (PDT)
-Message-ID: <f54d62e4-2ae4-5882-6107-71578a7f5c8f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1689756996;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VSA3F0uwCrJT24jM27htYOUi2fwt3Zqxz5cpMu6P9FE=;
-        b=KHc2qGBnqraA9xOqe1F0GHjOD9gaH9DFfKkdAMfHD/xTx1WWzqu/8cWe6sWA9B1RXnJa+K
-        9s4avczldHqJua1j4wnpmlmuuK43rwg0KOpW98ciJmu+fPPMo3orAqMNCYTR5PWrQd4vo8
-        cnacSJTQ5ecvneJ144Jatnjzby0HWqw=
-Date:   Wed, 19 Jul 2023 16:56:25 +0800
+        Wed, 19 Jul 2023 05:02:36 -0400
+Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B58D1199A;
+        Wed, 19 Jul 2023 02:02:34 -0700 (PDT)
+Received: by mail-vs1-xe2b.google.com with SMTP id ada2fe7eead31-440db8e60c8so2231471137.0;
+        Wed, 19 Jul 2023 02:02:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20221208; t=1689757354; x=1692349354;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dxIwZYUXAuriCTTrhHVqHKddrsis7m+qCsP3HgdIynU=;
+        b=roMthWZenYjFJbkbM2mH9bPO4Bf42B0BRdA0sdFpwN48PKQ9gk4TZacDsuyYpWMUtU
+         l7XYUiMzUMAy/phDMUaatUjESkkXKZSAnkJ4YsFYi4LHKq1cuYFBne+6nU2905/UPcSF
+         eiRoC/YPnk4Xfg/OHZHNVe0aaySC7Dum98v/RDAWN8si4j+7KTylat/B7KzsdUU52gR0
+         ATZdikwexy+mWOAK83xK6JMDtH6htGdJ9v/DCaLbaPTlmTZwkNX8scIlclg0p8FahA0R
+         h6FoIIVMuIN5v6FVCN4uWBK72xyHC8S/m8tYhlYULPyoo8BMP5rmm5j7YoomYtBCUVRH
+         okmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689757354; x=1692349354;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dxIwZYUXAuriCTTrhHVqHKddrsis7m+qCsP3HgdIynU=;
+        b=UtqZLJs/9dNaJ/ouji4lSjg9lWOiRDJHu6EFsAXZ0tegyRGQt9bj36VF6Lw6h0jEr4
+         5oUryOvEL0rWpk8i4qBLToJCdQSl83cr2UTEZAc2yWEyC9pIwj4DDSFNKfRCTi0G/4VC
+         XwxwEoX1EOCu3JbshtdtGc6m7Aj4KQqS3iGrUIgxGNSalgstJpwNuYEn8jm9+KIM0Yba
+         4GwWP3FePJO4zqUxeWWkI8kQ9EFipr4Wg5b+stI1Emg8E/ZhabU9UY6dltY9w8eujctv
+         1Jpx7/cJ4KRFwPKdlLYu0ep1Ahgrxk33hqVN6RzUUqqUS5moIkDMVfLuvf3za3B5RDeK
+         P0Ew==
+X-Gm-Message-State: ABy/qLZIxgKwJcpcJIPqFQB7N/0KFEvtmbZOH1CoTqoQMaVsnE6BMwYv
+        J5T09xHseVKGMhrc4hYuKllbS8PKsOhX/T+AjJE=
+X-Google-Smtp-Source: APBJJlFGC7hcxDjV2bvRpf7CwCMnWqPqtKrErYoLtJJRVn7WV3aGJI76Q4oBgWPzIE71Uc7VS02UNu6Z+sX11RmvnXE=
+X-Received: by 2002:a67:ce82:0:b0:443:6e00:d32 with SMTP id
+ c2-20020a67ce82000000b004436e000d32mr8825653vse.8.1689757353731; Wed, 19 Jul
+ 2023 02:02:33 -0700 (PDT)
 MIME-Version: 1.0
-Subject: Re: [PATCH 3/5] io_uring: add support for getdents
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-References: <20230718132112.461218-1-hao.xu@linux.dev>
- <20230718132112.461218-4-hao.xu@linux.dev>
-In-Reply-To: <20230718132112.461218-4-hao.xu@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20230719075127.47736-1-wangkefeng.wang@huawei.com> <20230719075127.47736-4-wangkefeng.wang@huawei.com>
+In-Reply-To: <20230719075127.47736-4-wangkefeng.wang@huawei.com>
+From:   =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+Date:   Wed, 19 Jul 2023 11:02:22 +0200
+Message-ID: <CAJ2a_DfGvPeDuN38UBXD4f2928n9GZpHFgdiPo9MoSAY7YXeOg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] selinux: use vma_is_initial_stack() and vma_is_initial_heap()
+To:     Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
+        selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/18/23 21:21, Hao Xu wrote:
-> From: Hao Xu <howeyxu@tencent.com>
-> 
-> This add support for getdents64 to io_uring, acting exactly like the
-> syscall: the directory is iterated from it's current's position as
-> stored in the file struct, and the file's position is updated exactly as
-> if getdents64 had been called.
-> 
-> For filesystems that support NOWAIT in iterate_shared(), try to use it
-> first; if a user already knows the filesystem they use do not support
-> nowait they can force async through IOSQE_ASYNC in the sqe flags,
-> avoiding the need to bounce back through a useless EAGAIN return.
-> 
-> Co-developed-by: Dominique Martinet <asmadeus@codewreck.org>
-> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
-> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+On Wed, 19 Jul 2023 at 09:40, Kefeng Wang <wangkefeng.wang@huawei.com> wrote:
+>
+> Use the helpers to simplify code.
+>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+> Cc: Eric Paris <eparis@parisplace.org>
+> Acked-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 > ---
->   include/uapi/linux/io_uring.h |  7 +++++
->   io_uring/fs.c                 | 55 +++++++++++++++++++++++++++++++++++
->   io_uring/fs.h                 |  3 ++
->   io_uring/opdef.c              |  8 +++++
->   4 files changed, 73 insertions(+)
-> 
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index 36f9c73082de..b200b2600622 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -65,6 +65,7 @@ struct io_uring_sqe {
->   		__u32		xattr_flags;
->   		__u32		msg_ring_flags;
->   		__u32		uring_cmd_flags;
-> +		__u32		getdents_flags;
+>  security/selinux/hooks.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+>
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index d06e350fedee..ee8575540a8e 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -3762,13 +3762,10 @@ static int selinux_file_mprotect(struct vm_area_struct *vma,
+>         if (default_noexec &&
+>             (prot & PROT_EXEC) && !(vma->vm_flags & VM_EXEC)) {
+>                 int rc = 0;
+> -               if (vma->vm_start >= vma->vm_mm->start_brk &&
+> -                   vma->vm_end <= vma->vm_mm->brk) {
+> +               if (vma_is_initial_heap(vma)) {
 
-Looks this is not needed anymore, I'll remove this in next version.
+This seems to change the condition from
 
->   	};
->   	__u64	user_data;	/* data to be passed back at completion time */
->   	/* pack this to avoid bogus arm OABI complaints */
-> @@ -235,6 +236,7 @@ enum io_uring_op {
->   	IORING_OP_URING_CMD,
->   	IORING_OP_SEND_ZC,
->   	IORING_OP_SENDMSG_ZC,
-> +	IORING_OP_GETDENTS,
->   
->   	/* this goes last, obviously */
->   	IORING_OP_LAST,
-> @@ -273,6 +275,11 @@ enum io_uring_op {
->    */
->   #define SPLICE_F_FD_IN_FIXED	(1U << 31) /* the last bit of __u32 */
->   
-> +/*
-> + * sqe->getdents_flags
-> + */
-> +#define IORING_GETDENTS_REWIND	(1U << 0)
+    vma->vm_start >= vma->vm_mm->start_brk && vma->vm_end <= vma->vm_mm->brk
 
-ditto
+to
 
-> +
->   /*
->    * POLL_ADD flags. Note that since sqe->poll_events is the flag space, the
->    * command flags for POLL_ADD are stored in sqe->len.
-> diff --git a/io_uring/fs.c b/io_uring/fs.c
-> index f6a69a549fd4..480f25677fed 100644
-> --- a/io_uring/fs.c
-> +++ b/io_uring/fs.c
-> @@ -47,6 +47,13 @@ struct io_link {
->   	int				flags;
->   };
->   
-> +struct io_getdents {
-> +	struct file			*file;
-> +	struct linux_dirent64 __user	*dirent;
-> +	unsigned int			count;
-> +	int				flags;
+    vma->vm_start <= vma->vm_mm->brk && vma->vm_end >= vma->vm_mm->start_brk
 
-ditto
+(or AND arguments swapped)
 
+    vma->vm_end >= vma->vm_mm->start_brk && vma->vm_start <= vma->vm_mm->brk
+
+Is this intended?
+
+>                         rc = avc_has_perm(sid, sid, SECCLASS_PROCESS,
+>                                           PROCESS__EXECHEAP, NULL);
+> -               } else if (!vma->vm_file &&
+> -                          ((vma->vm_start <= vma->vm_mm->start_stack &&
+> -                            vma->vm_end >= vma->vm_mm->start_stack) ||
+> +               } else if (!vma->vm_file && (vma_is_initial_stack(vma) ||
+>                             vma_is_stack_for_current(vma))) {
+>                         rc = avc_has_perm(sid, sid, SECCLASS_PROCESS,
+>                                           PROCESS__EXECSTACK, NULL);
+> --
+> 2.27.0
+>
