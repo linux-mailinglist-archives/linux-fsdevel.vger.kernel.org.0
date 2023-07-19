@@ -2,124 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD6077590F3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 11:03:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E8CB75913C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 11:11:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230368AbjGSJDF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 05:03:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49850 "EHLO
+        id S230294AbjGSJK7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 05:10:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230135AbjGSJCg (ORCPT
+        with ESMTP id S230291AbjGSJK6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 05:02:36 -0400
-Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B58D1199A;
-        Wed, 19 Jul 2023 02:02:34 -0700 (PDT)
-Received: by mail-vs1-xe2b.google.com with SMTP id ada2fe7eead31-440db8e60c8so2231471137.0;
-        Wed, 19 Jul 2023 02:02:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20221208; t=1689757354; x=1692349354;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dxIwZYUXAuriCTTrhHVqHKddrsis7m+qCsP3HgdIynU=;
-        b=roMthWZenYjFJbkbM2mH9bPO4Bf42B0BRdA0sdFpwN48PKQ9gk4TZacDsuyYpWMUtU
-         l7XYUiMzUMAy/phDMUaatUjESkkXKZSAnkJ4YsFYi4LHKq1cuYFBne+6nU2905/UPcSF
-         eiRoC/YPnk4Xfg/OHZHNVe0aaySC7Dum98v/RDAWN8si4j+7KTylat/B7KzsdUU52gR0
-         ATZdikwexy+mWOAK83xK6JMDtH6htGdJ9v/DCaLbaPTlmTZwkNX8scIlclg0p8FahA0R
-         h6FoIIVMuIN5v6FVCN4uWBK72xyHC8S/m8tYhlYULPyoo8BMP5rmm5j7YoomYtBCUVRH
-         okmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689757354; x=1692349354;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dxIwZYUXAuriCTTrhHVqHKddrsis7m+qCsP3HgdIynU=;
-        b=UtqZLJs/9dNaJ/ouji4lSjg9lWOiRDJHu6EFsAXZ0tegyRGQt9bj36VF6Lw6h0jEr4
-         5oUryOvEL0rWpk8i4qBLToJCdQSl83cr2UTEZAc2yWEyC9pIwj4DDSFNKfRCTi0G/4VC
-         XwxwEoX1EOCu3JbshtdtGc6m7Aj4KQqS3iGrUIgxGNSalgstJpwNuYEn8jm9+KIM0Yba
-         4GwWP3FePJO4zqUxeWWkI8kQ9EFipr4Wg5b+stI1Emg8E/ZhabU9UY6dltY9w8eujctv
-         1Jpx7/cJ4KRFwPKdlLYu0ep1Ahgrxk33hqVN6RzUUqqUS5moIkDMVfLuvf3za3B5RDeK
-         P0Ew==
-X-Gm-Message-State: ABy/qLZIxgKwJcpcJIPqFQB7N/0KFEvtmbZOH1CoTqoQMaVsnE6BMwYv
-        J5T09xHseVKGMhrc4hYuKllbS8PKsOhX/T+AjJE=
-X-Google-Smtp-Source: APBJJlFGC7hcxDjV2bvRpf7CwCMnWqPqtKrErYoLtJJRVn7WV3aGJI76Q4oBgWPzIE71Uc7VS02UNu6Z+sX11RmvnXE=
-X-Received: by 2002:a67:ce82:0:b0:443:6e00:d32 with SMTP id
- c2-20020a67ce82000000b004436e000d32mr8825653vse.8.1689757353731; Wed, 19 Jul
- 2023 02:02:33 -0700 (PDT)
+        Wed, 19 Jul 2023 05:10:58 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1A04121
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 02:10:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1689757815;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=aMIgzXiT1F2iEJnG15o5FqJ6MShjQORJM5LN2yDl3KI=;
+        b=aJQtS3NO2hYHYF/3bv13bvEDsTmrbU+7uffuykWZVdLAsnYpi8ezRwHZQKVt+oGBzIhSkM
+        TLoFisY361TvJfJfVS7HBpdD7tdmnaRj+FfMjvlWo96LWDkR40LIlsONRqzSUz6lOQ8hXo
+        bY2XJEN9g60RoEeNHCDz+8MHji+K7Zg=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-60-WzdpLWmjPkmtkdFW_z-X1A-1; Wed, 19 Jul 2023 05:10:11 -0400
+X-MC-Unique: WzdpLWmjPkmtkdFW_z-X1A-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 28B5688D580;
+        Wed, 19 Jul 2023 09:10:11 +0000 (UTC)
+Received: from t14s.redhat.com (unknown [10.45.225.164])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C6ADBF6CCA;
+        Wed, 19 Jul 2023 09:10:09 +0000 (UTC)
+From:   Jan Stancek <jstancek@redhat.com>
+To:     dhowells@redhat.com, kuba@kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, brauner@kernel.org,
+        viro@zeniv.linux.org.uk, jstancek@redhat.com
+Subject: [PATCH] splice, net: Fix splice_to_socket() for O_NONBLOCK socket
+Date:   Wed, 19 Jul 2023 11:07:52 +0200
+Message-Id: <7854000d2ce5ac32b75782a7c4574f25a11b573d.1689757133.git.jstancek@redhat.com>
 MIME-Version: 1.0
-References: <20230719075127.47736-1-wangkefeng.wang@huawei.com> <20230719075127.47736-4-wangkefeng.wang@huawei.com>
-In-Reply-To: <20230719075127.47736-4-wangkefeng.wang@huawei.com>
-From:   =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Date:   Wed, 19 Jul 2023 11:02:22 +0200
-Message-ID: <CAJ2a_DfGvPeDuN38UBXD4f2928n9GZpHFgdiPo9MoSAY7YXeOg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] selinux: use vma_is_initial_stack() and vma_is_initial_heap()
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
-        selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 19 Jul 2023 at 09:40, Kefeng Wang <wangkefeng.wang@huawei.com> wrote:
->
-> Use the helpers to simplify code.
->
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-> Cc: Eric Paris <eparis@parisplace.org>
-> Acked-by: Paul Moore <paul@paul-moore.com>
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> ---
->  security/selinux/hooks.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index d06e350fedee..ee8575540a8e 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -3762,13 +3762,10 @@ static int selinux_file_mprotect(struct vm_area_struct *vma,
->         if (default_noexec &&
->             (prot & PROT_EXEC) && !(vma->vm_flags & VM_EXEC)) {
->                 int rc = 0;
-> -               if (vma->vm_start >= vma->vm_mm->start_brk &&
-> -                   vma->vm_end <= vma->vm_mm->brk) {
-> +               if (vma_is_initial_heap(vma)) {
+LTP sendfile07 [1], which expects sendfile() to return EAGAIN when
+transferring data from regular file to a "full" O_NONBLOCK socket,
+started failing after commit 2dc334f1a63a ("splice, net: Use
+sendmsg(MSG_SPLICE_PAGES) rather than ->sendpage()").
+sendfile() no longer immediately returns, but now blocks.
 
-This seems to change the condition from
+Removed sock_sendpage() handled this case by setting a MSG_DONTWAIT
+flag, fix new splice_to_socket() to do the same for O_NONBLOCK sockets.
 
-    vma->vm_start >= vma->vm_mm->start_brk && vma->vm_end <= vma->vm_mm->brk
+[1] https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/sendfile/sendfile07.c
 
-to
+Fixes: 2dc334f1a63a ("splice, net: Use sendmsg(MSG_SPLICE_PAGES) rather than ->sendpage()")
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+---
+ fs/splice.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-    vma->vm_start <= vma->vm_mm->brk && vma->vm_end >= vma->vm_mm->start_brk
+diff --git a/fs/splice.c b/fs/splice.c
+index 004eb1c4ce31..3e2a31e1ce6a 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -876,6 +876,8 @@ ssize_t splice_to_socket(struct pipe_inode_info *pipe, struct file *out,
+ 			msg.msg_flags |= MSG_MORE;
+ 		if (remain && pipe_occupancy(pipe->head, tail) > 0)
+ 			msg.msg_flags |= MSG_MORE;
++		if (out->f_flags & O_NONBLOCK)
++			msg.msg_flags |= MSG_DONTWAIT;
+ 
+ 		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, bvec, bc,
+ 			      len - remain);
+-- 
+2.31.1
 
-(or AND arguments swapped)
-
-    vma->vm_end >= vma->vm_mm->start_brk && vma->vm_start <= vma->vm_mm->brk
-
-Is this intended?
-
->                         rc = avc_has_perm(sid, sid, SECCLASS_PROCESS,
->                                           PROCESS__EXECHEAP, NULL);
-> -               } else if (!vma->vm_file &&
-> -                          ((vma->vm_start <= vma->vm_mm->start_stack &&
-> -                            vma->vm_end >= vma->vm_mm->start_stack) ||
-> +               } else if (!vma->vm_file && (vma_is_initial_stack(vma) ||
->                             vma_is_stack_for_current(vma))) {
->                         rc = avc_has_perm(sid, sid, SECCLASS_PROCESS,
->                                           PROCESS__EXECSTACK, NULL);
-> --
-> 2.27.0
->
