@@ -2,67 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A5A5759017
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 10:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 323BF759024
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Jul 2023 10:22:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230214AbjGSITq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 04:19:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57764 "EHLO
+        id S230356AbjGSIWE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 04:22:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229724AbjGSITp (ORCPT
+        with ESMTP id S229936AbjGSIWC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 04:19:45 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9128172A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 01:19:03 -0700 (PDT)
+        Wed, 19 Jul 2023 04:22:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F77B172E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 01:21:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1689754742;
+        s=mimecast20190719; t=1689754875;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=A3PRF01yQKk/5cZ5BWUeGIVek1A+ZScaFRNRxy8v7WU=;
-        b=Y/cWtlH9QZ0lBmniPQonOIsMRBgJnt2zM8x0HjYVfdlijyrCPGhQMzjQdcjcOTAh8rtEiX
-        VIlhwvLe8svJ5ZVsnacEMXQabqzdtZoo4BotTQ9BNxP31giRtYIeA/yCwH8bJ5fcYS8I9+
-        HxPexPvmHYfr7alRdHQS6Sas6LUVMeI=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=lHNdzhJYXIyEvVVXeSxx/4ftxohEVfyVH2IVByUb0ic=;
+        b=H+85tU3l/XL2ySiw1RieVnRnd6OaOXcXMdxqg8OZbdp7J3klrQm/jrs9qEseqh4gA5bo04
+        sIapRpQfiAJMLpDN63kSjdesp2Yq5gp+i5V8RVQd7I6RlHmIqjuEyYLzFcNKps/wIZvV+f
+        BX1dVl8n3OyO6l0yLwelTperNImAVrQ=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-66-pv8UC3SEOLuGRjJ84cULxg-1; Wed, 19 Jul 2023 04:19:01 -0400
-X-MC-Unique: pv8UC3SEOLuGRjJ84cULxg-1
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-4fb76659d6cso5520723e87.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 01:19:01 -0700 (PDT)
+ us-mta-503-Prp3iTBiP-i8FZ9ko--G3w-1; Wed, 19 Jul 2023 04:21:14 -0400
+X-MC-Unique: Prp3iTBiP-i8FZ9ko--G3w-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-4fb76659d44so5671772e87.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 01:21:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689754738; x=1692346738;
+        d=1e100.net; s=20221208; t=1689754873; x=1692346873;
         h=content-transfer-encoding:in-reply-to:organization:from:references
          :cc:to:content-language:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=A3PRF01yQKk/5cZ5BWUeGIVek1A+ZScaFRNRxy8v7WU=;
-        b=fP8aLiQ4L+1XIePpqTcyVkYyaCkGqL2RYY4Sje1U52Bt/xIJcP/suG0yF6VuFmA19T
-         Duc0oJNQzOaQ7XVPuKUn6EHEatdNMGbE1+cHfJqcTEW4i0tGB5ebfN9N+lBk1JowEx2f
-         6rV6aLiXqIHkhKGbi4qQIzhDdQFrx/CR57CCammz/XWDGl9WQAyQYir4ATCqi5S2ozTI
-         XcHyN6K1IgKf4/iKFnQE7S5JvvQEfegCdrNV3t76wb2A2oO6pYVhUkyvumWekq6Hn4VU
-         iZNN88E4//vGxVO8KWYxHPrzj4n80LN2xj06bZUayH9qxgv6IStubz90m4ciTR+AkwdF
-         x9qw==
-X-Gm-Message-State: ABy/qLYJ+lY0r0+DLsnIO7eM8tp4F/YHdiFwebWFhjQhA5y4whPdBX3w
-        5DU2eEnunhyd20tTAA4s6hAh8vYuj55aFnyemFRN7CoTSaFZhepy3pYLwwzAOKllahucD6A1jWb
-        It6l1esbI/d5BZb/owbHWsvVc0A==
-X-Received: by 2002:a05:6512:5c1:b0:4f8:83f:babe with SMTP id o1-20020a05651205c100b004f8083fbabemr11169522lfo.62.1689754737885;
-        Wed, 19 Jul 2023 01:18:57 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlElWbEEQS6wB/sXWEw3o9coLgNkRyP67VSBFnN2SP6jtQCcIg6AEec+Q116/3HBCGy4e/xB8A==
-X-Received: by 2002:a05:6512:5c1:b0:4f8:83f:babe with SMTP id o1-20020a05651205c100b004f8083fbabemr11169502lfo.62.1689754737550;
-        Wed, 19 Jul 2023 01:18:57 -0700 (PDT)
+        bh=lHNdzhJYXIyEvVVXeSxx/4ftxohEVfyVH2IVByUb0ic=;
+        b=bXNtKWBPrP33gXGuVSy4FM3bRpHVKQ/VMtoFKIwztUQKHyJO0ZpliYGkIM/34c/9XF
+         vmZC/b9xoHxvfVy/ImL+/nILZRQRcumcnDOwe/OCu9YsBzaaalI3lr7bNuiBP+5i4bb/
+         ocrqCb36MBlSTc2zbyyqSLSHpstyt8Qk3Hhf/aP90b1TwbDPlI8sheSooHenjM37OY6b
+         Uyvr7+Ly33brd3lhzzgsN4ILW/Xeh/J/6b5mhVo2SKfZtGiCoeVboC4iHGZEScSt6Y+t
+         fVKgmA8L4WXTecM6IgtfM79TzcZyRvAkvs3rZbPwfi5t3Z6DYiitkxdzdxgV2jEh1CO8
+         Y/Sw==
+X-Gm-Message-State: ABy/qLboZCmyR1hJA0Sft91A8YmHpg/UDY6c0C5Gxi7Y3h3QP/yNKfOe
+        Szgme28dPxHXpSZCJ3iAVc325z0ccFtVo6/Dg0s0D/LyB55pg+TP8dgwndu1K4G5Le4eWFMGK1v
+        atrS1kN8Ar4F3c8YueZZRihI5ysp21/QK1w==
+X-Received: by 2002:a05:6512:750:b0:4fb:8cc0:57e3 with SMTP id c16-20020a056512075000b004fb8cc057e3mr1188127lfs.62.1689754872990;
+        Wed, 19 Jul 2023 01:21:12 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlFai0n0RcKXdiYpXZ+aojTS7Ksd/OHMwbJ10bIJdz+36AnhayvLRUmFZjEcfE4R/uLtmx1AWQ==
+X-Received: by 2002:a05:6512:750:b0:4fb:8cc0:57e3 with SMTP id c16-20020a056512075000b004fb8cc057e3mr1188110lfs.62.1689754872632;
+        Wed, 19 Jul 2023 01:21:12 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c74b:4f00:b030:1632:49f2:63? (p200300cbc74b4f00b030163249f20063.dip0.t-ipconnect.de. [2003:cb:c74b:4f00:b030:1632:49f2:63])
-        by smtp.gmail.com with ESMTPSA id u6-20020a05600c00c600b003fbb5142c4bsm1075458wmm.18.2023.07.19.01.18.56
+        by smtp.gmail.com with ESMTPSA id 7-20020a05600c230700b003fba6709c68sm1048356wmo.47.2023.07.19.01.21.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jul 2023 01:18:57 -0700 (PDT)
-Message-ID: <251edad7-e169-2118-e8e0-e8d4781d5a9c@redhat.com>
-Date:   Wed, 19 Jul 2023 10:18:56 +0200
+        Wed, 19 Jul 2023 01:21:12 -0700 (PDT)
+Message-ID: <0dc0e6b5-4c07-2ae3-80d3-99a5386c8f7d@redhat.com>
+Date:   Wed, 19 Jul 2023 10:21:11 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH v2 3/4] selinux: use vma_is_initial_stack() and
+Subject: Re: [PATCH v2 4/4] perf/core: use vma_is_initial_stack() and
  vma_is_initial_heap()
 Content-Language: en-US
 To:     Kefeng Wang <wangkefeng.wang@huawei.com>,
@@ -70,14 +70,13 @@ To:     Kefeng Wang <wangkefeng.wang@huawei.com>,
 Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
-        selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>
+        selinux@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
 References: <20230719075127.47736-1-wangkefeng.wang@huawei.com>
- <20230719075127.47736-4-wangkefeng.wang@huawei.com>
+ <20230719075127.47736-5-wangkefeng.wang@huawei.com>
 From:   David Hildenbrand <david@redhat.com>
 Organization: Red Hat
-In-Reply-To: <20230719075127.47736-4-wangkefeng.wang@huawei.com>
+In-Reply-To: <20230719075127.47736-5-wangkefeng.wang@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -92,39 +91,52 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 19.07.23 09:51, Kefeng Wang wrote:
-> Use the helpers to simplify code.
+> Use the helpers to simplify code, also kill unneeded goto cpy_name.
 > 
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-> Cc: Eric Paris <eparis@parisplace.org>
-> Acked-by: Paul Moore <paul@paul-moore.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
 > Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 > ---
->   security/selinux/hooks.c | 7 ++-----
->   1 file changed, 2 insertions(+), 5 deletions(-)
+>   kernel/events/core.c | 22 +++++++---------------
+>   1 file changed, 7 insertions(+), 15 deletions(-)
 > 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index d06e350fedee..ee8575540a8e 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -3762,13 +3762,10 @@ static int selinux_file_mprotect(struct vm_area_struct *vma,
->   	if (default_noexec &&
->   	    (prot & PROT_EXEC) && !(vma->vm_flags & VM_EXEC)) {
->   		int rc = 0;
-> -		if (vma->vm_start >= vma->vm_mm->start_brk &&
-> -		    vma->vm_end <= vma->vm_mm->brk) {
-> +		if (vma_is_initial_heap(vma)) {
->   			rc = avc_has_perm(sid, sid, SECCLASS_PROCESS,
->   					  PROCESS__EXECHEAP, NULL);
-> -		} else if (!vma->vm_file &&
-> -			   ((vma->vm_start <= vma->vm_mm->start_stack &&
-> -			     vma->vm_end >= vma->vm_mm->start_stack) ||
-> +		} else if (!vma->vm_file && (vma_is_initial_stack(vma) ||
->   			    vma_is_stack_for_current(vma))) {
->   			rc = avc_has_perm(sid, sid, SECCLASS_PROCESS,
->   					  PROCESS__EXECSTACK, NULL);
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 78ae7b6f90fd..d59f6327472f 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -8685,22 +8685,14 @@ static void perf_event_mmap_event(struct perf_mmap_event *mmap_event)
+>   		}
+>   
+>   		name = (char *)arch_vma_name(vma);
+> -		if (name)
+> -			goto cpy_name;
+> -
+> -		if (vma->vm_start <= vma->vm_mm->start_brk &&
+> -				vma->vm_end >= vma->vm_mm->brk) {
+> -			name = "[heap]";
+> -			goto cpy_name;
+> +		if (!name) {
+> +			if (vma_is_initial_heap(vma))
+> +				name = "[heap]";
+> +			else if (vma_is_initial_stack(vma))
+> +				name = "[stack]";
+> +			else
+> +				name = "//anon";
+>   		}
+> -		if (vma->vm_start <= vma->vm_mm->start_stack &&
+> -				vma->vm_end >= vma->vm_mm->start_stack) {
+> -			name = "[stack]";
+> -			goto cpy_name;
+> -		}
+> -
+> -		name = "//anon";
+> -		goto cpy_name;
+
+If you're removing that goto, maybe also worth removing the goto at the 
+end of the previous if branch.
 
 Reviewed-by: David Hildenbrand <david@redhat.com>
+
 
 -- 
 Cheers,
