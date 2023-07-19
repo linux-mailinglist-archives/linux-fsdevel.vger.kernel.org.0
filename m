@@ -2,100 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 453C075A2E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 01:41:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4836475A2EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 01:48:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229797AbjGSXlU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 19:41:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41586 "EHLO
+        id S229569AbjGSXsk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 19:48:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbjGSXlT (ORCPT
+        with ESMTP id S229519AbjGSXsj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 19:41:19 -0400
-Received: from resqmta-c1p-024060.sys.comcast.net (resqmta-c1p-024060.sys.comcast.net [IPv6:2001:558:fd00:56::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C6BE1B9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 16:41:18 -0700 (PDT)
-Received: from resomta-c1p-023269.sys.comcast.net ([96.102.18.227])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 256/256 bits)
-        (Client did not present a certificate)
-        by resqmta-c1p-024060.sys.comcast.net with ESMTP
-        id M6ftqWOMGprSIMGnFqYFtS; Wed, 19 Jul 2023 23:41:17 +0000
+        Wed, 19 Jul 2023 19:48:39 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20A73E69
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 16:48:38 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-51e2a6a3768so175407a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 16:48:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=comcastmailservice.net; s=20211018a; t=1689810077;
-        bh=D0Zxwoc5PyVtQd58yNNXz/EasT5elbjv8i+Mv7KlxLk=;
-        h=Received:Received:From:To:Subject:Date:MIME-Version:Message-ID:
-         Content-Type:Xfinity-Spam-Result;
-        b=VYYlb35lQ2Me5FxEggIh4eLd6U5nIi+pWMfonx5QvcpoEoY5W6rV3+ypSpUHH6ooT
-         af9wi0mXh81xS0p4tdn9379JTX10iuilIOoCfrX0MO+T+CoL5HeI3xAR7tLaBQUBBF
-         wynoad62e6N2MoqXdnzfY6CA/b0rnJy33OtgRYP8JoDrYXPPb5LtHdIasY4j26gRe0
-         zNGBhA++S/99ewS/y4Ihyrd6jZZjo5ENVDUUGZbW/rpxP4TzVwTQ9417PgfIwY2n3y
-         IdG8A55TtwaDGI4AHgJyXtQsIPXgSdLr2ZJfzbGokpu65Kt3IW1UX8kVjnHueKTzSG
-         8PlOL9fysEBzQ==
-Received: from localhost ([IPv6:2601:18c:9082:afd:219:d1ff:fe75:dc2f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 256/256 bits)
-        (Client did not present a certificate)
-        by resomta-c1p-023269.sys.comcast.net with ESMTPSA
-        id MGn6q5Mwsf3EjMGn7qAANV; Wed, 19 Jul 2023 23:41:13 +0000
-X-Xfinity-VMeta: sc=-100.00;st=legit
-From:   Matt Whitlock <kernel@mattwhitlock.name>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        d=linux-foundation.org; s=google; t=1689810516; x=1692402516;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xITvYVSy1BHIKVEC9gx23jBZUjPhKEXUypo/Br0I0Ws=;
+        b=Gpn6lr2cnqwjd7UovGs55F3RPrjfk9ENOwukZh1gYHEYwKbalfFiVSfSpSthCFV3o5
+         dFJkKll7NlioZAdV2ZQ4f1k42jmeE84ZkxlYj5YXWwmkUjZSwmotm95g6h+39Bt0Rc6k
+         zNFzq8gU4OSlJ6WR7uEVc8KBnEjp79rfHMuoE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689810516; x=1692402516;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xITvYVSy1BHIKVEC9gx23jBZUjPhKEXUypo/Br0I0Ws=;
+        b=MwhR5FKsPdou2vUPAiNqlaXRFj0UlJwYkB+tKNA2NrZgkIlna99LLLqu+iv6C0B4VB
+         ddeGFQ83rrP8K8wiXwgSvbAZnT2XaNLor/AaiY61Bwd1e+qNSy+1tZGGGITR70E3giTZ
+         7yqU91tXWntfVxVNmGHmzBaWZ1SP0vENbtJu/iaic3W5GAS6jtf0Msh+gZWijSqCY81J
+         z+Tez5NLeOEnF4nlwL3gMqa+IPqe/wtRfZI4Kccg98SUlEGBy0x9M08Vjv5Zf94QgGlf
+         KP9bjWx8j1PlHe4RfrNR/Zy2mK7JPchhWQosJKuSGA5HIzHClKnkc1n+XPYsF75kElML
+         IwjA==
+X-Gm-Message-State: ABy/qLZl/NBzAq3q4LusBgHgbFOyp995I4oH/AZZAtKnQcqA7lc9Visd
+        GTXxQaIoSxT1FrAGahWKZiNCwb8vZgL7tsCWSBTL8z1n
+X-Google-Smtp-Source: APBJJlGOd7FABwymG+cQZRGOxFocdzJfW+zm7WW7a+CYQvfpvb/gYZ9Q/ajyAZFVG+OuAf0PaPpzCg==
+X-Received: by 2002:aa7:da03:0:b0:521:d770:4743 with SMTP id r3-20020aa7da03000000b00521d7704743mr309063eds.20.1689810516537;
+        Wed, 19 Jul 2023 16:48:36 -0700 (PDT)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id r23-20020aa7c157000000b0051e166f342asm3245676edp.66.2023.07.19.16.48.35
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jul 2023 16:48:35 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-51e429e1eabso155998a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 16:48:35 -0700 (PDT)
+X-Received: by 2002:aa7:cd52:0:b0:521:aeba:c6c8 with SMTP id
+ v18-20020aa7cd52000000b00521aebac6c8mr3187409edw.39.1689810514772; Wed, 19
+ Jul 2023 16:48:34 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230629155433.4170837-1-dhowells@redhat.com> <20230629155433.4170837-2-dhowells@redhat.com>
+ <CAJfpegsJuvXJDcXpo9T19Gw0tDuvyOJdv44Y2bt04MEf1JLxGg@mail.gmail.com>
+ <c634a18e-9f2b-4746-bd8f-aa1d41e6ddf7@mattwhitlock.name> <CAJfpegvq4M_Go7fHiWVBBkrK6h4ChLqQTd0+EOKbRWZDcVerWA@mail.gmail.com>
+ <ZLg9HbhOVnLk1ogA@casper.infradead.org> <CAHk-=wiq95bWiWLyz96ombPfpy=PNrc2KKyzJ2d+WMrxi6=OVA@mail.gmail.com>
+ <6609f1b8-3264-4017-ac3c-84a01ea12690@mattwhitlock.name> <CAHk-=wh7OY=7ocTFY8styG8GgQ1coWxds=b09acHZG4t36OxWg@mail.gmail.com>
+In-Reply-To: <CAHk-=wh7OY=7ocTFY8styG8GgQ1coWxds=b09acHZG4t36OxWg@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 19 Jul 2023 16:48:17 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wguPaB+O0cSZaT-Zi1o+h0FccqL91s7rDokwkruNHE2BQ@mail.gmail.com>
+Message-ID: <CAHk-=wguPaB+O0cSZaT-Zi1o+h0FccqL91s7rDokwkruNHE2BQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/4] splice: Fix corruption of spliced data after
+ splice() returns
+To:     Matt Whitlock <kernel@mattwhitlock.name>
 Cc:     Matthew Wilcox <willy@infradead.org>,
         Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>, <netdev@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>, netdev@vger.kernel.org,
         Dave Chinner <david@fromorbit.com>,
-        Jens Axboe <axboe@kernel.dk>, <linux-fsdevel@kvack.org>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/4] splice: Fix corruption of spliced data after =?iso-8859-1?Q?splice()_returns?=
-Date:   Wed, 19 Jul 2023 19:41:07 -0400
-MIME-Version: 1.0
-Message-ID: <0d10033a-7ea1-48e3-806b-f74000045915@mattwhitlock.name>
-In-Reply-To: <CAHk-=wh7OY=7ocTFY8styG8GgQ1coWxds=b09acHZG4t36OxWg@mail.gmail.com>
-References: <20230629155433.4170837-1-dhowells@redhat.com>
- <20230629155433.4170837-2-dhowells@redhat.com>
- <CAJfpegsJuvXJDcXpo9T19Gw0tDuvyOJdv44Y2bt04MEf1JLxGg@mail.gmail.com>
- <c634a18e-9f2b-4746-bd8f-aa1d41e6ddf7@mattwhitlock.name>
- <CAJfpegvq4M_Go7fHiWVBBkrK6h4ChLqQTd0+EOKbRWZDcVerWA@mail.gmail.com>
- <ZLg9HbhOVnLk1ogA@casper.infradead.org>
- <CAHk-=wiq95bWiWLyz96ombPfpy=PNrc2KKyzJ2d+WMrxi6=OVA@mail.gmail.com>
- <6609f1b8-3264-4017-ac3c-84a01ea12690@mattwhitlock.name>
- <CAHk-=wh7OY=7ocTFY8styG8GgQ1coWxds=b09acHZG4t36OxWg@mail.gmail.com>
-User-Agent: Trojita/v0.7-595-g7738cd47; Qt/5.15.10; xcb; Linux; Gentoo Linux
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,MIME_QP_LONG_LINE,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@kvack.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wednesday, 19 July 2023 19:20:32 EDT, Linus Torvalds wrote:
->> On Wednesday, 19 July 2023 16:16:07 EDT, Linus Torvalds wrote:
->>> The *ONLY* reason for splice() existing is for zero-copy.
->>=20
->> The very first sentence of splice(2) reads: "splice() moves data between
->> two file descriptors without copying between kernel address space and user=
-
->> address space." Thus, it is not unreasonable to believe that the point of
->> splice is to avoid copying between user-space and kernel-space.
+On Wed, 19 Jul 2023 at 16:20, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> I'm not at all opposed to clarifying the documentation.
+> If you want "one-copy", what you can do is:
+>
+>  - mmap() the file data (zero copy, not stable yet)
+>
+>  - use "write()" to write the data to the network. This will copy it
+> to the skbs before the write() call returns and that copy makes it
+> stable.
+>
+> Alternatively, if you want to be more than a bit odd, you _can_ do the
+> zero-copy on the write side, by doing
+>
+>  - read the file data (one copy, now it's stable)
+>
+>  - vmsplice() to the kernel buffer (zero copy)
+>
+>  - splice() to the network (zero copy at least for the good cases)
 
-Then that is my request. This entire complaint/discussion/argument would=20
-have been avoided if splice(2) had contained a sentence like this one from=20=
+Actually, I guess technically there's a third way:
 
-sendfile(2):
+ - mmap the input (zero copy)
 
-"If out_fd refers to a socket or pipe with zero-copy support, callers must=20=
+ - write() to a pipe (one copy)
 
-ensure the transferred portions of the file referred to by in_fd remain=20
-unmodified until the reader on the other end of out_fd has consumed the=20
-transferred data."
+ - splice() to the network (zero copy)
 
-That is a clear warning of the perils of the implementation under the hood,=20=
+which doesn't seem to really have any sane use cases, but who knows...
+It avoids the user buffer management of the vmsplice() model, and
+while you cannot do anything to the data in user space *before* it is
+stable (because it only becomes stable as it is copied to the pipe
+buffers by the 'write()' system call), you could use "tee()" to
+duplicate the now stable stream and perhaps log it or create a
+checksum after-the-fact.
 
-and it could/should be copied, more or less verbatim, to splice(2).
+Another use-case would be if you want to send the *same* stable stream
+to two different network connections, while still only having one
+copy. You can't do that with plain splice() - because the data isn't
+guaranteed to be stable, and the two network connections might see
+different streams. You can't do that with the 'mmap and then
+write-to-socket' approach, because the two writes not only copy twice,
+they might copy different data.
+
+And while you *can* do it with the "read+vmsplice()" approach, maybe
+the "write to pipe() in order to avoid any user space buffer issues"
+model is better. And "tee()" avoids the overhead of doing multiple
+vmsplice() calls on the same buffer.
+
+I dunno.
+
+What I *am* trying to say is that "splice()" is actually kind of
+designed for people to do these kinds of combinations. But very very
+few people actually do it.
+
+For example, the "tee()" system call exists, but it is crazy hard to
+use, I'm not sure it has ever actually been used for anything real.
+
+               Linus
