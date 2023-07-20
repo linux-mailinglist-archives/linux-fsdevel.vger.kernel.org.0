@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AAA7D75B28D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 17:29:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD01675B290
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 17:29:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232039AbjGTP3E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jul 2023 11:29:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34170 "EHLO
+        id S232081AbjGTP3I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jul 2023 11:29:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231705AbjGTP3B (ORCPT
+        with ESMTP id S231854AbjGTP3D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jul 2023 11:29:01 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 364AC13E
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 08:28:48 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-5707177ff8aso8425477b3.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 08:28:48 -0700 (PDT)
+        Thu, 20 Jul 2023 11:29:03 -0400
+Received: from mail-ej1-x64a.google.com (mail-ej1-x64a.google.com [IPv6:2a00:1450:4864:20::64a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42C4C10D2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 08:28:52 -0700 (PDT)
+Received: by mail-ej1-x64a.google.com with SMTP id a640c23a62f3a-98e40d91fdfso70976866b.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 08:28:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1689866927; x=1690471727;
+        d=google.com; s=20221208; t=1689866931; x=1690471731;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IQBUPgxHkhflJuYPJ1CvCZCjp5mdRng6N97hOUv3RDI=;
-        b=umjfMOmncgfgLKwMNiEIs8577emiyzixkvve2v76Ldzq9BfJ2Gsva1zZuV7MmD+zEm
-         V73fo4vHJKN3JL0aZkO4wToR1GGZI6zAUng+M3D7w8R7KOD5DI5XFt33icbHulyHxvhl
-         D5+UKe8+wLNlI3Y0OlBtcRaD9X/Oh4SoHkKCK5pTRUk6deSnW5vy3T1AIqtzp6PAXLY5
-         Dlwwx0Wxi+sgy88xAvX+Vq1+H+9JH46daacQaxG5vBeKlL61m/L52VErUYkIIgC/iY1p
-         UgL6blkD2v7rwH7l2W/hozK4eWoRgzOMEkTe1YkafDUYMyaQvNAIvZ9dR7lwzd+z0uDI
-         kQ3w==
+        bh=EyZV70aSLRGUBSW3Idz74sX+TofVqWIQD1mh1640q38=;
+        b=RqS707yH9iuG7p6GJXSLRTbTgG0a3UfXdNmkgzKXyq+LZAk/vDmF962f9cun/ZxZCg
+         7d44NcEuve934uCnCmHBq7kvmoXcMgE8vYD2El840R8evkmUt6iB4SguESYzPUmKs136
+         pcRKzjfCHFo51fe3uLQ8VtOzzYCmY7RUStmHPVdkrUlC+8ku7Pp6CEefLRS5aIo53e8p
+         OY9bAVtCRHmJh/24zpIY+BvIeuDWITw0KryIPXViTV+QktgVYIYQbQaYHISUNt6cyX5Z
+         KJiJ81aEPRXETKLR/BgpiqXSvxeDfS6e4nf+/0XDdPzyofbowKZ44ErJDP1tOrhygDtm
+         fGDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689866927; x=1690471727;
+        d=1e100.net; s=20221208; t=1689866931; x=1690471731;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IQBUPgxHkhflJuYPJ1CvCZCjp5mdRng6N97hOUv3RDI=;
-        b=FXznxKLVmXDry3Hgv5cdBVrt3SELjNj7oPC0ahxKwlBXAKyOlDGs3klUo1xxEtQwPT
-         mhikD20DFwv+y30GuBJgRoGuR9fm78isnzBFB6KPyuF2jptnX4ztqOe+ball+FwE++N1
-         vUqCow04QBs8Ubl/zeCPM2okimNf3r41sskiPs56DakpADMRZRwbps0RpWRQj9fMIzdX
-         dbIa4QsVmmPVtCb2IS85kt3ZRaT7gqldToOvZiJ49kPZmnU72WamTOwRAbq9xbYpIzez
-         wBqPjLzU9G05xHkjqtOwIPH1AsnykkWNQc1ODn7ojNiOhf7NglIZkc7ydUzNYute6OEr
-         zpjQ==
-X-Gm-Message-State: ABy/qLaKOJGs4LwyPpKAWXdWMRduzU9JKRHVpAdt0LLQCrokkoxAB5uA
-        tbLAKtxnqR5q0fZCWGCO+yb0vE93BrurPmQ=
-X-Google-Smtp-Source: APBJJlHVd3IS4h3/Z8+ztRjFttwDDD2vfU5J2lXiiefal1S5tDdZhnFP6jIvagOyWXs0jg7XbB3rIbKvJmNJOGM=
+        bh=EyZV70aSLRGUBSW3Idz74sX+TofVqWIQD1mh1640q38=;
+        b=JQPkD7Gtku3CyFyHVfrH2C6ARLZ0CCUf0Rdvoan2kfbyi5gyNhy/ISIqruSHR5mCkh
+         mBbejocjQkzRqbKxnyhUWDL3iPTGcmWL8sSEB5YoWg4PsZzqt4fOO0jxPP1UBuw1hkx4
+         1Nt55S5SNwkrw2mgslUAU6LeGjokggVcdBIVRQLF98kOwzzObQgA/+BRguIl+DoZLNes
+         tLpBQ/xv5W/8GtQZjQ7M/0OVbdlqi8G3atjv8c5/v4pm4labTKz6PyRQU03EF+egBlkS
+         MTqV+0gP6aTPt7wIiZv4gVOtYiEA+e7t4UQFqzcqrwqMe5Ij5/AKMJH1cgYrrKqO5ZEE
+         d8nw==
+X-Gm-Message-State: ABy/qLaIj8q1oemEpV8XEybh9X0hdmFMqbKaj7/2pTxY4BBo16w/8xXd
+        pNB/nR926g4T2O1oWUNN5E94NEXuxAD2dx4=
+X-Google-Smtp-Source: APBJJlFcX1Wvv8T28heLGJIvE2Ykm8T7nFeE/WdA341Y+SWLJMzAB39fF5oIw+mdh2BWhXmtFjKIfxadaKRwNy4=
 X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:6c8])
- (user=aliceryhl job=sendgmr) by 2002:a81:ac4c:0:b0:57a:141f:b4f5 with SMTP id
- z12-20020a81ac4c000000b0057a141fb4f5mr61560ywj.7.1689866927507; Thu, 20 Jul
- 2023 08:28:47 -0700 (PDT)
-Date:   Thu, 20 Jul 2023 15:28:17 +0000
+ (user=aliceryhl job=sendgmr) by 2002:a17:907:2bd7:b0:98e:1a1b:9c21 with SMTP
+ id gv23-20020a1709072bd700b0098e1a1b9c21mr15466ejc.5.1689866930843; Thu, 20
+ Jul 2023 08:28:50 -0700 (PDT)
+Date:   Thu, 20 Jul 2023 15:28:18 +0000
 In-Reply-To: <20230720152820.3566078-1-aliceryhl@google.com>
 Mime-Version: 1.0
 References: <20230720152820.3566078-1-aliceryhl@google.com>
 X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
-Message-ID: <20230720152820.3566078-3-aliceryhl@google.com>
-Subject: [RFC PATCH v1 2/5] rust: cred: add Rust bindings for `struct cred`
+Message-ID: <20230720152820.3566078-4-aliceryhl@google.com>
+Subject: [RFC PATCH v1 3/5] rust: file: add `FileDescriptorReservation`
 From:   Alice Ryhl <aliceryhl@google.com>
 To:     rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Miguel Ojeda <ojeda@kernel.org>,
@@ -80,201 +80,97 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Wedson Almeida Filho <walmeida@microsoft.com>
 
-Make it possible to access credentials from Rust drivers. In particular,
-this patch makes it possible to get the id for the security context of a
-given file.
+This allows the creation of a file descriptor in two steps: first, we
+reserve a slot for it, then we commit or drop the reservation. The first
+step may fail (e.g., the current process ran out of available slots),
+but commit and drop never fail (and are mutually exclusive).
 
-Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
 Co-Developed-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/bindings/bindings_helper.h |  2 +
- rust/helpers.c                  | 22 +++++++++++
- rust/kernel/cred.rs             | 66 +++++++++++++++++++++++++++++++++
- rust/kernel/file.rs             | 15 ++++++++
- rust/kernel/lib.rs              |  1 +
- 5 files changed, 106 insertions(+)
- create mode 100644 rust/kernel/cred.rs
+ rust/kernel/file.rs | 61 ++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 60 insertions(+), 1 deletion(-)
 
-diff --git a/rust/kernel/cred.rs b/rust/kernel/cred.rs
-new file mode 100644
-index 000000000000..ca3fac4851a2
---- /dev/null
-+++ b/rust/kernel/cred.rs
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Credentials management.
-+//!
-+//! C header: [`include/linux/cred.h`](../../../../include/linux/cred.h)
-+//!
-+//! Reference: <https://www.kernel.org/doc/html/latest/security/credentials.html>
-+
-+use crate::{
-+    bindings,
-+    types::{AlwaysRefCounted, Opaque},
-+};
-+
-+/// Wraps the kernel's `struct cred`.
-+///
-+/// # Invariants
-+///
-+/// Instances of this type are always ref-counted, that is, a call to `get_cred` ensures that the
-+/// allocation remains valid at least until the matching call to `put_cred`.
-+#[repr(transparent)]
-+pub struct Credential(pub(crate) Opaque<bindings::cred>);
-+
-+// SAFETY: By design, the only way to access a `Credential` is via an immutable reference or an
-+// `ARef`. This means that the only situation in which a `Credential` can be accessed mutably is
-+// when the refcount drops to zero and the destructor runs. It is safe for that to happen on any
-+// thread, so it is ok for this type to be `Send`.
-+unsafe impl Send for Credential {}
-+
-+// SAFETY: It's OK to access `Credential` through shared references from other threads because
-+// we're either accessing properties that don't change or that are properly synchronised by C code.
-+unsafe impl Sync for Credential {}
-+
-+impl Credential {
-+    /// Creates a reference to a [`Credential`] from a valid pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The caller must ensure that `ptr` is valid and remains valid for the lifetime of the
-+    /// returned [`Credential`] reference.
-+    pub unsafe fn from_ptr<'a>(ptr: *const bindings::cred) -> &'a Credential {
-+        // SAFETY: The safety requirements guarantee the validity of the dereference, while the
-+        // `Credential` type being transparent makes the cast ok.
-+        unsafe { &*ptr.cast() }
-+    }
-+
-+    /// Get the id for this security context.
-+    pub fn get_secid(&self) -> u32 {
-+        let mut secid = 0;
-+        // SAFETY: The invariants of this type ensures that the pointer is valid.
-+        unsafe { bindings::security_cred_getsecid(self.0.get(), &mut secid) };
-+        secid
-+    }
-+}
-+
-+// SAFETY: The type invariants guarantee that `Credential` is always ref-counted.
-+unsafe impl AlwaysRefCounted for Credential {
-+    fn inc_ref(&self) {
-+        // SAFETY: The existence of a shared reference means that the refcount is nonzero.
-+        unsafe { bindings::get_cred(self.0.get()) };
-+    }
-+
-+    unsafe fn dec_ref(obj: core::ptr::NonNull<Self>) {
-+        // SAFETY: The safety requirements guarantee that the refcount is nonzero.
-+        unsafe { bindings::put_cred(obj.cast().as_ptr()) };
-+    }
-+}
 diff --git a/rust/kernel/file.rs b/rust/kernel/file.rs
-index 99657adf2472..d379ae2906d9 100644
+index d379ae2906d9..8ddf8f04ae0f 100644
 --- a/rust/kernel/file.rs
 +++ b/rust/kernel/file.rs
-@@ -7,6 +7,7 @@
- 
- use crate::{
-     bindings,
-+    cred::Credential,
+@@ -11,7 +11,7 @@
      error::{code::*, Error, Result},
      types::{ARef, AlwaysRefCounted, Opaque},
  };
-@@ -138,6 +139,20 @@ pub unsafe fn from_ptr<'a>(ptr: *const bindings::file) -> &'a File {
-         unsafe { &*ptr.cast() }
-     }
+-use core::ptr;
++use core::{marker::PhantomData, ptr};
  
-+    /// Returns the credentials of the task that originally opened the file.
-+    pub fn cred(&self) -> &Credential {
-+        // SAFETY: The file is valid because the shared reference guarantees a nonzero refcount.
-+        //
-+        // This uses a volatile read because C code may be modifying this field in parallel using
-+        // non-atomic unsynchronized writes. This corresponds to how the C macro READ_ONCE is
-+        // implemented.
-+        let ptr = unsafe { core::ptr::addr_of!((*self.0.get()).f_cred).read_volatile() };
-+        // SAFETY: The lifetimes of `self` and `Credential` are tied, so it is guaranteed that
-+        // the credential pointer remains valid (because the file is still alive, and it doesn't
-+        // change over the lifetime of a file).
-+        unsafe { Credential::from_ptr(ptr) }
+ /// Flags associated with a [`File`].
+ pub mod flags {
+@@ -179,6 +179,65 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+     }
+ }
+ 
++/// A file descriptor reservation.
++///
++/// This allows the creation of a file descriptor in two steps: first, we reserve a slot for it,
++/// then we commit or drop the reservation. The first step may fail (e.g., the current process ran
++/// out of available slots), but commit and drop never fail (and are mutually exclusive).
++///
++/// # Invariants
++///
++/// The fd stored in this struct must correspond to a reserved file descriptor of the current task.
++pub struct FileDescriptorReservation {
++    fd: u32,
++    /// Prevent values of this type from being moved to a different task.
++    ///
++    /// This is necessary because the C FFI calls assume that `current` is set to the task that
++    /// owns the fd in question.
++    _not_send_sync: PhantomData<*mut ()>,
++}
++
++impl FileDescriptorReservation {
++    /// Creates a new file descriptor reservation.
++    pub fn new(flags: u32) -> Result<Self> {
++        // SAFETY: FFI call, there are no safety requirements on `flags`.
++        let fd: i32 = unsafe { bindings::get_unused_fd_flags(flags) };
++        if fd < 0 {
++            return Err(Error::from_errno(fd));
++        }
++        Ok(Self {
++            fd: fd as _,
++            _not_send_sync: PhantomData,
++        })
 +    }
 +
-     /// Returns the flags associated with the file.
-     ///
-     /// The flags are a combination of the constants in [`flags`].
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 650bfffc1e6f..07258bfa8960 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -31,6 +31,7 @@
- #[cfg(not(testlib))]
- mod allocator;
- mod build_assert;
-+pub mod cred;
- pub mod error;
- pub mod file;
- pub mod init;
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index c5b2cfd02bac..d89f0df93615 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -6,9 +6,11 @@
-  * Sorted alphabetically.
-  */
- 
-+#include <linux/cred.h>
- #include <linux/errname.h>
- #include <linux/file.h>
- #include <linux/fs.h>
-+#include <linux/security.h>
- #include <linux/slab.h>
- #include <linux/refcount.h>
- #include <linux/wait.h>
-diff --git a/rust/helpers.c b/rust/helpers.c
-index 072f7ef80ea5..e13a7da430b1 100644
---- a/rust/helpers.c
-+++ b/rust/helpers.c
-@@ -22,12 +22,14 @@
- 
- #include <linux/bug.h>
- #include <linux/build_bug.h>
-+#include <linux/cred.h>
- #include <linux/err.h>
- #include <linux/errname.h>
- #include <linux/fs.h>
- #include <linux/mutex.h>
- #include <linux/refcount.h>
- #include <linux/sched/signal.h>
-+#include <linux/security.h>
- #include <linux/spinlock.h>
- #include <linux/wait.h>
- 
-@@ -144,6 +146,26 @@ struct file *rust_helper_get_file(struct file *f)
- }
- EXPORT_SYMBOL_GPL(rust_helper_get_file);
- 
-+const struct cred *rust_helper_get_cred(const struct cred *cred)
-+{
-+	return get_cred(cred);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_get_cred);
++    /// Returns the file descriptor number that was reserved.
++    pub fn reserved_fd(&self) -> u32 {
++        self.fd
++    }
 +
-+void rust_helper_put_cred(const struct cred *cred)
-+{
-+	put_cred(cred);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_put_cred);
++    /// Commits the reservation.
++    ///
++    /// The previously reserved file descriptor is bound to `file`.
++    pub fn commit(self, file: ARef<File>) {
++        // SAFETY: `self.fd` was previously returned by `get_unused_fd_flags`, and `file.ptr` is
++        // guaranteed to have an owned ref count by its type invariants.
++        unsafe { bindings::fd_install(self.fd, file.0.get()) };
 +
-+#ifndef CONFIG_SECURITY
-+void rust_helper_security_cred_getsecid(const struct cred *c, u32 *secid)
-+{
-+	security_cred_getsecid(c, secid);
++        // `fd_install` consumes both the file descriptor and the file reference, so we cannot run
++        // the destructors.
++        core::mem::forget(self);
++        core::mem::forget(file);
++    }
 +}
-+EXPORT_SYMBOL_GPL(rust_helper_security_cred_getsecid);
-+#endif
 +
- /*
-  * We use `bindgen`'s `--size_t-is-usize` option to bind the C `size_t` type
-  * as the Rust `usize` type, so we can use it in contexts where Rust
++impl Drop for FileDescriptorReservation {
++    fn drop(&mut self) {
++        // SAFETY: `self.fd` was returned by a previous call to `get_unused_fd_flags`.
++        unsafe { bindings::put_unused_fd(self.fd) };
++    }
++}
++
+ /// Represents the EBADF error code.
+ ///
+ /// Used for methods that can only fail with EBADF.
 -- 
 2.41.0.255.g8b1d071c50-goog
 
