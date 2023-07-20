@@ -2,273 +2,486 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0570F75A6EA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 08:50:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95D5975A6CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 08:45:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229604AbjGTGuM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jul 2023 02:50:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59932 "EHLO
+        id S230267AbjGTGpc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jul 2023 02:45:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230261AbjGTGuL (ORCPT
+        with ESMTP id S229884AbjGTGp3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jul 2023 02:50:11 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0448A12F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 23:50:09 -0700 (PDT)
-Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com [209.85.219.198])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4136C3F438
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 06:41:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1689835290;
-        bh=sn08qCBGn2XFGLFjGE9p3/8YTfeVApEFDQBv99Etk1U=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=A+dgrrBXgWfWx++MIgQnptVCxu/yfEpJfbOMv9fYjWjRpvZ85aC53cJbdzDcc+y5B
-         76T0Alf1q+W2vPaBFG8Y729yxRxSb+Law4nCDclscV6Ggnc7ZrTsdI3DCkuFNuRFsG
-         LBd7an157e9VY+sCIw2S6Lq21ktGbMt4TCO3dSpdo8EvzKifPE4iRtBbGLp4XnTI4q
-         YEHLP2toakCyQ2LHzjzHZm9zh4Hy7rs3pTa6/y+R3e1f++6NayiamfQkgkYD9W1JK8
-         qIHUU7h1vc2+MSbsrgvzfZ+k1u7wVjMPEey9oxFuz5K4638xvjDiqWF4XgCR7schO1
-         RDwMOicH5p4CA==
-Received: by mail-yb1-f198.google.com with SMTP id 3f1490d57ef6-ca8e5f39e09so961681276.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 23:41:30 -0700 (PDT)
+        Thu, 20 Jul 2023 02:45:29 -0400
+Received: from mail-ua1-x92e.google.com (mail-ua1-x92e.google.com [IPv6:2607:f8b0:4864:20::92e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 904B3E53;
+        Wed, 19 Jul 2023 23:45:26 -0700 (PDT)
+Received: by mail-ua1-x92e.google.com with SMTP id a1e0cc1a2514c-79969c14964so137819241.2;
+        Wed, 19 Jul 2023 23:45:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689835525; x=1692427525;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4s40UxJ71j3GTPiIqBOdD4gJDUJJb/j8k46qJGHULRE=;
+        b=gPjjEG198cBV8BAu7By6JcXDFqsbu3Mo4o0ZORiaiYDlHnWkH+/spBBeXkHTgeigdx
+         A+ze+rL4F91HnEZYPlM0lUAUEAtx/I18xRKaIzxGVhly7NZhQ1lpNasd/OeK6NyF+qkn
+         GLp1q52JGW20TCSOd/IUVQF6cfYdXbFCOvd9NSVNOhkJ8BDoRL5WbItrjyrsV/hWTwmk
+         iwEW3SSlHqH2PavmFzOE19YZa9UfYKkEkd7fsXe5CdSLRF89sKXy3xXc5n2MCesz2Tu/
+         tNeS8fepj9etU0Xa0G0FYBB+YhkL7DTbkPfV0/tJjFyqVUApcYKbIlzKJclApR9zaRms
+         8tbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689835288; x=1690440088;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sn08qCBGn2XFGLFjGE9p3/8YTfeVApEFDQBv99Etk1U=;
-        b=KGfgKQT1CTZXMY0XtF8d9+ppg+7VDxt12z9Phln51pbgWJc2MDI1FtPTtIJAxQQy3f
-         RUIEfw5w5pR++F35LWY+66SNvDtwdeiXX7vSjqSI3z/iUHRk3f8M+sVzxAlaaXSaI8ZI
-         0rtrGo8th4EbyH1Xh4sFQz464mBVlbxYWD3BCtcJlQbjrL3xnDcwNGpxgZpn0MWRdIUB
-         96JE9Z10WBlb4QkghQQdH6OcwEtswTK23PwuKKGAGMNc9i3IOPORoKM23XqQn5bg0Nld
-         07zv4bxTbkwp8Vddd7z+o4+La9gctoG4DCFwY9r/4pTdGn9bn2pyFJyH90mLwjh0O7La
-         3c4A==
-X-Gm-Message-State: ABy/qLaZ8NvJgah9VIakKKYUGsZKocRtboms6fvO1/Xrzjlzf+OKOTQr
-        vFwleufu8XJXPSxZSymgHTjfFCSfycLJhhIWYxwU8yOQBOUTfzvdx38DAGDx79c7voT/8/JPeqB
-        p9lzsgs59uJq7V+wY6EVCYxHeSszgFOunOs3wTuzyYGYe4+PRMRf810cmrUg=
-X-Received: by 2002:a25:9249:0:b0:cb4:6167:a69c with SMTP id e9-20020a259249000000b00cb46167a69cmr5112134ybo.8.1689835288069;
-        Wed, 19 Jul 2023 23:41:28 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlHRUHni5nA4TPodPsFhdrPUcOi3Auu/AQXNen2dsyJArtRIYZfFvI/MbH0+WMcrgsUUn484rk/zGxs0vb3MmZY=
-X-Received: by 2002:a25:9249:0:b0:cb4:6167:a69c with SMTP id
- e9-20020a259249000000b00cb46167a69cmr5112124ybo.8.1689835287796; Wed, 19 Jul
- 2023 23:41:27 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689835525; x=1692427525;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4s40UxJ71j3GTPiIqBOdD4gJDUJJb/j8k46qJGHULRE=;
+        b=f83hUkhLi3gINKqihP4wxuOTuVfazLlJK47Gbi2pYQRi5ZQBdKKUgOQIkNTAzjnjad
+         KBMuDIFyZsKbmWuJbsAxfjhCNnEqDsvJnkNfWFUDGJ1fiHnrqH540rPPuPLjRPq++ePB
+         P27/AF0K5xV1lN75W1z4b6iZPgr3BD+A6H64LTFS5Q4saQMVf+qBFlVbcyYvxt9U9mnK
+         lXkuhuWK9tgmzgoPAtQGgFOmSgEMHVtfBheZXCnqf/VN0DOeukTEgT0LFKd2L+hNfLdG
+         5MTgDCL3U74nai0adrt3raEu7tvp2RAbHO5WAI5LWL+xWcXYUqeGQbxktrKdOhPYMusq
+         VuHw==
+X-Gm-Message-State: ABy/qLZIvb/rgFq4gaqSFchTbVQw4qeUIxT2kWBtGKFz0I35hgUatgaD
+        6qgxAgmL0huyHlQMeXffaMDSZ35QIkhS3G7ylfg=
+X-Google-Smtp-Source: APBJJlE4M6fC+lZg/VTPgQUdkjaMqcQzWo6ADtDga36oW34akMGWNC4qIJ/tz8bKTvtBjDF0bBmVdFpKyWe8Mb4RWQo=
+X-Received: by 2002:a67:fb86:0:b0:443:69fd:3626 with SMTP id
+ n6-20020a67fb86000000b0044369fd3626mr5048751vsr.11.1689835525513; Wed, 19 Jul
+ 2023 23:45:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
- <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
- <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com> <CAJ4mKGby71qfb3gd696XH3AazeR0Qc_VGYupMznRH3Piky+VGA@mail.gmail.com>
- <977d8133-a55f-0667-dc12-aa6fd7d8c3e4@redhat.com> <CAEivzxcr99sERxZX17rZ5jW9YSzAWYvAjOOhBH+FqRoso2=yng@mail.gmail.com>
- <626175e2-ee91-0f1a-9e5d-e506aea366fa@redhat.com> <64241ff0-9af3-6817-478f-c24a0b9de9b3@redhat.com>
- <CAEivzxeF51ZEKhQ-0M35nooZ7_cZgk1-q75-YbkeWpZ9RuHG4A@mail.gmail.com>
- <4c4f73d8-8238-6ab8-ae50-d83c1441ac05@redhat.com> <CAEivzxeQGkemxVwJ148b_+OmntUAWkdL==yMiTMN+GPyaLkFPg@mail.gmail.com>
- <0a42c5d0-0479-e60e-ac84-be3b915c62d9@redhat.com> <CAEivzxcskn8WxcOo0PDHMascFRdYTD0Lr5Uo4fj3deBjDviOXA@mail.gmail.com>
- <8121882a-0823-3a60-e108-0ff7bae5c0c9@redhat.com> <CAEivzxcaJQvYyutAL8xapvoer06c97uVSVC729pUE=4_z4m_CA@mail.gmail.com>
- <CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThfzuibrhA3RKM=ZOYLg@mail.gmail.com> <3af4f092-8de7-d217-cd2d-d39dfc625edd@redhat.com>
-In-Reply-To: <3af4f092-8de7-d217-cd2d-d39dfc625edd@redhat.com>
-From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date:   Thu, 20 Jul 2023 08:41:16 +0200
-Message-ID: <CAEivzxcipdTQ9-b2zk-7-AMDfwPk2Brtp=X6H8xXsHMEtQJKFQ@mail.gmail.com>
-Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     Gregory Farnum <gfarnum@redhat.com>,
-        Christian Brauner <brauner@kernel.org>, stgraber@ubuntu.com,
-        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <CA+wXwBRdcjHW2zxDABdFU3c26mc1u+g6iWG7HrXJRL7Po3Qp0w@mail.gmail.com>
+ <ZJ2yeJR5TB4AyQIn@casper.infradead.org> <20230629181408.GM11467@frogsfrogsfrogs>
+ <CALrw=nFwbp06M7LB_Z0eFVPe29uFFUxAhKQ841GSDMtjP-JdXA@mail.gmail.com>
+ <CAOQ4uxiD6a9GmKwagRpUWBPRWCczB52Tsu5m6_igDzTQSLcs0w@mail.gmail.com>
+ <CALrw=nHH2u=+utzy8NfP6+fM6kOgtW0hdUHwK9-BWdYq+t-UoA@mail.gmail.com>
+ <CAOQ4uxju10zrQhVDA5WS+vTSbuW17vOD6EGBBJUmZg8c95vsrA@mail.gmail.com>
+ <20230630151657.GJ11441@frogsfrogsfrogs> <CALrw=nFv82aODZ0URzknqnZavyjCxV1vKOP9oYijfSdyaYEQ3g@mail.gmail.com>
+In-Reply-To: <CALrw=nFv82aODZ0URzknqnZavyjCxV1vKOP9oYijfSdyaYEQ3g@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 20 Jul 2023 09:45:14 +0300
+Message-ID: <CAOQ4uxgvawD4=4g8BaRiNvyvKN1oreuov_ie6sK6arq3bf8fxw@mail.gmail.com>
+Subject: Re: Backporting of series xfs/iomap: fix data corruption due to stale
+ cached iomap
+To:     Ignat Korchagin <ignat@cloudflare.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Daniel Dao <dqminh@cloudflare.com>,
+        Dave Chinner <david@fromorbit.com>,
+        kernel-team <kernel-team@cloudflare.com>,
+        linux-fsdevel@vger.kernel.org,
+        Chandan Babu R <chandanrlinux@gmail.com>,
+        Leah Rumancik <lrumancik@google.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Fred Lawler <fred@cloudflare.com>
+Content-Type: multipart/mixed; boundary="0000000000003a37450600e57e53"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UPPERCASE_50_75 autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 20, 2023 at 8:36=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
->
->
-> On 7/19/23 19:57, Aleksandr Mikhalitsyn wrote:
-> > On Tue, Jul 18, 2023 at 4:49=E2=80=AFPM Aleksandr Mikhalitsyn
-> > <aleksandr.mikhalitsyn@canonical.com> wrote:
-> >> On Tue, Jul 18, 2023 at 3:45=E2=80=AFAM Xiubo Li <xiubli@redhat.com> w=
-rote:
-> [...]
-> >> No, the idea is to stop mapping a caller_{uid, gid}. And to add a new
-> >> fields like
-> >> inode_owner_{uid, gid} which will be idmapped (this field will be spec=
-ific only
-> >> for those operations that create a new inode).
-> > I've decided to write some summary of different approaches and
-> > elaborate tricky places.
-> >
-> > Current implementation.
-> >
-> > We have head->caller_{uid,gid} fields mapped in according
-> > to the mount's idmapping. But as we don't have information about
-> > mount's idmapping in all call stacks (like ->lookup case), we
-> > are not able to map it always and they are left untouched in these case=
-s.
-> >
-> > This tends to an inconsistency between different inode_operations,
-> > for example ->lookup (don't have an access to an idmapping) and
-> > ->mkdir (have an idmapping as an argument).
-> >
-> > This inconsistency is absolutely harmless if the user does not
-> > use UID/GID-based restrictions. Because in this use case head->caller_{=
-uid,gid}
-> > fields used *only* to set inode owner UID/GID during the inode_operatio=
-ns
-> > which create inodes.
-> >
-> > Conclusion 1. head->caller_{uid,gid} fields have two meanings
-> > - UID/GID-based permission checks
-> > - inode owner information
-> >
-> > Solution 0. Ignore the issue with UID/GID-based restrictions and idmapp=
-ed mounts
-> > until we are not blamed by users ;-)
-> >
-> > As far as I can see you are not happy about this way. :-)
-> >
-> > Solution 1. Let's add mount's idmapping argument to all inode_operation=
-s
-> > and always map head->caller_{uid,gid} fields.
-> >
-> > Not a best idea, because:
-> > - big modification of VFS layer
-> > - ideologically incorrect, for instance ->lookup should not care
-> > and know *anything* about mount's idmapping, because ->lookup works
-> > not on the mount level (it's not important who and through which mount
-> > triggered the ->lookup). Imagine that you've dentry cache filled and ca=
-ll
-> > open(...) in this case ->lookup can be uncalled. But if the user was no=
-t lucky
-> > enough to have cache filled then open(..) will trigger the lookup and
-> > then ->lookup results will be dependent on the mount's idmapping. It
-> > seems incorrect
-> > and unobvious consequence of introducing such a parameter to ->lookup o=
-peration.
-> > To summarize, ->lookup is about filling dentry cache and dentry cache
-> > is superblock-level
-> > thing, not mount-level.
-> >
-> > Solution 2. Add some kind of extra checks to ceph-client and ceph
-> > server to detect that
-> > mount idmappings used with UID/GID-based restrictions and restrict such=
- mounts.
-> >
-> > Seems not ideal to me too. Because it's not a fix, it's a limitation
-> > and this limitation is
-> > not cheap from the implementation perspective (we need heavy changes
-> > in ceph server side and
-> > client side too). Btw, currently VFS API is also not ready for that,
-> > because we can't
-> > decide if idmapped mounts are allowed or not in runtime. It's a static
-> > thing that should be declared
-> > with FS_ALLOW_IDMAP flag in (struct file_system_type)->fs_flags. Not a
-> > big deal, but...
-> >
-> > Solution 3. Add a new UID/GID fields to ceph request structure in
-> > addition to head->caller_{uid,gid}
-> > to store information about inode owners (only for inode_operations
-> > which create inodes).
-> >
-> > How does it solves the problem?
-> > With these new fields we can leave head->caller_{uid,gid} untouched
-> > with an idmapped mounts code.
-> > It means that UID/GID-based restrictions will continue to work as inten=
-ded.
-> >
-> > At the same time, new fields (let say "inode_owner_{uid,gid}") will be
-> > mapped in accordance with
-> > a mount's idmapping.
-> >
-> > This solution seems ideal, because it is philosophically correct, it
-> > makes cephfs idmapped mounts to work
-> > in the same manner and way as idmapped mounts work for any other
-> > filesystem like ext4.
->
-> Okay, this approach sounds more reasonable to me. But you need to do
-> some extra work to make it to be compatible between {old,new} kernels
-> and  {old,new} cephs.
+--0000000000003a37450600e57e53
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sure. Then I'll start implementing this.
+On Wed, Jul 19, 2023 at 11:37=E2=80=AFPM Ignat Korchagin <ignat@cloudflare.=
+com> wrote:
+>
+> On Fri, Jun 30, 2023 at 4:17=E2=80=AFPM Darrick J. Wong <djwong@kernel.or=
+g> wrote:
+> >
+> > On Fri, Jun 30, 2023 at 04:05:36PM +0300, Amir Goldstein wrote:
+> > > On Fri, Jun 30, 2023 at 3:30=E2=80=AFPM Ignat Korchagin <ignat@cloudf=
+lare.com> wrote:
+> > > >
+> > > > On Fri, Jun 30, 2023 at 11:39=E2=80=AFAM Amir Goldstein <amir73il@g=
+mail.com> wrote:
+> > > > >
+> > > > > On Thu, Jun 29, 2023 at 10:31=E2=80=AFPM Ignat Korchagin <ignat@c=
+loudflare.com> wrote:
+> > > > > >
+> > > > > > On Thu, Jun 29, 2023 at 7:14=E2=80=AFPM Darrick J. Wong <djwong=
+@kernel.org> wrote:
+> > > > > > >
+> > > > > > > [add the xfs lts maintainers]
+> > > > > > >
+> > > > > > > On Thu, Jun 29, 2023 at 05:34:00PM +0100, Matthew Wilcox wrot=
+e:
+> > > > > > > > On Thu, Jun 29, 2023 at 05:09:41PM +0100, Daniel Dao wrote:
+> > > > > > > > > Hi Dave and Derrick,
+> > > > > > > > >
+> > > > > > > > > We are tracking down some corruptions on xfs for our rock=
+sdb workload,
+> > > > > > > > > running on kernel 6.1.25. The corruptions were
+> > > > > > > > > detected by rocksdb block checksum. The workload seems to=
+ share some
+> > > > > > > > > similarities
+> > > > > > > > > with the multi-threaded write workload described in
+> > > > > > > > > https://lore.kernel.org/linux-fsdevel/20221129001632.GX36=
+00936@dread.disaster.area/
+> > > > > > > > >
+> > > > > > > > > Can we backport the patch series to stable since it seeme=
+d to fix data
+> > > > > > > > > corruptions ?
+> > > > > > > >
+> > > > > > > > For clarity, are you asking for permission or advice about =
+doing this
+> > > > > > > > yourself, or are you asking somebody else to do the backpor=
+t for you?
+> > > > > > >
+> > > > > > > Nobody's officially committed to backporting and testing patc=
+hes for
+> > > > > > > 6.1; are you (Cloudflare) volunteering?
+> > > > > >
+> > > > > > Yes, we have applied them on top of 6.1.36, will be gradually
+> > > > > > releasing to our servers and will report back if we see the iss=
+ues go
+> > > > > > away
+> > > > > >
+> > > > >
+> > > > > Getting feedback back from Cloudflare production servers is aweso=
+me
+> > > > > but it's not enough.
+> > > > >
+> > > > > The standard for getting xfs LTS backports approved is:
+> > > > > 1. Test the backports against regressions with several rounds of =
+fstests
+> > > > >     check -g auto on selected xfs configurations [1]
+> > > > > 2. Post the backport series to xfs list and get an ACK from upstr=
+eam
+> > > > >     xfs maintainers
+> > > > >
+> > > > > We have volunteers doing this work for 5.4.y, 5.10.y and 5.15.y.
+> > > > > We do not yet have a volunteer to do that work for 6.1.y.
+> > > > >
+> > > > > The question is whether you (or your team) are volunteering to
+> > > > > do that work for 6.1.y xfs backports to help share the load?
+>
+> Circling back on this. So far it seems that the patchset in question
+> does fix the issues of rocksdb corruption as we haven't seen them for
+> some time on our test group. We're happy to dedicate some efforts now
+> to get them officially backported to 6.1 according to the process. We
+> did try basic things with kdevops and would like to learn more. Fred
+> (cc-ed here) is happy to drive the effort and be the primary contact
+> on this. Could you, please, guide us/him on the process?
+>
 
-Kind regards,
-Alex
+Hi Fred,
 
->
-> So then the caller uid/gid will always be the user uid/gid issuing the
-> requests as now.
->
-> Thanks
->
-> - Xiubo
->
->
-> > But yes, this requires cephfs protocol changes...
-> >
-> > I personally still believe that the "Solution 0" approach is optimal
-> > and we can go with "Solution 3" way
-> > as the next iteration.
-> >
-> > Kind regards,
-> > Alex
-> >
-> >> And also the same for other non-create requests. If
-> >>> so this will be incorrect for the cephx perm checks IMO.
-> >> Thanks,
-> >> Alex
-> >>
-> >>> Thanks
-> >>>
-> >>> - Xiubo
-> >>>
-> >>>
-> >>>> This makes a problem with path-based UID/GID restriction mechanism,
-> >>>> because it uses head->caller_{uid,gid} fields
-> >>>> to check if UID/GID is permitted or not.
-> >>>>
-> >>>> So, the problem is that we have one field in ceph request for two
-> >>>> different needs - to control permissions and to set inode owner.
-> >>>> Christian pointed that the most saner way is to modify ceph protocol
-> >>>> and add a separate field to store inode owner UID/GID,
-> >>>> and only this fields should be idmapped, but head->caller_{uid,gid}
-> >>>> will be untouched.
-> >>>>
-> >>>> With this approach, we will not affect UID/GID-based permission rule=
-s
-> >>>> with an idmapped mounts at all.
-> >>>>
-> >>>> Kind regards,
-> >>>> Alex
-> >>>>
-> >>>>> Thanks
-> >>>>>
-> >>>>> - Xiubo
-> >>>>>
-> >>>>>
-> >>>>>> Kind regards,
-> >>>>>> Alex
-> >>>>>>
-> >>>>>>> Thanks
-> >>>>>>>
-> >>>>>>> - Xiubo
-> >>>>>>>
-> >>>>>>>
-> >>>>>>>
-> >>>>>>>
-> >>>>>>>
-> >>>>>>>> Thanks,
-> >>>>>>>> Alex
-> >>>>>>>>
-> >>>>>>>>> Thanks
-> >>>>>>>>>
-> >>>>>>>>> - Xiubo
-> >>>>>>>>>
->
+I'd love to help you get started with kdevops and xfs testing.
+However, I am going on vacation tomorrow for three weeks,
+so I'll just drop a few pointers and let the others help you out.
+
+Luis (@mcgrof) is your best point of contact for kdevops.
+Chandan should be able to help you with xfs backporting questions.
+
+Better yet, use the discord channel:
+  https://bit.ly/linux-kdevops-chat
+
+Someone is almost always available to answer questions there.
+
+BACKPORT PATCHES:
+-------------------------------
+Please make sure to:
+1. Prefix subject with [PATCH 6.1]
+2. Specify upstream commit at head of commit message body
+3. Add specific backport notes at the bottom of commit message if needed
+4. Add your Signed-off-by at the end
+5. Check if the upstream commit has a Fixes mention in upstream
+5.a. If there are later fix commits, you will need to backport those as wel=
+l
+5.b. If the later fix commits are applicable to 6.4.y, you will need to bac=
+kport
+       them to 6.4.y first
+
+TESTING:
+--------------
+The most challenging part of running fstests with kdevops is
+establishing the baseline (which tests pass in current 6.1.y per xfs config=
+),
+but the baseline for that has already been established and committed
+in kdevops repo.
+
+There is a little quirk, that the baseline is associated only with exact
+kernel version, hence commits like:
+* c4e3de1 bootlinux: add expunge link for v6.1.39
+* d6b5ea4 bootlinux: add expunge link for v6.1.38
+
+Make sure that you test your patches against one of those tags
+or add new symlinks to other tags.
+Start by running a sanity test without your patches, because different
+running environments and kdevops configs may disagree on the baseline.
+
+You can use kdevops to either run local VMs with libvirt or launch
+cloud VMs with terraform - you need to configure this and more
+during the 'make menuconfig' step.
+Attaching my kdevops config (for libvirt guests) as a reference.
+
+REVIEW:
+------------
+Once you are done verifying no regressions over several kdevops run loops,
+please post the backport patches for review with [PATCH 6.1 CANDIDATE]
+prefix to xfs list (and not to stable list), like [1].
+Specify the bug reports from your production env, all the relevant informat=
+ion
+regarding testing and special backport considerations.
+
+Once the candidate backports have been ACKed, add the Acked-by trailer
+to patches, remove the CANDIDATE prefix and post them to the stable
+list, like [2].
+
+Good luck and thank you for your contribution!
+Amir.
+
+[1] https://lore.kernel.org/linux-xfs/20230712094733.1265038-1-amir73il@gma=
+il.com/
+[2] https://lore.kernel.org/linux-xfs/20230715063114.1485841-1-amir73il@gma=
+il.com/
+
+--0000000000003a37450600e57e53
+Content-Type: text/plain; charset="US-ASCII"; name="config.kdevops.xfs-6.1.y.txt"
+Content-Disposition: attachment; filename="config.kdevops.xfs-6.1.y.txt"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lkaqykuk0>
+X-Attachment-Id: f_lkaqykuk0
+
+IwojIEF1dG9tYXRpY2FsbHkgZ2VuZXJhdGVkIGZpbGU7IERPIE5PVCBFRElULgojIGtkZXZvcHMg
+NS4wLjItMDAxNjMtZ2ExODEwNzIKIwpDT05GSUdfTkVFRFNfTE9DQUxfREVWRUxPUE1FTlRfUEFU
+SD15CiMgQ09ORklHX0tERVZPUFNfRklSU1RfUlVOIGlzIG5vdCBzZXQKQ09ORklHX0RJU1RST19E
+RUJJQU49eQoKIwojIFRhcmdldCBhcmNoaXRlY3R1cmUKIwpDT05GSUdfVEFSR0VUX0FSQ0hfWDg2
+XzY0PXkKIyBDT05GSUdfVEFSR0VUX0FSQ0hfQVJNNjQgaXMgbm90IHNldAojIENPTkZJR19UQVJH
+RVRfQVJDSF9QUEM2NExFIGlzIG5vdCBzZXQKQ09ORklHX1RBUkdFVF9BUkNIPSJ4ODZfNjQiCiMg
+ZW5kIG9mIFRhcmdldCBhcmNoaXRlY3R1cmUKCiMKIyBTU0ggdXBkYXRlIGNvbmZpZ3VyYXRpb24K
+IwpDT05GSUdfS0RFVk9QU19TU0hfQ09ORklHX1VQREFURT15CkNPTkZJR19LREVWT1BTX1NTSF9D
+T05GSUc9In4vLnNzaC9jb25maWciCkNPTkZJR19LREVWT1BTX1NTSF9DT05GSUdfVVBEQVRFX1NU
+UklDVD15CkNPTkZJR19LREVWT1BTX1NTSF9DT05GSUdfVVBEQVRFX0JBQ0tVUD15CiMgZW5kIG9m
+IFNTSCB1cGRhdGUgY29uZmlndXJhdGlvbgoKQ09ORklHX0dJVF9BTFRFUk5BVElWRVM9eQpDT05G
+SUdfR0lUX0xJTlVYX0tERVZPUFNfR0lUSFVCPXkKIyBDT05GSUdfR0lUX0xJTlVYX0tERVZPUFNf
+R0lUTEFCIGlzIG5vdCBzZXQKIyBDT05GSUdfU0VUVVBfUE9TVEZJWF9FTUFJTF9SRUxBWSBpcyBu
+b3Qgc2V0CiMgQ09ORklHX0hZUEVSVklTT1JfVFVOSU5HIGlzIG5vdCBzZXQKIyBDT05GSUdfRU5B
+QkxFX0xPQ0FMX0xJTlVYX01JUlJPUiBpcyBub3Qgc2V0CkNPTkZJR19MT0NBTF9ERVZFTE9QTUVO
+VF9QQVRIPSIvaG9tZS94ZnMvZGV2ZWwvIgoKIwojIEJyaW5nIHVwIG1ldGhvZHMKIwpDT05GSUdf
+VkFHUkFOVD15CiMgQ09ORklHX1RFUlJBRk9STSBpcyBub3Qgc2V0CiMgQ09ORklHX1NLSVBfQlJJ
+TkdVUCBpcyBub3Qgc2V0CkNPTkZJR19WQUdSQU5UX0xJQlZJUlQ9eQojIENPTkZJR19WQUdSQU5U
+X1ZJUlRVQUxCT1ggaXMgbm90IHNldAojIENPTkZJR19WQUdSQU5UX0xBUkdFX0NQVSBpcyBub3Qg
+c2V0CiMgQ09ORklHX1ZBR1JBTlRfVkNQVVNfMiBpcyBub3Qgc2V0CiMgQ09ORklHX1ZBR1JBTlRf
+VkNQVVNfNCBpcyBub3Qgc2V0CkNPTkZJR19WQUdSQU5UX1ZDUFVTXzg9eQojIENPTkZJR19WQUdS
+QU5UX1ZDUFVTXzE2IGlzIG5vdCBzZXQKIyBDT05GSUdfVkFHUkFOVF9WQ1BVU18zMiBpcyBub3Qg
+c2V0CiMgQ09ORklHX1ZBR1JBTlRfVkNQVVNfNjQgaXMgbm90IHNldAojIENPTkZJR19WQUdSQU5U
+X1ZDUFVTXzEyOCBpcyBub3Qgc2V0CiMgQ09ORklHX1ZBR1JBTlRfVkNQVVNfMjU1IGlzIG5vdCBz
+ZXQKQ09ORklHX1ZBR1JBTlRfVkNQVVNfQ09VTlQ9OAojIENPTkZJR19WQUdSQU5UX01FTV8yRyBp
+cyBub3Qgc2V0CiMgQ09ORklHX1ZBR1JBTlRfTUVNXzNHIGlzIG5vdCBzZXQKQ09ORklHX1ZBR1JB
+TlRfTUVNXzRHPXkKIyBDT05GSUdfVkFHUkFOVF9NRU1fOEcgaXMgbm90IHNldAojIENPTkZJR19W
+QUdSQU5UX01FTV8xNkcgaXMgbm90IHNldAojIENPTkZJR19WQUdSQU5UX01FTV8zMkcgaXMgbm90
+IHNldApDT05GSUdfVkFHUkFOVF9NRU1fTUI9NDA5NgojIENPTkZJR19MSUJWSVJUX01BQ0hJTkVf
+VFlQRV9ERUZBVUxUIGlzIG5vdCBzZXQKQ09ORklHX0xJQlZJUlRfTUFDSElORV9UWVBFX1EzNT15
+CkNPTkZJR19MSUJWSVJUX0hPU1RfUEFTU1RIUk9VR0g9eQpDT05GSUdfUUVNVV9CVUlMRD15CkNP
+TkZJR19RRU1VX1VTRV9ERVZFTE9QTUVOVF9WRVJTSU9OPXkKQ09ORklHX1FFTVVfQlVJTERfVVBT
+VFJFQU09eQojIENPTkZJR19RRU1VX0JVSUxEX0pJQzIzIGlzIG5vdCBzZXQKIyBDT05GSUdfUUVN
+VV9CVUlMRF9NQU5VQUwgaXMgbm90IHNldApDT05GSUdfUUVNVV9CVUlMRF9HSVQ9Imh0dHBzOi8v
+Z2l0aHViLmNvbS9xZW11L3FlbXUuZ2l0IgpDT05GSUdfUUVNVV9CVUlMRF9HSVRfREFUQV9QQVRI
+PSJ7e2xvY2FsX2Rldl9wYXRofX0vcWVtdSIKQ09ORklHX1FFTVVfQlVJTERfR0lUX1ZFUlNJT049
+InY3LjIuMC1yYzQiCkNPTkZJR19RRU1VX0JJTl9QQVRIX0xJQlZJUlQ9Ii91c3IvbG9jYWwvYmlu
+L3FlbXUtc3lzdGVtLXg4Nl82NCIKQ09ORklHX1FFTVVfSU5TVEFMTF9ESVJfTElCVklSVD0iL3Vz
+ci9sb2NhbC9iaW4iCiMgQ09ORklHX0xJQlZJUlRfRVhUUkFfU1RPUkFHRV9EUklWRV9OVk1FIGlz
+IG5vdCBzZXQKQ09ORklHX0xJQlZJUlRfRVhUUkFfU1RPUkFHRV9EUklWRV9WSVJUSU89eQojIENP
+TkZJR19MSUJWSVJUX0VYVFJBX1NUT1JBR0VfRFJJVkVfSURFIGlzIG5vdCBzZXQKQ09ORklHX0xJ
+QlZJUlRfRVhUUkFfU1RPUkFHRV9WSVJUSU9fUEhZU0lDQUxfQkxPQ0tfU0laRV81MTI9eQojIENP
+TkZJR19MSUJWSVJUX0VYVFJBX1NUT1JBR0VfVklSVElPX1BIWVNJQ0FMX0JMT0NLX1NJWkVfMUsg
+aXMgbm90IHNldAojIENPTkZJR19MSUJWSVJUX0VYVFJBX1NUT1JBR0VfVklSVElPX1BIWVNJQ0FM
+X0JMT0NLX1NJWkVfMksgaXMgbm90IHNldAojIENPTkZJR19MSUJWSVJUX0VYVFJBX1NUT1JBR0Vf
+VklSVElPX1BIWVNJQ0FMX0JMT0NLX1NJWkVfNEsgaXMgbm90IHNldAojIENPTkZJR19MSUJWSVJU
+X0VYVFJBX1NUT1JBR0VfVklSVElPX1BIWVNJQ0FMX0JMT0NLX1NJWkVfOEsgaXMgbm90IHNldAoj
+IENPTkZJR19MSUJWSVJUX0VYVFJBX1NUT1JBR0VfVklSVElPX1BIWVNJQ0FMX0JMT0NLX1NJWkVf
+MTZLIGlzIG5vdCBzZXQKIyBDT05GSUdfTElCVklSVF9FWFRSQV9TVE9SQUdFX1ZJUlRJT19QSFlT
+SUNBTF9CTE9DS19TSVpFXzMySyBpcyBub3Qgc2V0CiMgQ09ORklHX0xJQlZJUlRfRVhUUkFfU1RP
+UkFHRV9WSVJUSU9fUEhZU0lDQUxfQkxPQ0tfU0laRV82NEsgaXMgbm90IHNldAojIENPTkZJR19M
+SUJWSVJUX0VYVFJBX1NUT1JBR0VfVklSVElPX1BIWVNJQ0FMX0JMT0NLX1NJWkVfMTI4SyBpcyBu
+b3Qgc2V0CiMgQ09ORklHX0xJQlZJUlRfRVhUUkFfU1RPUkFHRV9WSVJUSU9fUEhZU0lDQUxfQkxP
+Q0tfU0laRV8yNTZLIGlzIG5vdCBzZXQKIyBDT05GSUdfTElCVklSVF9FWFRSQV9TVE9SQUdFX1ZJ
+UlRJT19QSFlTSUNBTF9CTE9DS19TSVpFXzUxMksgaXMgbm90IHNldAojIENPTkZJR19MSUJWSVJU
+X0VYVFJBX1NUT1JBR0VfVklSVElPX1BIWVNJQ0FMX0JMT0NLX1NJWkVfMU0gaXMgbm90IHNldAoj
+IENPTkZJR19MSUJWSVJUX0VYVFJBX1NUT1JBR0VfVklSVElPX1BIWVNJQ0FMX0JMT0NLX1NJWkVf
+Mk0gaXMgbm90IHNldApDT05GSUdfTElCVklSVF9FWFRSQV9TVE9SQUdFX1ZJUlRJT19MT0dJQ0FM
+X0JMT0NLX1NJWkVfNTEyPXkKIyBDT05GSUdfTElCVklSVF9FWFRSQV9TVE9SQUdFX1ZJUlRJT19M
+T0dJQ0FMX0JMT0NLX1NJWkVfMUsgaXMgbm90IHNldAojIENPTkZJR19MSUJWSVJUX0VYVFJBX1NU
+T1JBR0VfVklSVElPX0xPR0lDQUxfQkxPQ0tfU0laRV8ySyBpcyBub3Qgc2V0CiMgQ09ORklHX0xJ
+QlZJUlRfRVhUUkFfU1RPUkFHRV9WSVJUSU9fTE9HSUNBTF9CTE9DS19TSVpFXzRLIGlzIG5vdCBz
+ZXQKIyBDT05GSUdfTElCVklSVF9FWFRSQV9TVE9SQUdFX1ZJUlRJT19MT0dJQ0FMX0JMT0NLX1NJ
+WkVfOEsgaXMgbm90IHNldAojIENPTkZJR19MSUJWSVJUX0VYVFJBX1NUT1JBR0VfVklSVElPX0xP
+R0lDQUxfQkxPQ0tfU0laRV8xNksgaXMgbm90IHNldAojIENPTkZJR19MSUJWSVJUX0VYVFJBX1NU
+T1JBR0VfVklSVElPX0xPR0lDQUxfQkxPQ0tfU0laRV8zMksgaXMgbm90IHNldAojIENPTkZJR19M
+SUJWSVJUX0VYVFJBX1NUT1JBR0VfVklSVElPX0xPR0lDQUxfQkxPQ0tfU0laRV82NEsgaXMgbm90
+IHNldAojIENPTkZJR19MSUJWSVJUX0VYVFJBX1NUT1JBR0VfVklSVElPX0xPR0lDQUxfQkxPQ0tf
+U0laRV8xMjhLIGlzIG5vdCBzZXQKIyBDT05GSUdfTElCVklSVF9FWFRSQV9TVE9SQUdFX1ZJUlRJ
+T19MT0dJQ0FMX0JMT0NLX1NJWkVfMjU2SyBpcyBub3Qgc2V0CiMgQ09ORklHX0xJQlZJUlRfRVhU
+UkFfU1RPUkFHRV9WSVJUSU9fTE9HSUNBTF9CTE9DS19TSVpFXzUxMksgaXMgbm90IHNldAojIENP
+TkZJR19MSUJWSVJUX0VYVFJBX1NUT1JBR0VfVklSVElPX0xPR0lDQUxfQkxPQ0tfU0laRV8xTSBp
+cyBub3Qgc2V0CiMgQ09ORklHX0xJQlZJUlRfRVhUUkFfU1RPUkFHRV9WSVJUSU9fTE9HSUNBTF9C
+TE9DS19TSVpFXzJNIGlzIG5vdCBzZXQKQ09ORklHX0xJQlZJUlRfVklSVElPX0FJT19NT0RFX05B
+VElWRT15CiMgQ09ORklHX0xJQlZJUlRfVklSVElPX0FJT19NT0RFX1RIUkVBRFMgaXMgbm90IHNl
+dApDT05GSUdfTElCVklSVF9WSVJUSU9fQUlPX01PREU9Im5hdGl2ZSIKQ09ORklHX0xJQlZJUlRf
+VklSVElPX0FJT19DQUNIRV9NT0RFX05PTkU9eQojIENPTkZJR19MSUJWSVJUX1ZJUlRJT19BSU9f
+Q0FDSEVfTU9ERV9XUklURVRIUk9VR0ggaXMgbm90IHNldAojIENPTkZJR19MSUJWSVJUX1ZJUlRJ
+T19BSU9fQ0FDSEVfTU9ERV9XUklURUJBQ0sgaXMgbm90IHNldAojIENPTkZJR19MSUJWSVJUX1ZJ
+UlRJT19BSU9fQ0FDSEVfTU9ERV9ESVJFQ1RTWU5DIGlzIG5vdCBzZXQKIyBDT05GSUdfTElCVklS
+VF9WSVJUSU9fQUlPX0NBQ0hFX01PREVfVU5TQUZFIGlzIG5vdCBzZXQKQ09ORklHX0xJQlZJUlRf
+VklSVElPX0FJT19DQUNIRV9NT0RFPSJub25lIgpDT05GSUdfTElCVklSVF9TVE9SQUdFX1BPT0xf
+UEFUSF9JTkZFUl9BRFZBTkNFRD15CiMgQ09ORklHX0xJQlZJUlRfU1RPUkFHRV9QT09MX1BBVEhf
+Q1VTVE9NX0NXRCBpcyBub3Qgc2V0CiMgQ09ORklHX0xJQlZJUlRfU1RPUkFHRV9QT09MX1BBVEhf
+Q1VTVE9NX0RFRkFVTFRfRElTVFJPIGlzIG5vdCBzZXQKIyBDT05GSUdfTElCVklSVF9TVE9SQUdF
+X1BPT0xfUEFUSF9DVVNUT01fTUFOVUFMIGlzIG5vdCBzZXQKQ09ORklHX0xJQlZJUlRfU1RPUkFH
+RV9QT09MX0NSRUFURT15CkNPTkZJR19MSUJWSVJUX1NUT1JBR0VfUE9PTF9OQU1FPSJkYXRhIgpD
+T05GSUdfTElCVklSVF9TVE9SQUdFX1BPT0xfUEFUSF9DVVNUT009Ii9kYXRhL2xpYnZpcnQvaW1h
+Z2VzIgpDT05GSUdfTElCVklSVF9VUklfU1lTVEVNPXkKIyBDT05GSUdfTElCVklSVF9VUklfU0VT
+U0lPTiBpcyBub3Qgc2V0CiMgQ09ORklHX0xJQlZJUlRfVVJJX0NVU1RPTSBpcyBub3Qgc2V0CkNP
+TkZJR19MSUJWSVJUX1VSSV9QQVRIPSJxZW11Oi8vL3N5c3RlbSIKQ09ORklHX0xJQlZJUlRfU1lT
+VEVNX1VSSV9QQVRIPSJxZW11Oi8vL3N5c3RlbSIKQ09ORklHX0xJQlZJUlRfUUVNVV9HUk9VUD0i
+bGlidmlydC1xZW11IgpDT05GSUdfS0RFVk9QU19TVE9SQUdFX1BPT0xfUEFUSD0iL2RhdGEvbGli
+dmlydC9pbWFnZXMiCkNPTkZJR19RRU1VX0JJTl9QQVRIPSIvdXNyL2xvY2FsL2Jpbi9xZW11LXN5
+c3RlbS14ODZfNjQiCkNPTkZJR19MSUJWSVJUX1VSST0icWVtdTovLy9zeXN0ZW0iCkNPTkZJR19M
+SUJWSVJUX1NZU1RFTV9VUkk9InFlbXU6Ly8vc3lzdGVtIgpDT05GSUdfVkFHUkFOVF9ERUJJQU49
+eQojIENPTkZJR19WQUdSQU5UX09QRU5TVVNFIGlzIG5vdCBzZXQKIyBDT05GSUdfVkFHUkFOVF9G
+RURPUkEgaXMgbm90IHNldAojIENPTkZJR19WQUdSQU5UX1JFREhBVF9HRU5FUklDIGlzIG5vdCBz
+ZXQKIyBDT05GSUdfVkFHUkFOVF9LREVWT1BTIGlzIG5vdCBzZXQKIyBDT05GSUdfVkFHUkFOVF9E
+RUJJQU5fQlVTVEVSNjQgaXMgbm90IHNldAojIENPTkZJR19WQUdSQU5UX0RFQklBTl9CVUxMU0VZ
+RTY0IGlzIG5vdCBzZXQKQ09ORklHX1ZBR1JBTlRfREVCSUFOX1RFU1RJTkc2ND15CkNPTkZJR19W
+QUdSQU5UX0RFQklBTl9CT1hfU0hPUlQ9InRlc3Rpbmc2NCIKQ09ORklHX1ZBR1JBTlRfQk9YPSJk
+ZWJpYW4vdGVzdGluZzY0IgpDT05GSUdfVkFHUkFOVF9CT1hfVVBEQVRFX09OX0JSSU5HVVA9eQpD
+T05GSUdfVkFHUkFOVF9CT1hfVkVSU0lPTj0iIgojIENPTkZJR19WQUdSQU5UX0xJQlZJUlRfSU5T
+VEFMTCBpcyBub3Qgc2V0CiMgQ09ORklHX1ZBR1JBTlRfTElCVklSVF9DT05GSUdVUkUgaXMgbm90
+IHNldAojIENPTkZJR19WQUdSQU5UX0xJQlZJUlRfVkVSSUZZIGlzIG5vdCBzZXQKQ09ORklHX1ZB
+R1JBTlRfSU5TVEFMTF9QUklWQVRFX0JPWEVTPXkKIyBDT05GSUdfTElCVklSVF9OVk1FX0RSSVZF
+X0ZPUk1BVF9RQ09XMiBpcyBub3Qgc2V0CkNPTkZJR19MSUJWSVJUX05WTUVfRFJJVkVfRk9STUFU
+X1JBVz15CkNPTkZJR19RRU1VX05WTUVfWk9ORV9EUklWRV9TSVpFPTEwMjQwMApDT05GSUdfUUVN
+VV9OVk1FX1pPTkVfWkFTTD0wCkNPTkZJR19RRU1VX05WTUVfWk9ORV9TSVpFPSIxMjhNIgpDT05G
+SUdfUUVNVV9OVk1FX1pPTkVfQ0FQQUNJVFk9IjBNIgpDT05GSUdfUUVNVV9OVk1FX1pPTkVfTUFY
+X0FDVElWRT0wCkNPTkZJR19RRU1VX05WTUVfWk9ORV9NQVhfT1BFTj0wCkNPTkZJR19RRU1VX05W
+TUVfWk9ORV9QSFlTSUNBTF9CTE9DS19TSVpFPTQwOTYKQ09ORklHX1FFTVVfTlZNRV9aT05FX0xP
+R0lDQUxfQkxPQ0tfU0laRT00MDk2CiMgQ09ORklHX1FFTVVfRU5BQkxFX0VYVFJBX0RSSVZFX0xB
+UkdFSU8gaXMgbm90IHNldApDT05GSUdfUUVNVV9MQVJHRUlPX0RSSVZFX0JBU0VfU0laRT0xMDI0
+MApDT05GSUdfUUVNVV9MQVJHRUlPX0NPTVBBVF9TSVpFPTUxMgpDT05GSUdfUUVNVV9MQVJHRUlP
+X01BWF9QT1dfTElNSVQ9MTIKIyBDT05GSUdfUUVNVV9FTkFCTEVfQ1hMIGlzIG5vdCBzZXQKIyBl
+bmQgb2YgQnJpbmcgdXAgbWV0aG9kcwoKIwojIEJyaW5nIHVwIGdvYWxzCiMKIyBDT05GSUdfS0RF
+Vk9QU19UUllfUkVGUkVTSF9SRVBPUyBpcyBub3Qgc2V0CiMgQ09ORklHX0tERVZPUFNfU0VUVVBf
+TkZTRCBpcyBub3Qgc2V0CiMgZW5kIG9mIEJyaW5nIHVwIGdvYWxzCgojCiMgTm9kZSBzeXNjdGwg
+Y29uZmlndXJhdGlvbgojCiMgQ09ORklHX1NZU0NUTF9UVU5JTkcgaXMgbm90IHNldAojIGVuZCBv
+ZiBOb2RlIHN5c2N0bCBjb25maWd1cmF0aW9uCgojCiMgVGFyZ2V0IHdvcmtmbG93cwojCkNPTkZJ
+R19XT1JLRkxPV1M9eQoKIwojIFNoYXJlZCB3b3JrZmxvdyBjb25maWd1cmF0aW9uCiMKCiMKIyBT
+aGFyZWQgd29ya2Zsb3cgZGF0YSBwYXJ0aXRpb24KIwpDT05GSUdfV09SS0ZMT1dfREFUQV9ERVZJ
+Q0U9Ii9kZXYvZGlzay9ieS1pZC92aXJ0aW8ta2Rldm9wczAiCkNPTkZJR19XT1JLRkxPV19EQVRB
+X1BBVEg9Ii9kYXRhIgpDT05GSUdfV09SS0ZMT1dfSU5GRVJfVVNFUl9BTkRfR1JPVVA9eQojIENP
+TkZJR19XT1JLRkxPV19EQVRBX0ZTVFlQRV9YRlMgaXMgbm90IHNldAojIENPTkZJR19XT1JLRkxP
+V19EQVRBX0ZTVFlQRV9FWFQ0IGlzIG5vdCBzZXQKQ09ORklHX1dPUktGTE9XX0RBVEFfRlNUWVBF
+X0JUUkZTPXkKQ09ORklHX1dPUktGTE9XX0RBVEFfRlNUWVBFPSJidHJmcyIKQ09ORklHX1dPUktG
+TE9XX0RBVEFfTEFCRUw9ImRhdGEiCiMgZW5kIG9mIFNoYXJlZCB3b3JrZmxvdyBkYXRhIHBhcnRp
+dGlvbgoKIyBDT05GSUdfV09SS0ZMT1dfTUFLRV9DTURfT1ZFUlJJREUgaXMgbm90IHNldApDT05G
+SUdfV09SS0ZMT1dfS0RFVk9QU19HSVQ9Imh0dHBzOi8vZ2l0aHViLmNvbS9saW51eC1rZGV2b3Bz
+L2tkZXZvcHMuZ2l0IgpDT05GSUdfV09SS0ZMT1dfS0RFVk9QU19HSVRfREFUQT0ie3tkYXRhX3Bh
+dGh9fS9rZGV2b3BzIgpDT05GSUdfV09SS0ZMT1dfS0RFVk9QU19ESVI9Int7ZGF0YV9wYXRofX0v
+a2Rldm9wcyIKIyBlbmQgb2YgU2hhcmVkIHdvcmtmbG93IGNvbmZpZ3VyYXRpb24KCiMgQ09ORklH
+X1dPUktGTE9XX0xJTlVYX0RJU1RSTyBpcyBub3Qgc2V0CkNPTkZJR19XT1JLRkxPV19MSU5VWF9D
+VVNUT009eQoKIwojIEdldCBhbmQgaW5zdGFsbCBMaW51eCBmcm9tIGdpdAojCkNPTkZJR19CT09U
+TElOVVg9eQpDT05GSUdfQk9PVExJTlVYXzlQPXkKCiMKIyBNb2RpZnkgZGVmYXVsdCA5cCBjb25m
+aWd1cmF0aW9uCiMKQ09ORklHX0JPT1RMSU5VWF85UF9IT1NUX1BBVEg9Ii9kYXRhL3hmcy94ZnMt
+Ni4xLnkva2Rldm9wcy9saW51eCIKQ09ORklHX0JPT1RMSU5VWF85UF9NU0laRT0xMzEwNzIKQ09O
+RklHX0JPT1RMSU5VWF85UF9GU0RFVj0ia2Rldm9wc185cF9mc2RldiIKQ09ORklHX0JPT1RMSU5V
+WF85UF9TRUNVUklUWV9NT0RFTD0ibm9uZSIKQ09ORklHX0JPT1RMSU5VWF85UF9EUklWRVI9InZp
+cnRpby05cC1wY2kiCkNPTkZJR19CT09UTElOVVhfOVBfTU9VTlRfVEFHPSJrZGV2b3BzXzlwX2Jv
+b3RsaW51eCIKIyBlbmQgb2YgTW9kaWZ5IGRlZmF1bHQgOXAgY29uZmlndXJhdGlvbgoKQ09ORklH
+X0JPT1RMSU5VWF9TVEFCTEU9eQojIENPTkZJR19CT09UTElOVVhfREVWIGlzIG5vdCBzZXQKIyBD
+T05GSUdfQk9PVExJTlVYX1RSRUVfTElOVVMgaXMgbm90IHNldApDT05GSUdfQk9PVExJTlVYX1RS
+RUVfU1RBQkxFPXkKIyBDT05GSUdfQk9PVExJTlVYX1NUQUJMRV9WNDE5IGlzIG5vdCBzZXQKIyBD
+T05GSUdfQk9PVExJTlVYX1NUQUJMRV9WNTQgaXMgbm90IHNldAojIENPTkZJR19CT09UTElOVVhf
+U1RBQkxFX1Y1MTAgaXMgbm90IHNldAojIENPTkZJR19CT09UTElOVVhfU1RBQkxFX1Y1MTQgaXMg
+bm90IHNldAojIENPTkZJR19CT09UTElOVVhfU1RBQkxFX1Y1MTcgaXMgbm90IHNldAojIENPTkZJ
+R19CT09UTElOVVhfU1RBQkxFX1Y1MTkgaXMgbm90IHNldAojIENPTkZJR19CT09UTElOVVhfU1RB
+QkxFX1Y2MCBpcyBub3Qgc2V0CkNPTkZJR19CT09UTElOVVhfU1RBQkxFX1Y2MT15CkNPTkZJR19C
+T09UTElOVVhfVFJFRV9OQU1FPSJsaW51eCIKQ09ORklHX0JPT1RMSU5VWF9UUkVFPSJodHRwczov
+L2dpdGh1Yi5jb20vYW1pcjczaWwvbGludXguZ2l0IgpDT05GSUdfQk9PVExJTlVYX1RSRUVfVEFH
+PSJ4ZnMtNi4xLnktZm9yLXRlc3RpbmciCkNPTkZJR19CT09UTElOVVhfVFJFRV9MT0NBTFZFUlNJ
+T049IiIKQ09ORklHX0JPT1RMSU5VWF9TSEFMTE9XX0NMT05FPXkKQ09ORklHX0JPT1RMSU5VWF9T
+SEFMTE9XX0NMT05FX0RFUFRIPTEKIyBlbmQgb2YgR2V0IGFuZCBpbnN0YWxsIExpbnV4IGZyb20g
+Z2l0CgpDT05GSUdfV09SS0ZMT1dTX1RFU1RTPXkKIyBDT05GSUdfV09SS0ZMT1dTX1RFU1RTX0RF
+TU9TIGlzIG5vdCBzZXQKQ09ORklHX1dPUktGTE9XU19MSU5VWF9URVNUUz15CkNPTkZJR19XT1JL
+RkxPV1NfREVESUNBVEVEX1dPUktGTE9XPXkKQ09ORklHX0tERVZPUFNfV09SS0ZMT1dfREVESUNB
+VEVfRlNURVNUUz15CiMgQ09ORklHX0tERVZPUFNfV09SS0ZMT1dfREVESUNBVEVfQkxLVEVTVFMg
+aXMgbm90IHNldAojIENPTkZJR19LREVWT1BTX1dPUktGTE9XX0RFRElDQVRFX0NYTCBpcyBub3Qg
+c2V0CiMgQ09ORklHX0tERVZPUFNfV09SS0ZMT1dfREVESUNBVEVfUFlORlMgaXMgbm90IHNldAoj
+IENPTkZJR19LREVWT1BTX1dPUktGTE9XX0RFRElDQVRFX1NFTEZURVNUUyBpcyBub3Qgc2V0CkNP
+TkZJR19LREVWT1BTX1dPUktGTE9XX0VOQUJMRV9GU1RFU1RTPXkKCiMKIyBDb25maWd1cmUgYW5k
+IHJ1biBmc3Rlc3RzCiMKQ09ORklHX0hBVkVfRElTVFJPX1BSRUZFUlNfRlNURVNUU19XQVRDSERP
+Rz15CkNPTkZJR19IQVZFX0RJU1RST19QUkVGRVJTX0ZTVEVTVFNfV0FUQ0hET0dfS0lMTD15CkNP
+TkZJR19GU1RFU1RTX1hGUz15CiMgQ09ORklHX0ZTVEVTVFNfQlRSRlMgaXMgbm90IHNldAojIENP
+TkZJR19GU1RFU1RTX0VYVDQgaXMgbm90IHNldApDT05GSUdfRlNURVNUU19GU1RZUD0ieGZzIgpD
+T05GSUdfRlNURVNUU19XQVRDSERPRz15CkNPTkZJR19GU1RFU1RTX1dBVENIRE9HX0NIRUNLX1RJ
+TUU9NQpDT05GSUdfRlNURVNUU19XQVRDSERPR19NQVhfTkVXX1RFU1RfVElNRT02MApDT05GSUdf
+RlNURVNUU19XQVRDSERPR19IVU5HX01VTFRJUExJRVJfTE9OR19URVNUUz0xMApDT05GSUdfRlNU
+RVNUU19XQVRDSERPR19IVU5HX0ZBU1RfVEVTVF9NQVhfVElNRT01CkNPTkZJR19GU1RFU1RTX1dB
+VENIRE9HX0tJTExfVEFTS1NfT05fSEFORz15CiMgQ09ORklHX0ZTVEVTVFNfV0FUQ0hET0dfUkVT
+RVRfSFVOR19TWVNURU1TIGlzIG5vdCBzZXQKCiMKIyBDb25maWd1cmUgaG93IHRvIHRlc3QgWEZT
+CiMKQ09ORklHX0hBVkVfRElTVFJPX1hGU19QUkVGRVJTX01BTlVBTD15CkNPTkZJR19IQVZFX0RJ
+U1RST19YRlNfU1VQUE9SVFNfQ1JDPXkKQ09ORklHX0hBVkVfRElTVFJPX1hGU19TVVBQT1JUU19S
+RUZMSU5LUz15CkNPTkZJR19IQVZFX0RJU1RST19YRlNfU1VQUE9SVFNfQklHQkxPQ0tTPXkKQ09O
+RklHX0hBVkVfRElTVFJPX1hGU19TVVBQT1JUU19FWFRFUk5BTF9MT0c9eQojIENPTkZJR19GU1RF
+U1RTX1hGU19NQU5VQUxfQ09WRVJBR0UgaXMgbm90IHNldApDT05GSUdfRlNURVNUU19YRlNfU0VD
+VElPTl9DUkM9eQpDT05GSUdfRlNURVNUU19YRlNfU0VDVElPTl9OT0NSQz15CkNPTkZJR19GU1RF
+U1RTX1hGU19TRUNUSU9OX05PQ1JDXzUxMj15CkNPTkZJR19GU1RFU1RTX1hGU19TRUNUSU9OX1JF
+RkxJTks9eQpDT05GSUdfRlNURVNUU19YRlNfU0VDVElPTl9SRUZMSU5LXzEwMjQ9eQpDT05GSUdf
+RlNURVNUU19YRlNfU0VDVElPTl9SRUZMSU5LX05PUk1BUEJUPXkKQ09ORklHX0ZTVEVTVFNfWEZT
+X1NFQ1RJT05fTE9HREVWPXkKIyBlbmQgb2YgQ29uZmlndXJlIGhvdyB0byB0ZXN0IFhGUwoKQ09O
+RklHX0ZTVEVTVFNfR0lUPSJodHRwczovL2dpdGh1Yi5jb20vbGludXgta2Rldm9wcy9mc3Rlc3Rz
+LmdpdCIKQ09ORklHX0ZTVEVTVFNfREFUQT0ie3tkYXRhX3BhdGh9fS9mc3Rlc3RzIgpDT05GSUdf
+RlNURVNUU19EQVRBX1RBUkdFVD0iL3Zhci9saWIveGZzdGVzdHMiCkNPTkZJR19GU1RFU1RTX1RF
+U1RERVZfU1BBUlNFRklMRV9HRU5FUkFUSU9OPXkKQ09ORklHX0ZTVEVTVFNfU1BBUlNFX0RFVj0i
+L2Rldi9kaXNrL2J5LWlkL3ZpcnRpby1rZGV2b3BzMSIKIyBDT05GSUdfRlNURVNUU19TUEFSU0Vf
+WEZTIGlzIG5vdCBzZXQKIyBDT05GSUdfRlNURVNUU19TUEFSU0VfQlRSRlMgaXMgbm90IHNldApD
+T05GSUdfRlNURVNUU19TUEFSU0VfRVhUND15CkNPTkZJR19GU1RFU1RTX1NQQVJTRV9GU1RZUEU9
+ImV4dDQiCkNPTkZJR19GU1RFU1RTX1NQQVJTRV9MQUJFTD0ic3BhcnNlZmlsZXMiCkNPTkZJR19G
+U1RFU1RTX1NQQVJTRV9GSUxFX1BBVEg9Ii9tZWRpYS9zcGFyc2VmaWxlcyIKQ09ORklHX0ZTVEVT
+VFNfU1BBUlNFX0ZJTEVfU0laRT0iMjBHIgpDT05GSUdfRlNURVNUU19TUEFSU0VfRklMRU5BTUVf
+UFJFRklYPSJzcGFyc2UtZGlzayIKQ09ORklHX0ZTVEVTVFNfVEVTVF9ERVY9Ii9kZXYvbG9vcDE2
+IgpDT05GSUdfRlNURVNUU19URVNUX0xPR0RFVj0iL2Rldi9sb29wMTMiCkNPTkZJR19GU1RFU1RT
+X1RFU1RfTE9HREVWX01LRlNfT1BUUz0iLWxzaXplPTFnIgpDT05GSUdfRlNURVNUU19URVNUX0RJ
+Uj0iL21lZGlhL3Rlc3QiCkNPTkZJR19GU1RFU1RTX1NDUkFUQ0hfREVWX1BPT0w9Ii9kZXYvbG9v
+cDUgL2Rldi9sb29wNiAvZGV2L2xvb3A3IC9kZXYvbG9vcDggL2Rldi9sb29wOSAvZGV2L2xvb3Ax
+MCAvZGV2L2xvb3AxMSAvZGV2L2xvb3AxMiIKQ09ORklHX0ZTVEVTVFNfU0NSQVRDSF9NTlQ9Ii9t
+ZWRpYS9zY3JhdGNoIgpDT05GSUdfRlNURVNUU19MT0dXUklURVNfREVWPSIvZGV2L2xvb3AxNSIK
+Q09ORklHX0ZTVEVTVFNfU0NSQVRDSF9MT0dERVY9Ii9kZXYvbG9vcDE1IgpDT05GSUdfRlNURVNU
+U19TRVRVUF9TWVNURU09eQpDT05GSUdfRlNURVNUU19SVU5fVEVTVFM9eQojIENPTkZJR19GU1RF
+U1RTX1JVTl9BVVRPX0dST1VQX1RFU1RTIGlzIG5vdCBzZXQKQ09ORklHX0ZTVEVTVFNfUlVOX0NV
+U1RPTV9HUk9VUF9URVNUUz0iYXV0byIKIyBDT05GSUdfRlNURVNUU19FTkFCTEVfUlVOX0NVU1RP
+TV9URVNUUyBpcyBub3Qgc2V0CiMgQ09ORklHX0ZTVEVTVFNfUlVOX0xBUkdFX0RJU0tfVEVTVFMg
+aXMgbm90IHNldAojIGVuZCBvZiBDb25maWd1cmUgYW5kIHJ1biBmc3Rlc3RzCgpDT05GSUdfS0RF
+Vk9QU19XT1JLRkxPV19HSVRfQ0xPTkVTX0tERVZPUFNfR0lUPXkKIyBlbmQgb2YgVGFyZ2V0IHdv
+cmtmbG93cwoKIwojIEtkZXZvcHMgY29uZmlndXJhdGlvbgojCkNPTkZJR19IQVZFX0NVU1RPTV9E
+SVNUUk9fSE9TVF9QUkVGSVg9eQpDT05GSUdfSEFWRV9ESVNUUk9fUFJFRkVSU19DVVNUT01fSE9T
+VF9QUkVGSVg9eQpDT05GSUdfQ1VTVE9NX0RJU1RST19IT1NUX1BSRUZJWD0idGVzdGluZzY0IgpD
+T05GSUdfS0RFVk9QU19VU0VfRElTVFJPX0hPU1RTX1BSRUZJWD15CkNPTkZJR19LREVWT1BTX0hP
+U1RTX1BSRUZJWD0ieGZzNjEiCiMgQ09ORklHX0tERVZPUFNfQkFTRUxJTkVfQU5EX0RFViBpcyBu
+b3Qgc2V0CgojCiMgQW5zaWJsZSBwb3N0LWJyaW5nIHVwIHByb3Zpc2lvbmluZyBjb25maWd1cmF0
+aW9uCiMKQ09ORklHX0tERVZPUFNfUExBWUJPT0tfRElSPSJwbGF5Ym9va3MiCkNPTkZJR19LREVW
+T1BTX0FOU0lCTEVfUFJPVklTSU9OX0VOQUJMRT15CkNPTkZJR19LREVWT1BTX0FOU0lCTEVfUFJP
+VklTSU9OX1BMQVlCT09LPSJkZXZjb25maWcueW1sIgpDT05GSUdfS0RFVk9QU19ERVZDT05GSUdf
+RU5BQkxFPXkKQ09ORklHX0tERVZPUFNfREVWQ09ORklHX0VOQUJMRV9DT05TT0xFPXkKQ09ORklH
+X0tERVZPUFNfREVWQ09ORklHX0tFUk5FTF9DT05TT0xFX1NFVFRJTkdTPSJjb25zb2xlPXR0eTAg
+Y29uc29sZT10dHkxIGNvbnNvbGU9dHR5UzAsMTE1MjAwbjgiCkNPTkZJR19LREVWT1BTX0RFVkNP
+TkZJR19HUlVCX1NFUklBTF9DT01NQU5EPSJzZXJpYWwgLS1zcGVlZD0xMTUyMDAgLS11bml0PTAg
+LS1wYXJpdHk9bm8gLS1zdG9wPTEiCkNPTkZJR19LREVWT1BTX0dSVUJfVElNRU9VVD0yCkNPTkZJ
+R19LREVWT1BTX0RFVkNPTkZJR19FTkFCTEVfU1lTVEVNRF9XQVRDSERPRz15CkNPTkZJR19LREVW
+T1BTX0RFVkNPTkZJR19TWVNURU1EX1dBVENIRE9HX1RJTUVPVVRfUlVOVElNRT0iNW1pbiIKQ09O
+RklHX0tERVZPUFNfREVWQ09ORklHX1NZU1RFTURfV0FUQ0hET0dfVElNRU9VVF9SRUJPT1Q9IjEw
+bWluIgpDT05GSUdfS0RFVk9QU19ERVZDT05GSUdfU1lTVEVNRF9XQVRDSERPR19USU1FT1VUX0tF
+WEVDPSI1bWluIgpDT05GSUdfS0RFVk9QU19BTlNJQkxFX0lOVkVOVE9SWV9GSUxFPSJob3N0cyIK
+Q09ORklHX0tERVZPUFNfUFlUSE9OX0lOVEVSUFJFVEVSPSIvdXNyL2Jpbi9weXRob24zIgpDT05G
+SUdfS0RFVk9QU19QWVRIT05fT0xEX0lOVEVSUFJFVEVSPSIvdXNyL2Jpbi9weXRob24yIgojIGVu
+ZCBvZiBBbnNpYmxlIHBvc3QtYnJpbmcgdXAgcHJvdmlzaW9uaW5nIGNvbmZpZ3VyYXRpb24KCiMK
+IyBLZXJuZWwgY29udGlub3VzIGludGVncmF0aW9uIGNvbmZpZ3VyYXRpb24KIwpDT05GSUdfS0VS
+TkVMX0NJX0RFRkFVTFRfU1RFQURZX1NUQVRFX0dPQUw9MTAwCkNPTkZJR19LRVJORUxfQ0k9eQpD
+T05GSUdfS0VSTkVMX0NJX0VOQUJMRV9TVEVBRFlfU1RBVEU9eQpDT05GSUdfS0VSTkVMX0NJX1NU
+RUFEWV9TVEFURV9HT0FMPTEwCiMgZW5kIG9mIEtlcm5lbCBjb250aW5vdXMgaW50ZWdyYXRpb24g
+Y29uZmlndXJhdGlvbgojIGVuZCBvZiBLZGV2b3BzIGNvbmZpZ3VyYXRpb24K
+--0000000000003a37450600e57e53--
