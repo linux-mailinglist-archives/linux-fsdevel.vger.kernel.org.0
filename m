@@ -2,106 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E50EC75B288
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 17:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81CA075B28B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 17:28:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231844AbjGTP2T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jul 2023 11:28:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33576 "EHLO
+        id S231234AbjGTP2y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jul 2023 11:28:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231151AbjGTP2R (ORCPT
+        with ESMTP id S230025AbjGTP2x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jul 2023 11:28:17 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9733123
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 08:28:11 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-51e24210395so13760a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 08:28:11 -0700 (PDT)
+        Thu, 20 Jul 2023 11:28:53 -0400
+Received: from mail-ej1-x64a.google.com (mail-ej1-x64a.google.com [IPv6:2a00:1450:4864:20::64a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE66D2710
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 08:28:39 -0700 (PDT)
+Received: by mail-ej1-x64a.google.com with SMTP id a640c23a62f3a-978a991c3f5so76937566b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 08:28:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1689866890; x=1690471690;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ueWLYJ0Zpp28j5V5QPthaLz88fH+2254dOYDnHgAd5M=;
-        b=NMSbGUMpK4C+K0lUFpR4U4mRLU2BGKqgVgy3KIZICDV9XOFW3qVvqLCVSIRLoocCJ3
-         zx5HwTBJWP8G5Ukq8j3RLc3ZxO0nz8qfTO6pkgHoVa0NAJZnrNOzWYmTAZc3g5k8jc9c
-         iqVtzrXFOKBFRiiZT8EJUMrIHV0PD2TU4a8YTQv8tFlSjwl7ytGHQbD0ou6BXQKME+TL
-         BtoGu9apQZyLEmd78jSKxhl3jqft/NQXl7t+QYT3CmxUz/rAm4ZrIyar2PlCBE1Ql/gR
-         /H7BUkFDgWCQRjPb9iC8bL7hDMohAHQYqjusxGEDOGW8dfxV9185lWbkRIFLsOLvtJiz
-         D8ZA==
+        d=google.com; s=20221208; t=1689866918; x=1690471718;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IWv9CLtWtTznOku5eHmfJC2LsM6xPb33sZCLyzCmpPY=;
+        b=c1JgmH+tNZLWMbTCSosM+iUVmcQSKnrVa80UTDLEeP9RITnb103bfyCMD8vc/lrM8u
+         rY8MgTzI/P9CbtUQ2K0sOFQUHS9dh7r2J+vsYz33TKkgfNGDR4z8kfUnTFTsZTPpX2VQ
+         9T8wonC5Rcnr7VEQzRZKGi3yjjpOlzaMV3TicsPfoOOnuSjoQE2h0gBe6vtwHWmELenj
+         DWhnODkj6bF24upvhB7OsZU/y+sk1JWZdzY4vs+pYwItk0t+kii4mJ+oxxT/VOK+bLYG
+         Q3VKxY2KMgjSRJDs37zhwH8FL0+glfOM/Z3T5VALtt6KUhECeTXa2cY6q/tyv7Jw+g8D
+         NWBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689866890; x=1690471690;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ueWLYJ0Zpp28j5V5QPthaLz88fH+2254dOYDnHgAd5M=;
-        b=H+PhXVTBwdfSAAK08+UrP1zpsLsJnFjFvnua71e8fj7fGM3BWgXTPMXed3tfH8gn/2
-         iSRuKUJAJVBUkDCXNVuxF4EikhRQRhFQoT3SS9neZKm/INwfsYeePP1epcCimBGaVqxg
-         r70XbE2Q3vMSY7Ahmz0wNvhLOo19FbjC0x/YUBCDoGJQVZNaXeoYYMI8PBwL55Oy2v3s
-         tNcGjR9RDQj730iYqD+cpFUVXSARzHj7N0WO5HAZWS/I3NUbTO4KbZ9zRG/wyLZf0ioW
-         kUKAS7/WlsGyoRwlxPdhgqsurCxNtak12ZA0w1Fs7tZu7la4o7k1pPd2tBh/luquTgOV
-         RSew==
-X-Gm-Message-State: ABy/qLa+m3SEMnwYvYHJpsYXRh3Ey1xGBQOErQOGY/HaGgJSImOMmW0E
-        b3+m462F+F/WHlmrhuUmEsc7+I8PTW62fLEzNvEuEw==
-X-Google-Smtp-Source: APBJJlFq0GZ4ZktUOfXrO7gkLDHTJWhPSD/1jcusDXb2jRQnlEDKQRL7PkcO0BkiH+wKF+BeNtP5oYmOviBhd85v+R0=
-X-Received: by 2002:a50:ab5c:0:b0:51e:54d5:50c0 with SMTP id
- t28-20020a50ab5c000000b0051e54d550c0mr113732edc.1.1689866890072; Thu, 20 Jul
- 2023 08:28:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <000000000000dbce4e05f170f289@google.com> <5f45bb9a-5e00-48dd-82b0-46b19b1b98a3@app.fastmail.com>
- <CAHk-=wi8XyAUF9_z6-oa4Ava6PVZeE-=TVNcFK1puQHpOtqLLw@mail.gmail.com>
- <ab7a9477-ddc7-430f-b4ee-c67251e879b0@app.fastmail.com> <2575F983-D170-4B79-A6BA-912D4ED2CC73@dubeyko.com>
- <46F233BB-E587-4F2B-AA62-898EB46C9DCE@dubeyko.com> <Y7bw7X1Y5KtmPF5s@casper.infradead.org>
- <50D6A66B-D994-48F4-9EBA-360E57A37BBE@dubeyko.com>
-In-Reply-To: <50D6A66B-D994-48F4-9EBA-360E57A37BBE@dubeyko.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 20 Jul 2023 17:27:57 +0200
-Message-ID: <CACT4Y+aJb4u+KPAF7629YDb2tB2geZrQm5sFR3M+r2P1rgicwQ@mail.gmail.com>
-Subject: Re: [syzbot] [hfs?] WARNING in hfs_write_inode
-To:     Viacheslav Dubeyko <slava@dubeyko.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        syzbot <syzbot+7bb7cd3595533513a9e7@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        christian.brauner@ubuntu.com,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com,
-        ZhangPeng <zhangpeng362@huawei.com>,
-        linux-m68k@lists.linux-m68k.org
+        d=1e100.net; s=20221208; t=1689866918; x=1690471718;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IWv9CLtWtTznOku5eHmfJC2LsM6xPb33sZCLyzCmpPY=;
+        b=SwyluPj8KAy/pW1p0E9Tv6e43F8tSgPpEMW790tRfARQZSbz6V/5AECLdT7Rylms6s
+         SY10BF6XUB7XeGivl/A7xhlPZM7vsuLV4d5Tf2JQFd2Z7LphQxvPPR7mUsxSu+6HJoR4
+         EfomP9iXFC7q24HHOnywST6rkD9jTlJtn+iNdBhXOQLhIRLSwCYTGNt1s9jpKmWe0XCb
+         9c+91I3rIBaPVIAysivsQd4Fnrek89sQrgHG2P0zlUPv+ww9DUwveTpcG6bP6ZNcfLO6
+         4dOfVw5ZBzdhg138xEWRdUGBrIbGDsw+9uUrhV9kstxLVsVR3yY5YwmjEujA8flJopM5
+         P2YQ==
+X-Gm-Message-State: ABy/qLb0usYApOxjfOLF2ikxgh1qTD+3Zywi897yhweLKYxOIYipS9TK
+        J8iuMNh6pzS+PrgXzjhmRBJXh4CA8XDGfPw=
+X-Google-Smtp-Source: APBJJlEE/YmhmLOm4Cd/eTebUZ59Cs4ErdANqkMNW39DQ5rwt41f7azTnmHcpd4tPQ6pTIci1P5DT3t0P2tGkHU=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:6c8])
+ (user=aliceryhl job=sendgmr) by 2002:a17:906:8a62:b0:98e:78ce:2979 with SMTP
+ id hy2-20020a1709068a6200b0098e78ce2979mr13545ejc.12.1689866918147; Thu, 20
+ Jul 2023 08:28:38 -0700 (PDT)
+Date:   Thu, 20 Jul 2023 15:28:15 +0000
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
+Message-ID: <20230720152820.3566078-1-aliceryhl@google.com>
+Subject: [RFC PATCH v1 0/5] Various Rust bindings for files
+From:   Alice Ryhl <aliceryhl@google.com>
+To:     rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Wedson Almeida Filho <wedsonaf@gmail.com>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        "=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>,
+        Benno Lossin <benno.lossin@proton.me>,
+        Alice Ryhl <aliceryhl@google.com>,
+        linux-kernel@vger.kernel.org, patches@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 5 Jan 2023 at 17:45, Viacheslav Dubeyko <slava@dubeyko.com> wrote:
-> > On Wed, Jan 04, 2023 at 08:37:16PM -0800, Viacheslav Dubeyko wrote:
-> >> Also, as far as I can see, available volume in report (mount_0.gz) somehow corrupted already:
-> >
-> > Syzbot generates deliberately-corrupted (aka fuzzed) filesystem images.
-> > So basically, you can't trust anything you read from the disc.
-> >
->
-> If the volume has been deliberately corrupted, then no guarantee that file system
-> driver will behave nicely. Technically speaking, inode write operation should never
-> happened for corrupted volume because the corruption should be detected during
-> b-tree node initialization time. If we would like to achieve such nice state of HFS/HFS+
-> drivers, then it requires a lot of refactoring/implementation efforts. I am not sure that
-> it is worth to do because not so many guys really use HFS/HFS+ as the main file
-> system under Linux.
+This contains bindings for various file related things that binder needs
+to use.
+
+I would especially like feedback on the SAFETY comments. Particularly,
+the safety comments in patch 4 and 5 are non-trivial. For example:
+
+ * In patch 4, I claim that passing POLLHUP|POLLFREE to __wake_up is
+   enough to ensure that we can now destroy the wait_list without
+   risking any use-after-frees, even if we have registered it with
+   epoll. Is that correct?
+
+ * In patch 5, I implement a utility for closing fds that might be held
+   using `fdget`. This is rather non-trivial, and I would be happy to
+   hear suggestions about alternate solutions.
+
+This patch is based on top of
+https://lore.kernel.org/all/20230426204923.16195-1-amiculas@cisco.com/
+which is currently the top commit on rust-next.
+
+Alice Ryhl (2):
+  rust: file: add bindings for `poll_table`
+  rust: file: add `DeferredFdCloser`
+
+Wedson Almeida Filho (3):
+  rust: file: add bindings for `struct file`
+  rust: cred: add Rust bindings for `struct cred`
+  rust: file: add `FileDescriptorReservation`
+
+ rust/bindings/bindings_helper.h |   8 +
+ rust/bindings/lib.rs            |   1 +
+ rust/helpers.c                  |  36 ++++
+ rust/kernel/cred.rs             |  66 +++++++
+ rust/kernel/file.rs             | 331 ++++++++++++++++++++++++++++++++
+ rust/kernel/file/poll_table.rs  |  93 +++++++++
+ rust/kernel/lib.rs              |   2 +
+ rust/kernel/sync/condvar.rs     |   2 +-
+ 8 files changed, 538 insertions(+), 1 deletion(-)
+ create mode 100644 rust/kernel/cred.rs
+ create mode 100644 rust/kernel/file.rs
+ create mode 100644 rust/kernel/file/poll_table.rs
 
 
-Most popular distros will happily auto-mount HFS/HFS+ from anything
-inserted into USB (e.g. what one may think is a charger). This creates
-interesting security consequences for most Linux users.
-An image may also be corrupted non-deliberately, which will lead to
-random memory corruptions if the kernel trusts it blindly.
+base-commit: 341faf2b45ba266d52c1ca886c4ffca52d666786
+-- 
+2.41.0.255.g8b1d071c50-goog
+
