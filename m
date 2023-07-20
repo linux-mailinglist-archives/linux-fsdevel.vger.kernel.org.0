@@ -2,120 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8239675B6C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 20:28:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29C0875B6C8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 20:30:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231933AbjGTS2G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jul 2023 14:28:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34332 "EHLO
+        id S232036AbjGTSaL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jul 2023 14:30:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232034AbjGTS2E (ORCPT
+        with ESMTP id S232048AbjGTSaH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jul 2023 14:28:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE9BE2D51;
-        Thu, 20 Jul 2023 11:27:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4BADD61B7D;
-        Thu, 20 Jul 2023 18:27:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 585D7C433C8;
-        Thu, 20 Jul 2023 18:27:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689877672;
-        bh=PveaWa0pZAx+au66P+YMH4ZRlUccBvcGi5t6QBLPtx4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=WbZFWiqCDECfQ2LLVFujdB30lRwZiLdacjV5uCQzpPU34Pzh3/ELbyjqmNP7YyLP6
-         M4WTdqRx5yNrP1t+QGUBPTFvvhB4Cs4OjAbPpTQWRMbBVnoclFwJ2vrKshRjmXQB1A
-         7/9jzzKrPh2EB6sx/sR0b5b2p/0fcixLDtetUVYVtl4hU0tS6ayvdiK/m/jMwt78HW
-         hmE9aQA0AUKqdS65JasZCGwhU7VQj1g6LrErgknZHivB0f5XR6VP+50HcsYtkXeH2m
-         fqUgYAFNqeQXP5F125y6SWwG7Jvnk17bur3lrAgMY0E+rc6FMlxi8uWgwgfcdj2YuG
-         E/hC4S1E1jOaw==
-Message-ID: <868611d7f222a19127783cc8d5f2af2e42ee24e4.camel@kernel.org>
-Subject: Re: [syzbot] [hfs?] WARNING in hfs_write_inode
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        syzbot <syzbot+7bb7cd3595533513a9e7@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        christian.brauner@ubuntu.com,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com,
-        ZhangPeng <zhangpeng362@huawei.com>,
-        linux-m68k@lists.linux-m68k.org,
-        debian-ports <debian-ports@lists.debian.org>
-Date:   Thu, 20 Jul 2023 14:27:50 -0400
-In-Reply-To: <ZLl2Fq35Ya0cNbIm@casper.infradead.org>
-References: <5f45bb9a-5e00-48dd-82b0-46b19b1b98a3@app.fastmail.com>
-         <CAHk-=wi8XyAUF9_z6-oa4Ava6PVZeE-=TVNcFK1puQHpOtqLLw@mail.gmail.com>
-         <ab7a9477-ddc7-430f-b4ee-c67251e879b0@app.fastmail.com>
-         <2575F983-D170-4B79-A6BA-912D4ED2CC73@dubeyko.com>
-         <46F233BB-E587-4F2B-AA62-898EB46C9DCE@dubeyko.com>
-         <Y7bw7X1Y5KtmPF5s@casper.infradead.org>
-         <50D6A66B-D994-48F4-9EBA-360E57A37BBE@dubeyko.com>
-         <CACT4Y+aJb4u+KPAF7629YDb2tB2geZrQm5sFR3M+r2P1rgicwQ@mail.gmail.com>
-         <ZLlvII/jMPTT32ef@casper.infradead.org>
-         <2d0bd58fb757e7771d13f82050a546ec5f7be8de.camel@physik.fu-berlin.de>
-         <ZLl2Fq35Ya0cNbIm@casper.infradead.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Thu, 20 Jul 2023 14:30:07 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABFFDE44;
+        Thu, 20 Jul 2023 11:30:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+        bh=yi1OQndfSAKROqv7J0RkOh857pRhe/ujJHjrZQ98YWs=; b=u1872vr6m+1g/EyQr5YbAPgIXi
+        8iuoeRHRChMThcfhq3UY4wdI2nXNzWYwgSIa+3FDugCI22X9Bm1XyJGiHJIu6D5kJQ9V0G5MO4iSE
+        OCY/rnMGrX1oQMmEiQ6EuF5nDQiX+ItXKTRxJ9DE/fIzrL9ODNmxrh9E1IxReSdEhLdvD66Ms/603
+        blSaDFm4qvspOBzeZCxfkeVeDnuHwotDQpz6ndikocgFBQUi1Ogq9+0S6tu/LSy8MI/j+CE58dhM4
+        SRty9xES0AVwyKdaUEC6HK5PTRUFutpUlznQI77UF5EffHqLSujOGKQT1cY/f22YqEvy8xv5GJ1j3
+        qxNb+hRw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qMYPb-00Bu2n-0Y;
+        Thu, 20 Jul 2023 18:30:03 +0000
+Date:   Thu, 20 Jul 2023 11:30:03 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Ignat Korchagin <ignat@cloudflare.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Daniel Dao <dqminh@cloudflare.com>,
+        Dave Chinner <david@fromorbit.com>,
+        kernel-team <kernel-team@cloudflare.com>,
+        linux-fsdevel@vger.kernel.org,
+        Chandan Babu R <chandanrlinux@gmail.com>,
+        Leah Rumancik <lrumancik@google.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Fred Lawler <fred@cloudflare.com>
+Subject: Re: Backporting of series xfs/iomap: fix data corruption due to
+ stale cached iomap
+Message-ID: <ZLl9K7jODHNYybTY@bombadil.infradead.org>
+References: <CA+wXwBRdcjHW2zxDABdFU3c26mc1u+g6iWG7HrXJRL7Po3Qp0w@mail.gmail.com>
+ <ZJ2yeJR5TB4AyQIn@casper.infradead.org>
+ <20230629181408.GM11467@frogsfrogsfrogs>
+ <CALrw=nFwbp06M7LB_Z0eFVPe29uFFUxAhKQ841GSDMtjP-JdXA@mail.gmail.com>
+ <CAOQ4uxiD6a9GmKwagRpUWBPRWCczB52Tsu5m6_igDzTQSLcs0w@mail.gmail.com>
+ <CALrw=nHH2u=+utzy8NfP6+fM6kOgtW0hdUHwK9-BWdYq+t-UoA@mail.gmail.com>
+ <CAOQ4uxju10zrQhVDA5WS+vTSbuW17vOD6EGBBJUmZg8c95vsrA@mail.gmail.com>
+ <20230630151657.GJ11441@frogsfrogsfrogs>
+ <CALrw=nFv82aODZ0URzknqnZavyjCxV1vKOP9oYijfSdyaYEQ3g@mail.gmail.com>
+ <CAOQ4uxgvawD4=4g8BaRiNvyvKN1oreuov_ie6sK6arq3bf8fxw@mail.gmail.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgvawD4=4g8BaRiNvyvKN1oreuov_ie6sK6arq3bf8fxw@mail.gmail.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2023-07-20 at 18:59 +0100, Matthew Wilcox wrote:
-> On Thu, Jul 20, 2023 at 07:50:47PM +0200, John Paul Adrian Glaubitz wrote=
-:
-> > > Then we should delete the HFS/HFS+ filesystems.  They're orphaned in
-> > > MAINTAINERS and if distros are going to do such a damnfool thing,
-> > > then we must stop them.
-> >=20
-> > Both HFS and HFS+ work perfectly fine. And if distributions or users ar=
-e so
-> > sensitive about security, it's up to them to blacklist individual featu=
-res
-> > in the kernel.
-> >=20
-> > Both HFS and HFS+ have been the default filesystem on MacOS for 30 year=
-s
-> > and I don't think it's justified to introduce such a hard compatibility
-> > breakage just because some people are worried about theoretical evil
-> > maid attacks.
-> >=20
-> > HFS/HFS+ mandatory if you want to boot Linux on a classic Mac or PowerM=
-ac
-> > and I don't think it's okay to break all these systems running Linux.
->=20
-> If they're so popular, then it should be no trouble to find somebody
-> to volunteer to maintain those filesystems.  Except they've been
-> marked as orphaned since 2011 and effectively were orphaned several
-> years before that (the last contribution I see from Roman Zippel is
-> in 2008, and his last contribution to hfs was in 2006).
+On Thu, Jul 20, 2023 at 09:45:14AM +0300, Amir Goldstein wrote:
+> On Wed, Jul 19, 2023 at 11:37 PM Ignat Korchagin <ignat@cloudflare.com> wrote:
+> >
+> > Circling back on this. So far it seems that the patchset in question
+> > does fix the issues of rocksdb corruption as we haven't seen them for
+> > some time on our test group. We're happy to dedicate some efforts now
+> > to get them officially backported to 6.1 according to the process. We
+> > did try basic things with kdevops and would like to learn more. Fred
+> > (cc-ed here) is happy to drive the effort and be the primary contact
+> > on this. Could you, please, guide us/him on the process?
+> >
+> 
+> Hi Fred,
+> 
+> I'd love to help you get started with kdevops and xfs testing.
+> However, I am going on vacation tomorrow for three weeks,
+> so I'll just drop a few pointers and let the others help you out.
+> 
+> Luis (@mcgrof) is your best point of contact for kdevops.
 
-I suspect that this is one of those catch-22 situations: distros are
-going to enable every feature under the sun. That doesn't mean that
-anyone is actually _using_ them these days.
+I'm happy to help.
 
-Is "staging" still a thing? Maybe we should move these drivers into the
-staging directory and pick a release where we'll sunset it, and then see
-who comes out of the woodwork?
+> Chandan should be able to help you with xfs backporting questions.
+> 
+> Better yet, use the discord channel:
+>   https://bit.ly/linux-kdevops-chat
+> 
+> Someone is almost always available to answer questions there.
 
-Cheers,
---=20
-Jeff Layton <jlayton@kernel.org>
+Indeed and also on irc.oftc.net on #kdevops too if you prefer IRC.
+But discord seems to be more happening for kdevops these days.
+
+> TESTING:
+> --------------
+> The most challenging part of running fstests with kdevops is
+> establishing the baseline (which tests pass in current 6.1.y per xfs config),
+> but the baseline for that has already been established and committed
+> in kdevops repo.
+> 
+> There is a little quirk, that the baseline is associated only with exact
+> kernel version, hence commits like:
+> * c4e3de1 bootlinux: add expunge link for v6.1.39
+
+Indeed so our latest baseline is in
+
+workflows/fstests/expunges/6.1.39/xfs/unassigned/
+
+> Make sure that you test your patches against one of those tags
+> or add new symlinks to other tags.
+> Start by running a sanity test without your patches, because different
+> running environments and kdevops configs may disagree on the baseline.
+
+You want to first run at least one loop to confirm your setup is fine
+and that you don't find any other failures other than the ones above.
+
+> You can use kdevops to either run local VMs with libvirt or launch
+> cloud VMs with terraform - you need to configure this and more
+> during the 'make menuconfig' step.
+> Attaching my kdevops config (for libvirt guests) as a reference.
+
+Please read:
+
+https://github.com/linux-kdevops/kdevops
+https://github.com/linux-kdevops/kdevops/blob/master/docs/requirements.md
+https://github.com/linux-kdevops/kdevops/blob/master/docs/kdevops-first-run.md
+https://github.com/linux-kdevops/kdevops/blob/master/docs/kdevops-mirror.md
+
+And the video demonstrations. Then I'm happy to schedule some time to
+cover anything the docs didn't cover, in particular to help you test new
+patches you wish to backport for a stable kernel and the testing
+criteria for that.
+
+  Luis
