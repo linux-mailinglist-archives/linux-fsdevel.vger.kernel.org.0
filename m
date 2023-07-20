@@ -2,70 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C1BD375B5AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 19:35:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6F9075B5E3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 19:51:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230453AbjGTRfp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jul 2023 13:35:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36276 "EHLO
+        id S231953AbjGTRvS convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jul 2023 13:51:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230027AbjGTRfo (ORCPT
+        with ESMTP id S229580AbjGTRvQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jul 2023 13:35:44 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AA7ECC;
-        Thu, 20 Jul 2023 10:35:40 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id E1D7920505;
-        Thu, 20 Jul 2023 17:35:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1689874538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=bx1yg3Jg+5Ltd8iqCFWRF8VuzeM7HV3z2vdytiQt5Yk=;
-        b=PngWjs3AoBtc3UEXbsy4RXLMM+WwOXtOaETHMIKlObHITJNGj7FJZ4hPCKD54JDAk2nJAl
-        pyA292JTp9N3ZP9LM60TZTYUWN5nLNFtfQnof0FRIZoLnjFItINkAuqulTEQVY9W8y/7TP
-        Zjuj5PDDl3oZ08U1lzw77D6gIfjSvkU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1689874538;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=bx1yg3Jg+5Ltd8iqCFWRF8VuzeM7HV3z2vdytiQt5Yk=;
-        b=xDCGVMAH4W5xpkJ3rw9cFHAVYgMRGr7QKLXhNDzAp/DC3RLxIESyxmyLvuLH96tj0bygov
-        FqHF7Y/pNcuJo2Dw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A6C48133DD;
-        Thu, 20 Jul 2023 17:35:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id bnjlImpwuWSLVQAAMHmgww
-        (envelope-from <krisman@suse.de>); Thu, 20 Jul 2023 17:35:38 +0000
-From:   Gabriel Krisman Bertazi <krisman@suse.de>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
-        jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v3 0/7] Support negative dentries on case-insensitive
- ext4 and f2fs
-Organization: SUSE
-References: <20230719221918.8937-1-krisman@suse.de>
-        <20230720074318.GA56170@sol.localdomain>
-Date:   Thu, 20 Jul 2023 13:35:37 -0400
-In-Reply-To: <20230720074318.GA56170@sol.localdomain> (Eric Biggers's message
-        of "Thu, 20 Jul 2023 00:43:18 -0700")
-Message-ID: <87y1ja4hau.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+        Thu, 20 Jul 2023 13:51:16 -0400
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6939C269D;
+        Thu, 20 Jul 2023 10:51:15 -0700 (PDT)
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.95)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1qMXnc-002BO8-NB; Thu, 20 Jul 2023 19:50:48 +0200
+Received: from p57bd98fd.dip0.t-ipconnect.de ([87.189.152.253] helo=suse-laptop.fritz.box)
+          by inpost2.zedat.fu-berlin.de (Exim 4.95)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1qMXnc-003YrW-FC; Thu, 20 Jul 2023 19:50:48 +0200
+Message-ID: <2d0bd58fb757e7771d13f82050a546ec5f7be8de.camel@physik.fu-berlin.de>
+Subject: Re: [syzbot] [hfs?] WARNING in hfs_write_inode
+From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     Viacheslav Dubeyko <slava@dubeyko.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        syzbot <syzbot+7bb7cd3595533513a9e7@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        christian.brauner@ubuntu.com,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        ZhangPeng <zhangpeng362@huawei.com>,
+        linux-m68k@lists.linux-m68k.org,
+        debian-ports <debian-ports@lists.debian.org>
+Date:   Thu, 20 Jul 2023 19:50:47 +0200
+In-Reply-To: <ZLlvII/jMPTT32ef@casper.infradead.org>
+References: <000000000000dbce4e05f170f289@google.com>
+         <5f45bb9a-5e00-48dd-82b0-46b19b1b98a3@app.fastmail.com>
+         <CAHk-=wi8XyAUF9_z6-oa4Ava6PVZeE-=TVNcFK1puQHpOtqLLw@mail.gmail.com>
+         <ab7a9477-ddc7-430f-b4ee-c67251e879b0@app.fastmail.com>
+         <2575F983-D170-4B79-A6BA-912D4ED2CC73@dubeyko.com>
+         <46F233BB-E587-4F2B-AA62-898EB46C9DCE@dubeyko.com>
+         <Y7bw7X1Y5KtmPF5s@casper.infradead.org>
+         <50D6A66B-D994-48F4-9EBA-360E57A37BBE@dubeyko.com>
+         <CACT4Y+aJb4u+KPAF7629YDb2tB2geZrQm5sFR3M+r2P1rgicwQ@mail.gmail.com>
+         <ZLlvII/jMPTT32ef@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.48.4 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-Originating-IP: 87.189.152.253
+X-ZEDAT-Hint: PO
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -74,54 +76,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eric Biggers <ebiggers@kernel.org> writes:
+Hello!
 
->> Another problem exists when turning a negative dentry to positive.  If
->> the negative dentry has a different case than what is currently being
->> used for lookup, the dentry cannot be reused without changing its name,
->> in order to guarantee filename-preserving semantics to userspace.  We
->> need to either change the name or invalidate the dentry. This issue is
->> currently avoided in mainline, since the negative dentry mechanism is
->> disabled.
->
-> Are you sure this problem even needs to be solved?
+On Thu, 2023-07-20 at 18:30 +0100, Matthew Wilcox wrote:
+> On Thu, Jul 20, 2023 at 05:27:57PM +0200, Dmitry Vyukov wrote:
+> > On Thu, 5 Jan 2023 at 17:45, Viacheslav Dubeyko <slava@dubeyko.com> wrote:
+> > > > On Wed, Jan 04, 2023 at 08:37:16PM -0800, Viacheslav Dubeyko wrote:
+> > > > > Also, as far as I can see, available volume in report (mount_0.gz) somehow corrupted already:
+> > > > 
+> > > > Syzbot generates deliberately-corrupted (aka fuzzed) filesystem images.
+> > > > So basically, you can't trust anything you read from the disc.
+> > > > 
+> > > 
+> > > If the volume has been deliberately corrupted, then no guarantee that file system
+> > > driver will behave nicely. Technically speaking, inode write operation should never
+> > > happened for corrupted volume because the corruption should be detected during
+> > > b-tree node initialization time. If we would like to achieve such nice state of HFS/HFS+
+> > > drivers, then it requires a lot of refactoring/implementation efforts. I am not sure that
+> > > it is worth to do because not so many guys really use HFS/HFS+ as the main file
+> > > system under Linux.
+> > 
+> > 
+> > Most popular distros will happily auto-mount HFS/HFS+ from anything
+> > inserted into USB (e.g. what one may think is a charger). This creates
+> > interesting security consequences for most Linux users.
+> > An image may also be corrupted non-deliberately, which will lead to
+> > random memory corruptions if the kernel trusts it blindly.
+> 
+> Then we should delete the HFS/HFS+ filesystems.  They're orphaned in
+> MAINTAINERS and if distros are going to do such a damnfool thing,
+> then we must stop them.
 
-Yes, because we promise name-preserving semantics.  If we don't do it,
-the name on the disk might be different than what was asked for, and tools
-that rely on it (they exist) will break.  During initial testing, I've
-had tools breaking with case-insensitive ext4 because they created a
-file, did getdents and wanted to see exactly the name they used.
+Both HFS and HFS+ work perfectly fine. And if distributions or users are so
+sensitive about security, it's up to them to blacklist individual features
+in the kernel.
 
-> It actually isn't specific to negative dentries.  If you have a file "foo"
-> that's not in the dcache, and you open it (or look it up in any other way) as
-> "FOO", then the positive dentry that gets created is named "FOO".
->
-> As a result, the name that shows up in /proc/$pid/fd/ for anyone who has the
-> file open is "FOO", not the true name "foo".  This is true even for processes
-> that open it as "foo", as long as the dentry remains in the dcache.
->
-> No negative dentries involved at all!
+Both HFS and HFS+ have been the default filesystem on MacOS for 30 years
+and I don't think it's justified to introduce such a hard compatibility
+breakage just because some people are worried about theoretical evil
+maid attacks.
 
-I totally agree it is goes beyond negative dentries, but this case is
-particularly important because it is the only one (that I know of) where
-the incorrect case might actually be written to the disk.  other cases,
-like /proc/<pid>/fd/ can just display a different case to userspace,
-which is confusing.  Still, the disk has the right version, exactly as
-originally created.
+HFS/HFS+ mandatory if you want to boot Linux on a classic Mac or PowerMac
+and I don't think it's okay to break all these systems running Linux.
 
-I see the current /proc/$pid/fd/ semantics as a bug. In fact, I have/had
-a bug report for bwrap/flatkpak breaking because it was mounting
-something and immediately checking /proc/mounts to confirm it worked.  A
-former team member tried fixing it a while ago, but we didn't follow up,
-and I don't really love the way they did it.  I need to look into that.
-
-> Or, it looks like the positive dentry case is solvable using d_add_ci().
-> So maybe you are planning to do that?  It's not clear to me.
-
-I want to use d_add_ci for the future, yes. It is not hard, but not
-trivial, because there is an infinite recursion if d_add_ci uses
-->d_compare() when doing the lookup for a duplicate.  We sent a patch to
-fix d_add_ci a while ago, but it was rejected.  I need to revisit.
+Thanks,
+Adrian
 
 -- 
-Gabriel Krisman Bertazi
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
