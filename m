@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4887175B291
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 17:29:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6959775B292
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 17:29:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232314AbjGTP3K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jul 2023 11:29:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34212 "EHLO
+        id S232399AbjGTP3L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jul 2023 11:29:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231898AbjGTP3D (ORCPT
+        with ESMTP id S232006AbjGTP3E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jul 2023 11:29:03 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26B402115
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 08:28:55 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-c64ef5bde93so773685276.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 08:28:55 -0700 (PDT)
+        Thu, 20 Jul 2023 11:29:04 -0400
+Received: from mail-ed1-x549.google.com (mail-ed1-x549.google.com [IPv6:2a00:1450:4864:20::549])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D324F270F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 08:28:59 -0700 (PDT)
+Received: by mail-ed1-x549.google.com with SMTP id 4fb4d7f45d1cf-51bef8bb689so2534487a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 08:28:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1689866934; x=1690471734;
+        d=google.com; s=20221208; t=1689866938; x=1690471738;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8tH3XEerZJwrZmU22bF8N/0qUJWteANYMAoh9Uhhjis=;
-        b=iIbHUoHVCIkaKMm/BUsR4YwpCcAILtijBEEpiPzLGsxFloPgn0f7EOrpei60KDIcvk
-         8t9TBzVqQs+AkQvHturJdtqihaNRMzMFCKXFW+yYzJtUuSGFzvt6b7X4xrQ742/qZmKU
-         PvEKOBKF4OD/QkC7sV6V53SmlhclUJxyOXH9z0797NDGNgsxIgCVTE77X5wl3hBXbpX4
-         CUYQc58iS7Vz7i0p4RGy5F1G9zOILpr96cQBOoIdxky3VX2EsWb49rl1/kluJqBrvrQt
-         WqjWtykIW08YaMiVbMm4RK5QZ+3LafZMQodf7O1gjLNykfiDOSypoIOhwMpCer+173uW
-         j3fA==
+        bh=d/u9EQyW+X21UxdbxspElMqoKZgJyUHYdK5EQ3Z7BOw=;
+        b=3Hwd44nZ28dd7XQpwbotYQrWBx55skJp3Gg5KtDbRpDdMOffpWdvgIzNW860/54HaT
+         Azxf/5by8rXcrok2m41Mqp1TMzDWRinsNR8PQskZDazzTs+Gp7tZqhBOc1yUUgTuJmRr
+         kksHZP3kh1tFtsq2GBDhXDOpYxYoVGwh08aplvBGp9TKQ48GqSDmZqAyZ2GTmAZhYpJ1
+         o2H8FoOGoPqkY2ao9JEaJJHSfeUSbfw+8DSGPm6uorPl8pnz36deNwerOjK72eTjgqXq
+         PVbSr14PujluBch8hecMx3je20sH5Q9iXokyshWyBaVVH59tY43OZqL9Vt46qTAXsIUY
+         M1Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689866934; x=1690471734;
+        d=1e100.net; s=20221208; t=1689866938; x=1690471738;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8tH3XEerZJwrZmU22bF8N/0qUJWteANYMAoh9Uhhjis=;
-        b=i496Rw0Hy1MxIfReH0JxqsG+PRrg6llGFSyyCaRJijzu0fAwxzQ0r8ou/EGZYrWFbQ
-         j6GsbwTBYf84NDH7j8gzcNDOc+a4Q6d4kxK4caqlt2xh1Zn+VeOL4JJBTV48FsIxoZs1
-         HfeHUsHXTJHa8y+rX34IU0bNlE5l4EMUFtNso/f0I7o5lhdQR4hVW8tJ49Wv0frR2Yjd
-         kHx/Otfr4nTPk+ATx84wNoW5c9Pg+6O1uaSxx/wQT7xQfW68i9D8lpxmpOCWcXYuI2LE
-         LQmkkwInVJBmKkzCtB2SjAHCinlnWvTdnBAq6h6lYeoAQSpADG5x+0q31JNgsJjW/Wf/
-         2y0A==
-X-Gm-Message-State: ABy/qLa0P/POPv1Y55NJr5kvnNjkOeVNFKxqQxUbW5ZsaXXzM0BTPKe+
-        15Q5ysirSUKkjwS53PUnVHJk9C0cd/OZHhc=
-X-Google-Smtp-Source: APBJJlF6cATeLhYEkc+Kltokpd6Fuo8ex9iPNH0A4q6at8KTHctN4S63Ew8lL0snobh9IN2IF6MQLjmL7RBatPk=
+        bh=d/u9EQyW+X21UxdbxspElMqoKZgJyUHYdK5EQ3Z7BOw=;
+        b=FmpfyrBYkqqpiih7uwX1o8IxnS7vn5jwQkYYF2An1TOaDaVka/Zpd1cOHZyUQIfGRx
+         HXeFYK89/1oPzATyI+zqYDz2LbgJSGBCS8JfUf5vCAet6r5TtpKLgrm/ofdD97EC7OjO
+         T6PbpyQylFLydKf1Nx8QaM5Nt/IARg0lUdSVImYb5F7cEgJIQA0lK5iHOFyxSfZrA9PA
+         TlBADXdUofxRjXPlQrG01wTifIUR5jNYXl7ovDLNwoOBgtsb/fokG1oKEuN1DVBvZ2jL
+         kZl61K14Vuw2d/rucwg7oOB7CzutgG0Zb/TT19lLMUfleWvK1Ai9l3bmgqGfGTY5bxJA
+         FNHg==
+X-Gm-Message-State: ABy/qLZBvbawBeEHm4uDNwPA2sPf84PbhkZMgL2BrbG/1P5uVDOodPDD
+        wLr6WoojxxgXoJPwTHS17b2qTb4E8Za26c0=
+X-Google-Smtp-Source: APBJJlHVWjVGueX9/R76s//0Z49bMtlWlMtdOLYEUW5lsDUqEawxcfhDALGNUuPtRnFpdXqSHdO1FkhKZsz5mhM=
 X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:6c8])
- (user=aliceryhl job=sendgmr) by 2002:a25:2551:0:b0:c86:e7cf:4064 with SMTP id
- l78-20020a252551000000b00c86e7cf4064mr39916ybl.6.1689866934433; Thu, 20 Jul
- 2023 08:28:54 -0700 (PDT)
-Date:   Thu, 20 Jul 2023 15:28:19 +0000
+ (user=aliceryhl job=sendgmr) by 2002:a05:6402:e9c:b0:51e:3810:e3b1 with SMTP
+ id h28-20020a0564020e9c00b0051e3810e3b1mr39802eda.1.1689866938115; Thu, 20
+ Jul 2023 08:28:58 -0700 (PDT)
+Date:   Thu, 20 Jul 2023 15:28:20 +0000
 In-Reply-To: <20230720152820.3566078-1-aliceryhl@google.com>
 Mime-Version: 1.0
 References: <20230720152820.3566078-1-aliceryhl@google.com>
 X-Mailer: git-send-email 2.41.0.255.g8b1d071c50-goog
-Message-ID: <20230720152820.3566078-5-aliceryhl@google.com>
-Subject: [RFC PATCH v1 4/5] rust: file: add bindings for `poll_table`
+Message-ID: <20230720152820.3566078-6-aliceryhl@google.com>
+Subject: [RFC PATCH v1 5/5] rust: file: add `DeferredFdCloser`
 From:   Alice Ryhl <aliceryhl@google.com>
 To:     rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Miguel Ojeda <ojeda@kernel.org>,
@@ -67,192 +67,184 @@ Cc:     Wedson Almeida Filho <wedsonaf@gmail.com>,
         linux-kernel@vger.kernel.org, patches@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-These bindings make it possible to register a `struct poll_table` with a
-`CondVar` so that notifying the condition variable will mark a given
-file as notified in the poll table.
+This adds a new type called `DeferredFdCloser` that can be used to close
+files by their fd in a way that is safe even if the file is currently
+held using `fdget`.
 
-This patch introduces a wrapper around `CondVar` (which is just a
-wrapper around `wait_list`) rather than extending `CondVar` itself
-because using the condition variable with poll tables makes it necessary
-to use `POLLHUP | POLLFREE` to clear the wait list when the condition
-variable is destroyed.
+This is done by grabbing an extra refcount to the file and dropping it
+in a task work once we return to userspace.
 
-This is not necessary with the ordinary `CondVar` because all of its
-methods will borrow the `CondVar` for longer than the duration in which
-it enqueues something to the wait list. This is not the case when
-registering a `PollTable`.
+See comments on `binder_do_fd_close` and commit `80cd795630d65` for
+motivation.
 
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/bindings/bindings_helper.h |  2 +
- rust/bindings/lib.rs            |  1 +
- rust/kernel/file.rs             |  3 ++
- rust/kernel/file/poll_table.rs  | 93 +++++++++++++++++++++++++++++++++
- rust/kernel/sync/condvar.rs     |  2 +-
- 5 files changed, 100 insertions(+), 1 deletion(-)
- create mode 100644 rust/kernel/file/poll_table.rs
+This is an implementation of `binder_deferred_fd_close` in Rust.
 
-diff --git a/rust/kernel/file/poll_table.rs b/rust/kernel/file/poll_table.rs
-new file mode 100644
-index 000000000000..d6d134355088
---- /dev/null
-+++ b/rust/kernel/file/poll_table.rs
-@@ -0,0 +1,93 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Utilities for working with `struct poll_table`.
-+
-+use crate::{
-+    bindings,
-+    file::File,
-+    prelude::*,
-+    sync::{CondVar, LockClassKey},
-+    types::Opaque,
-+};
-+use core::ops::Deref;
-+
-+/// Creates a [`PollCondVar`] initialiser with the given name and a newly-created lock class.
-+#[macro_export]
-+macro_rules! new_poll_condvar {
-+    ($($name:literal)?) => {
-+        $crate::file::PollCondVar::new($crate::optional_name!($($name)?), $crate::static_lock_class!())
-+    };
-+}
-+
-+/// Wraps the kernel's `struct poll_table`.
-+#[repr(transparent)]
-+pub struct PollTable(Opaque<bindings::poll_table>);
-+
-+impl PollTable {
-+    /// Creates a reference to a [`PollTable`] from a valid pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The caller must ensure that for the duration of 'a, the pointer will point at a valid poll
-+    /// table, and that it is only accessed via the returned reference.
-+    pub unsafe fn from_ptr<'a>(ptr: *mut bindings::poll_table) -> &'a mut PollTable {
-+        // SAFETY: The safety requirements guarantee the validity of the dereference, while the
-+        // `PollTable` type being transparent makes the cast ok.
-+        unsafe { &mut *ptr.cast() }
-+    }
-+
-+    fn get_qproc(&self) -> bindings::poll_queue_proc {
-+        let ptr = self.0.get();
-+        // SAFETY: The `ptr` is valid because it originates from a reference, and the `_qproc`
-+        // field is not modified concurrently with this call.
-+        unsafe { (*ptr)._qproc }
-+    }
-+
-+    /// Register this [`PollTable`] with the provided [`PollCondVar`], so that it can be notified
-+    /// using the condition variable.
-+    pub fn register_wait(&mut self, file: &File, cv: &PollCondVar) {
-+        if let Some(qproc) = self.get_qproc() {
-+            // SAFETY: The pointers to `self` and `file` are valid because they are references.
-+            //
-+            // Before the wait list is destroyed, the destructor of `PollCondVar` will clear
-+            // everything in the wait list, so the wait list is not used after it is freed.
-+            unsafe { qproc(file.0.get() as _, cv.wait_list.get(), self.0.get()) };
-+        }
-+    }
-+}
-+
-+/// A wrapper around [`CondVar`] that makes it usable with [`PollTable`].
-+///
-+/// [`CondVar`]: crate::sync::CondVar
-+#[pin_data(PinnedDrop)]
-+pub struct PollCondVar {
-+    #[pin]
-+    inner: CondVar,
-+}
-+
-+impl PollCondVar {
-+    /// Constructs a new condvar initialiser.
-+    #[allow(clippy::new_ret_no_self)]
-+    pub fn new(name: &'static CStr, key: &'static LockClassKey) -> impl PinInit<Self> {
-+        pin_init!(Self {
-+            inner <- CondVar::new(name, key),
-+        })
-+    }
-+}
-+
-+// Make the `CondVar` methods callable on `PollCondVar`.
-+impl Deref for PollCondVar {
-+    type Target = CondVar;
-+
-+    fn deref(&self) -> &CondVar {
-+        &self.inner
-+    }
-+}
-+
-+#[pinned_drop]
-+impl PinnedDrop for PollCondVar {
-+    fn drop(self: Pin<&mut Self>) {
-+        // Clear anything registered using `register_wait`.
-+        self.inner.notify(1, bindings::POLLHUP | bindings::POLLFREE);
-+    }
-+}
-diff --git a/rust/kernel/sync/condvar.rs b/rust/kernel/sync/condvar.rs
-index ed353399c4e5..699ecac2db89 100644
---- a/rust/kernel/sync/condvar.rs
-+++ b/rust/kernel/sync/condvar.rs
-@@ -144,7 +144,7 @@ pub fn wait_uninterruptible<T: ?Sized, B: Backend>(&self, guard: &mut Guard<'_,
-     }
- 
-     /// Calls the kernel function to notify the appropriate number of threads with the given flags.
--    fn notify(&self, count: i32, flags: u32) {
-+    pub(crate) fn notify(&self, count: i32, flags: u32) {
-         // SAFETY: `wait_list` points to valid memory.
-         unsafe {
-             bindings::__wake_up(
+I think the fact that binder needs to close fds in this way raises the
+question of how we want the Rust APIs for closing files to look.
+Apparently, fdget is not just used in easily reviewable regions, but
+also around things like the ioctl syscall, meaning that all ioctls must
+abide by the fdget safety requirements.
+
+ rust/bindings/bindings_helper.h |  2 +
+ rust/helpers.c                  |  7 +++
+ rust/kernel/file.rs             | 80 ++++++++++++++++++++++++++++++++-
+ 3 files changed, 88 insertions(+), 1 deletion(-)
+
 diff --git a/rust/kernel/file.rs b/rust/kernel/file.rs
-index 8ddf8f04ae0f..7281264cbaa1 100644
+index 7281264cbaa1..9b1f4efdf7ac 100644
 --- a/rust/kernel/file.rs
 +++ b/rust/kernel/file.rs
-@@ -13,6 +13,9 @@
+@@ -11,7 +11,8 @@
+     error::{code::*, Error, Result},
+     types::{ARef, AlwaysRefCounted, Opaque},
  };
- use core::{marker::PhantomData, ptr};
+-use core::{marker::PhantomData, ptr};
++use alloc::boxed::Box;
++use core::{alloc::AllocError, marker::PhantomData, mem, ptr};
  
-+mod poll_table;
-+pub use self::poll_table::{PollCondVar, PollTable};
+ mod poll_table;
+ pub use self::poll_table::{PollCondVar, PollTable};
+@@ -241,6 +242,83 @@ fn drop(&mut self) {
+     }
+ }
+ 
++/// Helper used for closing file descriptors in a way that is safe even if the file is currently
++/// held using `fdget`.
++///
++/// See comments on `binder_do_fd_close` and commit `80cd795630d65`.
++pub struct DeferredFdCloser {
++    inner: Box<DeferredFdCloserInner>,
++}
 +
- /// Flags associated with a [`File`].
- pub mod flags {
-     /// File is opened in append mode.
++/// SAFETY: This just holds an allocation with no real content, so there's no safety issue with
++/// moving it across threads.
++unsafe impl Send for DeferredFdCloser {}
++unsafe impl Sync for DeferredFdCloser {}
++
++#[repr(C)]
++struct DeferredFdCloserInner {
++    twork: mem::MaybeUninit<bindings::callback_head>,
++    file: *mut bindings::file,
++}
++
++impl DeferredFdCloser {
++    /// Create a new `DeferredFdCloser`.
++    pub fn new() -> Result<Self, AllocError> {
++        Ok(Self {
++            inner: Box::try_new(DeferredFdCloserInner {
++                twork: mem::MaybeUninit::uninit(),
++                file: core::ptr::null_mut(),
++            })?,
++        })
++    }
++
++    /// Schedule a task work that closes the file descriptor when this task returns to userspace.
++    pub fn close_fd(mut self, fd: u32) {
++        let file = unsafe { bindings::close_fd_get_file(fd) };
++        if !file.is_null() {
++            self.inner.file = file;
++
++            // SAFETY: Since DeferredFdCloserInner is `#[repr(C)]`, casting the pointers gives a
++            // pointer to the `twork` field.
++            let inner = Box::into_raw(self.inner) as *mut bindings::callback_head;
++
++            // SAFETY: Getting a pointer to current is always safe.
++            let current = unsafe { bindings::get_current() };
++            // SAFETY: The `file` pointer points at a valid file.
++            unsafe { bindings::get_file(file) };
++            // SAFETY: Due to the above `get_file`, even if the current task holds an `fdget` to
++            // this file right now, the refcount will not drop to zero until after it is released
++            // with `fdput`. This is because when using `fdget`, you must always use `fdput` before
++            // returning to userspace, and our task work runs after any `fdget` users have returned
++            // to user space.
++            //
++            // Note: fl_owner_t is currently a void pointer.
++            unsafe { bindings::filp_close(file, current as bindings::fl_owner_t) };
++            // SAFETY: The `inner` pointer is compatible with the `do_close_fd` method.
++            //
++            // The call to `task_work_add` can't fail, because we are scheduling the task work to
++            // the current task.
++            unsafe {
++                bindings::init_task_work(inner, Some(Self::do_close_fd));
++                bindings::task_work_add(current, inner, bindings::task_work_notify_mode_TWA_RESUME);
++            }
++        } else {
++            // Free the allocation.
++            drop(self.inner);
++        }
++    }
++
++    unsafe extern "C" fn do_close_fd(inner: *mut bindings::callback_head) {
++        // SAFETY: In `close_fd` we use this method together with a pointer that originates from a
++        // `Box<DeferredFdCloserInner>`, and we have just been given ownership of that allocation.
++        let inner = unsafe { Box::from_raw(inner as *mut DeferredFdCloserInner) };
++        // SAFETY: This drops a refcount we acquired in `close_fd`.
++        unsafe { bindings::fput(inner.file) };
++        // Free the allocation.
++        drop(inner);
++    }
++}
++
+ /// Represents the EBADF error code.
+ ///
+ /// Used for methods that can only fail with EBADF.
 diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index d89f0df93615..7d83e1a7a362 100644
+index 7d83e1a7a362..6d0d044fa8cd 100644
 --- a/rust/bindings/bindings_helper.h
 +++ b/rust/bindings/bindings_helper.h
-@@ -10,6 +10,7 @@
+@@ -8,6 +8,7 @@
+ 
+ #include <linux/cred.h>
  #include <linux/errname.h>
++#include <linux/fdtable.h>
  #include <linux/file.h>
  #include <linux/fs.h>
-+#include <linux/poll.h>
- #include <linux/security.h>
- #include <linux/slab.h>
+ #include <linux/poll.h>
+@@ -16,6 +17,7 @@
  #include <linux/refcount.h>
-@@ -19,3 +20,4 @@
+ #include <linux/wait.h>
+ #include <linux/sched.h>
++#include <linux/task_work.h>
+ 
  /* `bindgen` gets confused at certain things. */
  const gfp_t BINDINGS_GFP_KERNEL = GFP_KERNEL;
- const gfp_t BINDINGS___GFP_ZERO = __GFP_ZERO;
-+const __poll_t BINDINGS_POLLFREE = POLLFREE;
-diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
-index 9bcbea04dac3..eeb291cc60db 100644
---- a/rust/bindings/lib.rs
-+++ b/rust/bindings/lib.rs
-@@ -51,3 +51,4 @@ mod bindings_helper {
+diff --git a/rust/helpers.c b/rust/helpers.c
+index e13a7da430b1..d147ec5bc0a3 100644
+--- a/rust/helpers.c
++++ b/rust/helpers.c
+@@ -31,6 +31,7 @@
+ #include <linux/sched/signal.h>
+ #include <linux/security.h>
+ #include <linux/spinlock.h>
++#include <linux/task_work.h>
+ #include <linux/wait.h>
  
- pub const GFP_KERNEL: gfp_t = BINDINGS_GFP_KERNEL;
- pub const __GFP_ZERO: gfp_t = BINDINGS___GFP_ZERO;
-+pub const POLLFREE: __poll_t = BINDINGS_POLLFREE;
+ __noreturn void rust_helper_BUG(void)
+@@ -166,6 +167,12 @@ void rust_helper_security_cred_getsecid(const struct cred *c, u32 *secid)
+ EXPORT_SYMBOL_GPL(rust_helper_security_cred_getsecid);
+ #endif
+ 
++void rust_helper_init_task_work(struct callback_head *twork, task_work_func_t func)
++{
++	init_task_work(twork, func);
++}
++EXPORT_SYMBOL_GPL(rust_helper_init_task_work);
++
+ /*
+  * We use `bindgen`'s `--size_t-is-usize` option to bind the C `size_t` type
+  * as the Rust `usize` type, so we can use it in contexts where Rust
 -- 
 2.41.0.255.g8b1d071c50-goog
 
