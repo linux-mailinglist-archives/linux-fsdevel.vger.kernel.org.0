@@ -2,99 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B99B75B987
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 23:28:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D515875B9AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 23:39:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230106AbjGTV2P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jul 2023 17:28:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53728 "EHLO
+        id S230128AbjGTVjF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jul 2023 17:39:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230046AbjGTV2O (ORCPT
+        with ESMTP id S229528AbjGTVjE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jul 2023 17:28:14 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1599D271D;
-        Thu, 20 Jul 2023 14:28:09 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id d2e1a72fcca58-66872d4a141so892229b3a.1;
-        Thu, 20 Jul 2023 14:28:09 -0700 (PDT)
+        Thu, 20 Jul 2023 17:39:04 -0400
+Received: from mail-oo1-xc29.google.com (mail-oo1-xc29.google.com [IPv6:2607:f8b0:4864:20::c29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E52342711;
+        Thu, 20 Jul 2023 14:39:03 -0700 (PDT)
+Received: by mail-oo1-xc29.google.com with SMTP id 006d021491bc7-5634d8d1db0so897181eaf.0;
+        Thu, 20 Jul 2023 14:39:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689888489; x=1690493289;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Hy/9zTVZrlg7bbFpxkjr0lhxcNTNGSKdXmN/n9YFLY=;
-        b=nXxLfgmBt92XEDE8OP3OcE0nisAlc/Gi9Zse4iq73APm5A373sb6ySF1KTfOUa+QuX
-         ia3Xy59KQUF7gIB0hPoPjhSopV94TeiwDt/LztWRB6Qyz1jHNY1OozvVaE5RMQ9UdGw5
-         PMMWNQSNpVIxaxHNS4LWKSkQHzq5Z3SDiNLSXhdgHAc7DXvTGgH+4VKo2M8xFGbIHCXh
-         337Ve685ARtbWN8k2WWVvoDis4FS9zWIZ1LrAJA1fxWvbDhCuW9Dnu/E9PeGYaOXlPVE
-         kd4H7n4i3GLSfis0TrFmdjayzB65DGsbK8pheZGzu8z8qpliVRrp9gRaSAXgpDekRLO2
-         A4Nw==
+        d=gmail.com; s=20221208; t=1689889143; x=1690493943;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dYRT8gR63QqqutiXBMjJgTOolNJSeb3NYTp1ggZnVKs=;
+        b=VUKpGzl0QmLZoG4AixW1FNm6MZLVscI7HSnH+yQ2S69X9KvLvYNNcPWo+9fTGgG69C
+         XkWMW0FSBeM2JfnQeqf05ws31rzZNmsHAr6oXuR2TWdDTGbJhS1u0ooVFIM1X4mJOSva
+         AuaYKm6PwaLRzCaOL/kff4xXwUuNzPDMVBuvIxLnRfgwQNqQ0BE7ZGwdIPwe0mIxVM+U
+         tS3kBrn27axHlaGVlR7wg+RoJL50fwx3iNJmu+fjhlZkDZ09pR/3Pk6FzzsoWVyeKyZT
+         tafEnuzOm3ZOUMqDi3GzRPVfQk7PNwNw26gFNYHLCqsgwgOfG21mlqNZl0skPu45bRFI
+         IqIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689888489; x=1690493289;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Hy/9zTVZrlg7bbFpxkjr0lhxcNTNGSKdXmN/n9YFLY=;
-        b=Vv5d/iuJtL0/JPAiXPEaIoONslJdTQCxvegD6HWhtsgll2z8xBF+WGEcqpDh3gEzTZ
-         AKEm91N6GG4l91AqGlj6h3+dYnFehMz0FqPZ1nk/iQxqzEyHdWrPo+ikCm90IYh0lbjN
-         gNx3fqeYVqaFiSOHqqNGyI9v6OgkaOHC56uEkCySOD1gdESXAmuwgTsAOpnfq1IkkGUd
-         RQvUbdR1qSBRQs3BCXOjy+ZgEXG8MmBFOK7J/dYFEaH8rPZe+q16tR9+M6X0Hgi9RbEg
-         4924yAtaIVEYyGJoCJcngmaKKgxecgSpgZ5YygBrPlSPQ6icj5ll8kkXWgWF0EzMP3H5
-         AO7A==
-X-Gm-Message-State: ABy/qLagie0wXsFGlrs+hsxFv8ZUM3ZloOFgRfKJgT/DYY0uNqKi3pJ9
-        7xLWNgf0Ojua9Lqb2i7A0mM=
-X-Google-Smtp-Source: APBJJlG/e53j4EpED5Jwtfn4LkeoExV6FWkBmpJOuNFRNxz/SI2h0UOe64NVRwIQoof3O2DGaGflqQ==
-X-Received: by 2002:a05:6a20:2583:b0:135:10fd:31b0 with SMTP id k3-20020a056a20258300b0013510fd31b0mr109795pzd.15.1689888488716;
-        Thu, 20 Jul 2023 14:28:08 -0700 (PDT)
-Received: from localhost ([192.55.54.50])
-        by smtp.gmail.com with ESMTPSA id n2-20020a62e502000000b006826df9e286sm1637942pff.143.2023.07.20.14.28.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jul 2023 14:28:08 -0700 (PDT)
-Date:   Thu, 20 Jul 2023 14:28:06 -0700
-From:   Isaku Yamahata <isaku.yamahata@gmail.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl()
- for guest-specific backing memory
-Message-ID: <20230720212806.GG25699@ls.amr.corp.intel.com>
-References: <20230718234512.1690985-1-seanjc@google.com>
- <20230718234512.1690985-13-seanjc@google.com>
+        d=1e100.net; s=20221208; t=1689889143; x=1690493943;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dYRT8gR63QqqutiXBMjJgTOolNJSeb3NYTp1ggZnVKs=;
+        b=eCtj62K69IKKic66G7frMa+cFaQYhV0f3yZbVkOEPmmCqaRi0IK6E+cNgvBmcvML7B
+         tmA35fJ+EmKL+Eq9aAEaQYxiv1FiKSyrK+BgsK13316HiTfQWXBL39d2mO/8TXYfZUjB
+         ozNzqLv67FGzGZDzGYZ11zcEsVzIcTO9EB7NJLqMtgISygEZeNMMAojPyI/NixNWgDsI
+         XzfCCR4BKdaRHCIooKQTe0VgqBz/714kML81ob7u9Hoa7shOaMfxGWsaXw4qq7Wm3mz+
+         XFFqjL6GLxecAqTk/Kwj8L0Rb3FE+NQH4O+hSd1PGN6CXNvV8VLzuqe69CKp22DXh2n4
+         ln3A==
+X-Gm-Message-State: ABy/qLZKTrKf5LiOcIouqsG5sdHLh1+bg/OREJwG8IIuEo4Lo83JXugN
+        nRhNYQDgmFediAtQT/8HrCQSS742AC3u1I5WjOY=
+X-Google-Smtp-Source: APBJJlFkP7d8cztDg5vTHEWZqe100qSHRs8QuvUy5m3xEBh4upu9IXMIuup4mlqAcJscbYhC7cBhJQQCzzbZNb7BSw4=
+X-Received: by 2002:a4a:391b:0:b0:567:27f4:8c45 with SMTP id
+ m27-20020a4a391b000000b0056727f48c45mr93537ooa.8.1689889143157; Thu, 20 Jul
+ 2023 14:39:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230718234512.1690985-13-seanjc@google.com>
+References: <5f45bb9a-5e00-48dd-82b0-46b19b1b98a3@app.fastmail.com>
+ <CAHk-=wi8XyAUF9_z6-oa4Ava6PVZeE-=TVNcFK1puQHpOtqLLw@mail.gmail.com>
+ <ab7a9477-ddc7-430f-b4ee-c67251e879b0@app.fastmail.com> <2575F983-D170-4B79-A6BA-912D4ED2CC73@dubeyko.com>
+ <46F233BB-E587-4F2B-AA62-898EB46C9DCE@dubeyko.com> <Y7bw7X1Y5KtmPF5s@casper.infradead.org>
+ <50D6A66B-D994-48F4-9EBA-360E57A37BBE@dubeyko.com> <CACT4Y+aJb4u+KPAF7629YDb2tB2geZrQm5sFR3M+r2P1rgicwQ@mail.gmail.com>
+ <ZLlvII/jMPTT32ef@casper.infradead.org> <2d0bd58fb757e7771d13f82050a546ec5f7be8de.camel@physik.fu-berlin.de>
+ <ZLl2Fq35Ya0cNbIm@casper.infradead.org>
+In-Reply-To: <ZLl2Fq35Ya0cNbIm@casper.infradead.org>
+Reply-To: noloader@gmail.com
+From:   Jeffrey Walton <noloader@gmail.com>
+Date:   Thu, 20 Jul 2023 17:38:52 -0400
+Message-ID: <CAH8yC8=BwacXyFQret5pKVCzXXO0jLM_u9eW3bTdyPi4y8CSfw@mail.gmail.com>
+Subject: Re: [syzbot] [hfs?] WARNING in hfs_write_inode
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Viacheslav Dubeyko <slava@dubeyko.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        syzbot <syzbot+7bb7cd3595533513a9e7@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        christian.brauner@ubuntu.com,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        ZhangPeng <zhangpeng362@huawei.com>,
+        linux-m68k@lists.linux-m68k.org,
+        debian-ports <debian-ports@lists.debian.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -105,167 +90,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 04:44:55PM -0700,
-Sean Christopherson <seanjc@google.com> wrote:
+On Thu, Jul 20, 2023 at 2:39=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Thu, Jul 20, 2023 at 07:50:47PM +0200, John Paul Adrian Glaubitz wrote=
+:
+> > > Then we should delete the HFS/HFS+ filesystems.  They're orphaned in
+> > > MAINTAINERS and if distros are going to do such a damnfool thing,
+> > > then we must stop them.
+> >
+> > Both HFS and HFS+ work perfectly fine. And if distributions or users ar=
+e so
+> > sensitive about security, it's up to them to blacklist individual featu=
+res
+> > in the kernel.
+> >
+> > Both HFS and HFS+ have been the default filesystem on MacOS for 30 year=
+s
+> > and I don't think it's justified to introduce such a hard compatibility
+> > breakage just because some people are worried about theoretical evil
+> > maid attacks.
+> >
+> > HFS/HFS+ mandatory if you want to boot Linux on a classic Mac or PowerM=
+ac
+> > and I don't think it's okay to break all these systems running Linux.
+>
+> If they're so popular, then it should be no trouble to find somebody
+> to volunteer to maintain those filesystems.  Except they've been
+> marked as orphaned since 2011 and effectively were orphaned several
+> years before that (the last contribution I see from Roman Zippel is
+> in 2008, and his last contribution to hfs was in 2006).
 
-> +static int kvm_gmem_release(struct inode *inode, struct file *file)
-> +{
-> +	struct kvm_gmem *gmem = file->private_data;
-> +	struct kvm_memory_slot *slot;
-> +	struct kvm *kvm = gmem->kvm;
-> +	unsigned long index;
-> +
-> +	filemap_invalidate_lock(inode->i_mapping);
-> +
-> +	/*
-> +	 * Prevent concurrent attempts to *unbind* a memslot.  This is the last
-> +	 * reference to the file and thus no new bindings can be created, but
-> +	 * dereferencing the slot for existing bindings needs to be protected
-> +	 * against memslot updates, specifically so that unbind doesn't race
-> +	 * and free the memslot (kvm_gmem_get_file() will return NULL).
-> +	 */
-> +	mutex_lock(&kvm->slots_lock);
-> +
-> +	xa_for_each(&gmem->bindings, index, slot)
-> +		rcu_assign_pointer(slot->gmem.file, NULL);
-> +
-> +	synchronize_rcu();
-> +
-> +	/*
-> +	 * All in-flight operations are gone and new bindings can be created.
-> +	 * Zap all SPTEs pointed at by this file.  Do not free the backing
-> +	 * memory, as its lifetime is associated with the inode, not the file.
-> +	 */
-> +	kvm_gmem_invalidate_begin(gmem, 0, -1ul);
-> +	kvm_gmem_invalidate_end(gmem, 0, -1ul);
-> +
-> +	mutex_unlock(&kvm->slots_lock);
-> +
-> +	list_del(&gmem->entry);
-> +
-> +	filemap_invalidate_unlock(inode->i_mapping);
-> +
-> +	xa_destroy(&gmem->bindings);
-> +	kfree(gmem);
-> +
-> +	kvm_put_kvm(kvm);
-> +
-> +	return 0;
-> +}
+One data point may help.. I've been running Linux on an old PowerMac
+and an old Intel MacBook since about 2014 or 2015 or so. I have needed
+the HFS/HFS+ filesystem support for about 9 years now (including that
+"blessed" support for the Apple Boot partition).
 
-The lockdep complains with the filemapping lock and the kvm slot lock.
+There's never been a problem with Linux and the Apple filesystems.
+Maybe it speaks to the maturity/stability of the code that already
+exists. The code does not need a lot of attention nowadays.
 
+Maybe the orphaned status is the wrong metric to use to determine
+removal. Maybe a better metric would be installation base. I.e., how
+many users use the filesystem.
 
-From bc45eb084a761f93a87ba1f6d3a9949c17adeb31 Mon Sep 17 00:00:00 2001
-Message-Id: <bc45eb084a761f93a87ba1f6d3a9949c17adeb31.1689888438.git.isaku.yamahata@intel.com>
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-Date: Thu, 20 Jul 2023 14:16:21 -0700
-Subject: [PATCH] KVM/gmem: Fix locking ordering in kvm_gmem_release()
-
-The lockdep complains the locking order.  Fix kvm_gmem_release()
-
-VM destruction:
-- fput()
-   ...
-   \-kvm_gmem_release()
-     \-filemap_invalidate_lock(inode->i_mapping);
-       lock(&kvm->slots_lock);
-
-slot creation:
-kvm_set_memory_region()
-   mutex_lock(&kvm->slots_lock);
-   __kvm_set_memory_region(kvm, mem);
-    \-kvm_gmem_bind()
-      \-filemap_invalidate_lock(inode->i_mapping);
-
-======================================================
-WARNING: possible circular locking dependency detected
-------------------------------------------------------
-...
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (mapping.invalidate_lock#4){+.+.}-{4:4}:
-       ...
-       down_write+0x40/0xe0
-       kvm_gmem_bind+0xd9/0x1b0 [kvm]
-       __kvm_set_memory_region.part.0+0x4fc/0x620 [kvm]
-       __kvm_set_memory_region+0x6b/0x90 [kvm]
-       kvm_vm_ioctl+0x350/0xa00 [kvm]
-       __x64_sys_ioctl+0x95/0xd0
-       do_syscall_64+0x39/0x90
-       entry_SYSCALL_64_after_hwframe+0x6e/0xd8
-
--> #0 (&kvm->slots_lock){+.+.}-{4:4}:
-       ...
-       mutex_lock_nested+0x1b/0x30
-       kvm_gmem_release+0x56/0x1b0 [kvm]
-       __fput+0x115/0x2e0
-       ____fput+0xe/0x20
-       task_work_run+0x5e/0xb0
-       do_exit+0x2dd/0x5b0
-       do_group_exit+0x3b/0xb0
-       __x64_sys_exit_group+0x18/0x20
-       do_syscall_64+0x39/0x90
-       entry_SYSCALL_64_after_hwframe+0x6e/0xd8
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(mapping.invalidate_lock#4);
-                               lock(&kvm->slots_lock);
-                               lock(mapping.invalidate_lock#4);
-  lock(&kvm->slots_lock);
-
-Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
----
- virt/kvm/guest_mem.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/virt/kvm/guest_mem.c b/virt/kvm/guest_mem.c
-index ab91e972e699..772e4631fcd9 100644
---- a/virt/kvm/guest_mem.c
-+++ b/virt/kvm/guest_mem.c
-@@ -274,8 +274,6 @@ static int kvm_gmem_release(struct inode *inode, struct file *file)
- 	struct kvm *kvm = gmem->kvm;
- 	unsigned long index;
- 
--	filemap_invalidate_lock(inode->i_mapping);
--
- 	/*
- 	 * Prevent concurrent attempts to *unbind* a memslot.  This is the last
- 	 * reference to the file and thus no new bindings can be created, but
-@@ -285,6 +283,8 @@ static int kvm_gmem_release(struct inode *inode, struct file *file)
- 	 */
- 	mutex_lock(&kvm->slots_lock);
- 
-+	filemap_invalidate_lock(inode->i_mapping);
-+
- 	xa_for_each(&gmem->bindings, index, slot)
- 		rcu_assign_pointer(slot->gmem.file, NULL);
- 
-@@ -299,12 +299,12 @@ static int kvm_gmem_release(struct inode *inode, struct file *file)
- 	kvm_gmem_issue_arch_invalidate(gmem->kvm, file_inode(file), 0, -1ul);
- 	kvm_gmem_invalidate_end(gmem, 0, -1ul);
- 
--	mutex_unlock(&kvm->slots_lock);
--
- 	list_del(&gmem->entry);
- 
- 	filemap_invalidate_unlock(inode->i_mapping);
- 
-+	mutex_unlock(&kvm->slots_lock);
-+
- 	xa_destroy(&gmem->bindings);
- 	kfree(gmem);
- 
--- 
-2.25.1
-
-
-
--- 
-Isaku Yamahata <isaku.yamahata@gmail.com>
+Jeff
