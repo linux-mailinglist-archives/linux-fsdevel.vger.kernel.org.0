@@ -2,143 +2,270 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 189CA75B96E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 23:16:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B99B75B987
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 23:28:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230179AbjGTVQc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jul 2023 17:16:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50568 "EHLO
+        id S230106AbjGTV2P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jul 2023 17:28:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230094AbjGTVQb (ORCPT
+        with ESMTP id S230046AbjGTV2O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jul 2023 17:16:31 -0400
-Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BF32273E
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 14:16:26 -0700 (PDT)
-Received: by mail-ot1-x334.google.com with SMTP id 46e09a7af769-6b9b427b4fcso1021554a34.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 14:16:26 -0700 (PDT)
+        Thu, 20 Jul 2023 17:28:14 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1599D271D;
+        Thu, 20 Jul 2023 14:28:09 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id d2e1a72fcca58-66872d4a141so892229b3a.1;
+        Thu, 20 Jul 2023 14:28:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1689887785; x=1690492585;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qG+ThjVmfgJOgCEH3FGED5B6h6SrS5o6Axcjc3bwSOI=;
-        b=PlsOhuAwUTnsUHdCrAacS252UIxiMGOunaN7sjGqk6IdEDvWSfDkeAaUkUyPQ8TsWM
-         dSwDx1M0yS6cP18SL/J1e1PXgjFT+K9g6o5oDfjX5KtL6NSbkgGERWclg4dqpb5RXbRk
-         mgSxD4tswhi0vnWZ7QVrXYqDP0D8ob9/9QUQ6YAxjdxcpwGDgQkVMpn2oIljVP+8n250
-         Cvgx17BBdzoeGzK2qImORkfKCzx9ew4k1bBToLGVABe29MENH0fq/kJj3qouvSeuyZdO
-         /Z1VN2fJikHf9jRa4qnEkTjqz53WsvY8WrwXfru0TXBwVShYekLaJiGmdg8c8HjFud4b
-         s4CQ==
+        d=gmail.com; s=20221208; t=1689888489; x=1690493289;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9Hy/9zTVZrlg7bbFpxkjr0lhxcNTNGSKdXmN/n9YFLY=;
+        b=nXxLfgmBt92XEDE8OP3OcE0nisAlc/Gi9Zse4iq73APm5A373sb6ySF1KTfOUa+QuX
+         ia3Xy59KQUF7gIB0hPoPjhSopV94TeiwDt/LztWRB6Qyz1jHNY1OozvVaE5RMQ9UdGw5
+         PMMWNQSNpVIxaxHNS4LWKSkQHzq5Z3SDiNLSXhdgHAc7DXvTGgH+4VKo2M8xFGbIHCXh
+         337Ve685ARtbWN8k2WWVvoDis4FS9zWIZ1LrAJA1fxWvbDhCuW9Dnu/E9PeGYaOXlPVE
+         kd4H7n4i3GLSfis0TrFmdjayzB65DGsbK8pheZGzu8z8qpliVRrp9gRaSAXgpDekRLO2
+         A4Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689887785; x=1690492585;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qG+ThjVmfgJOgCEH3FGED5B6h6SrS5o6Axcjc3bwSOI=;
-        b=YNoQNpPDUBeZCFofjMiwA5Kxg6O3yOLLG5BjpZ+izdOzqwX9ifI+6nd1+8Fl9vASTF
-         t0dXLqUtK8bQEw6qfWAN4gyNxYfYrsjhVT4LJ3aR25Hacrz8rlt6ed4BeRlLQxpTH6pG
-         Zx0AJRIUufHXPU9HM0sebRJGaI0qeJ19+lQxcSj/ujdGvWi/3itl5k4FUANd511LYNUG
-         ptpWyMrNar5S/GLSMtsauHRA5K1CHGTu2hJC6xIj4fBT3xkrxdUGzSFN8MzJdPzFM15f
-         pzdU/WHHRiZubJZf/d85I/MOkc6du2YMu8z98LcsKOXuEceScndMaEb4c1mZFtVJSH+Z
-         TvMQ==
-X-Gm-Message-State: ABy/qLbJpItrw71mC3B5WjUPgI3AaA25oFWMN6KfORlPkWe0I+hu/JQl
-        2Iv9v5XZI6SSRvrcpCAc7Tc3zwFlNxUl8RvzUyiL
-X-Google-Smtp-Source: APBJJlEhgxTXc1qyzkAvHpHuXwIG3OtHxUZ6QwrqTdkR8L2OyhsuJu/aP2P2r4S2KF4Tr6uErZhsPZjFCuLra+hXwe4=
-X-Received: by 2002:aca:1218:0:b0:3a4:8e9b:e5cb with SMTP id
- 24-20020aca1218000000b003a48e9be5cbmr84720ois.1.1689887785358; Thu, 20 Jul
- 2023 14:16:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230719075127.47736-1-wangkefeng.wang@huawei.com>
- <20230719075127.47736-4-wangkefeng.wang@huawei.com> <CAJ2a_DfGvPeDuN38UBXD4f2928n9GZpHFgdiPo9MoSAY7YXeOg@mail.gmail.com>
- <dc8223db-b4ac-7bee-6f89-63475a7dcaf8@huawei.com> <CAHC9VhQzJ3J0kEymDUn3i+dnP_34GMNRjaCHXc4oddUCFb0Ygw@mail.gmail.com>
- <1e839238-c78d-71e0-28ae-7efff0e04953@huawei.com>
-In-Reply-To: <1e839238-c78d-71e0-28ae-7efff0e04953@huawei.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 20 Jul 2023 17:16:14 -0400
-Message-ID: <CAHC9VhRBxQmxegjLQ73J7zMOTpsOOBTj9PwZ6BptV=6ToC+1BA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] selinux: use vma_is_initial_stack() and vma_is_initial_heap()
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+        d=1e100.net; s=20221208; t=1689888489; x=1690493289;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9Hy/9zTVZrlg7bbFpxkjr0lhxcNTNGSKdXmN/n9YFLY=;
+        b=Vv5d/iuJtL0/JPAiXPEaIoONslJdTQCxvegD6HWhtsgll2z8xBF+WGEcqpDh3gEzTZ
+         AKEm91N6GG4l91AqGlj6h3+dYnFehMz0FqPZ1nk/iQxqzEyHdWrPo+ikCm90IYh0lbjN
+         gNx3fqeYVqaFiSOHqqNGyI9v6OgkaOHC56uEkCySOD1gdESXAmuwgTsAOpnfq1IkkGUd
+         RQvUbdR1qSBRQs3BCXOjy+ZgEXG8MmBFOK7J/dYFEaH8rPZe+q16tR9+M6X0Hgi9RbEg
+         4924yAtaIVEYyGJoCJcngmaKKgxecgSpgZ5YygBrPlSPQ6icj5ll8kkXWgWF0EzMP3H5
+         AO7A==
+X-Gm-Message-State: ABy/qLagie0wXsFGlrs+hsxFv8ZUM3ZloOFgRfKJgT/DYY0uNqKi3pJ9
+        7xLWNgf0Ojua9Lqb2i7A0mM=
+X-Google-Smtp-Source: APBJJlG/e53j4EpED5Jwtfn4LkeoExV6FWkBmpJOuNFRNxz/SI2h0UOe64NVRwIQoof3O2DGaGflqQ==
+X-Received: by 2002:a05:6a20:2583:b0:135:10fd:31b0 with SMTP id k3-20020a056a20258300b0013510fd31b0mr109795pzd.15.1689888488716;
+        Thu, 20 Jul 2023 14:28:08 -0700 (PDT)
+Received: from localhost ([192.55.54.50])
+        by smtp.gmail.com with ESMTPSA id n2-20020a62e502000000b006826df9e286sm1637942pff.143.2023.07.20.14.28.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jul 2023 14:28:08 -0700 (PDT)
+Date:   Thu, 20 Jul 2023 14:28:06 -0700
+From:   Isaku Yamahata <isaku.yamahata@gmail.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
-        selinux@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl()
+ for guest-specific backing memory
+Message-ID: <20230720212806.GG25699@ls.amr.corp.intel.com>
+References: <20230718234512.1690985-1-seanjc@google.com>
+ <20230718234512.1690985-13-seanjc@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230718234512.1690985-13-seanjc@google.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 20, 2023 at 4:28=E2=80=AFAM Kefeng Wang <wangkefeng.wang@huawei=
-.com> wrote:
-> On 2023/7/19 23:25, Paul Moore wrote:
-> > On Wed, Jul 19, 2023 at 6:23=E2=80=AFAM Kefeng Wang <wangkefeng.wang@hu=
-awei.com> wrote:
-> >> On 2023/7/19 17:02, Christian G=C3=B6ttsche wrote:
-> >>> On Wed, 19 Jul 2023 at 09:40, Kefeng Wang <wangkefeng.wang@huawei.com=
-> wrote:
-> >>>>
-> >>>> Use the helpers to simplify code.
-> >>>>
-> >>>> Cc: Paul Moore <paul@paul-moore.com>
-> >>>> Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-> >>>> Cc: Eric Paris <eparis@parisplace.org>
-> >>>> Acked-by: Paul Moore <paul@paul-moore.com>
-> >>>> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> >>>> ---
-> >>>>    security/selinux/hooks.c | 7 ++-----
-> >>>>    1 file changed, 2 insertions(+), 5 deletions(-)
-> >>>>
-> >>>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> >>>> index d06e350fedee..ee8575540a8e 100644
-> >>>> --- a/security/selinux/hooks.c
-> >>>> +++ b/security/selinux/hooks.c
-> >>>> @@ -3762,13 +3762,10 @@ static int selinux_file_mprotect(struct vm_a=
-rea_struct *vma,
-> >>>>           if (default_noexec &&
-> >>>>               (prot & PROT_EXEC) && !(vma->vm_flags & VM_EXEC)) {
-> >>>>                   int rc =3D 0;
-> >>>> -               if (vma->vm_start >=3D vma->vm_mm->start_brk &&
-> >>>> -                   vma->vm_end <=3D vma->vm_mm->brk) {
-> >>>> +               if (vma_is_initial_heap(vma)) {
-> >>>
-> >>> This seems to change the condition from
-> >>>
-> >>>       vma->vm_start >=3D vma->vm_mm->start_brk && vma->vm_end <=3D vm=
-a->vm_mm->brk
-> >>>
-> >>> to
-> >>>
-> >>>       vma->vm_start <=3D vma->vm_mm->brk && vma->vm_end >=3D vma->vm_=
-mm->start_brk
-> >>>
-> >>> (or AND arguments swapped)
-> >>>
-> >>>       vma->vm_end >=3D vma->vm_mm->start_brk && vma->vm_start <=3D vm=
-a->vm_mm->brk
-> >>>
-> >>> Is this intended?
-> >>
-> >> The new condition is to check whether there is intersection between
-> >> [startbrk,brk] and [vm_start,vm_end], it contains orignal check, so
-> >> I think it is ok, but for selinux check, I am not sure if there is
-> >> some other problem.
-> >
-> > This particular SELinux vma check is see if the vma falls within the
-> > heap; can you confirm that this change preserves this?
->
-> Yes, within is one case of new vma scope check.
+On Tue, Jul 18, 2023 at 04:44:55PM -0700,
+Sean Christopherson <seanjc@google.com> wrote:
 
-Thanks for the confirmation.
+> +static int kvm_gmem_release(struct inode *inode, struct file *file)
+> +{
+> +	struct kvm_gmem *gmem = file->private_data;
+> +	struct kvm_memory_slot *slot;
+> +	struct kvm *kvm = gmem->kvm;
+> +	unsigned long index;
+> +
+> +	filemap_invalidate_lock(inode->i_mapping);
+> +
+> +	/*
+> +	 * Prevent concurrent attempts to *unbind* a memslot.  This is the last
+> +	 * reference to the file and thus no new bindings can be created, but
+> +	 * dereferencing the slot for existing bindings needs to be protected
+> +	 * against memslot updates, specifically so that unbind doesn't race
+> +	 * and free the memslot (kvm_gmem_get_file() will return NULL).
+> +	 */
+> +	mutex_lock(&kvm->slots_lock);
+> +
+> +	xa_for_each(&gmem->bindings, index, slot)
+> +		rcu_assign_pointer(slot->gmem.file, NULL);
+> +
+> +	synchronize_rcu();
+> +
+> +	/*
+> +	 * All in-flight operations are gone and new bindings can be created.
+> +	 * Zap all SPTEs pointed at by this file.  Do not free the backing
+> +	 * memory, as its lifetime is associated with the inode, not the file.
+> +	 */
+> +	kvm_gmem_invalidate_begin(gmem, 0, -1ul);
+> +	kvm_gmem_invalidate_end(gmem, 0, -1ul);
+> +
+> +	mutex_unlock(&kvm->slots_lock);
+> +
+> +	list_del(&gmem->entry);
+> +
+> +	filemap_invalidate_unlock(inode->i_mapping);
+> +
+> +	xa_destroy(&gmem->bindings);
+> +	kfree(gmem);
+> +
+> +	kvm_put_kvm(kvm);
+> +
+> +	return 0;
+> +}
 
---=20
-paul-moore.com
+The lockdep complains with the filemapping lock and the kvm slot lock.
+
+
+From bc45eb084a761f93a87ba1f6d3a9949c17adeb31 Mon Sep 17 00:00:00 2001
+Message-Id: <bc45eb084a761f93a87ba1f6d3a9949c17adeb31.1689888438.git.isaku.yamahata@intel.com>
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+Date: Thu, 20 Jul 2023 14:16:21 -0700
+Subject: [PATCH] KVM/gmem: Fix locking ordering in kvm_gmem_release()
+
+The lockdep complains the locking order.  Fix kvm_gmem_release()
+
+VM destruction:
+- fput()
+   ...
+   \-kvm_gmem_release()
+     \-filemap_invalidate_lock(inode->i_mapping);
+       lock(&kvm->slots_lock);
+
+slot creation:
+kvm_set_memory_region()
+   mutex_lock(&kvm->slots_lock);
+   __kvm_set_memory_region(kvm, mem);
+    \-kvm_gmem_bind()
+      \-filemap_invalidate_lock(inode->i_mapping);
+
+======================================================
+WARNING: possible circular locking dependency detected
+------------------------------------------------------
+...
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (mapping.invalidate_lock#4){+.+.}-{4:4}:
+       ...
+       down_write+0x40/0xe0
+       kvm_gmem_bind+0xd9/0x1b0 [kvm]
+       __kvm_set_memory_region.part.0+0x4fc/0x620 [kvm]
+       __kvm_set_memory_region+0x6b/0x90 [kvm]
+       kvm_vm_ioctl+0x350/0xa00 [kvm]
+       __x64_sys_ioctl+0x95/0xd0
+       do_syscall_64+0x39/0x90
+       entry_SYSCALL_64_after_hwframe+0x6e/0xd8
+
+-> #0 (&kvm->slots_lock){+.+.}-{4:4}:
+       ...
+       mutex_lock_nested+0x1b/0x30
+       kvm_gmem_release+0x56/0x1b0 [kvm]
+       __fput+0x115/0x2e0
+       ____fput+0xe/0x20
+       task_work_run+0x5e/0xb0
+       do_exit+0x2dd/0x5b0
+       do_group_exit+0x3b/0xb0
+       __x64_sys_exit_group+0x18/0x20
+       do_syscall_64+0x39/0x90
+       entry_SYSCALL_64_after_hwframe+0x6e/0xd8
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(mapping.invalidate_lock#4);
+                               lock(&kvm->slots_lock);
+                               lock(mapping.invalidate_lock#4);
+  lock(&kvm->slots_lock);
+
+Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+---
+ virt/kvm/guest_mem.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/virt/kvm/guest_mem.c b/virt/kvm/guest_mem.c
+index ab91e972e699..772e4631fcd9 100644
+--- a/virt/kvm/guest_mem.c
++++ b/virt/kvm/guest_mem.c
+@@ -274,8 +274,6 @@ static int kvm_gmem_release(struct inode *inode, struct file *file)
+ 	struct kvm *kvm = gmem->kvm;
+ 	unsigned long index;
+ 
+-	filemap_invalidate_lock(inode->i_mapping);
+-
+ 	/*
+ 	 * Prevent concurrent attempts to *unbind* a memslot.  This is the last
+ 	 * reference to the file and thus no new bindings can be created, but
+@@ -285,6 +283,8 @@ static int kvm_gmem_release(struct inode *inode, struct file *file)
+ 	 */
+ 	mutex_lock(&kvm->slots_lock);
+ 
++	filemap_invalidate_lock(inode->i_mapping);
++
+ 	xa_for_each(&gmem->bindings, index, slot)
+ 		rcu_assign_pointer(slot->gmem.file, NULL);
+ 
+@@ -299,12 +299,12 @@ static int kvm_gmem_release(struct inode *inode, struct file *file)
+ 	kvm_gmem_issue_arch_invalidate(gmem->kvm, file_inode(file), 0, -1ul);
+ 	kvm_gmem_invalidate_end(gmem, 0, -1ul);
+ 
+-	mutex_unlock(&kvm->slots_lock);
+-
+ 	list_del(&gmem->entry);
+ 
+ 	filemap_invalidate_unlock(inode->i_mapping);
+ 
++	mutex_unlock(&kvm->slots_lock);
++
+ 	xa_destroy(&gmem->bindings);
+ 	kfree(gmem);
+ 
+-- 
+2.25.1
+
+
+
+-- 
+Isaku Yamahata <isaku.yamahata@gmail.com>
