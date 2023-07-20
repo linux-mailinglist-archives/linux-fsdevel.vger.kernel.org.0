@@ -2,54 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 99E4275A80E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 09:43:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9574975A832
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 09:51:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231689AbjGTHno (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jul 2023 03:43:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60904 "EHLO
+        id S231759AbjGTHu6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jul 2023 03:50:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231685AbjGTHnf (ORCPT
+        with ESMTP id S231336AbjGTHu5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jul 2023 03:43:35 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D0F02D4A;
-        Thu, 20 Jul 2023 00:43:21 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0CA3E618F6;
-        Thu, 20 Jul 2023 07:43:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3FBDC433C8;
-        Thu, 20 Jul 2023 07:43:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689839000;
-        bh=wkKDK2+s1pOg2JvqCSmY6SM9Z1YuLDwx2K3C/NKe7xI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eizBjjVGnO2vg1Tt2xjCxt2izjubXLk5XoIzez+G7NV6q1Pov2b3Jowbwu6LF+wXa
-         DNbJBORvYQCs0/CSWTrRQCmYn6FsD3maICWoXOwort8kKP5IwPbtFXh0cPUvhaD40s
-         ExnEkERouBZ6IjvHtIe0E+mUHUFZGymwvdhnJCHYdompFyjMBUL9wWaF6UroxpCZqR
-         Dcf1rsRIHmOSHhnxJooVrw450EAg1dAqIDazslQUWsPdBfInFNqjaoEzFkfSmavNZK
-         WkRV1J2XALtQTXEZC0xXWSOWH7LG+fDbExR5IFjiJMxBKUO/yvbkRuAfAebaoIjELj
-         0C2zvsGLMPibA==
-Date:   Thu, 20 Jul 2023 00:43:18 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Gabriel Krisman Bertazi <krisman@suse.de>
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
-        jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v3 0/7] Support negative dentries on case-insensitive
- ext4 and f2fs
-Message-ID: <20230720074318.GA56170@sol.localdomain>
-References: <20230719221918.8937-1-krisman@suse.de>
+        Thu, 20 Jul 2023 03:50:57 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1BB12128;
+        Thu, 20 Jul 2023 00:50:55 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 7C7756732D; Thu, 20 Jul 2023 09:50:50 +0200 (CEST)
+Date:   Thu, 20 Jul 2023 09:50:50 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Nitesh Shetty <nj.shetty@samsung.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        willy@infradead.org, hare@suse.de, djwong@kernel.org,
+        bvanassche@acm.org, ming.lei@redhat.com, dlemoal@kernel.org,
+        nitheshshetty@gmail.com, gost.dev@samsung.com,
+        Vincent Fu <vincent.fu@samsung.com>,
+        Anuj Gupta <anuj20.g@samsung.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v13 3/9] block: add emulation for copy
+Message-ID: <20230720075050.GB5042@lst.de>
+References: <20230627183629.26571-1-nj.shetty@samsung.com> <CGME20230627184020epcas5p13fdcea52edead5ffa3fae444f923439e@epcas5p1.samsung.com> <20230627183629.26571-4-nj.shetty@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230719221918.8937-1-krisman@suse.de>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+In-Reply-To: <20230627183629.26571-4-nj.shetty@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,34 +54,62 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sorry, one more thing...
+> +static void *blkdev_copy_alloc_buf(sector_t req_size, sector_t *alloc_size,
+> +		gfp_t gfp_mask)
+> +{
+> +	int min_size = PAGE_SIZE;
+> +	void *buf;
+> +
+> +	while (req_size >= min_size) {
+> +		buf = kvmalloc(req_size, gfp_mask);
+> +		if (buf) {
+> +			*alloc_size = req_size;
+> +			return buf;
+> +		}
+> +		/* retry half the requested size */
+> +		req_size >>= 1;
+> +	}
+> +
+> +	return NULL;
 
-On Wed, Jul 19, 2023 at 06:19:11PM -0400, Gabriel Krisman Bertazi wrote:
-> 
-> Another problem exists when turning a negative dentry to positive.  If
-> the negative dentry has a different case than what is currently being
-> used for lookup, the dentry cannot be reused without changing its name,
-> in order to guarantee filename-preserving semantics to userspace.  We
-> need to either change the name or invalidate the dentry. This issue is
-> currently avoided in mainline, since the negative dentry mechanism is
-> disabled.
+Is there any good reason for using vmalloc instead of a bunch
+of distcontiguous pages?
 
-Are you sure this problem even needs to be solved?
+> +		ctx = kzalloc(sizeof(struct copy_ctx), gfp_mask);
+> +		if (!ctx)
+> +			goto err_ctx;
 
-It actually isn't specific to negative dentries.  If you have a file "foo"
-that's not in the dcache, and you open it (or look it up in any other way) as
-"FOO", then the positive dentry that gets created is named "FOO".
+I'd suspect it would be better to just allocte a single buffer and
+only have a single outstanding copy.  That will reduce the bandwith
+you can theoretically get, but copies tend to be background operations
+anyway.  It will reduce the required memory, and thus the chance for
+this operation to fail on a loaded system.  It will also dramatically
+reduce the effect on memory managment.
 
-As a result, the name that shows up in /proc/$pid/fd/ for anyone who has the
-file open is "FOO", not the true name "foo".  This is true even for processes
-that open it as "foo", as long as the dentry remains in the dcache.
+> +		read_bio = bio_map_kern(in, buf, buf_len, gfp_mask);
+> +		if (IS_ERR(read_bio))
+> +			goto err_read_bio;
+> +
+> +		write_bio = bio_map_kern(out, buf, buf_len, gfp_mask);
+> +		if (IS_ERR(write_bio))
+> +			goto err_write_bio;
 
-No negative dentries involved at all!
+bio_map_kern is only for passthrough I/Os.  You need to use
+a bio_add_page loop here.
 
-Is your thinking that you just don't want to increase the number of ways in
-which this behavior can occur?
+> index 336146798e56..f8c80940c7ad 100644
+> --- a/include/linux/blk_types.h
+> +++ b/include/linux/blk_types.h
+> @@ -562,4 +562,9 @@ struct cio {
+>  	atomic_t refcount;
+>  };
+>  
+> +struct copy_ctx {
+> +	struct cio *cio;
+> +	struct work_struct dispatch_work;
+> +	struct bio *write_bio;
+> +};
 
-Or, it looks like the positive dentry case is solvable using d_add_ci().
-So maybe you are planning to do that?  It's not clear to me.
+This is misnamed as it's only used by the fallback code, and also
+should be private to blk-lib.c.
 
-- Eric
