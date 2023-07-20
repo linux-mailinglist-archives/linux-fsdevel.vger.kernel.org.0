@@ -2,67 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6360075AD9B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 13:57:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66C8675ADC8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 14:07:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231216AbjGTL5a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jul 2023 07:57:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54280 "EHLO
+        id S231631AbjGTMG7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jul 2023 08:06:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230226AbjGTL53 (ORCPT
+        with ESMTP id S231617AbjGTMG6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jul 2023 07:57:29 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D71CA10CB;
-        Thu, 20 Jul 2023 04:57:28 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-99357737980so127795466b.2;
-        Thu, 20 Jul 2023 04:57:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689854247; x=1690459047;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YEIUFqZ8/Bo/7OzswG7WehHeVU6nxJVjchlFmBJN/gc=;
-        b=sab3O3jQd+CYRloP7X1t93c1kiFsTEZMeKDriFob1uWehLbaMPJ+g2pWNgohwFwh0x
-         oAJ8KmaC+OUVyt2n9kzP+MW98HQAlGrq08ZbSx4L89P3tvD7Bzq5WGS2vhJZxfJ9zdpg
-         6aiiUlRvxYhbTm5ZkeInx8OAFeuKXreaWRLT+j1RbWse+ynByELtOsPyalFMu4boPT8O
-         fCzDsc/IkW9VlU9WT5J25rF22j8kpjBGdnLHm3R95HKg/7jofdJGa/XPqGJUlhRzAvd9
-         EEtwfheOkWWWut6YTMfP3gIpgdMfUCywCGSW700nbP0hfM8hW87xRzq4D6xtc/SpFPx+
-         QrgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689854247; x=1690459047;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YEIUFqZ8/Bo/7OzswG7WehHeVU6nxJVjchlFmBJN/gc=;
-        b=doxIELDLJcVbRF66q93X2P6Sp85dUpe1Vojz2Uuw/M+BRbVZdBhvRYDuuQKi7QXay1
-         2o/uA5e+JYwfMy+J/IzVTLhuNibtGC+a1VwXbmFtxne4iMK2CdDJf1+U4mS7rM+NY48h
-         EFgd1lzlDUTpxypfRgzo+30ZdBzS2bi4u0fkl5pjUCbeEtorIXNdOQPVWut3Pqn4ffqm
-         TIlT7Hsiiu6GetHeH+H3REqdnKGIT+rC06vvNHJRLDMcIEeD4mVQY45Z6n4Hdk8bnkdX
-         8gsvQIGBwgbTIOp3sBheV0uv+U8Av0AIs9wf6h1M2UQEOYGoXPc7WQ55ONiB/OrZsCry
-         3c4A==
-X-Gm-Message-State: ABy/qLay1BgR2XjZtfYdzBuBzikCK7+INDq5mMh4+F1GuVzvJW3tIn1T
-        QKQHdV3t+gFAn8khQLtOniPDOVietujsTVETXEZjqO6nlInZzw==
-X-Google-Smtp-Source: APBJJlEoHj71E+vGYJG8JbpB0Axw6SNrU+WwCO42wG0fT6uXmh4s5Fs8rHDoYtAI8FCj5BDLDCAw0GN8uFKmw+ifjsg=
-X-Received: by 2002:a17:906:158:b0:99b:40b5:1c3b with SMTP id
- 24-20020a170906015800b0099b40b51c3bmr4219040ejh.57.1689854247186; Thu, 20 Jul
- 2023 04:57:27 -0700 (PDT)
+        Thu, 20 Jul 2023 08:06:58 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F7751711;
+        Thu, 20 Jul 2023 05:06:55 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id DDB576732D; Thu, 20 Jul 2023 14:06:50 +0200 (CEST)
+Date:   Thu, 20 Jul 2023 14:06:50 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Hannes Reinecke <hare@suse.de>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 16/17] block: use iomap for writes to block devices
+Message-ID: <20230720120650.GA13266@lst.de>
+References: <20230424054926.26927-1-hch@lst.de> <20230424054926.26927-17-hch@lst.de> <b96b397e-2f5e-7910-3bb3-7405d0e293a7@suse.de>
 MIME-Version: 1.0
-References: <20230720115445.15583-1-piotr.siminski@globallogic.com>
-In-Reply-To: <20230720115445.15583-1-piotr.siminski@globallogic.com>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Thu, 20 Jul 2023 13:57:18 +0200
-Message-ID: <CAKXUXMzL4i0jT0xPFsV4ZG6L82yDCYLtKoUL7t=21ZDZ4OMY7w@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: change reiserfs status to obsolete
-To:     Piotr Siminski <piotr.siminski@globallogic.com>,
-        Jan Kara <jack@suse.cz>
-Cc:     reiserfs-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b96b397e-2f5e-7910-3bb3-7405d0e293a7@suse.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,40 +48,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Piotr, thanks for the clean up in the MAINTAINERS file.
+On Fri, May 19, 2023 at 04:22:01PM +0200, Hannes Reinecke wrote:
+> I'm hitting this during booting:
+> [    5.016324]  <TASK>
+> [    5.030256]  iomap_iter+0x11a/0x350
+> [    5.030264]  iomap_readahead+0x1eb/0x2c0
+> [    5.030272]  read_pages+0x5d/0x220
+> [    5.030279]  page_cache_ra_unbounded+0x131/0x180
+> [    5.030284]  filemap_get_pages+0xff/0x5a0
+> [    5.030292]  filemap_read+0xca/0x320
+> [    5.030296]  ? aa_file_perm+0x126/0x500
+> [    5.040216]  ? touch_atime+0xc8/0x150
+> [    5.040224]  blkdev_read_iter+0xb0/0x150
+> [    5.040228]  vfs_read+0x226/0x2d0
+> [    5.040234]  ksys_read+0xa5/0xe0
+> [    5.040238]  do_syscall_64+0x5b/0x80
+>
+> Maybe we should consider this patch:
 
-Reviewed-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+As willy said this should be taken care of by the i_size check.
+Did you run with just this patch set or some of the large block
+size experiments on top which might change the variables?
 
-Jan, could you pick this patch?
-
-Lukas
-
-
-On Thu, Jul 20, 2023 at 1:54=E2=80=AFPM Piotr Siminski
-<piotr.siminski@globallogic.com> wrote:
->
-> Reiserfs file system is no longer supported and is going to be removed
-> in 2025 as stated in commit eb103a51640e ("reiserfs: Deprecate reiserfs")=
-.
->
-> Signed-off-by: Piotr Siminski <piotr.siminski@globallogic.com>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a5c16bb92fe2..c340c6fc7923 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18064,7 +18064,7 @@ F:      include/linux/regmap.h
->
->  REISERFS FILE SYSTEM
->  L:     reiserfs-devel@vger.kernel.org
-> -S:     Supported
-> +S:     Obsolete
->  F:     fs/reiserfs/
->
->  REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM
-> --
-> 2.34.1
->
+I'll repost the series today without any chances in the area, and
+if you can reproduce it with just that series we need to root
+cause it, so please send your kernel and VM config along for the
+next report.
