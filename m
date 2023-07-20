@@ -2,52 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4877D75A2F5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 01:52:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28B7C75A2F9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 02:00:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229628AbjGSXw4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Jul 2023 19:52:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43882 "EHLO
+        id S229591AbjGTAAk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Jul 2023 20:00:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbjGSXw4 (ORCPT
+        with ESMTP id S229450AbjGTAAj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Jul 2023 19:52:56 -0400
-Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 580A1E69
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 16:52:55 -0700 (PDT)
-Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-560c7abdbdcso460161eaf.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 16:52:55 -0700 (PDT)
+        Wed, 19 Jul 2023 20:00:39 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 720E0172D
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 17:00:38 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-991ef0b464cso298261966b.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 17:00:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1689811237; x=1690416037;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=COIx9PJNSvI0bd/8+R1trZjf1/QUjd+w4gApApqhVyk=;
+        b=XLfa24sTCoY1wCmDjlNQ277e/jCHs0bjYQHPTQnrW+oGdycu9T1/orUS5RJJlyx2oX
+         3eRa8H1zmNVPOmNC2S/Khmb9MDc4h+kN4V82M+7PkecVSGPPyAISs79J6UkLT7sXQuW6
+         /7axDHNfB9I/y4mOqp+yQyT+8jCvO6wQYdZF0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689810774; x=1692402774;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A9gJwVZwzQg0baOMHo3naKFdZASs/9RCrT4IGNjRFMc=;
-        b=ZWT+5DDT2j/c+iPqykEeuMQH6WRcw6g1JGy7MeQdoPa1bCporgcwKFo1CygCuA5mZL
-         cdDF10aTXQPOmH1jy53urg5jZbpoWT0I/7RKFKzZvNc2WprFkXpIGzxkKuBpGMmBgQ1V
-         GnOelb8f8gz57k7CTDSgWGI4uZaiEhu2ggqw3foAWX1vmvLBIZrvj0Z2tdRSsKl5+5pc
-         z8AGEFq2aKo0L+VLlDieJlAI0fhsnI/NIme3E8iT/YzLeLDubihSW9Xu5o7ZlMJFX5Ai
-         37cMgJw8YsNrtgKr71u//cGy0c6WpQYCk+zDus/G1dJWlbrAL0Rr+cOeJJWMbe9iXK0p
-         gnXA==
-X-Gm-Message-State: ABy/qLa0ByOPuP923U1+ubEN1aCwIO3s1wIylRGwv9pwISRucoARI8p3
-        npA3fRCLvUx5F2ZBpVFpwcAfvwGH6U8QYv81nI6Dr4Ko25sd8+4=
-X-Google-Smtp-Source: APBJJlF3aS+sqsqnzDE8uhYbIzzKieuKgZfPG27IJi0z++r3NRFpF4nI8tTNRI4l65VIRweYXLw4hXHCqKFpqjH2f6jRroFGM3d9
+        d=1e100.net; s=20221208; t=1689811237; x=1690416037;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=COIx9PJNSvI0bd/8+R1trZjf1/QUjd+w4gApApqhVyk=;
+        b=VDnXzz9NY+83uO6pk6oxdGw5vVYOUIJG3rgZZVXvfYvR2/mdyCxdlkjae0iTZh9rc7
+         Ph7JFMQlWEDNAubKHjcUqvnfez680KDVIAnQruJ0lI4ZPvNdlgVdXTc+Q51e8GU1uajp
+         too0EJoIVz0txX4Psl5QKL48M+Hr4ejHg47siHVNbJchjgz1QB9jClcj1VYlG46wDKN1
+         QOaRSdkr3FckcojYUDLhsgVVllcj67/rOZY1JcbDjvAZGfH2kcRR/HFb2TWIw/+dIjGB
+         B7xWqQ45HpS21P0Pf20vDshVhwKABs43StzrCkdS2tClYrnto7fwUbyvxkaI2xpFqfLn
+         gfEA==
+X-Gm-Message-State: ABy/qLYYevVCRhbGXcq0eT6xG7oUVJ9u2Bph7KB1rnxNvm8Vc0NppF/Q
+        EhrqrDHyIBEgzca4I8RRVXZ0Wro5mi3JXb1qDOGD1o1i
+X-Google-Smtp-Source: APBJJlHCaoKJ53rXz2ItEWpE1gDjznnLJa2XPgQMR/8QgH9f3f4nakvv2rbulYGWBnP5zVpNjqOLkw==
+X-Received: by 2002:a17:906:224b:b0:993:e695:b585 with SMTP id 11-20020a170906224b00b00993e695b585mr4482159ejr.9.1689811236868;
+        Wed, 19 Jul 2023 17:00:36 -0700 (PDT)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id kj27-20020a170907765b00b00997e52cb30bsm2523503ejc.121.2023.07.19.17.00.34
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jul 2023 17:00:36 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-51cff235226so603936a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Jul 2023 17:00:34 -0700 (PDT)
+X-Received: by 2002:a50:fc13:0:b0:51d:914a:9f3d with SMTP id
+ i19-20020a50fc13000000b0051d914a9f3dmr3806792edr.10.1689811234438; Wed, 19
+ Jul 2023 17:00:34 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:3011:b0:39e:b6a2:98c7 with SMTP id
- ay17-20020a056808301100b0039eb6a298c7mr7704963oib.8.1689810774760; Wed, 19
- Jul 2023 16:52:54 -0700 (PDT)
-Date:   Wed, 19 Jul 2023 16:52:54 -0700
-In-Reply-To: <1fa2f7f07ebff31ddc24bbbd9ec47cc9@disroot.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f7a4210600dfba8c@google.com>
-Subject: Re: [syzbot] [hfs?] kernel BUG in hfsplus_show_options
-From:   syzbot <syzbot+98d3ceb7e01269e7bf4f@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sel4@disroot.org, syzkaller-bugs@googlegroups.com
+References: <20230629155433.4170837-1-dhowells@redhat.com> <20230629155433.4170837-2-dhowells@redhat.com>
+ <CAJfpegsJuvXJDcXpo9T19Gw0tDuvyOJdv44Y2bt04MEf1JLxGg@mail.gmail.com>
+ <c634a18e-9f2b-4746-bd8f-aa1d41e6ddf7@mattwhitlock.name> <CAJfpegvq4M_Go7fHiWVBBkrK6h4ChLqQTd0+EOKbRWZDcVerWA@mail.gmail.com>
+ <ZLg9HbhOVnLk1ogA@casper.infradead.org> <CAHk-=wiq95bWiWLyz96ombPfpy=PNrc2KKyzJ2d+WMrxi6=OVA@mail.gmail.com>
+ <6609f1b8-3264-4017-ac3c-84a01ea12690@mattwhitlock.name> <CAHk-=wh7OY=7ocTFY8styG8GgQ1coWxds=b09acHZG4t36OxWg@mail.gmail.com>
+ <0d10033a-7ea1-48e3-806b-f74000045915@mattwhitlock.name>
+In-Reply-To: <0d10033a-7ea1-48e3-806b-f74000045915@mattwhitlock.name>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 19 Jul 2023 17:00:17 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgwdG9KnADHQg9_F9vXFMKYFRcbSyb=0btFnzr2ufpQ6Q@mail.gmail.com>
+Message-ID: <CAHk-=wgwdG9KnADHQg9_F9vXFMKYFRcbSyb=0btFnzr2ufpQ6Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/4] splice: Fix corruption of spliced data after
+ splice() returns
+To:     Matt Whitlock <kernel@mattwhitlock.name>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>, netdev@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@kvack.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,20 +85,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Wed, 19 Jul 2023 at 16:41, Matt Whitlock <kernel@mattwhitlock.name> wrote:
+>
+> Then that is my request. This entire complaint/discussion/argument would
+> have been avoided if splice(2) had contained a sentence like this one from
+> sendfile(2):
+>
+> "If out_fd refers to a socket or pipe with zero-copy support, callers must
+> ensure the transferred portions of the file referred to by in_fd remain
+> unmodified until the reader on the other end of out_fd has consumed the
+> transferred data."
+>
+> That is a clear warning of the perils of the implementation under the hood,
+> and it could/should be copied, more or less verbatim, to splice(2).
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Ack. Internally in the kernel, the two really have always been more or
+less of intermingled.
 
-Reported-and-tested-by: syzbot+98d3ceb7e01269e7bf4f@syzkaller.appspotmail.com
+In fact, I think splice()/sendfile()/tee() could - and maybe should -
+actually be a single man-page to make it clear that they are all
+facets of the same thing.
 
-Tested on:
+The issues with TCP_CORK exist for splice too, for example, for
+exactly the same reasons.
 
-commit:         aeba4568 Add linux-next specific files for 20230718
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=14ccebe4a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e7ec534f91cfce6c
-dashboard link: https://syzkaller.appspot.com/bug?extid=98d3ceb7e01269e7bf4f
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=144204aea80000
+And while SPLICE_F_MORE exists, it only deals with multiple splice()
+calls, it doesn't deal with the "I wrote a header before I even
+started using splice()" case that is the one that is mentioned for
+sendfile().
 
-Note: testing is done by a robot and is best-effort only.
+Or course, technically TCP_CORK exists for plain write() use as well,
+but there the portable and historical fix is simply to use writev()
+and send it all in one go.
+
+So it's hopefully only when you use sendfile() and splice() that you
+end up with "oh, but I have multiple different *kinds* of sources, and
+I want to cork things until I've dealt with them all".
+
+            Linus
