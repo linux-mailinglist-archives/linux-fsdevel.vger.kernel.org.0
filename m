@@ -2,118 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CC4675B234
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 17:16:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E50EC75B288
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 17:28:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231949AbjGTPPl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jul 2023 11:15:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52364 "EHLO
+        id S231844AbjGTP2T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jul 2023 11:28:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232486AbjGTPPR (ORCPT
+        with ESMTP id S231151AbjGTP2R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jul 2023 11:15:17 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 573B5270C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 08:15:15 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1b852785a65so6925505ad.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 08:15:15 -0700 (PDT)
+        Thu, 20 Jul 2023 11:28:17 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9733123
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 08:28:11 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-51e24210395so13760a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 08:28:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1689866115; x=1690470915;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=igmOeAaO/nUKTsFVfVJFzonWyTXDvfkuPJ6/bFmba2Q=;
-        b=ifjX9YZCkg2s4O+drZO6YGL7/Lsgz1x+slvY8Cgw55/87DZkfZKcjA7poVCMbh+5yu
-         ZgPUB3PlIzjll6WwO8kRw6wk4Xgl1yVBybwpUF2Zu9dRe0ldpUHu2lVsHkjscH4fPV0z
-         CTkGCdiot7DvhOgsXAcbi36udOxdwU3PHMysE=
+        d=google.com; s=20221208; t=1689866890; x=1690471690;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ueWLYJ0Zpp28j5V5QPthaLz88fH+2254dOYDnHgAd5M=;
+        b=NMSbGUMpK4C+K0lUFpR4U4mRLU2BGKqgVgy3KIZICDV9XOFW3qVvqLCVSIRLoocCJ3
+         zx5HwTBJWP8G5Ukq8j3RLc3ZxO0nz8qfTO6pkgHoVa0NAJZnrNOzWYmTAZc3g5k8jc9c
+         iqVtzrXFOKBFRiiZT8EJUMrIHV0PD2TU4a8YTQv8tFlSjwl7ytGHQbD0ou6BXQKME+TL
+         BtoGu9apQZyLEmd78jSKxhl3jqft/NQXl7t+QYT3CmxUz/rAm4ZrIyar2PlCBE1Ql/gR
+         /H7BUkFDgWCQRjPb9iC8bL7hDMohAHQYqjusxGEDOGW8dfxV9185lWbkRIFLsOLvtJiz
+         D8ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689866115; x=1690470915;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20221208; t=1689866890; x=1690471690;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=igmOeAaO/nUKTsFVfVJFzonWyTXDvfkuPJ6/bFmba2Q=;
-        b=kQx75iGo1uyPQEOYKHQ0DMRwXosRvV2PnqAqvK6gu8iWDJt3LqRAkDgSgg7oTCySnF
-         eqjjvg9TBbhuRXlINqoGCx8oZiK66QM6V2Zual95ur9fMPrPdfWXW48LdP0u4EnxA8wA
-         yuOjME5clRsvB2A2IGIfLLkfjHn96juqyNmZT5Y5HI/cRfrgO689Qy28I7dBpQhPijNw
-         Bbncr1xTZ05UZr0VOtKrlKpXB99vfcsi+FSj/4oH7uJTPAixPseIIvCLIci8mrIZ+N8k
-         mnx0fiwpIOwIkqNzSXyatx2STeVmUuB42/LLdtq0q3WYFETIXtAq4N4SYXlvqrptgtSJ
-         RiYg==
-X-Gm-Message-State: ABy/qLYPkB9aPBHT3tzOH5pBdXYUYv2bbDJH6/b4hcZBHpoMBPd5AquL
-        27FJU778NXeuIk9FwiCOXAzf8Q==
-X-Google-Smtp-Source: APBJJlGHMyTI1JgQG21Ar8O1aZTXVCNn3SwZQMXEPB/BW8isuZnS7cfokAGhm9KQgXuhxoq6TG8yzw==
-X-Received: by 2002:a17:903:41cd:b0:1b8:9846:a3b2 with SMTP id u13-20020a17090341cd00b001b89846a3b2mr7290941ple.14.1689866114697;
-        Thu, 20 Jul 2023 08:15:14 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id e3-20020a170902b78300b001b88af04175sm1522076pls.41.2023.07.20.08.15.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jul 2023 08:15:13 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-hardening@vger.kernel.org
-Subject: [PATCH] vboxsf: Use flexible arrays for trailing string member
-Date:   Thu, 20 Jul 2023 08:15:06 -0700
-Message-Id: <20230720151458.never.673-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        bh=ueWLYJ0Zpp28j5V5QPthaLz88fH+2254dOYDnHgAd5M=;
+        b=H+PhXVTBwdfSAAK08+UrP1zpsLsJnFjFvnua71e8fj7fGM3BWgXTPMXed3tfH8gn/2
+         iSRuKUJAJVBUkDCXNVuxF4EikhRQRhFQoT3SS9neZKm/INwfsYeePP1epcCimBGaVqxg
+         r70XbE2Q3vMSY7Ahmz0wNvhLOo19FbjC0x/YUBCDoGJQVZNaXeoYYMI8PBwL55Oy2v3s
+         tNcGjR9RDQj730iYqD+cpFUVXSARzHj7N0WO5HAZWS/I3NUbTO4KbZ9zRG/wyLZf0ioW
+         kUKAS7/WlsGyoRwlxPdhgqsurCxNtak12ZA0w1Fs7tZu7la4o7k1pPd2tBh/luquTgOV
+         RSew==
+X-Gm-Message-State: ABy/qLa+m3SEMnwYvYHJpsYXRh3Ey1xGBQOErQOGY/HaGgJSImOMmW0E
+        b3+m462F+F/WHlmrhuUmEsc7+I8PTW62fLEzNvEuEw==
+X-Google-Smtp-Source: APBJJlFq0GZ4ZktUOfXrO7gkLDHTJWhPSD/1jcusDXb2jRQnlEDKQRL7PkcO0BkiH+wKF+BeNtP5oYmOviBhd85v+R0=
+X-Received: by 2002:a50:ab5c:0:b0:51e:54d5:50c0 with SMTP id
+ t28-20020a50ab5c000000b0051e54d550c0mr113732edc.1.1689866890072; Thu, 20 Jul
+ 2023 08:28:10 -0700 (PDT)
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1230; i=keescook@chromium.org;
- h=from:subject:message-id; bh=FPWlWMLBWLQk41wEHtF9Aoh4CSJCJMajyADIdaljriw=;
- b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBkuU96kJssYE7C3IMQG/og8R3QooDvyV0Ltszxl
- wFYSldLCqGJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZLlPegAKCRCJcvTf3G3A
- Jv+KD/4mMkxhrBH89W97Tm+qKvrzrmOjhG0Y4dB0j6sgNitbBZxCAFMdTAMSXNeK7c6MG8rpk0m
- u8Aq/XYopofblby5FeWyYmYKtxr6fMn0yifFAPOwlv/Y/k0UGAm9KmteX9xrEg/+sL+tH9vDH52
- 4PJTLar11KucciW4cdPPWQqdp4nY9H+ONRbKRycWlIXjP4HXFMsU07MioErLoIzJM73VLDOr2nt
- FQQEk5M6q+zmwIsdzheUle0/b79f12dbkD81rEVvFmXv+5mYpBU4tPZyCFEs+CqsjIJENYwGoFM
- F2jkyVp9T6HdBonaiqRRv8++PcExWotGJrHVXeb6tZTtJ+xiUHaHVAO2dbFTCGD8Oq1Qxj8LSR2
- XdEndk3wVvPqs/5hiQB/9hxeL2GRlHBlrvzMvOVG7Ofn3mvpojtAmQbLD9guxt3u/BEXnrLqqxK
- RCESTcBs5Lcy0EcYRBCACtjztpkxF16dwE794hUChM7rxTtdrp2vMEFhPsXxoKgoakdlGbsZDfp
- GgIeLFk5+spiGqODrZXQjQYoLD1vWQdWdEXcdENVN8qddA/cQMMK1kGSgCgso0zl+mvUm+AuLtc
- gtVSOQInlTRfeUsrzoTCCdJi+uvbi4iB2EFYCPWMn76WNSbwb0Z+5zZ/ThQnDRg0h6OPNDe62vm
- FV/WbHK fCuhPHJQ==
-X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+References: <000000000000dbce4e05f170f289@google.com> <5f45bb9a-5e00-48dd-82b0-46b19b1b98a3@app.fastmail.com>
+ <CAHk-=wi8XyAUF9_z6-oa4Ava6PVZeE-=TVNcFK1puQHpOtqLLw@mail.gmail.com>
+ <ab7a9477-ddc7-430f-b4ee-c67251e879b0@app.fastmail.com> <2575F983-D170-4B79-A6BA-912D4ED2CC73@dubeyko.com>
+ <46F233BB-E587-4F2B-AA62-898EB46C9DCE@dubeyko.com> <Y7bw7X1Y5KtmPF5s@casper.infradead.org>
+ <50D6A66B-D994-48F4-9EBA-360E57A37BBE@dubeyko.com>
+In-Reply-To: <50D6A66B-D994-48F4-9EBA-360E57A37BBE@dubeyko.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 20 Jul 2023 17:27:57 +0200
+Message-ID: <CACT4Y+aJb4u+KPAF7629YDb2tB2geZrQm5sFR3M+r2P1rgicwQ@mail.gmail.com>
+Subject: Re: [syzbot] [hfs?] WARNING in hfs_write_inode
+To:     Viacheslav Dubeyko <slava@dubeyko.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        syzbot <syzbot+7bb7cd3595533513a9e7@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        christian.brauner@ubuntu.com,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        ZhangPeng <zhangpeng362@huawei.com>,
+        linux-m68k@lists.linux-m68k.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The declaration of struct shfl_string used trailing fake flexible arrays
-for the string member. This was tripping FORTIFY_SOURCE since commit
-df8fc4e934c1 ("kbuild: Enable -fstrict-flex-arrays=3"). Replace the
-utf8 and utf16 members with actual flexible arrays, drop the unused ucs2
-member, and retriain a 2 byte padding to keep the structure size the same.
+On Thu, 5 Jan 2023 at 17:45, Viacheslav Dubeyko <slava@dubeyko.com> wrote:
+> > On Wed, Jan 04, 2023 at 08:37:16PM -0800, Viacheslav Dubeyko wrote:
+> >> Also, as far as I can see, available volume in report (mount_0.gz) somehow corrupted already:
+> >
+> > Syzbot generates deliberately-corrupted (aka fuzzed) filesystem images.
+> > So basically, you can't trust anything you read from the disc.
+> >
+>
+> If the volume has been deliberately corrupted, then no guarantee that file system
+> driver will behave nicely. Technically speaking, inode write operation should never
+> happened for corrupted volume because the corruption should be detected during
+> b-tree node initialization time. If we would like to achieve such nice state of HFS/HFS+
+> drivers, then it requires a lot of refactoring/implementation efforts. I am not sure that
+> it is worth to do because not so many guys really use HFS/HFS+ as the main file
+> system under Linux.
 
-Reported-by: Larry Finger <Larry.Finger@lwfinger.net>
-Closes: https://lore.kernel.org/lkml/ab3a70e9-60ed-0f13-e3d4-8866eaccc8c1@lwfinger.net/
-Tested-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- fs/vboxsf/shfl_hostintf.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/vboxsf/shfl_hostintf.h b/fs/vboxsf/shfl_hostintf.h
-index aca829062c12..069a019c9247 100644
---- a/fs/vboxsf/shfl_hostintf.h
-+++ b/fs/vboxsf/shfl_hostintf.h
-@@ -68,9 +68,9 @@ struct shfl_string {
- 
- 	/** UTF-8 or UTF-16 string. Nul terminated. */
- 	union {
--		u8 utf8[2];
--		u16 utf16[1];
--		u16 ucs2[1]; /* misnomer, use utf16. */
-+		u8 legacy_padding[2];
-+		DECLARE_FLEX_ARRAY(u8, utf8);
-+		DECLARE_FLEX_ARRAY(u16, utf16);
- 	} string;
- };
- VMMDEV_ASSERT_SIZE(shfl_string, 6);
--- 
-2.34.1
-
+Most popular distros will happily auto-mount HFS/HFS+ from anything
+inserted into USB (e.g. what one may think is a charger). This creates
+interesting security consequences for most Linux users.
+An image may also be corrupted non-deliberately, which will lead to
+random memory corruptions if the kernel trusts it blindly.
