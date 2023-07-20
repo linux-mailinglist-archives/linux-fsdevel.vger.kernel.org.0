@@ -2,94 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BB33D75B4F5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 18:49:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9667675B5A5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Jul 2023 19:30:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231518AbjGTQtK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jul 2023 12:49:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42776 "EHLO
+        id S230466AbjGTRaf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jul 2023 13:30:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231575AbjGTQtH (ORCPT
+        with ESMTP id S231204AbjGTRae (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jul 2023 12:49:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5732272C;
-        Thu, 20 Jul 2023 09:49:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 39EAA61B60;
-        Thu, 20 Jul 2023 16:49:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8709DC433C8;
-        Thu, 20 Jul 2023 16:48:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689871739;
-        bh=DuD2wgdpVvuLiAqRF7Zn0+FnsXSJdgY65WHCFNEQDWI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=gMQgtGMKJXDlnozqtvdqh6G6Cl7nRILPIlqFgXZnhaM0gswBapI/+QbRGlrAj2bT7
-         IfH5jEzTx2Bder0eWx/9Lh2YwCmRtAsLBylghc4BFz/A4JLuWkgkW3EGjAzmypmAOx
-         NgSl9AOyrB2GabSbhAoVMVQXtJdDJVazwVBlBqiuyPcuTZu6ImWAJZpo0U2THQP5cx
-         OpMTKmWeFXpzGC7Fvh0T1a0DRV+1hAV2aioNU/rRAsSdwh1dD9Kzj1F+bhQmZlAKbE
-         5/TiMP0epU0ayGmE6PMApmY92O3G/Y3SM0lneGul4Cvb12f2OLoa6xsrdda1DBzWe8
-         QHjDJW685ci3w==
-Date:   Thu, 20 Jul 2023 09:48:58 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     david@fromorbit.com, djwong@kernel.org,
-        torvalds@linux-foundation.org
-Cc:     chrubis@suse.cz, hch@lst.de, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, oliver.sang@intel.com,
-        ritesh.harjani@gmail.com
-Subject: [GIT PULL] iomap: bug fixes for 6.5
-Message-ID: <168987161500.3212821.11938475539735933401.stg-ugh@frogsfrogsfrogs>
+        Thu, 20 Jul 2023 13:30:34 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38E132722;
+        Thu, 20 Jul 2023 10:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=kZsL+fRMiTUhIF6cbkchAwMMymJQNGnAWsHwN+ewJ0E=; b=njeSPSpguzsHoVcLskuzq3zqvP
+        fh6yPSsenkfbn+nzasVka6Xcr/4vmVhShCMCWCwccY/VDY/4+EqZ6a08xnubBsxwKl52NFXncUna4
+        neUTaeTjchLENIA5+N7KASwQHi+8BunPa3WVG3+qM2zJZS/VsHgKNdC3WNzT8Z0ZdCyCAAa63J5HO
+        odj5alfVy+NbSyQkfnrweVtwROQS+w3gW7W6y/yPIhdJMID2yZo2if0EGxr+MMkGK/ewsl7+0JUUO
+        Lic2g6Q5iNJbymXPLx0wql6EaA2fSSUuHxU3BlG3N8SbfsK71rrv+19uHkhsEycQKptguXZYHDf72
+        A53SA8Eg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qMXTc-000IDQ-47; Thu, 20 Jul 2023 17:30:08 +0000
+Date:   Thu, 20 Jul 2023 18:30:08 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Viacheslav Dubeyko <slava@dubeyko.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        syzbot <syzbot+7bb7cd3595533513a9e7@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        christian.brauner@ubuntu.com,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        ZhangPeng <zhangpeng362@huawei.com>,
+        linux-m68k@lists.linux-m68k.org
+Subject: Re: [syzbot] [hfs?] WARNING in hfs_write_inode
+Message-ID: <ZLlvII/jMPTT32ef@casper.infradead.org>
+References: <000000000000dbce4e05f170f289@google.com>
+ <5f45bb9a-5e00-48dd-82b0-46b19b1b98a3@app.fastmail.com>
+ <CAHk-=wi8XyAUF9_z6-oa4Ava6PVZeE-=TVNcFK1puQHpOtqLLw@mail.gmail.com>
+ <ab7a9477-ddc7-430f-b4ee-c67251e879b0@app.fastmail.com>
+ <2575F983-D170-4B79-A6BA-912D4ED2CC73@dubeyko.com>
+ <46F233BB-E587-4F2B-AA62-898EB46C9DCE@dubeyko.com>
+ <Y7bw7X1Y5KtmPF5s@casper.infradead.org>
+ <50D6A66B-D994-48F4-9EBA-360E57A37BBE@dubeyko.com>
+ <CACT4Y+aJb4u+KPAF7629YDb2tB2geZrQm5sFR3M+r2P1rgicwQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CACT4Y+aJb4u+KPAF7629YDb2tB2geZrQm5sFR3M+r2P1rgicwQ@mail.gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Thu, Jul 20, 2023 at 05:27:57PM +0200, Dmitry Vyukov wrote:
+> On Thu, 5 Jan 2023 at 17:45, Viacheslav Dubeyko <slava@dubeyko.com> wrote:
+> > > On Wed, Jan 04, 2023 at 08:37:16PM -0800, Viacheslav Dubeyko wrote:
+> > >> Also, as far as I can see, available volume in report (mount_0.gz) somehow corrupted already:
+> > >
+> > > Syzbot generates deliberately-corrupted (aka fuzzed) filesystem images.
+> > > So basically, you can't trust anything you read from the disc.
+> > >
+> >
+> > If the volume has been deliberately corrupted, then no guarantee that file system
+> > driver will behave nicely. Technically speaking, inode write operation should never
+> > happened for corrupted volume because the corruption should be detected during
+> > b-tree node initialization time. If we would like to achieve such nice state of HFS/HFS+
+> > drivers, then it requires a lot of refactoring/implementation efforts. I am not sure that
+> > it is worth to do because not so many guys really use HFS/HFS+ as the main file
+> > system under Linux.
+> 
+> 
+> Most popular distros will happily auto-mount HFS/HFS+ from anything
+> inserted into USB (e.g. what one may think is a charger). This creates
+> interesting security consequences for most Linux users.
+> An image may also be corrupted non-deliberately, which will lead to
+> random memory corruptions if the kernel trusts it blindly.
 
-Please pull this branch with bug fixes for iomap for 6.5-rc2.  It turns
-out that fstests doesn't have any test coverage for short writes, but
-LTP does.  Fortunately, this was caught right after -rc1 was tagged.
-
-As usual, I did a test-merge with the main upstream branch as of a few
-minutes ago, and didn't see any conflicts.  Please let me know if you
-encounter any problems.
-
---D
-
-The following changes since commit fdf0eaf11452d72945af31804e2a1048ee1b574c:
-
-Linux 6.5-rc2 (2023-07-16 15:10:37 -0700)
-
-are available in the Git repository at:
-
-git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/iomap-6.5-fixes-1
-
-for you to fetch changes up to efa96cc99793bafe96bdbff6abab94d81472a32d:
-
-iomap: micro optimize the ki_pos assignment in iomap_file_buffered_write (2023-07-17 08:49:57 -0700)
-
-----------------------------------------------------------------
-Bug fixes for 6.5-rc2:
-
-* Fix a bug wherein a failed write could clobber short write status.
-
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-
-----------------------------------------------------------------
-Christoph Hellwig (2):
-iomap: fix a regression for partial write errors
-iomap: micro optimize the ki_pos assignment in iomap_file_buffered_write
-
-fs/iomap/buffered-io.c | 4 ++--
-1 file changed, 2 insertions(+), 2 deletions(-)
+Then we should delete the HFS/HFS+ filesystems.  They're orphaned in
+MAINTAINERS and if distros are going to do such a damnfool thing,
+then we must stop them.
