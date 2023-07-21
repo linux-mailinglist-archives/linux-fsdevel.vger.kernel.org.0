@@ -2,123 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB3B075BEF6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jul 2023 08:35:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1012175BF0E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jul 2023 08:43:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230506AbjGUGfs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Jul 2023 02:35:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34478 "EHLO
+        id S229654AbjGUGnE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Jul 2023 02:43:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230191AbjGUGfr (ORCPT
+        with ESMTP id S229651AbjGUGnC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Jul 2023 02:35:47 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D03C1BC1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 23:35:24 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id 98e67ed59e1d1-263036d4bc3so972254a91.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Jul 2023 23:35:24 -0700 (PDT)
+        Fri, 21 Jul 2023 02:43:02 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36F4EE44;
+        Thu, 20 Jul 2023 23:42:59 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3fbc5d5742eso13965055e9.3;
+        Thu, 20 Jul 2023 23:42:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1689921324; x=1690526124;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ADIyloD166jYHv11b4YS8m6+UmHnQ0p38Q1r2ipFvFM=;
-        b=INyinzdHITe+HkonRw4Nm1dMuNcIC0Xu1HE8dhJ6BGF0ueR2YbEcxtuY+TxDGv81/9
-         jbMmbGI7PxVsl/CxTeOXxbIz4f3jENUlN2SL6kXYsFv66YKbGD9FwePmu0ittS0Ge9KU
-         RcbuwyRMm6iqyo0Y0CPWjEsikGhoktj9YwwspMy9U8rowMVBA1e7FP7Tx5gNUnUTTArI
-         0C/vfG6x9gYtfsFtivqy0HMflrgjgq3ODixXvN82LcmRmsrbDat8a8XcJVk6+a/0nwlB
-         uS6JsqbwtYMGdRG8D/JOOH6ZNfshwSbzoOI3EkHj0tbNQNKlLWxtgPMTX4DzlqGRnWnr
-         jnUw==
+        d=gmail.com; s=20221208; t=1689921777; x=1690526577;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5nZ2UjtJkJatqkl69pOrJuBy1CF5MniKXwLw/NTDggw=;
+        b=JPudhTqrkma+6DrU2mBTAIjKltl7VwyWyIdTjCrSLqpYo1uNrTaI0EKwF7BxrvTtim
+         knRkn68kKGmOlO+CxZf9tFM/EKk1cH1TRez68fCPz0v7gY5BvRTDlY6gznNCEIZsVjo1
+         xYkaln6qYKDpKnERZCEfeIp6gRHk1jUtjEOdY2i7NqaDaanc/YdwhIKcqdHBLIJyyXp0
+         aC4nf2ZJSkHzU/7B1JMLXl3zUDMJpuSoaeRVCRf7Jhrx9wSn8T6TM/hfsBYqjn0iIdKR
+         XtJso2ZI+uMpgwRPwOR4xxs7wyYOS41HgTc+OkWl11eM2YMJdNyRCOwKHLtFqrNNHLCm
+         myWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689921324; x=1690526124;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ADIyloD166jYHv11b4YS8m6+UmHnQ0p38Q1r2ipFvFM=;
-        b=PW4iCivOrCZRkja3pBnjEk6ALUeAGbvm4T0HfkYwBk6B5nDLJ64fZ9OsSv76pbQuea
-         KAtO3fifSa4HFrPfc+M8RKI9nQZCElpVWEj1nZLZcoPWbmtCXXCVnevmhMgkBjhwF2jS
-         vl6qejH41L8GUMZtSK4c4IRk0UPSbmEHMbh8IbDQOy+wdk4aBZKImQGIb91K2SE06djg
-         NfTvijObdpDMNXdKVfyLgPSDb0/oF3sYvc2KPcua5Za4pX2rGlfBJo4Ng5IGS74SURM1
-         8qkXNsvU0Vo+47dLk2G6MI71XhzNW9Oswq22rtLu4J+rAuVDO9MOJwfbjdnukbP2jU4M
-         lYqA==
-X-Gm-Message-State: ABy/qLadZmA8nXKkt1pxyU5plpwMdVnwMvLJWp5g5Aqnby3JpNq09R36
-        UgyTvL8Tvy635cP890n/ipAXmQ==
-X-Google-Smtp-Source: APBJJlFN0J1oceIbBTEsvqQ3cueDwfrRySx5mrjN8Zu66Mtywn9rvbdXCh0v8ttoW8uG/Tc+p/NS8A==
-X-Received: by 2002:a17:90b:4d90:b0:267:85ae:2367 with SMTP id oj16-20020a17090b4d9000b0026785ae2367mr809483pjb.12.1689921323932;
-        Thu, 20 Jul 2023 23:35:23 -0700 (PDT)
-Received: from ?IPV6:fdbd:ff1:ce00:3a:146c:67b8:50e9:7617? ([2001:218:2001:0:1000:0:1:2])
-        by smtp.gmail.com with ESMTPSA id w24-20020a17090aea1800b00263418c81c5sm1886568pjy.46.2023.07.20.23.35.21
+        d=1e100.net; s=20221208; t=1689921777; x=1690526577;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5nZ2UjtJkJatqkl69pOrJuBy1CF5MniKXwLw/NTDggw=;
+        b=Rzc3NFX8B11V5zQCIbcOWhb8AHx5hVeWQarDSRRWyWvfDCDEqwI0LAGHjCXuej5u6O
+         ONi7rvwF0jDvlJNQtjAuMTJGfLwPx5FFyVLq9TgRg65XOfiVTsxNG+eGX2CWVPxuYaNC
+         WJsLl4DNmy3DJl/u5oqa9eB437hVL6x75YpAZOk/NeH5Rc5R2SJQAYY8bDd95pR5YMQJ
+         pBfUO5S/+G6uFF9RMbuhUX6513zqcEJ5MmX6HIf2LW/RjkoqCFUDX4nYLl0e8Ga4boh9
+         iKrbzaut21Fj2yipmRU1oHqA7ppw0HOvbv5u0yzEzwzrYIgQT9xkpkrIPVS4KcJxn7Y7
+         L4Bw==
+X-Gm-Message-State: ABy/qLbVAumlyCcOFrKPzIHuTPDEa7D+0YMloXHdf6BeKhIvOcEGO7f+
+        Vs0lE4DL3oMJ0W9LQ7ZWBbU=
+X-Google-Smtp-Source: APBJJlFEnQe43nLu/D7LH9v9SV9nG1WKz+uvgZ8xZePV2QZj91PxIrCNwbdfC1vCgKGnFacLOir6Hw==
+X-Received: by 2002:a05:600c:b58:b0:3fb:b1fd:4183 with SMTP id k24-20020a05600c0b5800b003fbb1fd4183mr726368wmr.12.1689921777366;
+        Thu, 20 Jul 2023 23:42:57 -0700 (PDT)
+Received: from smtpclient.apple ([2a02:c7c:aa7e:f200:f068:3acd:7e6c:5221])
+        by smtp.gmail.com with ESMTPSA id s13-20020a7bc38d000000b003fbd0c50ba2sm5498355wmj.32.2023.07.20.23.42.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jul 2023 23:35:23 -0700 (PDT)
-Message-ID: <e5266e11-b58b-c8ca-a3c8-0b2c07b3a1b2@bytedance.com>
-Date:   Fri, 21 Jul 2023 14:35:19 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.13.0
-Subject: Re: [External] [fuse-devel] [PATCH 3/3] fuse: write back dirty pages
- before direct write in direct_io_relax mode
-To:     Hao Xu <hao.xu@linux.dev>, fuse-devel@lists.sourceforge.net
-Cc:     linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm,
-        Wanpeng Li <wanpengli@tencent.com>, cgxu519@mykernel.net,
-        miklos@szeredi.hu
-References: <20230630094602.230573-1-hao.xu@linux.dev>
- <20230630094602.230573-4-hao.xu@linux.dev>
-From:   Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-In-Reply-To: <20230630094602.230573-4-hao.xu@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+        Thu, 20 Jul 2023 23:42:56 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Kirsten Bromilow <kirsten1@gmail.com>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [syzbot] [hfs?] WARNING in hfs_write_inode
+Date:   Fri, 21 Jul 2023 07:42:46 +0100
+Message-Id: <FE018F29-9CBB-471B-AB93-C4701AD9C4B1@gmail.com>
+References: <ZLnbN4Mm9L5wCzOK@casper.infradead.org>
+Cc:     Finn Thain <fthain@linux-m68k.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Viacheslav Dubeyko <slava@dubeyko.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        syzbot <syzbot+7bb7cd3595533513a9e7@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        christian.brauner@ubuntu.com,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        ZhangPeng <zhangpeng362@huawei.com>,
+        linux-m68k@lists.linux-m68k.org,
+        debian-ports <debian-ports@lists.debian.org>
+In-Reply-To: <ZLnbN4Mm9L5wCzOK@casper.infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+X-Mailer: iPhone Mail (20D67)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,MIME_QP_LONG_LINE,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Please stop sending these emails to me and remove me from the recipient list=
+?
+!
 
-On 2023/6/30 17:46, Hao Xu wrote:
-> From: Hao Xu <howeyxu@tencent.com>
-> 
-> In direct_io_relax mode, there can be shared mmaped files and thus dirty
-> pages in its page cache. Therefore those dirty pages should be written
-> back to backend before direct write to avoid data loss.
-> 
-> Signed-off-by: Hao Xu <howeyxu@tencent.com>
-> ---
->   fs/fuse/file.c | 7 +++++++
->   1 file changed, 7 insertions(+)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 176f719f8fc8..7c9167c62bf6 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -1485,6 +1485,13 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
->   	if (!ia)
->   		return -ENOMEM;
->   
-> +	if (fopen_direct_write && fc->direct_io_relax) {
-> +		res = filemap_write_and_wait_range(mapping, pos, pos + count - 1);
-> +		if (res) {
-> +			fuse_io_free(ia);
-> +			return res;
-> +		}
-> +	}
->   	if (!cuse && fuse_range_is_writeback(inode, idx_from, idx_to)) {
->   		if (!write)
->   			inode_lock(inode);
+Sent from my iPhone
 
-Tested-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+> On 21 Jul 2023, at 02:27, Matthew Wilcox <willy@infradead.org> wrote:
+>=20
+> =EF=BB=BFOn Fri, Jul 21, 2023 at 11:03:28AM +1000, Finn Thain wrote:
+>> On Fri, 21 Jul 2023, Dave Chinner wrote:
+>>=20
+>>>> I suspect that this is one of those catch-22 situations: distros are=20=
 
+>>>> going to enable every feature under the sun. That doesn't mean that=20
+>>>> anyone is actually _using_ them these days.
+>>=20
+>> I think the value of filesystem code is not just a question of how often=20=
 
-Looks good to me.
+>> it gets executed -- it's also about retaining access to the data collecte=
+d=20
+>> in archives, museums, galleries etc. that is inevitably held in old=20
+>> formats.
+>=20
+> That's an argument for adding support to tar, not for maintaining
+> read/write support.
+>=20
+>>> We need to much more proactive about dropping support for unmaintained=20=
 
-By the way, the behaviour would be a first FUSE_WRITE flushing the page 
-cache, followed by a second FUSE_WRITE doing the direct IO. In the 
-future, further optimization could be first write into the page cache 
-and then flush the dirty page to the FUSE daemon.
+>>> filesystems that nobody is ever fixing despite the constant stream of=20=
 
-
-Thanks,
-Jiachen
+>>> corruption- and deadlock- related bugs reported against them.
+>>=20
+>> IMO, a stream of bug reports is not a reason to remove code (it's a reaso=
+n=20
+>> to revert some commits).
+>>=20
+>> Anyway, that stream of bugs presumably flows from the unstable kernel API=
+,=20
+>> which is inherently high-maintenance. It seems that a stable API could be=
+=20
+>> more appropriate for any filesystem for which the on-disk format is fixed=
+=20
+>> (by old media, by unmaintained FLOSS implementations or abandoned=20
+>> proprietary implementations).
+>=20
+> You've misunderstood.  Google have decided to subject the entire kernel
+> (including obsolete unmaintained filesystems) to stress tests that it's
+> never had before.  IOW these bugs have been there since the code was
+> merged.  There's nothing to back out.  There's no API change to blame.
+> It's always been buggy and it's never mattered before.
+>=20
+> It wouldn't be so bad if Google had also decided to fund people to fix
+> those bugs, but no, they've decided to dump them on public mailing lists
+> and berate developers into fixing them.
+>=20
