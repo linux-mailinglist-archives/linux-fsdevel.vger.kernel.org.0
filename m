@@ -2,142 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CC75C75BBFB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jul 2023 03:46:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 804B275BC9A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jul 2023 04:58:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230014AbjGUBqG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jul 2023 21:46:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52210 "EHLO
+        id S229765AbjGUC6J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jul 2023 22:58:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229924AbjGUBqE (ORCPT
+        with ESMTP id S229684AbjGUC6H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jul 2023 21:46:04 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 499413592;
-        Thu, 20 Jul 2023 18:45:40 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 5E2B85C01A8;
-        Thu, 20 Jul 2023 21:45:39 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Thu, 20 Jul 2023 21:45:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1689903939; x=1689990339; bh=iYynT4KhE74j+
-        dSXMjtfN0JZs/wjEjd9JxVM4ynGFAE=; b=snXEv978O7wJ+SWzOrOYXBJpCY1Ie
-        B7BnmXfkr0COvcfnfRvjPvrQ7k59wxUHAgyOV77x6Yvl3u1I+7hMa8XTUuAgbo92
-        3D89fQUfzL5YfpxaBzBik3Lf2ffm2REX9mKVdIpAJaF72okvSWcjSvRk+5QzUAN2
-        /B6CdJ2KB9adOss522i41brkFR5p9sBwDirIdr2HCAch4eSOP+rMvGL5SVsSetdg
-        pC/hep6ZedWP9lDoNlcTt5rgyuk3i45QMLqJ2v/ely4QjXoUieSdj95u5fbNcnx5
-        MrAjHSbAetlZUpbaniCZjZ64Nf202pz+6qJejPl9dWPoxuzmj1GMpaBVQ==
-X-ME-Sender: <xms:QuO5ZNustU4DVeD-BCLqAYCY-bR0iC3ezijc77pRU3arSE0Kn2utmA>
-    <xme:QuO5ZGd3gUjk7tZ-waGyWFWiffGLEyDyFU0sUCBGfW1s2GtmrR4x1mjS3ps5pNJyn
-    sXJmiADNdioE69Av5Y>
-X-ME-Received: <xmr:QuO5ZAy5uoy0BnvLS4XTVjvwSe8mIDCZJVvJlyeOOH6kZmMcG_jsZDljlm1RmsJgpQLeiUOjMZeQvl-Ihi440PwZA6g5j-qACcM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrhedugdegkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefujgfkfhggtgesthdtredttddtvdenucfhrhhomhephfhinhhnucfv
-    hhgrihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgheqnecuggftrfgrth
-    htvghrnhepleeuheelheekgfeuvedtveetjeekhfffkeeffffftdfgjeevkeegfedvueeh
-    ueelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfh
-    hthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgh
-X-ME-Proxy: <xmx:QuO5ZEP-tPH-elvLT55nGwyw2VHEld4pe7MgHr6-BI1uAKDt6YIj2w>
-    <xmx:QuO5ZN84iEL6Ez0u0iK7p1wggE-4XYwhGoz8TZ1qIaiJ5_p9lUGwyw>
-    <xmx:QuO5ZEUtkwcLmMsRWrDqvIWfFSNHs4xixctKB_4wtAUGQWhfGbZX9w>
-    <xmx:Q-O5ZMdeuptiP0K-a2hZRq8St-IrOfJ5fp5wNsruIjDam4qmfgMMuw>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 20 Jul 2023 21:45:36 -0400 (EDT)
-Date:   Fri, 21 Jul 2023 11:45:39 +1000 (AEST)
-From:   Finn Thain <fthain@linux-m68k.org>
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     Dave Chinner <david@fromorbit.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        syzbot <syzbot+7bb7cd3595533513a9e7@syzkaller.appspotmail.com>,
+        Thu, 20 Jul 2023 22:58:07 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EDDA2690;
+        Thu, 20 Jul 2023 19:58:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689908286; x=1721444286;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=kAfnjUsMkeVOvOzOihPjEhY2+hkQ8lG+O+rh2M9hN3I=;
+  b=H9rmotCwT4ckzQWswhxn4Ib6CiDiPsJiNXD7UGG0w1dk6JNMKwnaMQtz
+   zmY8JadwDEYag8h1JCh7xZD5/2XHr+3L2U0dAT3UqUyGEjMAhf9ypk2ah
+   7pAql0yy3QDyhmZ2KaYJixiGH0t5ecCxhAf6fh5vWkwEqNn9FQLMNiLt7
+   3wiET+S8XA+75TV97domAi/mCbW/NfWvIJ3qpmKxOGiDUgqoXyrqzHKe8
+   w9D2du8wYQLtqsfve/0HSF3HHOWHgVWZMx9D3IGszljnzFOeccsGS4vNX
+   qvbRxW/b6IcOVKgJAVm1XCk0eYfgSuAg9YQ5L4T8bmGfwtZWxZEsRvCKt
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10777"; a="365817081"
+X-IronPort-AV: E=Sophos;i="6.01,220,1684825200"; 
+   d="scan'208";a="365817081"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2023 19:58:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10777"; a="898560727"
+X-IronPort-AV: E=Sophos;i="6.01,220,1684825200"; 
+   d="scan'208";a="898560727"
+Received: from lkp-server02.sh.intel.com (HELO 36946fcf73d7) ([10.239.97.151])
+  by orsmga005.jf.intel.com with ESMTP; 20 Jul 2023 19:57:57 -0700
+Received: from kbuild by 36946fcf73d7 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qMgKz-0006nV-0O;
+        Fri, 21 Jul 2023 02:57:54 +0000
+Date:   Fri, 21 Jul 2023 10:56:51 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     oe-kbuild-all@lists.linux.dev, Alex Sierra <alex.sierra@amd.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrei Vagin <avagin@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        christian.brauner@ubuntu.com,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com,
-        ZhangPeng <zhangpeng362@huawei.com>,
-        linux-m68k@lists.linux-m68k.org,
-        debian-ports <debian-ports@lists.debian.org>
-Subject: Re: [syzbot] [hfs?] WARNING in hfs_write_inode
-In-Reply-To: <ZLnbN4Mm9L5wCzOK@casper.infradead.org>
-Message-ID: <23b19f18-13a3-1744-cdce-801cfa35a807@linux-m68k.org>
-References: <46F233BB-E587-4F2B-AA62-898EB46C9DCE@dubeyko.com> <Y7bw7X1Y5KtmPF5s@casper.infradead.org> <50D6A66B-D994-48F4-9EBA-360E57A37BBE@dubeyko.com> <CACT4Y+aJb4u+KPAF7629YDb2tB2geZrQm5sFR3M+r2P1rgicwQ@mail.gmail.com> <ZLlvII/jMPTT32ef@casper.infradead.org>
- <2d0bd58fb757e7771d13f82050a546ec5f7be8de.camel@physik.fu-berlin.de> <ZLl2Fq35Ya0cNbIm@casper.infradead.org> <868611d7f222a19127783cc8d5f2af2e42ee24e4.camel@kernel.org> <ZLmzSEV6Wk+oRVoL@dread.disaster.area> <60b57ae9-ff49-de1d-d40d-172c9e6d43d5@linux-m68k.org>
- <ZLnbN4Mm9L5wCzOK@casper.infradead.org>
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        David Hildenbrand <david@redhat.com>, Greg KH <greg@kroah.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Peter Xu <peterx@redhat.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Yang Shi <shy828301@gmail.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: Re: fs/proc/task_mmu: Implement IOCTL for efficient page table
+ scanning
+Message-ID: <202307211030.2CJH6TkM-lkp@intel.com>
+References: <a0b5c6776b2ed91f78a7575649f8b100e58bd3a9.1689881078.git.mirq-linux@rere.qmqm.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a0b5c6776b2ed91f78a7575649f8b100e58bd3a9.1689881078.git.mirq-linux@rere.qmqm.pl>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 21 Jul 2023, Matthew Wilcox wrote:
+Hi Michał,
 
-> On Fri, Jul 21, 2023 at 11:03:28AM +1000, Finn Thain wrote:
-> > On Fri, 21 Jul 2023, Dave Chinner wrote:
-> > 
-> > > > I suspect that this is one of those catch-22 situations: distros 
-> > > > are going to enable every feature under the sun. That doesn't mean 
-> > > > that anyone is actually _using_ them these days.
-> > 
-> > I think the value of filesystem code is not just a question of how 
-> > often it gets executed -- it's also about retaining access to the data 
-> > collected in archives, museums, galleries etc. that is inevitably held 
-> > in old formats.
-> 
-> That's an argument for adding support to tar, not for maintaining 
-> read/write support.
-> 
+kernel test robot noticed the following build errors:
 
-I rather think it's an argument for collaboration between the interested 
-parties upstream (inluding tar developers). As I see it, the question is, 
-what kind of "upstream" is best for that?
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on linus/master v6.5-rc2 next-20230720]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> > > We need to much more proactive about dropping support for 
-> > > unmaintained filesystems that nobody is ever fixing despite the 
-> > > constant stream of corruption- and deadlock- related bugs reported 
-> > > against them.
-> > 
-> > IMO, a stream of bug reports is not a reason to remove code (it's a 
-> > reason to revert some commits).
-> > 
-> > Anyway, that stream of bugs presumably flows from the unstable kernel 
-> > API, which is inherently high-maintenance. It seems that a stable API 
-> > could be more appropriate for any filesystem for which the on-disk 
-> > format is fixed (by old media, by unmaintained FLOSS implementations 
-> > or abandoned proprietary implementations).
-> 
-> You've misunderstood.  Google have decided to subject the entire kernel 
-> (including obsolete unmaintained filesystems) to stress tests that it's 
-> never had before.  IOW these bugs have been there since the code was 
-> merged.  There's nothing to back out.  There's no API change to blame. 
-> It's always been buggy and it's never mattered before.
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/Micha-Miros-aw/Re-fs-proc-task_mmu-Implement-IOCTL-for-efficient-page-table-scanning/20230721-033050
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/a0b5c6776b2ed91f78a7575649f8b100e58bd3a9.1689881078.git.mirq-linux%40rere.qmqm.pl
+patch subject: Re: fs/proc/task_mmu: Implement IOCTL for efficient page table scanning
+config: arc-randconfig-r035-20230720 (https://download.01.org/0day-ci/archive/20230721/202307211030.2CJH6TkM-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 12.3.0
+reproduce: (https://download.01.org/0day-ci/archive/20230721/202307211030.2CJH6TkM-lkp@intel.com/reproduce)
 
-I see. Thanks for providing that background.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202307211030.2CJH6TkM-lkp@intel.com/
 
-> It wouldn't be so bad if Google had also decided to fund people to fix 
-> those bugs, but no, they've decided to dump them on public mailing lists 
-> and berate developers into fixing them.
-> 
+All errors (new ones prefixed by >>):
 
-Those bugs, if moved from kernel to userspace, would be less harmful, 
-right?
+   fs/proc/task_mmu.c: In function 'pagemap_scan_test_walk':
+   fs/proc/task_mmu.c:1921:13: error: implicit declaration of function 'userfaultfd_wp_async'; did you mean 'userfaultfd_wp'? [-Werror=implicit-function-declaration]
+    1921 |         if (userfaultfd_wp_async(vma) && userfaultfd_wp_use_markers(vma))
+         |             ^~~~~~~~~~~~~~~~~~~~
+         |             userfaultfd_wp
+   fs/proc/task_mmu.c: In function 'pagemap_scan_pte_hole':
+>> fs/proc/task_mmu.c:2200:19: error: implicit declaration of function 'uffd_wp_range' [-Werror=implicit-function-declaration]
+    2200 |         int err = uffd_wp_range(vma, addr, end - addr, true);
+         |                   ^~~~~~~~~~~~~
+   fs/proc/task_mmu.c: In function 'pagemap_scan_init_bounce_buffer':
+   fs/proc/task_mmu.c:2290:22: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+    2290 |         p->vec_out = (void __user *)p->arg.vec;
+         |                      ^
+   fs/proc/task_mmu.c: At top level:
+   fs/proc/task_mmu.c:1967:13: warning: 'pagemap_scan_backout_range' defined but not used [-Wunused-function]
+    1967 | static void pagemap_scan_backout_range(struct pagemap_scan_private *p,
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/uffd_wp_range +2200 fs/proc/task_mmu.c
+
+  2182	
+  2183	static int pagemap_scan_pte_hole(unsigned long addr, unsigned long end,
+  2184					 int depth, struct mm_walk *walk)
+  2185	{
+  2186		struct pagemap_scan_private *p = walk->private;
+  2187		struct vm_area_struct *vma = walk->vma;
+  2188		int ret;
+  2189	
+  2190		if (!vma || !pagemap_scan_is_interesting_page(p->cur_vma_category, p))
+  2191			return 0;
+  2192	
+  2193		ret = pagemap_scan_output(p->cur_vma_category, p, addr, &end);
+  2194		if (addr == end)
+  2195			return ret;
+  2196	
+  2197		if (~p->arg.flags & PM_SCAN_WP_MATCHING)
+  2198			return ret;
+  2199	
+> 2200		int err = uffd_wp_range(vma, addr, end - addr, true);
+  2201		if (err < 0)
+  2202			ret = err;
+  2203	
+  2204		return ret;
+  2205	}
+  2206	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
