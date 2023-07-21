@@ -2,144 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 40E0675D561
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jul 2023 22:16:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2A4175D5F1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jul 2023 22:48:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbjGUUQe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Jul 2023 16:16:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35844 "EHLO
+        id S230106AbjGUUsP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Jul 2023 16:48:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbjGUUQe (ORCPT
+        with ESMTP id S230053AbjGUUsN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Jul 2023 16:16:34 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD6E3272C;
-        Fri, 21 Jul 2023 13:16:32 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 82AE31F45F;
-        Fri, 21 Jul 2023 20:16:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1689970591; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=n+3XV/m/wutn1BSKHTosdH9uZC2velfSXaZJesszQtA=;
-        b=HrxIAbhGLWdpGDDiDBx0VURnTA7UwcQvC7+Prk5xgB9teOCVx6Atmqz/L6XQ7pZjeGoh6H
-        dABX9P0cchQs5hHktNwqiZi1QtQBOO2TMG5AuvK2frOoJliwwkktdsFzY+FVmIISkb/KoZ
-        5x/xifmlHJmBzePhqOZ95F0Gnr+/6cY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1689970591;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=n+3XV/m/wutn1BSKHTosdH9uZC2velfSXaZJesszQtA=;
-        b=3wyh95/nmrmuLtQ2O2njeLLNw43OlE660K1uYRlbN0gN/Wdlb3eMKXtZ8rxNUnyqL1arjW
-        9MAmFpSKG6XgJ5CQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3F89D134B0;
-        Fri, 21 Jul 2023 20:16:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id tEvjCZ/numSdJAAAMHmgww
-        (envelope-from <krisman@suse.de>); Fri, 21 Jul 2023 20:16:31 +0000
-From:   Gabriel Krisman Bertazi <krisman@suse.de>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     brauner@kernel.org, tytso@mit.edu,
-        linux-f2fs-devel@lists.sourceforge.net, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
-        linux-ext4@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: Re: [PATCH v3 3/7] libfs: Validate negative dentries in
- case-insensitive directories
-Organization: SUSE
-References: <20230719221918.8937-1-krisman@suse.de>
-        <20230719221918.8937-4-krisman@suse.de>
-        <20230720060657.GB2607@sol.localdomain>
-        <20230720064103.GC2607@sol.localdomain>
-Date:   Fri, 21 Jul 2023 16:16:30 -0400
-In-Reply-To: <20230720064103.GC2607@sol.localdomain> (Eric Biggers's message
-        of "Wed, 19 Jul 2023 23:41:03 -0700")
-Message-ID: <87bkg53tr5.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+        Fri, 21 Jul 2023 16:48:13 -0400
+Received: from mail-ot1-f78.google.com (mail-ot1-f78.google.com [209.85.210.78])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50DFA10F5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jul 2023 13:48:12 -0700 (PDT)
+Received: by mail-ot1-f78.google.com with SMTP id 46e09a7af769-6b9cf208fb5so4866420a34.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jul 2023 13:48:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689972491; x=1690577291;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8qTOg30Pyyd8rsEqqzfnKH2ivlCUarSSwgeMcDgQLn0=;
+        b=B7uPpa1G1LREDdAQx6gMX+wZer8rbZ4Lyp/WdVTIsbLCASO0U/t60tVla9xH4xNHsH
+         MKEvuI3tKwGUQh6zG3GLuJwhqmZhSFmKRy/S8kw53AXQSqFV4gG0MJb4dcAo3it8TxeE
+         z3Q+2UjSZ8KmnB0bWN6w2WInyhdxXZObwCt8NoJwGOC4tO5LuYdv9wZ8yq6m6YNCtoZU
+         LJNYqJNulJt/zgy6zISpH1HlDeD5IniGWVGOpA6ZSEQ6HA+cYu+qLAAkEPLnnFfH3Xbp
+         lFkW4j9aRKBKZ8ubZk5K59EuOSzpXhhGZ4GK5DXR3H4kK7dQe/j4XweoVL8hdlkIj6+q
+         37Yg==
+X-Gm-Message-State: ABy/qLYXK4PIPZdo0cq6+PaVJfJidtSBZDkQYaVO0gP0VzAw16xyqeg5
+        LCCNmiiu/bj7LNLNAU1CovU8xKcdN3jLeyhWEn1IdNwrUpzM
+X-Google-Smtp-Source: APBJJlElBQGXVCLZabwgLaEmLzMHQYKFHWenz4onzfkqO/Quvh8RT0SkcxsUzr4MJ14kIrJG99OR+w3TcFKHqjGUEqFpJ3LCHfkw
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6830:118:b0:6b9:a90e:f515 with SMTP id
+ i24-20020a056830011800b006b9a90ef515mr1450617otp.3.1689972491743; Fri, 21 Jul
+ 2023 13:48:11 -0700 (PDT)
+Date:   Fri, 21 Jul 2023 13:48:11 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000cf7de0601056232@google.com>
+Subject: [syzbot] [gfs2?] kernel panic: hung_task: blocked tasks (2)
+From:   syzbot <syzbot+607aa822c60b2e75b269@syzkaller.appspotmail.com>
+To:     cluster-devel@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eric Biggers <ebiggers@kernel.org> writes:
+Hello,
 
-> On Wed, Jul 19, 2023 at 11:06:57PM -0700, Eric Biggers wrote:
->> 
->> I'm also having trouble understanding exactly when ->d_name is stable here.
->> AFAICS, unfortunately the VFS has an edge case where a dentry can be moved
->> without its parent's ->i_rwsem being held.  It happens when a subdirectory is
->> "found" under multiple names.  The VFS doesn't support directory hard links, so
->> if it finds a second link to a directory, it just moves the whole dentry tree to
->> the new location.  This can happen if a filesystem image is corrupted and
->> contains directory hard links.  Coincidentally, it can also happen in an
->> encrypted directory due to the no-key name => normal name transition...
->
-> Sorry, I think I got this slightly wrong.  The move does happen with the
-> parent's ->i_rwsem held, but it's for read, not for write.  First, before
-> ->lookup is called, the ->i_rwsem of the parent directory is taken for read.
-> ->lookup() calls d_splice_alias() which can call __d_unalias() which does the
-> __d_move().  If the old alias is in a different directory (which cannot happen
-> in that fscrypt case, but can happen in the general "directory hard links"
-> case), __d_unalias() takes that directory's ->i_rwsem for read too.
->
-> So it looks like the parent's ->i_rwsem does indeed exclude moves of child
-> dentries, but only if it's taken for *write*.  So I guess you can rely on that;
-> it's just a bit more subtle than it first appears.  Though, some of your
-> explanation seems to assume that a read lock is sufficient ("In __lookup_slow,
-> either the parent inode is locked by the caller (lookup_slow) ..."), so maybe
-> there is still a problem.
+syzbot found the following issue on:
 
-I think I'm missing something on your clarification. I see your point
-about __d_unalias, and I see in the case where alias->d_parent !=
-dentry->d_parent we acquire the parent inode read lock:
+HEAD commit:    fdf0eaf11452 Linux 6.5-rc2
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1797783aa80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=27e33fd2346a54b
+dashboard link: https://syzkaller.appspot.com/bug?extid=607aa822c60b2e75b269
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11322fb6a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17687f1aa80000
 
-static int __d_unalias(struct inode *inode,
-		struct dentry *dentry, struct dentry *alias)
-{
-...
-	m1 = &dentry->d_sb->s_vfs_rename_mutex;
-	if (!inode_trylock_shared(alias->d_parent->d_inode))
-		goto out_err;
-}
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0ac950f24d26/disk-fdf0eaf1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/666fcbcfa05d/vmlinux-fdf0eaf1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5bbe73baa630/bzImage-fdf0eaf1.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/85821d156573/mount_0.gz
 
-And it seems to use that for __d_move. In this case, __d_move changes
-from under us even with a read lock, which is dangerous.  I think I
-agree with your first email more than the clarification.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+607aa822c60b2e75b269@syzkaller.appspotmail.com
 
-In the lookup_slow then:
+Kernel panic - not syncing: hung_task: blocked tasks
+CPU: 0 PID: 27 Comm: khungtaskd Not tainted 6.5.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/03/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
+ panic+0x6a4/0x750 kernel/panic.c:340
+ check_hung_uninterruptible_tasks kernel/hung_task.c:226 [inline]
+ watchdog+0xcf2/0x11b0 kernel/hung_task.c:379
+ kthread+0x33a/0x430 kernel/kthread.c:389
+ ret_from_fork+0x2c/0x70 arch/x86/kernel/process.c:145
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:296
+RIP: 0000:0x0
+Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+RSP: 0000:0000000000000000 EFLAGS: 00000000 ORIG_RAX: 0000000000000000
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-lookup_slow()
-  d_lookup()
-    d_splice_alias()
-      __d_unalias()
-        __d_move()
 
-this __d_move Can do a dentry move and race with d_revalidate even
-though it has the parent read lock.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> So it looks like the parent's ->i_rwsem does indeed exclude moves of child
-> dentries, but only if it's taken for *write*.  So I guess you can rely on that;
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-We can get away of it with acquiring the d_lock as you suggested, I
-think.  But can you clarify the above? I wanna make sure I didn't miss
-anything. I am indeed relying only on the read lock here, as you can see.
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
--- 
-Gabriel Krisman Bertazi
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
