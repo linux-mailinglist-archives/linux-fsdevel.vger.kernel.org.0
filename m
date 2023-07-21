@@ -2,169 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 804B275BC9A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jul 2023 04:58:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD38B75BCAB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jul 2023 05:12:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229765AbjGUC6J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Jul 2023 22:58:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48452 "EHLO
+        id S229891AbjGUDMf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Jul 2023 23:12:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229684AbjGUC6H (ORCPT
+        with ESMTP id S229879AbjGUDMe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Jul 2023 22:58:07 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EDDA2690;
-        Thu, 20 Jul 2023 19:58:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689908286; x=1721444286;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=kAfnjUsMkeVOvOzOihPjEhY2+hkQ8lG+O+rh2M9hN3I=;
-  b=H9rmotCwT4ckzQWswhxn4Ib6CiDiPsJiNXD7UGG0w1dk6JNMKwnaMQtz
-   zmY8JadwDEYag8h1JCh7xZD5/2XHr+3L2U0dAT3UqUyGEjMAhf9ypk2ah
-   7pAql0yy3QDyhmZ2KaYJixiGH0t5ecCxhAf6fh5vWkwEqNn9FQLMNiLt7
-   3wiET+S8XA+75TV97domAi/mCbW/NfWvIJ3qpmKxOGiDUgqoXyrqzHKe8
-   w9D2du8wYQLtqsfve/0HSF3HHOWHgVWZMx9D3IGszljnzFOeccsGS4vNX
-   qvbRxW/b6IcOVKgJAVm1XCk0eYfgSuAg9YQ5L4T8bmGfwtZWxZEsRvCKt
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10777"; a="365817081"
-X-IronPort-AV: E=Sophos;i="6.01,220,1684825200"; 
-   d="scan'208";a="365817081"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2023 19:58:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10777"; a="898560727"
-X-IronPort-AV: E=Sophos;i="6.01,220,1684825200"; 
-   d="scan'208";a="898560727"
-Received: from lkp-server02.sh.intel.com (HELO 36946fcf73d7) ([10.239.97.151])
-  by orsmga005.jf.intel.com with ESMTP; 20 Jul 2023 19:57:57 -0700
-Received: from kbuild by 36946fcf73d7 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qMgKz-0006nV-0O;
-        Fri, 21 Jul 2023 02:57:54 +0000
-Date:   Fri, 21 Jul 2023 10:56:51 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     oe-kbuild-all@lists.linux.dev, Alex Sierra <alex.sierra@amd.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrei Vagin <avagin@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        David Hildenbrand <david@redhat.com>, Greg KH <greg@kroah.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Peter Xu <peterx@redhat.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yang Shi <shy828301@gmail.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: Re: fs/proc/task_mmu: Implement IOCTL for efficient page table
- scanning
-Message-ID: <202307211030.2CJH6TkM-lkp@intel.com>
-References: <a0b5c6776b2ed91f78a7575649f8b100e58bd3a9.1689881078.git.mirq-linux@rere.qmqm.pl>
+        Thu, 20 Jul 2023 23:12:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 304972691;
+        Thu, 20 Jul 2023 20:12:33 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ACB7261CB8;
+        Fri, 21 Jul 2023 03:12:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB997C433C9;
+        Fri, 21 Jul 2023 03:12:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689909152;
+        bh=P5PD4WZdZoh4pNtL4TIN7fX5fHYnGq0RuYxMKGgCGno=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rcQnlg/RpT+yJL8B+6Vo2Kzu3FNEcBcT+fvC2InxQjcmOp3MmcAQER/qSX4LrFwsh
+         b+b//akbq3N+YiK4oeizbbruyqPk4zQfphMsarDQk7BK+jgE6Yhn0uuTEETn6yRLQv
+         mAq5r6NP0DGVy0q5EXiqTCBT9Xml1uKDiBW56GgKNZjBOld2tzFRDJY3khxpoN5uef
+         JazRSzDOTLAqko4CIxmw+N04KXPyvwukfjAHmL2zYTBR4sDvsPVwWKuhhko1UnU1nb
+         QeuTN9sw8DkD2JU0osKGLDPKeM1adSD52pKcuvv3MBkltj+O1kKMZfx6qHG7MOPAV3
+         IPOKZ5dA+uSlQ==
+Date:   Thu, 20 Jul 2023 20:12:30 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Gabriel Krisman Bertazi <krisman@suse.de>
+Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
+        jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v3 0/7] Support negative dentries on case-insensitive
+ ext4 and f2fs
+Message-ID: <20230721031230.GA847@sol.localdomain>
+References: <20230719221918.8937-1-krisman@suse.de>
+ <20230720074318.GA56170@sol.localdomain>
+ <87y1ja4hau.fsf@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a0b5c6776b2ed91f78a7575649f8b100e58bd3a9.1689881078.git.mirq-linux@rere.qmqm.pl>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <87y1ja4hau.fsf@suse.de>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Michał,
+On Thu, Jul 20, 2023 at 01:35:37PM -0400, Gabriel Krisman Bertazi wrote:
+> Eric Biggers <ebiggers@kernel.org> writes:
+> 
+> >> Another problem exists when turning a negative dentry to positive.  If
+> >> the negative dentry has a different case than what is currently being
+> >> used for lookup, the dentry cannot be reused without changing its name,
+> >> in order to guarantee filename-preserving semantics to userspace.  We
+> >> need to either change the name or invalidate the dentry. This issue is
+> >> currently avoided in mainline, since the negative dentry mechanism is
+> >> disabled.
+> >
+> > Are you sure this problem even needs to be solved?
+> 
+> Yes, because we promise name-preserving semantics.  If we don't do it,
+> the name on the disk might be different than what was asked for, and tools
+> that rely on it (they exist) will break.  During initial testing, I've
+> had tools breaking with case-insensitive ext4 because they created a
+> file, did getdents and wanted to see exactly the name they used.
+> 
+> > It actually isn't specific to negative dentries.  If you have a file "foo"
+> > that's not in the dcache, and you open it (or look it up in any other way) as
+> > "FOO", then the positive dentry that gets created is named "FOO".
+> >
+> > As a result, the name that shows up in /proc/$pid/fd/ for anyone who has the
+> > file open is "FOO", not the true name "foo".  This is true even for processes
+> > that open it as "foo", as long as the dentry remains in the dcache.
+> >
+> > No negative dentries involved at all!
+> 
+> I totally agree it is goes beyond negative dentries, but this case is
+> particularly important because it is the only one (that I know of) where
+> the incorrect case might actually be written to the disk.  other cases,
+> like /proc/<pid>/fd/ can just display a different case to userspace,
+> which is confusing.  Still, the disk has the right version, exactly as
+> originally created.
+> 
+> I see the current /proc/$pid/fd/ semantics as a bug. In fact, I have/had
+> a bug report for bwrap/flatkpak breaking because it was mounting
+> something and immediately checking /proc/mounts to confirm it worked.  A
+> former team member tried fixing it a while ago, but we didn't follow up,
+> and I don't really love the way they did it.  I need to look into that.
+> 
+> > Or, it looks like the positive dentry case is solvable using d_add_ci().
+> > So maybe you are planning to do that?  It's not clear to me.
+> 
+> I want to use d_add_ci for the future, yes. It is not hard, but not
+> trivial, because there is an infinite recursion if d_add_ci uses
+> ->d_compare() when doing the lookup for a duplicate.  We sent a patch to
+> fix d_add_ci a while ago, but it was rejected.  I need to revisit.
+> 
 
-kernel test robot noticed the following build errors:
+Thanks, I missed that choosing a different-case dentry actually changes the name
+given to the new file.  This is because the filesystem is told about the name of
+the file to create via the negative dentry that gets found/created -- not via
+the original user-specified string.  It would help if you made this clear in a
+code comment.  Taking the comment I suggested, I'd maybe revise it to:
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master v6.5-rc2 next-20230720]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+			/*
+			 * If the lookup is for creation, then a negative dentry
+			 * can only be reused if it's a case-sensitive match,
+                         * not just a case-insensitive one.  This is needed to
+                         * make the new file be created with the name the user
+                         * specified, preserving case.
+			 *
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Micha-Miros-aw/Re-fs-proc-task_mmu-Implement-IOCTL-for-efficient-page-table-scanning/20230721-033050
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/a0b5c6776b2ed91f78a7575649f8b100e58bd3a9.1689881078.git.mirq-linux%40rere.qmqm.pl
-patch subject: Re: fs/proc/task_mmu: Implement IOCTL for efficient page table scanning
-config: arc-randconfig-r035-20230720 (https://download.01.org/0day-ci/archive/20230721/202307211030.2CJH6TkM-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 12.3.0
-reproduce: (https://download.01.org/0day-ci/archive/20230721/202307211030.2CJH6TkM-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202307211030.2CJH6TkM-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   fs/proc/task_mmu.c: In function 'pagemap_scan_test_walk':
-   fs/proc/task_mmu.c:1921:13: error: implicit declaration of function 'userfaultfd_wp_async'; did you mean 'userfaultfd_wp'? [-Werror=implicit-function-declaration]
-    1921 |         if (userfaultfd_wp_async(vma) && userfaultfd_wp_use_markers(vma))
-         |             ^~~~~~~~~~~~~~~~~~~~
-         |             userfaultfd_wp
-   fs/proc/task_mmu.c: In function 'pagemap_scan_pte_hole':
->> fs/proc/task_mmu.c:2200:19: error: implicit declaration of function 'uffd_wp_range' [-Werror=implicit-function-declaration]
-    2200 |         int err = uffd_wp_range(vma, addr, end - addr, true);
-         |                   ^~~~~~~~~~~~~
-   fs/proc/task_mmu.c: In function 'pagemap_scan_init_bounce_buffer':
-   fs/proc/task_mmu.c:2290:22: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-    2290 |         p->vec_out = (void __user *)p->arg.vec;
-         |                      ^
-   fs/proc/task_mmu.c: At top level:
-   fs/proc/task_mmu.c:1967:13: warning: 'pagemap_scan_backout_range' defined but not used [-Wunused-function]
-    1967 | static void pagemap_scan_backout_range(struct pagemap_scan_private *p,
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +/uffd_wp_range +2200 fs/proc/task_mmu.c
-
-  2182	
-  2183	static int pagemap_scan_pte_hole(unsigned long addr, unsigned long end,
-  2184					 int depth, struct mm_walk *walk)
-  2185	{
-  2186		struct pagemap_scan_private *p = walk->private;
-  2187		struct vm_area_struct *vma = walk->vma;
-  2188		int ret;
-  2189	
-  2190		if (!vma || !pagemap_scan_is_interesting_page(p->cur_vma_category, p))
-  2191			return 0;
-  2192	
-  2193		ret = pagemap_scan_output(p->cur_vma_category, p, addr, &end);
-  2194		if (addr == end)
-  2195			return ret;
-  2196	
-  2197		if (~p->arg.flags & PM_SCAN_WP_MATCHING)
-  2198			return ret;
-  2199	
-> 2200		int err = uffd_wp_range(vma, addr, end - addr, true);
-  2201		if (err < 0)
-  2202			ret = err;
-  2203	
-  2204		return ret;
-  2205	}
-  2206	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+- Eric
