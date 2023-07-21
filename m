@@ -2,67 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD1675CB33
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jul 2023 17:14:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F36E275CB42
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jul 2023 17:16:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231909AbjGUPOa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Jul 2023 11:14:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49216 "EHLO
+        id S230143AbjGUPQM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Jul 2023 11:16:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231915AbjGUPOQ (ORCPT
+        with ESMTP id S231514AbjGUPQB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Jul 2023 11:14:16 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C4C630DD
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jul 2023 08:13:08 -0700 (PDT)
+        Fri, 21 Jul 2023 11:16:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 948C230F0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jul 2023 08:14:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1689952377;
+        s=mimecast20190719; t=1689952478;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=KuECWgmrt4c8ZTlDSWFvVOJXkvdaI59iER7noO41RWI=;
-        b=EvkoIsl1Ald/n0VtWGIJbPb/A4z3GOpRj0Fhdz3yIaJA9+IuTR5LFPxCvPVCsM/PPQhaFn
-        qzg5hwNlD9wRgSbxTD2TWcJDQZR8wW/OAEghdUsxebgITTS5FZ+r49v9XHkPvQUSvVRIbm
-        nP7MgLrNUnZr075+tH0CO8K6Rm76QwU=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=BrJmJjnrV3+4TK5GKS3+EEIdaYEFXLT6GE196jD6rfg=;
+        b=CDsSk9s1/5DYm3LiyePOdaL3snLXKxVUwMmGMlCcE9k0aMCLJByEO2YOt/egccfVNdNFhs
+        +9pVwpj8NaOb8sSUxm+fVlm3WsGG+BX5ACFYfv5cA+MXh37P03REGwnFHoJcp/OKlUr7k/
+        LI5cUa232Jt3Iz486Z5A85UHreaURk4=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-607-IIPBRq2jM2iJv0zLLCDtEQ-1; Fri, 21 Jul 2023 11:12:55 -0400
-X-MC-Unique: IIPBRq2jM2iJv0zLLCDtEQ-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-4fb87c48aceso2076345e87.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jul 2023 08:12:55 -0700 (PDT)
+ us-mta-74-3vbWzc5RM2KTj53nr1MOWQ-1; Fri, 21 Jul 2023 11:14:36 -0400
+X-MC-Unique: 3vbWzc5RM2KTj53nr1MOWQ-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-4fb7d06a7e6so2074813e87.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jul 2023 08:14:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689952374; x=1690557174;
+        d=1e100.net; s=20221208; t=1689952475; x=1690557275;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KuECWgmrt4c8ZTlDSWFvVOJXkvdaI59iER7noO41RWI=;
-        b=eg3RZheQVaMlkvs6h1ZjoEV8sazp9bZbP4aeSdcaL8Ru99OnwZmN/LEfXgO1+LDdOU
-         QmLqISoawHhWnL6qDJQVWZ//nBHAwqplcAQ5VvOgtEKW3nmuusgyG3mRxbUKVoelHA5p
-         VlPYHNPTCBts+mG/2oTgFSnJM1c2rN5HqvFRr1QmwT7qq5PGqc8n9LFTUQ88o3YuaSyc
-         dKGmJw2WsYoQGicnCdxXueLRmsw4q0APc7B32Db8/UlyGOZmTtbiillVpxcp/JWqd3bt
-         ZDPYDQMc42j1hZqlIsQuxwO0uoJMqVRQ9aeQH0QnDKeE8dAIOnSEiiudSq8gqIiGXEU4
-         PxiQ==
-X-Gm-Message-State: ABy/qLY4ori/62DPqBxkiNnjhtWK+Fsid7m4WAYbYz9u+9sqqZwkkBFc
-        cqvTy7KafuEv4ugzqmHUzaAk0jDl+iUsb30AIAik0Mi3UBAGy/khiBVDu4Fb82b3mdawoGbisr4
-        g1zQr52zhWBa8ZujSKx2qbuK5dA==
-X-Received: by 2002:a19:e05b:0:b0:4fb:caed:95c3 with SMTP id g27-20020a19e05b000000b004fbcaed95c3mr1377458lfj.53.1689952374307;
-        Fri, 21 Jul 2023 08:12:54 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlG7b5XRxViP22WEsYjZVx9eEuQn7vFDvQWd5jPtrRlHnUDSnFTiFx5UF3BQ2XwQWfw7l/MGag==
-X-Received: by 2002:a19:e05b:0:b0:4fb:caed:95c3 with SMTP id g27-20020a19e05b000000b004fbcaed95c3mr1377407lfj.53.1689952373968;
-        Fri, 21 Jul 2023 08:12:53 -0700 (PDT)
+        bh=BrJmJjnrV3+4TK5GKS3+EEIdaYEFXLT6GE196jD6rfg=;
+        b=fphBAOZkMLe7Brl0hMFZa848D+71WhrnK3rRJrrSe3TgEKsLSHjscD+6DgGSwx8d7f
+         VTBZ4oZauCWA7NalQN3IQyhkNOYKIrQxhbXsbwFuS82D3x0Nl9Y/eLjjtLB4OrNtFUL7
+         PYrQ6LF7Ys95WH7yIpXlq4qvV2xMPRBLy+2kPSvyZgq17PfI5WLW7jrte3brPikZiON2
+         Yex8wHCiApe5QnLyvePkAwa/6fS5EkFeTkuhi5CH9W77+2G/8k5v8bb0XXQH85YrH8Ms
+         tXF72/8sdFoJ8hBvDPhylSqxLIlHisBjj6o66Rw6hdESWV49yXpfS4E46lqYKh2/BB6h
+         vZrA==
+X-Gm-Message-State: ABy/qLaXXVUWGGcDnjMM25/5kurEM/ktPl3IDHuEy3kfVxZyct8MCj+9
+        JhW7gUk4lSzKTh/ySTbA4r70fWiDO+ySVO52PwCkfBcJ+anK5EaVai9xTnjU7UOQgjwG8eBw2Ts
+        FmWp8armNID/ahdZbNLbFaIYyNw==
+X-Received: by 2002:a05:6512:1150:b0:4f8:661f:60a4 with SMTP id m16-20020a056512115000b004f8661f60a4mr1702759lfg.41.1689952475202;
+        Fri, 21 Jul 2023 08:14:35 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlEY792MHWkKnplUr0Vx4lx09FEkAsdfsZuVIi7WtMfQ0gFs1YquUiOv8dJt4JtZPtFNMSuP/g==
+X-Received: by 2002:a05:6512:1150:b0:4f8:661f:60a4 with SMTP id m16-20020a056512115000b004f8661f60a4mr1702736lfg.41.1689952474795;
+        Fri, 21 Jul 2023 08:14:34 -0700 (PDT)
 Received: from ?IPV6:2001:b07:6468:f312:9af8:e5f5:7516:fa89? ([2001:b07:6468:f312:9af8:e5f5:7516:fa89])
-        by smtp.googlemail.com with ESMTPSA id n1-20020a05640204c100b0051e0f21c43fsm2214094edw.31.2023.07.21.08.12.51
+        by smtp.googlemail.com with ESMTPSA id l23-20020a056402345700b00521d2cf5f3bsm2224721edc.96.2023.07.21.08.14.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jul 2023 08:12:53 -0700 (PDT)
-Message-ID: <6519e3f4-7cea-01a6-724e-a0bce10c3c19@redhat.com>
-Date:   Fri, 21 Jul 2023 17:12:51 +0200
+        Fri, 21 Jul 2023 08:14:34 -0700 (PDT)
+Message-ID: <75f13a8a-132f-99ee-d3c6-24a12f2f23d5@redhat.com>
+Date:   Fri, 21 Jul 2023 17:14:31 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [RFC PATCH v11 16/29] KVM: Allow arch code to track number of
- memslot address spaces per VM
+Subject: Re: [RFC PATCH v11 18/29] KVM: selftests: Drop unused
+ kvm_userspace_memory_region_find() helper
 Content-Language: en-US
 To:     Sean Christopherson <seanjc@google.com>,
         Marc Zyngier <maz@kernel.org>,
@@ -100,15 +100,15 @@ Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Isaku Yamahata <isaku.yamahata@gmail.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
 References: <20230718234512.1690985-1-seanjc@google.com>
- <20230718234512.1690985-17-seanjc@google.com>
+ <20230718234512.1690985-19-seanjc@google.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
-In-Reply-To: <20230718234512.1690985-17-seanjc@google.com>
+In-Reply-To: <20230718234512.1690985-19-seanjc@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -116,20 +116,75 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/19/23 01:44, Sean Christopherson wrote:
-> @@ -4725,9 +4725,9 @@ static int kvm_vm_ioctl_check_extension_generic(struct kvm *kvm, long arg)
->   	case KVM_CAP_IRQ_ROUTING:
->   		return KVM_MAX_IRQ_ROUTES;
->   #endif
-> -#if KVM_ADDRESS_SPACE_NUM > 1
-> +#if KVM_MAX_NR_ADDRESS_SPACES > 1
->   	case KVM_CAP_MULTI_ADDRESS_SPACE:
-> -		return KVM_ADDRESS_SPACE_NUM;
-> +		return KVM_MAX_NR_ADDRESS_SPACES;
->   #endif
+On 7/19/23 01:45, Sean Christopherson wrote:
+> Drop kvm_userspace_memory_region_find(), it's unused and a terrible API
+> (probably why it's unused).  If anything outside of kvm_util.c needs to
+> get at the memslot, userspace_mem_region_find() can be exposed to give
+> others full access to all memory region/slot information.
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>   .../selftests/kvm/include/kvm_util_base.h     |  4 ---
+>   tools/testing/selftests/kvm/lib/kvm_util.c    | 29 -------------------
+>   2 files changed, 33 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/include/kvm_util_base.h b/tools/testing/selftests/kvm/include/kvm_util_base.h
+> index 07732a157ccd..6aeb008dd668 100644
+> --- a/tools/testing/selftests/kvm/include/kvm_util_base.h
+> +++ b/tools/testing/selftests/kvm/include/kvm_util_base.h
+> @@ -753,10 +753,6 @@ vm_adjust_num_guest_pages(enum vm_guest_mode mode, unsigned int num_guest_pages)
+>   	return n;
+>   }
+>   
+> -struct kvm_userspace_memory_region *
+> -kvm_userspace_memory_region_find(struct kvm_vm *vm, uint64_t start,
+> -				 uint64_t end);
+> -
+>   #define sync_global_to_guest(vm, g) ({				\
+>   	typeof(g) *_p = addr_gva2hva(vm, (vm_vaddr_t)&(g));	\
+>   	memcpy(_p, &(g), sizeof(g));				\
+> diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+> index 9741a7ff6380..45d21e052db0 100644
+> --- a/tools/testing/selftests/kvm/lib/kvm_util.c
+> +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+> @@ -586,35 +586,6 @@ userspace_mem_region_find(struct kvm_vm *vm, uint64_t start, uint64_t end)
+>   	return NULL;
+>   }
+>   
+> -/*
+> - * KVM Userspace Memory Region Find
+> - *
+> - * Input Args:
+> - *   vm - Virtual Machine
+> - *   start - Starting VM physical address
+> - *   end - Ending VM physical address, inclusive.
+> - *
+> - * Output Args: None
+> - *
+> - * Return:
+> - *   Pointer to overlapping region, NULL if no such region.
+> - *
+> - * Public interface to userspace_mem_region_find. Allows tests to look up
+> - * the memslot datastructure for a given range of guest physical memory.
+> - */
+> -struct kvm_userspace_memory_region *
+> -kvm_userspace_memory_region_find(struct kvm_vm *vm, uint64_t start,
+> -				 uint64_t end)
+> -{
+> -	struct userspace_mem_region *region;
+> -
+> -	region = userspace_mem_region_find(vm, start, end);
+> -	if (!region)
+> -		return NULL;
+> -
+> -	return &region->region;
+> -}
+> -
+>   __weak void vcpu_arch_free(struct kvm_vcpu *vcpu)
+>   {
+>   
 
-Since this is a VM ioctl, it should return 
-kvm_arch_nr_memslot_as_ids(kvm) if kvm != NULL.
+Will queue this.
 
 Paolo
 
