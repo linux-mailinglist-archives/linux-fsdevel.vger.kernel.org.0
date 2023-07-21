@@ -2,113 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DE6175D0EC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jul 2023 19:52:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13D4175D181
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jul 2023 20:48:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230034AbjGURwD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Jul 2023 13:52:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51028 "EHLO
+        id S230230AbjGUSsL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Jul 2023 14:48:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229990AbjGURwB (ORCPT
+        with ESMTP id S229451AbjGUSsK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Jul 2023 13:52:01 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3CBD3586;
-        Fri, 21 Jul 2023 10:51:57 -0700 (PDT)
-Received: from [192.168.10.12] (unknown [39.45.151.35])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 35C69660709D;
-        Fri, 21 Jul 2023 18:51:47 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1689961916;
-        bh=DDoWRz+yUmRlcHh/cA8RW2LvkPV43c8fzdbwlgOqXBw=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=hb/3Tmml0TudHA0SnrngZDAV7m9FDd2UZ1ziQ1dY9CToxHBzlNqg1sf4BUQ2pMXe3
-         DZYC7IWdLwAhwS8jS2QqqmmyhgNOem6p6MSZ+rBQH+ucZG4tqBWbP0rntrri4to3Y4
-         3MjSAjGzGKNbf3to9oalMh9VH+wJ+2vOdQVN2zaFtMqb1IFUqxj6UyhkcK4Ze8y9JT
-         XUjI1sncjMt8/sXvVbsw6uwEDh16us2s5s6T8+OAA3oi6AiSASvNnLsUG/4znoSrKM
-         J5xb7TQjkFyrIw+3OnCIA6wZ2poYcI9wXDzOsCLmFqH15rMNYhKixhc8/MA5hDEtq5
-         hZ9wnODa0VsRw==
-Message-ID: <04e76ff6-3cc0-4ad3-a39b-1f39107e5f3f@collabora.com>
-Date:   Fri, 21 Jul 2023 22:51:44 +0500
+        Fri, 21 Jul 2023 14:48:10 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74BA7E47
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jul 2023 11:48:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=a4HzuP9b0pIZ/Y8IfgWdavC7qv9/cPHj5HMecrc3lf0=; b=ofGXXsb18eAgrHH82mCo0t2TnH
+        mok84wTg2S3rFWDibuvUDyQV0U/0aYS+WQcLc2ASjFZJN832MEU++a7eE6ck/ibkdBJo3bgybfK5E
+        gb7nII6KH6RN3fFeJG1OA0vwyG+d5VLgiQQ5FS6UYL9oB2/HhuKx5rmeHPJKw2lnz7Ar3qQ5dSjNb
+        3oRUoZj9lD7oeI0P5vNrkndor28hWorN8hcXWnEpHymODmloKeFm2dPigU2cRaJox8D9hJJoPW/sj
+        NXVqJrDIkU19zocpf4ibRnl7VIUY01hAEgaaMC5hNUJua+uZv0GebOoPh2JYFrHbGRn0XTDwMTBj0
+        7QVsnk6A==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qMvAZ-001N43-LZ; Fri, 21 Jul 2023 18:48:03 +0000
+Date:   Fri, 21 Jul 2023 19:48:03 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Arjun Roy <arjunroy@google.com>, Eric Dumazet <edumazet@google.com>
+Cc:     linux-mm@kvack.org, Suren Baghdasaryan <surenb@google.com>,
+        linux-fsdevel@vger.kernel.org,
+        Punit Agrawal <punit.agrawal@bytedance.com>,
+        "David S . Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v2 9/9] tcp: Use per-vma locking for receive zerocopy
+Message-ID: <ZLrS4yBQRcDmwx9R@casper.infradead.org>
+References: <20230711202047.3818697-1-willy@infradead.org>
+ <20230711202047.3818697-10-willy@infradead.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yang Shi <shy828301@gmail.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: fs/proc/task_mmu: Implement IOCTL for efficient page table
- scanning
-Content-Language: en-US
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-References: <20230713101415.108875-6-usama.anjum@collabora.com>
- <a0b5c6776b2ed91f78a7575649f8b100e58bd3a9.1689881078.git.mirq-linux@rere.qmqm.pl>
- <7eedf953-7cf6-c342-8fa8-b7626d69ab63@collabora.com>
- <ZLpsEGZkeQECO08M@qmqm.qmqm.pl>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <ZLpsEGZkeQECO08M@qmqm.qmqm.pl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230711202047.3818697-10-willy@infradead.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/21/23 4:29 PM, Michał Mirosław wrote:
-> On Fri, Jul 21, 2023 at 03:48:22PM +0500, Muhammad Usama Anjum wrote:
->> On 7/21/23 12:28 AM, Michał Mirosław wrote:
->>> This is a massaged version of patch by Muhammad Usama Anjum [1]
->>> to illustrate my review comments and hopefully push the implementation
->>> efforts closer to conclusion. The changes are:
->> Thank you so much for this effort. I also want to reach conclusion. I'll
->> agree with all the changes which don't affect me. But some requirements
->> aren't being fulfilled with this current design.
-> [...]
->> #define PAGE_IS_WPASYNC		(1 << 0)
->> #define PAGE_IS_WRITTEN		(1 << 1)
->> You have another new flag PAGE_IS_WPASYNC. But there is no application of
->> PAGE_IS_WPASYNC. We must not add a flag which don't have any user.
-> 
-> BTW, I'm not sure I got the PAGE_IS_WPASYNC naming right - this is to
-> designate pages that can be write-protected (are UFFD-registered I believe).
-PAGE_IS_UFFDWP_REGISTERED or PAGE_IS_WP_REG?
 
-> 
-> Best Regards
-> Michał Mirosław
+Eric?  Arjun?  Any comments?
 
--- 
-BR,
-Muhammad Usama Anjum
+On Tue, Jul 11, 2023 at 09:20:47PM +0100, Matthew Wilcox (Oracle) wrote:
+> From: Arjun Roy <arjunroy@google.com>
+> 
+> Per-VMA locking allows us to lock a struct vm_area_struct without
+> taking the process-wide mmap lock in read mode.
+> 
+> Consider a process workload where the mmap lock is taken constantly in
+> write mode. In this scenario, all zerocopy receives are periodically
+> blocked during that period of time - though in principle, the memory
+> ranges being used by TCP are not touched by the operations that need
+> the mmap write lock. This results in performance degradation.
+> 
+> Now consider another workload where the mmap lock is never taken in
+> write mode, but there are many TCP connections using receive zerocopy
+> that are concurrently receiving. These connections all take the mmap
+> lock in read mode, but this does induce a lot of contention and atomic
+> ops for this process-wide lock. This results in additional CPU
+> overhead caused by contending on the cache line for this lock.
+> 
+> However, with per-vma locking, both of these problems can be avoided.
+> 
+> As a test, I ran an RPC-style request/response workload with 4KB
+> payloads and receive zerocopy enabled, with 100 simultaneous TCP
+> connections. I measured perf cycles within the
+> find_tcp_vma/mmap_read_lock/mmap_read_unlock codepath, with and
+> without per-vma locking enabled.
+> 
+> When using process-wide mmap semaphore read locking, about 1% of
+> measured perf cycles were within this path. With per-VMA locking, this
+> value dropped to about 0.45%.
+> 
+> Signed-off-by: Arjun Roy <arjunroy@google.com>
+> Reviewed-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: David S. Miller <davem@davemloft.net>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  net/ipv4/tcp.c | 39 ++++++++++++++++++++++++++++++++-------
+>  1 file changed, 32 insertions(+), 7 deletions(-)
+> 
+> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> index 1542de3f66f7..7118ec6cf886 100644
+> --- a/net/ipv4/tcp.c
+> +++ b/net/ipv4/tcp.c
+> @@ -2038,6 +2038,30 @@ static void tcp_zc_finalize_rx_tstamp(struct sock *sk,
+>  	}
+>  }
+>  
+> +static struct vm_area_struct *find_tcp_vma(struct mm_struct *mm,
+> +		unsigned long address, bool *mmap_locked)
+> +{
+> +	struct vm_area_struct *vma = lock_vma_under_rcu(mm, address);
+> +
+> +	if (vma) {
+> +		if (vma->vm_ops != &tcp_vm_ops) {
+> +			vma_end_read(vma);
+> +			return NULL;
+> +		}
+> +		*mmap_locked = false;
+> +		return vma;
+> +	}
+> +
+> +	mmap_read_lock(mm);
+> +	vma = vma_lookup(mm, address);
+> +	if (!vma || vma->vm_ops != &tcp_vm_ops) {
+> +		mmap_read_unlock(mm);
+> +		return NULL;
+> +	}
+> +	*mmap_locked = true;
+> +	return vma;
+> +}
+> +
+>  #define TCP_ZEROCOPY_PAGE_BATCH_SIZE 32
+>  static int tcp_zerocopy_receive(struct sock *sk,
+>  				struct tcp_zerocopy_receive *zc,
+> @@ -2055,6 +2079,7 @@ static int tcp_zerocopy_receive(struct sock *sk,
+>  	u32 seq = tp->copied_seq;
+>  	u32 total_bytes_to_map;
+>  	int inq = tcp_inq(sk);
+> +	bool mmap_locked;
+>  	int ret;
+>  
+>  	zc->copybuf_len = 0;
+> @@ -2079,13 +2104,10 @@ static int tcp_zerocopy_receive(struct sock *sk,
+>  		return 0;
+>  	}
+>  
+> -	mmap_read_lock(current->mm);
+> -
+> -	vma = vma_lookup(current->mm, address);
+> -	if (!vma || vma->vm_ops != &tcp_vm_ops) {
+> -		mmap_read_unlock(current->mm);
+> +	vma = find_tcp_vma(current->mm, address, &mmap_locked);
+> +	if (!vma)
+>  		return -EINVAL;
+> -	}
+> +
+>  	vma_len = min_t(unsigned long, zc->length, vma->vm_end - address);
+>  	avail_len = min_t(u32, vma_len, inq);
+>  	total_bytes_to_map = avail_len & ~(PAGE_SIZE - 1);
+> @@ -2159,7 +2181,10 @@ static int tcp_zerocopy_receive(struct sock *sk,
+>  						   zc, total_bytes_to_map);
+>  	}
+>  out:
+> -	mmap_read_unlock(current->mm);
+> +	if (mmap_locked)
+> +		mmap_read_unlock(current->mm);
+> +	else
+> +		vma_end_read(vma);
+>  	/* Try to copy straggler data. */
+>  	if (!ret)
+>  		copylen = tcp_zc_handle_leftover(zc, sk, skb, &seq, copybuf_len, tss);
+> -- 
+> 2.39.2
+> 
