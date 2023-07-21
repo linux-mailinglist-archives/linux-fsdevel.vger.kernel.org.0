@@ -2,113 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7027375C644
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jul 2023 14:00:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2EC175C6A1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Jul 2023 14:11:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230447AbjGUMA0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Jul 2023 08:00:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52154 "EHLO
+        id S229970AbjGUMLO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Jul 2023 08:11:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229809AbjGUMAZ (ORCPT
+        with ESMTP id S229820AbjGUMLO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Jul 2023 08:00:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9255719B3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jul 2023 04:59:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1689940782;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4Y7rbnaDJbn/YejSF4mQVA8Z4grlfMZHjKPnDFxLZ8A=;
-        b=NLYxJ/tI375ddfrYE69u4PU4Z9h7i6tOguCLsIe+/EncQBl2Aqsf93Gj2dpLFHHmIJWLvd
-        wEHK9+sHYSWQpfB86rX4TB+P5e6nKB+99bnGoy9jC96Rwt1F2pOlKeFgF426rwViuud1tV
-        rJFa43qXP2DG3tN66TNOfIOxNbBopgE=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-248-PXt9deAxNM6iywXC1LYdIA-1; Fri, 21 Jul 2023 07:59:41 -0400
-X-MC-Unique: PXt9deAxNM6iywXC1LYdIA-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-993c2d9e496so119393066b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Jul 2023 04:59:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689940780; x=1690545580;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Y7rbnaDJbn/YejSF4mQVA8Z4grlfMZHjKPnDFxLZ8A=;
-        b=ESFNinQEytThrr0AGyoixGMqctzgxC83QbWZQ+OfuGHpDdFlFn9WYC5s7LEGoqmVxo
-         qtc1Gzt0GRwwEQlJFXtCJbF36vUryWrVtZvnx8D7tHSyzoCjlK819kFo5Npey8QskL0h
-         PyhretW4rCzadbPccFGaZiofb49+Gu064aTNTFGy07AVRaj2UH3zG4XcPIZFnAG2Wb05
-         KgYQSY+LQWtWHCaXx13tftZTewOxzwFzn13ymDLfNmSAm93Q8sy0driU+yddCvA1dYR+
-         BEc9m4qw4S1pSy17V+wXrweFycBrvU00j/xzorX/ySteJRMlzBS4mHBBJPJWqMLN5Zz9
-         CnTw==
-X-Gm-Message-State: ABy/qLZ8BONAIGhPo/buLx8reMTlxNWlulRWRQhr+v+EppHUhogdqr3P
-        RUIjHR8LchTcdrMYu6bysslQxpZfrVR9fzq6jr0cSxe33JW6RkTjnr32dnJ9ZABECZPL+PuW9Ez
-        rySNkEqMCSVQ1ObeYUEl6E+oxmQ==
-X-Received: by 2002:a17:906:2da:b0:994:54af:e282 with SMTP id 26-20020a17090602da00b0099454afe282mr1360629ejk.10.1689940780005;
-        Fri, 21 Jul 2023 04:59:40 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlEk/l1rT7vVGyK6B+M0/vN6OF6CipTv2G0AE0UWGqg9sgFPNWcoUSGmc+Sw2v1G9OPem3PIcQ==
-X-Received: by 2002:a17:906:2da:b0:994:54af:e282 with SMTP id 26-20020a17090602da00b0099454afe282mr1360600ejk.10.1689940779630;
-        Fri, 21 Jul 2023 04:59:39 -0700 (PDT)
-Received: from ?IPV6:2001:b07:6468:f312:9af8:e5f5:7516:fa89? ([2001:b07:6468:f312:9af8:e5f5:7516:fa89])
-        by smtp.googlemail.com with ESMTPSA id um15-20020a170906cf8f00b00992b3ea1ee3sm2078970ejb.159.2023.07.21.04.59.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jul 2023 04:59:38 -0700 (PDT)
-Message-ID: <6118063e-5c91-acc4-129f-3bacc19f25ce@redhat.com>
-Date:   Fri, 21 Jul 2023 13:59:36 +0200
+        Fri, 21 Jul 2023 08:11:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87FAF1701;
+        Fri, 21 Jul 2023 05:11:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 202F961A39;
+        Fri, 21 Jul 2023 12:11:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C6E9C433C9;
+        Fri, 21 Jul 2023 12:11:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689941472;
+        bh=hJ2M7oZy09pQU7Rc+HwKVL3JXlQRCY+27o6eYDiCBOw=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=Bnt+PIbFNxpV9C1kCW/sa0AyI247EFlRDV6Wp3WTDuw6HrumMJB9BVFASXgvL8k3m
+         yrF+mzba68CyW9YdLn3EowdoqSdHsViSyDHuJu3+M40mRMkyOZ9MYsL1k48aLHbbvj
+         tSm77yZxLhEp3t+9vrmSSrB10SXdeRXwOJQJwfZtf4BSCLJ7YMrWEEcdOmtjGFuw8O
+         g3gbg3b4jvRFLHF1a4T5VegTOZYPN52jDF+5Gnf2tjKg8VVCvRj9Zb8aZktxG78mvl
+         mKgueMBoZjkffwTjsSW9soJTLDuI6m4r1r4LPhkmJwqc70Rje4oOM//PNfO6zjYJk9
+         uMRFQcPILmSgw==
+Message-ID: <d0b24d6d5dd15d80be5b1dcd724560bc5a016c08.camel@kernel.org>
+Subject: Re: [PATCH] Fix BUG: KASAN: use-after-free in
+ trace_event_raw_event_filelock_lock
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Will Shiu <Will.Shiu@mediatek.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Date:   Fri, 21 Jul 2023 08:11:10 -0400
+In-Reply-To: <d50c6c34035f1a0b143507d9ab9fcf0d27a5dc86.camel@kernel.org>
+References: <20230721051904.9317-1-Will.Shiu@mediatek.com>
+         <d50c6c34035f1a0b143507d9ab9fcf0d27a5dc86.camel@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [RFC PATCH v11 09/29] KVM: x86: Disallow hugepages when memory
- attributes are mixed
-Content-Language: en-US
-To:     Sean Christopherson <seanjc@google.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
-        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20230718234512.1690985-1-seanjc@google.com>
- <20230718234512.1690985-10-seanjc@google.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-In-Reply-To: <20230718234512.1690985-10-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -116,43 +65,17 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/19/23 01:44, Sean Christopherson wrote:
-> +static bool range_has_attrs(struct kvm *kvm, gfn_t start, gfn_t end,
-> +			    unsigned long attrs)
-> +{
-> +	XA_STATE(xas, &kvm->mem_attr_array, start);
-> +	unsigned long index;
-> +	bool has_attrs;
-> +	void *entry;
-> +
-> +	rcu_read_lock();
-> +
-> +	if (!attrs) {
-> +		has_attrs = !xas_find(&xas, end);
-> +		goto out;
-> +	}
-> +
-> +	has_attrs = true;
-> +	for (index = start; index < end; index++) {
-> +		do {
-> +			entry = xas_next(&xas);
-> +		} while (xas_retry(&xas, entry));
-> +
-> +		if (xas.xa_index != index || xa_to_value(entry) != attrs) {
-> +			has_attrs = false;
-> +			break;
-> +		}
-> +	}
-> +
-> +out:
-> +	rcu_read_unlock();
-> +	return has_attrs;
-> +}
-> +
+On Fri, 2023-07-21 at 06:34 -0400, Jeff Layton wrote:
+>=20
+> Could you send along the entire KASAN log message? I'm not sure I see
+> how this is being tripped. The lock we're passing in here is "request"
+> and that shouldn't be freed since it's allocated and owned by the
+> caller.
+>=20
 
-Can you move this function to virt/kvm/kvm_main.c?
+Nevermind. I see how this could happen, and have gone ahead and merged
+the patch. It should make v6.6.
 
-Thanks,
-
-Paolo
-
+Cheers,
+--=20
+Jeff Layton <jlayton@kernel.org>
