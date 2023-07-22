@@ -2,53 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 026F475DCCE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jul 2023 15:57:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1078375DCD6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jul 2023 16:06:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229644AbjGVN5K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Jul 2023 09:57:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58786 "EHLO
+        id S229560AbjGVOGU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Jul 2023 10:06:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229692AbjGVN5H (ORCPT
+        with ESMTP id S229452AbjGVOGT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Jul 2023 09:57:07 -0400
+        Sat, 22 Jul 2023 10:06:19 -0400
 Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9533A30D6;
-        Sat, 22 Jul 2023 06:57:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B6262128;
+        Sat, 22 Jul 2023 07:06:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1690034224; x=1721570224;
+  t=1690034778; x=1721570778;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:content-transfer-encoding:in-reply-to;
-  bh=5MIlRC2+zWqTR3u8Tn1LD4aunQEqMpb9fo+8qASwafs=;
-  b=jOOhUbJJOCPd00pMC3Jc1wo2HXdDydI3qPKDfzsCByRrEE3ExoJgQuaz
-   3KwzlkWoUHho1Nq53tURWBQFkT8vDiK2OPr2u0JT6USOr2fLkHOHJuPLz
-   YuI4FOpzdamtcOzpn6bUaljU1SH/rgj7TusNBJxd/akdrIgE3VFwdawbk
-   VSsc9u1vFU3XwHjd8AvD6nY1t96HODjExVPBlZ8AxACiVnyjV3232Outn
-   yfVwrnQLbrtllyRsAlES6ySUFUHPJ8FbKc6f6sQg8UOE32sl2rzrYtSLW
-   1nLz/vhnuawXUY+gyJOfbanF4QfS+BI9Md2UvzOd2av891Y5ZTv0S95Ps
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10779"; a="367223274"
+  bh=FWL7GsEsXsuIIlGHXCF3NbLBRp3WyWjS7z52lOLt9cM=;
+  b=OT4PZ+2jHe78K1AYSdq3Jkajh5ZApXrkn2BkG+Clx3E5NwQH/i7PqQYD
+   2ol/Ht49/6GDANF4XQAG3cCWCAT48YdT7sLwd2FsStbhUA6gIM8H3Whxq
+   h467fM90JimmHUjPiZwENSWp6QeqlBdlS7eiZiczB9BcYRE4Kuue9Anfv
+   L+4W26hKBiJ+YWHRWmEY8RoSeA+WGouOsQRUAwh7tjj6flW1VWbQv42BD
+   crjNEp6q6HG59K7FF8HTu0IPjYOHaK4TWrae9grlooE5Clz6YZ9gav357
+   uDjySsmY3iiMN2ftc2hID1r38GZkoAd2eWO0lpe4YeiD5mXh71/+g4Wku
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10779"; a="367223915"
 X-IronPort-AV: E=Sophos;i="6.01,224,1684825200"; 
-   d="scan'208";a="367223274"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2023 06:57:03 -0700
+   d="scan'208";a="367223915"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2023 07:06:17 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10779"; a="702357374"
+X-IronPort-AV: E=McAfee;i="6600,9927,10779"; a="760279985"
 X-IronPort-AV: E=Sophos;i="6.01,224,1684825200"; 
-   d="scan'208";a="702357374"
+   d="scan'208";a="760279985"
 Received: from lkp-server02.sh.intel.com (HELO 36946fcf73d7) ([10.239.97.151])
-  by orsmga006.jf.intel.com with ESMTP; 22 Jul 2023 06:56:56 -0700
+  by orsmga001.jf.intel.com with ESMTP; 22 Jul 2023 07:06:10 -0700
 Received: from kbuild by 36946fcf73d7 with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1qND62-0008Lr-0Z;
-        Sat, 22 Jul 2023 13:56:34 +0000
-Date:   Sat, 22 Jul 2023 21:55:04 +0800
+        id 1qNDFJ-0008M5-0z;
+        Sat, 22 Jul 2023 14:06:09 +0000
+Date:   Sat, 22 Jul 2023 22:05:32 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
         Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        Andrei Vagin <avagin@gmail.com>,
+Cc:     oe-kbuild-all@lists.linux.dev, Andrei Vagin <avagin@gmail.com>,
         Danylo Mocherniuk <mdanylo@google.com>,
         Alex Sierra <alex.sierra@amd.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -76,7 +75,7 @@ Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
         linux-kselftest@vger.kernel.org
 Subject: Re: [v2] fs/proc/task_mmu: Implement IOCTL for efficient page table
  scanning
-Message-ID: <202307222107.GdtIG4nq-lkp@intel.com>
+Message-ID: <202307222141.3RAiL0jR-lkp@intel.com>
 References: <ZLshsAj5PbsEAHhP@qmqm.qmqm.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -107,132 +106,32 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Micha-Miros-aw/fs-proc-ta
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
 patch link:    https://lore.kernel.org/r/ZLshsAj5PbsEAHhP%40qmqm.qmqm.pl
 patch subject: [v2] fs/proc/task_mmu: Implement IOCTL for efficient page table scanning
-config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20230722/202307222107.GdtIG4nq-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project.git 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce: (https://download.01.org/0day-ci/archive/20230722/202307222107.GdtIG4nq-lkp@intel.com/reproduce)
+config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20230722/202307222141.3RAiL0jR-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20230722/202307222141.3RAiL0jR-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202307222107.GdtIG4nq-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202307222141.3RAiL0jR-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
-   fs/proc/task_mmu.c:1921:6: error: call to undeclared function 'userfaultfd_wp_async'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
-           if (userfaultfd_wp_async(vma) && userfaultfd_wp_use_markers(vma))
-               ^
->> fs/proc/task_mmu.c:2047:13: error: use of undeclared identifier 'addr'
-           if (end != addr + HPAGE_SIZE) {
-                      ^
-   2 errors generated.
+   fs/proc/task_mmu.c: In function 'pagemap_scan_test_walk':
+   fs/proc/task_mmu.c:1921:13: error: implicit declaration of function 'userfaultfd_wp_async'; did you mean 'userfaultfd_wp'? [-Werror=implicit-function-declaration]
+    1921 |         if (userfaultfd_wp_async(vma) && userfaultfd_wp_use_markers(vma))
+         |             ^~~~~~~~~~~~~~~~~~~~
+         |             userfaultfd_wp
+   fs/proc/task_mmu.c: In function 'pagemap_scan_thp_entry':
+>> fs/proc/task_mmu.c:2047:20: error: 'addr' undeclared (first use in this function)
+    2047 |         if (end != addr + HPAGE_SIZE) {
+         |                    ^~~~
+   fs/proc/task_mmu.c:2047:20: note: each undeclared identifier is reported only once for each function it appears in
+   cc1: some warnings being treated as errors
 
 
 vim +/addr +2047 fs/proc/task_mmu.c
 
-  1913	
-  1914	static int pagemap_scan_test_walk(unsigned long start, unsigned long end,
-  1915					  struct mm_walk *walk)
-  1916	{
-  1917		struct pagemap_scan_private *p = walk->private;
-  1918		struct vm_area_struct *vma = walk->vma;
-  1919		unsigned long vma_category = 0;
-  1920	
-> 1921		if (userfaultfd_wp_async(vma) && userfaultfd_wp_use_markers(vma))
-  1922			vma_category |= PAGE_IS_WPASYNC;
-  1923		else if (p->arg.flags & PM_SCAN_CHECK_WPASYNC)
-  1924			return -EPERM;
-  1925	
-  1926		if (vma->vm_flags & VM_PFNMAP)
-  1927			return 1;
-  1928	
-  1929		if (!pagemap_scan_is_interesting_vma(vma_category, p))
-  1930			return 1;
-  1931	
-  1932		p->cur_vma_category = vma_category;
-  1933		return 0;
-  1934	}
-  1935	
-  1936	static bool pagemap_scan_push_range(unsigned long categories,
-  1937					    struct pagemap_scan_private *p,
-  1938					    unsigned long addr, unsigned long end)
-  1939	{
-  1940		struct page_region *cur_buf = &p->cur_buf;
-  1941	
-  1942		/*
-  1943		 * When there is no output buffer provided at all, the sentinel values
-  1944		 * won't match here. There is no other way for `cur_buf->end` to be
-  1945		 * non-zero other than it being non-empty.
-  1946		 */
-  1947		if (addr == cur_buf->end && categories == cur_buf->categories) {
-  1948			cur_buf->end = end;
-  1949			return true;
-  1950		}
-  1951	
-  1952		if (cur_buf->end) {
-  1953			if (p->vec_buf_index >= p->vec_buf_len)
-  1954				return false;
-  1955	
-  1956			memcpy(&p->vec_buf[p->vec_buf_index], cur_buf,
-  1957			       sizeof(*p->vec_buf));
-  1958			++p->vec_buf_index;
-  1959		}
-  1960	
-  1961		cur_buf->start = addr;
-  1962		cur_buf->end = end;
-  1963		cur_buf->categories = categories;
-  1964		return true;
-  1965	}
-  1966	
-  1967	static void pagemap_scan_backout_range(struct pagemap_scan_private *p,
-  1968					       unsigned long addr, unsigned long end)
-  1969	{
-  1970		struct page_region *cur_buf = &p->cur_buf;
-  1971	
-  1972		if (cur_buf->start != addr)
-  1973			cur_buf->end = addr;
-  1974		else
-  1975			cur_buf->start = cur_buf->end = 0;
-  1976	
-  1977		p->end_addr = 0;
-  1978		p->found_pages -= (end - addr) / PAGE_SIZE;
-  1979	}
-  1980	
-  1981	static int pagemap_scan_output(unsigned long categories,
-  1982				       struct pagemap_scan_private *p,
-  1983				       unsigned long addr, unsigned long *end)
-  1984	{
-  1985		unsigned long n_pages, total_pages;
-  1986		int ret = 0;
-  1987	
-  1988		if (!pagemap_scan_is_interesting_page(categories, p)) {
-  1989			*end = addr;
-  1990			return 0;
-  1991		}
-  1992	
-  1993		if (!p->vec_buf)
-  1994			return 0;
-  1995	
-  1996		categories &= p->arg.return_mask;
-  1997	
-  1998		n_pages = (*end - addr) / PAGE_SIZE;
-  1999		if (check_add_overflow(p->found_pages, n_pages, &total_pages) || total_pages > p->arg.max_pages) {
-  2000			size_t n_too_much = total_pages - p->arg.max_pages;
-  2001			*end -= n_too_much * PAGE_SIZE;
-  2002			n_pages -= n_too_much;
-  2003			ret = -ENOSPC;
-  2004		}
-  2005	
-  2006		if (!pagemap_scan_push_range(categories, p, addr, *end)) {
-  2007			*end = addr;
-  2008			n_pages = 0;
-  2009			ret = -ENOSPC;
-  2010		}
-  2011	
-  2012		p->found_pages += n_pages;
-  2013		if (ret)
-  2014			p->end_addr = *end;
-  2015		return ret;
-  2016	}
   2017	
   2018	static int pagemap_scan_thp_entry(pmd_t *pmd, unsigned long start,
   2019					  unsigned long end, struct mm_walk *walk)
