@@ -2,184 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1078375DCD6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jul 2023 16:06:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9C5A75DCDF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jul 2023 16:12:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229560AbjGVOGU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Jul 2023 10:06:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60036 "EHLO
+        id S229805AbjGVOMU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Jul 2023 10:12:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjGVOGT (ORCPT
+        with ESMTP id S229571AbjGVOMT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Jul 2023 10:06:19 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B6262128;
-        Sat, 22 Jul 2023 07:06:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1690034778; x=1721570778;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=FWL7GsEsXsuIIlGHXCF3NbLBRp3WyWjS7z52lOLt9cM=;
-  b=OT4PZ+2jHe78K1AYSdq3Jkajh5ZApXrkn2BkG+Clx3E5NwQH/i7PqQYD
-   2ol/Ht49/6GDANF4XQAG3cCWCAT48YdT7sLwd2FsStbhUA6gIM8H3Whxq
-   h467fM90JimmHUjPiZwENSWp6QeqlBdlS7eiZiczB9BcYRE4Kuue9Anfv
-   L+4W26hKBiJ+YWHRWmEY8RoSeA+WGouOsQRUAwh7tjj6flW1VWbQv42BD
-   crjNEp6q6HG59K7FF8HTu0IPjYOHaK4TWrae9grlooE5Clz6YZ9gav357
-   uDjySsmY3iiMN2ftc2hID1r38GZkoAd2eWO0lpe4YeiD5mXh71/+g4Wku
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10779"; a="367223915"
-X-IronPort-AV: E=Sophos;i="6.01,224,1684825200"; 
-   d="scan'208";a="367223915"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2023 07:06:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10779"; a="760279985"
-X-IronPort-AV: E=Sophos;i="6.01,224,1684825200"; 
-   d="scan'208";a="760279985"
-Received: from lkp-server02.sh.intel.com (HELO 36946fcf73d7) ([10.239.97.151])
-  by orsmga001.jf.intel.com with ESMTP; 22 Jul 2023 07:06:10 -0700
-Received: from kbuild by 36946fcf73d7 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qNDFJ-0008M5-0z;
-        Sat, 22 Jul 2023 14:06:09 +0000
-Date:   Sat, 22 Jul 2023 22:05:32 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     oe-kbuild-all@lists.linux.dev, Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Hildenbrand <david@redhat.com>, Greg KH <greg@kroah.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Peter Xu <peterx@redhat.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yang Shi <shy828301@gmail.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [v2] fs/proc/task_mmu: Implement IOCTL for efficient page table
- scanning
-Message-ID: <202307222141.3RAiL0jR-lkp@intel.com>
-References: <ZLshsAj5PbsEAHhP@qmqm.qmqm.pl>
+        Sat, 22 Jul 2023 10:12:19 -0400
+Received: from mail-oa1-f72.google.com (mail-oa1-f72.google.com [209.85.160.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E85852128
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Jul 2023 07:12:17 -0700 (PDT)
+Received: by mail-oa1-f72.google.com with SMTP id 586e51a60fabf-1bb4f5cf0fbso159532fac.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Jul 2023 07:12:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690035137; x=1690639937;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jnDcp0NLtVq/ey0neKiVHzKFmmKRPAJzB+a/EW3co1A=;
+        b=eL6VCXqQIc7kb6C48JTyhjYLsEICKm1SD+QkTe5t20v5rn8O43uHHIniOZehLhhcEy
+         duc/WHOpaFpEcCuleDnpCMfeAE1KSSrmVki8HbBI7hYDG5hZFIhkDtOVZMNRr9Q9PBLH
+         qpND8Bpm5ohQKJ8QCcJGp0Qs84UlUGhcrmiW7E//TJUkZB87XlCjnLd0Pzq40M4zKjl2
+         YtjTBeLl8dvZ/fynWbddRZgct9Ta12OiZMXnNAhBOFxbCuUXPqo4D6/PhQnKkwyjjJCX
+         GLjfE3rzYEGSj+a/Bgp3ym0EoMrV8yug3sy44iXsLC1BV59+rhACPkKpRi1hXh2kMOjC
+         CwCQ==
+X-Gm-Message-State: ABy/qLY64gFCLvzvvgeXMpWr52xNDkfiLIDXuIv7n25rWL3W1eK/2zdR
+        vZt2yk8pZbBMQZZtcX+gwKbRyZNNnEk+lbfGVPpEl91bqf1R
+X-Google-Smtp-Source: APBJJlEHDo8OtHioN1r+g5+qChjUQbWNll529ioG7mRnUPiQuDKhK1vas5Z8pEd572WIojX7LbcREqWqtJ6ynlcvopPteUlZ6db0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZLshsAj5PbsEAHhP@qmqm.qmqm.pl>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6870:98b3:b0:1b0:401:823d with SMTP id
+ eg51-20020a05687098b300b001b00401823dmr5732307oab.6.1690035137296; Sat, 22
+ Jul 2023 07:12:17 -0700 (PDT)
+Date:   Sat, 22 Jul 2023 07:12:17 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000043f64060113f871@google.com>
+Subject: [syzbot] [mm?] BUG: soft lockup in generic_file_write_iter (2)
+From:   syzbot <syzbot+3b5bce3e397a2c9dcac6@syzkaller.appspotmail.com>
+To:     brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Michał,
+Hello,
 
-kernel test robot noticed the following build errors:
+syzbot found the following issue on:
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master v6.5-rc2 next-20230721]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+HEAD commit:    1a0beef98b58 Merge tag 'tpmdd-v6.4-rc1' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1744b894280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3aa4ca13c88f2286
+dashboard link: https://syzkaller.appspot.com/bug?extid=3b5bce3e397a2c9dcac6
+compiler:       aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: arm64
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Micha-Miros-aw/fs-proc-task_mmu-Implement-IOCTL-for-efficient-page-table-scanning/20230722-082500
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/ZLshsAj5PbsEAHhP%40qmqm.qmqm.pl
-patch subject: [v2] fs/proc/task_mmu: Implement IOCTL for efficient page table scanning
-config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20230722/202307222141.3RAiL0jR-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20230722/202307222141.3RAiL0jR-lkp@intel.com/reproduce)
+Unfortunately, I don't have any reproducer for this issue yet.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202307222141.3RAiL0jR-lkp@intel.com/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3b5bce3e397a2c9dcac6@syzkaller.appspotmail.com
 
-All errors (new ones prefixed by >>):
+watchdog: BUG: soft lockup - CPU#1 stuck for 22s! [syz-executor.0:3202]
+Modules linked in:
+irq event stamp: 50116
+hardirqs last  enabled at (50115): [<ffff80000ca7e160>] __exit_to_kernel_mode arch/arm64/kernel/entry-common.c:84 [inline]
+hardirqs last  enabled at (50115): [<ffff80000ca7e160>] exit_to_kernel_mode+0x38/0x120 arch/arm64/kernel/entry-common.c:94
+hardirqs last disabled at (50116): [<ffff80000ca7fdc8>] __el1_irq arch/arm64/kernel/entry-common.c:468 [inline]
+hardirqs last disabled at (50116): [<ffff80000ca7fdc8>] el1_interrupt+0x24/0x54 arch/arm64/kernel/entry-common.c:486
+softirqs last  enabled at (50020): [<ffff80000801080c>] _stext+0x80c/0xd70
+softirqs last disabled at (49871): [<ffff800008019484>] ____do_softirq+0x10/0x1c arch/arm64/kernel/irq.c:80
+CPU: 1 PID: 3202 Comm: syz-executor.0 Not tainted 6.3.0-syzkaller-00113-g1a0beef98b58 #0
+Hardware name: linux,dummy-virt (DT)
+pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __arch_copy_from_user+0x1b0/0x230 arch/arm64/lib/copy_template.S:164
+lr : copyin lib/iov_iter.c:183 [inline]
+lr : copyin+0xb8/0x118 lib/iov_iter.c:175
+sp : ffff8000192a7840
+x29: ffff8000192a7840 x28: ffff8000192a7c30 x27: ffff80000dddb378
+x26: 0000000000001000 x25: 0000000040000000 x24: ffff000006324000
+x23: 0000ffff99400000 x22: 0000ffff99454000 x21: ffff000006324000
+x20: 0000ffff99454000 x19: 0000000000001000 x18: 0000000000000000
+x17: 0000000000000000 x16: 0000000000000000 x15: 0000ffff99454000
+x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
+x8 : 0000000000000000 x7 : 0000000000000000 x6 : ffff000006324d80
+x5 : ffff000006325000 x4 : 0000000000000000 x3 : ffff80000910e070
+x2 : 0000000000000200 x1 : 0000ffff99454dc0 x0 : ffff000006324000
+Call trace:
+ __arch_copy_from_user+0x1b0/0x230 arch/arm64/lib/copy_template.S:158
+ copy_page_from_iter_atomic+0x33c/0xe5c lib/iov_iter.c:815
+ generic_perform_write+0x218/0x3ec mm/filemap.c:3934
+ __generic_file_write_iter+0x1e8/0x3a0 mm/filemap.c:4054
+ generic_file_write_iter+0xc0/0x294 mm/filemap.c:4086
+ call_write_iter include/linux/fs.h:1851 [inline]
+ new_sync_write fs/read_write.c:491 [inline]
+ vfs_write+0x4c8/0x740 fs/read_write.c:584
+ ksys_write+0xec/0x1d0 fs/read_write.c:637
+ __do_sys_write fs/read_write.c:649 [inline]
+ __se_sys_write fs/read_write.c:646 [inline]
+ __arm64_sys_write+0x6c/0x9c fs/read_write.c:646
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall+0x6c/0x260 arch/arm64/kernel/syscall.c:52
+ el0_svc_common.constprop.0+0xc4/0x254 arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x50/0x124 arch/arm64/kernel/syscall.c:193
+ el0_svc+0x54/0x140 arch/arm64/kernel/entry-common.c:637
+ el0t_64_sync_handler+0xb8/0xbc arch/arm64/kernel/entry-common.c:655
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:591
 
-   fs/proc/task_mmu.c: In function 'pagemap_scan_test_walk':
-   fs/proc/task_mmu.c:1921:13: error: implicit declaration of function 'userfaultfd_wp_async'; did you mean 'userfaultfd_wp'? [-Werror=implicit-function-declaration]
-    1921 |         if (userfaultfd_wp_async(vma) && userfaultfd_wp_use_markers(vma))
-         |             ^~~~~~~~~~~~~~~~~~~~
-         |             userfaultfd_wp
-   fs/proc/task_mmu.c: In function 'pagemap_scan_thp_entry':
->> fs/proc/task_mmu.c:2047:20: error: 'addr' undeclared (first use in this function)
-    2047 |         if (end != addr + HPAGE_SIZE) {
-         |                    ^~~~
-   fs/proc/task_mmu.c:2047:20: note: each undeclared identifier is reported only once for each function it appears in
-   cc1: some warnings being treated as errors
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-vim +/addr +2047 fs/proc/task_mmu.c
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-  2017	
-  2018	static int pagemap_scan_thp_entry(pmd_t *pmd, unsigned long start,
-  2019					  unsigned long end, struct mm_walk *walk)
-  2020	{
-  2021	#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-  2022		struct pagemap_scan_private *p = walk->private;
-  2023		struct vm_area_struct *vma = walk->vma;
-  2024		unsigned long categories;
-  2025		spinlock_t *ptl;
-  2026		int ret = 0;
-  2027	
-  2028		ptl = pmd_trans_huge_lock(pmd, vma);
-  2029		if (!ptl)
-  2030			return -ENOENT;
-  2031	
-  2032		categories = p->cur_vma_category | pagemap_thp_category(*pmd);
-  2033	
-  2034		ret = pagemap_scan_output(categories, p, start, &end);
-  2035		if (start == end)
-  2036			goto out_unlock;
-  2037	
-  2038		if (~p->arg.flags & PM_SCAN_WP_MATCHING)
-  2039			goto out_unlock;
-  2040		if (~categories & PAGE_IS_WRITTEN)
-  2041			goto out_unlock;
-  2042	
-  2043		/*
-  2044		 * Break huge page into small pages if the WP operation
-  2045		 * need to be performed is on a portion of the huge page.
-  2046		 */
-> 2047		if (end != addr + HPAGE_SIZE) {
-  2048			spin_unlock(ptl);
-  2049			split_huge_pmd(vma, pmd, start);
-  2050			pagemap_scan_backout_range(p, start, end);
-  2051			return -ENOENT;
-  2052		}
-  2053	
-  2054		make_uffd_wp_pmd(vma, start, pmd);
-  2055		flush_tlb_range(vma, start, end);
-  2056	out_unlock:
-  2057		spin_unlock(ptl);
-  2058		return ret;
-  2059	#else /* !CONFIG_TRANSPARENT_HUGEPAGE */
-  2060		return -ENOENT;
-  2061	#endif
-  2062	}
-  2063	
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
