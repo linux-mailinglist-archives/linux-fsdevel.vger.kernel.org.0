@@ -2,266 +2,489 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EF1A675DCE2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jul 2023 16:13:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A07C675DE8E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Jul 2023 22:34:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229847AbjGVON4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Jul 2023 10:13:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34092 "EHLO
+        id S229785AbjGVUeK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Jul 2023 16:34:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229614AbjGVONz (ORCPT
+        with ESMTP id S229476AbjGVUeI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Jul 2023 10:13:55 -0400
-Received: from mail-ot1-f77.google.com (mail-ot1-f77.google.com [209.85.210.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 594792D50
-        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Jul 2023 07:13:53 -0700 (PDT)
-Received: by mail-ot1-f77.google.com with SMTP id 46e09a7af769-6b9e5c9148dso5867924a34.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Jul 2023 07:13:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690035232; x=1690640032;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Vk2T6BNaTNdRZJLDIaBjd8p//aZTXPIfdCAtBG/NKTY=;
-        b=LctAr4EpwHFpiPQMF0NC+OIULyh3iVzXNTuP0G2FxpWXoRt22dKgdc7Px/XUEDjX8P
-         cnpYX3WxstouqmJbIw19diccRZn/03chulxiLk2mnikeznst9riMSs5WYN1MvqooYjBy
-         uIVa0uZL3R+wC6l9DwRu4LG/UTCEmMYPe+w2qZxVmN0Rm5/GA94e1VSveZiYuzlpOpmz
-         F78KUBK8NUfWbtjgvZ8IKzzFwv35V9L5b/Ob4PWN8Ux+eUwn0eNstBupsA6aTxRCmbpk
-         ucbjbSBgM3QzbP8sveWCP1Nc0WvSiB2mDB1pOFKgKnzE7v4dm/z8kV1UJi83EnKky5Ed
-         45uA==
-X-Gm-Message-State: ABy/qLasNJcEs8NKH9MfWPT/O4b4cvNltOw+atinvBhFLB+jF6OkIOMx
-        GiDe/Ba6OigRxpZnB6GCmgmw04yY90nWiGhToKCEw6UWJBnT
-X-Google-Smtp-Source: APBJJlGsLdzsDFYjRrk2yAeug9/3GbUHWL6Al/sJfrA8zgRtqvK/RVCtJYkTw1VjHOh7xnwoT+Zo37DT4pcGPvmqKMTOvyC+Iqbm
+        Sat, 22 Jul 2023 16:34:08 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38DD8E6E
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Jul 2023 13:34:06 -0700 (PDT)
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36MKTMsP017668;
+        Sat, 22 Jul 2023 20:33:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=corp-2023-03-30;
+ bh=Wp0n58yvdp/7Kn+sQ4AkPJADAS90UefiBu/wihfsdHE=;
+ b=IkH6LndlAtN69cCKVrL5LreIxd6BZoxxsekbCFs9ieskmzGSpeGX9khNMGeRfPFzYR9j
+ wcOxc3p1IzOEHOO3hFg0BXT4sDWtcXizpv/cdzrxtSvU4aEAcgtucFTUMMKsj2UkUW+n
+ EgqyCICMeG5d/IZSagKT0Ih6QNa0RZoN5WjZv3c8rg1C3i67LreeepvvTkXtnctqUgQJ
+ BYXR7fYApkK8EYBokroCXP2GLXYJcgHKnysaV7CQmLYhA3+KQmT3FwFVFM5/wXkCm7OW
+ tE3I7Ujfl0qVvnLRvYz4DNgfW9TH1plLstuDm+C8epRgogFX/ysW/xzMoAzVNAnLMThM pg== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3s05hdrqee-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 22 Jul 2023 20:33:38 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 36MIucDN028655;
+        Sat, 22 Jul 2023 20:33:37 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2041.outbound.protection.outlook.com [104.47.66.41])
+        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3s05j2aebv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 22 Jul 2023 20:33:37 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MwH9McxK/xVYBABojdjtDdOza7naoZ9+CHusy4BKyEyorWqG9IzexAzJQ3+ZrWgVyRoNpMchxbgoCrV3zOLoJKZXiUMNH6EAw9kl4mVgkrdUPqN6LdzgdAj4J+3nKZqDsfrWUz48KKzRPdYAdV9A8b7GqyUyjFZUISvuZVXHeqTfRl5eeltIHR3aGVEN6Hpj6Od8ubIByjpSHutdHGPRfDMZXhFmQIfxC1DD1UbV4t5iXA3ykBuYtm/1qMsKhpSwjLMzpscNYbSXtX99kBPHjlsguomDlW6R3Xd+tmv0EsJdP7bdvFRDoHhVX2OvFcmJD80hgPrC9MUOvQ0j1RXElQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Wp0n58yvdp/7Kn+sQ4AkPJADAS90UefiBu/wihfsdHE=;
+ b=d68EwPV+r7BHUzDY5rihodCTzjU5dW5LF+mikeZjnIjXYw6sl58dEjPNzZq4mnhv8cRpxaVlVrjNkYg1wKfavTQQfSvaDFIC0Ao37zCWMLDcm26xKd4WylnATLlMP5946hRq1VuCl3Ss1PX2b2YbhJ/UmGEsxuh5xboH3BhB1MG6q+CNolxPt6gGm8k5edXOGppghu2Ad73+HpIaP8AMUsFrGWMiZLfMVfYhn4ebg31DQEI4fU1wEhRGn6hFD5zlwNq0YgnUlMZuYBNTwejfK9I2Ks31r3Z8UfNySKZeezHPcdrLjETuAHoOgUzLXZYMBLr+0fR8sq9iwIAuXFmj3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Wp0n58yvdp/7Kn+sQ4AkPJADAS90UefiBu/wihfsdHE=;
+ b=yWOL5wJMD95UHrwzxfLydu67pR6WAXZgDkncorOWcjFS8LAdv331sQtsqp+6t+79UjnsZXMSckH2wGw5hwrn19pEpDJOENeP1159LfdjnhjH1jJygWT47nl1FUcE+7NrftYQIrpfAh/9IaH9jqgUA29sMuWeYK+RbhdDXSA2Akc=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by LV8PR10MB7800.namprd10.prod.outlook.com (2603:10b6:408:1f0::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.30; Sat, 22 Jul
+ 2023 20:33:34 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::2990:c166:9436:40e]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::2990:c166:9436:40e%6]) with mapi id 15.20.6609.031; Sat, 22 Jul 2023
+ 20:33:33 +0000
+From:   Chuck Lever III <chuck.lever@oracle.com>
+To:     kernel test robot <oliver.sang@intel.com>
+CC:     Chuck Lever <cel@kernel.org>,
+        "oe-lkp@lists.linux.dev" <oe-lkp@lists.linux.dev>,
+        kernel test robot <lkp@intel.com>,
+        linux-mm <linux-mm@kvack.org>,
+        "ying.huang@intel.com" <ying.huang@intel.com>,
+        "feng.tang@intel.com" <feng.tang@intel.com>,
+        "fengwei.yin@intel.com" <fengwei.yin@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v7 3/3] shmem: stable directory offsets
+Thread-Topic: [PATCH v7 3/3] shmem: stable directory offsets
+Thread-Index: AQHZq3ssrh2qup7PxEOYTribWI6Yka+9nbyAgAjC0oA=
+Date:   Sat, 22 Jul 2023 20:33:33 +0000
+Message-ID: <3B736492-9332-40C9-A916-DA6EE1A425B9@oracle.com>
+References: <202307171436.29248fcf-oliver.sang@intel.com>
+In-Reply-To: <202307171436.29248fcf-oliver.sang@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3731.600.7)
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN0PR10MB5128:EE_|LV8PR10MB7800:EE_
+x-ms-office365-filtering-correlation-id: ae4d3f87-9f12-403d-a308-08db8af2eb66
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: tuUs2fAqu4aNnq/4Nb0pLI0iHvOAitdUui1Uu2hQm8af/zGiIDSr9BePe/OPXA6wV6yS1/x2sX8dKjOf0VaH52YcRYRwQCbDBmukAYQyv0fk1C7psHn8cVr3b92QBC8kcjvxtmx34wdK/l6rwAmFrUPfD2Aa/sQg5W7j/VrJCQsLWi4DWhTIJpD2WDb+I+aR+3IiQuQoPRDpeWbN8vNM/8BsqByJ3VzdEt7oaSLpME075pl5bColNo1QSnsP7GMv7IEV9xw9MVWjbHqPURscIq06GA/XXAcndXGnjT//oyX4F7iHiVHCb1/afhia/ABlpmm/t1dG5Hn67VHH66TCYgs5/yEZio/MhOuEvgjlHbO5AUeS4+XzaUAUAxZgJM5GcpQqWQChrTGSDGl4WwcUaDdB7MeyzOhNBQYM35VBtRQG4n436UPzlhyu/dmGsTtlPFjdH7gWCjWELyjO5XtpiHSdaanGJ/bjHgkQuXYzFIx3GU/OkfTDb0JtSq//J6MuiGjLt7nm52nh35AzGibBOxH8DnO1Zl2lap9/xTQjWuysf7o+IbSG5lfONwX60GHRX4id7V8p1C7qU+56sFENeu9lV6qSG48euKNZScFZ4VW4FCbGWrC+Z2o4gowEzJfBMbUutfrYlNG8AU4zkI7H8vg6Q/WMqWH50pGdQguLXuw=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(396003)(346002)(376002)(136003)(366004)(39860400002)(451199021)(71200400001)(6512007)(966005)(6486002)(19627235002)(91956017)(478600001)(54906003)(186003)(2616005)(53546011)(6506007)(26005)(30864003)(2906002)(316002)(41300700001)(76116006)(66556008)(66476007)(66446008)(64756008)(6916009)(4326008)(7416002)(5660300002)(8676002)(8936002)(66946007)(38100700002)(122000001)(33656002)(36756003)(38070700005)(86362001)(83380400001)(45980500001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?zL/AGOHRX4Vab6A24edpfILPvx8KXcudnOX99YeyTzoq9xvR5gXMGHFLL+VC?=
+ =?us-ascii?Q?a8FNdqc4YdQCdwuN7FeEuAXf8QrLyQD1oRcmIaKNMa48Jlkgog02LnzHvtjw?=
+ =?us-ascii?Q?e0NrveLRWbAsa4ts5zU9m+DcY9wUvX6CgTmDoVDAQhWPOcuvahcxJnZoDYuG?=
+ =?us-ascii?Q?3C3fqb8Pc4ZiUfFV4DGhFst5I2zJjmWXSSubErJY7F5Wg74lH7ZrTMxd+pQA?=
+ =?us-ascii?Q?aJPY/JAofjeZlh+s0OHI9ZPmVa8HU0TcSl/b5f9PJoAmP1pjEdDgZLasmx1D?=
+ =?us-ascii?Q?882LzVSwPRcs8Il8imiqElEIZwqG3z6p+TtYfDagLxsLRA0q4W39+vgnVi1l?=
+ =?us-ascii?Q?se394/Eey/gIDW4Tf0FFJ/154gmLQl7xOaUsTxPAJlO3+3d2smXNwF7emAAQ?=
+ =?us-ascii?Q?nSfgUUmU/ji77IggaScb6Kl+6pnpOFTcFIr1dknfM3bECnTp5P4rMuJpMrr8?=
+ =?us-ascii?Q?VIVza1RN7WzrEhHzSp57stZp62UKsCboaur4qsiOiDOJWHm0D7HyFDRAoNSE?=
+ =?us-ascii?Q?+X9BxMQRfsCJalgRzH8TTAp+uA06Hc3ZhurJouY+qz0WGr1xxDwnGn7zYS62?=
+ =?us-ascii?Q?iJL0OuACygLHIe+X2MNJjbs4O0r5HBTjZtD4jHsLjHuN6wX6IDL4+gm1in5s?=
+ =?us-ascii?Q?ZWnJ0QprajCwtxw7zS6e0k0zVcCe+ucMELCMs85+zdzK8MjkC1haMv/XmIHt?=
+ =?us-ascii?Q?NzTOppHBG6Y/3vsfYxPHMuEy1dv6Ts1raSoMqWOHfuZv/KYP1vdvovjD3qV6?=
+ =?us-ascii?Q?CGTJVonkfpeRpsTnZPPKwVd1JzPIiiEt8C2bJKp5ruaGCtYOtn16EGa0/AvW?=
+ =?us-ascii?Q?JDEcLUCHIc1776J6RtFfn/ncBd5Ve5DTGq66GB0urvA19M0KuSPfcpHuEHqi?=
+ =?us-ascii?Q?H2CgH+CtQMeVxLVC059kmrdYW/l/rIYsG0lmXsn9gN8u8sACuiAsD5dXEWQH?=
+ =?us-ascii?Q?QfOHFg7xL9ZyXDWCcHH4LJXzFkOgmLoZLbX8UiPFu5e8gsURdt8R7UP5IwmB?=
+ =?us-ascii?Q?8u+iWTW1mtYlI9HA2nI8PEP9mgs1EdnBwR/kmKp7Ncn/+3UDLBAblDJadP6Z?=
+ =?us-ascii?Q?0YeLU2u7qXwBZL3jzab043ZcH7nBgy+ktp0LpdZuKubMuXmOV03kRojz4TbG?=
+ =?us-ascii?Q?VrNeNiqX8yrBpasF+T5J/ic62aQu6puIEe7GwWaqB4p8OInb6aEvIzwGZASL?=
+ =?us-ascii?Q?xEdvvsnO+ytYBV0bWUypFgA4/GdG9v8+DNYRWqOXtNTiJysh7D5QIIhdoH8I?=
+ =?us-ascii?Q?fAOtrKOno5fAWNR6su87rcLSrASH8dI+E6TMS0JUsKeCndVR+fobr1AoYNgz?=
+ =?us-ascii?Q?1G9AlvCW3YeZV7izujnltTACdELv0cFYCJ2Tkm9E0g8XN8dPqKS36OfaNbDi?=
+ =?us-ascii?Q?Wqm079gyxh8D0CxqJOCCVLY7cMUuh6PtdswGbvYWfQBqBwyBazG/HvfIG4gO?=
+ =?us-ascii?Q?0ENQl1V8zu6+3dYNGfMMF1/neQJ6RIEGdPBzHUmJFuRhwtsDUTZ7D9Hdmkbr?=
+ =?us-ascii?Q?whkFHd/C3rYAfSpKGdLJvaPQnOBAvbw0K31+hXKpr7H+i31ljxgsLuw9L6nb?=
+ =?us-ascii?Q?OteY46kXiVj1fDnz06nA04dEjwTrE6qnDh/ZF9PfCoYnjjIWpBvYRdf3vdlm?=
+ =?us-ascii?Q?vg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <EF904F5078CDA540B4AC8A307B6F9B35@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Received: by 2002:a9d:65d8:0:b0:6b7:54de:87dc with SMTP id
- z24-20020a9d65d8000000b006b754de87dcmr3241367oth.0.1690035232760; Sat, 22 Jul
- 2023 07:13:52 -0700 (PDT)
-Date:   Sat, 22 Jul 2023 07:13:52 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b4e906060113fd63@google.com>
-Subject: [syzbot] [nilfs?] KASAN: slab-use-after-free Read in
- nilfs_load_inode_block (2)
-From:   syzbot <syzbot+74db8b3087f293d3a13a@syzkaller.appspotmail.com>
-To:     konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?dxoYsXzyxb87n/vDf8Ysj+Cfl3RfbqxgRxflL3e3s+EY5lAneGZy0Yco4Ygc?=
+ =?us-ascii?Q?OUVleuQeT0gnm23XnfTvwSCXoiesnHB5VGbjTpDGsgQJB3yAioO9tiR4/E5R?=
+ =?us-ascii?Q?lS4EkQOn7iYBm+nW2ZAwS+1JlvlH0JXf6P5oeOpgylqj94rw+OvKQk2HRHfj?=
+ =?us-ascii?Q?vnfCiGHyIfkJrkRUFLFPjWzVqO5ZV+6oS/FVwnRliKWNHWWZ+Y7+7/C3zk6O?=
+ =?us-ascii?Q?vmzQ+gR3qP93zWrE6Da7N5DkClPwytdHmRM/loUBWxpT/cNOJS/i55yI2QvZ?=
+ =?us-ascii?Q?zpQZTma3J3q7TEjambnlmMZZt08kGInAMy0K+KtDi7X9WzIcd93nT7GK9QpT?=
+ =?us-ascii?Q?pVlHJ0ACLF8EKE3zOUiRl4ZoZuILZwvZZnV+EzMdIlppcLDeeaSzunsC1POU?=
+ =?us-ascii?Q?PR+bePbEDJDGoDHjJOW391yWUK1nrIEhRJjhLyGjaqfzh3kU0w1JsEmeLqSi?=
+ =?us-ascii?Q?wcAWE7IK/7P7VYW9/koHfq0Rcuw0gbB9vK9c9PLa52x6pJ2PA340pf2KkVw2?=
+ =?us-ascii?Q?upoC3+g3mS9x4PaoDAUX5wlo9tj2BFSSr4f/ElMblOU60HS30e6ZI64l1FQw?=
+ =?us-ascii?Q?b+zEe4OgkVcd/rHfcTZr6/UJuZj2n5fZMlOWXbk7M0imB52hCwDVYRHdANk7?=
+ =?us-ascii?Q?RrAc2b/EHMLSo8dvCfi0+Feu3Ic2SC01OcCKYzlff+4biTgBfutAL8lTYBvS?=
+ =?us-ascii?Q?ALW1NLJbTTIknPFAYiGzJVNt50H4PZNXtj7SwkM8JS/dG9ao7K6voHv70Wvf?=
+ =?us-ascii?Q?tsKY7cD80+tclW81JMsJuTpXifSda/EggOYwp6kjgsa2tp05k3jN/c8/vUJw?=
+ =?us-ascii?Q?kIsetA2i+LYVcem+riRUFaQOap99KLP45StFnfEHBF2CLWEsrjMmuudC4GZQ?=
+ =?us-ascii?Q?Y53MmiMIbPliL9cBxi+oIYtTceYtd555cOZh5890Bj3nF5ctuSuAjCa/xpF0?=
+ =?us-ascii?Q?JMjd4m0cvEH/jhZMAXj5eZGgI6l47JFoSFRLivZTwoD2F72cx95h3seS76nJ?=
+ =?us-ascii?Q?HMxt/1vHUONSk8fP/pOJm36OBmDB26Qn5MZAQFlJ7Zw/q4E=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae4d3f87-9f12-403d-a308-08db8af2eb66
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jul 2023 20:33:33.8570
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: PfX/z1keEKuahDIAzANz+GIMCRgfpvw1/eAJPwrqb26uvsG7UjkkGxhSUhSDJ/HLXyR+5GcML66uESsis7QAUg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR10MB7800
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-22_10,2023-07-20_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 bulkscore=0
+ malwarescore=0 mlxscore=0 spamscore=0 mlxlogscore=999 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
+ definitions=main-2307220189
+X-Proofpoint-ORIG-GUID: gQ6CBrtYe8nvEcyQixOpX_n5R29NdnIJ
+X-Proofpoint-GUID: gQ6CBrtYe8nvEcyQixOpX_n5R29NdnIJ
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    fdf0eaf11452 Linux 6.5-rc2
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11354edca80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a4507c291b5ab5d4
-dashboard link: https://syzkaller.appspot.com/bug?extid=74db8b3087f293d3a13a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/227b5c9aa7b3/disk-fdf0eaf1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/aedc7f03bef6/vmlinux-fdf0eaf1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ec543f1fd878/bzImage-fdf0eaf1.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+74db8b3087f293d3a13a@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-use-after-free in nilfs_load_inode_block+0x11e/0x280 fs/nilfs2/inode.c:1030
-Read of size 8 at addr ffff888023e50230 by task syz-executor.2/5056
-
-CPU: 1 PID: 5056 Comm: syz-executor.2 Not tainted 6.5.0-rc2-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/03/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:364 [inline]
- print_report+0x163/0x540 mm/kasan/report.c:475
- kasan_report+0x175/0x1b0 mm/kasan/report.c:588
- nilfs_load_inode_block+0x11e/0x280 fs/nilfs2/inode.c:1030
- __nilfs_mark_inode_dirty+0xa5/0x280 fs/nilfs2/inode.c:1107
- nilfs_dirty_inode+0x164/0x200 fs/nilfs2/inode.c:1148
- __mark_inode_dirty+0x305/0xd90 fs/fs-writeback.c:2430
- mark_inode_dirty_sync include/linux/fs.h:2153 [inline]
- iput+0x1f2/0x8f0 fs/inode.c:1814
- nilfs_dispose_list+0x51d/0x5c0 fs/nilfs2/segment.c:816
- nilfs_detach_log_writer+0xaf1/0xbb0 fs/nilfs2/segment.c:2859
- nilfs_put_super+0x4d/0x160 fs/nilfs2/super.c:498
- generic_shutdown_super+0x134/0x340 fs/super.c:499
- kill_block_super+0x68/0xa0 fs/super.c:1417
- deactivate_locked_super+0xa4/0x110 fs/super.c:330
- cleanup_mnt+0x426/0x4c0 fs/namespace.c:1254
- task_work_run+0x24a/0x300 kernel/task_work.c:179
- resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
- exit_to_user_mode_loop+0xd9/0x100 kernel/entry/common.c:171
- exit_to_user_mode_prepare+0xb1/0x140 kernel/entry/common.c:204
- __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
- syscall_exit_to_user_mode+0x64/0x280 kernel/entry/common.c:297
- do_syscall_64+0x4d/0xc0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f723027de57
-Code: b0 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b0 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007ffe73394f58 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f723027de57
-RDX: 0000000000000000 RSI: 000000000000000a RDI: 00007ffe73395010
-RBP: 00007ffe73395010 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffe733960d0
-R13: 00007f72302c73b9 R14: 0000000000032737 R15: 000000000000000c
- </TASK>
-
-Allocated by task 5412:
- kasan_save_stack mm/kasan/common.c:45 [inline]
- kasan_set_track+0x4f/0x70 mm/kasan/common.c:52
- ____kasan_kmalloc mm/kasan/common.c:374 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:383
- kmalloc include/linux/slab.h:582 [inline]
- kzalloc include/linux/slab.h:703 [inline]
- nilfs_find_or_create_root+0x137/0x4e0 fs/nilfs2/the_nilfs.c:851
- nilfs_attach_checkpoint+0x123/0x4d0 fs/nilfs2/super.c:550
- nilfs_fill_super+0x321/0x600 fs/nilfs2/super.c:1095
- nilfs_mount+0x637/0x950 fs/nilfs2/super.c:1343
- legacy_get_tree+0xef/0x190 fs/fs_context.c:611
- vfs_get_tree+0x8c/0x270 fs/super.c:1519
- do_new_mount+0x28f/0xae0 fs/namespace.c:3335
- do_mount fs/namespace.c:3675 [inline]
- __do_sys_mount fs/namespace.c:3884 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3861
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-Freed by task 5056:
- kasan_save_stack mm/kasan/common.c:45 [inline]
- kasan_set_track+0x4f/0x70 mm/kasan/common.c:52
- kasan_save_free_info+0x28/0x40 mm/kasan/generic.c:522
- ____kasan_slab_free+0xd6/0x120 mm/kasan/common.c:236
- kasan_slab_free include/linux/kasan.h:162 [inline]
- slab_free_hook mm/slub.c:1792 [inline]
- slab_free_freelist_hook mm/slub.c:1818 [inline]
- slab_free mm/slub.c:3801 [inline]
- __kmem_cache_free+0x25f/0x3b0 mm/slub.c:3814
- nilfs_segctor_destroy fs/nilfs2/segment.c:2782 [inline]
- nilfs_detach_log_writer+0x8c1/0xbb0 fs/nilfs2/segment.c:2845
- nilfs_put_super+0x4d/0x160 fs/nilfs2/super.c:498
- generic_shutdown_super+0x134/0x340 fs/super.c:499
- kill_block_super+0x68/0xa0 fs/super.c:1417
- deactivate_locked_super+0xa4/0x110 fs/super.c:330
- cleanup_mnt+0x426/0x4c0 fs/namespace.c:1254
- task_work_run+0x24a/0x300 kernel/task_work.c:179
- resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
- exit_to_user_mode_loop+0xd9/0x100 kernel/entry/common.c:171
- exit_to_user_mode_prepare+0xb1/0x140 kernel/entry/common.c:204
- __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
- syscall_exit_to_user_mode+0x64/0x280 kernel/entry/common.c:297
- do_syscall_64+0x4d/0xc0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-The buggy address belongs to the object at ffff888023e50200
- which belongs to the cache kmalloc-256 of size 256
-The buggy address is located 48 bytes inside of
- freed 256-byte region [ffff888023e50200, ffff888023e50300)
-
-The buggy address belongs to the physical page:
-page:ffffea00008f9400 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x23e50
-head:ffffea00008f9400 order:1 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000010200(slab|head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xffffffff()
-raw: 00fff00000010200 ffff888012841b40 dead000000000100 dead000000000122
-raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 1, migratetype Unmovable, gfp_mask 0x1d2040(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL), pid 5181, tgid 5181 (syz-executor.2), ts 197741582486, free_ts 196828318372
- set_page_owner include/linux/page_owner.h:31 [inline]
- post_alloc_hook+0x1e6/0x210 mm/page_alloc.c:1570
- prep_new_page mm/page_alloc.c:1577 [inline]
- get_page_from_freelist+0x31e8/0x3370 mm/page_alloc.c:3221
- __alloc_pages+0x255/0x670 mm/page_alloc.c:4477
- alloc_slab_page+0x6a/0x160 mm/slub.c:1862
- allocate_slab mm/slub.c:2009 [inline]
- new_slab+0x84/0x2f0 mm/slub.c:2062
- ___slab_alloc+0xade/0x1100 mm/slub.c:3215
- __slab_alloc mm/slub.c:3314 [inline]
- __slab_alloc_node mm/slub.c:3367 [inline]
- slab_alloc_node mm/slub.c:3460 [inline]
- __kmem_cache_alloc_node+0x1af/0x270 mm/slub.c:3509
- kmalloc_trace+0x2a/0xe0 mm/slab_common.c:1076
- kmalloc include/linux/slab.h:582 [inline]
- kzalloc include/linux/slab.h:703 [inline]
- smk_fetch+0x92/0x140 security/smack/smack_lsm.c:291
- smack_d_instantiate+0x868/0xb40 security/smack/smack_lsm.c:3541
- security_d_instantiate+0x9b/0xf0 security/security.c:3760
- d_instantiate_new+0x65/0x120 fs/dcache.c:2053
- ext4_add_nondir+0x22d/0x290 fs/ext4/namei.c:2797
- ext4_symlink+0x908/0xb30 fs/ext4/namei.c:3431
- vfs_symlink+0x12f/0x2a0 fs/namei.c:4477
- do_symlinkat+0x201/0x610 fs/namei.c:4503
-page last free stack trace:
- reset_page_owner include/linux/page_owner.h:24 [inline]
- free_pages_prepare mm/page_alloc.c:1161 [inline]
- free_unref_page_prepare+0x903/0xa30 mm/page_alloc.c:2348
- free_unref_page+0x37/0x3f0 mm/page_alloc.c:2443
- discard_slab mm/slub.c:2108 [inline]
- __unfreeze_partials+0x1dc/0x220 mm/slub.c:2647
- put_cpu_partial+0x116/0x180 mm/slub.c:2723
- __slab_free+0x2b6/0x390 mm/slub.c:3671
- qlist_free_all+0x22/0x60 mm/kasan/quarantine.c:185
- kasan_quarantine_reduce+0x14b/0x160 mm/kasan/quarantine.c:292
- __kasan_slab_alloc+0x23/0x70 mm/kasan/common.c:305
- kasan_slab_alloc include/linux/kasan.h:186 [inline]
- slab_post_alloc_hook+0x6c/0x3b0 mm/slab.h:762
- slab_alloc_node mm/slub.c:3470 [inline]
- __kmem_cache_alloc_node+0x141/0x270 mm/slub.c:3509
- kmalloc_trace+0x2a/0xe0 mm/slab_common.c:1076
- kmalloc include/linux/slab.h:582 [inline]
- kzalloc include/linux/slab.h:703 [inline]
- mca_alloc net/ipv6/mcast.c:880 [inline]
- __ipv6_dev_mc_inc+0x426/0xa80 net/ipv6/mcast.c:936
- addrconf_join_solict net/ipv6/addrconf.c:2179 [inline]
- addrconf_dad_begin net/ipv6/addrconf.c:3995 [inline]
- addrconf_dad_work+0x424/0x16b0 net/ipv6/addrconf.c:4120
- process_one_work+0x92c/0x12c0 kernel/workqueue.c:2597
- worker_thread+0xa63/0x1210 kernel/workqueue.c:2748
- kthread+0x2b8/0x350 kernel/kthread.c:389
-
-Memory state around the buggy address:
- ffff888023e50100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888023e50180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff888023e50200: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                     ^
- ffff888023e50280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888023e50300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> On Jul 17, 2023, at 2:46 AM, kernel test robot <oliver.sang@intel.com> wr=
+ote:
+>=20
+>=20
+> hi, Chuck Lever,
+>=20
+> we reported a 3.0% improvement of stress-ng.handle.ops_per_sec for this c=
+ommit
+> on
+> https://lore.kernel.org/oe-lkp/202307132153.a52cdb2d-oliver.sang@intel.co=
+m/
+>=20
+> but now we noticed a regression, detail as below, FYI
+>=20
+> Hello,
+>=20
+> kernel test robot noticed a -15.5% regression of will-it-scale.per_thread=
+_ops on:
+>=20
+>=20
+> commit: a1a690e009744e4526526b2f838beec5ef9233cc ("[PATCH v7 3/3] shmem: =
+stable directory offsets")
+> url: https://github.com/intel-lab-lkp/linux/commits/Chuck-Lever/libfs-Add=
+-directory-operations-for-stable-offsets/20230701-014925
+> base: https://git.kernel.org/cgit/linux/kernel/git/akpm/mm.git mm-everyth=
+ing
+> patch link: https://lore.kernel.org/all/168814734331.530310.3911190551060=
+453102.stgit@manet.1015granger.net/
+> patch subject: [PATCH v7 3/3] shmem: stable directory offsets
+>=20
+> testcase: will-it-scale
+> test machine: 104 threads 2 sockets (Skylake) with 192G memory
+> parameters:
+>=20
+> nr_task: 16
+> mode: thread
+> test: unlink2
+> cpufreq_governor: performance
+>=20
+>=20
+> In addition to that, the commit also has significant impact on the follow=
+ing tests:
+>=20
+> +------------------+-----------------------------------------------------=
+--------------------------------------------+
+> | testcase: change | will-it-scale: will-it-scale.per_thread_ops -40.0% r=
+egression                                   |
+> | test machine     | 36 threads 1 sockets Intel(R) Core(TM) i9-10980XE CP=
+U @ 3.00GHz (Cascade Lake) with 128G memory |
+> | test parameters  | cpufreq_governor=3Dperformance                      =
+                                              |
+> |                  | mode=3Dthread                                       =
+                                              |
+> |                  | nr_task=3D16                                        =
+                                              |
+> |                  | test=3Dunlink2                                      =
+                                              |
+> +------------------+-----------------------------------------------------=
+--------------------------------------------+
+> | testcase: change | stress-ng: stress-ng.handle.ops_per_sec 3.0% improve=
+ment                                        |
+> | test machine     | 36 threads 1 sockets Intel(R) Core(TM) i9-9980XE CPU=
+ @ 3.00GHz (Skylake) with 32G memory        |
+> | test parameters  | class=3Dfilesystem                                  =
+                                              |
+> |                  | cpufreq_governor=3Dperformance                      =
+                                              |
+> |                  | disk=3D1SSD                                         =
+                                              |
+> |                  | fs=3Dext4                                           =
+                                              |
+> |                  | nr_threads=3D10%                                    =
+                                              |
+> |                  | test=3Dhandle                                       =
+                                              |
+> |                  | testtime=3D60s                                      =
+                                              |
+> +------------------+-----------------------------------------------------=
+--------------------------------------------+
+>=20
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202307171436.29248fcf-oliver.san=
+g@intel.com
+>=20
+>=20
+> Details are as below:
+> -------------------------------------------------------------------------=
+------------------------->
+>=20
+>=20
+> To reproduce:
+>=20
+>        git clone https://github.com/intel/lkp-tests.git
+>        cd lkp-tests
+>        sudo bin/lkp install job.yaml           # job file is attached in =
+this email
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+I'm trying to reproduce the regression here, but the reproducer fails
+at this step with:
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+=3D=3D> Installing package will-it-scale with /export/xfs/lkp-tests/sbin/pa=
+cman-LKP -U...
+warning: source_date_epoch_from_changelog set but %changelog is missing
+Executing(%install): /bin/sh -e /var/tmp/rpm-tmp.Py4eQi
++ umask 022
++ cd /export/xfs/lkp-tests/programs/will-it-scale/pkg/rpm_build/BUILD
++ '[' /export/xfs/lkp-tests/programs/will-it-scale/pkg/rpm_build/BUILDROOT/=
+will-it-scale-LKP-1-1.x86_64 '!=3D' / ']'
++ rm -rf /export/xfs/lkp-tests/programs/will-it-scale/pkg/rpm_build/BUILDRO=
+OT/will-it-scale-LKP-1-1.x86_64
+++ dirname /export/xfs/lkp-tests/programs/will-it-scale/pkg/rpm_build/BUILD=
+ROOT/will-it-scale-LKP-1-1.x86_64
++ mkdir -p /export/xfs/lkp-tests/programs/will-it-scale/pkg/rpm_build/BUILD=
+ROOT
++ mkdir /export/xfs/lkp-tests/programs/will-it-scale/pkg/rpm_build/BUILDROO=
+T/will-it-scale-LKP-1-1.x86_64
++ CFLAGS=3D'-march=3Dx86-64 -mtune=3Dgeneric -O2 -pipe -fstack-protector-st=
+rong --param=3Dssp-buffer-size=3D4'
++ export CFLAGS
++ CXXFLAGS=3D'-march=3Dx86-64 -mtune=3Dgeneric -O2 -pipe -fstack-protector-=
+strong --param=3Dssp-buffer-size=3D4'
++ export CXXFLAGS
++ FFLAGS=3D'-O2 -flto=3Dauto -ffat-lto-objects -fexceptions -g -grecord-gcc=
+-switches -pipe -Wall -Werror=3Dformat-security -Wp,-D_FORTIFY_SOURCE=3D2 -=
+Wp,-D_GLIBCXX_ASSERTIONS -specs=3D/usr/lib/rpm/redhat/redhat-hardened-cc1 -=
+fstack-protector-strong -specs=3D/usr/lib/rpm/redhat/redhat-annobin-cc1  -m=
+64  -mtune=3Dgeneric -fasynchronous-unwind-tables -fstack-clash-protection =
+-fcf-protection -I/usr/lib64/gfortran/modules'
++ export FFLAGS
++ FCFLAGS=3D'-O2 -flto=3Dauto -ffat-lto-objects -fexceptions -g -grecord-gc=
+c-switches -pipe -Wall -Werror=3Dformat-security -Wp,-D_FORTIFY_SOURCE=3D2 =
+-Wp,-D_GLIBCXX_ASSERTIONS -specs=3D/usr/lib/rpm/redhat/redhat-hardened-cc1 =
+-fstack-protector-strong -specs=3D/usr/lib/rpm/redhat/redhat-annobin-cc1  -=
+m64  -mtune=3Dgeneric -fasynchronous-unwind-tables -fstack-clash-protection=
+ -fcf-protection -I/usr/lib64/gfortran/modules'
++ export FCFLAGS
++ LDFLAGS=3D-Wl,-O1,--sort-common,--as-needed,-z,relro
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=3D/usr/lib64:
++ export LT_SYS_LIBRARY_PATH
++ CC=3Dgcc
++ export CC
++ CXX=3Dg++
++ export CXX
++ cp -a /export/xfs/lkp-tests/programs/will-it-scale/pkg/will-it-scale-lkp/=
+lkp /export/xfs/lkp-tests/programs/will-it-scale/pkg/rpm_build/BUILDROOT/wi=
+ll-it-scale-LKP-1-1.x86_64
++ /usr/lib/rpm/check-buildroot
++ /usr/lib/rpm/redhat/brp-ldconfig
++ /usr/lib/rpm/brp-compress
++ /usr/lib/rpm/brp-strip /usr/bin/strip
++ /usr/lib/rpm/brp-strip-comment-note /usr/bin/strip /usr/bin/objdump
+/usr/bin/objdump: '/export/xfs/lkp-tests/programs/will-it-scale/pkg/rpm_bui=
+ld/BUILDROOT/will-it-scale-LKP-1-1.x86_64/lkp/benchmarks/will-it-scale/writ=
+eseek2/export/xfs/lkp-tests/programs/will-it-scale/pkg/rpm_build/BUILDROOT/=
+will-it-scale-LKP-1-1.x86_64/lkp/benchmarks/will-it-scale/dup1_threads': No=
+ such file
+/usr/bin/strip: '/export/xfs/lkp-tests/programs/will-it-scale/pkg/rpm_build=
+/BUILDROOT/will-it-scale-LKP-1-1.x86_64/lkp/benchmarks/will-it-scale/writes=
+eek2/export/xfs/lkp-tests/programs/will-it-scale/pkg/rpm_build/BUILDROOT/wi=
+ll-it-scale-LKP-1-1.x86_64/lkp/benchmarks/will-it-scale/dup1_threads': No s=
+uch file
+/usr/bin/objdump: '/export/xfs/lkp-tests/programs/will-it-scale/pkg/rpm_bui=
+ld/BUILDROOT/will-it-scale-LKP-1-1.x8/export/xfs/lkp-tests/programs/will-it=
+-scale/pkg/rpm_build/BUILDROOT/will-it-scale-LKP-1-1.x86_64/lkp/benchmarks/=
+will-it-scale/brk1_processes': No such file
+/usr/bin/strip: '/export/xfs/lkp-tests/programs/will-it-scale/pkg/rpm_build=
+/BUILDROOT/will-it-scale-LKP-1-1.x8/export/xfs/lkp-tests/programs/will-it-s=
+cale/pkg/rpm_build/BUILDROOT/will-it-scale-LKP-1-1.x86_64/lkp/benchmarks/wi=
+ll-it-scale/brk1_processes': No such file
+/usr/bin/objdump: '/export/xfs/lkp-tests/programs/will-it-sc_processes': No=
+ such file
+/usr/bin/strip: '/export/xfs/lkp-tests/programs/will-it-sc_processes': No s=
+uch file
+/usr/bin/objdump: '6_64/lkp/benchmarks/will-it-scale/pread2_threads': No su=
+ch file
+/usr/bin/strip: '6_64/lkp/benchmarks/will-it-scale/pread2_threads': No such=
+ file
+/usr/bin/objdump: 'ale/pkg/rpm_build/BUILDROOT/will-it-scale-LKP-1-1.x86_64=
+/lkp/benchmarks/will-it-scale/poll2_processes': No such file
+/usr/bin/strip: 'ale/pkg/rpm_build/BUILDROOT/will-it-scale-LKP-1-1.x86_64/l=
+kp/benchmarks/will-it-scale/poll2_processes': No such file
++ /usr/lib/rpm/redhat/brp-strip-lto /usr/bin/strip
++ /usr/lib/rpm/brp-strip-static-archive /usr/bin/strip
++ /usr/lib/rpm/check-rpaths
++ /usr/lib/rpm/redhat/brp-mangle-shebangs
+mangling shebang in /lkp/benchmarks/python3/bin/python3.8-config from /bin/=
+sh to #!/usr/bin/sh
+*** ERROR: ambiguous python shebang in /lkp/benchmarks/python3/lib/python3.=
+8/encodings/rot_13.py: #!/usr/bin/env python. Change it to python3 (or pyth=
+on2) explicitly.
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/lib2to3/pgen2/tok=
+en.py from /usr/bin/env python3 to #!/usr/bin/python3
+*** ERROR: ambiguous python shebang in /lkp/benchmarks/python3/lib/python3.=
+8/lib2to3/tests/data/different_encoding.py: #!/usr/bin/env python. Change i=
+t to python3 (or python2) explicitly.
+*** ERROR: ambiguous python shebang in /lkp/benchmarks/python3/lib/python3.=
+8/lib2to3/tests/data/false_encoding.py: #!/usr/bin/env python. Change it to=
+ python3 (or python2) explicitly.
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/lib2to3/tests/pyt=
+ree_idempotency.py from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/config-3.8-x86_64=
+-linux-gnu/makesetup from /bin/sh to #!/usr/bin/sh
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/config-3.8-x86_64=
+-linux-gnu/install-sh from /bin/sh to #!/usr/bin/sh
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/ctypes/macholib/f=
+etch_macholib from /bin/sh to #!/usr/bin/sh
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/turtledemo/bytede=
+sign.py from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/turtledemo/clock.=
+py from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/turtledemo/forest=
+.py from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/turtledemo/fracta=
+lcurves.py from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/turtledemo/linden=
+mayer.py from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/turtledemo/minima=
+l_hanoi.py from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/turtledemo/paint.=
+py from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/turtledemo/peace.=
+py from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/turtledemo/penros=
+e.py from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/turtledemo/planet=
+_and_moon.py from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/turtledemo/tree.p=
+y from /usr/bin/env python3 to #!/usr/bin/python3
+*** WARNING: ./lkp/benchmarks/python3/lib/python3.8/turtledemo/two_canvases=
+.py is executable but has no shebang, removing executable bit
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/turtledemo/yinyan=
+g.py from /usr/bin/env python3 to #!/usr/bin/python3
+*** WARNING: ./lkp/benchmarks/python3/lib/python3.8/idlelib/idle.bat is exe=
+cutable but has no shebang, removing executable bit
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/idlelib/pyshell.p=
+y from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/test/ziptestdata/=
+exe_with_z64 from /bin/bash to #!/usr/bin/bash
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/test/ziptestdata/=
+exe_with_zip from /bin/bash to #!/usr/bin/bash
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/test/ziptestdata/=
+header.sh from /bin/bash to #!/usr/bin/bash
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/test/bisect_cmd.p=
+y from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/test/curses_tests=
+.py from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/test/regrtest.py =
+from /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/test/re_tests.py =
+from /usr/bin/env python3 to #!/usr/bin/python3
+*** WARNING: ./lkp/benchmarks/python3/lib/python3.8/test/test_dataclasses.p=
+y is executable but has no shebang, removing executable bit
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/base64.py from /u=
+sr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/cProfile.py from =
+/usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/pdb.py from /usr/=
+bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/platform.py from =
+/usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/profile.py from /=
+usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/quopri.py from /u=
+sr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/smtpd.py from /us=
+r/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/smtplib.py from /=
+usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/tabnanny.py from =
+/usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/tarfile.py from /=
+usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/timeit.py from /u=
+sr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/trace.py from /us=
+r/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/uu.py from /usr/b=
+in/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/python3/lib/python3.8/webbrowser.py fro=
+m /usr/bin/env python3 to #!/usr/bin/python3
+mangling shebang in /lkp/benchmarks/will-it-scale/runalltests from /bin/sh =
+to #!/usr/bin/sh
+error: Bad exit status from /var/tmp/rpm-tmp.Py4eQi (%install)
 
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+RPM build warnings:
+    source_date_epoch_from_changelog set but %changelog is missing
 
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
+RPM build errors:
+    Bad exit status from /var/tmp/rpm-tmp.Py4eQi (%install)
+error: open of /export/xfs/lkp-tests/programs/will-it-scale/pkg/rpm_build/R=
+PMS/will-it-scale-LKP.rpm failed: No such file or directory
+=3D=3D> WARNING: Failed to install built package(s).
+[cel@manet lkp-tests]$
 
-If you want to undo deduplication, reply with:
-#syz undup
+I'm on Fedora 38 x86_64.
+
+
+--
+Chuck Lever
+
+
