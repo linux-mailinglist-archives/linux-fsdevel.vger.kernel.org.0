@@ -2,137 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E35E375E01B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jul 2023 08:36:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4064E75E4F7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Jul 2023 22:55:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229599AbjGWGgE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Jul 2023 02:36:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36582 "EHLO
+        id S229608AbjGWUzN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Jul 2023 16:55:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbjGWGgD (ORCPT
+        with ESMTP id S229477AbjGWUzM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Jul 2023 02:36:03 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE3591BC7;
-        Sat, 22 Jul 2023 23:36:02 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-3172144c084so2835685f8f.1;
-        Sat, 22 Jul 2023 23:36:02 -0700 (PDT)
+        Sun, 23 Jul 2023 16:55:12 -0400
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6388FAD
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Jul 2023 13:55:11 -0700 (PDT)
+Received: by mail-yb1-xb33.google.com with SMTP id 3f1490d57ef6-d07c535377fso1729992276.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Jul 2023 13:55:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690094161; x=1690698961;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fWULp1Z09v1+2fHlAakWzwZrv/VdXoRTMrsIIP2c9oM=;
-        b=GTulg8USXbVDXXRM6ly4eKBRjjUBfUEIVWlNI8PKgXWaF81SmwvQ3xUOMUPN79twjE
-         PyhA+aDv6joI6cbOn3fpU5e60He7zvn/DPAXkjxUF04dckmsJbWn/msqwJi9mEhDdmdi
-         +OyHavZLtbf9/EGalrXeGtkQOBBjudFBaU2KOcDHEEoF8rNsRCx07bv1+5H6/xcf3A8Q
-         SRopIWfL22SC3foYcxFeeEuh9sqaD6tVDxE6UMZkfKXeIO1by5ejKRmV7kwtWWCztSFk
-         4gKny5d0AOLGZoCU9YGlBhOjujE/MExGCudC0mh4ldTuBVUxyD9zy8h7gxMtKGAt+rvP
-         Oc5g==
+        d=google.com; s=20221208; t=1690145710; x=1690750510;
+        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TY4oWT4BmzbCLpoTbP8uqzxOpbbEPhs/d55O6L9hwVM=;
+        b=vRkNNrSTcfhE/l1bOMFJ73ZeZD3Cg0OJYqHLVgN6sa7frN9TEH5M9lx17RdpXOPnDX
+         r2ii4Q5a2GlLxpuaywcH4oi535gMtHBWmcokk4JWEGW4gyNwxepVLK9YKcXHw7/yxUyP
+         qZGsVxrX/ncJTNoIkpijEyzVKP5AhmM5rnE+js8hlhOsUERNX+xXzOKxia0listxcOKe
+         0CoIxtYa2fio4TzzjiJUr2JxwEXo9Tb2nOuL2FWeboNf3b1OL+TwxUrsw13KVq4x4ERn
+         YDa0aMbL5MeVyBmjTVOhJoYCTet7tzOKKpLGqGv0T861jBvf5JcfqNiQhXjQmgl4s+wL
+         l68w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690094161; x=1690698961;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fWULp1Z09v1+2fHlAakWzwZrv/VdXoRTMrsIIP2c9oM=;
-        b=QMsZYtpwwYamxTLJVdZezes5IPc5SfNoQ84smJjKnh8WDpyXa5V5kr+gmnIkXKwECG
-         npYpvb7gevWrlu6XzJa56dIs3TbwtWVqzHzXe4aWghkJpBAcFGboo2X1HBvSrnzdMrMF
-         0/bLmwpwM3GuTRL9C3q5FxrbRw+Zj1Weq+6SRbppAXydbAV8qTgmqnpYx1Spdn/SQxTj
-         gbsQb9pGCwY2/m7KjSB6UbfKnJavG089ho1VQQtVSi1/r8eeGClW5+En8Frwod+Ke8vo
-         sqGHEVhHwktxeX2tFIXobFLZpTwZskvAvJ7Iys6yi237STZQCuQvlx2kv5DdNk3OD2MV
-         0MgA==
-X-Gm-Message-State: ABy/qLbJd0g0aiFV8RSaEF1MUtEeetpbwZVnHlMwGqFOQU6Wo85RpjkE
-        sLN0M9m71U/C/Vzyw9Ds+B8=
-X-Google-Smtp-Source: APBJJlG9YNmkLBeWnc+pvI9ph5YB4yCi6YR54SPLj6YxVXPOdHaAUQOZNPWzSS10tg0VPFD/q0GcGw==
-X-Received: by 2002:adf:e106:0:b0:315:8a80:329e with SMTP id t6-20020adfe106000000b003158a80329emr4470506wrz.40.1690094160991;
-        Sat, 22 Jul 2023 23:36:00 -0700 (PDT)
-Received: from [192.168.0.110] ([77.126.88.184])
-        by smtp.gmail.com with ESMTPSA id l8-20020a7bc448000000b003fb40ec9475sm6963768wmi.11.2023.07.22.23.35.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Jul 2023 23:36:00 -0700 (PDT)
-Message-ID: <bbdce803-0f23-7d3f-f75a-2bc3cfb794af@gmail.com>
-Date:   Sun, 23 Jul 2023 09:35:56 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH net-next v10 08/16] tls: Inline do_tcp_sendpages()
-Content-Language: en-US
-To:     Jakub Kicinski <kuba@kernel.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        David Ahern <dsahern@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        d=1e100.net; s=20221208; t=1690145710; x=1690750510;
+        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TY4oWT4BmzbCLpoTbP8uqzxOpbbEPhs/d55O6L9hwVM=;
+        b=RW1e3GD/BAP7e8KDYbGM7pEUtlebOzCtIzBK6futoXDBwy5sKlvZoQcRPpxHUoYvYf
+         VIQB2T+UvWWATzr0yYd01porhCtPaydkt1Zthp1Wpoqm1vNxPk1B09JElcMyXF4H33Ht
+         rbeRFuS95bKftpsRbIBwrofwtXtIKORIoomAGW3PrYIzEmZMhSGj9P2GEDE0FG4RMm2c
+         TSRs5bJCkLphsz3fh8URKuzlAr6zm9NS7NnuWd/8I8bPME27dM4RBwycanghKEndanG4
+         Gly6yEI78iTNqJ5J1cM5ZAcTFZ11NepPgHXZ5TETEYKAAv2KA86ytnpfJJlJ0lfooSOx
+         dVQg==
+X-Gm-Message-State: ABy/qLZIzjzgRVLzCEfrJ42TT9MbxSlk/4Wsg1K3ZWr1a9utqbavaANo
+        N8M0lVpi+42DI9fT+WqPuFjTUn4QD07BDjsOg3Bkqw==
+X-Google-Smtp-Source: APBJJlHVODtrgl3ATBbSeYuloyXNj+A+wOCcfh07rcSah/7KcVkNUk/mksbD/CHakBHII4RTtjs8eQ==
+X-Received: by 2002:a25:34d5:0:b0:d10:a134:addd with SMTP id b204-20020a2534d5000000b00d10a134adddmr625722yba.55.1690145710413;
+        Sun, 23 Jul 2023 13:55:10 -0700 (PDT)
+Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 8-20020a250108000000b00cc567b3a869sm2023917ybb.6.2023.07.23.13.55.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jul 2023 13:55:09 -0700 (PDT)
+Date:   Sun, 23 Jul 2023 13:55:00 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@ripple.attlocal.net
+To:     Andrew Morton <akpm@linux-foundation.org>
+cc:     Luis Chamberlain <mcgrof@kernel.org>,
         Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Boris Pismenny <borisp@nvidia.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Gal Pressman <gal@nvidia.com>, ranro@nvidia.com,
-        samiram@nvidia.com, drort@nvidia.com,
-        Tariq Toukan <tariqt@nvidia.com>
-References: <ecbb5d7e-7238-28e2-1a17-686325e2bb50@gmail.com>
- <4c49176f-147a-4283-f1b1-32aac7b4b996@gmail.com>
- <20230522121125.2595254-1-dhowells@redhat.com>
- <20230522121125.2595254-9-dhowells@redhat.com>
- <2267272.1686150217@warthog.procyon.org.uk>
- <5a9d4ffb-a569-3f60-6ac8-070ab5e5f5ad@gmail.com>
- <776549.1687167344@warthog.procyon.org.uk>
- <7337a904-231d-201d-397a-7bbe7cae929f@gmail.com>
- <20230630102143.7deffc30@kernel.org>
- <f0538006-6641-eaf6-b7b5-b3ef57afc652@gmail.com>
- <20230705091914.5bee12f8@kernel.org>
-From:   Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20230705091914.5bee12f8@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        NORMAL_HTTP_TO_IP,NUMERIC_HTTP_ADDR,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,WEIRD_PORT autolearn=ham
-        autolearn_force=no version=3.4.6
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH mm-hotfixes] tmpfs: fix Documentation of noswap and huge
+ mount options
+Message-ID: <986cb0bf-9780-354-9bb-4bf57aadbab@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+The noswap mount option is surely not one of the three options for sizing:
+move its description down.
 
+The huge= mount option does not accept numeric values: those are just in
+an internal enum.  Delete those numbers, and follow the manpage text more
+closely (but there's not yet any fadvise() or fcntl() which applies here).
 
-On 05/07/2023 19:19, Jakub Kicinski wrote:
-> On Tue, 4 Jul 2023 23:06:02 +0300 Tariq Toukan wrote:
->> Unfortunately, it still repros for us.
->>
->> We are collecting more info on how the repro is affected by the
->> different parameters.
-> 
-> Consider configuring kdump for your test env. Debugging is super easy
-> if one has the vmcore available.
+/sys/kernel/mm/transparent_hugepage/shmem_enabled is hard to describe, and
+barely relevant to mounting a tmpfs: just refer to transhuge.rst (while
+still using the words deny and force, to help as informal reminders).
 
-Hi Jakub, David,
+Fixes: d0f5a85442d1 ("shmem: update documentation")
+Fixes: 2c6efe9cf2d7 ("shmem: add support to ignore swap")
+Signed-off-by: Hugh Dickins <hughd@google.com>
+---
+ Documentation/filesystems/tmpfs.rst | 45 ++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 26 deletions(-)
 
-We repro the issue on the server side using this client command:
-$ wrk -b2.2.2.2 -t4 -c1000 -d5 --timeout 5s 
-https://2.2.2.3:20443/256000b.img
+diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
+index f18f46be5c0c..28aeaeea47d0 100644
+--- a/Documentation/filesystems/tmpfs.rst
++++ b/Documentation/filesystems/tmpfs.rst
+@@ -84,8 +84,6 @@ nr_inodes  The maximum number of inodes for this instance. The default
+            is half of the number of your physical RAM pages, or (on a
+            machine with highmem) the number of lowmem RAM pages,
+            whichever is the lower.
+-noswap     Disables swap. Remounts must respect the original settings.
+-           By default swap is enabled.
+ =========  ============================================================
+ 
+ These parameters accept a suffix k, m or g for kilo, mega and giga and
+@@ -99,36 +97,31 @@ mount with such options, since it allows any user with write access to
+ use up all the memory on the machine; but enhances the scalability of
+ that instance in a system with many CPUs making intensive use of it.
+ 
++tmpfs blocks may be swapped out, when there is a shortage of memory.
++tmpfs has a mount option to disable its use of swap:
++
++======  ===========================================================
++noswap  Disables swap. Remounts must respect the original settings.
++        By default swap is enabled.
++======  ===========================================================
++
+ tmpfs also supports Transparent Huge Pages which requires a kernel
+ configured with CONFIG_TRANSPARENT_HUGEPAGE and with huge supported for
+ your system (has_transparent_hugepage(), which is architecture specific).
+ The mount options for this are:
+ 
+-======  ============================================================
+-huge=0  never: disables huge pages for the mount
+-huge=1  always: enables huge pages for the mount
+-huge=2  within_size: only allocate huge pages if the page will be
+-        fully within i_size, also respect fadvise()/madvise() hints.
+-huge=3  advise: only allocate huge pages if requested with
+-        fadvise()/madvise()
+-======  ============================================================
++===========  ==============================================================
++huge=never   Do not allocate huge pages.  This is the default.
++huge=always  Attempt to allocate huge page every time a new page is needed.
++huge=within_size Only allocate huge page if it will be fully within i_size.
++             Also respect madvise(2) hints.
++huge=advise  Only allocate huge page if requested with madvise(2).
++===========  ==============================================================
+ 
+-There is a sysfs file which you can also use to control system wide THP
+-configuration for all tmpfs mounts, the file is:
+-
+-/sys/kernel/mm/transparent_hugepage/shmem_enabled
+-
+-This sysfs file is placed on top of THP sysfs directory and so is registered
+-by THP code. It is however only used to control all tmpfs mounts with one
+-single knob. Since it controls all tmpfs mounts it should only be used either
+-for emergency or testing purposes. The values you can set for shmem_enabled are:
+-
+-==  ============================================================
+--1  deny: disables huge on shm_mnt and all mounts, for
+-    emergency use
+--2  force: enables huge on shm_mnt and all mounts, w/o needing
+-    option, for testing
+-==  ============================================================
++See also Documentation/admin-guide/mm/transhuge.rst, which describes the
++sysfs file /sys/kernel/mm/transparent_hugepage/shmem_enabled: which can
++be used to deny huge pages on all tmpfs mounts in an emergency, or to
++force huge pages on all tmpfs mounts for testing.
+ 
+ tmpfs has a mount option to set the NUMA memory allocation policy for
+ all files in that instance (if CONFIG_NUMA is enabled) - which can be
+-- 
+2.35.3
 
-Port 20443 is configured with:
-     ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256;
-     sendfile    off;
-
-
-Important:
-1. Couldn't repro with files smaller than 40KB.
-2. Couldn't repro with "sendfile    on;"
-
-In addition, we collected the vmcore (forced by panic_on_warn), it can 
-be downloaded from here:
-https://drive.google.com/file/d/1Fi2dzgq6k2hb2L_kwyntRjfLF6_RmbxB/view?usp=sharing
-
-Regards,
-Tariq
