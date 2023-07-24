@@ -2,101 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 86B9A75FB0F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 17:44:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A7AB75FB18
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 17:47:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230166AbjGXPoz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 11:44:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57834 "EHLO
+        id S230328AbjGXPrB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 11:47:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbjGXPoy (ORCPT
+        with ESMTP id S229566AbjGXPrA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 11:44:54 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA7CA10D
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 08:44:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690213452;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8GyEE2LRs2/NufDXzm3a3Uj5OTnKsHjyZ7MI7G6a/wM=;
-        b=MbW+Y0VDLBlJTEvpi0KOAb5jke71CinS0Equ8RNbfrKrv0Ig7u02AkLZmC+z4N/FtDhOPG
-        yY9svYufIE4cykj9LWT6KAR4AXaPPu65JlyaQhKj2CS0D+sAkfW6/KLIAVa7j3f1qJB0z8
-        Mi1asGLSTR1kVhpuPA9l4ush6HoeS7o=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-633-mFyLxJVmPo26-LDlQZGELw-1; Mon, 24 Jul 2023 11:44:09 -0400
-X-MC-Unique: mFyLxJVmPo26-LDlQZGELw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 05B2F800B35;
-        Mon, 24 Jul 2023 15:44:09 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.205])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 32E8AC2C7D3;
-        Mon, 24 Jul 2023 15:44:08 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAASaF6yKxWaW6me0Y+vSEo0qUm_LTyL5CPVka75EPg_yq4MO9g@mail.gmail.com>
-References: <CAASaF6yKxWaW6me0Y+vSEo0qUm_LTyL5CPVka75EPg_yq4MO9g@mail.gmail.com> <7854000d2ce5ac32b75782a7c4574f25a11b573d.1689757133.git.jstancek@redhat.com> <64434.1690193532@warthog.procyon.org.uk>
-To:     Jan Stancek <jstancek@redhat.com>
-Cc:     dhowells@redhat.com, kuba@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        brauner@kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] splice, net: Fix splice_to_socket() for O_NONBLOCK socket
+        Mon, 24 Jul 2023 11:47:00 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D563A1B3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 08:46:59 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3fc075d9994so119505e9.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 08:46:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1690213618; x=1690818418;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UReZA49jpXda81AzjPqvcybNIrgPn25JJtMLPfG8EV8=;
+        b=DryB/zka48uuJEghAv42rnh8pFDKOLqpwZxUTYvQlc6g0UHvN9GFYYmXnxWIn76a3T
+         XTAZF6qHJHhMuw5w9EXg47DV8kZLEIoaXEdjSlNCxhk8/kNSmiXRRU7jZYj77oLsdBW1
+         /Fjdxlf0iDqPnUUmTpLUOqWqrjXSJPN0fvj1NFWIaSffYrjMp7tZUJ5mUFlW199X3jy9
+         CS9xLNrxPyWxVhw5nVT2rTK5Yyxhp9AyktRg4mevbb8Kk59nDDe2NvWijHg5SHlR5lja
+         p8cAV/3uDE8PuSy7HN48HCMeOXonGD48r1m5JPCES02qKjrUk7odtyHHX4Qu6lvYHfxW
+         KzHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690213618; x=1690818418;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UReZA49jpXda81AzjPqvcybNIrgPn25JJtMLPfG8EV8=;
+        b=RaJHvCQODeCePUtq2k87P06rWA3hfZ9/kRVuiHKUdYOfh91bUP87k6D577PtrTSYOf
+         p2i+qIBjLM2y0DOiogYNMXjT1gGQkcZccL/rC1aWznCJXkZknUQb0grZ4jcqQOSDKnkg
+         mQTb3dGGIk0addr1wCEmp6pixtp/et6jyRIfyF3TfZdgI1WNdcZYGPeuWwKXavlv4vp1
+         1UOG79H53WND2vK0D4i0oRjnrgqvIcDewHpxHLZxEuUkqNYHlqpVIcDuLIyCyok5bQV9
+         O/fFSYYBJeiBI2T5VJTwP8nZx54i2vNXoj0K4XcqBCGZ/q61fs3/lUvabPM5QplCBIry
+         h+Ng==
+X-Gm-Message-State: ABy/qLaKdRBebpsnZDlNPArYiZ7tKvb8IIEj0kEaSMjHbZ0EfmgI2F17
+        HRA92J0z2Toh21dMTraGmRcMFpCpmhJNmN81TVXE2Q==
+X-Google-Smtp-Source: APBJJlEORwATYissc1Yk1UYYEygcuNNda+940D3ZL5ecswPuDlAMGqOacpq9oSzkcckEbMEQLkuteNarO6R/MLk2kc8=
+X-Received: by 2002:a05:600c:3c93:b0:3fc:75d:8f85 with SMTP id
+ bg19-20020a05600c3c9300b003fc075d8f85mr183928wmb.6.1690213618221; Mon, 24 Jul
+ 2023 08:46:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <10686.1690213447.1@warthog.procyon.org.uk>
-Date:   Mon, 24 Jul 2023 16:44:07 +0100
-Message-ID: <10687.1690213447@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <20230711202047.3818697-1-willy@infradead.org> <20230711202047.3818697-6-willy@infradead.org>
+In-Reply-To: <20230711202047.3818697-6-willy@infradead.org>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 24 Jul 2023 17:46:21 +0200
+Message-ID: <CAG48ez2iccdvgjUh+tTpthJT8rHwd9eJwjgxBFMCWpa+imkQ7w@mail.gmail.com>
+Subject: Re: [PATCH v2 5/9] mm: Move FAULT_FLAG_VMA_LOCK check down in handle_pte_fault()
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-mm@kvack.org, Arjun Roy <arjunroy@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        linux-fsdevel@vger.kernel.org,
+        Punit Agrawal <punit.agrawal@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jan Stancek <jstancek@redhat.com> wrote:
+On Tue, Jul 11, 2023 at 10:20=E2=80=AFPM Matthew Wilcox (Oracle)
+<willy@infradead.org> wrote:
+> Call do_pte_missing() under the VMA lock ... then immediately retry
+> in do_fault().
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+[...]
+> @@ -4961,6 +4961,11 @@ static vm_fault_t handle_pte_fault(struct vm_fault=
+ *vmf)
+>         if (!vmf->pte)
+>                 return do_pte_missing(vmf);
+>
+> +       if ((vmf->flags & FAULT_FLAG_VMA_LOCK) && !vma_is_anonymous(vmf->=
+vma)) {
+> +               vma_end_read(vmf->vma);
+> +               return VM_FAULT_RETRY;
+> +       }
 
-> On Mon, Jul 24, 2023 at 12:12 PM David Howells <dhowells@redhat.com> wrote:
-> >
-> > Jan Stancek <jstancek@redhat.com> wrote:
-> >
-> > > LTP sendfile07 [1], which expects sendfile() to return EAGAIN when
-> > > transferring data from regular file to a "full" O_NONBLOCK socket,
-> > > started failing after commit 2dc334f1a63a ("splice, net: Use
-> > > sendmsg(MSG_SPLICE_PAGES) rather than ->sendpage()").
-> > > sendfile() no longer immediately returns, but now blocks.
-> > >
-> > > Removed sock_sendpage() handled this case by setting a MSG_DONTWAIT
-> > > flag, fix new splice_to_socket() to do the same for O_NONBLOCK sockets.
-> >
-> > Does this actually work correctly in all circumstances?
-> >
-> > The problem might come if you have a splice from a non-rewindable source
-> > through a temporary pipe (eg. sendfile() using splice_direct_to_actor()).
-> 
-> I assumed this was safe, since sendfile / splice_direct_to_actor()
-> requires input to be seekable.
+At this point we can have vmf->pte mapped, right? Does this mean this
+bailout leaks a kmap_local() on CONFIG_HIGHPTE?
 
-Ah!  The test isn't where I was looking for it (in sendfile()) - it's in
-splice_direct_to_actor().
-
-I wonder if it's worth making that explicit in do_sendfile() as the
-requirement doesn't hold if the output is a pipe (though in such a case,
-there's an explicit buffer, so it's not actually a problem).
-
-Anyway, did you want to post this to netdev too so that the networking tree
-picks it up?  Feel free to add:
-
-Acked-by: David Howells <dhowells@redhat.com>
-
+>         if (!pte_present(vmf->orig_pte))
+>                 return do_swap_page(vmf);
