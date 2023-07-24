@@ -2,271 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D53EB75F8FF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 15:55:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42D5B75F907
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 15:56:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229844AbjGXNzq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 09:55:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55348 "EHLO
+        id S230453AbjGXN4k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 09:56:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229922AbjGXNzd (ORCPT
+        with ESMTP id S230458AbjGXN4X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 09:55:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 732932129;
-        Mon, 24 Jul 2023 06:54:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 04467611DE;
-        Mon, 24 Jul 2023 13:54:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A5EFC433C8;
-        Mon, 24 Jul 2023 13:54:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690206864;
-        bh=G9YIu7rwZl2i8OKdrEM+0p3qMlbKOdR2B4+B4YnzfsA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=oTA9fnX9QjdujdfnRoozuDirGYtE6ngY24fiK6KoEeJ52ri06KKVboGez/oEi6rgg
-         tYhzIwtGGWWqW+ZwG6oBu7JJwfcZcdXxranKRoj7xeh+DSvK2RXk9t2kXUmcuHAh5G
-         khzcsFaecumEQBw9Z6rSOTUoZYKWNu0SLWZE4AK0rvG2Hu9pDGy/3n7LdvmtX2qPgV
-         JNWFd2Kk0uS/u10kwP+yf6o3PEb9LbDp+vxg7uEFL5p1aKwWMY1CoNmiZOAmAJfNKE
-         txrj+lVS07OWAhUg8jNWYbsY+YEK3JG/g4QjYBgwZFlTWNOmSHGxT+eldf65/V1M4H
-         PmBAg5JhfPYlg==
-Message-ID: <8903ae45c4802af9a56590460d2e1180b0f041f9.camel@kernel.org>
-Subject: Re: [PATCH v2] nfsd: inherit required unset default acls from
- effective set
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Chuck Lever <chuck.lever@oracle.com>
-Cc:     Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>,
-        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Ondrej Valousek <ondrej.valousek@diasemi.com>
-Date:   Mon, 24 Jul 2023 09:54:22 -0400
-In-Reply-To: <ZL6AKlkloZQwlmPG@tissot.1015granger.net>
-References: <20230724-nfsd-acl-v2-1-1cfaac973498@kernel.org>
-         <ZL6AKlkloZQwlmPG@tissot.1015granger.net>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Mon, 24 Jul 2023 09:56:23 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EACE1FCF
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 06:55:35 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4fb96e2b573so6520317e87.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 06:55:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1690206933; x=1690811733;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cLuBTJcHgRw5Dz5uIr7zOsQg7JkLL64F6mhAMmK/Urg=;
+        b=gvHlyPxpUKDXveeruAvPPnL2uwW7r0Lm6j/W1meQaI6mI9bctOF+FA+qn05a9Sgtx6
+         YLUJNCG7B6Bg6YnKGdq4BjFBF218V2BzeuKMNMBnLqM1NwslZsz/em1+PzKJfEko3N5D
+         Ki+Xww/RrchuUj/d3YykuEcicj0QjNcfotE4c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690206933; x=1690811733;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cLuBTJcHgRw5Dz5uIr7zOsQg7JkLL64F6mhAMmK/Urg=;
+        b=B8kwjRtPzY+7t4E9eBA86gmBdrcYLWY3+N3Prt+NXjwexqFpGi9glRzucWypHLsfK1
+         nEAqeG7Gv2zS8ZQFFOSaxDCsZZbNIcSOJku6ptVsAO8O7bhJQmtWkPFyweTPIsiYbAQe
+         xDijuksDU+zykBl0dqwIxp73xcCb7w5o54PaOOj3kvkXOebv+9xMivRK50XSzz+WaI1A
+         iQ2Uvr8FoigynZbzJAn5BtQvNQe87sQ39e+HaDJCVws5+PnL0mEv7OmsHu7Nbz1WWgdX
+         EuMf+7NtJXdpUYUOV4AtGbvRJS7GyQ20GvX19xU/OM8tLxiREsMQSH8Uaa6y78gNNWH+
+         OKeg==
+X-Gm-Message-State: ABy/qLbrZTgzPNNJPQXHH1MCds2WL2aA9f/xaXDeItgQxVrlay7iDpzV
+        59PEllwoePddfU3k7njNhyZMMdQKiCcTcpToXUsETA==
+X-Google-Smtp-Source: APBJJlFFevIadl9sawEPFI9I5OR2dPQnGvYtXsyb59paj5UKaXjSUkFCIk1mA0a3cy0sEARUqP5jmS4qlpHJ1cAJBSw=
+X-Received: by 2002:a05:6512:234c:b0:4fa:5255:4fa3 with SMTP id
+ p12-20020a056512234c00b004fa52554fa3mr6246134lfu.5.1690206933287; Mon, 24 Jul
+ 2023 06:55:33 -0700 (PDT)
 MIME-Version: 1.0
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20230629155433.4170837-1-dhowells@redhat.com> <20230629155433.4170837-2-dhowells@redhat.com>
+ <CAJfpegsJuvXJDcXpo9T19Gw0tDuvyOJdv44Y2bt04MEf1JLxGg@mail.gmail.com>
+ <c634a18e-9f2b-4746-bd8f-aa1d41e6ddf7@mattwhitlock.name> <CAJfpegvq4M_Go7fHiWVBBkrK6h4ChLqQTd0+EOKbRWZDcVerWA@mail.gmail.com>
+ <ZLg9HbhOVnLk1ogA@casper.infradead.org> <CAHk-=wiq95bWiWLyz96ombPfpy=PNrc2KKyzJ2d+WMrxi6=OVA@mail.gmail.com>
+ <63041.1690191864@warthog.procyon.org.uk>
+In-Reply-To: <63041.1690191864@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 24 Jul 2023 15:55:21 +0200
+Message-ID: <CAJfpegstr2CwC2ZL4-y_bAjS3hqF_vta5e4XQneJYmxz9rhVpA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/4] splice: Fix corruption of spliced data after
+ splice() returns
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Matt Whitlock <kernel@mattwhitlock.name>,
+        netdev@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@kvack.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2023-07-24 at 09:44 -0400, Chuck Lever wrote:
-> On Mon, Jul 24, 2023 at 08:13:05AM -0400, Jeff Layton wrote:
-> > A well-formed NFSv4 ACL will always contain OWNER@/GROUP@/EVERYONE@
-> > ACEs, but there is no requirement for inheritable entries for those
-> > entities. POSIX ACLs must always have owner/group/other entries, even f=
-or a
-> > default ACL.
-> >=20
-> > nfsd builds the default ACL from inheritable ACEs, but the current code
-> > just leaves any unspecified ACEs zeroed out. The result is that adding =
-a
-> > default user or group ACE to an inode can leave it with unwanted deny
-> > entries.
-> >=20
-> > For instance, a newly created directory with no acl will look something
-> > like this:
-> >=20
-> > 	# NFSv4 translation by server
-> > 	A::OWNER@:rwaDxtTcCy
-> > 	A::GROUP@:rxtcy
-> > 	A::EVERYONE@:rxtcy
-> >=20
-> > 	# POSIX ACL of underlying file
-> > 	user::rwx
-> > 	group::r-x
-> > 	other::r-x
-> >=20
-> > ...if I then add new v4 ACE:
-> >=20
-> > 	nfs4_setfacl -a A:fd:1000:rwx /mnt/local/test
-> >=20
-> > ...I end up with a result like this today:
-> >=20
-> > 	user::rwx
-> > 	user:1000:rwx
-> > 	group::r-x
-> > 	mask::rwx
-> > 	other::r-x
-> > 	default:user::---
-> > 	default:user:1000:rwx
-> > 	default:group::---
-> > 	default:mask::rwx
-> > 	default:other::---
-> >=20
-> > 	A::OWNER@:rwaDxtTcCy
-> > 	A::1000:rwaDxtcy
-> > 	A::GROUP@:rxtcy
-> > 	A::EVERYONE@:rxtcy
-> > 	D:fdi:OWNER@:rwaDx
-> > 	A:fdi:OWNER@:tTcCy
-> > 	A:fdi:1000:rwaDxtcy
-> > 	A:fdi:GROUP@:tcy
-> > 	A:fdi:EVERYONE@:tcy
-> >=20
-> > ...which is not at all expected. Adding a single inheritable allow ACE
-> > should not result in everyone else losing access.
-> >=20
-> > The setfacl command solves a silimar issue by copying owner/group/other
-> > entries from the effective ACL when none of them are set:
-> >=20
-> >     "If a Default ACL entry is created, and the  Default  ACL  contains=
-  no
-> >      owner,  owning group,  or  others  entry,  a  copy of the ACL owne=
-r,
-> >      owning group, or others entry is added to the Default ACL.
-> >=20
-> > Having nfsd do the same provides a more sane result (with no deny ACEs
-> > in the resulting set):
-> >=20
-> > 	user::rwx
-> > 	user:1000:rwx
-> > 	group::r-x
-> > 	mask::rwx
-> > 	other::r-x
-> > 	default:user::rwx
-> > 	default:user:1000:rwx
-> > 	default:group::r-x
-> > 	default:mask::rwx
-> > 	default:other::r-x
-> >=20
-> > 	A::OWNER@:rwaDxtTcCy
-> > 	A::1000:rwaDxtcy
-> > 	A::GROUP@:rxtcy
-> > 	A::EVERYONE@:rxtcy
-> > 	A:fdi:OWNER@:rwaDxtTcCy
-> > 	A:fdi:1000:rwaDxtcy
-> > 	A:fdi:GROUP@:rxtcy
-> > 	A:fdi:EVERYONE@:rxtcy
-> >=20
-> > Reported-by: Ondrej Valousek <ondrej.valousek@diasemi.com>
-> > Closes: https://bugzilla.redhat.com/show_bug.cgi?id=3D2136452
-> > Suggested-by: Andreas Gruenbacher <agruenba@redhat.com>
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> > Changes in v2:
-> > - always set missing ACEs whenever default ACL has any ACEs that are
-> >   explicitly set. This better conforms to how setfacl works.
-> > - drop now-unneeded "empty" boolean
-> > - Link to v1: https://lore.kernel.org/r/20230719-nfsd-acl-v1-1-eb0faf3d=
-2917@kernel.org
-> > ---
-> >  fs/nfsd/nfs4acl.c | 32 ++++++++++++++++++++++++++++----
-> >  1 file changed, 28 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/fs/nfsd/nfs4acl.c b/fs/nfsd/nfs4acl.c
-> > index 518203821790..b931d4383517 100644
-> > --- a/fs/nfsd/nfs4acl.c
-> > +++ b/fs/nfsd/nfs4acl.c
-> > @@ -441,7 +441,7 @@ struct posix_ace_state_array {
-> >   * calculated so far: */
-> > =20
-> >  struct posix_acl_state {
-> > -	int empty;
-> > +	unsigned char valid;
-> >  	struct posix_ace_state owner;
-> >  	struct posix_ace_state group;
-> >  	struct posix_ace_state other;
-> > @@ -457,7 +457,6 @@ init_state(struct posix_acl_state *state, int cnt)
-> >  	int alloc;
-> > =20
-> >  	memset(state, 0, sizeof(struct posix_acl_state));
-> > -	state->empty =3D 1;
-> >  	/*
-> >  	 * In the worst case, each individual acl could be for a distinct
-> >  	 * named user or group, but we don't know which, so we allocate
-> > @@ -500,7 +499,7 @@ posix_state_to_acl(struct posix_acl_state *state, u=
-nsigned int flags)
-> >  	 * and effective cases: when there are no inheritable ACEs,
-> >  	 * calls ->set_acl with a NULL ACL structure.
-> >  	 */
-> > -	if (state->empty && (flags & NFS4_ACL_TYPE_DEFAULT))
-> > +	if (!state->valid && (flags & NFS4_ACL_TYPE_DEFAULT))
-> >  		return NULL;
-> > =20
-> >  	/*
-> > @@ -622,9 +621,10 @@ static void process_one_v4_ace(struct posix_acl_st=
-ate *state,
-> >  				struct nfs4_ace *ace)
-> >  {
-> >  	u32 mask =3D ace->access_mask;
-> > +	short type =3D ace2type(ace);
-> >  	int i;
-> > =20
-> > -	state->empty =3D 0;
-> > +	state->valid |=3D type;
-> > =20
-> >  	switch (ace2type(ace)) {
->=20
-> Mechanical issue: the patch adds @type, but uses it just once.
-> The switch here also wants the value of ace2type(ace).
->=20
->=20
+On Mon, 24 Jul 2023 at 11:44, David Howells <dhowells@redhat.com> wrote:
+>
+> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>
+> > > So what's the API that provides the semantics of _copying_?
+> >
+> > It's called "read()" and "write()".
+>
+> What about copy_file_range()?  That seems to fall back to splicing if not
+> directly implemented by the filesystem.  It looks like the manpage for that
+> needs updating too - or should that actually copy?
 
-Doh! I had that fixed in one version of the patch, but had to rework the
-branch and lost that delta. I can respin, or if you just want to fix
-that in place, then that would be fine too.
+Both source and destination of copy_file_range() are regular files and
+do_splice_direct() is basically equivalent to write(dest, mmap of
+source), no refd buffers remain beyond the end of the syscall.  What
+is it that should be updated in the manpage?
 
-> >  	case ACL_USER_OBJ:
-> > @@ -726,6 +726,30 @@ static int nfs4_acl_nfsv4_to_posix(struct nfs4_acl=
- *acl,
-> >  		if (!(ace->flag & NFS4_ACE_INHERIT_ONLY_ACE))
-> >  			process_one_v4_ace(&effective_acl_state, ace);
-> >  	}
-> > +
-> > +	/*
-> > +	 * At this point, the default ACL may have zeroed-out entries for own=
-er,
-> > +	 * group and other. That usually results in a non-sensical resulting =
-ACL
-> > +	 * that denies all access except to any ACE that was explicitly added=
-.
-> > +	 *
-> > +	 * The setfacl command solves a similar problem with this logic:
-> > +	 *
-> > +	 * "If  a  Default  ACL  entry is created, and the Default ACL contai=
-ns
-> > +	 *  no owner, owning group, or others entry,  a  copy of  the  ACL
-> > +	 *  owner, owning group, or others entry is added to the Default ACL.=
-"
-> > +	 *
-> > +	 * Copy any missing ACEs from the effective set, if any ACEs were
-> > +	 * explicitly set.
-> > +	 */
-> > +	if (default_acl_state.valid) {
-> > +		if (!(default_acl_state.valid & ACL_USER_OBJ))
-> > +			default_acl_state.owner =3D effective_acl_state.owner;
-> > +		if (!(default_acl_state.valid & ACL_GROUP_OBJ))
-> > +			default_acl_state.group =3D effective_acl_state.group;
-> > +		if (!(default_acl_state.valid & ACL_OTHER))
-> > +			default_acl_state.other =3D effective_acl_state.other;
-> > +	}
-> > +
-> >  	*pacl =3D posix_state_to_acl(&effective_acl_state, flags);
-> >  	if (IS_ERR(*pacl)) {
-> >  		ret =3D PTR_ERR(*pacl);
-> >=20
-> > ---
-> > base-commit: 7bfb36a2ee1d329a501ba4781db4145dc951c798
-> > change-id: 20230719-nfsd-acl-5ab61537e4e6
-> >=20
-> > Best regards,
-> > --=20
-> > Jeff Layton <jlayton@kernel.org>
-> >=20
->=20
-
---=20
-Jeff Layton <jlayton@kernel.org>
+Thanks,
+Miklos
