@@ -2,103 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EDF975FA14
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 16:44:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EA1475FA2A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 16:49:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231329AbjGXOoB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 10:44:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59450 "EHLO
+        id S231611AbjGXOt5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 10:49:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229770AbjGXOoA (ORCPT
+        with ESMTP id S230118AbjGXOt4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 10:44:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEE1CD2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 07:43:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 42107611BC
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 14:43:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E8DCC433C7;
-        Mon, 24 Jul 2023 14:43:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690209838;
-        bh=V80fCBO6tgYnB7Y4diByKwMKMbOCb33FIejFATg08B8=;
-        h=Subject:From:To:Cc:Date:From;
-        b=QNJOk2COoCIQPzMYykF9XgsX08VRDrdH8EU44jFw20RzAArf8azQe8/8g+HZLq3VN
-         4IE+0rn/UW4CpdISFbcgE0U2cD4FPwCnZ1DlcsPa7llYhCtWxFghm2b2+WSbG2QbI9
-         0wCrXpeb1afMfCL7iMUsJbDqwRIZIqqxRSTNwB/ukQFcynI7rqTgumTvXgJvHwkRfc
-         r7ToSVzOD6IJNW/nY+LZv0j2vKLpRa7SNXVb5v+YcGSHN8S5QXv+69HRjNDExiTvjX
-         2ldM5tgzdtI5mZTBUeOXIVMgxdLl/J4o20NVP8kE6ye/zc9xBkdio7MUT7tYCFzc/2
-         UMy2onSWLgFLA==
-Subject: [PATCH] libfs: Add a lock class for the offset map's xa_lock
-From:   Chuck Lever <cel@kernel.org>
-To:     brauner@kernel.org
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Date:   Mon, 24 Jul 2023 10:43:57 -0400
-Message-ID: <169020933088.160441.9405180953116076087.stgit@manet.1015granger.net>
-User-Agent: StGit/1.5
+        Mon, 24 Jul 2023 10:49:56 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6396210DE
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 07:49:54 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3fc075d9994so112425e9.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 07:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1690210193; x=1690814993;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ki+X2Ujoc38+QWppbACpmptGeQ/z2af0rECZEbVAVFI=;
+        b=CeE/SNaU1vmPj5FnneXPHb3jJH79djSajq+EiQCueGmehbzLPuqRKsrG8hiPBG6CxE
+         G2ctKccmmtp7ajI2h6irptpIz3AmPV3ZFguG3NAHBWxF3/LEfOQW5X/IfAD69m6jqfJg
+         JfwzuA6Ew1d2vToJEtoJqCdZ92mi3u8Y2q0B/sWnf0BmPBIyhK8A3gQ467OLfb/8I0Gq
+         VUqB8BHwkz1iZ5ZIJq9IA0su5Y0AzBKgY6GU0fafP6X/OKdEj14uduMZnSOmSzWc34ed
+         wfAMQX6RSc3TlLD61vSGtqZ4s/TrCqBhTn9zcNX8xgOOrgd1pZw24byr8us1nJJWltPF
+         MkQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690210193; x=1690814993;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ki+X2Ujoc38+QWppbACpmptGeQ/z2af0rECZEbVAVFI=;
+        b=CBlG9HEf3RLU0pinLpYsMKuhWs7JIrtgynoT8rCxh1+ZV77L031Z7RdobAyrbcC45F
+         9qdZTEhwsB7A/X65I58pr6eReL6bW1TF7RhcJnav2adEHx2WN8ODJJA92/o2z+dmN4Wp
+         0uF/vyslALmFOKdbP8vYPzJljdOTRW1b8Gcehm6iuQcdgqBrvDXtL/zLtanWRYgvXB7G
+         FzDZstE7HOArvrJOhsPKkxOy3kJwR8n5ONJzcFmEd7Q6/Ty2+n+/fxffmdTSlQF92NtF
+         Y4G9aZDhF1VacSHYmX6DylxSdwAZ/62/VFSyCG0NkgMPkgWWG1yCmOq5Nvg4i/kfcN61
+         MZHw==
+X-Gm-Message-State: ABy/qLYsarG38AmOXzsQ9Zf+v8toDSnVqyluocC3z3QeX6/VRl6dAozy
+        Zk4bPNDL3tnCswUkGWIIfh4OfMdCeZoeGH7TsjlQLw==
+X-Google-Smtp-Source: APBJJlF9uk3eSs5x3t+6WtqH14pUEUPIKuiZ2qGbirueqO/SURxmmVHB9Rog6hFQVOJAJnpxVQMqTOvWAXbIpUrca/w=
+X-Received: by 2002:a05:600c:3ba7:b0:3f7:e4d8:2569 with SMTP id
+ n39-20020a05600c3ba700b003f7e4d82569mr154278wms.5.1690210192726; Mon, 24 Jul
+ 2023 07:49:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230711202047.3818697-1-willy@infradead.org> <20230711202047.3818697-2-willy@infradead.org>
+ <CAJuCfpGTRZO121fD0_nXi534D45+eOSUkCO7dcZe13jhkdfnSQ@mail.gmail.com> <ZLDCQHO4W1G7qKqv@casper.infradead.org>
+In-Reply-To: <ZLDCQHO4W1G7qKqv@casper.infradead.org>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 24 Jul 2023 16:49:16 +0200
+Message-ID: <CAG48ez3bv2nWaVx7kGKcj2eQXRfq8LNOUXm8s1gNVDJJoLsprw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/9] Revert "tcp: Use per-vma locking for receive zerocopy"
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
+        Arjun Roy <arjunroy@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        linux-fsdevel@vger.kernel.org,
+        Punit Agrawal <punit.agrawal@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Chuck Lever <chuck.lever@oracle.com>
+On Fri, Jul 14, 2023 at 5:34=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
+> wrote:
+> On Thu, Jul 13, 2023 at 08:02:12PM -0700, Suren Baghdasaryan wrote:
+> > On Tue, Jul 11, 2023 at 1:21=E2=80=AFPM Matthew Wilcox (Oracle)
+> > <willy@infradead.org> wrote:
+> > >
+> > > This reverts commit 7a7f094635349a7d0314364ad50bdeb770b6df4f.
+> >
+> > nit: some explanation and SOB would be nice.
+>
+> Well, it can't be actually applied.  What needs to happen is that the
+> networking people need to drop the commit from their tree.  Some review
+> from the networking people would be helpful to be sure that I didn't
+> break anything in my reworking of this patch to apply after my patches.
 
-Tie the dynamically-allocated xarray locks into a single class so
-contention on the directory offset xarrays can be observed.
-
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
----
- fs/libfs.c |    3 +++
- 1 file changed, 3 insertions(+)
-
-I've been looking into the recent kernel bot reports of performance
-regressions on the will-it-scale benchmark.
-
-https://lore.kernel.org/linux-mm/202307171640.e299f8d5-oliver.sang@intel.com/
-
-I haven't been able to run the reproducer yet, but I have created a
-small change to demonstrate that it is unlikely that it is the
-xa_lock itself that is the issue. All tests I've run here show "0.0"
-in the lock_stat contention metrics for the simple_offset_xa_lock
-class.
-
-It seems reasonable to include this small change in the patches
-already applied to your tree.
-
-
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 68b0000dc518..fcc0f1f3c2dc 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -249,6 +249,8 @@ static unsigned long dentry2offset(struct dentry *dentry)
- 	return (unsigned long)dentry->d_fsdata;
- }
- 
-+static struct lock_class_key simple_offset_xa_lock;
-+
- /**
-  * simple_offset_init - initialize an offset_ctx
-  * @octx: directory offset map to be initialized
-@@ -257,6 +259,7 @@ static unsigned long dentry2offset(struct dentry *dentry)
- void simple_offset_init(struct offset_ctx *octx)
- {
- 	xa_init_flags(&octx->xa, XA_FLAGS_ALLOC1);
-+	lockdep_set_class(&octx->xa.xa_lock, &simple_offset_xa_lock);
- 
- 	/* 0 is '.', 1 is '..', so always start with offset 2 */
- 	octx->next_offset = 2;
-
-
+Are you saying you want them to revert it before it reaches mainline?
+That commit landed in v6.5-rc1.
