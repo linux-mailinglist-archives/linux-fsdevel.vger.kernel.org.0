@@ -2,101 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CF2475F80F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 15:18:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F2A675F824
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 15:23:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230262AbjGXNSD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 09:18:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59122 "EHLO
+        id S231139AbjGXNXv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 09:23:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229883AbjGXNSC (ORCPT
+        with ESMTP id S230335AbjGXNXt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 09:18:02 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F0CE0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 06:17:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690204638;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=f4KQ/tLol2JTMF9SoFlYCSkzvClZr/k6u6hh/oPakP4=;
-        b=VwDwZobtOqPU5z+PbAqEFVt51QrCNZvJIN8eujhcyK2TJ2s9Nh4uIiH+P0TlVfeKiS2ksD
-        kwSuM/HjD7pdVVbkClVari7D+rowP6Ec42Sy2PFdej9S3ANJQEO1BgcqrnAgxbbB3CotQQ
-        ZytIFErMcj8qcOIOSGyKgzOiCY6lrRs=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-526-F2Wq1qF6PVuCC9PMRtj6hg-1; Mon, 24 Jul 2023 09:17:11 -0400
-X-MC-Unique: F2Wq1qF6PVuCC9PMRtj6hg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 73D201010427;
-        Mon, 24 Jul 2023 13:17:10 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D8ECA200BA63;
-        Mon, 24 Jul 2023 13:17:08 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <0000000000001416bb06004ebf53@google.com>
-References: <0000000000001416bb06004ebf53@google.com>
-To:     syzbot <syzbot+f527b971b4bdc8e79f9e@syzkaller.appspotmail.com>
-Cc:     dhowells@redhat.com, bpf@vger.kernel.org, brauner@kernel.org,
-        davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
-        kuba@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        pabeni@redhat.com, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [fs?] INFO: task hung in pipe_release (4)
+        Mon, 24 Jul 2023 09:23:49 -0400
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C960DF5;
+        Mon, 24 Jul 2023 06:23:47 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.143])
+        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4R8gpj3RJ1z4f3jqb;
+        Mon, 24 Jul 2023 21:23:41 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.174.178.55])
+        by APP4 (Coremail) with SMTP id gCh0CgBn0LNbe75kcavTOg--.2237S4;
+        Mon, 24 Jul 2023 21:23:41 +0800 (CST)
+From:   thunder.leizhen@huaweicloud.com
+To:     "Paul E . McKenney" <paulmck@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH 0/2] softirq: redefine the type of kernel_stat.softirqs[] as unsigned long
+Date:   Mon, 24 Jul 2023 21:22:22 +0800
+Message-Id: <20230724132224.916-1-thunder.leizhen@huaweicloud.com>
+X-Mailer: git-send-email 2.37.3.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <145369.1690204627.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 24 Jul 2023 14:17:07 +0100
-Message-ID: <145370.1690204627@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: gCh0CgBn0LNbe75kcavTOg--.2237S4
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gw17Zw1fXw13Aw13WFy3urg_yoW3Grc_Zw
+        s7tr1UGw1IqFZay3W3Gr47XryjyFWj9F97Cas0qFZ0934qyF98ZFWfAF95Wrsrur4vkFZI
+        vr98ZwnIgw1SvjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_JrC_JFWl1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+        67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+        0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lw4CEc2x0
+        rVAKj4xxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+        AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCI
+        c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+        AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWU
+        JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFC
+        JmUUUUU
+X-CM-SenderInfo: hwkx0vthuozvpl2kv046kxt4xhlfz01xgou0bp/
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,MAY_BE_FORGED,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Note that the test program is dodgy:
+From: Zhen Lei <thunder.leizhen@huawei.com>
 
-    pipe(&(0x7f0000000100)=3D{<r0=3D>0xffffffffffffffff, <r1=3D>0xffffffff=
-ffffffff})
-    r2 =3D socket$inet_udp(0x2, 0x2, 0x0)
+The type of member softirqs in structure kernel_stat is unsigned int, its
+accumulated value can easily overflow. Changing to unsigned long can safely 
+solve the problem on 64-bit processors.
 
-r2 is closed here:
+ struct kernel_stat {
+ 	unsigned long irqs_sum;
+-	unsigned int softirqs[NR_SOFTIRQS];
++	unsigned long softirqs[NR_SOFTIRQS];
 
-    close(r2)
-    r3 =3D socket$inet_udp(0x2, 0x2, 0x0)
-    setsockopt$sock_int(r3, 0x1, 0x6, &(0x7f0000000140)=3D0x32, 0x4)
-    bind$inet(r3, &(0x7f0000000000)=3D{0x2, 0x0, @dev=3D{0xac, 0x14, 0x14,=
- 0x15}}, 0x10)
-    connect$inet(r3, &(0x7f0000000200)=3D{0x2, 0x0, @broadcast}, 0x10)
-    sendmmsg(r3, &(0x7f0000000180)=3D[{{0x0, 0x0, 0x0}}, {{0x0, 0xffffffff=
-fffffed3, &(0x7f0000000940)=3D[{&(0x7f00000006c0)=3D'O', 0x57e}], 0x1}}], =
-0x4000000000003bd, 0x8800)
-    write$binfmt_misc(r1, &(0x7f0000000440)=3DANY=3D[], 0x8)
 
-but then used here:
+Zhen Lei (2):
+  softirq: fix integer overflow in function show_stat()
+  softirq: redefine the type of kernel_stat.softirqs[] as unsigned long
 
-    splice(r0, 0x0, r2, 0x0, 0x4ffe0, 0x0)
+ fs/proc/softirqs.c          | 2 +-
+ fs/proc/stat.c              | 4 ++--
+ include/linux/kernel_stat.h | 8 ++++----
+ kernel/rcu/tree.h           | 2 +-
+ kernel/rcu/tree_stall.h     | 6 +++---
+ 5 files changed, 11 insertions(+), 11 deletions(-)
 
-As it happens, r3 will probably end up referring to the same fd as r2 did,=
- but
-that's not guaranteed.
-
-David
+-- 
+2.25.1
 
