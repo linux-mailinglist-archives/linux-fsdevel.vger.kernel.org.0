@@ -2,106 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BB4375EBCB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 08:40:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C167675ED19
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 10:09:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230471AbjGXGkB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 02:40:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36092 "EHLO
+        id S231334AbjGXIJn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 04:09:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230443AbjGXGj7 (ORCPT
+        with ESMTP id S230423AbjGXIJl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 02:39:59 -0400
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E3F810F8
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Jul 2023 23:39:38 -0700 (PDT)
-Received: by mail-io1-xd29.google.com with SMTP id ca18e2360f4ac-7836272f36eso148440539f.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Jul 2023 23:39:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1690180775; x=1690785575;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UA46JXOgesbC+Hw0WTVb9Ex0u0JFh+2lvb8Dt3Xe0GY=;
-        b=JSlKugo93w0LuvvZESIAqXK6JMorSBm2Ud2Jp8AIpXbKxCfQMgtUComirCGVW/KZVh
-         /RYjmhzK3M6Njr/rTrAH3a+R0mzs+vvSMxv6d+tTAf4K4fODG2Ry8ylSUQdVJwP+9xc4
-         35kJ25AUs9tLxhEotHLmGZ9D7jjHqnrx9YIrLRvnVGBfvZmcTK7XN8srAYYy2CnOX5iG
-         sEzePFGOAnaBsMHAJRay3/QSKhdMWUrZDj5xnqUaFK5Ja2x6tHjjNENu2DRgbNUJIhBn
-         nNe0MEY9DksIp5wBk7YxeZo8BO8VEY1y4WvdlbBVSgQopiKuA2Ex5tE9HXmjBwD1lN7/
-         f9kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690180775; x=1690785575;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UA46JXOgesbC+Hw0WTVb9Ex0u0JFh+2lvb8Dt3Xe0GY=;
-        b=NolonACAesmhtcqTxGI0qUZnzw1usnprxfymsDWosMB5Ea8aakdH7fVLOhxIBin0ta
-         mjuduePObzahZ01m6Q7YH2rOV4bqS9ysyycly9RR7LHzdIzb/M/hnUn0V9IYr888YloX
-         U+r/I4MZl0NjBKDR0DX4jwHpmeuQl1iz+trPuX1syfIJmrr1LEC0ttbxXqPy6xODL+AM
-         0FNpzAY8uEBz/y64ZcAHWpsaPTPqal2rWI4eVlXhK55KM3rc520DyqoeP+ayUExZN7VO
-         rYev21FBV1JmYLe9Ydv0coYO6lGaI2g5FgVcpcDw6GCHtAdb0oIzCQatPIeWq7Yl7dR4
-         /syQ==
-X-Gm-Message-State: ABy/qLaFpc54uSp6C8AmhrZwJpZpCu5REEooSJqBjXAq2A+PF/15sURO
-        NeHbnLa1MU1mxYYPMrcpweTDig==
-X-Google-Smtp-Source: APBJJlHV6rGQMRqhG8BlCwNt5/JB2Dpn4brGoL7I+r6vKYg4/PRYcUEmkkUFP/rWyfL3ZaD9uP5JmQ==
-X-Received: by 2002:a5d:9f18:0:b0:783:58f4:2e2e with SMTP id q24-20020a5d9f18000000b0078358f42e2emr6459037iot.0.1690180775592;
-        Sun, 23 Jul 2023 23:39:35 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-119-116.pa.vic.optusnet.com.au. [49.186.119.116])
-        by smtp.gmail.com with ESMTPSA id x9-20020a056a00270900b00654228f9e93sm6933872pfv.120.2023.07.23.23.39.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jul 2023 23:39:35 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qNpEC-009qt9-1h;
-        Mon, 24 Jul 2023 16:39:32 +1000
-Date:   Mon, 24 Jul 2023 16:39:32 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Nitesh Shetty <nj.shetty@samsung.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, hch@lst.de,
-        gost.dev@samsung.com, Anuj Gupta <anuj20.g@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/read_write: Enable copy_file_range for block device.
-Message-ID: <ZL4cpDxr450zomJ0@dread.disaster.area>
-References: <CGME20230724060655epcas5p24f21ce77480885c746b9b86d27585492@epcas5p2.samsung.com>
- <20230724060336.8939-1-nj.shetty@samsung.com>
+        Mon, 24 Jul 2023 04:09:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7894FE
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 01:08:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1690186133;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xhhWjOAo127IlI+J36ZFWJ4YvuZh0i268mYvp7khtFo=;
+        b=inKVkj4SLnDwuuJykk2NXxDqHlsH6JJthGPq+dLes6KLoN7BiAdkFudvxKyFf7jdga87C1
+        1PvjgdJN+hqiM5RcJZIfOxAKm77didrDTgk9xm/YdABObowX9TM6GbPc6iX/C//lRbR9G3
+        QaNcq6Fq7xbkP/yC2Z6ecoqo/v96csM=
+Received: from mimecast-mx02.redhat.com (66.187.233.73 [66.187.233.73]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-695-QHXgyZ0wOlaG5Vn_ZaG1gg-1; Mon, 24 Jul 2023 04:08:47 -0400
+X-MC-Unique: QHXgyZ0wOlaG5Vn_ZaG1gg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9E83429AA3B6;
+        Mon, 24 Jul 2023 08:08:46 +0000 (UTC)
+Received: from localhost (ovpn-12-31.pek2.redhat.com [10.72.12.31])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 967751401C2E;
+        Mon, 24 Jul 2023 08:08:45 +0000 (UTC)
+Date:   Mon, 24 Jul 2023 16:08:41 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Jiri Olsa <olsajiri@gmail.com>,
+        Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v8 1/4] fs/proc/kcore: avoid bounce buffer for ktext data
+Message-ID: <ZL4xif/LX6ZhRqtf@MiWiFi-R3L-srv>
+References: <cover.1679566220.git.lstoakes@gmail.com>
+ <fd39b0bfa7edc76d360def7d034baaee71d90158.1679566220.git.lstoakes@gmail.com>
+ <ZHc2fm+9daF6cgCE@krava>
+ <ZLqMtcPXAA8g/4JI@MiWiFi-R3L-srv>
+ <86fd0ccb-f460-651f-8048-1026d905a2d6@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230724060336.8939-1-nj.shetty@samsung.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+In-Reply-To: <86fd0ccb-f460-651f-8048-1026d905a2d6@redhat.com>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 24, 2023 at 11:33:36AM +0530, Nitesh Shetty wrote:
-> From: Anuj Gupta <anuj20.g@samsung.com>
+On 07/24/23 at 08:23am, David Hildenbrand wrote:
+> Hi,
 > 
-> Change generic_copy_file_checks to use ->f_mapping->host for both inode_in
-> and inode_out. Allow block device in generic_file_rw_checks.
+> > 
+> > I met this too when I executed below command to trigger a kcore reading.
+> > I wanted to do a simple testing during system running and got this.
+> > 
+> >    makedumpfile --mem-usage /proc/kcore
+> > 
+> > Later I tried your above objdump testing, it corrupted system too.
+> > 
+> 
+> What do you mean with "corrupted system too" --  did it not only fail to
+> dump the system, but also actually harmed the system?
 
-Why? copy_file_range() is for copying a range of a regular file to
-another regular file - why do we want to support block devices for
-somethign that is clearly intended for copying data files?
+From my testing, reading kcore will cause system panic, then reboot. Not
+sure if Jiri saw the same phenomenon.
 
-Also, the copy_file_range man page states:
+> 
+> @Lorenzo do you plan on reproduce + fix, or should we consider reverting
+> that change?
 
-ERRORS
-.....
-    EINVAL Either fd_in or fd_out is not a regular file.
-.....
+When tested on a arm64 system, the reproducution is stable. I will have
+a look too to see if I have some finding this week.
 
-If we are changing the behavioru of copy_file_range (why?), then man
-page updates need to be done as well, documenting the change, which
-kernel versions only support regular files, etc.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
