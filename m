@@ -2,113 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 440E475EB42
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 08:11:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AB8475EB72
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 08:24:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230211AbjGXGLU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 02:11:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50344 "EHLO
+        id S230200AbjGXGYt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 02:24:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229764AbjGXGLR (ORCPT
+        with ESMTP id S229854AbjGXGYs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 02:11:17 -0400
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 488441B8
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Jul 2023 23:11:16 -0700 (PDT)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20230724061114epoutp0483464dbfd521e6eb2f3b48776beff22a~0uOnee0Wa2686526865epoutp04C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 06:11:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20230724061114epoutp0483464dbfd521e6eb2f3b48776beff22a~0uOnee0Wa2686526865epoutp04C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1690179074;
-        bh=IK3dxHmN4H0mrKlZYjtF8HydO/F3EynIGSvvTtPQyYo=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=gaU9lxo5L2d62LSVOkqafz2Tm3GaNW/u8Wz7NQBvvei2c10rcQbGxIf674pqoAJ/q
-         KGZ8jnGONHlWU26Sy0kN7KNU9gT4NcUb2WwTEu/53YoQLyetVfbNKJiut6cQKaJU48
-         DMa8lTG8uicmNRXp5h3KfRBB0CuhkEUXX8p4xwd0=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20230724061114epcas5p2ede7af22d682b0b0ca9a2d78aad5e658~0uOnG8x--0258702587epcas5p2D;
-        Mon, 24 Jul 2023 06:11:14 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.178]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4R8VCh1rD9z4x9Py; Mon, 24 Jul
-        2023 06:11:12 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        64.49.44250.0061EB46; Mon, 24 Jul 2023 15:11:12 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230724060655epcas5p24f21ce77480885c746b9b86d27585492~0uK2VvzRT2148421484epcas5p25;
-        Mon, 24 Jul 2023 06:06:55 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230724060655epsmtrp12375dce4a7600f368a4d6c2ea1201731~0uK2VCzLu0052600526epsmtrp1P;
-        Mon, 24 Jul 2023 06:06:55 +0000 (GMT)
-X-AuditID: b6c32a4a-c4fff7000000acda-5e-64be1600b2e0
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        6C.95.34491.FF41EB46; Mon, 24 Jul 2023 15:06:55 +0900 (KST)
-Received: from green245.sa.corp.samsungelectronics.net (unknown
-        [107.99.41.245]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230724060654epsmtip2702415b5f52b1f1a85a44b20693599a6~0uK1JO11Z2599125991epsmtip2X;
-        Mon, 24 Jul 2023 06:06:54 +0000 (GMT)
-From:   Nitesh Shetty <nj.shetty@samsung.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     hch@lst.de, gost.dev@samsung.com,
-        Anuj Gupta <anuj20.g@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/read_write: Enable copy_file_range for block device.
-Date:   Mon, 24 Jul 2023 11:33:36 +0530
-Message-Id: <20230724060336.8939-1-nj.shetty@samsung.com>
-X-Mailer: git-send-email 2.35.1.500.gb896f729e2
+        Mon, 24 Jul 2023 02:24:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A9B5B0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Jul 2023 23:24:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1690179840;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GZEd3y5m5T6ObBTdJq73wFLu8a8S74TGSO2fnmaNWAY=;
+        b=DoB6rkoI7r8Rl6n9nCpkLwy8qboLGWG9j7+QwV008VmO7B9NQETM48pc2DymJ3YyE0re7K
+        1sRvcxEVMoWFlKh2Ht18YJETq5SMVwfMwlrPGTnnsMWVKK3k1PRqER3vF8up1V3XHYWej8
+        liQUe7Cad5/JHgyyq0rtb0W3uD2F1dY=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-125-f0olRiCAOT2D9xHBYg91Yw-1; Mon, 24 Jul 2023 02:23:58 -0400
+X-MC-Unique: f0olRiCAOT2D9xHBYg91Yw-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-316f39e3e89so2380510f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Jul 2023 23:23:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690179837; x=1690784637;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GZEd3y5m5T6ObBTdJq73wFLu8a8S74TGSO2fnmaNWAY=;
+        b=DB5yJPSE9YDeXJFUlpPiSKZ0LwUu/rbbTUrAmfbwO3RP43ZA+NlyH2ku9KNhVgo6uB
+         Z7cif4JcsZGHJ2oWo9Rv+dl2idB/tIbVCN0wfPP7zPcsNu/dzfLtLAOtilVc+49xwGmZ
+         HHo0ajHSDMf29oqFe0B5y0xrBo7RfX37tKiHF5jpk+D+3FwOloQcqtEug846zTJsSPBj
+         /SV2UjiUkJnZOHTG8kGZpfG1g5eZK1fTl4voMzqPZ2BVnl5WNbXWKVmYDKvdaPgex68A
+         KdMtUARVneU4hdvGvtgiqAYzybdKt/SONYNI37j5x5wBNYcpYE4TzmJB0rKOE4nIKH2H
+         Lm3w==
+X-Gm-Message-State: ABy/qLZoW1/4a+B9EvoBZZCFb2EpZUrgQ5j/oHtMIsk6Ci3JSFy841Vu
+        Zs908ep26VZ4i9zDeuHbHLTVhG1jk7M5KXfv7Z/2w/5PMx9Q8zpZnZ6/5adxNCc60vlUqcbyVmB
+        KlnEjLTUYyD7ACZWJ6qbveBuavV47jtpAmQ==
+X-Received: by 2002:adf:e74f:0:b0:317:3e26:1699 with SMTP id c15-20020adfe74f000000b003173e261699mr4271853wrn.24.1690179837371;
+        Sun, 23 Jul 2023 23:23:57 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlGpW5m2s9rcQCA2y/SQn5BT+f9W2+cbW1Dhq/5Htb1O461c05ftyJmBOOOEljHVXnntLoe8dw==
+X-Received: by 2002:adf:e74f:0:b0:317:3e26:1699 with SMTP id c15-20020adfe74f000000b003173e261699mr4271844wrn.24.1690179836981;
+        Sun, 23 Jul 2023 23:23:56 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f45:d000:62f2:4df0:704a:e859? (p200300d82f45d00062f24df0704ae859.dip0.t-ipconnect.de. [2003:d8:2f45:d000:62f2:4df0:704a:e859])
+        by smtp.gmail.com with ESMTPSA id w16-20020adfec50000000b003143867d2ebsm11776170wrn.63.2023.07.23.23.23.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Jul 2023 23:23:56 -0700 (PDT)
+Message-ID: <86fd0ccb-f460-651f-8048-1026d905a2d6@redhat.com>
+Date:   Mon, 24 Jul 2023 08:23:55 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnk+LIzCtJLcpLzFFi42LZdlhTXZdBbF+Kwe7ZHBZNE/4yW7w+/InR
-        4uaBnUwWK1cfZbLYs/cki8XlXXPYLLb9ns9scf7vcVYHDo9NqzrZPHbfbGDz6NuyitHj8yY5
-        j01P3jIFsEZl22SkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6
-        ZeYA3aKkUJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTAp0CtOzC0uzUvXy0stsTI0
-        MDAyBSpMyM64+Hslc8F97ooz2y0bGF9ydjFyckgImEhsu/WeuYuRi0NIYDejxPmptxkhnE+M
-        ErvmXGKCcL4xSqz4d5wdpqVv3VtGEFtIYC+jxL4zBhBFrUwSxye9BEpwcLAJaEuc/s8BUiMi
-        ECbx5G0XK0gNs8B6RokL6+YzgSSEBTwkXn9sZQGxWQRUJc7c/MwGYvMKWEq0XvrABDJHQkBf
-        ov++IERYUOLkzCdg5cwC8hLNW2eDnS0hcI1d4vOr00wQx7lI7P73jQ3CFpZ4dXwL1NFSEi/7
-        26DscomVU1awQTS3MErMuj6LESJhL9F6qp8ZZDGzgKbE+l36EGFZiamn1jFBLOaT6P39BGoX
-        r8SOeTC2ssSa9Qug9kpKXPveCGV7SDxavZMVElixEge+f2KfwCg/C8k/s5D8Mwth8wJG5lWM
-        kqkFxbnpqcWmBUZ5qeXweE3Oz93ECE6RWl47GB8++KB3iJGJg/EQowQHs5IIb3r6rhQh3pTE
-        yqrUovz4otKc1OJDjKbAMJ7ILCWanA9M0nkl8YYmlgYmZmZmJpbGZoZK4ryvW+emCAmkJ5ak
-        ZqemFqQWwfQxcXBKNTAt7/D4pjhZOcpCU8vVjqlf7/m+LVebtz7vZJhr9/Bb4PnFBx0NN/gU
-        F8j9vpB29nfdUvPeRxOU3OOYM+q+3Ty7pmTvrOy7N360TD14sHZn9YWY2w71JxQZ3q1Mfb33
-        X6VgrOc7zSyjiBUZr/znezAdnF8280ztEsuJCZsZLHgWN59a435HNpK3s6TzyllDV9GDe8QY
-        V7iEKyRKm6/ZlPu1K/rwYinRC2m1TJt8amLdf5aofUjvfhR/dlNZdo/K3ad6Juz7eOzfiy8/
-        /Z7r5bOfq3kENfrN6puPNOifjXq9bL7C7wdMmrrapfs55aWMDRo1u7sdKqWjpV/frbv/VunA
-        5WWJ8X7txUvXGH3svaXEUpyRaKjFXFScCADqmQdCGgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrILMWRmVeSWpSXmKPExsWy7bCSvO5/kX0pBt+7DSyaJvxltnh9+BOj
-        xc0DO5ksVq4+ymSxZ+9JFovLu+awWWz7PZ/Z4vzf46wOHB6bVnWyeey+2cDm0bdlFaPH501y
-        HpuevGUKYI3isklJzcksSy3St0vgyrj4eyVzwX3uijPbLRsYX3J2MXJySAiYSPSte8vYxcjF
-        ISSwm1Hi8aU3bBAJSYllf48wQ9jCEiv/PWeHKGpmkujfcw3I4eBgE9CWOP2fA8QUEQiTOPeQ
-        H6SEWWAro8TXY6/ZQXqFBTwkXn9sZQGxWQRUJc7c/Aw2n1fAUqL10gcmkF4JAX2J/vuCEGFB
-        iZMzn4CVMwvISzRvnc08gZFvFpLULCSpBYxMqxglUwuKc9Nziw0LDPNSy/WKE3OLS/PS9ZLz
-        czcxgkNVS3MH4/ZVH/QOMTJxMB5ilOBgVhLhTU/flSLEm5JYWZValB9fVJqTWnyIUZqDRUmc
-        V/xFb4qQQHpiSWp2ampBahFMlomDU6qBqcBD+NQfXfdlOdZCmw6tTH1oGcT7urTxgXycVNTR
-        hcflF86X1rNzU1iV0HQn68yHtZyyolcKORIcYxfXTfUPfXp39W6/qFiO9U+Upjm0THzK4fiy
-        dYoOd0bfnEDfX9X+NYcdPZauaZ9+8fRnfvWX98TzZQ2rD0laB8mvbAv231Sxdca/ZtviR4vP
-        CU5hCM3in3JmGp9cL9PCclbrc+8XMbNKFN3c3f4x9ypXrUKbtMdx8Y97bH+ztXS6fnmq9mX7
-        Ws9rLs7NzD72tnunOGyQF9p8fe1MO4WVy/PnK3Lw+/3y+PNqc4W6S/VPh7mZzAm2y7hnd+xR
-        WXHvxeMnNfNr29Isl/xsDQvVbd6+tu22EktxRqKhFnNRcSIAE2JtBsQCAAA=
-X-CMS-MailID: 20230724060655epcas5p24f21ce77480885c746b9b86d27585492
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230724060655epcas5p24f21ce77480885c746b9b86d27585492
-References: <CGME20230724060655epcas5p24f21ce77480885c746b9b86d27585492@epcas5p2.samsung.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v8 1/4] fs/proc/kcore: avoid bounce buffer for ktext data
+Content-Language: en-US
+To:     Baoquan He <bhe@redhat.com>, Jiri Olsa <olsajiri@gmail.com>
+Cc:     Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Liu Shixin <liushixin2@huawei.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <cover.1679566220.git.lstoakes@gmail.com>
+ <fd39b0bfa7edc76d360def7d034baaee71d90158.1679566220.git.lstoakes@gmail.com>
+ <ZHc2fm+9daF6cgCE@krava> <ZLqMtcPXAA8g/4JI@MiWiFi-R3L-srv>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <ZLqMtcPXAA8g/4JI@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -116,43 +92,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Anuj Gupta <anuj20.g@samsung.com>
+Hi,
 
-Change generic_copy_file_checks to use ->f_mapping->host for both inode_in
-and inode_out. Allow block device in generic_file_rw_checks.
+> 
+> I met this too when I executed below command to trigger a kcore reading.
+> I wanted to do a simple testing during system running and got this.
+> 
+>    makedumpfile --mem-usage /proc/kcore
+> 
+> Later I tried your above objdump testing, it corrupted system too.
+> 
 
-Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
-Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
----
- fs/read_write.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+What do you mean with "corrupted system too" --  did it not only fail to 
+dump the system, but also actually harmed the system?
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index b07de77ef126..eaeb481477f4 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1405,8 +1405,8 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
- 				    struct file *file_out, loff_t pos_out,
- 				    size_t *req_count, unsigned int flags)
- {
--	struct inode *inode_in = file_inode(file_in);
--	struct inode *inode_out = file_inode(file_out);
-+	struct inode *inode_in = file_in->f_mapping->host;
-+	struct inode *inode_out = file_out->f_mapping->host;
- 	uint64_t count = *req_count;
- 	loff_t size_in;
- 	int ret;
-@@ -1708,7 +1708,9 @@ int generic_file_rw_checks(struct file *file_in, struct file *file_out)
- 	/* Don't copy dirs, pipes, sockets... */
- 	if (S_ISDIR(inode_in->i_mode) || S_ISDIR(inode_out->i_mode))
- 		return -EISDIR;
--	if (!S_ISREG(inode_in->i_mode) || !S_ISREG(inode_out->i_mode))
-+	if (!S_ISREG(inode_in->i_mode) && !S_ISBLK(inode_in->i_mode))
-+		return -EINVAL;
-+	if ((inode_in->i_mode & S_IFMT) != (inode_out->i_mode & S_IFMT))
- 		return -EINVAL;
- 
- 	if (!(file_in->f_mode & FMODE_READ) ||
+@Lorenzo do you plan on reproduce + fix, or should we consider reverting 
+that change?
+
 -- 
-2.25.1
+Cheers,
+
+David / dhildenb
 
