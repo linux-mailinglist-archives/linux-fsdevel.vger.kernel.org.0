@@ -2,118 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 60DB375ED39
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 10:18:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D50D75EDA9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 10:32:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229577AbjGXIS4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 04:18:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50446 "EHLO
+        id S230192AbjGXIcF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 04:32:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbjGXISz (ORCPT
+        with ESMTP id S231591AbjGXIcE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 04:18:55 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB61D93;
-        Mon, 24 Jul 2023 01:18:53 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-9926623e367so723726366b.0;
-        Mon, 24 Jul 2023 01:18:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690186732; x=1690791532;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7buxcMDQbXYavYttmKzovI7MVKRmkAiMGJ3Ho5r5lNY=;
-        b=K+gsHI9j9r5lM9XR5WMABpbPvZlKmXj9i8awMb9HkIEa50nkUIRf2zcqCu/VonB6pr
-         PsFFF9JmFN6t32dktfPlGOi4b0/k6/hsfQr73Zgn4fW1Dkt5My77WJsXR9Ipc/JeVokw
-         ko5Awlouhbsuwp1TtlL+dGDxGLvZC3M3aN7VKH8K4hHO0QMwYE84iv8mOwJ43pIaHnzE
-         j4z+wYwstI9IMtOWD9M8vuQuEFyhjSLqm8uS6gurwmoxQ1dY6JSi5/bLG6Y4zKFZQwhU
-         24zHhYW3fGOSqIZU4AVeJgPt4gI32ED6/cBUcsMB5rYdLAgJ6EHi22z5tkgwdAW/1rrK
-         zYlQ==
+        Mon, 24 Jul 2023 04:32:04 -0400
+Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com [209.85.160.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC2181B8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 01:31:57 -0700 (PDT)
+Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-1b03f7fb970so8279516fac.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 01:31:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690186732; x=1690791532;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7buxcMDQbXYavYttmKzovI7MVKRmkAiMGJ3Ho5r5lNY=;
-        b=YfJ7zXSvFlMTl2XOpXBO7fHTCzEAQrFbj1lH7TUFuZ+z+gP9Dsl05kwmGANKQoq89d
-         N7vuJWC8nvEw95UKNF98F+2veuMuZiGnIW3V/j+nJiizbU9HfA+9KMPf5/DnkyXgsSLs
-         US+x8QGpWg0n2leBHaqLt7gyDEgoJ+VpD7bbbO//jwC56ru33VEG9gWhzMbj0ADkZu5s
-         BGeFPY+6CnwyYmhhGwrBo2lkIDoVkrousYTeY4RnD0X62i2xej/RwYz/FG1k4hDgrx53
-         MUcsxRrO/5uWvESNDleLxk7Q04YtjBTomEusR2hxEPqLnEIYDLmf1jcvAgI8kyWB6f9L
-         qfKg==
-X-Gm-Message-State: ABy/qLa4sy1qSdhVqrllKeHBe5u2VFA58ZP/AIFI2UURGyLucAZtrCc1
-        ZfSDXOqM1WtlUaImS06S694Hxk6Zyac=
-X-Google-Smtp-Source: APBJJlGho1sN/bOHW+RH6k1NPxhZen/9JhFicpH04PsIewBGNWPrEjS7LDmgv8rz/WQW9yb2ay9KJw==
-X-Received: by 2002:a17:907:7758:b0:988:a578:4d65 with SMTP id kx24-20020a170907775800b00988a5784d65mr9049507ejc.32.1690186732037;
-        Mon, 24 Jul 2023 01:18:52 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id kg8-20020a17090776e800b0099329b3ab67sm6337302ejc.71.2023.07.24.01.18.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jul 2023 01:18:51 -0700 (PDT)
-From:   Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date:   Mon, 24 Jul 2023 10:18:48 +0200
-To:     Baoquan He <bhe@redhat.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Jiri Olsa <olsajiri@gmail.com>,
-        Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v8 1/4] fs/proc/kcore: avoid bounce buffer for ktext data
-Message-ID: <ZL4z6LVzrbMvXwyl@krava>
-References: <cover.1679566220.git.lstoakes@gmail.com>
- <fd39b0bfa7edc76d360def7d034baaee71d90158.1679566220.git.lstoakes@gmail.com>
- <ZHc2fm+9daF6cgCE@krava>
- <ZLqMtcPXAA8g/4JI@MiWiFi-R3L-srv>
- <86fd0ccb-f460-651f-8048-1026d905a2d6@redhat.com>
- <ZL4xif/LX6ZhRqtf@MiWiFi-R3L-srv>
+        d=1e100.net; s=20221208; t=1690187517; x=1690792317;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5J7ktKzhmZkgZE+x3/G0qL4ztdEtmMYBnbiSBN9PzD4=;
+        b=Pwex6tFxSmbgiYyFZFHOGYYfIazen0GuACx91zqpUV61KzjJCR4jfb1qA97dD0rBWI
+         uRDYjAb5Wcm81jc9efLRD6c0oJip1ziwFMqEHEwRhmkjvjrXylh4j890lQvmn7u79nPD
+         socAQbPurWDfxpcWO2mcW6NTU49PELSneGsBtDG9WKh/KhcJbbpIGeBNDZ+RRS7Rg2wM
+         vAiE14pZKtUdEBYtzjSm9r7byvNQtXd5Ox6DROmg2VGvvtfqnk/G4nnwNy1549MoxwdO
+         7FCC6GQG4O8qewoEFWKu7EFREUTu20fIUw8hLCV5STVnXj4CQO7F7y1TDG2U2fcn68s3
+         xLvw==
+X-Gm-Message-State: ABy/qLbQyJSuVUjj/MrfS5R8QXc5jHKnAO2qp2BQ+9ZbSfwaXmJU+948
+        gz5z5dY2uq6jmxdFJVNWhL8FZrOxRWe3G/KCx+HEkdfb/w++c/g=
+X-Google-Smtp-Source: APBJJlGj/AJV4crgXsUXx9xg+t5bD9FjXzISucJ6nztTudvcQmIAzJBWyVunO9vhiMzwYzSXUNaEEibrpyrJIIYrloS6X308afx3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZL4xif/LX6ZhRqtf@MiWiFi-R3L-srv>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6870:5b1b:b0:1bb:785d:7436 with SMTP id
+ ds27-20020a0568705b1b00b001bb785d7436mr1599528oab.10.1690187517019; Mon, 24
+ Jul 2023 01:31:57 -0700 (PDT)
+Date:   Mon, 24 Jul 2023 01:31:56 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008e4e370601377210@google.com>
+Subject: [syzbot] Monthly overlayfs report (Jul 2023)
+From:   syzbot <syzbot+lista7343adf220a77c2e87e@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 24, 2023 at 04:08:41PM +0800, Baoquan He wrote:
-> On 07/24/23 at 08:23am, David Hildenbrand wrote:
-> > Hi,
-> > 
-> > > 
-> > > I met this too when I executed below command to trigger a kcore reading.
-> > > I wanted to do a simple testing during system running and got this.
-> > > 
-> > >    makedumpfile --mem-usage /proc/kcore
-> > > 
-> > > Later I tried your above objdump testing, it corrupted system too.
-> > > 
-> > 
-> > What do you mean with "corrupted system too" --  did it not only fail to
-> > dump the system, but also actually harmed the system?
-> 
-> From my testing, reading kcore will cause system panic, then reboot. Not
-> sure if Jiri saw the same phenomenon.
+Hello overlayfs maintainers/developers,
 
-it did not crash for me, just the read error
-could you get console output from that?
+This is a 31-day syzbot report for the overlayfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/overlayfs
 
-jirka
+During the period, 3 new issues were detected and 1 were fixed.
+In total, 7 issues are still open and 18 have been fixed so far.
 
-> 
-> > 
-> > @Lorenzo do you plan on reproduce + fix, or should we consider reverting
-> > that change?
-> 
-> When tested on a arm64 system, the reproducution is stable. I will have
-> a look too to see if I have some finding this week.
-> 
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 727     Yes   possible deadlock in mnt_want_write (2)
+                  https://syzkaller.appspot.com/bug?extid=b42fe626038981fb7bfa
+<2> 50      No    general protection fault in d_path
+                  https://syzkaller.appspot.com/bug?extid=a67fc5321ffb4b311c98
+<3> 5       No    possible deadlock in seq_read_iter (2)
+                  https://syzkaller.appspot.com/bug?extid=da4f9f61f96525c62cc7
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
