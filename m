@@ -2,118 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 459B975FF44
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 20:48:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5FD875FF67
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 20:54:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229662AbjGXSsw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 14:48:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51430 "EHLO
+        id S230168AbjGXSyi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 14:54:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbjGXSsv (ORCPT
+        with ESMTP id S229995AbjGXSye (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 14:48:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6A7B10D8;
-        Mon, 24 Jul 2023 11:48:49 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 70C5261351;
-        Mon, 24 Jul 2023 18:48:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA4ACC433C8;
-        Mon, 24 Jul 2023 18:48:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690224528;
-        bh=Qxe+0ETwxQWdTQEpO1yRVBgMBFqnkztn/GbWhWGGA/Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YW3CUuL0abrttvR1K0iBuEF5JhiwpQ2d4i8SxV04HpBsiTNmgJK1WppPuosxQ/m6l
-         B7cl+FqImBhESx19hkraQm0/gCa3n8rbimRseC8Uj1ksW5/DxUdNtfhnrmDEM+SNxU
-         WNLV4pzKGicx95X5AiTQ0tvuDW7Sd7j8dtXiOPk+42luIYOsaHVqm2DaxqdBW58kMQ
-         Bw0eOHUxsOyO5aLHHcCsdE0nSFcpapa+az9l9/soTwRIFlwUiQDjoYmkM+RwIpYM3y
-         9eA8Kq2uvKGLYUjvHZlFx5HNokbOlRt9O/5i45SIPIFGrFC+5goWjB8OeuBiCqlZ7e
-         bZHALog+y0XeQ==
-Date:   Mon, 24 Jul 2023 20:48:43 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Seth Forshee <sforshee@kernel.org>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] file: always lock position
-Message-ID: <20230724-geadelt-nachrangig-07e431a2f3a4@brauner>
-References: <20230724-vfs-fdget_pos-v1-1-a4abfd7103f3@kernel.org>
- <CAHk-=whfJhag+iEscftpVq=dHTeL7rQopCvH+Pcs8vJHCGNvXQ@mail.gmail.com>
- <20230724-scheren-absegnen-8c807c760ba1@brauner>
- <CAHk-=whwUTsixPwyBiuA25F2mAzARTU_-BijfmJ3MzkKLOYDmA@mail.gmail.com>
- <20230724-gebessert-wortwahl-195daecce8f0@brauner>
- <CAHk-=wiZRxy3983r_nvWG4JP=w+Wi623WA9W6i2GXoTi+=6zWg@mail.gmail.com>
- <20230724-eckpunkte-melden-fc35b97d1c11@brauner>
- <CAHk-=wijcZGxrw8+aukW-m2YRGn5AUWfZsPSscez7w7_EqfuGQ@mail.gmail.com>
- <790fbcff-9831-e5cf-2aaf-1983d9c2cffe@kernel.dk>
- <CAHk-=wgqLGdTs5hBDskY4HjizPVYJ0cA6=-dwRR3TpJY7GZG3A@mail.gmail.com>
+        Mon, 24 Jul 2023 14:54:34 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 217CEE55
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 11:54:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=2zzyOQ/ELoedvwtKEVTyBAp/APkj84uTCSU6QcCalhU=; b=vZT/Y4MRkSR2RWKBXfsnQJA9eJ
+        L58r4l8glD5QAZyt8P99Pd+9h6TZHk1p3STq52FhfkuvDHTAY56TxbnU0iNvbtrY46ajoLfYr8+9Y
+        Xab08FxxN9u96Oy9O2EqCQBhhR8IqAXPAKcKwVITdLpuQyJeCl6hba5/5Gtlaz067Neul3z5HnTsj
+        8JJXJB7btmdCN2D2HxK2UhW07sJqLYq3nQqmbtMcMmbbYCIgdpGpkWeMPQoZxtFQzkow5VuH1PymB
+        U6tWF0TV1UFZMZhi6ccwHiMJsPddRyE8c1l3x/Hmu6MWCqvJLyhWXGr1aTdNXgqvuZE1s0VJSwtE6
+        f4FbI8LA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qO0h9-004iQz-VH; Mon, 24 Jul 2023 18:54:12 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Punit Agrawal <punit.agrawal@bytedance.com>
+Subject: [PATCH v3 00/10] Handle most file-backed faults under the VMA lock
+Date:   Mon, 24 Jul 2023 19:54:00 +0100
+Message-Id: <20230724185410.1124082-1-willy@infradead.org>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgqLGdTs5hBDskY4HjizPVYJ0cA6=-dwRR3TpJY7GZG3A@mail.gmail.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 24, 2023 at 11:27:29AM -0700, Linus Torvalds wrote:
-> On Mon, 24 Jul 2023 at 11:05, Jens Axboe <axboe@kernel.dk> wrote:
-> >
-> > io_uring never does that isn't the original user space creator task, or
-> > from the io-wq workers that it may create. Those are _always_ normal
-> > threads. There's no workqueue/kthread usage for IO or file
-> > getting/putting/installing/removing etc.
-> 
-> That's what I thought. But Christian's comments about the io_uring
-> getdents work made me worry.
+This patchset adds the ability to handle page faults on parts of files
+which are already in the page cache without taking the mmap lock.
 
-Sorry, my point was that an earlier version of the patchset _would_ have
-introduced a locking scheme that would've violated locking assumptions
-because it didn't get the subtle refcount difference right. But that was
-caught during review.
+Several people have volunteered to run benchmarks on this, so I haven't.
+I am running it through xfstests and it hasn't appear to introduce any
+regressions so far.
 
-It's really just keeping in mind that refcount rules change depending on
-whether fds or fixed files are used.
+This patchset is against next-20230724.
 
-> 
-> If io_uring does everything right, then the old "file_count(file) > 1"
-> test in __fdget_pos() - now sadly removed - should work just fine for
-> any io_uring directory handling.
+v3:
+ - Remove the reversion and reapplication of Arjun Roy's patch;
+   "Remove CONFIG_PER_VMA_LOCK ifdefs" is brought to the front, and
+   Arjun's patch is instead fixed.
+ - Add the missing pte_unmap() pointed out by Jann Horn
+ - Do not call ->huge_fault under the VMA lock, also pointed out by Jann
+ - Add the last two patches that handle faults on existing PTEs
+ - Add R-b from Suren (for the patches that remained intact)
+ - Better wording in commit messages
 
-Yes, but only if you disallow getdents with fixed files when the
-reference count rules are different.
+Matthew Wilcox (Oracle) (10):
+  mm: Remove CONFIG_PER_VMA_LOCK ifdefs
+  mm: Allow per-VMA locks on file-backed VMAs
+  mm: Move FAULT_FLAG_VMA_LOCK check from handle_mm_fault()
+  mm: Handle PUD faults under the VMA lock
+  mm: Handle some PMD faults under the VMA lock
+  mm: Move FAULT_FLAG_VMA_LOCK check down in handle_pte_fault()
+  mm: Move FAULT_FLAG_VMA_LOCK check down from do_fault()
+  mm: Run the fault-around code under the VMA lock
+  mm: Handle swap and NUMA PTE faults under the VMA lock
+  mm: Handle faults that merely update the accessed bit under the VMA
+    lock
 
-> 
-> It may not be obvious when you look at just that test in a vacuum, but
-> it happens after __fdget_pos() has done the
-> 
->         unsigned long v = __fdget(fd);
->         struct file *file = (struct file *)(v & ~3);
-> 
-> and if it's a threaded app - where io_uring threads count the same -
-> then the __fdget() in that sequence will have incremented the file
-> count.
-> 
-> So when it then used to do that
-> 
->                 if (file_count(file) > 1) {
-> 
-> that "> 1" included not just all the references from dup() etc,  but
-> for any threaded use where we have multiple references to the file
-> table it also that reference we get from __fdget() -> __fget() ->
-> __fget_files() -> __fget_files_rcu() -> get_file_rcu() ->
-> atomic_long_inc_not_zero(&(x)->f_count)).
+ MAINTAINERS             |  1 -
+ arch/arm64/mm/fault.c   |  2 -
+ arch/powerpc/mm/fault.c |  4 --
+ arch/riscv/mm/fault.c   |  4 --
+ arch/s390/mm/fault.c    |  2 -
+ arch/x86/mm/fault.c     |  4 --
+ include/linux/mm.h      |  6 +++
+ include/linux/net_mm.h  | 17 --------
+ include/net/tcp.h       |  1 -
+ mm/hugetlb.c            |  6 +++
+ mm/memory.c             | 97 +++++++++++++++++++++++++++++------------
+ net/ipv4/tcp.c          | 11 ++---
+ 12 files changed, 86 insertions(+), 69 deletions(-)
+ delete mode 100644 include/linux/net_mm.h
 
-Yes, for the regular system call path it's all well and dandy and I said
-as much on the getdents thread as well.
+-- 
+2.39.2
+
