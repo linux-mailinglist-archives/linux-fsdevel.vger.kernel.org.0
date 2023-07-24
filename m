@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A495075FF6A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 20:54:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EA9F75FF64
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 20:54:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230232AbjGXSyp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 14:54:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55504 "EHLO
+        id S230084AbjGXSyb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 14:54:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230197AbjGXSyo (ORCPT
+        with ESMTP id S229995AbjGXSy3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 14:54:44 -0400
+        Mon, 24 Jul 2023 14:54:29 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A07410E2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 11:54:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1181510E3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 11:54:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=/dr8E7Ysfsh/pzxHk8PrgytRhAkkfjQGUpicX+vSfvw=; b=h2urfpoJlH+/tTgmv+1TWIjF7V
-        SHPiUiKpC2n086K/Blscs2mtWtATwrhaglAB7qSgdBQvKMNtIPQV/UFDUBNnXBCJKZqS02PMxZDhN
-        QIpfedqmho8nh2D698VotNmU0q5qTKALJGUD/wc0E58tg4ZCE4Gn2rhzDLRFYpHGnf4jBnK69OxHr
-        fBw6gic1/us6lWW6l7ExzoNHq56D4JqqkX3VwhzEJSKvB1yN9l0CoM6WoGz83conZI3w9cwm2x84i
-        Zc3bYa8EqN9n54f/4wlFuqSHLh/NnBnmRxHDAymVbpKp5GzpcpfCkw2wIAESzGP7wGjHvSVs7xgCq
-        /JBsnc2A==;
+        bh=hJu05/6R+2/+R58/bqnW2667sqrjvy4Vo+FjhIXzCu0=; b=EL5lMUFnNoPCZMe0eS0Hvijf+2
+        j32meE393cAjsq10i8jRMBUAvHcjjnw4BZyBiVirhYCjv44Xl4PLoH/sWyaqKSIwj0MCPc3w4382H
+        sMSy+UNGoiKw8jyI5NZzdHT00TMqbw5mU8dWWw9oQPdxKe0U3T6zDJ0FWgJfc8FxlIPQcYk7vEW/o
+        ZuTt6UHN7KrKdU+56Av7l32r4Eo7vG1SZaOKkWH+D5hZLNwYGjYrfh6DSX0Lc98neqYSZBttPU1cN
+        Ul9efZMKPBrSxs/5R+8v5NbJUr06vyCHOrd6yf9uuxA58P9XcM8NezBphhwdnh8O+svpoAzp2Swxq
+        rE7Bc2kA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qO0hA-004iR7-AG; Mon, 24 Jul 2023 18:54:12 +0000
+        id 1qO0hA-004iR9-Cu; Mon, 24 Jul 2023 18:54:12 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Punit Agrawal <punit.agrawal@bytedance.com>
-Subject: [PATCH v3 04/10] mm: Handle PUD faults under the VMA lock
-Date:   Mon, 24 Jul 2023 19:54:04 +0100
-Message-Id: <20230724185410.1124082-5-willy@infradead.org>
+Subject: [PATCH v3 05/10] mm: Handle some PMD faults under the VMA lock
+Date:   Mon, 24 Jul 2023 19:54:05 +0100
+Message-Id: <20230724185410.1124082-6-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230724185410.1124082-1-willy@infradead.org>
 References: <20230724185410.1124082-1-willy@infradead.org>
@@ -50,98 +50,99 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Postpone checking the VMA_LOCK flag until we've attempted to handle
-faults on PUDs.  There's a mild upside to this patch in that we'll
-allocate the page tables while under the VMA lock rather than the mmap
-lock, reducing the hold time on the mmap lock, since the retry will find
-the page tables already populated.  The real purpose here is to make a
-commit that shows we don't call ->huge_fault under the VMA lock.  We do
-now handle setting the accessed bit on a PUD fault under the VMA lock,
-but that doesn't seem likely to be a measurable difference.
+Push the VMA_LOCK check down from __handle_mm_fault() to
+handle_pte_fault().  Once again, we refuse to call ->huge_fault() with
+the VMA lock held, but we will wait for a PMD migration entry with the
+VMA lock held, handle NUMA migration and set the accessed bit.  We were
+already doing this for anonymous VMAs, so it should be safe.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- mm/memory.c | 37 ++++++++++++++++++++++++-------------
- 1 file changed, 24 insertions(+), 13 deletions(-)
+ mm/memory.c | 39 +++++++++++++++++++++++++--------------
+ 1 file changed, 25 insertions(+), 14 deletions(-)
 
 diff --git a/mm/memory.c b/mm/memory.c
-index 5ca8902b6f67..7fec616f490b 100644
+index 7fec616f490b..9e4dd65e06ac 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -4987,11 +4987,17 @@ static vm_fault_t create_huge_pud(struct vm_fault *vmf)
+@@ -4949,36 +4949,47 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+ 
+ static inline vm_fault_t create_huge_pmd(struct vm_fault *vmf)
  {
- #if defined(CONFIG_TRANSPARENT_HUGEPAGE) &&			\
- 	defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
-+	struct vm_area_struct *vma = vmf->vma;
- 	/* No support for anonymous transparent PUD pages yet */
 -	if (vma_is_anonymous(vmf->vma))
++	struct vm_area_struct *vma = vmf->vma;
 +	if (vma_is_anonymous(vma))
- 		return VM_FAULT_FALLBACK;
+ 		return do_huge_pmd_anonymous_page(vmf);
 -	if (vmf->vma->vm_ops->huge_fault)
--		return vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PUD);
+-		return vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
 +	if (vma->vm_ops->huge_fault) {
 +		if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
 +			vma_end_read(vma);
 +			return VM_FAULT_RETRY;
 +		}
-+		return vma->vm_ops->huge_fault(vmf, PE_SIZE_PUD);
++		return vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
 +	}
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
  	return VM_FAULT_FALLBACK;
  }
-@@ -5000,21 +5006,26 @@ static vm_fault_t wp_huge_pud(struct vm_fault *vmf, pud_t orig_pud)
+ 
+ /* `inline' is required to avoid gcc 4.1.2 build error */
+ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
  {
- #if defined(CONFIG_TRANSPARENT_HUGEPAGE) &&			\
- 	defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
 +	struct vm_area_struct *vma = vmf->vma;
+ 	const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
  	vm_fault_t ret;
  
- 	/* No support for anonymous transparent PUD pages yet */
--	if (vma_is_anonymous(vmf->vma))
-+	if (vma_is_anonymous(vma))
- 		goto split;
+-	if (vma_is_anonymous(vmf->vma)) {
++	if (vma_is_anonymous(vma)) {
+ 		if (likely(!unshare) &&
+-		    userfaultfd_huge_pmd_wp(vmf->vma, vmf->orig_pmd))
++		    userfaultfd_huge_pmd_wp(vma, vmf->orig_pmd))
+ 			return handle_userfault(vmf, VM_UFFD_WP);
+ 		return do_huge_pmd_wp_page(vmf);
+ 	}
+ 
 -	if (vmf->vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) {
 -		if (vmf->vma->vm_ops->huge_fault) {
--			ret = vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PUD);
+-			ret = vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
 +	if (vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) {
 +		if (vma->vm_ops->huge_fault) {
 +			if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
 +				vma_end_read(vma);
 +				return VM_FAULT_RETRY;
 +			}
-+			ret = vma->vm_ops->huge_fault(vmf, PE_SIZE_PUD);
++			ret = vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
  			if (!(ret & VM_FAULT_FALLBACK))
  				return ret;
  		}
  	}
- split:
- 	/* COW or write-notify not handled on PUD level: split pud.*/
--	__split_huge_pud(vmf->vma, vmf->pud, vmf->address);
-+	__split_huge_pud(vma, vmf->pud, vmf->address);
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE && CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD */
+ 
+ 	/* COW or write-notify handled on pte level: split pmd. */
+-	__split_huge_pmd(vmf->vma, vmf->pmd, vmf->address, false, NULL);
++	__split_huge_pmd(vma, vmf->pmd, vmf->address, false, NULL);
+ 
  	return VM_FAULT_FALLBACK;
  }
-@@ -5134,11 +5145,6 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- 	p4d_t *p4d;
- 	vm_fault_t ret;
+@@ -5049,6 +5060,11 @@ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
+ {
+ 	pte_t entry;
+ 
++	if ((vmf->flags & FAULT_FLAG_VMA_LOCK) && !vma_is_anonymous(vmf->vma)) {
++		vma_end_read(vmf->vma);
++		return VM_FAULT_RETRY;
++	}
++
+ 	if (unlikely(pmd_none(*vmf->pmd))) {
+ 		/*
+ 		 * Leave __pte_alloc() until later: because vm_ops->fault may
+@@ -5188,11 +5204,6 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
+ 	if (pud_trans_unstable(vmf.pud))
+ 		goto retry_pud;
  
 -	if ((flags & FAULT_FLAG_VMA_LOCK) && !vma_is_anonymous(vma)) {
 -		vma_end_read(vma);
 -		return VM_FAULT_RETRY;
 -	}
 -
- 	pgd = pgd_offset(mm, address);
- 	p4d = p4d_alloc(mm, pgd, address);
- 	if (!p4d)
-@@ -5182,6 +5188,11 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- 	if (pud_trans_unstable(vmf.pud))
- 		goto retry_pud;
- 
-+	if ((flags & FAULT_FLAG_VMA_LOCK) && !vma_is_anonymous(vma)) {
-+		vma_end_read(vma);
-+		return VM_FAULT_RETRY;
-+	}
-+
  	if (pmd_none(*vmf.pmd) &&
  	    hugepage_vma_check(vma, vm_flags, false, true, true)) {
  		ret = create_huge_pmd(&vmf);
