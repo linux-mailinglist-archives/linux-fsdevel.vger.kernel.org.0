@@ -2,44 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 75B5C75F72B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 14:52:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C7EA75F73A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 14:53:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231473AbjGXMwo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 08:52:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38742 "EHLO
+        id S230140AbjGXMxU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 08:53:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231436AbjGXMwH (ORCPT
+        with ESMTP id S231408AbjGXMw0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 08:52:07 -0400
+        Mon, 24 Jul 2023 08:52:26 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01A691BC5;
-        Mon, 24 Jul 2023 05:49:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4463C4493;
+        Mon, 24 Jul 2023 05:49:52 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D506861161;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 255B561169;
+        Mon, 24 Jul 2023 12:49:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8F08C433CA;
         Mon, 24 Jul 2023 12:49:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77D0EC433C7;
-        Mon, 24 Jul 2023 12:49:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690202985;
-        bh=6C9vpUKzxaC1YPufnnUpE8qHeuHqYjFB9iVUxK25t6w=;
+        s=k20201202; t=1690202991;
+        bh=Go+3eKanODPQVKnV1QnMIrC75/lXwO2PkPnkMfOn2oA=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=XsJYHa+kIAgS2CCOa7LW/8nHLa52NtiPmwTpouZl0KMjTcwczWJae9MrsyadRYqp4
-         NjmpGvvKIqjNEZbIw1ihnZyO28RsU1vq8rf0vm313/q7CEMyRmYRwZ7MDdIFHhkyng
-         t83jp5fU2aSUHOgp5bSx+cti2+h4koI/azC65FWVTD18niCraPWwpjAHyfOpKVaH+T
-         YTuaHyxYss4pCnIKAjF3A5lqDVrogZQdzzMtedQefoBauCySoxEtkXuyHGrIMX+m/E
-         9GV6Onzc5k2gYSPBxresj9HoSJPMrmcw5u1C1lMAw/DX3mZO4s3nwBNtHhzct2rHrr
-         T0q+KNBLoAavg==
+        b=SGOel0zj3Xg2/V8CgGXmv5Vb5xs6UcZQZjnllfOer2XsJZVwiMjQSGCW28PzjcBo6
+         Yk9kG/y+io+W164TQBWcwNpdKuiPaWg6w2D3xlqLkKkcSDwCM8Z4Tb3NaIGkd8gh2+
+         J2V027GZilLJrM8LIs/jwkctpm3PUEa7esX3sVqnk2EYFq9wrZEf995RtZLTAMHnNm
+         iq6XmbPf6oFV96R7bjs+vJNUhtQQfKD3LGup0eqxgF7wZ1/hcR4tWnGoDrr7kiUIQ2
+         2bEYAYzMWlqLseUHQhzcdqL5DzmAf7KHqk9ljXbR6UOMi7ZiGXXGHQTd2/Kp1aOLWR
+         8Wd+QedKXia3A==
 From:   Mark Brown <broonie@kernel.org>
-Date:   Mon, 24 Jul 2023 13:46:13 +0100
-Subject: [PATCH v2 26/35] kselftest/arm64: Verify the GCS hwcap
+Date:   Mon, 24 Jul 2023 13:46:14 +0100
+Subject: [PATCH v2 27/35] kselftest/arm64: Add GCS as a detected feature in
+ the signal tests
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230724-arm64-gcs-v2-26-dc2c1d44c2eb@kernel.org>
+Message-Id: <20230724-arm64-gcs-v2-27-dc2c1d44c2eb@kernel.org>
 References: <20230724-arm64-gcs-v2-0-dc2c1d44c2eb@kernel.org>
 In-Reply-To: <20230724-arm64-gcs-v2-0-dc2c1d44c2eb@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
@@ -68,15 +69,15 @@ Cc:     "H.J. Lu" <hjl.tools@gmail.com>,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-099c9
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1205; i=broonie@kernel.org;
- h=from:subject:message-id; bh=6C9vpUKzxaC1YPufnnUpE8qHeuHqYjFB9iVUxK25t6w=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBkvnKo6f3jqr3UTwz6pZgSF+rdKksxp/uJtcwca2ZR
- AgUzGISJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZL5yqAAKCRAk1otyXVSH0LM3B/
- 0UPEO0Wjj2jDMhLtiAxLbW0+JmSRkL85UA8GD7f0behK4SZudUEnykSfwI6LC+7dHO2StbswpuE0md
- IfAL8WVuwJr4TTV2wog9c8Poi5AbnXKPq1h8O86dzjA0ccYL+f4P1CSepX94zyYdpxVnqDk5lYBmd9
- BbLMZfUAoLDFVFkNxMMHycIrpEC/Tq2CH2QIMTdEHqTOcbMiSahlB9lLXeHlSN6pmUAEkioll7m+hD
- GH9RdRHuxb+j2j9EqPOAs35APr7sLaY0UOMs124NtTM3/+Kr4TzcFF4K2BD3w56v+uDEDxLrYxT24q
- dWpQqi14QIEjkH1aQLDG8jYPKLJTaw
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1828; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=Go+3eKanODPQVKnV1QnMIrC75/lXwO2PkPnkMfOn2oA=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBkvnKvOKzZt/3RtZMYZPIxgGH/vxVptXxxrSB7qESE
+ uisUIA6JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZL5yrwAKCRAk1otyXVSH0DE8B/
+ 0RsbllIrmgF0TpXtVH7dWcBHmj49n2K3ymmrVqCF/PPyoCh20RLlpVhuD7BOKIYx6i9IlhfBKGeAXm
+ Pc6Nhyh2F7J5tk9gfCc92uZI9IUcfV9FXLEUngLY7r0XBzsCqiVcvc3h1uP6vIoPgoBE7HlCbjh2U1
+ Iutb8bvf9hs8pj+oXCPaoEITQGFhcL90ldexuMH2Uh0KjGE+tDhm9jSFtpDxSxWsABdcmASbm0YJhe
+ Ppt4a+zNNj7yjDytgzztjfTq52LWsEXgqXmj76le3k5uoImU5aJ6PKVdg7q0xm0Zy1DJqFAjWkGwY1
+ MlTkxab2Wu0Uwc3w+V5v8GkeOWQ5u9
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -89,51 +90,56 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add coverage of the GCS hwcap to the hwcap selftest, using a read of
-GCSPR_EL0 to generate SIGILL without having to worry about enabling GCS.
+In preparation for testing GCS related signal handling add it as a feature
+we check for in the signal handling support code.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- tools/testing/selftests/arm64/abi/hwcap.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ tools/testing/selftests/arm64/signal/test_signals.h       | 2 ++
+ tools/testing/selftests/arm64/signal/test_signals_utils.c | 3 +++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/tools/testing/selftests/arm64/abi/hwcap.c b/tools/testing/selftests/arm64/abi/hwcap.c
-index d4ad813fed10..38844e4c5aae 100644
---- a/tools/testing/selftests/arm64/abi/hwcap.c
-+++ b/tools/testing/selftests/arm64/abi/hwcap.c
-@@ -39,6 +39,17 @@ static void cssc_sigill(void)
- 	asm volatile(".inst 0xdac01c00" : : : "x0");
- }
+diff --git a/tools/testing/selftests/arm64/signal/test_signals.h b/tools/testing/selftests/arm64/signal/test_signals.h
+index 1e6273d81575..7ada43688c02 100644
+--- a/tools/testing/selftests/arm64/signal/test_signals.h
++++ b/tools/testing/selftests/arm64/signal/test_signals.h
+@@ -35,6 +35,7 @@ enum {
+ 	FSME_BIT,
+ 	FSME_FA64_BIT,
+ 	FSME2_BIT,
++	FGCS_BIT,
+ 	FMAX_END
+ };
  
-+static void gcs_sigill(void)
-+{
-+	unsigned long *gcspr;
-+
-+	asm volatile(
-+		"mrs	%0, S3_3_C2_C5_1"
-+	: "=r" (gcspr)
-+	:
-+	: "cc");
-+}
-+
- static void mops_sigill(void)
- {
- 	char dst[1], src[1];
-@@ -223,6 +234,14 @@ static const struct hwcap_data {
- 		.cpuinfo = "cssc",
- 		.sigill_fn = cssc_sigill,
- 	},
-+	{
-+		.name = "GCS",
-+		.at_hwcap = AT_HWCAP2,
-+		.hwcap_bit = HWCAP2_GCS,
-+		.cpuinfo = "gcs",
-+		.sigill_fn = gcs_sigill,
-+		.sigill_reliable = true,
-+	},
- 	{
- 		.name = "MOPS",
- 		.at_hwcap = AT_HWCAP2,
+@@ -43,6 +44,7 @@ enum {
+ #define FEAT_SME		(1UL << FSME_BIT)
+ #define FEAT_SME_FA64		(1UL << FSME_FA64_BIT)
+ #define FEAT_SME2		(1UL << FSME2_BIT)
++#define FEAT_GCS		(1UL << FGCS_BIT)
+ 
+ /*
+  * A descriptor used to describe and configure a test case.
+diff --git a/tools/testing/selftests/arm64/signal/test_signals_utils.c b/tools/testing/selftests/arm64/signal/test_signals_utils.c
+index 0dc948db3a4a..89ef95c1af0e 100644
+--- a/tools/testing/selftests/arm64/signal/test_signals_utils.c
++++ b/tools/testing/selftests/arm64/signal/test_signals_utils.c
+@@ -30,6 +30,7 @@ static char const *const feats_names[FMAX_END] = {
+ 	" SME ",
+ 	" FA64 ",
+ 	" SME2 ",
++	" GCS ",
+ };
+ 
+ #define MAX_FEATS_SZ	128
+@@ -329,6 +330,8 @@ int test_init(struct tdescr *td)
+ 			td->feats_supported |= FEAT_SME_FA64;
+ 		if (getauxval(AT_HWCAP2) & HWCAP2_SME2)
+ 			td->feats_supported |= FEAT_SME2;
++		if (getauxval(AT_HWCAP2) & HWCAP2_GCS)
++			td->feats_supported |= FEAT_GCS;
+ 		if (feats_ok(td)) {
+ 			if (td->feats_required & td->feats_supported)
+ 				fprintf(stderr,
 
 -- 
 2.30.2
