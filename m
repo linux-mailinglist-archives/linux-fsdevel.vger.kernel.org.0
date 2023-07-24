@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5405075F71B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 14:52:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAB6575F6F9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 14:50:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231430AbjGXMwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 08:52:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38214 "EHLO
+        id S231340AbjGXMul (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 08:50:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230236AbjGXMvX (ORCPT
+        with ESMTP id S231294AbjGXMuM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 08:51:23 -0400
+        Mon, 24 Jul 2023 08:50:12 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9E511FEE;
-        Mon, 24 Jul 2023 05:49:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6F4C3A90;
+        Mon, 24 Jul 2023 05:48:49 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 36A2E61166;
-        Mon, 24 Jul 2023 12:48:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5E8DC433C8;
-        Mon, 24 Jul 2023 12:48:36 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7BC8861152;
+        Mon, 24 Jul 2023 12:48:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 139E7C433C7;
+        Mon, 24 Jul 2023 12:48:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690202922;
-        bh=sSLA8c9zD81mYMEEIJgpRALMzE62vMXK9V14WuQWjaE=;
+        s=k20201202; t=1690202928;
+        bh=Qk1oAglcSxLTK1OL1yhAbWpcUwaL4dga6Y2wJZdhO9Q=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=r7HOQ9Rh8UynMvFI/bPplPgBqdUDaYNqyAQEhBPj1HgLWRTSHXvaiXUNCmGS+L0PI
-         63oWdWdCtHcJ0Wg8CiYAF057zrhuXB4p6asxCYlJ4fpPy3q00KE3MqYVJBotQCkDAY
-         8SLA98IUZyEgqtd+shDVrWx3QSk3fMrumxPOMO3aPpCHEXYjjymtZZV7CiDgP351RE
-         aVXc58tE48ZXmbuXLjwUKX0QbhbDqSWAAdB/dWzEZO8Ohtw825jHOnd7CuHzF3iDU/
-         D8u4nbwsp1XgIlzPZoZ7vtG3MsER7zsqUAAtT8FzL9UFaydlMubbPro61t7F/Fx3+S
-         iOToctsnJN0IQ==
+        b=GA7d9sNT/rJ0WJ+xEL1kedzmwFpOvzkvWpWRRSXDefPpF0h7Z3LoT3il5uE0/jaGL
+         L6aLEJLHytNQA3WxKZLSH6zh8Ow1I0Sn6BDkVTKcQtowTsnxfbvl8xAWfXIBC43yNa
+         gEuVty8LRHrHffr0mz/NHq9wuN5cxiRR+uZ0kCpgifaMxeY4L1cEPV1cDAt8Uw0LjM
+         ZkAdqcq7fwA52dr5Nft0H2gFnqGTWJxohX1c7MFcual5CLTH0ItrzoHs2zGqDqt+32
+         qB+MJmtKIkbPeklyMwx3GGljV2KcajFETid9doKwrM3Xrz5jn8emTI7Aa/1hh1Wkzb
+         cZC8+Lx9lXWJw==
 From:   Mark Brown <broonie@kernel.org>
-Date:   Mon, 24 Jul 2023 13:46:03 +0100
-Subject: [PATCH v2 16/35] arm64/traps: Handle GCS exceptions
+Date:   Mon, 24 Jul 2023 13:46:04 +0100
+Subject: [PATCH v2 17/35] arm64/mm: Handle GCS data aborts
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230724-arm64-gcs-v2-16-dc2c1d44c2eb@kernel.org>
+Message-Id: <20230724-arm64-gcs-v2-17-dc2c1d44c2eb@kernel.org>
 References: <20230724-arm64-gcs-v2-0-dc2c1d44c2eb@kernel.org>
 In-Reply-To: <20230724-arm64-gcs-v2-0-dc2c1d44c2eb@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
@@ -68,15 +68,15 @@ Cc:     "H.J. Lu" <hjl.tools@gmail.com>,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-099c9
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6026; i=broonie@kernel.org;
- h=from:subject:message-id; bh=sSLA8c9zD81mYMEEIJgpRALMzE62vMXK9V14WuQWjaE=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBkvnKdFLOnO1lFOz6ssZ+ApC0f+pTPPIjb/1RkSS5L
- PckvS96JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZL5ynQAKCRAk1otyXVSH0Jy8B/
- 9oZ94IxvkzNCo7/Q1+XIbcKJMfaYEkVTNjT3TJ98fgdLpiLMUgf7ahslODb+SYX+nqOYZyBsKzAqas
- rrFaoS6BJUNYOpcvEWRYvGcgBM0HDY2s22q/TqWQ5PnGJxZYhsQGPwUVzuiRSw07+mPRt/YuyiWzVf
- VIkvlf/P0WvECMs4DUsijibnJgloq7USAiHkoEPps4BsSczcigeeJrOlLnnByQ+BwDmNnv4S/+WNzm
- 2Q5UrTYim+ud4gLNQ9T1apZGzrEe4tFbHmn6AOcwCeDks2VorgXUOg1VxVDNqX7cPgyME+dOICWSii
- udNbiRcb3gVl71CfyXcRrX6cJsTcRh
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5613; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=Qk1oAglcSxLTK1OL1yhAbWpcUwaL4dga6Y2wJZdhO9Q=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBkvnKe3zPPjWT4b5WmOZ3LAhxzwLz4yNXLUgcttsYr
+ ud3QVBKJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZL5yngAKCRAk1otyXVSH0CvEB/
+ 4jJiJu+LxDMxSGM2XECjRZURDqgeoOVcHxDefJs3PqcXqoU78dy0rTwv9nHdWMNe+DxcP2JfpG4vEb
+ k9vfD4lKa5yBhhGMdAlXIkCXPuwQUuzai8rSnHIT/cdu+2ZVa6Hojaz9I5uQVc0pyJeOkZtFnCqtHB
+ 77pPbY8SwUtKgnD5M77EcPmScDx3sKQBKkzWB3KLbTeMZDA8yfqMYK4CpIFEDwig1tpVD2vQfmE3NB
+ q2o7Gyg5xJ2kaaV981T3GAAMlM9XFNkEzmfBPLjurRO3/0LXeRE0v0wNUaOdhK0nmUK36u9mja0sU1
+ 6MZAvqkH9o6DodF4d0KyhqXs9hG9k8
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -89,171 +89,165 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A new exception code is defined for GCS specific faults other than
-standard load/store faults, for example GCS token validation failures,
-add handling for this. These faults are reported to userspace as
-segfaults with code SEGV_CPERR (protection error), mirroring the
-reporting for x86 shadow stack errors.
+All GCS operations at EL0 must happen on a page which is marked as
+having UnprivGCS access, including read operations.  If a GCS operation
+attempts to access a page without this then it will generate a data
+abort with the GCS bit set in ESR_EL1.ISS2.
 
-GCS faults due to memory load/store operations generate data aborts with
-a flag set, these will be handled separately as part of the data abort
-handling.
+EL0 may validly generate such faults, for example due to copy on write
+which will cause the GCS data to be stored in a read only page with no
+GCS permissions until the actual copy happens.  Since UnprivGCS allows
+both reads and writes to the GCS (though only through GCS operations) we
+need to ensure that the memory management subsystem handles GCS accesses
+as writes at all times.  Do this by adding FAULT_FLAG_WRITE to any GCS
+page faults, adding handling to ensure that invalid cases are identfied
+as such early so the memory management core does not think they will
+succeed.  The core cannot distinguish between VMAs which are generally
+writeable and VMAs which are only writeable through GCS operations.
 
-Since we do not currently enable GCS for EL1 we should not get any faults
-there but while we're at it we wire things up there, treating any GCS
-fault as fatal.
+EL1 may validly write to EL0 GCS for management purposes (eg, while
+initialising with cap tokens).
+
+We also report any GCS faults in VMAs not marked as part of a GCS as
+access violations, causing a fault to be delivered to userspace if it
+attempts to do GCS operations outside a GCS.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/include/asm/esr.h       | 28 +++++++++++++++++++++++++++-
- arch/arm64/include/asm/exception.h |  2 ++
- arch/arm64/kernel/entry-common.c   | 23 +++++++++++++++++++++++
- arch/arm64/kernel/traps.c          | 11 +++++++++++
- 4 files changed, 63 insertions(+), 1 deletion(-)
+ arch/arm64/mm/fault.c | 78 +++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 70 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
-index ae35939f395b..a87a8305051f 100644
---- a/arch/arm64/include/asm/esr.h
-+++ b/arch/arm64/include/asm/esr.h
-@@ -51,7 +51,8 @@
- #define ESR_ELx_EC_FP_EXC32	(0x28)
- /* Unallocated EC: 0x29 - 0x2B */
- #define ESR_ELx_EC_FP_EXC64	(0x2C)
--/* Unallocated EC: 0x2D - 0x2E */
-+#define ESR_ELx_EC_GCS		(0x2D)
-+/* Unallocated EC: 0x2E */
- #define ESR_ELx_EC_SERROR	(0x2F)
- #define ESR_ELx_EC_BREAKPT_LOW	(0x30)
- #define ESR_ELx_EC_BREAKPT_CUR	(0x31)
-@@ -382,6 +383,31 @@
- #define ESR_ELx_MOPS_ISS_SRCREG(esr)	(((esr) & (UL(0x1f) << 5)) >> 5)
- #define ESR_ELx_MOPS_ISS_SIZEREG(esr)	(((esr) & (UL(0x1f) << 0)) >> 0)
- 
-+/* ISS field definitions for GCS */
-+#define ESR_ELx_ExType_SHIFT	(20)
-+#define ESR_ELx_ExType_MASK		GENMASK(23, 20)
-+#define ESR_ELx_Raddr_SHIFT		(10)
-+#define ESR_ELx_Raddr_MASK		GENMASK(14, 10)
-+#define ESR_ELx_Rn_SHIFT		(5)
-+#define ESR_ELx_Rn_MASK			GENMASK(9, 5)
-+#define ESR_ELx_Rvalue_SHIFT		5
-+#define ESR_ELx_Rvalue_MASK		GENMASK(9, 5)
-+#define ESR_ELx_IT_SHIFT		(0)
-+#define ESR_ELx_IT_MASK			GENMASK(4, 0)
-+
-+#define ESR_ELx_ExType_DATA_CHECK	0
-+#define ESR_ELx_ExType_EXLOCK		1
-+#define ESR_ELx_ExType_STR		2
-+
-+#define ESR_ELx_IT_RET			0
-+#define ESR_ELx_IT_GCSPOPM		1
-+#define ESR_ELx_IT_RET_KEYA		2
-+#define ESR_ELx_IT_RET_KEYB		3
-+#define ESR_ELx_IT_GCSSS1		4
-+#define ESR_ELx_IT_GCSSS2		5
-+#define ESR_ELx_IT_GCSPOPCX		6
-+#define ESR_ELx_IT_GCSPOPX		7
-+
- #ifndef __ASSEMBLY__
- #include <asm/types.h>
- 
-diff --git a/arch/arm64/include/asm/exception.h b/arch/arm64/include/asm/exception.h
-index ad688e157c9b..99caff458e20 100644
---- a/arch/arm64/include/asm/exception.h
-+++ b/arch/arm64/include/asm/exception.h
-@@ -57,6 +57,8 @@ void do_el0_undef(struct pt_regs *regs, unsigned long esr);
- void do_el1_undef(struct pt_regs *regs, unsigned long esr);
- void do_el0_bti(struct pt_regs *regs);
- void do_el1_bti(struct pt_regs *regs, unsigned long esr);
-+void do_el0_gcs(struct pt_regs *regs, unsigned long esr);
-+void do_el1_gcs(struct pt_regs *regs, unsigned long esr);
- void do_debug_exception(unsigned long addr_if_watchpoint, unsigned long esr,
- 			struct pt_regs *regs);
- void do_fpsimd_acc(unsigned long esr, struct pt_regs *regs);
-diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
-index 6b2e0c367702..4d86216962e5 100644
---- a/arch/arm64/kernel/entry-common.c
-+++ b/arch/arm64/kernel/entry-common.c
-@@ -400,6 +400,15 @@ static void noinstr el1_bti(struct pt_regs *regs, unsigned long esr)
- 	exit_to_kernel_mode(regs);
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 3fe516b32577..ec392207a475 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -494,13 +494,30 @@ static void do_bad_area(unsigned long far, unsigned long esr,
+ 	}
  }
  
-+static void noinstr el1_gcs(struct pt_regs *regs, unsigned long esr)
++/*
++ * Note: not valid for EL1 DC IVAC, but we never use that such that it
++ * should fault. EL0 cannot issue DC IVAC (undef).
++ */
++static bool is_write_abort(unsigned long esr)
 +{
-+	enter_from_kernel_mode(regs);
-+	local_daif_inherit(regs);
-+	do_el1_gcs(regs, esr);
-+	local_daif_mask();
-+	exit_to_kernel_mode(regs);
++	return (esr & ESR_ELx_WNR) && !(esr & ESR_ELx_CM);
 +}
 +
- static void noinstr el1_dbg(struct pt_regs *regs, unsigned long esr)
++static bool is_gcs_fault(unsigned long esr)
++{
++	if (!esr_is_data_abort(esr))
++		return false;
++
++	return ESR_ELx_ISS2(esr) & ESR_ELx_GCS;
++}
++
+ #define VM_FAULT_BADMAP		((__force vm_fault_t)0x010000)
+ #define VM_FAULT_BADACCESS	((__force vm_fault_t)0x020000)
+ 
+ static vm_fault_t __do_page_fault(struct mm_struct *mm,
+ 				  struct vm_area_struct *vma, unsigned long addr,
+ 				  unsigned int mm_flags, unsigned long vm_flags,
+-				  struct pt_regs *regs)
++				  unsigned long esr, struct pt_regs *regs)
  {
- 	unsigned long far = read_sysreg(far_el1);
-@@ -442,6 +451,9 @@ asmlinkage void noinstr el1h_64_sync_handler(struct pt_regs *regs)
- 	case ESR_ELx_EC_BTI:
- 		el1_bti(regs, esr);
- 		break;
-+	case ESR_ELx_EC_GCS:
-+		el1_gcs(regs, esr);
-+		break;
- 	case ESR_ELx_EC_BREAKPT_CUR:
- 	case ESR_ELx_EC_SOFTSTP_CUR:
- 	case ESR_ELx_EC_WATCHPT_CUR:
-@@ -621,6 +633,14 @@ static void noinstr el0_mops(struct pt_regs *regs, unsigned long esr)
- 	exit_to_user_mode(regs);
+ 	/*
+ 	 * Ok, we have a good vm_area for this memory access, so we can handle
+@@ -510,6 +527,26 @@ static vm_fault_t __do_page_fault(struct mm_struct *mm,
+ 	 */
+ 	if (!(vma->vm_flags & vm_flags))
+ 		return VM_FAULT_BADACCESS;
++
++	if (vma->vm_flags & VM_SHADOW_STACK) {
++		/*
++		 * Writes to a GCS must either be generated by a GCS
++		 * operation or be from EL1.
++		 */
++		if (is_write_abort(esr) &&
++		    !(is_gcs_fault(esr) || is_el1_data_abort(esr)))
++			return VM_FAULT_BADACCESS;
++	} else {
++		/*
++		 * GCS faults should never happen for pages that are
++		 * not part of a GCS and the operation being attempted
++		 * can never succeed.
++		 */
++		if (is_gcs_fault(esr))
++			return VM_FAULT_BADACCESS;
++	}
++
++
+ 	return handle_mm_fault(vma, addr, mm_flags, regs);
  }
  
-+static void noinstr el0_gcs(struct pt_regs *regs, unsigned long esr)
-+{
-+	enter_from_user_mode(regs);
-+	local_daif_restore(DAIF_PROCCTX);
-+	do_el0_gcs(regs, esr);
-+	exit_to_user_mode(regs);
-+}
-+
- static void noinstr el0_inv(struct pt_regs *regs, unsigned long esr)
- {
- 	enter_from_user_mode(regs);
-@@ -701,6 +721,9 @@ asmlinkage void noinstr el0t_64_sync_handler(struct pt_regs *regs)
- 	case ESR_ELx_EC_MOPS:
- 		el0_mops(regs, esr);
- 		break;
-+	case ESR_ELx_EC_GCS:
-+		el0_gcs(regs, esr);
-+		break;
- 	case ESR_ELx_EC_BREAKPT_LOW:
- 	case ESR_ELx_EC_SOFTSTP_LOW:
- 	case ESR_ELx_EC_WATCHPT_LOW:
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index 8b70759cdbb9..65dab959f620 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -500,6 +500,16 @@ void do_el1_bti(struct pt_regs *regs, unsigned long esr)
- 	die("Oops - BTI", regs, esr);
+@@ -518,13 +555,18 @@ static bool is_el0_instruction_abort(unsigned long esr)
+ 	return ESR_ELx_EC(esr) == ESR_ELx_EC_IABT_LOW;
  }
  
-+void do_el0_gcs(struct pt_regs *regs, unsigned long esr)
-+{
-+	force_signal_inject(SIGSEGV, SEGV_CPERR, regs->pc, 0);
-+}
-+
-+void do_el1_gcs(struct pt_regs *regs, unsigned long esr)
-+{
-+	die("Oops - GCS", regs, esr);
-+}
-+
- void do_el0_fpac(struct pt_regs *regs, unsigned long esr)
+-/*
+- * Note: not valid for EL1 DC IVAC, but we never use that such that it
+- * should fault. EL0 cannot issue DC IVAC (undef).
+- */
+-static bool is_write_abort(unsigned long esr)
++static bool is_invalid_el0_gcs_access(struct vm_area_struct *vma, u64 esr)
  {
- 	force_signal_inject(SIGILL, ILL_ILLOPN, regs->pc, esr);
-@@ -884,6 +894,7 @@ static const char *esr_class_str[] = {
- 	[ESR_ELx_EC_MOPS]		= "MOPS",
- 	[ESR_ELx_EC_FP_EXC32]		= "FP (AArch32)",
- 	[ESR_ELx_EC_FP_EXC64]		= "FP (AArch64)",
-+	[ESR_ELx_EC_GCS]		= "Guarded Control Stack",
- 	[ESR_ELx_EC_SERROR]		= "SError",
- 	[ESR_ELx_EC_BREAKPT_LOW]	= "Breakpoint (lower EL)",
- 	[ESR_ELx_EC_BREAKPT_CUR]	= "Breakpoint (current EL)",
+-	return (esr & ESR_ELx_WNR) && !(esr & ESR_ELx_CM);
++	if (!system_supports_gcs())
++		return false;
++	if (likely(!(vma->vm_flags & VM_SHADOW_STACK))) {
++		if (is_gcs_fault(esr))
++			return true;
++		return false;
++	}
++	if (is_gcs_fault(esr))
++		return false;
++	return is_write_abort(esr);
+ }
+ 
+ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
+@@ -573,6 +615,13 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
+ 		/* If EPAN is absent then exec implies read */
+ 		if (!cpus_have_const_cap(ARM64_HAS_EPAN))
+ 			vm_flags |= VM_EXEC;
++		/*
++		 * Upgrade read faults to write faults, GCS reads must
++		 * occur on a page marked as GCS so we need to trigger
++		 * copy on write always.
++		 */
++		if (is_gcs_fault(esr))
++			mm_flags |= FAULT_FLAG_WRITE;
+ 	}
+ 
+ 	if (is_ttbr0_addr(addr) && is_el1_permission_fault(addr, esr, regs)) {
+@@ -595,6 +644,19 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
+ 	if (!vma)
+ 		goto lock_mmap;
+ 
++	/*
++	 * We get legitimate write faults for GCS pages from GCS
++	 * operations and from EL1 writes to EL0 pages but just plain
++	 * EL0 writes are invalid.  Specifically check for this since
++	 * as a result of upgrading read faults to write faults for
++	 * CoW the mm core isn't able to distinguish these invalid
++	 * writes.
++	 */
++	if (is_invalid_el0_gcs_access(vma, esr)) {
++		vma_end_read(vma);
++		goto lock_mmap;
++	}
++
+ 	if (!(vma->vm_flags & vm_flags)) {
+ 		vma_end_read(vma);
+ 		goto lock_mmap;
+@@ -624,7 +686,7 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
+ 		goto done;
+ 	}
+ 
+-	fault = __do_page_fault(mm, vma, addr, mm_flags, vm_flags, regs);
++	fault = __do_page_fault(mm, vma, addr, mm_flags, vm_flags, esr, regs);
+ 
+ 	/* Quick path to respond to signals */
+ 	if (fault_signal_pending(fault, regs)) {
 
 -- 
 2.30.2
