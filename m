@@ -2,149 +2,242 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 184DC75F9F7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 16:34:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECB7C75F9FE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 16:38:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229824AbjGXOew (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 10:34:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56488 "EHLO
+        id S230345AbjGXOiT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 10:38:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229550AbjGXOev (ORCPT
+        with ESMTP id S229557AbjGXOiS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 10:34:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5A76F7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 07:34:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690209253;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=sw5JYA3+zGjsKL/Hf3UxVttJt75aXV0WOzCX0uDZMJk=;
-        b=FLU0saOmVza3DYUYf0SHJUyBHv6joOTRq4mJlEUlB6c1DbYvgiwzNpn14wwynN+5GGOMWF
-        mTyhwJtWKewNNuE38vnZNRNVuUgii4NpDzoDUi8XDYQS/FQbVgPJeHMgQXBvvYxisgVJfA
-        MVQoE26Ln5YQ166wEY8r/A2GW/096gw=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-450-2242VwcsMp6SRYZI29FIGA-1; Mon, 24 Jul 2023 10:34:07 -0400
-X-MC-Unique: 2242VwcsMp6SRYZI29FIGA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 15B5C8F77CC;
-        Mon, 24 Jul 2023 14:34:07 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 305672166B25;
-        Mon, 24 Jul 2023 14:33:46 +0000 (UTC)
-Date:   Mon, 24 Jul 2023 22:33:43 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Jiri Olsa <olsajiri@gmail.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v8 1/4] fs/proc/kcore: avoid bounce buffer for ktext data
-Message-ID: <ZL6Lx6QbLubsj3cg@MiWiFi-R3L-srv>
-References: <cover.1679566220.git.lstoakes@gmail.com>
- <fd39b0bfa7edc76d360def7d034baaee71d90158.1679566220.git.lstoakes@gmail.com>
- <ZHc2fm+9daF6cgCE@krava>
- <ZLqMtcPXAA8g/4JI@MiWiFi-R3L-srv>
- <86fd0ccb-f460-651f-8048-1026d905a2d6@redhat.com>
- <ZL4xif/LX6ZhRqtf@MiWiFi-R3L-srv>
- <ZL4z6LVzrbMvXwyl@krava>
+        Mon, 24 Jul 2023 10:38:18 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C0F2127
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 07:38:15 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-51e24210395so15274a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 07:38:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1690209493; x=1690814293;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b5SDTe6qOC5PXRB6SyhCG7ZaeHW8gj0AmjKckKwv3io=;
+        b=C9Suheke7UQIS/avFEu/JXXrfnObD0Xt0TNh7dM22D9jAawL6KZjL3QqM/z3wqzpm7
+         Mm6YMbmLhKk4HT4js0BuYeNzm0Hs5lGiTUonNYK4R1YxlN9UufVYBC7ruD+OUlg74rUR
+         46a2ArThiXaiWvRGM9jjZeLnWKh1O9ka7Tkd21FhQTItonpzlPJs1Ww16WWjwRf87RtU
+         59vTx2NKqdYe45KK5Y1YFLUDOCStjKyzdM3/kJ9CHWfHj2NuKmfVO4KpV9SaWezw8n2W
+         3tSWQhJJs7Y1INcgZ7gb204PsM5UMzzIkApxtp0SU2N09PJkoT5Pi0eXXnhEybhV9Nnv
+         tmnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690209493; x=1690814293;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b5SDTe6qOC5PXRB6SyhCG7ZaeHW8gj0AmjKckKwv3io=;
+        b=LsQJnqr6o9wG++KmZp8LfOANVnwdpqkC8r7ZgzzVqyaN0b8Mk/H/PIwV0Jg8sSdZy/
+         APzgBt9cRawkBlgt8MCiV34+sdQcl/WX8B90Y+7AwyBovsjjCvT6mU9SD+/b0THQyxPH
+         vf5N9aEEBydBUm55YIbhxKAzD6M7o6GBWPH9PFMHS8B6OynhfKs+0uOMC8S6zGAX/1zn
+         U0kpOZQ2dhWmBafxVDf52FiXWFwzDUess3QP8hgSbKxUOZcvzqE1pK7fxWJNcJvfqkeV
+         eVSbq9B3rJcVFcmerws0ImbvQQ9faMCVyn/+5m3QeZ5CQtjqbdmljDKVtuf9mezV/PWX
+         532A==
+X-Gm-Message-State: ABy/qLZnyKBE9SVnE+QxSERJIJ2OJlhuOuJUZISXPZAzWGG+DVWgQJL9
+        VcHr8Un35aGOFSpkgLg1BOfKT2jth83Ac+OR2Kerrw==
+X-Google-Smtp-Source: APBJJlFRzqXuIv1qPeWfBAjjHGcqTmgLN2bBdY5Dll/6hSi/V+dFxY9ftxsLNyp7eYXdBv5srMzDm+fP5nEzVgqY6F0=
+X-Received: by 2002:a50:d492:0:b0:51a:1ffd:10e with SMTP id
+ s18-20020a50d492000000b0051a1ffd010emr178091edi.3.1690209493308; Mon, 24 Jul
+ 2023 07:38:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZL4z6LVzrbMvXwyl@krava>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <20230713101415.108875-6-usama.anjum@collabora.com>
+ <a0b5c6776b2ed91f78a7575649f8b100e58bd3a9.1689881078.git.mirq-linux@rere.qmqm.pl>
+ <7eedf953-7cf6-c342-8fa8-b7626d69ab63@collabora.com> <ZLpqzcyo2ZMXwtm4@qmqm.qmqm.pl>
+ <382f4435-2088-08ce-20e9-bc1a15050861@collabora.com> <ZLshsAj5PbsEAHhP@qmqm.qmqm.pl>
+ <b1071d62-5c8e-1b03-d919-b3a9db520e51@collabora.com>
+In-Reply-To: <b1071d62-5c8e-1b03-d919-b3a9db520e51@collabora.com>
+From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+Date:   Mon, 24 Jul 2023 16:38:01 +0200
+Message-ID: <CABb0KFF6M2_94Ect72zMtaRLBpOoHjHYJA-Ube3oQAh4cXSg5w@mail.gmail.com>
+Subject: Re: [v2] fs/proc/task_mmu: Implement IOCTL for efficient page table scanning
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Yang Shi <shy828301@gmail.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07/24/23 at 10:18am, Jiri Olsa wrote:
-> On Mon, Jul 24, 2023 at 04:08:41PM +0800, Baoquan He wrote:
-> > On 07/24/23 at 08:23am, David Hildenbrand wrote:
-> > > Hi,
-> > > 
-> > > > 
-> > > > I met this too when I executed below command to trigger a kcore reading.
-> > > > I wanted to do a simple testing during system running and got this.
-> > > > 
-> > > >    makedumpfile --mem-usage /proc/kcore
-> > > > 
-> > > > Later I tried your above objdump testing, it corrupted system too.
-> > > > 
-> > > 
-> > > What do you mean with "corrupted system too" --  did it not only fail to
-> > > dump the system, but also actually harmed the system?
-> > 
-> > From my testing, reading kcore will cause system panic, then reboot. Not
-> > sure if Jiri saw the same phenomenon.
-> 
-> it did not crash for me, just the read error
-> could you get console output from that?
+On Mon, 24 Jul 2023 at 16:04, Muhammad Usama Anjum
+<usama.anjum@collabora.com> wrote:
+>
+> Fixed found bugs. Testing it further.
+>
+> - Split and backoff in case buffer full case as well
+> - Fix the wrong breaking of loop if page isn't interesting, skip intead
+> - Untag the address and save them into struct
+> - Round off the end address to next page
+>
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>  fs/proc/task_mmu.c | 54 ++++++++++++++++++++++++++--------------------
+>  1 file changed, 31 insertions(+), 23 deletions(-)
+>
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index add21fdf3c9a..64b326d0ec6d 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -1985,18 +1989,19 @@ static int pagemap_scan_output(unsigned long
+> categories,
+>         unsigned long n_pages, total_pages;
+>         int ret =3D 0;
+>
+> +       if (!p->vec_buf)
+> +               return 0;
+> +
+>         if (!pagemap_scan_is_interesting_page(categories, p)) {
+>                 *end =3D addr;
+>                 return 0;
+>         }
+>
+> -       if (!p->vec_buf)
+> -               return 0;
+> -
+>         categories &=3D p->arg.return_mask;
 
-I got a new arm64 machine, then executing "makedumpfile --mem-usage
-/proc/kcore" won't trigger panic, your objdump command can trigger
-panic. The call trace is pasted at below. It's the same as the panic and
-call trace I met on my last arm64 machine.
+This is wrong - is_interesting() check must happen before output as
+the `*end =3D addr` means the range should be skipped, but return 0
+requests continuing of the walk.
 
-[13270.314323] Mem abort info:
-[13270.317162]   ESR = 0x0000000096000007
-[13270.320901]   EC = 0x25: DABT (current EL), IL = 32 bits
-[13270.326217]   SET = 0, FnV = 0
-[13270.329261]   EA = 0, S1PTW = 0
-[13270.332390]   FSC = 0x07: level 3 translation fault
-[13270.337270] Data abort info:
-[13270.340139]   ISV = 0, ISS = 0x00000007, ISS2 = 0x00000000
-[13270.345626]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[13270.350666]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[13270.355981] swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000400651d64000
-[13270.362672] [ffffdc9cf3ea0000] pgd=1000401ffffff003, p4d=1000401ffffff003, pud=1000401fffffe003, pmd=1000401fffffd003, pte=0000000000000000
-[13270.375367] Internal error: Oops: 0000000096000007 [#4] SMP
-[13270.380934] Modules linked in: mlx5_ib ib_uverbs ib_core rfkill vfat fat joydev cdc_ether usbnet mii mlx5_core acpi_ipmi mlxfw ipmi_ssif psample tls ipmi_devintf pci_hyperv_intf arm_spe_pmu ipmi_msghandler arm_cmn arm_dmc620_pmu arm_dsu_pmu cppc_cpufreq acpi_tad fuse zram xfs crct10dif_ce polyval_ce polyval_generic ghash_ce uas sbsa_gwdt nvme nvme_core ast usb_storage nvme_common i2c_algo_bit xgene_hwmon
-[13270.416751] CPU: 15 PID: 8803 Comm: objdump Tainted: G      D            6.5.0-rc3 #1
-[13270.424570] Hardware name: WIWYNN Mt.Jade Server System B81.030Z1.0007/Mt.Jade Motherboard, BIOS 2.10.20220531 (SCP: 2.10.20220531) 2022/05/31
-[13270.437337] pstate: 20400009 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[13270.444289] pc : __arch_copy_to_user+0x180/0x240
-[13270.448910] lr : _copy_to_iter+0x11c/0x5d0
-[13270.453002] sp : ffff8000b15a37c0
-[13270.456306] x29: ffff8000b15a37c0 x28: ffffdc9cf3ea0000 x27: ffffdc9cf6938158
-[13270.463431] x26: ffff8000b15a3ba8 x25: 0000000000000690 x24: ffff8000b15a3b80
-[13270.470556] x23: 00000000000038ac x22: ffffdc9cf3ea0000 x21: ffff8000b15a3b80
-[13270.477682] x20: ffffdc9cf64fdf00 x19: 0000000000000400 x18: 0000000000000000
-[13270.484806] x17: 0000000000000000 x16: 0000000000000000 x15: ffffdc9cf3ea0000
-[13270.491931] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
-[13270.499056] x11: 0001000000000000 x10: ffffdc9cf64fdf00 x9 : 0000000000000690
-[13270.506182] x8 : 000000007c000000 x7 : 0000fd007e000000 x6 : 000000000eee0b60
-[13270.513306] x5 : 000000000eee0f60 x4 : 0000000000000000 x3 : 0000000000000400
-[13270.520431] x2 : 0000000000000380 x1 : ffffdc9cf3ea0000 x0 : 000000000eee0b60
-[13270.527556] Call trace:
-[13270.529992]  __arch_copy_to_user+0x180/0x240
-[13270.534250]  read_kcore_iter+0x718/0x878
-[13270.538167]  proc_reg_read_iter+0x8c/0xe8
-[13270.542168]  vfs_read+0x214/0x2c0
-[13270.545478]  ksys_read+0x78/0x118
-[13270.548782]  __arm64_sys_read+0x24/0x38
-[13270.552608]  invoke_syscall+0x78/0x108
-[13270.556351]  el0_svc_common.constprop.0+0x4c/0xf8
-[13270.561044]  do_el0_svc+0x34/0x50
-[13270.564347]  el0_svc+0x34/0x108
-[13270.567482]  el0t_64_sync_handler+0x100/0x130
-[13270.571829]  el0t_64_sync+0x194/0x198
-[13270.575483] Code: d503201f d503201f d503201f d503201f (a8c12027) 
-[13270.581567] ---[ end trace 0000000000000000 ]---
+> @@ -2044,7 +2050,7 @@ static int pagemap_scan_thp_entry(pmd_t *pmd,
+> unsigned long start,
+>          * Break huge page into small pages if the WP operation
+>          * need to be performed is on a portion of the huge page.
+>          */
+> -       if (end !=3D start + HPAGE_SIZE) {
+> +       if (end !=3D start + HPAGE_SIZE || ret =3D=3D -ENOSPC) {
 
+Why is it needed? If `end =3D=3D start + HPAGE_SIZE` then we're handling a
+full hugepage anyway.
+
+> @@ -2066,8 +2072,8 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd,
+> unsigned long start,
+>  {
+>         struct pagemap_scan_private *p =3D walk->private;
+>         struct vm_area_struct *vma =3D walk->vma;
+> +       unsigned long addr, categories, next;
+>         pte_t *pte, *start_pte;
+> -       unsigned long addr;
+>         bool flush =3D false;
+>         spinlock_t *ptl;
+>         int ret;
+> @@ -2088,12 +2094,14 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd,
+> unsigned long start,
+>         }
+>
+>         for (addr =3D start; addr !=3D end; pte++, addr +=3D PAGE_SIZE) {
+> -               unsigned long categories =3D p->cur_vma_category |
+> -                       pagemap_page_category(vma, addr, ptep_get(pte));
+> -               unsigned long next =3D addr + PAGE_SIZE;
+> +               categories =3D p->cur_vma_category |
+> +                            pagemap_page_category(vma, addr, ptep_get(pt=
+e));
+> +               next =3D addr + PAGE_SIZE;
+
+Why moving the variable declarations out of the loop?
+
+>
+>                 ret =3D pagemap_scan_output(categories, p, addr, &next);
+> -               if (next =3D=3D addr)
+> +               if (ret =3D=3D 0 && next =3D=3D addr)
+> +                       continue;
+> +               else if (next =3D=3D addr)
+>                         break;
+
+Ah, this indeed was a bug. Nit:
+
+if (next =3D=3D addr) { if (!ret) continue; break; }
+
+> @@ -2204,8 +2212,6 @@ static const struct mm_walk_ops pagemap_scan_ops =
+=3D {
+>  static int pagemap_scan_get_args(struct pm_scan_arg *arg,
+>                                  unsigned long uarg)
+>  {
+> -       unsigned long start, end, vec;
+> -
+>         if (copy_from_user(arg, (void __user *)uarg, sizeof(*arg)))
+>                 return -EFAULT;
+>
+> @@ -2219,22 +2225,24 @@ static int pagemap_scan_get_args(struct pm_scan_a=
+rg
+> *arg,
+>              arg->category_anyof_mask | arg->return_mask) & ~PM_SCAN_CATE=
+GORIES)
+>                 return -EINVAL;
+>
+> -       start =3D untagged_addr((unsigned long)arg->start);
+> -       end =3D untagged_addr((unsigned long)arg->end);
+> -       vec =3D untagged_addr((unsigned long)arg->vec);
+> +       arg->start =3D untagged_addr((unsigned long)arg->start);
+> +       arg->end =3D untagged_addr((unsigned long)arg->end);
+> +       arg->vec =3D untagged_addr((unsigned long)arg->vec);
+
+BTW, We should we keep the tag in args writeback().
+
+>         /* Validate memory pointers */
+> -       if (!IS_ALIGNED(start, PAGE_SIZE))
+> +       if (!IS_ALIGNED(arg->start, PAGE_SIZE))
+>                 return -EINVAL;
+> -       if (!access_ok((void __user *)start, end - start))
+> +       if (!access_ok((void __user *)arg->start, arg->end - arg->start))
+>                 return -EFAULT;
+> -       if (!vec && arg->vec_len)
+> +       if (!arg->vec && arg->vec_len)
+>                 return -EFAULT;
+> -       if (vec && !access_ok((void __user *)vec,
+> +       if (arg->vec && !access_ok((void __user *)arg->vec,
+>                               arg->vec_len * sizeof(struct page_region)))
+>                 return -EFAULT;
+>
+>         /* Fixup default values */
+> +       arg->end =3D (arg->end & ~PAGE_MASK) ?
+> +                  ((arg->end & PAGE_MASK) + PAGE_SIZE) : (arg->end);
+
+arg->end =3D ALIGN(arg->end, PAGE_SIZE);
+
+>         if (!arg->max_pages)
+>                 arg->max_pages =3D ULONG_MAX;
+>
+
+Best Regards
+Micha=C5=82 Miros=C5=82aw
