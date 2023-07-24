@@ -2,109 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F375D75F403
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 12:59:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC87775F4C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 13:18:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233156AbjGXK7A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 06:59:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52730 "EHLO
+        id S230383AbjGXLSK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 07:18:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231254AbjGXK66 (ORCPT
+        with ESMTP id S229813AbjGXLSI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 06:58:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47519FF
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 03:58:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690196293;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=F6TumHjbvlMGzO4xVYnJBJFbMI9Ohdrrske9/1R3NiY=;
-        b=cev9ycAickBsItKoAGqdT5qlT5o1gneS05xhjvz2H6+FZSQUt89bCKV+pg2K8y/wTQ4+LK
-        bAkdgzBRU+79jslFdnFNrxpOQ0XaUIZkfM0W7w2g5IXaRYeeEmVyoYU0YsX0XTWuSvtSMD
-        toEgDT4KDkMi+hklOa9Nj/whd4FT6sY=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-168-e7U0xzw8PMuN085D6-7lqA-1; Mon, 24 Jul 2023 06:58:12 -0400
-X-MC-Unique: e7U0xzw8PMuN085D6-7lqA-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-3fc07d4c2f4so26155195e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 03:58:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690196290; x=1690801090;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F6TumHjbvlMGzO4xVYnJBJFbMI9Ohdrrske9/1R3NiY=;
-        b=RwgxJpM464sfRA5QZbF9mh/z7+BQfX7OOHHFJvHLRE9L7v2t6rrjVmDegg8dMjxCjY
-         4YvKSI6SZ5JnyHOGYZLCiEJJioK0egFVfG0OyjrPGF2eeSoV/iRK/zcTv+QF4aNf8uaK
-         y1iGQpzNeq9yT4+2mdG8xZ5yCmS8WaBYpe2E8sOSMGnlkA7HA5fbN95RpmuKaUR6BTfa
-         /BbukktUH95cI2mby4YtUXA9HPzszQBUchIKuh/1386KhyJL80DtVYxkAex1aaCZWO04
-         jmMH9Ps8JIkojvK6QcpjA0ipIYyiIzo+8Py4sbDfCvDE4UazKGEsz6SMOt5HBghMuNt0
-         Uw4A==
-X-Gm-Message-State: ABy/qLYSCw2ICgy/5DUwNgiltSoixiK3i45vjWq8YQC9j3QDgWryCLBW
-        PVULVMt6/LRDhUWQ4RK3LA8t7xycGUZQInSKarQ4TrhtOg30Q+0UctB+3NBWxkNBcaGFUCQPhyO
-        2EXvjV+XqIxUTMaEVwAOp1Eahj5fth9TF
-X-Received: by 2002:a05:600c:2116:b0:3fa:8fb1:50fe with SMTP id u22-20020a05600c211600b003fa8fb150femr7689286wml.15.1690196290620;
-        Mon, 24 Jul 2023 03:58:10 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlG3j1Ad2yvF+UnMLXv/6Lw2FRlTF06c6lZtWHJGzEdkPdJIwnZ5I9t8OadERNj+baxM+ax9jQ==
-X-Received: by 2002:a05:600c:2116:b0:3fa:8fb1:50fe with SMTP id u22-20020a05600c211600b003fa8fb150femr7689274wml.15.1690196290272;
-        Mon, 24 Jul 2023 03:58:10 -0700 (PDT)
-Received: from aalbersh.remote.csb ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id n11-20020a7bcbcb000000b003fba92fad35sm12576469wmi.26.2023.07.24.03.58.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jul 2023 03:58:09 -0700 (PDT)
-Date:   Mon, 24 Jul 2023 12:58:08 +0200
-From:   Andrey Albershteyn <aalbersh@redhat.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        patches@lists.linux.dev
-Subject: Re: [PATCH] fstests: add helper to canonicalize devices used to
- enable persistent disks
-Message-ID: <20230724105808.dxyszzkzcwf7y7od@aalbersh.remote.csb>
-References: <20230720061727.2363548-1-mcgrof@kernel.org>
+        Mon, 24 Jul 2023 07:18:08 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 24B84E65;
+        Mon, 24 Jul 2023 04:17:47 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B206CDE0;
+        Mon, 24 Jul 2023 04:18:29 -0700 (PDT)
+Received: from [10.57.34.62] (unknown [10.57.34.62])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C518B3F5A1;
+        Mon, 24 Jul 2023 04:17:39 -0700 (PDT)
+Message-ID: <cdd08c9e-81d3-a85f-5426-5db738aa73ec@arm.com>
+Date:   Mon, 24 Jul 2023 12:17:40 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230720061727.2363548-1-mcgrof@kernel.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2 24/47] drm/panfrost: dynamically allocate the
+ drm-panfrost shrinker
+To:     Qi Zheng <zhengqi.arch@bytedance.com>, akpm@linux-foundation.org,
+        david@fromorbit.com, tkhai@ya.ru, vbabka@suse.cz,
+        roman.gushchin@linux.dev, djwong@kernel.org, brauner@kernel.org,
+        paulmck@kernel.org, tytso@mit.edu, cel@kernel.org,
+        senozhatsky@chromium.org, yujie.liu@intel.com,
+        gregkh@linuxfoundation.org, muchun.song@linux.dev
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+        kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-erofs@lists.ozlabs.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+        rcu@vger.kernel.org, netdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        dm-devel@redhat.com, linux-raid@vger.kernel.org,
+        linux-bcache@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org
+References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
+ <20230724094354.90817-25-zhengqi.arch@bytedance.com>
+Content-Language: en-GB
+From:   Steven Price <steven.price@arm.com>
+In-Reply-To: <20230724094354.90817-25-zhengqi.arch@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023-07-19 23:17:27, Luis Chamberlain wrote:
-> The filesystem configuration file does not allow you to use symlinks to
-> devices given the existing sanity checks verify that the target end
-> device matches the source.
+On 24/07/2023 10:43, Qi Zheng wrote:
+> In preparation for implementing lockless slab shrink, use new APIs to
+> dynamically allocate the drm-panfrost shrinker, so that it can be freed
+> asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
+> read-side critical section when releasing the struct panfrost_device.
 > 
-> Using a symlink is desirable if you want to enable persistent tests
-> across reboots. For example you may want to use /dev/disk/by-id/nvme-eui.*
-> so to ensure that the same drives are used even after reboot. This
-> is very useful if you are testing for example with a virtualized
-> environment and are using PCIe passthrough with other qemu NVMe drives
-> with one or many NVMe drives.
-> 
-> To enable support just add a helper to canonicalize devices prior to
-> running the tests.
-> 
-> This allows one test runner, kdevops, which I just extended with
-> support to use real NVMe drives. The drives it uses for the filesystem
-> configuration optionally is with NVMe eui symlinks so to allow
-> the same drives to be used over reboots.
-> 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+
+One nit below, but otherwise:
+
+Reviewed-by: Steven Price <steven.price@arm.com>
+
 > ---
+>  drivers/gpu/drm/panfrost/panfrost_device.h    |  2 +-
+>  drivers/gpu/drm/panfrost/panfrost_drv.c       |  6 +++-
+>  drivers/gpu/drm/panfrost/panfrost_gem.h       |  2 +-
+>  .../gpu/drm/panfrost/panfrost_gem_shrinker.c  | 32 ++++++++++++-------
+>  4 files changed, 27 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
+> index b0126b9fbadc..e667e5689353 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_device.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_device.h
+> @@ -118,7 +118,7 @@ struct panfrost_device {
+>  
+>  	struct mutex shrinker_lock;
+>  	struct list_head shrinker_list;
+> -	struct shrinker shrinker;
+> +	struct shrinker *shrinker;
+>  
+>  	struct panfrost_devfreq pfdevfreq;
+>  };
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> index bbada731bbbd..f705bbdea360 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> @@ -598,10 +598,14 @@ static int panfrost_probe(struct platform_device *pdev)
+>  	if (err < 0)
+>  		goto err_out1;
+>  
+> -	panfrost_gem_shrinker_init(ddev);
+> +	err = panfrost_gem_shrinker_init(ddev);
+> +	if (err)
+> +		goto err_out2;
+>  
+>  	return 0;
+>  
+> +err_out2:
+> +	drm_dev_unregister(ddev);
+>  err_out1:
+>  	pm_runtime_disable(pfdev->dev);
+>  	panfrost_device_fini(pfdev);
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.h b/drivers/gpu/drm/panfrost/panfrost_gem.h
+> index ad2877eeeccd..863d2ec8d4f0 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_gem.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_gem.h
+> @@ -81,7 +81,7 @@ panfrost_gem_mapping_get(struct panfrost_gem_object *bo,
+>  void panfrost_gem_mapping_put(struct panfrost_gem_mapping *mapping);
+>  void panfrost_gem_teardown_mappings_locked(struct panfrost_gem_object *bo);
+>  
+> -void panfrost_gem_shrinker_init(struct drm_device *dev);
+> +int panfrost_gem_shrinker_init(struct drm_device *dev);
+>  void panfrost_gem_shrinker_cleanup(struct drm_device *dev);
+>  
+>  #endif /* __PANFROST_GEM_H__ */
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
+> index bf0170782f25..9a90dfb5301f 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
+> @@ -18,8 +18,7 @@
+>  static unsigned long
+>  panfrost_gem_shrinker_count(struct shrinker *shrinker, struct shrink_control *sc)
+>  {
+> -	struct panfrost_device *pfdev =
+> -		container_of(shrinker, struct panfrost_device, shrinker);
+> +	struct panfrost_device *pfdev = shrinker->private_data;
+>  	struct drm_gem_shmem_object *shmem;
+>  	unsigned long count = 0;
+>  
+> @@ -65,8 +64,7 @@ static bool panfrost_gem_purge(struct drm_gem_object *obj)
+>  static unsigned long
+>  panfrost_gem_shrinker_scan(struct shrinker *shrinker, struct shrink_control *sc)
+>  {
+> -	struct panfrost_device *pfdev =
+> -		container_of(shrinker, struct panfrost_device, shrinker);
+> +	struct panfrost_device *pfdev = shrinker->private_data;
+>  	struct drm_gem_shmem_object *shmem, *tmp;
+>  	unsigned long freed = 0;
+>  
+> @@ -97,13 +95,24 @@ panfrost_gem_shrinker_scan(struct shrinker *shrinker, struct shrink_control *sc)
+>   *
+>   * This function registers and sets up the panfrost shrinker.
+>   */
+> -void panfrost_gem_shrinker_init(struct drm_device *dev)
+> +int panfrost_gem_shrinker_init(struct drm_device *dev)
+>  {
+>  	struct panfrost_device *pfdev = dev->dev_private;
+> -	pfdev->shrinker.count_objects = panfrost_gem_shrinker_count;
+> -	pfdev->shrinker.scan_objects = panfrost_gem_shrinker_scan;
+> -	pfdev->shrinker.seeks = DEFAULT_SEEKS;
+> -	WARN_ON(register_shrinker(&pfdev->shrinker, "drm-panfrost"));
+> +
+> +	pfdev->shrinker = shrinker_alloc(0, "drm-panfrost");
+> +	if (!pfdev->shrinker) {
+> +		WARN_ON(1);
 
-Looks good to me:
-Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
+I don't think this WARN_ON is particularly useful - if there's a failed
+memory allocation we should see output from the kernel anyway. And we're
+changing the semantics from "continue just without a shrinker" (which
+argueably justifies the warning) to "probe fails, device doesn't work"
+which will be obvious to the user so I don't feel we need the additional
+warn.
 
--- 
-- Andrey
+> +		return -ENOMEM;
+> +	}
+> +
+> +	pfdev->shrinker->count_objects = panfrost_gem_shrinker_count;
+> +	pfdev->shrinker->scan_objects = panfrost_gem_shrinker_scan;
+> +	pfdev->shrinker->seeks = DEFAULT_SEEKS;
+> +	pfdev->shrinker->private_data = pfdev;
+> +
+> +	shrinker_register(pfdev->shrinker);
+> +
+> +	return 0;
+>  }
+>  
+>  /**
+> @@ -116,7 +125,6 @@ void panfrost_gem_shrinker_cleanup(struct drm_device *dev)
+>  {
+>  	struct panfrost_device *pfdev = dev->dev_private;
+>  
+> -	if (pfdev->shrinker.nr_deferred) {
+> -		unregister_shrinker(&pfdev->shrinker);
+> -	}
+> +	if (pfdev->shrinker)
+> +		shrinker_unregister(pfdev->shrinker);
+>  }
 
