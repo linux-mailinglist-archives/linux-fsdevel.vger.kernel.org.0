@@ -2,164 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 838AE75FEE4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 20:18:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E40975FF07
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 20:27:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229675AbjGXSS1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 14:18:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38458 "EHLO
+        id S230232AbjGXS16 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 14:27:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229862AbjGXSS0 (ORCPT
+        with ESMTP id S230245AbjGXS1v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 14:18:26 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABB0FE4E;
-        Mon, 24 Jul 2023 11:18:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=FftEnjrfbBAd3Ww9EqN8sppXbEA0boEKYQQaC3XYChY=; b=ALkl62CiRE28E2LSizMN3y7fEY
-        kJycbVRJZEvZWmguJTa9cV8saw4voW845Dk7ZUIQ/EpBqHehcYEObAuEhAbV5cICUXMxpEHgWD1xY
-        0G6eQD7tzvNPI+5LLNz+rczyJT/b6KyVcZ+bYO3jrw6raTDm6jxMaJpIvIG1XxtiGTStkaoeXQ5ux
-        i2K6PllfRHRUSgqlIGCCkFHMYoEy4mFvIGC8wSVGTqOtUaudgrq/YQeHfsLxDw4QBvQ2/XP3rLron
-        /nYKqQX7yUCVJiO+cQev86wNP91/7Iz+oGCh9AS1aLKpPK5iq4sDhzycio7fP17V8xO0Lv6e1RKak
-        XdsSA3Lg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qO08S-005BNK-31;
-        Mon, 24 Jul 2023 18:18:20 +0000
-Date:   Mon, 24 Jul 2023 11:18:20 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Alistair Popple <apopple@nvidia.com>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Pankaj Raghav <p.raghav@samsung.com>
-Cc:     SeongJae Park <sj@kernel.org>, kevin.tian@intel.com,
-        x86@kernel.org, ajd@linux.ibm.com, kvm@vger.kernel.org,
-        linux-mm@kvack.org, catalin.marinas@arm.com, seanjc@google.com,
-        will@kernel.org, linux-kernel@vger.kernel.org, npiggin@gmail.com,
-        zhi.wang.linux@gmail.com, jgg@ziepe.ca, iommu@lists.linux.dev,
-        nicolinc@nvidia.com, jhubbard@nvidia.com, fbarrat@linux.ibm.com,
-        akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, robin.murphy@arm.com,
-        mcgrof@kernel.org
-Subject: Re: [PATCH v2 3/5] mmu_notifiers: Call invalidate_range() when
- invalidating TLBs
-Message-ID: <ZL7AbLJ+RUUgzt8O@bombadil.infradead.org>
-References: <8f293bb51a423afa71ddc3ba46e9f323ee9ffbc7.1689768831.git-series.apopple@nvidia.com>
- <20230719225105.1934-1-sj@kernel.org>
- <877cqvl7vr.fsf@nvdebian.thelocal>
+        Mon, 24 Jul 2023 14:27:51 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F407AA6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 11:27:49 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-992f6d7c7fbso813775166b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 11:27:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1690223268; x=1690828068;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hFsFnyl7tT3CvQE6TFTWwPvkx99KpTgqJ+hpUJ1OTjY=;
+        b=YDEMgSzb9abFx8/eHJUihXwF+FMZV7mcJSJm7wlzZOsZttCR363cG7hHA1YW106/UT
+         Nr07LqVy7KcKImwr0uzsIL4rc9w5x+54dxUbq+IXNMhX4k42OhH80oeBijTdKrJmzIeC
+         oFZcQ2QwVWRH5DNvkho3nigJurAOXGE021em4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690223268; x=1690828068;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hFsFnyl7tT3CvQE6TFTWwPvkx99KpTgqJ+hpUJ1OTjY=;
+        b=LEeR4l2Mke7vtTvJVCKdg1UgLw3qd7ClLhwABWjMcIIm/7OH+QlywH5Bm8cj2rNfMU
+         PN/wpRlQDwD7TkyGZ580NRkp0RsYenKL3+OCSFy/gcYJslj4dtjCyLwicEx/FNUDVObp
+         RLTQSX9KPCgjQwy1qm60VSYNh2U+1S9Baw3LDQE79Ij0ZJ9axtAga9dOpPqdVcAhSiL3
+         JjpTGFje3K/t920i+gCsMr6EiylPT4SmsH8QpBnTaBvR5nEPfLx1a5BmydLd8iHpKGiX
+         sB1oenI2qqQWmFq/e4VuYH+PZiNBslVLvujDfGVdWq+wwLZ7mQXfdLlVEpgASGy98g+C
+         b6AA==
+X-Gm-Message-State: ABy/qLadO0ZKnJdEhE5zZj84AhyFn3f/3KBv+a6r8sWQge4jVXYZju7P
+        eWyzbMgKZy+aeqKDUxZzET9sMzAePbuL7eMUIcBRiMTN
+X-Google-Smtp-Source: APBJJlG8skl5GvANmruxmAIpE7UTU3j8jtwjVOZ6zAGPGhyf50l4DhpihQKl6Bc4IlNgjRua4j4H+w==
+X-Received: by 2002:a17:906:314c:b0:994:55ce:1630 with SMTP id e12-20020a170906314c00b0099455ce1630mr8864981eje.42.1690223268254;
+        Mon, 24 Jul 2023 11:27:48 -0700 (PDT)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id si1-20020a170906cec100b00992d70f8078sm7109357ejb.106.2023.07.24.11.27.46
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jul 2023 11:27:47 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-51e429e1eabso6943372a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 11:27:46 -0700 (PDT)
+X-Received: by 2002:a50:ef0b:0:b0:51d:d4c0:eea5 with SMTP id
+ m11-20020a50ef0b000000b0051dd4c0eea5mr7690205eds.40.1690223266649; Mon, 24
+ Jul 2023 11:27:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <877cqvl7vr.fsf@nvdebian.thelocal>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20230724-vfs-fdget_pos-v1-1-a4abfd7103f3@kernel.org>
+ <CAHk-=whfJhag+iEscftpVq=dHTeL7rQopCvH+Pcs8vJHCGNvXQ@mail.gmail.com>
+ <20230724-scheren-absegnen-8c807c760ba1@brauner> <CAHk-=whwUTsixPwyBiuA25F2mAzARTU_-BijfmJ3MzkKLOYDmA@mail.gmail.com>
+ <20230724-gebessert-wortwahl-195daecce8f0@brauner> <CAHk-=wiZRxy3983r_nvWG4JP=w+Wi623WA9W6i2GXoTi+=6zWg@mail.gmail.com>
+ <20230724-eckpunkte-melden-fc35b97d1c11@brauner> <CAHk-=wijcZGxrw8+aukW-m2YRGn5AUWfZsPSscez7w7_EqfuGQ@mail.gmail.com>
+ <790fbcff-9831-e5cf-2aaf-1983d9c2cffe@kernel.dk>
+In-Reply-To: <790fbcff-9831-e5cf-2aaf-1983d9c2cffe@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 24 Jul 2023 11:27:29 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgqLGdTs5hBDskY4HjizPVYJ0cA6=-dwRR3TpJY7GZG3A@mail.gmail.com>
+Message-ID: <CAHk-=wgqLGdTs5hBDskY4HjizPVYJ0cA6=-dwRR3TpJY7GZG3A@mail.gmail.com>
+Subject: Re: [PATCH] file: always lock position
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Seth Forshee <sforshee@kernel.org>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Cc'ing fsdevel + xfs folks as this fixes a regression tests with
-XFS with generic/176.
+On Mon, 24 Jul 2023 at 11:05, Jens Axboe <axboe@kernel.dk> wrote:
+>
+> io_uring never does that isn't the original user space creator task, or
+> from the io-wq workers that it may create. Those are _always_ normal
+> threads. There's no workqueue/kthread usage for IO or file
+> getting/putting/installing/removing etc.
 
-On Thu, Jul 20, 2023 at 10:52:59AM +1000, Alistair Popple wrote:
-> 
-> SeongJae Park <sj@kernel.org> writes:
-> 
-> > Hi Alistair,
-> >
-> > On Wed, 19 Jul 2023 22:18:44 +1000 Alistair Popple <apopple@nvidia.com> wrote:
-> >
-> >> The invalidate_range() is going to become an architecture specific mmu
-> >> notifier used to keep the TLB of secondary MMUs such as an IOMMU in
-> >> sync with the CPU page tables. Currently it is called from separate
-> >> code paths to the main CPU TLB invalidations. This can lead to a
-> >> secondary TLB not getting invalidated when required and makes it hard
-> >> to reason about when exactly the secondary TLB is invalidated.
-> >> 
-> >> To fix this move the notifier call to the architecture specific TLB
-> >> maintenance functions for architectures that have secondary MMUs
-> >> requiring explicit software invalidations.
-> >> 
-> >> This fixes a SMMU bug on ARM64. On ARM64 PTE permission upgrades
-> >> require a TLB invalidation. This invalidation is done by the
-> >> architecutre specific ptep_set_access_flags() which calls
-> >> flush_tlb_page() if required. However this doesn't call the notifier
-> >> resulting in infinite faults being generated by devices using the SMMU
-> >> if it has previously cached a read-only PTE in it's TLB.
-> >> 
-> >> Moving the invalidations into the TLB invalidation functions ensures
-> >> all invalidations happen at the same time as the CPU invalidation. The
-> >> architecture specific flush_tlb_all() routines do not call the
-> >> notifier as none of the IOMMUs require this.
-> >> 
-> >> Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> >> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-> >
-> > I found below kernel NULL-dereference issue on latest mm-unstable tree, and
-> > bisect points me to the commit of this patch, namely
-> > 75c400f82d347af1307010a3e06f3aa5d831d995.
-> >
-> > To reproduce, I use 'stress-ng --bigheap $(nproc)'.  The issue happens as soon
-> > as it starts reclaiming memory.  I didn't dive deep into this yet, but
-> > reporting this issue first, since you might have an idea already.
-> 
-> Thanks for the report SJ!
-> 
-> I see the problem - current->mm can (obviously!) be NULL which is what's
-> leading to the NULL dereference. Instead I think on x86 I need to call
-> the notifier when adding the invalidate to the tlbbatch in
-> arch_tlbbatch_add_pending() which is equivalent to what ARM64 does.
-> 
-> The below should fix it. Will do a respin with this.
-> 
-> ---
-> 
-> diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-> index 837e4a50281a..79c46da919b9 100644
-> --- a/arch/x86/include/asm/tlbflush.h
-> +++ b/arch/x86/include/asm/tlbflush.h
-> @@ -4,6 +4,7 @@
->  
->  #include <linux/mm_types.h>
->  #include <linux/sched.h>
-> +#include <linux/mmu_notifier.h>
->  
->  #include <asm/processor.h>
->  #include <asm/cpufeature.h>
-> @@ -282,6 +283,7 @@ static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *b
->  {
->  	inc_mm_tlb_gen(mm);
->  	cpumask_or(&batch->cpumask, &batch->cpumask, mm_cpumask(mm));
-> +	mmu_notifier_arch_invalidate_secondary_tlbs(mm, 0, -1UL);
->  }
->  
->  static inline void arch_flush_tlb_batched_pending(struct mm_struct *mm)
-> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-> index 0b990fb56b66..2d253919b3e8 100644
-> --- a/arch/x86/mm/tlb.c
-> +++ b/arch/x86/mm/tlb.c
-> @@ -1265,7 +1265,6 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
->  
->  	put_flush_tlb_info();
->  	put_cpu();
-> -	mmu_notifier_arch_invalidate_secondary_tlbs(current->mm, 0, -1UL);
->  }
->  
->  /*
+That's what I thought. But Christian's comments about the io_uring
+getdents work made me worry.
 
-This patch also fixes a regression introduced on linux-next, the same
-crash on arch_tlbbatch_flush() is reproducible with fstests generic/176
-on XFS. This patch fixes that regression [0]. This should also close out
-the syzbot crash too [1]
+If io_uring does everything right, then the old "file_count(file) > 1"
+test in __fdget_pos() - now sadly removed - should work just fine for
+any io_uring directory handling.
 
-[0] https://gist.github.com/mcgrof/b37fc8cf7e6e1b3935242681de1a83e2
-[1] https://lore.kernel.org/all/0000000000003afcb4060135a664@google.com/
+It may not be obvious when you look at just that test in a vacuum, but
+it happens after __fdget_pos() has done the
 
-Tested-by: Luis Chamberlain <mcgrof@kernel.org>
+        unsigned long v = __fdget(fd);
+        struct file *file = (struct file *)(v & ~3);
 
-  Luis
+and if it's a threaded app - where io_uring threads count the same -
+then the __fdget() in that sequence will have incremented the file
+count.
+
+So when it then used to do that
+
+                if (file_count(file) > 1) {
+
+that "> 1" included not just all the references from dup() etc,  but
+for any threaded use where we have multiple references to the file
+table it also that reference we get from __fdget() -> __fget() ->
+__fget_files() -> __fget_files_rcu() -> get_file_rcu() ->
+atomic_long_inc_not_zero(&(x)->f_count)).
+
+And yes, that's a fairly long chain, through some subtle code. Doing
+"fdget()" (and variations) is not trivial.
+
+Of course, with directory handling, one of the things people have
+wanted is to have a "pread()" like model, where you have a position
+that is given externally and not tied to the 'struct file'.
+
+We don't have such a thing, and I don't think we can have one, because
+I think filesystems also end up having possibly other private data in
+the 'struct file' (trivially: the directory cursor for
+dcache_dir_open()).
+
+And other filesystems have it per-inode, which is why we have that
+"iterate_shared" vs "iterate" horror.
+
+So any dentry thing that wants to do things in parallel needs to open
+their own private 'file' just for *that* reason. And even then they
+will fail if the filesystem doesn't have that shared directory entry
+iterator.
+
+           Linus
