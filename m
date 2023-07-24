@@ -2,165 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 598CE75F5E3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 14:16:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CE0775F607
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 14:18:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230172AbjGXMQK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 08:16:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46170 "EHLO
+        id S230368AbjGXMST (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 08:18:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229732AbjGXMQD (ORCPT
+        with ESMTP id S229456AbjGXMSS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 08:16:03 -0400
-Received: from mail-40136.proton.ch (mail-40136.proton.ch [185.70.40.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C64D4E6D;
-        Mon, 24 Jul 2023 05:15:37 -0700 (PDT)
-Date:   Mon, 24 Jul 2023 12:15:17 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tmb.nu;
-        s=protonmail; t=1690200927; x=1690460127;
-        bh=xGE6QjHm3ej4AxAX+5EXNKI8Zly3g7JGtmwu3HuYvhg=;
-        h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-         Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-        b=TZIQN1Xh+XdlLYOxt0udbKtWWMD3wL/AZ82adZufAkHSESK0ulr1Ld0VhavgA+fhG
-         fpqAmGis3d8uxiftYfSDBGI4vUr1mPrEHSrzJUIyQwCnZgm0YNy76Tje7fsRqomibM
-         uHnIWGMjv9CmjOouHdW6z0ayVwmaCUXnETfPaZuA=
-To:     Mike Kravetz <mike.kravetz@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-From:   Thomas Backlund <tmb@tmb.nu>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Sidhartha Kumar <sidhartha.kumar@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Erdem Aktas <erdemaktas@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kernel test robot <oliver.sang@intel.com>
-Subject: Re: [PATCH 1/2] Revert "page cache: fix page_cache_next/prev_miss off by one"
-Message-ID: <bf744801-96a1-bdf1-79b5-5e8a21c05be3@tmb.nu>
-Feedback-ID: 19711308:user:proton
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        Mon, 24 Jul 2023 08:18:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32FCA170D;
+        Mon, 24 Jul 2023 05:17:47 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8A55C61124;
+        Mon, 24 Jul 2023 12:17:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE84DC433C7;
+        Mon, 24 Jul 2023 12:17:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690201064;
+        bh=QrEpSq7cPtZ3cWIhHPElPK38cx6jwtPbdBU+j7U7fKM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=lFo5/uyfnIZhAXSNnfYH/zs0wLPvsdGmMHFPu1gPwZUyuOP10nfFnm2e23E9mVHox
+         RPTdsfQNauiU49m1hBahLSzV9+gtG/J7umAiMCAj2AameE5Kr8rrBCOJ9W6HPjIMkc
+         lBp1NfEAIBufJmTKwy4+ZdRStOdLezK2HhFQXgRbYXDnNec/zH0oZOEiZUwOk3URR0
+         CwbOA3I9uES6cdgV2JXRUz8O/MvIwDzgSFlH2Jg5PAfwuqtmwK87bHc16vNtVYlbJG
+         hfzmJLudml4J90E2WDeTwJcjuLZaZewiSQ45z8+KBeEkpGI5axaDFLzZmilBUDvalQ
+         cGU58i/dTyQGA==
+Message-ID: <01e8445d033314b6d9cd67bece74ca1c3ce89945.camel@kernel.org>
+Subject: Re: [PATCH v2 34/47] nfsd: dynamically allocate the nfsd-client
+ shrinker
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Qi Zheng <zhengqi.arch@bytedance.com>, akpm@linux-foundation.org,
+        david@fromorbit.com, tkhai@ya.ru, vbabka@suse.cz,
+        roman.gushchin@linux.dev, djwong@kernel.org, brauner@kernel.org,
+        paulmck@kernel.org, tytso@mit.edu, steven.price@arm.com,
+        cel@kernel.org, senozhatsky@chromium.org, yujie.liu@intel.com,
+        gregkh@linuxfoundation.org, muchun.song@linux.dev
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+        kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-erofs@lists.ozlabs.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+        rcu@vger.kernel.org, netdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        dm-devel@redhat.com, linux-raid@vger.kernel.org,
+        linux-bcache@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Chuck Lever <chuck.lever@oracle.com>
+Date:   Mon, 24 Jul 2023 08:17:39 -0400
+In-Reply-To: <20230724094354.90817-35-zhengqi.arch@bytedance.com>
+References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
+         <20230724094354.90817-35-zhengqi.arch@bytedance.com>
+Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_MSPIKE_H5,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Den 2023-06-22 kl. 00:24, skrev Mike Kravetz:
-> This reverts commit 9425c591e06a9ab27a145ba655fb50532cf0bcc9
+On Mon, 2023-07-24 at 17:43 +0800, Qi Zheng wrote:
+> In preparation for implementing lockless slab shrink, use new APIs to
+> dynamically allocate the nfsd-client shrinker, so that it can be freed
+> asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
+> read-side critical section when releasing the struct nfsd_net.
 >=20
-> The reverted commit fixed up routines primarily used by readahead code
-> such that they could also be used by hugetlb.  Unfortunately, this
-> caused a performance regression as pointed out by the Closes: tag.
->=20
-> The hugetlb code which uses page_cache_next_miss will be addressed in
-> a subsequent patch.
->=20
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202306211346.1e9ff03e-oliver.sang@=
-intel.com
-> Fixes: 9425c591e06a ("page cache: fix page_cache_next/prev_miss off by on=
-e")
-> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-
-
-Should not this one be submitted to 6.4 stable branch too ?
-
-
-git describe --contains 9425c591e06a
-v6.4-rc7~29^2~1
-
-The other one (hugetlb: revert use of page_cache_next_miss()) of this=20
-patch series landed in 6.4.2
-
-Or am I missing something ?
-
---
-Thomas
-
+> Acked-by: Chuck Lever <chuck.lever@oracle.com>
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 > ---
->   mm/filemap.c | 26 ++++++++++----------------
->   1 file changed, 10 insertions(+), 16 deletions(-)
+>  fs/nfsd/netns.h     |  2 +-
+>  fs/nfsd/nfs4state.c | 20 ++++++++++++--------
+>  2 files changed, 13 insertions(+), 9 deletions(-)
 >=20
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 3b73101f9f86..9e44a49bbd74 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -1728,9 +1728,7 @@ bool __folio_lock_or_retry(struct folio *folio, str=
-uct mm_struct *mm,
->    *
->    * Return: The index of the gap if found, otherwise an index outside th=
-e
->    * range specified (in which case 'return - index >=3D max_scan' will b=
-e true).
-> - * In the rare case of index wrap-around, 0 will be returned.  0 will al=
-so
-> - * be returned if index =3D=3D 0 and there is a gap at the index.  We ca=
-n not
-> - * wrap-around if passed index =3D=3D 0.
-> + * In the rare case of index wrap-around, 0 will be returned.
->    */
->   pgoff_t page_cache_next_miss(struct address_space *mapping,
->   =09=09=09     pgoff_t index, unsigned long max_scan)
-> @@ -1740,13 +1738,12 @@ pgoff_t page_cache_next_miss(struct address_space=
- *mapping,
->   =09while (max_scan--) {
->   =09=09void *entry =3D xas_next(&xas);
->   =09=09if (!entry || xa_is_value(entry))
-> -=09=09=09return xas.xa_index;
-> -=09=09if (xas.xa_index =3D=3D 0 && index !=3D 0)
-> -=09=09=09return xas.xa_index;
-> +=09=09=09break;
-> +=09=09if (xas.xa_index =3D=3D 0)
-> +=09=09=09break;
->   =09}
->  =20
-> -=09/* No gaps in range and no wrap-around, return index beyond range */
-> -=09return xas.xa_index + 1;
-> +=09return xas.xa_index;
->   }
->   EXPORT_SYMBOL(page_cache_next_miss);
->  =20
-> @@ -1767,9 +1764,7 @@ EXPORT_SYMBOL(page_cache_next_miss);
->    *
->    * Return: The index of the gap if found, otherwise an index outside th=
-e
->    * range specified (in which case 'index - return >=3D max_scan' will b=
-e true).
-> - * In the rare case of wrap-around, ULONG_MAX will be returned.  ULONG_M=
-AX
-> - * will also be returned if index =3D=3D ULONG_MAX and there is a gap at=
- the
-> - * index.  We can not wrap-around if passed index =3D=3D ULONG_MAX.
-> + * In the rare case of wrap-around, ULONG_MAX will be returned.
->    */
->   pgoff_t page_cache_prev_miss(struct address_space *mapping,
->   =09=09=09     pgoff_t index, unsigned long max_scan)
-> @@ -1779,13 +1774,12 @@ pgoff_t page_cache_prev_miss(struct address_space=
- *mapping,
->   =09while (max_scan--) {
->   =09=09void *entry =3D xas_prev(&xas);
->   =09=09if (!entry || xa_is_value(entry))
-> -=09=09=09return xas.xa_index;
-> -=09=09if (xas.xa_index =3D=3D ULONG_MAX && index !=3D ULONG_MAX)
-> -=09=09=09return xas.xa_index;
-> +=09=09=09break;
-> +=09=09if (xas.xa_index =3D=3D ULONG_MAX)
-> +=09=09=09break;
->   =09}
->  =20
-> -=09/* No gaps in range and no wrap-around, return index beyond range */
-> -=09return xas.xa_index - 1;
-> +=09return xas.xa_index;
->   }
->   EXPORT_SYMBOL(page_cache_prev_miss);
->  =20
+> diff --git a/fs/nfsd/netns.h b/fs/nfsd/netns.h
+> index ec49b200b797..f669444d5336 100644
+> --- a/fs/nfsd/netns.h
+> +++ b/fs/nfsd/netns.h
+> @@ -195,7 +195,7 @@ struct nfsd_net {
+>  	int			nfs4_max_clients;
+> =20
+>  	atomic_t		nfsd_courtesy_clients;
+> -	struct shrinker		nfsd_client_shrinker;
+> +	struct shrinker		*nfsd_client_shrinker;
+>  	struct work_struct	nfsd_shrinker_work;
+>  };
+> =20
+> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> index 3339177f8e2f..c7a4616cd866 100644
+> --- a/fs/nfsd/nfs4state.c
+> +++ b/fs/nfsd/nfs4state.c
+> @@ -4388,8 +4388,7 @@ static unsigned long
+>  nfsd4_state_shrinker_count(struct shrinker *shrink, struct shrink_contro=
+l *sc)
+>  {
+>  	int count;
+> -	struct nfsd_net *nn =3D container_of(shrink,
+> -			struct nfsd_net, nfsd_client_shrinker);
+> +	struct nfsd_net *nn =3D shrink->private_data;
+> =20
+>  	count =3D atomic_read(&nn->nfsd_courtesy_clients);
+>  	if (!count)
+> @@ -8125,12 +8124,17 @@ static int nfs4_state_create_net(struct net *net)
+>  	INIT_WORK(&nn->nfsd_shrinker_work, nfsd4_state_shrinker_worker);
+>  	get_net(net);
+> =20
+> -	nn->nfsd_client_shrinker.scan_objects =3D nfsd4_state_shrinker_scan;
+> -	nn->nfsd_client_shrinker.count_objects =3D nfsd4_state_shrinker_count;
+> -	nn->nfsd_client_shrinker.seeks =3D DEFAULT_SEEKS;
+> -
+> -	if (register_shrinker(&nn->nfsd_client_shrinker, "nfsd-client"))
+> +	nn->nfsd_client_shrinker =3D shrinker_alloc(0, "nfsd-client");
+> +	if (!nn->nfsd_client_shrinker)
+>  		goto err_shrinker;
+> +
+> +	nn->nfsd_client_shrinker->scan_objects =3D nfsd4_state_shrinker_scan;
+> +	nn->nfsd_client_shrinker->count_objects =3D nfsd4_state_shrinker_count;
+> +	nn->nfsd_client_shrinker->seeks =3D DEFAULT_SEEKS;
+> +	nn->nfsd_client_shrinker->private_data =3D nn;
+> +
+> +	shrinker_register(nn->nfsd_client_shrinker);
+> +
+>  	return 0;
+> =20
+>  err_shrinker:
+> @@ -8228,7 +8232,7 @@ nfs4_state_shutdown_net(struct net *net)
+>  	struct list_head *pos, *next, reaplist;
+>  	struct nfsd_net *nn =3D net_generic(net, nfsd_net_id);
+> =20
+> -	unregister_shrinker(&nn->nfsd_client_shrinker);
+> +	shrinker_unregister(nn->nfsd_client_shrinker);
+>  	cancel_work(&nn->nfsd_shrinker_work);
+>  	cancel_delayed_work_sync(&nn->laundromat_work);
+>  	locks_end_grace(&nn->nfsd4_manager);
 
-
+Acked-by: Jeff Layton <jlayton@kernel.org>
