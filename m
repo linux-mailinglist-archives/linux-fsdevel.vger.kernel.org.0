@@ -2,77 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 56AD475FDE4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 19:37:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBF8075FDEA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jul 2023 19:39:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231309AbjGXRhU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 13:37:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41478 "EHLO
+        id S230159AbjGXRjD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 13:39:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230159AbjGXRhT (ORCPT
+        with ESMTP id S229735AbjGXRjC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 13:37:19 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 780E5188
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 10:36:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690220191;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kNGMSM8bxe1gWl9DKNB8FIofvuGTxcy8H7Yww9mrYIY=;
-        b=UFA076dOOnxqxplg042wUUbYzcLFn4JPs8YrBvObruixP7F/ko91YCvOCXngi0gAsrq6NE
-        iO0NIPOaQQu5ODl21VJSPMLOaH9+UHkx5uZrsyXqhNzxjUdgs/CYAGIVkS9Lv7Sy+qsunr
-        xFJh6vMjlNXFbfz3Ev3CZ1a6ftIfK3s=
-Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com
- [209.85.217.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-208-atWIiMgTNBmrjI8mHUdL5w-1; Mon, 24 Jul 2023 13:36:30 -0400
-X-MC-Unique: atWIiMgTNBmrjI8mHUdL5w-1
-Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-4451bae544cso786192137.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 10:36:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690220189; x=1690824989;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kNGMSM8bxe1gWl9DKNB8FIofvuGTxcy8H7Yww9mrYIY=;
-        b=BEtt+vlhBII2QU50If53VesgT5kWJpndbmVPPQarZbKunoexV+UzK/MxkIAwIbqv5+
-         A9CE9o3+06hnyYJz1iLvzhUEiTSHT1KrzMf4jqv2VEc3978OEPGu3aem08KXPtr46Q2k
-         +tVwlLBzkO7hn7M3G1n39A10OHHgYo+Uih4ousrTPlO9iWw+jT6sDUM7SGd4JZB+Tk7Y
-         +ttwJalZlL2pwtUb6jFjDTxL4zshNcsoA5Xz1fdVvyfM+SBsIU4zohHbWIYj4TIWkjAv
-         G8CftmX3jxMTzF78HOV+IQZ/hmcroXRH/uBWrCShLENIsvrXjwfM92az3ynjQUMNDROD
-         fj+w==
-X-Gm-Message-State: ABy/qLZEOdpe/W/eINgH0TrC3uldEr5uDw4konaREASSGKXqeP15eF8x
-        0B4r2fhUQlFGHmW4o/LcpxOqk9qilFTCek4SJiOyZCXEakBKyJi8/bA7GD+YtiMT4VUR1rKjVB1
-        YKd++T1zKwcctFouMVRoqNPQMInJqot5f0nMPQe1KeA==
-X-Received: by 2002:a67:f8d1:0:b0:443:6052:43ae with SMTP id c17-20020a67f8d1000000b00443605243aemr3299076vsp.24.1690220189675;
-        Mon, 24 Jul 2023 10:36:29 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlEPDqGTgQT6TM0EZ/andXcsJaVfqEGx4nspzB3wq5naiCL3fLJVYaemN8sLojXqmdOKsQ5G89TIgjY7tVB3FGk=
-X-Received: by 2002:a67:f8d1:0:b0:443:6052:43ae with SMTP id
- c17-20020a67f8d1000000b00443605243aemr3299068vsp.24.1690220189488; Mon, 24
- Jul 2023 10:36:29 -0700 (PDT)
+        Mon, 24 Jul 2023 13:39:02 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8C0610D1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jul 2023 10:39:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=Ng7LWPJ/45nE+0X2Uw07gbapNF8HAGcGiyHU5W4Ls88=; b=Ib8J3t6H2bxdWiJ/MpoM5DyuiH
+        jfMB1ThC6+iOljpj0S+y/TjWdLWoDNnwb/OwnmtX2E17KtfwtmaOXNOgaJAg6GBkUjto+0SCxwclX
+        vAg8QebpyvqfwneaTgtq8ooKKbXEw3ldykDIu/CLONAsim1wkQuYX+nC09zbnX5kpgRFtprfQuTCC
+        nG1dj27lbqnY/ECGbRR6SDQykvZ3GILpWT9c7E8Bh5QJm2cS9DpRAb4FZOJadQwzjG0w6uWx0sJx5
+        7GVUaL/A6RNhmpJ1ysf2UjaQ8pj5DC9dQJ6u9m1STsedOZPKUTjeupeE9OYXAyq2iyJ9znGsKtHp/
+        5+dUQhKA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qNzWL-004eOz-A1; Mon, 24 Jul 2023 17:38:57 +0000
+Date:   Mon, 24 Jul 2023 18:38:57 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     linux-mm@kvack.org, Arjun Roy <arjunroy@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        linux-fsdevel@vger.kernel.org,
+        Punit Agrawal <punit.agrawal@bytedance.com>
+Subject: Re: [PATCH v2 7/9] mm: Run the fault-around code under the VMA lock
+Message-ID: <ZL63MYjtUuiyGgjS@casper.infradead.org>
+References: <20230711202047.3818697-1-willy@infradead.org>
+ <20230711202047.3818697-8-willy@infradead.org>
+ <CAJuCfpF9DjN1OqKer_aGRWAHCBtEfYVcyThYzu9CXbWXSB8ybQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <CAASaF6yKxWaW6me0Y+vSEo0qUm_LTyL5CPVka75EPg_yq4MO9g@mail.gmail.com>
- <7854000d2ce5ac32b75782a7c4574f25a11b573d.1689757133.git.jstancek@redhat.com>
- <64434.1690193532@warthog.procyon.org.uk> <10687.1690213447@warthog.procyon.org.uk>
- <20230724100914.38f286a5@kernel.org>
-In-Reply-To: <20230724100914.38f286a5@kernel.org>
-From:   Jan Stancek <jstancek@redhat.com>
-Date:   Mon, 24 Jul 2023 19:37:08 +0200
-Message-ID: <CAASaF6z27XJGhn_7uX+KXrTFoi6KtK4Oxp1b_OZ7dW8yEH9X5Q@mail.gmail.com>
-Subject: Re: [PATCH] splice, net: Fix splice_to_socket() for O_NONBLOCK socket
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, brauner@kernel.org,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpF9DjN1OqKer_aGRWAHCBtEfYVcyThYzu9CXbWXSB8ybQ@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,16 +54,19 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 24, 2023 at 7:09=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Mon, 24 Jul 2023 16:44:07 +0100 David Howells wrote:
-> > Anyway, did you want to post this to netdev too so that the networking =
-tree
-> > picks it up?  Feel free to add:
->
-> +1, no preference which tree this goes thru, but if no one else claims
-> it please repost CCing netdev@vger.kernel.org
+On Thu, Jul 13, 2023 at 08:32:27PM -0700, Suren Baghdasaryan wrote:
+> On Tue, Jul 11, 2023 at 1:20 PM Matthew Wilcox (Oracle)
+> <willy@infradead.org> wrote:
+> >
+> > The map_pages fs method should be safe to run under the VMA lock instead
+> > of the mmap lock.  This should have a measurable reduction in contention
+> > on the mmap lock.
+> >
+> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> 
+> I'll trust your claim that vmf->vma->vm_ops->map_pages() never rely on
+> mmap_lock. I think it makes sense but I did not check every case :)
 
-I'll repost, thanks.
-
+Fortunately, there's really only one implementation of ->map_pages()
+and it's filemap_map_pages().  afs_vm_map_pages() is a thin wrapper
+around it.
