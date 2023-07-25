@@ -2,125 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A1A8761E1F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 18:12:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D996761E8D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 18:32:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231722AbjGYQMC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jul 2023 12:12:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47146 "EHLO
+        id S230062AbjGYQcN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jul 2023 12:32:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230177AbjGYQMB (ORCPT
+        with ESMTP id S229603AbjGYQcM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jul 2023 12:12:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BE8410CC;
-        Tue, 25 Jul 2023 09:12:00 -0700 (PDT)
+        Tue, 25 Jul 2023 12:32:12 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1394113D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 09:32:11 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AF569617D5;
-        Tue, 25 Jul 2023 16:11:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F22BC433C7;
-        Tue, 25 Jul 2023 16:11:59 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9B189617E4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 16:32:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0C79C433C8;
+        Tue, 25 Jul 2023 16:32:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690301519;
-        bh=6/SNhPKHabrmGeQMxzzLZYV2pEvSBrp2/eHwg/WAXHI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=R4SQCYQKBl6u95L5DEP14RcRLvYUzgmzuP7pCNmY3HjtPfWCeadMqprX/Scf1CY7J
-         jTCZIfqB2H2DsxFCXaEgrBwnQgXX2bOh3CRrgTvFhE80bOCU8dIB2r4kyFEdWevYAu
-         qFoDKvHqb2tfbKXwDHA6yRZyQf+Ne/9Vfv+zIvFokC95RzuJ7OXzAzmw1dFw7Nsg6l
-         rmoKBtQR41uVfx89MMeyYBL1QWZY+RVsnmtXGgeQhkc5oKYBHO5XG7t89q09Zs0j1K
-         rr+hWF5xuJxbaQkrRPkAUVA3xgoKaGfHVhvEOIoziiefZtUW+qyfuWyLDkVC6IltkI
-         KTHVcOf7wtWoA==
-Date:   Tue, 25 Jul 2023 09:11:58 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>
-Cc:     araherle@in.ibm.com, bfoster@redhat.com, djwong@kernel.org,
-        hch@lst.de, kent.overstreet@linux.dev, ritesh.list@gmail.com,
-        willy@infradead.org, Dave Chinner <david@fromorbit.com>
-Subject: [ANNOUNCE] xfs-linux: iomap-for-next updated to a67371b7aee9
-Message-ID: <20230725161158.GZ11352@frogsfrogsfrogs>
+        s=k20201202; t=1690302730;
+        bh=w5CYpGezhMyGhBHulH91IHFKRnOySxzwJL/Becf2xjw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ib3wJiS9/AY2JmfAkGVS//uNwnJ4j74LOOx48jBBDpbPUEcZEsJCCG9MGNBNHOJx+
+         jRtWpZs/vySzVHyQdPYiT9XXfVcTdyzNtUfT+33k7Tu9HOlo0BmioGJmekaHGrK+EC
+         kGWh2QpKnlhk+7FkHeEEHmwU0Tdt6wHX2EZkWdDPXBtdEtEjvYFaniSAQGIu4AG3cK
+         mTFUGax8fKwFYn8BpT3Bs20ocgvE8vFP2VlTdMxl4xF1a2HCWKNd5EEeANxuVpE8BQ
+         wvCp1bxhxiIPl/+UneD/9RzIgZHtIqbWBQwwpItloPCwEfgWFu24NKHDigTnNQlOcL
+         Pu6MO/hSXNqag==
+Date:   Tue, 25 Jul 2023 18:32:05 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     viro@zeniv.linux.org.uk, jack@suse.cz,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: open the block device after allocation the
+ super_block
+Message-ID: <20230725-einnahmen-warnschilder-17779aec0a97@brauner>
+References: <20230724175145.201318-1-hch@lst.de>
+ <20230725-tagebuch-gerede-a28f8fd8084a@brauner>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230725-tagebuch-gerede-a28f8fd8084a@brauner>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+On Tue, Jul 25, 2023 at 02:35:17PM +0200, Christian Brauner wrote:
+> On Mon, Jul 24, 2023 at 10:51:45AM -0700, Christoph Hellwig wrote:
+> > From: Jan Kara <jack@suse.cz>
+> > 
+> > Currently get_tree_bdev and mount_bdev open the block device before
+> > commiting to allocating a super block.  This means the block device
+> > is opened even for bind mounts and other reuses of the super_block.
+> > 
+> > That creates problems for restricting the number of writers to a device,
+> > and also leads to a unusual and not very helpful holder (the fs_type).
+> > 
+> > Reorganize the mount code to first look whether the superblock for a
+> > particular device is already mounted and open the block device only if
+> > it is not.
+> > 
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> > [hch: port to before the bdev_handle changes,
+> >       duplicate the bdev read-only check from blkdev_get_by_path,
+> >       extend the fsfree_mutex coverage to protect against freezes,
+> >       fix an open bdev leak when the bdev is frozen,
+> >       use the bdev local variable more,
+> >       rename the s variable to sb to be more descriptive]
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > ---
+> > 
+> > So I promised to get a series that builds on top of this ready, but
+> > I'm way to busy and this will take a while.  Getting this reworked
+> > version of Jan's patch out for everyone to use it as a based given
+> > that Christian is back from vacation, and I think Jan should be about
+> > back now as well.
+> 
+> I'm in the middle of reviewing this. You're probably aware, but both
+> btrfs and nilfs at least still open the devices first since they
+> open-code their bdev and sb handling.
 
-The iomap-for-next branch of the xfs-linux repository at:
+I've removed the references to bind mounts from the commit message.
+I mentioned in [1] and [2] that this problem is really related to
+superblocks at it's core. It's just that technically a bind-mount would
+be created in the following scenario where two processes race to create
+a superblock:
 
-	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+P1								P2
+fd_fs = fsopen("ext4");						fd_fs = fsopen("ext4");
+fsconfig(fd_fs, FSCONFIG_SET_STRING, "source", "/dev/sda");	fsconfig(fd_fs, FSCONFIG_SET_STRING, "source", "/dev/sda");
 
-has just been updated.
+// wins and creates superblock
+fsconfig(fd_fs, FSCONFIG_CMD_CREATE, ...)
+								// finds compatible superblock of P1
+								// spins until P1 sets SB_BORN and grabs a reference
+								fsconfig(fd_fs, FSCONFIG_CMD_CREATE, ...)
 
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.  This push completes our ability to perform large
-writes to large folios and have it not suck for writeback.
+P1								P2
+fd_mnt1 = fsmount(fd_fs);					fd_mnt2 = fsmount(fd_fs);
+move_mount(fd_mnt1, "/A")                                       move_mount(fd_mnt2, "/B")
 
-Next up is probably the switch to handling of directio completions in
-the caller's task context instead of a workqueue, but I think this
-should soak in for-next for a few days to see what the bots think. :P
+If we forbid writes to a mounted block device like Jan's other patch did
+then before your's and Jan's patch P2 would fail at FSCONFIG_CMD_CREATE
+iirc.
 
-The new head of the iomap-for-next branch is commit:
+But bind-mounting itself isn't really broken. For example, even after P2
+failed to create the superblock it could very well still do:
 
-a67371b7aee9 Merge tag 'iomap-per-block-dirty-tracking' of https://github.com/riteshharjani/linux into iomap-6.6-merge
+mount --bind /A /C
+mount --bind /A /D
 
-20 new commits:
+or whatever as that never goes into get_tree again. The problem really
+is that stuff like:
 
-Darrick J. Wong (2):
-      [d42bd17c6a20] Merge tag 'large-folio-writes' of git://git.infradead.org/users/willy/pagecache into iomap-6.6-merge
-      [a67371b7aee9] Merge tag 'iomap-per-block-dirty-tracking' of https://github.com/riteshharjani/linux into iomap-6.6-merge
+mount -t ext4 /dev/sda /E
 
-Matthew Wilcox (Oracle) (10):
-      [f7f9a0c8736d] iov_iter: Map the page later in copy_page_from_iter_atomic()
-      [908a1ad89466] iov_iter: Handle compound highmem pages in copy_page_from_iter_atomic()
-      [1b0306981e0f] iov_iter: Add copy_folio_from_iter_atomic()
-      [a221ab717c43] iomap: Remove large folio handling in iomap_invalidate_folio()
-      [32b29cc9db45] doc: Correct the description of ->release_folio
-      [7a8eb01b078f] iomap: Remove unnecessary test from iomap_release_folio()
-      [ffc143db63ee] filemap: Add fgf_t typedef
-      [4f6617011910] filemap: Allow __filemap_get_folio to allocate large folios
-      [d6bb59a9444d] iomap: Create large folios in the buffered write path
-      [5d8edfb900d5] iomap: Copy larger chunks from userspace
+would be broken but the problem is that this request is arguably
+ambiguous when seen from userspace. It either means:
 
-Ritesh Harjani (IBM) (8):
-      [04f52c4e6f80] iomap: Rename iomap_page to iomap_folio_state and others
-      [3ea5c76cadee] iomap: Drop ifs argument from iomap_set_range_uptodate()
-      [cc86181a3b76] iomap: Add some uptodate state handling helpers for ifs state bitmap
-      [eee2d2e6ea55] iomap: Fix possible overflow condition in iomap_write_delalloc_scan
-      [0af2b37d8e7a] iomap: Use iomap_punch_t typedef
-      [7f79d85b525b] iomap: Refactor iomap_write_delalloc_punch() function out
-      [a01b8f225248] iomap: Allocate ifs in ->write_begin() early
-      [4ce02c679722] iomap: Add per-block dirty state tracking to improve performance
+(1) create a superblock and mount it at /E
+(2) create a bind-mount for an existing superblock at /E
 
-Code Diffstat:
+For P1 (1) is the case but for P2 (2) is the case.
 
- Documentation/filesystems/locking.rst |  15 +-
- fs/btrfs/file.c                       |   6 +-
- fs/f2fs/compress.c                    |   2 +-
- fs/f2fs/f2fs.h                        |   2 +-
- fs/gfs2/aops.c                        |   2 +-
- fs/gfs2/bmap.c                        |   2 +-
- fs/iomap/buffered-io.c                | 469 +++++++++++++++++++++++-----------
- fs/xfs/xfs_aops.c                     |   2 +-
- fs/zonefs/file.c                      |   2 +-
- include/linux/iomap.h                 |   3 +-
- include/linux/pagemap.h               |  82 +++++-
- include/linux/uio.h                   |   9 +-
- lib/iov_iter.c                        |  43 ++--
- mm/filemap.c                          |  65 ++---
- mm/folio-compat.c                     |   2 +-
- mm/readahead.c                        |  13 -
- 16 files changed, 481 insertions(+), 238 deletions(-)
+Most of the time users really want (1). Right now, we have no way
+for a user to be sure that (1) did take place aka that they did indeed
+create the superblock. That can be a problem in environments where you
+need to be sure that you did create the superblock with the correct
+options. Because for P2 all mount options that they set may well be
+completely ignored unless e.g., P1 did request rw and P2 did request ro.
+
+This is why I'd like to add something like FSCONFIG_CMD_CREATE_EXCL
+which would fail if the caller didn't actually create the superblock but
+found an existing one instead.
+
+[1]: https://lore.kernel.org/linux-block/20230704-fasching-wertarbeit-7c6ffb01c83d@brauner
+[2]: https://lore.kernel.org/linux-block/20230705-pumpwerk-vielversprechend-a4b1fd947b65@brauner
