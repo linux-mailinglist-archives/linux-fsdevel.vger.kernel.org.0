@@ -2,54 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D996761E8D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 18:32:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4823B761EAA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 18:37:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230062AbjGYQcN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jul 2023 12:32:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60480 "EHLO
+        id S231276AbjGYQhK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jul 2023 12:37:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229603AbjGYQcM (ORCPT
+        with ESMTP id S230459AbjGYQhH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jul 2023 12:32:12 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1394113D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 09:32:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Tue, 25 Jul 2023 12:37:07 -0400
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050:0:465::101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B94D91723;
+        Tue, 25 Jul 2023 09:37:04 -0700 (PDT)
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9B189617E4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 16:32:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0C79C433C8;
-        Tue, 25 Jul 2023 16:32:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690302730;
-        bh=w5CYpGezhMyGhBHulH91IHFKRnOySxzwJL/Becf2xjw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ib3wJiS9/AY2JmfAkGVS//uNwnJ4j74LOOx48jBBDpbPUEcZEsJCCG9MGNBNHOJx+
-         jRtWpZs/vySzVHyQdPYiT9XXfVcTdyzNtUfT+33k7Tu9HOlo0BmioGJmekaHGrK+EC
-         kGWh2QpKnlhk+7FkHeEEHmwU0Tdt6wHX2EZkWdDPXBtdEtEjvYFaniSAQGIu4AG3cK
-         mTFUGax8fKwFYn8BpT3Bs20ocgvE8vFP2VlTdMxl4xF1a2HCWKNd5EEeANxuVpE8BQ
-         wvCp1bxhxiIPl/+UneD/9RzIgZHtIqbWBQwwpItloPCwEfgWFu24NKHDigTnNQlOcL
-         Pu6MO/hSXNqag==
-Date:   Tue, 25 Jul 2023 18:32:05 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     viro@zeniv.linux.org.uk, jack@suse.cz,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: open the block device after allocation the
- super_block
-Message-ID: <20230725-einnahmen-warnschilder-17779aec0a97@brauner>
-References: <20230724175145.201318-1-hch@lst.de>
- <20230725-tagebuch-gerede-a28f8fd8084a@brauner>
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4R9N3J6DgZz9sky;
+        Tue, 25 Jul 2023 18:37:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+        t=1690303020;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=JqCAz4pT3GDUTh/C6LdHYGGzlykcrPzOPXi/2ZYbtJI=;
+        b=Rjz3Tj6GNkJ756LoUn5njBvcsbsW0/MAqHFGq5N7S5DZflWFrn2po7Qsa2nBdkNLHPX2QN
+        WbOZe7hgRbuHfs7lKyLUw758wTVF1+2jDq6xMeLtjMSAFOTSnglc7uLKJyCyAUZDbJP5qn
+        WIr03ybhOR/BXivfWU8k54fCj/jkt46b7teY6si6XwQWnj/C2q4F/gk33Oq8fGPID1nU3V
+        Fm/Rx2muN4rG5Em8xoygWv7E6rqY2XuejuMkNewe4kxYskk5tul+YgVcZYcpz78OL4DHVO
+        pPLH6reidbUYi5iU0C947Q8MP5DncBUqNY6zptq9PlTGyGKyBOzpX+MhlLxHTg==
+Date:   Wed, 26 Jul 2023 02:36:25 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Alexey Gladkov <legion@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, James.Bottomley@hansenpartnership.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        axboe@kernel.dk, benh@kernel.crashing.org, borntraeger@de.ibm.com,
+        bp@alien8.de, catalin.marinas@arm.com, christian@brauner.io,
+        dalias@libc.org, davem@davemloft.net, deepa.kernel@gmail.com,
+        deller@gmx.de, dhowells@redhat.com, fenghua.yu@intel.com,
+        fweimer@redhat.com, geert@linux-m68k.org, glebfm@altlinux.org,
+        gor@linux.ibm.com, hare@suse.com, hpa@zytor.com,
+        ink@jurassic.park.msu.ru, jhogan@kernel.org, kim.phillips@arm.com,
+        ldv@altlinux.org, linux-alpha@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux@armlinux.org.uk,
+        linuxppc-dev@lists.ozlabs.org, luto@kernel.org, mattst88@gmail.com,
+        mingo@redhat.com, monstr@monstr.eu, mpe@ellerman.id.au,
+        namhyung@kernel.org, paulus@samba.org, peterz@infradead.org,
+        ralf@linux-mips.org, sparclinux@vger.kernel.org, stefan@agner.ch,
+        tglx@linutronix.de, tony.luck@intel.com, tycho@tycho.ws,
+        will@kernel.org, x86@kernel.org, ysato@users.sourceforge.jp,
+        Palmer Dabbelt <palmer@sifive.com>
+Subject: Re: [PATCH v4 2/5] fs: Add fchmodat2()
+Message-ID: <njnhwhgmsk64e6vf3ur7fifmxlipmzez3r5g7ejozsrkbwvq7w@tu7w3ieystcq>
+References: <cover.1689074739.git.legion@kernel.org>
+ <cover.1689092120.git.legion@kernel.org>
+ <f2a846ef495943c5d101011eebcf01179d0c7b61.1689092120.git.legion@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="afbbamzjyar6dsnm"
 Content-Disposition: inline
-In-Reply-To: <20230725-tagebuch-gerede-a28f8fd8084a@brauner>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <f2a846ef495943c5d101011eebcf01179d0c7b61.1689092120.git.legion@kernel.org>
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,94 +78,133 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 25, 2023 at 02:35:17PM +0200, Christian Brauner wrote:
-> On Mon, Jul 24, 2023 at 10:51:45AM -0700, Christoph Hellwig wrote:
-> > From: Jan Kara <jack@suse.cz>
-> > 
-> > Currently get_tree_bdev and mount_bdev open the block device before
-> > commiting to allocating a super block.  This means the block device
-> > is opened even for bind mounts and other reuses of the super_block.
-> > 
-> > That creates problems for restricting the number of writers to a device,
-> > and also leads to a unusual and not very helpful holder (the fs_type).
-> > 
-> > Reorganize the mount code to first look whether the superblock for a
-> > particular device is already mounted and open the block device only if
-> > it is not.
-> > 
-> > Signed-off-by: Jan Kara <jack@suse.cz>
-> > [hch: port to before the bdev_handle changes,
-> >       duplicate the bdev read-only check from blkdev_get_by_path,
-> >       extend the fsfree_mutex coverage to protect against freezes,
-> >       fix an open bdev leak when the bdev is frozen,
-> >       use the bdev local variable more,
-> >       rename the s variable to sb to be more descriptive]
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > ---
-> > 
-> > So I promised to get a series that builds on top of this ready, but
-> > I'm way to busy and this will take a while.  Getting this reworked
-> > version of Jan's patch out for everyone to use it as a based given
-> > that Christian is back from vacation, and I think Jan should be about
-> > back now as well.
-> 
-> I'm in the middle of reviewing this. You're probably aware, but both
-> btrfs and nilfs at least still open the devices first since they
-> open-code their bdev and sb handling.
 
-I've removed the references to bind mounts from the commit message.
-I mentioned in [1] and [2] that this problem is really related to
-superblocks at it's core. It's just that technically a bind-mount would
-be created in the following scenario where two processes race to create
-a superblock:
+--afbbamzjyar6dsnm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-P1								P2
-fd_fs = fsopen("ext4");						fd_fs = fsopen("ext4");
-fsconfig(fd_fs, FSCONFIG_SET_STRING, "source", "/dev/sda");	fsconfig(fd_fs, FSCONFIG_SET_STRING, "source", "/dev/sda");
+On 2023-07-11, Alexey Gladkov <legion@kernel.org> wrote:
+> On the userspace side fchmodat(3) is implemented as a wrapper
+> function which implements the POSIX-specified interface. This
+> interface differs from the underlying kernel system call, which does not
+> have a flags argument. Most implementations require procfs [1][2].
+>=20
+> There doesn't appear to be a good userspace workaround for this issue
+> but the implementation in the kernel is pretty straight-forward.
+>=20
+> The new fchmodat2() syscall allows to pass the AT_SYMLINK_NOFOLLOW flag,
+> unlike existing fchmodat.
+>=20
+> [1] https://sourceware.org/git/?p=3Dglibc.git;a=3Dblob;f=3Dsysdeps/unix/s=
+ysv/linux/fchmodat.c;h=3D17eca54051ee28ba1ec3f9aed170a62630959143;hb=3Da492=
+b1e5ef7ab50c6fdd4e4e9879ea5569ab0a6c#l35
+> [2] https://git.musl-libc.org/cgit/musl/tree/src/stat/fchmodat.c?id=3D718=
+f363bc2067b6487900eddc9180c84e7739f80#n28
+>=20
+> Co-developed-by: Palmer Dabbelt <palmer@sifive.com>
+> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+> Signed-off-by: Alexey Gladkov <legion@kernel.org>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  fs/open.c                | 18 ++++++++++++++----
+>  include/linux/syscalls.h |  2 ++
+>  2 files changed, 16 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/fs/open.c b/fs/open.c
+> index 0c55c8e7f837..39a7939f0d00 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -671,11 +671,11 @@ SYSCALL_DEFINE2(fchmod, unsigned int, fd, umode_t, =
+mode)
+>  	return err;
+>  }
+> =20
+> -static int do_fchmodat(int dfd, const char __user *filename, umode_t mod=
+e)
+> +static int do_fchmodat(int dfd, const char __user *filename, umode_t mod=
+e, int lookup_flags)
 
-// wins and creates superblock
-fsconfig(fd_fs, FSCONFIG_CMD_CREATE, ...)
-								// finds compatible superblock of P1
-								// spins until P1 sets SB_BORN and grabs a reference
-								fsconfig(fd_fs, FSCONFIG_CMD_CREATE, ...)
+I think it'd be much neater to do the conversion of AT_ flags here and
+pass 0 as a flags argument for all of the wrappers (this is how most of
+the other xyz(), fxyz(), fxyzat() syscall wrappers are done IIRC).
 
-P1								P2
-fd_mnt1 = fsmount(fd_fs);					fd_mnt2 = fsmount(fd_fs);
-move_mount(fd_mnt1, "/A")                                       move_mount(fd_mnt2, "/B")
+>  {
+>  	struct path path;
+>  	int error;
+> -	unsigned int lookup_flags =3D LOOKUP_FOLLOW;
+> +
+>  retry:
+>  	error =3D user_path_at(dfd, filename, lookup_flags, &path);
+>  	if (!error) {
+> @@ -689,15 +689,25 @@ static int do_fchmodat(int dfd, const char __user *=
+filename, umode_t mode)
+>  	return error;
+>  }
+> =20
+> +SYSCALL_DEFINE4(fchmodat2, int, dfd, const char __user *, filename,
+> +		umode_t, mode, int, flags)
+> +{
+> +	if (unlikely(flags & ~AT_SYMLINK_NOFOLLOW))
+> +		return -EINVAL;
 
-If we forbid writes to a mounted block device like Jan's other patch did
-then before your's and Jan's patch P2 would fail at FSCONFIG_CMD_CREATE
-iirc.
+We almost certainly want to support AT_EMPTY_PATH at the same time.
+Otherwise userspace will still need to go through /proc when trying to
+chmod a file handle they have.
 
-But bind-mounting itself isn't really broken. For example, even after P2
-failed to create the superblock it could very well still do:
+> +
+> +	return do_fchmodat(dfd, filename, mode,
+> +			flags & AT_SYMLINK_NOFOLLOW ? 0 : LOOKUP_FOLLOW);
+> +}
+> +
+>  SYSCALL_DEFINE3(fchmodat, int, dfd, const char __user *, filename,
+>  		umode_t, mode)
+>  {
+> -	return do_fchmodat(dfd, filename, mode);
+> +	return do_fchmodat(dfd, filename, mode, LOOKUP_FOLLOW);
+>  }
+> =20
+>  SYSCALL_DEFINE2(chmod, const char __user *, filename, umode_t, mode)
+>  {
+> -	return do_fchmodat(AT_FDCWD, filename, mode);
+> +	return do_fchmodat(AT_FDCWD, filename, mode, LOOKUP_FOLLOW);
+>  }
+> =20
+>  /*
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index 584f404bf868..6e852279fbc3 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -440,6 +440,8 @@ asmlinkage long sys_chroot(const char __user *filenam=
+e);
+>  asmlinkage long sys_fchmod(unsigned int fd, umode_t mode);
+>  asmlinkage long sys_fchmodat(int dfd, const char __user *filename,
+>  			     umode_t mode);
+> +asmlinkage long sys_fchmodat2(int dfd, const char __user *filename,
+> +			     umode_t mode, int flags);
+>  asmlinkage long sys_fchownat(int dfd, const char __user *filename, uid_t=
+ user,
+>  			     gid_t group, int flag);
+>  asmlinkage long sys_fchown(unsigned int fd, uid_t user, gid_t group);
+> --=20
+> 2.33.8
+>=20
 
-mount --bind /A /C
-mount --bind /A /D
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-or whatever as that never goes into get_tree again. The problem really
-is that stuff like:
+--afbbamzjyar6dsnm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-mount -t ext4 /dev/sda /E
+-----BEGIN PGP SIGNATURE-----
 
-would be broken but the problem is that this request is arguably
-ambiguous when seen from userspace. It either means:
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZL/6CAAKCRAol/rSt+lE
+b6sDAP4lsghYpoBg52FejYPCUR5VtRTHaPrZUbfu6F44pCzVHgEAjO6SIBNVvxu2
+rHWRVzHnnBK8tOaeoiT0Xiex2/+5PAE=
+=mARF
+-----END PGP SIGNATURE-----
 
-(1) create a superblock and mount it at /E
-(2) create a bind-mount for an existing superblock at /E
-
-For P1 (1) is the case but for P2 (2) is the case.
-
-Most of the time users really want (1). Right now, we have no way
-for a user to be sure that (1) did take place aka that they did indeed
-create the superblock. That can be a problem in environments where you
-need to be sure that you did create the superblock with the correct
-options. Because for P2 all mount options that they set may well be
-completely ignored unless e.g., P1 did request rw and P2 did request ro.
-
-This is why I'd like to add something like FSCONFIG_CMD_CREATE_EXCL
-which would fail if the caller didn't actually create the superblock but
-found an existing one instead.
-
-[1]: https://lore.kernel.org/linux-block/20230704-fasching-wertarbeit-7c6ffb01c83d@brauner
-[2]: https://lore.kernel.org/linux-block/20230705-pumpwerk-vielversprechend-a4b1fd947b65@brauner
+--afbbamzjyar6dsnm--
