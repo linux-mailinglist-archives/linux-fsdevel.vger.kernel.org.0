@@ -2,302 +2,257 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B2F94762091
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 19:51:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAF367620C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 19:59:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229759AbjGYRvh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jul 2023 13:51:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46608 "EHLO
+        id S231918AbjGYR7Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jul 2023 13:59:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229778AbjGYRvf (ORCPT
+        with ESMTP id S232032AbjGYR7W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jul 2023 13:51:35 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B939D26A1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 10:50:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690307417;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ofcHR9i21vUkgd+y9BiEJpoyobnlC1eSUMdsvDQGlv0=;
-        b=SVnxEg5kkSkq3CyUVQgAQEE1TQ1RJzsnRWGsH6YBBbLlkVICWfuo0z+yTSPsfgoVKvyv3k
-        h19Ger72j2unNDdQOC8vf/v5h6Ud3J42FIk9QgjyRisKLDtdeFKrK8iQMt2j7886rw01Nm
-        0KlCqT/okFqiFzh6IRYOHOmskWwfWUI=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-104-PlUfZjBfOH2l8EmlUThBmw-1; Tue, 25 Jul 2023 13:50:15 -0400
-X-MC-Unique: PlUfZjBfOH2l8EmlUThBmw-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1bbac333f2cso10740645ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 10:50:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690307414; x=1690912214;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ofcHR9i21vUkgd+y9BiEJpoyobnlC1eSUMdsvDQGlv0=;
-        b=ISFrKDbNyOFCZvv+vZZrqw2QzZkPLE2uFU7XFyYQCVAJnFycKJWYYMcuQwECwbrJ3J
-         26Ico2Z772g3YXZhZfyKjeKeKZGxt+dCv4hanph4uTg4jLox6F6C4X7WpWWFomEvQgQB
-         ImPYtBEWcz3qH8P4Gouhz29iU+CNhHgALNWyVZaPomIGIn1KEU8Pmpy7SWxPVVbGDt2B
-         XHb2siM9ILtku5vHVM+P/UeHsTlErn3fK1Xpj1muGHOhCebbn8up3NdKO+otgrwkxMB2
-         5j0qxAheaBYlJoKkKtPRLdV4+cS7L5xme20LIs1km/1prdqScstP5sRzqnrHlBDsRyOd
-         8L7g==
-X-Gm-Message-State: ABy/qLY25MeMI1PgaDxUqgtUCeYl9hpGs2n7xao1wnPT+83t95H9oDdr
-        hHh7QFLvE6Wm9mjqfxDPw0G91C42rtL6kXltyWTDw87PfYxhFtAjU9F4D18gFWGHak70z9VvKh3
-        9UYQqYQsJ7ryPz+6JpUG02C9EuA==
-X-Received: by 2002:a17:902:e890:b0:1b6:4bbd:c3b6 with SMTP id w16-20020a170902e89000b001b64bbdc3b6mr13434245plg.9.1690307413936;
-        Tue, 25 Jul 2023 10:50:13 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlHNsSBHwJphNTbtkW9JruDV0UxK7MpgcFSpPmHbJ+8/6yHsKeFpz31cLMGPa//IoEFaj7H+SQ==
-X-Received: by 2002:a17:902:e890:b0:1b6:4bbd:c3b6 with SMTP id w16-20020a170902e89000b001b64bbdc3b6mr13434227plg.9.1690307413590;
-        Tue, 25 Jul 2023 10:50:13 -0700 (PDT)
-Received: from zlang-mailbox ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id f20-20020a170902ab9400b001bb7a736b46sm7734730plr.104.2023.07.25.10.50.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 10:50:13 -0700 (PDT)
-Date:   Wed, 26 Jul 2023 01:50:09 +0800
-From:   Zorro Lang <zlang@redhat.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>, fstests@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH] fstests: add helper to canonicalize devices used to
- enable persistent disks
-Message-ID: <20230725175009.jv4hbqxtags6qh5r@zlang-mailbox>
-References: <20230720061727.2363548-1-mcgrof@kernel.org>
- <20230725081307.xydlwjdl4lq3ts3m@zlang-mailbox>
- <20230725155439.GF11340@frogsfrogsfrogs>
+        Tue, 25 Jul 2023 13:59:22 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E8DF1FF7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 10:59:17 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 3F0295C018D;
+        Tue, 25 Jul 2023 13:59:13 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 25 Jul 2023 13:59:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        cc:cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
+        1690307953; x=1690394353; bh=H5Lt2LapYcQATw9WO8eUUlNhEIzRMnMZ3X+
+        ijUtWJqI=; b=ZB8TVkzdx1Hdpmc3/fRd24RxgBZM2JFb5vEGq2xykSptrgEI3lC
+        MpGC3PmT8guSci41oB4Y5o7Sxp8lMrt31vvQ7eXgoR3pdWMVIrGTeFAn90lGknbL
+        dPVCUZC6oLdSova1wcja2xj/Bm5gceFGjoZsZ8RGHpJlPUvrEbNEMrQQgJloyXWC
+        tOmbYihfV2swQElGs8z19pbhuWPV1m2MfqYxOG1/Um2x4DbezXm4ULnQ3hYrGWwc
+        Z8T7verAeipiq2lkN50ZIcXQJbWOMAuloD8HgNv9FSfB7NrbCTr/iELkG9B/jFkj
+        W0hP4GGNiNhuOtBKr2+JIZhSHfokQP2uCAQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+        1690307953; x=1690394353; bh=H5Lt2LapYcQATw9WO8eUUlNhEIzRMnMZ3X+
+        ijUtWJqI=; b=HdhlqQpsipPksIOyjZi03v7h6n23GTrTybgNtG5tHdXfYc9GHml
+        1CBoIS12Ky8g1kxmkMQaYLE3Fj2uzTKZ1K/b5TW5SMZFjW8iCfkqgsO1VMDODixx
+        uHVOYupWycmDXGAOvtpi1rMf4hXf9+V7zI+YddqaBwlVi6XBxt42IxxGhnn5NeJD
+        AOx/3CNhGotOsUVcnPWstu/eU+TSdZ4tyzc950gAX2LawZm1qIlcOvzFLctFZCxQ
+        u/gVIqPTl0grOrNDIjVYqtrM8NzLhJQRgD5pNucuAyEBnlTqy27/zYJ3wHZz3E6d
+        roHg7zScsZ+v2mktESbVhD19MCGcpsYE30g==
+X-ME-Sender: <xms:bw3AZJZorYL25Tj1Rw5YF9a3Ei3kaennlzMB2mn_Wa9uByjHXwGf5Q>
+    <xme:bw3AZAZoCjaJ8L0X1ze_ak-SUWPwCsZ-ZWBu92PQgL-sjc3VVGZCvc6odr-YxlNJC
+    03O_xUTbjfUaHS2>
+X-ME-Received: <xmr:bw3AZL8GzGyvyKMOxGA8KP4T4hEC0TjtXsXTBfSh_pVFc7QT-FTezEq3psPipRjDjpev8zZ6C9p6bajGgULFYrdOw2m5woiXeawOdetyFkYIvyr51nVd>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedriedtgdduudejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtfeejnecuhfhrohhmpeeuvghr
+    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
+    hlrdhfmheqnecuggftrfgrthhtvghrnhepfffhtddvveeivdduuedujeetffekkeelgfdv
+    fefgueffieefjefgjeffhedttdefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
+    fhhm
+X-ME-Proxy: <xmx:bw3AZHrl5b8lxzkAL-1UqB5zaDdLCdWZS0VIQoypuOoSWIZTH-zFSA>
+    <xmx:bw3AZEoVytVTCMl9JOdKlW-nis9yQ_qqtg-fS2jPixP9l-iwCYcmlw>
+    <xmx:bw3AZNQoSuOjXKJwgVPv9Wi1hnr0HSxisz2c0FkY_saa5U7RGB_rsQ>
+    <xmx:cQ3AZJB9u2FCND6-Z2VGQKCg4TBHVM5l8PCxwnDL94JSSpkXUYLo0g>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 25 Jul 2023 13:59:10 -0400 (EDT)
+Message-ID: <02444c76-ea2e-3931-d49e-5cd0518711a7@fastmail.fm>
+Date:   Tue, 25 Jul 2023 19:59:08 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230725155439.GF11340@frogsfrogsfrogs>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [External] [fuse-devel] [PATCH 3/3] fuse: write back dirty pages
+ before direct write in direct_io_relax mode
+To:     Hao Xu <hao.xu@linux.dev>,
+        Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>,
+        fuse-devel@lists.sourceforge.net
+Cc:     linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>,
+        cgxu519@mykernel.net, miklos@szeredi.hu
+References: <20230630094602.230573-1-hao.xu@linux.dev>
+ <20230630094602.230573-4-hao.xu@linux.dev>
+ <e5266e11-b58b-c8ca-a3c8-0b2c07b3a1b2@bytedance.com>
+ <2622afd7-228f-02f3-3b72-a1c826844126@linux.dev>
+ <396A0BF4-DA68-46F8-9881-3801737225C6@fastmail.fm>
+ <9b0a164d-3d0e-cc57-81b7-ae32bef4e9d7@linux.dev>
+ <cb8c18e6-b5cb-e891-696f-b403012eacb7@fastmail.fm>
+ <45da6206-8e34-a184-5ba4-d40be252cfd2@linux.dev>
+Content-Language: en-US, de-DE
+From:   Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <45da6206-8e34-a184-5ba4-d40be252cfd2@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 25, 2023 at 08:54:39AM -0700, Darrick J. Wong wrote:
-> On Tue, Jul 25, 2023 at 04:13:07PM +0800, Zorro Lang wrote:
-> > On Wed, Jul 19, 2023 at 11:17:27PM -0700, Luis Chamberlain wrote:
-> > > The filesystem configuration file does not allow you to use symlinks to
-> > > devices given the existing sanity checks verify that the target end
-> > > device matches the source.
-> > > 
-> > > Using a symlink is desirable if you want to enable persistent tests
-> > > across reboots. For example you may want to use /dev/disk/by-id/nvme-eui.*
-> > > so to ensure that the same drives are used even after reboot. This
-> > > is very useful if you are testing for example with a virtualized
-> > > environment and are using PCIe passthrough with other qemu NVMe drives
-> > > with one or many NVMe drives.
-> > > 
-> > > To enable support just add a helper to canonicalize devices prior to
-> > > running the tests.
-> > > 
-> > > This allows one test runner, kdevops, which I just extended with
-> > > support to use real NVMe drives. The drives it uses for the filesystem
-> > > configuration optionally is with NVMe eui symlinks so to allow
-> > > the same drives to be used over reboots.
-> > > 
-> > > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> > > ---
-> > 
-> > Hi Luis,
-> > 
-> > Hmmm... this's a default behavior change for fstests, although I'm not sure
-> > what will be affect. I'm wondering if we should do this in fstests. I don't
-> > want to tell the users that the device names they give to fstests will always
-> > be truned to real names from now on.
-> > 
-> > Generally the users of fstests provide the device names, so the users
-> > might need to take care of the name is "/dev/mapper/testvg-testdev"
-> > or "/dev/dm-4". The users can deal with the device names when their
-> > script prepare to run fstests.
-> > 
-> > If more developers prefer this change, I'd like to make it to be
-> > optional by an option of ./check at least, not always turn devname
-> > to realpath. Welcome review points from others.
-> 
-> Hmm.  SCRATCH_DEV=/dev/testvg/testlv works right now, it'd be sort of
-> annoying to have "/dev/dm-4" get written into the report and then you've
-> lost the correlation to whatever the user passed in.
-> 
-> Oh wait.  My giant mound of ./check wrapper script already does that
-> canonicalization and has for years.
-> 
-> Ok.  Sounds good to me then. :P
 
-So you hope fstests can do this translation (use real device name) by default?
+
+On 7/25/23 18:57, Hao Xu wrote:
+> 
+> On 7/25/23 21:00, Bernd Schubert wrote:
+>>
+>>
+>> On 7/25/23 12:11, Hao Xu wrote:
+>>> On 7/21/23 19:56, Bernd Schubert wrote:
+>>>> On July 21, 2023 1:27:26 PM GMT+02:00, Hao Xu <hao.xu@linux.dev> wrote:
+>>>>> On 7/21/23 14:35, Jiachen Zhang wrote:
+>>>>>>
+>>>>>> On 2023/6/30 17:46, Hao Xu wrote:
+>>>>>>> From: Hao Xu <howeyxu@tencent.com>
+>>>>>>>
+>>>>>>> In direct_io_relax mode, there can be shared mmaped files and 
+>>>>>>> thus dirty
+>>>>>>> pages in its page cache. Therefore those dirty pages should be 
+>>>>>>> written
+>>>>>>> back to backend before direct write to avoid data loss.
+>>>>>>>
+>>>>>>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+>>>>>>> ---
+>>>>>>>    fs/fuse/file.c | 7 +++++++
+>>>>>>>    1 file changed, 7 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>>>>>>> index 176f719f8fc8..7c9167c62bf6 100644
+>>>>>>> --- a/fs/fuse/file.c
+>>>>>>> +++ b/fs/fuse/file.c
+>>>>>>> @@ -1485,6 +1485,13 @@ ssize_t fuse_direct_io(struct fuse_io_priv 
+>>>>>>> *io, struct iov_iter *iter,
+>>>>>>>        if (!ia)
+>>>>>>>            return -ENOMEM;
+>>>>>>> +    if (fopen_direct_write && fc->direct_io_relax) {
+>>>>>>> +        res = filemap_write_and_wait_range(mapping, pos, pos + 
+>>>>>>> count - 1);
+>>>>>>> +        if (res) {
+>>>>>>> +            fuse_io_free(ia);
+>>>>>>> +            return res;
+>>>>>>> +        }
+>>>>>>> +    }
+>>>>>>>        if (!cuse && fuse_range_is_writeback(inode, idx_from, 
+>>>>>>> idx_to)) {
+>>>>>>>            if (!write)
+>>>>>>>                inode_lock(inode);
+>>>>>>
+>>>>>> Tested-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+>>>>>>
+>>>>>>
+>>>>>> Looks good to me.
+>>>>>>
+>>>>>> By the way, the behaviour would be a first FUSE_WRITE flushing the 
+>>>>>> page cache, followed by a second FUSE_WRITE doing the direct IO. 
+>>>>>> In the future, further optimization could be first write into the 
+>>>>>> page cache and then flush the dirty page to the FUSE daemon.
+>>>>>>
+>>>>>
+>>>>> I think this makes sense, cannot think of any issue in it for now, so
+>>>>> I'll do that change and send next version, super thanks, Jiachen!
+>>>>>
+>>>>> Thanks,
+>>>>> Hao
+>>>>>
+>>>>>>
+>>>>>> Thanks,
+>>>>>> Jiachen
+>>>>>
+>>>>
+>>>> On my phone, sorry if mail formatting is not optimal.
+>>>> Do I understand it right? You want DIO code path copy into pages and 
+>>>> then flush/invalidate these pages? That would be punish DIO for for 
+>>>> the unlikely case there are also dirty pages (discouraged IO pattern).
+>>>
+>>> Hi Bernd,
+>>> I think I don't get what you said, why it is punishment and why it's 
+>>> discouraged IO pattern?
+>>> On my first eyes seeing Jiachen's idea, I was thinking "that sounds
+>>> disobeying direct write semantics" because usually direct write is
+>>> "flush dirty page -> invalidate page -> write data through to backend"
+>>> not "write data to page -> flush dirty page/(writeback data)"
+>>> The latter in worst case write data both to page cache and backend
+>>> while the former just write to backend and load it to the page cache
+>>> when buffered reading. But seems there is no such "standard way" which
+>>> says we should implement direct IO in that way.
+>>
+>> Hi Hao,
+>>
+>> sorry for being brief last week, I was on vacation and reading/writing 
+>> some mails on my phone.
+>>
+>> With 'punishment' I mean memory copies to the page cache - memory 
+>> copies are expensive and DIO should avoid it.
+>>
+>> Right now your patch adds filemap_write_and_wait_range(), but we do 
+>> not know if it did work (i.e. if pages had to be flushed). So unless 
+>> you find a way to get that information, copy to page cache would be 
+>> unconditionally - overhead of memory copy even if there are no dirty 
+>> pages.
+> 
+> 
+> Ah, looks I understood what you mean in my last email reply. Yes, just 
+> like what I said in last email:
+> 
+> [1] flush dirty page --> invalidate page --> write data to backend
+> 
+>     This is what we do for direct write right now in kernel, I call this 
+> policy "write-through", since it doesn't care much about the cache.
+> 
+> [2] write data to page cache --> flush dirty page in suitable time
+> 
+>     This is  "write-back" policy, used by buffered write. Here in this 
+> patch's case, we flush pages synchronously, so it still can be called 
+> direct-write.
+> 
+> Surely, in the worst case, the page is clean, then [2] has one extra 
+> memory copy than [1]. But like what I pointed out, for [2], next time 
+> buffered
+> 
+> read happens, the page is in latest state, so no I/O needed, while for 
+> [1], it has to load data from backend to page cache.
+> 
+> 
+>>
+>> With 'discouraged' I mean mix of page cache and direct-io. Typically 
+>> one should only do either of both (page cache or DIO), but not a mix 
+>> of them. For example see your patch, it flushes the page cache, but 
+>> without a lock - races are possible. Copying to the page cache might 
+>> be a solution, but it has the overhead above.
+> 
+> 
+> For race, we held inode lock there, do I miss anything?
+
+We hold inode lock in write path, but not in read path. That ensures 
+invalidate_inode_pages2_range() is not racing, but DIO read might race 
+with a page cache writing happening in parallel. I guess results are 
+then a bit unexpected anyway, although differently if we would hold the 
+lock.
+
 
 > 
-> > >  check         |  1 +
-> > >  common/config | 44 +++++++++++++++++++++++++++++++++++++++++++-
-> > >  2 files changed, 44 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/check b/check
-> > > index 89e7e7bf20df..d063d3f498fd 100755
-> > > --- a/check
-> > > +++ b/check
-> > > @@ -734,6 +734,7 @@ function run_section()
-> > >  	fi
-> > >  
-> > >  	get_next_config $section
-> > > +	_canonicalize_devices
-> > >  
-> > >  	mkdir -p $RESULT_BASE
-> > >  	if [ ! -d $RESULT_BASE ]; then
-> > > diff --git a/common/config b/common/config
-> > > index 936ac225f4b1..f5a3815a0435 100644
-> > > --- a/common/config
-> > > +++ b/common/config
-> > > @@ -655,6 +655,47 @@ _canonicalize_mountpoint()
-> > >  	echo "$parent/$base"
-> > >  }
-> > >  
-> > > +# Enables usage of /dev/disk/by-id/ symlinks to persist target devices
-> > > +# over reboots
-> > > +_canonicalize_devices()
-> > > +{
-> > > +	if [ ! -z "$TEST_DEV" ] && [ -L $TEST_DEV ]; then
-> > 
-> > I think [ -L "$TEST_DEV" ] is enough.
 > 
-> I don't think it is.
+>>
+>> Thanks,
+>> Bernd
 > 
-> $ unset moo
-> $ [ -L $moo ]
+> 
+> I now think it's good to keep the pattern same as other filesystems 
+> which is [1] to avoid possible performance issues in the future, thanks 
+> Bernd.
 
-The double quotation marks "" are needed.
+Thanks, I think we should keep fuse consistent with what other fs do.
 
-> $ echo $?
-> 0
-> $ realpath -e $moo
-> realpath: missing operand
-> Try 'realpath --help' for more information.
-> 
-> > > +		TEST_DEV=$(realpath -e $TEST_DEV)
-> > 
-> > Anyone knows the difference of realpatch and readlink?
-> 
-> readlink doesn't follow nested symlinks; realpath does:
-> 
-> $ touch /tmp/a
-> $ ln -s /tmp/a /tmp/b
-> $ ln -s /tmp/b /tmp/c
-> $ readlink /tmp/c
-> /tmp/b
-> $ realpath /tmp/c
-> /tmp/a
-> $ readlink -m /tmp/c
-> /tmp/a
-
-The -e option helps:
-
-# readlink -e /tmp/c
-/tmp/a
-# realpath -e /tmp/c
-/tmp/a
-
-> 
-> > > +	fi
-> > > +
-> > > +	if [ ! -z "$SCRATCH_DEV" ] && [ -L $SCRATCH_DEV ]; then
-> > > +		SCRATCH_DEV=$(realpath -e $SCRATCH_DEV)
-> 
-> Extra question: Shouldn't we be putting theis ^^^ variables in quotes?
-
-Make sense to me.
 
 Thanks,
-Zorro
-
-> 
-> Supposing someone starts passing in
-> SCRATCH_DEV=/dev/disk/by-label/har har"
-> 
-> This expression will barf everywhere:
-> 
-> $ SCRATCH_DEV=$(realpath -e $SCRATCH_DEV)
-> realpath: /dev/disk/by-label/har: No such file or directory
-> realpath: har: No such file or directory
-> 
-> Due to the lack of quoting on its way to turning that into /dev/sda3.
-> Granted fstests has historically required no spaces in anything, but
-> still, it's bad hygiene.
-> 
-> [writing anything in bash is bad hygiene, but for the sweet sweet pipe
-> goodness]
-> 
-> > > +	fi
-> > > +
-> > > +	if [ ! -z "$TEST_LOGDEV" ] && [ -L $TEST_LOGDEV ]; then
-> > > +		TEST_LOGDEV=$(realpath -e $TEST_LOGDEV)
-> > > +	fi
-> > > +
-> > > +	if [ ! -z "$TEST_RTDEV" ] && [ -L $TEST_RTDEV ]; then
-> > > +		TEST_RTDEV=$(realpath -e $TEST_RTDEV)
-> > > +	fi
-> > > +
-> > > +	if [ ! -z "$SCRATCH_RTDEV" ] && [ -L $SCRATCH_RTDEV ]; then
-> > > +		SCRATCH_RTDEV=$(realpath -e $SCRATCH_RTDEV)
-> > > +	fi
-> > > +
-> > > +	if [ ! -z "$LOGWRITES_DEV" ] && [ -L $LOGWRITES_DEV ]; then
-> > > +		LOGWRITES_DEV=$(realpath -e $LOGWRITES_DEV)
-> > > +	fi
-> > > +
-> > > +	if [ ! -z "$SCRATCH_DEV_POOL" ]; then
-> > > +		NEW_SCRATCH_POOL=""
-> > > +		for i in $SCRATCH_DEV_POOL; do
-> > > +			if [ -L $i ]; then
-> > > +				NEW_SCRATCH_POOL="$NEW_SCRATCH_POOL $(realpath -e $i)"
-> > > +			else
-> > > +				NEW_SCRATCH_POOL="$NEW_SCRATCH_POOL $i)"
-> >                                                                      ^^^
-> > 
-> > What's this half ")" for ?
-> 
-> Some kind of typo, I assume...
-> 
-> --D
-> 
-> > 
-> > Thanks,
-> > Zorro
-> > 
-> > 
-> > > +			fi
-> > > +		done
-> > > +		SCRATCH_DEV_POOL="$NEW_SCRATCH_POOL"
-> > > +	fi
-> > > +}
-> > > +
-> > >  # On check -overlay, for the non multi section config case, this
-> > >  # function is called on every test, before init_rc().
-> > >  # When SCRATCH/TEST_* vars are defined in config file, config file
-> > > @@ -785,7 +826,6 @@ get_next_config() {
-> > >  	fi
-> > >  
-> > >  	parse_config_section $1
-> > > -
-> > >  	if [ ! -z "$OLD_FSTYP" ] && [ $OLD_FSTYP != $FSTYP ]; then
-> > >  		[ -z "$MOUNT_OPTIONS" ] && _mount_opts
-> > >  		[ -z "$TEST_FS_MOUNT_OPTS" ] && _test_mount_opts
-> > > @@ -901,5 +941,7 @@ else
-> > >  	fi
-> > >  fi
-> > >  
-> > > +_canonicalize_devices
-> > > +
-> > >  # make sure this script returns success
-> > >  /bin/true
-> > > -- 
-> > > 2.39.2
-> > > 
-> > 
-> 
-
+Bernd
