@@ -2,54 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B508D761051
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 12:11:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87C5B761098
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 12:24:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231254AbjGYKLY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jul 2023 06:11:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38442 "EHLO
+        id S233421AbjGYKYQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jul 2023 06:24:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231623AbjGYKLW (ORCPT
+        with ESMTP id S230462AbjGYKYP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jul 2023 06:11:22 -0400
-Received: from out-60.mta1.migadu.com (out-60.mta1.migadu.com [95.215.58.60])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EC7F10FA
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 03:11:14 -0700 (PDT)
-Message-ID: <9b0a164d-3d0e-cc57-81b7-ae32bef4e9d7@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1690279872;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=cp2G6Suk2Avgq5OP5WwoCgbwBHs06hhcMJV7ZyIbEuo=;
-        b=VB2J3ghJq5xLs1cyTqWpdXTFvI5iEbfSWggwbTi9iY0JjW0Hdt/TGxEyqNs2FmVp++YRjZ
-        kPtzdP0DqA4HqecPpeUutJq0VaB4JIxVB2Mc5/PSnYO5eX1/cEIzSdvNHGCnAVwFeVGfjO
-        /8/Z7JCq/4RwPLemJtd10OK/rn2KOfE=
-Date:   Tue, 25 Jul 2023 18:11:05 +0800
+        Tue, 25 Jul 2023 06:24:15 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE76610CB;
+        Tue, 25 Jul 2023 03:24:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1690280654; x=1721816654;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=z2JgSRr57QfGjyG/fWEsaikXL6iwmaxUOjUdDAVtI0A=;
+  b=RAb1leraqX5Fyk6HEvP9T703FMF8+1ubL2WTdk/W6M/nh63j8c+gyD+8
+   ldRTrTyztR8vGBwEyJBHK/SKadmUhsiA5MNJhy320hC3kWAsd4iVQvyqE
+   vocuEeelD/8dgxtS4meTWHDD6+8OFU71+q7VGTjK8GzSrh+pQMKBqj4lO
+   PtGq4nWE63jDDBOpj7/++pecb/44c/1zSJ8GzeI8AHU5vUWLycMbWy9kB
+   SQjl51FS33cwUBefU91alkr6ZhH8JkeI4sXAoyFDQGLHNnLY5QW7FBGOv
+   3DHGaDlfGuMlMytnRXm+SJkBfa1KcZtuTESmJfCmD1JZXK6uEH9O8Wasw
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10781"; a="347956818"
+X-IronPort-AV: E=Sophos;i="6.01,230,1684825200"; 
+   d="scan'208";a="347956818"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2023 03:24:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10781"; a="1056753039"
+X-IronPort-AV: E=Sophos;i="6.01,230,1684825200"; 
+   d="scan'208";a="1056753039"
+Received: from mlytkin-mobl2.ger.corp.intel.com (HELO box.shutemov.name) ([10.252.57.129])
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2023 03:24:05 -0700
+Received: by box.shutemov.name (Postfix, from userid 1000)
+        id 171E4103A12; Tue, 25 Jul 2023 13:24:03 +0300 (+03)
+Date:   Tue, 25 Jul 2023 13:24:03 +0300
+From:   "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Sean Christopherson <seanjc@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>
+Subject: Re: [RFC PATCH v11 10/29] mm: Add AS_UNMOVABLE to mark mapping as
+ completely unmovable
+Message-ID: <20230725102403.xywjqlhyqkrzjok6@box.shutemov.name>
+References: <20230718234512.1690985-1-seanjc@google.com>
+ <20230718234512.1690985-11-seanjc@google.com>
 MIME-Version: 1.0
-Subject: Re: [External] [fuse-devel] [PATCH 3/3] fuse: write back dirty pages
- before direct write in direct_io_relax mode
-To:     Bernd Schubert <bernd.schubert@fastmail.fm>,
-        Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>,
-        fuse-devel@lists.sourceforge.net
-Cc:     linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>,
-        cgxu519@mykernel.net, miklos@szeredi.hu
-References: <20230630094602.230573-1-hao.xu@linux.dev>
- <20230630094602.230573-4-hao.xu@linux.dev>
- <e5266e11-b58b-c8ca-a3c8-0b2c07b3a1b2@bytedance.com>
- <2622afd7-228f-02f3-3b72-a1c826844126@linux.dev>
- <396A0BF4-DA68-46F8-9881-3801737225C6@fastmail.fm>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <396A0BF4-DA68-46F8-9881-3801737225C6@fastmail.fm>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230718234512.1690985-11-seanjc@google.com>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,74 +96,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/21/23 19:56, Bernd Schubert wrote:
-> On July 21, 2023 1:27:26 PM GMT+02:00, Hao Xu <hao.xu@linux.dev> wrote:
->> On 7/21/23 14:35, Jiachen Zhang wrote:
->>>
->>> On 2023/6/30 17:46, Hao Xu wrote:
->>>> From: Hao Xu <howeyxu@tencent.com>
->>>>
->>>> In direct_io_relax mode, there can be shared mmaped files and thus dirty
->>>> pages in its page cache. Therefore those dirty pages should be written
->>>> back to backend before direct write to avoid data loss.
->>>>
->>>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
->>>> ---
->>>>    fs/fuse/file.c | 7 +++++++
->>>>    1 file changed, 7 insertions(+)
->>>>
->>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->>>> index 176f719f8fc8..7c9167c62bf6 100644
->>>> --- a/fs/fuse/file.c
->>>> +++ b/fs/fuse/file.c
->>>> @@ -1485,6 +1485,13 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
->>>>        if (!ia)
->>>>            return -ENOMEM;
->>>> +    if (fopen_direct_write && fc->direct_io_relax) {
->>>> +        res = filemap_write_and_wait_range(mapping, pos, pos + count - 1);
->>>> +        if (res) {
->>>> +            fuse_io_free(ia);
->>>> +            return res;
->>>> +        }
->>>> +    }
->>>>        if (!cuse && fuse_range_is_writeback(inode, idx_from, idx_to)) {
->>>>            if (!write)
->>>>                inode_lock(inode);
->>>
->>> Tested-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
->>>
->>>
->>> Looks good to me.
->>>
->>> By the way, the behaviour would be a first FUSE_WRITE flushing the page cache, followed by a second FUSE_WRITE doing the direct IO. In the future, further optimization could be first write into the page cache and then flush the dirty page to the FUSE daemon.
->>>
->>
->> I think this makes sense, cannot think of any issue in it for now, so
->> I'll do that change and send next version, super thanks, Jiachen!
->>
->> Thanks,
->> Hao
->>
->>>
->>> Thanks,
->>> Jiachen
->>
-> 
-> On my phone, sorry if mail formatting is not optimal.
-> Do I understand it right? You want DIO code path copy into pages and then flush/invalidate these pages? That would be punish DIO for for the unlikely case there are also dirty pages (discouraged IO pattern).
+On Tue, Jul 18, 2023 at 04:44:53PM -0700, Sean Christopherson wrote:
+> diff --git a/mm/compaction.c b/mm/compaction.c
+> index dbc9f86b1934..a3d2b132df52 100644
+> --- a/mm/compaction.c
+> +++ b/mm/compaction.c
+> @@ -1047,6 +1047,10 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+>  		if (!mapping && (folio_ref_count(folio) - 1) > folio_mapcount(folio))
+>  			goto isolate_fail_put;
+>  
+> +		/* The mapping truly isn't movable. */
+> +		if (mapping && mapping_unmovable(mapping))
+> +			goto isolate_fail_put;
+> +
 
-Hi Bernd,
-I think I don't get what you said, why it is punishment and why it's 
-discouraged IO pattern?
-On my first eyes seeing Jiachen's idea, I was thinking "that sounds
-disobeying direct write semantics" because usually direct write is
-"flush dirty page -> invalidate page -> write data through to backend"
-not "write data to page -> flush dirty page/(writeback data)"
-The latter in worst case write data both to page cache and backend
-while the former just write to backend and load it to the page cache
-when buffered reading. But seems there is no such "standard way" which
-says we should implement direct IO in that way.
+I doubt that it is safe to dereference mapping here. I believe the folio
+can be truncated from under us and the mapping freed with the inode.
 
-Regards,
-Hao
+The folio has to be locked to dereference mapping safely (given that the
+mapping is still tied to the folio).
 
+Vlastimil, any comments?
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
