@@ -2,95 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AC8EA761DE2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 17:59:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2846F761DDE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 17:59:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232846AbjGYP7m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jul 2023 11:59:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39188 "EHLO
+        id S232276AbjGYP7i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jul 2023 11:59:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231922AbjGYP7j (ORCPT
+        with ESMTP id S230340AbjGYP7g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jul 2023 11:59:39 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E41472126
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 08:58:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690300731;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DCrVdTZAI+0vQC3PoQE4vcBJ0YMLagHeZdYmArSL1lk=;
-        b=SopnfteEDyD0XSwn1vs/WJ2577jbiratEy3Aer4DNlSq0eTrRbBD2/ZrzbsFfIsozbSYuq
-        F7o4XKQ0lwsKjB3rw6fO1AUnvJaNH7sKQ3IirDfvT8pNPvPFbfimDF+qDwaA09AYfZnAAl
-        MBTHzk3Sf9rA4i6zcn3LcHsZs5kT7R8=
-Received: from mimecast-mx02.redhat.com (66.187.233.73 [66.187.233.73]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-410-WI-G73yFMfKYvUZh17UjEQ-1; Tue, 25 Jul 2023 11:58:46 -0400
-X-MC-Unique: WI-G73yFMfKYvUZh17UjEQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 25 Jul 2023 11:59:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE5A22106
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 08:59:34 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DD0281C16600;
-        Tue, 25 Jul 2023 15:58:43 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.242])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D7BA0201EC58;
-        Tue, 25 Jul 2023 15:58:34 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <cover.1689092120.git.legion@kernel.org>
-References: <cover.1689092120.git.legion@kernel.org> <cover.1689074739.git.legion@kernel.org>
-To:     Alexey Gladkov <legion@kernel.org>
-Cc:     dhowells@redhat.com, James.Bottomley@HansenPartnership.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        axboe@kernel.dk, benh@kernel.crashing.org, borntraeger@de.ibm.com,
-        bp@alien8.de, catalin.marinas@arm.com, christian@brauner.io,
-        dalias@libc.org, davem@davemloft.net, deepa.kernel@gmail.com,
-        deller@gmx.de, fenghua.yu@intel.com, fweimer@redhat.com,
-        geert@linux-m68k.org, glebfm@altlinux.org, gor@linux.ibm.com,
-        hare@suse.com, hpa@zytor.com, ink@jurassic.park.msu.ru,
-        jhogan@kernel.org, kim.phillips@arm.com, ldv@altlinux.org,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux@armlinux.org.uk, linuxppc-dev@lists.ozlabs.org,
-        luto@kernel.org, mattst88@gmail.com, mingo@redhat.com,
-        monstr@monstr.eu, mpe@ellerman.id.au, namhyung@kernel.org,
-        paulus@samba.org, peterz@infradead.org, ralf@linux-mips.org,
-        sparclinux@vger.kernel.org, stefan@agner.ch, tglx@linutronix.de,
-        tony.luck@intel.com, tycho@tycho.ws, will@kernel.org,
-        x86@kernel.org, ysato@users.sourceforge.jp,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Add fchmodat2() - or add a more general syscall?
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 67BA9617D1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 15:59:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6914C433C7;
+        Tue, 25 Jul 2023 15:59:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690300773;
+        bh=0u+HYQGmoCedoBKVOoR5Hosif+VWaXwQKUiW99pfSl4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mTK5dt2WSUPfGCvS5hXGIxM5+Qo1OOaSBnYQUfe+AhZjnnlzlWwviZyCv9g4SmG6O
+         x4FpMQGpcbie1X5LzuFQwFPEM7hMTeUoiHPNk/aSF9wqaXFYHcaWCL/2GwbPxq5P94
+         aFgY4ZwvYReY5VgXWvhtK7ZnYGnSXcahi0rchwtbgR41DYp/GDOJp1461QAp4qrrAn
+         hq0maRK6VgjD16grARCE3QsP99YcuPcKVsYEjvxuCZTIMmD1SSZWT+bA4RdoYxrEMd
+         4bFVQNDaD1RB6Agl1WVf56i10pWbHdlzmP3yaXondjpvmEcR5YDQPkuC0O43oOFasY
+         sitViS0NP5xIg==
+Date:   Tue, 25 Jul 2023 17:59:22 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Philip Li <philip.li@intel.com>
+Cc:     Chuck Lever III <chuck.lever@oracle.com>,
+        kernel test robot <oliver.sang@intel.com>,
+        Chuck Lever <cel@kernel.org>,
+        "oe-lkp@lists.linux.dev" <oe-lkp@lists.linux.dev>,
+        kernel test robot <lkp@intel.com>,
+        linux-mm <linux-mm@kvack.org>,
+        "ying.huang@intel.com" <ying.huang@intel.com>,
+        "feng.tang@intel.com" <feng.tang@intel.com>,
+        "fengwei.yin@intel.com" <fengwei.yin@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v7 3/3] shmem: stable directory offsets
+Message-ID: <20230725-geraubt-international-910f0d37175b@brauner>
+References: <202307171436.29248fcf-oliver.sang@intel.com>
+ <3B736492-9332-40C9-A916-DA6EE1A425B9@oracle.com>
+ <53E23038-3904-400F-97E1-0BAFAD510D2D@oracle.com>
+ <ZL/wMvYSjRU0L6Cp@rli9-mobl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <104970.1690300714.1@warthog.procyon.org.uk>
-Date:   Tue, 25 Jul 2023 16:58:34 +0100
-Message-ID: <104971.1690300714@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZL/wMvYSjRU0L6Cp@rli9-mobl>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Rather than adding a fchmodat2() syscall, should we add a "set_file_attrs()"
-syscall that takes a mask and allows you to set a bunch of stuff all in one
-go?  Basically, an interface to notify_change() in the kernel that would allow
-several stats to be set atomically.  This might be of particular interest to
-network filesystems.
+On Tue, Jul 25, 2023 at 11:54:26PM +0800, Philip Li wrote:
+> On Tue, Jul 25, 2023 at 03:12:22PM +0000, Chuck Lever III wrote:
+> > 
+> > 
+> > > On Jul 22, 2023, at 4:33 PM, Chuck Lever III <chuck.lever@oracle.com> wrote:
+> > > 
+> > > 
+> > > 
+> > >> On Jul 17, 2023, at 2:46 AM, kernel test robot <oliver.sang@intel.com> wrote:
+> > >> 
+> > >> 
+> > >> hi, Chuck Lever,
+> > >> 
+> > >> we reported a 3.0% improvement of stress-ng.handle.ops_per_sec for this commit
+> > >> on
+> > >> https://lore.kernel.org/oe-lkp/202307132153.a52cdb2d-oliver.sang@intel.com/
+> > >> 
+> > >> but now we noticed a regression, detail as below, FYI
+> > >> 
+> > >> Hello,
+> > >> 
+> > >> kernel test robot noticed a -15.5% regression of will-it-scale.per_thread_ops on:
+> > >> 
+> > >> 
+> > >> commit: a1a690e009744e4526526b2f838beec5ef9233cc ("[PATCH v7 3/3] shmem: stable directory offsets")
+> > >> url: https://github.com/intel-lab-lkp/linux/commits/Chuck-Lever/libfs-Add-directory-operations-for-stable-offsets/20230701-014925
+> > >> base: https://git.kernel.org/cgit/linux/kernel/git/akpm/mm.git mm-everything
+> > >> patch link: https://lore.kernel.org/all/168814734331.530310.3911190551060453102.stgit@manet.1015granger.net/
+> > >> patch subject: [PATCH v7 3/3] shmem: stable directory offsets
+> > >> 
+> > >> testcase: will-it-scale
+> > >> test machine: 104 threads 2 sockets (Skylake) with 192G memory
+> > >> parameters:
+> > >> 
+> > >> nr_task: 16
+> > >> mode: thread
+> > >> test: unlink2
+> > >> cpufreq_governor: performance
+> > >> 
+> > >> 
+> > >> In addition to that, the commit also has significant impact on the following tests:
+> > >> 
+> > >> +------------------+-------------------------------------------------------------------------------------------------+
+> > >> | testcase: change | will-it-scale: will-it-scale.per_thread_ops -40.0% regression                                   |
+> > >> | test machine     | 36 threads 1 sockets Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz (Cascade Lake) with 128G memory |
+> > >> | test parameters  | cpufreq_governor=performance                                                                    |
+> > >> |                  | mode=thread                                                                                     |
+> > >> |                  | nr_task=16                                                                                      |
+> > >> |                  | test=unlink2                                                                                    |
+> > >> +------------------+-------------------------------------------------------------------------------------------------+
+> > >> | testcase: change | stress-ng: stress-ng.handle.ops_per_sec 3.0% improvement                                        |
+> > >> | test machine     | 36 threads 1 sockets Intel(R) Core(TM) i9-9980XE CPU @ 3.00GHz (Skylake) with 32G memory        |
+> > >> | test parameters  | class=filesystem                                                                                |
+> > >> |                  | cpufreq_governor=performance                                                                    |
+> > >> |                  | disk=1SSD                                                                                       |
+> > >> |                  | fs=ext4                                                                                         |
+> > >> |                  | nr_threads=10%                                                                                  |
+> > >> |                  | test=handle                                                                                     |
+> > >> |                  | testtime=60s                                                                                    |
+> > >> +------------------+-------------------------------------------------------------------------------------------------+
+> > >> 
+> > >> 
+> > >> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > >> the same patch/commit), kindly add following tags
+> > >> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> > >> | Closes: https://lore.kernel.org/oe-lkp/202307171436.29248fcf-oliver.sang@intel.com
+> > >> 
+> > >> 
+> > >> Details are as below:
+> > >> -------------------------------------------------------------------------------------------------->
+> > >> 
+> > >> 
+> > >> To reproduce:
+> > >> 
+> > >>       git clone https://github.com/intel/lkp-tests.git
+> > >>       cd lkp-tests
+> > >>       sudo bin/lkp install job.yaml           # job file is attached in this email
+> > 
+> > Has anyone from the lkp or ltp teams had a chance to look at this?
+> > I'm stuck without this reproducer.
+> 
+> Sorry about this that fedora is not fully supported now [1]. A possible way
+> is to run the test inside docker [2]. But we haven't fully tested the
+> reproduce steps in docker yet, which is in our TODO list. Also a concern is
+> that docker environment probably can't reproduce the performance regression.
+> 
+> For now, not sure whether it is convenient for you to have a ubuntu or debian
+> environment to give a try? Another alternative is if you have new patch, we
+> can assist to verify it on our machines.
 
-David
+So while we have your attention here. I've asked this a while ago in
+another mail: It would be really really helpful if there was a way for
+us to ask/trigger a perf test run for specific branches/patches we
+suspect of being performance sensitive.
 
+It's a bit of a shame that we have no simple way of submitting a custom
+job and get performance results reported. I know that resources for this
+are probably scarce but some way to at least request it would be really
+really nice.
