@@ -2,53 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 46306761FA9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 18:57:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1101A761FBD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 19:03:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232003AbjGYQ5l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jul 2023 12:57:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49882 "EHLO
+        id S232556AbjGYRDd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jul 2023 13:03:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229492AbjGYQ5k (ORCPT
+        with ESMTP id S232530AbjGYRDc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jul 2023 12:57:40 -0400
-Received: from out-37.mta1.migadu.com (out-37.mta1.migadu.com [95.215.58.37])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 108EA10B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 09:57:38 -0700 (PDT)
-Message-ID: <45da6206-8e34-a184-5ba4-d40be252cfd2@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1690304257;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qOH2+wUxEOwH8igRf+huAYSxRY+zwTmm3Lq2g2+GYT4=;
-        b=HLyRT0JHYQOGR6u5HeXufBBX6rGdEg9joKATrL3cUM+PIm3oDLFlgjAdIsHIoeYAkgK6L+
-        geRzMCPmXjXXx5gZW8PLyIHxQIVyBdFw/SDsY1J6pGWPwkeHnJEhyF/hH3AjMdmTe8pGC/
-        DX75ch4tT8nnyo1YCbbR2OJ4L/Ojp4A=
-Date:   Wed, 26 Jul 2023 00:57:23 +0800
+        Tue, 25 Jul 2023 13:03:32 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41C2F1FEC
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 10:03:26 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3fbc0609cd6so47015635e9.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 10:03:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690304604; x=1690909404;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N4+AkqHfBt+YF57UntWNN2nKkLF9PtsmEtzT5w0gGjw=;
+        b=R8+j0MkNrQ9S1wsciu9YPQVqDiyOWBtNFsYYRAYkSldu25nmGXgnlE75BefikcMfLG
+         4SEFn3CZL1vNb3HOeviMoFSF3L730rOMzcL7qUFVoRHEREDW0WdcWtOmKbzMVlfae5T5
+         TsIDLX6YD4no0mPEHSW/5ZNX+eV/v8ncrX/4CRdwb8j1Joj3YKPEgits7wlA2y7RMXbr
+         jqro8ts/A8MQfam9HTsPOhxDN4/coVhxV3a0codjQhF0gulrZn9lj2iVIyNJxYY5YE53
+         WihUiIKfhYMgoJPvEnpRc0Q4Ij1WHEf6sE1d2HRjx4+Z8Aytuo5Z79P7R/1zJktYzIMg
+         9dgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690304604; x=1690909404;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N4+AkqHfBt+YF57UntWNN2nKkLF9PtsmEtzT5w0gGjw=;
+        b=gFNLPcjaDxwB4rXtHPgyLdS5RLfqEkCkURM3mzDe1sF+jB1HRHhQqXb0KiYnG8bDNT
+         S4/nLiabdFKYbSalWf3zti5Jd7dU0XFss56CLnr1Xc/xQ7yFdGlJDP0WEn/W7ucEptkw
+         pG9aqHDx0JqcLOv3cQq/sUTZd9PadSxKh1ncIhoMXivy7+NgO8NCTtTb+XJWy7k05/ov
+         g+ZO1WqHI6XPURsw9FWjDByzpG4JcZMnA/b0/wbAsIJ535S53539ACtoUL4v0lbZt819
+         XHRo1bx9/+L5TcCcFY171QoEbWGoCzS6Zfw4ngpRgD7RHPZBQggrPYOZyVFeHDf9TC2P
+         uOXA==
+X-Gm-Message-State: ABy/qLbr3yScHi6VOpqO3zU+NCpGSb0CwWmQV9CP6NhWSr8JfkxxRui/
+        cnSib4WYmQyfC/m/Z3EeUH0kAw==
+X-Google-Smtp-Source: APBJJlGgjQxBjIlV3D6Fz51keIByk9Gjjuex8YMFGkODUlaMAU9GW06ihUuImle6v5gOk1v8OaNujA==
+X-Received: by 2002:a1c:7c08:0:b0:3f9:70f:8b99 with SMTP id x8-20020a1c7c08000000b003f9070f8b99mr8493034wmc.7.1690304604300;
+        Tue, 25 Jul 2023 10:03:24 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id l5-20020a05600c1d0500b003fbb1ce274fsm6046067wms.0.2023.07.25.10.03.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jul 2023 10:03:23 -0700 (PDT)
+Date:   Tue, 25 Jul 2023 20:03:16 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Baoquan He <bhe@redhat.com>, Matthew Wilcox <willy@infradead.org>
+Cc:     Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] proc/vmcore: fix signedness bug in read_from_oldmem()
+Message-ID: <b55f7eed-1c65-4adc-95d1-6c7c65a54a6e@moroto.mountain>
 MIME-Version: 1.0
-Subject: Re: [External] [fuse-devel] [PATCH 3/3] fuse: write back dirty pages
- before direct write in direct_io_relax mode
-Content-Language: en-US
-To:     Bernd Schubert <bernd.schubert@fastmail.fm>,
-        Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>,
-        fuse-devel@lists.sourceforge.net
-Cc:     linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>,
-        cgxu519@mykernel.net, miklos@szeredi.hu
-References: <20230630094602.230573-1-hao.xu@linux.dev>
- <20230630094602.230573-4-hao.xu@linux.dev>
- <e5266e11-b58b-c8ca-a3c8-0b2c07b3a1b2@bytedance.com>
- <2622afd7-228f-02f3-3b72-a1c826844126@linux.dev>
- <396A0BF4-DA68-46F8-9881-3801737225C6@fastmail.fm>
- <9b0a164d-3d0e-cc57-81b7-ae32bef4e9d7@linux.dev>
- <cb8c18e6-b5cb-e891-696f-b403012eacb7@fastmail.fm>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <cb8c18e6-b5cb-e891-696f-b403012eacb7@fastmail.fm>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
@@ -59,147 +70,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+The bug is the error handling:
 
-On 7/25/23 21:00, Bernd Schubert wrote:
->
->
-> On 7/25/23 12:11, Hao Xu wrote:
->> On 7/21/23 19:56, Bernd Schubert wrote:
->>> On July 21, 2023 1:27:26 PM GMT+02:00, Hao Xu <hao.xu@linux.dev> wrote:
->>>> On 7/21/23 14:35, Jiachen Zhang wrote:
->>>>>
->>>>> On 2023/6/30 17:46, Hao Xu wrote:
->>>>>> From: Hao Xu <howeyxu@tencent.com>
->>>>>>
->>>>>> In direct_io_relax mode, there can be shared mmaped files and 
->>>>>> thus dirty
->>>>>> pages in its page cache. Therefore those dirty pages should be 
->>>>>> written
->>>>>> back to backend before direct write to avoid data loss.
->>>>>>
->>>>>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
->>>>>> ---
->>>>>>    fs/fuse/file.c | 7 +++++++
->>>>>>    1 file changed, 7 insertions(+)
->>>>>>
->>>>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->>>>>> index 176f719f8fc8..7c9167c62bf6 100644
->>>>>> --- a/fs/fuse/file.c
->>>>>> +++ b/fs/fuse/file.c
->>>>>> @@ -1485,6 +1485,13 @@ ssize_t fuse_direct_io(struct fuse_io_priv 
->>>>>> *io, struct iov_iter *iter,
->>>>>>        if (!ia)
->>>>>>            return -ENOMEM;
->>>>>> +    if (fopen_direct_write && fc->direct_io_relax) {
->>>>>> +        res = filemap_write_and_wait_range(mapping, pos, pos + 
->>>>>> count - 1);
->>>>>> +        if (res) {
->>>>>> +            fuse_io_free(ia);
->>>>>> +            return res;
->>>>>> +        }
->>>>>> +    }
->>>>>>        if (!cuse && fuse_range_is_writeback(inode, idx_from, 
->>>>>> idx_to)) {
->>>>>>            if (!write)
->>>>>>                inode_lock(inode);
->>>>>
->>>>> Tested-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
->>>>>
->>>>>
->>>>> Looks good to me.
->>>>>
->>>>> By the way, the behaviour would be a first FUSE_WRITE flushing the 
->>>>> page cache, followed by a second FUSE_WRITE doing the direct IO. 
->>>>> In the future, further optimization could be first write into the 
->>>>> page cache and then flush the dirty page to the FUSE daemon.
->>>>>
->>>>
->>>> I think this makes sense, cannot think of any issue in it for now, so
->>>> I'll do that change and send next version, super thanks, Jiachen!
->>>>
->>>> Thanks,
->>>> Hao
->>>>
->>>>>
->>>>> Thanks,
->>>>> Jiachen
->>>>
->>>
->>> On my phone, sorry if mail formatting is not optimal.
->>> Do I understand it right? You want DIO code path copy into pages and 
->>> then flush/invalidate these pages? That would be punish DIO for for 
->>> the unlikely case there are also dirty pages (discouraged IO pattern).
->>
->> Hi Bernd,
->> I think I don't get what you said, why it is punishment and why it's 
->> discouraged IO pattern?
->> On my first eyes seeing Jiachen's idea, I was thinking "that sounds
->> disobeying direct write semantics" because usually direct write is
->> "flush dirty page -> invalidate page -> write data through to backend"
->> not "write data to page -> flush dirty page/(writeback data)"
->> The latter in worst case write data both to page cache and backend
->> while the former just write to backend and load it to the page cache
->> when buffered reading. But seems there is no such "standard way" which
->> says we should implement direct IO in that way.
->
-> Hi Hao,
->
-> sorry for being brief last week, I was on vacation and reading/writing 
-> some mails on my phone.
->
-> With 'punishment' I mean memory copies to the page cache - memory 
-> copies are expensive and DIO should avoid it.
->
-> Right now your patch adds filemap_write_and_wait_range(), but we do 
-> not know if it did work (i.e. if pages had to be flushed). So unless 
-> you find a way to get that information, copy to page cache would be 
-> unconditionally - overhead of memory copy even if there are no dirty 
-> pages.
+	if (tmp < nr_bytes) {
 
+"tmp" can hold negative error codes but because "nr_bytes" is type
+size_t the negative error codes are treated as very high positive
+values (success).  Fix this by changing "nr_bytes" to type ssize_t.  The
+"nr_bytes" variable is used to store values between 1 and PAGE_SIZE and
+they can fit in ssize_t without any issue.
 
-Ah, looks I understood what you mean in my last email reply. Yes, just 
-like what I said in last email:
+Fixes: 5d8de293c224 ("vmcore: convert copy_oldmem_page() to take an iov_iter")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/proc/vmcore.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1] flush dirty page --> invalidate page --> write data to backend
-
-    This is what we do for direct write right now in kernel, I call this 
-policy "write-through", since it doesn't care much about the cache.
-
-[2] write data to page cache --> flush dirty page in suitable time
-
-    This is  "write-back" policy, used by buffered write. Here in this 
-patch's case, we flush pages synchronously, so it still can be called 
-direct-write.
-
-Surely, in the worst case, the page is clean, then [2] has one extra 
-memory copy than [1]. But like what I pointed out, for [2], next time 
-buffered
-
-read happens, the page is in latest state, so no I/O needed, while for 
-[1], it has to load data from backend to page cache.
-
-
->
-> With 'discouraged' I mean mix of page cache and direct-io. Typically 
-> one should only do either of both (page cache or DIO), but not a mix 
-> of them. For example see your patch, it flushes the page cache, but 
-> without a lock - races are possible. Copying to the page cache might 
-> be a solution, but it has the overhead above.
-
-
-For race, we held inode lock there, do I miss anything?
-
-
->
-> Thanks,
-> Bernd
-
-
-I now think it's good to keep the pattern same as other filesystems 
-which is [1] to avoid possible performance issues in the future, thanks 
-Bernd.
-
-
-Hao
-
+diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+index cb80a7703d58..1fb213f379a5 100644
+--- a/fs/proc/vmcore.c
++++ b/fs/proc/vmcore.c
+@@ -132,7 +132,7 @@ ssize_t read_from_oldmem(struct iov_iter *iter, size_t count,
+ 			 u64 *ppos, bool encrypted)
+ {
+ 	unsigned long pfn, offset;
+-	size_t nr_bytes;
++	ssize_t nr_bytes;
+ 	ssize_t read = 0, tmp;
+ 	int idx;
+ 
+-- 
+2.39.2
 
