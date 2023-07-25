@@ -2,170 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2846F761DDE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 17:59:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3928F761DF7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 18:04:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232276AbjGYP7i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jul 2023 11:59:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39068 "EHLO
+        id S231708AbjGYQE0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jul 2023 12:04:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230340AbjGYP7g (ORCPT
+        with ESMTP id S231539AbjGYQEN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jul 2023 11:59:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE5A22106
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 08:59:34 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 67BA9617D1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 15:59:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6914C433C7;
-        Tue, 25 Jul 2023 15:59:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690300773;
-        bh=0u+HYQGmoCedoBKVOoR5Hosif+VWaXwQKUiW99pfSl4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mTK5dt2WSUPfGCvS5hXGIxM5+Qo1OOaSBnYQUfe+AhZjnnlzlWwviZyCv9g4SmG6O
-         x4FpMQGpcbie1X5LzuFQwFPEM7hMTeUoiHPNk/aSF9wqaXFYHcaWCL/2GwbPxq5P94
-         aFgY4ZwvYReY5VgXWvhtK7ZnYGnSXcahi0rchwtbgR41DYp/GDOJp1461QAp4qrrAn
-         hq0maRK6VgjD16grARCE3QsP99YcuPcKVsYEjvxuCZTIMmD1SSZWT+bA4RdoYxrEMd
-         4bFVQNDaD1RB6Agl1WVf56i10pWbHdlzmP3yaXondjpvmEcR5YDQPkuC0O43oOFasY
-         sitViS0NP5xIg==
-Date:   Tue, 25 Jul 2023 17:59:22 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Philip Li <philip.li@intel.com>
-Cc:     Chuck Lever III <chuck.lever@oracle.com>,
-        kernel test robot <oliver.sang@intel.com>,
-        Chuck Lever <cel@kernel.org>,
-        "oe-lkp@lists.linux.dev" <oe-lkp@lists.linux.dev>,
-        kernel test robot <lkp@intel.com>,
-        linux-mm <linux-mm@kvack.org>,
-        "ying.huang@intel.com" <ying.huang@intel.com>,
-        "feng.tang@intel.com" <feng.tang@intel.com>,
-        "fengwei.yin@intel.com" <fengwei.yin@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Hugh Dickins <hughd@google.com>,
+        Tue, 25 Jul 2023 12:04:13 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3B3810E5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 09:04:01 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-c0f35579901so6470181276.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 09:04:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1690301041; x=1690905841;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JzfMU5Qs8JliFSPK4e1C5em4CWxZCGfzp6e2iymS9Yg=;
+        b=dW59zwmrsLAamcGnirE6A1LfKT51T61DtWDAOhx4/cSvK3sOAiDmr+BlK4XiPthtzP
+         CN9MlQi3HhBVcH71uuUqq+M14CfwGnGPEE/BpfevOBdEFKHG7J0iaICViLaRAky8BhEp
+         HFcQ65KDccgqhPQn/ChYInnlcEfq7qr0Ma/Jgkr7SmWI+05vO/bEbUCWl8Rn7I2emovI
+         UeVOyMZohBruEuz8fBipp3NgVzf/qbnB/hnqT0XX1CDCZ3KOl7DJQE2yXx50QpLL6+Az
+         IlluRAj7yyIarMAgzXmFlQrKZdiqjqFyPfBBVM/tbJmItA4hkVu10uPsnU/tUYfyPMpN
+         N63Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690301041; x=1690905841;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JzfMU5Qs8JliFSPK4e1C5em4CWxZCGfzp6e2iymS9Yg=;
+        b=eNJuJvZ9kDxmzk3MI7ff1ZQ9OBxwDTVFWDWEsFtXt3V8gjF6lFGT+mz16ujZRuRbwI
+         YuZRTSTZeMnOrb72FIJcKytJBXDJy2mZ2+QvFghVRAr7S32dZHvkQQUwNic47/ukwh9Y
+         WvTi1OZ8IAX+B2jOnAicaP1mIaxFpL2LvY30h4DgG4jruMc7PnBmU+zRToNRXxZhAaSJ
+         NC4N1UEb+8I7g7FXM9ZgAHo1xU1kOXXwmDAkvYNTmtKe7EQCuyjn4bcOdVQPcf/zVmpj
+         rExioOyyZLFKNl+MtQN6xFXY6dPGyDrLz4lSIPIHQ7P1Kqj+ABHdPWYuf8tU3qaCOMvW
+         xh5A==
+X-Gm-Message-State: ABy/qLYuF7SDcdsZPDKZM9fj8t/M0kwi3Bme1EAiS4xZpe32QmQ7wHhU
+        f/qmHxNs6FMn8LWk52aNHuj91RPsbr4=
+X-Google-Smtp-Source: APBJJlH1niyzp4cjBeRls9BsaNe03YLK4iKuUQJEO3t7N9JW3OW9U+d5kcfXqA22KUPE/pwVy1vkIiRVphQ=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:46d4:0:b0:cf9:3564:33cc with SMTP id
+ t203-20020a2546d4000000b00cf9356433ccmr81585yba.13.1690301041144; Tue, 25 Jul
+ 2023 09:04:01 -0700 (PDT)
+Date:   Tue, 25 Jul 2023 09:03:59 -0700
+In-Reply-To: <DS0PR11MB637386533A4A10667BA6DF03DC03A@DS0PR11MB6373.namprd11.prod.outlook.com>
+Mime-Version: 1.0
+References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-13-seanjc@google.com>
+ <DS0PR11MB637386533A4A10667BA6DF03DC03A@DS0PR11MB6373.namprd11.prod.outlook.com>
+Message-ID: <ZL/yb4wL4Nhf9snZ@google.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+From:   Sean Christopherson <seanjc@google.com>
+To:     Wei W Wang <wei.w.wang@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v7 3/3] shmem: stable directory offsets
-Message-ID: <20230725-geraubt-international-910f0d37175b@brauner>
-References: <202307171436.29248fcf-oliver.sang@intel.com>
- <3B736492-9332-40C9-A916-DA6EE1A425B9@oracle.com>
- <53E23038-3904-400F-97E1-0BAFAD510D2D@oracle.com>
- <ZL/wMvYSjRU0L6Cp@rli9-mobl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZL/wMvYSjRU0L6Cp@rli9-mobl>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 25, 2023 at 11:54:26PM +0800, Philip Li wrote:
-> On Tue, Jul 25, 2023 at 03:12:22PM +0000, Chuck Lever III wrote:
-> > 
-> > 
-> > > On Jul 22, 2023, at 4:33 PM, Chuck Lever III <chuck.lever@oracle.com> wrote:
-> > > 
-> > > 
-> > > 
-> > >> On Jul 17, 2023, at 2:46 AM, kernel test robot <oliver.sang@intel.com> wrote:
-> > >> 
-> > >> 
-> > >> hi, Chuck Lever,
-> > >> 
-> > >> we reported a 3.0% improvement of stress-ng.handle.ops_per_sec for this commit
-> > >> on
-> > >> https://lore.kernel.org/oe-lkp/202307132153.a52cdb2d-oliver.sang@intel.com/
-> > >> 
-> > >> but now we noticed a regression, detail as below, FYI
-> > >> 
-> > >> Hello,
-> > >> 
-> > >> kernel test robot noticed a -15.5% regression of will-it-scale.per_thread_ops on:
-> > >> 
-> > >> 
-> > >> commit: a1a690e009744e4526526b2f838beec5ef9233cc ("[PATCH v7 3/3] shmem: stable directory offsets")
-> > >> url: https://github.com/intel-lab-lkp/linux/commits/Chuck-Lever/libfs-Add-directory-operations-for-stable-offsets/20230701-014925
-> > >> base: https://git.kernel.org/cgit/linux/kernel/git/akpm/mm.git mm-everything
-> > >> patch link: https://lore.kernel.org/all/168814734331.530310.3911190551060453102.stgit@manet.1015granger.net/
-> > >> patch subject: [PATCH v7 3/3] shmem: stable directory offsets
-> > >> 
-> > >> testcase: will-it-scale
-> > >> test machine: 104 threads 2 sockets (Skylake) with 192G memory
-> > >> parameters:
-> > >> 
-> > >> nr_task: 16
-> > >> mode: thread
-> > >> test: unlink2
-> > >> cpufreq_governor: performance
-> > >> 
-> > >> 
-> > >> In addition to that, the commit also has significant impact on the following tests:
-> > >> 
-> > >> +------------------+-------------------------------------------------------------------------------------------------+
-> > >> | testcase: change | will-it-scale: will-it-scale.per_thread_ops -40.0% regression                                   |
-> > >> | test machine     | 36 threads 1 sockets Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz (Cascade Lake) with 128G memory |
-> > >> | test parameters  | cpufreq_governor=performance                                                                    |
-> > >> |                  | mode=thread                                                                                     |
-> > >> |                  | nr_task=16                                                                                      |
-> > >> |                  | test=unlink2                                                                                    |
-> > >> +------------------+-------------------------------------------------------------------------------------------------+
-> > >> | testcase: change | stress-ng: stress-ng.handle.ops_per_sec 3.0% improvement                                        |
-> > >> | test machine     | 36 threads 1 sockets Intel(R) Core(TM) i9-9980XE CPU @ 3.00GHz (Skylake) with 32G memory        |
-> > >> | test parameters  | class=filesystem                                                                                |
-> > >> |                  | cpufreq_governor=performance                                                                    |
-> > >> |                  | disk=1SSD                                                                                       |
-> > >> |                  | fs=ext4                                                                                         |
-> > >> |                  | nr_threads=10%                                                                                  |
-> > >> |                  | test=handle                                                                                     |
-> > >> |                  | testtime=60s                                                                                    |
-> > >> +------------------+-------------------------------------------------------------------------------------------------+
-> > >> 
-> > >> 
-> > >> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > >> the same patch/commit), kindly add following tags
-> > >> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> > >> | Closes: https://lore.kernel.org/oe-lkp/202307171436.29248fcf-oliver.sang@intel.com
-> > >> 
-> > >> 
-> > >> Details are as below:
-> > >> -------------------------------------------------------------------------------------------------->
-> > >> 
-> > >> 
-> > >> To reproduce:
-> > >> 
-> > >>       git clone https://github.com/intel/lkp-tests.git
-> > >>       cd lkp-tests
-> > >>       sudo bin/lkp install job.yaml           # job file is attached in this email
-> > 
-> > Has anyone from the lkp or ltp teams had a chance to look at this?
-> > I'm stuck without this reproducer.
+On Tue, Jul 25, 2023, Wei W Wang wrote:
+> On Wednesday, July 19, 2023 7:45 AM, Sean Christopherson wrote:
+> > +int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
+> > +		     gfn_t gfn, kvm_pfn_t *pfn, int *max_order) {
+> > +	pgoff_t index = gfn - slot->base_gfn + slot->gmem.pgoff;
+> > +	struct kvm_gmem *gmem;
+> > +	struct folio *folio;
+> > +	struct page *page;
+> > +	struct file *file;
+> > +
+> > +	file = kvm_gmem_get_file(slot);
+> > +	if (!file)
+> > +		return -EFAULT;
+> > +
+> > +	gmem = file->private_data;
+> > +
+> > +	if (WARN_ON_ONCE(xa_load(&gmem->bindings, index) != slot)) {
+> > +		fput(file);
+> > +		return -EIO;
+> > +	}
+> > +
+> > +	folio = kvm_gmem_get_folio(file_inode(file), index);
+> > +	if (!folio) {
+> > +		fput(file);
+> > +		return -ENOMEM;
+> > +	}
+> > +
+> > +	page = folio_file_page(folio, index);
+> > +
+> > +	*pfn = page_to_pfn(page);
+> > +	*max_order = compound_order(compound_head(page));
 > 
-> Sorry about this that fedora is not fully supported now [1]. A possible way
-> is to run the test inside docker [2]. But we haven't fully tested the
-> reproduce steps in docker yet, which is in our TODO list. Also a concern is
-> that docker environment probably can't reproduce the performance regression.
+> Maybe better to check if caller provided a buffer to get the max_order:
+> if (max_order)
+> 	*max_order = compound_order(compound_head(page));
 > 
-> For now, not sure whether it is convenient for you to have a ubuntu or debian
-> environment to give a try? Another alternative is if you have new patch, we
-> can assist to verify it on our machines.
+> This is what the previous version did (restrictedmem_get_page),
+> so that callers who only want to get a pfn don't need to define
+> an unused "order" param.
 
-So while we have your attention here. I've asked this a while ago in
-another mail: It would be really really helpful if there was a way for
-us to ask/trigger a perf test run for specific branches/patches we
-suspect of being performance sensitive.
-
-It's a bit of a shame that we have no simple way of submitting a custom
-job and get performance results reported. I know that resources for this
-are probably scarce but some way to at least request it would be really
-really nice.
+My preference would be to require @max_order.  I can kinda sorta see why a generic
+implementation (restrictedmem) would make the param optional, but with gmem being
+KVM-internal I think it makes sense to require the param.  Even if pKVM doesn't
+_currently_ need/want the order of the backing allocation, presumably that's because
+hugepage support is still on the TODO list, not because pKVM fundamentally doesn't
+need to know the order of the backing allocation.
