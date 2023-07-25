@@ -2,53 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A137E76043E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 02:45:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ED017604FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 04:00:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230131AbjGYApc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 20:45:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36988 "EHLO
+        id S230041AbjGYCAr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 22:00:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbjGYApb (ORCPT
+        with ESMTP id S229475AbjGYCAp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 20:45:31 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D82A410F9;
-        Mon, 24 Jul 2023 17:45:29 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7099861486;
-        Tue, 25 Jul 2023 00:45:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 953B7C433C7;
-        Tue, 25 Jul 2023 00:45:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690245928;
-        bh=hBv3qa2DL7bn7fw8RIoZNx51Zbvz7PAHljshT2Ia2qI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ViSZd/cg0zEDO5+Sjl/rAVAYl4SwV9Gb87ELJLZnjLD0ZnIly8Am8lgUvuDuWdv6H
-         BKK4TeZIQjHniiGJFSg8N5/0b2zvWSUSqzJfpThkqXWG0KdhvJPpRsd/7nL6a85R5s
-         Yavi1jv2M922rvAlwQvi8y2IrMYstu2g5P7UgOAqrZygXCu75aTuQSQxp4JDx/KCNe
-         +rk4TDlPvQn7O0VYNRi1eEx33zwer2/YC34qko8TN/VJA67qnZL2G/GYXJorZ7m6eO
-         UOqeZ/MeV7yxum2iGd8UENjEE+D5zuxL4roh7D6EUAfQZ8lJto4lc6bvSUFHSX5YdE
-         ggkZfCl699k6g==
-Date:   Mon, 24 Jul 2023 17:45:28 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>
-Cc:     djwong@kernel.org, hch@lst.de, kent.overstreet@linux.dev,
-        willy@infradead.org,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        Dave Chinner <david@fromorbit.com>
-Subject: [ANNOUNCE] xfs-linux: iomap-for-next updated to d42bd17c6a20
-Message-ID: <20230725004528.GB11336@frogsfrogsfrogs>
+        Mon, 24 Jul 2023 22:00:45 -0400
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7108610F0;
+        Mon, 24 Jul 2023 19:00:44 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.143])
+        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4R90c76d3gz4f3nb1;
+        Tue, 25 Jul 2023 10:00:39 +0800 (CST)
+Received: from [10.174.178.55] (unknown [10.174.178.55])
+        by APP4 (Coremail) with SMTP id gCh0CgAHcLPGLL9k+mv8Og--.60794S3;
+        Tue, 25 Jul 2023 10:00:40 +0800 (CST)
+Subject: Re: [PATCH 1/2] softirq: fix integer overflow in function show_stat()
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Paul E . McKenney" <paulmck@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Zhen Lei <thunder.leizhen@huawei.com>
+References: <20230724132224.916-1-thunder.leizhen@huaweicloud.com>
+ <20230724132224.916-2-thunder.leizhen@huaweicloud.com>
+ <ZL6BwiHhvQneJZYH@casper.infradead.org>
+From:   "Leizhen (ThunderTown)" <thunder.leizhen@huaweicloud.com>
+Message-ID: <6e38e31f-4413-1aff-8973-5c3d660bedea@huaweicloud.com>
+Date:   Tue, 25 Jul 2023 10:00:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+In-Reply-To: <ZL6BwiHhvQneJZYH@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: gCh0CgAHcLPGLL9k+mv8Og--.60794S3
+X-Coremail-Antispam: 1UD129KBjvJXoWrKFyrJFWDKrWkZr13KF1xXwb_yoW8JF17pF
+        yUKw1UGr4kCFyxAr92qr18GF4xAws8Ja45Zr17Ca4IvFZ8Ar9IgF47GrWjqasrWr9agw4F
+        van2gr9rCayYv3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6r1F6r1fM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+        0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+        e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+        6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+        kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+        14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+        9x07UWE__UUUUU=
+X-CM-SenderInfo: hwkx0vthuozvpl2kv046kxt4xhlfz01xgou0bp/
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,KHOP_HELO_FCRDNS,
+        MAY_BE_FORGED,NICE_REPLY_A,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,61 +76,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
 
-The iomap-for-next branch of the xfs-linux repository at:
 
-	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+On 2023/7/24 21:50, Matthew Wilcox wrote:
+> On Mon, Jul 24, 2023 at 09:22:23PM +0800, thunder.leizhen@huaweicloud.com wrote:
+>> From: Zhen Lei <thunder.leizhen@huawei.com>
+>>
+>> The statistics function of softirq is supported by commit aa0ce5bbc2db
+>> ("softirq: introduce statistics for softirq") in 2009. At that time,
+>> 64-bit processors should not have many cores and would not face
+>> significant count overflow problems. Now it's common for a processor to
+>> have hundreds of cores. Assume that there are 100 cores and 10
+>> TIMER_SOFTIRQ are generated per second, then the 32-bit sum will be
+>> overflowed after 50 days.
+> 
+> 50 days is long enough to take a snapshot.  You should always be using
+> difference between, not absolute values, and understand that they can
+> wrap.  We only tend to change the size of a counter when it can wrap
+> sufficiently quickly that we might miss a wrap (eg tens of seconds).
 
-has just been updated.
+Yes, I think patch 2/2 can be dropped. I reduced the number of soft
+interrupts generated in one second, and actually 100+ or 1000 is normal.
+But I think patch 1/2 is necessary. The sum of the output scattered values
+does not match the output sum. To solve this problem, we only need to
+adjust the type of a local variable.
 
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.
 
-So.  I've merged willy's large folio writes series into the branch, and
-next I'd like to merge Ritesh's dirty block tracking changes.  Ritesh,
-could you rebase your changes against this branch and send me a pull
-request?
+> 
+> .
+> 
 
-(Next in line could be the dio completions thing that Jens is working
-on, though iirc Dave still had some questions about that...)
+-- 
+Regards,
+  Zhen Lei
 
-The new head of the iomap-for-next branch is commit:
-
-d42bd17c6a20 Merge tag 'large-folio-writes' of git://git.infradead.org/users/willy/pagecache into iomap-6.6-merge
-
-11 new commits:
-
-Darrick J. Wong (1):
-      [d42bd17c6a20] Merge tag 'large-folio-writes' of git://git.infradead.org/users/willy/pagecache into iomap-6.6-merge
-
-Matthew Wilcox (Oracle) (10):
-      [f7f9a0c8736d] iov_iter: Map the page later in copy_page_from_iter_atomic()
-      [908a1ad89466] iov_iter: Handle compound highmem pages in copy_page_from_iter_atomic()
-      [1b0306981e0f] iov_iter: Add copy_folio_from_iter_atomic()
-      [a221ab717c43] iomap: Remove large folio handling in iomap_invalidate_folio()
-      [32b29cc9db45] doc: Correct the description of ->release_folio
-      [7a8eb01b078f] iomap: Remove unnecessary test from iomap_release_folio()
-      [ffc143db63ee] filemap: Add fgf_t typedef
-      [4f6617011910] filemap: Allow __filemap_get_folio to allocate large folios
-      [d6bb59a9444d] iomap: Create large folios in the buffered write path
-      [5d8edfb900d5] iomap: Copy larger chunks from userspace
-
-Code Diffstat:
-
- Documentation/filesystems/locking.rst | 15 +++++--
- fs/btrfs/file.c                       |  6 +--
- fs/f2fs/compress.c                    |  2 +-
- fs/f2fs/f2fs.h                        |  2 +-
- fs/gfs2/bmap.c                        |  2 +-
- fs/iomap/buffered-io.c                | 54 +++++++++++------------
- include/linux/iomap.h                 |  2 +-
- include/linux/pagemap.h               | 82 ++++++++++++++++++++++++++++++-----
- include/linux/uio.h                   |  9 +++-
- lib/iov_iter.c                        | 43 +++++++++++-------
- mm/filemap.c                          | 65 ++++++++++++++-------------
- mm/folio-compat.c                     |  2 +-
- mm/readahead.c                        | 13 ------
- 13 files changed, 187 insertions(+), 110 deletions(-)
