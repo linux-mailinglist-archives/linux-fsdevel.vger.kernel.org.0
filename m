@@ -2,60 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B681C761D5C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 17:27:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44788761DB3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 17:53:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231481AbjGYP1W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jul 2023 11:27:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51814 "EHLO
+        id S232628AbjGYPxn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jul 2023 11:53:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbjGYP1V (ORCPT
+        with ESMTP id S231206AbjGYPxm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jul 2023 11:27:21 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90668E2;
-        Tue, 25 Jul 2023 08:27:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=FWv8YUOLDpc9XWpy42XZkr/o/V+IgMX0b+gKuTdbiQw=; b=B71INnRD3fJ67zcj/KlULhsLsr
-        JKhVWS0RbQwwHsaf29JeM5y1H5uLxqnrd0ZD8geKFJfRzeq9YupOKsw2VgDe997O9slDnrZQaOACq
-        yxi7N75Gi1mWxylYinAqJ4Mo1bN6COCOzQynpSA8H7If9YmM7/TXZgVwSSKtsmZDPO6tIw6YbtM7a
-        2qhntEHm+2yPxp1Q0iite7DpMrKhIJ9U4EpotaPaxO2xOLnO00gaenS3LxX/1kv/r4OZfU/PkHosy
-        uA063/A20TsAvT7r3IAb5Tu4lwRishzfojqHcxUzlwZfEzuVO3dF+99+Nmxz4LwoWSmnB0lTPSz3E
-        NF8c+sEQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qOJw6-005aym-Jp; Tue, 25 Jul 2023 15:26:54 +0000
-Date:   Tue, 25 Jul 2023 16:26:54 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Leizhen (ThunderTown)" <thunder.leizhen@huaweicloud.com>
-Cc:     "Paul E . McKenney" <paulmck@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Zhen Lei <thunder.leizhen@huawei.com>
-Subject: Re: [PATCH 1/2] softirq: fix integer overflow in function show_stat()
-Message-ID: <ZL/pvjMMtlxvBSCm@casper.infradead.org>
-References: <20230724132224.916-1-thunder.leizhen@huaweicloud.com>
- <20230724132224.916-2-thunder.leizhen@huaweicloud.com>
- <ZL6BwiHhvQneJZYH@casper.infradead.org>
- <6e38e31f-4413-1aff-8973-5c3d660bedea@huaweicloud.com>
- <3b1ba209-58c8-b2b6-115a-6c43cba80098@huaweicloud.com>
+        Tue, 25 Jul 2023 11:53:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACF18212F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 08:53:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2FE6C617C8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 15:53:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B554C433C7;
+        Tue, 25 Jul 2023 15:53:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690300416;
+        bh=yrA38A3YvfdrQJYbMZLtu+u8CQxlhUeS8fS+SQAd20c=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dyxLQgt4ep2azH/brrh4x/vUQPVdKCz0dqnBCVq4soZ71fb+uFdSjFEQTwRSxOkIg
+         UUw023ovaPRe5wXC1C7mQ3AiRkuWbbLLHyWy6c3V5xGlztKvFV7lsg0qC3wDlN7lAi
+         9+dYZnoaui3L9VUyQO+luiMLf4izBqhK7MyJN7ZrQjumoYECTKUicB5l+KVevvdB6Q
+         +NNh6JCvwqVuJvfWEIiILHqkm4trYgNlMPX7lVQQbE0oCRZxLMcH2yjAtp65Rsgb5I
+         2H1sTCdls2OB5PZevtAZmgyinUaNiFoSBabICdsxjz2HrW3J8Q9BuTtKF97vb/5a+f
+         aV59gjqIzjbUA==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz
+Subject: Re: [PATCH] fs: open the block device after allocation the super_block
+Date:   Tue, 25 Jul 2023 17:53:25 +0200
+Message-Id: <20230725-klebstoff-walzwerk-f9163eb2cdb6@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230724175145.201318-1-hch@lst.de>
+References: <20230724175145.201318-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b1ba209-58c8-b2b6-115a-6c43cba80098@huaweicloud.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1201; i=brauner@kernel.org; h=from:subject:message-id; bh=yrA38A3YvfdrQJYbMZLtu+u8CQxlhUeS8fS+SQAd20c=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTsf/+mvf7O9A8SR9L5jubXark6XHxxm+lCeoPbCrXoWsuw V8FnO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaygp+R4aFK7j9Ztf1ijM9q+lT+rX mqwmE//bCo4hGdBk/nj9ruOxgZVkt8Y5Ri1dM+Z6t77H9u3qwF/r93GEe9OtX/aSO7ktUSdgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -63,44 +59,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 25, 2023 at 05:09:05PM +0800, Leizhen (ThunderTown) wrote:
-> On 2023/7/25 10:00, Leizhen (ThunderTown) wrote:
-> > On 2023/7/24 21:50, Matthew Wilcox wrote:
-> >> On Mon, Jul 24, 2023 at 09:22:23PM +0800, thunder.leizhen@huaweicloud.com wrote:
-> >>> From: Zhen Lei <thunder.leizhen@huawei.com>
-> >>>
-> >>> The statistics function of softirq is supported by commit aa0ce5bbc2db
-> >>> ("softirq: introduce statistics for softirq") in 2009. At that time,
-> >>> 64-bit processors should not have many cores and would not face
-> >>> significant count overflow problems. Now it's common for a processor to
-> >>> have hundreds of cores. Assume that there are 100 cores and 10
-> >>> TIMER_SOFTIRQ are generated per second, then the 32-bit sum will be
-> >>> overflowed after 50 days.
-> >>
-> >> 50 days is long enough to take a snapshot.  You should always be using
-> >> difference between, not absolute values, and understand that they can
-> >> wrap.  We only tend to change the size of a counter when it can wrap
-> >> sufficiently quickly that we might miss a wrap (eg tens of seconds).
+On Mon, 24 Jul 2023 10:51:45 -0700, Christoph Hellwig wrote:
+> Currently get_tree_bdev and mount_bdev open the block device before
+> commiting to allocating a super block.  This means the block device
+> is opened even for bind mounts and other reuses of the super_block.
 > 
-> Sometimes it can take a long time to view it again. For example, it is
-> possible to run a complete business test for hours or even days, and
-> then calculate the average.
-
-I've been part of teams which have done such multi-hour tests.  That
-isn't how monitoring was performed.  Instead snapshots were taken every
-minute or even more frequently, because we wanted to know how these
-counters were fluctuating during the test -- were there time periods
-when the number of sortirqs spiked, or was it constant during the test?
-
-> > Yes, I think patch 2/2 can be dropped. I reduced the number of soft
-> > interrupts generated in one second, and actually 100+ or 1000 is normal.
-> > But I think patch 1/2 is necessary. The sum of the output scattered values
-> > does not match the output sum. To solve this problem, we only need to
-> > adjust the type of a local variable.
+> That creates problems for restricting the number of writers to a device,
+> and also leads to a unusual and not very helpful holder (the fs_type).
 > 
-> However, it is important to consider that when the local variable is changed
-> to u64, the output string becomes longer. It is not clear if the user-mode
-> program parses it only by u32.
+> [...]
 
-There's no need for the numbers to add up.  They won't anyway, because
-summing them is racy , so they'll always be a little off.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] fs: open block device after superblock creation
+      https://git.kernel.org/vfs/vfs/c/787388e88395
