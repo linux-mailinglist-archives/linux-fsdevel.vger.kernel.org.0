@@ -2,78 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AFEFD761F9E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 18:53:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46306761FA9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 18:57:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232462AbjGYQxf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jul 2023 12:53:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46038 "EHLO
+        id S232003AbjGYQ5l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jul 2023 12:57:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232594AbjGYQwu (ORCPT
+        with ESMTP id S229492AbjGYQ5k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jul 2023 12:52:50 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACF04212C;
-        Tue, 25 Jul 2023 09:52:28 -0700 (PDT)
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4R9NMl0vV4z9sT1;
-        Tue, 25 Jul 2023 18:51:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-        t=1690303875;
+        Tue, 25 Jul 2023 12:57:40 -0400
+Received: from out-37.mta1.migadu.com (out-37.mta1.migadu.com [95.215.58.37])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 108EA10B
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 09:57:38 -0700 (PDT)
+Message-ID: <45da6206-8e34-a184-5ba4-d40be252cfd2@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1690304257;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=oXu7I2w2GulAbsjkAbhBaZ0d5Ez9Ymu2aocx4QCikLk=;
-        b=kSmWzfYu0h5RiTQdQhuOq6it0MoOiZSf3kDgxT/+cq1LY2gaqgps8UYFoHqeIEJZu3gl3Y
-        6NfO6pwEzKCD/FvCRHx/mqdIegvQ/xl7XBtbCWyNeZKkLoJYNVo2fbFaa337PF09aPHP6s
-        Pl0K38zR38aZQ86S1uv2GiAEqLJIYLuc9RjcsgJwCXiQ911NIuvw8DS1OGefalEOwy3G4n
-        KQ6maBX4klVBvsIqPSP4EVbp/eKJmPJVCbjW7W/CHYeRncxiKGHJavwOxVN7JsO5FrBQZc
-        nb3oLM1e0fdNJTRxem86wTiDhq20paUp4CP7Y3BaHa+ddyDai81fX7CP4bOPqg==
-Date:   Wed, 26 Jul 2023 02:50:50 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Alexey Gladkov <legion@kernel.org>,
-        James.Bottomley@hansenpartnership.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, axboe@kernel.dk,
-        benh@kernel.crashing.org, borntraeger@de.ibm.com, bp@alien8.de,
-        catalin.marinas@arm.com, christian@brauner.io, dalias@libc.org,
-        davem@davemloft.net, deepa.kernel@gmail.com, deller@gmx.de,
-        fenghua.yu@intel.com, fweimer@redhat.com, geert@linux-m68k.org,
-        glebfm@altlinux.org, gor@linux.ibm.com, hare@suse.com,
-        hpa@zytor.com, ink@jurassic.park.msu.ru, jhogan@kernel.org,
-        kim.phillips@arm.com, ldv@altlinux.org,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux@armlinux.org.uk, linuxppc-dev@lists.ozlabs.org,
-        luto@kernel.org, mattst88@gmail.com, mingo@redhat.com,
-        monstr@monstr.eu, mpe@ellerman.id.au, namhyung@kernel.org,
-        paulus@samba.org, peterz@infradead.org, ralf@linux-mips.org,
-        sparclinux@vger.kernel.org, stefan@agner.ch, tglx@linutronix.de,
-        tony.luck@intel.com, tycho@tycho.ws, will@kernel.org,
-        x86@kernel.org, ysato@users.sourceforge.jp,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: Add fchmodat2() - or add a more general syscall?
-Message-ID: <u7lakye7ikvyu6g2ktxbzixt5hnvqtzt5s4g72j74tgg4bwlpu@7pcqd4ah5tah>
-References: <cover.1689092120.git.legion@kernel.org>
- <cover.1689074739.git.legion@kernel.org>
- <104971.1690300714@warthog.procyon.org.uk>
+        bh=qOH2+wUxEOwH8igRf+huAYSxRY+zwTmm3Lq2g2+GYT4=;
+        b=HLyRT0JHYQOGR6u5HeXufBBX6rGdEg9joKATrL3cUM+PIm3oDLFlgjAdIsHIoeYAkgK6L+
+        geRzMCPmXjXXx5gZW8PLyIHxQIVyBdFw/SDsY1J6pGWPwkeHnJEhyF/hH3AjMdmTe8pGC/
+        DX75ch4tT8nnyo1YCbbR2OJ4L/Ojp4A=
+Date:   Wed, 26 Jul 2023 00:57:23 +0800
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="sqz3gv5iaglclup7"
-Content-Disposition: inline
-In-Reply-To: <104971.1690300714@warthog.procyon.org.uk>
-X-Rspamd-Queue-Id: 4R9NMl0vV4z9sT1
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Subject: Re: [External] [fuse-devel] [PATCH 3/3] fuse: write back dirty pages
+ before direct write in direct_io_relax mode
+Content-Language: en-US
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>,
+        Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>,
+        fuse-devel@lists.sourceforge.net
+Cc:     linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>,
+        cgxu519@mykernel.net, miklos@szeredi.hu
+References: <20230630094602.230573-1-hao.xu@linux.dev>
+ <20230630094602.230573-4-hao.xu@linux.dev>
+ <e5266e11-b58b-c8ca-a3c8-0b2c07b3a1b2@bytedance.com>
+ <2622afd7-228f-02f3-3b72-a1c826844126@linux.dev>
+ <396A0BF4-DA68-46F8-9881-3801737225C6@fastmail.fm>
+ <9b0a164d-3d0e-cc57-81b7-ae32bef4e9d7@linux.dev>
+ <cb8c18e6-b5cb-e891-696f-b403012eacb7@fastmail.fm>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
+In-Reply-To: <cb8c18e6-b5cb-e891-696f-b403012eacb7@fastmail.fm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -81,44 +60,146 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---sqz3gv5iaglclup7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 7/25/23 21:00, Bernd Schubert wrote:
+>
+>
+> On 7/25/23 12:11, Hao Xu wrote:
+>> On 7/21/23 19:56, Bernd Schubert wrote:
+>>> On July 21, 2023 1:27:26 PM GMT+02:00, Hao Xu <hao.xu@linux.dev> wrote:
+>>>> On 7/21/23 14:35, Jiachen Zhang wrote:
+>>>>>
+>>>>> On 2023/6/30 17:46, Hao Xu wrote:
+>>>>>> From: Hao Xu <howeyxu@tencent.com>
+>>>>>>
+>>>>>> In direct_io_relax mode, there can be shared mmaped files and 
+>>>>>> thus dirty
+>>>>>> pages in its page cache. Therefore those dirty pages should be 
+>>>>>> written
+>>>>>> back to backend before direct write to avoid data loss.
+>>>>>>
+>>>>>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+>>>>>> ---
+>>>>>>    fs/fuse/file.c | 7 +++++++
+>>>>>>    1 file changed, 7 insertions(+)
+>>>>>>
+>>>>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>>>>>> index 176f719f8fc8..7c9167c62bf6 100644
+>>>>>> --- a/fs/fuse/file.c
+>>>>>> +++ b/fs/fuse/file.c
+>>>>>> @@ -1485,6 +1485,13 @@ ssize_t fuse_direct_io(struct fuse_io_priv 
+>>>>>> *io, struct iov_iter *iter,
+>>>>>>        if (!ia)
+>>>>>>            return -ENOMEM;
+>>>>>> +    if (fopen_direct_write && fc->direct_io_relax) {
+>>>>>> +        res = filemap_write_and_wait_range(mapping, pos, pos + 
+>>>>>> count - 1);
+>>>>>> +        if (res) {
+>>>>>> +            fuse_io_free(ia);
+>>>>>> +            return res;
+>>>>>> +        }
+>>>>>> +    }
+>>>>>>        if (!cuse && fuse_range_is_writeback(inode, idx_from, 
+>>>>>> idx_to)) {
+>>>>>>            if (!write)
+>>>>>>                inode_lock(inode);
+>>>>>
+>>>>> Tested-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+>>>>>
+>>>>>
+>>>>> Looks good to me.
+>>>>>
+>>>>> By the way, the behaviour would be a first FUSE_WRITE flushing the 
+>>>>> page cache, followed by a second FUSE_WRITE doing the direct IO. 
+>>>>> In the future, further optimization could be first write into the 
+>>>>> page cache and then flush the dirty page to the FUSE daemon.
+>>>>>
+>>>>
+>>>> I think this makes sense, cannot think of any issue in it for now, so
+>>>> I'll do that change and send next version, super thanks, Jiachen!
+>>>>
+>>>> Thanks,
+>>>> Hao
+>>>>
+>>>>>
+>>>>> Thanks,
+>>>>> Jiachen
+>>>>
+>>>
+>>> On my phone, sorry if mail formatting is not optimal.
+>>> Do I understand it right? You want DIO code path copy into pages and 
+>>> then flush/invalidate these pages? That would be punish DIO for for 
+>>> the unlikely case there are also dirty pages (discouraged IO pattern).
+>>
+>> Hi Bernd,
+>> I think I don't get what you said, why it is punishment and why it's 
+>> discouraged IO pattern?
+>> On my first eyes seeing Jiachen's idea, I was thinking "that sounds
+>> disobeying direct write semantics" because usually direct write is
+>> "flush dirty page -> invalidate page -> write data through to backend"
+>> not "write data to page -> flush dirty page/(writeback data)"
+>> The latter in worst case write data both to page cache and backend
+>> while the former just write to backend and load it to the page cache
+>> when buffered reading. But seems there is no such "standard way" which
+>> says we should implement direct IO in that way.
+>
+> Hi Hao,
+>
+> sorry for being brief last week, I was on vacation and reading/writing 
+> some mails on my phone.
+>
+> With 'punishment' I mean memory copies to the page cache - memory 
+> copies are expensive and DIO should avoid it.
+>
+> Right now your patch adds filemap_write_and_wait_range(), but we do 
+> not know if it did work (i.e. if pages had to be flushed). So unless 
+> you find a way to get that information, copy to page cache would be 
+> unconditionally - overhead of memory copy even if there are no dirty 
+> pages.
 
-On 2023-07-25, David Howells <dhowells@redhat.com> wrote:
-> Rather than adding a fchmodat2() syscall, should we add a "set_file_attrs=
-()"
-> syscall that takes a mask and allows you to set a bunch of stuff all in o=
-ne
-> go?  Basically, an interface to notify_change() in the kernel that would =
-allow
-> several stats to be set atomically.  This might be of particular interest=
- to
-> network filesystems.
 
-Presumably looking something like statx(2) (except hopefully with
-extensible structs this time :P)? I think that could also be useful, but
-given this is a fairly straight-forward syscall addition (and it also
-would resolve the AT_EMPTY_PATH issue for chmod as well as simplify the
-glibc wrapper), I think it makes sense to take this and we can do
-set_statx(2) separately?
+Ah, looks I understood what you mean in my last email reply. Yes, just 
+like what I said in last email:
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+[1] flush dirty page --> invalidate page --> write data to backend
 
---sqz3gv5iaglclup7
-Content-Type: application/pgp-signature; name="signature.asc"
+    This is what we do for direct write right now in kernel, I call this 
+policy "write-through", since it doesn't care much about the cache.
 
------BEGIN PGP SIGNATURE-----
+[2] write data to page cache --> flush dirty page in suitable time
 
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZL/9agAKCRAol/rSt+lE
-b9muAP9aP2TUmAAHS6rOFH9Gf6v2e1/S/NcOkGphCidcAt2ZiwEAzjtee/kbCs2+
-akroOcjwVI11LFf34VRyguX0zOzOWQ4=
-=pGFN
------END PGP SIGNATURE-----
+    This is  "write-back" policy, used by buffered write. Here in this 
+patch's case, we flush pages synchronously, so it still can be called 
+direct-write.
 
---sqz3gv5iaglclup7--
+Surely, in the worst case, the page is clean, then [2] has one extra 
+memory copy than [1]. But like what I pointed out, for [2], next time 
+buffered
+
+read happens, the page is in latest state, so no I/O needed, while for 
+[1], it has to load data from backend to page cache.
+
+
+>
+> With 'discouraged' I mean mix of page cache and direct-io. Typically 
+> one should only do either of both (page cache or DIO), but not a mix 
+> of them. For example see your patch, it flushes the page cache, but 
+> without a lock - races are possible. Copying to the page cache might 
+> be a solution, but it has the overhead above.
+
+
+For race, we held inode lock there, do I miss anything?
+
+
+>
+> Thanks,
+> Bernd
+
+
+I now think it's good to keep the pattern same as other filesystems 
+which is [1] to avoid possible performance issues in the future, thanks 
+Bernd.
+
+
+Hao
+
+
