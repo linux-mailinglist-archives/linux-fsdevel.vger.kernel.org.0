@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7139761C20
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 16:45:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66859761C22
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 16:45:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230409AbjGYOpg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jul 2023 10:45:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54700 "EHLO
+        id S232340AbjGYOpu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jul 2023 10:45:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230459AbjGYOpf (ORCPT
+        with ESMTP id S230459AbjGYOpi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jul 2023 10:45:35 -0400
+        Tue, 25 Jul 2023 10:45:38 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0301412D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 07:45:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD215116
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 07:45:36 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 868FF61703
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 14:45:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDE7EC433CD;
-        Tue, 25 Jul 2023 14:45:30 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4B70C6178F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 14:45:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76547C433C9;
+        Tue, 25 Jul 2023 14:45:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690296333;
-        bh=lISOjIRoZ8eyNsvIWJg3pEzAgdhmgsQyuciEDHNazkM=;
+        s=k20201202; t=1690296335;
+        bh=FqduMW218UjXbigOXgHtnWEu6jRYoPHoS15ts7Vta+E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ICbNbwGK9vPDstPO+SP6gjRMfJPQmQ439ac+WmNnjrEofwPgn2a052ZfY/qgOVTJe
-         wg6JS4Y8YJP3llQfB+CIthE7rEkkdZXUwdNC+IvP5BoiGTcnMZc3qEgwIjerzCkzgS
-         OvXT44hXRcfvRnuo/JxCSgyha5SMALEDg9nuX1SrSgmSTbSrqWxcaFeiCkW/aAZvaI
-         qj9imUV9s+f1KLnUWcV3ikA1Aas8emPYtwz+DwX47+xahOXLI3n6dv7X8lw7RmdPFq
-         tKAL2tGGJsUQpGVxPqWPJF1bc2IAmFTsXztaAq+SOjlgoIfy883HaTlzclKu6eiTkD
-         W4KsRrR4NCBzA==
+        b=tz5z1Bt1rRRlUekc6O6q7KfGynmu+z+ELJkl6mLrLYvuMugTk7pV0o6kHp5yfkS52
+         xaHg+jlh7iYD77h5HRAjCe0bcAuub2a19HFUEAg4gBHejxGIrUNnuvzCPrFhnAg3RF
+         bGRz4ubaQYbB7Wopc6aqu4uLS2VVLMtvnHkh4PraPGBpnWTXSxmruDXY5refk3/cGf
+         z/Wtnqh9kcf2bExBfJwbf47O+4ullVjPLWzWBvYDKSBSOuCWInzIYMhOMU62AuPlFq
+         k0qHd0/Vjh9HajsegiiW7cI1fUYiAKFpXEcsxqYPgBrd2XP8aaCWVVUmOn9sY3AfmS
+         1wTjybPZC+xyA==
 From:   cem@kernel.org
 To:     linux-fsdevel@vger.kernel.org
 Cc:     jack@suse.cz, akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
         linux-mm@kvack.org, djwong@kernel.org, hughd@google.com,
         brauner@kernel.org, mcgrof@kernel.org
-Subject: [PATCH 6/7] shmem: Add default quota limit mount options
-Date:   Tue, 25 Jul 2023 16:45:09 +0200
-Message-Id: <20230725144510.253763-7-cem@kernel.org>
+Subject: [PATCH 7/7] shmem: fix quota lock nesting in huge hole handling
+Date:   Tue, 25 Jul 2023 16:45:10 +0200
+Message-Id: <20230725144510.253763-8-cem@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230725144510.253763-1-cem@kernel.org>
 References: <20230725144510.253763-1-cem@kernel.org>
@@ -56,265 +56,159 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Lukas Czerner <lczerner@redhat.com>
+From: Hugh Dickins <hughd@google.com>
 
-Allow system administrator to set default global quota limits at tmpfs
-mount time.
+i_pages lock nests inside i_lock, but shmem_charge() and shmem_uncharge()
+were being called from THP splitting or collapsing while i_pages lock was
+held, and now go on to call dquot_alloc_block_nodirty() which takes
+i_lock to update i_blocks.
 
-Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
+We may well want to take i_lock out of this path later, in the non-quota
+case even if it's left in the quota case (or perhaps use i_lock instead
+of shmem's info->lock throughout); but don't get into that at this time.
+
+Move the shmem_charge() and shmem_uncharge() calls out from under i_pages
+lock, accounting the full batch of holes in a single call.
+
+Still pass the pages argument to shmem_uncharge(), but it happens now to
+be unused: shmem_recalc_inode() is designed to account for clean pages
+freed behind shmem's back, so it gets the accounting right by itself;
+then the later call to shmem_inode_unacct_blocks() led to imbalance
+(that WARN_ON(inode->i_blocks) in shmem_evict_inode()).
+
+Reported-by: syzbot+38ca19393fb3344f57e6@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/lkml/0000000000008e62f40600bfe080@google.com/
+Reported-by: syzbot+440ff8cca06ee7a1d4db@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/lkml/00000000000076a7840600bfb6e8@google.com/
+Signed-off-by: Hugh Dickins <hughd@google.com>
+Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
+Tested-by: Carlos Maiolino <cmaiolino@redhat.com>
 ---
- Documentation/filesystems/tmpfs.rst | 34 +++++++++++-----
- include/linux/shmem_fs.h            |  8 ++++
- mm/shmem.c                          | 61 +++++++++++++++++++++++++++++
- mm/shmem_quota.c                    | 34 +++++++++++++++-
- 4 files changed, 127 insertions(+), 10 deletions(-)
+ mm/huge_memory.c |  6 ++++--
+ mm/khugepaged.c  | 13 +++++++------
+ mm/shmem.c       | 19 +++++++++----------
+ 3 files changed, 20 insertions(+), 18 deletions(-)
 
-diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
-index 0c7d8bd052f1..f843dbbeb589 100644
---- a/Documentation/filesystems/tmpfs.rst
-+++ b/Documentation/filesystems/tmpfs.rst
-@@ -132,15 +132,31 @@ for emergency or testing purposes. The values you can set for shmem_enabled are:
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index eb3678360b97..d301c323c69a 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2521,7 +2521,7 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+ 	struct address_space *swap_cache = NULL;
+ 	unsigned long offset = 0;
+ 	unsigned int nr = thp_nr_pages(head);
+-	int i;
++	int i, nr_dropped = 0;
  
- tmpfs also supports quota with the following mount options
+ 	/* complete memcg works before add pages to LRU */
+ 	split_page_memcg(head, nr);
+@@ -2546,7 +2546,7 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+ 			struct folio *tail = page_folio(head + i);
  
--========  =============================================================
--quota     User and group quota accounting and enforcement is enabled on
--          the mount. Tmpfs is using hidden system quota files that are
--          initialized on mount.
--usrquota  User quota accounting and enforcement is enabled on the
--          mount.
--grpquota  Group quota accounting and enforcement is enabled on the
--          mount.
--========  =============================================================
-+======================== =================================================
-+quota                    User and group quota accounting and enforcement
-+                         is enabled on the mount. Tmpfs is using hidden
-+                         system quota files that are initialized on mount.
-+usrquota                 User quota accounting and enforcement is enabled
-+                         on the mount.
-+grpquota                 Group quota accounting and enforcement is enabled
-+                         on the mount.
-+usrquota_block_hardlimit Set global user quota block hard limit.
-+usrquota_inode_hardlimit Set global user quota inode hard limit.
-+grpquota_block_hardlimit Set global group quota block hard limit.
-+grpquota_inode_hardlimit Set global group quota inode hard limit.
-+======================== =================================================
-+
-+None of the quota related mount options can be set or changed on remount.
-+
-+Quota limit parameters accept a suffix k, m or g for kilo, mega and giga
-+and can't be changed on remount. Default global quota limits are taking
-+effect for any and all user/group/project except root the first time the
-+quota entry for user/group/project id is being accessed - typically the
-+first time an inode with a particular id ownership is being created after
-+the mount. In other words, instead of the limits being initialized to zero,
-+they are initialized with the particular value provided with these mount
-+options. The limits can be changed for any user/group id at any time as they
-+normally can be.
+ 			if (shmem_mapping(head->mapping))
+-				shmem_uncharge(head->mapping->host, 1);
++				nr_dropped++;
+ 			else if (folio_test_clear_dirty(tail))
+ 				folio_account_cleaned(tail,
+ 					inode_to_wb(folio->mapping->host));
+@@ -2583,6 +2583,8 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+ 	}
+ 	local_irq_enable();
  
- Note that tmpfs quotas do not support user namespaces so no uid/gid
- translation is done if quotas are enabled inside user namespaces.
-diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index 1a568a0f542f..c0058f3bba70 100644
---- a/include/linux/shmem_fs.h
-+++ b/include/linux/shmem_fs.h
-@@ -42,6 +42,13 @@ struct shmem_inode_info {
- 	(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NODUMP_FL | FS_NOATIME_FL)
- #define SHMEM_FL_INHERITED		(FS_NODUMP_FL | FS_NOATIME_FL)
++	if (nr_dropped)
++		shmem_uncharge(head->mapping->host, nr_dropped);
+ 	remap_page(folio, nr);
  
-+struct shmem_quota_limits {
-+	qsize_t usrquota_bhardlimit; /* Default user quota block hard limit */
-+	qsize_t usrquota_ihardlimit; /* Default user quota inode hard limit */
-+	qsize_t grpquota_bhardlimit; /* Default group quota block hard limit */
-+	qsize_t grpquota_ihardlimit; /* Default group quota inode hard limit */
-+};
-+
- struct shmem_sb_info {
- 	unsigned long max_blocks;   /* How many blocks are allowed */
- 	struct percpu_counter used_blocks;  /* How many are allocated */
-@@ -60,6 +67,7 @@ struct shmem_sb_info {
- 	spinlock_t shrinklist_lock;   /* Protects shrinklist */
- 	struct list_head shrinklist;  /* List of shinkable inodes */
- 	unsigned long shrinklist_len; /* Length of shrinklist */
-+	struct shmem_quota_limits qlimits; /* Default quota limits */
- };
+ 	if (PageSwapCache(head)) {
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 78c8d5d8b628..47d1d32c734f 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1955,10 +1955,6 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+ 						goto xa_locked;
+ 					}
+ 				}
+-				if (!shmem_charge(mapping->host, 1)) {
+-					result = SCAN_FAIL;
+-					goto xa_locked;
+-				}
+ 				nr_none++;
+ 				continue;
+ 			}
+@@ -2145,8 +2141,13 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+ 	 */
+ 	try_to_unmap_flush();
  
- static inline struct shmem_inode_info *SHMEM_I(struct inode *inode)
+-	if (result != SCAN_SUCCEED)
++	if (result == SCAN_SUCCEED && nr_none &&
++	    !shmem_charge(mapping->host, nr_none))
++		result = SCAN_FAIL;
++	if (result != SCAN_SUCCEED) {
++		nr_none = 0;
+ 		goto rollback;
++	}
+ 
+ 	/*
+ 	 * The old pages are locked, so they won't change anymore.
+@@ -2283,8 +2284,8 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+ 	if (nr_none) {
+ 		xas_lock_irq(&xas);
+ 		mapping->nrpages -= nr_none;
+-		shmem_uncharge(mapping->host, nr_none);
+ 		xas_unlock_irq(&xas);
++		shmem_uncharge(mapping->host, nr_none);
+ 	}
+ 
+ 	list_for_each_entry_safe(page, tmp, &pagelist, lru) {
 diff --git a/mm/shmem.c b/mm/shmem.c
-index 7c75f30309ff..bd02909bacd6 100644
+index bd02909bacd6..5f83c18abc45 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -118,6 +118,7 @@ struct shmem_options {
- 	int seen;
- 	bool noswap;
- 	unsigned short quota_types;
-+	struct shmem_quota_limits qlimits;
- #define SHMEM_SEEN_BLOCKS 1
- #define SHMEM_SEEN_INODES 2
- #define SHMEM_SEEN_HUGE 4
-@@ -3735,6 +3736,10 @@ enum shmem_param {
- 	Opt_quota,
- 	Opt_usrquota,
- 	Opt_grpquota,
-+	Opt_usrquota_block_hardlimit,
-+	Opt_usrquota_inode_hardlimit,
-+	Opt_grpquota_block_hardlimit,
-+	Opt_grpquota_inode_hardlimit,
- };
- 
- static const struct constant_table shmem_param_enums_huge[] = {
-@@ -3761,6 +3766,10 @@ const struct fs_parameter_spec shmem_fs_parameters[] = {
- 	fsparam_flag  ("quota",		Opt_quota),
- 	fsparam_flag  ("usrquota",	Opt_usrquota),
- 	fsparam_flag  ("grpquota",	Opt_grpquota),
-+	fsparam_string("usrquota_block_hardlimit", Opt_usrquota_block_hardlimit),
-+	fsparam_string("usrquota_inode_hardlimit", Opt_usrquota_inode_hardlimit),
-+	fsparam_string("grpquota_block_hardlimit", Opt_grpquota_block_hardlimit),
-+	fsparam_string("grpquota_inode_hardlimit", Opt_grpquota_inode_hardlimit),
- #endif
- 	{}
- };
-@@ -3871,6 +3880,42 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
- 		ctx->seen |= SHMEM_SEEN_QUOTA;
- 		ctx->quota_types |= QTYPE_MASK_GRP;
- 		break;
-+	case Opt_usrquota_block_hardlimit:
-+		size = memparse(param->string, &rest);
-+		if (*rest || !size)
-+			goto bad_value;
-+		if (size > SHMEM_QUOTA_MAX_SPC_LIMIT)
-+			return invalfc(fc,
-+				       "User quota block hardlimit too large.");
-+		ctx->qlimits.usrquota_bhardlimit = size;
-+		break;
-+	case Opt_grpquota_block_hardlimit:
-+		size = memparse(param->string, &rest);
-+		if (*rest || !size)
-+			goto bad_value;
-+		if (size > SHMEM_QUOTA_MAX_SPC_LIMIT)
-+			return invalfc(fc,
-+				       "Group quota block hardlimit too large.");
-+		ctx->qlimits.grpquota_bhardlimit = size;
-+		break;
-+	case Opt_usrquota_inode_hardlimit:
-+		size = memparse(param->string, &rest);
-+		if (*rest || !size)
-+			goto bad_value;
-+		if (size > SHMEM_QUOTA_MAX_INO_LIMIT)
-+			return invalfc(fc,
-+				       "User quota inode hardlimit too large.");
-+		ctx->qlimits.usrquota_ihardlimit = size;
-+		break;
-+	case Opt_grpquota_inode_hardlimit:
-+		size = memparse(param->string, &rest);
-+		if (*rest || !size)
-+			goto bad_value;
-+		if (size > SHMEM_QUOTA_MAX_INO_LIMIT)
-+			return invalfc(fc,
-+				       "Group quota inode hardlimit too large.");
-+		ctx->qlimits.grpquota_ihardlimit = size;
-+		break;
- 	}
- 	return 0;
- 
-@@ -3984,6 +4029,18 @@ static int shmem_reconfigure(struct fs_context *fc)
- 		goto out;
- 	}
- 
-+#ifdef CONFIG_TMPFS_QUOTA
-+#define CHANGED_LIMIT(name)						\
-+	(ctx->qlimits.name## hardlimit &&				\
-+	(ctx->qlimits.name## hardlimit != sbinfo->qlimits.name## hardlimit))
-+
-+	if (CHANGED_LIMIT(usrquota_b) || CHANGED_LIMIT(usrquota_i) ||
-+	    CHANGED_LIMIT(grpquota_b) || CHANGED_LIMIT(grpquota_i)) {
-+		err = "Cannot change global quota limit on remount";
-+		goto out;
-+	}
-+#endif /* CONFIG_TMPFS_QUOTA */
-+
- 	if (ctx->seen & SHMEM_SEEN_HUGE)
- 		sbinfo->huge = ctx->huge;
- 	if (ctx->seen & SHMEM_SEEN_INUMS)
-@@ -4163,6 +4220,10 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
- 		sb->s_qcop = &dquot_quotactl_sysfile_ops;
- 		sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
- 
-+		/* Copy the default limits from ctx into sbinfo */
-+		memcpy(&sbinfo->qlimits, &ctx->qlimits,
-+		       sizeof(struct shmem_quota_limits));
-+
- 		if (shmem_enable_quotas(sb, ctx->quota_types))
- 			goto failed;
- 	}
-diff --git a/mm/shmem_quota.c b/mm/shmem_quota.c
-index e92b8ece9880..062d1c1097ae 100644
---- a/mm/shmem_quota.c
-+++ b/mm/shmem_quota.c
-@@ -166,6 +166,7 @@ static int shmem_acquire_dquot(struct dquot *dquot)
+@@ -424,18 +424,20 @@ static void shmem_recalc_inode(struct inode *inode)
+ bool shmem_charge(struct inode *inode, long pages)
  {
- 	struct mem_dqinfo *info = sb_dqinfo(dquot->dq_sb, dquot->dq_id.type);
- 	struct rb_node **n = &((struct rb_root *)info->dqi_priv)->rb_node;
-+	struct shmem_sb_info *sbinfo = dquot->dq_sb->s_fs_info;
- 	struct rb_node *parent = NULL, *new_node = NULL;
- 	struct quota_id *new_entry, *entry;
- 	qid_t id = from_kqid(&init_user_ns, dquot->dq_id);
-@@ -195,6 +196,14 @@ static int shmem_acquire_dquot(struct dquot *dquot)
- 	}
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+-	unsigned long flags;
++	struct address_space *mapping = inode->i_mapping;
  
- 	new_entry->id = id;
-+	if (dquot->dq_id.type == USRQUOTA) {
-+		new_entry->bhardlimit = sbinfo->qlimits.usrquota_bhardlimit;
-+		new_entry->ihardlimit = sbinfo->qlimits.usrquota_ihardlimit;
-+	} else if (dquot->dq_id.type == GRPQUOTA) {
-+		new_entry->bhardlimit = sbinfo->qlimits.grpquota_bhardlimit;
-+		new_entry->ihardlimit = sbinfo->qlimits.grpquota_ihardlimit;
-+	}
-+
- 	new_node = &new_entry->node;
- 	rb_link_node(new_node, parent, n);
- 	rb_insert_color(new_node, (struct rb_root *)info->dqi_priv);
-@@ -224,6 +233,29 @@ static int shmem_acquire_dquot(struct dquot *dquot)
- 	return ret;
+ 	if (shmem_inode_acct_block(inode, pages))
+ 		return false;
+ 
+ 	/* nrpages adjustment first, then shmem_recalc_inode() when balanced */
+-	inode->i_mapping->nrpages += pages;
++	xa_lock_irq(&mapping->i_pages);
++	mapping->nrpages += pages;
++	xa_unlock_irq(&mapping->i_pages);
+ 
+-	spin_lock_irqsave(&info->lock, flags);
++	spin_lock_irq(&info->lock);
+ 	info->alloced += pages;
+ 	shmem_recalc_inode(inode);
+-	spin_unlock_irqrestore(&info->lock, flags);
++	spin_unlock_irq(&info->lock);
+ 
+ 	return true;
+ }
+@@ -443,16 +445,13 @@ bool shmem_charge(struct inode *inode, long pages)
+ void shmem_uncharge(struct inode *inode, long pages)
+ {
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+-	unsigned long flags;
+ 
+ 	/* nrpages adjustment done by __filemap_remove_folio() or caller */
+ 
+-	spin_lock_irqsave(&info->lock, flags);
+-	info->alloced -= pages;
++	spin_lock_irq(&info->lock);
+ 	shmem_recalc_inode(inode);
+-	spin_unlock_irqrestore(&info->lock, flags);
+-
+-	shmem_inode_unacct_blocks(inode, pages);
++	/* which has called shmem_inode_unacct_blocks() if necessary */
++	spin_unlock_irq(&info->lock);
  }
  
-+static bool shmem_is_empty_dquot(struct dquot *dquot)
-+{
-+	struct shmem_sb_info *sbinfo = dquot->dq_sb->s_fs_info;
-+	qsize_t bhardlimit;
-+	qsize_t ihardlimit;
-+
-+	if (dquot->dq_id.type == USRQUOTA) {
-+		bhardlimit = sbinfo->qlimits.usrquota_bhardlimit;
-+		ihardlimit = sbinfo->qlimits.usrquota_ihardlimit;
-+	} else if (dquot->dq_id.type == GRPQUOTA) {
-+		bhardlimit = sbinfo->qlimits.grpquota_bhardlimit;
-+		ihardlimit = sbinfo->qlimits.grpquota_ihardlimit;
-+	}
-+
-+	if (test_bit(DQ_FAKE_B, &dquot->dq_flags) ||
-+		(dquot->dq_dqb.dqb_curspace == 0 &&
-+		 dquot->dq_dqb.dqb_curinodes == 0 &&
-+		 dquot->dq_dqb.dqb_bhardlimit == bhardlimit &&
-+		 dquot->dq_dqb.dqb_ihardlimit == ihardlimit))
-+		return true;
-+
-+	return false;
-+}
  /*
-  * Store limits from dquot in the tree unless it's fake. If it is fake
-  * remove the id from the tree since there is no useful information in
-@@ -261,7 +293,7 @@ static int shmem_release_dquot(struct dquot *dquot)
- 	return -ENOENT;
- 
- found:
--	if (test_bit(DQ_FAKE_B, &dquot->dq_flags)) {
-+	if (shmem_is_empty_dquot(dquot)) {
- 		/* Remove entry from the tree */
- 		rb_erase(&entry->node, info->dqi_priv);
- 		kfree(entry);
 -- 
 2.39.2
 
