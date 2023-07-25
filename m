@@ -2,257 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CAF367620C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 19:59:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AEEC7620F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 20:05:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231918AbjGYR7Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jul 2023 13:59:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51750 "EHLO
+        id S232560AbjGYSFh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jul 2023 14:05:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232032AbjGYR7W (ORCPT
+        with ESMTP id S231129AbjGYSFe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jul 2023 13:59:22 -0400
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E8DF1FF7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 10:59:17 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 3F0295C018D;
-        Tue, 25 Jul 2023 13:59:13 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Tue, 25 Jul 2023 13:59:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-        1690307953; x=1690394353; bh=H5Lt2LapYcQATw9WO8eUUlNhEIzRMnMZ3X+
-        ijUtWJqI=; b=ZB8TVkzdx1Hdpmc3/fRd24RxgBZM2JFb5vEGq2xykSptrgEI3lC
-        MpGC3PmT8guSci41oB4Y5o7Sxp8lMrt31vvQ7eXgoR3pdWMVIrGTeFAn90lGknbL
-        dPVCUZC6oLdSova1wcja2xj/Bm5gceFGjoZsZ8RGHpJlPUvrEbNEMrQQgJloyXWC
-        tOmbYihfV2swQElGs8z19pbhuWPV1m2MfqYxOG1/Um2x4DbezXm4ULnQ3hYrGWwc
-        Z8T7verAeipiq2lkN50ZIcXQJbWOMAuloD8HgNv9FSfB7NrbCTr/iELkG9B/jFkj
-        W0hP4GGNiNhuOtBKr2+JIZhSHfokQP2uCAQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1690307953; x=1690394353; bh=H5Lt2LapYcQATw9WO8eUUlNhEIzRMnMZ3X+
-        ijUtWJqI=; b=HdhlqQpsipPksIOyjZi03v7h6n23GTrTybgNtG5tHdXfYc9GHml
-        1CBoIS12Ky8g1kxmkMQaYLE3Fj2uzTKZ1K/b5TW5SMZFjW8iCfkqgsO1VMDODixx
-        uHVOYupWycmDXGAOvtpi1rMf4hXf9+V7zI+YddqaBwlVi6XBxt42IxxGhnn5NeJD
-        AOx/3CNhGotOsUVcnPWstu/eU+TSdZ4tyzc950gAX2LawZm1qIlcOvzFLctFZCxQ
-        u/gVIqPTl0grOrNDIjVYqtrM8NzLhJQRgD5pNucuAyEBnlTqy27/zYJ3wHZz3E6d
-        roHg7zScsZ+v2mktESbVhD19MCGcpsYE30g==
-X-ME-Sender: <xms:bw3AZJZorYL25Tj1Rw5YF9a3Ei3kaennlzMB2mn_Wa9uByjHXwGf5Q>
-    <xme:bw3AZAZoCjaJ8L0X1ze_ak-SUWPwCsZ-ZWBu92PQgL-sjc3VVGZCvc6odr-YxlNJC
-    03O_xUTbjfUaHS2>
-X-ME-Received: <xmr:bw3AZL8GzGyvyKMOxGA8KP4T4hEC0TjtXsXTBfSh_pVFc7QT-FTezEq3psPipRjDjpev8zZ6C9p6bajGgULFYrdOw2m5woiXeawOdetyFkYIvyr51nVd>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedriedtgdduudejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtfeejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepfffhtddvveeivdduuedujeetffekkeelgfdv
-    fefgueffieefjefgjeffhedttdefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:bw3AZHrl5b8lxzkAL-1UqB5zaDdLCdWZS0VIQoypuOoSWIZTH-zFSA>
-    <xmx:bw3AZEoVytVTCMl9JOdKlW-nis9yQ_qqtg-fS2jPixP9l-iwCYcmlw>
-    <xmx:bw3AZNQoSuOjXKJwgVPv9Wi1hnr0HSxisz2c0FkY_saa5U7RGB_rsQ>
-    <xmx:cQ3AZJB9u2FCND6-Z2VGQKCg4TBHVM5l8PCxwnDL94JSSpkXUYLo0g>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 25 Jul 2023 13:59:10 -0400 (EDT)
-Message-ID: <02444c76-ea2e-3931-d49e-5cd0518711a7@fastmail.fm>
-Date:   Tue, 25 Jul 2023 19:59:08 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [External] [fuse-devel] [PATCH 3/3] fuse: write back dirty pages
- before direct write in direct_io_relax mode
-To:     Hao Xu <hao.xu@linux.dev>,
-        Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>,
-        fuse-devel@lists.sourceforge.net
-Cc:     linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>,
-        cgxu519@mykernel.net, miklos@szeredi.hu
-References: <20230630094602.230573-1-hao.xu@linux.dev>
- <20230630094602.230573-4-hao.xu@linux.dev>
- <e5266e11-b58b-c8ca-a3c8-0b2c07b3a1b2@bytedance.com>
- <2622afd7-228f-02f3-3b72-a1c826844126@linux.dev>
- <396A0BF4-DA68-46F8-9881-3801737225C6@fastmail.fm>
- <9b0a164d-3d0e-cc57-81b7-ae32bef4e9d7@linux.dev>
- <cb8c18e6-b5cb-e891-696f-b403012eacb7@fastmail.fm>
- <45da6206-8e34-a184-5ba4-d40be252cfd2@linux.dev>
-Content-Language: en-US, de-DE
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <45da6206-8e34-a184-5ba4-d40be252cfd2@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+        Tue, 25 Jul 2023 14:05:34 -0400
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59A4F1FDA
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 11:05:32 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-583da2ac09fso35150817b3.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 11:05:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1690308331; x=1690913131;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BIo8qHauKdQX+T8FT8wbaojm6/JdQZAwM03PT/kIykI=;
+        b=7nXQcBRpxoTRBB3DVtfi1G3SLzO+8rbX0pZK3GqB/ZiRovVnhgEY5C+Gs70dPcpJKC
+         v8EbJPLKK/PtzLxWiGJ5qeO4LJqB7HN3pWAhYbANBnQSVYoMTUMzCaeCD3zEfSqoM+r2
+         fDpLY03C1R0xadVk8zh9oHGZMZqSmWV+dliNXRuRczTowFXc/oEsFJjHeqmHR0h/7zjV
+         1SaakHlCZawqmTagIefeOP2xnfIobskVh1rmXibU4Cwg3i96EQeqcAc0By/i+P6tJXi9
+         1AMdfmti0ZHyvBS0qJY6Ig052U8rUWQC7aHvZS0sxZXtvMY234BUecIw+5qK/UmUColq
+         VbWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690308331; x=1690913131;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BIo8qHauKdQX+T8FT8wbaojm6/JdQZAwM03PT/kIykI=;
+        b=ePYSWet3CuCW+ABA3HQmUtTd3d3nLzVZrGeFFlNPaM3clf7BGOUnw44vRbhhVaAgYT
+         wLjiWECvqbuzHATj6ZKGVG7ZPI7ylCRm/ItYKbqLnZh11ZS5ruRtyRo7EvjPe3Hf3aF2
+         A3/vvlXC5etw8ebZmHrkiCH9WDYDjQL+rBNifEAy3RlRBh6XJ5tTt5GwaEuPq/DALhgs
+         o17df+0+DVabOzGz70vaG6r2U80AfVxVhts7xvniwp93EcVI4GnbzKQ4dE/mw/AZY/cn
+         BxpSEVq1oI+s1NBNnBDq0gkHHkR6OQ9H8bFfwsZ7j61WtOs4iaKdYltom6NTE/6MeJWw
+         wLuw==
+X-Gm-Message-State: ABy/qLZ29i+FZ0XZJeNVkWu5DWXjEdTMr5T0yn9f0OIWfc12ZGB5WTIj
+        aGrQrcBkOe8oCK1MAwuECK5zLDJ/fOo=
+X-Google-Smtp-Source: APBJJlG+f5K6Guu8BWDh2M0jvEhmql8458IaH+LCw2ABsy+ZDoDj1Vv7TcavygUx+nDEGvPQs1RCmsWjSr8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a81:4509:0:b0:573:5797:4b9e with SMTP id
+ s9-20020a814509000000b0057357974b9emr213ywa.1.1690308331572; Tue, 25 Jul 2023
+ 11:05:31 -0700 (PDT)
+Date:   Tue, 25 Jul 2023 11:05:29 -0700
+In-Reply-To: <ZLphxpSTL9Fpn1ye@yilunxu-OptiPlex-7050>
+Mime-Version: 1.0
+References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-2-seanjc@google.com>
+ <ZLolA2U83tP75Qdd@yzhao56-desk.sh.intel.com> <ZLphxpSTL9Fpn1ye@yilunxu-OptiPlex-7050>
+Message-ID: <ZMAO6bhan9l6ybQM@google.com>
+Subject: Re: [RFC PATCH v11 01/29] KVM: Wrap kvm_gfn_range.pte in a per-action union
+From:   Sean Christopherson <seanjc@google.com>
+To:     Xu Yilun <yilun.xu@intel.com>
+Cc:     Yan Zhao <yan.y.zhao@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Jul 21, 2023, Xu Yilun wrote:
+> On 2023-07-21 at 14:26:11 +0800, Yan Zhao wrote:
+> > On Tue, Jul 18, 2023 at 04:44:44PM -0700, Sean Christopherson wrote:
+> > 
+> > May I know why KVM now needs to register to callback .change_pte()?
+> 
+> I can see the original purpose is to "setting a pte in the shadow page
+> table directly, instead of flushing the shadow page table entry and then
+> getting vmexit to set it"[1].
+> 
+> IIUC, KVM is expected to directly make the new pte present for new
+> pages in this callback, like for COW.
 
+Yes.
 
-On 7/25/23 18:57, Hao Xu wrote:
+> > As also commented in kvm_mmu_notifier_change_pte(), .change_pte() must be
+> > surrounded by .invalidate_range_{start,end}().
+> > 
+> > While kvm_mmu_notifier_invalidate_range_start() has called kvm_unmap_gfn_range()
+> > to zap all leaf SPTEs, and page fault path will not install new SPTEs
+> > successfully before kvm_mmu_notifier_invalidate_range_end(),
+> > kvm_set_spte_gfn() should not be able to find any shadow present leaf entries to
+> > update PFN.
 > 
-> On 7/25/23 21:00, Bernd Schubert wrote:
->>
->>
->> On 7/25/23 12:11, Hao Xu wrote:
->>> On 7/21/23 19:56, Bernd Schubert wrote:
->>>> On July 21, 2023 1:27:26 PM GMT+02:00, Hao Xu <hao.xu@linux.dev> wrote:
->>>>> On 7/21/23 14:35, Jiachen Zhang wrote:
->>>>>>
->>>>>> On 2023/6/30 17:46, Hao Xu wrote:
->>>>>>> From: Hao Xu <howeyxu@tencent.com>
->>>>>>>
->>>>>>> In direct_io_relax mode, there can be shared mmaped files and 
->>>>>>> thus dirty
->>>>>>> pages in its page cache. Therefore those dirty pages should be 
->>>>>>> written
->>>>>>> back to backend before direct write to avoid data loss.
->>>>>>>
->>>>>>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
->>>>>>> ---
->>>>>>>    fs/fuse/file.c | 7 +++++++
->>>>>>>    1 file changed, 7 insertions(+)
->>>>>>>
->>>>>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->>>>>>> index 176f719f8fc8..7c9167c62bf6 100644
->>>>>>> --- a/fs/fuse/file.c
->>>>>>> +++ b/fs/fuse/file.c
->>>>>>> @@ -1485,6 +1485,13 @@ ssize_t fuse_direct_io(struct fuse_io_priv 
->>>>>>> *io, struct iov_iter *iter,
->>>>>>>        if (!ia)
->>>>>>>            return -ENOMEM;
->>>>>>> +    if (fopen_direct_write && fc->direct_io_relax) {
->>>>>>> +        res = filemap_write_and_wait_range(mapping, pos, pos + 
->>>>>>> count - 1);
->>>>>>> +        if (res) {
->>>>>>> +            fuse_io_free(ia);
->>>>>>> +            return res;
->>>>>>> +        }
->>>>>>> +    }
->>>>>>>        if (!cuse && fuse_range_is_writeback(inode, idx_from, 
->>>>>>> idx_to)) {
->>>>>>>            if (!write)
->>>>>>>                inode_lock(inode);
->>>>>>
->>>>>> Tested-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
->>>>>>
->>>>>>
->>>>>> Looks good to me.
->>>>>>
->>>>>> By the way, the behaviour would be a first FUSE_WRITE flushing the 
->>>>>> page cache, followed by a second FUSE_WRITE doing the direct IO. 
->>>>>> In the future, further optimization could be first write into the 
->>>>>> page cache and then flush the dirty page to the FUSE daemon.
->>>>>>
->>>>>
->>>>> I think this makes sense, cannot think of any issue in it for now, so
->>>>> I'll do that change and send next version, super thanks, Jiachen!
->>>>>
->>>>> Thanks,
->>>>> Hao
->>>>>
->>>>>>
->>>>>> Thanks,
->>>>>> Jiachen
->>>>>
->>>>
->>>> On my phone, sorry if mail formatting is not optimal.
->>>> Do I understand it right? You want DIO code path copy into pages and 
->>>> then flush/invalidate these pages? That would be punish DIO for for 
->>>> the unlikely case there are also dirty pages (discouraged IO pattern).
->>>
->>> Hi Bernd,
->>> I think I don't get what you said, why it is punishment and why it's 
->>> discouraged IO pattern?
->>> On my first eyes seeing Jiachen's idea, I was thinking "that sounds
->>> disobeying direct write semantics" because usually direct write is
->>> "flush dirty page -> invalidate page -> write data through to backend"
->>> not "write data to page -> flush dirty page/(writeback data)"
->>> The latter in worst case write data both to page cache and backend
->>> while the former just write to backend and load it to the page cache
->>> when buffered reading. But seems there is no such "standard way" which
->>> says we should implement direct IO in that way.
->>
->> Hi Hao,
->>
->> sorry for being brief last week, I was on vacation and reading/writing 
->> some mails on my phone.
->>
->> With 'punishment' I mean memory copies to the page cache - memory 
->> copies are expensive and DIO should avoid it.
->>
->> Right now your patch adds filemap_write_and_wait_range(), but we do 
->> not know if it did work (i.e. if pages had to be flushed). So unless 
->> you find a way to get that information, copy to page cache would be 
->> unconditionally - overhead of memory copy even if there are no dirty 
->> pages.
-> 
-> 
-> Ah, looks I understood what you mean in my last email reply. Yes, just 
-> like what I said in last email:
-> 
-> [1] flush dirty page --> invalidate page --> write data to backend
-> 
->     This is what we do for direct write right now in kernel, I call this 
-> policy "write-through", since it doesn't care much about the cache.
-> 
-> [2] write data to page cache --> flush dirty page in suitable time
-> 
->     This is  "write-back" policy, used by buffered write. Here in this 
-> patch's case, we flush pages synchronously, so it still can be called 
-> direct-write.
-> 
-> Surely, in the worst case, the page is clean, then [2] has one extra 
-> memory copy than [1]. But like what I pointed out, for [2], next time 
-> buffered
-> 
-> read happens, the page is in latest state, so no I/O needed, while for 
-> [1], it has to load data from backend to page cache.
-> 
-> 
->>
->> With 'discouraged' I mean mix of page cache and direct-io. Typically 
->> one should only do either of both (page cache or DIO), but not a mix 
->> of them. For example see your patch, it flushes the page cache, but 
->> without a lock - races are possible. Copying to the page cache might 
->> be a solution, but it has the overhead above.
-> 
-> 
-> For race, we held inode lock there, do I miss anything?
+> I also failed to figure out how the kvm_set_spte_gfn() could pass
+> several !is_shadow_present_pte(iter.old_spte) check then write the new
+> pte.
 
-We hold inode lock in write path, but not in read path. That ensures 
-invalidate_inode_pages2_range() is not racing, but DIO read might race 
-with a page cache writing happening in parallel. I guess results are 
-then a bit unexpected anyway, although differently if we would hold the 
-lock.
+It can't.  .change_pte() has been dead code on x86 for 10+ years at this point,
+and if my assessment from a few years back still holds true, it's dead code on
+all architectures.
 
+The only reason I haven't formally proposed dropping the hook is that I don't want
+to risk the patch backfiring, i.e. I don't want to prompt someone to care enough
+to try and fix it.
 
-> 
-> 
->>
->> Thanks,
->> Bernd
-> 
-> 
-> I now think it's good to keep the pattern same as other filesystems 
-> which is [1] to avoid possible performance issues in the future, thanks 
-> Bernd.
+commit c13fda237f08a388ba8a0849785045944bf39834
+Author: Sean Christopherson <seanjc@google.com>
+Date:   Fri Apr 2 02:56:49 2021 +0200
 
-Thanks, I think we should keep fuse consistent with what other fs do.
-
-
-Thanks,
-Bernd
+    KVM: Assert that notifier count is elevated in .change_pte()
+    
+    In KVM's .change_pte() notification callback, replace the notifier
+    sequence bump with a WARN_ON assertion that the notifier count is
+    elevated.  An elevated count provides stricter protections than bumping
+    the sequence, and the sequence is guarnateed to be bumped before the
+    count hits zero.
+    
+    When .change_pte() was added by commit 828502d30073 ("ksm: add
+    mmu_notifier set_pte_at_notify()"), bumping the sequence was necessary
+    as .change_pte() would be invoked without any surrounding notifications.
+    
+    However, since commit 6bdb913f0a70 ("mm: wrap calls to set_pte_at_notify
+    with invalidate_range_start and invalidate_range_end"), all calls to
+    .change_pte() are guaranteed to be surrounded by start() and end(), and
+    so are guaranteed to run with an elevated notifier count.
+    
+    Note, wrapping .change_pte() with .invalidate_range_{start,end}() is a
+    bug of sorts, as invalidating the secondary MMU's (KVM's) PTE defeats
+    the purpose of .change_pte().  Every arch's kvm_set_spte_hva() assumes
+    .change_pte() is called when the relevant SPTE is present in KVM's MMU,
+    as the original goal was to accelerate Kernel Samepage Merging (KSM) by
+    updating KVM's SPTEs without requiring a VM-Exit (due to invalidating
+    the SPTE).  I.e. it means that .change_pte() is effectively dead code
+    on _all_ architectures.
+    
+    x86 and MIPS are clearcut nops if the old SPTE is not-present, and that
+    is guaranteed due to the prior invalidation.  PPC simply unmaps the SPTE,
+    which again should be a nop due to the invalidation.  arm64 is a bit
+    murky, but it's also likely a nop because kvm_pgtable_stage2_map() is
+    called without a cache pointer, which means it will map an entry if and
+    only if an existing PTE was found.
+    
+    For now, take advantage of the bug to simplify future consolidation of
+    KVMs's MMU notifier code.   Doing so will not greatly complicate fixing
+    .change_pte(), assuming it's even worth fixing.  .change_pte() has been
+    broken for 8+ years and no one has complained.  Even if there are
+    KSM+KVM users that care deeply about its performance, the benefits of
+    avoiding VM-Exits via .change_pte() need to be reevaluated to justify
+    the added complexity and testing burden.  Ripping out .change_pte()
+    entirely would be a lot easier.
