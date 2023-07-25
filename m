@@ -2,91 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD2B760303
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 01:16:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BDAB7603EC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jul 2023 02:24:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230294AbjGXXQT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Jul 2023 19:16:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39402 "EHLO
+        id S231217AbjGYAX7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Jul 2023 20:23:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbjGXXQS (ORCPT
+        with ESMTP id S229624AbjGYAX6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Jul 2023 19:16:18 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE1591700;
-        Mon, 24 Jul 2023 16:16:14 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 46ACC5C007A;
-        Mon, 24 Jul 2023 19:16:12 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Mon, 24 Jul 2023 19:16:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-        1690240572; x=1690326972; bh=yQYsb6f3TXQaFHpzPwBQUT2HsaYCaEOi5Gw
-        32hKxJA8=; b=kiw5EYlYEliliVaH2uAd5xQgwfk6a0Azwggd5j3wu0jmCLFBkKk
-        5ySW3u/M7LH9FEYgIL5Dtgy82t6Q/xCGMtcECOcP8W5zgoyuZoqCO77XPYNcyN0V
-        h1GHVhW5zMuprsVdFqQpZeNqUaNU5PwMSFg1w1FV0uxorC5d5y/IKhotD6ZWCkKt
-        Q9kdsz08YZHQlqQWM4i/gBrWURqQyiRCeLp1jzz2F1jTpiv8+omRSxH9FREUDjbi
-        3mnPSszetZqAPSU3mtDWgOIwLmx+pyGCu7+at6YIF713vOeeR1lPUhA7yO5GAixL
-        ITXzLvDISNRT+Puk/rRD1D3jpoiNCg3VDsQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1690240572; x=1690326972; bh=yQYsb6f3TXQaFHpzPwBQUT2HsaYCaEOi5Gw
-        32hKxJA8=; b=zsPsLpfvAQPST8ChJGPYrq9KXVqhncxmJ24BhlCYdlcn4JHnl53
-        dnzUUp5kB/H2pDaZ3R2P0hi9XfW+16twhn/L78rc0ja9SOjqbahgpMAyURdg2Rdh
-        tZNS86qxqMyAuT+J/WBPrLWwaPuVz/WEAf/PLrVHvBTDx4ejAhL9OZrTimi/1PBA
-        DD+fklgtS060ta6onElWYkxeohZzK9R5ui0RBi5iXsvS+DOs9F+dycD7Uq4ggpXP
-        1lM7QH7W1J2t7HUdfRhn85+Y0ufRShzk0wFOs6ktBuLPnQMl6dZDFIIbQycUIjOI
-        KKaMsh3OI1KG3pe0kGyLjYj6DeIzZQ9ikcw==
-X-ME-Sender: <xms:Owa_ZItPz_RhnDXHN0zRpimrOciL1_B4p1qQ0mt-pzPHe_blSAzK7g>
-    <xme:Owa_ZFfc1aNcwN_wDuvDa3D4l4eXWhRDBKjXYvxS-jlBY5rM_4hRuKzQS4BYCgXUZ
-    nmGCkUjQxhbgMgO>
-X-ME-Received: <xmr:Owa_ZDxTmW96cltfkrIMo8dA6oXm0ioLIQzorlrMJybBfeOCILKMD-Frj7dovLC96AoIT_2SO9vrda0wNbb6uIzB6RsEfWseLDbXsrX1gY25RpgGOv2y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrheelgddvtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttdefjeenucfhrhhomhepuegvrhhn
-    ugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
-    drfhhmqeenucggtffrrghtthgvrhhnpeekheevkeelkeekjefhheegfedtffduudejjeei
-    heehudeuleelgefhueekfeevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhf
-    mh
-X-ME-Proxy: <xmx:Owa_ZLPEQ02oXKrOdrF5MCE_VS65kkrNgrih56GKJ0IhM3n0XD8epQ>
-    <xmx:Owa_ZI9W25OJ2ilOuHmm7ZwILkOftO-o3D1ybbYqWwvchN0K5gDFeg>
-    <xmx:Owa_ZDXx4lIzDzZNkqmMSBc5mqjPNz3fPwlRaSZsYR05vXl_J6DZiA>
-    <xmx:PAa_ZHmHiQLegGVzbah0PIilpJ5Fy5opwvUkus15mFuS2q-BT7a9qw>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Jul 2023 19:16:10 -0400 (EDT)
-Message-ID: <6a73a722-6bb5-6462-e7ff-a55866374758@fastmail.fm>
-Date:   Tue, 25 Jul 2023 01:16:08 +0200
+        Mon, 24 Jul 2023 20:23:58 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2075.outbound.protection.outlook.com [40.107.220.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 312D2115;
+        Mon, 24 Jul 2023 17:23:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kQshaVJo+Imw5FT/PvX0SjTY1S/D5JTwn+kMFtJBELz5ci1VIEATPDbjWlA3X+dA7fTNk4byOnlnUfMzEHUyYXnaxNHe3VLDDGu/7TiHxfSVIQmQAdljcibGiQ6+PwCQopPpXemQq2r94D0nIpoeXsTkLY1w44Nx/UzbtwtEOv2npAR0nPKO6OW+qwSPNehOO4NvmjyzGXEdgn8KfxMoAag6PiKSu1PVNkkyBZb3CDn3x2gW09zNUXC5TtuLGPl7ky1I+K/AV6OwGlI1a00wb3THQ2DFq4hFeo456OXovbVtPJ/7Di6hd4+870Y8u2wg7/3tRjtXjw1e1dXR0fm6bw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ku6MUz4MWhYaOMPRiAjUDVhN6Zt5HLCAWnUljt2NgLo=;
+ b=JQ25lgqCSeh5MPALkOkA9kQ0tNXkhLmMn7HgUpgZK4hrrWV0i1b0kgPGYyZb0Z2EwWcsTBjKh+tAxcCULGXKA04b7KCw4Z33UBJ2Mk2nb6FguIqF3OaUpuihgYFPWt0zgmZFcuC9rVUlm01wf0cc89AxS7Xjmty3/aK9BmMwryPUpcL7trPAnGrz1EfJ7GjCOg9OFQH9TzYHsi0Lgg/CV8XPJWQOqNW+DACdDseULXI2BDkJL0vZ9fqFMYKSXivPmJISRJzlqlrEJArb8uR/AXqCmW2MNPB5S85F3OTA0K3eXaToY+duCvA8RTZ6geTwzEb0hEDauRtifyFY3uQg0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ku6MUz4MWhYaOMPRiAjUDVhN6Zt5HLCAWnUljt2NgLo=;
+ b=mdsDlMRO0DBL2q0erXUI795RiQl6DMQUds39J3UEyLbK23zeMbizJDRR0f//NbcQsDUd6EQT9gc71FmrWEq4tayoEuJCrBXIClK6yGe7/50QzWOauI779HblHYX8YsExnIfxSgQb1TjbHGzbjmQ/13eoFXUNL9Nb8/roFp3wCTu2ZoJH1XsgbJkLc5l24RwVDsnZr0WbRVykDNQps2Qin8itswWkBx90aYierPwu88n07Zu2904e5PsWiA8xeB1WLr4faD84USCBMZZwIomszGKrK0cSKSNVMh51sP7hkjZKU17wvlVyWSYzy+JrQntOe2IIpSjRgmaQ7pbCYxLBFg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3179.namprd12.prod.outlook.com (2603:10b6:5:183::18)
+ by SJ0PR12MB5405.namprd12.prod.outlook.com (2603:10b6:a03:3af::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.33; Tue, 25 Jul
+ 2023 00:23:55 +0000
+Received: from DM6PR12MB3179.namprd12.prod.outlook.com
+ ([fe80::3eb6:cda8:4a56:25fe]) by DM6PR12MB3179.namprd12.prod.outlook.com
+ ([fe80::3eb6:cda8:4a56:25fe%7]) with mapi id 15.20.6609.031; Tue, 25 Jul 2023
+ 00:23:54 +0000
+References: <8f293bb51a423afa71ddc3ba46e9f323ee9ffbc7.1689768831.git-series.apopple@nvidia.com>
+ <20230719225105.1934-1-sj@kernel.org> <877cqvl7vr.fsf@nvdebian.thelocal>
+ <ZL7AbLJ+RUUgzt8O@bombadil.infradead.org>
+User-agent: mu4e 1.8.13; emacs 28.2
+From:   Alistair Popple <apopple@nvidia.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Pankaj Raghav <p.raghav@samsung.com>,
+        SeongJae Park <sj@kernel.org>, kevin.tian@intel.com,
+        x86@kernel.org, ajd@linux.ibm.com, kvm@vger.kernel.org,
+        linux-mm@kvack.org, catalin.marinas@arm.com, seanjc@google.com,
+        will@kernel.org, linux-kernel@vger.kernel.org, npiggin@gmail.com,
+        zhi.wang.linux@gmail.com, jgg@ziepe.ca, iommu@lists.linux.dev,
+        nicolinc@nvidia.com, jhubbard@nvidia.com, fbarrat@linux.ibm.com,
+        akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, robin.murphy@arm.com
+Subject: Re: [PATCH v2 3/5] mmu_notifiers: Call invalidate_range() when
+ invalidating TLBs
+Date:   Tue, 25 Jul 2023 10:20:52 +1000
+In-reply-to: <ZL7AbLJ+RUUgzt8O@bombadil.infradead.org>
+Message-ID: <87v8e8zvmz.fsf@nvdebian.thelocal>
+Content-Type: text/plain
+X-ClientProxiedBy: SY6PR01CA0124.ausprd01.prod.outlook.com
+ (2603:10c6:10:1b8::17) To DM6PR12MB3179.namprd12.prod.outlook.com
+ (2603:10b6:5:183::18)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [RFC PATCH 2/2] fuse: ensure that submounts lookup their root
-To:     Krister Johansen <kjlx@templeofstupid.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        German Maglione <gmaglione@redhat.com>,
-        Greg Kurz <groug@kaod.org>, Max Reitz <mreitz@redhat.com>
-References: <cover.1689038902.git.kjlx@templeofstupid.com>
- <69bb95c34deb25f56b3b842528edcb40a098d38d.1689038902.git.kjlx@templeofstupid.com>
-Content-Language: en-US, de-DE
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <69bb95c34deb25f56b3b842528edcb40a098d38d.1689038902.git.kjlx@templeofstupid.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3179:EE_|SJ0PR12MB5405:EE_
+X-MS-Office365-Filtering-Correlation-Id: f49de129-5bb2-4bb7-a2a6-08db8ca56d99
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: S4kV4QoyxWeJb12KnNIxvGW2EgcWAB4DcWd8MnqcX5Ow77pu+WNj0mqYhoDaSOvEx688pjOalI0g3D69B1b5S3pJDpucMVbLIM5xDSW3DDbPkitABTHFRmmxEBPbbchrPEuEp29VBu5gX+Fji3Kd9pyybSWspIE2b59MqtI8K/eA0AUCnuDtpXew2ZYCXqN+LtR5ZS6iOr4+XIdXHWGo2pWvOzYuL3yv4RcqZiyc6Mu/4iT6+zWkTBaNOiMyM9p9w4vwJjSQ6S6auhGwvkoNOJI4azOMdTOKNk0erjctx47pxsJDEnYRUHc6pec0cnhTFWx2miMAr7FFXk1hmeIj/qSotl5Ct9yuEl78Jkxt4nI+AEOG3QzaU21kWHFF3UyoXy54iLeUXQzT7zDtA1ACbihsJX6EHZuSDZqEaBVc8n1nJI06XZvconfz40/SD6XcOrb8A8c1n1zNUBcfkgdjK4Pi+rSeqfmkMT0anCle7Hw2ef64r3/YGYHlqbLryv8BZPxOEqcREM9bjx6PILY76VgcS7WdrXHoUncswyis3epNqj00f7WEm4TKreeJw1wcfRA0WaXaVNxRh9wwgasvr5t9vYaGF8vH+C6v8orLTrU=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3179.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(366004)(346002)(396003)(136003)(376002)(451199021)(5660300002)(83380400001)(2906002)(7416002)(8676002)(8936002)(38100700002)(54906003)(966005)(6486002)(6506007)(478600001)(26005)(186003)(41300700001)(6512007)(86362001)(66556008)(9686003)(66476007)(6916009)(4326008)(316002)(66946007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ZyENK2BIcQ5IWgp+X9tHTNXPyEU2ibIZKb/CxXI7KPjGUXl2e1C2NjDvWLEy?=
+ =?us-ascii?Q?FCE7ql9oHYZnGFD7yPmqjKzdjlGs5nxc0B/2+1/78nTSY+PXPzsmedG1U2tY?=
+ =?us-ascii?Q?DvUsvPk90g7GOec06g20huyXnTlkyFZvqKG7wynGda5SpiSsVNy//xbKKmFZ?=
+ =?us-ascii?Q?4fVZkz195vhwdNJfyTeMiroNal2tPv7oyk+dypUhWTBO+nmm/Faf3afCyGle?=
+ =?us-ascii?Q?OaiDn9FjxPf7A/27VlZnDJjQjyO/fexi3lCnVV8U/pKbm7hvPGY/BllJmM8G?=
+ =?us-ascii?Q?2eOBjFGGuQ1EMorDmCL7tfIr+ub2FOYH49AOsGznIeT72IXfNLGVhvmprD0+?=
+ =?us-ascii?Q?fFE7sEfz7tVuivNsGnJGsIfT92Ty6uKfBXwZ9z/UQUZPET9RSvxunw0XwMtx?=
+ =?us-ascii?Q?QGQfUpC4EptsRoglaoOSIYmlUmRcNcEYGrgDwb7d88tkEtkiWYO8atgzsPzQ?=
+ =?us-ascii?Q?XQLG/fCAxX7nc+J2TNWud49o1zbXaaiWco/bBQn0AEspmz3iS+Z6cdBrPViB?=
+ =?us-ascii?Q?zR9zQGdjqGBFp4h7K7oZl78p0tgoUlGn7nKuJzEqsDUlo+crpHXEoo7YRFYo?=
+ =?us-ascii?Q?V7pI73iJpwdKBDo+Vv9ryW/xjGu6fYKKvTEUSpwOr5Hd21gBFpb9lY/jjOxP?=
+ =?us-ascii?Q?aPUoiEH3y5Bi/hiPSf4MdeEN9kf+G7MtUTZg+7f9u4/WylIrqMqWudmaOsvR?=
+ =?us-ascii?Q?e002RKAENuJk9uJ7rG3ZkSRLGzNbtcRI/Y9IM3eJvpiRkHwqfpK+YMp3Ubdk?=
+ =?us-ascii?Q?2r55Bv+ixReWr0L2So9UjZZVYmHiRBpZmxXfHYO5RwlHo8EEMVZvs4d7+HZs?=
+ =?us-ascii?Q?Rz3UnkBnwXmmI89M7T6XhHnJYvU9crECnHqPA5QYuQj6uh6JOdbqOGJdFJce?=
+ =?us-ascii?Q?BUoQEw0dgszYgqG+u11LJ4TKPxdFdszj49y55tEKwVwugjvfc4s6JVGoLfdA?=
+ =?us-ascii?Q?x6JbPFmMjOq4xBLt5k//MKiyQX+sHUH0e53UC5JApyJmhbUhFd232DrdvfM9?=
+ =?us-ascii?Q?V2rskMU4Njjco3qKO5Gx85ybYeCc+9qyneJIzalvi0fd+Fl1RX9UcZQVrCmH?=
+ =?us-ascii?Q?76hN2qLIhVud1cwyqJeqJlV34hMTJ2CTBA3+aNfM2yWFDIXvBZDG84GZ1+HK?=
+ =?us-ascii?Q?VbhEgahty7wb+WNBZXeKBBhaRiqOeBH58cytgiU8ZUxZNeiyk/tC6orRSMZs?=
+ =?us-ascii?Q?SKjZAMAsIlxC1nJMqK5GOmlQbO8FmIiUAKzb/yLvGzARhMu7AAn2SENY7TQl?=
+ =?us-ascii?Q?WhGpF2oAsO/Whxg9cRrwB6cRPa7hAmTX86LiIc/hvKCx+FeKgjjAYM6TQHJG?=
+ =?us-ascii?Q?2RJRl/n1sVXTTvIGrLnW9KSSU6hcOrKNWVPBP6B4f1pnxEDmwvAEejfPhZ5W?=
+ =?us-ascii?Q?ynTzvyvS3nwiUKeNhTSwX21JZigGHyyh/6vR+sQHrHEo29GL38/ABjO21srJ?=
+ =?us-ascii?Q?zyod2d5ILmLm1CI7qxzq1zmCSgEGL1jfUlbgrdSdIlDO1Qn6xKiXar475e0q?=
+ =?us-ascii?Q?luHlPvAulu15qyucFAim1QDreiIygQX+AE+Q9Ek8f6da/gEG3gSSgR0vzoHK?=
+ =?us-ascii?Q?EKywRnJG3sP18fYRfnm2tUygPXqLy7J6vmVK60ZE?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f49de129-5bb2-4bb7-a2a6-08db8ca56d99
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3179.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jul 2023 00:23:54.1641
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ReXHcJFhI812pCDjT2afAZrcaKRkKrRr85XtzIEtPfHZTzrKl/Dd8y2PkKPUY8EW4JYPcWveeNVV7H4KOl+Bwg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5405
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -95,123 +126,53 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+Luis Chamberlain <mcgrof@kernel.org> writes:
 
-On 7/11/23 03:37, Krister Johansen wrote:
-> Prior to this commit, the submount code assumed that the inode for the
-> root filesystem could not be evicted.  When eviction occurs the server
-> may forget the inode.  This author has observed a submount get an EBADF
-> from a virtiofsd server that resulted from the sole dentry / inode
-> pair getting evicted from a mount namespace and superblock where they
-> were originally referenced.  The dentry shrinker triggered a forget
-> after killing the dentry with the last reference.
-> 
-> As a result, a container that was also using this submount failed to
-> access its filesystem because it had borrowed the reference instead of
-> taking its own when setting up its superblock for the submount.
-> 
-> Fix by ensuring that submount superblock configuration looks up the
-> nodeid for the submount as well.
-> 
-> Signed-off-by: Krister Johansen <kjlx@templeofstupid.com>
-> ---
->   fs/fuse/dir.c    | 10 +++++-----
->   fs/fuse/fuse_i.h |  6 ++++++
->   fs/fuse/inode.c  | 32 ++++++++++++++++++++++++++++----
->   3 files changed, 39 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index bdf5526a0733..fe6b3fd4a49c 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -193,11 +193,11 @@ static void fuse_lookup_init(struct fuse_conn *fc, struct fuse_args *args,
->   	args->out_args[0].value = outarg;
->   }
->   
-> -static int fuse_dentry_revalidate_lookup(struct fuse_mount *fm,
-> -					 struct dentry *entry,
-> -					 struct inode *inode,
-> -					 struct fuse_entry_out *outarg,
-> -					 bool *lookedup)
-> +int fuse_dentry_revalidate_lookup(struct fuse_mount *fm,
-> +				  struct dentry *entry,
-> +				  struct inode *inode,
-> +				  struct fuse_entry_out *outarg,
-> +				  bool *lookedup)
->   {
->   	struct dentry *parent;
->   	struct fuse_forget_link *forget;
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 9b7fc7d3c7f1..77b123eddb6d 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -1309,6 +1309,12 @@ void fuse_dax_dontcache(struct inode *inode, unsigned int flags);
->   bool fuse_dax_check_alignment(struct fuse_conn *fc, unsigned int map_alignment);
->   void fuse_dax_cancel_work(struct fuse_conn *fc);
->   
-> +/* dir.c */
-> +int fuse_dentry_revalidate_lookup(struct fuse_mount *fm, struct dentry *entry,
-> +				  struct inode *inode,
-> +				  struct fuse_entry_out *outarg,
-> +				  bool *lookedup);
-> +
->   /* ioctl.c */
->   long fuse_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
->   long fuse_file_compat_ioctl(struct file *file, unsigned int cmd,
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index f19d748890f0..1032e4b05d9c 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1441,6 +1441,10 @@ static int fuse_fill_super_submount(struct super_block *sb,
->   	struct super_block *parent_sb = parent_fi->inode.i_sb;
->   	struct fuse_attr root_attr;
->   	struct inode *root;
-> +	struct inode *parent;
-> +	struct dentry *pdent;
-> +	bool lookedup = false;
-> +	int ret;
->   
->   	fuse_sb_defaults(sb);
->   	fm->sb = sb;
-> @@ -1456,14 +1460,34 @@ static int fuse_fill_super_submount(struct super_block *sb,
->   	if (parent_sb->s_subtype && !sb->s_subtype)
->   		return -ENOMEM;
->   
-> +	/*
-> +	 * It is necessary to lookup the parent_if->nodeid in case the dentry
-> +	 * that triggered the automount of the submount is later evicted.
-> +	 * If this dentry is evicted without the lookup count getting increased
-> +	 * on the submount root, then the server can subsequently forget this
-> +	 * nodeid which leads to errors when trying to access the root of the
-> +	 * submount.
-> +	 */
-> +	parent = &parent_fi->inode;
-> +	pdent = d_find_alias(parent);
-> +	if (pdent) {
-> +		struct fuse_entry_out outarg;
-> +
-> +		ret = fuse_dentry_revalidate_lookup(fm, pdent, parent, &outarg,
-> +						    &lookedup);
-> +		dput(pdent);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
->   	fuse_fill_attr_from_inode(&root_attr, parent_fi);
->   	root = fuse_iget(sb, parent_fi->nodeid, 0, &root_attr, 0, 0);
->   	/*
-> -	 * This inode is just a duplicate, so it is not looked up and
-> -	 * its nlookup should not be incremented.  fuse_iget() does
-> -	 * that, though, so undo it here.
-> +	 * fuse_iget() sets nlookup to 1 at creation time.  If this nodeid was
-> +	 * not successfully looked up then decrement the count.
->   	 */
-> -	get_fuse_inode(root)->nlookup--;
-> +	if (!lookedup)
-> +		get_fuse_inode(root)->nlookup--;
+>> diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+>> index 837e4a50281a..79c46da919b9 100644
+>> --- a/arch/x86/include/asm/tlbflush.h
+>> +++ b/arch/x86/include/asm/tlbflush.h
+>> @@ -4,6 +4,7 @@
+>>  
+>>  #include <linux/mm_types.h>
+>>  #include <linux/sched.h>
+>> +#include <linux/mmu_notifier.h>
+>>  
+>>  #include <asm/processor.h>
+>>  #include <asm/cpufeature.h>
+>> @@ -282,6 +283,7 @@ static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *b
+>>  {
+>>  	inc_mm_tlb_gen(mm);
+>>  	cpumask_or(&batch->cpumask, &batch->cpumask, mm_cpumask(mm));
+>> +	mmu_notifier_arch_invalidate_secondary_tlbs(mm, 0, -1UL);
+>>  }
+>>  
+>>  static inline void arch_flush_tlb_batched_pending(struct mm_struct *mm)
+>> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+>> index 0b990fb56b66..2d253919b3e8 100644
+>> --- a/arch/x86/mm/tlb.c
+>> +++ b/arch/x86/mm/tlb.c
+>> @@ -1265,7 +1265,6 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
+>>  
+>>  	put_flush_tlb_info();
+>>  	put_cpu();
+>> -	mmu_notifier_arch_invalidate_secondary_tlbs(current->mm, 0, -1UL);
+>>  }
+>>  
+>>  /*
+>
+> This patch also fixes a regression introduced on linux-next, the same
+> crash on arch_tlbbatch_flush() is reproducible with fstests generic/176
+> on XFS. This patch fixes that regression [0]. This should also close out
+> the syzbot crash too [1]
+>
+> [0] https://gist.github.com/mcgrof/b37fc8cf7e6e1b3935242681de1a83e2
+> [1] https://lore.kernel.org/all/0000000000003afcb4060135a664@google.com/
+>
+> Tested-by: Luis Chamberlain <mcgrof@kernel.org>
 
-How does a submount work with a parent mismatch? I wonder if this 
-function should return an error if lookup of the parent failed.
+Thanks Luis. The above fix/respin is already in yesterdays linux-next
+(next-20230724) so hopefully you are no longer seeing issues.
 
+>   Luis
 
-Thanks,
-Bernd
