@@ -2,211 +2,220 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE10764097
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 22:37:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FFC87640ED
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 23:09:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231387AbjGZUh2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 16:37:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59132 "EHLO
+        id S230183AbjGZVJF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 17:09:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbjGZUh1 (ORCPT
+        with ESMTP id S230332AbjGZVI4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 16:37:27 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E40952701;
-        Wed, 26 Jul 2023 13:37:25 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2b9ba3d6157so2527171fa.3;
-        Wed, 26 Jul 2023 13:37:25 -0700 (PDT)
+        Wed, 26 Jul 2023 17:08:56 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C46B1BE8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 14:08:53 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-99313a34b2dso20012966b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 14:08:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690403844; x=1691008644;
+        d=umich.edu; s=google-2016-06-03; t=1690405732; x=1691010532;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0lwD0XW5XNFFxl46sPGBkyRuR0c2+TXyAF+CGil8NRI=;
-        b=WBqtUarSorotOYNCJWkNReSAf19CXEDpnJUFPGIYyvbDGPlIhT1+vr65mlLeyLiFth
-         GmCuACdJUKmp+aXMjQJaPSWfUyQzmfkXHGzk1XVUCq+ELSSJcCrHrh6NujIUxHhB+pw6
-         nrYhrtteDJSDiCNTnF299w8Z9/ab/lCPugj6dQRq2KaUlgPuKoQROhjcGJ8gNM13Bqq6
-         HXJ0oEeCTipLRP3OmuZJqKsKtZxr2J8MAGrlTNRyxx+TIF/yZUzVNn9X44NDKlLi5I1l
-         PROjUW0OkV6M0DhbGgLHOtqYwRlhKYlkumzwjTCDK8bK1/gq+2Hvl44iae7i0AeSagm4
-         dsUw==
+        bh=vjkLXak8d+/QRW6V4ufp25mmvem0zi/hCFrifSGngFs=;
+        b=ZuSNoM2neGgmzJ1HDcF0VbUgodiwml7GqlGB44XNU8z5ksD6ZgMFqxzRPQ/SOCjj4c
+         ARW7u1YMSMc1qazZhCR8R7yOPL7bOd/vH43fz1I2RCkJzEm95afcsIadPOIYU/QIdQfr
+         Tla/Ks/rrhbE94krRIMf/jrGJbH3Ww5d5rLLy+EQ0WGCoRgWGznST2uHoLjGiMp0uocQ
+         QnXb6vmTvRegB76hyRWSgc14aNXqn1Uv+hBAIt4puE5lpAIwJqRZnKIM5UAazLI20hLC
+         JdpL4f5XboVywAr0dntT3KVk9t04zLbwt77q8P8VWPJ+RN7t4OjXlNEadTBgDe8q8XG/
+         9gIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690403844; x=1691008644;
+        d=1e100.net; s=20221208; t=1690405732; x=1691010532;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0lwD0XW5XNFFxl46sPGBkyRuR0c2+TXyAF+CGil8NRI=;
-        b=KIeyFqN3IrEPVStL8fHKKTBEc61YjKglY7MV8QLhdRs4w3hHd+BIJd/rGgpRtteHeM
-         ULe/wPZ/s22nwauGlOPb/0omYiRFlZTiV+m9BOCEAKxGO/wQtKBhHFd86jipOmVAWmKj
-         3WL83AaYdrIZ+GSblrFyYfWz2N5BFlyHHnOfzYdD2Xp7C/9inJ4AAMaQIzEffzmanCp4
-         wy2hQSCglKo7ievZpjeCKBLQzEp5LQbg6+eMF4XowBuA0W9vdFr0AvVu/00xJx+1e1bu
-         Qv/nEDV28WiypPjauHBQg2owMGaWSMiQZHlnD87S+Z9B3T6awYKQlBqyWpDvlBJdmsja
-         K0mA==
-X-Gm-Message-State: ABy/qLYXjZhn3ocZZW+AaEQCCUHyP+dx46werLhdSdWxqzC766UPg8aJ
-        ha2HAcPhnB+pzl2PHOCHAnUDSWA8p00vyg/hMI4=
-X-Google-Smtp-Source: APBJJlEBZjUVEWmH37ptqLNcNX8TxOf/NsFag9dWp+iIhP+gTcIv5RvFOUu1qEFSS9+AlBqg9RVIEdg2dS0OjOpUZFE=
-X-Received: by 2002:a2e:8490:0:b0:2b6:9afe:191c with SMTP id
- b16-20020a2e8490000000b002b69afe191cmr129103ljh.7.1690403843955; Wed, 26 Jul
- 2023 13:37:23 -0700 (PDT)
+        bh=vjkLXak8d+/QRW6V4ufp25mmvem0zi/hCFrifSGngFs=;
+        b=AOJhU6OnU3nKwK7yho3sJ2616U7UqpdcE/e40Sd0BydUjF2E7PQP2h+s5dLhVKD57+
+         MrEFi3w5WD3i1MPsvsnwc49YmPSjgmI5MFcVZNt/9Yq7U6t2xQ+5CXGRjDzFPphMaK2o
+         O2AgRTzVqQ4vQk0gstFtV+JCTQ3gFMNrIyGV68bmDL9Y9DYzz+advT55Xgr1zYbaHZRS
+         OaHw7ZXmoQMe5d2xdoinvvbarbMVEOs9ujt5v6II966LYaKCA9Wtp3aDHbZM/8jqH0is
+         23xt4hGs3f3Pt5lq7VFSVjqB8oenRnPX8UoYCgK8XqdsskIN/t69luYNGNeJjMWI5s57
+         oTSw==
+X-Gm-Message-State: ABy/qLZDWWB/mPw8ao7Txpg75QTCD5UXETN3HWJM9udVIsfPl9SJHlJd
+        MQI9h5QnXBVlbmb0oh++qO1t4CV+iTmWcfhEkD07aw==
+X-Google-Smtp-Source: APBJJlFQX7UzDW/k/kYtWDvZK568AeNZukeBl2pXtyjIMni9uWicDax9fIk3Xw0AO67YAsFOv9YnJHcBKz+EEJqcJyI=
+X-Received: by 2002:a17:906:7391:b0:994:54af:e282 with SMTP id
+ f17-20020a170906739100b0099454afe282mr213636ejl.10.1690405732051; Wed, 26 Jul
+ 2023 14:08:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20571.1690369076@warthog.procyon.org.uk> <416eca24-6baf-69d9-21a2-c434a9744596@redhat.com>
-In-Reply-To: <416eca24-6baf-69d9-21a2-c434a9744596@redhat.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Wed, 26 Jul 2023 15:37:12 -0500
-Message-ID: <CAH2r5mtMLQ91znvYP71s_K7uS_HibC_yOpkZea-f=+NteFJyPg@mail.gmail.com>
-Subject: Re: [PATCH] crypto, cifs: Fix error handling in extract_iter_to_sg()
-To:     David Hildenbrand <david@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steve French <sfrench@samba.org>, akpm@linux-foundation.org,
-        Sven Schnelle <svens@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jeff Layton <jlayton@kernel.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-crypto@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230726164535.230515-1-amiculas@cisco.com> <20230726164535.230515-11-amiculas@cisco.com>
+In-Reply-To: <20230726164535.230515-11-amiculas@cisco.com>
+From:   Trevor Gross <tmgross@umich.edu>
+Date:   Wed, 26 Jul 2023 17:08:40 -0400
+Message-ID: <CALNs47ss3kV3mTx4ksYTWaHWdRG48=97DTi3OEnPom2nFcYhHw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 10/10] rust: puzzlefs: add oci_root_dir and
+ image_manifest filesystem parameters
+To:     Ariel Miculas <amiculas@cisco.com>
+Cc:     rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tycho@tycho.pizza,
+        brauner@kernel.org, viro@zeniv.linux.org.uk, ojeda@kernel.org,
+        alex.gaynor@gmail.com, wedsonaf@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Acked-off-by: Steve French <stfrench@microsoft.com>
+On Wed, Jul 26, 2023 at 12:55=E2=80=AFPM Ariel Miculas <amiculas@cisco.com>=
+ wrote:
+>
+> These parameters are passed when mounting puzzlefs using '-o' option of
+> mount:
+> -o oci_root_dir=3D"/path/to/oci/dir"
+> -o image_manifest=3D"root_hash_of_image_manifest"
+>
+> For a particular manifest in the manifests array in index.json (located
+> in the oci_root_dir), the root hash of the image manifest is found in
+> the digest field.
+>
+> It would be nicer if we could pass the tag, but we don't support json
+> deserialization.
+>
+> Example of mount:
+> mount -t puzzlefs -o oci_root_dir=3D"/home/puzzlefs_oci" -o \
+> image_manifest=3D"2d6602d678140540dc7e96de652a76a8b16e8aca190bae141297bcf=
+fdcae901b" \
+> none /mnt
+>
+> Signed-off-by: Ariel Miculas <amiculas@cisco.com>
+> ---
+>  samples/rust/puzzlefs.rs | 63 ++++++++++++++++++++++++++--------------
+>  1 file changed, 41 insertions(+), 22 deletions(-)
+>
+> diff --git a/samples/rust/puzzlefs.rs b/samples/rust/puzzlefs.rs
+> index dad7ecc76eca..4e9a8aedf0c1 100644
+> --- a/samples/rust/puzzlefs.rs
+> +++ b/samples/rust/puzzlefs.rs
+> @@ -7,6 +7,7 @@
+>  use kernel::{
+>      c_str, file, fs,
+>      io_buffer::IoBufferWriter,
+> +    str::CString,
+>      sync::{Arc, ArcBorrow},
+>  };
+>
+> @@ -31,27 +32,29 @@ struct PuzzlefsInfo {
+>      puzzlefs: Arc<PuzzleFS>,
+>  }
+>
+> +#[derive(Default)]
+> +struct PuzzleFsParams {
+> +    oci_root_dir: Option<CString>,
+> +    image_manifest: Option<CString>,
+> +}
+> +
+>  #[vtable]
+>  impl fs::Context<Self> for PuzzleFsModule {
+> -    type Data =3D ();
+> -
+> -    kernel::define_fs_params! {(),
+> -        {flag, "flag", |_, v| { pr_info!("flag passed-in: {v}\n"); Ok(()=
+) } },
+> -        {flag_no, "flagno", |_, v| { pr_info!("flagno passed-in: {v}\n")=
+; Ok(()) } },
+> -        {bool, "bool", |_, v| { pr_info!("bool passed-in: {v}\n"); Ok(()=
+) } },
+> -        {u32, "u32", |_, v| { pr_info!("u32 passed-in: {v}\n"); Ok(()) }=
+ },
+> -        {u32oct, "u32oct", |_, v| { pr_info!("u32oct passed-in: {v}\n");=
+ Ok(()) } },
+> -        {u32hex, "u32hex", |_, v| { pr_info!("u32hex passed-in: {v}\n");=
+ Ok(()) } },
+> -        {s32, "s32", |_, v| { pr_info!("s32 passed-in: {v}\n"); Ok(()) }=
+ },
+> -        {u64, "u64", |_, v| { pr_info!("u64 passed-in: {v}\n"); Ok(()) }=
+ },
+> -        {string, "string", |_, v| { pr_info!("string passed-in: {v}\n");=
+ Ok(()) } },
+> -        {enum, "enum", [("first", 10), ("second", 20)], |_, v| {
+> -            pr_info!("enum passed-in: {v}\n"); Ok(()) }
+> -        },
+> +    type Data =3D Box<PuzzleFsParams>;
+> +
+> +    kernel::define_fs_params! {Box<PuzzleFsParams>,
+> +        {string, "oci_root_dir", |s, v| {
+> +                                      s.oci_root_dir =3D Some(CString::t=
+ry_from_fmt(format_args!("{v}"))?);
+> +                                      Ok(())
+> +                                  }},
+> +        {string, "image_manifest", |s, v| {
+> +                                      s.image_manifest =3D Some(CString:=
+:try_from_fmt(format_args!("{v}"))?);
+> +                                      Ok(())
+> +                                  }},
+>      }
+>
+> -    fn try_new() -> Result {
+> -        Ok(())
+> +    fn try_new() -> Result<Self::Data> {
+> +        Ok(Box::try_new(PuzzleFsParams::default())?)
+>      }
+>  }
+>
+> @@ -136,11 +139,27 @@ impl fs::Type for PuzzleFsModule {
+>      const FLAGS: i32 =3D fs::flags::USERNS_MOUNT;
+>      const DCACHE_BASED: bool =3D true;
+>
+> -    fn fill_super(_data: (), sb: fs::NewSuperBlock<'_, Self>) -> Result<=
+&fs::SuperBlock<Self>> {
+> -        let puzzlefs =3D PuzzleFS::open(
+> -            c_str!("/home/puzzlefs_oci"),
+> -            c_str!("2d6602d678140540dc7e96de652a76a8b16e8aca190bae141297=
+bcffdcae901b"),
+> -        );
+> +    fn fill_super(
+> +        data: Box<PuzzleFsParams>,
+> +        sb: fs::NewSuperBlock<'_, Self>,
+> +    ) -> Result<&fs::SuperBlock<Self>> {
+> +        let oci_root_dir =3D match data.oci_root_dir {
+> +            Some(val) =3D> val,
+> +            None =3D> {
+> +                pr_err!("missing oci_root_dir parameter!\n");
+> +                return Err(ENOTSUPP);
+> +            }
+> +        };
+> +
+> +        let image_manifest =3D match data.image_manifest {
+> +            Some(val) =3D> val,
+> +            None =3D> {
+> +                pr_err!("missing image_manifest parameter!\n");
+> +                return Err(ENOTSUPP);
+> +            }
+> +        };
+> +
 
-On Wed, Jul 26, 2023 at 8:56=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
+The guard syntax (available since 1.65) can make these kinds of match state=
+ments
+cleaner:
+
+    let Some(oci_root_dir) =3D data.oci_root_dir else {
+        pr_err!("missing oci_root_dir parameter!\n");
+        return Err(ENOTSUPP);
+    }
+
+    let Some(image_manifest) ...
+
+> +        let puzzlefs =3D PuzzleFS::open(&oci_root_dir, &image_manifest);
 >
-> On 26.07.23 12:57, David Howells wrote:
-> >
-> > Fix error handling in extract_iter_to_sg().  Pages need to be unpinned,=
- not
-> > put in extract_user_to_sg() when handling IOVEC/UBUF sources.
-> >
-> > The bug may result in a warning like the following:
-> >
-> >    WARNING: CPU: 1 PID: 20384 at mm/gup.c:229 __lse_atomic_add arch/arm=
-64/include/asm/atomic_lse.h:27 [inline]
-> >    WARNING: CPU: 1 PID: 20384 at mm/gup.c:229 arch_atomic_add arch/arm6=
-4/include/asm/atomic.h:28 [inline]
-> >    WARNING: CPU: 1 PID: 20384 at mm/gup.c:229 raw_atomic_add include/li=
-nux/atomic/atomic-arch-fallback.h:537 [inline]
-> >    WARNING: CPU: 1 PID: 20384 at mm/gup.c:229 atomic_add include/linux/=
-atomic/atomic-instrumented.h:105 [inline]
-> >    WARNING: CPU: 1 PID: 20384 at mm/gup.c:229 try_grab_page+0x108/0x160=
- mm/gup.c:252
-> >    ...
-> >    pc : try_grab_page+0x108/0x160 mm/gup.c:229
-> >    lr : follow_page_pte+0x174/0x3e4 mm/gup.c:651
-> >    ...
-> >    Call trace:
-> >     __lse_atomic_add arch/arm64/include/asm/atomic_lse.h:27 [inline]
-> >     arch_atomic_add arch/arm64/include/asm/atomic.h:28 [inline]
-> >     raw_atomic_add include/linux/atomic/atomic-arch-fallback.h:537 [inl=
-ine]
-> >     atomic_add include/linux/atomic/atomic-instrumented.h:105 [inline]
-> >     try_grab_page+0x108/0x160 mm/gup.c:252
-> >     follow_pmd_mask mm/gup.c:734 [inline]
-> >     follow_pud_mask mm/gup.c:765 [inline]
-> >     follow_p4d_mask mm/gup.c:782 [inline]
-> >     follow_page_mask+0x12c/0x2e4 mm/gup.c:839
-> >     __get_user_pages+0x174/0x30c mm/gup.c:1217
-> >     __get_user_pages_locked mm/gup.c:1448 [inline]
-> >     __gup_longterm_locked+0x94/0x8f4 mm/gup.c:2142
-> >     internal_get_user_pages_fast+0x970/0xb60 mm/gup.c:3140
-> >     pin_user_pages_fast+0x4c/0x60 mm/gup.c:3246
-> >     iov_iter_extract_user_pages lib/iov_iter.c:1768 [inline]
-> >     iov_iter_extract_pages+0xc8/0x54c lib/iov_iter.c:1831
-> >     extract_user_to_sg lib/scatterlist.c:1123 [inline]
-> >     extract_iter_to_sg lib/scatterlist.c:1349 [inline]
-> >     extract_iter_to_sg+0x26c/0x6fc lib/scatterlist.c:1339
-> >     hash_sendmsg+0xc0/0x43c crypto/algif_hash.c:117
-> >     sock_sendmsg_nosec net/socket.c:725 [inline]
-> >     sock_sendmsg+0x54/0x60 net/socket.c:748
-> >     ____sys_sendmsg+0x270/0x2ac net/socket.c:2494
-> >     ___sys_sendmsg+0x80/0xdc net/socket.c:2548
-> >     __sys_sendmsg+0x68/0xc4 net/socket.c:2577
-> >     __do_sys_sendmsg net/socket.c:2586 [inline]
-> >     __se_sys_sendmsg net/socket.c:2584 [inline]
-> >     __arm64_sys_sendmsg+0x24/0x30 net/socket.c:2584
-> >     __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
-> >     invoke_syscall+0x48/0x114 arch/arm64/kernel/syscall.c:52
-> >     el0_svc_common.constprop.0+0x44/0xe4 arch/arm64/kernel/syscall.c:14=
-2
-> >     do_el0_svc+0x38/0xa4 arch/arm64/kernel/syscall.c:191
-> >     el0_svc+0x2c/0xb0 arch/arm64/kernel/entry-common.c:647
-> >     el0t_64_sync_handler+0xc0/0xc4 arch/arm64/kernel/entry-common.c:665
-> >     el0t_64_sync+0x19c/0x1a0 arch/arm64/kernel/entry.S:591
-> >
-> > Fixes: 018584697533 ("netfs: Add a function to extract an iterator into=
- a scatterlist")
-> > Reported-by: syzbot+9b82859567f2e50c123e@syzkaller.appspotmail.com
-> > Link: https://lore.kernel.org/linux-mm/000000000000273d0105ff97bf56@goo=
-gle.com/
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > cc: Sven Schnelle <svens@linux.ibm.com>
-> > cc: akpm@linux-foundation.org
-> > cc: Herbert Xu <herbert@gondor.apana.org.au>
-> > cc: "David S. Miller" <davem@davemloft.net>
-> > cc: Jeff Layton <jlayton@kernel.org>
-> > cc: Steve French <sfrench@samba.org>
-> > cc: Shyam Prasad N <nspmangalore@gmail.com>
-> > cc: Rohith Surabattula <rohiths.msft@gmail.com>
-> > cc: Jens Axboe <axboe@kernel.dk>
-> > cc: Herbert Xu <herbert@gondor.apana.org.au>
-> > cc: "David S. Miller" <davem@davemloft.net>
-> > cc: Eric Dumazet <edumazet@google.com>
-> > cc: Jakub Kicinski <kuba@kernel.org>
-> > cc: Paolo Abeni <pabeni@redhat.com>
-> > cc: Matthew Wilcox <willy@infradead.org>
-> > cc: linux-mm@kvack.org
-> > cc: linux-crypto@vger.kernel.org
-> > cc: linux-cachefs@redhat.com
-> > cc: linux-cifs@vger.kernel.org
-> > cc: linux-fsdevel@vger.kernel.org
-> > cc: netdev@vger.kernel.org
-> > ---
-> >   lib/scatterlist.c |    2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/lib/scatterlist.c b/lib/scatterlist.c
-> > index e86231a44c3d..c65566b4dc66 100644
-> > --- a/lib/scatterlist.c
-> > +++ b/lib/scatterlist.c
-> > @@ -1148,7 +1148,7 @@ static ssize_t extract_user_to_sg(struct iov_iter=
- *iter,
-> >
-> >   failed:
-> >       while (sgtable->nents > sgtable->orig_nents)
-> > -             put_page(sg_page(&sgtable->sgl[--sgtable->nents]));
-> > +             unpin_user_page(sg_page(&sgtable->sgl[--sgtable->nents]))=
-;
-> >       return res;
-> >   }
-> >
-> >
->
-> Reviewed-by: David Hildenbrand <david@redhat.com>
->
+>          if let Err(ref e) =3D puzzlefs {
+>              pr_info!("error opening puzzlefs {e}\n");
 > --
-> Cheers,
+> 2.41.0
 >
-> David / dhildenb
 >
-
-
---=20
-Thanks,
-
-Steve
