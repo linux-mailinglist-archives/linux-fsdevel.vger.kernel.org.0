@@ -2,171 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BC1F763ADE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 17:22:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C15F763AFC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 17:26:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234809AbjGZPWo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 11:22:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35870 "EHLO
+        id S233944AbjGZP00 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 11:26:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233868AbjGZPWm (ORCPT
+        with ESMTP id S233909AbjGZP0Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 11:22:42 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77EE094
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 08:22:40 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-3176a439606so2063056f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 08:22:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690384959; x=1690989759;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xiyxJQtngIitM6NvDkSmtJp7dkYh2m7KhsJ3ZxlyPB8=;
-        b=pHxhaa21ySaf/Q0o5VjvoZfUVtqSmxNF4ePZCZmuGxVj0og38x9F6VbWo41eaRBbqt
-         JcXRT9vpP/Rd6UNAFG1iq6Fdqa+L4N/0n2uSyPAlu0rJnQZFkFwR9HF5rg6xrC+YxMs9
-         jUBQa5ZCVQUwECT6kyV37bwh0EexSgz2SmcLdu8TwLep1qhqafMXz9pmipYc8Pt3p8yy
-         FbM/3ESOxbO3X0jM2FeYcvpj+JHMjZAPxPLghDQlkP164edn2HqasQrz3WW/DSlmAhmf
-         TN5eMZKmHpYfkC6/1GMDu0c0mZVPw1Vg2pFb89aTmbo3nXmrIdjt0ct7jigRI+eS6pkG
-         kHiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690384959; x=1690989759;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xiyxJQtngIitM6NvDkSmtJp7dkYh2m7KhsJ3ZxlyPB8=;
-        b=C9lX/q0HNcm8AVvPtxFwrrwv3pKI9NnQwAcCl3VGZNvz0rWxYW0LGpQ/uLgN+HUTO3
-         TTEGWINz2HkTiuV29pX/zX6TJ53Y2Iigf29osF2ir6lWea8FAJ3jU0iMOg8PL9fj9CDa
-         PETexbBxXdHxwBBEWt/VA1K5sl0VDHN1eRKDINgRRlW+7A/7zADWjTuKvz8mVGJE1qJk
-         WNfqkmZaojXNXRnW+51YLvXMUH4FW8J0/aF+HGu7xEPlDo7NqM71XuglvEPSIQSvB6bn
-         OT32IbUiNd5dN7LJfb/Y44pLfaRs5hAJ1j9PaHyRkqUrSbRwBBe6QwzKouq4Zb9bxe34
-         2JRg==
-X-Gm-Message-State: ABy/qLYQlKyx+AVD6Yqsg+f4BR7TGfLgzWJBRlkvhmwqaMFyYVvlyUe8
-        YreRAye/y6X8f33qQouf75STag==
-X-Google-Smtp-Source: APBJJlFTczgdZQtyu7bi9shz49TW2vyCAL6upXqlApA4QBDQkCprWnQsZplxHs2jnpf5ONSNsPn7rw==
-X-Received: by 2002:adf:f452:0:b0:317:6623:e33f with SMTP id f18-20020adff452000000b003176623e33fmr1955488wrp.14.1690384958593;
-        Wed, 26 Jul 2023 08:22:38 -0700 (PDT)
-Received: from loic-ThinkPad-T470p.. ([2a01:e0a:82c:5f0:8c06:4c96:5858:e8ab])
-        by smtp.gmail.com with ESMTPSA id k8-20020a5d4288000000b003176a4394d7sm6356032wrq.24.2023.07.26.08.22.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jul 2023 08:22:38 -0700 (PDT)
-From:   Loic Poulain <loic.poulain@linaro.org>
-To:     brauner@kernel.org, viro@zeniv.linux.org.uk, corbet@lwn.net
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, hch@infradead.org,
-        Loic Poulain <loic.poulain@linaro.org>
-Subject: [PATCH v2] init: Add support for rootwait timeout parameter
-Date:   Wed, 26 Jul 2023 17:22:32 +0200
-Message-Id: <20230726152232.932288-1-loic.poulain@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Wed, 26 Jul 2023 11:26:24 -0400
+Received: from bagheera.iewc.co.za (bagheera.iewc.co.za [IPv6:2c0f:f720:0:3::9a49:2249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E8C094;
+        Wed, 26 Jul 2023 08:26:22 -0700 (PDT)
+Received: from [154.73.32.4] (helo=tauri.local.uls.co.za)
+        by bagheera.iewc.co.za with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <jaco@uls.co.za>)
+        id 1qOgP0-0000q2-1c; Wed, 26 Jul 2023 17:26:14 +0200
+Received: from [192.168.1.145]
+        by tauri.local.uls.co.za with esmtp (Exim 4.94.2)
+        (envelope-from <jaco@uls.co.za>)
+        id 1qOgOz-0005NM-ER; Wed, 26 Jul 2023 17:26:13 +0200
+Message-ID: <7d762c95-e4ca-d612-f70f-64789d4624cf@uls.co.za>
+Date:   Wed, 26 Jul 2023 17:26:12 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] fuse: enable larger read buffers for readdir.
+Content-Language: en-GB
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230726105953.843-1-jaco@uls.co.za>
+ <b5255112-922f-b965-398e-38b9f5fb4892@fastmail.fm>
+From:   Jaco Kroon <jaco@uls.co.za>
+Organization: Ultimate Linux Solutions (Pty) Ltd
+In-Reply-To: <b5255112-922f-b965-398e-38b9f5fb4892@fastmail.fm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add an optional timeout arg to 'rootwait' as the maximum time in
-seconds to wait for the root device to show up before attempting
-forced mount of the root filesystem.
+Hi,
 
-Use case:
-In case of device mapper usage for the rootfs (e.g. root=/dev/dm-0),
-if the mapper is not able to create the virtual block for any reason
-(wrong arguments, bad dm-verity signature, etc), the `rootwait` param
-causes the kernel to wait forever. It may however be desirable to only
-wait for a given time and then panic (force mount) to cause device reset.
-This gives the bootloader a chance to detect the problem and to take some
-measures, such as marking the booted partition as bad (for A/B case) or
-entering a recovery mode.
+On 2023/07/26 15:53, Bernd Schubert wrote:
+>
+>
+> On 7/26/23 12:59, Jaco Kroon wrote:
+>> Signed-off-by: Jaco Kroon <jaco@uls.co.za>
+>> ---
+>>   fs/fuse/Kconfig   | 16 ++++++++++++++++
+>>   fs/fuse/readdir.c | 42 ++++++++++++++++++++++++------------------
+>>   2 files changed, 40 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
+>> index 038ed0b9aaa5..0783f9ee5cd3 100644
+>> --- a/fs/fuse/Kconfig
+>> +++ b/fs/fuse/Kconfig
+>> @@ -18,6 +18,22 @@ config FUSE_FS
+>>         If you want to develop a userspace FS, or if you want to use
+>>         a filesystem based on FUSE, answer Y or M.
+>>   +config FUSE_READDIR_ORDER
+>> +    int
+>> +    range 0 5
+>> +    default 5
+>> +    help
+>> +        readdir performance varies greatly depending on the size of 
+>> the read.
+>> +        Larger buffers results in larger reads, thus fewer reads and 
+>> higher
+>> +        performance in return.
+>> +
+>> +        You may want to reduce this value on seriously constrained 
+>> memory
+>> +        systems where 128KiB (assuming 4KiB pages) cache pages is 
+>> not ideal.
+>> +
+>> +        This value reprents the order of the number of pages to 
+>> allocate (ie,
+>> +        the shift value).  A value of 0 is thus 1 page (4KiB) where 
+>> 5 is 32
+>> +        pages (128KiB).
+>> +
+>
+> I like the idea of a larger readdir size, but shouldn't that be a 
+> server/daemon/library decision which size to use, instead of kernel 
+> compile time? So should be part of FUSE_INIT negotiation?
 
-In success case, mounting happens as soon as the root device is ready,
-unlike the existing 'rootdelay' parameter which performs an unconditional
-pause.
+Yes sure, but there still needs to be a default.  And one page at a time 
+doesn't cut it.
 
-Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
----
- v2: rebase + reword: add use case example
+-- snip --
 
- .../admin-guide/kernel-parameters.txt         |  4 ++++
- init/do_mounts.c                              | 19 +++++++++++++++++--
- 2 files changed, 21 insertions(+), 2 deletions(-)
+>>   -    page = alloc_page(GFP_KERNEL);
+>> +    page = alloc_pages(GFP_KERNEL, READDIR_PAGES_ORDER);
+>
+> I guess that should become folio alloc(), one way or the other. Now I 
+> think order 0 was chosen before to avoid risk of allocation failure. I 
+> guess it might work to try a large size and to fall back to 0 when 
+> that failed. Or fail back to the slower vmalloc.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a1457995fd41..387cf9c2a2c5 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5501,6 +5501,10 @@
- 			Useful for devices that are detected asynchronously
- 			(e.g. USB and MMC devices).
- 
-+	rootwait=	[KNL] Maximum time (in seconds) to wait for root device
-+			to show up before attempting to mount the root
-+			filesystem.
-+
- 	rproc_mem=nn[KMG][@address]
- 			[KNL,ARM,CMA] Remoteproc physical memory block.
- 			Memory area to be used by remote processor image,
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index 1aa015883519..118f2bbe7b38 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -18,6 +18,7 @@
- #include <linux/slab.h>
- #include <linux/ramfs.h>
- #include <linux/shmem_fs.h>
-+#include <linux/ktime.h>
- 
- #include <linux/nfs_fs.h>
- #include <linux/nfs_fs_sb.h>
-@@ -71,12 +72,20 @@ static int __init rootwait_setup(char *str)
- {
- 	if (*str)
- 		return 0;
--	root_wait = 1;
-+	root_wait = -1;
- 	return 1;
- }
- 
- __setup("rootwait", rootwait_setup);
- 
-+static int __init rootwait_timeout_setup(char *str)
-+{
-+	root_wait = simple_strtoul(str, NULL, 0);
-+	return 1;
-+}
-+
-+__setup("rootwait=", rootwait_timeout_setup);
-+
- static char * __initdata root_mount_data;
- static int __init root_data_setup(char *str)
- {
-@@ -384,14 +393,20 @@ void __init mount_root(char *root_device_name)
- /* wait for any asynchronous scanning to complete */
- static void __init wait_for_root(char *root_device_name)
- {
-+	const ktime_t end = ktime_add_ms(ktime_get_raw(), root_wait * MSEC_PER_SEC);
-+
- 	if (ROOT_DEV != 0)
- 		return;
- 
- 	pr_info("Waiting for root device %s...\n", root_device_name);
- 
- 	while (!driver_probe_done() ||
--	       early_lookup_bdev(root_device_name, &ROOT_DEV) < 0)
-+	       early_lookup_bdev(root_device_name, &ROOT_DEV) < 0) {
- 		msleep(5);
-+		if (root_wait > 0 && ktime_after(ktime_get_raw(), end))
-+			break;
-+	}
-+
- 	async_synchronize_full();
- 
- }
--- 
-2.34.1
+If this varies then a bunch of other code will become somewhat more 
+complex, especially if one alloc succeeds, and then a follow-up succeeds.
 
+I'm not familiar with the differences between the different mechanisms 
+available for allocation.
+
+-- snip --
+
+> Thanks,
+My pleasure,
+Jaco
