@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3335C762E07
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 09:40:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E01CF762E1E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 09:42:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232478AbjGZHkE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 03:40:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36152 "EHLO
+        id S232810AbjGZHmD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 03:42:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231601AbjGZHj2 (ORCPT
+        with ESMTP id S232821AbjGZHl2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 03:39:28 -0400
-Received: from out-55.mta0.migadu.com (out-55.mta0.migadu.com [91.218.175.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A636849FA
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 00:36:36 -0700 (PDT)
+        Wed, 26 Jul 2023 03:41:28 -0400
+Received: from out-47.mta0.migadu.com (out-47.mta0.migadu.com [91.218.175.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C12E51BD6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 00:37:41 -0700 (PDT)
 Content-Type: text/plain;
         charset=us-ascii
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1690356994;
+        t=1690357041;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Yrw1e5tQhbkMga7eJrUip2ycPtsuLn9P74mG8ros/F0=;
-        b=XkkSjxLZhEs+WTu6Lxce6yw56JkcjLLE3W9mi8l7oiUYes2Mt2Kx9x4+hwiBhDOxzRpaVC
-        pfsRiMgi/wQngx46uSL66saqLbu8FkMymz5gIEi/n4cwHkh93N7+NRLIrXwMgbBpn3V0mr
-        W8L4NvyZa4l7hBRrr+6H7xx0fZlpIGk=
+        bh=FH3LyfLyqkvA0uofohdpfMljRn5zgQbiJWs64hRJpqc=;
+        b=COPHaz+wHjiUlAHsjP58xdsSSXA6rPPl39Mqp3hq6OVH+Fq0km6xEhEcWCRhxhX26w/v20
+        C9+jDmrUpEHzECadLd9w01EIqvkiKvcuovvFjSED4El7k+dj7Pu3N2tGkGTqTXRyLg+bIG
+        Dtp5bL/dBJohTZeYRyhYg3+TCZ3pysU=
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 29/47] vmw_balloon: dynamically allocate the
- vmw-balloon shrinker
+Subject: Re: [PATCH v2 30/47] virtio_balloon: dynamically allocate the
+ virtio-balloon shrinker
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From:   Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <20230724094354.90817-30-zhengqi.arch@bytedance.com>
-Date:   Wed, 26 Jul 2023 15:35:42 +0800
+In-Reply-To: <20230724094354.90817-31-zhengqi.arch@bytedance.com>
+Date:   Wed, 26 Jul 2023 15:36:34 +0800
 Cc:     Andrew Morton <akpm@linux-foundation.org>, david@fromorbit.com,
         tkhai@ya.ru, Vlastimil Babka <vbabka@suse.cz>,
         Roman Gushchin <roman.gushchin@linux.dev>, djwong@kernel.org,
@@ -55,9 +55,9 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>, david@fromorbit.com,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org
 Content-Transfer-Encoding: 7bit
-Message-Id: <1D40C9FD-84F6-40BA-8D2C-0DF05882C933@linux.dev>
+Message-Id: <1934CDDA-BE23-4048-B924-2C954817F1A1@linux.dev>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
- <20230724094354.90817-30-zhengqi.arch@bytedance.com>
+ <20230724094354.90817-31-zhengqi.arch@bytedance.com>
 To:     Qi Zheng <zhengqi.arch@bytedance.com>
 X-Migadu-Flow: FLOW_OUT
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -75,16 +75,11 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 > On Jul 24, 2023, at 17:43, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
 > 
 > In preparation for implementing lockless slab shrink, use new APIs to
-> dynamically allocate the vmw-balloon shrinker, so that it can be freed
+> dynamically allocate the virtio-balloon shrinker, so that it can be freed
 > asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
-> read-side critical section when releasing the struct vmballoon.
-> 
-> And we can simply exit vmballoon_init() when registering the shrinker
-> fails. So the shrinker_registered indication is redundant, just remove it.
+> read-side critical section when releasing the struct virtio_balloon.
 > 
 > Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-
-Nice cleanup.
 
 Reviewed-by: Muchun Song <songmuchun@bytedance.com>
 
