@@ -2,123 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 61E65762796
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 01:59:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0164B7627C2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 02:30:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230219AbjGYX7D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jul 2023 19:59:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50626 "EHLO
+        id S231599AbjGZAao (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Jul 2023 20:30:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjGYX7C (ORCPT
+        with ESMTP id S229798AbjGZAam (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jul 2023 19:59:02 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE26D170D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 16:58:59 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3fb4146e8ceso51614505e9.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 16:58:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google; t=1690329538; x=1690934338;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y0V/EEMFzUDgOJY1HEZ2mzSgEOY/cF7JWrxdvLNmC4c=;
-        b=HQmhRjdDvJ1uYczgxWnKD2vuEgMQ1C34U5qNTVu5bgQnwC4Bo65ZfziU37Xl9ReMuI
-         ljgsg+zC1ZyZKpd6J4xCbFL7r/WFBlobzR0fNJHPHHsEVIs1APIzpwzPPIJWZ9biqp/R
-         QfbRvQeOQiOMI8y/jOcru47WwYghRDHy+nC0Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690329538; x=1690934338;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y0V/EEMFzUDgOJY1HEZ2mzSgEOY/cF7JWrxdvLNmC4c=;
-        b=GBKGJC83u2Ww6KR2I4GElFch+neIuUIOaLAYWZ+1/NivKO9fd/kb0oPP9e75U/BSl1
-         ptbUj5uG6KrTtBcYhKODH1pzmkWorl9/0x0vnQPcn5P5XP3SfbaqT0UK5nH7ivGfoZbK
-         5TKO5f1uIexTB5xgT8tBbcwwvWMpklsvoLvwsuiiTeP88Q8c4uLQ5leLpNIcGvPBC81O
-         kN2VTqTahJ4kgn775X/rSpAM8BVsA5blR5T8nqXsnbZSEXbUubGBXVS5qhSuNUef4suT
-         d+Lu2Bk9nK+R1cgihtEUD18inEiS5xvNLPyf73PtupcKfLTyt+a7I5xVJpbqEnH1firZ
-         Tnog==
-X-Gm-Message-State: ABy/qLYDVC+YpfjCQnkYFcGLlV2DfQrSd1sHjrV9c5upwS7U1t4Mlqku
-        REe7ZiCxf7vupxDfOe2bk5x41ZyRHmj2k9CMhwzWHA==
-X-Google-Smtp-Source: APBJJlGy2L5/2cNwOkSULYyldMb4TDytCVWiZW6+dAHiJcS7YGt/MlduX4KyitS9hJny3oNNGjQrpGffL7wmLJmUKA8=
-X-Received: by 2002:a5d:49c5:0:b0:316:fb39:e045 with SMTP id
- t5-20020a5d49c5000000b00316fb39e045mr180608wrs.48.1690329538460; Tue, 25 Jul
- 2023 16:58:58 -0700 (PDT)
+        Tue, 25 Jul 2023 20:30:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4684426BE;
+        Tue, 25 Jul 2023 17:30:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7F22C619BA;
+        Wed, 26 Jul 2023 00:30:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17D78C433C8;
+        Wed, 26 Jul 2023 00:30:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690331438;
+        bh=HwRJf2zxAV2y30LZeuhROoAoaYKeWsk0jz6e4I2TDSc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=O/Ew3KvC2OYxWejrYo1gr0rQQ3g5uQPthHMWNklJWVnh5zoMPVe9NzCIdZwAQXmLf
+         +1A+Di9DS6TD36yOmgISCSfAjdrPLh2TO7Gbf1llPGWTo3i3KCDRMNpz0eJEW06PkR
+         PILqC53xtrFUkEZcCYmGEATmmHWo2vsJnwIEiJQWQZ8e39JEEtVOjgEdF788hEV7y6
+         LbY+o2nfE+LCSAt0m1hkH+uxNWGQuJzg87s9AuaxvDlkX5mUpfPQUchBaBrAbCjAd9
+         vjYoJAQjDlA/IbWCElcdUES1bgjq+sK/7YXbIMhgjI05BqtIe16+S+ZTjck/dNyHVE
+         3UZ8A2gLfr8dw==
+Date:   Tue, 25 Jul 2023 17:30:36 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Tariq Toukan <ttoukan.linux@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>, netdev@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Boris Pismenny <borisp@nvidia.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Gal Pressman <gal@nvidia.com>, ranro@nvidia.com,
+        samiram@nvidia.com, drort@nvidia.com,
+        Tariq Toukan <tariqt@nvidia.com>
+Subject: Re: [PATCH net-next v10 08/16] tls: Inline do_tcp_sendpages()
+Message-ID: <20230725173036.442ba8ba@kernel.org>
+In-Reply-To: <bbdce803-0f23-7d3f-f75a-2bc3cfb794af@gmail.com>
+References: <ecbb5d7e-7238-28e2-1a17-686325e2bb50@gmail.com>
+        <4c49176f-147a-4283-f1b1-32aac7b4b996@gmail.com>
+        <20230522121125.2595254-1-dhowells@redhat.com>
+        <20230522121125.2595254-9-dhowells@redhat.com>
+        <2267272.1686150217@warthog.procyon.org.uk>
+        <5a9d4ffb-a569-3f60-6ac8-070ab5e5f5ad@gmail.com>
+        <776549.1687167344@warthog.procyon.org.uk>
+        <7337a904-231d-201d-397a-7bbe7cae929f@gmail.com>
+        <20230630102143.7deffc30@kernel.org>
+        <f0538006-6641-eaf6-b7b5-b3ef57afc652@gmail.com>
+        <20230705091914.5bee12f8@kernel.org>
+        <bbdce803-0f23-7d3f-f75a-2bc3cfb794af@gmail.com>
 MIME-Version: 1.0
-References: <20230710183338.58531-1-ivan@cloudflare.com> <2023071039-negate-stalemate-6987@gregkh>
- <CABWYdi39+TJd1qV3nWs_eYc7XMC0RvxG22ihfq7rzuPaNvn1cQ@mail.gmail.com> <jy7ktvlb4tkg6pl2vll6u4gozfji7giddyseypj4w2d2ue4gvn@4tw7dmjy4hfv>
-In-Reply-To: <jy7ktvlb4tkg6pl2vll6u4gozfji7giddyseypj4w2d2ue4gvn@4tw7dmjy4hfv>
-From:   Ivan Babrou <ivan@cloudflare.com>
-Date:   Tue, 25 Jul 2023 16:58:47 -0700
-Message-ID: <CABWYdi1k1gNwkWT8TH7kPv=tA8qaZbjaaogYoMRnFPtBqvR_Uw@mail.gmail.com>
-Subject: Re: [PATCH] kernfs: attach uuid for every kernfs and report it in fsid
-To:     =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, kernel-team@cloudflare.com,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
-        Zefan Li <lizefan.x@bytedance.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NORMAL_HTTP_TO_IP,
+        NUMERIC_HTTP_ADDR,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED,WEIRD_PORT autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 25, 2023 at 7:07=E2=80=AFAM Michal Koutn=C3=BD <mkoutny@suse.co=
-m> wrote:
->
-> Hello.
->
-> On Mon, Jul 10, 2023 at 02:21:10PM -0700, Ivan Babrou <ivan@cloudflare.co=
-m> wrote:
-> > I want to monitor cgroup changes, so that I can have an up to date map
-> > of inode -> cgroup path, so that I can resolve the value returned from
-> > bpf_get_current_cgroup_id() into something that a human can easily
-> > grasp (think system.slice/nginx.service).
->
-> Have you considered cgroup_path_from_kernfs_id()?
+On Sun, 23 Jul 2023 09:35:56 +0300 Tariq Toukan wrote:
+> Hi Jakub, David,
+> 
+> We repro the issue on the server side using this client command:
+> $ wrk -b2.2.2.2 -t4 -c1000 -d5 --timeout 5s 
+> https://2.2.2.3:20443/256000b.img
+> 
+> Port 20443 is configured with:
+>      ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256;
+>      sendfile    off;
+> 
+> 
+> Important:
+> 1. Couldn't repro with files smaller than 40KB.
+> 2. Couldn't repro with "sendfile    on;"
+> 
+> In addition, we collected the vmcore (forced by panic_on_warn), it can 
+> be downloaded from here:
+> https://drive.google.com/file/d/1Fi2dzgq6k2hb2L_kwyntRjfLF6_RmbxB/view?usp=sharing
 
-* It's not available from bpf from what I see (should I send a patch?)
-* It turns short numeric keys into large string keys (you mention this belo=
-w)
-* It's a lot more work upfront for every event under a spinlock
+This has no symbols :(
 
-> > Currently I do a full sweep to build a map, which doesn't work if a
-> > cgroup is short lived, as it just disappears before I can resolve it.
-> > Unfortunately, systemd recycles cgroups on restart, changing inode
-> > number, so this is a very real issue.
->
-> So, a historical map of cgroup id -> path is also useful for you, right?
-> (IOW, cgroup_path_from_kernfs_id() is possible but it'd inflate log
-> buffer size if full paths were stored instead of ids.)
+There is a small bug in this commit, we should always set SPLICE.
+But I don't see how that'd cause the warning you're seeing.
+Does your build have CONFIG_DEBUG_VM enabled?
 
-For the most part the historical map would not be necessary if we had
-cgroup paths (except for the points I mentioned above).
+-->8-------------------------
 
-> (I think a similar map would be beneficial for SCM_CGROUP [1] idea too.)
+From: Jakub Kicinski <kuba@kernel.org>
+Date: Tue, 25 Jul 2023 17:03:25 -0700
+Subject: net: tls: set MSG_SPLICE_PAGES consistently
 
-Yes, it seems like it.
+We used to change the flags for the last segment, because
+non-last segments had the MSG_SENDPAGE_NOTLAST flag set.
+That flag is no longer a thing so remove the setting.
 
-> > There's also this old wiki page from systemd:
-> >
-> > * https://freedesktop.org/wiki/Software/systemd/Optimizations
->
-> The page also states:
->
-> > Last edited Sat 18 May 2013 08:20:38 AM UTC
->
-> Emptiness notifications via release_agent are so 2016 :-), unified
-> hiearchy has more convenient API [2], this is FTR.
+Since flags most likely don't have MSG_SPLICE_PAGES set
+this avoids passing parts of the sg as splice and parts
+as non-splice.
 
-Sure, but these aren't arguments against having fanotify for cgroup filesys=
-tem.
+... tags ...
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+---
+ net/tls/tls_main.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
+index b6896126bb92..4a8ee2f6badb 100644
+--- a/net/tls/tls_main.c
++++ b/net/tls/tls_main.c
+@@ -139,9 +139,6 @@ int tls_push_sg(struct sock *sk,
+ 
+ 	ctx->splicing_pages = true;
+ 	while (1) {
+-		if (sg_is_last(sg))
+-			msg.msg_flags = flags;
+-
+ 		/* is sending application-limited? */
+ 		tcp_rate_check_app_limited(sk);
+ 		p = sg_page(sg);
+-- 
+2.41.0
+
