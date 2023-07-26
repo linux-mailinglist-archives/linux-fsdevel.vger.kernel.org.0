@@ -2,83 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D370763073
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 10:49:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AA2E763149
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 11:10:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233372AbjGZItz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 04:49:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51512 "EHLO
+        id S233408AbjGZJKb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 05:10:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232664AbjGZIt0 (ORCPT
+        with ESMTP id S233285AbjGZJJ5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 04:49:26 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9271759D2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 01:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690360912;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=d/oTrLa3wfV0i253XfKhTyT1CTpeukEXI1z5KYmU9f8=;
-        b=B1DA7dpdEoOIoctpb1fAQhCeZL6P+ShUh7mbvZRWJHxQPmEq9u4S+z1XgXZXqN/PQdchkJ
-        9GNOp5cRA0rzA/L8voWg8sMvZaxBMoXt1MCEjenxkp9YefQE0kRGDoCZO7+mQuy5/CkUIb
-        ZMWk/omkmsmEfRHvlNmnmJC1wiAT/yo=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-441-dBAKzojIPFCmGPV9s8Djaw-1; Wed, 26 Jul 2023 04:41:48 -0400
-X-MC-Unique: dBAKzojIPFCmGPV9s8Djaw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 26 Jul 2023 05:09:57 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 172F8268B;
+        Wed, 26 Jul 2023 02:06:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C29781010427;
-        Wed, 26 Jul 2023 08:41:47 +0000 (UTC)
-Received: from localhost (ovpn-12-99.pek2.redhat.com [10.72.12.99])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D339B4094DC0;
-        Wed, 26 Jul 2023 08:41:46 +0000 (UTC)
-Date:   Wed, 26 Jul 2023 16:41:43 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Vivek Goyal <vgoyal@redhat.com>, akpm@linux-foundation.org,
-        Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] proc/vmcore: fix signedness bug in read_from_oldmem()
-Message-ID: <ZMDcR6wKn3Dz6NJy@MiWiFi-R3L-srv>
-References: <b55f7eed-1c65-4adc-95d1-6c7c65a54a6e@moroto.mountain>
- <ZMC1jU7ywPGt1QmO@MiWiFi-R3L-srv>
- <c770613e-1f11-4bff-bc5f-9bc6f07a4da5@kadam.mountain>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9F0F6618E2;
+        Wed, 26 Jul 2023 09:06:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ED81C433C7;
+        Wed, 26 Jul 2023 09:06:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690362375;
+        bh=qw7N0geLh/7O+YFGms6S6G8hXqAkOc3FsrusV/KL+RU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Jc11UcNFpdhVQksWMoTAsOXXmz2R8iFHxBeM1ass1vgxLxy8PiLUx5Wwe8wYNmDJU
+         uXdPN0nvW5cZrAO7FcvWn5C2tT2STexnw89victYle3r48fiJ1ikQSVr8rMle1x1fq
+         rFpcHxultW2BggkYhCDhOFosX70I6o1nVer6OMx1ExUKJ2fgYlLvGHkH9zbZgORfmU
+         +mPBq1emQtssbj9SH3B5omuuDpxqz7GhINsikLFQ9+G48iQxnoW8ufHYX/SFwbKfHV
+         epo/EIupW6SxDiIW4+21cHB26JO4S2i75lZtNa1bVodD+1o3ctQ8IajZh4V2/1iRwW
+         DyNSfFJl6/uwQ==
+From:   Christian Brauner <brauner@kernel.org>
+To:     thunder.leizhen@huaweicloud.com
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Zhen Lei <thunder.leizhen@huawei.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] epoll: simplify ep_alloc()
+Date:   Wed, 26 Jul 2023 11:06:06 +0200
+Message-Id: <20230726-achthundert-angehalten-62077a7fdbab@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230726032135.933-1-thunder.leizhen@huaweicloud.com>
+References: <20230726032135.933-1-thunder.leizhen@huaweicloud.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c770613e-1f11-4bff-bc5f-9bc6f07a4da5@kadam.mountain>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=925; i=brauner@kernel.org; h=from:subject:message-id; bh=qw7N0geLh/7O+YFGms6S6G8hXqAkOc3FsrusV/KL+RU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQcePi708B/3VWXuQqrDf4+mm5gn3G2pcL03O/XTjcZ1/4M /bassqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiQRcYGdbO+X9qQfzdIw/KTRtYxH v9vyjwLHL3f61wJVhN7ubOfm1Ghue32ASfVzz5U9zDc+JsqWRsy/aHyh9DCkzcXfM2e7A0cwEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07/26/23 at 09:03am, Dan Carpenter wrote:
-> On Wed, Jul 26, 2023 at 01:56:29PM +0800, Baoquan He wrote:
-> > 
-> > Thanks for this fix. Just curious, this is found out by code exploring,
-> > or any breaking?
+On Wed, 26 Jul 2023 11:21:35 +0800, thunder.leizhen@huaweicloud.com wrote:
+> The get_current_user() does not fail, and moving it after kzalloc() can
+> simplify the code a bit.
 > 
-> It's from static analysis, looking at when error codes are type promoted
-> to unsigned.  I pushed the Smatch check for this yesterday.
-
-I see, thanks for telling.
-
-> 
-> https://github.com/error27/smatch/commit/a2e6ca07e2ef83a72c9ffa3508af1398a6ecc7ed
-> 
-> regards,
-> dan carpenter
 > 
 
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] epoll: simplify ep_alloc()
+      https://git.kernel.org/vfs/vfs/c/3f3ecbd73071
