@@ -2,532 +2,263 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 23A96763807
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 15:49:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6E12763825
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 15:56:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232807AbjGZNtx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 09:49:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55154 "EHLO
+        id S233050AbjGZN4O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 09:56:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232151AbjGZNtw (ORCPT
+        with ESMTP id S231758AbjGZN4N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 09:49:52 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C231010CB
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 06:49:48 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-99bcfe28909so31178566b.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 06:49:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1690379387; x=1690984187;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JAaZmPHXZeGobf5rSZ012Uj0JsTN/3lCLdtE1EeBSGc=;
-        b=h2ZLafS+HpTfN6e4TQr9KVY6A3O7gsCShKLOM4Ix/zspLkSROIoM5eLy/mrmRohasf
-         qQi+nn9GwiLlpxFu5PRSGT8Otx5/tFZb/3sboPgCofWTYswyavEJfSxRV3nwQyfGc1+S
-         reoJg3JGMGX15GHyLRboqUK4oSEnphOlnaU6k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690379387; x=1690984187;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JAaZmPHXZeGobf5rSZ012Uj0JsTN/3lCLdtE1EeBSGc=;
-        b=dgvxCOibe98y2AdUa9LO5YtomerZxnKLrVAQ0SfX1YmGjruhBzMdbbN22ANTq+CU6O
-         3aVAZd6uxKijQNhto6qKI2P0BneVS1Hgmg2fBR3KassQeqzK1MzsgroHl/b+sAG+c6Ed
-         PZyJmxV5gkqEu6T3nKbfcQwnKDS2EZTyy6MHTyuUCGC+5BpGVrRtmKthHRHP3zsBBHqN
-         qTYqHYRuLGNQ1h4iktAAN60SBEzssuqSZcN8M8aLMKNLzn7dtLfDA3dSyJJ25YKZW0nL
-         Q/e3SLuM/8ewx8xl4dQJV2WJGXxCFWZAFk/p6069GiwYL4NLSGe93FCV3CZfSioPfT6B
-         1CsQ==
-X-Gm-Message-State: ABy/qLanLV2j6bH+qvLsxqa3zeaI8eAMVUdkusMJ1c7qGubdvaFHz7GX
-        p062QUe6buzbuGcjc+76CaUPCrEIIU/sHuyCoBiWRQ==
-X-Google-Smtp-Source: APBJJlGIvcY2whyR6OiYXgwmYdogcE+9qzuSNvdkrOgEbJv/OJYzt1y7z+lCdw2PiYLMbV9WT5VGiZvwAdBNvvpYE5Y=
-X-Received: by 2002:a17:907:75d0:b0:997:e9a3:9c59 with SMTP id
- jl16-20020a17090775d000b00997e9a39c59mr1778701ejc.6.1690379387065; Wed, 26
- Jul 2023 06:49:47 -0700 (PDT)
+        Wed, 26 Jul 2023 09:56:13 -0400
+Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB5782716;
+        Wed, 26 Jul 2023 06:54:00 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id A3786320039A;
+        Wed, 26 Jul 2023 09:53:50 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Wed, 26 Jul 2023 09:53:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        cc:content-transfer-encoding:content-type:content-type:date:date
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
+        1690379630; x=1690466030; bh=vcPDkrsGIwFtmpzt098KRroBQefPuWMGKTH
+        AmPms6QE=; b=P9KZyJhTKlj1NQ3Cm0gWoHj/6QLltZp81f74zItfjr7/T+/4wCI
+        GpG3hrgRU83LMTNr5kPTnEg6nZIMMUS3urPY6GEHGXyoONrrJRAmydu6FfHotmy4
+        R8r6phEDHtM6kOzMNcqJnFWNAaFPED+U6oDNzK7cDe1pkYx35+5vOrAn+OQ3ueLK
+        Lm9raHomDna6+R8lwOiYNOYs4j+LlC6RyCQNYEvwMY0vm+ns0ZT86zxmwlp5K6dK
+        wxKDE1mt0kZrW/FHw3/It2LsaTZ472Lzj8GY1izdg8whoSKMEdl91OmrEInWsgS8
+        XyiHz0q7aQkO1Eejmic1SWpqetBYp4+CgTg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1690379630; x=
+        1690466030; bh=vcPDkrsGIwFtmpzt098KRroBQefPuWMGKTHAmPms6QE=; b=p
+        bTF2jKsQtHQUJDmARouwsuP/ygVU7gS2EEWiwdrrU4O3P4FX256CNIcr4/KTyTQo
+        6q+FVidaD9Rcu5xi4sRhzgCN1Cl5Vwj7F89MXfmTepxhhKPqmzPdQ+rAmeOh+2mW
+        xwWeznjLoytEbRjIl0OF80+ybdlelftp2ENQwP54SeS1xGd8OMqiTVwelY4lJX8q
+        Ajcf7QDdFQybC+y0rToOo3dvsvBjCsc6i/IlIJPyd3AFlT3Qv4stAzuFx8+Dxrh9
+        bvN7FDWzNoihaHglB6mK/ZfWfRPAZ2CXDRtbQzLvylas0fsiplWIM0WGXNCrIvV3
+        D+pO25u43PxQ61oiOuWUQ==
+X-ME-Sender: <xms:biXBZFE8UPVASSR7VKgNpn0yUlZ3ZM_AvTn7wRZOSRU5LYJe9Er6HQ>
+    <xme:biXBZKWQ_Kl8_5FPvGptHLktM4kwUoSNpztAiAHzHgpz_v6Z8iyFSJZZzsiWsYP9Z
+    zu8lPPceBnBSB6S>
+X-ME-Received: <xmr:biXBZHIs-q-eMqoVmplb3eAYBmuqJ3Dh9WG7fz3lqQpzrvD5SwZHlRyU6SZBtxlP1w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedriedvgdeikecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenfg
+    hrlhcuvffnffculddutddmnecujfgurhepkfffgggfuffvfhfhjggtgfesthejredttdef
+    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusg
+    gvrhhtsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeegffdutdegiefg
+    teelleeggeeuueduteefieduvedvueefieejledvjeeuhfefgeenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghr
+    thesfhgrshhtmhgrihhlrdhfmh
+X-ME-Proxy: <xmx:biXBZLHEbsuxV6zW_kktPeE4sC7uAGLyoh-CUXfZqOLry5M0omV9EQ>
+    <xmx:biXBZLWJUDA21Z95rdC45mrxKdGZ6jCaPdmb_MFCBM1y8-ma60MiVA>
+    <xmx:biXBZGPcxVclx20XeyFe3z8At6m8uMP7yyXKvbJfOQJsVAkdsy6h_w>
+    <xmx:biXBZIg43U4BXLIlWFIDcU-_FI9kSWrZOA9aX5gqgdDSXhlJ2lJPrA>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 26 Jul 2023 09:53:49 -0400 (EDT)
+Message-ID: <b5255112-922f-b965-398e-38b9f5fb4892@fastmail.fm>
+Date:   Wed, 26 Jul 2023 15:53:47 +0200
 MIME-Version: 1.0
-References: <166606025456.13363.3829702374064563472.stgit@donald.themaw.net>
- <166606036215.13363.1288735296954908554.stgit@donald.themaw.net>
- <Y2BMonmS0SdOn5yh@slm.duckdns.org> <20221221133428.GE69385@mutt>
- <7815c8da-7d5f-c2c5-9dfd-7a77ac37c7f7@themaw.net> <e25ee08c-7692-4042-9961-a499600f0a49@app.fastmail.com>
- <9e35cf66-79ef-1f13-dc6b-b013c73a9fc6@themaw.net> <db933d76-1432-f671-8712-d94de35277d8@themaw.net>
- <20230718190009.GC411@mutt> <76fcd1fe-b5f5-dd6b-c74d-30c2300f3963@themaw.net> <ce407424e98bf5f2b186df5d28dd5749a6cbfa45.camel@themaw.net>
-In-Reply-To: <ce407424e98bf5f2b186df5d28dd5749a6cbfa45.camel@themaw.net>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 26 Jul 2023 15:49:35 +0200
-Message-ID: <CAJfpegu2S04RTpuHMH9=ODVmLD1JdB64t=ieprx74teonCDHEg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] kernfs: dont take i_lock on inode attr read
-To:     Ian Kent <raven@themaw.net>
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Tejun Heo <tj@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Minchan Kim <minchan@kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        elver@google.com, imran.f.khan@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH] fuse: enable larger read buffers for readdir.
+Content-Language: en-US
+To:     Jaco Kroon <jaco@uls.co.za>, Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230726105953.843-1-jaco@uls.co.za>
+From:   Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <20230726105953.843-1-jaco@uls.co.za>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 20 Jul 2023 at 04:03, Ian Kent <raven@themaw.net> wrote:
->
-> On Wed, 2023-07-19 at 12:23 +0800, Ian Kent wrote:
-> > On 19/7/23 03:00, Anders Roxell wrote:
-> > > On 2023-01-23 11:11, Ian Kent wrote:
-> > > > On 29/12/22 21:07, Ian Kent wrote:
-> > > > > On 29/12/22 17:20, Arnd Bergmann wrote:
-> > > > > > On Fri, Dec 23, 2022, at 00:11, Ian Kent wrote:
-> > > > > > > On 21/12/22 21:34, Anders Roxell wrote:
-> > > > > > > > On 2022-10-31 12:30, Tejun Heo wrote:
-> > > > > > > > > On Tue, Oct 18, 2022 at 10:32:42AM +0800, Ian Kent
-> > > > > > > > > wrote:
-> > > > > > > > > > The kernfs write lock is held when the kernfs node
-> > > > > > > > > > inode attributes
-> > > > > > > > > > are updated. Therefore, when either
-> > > > > > > > > > kernfs_iop_getattr() or
-> > > > > > > > > > kernfs_iop_permission() are called the kernfs node
-> > > > > > > > > > inode attributes
-> > > > > > > > > > won't change.
-> > > > > > > > > >
-> > > > > > > > > > Consequently concurrent kernfs_refresh_inode() calls
-> > > > > > > > > > always copy the
-> > > > > > > > > > same values from the kernfs node.
-> > > > > > > > > >
-> > > > > > > > > > So there's no need to take the inode i_lock to get
-> > > > > > > > > > consistent values
-> > > > > > > > > > for generic_fillattr() and generic_permission(), the
-> > > > > > > > > > kernfs read lock
-> > > > > > > > > > is sufficient.
-> > > > > > > > > >
-> > > > > > > > > > Signed-off-by: Ian Kent <raven@themaw.net>
-> > > > > > > > > Acked-by: Tejun Heo <tj@kernel.org>
-> > > > > > > > Hi,
-> > > > > > > >
-> > > > > > > > Building an allmodconfig arm64 kernel on yesterdays next-
-> > > > > > > > 20221220 and
-> > > > > > > > booting that in qemu I see the following "BUG: KCSAN:
-> > > > > > > > data-race in
-> > > > > > > > set_nlink / set_nlink".
-> > > > > > > I'll check if I missed any places where set_link() could be
-> > > > > > > called where the link count could be different.
-> > > > > > >
-> > > > > > >
-> > > > > > > If there aren't any the question will then be can writing
-> > > > > > > the
-> > > > > > > same value to this location in multiple concurrent threads
-> > > > > > > corrupt it?
-> > > > > > I think the race that is getting reported for set_nlink()
-> > > > > > is about this bit getting called simulatenously on multiple
-> > > > > > CPUs with only the read lock held for the inode:
-> > > > > >
-> > > > > >        /* Yes, some filesystems do change nlink from zero to
-> > > > > > one */
-> > > > > >        if (inode->i_nlink == 0)
-> > > > > > atomic_long_dec(&inode->i_sb->s_remove_count);
-> > > > > >        inode->__i_nlink = nlink;
-> > > > > >
-> > > > > > Since i_nlink and __i_nlink refer to the same memory
-> > > > > > location,
-> > > > > > the 'inode->i_nlink == 0' check can be true for all of them
-> > > > > > before the nonzero nlink value gets set, and this results in
-> > > > > > s_remove_count being decremented more than once.
-> > > > >
-> > > > > Thanks for the comment Arnd.
-> > > >
-> > > > Hello all,
-> > > >
-> > > >
-> > > > I've been looking at this and after consulting Miklos and his
-> > > > pointing
-> > > >
-> > > > out that it looks like a false positive the urgency dropped off a
-> > > > bit. So
-> > > >
-> > > > apologies for taking so long to report back.
-> > > >
-> > > >
-> > > > Anyway it needs some description of conclusions reached so far.
-> > > >
-> > > >
-> > > > I'm still looking around but in short, kernfs will set
-> > > > directories to <# of
-> > > >
-> > > > directory entries> + 2 unconditionally for directories. I can't
-> > > > yet find
-> > > >
-> > > > any other places where i_nlink is set or changed and if there are
-> > > > none
-> > > >
-> > > > then i_nlink will never be set to zero so the race should not
-> > > > occur.
-> > > >
-> > > >
-> > > > Consequently my claim is this is a real false positive.
-> > > >
-> > > >
-> > > > There are the file system operations that may be passed at mount
-> > > > time
-> > > >
-> > > > but given the way kernfs sets i_nlink it pretty much dictates
-> > > > those
-> > > > operations
-> > > >
-> > > > (if there were any that modify it and there don't appear to be
-> > > > any) leave it
-> > > >
-> > > > alone.
-> > > >
-> > > >
-> > > > So it just doesn't make sense for users of kernfs to fiddle with
-> > > > i_nlink ...
-> > > On todays next tag, next-20230718 this KCSAN BUG poped up again.
-> > > When I
-> > > built an allmodconfig arm64 kernel and booted it in QEMU. Full log
-> > > can
-> > > be found http://ix.io/4AUd
-> > >
-> > > [ 1694.987789][  T137] BUG: KCSAN: data-race in inode_permission /
-> > > kernfs_refresh_inode
-> > > [ 1694.992912][  T137]
-> > > [ 1694.994532][  T137] write to 0xffff00000bab6070 of 2 bytes by
-> > > task 104 on cpu 0:
-> > > [ 1694.999269][ T137] kernfs_refresh_inode
-> > > (/home/anders/src/kernel/next/fs/kernfs/inode.c:171)
-> > > [ 1695.002707][ T137] kernfs_iop_permission
-> > > (/home/anders/src/kernel/next/fs/kernfs/inode.c:289)
-> > > [ 1695.006148][ T137] inode_permission
-> > > (/home/anders/src/kernel/next/fs/namei.c:461
-> > > /home/anders/src/kernel/next/fs/namei.c:528)
-> > > [ 1695.009420][ T137] link_path_walk
-> > > (/home/anders/src/kernel/next/fs/namei.c:1720
-> > > /home/anders/src/kernel/next/fs/namei.c:2267)
-> > > [ 1695.012643][ T137] path_lookupat
-> > > (/home/anders/src/kernel/next/fs/namei.c:2478 (discriminator 2))
-> > > [ 1695.015781][ T137] filename_lookup
-> > > (/home/anders/src/kernel/next/fs/namei.c:2508)
-> > > [ 1695.019059][ T137] vfs_statx
-> > > (/home/anders/src/kernel/next/fs/stat.c:238)
-> > > [ 1695.022024][ T137] vfs_fstatat
-> > > (/home/anders/src/kernel/next/fs/stat.c:276)
-> > > [ 1695.025067][ T137] __do_sys_newfstatat
-> > > (/home/anders/src/kernel/next/fs/stat.c:446)
-> > > [ 1695.028497][ T137] __arm64_sys_newfstatat
-> > > (/home/anders/src/kernel/next/fs/stat.c:440
-> > > /home/anders/src/kernel/next/fs/stat.c:440)
-> > > [ 1695.032080][ T137] el0_svc_common.constprop.0
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:38
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:52
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:139)
-> > > [ 1695.035916][ T137] do_el0_svc
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:188)
-> > > [ 1695.038796][ T137] el0_svc
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:133
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:144
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:648)
-> > > [ 1695.041468][ T137] el0t_64_sync_handler
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:666)
-> > > [ 1695.044889][ T137] el0t_64_sync
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/entry.S:591)
-> > > [ 1695.047904][  T137]
-> > > [ 1695.049511][  T137] 1 lock held by systemd-udevd/104:
-> > > [ 1695.052837][ T137] #0: ffff000006681e08 (&root-
-> > > >kernfs_iattr_rwsem){++++}-{3:3}, at: kernfs_iop_permission
-> > > (/home/anders/src/kernel/next/fs/kernfs/inode.c:288)
-> > > [ 1695.060241][  T137] irq event stamp: 82902
-> > > [ 1695.063006][ T137] hardirqs last enabled at (82901):
-> > > _raw_spin_unlock_irqrestore
-> > > (/home/anders/src/kernel/next/arch/arm64/include/asm/alternative-
-> > > macros.h:250
-> > > /home/anders/src/kernel/next/arch/arm64/include/asm/irqflags.h:27
-> > > /home/anders/src/kernel/next/arch/arm64/include/asm/irqflags.h:140
-> > > /home/anders/src/kernel/next/include/linux/spinlock_api_smp.h:151
-> > > /home/anders/src/kernel/next/kernel/locking/spinlock.c:194)
-> > > [ 1695.069673][ T137] hardirqs last disabled at (82902):
-> > > el1_interrupt
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:472
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:488)
-> > > [ 1695.075474][ T137] softirqs last enabled at (82792):
-> > > fpsimd_restore_current_state
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:264
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1791)
-> > > [ 1695.082319][ T137] softirqs last disabled at (82790):
-> > > fpsimd_restore_current_state
-> > > (/home/anders/src/kernel/next/include/linux/bottom_half.h:20
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:242
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1784)
-> > > [ 1695.089049][  T137]
-> > > [ 1695.090659][  T137] read to 0xffff00000bab6070 of 2 bytes by
-> > > task 137 on cpu 0:
-> > > [ 1695.095374][ T137] inode_permission
-> > > (/home/anders/src/kernel/next/fs/namei.c:532)
-> > > [ 1695.098655][ T137] link_path_walk
-> > > (/home/anders/src/kernel/next/fs/namei.c:1720
-> > > /home/anders/src/kernel/next/fs/namei.c:2267)
-> > > [ 1695.101857][ T137] path_openat
-> > > (/home/anders/src/kernel/next/fs/namei.c:3789 (discriminator 2))
-> > > [ 1695.104885][ T137] do_filp_open
-> > > (/home/anders/src/kernel/next/fs/namei.c:3820)
-> > > [ 1695.108006][ T137] do_sys_openat2
-> > > (/home/anders/src/kernel/next/fs/open.c:1418)
-> > > [ 1695.111290][ T137] __arm64_sys_openat
-> > > (/home/anders/src/kernel/next/fs/open.c:1433)
-> > > [ 1695.114825][ T137] el0_svc_common.constprop.0
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:38
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:52
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:139)
-> > > [ 1695.118662][ T137] do_el0_svc
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:188)
-> > > [ 1695.121555][ T137] el0_svc
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:133
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:144
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:648)
-> > > [ 1695.124207][ T137] el0t_64_sync_handler
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:666)
-> > > [ 1695.127590][ T137] el0t_64_sync
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/entry.S:591)
-> > > [ 1695.130641][  T137]
-> > > [ 1695.132241][  T137] no locks held by systemd-udevd/137.
-> > > [ 1695.135618][  T137] irq event stamp: 3246
-> > > [ 1695.138519][ T137] hardirqs last enabled at (3245):
-> > > seqcount_lockdep_reader_access
-> > > (/home/anders/src/kernel/next/include/linux/seqlock.h:105)
-> > > [ 1695.145825][ T137] hardirqs last disabled at (3246):
-> > > el1_interrupt
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:472
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:488)
-> > > [ 1695.151942][ T137] softirqs last enabled at (3208):
-> > > fpsimd_restore_current_state
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:264
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1791)
-> > > [ 1695.158950][ T137] softirqs last disabled at (3206):
-> > > fpsimd_restore_current_state
-> > > (/home/anders/src/kernel/next/include/linux/bottom_half.h:20
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:242
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1784)
-> > > [ 1695.166036][  T137]
-> > > [ 1695.167621][  T137] Reported by Kernel Concurrency Sanitizer on:
-> > > [ 1695.179990][  T137] Hardware name: linux,dummy-virt (DT)
-> > > [ 1695.183687][  T137]
-> > > ==================================================================
-> >
-> >
-> > This one is different to the original.
-> >
-> >
-> > I can't see where the problem is here, can someone help me out
-> >
-> > please.
-> >
-> >
-> > I don't see any shared data values used by the call
-> >
-> > devcgroup_inode_permission(inode, mask) in
-> > fs/namei.c:inode_permission()
-> >
-> > that might be a problem during the read except possibly inode-
-> > >i_mode.
-> >
-> >
-> > I'll check on that ... maybe something's been missed when
-> > kernfs_rwsem
-> >
-> > was changed to a separate lock (kernfs_iattr_rwsem).
-> >
-> >
-> > >
-> > > [...]
-> > >
-> > > [ 1738.053819][  T104] BUG: KCSAN: data-race in set_nlink /
-> > > set_nlink
-> > > [ 1738.058223][  T104]
-> > > [ 1738.059865][  T104] read to 0xffff00000bab6918 of 4 bytes by
-> > > task 108 on cpu 0:
-> > > [ 1738.064916][ T104] set_nlink
-> > > (/home/anders/src/kernel/next/fs/inode.c:369)
-> > > [ 1738.067845][ T104] kernfs_refresh_inode
-> > > (/home/anders/src/kernel/next/fs/kernfs/inode.c:180)
-> > > [ 1738.071607][ T104] kernfs_iop_permission
-> > > (/home/anders/src/kernel/next/fs/kernfs/inode.c:289)
-> > > [ 1738.075467][ T104] inode_permission
-> > > (/home/anders/src/kernel/next/fs/namei.c:461
-> > > /home/anders/src/kernel/next/fs/namei.c:528)
-> > > [ 1738.078868][ T104] link_path_walk
-> > > (/home/anders/src/kernel/next/fs/namei.c:1720
-> > > /home/anders/src/kernel/next/fs/namei.c:2267)
-> > > [ 1738.082270][ T104] path_lookupat
-> > > (/home/anders/src/kernel/next/fs/namei.c:2478 (discriminator 2))
-> > > [ 1738.085488][ T104] filename_lookup
-> > > (/home/anders/src/kernel/next/fs/namei.c:2508)
-> > > [ 1738.089101][ T104] user_path_at_empty
-> > > (/home/anders/src/kernel/next/fs/namei.c:2907)
-> > > [ 1738.092469][ T104] do_readlinkat
-> > > (/home/anders/src/kernel/next/fs/stat.c:477)
-> > > [ 1738.095970][ T104] __arm64_sys_readlinkat
-> > > (/home/anders/src/kernel/next/fs/stat.c:504
-> > > /home/anders/src/kernel/next/fs/stat.c:501
-> > > /home/anders/src/kernel/next/fs/stat.c:501)
-> > > [ 1738.099529][ T104] el0_svc_common.constprop.0
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:38
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:52
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:139)
-> > > [ 1738.103696][ T104] do_el0_svc
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:188)
-> > > [ 1738.106560][ T104] el0_svc
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:133
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:144
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:648)
-> > > [ 1738.109613][ T104] el0t_64_sync_handler
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:666)
-> > > [ 1738.113035][ T104] el0t_64_sync
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/entry.S:591)
-> > > [ 1738.116346][  T104]
-> > > [ 1738.117924][  T104] 1 lock held by systemd-udevd/108:
-> > > [ 1738.121580][ T104] #0: ffff000006681e08 (&root-
-> > > >kernfs_iattr_rwsem){++++}-{3:3}, at: kernfs_iop_permission
-> > > (/home/anders/src/kernel/next/fs/kernfs/inode.c:288)
-> > > [ 1738.129355][  T104] irq event stamp: 31000
-> > > [ 1738.132088][ T104] hardirqs last enabled at (31000):
-> > > seqcount_lockdep_reader_access
-> > > (/home/anders/src/kernel/next/include/linux/seqlock.h:105)
-> > > [ 1738.139417][ T104] hardirqs last disabled at (30999):
-> > > seqcount_lockdep_reader_access
-> > > (/home/anders/src/kernel/next/include/linux/seqlock.h:104)
-> > > [ 1738.146781][ T104] softirqs last enabled at (30973):
-> > > fpsimd_restore_current_state
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:264
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1791)
-> > > [ 1738.153891][ T104] softirqs last disabled at (30971):
-> > > fpsimd_restore_current_state
-> > > (/home/anders/src/kernel/next/include/linux/bottom_half.h:20
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:242
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1784)
-> > > [ 1738.161012][  T104]
-> > > [ 1738.162663][  T104] write to 0xffff00000bab6918 of 4 bytes by
-> > > task 104 on cpu 0:
-> > > [ 1738.167730][ T104] set_nlink
-> > > (/home/anders/src/kernel/next/fs/inode.c:372)
-> > > [ 1738.170559][ T104] kernfs_refresh_inode
-> > > (/home/anders/src/kernel/next/fs/kernfs/inode.c:180)
-> > > [ 1738.174355][ T104] kernfs_iop_permission
-> > > (/home/anders/src/kernel/next/fs/kernfs/inode.c:289)
-> > > [ 1738.177829][ T104] inode_permission
-> > > (/home/anders/src/kernel/next/fs/namei.c:461
-> > > /home/anders/src/kernel/next/fs/namei.c:528)
-> > > [ 1738.181403][ T104] link_path_walk
-> > > (/home/anders/src/kernel/next/fs/namei.c:1720
-> > > /home/anders/src/kernel/next/fs/namei.c:2267)
-> > > [ 1738.184738][ T104] path_lookupat
-> > > (/home/anders/src/kernel/next/fs/namei.c:2478 (discriminator 2))
-> > > [ 1738.188268][ T104] filename_lookup
-> > > (/home/anders/src/kernel/next/fs/namei.c:2508)
-> > > [ 1738.191865][ T104] vfs_statx
-> > > (/home/anders/src/kernel/next/fs/stat.c:238)
-> > > [ 1738.196236][ T104] vfs_fstatat
-> > > (/home/anders/src/kernel/next/fs/stat.c:276)
-> > > [ 1738.200120][ T104] __do_sys_newfstatat
-> > > (/home/anders/src/kernel/next/fs/stat.c:446)
-> > > [ 1738.204095][ T104] __arm64_sys_newfstatat
-> > > (/home/anders/src/kernel/next/fs/stat.c:440
-> > > /home/anders/src/kernel/next/fs/stat.c:440)
-> > > [ 1738.207676][ T104] el0_svc_common.constprop.0
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:38
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:52
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:139)
-> > > [ 1738.211820][ T104] do_el0_svc
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:188)
-> > > [ 1738.214815][ T104] el0_svc
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:133
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:144
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:648)
-> > > [ 1738.217709][ T104] el0t_64_sync_handler
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:666)
-> > > [ 1738.221239][ T104] el0t_64_sync
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/entry.S:591)
-> > > [ 1738.224502][  T104]
-> > > [ 1738.226090][  T104] 1 lock held by systemd-udevd/104:
-> > > [ 1738.229747][ T104] #0: ffff000006681e08 (&root-
-> > > >kernfs_iattr_rwsem){++++}-{3:3}, at: kernfs_iop_permission
-> > > (/home/anders/src/kernel/next/fs/kernfs/inode.c:288)
-> > > [ 1738.237504][  T104] irq event stamp: 108353
-> > > [ 1738.240262][ T104] hardirqs last enabled at (108353):
-> > > seqcount_lockdep_reader_access
-> > > (/home/anders/src/kernel/next/include/linux/seqlock.h:105)
-> > > [ 1738.247443][ T104] hardirqs last disabled at (108352):
-> > > seqcount_lockdep_reader_access
-> > > (/home/anders/src/kernel/next/include/linux/seqlock.h:104)
-> > > [ 1738.254510][ T104] softirqs last enabled at (108326):
-> > > fpsimd_restore_current_state
-> > > (/home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:264
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1791)
-> > > [ 1738.262187][ T104] softirqs last disabled at (108324):
-> > > fpsimd_restore_current_state
-> > > (/home/anders/src/kernel/next/include/linux/bottom_half.h:20
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:242
-> > > /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1784)
-> > > [ 1738.270239][  T104]
-> > > [ 1738.272140][  T104] Reported by Kernel Concurrency Sanitizer on:
-> > > [ 1738.285185][  T104] Hardware name: linux,dummy-virt (DT)
-> > > [ 1738.288703][  T104]
-> > > ==================================================================
-> >
-> > This looks just like the original except a different lock is being
-> >
-> > used now.
-> >
-> >
-> > The link count can't be less than two if set_nlink() is called.
-> >
-> >
-> > Maybe I am missing something but the directory count is changed only
-> >
-> > while holding the root->kernfs_iattr_rwsem so the value used by
-> >
-> > set_nlink() will not change during concurrent calls to
-> > refresh_inode().
-> >
-> > Still looks like a false positive, I'll check the write operations
-> > again just to be sure.
->
-> I do see a problem with recent changes.
->
-> I'll send this off to Greg after I've done some testing (primarily just
-> compile and function).
->
-> Here's a patch which describes what I found.
->
-> Comments are, of course, welcome, ;)
->
-> kernfs: fix missing kernfs_iattr_rwsem locking
->
-> From: Ian Kent <raven@themaw.net>
->
-> When the kernfs_iattr_rwsem was introduced a case was missed.
->
-> The update of the kernfs directory node child count was also protected
-> by the kernfs_rwsem and needs to be included in the change so that the
-> child count (and so the inode n_link attribute) does not change while
-> holding the rwsem for read.
->
-> Fixes: 9caf696142 (kernfs: Introduce separate rwsem to protect inode
-> attributes)
->
-> Signed-off-by: Ian Kent <raven@themaw.net>
-> Cc: Anders Roxell <anders.roxell@linaro.org>
-> Cc: Imran Khan <imran.f.khan@oracle.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Eric Sandeen <sandeen@sandeen.net>
 
-Looks good.
 
-Acked-by: Miklos Szeredi <mszeredi@redhat.com>
+On 7/26/23 12:59, Jaco Kroon wrote:
+> Signed-off-by: Jaco Kroon <jaco@uls.co.za>
+> ---
+>   fs/fuse/Kconfig   | 16 ++++++++++++++++
+>   fs/fuse/readdir.c | 42 ++++++++++++++++++++++++------------------
+>   2 files changed, 40 insertions(+), 18 deletions(-)
+> 
+> diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
+> index 038ed0b9aaa5..0783f9ee5cd3 100644
+> --- a/fs/fuse/Kconfig
+> +++ b/fs/fuse/Kconfig
+> @@ -18,6 +18,22 @@ config FUSE_FS
+>   	  If you want to develop a userspace FS, or if you want to use
+>   	  a filesystem based on FUSE, answer Y or M.
+>   
+> +config FUSE_READDIR_ORDER
+> +	int
+> +	range 0 5
+> +	default 5
+> +	help
+> +		readdir performance varies greatly depending on the size of the read.
+> +		Larger buffers results in larger reads, thus fewer reads and higher
+> +		performance in return.
+> +
+> +		You may want to reduce this value on seriously constrained memory
+> +		systems where 128KiB (assuming 4KiB pages) cache pages is not ideal.
+> +
+> +		This value reprents the order of the number of pages to allocate (ie,
+> +		the shift value).  A value of 0 is thus 1 page (4KiB) where 5 is 32
+> +		pages (128KiB).
+> +
+
+I like the idea of a larger readdir size, but shouldn't that be a 
+server/daemon/library decision which size to use, instead of kernel 
+compile time? So should be part of FUSE_INIT negotiation?
+
+>   config CUSE
+>   	tristate "Character device in Userspace support"
+>   	depends on FUSE_FS
+> diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
+> index dc603479b30e..98c62b623240 100644
+> --- a/fs/fuse/readdir.c
+> +++ b/fs/fuse/readdir.c
+> @@ -13,6 +13,12 @@
+>   #include <linux/pagemap.h>
+>   #include <linux/highmem.h>
+>   
+> +#define READDIR_PAGES_ORDER		CONFIG_FUSE_READDIR_ORDER
+> +#define READDIR_PAGES			(1 << READDIR_PAGES_ORDER)
+> +#define READDIR_PAGES_SIZE		(PAGE_SIZE << READDIR_PAGES_ORDER)
+> +#define READDIR_PAGES_MASK		(READDIR_PAGES_SIZE - 1)
+> +#define READDIR_PAGES_SHIFT		(PAGE_SHIFT + READDIR_PAGES_ORDER)
+> +
+>   static bool fuse_use_readdirplus(struct inode *dir, struct dir_context *ctx)
+>   {
+>   	struct fuse_conn *fc = get_fuse_conn(dir);
+> @@ -52,10 +58,10 @@ static void fuse_add_dirent_to_cache(struct file *file,
+>   	}
+>   	version = fi->rdc.version;
+>   	size = fi->rdc.size;
+> -	offset = size & ~PAGE_MASK;
+> -	index = size >> PAGE_SHIFT;
+> +	offset = size & ~READDIR_PAGES_MASK;
+> +	index = size >> READDIR_PAGES_SHIFT;
+>   	/* Dirent doesn't fit in current page?  Jump to next page. */
+> -	if (offset + reclen > PAGE_SIZE) {
+> +	if (offset + reclen > READDIR_PAGES_SIZE) {
+>   		index++;
+>   		offset = 0;
+>   	}
+> @@ -83,7 +89,7 @@ static void fuse_add_dirent_to_cache(struct file *file,
+>   	}
+>   	memcpy(addr + offset, dirent, reclen);
+>   	kunmap_local(addr);
+> -	fi->rdc.size = (index << PAGE_SHIFT) + offset + reclen;
+> +	fi->rdc.size = (index << READDIR_PAGES_SHIFT) + offset + reclen;
+>   	fi->rdc.pos = dirent->off;
+>   unlock:
+>   	spin_unlock(&fi->rdc.lock);
+> @@ -104,7 +110,7 @@ static void fuse_readdir_cache_end(struct file *file, loff_t pos)
+>   	}
+>   
+>   	fi->rdc.cached = true;
+> -	end = ALIGN(fi->rdc.size, PAGE_SIZE);
+> +	end = ALIGN(fi->rdc.size, READDIR_PAGES_SIZE);
+>   	spin_unlock(&fi->rdc.lock);
+>   
+>   	/* truncate unused tail of cache */
+> @@ -328,25 +334,25 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
+>   	struct fuse_mount *fm = get_fuse_mount(inode);
+>   	struct fuse_io_args ia = {};
+>   	struct fuse_args_pages *ap = &ia.ap;
+> -	struct fuse_page_desc desc = { .length = PAGE_SIZE };
+> +	struct fuse_page_desc desc = { .length = READDIR_PAGES_SIZE };
+>   	u64 attr_version = 0;
+>   	bool locked;
+>   
+> -	page = alloc_page(GFP_KERNEL);
+> +	page = alloc_pages(GFP_KERNEL, READDIR_PAGES_ORDER);
+
+I guess that should become folio alloc(), one way or the other. Now I 
+think order 0 was chosen before to avoid risk of allocation failure. I 
+guess it might work to try a large size and to fall back to 0 when that 
+failed. Or fail back to the slower vmalloc.
+
+>   	if (!page)
+>   		return -ENOMEM;
+>   
+>   	plus = fuse_use_readdirplus(inode, ctx);
+>   	ap->args.out_pages = true;
+> -	ap->num_pages = 1;
+> +	ap->num_pages = READDIR_PAGES;
+>   	ap->pages = &page;
+>   	ap->descs = &desc;
+>   	if (plus) {
+>   		attr_version = fuse_get_attr_version(fm->fc);
+> -		fuse_read_args_fill(&ia, file, ctx->pos, PAGE_SIZE,
+> +		fuse_read_args_fill(&ia, file, ctx->pos, READDIR_PAGES_SIZE,
+>   				    FUSE_READDIRPLUS);
+>   	} else {
+> -		fuse_read_args_fill(&ia, file, ctx->pos, PAGE_SIZE,
+> +		fuse_read_args_fill(&ia, file, ctx->pos, READDIR_PAGES_SIZE,
+>   				    FUSE_READDIR);
+>   	}
+>   	locked = fuse_lock_inode(inode);
+> @@ -383,7 +389,7 @@ static enum fuse_parse_result fuse_parse_cache(struct fuse_file *ff,
+>   					       void *addr, unsigned int size,
+>   					       struct dir_context *ctx)
+>   {
+> -	unsigned int offset = ff->readdir.cache_off & ~PAGE_MASK;
+> +	unsigned int offset = ff->readdir.cache_off & ~READDIR_PAGES_MASK;
+>   	enum fuse_parse_result res = FOUND_NONE;
+>   
+>   	WARN_ON(offset >= size);
+> @@ -504,16 +510,16 @@ static int fuse_readdir_cached(struct file *file, struct dir_context *ctx)
+>   
+>   	WARN_ON(fi->rdc.size < ff->readdir.cache_off);
+>   
+> -	index = ff->readdir.cache_off >> PAGE_SHIFT;
+> +	index = ff->readdir.cache_off >> READDIR_PAGES_SHIFT;
+>   
+> -	if (index == (fi->rdc.size >> PAGE_SHIFT))
+> -		size = fi->rdc.size & ~PAGE_MASK;
+> +	if (index == (fi->rdc.size >> READDIR_PAGES_SHIFT))
+> +		size = fi->rdc.size & ~READDIR_PAGES_MASK;
+>   	else
+> -		size = PAGE_SIZE;
+> +		size = READDIR_PAGES_SIZE;
+>   	spin_unlock(&fi->rdc.lock);
+>   
+>   	/* EOF? */
+> -	if ((ff->readdir.cache_off & ~PAGE_MASK) == size)
+> +	if ((ff->readdir.cache_off & ~READDIR_PAGES_MASK) == size)
+>   		return 0;
+>   
+>   	page = find_get_page_flags(file->f_mapping, index,
+> @@ -559,9 +565,9 @@ static int fuse_readdir_cached(struct file *file, struct dir_context *ctx)
+>   	if (res == FOUND_ALL)
+>   		return 0;
+>   
+> -	if (size == PAGE_SIZE) {
+> +	if (size == READDIR_PAGES_SIZE) {
+>   		/* We hit end of page: skip to next page. */
+> -		ff->readdir.cache_off = ALIGN(ff->readdir.cache_off, PAGE_SIZE);
+> +		ff->readdir.cache_off = ALIGN(ff->readdir.cache_off, READDIR_PAGES_SIZE);
+>   		goto retry;
+>   	}
+>   
+
+Thanks,
+Bernd
