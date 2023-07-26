@@ -2,50 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 23F77763AC6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 17:19:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BC1F763ADE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 17:22:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231417AbjGZPT0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 11:19:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33676 "EHLO
+        id S234809AbjGZPWo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 11:22:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231717AbjGZPTY (ORCPT
+        with ESMTP id S233868AbjGZPWm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 11:19:24 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EFDE26AE;
-        Wed, 26 Jul 2023 08:19:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-        bh=ENp8t2alD9uqWSc+lVmb+ztvUQXJv9bHqkir1OYXiZQ=; b=Zktt9cmfUVUjC5iN3Pf6hJxBWZ
-        pONXfD/vj7s9mjqgRHd1uXzmF89SyNsi4jKE3kGyIPy2Lbr8lZGBx94kPGgg6cXhoybPp93Gpa0Hp
-        dSO4VFfWrDuOkjMJc1bQmD1hJF53UyBtA+rRAsukRUT2zNXoAkzVpFGMuQjyc3n5MM4dH7cB8Vs2G
-        lEpOmMnrPw3Dp2zj2Bb890sg2PECXXfIWKFShQKbR66J5FLB31H4NGMpxkO7+Bv6CyxHQ+CbDAGB6
-        hlr3dqIHeOKPBbn4BZU7KQd7Lr2UN6I4auxZ1OlMsPzF2qtGu4KhY0ezyP5xn+IPsrLDx1toevPIU
-        +GlVwSYA==;
-Received: from [2601:1c2:980:9ec0::2764]
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qOgIB-00ApOw-1k;
-        Wed, 26 Jul 2023 15:19:11 +0000
-Message-ID: <a08cff9e-9bf6-2176-b2d2-dbbc3a0c9350@infradead.org>
-Date:   Wed, 26 Jul 2023 08:19:09 -0700
+        Wed, 26 Jul 2023 11:22:42 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77EE094
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 08:22:40 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-3176a439606so2063056f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 08:22:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690384959; x=1690989759;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xiyxJQtngIitM6NvDkSmtJp7dkYh2m7KhsJ3ZxlyPB8=;
+        b=pHxhaa21ySaf/Q0o5VjvoZfUVtqSmxNF4ePZCZmuGxVj0og38x9F6VbWo41eaRBbqt
+         JcXRT9vpP/Rd6UNAFG1iq6Fdqa+L4N/0n2uSyPAlu0rJnQZFkFwR9HF5rg6xrC+YxMs9
+         jUBQa5ZCVQUwECT6kyV37bwh0EexSgz2SmcLdu8TwLep1qhqafMXz9pmipYc8Pt3p8yy
+         FbM/3ESOxbO3X0jM2FeYcvpj+JHMjZAPxPLghDQlkP164edn2HqasQrz3WW/DSlmAhmf
+         TN5eMZKmHpYfkC6/1GMDu0c0mZVPw1Vg2pFb89aTmbo3nXmrIdjt0ct7jigRI+eS6pkG
+         kHiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690384959; x=1690989759;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xiyxJQtngIitM6NvDkSmtJp7dkYh2m7KhsJ3ZxlyPB8=;
+        b=C9lX/q0HNcm8AVvPtxFwrrwv3pKI9NnQwAcCl3VGZNvz0rWxYW0LGpQ/uLgN+HUTO3
+         TTEGWINz2HkTiuV29pX/zX6TJ53Y2Iigf29osF2ir6lWea8FAJ3jU0iMOg8PL9fj9CDa
+         PETexbBxXdHxwBBEWt/VA1K5sl0VDHN1eRKDINgRRlW+7A/7zADWjTuKvz8mVGJE1qJk
+         WNfqkmZaojXNXRnW+51YLvXMUH4FW8J0/aF+HGu7xEPlDo7NqM71XuglvEPSIQSvB6bn
+         OT32IbUiNd5dN7LJfb/Y44pLfaRs5hAJ1j9PaHyRkqUrSbRwBBe6QwzKouq4Zb9bxe34
+         2JRg==
+X-Gm-Message-State: ABy/qLYQlKyx+AVD6Yqsg+f4BR7TGfLgzWJBRlkvhmwqaMFyYVvlyUe8
+        YreRAye/y6X8f33qQouf75STag==
+X-Google-Smtp-Source: APBJJlFTczgdZQtyu7bi9shz49TW2vyCAL6upXqlApA4QBDQkCprWnQsZplxHs2jnpf5ONSNsPn7rw==
+X-Received: by 2002:adf:f452:0:b0:317:6623:e33f with SMTP id f18-20020adff452000000b003176623e33fmr1955488wrp.14.1690384958593;
+        Wed, 26 Jul 2023 08:22:38 -0700 (PDT)
+Received: from loic-ThinkPad-T470p.. ([2a01:e0a:82c:5f0:8c06:4c96:5858:e8ab])
+        by smtp.gmail.com with ESMTPSA id k8-20020a5d4288000000b003176a4394d7sm6356032wrq.24.2023.07.26.08.22.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jul 2023 08:22:38 -0700 (PDT)
+From:   Loic Poulain <loic.poulain@linaro.org>
+To:     brauner@kernel.org, viro@zeniv.linux.org.uk, corbet@lwn.net
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, hch@infradead.org,
+        Loic Poulain <loic.poulain@linaro.org>
+Subject: [PATCH v2] init: Add support for rootwait timeout parameter
+Date:   Wed, 26 Jul 2023 17:22:32 +0200
+Message-Id: <20230726152232.932288-1-loic.poulain@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] fuse: enable larger read buffers for readdir.
-Content-Language: en-US
-To:     Jaco Kroon <jaco@uls.co.za>, Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230726105953.843-1-jaco@uls.co.za>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20230726105953.843-1-jaco@uls.co.za>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -53,27 +70,103 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Add an optional timeout arg to 'rootwait' as the maximum time in
+seconds to wait for the root device to show up before attempting
+forced mount of the root filesystem.
 
+Use case:
+In case of device mapper usage for the rootfs (e.g. root=/dev/dm-0),
+if the mapper is not able to create the virtual block for any reason
+(wrong arguments, bad dm-verity signature, etc), the `rootwait` param
+causes the kernel to wait forever. It may however be desirable to only
+wait for a given time and then panic (force mount) to cause device reset.
+This gives the bootloader a chance to detect the problem and to take some
+measures, such as marking the booted partition as bad (for A/B case) or
+entering a recovery mode.
 
-On 7/26/23 03:59, Jaco Kroon wrote:
-> +config FUSE_READDIR_ORDER
-> +	int
-> +	range 0 5
-> +	default 5
-> +	help
-> +		readdir performance varies greatly depending on the size of the read.
-> +		Larger buffers results in larger reads, thus fewer reads and higher
-> +		performance in return.
-> +
-> +		You may want to reduce this value on seriously constrained memory
-> +		systems where 128KiB (assuming 4KiB pages) cache pages is not ideal.
-> +
-> +		This value reprents the order of the number of pages to allocate (ie,
+In success case, mounting happens as soon as the root device is ready,
+unlike the existing 'rootdelay' parameter which performs an unconditional
+pause.
 
-	                   represents                                            (i.e.,
+Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+---
+ v2: rebase + reword: add use case example
 
-> +		the shift value).  A value of 0 is thus 1 page (4KiB) where 5 is 32
-> +		pages (128KiB).
+ .../admin-guide/kernel-parameters.txt         |  4 ++++
+ init/do_mounts.c                              | 19 +++++++++++++++++--
+ 2 files changed, 21 insertions(+), 2 deletions(-)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index a1457995fd41..387cf9c2a2c5 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -5501,6 +5501,10 @@
+ 			Useful for devices that are detected asynchronously
+ 			(e.g. USB and MMC devices).
+ 
++	rootwait=	[KNL] Maximum time (in seconds) to wait for root device
++			to show up before attempting to mount the root
++			filesystem.
++
+ 	rproc_mem=nn[KMG][@address]
+ 			[KNL,ARM,CMA] Remoteproc physical memory block.
+ 			Memory area to be used by remote processor image,
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index 1aa015883519..118f2bbe7b38 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -18,6 +18,7 @@
+ #include <linux/slab.h>
+ #include <linux/ramfs.h>
+ #include <linux/shmem_fs.h>
++#include <linux/ktime.h>
+ 
+ #include <linux/nfs_fs.h>
+ #include <linux/nfs_fs_sb.h>
+@@ -71,12 +72,20 @@ static int __init rootwait_setup(char *str)
+ {
+ 	if (*str)
+ 		return 0;
+-	root_wait = 1;
++	root_wait = -1;
+ 	return 1;
+ }
+ 
+ __setup("rootwait", rootwait_setup);
+ 
++static int __init rootwait_timeout_setup(char *str)
++{
++	root_wait = simple_strtoul(str, NULL, 0);
++	return 1;
++}
++
++__setup("rootwait=", rootwait_timeout_setup);
++
+ static char * __initdata root_mount_data;
+ static int __init root_data_setup(char *str)
+ {
+@@ -384,14 +393,20 @@ void __init mount_root(char *root_device_name)
+ /* wait for any asynchronous scanning to complete */
+ static void __init wait_for_root(char *root_device_name)
+ {
++	const ktime_t end = ktime_add_ms(ktime_get_raw(), root_wait * MSEC_PER_SEC);
++
+ 	if (ROOT_DEV != 0)
+ 		return;
+ 
+ 	pr_info("Waiting for root device %s...\n", root_device_name);
+ 
+ 	while (!driver_probe_done() ||
+-	       early_lookup_bdev(root_device_name, &ROOT_DEV) < 0)
++	       early_lookup_bdev(root_device_name, &ROOT_DEV) < 0) {
+ 		msleep(5);
++		if (root_wait > 0 && ktime_after(ktime_get_raw(), end))
++			break;
++	}
++
+ 	async_synchronize_full();
+ 
+ }
 -- 
-~Randy
+2.34.1
+
