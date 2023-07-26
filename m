@@ -2,115 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1626576359F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 13:51:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E226763589
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 13:45:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234296AbjGZLvR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 07:51:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49632 "EHLO
+        id S234179AbjGZLpT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 07:45:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234345AbjGZLvN (ORCPT
+        with ESMTP id S234222AbjGZLpP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 07:51:13 -0400
-Received: from xry111.site (xry111.site [89.208.246.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97A98270E;
-        Wed, 26 Jul 2023 04:50:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-        s=default; t=1690371783;
-        bh=jWiCyAHDoFfZLpVNTNaoY7OP9Un2BLhuB6gAtCXKxiU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=epxZ6oJu5I1Pe8FpvkK1jHRkLtIvks6AYMbFelpyGFHzchlagQmzNd50QWdc2TanX
-         9FjyZYTraCEf+1/TL5wnh9gsQQmD8VUZg2kkeWK7QSSoqHxU7ldI+tn3XrFj72vD7e
-         eNBmLfOoQZoadxbZi0zSV3KonoOf1Jb11MBNiQFM=
-Received: from [IPv6:240e:456:1120:202:485:bd13:935c:5daf] (unknown [IPv6:240e:456:1120:202:485:bd13:935c:5daf])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-        (Client did not present a certificate)
-        (Authenticated sender: xry111@xry111.site)
-        by xry111.site (Postfix) with ESMTPSA id A1F23659A1;
-        Wed, 26 Jul 2023 07:42:55 -0400 (EDT)
-Message-ID: <3fa06f06727d8742a76fac9553e623095b7c7099.camel@xry111.site>
-Subject: Re: [PATCH v2] splice, net: Fix splice_to_socket() for O_NONBLOCK
- socket
-From:   Xi Ruoyao <xry111@xry111.site>
-To:     Jan Stancek <jstancek@redhat.com>, dhowells@redhat.com,
-        kuba@kernel.org, netdev@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        brauner@kernel.org, viro@zeniv.linux.org.uk
-Date:   Wed, 26 Jul 2023 19:42:47 +0800
-In-Reply-To: <023c0e21e595e00b93903a813bc0bfb9a5d7e368.1690219914.git.jstancek@redhat.com>
-References: <023c0e21e595e00b93903a813bc0bfb9a5d7e368.1690219914.git.jstancek@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+        Wed, 26 Jul 2023 07:45:15 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58D2F2D5D;
+        Wed, 26 Jul 2023 04:44:46 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-98df3dea907so1025953566b.3;
+        Wed, 26 Jul 2023 04:44:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690371824; x=1690976624;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LucON46rxCnB8H/NqbP2qdCDDBI9z5ydH1MkYVoh1II=;
+        b=U4Pt4NQcLxLvPm5CXftoA0+aYzMZH7Dfck0Uhx7aEMgpLJsGnf36pzzdwNtizBn8gj
+         VFXJFEQbls5KGalhlHlOQYeiqewjs9kc+4BUmOlw3IWdU7XqOmJehEWyn+XP5Q9fSvcv
+         EcQa8xdjNjWdOP1pTlUcVpcyGyC+9VXTxQgEu7gkqQtKv7/nWgsdUciQ3staM4V8TP3p
+         +GoW2+8LeGfmIGAc6HsjnX9h4U8ECXsZezBtZPiwG9Punsry2P/Xcv2oit9C6Y66+kxc
+         QJOvEDzBI1Rt8s8NMDhxwQxdZujdb/Azg73NjikgVhHbnq8tIiDLm5dNL2h7e2gZIvR/
+         ntOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690371824; x=1690976624;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LucON46rxCnB8H/NqbP2qdCDDBI9z5ydH1MkYVoh1II=;
+        b=dP6QOnjFXmDj285Ojaiipn8tkQlPt1XwvKBwLlJxyCfJ94bpZDOko8V6z73d99N/2f
+         1CulJJfIDWwyQ9qf6EiR7WI+8x2HuOTm1XeuSbp3uQt+CjRYVV0U2NYeSA6jfV3FmaUP
+         +C6FU3OLIiejZQObGoY4OA91ZopiqcJLUfgkhUaJY8zMiR4mVnY//DwvxfVSXbIlFozY
+         1Wc0oL+mtGjndBEGS3DihXi0DOLHau0RBPqI9vBT7VYwqqH9MQ8IfvKNBM1iVn3aY5tu
+         nHbfCtsknJKj2ubm2StbDM6LHzjIV9huaQxebwHnyZw65Yqq9MgXFIyRhBI5Fc+rHqoD
+         pbpw==
+X-Gm-Message-State: ABy/qLb9Gbu9L7Ed1I1ETG6GusUqOhghnwpZ6WzYo2L1Uprm4++Bb7N2
+        b4Qq8kOAXO6hPGzF4y40IGM=
+X-Google-Smtp-Source: APBJJlFndmwsKn44klgr7dJH1x6WY6kkEbF8sug4Ovo4JtP2oBsigyyob1BXXzwdhRutSwmlT6/YBQ==
+X-Received: by 2002:a17:906:3048:b0:992:ab3a:f0d4 with SMTP id d8-20020a170906304800b00992ab3af0d4mr1346049ejd.17.1690371823534;
+        Wed, 26 Jul 2023 04:43:43 -0700 (PDT)
+Received: from [192.168.0.103] ([77.126.7.132])
+        by smtp.gmail.com with ESMTPSA id s5-20020a170906168500b00991e2b5a27dsm9372329ejd.37.2023.07.26.04.43.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jul 2023 04:43:43 -0700 (PDT)
+Message-ID: <fed78210-4560-b655-b43a-bc31d1cfe1b8@gmail.com>
+Date:   Wed, 26 Jul 2023 14:43:35 +0300
 MIME-Version: 1.0
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH net-next v10 08/16] tls: Inline do_tcp_sendpages()
+Content-Language: en-US
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Boris Pismenny <borisp@nvidia.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Gal Pressman <gal@nvidia.com>, ranro@nvidia.com,
+        samiram@nvidia.com, drort@nvidia.com,
+        Tariq Toukan <tariqt@nvidia.com>
+References: <bbdce803-0f23-7d3f-f75a-2bc3cfb794af@gmail.com>
+ <ecbb5d7e-7238-28e2-1a17-686325e2bb50@gmail.com>
+ <4c49176f-147a-4283-f1b1-32aac7b4b996@gmail.com>
+ <20230522121125.2595254-1-dhowells@redhat.com>
+ <20230522121125.2595254-9-dhowells@redhat.com>
+ <2267272.1686150217@warthog.procyon.org.uk>
+ <5a9d4ffb-a569-3f60-6ac8-070ab5e5f5ad@gmail.com>
+ <776549.1687167344@warthog.procyon.org.uk>
+ <7337a904-231d-201d-397a-7bbe7cae929f@gmail.com>
+ <20230630102143.7deffc30@kernel.org>
+ <f0538006-6641-eaf6-b7b5-b3ef57afc652@gmail.com>
+ <20230705091914.5bee12f8@kernel.org>
+ <20418.1690368701@warthog.procyon.org.uk>
+From:   Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20418.1690368701@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        NORMAL_HTTP_TO_IP,NUMERIC_HTTP_ADDR,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED,WEIRD_PORT autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2023-07-24 at 19:39 +0200, Jan Stancek wrote:
-> LTP sendfile07 [1], which expects sendfile() to return EAGAIN when
-> transferring data from regular file to a "full" O_NONBLOCK socket,
-> started failing after commit 2dc334f1a63a ("splice, net: Use
-> sendmsg(MSG_SPLICE_PAGES) rather than ->sendpage()").
-> sendfile() no longer immediately returns, but now blocks.
->=20
-> Removed sock_sendpage() handled this case by setting a MSG_DONTWAIT
-> flag, fix new splice_to_socket() to do the same for O_NONBLOCK sockets.
->=20
-> [1] https://github.com/linux-test-project/ltp/blob/master/testcases/kerne=
-l/syscalls/sendfile/sendfile07.c
->=20
-> Fixes: 2dc334f1a63a ("splice, net: Use sendmsg(MSG_SPLICE_PAGES) rather t=
-han ->sendpage()")
-> Acked-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Jan Stancek <jstancek@redhat.com>
 
-This issue caused the "test_asyncio" test in Python 3 test suite to hang
-indefinitely.  I can confirm this patch fixes the issue.
 
-Tested-by: Xi Ruoyao <xry111@xry111.site>
+On 26/07/2023 13:51, David Howells wrote:
+> Tariq Toukan <ttoukan.linux@gmail.com> wrote:
+> 
+>> We repro the issue on the server side using this client command:
+>> $ wrk -b2.2.2.2 -t4 -c1000 -d5 --timeout 5s https://2.2.2.3:20443/256000b.img
+> 
+> What's wrk?
+> 
+> David
+> 
 
-> ---
-> Changes in v2:
-> - add David's Acked-by
-> - add netdev list
->=20
-> =C2=A0fs/splice.c | 2 ++
-> =C2=A01 file changed, 2 insertions(+)
->=20
-> diff --git a/fs/splice.c b/fs/splice.c
-> index 004eb1c4ce31..3e2a31e1ce6a 100644
-> --- a/fs/splice.c
-> +++ b/fs/splice.c
-> @@ -876,6 +876,8 @@ ssize_t splice_to_socket(struct pipe_inode_info *pipe=
-, struct file *out,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0msg=
-.msg_flags |=3D MSG_MORE;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0if (remain && pipe_occupancy(pipe->head, tail) > 0)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0msg=
-.msg_flags |=3D MSG_MORE;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0if (out->f_flags & O_NONBLOCK)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0msg.msg_f=
-lags |=3D MSG_DONTWAIT;
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, bvec, bc,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 len - remain);
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+Pretty known and standard client app.
+wrk - a HTTP benchmarking tool
+https://github.com/wg/wrk
