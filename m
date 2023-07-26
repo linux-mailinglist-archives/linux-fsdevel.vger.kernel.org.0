@@ -2,67 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BA66763BEB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 18:04:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1F6E763BF2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 18:06:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231224AbjGZQEu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 12:04:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60170 "EHLO
+        id S231829AbjGZQGv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 12:06:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229582AbjGZQEs (ORCPT
+        with ESMTP id S232562AbjGZQGp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 12:04:48 -0400
+        Wed, 26 Jul 2023 12:06:45 -0400
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D85E1BF6;
-        Wed, 26 Jul 2023 09:04:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 750832696;
+        Wed, 26 Jul 2023 09:06:41 -0700 (PDT)
 Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36QFnA7J025744;
-        Wed, 26 Jul 2023 16:04:01 GMT
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36QFnA7l025744;
+        Wed, 26 Jul 2023 16:06:15 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : content-type : in-reply-to :
  mime-version; s=corp-2023-03-30;
- bh=Vl0EDgU1iY4eX/vTjPqlZJv9rmezVLDsgHKX74aNlEk=;
- b=qi5sgKCbGdIyR1NV2ilRT2XMBYNvnvEKav8mrfZfDYheD+5Y1s1JWHWyKQ9rcwNfHP4T
- zvBfpIXw3aFCYOx5IKAdjZqq+F66ZDIWK+5SJTnCswjOUnMqGROySGuSFgBDyG1RwvXP
- h1PJXSctnfspTz/1PWe+ZU19itjDESlvEVADQtQI4lR0Lipr+ENj9mjmpUMrdZ4nZc0m
- SPGBSZwDjed78XrQmEJ1IKMi06SzrXIlgxbB8pzJiDe7c7R3XGFWMPKbOoGZueJHzh9i
- xFxfUEpR32LbG4IIiT0mNtnZIR4hOI9YcjyNLQv1kg+w2Wtr8pQdQ8h7GkjwCN0yNWhR OA== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3s075d7wy7-1
+ bh=HxQ4SpeG/o7tPw+bmEe+bzEnbUqsGTIAlCF9U8RpRKw=;
+ b=C0QKxoXfLBZJ1VlkHy3bv7ua9HAFLOMXB4fYblCejPOszQYMUr3nu2+FAd8ON4qObzz/
+ FkA7LUBV5a6bW/M4Nx3IZzQqFfPIFvhp0eBNstWyrvcmH2hDNPcUbLu2UXGGc5pyYuOT
+ gUvkj+ueClZZ2jXXEzbTv7In5rEoBYtz/9tKXvPVdXB4KuUconBnMBuf8/+bTCtsot2h
+ nFvYLGYZbPowkprECEDvhKC6tzPrZUZ3ZR0BwzazZyToSz/U00TZyLN2T0Rxacasq425
+ Jr4MJBnWpZ+XoVQVk0bI+8+lt1KeMV0F8CYlH/MZPu4MN5cI8Q+fXoALhedA1PwgV7ni Dg== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3s075d7x5y-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jul 2023 16:04:01 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 36QFWZXk011864;
-        Wed, 26 Jul 2023 16:04:00 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2177.outbound.protection.outlook.com [104.47.55.177])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3s05j6ngpy-1
+        Wed, 26 Jul 2023 16:06:15 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 36QFf2sk029421;
+        Wed, 26 Jul 2023 16:06:14 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3s05j6dstv-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jul 2023 16:04:00 +0000
+        Wed, 26 Jul 2023 16:06:14 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ImiShUCjBEsWUMVRVqDQiVvXnNSy/NZBjToFgSRs1ZJItd+Du24I94K9m6nlXukJvO9AAtSHlf4daJcHEPLsRxz5tsC+zMkMZjQxgeVXX6fLuGYyUcwHemD9lN1K7sJ9BpuWNWoMXZEKMjWe+jXgSIIFblZqXGyWm3ePe9pGA0iZe/6qKrPid7A9+oqoiFJL2vWnZxAVELCE5pU6mjwa3WXIz4ymOMfeYvrcQN+d2PN6nwf0B4zV0mjz+ti9xWlY6GjMFncIGrtGzkSOXvufB8f5DOAWSwBHaA34kr9t1zwjPOVdHBeYelyQwwUeq3UcNkK+xXlK3l4KQN5ZxgBEYg==
+ b=FE4YuLmEBVZLJVtfpd0yP9I/Gb2AL4c3cHJRc85MID/o4ZFXNbgYLDigUPiWic+J3c03GHZwZDYtMOOWPhol9oz3hYXPahki+/lag4pWInpNKAcqx8Q6o3SIPFpixZCrZNUWgycwG7WIq4iZLJ3dsfqp0570RXLMiC8+acSd6n03ZAZ0unUW7oY1hLZ0g7wWMnoeMXtWFWrNso2Jr2VbJqeXE3J/dtqj7Ad2JvLGN9zRBq/W8vpsJI/iYT5yZ45Oj+97uOEHrLAnAhq46v4ae/WhXVQzBvETuqVcx9MneJJtGvmG1d7jn0/l9eDfZVm0F9eV0pjcJuxNsyRzThlzsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Vl0EDgU1iY4eX/vTjPqlZJv9rmezVLDsgHKX74aNlEk=;
- b=K3vEdZYpdjV/TKtet9dZJfo2+tXhoMTNR1MY1ms1MLWN6djyN15+Y6IAiz+9NQYIJak5STuG0jMzt1m/1euu8GWARgboxmXAAqs1b+MGrDkEP5aMqZ/29aHuZLtBcJGmiVyM9I/ZDQJ2q5fepPxVxDa+Cxxli3KxK4QKYKojcma4D8fbYukskQvhR4/vV4dJfXtlRawbei9H2O2aiSvpm3+OltIUO/loslJHNJugxSm0YKH0FKrkRwgi0DoLp49+tEUSjNNQsUYifzrSHokRGjkODF4Zv1Do66fkwUK+DAzMF01gaYDYwtstWucNEXXKlAr8KKS/OHX6/rlJw4oscg==
+ bh=HxQ4SpeG/o7tPw+bmEe+bzEnbUqsGTIAlCF9U8RpRKw=;
+ b=VXelSYkNU8aknIBF0plPF7IFY4YXRRntG5em4h4HlI1I/UBBzSYufOSEpDiRF0Duq48WvAGZBApClnI3DwiSuKrVWwNfuISU89taDggMiM3HF4rc7rM9ov6N7bMNdT0LM0KhNXylgq/wMwXpDQhXaurCiGyWiba0Y11yPHTbbgTQ+tQRUa6NWYQUwB/tautVG+Gq/IzHsxb64RlHO9aBLvK4m6oBAW5Zt60EzuFnMwDzEFN9qQ1a2P5+iTlZIdgoGfxgnioORiy9ZQAc9V6Z9/JgFJMI1SolrLgTyBzYYxoKuYgtWJIhRvxbUM000HpCH8MLEzAXmqKxnKcFRIa2Vw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vl0EDgU1iY4eX/vTjPqlZJv9rmezVLDsgHKX74aNlEk=;
- b=JQG9NXonyJos/9Ty/TX/Tzb64VYL3n2N8n+sRFYvQ2v8sWWNywTQRbQZbgsrZMol0TQMnrMTOW4KOHSxF30Flzveb90fQiai4zhzYIuGl/kavhglEJpNnkMpkjIbXBRvXic9JcD8Q9fKpQw8L7DF5l7ULf8D5IQFY9hkZVyc8Sw=
+ bh=HxQ4SpeG/o7tPw+bmEe+bzEnbUqsGTIAlCF9U8RpRKw=;
+ b=l7c55uDgTOCc8AlNU8KyRwh5STVpjHAEwGrXPpTQhXP85Kv47zdV/KBcxAeMOrVpwYN0UX3vYYKlezdz3AXa9RHzMUn4TBoIutd4WKAHI7yA1gbchLxf8Iq+RHzNlrFn8wm+SDtCSw2Js1Awv1mbkjJOnImr2E6piHm6GIO21aY=
 Received: from SN6PR10MB3022.namprd10.prod.outlook.com (2603:10b6:805:d8::25)
  by IA0PR10MB7668.namprd10.prod.outlook.com (2603:10b6:208:492::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.33; Wed, 26 Jul
- 2023 16:03:58 +0000
+ 2023 16:06:11 +0000
 Received: from SN6PR10MB3022.namprd10.prod.outlook.com
  ([fe80::26d3:6f41:6415:8c35]) by SN6PR10MB3022.namprd10.prod.outlook.com
  ([fe80::26d3:6f41:6415:8c35%3]) with mapi id 15.20.6631.026; Wed, 26 Jul 2023
- 16:03:58 +0000
-Date:   Wed, 26 Jul 2023 12:03:54 -0400
+ 16:06:11 +0000
+Date:   Wed, 26 Jul 2023 12:06:07 -0400
 From:   "Liam R. Howlett" <Liam.Howlett@Oracle.com>
 To:     Peng Zhang <zhangpeng.00@bytedance.com>
 Cc:     corbet@lwn.net, akpm@linux-foundation.org, willy@infradead.org,
@@ -71,9 +71,8 @@ Cc:     corbet@lwn.net, akpm@linux-foundation.org, willy@infradead.org,
         npiggin@gmail.com, avagin@gmail.com, linux-mm@kvack.org,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 04/11] maple_tree: Introduce interfaces __mt_dup() and
- mt_dup()
-Message-ID: <20230726160354.konsgq6hidj7gr5u@revolver>
+Subject: Re: [PATCH 05/11] maple_tree: Add test for mt_dup()
+Message-ID: <20230726160607.eoobd4dyvryfb25a@revolver>
 Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
         Peng Zhang <zhangpeng.00@bytedance.com>, corbet@lwn.net,
         akpm@linux-foundation.org, willy@infradead.org, brauner@kernel.org,
@@ -83,91 +82,92 @@ Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
 References: <20230726080916.17454-1-zhangpeng.00@bytedance.com>
- <20230726080916.17454-5-zhangpeng.00@bytedance.com>
+ <20230726080916.17454-6-zhangpeng.00@bytedance.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230726080916.17454-5-zhangpeng.00@bytedance.com>
+In-Reply-To: <20230726080916.17454-6-zhangpeng.00@bytedance.com>
 User-Agent: NeoMutt/20220429
-X-ClientProxiedBy: YT1P288CA0003.CANP288.PROD.OUTLOOK.COM (2603:10b6:b01::16)
- To SN6PR10MB3022.namprd10.prod.outlook.com (2603:10b6:805:d8::25)
+X-ClientProxiedBy: YT4PR01CA0434.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:10d::6) To SN6PR10MB3022.namprd10.prod.outlook.com
+ (2603:10b6:805:d8::25)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SN6PR10MB3022:EE_|IA0PR10MB7668:EE_
-X-MS-Office365-Filtering-Correlation-Id: b57b4c98-a3f4-463d-f1c4-08db8df1eb55
+X-MS-Office365-Filtering-Correlation-Id: 52b98698-559b-48c8-d8e3-08db8df23aad
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: OWlUKrNPfC74ImWryo4rFgirmfccHa5gloM1gfMPVAZx6Meq88m2y5GQKL9ZxuKzr1qRvIsMz1CXhzu70B8uPK0O5c+ye++kguw0vI8A+5833o5cGN4lz8Ztiyfnry9y8rFVlBfYS8wsijQfVOfI0Ve6CnUUvf62h3W8jMqduurkxDRHlnO5QfNU277p5O1w+voPdorFGR2woKzTulzqeBeGOQwRYRRJsiKPch1YSabXbOH8Hx4RqF5uyx7w1hd82QwFWc8njvqm1ite2PuDJFulZ+nKl3IKsX+U+Z37CkzBa9MjBrgYnql8qyFo8SjgzbGxp17fhu4+anNB1YtRixYqu7IeCDoh9cu/69iLS5vCgnBkXOnga52bQY6YEAJnBHAAr7m8xS7cV3A9cMnms+zthBBX6/5M50VS3Q3dnpX+9MTYe7LF1OM6FGbs6o2liRoJxQ3oSfhVLHGZ4LChl/MkDhYFJTFnOdWMuA7f6RxzCB977mF5JxZLqxx/ly3FrEYgwA1zzUAWdNSpPNZpLEBQeMJTPcxz/rcURAetAv+j0Mp41XRKxdm7FmrRcmVN
+X-Microsoft-Antispam-Message-Info: +gUVO7vtt30oRLEtIr4uy9wGotNZMhmCUEPWmYs5hJZIWW2fwe5Wp6jakiiExjv4uMWDEcLNamV79+lEh7GuIgi2UXGidp1waXh+orU7zeXOBhQh+0+AXkEMxkXPF3TUMGCNiPfpJ96E91XSxBQ1SCYg1XMoIw/gdTKs9zO784fH64+MDz0YleaNp0lali0Ml2wQfuw/GqTv1s3Yt48w3FKM1WEtJu0tp7b9SU5cniNSOmZKxQ3CpfHQU+5dIFrsgF6Or9XmPDbhaLM8tSTMfaJ85J3/qJWiAaQoEBGXyzBUskNEofPWTyfZx30m9m0ODB6Jdf7i91w8ym2knxO/ixsAQprUnViBtjEPAt0N0lSV9BKPgnbxiyYjQCfMFIwdoluLh9+T9Nf3eEgnk09L/mRZ3K3iLr7DnlxU10EOc6Ajbed8yp0o5vdGUm1KP6TFUqVRzOz4NGM8V1XiAyT5YSel9WoleSLdd7WkXVrpmWvnQFBThqspEpg4gBgn7ZD7m8m1lCI1Q+boG7S5g/Y/AskIjDoWeXrbvdYXpNOP7yGt9gE6QQhyUPnvs8keAy4S
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR10MB3022.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(7916004)(39860400002)(346002)(396003)(136003)(366004)(376002)(451199021)(86362001)(38100700002)(33716001)(478600001)(2906002)(186003)(26005)(1076003)(6506007)(8936002)(6512007)(5660300002)(41300700001)(8676002)(6666004)(316002)(4326008)(83380400001)(7416002)(66476007)(66556008)(66946007)(6916009)(6486002)(9686003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?CKiGUDPzi44uNdPrdBYC5zdxrg/zy+JHP1bEoDJZg9pqrBRglEuKjM7kzYPc?=
- =?us-ascii?Q?8HliKQfKiJX++xmpZfoeOOZ5dQ7Kpcd86ZHpWbwZarvBY7sNKb+gJo722Vp9?=
- =?us-ascii?Q?r2G/tDGHbIQRUpVNjxiudN/tZPA+rtd+ojHmYyqci7tKoyr+VYD11wG56gTT?=
- =?us-ascii?Q?ebh/AEYzaccdfX+HWmtUvf8dHHHHshmL5HicwvDt8Kz6T9pn36TYJksYBTmj?=
- =?us-ascii?Q?RGVFNNVPFOOFtXVy7GGmzcPAmQhlTGaWV7yUhP5k1rqbvZcV2ASGv0dWEkkO?=
- =?us-ascii?Q?eW25YG20gA3wWDlqquDMPFerz36ypN4Cg3Fyv5r+4lInhOMBtmyrseOT4Lcs?=
- =?us-ascii?Q?0QDoGPhuflcV2a5ponS/hVcCuXNDp8RXHfZTHPRPN/QGKUu0pbQV3ePO3WVN?=
- =?us-ascii?Q?2+KGVjLWmU8wrgZ5z4i/YBk082uZ8jSCOD7uQFcj8uYDWcuNaWzwCH5A2jLH?=
- =?us-ascii?Q?Dj20TTGooQAbSNXF+gVwUufhIqv63JX8SMlf+BtsVP1wR/RXmgE8NuOSJTDf?=
- =?us-ascii?Q?TfdksgahHLKKmLNoIzwT6aLuIt3Ob5B7InLsL6yW1cVEcU8M/g+UHsp/fvJp?=
- =?us-ascii?Q?+MOIeVthY6qiLPFRsiF0fMH/+aOvVOTvEyi2BjuBqO4iR6/bjjtiedCzBm+v?=
- =?us-ascii?Q?t+TE6TlVq//dAtwrp6M4M7lJYN53OIzv9iE2sn2QKHsyrjmYSgVnF8kO5910?=
- =?us-ascii?Q?yySYZp4UWHbdYcvEzmS8ysY9HsNcwW7HsOSWD/aD2ieqwupuQ9/SB2WQWowI?=
- =?us-ascii?Q?urqEwisBcKxt3UiBCE91yZg8U9N7DbbVXJzwvnpPPaZfHjIlL7ZB1V4KwiQw?=
- =?us-ascii?Q?5fPeHlthV8y15YpXoHmrplNQO9rIqJayGxlZMi3V9eLdyX3HLN7zQ15Kr83m?=
- =?us-ascii?Q?TYs95Ws6lT94dlMcyNVtt/nQaLJgiG4Yc4tgjdwHTjl2bVSS1wM3+7Deeuh5?=
- =?us-ascii?Q?D7wA3ZR/GpnUDRsoB6weS61fddSNMkr8ksgW+qttV3R1TCg3RCWkRIe0iLp/?=
- =?us-ascii?Q?oQGZu2kMIDtU8alELpWSsy24nafW7yHuDGi731++FMpQiL2VlHCatdURoK01?=
- =?us-ascii?Q?n565E3IAolyYIik/Pqeb1o7JxuYF4eFN2C1P+QW9hST8xrxPughVZNXyMYd0?=
- =?us-ascii?Q?6Zi4/+T7ME1rQUBc9j7RDT4xhXqQ8ELaXxbLt9bTzmEKQkuTO216UJhCddFt?=
- =?us-ascii?Q?KwhMtay8FgyimLAD1+Cr7NxxlIZcSJ+BD3XqCZS87OchB7JPQIZCKYTJDh/R?=
- =?us-ascii?Q?vhV1DrDLDxkYe9CAQjldr7sYxDzfrqwy9vGQNNvfTSf1gShVOoyGYITzSsnU?=
- =?us-ascii?Q?dx6X90RXHhyEugpngFeSQC6+uzWjC4bRgJZeLSATfYipFP4dYQAK18kOZJlB?=
- =?us-ascii?Q?N2C6QkSOS/2XZf1zHT5z9fKMBDb/NLFvbCYivdoxQJPhkFM5BnZ0X4WR+Eal?=
- =?us-ascii?Q?vkvpw3sKouqVpHp1vEMpAOrWtfXIzwSdb1fCIITDAUsikV2qTD8G1oUrX8O1?=
- =?us-ascii?Q?XaAYGOGPe4aH8nrzgJDmxpssWFeOFRSBvC8aKaUPYReUnsD6wCHfCQKMJGAw?=
- =?us-ascii?Q?CNtwcHZEIUkANwvQpCCXPTNT4pE8x5VJkHNXAqJbTujKkIuXw14fGFW9IALh?=
- =?us-ascii?Q?OA=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?zO/UPH70GNeJxZXK8FESqklf8/8GGx+RbBsPhCEsFiZZV4Gpaq+UTlneGlvr?=
+ =?us-ascii?Q?4b9WfskH0X+JKFIQetH2l9nRHiD1swHbw9+CcaGKOQe4/UC9+efwFKzB+/tw?=
+ =?us-ascii?Q?NebsUzW7X7symCltpxfucpG3kfr9JCzhSKWu4Wz3kR8Pte+/abCd+SdV4pwB?=
+ =?us-ascii?Q?1Rca1qtKr1sQwgx77+YsmwV0gQwRqBqj5oIxl/MQyFSTze6S3iIZHdd4pI4C?=
+ =?us-ascii?Q?xLd6xdNNx1b3YGGtponiWFELevS7yGwx4Pkf7ps91oDHW4xPDgJ2E+Lajw0k?=
+ =?us-ascii?Q?6QHMFng2I5WGmIi0MEAtuOfaMbHZZUO9UXOD8/S6JslxR7FyY/2+KIz/XZHX?=
+ =?us-ascii?Q?/ho10WEkEjTIip1Vl13suko8Oqsi3aow0dBGaxIJUd3oIWaCy4E8giCi/Vss?=
+ =?us-ascii?Q?G5PyMyOQZhEFcEiUi4B0CXV4gN8TnNDF6djSl+qGfZwNw/SnD+MnGzqVGtv8?=
+ =?us-ascii?Q?NxbCuTDRs+wTAZ3ucuXHEiJc/NN0qoM8BYUwZCFqJYkZSFqZU8DdlEZFKFVG?=
+ =?us-ascii?Q?AHdnk7N+ZI6IO2DNB4eWmeOS2gPUmik1tBT0BYhp5AxKEuWqRCTv143HVbFM?=
+ =?us-ascii?Q?66m2t4rF2TfktFK9hF6v2+ULZaCNgvYgvG1QGgdF9NpCanOBvTUt7grECFFu?=
+ =?us-ascii?Q?wjz0czmiaWQiI1rghNYItsZzuMV93qQHZjPcu9ZKHZe720IXPV4xD2obwOdK?=
+ =?us-ascii?Q?BZ9eN9+iqEKIkpTSthXy7DYON4bCtFy5K3pw+/TWB+Aa2PjO/p9t1Rkn642I?=
+ =?us-ascii?Q?A/8eQcuoIGK/BBxV0oQk9XhHXVMBovD5YcZ78TA3cs8p48o5nTZCHffW/4jm?=
+ =?us-ascii?Q?g8miATCiVO+oQnkwaE3PtF2TX61ZAbU2dTKubrr8iyDJwXr48uk1/E58PF24?=
+ =?us-ascii?Q?sbFDMhPk3OQKI0qr34SYeNJDdXXPbA2ABnrqBVuoUPsivpXmBZdY1dISCmi8?=
+ =?us-ascii?Q?QIDsVaN4wg+SwKBggXcgUEqmIyP9LWLeW0VEX9b+2lyNp0RD+7oQHP/2KNBs?=
+ =?us-ascii?Q?hs/Eqg5/tmP3qpOE4txaY03aXltyN+QQGS4xxxCF5Sbo4d89khHx7XKHvVP9?=
+ =?us-ascii?Q?WGRBz9jXdeQy1fpH00di+Fm8FVkl/qkOyK3SbXdxIfx1zDgtu6OwUyHE3CJY?=
+ =?us-ascii?Q?jHLp/M8qVuMLzTFQUM0DTr6QpsnaqqAZR/S96j/OwuFw8VZPssI1jagDk75A?=
+ =?us-ascii?Q?I2p6B8yGRXpEycIoBJs9+hK7Xnz1cl+hOki4HuQbHbZ77GAKnXCE8Rf9zt1K?=
+ =?us-ascii?Q?npS5+fTDheEONGoAy1Q5IMd0Si9Us/jVf/WEc7wqpQdJ7BdKrSNHJl1I6c9N?=
+ =?us-ascii?Q?AKgAtIBeNxVee4nA/zDAod3LgvcWtCycbn8j96zREpA/z0Yq2Up7X6Jysuf5?=
+ =?us-ascii?Q?aWWwFrCr4Va52eBi6fnCxwBX00kTohKP8dUxez1WOcAXERTROp/m2XkLBzKW?=
+ =?us-ascii?Q?VlMJ+JybmhOlUTJSX2wCtBb8k5O7rsKAuSyx+TMCjvCRC0lriQQ9Ex3dRK/4?=
+ =?us-ascii?Q?rZU3h88XBLU5P7nMS4RtogXzx9DGLMqWpRhb4nh1avTnSgzwPzzrXxsCxRQd?=
+ =?us-ascii?Q?s7f9XfKr+1jBGyqcyRNHU1hx0GxLMGdOmm64XmizN+dLzZiLmcjIBBDwSHUE?=
+ =?us-ascii?Q?wg=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?agiweP2+tR0+VNdM4PUnbV3s6Lw6fhx0PGLsgVLR2OjrOhKS8trjMebZLIVS?=
- =?us-ascii?Q?NTCrTK4DxN9MzlK5EYnNr4o3P5mAQx/a9QOUfMXIiDq87r7+vFjluLBpKVSl?=
- =?us-ascii?Q?IhPgM4DW0Ix0sszipKXroEYBUmALkcuTPGyrl4LE0wCsBZdpsiR++1BIQT81?=
- =?us-ascii?Q?rwVeiSOtOuWEQUkImI5z1Idaa5pIaB8uV42CS2yhb5NcdHwrNP3c5KgjKDJb?=
- =?us-ascii?Q?0sr6gtWUsIBqRqwLuMBoH3myLbiqijaKd6N4ZXIaAbAISpv23kvBsSEZS/iZ?=
- =?us-ascii?Q?UROaBV0O2bN9OSNtTr0op0EANQChRhbCM9H0qLWE+RyBxmLWjjJx11COrpS4?=
- =?us-ascii?Q?hOVUh4KGRbB7Wt4AtRrLyRjwvimU3dEgnUeu+Nf6JYOxh6fH4MPNi0tbV3kl?=
- =?us-ascii?Q?0uKj+cEZ2AELZ3t4dhm3QmX/Oftu5KREgTPy29LxzJEckLSqjMPWEvpN4LH0?=
- =?us-ascii?Q?A+yHFoJpGMya/ckKzPhxKqiFjgGq3+9jB2MuK9mOzxS1iLgpJQooBlTzH8fs?=
- =?us-ascii?Q?Idujq3ao0lb2yfGjDZQOWIxes+5YnED0LNIBu6MtBfBYk3y+amao75ubuPNK?=
- =?us-ascii?Q?dI/hLjZIMbRzITLC9NuLB8z6Ifd8NcjKUFv9x86x56zNYNsDqj61frbUp3vJ?=
- =?us-ascii?Q?cttrHtWiKU+juB0vvgIKO2hKL//6AvBhE9MczUPmfZ1ZdEmS/4VNApcBavGX?=
- =?us-ascii?Q?Ts2D/jpNETwgDRHT71DRsxiPv2oCu1LKEVUaSw65Wdo97hmXqkZVB1ywxDDz?=
- =?us-ascii?Q?WN+4+9a8KmcLTNT1q5qsJu/s0923zhD62xC7iKL/qRNCPh3VB159EsW4ZxrP?=
- =?us-ascii?Q?cDFJN7AjcihlcFEtgYTSNQ/4bIAHyrnG6yHtOpqDO5xamQNSndUmlqqK1VAJ?=
- =?us-ascii?Q?Ci71nK3AFXqj29odaeIldBiwrQPIpbUTKUHjRic70S2ZoB0xdkq6o+Hvw1Zl?=
- =?us-ascii?Q?0Hrj9IXctY6JjYM2r8aRc0OroOoWVl/uIj2iuIQlJnWK2oQC3dUzYcBlvVuO?=
- =?us-ascii?Q?7VH3sPNCnMi57dlPE1kljze+Z/X1EBLrpV/7A8msZvcbhAKj60cfD/HtTsMh?=
- =?us-ascii?Q?fiHC7sYZ?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?aG4oZp+Lt+PF9iNmI/vEA8fegFbelrTjphsF5U+Fm+0JdFmpUrou7DSmzxmH?=
+ =?us-ascii?Q?+NLrPYvw2kLtfy6yk2ei6fMH5khqRi2r9dqSyE+5apU0Flk1+ez1NQTn+QNW?=
+ =?us-ascii?Q?wy3SHlNYctJ2bOgGIltEJbcRP4XUJD4LwSsJv5A5xU5UjVE45ulzZ78uZzhS?=
+ =?us-ascii?Q?/OEnpHH/J5+Lik89K6c92wLmJ1YiAoJyMaHcXiamdesr8BWh1UVWFEtUwX9P?=
+ =?us-ascii?Q?+dy0VJfErQ/Vu1BfHfECZH0rtinWd+bfQ0zbNBq52wP39ixxvUJtF5rqABxp?=
+ =?us-ascii?Q?OCL5s+YmANw0Mi73mm4+5F1dMOr5a8CLcnm9gM0etDpTSRzworNSrvS+B98T?=
+ =?us-ascii?Q?TcycQv3Qlrrjpx2O1iIL5frNcUTzngxHuETKiRey3hWu/R2uBCzIMTEuzPPx?=
+ =?us-ascii?Q?mo5a66V7/nPo21S8x/jllZShrhSSzJq+G7SumWgO7VuRK52sRdJbVh+HvEJK?=
+ =?us-ascii?Q?ywsHt8yGQ59o4dmDsfxo8efTorqfp3udheWaT5loJd2qhnWrckSMez4K1UOv?=
+ =?us-ascii?Q?VoUQdjWxY8r2LIcYwV6PtzXd61bGvThqUtNRRMV3Fjq60M3icEDjv3Conj7P?=
+ =?us-ascii?Q?IpVyoRXj10ZHvIhXqrH4frV2i9HIySv6LPVshOvqBYpMPaR/4Qcd0CmabAuZ?=
+ =?us-ascii?Q?rSOoBvyP6lSSIVVdZMm+ai6ss9fJQqvlrfOz2j5aZVM4r7PXXPVDAAISN+zQ?=
+ =?us-ascii?Q?xpIJ4orz58dlZB8lUwlhpfFOsHmMdapvZkrCgblZWsp+HuexY1R4xs7zQMwM?=
+ =?us-ascii?Q?LMDuGsGifZs16YTHOuNWpeA3EOITQZJN6aZ4abFq5tJMx7bmBaBBxZT57NHv?=
+ =?us-ascii?Q?mibJMPsh6kKDOQCWZK2aX8DtwQMQjhVxv+KqE8oEsBjIuaT3966BkCmHHCeA?=
+ =?us-ascii?Q?bAutMCMyv042Hux6mewb/Zq28Ce/tHHO32ltO0RvR9O+0VKhuVWL6MAx+T+5?=
+ =?us-ascii?Q?RrPltHJsLGgK2lHzoByPZg6nW47G9roO2cj5GRXzzW0hSaxJVVY4Aj5xZaFm?=
+ =?us-ascii?Q?d7nQgpxsm1OAJlCPfOmJrCXonQpFKcCXWwItkbNQRABCrysE4cKzFUvvSvQM?=
+ =?us-ascii?Q?StdQZ8nV?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b57b4c98-a3f4-463d-f1c4-08db8df1eb55
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52b98698-559b-48c8-d8e3-08db8df23aad
 X-MS-Exchange-CrossTenant-AuthSource: SN6PR10MB3022.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2023 16:03:58.1506
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2023 16:06:11.2079
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IJYGT07D8PBc7dbCTylhzMaqk1zxeJLPjPfOedSQ3iCUOgPZ68q+mdOmiRTPl85ZZV1G18e8ftUkwWmQjzZ12A==
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7S7cfibtj8vtArtPr3F7VQjUeM2N2mD0NcSDyOruRbwE/wP4pOS36ZiT/8Wlo97YmJeS4zEk6k0kdrig3FAexQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB7668
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-07-26_06,2023-07-26_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 bulkscore=0
- malwarescore=0 mlxscore=0 spamscore=0 mlxlogscore=999 suspectscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 adultscore=0
+ phishscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0 suspectscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
  definitions=main-2307260143
-X-Proofpoint-ORIG-GUID: Nl0TdaM04PIzxi7X757Jywki5oyxUEiw
-X-Proofpoint-GUID: Nl0TdaM04PIzxi7X757Jywki5oyxUEiw
+X-Proofpoint-ORIG-GUID: qZmabKATeRNoeExb13GrnrKfkiWLl4_b
+X-Proofpoint-GUID: qZmabKATeRNoeExb13GrnrKfkiWLl4_b
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
@@ -179,290 +179,241 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 * Peng Zhang <zhangpeng.00@bytedance.com> [230726 04:10]:
-> Introduce interfaces __mt_dup() and mt_dup(), which are used to
-> duplicate a maple tree. Compared with traversing the source tree and
-> reinserting entry by entry in the new tree, it has better performance.
-> The difference between __mt_dup() and mt_dup() is that mt_dup() holds
-> an internal lock.
+> Add test for mt_dup().
 > 
 > Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
 > ---
->  include/linux/maple_tree.h |   3 +
->  lib/maple_tree.c           | 211 +++++++++++++++++++++++++++++++++++++
->  2 files changed, 214 insertions(+)
+>  tools/testing/radix-tree/maple.c | 202 +++++++++++++++++++++++++++++++
+>  1 file changed, 202 insertions(+)
 > 
-> diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
-> index c962af188681..229fe78e4c89 100644
-> --- a/include/linux/maple_tree.h
-> +++ b/include/linux/maple_tree.h
-> @@ -327,6 +327,9 @@ int mtree_store(struct maple_tree *mt, unsigned long index,
->  		void *entry, gfp_t gfp);
->  void *mtree_erase(struct maple_tree *mt, unsigned long index);
->  
-> +int mt_dup(struct maple_tree *mt, struct maple_tree *new, gfp_t gfp);
-> +int __mt_dup(struct maple_tree *mt, struct maple_tree *new, gfp_t gfp);
-> +
->  void mtree_destroy(struct maple_tree *mt);
->  void __mt_destroy(struct maple_tree *mt);
->  
-> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-> index da3a2fb405c0..efac6761ae37 100644
-> --- a/lib/maple_tree.c
-> +++ b/lib/maple_tree.c
-> @@ -6595,6 +6595,217 @@ void *mtree_erase(struct maple_tree *mt, unsigned long index)
+> diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
+> index e5da1cad70ba..3052e899e5df 100644
+> --- a/tools/testing/radix-tree/maple.c
+> +++ b/tools/testing/radix-tree/maple.c
+> @@ -35857,6 +35857,204 @@ static noinline void __init check_locky(struct maple_tree *mt)
+>  	mt_clear_in_rcu(mt);
 >  }
->  EXPORT_SYMBOL(mtree_erase);
 >  
 > +/*
-> + * mt_dup_free() - Free the nodes of a incomplete maple tree.
-> + * @mt: The incomplete maple tree
-> + * @node: Free nodes from @node
-> + *
-> + * This function frees all nodes starting from @node in the reverse order of
-> + * mt_dup_build(). At this point we don't need to hold the source tree lock.
+> + * Compare two nodes and return 0 if they are the same, non-zero otherwise.
 > + */
-> +static void mt_dup_free(struct maple_tree *mt, struct maple_node *node)
+> +static int __init compare_node(struct maple_enode *enode_a,
+> +			       struct maple_enode *enode_b)
 > +{
-> +	void **slots;
-> +	unsigned char offset;
-> +	struct maple_enode *enode;
+> +	struct maple_node *node_a, *node_b;
+> +	struct maple_node a, b;
+> +	void **slots_a, **slots_b; /* Do not use the rcu tag. */
 > +	enum maple_type type;
-> +	unsigned char count = 0, i;
+> +	int i;
 > +
-
-Can we make these labels inline functions and try to make this a loop?
-
-> +try_ascend:
-> +	if (ma_is_root(node)) {
-> +		mt_free_one(node);
-> +		return;
+> +	if (((unsigned long)enode_a & MAPLE_NODE_MASK) !=
+> +	    ((unsigned long)enode_b & MAPLE_NODE_MASK)) {
+> +		pr_err("The lower 8 bits of enode are different.\n");
+> +		return -1;
 > +	}
 > +
-> +	offset = ma_parent_slot(node);
-> +	type = ma_parent_type(mt, node);
-> +	node = ma_parent(node);
-> +	if (!offset)
-> +		goto free;
+> +	type = mte_node_type(enode_a);
+> +	node_a = mte_to_node(enode_a);
+> +	node_b = mte_to_node(enode_b);
+> +	a = *node_a;
+> +	b = *node_b;
 > +
-> +	offset--;
+> +	/* Do not compare addresses. */
+> +	if (ma_is_root(node_a) || ma_is_root(node_b)) {
+> +		a.parent = (struct maple_pnode *)((unsigned long)a.parent &
+> +						  MA_ROOT_PARENT);
+> +		b.parent = (struct maple_pnode *)((unsigned long)b.parent &
+> +						  MA_ROOT_PARENT);
+> +	} else {
+> +		a.parent = (struct maple_pnode *)((unsigned long)a.parent &
+> +						  MAPLE_NODE_MASK);
+> +		b.parent = (struct maple_pnode *)((unsigned long)b.parent &
+> +						  MAPLE_NODE_MASK);
+> +	}
 > +
-> +descend:
-> +	slots = (void **)ma_slots(node, type);
-> +	enode = slots[offset];
-> +	if (mte_is_leaf(enode))
-> +		goto free;
+> +	if (a.parent != b.parent) {
+> +		pr_err("The lower 8 bits of parents are different. %p %p\n",
+> +			a.parent, b.parent);
+> +		return -1;
+> +	}
 > +
-> +	type = mte_node_type(enode);
-> +	node = mte_to_node(enode);
-> +	offset = ma_nonleaf_data_end_nocheck(node, type);
-> +	goto descend;
+> +	/*
+> +	 * If it is a leaf node, the slots do not contain the node address, and
+> +	 * no special processing of slots is required.
+> +	 */
+> +	if (ma_is_leaf(type))
+> +		goto cmp;
 > +
-> +free:
-> +	slots = (void **)ma_slots(node, type);
-> +	count = ma_nonleaf_data_end_nocheck(node, type) + 1;
-> +	for (i = 0; i < count; i++)
-> +		((unsigned long *)slots)[i] &= ~MAPLE_NODE_MASK;
+> +	slots_a = ma_slots(&a, type);
+> +	slots_b = ma_slots(&b, type);
 > +
-> +	/* Cast to __rcu to avoid sparse checker complaining. */
-> +	mt_free_bulk(count, (void __rcu **)slots);
-> +	goto try_ascend;
+> +	for (i = 0; i < mt_slots[type]; i++) {
+> +		if (!slots_a[i] && !slots_b[i])
+> +			break;
+> +
+> +		if (!slots_a[i] || !slots_b[i]) {
+> +			pr_err("The number of slots is different.\n");
+> +			return -1;
+> +		}
+> +
+> +		/* Do not compare addresses in slots. */
+> +		((unsigned long *)slots_a)[i] &= MAPLE_NODE_MASK;
+> +		((unsigned long *)slots_b)[i] &= MAPLE_NODE_MASK;
+> +	}
+> +
+> +cmp:
+> +	/*
+> +	 * Compare all contents of two nodes, including parent (except address),
+> +	 * slots (except address), pivots, gaps and metadata.
+> +	 */
+> +	return memcmp(&a, &b, sizeof(struct maple_node));
 > +}
 > +
 > +/*
-> + * mt_dup_build() - Build a new maple tree from a source tree
-> + * @mt: The source maple tree to copy from
-> + * @new: The new maple tree
-> + * @gfp: The GFP_FLAGS to use for allocations
-> + * @to_free: Free nodes starting from @to_free if the build fails
-> + *
-> + * This function builds a new tree in DFS preorder. If it fails due to memory
-> + * allocation, @to_free will store the last failed node to free the incomplete
-> + * tree. Use mt_dup_free() to free nodes.
-> + *
-> + * Return: 0 on success, -ENOMEM if memory could not be allocated.
+> + * Compare two trees and return 0 if they are the same, non-zero otherwise.
 > + */
-> +static inline int mt_dup_build(struct maple_tree *mt, struct maple_tree *new,
-> +			       gfp_t gfp, struct maple_node **to_free)
-
-I am trying to change the functions to be two tabs of indent for
-arguments from now on.  It allows for more to fit on a single line and
-still maintains a clear separation between code and argument lists.
-
+> +static int __init compare_tree(struct maple_tree *mt_a, struct maple_tree *mt_b)
 > +{
-> +	struct maple_enode *enode;
-> +	struct maple_node *new_node, *new_parent = NULL, *node;
-> +	enum maple_type type;
-> +	void __rcu **slots;
-> +	void **new_slots;
-> +	unsigned char count, request, i, offset;
-> +	unsigned long *set_parent;
-> +	unsigned long new_root;
+> +	MA_STATE(mas_a, mt_a, 0, 0);
+> +	MA_STATE(mas_b, mt_b, 0, 0);
 > +
-> +	mt_init_flags(new, mt->ma_flags);
-> +	enode = mt_root_locked(mt);
-> +	if (unlikely(!xa_is_node(enode))) {
-> +		rcu_assign_pointer(new->ma_root, enode);
+> +	if (mt_a->ma_flags != mt_b->ma_flags) {
+> +		pr_err("The flags of the two trees are different.\n");
+> +		return -1;
+> +	}
+> +
+> +	mas_dfs_preorder(&mas_a);
+> +	mas_dfs_preorder(&mas_b);
+> +
+> +	if (mas_is_ptr(&mas_a) || mas_is_ptr(&mas_b)) {
+> +		if (!(mas_is_ptr(&mas_a) && mas_is_ptr(&mas_b))) {
+> +			pr_err("One is MAS_ROOT and the other is not.\n");
+> +			return -1;
+> +		}
 > +		return 0;
 > +	}
 > +
-> +	new_node = mt_alloc_one(gfp);
-> +	if (!new_node)
-> +		return -ENOMEM;
+> +	while (!mas_is_none(&mas_a) || !mas_is_none(&mas_b)) {
 > +
-> +	new_root = (unsigned long)new_node;
-> +	new_root |= (unsigned long)enode & MAPLE_NODE_MASK;
+> +		if (mas_is_none(&mas_a) || mas_is_none(&mas_b)) {
+> +			pr_err("One is MAS_NONE and the other is not.\n");
+> +			return -1;
+> +		}
 > +
-> +copy_node:
-
-Can you make copy_node, descend, ascend inline functions instead of the
-goto jumping please?  It's better to have loops over jumping around a
-lot.  Gotos are good for undoing things and retry, but constructing
-loops with them makes it difficult to follow.
-
-> +	node = mte_to_node(enode);
-> +	type = mte_node_type(enode);
-> +	memcpy(new_node, node, sizeof(struct maple_node));
+> +		if (mas_a.min != mas_b.min ||
+> +		    mas_a.max != mas_b.max) {
+> +			pr_err("mas->min, mas->max do not match.\n");
+> +			return -1;
+> +		}
 > +
-> +	set_parent = (unsigned long *)&(new_node->parent);
-> +	*set_parent &= MAPLE_NODE_MASK;
-> +	*set_parent |= (unsigned long)new_parent;
-
-Maybe make a small inline to set the parent instead of this?
-
-There are some defined helpers for setting the types like
-ma_parent_ptr() and ma_enode_ptr() to make casting more type-safe.
-
-> +	if (ma_is_leaf(type))
-> +		goto ascend;
+> +		if (compare_node(mas_a.node, mas_b.node)) {
+> +			pr_err("The contents of nodes %p and %p are different.\n",
+> +			       mas_a.node, mas_b.node);
+> +			mt_dump(mt_a, mt_dump_dec);
+> +			mt_dump(mt_b, mt_dump_dec);
+> +			return -1;
+> +		}
 > +
-> +	new_slots = (void **)ma_slots(new_node, type);
-> +	slots = ma_slots(node, type);
-> +	request = ma_nonleaf_data_end(mt, node, type) + 1;
-> +	count = mt_alloc_bulk(gfp, request, new_slots);
-> +	if (!count) {
-> +		*to_free = new_node;
-> +		return -ENOMEM;
+> +		mas_dfs_preorder(&mas_a);
+> +		mas_dfs_preorder(&mas_b);
 > +	}
 > +
-> +	for (i = 0; i < count; i++)
-> +		((unsigned long *)new_slots)[i] |=
-> +				((unsigned long)mt_slot_locked(mt, slots, i) &
-> +				 MAPLE_NODE_MASK);
-> +	offset = 0;
-> +
-> +descend:
-> +	new_parent = new_node;
-> +	enode = mt_slot_locked(mt, slots, offset);
-> +	new_node = mte_to_node(new_slots[offset]);
-> +	goto copy_node;
-> +
-> +ascend:
-> +	if (ma_is_root(node)) {
-> +		new_node = mte_to_node((void *)new_root);
-> +		new_node->parent = ma_parent_ptr((unsigned long)new |
-> +						 MA_ROOT_PARENT);
-> +		rcu_assign_pointer(new->ma_root, (void *)new_root);
-> +		return 0;
-> +	}
-> +
-> +	offset = ma_parent_slot(node);
-> +	type = ma_parent_type(mt, node);
-> +	node = ma_parent(node);
-> +	new_node = ma_parent(new_node);
-> +	if (offset < ma_nonleaf_data_end(mt, node, type)) {
-> +		offset++;
-> +		new_slots = (void **)ma_slots(new_node, type);
-> +		slots = ma_slots(node, type);
-> +		goto descend;
-> +	}
-> +
-> +	goto ascend;
+> +	return 0;
 > +}
 > +
-> +/**
-> + * __mt_dup(): Duplicate a maple tree
-> + * @mt: The source maple tree
-> + * @new: The new maple tree
-> + * @gfp: The GFP_FLAGS to use for allocations
-> + *
-> + * This function duplicates a maple tree using a faster method than traversing
-> + * the source tree and inserting entries into the new tree one by one. The user
-> + * needs to lock the source tree manually. Before calling this function, @new
-> + * must be an empty tree or an uninitialized tree. If @mt uses an external lock,
-> + * we may also need to manually set @new's external lock using
-> + * mt_set_external_lock().
-> + *
-> + * Return: 0 on success, -ENOMEM if memory could not be allocated.
-> + */
-> +int __mt_dup(struct maple_tree *mt, struct maple_tree *new, gfp_t gfp)
-
-We use mas_ for things that won't handle the locking and pass in a maple
-state.  Considering the leaves need to be altered once this is returned,
-I would expect passing in a maple state should be feasible?
-
+> +static noinline void __init check_mt_dup(struct maple_tree *mt)
 > +{
-> +	int ret;
-> +	struct maple_node *to_free = NULL;
+> +	DEFINE_MTREE(new);
+> +	int i, j, ret, count = 0;
 > +
-> +	ret = mt_dup_build(mt, new, gfp, &to_free);
+> +	/* stored in the root pointer*/
+> +	mt_init_flags(&tree, 0);
+> +	mtree_store_range(&tree, 0, 0, xa_mk_value(0), GFP_KERNEL);
+> +	mt_dup(&tree, &new, GFP_KERNEL);
+> +	mt_validate(&new);
+> +	if (compare_tree(&tree, &new))
+> +		MT_BUG_ON(&new, 1);
 > +
-> +	if (unlikely(ret == -ENOMEM)) {
+> +	mtree_destroy(&tree);
+> +	mtree_destroy(&new);
+> +
+> +	for (i = 0; i < 1000; i += 3) {
+> +		if (i & 1)
+> +			mt_init_flags(&tree, 0);
+> +		else
+> +			mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
+> +
+> +		for (j = 0; j < i; j++) {
+> +			mtree_store_range(&tree, j * 10, j * 10 + 5,
+> +					  xa_mk_value(j), GFP_KERNEL);
+> +		}
 
-On other errors, will the half constructed tree be returned?  Is this
-safe?
+Storing in this way is probably not checking a full tree.  I think it's
+important to check the full tree/full nodes since you have changes to
+detect the metadata.
 
-> +		if (to_free)
-> +			mt_dup_free(new, to_free);
+> +
+> +		ret = mt_dup(&tree, &new, GFP_KERNEL);
+> +		MT_BUG_ON(&new, ret != 0);
+> +		mt_validate(&new);
+> +		if (compare_tree(&tree, &new))
+> +			MT_BUG_ON(&new, 1);
+> +
+> +		mtree_destroy(&tree);
+> +		mtree_destroy(&new);
 > +	}
 > +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL(__mt_dup);
+> +	/* Test memory allocation failed. */
+> +	for (i = 0; i < 1000; i += 3) {
+> +		if (i & 1)
+> +			mt_init_flags(&tree, 0);
+> +		else
+> +			mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
 > +
-> +/**
-> + * mt_dup(): Duplicate a maple tree
-> + * @mt: The source maple tree
-> + * @new: The new maple tree
-> + * @gfp: The GFP_FLAGS to use for allocations
-> + *
-> + * This function duplicates a maple tree using a faster method than traversing
-> + * the source tree and inserting entries into the new tree one by one. The
-> + * function will lock the source tree with an internal lock, and the user does
-> + * not need to manually handle the lock. Before calling this function, @new must
-> + * be an empty tree or an uninitialized tree. If @mt uses an external lock, we
-> + * may also need to manually set @new's external lock using
-> + * mt_set_external_lock().
-> + *
-> + * Return: 0 on success, -ENOMEM if memory could not be allocated.
-> + */
-> +int mt_dup(struct maple_tree *mt, struct maple_tree *new, gfp_t gfp)
-
-mtree_ ususually used to indicate locking is handled.
-
-> +{
-> +	int ret;
-> +	struct maple_node *to_free = NULL;
+> +		for (j = 0; j < i; j++) {
+> +			mtree_store_range(&tree, j * 10, j * 10 + 5,
+> +					  xa_mk_value(j), GFP_KERNEL);
+> +		}
 > +
-> +	mtree_lock(mt);
-> +	ret = mt_dup_build(mt, new, gfp, &to_free);
-> +	mtree_unlock(mt);
+> +		mt_set_non_kernel(50);
+
+It may be worth while allowing more/less than 50 allocations.
+
+> +		ret = mt_dup(&tree, &new, GFP_NOWAIT);
+> +		mt_set_non_kernel(0);
+> +		if (ret != 0) {
+> +			MT_BUG_ON(&new, ret != -ENOMEM);
+> +			count++;
+> +			mtree_destroy(&tree);
+> +			continue;
+> +		}
 > +
-> +	if (unlikely(ret == -ENOMEM)) {
-> +		if (to_free)
-> +			mt_dup_free(new, to_free);
-
-Again, is a half constructed tree safe to return?  Since each caller
-checks to_free is NULL, could that be in mt_dup_free() instead?
-
+> +		mt_validate(&new);
+> +		if (compare_tree(&tree, &new))
+> +			MT_BUG_ON(&new, 1);
+> +
+> +		mtree_destroy(&tree);
+> +		mtree_destroy(&new);
 > +	}
 > +
-> +	return ret;
+> +	/* pr_info("mt_dup() fail %d times\n", count); */
+> +	BUG_ON(!count);
 > +}
-> +EXPORT_SYMBOL(mt_dup);
 > +
->  /**
->   * __mt_destroy() - Walk and free all nodes of a locked maple tree.
->   * @mt: The maple tree
+>  extern void test_kmem_cache_bulk(void);
+>  
+>  void farmer_tests(void)
+> @@ -35904,6 +36102,10 @@ void farmer_tests(void)
+>  	check_null_expand(&tree);
+>  	mtree_destroy(&tree);
+>  
+> +	mt_init_flags(&tree, 0);
+> +	check_mt_dup(&tree);
+> +	mtree_destroy(&tree);
+> +
+>  	/* RCU testing */
+>  	mt_init_flags(&tree, 0);
+>  	check_erase_testset(&tree);
 > -- 
 > 2.20.1
 > 
