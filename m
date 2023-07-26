@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 94142763B17
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 17:30:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FF52763B7B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 17:45:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234028AbjGZPav (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 11:30:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40524 "EHLO
+        id S234902AbjGZPpG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 11:45:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233987AbjGZPat (ORCPT
+        with ESMTP id S233867AbjGZPpF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 11:30:49 -0400
+        Wed, 26 Jul 2023 11:45:05 -0400
 Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 449401FFC;
-        Wed, 26 Jul 2023 08:30:47 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 14BC63200344;
-        Wed, 26 Jul 2023 11:30:46 -0400 (EDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FDE6E47;
+        Wed, 26 Jul 2023 08:45:04 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id 5994B320094D;
+        Wed, 26 Jul 2023 11:45:03 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Wed, 26 Jul 2023 11:30:47 -0400
+  by compute4.internal (MEProxy); Wed, 26 Jul 2023 11:45:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
         cc:content-transfer-encoding:content-type:content-type:date:date
         :from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-        1690385446; x=1690471846; bh=+FXui71M4KLr0BGEwEGbDcZQqLzS0w/dnD5
-        SDEjctV4=; b=shZkvMNkyJ1lFMNg0Or5U9Tf8NaZrEfAxjUz0SGr0yvn3EA/bPG
-        7HNnk4WzV8iDu3Wu54e7GwjQn8UXhbJamL4Q04h1/Ao/HIvUoJgh9ANhReL4C6TV
-        Hx8p1gB5RJ+ZWpy3jSDNGwlMrWB2qCNxqFOtw8qpisBDVXh/eMHC1RhKNqjx3jh5
-        GtlJbAc/FVdEFZnp964SsAOrM9pGcxfAls3Tr6h4SAgG8kM5PPWVeiyf16JGkQgA
-        h5tT/B0i5mt8xlawvCkAnOUYWH6F58A/i46oiDA8asJgISvivIzEflqpe7Ycf2q6
-        4+ozJkkOVeBEL2Q9v7ZIqbT27FNCPt8CQTQ==
+        1690386302; x=1690472702; bh=5JHQWc7fIr5yWMFZ7HQ4DfnYA0AEVbvufUW
+        OsS08iP0=; b=x2IFDSO+wUnEkLoaYchqP8zzaT6j53QOYdy1wMRUYptKyDRdLm7
+        Iz63Ht7yp+vAMh5x4o9RZH/yMSwxcr7rwF1EYnkPTG5or8M2UcfN52OE+XHxNSGZ
+        ceaScNSdqlFfLL3uIuA+AUiEQAEq5vYPRJky3WioqZjoTts13vbMnb77RSQ/a5b7
+        oCZzknWiv9EkR4DkYsZqLtIyXZf518V+BDCmTsPb2B8GtXBQXetjzenrYcirJq91
+        BbkhT5xygBcWMnOkfETm8Ga/a3ZsFftYGJEHaF/sJK75CTIvrF3fgRfgDX2VN0Lc
+        eNDbwG3Jxo8v9qRVqAR3LUlt0Lu/qzg7NGA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:content-type
         :content-type:date:date:feedback-id:feedback-id:from:from
         :in-reply-to:in-reply-to:message-id:mime-version:references
         :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1690385446; x=
-        1690471846; bh=+FXui71M4KLr0BGEwEGbDcZQqLzS0w/dnD5SDEjctV4=; b=e
-        v+eCn2VtqzzwPzl31zhpIuEXwAArXP7mI2XJsg/p6sU5R+L3RNJCPOfussVEwrm9
-        iGXai+zhYfOMKor+ItuHEMlrNcjB0xikc5YsrFX85/SF8U3BLDavfGc10C2SpkUn
-        JCBR2sg6wYc0PjqrVL8Ywy98whIt6j7VJmQoftB/Wc240FXxX/mtT7L+DNglazD4
-        sSKmuw+WIslH6pMv2MiW/dkoBaB+vVWKM64xT/ZkIKTtbdE7xXB4HPdR3CPJpzYx
-        bx1WyHIwaF0RLW5zlZGoKNsTHqh2z7q8++gk9ZwlteyKQoj3EPte3Rzno2Kk+Pha
-        I/6KRgKH6CXmf8YHIAfbw==
-X-ME-Sender: <xms:JjzBZEAqHLvQBWcVRfHg20D0TEAA0z-BNFgxsKHQvtYKKd-NWYuUYg>
-    <xme:JjzBZGiZ6bMiAd2tolhqJaRCH6u6MBglAYfJu-9RxnwGm9Gwwy-2czq-A6X-PsZct
-    u9_rj6OdfhRNafn>
-X-ME-Received: <xmr:JjzBZHkZig3cGiB4ht3DG1tSwi-JtBubMRTaO7VoqSZZy6pOTtO3xuHUTNkPQkdvwA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedriedvgdekjecutefuodetggdotefrodftvf
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1690386302; x=
+        1690472702; bh=5JHQWc7fIr5yWMFZ7HQ4DfnYA0AEVbvufUWOsS08iP0=; b=t
+        kLM2+G3Oy+zblWDZFHanAl/hKO4LnSNpsagGXVPBCX3kvV0/GGW/rgQK2LGq0Axk
+        MEHDplzVXXn1470GDj32pvwHtCKADYXyu6ID9dR55hwqiMwhHZTlndBssa+cy6gF
+        7Ap6Q4c9HVUNHTcXk/okbthdfXwuiQS1slyiC195cqDG3oZjsHXylouSAMuEMOaZ
+        dBFjKNcmZCbErKZighVMLtqJapuY5Wfg3bUR6XrXVWD43jZx8Mw3hP7eB4K7zIb7
+        5qM7JYzp5/ffCUirgmR2FD8dlIKXe7mNTkPHsgX+TAztyfm2KbAtE5AjQOzo40+j
+        1eP7G/qj+yj835QYUEfFg==
+X-ME-Sender: <xms:fj_BZDMevFOALPTMO8-H3rh44Rc9RgS91HDcSKT-JnMVkC_mb6EWOA>
+    <xme:fj_BZN_JNAMk5cKp0TFuSpb5CiiHFnL5ip5FdOaAj0oXDGqLNT-S97U_VWYYjm2q0
+    uDujIM8vbxmlVah>
+X-ME-Received: <xmr:fj_BZCSmzD0hFJsPTFvbbL_YoRJ7TkgtLcZLCXIb-eBHMfgvTPOtlTyp4Wzl8KT6zQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedriedvgdeludcutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenfg
     hrlhcuvffnffculddutddmnecujfgurhepkfffgggfuffvfhfhjggtgfesthekredttdef
@@ -57,25 +57,25 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedriedvgdekjecutefuodetggdote
     feehieeukedvudelieevteevuedtueffhfeuteeivedvhfduvdenucevlhhushhtvghruf
     hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghr
     thesfhgrshhtmhgrihhlrdhfmh
-X-ME-Proxy: <xmx:JjzBZKz6HoWWxXnGlZdsRtWYdnpefHkQWv_f_GXM0yjTsLhxPUAbyA>
-    <xmx:JjzBZJQHO_4PvSoiwyFIK4_9US4wcfHZ8_pDr6zyu4rTGuYgNMTFTA>
-    <xmx:JjzBZFbORx0hcgjCiD741VMKu0_BKojaH-NDHYY6PW9HFIjR3OeuUQ>
-    <xmx:JjzBZEfzfzDiEyviqm2jC-V6OzjtXSJgJAD2129FVxUo6zLpLj4nJw>
+X-ME-Proxy: <xmx:fj_BZHuBetPyDLlL_0NeaxlJIACPLD88kfpHHNh1N8vq3Y4XWhryxg>
+    <xmx:fj_BZLdnJV88ezrU8yJ24hStwR_mEPypSdvhjgi-yWDu6vY1Rs9u0w>
+    <xmx:fj_BZD0vtu21W19VVGIWbl1ft8h1u0r_GOiZRDmqJ__WrKE2TABPlQ>
+    <xmx:fj_BZMoUe-ITCDfNovwHwiCqAaseG1ctvcfz1RjHLQwmtlyJtl9OuA>
 Feedback-ID: id8a24192:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 26 Jul 2023 11:30:45 -0400 (EDT)
-Message-ID: <4470a31c-802e-51e2-75b0-362c05fecfb8@fastmail.fm>
-Date:   Wed, 26 Jul 2023 17:30:44 +0200
+ 26 Jul 2023 11:45:02 -0400 (EDT)
+Message-ID: <0731f4b9-cd4e-2cb3-43ba-c74d238b824f@fastmail.fm>
+Date:   Wed, 26 Jul 2023 17:45:01 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
 Subject: Re: [PATCH] fuse: enable larger read buffers for readdir.
+Content-Language: en-US
 To:     Jaco Kroon <jaco@uls.co.za>, Miklos Szeredi <miklos@szeredi.hu>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230726105953.843-1-jaco@uls.co.za>
  <b5255112-922f-b965-398e-38b9f5fb4892@fastmail.fm>
  <7d762c95-e4ca-d612-f70f-64789d4624cf@uls.co.za>
-Content-Language: en-US
 From:   Bernd Schubert <bernd.schubert@fastmail.fm>
 In-Reply-To: <7d762c95-e4ca-d612-f70f-64789d4624cf@uls.co.za>
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -142,28 +142,11 @@ On 7/26/23 17:26, Jaco Kroon wrote:
 > 
 > Yes sure, but there still needs to be a default.  And one page at a time 
 > doesn't cut it.
-> 
-> -- snip --
-> 
->>>   -    page = alloc_page(GFP_KERNEL);
->>> +    page = alloc_pages(GFP_KERNEL, READDIR_PAGES_ORDER);
->>
->> I guess that should become folio alloc(), one way or the other. Now I 
->> think order 0 was chosen before to avoid risk of allocation failure. I 
->> guess it might work to try a large size and to fall back to 0 when 
->> that failed. Or fail back to the slower vmalloc.
-> 
-> If this varies then a bunch of other code will become somewhat more 
-> complex, especially if one alloc succeeds, and then a follow-up succeeds.
 
-Yeah, the better choice is kvmalloc/kvfree which handles it internally.
+With FUSE_INIT userspace would make that decision, based on what kernel 
+fuse suggests? process_init_reply() already handles other limits - I 
+don't see why readdir max has to be compile time option. Maybe a module 
+option to set the limit?
 
-> 
-> I'm not familiar with the differences between the different mechanisms 
-> available for allocation.
-> 
-> -- snip --
-> 
->> Thanks,
-> My pleasure,
-> Jaco
+Thanks,
+Bernd
