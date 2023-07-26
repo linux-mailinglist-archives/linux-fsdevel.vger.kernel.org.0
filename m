@@ -2,54 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CBF4763924
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 16:30:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11E7F76392A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 16:32:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234540AbjGZOax (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 10:30:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54238 "EHLO
+        id S234545AbjGZOch (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 10:32:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234539AbjGZOaw (ORCPT
+        with ESMTP id S231500AbjGZOcg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 10:30:52 -0400
-Received: from mail-ot1-f80.google.com (mail-ot1-f80.google.com [209.85.210.80])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC17C19A1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 07:30:47 -0700 (PDT)
-Received: by mail-ot1-f80.google.com with SMTP id 46e09a7af769-6b9ef9cd887so1717152a34.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 07:30:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690381847; x=1690986647;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BLnveNQNUeRMV9+8/gX2nx7OCERcD8PiCFgXgd8INio=;
-        b=GK3e96CflGxVX0XbQ4uUv22feVa4tG3zLcyeVEhkWwAJfOuw1g4PKDf2cJc5zh/M43
-         jtaHyk0iNjRgnv9/GUnxQFk7poydsMCLhJTT9ZZkLW5xTTsR1lQ7uRBhwwjclA4g+VWw
-         tMvucny08ioJSajNiDoUBUaZyNP9GtFU+SFsdT/ObRnHlUaUFyp+PijUAFHq+JH0ZLnC
-         vlqliyYyXw2UOBqthX6l7pECqvZyFVR+awBfDHNC8Z4tSgsoxHG0ZMp3cdnCQrsIfXp0
-         SVS1AJX2BqettPXKs1s+ToaWNLMtzf/U/mqgpOCZNqTWENKNQxGf6oxRIKVgP1Jkq4Au
-         mHNw==
-X-Gm-Message-State: ABy/qLaV8hgidPJmPsGIP1vXeWCFt26FzDXYMWeuG4c7mFcMfiqfZs2y
-        o5AF9w4TIFfSvgQznCynfDIeYANVZH3y4oxvntOKPWRI/NCq
-X-Google-Smtp-Source: APBJJlF94a7aZPlBEEnkqliCoEGpJ7HkuzLH8OrGyYMoZf3TnyszHLvpYBOhSf3vWG9YPVHulH/EgwVJaG3uzLk7VgPFQ/GhsUTa
+        Wed, 26 Jul 2023 10:32:36 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E58B1188
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 07:31:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1690381911;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fE1OR9ByWNiD6jQOB//eqVZjFQki6qBjJm4P5JTOE44=;
+        b=GYxVfy6EdjX4v9UhskWzERF8bAtUmupK3pkc/UUxY7QKsX6esSSUysi6i6J4X8l3A0XSSY
+        QNm0BzftRTdnpFes7246iUmribGfMSOzFzN5KAHcewPy1ewmwo24Fnj/uLeLJy25BcJ/UL
+        QR8j5sRLNk3B0l1Et4ny8iNWSJ9sj0Q=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-265-caxb8pjXOJOTCo-3pjhtKw-1; Wed, 26 Jul 2023 10:31:47 -0400
+X-MC-Unique: caxb8pjXOJOTCo-3pjhtKw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4FDCD800888;
+        Wed, 26 Jul 2023 14:31:46 +0000 (UTC)
+Received: from tpad.localdomain (ovpn-112-3.gru2.redhat.com [10.97.112.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EF18F40C2063;
+        Wed, 26 Jul 2023 14:31:45 +0000 (UTC)
+Received: by tpad.localdomain (Postfix, from userid 1000)
+        id 1CBDC40B16BD4; Wed, 26 Jul 2023 11:31:26 -0300 (-03)
+Date:   Wed, 26 Jul 2023 11:31:26 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Leonardo Bras <leobras@redhat.com>,
+        Yair Podemsky <ypodemsk@redhat.com>, P J P <ppandit@redhat.com>
+Subject: Re: [PATCH] fs/buffer.c: disable per-CPU buffer_head cache for
+ isolated CPUs
+Message-ID: <ZMEuPoKQ0cb+iMtl@tpad>
+References: <ZJtBrybavtb1x45V@tpad>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6830:30b1:b0:6b8:70f3:fd36 with SMTP id
- g49-20020a05683030b100b006b870f3fd36mr3643946ots.2.1690381847267; Wed, 26 Jul
- 2023 07:30:47 -0700 (PDT)
-Date:   Wed, 26 Jul 2023 07:30:47 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008a91fe060164b11f@google.com>
-Subject: [syzbot] [fs?] WARNING in __brelse (3)
-From:   syzbot <syzbot+ce3af36144a13b018cc7@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, brauner@kernel.org, hch@lst.de,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        liushixin2@huawei.com, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZJtBrybavtb1x45V@tpad>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,116 +72,84 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
 
-syzbot found the following issue on:
+Ping, apparently there is no objection to this patch...
 
-HEAD commit:    d192f5382581 Merge tag 'arm64-fixes' of git://git.kernel.o..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=16ef7c6aa80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=28e257d54f02de1a
-dashboard link: https://syzkaller.appspot.com/bug?extid=ce3af36144a13b018cc7
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15302152a80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12771152a80000
+Christian, what is the preferred tree for integration?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5646cedb4f1a/disk-d192f538.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/14060d990196/vmlinux-d192f538.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f58a09eb6b40/bzImage-d192f538.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/b412a33c80f2/mount_0.gz
+On Tue, Jun 27, 2023 at 05:08:15PM -0300, Marcelo Tosatti wrote:
+> 
+> For certain types of applications (for example PLC software or
+> RAN processing), upon occurrence of an event, it is necessary to
+> complete a certain task in a maximum amount of time (deadline).
+> 
+> One way to express this requirement is with a pair of numbers,
+> deadline time and execution time, where:
+> 
+>         * deadline time: length of time between event and deadline.
+>         * execution time: length of time it takes for processing of event
+>                           to occur on a particular hardware platform
+>                           (uninterrupted).
+> 
+> The particular values depend on use-case. For the case
+> where the realtime application executes in a virtualized
+> guest, an IPI which must be serviced in the host will cause
+> the following sequence of events:
+> 
+>         1) VM-exit
+>         2) execution of IPI (and function call)
+>         3) VM-entry
+> 
+> Which causes an excess of 50us latency as observed by cyclictest
+> (this violates the latency requirement of vRAN application with 1ms TTI,
+> for example).
+> 
+> invalidate_bh_lrus calls an IPI on each CPU that has non empty
+> per-CPU cache:
+> 
+>         on_each_cpu_cond(has_bh_in_lru, invalidate_bh_lru, NULL, 1);
+> 
+> The performance when using the per-CPU LRU cache is as follows:
+> 
+>  42 ns per __find_get_block
+>  68 ns per __find_get_block_slow
+> 
+> Given that the main use cases for latency sensitive applications
+> do not involve block I/O (data necessary for program operation is 
+> locked in RAM), disable per-CPU buffer_head caches for isolated CPUs.
+> 
+> Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index a7fc561758b1..49e9160ce100 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -49,6 +49,7 @@
+>  #include <trace/events/block.h>
+>  #include <linux/fscrypt.h>
+>  #include <linux/fsverity.h>
+> +#include <linux/sched/isolation.h>
+>  
+>  #include "internal.h"
+>  
+> @@ -1289,7 +1290,7 @@ static void bh_lru_install(struct buffer_head *bh)
+>  	 * failing page migration.
+>  	 * Skip putting upcoming bh into bh_lru until migration is done.
+>  	 */
+> -	if (lru_cache_disabled()) {
+> +	if (lru_cache_disabled() || cpu_is_isolated(smp_processor_id())) {
+>  		bh_lru_unlock();
+>  		return;
+>  	}
+> @@ -1319,6 +1320,10 @@ lookup_bh_lru(struct block_device *bdev, sector_t block, unsigned size)
+>  
+>  	check_irqs_on();
+>  	bh_lru_lock();
+> +	if (cpu_is_isolated(smp_processor_id())) {
+> +		bh_lru_unlock();
+> +		return NULL;
+> +	}
+>  	for (i = 0; i < BH_LRU_SIZE; i++) {
+>  		struct buffer_head *bh = __this_cpu_read(bh_lrus.bhs[i]);
+>  
 
-The issue was bisected to:
-
-commit f6e2c20ca7604e6a267c93a511d19dda72573be1
-Author: Liu Shixin <liushixin2@huawei.com>
-Date:   Fri Apr 29 21:38:04 2022 +0000
-
-    fs: sysv: check sbi->s_firstdatazone in complete_read_super
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=167a02bea80000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=157a02bea80000
-console output: https://syzkaller.appspot.com/x/log.txt?x=117a02bea80000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ce3af36144a13b018cc7@syzkaller.appspotmail.com
-Fixes: f6e2c20ca760 ("fs: sysv: check sbi->s_firstdatazone in complete_read_super")
-
-------------[ cut here ]------------
-VFS: brelse: Trying to free free buffer
-WARNING: CPU: 1 PID: 5011 at fs/buffer.c:1257 __brelse fs/buffer.c:1257 [inline]
-WARNING: CPU: 1 PID: 5011 at fs/buffer.c:1257 __brelse+0x6b/0xa0 fs/buffer.c:1251
-Modules linked in:
-CPU: 1 PID: 5011 Comm: syz-executor104 Not tainted 6.5.0-rc2-syzkaller-00307-gd192f5382581 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2023
-RIP: 0010:__brelse fs/buffer.c:1257 [inline]
-RIP: 0010:__brelse+0x6b/0xa0 fs/buffer.c:1251
-Code: 7c 04 84 d2 75 4e 44 8b 63 60 31 ff 44 89 e6 e8 1b 29 8d ff 45 85 e4 75 1c e8 a1 2d 8d ff 48 c7 c7 20 a7 7c 8a e8 65 f6 53 ff <0f> 0b 5b 5d 41 5c e9 8a 2d 8d ff e8 85 2d 8d ff be 04 00 00 00 48
-RSP: 0018:ffffc900033cf8c8 EFLAGS: 00010086
-RAX: 0000000000000000 RBX: ffff88807135a2b8 RCX: 0000000000000000
-RDX: ffff88807e0da000 RSI: ffffffff814c5346 RDI: 0000000000000001
-RBP: ffff88807135a318 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
-R13: ffff88807135a2b8 R14: dffffc0000000000 R15: ffffffff81f85b70
-FS:  0000555555653380(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000066c7e0 CR3: 000000007cf88000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- brelse include/linux/buffer_head.h:339 [inline]
- __invalidate_bh_lrus fs/buffer.c:1492 [inline]
- invalidate_bh_lru+0xa2/0x190 fs/buffer.c:1505
- csd_do_func kernel/smp.c:131 [inline]
- smp_call_function_many_cond+0x122a/0x1570 kernel/smp.c:826
- on_each_cpu_cond_mask+0x40/0x90 kernel/smp.c:1003
- invalidate_bdev+0x9b/0xd0 block/bdev.c:85
- invalidate_disk+0x41/0x110 block/genhd.c:734
- __loop_clr_fd+0x259/0x900 drivers/block/loop.c:1164
- loop_clr_fd drivers/block/loop.c:1257 [inline]
- lo_ioctl+0x5d8/0x1a50 drivers/block/loop.c:1563
- blkdev_ioctl+0x2f9/0x770 block/ioctl.c:621
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
- __se_sys_ioctl fs/ioctl.c:856 [inline]
- __x64_sys_ioctl+0x18f/0x210 fs/ioctl.c:856
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f986153247b
-Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
-RSP: 002b:00007ffd9d3fbdc0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000016 RCX: 00007f986153247b
-RDX: 0000000000000000 RSI: 0000000000004c01 RDI: 0000000000000004
-RBP: 0000000000000004 R08: 00007ffd9d3fbe60 R09: 0000000000009df6
-R10: 0000000000008003 R11: 0000000000000246 R12: 00007ffd9d3fbe60
-R13: 0000000000000003 R14: 0000000000010000 R15: 0000000000000001
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
