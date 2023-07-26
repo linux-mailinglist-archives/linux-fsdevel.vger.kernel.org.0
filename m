@@ -2,76 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 222BA762A5A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 06:42:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58FF2762B02
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 07:57:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230116AbjGZEmC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 00:42:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46840 "EHLO
+        id S231570AbjGZF5Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 01:57:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230057AbjGZEmB (ORCPT
+        with ESMTP id S231370AbjGZF5X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 00:42:01 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 889E91995
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 21:42:00 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-173-48-116-181.bstnma.fios.verizon.net [173.48.116.181])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 36Q4fWGf024591
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 26 Jul 2023 00:41:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1690346494; bh=y0Rr6xQeDPJL5fQifaEWIbWcz2t8/ElkVNXtZEu02xs=;
-        h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-        b=E2Bn7FwYQjbCFCJnPKDJ5kGpayi6p94Q5Mw4snuQSMsj4VPzqe/mC6T72OWGnQ+qL
-         8wSrQfFTi1rW+1ERHcHirjP/XTOY8Fl7Uth/6uPr+w/SdgKmZOmhn5vSDz3pGibrn+
-         Y70x3VkUX1M83ZUrcDmgRSSMta5dFecuLCScsXl53T6gyKLz0fGoTbM53M9ta28qAW
-         piTNDBNBHSk0hisPhF1w4sK2ZTK2d+O4XYb++DCev9FQQeArkAcYi9rTSJQN0SvplN
-         ns0XwJlcQB1xI3GwTuiZcF4zQf71tZegC7nAMGK87Hweh6M3i3PQa8YxOSh3tjIayi
-         lAyeV+SkY8EEw==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 240B215C04DF; Wed, 26 Jul 2023 00:41:32 -0400 (EDT)
-Date:   Wed, 26 Jul 2023 00:41:32 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Zorro Lang <zlang@redhat.com>,
-        Luis Chamberlain <mcgrof@kernel.org>, fstests@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH] fstests: add helper to canonicalize devices used to
- enable persistent disks
-Message-ID: <20230726044132.GA30264@mit.edu>
-References: <20230720061727.2363548-1-mcgrof@kernel.org>
- <20230725081307.xydlwjdl4lq3ts3m@zlang-mailbox>
- <20230725155439.GF11340@frogsfrogsfrogs>
+        Wed, 26 Jul 2023 01:57:23 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2180726A2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jul 2023 22:56:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1690350996;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=cCdtovwVGt1zGQDulnNlAkJ36m7TNP783WWClrPi0Zk=;
+        b=aYe/Eh6XNO9YR0OJaWpVHtSaByJfcBP4GcWr3sLpaAC3KF/RCKXHSxpyQkEYCBNLsMAwHj
+        YnosqrvDgaj191spB5YeqyvHmE75aoO3ptuxePdGt3t1xFR3qzuwthykyX8SkvG5Rn1Jwz
+        rgw+hDk+RGNI0F40v5VgU6+yufK8cmw=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-680-95vf44wnPFeaXlb7Y-rxNw-1; Wed, 26 Jul 2023 01:56:34 -0400
+X-MC-Unique: 95vf44wnPFeaXlb7Y-rxNw-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 85523830EFC;
+        Wed, 26 Jul 2023 05:56:33 +0000 (UTC)
+Received: from localhost (ovpn-12-99.pek2.redhat.com [10.72.12.99])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D183246A3A7;
+        Wed, 26 Jul 2023 05:56:32 +0000 (UTC)
+Date:   Wed, 26 Jul 2023 13:56:29 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Vivek Goyal <vgoyal@redhat.com>, akpm@linux-foundation.org,
+        Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] proc/vmcore: fix signedness bug in read_from_oldmem()
+Message-ID: <ZMC1jU7ywPGt1QmO@MiWiFi-R3L-srv>
+References: <b55f7eed-1c65-4adc-95d1-6c7c65a54a6e@moroto.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230725155439.GF11340@frogsfrogsfrogs>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+In-Reply-To: <b55f7eed-1c65-4adc-95d1-6c7c65a54a6e@moroto.mountain>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 25, 2023 at 08:54:39AM -0700, Darrick J. Wong wrote:
-> On Tue, Jul 25, 2023 at 04:13:07PM +0800, Zorro Lang wrote:
-> > On Wed, Jul 19, 2023 at 11:17:27PM -0700, Luis Chamberlain wrote:
-> > > The filesystem configuration file does not allow you to use symlinks to
-> > > devices given the existing sanity checks verify that the target end
-> > > device matches the source.
+Hi Dan,
 
-I'm a little confused.  Where are these "sanity checks" enforced?
-I've been using
+On 07/25/23 at 08:03pm, Dan Carpenter wrote:
+> The bug is the error handling:
+> 
+> 	if (tmp < nr_bytes) {
+> 
+> "tmp" can hold negative error codes but because "nr_bytes" is type
+> size_t the negative error codes are treated as very high positive
+> values (success).  Fix this by changing "nr_bytes" to type ssize_t.  The
+> "nr_bytes" variable is used to store values between 1 and PAGE_SIZE and
+> they can fit in ssize_t without any issue.
+> 
+> Fixes: 5d8de293c224 ("vmcore: convert copy_oldmem_page() to take an iov_iter")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  fs/proc/vmcore.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+> index cb80a7703d58..1fb213f379a5 100644
+> --- a/fs/proc/vmcore.c
+> +++ b/fs/proc/vmcore.c
+> @@ -132,7 +132,7 @@ ssize_t read_from_oldmem(struct iov_iter *iter, size_t count,
+>  			 u64 *ppos, bool encrypted)
+>  {
+>  	unsigned long pfn, offset;
+> -	size_t nr_bytes;
+> +	ssize_t nr_bytes;
+>  	ssize_t read = 0, tmp;
+>  	int idx;
 
-SCRATCH_DEV=/dev/mapper/xt-vdc
+Thanks for this fix. Just curious, this is found out by code exploring,
+or any breaking?
 
-where /dev/mapper/xt-vdc is a symlink to /dev/dm-4 (or some such)
-without any problems.  So I don't quite understand why we need to
-canonicalize devices?
+Acked-by: Baoquan He <bhe@redhat.com>
 
-					- Ted
