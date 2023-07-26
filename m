@@ -2,229 +2,337 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D5EF7642B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 01:47:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19D877642BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 01:52:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231172AbjGZXrz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 19:47:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55096 "EHLO
+        id S230182AbjGZXwc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 19:52:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231233AbjGZXrx (ORCPT
+        with ESMTP id S229621AbjGZXwa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 19:47:53 -0400
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57812BF;
-        Wed, 26 Jul 2023 16:47:52 -0700 (PDT)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-58459a6f42cso3877927b3.2;
-        Wed, 26 Jul 2023 16:47:52 -0700 (PDT)
+        Wed, 26 Jul 2023 19:52:30 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D7C8BF
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 16:52:27 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-98dfb3f9af6so36094266b.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 16:52:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690415271; x=1691020071;
+        d=umich.edu; s=google-2016-06-03; t=1690415546; x=1691020346;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eSj579UEHOTLxAoowRqvJsUTOQYIQrtDrZClJxox6OU=;
-        b=R6sNVC+TTGCjJRW0Ih7LK/VG4X2yBvUysLh4Nf2k0wBPQzeee4Q09pq3U0Etsk4gim
-         ZxOLoy1NsoKyQ2b+r68QcfKkpMOTer5ZgVwoLLKx2dmBYRiT5ttGbKleuQEK0HaNl6Ps
-         pbtkn2v1fo3wUzBH61Hi6JJkahgYMrbvJVNLKSKrDHPG8qSKsHVY0z2JXblmkyDdQkzr
-         yUQ79ZxpMf3rR0CVXi0qEBz0FFUVmeTdRxOn1AwPyh9d/257cpXfxcZgS7Z0O81Xb7QE
-         He7anbcksAX8PMcLbccLAyD8bi4/YxkiflLAfg9h6UBcTTFs7ogNbbiN9KXnRDtsMbuT
-         i8MQ==
+        bh=VE4t0MHRbptM3cte7NJENQQexqmO7oHZypjHMYHhyBI=;
+        b=QMr9VteXNHwjahVZzvhMAMpHVUsgCaz9yA/EhbGwyBj2sGcUm1TgDQDVt5NFXVqfP9
+         Yxlo+MGrp2JHj+rZbMNsAy929ZzP2XQOLD4gGyWuw5XsVpk7zWBJoB6Gl8tFQd80RP4v
+         x22zpVtOBr1asbCgxTMHDL4jIs9eF9kic1MLr6rEPbMo9KkeP2dhjOxuNC263hPYMETx
+         /LKd449YJd348Yh24zO176QORBKTCrh0SrcbVhWQw3nOftOI5t5y4cS6HiPMWyqPzzRf
+         v1JJhrcaWP02Y24wZMCfdObj4KRSJWOQKpxRx2UuDaMAZQEIf4q9DLtjbULzpLAcOfyL
+         5xVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690415271; x=1691020071;
+        d=1e100.net; s=20221208; t=1690415546; x=1691020346;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eSj579UEHOTLxAoowRqvJsUTOQYIQrtDrZClJxox6OU=;
-        b=gCr8DwQWEmR8HJ4QARHTTtXKSqO9kWX3uSohengrTkimlXE9MMufiFf2YEl9qHniBZ
-         q0eKyIk+mrCDwzfdta5+UzSrRIak2t6Pf6XahEKMvnFhKYraxYmJqgw7kxbupg3v2BTc
-         46OhNnNBzLbnTJ0E6N557eWuJEB4M+2O65hLBSQBKDK1BPAZnFyJsgsgYWYe4Bt+2rbz
-         sgmCQr1x4CwOgIakuJOG5poKWPvNYbaEv3DxES35kwDeYBnWCkKH4S0bm3pAWxw0K0MF
-         boUH2/0wafSNJ8l/ug2UYJ/VuozLIl4rVnNVC2CfAOu059Jw5Jn1+UmvRVTSVpTLlI3D
-         FMSg==
-X-Gm-Message-State: ABy/qLY1mhMfWlINZAr2V5Xac5JkX3Tgyn0h9HPlZsvzLhxlOEEIAW0s
-        C8zoeF1rffEVtNCL8PwZpIErgWjgtP01zPeNoVI=
-X-Google-Smtp-Source: APBJJlFFCpTFDAjga9FJjYZxTm2toNbn47AgMiyGDenCaSYZW/+aMaz5h/M/uw0OE7Rs6UotCaXxpvD9k8CTeAI5QZA=
-X-Received: by 2002:a0d:dd03:0:b0:577:2cac:cd4b with SMTP id
- g3-20020a0ddd03000000b005772caccd4bmr3699450ywe.7.1690415271492; Wed, 26 Jul
- 2023 16:47:51 -0700 (PDT)
+        bh=VE4t0MHRbptM3cte7NJENQQexqmO7oHZypjHMYHhyBI=;
+        b=LKJFbPR8w7Uhj4aSXkT5/B/HyFFdeGd/ZbTj2QoKwXBROCWqJLApE8KnKDn6CAK4HY
+         1cVPOO7yVkcZ4eWv2O0u6Jy3tGsbYaQi799da9x4/rXH9qCtwXkFOmTzVIGSt+mKqYs7
+         Fq3eT9YrU+P7IFd95suGW09htzAjsqXOKJ5gzky5xaLuliprs9uH7G5So4sG0rJ6x7iR
+         4gyxHGM7YU6XkGsbdoglaN6passDyjdGP7w1DVUnPFXTRmijAsuojAR/ZogFXq9/8XQJ
+         MpSJpaausCTHHceevZXeQ/2V95Z3c2tfBSTqqyxsuI7VPN6FukoJZ8DyxgCysqAOEkra
+         baHA==
+X-Gm-Message-State: ABy/qLYKQ7+q2NCk+klRnjwxlJia17ceYxucqMyijBGPv3xVge/uiMD7
+        k2mdEkSkMyAfVmoTWnrMjKJabkhKPDI4S9fK2N3U4g==
+X-Google-Smtp-Source: APBJJlHCx1zJGrmVcbJXdhFOfadSP+F29WX5PX5AYMaOBopXRUF1yVoD2WjOwrCXIR6LkEwGpYbupHn1CTHHcAgrNQ8=
+X-Received: by 2002:a17:906:74d8:b0:99b:cb78:8537 with SMTP id
+ z24-20020a17090674d800b0099bcb788537mr464601ejl.11.1690415545887; Wed, 26 Jul
+ 2023 16:52:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230726164535.230515-1-amiculas@cisco.com> <20230726164535.230515-11-amiculas@cisco.com>
- <CALNs47ss3kV3mTx4ksYTWaHWdRG48=97DTi3OEnPom2nFcYhHw@mail.gmail.com>
-In-Reply-To: <CALNs47ss3kV3mTx4ksYTWaHWdRG48=97DTi3OEnPom2nFcYhHw@mail.gmail.com>
-From:   Wedson Almeida Filho <wedsonaf@gmail.com>
-Date:   Wed, 26 Jul 2023 20:47:41 -0300
-Message-ID: <CANeycqqTdL9vr=JF+Fij5EY0TW_+_FY1p2qGdvGhYcyH9=9J9w@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 10/10] rust: puzzlefs: add oci_root_dir and
- image_manifest filesystem parameters
-To:     Trevor Gross <tmgross@umich.edu>
-Cc:     Ariel Miculas <amiculas@cisco.com>, rust-for-linux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        tycho@tycho.pizza, brauner@kernel.org, viro@zeniv.linux.org.uk,
-        ojeda@kernel.org, alex.gaynor@gmail.com
+References: <20230726164535.230515-1-amiculas@cisco.com> <20230726164535.230515-5-amiculas@cisco.com>
+In-Reply-To: <20230726164535.230515-5-amiculas@cisco.com>
+From:   Trevor Gross <tmgross@umich.edu>
+Date:   Wed, 26 Jul 2023 19:52:13 -0400
+Message-ID: <CALNs47svt4481_3Te9FzskAJ29ur6h115NdLfej3Ejfcd5tO7w@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 04/10] rust: file: Add a new RegularFile newtype
+ useful for reading files
+To:     Ariel Miculas <amiculas@cisco.com>
+Cc:     rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tycho@tycho.pizza,
+        brauner@kernel.org, viro@zeniv.linux.org.uk, ojeda@kernel.org,
+        alex.gaynor@gmail.com, wedsonaf@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 26 Jul 2023 at 18:08, Trevor Gross <tmgross@umich.edu> wrote:
+On Wed, Jul 26, 2023 at 12:54=E2=80=AFPM Ariel Miculas <amiculas@cisco.com>=
+ wrote:
 >
-> On Wed, Jul 26, 2023 at 12:55=E2=80=AFPM Ariel Miculas <amiculas@cisco.co=
-m> wrote:
-> >
-> > These parameters are passed when mounting puzzlefs using '-o' option of
-> > mount:
-> > -o oci_root_dir=3D"/path/to/oci/dir"
-> > -o image_manifest=3D"root_hash_of_image_manifest"
-> >
-> > For a particular manifest in the manifests array in index.json (located
-> > in the oci_root_dir), the root hash of the image manifest is found in
-> > the digest field.
-> >
-> > It would be nicer if we could pass the tag, but we don't support json
-> > deserialization.
-> >
-> > Example of mount:
-> > mount -t puzzlefs -o oci_root_dir=3D"/home/puzzlefs_oci" -o \
-> > image_manifest=3D"2d6602d678140540dc7e96de652a76a8b16e8aca190bae141297b=
-cffdcae901b" \
-> > none /mnt
-> >
-> > Signed-off-by: Ariel Miculas <amiculas@cisco.com>
-> > ---
-> >  samples/rust/puzzlefs.rs | 63 ++++++++++++++++++++++++++--------------
-> >  1 file changed, 41 insertions(+), 22 deletions(-)
-> >
-> > diff --git a/samples/rust/puzzlefs.rs b/samples/rust/puzzlefs.rs
-> > index dad7ecc76eca..4e9a8aedf0c1 100644
-> > --- a/samples/rust/puzzlefs.rs
-> > +++ b/samples/rust/puzzlefs.rs
-> > @@ -7,6 +7,7 @@
-> >  use kernel::{
-> >      c_str, file, fs,
-> >      io_buffer::IoBufferWriter,
-> > +    str::CString,
-> >      sync::{Arc, ArcBorrow},
-> >  };
-> >
-> > @@ -31,27 +32,29 @@ struct PuzzlefsInfo {
-> >      puzzlefs: Arc<PuzzleFS>,
-> >  }
-> >
-> > +#[derive(Default)]
-> > +struct PuzzleFsParams {
-> > +    oci_root_dir: Option<CString>,
-> > +    image_manifest: Option<CString>,
-> > +}
-> > +
-> >  #[vtable]
-> >  impl fs::Context<Self> for PuzzleFsModule {
-> > -    type Data =3D ();
-> > -
-> > -    kernel::define_fs_params! {(),
-> > -        {flag, "flag", |_, v| { pr_info!("flag passed-in: {v}\n"); Ok(=
-()) } },
-> > -        {flag_no, "flagno", |_, v| { pr_info!("flagno passed-in: {v}\n=
-"); Ok(()) } },
-> > -        {bool, "bool", |_, v| { pr_info!("bool passed-in: {v}\n"); Ok(=
-()) } },
-> > -        {u32, "u32", |_, v| { pr_info!("u32 passed-in: {v}\n"); Ok(())=
- } },
-> > -        {u32oct, "u32oct", |_, v| { pr_info!("u32oct passed-in: {v}\n"=
-); Ok(()) } },
-> > -        {u32hex, "u32hex", |_, v| { pr_info!("u32hex passed-in: {v}\n"=
-); Ok(()) } },
-> > -        {s32, "s32", |_, v| { pr_info!("s32 passed-in: {v}\n"); Ok(())=
- } },
-> > -        {u64, "u64", |_, v| { pr_info!("u64 passed-in: {v}\n"); Ok(())=
- } },
-> > -        {string, "string", |_, v| { pr_info!("string passed-in: {v}\n"=
-); Ok(()) } },
-> > -        {enum, "enum", [("first", 10), ("second", 20)], |_, v| {
-> > -            pr_info!("enum passed-in: {v}\n"); Ok(()) }
-> > -        },
-> > +    type Data =3D Box<PuzzleFsParams>;
-> > +
-> > +    kernel::define_fs_params! {Box<PuzzleFsParams>,
-> > +        {string, "oci_root_dir", |s, v| {
-> > +                                      s.oci_root_dir =3D Some(CString:=
-:try_from_fmt(format_args!("{v}"))?);
-> > +                                      Ok(())
-> > +                                  }},
-> > +        {string, "image_manifest", |s, v| {
-> > +                                      s.image_manifest =3D Some(CStrin=
-g::try_from_fmt(format_args!("{v}"))?);
-> > +                                      Ok(())
-> > +                                  }},
-> >      }
-> >
-> > -    fn try_new() -> Result {
-> > -        Ok(())
-> > +    fn try_new() -> Result<Self::Data> {
-> > +        Ok(Box::try_new(PuzzleFsParams::default())?)
-> >      }
-> >  }
-> >
-> > @@ -136,11 +139,27 @@ impl fs::Type for PuzzleFsModule {
-> >      const FLAGS: i32 =3D fs::flags::USERNS_MOUNT;
-> >      const DCACHE_BASED: bool =3D true;
-> >
-> > -    fn fill_super(_data: (), sb: fs::NewSuperBlock<'_, Self>) -> Resul=
-t<&fs::SuperBlock<Self>> {
-> > -        let puzzlefs =3D PuzzleFS::open(
-> > -            c_str!("/home/puzzlefs_oci"),
-> > -            c_str!("2d6602d678140540dc7e96de652a76a8b16e8aca190bae1412=
-97bcffdcae901b"),
-> > -        );
-> > +    fn fill_super(
-> > +        data: Box<PuzzleFsParams>,
-> > +        sb: fs::NewSuperBlock<'_, Self>,
-> > +    ) -> Result<&fs::SuperBlock<Self>> {
-> > +        let oci_root_dir =3D match data.oci_root_dir {
-> > +            Some(val) =3D> val,
-> > +            None =3D> {
-> > +                pr_err!("missing oci_root_dir parameter!\n");
-> > +                return Err(ENOTSUPP);
-> > +            }
-> > +        };
-> > +
-> > +        let image_manifest =3D match data.image_manifest {
-> > +            Some(val) =3D> val,
-> > +            None =3D> {
-> > +                pr_err!("missing image_manifest parameter!\n");
-> > +                return Err(ENOTSUPP);
-> > +            }
-> > +        };
-> > +
+> Implement from_path, from_path_in_root_mnt, read_with_offset,
+> read_to_end and get_file_size methods for a RegularFile newtype.
 >
-> The guard syntax (available since 1.65) can make these kinds of match sta=
-tements
-> cleaner:
+> Signed-off-by: Ariel Miculas <amiculas@cisco.com>
+> ---
+>  rust/helpers.c       |   6 ++
+>  rust/kernel/error.rs |   4 +-
+>  rust/kernel/file.rs  | 129 ++++++++++++++++++++++++++++++++++++++++++-
+>  3 files changed, 135 insertions(+), 4 deletions(-)
+>
+> diff --git a/rust/helpers.c b/rust/helpers.c
+> index eed8ace52fb5..9e860a554cda 100644
+> --- a/rust/helpers.c
+> +++ b/rust/helpers.c
+> @@ -213,6 +213,12 @@ void *rust_helper_alloc_inode_sb(struct super_block =
+*sb,
+>  }
+>  EXPORT_SYMBOL_GPL(rust_helper_alloc_inode_sb);
+>
+> +loff_t rust_helper_i_size_read(const struct inode *inode)
+> +{
+> +       return i_size_read(inode);
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_i_size_read);
+> +
+>  /*
+>   * We use `bindgen`'s `--size_t-is-usize` option to bind the C `size_t` =
+type
+>   * as the Rust `usize` type, so we can use it in contexts where Rust
+> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
+> index 05fcab6abfe6..e061c83f806a 100644
+> --- a/rust/kernel/error.rs
+> +++ b/rust/kernel/error.rs
+> @@ -273,9 +273,7 @@ pub fn to_result(err: core::ffi::c_int) -> Result {
+>  ///     }
+>  /// }
+>  /// ```
+> -// TODO: Remove `dead_code` marker once an in-kernel client is available=
+.
+> -#[allow(dead_code)]
+> -pub(crate) fn from_err_ptr<T>(ptr: *mut T) -> Result<*mut T> {
+> +pub fn from_err_ptr<T>(ptr: *mut T) -> Result<*mut T> {
+>      // CAST: Casting a pointer to `*const core::ffi::c_void` is always v=
+alid.
+>      let const_ptr: *const core::ffi::c_void =3D ptr.cast();
+>      // SAFETY: The FFI function does not deref the pointer.
+> diff --git a/rust/kernel/file.rs b/rust/kernel/file.rs
+> index 494939ba74df..a3002c416dbb 100644
+> --- a/rust/kernel/file.rs
+> +++ b/rust/kernel/file.rs
+> @@ -8,11 +8,13 @@
+>  use crate::{
+>      bindings,
+>      cred::Credential,
+> -    error::{code::*, from_result, Error, Result},
+> +    error::{code::*, from_err_ptr, from_result, Error, Result},
+>      fs,
+>      io_buffer::{IoBufferReader, IoBufferWriter},
+>      iov_iter::IovIter,
+>      mm,
+> +    mount::Vfsmount,
+> +    str::CStr,
+>      sync::CondVar,
+>      types::ARef,
+>      types::AlwaysRefCounted,
+> @@ -20,6 +22,7 @@
+>      types::Opaque,
+>      user_ptr::{UserSlicePtr, UserSlicePtrReader, UserSlicePtrWriter},
+>  };
+> +use alloc::vec::Vec;
+>  use core::convert::{TryFrom, TryInto};
+>  use core::{marker, mem, ptr};
+>  use macros::vtable;
+> @@ -201,6 +204,130 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+>      }
+>  }
+>
+> +/// A newtype over file, specific to regular files
+> +pub struct RegularFile(ARef<File>);
+> +impl RegularFile {
+> +    /// Creates a new instance of Self if the file is a regular file
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// The caller must ensure file_ptr.f_inode is initialized to a vali=
+d pointer (e.g. file_ptr is
+> +    /// a pointer returned by path_openat); It must also ensure that fil=
+e_ptr's reference count was
+> +    /// incremented at least once
+> +    fn create_if_regular(file_ptr: ptr::NonNull<bindings::file>) -> Resu=
+lt<RegularFile> {
 
-This is unstable though.
+This function should be unsafe, correct? You instead take a
+`&bindings::file` instead of `NonNull` but still keep it unsafe, so
+the "valid pointer" invariant is always reached.
 
-We try to stay away from unstable features unless we really need them,
-which I feel is not the case here.
+Or, could this take `&kernel::file::File` instead to reduce some duplicatio=
+n?
 
->     let Some(oci_root_dir) =3D data.oci_root_dir else {
->         pr_err!("missing oci_root_dir parameter!\n");
->         return Err(ENOTSUPP);
->     }
+> +        // SAFETY: file_ptr is a NonNull pointer
+> +        let inode =3D unsafe { core::ptr::addr_of!((*file_ptr.as_ptr()).=
+f_inode).read() };
+> +        // SAFETY: the caller must ensure f_inode is initialized to a va=
+lid pointer
+> +        unsafe {
+> +            if bindings::S_IFMT & ((*inode).i_mode) as u32 !=3D bindings=
+::S_IFREG {
+> +                return Err(EINVAL);
+> +            }
+> +        }
+
+Nit: factor `unsafe { ((*inode).i_mode) }` out so it doesn't look like
+the whole statement is unsafe
+
+> +        // SAFETY: the safety requirements state that file_ptr's referen=
+ce count was incremented at
+> +        // least once
+> +        Ok(RegularFile(unsafe { ARef::from_raw(file_ptr.cast()) }))
+> +    }
+> +    /// Constructs a new [`struct file`] wrapper from a path.
+> +    pub fn from_path(filename: &CStr, flags: i32, mode: u16) -> Result<S=
+elf> {
+> +        let file_ptr =3D unsafe {
+> +            // SAFETY: filename is a reference, so it's a valid pointer
+> +            from_err_ptr(bindings::filp_open(
+> +                filename.as_ptr() as *const i8,
+> +                flags,
+> +                mode,
+> +            ))?
+> +        };
+
+I mentioned in another email that `.cast::<i8>()` can be more
+idiomatic and a bit safer than `as`, it's a stylistic choice but there
+are a few places it could be changed here if desired
+
+Also, the `// SAFETY` comments need to go outside the unsafe block
+
+> +        let file_ptr =3D ptr::NonNull::new(file_ptr).ok_or(ENOENT)?;
+> +
+> +        // SAFETY: `filp_open` initializes the refcount with 1
+> +        Self::create_if_regular(file_ptr)
+> +    }
+
+Will need unsafe block if `create_if_regular` becomes unsafe
+
+> +
+> +    /// Constructs a new [`struct file`] wrapper from a path and a vfsmo=
+unt.
+> +    pub fn from_path_in_root_mnt(
+> +        mount: &Vfsmount,
+> +        filename: &CStr,
+> +        flags: i32,
+> +        mode: u16,
+> +    ) -> Result<Self> {
+> +        let file_ptr =3D {
+> +            let mnt =3D mount.get();
+> +            // construct a path from vfsmount, see file_open_root_mnt
+> +            let raw_path =3D bindings::path {
+> +                mnt,
+> +                // SAFETY: Vfsmount structure stores a valid vfsmount ob=
+ject
+> +                dentry: unsafe { (*mnt).mnt_root },
+> +            };
+> +            unsafe {
+> +                // SAFETY: raw_path and filename are both references
+> +                from_err_ptr(bindings::file_open_root(
+> +                    &raw_path,
+> +                    filename.as_ptr() as *const i8,
+> +                    flags,
+> +                    mode,
+> +                ))?
+> +            }
+> +        };
+
+Is there a reason to use the larger scope block, rather than moving
+`mnt` and `raw_path` out and doing `let file_ptr =3D unsafe { ... }`? If
+so, a comment would be good.
+
+> +        let file_ptr =3D ptr::NonNull::new(file_ptr).ok_or(ENOENT)?;
+> +
+> +        // SAFETY: `file_open_root` initializes the refcount with 1
+> +        Self::create_if_regular(file_ptr)
+> +    }
+> +
+> +    /// Read from the file into the specified buffer
+> +    pub fn read_with_offset(&self, buf: &mut [u8], offset: u64) -> Resul=
+t<usize> {
+> +        Ok({
+> +            // kernel_read_file expects a pointer to a "void *" buffer
+> +            let mut ptr_to_buf =3D buf.as_mut_ptr() as *mut core::ffi::c=
+_void;
+> +            // Unless we give a non-null pointer to the file size:
+> +            // 1. we cannot give a non-zero value for the offset
+> +            // 2. we cannot have offset 0 and buffer_size > file_size
+> +            let mut file_size =3D 0;
+> +
+> +            // SAFETY: 'file' is valid because it's taken from Self, 'bu=
+f' and 'file_size` are
+> +            // references to the stack variables 'ptr_to_buf' and 'file_=
+size'; ptr_to_buf is also
+> +            // a pointer to a valid buffer that was obtained from a refe=
+rence
+> +            let result =3D unsafe {
+> +                bindings::kernel_read_file(
+> +                    self.0 .0.get(),
+
+Is this spacing intentional? If so, `(self.0).0.get()` may be cleaner
+
+> +                    offset.try_into()?,
+> +                    &mut ptr_to_buf,
+> +                    buf.len(),
+> +                    &mut file_size,
+> +                    bindings::kernel_read_file_id_READING_UNKNOWN,
+> +                )
+> +            };
+> +
+> +            // kernel_read_file returns the number of bytes read on succ=
+ess or negative on error.
+> +            if result < 0 {
+> +                return Err(Error::from_errno(result.try_into()?));
+> +            }
+> +
+> +            result.try_into()?
+> +        })
+> +    }
+
+I think you could remove the block here and just return `Ok(result.try_into=
+()?)`
+
+> +
+> +    /// Allocate and return a vector containing the contents of the enti=
+re file
+> +    pub fn read_to_end(&self) -> Result<Vec<u8>> {
+> +        let file_size =3D self.get_file_size()?;
+> +        let mut buffer =3D Vec::try_with_capacity(file_size)?;
+> +        buffer.try_resize(file_size, 0)?;
+> +        self.read_with_offset(&mut buffer, 0)?;
+> +        Ok(buffer)
+> +    }
+> +
+> +    fn get_file_size(&self) -> Result<usize> {
+> +        // SAFETY: 'file' is valid because it's taken from Self
+> +        let file_size =3D unsafe { bindings::i_size_read((*self.0 .0.get=
+()).f_inode) };
+> +
+> +        if file_size < 0 {
+> +            return Err(EINVAL);
+> +        }
+> +
+> +        Ok(file_size.try_into()?)
+> +    }
+> +}
+> +
+>  /// A file descriptor reservation.
+>  ///
+>  /// This allows the creation of a file descriptor in two steps: first, w=
+e reserve a slot for it,
+> --
+> 2.41.0
 >
->     let Some(image_manifest) ...
 >
-> > +        let puzzlefs =3D PuzzleFS::open(&oci_root_dir, &image_manifest=
-);
-> >
-> >          if let Err(ref e) =3D puzzlefs {
-> >              pr_info!("error opening puzzlefs {e}\n");
-> > --
-> > 2.41.0
-> >
-> >
