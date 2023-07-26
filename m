@@ -2,51 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 941EE763EB1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 20:40:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F23D763F6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 21:20:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230486AbjGZSkX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 14:40:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39500 "EHLO
+        id S230174AbjGZTUx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 15:20:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229685AbjGZSkW (ORCPT
+        with ESMTP id S230431AbjGZTUv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 14:40:22 -0400
-Received: from uriel.iewc.co.za (uriel.iewc.co.za [IPv6:2c0f:f720:0:3::9a49:2248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAD8019BD;
-        Wed, 26 Jul 2023 11:40:19 -0700 (PDT)
-Received: from [154.73.32.4] (helo=tauri.local.uls.co.za)
-        by uriel.iewc.co.za with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <jaco@uls.co.za>)
-        id 1qOjCo-0001Sj-MK; Wed, 26 Jul 2023 20:25:50 +0200
-Received: from [192.168.1.145]
-        by tauri.local.uls.co.za with esmtp (Exim 4.94.2)
-        (envelope-from <jaco@uls.co.za>)
-        id 1qOjCn-0005Ug-L2; Wed, 26 Jul 2023 20:25:49 +0200
-Message-ID: <27875beb-bd1c-0087-ac4c-420a9d92a5a9@uls.co.za>
-Date:   Wed, 26 Jul 2023 20:25:48 +0200
+        Wed, 26 Jul 2023 15:20:51 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC2292737;
+        Wed, 26 Jul 2023 12:20:48 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3fbea147034so1016195e9.0;
+        Wed, 26 Jul 2023 12:20:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690399247; x=1691004047;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SU5w/Qd+Q2s6pTNTUx/bglHlSYRuAA+mciT7JmjRh4Q=;
+        b=eoqi2tQD/6t5XYrmp8b4wsx9lND/kXSpo3WDzgeBYvmGmX8P0Qbv9v7pDii13+pyfd
+         ER0K4tqBLphE04ZvAen5YdS1W0X1OBqgYPjwYZNF9l4seZ+oVg3f3Wvoofn7LEg6K6En
+         /CdCtVnq50U+RI2LK6KD1tvDN5gfFJCL9qy+DBqSF9Ug8+PG0K0ekDURaqkHa3eAJoSq
+         aSFL4/zvZxnGjG0iXbDYoPJ8Pw2hA+1skJ+X+eOS0HgX5l6DwLaWRT8BDboDgh/LOhh3
+         ufkWtTbCRp5fKH7T3EtwgN0c9JqUb+re9tVFoOESHeVAXxYlwkIGDrBn9wel/6xHfbOt
+         AU8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690399247; x=1691004047;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SU5w/Qd+Q2s6pTNTUx/bglHlSYRuAA+mciT7JmjRh4Q=;
+        b=lUDnI30A7RAjmZXqicWXD9S4xbjUW4zJyvhCxx1Q7BVd7z8roCepoxMPpHlAm4ztLc
+         fPG9a4PCOjOy8W80rU0tSFIrdC0aL3n3bNWMlcffo43DetrnNcGTU4Mx9nTIAcW2Ckgz
+         ISulF1H51WxM0fb0h5KSG3zVW9/N0mJRbz6j+T0JAj9ukMwx16HB3NtiOV2rkQDAijW+
+         ZhibVgrjlXAlhYlTxhH+V173dqW+QQk0f1ceEWZcPdTLeLEBm2D2MZKeotmwIwMXYdIl
+         Aivcve23R5MIPaA8I7+zWcrlUh6sV+ttxLcw5wuShFWC33lVee23q5tmaoXI8KNo3O9M
+         225g==
+X-Gm-Message-State: ABy/qLZtBzZhTDa0a2VMfnGXgzdrlFaQOFy6+4Q5DRbn9p3E5XjzACNc
+        4g8wvDZ206AT0tvcmOKxi8w=
+X-Google-Smtp-Source: APBJJlHBRtroaMd2u/pxowsVAjxlt8UGtzJgYXLG5mldxeUG4NiXgFfvruege631QAMLsz2xk70BvA==
+X-Received: by 2002:a05:600c:2181:b0:3fa:98c3:7dbd with SMTP id e1-20020a05600c218100b003fa98c37dbdmr10406wme.41.1690399246785;
+        Wed, 26 Jul 2023 12:20:46 -0700 (PDT)
+Received: from [192.168.0.103] ([77.126.7.132])
+        by smtp.gmail.com with ESMTPSA id c22-20020a7bc856000000b003fbd0c50ba2sm2782413wml.32.2023.07.26.12.20.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jul 2023 12:20:46 -0700 (PDT)
+Message-ID: <e9c41176-829a-af5a-65d2-78a2f414cd04@gmail.com>
+Date:   Wed, 26 Jul 2023 22:20:42 +0300
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH] fuse: enable larger read buffers for readdir.
-Content-Language: en-GB
-To:     Antonio SJ Musumeci <trapexit@spawn.link>,
-        Bernd Schubert <bernd.schubert@fastmail.fm>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230726105953.843-1-jaco@uls.co.za>
- <b5255112-922f-b965-398e-38b9f5fb4892@fastmail.fm>
- <7d762c95-e4ca-d612-f70f-64789d4624cf@uls.co.za>
- <0731f4b9-cd4e-2cb3-43ba-c74d238b824f@fastmail.fm>
- <831e5a03-7126-3d45-2137-49c1a25769df@spawn.link>
-From:   Jaco Kroon <jaco@uls.co.za>
-Organization: Ultimate Linux Solutions (Pty) Ltd
-In-Reply-To: <831e5a03-7126-3d45-2137-49c1a25769df@spawn.link>
+Subject: Re: [PATCH net-next v10 08/16] tls: Inline do_tcp_sendpages()
+Content-Language: en-US
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>, netdev@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Boris Pismenny <borisp@nvidia.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Gal Pressman <gal@nvidia.com>, ranro@nvidia.com,
+        samiram@nvidia.com, drort@nvidia.com,
+        Tariq Toukan <tariqt@nvidia.com>
+References: <ecbb5d7e-7238-28e2-1a17-686325e2bb50@gmail.com>
+ <4c49176f-147a-4283-f1b1-32aac7b4b996@gmail.com>
+ <20230522121125.2595254-1-dhowells@redhat.com>
+ <20230522121125.2595254-9-dhowells@redhat.com>
+ <2267272.1686150217@warthog.procyon.org.uk>
+ <5a9d4ffb-a569-3f60-6ac8-070ab5e5f5ad@gmail.com>
+ <776549.1687167344@warthog.procyon.org.uk>
+ <7337a904-231d-201d-397a-7bbe7cae929f@gmail.com>
+ <20230630102143.7deffc30@kernel.org>
+ <f0538006-6641-eaf6-b7b5-b3ef57afc652@gmail.com>
+ <20230705091914.5bee12f8@kernel.org>
+ <bbdce803-0f23-7d3f-f75a-2bc3cfb794af@gmail.com>
+ <20230725173036.442ba8ba@kernel.org>
+From:   Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20230725173036.442ba8ba@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        NORMAL_HTTP_TO_IP,NUMERIC_HTTP_ADDR,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED,WEIRD_PORT autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -54,95 +105,81 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
 
-On 2023/07/26 19:23, Antonio SJ Musumeci wrote:
-> On 7/26/23 10:45, Bernd Schubert wrote:
->> On 7/26/23 17:26, Jaco Kroon wrote:
->>> Hi,
->>>
->>> On 2023/07/26 15:53, Bernd Schubert wrote:
->>>> On 7/26/23 12:59, Jaco Kroon wrote:
->>>>> Signed-off-by: Jaco Kroon <jaco@uls.co.za>
->>>>> ---
->>>>>     fs/fuse/Kconfig   | 16 ++++++++++++++++
->>>>>     fs/fuse/readdir.c | 42 ++++++++++++++++++++++++------------------
->>>>>     2 files changed, 40 insertions(+), 18 deletions(-)
->>>>>
->>>>> diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
->>>>> index 038ed0b9aaa5..0783f9ee5cd3 100644
->>>>> --- a/fs/fuse/Kconfig
->>>>> +++ b/fs/fuse/Kconfig
->>>>> @@ -18,6 +18,22 @@ config FUSE_FS
->>>>>           If you want to develop a userspace FS, or if you want to use
->>>>>           a filesystem based on FUSE, answer Y or M.
->>>>>     +config FUSE_READDIR_ORDER
->>>>> +    int
->>>>> +    range 0 5
->>>>> +    default 5
->>>>> +    help
->>>>> +        readdir performance varies greatly depending on the size of
->>>>> the read.
->>>>> +        Larger buffers results in larger reads, thus fewer reads and
->>>>> higher
->>>>> +        performance in return.
->>>>> +
->>>>> +        You may want to reduce this value on seriously constrained
->>>>> memory
->>>>> +        systems where 128KiB (assuming 4KiB pages) cache pages is
->>>>> not ideal.
->>>>> +
->>>>> +        This value reprents the order of the number of pages to
->>>>> allocate (ie,
->>>>> +        the shift value).  A value of 0 is thus 1 page (4KiB) where
->>>>> 5 is 32
->>>>> +        pages (128KiB).
->>>>> +
->>>> I like the idea of a larger readdir size, but shouldn't that be a
->>>> server/daemon/library decision which size to use, instead of kernel
->>>> compile time? So should be part of FUSE_INIT negotiation?
->>> Yes sure, but there still needs to be a default.  And one page at a time
->>> doesn't cut it.
->> With FUSE_INIT userspace would make that decision, based on what kernel
->> fuse suggests? process_init_reply() already handles other limits - I
->> don't see why readdir max has to be compile time option. Maybe a module
->> option to set the limit?
+
+On 26/07/2023 3:30, Jakub Kicinski wrote:
+> On Sun, 23 Jul 2023 09:35:56 +0300 Tariq Toukan wrote:
+>> Hi Jakub, David,
 >>
->> Thanks,
->> Bernd
-> I had similar question / comment. This seems to me to be more
-> appropriately handed by the server via FUSE_INIT.
->
-> And wouldn't "max" more easily be FUSE_MAX_MAX_PAGES? Is there a reason
-> not to allow upwards of 256 pages sized readdir buffer?
+>> We repro the issue on the server side using this client command:
+>> $ wrk -b2.2.2.2 -t4 -c1000 -d5 --timeout 5s
+>> https://2.2.2.3:20443/256000b.img
+>>
+>> Port 20443 is configured with:
+>>       ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256;
+>>       sendfile    off;
+>>
+>>
+>> Important:
+>> 1. Couldn't repro with files smaller than 40KB.
+>> 2. Couldn't repro with "sendfile    on;"
+>>
+>> In addition, we collected the vmcore (forced by panic_on_warn), it can
+>> be downloaded from here:
+>> https://drive.google.com/file/d/1Fi2dzgq6k2hb2L_kwyntRjfLF6_RmbxB/view?usp=sharing
+> 
+> This has no symbols :(
+> 
 
-Will look into FUSE_INIT.  The FUSE_INIT as I understand from what I've 
-read has some expansion constraints or the structure is somehow 
-negotiated.  Older clients in other words that's not aware of the option 
-will follow some default.  For backwards compatibility that default 
-should probably be 1 page.  For performance reasons it makes sense that 
-this limit be larger.
+Uh.. :/
+I'll try to fix this and re-generate.
 
-glibc uses a 128KiB buffer for getdents64, so I'm not sure >128KiB here 
-makes sense.  Or if these two buffers are even directly related.
+> There is a small bug in this commit, we should always set SPLICE.
+> But I don't see how that'd cause the warning you're seeing.
+> Does your build have CONFIG_DEBUG_VM enabled?
 
-Default to fc->max_pages (which defaults to 32 or 128KiB) if the 
-user-space side doesn't understand the max_readdir_pages limit aspect of 
-things?  Assuming these limits should be set separately.  I'm thinking 
-piggy backing on fc->max_pages is just fine to be honest.
+No.
 
-For the sake of avoiding division and modulo operations in the cache, 
-I'm thinking round-down max_pages to the closest power of two for the 
-sake of sticking to binary operators rather than divisions and mods?
+# CONFIG_DEBUG_VM is not set
+# CONFIG_DEBUG_VM_PGTABLE is not set
 
-Current patch introduces a definite memory leak either way.  Tore 
-through about 12GB of RAM in a matter of 20 minutes or so.  Just going 
-to patch it that way first, and then based on responses above will look 
-into an alternative patch that does not depend on a compile-time 
-option.  Guessing __free_page should be a multi-page variant now.
+> 
+> -->8-------------------------
+> 
+> From: Jakub Kicinski <kuba@kernel.org>
+> Date: Tue, 25 Jul 2023 17:03:25 -0700
+> Subject: net: tls: set MSG_SPLICE_PAGES consistently
+> 
+> We used to change the flags for the last segment, because
+> non-last segments had the MSG_SENDPAGE_NOTLAST flag set.
+> That flag is no longer a thing so remove the setting.
+> 
+> Since flags most likely don't have MSG_SPLICE_PAGES set
+> this avoids passing parts of the sg as splice and parts
+> as non-splice.
+> 
+> ... tags ...
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> ---
+>   net/tls/tls_main.c | 3 ---
+>   1 file changed, 3 deletions(-)
+> 
+> diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
+> index b6896126bb92..4a8ee2f6badb 100644
+> --- a/net/tls/tls_main.c
+> +++ b/net/tls/tls_main.c
+> @@ -139,9 +139,6 @@ int tls_push_sg(struct sock *sk,
+>   
+>   	ctx->splicing_pages = true;
+>   	while (1) {
+> -		if (sg_is_last(sg))
+> -			msg.msg_flags = flags;
+> -
+>   		/* is sending application-limited? */
+>   		tcp_rate_check_app_limited(sk);
+>   		p = sg_page(sg);
 
-Thanks for all the feedback so far.
+I'll test this anyway tomorrow and update.
 
-Kind regards,
-Jaco
-
+Regards,
+Tariq
