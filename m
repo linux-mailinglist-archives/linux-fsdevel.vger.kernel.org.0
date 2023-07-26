@@ -2,110 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4045A762DEE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 09:38:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3335C762E07
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 09:40:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229568AbjGZHiY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 03:38:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60710 "EHLO
+        id S232478AbjGZHkE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 03:40:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232550AbjGZHht (ORCPT
+        with ESMTP id S231601AbjGZHj2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 03:37:49 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 339CE449A;
-        Wed, 26 Jul 2023 00:35:47 -0700 (PDT)
-Received: from kwepemm600016.china.huawei.com (unknown [172.30.72.56])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4R9lwZ58g1ztRpc;
-        Wed, 26 Jul 2023 15:32:30 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by kwepemm600016.china.huawei.com
- (7.193.23.20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 26 Jul
- 2023 15:35:44 +0800
-From:   liubo <liubo254@huawei.com>
-To:     <akpm@linux-foundation.org>
-CC:     <liubo254@huawei.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <hughd@google.com>,
-        <peterx@redhat.com>, <willy@infradead.org>
-Subject: [PATCH] smaps: Fix the abnormal memory statistics obtained through /proc/pid/smaps
-Date:   Wed, 26 Jul 2023 15:34:09 +0800
-Message-ID: <20230726073409.631838-1-liubo254@huawei.com>
-X-Mailer: git-send-email 2.23.0
+        Wed, 26 Jul 2023 03:39:28 -0400
+Received: from out-55.mta0.migadu.com (out-55.mta0.migadu.com [91.218.175.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A636849FA
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 00:36:36 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1690356994;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Yrw1e5tQhbkMga7eJrUip2ycPtsuLn9P74mG8ros/F0=;
+        b=XkkSjxLZhEs+WTu6Lxce6yw56JkcjLLE3W9mi8l7oiUYes2Mt2Kx9x4+hwiBhDOxzRpaVC
+        pfsRiMgi/wQngx46uSL66saqLbu8FkMymz5gIEi/n4cwHkh93N7+NRLIrXwMgbBpn3V0mr
+        W8L4NvyZa4l7hBRrr+6H7xx0fZlpIGk=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.124.27]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm600016.china.huawei.com (7.193.23.20)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Subject: Re: [PATCH v2 29/47] vmw_balloon: dynamically allocate the
+ vmw-balloon shrinker
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <20230724094354.90817-30-zhengqi.arch@bytedance.com>
+Date:   Wed, 26 Jul 2023 15:35:42 +0800
+Cc:     Andrew Morton <akpm@linux-foundation.org>, david@fromorbit.com,
+        tkhai@ya.ru, Vlastimil Babka <vbabka@suse.cz>,
+        Roman Gushchin <roman.gushchin@linux.dev>, djwong@kernel.org,
+        Christian Brauner <brauner@kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>, tytso@mit.edu,
+        steven.price@arm.com, cel@kernel.org,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        yujie.liu@intel.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+        kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-erofs@lists.ozlabs.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+        rcu@vger.kernel.org, netdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        dm-devel@redhat.com, linux-raid@vger.kernel.org,
+        linux-bcache@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <1D40C9FD-84F6-40BA-8D2C-0DF05882C933@linux.dev>
+References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
+ <20230724094354.90817-30-zhengqi.arch@bytedance.com>
+To:     Qi Zheng <zhengqi.arch@bytedance.com>
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In commit 474098edac26 ("mm/gup: replace FOLL_NUMA by
-gup_can_follow_protnone()"), FOLL_NUMA was removed and replaced by
-the gup_can_follow_protnone interface.
 
-However, for the case where the user-mode process uses transparent
-huge pages, when analyzing the memory usage through
-/proc/pid/smaps_rollup, the obtained memory usage is not consistent
-with the RSS in /proc/pid/status.
 
-Related examples are as follows:
-cat /proc/15427/status
-VmRSS:  20973024 kB
-RssAnon:        20971616 kB
-RssFile:            1408 kB
-RssShmem:              0 kB
+> On Jul 24, 2023, at 17:43, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
+> 
+> In preparation for implementing lockless slab shrink, use new APIs to
+> dynamically allocate the vmw-balloon shrinker, so that it can be freed
+> asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
+> read-side critical section when releasing the struct vmballoon.
+> 
+> And we can simply exit vmballoon_init() when registering the shrinker
+> fails. So the shrinker_registered indication is redundant, just remove it.
+> 
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 
-cat /proc/15427/smaps_rollup
-00400000-7ffcc372d000 ---p 00000000 00:00 0 [rollup]
-Rss:            14419432 kB
-Pss:            14418079 kB
-Pss_Dirty:      14418016 kB
-Pss_Anon:       14418016 kB
-Pss_File:             63 kB
-Pss_Shmem:             0 kB
-Anonymous:      14418016 kB
-LazyFree:              0 kB
-AnonHugePages:  14417920 kB
+Nice cleanup.
 
-The root cause is that the traversal In the page table, the number of
-pages obtained by smaps_pmd_entry does not include the pages
-corresponding to PROTNONE,resulting in a different situation.
+Reviewed-by: Muchun Song <songmuchun@bytedance.com>
 
-Therefore, when obtaining pages through the follow_trans_huge_pmd
-interface, add the FOLL_FORCE flag to count the pages corresponding to
-PROTNONE to solve the above problem.
-
-Signed-off-by: liubo <liubo254@huawei.com>
-Fixes: 474098edac26 ("mm/gup: replace FOLL_NUMA by gup_can_follow_protnone()")
----
- fs/proc/task_mmu.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index c1e6531cb02a..ed08f9b869e2 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -571,8 +571,10 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
- 	bool migration = false;
- 
- 	if (pmd_present(*pmd)) {
--		/* FOLL_DUMP will return -EFAULT on huge zero page */
--		page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP);
-+		/* FOLL_DUMP will return -EFAULT on huge zero page
-+		 * FOLL_FORCE follow a PROT_NONE mapped page
-+		 */
-+		page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP | FOLL_FORCE);
- 	} else if (unlikely(thp_migration_supported() && is_swap_pmd(*pmd))) {
- 		swp_entry_t entry = pmd_to_swp_entry(*pmd);
- 
--- 
-2.27.0
 
