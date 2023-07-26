@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 51474762FAD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 10:23:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53F8B762FB2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 10:23:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232155AbjGZIXT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 04:23:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34304 "EHLO
+        id S231450AbjGZIXV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 04:23:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231580AbjGZIWX (ORCPT
+        with ESMTP id S231812AbjGZIWm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 04:22:23 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79D276A70
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 01:10:13 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id 98e67ed59e1d1-2685102cd16so253568a91.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 01:10:13 -0700 (PDT)
+        Wed, 26 Jul 2023 04:22:42 -0400
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A9636E97
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 01:10:19 -0700 (PDT)
+Received: by mail-il1-x129.google.com with SMTP id e9e14a558f8ab-348ec533c92so1644705ab.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 01:10:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1690359013; x=1690963813;
+        d=bytedance.com; s=google; t=1690359018; x=1690963818;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Q9dsUg7Mi/WzTn56TpcYztC53dUlO7YtHGzVyJj2ahA=;
-        b=AxvO2W8WmVjCl+8rJI4ixbPJPEirwx12lLH3TIqpROUBNuTlBFTpwIzvimh0rKV5GO
-         jl53Qb/ksDM+V8W/GLFWjp+RoSYw3jS+hUC4AqvaYFObpV+KEgG/doJAkaO3KYxj67D3
-         hGPB/vbqL0FvtkEDKiSP2uFPrG+vqg6MD9oePIzWQfrkyb9NfNm5I1GxlLLwR2jNR5xw
-         PYqQU1CDGlNTqFeTUH9EsCbpxb5Yp/asxXO7fyvKXIG2Sip5Qaq5nthqVKfov9s0UZnU
-         nig8GQjrdik29VC+VZghqXGcKhCir4shFIkMGLbvr/P68Zz7mLMG8OhUaIsqqlWUdBPz
-         BlrQ==
+        bh=zLmPRatqLaPjNdFSIOQqmfdfgzRaFIKbs75zNZxQM3k=;
+        b=edqfz4k42nCM4mbt3rgbm433jEQgkgjdf50ULvk8j2xYHjezVeSFt1oZ907tUkLq6H
+         ow/CoVkmA5DqlFbF8xELCu7XeAPlG3bTVmgL6D3d33T+UtZlMVWJMJvrYHZ4nrda3KuW
+         Pp+6+h0GCAVyTF84xW6NaL1Yy0kreE4NvfODNzLeX1FkzSpYfE4EDIGnEfkgGSLFIcf/
+         JNvbkrZvHx4x5rq0B03sAvUSxcYYjCKmiCcAjvYEtA5Y4uzZBxgt5r99KZvcg2AJ4Ce2
+         mlpfpAvootB9ZFpXGuoGEyHBwrOZDmHKQMbdKy+9I1mars1V4N4rHoRVXeHhHak5dgDV
+         uiPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690359013; x=1690963813;
+        d=1e100.net; s=20221208; t=1690359018; x=1690963818;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q9dsUg7Mi/WzTn56TpcYztC53dUlO7YtHGzVyJj2ahA=;
-        b=Zqv4wFjxELbN94SKtAAG0roLvhckYKWokiMVWA57x6v7DV8fqFv+6tYnM9hFBsMoya
-         jTpnzhEpmMuHizeuidm//mLJYdkGgPbrKXWxDWSl9fyQdcgRXIg6SRuLhQWInobQQQYX
-         AQqHjqx04soL3FJ3plsVWXagu/BFRgF6DyaSZGJch57Iu5HcxY9zKNsXrEgDzcQL3NIX
-         7TmigWsgthdMSUAbeRxeSBbHX8LoZrZFLaXpFjAE191JWfb6p28vygq65sNl5gl12C1X
-         XA55WPp4hcaEHwUZ53c3hhCo27gj/Up4x8RLoN7b01P6yCVpM/hLCYayDSirZVq6PpfC
-         MTjg==
-X-Gm-Message-State: ABy/qLaQJCIG64L6vKQbf5JS7N9hb+j8UWykwH8F/Yzhaa6mlGZt4aDc
-        U9Nnby6X/zcR9g3W6+JtqIz9QA==
-X-Google-Smtp-Source: APBJJlGkN+ndt02hEH/zEFcGhY2t+fQ0s2aGudRsTkYsXiwqyld2+wz2kPDM4ySgqmSJx8lp4VguSA==
-X-Received: by 2002:a17:90b:1498:b0:268:f56:a2d6 with SMTP id js24-20020a17090b149800b002680f56a2d6mr947545pjb.22.1690359012722;
-        Wed, 26 Jul 2023 01:10:12 -0700 (PDT)
+        bh=zLmPRatqLaPjNdFSIOQqmfdfgzRaFIKbs75zNZxQM3k=;
+        b=VzcSSbD3yUrDKSxOBcW2I3Pp7vPVUsck00irzldvK+yTGXho4GoYrJjJwFfqSU16tP
+         u4sQJ1d59yGf2qTt2zJKtIEy1r3Ua4voqaNrvI3NFUPROMxZHzJc3dV15vRS/s3DCW/a
+         DLi6iI9TpDTX6S/Li4IWDi57DIyyH695VLEBcWvaBlEIxcFFkelvBEkRhCJVWTBexvpq
+         EyvvGOaB1WvSc69ybGAnwWvQew/LarnVYS4roaH/RUVqHkgXamviiBb4vhnz/K3j9Hri
+         jRvwFv0s8JfcErNIfR3RZlYkgWgLayrYYU1ic7AUr/aBlDJ+ZwGa9QMgvN7M1D/ngita
+         /5GQ==
+X-Gm-Message-State: ABy/qLamV+KqOwqWZLNwe16F/jBjSMkbIxSQdRt73ghTLeyJ7zAmwHuY
+        aP6ENSFCPi/iEw8uQ431K5MCIQ==
+X-Google-Smtp-Source: APBJJlGa1sI8Ot6wDuAGAIzbtMGaPwlxOu08ayCD0nVOoODHEZRjd9Ytl9786BZoeyT8Q0+YuiMnMQ==
+X-Received: by 2002:a05:6e02:92d:b0:348:c57f:b016 with SMTP id o13-20020a056e02092d00b00348c57fb016mr1153348ilt.3.1690359018367;
+        Wed, 26 Jul 2023 01:10:18 -0700 (PDT)
 Received: from GL4FX4PXWL.bytedance.net ([203.208.167.147])
-        by smtp.gmail.com with ESMTPSA id gc17-20020a17090b311100b002680b2d2ab6sm756540pjb.19.2023.07.26.01.10.07
+        by smtp.gmail.com with ESMTPSA id gc17-20020a17090b311100b002680b2d2ab6sm756540pjb.19.2023.07.26.01.10.13
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 26 Jul 2023 01:10:12 -0700 (PDT)
+        Wed, 26 Jul 2023 01:10:18 -0700 (PDT)
 From:   Peng Zhang <zhangpeng.00@bytedance.com>
 To:     Liam.Howlett@oracle.com, corbet@lwn.net, akpm@linux-foundation.org,
         willy@infradead.org, brauner@kernel.org, surenb@google.com,
@@ -58,9 +58,9 @@ To:     Liam.Howlett@oracle.com, corbet@lwn.net, akpm@linux-foundation.org,
 Cc:     linux-mm@kvack.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Peng Zhang <zhangpeng.00@bytedance.com>
-Subject: [PATCH 04/11] maple_tree: Introduce interfaces __mt_dup() and mt_dup()
-Date:   Wed, 26 Jul 2023 16:09:09 +0800
-Message-Id: <20230726080916.17454-5-zhangpeng.00@bytedance.com>
+Subject: [PATCH 05/11] maple_tree: Add test for mt_dup()
+Date:   Wed, 26 Jul 2023 16:09:10 +0800
+Message-Id: <20230726080916.17454-6-zhangpeng.00@bytedance.com>
 X-Mailer: git-send-email 2.37.0 (Apple Git-136)
 In-Reply-To: <20230726080916.17454-1-zhangpeng.00@bytedance.com>
 References: <20230726080916.17454-1-zhangpeng.00@bytedance.com>
@@ -69,261 +69,240 @@ Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce interfaces __mt_dup() and mt_dup(), which are used to
-duplicate a maple tree. Compared with traversing the source tree and
-reinserting entry by entry in the new tree, it has better performance.
-The difference between __mt_dup() and mt_dup() is that mt_dup() holds
-an internal lock.
+Add test for mt_dup().
 
 Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
 ---
- include/linux/maple_tree.h |   3 +
- lib/maple_tree.c           | 211 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 214 insertions(+)
+ tools/testing/radix-tree/maple.c | 202 +++++++++++++++++++++++++++++++
+ 1 file changed, 202 insertions(+)
 
-diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
-index c962af188681..229fe78e4c89 100644
---- a/include/linux/maple_tree.h
-+++ b/include/linux/maple_tree.h
-@@ -327,6 +327,9 @@ int mtree_store(struct maple_tree *mt, unsigned long index,
- 		void *entry, gfp_t gfp);
- void *mtree_erase(struct maple_tree *mt, unsigned long index);
- 
-+int mt_dup(struct maple_tree *mt, struct maple_tree *new, gfp_t gfp);
-+int __mt_dup(struct maple_tree *mt, struct maple_tree *new, gfp_t gfp);
-+
- void mtree_destroy(struct maple_tree *mt);
- void __mt_destroy(struct maple_tree *mt);
- 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index da3a2fb405c0..efac6761ae37 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -6595,6 +6595,217 @@ void *mtree_erase(struct maple_tree *mt, unsigned long index)
+diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
+index e5da1cad70ba..3052e899e5df 100644
+--- a/tools/testing/radix-tree/maple.c
++++ b/tools/testing/radix-tree/maple.c
+@@ -35857,6 +35857,204 @@ static noinline void __init check_locky(struct maple_tree *mt)
+ 	mt_clear_in_rcu(mt);
  }
- EXPORT_SYMBOL(mtree_erase);
  
 +/*
-+ * mt_dup_free() - Free the nodes of a incomplete maple tree.
-+ * @mt: The incomplete maple tree
-+ * @node: Free nodes from @node
-+ *
-+ * This function frees all nodes starting from @node in the reverse order of
-+ * mt_dup_build(). At this point we don't need to hold the source tree lock.
++ * Compare two nodes and return 0 if they are the same, non-zero otherwise.
 + */
-+static void mt_dup_free(struct maple_tree *mt, struct maple_node *node)
++static int __init compare_node(struct maple_enode *enode_a,
++			       struct maple_enode *enode_b)
 +{
-+	void **slots;
-+	unsigned char offset;
-+	struct maple_enode *enode;
++	struct maple_node *node_a, *node_b;
++	struct maple_node a, b;
++	void **slots_a, **slots_b; /* Do not use the rcu tag. */
 +	enum maple_type type;
-+	unsigned char count = 0, i;
++	int i;
 +
-+try_ascend:
-+	if (ma_is_root(node)) {
-+		mt_free_one(node);
-+		return;
++	if (((unsigned long)enode_a & MAPLE_NODE_MASK) !=
++	    ((unsigned long)enode_b & MAPLE_NODE_MASK)) {
++		pr_err("The lower 8 bits of enode are different.\n");
++		return -1;
 +	}
 +
-+	offset = ma_parent_slot(node);
-+	type = ma_parent_type(mt, node);
-+	node = ma_parent(node);
-+	if (!offset)
-+		goto free;
++	type = mte_node_type(enode_a);
++	node_a = mte_to_node(enode_a);
++	node_b = mte_to_node(enode_b);
++	a = *node_a;
++	b = *node_b;
 +
-+	offset--;
++	/* Do not compare addresses. */
++	if (ma_is_root(node_a) || ma_is_root(node_b)) {
++		a.parent = (struct maple_pnode *)((unsigned long)a.parent &
++						  MA_ROOT_PARENT);
++		b.parent = (struct maple_pnode *)((unsigned long)b.parent &
++						  MA_ROOT_PARENT);
++	} else {
++		a.parent = (struct maple_pnode *)((unsigned long)a.parent &
++						  MAPLE_NODE_MASK);
++		b.parent = (struct maple_pnode *)((unsigned long)b.parent &
++						  MAPLE_NODE_MASK);
++	}
 +
-+descend:
-+	slots = (void **)ma_slots(node, type);
-+	enode = slots[offset];
-+	if (mte_is_leaf(enode))
-+		goto free;
++	if (a.parent != b.parent) {
++		pr_err("The lower 8 bits of parents are different. %p %p\n",
++			a.parent, b.parent);
++		return -1;
++	}
 +
-+	type = mte_node_type(enode);
-+	node = mte_to_node(enode);
-+	offset = ma_nonleaf_data_end_nocheck(node, type);
-+	goto descend;
++	/*
++	 * If it is a leaf node, the slots do not contain the node address, and
++	 * no special processing of slots is required.
++	 */
++	if (ma_is_leaf(type))
++		goto cmp;
 +
-+free:
-+	slots = (void **)ma_slots(node, type);
-+	count = ma_nonleaf_data_end_nocheck(node, type) + 1;
-+	for (i = 0; i < count; i++)
-+		((unsigned long *)slots)[i] &= ~MAPLE_NODE_MASK;
++	slots_a = ma_slots(&a, type);
++	slots_b = ma_slots(&b, type);
 +
-+	/* Cast to __rcu to avoid sparse checker complaining. */
-+	mt_free_bulk(count, (void __rcu **)slots);
-+	goto try_ascend;
++	for (i = 0; i < mt_slots[type]; i++) {
++		if (!slots_a[i] && !slots_b[i])
++			break;
++
++		if (!slots_a[i] || !slots_b[i]) {
++			pr_err("The number of slots is different.\n");
++			return -1;
++		}
++
++		/* Do not compare addresses in slots. */
++		((unsigned long *)slots_a)[i] &= MAPLE_NODE_MASK;
++		((unsigned long *)slots_b)[i] &= MAPLE_NODE_MASK;
++	}
++
++cmp:
++	/*
++	 * Compare all contents of two nodes, including parent (except address),
++	 * slots (except address), pivots, gaps and metadata.
++	 */
++	return memcmp(&a, &b, sizeof(struct maple_node));
 +}
 +
 +/*
-+ * mt_dup_build() - Build a new maple tree from a source tree
-+ * @mt: The source maple tree to copy from
-+ * @new: The new maple tree
-+ * @gfp: The GFP_FLAGS to use for allocations
-+ * @to_free: Free nodes starting from @to_free if the build fails
-+ *
-+ * This function builds a new tree in DFS preorder. If it fails due to memory
-+ * allocation, @to_free will store the last failed node to free the incomplete
-+ * tree. Use mt_dup_free() to free nodes.
-+ *
-+ * Return: 0 on success, -ENOMEM if memory could not be allocated.
++ * Compare two trees and return 0 if they are the same, non-zero otherwise.
 + */
-+static inline int mt_dup_build(struct maple_tree *mt, struct maple_tree *new,
-+			       gfp_t gfp, struct maple_node **to_free)
++static int __init compare_tree(struct maple_tree *mt_a, struct maple_tree *mt_b)
 +{
-+	struct maple_enode *enode;
-+	struct maple_node *new_node, *new_parent = NULL, *node;
-+	enum maple_type type;
-+	void __rcu **slots;
-+	void **new_slots;
-+	unsigned char count, request, i, offset;
-+	unsigned long *set_parent;
-+	unsigned long new_root;
++	MA_STATE(mas_a, mt_a, 0, 0);
++	MA_STATE(mas_b, mt_b, 0, 0);
 +
-+	mt_init_flags(new, mt->ma_flags);
-+	enode = mt_root_locked(mt);
-+	if (unlikely(!xa_is_node(enode))) {
-+		rcu_assign_pointer(new->ma_root, enode);
++	if (mt_a->ma_flags != mt_b->ma_flags) {
++		pr_err("The flags of the two trees are different.\n");
++		return -1;
++	}
++
++	mas_dfs_preorder(&mas_a);
++	mas_dfs_preorder(&mas_b);
++
++	if (mas_is_ptr(&mas_a) || mas_is_ptr(&mas_b)) {
++		if (!(mas_is_ptr(&mas_a) && mas_is_ptr(&mas_b))) {
++			pr_err("One is MAS_ROOT and the other is not.\n");
++			return -1;
++		}
 +		return 0;
 +	}
 +
-+	new_node = mt_alloc_one(gfp);
-+	if (!new_node)
-+		return -ENOMEM;
++	while (!mas_is_none(&mas_a) || !mas_is_none(&mas_b)) {
 +
-+	new_root = (unsigned long)new_node;
-+	new_root |= (unsigned long)enode & MAPLE_NODE_MASK;
++		if (mas_is_none(&mas_a) || mas_is_none(&mas_b)) {
++			pr_err("One is MAS_NONE and the other is not.\n");
++			return -1;
++		}
 +
-+copy_node:
-+	node = mte_to_node(enode);
-+	type = mte_node_type(enode);
-+	memcpy(new_node, node, sizeof(struct maple_node));
++		if (mas_a.min != mas_b.min ||
++		    mas_a.max != mas_b.max) {
++			pr_err("mas->min, mas->max do not match.\n");
++			return -1;
++		}
 +
-+	set_parent = (unsigned long *)&(new_node->parent);
-+	*set_parent &= MAPLE_NODE_MASK;
-+	*set_parent |= (unsigned long)new_parent;
-+	if (ma_is_leaf(type))
-+		goto ascend;
++		if (compare_node(mas_a.node, mas_b.node)) {
++			pr_err("The contents of nodes %p and %p are different.\n",
++			       mas_a.node, mas_b.node);
++			mt_dump(mt_a, mt_dump_dec);
++			mt_dump(mt_b, mt_dump_dec);
++			return -1;
++		}
 +
-+	new_slots = (void **)ma_slots(new_node, type);
-+	slots = ma_slots(node, type);
-+	request = ma_nonleaf_data_end(mt, node, type) + 1;
-+	count = mt_alloc_bulk(gfp, request, new_slots);
-+	if (!count) {
-+		*to_free = new_node;
-+		return -ENOMEM;
++		mas_dfs_preorder(&mas_a);
++		mas_dfs_preorder(&mas_b);
 +	}
 +
-+	for (i = 0; i < count; i++)
-+		((unsigned long *)new_slots)[i] |=
-+				((unsigned long)mt_slot_locked(mt, slots, i) &
-+				 MAPLE_NODE_MASK);
-+	offset = 0;
-+
-+descend:
-+	new_parent = new_node;
-+	enode = mt_slot_locked(mt, slots, offset);
-+	new_node = mte_to_node(new_slots[offset]);
-+	goto copy_node;
-+
-+ascend:
-+	if (ma_is_root(node)) {
-+		new_node = mte_to_node((void *)new_root);
-+		new_node->parent = ma_parent_ptr((unsigned long)new |
-+						 MA_ROOT_PARENT);
-+		rcu_assign_pointer(new->ma_root, (void *)new_root);
-+		return 0;
-+	}
-+
-+	offset = ma_parent_slot(node);
-+	type = ma_parent_type(mt, node);
-+	node = ma_parent(node);
-+	new_node = ma_parent(new_node);
-+	if (offset < ma_nonleaf_data_end(mt, node, type)) {
-+		offset++;
-+		new_slots = (void **)ma_slots(new_node, type);
-+		slots = ma_slots(node, type);
-+		goto descend;
-+	}
-+
-+	goto ascend;
++	return 0;
 +}
 +
-+/**
-+ * __mt_dup(): Duplicate a maple tree
-+ * @mt: The source maple tree
-+ * @new: The new maple tree
-+ * @gfp: The GFP_FLAGS to use for allocations
-+ *
-+ * This function duplicates a maple tree using a faster method than traversing
-+ * the source tree and inserting entries into the new tree one by one. The user
-+ * needs to lock the source tree manually. Before calling this function, @new
-+ * must be an empty tree or an uninitialized tree. If @mt uses an external lock,
-+ * we may also need to manually set @new's external lock using
-+ * mt_set_external_lock().
-+ *
-+ * Return: 0 on success, -ENOMEM if memory could not be allocated.
-+ */
-+int __mt_dup(struct maple_tree *mt, struct maple_tree *new, gfp_t gfp)
++static noinline void __init check_mt_dup(struct maple_tree *mt)
 +{
-+	int ret;
-+	struct maple_node *to_free = NULL;
++	DEFINE_MTREE(new);
++	int i, j, ret, count = 0;
 +
-+	ret = mt_dup_build(mt, new, gfp, &to_free);
++	/* stored in the root pointer*/
++	mt_init_flags(&tree, 0);
++	mtree_store_range(&tree, 0, 0, xa_mk_value(0), GFP_KERNEL);
++	mt_dup(&tree, &new, GFP_KERNEL);
++	mt_validate(&new);
++	if (compare_tree(&tree, &new))
++		MT_BUG_ON(&new, 1);
 +
-+	if (unlikely(ret == -ENOMEM)) {
-+		if (to_free)
-+			mt_dup_free(new, to_free);
++	mtree_destroy(&tree);
++	mtree_destroy(&new);
++
++	for (i = 0; i < 1000; i += 3) {
++		if (i & 1)
++			mt_init_flags(&tree, 0);
++		else
++			mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
++
++		for (j = 0; j < i; j++) {
++			mtree_store_range(&tree, j * 10, j * 10 + 5,
++					  xa_mk_value(j), GFP_KERNEL);
++		}
++
++		ret = mt_dup(&tree, &new, GFP_KERNEL);
++		MT_BUG_ON(&new, ret != 0);
++		mt_validate(&new);
++		if (compare_tree(&tree, &new))
++			MT_BUG_ON(&new, 1);
++
++		mtree_destroy(&tree);
++		mtree_destroy(&new);
 +	}
 +
-+	return ret;
-+}
-+EXPORT_SYMBOL(__mt_dup);
++	/* Test memory allocation failed. */
++	for (i = 0; i < 1000; i += 3) {
++		if (i & 1)
++			mt_init_flags(&tree, 0);
++		else
++			mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
 +
-+/**
-+ * mt_dup(): Duplicate a maple tree
-+ * @mt: The source maple tree
-+ * @new: The new maple tree
-+ * @gfp: The GFP_FLAGS to use for allocations
-+ *
-+ * This function duplicates a maple tree using a faster method than traversing
-+ * the source tree and inserting entries into the new tree one by one. The
-+ * function will lock the source tree with an internal lock, and the user does
-+ * not need to manually handle the lock. Before calling this function, @new must
-+ * be an empty tree or an uninitialized tree. If @mt uses an external lock, we
-+ * may also need to manually set @new's external lock using
-+ * mt_set_external_lock().
-+ *
-+ * Return: 0 on success, -ENOMEM if memory could not be allocated.
-+ */
-+int mt_dup(struct maple_tree *mt, struct maple_tree *new, gfp_t gfp)
-+{
-+	int ret;
-+	struct maple_node *to_free = NULL;
++		for (j = 0; j < i; j++) {
++			mtree_store_range(&tree, j * 10, j * 10 + 5,
++					  xa_mk_value(j), GFP_KERNEL);
++		}
 +
-+	mtree_lock(mt);
-+	ret = mt_dup_build(mt, new, gfp, &to_free);
-+	mtree_unlock(mt);
++		mt_set_non_kernel(50);
++		ret = mt_dup(&tree, &new, GFP_NOWAIT);
++		mt_set_non_kernel(0);
++		if (ret != 0) {
++			MT_BUG_ON(&new, ret != -ENOMEM);
++			count++;
++			mtree_destroy(&tree);
++			continue;
++		}
 +
-+	if (unlikely(ret == -ENOMEM)) {
-+		if (to_free)
-+			mt_dup_free(new, to_free);
++		mt_validate(&new);
++		if (compare_tree(&tree, &new))
++			MT_BUG_ON(&new, 1);
++
++		mtree_destroy(&tree);
++		mtree_destroy(&new);
 +	}
 +
-+	return ret;
++	/* pr_info("mt_dup() fail %d times\n", count); */
++	BUG_ON(!count);
 +}
-+EXPORT_SYMBOL(mt_dup);
 +
- /**
-  * __mt_destroy() - Walk and free all nodes of a locked maple tree.
-  * @mt: The maple tree
+ extern void test_kmem_cache_bulk(void);
+ 
+ void farmer_tests(void)
+@@ -35904,6 +36102,10 @@ void farmer_tests(void)
+ 	check_null_expand(&tree);
+ 	mtree_destroy(&tree);
+ 
++	mt_init_flags(&tree, 0);
++	check_mt_dup(&tree);
++	mtree_destroy(&tree);
++
+ 	/* RCU testing */
+ 	mt_init_flags(&tree, 0);
+ 	check_erase_testset(&tree);
 -- 
 2.20.1
 
