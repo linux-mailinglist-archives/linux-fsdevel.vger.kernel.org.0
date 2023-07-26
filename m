@@ -2,108 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 884C7763E01
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 19:58:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D199763E28
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 20:08:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230385AbjGZR6o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 13:58:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46344 "EHLO
+        id S232152AbjGZSIo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 14:08:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230032AbjGZR6m (ORCPT
+        with ESMTP id S232100AbjGZSIn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 13:58:42 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDD302688;
-        Wed, 26 Jul 2023 10:58:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=YPmagiFQ/MeFHRjwmSRL0hWWXD4WhK730BMoQ57Tcfs=; b=kixqBCkSocxZEhHc2Sl4YQ3j/W
-        6MHhYsaeGcAEFz3Ikfkl0tpJZeVVuCe/BiTxlYG3dJ8HcvJ/T2vdQAQ5gIBhR2n6UhgaBfMrG4PI3
-        Z5Id/jv1a75gsjOtDXpt/LD7O15Touqa7NqiEPt/l8zBxXGlzsYO+bCoXjnUd4LyKsNR8uZGhhZRg
-        +OyiKfgZbY7fbFXMfGEJdwxH3fx8IGSflQLhVMJDAioTezH4kPOYHszoYxlRVTrC6/MqPhn7X667m
-        QRhIOcxcm6QRQ5XuiNwXgc2BldKLdF/obVnyC8UpbIg6DWBIlRNSJNh4WSktu5vL21AXLcVy8pPM7
-        x0bCwxMw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qOimM-00BE8R-2H;
-        Wed, 26 Jul 2023 17:58:30 +0000
-Date:   Wed, 26 Jul 2023 10:58:30 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Joel Granados <j.granados@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, willy@infradead.org,
-        josh@joshtriplett.org,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH 06/14] sysctl: Add size to register_sysctl
-Message-ID: <ZMFexmOcfyORkRRs@bombadil.infradead.org>
-References: <20230726140635.2059334-1-j.granados@samsung.com>
- <CGME20230726140659eucas1p2c3cd9f57dd13c71ddeb78d2480587e72@eucas1p2.samsung.com>
- <20230726140635.2059334-7-j.granados@samsung.com>
+        Wed, 26 Jul 2023 14:08:43 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 643A91FF5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 11:08:42 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id AA8C232005CA;
+        Wed, 26 Jul 2023 14:08:41 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Wed, 26 Jul 2023 14:08:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=cc
+        :content-type:content-type:date:date:from:from:in-reply-to
+        :message-id:mime-version:reply-to:sender:subject:subject:to:to;
+         s=fm1; t=1690394921; x=1690481321; bh=LiFTDs2ptIm9/GUnG9PO+IOhE
+        8PladO/37FfCMk44W0=; b=Zjd+JdOfaXc95hyrStR7yVWwcj9Z5FRdJnDdVGvoB
+        hFQcwGysZEd3hY12iGEknC7iHqBOJaBvTfmEdTUL1lwYWBPgz8IIAxUi8CNjiGPE
+        qI2kjue4uo5aXzKThdvVc6f6Qqc1o8ZitO3T/QRFEgBW2bLPdeZ4mP5XoRKH/4aM
+        QuTNdtTbL+DA7BzbivJm+dZqmzdw8QaixPwRkWnkHyMMeKnCv5Q3oWdoh15wkX/t
+        Slf8DjanRyrYw9GXo17PSgsbGC4u6DtE2//iowF0jAdidAjCgGtbbXPd1KJEeB2U
+        8x2Pfeg4eTBKPpQU7QnTfRZGMXNNxpLu6gpCV6imrQYbQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:message-id
+        :mime-version:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+        1690394921; x=1690481321; bh=LiFTDs2ptIm9/GUnG9PO+IOhE8PladO/37F
+        fCMk44W0=; b=w7P4wiHE5NsMTulNNIOoyW1q+23I5jARt/YUnU8yDRwPo7bYKI7
+        lkPjwE5THlCpPz8WwNez37SNPMcEBngGe8Xx9rpiNpuYcZcf1z9HULAgwJeCYqp+
+        Q8kxpWHdgjmtkzXIhvlHRjcDB6S5bsxvvGhYdpMJiocfFNAQp81ba4K+5znSEkAh
+        s459it+KkAx/GXgPypASDT/1uA4TZQ4rF+NRq68yV2/JJ6jXC4DITlSyYGJrVxoY
+        kGC9W2QdEzILo3xy3PVsN22SZ9D6NiSNTvQUHYhC0E+1QT5Q+/l0RFkcoZXpa3LR
+        DFFl9zjcdyewCzGIN8USBP3acLjaQt2ohqw==
+X-ME-Sender: <xms:KGHBZL1fGOvn3X8f6_LriwhP451LUHIokPDYbNbNZRJhd57b85QQsg>
+    <xme:KGHBZKGtlm8DAegp3E0vbiWBQABS0EAEEAWZQQUPS19WYHikyMb3bGgVLJVE89jij
+    Xm0e4SU5Rl5dck8>
+X-ME-Received: <xmr:KGHBZL7r8ohbYhMoY-yLIQ0X_qiSrWuV7PJHQ8uSgCnDuN7gozcjR5HfIwWGDgUShaC_BlfLmys>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedriedvgdduudelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkfgfgggtsehttddttddtredtnecuhfhrohhmpefpihhkohhlrghu
+    shcutfgrthhhuceopfhikhholhgruhhssehrrghthhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepiedtueetheevledtuedvgfdvgeeghffhfeeigeejveektdfguefgjeeuvdefhedv
+    necuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomheppfhikhholhgruhhssehrrghthhdrohhrgh
+X-ME-Proxy: <xmx:KGHBZA2ARuurFBgu3nFFP4PbYzR0O9Gbh7ATO-tfV07wJuRpPw_YIg>
+    <xmx:KGHBZOH3TxIcSA5p86npf8JwfUcAhSMGTUPK1PCNQevkbjNpVgPnbg>
+    <xmx:KGHBZB9NE8dGyrzp_10ZPS-MoBcIWdJCEdFmrFIqW1_RnaScOHMO8g>
+    <xmx:KWHBZKjum4_DHvxFjTboa0812gsdEJSHPPXct7JI9mE41jJHWZIncg>
+Feedback-ID: i53a843ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 26 Jul 2023 14:08:40 -0400 (EDT)
+Received: from vostro.rath.org (vostro [192.168.12.4])
+        by ebox.rath.org (Postfix) with ESMTPS id 79A1BB3D;
+        Wed, 26 Jul 2023 18:08:39 +0000 (UTC)
+Received: by vostro.rath.org (Postfix, from userid 1000)
+        id E41BE8053E; Wed, 26 Jul 2023 19:08:38 +0100 (BST)
+From:   Nikolaus Rath <Nikolaus@rath.org>
+To:     fuse-devel@lists.sourceforge.net,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        miklos <mszeredi@redhat.com>
+Subject: Semantics of fuse_notify_delete()
+Mail-Copies-To: never
+Mail-Followup-To: fuse-devel@lists.sourceforge.net, Linux FS Devel
+        <linux-fsdevel@vger.kernel.org>, miklos <mszeredi@redhat.com>
+Date:   Wed, 26 Jul 2023 19:08:38 +0100
+Message-ID: <87wmymk0k9.fsf@vostro.rath.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230726140635.2059334-7-j.granados@samsung.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 26, 2023 at 04:06:26PM +0200, Joel Granados wrote:
-> In order to remove the end element from the ctl_table struct arrays, we
-> replace the register_syctl function with a macro that will add the
-> ARRAY_SIZE to the new register_sysctl_sz function. In this way the
-> callers that are already using an array of ctl_table structs do not have
-> to change. We *do* change the callers that pass the ctl_table array as a
-> pointer.
+Hello,
 
-Thanks for doing this and this series!
+It seems to me that fuse_notify_delete
+(https://elixir.bootlin.com/linux/v6.1/source/fs/fuse/dev.c#L1512) fails
+with ENOTEMPTY if there is a pending FORGET request for a directory
+entry within. Is that correct?
 
-> Signed-off-by: Joel Granados <j.granados@samsung.com>
-> ---
-> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-> index 0495c858989f..b1168ae281c9 100644
-> --- a/include/linux/sysctl.h
-> +++ b/include/linux/sysctl.h
-> @@ -215,6 +215,9 @@ struct ctl_path {
->  	const char *procname;
->  };
->  
-> +#define register_sysctl(path, table)	\
-> +	register_sysctl_sz(path, table, ARRAY_SIZE(table))
-> +
->  #ifdef CONFIG_SYSCTL
+If so, what is the expected behavior for a filesystem that has just
+deleted the entire tree and wants to inform the kernel of that fact?
 
-Wasn't it Greg who had suggested this? Maybe add Suggested-by with him
-on it.
+Calling fuse_notify_delete() synchronously seems very prone to
+deadlocks, and I'm not sure that the call would actually block until
+FORGET has been processed.
 
-Also, your cover letter and first few patches are not CC'd to the netdev
-list or others. What you want to do is collect all the email addresses
-for this small patch series and add them to who you email for your
-entire series, otherwise at times they won't be able to properly review
-or understand the exact context of the changes. You want folks to do less
-work to review, not more.
+Is the filesystem expected to wait for FORGET before it issues
+fuse_notify_delete()? Or should it actually wait with the (physical)
+removal of the parent directory until all child entries have zero lookup
+count?
 
-So please resend and add others to the other patches.
+In the former case, why is this needed? In the latter case, how are
+network filesystems supposed to deal with this?
 
-  Luis
+Best,
+-Nikolaus
