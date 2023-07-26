@@ -2,94 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B9AD1763029
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 10:45:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B034E763031
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 10:45:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233392AbjGZIpA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 04:45:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47918 "EHLO
+        id S230435AbjGZIpu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 04:45:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233191AbjGZIob (ORCPT
+        with ESMTP id S232397AbjGZIpV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 04:44:31 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AE1F6EA0;
-        Wed, 26 Jul 2023 01:34:36 -0700 (PDT)
-Received: from [192.168.100.7] (unknown [59.103.218.24])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        Wed, 26 Jul 2023 04:45:21 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE54E4;
+        Wed, 26 Jul 2023 01:36:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 0A24F6606FCD;
-        Wed, 26 Jul 2023 09:34:24 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1690360474;
-        bh=kbyHAewU6qDnSTSEyCglZNTxAWdvBGgIOe5Sk6F5sTk=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=h9vI4xVfSTcEGbDHFnNp1CkGPb9ffa35OppZjK5mAmcVidyByB2rlTvL5Zkh7i8oO
-         rNof11swMdDQ6XoZmgXX9hkBQELBwhGG98hwt9vvJnulV1RvhlgTcqn1btp9/t5u6O
-         T7cHg9go9dgQa+c7vZTN3miRAntkp2ZZYsnIkGMMMIaRy+kdpvj+aBCiOfFidy3kB+
-         yVnR/o1QbDrw05pt0FqkJ/LRMk3KT8T1mauAs1bdfW/Nl8beRFvqFMbe9LV0ghm3Qb
-         RxLsslpnJtnsWF2tWh7eU+vg4oVbzPSvp6OfMZRRcEYNpeNh9cJNWPwzQWntK2bjvF
-         v4VrM6r9ucckQ==
-Message-ID: <f949f74f-bb65-e3f2-e70d-7198446a9981@collabora.com>
-Date:   Wed, 26 Jul 2023 13:34:19 +0500
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1637A61876;
+        Wed, 26 Jul 2023 08:36:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A83F9C433C8;
+        Wed, 26 Jul 2023 08:36:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690360602;
+        bh=3GlqyY7ypdrd9XrUgZY7qfg/u44TMTUBNKPVjbSg/SE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bWXeSZyl4iTP+6W28CAgdid2jQ8mzv+lgOehgwlr7yioXG4f/MsLy4iqzS5wSDT32
+         MV83MJhzw04CUCJl/CkmoLr5z2noBw28fRJGywwWTw569MR+DkPC4bMZbbRtxzlkCW
+         +06OGRyhJdo4qCo3o4kfVkM3BCq1162cCP843dHSOlFDeGAH4tdHM+fldAUXE6PcyR
+         96Xnn/o9lyUyFtBiYbI4dXRyU2Kg3oLNUNErY+kdMAAX/dHyXZUPA4lpne400Ae0/D
+         C1mEZLDIyugZ+SAUin4W/b2HiWqzpA8CARzXen8xDgEw6kp+HMDARcLG0FT9xTsflw
+         rCBHU7mvYTAdw==
+Date:   Wed, 26 Jul 2023 10:36:37 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Seth Forshee <sforshee@kernel.org>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] file: always lock position
+Message-ID: <20230726-antik-abwinken-87647ff63ec8@brauner>
+References: <20230724-eckpunkte-melden-fc35b97d1c11@brauner>
+ <CAHk-=wijcZGxrw8+aukW-m2YRGn5AUWfZsPSscez7w7_EqfuGQ@mail.gmail.com>
+ <790fbcff-9831-e5cf-2aaf-1983d9c2cffe@kernel.dk>
+ <CAHk-=wgqLGdTs5hBDskY4HjizPVYJ0cA6=-dwRR3TpJY7GZG3A@mail.gmail.com>
+ <20230724-geadelt-nachrangig-07e431a2f3a4@brauner>
+ <CAHk-=wjKXJhW3ZYtd1n9mhK8-8Ni=LSWoytkx2F5c5q=DiX1cA@mail.gmail.com>
+ <4b382446-82b6-f31a-2f22-3e812273d45f@kernel.dk>
+ <CAHk-=wg8gY+oBoehMop2G8wq2L0ciApZEOOMpiPCL=6gxBgx=g@mail.gmail.com>
+ <8d1069bf-4c0b-22be-e4c4-5f2b1eb1f7e8@kernel.dk>
+ <CAHk-=whMEd2J5otKf76zuO831sXi4OtgyBTozq_wE43q92=EiQ@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yang Shi <shy828301@gmail.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [v3] fs/proc/task_mmu: Implement IOCTL for efficient page table
- scanning
-Content-Language: en-US
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20230713101415.108875-6-usama.anjum@collabora.com>
- <a0b5c6776b2ed91f78a7575649f8b100e58bd3a9.1689881078.git.mirq-linux@rere.qmqm.pl>
- <7eedf953-7cf6-c342-8fa8-b7626d69ab63@collabora.com>
- <ZLpqzcyo2ZMXwtm4@qmqm.qmqm.pl>
- <382f4435-2088-08ce-20e9-bc1a15050861@collabora.com>
- <ZLshsAj5PbsEAHhP@qmqm.qmqm.pl>
- <b1071d62-5c8e-1b03-d919-b3a9db520e51@collabora.com>
- <CABb0KFF6M2_94Ect72zMtaRLBpOoHjHYJA-Ube3oQAh4cXSg5w@mail.gmail.com>
- <44eddc7d-fd68-1595-7e4f-e196abe37311@collabora.com>
- <CABb0KFHJVeEkh4f6WWK6FThCbA+NE8iYUZE68nV1YAxaHwiwog@mail.gmail.com>
- <e1ead2e8-046a-31d9-8df9-27cdd7b7ff83@collabora.com>
- <1afedab8-5929-61e5-b0da-9c70dc01c254@collabora.com>
- <eac29a4d-aa3f-4df5-97e6-4aa3a358f2b1@collabora.com>
- <CABb0KFHuNpG+NJQ4sQdp1n_Kf4sO8aC5DBEppFc1zz=zAeDfQw@mail.gmail.com>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <CABb0KFHuNpG+NJQ4sQdp1n_Kf4sO8aC5DBEppFc1zz=zAeDfQw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whMEd2J5otKf76zuO831sXi4OtgyBTozq_wE43q92=EiQ@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -97,60 +67,50 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/25/23 11:05 PM, Michał Mirosław wrote:
-> On Tue, 25 Jul 2023 at 11:11, Muhammad Usama Anjum
-> <usama.anjum@collabora.com> wrote:
->>
->> ----
->> Michal please post your thoughts before I post this as v26.
->> ----
-> [...]
+On Tue, Jul 25, 2023 at 01:51:37PM -0700, Linus Torvalds wrote:
+> On Tue, 25 Jul 2023 at 13:41, Jens Axboe <axboe@kernel.dk> wrote:
+> >
+> > Right, but what if the original app closes the file descriptor? Now you
+> > have the io_uring file table still holding a reference to it, but it'd
+> > just be 1. Which is enough to keep it alive, but you can still have
+> > multiple IOs inflight against this file.
 > 
-> Looks ok - minor things below.
+> Note that fdget_pos() fundamentally only works on file descriptors
+> that are there - it's literally looking them up in the file table as
+> it goes along. And it looks at the count of the file description as it
+> is looked up. So that refcount is guaranteed to exist.
 > 
-> 1. I'd change the _WPASYNC things to something better, if this can
-> also work with "normal" UFFD WP.
-Yeah, but we don't have any use case where UFFD WP is required. It can be
-easily added later when user case arrives. Also UFFD WP sends messages to
-userspace. User can easily do the bookkeeping in userspace as performance
-isn't a concern there.
-
+> If the file has been closed, fdget_pos() will just fail because it
+> doesn't find it.
 > 
-> 2. For the address tagging part I'd prefer someone who knows how this
-> is used take a look. We're ignoring the tag (but clear it on return in
-> ->start) - so it doesn't matter for the ioctl() itself.
-I've added Kirill if he can give his thoughts about tagged memory.
+> And if it's then closed *afterwards*, that's fine and doesn't affect
+> anything, because the locking has been done and we saved away the
+> status bit as FDPUT_POS_UNLOCK, so the code knows to unlock even if
+> the file descriptor in the meantime has turned back to having just a
+> single refcount.
 
-Right now we are removing the tags from all 3 pointers (start, end, vec)
-before using the pointers on kernel side. But we are overwriting and
-writing the walk ending address in start which user can read/use.
+Yes, and to summarize which I tried in my description for the commit.
+The getdents support patchset would have introduced a bug because the
+patchset copied the fdget_pos() file_count(file) > 1 optimization into
+io_uring.
 
-I think we shouldn't over-write the start (and its tag) and instead return
-the ending walk address in new variable, walk_end.
+That works fine as long as the original file descriptor used to register
+the fixed file is kept. The locking will work correctly as
+file_count(file) > 1 and no races are possible neither via getdent calls
+using the original file descriptor nor via io_uring using the fixed file
+or even mixing both.
 
-> 
-> 3. BTW, One of the uses is the GetWriteWatch and I wonder how it
-> behaves on HugeTLB (MEM_LARGE_PAGES allocation)? Shouldn't it return a
-> list of huge pages and write *lpdwGranularity = HPAGE_SIZE?
-Wine/Proton doesn't used hugetlb by default. Hugetlb isn't enabled by
-default on Debian as well. For GetWriteWatch() we don't care about the
-hugetlb at all. We have added hugetlb's implementation to complete the
-feature and leave out something.
+But as soon as the original file descriptor is closed the f_count for
+the file drops back to 1 but continues to be usable from io_uring via
+the fixed file. Now the optimization that the patchset wanted to copy
+over would cause bugs as multiple racing getdent requests would be
+possible using the fixed file.
 
-Also GetWriteWatch() implementation wouldn't require THP support as well
-because you start to get 2MB of memory dirty even when only 4kB of memory
-shouldn't have been dirty.
+The simple thing ofc is that io_uring just always grabs the position
+lock and never does this optimization. The authors were just unaware
+because it wasn't obvious to them that fixed files would not work with
+the optimization.
 
-> 
-> 4. The docs and commit messages need some rewording due to the changes
-> in the API.
-Yeah, I've updated the doc. I'll update the commit message as well.
-
-> 
-> Other than that:
-> 
-> Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-
--- 
-BR,
-Muhammad Usama Anjum
+I caught that during review but then immediately realized that the
+file_count(file) > 1 optimization was unfortunately broken in another
+way, which ultimately led to this commit.
