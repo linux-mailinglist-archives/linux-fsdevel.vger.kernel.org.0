@@ -2,147 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A6FD7638FC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 16:25:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CBF4763924
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 16:30:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234491AbjGZOZH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 10:25:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50218 "EHLO
+        id S234540AbjGZOax (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 10:30:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234094AbjGZOZD (ORCPT
+        with ESMTP id S234539AbjGZOaw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 10:25:03 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E962A171D
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 07:25:01 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-5840614b107so33874367b3.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 07:25:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1690381501; x=1690986301;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mt8/YY3u8LjsBjr8d6/ke2ZW25YHueLUKLJjDJYMc8s=;
-        b=KwMaCkiB4xAqGBUh9OF2kV0ZTXZJ9t/BQNvELYTboh2nFXRCb/O6mzI5Rf4+JkOSUf
-         GbfKDvzjuzeoTYk+8UzFDnEFGCf4Xp/4j132VlBFiOap0dqwF0d+IWavL7GkLuWIPxaf
-         FtFh1NcigPTHGOQymzspNYZcGJWMeYjGrAKFBYQg3vkICZKAIWBqnifvNeqq77Udkh7Z
-         xGehHXpHV6lJVR2/PB6tUzMEDhiwA5lq38Ga3ndr8/43j3+UY7kRIeUxbAwefFFreB6b
-         OU07H0FnfDMXq+of8q/ygEkV9SZmVl7edMM6TzYoGxGd/1xqW6Xr5wUrtaTzZVCwe9dk
-         Dlpw==
+        Wed, 26 Jul 2023 10:30:52 -0400
+Received: from mail-ot1-f80.google.com (mail-ot1-f80.google.com [209.85.210.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC17C19A1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 07:30:47 -0700 (PDT)
+Received: by mail-ot1-f80.google.com with SMTP id 46e09a7af769-6b9ef9cd887so1717152a34.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 07:30:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690381501; x=1690986301;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mt8/YY3u8LjsBjr8d6/ke2ZW25YHueLUKLJjDJYMc8s=;
-        b=Ns9qsPnYto7Z1syerrao7kXfqxYlpj9DRnVB3EEz1vA26LWpL8yYCzk4Sj10ue3xBZ
-         oWQFPB326OfWcb+IEIV3MWasfdrr4f5OfoWpc70ed3RiHZYMX2Y4MsmrKfsQ98Y7YEXe
-         Qb3qYMx3b4wrvr31GZNwvvQm7VOflCkb/N8LnSHGMy2hEEdrQ38wl08NxcL2+1fVm9n6
-         nrKZF4YMYnHKyHCgluHM+S9ea4/rXPGyO6pshcTyptWU7UHQx3xHDpUyvczUESU3V9K4
-         TSO/ElIQ5U7GJrmGskDys606jhpK0D9sp3Hp0brJN5byGnghM3XDq9MR8xy+da5Q3blL
-         H+Lw==
-X-Gm-Message-State: ABy/qLZIVJ/CTplRKkL0dqFRmKcXBg7fBvJWa2jFo3nGAA37CgHLWdKo
-        L9yjtnT2cpu7Z74pckOVP07MiWWUvio=
-X-Google-Smtp-Source: APBJJlHpunM1lrfEfJpa6UtG2AaqQE17ubaKuYzputooU8ueGDVFO/y80053uMgFIUrJA+dTGv8yhoGEgv0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a81:ac60:0:b0:576:de5f:95e1 with SMTP id
- z32-20020a81ac60000000b00576de5f95e1mr20181ywj.1.1690381501073; Wed, 26 Jul
- 2023 07:25:01 -0700 (PDT)
-Date:   Wed, 26 Jul 2023 07:24:59 -0700
-In-Reply-To: <2f98a32c-bd3d-4890-b757-4d2f67a3b1a7@amd.com>
-Mime-Version: 1.0
-References: <20230718234512.1690985-1-seanjc@google.com> <110f1aa0-7fcd-1287-701a-89c2203f0ac2@amd.com>
- <ZL6uMk/8UeuGj8CP@google.com> <2f98a32c-bd3d-4890-b757-4d2f67a3b1a7@amd.com>
-Message-ID: <ZMEsuyqHhp1DAVdR@google.com>
-Subject: Re: [RFC PATCH v11 00/29] KVM: guest_memfd() and per-page attributes
-From:   Sean Christopherson <seanjc@google.com>
-To:     "Nikunj A. Dadhania" <nikunj@amd.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.6
+        d=1e100.net; s=20221208; t=1690381847; x=1690986647;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BLnveNQNUeRMV9+8/gX2nx7OCERcD8PiCFgXgd8INio=;
+        b=GK3e96CflGxVX0XbQ4uUv22feVa4tG3zLcyeVEhkWwAJfOuw1g4PKDf2cJc5zh/M43
+         jtaHyk0iNjRgnv9/GUnxQFk7poydsMCLhJTT9ZZkLW5xTTsR1lQ7uRBhwwjclA4g+VWw
+         tMvucny08ioJSajNiDoUBUaZyNP9GtFU+SFsdT/ObRnHlUaUFyp+PijUAFHq+JH0ZLnC
+         vlqliyYyXw2UOBqthX6l7pECqvZyFVR+awBfDHNC8Z4tSgsoxHG0ZMp3cdnCQrsIfXp0
+         SVS1AJX2BqettPXKs1s+ToaWNLMtzf/U/mqgpOCZNqTWENKNQxGf6oxRIKVgP1Jkq4Au
+         mHNw==
+X-Gm-Message-State: ABy/qLaV8hgidPJmPsGIP1vXeWCFt26FzDXYMWeuG4c7mFcMfiqfZs2y
+        o5AF9w4TIFfSvgQznCynfDIeYANVZH3y4oxvntOKPWRI/NCq
+X-Google-Smtp-Source: APBJJlF94a7aZPlBEEnkqliCoEGpJ7HkuzLH8OrGyYMoZf3TnyszHLvpYBOhSf3vWG9YPVHulH/EgwVJaG3uzLk7VgPFQ/GhsUTa
+MIME-Version: 1.0
+X-Received: by 2002:a05:6830:30b1:b0:6b8:70f3:fd36 with SMTP id
+ g49-20020a05683030b100b006b870f3fd36mr3643946ots.2.1690381847267; Wed, 26 Jul
+ 2023 07:30:47 -0700 (PDT)
+Date:   Wed, 26 Jul 2023 07:30:47 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008a91fe060164b11f@google.com>
+Subject: [syzbot] [fs?] WARNING in __brelse (3)
+From:   syzbot <syzbot+ce3af36144a13b018cc7@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, brauner@kernel.org, hch@lst.de,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        liushixin2@huawei.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 26, 2023, Nikunj A. Dadhania wrote:
-> Hi Sean,
-> 
-> On 7/24/2023 10:30 PM, Sean Christopherson wrote:
-> >>   Starting an SNP guest with 40G memory with memory interleave between
-> >>   Node2 and Node3
-> >>
-> >>   $ numactl -i 2,3 ./bootg_snp.sh
-> >>
-> >>     PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-> >>  242179 root      20   0   40.4g  99580  51676 S  78.0   0.0   0:56.58 qemu-system-x86
-> >>
-> >>   -> Incorrect process resident memory and shared memory is reported
-> > 
-> > I don't know that I would call these "incorrect".  Shared memory definitely is
-> > correct, because by definition guest_memfd isn't shared.  RSS is less clear cut;
-> > gmem memory is resident in RAM, but if we show gmem in RSS then we'll end up with
-> > scenarios where RSS > VIRT, which will be quite confusing for unaware users (I'm
-> > assuming the 40g of VIRT here comes from QEMU mapping the shared half of gmem
-> > memslots).
-> 
-> I am not sure why will RSS exceed the VIRT, it should be at max 40G (assuming all the
-> memory is private)
+Hello,
 
-And also assuming that (a) userspace mmap()'d the shared side of things 1:1 with
-private memory and (b) that the shared mappings have not been populated.   Those
-assumptions will mostly probably hold true for QEMU, but kernel correctness
-shouldn't depend on assumptions about one specific userspace application.
+syzbot found the following issue on:
 
-> >>   /proc/<qemu pid>/smaps
-> >>   7f528be00000-7f5c8be00000 rw-p 00000000 00:01 26629                      /memfd:memory-backend-memfd-shared (deleted)
-> >>   7f5c90200000-7f5c90220000 rw-s 00000000 00:01 44033                      /memfd:rom-backend-memfd-shared (deleted)
-> >>   7f5c90400000-7f5c90420000 rw-s 00000000 00:01 44032                      /memfd:rom-backend-memfd-shared (deleted)
-> >>   7f5c90800000-7f5c90b7c000 rw-s 00000000 00:01 1025                       /memfd:rom-backend-memfd-shared (deleted)
-> > 
-> > This is all expected, and IMO correct.  There are no userspace mappings, and so
-> > not accounting anything is working as intended.
-> Doesn't sound that correct, if 10 SNP guests are running each using 10GB, how
-> would we know who is using 100GB of memory?
+HEAD commit:    d192f5382581 Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=16ef7c6aa80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=28e257d54f02de1a
+dashboard link: https://syzkaller.appspot.com/bug?extid=ce3af36144a13b018cc7
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15302152a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12771152a80000
 
-It's correct with respect to what the interfaces show, which is how much memory
-is *mapped* into userspace.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5646cedb4f1a/disk-d192f538.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/14060d990196/vmlinux-d192f538.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f58a09eb6b40/bzImage-d192f538.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/b412a33c80f2/mount_0.gz
 
-As I said (or at least tried to say) in my first reply, I am not against exposing
-memory usage to userspace via stats, only that it's not obvious to me that the
-existing VMA-based stats are the most appropriate way to surface this information.
+The issue was bisected to:
+
+commit f6e2c20ca7604e6a267c93a511d19dda72573be1
+Author: Liu Shixin <liushixin2@huawei.com>
+Date:   Fri Apr 29 21:38:04 2022 +0000
+
+    fs: sysv: check sbi->s_firstdatazone in complete_read_super
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=167a02bea80000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=157a02bea80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=117a02bea80000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ce3af36144a13b018cc7@syzkaller.appspotmail.com
+Fixes: f6e2c20ca760 ("fs: sysv: check sbi->s_firstdatazone in complete_read_super")
+
+------------[ cut here ]------------
+VFS: brelse: Trying to free free buffer
+WARNING: CPU: 1 PID: 5011 at fs/buffer.c:1257 __brelse fs/buffer.c:1257 [inline]
+WARNING: CPU: 1 PID: 5011 at fs/buffer.c:1257 __brelse+0x6b/0xa0 fs/buffer.c:1251
+Modules linked in:
+CPU: 1 PID: 5011 Comm: syz-executor104 Not tainted 6.5.0-rc2-syzkaller-00307-gd192f5382581 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2023
+RIP: 0010:__brelse fs/buffer.c:1257 [inline]
+RIP: 0010:__brelse+0x6b/0xa0 fs/buffer.c:1251
+Code: 7c 04 84 d2 75 4e 44 8b 63 60 31 ff 44 89 e6 e8 1b 29 8d ff 45 85 e4 75 1c e8 a1 2d 8d ff 48 c7 c7 20 a7 7c 8a e8 65 f6 53 ff <0f> 0b 5b 5d 41 5c e9 8a 2d 8d ff e8 85 2d 8d ff be 04 00 00 00 48
+RSP: 0018:ffffc900033cf8c8 EFLAGS: 00010086
+RAX: 0000000000000000 RBX: ffff88807135a2b8 RCX: 0000000000000000
+RDX: ffff88807e0da000 RSI: ffffffff814c5346 RDI: 0000000000000001
+RBP: ffff88807135a318 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
+R13: ffff88807135a2b8 R14: dffffc0000000000 R15: ffffffff81f85b70
+FS:  0000555555653380(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000066c7e0 CR3: 000000007cf88000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ brelse include/linux/buffer_head.h:339 [inline]
+ __invalidate_bh_lrus fs/buffer.c:1492 [inline]
+ invalidate_bh_lru+0xa2/0x190 fs/buffer.c:1505
+ csd_do_func kernel/smp.c:131 [inline]
+ smp_call_function_many_cond+0x122a/0x1570 kernel/smp.c:826
+ on_each_cpu_cond_mask+0x40/0x90 kernel/smp.c:1003
+ invalidate_bdev+0x9b/0xd0 block/bdev.c:85
+ invalidate_disk+0x41/0x110 block/genhd.c:734
+ __loop_clr_fd+0x259/0x900 drivers/block/loop.c:1164
+ loop_clr_fd drivers/block/loop.c:1257 [inline]
+ lo_ioctl+0x5d8/0x1a50 drivers/block/loop.c:1563
+ blkdev_ioctl+0x2f9/0x770 block/ioctl.c:621
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:870 [inline]
+ __se_sys_ioctl fs/ioctl.c:856 [inline]
+ __x64_sys_ioctl+0x18f/0x210 fs/ioctl.c:856
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f986153247b
+Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+RSP: 002b:00007ffd9d3fbdc0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000016 RCX: 00007f986153247b
+RDX: 0000000000000000 RSI: 0000000000004c01 RDI: 0000000000000004
+RBP: 0000000000000004 R08: 00007ffd9d3fbe60 R09: 0000000000009df6
+R10: 0000000000008003 R11: 0000000000000246 R12: 00007ffd9d3fbe60
+R13: 0000000000000003 R14: 0000000000010000 R15: 0000000000000001
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
