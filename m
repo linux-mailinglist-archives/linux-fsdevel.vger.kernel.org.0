@@ -2,162 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 34BB77640F4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 23:10:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC07576416A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 23:50:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231191AbjGZVKt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 17:10:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40004 "EHLO
+        id S229779AbjGZVuv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 17:50:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230187AbjGZVKs (ORCPT
+        with ESMTP id S229828AbjGZVut (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 17:10:48 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D1C11FFA
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 14:10:46 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-5223910acf2so4647a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 14:10:46 -0700 (PDT)
+        Wed, 26 Jul 2023 17:50:49 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80D41FA
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 14:50:47 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1b8ad9eede0so2227595ad.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 14:50:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1690405845; x=1691010645;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qwlPGFA6Wt4wHaQbg7XU0SaMv13PMQh8DDGdrKpf/oA=;
-        b=eLu+gNofp9wRbALE2bkVYGmwGJxPl36LCy1T4+1JgQnamYSfKJ9xDY86bimfkqoGIQ
-         zvgmsb7odQAULMETzbuIwLSJWIQ/Fwquxp67SYVP8fIfPzevZLwU33RjsCF5loWfigIi
-         D8J4p2w/m17TwgF7ZjEcVORxUQWSKgUpBlnqLCLO4uiCN/AITyww9rYNx7N4V3GnnYo0
-         HquyCXm2Odan4UPZidq5GwLDJdEDg9GXDQmUCnqz6MGT0lKOyrxtKU8w/LD8/mwZSugI
-         gH5NOFaIeUr6rA5zO0GBlWhk+rwHe8158VQtUck3GyvOBRGBVJ8hg9PlIx1e1hVSXqyV
-         yI3A==
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1690408247; x=1691013047;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oEVsgMhfJCo3+WMo9jBocLy7Yo6Kj93DjounOZpsoZ8=;
+        b=JImPWHdVbo7ZJgolrQI/m8aHyPEXt0Of30eNRqZAa8bdH+gsYimY42WGx7XcoqTiz/
+         wW9Ik+WwYLvLnD5860DeZxolVzNv1e8r5hy2PB9G8Or8v39vUOHg1xG0x5ibSBxqwSQm
+         MiPuxdFBcYromSZ0J+88yBmN6GQLzO1vBRM/PirC6Mu8N0CtTbAWlmODJ2ZayZ3mbWU+
+         W36vZpVaHKxdb3Qi0jq6FJZClLAUPYMkyQp6u3q/GgBhucYRY01GL6ai7O9VP/RSax8Q
+         kvBabVIWwmi62NhNBFWp4mKro1HRN/z1hYz2Kgj5+p504uztWFPMUlFllQke6DUBeF2J
+         Cn8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690405845; x=1691010645;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qwlPGFA6Wt4wHaQbg7XU0SaMv13PMQh8DDGdrKpf/oA=;
-        b=IvtNoWxlKThW8VdmnzlYKQlyIUx+1dglsZMpSbOkL6n5/WXac7vrJ43YY5k1GRAYbA
-         /bvfvcdyHh2GiU5194uCpONqHV79aO0u+0Vx8az5GF+U/lYymSzU3cRJxN0V3OPSI33w
-         XwIwbKKxnfLZvJXpjdZ/U4vLwzo452L6bDZEyum5NoocIw5EkVSHxj2+HOvVnXo32X49
-         NKRZq15MuG1ksWaxjI8AxAMIZ7v8kKQmTzmCJ032aiSrAvdNXXwDPIUZ62qmaLXAXwUn
-         HIFDnFCZS+SxHXcqjL5SYDGgfftsTvPaiXzY67m1rv00h7ngHDIfWa2w9AImH8BjLZwl
-         SA5A==
-X-Gm-Message-State: ABy/qLbMgzX/Q+T/S0Y8GPa6l9HAl6AIhR/sk9YYKqHoxf8p91VC85e2
-        LvcdioauuYXsDW1IGef8lnPqrm7MEYPP8cy4Jz8iog==
-X-Google-Smtp-Source: APBJJlHivbRzuJT8P6p6jbxegWClyIOonCFtye/wSfmGogOINZRhaBvz2SCuEPMI1MLUCqxE5bFrkaSD3dQXAy/1y34=
-X-Received: by 2002:a50:d797:0:b0:522:4741:d992 with SMTP id
- w23-20020a50d797000000b005224741d992mr34619edi.4.1690405844799; Wed, 26 Jul
- 2023 14:10:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230713101415.108875-6-usama.anjum@collabora.com>
- <a0b5c6776b2ed91f78a7575649f8b100e58bd3a9.1689881078.git.mirq-linux@rere.qmqm.pl>
- <7eedf953-7cf6-c342-8fa8-b7626d69ab63@collabora.com> <ZLpqzcyo2ZMXwtm4@qmqm.qmqm.pl>
- <382f4435-2088-08ce-20e9-bc1a15050861@collabora.com> <ZLshsAj5PbsEAHhP@qmqm.qmqm.pl>
- <b1071d62-5c8e-1b03-d919-b3a9db520e51@collabora.com> <CABb0KFF6M2_94Ect72zMtaRLBpOoHjHYJA-Ube3oQAh4cXSg5w@mail.gmail.com>
- <44eddc7d-fd68-1595-7e4f-e196abe37311@collabora.com> <CABb0KFHJVeEkh4f6WWK6FThCbA+NE8iYUZE68nV1YAxaHwiwog@mail.gmail.com>
- <e1ead2e8-046a-31d9-8df9-27cdd7b7ff83@collabora.com> <1afedab8-5929-61e5-b0da-9c70dc01c254@collabora.com>
- <eac29a4d-aa3f-4df5-97e6-4aa3a358f2b1@collabora.com> <CABb0KFHuNpG+NJQ4sQdp1n_Kf4sO8aC5DBEppFc1zz=zAeDfQw@mail.gmail.com>
- <f949f74f-bb65-e3f2-e70d-7198446a9981@collabora.com>
-In-Reply-To: <f949f74f-bb65-e3f2-e70d-7198446a9981@collabora.com>
-From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
-Date:   Wed, 26 Jul 2023 23:10:33 +0200
-Message-ID: <CABb0KFGQ_HbD+MNwKCcE+6D50XhJxpx0M0dRiC-EVwEXPv+4XA@mail.gmail.com>
-Subject: Re: [v3] fs/proc/task_mmu: Implement IOCTL for efficient page table scanning
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Axel Rasmussen <axelrasmussen@google.com>,
+        d=1e100.net; s=20221208; t=1690408247; x=1691013047;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oEVsgMhfJCo3+WMo9jBocLy7Yo6Kj93DjounOZpsoZ8=;
+        b=VTS4mSKbq1h/30v8TQIzCys1PZQPgK8mLBS1b2CN2NgGNBA8Qc+DcczgITReErlyaW
+         yp7KMixFnD/NVenNjaWLmhZbZO1El5tH5X8vkor5+L2yoaeWBtAgBxUdUw/zbjXXx+oD
+         FXoeQXt/ZgMDm8xH2M7iCVTA903SLj0kgm8WEaAUTocZAYeTDvJuYuKJ2OGtRNop94AZ
+         WuAcf4BXQk1kgzwNLue5SJ30kzTX8377M6+Khdx9y1d6vG7jgytoSVqC46UKgj9luuQS
+         KqngvfghRLApjTAGXx91Rc5PgmAlKLwoPlNQAteanQJf3SLn5nTM7cjsSGCEVcH6JAWk
+         BxbA==
+X-Gm-Message-State: ABy/qLan6GkcuVeqpf6P/LCj9LaS4SknrZTOPJTVnbbzYby5rfPBz3ma
+        WSmDFg3LHL2zEx9J1DE1yDfPkq+ObVWpa1UK9D0=
+X-Google-Smtp-Source: APBJJlEYMi5IrHUY78a1kRiay85JTqoZqaM8MkfAimsJL8TH5HyPPxcjiUtXy1E0Yotpel0Ii7ehpA==
+X-Received: by 2002:a17:902:f80a:b0:1bb:d048:3173 with SMTP id ix10-20020a170902f80a00b001bbd0483173mr1929140plb.61.1690408246973;
+        Wed, 26 Jul 2023 14:50:46 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-119-116.pa.vic.optusnet.com.au. [49.186.119.116])
+        by smtp.gmail.com with ESMTPSA id jj6-20020a170903048600b001ab39cd875csm25252plb.133.2023.07.26.14.50.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jul 2023 14:50:46 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qOmP5-00AuAE-0V;
+        Thu, 27 Jul 2023 07:50:43 +1000
+Date:   Thu, 27 Jul 2023 07:50:43 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Hao Xu <hao.xu@linux.dev>
+Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
         Christian Brauner <brauner@kernel.org>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yang Shi <shy828301@gmail.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+Subject: Re: [PATCH 1/7] iomap: merge iomap_seek_hole() and iomap_seek_data()
+Message-ID: <ZMGVM/BdgsjMSsIF@dread.disaster.area>
+References: <20230726102603.155522-1-hao.xu@linux.dev>
+ <20230726102603.155522-2-hao.xu@linux.dev>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230726102603.155522-2-hao.xu@linux.dev>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 26 Jul 2023 at 10:34, Muhammad Usama Anjum
-<usama.anjum@collabora.com> wrote:
-> On 7/25/23 11:05=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
-> > On Tue, 25 Jul 2023 at 11:11, Muhammad Usama Anjum
-> > <usama.anjum@collabora.com> wrote:
-> >>
-> >> ----
-> >> Michal please post your thoughts before I post this as v26.
-> >> ----
-> > [...]
-> >
-> > Looks ok - minor things below.
-> >
-> > 1. I'd change the _WPASYNC things to something better, if this can
-> > also work with "normal" UFFD WP.
-> Yeah, but we don't have any use case where UFFD WP is required. It can be
-> easily added later when user case arrives. Also UFFD WP sends messages to
-> userspace. User can easily do the bookkeeping in userspace as performance
-> isn't a concern there.
+On Wed, Jul 26, 2023 at 06:25:57PM +0800, Hao Xu wrote:
+> From: Hao Xu <howeyxu@tencent.com>
+> 
+> The two functions share almost same code, merge them together.
+> No functional change in this patch.
 
-We shouldn't name the flags based on the use case but based on what
-they actually do. So if this checks UFFD registration for WP, then
-maybe PAGE_IS_WPALLOWED or something better describing the trait it
-matches?
+No, please don't. seek data and seek hole have subtly different
+semantics and return values, and we've explicitly kept them separate
+because it's much easier to maintain them as separate functions with
+separate semantics than combine them into a single function with
+lots of non-obvious conditional behaviour.
 
-> > 2. For the address tagging part I'd prefer someone who knows how this
-> > is used take a look. We're ignoring the tag (but clear it on return in
-> > ->start) - so it doesn't matter for the ioctl() itself.
-> I've added Kirill if he can give his thoughts about tagged memory.
->
-> Right now we are removing the tags from all 3 pointers (start, end, vec)
-> before using the pointers on kernel side. But we are overwriting and
-> writing the walk ending address in start which user can read/use.
->
-> I think we shouldn't over-write the start (and its tag) and instead retur=
-n
-> the ending walk address in new variable, walk_end.
+The fact that the new iomap_seek() API requires a boolean "SEEK_DATA
+or SEEK_HOLE" field to indicate that the caller wants makes it clear
+that this isn't actually an improvement over explicit
+iomap_seek_data() and iomap_seek_hole() API calls.
 
-The overwrite of `start` is making the ioctl restart (continuation)
-easier to handle. I prefer the current way, but it's not a strong
-opinion.
-
-> > 3. BTW, One of the uses is the GetWriteWatch and I wonder how it
-> > behaves on HugeTLB (MEM_LARGE_PAGES allocation)? Shouldn't it return a
-> > list of huge pages and write *lpdwGranularity =3D HPAGE_SIZE?
-> Wine/Proton doesn't used hugetlb by default. Hugetlb isn't enabled by
-> default on Debian as well. For GetWriteWatch() we don't care about the
-> hugetlb at all. We have added hugetlb's implementation to complete the
-> feature and leave out something.
-
-How is GetWriteWatch() working when passed a VirtualAlloc(...,
-MEM_LARGE_PAGES|MEM_WRITE_WATCH...)-allocated range? Does it still
-report 4K pages?
-This is only a problem when using max_pages: a hugetlb range might
-need counting and reporting huge pages and not 4K parts.
-
-Best Regards
-Micha=C5=82 Miros=C5=82aw
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
