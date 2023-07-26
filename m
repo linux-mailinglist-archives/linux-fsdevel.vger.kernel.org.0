@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB187762F98
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 10:22:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59260762F99
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 10:22:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231473AbjGZIWU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S231690AbjGZIWU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 26 Jul 2023 04:22:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60340 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231667AbjGZIVq (ORCPT
+        with ESMTP id S231580AbjGZIVt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 04:21:46 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7C004C08
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 01:09:55 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id 98e67ed59e1d1-268030e1be7so1720324a91.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 01:09:55 -0700 (PDT)
+        Wed, 26 Jul 2023 04:21:49 -0400
+Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D32F4C15
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 01:10:02 -0700 (PDT)
+Received: by mail-ot1-x32d.google.com with SMTP id 46e09a7af769-6bb31245130so2174916a34.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 01:10:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1690358995; x=1690963795;
+        d=bytedance.com; s=google; t=1690359001; x=1690963801;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GIT4erJsSQIWC2QtZ169UhvGSIUrHQbWmspV6b3RxCk=;
-        b=Hi4bTAj2w5H2xNQiLID4Hia2qzuatOrdKEXuIHwgfQq4h5TogE8UlYPLPr4GbRqm0t
-         bir4kr6IwT4SUpGIrXSZ4kUtFow9YDCvc0PSsNFaFKeVcnfY/tlQui4eRr3KN7eX274n
-         u6Al0q6bZSrERi3GamYqKl9Z2w0C884Shf+SlR3209WA6vvKX5T7a5zszboxPBvYa9QQ
-         gz6TciUgktOetIsNxr9d7qgzK6KCCnMoSiwCmg8JTNl2AOqjwe/mUswmU4FcnPJ0zNg4
-         SOPE/TJNK04LNOIeKt6aNMQU4jIO/Np2hanV3cU01WxmakYXecUILeywfx6kY/dSyQ0p
-         Jxgw==
+        bh=CBWhUMSjOCubXY+PC9p9DMz2fuhl5l7G2DCnpXKXi44=;
+        b=RXB/luIXuwGwXY6rqH5frdTWpd6w9LTeUKn410+nFpUsNaJ23LLavNegSawCjRQMgP
+         olOEFVPrbE0jXarH32neIg973IiVObAB37RV1Je7V6W6onAegs08yBYLMxWW4j27U03B
+         hRTru99Vp9e2P5P7I1yZCu3hCHl6eDVSN3p1/mQN5OYlpRyyeZZmDVUBbwGJZaY20H4v
+         +Q7yDQfwWSqQdd6nsa9TBmh2ADavZejwsPqQ3zGHYBIy3WOGxQ8Wc0Mt+U6dEDUIIa22
+         6tz1eEu1O31YEPOltcFul+d3p84JJlOgzZQar6fOQqG8Qibwy5TwOeiRi3r4Mzrf/Aam
+         nPTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690358995; x=1690963795;
+        d=1e100.net; s=20221208; t=1690359001; x=1690963801;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GIT4erJsSQIWC2QtZ169UhvGSIUrHQbWmspV6b3RxCk=;
-        b=THtNjYEHM6KCm4qQYaZkH/GooxXZOKn6B4fijZl4G5+JszIJHJZzWXoDJ272pspqUA
-         WBKY2R5jxRbFUQaevz7iFMsulZt7aZGiIBllirLXhB3rZSNfNkvEyzVrFibpb7Tweu73
-         dYrk2eVrcRu1WJMGTciAUoCAIHrymXLaWSNc+qjqR6iaoUh6SMcz8BGjHbvJVhN7qUWZ
-         Nfmh997xSskTW/TzcZ5J0yAcwSnVh0eryqOYF3pOdozNfPNS69IwoBcyw8J7nM7qyToi
-         hpLzhYaoXbAA7ji3XDkry5AKK3axgrwmPouO+zIBo6wGObL6fKQPSXyL38OQ6bwIkw/8
-         gnYg==
-X-Gm-Message-State: ABy/qLaRfJuutIhdMcYYpsEsUzG298Xx9r94HwWYBjvOHJ2413lyQb94
-        yG/DBeFa5uG+qr4NWw3XvpbFrA==
-X-Google-Smtp-Source: APBJJlGTCbgSnoEUEY2Im4b6IteSzBL20T2KsQb6OtigwSGhrzItecI4bNmqd6Se4OFmw5iiEF2MyQ==
-X-Received: by 2002:a17:90a:c002:b0:268:2500:b17e with SMTP id p2-20020a17090ac00200b002682500b17emr1115938pjt.23.1690358995399;
-        Wed, 26 Jul 2023 01:09:55 -0700 (PDT)
+        bh=CBWhUMSjOCubXY+PC9p9DMz2fuhl5l7G2DCnpXKXi44=;
+        b=I31LT5V/E4+yt0dgN/aESxhJQXrVdQkNXk7AXcly/dS3NCQuf9kUq8/WeJQstbgspW
+         8UPFDgrsWORypMaZoWLbhlWAvwdh03hgn2TPilsPVjX48CC/Nmp152jkDNwutG3ebHb9
+         vrlSVfbd/Vw9HrPH2SqsMiwktxRF+nvJVgT18Cry2M9H08/h2ddOsyAyIZcpmx+9h7Ok
+         pgJXM2v1NNMSagpTkee1SOdpcXxMBdWuF976u/2ZPwILLtPpc+KFMllfTc+KlQ8alcMZ
+         sZLmdTVI+KunEHqyjfUyF6ZgrmWYboCHV6v1U2NszQ+m0F9JjhdmKSR1R9HZEuutFJmS
+         dSfA==
+X-Gm-Message-State: ABy/qLZxhL9hcymIxLl7icUsZk4492R7wkVFUVYJbwcf1EhkDQmOm7P8
+        uGK2xgtVNgBUm8LPEHL+MKI0wg==
+X-Google-Smtp-Source: APBJJlHPh1Z40rOPA8hPV6aBOaHB64sfPxEqqnj6neuzGgAVDkJcfp/eL+6OtW5OBvbdU9FuJRRJcQ==
+X-Received: by 2002:a05:6830:1e39:b0:6b9:ae94:c664 with SMTP id t25-20020a0568301e3900b006b9ae94c664mr1651229otr.13.1690359001292;
+        Wed, 26 Jul 2023 01:10:01 -0700 (PDT)
 Received: from GL4FX4PXWL.bytedance.net ([203.208.167.147])
-        by smtp.gmail.com with ESMTPSA id gc17-20020a17090b311100b002680b2d2ab6sm756540pjb.19.2023.07.26.01.09.49
+        by smtp.gmail.com with ESMTPSA id gc17-20020a17090b311100b002680b2d2ab6sm756540pjb.19.2023.07.26.01.09.55
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 26 Jul 2023 01:09:55 -0700 (PDT)
+        Wed, 26 Jul 2023 01:10:00 -0700 (PDT)
 From:   Peng Zhang <zhangpeng.00@bytedance.com>
 To:     Liam.Howlett@oracle.com, corbet@lwn.net, akpm@linux-foundation.org,
         willy@infradead.org, brauner@kernel.org, surenb@google.com,
@@ -58,9 +58,9 @@ To:     Liam.Howlett@oracle.com, corbet@lwn.net, akpm@linux-foundation.org,
 Cc:     linux-mm@kvack.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Peng Zhang <zhangpeng.00@bytedance.com>
-Subject: [PATCH 01/11] maple_tree: Introduce ma_nonleaf_data_end{_nocheck}()
-Date:   Wed, 26 Jul 2023 16:09:06 +0800
-Message-Id: <20230726080916.17454-2-zhangpeng.00@bytedance.com>
+Subject: [PATCH 02/11] maple_tree: Validate MAPLE_ENODE and ma_nonleaf_data_end()
+Date:   Wed, 26 Jul 2023 16:09:07 +0800
+Message-Id: <20230726080916.17454-3-zhangpeng.00@bytedance.com>
 X-Mailer: git-send-email 2.37.0 (Apple Git-136)
 In-Reply-To: <20230726080916.17454-1-zhangpeng.00@bytedance.com>
 References: <20230726080916.17454-1-zhangpeng.00@bytedance.com>
@@ -76,114 +76,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce ma_nonleaf_data_end{_nocheck}() to get the data end of
-non-leaf nodes without knowing the maximum value of nodes, so that any
-ascending can be avoided even if the maximum value of nodes is not known.
-
-The principle is that we introduce MAPLE_ENODE to mark an ENODE, which
-cannot be used by metadata, so we can distinguish whether it is ENODE or
-metadata.
-
-The nocheck version is to avoid lockdep complaining in some scenarios
-where no locks are held.
+Updated mt_validate() to validate MAPLE_ENODE and ma_nonleaf_data_end().
 
 Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
 ---
- lib/maple_tree.c | 70 ++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 68 insertions(+), 2 deletions(-)
+ lib/maple_tree.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index a3d602cfd030..98e4fdf6f4b9 100644
+index 98e4fdf6f4b9..e0e9a87bdb43 100644
 --- a/lib/maple_tree.c
 +++ b/lib/maple_tree.c
-@@ -310,12 +310,19 @@ static inline void mte_set_node_dead(struct maple_enode *mn)
- #define MAPLE_ENODE_TYPE_SHIFT		0x03
- /* Bit 2 means a NULL somewhere below */
- #define MAPLE_ENODE_NULL		0x04
-+/* Bit 7 means this is an ENODE, instead of metadata */
-+#define MAPLE_ENODE			0x80
-+
-+static inline bool slot_is_mte(unsigned long slot)
-+{
-+	return slot & MAPLE_ENODE;
-+}
+@@ -7130,6 +7130,11 @@ static void mas_validate_child_slot(struct ma_state *mas)
+ 			MT_BUG_ON(mas->tree, 1);
+ 		}
  
- static inline struct maple_enode *mt_mk_node(const struct maple_node *node,
- 					     enum maple_type type)
- {
--	return (void *)((unsigned long)node |
--			(type << MAPLE_ENODE_TYPE_SHIFT) | MAPLE_ENODE_NULL);
-+	return (void *)((unsigned long)node | (type << MAPLE_ENODE_TYPE_SHIFT) |
-+			MAPLE_ENODE_NULL | MAPLE_ENODE);
- }
++		if (!slot_is_mte((unsigned long)child)) {
++			pr_err("Slot is not mte %p[%u]\n", mas_mn(mas), i);
++			MT_BUG_ON(mas->tree, 1);
++		}
++
+ 		if (mte_parent_slot(child) != i) {
+ 			pr_err("Slot error at %p[%u]: child %p has pslot %u\n",
+ 			       mas_mn(mas), i, mte_to_node(child),
+@@ -7200,6 +7205,13 @@ static void mas_validate_limits(struct ma_state *mas)
+ 		MT_BUG_ON(mas->tree, 1);
+ 	}
  
- static inline void *mte_mk_root(const struct maple_enode *node)
-@@ -1411,6 +1418,65 @@ static inline struct maple_enode *mas_start(struct ma_state *mas)
- 	return NULL;
- }
++	if (!mte_is_leaf(mas->node) &&
++	    mas_data_end(mas) != mte_nonleaf_data_end(mas->tree, mas->node)) {
++		pr_err("node:%p mas_data_end() != mte_nonleaf_data_end()\n",
++		       mas_mn(mas));
++		MT_BUG_ON(mas->tree, 1);
++	}
++
+ 	for (i += 1; i < mt_slots[type]; i++) {
+ 		void *entry = mas_slot(mas, slots, i);
  
-+/*
-+ * ma_nonleaf_data_end() - Find the end of the data in a non-leaf node.
-+ * @mt: The maple tree
-+ * @node: The maple node
-+ * @type: The maple node type
-+ *
-+ * Uses metadata to find the end of the data when possible without knowing the
-+ * node maximum.
-+ *
-+ * Return: The zero indexed last slot with child.
-+ */
-+static inline unsigned char ma_nonleaf_data_end(struct maple_tree *mt,
-+						struct maple_node *node,
-+						enum maple_type type)
-+{
-+	void __rcu **slots;
-+	unsigned long slot;
-+
-+	slots = ma_slots(node, type);
-+	slot = (unsigned long)mt_slot(mt, slots, mt_pivots[type]);
-+	if (unlikely(slot_is_mte(slot)))
-+		return mt_pivots[type];
-+
-+	return ma_meta_end(node, type);
-+}
-+
-+/*
-+ * ma_nonleaf_data_end_nocheck() - Find the end of the data in a non-leaf node.
-+ * @node: The maple node
-+ * @type: The maple node type
-+ *
-+ * Uses metadata to find the end of the data when possible without knowing the
-+ * node maximum. This is the version of ma_nonleaf_data_end() that does not
-+ * check for lock held. This particular version is designed to avoid lockdep
-+ * complaining in some scenarios.
-+ *
-+ * Return: The zero indexed last slot with child.
-+ */
-+static inline unsigned char ma_nonleaf_data_end_nocheck(struct maple_node *node,
-+							enum maple_type type)
-+{
-+	void __rcu **slots;
-+	unsigned long slot;
-+
-+	slots = ma_slots(node, type);
-+	slot = (unsigned long)rcu_dereference_raw(slots[mt_pivots[type]]);
-+	if (unlikely(slot_is_mte(slot)))
-+		return mt_pivots[type];
-+
-+	return ma_meta_end(node, type);
-+}
-+
-+/* See ma_nonleaf_data_end() */
-+static inline unsigned char mte_nonleaf_data_end(struct maple_tree *mt,
-+						 struct maple_enode *enode)
-+{
-+	return ma_nonleaf_data_end(mt, mte_to_node(enode), mte_node_type(enode));
-+}
-+
- /*
-  * ma_data_end() - Find the end of the data in a node.
-  * @node: The maple node
 -- 
 2.20.1
 
