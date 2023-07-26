@@ -2,69 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FFC87640ED
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 23:09:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34BB77640F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 23:10:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230183AbjGZVJF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 17:09:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39438 "EHLO
+        id S231191AbjGZVKt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 17:10:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230332AbjGZVI4 (ORCPT
+        with ESMTP id S230187AbjGZVKs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 17:08:56 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C46B1BE8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 14:08:53 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-99313a34b2dso20012966b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 14:08:53 -0700 (PDT)
+        Wed, 26 Jul 2023 17:10:48 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D1C11FFA
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 14:10:46 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-5223910acf2so4647a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 14:10:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umich.edu; s=google-2016-06-03; t=1690405732; x=1691010532;
+        d=google.com; s=20221208; t=1690405845; x=1691010645;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vjkLXak8d+/QRW6V4ufp25mmvem0zi/hCFrifSGngFs=;
-        b=ZuSNoM2neGgmzJ1HDcF0VbUgodiwml7GqlGB44XNU8z5ksD6ZgMFqxzRPQ/SOCjj4c
-         ARW7u1YMSMc1qazZhCR8R7yOPL7bOd/vH43fz1I2RCkJzEm95afcsIadPOIYU/QIdQfr
-         Tla/Ks/rrhbE94krRIMf/jrGJbH3Ww5d5rLLy+EQ0WGCoRgWGznST2uHoLjGiMp0uocQ
-         QnXb6vmTvRegB76hyRWSgc14aNXqn1Uv+hBAIt4puE5lpAIwJqRZnKIM5UAazLI20hLC
-         JdpL4f5XboVywAr0dntT3KVk9t04zLbwt77q8P8VWPJ+RN7t4OjXlNEadTBgDe8q8XG/
-         9gIw==
+        bh=qwlPGFA6Wt4wHaQbg7XU0SaMv13PMQh8DDGdrKpf/oA=;
+        b=eLu+gNofp9wRbALE2bkVYGmwGJxPl36LCy1T4+1JgQnamYSfKJ9xDY86bimfkqoGIQ
+         zvgmsb7odQAULMETzbuIwLSJWIQ/Fwquxp67SYVP8fIfPzevZLwU33RjsCF5loWfigIi
+         D8J4p2w/m17TwgF7ZjEcVORxUQWSKgUpBlnqLCLO4uiCN/AITyww9rYNx7N4V3GnnYo0
+         HquyCXm2Odan4UPZidq5GwLDJdEDg9GXDQmUCnqz6MGT0lKOyrxtKU8w/LD8/mwZSugI
+         gH5NOFaIeUr6rA5zO0GBlWhk+rwHe8158VQtUck3GyvOBRGBVJ8hg9PlIx1e1hVSXqyV
+         yI3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690405732; x=1691010532;
+        d=1e100.net; s=20221208; t=1690405845; x=1691010645;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vjkLXak8d+/QRW6V4ufp25mmvem0zi/hCFrifSGngFs=;
-        b=AOJhU6OnU3nKwK7yho3sJ2616U7UqpdcE/e40Sd0BydUjF2E7PQP2h+s5dLhVKD57+
-         MrEFi3w5WD3i1MPsvsnwc49YmPSjgmI5MFcVZNt/9Yq7U6t2xQ+5CXGRjDzFPphMaK2o
-         O2AgRTzVqQ4vQk0gstFtV+JCTQ3gFMNrIyGV68bmDL9Y9DYzz+advT55Xgr1zYbaHZRS
-         OaHw7ZXmoQMe5d2xdoinvvbarbMVEOs9ujt5v6II966LYaKCA9Wtp3aDHbZM/8jqH0is
-         23xt4hGs3f3Pt5lq7VFSVjqB8oenRnPX8UoYCgK8XqdsskIN/t69luYNGNeJjMWI5s57
-         oTSw==
-X-Gm-Message-State: ABy/qLZDWWB/mPw8ao7Txpg75QTCD5UXETN3HWJM9udVIsfPl9SJHlJd
-        MQI9h5QnXBVlbmb0oh++qO1t4CV+iTmWcfhEkD07aw==
-X-Google-Smtp-Source: APBJJlFQX7UzDW/k/kYtWDvZK568AeNZukeBl2pXtyjIMni9uWicDax9fIk3Xw0AO67YAsFOv9YnJHcBKz+EEJqcJyI=
-X-Received: by 2002:a17:906:7391:b0:994:54af:e282 with SMTP id
- f17-20020a170906739100b0099454afe282mr213636ejl.10.1690405732051; Wed, 26 Jul
- 2023 14:08:52 -0700 (PDT)
+        bh=qwlPGFA6Wt4wHaQbg7XU0SaMv13PMQh8DDGdrKpf/oA=;
+        b=IvtNoWxlKThW8VdmnzlYKQlyIUx+1dglsZMpSbOkL6n5/WXac7vrJ43YY5k1GRAYbA
+         /bvfvcdyHh2GiU5194uCpONqHV79aO0u+0Vx8az5GF+U/lYymSzU3cRJxN0V3OPSI33w
+         XwIwbKKxnfLZvJXpjdZ/U4vLwzo452L6bDZEyum5NoocIw5EkVSHxj2+HOvVnXo32X49
+         NKRZq15MuG1ksWaxjI8AxAMIZ7v8kKQmTzmCJ032aiSrAvdNXXwDPIUZ62qmaLXAXwUn
+         HIFDnFCZS+SxHXcqjL5SYDGgfftsTvPaiXzY67m1rv00h7ngHDIfWa2w9AImH8BjLZwl
+         SA5A==
+X-Gm-Message-State: ABy/qLbMgzX/Q+T/S0Y8GPa6l9HAl6AIhR/sk9YYKqHoxf8p91VC85e2
+        LvcdioauuYXsDW1IGef8lnPqrm7MEYPP8cy4Jz8iog==
+X-Google-Smtp-Source: APBJJlHivbRzuJT8P6p6jbxegWClyIOonCFtye/wSfmGogOINZRhaBvz2SCuEPMI1MLUCqxE5bFrkaSD3dQXAy/1y34=
+X-Received: by 2002:a50:d797:0:b0:522:4741:d992 with SMTP id
+ w23-20020a50d797000000b005224741d992mr34619edi.4.1690405844799; Wed, 26 Jul
+ 2023 14:10:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230726164535.230515-1-amiculas@cisco.com> <20230726164535.230515-11-amiculas@cisco.com>
-In-Reply-To: <20230726164535.230515-11-amiculas@cisco.com>
-From:   Trevor Gross <tmgross@umich.edu>
-Date:   Wed, 26 Jul 2023 17:08:40 -0400
-Message-ID: <CALNs47ss3kV3mTx4ksYTWaHWdRG48=97DTi3OEnPom2nFcYhHw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 10/10] rust: puzzlefs: add oci_root_dir and
- image_manifest filesystem parameters
-To:     Ariel Miculas <amiculas@cisco.com>
-Cc:     rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tycho@tycho.pizza,
-        brauner@kernel.org, viro@zeniv.linux.org.uk, ojeda@kernel.org,
-        alex.gaynor@gmail.com, wedsonaf@gmail.com
+References: <20230713101415.108875-6-usama.anjum@collabora.com>
+ <a0b5c6776b2ed91f78a7575649f8b100e58bd3a9.1689881078.git.mirq-linux@rere.qmqm.pl>
+ <7eedf953-7cf6-c342-8fa8-b7626d69ab63@collabora.com> <ZLpqzcyo2ZMXwtm4@qmqm.qmqm.pl>
+ <382f4435-2088-08ce-20e9-bc1a15050861@collabora.com> <ZLshsAj5PbsEAHhP@qmqm.qmqm.pl>
+ <b1071d62-5c8e-1b03-d919-b3a9db520e51@collabora.com> <CABb0KFF6M2_94Ect72zMtaRLBpOoHjHYJA-Ube3oQAh4cXSg5w@mail.gmail.com>
+ <44eddc7d-fd68-1595-7e4f-e196abe37311@collabora.com> <CABb0KFHJVeEkh4f6WWK6FThCbA+NE8iYUZE68nV1YAxaHwiwog@mail.gmail.com>
+ <e1ead2e8-046a-31d9-8df9-27cdd7b7ff83@collabora.com> <1afedab8-5929-61e5-b0da-9c70dc01c254@collabora.com>
+ <eac29a4d-aa3f-4df5-97e6-4aa3a358f2b1@collabora.com> <CABb0KFHuNpG+NJQ4sQdp1n_Kf4sO8aC5DBEppFc1zz=zAeDfQw@mail.gmail.com>
+ <f949f74f-bb65-e3f2-e70d-7198446a9981@collabora.com>
+In-Reply-To: <f949f74f-bb65-e3f2-e70d-7198446a9981@collabora.com>
+From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+Date:   Wed, 26 Jul 2023 23:10:33 +0200
+Message-ID: <CABb0KFGQ_HbD+MNwKCcE+6D50XhJxpx0M0dRiC-EVwEXPv+4XA@mail.gmail.com>
+Subject: Re: [v3] fs/proc/task_mmu: Implement IOCTL for efficient page table scanning
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Yang Shi <shy828301@gmail.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        kernel@collabora.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
         autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -72,150 +103,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 26, 2023 at 12:55=E2=80=AFPM Ariel Miculas <amiculas@cisco.com>=
- wrote:
->
-> These parameters are passed when mounting puzzlefs using '-o' option of
-> mount:
-> -o oci_root_dir=3D"/path/to/oci/dir"
-> -o image_manifest=3D"root_hash_of_image_manifest"
->
-> For a particular manifest in the manifests array in index.json (located
-> in the oci_root_dir), the root hash of the image manifest is found in
-> the digest field.
->
-> It would be nicer if we could pass the tag, but we don't support json
-> deserialization.
->
-> Example of mount:
-> mount -t puzzlefs -o oci_root_dir=3D"/home/puzzlefs_oci" -o \
-> image_manifest=3D"2d6602d678140540dc7e96de652a76a8b16e8aca190bae141297bcf=
-fdcae901b" \
-> none /mnt
->
-> Signed-off-by: Ariel Miculas <amiculas@cisco.com>
-> ---
->  samples/rust/puzzlefs.rs | 63 ++++++++++++++++++++++++++--------------
->  1 file changed, 41 insertions(+), 22 deletions(-)
->
-> diff --git a/samples/rust/puzzlefs.rs b/samples/rust/puzzlefs.rs
-> index dad7ecc76eca..4e9a8aedf0c1 100644
-> --- a/samples/rust/puzzlefs.rs
-> +++ b/samples/rust/puzzlefs.rs
-> @@ -7,6 +7,7 @@
->  use kernel::{
->      c_str, file, fs,
->      io_buffer::IoBufferWriter,
-> +    str::CString,
->      sync::{Arc, ArcBorrow},
->  };
->
-> @@ -31,27 +32,29 @@ struct PuzzlefsInfo {
->      puzzlefs: Arc<PuzzleFS>,
->  }
->
-> +#[derive(Default)]
-> +struct PuzzleFsParams {
-> +    oci_root_dir: Option<CString>,
-> +    image_manifest: Option<CString>,
-> +}
-> +
->  #[vtable]
->  impl fs::Context<Self> for PuzzleFsModule {
-> -    type Data =3D ();
-> -
-> -    kernel::define_fs_params! {(),
-> -        {flag, "flag", |_, v| { pr_info!("flag passed-in: {v}\n"); Ok(()=
-) } },
-> -        {flag_no, "flagno", |_, v| { pr_info!("flagno passed-in: {v}\n")=
-; Ok(()) } },
-> -        {bool, "bool", |_, v| { pr_info!("bool passed-in: {v}\n"); Ok(()=
-) } },
-> -        {u32, "u32", |_, v| { pr_info!("u32 passed-in: {v}\n"); Ok(()) }=
- },
-> -        {u32oct, "u32oct", |_, v| { pr_info!("u32oct passed-in: {v}\n");=
- Ok(()) } },
-> -        {u32hex, "u32hex", |_, v| { pr_info!("u32hex passed-in: {v}\n");=
- Ok(()) } },
-> -        {s32, "s32", |_, v| { pr_info!("s32 passed-in: {v}\n"); Ok(()) }=
- },
-> -        {u64, "u64", |_, v| { pr_info!("u64 passed-in: {v}\n"); Ok(()) }=
- },
-> -        {string, "string", |_, v| { pr_info!("string passed-in: {v}\n");=
- Ok(()) } },
-> -        {enum, "enum", [("first", 10), ("second", 20)], |_, v| {
-> -            pr_info!("enum passed-in: {v}\n"); Ok(()) }
-> -        },
-> +    type Data =3D Box<PuzzleFsParams>;
-> +
-> +    kernel::define_fs_params! {Box<PuzzleFsParams>,
-> +        {string, "oci_root_dir", |s, v| {
-> +                                      s.oci_root_dir =3D Some(CString::t=
-ry_from_fmt(format_args!("{v}"))?);
-> +                                      Ok(())
-> +                                  }},
-> +        {string, "image_manifest", |s, v| {
-> +                                      s.image_manifest =3D Some(CString:=
-:try_from_fmt(format_args!("{v}"))?);
-> +                                      Ok(())
-> +                                  }},
->      }
->
-> -    fn try_new() -> Result {
-> -        Ok(())
-> +    fn try_new() -> Result<Self::Data> {
-> +        Ok(Box::try_new(PuzzleFsParams::default())?)
->      }
->  }
->
-> @@ -136,11 +139,27 @@ impl fs::Type for PuzzleFsModule {
->      const FLAGS: i32 =3D fs::flags::USERNS_MOUNT;
->      const DCACHE_BASED: bool =3D true;
->
-> -    fn fill_super(_data: (), sb: fs::NewSuperBlock<'_, Self>) -> Result<=
-&fs::SuperBlock<Self>> {
-> -        let puzzlefs =3D PuzzleFS::open(
-> -            c_str!("/home/puzzlefs_oci"),
-> -            c_str!("2d6602d678140540dc7e96de652a76a8b16e8aca190bae141297=
-bcffdcae901b"),
-> -        );
-> +    fn fill_super(
-> +        data: Box<PuzzleFsParams>,
-> +        sb: fs::NewSuperBlock<'_, Self>,
-> +    ) -> Result<&fs::SuperBlock<Self>> {
-> +        let oci_root_dir =3D match data.oci_root_dir {
-> +            Some(val) =3D> val,
-> +            None =3D> {
-> +                pr_err!("missing oci_root_dir parameter!\n");
-> +                return Err(ENOTSUPP);
-> +            }
-> +        };
-> +
-> +        let image_manifest =3D match data.image_manifest {
-> +            Some(val) =3D> val,
-> +            None =3D> {
-> +                pr_err!("missing image_manifest parameter!\n");
-> +                return Err(ENOTSUPP);
-> +            }
-> +        };
-> +
+On Wed, 26 Jul 2023 at 10:34, Muhammad Usama Anjum
+<usama.anjum@collabora.com> wrote:
+> On 7/25/23 11:05=E2=80=AFPM, Micha=C5=82 Miros=C5=82aw wrote:
+> > On Tue, 25 Jul 2023 at 11:11, Muhammad Usama Anjum
+> > <usama.anjum@collabora.com> wrote:
+> >>
+> >> ----
+> >> Michal please post your thoughts before I post this as v26.
+> >> ----
+> > [...]
+> >
+> > Looks ok - minor things below.
+> >
+> > 1. I'd change the _WPASYNC things to something better, if this can
+> > also work with "normal" UFFD WP.
+> Yeah, but we don't have any use case where UFFD WP is required. It can be
+> easily added later when user case arrives. Also UFFD WP sends messages to
+> userspace. User can easily do the bookkeeping in userspace as performance
+> isn't a concern there.
 
-The guard syntax (available since 1.65) can make these kinds of match state=
-ments
-cleaner:
+We shouldn't name the flags based on the use case but based on what
+they actually do. So if this checks UFFD registration for WP, then
+maybe PAGE_IS_WPALLOWED or something better describing the trait it
+matches?
 
-    let Some(oci_root_dir) =3D data.oci_root_dir else {
-        pr_err!("missing oci_root_dir parameter!\n");
-        return Err(ENOTSUPP);
-    }
+> > 2. For the address tagging part I'd prefer someone who knows how this
+> > is used take a look. We're ignoring the tag (but clear it on return in
+> > ->start) - so it doesn't matter for the ioctl() itself.
+> I've added Kirill if he can give his thoughts about tagged memory.
+>
+> Right now we are removing the tags from all 3 pointers (start, end, vec)
+> before using the pointers on kernel side. But we are overwriting and
+> writing the walk ending address in start which user can read/use.
+>
+> I think we shouldn't over-write the start (and its tag) and instead retur=
+n
+> the ending walk address in new variable, walk_end.
 
-    let Some(image_manifest) ...
+The overwrite of `start` is making the ioctl restart (continuation)
+easier to handle. I prefer the current way, but it's not a strong
+opinion.
 
-> +        let puzzlefs =3D PuzzleFS::open(&oci_root_dir, &image_manifest);
->
->          if let Err(ref e) =3D puzzlefs {
->              pr_info!("error opening puzzlefs {e}\n");
-> --
-> 2.41.0
->
->
+> > 3. BTW, One of the uses is the GetWriteWatch and I wonder how it
+> > behaves on HugeTLB (MEM_LARGE_PAGES allocation)? Shouldn't it return a
+> > list of huge pages and write *lpdwGranularity =3D HPAGE_SIZE?
+> Wine/Proton doesn't used hugetlb by default. Hugetlb isn't enabled by
+> default on Debian as well. For GetWriteWatch() we don't care about the
+> hugetlb at all. We have added hugetlb's implementation to complete the
+> feature and leave out something.
+
+How is GetWriteWatch() working when passed a VirtualAlloc(...,
+MEM_LARGE_PAGES|MEM_WRITE_WATCH...)-allocated range? Does it still
+report 4K pages?
+This is only a problem when using max_pages: a hugetlb range might
+need counting and reporting huge pages and not 4K parts.
+
+Best Regards
+Micha=C5=82 Miros=C5=82aw
