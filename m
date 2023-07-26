@@ -2,114 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D199763E28
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 20:08:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22E8B763E38
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 20:15:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232152AbjGZSIo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 14:08:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51730 "EHLO
+        id S230152AbjGZSPv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 14:15:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232100AbjGZSIn (ORCPT
+        with ESMTP id S231483AbjGZSPt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 14:08:43 -0400
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 643A91FF5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 11:08:42 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id AA8C232005CA;
-        Wed, 26 Jul 2023 14:08:41 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Wed, 26 Jul 2023 14:08:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=cc
-        :content-type:content-type:date:date:from:from:in-reply-to
-        :message-id:mime-version:reply-to:sender:subject:subject:to:to;
-         s=fm1; t=1690394921; x=1690481321; bh=LiFTDs2ptIm9/GUnG9PO+IOhE
-        8PladO/37FfCMk44W0=; b=Zjd+JdOfaXc95hyrStR7yVWwcj9Z5FRdJnDdVGvoB
-        hFQcwGysZEd3hY12iGEknC7iHqBOJaBvTfmEdTUL1lwYWBPgz8IIAxUi8CNjiGPE
-        qI2kjue4uo5aXzKThdvVc6f6Qqc1o8ZitO3T/QRFEgBW2bLPdeZ4mP5XoRKH/4aM
-        QuTNdtTbL+DA7BzbivJm+dZqmzdw8QaixPwRkWnkHyMMeKnCv5Q3oWdoh15wkX/t
-        Slf8DjanRyrYw9GXo17PSgsbGC4u6DtE2//iowF0jAdidAjCgGtbbXPd1KJEeB2U
-        8x2Pfeg4eTBKPpQU7QnTfRZGMXNNxpLu6gpCV6imrQYbQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:message-id
-        :mime-version:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1690394921; x=1690481321; bh=LiFTDs2ptIm9/GUnG9PO+IOhE8PladO/37F
-        fCMk44W0=; b=w7P4wiHE5NsMTulNNIOoyW1q+23I5jARt/YUnU8yDRwPo7bYKI7
-        lkPjwE5THlCpPz8WwNez37SNPMcEBngGe8Xx9rpiNpuYcZcf1z9HULAgwJeCYqp+
-        Q8kxpWHdgjmtkzXIhvlHRjcDB6S5bsxvvGhYdpMJiocfFNAQp81ba4K+5znSEkAh
-        s459it+KkAx/GXgPypASDT/1uA4TZQ4rF+NRq68yV2/JJ6jXC4DITlSyYGJrVxoY
-        kGC9W2QdEzILo3xy3PVsN22SZ9D6NiSNTvQUHYhC0E+1QT5Q+/l0RFkcoZXpa3LR
-        DFFl9zjcdyewCzGIN8USBP3acLjaQt2ohqw==
-X-ME-Sender: <xms:KGHBZL1fGOvn3X8f6_LriwhP451LUHIokPDYbNbNZRJhd57b85QQsg>
-    <xme:KGHBZKGtlm8DAegp3E0vbiWBQABS0EAEEAWZQQUPS19WYHikyMb3bGgVLJVE89jij
-    Xm0e4SU5Rl5dck8>
-X-ME-Received: <xmr:KGHBZL7r8ohbYhMoY-yLIQ0X_qiSrWuV7PJHQ8uSgCnDuN7gozcjR5HfIwWGDgUShaC_BlfLmys>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedriedvgdduudelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkfgfgggtsehttddttddtredtnecuhfhrohhmpefpihhkohhlrghu
-    shcutfgrthhhuceopfhikhholhgruhhssehrrghthhdrohhrgheqnecuggftrfgrthhtvg
-    hrnhepiedtueetheevledtuedvgfdvgeeghffhfeeigeejveektdfguefgjeeuvdefhedv
-    necuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomheppfhikhholhgruhhssehrrghthhdrohhrgh
-X-ME-Proxy: <xmx:KGHBZA2ARuurFBgu3nFFP4PbYzR0O9Gbh7ATO-tfV07wJuRpPw_YIg>
-    <xmx:KGHBZOH3TxIcSA5p86npf8JwfUcAhSMGTUPK1PCNQevkbjNpVgPnbg>
-    <xmx:KGHBZB9NE8dGyrzp_10ZPS-MoBcIWdJCEdFmrFIqW1_RnaScOHMO8g>
-    <xmx:KWHBZKjum4_DHvxFjTboa0812gsdEJSHPPXct7JI9mE41jJHWZIncg>
-Feedback-ID: i53a843ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 26 Jul 2023 14:08:40 -0400 (EDT)
-Received: from vostro.rath.org (vostro [192.168.12.4])
-        by ebox.rath.org (Postfix) with ESMTPS id 79A1BB3D;
-        Wed, 26 Jul 2023 18:08:39 +0000 (UTC)
-Received: by vostro.rath.org (Postfix, from userid 1000)
-        id E41BE8053E; Wed, 26 Jul 2023 19:08:38 +0100 (BST)
-From:   Nikolaus Rath <Nikolaus@rath.org>
-To:     fuse-devel@lists.sourceforge.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        miklos <mszeredi@redhat.com>
-Subject: Semantics of fuse_notify_delete()
-Mail-Copies-To: never
-Mail-Followup-To: fuse-devel@lists.sourceforge.net, Linux FS Devel
-        <linux-fsdevel@vger.kernel.org>, miklos <mszeredi@redhat.com>
-Date:   Wed, 26 Jul 2023 19:08:38 +0100
-Message-ID: <87wmymk0k9.fsf@vostro.rath.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+        Wed, 26 Jul 2023 14:15:49 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB7B52D44;
+        Wed, 26 Jul 2023 11:15:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=x97cDGBfbbYgCu4TNBD9kXaxFG/QZ+f5W68FlyrkZcE=; b=Q2VKv6oQ6oHWzZEFcT0SsIsfBn
+        oD6MQPzRS5vQQlGWM5+zSeNvcE6Xyd37XYO3CpHLWgeAwlRVV6of7bh40pq3z2rmFr3UWJ6opyss6
+        5xmm07nFq4G84pv8yjwZTMUuua6sDDICAkKq2lvbSUsQ8mOMZ7KpxXAfIaq39fe5+m47fdqJu2CMK
+        Tn2RWeUgMz0lSjQj5z6W5UmOFQNclWFYFpEQl55xY6r9/NC6S8Lf4bxH+ZzMJCWJ7XdeF8SSHrPK6
+        pyiUI2TwB4IZx2YDr6NiJ87nWWbeqHbZMhA0LbGJ0A3u9k8VMwpSlTaE+uKN8QlK0tnYPithCoPM8
+        ROqfp5UQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qOj2y-00BG7X-34;
+        Wed, 26 Jul 2023 18:15:40 +0000
+Date:   Wed, 26 Jul 2023 11:15:40 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Joel Granados <j.granados@samsung.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>, willy@infradead.org,
+        josh@joshtriplett.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 00/14] sysctl: Add a size argument to register functions
+ in sysctl
+Message-ID: <ZMFizKFkVxUFtSqa@bombadil.infradead.org>
+References: <CGME20230726140648eucas1p29a92c80fb28550e2087cd0ae190d29bd@eucas1p2.samsung.com>
+ <20230726140635.2059334-1-j.granados@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230726140635.2059334-1-j.granados@samsung.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Wed, Jul 26, 2023 at 04:06:20PM +0200, Joel Granados wrote:
+> What?
+> These commits set things up so we can start removing the sentinel elements.
 
-It seems to me that fuse_notify_delete
-(https://elixir.bootlin.com/linux/v6.1/source/fs/fuse/dev.c#L1512) fails
-with ENOTEMPTY if there is a pending FORGET request for a directory
-entry within. Is that correct?
+Yes but the why must explained right away.
 
-If so, what is the expected behavior for a filesystem that has just
-deleted the entire tree and wants to inform the kernel of that fact?
+> Why?
+> This is part of the push to trim down kernel/sysctl.c by moving the large array
+> that was causing merge conflicts. 
 
-Calling fuse_notify_delete() synchronously seems very prone to
-deadlocks, and I'm not sure that the call would actually block until
-FORGET has been processed.
+Let me elaborate on that:
 
-Is the filesystem expected to wait for FORGET before it issues
-fuse_notify_delete()? Or should it actually wait with the (physical)
-removal of the parent directory until all child entries have zero lookup
-count?
+While the move moving over time of array elements out of kernel/sysctl.c
+to their own place helps merge conflicts this patch set does not help
+with that in and of itself, what it does is help make sure the move of
+sysctls to their own files does not bloat the kernel more, and in fact
+helps reduce the overall build time size of the kernel and run time
+memory consumed by the kernel by about ~64 bytes per array.
 
-In the former case, why is this needed? In the latter case, how are
-network filesystems supposed to deal with this?
+Without this patch set each time we moved a set of sysctls out of
+kernel/sysctl.c to its own subsystem we'd have to add a new sentinel
+element (an empty sysctl entry), and while that helps clean up
+kernel/sysctl.c to avoid merge conflicts, it also bloats the kernel
+by about 64 bytes on average each time.
 
-Best,
--Nikolaus
+We can do better. We can make those moves *not* have a size penalty, and
+all around also reduce the build / run time of the kernel.
+
+*This* is the why, that if we don't do this the cleanup of
+kernel/sysctl.c ends up slowly bloating the kernel. Willy had
+suggested we instead remove the sentinel so that each move does not
+incur a size penalty, but also that in turn reduces the size of the
+kernel at build time / run time by a ballpark about ~64 bytes per
+array.
+
+Then the following is more details about estimates of overall size
+savings, it's not miscellaneous information at all, it's very relevant
+information to this patch set.
+
+> Misc:
+> A consequence of eventually removing all the sentinels (64 bytes per sentinel)
+> is the bytes we save. Here I include numbers for when all sentinels are removed
+> to contextualize this chunk
+>   * bloat-o-meter:
+>     The "yesall" configuration results save 9158 bytes (you can see the output here
+>     https://lore.kernel.org/all/20230621091000.424843-1-j.granados@samsung.com/.
+>     The "tiny" configuration + CONFIG_SYSCTL save 1215 bytes (you can see the
+>     output here [2])
+>   * memory usage:
+>     As we no longer need the sentinel element within proc_sysctl.c, we save some
+>     bytes in main memory as well. In my testing kernel I measured a difference of
+>     6720 bytes. I include the way to measure this in [1]
+
+  Luis
