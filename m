@@ -2,67 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B1F6E763BF2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 18:06:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E71E4763BFD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 18:09:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231829AbjGZQGv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 12:06:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33652 "EHLO
+        id S231547AbjGZQJW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 12:09:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232562AbjGZQGp (ORCPT
+        with ESMTP id S231192AbjGZQJV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 12:06:45 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 750832696;
-        Wed, 26 Jul 2023 09:06:41 -0700 (PDT)
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36QFnA7l025744;
-        Wed, 26 Jul 2023 16:06:15 GMT
+        Wed, 26 Jul 2023 12:09:21 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B9A319A1;
+        Wed, 26 Jul 2023 09:09:20 -0700 (PDT)
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36Q8Eocu017652;
+        Wed, 26 Jul 2023 16:08:50 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : content-type : in-reply-to :
  mime-version; s=corp-2023-03-30;
- bh=HxQ4SpeG/o7tPw+bmEe+bzEnbUqsGTIAlCF9U8RpRKw=;
- b=C0QKxoXfLBZJ1VlkHy3bv7ua9HAFLOMXB4fYblCejPOszQYMUr3nu2+FAd8ON4qObzz/
- FkA7LUBV5a6bW/M4Nx3IZzQqFfPIFvhp0eBNstWyrvcmH2hDNPcUbLu2UXGGc5pyYuOT
- gUvkj+ueClZZ2jXXEzbTv7In5rEoBYtz/9tKXvPVdXB4KuUconBnMBuf8/+bTCtsot2h
- nFvYLGYZbPowkprECEDvhKC6tzPrZUZ3ZR0BwzazZyToSz/U00TZyLN2T0Rxacasq425
- Jr4MJBnWpZ+XoVQVk0bI+8+lt1KeMV0F8CYlH/MZPu4MN5cI8Q+fXoALhedA1PwgV7ni Dg== 
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3s075d7x5y-1
+ bh=D9fo13T6cmvZU4kwCqkmIGf/xzs5cc7MW2cvhhmSzoU=;
+ b=XeeHTKgl4LCBVPl1xOMoZpcSPLWxWslGnQ09DED2/V8nIVTVFLq7WqvQXxuQam2W73tP
+ Jf0YwebEy4oM+ByoFtnWr2H49Q8VduHBcIeQZUwugYOLlgkTsja5S9Kr1mvf2fLeOJw7
+ u7FNO6I+X9ROKQ2QxCbIukVi0xjuMSOmPz4NaRQDfIG5EIZbw6ovYuXaJypk52gy747J
+ yybtjsWCss4/jg1IclLU6RqfKJvmD/oLAmDxwfCHHl5qA2/mwt2g+Pq9X4W6d36YZYKD
+ EHgHasNAceMe7AH5cCUVy/AUQHWiVtRi0KPlPlwulXgT7lx2do7k//mE1bsubJi0q4Jb oA== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3s061c7waf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jul 2023 16:06:15 +0000
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 36QFf2sk029421;
-        Wed, 26 Jul 2023 16:06:14 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
-        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3s05j6dstv-1
+        Wed, 26 Jul 2023 16:08:50 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 36QFZW4Z025271;
+        Wed, 26 Jul 2023 16:08:49 GMT
+Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2044.outbound.protection.outlook.com [104.47.74.44])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3s05j6wqhm-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Jul 2023 16:06:14 +0000
+        Wed, 26 Jul 2023 16:08:49 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FE4YuLmEBVZLJVtfpd0yP9I/Gb2AL4c3cHJRc85MID/o4ZFXNbgYLDigUPiWic+J3c03GHZwZDYtMOOWPhol9oz3hYXPahki+/lag4pWInpNKAcqx8Q6o3SIPFpixZCrZNUWgycwG7WIq4iZLJ3dsfqp0570RXLMiC8+acSd6n03ZAZ0unUW7oY1hLZ0g7wWMnoeMXtWFWrNso2Jr2VbJqeXE3J/dtqj7Ad2JvLGN9zRBq/W8vpsJI/iYT5yZ45Oj+97uOEHrLAnAhq46v4ae/WhXVQzBvETuqVcx9MneJJtGvmG1d7jn0/l9eDfZVm0F9eV0pjcJuxNsyRzThlzsg==
+ b=XMrthq8f/L2tJcntLmIKcM821Nn+2wcbsOSMF4wRB5HCL5h5GXfL+rDFrhP8WfDirbnyMu9SbWJVmWhm455DKlQIKz6Nz1IUS7YjwHC52TiFNHlIxhq91FRypyUcJhyTCwBQwt9tXB1DzMeW3F83Cob5Zyx6PmtgWzMJzSgWd3633/S0djB7M1wFGf/BngvSi5gBDuadGuByeLJ7zPRBrKdPietJ+j3Y3h1QdYzUY1DdyPp20vG5BaxEwClBHC7s0+VypfLiVsrGoZO+A4XCflUYavy3fU4x7RidTGLMjycKf7NxLsI3GAw1pyJOA+v0337LEmJPKY0U2iHnQF0ANQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HxQ4SpeG/o7tPw+bmEe+bzEnbUqsGTIAlCF9U8RpRKw=;
- b=VXelSYkNU8aknIBF0plPF7IFY4YXRRntG5em4h4HlI1I/UBBzSYufOSEpDiRF0Duq48WvAGZBApClnI3DwiSuKrVWwNfuISU89taDggMiM3HF4rc7rM9ov6N7bMNdT0LM0KhNXylgq/wMwXpDQhXaurCiGyWiba0Y11yPHTbbgTQ+tQRUa6NWYQUwB/tautVG+Gq/IzHsxb64RlHO9aBLvK4m6oBAW5Zt60EzuFnMwDzEFN9qQ1a2P5+iTlZIdgoGfxgnioORiy9ZQAc9V6Z9/JgFJMI1SolrLgTyBzYYxoKuYgtWJIhRvxbUM000HpCH8MLEzAXmqKxnKcFRIa2Vw==
+ bh=D9fo13T6cmvZU4kwCqkmIGf/xzs5cc7MW2cvhhmSzoU=;
+ b=FCBYWp7BBFnqHlQFWfPQxS+M2J5HY6dwTTV2Kj4ZaE4L9lO+KJRvPozB4sJ0YsYdcN01BCYuXpKphqF2XnnOGfM9dzoutRTBj2tAFk1CtpfyMhIoAz8C4Hmz0HxnmQnrCYx+OgyvMOfBWcl5N1nvNLa0uBlyHL7hZs7BFto8mnWpoFJC7q+8sCyf2wysz3UZ9NwP0VtV73xyTh7DrLfvy+A2wv+NuaJbiHgxCqUEEexjWmwEnPi8RreYnUk4r3M0m0AAAHc4XIrfsyRu7cns75dvTuj9qvPsXD3Vnq+6aZ0LWQtCz7c3WuG6RW8wMtuzu/Tp9ut3UgQlr823M3moGw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HxQ4SpeG/o7tPw+bmEe+bzEnbUqsGTIAlCF9U8RpRKw=;
- b=l7c55uDgTOCc8AlNU8KyRwh5STVpjHAEwGrXPpTQhXP85Kv47zdV/KBcxAeMOrVpwYN0UX3vYYKlezdz3AXa9RHzMUn4TBoIutd4WKAHI7yA1gbchLxf8Iq+RHzNlrFn8wm+SDtCSw2Js1Awv1mbkjJOnImr2E6piHm6GIO21aY=
+ bh=D9fo13T6cmvZU4kwCqkmIGf/xzs5cc7MW2cvhhmSzoU=;
+ b=c5SC24TAedAeufx5o5p6qrHFOR9A90ZeW0yKiU3ACl53fTsGMQw06VbiyF/7nMUJKmAgcnayzqQ172XoQFc9tBDKtP/Elf+dalqwWRNwkROzj+Sun4Gcgzf8DosGSqUEejLhDEoELRP9EBue70F9erkaqWhbcVOeDNsDzt9K8s8=
 Received: from SN6PR10MB3022.namprd10.prod.outlook.com (2603:10b6:805:d8::25)
- by IA0PR10MB7668.namprd10.prod.outlook.com (2603:10b6:208:492::14) with
+ by IA1PR10MB5900.namprd10.prod.outlook.com (2603:10b6:208:3d4::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.33; Wed, 26 Jul
- 2023 16:06:11 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.29; Wed, 26 Jul
+ 2023 16:08:46 +0000
 Received: from SN6PR10MB3022.namprd10.prod.outlook.com
  ([fe80::26d3:6f41:6415:8c35]) by SN6PR10MB3022.namprd10.prod.outlook.com
  ([fe80::26d3:6f41:6415:8c35%3]) with mapi id 15.20.6631.026; Wed, 26 Jul 2023
- 16:06:11 +0000
-Date:   Wed, 26 Jul 2023 12:06:07 -0400
+ 16:08:46 +0000
+Date:   Wed, 26 Jul 2023 12:08:43 -0400
 From:   "Liam R. Howlett" <Liam.Howlett@Oracle.com>
 To:     Peng Zhang <zhangpeng.00@bytedance.com>
 Cc:     corbet@lwn.net, akpm@linux-foundation.org, willy@infradead.org,
@@ -71,8 +71,9 @@ Cc:     corbet@lwn.net, akpm@linux-foundation.org, willy@infradead.org,
         npiggin@gmail.com, avagin@gmail.com, linux-mm@kvack.org,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 05/11] maple_tree: Add test for mt_dup()
-Message-ID: <20230726160607.eoobd4dyvryfb25a@revolver>
+Subject: Re: [PATCH 06/11] maple_tree: Introduce mas_replace_entry() to
+ directly replace an entry
+Message-ID: <20230726160843.hpl4razxiikqbuxy@revolver>
 Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
         Peng Zhang <zhangpeng.00@bytedance.com>, corbet@lwn.net,
         akpm@linux-foundation.org, willy@infradead.org, brauner@kernel.org,
@@ -82,92 +83,92 @@ Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
 References: <20230726080916.17454-1-zhangpeng.00@bytedance.com>
- <20230726080916.17454-6-zhangpeng.00@bytedance.com>
+ <20230726080916.17454-7-zhangpeng.00@bytedance.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230726080916.17454-6-zhangpeng.00@bytedance.com>
+In-Reply-To: <20230726080916.17454-7-zhangpeng.00@bytedance.com>
 User-Agent: NeoMutt/20220429
-X-ClientProxiedBy: YT4PR01CA0434.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:10d::6) To SN6PR10MB3022.namprd10.prod.outlook.com
+X-ClientProxiedBy: YT3PR01CA0099.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:85::19) To SN6PR10MB3022.namprd10.prod.outlook.com
  (2603:10b6:805:d8::25)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR10MB3022:EE_|IA0PR10MB7668:EE_
-X-MS-Office365-Filtering-Correlation-Id: 52b98698-559b-48c8-d8e3-08db8df23aad
+X-MS-TrafficTypeDiagnostic: SN6PR10MB3022:EE_|IA1PR10MB5900:EE_
+X-MS-Office365-Filtering-Correlation-Id: 94a2f4f6-7604-4e36-320e-08db8df29765
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: +gUVO7vtt30oRLEtIr4uy9wGotNZMhmCUEPWmYs5hJZIWW2fwe5Wp6jakiiExjv4uMWDEcLNamV79+lEh7GuIgi2UXGidp1waXh+orU7zeXOBhQh+0+AXkEMxkXPF3TUMGCNiPfpJ96E91XSxBQ1SCYg1XMoIw/gdTKs9zO784fH64+MDz0YleaNp0lali0Ml2wQfuw/GqTv1s3Yt48w3FKM1WEtJu0tp7b9SU5cniNSOmZKxQ3CpfHQU+5dIFrsgF6Or9XmPDbhaLM8tSTMfaJ85J3/qJWiAaQoEBGXyzBUskNEofPWTyfZx30m9m0ODB6Jdf7i91w8ym2knxO/ixsAQprUnViBtjEPAt0N0lSV9BKPgnbxiyYjQCfMFIwdoluLh9+T9Nf3eEgnk09L/mRZ3K3iLr7DnlxU10EOc6Ajbed8yp0o5vdGUm1KP6TFUqVRzOz4NGM8V1XiAyT5YSel9WoleSLdd7WkXVrpmWvnQFBThqspEpg4gBgn7ZD7m8m1lCI1Q+boG7S5g/Y/AskIjDoWeXrbvdYXpNOP7yGt9gE6QQhyUPnvs8keAy4S
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR10MB3022.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(7916004)(39860400002)(346002)(396003)(136003)(366004)(376002)(451199021)(86362001)(38100700002)(33716001)(478600001)(2906002)(186003)(26005)(1076003)(6506007)(8936002)(6512007)(5660300002)(41300700001)(8676002)(6666004)(316002)(4326008)(83380400001)(7416002)(66476007)(66556008)(66946007)(6916009)(6486002)(9686003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: cVHYnibFFZR0B7XpRsfPHbu/i4Hn8I+zLHEF6Dp1JqFgkRVnlgvmym9tQJHJ6BGzZ+GmSZbkh6GssipW2/UvJ1Y19rlTPxSdzxpC/AlZZJ5rst31hPfvVwOChGR7SMvN6JrxEviPDN55P2hgsMfqc+tGq9oWY54hTxc9q30mEBGFofurBp/+Bm0lwbPGHTkX+udzeHa1ccVUst/wh5p1XHQxgsqK7MKXbkPlfrwoFKQByePeaz5zdK7wjYGVZcAsA++Mt+VeT/ym9MXTmSHmmWvTycN13csxq9yzmBdWKX73B4gtmGNcABNV6mk78OSAoGcgxTfDQRLP/c1bXweeKpVsXGD693b93kfFdJztb+h7swbbbusbi88H+SyDVx7u7MISX3u1EZFEgpCFOyjz7oYKYg8wRNYo1jbH/iw1+qLdDH1SeV1pX+Z+jRRmHBQX9tM3rVlo+ZozupJDAoHyBfq4IiY9Q2KC6cq64pgu0N2wrYvn0wOE17x6Su2mdOheq3nfO6mIWwpv5B/JegMkilU3NHjwowilGVkrcmO+dbkYlYWxZurGpyjnDo1Uo6oA
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR10MB3022.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(7916004)(396003)(376002)(346002)(366004)(136003)(39860400002)(451199021)(86362001)(33716001)(2906002)(478600001)(38100700002)(186003)(1076003)(26005)(6506007)(5660300002)(41300700001)(9686003)(6666004)(6512007)(7416002)(6486002)(66476007)(66556008)(316002)(66946007)(8676002)(4326008)(6916009)(8936002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?zO/UPH70GNeJxZXK8FESqklf8/8GGx+RbBsPhCEsFiZZV4Gpaq+UTlneGlvr?=
- =?us-ascii?Q?4b9WfskH0X+JKFIQetH2l9nRHiD1swHbw9+CcaGKOQe4/UC9+efwFKzB+/tw?=
- =?us-ascii?Q?NebsUzW7X7symCltpxfucpG3kfr9JCzhSKWu4Wz3kR8Pte+/abCd+SdV4pwB?=
- =?us-ascii?Q?1Rca1qtKr1sQwgx77+YsmwV0gQwRqBqj5oIxl/MQyFSTze6S3iIZHdd4pI4C?=
- =?us-ascii?Q?xLd6xdNNx1b3YGGtponiWFELevS7yGwx4Pkf7ps91oDHW4xPDgJ2E+Lajw0k?=
- =?us-ascii?Q?6QHMFng2I5WGmIi0MEAtuOfaMbHZZUO9UXOD8/S6JslxR7FyY/2+KIz/XZHX?=
- =?us-ascii?Q?/ho10WEkEjTIip1Vl13suko8Oqsi3aow0dBGaxIJUd3oIWaCy4E8giCi/Vss?=
- =?us-ascii?Q?G5PyMyOQZhEFcEiUi4B0CXV4gN8TnNDF6djSl+qGfZwNw/SnD+MnGzqVGtv8?=
- =?us-ascii?Q?NxbCuTDRs+wTAZ3ucuXHEiJc/NN0qoM8BYUwZCFqJYkZSFqZU8DdlEZFKFVG?=
- =?us-ascii?Q?AHdnk7N+ZI6IO2DNB4eWmeOS2gPUmik1tBT0BYhp5AxKEuWqRCTv143HVbFM?=
- =?us-ascii?Q?66m2t4rF2TfktFK9hF6v2+ULZaCNgvYgvG1QGgdF9NpCanOBvTUt7grECFFu?=
- =?us-ascii?Q?wjz0czmiaWQiI1rghNYItsZzuMV93qQHZjPcu9ZKHZe720IXPV4xD2obwOdK?=
- =?us-ascii?Q?BZ9eN9+iqEKIkpTSthXy7DYON4bCtFy5K3pw+/TWB+Aa2PjO/p9t1Rkn642I?=
- =?us-ascii?Q?A/8eQcuoIGK/BBxV0oQk9XhHXVMBovD5YcZ78TA3cs8p48o5nTZCHffW/4jm?=
- =?us-ascii?Q?g8miATCiVO+oQnkwaE3PtF2TX61ZAbU2dTKubrr8iyDJwXr48uk1/E58PF24?=
- =?us-ascii?Q?sbFDMhPk3OQKI0qr34SYeNJDdXXPbA2ABnrqBVuoUPsivpXmBZdY1dISCmi8?=
- =?us-ascii?Q?QIDsVaN4wg+SwKBggXcgUEqmIyP9LWLeW0VEX9b+2lyNp0RD+7oQHP/2KNBs?=
- =?us-ascii?Q?hs/Eqg5/tmP3qpOE4txaY03aXltyN+QQGS4xxxCF5Sbo4d89khHx7XKHvVP9?=
- =?us-ascii?Q?WGRBz9jXdeQy1fpH00di+Fm8FVkl/qkOyK3SbXdxIfx1zDgtu6OwUyHE3CJY?=
- =?us-ascii?Q?jHLp/M8qVuMLzTFQUM0DTr6QpsnaqqAZR/S96j/OwuFw8VZPssI1jagDk75A?=
- =?us-ascii?Q?I2p6B8yGRXpEycIoBJs9+hK7Xnz1cl+hOki4HuQbHbZ77GAKnXCE8Rf9zt1K?=
- =?us-ascii?Q?npS5+fTDheEONGoAy1Q5IMd0Si9Us/jVf/WEc7wqpQdJ7BdKrSNHJl1I6c9N?=
- =?us-ascii?Q?AKgAtIBeNxVee4nA/zDAod3LgvcWtCycbn8j96zREpA/z0Yq2Up7X6Jysuf5?=
- =?us-ascii?Q?aWWwFrCr4Va52eBi6fnCxwBX00kTohKP8dUxez1WOcAXERTROp/m2XkLBzKW?=
- =?us-ascii?Q?VlMJ+JybmhOlUTJSX2wCtBb8k5O7rsKAuSyx+TMCjvCRC0lriQQ9Ex3dRK/4?=
- =?us-ascii?Q?rZU3h88XBLU5P7nMS4RtogXzx9DGLMqWpRhb4nh1avTnSgzwPzzrXxsCxRQd?=
- =?us-ascii?Q?s7f9XfKr+1jBGyqcyRNHU1hx0GxLMGdOmm64XmizN+dLzZiLmcjIBBDwSHUE?=
- =?us-ascii?Q?wg=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?sQjUkWuGxcInrgjpIWpUOfQTxtd42OL6IvS0d07ANIOsd31Z0ou+9cIsC2Dl?=
+ =?us-ascii?Q?0WkVzWWsb/sLBCxeIliKtblvtqNL/93El9U8tbUXhIT/javCRQqA17us6+Wl?=
+ =?us-ascii?Q?fpilVha0xnV9jnMPuyrq0BHR2I3sX+CvGKNdNVpYzStdcoG/Xs+JdfW1NstH?=
+ =?us-ascii?Q?TnspEua5YXeXIpw02vrtS0J9Z4EoJ7Tz53m3lZU0mWor/K3zVGr3Gnoba34B?=
+ =?us-ascii?Q?FXpbolllVmdslRDutW1LSCdhlyqNCc1c/g93jvNgJ4dX7vIOa49qWYKUSZa1?=
+ =?us-ascii?Q?W2fDm8UhJRoVtakTaMVglkcU0BQrc1Ej8PL3Bmcoo5dEcNQemncVGVWlg0tm?=
+ =?us-ascii?Q?G6PiJrKdgOzydD82faFEeDp5KDCo++aFfGWflbARIUMxAKq2n7GeWwSWG0P5?=
+ =?us-ascii?Q?Dud+P3HzFH1XbG3Vz7896qASMOb62b6KCQm94HrCQTJUT7SOFMS4LkASdqVU?=
+ =?us-ascii?Q?tjRxyJkUZR9YL/VHOTvGsBqExjrjwFVGWybZkm2gW317KPalhCz+sDfeWG6k?=
+ =?us-ascii?Q?IRRDuiL9TCYY/oat01kiUgX2bcsQsByAJjbkF4PhqjbHgwOKIMC3cvMOxEXD?=
+ =?us-ascii?Q?vayjPuw5BnYaOQbuIFzmWxl6Y4Tirzm3WY9+rOiaZcTUwbW7+oaGoRwu1pPk?=
+ =?us-ascii?Q?ynu4jHNf+9vg4cEMmLLYtvEkZL2QLTcFQZa1SzmE/smLG8iQVIJLppgH3+u3?=
+ =?us-ascii?Q?hckq8eIaPyPkSgIzyJYATXPtilE4yD2zKwq9Z4U8jLs5nh0ZNbCFBTL3sl/I?=
+ =?us-ascii?Q?pRxraKHNgBKbq2tLFpiCCXb0hxB+2G4ueWSK3sGUqVOiCETR+rPxLr/AceyX?=
+ =?us-ascii?Q?RWCohsB8nApsHpUVZpdHjFufk2VFe1PuJp6xc8FfeY0BLCFhJ3KL8aFKyLwT?=
+ =?us-ascii?Q?gJZzOqFt7BxeJwhywO2unnKzMeqApiWhda1BZc9G8apLvnLkAAvxdV0TiCSq?=
+ =?us-ascii?Q?2lE+47728uxxByeMMEvZq9PZ4ozJjqF2GLKJtVsSwAKKf63LNZjNSxRMIyd7?=
+ =?us-ascii?Q?5Ck4wahmT0BH0IXizEJ8ekonptr0njln2JeIvcp0LfGHx7LCOF/4CWFAGLIk?=
+ =?us-ascii?Q?fpB/CUl8JYkyqfhA3EHX+vRMvqxZqJDeT8996yrHc3YJ7iT4nrHSjCnesI4P?=
+ =?us-ascii?Q?9VM6LIxAxX1Fb0zy6z0OtKP5UEcbh3FSUaKtYXOO6zVcwR8yxm3yF7LrCOQz?=
+ =?us-ascii?Q?N7l5MgOLyJeygAAMNh7tWTPsTrZxG7ZBv2Hqxfi5IIKpUwLStrUXKXhqfM5c?=
+ =?us-ascii?Q?79SY4PxQgWAGAzbWNYi+x8gHwmw7l80s9cEZS29Hr2RAfNK1Gjy738jHo8jw?=
+ =?us-ascii?Q?igHTIDwjsjrem8iIMYsAur5yPaR2U3f60JwrKQEStjt/G+UhRubweDf4ghhk?=
+ =?us-ascii?Q?x5AWMNCOkyvMDnuvwOl5KKDBKYxNt7mIxnDqDEiCymAlvX5aCIQWPO+KuvNX?=
+ =?us-ascii?Q?kg8E82kINPntm91qgsdAm44FEpdvouAE78UEgcS83xc7A0lbHTZ3eXmAbVwQ?=
+ =?us-ascii?Q?HmCMEMUqfSK1FiuSO515KGDuxO6a59Sg8Ycco+1/sFf2RkmpdubTrZogxhRP?=
+ =?us-ascii?Q?gM0qrX6VtFGKPbkDCeeMyEB8j3AsuOu77utcgH4dJ83ne1tsc3UgAh3BiLK2?=
+ =?us-ascii?Q?xw=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?aG4oZp+Lt+PF9iNmI/vEA8fegFbelrTjphsF5U+Fm+0JdFmpUrou7DSmzxmH?=
- =?us-ascii?Q?+NLrPYvw2kLtfy6yk2ei6fMH5khqRi2r9dqSyE+5apU0Flk1+ez1NQTn+QNW?=
- =?us-ascii?Q?wy3SHlNYctJ2bOgGIltEJbcRP4XUJD4LwSsJv5A5xU5UjVE45ulzZ78uZzhS?=
- =?us-ascii?Q?/OEnpHH/J5+Lik89K6c92wLmJ1YiAoJyMaHcXiamdesr8BWh1UVWFEtUwX9P?=
- =?us-ascii?Q?+dy0VJfErQ/Vu1BfHfECZH0rtinWd+bfQ0zbNBq52wP39ixxvUJtF5rqABxp?=
- =?us-ascii?Q?OCL5s+YmANw0Mi73mm4+5F1dMOr5a8CLcnm9gM0etDpTSRzworNSrvS+B98T?=
- =?us-ascii?Q?TcycQv3Qlrrjpx2O1iIL5frNcUTzngxHuETKiRey3hWu/R2uBCzIMTEuzPPx?=
- =?us-ascii?Q?mo5a66V7/nPo21S8x/jllZShrhSSzJq+G7SumWgO7VuRK52sRdJbVh+HvEJK?=
- =?us-ascii?Q?ywsHt8yGQ59o4dmDsfxo8efTorqfp3udheWaT5loJd2qhnWrckSMez4K1UOv?=
- =?us-ascii?Q?VoUQdjWxY8r2LIcYwV6PtzXd61bGvThqUtNRRMV3Fjq60M3icEDjv3Conj7P?=
- =?us-ascii?Q?IpVyoRXj10ZHvIhXqrH4frV2i9HIySv6LPVshOvqBYpMPaR/4Qcd0CmabAuZ?=
- =?us-ascii?Q?rSOoBvyP6lSSIVVdZMm+ai6ss9fJQqvlrfOz2j5aZVM4r7PXXPVDAAISN+zQ?=
- =?us-ascii?Q?xpIJ4orz58dlZB8lUwlhpfFOsHmMdapvZkrCgblZWsp+HuexY1R4xs7zQMwM?=
- =?us-ascii?Q?LMDuGsGifZs16YTHOuNWpeA3EOITQZJN6aZ4abFq5tJMx7bmBaBBxZT57NHv?=
- =?us-ascii?Q?mibJMPsh6kKDOQCWZK2aX8DtwQMQjhVxv+KqE8oEsBjIuaT3966BkCmHHCeA?=
- =?us-ascii?Q?bAutMCMyv042Hux6mewb/Zq28Ce/tHHO32ltO0RvR9O+0VKhuVWL6MAx+T+5?=
- =?us-ascii?Q?RrPltHJsLGgK2lHzoByPZg6nW47G9roO2cj5GRXzzW0hSaxJVVY4Aj5xZaFm?=
- =?us-ascii?Q?d7nQgpxsm1OAJlCPfOmJrCXonQpFKcCXWwItkbNQRABCrysE4cKzFUvvSvQM?=
- =?us-ascii?Q?StdQZ8nV?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?wNr8JQPV83M6w/Z+LEm1uzocwyHHNGZgj3HcZszKTHodC4oqYQjS2Tbb2lq0?=
+ =?us-ascii?Q?NMX7uLgOgWTijUO7dycOYy4s3r5sVqAPfo8gJFcaKgwG0ZEPhjVjjnCdR3Wu?=
+ =?us-ascii?Q?oacMaP6KwZVQPlWyaKBJ905g7BLONpfxcogMYPAtcJfchGKW8eDV205XolmF?=
+ =?us-ascii?Q?duibWdEXk2y8k+AGhiQGFJ1YL3LoZBqeyp+Xx494euyfCGF3EoTWRlo6R48u?=
+ =?us-ascii?Q?7RZOYcuR2BCzqymDocEyVM3P0PbNNyplQSdFGJrPAQEjPSnlGJoI2DkHoqk2?=
+ =?us-ascii?Q?Bccx6b0fhjdt8nBqbc0CzWTGgwM1oHp4hxsy8RWEeQJWO5HG8nmb6+4gbMQ7?=
+ =?us-ascii?Q?sRzv4ha73FmCBYpu6JUptVo7RWKG7Aj06TY/ActxWnbCZhih+rzXNmqEhO/B?=
+ =?us-ascii?Q?F6fKXe/Ma8W2AhtC/9ozp9m9ONwU1z9ZG+gKC53jsxtQkN0whIpxRqzeqIf6?=
+ =?us-ascii?Q?hvRCtEb4QTQuInUMdbbZJ3rH9Cw/EGUhaip/tMRDNnR51ocus6WZD4eGzszH?=
+ =?us-ascii?Q?GDp0b78BSGAcvYNkDCMTyYL0t0bzzvXyyt6wJ6bbz4tpWwE+1hXfoGIfIBiu?=
+ =?us-ascii?Q?yTOYTILWfvkWxyonrfw++f94M/GKoFEI7zFw0+RFDl5sqnkscJRVFiJKEcy7?=
+ =?us-ascii?Q?RN/dJzH0nyLw2NjG25M9DPcB2zkVHyykjYg0GLmdVzPL/r1z1SI1qugeitRQ?=
+ =?us-ascii?Q?0HDqknONWFa23JhX/EqiJhkR1aD+SEuxRE8QPb2h/Yed1z+yV9Qkc0yoHuv/?=
+ =?us-ascii?Q?hntmNIMMRi8VscBJjM79u9/uSrGmVGhD8kuxw7h843NCylA/nZFCOv7FmWIE?=
+ =?us-ascii?Q?FoS/LsIlFJzBcmPUpfwuXxqGxMYlYyMJ1YKvn/udXsBgsxjBiF0A2LeIv5BK?=
+ =?us-ascii?Q?LqvwVj6gLRqXY1vFGqq3z1CAZ+ySxckcvx/tMoG2fSvJT6A/tPcv8lQXstfG?=
+ =?us-ascii?Q?uZntF8m01pmqPXP8Iz3g34cOuZOmg20NeALKEGpSHX7lja967ZJdRz+w03kp?=
+ =?us-ascii?Q?3OBciVPXibM4oSopX0j3gjXgyJaGYo21oyPyQks5oBGqj3Dqt7jBArts7n0+?=
+ =?us-ascii?Q?Y3LPktd4?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 52b98698-559b-48c8-d8e3-08db8df23aad
+X-MS-Exchange-CrossTenant-Network-Message-Id: 94a2f4f6-7604-4e36-320e-08db8df29765
 X-MS-Exchange-CrossTenant-AuthSource: SN6PR10MB3022.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2023 16:06:11.2079
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2023 16:08:46.5855
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7S7cfibtj8vtArtPr3F7VQjUeM2N2mD0NcSDyOruRbwE/wP4pOS36ZiT/8Wlo97YmJeS4zEk6k0kdrig3FAexQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB7668
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6uZBko8yxiQ23jSpbzzxWEAODIANPF4AbwApcZSBGEx+LbQ+8yv0I1MKD0HPqJ9ryTo6B1gtqBrmh5fCq9s9sQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB5900
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-26_06,2023-07-26_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 adultscore=0
- phishscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
- definitions=main-2307260143
-X-Proofpoint-ORIG-GUID: qZmabKATeRNoeExb13GrnrKfkiWLl4_b
-X-Proofpoint-GUID: qZmabKATeRNoeExb13GrnrKfkiWLl4_b
+ definitions=2023-07-26_07,2023-07-26_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ adultscore=0 mlxscore=0 phishscore=0 suspectscore=0 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307260143
+X-Proofpoint-ORIG-GUID: piPfFQ2OCopH0idlrL4NwBy0qBU9d40x
+X-Proofpoint-GUID: piPfFQ2OCopH0idlrL4NwBy0qBU9d40x
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
@@ -179,242 +180,74 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 * Peng Zhang <zhangpeng.00@bytedance.com> [230726 04:10]:
-> Add test for mt_dup().
+> If mas has located a specific entry, it may be need to replace this
+> entry, so introduce mas_replace_entry() to do this. mas_replace_entry()
+> will be more efficient than mas_store*() because it doesn't do many
+> unnecessary checks.
+> 
+> This function should be inline, but more functions need to be moved to
+> the header file, so I didn't do it for the time being.
+
+I am really nervous having no checks here.  I get that this could be
+used for duplicating the tree more efficiently, but having a function
+that just swaps a value in is very dangerous - especially since it is
+decoupled from the tree duplication code.
+
 > 
 > Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
 > ---
->  tools/testing/radix-tree/maple.c | 202 +++++++++++++++++++++++++++++++
->  1 file changed, 202 insertions(+)
+>  include/linux/maple_tree.h |  1 +
+>  lib/maple_tree.c           | 25 +++++++++++++++++++++++++
+>  2 files changed, 26 insertions(+)
 > 
-> diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
-> index e5da1cad70ba..3052e899e5df 100644
-> --- a/tools/testing/radix-tree/maple.c
-> +++ b/tools/testing/radix-tree/maple.c
-> @@ -35857,6 +35857,204 @@ static noinline void __init check_locky(struct maple_tree *mt)
->  	mt_clear_in_rcu(mt);
+> diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
+> index 229fe78e4c89..a05e9827d761 100644
+> --- a/include/linux/maple_tree.h
+> +++ b/include/linux/maple_tree.h
+> @@ -462,6 +462,7 @@ struct ma_wr_state {
+>  
+>  void *mas_walk(struct ma_state *mas);
+>  void *mas_store(struct ma_state *mas, void *entry);
+> +void mas_replace_entry(struct ma_state *mas, void *entry);
+>  void *mas_erase(struct ma_state *mas);
+>  int mas_store_gfp(struct ma_state *mas, void *entry, gfp_t gfp);
+>  void mas_store_prealloc(struct ma_state *mas, void *entry);
+> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+> index efac6761ae37..d58572666a00 100644
+> --- a/lib/maple_tree.c
+> +++ b/lib/maple_tree.c
+> @@ -5600,6 +5600,31 @@ void *mas_store(struct ma_state *mas, void *entry)
 >  }
+>  EXPORT_SYMBOL_GPL(mas_store);
 >  
-> +/*
-> + * Compare two nodes and return 0 if they are the same, non-zero otherwise.
+> +/**
+> + * mas_replace_entry() - Replace an entry that already exists in the maple tree
+> + * @mas: The maple state
+> + * @entry: The entry to store
+> + *
+> + * Please note that mas must already locate an existing entry, and the new entry
+> + * must not be NULL. If these two points cannot be guaranteed, please use
+> + * mas_store*() instead, otherwise it will cause an internal error in the maple
+> + * tree. This function does not need to allocate memory, so it must succeed.
 > + */
-> +static int __init compare_node(struct maple_enode *enode_a,
-> +			       struct maple_enode *enode_b)
+> +void mas_replace_entry(struct ma_state *mas, void *entry)
 > +{
-> +	struct maple_node *node_a, *node_b;
-> +	struct maple_node a, b;
-> +	void **slots_a, **slots_b; /* Do not use the rcu tag. */
-> +	enum maple_type type;
-> +	int i;
+> +	void __rcu **slots;
 > +
-> +	if (((unsigned long)enode_a & MAPLE_NODE_MASK) !=
-> +	    ((unsigned long)enode_b & MAPLE_NODE_MASK)) {
-> +		pr_err("The lower 8 bits of enode are different.\n");
-> +		return -1;
-> +	}
+> +#ifdef CONFIG_DEBUG_MAPLE_TREE
+> +	MAS_WARN_ON(mas, !mte_is_leaf(mas->node));
+> +	MAS_WARN_ON(mas, !entry);
+> +	MAS_WARN_ON(mas, mas->offset >= mt_slots[mte_node_type(mas->node)]);
+> +#endif
 > +
-> +	type = mte_node_type(enode_a);
-> +	node_a = mte_to_node(enode_a);
-> +	node_b = mte_to_node(enode_b);
-> +	a = *node_a;
-> +	b = *node_b;
-> +
-> +	/* Do not compare addresses. */
-> +	if (ma_is_root(node_a) || ma_is_root(node_b)) {
-> +		a.parent = (struct maple_pnode *)((unsigned long)a.parent &
-> +						  MA_ROOT_PARENT);
-> +		b.parent = (struct maple_pnode *)((unsigned long)b.parent &
-> +						  MA_ROOT_PARENT);
-> +	} else {
-> +		a.parent = (struct maple_pnode *)((unsigned long)a.parent &
-> +						  MAPLE_NODE_MASK);
-> +		b.parent = (struct maple_pnode *)((unsigned long)b.parent &
-> +						  MAPLE_NODE_MASK);
-> +	}
-> +
-> +	if (a.parent != b.parent) {
-> +		pr_err("The lower 8 bits of parents are different. %p %p\n",
-> +			a.parent, b.parent);
-> +		return -1;
-> +	}
-> +
-> +	/*
-> +	 * If it is a leaf node, the slots do not contain the node address, and
-> +	 * no special processing of slots is required.
-> +	 */
-> +	if (ma_is_leaf(type))
-> +		goto cmp;
-> +
-> +	slots_a = ma_slots(&a, type);
-> +	slots_b = ma_slots(&b, type);
-> +
-> +	for (i = 0; i < mt_slots[type]; i++) {
-> +		if (!slots_a[i] && !slots_b[i])
-> +			break;
-> +
-> +		if (!slots_a[i] || !slots_b[i]) {
-> +			pr_err("The number of slots is different.\n");
-> +			return -1;
-> +		}
-> +
-> +		/* Do not compare addresses in slots. */
-> +		((unsigned long *)slots_a)[i] &= MAPLE_NODE_MASK;
-> +		((unsigned long *)slots_b)[i] &= MAPLE_NODE_MASK;
-> +	}
-> +
-> +cmp:
-> +	/*
-> +	 * Compare all contents of two nodes, including parent (except address),
-> +	 * slots (except address), pivots, gaps and metadata.
-> +	 */
-> +	return memcmp(&a, &b, sizeof(struct maple_node));
+> +	slots = ma_slots(mte_to_node(mas->node), mte_node_type(mas->node));
+> +	rcu_assign_pointer(slots[mas->offset], entry);
 > +}
+> +EXPORT_SYMBOL_GPL(mas_replace_entry);
 > +
-> +/*
-> + * Compare two trees and return 0 if they are the same, non-zero otherwise.
-> + */
-> +static int __init compare_tree(struct maple_tree *mt_a, struct maple_tree *mt_b)
-> +{
-> +	MA_STATE(mas_a, mt_a, 0, 0);
-> +	MA_STATE(mas_b, mt_b, 0, 0);
-> +
-> +	if (mt_a->ma_flags != mt_b->ma_flags) {
-> +		pr_err("The flags of the two trees are different.\n");
-> +		return -1;
-> +	}
-> +
-> +	mas_dfs_preorder(&mas_a);
-> +	mas_dfs_preorder(&mas_b);
-> +
-> +	if (mas_is_ptr(&mas_a) || mas_is_ptr(&mas_b)) {
-> +		if (!(mas_is_ptr(&mas_a) && mas_is_ptr(&mas_b))) {
-> +			pr_err("One is MAS_ROOT and the other is not.\n");
-> +			return -1;
-> +		}
-> +		return 0;
-> +	}
-> +
-> +	while (!mas_is_none(&mas_a) || !mas_is_none(&mas_b)) {
-> +
-> +		if (mas_is_none(&mas_a) || mas_is_none(&mas_b)) {
-> +			pr_err("One is MAS_NONE and the other is not.\n");
-> +			return -1;
-> +		}
-> +
-> +		if (mas_a.min != mas_b.min ||
-> +		    mas_a.max != mas_b.max) {
-> +			pr_err("mas->min, mas->max do not match.\n");
-> +			return -1;
-> +		}
-> +
-> +		if (compare_node(mas_a.node, mas_b.node)) {
-> +			pr_err("The contents of nodes %p and %p are different.\n",
-> +			       mas_a.node, mas_b.node);
-> +			mt_dump(mt_a, mt_dump_dec);
-> +			mt_dump(mt_b, mt_dump_dec);
-> +			return -1;
-> +		}
-> +
-> +		mas_dfs_preorder(&mas_a);
-> +		mas_dfs_preorder(&mas_b);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static noinline void __init check_mt_dup(struct maple_tree *mt)
-> +{
-> +	DEFINE_MTREE(new);
-> +	int i, j, ret, count = 0;
-> +
-> +	/* stored in the root pointer*/
-> +	mt_init_flags(&tree, 0);
-> +	mtree_store_range(&tree, 0, 0, xa_mk_value(0), GFP_KERNEL);
-> +	mt_dup(&tree, &new, GFP_KERNEL);
-> +	mt_validate(&new);
-> +	if (compare_tree(&tree, &new))
-> +		MT_BUG_ON(&new, 1);
-> +
-> +	mtree_destroy(&tree);
-> +	mtree_destroy(&new);
-> +
-> +	for (i = 0; i < 1000; i += 3) {
-> +		if (i & 1)
-> +			mt_init_flags(&tree, 0);
-> +		else
-> +			mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
-> +
-> +		for (j = 0; j < i; j++) {
-> +			mtree_store_range(&tree, j * 10, j * 10 + 5,
-> +					  xa_mk_value(j), GFP_KERNEL);
-> +		}
-
-Storing in this way is probably not checking a full tree.  I think it's
-important to check the full tree/full nodes since you have changes to
-detect the metadata.
-
-> +
-> +		ret = mt_dup(&tree, &new, GFP_KERNEL);
-> +		MT_BUG_ON(&new, ret != 0);
-> +		mt_validate(&new);
-> +		if (compare_tree(&tree, &new))
-> +			MT_BUG_ON(&new, 1);
-> +
-> +		mtree_destroy(&tree);
-> +		mtree_destroy(&new);
-> +	}
-> +
-> +	/* Test memory allocation failed. */
-> +	for (i = 0; i < 1000; i += 3) {
-> +		if (i & 1)
-> +			mt_init_flags(&tree, 0);
-> +		else
-> +			mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
-> +
-> +		for (j = 0; j < i; j++) {
-> +			mtree_store_range(&tree, j * 10, j * 10 + 5,
-> +					  xa_mk_value(j), GFP_KERNEL);
-> +		}
-> +
-> +		mt_set_non_kernel(50);
-
-It may be worth while allowing more/less than 50 allocations.
-
-> +		ret = mt_dup(&tree, &new, GFP_NOWAIT);
-> +		mt_set_non_kernel(0);
-> +		if (ret != 0) {
-> +			MT_BUG_ON(&new, ret != -ENOMEM);
-> +			count++;
-> +			mtree_destroy(&tree);
-> +			continue;
-> +		}
-> +
-> +		mt_validate(&new);
-> +		if (compare_tree(&tree, &new))
-> +			MT_BUG_ON(&new, 1);
-> +
-> +		mtree_destroy(&tree);
-> +		mtree_destroy(&new);
-> +	}
-> +
-> +	/* pr_info("mt_dup() fail %d times\n", count); */
-> +	BUG_ON(!count);
-> +}
-> +
->  extern void test_kmem_cache_bulk(void);
->  
->  void farmer_tests(void)
-> @@ -35904,6 +36102,10 @@ void farmer_tests(void)
->  	check_null_expand(&tree);
->  	mtree_destroy(&tree);
->  
-> +	mt_init_flags(&tree, 0);
-> +	check_mt_dup(&tree);
-> +	mtree_destroy(&tree);
-> +
->  	/* RCU testing */
->  	mt_init_flags(&tree, 0);
->  	check_erase_testset(&tree);
+>  /**
+>   * mas_store_gfp() - Store a value into the tree.
+>   * @mas: The maple state
 > -- 
 > 2.20.1
-> 
 > 
