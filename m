@@ -2,112 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AE4BC762933
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 05:22:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95988762A54
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 06:32:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231224AbjGZDWG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Jul 2023 23:22:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43160 "EHLO
+        id S230182AbjGZEcS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 00:32:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230486AbjGZDWB (ORCPT
+        with ESMTP id S229472AbjGZEcQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Jul 2023 23:22:01 -0400
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB8552697;
-        Tue, 25 Jul 2023 20:21:58 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.30.67.143])
-        by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4R9fMR097cz4f3jMH;
-        Wed, 26 Jul 2023 11:21:55 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.174.178.55])
-        by APP4 (Coremail) with SMTP id gCh0CgCHLaFPkcBkmKBNOw--.42869S4;
-        Wed, 26 Jul 2023 11:21:55 +0800 (CST)
-From:   thunder.leizhen@huaweicloud.com
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Zhen Lei <thunder.leizhen@huawei.com>
-Subject: [PATCH] epoll: simplify ep_alloc()
-Date:   Wed, 26 Jul 2023 11:21:35 +0800
-Message-Id: <20230726032135.933-1-thunder.leizhen@huaweicloud.com>
-X-Mailer: git-send-email 2.37.3.windows.1
+        Wed, 26 Jul 2023 00:32:16 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D5D6A0;
+        Tue, 25 Jul 2023 21:32:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=uMDpXai9jnzcyG1+E1KFnjBJUtDKa0sU3l3aqJf5M+Q=; b=dGXA4NWGVTSoEmqk20tITHiyuE
+        lPYPO6433XZ4tnt3t48LsE+d/4VpNeS7oM84J6y+thfwX/XPYruwCi8vYRFHLt+GjDjCiHIw3MOf9
+        B21S3QCJnJSQVU4cmVrMA6Jwxia0nG8m3HOCU5rdRiQ6gG8soU8Qjqj6y1ihQKybMrEnsXy7uw3aa
+        oXjrcZqWY8VGbOpl7xebCsuPS5dZaIJp1WF6eVY2mca4sqyVVYH3Qi1HU8k9pMX8ZE1Qa7nutJJ21
+        vKLYSH4ku2imUu6ZYo8rdtqCTm83go7AEUCC1l8bmHLUIc2eqRqhsJg0vXj9KOvIgeUc85oxV/W6D
+        EOVARvtw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qOVr9-0069Nf-DF; Wed, 26 Jul 2023 04:10:35 +0000
+Date:   Wed, 26 Jul 2023 05:10:35 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] proc/vmcore: fix signedness bug in read_from_oldmem()
+Message-ID: <ZMCcu9KHh0uC2VFq@casper.infradead.org>
+References: <b55f7eed-1c65-4adc-95d1-6c7c65a54a6e@moroto.mountain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: gCh0CgCHLaFPkcBkmKBNOw--.42869S4
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gr4UAF43Kr4xKFWUKFWfXwb_yoWkZrX_AF
-        W09a4DGrW8JF4fJa4UAw1YvFWfKa1FvFW8Zr40kFZ7Wa43Gr93Zayqvr43Zr17uFW3WFya
-        vwn7C39Iq3Wj9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbz8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-        Y4v20xvaj40_JrC_JFWl1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-        67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-        0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lw4CEc2x0rVAKj4xxMxAIw28IcxkI7VAKI48J
-        MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-        AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-        0xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4
-        v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-        14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFCJmUUUUU
-X-CM-SenderInfo: hwkx0vthuozvpl2kv046kxt4xhlfz01xgou0bp/
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b55f7eed-1c65-4adc-95d1-6c7c65a54a6e@moroto.mountain>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Zhen Lei <thunder.leizhen@huawei.com>
+On Tue, Jul 25, 2023 at 08:03:16PM +0300, Dan Carpenter wrote:
+> The bug is the error handling:
+> 
+> 	if (tmp < nr_bytes) {
+> 
+> "tmp" can hold negative error codes but because "nr_bytes" is type
+> size_t the negative error codes are treated as very high positive
+> values (success).  Fix this by changing "nr_bytes" to type ssize_t.  The
+> "nr_bytes" variable is used to store values between 1 and PAGE_SIZE and
+> they can fit in ssize_t without any issue.
+> 
+> Fixes: 5d8de293c224 ("vmcore: convert copy_oldmem_page() to take an iov_iter")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-The get_current_user() does not fail, and moving it after kzalloc() can
-simplify the code a bit.
-
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
----
- fs/eventpoll.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
-
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 4b1b3362f697b11..1d9a71a0c4c1678 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -975,15 +975,11 @@ void eventpoll_release_file(struct file *file)
- 
- static int ep_alloc(struct eventpoll **pep)
- {
--	int error;
--	struct user_struct *user;
- 	struct eventpoll *ep;
- 
--	user = get_current_user();
--	error = -ENOMEM;
- 	ep = kzalloc(sizeof(*ep), GFP_KERNEL);
- 	if (unlikely(!ep))
--		goto free_uid;
-+		return -ENOMEM;
- 
- 	mutex_init(&ep->mtx);
- 	rwlock_init(&ep->lock);
-@@ -992,16 +988,12 @@ static int ep_alloc(struct eventpoll **pep)
- 	INIT_LIST_HEAD(&ep->rdllist);
- 	ep->rbr = RB_ROOT_CACHED;
- 	ep->ovflist = EP_UNACTIVE_PTR;
--	ep->user = user;
-+	ep->user = get_current_user();
- 	refcount_set(&ep->refcount, 1);
- 
- 	*pep = ep;
- 
- 	return 0;
--
--free_uid:
--	free_uid(user);
--	return error;
- }
- 
- /*
--- 
-2.25.1
-
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
