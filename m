@@ -2,47 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 446DD763D0E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 18:58:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32998763CEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jul 2023 18:48:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232266AbjGZQ57 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Jul 2023 12:57:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41366 "EHLO
+        id S231721AbjGZQsP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Jul 2023 12:48:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232185AbjGZQ54 (ORCPT
+        with ESMTP id S231862AbjGZQry (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Jul 2023 12:57:56 -0400
-Received: from aer-iport-4.cisco.com (aer-iport-4.cisco.com [173.38.203.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F08F1E42
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 09:57:54 -0700 (PDT)
+        Wed, 26 Jul 2023 12:47:54 -0400
+Received: from aer-iport-3.cisco.com (aer-iport-3.cisco.com [173.38.203.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A100926B9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jul 2023 09:47:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=6458; q=dns/txt; s=iport;
-  t=1690390675; x=1691600275;
+  d=cisco.com; i=@cisco.com; l=9636; q=dns/txt; s=iport;
+  t=1690390051; x=1691599651;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=cIBpQFptALxQEDeNXQIlMjNYdYD99mepAG1JGqIXFp8=;
-  b=SYq4YXMnDGrU7gRPKHuCkwF1z4E7FIIL0QUkDGIAqg2Pp5Q0xqdDTM+O
-   J3ZJbD7aD3mOiAitwibKZFrqkJ57jutSAmFuGCPlAkxKnop4JvF3OXjwS
-   VaPekMmpFKRntVfv7LdovDZ7KV0OrQwlblOrWpcVTkfDiiYKjMgw1DVTe
-   E=;
+  bh=PFmcSAyq0q+twl25ouvozy9tQ/05/gbjPTooN2X1b1Q=;
+  b=f7NgAZ7SBIH/RmXrzQ8+vH2vQp2rGh8F+jy0TefklB9OVutpD4e+yZ50
+   GKmyO3Qx9+I+EdDqCYdTxeW6+zbeInmK6U/DdZJF5F4Q40sL4U2fSL1qb
+   s8bXINmNblkX9YQXTlOynDxJcG7JbKx2hiGGKdv8AQK46BqRMXo1e2B4k
+   w=;
+X-CSE-ConnectionGUID: N5IyJgQqSHigT8C597hZ2g==
+X-CSE-MsgGUID: V0qXxUGWTayV3mKfou9ceA==
 X-IronPort-AV: E=Sophos;i="6.01,232,1684800000"; 
-   d="scan'208";a="8416074"
+   d="scan'208";a="8394938"
 Received: from aer-iport-nat.cisco.com (HELO aer-core-7.cisco.com) ([173.38.203.22])
-  by aer-iport-4.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2023 16:46:24 +0000
+  by aer-iport-3.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2023 16:46:26 +0000
 Received: from archlinux-cisco.cisco.com (dhcp-10-61-98-211.cisco.com [10.61.98.211])
         (authenticated bits=0)
-        by aer-core-7.cisco.com (8.15.2/8.15.2) with ESMTPSA id 36QGjqU0022602
+        by aer-core-7.cisco.com (8.15.2/8.15.2) with ESMTPSA id 36QGjqU1022602
         (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 26 Jul 2023 16:46:24 GMT
+        Wed, 26 Jul 2023 16:46:25 GMT
 From:   Ariel Miculas <amiculas@cisco.com>
 To:     rust-for-linux@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         tycho@tycho.pizza, brauner@kernel.org, viro@zeniv.linux.org.uk,
         ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
         Ariel Miculas <amiculas@cisco.com>
-Subject: [RFC PATCH v2 08/10] rust: puzzlefs: read the puzzlefs image manifest instead of an individual metadata layer
-Date:   Wed, 26 Jul 2023 19:45:32 +0300
-Message-ID: <20230726164535.230515-9-amiculas@cisco.com>
+Subject: [RFC PATCH v2 09/10] rust: puzzlefs: add support for reading files
+Date:   Wed, 26 Jul 2023 19:45:33 +0300
+Message-ID: <20230726164535.230515-10-amiculas@cisco.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230726164535.230515-1-amiculas@cisco.com>
 References: <20230726164535.230515-1-amiculas@cisco.com>
@@ -54,191 +56,293 @@ X-Outbound-Node: aer-core-7.cisco.com
 X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED,
-        USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The puzzlefs image manifest is the file referenced by index.json and it
-contains the array of metadata layers that describe the puzzlefs image.
-This file represents the root of the puzzlefs filesystem since we can't
-parse json files. When this filesystem is mounted, usermode will need to
-read the tag from index.json, find the corresponding puzzlefs image
-manifest and pass it to the kernel module.
-
-Due to the lack of BTreeMap in the kernel, only image manifests without
-fs verity information are supported for now.
+Each file has an associated list of file chunks, which are identified
+using a content addressable blob and an offset. These were generated by
+the `puzzlefs build` command, which uses FastCDC to split a filesystem
+into chunks.
 
 Signed-off-by: Ariel Miculas <amiculas@cisco.com>
 ---
- samples/rust/puzzle.rs       |  1 +
- samples/rust/puzzle/inode.rs | 22 ++++++++++++----
- samples/rust/puzzle/oci.rs   | 51 ++++++++++++++++++++++++++++++++++++
- samples/rust/puzzlefs.rs     | 23 ++++++++--------
- 4 files changed, 80 insertions(+), 17 deletions(-)
- create mode 100644 samples/rust/puzzle/oci.rs
+ samples/rust/puzzle/inode.rs | 61 +++++++++++++++++++++++++++++++++---
+ samples/rust/puzzle/oci.rs   | 32 +++++++++++++++----
+ samples/rust/puzzlefs.rs     | 54 +++++++++++++------------------
+ 3 files changed, 105 insertions(+), 42 deletions(-)
 
-diff --git a/samples/rust/puzzle.rs b/samples/rust/puzzle.rs
-index a809cddfb817..e74a248c39ff 100644
---- a/samples/rust/puzzle.rs
-+++ b/samples/rust/puzzle.rs
-@@ -2,3 +2,4 @@
- pub(crate) mod types;
- pub(crate) use types::{manifest_capnp, metadata_capnp};
- pub(crate) mod inode;
-+pub(crate) mod oci;
 diff --git a/samples/rust/puzzle/inode.rs b/samples/rust/puzzle/inode.rs
-index d792f661aa00..f63cdbc1eac4 100644
+index f63cdbc1eac4..03c9f6bee75f 100644
 --- a/samples/rust/puzzle/inode.rs
 +++ b/samples/rust/puzzle/inode.rs
-@@ -3,20 +3,32 @@
- 
- use crate::puzzle::error::Result;
- use crate::puzzle::error::WireFormatError;
-+use crate::puzzle::oci::Image;
+@@ -7,10 +7,10 @@
  use crate::puzzle::types as format;
--use crate::puzzle::types::{Inode, InodeMode, MetadataBlob};
-+use crate::puzzle::types::{Digest, Inode, InodeMode};
+ use crate::puzzle::types::{Digest, Inode, InodeMode};
  use alloc::vec::Vec;
-+use kernel::mount::Vfsmount;
- use kernel::prelude::ENOENT;
-+use kernel::str::CStr;
-+use kernel::sync::Arc;
++use core::cmp::min;
+ use kernel::mount::Vfsmount;
+-use kernel::prelude::ENOENT;
++use kernel::prelude::{ENOENT, ENOTDIR};
+ use kernel::str::CStr;
+-use kernel::sync::Arc;
  
  pub(crate) struct PuzzleFS {
-+    pub(crate) oci: Image,
-     layers: Vec<format::MetadataBlob>,
+     pub(crate) oci: Image,
+@@ -18,8 +18,9 @@ pub(crate) struct PuzzleFS {
  }
  
  impl PuzzleFS {
--    pub(crate) fn new(md: MetadataBlob) -> Result<Self> {
--        let mut v = Vec::new();
--        v.try_push(md)?;
--        Ok(PuzzleFS { layers: v })
-+    pub(crate) fn open(vfsmount: Arc<Vfsmount>, rootfs_path: &CStr) -> Result<PuzzleFS> {
-+        let oci = Image::open(vfsmount)?;
-+        let rootfs = oci.open_rootfs_blob(rootfs_path)?;
+-    pub(crate) fn open(vfsmount: Arc<Vfsmount>, rootfs_path: &CStr) -> Result<PuzzleFS> {
+-        let oci = Image::open(vfsmount)?;
++    pub(crate) fn open(oci_root_dir: &CStr, rootfs_path: &CStr) -> Result<PuzzleFS> {
++        let vfs_mount = Vfsmount::new_private_mount(oci_root_dir)?;
++        let oci = Image::open(vfs_mount)?;
+         let rootfs = oci.open_rootfs_blob(rootfs_path)?;
+ 
+         let mut layers = Vec::new();
+@@ -46,3 +47,55 @@ pub(crate) fn find_inode(&self, ino: u64) -> Result<Inode> {
+         Err(WireFormatError::from_errno(ENOENT))
+     }
+ }
 +
-+        let mut layers = Vec::new();
-+        for md in rootfs.metadatas.iter() {
-+            let digest = Digest::try_from(md)?;
-+            layers.try_push(oci.open_metadata_blob(&digest)?)?;
++pub(crate) fn file_read(
++    oci: &Image,
++    inode: &Inode,
++    offset: usize,
++    data: &mut [u8],
++) -> Result<usize> {
++    let chunks = match &inode.mode {
++        InodeMode::File { chunks } => chunks,
++        _ => return Err(WireFormatError::from_errno(ENOTDIR)),
++    };
++
++    // TODO: fix all this casting...
++    let end = offset + data.len();
++
++    let mut file_offset = 0;
++    let mut buf_offset = 0;
++    for chunk in chunks {
++        // have we read enough?
++        if file_offset > end {
++            break;
 +        }
 +
-+        Ok(PuzzleFS { oci, layers })
-     }
- 
-     pub(crate) fn find_inode(&self, ino: u64) -> Result<Inode> {
++        // should we skip this chunk?
++        if file_offset + (chunk.len as usize) < offset {
++            file_offset += chunk.len as usize;
++            continue;
++        }
++
++        let addl_offset = if offset > file_offset {
++            offset - file_offset
++        } else {
++            0
++        };
++
++        // ok, need to read this chunk; how much?
++        let left_in_buf = data.len() - buf_offset;
++        let to_read = min(left_in_buf, chunk.len as usize - addl_offset);
++
++        let start = buf_offset;
++        let finish = start + to_read;
++        file_offset += addl_offset;
++
++        // how many did we actually read?
++        let n = oci.fill_from_chunk(chunk.blob, addl_offset as u64, &mut data[start..finish])?;
++        file_offset += n;
++        buf_offset += n;
++    }
++
++    // discard any extra if we hit EOF
++    Ok(buf_offset)
++}
 diff --git a/samples/rust/puzzle/oci.rs b/samples/rust/puzzle/oci.rs
-new file mode 100644
-index 000000000000..becb2b868450
---- /dev/null
+index becb2b868450..5aa60ded8419 100644
+--- a/samples/rust/puzzle/oci.rs
 +++ b/samples/rust/puzzle/oci.rs
-@@ -0,0 +1,51 @@
-+use crate::puzzle::error::Result;
-+use crate::puzzle::types::{Digest, MetadataBlob, Rootfs};
-+use kernel::c_str;
-+use kernel::file;
-+use kernel::file::RegularFile;
-+use kernel::mount::Vfsmount;
-+use kernel::pr_info;
-+use kernel::str::{CStr, CString};
-+use kernel::sync::Arc;
+@@ -1,19 +1,21 @@
+-use crate::puzzle::error::Result;
++use crate::puzzle::error::{Result, WireFormatError};
++use crate::puzzle::types as format;
+ use crate::puzzle::types::{Digest, MetadataBlob, Rootfs};
+ use kernel::c_str;
+ use kernel::file;
+ use kernel::file::RegularFile;
+ use kernel::mount::Vfsmount;
+-use kernel::pr_info;
++use kernel::pr_debug;
++use kernel::prelude::ENOTSUPP;
+ use kernel::str::{CStr, CString};
+-use kernel::sync::Arc;
+ 
++#[derive(Debug)]
+ pub(crate) struct Image {
+-    vfs_mount: Arc<Vfsmount>,
++    pub(crate) vfs_mount: Vfsmount,
+ }
+ 
+ impl Image {
+-    pub(crate) fn open(vfsmount: Arc<Vfsmount>) -> Result<Self> {
++    pub(crate) fn open(vfsmount: Vfsmount) -> Result<Self> {
+         Ok(Image {
+             vfs_mount: vfsmount,
+         })
+@@ -26,7 +28,7 @@ pub(crate) fn blob_path_relative(&self) -> &CStr {
+     fn open_raw_blob(&self, digest: &Digest) -> Result<RegularFile> {
+         let filename =
+             CString::try_from_fmt(format_args!("{}/{digest}", self.blob_path_relative()))?;
+-        pr_info!("trying to open {:?}\n", &filename);
++        pr_debug!("trying to open {:?}\n", &*filename);
+ 
+         let file = RegularFile::from_path_in_root_mnt(
+             &self.vfs_mount,
+@@ -48,4 +50,22 @@ pub(crate) fn open_rootfs_blob(&self, path: &CStr) -> Result<Rootfs> {
+         let rootfs = Rootfs::open(self.open_raw_blob(&digest)?)?;
+         Ok(rootfs)
+     }
 +
-+pub(crate) struct Image {
-+    vfs_mount: Arc<Vfsmount>,
-+}
++    pub(crate) fn fill_from_chunk(
++        &self,
++        chunk: format::BlobRef,
++        addl_offset: u64,
++        buf: &mut [u8],
++    ) -> Result<usize> {
++        let digest = &<Digest>::try_from(chunk)?;
 +
-+impl Image {
-+    pub(crate) fn open(vfsmount: Arc<Vfsmount>) -> Result<Self> {
-+        Ok(Image {
-+            vfs_mount: vfsmount,
-+        })
++        let blob = if chunk.compressed {
++            return Err(WireFormatError::KernelError(ENOTSUPP));
++        } else {
++            self.open_raw_blob(digest)?
++        };
++
++        let n = blob.read_with_offset(buf, chunk.offset + addl_offset)?;
++        Ok(n)
 +    }
-+
-+    pub(crate) fn blob_path_relative(&self) -> &CStr {
-+        c_str!("blobs/sha256")
-+    }
-+
-+    fn open_raw_blob(&self, digest: &Digest) -> Result<RegularFile> {
-+        let filename =
-+            CString::try_from_fmt(format_args!("{}/{digest}", self.blob_path_relative()))?;
-+        pr_info!("trying to open {:?}\n", &filename);
-+
-+        let file = RegularFile::from_path_in_root_mnt(
-+            &self.vfs_mount,
-+            &filename,
-+            file::flags::O_RDONLY.try_into().unwrap(),
-+            0,
-+        )?;
-+
-+        Ok(file)
-+    }
-+
-+    pub(crate) fn open_metadata_blob(&self, digest: &Digest) -> Result<MetadataBlob> {
-+        let f = self.open_raw_blob(digest)?;
-+        MetadataBlob::new(f)
-+    }
-+
-+    pub(crate) fn open_rootfs_blob(&self, path: &CStr) -> Result<Rootfs> {
-+        let digest = Digest::try_from(path)?;
-+        let rootfs = Rootfs::open(self.open_raw_blob(&digest)?)?;
-+        Ok(rootfs)
-+    }
-+}
+ }
 diff --git a/samples/rust/puzzlefs.rs b/samples/rust/puzzlefs.rs
-index 1f0073716d91..76dc59403db3 100644
+index 76dc59403db3..dad7ecc76eca 100644
 --- a/samples/rust/puzzlefs.rs
 +++ b/samples/rust/puzzlefs.rs
-@@ -14,7 +14,7 @@
+@@ -3,7 +3,6 @@
+ //! Rust file system sample.
+ 
+ use kernel::module_fs;
+-use kernel::mount::Vfsmount;
+ use kernel::prelude::*;
+ use kernel::{
+     c_str, file, fs,
+@@ -13,7 +12,7 @@
+ 
  mod puzzle;
  // Required by the autogenerated '_capnp.rs' files
- use puzzle::inode::PuzzleFS;
--use puzzle::types::{Inode, InodeMode, MetadataBlob};
-+use puzzle::types::{Inode, InodeMode};
+-use puzzle::inode::PuzzleFS;
++use puzzle::inode::{file_read, PuzzleFS};
+ use puzzle::types::{Inode, InodeMode};
  use puzzle::{manifest_capnp, metadata_capnp};
  
- use kernel::fs::{DEntry, INodeParams, NeedsRoot, NewSuperBlock, RootDEntry};
-@@ -69,7 +69,7 @@ fn puzzlefs_populate_dir(
-         return Err(E2BIG);
-     }
+@@ -28,9 +27,8 @@
  
--    let inode = Arc::try_new(pfs.find_inode(ino).map_err(|_| EINVAL)?)?;
-+    let inode = Arc::try_new(pfs.find_inode(ino)?)?;
-     match &inode.mode {
-         InodeMode::File { chunks: _ } => {
-             let params = INodeParams {
-@@ -154,18 +154,17 @@ fn fill_super(_data: (), sb: fs::NewSuperBlock<'_, Self>) -> Result<&fs::SuperBl
-             },
-         )?;
+ struct PuzzleFsModule;
  
--        let file = file::RegularFile::from_path_in_root_mnt(
--            &arc_vfs_mount,
--            c_str!("997eed138af30d187e87d682dd2ae9f240fae78f668907a0519460b397c82467"),
--            file::flags::O_RDONLY.try_into().unwrap(),
--            0,
--        )?;
+-#[derive(Debug)]
+ struct PuzzlefsInfo {
+-    vfs_mount: Arc<Vfsmount>,
++    puzzlefs: Arc<PuzzleFS>,
+ }
+ 
+ #[vtable]
+@@ -139,14 +137,20 @@ impl fs::Type for PuzzleFsModule {
+     const DCACHE_BASED: bool = true;
+ 
+     fn fill_super(_data: (), sb: fs::NewSuperBlock<'_, Self>) -> Result<&fs::SuperBlock<Self>> {
+-        let vfs_mount = Vfsmount::new_private_mount(c_str!("/home/puzzlefs_oci"))?;
+-        pr_info!("vfs_mount {:?}\n", vfs_mount);
 +        let puzzlefs = PuzzleFS::open(
-+            arc_vfs_mount,
++            c_str!("/home/puzzlefs_oci"),
 +            c_str!("2d6602d678140540dc7e96de652a76a8b16e8aca190bae141297bcffdcae901b"),
 +        );
  
--        // TODO: figure out how to go from WireFormatError to kernel::error::Error
--        let metadata = MetadataBlob::new(file).map_err(|_| EINVAL)?;
+-        let arc_vfs_mount = Arc::try_new(vfs_mount)?;
 +        if let Err(ref e) = puzzlefs {
 +            pr_info!("error opening puzzlefs {e}\n");
 +        }
++
++        let puzzlefs = Arc::try_new(puzzlefs?)?;
  
--        let mut puzzlefs = PuzzleFS::new(metadata).map_err(|_| EINVAL)?;
--        let root_inode = Arc::try_new(puzzlefs.find_inode(1).map_err(|_| EINVAL)?)?;
-+        let mut puzzlefs = puzzlefs?;
-+        let root_inode = Arc::try_new(puzzlefs.find_inode(1)?)?;
+         let sb = sb.init(
+             Box::try_new(PuzzlefsInfo {
+-                vfs_mount: arc_vfs_mount.clone(),
++                puzzlefs: puzzlefs.clone(),
+             })?,
+             &fs::SuperParams {
+                 magic: 0x72757374,
+@@ -154,19 +158,9 @@ fn fill_super(_data: (), sb: fs::NewSuperBlock<'_, Self>) -> Result<&fs::SuperBl
+             },
+         )?;
  
-         let root = try_new_populated_root_puzzlefs_dentry(&sb, &mut puzzlefs, root_inode)?;
+-        let puzzlefs = PuzzleFS::open(
+-            arc_vfs_mount,
+-            c_str!("2d6602d678140540dc7e96de652a76a8b16e8aca190bae141297bcffdcae901b"),
+-        );
+-
+-        if let Err(ref e) = puzzlefs {
+-            pr_info!("error opening puzzlefs {e}\n");
+-        }
+-
+-        let mut puzzlefs = puzzlefs?;
+         let root_inode = Arc::try_new(puzzlefs.find_inode(1)?)?;
+ 
+-        let root = try_new_populated_root_puzzlefs_dentry(&sb, &mut puzzlefs, root_inode)?;
++        let root = try_new_populated_root_puzzlefs_dentry(&sb, &puzzlefs, root_inode)?;
          let sb = sb.init_root(root)?;
+         Ok(sb)
+     }
+@@ -180,32 +174,28 @@ impl file::Operations for FsFile {
+     type OpenData = Arc<Inode>;
+     type Filesystem = PuzzleFsModule;
+     // this is an Arc because Data must be ForeignOwnable and the only implementors of it are Box,
+-    // Arc and (); we cannot pass a reference to read, so we share Vfsmount using and Arc
+-    type Data = Arc<Vfsmount>;
++    // Arc and (); we cannot pass a reference to the read callback, so we share PuzzleFS using Arc
++    type Data = Arc<PuzzleFS>;
+ 
+     fn open(
+         fs_info: &PuzzlefsInfo,
+         _context: &Self::OpenData,
+         _file: &file::File,
+     ) -> Result<Self::Data> {
+-        Ok(fs_info.vfs_mount.clone())
++        Ok(fs_info.puzzlefs.clone())
+     }
+ 
+     fn read(
+-        data: ArcBorrow<'_, Vfsmount>,
+-        _file: &file::File,
++        data: ArcBorrow<'_, PuzzleFS>,
++        file: &file::File,
+         writer: &mut impl IoBufferWriter,
+         offset: u64,
+     ) -> Result<usize> {
++        let inode = file.inode::<PuzzleFsModule>().ok_or(EINVAL)?.fs_data();
+         let mut buf = Vec::try_with_capacity(writer.len())?;
+         buf.try_resize(writer.len(), 0)?;
+-        let file = file::RegularFile::from_path_in_root_mnt(
+-            &data,
+-            c_str!("data"),
+-            file::flags::O_RDONLY.try_into().unwrap(),
+-            0,
+-        )?;
+-        let nr_bytes_read = file.read_with_offset(&mut buf[..], offset)?;
+-        file::read_from_slice(&buf[..nr_bytes_read], writer, 0)
++        let read = file_read(&data.oci, inode, offset as usize, &mut buf)?;
++        buf.truncate(read);
++        file::read_from_slice(&buf, writer, 0)
+     }
+ }
 -- 
 2.41.0
 
