@@ -2,205 +2,351 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 40C377654B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 15:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 856647654C6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 15:18:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232064AbjG0NQm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 09:16:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58116 "EHLO
+        id S232907AbjG0NST (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 09:18:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231908AbjG0NQl (ORCPT
+        with ESMTP id S232461AbjG0NSS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 09:16:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B59922726
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 06:15:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690463740;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=hkGX/h7m3QPOunZGgc4OMZF0dALyUJfLw/fdSlyp7rI=;
-        b=gjTNQCbk03Wh9hmiGZhYulmo2ZrjfxhzFKrOnLvweNXn1XDkm2QEnQvfsf1FLe6ul301Hd
-        H9CQI4Sqct+7xVLnDVVUd1VBA/oYACusr4NcR4WooLz0YfC/lZwx9FcJWVRKb8L4k1qhvS
-        Rh7n5kmefkcfXGjT575lr61ioY42oXw=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-383-zVk4JXRCMv23UzoKhyRJxQ-1; Thu, 27 Jul 2023 09:15:39 -0400
-X-MC-Unique: zVk4JXRCMv23UzoKhyRJxQ-1
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-767edbf73cbso20940885a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 06:15:39 -0700 (PDT)
+        Thu, 27 Jul 2023 09:18:18 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99E87271F;
+        Thu, 27 Jul 2023 06:18:15 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2b9a2033978so14268101fa.0;
+        Thu, 27 Jul 2023 06:18:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690463894; x=1691068694;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9fyriAuR62oiOhWCN6FxF1ilSFj6jT3X3Z5HG3vr+EI=;
+        b=KN26IBq1GW3sLBHlKq6ESKSVTnXPVg1dTJQ8f2z3dqnXJDI7++FyJBa/0eMQzsKiSs
+         mtb6aoFp3JbW04zMM6RSnv8iaqeS+e9LdyYCc5+za8qQQmpj6ZbnALJzvVhcSG0m3Keg
+         2aDy8GOc2wnK+ZrbbJdLyr2IXn0Vve0q2iacG5LHcyg3qJazWlGLxp0SZfQ04HwqTD9H
+         zdbClAzMB9DEVc/ew6odf68/Nb4DnDysNSKg6biVjeoOoC/1VugMUesjzBS8jHdO8vGM
+         Xl+AHgU+OaVP+XDjf+ka9pxznPdqoqYW4LWqetF3JSBwy0Z8aB0EUFBrYAhKxibBK1o0
+         1CUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690463739; x=1691068539;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hkGX/h7m3QPOunZGgc4OMZF0dALyUJfLw/fdSlyp7rI=;
-        b=afAn8FjSsQJijhMGO05K9gLPxweaUyxxqGvUpM9RRbZ1Efh1YAoYUvrMXfi360hzG9
-         TQDSR9uzN72DDy83KqWwich8BaowVAQHLxchB7L0C8Pmgcc62LN2XCWAQhxLhnMxB3SJ
-         UqtQn0fYthiedEaHlRFAdQapwuPGWlFPgwVz7smDUxZ/kR5Y2EyPS2xKjCeJzQtsxvsD
-         yI3JZcv+HmVOfB5pbRFTk7EPUDKGcma5qgQ+XIxh6F9zyyWrlNHbsicCqh+OWZPWwrRQ
-         SHXR/5NSwS7KoTHy7sH/ozkbOCCf9T0HmBJKKrWQnoDHU9ANe39RcBdzm0cIWC4Gt4Xy
-         8TmA==
-X-Gm-Message-State: ABy/qLbxOMF3WoKujpfsT+Ap8wgQPt6cflYGtXlJGkk94n4t2OoQUQYz
-        YwT+lDbL1LGBemV1QbhrZXnUSvNQ898tZYfBH4Ht4iSxDyhoGy1gi7JkbD9ybU7o+LTdqu4roV4
-        JcRBaFx/sFa+FJRwb6sp0j78ioA==
-X-Received: by 2002:a05:620a:318f:b0:765:a957:f526 with SMTP id bi15-20020a05620a318f00b00765a957f526mr5491560qkb.3.1690463739080;
-        Thu, 27 Jul 2023 06:15:39 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlH1DyY2M8hXAuCoIVwrMg350ou4HtJv049anJhsIv3IyMg4HxHTjRWByBzy/LHrzDeVZAZxLw==
-X-Received: by 2002:a05:620a:318f:b0:765:a957:f526 with SMTP id bi15-20020a05620a318f00b00765a957f526mr5491539qkb.3.1690463738744;
-        Thu, 27 Jul 2023 06:15:38 -0700 (PDT)
-Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
-        by smtp.gmail.com with ESMTPSA id z5-20020a05620a100500b00767cf5d3faasm396971qkj.86.2023.07.27.06.15.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jul 2023 06:15:38 -0700 (PDT)
-Date:   Thu, 27 Jul 2023 09:15:37 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     liubo <liubo254@huawei.com>, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hughd@google.com, willy@infradead.org
-Subject: Re: [PATCH] smaps: Fix the abnormal memory statistics obtained
- through /proc/pid/smaps
-Message-ID: <ZMJt+VWzIG4GAjeb@x1n>
-References: <20230726073409.631838-1-liubo254@huawei.com>
- <CADFyXm5nkgZjVMj3iJhqQnyA1AOmqZ-AKdaWyUD=UvZsOEOcPg@mail.gmail.com>
+        d=1e100.net; s=20221208; t=1690463894; x=1691068694;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9fyriAuR62oiOhWCN6FxF1ilSFj6jT3X3Z5HG3vr+EI=;
+        b=eKauDRsiUjGbjbrH/hRgf/2D1GhqmI+WUMx/fD+srnPy2oGgaSWxTNyDR3ih35b65v
+         qIRhYfmbq8M9zV7iYh505yjCzpOq0CXAXY72LhTw5AFZb9zFlzm82UmbvB2WTbdc/ZMi
+         RAESL9fkolOuXQCIKqS2MNZcjvhE8hhrSIa9AO66rUP8ku/IhY2qhIgCR67O1rqbuA+v
+         Vov8iO96I71DAwqrieWwhxDJryIsIwCJkmlxl4IAF06LK393r0q9cKc2ONF1cXke8IUe
+         a94JmSYKf5dcd9lbaraGRP8mjoN26a43Bq4c8SEOHwwmtsYoZ8lPcHeHfqx8+LSUtFpx
+         vIPA==
+X-Gm-Message-State: ABy/qLZjedNu3prMrMHwTaKAdGw2liKEiT7A91jHssKnGzoetDsYZdpz
+        o2Xd+yWH7ENt27cYDoMuAnIVa6UUwp0A2c1UwlI=
+X-Google-Smtp-Source: APBJJlEGjd/T0bgXXtGhJ1s8iRyIgQPP1P+6/F4Tu5sqBaa2EpBLrKbLA7+i632bjV4hDOXvpfWcBuHLrLfwpr0IziE=
+X-Received: by 2002:a2e:8490:0:b0:2b5:1b80:264b with SMTP id
+ b16-20020a2e8490000000b002b51b80264bmr1809793ljh.12.1690463893637; Thu, 27
+ Jul 2023 06:18:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADFyXm5nkgZjVMj3iJhqQnyA1AOmqZ-AKdaWyUD=UvZsOEOcPg@mail.gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230726164535.230515-1-amiculas@cisco.com> <20230726164535.230515-5-amiculas@cisco.com>
+ <CALNs47svt4481_3Te9FzskAJ29ur6h115NdLfej3Ejfcd5tO7w@mail.gmail.com>
+In-Reply-To: <CALNs47svt4481_3Te9FzskAJ29ur6h115NdLfej3Ejfcd5tO7w@mail.gmail.com>
+From:   Ariel Miculas <ariel.miculas@gmail.com>
+Date:   Thu, 27 Jul 2023 16:18:02 +0300
+Message-ID: <CAPDJoNutF=eWFTx5GsP579ayQBBjXXVjA1JjX8rbZu7m2jwW2Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 04/10] rust: file: Add a new RegularFile newtype
+ useful for reading files
+To:     Trevor Gross <tmgross@umich.edu>
+Cc:     Ariel Miculas <amiculas@cisco.com>, rust-for-linux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tycho@tycho.pizza, brauner@kernel.org, viro@zeniv.linux.org.uk,
+        ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 27, 2023 at 01:37:06PM +0200, David Hildenbrand wrote:
-> On Wed, Jul 26, 2023 at 9:40 AM liubo <liubo254@huawei.com> wrote:
+On Thu, Jul 27, 2023 at 2:52=E2=80=AFAM Trevor Gross <tmgross@umich.edu> wr=
+ote:
+>
+> On Wed, Jul 26, 2023 at 12:54=E2=80=AFPM Ariel Miculas <amiculas@cisco.co=
+m> wrote:
 > >
-> > In commit 474098edac26 ("mm/gup: replace FOLL_NUMA by
-> > gup_can_follow_protnone()"), FOLL_NUMA was removed and replaced by
-> > the gup_can_follow_protnone interface.
+> > Implement from_path, from_path_in_root_mnt, read_with_offset,
+> > read_to_end and get_file_size methods for a RegularFile newtype.
 > >
-> > However, for the case where the user-mode process uses transparent
-> > huge pages, when analyzing the memory usage through
-> > /proc/pid/smaps_rollup, the obtained memory usage is not consistent
-> > with the RSS in /proc/pid/status.
-> >
-> > Related examples are as follows:
-> > cat /proc/15427/status
-> > VmRSS:  20973024 kB
-> > RssAnon:        20971616 kB
-> > RssFile:            1408 kB
-> > RssShmem:              0 kB
-> >
-> > cat /proc/15427/smaps_rollup
-> > 00400000-7ffcc372d000 ---p 00000000 00:00 0 [rollup]
-> > Rss:            14419432 kB
-> > Pss:            14418079 kB
-> > Pss_Dirty:      14418016 kB
-> > Pss_Anon:       14418016 kB
-> > Pss_File:             63 kB
-> > Pss_Shmem:             0 kB
-> > Anonymous:      14418016 kB
-> > LazyFree:              0 kB
-> > AnonHugePages:  14417920 kB
-> >
-> > The root cause is that the traversal In the page table, the number of
-> > pages obtained by smaps_pmd_entry does not include the pages
-> > corresponding to PROTNONE,resulting in a different situation.
-> >
-> 
-> Thanks for reporting and debugging!
-> 
-> > Therefore, when obtaining pages through the follow_trans_huge_pmd
-> > interface, add the FOLL_FORCE flag to count the pages corresponding to
-> > PROTNONE to solve the above problem.
-> >
-> 
-> We really want to avoid the usage of FOLL_FORCE, and ideally limit it
-> to ptrace only.
-
-Fundamentally when removing FOLL_NUMA we did already assumed !FORCE is
-FOLL_NUMA.  It means to me after the removal it's not possible to say in a
-gup walker that "it's not FORCEd, but I don't want to trigger NUMA but just
-get the page".
-
-Is that what we want?  Shall we document that in FOLL_FORCE if we intended
-to enforce numa balancing as long as !FORCE?
-
-> 
-> > Signed-off-by: liubo <liubo254@huawei.com>
-> > Fixes: 474098edac26 ("mm/gup: replace FOLL_NUMA by gup_can_follow_protnone()")
+> > Signed-off-by: Ariel Miculas <amiculas@cisco.com>
 > > ---
-> >  fs/proc/task_mmu.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >  rust/helpers.c       |   6 ++
+> >  rust/kernel/error.rs |   4 +-
+> >  rust/kernel/file.rs  | 129 ++++++++++++++++++++++++++++++++++++++++++-
+> >  3 files changed, 135 insertions(+), 4 deletions(-)
 > >
-> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > index c1e6531cb02a..ed08f9b869e2 100644
-> > --- a/fs/proc/task_mmu.c
-> > +++ b/fs/proc/task_mmu.c
-> > @@ -571,8 +571,10 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
-> >         bool migration = false;
+> > diff --git a/rust/helpers.c b/rust/helpers.c
+> > index eed8ace52fb5..9e860a554cda 100644
+> > --- a/rust/helpers.c
+> > +++ b/rust/helpers.c
+> > @@ -213,6 +213,12 @@ void *rust_helper_alloc_inode_sb(struct super_bloc=
+k *sb,
+> >  }
+> >  EXPORT_SYMBOL_GPL(rust_helper_alloc_inode_sb);
 > >
-> >         if (pmd_present(*pmd)) {
-> > -               /* FOLL_DUMP will return -EFAULT on huge zero page */
-> > -               page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP);
-> > +               /* FOLL_DUMP will return -EFAULT on huge zero page
-> > +                * FOLL_FORCE follow a PROT_NONE mapped page
-> > +                */
-> > +               page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP | FOLL_FORCE);
-> >         } else if (unlikely(thp_migration_supported() && is_swap_pmd(*pmd))) {
-> >                 swp_entry_t entry = pmd_to_swp_entry(*pmd);
-> 
-> Might do as an easy fix. But we really should get rid of that
-> absolutely disgusting usage of follow_trans_huge_pmd().
-> 
-> We don't need 99% of what follow_trans_huge_pmd() does here.
-> 
-> Would the following also fix your issue?
-> 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 507cd4e59d07..fc744964816e 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -587,8 +587,7 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
->         bool migration = false;
-> 
->         if (pmd_present(*pmd)) {
-> -               /* FOLL_DUMP will return -EFAULT on huge zero page */
-> -               page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP);
-> +               page = vm_normal_page_pmd(vma, addr, *pmd);
->         } else if (unlikely(thp_migration_supported() && is_swap_pmd(*pmd))) {
->                 swp_entry_t entry = pmd_to_swp_entry(*pmd);
-> 
-> It also skips the shared zeropage and pmd_devmap(),
-> 
-> Otherwise, a simple pmd_page(*pmd) + is_huge_zero_pmd(*pmd) check will do, but I
-> suspect vm_normal_page_pmd() might be what we actually want to have here.
-> 
-> Because smaps_pte_entry() properly checks for vm_normal_page().
-
-There're indeed some very trivial detail in vm_normal_page_pmd() that's
-different, but maybe not so relevant.  E.g.,
-
-	if (WARN_ON_ONCE(folio_ref_count(folio) <= 0))
-		return -ENOMEM;
-
-	if (unlikely(!(flags & FOLL_PCI_P2PDMA) && is_pci_p2pdma_page(page)))
-		return -EREMOTEIO;
-
-I'm not sure whether the p2pdma page would matter in any form here.  E.g.,
-whether it can be mapped privately.
-
--- 
-Peter Xu
-
+> > +loff_t rust_helper_i_size_read(const struct inode *inode)
+> > +{
+> > +       return i_size_read(inode);
+> > +}
+> > +EXPORT_SYMBOL_GPL(rust_helper_i_size_read);
+> > +
+> >  /*
+> >   * We use `bindgen`'s `--size_t-is-usize` option to bind the C `size_t=
+` type
+> >   * as the Rust `usize` type, so we can use it in contexts where Rust
+> > diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
+> > index 05fcab6abfe6..e061c83f806a 100644
+> > --- a/rust/kernel/error.rs
+> > +++ b/rust/kernel/error.rs
+> > @@ -273,9 +273,7 @@ pub fn to_result(err: core::ffi::c_int) -> Result {
+> >  ///     }
+> >  /// }
+> >  /// ```
+> > -// TODO: Remove `dead_code` marker once an in-kernel client is availab=
+le.
+> > -#[allow(dead_code)]
+> > -pub(crate) fn from_err_ptr<T>(ptr: *mut T) -> Result<*mut T> {
+> > +pub fn from_err_ptr<T>(ptr: *mut T) -> Result<*mut T> {
+> >      // CAST: Casting a pointer to `*const core::ffi::c_void` is always=
+ valid.
+> >      let const_ptr: *const core::ffi::c_void =3D ptr.cast();
+> >      // SAFETY: The FFI function does not deref the pointer.
+> > diff --git a/rust/kernel/file.rs b/rust/kernel/file.rs
+> > index 494939ba74df..a3002c416dbb 100644
+> > --- a/rust/kernel/file.rs
+> > +++ b/rust/kernel/file.rs
+> > @@ -8,11 +8,13 @@
+> >  use crate::{
+> >      bindings,
+> >      cred::Credential,
+> > -    error::{code::*, from_result, Error, Result},
+> > +    error::{code::*, from_err_ptr, from_result, Error, Result},
+> >      fs,
+> >      io_buffer::{IoBufferReader, IoBufferWriter},
+> >      iov_iter::IovIter,
+> >      mm,
+> > +    mount::Vfsmount,
+> > +    str::CStr,
+> >      sync::CondVar,
+> >      types::ARef,
+> >      types::AlwaysRefCounted,
+> > @@ -20,6 +22,7 @@
+> >      types::Opaque,
+> >      user_ptr::{UserSlicePtr, UserSlicePtrReader, UserSlicePtrWriter},
+> >  };
+> > +use alloc::vec::Vec;
+> >  use core::convert::{TryFrom, TryInto};
+> >  use core::{marker, mem, ptr};
+> >  use macros::vtable;
+> > @@ -201,6 +204,130 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+> >      }
+> >  }
+> >
+> > +/// A newtype over file, specific to regular files
+> > +pub struct RegularFile(ARef<File>);
+> > +impl RegularFile {
+> > +    /// Creates a new instance of Self if the file is a regular file
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// The caller must ensure file_ptr.f_inode is initialized to a va=
+lid pointer (e.g. file_ptr is
+> > +    /// a pointer returned by path_openat); It must also ensure that f=
+ile_ptr's reference count was
+> > +    /// incremented at least once
+> > +    fn create_if_regular(file_ptr: ptr::NonNull<bindings::file>) -> Re=
+sult<RegularFile> {
+>
+> This function should be unsafe, correct? You instead take a
+> `&bindings::file` instead of `NonNull` but still keep it unsafe, so
+> the "valid pointer" invariant is always reached.
+>
+> Or, could this take `&kernel::file::File` instead to reduce some duplicat=
+ion?
+>
+Yes, this should have been unsafe, I've also changed it to receive a
+`*mut bindings::file` instead of NonNull.
+> > +        // SAFETY: file_ptr is a NonNull pointer
+> > +        let inode =3D unsafe { core::ptr::addr_of!((*file_ptr.as_ptr()=
+).f_inode).read() };
+> > +        // SAFETY: the caller must ensure f_inode is initialized to a =
+valid pointer
+> > +        unsafe {
+> > +            if bindings::S_IFMT & ((*inode).i_mode) as u32 !=3D bindin=
+gs::S_IFREG {
+> > +                return Err(EINVAL);
+> > +            }
+> > +        }
+>
+> Nit: factor `unsafe { ((*inode).i_mode) }` out so it doesn't look like
+> the whole statement is unsafe
+>
+> > +        // SAFETY: the safety requirements state that file_ptr's refer=
+ence count was incremented at
+> > +        // least once
+> > +        Ok(RegularFile(unsafe { ARef::from_raw(file_ptr.cast()) }))
+> > +    }
+> > +    /// Constructs a new [`struct file`] wrapper from a path.
+> > +    pub fn from_path(filename: &CStr, flags: i32, mode: u16) -> Result=
+<Self> {
+> > +        let file_ptr =3D unsafe {
+> > +            // SAFETY: filename is a reference, so it's a valid pointe=
+r
+> > +            from_err_ptr(bindings::filp_open(
+> > +                filename.as_ptr() as *const i8,
+> > +                flags,
+> > +                mode,
+> > +            ))?
+> > +        };
+>
+> I mentioned in another email that `.cast::<i8>()` can be more
+> idiomatic and a bit safer than `as`, it's a stylistic choice but there
+> are a few places it could be changed here if desired
+Thanks, didn't know about this.
+>
+> Also, the `// SAFETY` comments need to go outside the unsafe block
+>
+> > +        let file_ptr =3D ptr::NonNull::new(file_ptr).ok_or(ENOENT)?;
+> > +
+> > +        // SAFETY: `filp_open` initializes the refcount with 1
+> > +        Self::create_if_regular(file_ptr)
+> > +    }
+>
+> Will need unsafe block if `create_if_regular` becomes unsafe
+>
+> > +
+> > +    /// Constructs a new [`struct file`] wrapper from a path and a vfs=
+mount.
+> > +    pub fn from_path_in_root_mnt(
+> > +        mount: &Vfsmount,
+> > +        filename: &CStr,
+> > +        flags: i32,
+> > +        mode: u16,
+> > +    ) -> Result<Self> {
+> > +        let file_ptr =3D {
+> > +            let mnt =3D mount.get();
+> > +            // construct a path from vfsmount, see file_open_root_mnt
+> > +            let raw_path =3D bindings::path {
+> > +                mnt,
+> > +                // SAFETY: Vfsmount structure stores a valid vfsmount =
+object
+> > +                dentry: unsafe { (*mnt).mnt_root },
+> > +            };
+> > +            unsafe {
+> > +                // SAFETY: raw_path and filename are both references
+> > +                from_err_ptr(bindings::file_open_root(
+> > +                    &raw_path,
+> > +                    filename.as_ptr() as *const i8,
+> > +                    flags,
+> > +                    mode,
+> > +                ))?
+> > +            }
+> > +        };
+>
+> Is there a reason to use the larger scope block, rather than moving
+> `mnt` and `raw_path` out and doing `let file_ptr =3D unsafe { ... }`? If
+> so, a comment would be good.
+No, that's just how the code has evolved from splitting unsafe blocks,
+I've changed this in
+https://github.com/ariel-miculas/linux/tree/puzzlefs_rfc
+>
+> > +        let file_ptr =3D ptr::NonNull::new(file_ptr).ok_or(ENOENT)?;
+> > +
+> > +        // SAFETY: `file_open_root` initializes the refcount with 1
+> > +        Self::create_if_regular(file_ptr)
+> > +    }
+> > +
+> > +    /// Read from the file into the specified buffer
+> > +    pub fn read_with_offset(&self, buf: &mut [u8], offset: u64) -> Res=
+ult<usize> {
+> > +        Ok({
+> > +            // kernel_read_file expects a pointer to a "void *" buffer
+> > +            let mut ptr_to_buf =3D buf.as_mut_ptr() as *mut core::ffi:=
+:c_void;
+> > +            // Unless we give a non-null pointer to the file size:
+> > +            // 1. we cannot give a non-zero value for the offset
+> > +            // 2. we cannot have offset 0 and buffer_size > file_size
+> > +            let mut file_size =3D 0;
+> > +
+> > +            // SAFETY: 'file' is valid because it's taken from Self, '=
+buf' and 'file_size` are
+> > +            // references to the stack variables 'ptr_to_buf' and 'fil=
+e_size'; ptr_to_buf is also
+> > +            // a pointer to a valid buffer that was obtained from a re=
+ference
+> > +            let result =3D unsafe {
+> > +                bindings::kernel_read_file(
+> > +                    self.0 .0.get(),
+>
+> Is this spacing intentional? If so, `(self.0).0.get()` may be cleaner
+No, it's not intentional, this is rustfmt`s creation.
+>
+> > +                    offset.try_into()?,
+> > +                    &mut ptr_to_buf,
+> > +                    buf.len(),
+> > +                    &mut file_size,
+> > +                    bindings::kernel_read_file_id_READING_UNKNOWN,
+> > +                )
+> > +            };
+> > +
+> > +            // kernel_read_file returns the number of bytes read on su=
+ccess or negative on error.
+> > +            if result < 0 {
+> > +                return Err(Error::from_errno(result.try_into()?));
+> > +            }
+> > +
+> > +            result.try_into()?
+> > +        })
+> > +    }
+>
+> I think you could remove the block here and just return `Ok(result.try_in=
+to()?)`
+Good idea.
+>
+> > +
+> > +    /// Allocate and return a vector containing the contents of the en=
+tire file
+> > +    pub fn read_to_end(&self) -> Result<Vec<u8>> {
+> > +        let file_size =3D self.get_file_size()?;
+> > +        let mut buffer =3D Vec::try_with_capacity(file_size)?;
+> > +        buffer.try_resize(file_size, 0)?;
+> > +        self.read_with_offset(&mut buffer, 0)?;
+> > +        Ok(buffer)
+> > +    }
+> > +
+> > +    fn get_file_size(&self) -> Result<usize> {
+> > +        // SAFETY: 'file' is valid because it's taken from Self
+> > +        let file_size =3D unsafe { bindings::i_size_read((*self.0 .0.g=
+et()).f_inode) };
+> > +
+> > +        if file_size < 0 {
+> > +            return Err(EINVAL);
+> > +        }
+> > +
+> > +        Ok(file_size.try_into()?)
+> > +    }
+> > +}
+> > +
+> >  /// A file descriptor reservation.
+> >  ///
+> >  /// This allows the creation of a file descriptor in two steps: first,=
+ we reserve a slot for it,
+> > --
+> > 2.41.0
+> >
+> >
+>
