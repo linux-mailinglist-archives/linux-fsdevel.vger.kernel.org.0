@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 682947652DF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 13:48:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65F9C7652E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 13:49:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233445AbjG0Lsf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 07:48:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40962 "EHLO
+        id S233493AbjG0Ltu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 07:49:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232372AbjG0Lse (ORCPT
+        with ESMTP id S232372AbjG0Ltt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 07:48:34 -0400
+        Thu, 27 Jul 2023 07:49:49 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 071182122;
-        Thu, 27 Jul 2023 04:48:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 590411FDA;
+        Thu, 27 Jul 2023 04:49:48 -0700 (PDT)
 Received: from [192.168.100.7] (unknown [59.103.218.24])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id CE4986607057;
-        Thu, 27 Jul 2023 12:48:17 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8C5206607057;
+        Thu, 27 Jul 2023 12:49:40 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1690458511;
-        bh=0qxwSBYd7sM3osQHdzQ9jmOETl5u5FVEVXpJCyozE18=;
+        s=mail; t=1690458587;
+        bh=NC/0VSOPtAjML62vw26aYCCXLVTxIUCUUJS7zYvPPmc=;
         h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=VwWHBy4Fz+Uq2ZgEVfz/g6zrk+uiQW8i288WOCqoUeKyYOZPSWRGPswZH9S4GjmjI
-         elJ4o1Nc21T6uGBpPA4OMaU79ukYjTR6EFOZ8oQNI5xWQmuPWq8XEXZKbbwoDecklx
-         KzPKIBcZwJ52uDt6FZzv6w6igb7g2jUHUbx/IcsmVww4JYwgu6IBR1k8X4/wy6JA7e
-         hXzWGNky+83m0plmg16KCcnWLGNr9AjJwFzOTWwqvO39CXzVojFzPmaJraVo5xAf1n
-         AoZswvD8VYINa6Z/6qVIh+3XCYT+VdeiuiyV03TYf/cP9aTOzIbBfmZz+MgvsgnHRJ
-         wvuG9pLLO8YeA==
-Message-ID: <7f124303-660e-8350-4628-2340550637b0@collabora.com>
-Date:   Thu, 27 Jul 2023 16:48:10 +0500
+        b=g5Gw9jVrYVSkBWRsfZ85xC9Pv7jkspf3yqXuJtKBaFobfMRIpTo5ZqoUhbu8S/A/r
+         KiRk5MZNS3mhjapKKtlHZC4pnXcxUCGVOv65GG+DMRFdp+oV8tCZZIXzIIEDFXmIWv
+         mFczKH20FJBTCjgqeo0glCPBkHqZ21380lsTwdi2jxEihxtgS+kAGxfJzcqIsOEJui
+         Pu8DJACPMXee76vw9s8ZB8oxlGZcA8Eu9490oMKx6BEmSG5Mu82JOWWv67EfzSlLCC
+         Z3hwEQXPjDVKWqrtsmnQHurlKRdV1d9eZA8LV5n/VW89lQ2b4iG4sDAeLH4/7ocJd5
+         GmEh8qxav/0Rw==
+Message-ID: <82de29db-85fc-0d44-ef41-3ccfe0d3d2c1@collabora.com>
+Date:   Thu, 27 Jul 2023 16:49:36 +0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
@@ -70,9 +70,9 @@ Content-Language: en-US
 To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
 References: <20230727093637.1262110-1-usama.anjum@collabora.com>
  <20230727093637.1262110-3-usama.anjum@collabora.com>
- <CABb0KFFtjTve+uM=CTPChzUbJvJ=Tr3Q8espo_Rr_hutZPPAiw@mail.gmail.com>
+ <CABb0KFFphs6gLCH9+tenmoJ_3nNAop30pOMhKDwKT2Pthvb=6g@mail.gmail.com>
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <CABb0KFFtjTve+uM=CTPChzUbJvJ=Tr3Q8espo_Rr_hutZPPAiw@mail.gmail.com>
+In-Reply-To: <CABb0KFFphs6gLCH9+tenmoJ_3nNAop30pOMhKDwKT2Pthvb=6g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -85,91 +85,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/27/23 4:40 PM, Michał Mirosław wrote:
+On 7/27/23 4:46 PM, Michał Mirosław wrote:
 > On Thu, 27 Jul 2023 at 11:37, Muhammad Usama Anjum
 > <usama.anjum@collabora.com> wrote:
->> This IOCTL, PAGEMAP_SCAN on pagemap file can be used to get and/or clear
->> the info about page table entries. The following operations are supported
->> in this ioctl:
->> - Get the information if the pages have Async Write-Protection enabled
->>   (``PAGE_IS_WPALLOWED``), have been written to (``PAGE_IS_WRITTEN``), file
->>   mapped (``PAGE_IS_FILE``), present (``PAGE_IS_PRESENT``), swapped
->>   (``PAGE_IS_SWAPPED``) or page has pfn zero (``PAGE_IS_PFNZERO``).
->> - Find pages which have been written to and/or write protect
->>   (atomic ``PM_SCAN_WP_MATCHING + PM_SCAN_CHECK_WPASYNC``) the pages
->>   atomically. The (``PM_SCAN_WP_MATCHING``) is used to WP the matched
->>   pages. The (``PM_SCAN_CHECK_WPASYNC``) aborts the operation if
->>   non-Async-Write-Protected pages are found. Get is automatically performed
->>   if output buffer is specified.
->>
->> This IOCTL can be extended to get information about more PTE bits. The
->> entire address range passed by user [start, end) is scanned until either
->> the user provided buffer is full or max_pages have been found.
->>
->> Reviewed-by: Andrei Vagin <avagin@gmail.com>
->> Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
->> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> 
-> Thanks for all the work!
-> 
-> Small request below.
-> 
->> --- a/fs/proc/task_mmu.c
->> +++ b/fs/proc/task_mmu.c
 > [...]
->> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->> +static unsigned long pagemap_thp_category(pmd_t pmd)
->> +{
->> +       unsigned long categories = 0;
->> +
->> +       if (pmd_present(pmd)) {
->> +               categories |= PAGE_IS_PRESENT;
->> +               if (!pmd_uffd_wp(pmd))
->> +                       categories |= PAGE_IS_WRITTEN;
->> +               if (is_zero_pfn(pmd_pfn(pmd)))
->> +                       categories |= PAGE_IS_PFNZERO;
->> +       } else if (is_swap_pmd(pmd)) {
->> +               categories |= PAGE_IS_SWAPPED;
->> +               if (!pmd_swp_uffd_wp(pmd))
->> +                       categories |= PAGE_IS_WRITTEN;
->> +       }
->> +
->> +       return categories;
->> +}
+>> --- a/include/uapi/linux/fs.h
+>> +++ b/include/uapi/linux/fs.h
 > [...]
->> +#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->> +
->> +#ifdef CONFIG_HUGETLB_PAGE
->> +static unsigned long pagemap_hugetlb_category(pte_t pte)
->> +{
->> +       unsigned long categories = 0;
->> +
->> +       if (pte_present(pte)) {
->> +               categories |= PAGE_IS_PRESENT;
->> +               if (!huge_pte_uffd_wp(pte))
->> +                       categories |= PAGE_IS_WRITTEN;
->> +               if (!PageAnon(pte_page(pte)))
->> +                       categories |= PAGE_IS_FILE;
->> +               if (is_zero_pfn(pte_pfn(pte)))
->> +                       categories |= PAGE_IS_PFNZERO;
->> +       } else if (is_swap_pte(pte)) {
->> +               categories |= PAGE_IS_SWAPPED;
->> +               if (!pte_swp_uffd_wp_any(pte))
->> +                       categories |= PAGE_IS_WRITTEN;
->> +       }
->> +
->> +       return categories;
->> +}
+>> +/*
+>> + * struct pm_scan_arg - Pagemap ioctl argument
+>> + * @size:              Size of the structure
+>> + * @flags:             Flags for the IOCTL
+>> + * @start:             Starting address of the region
+>> + * @end:               Ending address of the region
+>> + * @walk_end:          Ending address of the visited memory is returned
+>> + *                     (This helps if entire range hasn't been visited)
 > 
-> Could you add PAGE_IS_HUGE for THP and HugeTLB pages? This would help
-> maintaining checkpointed process'es page sizes by CRIU when THP is
-> used.
-Can be done.
+> "Address where the scan stopped (written by kernel). walk_end == end
+> informs that the scan completed."
+I'll update comment.
 
 > 
-> Best Regards
-> Michał Mirosław
+> (To make the userspace life easier, we can copy `end` (only) in case
+> of full scan completion, so that the tag is retained.)
+Lets be consist and not copy tag from end to walk_end as we'll now know
+about tag every time. It should be the responsibility of the user to deal
+with it.
+
+> 
+>> + * @vec:               Address of page_region struct array for output
+>> + * @vec_len:           Length of the page_region struct array
+>> + * @max_pages:         Optional limit for number of returned pages (0 = disabled)
+>> + * @category_inverted: PAGE_IS_* categories which values match if 0 instead of 1
+>> + * @category_mask:     Skip pages for which any category doesn't match
+>> + * @category_anyof_mask: Skip pages for which no category matches
+>> + * @return_mask:       PAGE_IS_* categories that are to be reported in `page_region`s returned
+>> + */
 
 -- 
 BR,
