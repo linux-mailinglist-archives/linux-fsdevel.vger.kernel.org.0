@@ -2,53 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CB8B7653F2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 14:31:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CF177654A3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 15:10:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232537AbjG0Ma6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 08:30:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37130 "EHLO
+        id S232285AbjG0NKw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 09:10:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232948AbjG0Map (ORCPT
+        with ESMTP id S233210AbjG0NKl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 08:30:45 -0400
-Received: from out-66.mta0.migadu.com (out-66.mta0.migadu.com [91.218.175.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 691B511D
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 05:30:35 -0700 (PDT)
-Message-ID: <09d2ab2b-1269-21f5-7b7d-410c0f311887@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1690461034;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3PYsZ8fztDLb8zB2LbfphLlVJcGazDoAn1755qEELm0=;
-        b=biv65rS16yG471XhUCuu9oete8E5kBm4b82GXvrRalQJTSD34AanuOZBGtnbSG3cskzWDQ
-        uvVFdCshOGn8Hc97zP4Awlr6XLLp3a0/jLxnkv556gFWy3W0bVcqrj8O4ICuxTAGhKugT1
-        +XbDMDfxi+u7P+jzDfj2cwrmVZQ4Gkc=
-Date:   Thu, 27 Jul 2023 20:30:27 +0800
+        Thu, 27 Jul 2023 09:10:41 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 949FC2D63;
+        Thu, 27 Jul 2023 06:10:17 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4fe1489ced6so1662395e87.0;
+        Thu, 27 Jul 2023 06:10:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690463412; x=1691068212;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mi+oPTTzE1C4HQcitXRKVgEJcROJC+7Sg1+tAjSg2p0=;
+        b=IM5/7X2v2Xih+opN4AsiOyB/ZCEZ8R+xtKyk3NglW+OcIgc5nNUDDt7YOj+niXvVgt
+         0BTbXhCaLi+jfAJG60joKtlFQmjn0k/68ybDwOB+CcHcdh72kSjokSpfgXl9ITYypbZf
+         DCxEGdw8doCbSFUmKmNpXYxBZJFVY1BkzOg4kuqYNbjYeqRZ82WFfOnaBB69/GvJ9PwJ
+         G+IHAoA7rL+rwNrvRnPGA7cDgJ7iaT8JE+53J3rA2uyPUUm61Zb+Wo0arRa/L2sSLQW8
+         Ln9jqi1DVokbnRrBAAJRiL/XOkgtJThBmBRujPuzrcA4PPrqEejmMmVv3Kpr1SCQN1N2
+         HMNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690463412; x=1691068212;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mi+oPTTzE1C4HQcitXRKVgEJcROJC+7Sg1+tAjSg2p0=;
+        b=IPhv1IG9D0k40fp9X6gB2wv8ZdL3sLW7w2o/ewgNfdprLHcfI8LIqiKbJ8xFmn92yr
+         eGv1ALk9h/lrO3tlIkw2jOHatZEuuapAmlFwsvY6g6428KsOMdIE2e0WQO9kZA2BSedP
+         +AIOeOJ5hNxwT5ZA2KC7AZwTP+tXK08e4GSQDgRg3iClWmuTTLq3Zm40QiLE9mH2C+JV
+         pafSm7t68fMf5iQ+T2IPoJnPYzryHxMcDAFBmRAUtkF1xR8KSuHdzTjL1H1O8EOIymfA
+         6vkbWbMRlEo75+bsmWV09mOQwnTcuP+xjdxC0wnyQyAyn8LRS1E92wcw6r2/MmgcVWXf
+         1fkg==
+X-Gm-Message-State: ABy/qLZsuvrfKFGlFcYrMtAzmn/dOWtcq1cD8Nxwoi+kCQGoR/JwHYe0
+        VmUTiGwDqh0qDeLqQBYE+82f+ji32Jw2z/mZg7w=
+X-Google-Smtp-Source: APBJJlHALcjQJpKbuUhVh8VlUyjFsJb/YAYdHbIX5DRuaT0JU9A4uZdvVnD25gJHxzCg3AVCmyXG2/noLcwkiHhGOu8=
+X-Received: by 2002:a2e:9b0a:0:b0:2b9:ba02:437f with SMTP id
+ u10-20020a2e9b0a000000b002b9ba02437fmr1895347lji.3.1690463411731; Thu, 27 Jul
+ 2023 06:10:11 -0700 (PDT)
 MIME-Version: 1.0
-Subject: Re: [RFC 0/7] io_uring lseek
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-References: <20230726102603.155522-1-hao.xu@linux.dev>
-In-Reply-To: <20230726102603.155522-1-hao.xu@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20230726164535.230515-1-amiculas@cisco.com> <20230726164535.230515-4-amiculas@cisco.com>
+ <CALNs47tkc2vWYW13LQq17Qcy0UFBJXan+7S_JVsPBXwTTJn3bQ@mail.gmail.com>
+In-Reply-To: <CALNs47tkc2vWYW13LQq17Qcy0UFBJXan+7S_JVsPBXwTTJn3bQ@mail.gmail.com>
+From:   Ariel Miculas <ariel.miculas@gmail.com>
+Date:   Thu, 27 Jul 2023 16:10:00 +0300
+Message-ID: <CAPDJoNv4N0fh075J9MppDOHzFyMXP0NuWsmt4uXNcb_C-RiR+w@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 03/10] rust: kernel: add an abstraction over
+ vfsmount to allow cloning a new private mount
+To:     Trevor Gross <tmgross@umich.edu>
+Cc:     Ariel Miculas <amiculas@cisco.com>, rust-for-linux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tycho@tycho.pizza, brauner@kernel.org, viro@zeniv.linux.org.uk,
+        ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SCC_BODY_URI_ONLY,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,101 +71,5 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/26/23 18:25, Hao Xu wrote:
-> From: Hao Xu <howeyxu@tencent.com>
-> 
-> This series adds lseek for io_uring, the motivation to import this
-> syscall is in previous io_uring getdents patchset, we lack a way to
-> rewind the file cursor when it goes to the end of file. Another reason
-> is lseek is a common syscall, it's good for coding consistency when
-> users use io_uring as their main loop.
-> 
-> Patch 1 is code clean for iomap
-> Patch 2 adds IOMAP_NOWAIT logic for iomap lseek
-> Patch 3 adds a nowait parameter to for IOMAP_NOWAIT control
-> Patch 4 adds llseek_nowait() for file_operations so that specific
->          filesystem can implement it for nowait lseek
-> Patch 5 adds llseek_nowait() implementation for xfs
-> Patch 6 adds a new vfs wrapper for io_uring use
-> Patch 7 is the main io_uring lseek implementation
-> 
-> Note, this series depends on the previous io_uring getdents series.
-> 
-> This is marked RFC since there is (at least) an issue to be discussed:
-> The work in this series is mainly to reslove a problem that the current
-> llseek() in struct file_operations doesn't have a place to deliver
-> nowait info, and adding an argument to it results in update for llseek
-> implementation of all filesystems (35 functions), so here I introduce
-> a new llseek_nowait() as a workaround.
-> 
-> For performance, it has about 20%~30% improvement on iops.
-> The test program is just like the one for io_uring getdents, here is the
-> link to it: https://github.com/HowHsu/liburing/blob/llseek/test/lseek.c
-> - Each test runs about 30000 async requests/sync syscalls
-> - Each test runs 100 times and get the average value.
-> - offset is randomly generated value
-> - the file is a 1M all zero file
-> 
-> [howeyxu@~]$ python3 run_lseek.py
-> test args:  seek mode:SEEK_SET, offset: 334772
-> Average of  sync :  0.012300650000000002
-> Average of  iouring :  0.008528009999999999
-> 30.67%
-> 
-> [howeyxu@~]$ python3 run_lseek.py
-> test args:  seek mode:SEEK_CUR, offset: 389292
-> Average of  sync :  0.012736129999999995
-> Average of  iouring :  0.00928725
-> 27.08%
-> 
-> [howeyxu@~]$ python3 run_lseek.py
-> test args:  seek mode:SEEK_END, offset: 281141
-> Average of  sync :  0.01221595
-> Average of  iouring :  0.008442890000000003
-> 30.89%
-> 
-> [howeyxu@~]$ python3 run_lseek.py
-> test args:  seek mode:SEEK_DATA, offset: 931103
-> Average of  sync :  0.015496230000000005
-> Average of  iouring :  0.012341509999999998
-> 20.36%
-> 
-> [howeyxu@~]$ python3 run_lseek.py
-> test args:  seek mode:SEEK_HOLE, offset: 430194
-> Average of  sync :  0.01555663000000001
-> Average of  iouring :  0.012064940000000003
-> 22.45%
->   
-> 
-> Hao Xu (7):
->    iomap: merge iomap_seek_hole() and iomap_seek_data()
->    xfs: add nowait support for xfs_seek_iomap_begin()
->    add nowait parameter for iomap_seek()
->    add llseek_nowait() for struct file_operations
->    add llseek_nowait support for xfs
->    add vfs_lseek_nowait()
->    add lseek for io_uring
-> 
->   fs/ext4/file.c                |  9 ++---
->   fs/gfs2/inode.c               |  4 +--
->   fs/iomap/seek.c               | 42 ++++++-----------------
->   fs/read_write.c               | 18 ++++++++++
->   fs/xfs/xfs_file.c             | 34 ++++++++++++++++---
->   fs/xfs/xfs_iomap.c            |  4 ++-
->   include/linux/fs.h            |  4 +++
->   include/linux/iomap.h         |  6 ++--
->   include/uapi/linux/io_uring.h |  1 +
->   io_uring/fs.c                 | 63 +++++++++++++++++++++++++++++++++++
->   io_uring/fs.h                 |  3 ++
->   io_uring/opdef.c              |  8 +++++
->   12 files changed, 145 insertions(+), 51 deletions(-)
-> 
-> 
-> base-commit: 4a4b046082eca8ae90b654d772fccc30e9f23f4d
-
-Hi folks,
-I'll leave this patchset here before the io_uring getdents is merged,
-then come back and update this one.
-
-Thanks,
-Hao
+Thanks, I've applied your suggestions on
+https://github.com/ariel-miculas/linux/tree/puzzlefs_rfc
