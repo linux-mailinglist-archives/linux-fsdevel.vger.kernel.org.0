@@ -2,123 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E8DD5765E3A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 23:30:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF1BA765E84
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 23:56:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229915AbjG0Vai (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 17:30:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52946 "EHLO
+        id S230230AbjG0V4p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 17:56:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231561AbjG0Vac (ORCPT
+        with ESMTP id S232598AbjG0V4b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 17:30:32 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 875CF1BF4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 14:29:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690493346;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jGnguQzUAnXSgoEJGq4aUCEYI9GBqFjghH3nhnid2s4=;
-        b=LIC7PjXhU9JMtnKM9nSmeuF1a9xgG9GFaBlxxlaWTzxGhlur1/EHHl6cMA/PB6irJFFvHR
-        w6rgIbpOiD1oZRcHhps7I4vwqJA9ir3HGxekS1nQtxLRIg9yT4psGr+6Grs4AE/ogvHQo8
-        TC7uDaptFi8DjjSsuC+OMyKw10nneEw=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-49-u7XBChHRONmnMfoWeq8OoQ-1; Thu, 27 Jul 2023 17:29:00 -0400
-X-MC-Unique: u7XBChHRONmnMfoWeq8OoQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C80A3856F66;
-        Thu, 27 Jul 2023 21:28:59 +0000 (UTC)
-Received: from t14s.redhat.com (unknown [10.39.192.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CDA6240C2063;
-        Thu, 27 Jul 2023 21:28:57 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        liubo <liubo254@huawei.com>, Peter Xu <peterx@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v1 4/4] mm/gup: document FOLL_FORCE behavior
-Date:   Thu, 27 Jul 2023 23:28:45 +0200
-Message-ID: <20230727212845.135673-5-david@redhat.com>
-In-Reply-To: <20230727212845.135673-1-david@redhat.com>
-References: <20230727212845.135673-1-david@redhat.com>
+        Thu, 27 Jul 2023 17:56:31 -0400
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com [209.85.167.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F07BB35AF
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 14:56:25 -0700 (PDT)
+Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-3a5ab2d29bbso2979303b6e.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 14:56:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690494985; x=1691099785;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NTZFcDWEnalsrrsj91+aV+exj/gSz6DkLyYFyJHhczQ=;
+        b=MVgCa3UzPNr2n6a4OxwkFTYC3bJ+2pfZ+HVc/8Bvvt+hs2GH9oSIRsQs4oJDoACLhb
+         po6V1TP7Lheh6OCcZElT5yAn5VRAkR00srjP28a5y0+NYq0t8217cbnHHczict7Y4TUS
+         uSiHeXFK55mLZYPdW9+MnFWJenZX4iPOZ27AEMXmuycO8A3oZIjXcwWqNa8xOzt1nu7x
+         mEy5B9OFf1jhUMPlTNGiVuU6pSTVq4b6CJjppmV1DbWAdg9yAUsGe3AVDCBLeCuBQxcR
+         ay9AKvWGT85ggAUkp6Iy2VFTbamekCMnjSZKxyXy40QoN1BLM18r3U0BKiB5129aFdDt
+         b8zg==
+X-Gm-Message-State: ABy/qLbEVEt4WeaubArr+pH2yECM3GSNgl/yoafBFDAhomiW/ZQtn64o
+        gSLgX/uHY1nlLVVlMxVu+46PeZIdLV6IUE9hDpP5gE7AIu2+
+X-Google-Smtp-Source: APBJJlH27w/I6S9cUeylwXarAxaDlL/rMDcRdn6KLWkdjH2BJtEUNIhS7lk/MWp1h0vRqgIhlJrFWuq2xzxANoqLIN7JnzjhDHdp
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Received: by 2002:a05:6808:1b24:b0:3a3:7087:bbfb with SMTP id
+ bx36-20020a0568081b2400b003a37087bbfbmr1067033oib.6.1690494985416; Thu, 27
+ Jul 2023 14:56:25 -0700 (PDT)
+Date:   Thu, 27 Jul 2023 14:56:25 -0700
+In-Reply-To: <000000000000b4e906060113fd63@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000019b5b106017f096a@google.com>
+Subject: Re: [syzbot] [nilfs?] KASAN: slab-use-after-free Read in
+ nilfs_load_inode_block (2)
+From:   syzbot <syzbot+74db8b3087f293d3a13a@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, konishi.ryusuke@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As suggested by Peter, let's document FOLL_FORCE handling and make it
-clear that without FOLL_FORCE, we will always trigger NUMA-hinting
-faults when stumbling over a PROT_NONE-mapped PTE.
+syzbot has bisected this issue to:
 
-Also add a comment regarding follow_page() and its interaction with
-FOLL_FORCE.
+commit 28a65b49eb53e172d23567005465019658bfdb4d
+Author: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date:   Thu Apr 27 01:15:26 2023 +0000
 
-Let's place the doc next to the definition, where it certainly can't be
-missed.
+    nilfs2: do not write dirty data after degenerating to read-only
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- include/linux/mm_types.h | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=177150e5a80000
+start commit:   5f0bc0b042fc mm: suppress mm fault logging if fatal signal..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=14f150e5a80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10f150e5a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5d10d93e1ae1f229
+dashboard link: https://syzkaller.appspot.com/bug?extid=74db8b3087f293d3a13a
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15176d81a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=132d93d9a80000
 
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 2fa6fcc740a1..96cf78686c29 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -1243,7 +1243,30 @@ enum {
- 	FOLL_GET = 1 << 1,
- 	/* give error on hole if it would be zero */
- 	FOLL_DUMP = 1 << 2,
--	/* get_user_pages read/write w/o permission */
-+	/*
-+	 * Make get_user_pages() and friends ignore some VMA+PTE permissions.
-+	 *
-+	 * This flag should primarily only be used by ptrace and some
-+	 * GUP-internal functionality, such as for mlock handling.
-+	 *
-+	 * Without this flag, these functions always trigger page faults
-+	 * (such as NUMA hinting faults) when stumbling over a
-+	 * PROT_NONE-mapped PTE.
-+	 *
-+	 * !FOLL_WRITE: succeed even if the PTE is PROT_NONE
-+	 * * Rejected if the VMA is currently not readable and it cannot
-+	 *   become readable
-+	 *
-+	 * FOLL_WRITE: succeed even if the PTE is not writable.
-+	 *  * Rejected if the VMA is currently not writable and
-+	 *   * it is a hugetlb mapping
-+	 *   * it is not a COW mapping that could become writable
-+	 *
-+	 * Note: follow_page() does not accept FOLL_FORCE. Historically,
-+	 * follow_page() behaved similar to FOLL_FORCE without FOLL_WRITE:
-+	 * succeed even if the PTE is PROT_NONE and FOLL_WRITE is not set.
-+	 * However, VMA permissions are not checked.
-+	 */
- 	FOLL_FORCE = 1 << 3,
- 	/*
- 	 * if a disk transfer is needed, start the IO and return without waiting
--- 
-2.41.0
+Reported-by: syzbot+74db8b3087f293d3a13a@syzkaller.appspotmail.com
+Fixes: 28a65b49eb53 ("nilfs2: do not write dirty data after degenerating to read-only")
 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
