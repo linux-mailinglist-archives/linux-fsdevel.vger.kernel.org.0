@@ -2,71 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B71E1764AC4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 10:11:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33980764CC1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 10:26:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229580AbjG0ILk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 04:11:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48100 "EHLO
+        id S234055AbjG0I0t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 04:26:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233128AbjG0IKx (ORCPT
+        with ESMTP id S234053AbjG0I0N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 04:10:53 -0400
-Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B89B2704;
-        Thu, 27 Jul 2023 01:07:31 -0700 (PDT)
-Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-577ddda6ab1so9160567b3.0;
-        Thu, 27 Jul 2023 01:07:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690445202; x=1691050002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SnWFpt95Q3j8e7MLb3EqSgHRbu05nFOkNwUSTleai7E=;
-        b=aXUsQ8/fEEeIVnty+3bsScnD48iuOFMA/lXYFJu+8jVcSjQE8dJcEzmSz7pleCnnEp
-         ebkIz4M9tSzUmHN1+2XUD3THlcodhxXPL5j2Jb5ICm69QHCov6hY9SSAbREl64gdPqR6
-         V4Gye1UgSbbeWo0y9pOVAh9OSCP23Sh6skCaY7vr+dmNXcj5b9vHP/+VWwTTdlgzk5V9
-         P0OGfQ3b/YcMjrFOvTwm0ho5ZNSQA7F97ALlpfmm/pyly8KFpcF+L0vp9uAOtOOFaCWl
-         LoKel1Vw8lc4QqgbCFEhznoG4SoDFC5cQI9M28jAGnuSfTQMTsQExGXOLB0WkiAIb6im
-         IsNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690445202; x=1691050002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SnWFpt95Q3j8e7MLb3EqSgHRbu05nFOkNwUSTleai7E=;
-        b=b1mZv83AQ9QJkS1zjp5GHjlxBMn/aQlSOFWOQ087eU431v4BQS52Epgd6JC4WwJKnL
-         lAvgDWnWIqvXkIL1zPvAsEngp+1HDa2H5OjUQxGH+utHTAQUZVRCJWeQMNw8VF+EpR1+
-         YKtR0ibwqxR2aR5RB4KLLo2ROR3pc3mEgv5/zq2uSSg2OoePZs+SFB29ax2g/wcECE2k
-         q/ev6OdsSjVAvPEc+FcOZ4QAlXtf/7FNgQ/WaPIzOSMLgNANtFkh7mKPhKn9EKcTMtpM
-         JnuYfShI8Jv1ytTYwt5PJdGbe7JnPgcHYUJWGIC6rAMTF4hbjv5PsHNsfeSHWzvtGbna
-         d+Vg==
-X-Gm-Message-State: ABy/qLbkE6ukbDFU0Bg1Wik0FIHjy/K8fJPaXlpIocSMFvFrNKsbMgHe
-        YeR8K38kagymKGYr5ewPyFOaWp19y5KWsSOD8iA=
-X-Google-Smtp-Source: APBJJlH30/jlnH5SmnxS+zKhKs/V7g/mAPXehe2n3RR59HUyByZM1u+swtqS9Rtjc3ZTfOwHpuXxA5rXobngfkYHhT8=
-X-Received: by 2002:a0d:dbcd:0:b0:56f:fd0a:588d with SMTP id
- d196-20020a0ddbcd000000b0056ffd0a588dmr2448456ywe.8.1690445201803; Thu, 27
- Jul 2023 01:06:41 -0700 (PDT)
+        Thu, 27 Jul 2023 04:26:13 -0400
+Received: from ida.iewc.co.za (ida.iewc.co.za [154.73.34.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 398F24EE4;
+        Thu, 27 Jul 2023 01:13:59 -0700 (PDT)
+Received: from [165.16.200.159] (helo=plastiekpoot)
+        by ida.iewc.co.za with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <jkroon@uls.co.za>)
+        id 1qOw7C-0000fk-Mj; Thu, 27 Jul 2023 10:12:54 +0200
+Received: from jkroon by plastiekpoot with local (Exim 4.96)
+        (envelope-from <jkroon@uls.co.za>)
+        id 1qOw7A-0004la-0s;
+        Thu, 27 Jul 2023 10:12:52 +0200
+From:   Jaco Kroon <jaco@uls.co.za>
+To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Bernd Schubert <bernd.schubert@fastmail.fm>,
+        Antonio SJ Musumeci <trapexit@spawn.link>
+Cc:     Jaco Kroon <jaco@uls.co.za>
+Subject: [PATCH] fuse: enable larger read buffers for readdir [v2].
+Date:   Thu, 27 Jul 2023 10:12:18 +0200
+Message-ID: <20230727081237.18217-1-jaco@uls.co.za>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230726105953.843-1-jaco@uls.co.za>
+References: <20230726105953.843-1-jaco@uls.co.za>
 MIME-Version: 1.0
-References: <20230726164535.230515-1-amiculas@cisco.com> <20230726164535.230515-11-amiculas@cisco.com>
- <CALNs47ss3kV3mTx4ksYTWaHWdRG48=97DTi3OEnPom2nFcYhHw@mail.gmail.com>
- <CANeycqqTdL9vr=JF+Fij5EY0TW_+_FY1p2qGdvGhYcyH9=9J9w@mail.gmail.com> <CALNs47s=eXJ-=s7WiVSBoqgcKSqkuZemm_Lx_Ts7yoaOp_e13A@mail.gmail.com>
-In-Reply-To: <CALNs47s=eXJ-=s7WiVSBoqgcKSqkuZemm_Lx_Ts7yoaOp_e13A@mail.gmail.com>
-From:   Wedson Almeida Filho <wedsonaf@gmail.com>
-Date:   Thu, 27 Jul 2023 05:06:32 -0300
-Message-ID: <CANeycqrGTB3Pd1JBoYHgLHU=ckBQjdv1oZt+no31aZ5UXHW8uA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 10/10] rust: puzzlefs: add oci_root_dir and
- image_manifest filesystem parameters
-To:     Trevor Gross <tmgross@umich.edu>
-Cc:     Ariel Miculas <amiculas@cisco.com>, rust-for-linux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        tycho@tycho.pizza, brauner@kernel.org, viro@zeniv.linux.org.uk,
-        ojeda@kernel.org, alex.gaynor@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,38 +47,116 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 26 Jul 2023 at 21:02, Trevor Gross <tmgross@umich.edu> wrote:
->
-> On Wed, Jul 26, 2023 at 7:48=E2=80=AFPM Wedson Almeida Filho <wedsonaf@gm=
-ail.com> wrote:
-> >
-> > On Wed, 26 Jul 2023 at 18:08, Trevor Gross <tmgross@umich.edu> wrote:
-> > >
-> > [...]
-> > > The guard syntax (available since 1.65) can make these kinds of match=
- statements
-> > > cleaner:
-> >
-> > This is unstable though.
-> >
-> > We try to stay away from unstable features unless we really need them,
-> > which I feel is not the case here.
-> >
->
-> Let/else has been stable since 1.65 and is in pretty heavy use, the
-> kernel is on 1.68.2 correct? Could you be thinking of let chains
-> (multiple matches joined with `&&`/`||`)?
+This patch does not mess with the caching infrastructure like the
+previous one, which we believe caused excessive CPU and broke directory
+listings in some cases.
 
-Oh, my bad. I got it mixed with "if let guard" (issue 51114).
+This version only affects the uncached read, which then during parse adds an
+entry at a time to the cached structures by way of copying, and as such,
+we believe this should be sufficient.
 
-And yeah, we're on 1.68.2, so this code can benefit from this simplificatio=
-n.
+We're still seeing cases where getdents64 takes ~10s (this was the case
+in any case without this patch, the difference now that we get ~500
+entries for that time rather than the 14-18 previously).  We believe
+that that latency is introduced on glusterfs side and is under separate
+discussion with the glusterfs developers.
 
-Thanks!
+This is still a compile-time option, but a working one compared to
+previous patch.  For now this works, but it's not recommended for merge
+(as per email discussion).
 
->
-> >     let Some(oci_root_dir) =3D data.oci_root_dir else {
-> >         pr_err!("missing oci_root_dir parameter!\n");
-> >         return Err(ENOTSUPP);
-> >     }
-> > [...]
+This still uses alloc_pages rather than kvmalloc/kvfree.
+
+Signed-off-by: Jaco Kroon <jaco@uls.co.za>
+---
+ fs/fuse/Kconfig   | 16 ++++++++++++++++
+ fs/fuse/readdir.c | 18 ++++++++++++------
+ 2 files changed, 28 insertions(+), 6 deletions(-)
+
+diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
+index 038ed0b9aaa5..0783f9ee5cd3 100644
+--- a/fs/fuse/Kconfig
++++ b/fs/fuse/Kconfig
+@@ -18,6 +18,22 @@ config FUSE_FS
+ 	  If you want to develop a userspace FS, or if you want to use
+ 	  a filesystem based on FUSE, answer Y or M.
+ 
++config FUSE_READDIR_ORDER
++	int
++	range 0 5
++	default 5
++	help
++		readdir performance varies greatly depending on the size of the read.
++		Larger buffers results in larger reads, thus fewer reads and higher
++		performance in return.
++
++		You may want to reduce this value on seriously constrained memory
++		systems where 128KiB (assuming 4KiB pages) cache pages is not ideal.
++
++		This value reprents the order of the number of pages to allocate (ie,
++		the shift value).  A value of 0 is thus 1 page (4KiB) where 5 is 32
++		pages (128KiB).
++
+ config CUSE
+ 	tristate "Character device in Userspace support"
+ 	depends on FUSE_FS
+diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
+index dc603479b30e..47cea4d91228 100644
+--- a/fs/fuse/readdir.c
++++ b/fs/fuse/readdir.c
+@@ -13,6 +13,12 @@
+ #include <linux/pagemap.h>
+ #include <linux/highmem.h>
+ 
++#define READDIR_PAGES_ORDER		CONFIG_FUSE_READDIR_ORDER
++#define READDIR_PAGES			(1 << READDIR_PAGES_ORDER)
++#define READDIR_PAGES_SIZE		(PAGE_SIZE << READDIR_PAGES_ORDER)
++#define READDIR_PAGES_MASK		(READDIR_PAGES_SIZE - 1)
++#define READDIR_PAGES_SHIFT		(PAGE_SHIFT + READDIR_PAGES_ORDER)
++
+ static bool fuse_use_readdirplus(struct inode *dir, struct dir_context *ctx)
+ {
+ 	struct fuse_conn *fc = get_fuse_conn(dir);
+@@ -328,25 +334,25 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
+ 	struct fuse_mount *fm = get_fuse_mount(inode);
+ 	struct fuse_io_args ia = {};
+ 	struct fuse_args_pages *ap = &ia.ap;
+-	struct fuse_page_desc desc = { .length = PAGE_SIZE };
++	struct fuse_page_desc desc = { .length = READDIR_PAGES_SIZE };
+ 	u64 attr_version = 0;
+ 	bool locked;
+ 
+-	page = alloc_page(GFP_KERNEL);
++	page = alloc_pages(GFP_KERNEL, READDIR_PAGES_ORDER);
+ 	if (!page)
+ 		return -ENOMEM;
+ 
+ 	plus = fuse_use_readdirplus(inode, ctx);
+ 	ap->args.out_pages = true;
+-	ap->num_pages = 1;
++	ap->num_pages = READDIR_PAGES;
+ 	ap->pages = &page;
+ 	ap->descs = &desc;
+ 	if (plus) {
+ 		attr_version = fuse_get_attr_version(fm->fc);
+-		fuse_read_args_fill(&ia, file, ctx->pos, PAGE_SIZE,
++		fuse_read_args_fill(&ia, file, ctx->pos, READDIR_PAGES_SIZE,
+ 				    FUSE_READDIRPLUS);
+ 	} else {
+-		fuse_read_args_fill(&ia, file, ctx->pos, PAGE_SIZE,
++		fuse_read_args_fill(&ia, file, ctx->pos, READDIR_PAGES_SIZE,
+ 				    FUSE_READDIR);
+ 	}
+ 	locked = fuse_lock_inode(inode);
+@@ -367,7 +373,7 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
+ 		}
+ 	}
+ 
+-	__free_page(page);
++	__free_pages(page, READDIR_PAGES_ORDER);
+ 	fuse_invalidate_atime(inode);
+ 	return res;
+ }
+-- 
+2.41.0
+
