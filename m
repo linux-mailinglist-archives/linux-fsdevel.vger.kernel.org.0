@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A2E8A765E3B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 23:30:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8DD5765E3A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 23:30:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232132AbjG0Vaj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 17:30:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52942 "EHLO
+        id S229915AbjG0Vai (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 17:30:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231675AbjG0Vac (ORCPT
+        with ESMTP id S231561AbjG0Vac (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 27 Jul 2023 17:30:32 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 938B91BC3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 14:29:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 875CF1BF4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 14:29:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690493343;
+        s=mimecast20190719; t=1690493346;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Gg+vYFf2MUM715aNnpsI37yVDyYtQwBsTVNC7NmhATc=;
-        b=e3VCchc75lZUUCtzE/TjD1I5f3oVWv8LqGr7uoUV3TZGqNRWjHEyEjJtLutoDP17IE/e75
-        uQcGOTqm2yxEjuN1sc1T8trOlj9VtIyXcD23oM8mcB6bnWniU1OoCog6fwXNyPPHyzc5MS
-        omPnY1zl2TMwU+vRcuuQSUacqyMWhwg=
+        bh=jGnguQzUAnXSgoEJGq4aUCEYI9GBqFjghH3nhnid2s4=;
+        b=LIC7PjXhU9JMtnKM9nSmeuF1a9xgG9GFaBlxxlaWTzxGhlur1/EHHl6cMA/PB6irJFFvHR
+        w6rgIbpOiD1oZRcHhps7I4vwqJA9ir3HGxekS1nQtxLRIg9yT4psGr+6Grs4AE/ogvHQo8
+        TC7uDaptFi8DjjSsuC+OMyKw10nneEw=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-359-RlyUAFoMPPO8N1iA8aE7qw-1; Thu, 27 Jul 2023 17:28:58 -0400
-X-MC-Unique: RlyUAFoMPPO8N1iA8aE7qw-1
+ us-mta-49-u7XBChHRONmnMfoWeq8OoQ-1; Thu, 27 Jul 2023 17:29:00 -0400
+X-MC-Unique: u7XBChHRONmnMfoWeq8OoQ-1
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 924CC805951;
-        Thu, 27 Jul 2023 21:28:57 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C80A3856F66;
+        Thu, 27 Jul 2023 21:28:59 +0000 (UTC)
 Received: from t14s.redhat.com (unknown [10.39.192.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 91ABF40C2063;
-        Thu, 27 Jul 2023 21:28:55 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CDA6240C2063;
+        Thu, 27 Jul 2023 21:28:57 +0000 (UTC)
 From:   David Hildenbrand <david@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Hugh Dickins <hughd@google.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
         John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v1 3/4] smaps: use vm_normal_page_pmd() instead of follow_trans_huge_pmd()
-Date:   Thu, 27 Jul 2023 23:28:44 +0200
-Message-ID: <20230727212845.135673-4-david@redhat.com>
+Subject: [PATCH v1 4/4] mm/gup: document FOLL_FORCE behavior
+Date:   Thu, 27 Jul 2023 23:28:45 +0200
+Message-ID: <20230727212845.135673-5-david@redhat.com>
 In-Reply-To: <20230727212845.135673-1-david@redhat.com>
 References: <20230727212845.135673-1-david@redhat.com>
 MIME-Version: 1.0
@@ -68,36 +68,57 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We really shouldn't be using a GUP-internal helper if it can be avoided,
-and avoiding the FOLL_FORCE here is certainly desirable.
+As suggested by Peter, let's document FOLL_FORCE handling and make it
+clear that without FOLL_FORCE, we will always trigger NUMA-hinting
+faults when stumbling over a PROT_NONE-mapped PTE.
 
-Similar to smaps_pte_entry() that uses vm_normal_page(), let's use
-vm_normal_page_pmd() -- that didn't exist back when we introduced that
-code -- that similarly refuses to return the huge zeropage.
+Also add a comment regarding follow_page() and its interaction with
+FOLL_FORCE.
+
+Let's place the doc next to the definition, where it certainly can't be
+missed.
 
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- fs/proc/task_mmu.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ include/linux/mm_types.h | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 7075ce11dc7d..b8ea270bf68b 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -571,12 +571,7 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
- 	bool migration = false;
- 
- 	if (pmd_present(*pmd)) {
--		/*
--		 * FOLL_DUMP will return -EFAULT on huge zero page
--		 * FOLL_FORCE follow a PROT_NONE mapped page
--		 */
--		page = follow_trans_huge_pmd(vma, addr, pmd,
--					     FOLL_DUMP | FOLL_FORCE);
-+		page = vm_normal_page_pmd(vma, addr, *pmd);
- 	} else if (unlikely(thp_migration_supported() && is_swap_pmd(*pmd))) {
- 		swp_entry_t entry = pmd_to_swp_entry(*pmd);
- 
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 2fa6fcc740a1..96cf78686c29 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -1243,7 +1243,30 @@ enum {
+ 	FOLL_GET = 1 << 1,
+ 	/* give error on hole if it would be zero */
+ 	FOLL_DUMP = 1 << 2,
+-	/* get_user_pages read/write w/o permission */
++	/*
++	 * Make get_user_pages() and friends ignore some VMA+PTE permissions.
++	 *
++	 * This flag should primarily only be used by ptrace and some
++	 * GUP-internal functionality, such as for mlock handling.
++	 *
++	 * Without this flag, these functions always trigger page faults
++	 * (such as NUMA hinting faults) when stumbling over a
++	 * PROT_NONE-mapped PTE.
++	 *
++	 * !FOLL_WRITE: succeed even if the PTE is PROT_NONE
++	 * * Rejected if the VMA is currently not readable and it cannot
++	 *   become readable
++	 *
++	 * FOLL_WRITE: succeed even if the PTE is not writable.
++	 *  * Rejected if the VMA is currently not writable and
++	 *   * it is a hugetlb mapping
++	 *   * it is not a COW mapping that could become writable
++	 *
++	 * Note: follow_page() does not accept FOLL_FORCE. Historically,
++	 * follow_page() behaved similar to FOLL_FORCE without FOLL_WRITE:
++	 * succeed even if the PTE is PROT_NONE and FOLL_WRITE is not set.
++	 * However, VMA permissions are not checked.
++	 */
+ 	FOLL_FORCE = 1 << 3,
+ 	/*
+ 	 * if a disk transfer is needed, start the IO and return without waiting
 -- 
 2.41.0
 
