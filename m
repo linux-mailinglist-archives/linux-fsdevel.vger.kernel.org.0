@@ -2,177 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B2034764F86
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 11:23:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A8A2764F91
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 11:24:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233113AbjG0JXq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 05:23:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48544 "EHLO
+        id S234367AbjG0JYT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 05:24:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234643AbjG0JXW (ORCPT
+        with ESMTP id S233208AbjG0JXq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 05:23:22 -0400
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C6593AA9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 02:13:22 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id d2e1a72fcca58-6748a616e17so195958b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 02:13:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1690449201; x=1691054001;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ab3i02uMNDVjAVrJgavtDQnv7B+TbSMr9u4LPtdCXIk=;
-        b=DcofMrRnwJynNkdGxtjH9DqKXau2yqZGatjPtAtzn+O56nMmwXuVd7ToeAQUojKhyr
-         PVIHt52Ove4HfRkW5Jz6nWPZD9BmVLc7SbBBPIeMe8wFyfKaQIk+EbU0k3nRPfOKNwBh
-         oCNv2ZD1HFVJTkxvMKWyxXL9Onk9dGrGolbp1H25aJz81J4GYNUwPghcXVGUuE5zAHUa
-         mP22aBPwBQ4pP/D5mY0ghxG8TnuQLNORwYORdeX0ZvQJ20+Z3LaIninEXnknTqruUQCo
-         Za3jxS8cFIItCGBaY6f3hGkZx+gttPFDrR9vIxhOGVxid7Al6RP9znkmq9WOz9AcYgeV
-         IdKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690449201; x=1691054001;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ab3i02uMNDVjAVrJgavtDQnv7B+TbSMr9u4LPtdCXIk=;
-        b=WtWzre3uuExY0WaNMcDmQJ7TjikJHNpiPsdoqSjtYcrf8woKZi0b0O7p6dLPjA6+mb
-         I+ToPt3o6vpuultYw2Sz7oydNm3aSL6OxAf8Bfx+OxA9Ucs4/jM56om0Eu9+i18k0Ifc
-         rDTFp4LDP4P0TnUGMUb1qSgQfgMhHAd7ZwDKzWENxBbzpKpvzvitAlBZXlmiDxsnz/a0
-         HltPDxx151LBY8fpwX51kvQV6lvcjMHTw+RZRO2z1G7VQI9u/tKfiBbnG9om7fBDeIdz
-         p7qeuq0GEUwtvaG3RFp/71LG0izDGh0vl3oQZ8+kUG2z89oeWM8ilxv8KnxZZNRPRRym
-         LVkg==
-X-Gm-Message-State: ABy/qLbxTvKJ0hhiN0lqMIsR0OyEmpPVmztR9bHnVnXOAPvXEYSgKptR
-        EOhO1pXeCxVKbQj7pOo4jxeW5Q==
-X-Google-Smtp-Source: APBJJlGBn5Xl2QFHzxgRMihSAaLd28csKz8Em946xGdOgBfe3ljiGqu5+YaMyvDFvdIkqmZPd3zpbQ==
-X-Received: by 2002:a05:6a00:4792:b0:668:834d:4bd with SMTP id dh18-20020a056a00479200b00668834d04bdmr4787709pfb.0.1690449201600;
-        Thu, 27 Jul 2023 02:13:21 -0700 (PDT)
-Received: from [10.70.252.135] ([203.208.167.147])
-        by smtp.gmail.com with ESMTPSA id m26-20020a056a00165a00b006687b41c4dasm1017146pfc.110.2023.07.27.02.13.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jul 2023 02:13:21 -0700 (PDT)
-Message-ID: <961f6055-a395-8490-4c22-765a30668460@bytedance.com>
-Date:   Thu, 27 Jul 2023 17:13:07 +0800
+        Thu, 27 Jul 2023 05:23:46 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D1AD7A8D
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 02:14:06 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230727091405euoutp0235266c8da6f08a221522fcd84af4d069~1rqHk8vFu1121811218euoutp02I
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 09:14:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230727091405euoutp0235266c8da6f08a221522fcd84af4d069~1rqHk8vFu1121811218euoutp02I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1690449245;
+        bh=0cXnpVGBxmhdJMmaYwcwbcH1i+EYtVarejvMg08tUEU=;
+        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+        b=o8EvI3oJPSzJmaw4QQ9eZlGB34eQ2iUHfmsYdW/EvXAWSOHD1BuI6VqjfqqcVMp2+
+         YwbnqSondbnxWS+iP8aZnZ9Eo63iZlcdaNhOzwJNB6EYLlHBOQSydmBnwPpz79L+H6
+         fDeiGbfPeXnvP8oCqlE8WnJRjNe4H785ZE5JWexk=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20230727091405eucas1p2f0cf4841ed09c937a4790a1ea0c85c00~1rqHQtllF1076710767eucas1p2L;
+        Thu, 27 Jul 2023 09:14:05 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id CD.CF.37758.D5532C46; Thu, 27
+        Jul 2023 10:14:05 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230727091404eucas1p2cbc14ec51eb1442496b1a4c30cd04803~1rqGwZ52s0918209182eucas1p2A;
+        Thu, 27 Jul 2023 09:14:04 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20230727091404eusmtrp1620d5fe01aaff3faf74f6cc965cb1d73~1rqGvtzXx0747907479eusmtrp1k;
+        Thu, 27 Jul 2023 09:14:04 +0000 (GMT)
+X-AuditID: cbfec7f5-7ffff7000002937e-77-64c2355dff9f
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id A3.49.14344.C5532C46; Thu, 27
+        Jul 2023 10:14:04 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230727091404eusmtip1a4ebbfaa152885d175508f032d78b685~1rqGkcS5t2832928329eusmtip1z;
+        Thu, 27 Jul 2023 09:14:04 +0000 (GMT)
+Received: from localhost (106.110.32.140) by CAMSVWEXC02.scsc.local
+        (2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+        Thu, 27 Jul 2023 10:14:03 +0100
+Date:   Thu, 27 Jul 2023 11:14:02 +0200
+From:   Pankaj Raghav <p.raghav@samsung.com>
+To:     Christoph Hellwig <hch@lst.de>
+CC:     Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christian Brauner <christian@brauner.io>,
+        <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-xfs@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/6] block: use iomap for writes to block devices
+Message-ID: <20230727091402.3j5f7t22upvr4lvz@localhost>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.12.0
-Subject: Re: [PATCH v3 27/49] dm: dynamically allocate the dm-bufio shrinker
-Content-Language: en-US
-To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
-        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
-        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
-        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
-        yujie.liu@intel.com, gregkh@linuxfoundation.org,
-        muchun.song@linux.dev
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-        kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-erofs@lists.ozlabs.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, linux-mtd@lists.infradead.org,
-        rcu@vger.kernel.org, netdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        dm-devel@redhat.com, linux-raid@vger.kernel.org,
-        linux-bcache@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Muchun Song <songmuchun@bytedance.com>
-References: <20230727080502.77895-1-zhengqi.arch@bytedance.com>
- <20230727080502.77895-28-zhengqi.arch@bytedance.com>
-From:   Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <20230727080502.77895-28-zhengqi.arch@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20230720140452.63817-6-hch@lst.de>
+X-Originating-IP: [106.110.32.140]
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+        CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDKsWRmVeSWpSXmKPExsWy7djPc7qxpodSDO7OYreYs34Nm8Xqu/1s
+        Fo3vlC0uP+GzWLn6KJPF3lvaFnv2nmSxuLxrDpvFvTX/WS12/dnBbvH7xxw2B26Pv3M/Mnts
+        XqHlcflsqcemVZ1sHps+TWL3ODHjN4vH7psNbB6fN8kFcERx2aSk5mSWpRbp2yVwZZzf+pe9
+        4B9jxZW9G9kaGC8xdjFyckgImEh0Hn3I1MXIxSEksIJR4uendywgCSGBL4wSU5akQNifGSWO
+        reeEadh0ZAUbRMNyRonTTQtZ4Yr6PlpBJLYwSky4fp8JJMEioCpx/XcTcxcjBwebgJZEYyc7
+        SFhEQEni6auzjCD1zAL3mSQ+7DsIdpKwgKvEvJa9zCA2r4C5xNW/b5ggbEGJkzOfgF3HLKAj
+        sWD3JzaQmcwC0hLL/3GAhDkFDCSmrj8A9ZmSRMPmMywQdq3EqS23wL6UEJjOKXFv9jk2iISL
+        ROfqNlYIW1ji1fEt7BC2jMTpyT1QzdUST2/8ZoZobmGU6N+5HmyxhIC1RN+ZHAjTUaLlpT2E
+        ySdx460gxJV8EpO2TWeGCPNKdLQJQQxUk1h97w3LBEblWUj+moXkr1kIfy1gZF7FKJ5aWpyb
+        nlpsnJdarlecmFtcmpeul5yfu4kRmKBO/zv+dQfjilcf9Q4xMnEwHmKU4GBWEuE1jNmXIsSb
+        klhZlVqUH19UmpNafIhRmoNFSZxX2/ZkspBAemJJanZqakFqEUyWiYNTqoHJ0MBxzpHWhxGP
+        TuqmH3orK8BXczGq5PqxJzkrgnfPPv9plutiS8Zjn1Lrte7Gt/978PqsvqP1nTcT1u2/L2x4
+        czbvrhJ725D11u6q+y46xrXeyJKrObLhy2Xv7kOtXYkvPH1DNBpvbi1cxfGOL/TRBhWhletD
+        V+RH9u5Ou3S1dmX3ap+pGuuDHVfc2eBfx2r3+NrWAPP7DytLbIriD21N80+rVC5/wqHIyLN0
+        qkSAbSan1L0pD0pvLZm18xuXtVLN43+X70TGbTFytUntu+u18n2grdTNjt2a8SFdPLcqrCyW
+        rLsw22OG89sZMtd1ldjvzndvso0x5xN+cvjJnKMyMbuanvnXiS5XY9WMTTZUYinOSDTUYi4q
+        TgQA9/RpsL8DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLIsWRmVeSWpSXmKPExsVy+t/xu7oxpodSDGa2KVrMWb+GzWL13X42
+        i8Z3yhaXn/BZrFx9lMli7y1tiz17T7JYXN41h83i3pr/rBa7/uxgt/j9Yw6bA7fH37kfmT02
+        r9DyuHy21GPTqk42j02fJrF7nJjxm8Vj980GNo/Pm+QCOKL0bIryS0tSFTLyi0tslaINLYz0
+        DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0Ms5v/cte8I+x4srejWwNjJcYuxg5OSQE
+        TCQ2HVnB1sXIxSEksJRR4szDJUwQCRmJjV+uskLYwhJ/rnVBFX1klPj27DUjhLOFUeLmhOVg
+        o1gEVCWu/25i7mLk4GAT0JJo7GQHCYsIKEk8fXUWrJ5Z4D6TxId9B8HqhQVcJea17GUGsXkF
+        zCWu/n0DtllIIFRi2tkZrBBxQYmTM5+wgNjMAjoSC3Z/YgOZzywgLbH8HwdImFPAQGLq+gNQ
+        3yhJNGw+wwJh10p8/vuMcQKj8Cwkk2YhmTQLYdICRuZVjCKppcW56bnFRnrFibnFpXnpesn5
+        uZsYgfG67djPLTsYV776qHeIkYmD8RCjBAezkgivYcy+FCHelMTKqtSi/Pii0pzU4kOMpsCQ
+        mMgsJZqcD0wYeSXxhmYGpoYmZpYGppZmxkrivJ4FHYlCAumJJanZqakFqUUwfUwcnFINTOsC
+        5rA/n+4Rwimx+M+39548U58V3Ta8e3qT3Ryl74YP9z1yrJJTC5p2x+XPa41zp3czrzqVu9+M
+        46jq8b2bjmz43T71tkp8TPGVo6XrA64F/rnZLxr68a4eM/eJT/4789ecnv25/bO8Hrdyv1ee
+        tbyQpvGN418Dn7w4+v/b+biML50XNmca3k4obN0q91Wj7rbgsqf3QxZ+e7mzIPNxzJxmBkeO
+        yyfWX1RTMlt5I0va0/XwD/Wgbb5Rd2ZGZq/8GjdTJFrwTar4F+9/ps8uncgKCIh4Z/7yyF+b
+        gpnHGs75bSqR0Hef8cu0/ai2hWzrtOSJWdNdlmzYdFSnZAX/2aYQqUfHOB1Op8QKsuxYKW6l
+        xFKckWioxVxUnAgANNCESGADAAA=
+X-CMS-MailID: 20230727091404eucas1p2cbc14ec51eb1442496b1a4c30cd04803
+X-Msg-Generator: CA
+X-RootMTR: 20230727091404eucas1p2cbc14ec51eb1442496b1a4c30cd04803
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230727091404eucas1p2cbc14ec51eb1442496b1a4c30cd04803
+References: <20230720140452.63817-1-hch@lst.de>
+        <20230720140452.63817-6-hch@lst.de>
+        <CGME20230727091404eucas1p2cbc14ec51eb1442496b1a4c30cd04803@eucas1p2.samsung.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 2023/7/27 16:04, Qi Zheng wrote:
-> In preparation for implementing lockless slab shrink, use new APIs to
-> dynamically allocate the dm-bufio shrinker, so that it can be freed
-> asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
-> read-side critical section when releasing the struct dm_bufio_client.
+On Thu, Jul 20, 2023 at 04:04:51PM +0200, Christoph Hellwig wrote:
+> Use iomap in buffer_head compat mode to write to block devices.
 > 
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-> Reviewed-by: Muchun Song <songmuchun@bytedance.com>
-> ---
->   drivers/md/dm-bufio.c | 26 +++++++++++++++-----------
->   1 file changed, 15 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/md/dm-bufio.c b/drivers/md/dm-bufio.c
-> index bc309e41d074..5a9124b83d53 100644
-> --- a/drivers/md/dm-bufio.c
-> +++ b/drivers/md/dm-bufio.c
-> @@ -963,7 +963,7 @@ struct dm_bufio_client {
->   
->   	sector_t start;
->   
-> -	struct shrinker shrinker;
-> +	struct shrinker *shrinker;
->   	struct work_struct shrink_work;
->   	atomic_long_t need_shrink;
->   
-> @@ -2368,7 +2368,7 @@ static unsigned long dm_bufio_shrink_scan(struct shrinker *shrink, struct shrink
->   {
->   	struct dm_bufio_client *c;
->   
-> -	c = container_of(shrink, struct dm_bufio_client, shrinker);
-> +	c = shrink->private_data;
->   	atomic_long_add(sc->nr_to_scan, &c->need_shrink);
->   	queue_work(dm_bufio_wq, &c->shrink_work);
->   
-> @@ -2377,7 +2377,7 @@ static unsigned long dm_bufio_shrink_scan(struct shrinker *shrink, struct shrink
->   
->   static unsigned long dm_bufio_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
->   {
-> -	struct dm_bufio_client *c = container_of(shrink, struct dm_bufio_client, shrinker);
-> +	struct dm_bufio_client *c = shrink->private_data;
->   	unsigned long count = cache_total(&c->cache);
->   	unsigned long retain_target = get_retain_buffers(c);
->   	unsigned long queued_for_cleanup = atomic_long_read(&c->need_shrink);
-> @@ -2490,15 +2490,19 @@ struct dm_bufio_client *dm_bufio_client_create(struct block_device *bdev, unsign
->   	INIT_WORK(&c->shrink_work, shrink_work);
->   	atomic_long_set(&c->need_shrink, 0);
->   
-> -	c->shrinker.count_objects = dm_bufio_shrink_count;
-> -	c->shrinker.scan_objects = dm_bufio_shrink_scan;
-> -	c->shrinker.seeks = 1;
-> -	c->shrinker.batch = 0;
-> -	r = register_shrinker(&c->shrinker, "dm-bufio:(%u:%u)",
-> -			      MAJOR(bdev->bd_dev), MINOR(bdev->bd_dev));
-> -	if (r)
-> +	c->shrinker = shrinker_alloc(0, "dm-bufio:(%u:%u)",
-> +				     MAJOR(bdev->bd_dev), MINOR(bdev->bd_dev));
-> +	if (!c->shrinker)
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Here should set r to -ENOMEM, will fix.
-
->   		goto bad;
->   
-> +	c->shrinker->count_objects = dm_bufio_shrink_count;
-> +	c->shrinker->scan_objects = dm_bufio_shrink_scan;
-> +	c->shrinker->seeks = 1;
-> +	c->shrinker->batch = 0;
-> +	c->shrinker->private_data = c;
-> +
-> +	shrinker_register(c->shrinker);
-> +
->   	mutex_lock(&dm_bufio_clients_lock);
->   	dm_bufio_client_count++;
->   	list_add(&c->client_list, &dm_bufio_all_clients);
-> @@ -2537,7 +2541,7 @@ void dm_bufio_client_destroy(struct dm_bufio_client *c)
->   
->   	drop_buffers(c);
->   
-> -	unregister_shrinker(&c->shrinker);
-> +	shrinker_free(c->shrinker);
->   	flush_work(&c->shrink_work);
->   
->   	mutex_lock(&dm_bufio_clients_lock);
+Looks good,
+Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
