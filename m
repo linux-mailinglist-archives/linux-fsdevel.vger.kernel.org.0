@@ -2,119 +2,271 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D34BD765135
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 12:30:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 512B3765137
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 12:31:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233849AbjG0Kan (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 06:30:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59296 "EHLO
+        id S233644AbjG0Kb4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 06:31:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233998AbjG0KaQ (ORCPT
+        with ESMTP id S231772AbjG0Kby (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 06:30:16 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09D501984;
-        Thu, 27 Jul 2023 03:30:01 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-d167393b95aso2880069276.0;
-        Thu, 27 Jul 2023 03:30:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690453800; x=1691058600;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=omUaDYixzWjtTMpLHRqhT6EXYqbxVHZ/m0JLSVt+zRU=;
-        b=kR/E8OXTGyuAcMVnK2KQrLklJTZJIbjeBJSeT2sIhGPM65Oruur9kofklO6ietHDy9
-         iN+Yk3uFFi0DCH5b+KIEtuBcPluVBtavpypaR5WD07CSqNhopnv+R23ky6tSh9IjXGJk
-         GzdeqRWRPgntqPs3w/iwM7pGLzDbKoIc/aZkfpT2kgbAlhsGaHHBFI9ifZTJ75RImlBN
-         m18KEttAN2mbFemlm21ARI+oQPZWhQ5ZKjtL1LwA/zUs5OtenG40a77AVnpCBMgIji09
-         cexZ5ek/pfpL8k5LTc7yy93lENk2O4UsiIb8Ws8buCdDhR4wb5xCwrRekry+fPBuluvl
-         CgJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690453800; x=1691058600;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=omUaDYixzWjtTMpLHRqhT6EXYqbxVHZ/m0JLSVt+zRU=;
-        b=Nu8Cnj1AU3YMdobcxa6j38XTBGUDdHZm7Ky9rG3bDO6Bpsc5YvUwy4Ls4JKoI0vE6p
-         fDRcYuQBDmF1ol3FOqfI90Sogn5jarlnblz6QRZXQpjzDD5W+OmymYPd8yXvWZko/99u
-         VrwsIC/nMpSmNo8Xab1qUjBS+oIaGidWw90Vj1kfg+DGTRLindzQd33933aP8lyqXJG0
-         DpXdeYo0nCkTUSEE2HuiuyW6dltaAnJ/VnE27ZuIhN6K3byMWznT2jBaN3wmlZOjYJsA
-         Z00EgGMUVC75B0bGE45zLiKc9SWm4nE7tnnh7h1Gl6at2Uw1xhkFlYYIXIQEkNLmTdKD
-         8p0g==
-X-Gm-Message-State: ABy/qLbE5I+ILduGkww569LqrERsogemz2UFR91B88us+mQ8g+lkSqf3
-        g7cn8Tog7LvzodQZUyykbJGa4M+vux4fv1nTERE=
-X-Google-Smtp-Source: APBJJlHBlYlPNCAOaUQmX7sCh/RdKgzYXiRFfLFaMRkHkke9meK1yv0x0Ok78z4gqgOSPSppdBIT7tY7YrKsz3aQ6Jo=
-X-Received: by 2002:a25:3617:0:b0:d1f:8809:ffa1 with SMTP id
- d23-20020a253617000000b00d1f8809ffa1mr2701868yba.27.1690453800151; Thu, 27
- Jul 2023 03:30:00 -0700 (PDT)
+        Thu, 27 Jul 2023 06:31:54 -0400
+Received: from out-94.mta1.migadu.com (out-94.mta1.migadu.com [95.215.58.94])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45EBCF0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 03:31:53 -0700 (PDT)
+Message-ID: <b4fb751f-abb2-5618-31a0-f0cdacc49506@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1690453911;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oGpfhAb64EsW2uN8Dah7rKlE+izLRexQARkgqVJV7A0=;
+        b=gybijNZYKGed1JmpPimu96vnkfKVqBnOjDg/+vJFP7gG1HgiChbtcPjY5e0yyCAtfVFAFF
+        xDOR/SIXh0g54ExRfngpsZLE7ndympUPmZTMXpqwmCgxmTfJEfr3/XgXOUwNJbOxCnPDFE
+        XZeYWz+35fwWyLU3WybnVrOUr9Yv46o=
+Date:   Thu, 27 Jul 2023 18:31:38 +0800
 MIME-Version: 1.0
-References: <20230627183629.26571-1-nj.shetty@samsung.com> <CGME20230627184010epcas5p4bb6581408d9b67bbbcad633fb26689c9@epcas5p4.samsung.com>
- <20230627183629.26571-3-nj.shetty@samsung.com> <20230720074256.GA5042@lst.de>
-In-Reply-To: <20230720074256.GA5042@lst.de>
-From:   Nitesh Shetty <nitheshshetty@gmail.com>
-Date:   Thu, 27 Jul 2023 15:59:49 +0530
-Message-ID: <CAOSviJ3oDSHk2HXyRZa=A43vCxh-n2YkyuW-qXNq-q=i6bNacQ@mail.gmail.com>
-Subject: Re: [PATCH v13 2/9] block: Add copy offload support infrastructure
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Nitesh Shetty <nj.shetty@samsung.com>,
-        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
-        Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-        willy@infradead.org, hare@suse.de, djwong@kernel.org,
-        bvanassche@acm.org, ming.lei@redhat.com, dlemoal@kernel.org,
-        gost.dev@samsung.com, Anuj Gupta <anuj20.g@samsung.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [fuse-devel] [PATCH 3/3] fuse: write back dirty pages before
+ direct write in direct_io_relax mode
+Content-Language: en-US
+To:     Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>,
+        Bernd Schubert <bernd.schubert@fastmail.fm>,
+        fuse-devel@lists.sourceforge.net
+Cc:     linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>,
+        cgxu519@mykernel.net, miklos@szeredi.hu
+References: <20230630094602.230573-1-hao.xu@linux.dev>
+ <20230630094602.230573-4-hao.xu@linux.dev>
+ <e5266e11-b58b-c8ca-a3c8-0b2c07b3a1b2@bytedance.com>
+ <2622afd7-228f-02f3-3b72-a1c826844126@linux.dev>
+ <396A0BF4-DA68-46F8-9881-3801737225C6@fastmail.fm>
+ <9b0a164d-3d0e-cc57-81b7-ae32bef4e9d7@linux.dev>
+ <cb8c18e6-b5cb-e891-696f-b403012eacb7@fastmail.fm>
+ <45da6206-8e34-a184-5ba4-d40be252cfd2@linux.dev>
+ <6856f435-a589-e044-881f-3a80aefa1174@bytedance.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
+In-Reply-To: <6856f435-a589-e044-881f-3a80aefa1174@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 20, 2023 at 1:12=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
-e:
-> > Suggested-by: Christoph Hellwig <hch@lst.de>
->
-> Hmm, I'm not sure I suggested adding copy offload..
->
-We meant for request based design, we will remove it.
+On 7/26/23 19:07, Jiachen Zhang wrote:
+> 
+> 
+> On 2023/7/26 00:57, Hao Xu wrote:
+>>
+>> On 7/25/23 21:00, Bernd Schubert wrote:
+>>>
+>>>
+>>> On 7/25/23 12:11, Hao Xu wrote:
+>>>> On 7/21/23 19:56, Bernd Schubert wrote:
+>>>>> On July 21, 2023 1:27:26 PM GMT+02:00, Hao Xu <hao.xu@linux.dev> 
+>>>>> wrote:
+>>>>>> On 7/21/23 14:35, Jiachen Zhang wrote:
+>>>>>>>
+>>>>>>> On 2023/6/30 17:46, Hao Xu wrote:
+>>>>>>>> From: Hao Xu <howeyxu@tencent.com>
+>>>>>>>>
+>>>>>>>> In direct_io_relax mode, there can be shared mmaped files and 
+>>>>>>>> thus dirty
+>>>>>>>> pages in its page cache. Therefore those dirty pages should be 
+>>>>>>>> written
+>>>>>>>> back to backend before direct write to avoid data loss.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+>>>>>>>> ---
+>>>>>>>>    fs/fuse/file.c | 7 +++++++
+>>>>>>>>    1 file changed, 7 insertions(+)
+>>>>>>>>
+>>>>>>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>>>>>>>> index 176f719f8fc8..7c9167c62bf6 100644
+>>>>>>>> --- a/fs/fuse/file.c
+>>>>>>>> +++ b/fs/fuse/file.c
+>>>>>>>> @@ -1485,6 +1485,13 @@ ssize_t fuse_direct_io(struct 
+>>>>>>>> fuse_io_priv *io, struct iov_iter *iter,
+>>>>>>>>        if (!ia)
+>>>>>>>>            return -ENOMEM;
+>>>>>>>> +    if (fopen_direct_write && fc->direct_io_relax) {
+> 
+> 
+> Hi,
+> 
+> Seems this patchset flushes and invalidates the page cache before doing 
+> the direct-io writes, which avoids data loss caused by flushing staled 
+> data to FUSE daemon. And I tested it works well.
+> 
+> But there is also another side of the same problem we should consider. 
+> If a file is modified through its page cache (shared mmapped regions, or 
+> non-FOPEN_DIRECT_IO files), the following direct-io reads may bypass the 
+> new data in dirty page cache and read the staled data from FUSE daemon. 
+> I think this is also a problem that should be fixed. It could be fixed 
+> by uncondictionally calling filemap_write_and_wait_range() before 
+> direct-io read.
+> 
+> 
+>>>>>>>> +        res = filemap_write_and_wait_range(mapping, pos, pos + 
+>>>>>>>> count - 1);
+>>>>>>>> +        if (res) {
+>>>>>>>> +            fuse_io_free(ia);
+>>>>>>>> +            return res;
+>>>>>>>> +        }
+>>>>>>>> +    }
+>>>>>>>>        if (!cuse && fuse_range_is_writeback(inode, idx_from, 
+>>>>>>>> idx_to)) {
+>>>>>>>>            if (!write)
+>>>>>>>>                inode_lock(inode);
+>>>>>>>
+>>>>>>> Tested-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+>>>>>>>
+>>>>>>>
+>>>>>>> Looks good to me.
+>>>>>>>
+>>>>>>> By the way, the behaviour would be a first FUSE_WRITE flushing 
+>>>>>>> the page cache, followed by a second FUSE_WRITE doing the direct 
+>>>>>>> IO. In the future, further optimization could be first write into 
+>>>>>>> the page cache and then flush the dirty page to the FUSE daemon.
+>>>>>>>
+>>>>>>
+>>>>>> I think this makes sense, cannot think of any issue in it for now, so
+>>>>>> I'll do that change and send next version, super thanks, Jiachen!
+>>>>>>
+>>>>>> Thanks,
+>>>>>> Hao
+>>>>>>
+>>>>>>>
+>>>>>>> Thanks,
+>>>>>>> Jiachen
+>>>>>>
+>>>>>
+>>>>> On my phone, sorry if mail formatting is not optimal.
+>>>>> Do I understand it right? You want DIO code path copy into pages 
+>>>>> and then flush/invalidate these pages? That would be punish DIO for 
+>>>>> for the unlikely case there are also dirty pages (discouraged IO 
+>>>>> pattern).
+>>>>
+>>>> Hi Bernd,
+>>>> I think I don't get what you said, why it is punishment and why it's 
+>>>> discouraged IO pattern?
+>>>> On my first eyes seeing Jiachen's idea, I was thinking "that sounds
+>>>> disobeying direct write semantics" because usually direct write is
+>>>> "flush dirty page -> invalidate page -> write data through to backend"
+>>>> not "write data to page -> flush dirty page/(writeback data)"
+>>>> The latter in worst case write data both to page cache and backend
+>>>> while the former just write to backend and load it to the page cache
+>>>> when buffered reading. But seems there is no such "standard way" which
+>>>> says we should implement direct IO in that way.
+>>>
+>>> Hi Hao,
+>>>
+>>> sorry for being brief last week, I was on vacation and 
+>>> reading/writing some mails on my phone.
+>>>
+>>> With 'punishment' I mean memory copies to the page cache - memory 
+>>> copies are expensive and DIO should avoid it.
+>>>
+>>> Right now your patch adds filemap_write_and_wait_range(), but we do 
+>>> not know if it did work (i.e. if pages had to be flushed). So unless 
+>>> you find a way to get that information, copy to page cache would be 
+>>> unconditionally - overhead of memory copy even if there are no dirty 
+>>> pages.
+>>
+>>
+>> Ah, looks I understood what you mean in my last email reply. Yes, just 
+>> like what I said in last email:
+>>
+>> [1] flush dirty page --> invalidate page --> write data to backend
+>>
+>>     This is what we do for direct write right now in kernel, I call 
+>> this policy "write-through", since it doesn't care much about the cache.
+>>
+>> [2] write data to page cache --> flush dirty page in suitable time
+>>
+>>     This is  "write-back" policy, used by buffered write. Here in this 
+>> patch's case, we flush pages synchronously, so it still can be called 
+>> direct-write.
+>>
+>> Surely, in the worst case, the page is clean, then [2] has one extra 
+>> memory copy than [1]. But like what I pointed out, for [2], next time 
+>> buffered
+>>
+>> read happens, the page is in latest state, so no I/O needed, while for 
+>> [1], it has to load data from backend to page cache.
+>>
+> 
+> Write-through, write-back and direct-io are also exlained in the kernel 
+> documentation [*], of which write-through and write-back are cache 
+> modes. According to the document, the pattern [2] is similar to the FUSE 
 
-> >  static inline unsigned int blk_rq_get_max_segments(struct request *rq)
-> >  {
-> >       if (req_op(rq) =3D=3D REQ_OP_DISCARD)
-> > @@ -303,6 +310,8 @@ static inline bool bio_may_exceed_limits(struct bio=
- *bio,
-> >               break;
-> >       }
-> >
-> > +     if (unlikely(op_is_copy(bio->bi_opf)))
-> > +             return false;
->
-> This looks wrong to me.  I think the copy ops need to be added to the
-> switch statement above as they have non-trivial splitting decisions.
-> Or at least should have those as we're missing the code to split
-> copy commands right now.
->
+Yep, in previous mail write-through and write-back I mentioned are
+generic concepts for any cache system, e.g. cpu cache, page cache.
 
-Agreed, copy will have non-trivial splitting decisions. But, I
-couldn't think of scenarios where this could happen, as we check for
-queue limits before issuing a copy. Do you see scenarios where split
-could happen for copy here.
 
-Acked for all other review comments.
+> write-back mode, but the pattern [1] is different from the FUSE 
+> write-through mode. The FUSE write-through mode obeys the 'write data to 
+> page cache --> flush dirty page synchronously' (let us call it pattern 
+> [3]), which keeps the clean cache in-core after flushing.
 
-Thank you,
-Nitesh Shetty
+I read the fuse doc, I think you are right, in !FOPEN_DIRECT_IO mode,
+the IO model for fuse is different with other filesystems. Specifically,
+its 'write-back' branch is just following other filesystems and
+'write-through' forces all writes go to both page cache and back-end,
+this is actually closer to the concept write-through.
+
+> 
+> To improve performance while keeping the direct-io semantics, my 
+> thoughts was in the future, maybe we can fallback to the pattern [3] if 
+> the target page is in-core, otherwise keep the original direct-io 
+> pattern without reading from whole pages from FUSE daemon.
+
+Why will we reading from whole pages from backend?
+That case happens for buffered write, because for buffered write, if we
+partially write to a page that is not in the front-end cache, it causes
+reading the whole page from back-end. But here we always do direct write
+in FOPEN_DIRECT_IO mode, so we just invalidate the pages involved.
+
+And just like Bernd said, "if the target page is in-core" is not enough,
+if the target page is not dirty, following pattern [3] make one extra
+page cache write.
+
+> 
+> [*] https://www.kernel.org/doc/Documentation/filesystems/fuse-io.txt
+> 
+> Thanks,
+> Jiachen
+> 
+>>
+>>>
+>>> With 'discouraged' I mean mix of page cache and direct-io. Typically 
+>>> one should only do either of both (page cache or DIO), but not a mix 
+>>> of them. For example see your patch, it flushes the page cache, but 
+>>> without a lock - races are possible. Copying to the page cache might 
+>>> be a solution, but it has the overhead above.
+>>
+>>
+>> For race, we held inode lock there, do I miss anything?
+>>
+>>
+>>>
+>>> Thanks,
+>>> Bernd
+>>
+>>
+>> I now think it's good to keep the pattern same as other filesystems 
+>> which is [1] to avoid possible performance issues in the future, 
+>> thanks Bernd.
+>>
+>>
+>> Hao
+>>
+>>
+
