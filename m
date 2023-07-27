@@ -2,79 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 76EF3765AA6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 19:43:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61874765B3C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 20:14:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229678AbjG0RnI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 13:43:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39234 "EHLO
+        id S230381AbjG0SOJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 14:14:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229902AbjG0Rmx (ORCPT
+        with ESMTP id S230461AbjG0SOH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 13:42:53 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799A730E3;
-        Thu, 27 Jul 2023 10:42:52 -0700 (PDT)
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4RBdQK2JCDz9tB8;
-        Thu, 27 Jul 2023 19:42:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-        t=1690479769;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=irvaKwjIRBfIMs3OM027g5G4TY2gjSeGrvplRFueXaU=;
-        b=UZDWQCSlVrWdtqreCk6pJhl6N2mvEBs8l+J0GZXLAJ/i0AyNILAKr29Y2HzpDc9MHho6C5
-        xVlOhswIJJkR5SSR4ws+giR/x20PVxaPyIM6O/iNQxvH7uAImdu2F/Zw48FGbEcZ6risS0
-        REEAuKwEzxnqm3M6cQCiZqnNt+7AoEXIgN0iyVEXl/IgRzie92zZ+gVSh1Z8MCS6kWkRql
-        HlKWkqhpMYcbmdMzT3dNoNMTNXKs91TI0m/a0jVKcoSIVgCZEWz4fVmF9rn+0qt15Qn/26
-        OISfzUoTd6FBgoUSvJSBOFNpfsyBzgTQSL6tDQROyhhl2eKXxJMNtKy6plit+w==
-Date:   Fri, 28 Jul 2023 03:42:22 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Alexey Gladkov <legion@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        Palmer Dabbelt <palmer@sifive.com>,
-        James.Bottomley@hansenpartnership.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, axboe@kernel.dk,
-        benh@kernel.crashing.org, borntraeger@de.ibm.com, bp@alien8.de,
-        catalin.marinas@arm.com, christian@brauner.io, dalias@libc.org,
-        davem@davemloft.net, deepa.kernel@gmail.com, deller@gmx.de,
-        dhowells@redhat.com, fenghua.yu@intel.com, fweimer@redhat.com,
-        geert@linux-m68k.org, glebfm@altlinux.org, gor@linux.ibm.com,
-        hare@suse.com, hpa@zytor.com, ink@jurassic.park.msu.ru,
-        jhogan@kernel.org, kim.phillips@arm.com, ldv@altlinux.org,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux@armlinux.org.uk, linuxppc-dev@lists.ozlabs.org,
-        luto@kernel.org, mattst88@gmail.com, mingo@redhat.com,
-        monstr@monstr.eu, mpe@ellerman.id.au, namhyung@kernel.org,
-        paulus@samba.org, peterz@infradead.org, ralf@linux-mips.org,
-        sparclinux@vger.kernel.org, stefan@agner.ch, tglx@linutronix.de,
-        tony.luck@intel.com, tycho@tycho.ws, will@kernel.org,
-        x86@kernel.org, ysato@users.sourceforge.jp
-Subject: Re: [PATCH v4 3/5] arch: Register fchmodat2, usually as syscall 452
-Message-ID: <20230727.174206-real.town.kosher.menu-lN1F8uSeAtB@cyphar.com>
-References: <cover.1689074739.git.legion@kernel.org>
- <cover.1689092120.git.legion@kernel.org>
- <a677d521f048e4ca439e7080a5328f21eb8e960e.1689092120.git.legion@kernel.org>
- <nbtxxotfsotuiepm7r4tegc4hy5qxe4dfjuqq7rm6qkkevooxh@4hacgjwit4or>
- <20230727-fangen-olympiade-85fcbdaf03d7@brauner>
+        Thu, 27 Jul 2023 14:14:07 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D548130F3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 11:14:06 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-115-64.bstnma.fios.verizon.net [173.48.115.64])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 36RIDdNJ032404
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Jul 2023 14:13:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1690481621; bh=YhV95XsKE5ygKImXHE1eq93G7xXd76r7xSZbt1Eo2yM=;
+        h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+        b=Jk0wiFKtbRC5O3WJWjnZ2xh+xyCKHrTjzINuGBBeD8UVxpWB8GV44VbRpWwgLz0qo
+         ejRW0dZrPurHOSBaYdlvb0JS1/cwU8SRMjF+jexEYelgK2JklChrQfMebrl044UnRW
+         6q2UPLMYTpdTcFMbVAK4NvzHAyB4+sbOOdc4z5U7CWXEpf5w24hu5ziSqNy24pBphd
+         mB2nr87xwE3PHYrVxZKzv0GIoJ86UlTyBu69wdfMBiSsGBgdeKDf7ydGLPtAM9Sxw4
+         ilCU/kBrrs5nqJ+acgWcdOOF17qi7JfXWlGTOEpVJ0aHmFwy/b5ghndVr6hHp8pfbg
+         jDoMewJBrFQMQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 30B1A15C04EF; Thu, 27 Jul 2023 14:13:39 -0400 (EDT)
+Date:   Thu, 27 Jul 2023 14:13:39 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Gabriel Krisman Bertazi <krisman@suse.de>
+Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, ebiggers@kernel.org,
+        jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v4 0/7] Support negative dentries on case-insensitive
+ ext4 and f2fs
+Message-ID: <20230727181339.GH30264@mit.edu>
+References: <20230727172843.20542-1-krisman@suse.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="y33k3lm4leglkjmq"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230727-fangen-olympiade-85fcbdaf03d7@brauner>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+In-Reply-To: <20230727172843.20542-1-krisman@suse.de>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,49 +56,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Jul 27, 2023 at 01:28:36PM -0400, Gabriel Krisman Bertazi wrote:
+> This is the v4 of the negative dentry support on case-insensitive
+> directories.  It doesn't have any functional changes from v1. It applies
+> Eric's comments to bring the flags check closet together, improve the
+> documentation and improve comments in the code.  I also relooked at the
+> locks to ensure the inode read lock is indeed enough in the lookup_slow
+> path.
 
---y33k3lm4leglkjmq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Al, Christian, any thoughts or preferences for how we should handle
+this patch series?  I'm willing to take it through the ext4 tree, but
+since it has vfs, ext4, and f2fs changes (and the bulk of the changes
+are in the vfs), perhaps it should go through the vfs tree?
 
-On 2023-07-27, Christian Brauner <brauner@kernel.org> wrote:
-> On Wed, Jul 26, 2023 at 02:43:41AM +1000, Aleksa Sarai wrote:
-> > On 2023-07-11, Alexey Gladkov <legion@kernel.org> wrote:
-> > > From: Palmer Dabbelt <palmer@sifive.com>
-> > >=20
-> > > This registers the new fchmodat2 syscall in most places as nuber 452,
-> > > with alpha being the exception where it's 562.  I found all these sit=
-es
-> > > by grepping for fspick, which I assume has found me everything.
-> >=20
-> > Shouldn't this patch be squashed with the patch that adds the syscall?
-> > At least, that's how I've usually seen it done...
->=20
-> Depends. Iirc, someone said they'd prefer for doing it in one patch
-> in some circumstances on some system call we added years ago. But otoh,
-> having the syscall wiring done separately makes it easy for arch
-> maintainers to ack only the wiring up part. Both ways are valid imho.
-> (cachestat() did it for x86 and then all the others separately. So
-> really it seems a bit all over the place depending on the scenario.)
+Also, Christian, I notice one of the five VFS patches in the series
+has your Reviewed-by tag, but not the others?  Is that because you
+haven't had a chance to make a final determination on those patches,
+or you have outstanding comments still to be addressed?
 
-Fair enough!
+Cheers,
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---y33k3lm4leglkjmq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZMKsfgAKCRAol/rSt+lE
-b/FwAQChKTWhN1YMxOU/bLQz1S3i+RhA8DQHZpoCbh1FlOSYwAEAmOKfPG+e4zNA
-VW75+QkpKlGw0rY3TfjxW8YkGfonXgo=
-=/4Tp
------END PGP SIGNATURE-----
-
---y33k3lm4leglkjmq--
+					- Ted
