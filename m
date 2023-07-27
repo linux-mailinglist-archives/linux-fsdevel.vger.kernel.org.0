@@ -2,157 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB9D97653D3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 14:28:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17FB37653E1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 14:28:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231663AbjG0M21 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 08:28:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60128 "EHLO
+        id S234205AbjG0M2m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 08:28:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234134AbjG0M1v (ORCPT
+        with ESMTP id S234529AbjG0M2M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 08:27:51 -0400
-Received: from out-72.mta1.migadu.com (out-72.mta1.migadu.com [IPv6:2001:41d0:203:375::48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7E5C30E2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 05:27:05 -0700 (PDT)
-Message-ID: <34f3b7ce-41f1-49c8-781d-a73b48481e0d@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1690460815;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=exoCYtqs4lKqJRylVtrIZXW7kCXNeNEVdEMQ+pCJcHg=;
-        b=BaqiPSAGVUuwX0RzK5qjvyw4xGjFXILgA4tzmXVsCDqGuG2yDXTXng8OfXu70jiSpl2Mc1
-        l+UYs0hvUrCoAMLSZK0qtW1qy1hp+Y8fQwHrSCGAJ3Okgh3TApfTYgNiXHl959CtqR9FKw
-        dBf3wUP4UuwUyt1jj8JZqQYVznhkBBc=
-Date:   Thu, 27 Jul 2023 20:26:47 +0800
+        Thu, 27 Jul 2023 08:28:12 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B80530CA;
+        Thu, 27 Jul 2023 05:27:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=0SHwtlLfdLykm91VDjKonBsfjtpcmLBc8lJqYZToBcg=; b=D9EKpOfhiN9nSQhGjNtFFOB/5J
+        IvoEznWKphYvGec9XS3FDaLewEcIxHC3ECqpdiPtciChaSPmdJnvaaQTPRIcMWw53ITYejobJi1QD
+        vF6RYxVTJ3bvRt63gOVBNbGgp11XHjkqwdarkDR9IGkOdUJ38OS3rQ6MrlumhKynj1UUvgTQy1ErQ
+        ErRrW5vmoqqJfnmFf5OZfpiFG1v8O9ZhhpIyWeO4gdB/EFnqNBgXl9y71BYZtOHKEu0bA+htek+sC
+        qn09JvHVWJ7ohLt1iFUvG869wEVjKgh3981XyKTBB9xlkOAmc8TyXWMaH03xAAuswqgRqa8Wqp4HJ
+        m+CVd12Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qP060-007Sp6-P9; Thu, 27 Jul 2023 12:27:56 +0000
+Date:   Thu, 27 Jul 2023 13:27:56 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Daniel Dao <dqminh@cloudflare.com>
+Cc:     linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        kernel-team <kernel-team@cloudflare.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, djwong@kernel.org
+Subject: Re: Kernel NULL pointer deref and data corruptions with xfs on 6.1
+Message-ID: <ZMJizCdbm+JPZ8gp@casper.infradead.org>
+References: <CA+wXwBRGab3UqbLqsr8xG=ZL2u9bgyDNNea4RGfTDjqB=J3geQ@mail.gmail.com>
+ <ZMHkLA+r2K6hKsr5@casper.infradead.org>
+ <CA+wXwBQur9DU7mVa961KWpL+cn1BNeZbU+oja+SKMHhEo1D0-g@mail.gmail.com>
 MIME-Version: 1.0
-Subject: Re: [PATCH 5/7] add llseek_nowait support for xfs
-Content-Language: en-US
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-References: <20230726102603.155522-1-hao.xu@linux.dev>
- <20230726102603.155522-6-hao.xu@linux.dev>
- <ZMGaqsDTe4oDCdAZ@dread.disaster.area>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <ZMGaqsDTe4oDCdAZ@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+wXwBQur9DU7mVa961KWpL+cn1BNeZbU+oja+SKMHhEo1D0-g@mail.gmail.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/27/23 06:14, Dave Chinner wrote:
-> On Wed, Jul 26, 2023 at 06:26:01PM +0800, Hao Xu wrote:
->> From: Hao Xu <howeyxu@tencent.com>
->>
->> Add llseek_nowait() operation for xfs, it acts just like llseek(). The
->> thing different is it delivers nowait parameter to iomap layer.
->>
->> Signed-off-by: Hao Xu <howeyxu@tencent.com>
->> ---
->>   fs/xfs/xfs_file.c | 29 +++++++++++++++++++++++++++--
->>   1 file changed, 27 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
->> index 73adc0aee2ff..cba82264221d 100644
->> --- a/fs/xfs/xfs_file.c
->> +++ b/fs/xfs/xfs_file.c
->> @@ -1257,10 +1257,11 @@ xfs_file_readdir(
->>   }
->>   
->>   STATIC loff_t
->> -xfs_file_llseek(
->> +__xfs_file_llseek(
->>   	struct file	*file,
->>   	loff_t		offset,
->> -	int		whence)
->> +	int		whence,
->> +	bool		nowait)
->>   {
->>   	struct inode		*inode = file->f_mapping->host;
->>   
->> @@ -1282,6 +1283,28 @@ xfs_file_llseek(
->>   	return vfs_setpos(file, offset, inode->i_sb->s_maxbytes);
->>   }
->>   
->> +STATIC loff_t
->> +xfs_file_llseek(
->> +	struct file	*file,
->> +	loff_t		offset,
->> +	int		whence)
->> +{
->> +	return __xfs_file_llseek(file, offset, whence, false);
->> +}
->> +
->> +STATIC loff_t
->> +xfs_file_llseek_nowait(
->> +	struct file	*file,
->> +	loff_t		offset,
->> +	int		whence,
->> +	bool		nowait)
->> +{
->> +	if (file->f_op == &xfs_file_operations)
->> +		return __xfs_file_llseek(file, offset, whence, nowait);
->> +	else
->> +		return generic_file_llseek(file, offset, whence);
->> +}
->> +
->>   #ifdef CONFIG_FS_DAX
->>   static inline vm_fault_t
->>   xfs_dax_fault(
->> @@ -1442,6 +1465,7 @@ xfs_file_mmap(
->>   
->>   const struct file_operations xfs_file_operations = {
->>   	.llseek		= xfs_file_llseek,
->> +	.llseek_nowait	= xfs_file_llseek_nowait,
->>   	.read_iter	= xfs_file_read_iter,
->>   	.write_iter	= xfs_file_write_iter,
->>   	.splice_read	= xfs_file_splice_read,
->> @@ -1467,6 +1491,7 @@ const struct file_operations xfs_dir_file_operations = {
->>   	.read		= generic_read_dir,
->>   	.iterate_shared	= xfs_file_readdir,
->>   	.llseek		= generic_file_llseek,
->> +	.llseek_nowait	= xfs_file_llseek_nowait,
->>   	.unlocked_ioctl	= xfs_file_ioctl,
->>   #ifdef CONFIG_COMPAT
->>   	.compat_ioctl	= xfs_file_compat_ioctl,
+On Thu, Jul 27, 2023 at 11:25:33AM +0100, Daniel Dao wrote:
+> On Thu, Jul 27, 2023 at 4:27 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Fri, Jul 21, 2023 at 11:49:04AM +0100, Daniel Dao wrote:
+> > > We do not have a reproducer yet, but we now have more debugging data
+> > > which hopefully
+> > > should help narrow this down. Details as followed:
+> > >
+> > > 1. Kernel NULL pointer deferencences in __filemap_get_folio
+> > >
+> > > This happened on a few different hosts, with a few different repeated addresses.
+> > > The addresses are 0000000000000036, 0000000000000076,
+> > > 00000000000000f6. This looks
+> > > like the xarray is corrupted and we were trying to do some work on a
+> > > sibling entry.
+> >
+> > I think I have a fix for this one.  Please try the attached.
 > 
-> This is pretty nasty. It would be far better just to change the
-> .llseek method than to inflict this on every filesystem for the
-> forseeable future.
-> 
-> Not that I'm a fan of passing "nowait" booleans all through the file
-> operations methods - that way lies madness. We use a control
-> structure for the IO path operations (kiocb) to hold per-call
-> context information, perhaps we need something similar for these
-> other methods that people are wanting to hook up to io_uring (e.g.
-> readdir) so taht we don't have to play whack-a-mole with every new
-> io_uring method that people want and then end up with a different
-> nowait solution for every method.
-> 
-> -Dave.
+> For some reason I do not see the attached patch. Can you resend it, or
+> is it the same
+> one as in https://bugzilla.kernel.org/show_bug.cgi?id=216646#c31 ?
 
-whack-a-mole is exactly what I thought when I tried to find a place to
-hold that...I'll think about it in next version, a generic structure for
-io_uring is good I believe. I'll update this patchset after the getdents
-stuff are merged.
-
-Thanks,
-Hao
+Yes, that's the one, sorry.
