@@ -2,133 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FAB5765296
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 13:37:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C47C7652B2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 13:40:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231590AbjG0Lhd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 07:37:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34030 "EHLO
+        id S233286AbjG0Lku (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 07:40:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231163AbjG0Lhc (ORCPT
+        with ESMTP id S233191AbjG0Lkq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 07:37:32 -0400
-Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2CC3135
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 04:37:30 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 1FB59320046F;
-        Thu, 27 Jul 2023 07:37:30 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Thu, 27 Jul 2023 07:37:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; t=1690457849; x=1690544249; bh=8m
-        t7BlsoZ3JZK5KL25oPh4zBAwjMNg3JZHz2IsKdFGE=; b=IgAC9Zwix7I3ggB7v4
-        tUemcdnpHwRoLtI/GRlvS2qT+sUIWePShqbO5/L8NffgqRAgiSNKWrg28LF9WfK+
-        1riO3gl+LEL8wXnwnLeTsVmD7eTSI9VIuyp/hzCfbF+2eB29dHCIyXJJjcN6IIjD
-        h3Is49naO6jWVIX29/Y7Izf4cE/K54FC5KsbqNYeliKKuxM1M/hXrwjIHNT3smXg
-        xnniU1Kf2wmK3flcmL90elsMUZc5qLRoM+EbG49xf/IKyj4DMK9PqGGa8pWQ89qM
-        08/xe6ErGKkUjU7tyAgZUEeDZAIrK2obl1paHRpMQHjuwXQKIDu4I79MAnU3RDQ/
-        X7bg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1690457849; x=1690544249; bh=8mt7BlsoZ3JZK
-        5KL25oPh4zBAwjMNg3JZHz2IsKdFGE=; b=c+N10ZQCvrxRS5HD6/ViKxamJ+Il8
-        ls0d23PnvhhUMkAOKvkksLvc7IxGm+7uLQfynzht9CxXzFEm67yzl143vHGrtty6
-        LzzJlSEs1KgiA75eOJbnh9+m1siqpyXaJ6dl5HlhAe0upgAePY54XYtSO/ArLTB3
-        KcDquUaUBKNMMVC3enAKTlz6pBHRcLLtpjgSGbkMXY6mZrnzo2C0z7UtOiZu5QBH
-        8pghiIS1Xc37V7TjBBauRTlcIcHbC7rtV6k55+jS2OkPH97i/mUoPGjMRckvdMlr
-        2FNSqpCi9UaF1sbuSDCQplN8JFPhP77aLDOw+0nlBf+bfXFK1Z2vs6FlA==
-X-ME-Sender: <xms:-VbCZENMcDlIZjY7mR98re02WfzrIe36YVn6-FL6ocLDk5qQbegwDw>
-    <xme:-VbCZK_GDglhfmZgi8HJzeXkic95JuCjRcBKPLPT3qdXXDGQazMjy57XmiivEO0IJ
-    VvlF4bLQHBr0ql5>
-X-ME-Received: <xmr:-VbCZLQqgAT9tKZKBTuUfcvLVvcrpBp_p-FwO48LOAsV2ZJ6USgGxJzbb9iUG0XiBTC9rBJE7lw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrieeggdduiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvfevufhfffgjkfgfgggtsehttddttddtredtnecuhfhrohhmpefpihhkohhl
-    rghushcutfgrthhhuceopfhikhholhgruhhssehrrghthhdrohhrgheqnecuggftrfgrth
-    htvghrnhepjeeuveettdeugfeigeefveehhffhieegieetvdelgfelleekgffgvefhffeg
-    udffnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomheppfhikhholhgruhhssehrrghthhdrohhr
-    gh
-X-ME-Proxy: <xmx:-VbCZMtSw8vLzGO-_h9Zs5P-XidZW24Hf7RQGT54Qgsyy06dWf0agg>
-    <xmx:-VbCZMdm9NeaH4IsAHkFAusAoqfKAWHVmq9vuaWqQcPLe1a3bWMmeQ>
-    <xmx:-VbCZA0pwVnmFU4Qp8PiWkGaGbqOyJcrr3BDDqXN3tsgYsXMIe3kTg>
-    <xmx:-VbCZBE6pzE3HPvOH6EeAQLKUYHEhTCtNMGc8zaypzaxQXavVQKqQA>
-Feedback-ID: i53a843ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 27 Jul 2023 07:37:28 -0400 (EDT)
-Received: from vostro.rath.org (vostro [192.168.12.4])
-        by ebox.rath.org (Postfix) with ESMTPS id 5D94C134;
-        Thu, 27 Jul 2023 11:37:27 +0000 (UTC)
-Received: by vostro.rath.org (Postfix, from userid 1000)
-        id B917180832; Thu, 27 Jul 2023 12:37:26 +0100 (BST)
-From:   Nikolaus Rath <Nikolaus@rath.org>
-To:     Miklos Szeredi via fuse-devel <fuse-devel@lists.sourceforge.net>
-Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        miklos <mszeredi@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [fuse-devel] Semantics of fuse_notify_delete()
-References: <87wmymk0k9.fsf@vostro.rath.org>
-        <CAJfpegs+FfWGCOxX1XERGHfYRZzCzcLZ99mnchfb8o9U0kTS-A@mail.gmail.com>
-Mail-Copies-To: never
-Mail-Followup-To: Miklos Szeredi via fuse-devel
-        <fuse-devel@lists.sourceforge.net>, Linux FS Devel
-        <linux-fsdevel@vger.kernel.org>, miklos <mszeredi@redhat.com>, Miklos
-        Szeredi <miklos@szeredi.hu>
-Date:   Thu, 27 Jul 2023 12:37:26 +0100
-In-Reply-To: <CAJfpegs+FfWGCOxX1XERGHfYRZzCzcLZ99mnchfb8o9U0kTS-A@mail.gmail.com>
-        (Miklos Szeredi via fuse-devel's message of "Thu, 27 Jul 2023 10:04:56
-        +0200")
-Message-ID: <87tttpk2kp.fsf@vostro.rath.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+        Thu, 27 Jul 2023 07:40:46 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5DFB270F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 04:40:43 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3fbb07e7155so77835e9.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 04:40:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1690458042; x=1691062842;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ph+T+bMJj5qPDZ5PD7H/7htn5wjLlAl0f0VpKLrvh6M=;
+        b=Hkxkwm02Od+vXqQN98JCAu61H1aNjPJs2zWZs6eEprDoT7GUpW3cvPh9/GCBEoiWJv
+         ADkiPRNFo1/2PKKMmAndwoKPh+rjvAOwLlEtuyZbaJG90u2GOk0cLoyPhX0xwxiJCbKX
+         pHV3eJRPsqxXCpiBCKqJN+8YmH8osH4l2sh+1Fd9XsFf0M+vAI4G+nrK0VgrDEn+ECtu
+         rxL+CHHQ8HWUye2yzC54EOszbNX/VdBOEmWTBMDNwDoZo2E6RlJWqbZtyn0bcxfmTgV0
+         542RVvI83Yr0K/WopxZlNaETzSn8ELkPQaUHdiTt5xg0oF22UaCJy11CwE66aV9yhu/5
+         3o5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690458042; x=1691062842;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ph+T+bMJj5qPDZ5PD7H/7htn5wjLlAl0f0VpKLrvh6M=;
+        b=d+QSVL5nUfnqvDy9jrvfF1mDeE5ro/SWaeb5ySnqZye8UlSsR+zaASmTUEkqW9+TM5
+         6c0z7YydMn2iEE4XF/S1uMcl3X96jgloa2p7B4gTS75e3eLaqcyw46p3/CCwKzOa4xNj
+         1b+jkvXMLFgEU1gci0cRcXBCKLG+ZcqmrTTQHZk+iA0w3SNOb92is+pPAamC7YBM2Mrr
+         eg8VuIrbsQhg+nm2uaUnLEOwCVcv59+hoHSaMvJlSIFlhP9gRj6dJSw6Ff3qP5vvm34G
+         HM0hAMyyz9oOI7tqUjsTmb7M5Oz/rvkJxdwfA8nWbCHDb99/QGFzjcdhrgT4MHPP10gL
+         j+uA==
+X-Gm-Message-State: ABy/qLbDzkKaVJ5ovunhR2ZwhDzysQhBZz0W4Z6Sk2pSFewCD1DU5G3K
+        +vGKPTAvADFHEE5FlNrxoIXXNxnlSh7lhKGVHWhr4A==
+X-Google-Smtp-Source: APBJJlGwCp+6u1RpzRTossFaboM1iyX+LT63lVnVimEXhyrxu43sILR/KnygiHidSJUVZBmyzkf2aC+fg1HsHe2Aw94=
+X-Received: by 2002:a05:600c:6023:b0:3fd:e15:6d5 with SMTP id
+ az35-20020a05600c602300b003fd0e1506d5mr94340wmb.2.1690458042138; Thu, 27 Jul
+ 2023 04:40:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20230727093637.1262110-1-usama.anjum@collabora.com> <20230727093637.1262110-3-usama.anjum@collabora.com>
+In-Reply-To: <20230727093637.1262110-3-usama.anjum@collabora.com>
+From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+Date:   Thu, 27 Jul 2023 13:40:30 +0200
+Message-ID: <CABb0KFFtjTve+uM=CTPChzUbJvJ=Tr3Q8espo_Rr_hutZPPAiw@mail.gmail.com>
+Subject: Re: [PATCH v26 2/5] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Jul 27 2023, Miklos Szeredi via fuse-devel <fuse-devel@lists.sourceforge.net> wrote:
-> On Wed, 26 Jul 2023 at 20:09, Nikolaus Rath <Nikolaus@rath.org> wrote:
->>
->> Hello,
->>
->> It seems to me that fuse_notify_delete
->> (https://elixir.bootlin.com/linux/v6.1/source/fs/fuse/dev.c#L1512) fails
->> with ENOTEMPTY if there is a pending FORGET request for a directory
->> entry within. Is that correct?
+On Thu, 27 Jul 2023 at 11:37, Muhammad Usama Anjum
+<usama.anjum@collabora.com> wrote:
+> This IOCTL, PAGEMAP_SCAN on pagemap file can be used to get and/or clear
+> the info about page table entries. The following operations are supported
+> in this ioctl:
+> - Get the information if the pages have Async Write-Protection enabled
+>   (``PAGE_IS_WPALLOWED``), have been written to (``PAGE_IS_WRITTEN``), fi=
+le
+>   mapped (``PAGE_IS_FILE``), present (``PAGE_IS_PRESENT``), swapped
+>   (``PAGE_IS_SWAPPED``) or page has pfn zero (``PAGE_IS_PFNZERO``).
+> - Find pages which have been written to and/or write protect
+>   (atomic ``PM_SCAN_WP_MATCHING + PM_SCAN_CHECK_WPASYNC``) the pages
+>   atomically. The (``PM_SCAN_WP_MATCHING``) is used to WP the matched
+>   pages. The (``PM_SCAN_CHECK_WPASYNC``) aborts the operation if
+>   non-Async-Write-Protected pages are found. Get is automatically perform=
+ed
+>   if output buffer is specified.
 >
-> It's bug if it does that.
+> This IOCTL can be extended to get information about more PTE bits. The
+> entire address range passed by user [start, end) is scanned until either
+> the user provided buffer is full or max_pages have been found.
 >
-> The code related to NOTIFY_DELETE in fuse_reverse_inval_entry() seems
-> historic.  It's supposed to be careful about mountpoints and
-> referenced dentries, but d_invalidate() should have already gotten all
-> that out of the way and left an unhashed dentry without any submounts
-> or children. The checks just seem redundant, but not harmful.
->
-> If you are managing to trigger the ENOTEMPTY case, then something
-> strange is going on, and we need to investigate.
+> Reviewed-by: Andrei Vagin <avagin@gmail.com>
+> Reviewed-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
-I can trigger this reliable on kernel 6.1.0-10-amd64 (Debian stable)
-with this sequence of operations:
+Thanks for all the work!
 
-$ mkdir test
-$ echo foo > test/bar
-$ Trigger removal of test/bar and then test within the filesystem (not
-through unlink()/rmdir() but out-of-band)
+Small request below.
 
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+[...]
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +static unsigned long pagemap_thp_category(pmd_t pmd)
+> +{
+> +       unsigned long categories =3D 0;
+> +
+> +       if (pmd_present(pmd)) {
+> +               categories |=3D PAGE_IS_PRESENT;
+> +               if (!pmd_uffd_wp(pmd))
+> +                       categories |=3D PAGE_IS_WRITTEN;
+> +               if (is_zero_pfn(pmd_pfn(pmd)))
+> +                       categories |=3D PAGE_IS_PFNZERO;
+> +       } else if (is_swap_pmd(pmd)) {
+> +               categories |=3D PAGE_IS_SWAPPED;
+> +               if (!pmd_swp_uffd_wp(pmd))
+> +                       categories |=3D PAGE_IS_WRITTEN;
+> +       }
+> +
+> +       return categories;
+> +}
+[...]
+> +#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+> +
+> +#ifdef CONFIG_HUGETLB_PAGE
+> +static unsigned long pagemap_hugetlb_category(pte_t pte)
+> +{
+> +       unsigned long categories =3D 0;
+> +
+> +       if (pte_present(pte)) {
+> +               categories |=3D PAGE_IS_PRESENT;
+> +               if (!huge_pte_uffd_wp(pte))
+> +                       categories |=3D PAGE_IS_WRITTEN;
+> +               if (!PageAnon(pte_page(pte)))
+> +                       categories |=3D PAGE_IS_FILE;
+> +               if (is_zero_pfn(pte_pfn(pte)))
+> +                       categories |=3D PAGE_IS_PFNZERO;
+> +       } else if (is_swap_pte(pte)) {
+> +               categories |=3D PAGE_IS_SWAPPED;
+> +               if (!pte_swp_uffd_wp_any(pte))
+> +                       categories |=3D PAGE_IS_WRITTEN;
+> +       }
+> +
+> +       return categories;
+> +}
 
-What can I do to help with the investigation?
+Could you add PAGE_IS_HUGE for THP and HugeTLB pages? This would help
+maintaining checkpointed process'es page sizes by CRIU when THP is
+used.
 
-Best,
--Nikolaus
+Best Regards
+Micha=C5=82 Miros=C5=82aw
