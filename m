@@ -2,44 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 33980764CC1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 10:26:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEBB9764E0C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 10:48:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234055AbjG0I0t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 04:26:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60418 "EHLO
+        id S232064AbjG0Is1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 04:48:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234053AbjG0I0N (ORCPT
+        with ESMTP id S232598AbjG0IrW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 04:26:13 -0400
-Received: from ida.iewc.co.za (ida.iewc.co.za [154.73.34.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 398F24EE4;
-        Thu, 27 Jul 2023 01:13:59 -0700 (PDT)
-Received: from [165.16.200.159] (helo=plastiekpoot)
-        by ida.iewc.co.za with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <jkroon@uls.co.za>)
-        id 1qOw7C-0000fk-Mj; Thu, 27 Jul 2023 10:12:54 +0200
-Received: from jkroon by plastiekpoot with local (Exim 4.96)
-        (envelope-from <jkroon@uls.co.za>)
-        id 1qOw7A-0004la-0s;
-        Thu, 27 Jul 2023 10:12:52 +0200
-From:   Jaco Kroon <jaco@uls.co.za>
-To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Bernd Schubert <bernd.schubert@fastmail.fm>,
-        Antonio SJ Musumeci <trapexit@spawn.link>
-Cc:     Jaco Kroon <jaco@uls.co.za>
-Subject: [PATCH] fuse: enable larger read buffers for readdir [v2].
-Date:   Thu, 27 Jul 2023 10:12:18 +0200
-Message-ID: <20230727081237.18217-1-jaco@uls.co.za>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230726105953.843-1-jaco@uls.co.za>
-References: <20230726105953.843-1-jaco@uls.co.za>
+        Thu, 27 Jul 2023 04:47:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A92E59D1;
+        Thu, 27 Jul 2023 01:30:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6A03F61DA8;
+        Thu, 27 Jul 2023 08:30:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06711C433C7;
+        Thu, 27 Jul 2023 08:30:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690446606;
+        bh=lgMwb11ItIJ27YCsuj2akQ0e0AMgpISaoiuOUrGiITY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Tr4M7HQ3pxhso0Q/eg4xKtwD0lUURtq4zUL2WnDxbX7YJArr/oNtVx0HKmYWbVJCj
+         uZ3CjjOq76HigUmfxsBIfU5BJp2UCC8gXysiCMyY4oUiNa0NyuYtXgOb+GgYI2e2UD
+         q/DMid3QMY2nJGias56vfjnyYrQ2kAGyvOg7az/lKKcQPYsllW1cAnQl1FfA/ktsaA
+         ypQoOxGNqaMUpP2GFbXa8+1QKt5gSsrAShH7O9rxadTFuFxweU5IvbZDayprJj2afQ
+         IGlbjA9TtQP0FcoHyTXu4yjcQ81VS0g2mOFp+HrXHsn6/kAwTiNlXyj4HVftm6tXbg
+         kxbv5Cd7EwHzQ==
+Message-ID: <baaf7de4-9a0e-b953-2b6a-46e60c415614@kernel.org>
+Date:   Thu, 27 Jul 2023 17:30:01 +0900
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v3 28/49] dm zoned: dynamically allocate the dm-zoned-meta
+ shrinker
+Content-Language: en-US
+To:     Qi Zheng <zhengqi.arch@bytedance.com>, akpm@linux-foundation.org,
+        david@fromorbit.com, tkhai@ya.ru, vbabka@suse.cz,
+        roman.gushchin@linux.dev, djwong@kernel.org, brauner@kernel.org,
+        paulmck@kernel.org, tytso@mit.edu, steven.price@arm.com,
+        cel@kernel.org, senozhatsky@chromium.org, yujie.liu@intel.com,
+        gregkh@linuxfoundation.org, muchun.song@linux.dev
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+        kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-erofs@lists.ozlabs.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+        rcu@vger.kernel.org, netdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        dm-devel@redhat.com, linux-raid@vger.kernel.org,
+        linux-bcache@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Muchun Song <songmuchun@bytedance.com>
+References: <20230727080502.77895-1-zhengqi.arch@bytedance.com>
+ <20230727080502.77895-29-zhengqi.arch@bytedance.com>
+From:   Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20230727080502.77895-29-zhengqi.arch@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -47,116 +77,102 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch does not mess with the caching infrastructure like the
-previous one, which we believe caused excessive CPU and broke directory
-listings in some cases.
+On 7/27/23 17:04, Qi Zheng wrote:
+> In preparation for implementing lockless slab shrink, use new APIs to
+> dynamically allocate the dm-zoned-meta shrinker, so that it can be freed
+> asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
+> read-side critical section when releasing the struct dmz_metadata.
+> 
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> Reviewed-by: Muchun Song <songmuchun@bytedance.com>
+> ---
+>  drivers/md/dm-zoned-metadata.c | 28 ++++++++++++++++------------
+>  1 file changed, 16 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/md/dm-zoned-metadata.c b/drivers/md/dm-zoned-metadata.c
+> index 9d3cca8e3dc9..0bcb26a43578 100644
+> --- a/drivers/md/dm-zoned-metadata.c
+> +++ b/drivers/md/dm-zoned-metadata.c
+> @@ -187,7 +187,7 @@ struct dmz_metadata {
+>  	struct rb_root		mblk_rbtree;
+>  	struct list_head	mblk_lru_list;
+>  	struct list_head	mblk_dirty_list;
+> -	struct shrinker		mblk_shrinker;
+> +	struct shrinker		*mblk_shrinker;
+>  
+>  	/* Zone allocation management */
+>  	struct mutex		map_lock;
+> @@ -615,7 +615,7 @@ static unsigned long dmz_shrink_mblock_cache(struct dmz_metadata *zmd,
+>  static unsigned long dmz_mblock_shrinker_count(struct shrinker *shrink,
+>  					       struct shrink_control *sc)
+>  {
+> -	struct dmz_metadata *zmd = container_of(shrink, struct dmz_metadata, mblk_shrinker);
+> +	struct dmz_metadata *zmd = shrink->private_data;
+>  
+>  	return atomic_read(&zmd->nr_mblks);
+>  }
+> @@ -626,7 +626,7 @@ static unsigned long dmz_mblock_shrinker_count(struct shrinker *shrink,
+>  static unsigned long dmz_mblock_shrinker_scan(struct shrinker *shrink,
+>  					      struct shrink_control *sc)
+>  {
+> -	struct dmz_metadata *zmd = container_of(shrink, struct dmz_metadata, mblk_shrinker);
+> +	struct dmz_metadata *zmd = shrink->private_data;
+>  	unsigned long count;
+>  
+>  	spin_lock(&zmd->mblk_lock);
+> @@ -2936,19 +2936,23 @@ int dmz_ctr_metadata(struct dmz_dev *dev, int num_dev,
+>  	 */
+>  	zmd->min_nr_mblks = 2 + zmd->nr_map_blocks + zmd->zone_nr_bitmap_blocks * 16;
+>  	zmd->max_nr_mblks = zmd->min_nr_mblks + 512;
+> -	zmd->mblk_shrinker.count_objects = dmz_mblock_shrinker_count;
+> -	zmd->mblk_shrinker.scan_objects = dmz_mblock_shrinker_scan;
+> -	zmd->mblk_shrinker.seeks = DEFAULT_SEEKS;
+>  
+>  	/* Metadata cache shrinker */
+> -	ret = register_shrinker(&zmd->mblk_shrinker, "dm-zoned-meta:(%u:%u)",
+> -				MAJOR(dev->bdev->bd_dev),
+> -				MINOR(dev->bdev->bd_dev));
+> -	if (ret) {
+> -		dmz_zmd_err(zmd, "Register metadata cache shrinker failed");
+> +	zmd->mblk_shrinker = shrinker_alloc(0,  "dm-zoned-meta:(%u:%u)",
+> +					    MAJOR(dev->bdev->bd_dev),
+> +					    MINOR(dev->bdev->bd_dev));
+> +	if (!zmd->mblk_shrinker) {
+> +		dmz_zmd_err(zmd, "Allocate metadata cache shrinker failed");
 
-This version only affects the uncached read, which then during parse adds an
-entry at a time to the cached structures by way of copying, and as such,
-we believe this should be sufficient.
+ret is not set here, so dmz_ctr_metadata() will return success. You need to add:
+		ret = -ENOMEM;
+or something.
+>  		goto err;
+>  	}
+>  
+> +	zmd->mblk_shrinker->count_objects = dmz_mblock_shrinker_count;
+> +	zmd->mblk_shrinker->scan_objects = dmz_mblock_shrinker_scan;
+> +	zmd->mblk_shrinker->seeks = DEFAULT_SEEKS;
+> +	zmd->mblk_shrinker->private_data = zmd;
+> +
+> +	shrinker_register(zmd->mblk_shrinker);
 
-We're still seeing cases where getdents64 takes ~10s (this was the case
-in any case without this patch, the difference now that we get ~500
-entries for that time rather than the 14-18 previously).  We believe
-that that latency is introduced on glusterfs side and is under separate
-discussion with the glusterfs developers.
+I fail to see how this new shrinker API is better... Why isn't there a
+shrinker_alloc_and_register() function ? That would avoid adding all this code
+all over the place as the new API call would be very similar to the current
+shrinker_register() call with static allocation.
 
-This is still a compile-time option, but a working one compared to
-previous patch.  For now this works, but it's not recommended for merge
-(as per email discussion).
+> +
+>  	dmz_zmd_info(zmd, "DM-Zoned metadata version %d", zmd->sb_version);
+>  	for (i = 0; i < zmd->nr_devs; i++)
+>  		dmz_print_dev(zmd, i);
+> @@ -2995,7 +2999,7 @@ int dmz_ctr_metadata(struct dmz_dev *dev, int num_dev,
+>   */
+>  void dmz_dtr_metadata(struct dmz_metadata *zmd)
+>  {
+> -	unregister_shrinker(&zmd->mblk_shrinker);
+> +	shrinker_free(zmd->mblk_shrinker);
+>  	dmz_cleanup_metadata(zmd);
+>  	kfree(zmd);
+>  }
 
-This still uses alloc_pages rather than kvmalloc/kvfree.
-
-Signed-off-by: Jaco Kroon <jaco@uls.co.za>
----
- fs/fuse/Kconfig   | 16 ++++++++++++++++
- fs/fuse/readdir.c | 18 ++++++++++++------
- 2 files changed, 28 insertions(+), 6 deletions(-)
-
-diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
-index 038ed0b9aaa5..0783f9ee5cd3 100644
---- a/fs/fuse/Kconfig
-+++ b/fs/fuse/Kconfig
-@@ -18,6 +18,22 @@ config FUSE_FS
- 	  If you want to develop a userspace FS, or if you want to use
- 	  a filesystem based on FUSE, answer Y or M.
- 
-+config FUSE_READDIR_ORDER
-+	int
-+	range 0 5
-+	default 5
-+	help
-+		readdir performance varies greatly depending on the size of the read.
-+		Larger buffers results in larger reads, thus fewer reads and higher
-+		performance in return.
-+
-+		You may want to reduce this value on seriously constrained memory
-+		systems where 128KiB (assuming 4KiB pages) cache pages is not ideal.
-+
-+		This value reprents the order of the number of pages to allocate (ie,
-+		the shift value).  A value of 0 is thus 1 page (4KiB) where 5 is 32
-+		pages (128KiB).
-+
- config CUSE
- 	tristate "Character device in Userspace support"
- 	depends on FUSE_FS
-diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
-index dc603479b30e..47cea4d91228 100644
---- a/fs/fuse/readdir.c
-+++ b/fs/fuse/readdir.c
-@@ -13,6 +13,12 @@
- #include <linux/pagemap.h>
- #include <linux/highmem.h>
- 
-+#define READDIR_PAGES_ORDER		CONFIG_FUSE_READDIR_ORDER
-+#define READDIR_PAGES			(1 << READDIR_PAGES_ORDER)
-+#define READDIR_PAGES_SIZE		(PAGE_SIZE << READDIR_PAGES_ORDER)
-+#define READDIR_PAGES_MASK		(READDIR_PAGES_SIZE - 1)
-+#define READDIR_PAGES_SHIFT		(PAGE_SHIFT + READDIR_PAGES_ORDER)
-+
- static bool fuse_use_readdirplus(struct inode *dir, struct dir_context *ctx)
- {
- 	struct fuse_conn *fc = get_fuse_conn(dir);
-@@ -328,25 +334,25 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
- 	struct fuse_mount *fm = get_fuse_mount(inode);
- 	struct fuse_io_args ia = {};
- 	struct fuse_args_pages *ap = &ia.ap;
--	struct fuse_page_desc desc = { .length = PAGE_SIZE };
-+	struct fuse_page_desc desc = { .length = READDIR_PAGES_SIZE };
- 	u64 attr_version = 0;
- 	bool locked;
- 
--	page = alloc_page(GFP_KERNEL);
-+	page = alloc_pages(GFP_KERNEL, READDIR_PAGES_ORDER);
- 	if (!page)
- 		return -ENOMEM;
- 
- 	plus = fuse_use_readdirplus(inode, ctx);
- 	ap->args.out_pages = true;
--	ap->num_pages = 1;
-+	ap->num_pages = READDIR_PAGES;
- 	ap->pages = &page;
- 	ap->descs = &desc;
- 	if (plus) {
- 		attr_version = fuse_get_attr_version(fm->fc);
--		fuse_read_args_fill(&ia, file, ctx->pos, PAGE_SIZE,
-+		fuse_read_args_fill(&ia, file, ctx->pos, READDIR_PAGES_SIZE,
- 				    FUSE_READDIRPLUS);
- 	} else {
--		fuse_read_args_fill(&ia, file, ctx->pos, PAGE_SIZE,
-+		fuse_read_args_fill(&ia, file, ctx->pos, READDIR_PAGES_SIZE,
- 				    FUSE_READDIR);
- 	}
- 	locked = fuse_lock_inode(inode);
-@@ -367,7 +373,7 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
- 		}
- 	}
- 
--	__free_page(page);
-+	__free_pages(page, READDIR_PAGES_ORDER);
- 	fuse_invalidate_atime(inode);
- 	return res;
- }
 -- 
-2.41.0
+Damien Le Moal
+Western Digital Research
 
