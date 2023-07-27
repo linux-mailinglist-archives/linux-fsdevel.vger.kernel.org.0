@@ -2,100 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B768F765127
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 12:29:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D34BD765135
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 12:30:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234414AbjG0K3E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 06:29:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54864 "EHLO
+        id S233849AbjG0Kan (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 06:30:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234672AbjG0K2U (ORCPT
+        with ESMTP id S233998AbjG0KaQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 06:28:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0428126B8;
-        Thu, 27 Jul 2023 03:27:57 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 95F0261E1D;
-        Thu, 27 Jul 2023 10:27:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42FC3C433C8;
-        Thu, 27 Jul 2023 10:27:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690453676;
-        bh=deaD8pujkpTtajMkrzG6FDy9HzkESG69/qNzMXZtjw0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I7SQDE13fzKBcFUp5ePMk9YUxZ5LwkMwJzEhJh5gygi5y3Ao4HYQUhpzqZ+RcAGng
-         bn4vp/EfbLNeCzrahJPNrwO1OBRujz9xBo7+Gwbo3boim4OhzbOb3qoiVHBiAMEaWJ
-         PUG9ntl7QrNnL9tqEWTP/FDqYRjBLv6Pe+hC4010c/XsSyQFDc2T5KRE4F0CEfvhIP
-         4kdpLRFtj8U5bMLrtJSUPNEcwdIVIx3V75HfNd2zboybu6ykt1PDPjB308ZqP7GtZB
-         ns0n3LOD64u1iaWvsMh+b+uKRfMRf5JlVFDa1qQYJ082NdSiyLNQ81rIjYiYhPr8X+
-         TOPX0LSqgemIg==
-Date:   Thu, 27 Jul 2023 12:27:42 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        James.Bottomley@hansenpartnership.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, axboe@kernel.dk,
-        benh@kernel.crashing.org, borntraeger@de.ibm.com, bp@alien8.de,
-        catalin.marinas@arm.com, christian@brauner.io, dalias@libc.org,
-        davem@davemloft.net, deepa.kernel@gmail.com, deller@gmx.de,
-        fenghua.yu@intel.com, fweimer@redhat.com, geert@linux-m68k.org,
-        glebfm@altlinux.org, gor@linux.ibm.com, hare@suse.com,
-        hpa@zytor.com, ink@jurassic.park.msu.ru, jhogan@kernel.org,
-        kim.phillips@arm.com, ldv@altlinux.org,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux@armlinux.org.uk, linuxppc-dev@lists.ozlabs.org,
-        luto@kernel.org, mattst88@gmail.com, mingo@redhat.com,
-        monstr@monstr.eu, mpe@ellerman.id.au, namhyung@kernel.org,
-        paulus@samba.org, peterz@infradead.org, ralf@linux-mips.org,
-        sparclinux@vger.kernel.org, stefan@agner.ch, tglx@linutronix.de,
-        tony.luck@intel.com, tycho@tycho.ws, will@kernel.org,
-        x86@kernel.org, ysato@users.sourceforge.jp,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: Add fchmodat2() - or add a more general syscall?
-Message-ID: <20230727-kassieren-aneinander-052b18a84546@brauner>
-References: <cover.1689092120.git.legion@kernel.org>
- <cover.1689074739.git.legion@kernel.org>
- <104971.1690300714@warthog.procyon.org.uk>
- <20230727035710.GA15127@sol.localdomain>
+        Thu, 27 Jul 2023 06:30:16 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09D501984;
+        Thu, 27 Jul 2023 03:30:01 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-d167393b95aso2880069276.0;
+        Thu, 27 Jul 2023 03:30:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690453800; x=1691058600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=omUaDYixzWjtTMpLHRqhT6EXYqbxVHZ/m0JLSVt+zRU=;
+        b=kR/E8OXTGyuAcMVnK2KQrLklJTZJIbjeBJSeT2sIhGPM65Oruur9kofklO6ietHDy9
+         iN+Yk3uFFi0DCH5b+KIEtuBcPluVBtavpypaR5WD07CSqNhopnv+R23ky6tSh9IjXGJk
+         GzdeqRWRPgntqPs3w/iwM7pGLzDbKoIc/aZkfpT2kgbAlhsGaHHBFI9ifZTJ75RImlBN
+         m18KEttAN2mbFemlm21ARI+oQPZWhQ5ZKjtL1LwA/zUs5OtenG40a77AVnpCBMgIji09
+         cexZ5ek/pfpL8k5LTc7yy93lENk2O4UsiIb8Ws8buCdDhR4wb5xCwrRekry+fPBuluvl
+         CgJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690453800; x=1691058600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=omUaDYixzWjtTMpLHRqhT6EXYqbxVHZ/m0JLSVt+zRU=;
+        b=Nu8Cnj1AU3YMdobcxa6j38XTBGUDdHZm7Ky9rG3bDO6Bpsc5YvUwy4Ls4JKoI0vE6p
+         fDRcYuQBDmF1ol3FOqfI90Sogn5jarlnblz6QRZXQpjzDD5W+OmymYPd8yXvWZko/99u
+         VrwsIC/nMpSmNo8Xab1qUjBS+oIaGidWw90Vj1kfg+DGTRLindzQd33933aP8lyqXJG0
+         DpXdeYo0nCkTUSEE2HuiuyW6dltaAnJ/VnE27ZuIhN6K3byMWznT2jBaN3wmlZOjYJsA
+         Z00EgGMUVC75B0bGE45zLiKc9SWm4nE7tnnh7h1Gl6at2Uw1xhkFlYYIXIQEkNLmTdKD
+         8p0g==
+X-Gm-Message-State: ABy/qLbE5I+ILduGkww569LqrERsogemz2UFR91B88us+mQ8g+lkSqf3
+        g7cn8Tog7LvzodQZUyykbJGa4M+vux4fv1nTERE=
+X-Google-Smtp-Source: APBJJlHBlYlPNCAOaUQmX7sCh/RdKgzYXiRFfLFaMRkHkke9meK1yv0x0Ok78z4gqgOSPSppdBIT7tY7YrKsz3aQ6Jo=
+X-Received: by 2002:a25:3617:0:b0:d1f:8809:ffa1 with SMTP id
+ d23-20020a253617000000b00d1f8809ffa1mr2701868yba.27.1690453800151; Thu, 27
+ Jul 2023 03:30:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230727035710.GA15127@sol.localdomain>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230627183629.26571-1-nj.shetty@samsung.com> <CGME20230627184010epcas5p4bb6581408d9b67bbbcad633fb26689c9@epcas5p4.samsung.com>
+ <20230627183629.26571-3-nj.shetty@samsung.com> <20230720074256.GA5042@lst.de>
+In-Reply-To: <20230720074256.GA5042@lst.de>
+From:   Nitesh Shetty <nitheshshetty@gmail.com>
+Date:   Thu, 27 Jul 2023 15:59:49 +0530
+Message-ID: <CAOSviJ3oDSHk2HXyRZa=A43vCxh-n2YkyuW-qXNq-q=i6bNacQ@mail.gmail.com>
+Subject: Re: [PATCH v13 2/9] block: Add copy offload support infrastructure
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Nitesh Shetty <nj.shetty@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
+        Keith Busch <kbusch@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        willy@infradead.org, hare@suse.de, djwong@kernel.org,
+        bvanassche@acm.org, ming.lei@redhat.com, dlemoal@kernel.org,
+        gost.dev@samsung.com, Anuj Gupta <anuj20.g@samsung.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 26, 2023 at 08:57:10PM -0700, Eric Biggers wrote:
-> On Tue, Jul 25, 2023 at 04:58:34PM +0100, David Howells wrote:
-> > Rather than adding a fchmodat2() syscall, should we add a "set_file_attrs()"
-> > syscall that takes a mask and allows you to set a bunch of stuff all in one
-> > go?  Basically, an interface to notify_change() in the kernel that would allow
-> > several stats to be set atomically.  This might be of particular interest to
-> > network filesystems.
-> > 
-> > David
-> > 
-> 
-> fchmodat2() is a simple addition that fits well with the existing syscalls.
-> It fixes an oversight in fchmodat().
-> 
-> IMO we should just add fchmodat2(), and not get sidetracked by trying to add
-> some super-generalized syscall instead.  That can always be done later.
+On Thu, Jul 20, 2023 at 1:12=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
+e:
+> > Suggested-by: Christoph Hellwig <hch@lst.de>
+>
+> Hmm, I'm not sure I suggested adding copy offload..
+>
+We meant for request based design, we will remove it.
 
-Agreed.
+> >  static inline unsigned int blk_rq_get_max_segments(struct request *rq)
+> >  {
+> >       if (req_op(rq) =3D=3D REQ_OP_DISCARD)
+> > @@ -303,6 +310,8 @@ static inline bool bio_may_exceed_limits(struct bio=
+ *bio,
+> >               break;
+> >       }
+> >
+> > +     if (unlikely(op_is_copy(bio->bi_opf)))
+> > +             return false;
+>
+> This looks wrong to me.  I think the copy ops need to be added to the
+> switch statement above as they have non-trivial splitting decisions.
+> Or at least should have those as we're missing the code to split
+> copy commands right now.
+>
+
+Agreed, copy will have non-trivial splitting decisions. But, I
+couldn't think of scenarios where this could happen, as we check for
+queue limits before issuing a copy. Do you see scenarios where split
+could happen for copy here.
+
+Acked for all other review comments.
+
+Thank you,
+Nitesh Shetty
