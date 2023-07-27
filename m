@@ -2,207 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 90B357659A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 19:13:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E50677659AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 19:13:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232081AbjG0RNK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 13:13:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45468 "EHLO
+        id S232721AbjG0RNb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 13:13:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229746AbjG0RNH (ORCPT
+        with ESMTP id S232224AbjG0RNS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 13:13:07 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9551C2D7D;
-        Thu, 27 Jul 2023 10:13:05 -0700 (PDT)
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4RBclx61jyz9sSq;
-        Thu, 27 Jul 2023 19:13:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-        t=1690477981;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=r4xS4z3m09mcDhbG2vSNuCuAOWPT6oLsRQePsTlsExg=;
-        b=wphgglIyp+usBR0fNyl85KtqD+TvcRheXCarcC9+q/rC2O/c19YVrPmD3yxd6P5zNkRAgn
-        ap1J1ewuz2/88KROo01hnaKnZ4/JhylWNhiBSxQ81mAbQ2FpPaPd18Eeg5JBsnXEACuOVL
-        kxHc79dCNTAe95YgGNhXV08fsF9k1vsOGv6GUB2QE5SFFlSOWEvhyRbKLtNFmt5GQKNj3u
-        IN6dDugiyIaBjBJ+ymRyuAdQFshGsVMUm52bzNxGOPYfWT6GeKADooVM0YYFrrgU4Aio3h
-        BRZYiw4NU+t71y0ghqPQ5R5qkpDibTPetLXyyMi4+J3mphGiAC1Gb+WOSRyIbQ==
-Date:   Fri, 28 Jul 2023 03:12:24 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Alexey Gladkov <legion@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, James.Bottomley@hansenpartnership.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        axboe@kernel.dk, benh@kernel.crashing.org, borntraeger@de.ibm.com,
-        bp@alien8.de, catalin.marinas@arm.com, christian@brauner.io,
-        dalias@libc.org, davem@davemloft.net, deepa.kernel@gmail.com,
-        deller@gmx.de, dhowells@redhat.com, fenghua.yu@intel.com,
-        fweimer@redhat.com, geert@linux-m68k.org, glebfm@altlinux.org,
-        gor@linux.ibm.com, hare@suse.com, hpa@zytor.com,
-        ink@jurassic.park.msu.ru, jhogan@kernel.org, kim.phillips@arm.com,
-        ldv@altlinux.org, linux-alpha@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux@armlinux.org.uk,
-        linuxppc-dev@lists.ozlabs.org, luto@kernel.org, mattst88@gmail.com,
-        mingo@redhat.com, monstr@monstr.eu, mpe@ellerman.id.au,
-        namhyung@kernel.org, paulus@samba.org, peterz@infradead.org,
-        ralf@linux-mips.org, sparclinux@vger.kernel.org, stefan@agner.ch,
-        tglx@linutronix.de, tony.luck@intel.com, tycho@tycho.ws,
-        will@kernel.org, x86@kernel.org, ysato@users.sourceforge.jp,
-        Palmer Dabbelt <palmer@sifive.com>
-Subject: Re: [PATCH v4 2/5] fs: Add fchmodat2()
-Message-ID: <20230727.041348-imposing.uptake.velvet.nylon-712tDwzCAbCCoSGx@cyphar.com>
-References: <cover.1689074739.git.legion@kernel.org>
- <cover.1689092120.git.legion@kernel.org>
- <f2a846ef495943c5d101011eebcf01179d0c7b61.1689092120.git.legion@kernel.org>
- <njnhwhgmsk64e6vf3ur7fifmxlipmzez3r5g7ejozsrkbwvq7w@tu7w3ieystcq>
- <ZMEjlDNJkFpYERr1@example.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mzzk664uqt7bucoa"
-Content-Disposition: inline
-In-Reply-To: <ZMEjlDNJkFpYERr1@example.org>
-X-Rspamd-Queue-Id: 4RBclx61jyz9sSq
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        Thu, 27 Jul 2023 13:13:18 -0400
+Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9814C30FC
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 10:13:10 -0700 (PDT)
+Received: by mail-pl1-x649.google.com with SMTP id d9443c01a7336-1bba9a0da10so8097325ad.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 10:13:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1690477989; x=1691082789;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=F7oDMpfc0bW6NSyfuHNNNYlN2HFPFEuCSHvjU51+NBs=;
+        b=uR617wLpg6qNB677nCTpj/mRcHCn7jeMQ6T975dwFWafb05LBOA5GXBHggNBovfIzX
+         O/7M392ccdTOGZqesE1qC7szLmXDUVbpTkdUSAnDKesUZGTHf6YrHw7iRdcLemcslWSD
+         KrRYixDmKkhke5BhBNDcGGoexHbctICnVSugeNNjkFTNcd3g+7vTx3m4xPX98nUwGt3/
+         mWhf+uFvINzhg7lFN3O3GR8jmx04AReHHh1Ek1sP09ZwG+oxGwlWe7n39MiREf5a36wi
+         QECqs1dJt2n4+euTMFmAQH0Oiz0RKLy4HgS6MVL8RVa78gxf6JRosPxL/mvaakJouVeF
+         ho3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690477989; x=1691082789;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F7oDMpfc0bW6NSyfuHNNNYlN2HFPFEuCSHvjU51+NBs=;
+        b=L7Gtcs9staTSsEWj2w2LUULEuzzUCBpbpAdq8foMde3clzo5g7kdIfSWmptcqX/2vT
+         RjZvuUBSuYrZA3EPcihpOOUoxBPeJGuUJ5IXL2xQQEUcczKcf6DcSpk10qvWJCivPtYI
+         /BFekhrQSjWoZIKYdy/kdUxxmFlB3ypxupRBoKEACM8eL5KnBZw0YK4UOjtC68HHDIS/
+         CZo2tMsn9m1QrnRKmWV/RNii3ibCAlNOc1IqWDNLDqTxj0k7nyY2+ecM9n5PMNNEqeTt
+         WVT2pVq4J3wNsqqIA/CS/jTRupovwxBGEqPcL8PPXREUvZ79MShF5pSDJS4RTrVJvge/
+         unrg==
+X-Gm-Message-State: ABy/qLZmv+BPEkh2N6hCqVLMJVRRz/pWVmExFWVcMZ81IIP2bm6RkusD
+        bd9HF35UX5adMTq4TgVxyVGAHrG/0jI=
+X-Google-Smtp-Source: APBJJlEiCX9DyxliShqr2xPxTiyej7fUi+PkS+4LO77eNeghg1Fiv4b0fvD5YH2w9mP2/cy4q9w9vNXHRRI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:903:22c6:b0:1b5:2b14:5f2c with SMTP id
+ y6-20020a17090322c600b001b52b145f2cmr24803plg.4.1690477989357; Thu, 27 Jul
+ 2023 10:13:09 -0700 (PDT)
+Date:   Thu, 27 Jul 2023 10:13:07 -0700
+In-Reply-To: <CA+EHjTzP2fypgkJbRpSPrKaWytW7v8ANEifofMnQCkdvYaX6Eg@mail.gmail.com>
+Mime-Version: 1.0
+References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-13-seanjc@google.com>
+ <CA+EHjTzP2fypgkJbRpSPrKaWytW7v8ANEifofMnQCkdvYaX6Eg@mail.gmail.com>
+Message-ID: <ZMKlo+Fe8n/eLQ82@google.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+From:   Sean Christopherson <seanjc@google.com>
+To:     Fuad Tabba <tabba@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Jul 27, 2023, Fuad Tabba wrote:
+> Hi Sean,
+> 
+> <snip>
+> ...
+> 
+> > @@ -5134,6 +5167,16 @@ static long kvm_vm_ioctl(struct file *filp,
+> >         case KVM_GET_STATS_FD:
+> >                 r = kvm_vm_ioctl_get_stats_fd(kvm);
+> >                 break;
+> > +       case KVM_CREATE_GUEST_MEMFD: {
+> > +               struct kvm_create_guest_memfd guest_memfd;
+> > +
+> > +               r = -EFAULT;
+> > +               if (copy_from_user(&guest_memfd, argp, sizeof(guest_memfd)))
+> > +                       goto out;
+> > +
+> > +               r = kvm_gmem_create(kvm, &guest_memfd);
+> > +               break;
+> > +       }
+> 
+> I'm thinking line of sight here, by having this as a vm ioctl (rather
+> than a system iocl), would it complicate making it possible in the
+> future to share/donate memory between VMs?
 
---mzzk664uqt7bucoa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Maybe, but I hope not?
 
-On 2023-07-26, Alexey Gladkov <legion@kernel.org> wrote:
-> On Wed, Jul 26, 2023 at 02:36:25AM +1000, Aleksa Sarai wrote:
-> > On 2023-07-11, Alexey Gladkov <legion@kernel.org> wrote:
-> > > On the userspace side fchmodat(3) is implemented as a wrapper
-> > > function which implements the POSIX-specified interface. This
-> > > interface differs from the underlying kernel system call, which does =
-not
-> > > have a flags argument. Most implementations require procfs [1][2].
-> > >=20
-> > > There doesn't appear to be a good userspace workaround for this issue
-> > > but the implementation in the kernel is pretty straight-forward.
-> > >=20
-> > > The new fchmodat2() syscall allows to pass the AT_SYMLINK_NOFOLLOW fl=
-ag,
-> > > unlike existing fchmodat.
-> > >=20
-> > > [1] https://sourceware.org/git/?p=3Dglibc.git;a=3Dblob;f=3Dsysdeps/un=
-ix/sysv/linux/fchmodat.c;h=3D17eca54051ee28ba1ec3f9aed170a62630959143;hb=3D=
-a492b1e5ef7ab50c6fdd4e4e9879ea5569ab0a6c#l35
-> > > [2] https://git.musl-libc.org/cgit/musl/tree/src/stat/fchmodat.c?id=
-=3D718f363bc2067b6487900eddc9180c84e7739f80#n28
-> > >=20
-> > > Co-developed-by: Palmer Dabbelt <palmer@sifive.com>
-> > > Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-> > > Signed-off-by: Alexey Gladkov <legion@kernel.org>
-> > > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> > > ---
-> > >  fs/open.c                | 18 ++++++++++++++----
-> > >  include/linux/syscalls.h |  2 ++
-> > >  2 files changed, 16 insertions(+), 4 deletions(-)
-> > >=20
-> > > diff --git a/fs/open.c b/fs/open.c
-> > > index 0c55c8e7f837..39a7939f0d00 100644
-> > > --- a/fs/open.c
-> > > +++ b/fs/open.c
-> > > @@ -671,11 +671,11 @@ SYSCALL_DEFINE2(fchmod, unsigned int, fd, umode=
-_t, mode)
-> > >  	return err;
-> > >  }
-> > > =20
-> > > -static int do_fchmodat(int dfd, const char __user *filename, umode_t=
- mode)
-> > > +static int do_fchmodat(int dfd, const char __user *filename, umode_t=
- mode, int lookup_flags)
-> >=20
-> > I think it'd be much neater to do the conversion of AT_ flags here and
-> > pass 0 as a flags argument for all of the wrappers (this is how most of
-> > the other xyz(), fxyz(), fxyzat() syscall wrappers are done IIRC).
->=20
-> I just addressed the Al Viro's suggestion.
->=20
-> https://lore.kernel.org/lkml/20190717014802.GS17978@ZenIV.linux.org.uk/
+There would still be a primary owner of the memory, i.e. the memory would still
+need to be allocated in the context of a specific VM.  And the primary owner should
+be able to restrict privileges, e.g. allow a different VM to read but not write
+memory.
 
-I think Al misspoke, because he also said "pass it 0 as an extra
-argument", but you actually have to pass LOOKUP_FOLLOW from the
-wrappers. If you look at how faccessat2 and faccessat are implemented,
-it follows the behaviour I described.
+My current thinking is to (a) tie the lifetime of the backing pages to the inode,
+i.e. allow allocations to outlive the original VM, and (b) create a new file each
+time memory is shared/donated with a different VM (or other entity in the kernel).
 
-> > >  {
-> > >  	struct path path;
-> > >  	int error;
-> > > -	unsigned int lookup_flags =3D LOOKUP_FOLLOW;
-> > > +
-> > >  retry:
-> > >  	error =3D user_path_at(dfd, filename, lookup_flags, &path);
-> > >  	if (!error) {
-> > > @@ -689,15 +689,25 @@ static int do_fchmodat(int dfd, const char __us=
-er *filename, umode_t mode)
-> > >  	return error;
-> > >  }
-> > > =20
-> > > +SYSCALL_DEFINE4(fchmodat2, int, dfd, const char __user *, filename,
-> > > +		umode_t, mode, int, flags)
-> > > +{
-> > > +	if (unlikely(flags & ~AT_SYMLINK_NOFOLLOW))
-> > > +		return -EINVAL;
-> >=20
-> > We almost certainly want to support AT_EMPTY_PATH at the same time.
-> > Otherwise userspace will still need to go through /proc when trying to
-> > chmod a file handle they have.
->=20
-> I'm not sure I understand. Can you explain what you mean?
+That should make it fairly straightforward to provide different permissions, e.g.
+track them per-file, and I think should also avoid the need to change the memslot
+binding logic since each VM would have it's own view/bindings.
 
-You should add support for AT_EMPTY_PATH (LOOKUP_EMPTY) as well as
-AT_SYMLINK_NOFOLLOW. It would only require something like:
+Copy+pasting a relevant snippet from a lengthier response in a different thread[*]:
 
-	unsigned int lookup_flags =3D LOOKUP_FOLLOW;
+  Conceptually, I think KVM should to bind to the file.  The inode is effectively
+  the raw underlying physical storage, while the file is the VM's view of that
+  storage. 
+  
+  Practically, I think that gives us a clean, intuitive way to handle intra-host
+  migration.  Rather than transfer ownership of the file, instantiate a new file
+  for the target VM, using the gmem inode from the source VM, i.e. create a hard
+  link.  That'd probably require new uAPI, but I don't think that will be hugely
+  problematic.  KVM would need to ensure the new VM's guest_memfd can't be mapped
+  until KVM_CAP_VM_MOVE_ENC_CONTEXT_FROM (which would also need to verify the
+  memslots/bindings are identical), but that should be easy enough to enforce.
+  
+  That way, a VM, its memslots, and its SPTEs are tied to the file, while allowing
+  the memory and the *contents* of memory to outlive the VM, i.e. be effectively
+  transfered to the new target VM.  And we'll maintain the invariant that each
+  guest_memfd is bound 1:1 with a single VM.
+  
+  As above, that should also help us draw the line between mapping memory into a
+  VM (file), and freeing/reclaiming the memory (inode).
+  
+  There will be extra complexity/overhead as we'll have to play nice with the
+  possibility of multiple files per inode, e.g. to zap mappings across all files
+  when punching a hole, but the extra complexity is quite small, e.g. we can use
+  address_space.private_list to keep track of the guest_memfd instances associated
+  with the inode.
+  
+  Setting aside TDX and SNP for the moment, as it's not clear how they'll support
+  memory that is "private" but shared between multiple VMs, I think per-VM files
+  would work well for sharing gmem between two VMs.  E.g. would allow a give page
+  to be bound to a different gfn for each VM, would allow having different permissions
+  for each file (e.g. to allow fallocate() only from the original owner).
 
-	if (flags & ~(AT_EMPTY_PATH | AT_SYMLINK_NOFOLLOW))
-		return -EINVAL;
-
-	if (flags & AT_EMPTY_PATH)
-		lookup_flags |=3D LOOKUP_EMPTY;
-	if (flags & AT_SYMLINK_NOFOLLOW)
-		lookup_flags &=3D ~LOOKUP_FOLLOW;
-
-	/* ... */
-
-This would be effectively equivalent to fchmod(fd, mode). (I was wrong
-when I said this wasn't already possible -- I forgot about fchmod(2).)
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---mzzk664uqt7bucoa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZMKleAAKCRAol/rSt+lE
-bym9AQDqgQyuOeexUTCKq/tyT2Gt8n1mt1PGm55hdeFxmQCD1AD+NkISNEOp7Oej
-qTsMPEIGWvfGX/MWtUS2thZbT2WvjA4=
-=+qOC
------END PGP SIGNATURE-----
-
---mzzk664uqt7bucoa--
+[*] https://lore.kernel.org/all/ZLGiEfJZTyl7M8mS@google.com
