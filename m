@@ -2,210 +2,357 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D442765721
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 17:14:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53342765751
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 17:21:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234464AbjG0POI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 11:14:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58386 "EHLO
+        id S231536AbjG0PV3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 11:21:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231370AbjG0POG (ORCPT
+        with ESMTP id S231370AbjG0PV2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 11:14:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32A4119A0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 08:13:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690470800;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=d+K3NKuN7pFRTB77+mmM/h9zHjbt4jm2xK8401VCvp4=;
-        b=HgJtRI2+tbxJAiNkJwQhOcRDiz0x4W0GQgV7hmt59thasR/lulskb3yxdhDnvQpZdxefla
-        CboZPHdZl6V7lUF+sihfklJgxcgjwkvR+uIDJ2ILfRubE2M4PjdWzyBQmJnldXmML0mS81
-        RhQ+YHWRr08xGyNspMrHD5vwoD30XbM=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-253-831I1tQmO3e1bm5j0cMvVg-1; Thu, 27 Jul 2023 11:13:19 -0400
-X-MC-Unique: 831I1tQmO3e1bm5j0cMvVg-1
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-765ad67e690so21728785a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 08:13:19 -0700 (PDT)
+        Thu, 27 Jul 2023 11:21:28 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C4AA273D
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 08:21:26 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-99bdcade7fbso91381266b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 08:21:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1690471285; x=1691076085;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qO6zMXaYYTVSgQL74L2Fy444v1xc+I1L+rWiKjULm/s=;
+        b=qdjiHsgoQLXB6c81fQhjmKreFwfhr2RUxyoGKx+q2/KfhP5JjYiTlpF4L57KwALy1a
+         hDM4fptBZXZOnxe1EnmsaytxZk5Wb+t75YKYIpYt4+CNALuMEYcjsZxSsrKg4ePoy8rc
+         tTMjYv7nqhrD1gzH7RQOlL+Ie/Cw8qrgO3/+A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690470798; x=1691075598;
+        d=1e100.net; s=20221208; t=1690471285; x=1691076085;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d+K3NKuN7pFRTB77+mmM/h9zHjbt4jm2xK8401VCvp4=;
-        b=P+0W4IKGgrVZTjCctGapegLN1gbC+yk/cxFkji2Qxi183B+RKNdGtcjn6PHTJb5aPc
-         V3Ssatj9lkZyL18pNPXCkVv874aYErGGTAtNZ2nk+EiJiX99GqL775HavsPzXFKh4HSB
-         ICQN2vMUbIAEdYDlFzx+T2ZrYUT9qAnSPSqqDO+2lFqVfKOKQhsqql4q1h8iuWTjLR8B
-         19PRyUI2eH6ytOROhIgTmbYQLBbf8TK8iVRtRjz6fvFbKAd/l9Q5CrN8XZb2NEcvaCp1
-         hBYgCYp4aH3hJbFtCxYte2Mp0KPRVEeKD1KGcKu5ukPh5qwsXtbKX5DFviXeQjcGWECR
-         7r9Q==
-X-Gm-Message-State: ABy/qLaPmPLXxiYrQnLiqt1dR86WOH1pnukLJc5hwRJ7N+fSbFftEf80
-        EyiX+evLoxAhwlZgsT0hpkL9FpqGdgF2mgIoGyOImb9FS/znGs6Qimp+GKqTabxuG3x9jL1iZWP
-        P53TPJkerl5ozBtWKg0E8wz0X0P3hEmlLnw==
-X-Received: by 2002:a05:620a:4487:b0:767:ffb:58aa with SMTP id x7-20020a05620a448700b007670ffb58aamr6484608qkp.3.1690470798571;
-        Thu, 27 Jul 2023 08:13:18 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlFs5DibxNTW9sdysef7XXwwep3NBUN5dOmYIBHnZfzSv0a7hEoloL19Tdn4QXu4FXCbYLufKA==
-X-Received: by 2002:a05:620a:4487:b0:767:ffb:58aa with SMTP id x7-20020a05620a448700b007670ffb58aamr6484594qkp.3.1690470798241;
-        Thu, 27 Jul 2023 08:13:18 -0700 (PDT)
-Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
-        by smtp.gmail.com with ESMTPSA id v13-20020ae9e30d000000b00767f14f5856sm458979qkf.117.2023.07.27.08.13.17
+        bh=qO6zMXaYYTVSgQL74L2Fy444v1xc+I1L+rWiKjULm/s=;
+        b=g1CRMzx4OqpbcJIjT5xPcbP41nfMGEWZb1QpJRbqM8RavA1rhPURxmZDFkK8mvfTk6
+         xKd6NgnMwSAY0QkVUW4kgRRJoRhKdvKkJsjDYr5kg2ErLDxUZaVZ0D8IziALxLZfm5L/
+         GnrettKRlLRlJmy7YPh2JWbKcee+xsJudZpKxC7yKLIIxBfbxoj9f11aWFXEWo73Bpu8
+         1NBpJmir8Ov/wkibz0JDdp3i0gv/8nUk1yJ1/Rk7tXeeCC+R0ayN1TZO7UN6fzIsMIVf
+         hMU8zmjl9FZNeXlMnU1R8pJVIRiskxwYyjNxjscywFq9vs/nG+lSZCRbpxKU2aLNdWJ3
+         gVtA==
+X-Gm-Message-State: ABy/qLayGp1E56KIzK7MvvM83bmB5msSZdPQwiiImj2BtOCpt23OmANs
+        jMPwJ+9IWTU7TDPCf2NciNmMS6LTkvimP+uhBeA=
+X-Google-Smtp-Source: APBJJlGT9lRvF3J44vX3/X7wPObb1WUD6ovfu1m/g1z2Q2YaNJVZDWni0O7Lqdj1rcBc47LVGYb3DA==
+X-Received: by 2002:a17:906:29a:b0:992:a838:a564 with SMTP id 26-20020a170906029a00b00992a838a564mr2166367ejf.28.1690471284985;
+        Thu, 27 Jul 2023 08:21:24 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (92-249-235-35.pool.digikabel.hu. [92.249.235.35])
+        by smtp.gmail.com with ESMTPSA id i10-20020a170906250a00b00993150e5325sm895606ejb.60.2023.07.27.08.21.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jul 2023 08:13:17 -0700 (PDT)
-Date:   Thu, 27 Jul 2023 11:13:16 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     liubo <liubo254@huawei.com>, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hughd@google.com, willy@infradead.org
-Subject: Re: [PATCH] smaps: Fix the abnormal memory statistics obtained
- through /proc/pid/smaps
-Message-ID: <ZMKJjDaqZ7FW0jfe@x1n>
-References: <20230726073409.631838-1-liubo254@huawei.com>
- <CADFyXm5nkgZjVMj3iJhqQnyA1AOmqZ-AKdaWyUD=UvZsOEOcPg@mail.gmail.com>
- <ZMJt+VWzIG4GAjeb@x1n>
- <f49c2a51-4dd8-784b-57fa-34fb397db2b7@redhat.com>
+        Thu, 27 Jul 2023 08:21:23 -0700 (PDT)
+Date:   Thu, 27 Jul 2023 17:21:21 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Jaco Kroon <jaco@uls.co.za>
+Cc:     Antonio SJ Musumeci <trapexit@spawn.link>,
+        Bernd Schubert <bernd.schubert@fastmail.fm>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fuse: enable larger read buffers for readdir.
+Message-ID: <ZMKLcf1r0epaev5C@miu.piliscsaba.redhat.com>
+References: <20230726105953.843-1-jaco@uls.co.za>
+ <b5255112-922f-b965-398e-38b9f5fb4892@fastmail.fm>
+ <7d762c95-e4ca-d612-f70f-64789d4624cf@uls.co.za>
+ <0731f4b9-cd4e-2cb3-43ba-c74d238b824f@fastmail.fm>
+ <831e5a03-7126-3d45-2137-49c1a25769df@spawn.link>
+ <27875beb-bd1c-0087-ac4c-420a9d92a5a9@uls.co.za>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f49c2a51-4dd8-784b-57fa-34fb397db2b7@redhat.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <27875beb-bd1c-0087-ac4c-420a9d92a5a9@uls.co.za>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 27, 2023 at 03:28:49PM +0200, David Hildenbrand wrote:
-> > > > Therefore, when obtaining pages through the follow_trans_huge_pmd
-> > > > interface, add the FOLL_FORCE flag to count the pages corresponding to
-> > > > PROTNONE to solve the above problem.
-> > > > 
-> > > 
-> > > We really want to avoid the usage of FOLL_FORCE, and ideally limit it
-> > > to ptrace only.
-> > 
-> > Fundamentally when removing FOLL_NUMA we did already assumed !FORCE is
-> > FOLL_NUMA.  It means to me after the removal it's not possible to say in a
-> > gup walker that "it's not FORCEd, but I don't want to trigger NUMA but just
-> > get the page".
-> > 
-> > Is that what we want?  Shall we document that in FOLL_FORCE if we intended
-> > to enforce numa balancing as long as !FORCE?
-> 
-> That was the idea, yes. I could have sworn we had that at least in some
-> patch description.
-> 
-> Back then, I played with special-casing on gup_can_follow_protnone() on
-> FOLL_GET | FOLL_PIN. But it's all just best guesses.
-> 
-> Can always be added if deemed necessary and worth it.
-> 
-> Here, it's simply an abuse of that GUP function that I wasn't aware of --
-> otherwise I'd have removed that before hand.
-> 
-> > 
-> > > 
-> > > > Signed-off-by: liubo <liubo254@huawei.com>
-> > > > Fixes: 474098edac26 ("mm/gup: replace FOLL_NUMA by gup_can_follow_protnone()")
-> > > > ---
-> > > >   fs/proc/task_mmu.c | 6 ++++--
-> > > >   1 file changed, 4 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > > > index c1e6531cb02a..ed08f9b869e2 100644
-> > > > --- a/fs/proc/task_mmu.c
-> > > > +++ b/fs/proc/task_mmu.c
-> > > > @@ -571,8 +571,10 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
-> > > >          bool migration = false;
-> > > > 
-> > > >          if (pmd_present(*pmd)) {
-> > > > -               /* FOLL_DUMP will return -EFAULT on huge zero page */
-> > > > -               page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP);
-> > > > +               /* FOLL_DUMP will return -EFAULT on huge zero page
-> > > > +                * FOLL_FORCE follow a PROT_NONE mapped page
-> > > > +                */
-> > > > +               page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP | FOLL_FORCE);
-> > > >          } else if (unlikely(thp_migration_supported() && is_swap_pmd(*pmd))) {
-> > > >                  swp_entry_t entry = pmd_to_swp_entry(*pmd);
-> > > 
-> > > Might do as an easy fix. But we really should get rid of that
-> > > absolutely disgusting usage of follow_trans_huge_pmd().
-> > > 
-> > > We don't need 99% of what follow_trans_huge_pmd() does here.
-> > > 
-> > > Would the following also fix your issue?
-> > > 
-> > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > > index 507cd4e59d07..fc744964816e 100644
-> > > --- a/fs/proc/task_mmu.c
-> > > +++ b/fs/proc/task_mmu.c
-> > > @@ -587,8 +587,7 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
-> > >          bool migration = false;
-> > > 
-> > >          if (pmd_present(*pmd)) {
-> > > -               /* FOLL_DUMP will return -EFAULT on huge zero page */
-> > > -               page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP);
-> > > +               page = vm_normal_page_pmd(vma, addr, *pmd);
-> > >          } else if (unlikely(thp_migration_supported() && is_swap_pmd(*pmd))) {
-> > >                  swp_entry_t entry = pmd_to_swp_entry(*pmd);
-> > > 
-> > > It also skips the shared zeropage and pmd_devmap(),
-> > > 
-> > > Otherwise, a simple pmd_page(*pmd) + is_huge_zero_pmd(*pmd) check will do, but I
-> > > suspect vm_normal_page_pmd() might be what we actually want to have here.
-> > > 
-> > > Because smaps_pte_entry() properly checks for vm_normal_page().
-> > 
-> > There're indeed some very trivial detail in vm_normal_page_pmd() that's
-> > different, but maybe not so relevant.  E.g.,
-> > 
-> > 	if (WARN_ON_ONCE(folio_ref_count(folio) <= 0))
-> > 		return -ENOMEM;
-> 
-> Note that we're not even passing FOLL_GET | FOLL_PIN. Because we're not
-> actually doing GUP. So the refcount is not that relevant.
-> 
-> > 
-> > 	if (unlikely(!(flags & FOLL_PCI_P2PDMA) && is_pci_p2pdma_page(page)))
-> > 		return -EREMOTEIO;
-> > 
-> > I'm not sure whether the p2pdma page would matter in any form here.  E.g.,
-> > whether it can be mapped privately.
-> 
-> Good point, but I don't think that people messing with GUP even imagined
-> that we would call that function from a !GUP place.
-> 
-> This was wrong from the very start. If we're not in GUP, we shouldn't call
-> GUP functions.
+On Wed, Jul 26, 2023 at 08:25:48PM +0200, Jaco Kroon wrote:
 
-My understanding is !GET && !PIN is also called gup.. otherwise we don't
-need GET and it can just be always implied.
+> glibc uses a 128KiB buffer for getdents64, so I'm not sure >128KiB here
+> makes sense.  Or if these two buffers are even directly related.
 
-The other proof is try_grab_page() doesn't fail hard on !GET && !PIN.  So I
-don't know whether that's "wrong" to be used..
+Definitely related.  See how the dir_emit() works: if the entry doesn't fit in
+the userspace buffer, then ->readdir() returns.  If entries remain in the fuse
+buffer at that time, they are simply discarded.  Simply put, making the
+buffer too large is going to be a waste of resources and at some point will be
+slower than the single page buffer.
 
-Back to the topic: I'd say either of the patches look good to solve the
-problem.  If p2pdma pages are mapped as PFNMAP/MIXEDMAP (?), I guess
-vm_normal_page_pmd() proposed here will also work on it, so nothing I see
-wrong on 2nd one yet.
+Note: discarding received entries is the only possible action if caching is
+disabled.  With caching enabled it would make sense to pre-fill the cache with
+the overflowed entries and use them in the next iteration.  However the caching
+code is not prepared for using partial caches at the moment.
 
-It looks nicer indeed to not have FOLL_FORCE here, but it also makes me
-just wonder whether we should document NUMA behavior for FOLL_* somewhere,
-because we have an implication right now on !FOLL_FORCE over NUMA, which is
-not obvious to me..
+The best strategy would be to find the optimal buffer size based on the size of
+the userspace buffer.  Putting that info into struct dir_context doesn't sound
+too complicated...
 
-And to look more over that aspect, see follow_page(): previously we can
-follow a page for protnone (as it never applies FOLL_NUMA) but now it won't
-(it never applies FOLL_FORCE, either, so it seems "accidentally" implies
-FOLL_NUMA now).  Not sure whether it's intended, though..
+Here's a patch.  It doesn't touch readdir.  Simply setting the fuse buffer size
+to the userspace buffer size should work, the record sizes are similar (fuse's
+is slightly larger than libc's, so no overflow should ever happen).
 
--- 
-Peter Xu
+Thanks,
+Miklos
 
+
+---
+ fs/exportfs/expfs.c    |    1 +
+ fs/overlayfs/readdir.c |   12 +++++++++++-
+ fs/readdir.c           |   29 ++++++++++++++---------------
+ include/linux/fs.h     |    7 +++++++
+ 4 files changed, 33 insertions(+), 16 deletions(-)
+
+--- a/fs/exportfs/expfs.c
++++ b/fs/exportfs/expfs.c
+@@ -286,6 +286,7 @@ static int get_name(const struct path *p
+ 	};
+ 	struct getdents_callback buffer = {
+ 		.ctx.actor = filldir_one,
++		.ctx.count = INT_MAX,
+ 		.name = name,
+ 	};
+ 
+--- a/fs/overlayfs/readdir.c
++++ b/fs/overlayfs/readdir.c
+@@ -347,6 +347,7 @@ static int ovl_dir_read_merged(struct de
+ 	struct path realpath;
+ 	struct ovl_readdir_data rdd = {
+ 		.ctx.actor = ovl_fill_merge,
++		.ctx.count = INT_MAX,
+ 		.dentry = dentry,
+ 		.list = list,
+ 		.root = root,
+@@ -557,6 +558,7 @@ static int ovl_dir_read_impure(const str
+ 	struct ovl_cache_entry *p, *n;
+ 	struct ovl_readdir_data rdd = {
+ 		.ctx.actor = ovl_fill_plain,
++		.ctx.count = INT_MAX,
+ 		.list = list,
+ 		.root = root,
+ 	};
+@@ -658,6 +660,7 @@ static bool ovl_fill_real(struct dir_con
+ 	struct ovl_readdir_translate *rdt =
+ 		container_of(ctx, struct ovl_readdir_translate, ctx);
+ 	struct dir_context *orig_ctx = rdt->orig_ctx;
++	bool res;
+ 
+ 	if (rdt->parent_ino && strcmp(name, "..") == 0) {
+ 		ino = rdt->parent_ino;
+@@ -672,7 +675,10 @@ static bool ovl_fill_real(struct dir_con
+ 					  name, namelen, rdt->xinowarn);
+ 	}
+ 
+-	return orig_ctx->actor(orig_ctx, name, namelen, offset, ino, d_type);
++	res = orig_ctx->actor(orig_ctx, name, namelen, offset, ino, d_type);
++	ctx->count = orig_ctx->count;
++
++	return res;
+ }
+ 
+ static bool ovl_is_impure_dir(struct file *file)
+@@ -699,6 +705,7 @@ static int ovl_iterate_real(struct file
+ 	const struct ovl_layer *lower_layer = ovl_layer_lower(dir);
+ 	struct ovl_readdir_translate rdt = {
+ 		.ctx.actor = ovl_fill_real,
++		.ctx.count = ctx->count,
+ 		.orig_ctx = ctx,
+ 		.xinobits = ovl_xino_bits(ofs),
+ 		.xinowarn = ovl_xino_warn(ofs),
+@@ -1058,6 +1065,7 @@ int ovl_check_d_type_supported(const str
+ 	int err;
+ 	struct ovl_readdir_data rdd = {
+ 		.ctx.actor = ovl_check_d_type,
++		.ctx.count = INT_MAX,
+ 		.d_type_supported = false,
+ 	};
+ 
+@@ -1079,6 +1087,7 @@ static int ovl_workdir_cleanup_recurse(s
+ 	struct ovl_cache_entry *p;
+ 	struct ovl_readdir_data rdd = {
+ 		.ctx.actor = ovl_fill_plain,
++		.ctx.count = INT_MAX,
+ 		.list = &list,
+ 	};
+ 	bool incompat = false;
+@@ -1163,6 +1172,7 @@ int ovl_indexdir_cleanup(struct ovl_fs *
+ 	struct ovl_cache_entry *p;
+ 	struct ovl_readdir_data rdd = {
+ 		.ctx.actor = ovl_fill_plain,
++		.ctx.count = INT_MAX,
+ 		.list = &list,
+ 	};
+ 
+--- a/fs/readdir.c
++++ b/fs/readdir.c
+@@ -184,6 +184,7 @@ SYSCALL_DEFINE3(old_readdir, unsigned in
+ 	struct fd f = fdget_pos(fd);
+ 	struct readdir_callback buf = {
+ 		.ctx.actor = fillonedir,
++		.ctx.count = 1, /* Hint to fs: just one entry. */
+ 		.dirent = dirent
+ 	};
+ 
+@@ -215,7 +216,6 @@ struct getdents_callback {
+ 	struct dir_context ctx;
+ 	struct linux_dirent __user * current_dir;
+ 	int prev_reclen;
+-	int count;
+ 	int error;
+ };
+ 
+@@ -234,7 +234,7 @@ static bool filldir(struct dir_context *
+ 	if (unlikely(buf->error))
+ 		return false;
+ 	buf->error = -EINVAL;	/* only used if we fail.. */
+-	if (reclen > buf->count)
++	if (reclen > ctx->count)
+ 		return false;
+ 	d_ino = ino;
+ 	if (sizeof(d_ino) < sizeof(ino) && d_ino != ino) {
+@@ -259,7 +259,7 @@ static bool filldir(struct dir_context *
+ 
+ 	buf->current_dir = (void __user *)dirent + reclen;
+ 	buf->prev_reclen = reclen;
+-	buf->count -= reclen;
++	ctx->count -= reclen;
+ 	return true;
+ efault_end:
+ 	user_write_access_end();
+@@ -274,7 +274,7 @@ SYSCALL_DEFINE3(getdents, unsigned int,
+ 	struct fd f;
+ 	struct getdents_callback buf = {
+ 		.ctx.actor = filldir,
+-		.count = count,
++		.ctx.count = count,
+ 		.current_dir = dirent
+ 	};
+ 	int error;
+@@ -293,7 +293,7 @@ SYSCALL_DEFINE3(getdents, unsigned int,
+ 		if (put_user(buf.ctx.pos, &lastdirent->d_off))
+ 			error = -EFAULT;
+ 		else
+-			error = count - buf.count;
++			error = count - buf.ctx.count;
+ 	}
+ 	fdput_pos(f);
+ 	return error;
+@@ -303,7 +303,6 @@ struct getdents_callback64 {
+ 	struct dir_context ctx;
+ 	struct linux_dirent64 __user * current_dir;
+ 	int prev_reclen;
+-	int count;
+ 	int error;
+ };
+ 
+@@ -321,7 +320,7 @@ static bool filldir64(struct dir_context
+ 	if (unlikely(buf->error))
+ 		return false;
+ 	buf->error = -EINVAL;	/* only used if we fail.. */
+-	if (reclen > buf->count)
++	if (reclen > ctx->count)
+ 		return false;
+ 	prev_reclen = buf->prev_reclen;
+ 	if (prev_reclen && signal_pending(current))
+@@ -341,7 +340,7 @@ static bool filldir64(struct dir_context
+ 
+ 	buf->prev_reclen = reclen;
+ 	buf->current_dir = (void __user *)dirent + reclen;
+-	buf->count -= reclen;
++	ctx->count -= reclen;
+ 	return true;
+ 
+ efault_end:
+@@ -357,7 +356,7 @@ SYSCALL_DEFINE3(getdents64, unsigned int
+ 	struct fd f;
+ 	struct getdents_callback64 buf = {
+ 		.ctx.actor = filldir64,
+-		.count = count,
++		.ctx.count = count,
+ 		.current_dir = dirent
+ 	};
+ 	int error;
+@@ -377,7 +376,7 @@ SYSCALL_DEFINE3(getdents64, unsigned int
+ 		if (put_user(d_off, &lastdirent->d_off))
+ 			error = -EFAULT;
+ 		else
+-			error = count - buf.count;
++			error = count - buf.ctx.count;
+ 	}
+ 	fdput_pos(f);
+ 	return error;
+@@ -442,6 +441,7 @@ COMPAT_SYSCALL_DEFINE3(old_readdir, unsi
+ 	struct fd f = fdget_pos(fd);
+ 	struct compat_readdir_callback buf = {
+ 		.ctx.actor = compat_fillonedir,
++		.ctx.count = 1, /* Hint to fs: just one entry. */
+ 		.dirent = dirent
+ 	};
+ 
+@@ -467,7 +467,6 @@ struct compat_getdents_callback {
+ 	struct dir_context ctx;
+ 	struct compat_linux_dirent __user *current_dir;
+ 	int prev_reclen;
+-	int count;
+ 	int error;
+ };
+ 
+@@ -486,7 +485,7 @@ static bool compat_filldir(struct dir_co
+ 	if (unlikely(buf->error))
+ 		return false;
+ 	buf->error = -EINVAL;	/* only used if we fail.. */
+-	if (reclen > buf->count)
++	if (reclen > ctx->count)
+ 		return false;
+ 	d_ino = ino;
+ 	if (sizeof(d_ino) < sizeof(ino) && d_ino != ino) {
+@@ -510,7 +509,7 @@ static bool compat_filldir(struct dir_co
+ 
+ 	buf->prev_reclen = reclen;
+ 	buf->current_dir = (void __user *)dirent + reclen;
+-	buf->count -= reclen;
++	ctx->count -= reclen;
+ 	return true;
+ efault_end:
+ 	user_write_access_end();
+@@ -525,8 +524,8 @@ COMPAT_SYSCALL_DEFINE3(getdents, unsigne
+ 	struct fd f;
+ 	struct compat_getdents_callback buf = {
+ 		.ctx.actor = compat_filldir,
++		.ctx.count = count,
+ 		.current_dir = dirent,
+-		.count = count
+ 	};
+ 	int error;
+ 
+@@ -544,7 +543,7 @@ COMPAT_SYSCALL_DEFINE3(getdents, unsigne
+ 		if (put_user(buf.ctx.pos, &lastdirent->d_off))
+ 			error = -EFAULT;
+ 		else
+-			error = count - buf.count;
++			error = count - buf.ctx.count;
+ 	}
+ 	fdput_pos(f);
+ 	return error;
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1719,6 +1719,13 @@ typedef bool (*filldir_t)(struct dir_con
+ struct dir_context {
+ 	filldir_t actor;
+ 	loff_t pos;
++	/*
++	 * Filesystems MUST NOT MODIFY count, but may use as a hint:
++	 * 0	    unknown
++	 * > 0      space in buffer (assume at least one entry)
++	 * INT_MAX  unlimited
++	 */
++	int count;
+ };
+ 
+ /*
