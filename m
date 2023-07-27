@@ -2,110 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A6B57650E1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 12:21:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38E6576510E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 12:27:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233658AbjG0KU5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 06:20:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52318 "EHLO
+        id S234113AbjG0K1C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 06:27:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233571AbjG0KUy (ORCPT
+        with ESMTP id S234164AbjG0K0g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 06:20:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A385619AF;
-        Thu, 27 Jul 2023 03:20:52 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 38C6E61DED;
-        Thu, 27 Jul 2023 10:20:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9266C433C8;
-        Thu, 27 Jul 2023 10:20:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690453251;
-        bh=Uv0jglg4XDxm5uiOcl1Fs0VDdmS3vnj5J06IHksC3j0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=VjGCTE5fXWQGMkstr5mWfG/olGcukHbx9MJ5gIHM1kJfwo/BiFcjiuEaiA2TxQad6
-         b/CL9D78jYHhDiLBxLD9gCBB6CtR9Pngnq1E4RM+cWQl1ITCzXzhPBEMorh0UStJGb
-         V5QypMia7H1mT7Yv9W7oIRfkDRB1G3xJIxfo7Y/Lymzj+mXx3lcBAFmRFbWxhh8lk9
-         h4N9LjcMkMC3/ZfJEah0qCVly/fWQ4ostsbFgLI1m7GG/WQbkHJ87BAgn9cUsNUERW
-         XrnUyEDaK9+tFU+Iukly/qv+tfC9IZiVkgJJJYsmEkH+2gmJEivzAz4IAcCpkEsNUW
-         WY8rxT9ubVHrA==
-Message-ID: <ba0868b2-9f90-3d81-1c91-8810057fb3ce@kernel.org>
-Date:   Thu, 27 Jul 2023 19:20:46 +0900
+        Thu, 27 Jul 2023 06:26:36 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2251B30C7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 03:25:46 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4f954d7309fso955960e87.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 03:25:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google; t=1690453545; x=1691058345;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4eo0nUNLDSH01XaEhi0ZXVn6hqceUGX3Bt7xyegC/Sc=;
+        b=AHFnzs/q47CXYaHIVWpF7M9ENsWBNsK8UIT0U5PJtm0+RF4XCnQrVtk5oZYdHkEWIO
+         +tnH2OTlCMSUN9j2MhgNmyd99SjGNZJKfISm0+t4tbTjQwO7ozOjMOKw5oZqGJEnGFK6
+         RmdYZg4YzYsBiNVLqbuwoQbpo/88yOrzlejrc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690453545; x=1691058345;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4eo0nUNLDSH01XaEhi0ZXVn6hqceUGX3Bt7xyegC/Sc=;
+        b=G6eYT6BhpCLKKcgV72vvsocjHapozm0Z0pFSjXwkoK0JaoEPgwg7l3C14ZqWS/a1au
+         ajWkw7DwBmKALvMhgb4e+cBRnzQ5AL6kIXj1n+eMUCYAPvu+FN7pc/FO97fbA1+VoKzB
+         FwttnXXZKb5ue9pOfj7u3sGlq+wSXqQSXZzN6feI7qKD1x40PwD4yWYFXwJZ1hgOtkob
+         35xwXLPZ7I3WmI41j9AMDOQ4/TrtFojwiJuujfwgCRYObBSv9Fz/aYIn27fd+Q5bV+19
+         qKqdbc3XiqceKUn8kO3BRC2w+V4sK2T+3vTD6QI/ywio+DQi0qv+jgJP7RVFSEAAjXF7
+         OCKQ==
+X-Gm-Message-State: ABy/qLbngnlAAqEuuBI2StqTOxjwe0YwnsbGysgD5sUKgL0N56KJl7Pj
+        LXcoiHraAO9w7yQ33Iy0nQITv6t6KcOrw1N2FcOAlQ==
+X-Google-Smtp-Source: APBJJlEYQigitByUZfSadIsB0MkvvnGp/ZJ98N872TQtA/Nc4bVV3uhL6gODz4sBFjYOZvXykvIg0tATyBeZFT5gp7s=
+X-Received: by 2002:a05:6512:2824:b0:4fe:17a8:bee5 with SMTP id
+ cf36-20020a056512282400b004fe17a8bee5mr703651lfb.31.1690453545006; Thu, 27
+ Jul 2023 03:25:45 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 28/49] dm zoned: dynamically allocate the dm-zoned-meta
- shrinker
-Content-Language: en-US
-To:     Qi Zheng <zhengqi.arch@bytedance.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-        kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-erofs@lists.ozlabs.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, linux-mtd@lists.infradead.org,
-        rcu@vger.kernel.org, netdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        dm-devel@redhat.com, linux-raid@vger.kernel.org,
-        linux-bcache@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Muchun Song <songmuchun@bytedance.com>,
-        akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
-        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
-        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
-        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
-        yujie.liu@intel.com, gregkh@linuxfoundation.org,
-        muchun.song@linux.dev
-References: <20230727080502.77895-1-zhengqi.arch@bytedance.com>
- <20230727080502.77895-29-zhengqi.arch@bytedance.com>
- <baaf7de4-9a0e-b953-2b6a-46e60c415614@kernel.org>
- <56ee1d92-28ee-81cb-9c41-6ca7ea6556b0@bytedance.com>
-From:   Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <56ee1d92-28ee-81cb-9c41-6ca7ea6556b0@bytedance.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <CA+wXwBRGab3UqbLqsr8xG=ZL2u9bgyDNNea4RGfTDjqB=J3geQ@mail.gmail.com>
+ <ZMHkLA+r2K6hKsr5@casper.infradead.org>
+In-Reply-To: <ZMHkLA+r2K6hKsr5@casper.infradead.org>
+From:   Daniel Dao <dqminh@cloudflare.com>
+Date:   Thu, 27 Jul 2023 11:25:33 +0100
+Message-ID: <CA+wXwBQur9DU7mVa961KWpL+cn1BNeZbU+oja+SKMHhEo1D0-g@mail.gmail.com>
+Subject: Re: Kernel NULL pointer deref and data corruptions with xfs on 6.1
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        kernel-team <kernel-team@cloudflare.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, djwong@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/27/23 17:55, Qi Zheng wrote:
->>>           goto err;
->>>       }
->>>   +    zmd->mblk_shrinker->count_objects = dmz_mblock_shrinker_count;
->>> +    zmd->mblk_shrinker->scan_objects = dmz_mblock_shrinker_scan;
->>> +    zmd->mblk_shrinker->seeks = DEFAULT_SEEKS;
->>> +    zmd->mblk_shrinker->private_data = zmd;
->>> +
->>> +    shrinker_register(zmd->mblk_shrinker);
->>
->> I fail to see how this new shrinker API is better... Why isn't there a
->> shrinker_alloc_and_register() function ? That would avoid adding all this code
->> all over the place as the new API call would be very similar to the current
->> shrinker_register() call with static allocation.
-> 
-> In some registration scenarios, memory needs to be allocated in advance.
-> So we continue to use the previous prealloc/register_prepared()
-> algorithm. The shrinker_alloc_and_register() is just a helper function
-> that combines the two, and this increases the number of APIs that
-> shrinker exposes to the outside, so I choose not to add this helper.
+On Thu, Jul 27, 2023 at 4:27=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Fri, Jul 21, 2023 at 11:49:04AM +0100, Daniel Dao wrote:
+> > We do not have a reproducer yet, but we now have more debugging data
+> > which hopefully
+> > should help narrow this down. Details as followed:
+> >
+> > 1. Kernel NULL pointer deferencences in __filemap_get_folio
+> >
+> > This happened on a few different hosts, with a few different repeated a=
+ddresses.
+> > The addresses are 0000000000000036, 0000000000000076,
+> > 00000000000000f6. This looks
+> > like the xarray is corrupted and we were trying to do some work on a
+> > sibling entry.
+>
+> I think I have a fix for this one.  Please try the attached.
 
-And that results in more code in many places instead of less code + a simple
-inline helper in the shrinker header file... So not adding that super simple
-helper is not exactly the best choice in my opinion.
-
--- 
-Damien Le Moal
-Western Digital Research
-
+For some reason I do not see the attached patch. Can you resend it, or
+is it the same
+one as in https://bugzilla.kernel.org/show_bug.cgi?id=3D216646#c31 ?
