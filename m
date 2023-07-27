@@ -2,196 +2,261 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 306DB7654FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 15:29:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49285765519
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 15:33:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233606AbjG0N3l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 09:29:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34340 "EHLO
+        id S233356AbjG0NdE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 09:33:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233468AbjG0N3k (ORCPT
+        with ESMTP id S233171AbjG0NdD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 09:29:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8977B2723
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 06:28:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690464533;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wbhdfKdpjjTeU2vnbyQYy8PlRea3cn9Yeu82XaRTHfU=;
-        b=AjzkgZD/aOw35ebdA8tpSbUNMd5dasksT/EAKlAvB66Z4/I6NJZgARTwQIDEugeqWTbaXb
-        lnTHg1Qxh661BlsI1pv+ZJvLA/AUeVeQoJRlAPE7MBe+kHbp53oum/hHENeaChihu5gnRo
-        HSQAtaH4M7lTqc8S0K0gAaE++YlHhU4=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-678-3wlsSnm0PS66mbfppqR_gw-1; Thu, 27 Jul 2023 09:28:52 -0400
-X-MC-Unique: 3wlsSnm0PS66mbfppqR_gw-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2b70c44b5fdso9297821fa.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 06:28:52 -0700 (PDT)
+        Thu, 27 Jul 2023 09:33:03 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CD8A272D;
+        Thu, 27 Jul 2023 06:33:01 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4fe1489ced6so1708442e87.0;
+        Thu, 27 Jul 2023 06:33:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690464780; x=1691069580;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fNVKS520fpom9zikP7GGO5Kqp+pwk56e852uQYR5BkU=;
+        b=gf7mfFC/0wfbZM46ODlqyIyv7XknlmYmjPR9vw7W5BQFPqJU4Dvn9yg6veiQ6fM+pF
+         nXMnhG+yw5I01J267ZuyGzRO+SBrZT5Ef7m0FLLGY9NKG0RlwXGjD+1LMmc3UAC9NNHr
+         5MZ9vcBrJBzR5IPUFe8K4GI2jvTKyLZbhCpJqQ6KOhz7oMxf7TApXZhC35oHvSEKuiTV
+         0JPds7aR9qmkiwwpjA8m8S8lhBB7gmQiAHH1osDN3JVV+9Wsr1PBsUnme1rLbEHHVLWh
+         jf5nnPwwXx0EbPQTKmCDOaIDuQc3ep2i+cyOCkN+ou+PX1360JxiRMWouq3mX2m3+Zf9
+         QyDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690464531; x=1691069331;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :references:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wbhdfKdpjjTeU2vnbyQYy8PlRea3cn9Yeu82XaRTHfU=;
-        b=kjG2Oks0OYr9Q9yPorTMSfTMmlQBwDabzMe0+51tkuGcYjlRQk9wC+UDFZ9DunWVZS
-         +CQICO79n198J4X+njNn4rygLDfJPEUhCrUpzZepQISSeFuUTJK7FAnqo84zwJ03WNPt
-         a1uDgnL4Rx/L1vXrjkipThHt3GoVSdaUipY2YnbB4i92dJQdtQFsjVxXDInngOpqdK5e
-         uJkXvFOcU8VSD/Nr9BajhYPEj7ro/Fm4eHENxOTuv4ufkzeLC9JvZwE8kcCiPt13UE/l
-         +3H9hLdtNauFU0zd8udu6oEfLhjWbg/8H6OtewvuBhDE5C9NWGTIkOVdM1WGrayXjYqY
-         550Q==
-X-Gm-Message-State: ABy/qLbPhNCMHj/7vYrvSaisNliKM36ySklgujUJQqY69aP7Tn9+DZ46
-        KdRrDM5RNM0aniUd2K5Aw6pU+Qm4UUMkt0C8Va8SOLxH38SfO3S60htzUe+dZwYlXIMJLkKr5JR
-        qVn6JI2KjxiUbECBj8TZuTaAXAg==
-X-Received: by 2002:a2e:8181:0:b0:2b6:a7dd:e22 with SMTP id e1-20020a2e8181000000b002b6a7dd0e22mr1815728ljg.48.1690464530935;
-        Thu, 27 Jul 2023 06:28:50 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlEXr3A2S68VJWSnXoBV5s3jxQ7+gtNtauH5rriWdxVquRYU1ew5G1anWxTI4nzDXCLWRGcslg==
-X-Received: by 2002:a2e:8181:0:b0:2b6:a7dd:e22 with SMTP id e1-20020a2e8181000000b002b6a7dd0e22mr1815705ljg.48.1690464530412;
-        Thu, 27 Jul 2023 06:28:50 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id 26-20020a05600c229a00b003fc3b03e41esm6982284wmf.1.2023.07.27.06.28.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jul 2023 06:28:49 -0700 (PDT)
-Message-ID: <f49c2a51-4dd8-784b-57fa-34fb397db2b7@redhat.com>
-Date:   Thu, 27 Jul 2023 15:28:49 +0200
+        d=1e100.net; s=20221208; t=1690464780; x=1691069580;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fNVKS520fpom9zikP7GGO5Kqp+pwk56e852uQYR5BkU=;
+        b=GmWrAG0/uVonbj9ngt9PNNYcqqHMjZW33OAHl6duy5LetTIm6b2EER71cu2sgLnS4+
+         P3XKj3lBEeoT2y/caVMuM9oBoOzKbLXjt5iAr8p77vKMbBpceWU1SVeQHMaYPqa8fapU
+         6rDORcfDJdYZbrDWkw8jAEaYILfd9Lo6+Twwm7GMp1ua3+nBoigVn5NuttbFgzpUX7HU
+         k86quOO9EhbZ5RJHIz4j89R3FS6TN95jTEWGgVxZGDyqIW6T4t2cFuY6S+Zish+Ss9Db
+         jDIU4UYjCVBBW8Ke73fLPCXEOk1qgYbSaOaYI2xbpgbh+/17JCwvgV0RzPvUIdsrCdOn
+         5yjA==
+X-Gm-Message-State: ABy/qLbPFAgT0HPkjbdqIYU0Ng7Kx99byc7KSl2qmbLG4QwShLWE7QKU
+        721ryxot7/NSDgkWRN77tqwxd1AjtKr7J5/VmCs=
+X-Google-Smtp-Source: APBJJlEoaBon0qIf+o3H5ybsdyY2J571wEx/HePSoiAhvwnMkjCJxjZ1SwZXzaOy8H1h8XAtUs9aG/a95vBooddqtpQ=
+X-Received: by 2002:a2e:b015:0:b0:2b6:d326:156d with SMTP id
+ y21-20020a2eb015000000b002b6d326156dmr1776436ljk.19.1690464779581; Thu, 27
+ Jul 2023 06:32:59 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Content-Language: en-US
-To:     Peter Xu <peterx@redhat.com>
-Cc:     liubo <liubo254@huawei.com>, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hughd@google.com, willy@infradead.org
-References: <20230726073409.631838-1-liubo254@huawei.com>
- <CADFyXm5nkgZjVMj3iJhqQnyA1AOmqZ-AKdaWyUD=UvZsOEOcPg@mail.gmail.com>
- <ZMJt+VWzIG4GAjeb@x1n>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH] smaps: Fix the abnormal memory statistics obtained
- through /proc/pid/smaps
-In-Reply-To: <ZMJt+VWzIG4GAjeb@x1n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20230726164535.230515-1-amiculas@cisco.com> <20230726164535.230515-7-amiculas@cisco.com>
+In-Reply-To: <20230726164535.230515-7-amiculas@cisco.com>
+From:   Ariel Miculas <ariel.miculas@gmail.com>
+Date:   Thu, 27 Jul 2023 16:32:48 +0300
+Message-ID: <CAPDJoNs_VTnVATXr4AFs5D8unOihrpYXLDn69fjT0OshrYADXA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 06/10] rust: file: pass the filesystem context to
+ the open function
+To:     Ariel Miculas <amiculas@cisco.com>
+Cc:     rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tycho@tycho.pizza,
+        brauner@kernel.org, viro@zeniv.linux.org.uk, ojeda@kernel.org,
+        alex.gaynor@gmail.com, wedsonaf@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->>> Therefore, when obtaining pages through the follow_trans_huge_pmd
->>> interface, add the FOLL_FORCE flag to count the pages corresponding to
->>> PROTNONE to solve the above problem.
->>>
->>
->> We really want to avoid the usage of FOLL_FORCE, and ideally limit it
->> to ptrace only.
-> 
-> Fundamentally when removing FOLL_NUMA we did already assumed !FORCE is
-> FOLL_NUMA.  It means to me after the removal it's not possible to say in a
-> gup walker that "it's not FORCEd, but I don't want to trigger NUMA but just
-> get the page".
-> 
-> Is that what we want?  Shall we document that in FOLL_FORCE if we intended
-> to enforce numa balancing as long as !FORCE?
+On Wed, Jul 26, 2023 at 7:58=E2=80=AFPM Ariel Miculas <amiculas@cisco.com> =
+wrote:
+>
+> This allows us to create a Vfsmount structure and pass it to the read
+> callback.
+>
+> Signed-off-by: Ariel Miculas <amiculas@cisco.com>
+> ---
+>  rust/kernel/file.rs      | 17 +++++++++++++++--
+>  samples/rust/puzzlefs.rs | 40 +++++++++++++++++++++++++++++++++++-----
+>  samples/rust/rust_fs.rs  |  3 ++-
+>  3 files changed, 52 insertions(+), 8 deletions(-)
+>
+> diff --git a/rust/kernel/file.rs b/rust/kernel/file.rs
+> index a3002c416dbb..af1eb1ee9267 100644
+> --- a/rust/kernel/file.rs
+> +++ b/rust/kernel/file.rs
+> @@ -457,9 +457,15 @@ impl<A: OpenAdapter<T::OpenData>, T: Operations> Ope=
+rationsVtable<A, T> {
+>              // `fileref` never outlives this function, so it is guarante=
+ed to be
+>              // valid.
+>              let fileref =3D unsafe { File::from_ptr(file) };
+> +
+> +            // SAFETY: into_foreign was called in fs::NewSuperBlock<...,=
+ NeedsInit>::init and
+> +            // it is valid until from_foreign will be called in fs::Tabl=
+es::free_callback
+> +            let fs_info =3D
+> +                unsafe { <T::Filesystem as fs::Type>::Data::borrow((*(*i=
+node).i_sb).s_fs_info) };
+> +
+>              // SAFETY: `arg` was previously returned by `A::convert` and=
+ must
+>              // be a valid non-null pointer.
+> -            let ptr =3D T::open(unsafe { &*arg }, fileref)?.into_foreign=
+();
+> +            let ptr =3D T::open(fs_info, unsafe { &*arg }, fileref)?.int=
+o_foreign();
+>              // SAFETY: The C contract guarantees that `private_data` is =
+available
+>              // for implementers of the file operations (no other C code =
+accesses
+>              // it), so we know that there are no concurrent threads/CPUs=
+ accessing
+> @@ -930,10 +936,17 @@ pub trait Operations {
+>      /// The type of the context data passed to [`Operations::open`].
+>      type OpenData: Sync =3D ();
+>
+> +    /// Data associated with each file system instance.
+> +    type Filesystem: fs::Type;
+> +
+>      /// Creates a new instance of this file.
+>      ///
+>      /// Corresponds to the `open` function pointer in `struct file_opera=
+tions`.
+> -    fn open(context: &Self::OpenData, file: &File) -> Result<Self::Data>=
+;
+> +    fn open(
+> +        fs_info: <<Self::Filesystem as fs::Type>::Data as ForeignOwnable=
+>::Borrowed<'_>,
+> +        context: &Self::OpenData,
+> +        file: &File,
+> +    ) -> Result<Self::Data>;
+>
+>      /// Cleans up after the last reference to the file goes away.
+>      ///
+> diff --git a/samples/rust/puzzlefs.rs b/samples/rust/puzzlefs.rs
+> index 9afd82745b64..8a64e0bd437d 100644
+> --- a/samples/rust/puzzlefs.rs
+> +++ b/samples/rust/puzzlefs.rs
+> @@ -3,8 +3,14 @@
+>  //! Rust file system sample.
+>
+>  use kernel::module_fs;
+> +use kernel::mount::Vfsmount;
+>  use kernel::prelude::*;
+> -use kernel::{c_str, file, fs, io_buffer::IoBufferWriter};
+> +use kernel::{
+> +    c_str, file, fmt, fs,
+> +    io_buffer::IoBufferWriter,
+> +    str::CString,
+> +    sync::{Arc, ArcBorrow},
+> +};
+>
+>  mod puzzle;
+>  // Required by the autogenerated '_capnp.rs' files
+> @@ -19,6 +25,12 @@
+>
+>  struct PuzzleFsModule;
+>
+> +#[derive(Debug)]
+> +struct PuzzlefsInfo {
+> +    base_path: CString,
+> +    vfs_mount: Arc<Vfsmount>,
+> +}
+> +
+>  #[vtable]
+>  impl fs::Context<Self> for PuzzleFsModule {
+>      type Data =3D ();
+> @@ -46,14 +58,23 @@ fn try_new() -> Result {
+>  impl fs::Type for PuzzleFsModule {
+>      type Context =3D Self;
+>      type INodeData =3D &'static [u8];
+> +    type Data =3D Box<PuzzlefsInfo>;
+>      const SUPER_TYPE: fs::Super =3D fs::Super::Independent;
+>      const NAME: &'static CStr =3D c_str!("puzzlefs");
+>      const FLAGS: i32 =3D fs::flags::USERNS_MOUNT;
+>      const DCACHE_BASED: bool =3D true;
+>
+>      fn fill_super(_data: (), sb: fs::NewSuperBlock<'_, Self>) -> Result<=
+&fs::SuperBlock<Self>> {
+> +        let base_path =3D CString::try_from_fmt(fmt!("hello world"))?;
+> +        pr_info!("base_path {:?}\n", base_path);
+> +        let vfs_mount =3D Vfsmount::new_private_mount(c_str!("/home/puzz=
+lefs_oci"))?;
+> +        pr_info!("vfs_mount {:?}\n", vfs_mount);
+> +
+>          let sb =3D sb.init(
+> -            (),
+> +            Box::try_new(PuzzlefsInfo {
+> +                base_path,
+> +                vfs_mount: Arc::try_new(vfs_mount)?,
+> +            })?,
+>              &fs::SuperParams {
+>                  magic: 0x72757374,
+>                  ..fs::SuperParams::DEFAULT
+> @@ -88,14 +109,23 @@ fn fill_super(_data: (), sb: fs::NewSuperBlock<'_, S=
+elf>) -> Result<&fs::SuperBl
+>
+>  #[vtable]
+>  impl file::Operations for FsFile {
+> +    // must be the same as INodeData
+>      type OpenData =3D &'static [u8];
+> +    type Filesystem =3D PuzzleFsModule;
+> +    // this is an Arc because Data must be ForeignOwnable and the only i=
+mplementors of it are Box,
+> +    // Arc and (); we cannot pass a reference to read, so we share Vfsmo=
+unt using and Arc
+> +    type Data =3D Arc<Vfsmount>;
+>
+> -    fn open(_context: &Self::OpenData, _file: &file::File) -> Result<Sel=
+f::Data> {
+> -        Ok(())
+> +    fn open(
+> +        fs_info: &PuzzlefsInfo,
+> +        _context: &Self::OpenData,
+> +        _file: &file::File,
+> +    ) -> Result<Self::Data> {
+> +        Ok(fs_info.vfs_mount.clone())
+>      }
+>
+>      fn read(
+> -        _data: (),
+> +        data: ArcBorrow<'_, Vfsmount>,
+>          file: &file::File,
+>          writer: &mut impl IoBufferWriter,
+>          offset: u64,
+> diff --git a/samples/rust/rust_fs.rs b/samples/rust/rust_fs.rs
+> index 7527681ee024..c58ed1560e06 100644
+> --- a/samples/rust/rust_fs.rs
+> +++ b/samples/rust/rust_fs.rs
+> @@ -85,8 +85,9 @@ fn fill_super(_data: (), sb: fs::NewSuperBlock<'_, Self=
+>) -> Result<&fs::SuperBl
+>  #[vtable]
+>  impl file::Operations for FsFile {
+>      type OpenData =3D &'static [u8];
+> +    type Filesystem =3D RustFs;
+>
+> -    fn open(_context: &Self::OpenData, _file: &file::File) -> Result<Sel=
+f::Data> {
+> +    fn open(_fs_info: (), _context: &Self::OpenData, _file: &file::File)=
+ -> Result<Self::Data> {
+>          Ok(())
+>      }
+>
+> --
+> 2.41.0
+>
+>
+Hey Wedson,
 
-That was the idea, yes. I could have sworn we had that at least in some 
-patch description.
+Is it ok to couple file::Operations with fs::Type? I didn't find a
+better way to implement this.
+I'm asking because I've seen you've gone to great lengths to decouple them.
 
-Back then, I played with special-casing on gup_can_follow_protnone() on 
-FOLL_GET | FOLL_PIN. But it's all just best guesses.
-
-Can always be added if deemed necessary and worth it.
-
-Here, it's simply an abuse of that GUP function that I wasn't aware of 
--- otherwise I'd have removed that before hand.
-
-> 
->>
->>> Signed-off-by: liubo <liubo254@huawei.com>
->>> Fixes: 474098edac26 ("mm/gup: replace FOLL_NUMA by gup_can_follow_protnone()")
->>> ---
->>>   fs/proc/task_mmu.c | 6 ++++--
->>>   1 file changed, 4 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->>> index c1e6531cb02a..ed08f9b869e2 100644
->>> --- a/fs/proc/task_mmu.c
->>> +++ b/fs/proc/task_mmu.c
->>> @@ -571,8 +571,10 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
->>>          bool migration = false;
->>>
->>>          if (pmd_present(*pmd)) {
->>> -               /* FOLL_DUMP will return -EFAULT on huge zero page */
->>> -               page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP);
->>> +               /* FOLL_DUMP will return -EFAULT on huge zero page
->>> +                * FOLL_FORCE follow a PROT_NONE mapped page
->>> +                */
->>> +               page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP | FOLL_FORCE);
->>>          } else if (unlikely(thp_migration_supported() && is_swap_pmd(*pmd))) {
->>>                  swp_entry_t entry = pmd_to_swp_entry(*pmd);
->>
->> Might do as an easy fix. But we really should get rid of that
->> absolutely disgusting usage of follow_trans_huge_pmd().
->>
->> We don't need 99% of what follow_trans_huge_pmd() does here.
->>
->> Would the following also fix your issue?
->>
->> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->> index 507cd4e59d07..fc744964816e 100644
->> --- a/fs/proc/task_mmu.c
->> +++ b/fs/proc/task_mmu.c
->> @@ -587,8 +587,7 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
->>          bool migration = false;
->>
->>          if (pmd_present(*pmd)) {
->> -               /* FOLL_DUMP will return -EFAULT on huge zero page */
->> -               page = follow_trans_huge_pmd(vma, addr, pmd, FOLL_DUMP);
->> +               page = vm_normal_page_pmd(vma, addr, *pmd);
->>          } else if (unlikely(thp_migration_supported() && is_swap_pmd(*pmd))) {
->>                  swp_entry_t entry = pmd_to_swp_entry(*pmd);
->>
->> It also skips the shared zeropage and pmd_devmap(),
->>
->> Otherwise, a simple pmd_page(*pmd) + is_huge_zero_pmd(*pmd) check will do, but I
->> suspect vm_normal_page_pmd() might be what we actually want to have here.
->>
->> Because smaps_pte_entry() properly checks for vm_normal_page().
-> 
-> There're indeed some very trivial detail in vm_normal_page_pmd() that's
-> different, but maybe not so relevant.  E.g.,
-> 
-> 	if (WARN_ON_ONCE(folio_ref_count(folio) <= 0))
-> 		return -ENOMEM;
-
-Note that we're not even passing FOLL_GET | FOLL_PIN. Because we're not 
-actually doing GUP. So the refcount is not that relevant.
-
-> 
-> 	if (unlikely(!(flags & FOLL_PCI_P2PDMA) && is_pci_p2pdma_page(page)))
-> 		return -EREMOTEIO;
-> 
-> I'm not sure whether the p2pdma page would matter in any form here.  E.g.,
-> whether it can be mapped privately.
-
-Good point, but I don't think that people messing with GUP even imagined 
-that we would call that function from a !GUP place.
-
-This was wrong from the very start. If we're not in GUP, we shouldn't 
-call GUP functions.
-
--- 
 Cheers,
-
-David / dhildenb
-
+Ariel
