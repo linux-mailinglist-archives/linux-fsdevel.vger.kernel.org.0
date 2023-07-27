@@ -2,53 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 665EF765F68
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 00:27:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E82C766007
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 00:59:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232360AbjG0W1N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 18:27:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44740 "EHLO
+        id S231922AbjG0W7F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 18:59:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232185AbjG0W1M (ORCPT
+        with ESMTP id S229621AbjG0W7D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 18:27:12 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0A2D2D71;
-        Thu, 27 Jul 2023 15:27:10 -0700 (PDT)
+        Thu, 27 Jul 2023 18:59:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1629C94;
+        Thu, 27 Jul 2023 15:59:02 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2F60E61F57;
-        Thu, 27 Jul 2023 22:27:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C408C433C7;
-        Thu, 27 Jul 2023 22:27:09 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 571AF61F78;
+        Thu, 27 Jul 2023 22:59:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D062C433C7;
+        Thu, 27 Jul 2023 22:59:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690496829;
-        bh=0LiP0QB1lVR87Tgh5/RGahBFjG3v60pbf8mzqr+M4F8=;
-        h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-        b=oflBqoiifTy9YI9fu6hNV9A1eOgHdcsB5HiPigzRfwGMg6LGqiLTsP98r3pXrg19e
-         GqSCUnamjR9e+gUhKlPDkYAMpWkHzDiX/Ci1EhOF5obimdowVLKfQofH4QWzTz7+WV
-         gsn2KTDm4wr6BTIzlpsNgpF6rBf/oD1qYc8cwDwFKWYZ1GfZBnVXyd8OTBIUGWJYh5
-         KZMLKfr43Y49odhBpDSrByCnnnsp1DeNdNO+oxZcoZpVW8MWmWFGV0M49D3aS+OvPk
-         h4ak7thgSXpsi8d8olWbq+86KdZ+86su6Dg/QmG0Y1T8UAottn/PEL2NEO7MtnYdyJ
-         F/0+AYydtgwjw==
-Date:   Thu, 27 Jul 2023 15:27:09 -0700
-Subject: [PATCH 7/7] xfs: improve xfarray quicksort pivot
+        s=k20201202; t=1690498740;
+        bh=7YZbeoQqfKNEx+jwMo1/b4aGKcS1iuXyOx+y/zN5Zzo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hJ6iB/tYWfVsHajByyC28Q7EemdgjIMF6uLfu9+WgDtg2ewJu2I/4RuqBensexXAf
+         FDDEk9ibYhSToWf2z2KL+m6ua2Eid74tC26XQxdAGdDyuhJauZOYrO+rSPxa76G3C8
+         JM8crmumVVgBtDC38fV2RDMVcxBvwdD45lwBhEddEORux7bg7/o6DgRHlk1qTcLQfL
+         DpzfQqSxW2XolqDRG8BB/4q1ZDERYghJA4A7XHyfwQH8iDKwXyZzLYDZHNAIw2TPal
+         V0qSx/dLBn64aNDLJOH0GqdY6JJLnw9NBtfFrhnafz2W+ZNJQz+4SP8SRFHsnnsNW6
+         qwdkUtESktMGA==
+Date:   Thu, 27 Jul 2023 15:58:59 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     djwong@kernel.org
-Cc:     Kent Overstreet <kent.overstreet@linux.dev>,
-        Dave Chinner <dchinner@redhat.com>, linux-xfs@vger.kernel.org,
-        willy@infradead.org, linux-fsdevel@vger.kernel.org
-Message-ID: <169049623673.921478.10458271524242483270.stgit@frogsfrogsfrogs>
-In-Reply-To: <169049623563.921478.13811535720302490179.stgit@frogsfrogsfrogs>
-References: <169049623563.921478.13811535720302490179.stgit@frogsfrogsfrogs>
-User-Agent: StGit/0.19
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Pankaj Raghav <p.raghav@samsung.com>,
+        Chandan Babu R <chandan.babu@oracle.com>
+Subject: Re: xfs kdevops baseline for next-20230725
+Message-ID: <20230727225859.GF11352@frogsfrogsfrogs>
+References: <ZMK1r91ByQERwDK+@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZMK1r91ByQERwDK+@bombadil.infradead.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -57,334 +56,228 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Darrick J. Wong <djwong@kernel.org>
+On Thu, Jul 27, 2023 at 11:21:35AM -0700, Luis Chamberlain wrote:
+> I'd like to see if this is useful so feedback is welcomed.
+> 
+> I recently had a reason to establish a baseline for XFS as we start
+> testing some new fatures we've been working on to ensure we don't create
+> regressions. I've been using kdevops for this work, its on github [0] and
+> on gitlab for those that prefer that [1] and tested against linux-next
+> tag next-20230725, with its respective generic kernel configuration
+> which has evolved over time for kdevops which let's us test with kdevops
+> with qemu / virtualbox / all cloud providers [2]. We fork fstests [3] so
+> have a small delta, mostly reverts to help stability on testing as
+> Chandan found regressions in some new fstest changes.
+> 
+> [0] https://github.com/linux-kdevops/kdevops.git
+> [1] https://gitlab.com/linux-kdevops/kdevops.git
+> [2] https://github.com/linux-kdevops/kdevops/blob/master/playbooks/roles/bootlinux/templates/config-next-20230725
+> [3] https://github.com/linux-kdevops/fstests
+> 
+> The sections tested for are:
+> 
+> xfs_crc
+> xfs_reflink
+> xfs_reflink-normapbt
+> xfs_reflink_1024
+> xfs_reflink_2k
+> xfs_reflink_4k
+> xfs_nocrc
+> xfs_nocrc_512
+> xfs_nocrc_1k
+> xfs_nocrc_2k
+> xfs_nocrc_4k
+> xfs_logdev
+> xfs_rtdev
+> xfs_rtlogdev
 
-Now that we have the means to do insertion sorts of small in-memory
-subsets of an xfarray, use it to improve the quicksort pivot algorithm
-by reading 7 records into memory and finding the median of that.  This
-should prevent bad partitioning when a[lo] and a[hi] end up next to each
-other in the final sort, which can happen when sorting for cntbt repair
-when the free space is extremely fragmented (e.g. generic/176).
+Question: Have you turned on gcov to determine how much of fs/xfs/ and
+fs/iomap/ are actually getting exercised by these configurations?
 
-This doesn't speed up the average quicksort run by much, but it will
-(hopefully) avoid the quadratic time collapse for which quicksort is
-famous.
+I have for my fstests fleet; it's about ~90% for iomap, ~87% for
+xfs/libxfs, ~84% for the pagecache, and ~80% for xfs/scrub.  Was
+wondering what everyone else got on the test.
 
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
----
- fs/xfs/scrub/xfarray.c |  198 ++++++++++++++++++++++++++++++++----------------
- fs/xfs/scrub/xfarray.h |   19 +++--
- 2 files changed, 148 insertions(+), 69 deletions(-)
+--D
 
-
-diff --git a/fs/xfs/scrub/xfarray.c b/fs/xfs/scrub/xfarray.c
-index 18cc734ab0f48..f0f532c10a5ac 100644
---- a/fs/xfs/scrub/xfarray.c
-+++ b/fs/xfs/scrub/xfarray.c
-@@ -427,6 +427,14 @@ static inline xfarray_idx_t *xfarray_sortinfo_hi(struct xfarray_sortinfo *si)
- 	return xfarray_sortinfo_lo(si) + si->max_stack_depth;
- }
- 
-+/* Size of each element in the quicksort pivot array. */
-+static inline size_t
-+xfarray_pivot_rec_sz(
-+	struct xfarray		*array)
-+{
-+	return round_up(array->obj_size, 8) + sizeof(xfarray_idx_t);
-+}
-+
- /* Allocate memory to handle the sort. */
- static inline int
- xfarray_sortinfo_alloc(
-@@ -437,8 +445,16 @@ xfarray_sortinfo_alloc(
- {
- 	struct xfarray_sortinfo	*si;
- 	size_t			nr_bytes = sizeof(struct xfarray_sortinfo);
-+	size_t			pivot_rec_sz = xfarray_pivot_rec_sz(array);
- 	int			max_stack_depth;
- 
-+	/*
-+	 * The median-of-nine pivot algorithm doesn't work if a subset has
-+	 * fewer than 9 items.  Make sure the in-memory sort will always take
-+	 * over for subsets where this wouldn't be the case.
-+	 */
-+	BUILD_BUG_ON(XFARRAY_QSORT_PIVOT_NR >= XFARRAY_ISORT_NR);
-+
- 	/*
- 	 * Tail-call recursion during the partitioning phase means that
- 	 * quicksort will never recurse more than log2(nr) times.  We need one
-@@ -453,8 +469,10 @@ xfarray_sortinfo_alloc(
- 	/* Each level of quicksort uses a lo and a hi index */
- 	nr_bytes += max_stack_depth * sizeof(xfarray_idx_t) * 2;
- 
--	/* Scratchpad for in-memory sort, or one record for the pivot */
--	nr_bytes += (XFARRAY_ISORT_NR * array->obj_size);
-+	/* Scratchpad for in-memory sort, or finding the pivot */
-+	nr_bytes += max_t(size_t,
-+			(XFARRAY_QSORT_PIVOT_NR + 1) * pivot_rec_sz,
-+			XFARRAY_ISORT_NR * array->obj_size);
- 
- 	si = kvzalloc(nr_bytes, XCHK_GFP_FLAGS);
- 	if (!si)
-@@ -632,14 +650,43 @@ static inline void *xfarray_sortinfo_pivot(struct xfarray_sortinfo *si)
- 	return xfarray_sortinfo_hi(si) + si->max_stack_depth;
- }
- 
-+/* Return a pointer to the start of the pivot array. */
-+static inline void *
-+xfarray_sortinfo_pivot_array(
-+	struct xfarray_sortinfo	*si)
-+{
-+	return xfarray_sortinfo_pivot(si) + si->array->obj_size;
-+}
-+
-+/* The xfarray record is stored at the start of each pivot array element. */
-+static inline void *
-+xfarray_pivot_array_rec(
-+	void			*pa,
-+	size_t			pa_recsz,
-+	unsigned int		pa_idx)
-+{
-+	return pa + (pa_recsz * pa_idx);
-+}
-+
-+/* The xfarray index is stored at the end of each pivot array element. */
-+static inline xfarray_idx_t *
-+xfarray_pivot_array_idx(
-+	void			*pa,
-+	size_t			pa_recsz,
-+	unsigned int		pa_idx)
-+{
-+	return xfarray_pivot_array_rec(pa, pa_recsz, pa_idx + 1) -
-+			sizeof(xfarray_idx_t);
-+}
-+
- /*
-  * Find a pivot value for quicksort partitioning, swap it with a[lo], and save
-  * the cached pivot record for the next step.
-  *
-- * Select the median value from a[lo], a[mid], and a[hi].  Put the median in
-- * a[lo], the lowest in a[mid], and the highest in a[hi].  Using the median of
-- * the three reduces the chances that we pick the worst case pivot value, since
-- * it's likely that our array values are nearly sorted.
-+ * Load evenly-spaced records within the given range into memory, sort them,
-+ * and choose the pivot from the median record.  Using multiple points will
-+ * improve the quality of the pivot selection, and hopefully avoid the worst
-+ * quicksort behavior, since our array values are nearly always evenly sorted.
-  */
- STATIC int
- xfarray_qsort_pivot(
-@@ -647,76 +694,99 @@ xfarray_qsort_pivot(
- 	xfarray_idx_t		lo,
- 	xfarray_idx_t		hi)
- {
--	void			*a = xfarray_sortinfo_pivot(si);
--	void			*b = xfarray_scratch(si->array);
--	xfarray_idx_t		mid = lo + ((hi - lo) / 2);
-+	void			*pivot = xfarray_sortinfo_pivot(si);
-+	void			*parray = xfarray_sortinfo_pivot_array(si);
-+	void			*recp;
-+	xfarray_idx_t		*idxp;
-+	xfarray_idx_t		step = (hi - lo) / (XFARRAY_QSORT_PIVOT_NR - 1);
-+	size_t			pivot_rec_sz = xfarray_pivot_rec_sz(si->array);
-+	int			i, j;
- 	int			error;
- 
--	/* if a[mid] < a[lo], swap a[mid] and a[lo]. */
--	error = xfarray_sort_load(si, mid, a);
--	if (error)
--		return error;
--	error = xfarray_sort_load(si, lo, b);
--	if (error)
--		return error;
--	if (xfarray_sort_cmp(si, a, b) < 0) {
--		error = xfarray_sort_store(si, lo, a);
--		if (error)
--			return error;
--		error = xfarray_sort_store(si, mid, b);
--		if (error)
--			return error;
--	}
-+	ASSERT(step > 0);
- 
--	/* if a[hi] < a[mid], swap a[mid] and a[hi]. */
--	error = xfarray_sort_load(si, hi, a);
--	if (error)
--		return error;
--	error = xfarray_sort_load(si, mid, b);
--	if (error)
--		return error;
--	if (xfarray_sort_cmp(si, a, b) < 0) {
--		error = xfarray_sort_store(si, mid, a);
--		if (error)
--			return error;
--		error = xfarray_sort_store(si, hi, b);
--		if (error)
--			return error;
--	} else {
--		goto move_front;
-+	/*
-+	 * Load the xfarray indexes of the records we intend to sample into the
-+	 * pivot array.
-+	 */
-+	idxp = xfarray_pivot_array_idx(parray, pivot_rec_sz, 0);
-+	*idxp = lo;
-+	for (i = 1; i < XFARRAY_QSORT_PIVOT_NR - 1; i++) {
-+		idxp = xfarray_pivot_array_idx(parray, pivot_rec_sz, i);
-+		*idxp = lo + (i * step);
- 	}
-+	idxp = xfarray_pivot_array_idx(parray, pivot_rec_sz,
-+			XFARRAY_QSORT_PIVOT_NR - 1);
-+	*idxp = hi;
- 
--	/* if a[mid] < a[lo], swap a[mid] and a[lo]. */
--	error = xfarray_sort_load(si, mid, a);
--	if (error)
--		return error;
--	error = xfarray_sort_load(si, lo, b);
--	if (error)
--		return error;
--	if (xfarray_sort_cmp(si, a, b) < 0) {
--		error = xfarray_sort_store(si, lo, a);
--		if (error)
--			return error;
--		error = xfarray_sort_store(si, mid, b);
-+	/* Load the selected xfarray records into the pivot array. */
-+	for (i = 0; i < XFARRAY_QSORT_PIVOT_NR; i++) {
-+		xfarray_idx_t	idx;
-+
-+		recp = xfarray_pivot_array_rec(parray, pivot_rec_sz, i);
-+		idxp = xfarray_pivot_array_idx(parray, pivot_rec_sz, i);
-+
-+		/* No unset records; load directly into the array. */
-+		if (likely(si->array->unset_slots == 0)) {
-+			error = xfarray_sort_load(si, *idxp, recp);
-+			if (error)
-+				return error;
-+			continue;
-+		}
-+
-+		/*
-+		 * Load non-null records into the scratchpad without changing
-+		 * the xfarray_idx_t in the pivot array.
-+		 */
-+		idx = *idxp;
-+		xfarray_sort_bump_loads(si);
-+		error = xfarray_load_next(si->array, &idx, recp);
- 		if (error)
- 			return error;
- 	}
- 
--move_front:
-+	xfarray_sort_bump_heapsorts(si);
-+	sort(parray, XFARRAY_QSORT_PIVOT_NR, pivot_rec_sz, si->cmp_fn, NULL);
-+
- 	/*
--	 * Move our selected pivot to a[lo].  Recall that a == si->pivot, so
--	 * this leaves us with the pivot cached in the sortinfo structure.
-+	 * We sorted the pivot array records (which includes the xfarray
-+	 * indices) in xfarray record order.  The median element of the pivot
-+	 * array contains the xfarray record that we will use as the pivot.
-+	 * Copy that xfarray record to the designated space.
- 	 */
--	error = xfarray_sort_load(si, lo, b);
--	if (error)
--		return error;
--	error = xfarray_sort_load(si, mid, a);
--	if (error)
--		return error;
--	error = xfarray_sort_store(si, mid, b);
-+	recp = xfarray_pivot_array_rec(parray, pivot_rec_sz,
-+			XFARRAY_QSORT_PIVOT_NR / 2);
-+	memcpy(pivot, recp, si->array->obj_size);
-+
-+	/* If the pivot record we chose was already in a[lo] then we're done. */
-+	idxp = xfarray_pivot_array_idx(parray, pivot_rec_sz,
-+			XFARRAY_QSORT_PIVOT_NR / 2);
-+	if (*idxp == lo)
-+		return 0;
-+
-+	/*
-+	 * Find the cached copy of a[lo] in the pivot array so that we can swap
-+	 * a[lo] and a[pivot].
-+	 */
-+	for (i = 0, j = -1; i < XFARRAY_QSORT_PIVOT_NR; i++) {
-+		idxp = xfarray_pivot_array_idx(parray, pivot_rec_sz, i);
-+		if (*idxp == lo)
-+			j = i;
-+	}
-+	if (j < 0) {
-+		ASSERT(j >= 0);
-+		return -EFSCORRUPTED;
-+	}
-+
-+	/* Swap a[lo] and a[pivot]. */
-+	error = xfarray_sort_store(si, lo, pivot);
- 	if (error)
- 		return error;
--	return xfarray_sort_store(si, lo, a);
-+
-+	recp = xfarray_pivot_array_rec(parray, pivot_rec_sz, j);
-+	idxp = xfarray_pivot_array_idx(parray, pivot_rec_sz,
-+			XFARRAY_QSORT_PIVOT_NR / 2);
-+	return xfarray_sort_store(si, *idxp, recp);
- }
- 
- /*
-@@ -828,7 +898,7 @@ xfarray_sort_load_cached(
-  *    particularly expensive in the kernel.
-  *
-  * 2. For arrays with records in arbitrary or user-controlled order, choose the
-- *    pivot element using a median-of-three decision tree.  This reduces the
-+ *    pivot element using a median-of-nine decision tree.  This reduces the
-  *    probability of selecting a bad pivot value which causes worst case
-  *    behavior (i.e. partition sizes of 1).
-  *
-diff --git a/fs/xfs/scrub/xfarray.h b/fs/xfs/scrub/xfarray.h
-index 091614e7f6836..4ecac01363d9f 100644
---- a/fs/xfs/scrub/xfarray.h
-+++ b/fs/xfs/scrub/xfarray.h
-@@ -62,6 +62,9 @@ typedef cmp_func_t xfarray_cmp_fn;
- #define XFARRAY_ISORT_SHIFT		(4)
- #define XFARRAY_ISORT_NR		(1U << XFARRAY_ISORT_SHIFT)
- 
-+/* Evalulate this many points to find the qsort pivot. */
-+#define XFARRAY_QSORT_PIVOT_NR		(9)
-+
- struct xfarray_sortinfo {
- 	struct xfarray		*array;
- 
-@@ -91,7 +94,6 @@ struct xfarray_sortinfo {
- 	uint64_t		compares;
- 	uint64_t		heapsorts;
- #endif
--
- 	/*
- 	 * Extra bytes are allocated beyond the end of the structure to store
- 	 * quicksort information.  C does not permit multiple VLAs per struct,
-@@ -114,11 +116,18 @@ struct xfarray_sortinfo {
- 	 * 	xfarray_rec_t	scratch[ISORT_NR];
- 	 *
- 	 * Otherwise, we want to partition the records to partition the array.
--	 * We store the chosen pivot record here and use the xfarray scratchpad
--	 * to rearrange the array around the pivot:
--	 *
--	 * 	xfarray_rec_t	pivot;
-+	 * We store the chosen pivot record at the start of the scratchpad area
-+	 * and use the rest to sample some records to estimate the median.
-+	 * The format of the qsort_pivot array enables us to use the kernel
-+	 * heapsort function to place the median value in the middle.
- 	 *
-+	 * 	struct {
-+	 * 		xfarray_rec_t	pivot;
-+	 * 		struct {
-+	 *			xfarray_rec_t	rec;  (rounded up to 8 bytes)
-+	 * 			xfarray_idx_t	idx;
-+	 *		} qsort_pivot[QSORT_PIVOT_NR];
-+	 * 	};
- 	 * }
- 	 */
- };
-
+> You can see what these sections represent in terms of xfs here:
+> 
+> https://github.com/linux-kdevops/kdevops/blob/master/playbooks/roles/fstests/templates/xfs/xfs.config
+> 
+> The first order of business before even considering a set of changes is
+> getting baseline and building a high confidence in that baseline. We had
+> a technical debt as it's been a while before we get to establish and
+> publish a baseline with high confidence for XFS for linux-next. Hopefully this
+> will help us keep it moving forward.
+> 
+> The kdevops configuration used for this can be found here:
+> 
+> https://github.com/linux-kdevops/kdevops/blob/master/workflows/fstests/results/mcgrof/libvirt-qemu/20230727/kdevops.config
+> 
+> Worth noting is that virtio drives are used instead of NVMe since virtio
+> supports io-threads, and so we get less NVMe timouts on the guest which
+> have proven to cause major false positives for testing for a while as we
+> have seen on the stable testing. I'll go ahead and make virtio the
+> default for qemu configurations now. We expect to move back to nvme once
+> distros pick up release of qemu with io-thread support.
+> 
+> This is useful truncated / sparsefiles files with loopback file strategy
+> documented here:
+> 
+> https://github.com/linux-kdevops/kdevops/blob/master/docs/testing-with-loopback.md
+> 
+> I'll soon re-test with real NVMe drives though as kdevops now has
+> support for using them and I have some basic tests with PCIe passthrough
+> (which kdevops also enables with 'make dynconfig').
+> 
+> For now I've just ran one full set of fstests, ie, the confidence is rather
+> low for my preference. After publishing this I will the tests against one
+> week's worth of testing to build confidence up to 100 tests. We'll see
+> if some other tests fail with a lower failure rate after that.
+> 
+> But for now I figured I'd publish preliminary results on the first run.
+> Some failures seem like test bugs. Some other failures are likely real and
+> require investigation.
+> 
+> Often we just commit into kdevops test results / expunges, but this is
+> the first time publishing actual results on the mailing list. The commit
+> logs detail the methodology to collect things results and go step by
+> step so to help others who may want to try to start baselines with other
+> filesystems, etc.
+> 
+> You are more than welcomed to also contribute testing and your own
+> results in your own kdevops namespace, the more we have the better
+> (within reason of course).
+> 
+> The tests found to be common in at least 2 secions go in the all.txt
+> expunge list. Since at LSFMM we've been requested to store results
+> this set of results go with results archived in XZ format and
+> demonstrate how to list files in it, and also get results for failures
+> out. I provide a simple super cursory review of the test failures as well.
+> 
+> The test bugs seem related to quotes, but it's not clear to me why
+> this wasn't detected in other tests before.
+> 
+> What I'd like to know, is if this email is useful to the XFS development
+> community. Should we strive to do this more often?
+> 
+> Here are failures found in at least more than one section:
+> 
+> cat workflows/fstests/expunges/6.5.0-rc3-next-20230725/xfs/unassigned/all.txt
+> 
+> # lazy baseline entries are failures found at least once on multiple XFS test
+> # sections. To see the actual *.bad files and *.dmesg files you can use:
+> #
+> # tar -tOJf workflows/fstests/results/mcgrof/libvirt-qemu/20230727/6.5.0-rc3-next-20230725.xz
+> #
+> # For example to see all generic/175 failures:
+> #
+> # tar -tOJf workflows/fstests/results/mcgrof/libvirt-qemu/20230727/6.5.0-rc3-next-20230725.xz 2>&1 | grep generic | grep 175
+> # 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/generic/175.out.bad
+> # 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/generic/175.full
+> # 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/generic/175.dmesg
+> # 6.5.0-rc3-next-20230725/xfs_reflink/generic/175.out.bad
+> # 6.5.0-rc3-next-20230725/xfs_reflink/generic/175.full
+> # 6.5.0-rc3-next-20230725/xfs_reflink/generic/175.dmesg
+> # 6.5.0-rc3-next-20230725/xfs_reflink_4k/generic/175.out.bad
+> # 6.5.0-rc3-next-20230725/xfs_reflink_4k/generic/175.full
+> # 6.5.0-rc3-next-20230725/xfs_reflink_4k/generic/175.dmesg
+> # 6.5.0-rc3-next-20230725/xfs_rtdev/generic/175.out.bad
+> # 6.5.0-rc3-next-20230725/xfs_rtdev/generic/175.full
+> # 6.5.0-rc3-next-20230725/xfs_rtdev/generic/175.dmesg
+> #
+> # And now to see one individual file:
+> #
+> # tar -xOJf workflows/fstests/results/mcgrof/libvirt-qemu/20230727/6.5.0-rc3-next-20230725.xz 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/generic/175.out.bad
+> # tar -xOJf workflows/fstests/results/mcgrof/libvirt-qemu/20230727/6.5.0-rc3-next-20230725.xz 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/generic/175.dmesg
+> #
+> generic/175 # seems like a test bug - lazy baseline - failure found in at least two sections
+> generic/297 # seems like a test bug - lazy baseline - failure found in at least two sections
+> generic/298 # seems like a test bug - lazy baseline - failure found in at least two sections
+> generic/471 # race against loop? - lazy baseline - failure found in at least two sections
+> generic/563 # needs investigation - lazy baseline - failure found in at least two sections
+> xfs/157 # needs investigation - lazy baseline - failure found in at least two sections
+> xfs/188 # unclear - lazy baseline - failure found in at least two sections
+> xfs/205 # unclear - lazy baseline - failure found in at least two sections
+> xfs/432 # test bug: blocksize should detect sector size - lazy baseline - failure found in at least two sections
+> xfs/506 # needs investigation - lazy baseline - failure found in at least two sections
+> xfs/516 # needs investigation - lazy baseline - failure found in at least two sections
+> 
+> Here are failures found in just the test section which enables reflinks
+> but disables rmapbt:
+> 
+> cat workflows/fstests/expunges/6.5.0-rc3-next-20230725/xfs/unassigned/xfs_reflink_normapbt.txt
+> 
+> # For exmaple to see these failures:
+> #
+> # tar -tOJf workflows/fstests/results/mcgrof/libvirt-qemu/20230727/6.5.0-rc3-next-20230725.xz 2>&1 | grep xfs | grep normap | grep 301
+> #
+> # 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/xfs/301.out.bad
+> # 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/xfs/301.full
+> # 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/xfs/301.dmesg
+> 
+> # To see one file output:
+> # tar -xOJf workflows/fstests/results/mcgrof/libvirt-qemu/20230727/6.5.0-rc3-next-20230725.xz 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/xfs/301.out.bad
+> xfs/301 # needs investigation
+> 
+> And here are failures found only on the realtime device, most are likely
+> test bugs which means we gotta enhance the test to skip the realtime
+> device or learn to use it, but some seem like real failures:
+> 
+> cat workflows/fstests/expunges/6.5.0-rc3-next-20230725/xfs/unassigned/xfs_rtdev.txt
+> 
+> # For example to see rtdev's generic/012 related files:
+> #
+> # tar -tOJf workflows/fstests/results/mcgrof/libvirt-qemu/20230727/6.5.0-rc3-next-20230725.xz 2>&1 | grep xfs | grep rtdev | grep 012
+> #
+> # To see the generic/012 out.bad file:
+> # tar -xOJf workflows/fstests/results/mcgrof/libvirt-qemu/20230727/6.5.0-rc3-next-20230725.xz 6.5.0-rc3-next-20230725/xfs_rtdev/generic/012.out.bad
+> #
+> generic/012 # needs investigation
+> generic/013 # needs investigation
+> generic/015 # might be a test bug
+> generic/016 # needs investigation
+> generic/021 # needs investigation
+> generic/022 # needs investigation
+> generic/027 # might be a test bug
+> generic/058 # needs investigation
+> generic/060 # needs investigation
+> generic/061 # needs investigation
+> generic/063 # needs investigation
+> generic/074 # needs investigation
+> generic/075 # needs investigation
+> generic/077 # might be a test bug
+> generic/096 # might be a test bug
+> generic/102 # might be a test bug
+> generic/112 # needs investigation
+> generic/113 # needs investigation
+> generic/171 # might be a test bug
+> generic/172 # might be a test bug
+> generic/173 # might be a test bug
+> generic/174 # might be a test bug
+> generic/204 # might be a test bug
+> generic/224 # might be a test bug
+> generic/226 # might be a test bug
+> generic/251 # ran out of space and then corruption?
+> generic/256 # might be a test bug
+> generic/269 # might be a test bug
+> generic/270 # might be a test bug
+> generic/273 # might be a test bug
+> generic/274 # might be a test bug
+> generic/275 # might be a test bug
+> generic/300 # might be a test bug
+> generic/312 # might be a test bug
+> generic/361 # might be a test bug
+> generic/371 # might be a test bug
+> generic/416 # might be a test bug
+> generic/427 # might be a test bug
+> generic/449 # might be a test bug
+> generic/488 # might be a test bug
+> generic/511 # might be a test bug
+> generic/515 # might be a test bug
+> generic/520 # needs investigation
+> generic/551 # needs investigation
+> generic/558 # might be a test bug
+> generic/562 # never completed
+> 
+>   Luis
