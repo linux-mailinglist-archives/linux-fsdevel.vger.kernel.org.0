@@ -2,59 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DDDA7764EF4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 11:13:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2C11764F2B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 11:16:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231772AbjG0JNa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 05:13:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39146 "EHLO
+        id S233077AbjG0JQw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 05:16:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234210AbjG0JNG (ORCPT
+        with ESMTP id S233096AbjG0JQZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 05:13:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FCD07D91;
-        Thu, 27 Jul 2023 02:01:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B96A561DC6;
-        Thu, 27 Jul 2023 09:01:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55442C433C7;
-        Thu, 27 Jul 2023 09:01:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690448485;
-        bh=RCIxAq+J6KM/JUYFtqw9jn62QLvzZlvWqd22bpCy8BU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BYq/bF6zhUZ6NptcTbtJ5x0bg7xdgOwVxE0cFCL2YbzKnA8Rg4kDb4rEeAyMQ4jDt
-         E/oa8kraypY43zR7ScAYwqrp1WjXb35nVSJM1vnjcmbz6Cw37ITU0JHAupYsx6fYg5
-         UiSNz+FUMF3h8YcAJcx4i+JjVrwgh/AX5kF7RXE3uBSutffA6TsXXKOTgzV/V10N/d
-         n8eYNkOgSZ+zVHoD6cYuJdaJM2/hvcgUGk2GIt4ce6Sug93wLldCPrf0Zia5eKMEX2
-         qLjZl51CCtpmkXHW9/0M32urJ7NF6kEKnCqIlMkf9ggTXGi/V6gLNtibwfiEbTiSGq
-         qhxwPylU95Tlg==
-Date:   Thu, 27 Jul 2023 11:01:20 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc:     Xiubo Li <xiubli@redhat.com>, stgraber@ubuntu.com,
-        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 03/11] ceph: handle idmapped mounts in
- create_request_message()
-Message-ID: <20230727-bedeuten-endkampf-22c87edd132b@brauner>
-References: <20230726141026.307690-1-aleksandr.mikhalitsyn@canonical.com>
- <20230726141026.307690-4-aleksandr.mikhalitsyn@canonical.com>
- <6ea8bf93-b456-bda4-b39d-a43328987ac9@redhat.com>
- <CAEivzxeQubvas2yPFYRRXr3BP7pp1HNM3b7C-PQQWy-0FpFKuQ@mail.gmail.com>
+        Thu, 27 Jul 2023 05:16:25 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 796967ECD
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 02:07:13 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-66d6a9851f3so176609b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 02:07:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1690448833; x=1691053633;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UKiGuCYavgdrONYSlKU+hjlx/AzCB2LKMORbFgw7HEo=;
+        b=DjrROq91sf6Va+7++jhnZLLfMfZ3NpR+vs103Gffs3+O08HW6byjEgnIqMIjx7XVVU
+         6Esw8LCCRNx5FIzgZD2yLlNtiJ3fWUXbMzLdc62rKZLebfjHSG7L7jgEMl0D1hE7ZoNg
+         HZ2c9Q9i+LL0tt0iImhvHFOK+Hduw2G0dP+6wK+guSG8W2Nz3BegBODQY1lmNQJ14Dz4
+         uuXi2h/k5/64PvGOHou6Defqpklm1cGUHs8RqpArf+xI1YmvbpRswY34ry3JAORO90Jx
+         4NSzh0j5w+vqWxK/Ia35MiibA4wNxyya8QHOgB3QIdRRJ50Wt48gZu09EVgownqRkh1E
+         f6DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690448833; x=1691053633;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UKiGuCYavgdrONYSlKU+hjlx/AzCB2LKMORbFgw7HEo=;
+        b=NMjPPZCFfKmUIsLCbZy+aV+U9Pl/qpwWrEumHBrEOoCchyOWzLTes6i//NjfTEhUxv
+         QZPj17vgMAoF3z1DyJvy1LOxmW7MzcVqfAbMCJ7enF9RNaBCl9QA46eDUx7wGiGqJIIh
+         qDnhmTsEl4c4g9/VPEat7oIH7q08ei8Gqv5emPfhxBKBR4Jyu0hmvmAGMuNLHwSt0DfP
+         7W/rf4ZKcQrrCMMuxreXE7GCcXKywCFEjoF7TPhp7CNG2opMoMPyYQUaSHgwcQ01+Vrl
+         I2+V5YGWdCV8hx087WEVUiSa6HPCQ0/NG1j1IGJY0JmkBuvhpUYk+1zOVz5NUsT71xix
+         Uncw==
+X-Gm-Message-State: ABy/qLYQg8C8iOE+ms/EFQZOfD1R4WPzbdf8TUZFPNMFfiTA1pjWR8Sz
+        2hWyx0nkUr5P2LK3MkhOkDkLvg==
+X-Google-Smtp-Source: APBJJlEquEzidizjgrmS1e55j2UU3CMKKyxPnlaVqAXQYQ+ePfvdxx8A4f9JU/BbmCjGKzVhoGuchQ==
+X-Received: by 2002:a17:90a:128e:b0:263:25f9:65b2 with SMTP id g14-20020a17090a128e00b0026325f965b2mr4139877pja.4.1690448832920;
+        Thu, 27 Jul 2023 02:07:12 -0700 (PDT)
+Received: from [10.70.252.135] ([203.208.167.147])
+        by smtp.gmail.com with ESMTPSA id a11-20020a170902ee8b00b001b7e63cfa19sm1063627pld.234.2023.07.27.02.07.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jul 2023 02:07:12 -0700 (PDT)
+Message-ID: <19461737-db63-2ab5-110b-e65035881ae2@bytedance.com>
+Date:   Thu, 27 Jul 2023 17:06:57 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEivzxeQubvas2yPFYRRXr3BP7pp1HNM3b7C-PQQWy-0FpFKuQ@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.12.0
+Subject: Re: [PATCH v3 15/49] nfs: dynamically allocate the nfs-acl shrinker
+Content-Language: en-US
+To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
+        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
+        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
+        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
+        yujie.liu@intel.com, gregkh@linuxfoundation.org,
+        muchun.song@linux.dev
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+        kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-erofs@lists.ozlabs.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+        rcu@vger.kernel.org, netdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        dm-devel@redhat.com, linux-raid@vger.kernel.org,
+        linux-bcache@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Muchun Song <songmuchun@bytedance.com>
+References: <20230727080502.77895-1-zhengqi.arch@bytedance.com>
+ <20230727080502.77895-16-zhengqi.arch@bytedance.com>
+From:   Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <20230727080502.77895-16-zhengqi.arch@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,121 +92,63 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 27, 2023 at 08:36:40AM +0200, Aleksandr Mikhalitsyn wrote:
-> On Thu, Jul 27, 2023 at 7:30 AM Xiubo Li <xiubli@redhat.com> wrote:
-> >
-> >
-> > On 7/26/23 22:10, Alexander Mikhalitsyn wrote:
-> > > Inode operations that create a new filesystem object such as ->mknod,
-> > > ->create, ->mkdir() and others don't take a {g,u}id argument explicitly.
-> > > Instead the caller's fs{g,u}id is used for the {g,u}id of the new
-> > > filesystem object.
-> > >
-> > > In order to ensure that the correct {g,u}id is used map the caller's
-> > > fs{g,u}id for creation requests. This doesn't require complex changes.
-> > > It suffices to pass in the relevant idmapping recorded in the request
-> > > message. If this request message was triggered from an inode operation
-> > > that creates filesystem objects it will have passed down the relevant
-> > > idmaping. If this is a request message that was triggered from an inode
-> > > operation that doens't need to take idmappings into account the initial
-> > > idmapping is passed down which is an identity mapping.
-> > >
-> > > This change uses a new cephfs protocol extension CEPHFS_FEATURE_HAS_OWNER_UIDGID
-> > > which adds two new fields (owner_{u,g}id) to the request head structure.
-> > > So, we need to ensure that MDS supports it otherwise we need to fail
-> > > any IO that comes through an idmapped mount because we can't process it
-> > > in a proper way. MDS server without such an extension will use caller_{u,g}id
-> > > fields to set a new inode owner UID/GID which is incorrect because caller_{u,g}id
-> > > values are unmapped. At the same time we can't map these fields with an
-> > > idmapping as it can break UID/GID-based permission checks logic on the
-> > > MDS side. This problem was described with a lot of details at [1], [2].
-> > >
-> > > [1] https://lore.kernel.org/lkml/CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThfzuibrhA3RKM=ZOYLg@mail.gmail.com/
-> > > [2] https://lore.kernel.org/all/20220104140414.155198-3-brauner@kernel.org/
-> > >
-> > > Cc: Xiubo Li <xiubli@redhat.com>
-> > > Cc: Jeff Layton <jlayton@kernel.org>
-> > > Cc: Ilya Dryomov <idryomov@gmail.com>
-> > > Cc: ceph-devel@vger.kernel.org
-> > > Co-Developed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-> > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-> > > ---
-> > > v7:
-> > >       - reworked to use two new fields for owner UID/GID (https://github.com/ceph/ceph/pull/52575)
-> > > ---
-> > >   fs/ceph/mds_client.c         | 20 ++++++++++++++++++++
-> > >   fs/ceph/mds_client.h         |  5 ++++-
-> > >   include/linux/ceph/ceph_fs.h |  4 +++-
-> > >   3 files changed, 27 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > > index c641ab046e98..ac095a95f3d0 100644
-> > > --- a/fs/ceph/mds_client.c
-> > > +++ b/fs/ceph/mds_client.c
-> > > @@ -2923,6 +2923,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
-> > >   {
-> > >       int mds = session->s_mds;
-> > >       struct ceph_mds_client *mdsc = session->s_mdsc;
-> > > +     struct ceph_client *cl = mdsc->fsc->client;
-> > >       struct ceph_msg *msg;
-> > >       struct ceph_mds_request_head_legacy *lhead;
-> > >       const char *path1 = NULL;
-> > > @@ -3028,6 +3029,16 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
-> > >       lhead = find_legacy_request_head(msg->front.iov_base,
-> > >                                        session->s_con.peer_features);
-> > >
-> > > +     if ((req->r_mnt_idmap != &nop_mnt_idmap) &&
-> > > +         !test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID, &session->s_features)) {
-> > > +             pr_err_ratelimited_client(cl,
-> > > +                     "idmapped mount is used and CEPHFS_FEATURE_HAS_OWNER_UIDGID"
-> > > +                     " is not supported by MDS. Fail request with -EIO.\n");
-> > > +
-> > > +             ret = -EIO;
-> > > +             goto out_err;
-> > > +     }
-> > > +
-> >
-> > I think this couldn't fail the mounting operation, right ?
-> 
-> This won't fail mounting. First of all an idmapped mount is always an
-> additional mount, you always
-> start from doing "normal" mount and only after that you can use this
-> mount to create an idmapped one.
-> ( example: https://github.com/brauner/mount-idmapped/tree/master )
-> 
-> >
-> > IMO we should fail the mounting from the beginning.
-> 
-> Unfortunately, we can't fail mount from the beginning. Procedure of
-> the idmapped mounts
-> creation is handled not on the filesystem level, but on the VFS level
 
-Correct. It's a generic vfsmount feature.
 
-> (source: https://github.com/torvalds/linux/blob/0a8db05b571ad5b8d5c8774a004c0424260a90bd/fs/namespace.c#L4277
-> )
+On 2023/7/27 16:04, Qi Zheng wrote:
+> Use new APIs to dynamically allocate the nfs-acl shrinker.
 > 
-> Kernel perform all required checks as:
-> - filesystem type has declared to support idmappings
-> (fs_type->fs_flags & FS_ALLOW_IDMAP)
-> - user who creates idmapped mount should be CAP_SYS_ADMIN in a user
-> namespace that owns superblock of the filesystem
-> (for cephfs it's always init_user_ns => user should be root on the host)
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> Reviewed-by: Muchun Song <songmuchun@bytedance.com>
+> ---
+>   fs/nfs/super.c | 20 ++++++++++++--------
+>   1 file changed, 12 insertions(+), 8 deletions(-)
 > 
-> So I would like to go this way because of the reasons mentioned above:
-> - root user is someone who understands what he does.
-> - idmapped mounts are never "first" mounts. They are always created
-> after "normal" mount.
-> - effectively this check makes "normal" mount to work normally and
-> fail only requests that comes through an idmapped mounts
-> with reasonable error message. Obviously, all read operations will
-> work perfectly well only the operations that create new inodes will
-> fail.
-> Btw, we already have an analogical semantic on the VFS level for users
-> who have no UID/GID mapping to the host. Filesystem requests for
-> such users will fail with -EOVERFLOW. Here we have something close.
+> diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+> index 2284f749d892..072d82e1be06 100644
+> --- a/fs/nfs/super.c
+> +++ b/fs/nfs/super.c
+> @@ -129,11 +129,7 @@ static void nfs_ssc_unregister_ops(void)
+>   }
+>   #endif /* CONFIG_NFS_V4_2 */
+>   
+> -static struct shrinker acl_shrinker = {
+> -	.count_objects	= nfs_access_cache_count,
+> -	.scan_objects	= nfs_access_cache_scan,
+> -	.seeks		= DEFAULT_SEEKS,
+> -};
+> +static struct shrinker *acl_shrinker;
+>   
+>   /*
+>    * Register the NFS filesystems
+> @@ -153,9 +149,17 @@ int __init register_nfs_fs(void)
+>   	ret = nfs_register_sysctl();
+>   	if (ret < 0)
+>   		goto error_2;
+> -	ret = register_shrinker(&acl_shrinker, "nfs-acl");
+> -	if (ret < 0)
+> +
+> +	acl_shrinker = shrinker_alloc(0, "nfs-acl");
+> +	if (!acl_shrinker)
+>   		goto error_3;
 
-Refusing requests coming from an idmapped mount if the server misses
-appropriate features is good enough as a first step imho. And yes, we do
-have similar logic on the vfs level for unmapped uid/gid.
+Here should set ret to -ENOMEM, will fix.
+
+> +
+> +	acl_shrinker->count_objects = nfs_access_cache_count;
+> +	acl_shrinker->scan_objects = nfs_access_cache_scan;
+> +	acl_shrinker->seeks = DEFAULT_SEEKS;
+> +
+> +	shrinker_register(acl_shrinker);
+> +
+>   #ifdef CONFIG_NFS_V4_2
+>   	nfs_ssc_register_ops();
+>   #endif
+> @@ -175,7 +179,7 @@ int __init register_nfs_fs(void)
+>    */
+>   void __exit unregister_nfs_fs(void)
+>   {
+> -	unregister_shrinker(&acl_shrinker);
+> +	shrinker_free(acl_shrinker);
+>   	nfs_unregister_sysctl();
+>   	unregister_nfs4_fs();
+>   #ifdef CONFIG_NFS_V4_2
