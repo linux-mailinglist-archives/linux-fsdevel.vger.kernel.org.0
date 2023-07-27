@@ -2,100 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A2A87659B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 19:14:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C57A7659CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 19:15:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233043AbjG0ROB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 13:14:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46226 "EHLO
+        id S232833AbjG0RPv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 13:15:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232856AbjG0RNq (ORCPT
+        with ESMTP id S231218AbjG0RPf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 13:13:46 -0400
-Received: from brightrain.aerifal.cx (brightrain.aerifal.cx [216.12.86.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA0273A8D
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 10:13:35 -0700 (PDT)
-Date:   Thu, 27 Jul 2023 13:13:37 -0400
-From:   "dalias@libc.org" <dalias@libc.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Andreas Schwab <schwab@linux-m68k.org>,
-        David Laight <David.Laight@ACULAB.COM>,
-        'Aleksa Sarai' <cyphar@cyphar.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "James.Bottomley@hansenpartnership.com" 
-        <James.Bottomley@hansenpartnership.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "alexander.shishkin@linux.intel.com" 
-        <alexander.shishkin@linux.intel.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "borntraeger@de.ibm.com" <borntraeger@de.ibm.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "christian@brauner.io" <christian@brauner.io>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "deepa.kernel@gmail.com" <deepa.kernel@gmail.com>,
-        "deller@gmx.de" <deller@gmx.de>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "fweimer@redhat.com" <fweimer@redhat.com>,
-        "geert@linux-m68k.org" <geert@linux-m68k.org>,
-        "glebfm@altlinux.org" <glebfm@altlinux.org>,
-        "gor@linux.ibm.com" <gor@linux.ibm.com>,
-        "hare@suse.com" <hare@suse.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "ink@jurassic.park.msu.ru" <ink@jurassic.park.msu.ru>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "kim.phillips@arm.com" <kim.phillips@arm.com>,
-        "ldv@altlinux.org" <ldv@altlinux.org>,
-        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        "linux-m68k@lists.linux-m68k.org" <linux-m68k@lists.linux-m68k.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "mattst88@gmail.com" <mattst88@gmail.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "monstr@monstr.eu" <monstr@monstr.eu>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "stefan@agner.ch" <stefan@agner.ch>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "tycho@tycho.ws" <tycho@tycho.ws>,
-        "will@kernel.org" <will@kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "ysato@users.sourceforge.jp" <ysato@users.sourceforge.jp>,
-        Palmer Dabbelt <palmer@sifive.com>
-Subject: Re: [PATCH v4 2/5] fs: Add fchmodat2()
-Message-ID: <20230727171336.GC20050@brightrain.aerifal.cx>
-References: <cover.1689074739.git.legion@kernel.org>
- <cover.1689092120.git.legion@kernel.org>
- <f2a846ef495943c5d101011eebcf01179d0c7b61.1689092120.git.legion@kernel.org>
- <njnhwhgmsk64e6vf3ur7fifmxlipmzez3r5g7ejozsrkbwvq7w@tu7w3ieystcq>
- <d052e1266bf042f9b4961bbf42261a55@AcuMS.aculab.com>
- <87ila5jp2y.fsf@igel.home>
- <20230727-zerrt-leitmotiv-9e8b60abf690@brauner>
+        Thu, 27 Jul 2023 13:15:35 -0400
+Received: from mail.codeweavers.com (mail.codeweavers.com [4.36.192.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 392453A89;
+        Thu, 27 Jul 2023 10:15:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=codeweavers.com; s=s1; h=From:Cc:To:Subject:Date:Message-ID:Sender;
+        bh=qDGyNuZm1SlXvpHYjVnont8zJnpqBv3isL90u1ngU/Q=; b=eBXhTsEZvHyz459/k9nNsc+Ulj
+        zsL16vMgaqJ18maqGw1TS+RsXBgyXVShSA335XoxyuV6e5Kw5UfGaAuN1Cl3PSi+bi+AqIqm8ziNd
+        akly2EihEuPQ8MqrgTYkkpiPr5i2sx6WMFQj3d/elQR7eBafo0SZnIFPSFr+blNBZBR40gwfVOrWQ
+        jkHCfYjX+cML0EEgKWVa7pFYDApTKP8hGiqnL6hWXM+02xPEp+6WjmxOzqsuHxHWhDa8131odgChs
+        Dkhjdn7bZgqldhIznacSS/1YJcDd4f2yRZVkWThhNlPoGpmcNN3+djoaepg+lkJU/2XRd+ZGFYqq6
+        MjGxkbGg==;
+Received: from cw141ip123.vpn.codeweavers.com ([10.69.141.123])
+        by mail.codeweavers.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <pgofman@codeweavers.com>)
+        id 1qP4aA-006l8N-1D; Thu, 27 Jul 2023 12:15:22 -0500
+Message-ID: <a1e43d96-ad15-961c-7005-43d1f714408f@codeweavers.com>
+Date:   Thu, 27 Jul 2023 11:15:13 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230727-zerrt-leitmotiv-9e8b60abf690@brauner>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [v3] fs/proc/task_mmu: Implement IOCTL for efficient page table
+ scanning
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Yang Shi <shy828301@gmail.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        kernel@collabora.com
+References: <20230713101415.108875-6-usama.anjum@collabora.com>
+ <7eedf953-7cf6-c342-8fa8-b7626d69ab63@collabora.com>
+ <ZLpqzcyo2ZMXwtm4@qmqm.qmqm.pl>
+ <382f4435-2088-08ce-20e9-bc1a15050861@collabora.com>
+ <ZLshsAj5PbsEAHhP@qmqm.qmqm.pl>
+ <b1071d62-5c8e-1b03-d919-b3a9db520e51@collabora.com>
+ <CABb0KFF6M2_94Ect72zMtaRLBpOoHjHYJA-Ube3oQAh4cXSg5w@mail.gmail.com>
+ <44eddc7d-fd68-1595-7e4f-e196abe37311@collabora.com>
+ <CABb0KFHJVeEkh4f6WWK6FThCbA+NE8iYUZE68nV1YAxaHwiwog@mail.gmail.com>
+ <e1ead2e8-046a-31d9-8df9-27cdd7b7ff83@collabora.com>
+ <1afedab8-5929-61e5-b0da-9c70dc01c254@collabora.com>
+ <eac29a4d-aa3f-4df5-97e6-4aa3a358f2b1@collabora.com>
+ <CABb0KFHuNpG+NJQ4sQdp1n_Kf4sO8aC5DBEppFc1zz=zAeDfQw@mail.gmail.com>
+ <f949f74f-bb65-e3f2-e70d-7198446a9981@collabora.com>
+ <CABb0KFGQ_HbD+MNwKCcE+6D50XhJxpx0M0dRiC-EVwEXPv+4XA@mail.gmail.com>
+ <94c6b665-bbc2-5030-f9b1-d933791008b8@codeweavers.com>
+ <CABb0KFEr_CDZyvZ27q2b7DbXwW3h+hNLjjzBw1GzzkZW=j-Dow@mail.gmail.com>
+Content-Language: en-GB
+From:   Paul Gofman <pgofman@codeweavers.com>
+In-Reply-To: <CABb0KFEr_CDZyvZ27q2b7DbXwW3h+hNLjjzBw1GzzkZW=j-Dow@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -103,47 +95,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 27, 2023 at 07:02:53PM +0200, Christian Brauner wrote:
-> On Thu, Jul 27, 2023 at 06:28:53PM +0200, Andreas Schwab wrote:
-> > On Jul 27 2023, David Laight wrote:
-> > 
-> > > From: Aleksa Sarai
-> > >> Sent: 25 July 2023 17:36
-> > > ...
-> > >> We almost certainly want to support AT_EMPTY_PATH at the same time.
-> > >> Otherwise userspace will still need to go through /proc when trying to
-> > >> chmod a file handle they have.
-> > >
-> > > That can't be allowed.
-> > 
-> > IIUC, fchmodat2(fd, "", m, AT_EMPTY_PATH) is equivalent to fchmod(fd,
-> > m).  With that, new architectures only need to implement the fchmodat2
-> > syscall to cover all chmod variants.
-> 
-> There's a difference though as fchmod() doesn't work with O_PATH file
-> descriptors while AT_EMPTY_PATH does. Similar to how fchown() doesn't
-> work with O_PATH file descriptors.
-> 
-> However, we do allow AT_EMPTY_PATH with fchownat() so there's no reason
-> to not allow it for fchmodat2().
-> 
-> But it's a bit of a shame that O_PATH looks less and less like O_PATH.
-> It came from can-do-barely-anything to can-do-quite-a-lot-of-things over
-> the years.
-> 
-> In any case, AT_EMPTY_PATH for fchmodat2() can be an additional patch on
-> top.
+On Windows GetWriteWatch won't work if the range is not withing a single 
+memory view regardless of MEM_LARGE_PAGES (that is, single VirtualAlloc 
+result, somewhat analogous to VMA but not quite), such a call will 
+result in an error.
 
-From a standpoint of implementing O_SEARCH/O_EXEC using it, I don't
-see any reason fchown/fchmod should not work on O_PATH file
-descriptors. And indeed when you have procfs available to emulate them
-via procfs, it already does. So I don't see this as unwanted
-functionality or an access control regression. I see it as things
-behaving as expected.
+For the context, Windows never auto splits or joins memory views, and 
+basically nothing can be done across views boundary (merging placeholder 
+views is an exception, while unrelated). VirtualProtect (which stands 
+for mprotect) can be done for individual pages withing the view of 
+course, but it is purely per page and doesn't affect view protection 
+flags or result in any splitting of those. VirtualProtect across views 
+adjacent in memory will also fail.
 
-Semantically, O_PATH is a reference to the inode, not to the dirent.
-So there is no reason you should not be able to do things that need
-permission to the inode (changing permissions on it) rather than to
-the dirent (renaming/moving).
+On 7/27/23 05:18, Michał Mirosław wrote:
+>
+> Is it possible (on Windows) to have MEM_LARGE_PAGES allocation near a
+> normal one and run GetWriteWatch() on both in one call? If so, how
+> does it behave / what is expected?
+>
+> Best Regards
+> Michał Mirosław
 
-Rich
+
