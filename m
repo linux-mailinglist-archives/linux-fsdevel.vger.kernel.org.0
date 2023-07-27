@@ -2,261 +2,246 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 49285765519
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 15:33:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3087B7655EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 16:27:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233356AbjG0NdE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 09:33:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35586 "EHLO
+        id S233709AbjG0O1j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 10:27:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233171AbjG0NdD (ORCPT
+        with ESMTP id S231927AbjG0O1i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 09:33:03 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CD8A272D;
-        Thu, 27 Jul 2023 06:33:01 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4fe1489ced6so1708442e87.0;
-        Thu, 27 Jul 2023 06:33:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690464780; x=1691069580;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fNVKS520fpom9zikP7GGO5Kqp+pwk56e852uQYR5BkU=;
-        b=gf7mfFC/0wfbZM46ODlqyIyv7XknlmYmjPR9vw7W5BQFPqJU4Dvn9yg6veiQ6fM+pF
-         nXMnhG+yw5I01J267ZuyGzRO+SBrZT5Ef7m0FLLGY9NKG0RlwXGjD+1LMmc3UAC9NNHr
-         5MZ9vcBrJBzR5IPUFe8K4GI2jvTKyLZbhCpJqQ6KOhz7oMxf7TApXZhC35oHvSEKuiTV
-         0JPds7aR9qmkiwwpjA8m8S8lhBB7gmQiAHH1osDN3JVV+9Wsr1PBsUnme1rLbEHHVLWh
-         jf5nnPwwXx0EbPQTKmCDOaIDuQc3ep2i+cyOCkN+ou+PX1360JxiRMWouq3mX2m3+Zf9
-         QyDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690464780; x=1691069580;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fNVKS520fpom9zikP7GGO5Kqp+pwk56e852uQYR5BkU=;
-        b=GmWrAG0/uVonbj9ngt9PNNYcqqHMjZW33OAHl6duy5LetTIm6b2EER71cu2sgLnS4+
-         P3XKj3lBEeoT2y/caVMuM9oBoOzKbLXjt5iAr8p77vKMbBpceWU1SVeQHMaYPqa8fapU
-         6rDORcfDJdYZbrDWkw8jAEaYILfd9Lo6+Twwm7GMp1ua3+nBoigVn5NuttbFgzpUX7HU
-         k86quOO9EhbZ5RJHIz4j89R3FS6TN95jTEWGgVxZGDyqIW6T4t2cFuY6S+Zish+Ss9Db
-         jDIU4UYjCVBBW8Ke73fLPCXEOk1qgYbSaOaYI2xbpgbh+/17JCwvgV0RzPvUIdsrCdOn
-         5yjA==
-X-Gm-Message-State: ABy/qLbPFAgT0HPkjbdqIYU0Ng7Kx99byc7KSl2qmbLG4QwShLWE7QKU
-        721ryxot7/NSDgkWRN77tqwxd1AjtKr7J5/VmCs=
-X-Google-Smtp-Source: APBJJlEoaBon0qIf+o3H5ybsdyY2J571wEx/HePSoiAhvwnMkjCJxjZ1SwZXzaOy8H1h8XAtUs9aG/a95vBooddqtpQ=
-X-Received: by 2002:a2e:b015:0:b0:2b6:d326:156d with SMTP id
- y21-20020a2eb015000000b002b6d326156dmr1776436ljk.19.1690464779581; Thu, 27
- Jul 2023 06:32:59 -0700 (PDT)
+        Thu, 27 Jul 2023 10:27:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 584B52D56;
+        Thu, 27 Jul 2023 07:27:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DB4DB61E97;
+        Thu, 27 Jul 2023 14:27:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD209C433C7;
+        Thu, 27 Jul 2023 14:27:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690468055;
+        bh=wyJbJTjZXB9lB3IuTsMaPPp1mhhF4v2pSj0OspQtZjc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MCNPDnXnZ5I7x0DsnXFDcrAvWiksnUbpnFkir2T+K25//KTzc2474Qk25iQhLdkkH
+         z5VlMZu09uPhVZ6gnLLjWgqsjQhVwrICSujk3t7qDf9iENcCfm+rr8pK9Ow1za9TNn
+         ekdpH81na0T6l7WW1EkH8QqKKi7hnrXTd1pqwwtoavbDy5VXNfMVE5RsZ/r7uKPM92
+         sH0RQQUKf0fPIVJJTBKI6bjCoM5DlL11iUvBuX2WIvG27j6BzCgZVKU9TaUMimOZ5y
+         J1FypBmY2eEIQL8O8FcMgoBqwQeQU1VipDs2ajIKA5IxzeQpVs6soZ6p+xjPrEM64m
+         Avvl9vnEOR8Tw==
+Date:   Thu, 27 Jul 2023 16:27:30 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Hao Xu <hao.xu@linux.dev>, djwong@kernel.org,
+        Dave Chinner <david@fromorbit.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+Subject: Re: [PATCH 3/5] io_uring: add support for getdents
+Message-ID: <20230727-salbe-kurvigen-31b410c07bb9@brauner>
+References: <20230718132112.461218-1-hao.xu@linux.dev>
+ <20230718132112.461218-4-hao.xu@linux.dev>
+ <20230726-leinen-basisarbeit-13ae322690ff@brauner>
+ <e9ddc8cc-f567-46bc-8f82-cf5ff8ff6c95@linux.dev>
 MIME-Version: 1.0
-References: <20230726164535.230515-1-amiculas@cisco.com> <20230726164535.230515-7-amiculas@cisco.com>
-In-Reply-To: <20230726164535.230515-7-amiculas@cisco.com>
-From:   Ariel Miculas <ariel.miculas@gmail.com>
-Date:   Thu, 27 Jul 2023 16:32:48 +0300
-Message-ID: <CAPDJoNs_VTnVATXr4AFs5D8unOihrpYXLDn69fjT0OshrYADXA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 06/10] rust: file: pass the filesystem context to
- the open function
-To:     Ariel Miculas <amiculas@cisco.com>
-Cc:     rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tycho@tycho.pizza,
-        brauner@kernel.org, viro@zeniv.linux.org.uk, ojeda@kernel.org,
-        alex.gaynor@gmail.com, wedsonaf@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <e9ddc8cc-f567-46bc-8f82-cf5ff8ff6c95@linux.dev>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 26, 2023 at 7:58=E2=80=AFPM Ariel Miculas <amiculas@cisco.com> =
-wrote:
->
-> This allows us to create a Vfsmount structure and pass it to the read
-> callback.
->
-> Signed-off-by: Ariel Miculas <amiculas@cisco.com>
-> ---
->  rust/kernel/file.rs      | 17 +++++++++++++++--
->  samples/rust/puzzlefs.rs | 40 +++++++++++++++++++++++++++++++++++-----
->  samples/rust/rust_fs.rs  |  3 ++-
->  3 files changed, 52 insertions(+), 8 deletions(-)
->
-> diff --git a/rust/kernel/file.rs b/rust/kernel/file.rs
-> index a3002c416dbb..af1eb1ee9267 100644
-> --- a/rust/kernel/file.rs
-> +++ b/rust/kernel/file.rs
-> @@ -457,9 +457,15 @@ impl<A: OpenAdapter<T::OpenData>, T: Operations> Ope=
-rationsVtable<A, T> {
->              // `fileref` never outlives this function, so it is guarante=
-ed to be
->              // valid.
->              let fileref =3D unsafe { File::from_ptr(file) };
-> +
-> +            // SAFETY: into_foreign was called in fs::NewSuperBlock<...,=
- NeedsInit>::init and
-> +            // it is valid until from_foreign will be called in fs::Tabl=
-es::free_callback
-> +            let fs_info =3D
-> +                unsafe { <T::Filesystem as fs::Type>::Data::borrow((*(*i=
-node).i_sb).s_fs_info) };
-> +
->              // SAFETY: `arg` was previously returned by `A::convert` and=
- must
->              // be a valid non-null pointer.
-> -            let ptr =3D T::open(unsafe { &*arg }, fileref)?.into_foreign=
-();
-> +            let ptr =3D T::open(fs_info, unsafe { &*arg }, fileref)?.int=
-o_foreign();
->              // SAFETY: The C contract guarantees that `private_data` is =
-available
->              // for implementers of the file operations (no other C code =
-accesses
->              // it), so we know that there are no concurrent threads/CPUs=
- accessing
-> @@ -930,10 +936,17 @@ pub trait Operations {
->      /// The type of the context data passed to [`Operations::open`].
->      type OpenData: Sync =3D ();
->
-> +    /// Data associated with each file system instance.
-> +    type Filesystem: fs::Type;
-> +
->      /// Creates a new instance of this file.
->      ///
->      /// Corresponds to the `open` function pointer in `struct file_opera=
-tions`.
-> -    fn open(context: &Self::OpenData, file: &File) -> Result<Self::Data>=
-;
-> +    fn open(
-> +        fs_info: <<Self::Filesystem as fs::Type>::Data as ForeignOwnable=
->::Borrowed<'_>,
-> +        context: &Self::OpenData,
-> +        file: &File,
-> +    ) -> Result<Self::Data>;
->
->      /// Cleans up after the last reference to the file goes away.
->      ///
-> diff --git a/samples/rust/puzzlefs.rs b/samples/rust/puzzlefs.rs
-> index 9afd82745b64..8a64e0bd437d 100644
-> --- a/samples/rust/puzzlefs.rs
-> +++ b/samples/rust/puzzlefs.rs
-> @@ -3,8 +3,14 @@
->  //! Rust file system sample.
->
->  use kernel::module_fs;
-> +use kernel::mount::Vfsmount;
->  use kernel::prelude::*;
-> -use kernel::{c_str, file, fs, io_buffer::IoBufferWriter};
-> +use kernel::{
-> +    c_str, file, fmt, fs,
-> +    io_buffer::IoBufferWriter,
-> +    str::CString,
-> +    sync::{Arc, ArcBorrow},
-> +};
->
->  mod puzzle;
->  // Required by the autogenerated '_capnp.rs' files
-> @@ -19,6 +25,12 @@
->
->  struct PuzzleFsModule;
->
-> +#[derive(Debug)]
-> +struct PuzzlefsInfo {
-> +    base_path: CString,
-> +    vfs_mount: Arc<Vfsmount>,
-> +}
-> +
->  #[vtable]
->  impl fs::Context<Self> for PuzzleFsModule {
->      type Data =3D ();
-> @@ -46,14 +58,23 @@ fn try_new() -> Result {
->  impl fs::Type for PuzzleFsModule {
->      type Context =3D Self;
->      type INodeData =3D &'static [u8];
-> +    type Data =3D Box<PuzzlefsInfo>;
->      const SUPER_TYPE: fs::Super =3D fs::Super::Independent;
->      const NAME: &'static CStr =3D c_str!("puzzlefs");
->      const FLAGS: i32 =3D fs::flags::USERNS_MOUNT;
->      const DCACHE_BASED: bool =3D true;
->
->      fn fill_super(_data: (), sb: fs::NewSuperBlock<'_, Self>) -> Result<=
-&fs::SuperBlock<Self>> {
-> +        let base_path =3D CString::try_from_fmt(fmt!("hello world"))?;
-> +        pr_info!("base_path {:?}\n", base_path);
-> +        let vfs_mount =3D Vfsmount::new_private_mount(c_str!("/home/puzz=
-lefs_oci"))?;
-> +        pr_info!("vfs_mount {:?}\n", vfs_mount);
-> +
->          let sb =3D sb.init(
-> -            (),
-> +            Box::try_new(PuzzlefsInfo {
-> +                base_path,
-> +                vfs_mount: Arc::try_new(vfs_mount)?,
-> +            })?,
->              &fs::SuperParams {
->                  magic: 0x72757374,
->                  ..fs::SuperParams::DEFAULT
-> @@ -88,14 +109,23 @@ fn fill_super(_data: (), sb: fs::NewSuperBlock<'_, S=
-elf>) -> Result<&fs::SuperBl
->
->  #[vtable]
->  impl file::Operations for FsFile {
-> +    // must be the same as INodeData
->      type OpenData =3D &'static [u8];
-> +    type Filesystem =3D PuzzleFsModule;
-> +    // this is an Arc because Data must be ForeignOwnable and the only i=
-mplementors of it are Box,
-> +    // Arc and (); we cannot pass a reference to read, so we share Vfsmo=
-unt using and Arc
-> +    type Data =3D Arc<Vfsmount>;
->
-> -    fn open(_context: &Self::OpenData, _file: &file::File) -> Result<Sel=
-f::Data> {
-> -        Ok(())
-> +    fn open(
-> +        fs_info: &PuzzlefsInfo,
-> +        _context: &Self::OpenData,
-> +        _file: &file::File,
-> +    ) -> Result<Self::Data> {
-> +        Ok(fs_info.vfs_mount.clone())
->      }
->
->      fn read(
-> -        _data: (),
-> +        data: ArcBorrow<'_, Vfsmount>,
->          file: &file::File,
->          writer: &mut impl IoBufferWriter,
->          offset: u64,
-> diff --git a/samples/rust/rust_fs.rs b/samples/rust/rust_fs.rs
-> index 7527681ee024..c58ed1560e06 100644
-> --- a/samples/rust/rust_fs.rs
-> +++ b/samples/rust/rust_fs.rs
-> @@ -85,8 +85,9 @@ fn fill_super(_data: (), sb: fs::NewSuperBlock<'_, Self=
->) -> Result<&fs::SuperBl
->  #[vtable]
->  impl file::Operations for FsFile {
->      type OpenData =3D &'static [u8];
-> +    type Filesystem =3D RustFs;
->
-> -    fn open(_context: &Self::OpenData, _file: &file::File) -> Result<Sel=
-f::Data> {
-> +    fn open(_fs_info: (), _context: &Self::OpenData, _file: &file::File)=
- -> Result<Self::Data> {
->          Ok(())
->      }
->
-> --
-> 2.41.0
->
->
-Hey Wedson,
+On Thu, Jul 27, 2023 at 07:51:19PM +0800, Hao Xu wrote:
+> On 7/26/23 23:00, Christian Brauner wrote:
+> > On Tue, Jul 18, 2023 at 09:21:10PM +0800, Hao Xu wrote:
+> > > From: Hao Xu <howeyxu@tencent.com>
+> > > 
+> > > This add support for getdents64 to io_uring, acting exactly like the
+> > > syscall: the directory is iterated from it's current's position as
+> > > stored in the file struct, and the file's position is updated exactly as
+> > > if getdents64 had been called.
+> > > 
+> > > For filesystems that support NOWAIT in iterate_shared(), try to use it
+> > > first; if a user already knows the filesystem they use do not support
+> > > nowait they can force async through IOSQE_ASYNC in the sqe flags,
+> > > avoiding the need to bounce back through a useless EAGAIN return.
+> > > 
+> > > Co-developed-by: Dominique Martinet <asmadeus@codewreck.org>
+> > > Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+> > > Signed-off-by: Hao Xu <howeyxu@tencent.com>
+> > > ---
+> > >   include/uapi/linux/io_uring.h |  7 +++++
+> > >   io_uring/fs.c                 | 55 +++++++++++++++++++++++++++++++++++
+> > >   io_uring/fs.h                 |  3 ++
+> > >   io_uring/opdef.c              |  8 +++++
+> > >   4 files changed, 73 insertions(+)
+> > > 
+> > > diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> > > index 36f9c73082de..b200b2600622 100644
+> > > --- a/include/uapi/linux/io_uring.h
+> > > +++ b/include/uapi/linux/io_uring.h
+> > > @@ -65,6 +65,7 @@ struct io_uring_sqe {
+> > >   		__u32		xattr_flags;
+> > >   		__u32		msg_ring_flags;
+> > >   		__u32		uring_cmd_flags;
+> > > +		__u32		getdents_flags;
+> > >   	};
+> > >   	__u64	user_data;	/* data to be passed back at completion time */
+> > >   	/* pack this to avoid bogus arm OABI complaints */
+> > > @@ -235,6 +236,7 @@ enum io_uring_op {
+> > >   	IORING_OP_URING_CMD,
+> > >   	IORING_OP_SEND_ZC,
+> > >   	IORING_OP_SENDMSG_ZC,
+> > > +	IORING_OP_GETDENTS,
+> > >   	/* this goes last, obviously */
+> > >   	IORING_OP_LAST,
+> > > @@ -273,6 +275,11 @@ enum io_uring_op {
+> > >    */
+> > >   #define SPLICE_F_FD_IN_FIXED	(1U << 31) /* the last bit of __u32 */
+> > > +/*
+> > > + * sqe->getdents_flags
+> > > + */
+> > > +#define IORING_GETDENTS_REWIND	(1U << 0)
+> > > +
+> > >   /*
+> > >    * POLL_ADD flags. Note that since sqe->poll_events is the flag space, the
+> > >    * command flags for POLL_ADD are stored in sqe->len.
+> > > diff --git a/io_uring/fs.c b/io_uring/fs.c
+> > > index f6a69a549fd4..480f25677fed 100644
+> > > --- a/io_uring/fs.c
+> > > +++ b/io_uring/fs.c
+> > > @@ -47,6 +47,13 @@ struct io_link {
+> > >   	int				flags;
+> > >   };
+> > > +struct io_getdents {
+> > > +	struct file			*file;
+> > > +	struct linux_dirent64 __user	*dirent;
+> > > +	unsigned int			count;
+> > > +	int				flags;
+> > > +};
+> > > +
+> > >   int io_renameat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+> > >   {
+> > >   	struct io_rename *ren = io_kiocb_to_cmd(req, struct io_rename);
+> > > @@ -291,3 +298,51 @@ void io_link_cleanup(struct io_kiocb *req)
+> > >   	putname(sl->oldpath);
+> > >   	putname(sl->newpath);
+> > >   }
+> > > +
+> > > +int io_getdents_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+> > > +{
+> > > +	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
+> > > +
+> > > +	if (READ_ONCE(sqe->off) != 0)
+> > > +		return -EINVAL;
+> > > +
+> > > +	gd->dirent = u64_to_user_ptr(READ_ONCE(sqe->addr));
+> > > +	gd->count = READ_ONCE(sqe->len);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
+> > > +{
+> > > +	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
+> > > +	struct file *file = req->file;
+> > > +	unsigned long getdents_flags = 0;
+> > > +	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
+> > 
+> > Hm, I'm not sure what exactly the rules are for IO_URING_F_NONBLOCK.
+> > But to point this out:
+> > 
+> > vfs_getdents()
+> > -> iterate_dir()
+> >     {
+> >          if (shared)
+> >                  res = down_read_killable(&inode->i_rwsem);
+> >          else
+> >                  res = down_write_killable(&inode->i_rwsem);
+> >     }
+> > 
+> > which means you can still end up sleeping here before you go into a
+> > filesystem that does actually support non-waiting getdents. So if you
+> > have concurrent operations that grab inode lock (touch, mkdir etc) you
+> > can end up sleeping here.
+> > 
+> > Is that intentional or an oversight? If the former can someone please
+> > explain the rules and why it's fine in this case?
+> 
+> I actually saw this semaphore, and there is another xfs lock in
+> file_accessed
+>   --> touch_atime
+>     --> inode_update_time
+>       --> inode->i_op->update_time == xfs_vn_update_time
+> 
+> Forgot to point them out in the cover-letter..., I didn't modify them
+> since I'm not very sure about if we should do so, and I saw Stefan's
+> patchset didn't modify them too.
+> 
+> My personnal thinking is we should apply trylock logic for this
+> inode->i_rwsem. For xfs lock in touch_atime, we should do that since it
+> doesn't make sense to rollback all the stuff while we are almost at the
+> end of getdents because of a lock.
 
-Is it ok to couple file::Operations with fs::Type? I didn't find a
-better way to implement this.
-I'm asking because I've seen you've gone to great lengths to decouple them.
+That manoeuvres around the problem. Which I'm slightly more sensitive
+too as this review is a rather expensive one.
 
-Cheers,
-Ariel
+Plus, it seems fixable in at least two ways:
+
+For both we need to be able to tell the filesystem that a nowait atime
+update is requested. Simple thing seems to me to add a S_NOWAIT flag to
+file_time_flags and passing that via i_op->update_time() which already
+has a flag argument. That would likely also help kiocb_modified().
+
+file_accessed()
+-> touch_atime()
+   -> inode_update_time()
+      -> i_op->update_time == xfs_vn_update_time()
+
+Then we have two options afaict:
+
+(1) best-effort atime update
+
+file_accessed() already has the builtin assumption that updating atime
+might fail for other reasons - see the comment in there. So it is
+somewhat best-effort already.
+
+(2) move atime update before calling into filesystem
+
+If we want to be sure that access time is updated when a readdir request
+is issued through io_uring then we need to have file_accessed() give a
+return value and expose a new helper for io_uring or modify
+vfs_getdents() to do something like:
+
+vfs_getdents()
+{
+	if (nowait)
+		down_read_trylock()
+
+	if (!IS_DEADDIR(inode)) {
+		ret = file_accessed(file);
+		if (ret == -EAGAIN)
+			goto out_unlock;
+
+		f_op->iterate_shared()
+	}
+}
+
+It's not unprecedented to do update atime before the actual operation
+has been done afaict. That's already the case in xfs_file_write_checks()
+which is called before anything is written. So that seems ok.
+
+Does any of these two options work for the xfs maintainers and Jens?
