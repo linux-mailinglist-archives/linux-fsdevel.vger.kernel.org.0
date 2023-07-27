@@ -2,282 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E82C766007
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 00:59:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B991376600F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 00:59:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231922AbjG0W7F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 18:59:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32826 "EHLO
+        id S230017AbjG0W7p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 18:59:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229621AbjG0W7D (ORCPT
+        with ESMTP id S233105AbjG0W7o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 18:59:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1629C94;
-        Thu, 27 Jul 2023 15:59:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 571AF61F78;
-        Thu, 27 Jul 2023 22:59:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D062C433C7;
-        Thu, 27 Jul 2023 22:59:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690498740;
-        bh=7YZbeoQqfKNEx+jwMo1/b4aGKcS1iuXyOx+y/zN5Zzo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hJ6iB/tYWfVsHajByyC28Q7EemdgjIMF6uLfu9+WgDtg2ewJu2I/4RuqBensexXAf
-         FDDEk9ibYhSToWf2z2KL+m6ua2Eid74tC26XQxdAGdDyuhJauZOYrO+rSPxa76G3C8
-         JM8crmumVVgBtDC38fV2RDMVcxBvwdD45lwBhEddEORux7bg7/o6DgRHlk1qTcLQfL
-         DpzfQqSxW2XolqDRG8BB/4q1ZDERYghJA4A7XHyfwQH8iDKwXyZzLYDZHNAIw2TPal
-         V0qSx/dLBn64aNDLJOH0GqdY6JJLnw9NBtfFrhnafz2W+ZNJQz+4SP8SRFHsnnsNW6
-         qwdkUtESktMGA==
-Date:   Thu, 27 Jul 2023 15:58:59 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Pankaj Raghav <p.raghav@samsung.com>,
-        Chandan Babu R <chandan.babu@oracle.com>
-Subject: Re: xfs kdevops baseline for next-20230725
-Message-ID: <20230727225859.GF11352@frogsfrogsfrogs>
-References: <ZMK1r91ByQERwDK+@bombadil.infradead.org>
+        Thu, 27 Jul 2023 18:59:44 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AC86271C
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 15:59:41 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-686ba29ccb1so940091b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 15:59:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1690498781; x=1691103581;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8CTrna5t3S7P99W+zrM1I2ApZYIkXTVQedDFVAI6oIw=;
+        b=X7pt5OuyEbf8f6R9fnvI9dxfnaaqjP1RGRY8ZMiJ1wEZkopGyRUZXV3N7HE87n67xj
+         XeLWxsKHlNX6ErnVJUF/xO5BY5VT61hhmCqWCbxit+6W6UUMx7WmvB86s0q+wgGSoL6W
+         koucWxrpBOYNBJME5+HxRa/lXlSreJXWQaoDeJrNnWxYMUw7bNkMz2551ucFVRtsjQZW
+         0ldvdZqoq1ohkP2t1Jbzv+uf1kwplqapkGN1TtrTmsgZICGsR0gfv1ElN5pvcVjNfGjj
+         OPatiCTf9mYCZ8F6QAcUCONXn7kELLjAWaYShbgFOaFFniHTDeIvjRJJRIf4kK+rSYkZ
+         RVyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690498781; x=1691103581;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8CTrna5t3S7P99W+zrM1I2ApZYIkXTVQedDFVAI6oIw=;
+        b=FrXobjfrJKFYrpn3AcC8guWeWt2bw0njVez+8w6cMQvYk7+srzkl5fGYEQboIzajBw
+         r54MnhPoVh5IDGZlIMqiPAkLWLES0LLALlItU/OpIN/+r7iNY0ytOZZmYhfI7XDqCY6L
+         dd4L6Qyui+U2nTyn9Yh59rwuKc7iw/FeKqn2l3ZROCUY//bkHU1HDSh6cIBIcU+oQNb7
+         WJoXAbGwftDgw6Jk4R4RSo13ksxT05AgpnBnoB6NGAKw51yJ/ChO7fcnNRsRV/Tj782R
+         OfUZEPbUlHwi3nICb6IiD0v2BKwMGnjr7r/BfbpliraLIoe/8GZsNx3WGfBNFQNfv8aW
+         tZaw==
+X-Gm-Message-State: ABy/qLY6QBd/g8mVNfUhirVFZBqzdVZpwXUnizGoAeGyN+/vCBfvNPoR
+        aSwpGUoDlBSrEUCHngkzWRiLEA==
+X-Google-Smtp-Source: APBJJlGFE8oAcAZu2XvzWjC5bjR81v7OIjjTfZ8m+EaEe6Rjpq3cuwvHN3I08mErFwOZJpneP9Ly1g==
+X-Received: by 2002:a05:6a00:17a8:b0:64d:42b9:6895 with SMTP id s40-20020a056a0017a800b0064d42b96895mr61072pfg.5.1690498780930;
+        Thu, 27 Jul 2023 15:59:40 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-119-116.pa.vic.optusnet.com.au. [49.186.119.116])
+        by smtp.gmail.com with ESMTPSA id p24-20020aa78618000000b0068702b66ab1sm1115813pfn.174.2023.07.27.15.59.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jul 2023 15:59:40 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qP9xJ-00BKKZ-1O;
+        Fri, 28 Jul 2023 08:59:37 +1000
+Date:   Fri, 28 Jul 2023 08:59:37 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Damien Le Moal <dlemoal@kernel.org>
+Cc:     Qi Zheng <zhengqi.arch@bytedance.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+        kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-erofs@lists.ozlabs.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+        rcu@vger.kernel.org, netdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        dm-devel@redhat.com, linux-raid@vger.kernel.org,
+        linux-bcache@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Muchun Song <songmuchun@bytedance.com>,
+        akpm@linux-foundation.org, tkhai@ya.ru, vbabka@suse.cz,
+        roman.gushchin@linux.dev, djwong@kernel.org, brauner@kernel.org,
+        paulmck@kernel.org, tytso@mit.edu, steven.price@arm.com,
+        cel@kernel.org, senozhatsky@chromium.org, yujie.liu@intel.com,
+        gregkh@linuxfoundation.org, muchun.song@linux.dev
+Subject: Re: [PATCH v3 28/49] dm zoned: dynamically allocate the
+ dm-zoned-meta shrinker
+Message-ID: <ZML22YJi5vPBDEDj@dread.disaster.area>
+References: <20230727080502.77895-1-zhengqi.arch@bytedance.com>
+ <20230727080502.77895-29-zhengqi.arch@bytedance.com>
+ <baaf7de4-9a0e-b953-2b6a-46e60c415614@kernel.org>
+ <56ee1d92-28ee-81cb-9c41-6ca7ea6556b0@bytedance.com>
+ <ba0868b2-9f90-3d81-1c91-8810057fb3ce@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <ZMK1r91ByQERwDK+@bombadil.infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ba0868b2-9f90-3d81-1c91-8810057fb3ce@kernel.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 27, 2023 at 11:21:35AM -0700, Luis Chamberlain wrote:
-> I'd like to see if this is useful so feedback is welcomed.
+On Thu, Jul 27, 2023 at 07:20:46PM +0900, Damien Le Moal wrote:
+> On 7/27/23 17:55, Qi Zheng wrote:
+> >>>           goto err;
+> >>>       }
+> >>>   +    zmd->mblk_shrinker->count_objects = dmz_mblock_shrinker_count;
+> >>> +    zmd->mblk_shrinker->scan_objects = dmz_mblock_shrinker_scan;
+> >>> +    zmd->mblk_shrinker->seeks = DEFAULT_SEEKS;
+> >>> +    zmd->mblk_shrinker->private_data = zmd;
+> >>> +
+> >>> +    shrinker_register(zmd->mblk_shrinker);
+> >>
+> >> I fail to see how this new shrinker API is better... Why isn't there a
+> >> shrinker_alloc_and_register() function ? That would avoid adding all this code
+> >> all over the place as the new API call would be very similar to the current
+> >> shrinker_register() call with static allocation.
+> > 
+> > In some registration scenarios, memory needs to be allocated in advance.
+> > So we continue to use the previous prealloc/register_prepared()
+> > algorithm. The shrinker_alloc_and_register() is just a helper function
+> > that combines the two, and this increases the number of APIs that
+> > shrinker exposes to the outside, so I choose not to add this helper.
 > 
-> I recently had a reason to establish a baseline for XFS as we start
-> testing some new fatures we've been working on to ensure we don't create
-> regressions. I've been using kdevops for this work, its on github [0] and
-> on gitlab for those that prefer that [1] and tested against linux-next
-> tag next-20230725, with its respective generic kernel configuration
-> which has evolved over time for kdevops which let's us test with kdevops
-> with qemu / virtualbox / all cloud providers [2]. We fork fstests [3] so
-> have a small delta, mostly reverts to help stability on testing as
-> Chandan found regressions in some new fstest changes.
-> 
-> [0] https://github.com/linux-kdevops/kdevops.git
-> [1] https://gitlab.com/linux-kdevops/kdevops.git
-> [2] https://github.com/linux-kdevops/kdevops/blob/master/playbooks/roles/bootlinux/templates/config-next-20230725
-> [3] https://github.com/linux-kdevops/fstests
-> 
-> The sections tested for are:
-> 
-> xfs_crc
-> xfs_reflink
-> xfs_reflink-normapbt
-> xfs_reflink_1024
-> xfs_reflink_2k
-> xfs_reflink_4k
-> xfs_nocrc
-> xfs_nocrc_512
-> xfs_nocrc_1k
-> xfs_nocrc_2k
-> xfs_nocrc_4k
-> xfs_logdev
-> xfs_rtdev
-> xfs_rtlogdev
+> And that results in more code in many places instead of less code + a simple
+> inline helper in the shrinker header file...
 
-Question: Have you turned on gcov to determine how much of fs/xfs/ and
-fs/iomap/ are actually getting exercised by these configurations?
+It's not just a "simple helper" - it's a function that has to take 6
+or 7 parameters with a return value that must be checked and
+handled.
 
-I have for my fstests fleet; it's about ~90% for iomap, ~87% for
-xfs/libxfs, ~84% for the pagecache, and ~80% for xfs/scrub.  Was
-wondering what everyone else got on the test.
+This was done in the first versions of the patch set - the amount of
+code in each caller does not go down and, IMO, was much harder to
+read and determine "this is obviously correct" that what we have
+now.
 
---D
+> So not adding that super simple
+> helper is not exactly the best choice in my opinion.
 
-> You can see what these sections represent in terms of xfs here:
-> 
-> https://github.com/linux-kdevops/kdevops/blob/master/playbooks/roles/fstests/templates/xfs/xfs.config
-> 
-> The first order of business before even considering a set of changes is
-> getting baseline and building a high confidence in that baseline. We had
-> a technical debt as it's been a while before we get to establish and
-> publish a baseline with high confidence for XFS for linux-next. Hopefully this
-> will help us keep it moving forward.
-> 
-> The kdevops configuration used for this can be found here:
-> 
-> https://github.com/linux-kdevops/kdevops/blob/master/workflows/fstests/results/mcgrof/libvirt-qemu/20230727/kdevops.config
-> 
-> Worth noting is that virtio drives are used instead of NVMe since virtio
-> supports io-threads, and so we get less NVMe timouts on the guest which
-> have proven to cause major false positives for testing for a while as we
-> have seen on the stable testing. I'll go ahead and make virtio the
-> default for qemu configurations now. We expect to move back to nvme once
-> distros pick up release of qemu with io-thread support.
-> 
-> This is useful truncated / sparsefiles files with loopback file strategy
-> documented here:
-> 
-> https://github.com/linux-kdevops/kdevops/blob/master/docs/testing-with-loopback.md
-> 
-> I'll soon re-test with real NVMe drives though as kdevops now has
-> support for using them and I have some basic tests with PCIe passthrough
-> (which kdevops also enables with 'make dynconfig').
-> 
-> For now I've just ran one full set of fstests, ie, the confidence is rather
-> low for my preference. After publishing this I will the tests against one
-> week's worth of testing to build confidence up to 100 tests. We'll see
-> if some other tests fail with a lower failure rate after that.
-> 
-> But for now I figured I'd publish preliminary results on the first run.
-> Some failures seem like test bugs. Some other failures are likely real and
-> require investigation.
-> 
-> Often we just commit into kdevops test results / expunges, but this is
-> the first time publishing actual results on the mailing list. The commit
-> logs detail the methodology to collect things results and go step by
-> step so to help others who may want to try to start baselines with other
-> filesystems, etc.
-> 
-> You are more than welcomed to also contribute testing and your own
-> results in your own kdevops namespace, the more we have the better
-> (within reason of course).
-> 
-> The tests found to be common in at least 2 secions go in the all.txt
-> expunge list. Since at LSFMM we've been requested to store results
-> this set of results go with results archived in XZ format and
-> demonstrate how to list files in it, and also get results for failures
-> out. I provide a simple super cursory review of the test failures as well.
-> 
-> The test bugs seem related to quotes, but it's not clear to me why
-> this wasn't detected in other tests before.
-> 
-> What I'd like to know, is if this email is useful to the XFS development
-> community. Should we strive to do this more often?
-> 
-> Here are failures found in at least more than one section:
-> 
-> cat workflows/fstests/expunges/6.5.0-rc3-next-20230725/xfs/unassigned/all.txt
-> 
-> # lazy baseline entries are failures found at least once on multiple XFS test
-> # sections. To see the actual *.bad files and *.dmesg files you can use:
-> #
-> # tar -tOJf workflows/fstests/results/mcgrof/libvirt-qemu/20230727/6.5.0-rc3-next-20230725.xz
-> #
-> # For example to see all generic/175 failures:
-> #
-> # tar -tOJf workflows/fstests/results/mcgrof/libvirt-qemu/20230727/6.5.0-rc3-next-20230725.xz 2>&1 | grep generic | grep 175
-> # 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/generic/175.out.bad
-> # 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/generic/175.full
-> # 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/generic/175.dmesg
-> # 6.5.0-rc3-next-20230725/xfs_reflink/generic/175.out.bad
-> # 6.5.0-rc3-next-20230725/xfs_reflink/generic/175.full
-> # 6.5.0-rc3-next-20230725/xfs_reflink/generic/175.dmesg
-> # 6.5.0-rc3-next-20230725/xfs_reflink_4k/generic/175.out.bad
-> # 6.5.0-rc3-next-20230725/xfs_reflink_4k/generic/175.full
-> # 6.5.0-rc3-next-20230725/xfs_reflink_4k/generic/175.dmesg
-> # 6.5.0-rc3-next-20230725/xfs_rtdev/generic/175.out.bad
-> # 6.5.0-rc3-next-20230725/xfs_rtdev/generic/175.full
-> # 6.5.0-rc3-next-20230725/xfs_rtdev/generic/175.dmesg
-> #
-> # And now to see one individual file:
-> #
-> # tar -xOJf workflows/fstests/results/mcgrof/libvirt-qemu/20230727/6.5.0-rc3-next-20230725.xz 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/generic/175.out.bad
-> # tar -xOJf workflows/fstests/results/mcgrof/libvirt-qemu/20230727/6.5.0-rc3-next-20230725.xz 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/generic/175.dmesg
-> #
-> generic/175 # seems like a test bug - lazy baseline - failure found in at least two sections
-> generic/297 # seems like a test bug - lazy baseline - failure found in at least two sections
-> generic/298 # seems like a test bug - lazy baseline - failure found in at least two sections
-> generic/471 # race against loop? - lazy baseline - failure found in at least two sections
-> generic/563 # needs investigation - lazy baseline - failure found in at least two sections
-> xfs/157 # needs investigation - lazy baseline - failure found in at least two sections
-> xfs/188 # unclear - lazy baseline - failure found in at least two sections
-> xfs/205 # unclear - lazy baseline - failure found in at least two sections
-> xfs/432 # test bug: blocksize should detect sector size - lazy baseline - failure found in at least two sections
-> xfs/506 # needs investigation - lazy baseline - failure found in at least two sections
-> xfs/516 # needs investigation - lazy baseline - failure found in at least two sections
-> 
-> Here are failures found in just the test section which enables reflinks
-> but disables rmapbt:
-> 
-> cat workflows/fstests/expunges/6.5.0-rc3-next-20230725/xfs/unassigned/xfs_reflink_normapbt.txt
-> 
-> # For exmaple to see these failures:
-> #
-> # tar -tOJf workflows/fstests/results/mcgrof/libvirt-qemu/20230727/6.5.0-rc3-next-20230725.xz 2>&1 | grep xfs | grep normap | grep 301
-> #
-> # 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/xfs/301.out.bad
-> # 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/xfs/301.full
-> # 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/xfs/301.dmesg
-> 
-> # To see one file output:
-> # tar -xOJf workflows/fstests/results/mcgrof/libvirt-qemu/20230727/6.5.0-rc3-next-20230725.xz 6.5.0-rc3-next-20230725/xfs_reflink_normapbt/xfs/301.out.bad
-> xfs/301 # needs investigation
-> 
-> And here are failures found only on the realtime device, most are likely
-> test bugs which means we gotta enhance the test to skip the realtime
-> device or learn to use it, but some seem like real failures:
-> 
-> cat workflows/fstests/expunges/6.5.0-rc3-next-20230725/xfs/unassigned/xfs_rtdev.txt
-> 
-> # For example to see rtdev's generic/012 related files:
-> #
-> # tar -tOJf workflows/fstests/results/mcgrof/libvirt-qemu/20230727/6.5.0-rc3-next-20230725.xz 2>&1 | grep xfs | grep rtdev | grep 012
-> #
-> # To see the generic/012 out.bad file:
-> # tar -xOJf workflows/fstests/results/mcgrof/libvirt-qemu/20230727/6.5.0-rc3-next-20230725.xz 6.5.0-rc3-next-20230725/xfs_rtdev/generic/012.out.bad
-> #
-> generic/012 # needs investigation
-> generic/013 # needs investigation
-> generic/015 # might be a test bug
-> generic/016 # needs investigation
-> generic/021 # needs investigation
-> generic/022 # needs investigation
-> generic/027 # might be a test bug
-> generic/058 # needs investigation
-> generic/060 # needs investigation
-> generic/061 # needs investigation
-> generic/063 # needs investigation
-> generic/074 # needs investigation
-> generic/075 # needs investigation
-> generic/077 # might be a test bug
-> generic/096 # might be a test bug
-> generic/102 # might be a test bug
-> generic/112 # needs investigation
-> generic/113 # needs investigation
-> generic/171 # might be a test bug
-> generic/172 # might be a test bug
-> generic/173 # might be a test bug
-> generic/174 # might be a test bug
-> generic/204 # might be a test bug
-> generic/224 # might be a test bug
-> generic/226 # might be a test bug
-> generic/251 # ran out of space and then corruption?
-> generic/256 # might be a test bug
-> generic/269 # might be a test bug
-> generic/270 # might be a test bug
-> generic/273 # might be a test bug
-> generic/274 # might be a test bug
-> generic/275 # might be a test bug
-> generic/300 # might be a test bug
-> generic/312 # might be a test bug
-> generic/361 # might be a test bug
-> generic/371 # might be a test bug
-> generic/416 # might be a test bug
-> generic/427 # might be a test bug
-> generic/449 # might be a test bug
-> generic/488 # might be a test bug
-> generic/511 # might be a test bug
-> generic/515 # might be a test bug
-> generic/520 # needs investigation
-> generic/551 # needs investigation
-> generic/558 # might be a test bug
-> generic/562 # never completed
-> 
->   Luis
+Each to their own - I much prefer the existing style/API over having
+to go look up a helper function every time I want to check some
+random shrinker has been set up correctly....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
