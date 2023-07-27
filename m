@@ -2,442 +2,356 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 70592764FF4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 11:38:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5526F764FFA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 11:39:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232465AbjG0Jij (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 05:38:39 -0400
+        id S234401AbjG0Jjt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 05:39:49 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232227AbjG0JiR (ORCPT
+        with ESMTP id S234082AbjG0Jjb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 05:38:17 -0400
-Received: from mail-ej1-x649.google.com (mail-ej1-x649.google.com [IPv6:2a00:1450:4864:20::649])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 721666194
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 02:32:23 -0700 (PDT)
-Received: by mail-ej1-x649.google.com with SMTP id a640c23a62f3a-94a34a0b75eso40341966b.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 02:32:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1690450342; x=1691055142;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b9wG54SKOiot2xhxqhwPg9gnKBeCz5aIx7TRjv8QIGU=;
-        b=PL/tvt0CbuTauU8KZes+sFfrzPx5i2oVs1vpi0kiz7a+WhwvPCbEUZSkP9515tIsZu
-         MdFgTqZDIsQPXAYmvInuYeN9XcbmX54NmBeDos+fC6AHYJFwxpIN712zYGbnD+8nM64b
-         f6wCPGiSiLqcJaXVHa+IBNJbw+1/1oA1T2UD4wbhqX5lou7op4euYptimhxWv/Lm3qB4
-         NZnKJz58dILp4GnQAuJg4tKyYK6aZkw2hVbTw4dkC+bjivB1rfWyIJDlTnaGvSy8WuOj
-         ysKuSiGbYqSU9iJEwi6MudATGm/Om331YH4Ja7euDpwlPEwJUMLfFsoI4hffzFjRFRJY
-         dggQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690450342; x=1691055142;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=b9wG54SKOiot2xhxqhwPg9gnKBeCz5aIx7TRjv8QIGU=;
-        b=lUbaqOwLg2Bv/B2g+carKauJpAURJHAtBxYUkoHg2MAIt6Mh9LB9/sV8b1/D8CLVka
-         f0iJtbnYZJoTy/RbHEPselWqIlNiCYoRMrfkbRWKBNIB89Mek7/dc4OJKL+s/ccKhQLS
-         /TSlQbew7SN5aZ6+E7pYOC/GPsDJinrl5LiwSYr/huEH3AM4ukedPYkySi6NlOZ7jTqi
-         SHB5WS+0+mwlDFiTT2GKDRhdpLPJk2q1ROKwOytHdeughXFsbdrU+km1porYIwKWcRlz
-         RxFszDj0dTAflBwcpvA+wYUvcC5wcyKiMx6H7xdO8C/eZyPghxTIFZKREQcXLuoRgow5
-         NlBQ==
-X-Gm-Message-State: ABy/qLblLg3anTZbOQeezEGcnP6tV3L9xAhnW9DZj+lxEejOMdD+523L
-        5PIf2B5MhER9I6inrKHBkj18lugodRM=
-X-Google-Smtp-Source: APBJJlFJ+e9xmxyrCQ1V2JgK9iX7EyjccAOjmi7+qZk6ILEWDNE+0nq08DNB0yMFJgBaSsucaDCACszr2EA=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:db47:e98d:115e:6269])
- (user=gnoack job=sendgmr) by 2002:a17:907:8315:b0:98e:3ef1:90b with SMTP id
- mq21-20020a170907831500b0098e3ef1090bmr4310ejc.1.1690450341872; Thu, 27 Jul
- 2023 02:32:21 -0700 (PDT)
-Date:   Thu, 27 Jul 2023 11:32:18 +0200
-In-Reply-To: <e7e24682-5da7-3b09-323e-a4f784f10158@digikod.net>
-Message-Id: <ZMI5ooJq6i/OJyxs@google.com>
-Mime-Version: 1.0
-References: <20230623144329.136541-1-gnoack@google.com> <6dfc0198-9010-7c54-2699-d3b867249850@digikod.net>
- <ZK6/CF0RS5KPOVff@google.com> <f3d46406-4cae-cd5d-fb35-cfcbd64c0690@digikod.net>
- <20230713.470acd0e890b@gnoack.org> <e7e24682-5da7-3b09-323e-a4f784f10158@digikod.net>
-Subject: Re: [PATCH v2 0/6] Landlock: ioctl support
-From:   "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
-To:     "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
-Cc:     "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack3000@gmail.com>,
-        linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        linux-fsdevel@vger.kernel.org,
+        Thu, 27 Jul 2023 05:39:31 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C3819B;
+        Thu, 27 Jul 2023 02:36:55 -0700 (PDT)
+Received: from localhost.localdomain (unknown [59.103.218.24])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id F3B97660702D;
+        Thu, 27 Jul 2023 10:36:43 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1690450613;
+        bh=WAw9Wc6ERjXa7v5e39iwMT8AojeRV2+olmo/rV/sqtQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=h8lBvDHFbUYSMiWWLfwuIpIOQ9ZHUXXFn3GTj+E+VYisn3eFodFHlBVDnkVrUni4+
+         Tt1p3lDuxl5tyH74+YyWwDpvXyShgtIGB4fb+Qw1qP5FjpCUfjM3GBRCph4gsArGlo
+         fLQCpm8WEVqX1mP3FGuVpNA3Kw+W552Z0iA4OnjBqtqiDWlKUMk6Q3qDPk4KjWtY3E
+         /g7q5q4pS77d4nQMVV37EFuTD1qBaDeYnsk+RvlgRu0+DQz+nzG4cgbrVXSVPiDWMD
+         1duBxJPEAQwL0Wdk6HB5BpOMXXNMbaxDPPcAtdzx2NPOx/r9YIGbHbTAtHj5tZq2qT
+         0VVAJHvecIbQQ==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
         Christian Brauner <brauner@kernel.org>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Matt Bobrowski <repnop@google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@Oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: [PATCH v26 0/5] Implement IOCTL to get and optionally clear info about PTEs
+Date:   Thu, 27 Jul 2023 14:36:32 +0500
+Message-Id: <20230727093637.1262110-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URI_TRY_3LD autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Micka=C3=ABl!
+*Changes in v26:*
+- Code re-structurring and API changes in PAGEMAP_IOCTL
 
-Overall, I believe that I thought too far ahead here and now we've
-been mixing the discussions for different steps from the three-step
-approach that we discussed in [1].
+*Changes in v25*:
+- Do proper filtering on hole as well (hole got missed earlier)
 
-In order to make progress here, let me try to disentangle in this mail
-which parts we need for the current step (1) and which parts are only
-needed for later steps.
+*Changes in v24*:
+- Rebase on top of next-20230710
+- Place WP markers in case of hole as well
 
-[1] https://lore.kernel.org/linux-security-module/d4f1395c-d2d4-1860-3a02-2=
-a0c023dd761@digikod.net/
+*Changes in v23*:
+- Set vec_buf_index in loop only when vec_buf_index is set
+- Return -EFAULT instead of -EINVAL if vec is NULL
+- Correctly return the walk ending address to the page granularity
 
+*Changes in v22*:
+- Interface change:
+  - Replace [start start + len) with [start, end)
+  - Return the ending address of the address walk in start
 
-On Mon, Jul 24, 2023 at 09:03:42PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> On 14/07/2023 00:38, G=C3=BCnther Noack wrote:
-> > On Wed, Jul 12, 2023 at 07:48:29PM +0200, Micka=C3=ABl Sala=C3=BCn wrot=
-e:
-> > > A useful split would be at least between devices and regular
-> > > files/directories, something like this:
-> > > - LANDLOCK_ACCESS_FS_IOCTL_DEV: allows IOCTLs on character or block d=
-evices,
-> > > which should be targeted on specific paths.
-> > > - LANDLOCK_ACCESS_FS_IOCTL_NODEV: allows IOCTLs on regular files,
-> > > directories, unix sockets, pipes, and symlinks. These are targeting
-> > > filesystems (e.g. ext4's fsverity) or common Linux file types.
-> >=20
-> > To make sure we are on the same page, let me paraphrase:
-> >=20
-> > You are suggesting that we should split the LANDLOCK_ACCESS_FS_IOCTL
-> > right into a LANDLOCK_ACCESS_FS_IOCTL_DEV part (for block and
-> > character devices) and a LANDLOCK_ACCESS_FS_IOCTL_NODEV part (for
-> > regular files, directories, named(!) unix sockets, named(!) pipes and
-> > symlinks)?  The check would presumably be done during the open(2) call
-> > and then store the access right on the freshly opened struct file?
->=20
-> Correct
+*Changes in v21*:
+- Abort walk instead of returning error if WP is to be performed on
+  partial hugetlb
 
-OK, I'll add this to step (1) then.
+*Changes in v20*
+- Correct PAGE_IS_FILE and add PAGE_IS_PFNZERO
 
+*Changes in v19*
+- Minor changes and interface updates
 
-> > (It is more clearly a philosophy of "protecting resources", rather
-> > than a philosophy of limiting access to the thousands of potentially
-> > buggy ioctl implementations. - But I think it might be reasonable to
-> > permit unnamed pipes and socketpairs - they are useful mechanisms and
-> > seem harmless as long as their implementations don't have bugs.)
->=20
-> The goal of Landlock is to limit access to new resources (e.g. new FD
-> obtained from an existing FD or a path).
->=20
-> Unnamed pipes and socketpairs are not a way to (directly) access new kern=
-el
-> resources/data, hence out of scope for Landlock. Abstract unix sockets wi=
-ll
-> need to be restricted though, but not with a path_beneath rule (and not
-> right now with this patch series).
+*Changes in v18*
+- Rebase on top of next-20230613
+- Minor updates
 
-OK, fair enough.  I can see that this is conceptually cleaner within
-Landlock.
+*Changes in v17*
+- Rebase on top of next-20230606
+- Minor improvements in PAGEMAP_SCAN IOCTL patch
 
-Let's go for that approach then, where Landlock only restricts newly
-opened path-based files, and where we leave inherited file descriptors
-and the ones created through pipe(2), socketpair(2) and timerfds as
-they are for now.
+*Changes in v16*
+- Fix a corner case
+- Add exclusive PM_SCAN_OP_WP back
 
-It feels like TIOCSTI (and TIOCLINUX) are probably the biggest
-problems when it comes to these inherited files.  With some luck,
-TIOCSTI will be turned off by distributions soon (and TIOCLINUX only
-works on the text console, which is luckily not in use that much).
-Fingers crossed.
+*Changes in v15*
+- Build fix (Add missed build fix in RESEND)
 
+*Changes in v14*
+- Fix build error caused by #ifdef added at last minute in some configs
 
-> > > I think it makes sense because the underlying filesystems should alre=
-ady
-> > > check for read/write access, which is not the case for block/char dev=
-ices.
-> > > Pipe and unix socket IOCTLs are quite specific but don't touch the
-> > > underlying filesystem, and it should be allowed to properly use them.=
- It
-> > > should be noted that the pipe and socket IOCTL implementations don't =
-care
-> > > about their file mode though; I guess the rationale might be that IOC=
-TLs may
-> > > be required to (efficiently) either read or write.
-> > >=20
-> >=20
-> > I don't understand your remark about the read/write access.
->=20
-> I meant that regular file/directory IOCTLs (e.g. fscrypt) should already
-> check for read or write access according to the IOCTL command. This doesn=
-'t
-> seem to be the case for devices because they don't modify and are unrelat=
-ed
-> to the underlying filesystem.
->=20
->=20
-> >=20
-> > Pipes have a read end and a write end, where only one of the two
-> > operations should work.  Unix sockets are always bidirectional, if I
-> > remember this correctly.
->=20
-> Yes, but the pipe and socket IOCTL commands don't check if the related FD=
- is
-> opened with read nor write.
+*Changes in v13*
+- Rebase on top of next-20230414
+- Give-up on using uffd_wp_range() and write new helpers, flush tlb only
+  once
 
-I still don't understand your remarks about ioctl commands not
-checking read and write flags.  To clarify: What you are talking about
-is that the implementations of individual ioctl commands should all
-check the read and write mode flags on the struct file, is that right?
+*Changes in v12*
+- Update and other memory types to UFFD_FEATURE_WP_ASYNC
+- Rebaase on top of next-20230406
+- Review updates
 
-I'm puzzled how you come to the conclusion that devices don't do such
-checks - did you read some ioctl command implementations, or is it a
-more underlying principle that I was not aware of so far?
+*Changes in v11*
+- Rebase on top of next-20230307
+- Base patches on UFFD_FEATURE_WP_UNPOPULATED
+- Do a lot of cosmetic changes and review updates
+- Remove ENGAGE_WP + !GET operation as it can be performed with
+  UFFDIO_WRITEPROTECT
 
-So far, I've always been under the impression that the modes on device
-files are also reflected on the associated struct file after they are
-opened.  As in, you open a block device for reading to read its
-contents, but you need to open it for writing to modify it.  Are these
-rights not respected by the ioctl commands?
+*Changes in v10*
+- Add specific condition to return error if hugetlb is used with wp
+  async
+- Move changes in tools/include/uapi/linux/fs.h to separate patch
+- Add documentation
 
+*Changes in v9:*
+- Correct fault resolution for userfaultfd wp async
+- Fix build warnings and errors which were happening on some configs
+- Simplify pagemap ioctl's code
 
-In any case - I believe the only reason why we are discussing this is
-to justify the DEV/NODEV split, and that one in itself is not
-controversial to me, even when I admittedly don't fully follow your
-reasoning.
+*Changes in v8:*
+- Update uffd async wp implementation
+- Improve PAGEMAP_IOCTL implementation
 
+*Changes in v7:*
+- Add uffd wp async
+- Update the IOCTL to use uffd under the hood instead of soft-dirty
+  flags
 
-> > The thing that struck me about the above list of criteria is that each
-> > of them seems to have gaps.  As an example, take timerfds
-> > (timerfd_create(2)):
-> >=20
-> >   * these do not get opened through a file system path, so the *file
-> >     path* can not restrict them.
->=20
-> >   * they are not character or block devices and do not have a device ID=
-.
-> >   * they don't match any of the file types in filp->f_mode.
->=20
-> Indeed, we may need a way to identify this kind of FD in the future but i=
-t
-> should not be an issue for now with the path_beneath rules. I guess we co=
-uld
-> match the anon_inode:[*] name, but I would prefer to avoid using strings.=
- A
-> better way to identify this kind of FD would be to pass a similar one in =
-a
-> rule, in the same way as for path_beneath (as I suggested in a previous
-> email).
+*Motivation*
+The real motivation for adding PAGEMAP_SCAN IOCTL is to emulate Windows
+GetWriteWatch() and ResetWriteWatch() syscalls [1]. The GetWriteWatch()
+retrieves the addresses of the pages that are written to in a region of
+virtual memory.
 
-(In retrospect, the timerfd was a bad example, because it is acquired
-through something else than open(2).  I don't currently have an
-immediate example at hand for an anon_inode which is reachable through
-the file system (except /proc/.../fd).)
+This syscall is used in Windows applications and games etc. This syscall is
+being emulated in pretty slow manner in userspace. Our purpose is to
+enhance the kernel such that we translate it efficiently in a better way.
+Currently some out of tree hack patches are being used to efficiently
+emulate it in some kernels. We intend to replace those with these patches.
+So the whole gaming on Linux can effectively get benefit from this. It
+means there would be tons of users of this code.
 
-Agreed that matching the "anon_inode:*" name would be a hack.  That
-does not look like it was meant as a reliable interface.
+CRIU use case [2] was mentioned by Andrei and Danylo:
+> Use cases for migrating sparse VMAs are binaries sanitized with ASAN,
+> MSAN or TSAN [3]. All of these sanitizers produce sparse mappings of
+> shadow memory [4]. Being able to migrate such binaries allows to highly
+> reduce the amount of work needed to identify and fix post-migration
+> crashes, which happen constantly.
 
-This discussion seems like it belongs to step (2) and later though, so
-wouldn't block the first patch set, I think.
+Andrei's defines the following uses of this code:
+* it is more granular and allows us to track changed pages more
+  effectively. The current interface can clear dirty bits for the entire
+  process only. In addition, reading info about pages is a separate
+  operation. It means we must freeze the process to read information
+  about all its pages, reset dirty bits, only then we can start dumping
+  pages. The information about pages becomes more and more outdated,
+  while we are processing pages. The new interface solves both these
+  downsides. First, it allows us to read pte bits and clear the
+  soft-dirty bit atomically. It means that CRIU will not need to freeze
+  processes to pre-dump their memory. Second, it clears soft-dirty bits
+  for a specified region of memory. It means CRIU will have actual info
+  about pages to the moment of dumping them.
+* The new interface has to be much faster because basic page filtering
+  is happening in the kernel. With the old interface, we have to read
+  pagemap for each page.
 
+*Implementation Evolution (Short Summary)*
+From the definition of GetWriteWatch(), we feel like kernel's soft-dirty
+feature can be used under the hood with some additions like:
+* reset soft-dirty flag for only a specific region of memory instead of
+clearing the flag for the entire process
+* get and clear soft-dirty flag for a specific region atomically
 
-> > So in order to permit the TFD_IOC_SET_TICKS ioctl on them, these three
-> > criteria can't be used to describe a timerfd.
->=20
-> Correct, and timerfd don't give access to (FS-related) data.
->=20
-> If we want to restrict this kind of FD (and if it's worth it), we can fol=
-low
-> the same approach as for restricting new socket creation. Restricting
-> specific IOCTLs on these FDs would require a capability-based approach (c=
-f.
-> Capsicum): explicitly attach restrictions to a FD, not a process, and the
-> mechanism is almost there thanks to the truncate access right patches. It
-> would make sense for Landlock to support this kind of FD capabilities, bu=
-t
-> maybe not right now.
+So we decided to use ioctl on pagemap file to read or/and reset soft-dirty
+flag. But using soft-dirty flag, sometimes we get extra pages which weren't
+even written. They had become soft-dirty because of VMA merging and
+VM_SOFTDIRTY flag. This breaks the definition of GetWriteWatch(). We were
+able to by-pass this short coming by ignoring VM_SOFTDIRTY until David
+reported that mprotect etc messes up the soft-dirty flag while ignoring
+VM_SOFTDIRTY [5]. This wasn't happening until [6] got introduced. We
+discussed if we can revert these patches. But we could not reach to any
+conclusion. So at this point, I made couple of tries to solve this whole
+VM_SOFTDIRTY issue by correcting the soft-dirty implementation:
+* [7] Correct the bug fixed wrongly back in 2014. It had potential to cause
+regression. We left it behind.
+* [8] Keep a list of soft-dirty part of a VMA across splits and merges. I
+got the reply don't increase the size of the VMA by 8 bytes.
 
-+1 let's discuss in a follow-up patch set.
+At this point, we left soft-dirty considering it is too much delicate and
+userfaultfd [9] seemed like the only way forward. From there onward, we
+have been basing soft-dirty emulation on userfaultfd wp feature where
+kernel resolves the faults itself when WP_ASYNC feature is used. It was
+straight forward to add WP_ASYNC feature in userfautlfd. Now we get only
+those pages dirty or written-to which are really written in reality. (PS
+There is another WP_UNPOPULATED userfautfd feature is required which is
+needed to avoid pre-faulting memory before write-protecting [9].)
 
+All the different masks were added on the request of CRIU devs to create
+interface more generic and better.
 
-> > For completeness: I forgot to list here: The other reason where a
-> > check during ioctl() is needed is the case as for the timerfd, the
-> > pipe(2) and socketpair(2), where a file is created through a simple
-> > syscall, but without spelling out a path.  If these kinds of files are
-> > in scope for ioctl protection, it can't be done during the open()
-> > check alone, I suspect?
->=20
-> Correct, but we don't need this kind of restriction for now.
+[1] https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-getwritewatch
+[2] https://lore.kernel.org/all/20221014134802.1361436-1-mdanylo@google.com
+[3] https://github.com/google/sanitizers
+[4] https://github.com/google/sanitizers/wiki/AddressSanitizerAlgorithm#64-bit
+[5] https://lore.kernel.org/all/bfcae708-db21-04b4-0bbe-712badd03071@redhat.com
+[6] https://lore.kernel.org/all/20220725142048.30450-1-peterx@redhat.com/
+[7] https://lore.kernel.org/all/20221122115007.2787017-1-usama.anjum@collabora.com
+[8] https://lore.kernel.org/all/20221220162606.1595355-1-usama.anjum@collabora.com
+[9] https://lore.kernel.org/all/20230306213925.617814-1-peterx@redhat.com
+[10] https://lore.kernel.org/all/20230125144529.1630917-1-mdanylo@google.com
 
-OK
+* Original Cover letter from v8*
+Hello,
 
+Note:
+Soft-dirty pages and pages which have been written-to are synonyms. As
+kernel already has soft-dirty feature inside which we have given up to
+use, we are using written-to terminology while using UFFD async WP under
+the hood.
 
-> > > As I explained before, I don't think we should care about inherited o=
-r
-> > > passed FDs. Other ways to get FDs (e.g. landlock_create_ruleset) shou=
-ld
-> > > probably not be a priority for now.
-> >=20
-> > I don't know what we should do about the "basic Unix tool" and
-> > TIOCSTI/TIOCLINUX case, where it is possible to gain control over the
-> > shell running in the tty that we get as stdout fd.
-> >=20
-> > I'm in that situation with the little web application I run at home,
-> > but the patch that you have sent for GNU tar at some point (and which
-> > we should really revive :)) has the same problem: If an attacker
-> > manages to do a Remote Code Execution in that tar process, they can
-> > ioctl(1, TIOCSTI, ...) their way out into the shell which invoked tar,
-> > and which is not restricted with tar's Landlock policy.
-> >=20
-> > (I don't really see tar create a pty/tty pair either and shovel data
-> > between them in a sidecar process or thread, just to protect against
-> > that.)
->=20
-> Indeed, and that's why sandboxing an application might raise some
-> challenges. We should note that a sandboxed application might only be saf=
-ely
-> used in some cases (e.g. pipe stdio and close other FDs), but I agree tha=
-t
-> this is not satisfactory for now, and there are still gaps.
+It is possible to find and clear soft-dirty pages entirely in userspace.
+But it isn't efficient:
+- The mprotect and SIGSEGV handler for bookkeeping
+- The userfaultfd wp (synchronous) with the handler for bookkeeping
 
-OK, I'll make sure it shows up in the documentation.
+Some benchmarks can be seen here[1]. This series adds features that weren't
+present earlier:
+- There is no atomic get soft-dirty/Written-to status and clear present in
+  the kernel.
+- The pages which have been written-to can not be found in accurate way.
+  (Kernel's soft-dirty PTE bit + sof_dirty VMA bit shows more soft-dirty
+  pages than there actually are.)
 
+Historically, soft-dirty PTE bit tracking has been used in the CRIU
+project. The procfs interface is enough for finding the soft-dirty bit
+status and clearing the soft-dirty bit of all the pages of a process.
+We have the use case where we need to track the soft-dirty PTE bit for
+only specific pages on-demand. We need this tracking and clear mechanism
+of a region of memory while the process is running to emulate the
+getWriteWatch() syscall of Windows.
 
-> > Remark: For the specific TIOCSTI problem, I'm seeing a glimmer of
-> > light with this patch set which has appeared in the meantime:
-> > https://lore.kernel.org/all/20230710002645.v565c7xq5iddruse@begin/
-> > (This will still require that distributions flip that Kconfig option
-> > off, but the only(?) known user of TIOCSTI, BRLTTY, would continue
-> > working.)
->=20
-> I hope most distros are disabling CONFIG_LEGACY_TIOCSTI, otherwise users
-> should still be able to tweak the related sysctl.
+*(Moved to using UFFD instead of soft-dirty feature to find pages which
+have been written-to from v7 patch series)*:
+Stop using the soft-dirty flags for finding which pages have been
+written to. It is too delicate and wrong as it shows more soft-dirty
+pages than the actual soft-dirty pages. There is no interest in
+correcting it [2][3] as this is how the feature was written years ago.
+It shouldn't be updated to changed behaviour. Peter Xu has suggested
+using the async version of the UFFD WP [4] as it is based inherently
+on the PTEs.
 
-+1
+So in this patch series, I've added a new mode to the UFFD which is
+asynchronous version of the write protect. When this variant of the
+UFFD WP is used, the page faults are resolved automatically by the
+kernel. The pages which have been written-to can be found by reading
+pagemap file (!PM_UFFD_WP). This feature can be used successfully to
+find which pages have been written to from the time the pages were
+write protected. This works just like the soft-dirty flag without
+showing any extra pages which aren't soft-dirty in reality.
 
+The information related to pages if the page is file mapped, present and
+swapped is required for the CRIU project [5][6]. The addition of the
+required mask, any mask, excluded mask and return masks are also required
+for the CRIU project [5].
 
-> > I would be more comfortable with doing the checks only at open(2) time
-> > if the above patch landed in distributions so that you would need to
-> > have CAP_SYS_ADMIN in order to use TIOCSTI.
-> >=20
-> > Do you think this is realistic?  If this does not get flipped by
-> > distributions, Landlock would continue to have these TIOCSTI problems
-> > on these platforms (unless its users do the pty/tty pair thing, but
-> > that seems like an unrealistic demand).
->=20
-> What if we use an FD to identify an inode with landlock_inode_attr rule? =
-We
-> could have some flag to "pin" the restriction on this specific FD/inode, =
-or
-> only match the device type, or the file type=E2=80=A6 We need to think a =
-bit more
-> about the implications though.
+The IOCTL returns the addresses of the pages which match the specific
+masks. The page addresses are returned in struct page_region in a compact
+form. The max_pages is needed to support a use case where user only wants
+to get a specific number of pages. So there is no need to find all the
+pages of interest in the range when max_pages is specified. The IOCTL
+returns when the maximum number of the pages are found. The max_pages is
+optional. If max_pages is specified, it must be equal or greater than the
+vec_size. This restriction is needed to handle worse case when one
+page_region only contains info of one page and it cannot be compacted.
+This is needed to emulate the Windows getWriteWatch() syscall.
 
-This would also be a later step and not be part of step (1).
+The patch series include the detailed selftest which can be used as an
+example for the uffd async wp test and PAGEMAP_IOCTL. It shows the
+interface usages as well.
 
-The idea of using an FD as an "example" is interesting, but I'm not
-fully sold on it yet.  I need to ponder it more.  Some specific
-points:
+[1] https://lore.kernel.org/lkml/54d4c322-cd6e-eefd-b161-2af2b56aae24@collabora.com/
+[2] https://lore.kernel.org/all/20221220162606.1595355-1-usama.anjum@collabora.com
+[3] https://lore.kernel.org/all/20221122115007.2787017-1-usama.anjum@collabora.com
+[4] https://lore.kernel.org/all/Y6Hc2d+7eTKs7AiH@x1n
+[5] https://lore.kernel.org/all/YyiDg79flhWoMDZB@gmail.com/
+[6] https://lore.kernel.org/all/20221014134802.1361436-1-mdanylo@google.com/
 
-* Creating such FDs might have unwanted side effects, or be
-  disproportionally difficult, when they are just created for the
-  purpose of defining a Landlock ruleset.
+Regards,
+Muhammad Usama Anjum
 
-* The matching is unclear to me.  In particular, we've discussed
-  before to restrict dev_t ranges (fixed major, range on minor) - I
-  don't know how that would be done with this approach.
+Muhammad Usama Anjum (4):
+  fs/proc/task_mmu: Implement IOCTL to get and optionally clear info
+    about PTEs
+  tools headers UAPI: Update linux/fs.h with the kernel sources
+  mm/pagemap: add documentation of PAGEMAP_SCAN IOCTL
+  selftests: mm: add pagemap ioctl tests
 
+Peter Xu (1):
+  userfaultfd: UFFD_FEATURE_WP_ASYNC
 
-> >  I don't see how
-> > specifying the file type and device ID range as plain numbers could
-> > lead to a race condition.
->=20
-> No race condition but side channel issues. For instance, a landlocked
-> process could infer some file properties by adding and testing a Landlock
-> rule even if it is not allowed to read such file properties (because of
-> potential Landlock or other restrictions). Using a FD enables Landlock to
-> check that the process is indeed allowed to read such properties, or we m=
-ay
-> decide that it is not necessary to do so.
+ Documentation/admin-guide/mm/pagemap.rst     |   64 +
+ Documentation/admin-guide/mm/userfaultfd.rst |   35 +
+ fs/proc/task_mmu.c                           |  653 ++++++++
+ fs/userfaultfd.c                             |   26 +-
+ include/linux/hugetlb.h                      |    1 +
+ include/linux/userfaultfd_k.h                |   21 +-
+ include/uapi/linux/fs.h                      |   58 +
+ include/uapi/linux/userfaultfd.h             |    9 +-
+ mm/hugetlb.c                                 |   34 +-
+ mm/memory.c                                  |   27 +-
+ tools/include/uapi/linux/fs.h                |   58 +
+ tools/testing/selftests/mm/.gitignore        |    2 +
+ tools/testing/selftests/mm/Makefile          |    3 +-
+ tools/testing/selftests/mm/config            |    1 +
+ tools/testing/selftests/mm/pagemap_ioctl.c   | 1485 ++++++++++++++++++
+ tools/testing/selftests/mm/run_vmtests.sh    |    4 +
+ 16 files changed, 2457 insertions(+), 24 deletions(-)
+ create mode 100644 tools/testing/selftests/mm/pagemap_ioctl.c
 
-Understood - so IIUC the scenario is that a process is not permitted
-to read file attributes, but it'll be able to infer the device ID by
-defining a dev_t-based Landlock rule and then observing whether ioctl
-still works.
+-- 
+2.39.2
 
-(I'll also postpone it to step (2) or later then)
-
-
-> > If yes, I do agree that a list of permitted ioctls is similar to the
-> > access rights flags that we already have, and it would have to get
-> > passed around in a similar fashion (as "synthetic access rights"),
-> > albeit using a different data structure.
-> >=20
-> > I'm still skeptical of the API approach where we tie previously
-> > unrelated rules together, if that is what you mean here.  I find this
-> > difficult to explain and reason about.  But in doubt we'll see in the
-> > implementation how unwieldy it actually gets.
->=20
-> Right, we don't need to implement the synthetic access rights with the
-> current step though.
-
-+1 OK
-
->=20
-> >=20
-> >=20
-> > > > The upside of that approach would be that it could also be used to =
-selectively
-> > > > restrict specific known-evil ioctls, and letting all others continu=
-e to work.
-> > > > For example, sandboxing or sudo-like programs could filter out TIOC=
-STI and
-> > > > TIOCLINUX.
-> >=20
-> > By the way, selectively restricting known-bad ioctls is still not
-> > possible with the approach we discussed now, I think.  Maybe TIOCSTI
-> > is the only bad one... I hope.
->=20
-> It would not be possible with the landlock_path_beneath_attr, but the
-> landlock_inode_attr could be enough.
-
-Will ponder it -- it has the limitation as I said above that it can't
-restrict device ranges, but it could be used to apply restrictions to
-specific opened inodes.
-
-One difference I see with this approach is that the rights would not
-transfer along with the opened file when the files get passed between
-processes.  So the policy for that inode would apply to the enforcing
-process and its new children, but it would not apply to other
-processes which the file is given to.
-
-
----
-
-Summarizing this, I believe that the parts that we need for step (1)
-are the following ones:
-
-(1) Identify and blanket-permit a small list of ioctl cmds which work
-    on all file descriptors (FIOCLEX, FIONCLEX, FIONBIO, FIOASYNC, and
-    others?)
-
-    Compare
-    https://lore.kernel.org/linux-security-module/6dfc0198-9010-7c54-2699-d=
-3b867249850@digikod.net/
-
-(2) Split into LANDLOCK_ACCESS_FS_IOCTL into a ..._DEV and a ..._NODEV part=
-.
-
-(3) Point out in documentation that this IOCTL restriction scheme only
-    applies to newly opened FDs and in particular point out the common
-    use case where that is a TTY, and what to do in this case.
-
-If you agree, I'd go ahead and implement that as step (1) and we can
-discuss the more advanced ideas in the context of a follow-up.
-
-Thanks,
-=E2=80=94G=C3=BCnther
-
---=20
-Sent using Mutt =F0=9F=90=95 Woof Woof
