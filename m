@@ -2,93 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ABF32765C43
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 21:43:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 074B5765C6B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 21:50:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231378AbjG0TnG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 15:43:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58138 "EHLO
+        id S231868AbjG0TuN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 15:50:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230211AbjG0TnF (ORCPT
+        with ESMTP id S232371AbjG0TuF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 15:43:05 -0400
-Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E31F32D7D;
-        Thu, 27 Jul 2023 12:43:04 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 03C38320091E;
-        Thu, 27 Jul 2023 15:43:03 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Thu, 27 Jul 2023 15:43:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-        1690486983; x=1690573383; bh=49GR1k6Q08NLQKKVbLSRij8vwYLRr8VLzRz
-        3qgnQVpc=; b=eIMzuhw6lN9NwSNoBm7Du3VBvSeQSO5QM9OW5QRbTtzBUBbma/8
-        fPiet+TrvPwIkt522wvsB4bFABaN1HZvoLDDS/MYWQutbQnboUEH6pu/vE9suU73
-        QNqV5fnCW+32Q/H1rGaR9dgdA+f9jYeaRUNVcE5pIDr9QwVHESYzUibG7oJC3q8v
-        HYI1iFbBB2qlOvqyAlPViJuzt8bCd6MhZ/TpMQDGDl0rH20JHStJNxr0BuQU2ruM
-        Lt5QGqbbuler97ftkORl/G1fwbfcNBuNleqMHv0nz/yurl3WiMlS3udbRUqnQdFf
-        pGnQNiqxIUcRe7w1fWFFD8gfAfErkXqqbTQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1690486983; x=1690573383; bh=49GR1k6Q08NLQKKVbLSRij8vwYLRr8VLzRz
-        3qgnQVpc=; b=q9UEBRDEAABBwCD8WqIqejtPNSINKEkcU6i087uLni5AZxJaoOB
-        Aj39qXFZWm7BQwJ0xdk31Xz76TVeN40vAfSlujbTNjJRBz+vlp61zYHHg50tuB7c
-        wMb+YMpkZN+o3GTBeG7PZt8rNVTSnj38wlQqjjFhMf/sq/RgBYyi5irQh7cqYAui
-        k8zUQo1wGtcwTvdU7Cic07csM0VTno1SklnnORnh8TKG9/siogEFfjgkLvXXzSfh
-        HCp+k2uTSLE0E8yY/hqD781aRH53aLp6tStPQ7Clrvd53RJobEuqGnrNXJNqNx82
-        UPDQAAKVrWqKp1eIaGo/zzgWuyfvOWwBn6g==
-X-ME-Sender: <xms:x8jCZJ_kbvxpapkAuV4-k1Q2duQwoxt1TdG11OeXPl5G-OJG_B_cSg>
-    <xme:x8jCZNtNKAlsGcGKifdqsZMBB7b51M7ThTA4IwpnpKddpLYMI-pYL041J0JKbvjhH
-    uYwFJhJXCEzNElI>
-X-ME-Received: <xmr:x8jCZHBAYMPEXGefkkOUFRxoq34lDenX7HQBQD5z9gC87DJ58yluD1ghn2Q3E1Q9Sw1naEv_gmVLDw9PorBXG1xlVuhzbZpM-BAyIM4eg0xd66Mt-cvI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrieeggdduudefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    gfrhhlucfvnfffucdluddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredt
-    tdefjeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthh
-    husggvrhhtsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeekheevkeel
-    keekjefhheegfedtffduudejjeeiheehudeuleelgefhueekfeevudenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgs
-    vghrthesfhgrshhtmhgrihhlrdhfmh
-X-ME-Proxy: <xmx:x8jCZNd7A3Y53OoIAw913pKFAWl71lZP5PqOjwUJzUVIiM4She_Wjw>
-    <xmx:x8jCZOOoNjn4vsj3A3MrkOEwCq3QCfyWcSA-jWZZW9PXiGRqgalkPg>
-    <xmx:x8jCZPl2LIQ1s906Ndz6OMUMU3iFmx83DoEklXG17ndGUW_e1bhDnw>
-    <xmx:x8jCZLpiRWZRqDmQq4gykMbheX-XCHTTEWLs6vwZm9a8lVxbhH0dTg>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 27 Jul 2023 15:43:02 -0400 (EDT)
-Message-ID: <21fff874-d4ed-1781-32a6-06f154a4bc99@fastmail.fm>
-Date:   Thu, 27 Jul 2023 21:43:01 +0200
+        Thu, 27 Jul 2023 15:50:05 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15B6330CA
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 12:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1690487352;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lhKBfrs7PWxagBM4M/4Uh0236cjqOcIxZ56PmZEdO5Q=;
+        b=CDWpo489G/Kvo327LcneaKGL4uCx87Aj78cmwvPf9fT/dQLsM1RaV/LjTmgBZdZ9q9Uwx1
+        /E7eFH4v33eS2SdATFFnP97UiZQoW44PVNRTswvdrRVOUqScLnJVe37UOmht9e16vgi8p7
+        af9Ox8/c8nFx3c9/BYaSeXslEGfaYZ0=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-493-o54PgO0nPbi9ttTz3960KA-1; Thu, 27 Jul 2023 15:49:06 -0400
+X-MC-Unique: o54PgO0nPbi9ttTz3960KA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2441B185A7BC;
+        Thu, 27 Jul 2023 19:49:05 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.131])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ECB371121330;
+        Thu, 27 Jul 2023 19:49:02 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <b0d380c-d5d6-6ab1-67b5-8dc514127f8f@google.com>
+References: <b0d380c-d5d6-6ab1-67b5-8dc514127f8f@google.com> <20230727093529.f235377fabec606e16c20679@linux-foundation.org> <20230727161016.169066-1-dhowells@redhat.com> <20230727161016.169066-2-dhowells@redhat.com> <175119.1690476440@warthog.procyon.org.uk>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     dhowells@redhat.com, Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        John Hubbard <jhubbard@nvidia.com>,
+        David Hildenbrand <david@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] shmem: Fix splice of a missing page
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Subject: Re: [PATCH] fuse: enable larger read buffers for readdir.
-Content-Language: en-US, de-DE
-To:     Miklos Szeredi <miklos@szeredi.hu>, Jaco Kroon <jaco@uls.co.za>
-Cc:     Antonio SJ Musumeci <trapexit@spawn.link>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230726105953.843-1-jaco@uls.co.za>
- <b5255112-922f-b965-398e-38b9f5fb4892@fastmail.fm>
- <7d762c95-e4ca-d612-f70f-64789d4624cf@uls.co.za>
- <0731f4b9-cd4e-2cb3-43ba-c74d238b824f@fastmail.fm>
- <831e5a03-7126-3d45-2137-49c1a25769df@spawn.link>
- <27875beb-bd1c-0087-ac4c-420a9d92a5a9@uls.co.za>
- <CAJfpegtaxHu2RCqStSFyGzEUrQx-cpuQaCCxiB-F6YmBEvNiJw@mail.gmail.com>
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <CAJfpegtaxHu2RCqStSFyGzEUrQx-cpuQaCCxiB-F6YmBEvNiJw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <178882.1690487342.1@warthog.procyon.org.uk>
+Date:   Thu, 27 Jul 2023 20:49:02 +0100
+Message-ID: <178883.1690487342@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -96,26 +72,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hugh Dickins <hughd@google.com> wrote:
 
-
-On 7/27/23 21:21, Miklos Szeredi wrote:
-> On Wed, 26 Jul 2023 at 20:40, Jaco Kroon <jaco@uls.co.za> wrote:
+> On Thu, 27 Jul 2023, David Howells wrote:
+> > Andrew Morton <akpm@linux-foundation.org> wrote:
+> > 
+> > > This is already in mm-unstable (and hence linux-next) via Hugh's
+> > > "shmem: minor fixes to splice-read implementation"
+> > > (https://lkml.kernel.org/r/32c72c9c-72a8-115f-407d-f0148f368@google.com)
+> > 
+> > And I've already reviewed it:-)
 > 
->> Will look into FUSE_INIT.  The FUSE_INIT as I understand from what I've
->> read has some expansion constraints or the structure is somehow
->> negotiated.  Older clients in other words that's not aware of the option
->> will follow some default.  For backwards compatibility that default
->> should probably be 1 page.  For performance reasons it makes sense that
->> this limit be larger.
-> 
-> Yes, might need this for backward compatibility.  But perhaps a
-> feature flag is enough and the readdir buf can be limited to
-> fc->max_read.
+> I'm not sure whether that ":-)" is implying (good-natured) denial.
 
-fc->max_read is set by default to ~0 and only set to something else when 
-the max_read mount option is given? So typically that is a large value 
-(UINT_MAX)?
+I've reviewed it, and the review still seems good.
 
+> You reviewed the original on 17 April, when Jens took it into his tree;
+> then it vanished in a rewrite, and you didn't respond when I asked about
+> that on 28 June;
 
-Thanks,
-Bernd
+I missed it in the rush to try and get everything debugged during the merge
+window prior to going on holiday.
+
+> then you were Cc'ed when I sent it to Andrew on 23 July (where I explained
+> about dropping two mods but keeping your Reviewed-by).
+
+Hmmm...  I don't find that one in my inbox.
+
+> This version that Andrew has in mm-unstable includes the hwpoison fix
+> that we agreed on before, in addition to the len -> part fix.
+
+Ok.
+
+David
+
