@@ -2,229 +2,255 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 26010765014
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 11:43:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D875765044
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jul 2023 11:50:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232483AbjG0Jni (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 05:43:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59510 "EHLO
+        id S231982AbjG0Jt7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 05:49:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234050AbjG0Jn0 (ORCPT
+        with ESMTP id S232001AbjG0Jtx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 05:43:26 -0400
-Received: from out-124.mta0.migadu.com (out-124.mta0.migadu.com [91.218.175.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC6411739
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 02:43:01 -0700 (PDT)
-Message-ID: <b4cb0dfa-e6d4-eb93-3f54-d951a25e26d2@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1690450979;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+Ux7MkE7mBBTHCndJ7zOsRytS4ZLarEC65+RLjXxT+w=;
-        b=AEYOEuChlb66P5nt4dVwpwol8jWjB3m8aXfO29+rilywovbkDXBQ/etiVjSd/F4MnzrVxU
-        72J188GIud0T27x0z5DF2PuS2OjS8+xm09k81MO9lxCmFjdcuhZA8XeEkHEQ+zdYD1Wz54
-        HF6aQSBt4nPgOE4ngwF8agCTU2gWqf0=
-Date:   Thu, 27 Jul 2023 17:42:52 +0800
+        Thu, 27 Jul 2023 05:49:53 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D19FB358E
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 02:49:26 -0700 (PDT)
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com [209.85.219.197])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 8133E40822
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 09:48:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1690451297;
+        bh=WTLnGBvjCSqP+5BtDwi+mG3Apzjq6Uh/eJ7UyBfPVTU=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=n2AEJzcHbFqQQftkA8ZUuuXkz/5RuOMQqzHig86bmr2/OHpQYSSvDEfVb5KH91Rcq
+         ONB/L8V2bz99j8xBSEbyLRegFoq2ptf/UZgc1fuWSjecbxmQjR2HNad4cPo0ytURtV
+         Xt168Ozm8uPOCitD/8J++ST3C8P1prvGrG4lJ585P3XadEyaQ5rrjSzTuAwCFCedal
+         C/+xiOZcDC5QOUEmPrDfkyWMW56EP6jUsUge/3TsOQDyep9hLFYVt4VgdGEckQ+0it
+         jTHCceYYQSjrsCAnHuZSQftV0MGPkgwP8Jep8zVvmAju7UTT1J6wfr/Foo8FmDqwGP
+         np/XXHgNZQy9Q==
+Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-d11f35a0d5cso737609276.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 02:48:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690451296; x=1691056096;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WTLnGBvjCSqP+5BtDwi+mG3Apzjq6Uh/eJ7UyBfPVTU=;
+        b=YSzqeLT5Zew4wJlKJDKYGIORmVcKks7+etAQm5IDBbMPueHfTo7hw7O4fNKYawgJfP
+         hKySKy3T4hwnuypF001bFi4jM10VlGw0uja5UgNih+guvm4QBqDJyXBIu7g2OI9YmrRx
+         g36SfPa9xve88Dz/VH2DznR3TlZutrUSoOkudwS86y6sxhsieoZkiCroMaaDdCVX+8Zj
+         5USC/oqCf7gZmaz/OJDynQGjNr5sRQ2nI4m35k1uI4x5heez9Fw4vQ8yqxBhLnSboXP/
+         g+aj9TTfFrDNXdW44X2Yw2LUBBm2NBDf6UJzasxgI2KdgzYWiBJwa340IA80srKxRti/
+         6hoQ==
+X-Gm-Message-State: ABy/qLaj83efhTcVldjXl9XpQ8XHLvjxExVf8wHgj8ZgaP0ILdCGU5mD
+        4TU6B84B+PP1mV2HD6YG8uYuZBuE+WKZIrX/ihqBGLD8yJXK7N/x+/yh435A0E3MWXBa2qht5x+
+        kwSRJ1L0JkKKN+HNgLGXgTtzT2gE0Gh7C2S8oqjVWyCUEOIRcK2VlB8UjCNY=
+X-Received: by 2002:a25:aa44:0:b0:d08:5a25:e6b4 with SMTP id s62-20020a25aa44000000b00d085a25e6b4mr4275035ybi.28.1690451296224;
+        Thu, 27 Jul 2023 02:48:16 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlF5+2BQCM2TmchCezsz6wmmafSVYHnLcCDnM9U7L5fvA1biqUyUssGgCHz0KOjLvo/zIZX6Plh7IdUY3k7yM1c=
+X-Received: by 2002:a25:aa44:0:b0:d08:5a25:e6b4 with SMTP id
+ s62-20020a25aa44000000b00d085a25e6b4mr4275022ybi.28.1690451295998; Thu, 27
+ Jul 2023 02:48:15 -0700 (PDT)
 MIME-Version: 1.0
-Subject: Re: [External] [fuse-devel] [PATCH 3/3] fuse: write back dirty pages
- before direct write in direct_io_relax mode
-Content-Language: en-US
-To:     Bernd Schubert <bernd.schubert@fastmail.fm>,
-        Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>,
-        fuse-devel@lists.sourceforge.net
-Cc:     linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>,
-        cgxu519@mykernel.net, miklos@szeredi.hu
-References: <20230630094602.230573-1-hao.xu@linux.dev>
- <20230630094602.230573-4-hao.xu@linux.dev>
- <e5266e11-b58b-c8ca-a3c8-0b2c07b3a1b2@bytedance.com>
- <2622afd7-228f-02f3-3b72-a1c826844126@linux.dev>
- <396A0BF4-DA68-46F8-9881-3801737225C6@fastmail.fm>
- <9b0a164d-3d0e-cc57-81b7-ae32bef4e9d7@linux.dev>
- <cb8c18e6-b5cb-e891-696f-b403012eacb7@fastmail.fm>
- <45da6206-8e34-a184-5ba4-d40be252cfd2@linux.dev>
- <02444c76-ea2e-3931-d49e-5cd0518711a7@fastmail.fm>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <02444c76-ea2e-3931-d49e-5cd0518711a7@fastmail.fm>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <20230726141026.307690-1-aleksandr.mikhalitsyn@canonical.com>
+ <20230726141026.307690-4-aleksandr.mikhalitsyn@canonical.com>
+ <6ea8bf93-b456-bda4-b39d-a43328987ac9@redhat.com> <CAEivzxeQubvas2yPFYRRXr3BP7pp1HNM3b7C-PQQWy-0FpFKuQ@mail.gmail.com>
+ <20230727-bedeuten-endkampf-22c87edd132b@brauner>
+In-Reply-To: <20230727-bedeuten-endkampf-22c87edd132b@brauner>
+From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date:   Thu, 27 Jul 2023 11:48:04 +0200
+Message-ID: <CAEivzxcx31k3M1jWhhDrx6jxYtw=VOd84N-cMNWc+BZjq6QuFQ@mail.gmail.com>
+Subject: Re: [PATCH v7 03/11] ceph: handle idmapped mounts in create_request_message()
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Xiubo Li <xiubli@redhat.com>, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/26/23 01:59, Bernd Schubert wrote:
-> 
-> 
-> On 7/25/23 18:57, Hao Xu wrote:
->>
->> On 7/25/23 21:00, Bernd Schubert wrote:
->>>
->>>
->>> On 7/25/23 12:11, Hao Xu wrote:
->>>> On 7/21/23 19:56, Bernd Schubert wrote:
->>>>> On July 21, 2023 1:27:26 PM GMT+02:00, Hao Xu <hao.xu@linux.dev> 
->>>>> wrote:
->>>>>> On 7/21/23 14:35, Jiachen Zhang wrote:
->>>>>>>
->>>>>>> On 2023/6/30 17:46, Hao Xu wrote:
->>>>>>>> From: Hao Xu <howeyxu@tencent.com>
->>>>>>>>
->>>>>>>> In direct_io_relax mode, there can be shared mmaped files and 
->>>>>>>> thus dirty
->>>>>>>> pages in its page cache. Therefore those dirty pages should be 
->>>>>>>> written
->>>>>>>> back to backend before direct write to avoid data loss.
->>>>>>>>
->>>>>>>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
->>>>>>>> ---
->>>>>>>>    fs/fuse/file.c | 7 +++++++
->>>>>>>>    1 file changed, 7 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->>>>>>>> index 176f719f8fc8..7c9167c62bf6 100644
->>>>>>>> --- a/fs/fuse/file.c
->>>>>>>> +++ b/fs/fuse/file.c
->>>>>>>> @@ -1485,6 +1485,13 @@ ssize_t fuse_direct_io(struct 
->>>>>>>> fuse_io_priv *io, struct iov_iter *iter,
->>>>>>>>        if (!ia)
->>>>>>>>            return -ENOMEM;
->>>>>>>> +    if (fopen_direct_write && fc->direct_io_relax) {
->>>>>>>> +        res = filemap_write_and_wait_range(mapping, pos, pos + 
->>>>>>>> count - 1);
->>>>>>>> +        if (res) {
->>>>>>>> +            fuse_io_free(ia);
->>>>>>>> +            return res;
->>>>>>>> +        }
->>>>>>>> +    }
->>>>>>>>        if (!cuse && fuse_range_is_writeback(inode, idx_from, 
->>>>>>>> idx_to)) {
->>>>>>>>            if (!write)
->>>>>>>>                inode_lock(inode);
->>>>>>>
->>>>>>> Tested-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
->>>>>>>
->>>>>>>
->>>>>>> Looks good to me.
->>>>>>>
->>>>>>> By the way, the behaviour would be a first FUSE_WRITE flushing 
->>>>>>> the page cache, followed by a second FUSE_WRITE doing the direct 
->>>>>>> IO. In the future, further optimization could be first write into 
->>>>>>> the page cache and then flush the dirty page to the FUSE daemon.
->>>>>>>
->>>>>>
->>>>>> I think this makes sense, cannot think of any issue in it for now, so
->>>>>> I'll do that change and send next version, super thanks, Jiachen!
->>>>>>
->>>>>> Thanks,
->>>>>> Hao
->>>>>>
->>>>>>>
->>>>>>> Thanks,
->>>>>>> Jiachen
->>>>>>
->>>>>
->>>>> On my phone, sorry if mail formatting is not optimal.
->>>>> Do I understand it right? You want DIO code path copy into pages 
->>>>> and then flush/invalidate these pages? That would be punish DIO for 
->>>>> for the unlikely case there are also dirty pages (discouraged IO 
->>>>> pattern).
->>>>
->>>> Hi Bernd,
->>>> I think I don't get what you said, why it is punishment and why it's 
->>>> discouraged IO pattern?
->>>> On my first eyes seeing Jiachen's idea, I was thinking "that sounds
->>>> disobeying direct write semantics" because usually direct write is
->>>> "flush dirty page -> invalidate page -> write data through to backend"
->>>> not "write data to page -> flush dirty page/(writeback data)"
->>>> The latter in worst case write data both to page cache and backend
->>>> while the former just write to backend and load it to the page cache
->>>> when buffered reading. But seems there is no such "standard way" which
->>>> says we should implement direct IO in that way.
->>>
->>> Hi Hao,
->>>
->>> sorry for being brief last week, I was on vacation and 
->>> reading/writing some mails on my phone.
->>>
->>> With 'punishment' I mean memory copies to the page cache - memory 
->>> copies are expensive and DIO should avoid it.
->>>
->>> Right now your patch adds filemap_write_and_wait_range(), but we do 
->>> not know if it did work (i.e. if pages had to be flushed). So unless 
->>> you find a way to get that information, copy to page cache would be 
->>> unconditionally - overhead of memory copy even if there are no dirty 
->>> pages.
->>
->>
->> Ah, looks I understood what you mean in my last email reply. Yes, just 
->> like what I said in last email:
->>
->> [1] flush dirty page --> invalidate page --> write data to backend
->>
->>     This is what we do for direct write right now in kernel, I call 
->> this policy "write-through", since it doesn't care much about the cache.
->>
->> [2] write data to page cache --> flush dirty page in suitable time
->>
->>     This is  "write-back" policy, used by buffered write. Here in this 
->> patch's case, we flush pages synchronously, so it still can be called 
->> direct-write.
->>
->> Surely, in the worst case, the page is clean, then [2] has one extra 
->> memory copy than [1]. But like what I pointed out, for [2], next time 
->> buffered
->>
->> read happens, the page is in latest state, so no I/O needed, while for 
->> [1], it has to load data from backend to page cache.
->>
->>
->>>
->>> With 'discouraged' I mean mix of page cache and direct-io. Typically 
->>> one should only do either of both (page cache or DIO), but not a mix 
->>> of them. For example see your patch, it flushes the page cache, but 
->>> without a lock - races are possible. Copying to the page cache might 
->>> be a solution, but it has the overhead above.
->>
->>
->> For race, we held inode lock there, do I miss anything?
-> 
-> We hold inode lock in write path, but not in read path. That ensures 
-> invalidate_inode_pages2_range() is not racing, but DIO read might race 
-> with a page cache writing happening in parallel. I guess results are 
-> then a bit unexpected anyway, although differently if we would hold the 
-> lock.
-> 
+On Thu, Jul 27, 2023 at 11:01=E2=80=AFAM Christian Brauner <brauner@kernel.=
+org> wrote:
+>
+> On Thu, Jul 27, 2023 at 08:36:40AM +0200, Aleksandr Mikhalitsyn wrote:
+> > On Thu, Jul 27, 2023 at 7:30=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wr=
+ote:
+> > >
+> > >
+> > > On 7/26/23 22:10, Alexander Mikhalitsyn wrote:
+> > > > Inode operations that create a new filesystem object such as ->mkno=
+d,
+> > > > ->create, ->mkdir() and others don't take a {g,u}id argument explic=
+itly.
+> > > > Instead the caller's fs{g,u}id is used for the {g,u}id of the new
+> > > > filesystem object.
+> > > >
+> > > > In order to ensure that the correct {g,u}id is used map the caller'=
+s
+> > > > fs{g,u}id for creation requests. This doesn't require complex chang=
+es.
+> > > > It suffices to pass in the relevant idmapping recorded in the reque=
+st
+> > > > message. If this request message was triggered from an inode operat=
+ion
+> > > > that creates filesystem objects it will have passed down the releva=
+nt
+> > > > idmaping. If this is a request message that was triggered from an i=
+node
+> > > > operation that doens't need to take idmappings into account the ini=
+tial
+> > > > idmapping is passed down which is an identity mapping.
+> > > >
+> > > > This change uses a new cephfs protocol extension CEPHFS_FEATURE_HAS=
+_OWNER_UIDGID
+> > > > which adds two new fields (owner_{u,g}id) to the request head struc=
+ture.
+> > > > So, we need to ensure that MDS supports it otherwise we need to fai=
+l
+> > > > any IO that comes through an idmapped mount because we can't proces=
+s it
+> > > > in a proper way. MDS server without such an extension will use call=
+er_{u,g}id
+> > > > fields to set a new inode owner UID/GID which is incorrect because =
+caller_{u,g}id
+> > > > values are unmapped. At the same time we can't map these fields wit=
+h an
+> > > > idmapping as it can break UID/GID-based permission checks logic on =
+the
+> > > > MDS side. This problem was described with a lot of details at [1], =
+[2].
+> > > >
+> > > > [1] https://lore.kernel.org/lkml/CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThf=
+zuibrhA3RKM=3DZOYLg@mail.gmail.com/
+> > > > [2] https://lore.kernel.org/all/20220104140414.155198-3-brauner@ker=
+nel.org/
+> > > >
+> > > > Cc: Xiubo Li <xiubli@redhat.com>
+> > > > Cc: Jeff Layton <jlayton@kernel.org>
+> > > > Cc: Ilya Dryomov <idryomov@gmail.com>
+> > > > Cc: ceph-devel@vger.kernel.org
+> > > > Co-Developed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canon=
+ical.com>
+> > > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > > > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonic=
+al.com>
+> > > > ---
+> > > > v7:
+> > > >       - reworked to use two new fields for owner UID/GID (https://g=
+ithub.com/ceph/ceph/pull/52575)
+> > > > ---
+> > > >   fs/ceph/mds_client.c         | 20 ++++++++++++++++++++
+> > > >   fs/ceph/mds_client.h         |  5 ++++-
+> > > >   include/linux/ceph/ceph_fs.h |  4 +++-
+> > > >   3 files changed, 27 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > > > index c641ab046e98..ac095a95f3d0 100644
+> > > > --- a/fs/ceph/mds_client.c
+> > > > +++ b/fs/ceph/mds_client.c
+> > > > @@ -2923,6 +2923,7 @@ static struct ceph_msg *create_request_messag=
+e(struct ceph_mds_session *session,
+> > > >   {
+> > > >       int mds =3D session->s_mds;
+> > > >       struct ceph_mds_client *mdsc =3D session->s_mdsc;
+> > > > +     struct ceph_client *cl =3D mdsc->fsc->client;
+> > > >       struct ceph_msg *msg;
+> > > >       struct ceph_mds_request_head_legacy *lhead;
+> > > >       const char *path1 =3D NULL;
+> > > > @@ -3028,6 +3029,16 @@ static struct ceph_msg *create_request_messa=
+ge(struct ceph_mds_session *session,
+> > > >       lhead =3D find_legacy_request_head(msg->front.iov_base,
+> > > >                                        session->s_con.peer_features=
+);
+> > > >
+> > > > +     if ((req->r_mnt_idmap !=3D &nop_mnt_idmap) &&
+> > > > +         !test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID, &session->s_fe=
+atures)) {
+> > > > +             pr_err_ratelimited_client(cl,
+> > > > +                     "idmapped mount is used and CEPHFS_FEATURE_HA=
+S_OWNER_UIDGID"
+> > > > +                     " is not supported by MDS. Fail request with =
+-EIO.\n");
+> > > > +
+> > > > +             ret =3D -EIO;
+> > > > +             goto out_err;
+> > > > +     }
+> > > > +
+> > >
+> > > I think this couldn't fail the mounting operation, right ?
+> >
+> > This won't fail mounting. First of all an idmapped mount is always an
+> > additional mount, you always
+> > start from doing "normal" mount and only after that you can use this
+> > mount to create an idmapped one.
+> > ( example: https://github.com/brauner/mount-idmapped/tree/master )
+> >
+> > >
+> > > IMO we should fail the mounting from the beginning.
+> >
+> > Unfortunately, we can't fail mount from the beginning. Procedure of
+> > the idmapped mounts
+> > creation is handled not on the filesystem level, but on the VFS level
+>
+> Correct. It's a generic vfsmount feature.
+>
+> > (source: https://github.com/torvalds/linux/blob/0a8db05b571ad5b8d5c8774=
+a004c0424260a90bd/fs/namespace.c#L4277
+> > )
+> >
+> > Kernel perform all required checks as:
+> > - filesystem type has declared to support idmappings
+> > (fs_type->fs_flags & FS_ALLOW_IDMAP)
+> > - user who creates idmapped mount should be CAP_SYS_ADMIN in a user
+> > namespace that owns superblock of the filesystem
+> > (for cephfs it's always init_user_ns =3D> user should be root on the ho=
+st)
+> >
+> > So I would like to go this way because of the reasons mentioned above:
+> > - root user is someone who understands what he does.
+> > - idmapped mounts are never "first" mounts. They are always created
+> > after "normal" mount.
+> > - effectively this check makes "normal" mount to work normally and
+> > fail only requests that comes through an idmapped mounts
+> > with reasonable error message. Obviously, all read operations will
+> > work perfectly well only the operations that create new inodes will
+> > fail.
+> > Btw, we already have an analogical semantic on the VFS level for users
+> > who have no UID/GID mapping to the host. Filesystem requests for
+> > such users will fail with -EOVERFLOW. Here we have something close.
+>
+> Refusing requests coming from an idmapped mount if the server misses
+> appropriate features is good enough as a first step imho. And yes, we do
+> have similar logic on the vfs level for unmapped uid/gid.
 
-This confused me a bit. Direct read should hold inode shared lock I
-believe, I checked it for fuse, neither in FOPEN_DIRECT_IO or not we
-don't hold shared inode lock. Any concern causes fuse doing so?
+Thanks, Christian!
 
-Regards,
-Hao
+I wanted to add that alternative here is to modify caller_{u,g}id
+fields as it was done in the first approach,
+it will break the UID/GID-based permissions model for old MDS versions
+(we can put printk_once to inform user about this),
+but at the same time it will allow us to support idmapped mounts in
+all cases. This support will be not fully ideal for old MDS
+ and perfectly well for new MDS versions.
 
-> 
->>
->>
->>>
->>> Thanks,
->>> Bernd
->>
->>
->> I now think it's good to keep the pattern same as other filesystems 
->> which is [1] to avoid possible performance issues in the future, 
->> thanks Bernd.
-> 
-> Thanks, I think we should keep fuse consistent with what other fs do.
-> 
-> 
-> Thanks,
-> Bernd
+Alternatively, we can introduce cephfs mount option like
+"idmap_with_old_mds" and if it's enabled then we set caller_{u,g}id
+for MDS without CEPHFS_FEATURE_HAS_OWNER_UIDGID, if it's disabled
+(default) we fail requests with -EIO. For
+new MDS everything goes in the right way.
 
+Kind regards,
+Alex
