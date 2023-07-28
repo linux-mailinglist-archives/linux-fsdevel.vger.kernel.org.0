@@ -2,199 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B65376627B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 05:37:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05C3F7662C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 06:07:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233208AbjG1DhK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 23:37:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57036 "EHLO
+        id S231875AbjG1EHE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jul 2023 00:07:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233168AbjG1DhG (ORCPT
+        with ESMTP id S233050AbjG1EHC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 23:37:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 188222D54;
-        Thu, 27 Jul 2023 20:37:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Fri, 28 Jul 2023 00:07:02 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0082130F4;
+        Thu, 27 Jul 2023 21:06:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1690517197;
+        bh=pcQAPdGAc64rGs8Q8YF3FyAN7z68cqGb6vBQ20gSNTI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fOjoj7qiHnPnlKdFgMZ+0gjqSWwmQqBEsnK2mYYKFdMO+cw9BklEUfYPvFRD6T3b3
+         ortaIruVUodPqY/i+KyqWiW+7hgJ2N2zoMJw0SqQ/PhvCnZLb3PygByx6TlW4+LkRY
+         liOERS6BIc/IIVAqn2aOhykurU+X0zSzdCQo5E72KRv3W+vxSR4T5GVGBS6tYg2LF3
+         4bqTEwaCnOOpOg0YaeBaJ9JpgUCz1NNzFmn0QLfDB4LvSCWpcZqH8J4R2hzNocThv/
+         zoMCg261d6hRqzR2ROTI9jwjFsZjOsf7fPWvvXSZ1S9KJpcEhObhfCYaangjx7/MwM
+         ruR5mrhx3yibw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9BD8C61F71;
-        Fri, 28 Jul 2023 03:37:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEDF5C433C8;
-        Fri, 28 Jul 2023 03:37:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690515423;
-        bh=CKy8nc2se/qVw6CL5KyA7b+klhxeNbXYszAes8MV3fU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JnDMASVVExqHsoZ/eDZPVcK83cOGguCZ6ebknWUvkE480wI3iqMhOLZMGSyDeLFc8
-         YvkNyZ9+1kn3XSDI2NNSMR8kwhNvl8NgwucKiFDis4FPWcBai1rQLR5U15uxCP8jG+
-         CM8OIhxm+LGeIyHYgKiVtNw6zeDLT5AOc6lkn1wfU1sAMSB3jp3o4BgL6G4Wuz634d
-         CEBObpQKS1RF2jWmN/r6M71gqtRJL3J8iUIy0Xt5eFcLoAXyjBUCUNx+RzAuToq1vE
-         khOvQDVaMnHibgnAG1ZazDQQp3kWECQi23IRktU30AXaYO6ZEsC+vE15l6qjEDa8lm
-         810cbulZExkWw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-        id 8A0EFCE0069; Thu, 27 Jul 2023 20:37:02 -0700 (PDT)
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     akpm@linux-foundation.org, adobriyan@gmail.com, mhiramat@kernel.org
-Cc:     arnd@kernel.org, ndesaulniers@google.com, paulmck@kernel.org,
-        sfr@canb.auug.org.au, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: [PATCH RFC bootconfig] 2/2] fs/proc: Add /proc/cmdline_image for embedded arguments
-Date:   Thu, 27 Jul 2023 20:37:01 -0700
-Message-Id: <20230728033701.817094-2-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <197cba95-3989-4d2f-a9f1-8b192ad08c49@paulmck-laptop>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4RBvG45TP8z4wqW;
+        Fri, 28 Jul 2023 14:06:36 +1000 (AEST)
+Date:   Fri, 28 Jul 2023 14:06:35 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     akpm@linux-foundation.org, adobriyan@gmail.com,
+        mhiramat@kernel.org, arnd@kernel.org, ndesaulniers@google.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@meta.com
+Subject: Re: [PATCH RFC bootconfig] 1/2] fs/proc: Add /proc/cmdline_load for
+ boot loader arguments
+Message-ID: <20230728140635.2ea3e82d@canb.auug.org.au>
+In-Reply-To: <20230728033701.817094-1-paulmck@kernel.org>
 References: <197cba95-3989-4d2f-a9f1-8b192ad08c49@paulmck-laptop>
+        <20230728033701.817094-1-paulmck@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; boundary="Sig_/EBviVOK.OrMU/Lj0QJSW_zt";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In kernels built with CONFIG_BOOT_CONFIG_FORCE=y, /proc/cmdline will show
-all kernel boot parameters, both those supplied by the boot loader and
-those embedded in the kernel image.  This works well for those who just
-want to see all of the kernel boot parameters, but is not helpful to those
-who need to see only those parameters that were embedded into the kernel
-image.  This is especially important in situations where there are many
-kernel images for different kernel versions and kernel configurations,
-all of which opens the door to a great deal of human error.
+--Sig_/EBviVOK.OrMU/Lj0QJSW_zt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Therefore, provide a /proc/cmdline_image file that shows only those kernel
-boot parameters that were embedded in the kernel image.  The output
-is in boot-image format, which allows easy reconcilation against the
-boot-config source file.
+Hi Paul,
 
-Why put this in /proc?  Because it is quite similar to /proc/cmdline, so
-it makes sense to put it in the same place that /proc/cmdline is located.
+Just a couple of nits:
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: <linux-fsdevel@vger.kernel.org>
+On Thu, 27 Jul 2023 20:37:00 -0700 "Paul E. McKenney" <paulmck@kernel.org> =
+wrote:
+>
+> [ sfr: Apply kernel test robot feedback. ]
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- fs/proc/cmdline.c    | 12 ++++++++++++
- include/linux/init.h | 11 ++++++-----
- init/main.c          |  9 +++++++++
- 3 files changed, 27 insertions(+), 5 deletions(-)
+This was a fix for my own build testing (I am not a bot (yet) :-)).
 
-diff --git a/fs/proc/cmdline.c b/fs/proc/cmdline.c
-index 1d0ef9d2949d..4ab5223198cb 100644
---- a/fs/proc/cmdline.c
-+++ b/fs/proc/cmdline.c
-@@ -20,6 +20,15 @@ static int cmdline_load_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
-+static int cmdline_image_proc_show(struct seq_file *m, void *v)
-+{
-+#ifdef CONFIG_BOOT_CONFIG_FORCE
-+	seq_puts(m, saved_bootconfig_string);
-+	seq_putc(m, '\n');
-+#endif
-+	return 0;
-+}
-+
- static int __init proc_cmdline_init(void)
- {
- 	struct proc_dir_entry *pde;
-@@ -31,6 +40,9 @@ static int __init proc_cmdline_init(void)
- 		pde = proc_create_single("cmdline_load", 0, NULL, cmdline_load_proc_show);
- 		pde_make_permanent(pde);
- 		pde->size = strnlen(boot_command_line, COMMAND_LINE_SIZE) + 1;
-+		pde = proc_create_single("cmdline_image", 0, NULL, cmdline_image_proc_show);
-+		pde_make_permanent(pde);
-+		pde->size = strnlen(saved_bootconfig_string, COMMAND_LINE_SIZE) + 1;
- 	}
- 	return 0;
- }
-diff --git a/include/linux/init.h b/include/linux/init.h
-index 29e75bbe7984..c075983c5015 100644
---- a/include/linux/init.h
-+++ b/include/linux/init.h
-@@ -14,7 +14,7 @@
- #define __noinitretpoline
- #endif
- 
--/* These macros are used to mark some functions or 
-+/* These macros are used to mark some functions or
-  * initialized data (doesn't apply to uninitialized data)
-  * as `initialization' functions. The kernel can take this
-  * as hint that the function is used only during the initialization
-@@ -22,7 +22,7 @@
-  *
-  * Usage:
-  * For functions:
-- * 
-+ *
-  * You should add __init immediately before the function name, like:
-  *
-  * static void __init initme(int x, int y)
-@@ -148,6 +148,7 @@ extern char boot_command_line[];
- extern char *saved_command_line;
- extern unsigned int saved_command_line_len;
- extern unsigned int reset_devices;
-+extern char saved_bootconfig_string[];
- 
- /* used by init/main.c */
- void setup_arch(char **);
-@@ -184,7 +185,7 @@ extern void (*late_time_init)(void);
- extern bool initcall_debug;
- 
- #endif
--  
-+
- #ifndef MODULE
- 
- #ifndef __ASSEMBLY__
-@@ -192,8 +193,8 @@ extern bool initcall_debug;
- /*
-  * initcalls are now grouped by functionality into separate
-  * subsections. Ordering inside the subsections is determined
-- * by link order. 
-- * For backwards compatibility, initcall() puts the call in 
-+ * by link order.
-+ * For backwards compatibility, initcall() puts the call in
-  * the device init subsection.
-  *
-  * The `id' arg to __define_initcall() is needed so that multiple initcalls
-diff --git a/init/main.c b/init/main.c
-index 2121685c479a..981170da0b1c 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -146,6 +146,11 @@ static char *extra_command_line;
- /* Extra init arguments */
- static char *extra_init_args;
- 
-+/* Untouched boot-config string */
-+#ifdef CONFIG_BOOT_CONFIG_FORCE
-+char saved_bootconfig_string[COMMAND_LINE_SIZE] __ro_after_init;
-+#endif
-+
- #ifdef CONFIG_BOOT_CONFIG
- /* Is bootconfig on command line? */
- static bool bootconfig_found;
-@@ -435,6 +440,10 @@ static void __init setup_boot_config(void)
- 		return;
- 	}
- 
-+#ifdef CONFIG_BOOT_CONFIG_FORCE
-+	strncpy(saved_bootconfig_string, data, COMMAND_LINE_SIZE);
-+#endif
-+
- 	if (size >= XBC_DATA_MAX) {
- 		pr_err("bootconfig size %ld greater than max size %d\n",
- 			(long)size, XBC_DATA_MAX);
--- 
-2.40.1
+> diff --git a/include/linux/init.h b/include/linux/init.h
+> index 266c3e1640d4..29e75bbe7984 100644
+> --- a/include/linux/init.h
+> +++ b/include/linux/init.h
+> @@ -112,6 +112,7 @@
+>  #define __REFCONST       .section       ".ref.rodata", "a"
+> =20
+>  #ifndef __ASSEMBLY__
+> +
 
+Please remove this added blank line.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/EBviVOK.OrMU/Lj0QJSW_zt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmTDPssACgkQAVBC80lX
+0Gwf5AgAi37ZIN9HLZU6bU+R+FwyrYNDr2cZ/NJ4Dp+VxCJzDpg5+kjYsWoX6IA2
+KDI8vz2oIDpB8HuQpTDQqMYRLMgM2JKo9tC5stoMX0xGgm2s8OQZBAQALVXbJRS2
+0EJMMcuANvLzL0lYw1L0IpMyFVKPx1JbXXkCtl/M7d43OgBwihtDbb9isvsbVQ7n
+/Rc4LUqcfXNpjOgUPlchY89RTUUHuXMkT5evqvD6psh/h7sSt8BflvTQXopm6rWU
+ArQM6/36EYYb5Bza5yao0y2hUlh6OIrSOvoydGUirwQeEhcA4OPYzX+qCtQZrhn1
+txkRvf76hsFpsJ/29oJMqSn6AcZ9bA==
+=ggdP
+-----END PGP SIGNATURE-----
+
+--Sig_/EBviVOK.OrMU/Lj0QJSW_zt--
