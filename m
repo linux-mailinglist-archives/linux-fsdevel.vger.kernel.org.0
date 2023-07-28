@@ -2,134 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D22787671A4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 18:14:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45EE17671BA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 18:19:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229584AbjG1QOX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jul 2023 12:14:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56766 "EHLO
+        id S229801AbjG1QTH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jul 2023 12:19:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229686AbjG1QOS (ORCPT
+        with ESMTP id S229592AbjG1QTG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jul 2023 12:14:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BDC13AB4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 09:13:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690560812;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1Dyh7+qatvQDKM5qDRHq8YkO5TCQeLww3uN1vYmzEUU=;
-        b=EzFo3gQj5XQ/9hIaortrhTD4LYBvIArNQeuoEUMjFSmK9OVj9+r5R7l037EK/2lLnNq90Z
-        iCl5HGQAazJ5SxihMyCGgtE/1fNg8e8aP6nCISlzVK2BY7YZYcv/jQY5OtVem140TIuwGZ
-        xjSysc4LiYaO9KBdfIkJceHnTkWpOxw=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-648-zIl1UW6bNWygTRE9dxVZTw-1; Fri, 28 Jul 2023 12:13:30 -0400
-X-MC-Unique: zIl1UW6bNWygTRE9dxVZTw-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-99bb3a2c781so137961866b.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 09:13:30 -0700 (PDT)
+        Fri, 28 Jul 2023 12:19:06 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1F5C26B2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 09:19:04 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-522382c4840so3055545a12.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 09:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1690561143; x=1691165943;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oiqXtLXb56gWHpFHlkrGXB0htpi3zn1ShhYELBek5ko=;
+        b=bynKf6n+TpRfz0DyR2rYNbqu0v4M0dTgmVz8xWQq8X+28lhY2cl5XnPRKgqX9HAqiE
+         H79vFTkAB/9Itwu2leZ1xBpWwBB4F2uReu+dWnEz72qQ+dgV9BK2g3sOlh+7HQG5ShkZ
+         9P+UQsfvk3Zbb2D6K+z9GjqGwuGQGpMLf/2Vk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690560809; x=1691165609;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Dyh7+qatvQDKM5qDRHq8YkO5TCQeLww3uN1vYmzEUU=;
-        b=ByYMMfWsec7fc1fdfnH3qCEi54V0849NoQSQaeWiOVnxyeFTidqmiv9Gqc9m3I+4Q1
-         okC89lv3WgL46W+bYvNDugIDGdTLh7+x0/q/08uk50YR8QhcQRatPSVDLvY2jerJzJp7
-         /4KBuI9LqrlSDnvoJnikz4LBC1AO74VN8xwpKYYCPjSQHFaTVXV/6HAlv8YYPFaG6cNy
-         NU/wTROdeFYBdr4EgrPzWzeHssms8U32oLbReZuCGIhhOUcBZbWe6M+gkd99KRAwqKv3
-         D9MYk3mUiL8/jX+HZ8JBUDpZe3t5TXBsGFSImaTV5weAwEzJ8bw7FFYkHfqGr8nmFoWk
-         qPYg==
-X-Gm-Message-State: ABy/qLaYoupXgTPqdjK0MSf8FEey+FfVo31oSMf5sFQONBqw5Nm80/6Q
-        axXqXrEURu85o4ppX5sUhee5S8uuUjUO40A7ZhjCGS7WOqKr4KrhpFRhKK9vAqftMcB/qrBUcQb
-        tQP4yUIip8deMdNuciuYelgBCQQ==
-X-Received: by 2002:a17:906:5354:b0:99b:efd3:3dcc with SMTP id j20-20020a170906535400b0099befd33dccmr1357340ejo.62.1690560809626;
-        Fri, 28 Jul 2023 09:13:29 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlHd2sX/AyGtIAscRR2p4pTksaGOsuCTBRQ37WpaEGChaEB1fcJtjozFJjrwhV4jFSHGD+pttg==
-X-Received: by 2002:a17:906:5354:b0:99b:efd3:3dcc with SMTP id j20-20020a170906535400b0099befd33dccmr1357325ejo.62.1690560809219;
-        Fri, 28 Jul 2023 09:13:29 -0700 (PDT)
-Received: from ?IPV6:2001:b07:6468:f312:9af8:e5f5:7516:fa89? ([2001:b07:6468:f312:9af8:e5f5:7516:fa89])
-        by smtp.googlemail.com with ESMTPSA id gy26-20020a170906f25a00b00993470682e5sm2197928ejb.32.2023.07.28.09.13.26
+        d=1e100.net; s=20221208; t=1690561143; x=1691165943;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oiqXtLXb56gWHpFHlkrGXB0htpi3zn1ShhYELBek5ko=;
+        b=LUnmQkJ3FqzBdyRQXU4btT7sTF2SB0by1EuTcv4gsUbJ+3qape9YSo6FwyygUBnlNu
+         aAZompDyZ36AvoIi7Ako/YAt0hYCxKegxemRa4I2SE/843gCp0XWMXjE6aQYKwVtjVyz
+         WdWt/R0gj7YGxolaXy0YD1pvpgZRBE+bzQJ03NumCgly6yWBzZXIh3I6cqqKjZvQVD10
+         yZMRPvNNaiKp0ghBr+u2D8Mr3AypqPN6JSNO/SBGeby2MWZfNEcvO30Ur7G0pkIB0Nnu
+         I0oLSWfD9Up7tQHEiM/IfpJv8S/gZ7QSMA8joZnCw+diejCAvcKaU7WtGFASNdbZU/SB
+         nVvw==
+X-Gm-Message-State: ABy/qLZdvDVOLCYsoQhjBe7DLl3VLF6p+ekw9U0T87w8sG6H3abDwzOk
+        FNJbS5eDjabzUFpXA8qZjosRW9zTLAaO/B9p5tknYFCx
+X-Google-Smtp-Source: APBJJlE3cne5zALqgtFqshukboTVhNzAd5CFZO8tEtsKzDGbgbspGb3/0DNKOfL8ZTJq8dwRcEvT/g==
+X-Received: by 2002:a17:906:10cd:b0:94e:4489:f24d with SMTP id v13-20020a17090610cd00b0094e4489f24dmr3076902ejv.61.1690561143292;
+        Fri, 28 Jul 2023 09:19:03 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id c22-20020a17090603d600b0099275c59bc9sm2229162eja.33.2023.07.28.09.19.02
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jul 2023 09:13:28 -0700 (PDT)
-Message-ID: <6da710cf-2bc0-bb6e-26f1-fba14ca767db@redhat.com>
-Date:   Fri, 28 Jul 2023 18:13:26 +0200
+        Fri, 28 Jul 2023 09:19:02 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5221cf2bb8cso3075339a12.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 09:19:02 -0700 (PDT)
+X-Received: by 2002:a05:6402:1141:b0:51e:5322:a642 with SMTP id
+ g1-20020a056402114100b0051e5322a642mr2296690edw.27.1690561141923; Fri, 28 Jul
+ 2023 09:19:01 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [RFC PATCH v11 10/29] mm: Add AS_UNMOVABLE to mark mapping as
- completely unmovable
-Content-Language: en-US
-To:     Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
+References: <20230727212845.135673-1-david@redhat.com>
+In-Reply-To: <20230727212845.135673-1-david@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 28 Jul 2023 09:18:45 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiig=N75AGP7UAG9scmghWAqsTB5NRO6RiWLOB5YWfcTQ@mail.gmail.com>
+Message-ID: <CAHk-=wiig=N75AGP7UAG9scmghWAqsTB5NRO6RiWLOB5YWfcTQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/4] smaps / mm/gup: fix gup_can_follow_protnone fallout
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Fuad Tabba <tabba@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Ackerley Tng <ackerleytng@google.com>,
-        Maciej Szmigiero <mail@maciej.szmigiero.name>,
-        David Hildenbrand <david@redhat.com>,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Wang <wei.w.wang@intel.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Isaku Yamahata <isaku.yamahata@gmail.com>
-References: <20230718234512.1690985-1-seanjc@google.com>
- <20230718234512.1690985-11-seanjc@google.com>
- <20230725102403.xywjqlhyqkrzjok6@box.shutemov.name>
- <ZL/Fa4W2Ne9EVxoh@casper.infradead.org>
- <692b09f7-70d9-1119-7fe2-3e7396ec259d@suse.cz>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-In-Reply-To: <692b09f7-70d9-1119-7fe2-3e7396ec259d@suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        liubo <liubo254@huawei.com>, Peter Xu <peterx@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Hugh Dickins <hughd@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/28/23 18:02, Vlastimil Babka wrote:
->> There's even a comment to that effect later on in the function:
-> Hmm, well spotted. But it wouldn't be so great if we now had to lock every
-> inspected page (and not just dirty pages), just to check the AS_ bit.
-> 
-> But I wonder if this is leftover from previous versions. Are the guest pages
-> even PageLRU currently? (and should they be, given how they can't be swapped
-> out or anything?) If not, isolate_migratepages_block will skip them anyway.
+On Thu, 27 Jul 2023 at 14:28, David Hildenbrand <david@redhat.com> wrote:
+>
+> This is my proposal on how to handle the fallout of 474098edac26
+> ("mm/gup: replace FOLL_NUMA by gup_can_follow_protnone()") where I
+> accidentially missed that follow_page() and smaps implicitly kept the
+> FOLL_NUMA flag clear by *not* setting it if FOLL_FORCE is absent, to
+> not trigger faults on PROT_NONE-mapped PTEs.
 
-No, they're not (migration or even swap-out is not excluded for the 
-future, but for now it's left for future work.
+Ugh.
 
-Paolo
+I hate how it uses FOLL_FORCE that is inherently scary.
 
+Why do we have that "gup_can_follow_protnone()" logic AT ALL?
+
+Couldn't we just get rid of that disgusting thing, and just say that
+GUP (and follow_page()) always just ignores NUMA hinting, and always
+just follows protnone?
+
+We literally used to have this:
+
+        if (!(gup_flags & FOLL_FORCE))
+                gup_flags |= FOLL_NUMA;
+
+ie we *always* set FOLL_NUMA for any sane situation. FOLL_FORCE should
+be the rare crazy case.
+
+The original reason for not setting FOLL_NUMA all the time is
+documented in commit 0b9d705297b2 ("mm: numa: Support NUMA hinting
+page faults from gup/gup_fast") from way back in 2012:
+
+         * If FOLL_FORCE and FOLL_NUMA are both set, handle_mm_fault
+         * would be called on PROT_NONE ranges. We must never invoke
+         * handle_mm_fault on PROT_NONE ranges or the NUMA hinting
+         * page faults would unprotect the PROT_NONE ranges if
+         * _PAGE_NUMA and _PAGE_PROTNONE are sharing the same pte/pmd
+         * bitflag. So to avoid that, don't set FOLL_NUMA if
+         * FOLL_FORCE is set.
+
+but I don't think the original reason for this is *true* any more.
+
+Because then two years later in 2014, in commit c46a7c817e66 ("x86:
+define _PAGE_NUMA by reusing software bits on the PMD and PTE levels")
+Mel made the code able to distinguish between PROT_NONE and NUMA
+pages, and he changed the comment above too.
+
+But I get the very very strong feeling that instead of changing the
+comment, he should have actually removed the comment and the code.
+
+So I get the strong feeling that all these FOLL_NUMA games should just
+go away. You removed the FOLL_NUMA bit, but you replaced it with using
+FOLL_FORCE.
+
+So rather than make this all even more opaque and make it even harder
+to figure out why we have that code in the first place, I think it
+should all just be removed.
+
+The original reason for FOLL_NUMA simply does not exist any more. We
+know exactly when a page is marked for NUMA faulting, and we should
+simply *ignore* it for GUP and follow_page().
+
+I think we should treat a NUMA-faulting page as just being present
+(and not NUMA-fault it).
+
+Am I missing something?
+
+                  Linus
