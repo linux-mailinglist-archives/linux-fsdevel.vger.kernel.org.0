@@ -2,118 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B194A76677F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 10:44:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61B44766795
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 10:46:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234980AbjG1IoX convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jul 2023 04:44:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42292 "EHLO
+        id S234895AbjG1Iqv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jul 2023 04:46:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234945AbjG1IoG (ORCPT
+        with ESMTP id S234002AbjG1Iqe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jul 2023 04:44:06 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D92233A8B
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 01:44:03 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-66-QuWuNYGHMBmrzfdm4fjM8A-1; Fri, 28 Jul 2023 09:44:01 +0100
-X-MC-Unique: QuWuNYGHMBmrzfdm4fjM8A-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 28 Jul
- 2023 09:43:58 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Fri, 28 Jul 2023 09:43:58 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Aleksa Sarai' <cyphar@cyphar.com>,
-        Alexey Gladkov <legion@kernel.org>
-CC:     LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "James.Bottomley@hansenpartnership.com" 
-        <James.Bottomley@hansenpartnership.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "alexander.shishkin@linux.intel.com" 
-        <alexander.shishkin@linux.intel.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "borntraeger@de.ibm.com" <borntraeger@de.ibm.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "christian@brauner.io" <christian@brauner.io>,
-        "dalias@libc.org" <dalias@libc.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "deepa.kernel@gmail.com" <deepa.kernel@gmail.com>,
-        "deller@gmx.de" <deller@gmx.de>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "fweimer@redhat.com" <fweimer@redhat.com>,
-        "geert@linux-m68k.org" <geert@linux-m68k.org>,
-        "glebfm@altlinux.org" <glebfm@altlinux.org>,
-        "gor@linux.ibm.com" <gor@linux.ibm.com>,
-        "hare@suse.com" <hare@suse.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "ink@jurassic.park.msu.ru" <ink@jurassic.park.msu.ru>,
-        "jhogan@kernel.org" <jhogan@kernel.org>,
-        "kim.phillips@arm.com" <kim.phillips@arm.com>,
-        "ldv@altlinux.org" <ldv@altlinux.org>,
-        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        "linux-m68k@lists.linux-m68k.org" <linux-m68k@lists.linux-m68k.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "mattst88@gmail.com" <mattst88@gmail.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "monstr@monstr.eu" <monstr@monstr.eu>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "ralf@linux-mips.org" <ralf@linux-mips.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "stefan@agner.ch" <stefan@agner.ch>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "tycho@tycho.ws" <tycho@tycho.ws>,
-        "will@kernel.org" <will@kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "ysato@users.sourceforge.jp" <ysato@users.sourceforge.jp>,
-        Palmer Dabbelt <palmer@sifive.com>
-Subject: RE: [PATCH v4 2/5] fs: Add fchmodat2()
-Thread-Topic: [PATCH v4 2/5] fs: Add fchmodat2()
-Thread-Index: AQHZwLFLeKGBJJpK+0qJRy2agWp2qK/O266A
-Date:   Fri, 28 Jul 2023 08:43:58 +0000
-Message-ID: <dc48b40748e24d3799e7ee66fa7e8cb4@AcuMS.aculab.com>
-References: <cover.1689074739.git.legion@kernel.org>
- <cover.1689092120.git.legion@kernel.org>
- <f2a846ef495943c5d101011eebcf01179d0c7b61.1689092120.git.legion@kernel.org>
- <njnhwhgmsk64e6vf3ur7fifmxlipmzez3r5g7ejozsrkbwvq7w@tu7w3ieystcq>
- <ZMEjlDNJkFpYERr1@example.org>
- <20230727.041348-imposing.uptake.velvet.nylon-712tDwzCAbCCoSGx@cyphar.com>
- <20230727.173441-loving.habit.lame.acrobat-V6VTPe8G4FRI@cyphar.com>
-In-Reply-To: <20230727.173441-loving.habit.lame.acrobat-V6VTPe8G4FRI@cyphar.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 28 Jul 2023 04:46:34 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DE153C27
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 01:45:46 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id EAB435C00F1;
+        Fri, 28 Jul 2023 04:45:45 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Fri, 28 Jul 2023 04:45:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=cc
+        :content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1690533945; x=1690620345; bh=bZ
+        ICWCiXBzwqJUYCmmk6QuGn8+ItZU5nJPTHbHYffMc=; b=RJW4HzLX7MQO5J9rOb
+        1dPpj17krfp7u+vQ4wasMp3LpSKq+8wDoYe4VeORWm9Vxu7Jc1OUlIZoeYKZOici
+        oyqcv6J0wlwcX20Asq+M32q6FutowjmPcK5m0YAOFpQwLwUuY2xFNGmoTxG+G/To
+        F5rtc9z3FJWeH2N2mqCstR7JmjuFQUYrHfJgjF+Z6/nhRDwHPBEVgNJSL1NOibJB
+        ZFVx+omoqy2LOZjKU12aqSTsu8KI60rhf49/tqsNWjIvQvtdQ4nrwX2btv5EOkAL
+        lN5WgkAA1mD4jiPxN0iF7a/S1jIXfu8qZtFid5d0K5vcApJnp+KRa52YsiST5FC4
+        gEIw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1690533945; x=1690620345; bh=bZICWCiXBzwqJ
+        UYCmmk6QuGn8+ItZU5nJPTHbHYffMc=; b=QSr18lyQOMkmVKqN1IkKZnH//IQ/w
+        bvWqdXu/ceG8qlLt3dhLcAkz46ntSM/7F9I46bWF0vCIdzpr6zh2IbZT4nX+IQU2
+        /zaOqzOld9ZtPWYTyDKuaHR+nXahWKOLSqiRIEp03w3FSL8TQ9g8mOkN5C0jdWYz
+        jhTMejXbyWZrxTqmMimZalDy2qe9etWICM4gZit+oZtpezVZrz9LnK74M+J0yZnC
+        smXKTNWfV3JkRKLmu+IQEDxd+gei+evV623lBp3OpcAuE4x6TBt1ZgvxedKtoGcm
+        0NNz1FeTCaM0Se5ALzXw+4ff65Ll2fuJJJmV4GKofqX9i613vdP0fEMJg==
+X-ME-Sender: <xms:OYDDZE6pXAQdU45s6x8Q05G3Rqxwhg4fRcqh1Z_wSu6etXxf0C84xA>
+    <xme:OYDDZF5GbhvL9MZNBaBrXCiUWuYD7Sfm8ZP1StNKueXoQhIdIHdQwCXljQAgz4GHx
+    L7dowauugysNTUP>
+X-ME-Received: <xmr:OYDDZDfCNBsjN21Mf3ehthZqJtfUY86-l6iQAm-qpCOOPmQSHnCFdqG4sy0NUMbyAAOgfFQ_NH0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrieeigddtiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufhffjgfkfgggtgesthdttddttdertdenucfhrhhomheppfhikhholhgr
+    uhhsucftrghthhcuoefpihhkohhlrghushesrhgrthhhrdhorhhgqeenucggtffrrghtth
+    gvrhhnpedtieekgeduleetueeuleeiiefffefgtdeivdejteeiffefgfeftdetudefleeh
+    keenucffohhmrghinhepsghoohhtlhhinhdrtghomhdpghhithhhuhgsrdgtohhmnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheppfhikhholhgr
+    uhhssehrrghthhdrohhrgh
+X-ME-Proxy: <xmx:OYDDZJKHi_3qiHy6AwUwk7JETa9yKemxqyDXhdWM2R3-6ELq18JCbA>
+    <xmx:OYDDZIKpESO9slmiVIHgv9QghCGa4oRKN357qQpLS0zsU1rpVlIaGg>
+    <xmx:OYDDZKyUjk3lg_MrPfO8tyI18raRUlLF0tjhpRzN3DiJsxI57zZIng>
+    <xmx:OYDDZCgEY3fUbsd8wKgJuxezlKDBylS4AOMpsNOUoXJDlCPZg7bJvg>
+Feedback-ID: i53a843ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 28 Jul 2023 04:45:45 -0400 (EDT)
+Received: from vostro.rath.org (vostro [192.168.12.4])
+        by ebox.rath.org (Postfix) with ESMTPS id E648E53E;
+        Fri, 28 Jul 2023 08:45:43 +0000 (UTC)
+Received: by vostro.rath.org (Postfix, from userid 1000)
+        id 5F08780A23; Fri, 28 Jul 2023 09:45:43 +0100 (BST)
+From:   Nikolaus Rath <Nikolaus@rath.org>
+To:     Miklos Szeredi via fuse-devel <fuse-devel@lists.sourceforge.net>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        miklos <mszeredi@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [fuse-devel] Semantics of fuse_notify_delete()
+References: <87wmymk0k9.fsf@vostro.rath.org>
+        <CAJfpegs+FfWGCOxX1XERGHfYRZzCzcLZ99mnchfb8o9U0kTS-A@mail.gmail.com>
+        <87tttpk2kp.fsf@vostro.rath.org>
+Mail-Copies-To: never
+Mail-Followup-To: Miklos Szeredi via fuse-devel
+        <fuse-devel@lists.sourceforge.net>, Linux FS Devel
+        <linux-fsdevel@vger.kernel.org>, miklos <mszeredi@redhat.com>, Miklos
+        Szeredi <miklos@szeredi.hu>
+Date:   Fri, 28 Jul 2023 09:45:43 +0100
+In-Reply-To: <87tttpk2kp.fsf@vostro.rath.org> (Nikolaus Rath's message of
+        "Thu, 27 Jul 2023 12:37:26 +0100")
+Message-ID: <87r0osjufc.fsf@vostro.rath.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -121,29 +99,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-...
-> FWIW, I agree with Christian that these behaviours are not ideal (and
-> I'm working on a series that might allow for these things to be properly
-> blocked in the future) but there's also the consistency argument -- I
-> don't think fchownat() is much safer to allow in this way than
-> fchmodat() and (again) this behaviour is already possible through
-> procfs.
+On Jul 27 2023, Nikolaus Rath <Nikolaus@rath.org> wrote:
+> On Jul 27 2023, Miklos Szeredi via fuse-devel <fuse-devel@lists.sourceforge.net> wrote:
+>> On Wed, 26 Jul 2023 at 20:09, Nikolaus Rath <Nikolaus@rath.org> wrote:
+>>>
+>>> Hello,
+>>>
+>>> It seems to me that fuse_notify_delete
+>>> (https://elixir.bootlin.com/linux/v6.1/source/fs/fuse/dev.c#L1512) fails
+>>> with ENOTEMPTY if there is a pending FORGET request for a directory
+>>> entry within. Is that correct?
+>>
+>> It's bug if it does that.
+>>
+>> The code related to NOTIFY_DELETE in fuse_reverse_inval_entry() seems
+>> historic.  It's supposed to be careful about mountpoints and
+>> referenced dentries, but d_invalidate() should have already gotten all
+>> that out of the way and left an unhashed dentry without any submounts
+>> or children. The checks just seem redundant, but not harmful.
+>>
+>> If you are managing to trigger the ENOTEMPTY case, then something
+>> strange is going on, and we need to investigate.
+>
+> I can trigger this reliable on kernel 6.1.0-10-amd64 (Debian stable)
+> with this sequence of operations:
+>
+> $ mkdir test
+> $ echo foo > test/bar
+> $ Trigger removal of test/bar and then test within the filesystem (not
+> through unlink()/rmdir() but out-of-band)
+>
+>
+> What can I do to help with the investigation?
 
-If the 'through procfs' involves readlink("/proc/self/fd/n") and
-accessing through the returned path then the permission checks
-are different.
-Using the returned path requires search permissions on all the
-directories.
 
-This is all fine for xxxat() functions where a real open
-directory fd is supplied.
-But other cases definitely need a lot of thought to ensure
-they don't let programs acquire permissions they aren't
-supposed to have.
+I've pushed an instrumented snapshot to
+https://github.com/s3ql/s3ql/tree/notify_delete_bug. For me, this
+reliably reproduces the problem:
 
-	David
+$ python3 setup.py build_cython build_ext --inplace
+$ md bucket
+$ bin/mkfs.s3ql --plain local://bucket
+[...]
+$ bin/mount.s3ql --fg local://bucket mnt &
+[...]
+$ md mnt/test; echo foo > mnt/test/bar
+$ bin/s3qlrm mnt/test
+fuse: writing device: Directory not empty
+ERROR: Failed to submit invalidate_entry request for parent inode 1, name b'test'
+Traceback (most recent call last):
+  File "src/internal.pxi", line 125, in pyfuse3._notify_loop
+  File "src/pyfuse3.pyx", line 915, in pyfuse3.invalidate_entry
+OSError: [Errno 39] fuse_lowlevel_notify_delete returned: Directory not
+empty
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
 
+I've looked into reproducing this with e.g. example/passthrough_ll.c,
+but it's non-trivial because of the need to run notify_delete in a
+separate thread and giving it all the right arguments. I can look into
+it more if that's needed though.
+
+Best,
+-Nikolaus
