@@ -2,194 +2,317 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EAC167661C9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 04:30:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DED1A766228
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 04:58:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232348AbjG1CaQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Jul 2023 22:30:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33514 "EHLO
+        id S232528AbjG1C6L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Jul 2023 22:58:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232287AbjG1CaO (ORCPT
+        with ESMTP id S229786AbjG1C6J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Jul 2023 22:30:14 -0400
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2072.outbound.protection.outlook.com [40.107.102.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D15E30DA;
-        Thu, 27 Jul 2023 19:30:13 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Gj7exefdjk0BC5upxEsJaF16NiWsSpD5aqCoq/TyD0UaVlbq1y9Xh6nbr3082ePmMmDR6BLOwc4MRn4OpEGQwY9kcCvY/J8M8ljGcazPEBXERyZOKDMeeQ4zxy3TwBPRt7Vkqa56sIlxC28rsjlwI4/4ULPz51RPFlWhXPohTkLpUD+SZ/UajIlNYEH6hyrHZk7RnEQ14dsm1C6nsrRQdKco+o3Bx6Gm2H2tlWG6PHUPmOeFCtESqoMnTU3gRs4md1DNs5c9YaKJNUKxnLKBUA1dKPWXnFGqd0tFkIGmlpT8Cxef0qSN8YgbMPFsjQ3wkv8JDwwwOrEcB+CvTXsc0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GGQgFr9l7zey7jHcRF3mJhuBqwQEDJceSSW2x8i0EP0=;
- b=D/1itekzB/L0uQzcYNG9m3pual2oH+VyKeNDBpHJ52atMW6LoVJc+QdheV1l1e9bB5LCkaCq1bAKyiASo5qkH1GzowPU2/w7Hwf7fYeiMYTFn1QbNne0C1JbpCgNnHAmJaX18FwJCpmG4MIuGrenheSI200pmtVMdKOzdU5PWEY7PWgtMHQOjTSV17IJ2Y2I3dwrwRalW7DpXOTO9SbT4X9gGeK5+ImRchoG4IH/4oNdttgHrLuEIC9gwRhlHWiOmwgoZUrzoodEmRjD3/7yO6IwMk1YXqB9CBGgqVbsP+3WueH7cFHwnsdeWaNpktX9814h35XQk5XR4VGAOzGjog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GGQgFr9l7zey7jHcRF3mJhuBqwQEDJceSSW2x8i0EP0=;
- b=dwgkIkuH0PGW0J4M2PJdQQSeZWU9J8NdkmA4m6PIIfCN9cK4Neuc8xzUm+9yvRuTL9ote1hUmsEg6Mh4JeuuOehPPTO0qPOK/VcughIlvuEkmzviArvzVEMwqj4RQ7RSU67g3m3M8nL1Pi8U7ZjAZeM8qW30J30oqnW4FrS161O1ejhB3aMdPDlpRzwYTYVxuqhhpqAen7WsnCLUDrmV3fskUeHdPYhulMRGXOLkBiZ7hBnQXUNLzdXqkL1Cl/voO9Gkmo2XJH6QGywrTd8Rq9LWH4goyzNY72zpXScgw8+Sl/v8DGHAh3MbX/JgTqzX+aprkgF5sMH6JA/xcR5wXQ==
-Received: from SN7PR04CA0116.namprd04.prod.outlook.com (2603:10b6:806:122::31)
- by LV8PR12MB9359.namprd12.prod.outlook.com (2603:10b6:408:1fe::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.33; Fri, 28 Jul
- 2023 02:30:11 +0000
-Received: from SA2PEPF00001504.namprd04.prod.outlook.com
- (2603:10b6:806:122:cafe::f5) by SN7PR04CA0116.outlook.office365.com
- (2603:10b6:806:122::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.29 via Frontend
- Transport; Fri, 28 Jul 2023 02:30:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SA2PEPF00001504.mail.protection.outlook.com (10.167.242.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6631.22 via Frontend Transport; Fri, 28 Jul 2023 02:30:11 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.5; Thu, 27 Jul 2023
- 19:30:01 -0700
-Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.37; Thu, 27 Jul
- 2023 19:30:00 -0700
-Message-ID: <55c92738-e402-4657-3d46-162ad2c09d68@nvidia.com>
-Date:   Thu, 27 Jul 2023 19:30:00 -0700
+        Thu, 27 Jul 2023 22:58:09 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00CC2213A
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 19:57:48 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1bb2468257fso9816995ad.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jul 2023 19:57:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1690513068; x=1691117868;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WQDPDf8JZAFiL6Rq9P4Wi7ecqzmU4ri9UYAO1Af8OMI=;
+        b=ZxMOdJ6IwUrpVQzUsbucF1ehTSICSH2eWs0MYmuw0Dl7uzNcnuwrLfa3EBNKgT8gb0
+         oI+2oF3Zk86fzJb9X7OH+SDolZjMpDXl0piWRvNM5K+r7AejNr79DalbVecDwCD9uo04
+         y09kzezbR1r4bMKmZaAqAbwSkR1pkT2j5oFJk89R2Q+ct9hxQ54xArJuqDxJ9mi3z3e1
+         gD6CkPOFArOp6SwHZtE4n+Fui4D8gry6XdSCXkEvqbE9qbl9BqGD1WH5zvYvkxrcLXdT
+         vRFqtPI/sErG24QNuegDQdO3uL8wBalb9HF1ho6TuOMnvsCTXoK28GyKKidlynP3dUA7
+         zOYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690513068; x=1691117868;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WQDPDf8JZAFiL6Rq9P4Wi7ecqzmU4ri9UYAO1Af8OMI=;
+        b=BQ3hpW38fOoVTdy7AgHjIlQci1peJHc4QEhANMlrZzumVAGa9ZcPU6zfJLUs9XQeuJ
+         UPpOy5DU+68ms0NPtEB0CxkVkeHvl0dCAGyVU7oxKdhEkISu9RIlcmm7VGrWJJd3xKi5
+         w84mQJQe4tzZwcTlRfecq77YgCUfaG6bNro0ay+hBeWkmASbR+Z380CfyYaQ9bMC4j5V
+         h9W3DG3dTTgguc8nyUt9YIokyaj/SOFzzsX3yZqCSCb+9K7Qy3t6tdYWUGJ5yJMGUYXi
+         7Db/OSUSZ1RHDApAmwluVxiFnsMNUWRGenMpudiRYXGx/v2bnolFtSHwQN6o9PBUsfGy
+         6BtQ==
+X-Gm-Message-State: ABy/qLZQS7OA+W1kKACVfF0LarbxLIqBHNFZ4wh+8AOpYg8y9E3po4un
+        KSfBDr5GwIjBXg0msJe4Pb+rJA==
+X-Google-Smtp-Source: APBJJlEoSUFYAoNyEjUxprw92DkS9SGnnUh1rbqPqjd9cv3iBuTNlLDRWmBagdsdXzuLe3jGdMsA/g==
+X-Received: by 2002:a17:902:e546:b0:1b8:aef2:773e with SMTP id n6-20020a170902e54600b001b8aef2773emr380798plf.46.1690513068318;
+        Thu, 27 Jul 2023 19:57:48 -0700 (PDT)
+Received: from [10.3.208.155] ([61.213.176.13])
+        by smtp.gmail.com with ESMTPSA id kb14-20020a170903338e00b001b8ad8382a4sm2334461plb.216.2023.07.27.19.57.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jul 2023 19:57:47 -0700 (PDT)
+Message-ID: <ef357671-0f31-32bd-9638-66455a70a626@bytedance.com>
+Date:   Fri, 28 Jul 2023 10:57:43 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] mm/gup: Make follow_page() succeed again on
- PROT_NONE PTEs/PMDs
-Content-Language: en-US
-To:     David Hildenbrand <david@redhat.com>,
-        <linux-kernel@vger.kernel.org>
-CC:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        liubo <liubo254@huawei.com>, Peter Xu <peterx@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, <stable@vger.kernel.org>
-References: <20230727212845.135673-1-david@redhat.com>
- <20230727212845.135673-3-david@redhat.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20230727212845.135673-3-david@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00001504:EE_|LV8PR12MB9359:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7ab3b403-7c55-469f-89e4-08db8f12916f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: F+1yGKS6pQ9yIAPBC2UMxJMx7Q+rqLux+9CJmaIR13CEifiEDgSTG6Q5XuRrbX4YB97p7D/ofu0vRGVmV7rdv/25d2yEW0xIv+yWtSw3Muh0FPNlCbk9LFQOatP1P2cG6hqRnkgUAPPCWl+OAchZb4xHWpA9UByCs+g81KzT5QxWQcXNgUQhYGVPfTMnIM0tFiZpAEKMj/BUzAHAu0x+lSKaq5UToxKKQETDrd6jw5aycYgseWLO84VcVxXU7rSlSbgHGpzMi82ebgMMFOR9brpYy/0HD9Y1rMhJrOwX9m2KbsJI+byYUK3Ol+j+4cKmABKOSPy2yZUdio8eIv38IQqU5OB7XpLx7INtYTmQesWN6hFPGj9fhh7b5+1/a72AQB11Wa9oeJa0kIADSULRUBwokep6UgkQoILD/sIvoPt9pIKXnDkT2HN31Ne4K7fOT6UShLhW25PjA/p0qXocDSOAfuw/Jhlipr2ldbjhIzXfwuJToeRGXaEFc/pxg2v3c7BrTPVK1+QGJ2Z8PFCHNXbpGxPdpLsjnslqokEj7Wxf2p2A+uET8gZ1nXqc7Qyd/ZyVaiF/2TcxHgE2VyudPNV76AzlIzV35p6Uyai4dl1OrzPYmphLZVS4SsczOsaJWAc6QFHX8LYUeURv1BSyvgRZIsTRHSz4QJx4VcWM0kOuNaV61adWGGb12CApqR0aOKDIxoV0Ns9ZVmoFdJI0xA0Bqgwi/dhX4+FtgFoFhteb0CJ94S9VLSl/jcZKhfksWo38IAQMtdbHbJ2Jx3h12Q==
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230028)(4636009)(346002)(39860400002)(136003)(396003)(376002)(82310400008)(451199021)(40470700004)(36840700001)(46966006)(40480700001)(40460700003)(110136005)(4326008)(7636003)(54906003)(82740400003)(356005)(478600001)(5660300002)(8676002)(41300700001)(2616005)(8936002)(70206006)(16576012)(70586007)(316002)(36860700001)(336012)(186003)(16526019)(426003)(47076005)(83380400001)(53546011)(26005)(31696002)(86362001)(36756003)(2906002)(7416002)(31686004)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2023 02:30:11.3840
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ab3b403-7c55-469f-89e4-08db8f12916f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SA2PEPF00001504.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9359
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.13.0
+Subject: Re: [fuse-devel] [PATCH 3/3] fuse: write back dirty pages before
+ direct write in direct_io_relax mode
+To:     Hao Xu <hao.xu@linux.dev>,
+        Bernd Schubert <bernd.schubert@fastmail.fm>,
+        fuse-devel@lists.sourceforge.net
+Cc:     linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>,
+        cgxu519@mykernel.net, miklos@szeredi.hu
+References: <20230630094602.230573-1-hao.xu@linux.dev>
+ <20230630094602.230573-4-hao.xu@linux.dev>
+ <e5266e11-b58b-c8ca-a3c8-0b2c07b3a1b2@bytedance.com>
+ <2622afd7-228f-02f3-3b72-a1c826844126@linux.dev>
+ <396A0BF4-DA68-46F8-9881-3801737225C6@fastmail.fm>
+ <9b0a164d-3d0e-cc57-81b7-ae32bef4e9d7@linux.dev>
+ <cb8c18e6-b5cb-e891-696f-b403012eacb7@fastmail.fm>
+ <45da6206-8e34-a184-5ba4-d40be252cfd2@linux.dev>
+ <6856f435-a589-e044-881f-3a80aefa1174@bytedance.com>
+ <b4fb751f-abb2-5618-31a0-f0cdacc49506@linux.dev>
+From:   Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+In-Reply-To: <b4fb751f-abb2-5618-31a0-f0cdacc49506@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/27/23 14:28, David Hildenbrand wrote:
-> We accidentally enforced PROT_NONE PTE/PMD permission checks for
-> follow_page() like we do for get_user_pages() and friends. That was
-> undesired, because follow_page() is usually only used to lookup a currently
-> mapped page, not to actually access it. Further, follow_page() does not
-> actually trigger fault handling, but instead simply fails.
-
-I see that follow_page() is also completely undocumented. And that
-reduces us to deducing how it should be used...these things that
-change follow_page()'s behavior maybe should have a go at documenting
-it too, perhaps.
-
+On 2023/7/27 18:31, Hao Xu wrote:
+> On 7/26/23 19:07, Jiachen Zhang wrote:
+>>
+>>
+>> On 2023/7/26 00:57, Hao Xu wrote:
+>>>
+>>> On 7/25/23 21:00, Bernd Schubert wrote:
+>>>>
+>>>>
+>>>> On 7/25/23 12:11, Hao Xu wrote:
+>>>>> On 7/21/23 19:56, Bernd Schubert wrote:
+>>>>>> On July 21, 2023 1:27:26 PM GMT+02:00, Hao Xu <hao.xu@linux.dev> 
+>>>>>> wrote:
+>>>>>>> On 7/21/23 14:35, Jiachen Zhang wrote:
+>>>>>>>>
+>>>>>>>> On 2023/6/30 17:46, Hao Xu wrote:
+>>>>>>>>> From: Hao Xu <howeyxu@tencent.com>
+>>>>>>>>>
+>>>>>>>>> In direct_io_relax mode, there can be shared mmaped files and 
+>>>>>>>>> thus dirty
+>>>>>>>>> pages in its page cache. Therefore those dirty pages should be 
+>>>>>>>>> written
+>>>>>>>>> back to backend before direct write to avoid data loss.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
+>>>>>>>>> ---
+>>>>>>>>>    fs/fuse/file.c | 7 +++++++
+>>>>>>>>>    1 file changed, 7 insertions(+)
+>>>>>>>>>
+>>>>>>>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>>>>>>>>> index 176f719f8fc8..7c9167c62bf6 100644
+>>>>>>>>> --- a/fs/fuse/file.c
+>>>>>>>>> +++ b/fs/fuse/file.c
+>>>>>>>>> @@ -1485,6 +1485,13 @@ ssize_t fuse_direct_io(struct 
+>>>>>>>>> fuse_io_priv *io, struct iov_iter *iter,
+>>>>>>>>>        if (!ia)
+>>>>>>>>>            return -ENOMEM;
+>>>>>>>>> +    if (fopen_direct_write && fc->direct_io_relax) {
+>>
+>>
+>> Hi,
+>>
+>> Seems this patchset flushes and invalidates the page cache before 
+>> doing the direct-io writes, which avoids data loss caused by flushing 
+>> staled data to FUSE daemon. And I tested it works well.
+>>
+>> But there is also another side of the same problem we should consider. 
+>> If a file is modified through its page cache (shared mmapped regions, 
+>> or non-FOPEN_DIRECT_IO files), the following direct-io reads may 
+>> bypass the new data in dirty page cache and read the staled data from 
+>> FUSE daemon. I think this is also a problem that should be fixed. It 
+>> could be fixed by uncondictionally calling 
+>> filemap_write_and_wait_range() before direct-io read.
+>>
+>>
+>>>>>>>>> +        res = filemap_write_and_wait_range(mapping, pos, pos + 
+>>>>>>>>> count - 1);
+>>>>>>>>> +        if (res) {
+>>>>>>>>> +            fuse_io_free(ia);
+>>>>>>>>> +            return res;
+>>>>>>>>> +        }
+>>>>>>>>> +    }
+>>>>>>>>>        if (!cuse && fuse_range_is_writeback(inode, idx_from, 
+>>>>>>>>> idx_to)) {
+>>>>>>>>>            if (!write)
+>>>>>>>>>                inode_lock(inode);
+>>>>>>>>
+>>>>>>>> Tested-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> Looks good to me.
+>>>>>>>>
+>>>>>>>> By the way, the behaviour would be a first FUSE_WRITE flushing 
+>>>>>>>> the page cache, followed by a second FUSE_WRITE doing the direct 
+>>>>>>>> IO. In the future, further optimization could be first write 
+>>>>>>>> into the page cache and then flush the dirty page to the FUSE 
+>>>>>>>> daemon.
+>>>>>>>>
+>>>>>>>
+>>>>>>> I think this makes sense, cannot think of any issue in it for 
+>>>>>>> now, so
+>>>>>>> I'll do that change and send next version, super thanks, Jiachen!
+>>>>>>>
+>>>>>>> Thanks,
+>>>>>>> Hao
+>>>>>>>
+>>>>>>>>
+>>>>>>>> Thanks,
+>>>>>>>> Jiachen
+>>>>>>>
+>>>>>>
+>>>>>> On my phone, sorry if mail formatting is not optimal.
+>>>>>> Do I understand it right? You want DIO code path copy into pages 
+>>>>>> and then flush/invalidate these pages? That would be punish DIO 
+>>>>>> for for the unlikely case there are also dirty pages (discouraged 
+>>>>>> IO pattern).
+>>>>>
+>>>>> Hi Bernd,
+>>>>> I think I don't get what you said, why it is punishment and why 
+>>>>> it's discouraged IO pattern?
+>>>>> On my first eyes seeing Jiachen's idea, I was thinking "that sounds
+>>>>> disobeying direct write semantics" because usually direct write is
+>>>>> "flush dirty page -> invalidate page -> write data through to backend"
+>>>>> not "write data to page -> flush dirty page/(writeback data)"
+>>>>> The latter in worst case write data both to page cache and backend
+>>>>> while the former just write to backend and load it to the page cache
+>>>>> when buffered reading. But seems there is no such "standard way" which
+>>>>> says we should implement direct IO in that way.
+>>>>
+>>>> Hi Hao,
+>>>>
+>>>> sorry for being brief last week, I was on vacation and 
+>>>> reading/writing some mails on my phone.
+>>>>
+>>>> With 'punishment' I mean memory copies to the page cache - memory 
+>>>> copies are expensive and DIO should avoid it.
+>>>>
+>>>> Right now your patch adds filemap_write_and_wait_range(), but we do 
+>>>> not know if it did work (i.e. if pages had to be flushed). So unless 
+>>>> you find a way to get that information, copy to page cache would be 
+>>>> unconditionally - overhead of memory copy even if there are no dirty 
+>>>> pages.
+>>>
+>>>
+>>> Ah, looks I understood what you mean in my last email reply. Yes, 
+>>> just like what I said in last email:
+>>>
+>>> [1] flush dirty page --> invalidate page --> write data to backend
+>>>
+>>>     This is what we do for direct write right now in kernel, I call 
+>>> this policy "write-through", since it doesn't care much about the cache.
+>>>
+>>> [2] write data to page cache --> flush dirty page in suitable time
+>>>
+>>>     This is  "write-back" policy, used by buffered write. Here in 
+>>> this patch's case, we flush pages synchronously, so it still can be 
+>>> called direct-write.
+>>>
+>>> Surely, in the worst case, the page is clean, then [2] has one extra 
+>>> memory copy than [1]. But like what I pointed out, for [2], next time 
+>>> buffered
+>>>
+>>> read happens, the page is in latest state, so no I/O needed, while 
+>>> for [1], it has to load data from backend to page cache.
+>>>
+>>
+>> Write-through, write-back and direct-io are also exlained in the 
+>> kernel documentation [*], of which write-through and write-back are 
+>> cache modes. According to the document, the pattern [2] is similar to 
+>> the FUSE 
 > 
-> Let's restore that behavior by conditionally setting FOLL_FORCE if
-> FOLL_WRITE is not set. This way, for example KSM and migration code will
-> no longer fail on PROT_NONE mapped PTEs/PMDS.
+> Yep, in previous mail write-through and write-back I mentioned are
+> generic concepts for any cache system, e.g. cpu cache, page cache.
 > 
-> Handling this internally doesn't require us to add any new FOLL_FORCE
-> usage outside of GUP code.
 > 
-> While at it, refuse to accept FOLL_FORCE: we don't even perform VMA
-> permission checks like in check_vma_flags(), so especially
-> FOLL_FORCE|FOLL_WRITE would be dodgy.
+>> write-back mode, but the pattern [1] is different from the FUSE 
+>> write-through mode. The FUSE write-through mode obeys the 'write data 
+>> to page cache --> flush dirty page synchronously' (let us call it 
+>> pattern [3]), which keeps the clean cache in-core after flushing.
 > 
-> This issue was identified by code inspection. We'll add some
-> documentation regarding FOLL_FORCE next.
+> I read the fuse doc, I think you are right, in !FOPEN_DIRECT_IO mode,
+> the IO model for fuse is different with other filesystems. Specifically,
+> its 'write-back' branch is just following other filesystems and
+> 'write-through' forces all writes go to both page cache and back-end,
+> this is actually closer to the concept write-through.
 > 
-> Reported-by: Peter Xu <peterx@redhat.com>
-> Fixes: 474098edac26 ("mm/gup: replace FOLL_NUMA by gup_can_follow_protnone()")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->   mm/gup.c | 10 +++++++++-
->   1 file changed, 9 insertions(+), 1 deletion(-)
+>>
+>> To improve performance while keeping the direct-io semantics, my 
+>> thoughts was in the future, maybe we can fallback to the pattern [3] 
+>> if the target page is in-core, otherwise keep the original direct-io 
+>> pattern without reading from whole pages from FUSE daemon.
 > 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 2493ffa10f4b..da9a5cc096ac 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -841,9 +841,17 @@ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
->   	if (vma_is_secretmem(vma))
->   		return NULL;
->   
-> -	if (WARN_ON_ONCE(foll_flags & FOLL_PIN))
-> +	if (WARN_ON_ONCE(foll_flags & (FOLL_PIN | FOLL_FORCE)))
->   		return NULL;
+> Why will we reading from whole pages from backend?
+> That case happens for buffered write, because for buffered write, if we
+> partially write to a page that is not in the front-end cache, it causes
+> reading the whole page from back-end. But here we always do direct write
+> in FOPEN_DIRECT_IO mode, so we just invalidate the pages involved.
+> 
 
-This is not a super happy situation: follow_page() is now prohibited
-(see above: we should document that interface) from passing in
-FOLL_FORCE...
+Hi Hao,
 
->   
-> +	/*
-> +	 * Traditionally, follow_page() succeeded on PROT_NONE-mapped pages
-> +	 * but failed follow_page(FOLL_WRITE) on R/O-mapped pages. Let's
-> +	 * keep these semantics by setting FOLL_FORCE if FOLL_WRITE is not set.
-> +	 */
-> +	if (!(foll_flags & FOLL_WRITE))
-> +		foll_flags |= FOLL_FORCE;
-> +
+Yes, and I did say that if the page is not in-core, we can still keep 
+the direct-io pattern, which avoids paging-in of the write-through and 
+write-back modes.
 
-...but then we set it anyway, for special cases. It's awkward because
-FOLL_FORCE is not an "internal to gup" flag (yet?).
+> And just like Bernd said, "if the target page is in-core" is not enough,
+> if the target page is not dirty, following pattern [3] make one extra
+> page cache write.
+> 
 
-I don't yet have suggestions, other than:
+Yes, I agree the further checking of the dirtyness is better for 
+improving performance.
 
-1) Yes, the FOLL_NUMA made things bad.
+Thanks,
+Jiachen
 
-2) And they are still very confusing, especially the new use of
-    FOLL_FORCE.
 
-...I'll try to let this soak in and maybe recommend something
-in a more productive way. :)
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+>>
+>> [*] https://www.kernel.org/doc/Documentation/filesystems/fuse-io.txt
+>>
+>> Thanks,
+>> Jiachen
+>>
+>>>
+>>>>
+>>>> With 'discouraged' I mean mix of page cache and direct-io. Typically 
+>>>> one should only do either of both (page cache or DIO), but not a mix 
+>>>> of them. For example see your patch, it flushes the page cache, but 
+>>>> without a lock - races are possible. Copying to the page cache might 
+>>>> be a solution, but it has the overhead above.
+>>>
+>>>
+>>> For race, we held inode lock there, do I miss anything?
+>>>
+>>>
+>>>>
+>>>> Thanks,
+>>>> Bernd
+>>>
+>>>
+>>> I now think it's good to keep the pattern same as other filesystems 
+>>> which is [1] to avoid possible performance issues in the future, 
+>>> thanks Bernd.
+>>>
+>>>
+>>> Hao
+>>>
+>>>
+> 
 
