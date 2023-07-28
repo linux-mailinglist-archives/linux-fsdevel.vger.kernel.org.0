@@ -2,163 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BAF9C767763
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 23:03:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73AAD767767
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 23:05:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230381AbjG1VDl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jul 2023 17:03:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51996 "EHLO
+        id S230181AbjG1VF1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jul 2023 17:05:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229592AbjG1VDk (ORCPT
+        with ESMTP id S230125AbjG1VF0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jul 2023 17:03:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27198449C
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 14:02:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690578171;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Wkcm2vsBSrFML/GWUxYGG5U3iYViWt9LTI9JWBRvcyA=;
-        b=b3UIJ/i/D4VGzdzFodQTc2ywOJWfvab0l8VAm13HF+WBSegBkRurcEJkTmQMkRStPtVnpm
-        +W/8hfxB8ffeja+f3EHROUF+wFSNLiOhO3xrAEuUWINq8bXfesM0l1AKUmoZii8ipOjMcd
-        LnJdOK0CwM0li/6lrMpWzvx22EqsfU0=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-251-79ZbLTXsN4i993f3RBdxSQ-1; Fri, 28 Jul 2023 17:02:49 -0400
-X-MC-Unique: 79ZbLTXsN4i993f3RBdxSQ-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-3fe15547164so926825e9.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 14:02:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690578168; x=1691182968;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :references:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wkcm2vsBSrFML/GWUxYGG5U3iYViWt9LTI9JWBRvcyA=;
-        b=QW3NmfP7B9Cgmi/HvyzxtNZUcFUtmsoYbwlondBLqa+kRpKvqqea5JOtWpfLI3njmf
-         BNBFgisdjFXd9uPcuc5d6kuyETxHlQ50iNv59Awlld8blwFZCt9LUdyrfF71BKY7DO4Y
-         pyeI5CeH6mXALBjaE2Fe4eXb01NoexiGXIHuNVbL4RSOHDP3k514KeJSfrUe+Iopxevv
-         lA9qyW9Ve01w5t+2W1nsbkIC/Y1cYLVDMmjkFeTV9M7H+Ot7JDrSm7ehwYIxSBTvDKWw
-         gcrxeWJGc9LExNsR+Ju4QvD9SWr2/i+APNBnre8KxCz5osM+5btdpDdzelWrJHtLkmZZ
-         JmLQ==
-X-Gm-Message-State: ABy/qLYw4ZVjHyCql19dPWh426aTYcrVl7iUNfdEkjCgNIxkkvM3pZFN
-        xidsTAHSgn7u+f1xiW877Ip1KvPDv+cwHguQZspKuboi0drfkB5xFmZIGl9kXcqpuNCRuWS+G1c
-        adzQy3z0Z6c69oFOOrO2U6tDndg==
-X-Received: by 2002:a7b:cc88:0:b0:3fe:10d8:e7ef with SMTP id p8-20020a7bcc88000000b003fe10d8e7efmr2086249wma.19.1690578168575;
-        Fri, 28 Jul 2023 14:02:48 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlHGDhYAogGggViLK1Uq2Uh1kiDC6aD5EdFYHUetEZH44a98xWY4bpVsN0bm7KKuxmYxzTm9RA==
-X-Received: by 2002:a7b:cc88:0:b0:3fe:10d8:e7ef with SMTP id p8-20020a7bcc88000000b003fe10d8e7efmr2086233wma.19.1690578168215;
-        Fri, 28 Jul 2023 14:02:48 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c706:6b00:bf49:f14b:380d:f871? (p200300cbc7066b00bf49f14b380df871.dip0.t-ipconnect.de. [2003:cb:c706:6b00:bf49:f14b:380d:f871])
-        by smtp.gmail.com with ESMTPSA id g9-20020a05600c308900b003fe15c466f3sm235178wmn.0.2023.07.28.14.02.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jul 2023 14:02:47 -0700 (PDT)
-Message-ID: <69a5f457-63b6-2d4f-e5c0-4b3de1e6c9f1@redhat.com>
-Date:   Fri, 28 Jul 2023 23:02:46 +0200
+        Fri, 28 Jul 2023 17:05:26 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C32D144B5;
+        Fri, 28 Jul 2023 14:05:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 550436220B;
+        Fri, 28 Jul 2023 21:05:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACE97C433C8;
+        Fri, 28 Jul 2023 21:05:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690578319;
+        bh=7qOs7TnG/8tF9E4QPJWYx9tCPCwzVufdhmnJ191LcHY=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=frguYMS9LYFIXpkA2hQ4p752eTEDDRN028mZ8JSp9Cp/XV5nhamo2EG7gQEP+dyvb
+         +7mkpatxWOaRzYliEvatZBbe/w4r1lApI3B185bTcw3KyT9wSPO6z81FUK1ai7+HzV
+         F7WdIFqzzHzqrNonUugUSKfgvyCdEvS7oYdZV248BVIbdWI8uiEdZBUPwx1lIvYXWJ
+         pMavPk7jwjm1bLwVgzVn0CFmSgAuej6JtKv0IV+kBsKd6MnNt3/Mx3L7oJWKr+y+Cz
+         F1jBiQj8T+/CXbwSEJCF0Dbrb/TuNLpzbpD+TugjjQ9x0fWhcXBlPxbosdn+jaGOI8
+         XJDxvgQ9Ku19w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+        id 2CEE6CE0A13; Fri, 28 Jul 2023 14:05:19 -0700 (PDT)
+Date:   Fri, 28 Jul 2023 14:05:19 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     akpm@linux-foundation.org, adobriyan@gmail.com,
+        mhiramat@kernel.org, arnd@kernel.org, ndesaulniers@google.com,
+        sfr@canb.auug.org.au, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH RFC bootconfig 0/2] Distinguish bootloader and embedded
+ kernel parameters
+Message-ID: <2007473f-cdf3-4f15-bee9-470e4b30bb16@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <197cba95-3989-4d2f-a9f1-8b192ad08c49@paulmck-laptop>
+ <cc9ba6e9-1154-ad84-0fef-d67834169110@infradead.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        liubo <liubo254@huawei.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>
-References: <20230727212845.135673-1-david@redhat.com>
- <CAHk-=wiig=N75AGP7UAG9scmghWAqsTB5NRO6RiWLOB5YWfcTQ@mail.gmail.com>
- <ZMQZfn/hUURmfqWN@x1n>
- <CAHk-=wgRiP_9X0rRdZKT8nhemZGNateMtb366t37d8-x7VRs=g@mail.gmail.com>
- <e74b735e-56c8-8e62-976f-f448f7d4370c@redhat.com>
- <CAHk-=wgG1kfPR6vtA2W8DMFOSSVMOhKz1_w5bwUn4_QxyYHnTA@mail.gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH v1 0/4] smaps / mm/gup: fix gup_can_follow_protnone
- fallout
-In-Reply-To: <CAHk-=wgG1kfPR6vtA2W8DMFOSSVMOhKz1_w5bwUn4_QxyYHnTA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cc9ba6e9-1154-ad84-0fef-d67834169110@infradead.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 28.07.23 22:50, Linus Torvalds wrote:
-> On Fri, 28 Jul 2023 at 13:33, David Hildenbrand <david@redhat.com> wrote:
->>
->> So would you rather favor a FOLL_NUMA that has to be passed from the
->> outside by selected callers or a FOLL_NUMA that is set on the GUP path
->> unconditionally (but left clear for follow_page())?
+On Thu, Jul 27, 2023 at 09:25:06PM -0700, Randy Dunlap wrote:
 > 
-> I'd rather see the FOLL_NUMA that has to be set by odd cases, and that
-> is never set by any sane user.
-
-Thanks!
-
 > 
-> And it should not be called FOLL_NUMA. It should be called something
-> else. Because *not* having it doesn't disable following pages across
-> NUMA boundaries, and the name is actively misleading.
+> On 7/27/23 20:35, Paul E. McKenney wrote:
+> > Hello!
+> > 
+> > This series provides /proc interfaces parallel to /proc/cmdline that
+> > provide only those kernel boot parameters that were provided by the
+> > bootloader (/proc/cmdline_load) and only those parameters that were
+> > embedded in the kernel image (/proc/cmdline_image, in boot-config format).
+> > This is especially important when these parameters are presented to the
+> > boot loader by automation that might gather them from diverse sources,
+> > and also when a kexec-based reboot process pulls the kernel boot
+> > parameters from /proc.  If such a reboot process uses /proc/cmdline,
+> > the kernel parameters from the image are replicated on every reboot,
+> > which can be frustrating when the new kernel has different embedded
+> > kernel boot parameters.
+> > 
+> > Why put these in /proc?  Because they is quite similar to /proc/cmdline,
+> > so it makes sense to put it in the same place that /proc/cmdline is
+> > located.
+> > 
+> > 1.	fs/proc: Add /proc/cmdline_load for boot loader arguments.
+> > 
+> > 2.	fs/proc: Add /proc/cmdline_image for embedded arguments.
+> > 
+> > 						Thanx, Paul
+> > 
 > 
-> It sounds like what KVM actually wants is a "Do NOT follow NUMA pages,
-> I'll force a page fault".
+> Hi Paul,
 > 
-> And the fact that KVM wants a fault for NUMA pages shouldn't mean that
-> others - who clearly cannot care - get that insane behavior by
-> default.
-
-For KVM it represents actual CPU access. To map these pages into the VM 
-MMU we have to look them up from the process -- in the context of the 
-faulting CPU. So it makes a lot of sense for KVM. (which is also where 
-autonuma gets heavily used)
-
+> This series seems to be missing updates to
+> Documentation/filesystems/proc.rst.
 > 
-> The name should reflect that, instead of being the misleading mess of
-> FOLL_FORCE and bad naming that it is now.
-> 
-> So maybe it can be called "FOLL_HONOR_NUMA_FAULT" or something, to
-> make it clear that it's the *opposite* of FOLL_FORCE, and that it
-> honors the NUMA faulting that nobody should care about.
+> Please add them.
 
-Naming sounds much better to me.
+Good catch, thank you!
 
-> 
-> Then the KVM code can have a big comment about *why* it sets that bit.
+I will fold the diff below into the three respective commits on my next
+rebase, but in the meantime, please let me know what you think.
 
-Yes.
+							Thanx, Paul
 
-> 
-> Hmm? Can we please aim for something that is understandable and
-> documented? No odd implicit rules. No "force NUMA fault even when it
-> makes no sense". No tie-in with FOLL_FORCE.
-
-I mean, I messed all that FOLL_NUMA handling up because I was very 
-confused. So I'm all for better documentation.
-
-
-Can we get a simple revert in first (without that FOLL_FORCE special 
-casing and ideally with a better name) to handle stable backports, and 
-I'll follow-up with more documentation and letting GUP callers pass in 
-that flag instead?
-
-That would help a lot. Then we also have more time to let that "move it 
-to GUP callers" mature a bit in -next, to see if we find any surprises?
-
--- 
-Cheers,
-
-David / dhildenb
-
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index 7897a7dafcbc..98c43c5ef1ee 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -686,7 +686,10 @@ files are there, and which are missing.
+  apm          Advanced power management info
+  buddyinfo    Kernel memory allocator information (see text)	(2.5)
+  bus          Directory containing bus specific information
+- cmdline      Kernel command line
++ cmdline      Kernel command line, both from bootloader and embedded
++ 	      in the kernel image
++ cmdline_image Kernel command line obtained from boot loader	(6.6)
++ cmdline_load Kernel command line obtained from kernel image	(6.6)
+  cpuinfo      Info about the CPU
+  devices      Available devices (block and character)
+  dma          Used DMS channels
