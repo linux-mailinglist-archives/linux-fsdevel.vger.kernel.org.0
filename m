@@ -2,260 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 372C9766DD9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 15:06:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C05B766DFE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 15:22:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235659AbjG1NGi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jul 2023 09:06:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37246 "EHLO
+        id S236122AbjG1NWE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jul 2023 09:22:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233855AbjG1NGh (ORCPT
+        with ESMTP id S234299AbjG1NWD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jul 2023 09:06:37 -0400
+        Fri, 28 Jul 2023 09:22:03 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C22F8BA;
-        Fri, 28 Jul 2023 06:06:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65D6A19BF;
+        Fri, 28 Jul 2023 06:22:02 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 607B162136;
-        Fri, 28 Jul 2023 13:06:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6311C433C7;
-        Fri, 28 Jul 2023 13:06:33 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F180962111;
+        Fri, 28 Jul 2023 13:22:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E324DC433C8;
+        Fri, 28 Jul 2023 13:22:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690549595;
-        bh=B5eDKcaoTXLugVjBQrPAJwdWNhFF7TbrpxphDJEcWEg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ujq2W3motdbWyEsbwKZCMeTPTQxXd2t1I/SrcH9azhOZn/ak+gQinKrUWl0VTf2Qq
-         BxXIVneSZuWTjRKw/GVZ5ZDZIO6RgPl4uY1ouAQOpfox/+IbfH4rFXKM8LOxulNxNy
-         S9FhAd+MLi+W8qgg7wLIqC4UkLfKVTi1JC7hLBAN9kqj9wQzhaeD3mmieL1R05Kvzg
-         SGyADjFmSatANJnLqL1/PvDvTh0RtoX0UO+/URnyM+Fq0tetNujCWjhvGS0tItAGbM
-         T8eQEQGQwOk7eBnAXurQH7/IPb8QI1SKUhwFATf+bmNwNUehcgoCYj8jwpUKJVOpQc
-         g+NS/HSOSid0A==
-Date:   Fri, 28 Jul 2023 15:06:30 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Gabriel Krisman Bertazi <krisman@suse.de>
-Cc:     viro@zeniv.linux.org.uk, tytso@mit.edu, ebiggers@kernel.org,
-        jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: Re: [PATCH v4 3/7] libfs: Validate negative dentries in
- case-insensitive directories
-Message-ID: <20230728-beckenrand-wahrlich-62d6b0505d68@brauner>
-References: <20230727172843.20542-1-krisman@suse.de>
- <20230727172843.20542-4-krisman@suse.de>
+        s=k20201202; t=1690550521;
+        bh=BWNdvlVBxmTX4HBWkWikwKLite/l018JUea+q9vpOSQ=;
+        h=From:Date:Subject:To:Cc:From;
+        b=kYddY89bwLAsJQiGEn5hhVv85YkfB+CGBmvDTiEJTSkdA/3X8O+cqMTqaieD+nDj4
+         KZnMv9ZKIZabaeqvqNDJfUpHChEkybeyP5o5UHI6Lib9qVjaVdX3+kuIo8U1S5d3TN
+         54YtON/Mdwu1ZZnQP1wbNEv89PHHVJUmxE3hTcMJBerCetDhsxK8ER0ojlVMG0hGrR
+         r9ybvsUbCB6fdZd8yWXAq6SVbVUVay2gBhYZJtZPvS52xDAckHQyfwIiEGW5Ax1Vbg
+         PzZPdMDsRU24fTZjpsd0iBhZlfEKW1jf4rK7/KK4SvbA5Y9SJ60SSMHO1msNOk3ajZ
+         y/On6r8CFbW2A==
+From:   Jeff Layton <jlayton@kernel.org>
+Date:   Fri, 28 Jul 2023 09:21:37 -0400
+Subject: [PATCH] fs: compare truncated timestamps in current_mgtime
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230727172843.20542-4-krisman@suse.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230728-mgctime-v1-1-5b0ddc5df08e@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAODAw2QC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI2MDcyML3dz05JLM3FRd01SD1GSDVAvLJAMTJaDqgqLUtMwKsEnRsbW1ALW
+ sMS9ZAAAA
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2038; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=BWNdvlVBxmTX4HBWkWikwKLite/l018JUea+q9vpOSQ=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBkw8D4pJpahgkJEeHFHsp7WsETMNpKt8cmCmLD4
+ lPCyeqLnkCJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZMPA+AAKCRAADmhBGVaC
+ Fbp4D/0X9Sp659D5Gk0EPTxpKwy/cyKLhgFyxaBzwDzmC10iZc2wUZaFJr1vJek24dsGIVwQG6o
+ eNTMPNx5XhZw5jWqnMJj21ovegpjRC36bd6F4jgIfHTvlizeAQqHKgdL+IYT+2c4wfaMoDwrDKR
+ vlUPL8mNrEKa/pwxk1GPg8BFfbQoJARLLgfQVo0I8bKAtGxPzEVD/yRAVnPQHTIl1RPktax9BFr
+ vAyc6r0dsRYIyBXikuWoqFqj6ISdjpkI3xlOLdZd2cvYO4LbaXM9Qj557rX3DUKHdszLs/P5BAy
+ jElWM9LwJD0CPl7kG200wKV391b7eC1MNV8ochZB67v/2hU5NSCQmZAgv7qp0rCfXJa7rgDALMk
+ IdrFPLJJtRxPAdj/oIJyLwuO4qI6MheuMM9cKfmUBXrp+4X3vlTWDSYmkGfZ6Xjks5qKSQDquHH
+ JrL1S+t+2dAXC82MBO+XFv0baCr4JVMtewklsccXw0iH1VbmmUeU4Onn+tSfLbIIElCV4Ni9erS
+ BdREuq3Xs/cdnitOqYQidCn+DVVyaqnUVL7oIU1QQ/UbnmLAswYNOBZIPxRl+DSSZeiTuDjS/gy
+ NH+QY9IgI+1Rj5E5jIgK1runNp2244/w4J0UFmwYPS8lgonRvHbvhFdbSEwfth2wUcPOJNzY2Bd
+ 8GDGTrsApahU+/Q==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_FILL_THIS_FORM_SHORT,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 27, 2023 at 01:28:39PM -0400, Gabriel Krisman Bertazi wrote:
-> From: Gabriel Krisman Bertazi <krisman@collabora.com>
-> 
-> Introduce a dentry revalidation helper to be used by case-insensitive
-> filesystems to check if it is safe to reuse a negative dentry.
-> 
-> A negative dentry is safe to be reused on a case-insensitive lookup if
-> it was created during a case-insensitive lookup and this is not a lookup
-> that will instantiate a dentry. If this is a creation lookup, we also
-> need to make sure the name matches sensitively the name under lookup in
-> order to assure the name preserving semantics.
-> 
-> dentry->d_name is only checked by the case-insensitive d_revalidate hook
-> in the LOOKUP_CREATE/LOOKUP_RENAME_TARGET case since, for these cases,
-> d_revalidate is always called with the parent inode read-locked, and
-> therefore the name cannot change from under us.
-> 
-> d_revalidate is only called in 4 places: lookup_dcache, __lookup_slow,
-> lookup_open and lookup_fast:
-> 
->   - lookup_dcache always calls it with zeroed flags, with the exception
->     of when coming from __lookup_hash, which needs the parent locked
->     already, for instance in the open/creation path, which is locked in
->     open_last_lookups.
-> 
->   - In __lookup_slow, either the parent inode is read locked by the
->     caller (lookup_slow), or it is called with no flags (lookup_one*).
->     The read lock suffices to prevent ->d_name modifications, with the
->     exception of one case: __d_unalias, will call __d_move to fix a
->     directory accessible from multiple dentries, which effectively swaps
->     ->d_name while holding only the shared read lock.  This happens
->     through this flow:
-> 
->     lookup_slow()  //LOOKUP_CREATE
->       d_lookup()
->         ->d_lookup()
->           d_splice_alias()
->             __d_unalias()
->               __d_move()
-> 
->     Nevertheless, this case is not a problem because negative dentries
->     are not allowed to be moved with __d_move.
-> 
->   - lookup_open also requires the parent to be locked in the creation
->     case, which is done in open_last_lookups.
-> 
->   - lookup_fast will indeed be called with the parent unlocked, but it
->     shouldn't be called with LOOKUP_CREATE.  Either it is called in the
->     link_path_walk, where nd->flags doesn't have LOOKUP_CREATE yet or in
->     open_last_lookups. But, in this case, it also never has LOOKUP_CREATE,
->     because it is only called on the !O_CREAT case, which means op->intent
->     doesn't have LOOKUP_CREAT (set in build_open_flags only if O_CREAT is
->     set).
-> 
-> Finally, for the LOOKUP_RENAME_TARGET, we are doing a rename, so the
-> parents inodes are also locked.
-> 
-> Reviewed-by: Theodore Ts'o <tytso@mit.edu>
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> 
-> ---
-> Changes since v3:
->   - Add comment regarding creation (Eric)
->   - Reorder checks to clarify !flags meaning (Eric)
->   - Add commit message explanaton of the inode read lock wrt.
->     __d_move. (Eric)
-> Changes since v2:
->   - Add comments to all rejection cases (Eric)
->   - safeguard against filesystem creating dentries without LOOKUP flags
-> ---
->  fs/libfs.c | 55 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 55 insertions(+)
-> 
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index 5b851315eeed..ed04c4dcc312 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -1462,9 +1462,64 @@ static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
->  	return 0;
->  }
->  
-> +static inline int generic_ci_d_revalidate(struct dentry *dentry,
-> +					  const struct qstr *name,
-> +					  unsigned int flags)
-> +{
-> +	if (d_is_negative(dentry)) {
-> +		const struct dentry *parent = READ_ONCE(dentry->d_parent);
-> +		const struct inode *dir = READ_ONCE(parent->d_inode);
-> +
-> +		if (dir && needs_casefold(dir)) {
-> +			/*
-> +			 * Negative dentries created prior to turning the
-> +			 * directory case-insensitive cannot be trusted, since
-> +			 * they don't ensure any possible case version of the
-> +			 * filename doesn't exist.
-> +			 */
-> +			if (!d_is_casefold_lookup(dentry))
-> +				return 0;
-> +
-> +			/*
-> +			 * Filesystems will call into d_revalidate without
-> +			 * setting LOOKUP_ flags even for file creation (see
-> +			 * lookup_one* variants).  Reject negative dentries in
-> +			 * this case, since we can't know for sure it won't be
-> +			 * used for creation.
-> +			 */
-> +			if (!flags)
-> +				return 0;
-> +
-> +			/*
-> +			 * If the lookup is for creation, then a negative dentry
-> +			 * can only be reused if it's a case-sensitive match,
-> +			 * not just a case-insensitive one.  This is needed to
-> +			 * make the new file be created with the name the user
-> +			 * specified, preserving case.
-> +			 */
-> +			if (flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET)) {
-> +				/*
-> +				 * ->d_name won't change from under us in the
-> +				 * creation path only, since d_revalidate during
-> +				 * creation and renames is always called with
-> +				 * the parent inode locked.  It isn't the case
-> +				 * for all lookup callpaths, so ->d_name must
-> +				 * not be touched outside
-> +				 * (LOOKUP_CREATE|LOOKUP_RENAME_TARGET) context.
-> +				 */
-> +				if (dentry->d_name.len != name->len ||
-> +				    memcmp(dentry->d_name.name, name->name, name->len))
-> +					return 0;
-> +			}
-> +		}
-> +	}
-> +	return 1;
-> +}
-> +
->  static const struct dentry_operations generic_ci_dentry_ops = {
->  	.d_hash = generic_ci_d_hash,
->  	.d_compare = generic_ci_d_compare,
-> +	.d_revalidate_name = generic_ci_d_revalidate,
->  };
->  #endif
+current_mgtime compares the ctime (which has already been truncated) to
+the value from ktime_get_coarse_real_ts64 (which has not). All of the
+existing filesystems that enable mgtime have 1ns granularity, so this is
+not a problem today, but it is more correct to compare truncated
+timestamps instead.
 
-Wouldn't it make sense to get rid of all this indentation?
+Do the truncate earlier, so we're comparing like things.
 
-	const struct dentry *parent;
-	const struct inode *dir;
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/inode.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-	if (!d_is_negative(dentry))
-		return 1;
+diff --git a/fs/inode.c b/fs/inode.c
+index 369621e7faf5..8199d0e02cce 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2097,28 +2097,28 @@ EXPORT_SYMBOL(file_remove_privs);
+  */
+ static struct timespec64 current_mgtime(struct inode *inode)
+ {
+-	struct timespec64 now;
++	struct timespec64 now, ctime;
+ 	atomic_long_t *pnsec = (atomic_long_t *)&inode->__i_ctime.tv_nsec;
+ 	long nsec = atomic_long_read(pnsec);
+ 
+ 	if (nsec & I_CTIME_QUERIED) {
+ 		ktime_get_real_ts64(&now);
+-	} else {
+-		struct timespec64 ctime;
++		return timestamp_truncate(now, inode);
++	}
+ 
+-		ktime_get_coarse_real_ts64(&now);
++	ktime_get_coarse_real_ts64(&now);
++	now = timestamp_truncate(now, inode);
+ 
+-		/*
+-		 * If we've recently fetched a fine-grained timestamp
+-		 * then the coarse-grained one may still be earlier than the
+-		 * existing one. Just keep the existing ctime if so.
+-		 */
+-		ctime = inode_get_ctime(inode);
+-		if (timespec64_compare(&ctime, &now) > 0)
+-			now = ctime;
+-	}
++	/*
++	 * If we've recently fetched a fine-grained timestamp
++	 * then the coarse-grained one may still be earlier than the
++	 * existing ctime. Just keep the existing value if so.
++	 */
++	ctime = inode_get_ctime(inode);
++	if (timespec64_compare(&ctime, &now) > 0)
++		now = ctime;
+ 
+-	return timestamp_truncate(now, inode);
++	return now;
+ }
+ 
+ /**
 
-	parent = READ_ONCE(dentry->d_parent);
-	dir = READ_ONCE(parent->d_inode);
+---
+base-commit: 4ce0966ed7c04881c5f352e0bb53af9b38f94253
+change-id: 20230728-mgctime-5e0ec0e89b04
 
-	if (!dir)
-		return 1;
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-	if (!needs_casefold(dir))
-		return 1;
-
-	/*
-	 * Negative dentries created prior to turning the
-	 * directory case-insensitive cannot be trusted, since
-	 * they don't ensure any possible case version of the
-	 * filename doesn't exist.
-	 */
-	if (!d_is_casefold_lookup(dentry))
-		return 0;
-
-	/*
-	 * Filesystems will call into d_revalidate without
-	 * setting LOOKUP_ flags even for file creation (see
-	 * lookup_one* variants).  Reject negative dentries in
-	 * this case, since we can't know for sure it won't be
-	 * used for creation.
-	 */
-	if (!flags)
-		return 0;
-
-	/*
-	 * If the lookup is for creation, then a negative dentry
-	 * can only be reused if it's a case-sensitive match,
-	 * not just a case-insensitive one.  This is needed to
-	 * make the new file be created with the name the user
-	 * specified, preserving case.
-	 */
-	if (flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET)) {
-		/*
-		 * ->d_name won't change from under us in the
-		 * creation path only, since d_revalidate during
-		 * creation and renames is always called with
-		 * the parent inode locked.  It isn't the case
-		 * for all lookup callpaths, so ->d_name must
-		 * not be touched outside
-		 * (LOOKUP_CREATE|LOOKUP_RENAME_TARGET) context.
-		 */
-		if (dentry->d_name.len != name->len ||
-		    memcmp(dentry->d_name.name, name->name, name->len))
-			return 0;
-	}
-	return 1;
