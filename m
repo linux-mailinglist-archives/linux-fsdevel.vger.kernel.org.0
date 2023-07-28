@@ -2,68 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B82857669F1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 12:13:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7CA57669F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 12:13:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233462AbjG1KN1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jul 2023 06:13:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44838 "EHLO
+        id S235753AbjG1KNm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jul 2023 06:13:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235727AbjG1KNF (ORCPT
+        with ESMTP id S235697AbjG1KNa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jul 2023 06:13:05 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 837BB2D67
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 03:12:16 -0700 (PDT)
+        Fri, 28 Jul 2023 06:13:30 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0CBB2D60
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 03:12:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690539135;
+        s=mimecast20190719; t=1690539163;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=qVTrdKONuZJ8X8z6/JDKIqzW1vcvdhBBj7CBWpchIeA=;
-        b=BjWsXF+4ETyxB3IwV46uj3ei97IHZyp53Coevw6DHAqFc7P5ydxI2grK3hfK7Mg3IK8nVi
-        JSSfdDHL/2XyJz2sS4j9q4BfrvCzAmpbS4sz280OF43KPVSgwKl4eSul8n4MLqjGfeyNfh
-        qHxw/YlvyX/9rmPFK0dHQmPrw4Ijalk=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=36P+r7DbNPBfWo4XOeJBPnwWmXV8Z/JHFi2a2sUUCQw=;
+        b=RgH19BrCz6kgKRAFCusN4Bsn0Soj2cQ+cKLRG+CUYliuxnL7bXl+v2hoPW1ZvFvfolpGun
+        ZBeQWZ1T0D4OeTtRazwILa3vNmskai8e62bVbo7yfRsMf5gse5pHqcZ3xF6PeIl3JYLU21
+        V1SxDoCahRQdpVIWXBNdpojmNpj3m+s=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-653-D94BHk7WMe6taJ65MawYbg-1; Fri, 28 Jul 2023 06:12:14 -0400
-X-MC-Unique: D94BHk7WMe6taJ65MawYbg-1
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-55bf2bf1cdeso1775915a12.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 03:12:14 -0700 (PDT)
+ us-mta-398-xONXqUmqMtGQqpZFYSFA6Q-1; Fri, 28 Jul 2023 06:12:41 -0400
+X-MC-Unique: xONXqUmqMtGQqpZFYSFA6Q-1
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1bba270c62dso13135525ad.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 03:12:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690539133; x=1691143933;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20221208; t=1690539160; x=1691143960;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qVTrdKONuZJ8X8z6/JDKIqzW1vcvdhBBj7CBWpchIeA=;
-        b=ev29MbTRihMGFRt5gpj5c3P3sFkHaDMbj9CFGoO2yGomAnc0kYigca0qse4Rq6DMAD
-         pCBszly3Mwf62gRBHY1K6hR/02wk3Q02Z8W4wOeWv070hLSZdJ3cwN4qtHhXR7kSspIS
-         e0cCQcxCESQAn5MmGphjlSyQx/sFlDTfBnEMJLNfwqkEUFxnn0hTKTEIgBUtkUkyGysG
-         s+LG5Luny7p96039nhQ4/OanPSS/PW4hes2+7BNBtBWoGP5J+ZYzxZhwz24JJRs5RAt5
-         Y6hY4atgbajHGnhoRb1q1yeR9iHJKS4L2SrrwTdtXYVUjVeet+ikHzvFVI/Xe+KYf8Bg
-         sXuA==
-X-Gm-Message-State: ABy/qLbfK3+9UpRDWBapEM9rQjpgafzJ+sXQIWol5tvDyauoshAg6zBp
-        DXF8fqOZCl8FK+PNzrq4VEHJmbFWnbO0Kt+aHLAOcVl9hAzUUNfqJcUugJdd6A+StAyBLDzK0Jf
-        iqNLk/AWDWyhlJN/zF6J/foCesA==
-X-Received: by 2002:a17:90b:3712:b0:262:e6d2:2d6 with SMTP id mg18-20020a17090b371200b00262e6d202d6mr1339743pjb.47.1690539133484;
-        Fri, 28 Jul 2023 03:12:13 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlHeJERDSg1rmrndYhymaBmDwNAPGudzcHiIHpPycBSm5xkVLwyT06jzf+MmS1WinFCz3l3qbg==
-X-Received: by 2002:a17:90b:3712:b0:262:e6d2:2d6 with SMTP id mg18-20020a17090b371200b00262e6d202d6mr1339718pjb.47.1690539133132;
-        Fri, 28 Jul 2023 03:12:13 -0700 (PDT)
+        bh=36P+r7DbNPBfWo4XOeJBPnwWmXV8Z/JHFi2a2sUUCQw=;
+        b=g0ot9ji9wGCZ2CtSIwDSMYflAHKGG8l/m6gKqikKwpNIOsLrjj/iguydXEkK2JfY85
+         1ONx26PbcrYdK65mTJF/BaACje+fFVKCCXb+X9aZiC426bQFoFpgLN4At5rXjx3zy1fx
+         yLE/DF58CYhR16kLBZO4e93IN9n2vX/GybvpEeZ18Zq1HRtSyG7cDPphXhviUgQXgAnp
+         hzuYiEWpdBQL/P9lyCd+TrGp30WOoYGhiCdpeDtnDEuadZ01D5Abp2CBzM8VmUHZ88Af
+         rrC2GzffNskA2J7R3Y82J5Me5vX5U/AnS6umdiji4K2INFWlcPNJhak/vB+2xv674KYX
+         Cj+Q==
+X-Gm-Message-State: ABy/qLavTCD83Cy2c+t6W5uJtXEr0MjvilhXnGU4s7ltB81uWlP0ylaN
+        PuMI7me2x0kJZEEgXquMLqxwJHDDS2l6EBR7wGvEP4aXMAhI0elrPtQGwDF0Sto8g9xzXxtxV9t
+        d+1D5Q1Yp4Tftz2XbGXz6kVx9Kg==
+X-Received: by 2002:a17:902:b187:b0:1b8:4e69:c8f7 with SMTP id s7-20020a170902b18700b001b84e69c8f7mr874684plr.23.1690539160550;
+        Fri, 28 Jul 2023 03:12:40 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlEj2r656ptP3/mIAQnYQLkqNV8TpnDyEz+Xd4nj5KeJpMksPMVzmWQhfo4lJjd/gQd41BswEw==
+X-Received: by 2002:a17:902:b187:b0:1b8:4e69:c8f7 with SMTP id s7-20020a170902b18700b001b84e69c8f7mr874678plr.23.1690539160270;
+        Fri, 28 Jul 2023 03:12:40 -0700 (PDT)
 Received: from [10.72.112.17] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id u9-20020a17090341c900b001ac95be5081sm3180459ple.307.2023.07.28.03.12.09
+        by smtp.gmail.com with ESMTPSA id w5-20020a1709029a8500b001b8a3e2c241sm3205019plp.14.2023.07.28.03.12.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jul 2023 03:12:12 -0700 (PDT)
-Message-ID: <a441f975-86c0-0f95-5ad0-ad6139a2d705@redhat.com>
-Date:   Fri, 28 Jul 2023 18:12:07 +0800
+        Fri, 28 Jul 2023 03:12:39 -0700 (PDT)
+Message-ID: <e1f56462-e8e7-d93f-9ff0-99b0c67f82fc@redhat.com>
+Date:   Fri, 28 Jul 2023 18:12:36 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
+From:   Xiubo Li <xiubli@redhat.com>
 Subject: Re: [PATCH v7 03/11] ceph: handle idmapped mounts in
  create_request_message()
-Content-Language: en-US
 To:     =?UTF-8?Q?St=c3=a9phane_Graber?= <stgraber@ubuntu.com>,
         Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 Cc:     Christian Brauner <brauner@kernel.org>,
@@ -77,15 +77,15 @@ References: <20230726141026.307690-1-aleksandr.mikhalitsyn@canonical.com>
  <20230727-bedeuten-endkampf-22c87edd132b@brauner>
  <CAEivzxcx31k3M1jWhhDrx6jxYtw=VOd84N-cMNWc+BZjq6QuFQ@mail.gmail.com>
  <CA+enf=sFC-hiziuXoeDWnb7MoErc+b1PAncOjbM2rNyB4fzfwA@mail.gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
+Content-Language: en-US
 In-Reply-To: <CA+enf=sFC-hiziuXoeDWnb7MoErc+b1PAncOjbM2rNyB4fzfwA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -95,11 +95,10 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 7/27/23 22:46, Stéphane Graber wrote:
 > On Thu, Jul 27, 2023 at 5:48 AM Aleksandr Mikhalitsyn
-> <aleksandr.mikhalitsyn@canonical.com> wrote:
->> On Thu, Jul 27, 2023 at 11:01 AM Christian Brauner <brauner@kernel.org> wrote:
+> <aleksandr.mikhalitsyn@canonical.com>  wrote:
+>> On Thu, Jul 27, 2023 at 11:01 AM Christian Brauner<brauner@kernel.org>  wrote:
 >>> On Thu, Jul 27, 2023 at 08:36:40AM +0200, Aleksandr Mikhalitsyn wrote:
->>>> On Thu, Jul 27, 2023 at 7:30 AM Xiubo Li <xiubli@redhat.com> wrote:
->>>>>
+>>>> On Thu, Jul 27, 2023 at 7:30 AM Xiubo Li<xiubli@redhat.com>  wrote:
 >>>>> On 7/26/23 22:10, Alexander Mikhalitsyn wrote:
 >>>>>> Inode operations that create a new filesystem object such as ->mknod,
 >>>>>> ->create, ->mkdir() and others don't take a {g,u}id argument explicitly.
@@ -125,16 +124,16 @@ On 7/27/23 22:46, Stéphane Graber wrote:
 >>>>>> idmapping as it can break UID/GID-based permission checks logic on the
 >>>>>> MDS side. This problem was described with a lot of details at [1], [2].
 >>>>>>
->>>>>> [1] https://lore.kernel.org/lkml/CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThfzuibrhA3RKM=ZOYLg@mail.gmail.com/
->>>>>> [2] https://lore.kernel.org/all/20220104140414.155198-3-brauner@kernel.org/
+>>>>>> [1]https://lore.kernel.org/lkml/CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThfzuibrhA3RKM=ZOYLg@mail.gmail.com/
+>>>>>> [2]https://lore.kernel.org/all/20220104140414.155198-3-brauner@kernel.org/
 >>>>>>
->>>>>> Cc: Xiubo Li <xiubli@redhat.com>
->>>>>> Cc: Jeff Layton <jlayton@kernel.org>
->>>>>> Cc: Ilya Dryomov <idryomov@gmail.com>
->>>>>> Cc: ceph-devel@vger.kernel.org
->>>>>> Co-Developed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
->>>>>> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
->>>>>> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+>>>>>> Cc: Xiubo Li<xiubli@redhat.com>
+>>>>>> Cc: Jeff Layton<jlayton@kernel.org>
+>>>>>> Cc: Ilya Dryomov<idryomov@gmail.com>
+>>>>>> Cc:ceph-devel@vger.kernel.org
+>>>>>> Co-Developed-by: Alexander Mikhalitsyn<aleksandr.mikhalitsyn@canonical.com>
+>>>>>> Signed-off-by: Christian Brauner<christian.brauner@ubuntu.com>
+>>>>>> Signed-off-by: Alexander Mikhalitsyn<aleksandr.mikhalitsyn@canonical.com>
 >>>>>> ---
 >>>>>> v7:
 >>>>>>        - reworked to use two new fields for owner UID/GID (https://github.com/ceph/ceph/pull/52575)
@@ -175,7 +174,7 @@ On 7/27/23 22:46, Stéphane Graber wrote:
 >>>> additional mount, you always
 >>>> start from doing "normal" mount and only after that you can use this
 >>>> mount to create an idmapped one.
->>>> ( example: https://github.com/brauner/mount-idmapped/tree/master )
+>>>> ( example:https://github.com/brauner/mount-idmapped/tree/master  )
 >>>>
 >>>>> IMO we should fail the mounting from the beginning.
 >>>> Unfortunately, we can't fail mount from the beginning. Procedure of
@@ -183,7 +182,7 @@ On 7/27/23 22:46, Stéphane Graber wrote:
 >>>> creation is handled not on the filesystem level, but on the VFS level
 >>> Correct. It's a generic vfsmount feature.
 >>>
->>>> (source: https://github.com/torvalds/linux/blob/0a8db05b571ad5b8d5c8774a004c0424260a90bd/fs/namespace.c#L4277
+>>>> (source:https://github.com/torvalds/linux/blob/0a8db05b571ad5b8d5c8774a004c0424260a90bd/fs/namespace.c#L4277
 >>>> )
 >>>>
 >>>> Kernel perform all required checks as:
@@ -240,7 +239,6 @@ Thanks
 
 - Xiubo
 
->
 > Some kind of mount option, module option or the like would all be fine for this.
 >
 > Stéphane
