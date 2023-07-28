@@ -2,245 +2,252 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7CA57669F3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 12:13:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 211B17669FA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 12:14:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235753AbjG1KNm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jul 2023 06:13:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44920 "EHLO
+        id S235799AbjG1KOK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jul 2023 06:14:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235697AbjG1KNa (ORCPT
+        with ESMTP id S235697AbjG1KNo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jul 2023 06:13:30 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0CBB2D60
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 03:12:43 -0700 (PDT)
+        Fri, 28 Jul 2023 06:13:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CB7230F5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 03:13:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690539163;
+        s=mimecast20190719; t=1690539182;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=36P+r7DbNPBfWo4XOeJBPnwWmXV8Z/JHFi2a2sUUCQw=;
-        b=RgH19BrCz6kgKRAFCusN4Bsn0Soj2cQ+cKLRG+CUYliuxnL7bXl+v2hoPW1ZvFvfolpGun
-        ZBeQWZ1T0D4OeTtRazwILa3vNmskai8e62bVbo7yfRsMf5gse5pHqcZ3xF6PeIl3JYLU21
-        V1SxDoCahRQdpVIWXBNdpojmNpj3m+s=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=FBSITkR13Me7nA0UvBku+KqeFgHRRHFCLDJ6AjKdk9M=;
+        b=jFnf9neNBpjpv18J8HRR/RFkfea9B2RRvj3NPREFacHhlxGzuKPvkM6B9Fr4dQKvkMdOfd
+        TZF5iU9MSiqMyexc7dARDEqlEs00O1u3Z/VX0DDAk+rlCE/7e6lP/yojTfh/CEOitcdH9S
+        5sbHd856yNCWhUMnzPT6qnAylDU3UYY=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-398-xONXqUmqMtGQqpZFYSFA6Q-1; Fri, 28 Jul 2023 06:12:41 -0400
-X-MC-Unique: xONXqUmqMtGQqpZFYSFA6Q-1
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1bba270c62dso13135525ad.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 03:12:41 -0700 (PDT)
+ us-mta-103-M-Ewf9SbN_yAE0J2pboBvg-1; Fri, 28 Jul 2023 06:13:01 -0400
+X-MC-Unique: M-Ewf9SbN_yAE0J2pboBvg-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2b9b00a80e9so16951501fa.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 03:13:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690539160; x=1691143960;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=36P+r7DbNPBfWo4XOeJBPnwWmXV8Z/JHFi2a2sUUCQw=;
-        b=g0ot9ji9wGCZ2CtSIwDSMYflAHKGG8l/m6gKqikKwpNIOsLrjj/iguydXEkK2JfY85
-         1ONx26PbcrYdK65mTJF/BaACje+fFVKCCXb+X9aZiC426bQFoFpgLN4At5rXjx3zy1fx
-         yLE/DF58CYhR16kLBZO4e93IN9n2vX/GybvpEeZ18Zq1HRtSyG7cDPphXhviUgQXgAnp
-         hzuYiEWpdBQL/P9lyCd+TrGp30WOoYGhiCdpeDtnDEuadZ01D5Abp2CBzM8VmUHZ88Af
-         rrC2GzffNskA2J7R3Y82J5Me5vX5U/AnS6umdiji4K2INFWlcPNJhak/vB+2xv674KYX
-         Cj+Q==
-X-Gm-Message-State: ABy/qLavTCD83Cy2c+t6W5uJtXEr0MjvilhXnGU4s7ltB81uWlP0ylaN
-        PuMI7me2x0kJZEEgXquMLqxwJHDDS2l6EBR7wGvEP4aXMAhI0elrPtQGwDF0Sto8g9xzXxtxV9t
-        d+1D5Q1Yp4Tftz2XbGXz6kVx9Kg==
-X-Received: by 2002:a17:902:b187:b0:1b8:4e69:c8f7 with SMTP id s7-20020a170902b18700b001b84e69c8f7mr874684plr.23.1690539160550;
-        Fri, 28 Jul 2023 03:12:40 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlEj2r656ptP3/mIAQnYQLkqNV8TpnDyEz+Xd4nj5KeJpMksPMVzmWQhfo4lJjd/gQd41BswEw==
-X-Received: by 2002:a17:902:b187:b0:1b8:4e69:c8f7 with SMTP id s7-20020a170902b18700b001b84e69c8f7mr874678plr.23.1690539160270;
-        Fri, 28 Jul 2023 03:12:40 -0700 (PDT)
-Received: from [10.72.112.17] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id w5-20020a1709029a8500b001b8a3e2c241sm3205019plp.14.2023.07.28.03.12.37
+        d=1e100.net; s=20221208; t=1690539179; x=1691143979;
+        h=content-transfer-encoding:in-reply-to:subject:organization
+         :references:cc:to:from:content-language:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FBSITkR13Me7nA0UvBku+KqeFgHRRHFCLDJ6AjKdk9M=;
+        b=EQzHh1s1q1/glRX2tiVlbJUC51t8VRqvNMIHj0fRT3YdTOZyI8cXluUZaAcOkQXWEU
+         ks8yuFvK8QrLncLIqfyFvN91tZOMKlOCJFu/Y7IRX6ml2AJSPQLgWSFWuEsfYeIg57jO
+         6IaLNnjN88A/fMC/VvTghZBXFykuzSCLq2PfQFKl3XBvmHrKQA9jX5qmr98tJwkugZI+
+         AEFlFUXcmdo0DA51dTD3ssfsEmnQlojK9yexmOugRsj+/YX+iNNxUuAFbGDUGNMHeD/h
+         Y2cDvoH71xgQictkt1DnB+3awNXiPwBOpPMe2lXNMBMztUO+KsDQwys5m/bssiYOrZcG
+         g8OA==
+X-Gm-Message-State: ABy/qLZnWKKKDKRXb2NmC/hYsppgLdd2k4E5Y1C5YBqrnIII4MN/fFNd
+        mWQIrqPjLc1T+m7ncqM4P4w4tYYtNGhfs7f8Ww89tjyjqhCVkw4pZFigrBkc4SJ9Wd1vjxjwCoz
+        t2A6zWSnR6OMNIFH+WCAmdlONDg==
+X-Received: by 2002:a2e:9d84:0:b0:2b9:d07f:ee50 with SMTP id c4-20020a2e9d84000000b002b9d07fee50mr1233690ljj.30.1690539179753;
+        Fri, 28 Jul 2023 03:12:59 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlGkAr1jxNT4mmSwfn2e2XtO3UnoTO1B9ASM5Fa1JtMt3k6efdjWl5GqbHAD0g1vAdfROlzYmg==
+X-Received: by 2002:a2e:9d84:0:b0:2b9:d07f:ee50 with SMTP id c4-20020a2e9d84000000b002b9d07fee50mr1233664ljj.30.1690539179271;
+        Fri, 28 Jul 2023 03:12:59 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c706:6b00:bf49:f14b:380d:f871? (p200300cbc7066b00bf49f14b380df871.dip0.t-ipconnect.de. [2003:cb:c706:6b00:bf49:f14b:380d:f871])
+        by smtp.gmail.com with ESMTPSA id t25-20020a7bc3d9000000b003fc01495383sm6592524wmj.6.2023.07.28.03.12.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jul 2023 03:12:39 -0700 (PDT)
-Message-ID: <e1f56462-e8e7-d93f-9ff0-99b0c67f82fc@redhat.com>
-Date:   Fri, 28 Jul 2023 18:12:36 +0800
+        Fri, 28 Jul 2023 03:12:58 -0700 (PDT)
+Message-ID: <13b14aa6-302e-63cc-2a99-f5c22b9931fc@redhat.com>
+Date:   Fri, 28 Jul 2023 12:12:57 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-From:   Xiubo Li <xiubli@redhat.com>
-Subject: Re: [PATCH v7 03/11] ceph: handle idmapped mounts in
- create_request_message()
-To:     =?UTF-8?Q?St=c3=a9phane_Graber?= <stgraber@ubuntu.com>,
-        Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230726141026.307690-1-aleksandr.mikhalitsyn@canonical.com>
- <20230726141026.307690-4-aleksandr.mikhalitsyn@canonical.com>
- <6ea8bf93-b456-bda4-b39d-a43328987ac9@redhat.com>
- <CAEivzxeQubvas2yPFYRRXr3BP7pp1HNM3b7C-PQQWy-0FpFKuQ@mail.gmail.com>
- <20230727-bedeuten-endkampf-22c87edd132b@brauner>
- <CAEivzxcx31k3M1jWhhDrx6jxYtw=VOd84N-cMNWc+BZjq6QuFQ@mail.gmail.com>
- <CA+enf=sFC-hiziuXoeDWnb7MoErc+b1PAncOjbM2rNyB4fzfwA@mail.gmail.com>
+ Thunderbird/102.13.0
 Content-Language: en-US
-In-Reply-To: <CA+enf=sFC-hiziuXoeDWnb7MoErc+b1PAncOjbM2rNyB4fzfwA@mail.gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+To:     John Hubbard <jhubbard@nvidia.com>, linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        liubo <liubo254@huawei.com>, Peter Xu <peterx@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Hugh Dickins <hughd@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, stable@vger.kernel.org
+References: <20230727212845.135673-1-david@redhat.com>
+ <20230727212845.135673-3-david@redhat.com>
+ <55c92738-e402-4657-3d46-162ad2c09d68@nvidia.com>
+ <9de80e22-e89f-2760-34f4-61be5f8fd39c@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH v1 2/4] mm/gup: Make follow_page() succeed again on
+ PROT_NONE PTEs/PMDs
+In-Reply-To: <9de80e22-e89f-2760-34f4-61be5f8fd39c@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 7/27/23 22:46, Stéphane Graber wrote:
-> On Thu, Jul 27, 2023 at 5:48 AM Aleksandr Mikhalitsyn
-> <aleksandr.mikhalitsyn@canonical.com>  wrote:
->> On Thu, Jul 27, 2023 at 11:01 AM Christian Brauner<brauner@kernel.org>  wrote:
->>> On Thu, Jul 27, 2023 at 08:36:40AM +0200, Aleksandr Mikhalitsyn wrote:
->>>> On Thu, Jul 27, 2023 at 7:30 AM Xiubo Li<xiubli@redhat.com>  wrote:
->>>>> On 7/26/23 22:10, Alexander Mikhalitsyn wrote:
->>>>>> Inode operations that create a new filesystem object such as ->mknod,
->>>>>> ->create, ->mkdir() and others don't take a {g,u}id argument explicitly.
->>>>>> Instead the caller's fs{g,u}id is used for the {g,u}id of the new
->>>>>> filesystem object.
->>>>>>
->>>>>> In order to ensure that the correct {g,u}id is used map the caller's
->>>>>> fs{g,u}id for creation requests. This doesn't require complex changes.
->>>>>> It suffices to pass in the relevant idmapping recorded in the request
->>>>>> message. If this request message was triggered from an inode operation
->>>>>> that creates filesystem objects it will have passed down the relevant
->>>>>> idmaping. If this is a request message that was triggered from an inode
->>>>>> operation that doens't need to take idmappings into account the initial
->>>>>> idmapping is passed down which is an identity mapping.
->>>>>>
->>>>>> This change uses a new cephfs protocol extension CEPHFS_FEATURE_HAS_OWNER_UIDGID
->>>>>> which adds two new fields (owner_{u,g}id) to the request head structure.
->>>>>> So, we need to ensure that MDS supports it otherwise we need to fail
->>>>>> any IO that comes through an idmapped mount because we can't process it
->>>>>> in a proper way. MDS server without such an extension will use caller_{u,g}id
->>>>>> fields to set a new inode owner UID/GID which is incorrect because caller_{u,g}id
->>>>>> values are unmapped. At the same time we can't map these fields with an
->>>>>> idmapping as it can break UID/GID-based permission checks logic on the
->>>>>> MDS side. This problem was described with a lot of details at [1], [2].
->>>>>>
->>>>>> [1]https://lore.kernel.org/lkml/CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThfzuibrhA3RKM=ZOYLg@mail.gmail.com/
->>>>>> [2]https://lore.kernel.org/all/20220104140414.155198-3-brauner@kernel.org/
->>>>>>
->>>>>> Cc: Xiubo Li<xiubli@redhat.com>
->>>>>> Cc: Jeff Layton<jlayton@kernel.org>
->>>>>> Cc: Ilya Dryomov<idryomov@gmail.com>
->>>>>> Cc:ceph-devel@vger.kernel.org
->>>>>> Co-Developed-by: Alexander Mikhalitsyn<aleksandr.mikhalitsyn@canonical.com>
->>>>>> Signed-off-by: Christian Brauner<christian.brauner@ubuntu.com>
->>>>>> Signed-off-by: Alexander Mikhalitsyn<aleksandr.mikhalitsyn@canonical.com>
->>>>>> ---
->>>>>> v7:
->>>>>>        - reworked to use two new fields for owner UID/GID (https://github.com/ceph/ceph/pull/52575)
->>>>>> ---
->>>>>>    fs/ceph/mds_client.c         | 20 ++++++++++++++++++++
->>>>>>    fs/ceph/mds_client.h         |  5 ++++-
->>>>>>    include/linux/ceph/ceph_fs.h |  4 +++-
->>>>>>    3 files changed, 27 insertions(+), 2 deletions(-)
->>>>>>
->>>>>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
->>>>>> index c641ab046e98..ac095a95f3d0 100644
->>>>>> --- a/fs/ceph/mds_client.c
->>>>>> +++ b/fs/ceph/mds_client.c
->>>>>> @@ -2923,6 +2923,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
->>>>>>    {
->>>>>>        int mds = session->s_mds;
->>>>>>        struct ceph_mds_client *mdsc = session->s_mdsc;
->>>>>> +     struct ceph_client *cl = mdsc->fsc->client;
->>>>>>        struct ceph_msg *msg;
->>>>>>        struct ceph_mds_request_head_legacy *lhead;
->>>>>>        const char *path1 = NULL;
->>>>>> @@ -3028,6 +3029,16 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
->>>>>>        lhead = find_legacy_request_head(msg->front.iov_base,
->>>>>>                                         session->s_con.peer_features);
->>>>>>
->>>>>> +     if ((req->r_mnt_idmap != &nop_mnt_idmap) &&
->>>>>> +         !test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID, &session->s_features)) {
->>>>>> +             pr_err_ratelimited_client(cl,
->>>>>> +                     "idmapped mount is used and CEPHFS_FEATURE_HAS_OWNER_UIDGID"
->>>>>> +                     " is not supported by MDS. Fail request with -EIO.\n");
->>>>>> +
->>>>>> +             ret = -EIO;
->>>>>> +             goto out_err;
->>>>>> +     }
->>>>>> +
->>>>> I think this couldn't fail the mounting operation, right ?
->>>> This won't fail mounting. First of all an idmapped mount is always an
->>>> additional mount, you always
->>>> start from doing "normal" mount and only after that you can use this
->>>> mount to create an idmapped one.
->>>> ( example:https://github.com/brauner/mount-idmapped/tree/master  )
->>>>
->>>>> IMO we should fail the mounting from the beginning.
->>>> Unfortunately, we can't fail mount from the beginning. Procedure of
->>>> the idmapped mounts
->>>> creation is handled not on the filesystem level, but on the VFS level
->>> Correct. It's a generic vfsmount feature.
+On 28.07.23 11:08, David Hildenbrand wrote:
+> On 28.07.23 04:30, John Hubbard wrote:
+>> On 7/27/23 14:28, David Hildenbrand wrote:
+>>> We accidentally enforced PROT_NONE PTE/PMD permission checks for
+>>> follow_page() like we do for get_user_pages() and friends. That was
+>>> undesired, because follow_page() is usually only used to lookup a currently
+>>> mapped page, not to actually access it. Further, follow_page() does not
+>>> actually trigger fault handling, but instead simply fails.
+>>
+>> I see that follow_page() is also completely undocumented. And that
+>> reduces us to deducing how it should be used...these things that
+>> change follow_page()'s behavior maybe should have a go at documenting
+>> it too, perhaps.
+> 
+> I can certainly be motivated to do that. :)
+> 
+>>
 >>>
->>>> (source:https://github.com/torvalds/linux/blob/0a8db05b571ad5b8d5c8774a004c0424260a90bd/fs/namespace.c#L4277
->>>> )
->>>>
->>>> Kernel perform all required checks as:
->>>> - filesystem type has declared to support idmappings
->>>> (fs_type->fs_flags & FS_ALLOW_IDMAP)
->>>> - user who creates idmapped mount should be CAP_SYS_ADMIN in a user
->>>> namespace that owns superblock of the filesystem
->>>> (for cephfs it's always init_user_ns => user should be root on the host)
->>>>
->>>> So I would like to go this way because of the reasons mentioned above:
->>>> - root user is someone who understands what he does.
->>>> - idmapped mounts are never "first" mounts. They are always created
->>>> after "normal" mount.
->>>> - effectively this check makes "normal" mount to work normally and
->>>> fail only requests that comes through an idmapped mounts
->>>> with reasonable error message. Obviously, all read operations will
->>>> work perfectly well only the operations that create new inodes will
->>>> fail.
->>>> Btw, we already have an analogical semantic on the VFS level for users
->>>> who have no UID/GID mapping to the host. Filesystem requests for
->>>> such users will fail with -EOVERFLOW. Here we have something close.
->>> Refusing requests coming from an idmapped mount if the server misses
->>> appropriate features is good enough as a first step imho. And yes, we do
->>> have similar logic on the vfs level for unmapped uid/gid.
->> Thanks, Christian!
+>>> Let's restore that behavior by conditionally setting FOLL_FORCE if
+>>> FOLL_WRITE is not set. This way, for example KSM and migration code will
+>>> no longer fail on PROT_NONE mapped PTEs/PMDS.
+>>>
+>>> Handling this internally doesn't require us to add any new FOLL_FORCE
+>>> usage outside of GUP code.
+>>>
+>>> While at it, refuse to accept FOLL_FORCE: we don't even perform VMA
+>>> permission checks like in check_vma_flags(), so especially
+>>> FOLL_FORCE|FOLL_WRITE would be dodgy.
+>>>
+>>> This issue was identified by code inspection. We'll add some
+>>> documentation regarding FOLL_FORCE next.
+>>>
+>>> Reported-by: Peter Xu <peterx@redhat.com>
+>>> Fixes: 474098edac26 ("mm/gup: replace FOLL_NUMA by gup_can_follow_protnone()")
+>>> Cc: <stable@vger.kernel.org>
+>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>> ---
+>>>     mm/gup.c | 10 +++++++++-
+>>>     1 file changed, 9 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/mm/gup.c b/mm/gup.c
+>>> index 2493ffa10f4b..da9a5cc096ac 100644
+>>> --- a/mm/gup.c
+>>> +++ b/mm/gup.c
+>>> @@ -841,9 +841,17 @@ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
+>>>     	if (vma_is_secretmem(vma))
+>>>     		return NULL;
+>>>     
+>>> -	if (WARN_ON_ONCE(foll_flags & FOLL_PIN))
+>>> +	if (WARN_ON_ONCE(foll_flags & (FOLL_PIN | FOLL_FORCE)))
+>>>     		return NULL;
 >>
->> I wanted to add that alternative here is to modify caller_{u,g}id
->> fields as it was done in the first approach,
->> it will break the UID/GID-based permissions model for old MDS versions
->> (we can put printk_once to inform user about this),
->> but at the same time it will allow us to support idmapped mounts in
->> all cases. This support will be not fully ideal for old MDS
->>   and perfectly well for new MDS versions.
+>> This is not a super happy situation: follow_page() is now prohibited
+>> (see above: we should document that interface) from passing in
+>> FOLL_FORCE...
+> 
+> I guess you saw my patch #4.
+> 
+> If you take a look at the existing callers (that are fortunately very
+> limited), you'll see that nobody cares.
+> 
+> Most of the FOLL flags don't make any sense for follow_page(), and
+> limiting further (ab)use is at least to me very appealing.
+> 
 >>
->> Alternatively, we can introduce cephfs mount option like
->> "idmap_with_old_mds" and if it's enabled then we set caller_{u,g}id
->> for MDS without CEPHFS_FEATURE_HAS_OWNER_UIDGID, if it's disabled
->> (default) we fail requests with -EIO. For
->> new MDS everything goes in the right way.
+>>>     
+>>> +	/*
+>>> +	 * Traditionally, follow_page() succeeded on PROT_NONE-mapped pages
+>>> +	 * but failed follow_page(FOLL_WRITE) on R/O-mapped pages. Let's
+>>> +	 * keep these semantics by setting FOLL_FORCE if FOLL_WRITE is not set.
+>>> +	 */
+>>> +	if (!(foll_flags & FOLL_WRITE))
+>>> +		foll_flags |= FOLL_FORCE;
+>>> +
 >>
->> Kind regards,
->> Alex
-> Hey there,
->
-> A very strong +1 on there needing to be some way to make this work
-> with older Ceph releases.
-> Ceph Reef isn't out yet and we're in July 2023, so I'd really like not
-> having to wait until Ceph Squid in mid 2024 to be able to make use of
-> this!
+>> ...but then we set it anyway, for special cases. It's awkward because
+>> FOLL_FORCE is not an "internal to gup" flag (yet?).
+>>
+>> I don't yet have suggestions, other than:
+>>
+>> 1) Yes, the FOLL_NUMA made things bad.
+>>
+>> 2) And they are still very confusing, especially the new use of
+>>       FOLL_FORCE.
+>>
+>> ...I'll try to let this soak in and maybe recommend something
+>> in a more productive way. :)
+> 
+> What I can offer that might be very appealing is the following:
+> 
+> Get rid of the flags parameter for follow_page() *completely*. Yes, then
+> we can even rename FOLL_ to something reasonable in the context where it
+> is nowadays used ;)
+> 
+> 
+> Internally, we'll then set
+> 
+> FOLL_GET | FOLL_DUMP | FOLL_FORCE
+> 
+> and document exactly what this functions does. Any user that needs
+> something different should just look into using get_user_pages() instead.
+> 
+> I can prototype that on top of this work easily.
 
-IMO this shouldn't be an issue, because we can backport it to old releases.
+The end result looks something like:
 
-Thanks
+/**
+  * follow_page - look up and reference a page descriptor from a user-virtual
+  * 		 address
+  * @vma: vm_area_struct mapping @address
+  * @address: virtual address to look up
+  *
+  * follow_page() will look up the page mapped at the given address and
+  * take a reference on the page. The returned page has to be released using
+  * put_page().
+  *
+  * follow_page() will not return special (like zero) pages and does not check
+  * PTE protection: the returned page might be mapped PROT_NONE, R/O or R/W.
+  * Consequently, follow_page() will not trigger NUMA hinting faults.
+  *
+  * follow_page() does not trigger page faults. If no page is mapped, or
+  * a special (like zero) page is mapped, it returns %NULL or an error pointer.
+  *
+  * Note: new users with different requirements are probably better off using
+  *       one of the get_user_pages() variants or one of the walk_page_range()
+  *       variants.
+  *
+  * Return: the mapped (struct page *), %NULL if no mapping exists, or
+  * an error pointer if there is a mapping to something not represented
+  * by a page descriptor (see also vm_normal_page()) or the zero page.
+  */
+struct page *follow_page(struct vm_area_struct *vma, unsigned long address)
+{
+	struct follow_page_context ctx = { NULL };
+	unsigned long gup_flags;
+	struct page *page;
 
-- Xiubo
+	if (vma_is_secretmem(vma))
+		return NULL;
 
-> Some kind of mount option, module option or the like would all be fine for this.
->
-> Stéphane
->
+	/*
+	 * FOLL_GET: We always want a reference on the returned page.
+	 * FOL_DUMP: Ignore special (like zero) pages.
+	 * FOLL_FORCE: Succeeded on PROT_NONE-mapped pages.
+	 */
+	gup_flags = FOLL_GET | FOLL_DUMP | FOLL_FORCE;
+
+	page = follow_page_mask(vma, address, gup_flags, &ctx);
+	if (ctx.pgmap)
+		put_dev_pagemap(ctx.pgmap);
+	return page;
+}
+
+-- 
+Cheers,
+
+David / dhildenb
 
