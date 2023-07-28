@@ -2,106 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 05C3F7662C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 06:07:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E4BE766325
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 06:25:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231875AbjG1EHE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jul 2023 00:07:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36656 "EHLO
+        id S230440AbjG1EZT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jul 2023 00:25:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233050AbjG1EHC (ORCPT
+        with ESMTP id S229933AbjG1EZS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jul 2023 00:07:02 -0400
-Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0082130F4;
-        Thu, 27 Jul 2023 21:06:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1690517197;
-        bh=pcQAPdGAc64rGs8Q8YF3FyAN7z68cqGb6vBQ20gSNTI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fOjoj7qiHnPnlKdFgMZ+0gjqSWwmQqBEsnK2mYYKFdMO+cw9BklEUfYPvFRD6T3b3
-         ortaIruVUodPqY/i+KyqWiW+7hgJ2N2zoMJw0SqQ/PhvCnZLb3PygByx6TlW4+LkRY
-         liOERS6BIc/IIVAqn2aOhykurU+X0zSzdCQo5E72KRv3W+vxSR4T5GVGBS6tYg2LF3
-         4bqTEwaCnOOpOg0YaeBaJ9JpgUCz1NNzFmn0QLfDB4LvSCWpcZqH8J4R2hzNocThv/
-         zoMCg261d6hRqzR2ROTI9jwjFsZjOsf7fPWvvXSZ1S9KJpcEhObhfCYaangjx7/MwM
-         ruR5mrhx3yibw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4RBvG45TP8z4wqW;
-        Fri, 28 Jul 2023 14:06:36 +1000 (AEST)
-Date:   Fri, 28 Jul 2023 14:06:35 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     akpm@linux-foundation.org, adobriyan@gmail.com,
-        mhiramat@kernel.org, arnd@kernel.org, ndesaulniers@google.com,
+        Fri, 28 Jul 2023 00:25:18 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FEA119B;
+        Thu, 27 Jul 2023 21:25:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=Ao7GNVwTNlA+08NsEP9KZa7poSWv2gw93VRCPXPtkIo=; b=38+weY92+ZIyidQnYhi8kc+JP/
+        szcZrxQEne0HTl1iQsM6mY36YAgtWl6RMTi9sS3DHyFIBOn0YC3/08+0L/Zv4lwb/wo68qR5dC9GK
+        CihBfhf/c1vmio6iXOLkf6+96C8LwAzkIYrMxj9IukfT6/uTd2MaJ4mh+thby9/Ugm2XuBho+cnGX
+        Y4XC7L87mowW4ZLrfjDQMLR8ptTm4S4yEiC/lH9KGXXKu1yIIFIb9xygfEmQpmbBQd+jU/epsA5q8
+        tN26FPumsd06dJzLMPQt7IUsZj9mBb6r7z/j82XJ2QZDc8CwwiiI/mDCfhp9SzpMt9M9SdIhcPdKM
+        pbSnNOqA==;
+Received: from [2601:1c2:980:9ec0::2764]
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1qPF2J-001aDr-28;
+        Fri, 28 Jul 2023 04:25:07 +0000
+Message-ID: <cc9ba6e9-1154-ad84-0fef-d67834169110@infradead.org>
+Date:   Thu, 27 Jul 2023 21:25:06 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH RFC bootconfig 0/2] Distinguish bootloader and embedded
+ kernel parameters
+Content-Language: en-US
+To:     paulmck@kernel.org, akpm@linux-foundation.org, adobriyan@gmail.com,
+        mhiramat@kernel.org
+Cc:     arnd@kernel.org, ndesaulniers@google.com, sfr@canb.auug.org.au,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-team@meta.com
-Subject: Re: [PATCH RFC bootconfig] 1/2] fs/proc: Add /proc/cmdline_load for
- boot loader arguments
-Message-ID: <20230728140635.2ea3e82d@canb.auug.org.au>
-In-Reply-To: <20230728033701.817094-1-paulmck@kernel.org>
 References: <197cba95-3989-4d2f-a9f1-8b192ad08c49@paulmck-laptop>
-        <20230728033701.817094-1-paulmck@kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/EBviVOK.OrMU/Lj0QJSW_zt";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <197cba95-3989-4d2f-a9f1-8b192ad08c49@paulmck-laptop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/EBviVOK.OrMU/Lj0QJSW_zt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+
+
+On 7/27/23 20:35, Paul E. McKenney wrote:
+> Hello!
+> 
+> This series provides /proc interfaces parallel to /proc/cmdline that
+> provide only those kernel boot parameters that were provided by the
+> bootloader (/proc/cmdline_load) and only those parameters that were
+> embedded in the kernel image (/proc/cmdline_image, in boot-config format).
+> This is especially important when these parameters are presented to the
+> boot loader by automation that might gather them from diverse sources,
+> and also when a kexec-based reboot process pulls the kernel boot
+> parameters from /proc.  If such a reboot process uses /proc/cmdline,
+> the kernel parameters from the image are replicated on every reboot,
+> which can be frustrating when the new kernel has different embedded
+> kernel boot parameters.
+> 
+> Why put these in /proc?  Because they is quite similar to /proc/cmdline,
+> so it makes sense to put it in the same place that /proc/cmdline is
+> located.
+> 
+> 1.	fs/proc: Add /proc/cmdline_load for boot loader arguments.
+> 
+> 2.	fs/proc: Add /proc/cmdline_image for embedded arguments.
+> 
+> 						Thanx, Paul
+> 
 
 Hi Paul,
 
-Just a couple of nits:
+This series seems to be missing updates to
+Documentation/filesystems/proc.rst.
 
-On Thu, 27 Jul 2023 20:37:00 -0700 "Paul E. McKenney" <paulmck@kernel.org> =
-wrote:
->
-> [ sfr: Apply kernel test robot feedback. ]
+Please add them.
+Thanks.
 
-This was a fix for my own build testing (I am not a bot (yet) :-)).
+> ------------------------------------------------------------------------
+> 
+>  b/fs/proc/cmdline.c    |   13 +++++++++++++
+>  b/include/linux/init.h |    3 ++-
+>  b/init/main.c          |    2 +-
+>  fs/proc/cmdline.c      |   12 ++++++++++++
+>  include/linux/init.h   |   11 ++++++-----
+>  init/main.c            |    9 +++++++++
+>  6 files changed, 43 insertions(+), 7 deletions(-)
 
-> diff --git a/include/linux/init.h b/include/linux/init.h
-> index 266c3e1640d4..29e75bbe7984 100644
-> --- a/include/linux/init.h
-> +++ b/include/linux/init.h
-> @@ -112,6 +112,7 @@
->  #define __REFCONST       .section       ".ref.rodata", "a"
-> =20
->  #ifndef __ASSEMBLY__
-> +
-
-Please remove this added blank line.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/EBviVOK.OrMU/Lj0QJSW_zt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmTDPssACgkQAVBC80lX
-0Gwf5AgAi37ZIN9HLZU6bU+R+FwyrYNDr2cZ/NJ4Dp+VxCJzDpg5+kjYsWoX6IA2
-KDI8vz2oIDpB8HuQpTDQqMYRLMgM2JKo9tC5stoMX0xGgm2s8OQZBAQALVXbJRS2
-0EJMMcuANvLzL0lYw1L0IpMyFVKPx1JbXXkCtl/M7d43OgBwihtDbb9isvsbVQ7n
-/Rc4LUqcfXNpjOgUPlchY89RTUUHuXMkT5evqvD6psh/h7sSt8BflvTQXopm6rWU
-ArQM6/36EYYb5Bza5yao0y2hUlh6OIrSOvoydGUirwQeEhcA4OPYzX+qCtQZrhn1
-txkRvf76hsFpsJ/29oJMqSn6AcZ9bA==
-=ggdP
------END PGP SIGNATURE-----
-
---Sig_/EBviVOK.OrMU/Lj0QJSW_zt--
+-- 
+~Randy
