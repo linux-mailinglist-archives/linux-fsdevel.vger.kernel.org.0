@@ -2,126 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 54CB7766367
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 06:49:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDCA376637C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 07:05:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233354AbjG1Esz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jul 2023 00:48:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50124 "EHLO
+        id S232860AbjG1FFl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jul 2023 01:05:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233247AbjG1Esc (ORCPT
+        with ESMTP id S230512AbjG1FFk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jul 2023 00:48:32 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3588E26B8;
-        Thu, 27 Jul 2023 21:48:31 -0700 (PDT)
-Received: from dggpemm100001.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RBw6T19T8zNm4t;
-        Fri, 28 Jul 2023 12:45:05 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Fri, 28 Jul 2023 12:48:27 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-perf-users@vger.kernel.org>,
-        <selinux@vger.kernel.org>,
-        =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        <christian.koenig@amd.com>, <Xinhui.Pan@amd.com>,
-        <airlied@gmail.com>, <daniel@ffwll.ch>, <paul@paul-moore.com>,
-        <stephen.smalley.work@gmail.com>, <eparis@parisplace.org>,
-        <peterz@infradead.org>, <acme@kernel.org>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: [PATCH v3 4/4] perf/core: use vma_is_initial_stack() and vma_is_initial_heap()
-Date:   Fri, 28 Jul 2023 13:00:43 +0800
-Message-ID: <20230728050043.59880-5-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230728050043.59880-1-wangkefeng.wang@huawei.com>
-References: <20230728050043.59880-1-wangkefeng.wang@huawei.com>
+        Fri, 28 Jul 2023 01:05:40 -0400
+Received: from bagheera.iewc.co.za (bagheera.iewc.co.za [IPv6:2c0f:f720:0:3::9a49:2249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EB282D67;
+        Thu, 27 Jul 2023 22:05:38 -0700 (PDT)
+Received: from [154.73.32.4] (helo=tauri.local.uls.co.za)
+        by bagheera.iewc.co.za with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <jaco@uls.co.za>)
+        id 1qPFf1-0005PS-Vn; Fri, 28 Jul 2023 07:05:08 +0200
+Received: from [192.168.1.145]
+        by tauri.local.uls.co.za with esmtp (Exim 4.94.2)
+        (envelope-from <jaco@uls.co.za>)
+        id 1qPFf0-0005t6-R4; Fri, 28 Jul 2023 07:05:06 +0200
+Message-ID: <c4d98da8-1931-4165-9212-c502c71d4bbd@uls.co.za>
+Date:   Fri, 28 Jul 2023 07:05:06 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm100001.china.huawei.com (7.185.36.93)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] fuse: enable larger read buffers for readdir [v2].
+Content-Language: en-GB
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Antonio SJ Musumeci <trapexit@spawn.link>
+References: <20230726105953.843-1-jaco@uls.co.za>
+ <20230727081237.18217-1-jaco@uls.co.za>
+ <CAJfpegvJ7FOS35yiKsTAzQh5Uf71FatU-kTJpXJtDPQbXeMgxA@mail.gmail.com>
+ <d9ec13de-ebb2-af50-6026-408b49ff979b@fastmail.fm>
+From:   Jaco Kroon <jaco@uls.co.za>
+Organization: Ultimate Linux Solutions (Pty) Ltd
+In-Reply-To: <d9ec13de-ebb2-af50-6026-408b49ff979b@fastmail.fm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use the helpers to simplify code, also kill unneeded goto cpy_name.
+Hi,
+>>>          plus = fuse_use_readdirplus(inode, ctx);
+>>>          ap->args.out_pages = true;
+>>> -       ap->num_pages = 1;
+>>> +       ap->num_pages = READDIR_PAGES;
+>>
+>> No.  This is the array lenght, which is 1.  This is the hack I guess,
+>> which makes the above trick work.
+>
+> Hmm, ap->num_pages / ap->pages[] is used in fuse_copy_pages, but so is 
+> ap->descs[] - shouldn't the patch caused an out-of-bound access?
+> Out of interest, would you mind to explain how the hack worked?
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- kernel/events/core.c | 33 +++++++++++----------------------
- 1 file changed, 11 insertions(+), 22 deletions(-)
+Apparently it shouldn't ... my understanding of how pages* worked was 
+all wrong.
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index f84e2640ea2f..b36d0823ff33 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -8631,7 +8631,7 @@ static void perf_event_mmap_event(struct perf_mmap_event *mmap_event)
- 	unsigned int size;
- 	char tmp[16];
- 	char *buf = NULL;
--	char *name;
-+	char *name = NULL;
- 
- 	if (vma->vm_flags & VM_READ)
- 		prot |= PROT_READ;
-@@ -8678,29 +8678,18 @@ static void perf_event_mmap_event(struct perf_mmap_event *mmap_event)
- 
- 		goto got_name;
- 	} else {
--		if (vma->vm_ops && vma->vm_ops->name) {
-+		if (vma->vm_ops && vma->vm_ops->name)
- 			name = (char *) vma->vm_ops->name(vma);
--			if (name)
--				goto cpy_name;
-+		if (!name)
-+			name = (char *)arch_vma_name(vma);
-+		if (!name) {
-+			if (vma_is_initial_heap(vma))
-+				name = "[heap]";
-+			else if (vma_is_initial_stack(vma))
-+				name = "[stack]";
-+			else
-+				name = "//anon";
- 		}
--
--		name = (char *)arch_vma_name(vma);
--		if (name)
--			goto cpy_name;
--
--		if (vma->vm_start <= vma->vm_mm->start_brk &&
--				vma->vm_end >= vma->vm_mm->brk) {
--			name = "[heap]";
--			goto cpy_name;
--		}
--		if (vma->vm_start <= vma->vm_mm->start_stack &&
--				vma->vm_end >= vma->vm_mm->start_stack) {
--			name = "[stack]";
--			goto cpy_name;
--		}
--
--		name = "//anon";
--		goto cpy_name;
- 	}
- 
- cpy_name:
--- 
-2.41.0
+I'm guessing since all the data fits in the first page (ap->pages[0] in 
+other words, of length/size desc.length) that the other pages are never 
+accessed.  Looking at fuse_copy_pages this does indeed seem to be the 
+case.  So I ended up just being really, really lucky here.
+
+Kind regards,
+Jaco
 
