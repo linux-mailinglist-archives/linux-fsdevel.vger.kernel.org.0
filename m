@@ -2,115 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B73C76769F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 21:51:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D8CE7676A2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 21:53:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234991AbjG1Tvc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jul 2023 15:51:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56808 "EHLO
+        id S232951AbjG1TxB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jul 2023 15:53:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235084AbjG1Tv2 (ORCPT
+        with ESMTP id S229743AbjG1TxA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jul 2023 15:51:28 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACD8444A2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 12:50:34 -0700 (PDT)
+        Fri, 28 Jul 2023 15:53:00 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A0E73C1D
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 12:52:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690573833;
+        s=mimecast20190719; t=1690573936;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=JL0vjTaxYUqkmZNYFhgTom6BuK4FVEs8BSvx2Ibs/QU=;
-        b=JvVMvfW3G7Mx/na4JkYK+NdMPgHIhpwoE3sn/O/ggDlXt7EwizO4V/uYaqaYtRycNJV1Sm
-        jSlcbdSz8gHQAm13xu50pu+flXSediyhYNItk74BzlpLtKV5HpBgHYv57DO/D4aYfcyqRz
-        HjUcXBmF/6E05LaypT6wm8hY47J/Vcs=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=Z2+ypDVV6dSVwbKJr16uhr2IJ9r+AwX9x8+Z/cyB1F4=;
+        b=XxMjNbEl4hPno/lWM8xq7JRrFzVjDkuoRTBwFpgv50VGqOUGlxzuYeipwoHibuBK4TA36Z
+        CpjxlVdcaKU/+sYuP6jomSmpt39ne+lROs2bXdsJRFzrlKJtPmZxoPOlsqimOHTYPFYpfq
+        HCxCgPk8sJlVzJYyqaIVGye/4a2ynd0=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-582-ti_uzGD4NEeYldf5-pa0_g-1; Fri, 28 Jul 2023 15:50:32 -0400
-X-MC-Unique: ti_uzGD4NEeYldf5-pa0_g-1
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-76c8e07cbe9so13210685a.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 12:50:31 -0700 (PDT)
+ us-mta-647-p8hghl9cMSag8r7Tfqgdpw-1; Fri, 28 Jul 2023 15:52:14 -0400
+X-MC-Unique: p8hghl9cMSag8r7Tfqgdpw-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-314134f403fso1357750f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 12:52:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690573831; x=1691178631;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JL0vjTaxYUqkmZNYFhgTom6BuK4FVEs8BSvx2Ibs/QU=;
-        b=lUj9C01odL6iMVPz0ADn7yP0J4o0IsANWnV7yg8raA/Jwu5T5LT9NVeuzOuVKB59Ev
-         u+pBsSUMHEPX3K/yIduwaTJechvztO0m5wzg+RML4TNQtMZTRt0VkcsyP+JOgzxKCDeR
-         InXyAFez0haQD4Qr1oupDi4pyErvoXlrek0hL+RmtdfVx2jbxYK6YxgLnLzVjFPl1sH3
-         vfsR11BZBbFEtEtXaKeTmuE5OmdW7MWc+9CJFR/1JcJ+/o/Eub26WdOR34ahUQm0D6sQ
-         0vLKzdejv1w9EQK2G5ShaTJgquGL2ttfUntSxowMJ4sK1O3bXAD98CxcHAKCgsG3FRJS
-         Ql3w==
-X-Gm-Message-State: ABy/qLamiM5uA0Ing6g30R6YrZVwfJlOHQCFUtN+5ds+ojhsDQdiO7Pu
-        4Zswl2N18jOcV8XknHzzmEanCbdaYuAQfIelPk3+A0UqT5Jqhu0Dwgi0YsXS8+wv4S5C3oneTVN
-        1uqWO18o3Ih2UgsXsNawjVwXfww==
-X-Received: by 2002:ac8:5ad5:0:b0:400:990c:8f7c with SMTP id d21-20020ac85ad5000000b00400990c8f7cmr825184qtd.0.1690573831583;
-        Fri, 28 Jul 2023 12:50:31 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlEvAskwCoVMGlYLkEaAmUF4jcMWrt6qNlGnn1uYl/VfOdOQ0yaJwY1yqIo6W+eUFAntaOCUjQ==
-X-Received: by 2002:ac8:5ad5:0:b0:400:990c:8f7c with SMTP id d21-20020ac85ad5000000b00400990c8f7cmr825160qtd.0.1690573831320;
-        Fri, 28 Jul 2023 12:50:31 -0700 (PDT)
-Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
-        by smtp.gmail.com with ESMTPSA id o11-20020ac872cb000000b004055106ee80sm195044qtp.44.2023.07.28.12.50.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jul 2023 12:50:30 -0700 (PDT)
-Date:   Fri, 28 Jul 2023 15:50:29 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        d=1e100.net; s=20221208; t=1690573933; x=1691178733;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z2+ypDVV6dSVwbKJr16uhr2IJ9r+AwX9x8+Z/cyB1F4=;
+        b=RS4lsj6pFij351aihlOk13eka8MiEw4+piBZWPmixCCvE0Wn4vk6Wwo9WCjeB0uPVt
+         e3kR+xPYx7yQ8GSwe2FbDHjoj6vRd72vPDAx0jGRrWqD4kbrZ7h21xvjVsZhdlEXRAx5
+         L4CanhSlQ5tQxK6/HOHoQQ/NP5wXGDqGU9G5O/MqWHjgYar0a7ouHor3UF3NlUGd8Qk4
+         GSiYCQJ6au3DXSenNB4Em41sEiFWmdMDwRwjRnoUEO1slzxjK5x8SeeuK45/HsTB43Eo
+         hKbrtxdXB3o/xRnW+Cd3bNdV2WEYDC/GH/inPc5iTVAp0fHxgcTO3xpx9IUsZ3loPLze
+         3ORQ==
+X-Gm-Message-State: ABy/qLYeWF3WVrulMYAfX/Xey/D0IrnKEP/05Ld/U3F1nNSsvqUz7d5B
+        pY2a2sT3PeNW+mCZnExPbpw3lOsCZAMDbfkXKOhF1hH2vCbzJyA0igfaTuKNoNd6mC35xgTtj3Z
+        I1kEN4LIan6avSgd48r74ELpeDA==
+X-Received: by 2002:a5d:6849:0:b0:313:f347:eea0 with SMTP id o9-20020a5d6849000000b00313f347eea0mr2595044wrw.60.1690573933542;
+        Fri, 28 Jul 2023 12:52:13 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlFnzwP4B5xQQLlK2sKSIchVUYqrHrpepiG7G8Hpg27lW/ADY4pc3Ao/iX95LwenFmTIWkhgqA==
+X-Received: by 2002:a5d:6849:0:b0:313:f347:eea0 with SMTP id o9-20020a5d6849000000b00313f347eea0mr2595023wrw.60.1690573933205;
+        Fri, 28 Jul 2023 12:52:13 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c706:6b00:bf49:f14b:380d:f871? (p200300cbc7066b00bf49f14b380df871.dip0.t-ipconnect.de. [2003:cb:c706:6b00:bf49:f14b:380d:f871])
+        by smtp.gmail.com with ESMTPSA id o12-20020adfcf0c000000b00301a351a8d6sm5544158wrj.84.2023.07.28.12.52.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jul 2023 12:52:12 -0700 (PDT)
+Message-ID: <aab2cb18-67e1-e55b-57e0-7e0ac90f3da3@redhat.com>
+Date:   Fri, 28 Jul 2023 21:52:11 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v1 0/4] smaps / mm/gup: fix gup_can_follow_protnone
+ fallout
+Content-Language: en-US
+To:     Peter Xu <peterx@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         liubo <liubo254@huawei.com>,
         Matthew Wilcox <willy@infradead.org>,
         Hugh Dickins <hughd@google.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: Re: [PATCH v1 0/4] smaps / mm/gup: fix gup_can_follow_protnone
- fallout
-Message-ID: <ZMQcBWvjVUEBU6mF@x1n>
+        John Hubbard <jhubbard@nvidia.com>
 References: <20230727212845.135673-1-david@redhat.com>
  <CAHk-=wiig=N75AGP7UAG9scmghWAqsTB5NRO6RiWLOB5YWfcTQ@mail.gmail.com>
- <eaa67cf6-4896-bb62-0899-ebdae8744c7a@redhat.com>
- <b647fd9a-3d75-625c-9f2c-dd3c251528c4@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b647fd9a-3d75-625c-9f2c-dd3c251528c4@redhat.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+ <ZMQZfn/hUURmfqWN@x1n>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <ZMQZfn/hUURmfqWN@x1n>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 28, 2023 at 09:40:54PM +0200, David Hildenbrand wrote:
-> Hmm. So three alternatives I see:
+On 28.07.23 21:39, Peter Xu wrote:
+> Hi, Linus,
 > 
-> 1) Use FOLL_FORCE in follow_page() to unconditionally disable protnone
->    checks. Alternatively, have an internal FOLL_NO_PROTNONE flag if we
->    don't like that.
+> On Fri, Jul 28, 2023 at 09:18:45AM -0700, Linus Torvalds wrote:
+>> The original reason for FOLL_NUMA simply does not exist any more. We
+>> know exactly when a page is marked for NUMA faulting, and we should
+>> simply *ignore* it for GUP and follow_page().
+>>
+>> I think we should treat a NUMA-faulting page as just being present
+>> (and not NUMA-fault it).
 > 
-> 2) Revert the commit and reintroduce unconditional FOLL_NUMA without
->    FOLL_FORCE.
+> But then does it means that any gup-only user will have numa balancing
+> completely disabled?  Since as long as the page will only be accessed by
+> GUP, the numa balancing will never trigger anyway..  I think KVM is
+> manipulating guest pages just like that.  Not sure whether it means it'll
+> void the whole numa effort there.
 > 
-> 3) Have a FOLL_NUMA that callers like KVM can pass.
+> If we allow that GUP from happening (taking protnone as present) I assume
+> it'll also stop any further numa balancing on this very page to trigger
+> too, because even if some page fault handler triggered on this protnone
+> page later that is not GUP anymore, when it wants to migrate the page to
+> the other numa node it'll see someone is holding a reference on it already,
+> and then we should give up the balancing.
+> 
+> So to me FOLL_NUMA (or any identifier like it.. just to describe the
+> caller's need; some may really just want to fetch the pfn/page) still makes
+> sense.  But maybe I totally misunderstood above..
 
-I'm afraid 3) means changing numa balancing to opt-in, probably no-go for
-any non-kvm gup users as that could start to break there, even if making
-smaps/follow_page happy again.
+Yes, I agree, took me a bit longer to realize (being a KVM developer :) 
+... I'm really ready for the weekend).
 
-I keep worrying 1) on FOLL_FORCE abuse.
-
-So I keep my vote on 2).
-
-Thanks,
+So if this series is not acceptable then better revert that commit -- or 
+let callers like KVM specify FOLL_NUMA.
 
 -- 
-Peter Xu
+Cheers,
+
+David / dhildenb
 
