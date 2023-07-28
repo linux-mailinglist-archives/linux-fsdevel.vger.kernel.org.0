@@ -2,118 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AAFF076792A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jul 2023 01:53:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8173576792D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jul 2023 01:55:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235662AbjG1XxK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jul 2023 19:53:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41896 "EHLO
+        id S235087AbjG1XzK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jul 2023 19:55:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230274AbjG1XxK (ORCPT
+        with ESMTP id S230274AbjG1XzJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jul 2023 19:53:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27E964233
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 16:52:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690588347;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BY29vbVRSLrx1jOwy2KzcUw26TLcuFDuJxFn8li9iP8=;
-        b=SBvVmuq5YANiUvXhT5kqY7V8ZmhhNpOsYRGu+tlXmrF+MoGgPpN70pEIZM3hmA1bff9Ecd
-        ofiMH7Jdujeb+EvAAPAHz1e9EG8XffCxfPneFcmIdQ7KkGPSinOSEixqurGxfQGTUJVml+
-        OThygK9aGZJ6hkx5bYQW6UPgYGSsDnc=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-344-QF0H11mpOgSewz_eLPmuog-1; Fri, 28 Jul 2023 19:52:22 -0400
-X-MC-Unique: QF0H11mpOgSewz_eLPmuog-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 28 Jul 2023 19:55:09 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A691A4231;
+        Fri, 28 Jul 2023 16:55:07 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3B356185A78B;
-        Fri, 28 Jul 2023 23:52:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.131])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A857F400F36;
-        Fri, 28 Jul 2023 23:52:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20230718160737.52c68c73@kernel.org>
-References: <20230718160737.52c68c73@kernel.org> <000000000000881d0606004541d1@google.com> <0000000000001416bb06004ebf53@google.com>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     dhowells@redhat.com,
-        syzbot <syzbot+f527b971b4bdc8e79f9e@syzkaller.appspotmail.com>,
-        bpf@vger.kernel.org, brauner@kernel.org, davem@davemloft.net,
-        dsahern@kernel.org, edumazet@google.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, pabeni@redhat.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [fs?] INFO: task hung in pipe_release (4)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 582231F896;
+        Fri, 28 Jul 2023 23:55:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1690588505; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Vpkws96VxtaEEsabDbCElfZ/CAGrK02wRH+80AynJeI=;
+        b=Zg53RflBzXPb/WjOhq9z7GxPVaVruduuA94kKZsJzMtKSgnxgDI5subY4BsPKxKUj9bawz
+        R8IYSw0j2TterfOw53YuY58c+Hd4LizvlARaUXX+5LbD5+ptMqSBHyBgjlVKJI92alnzLb
+        RtXNi0nCF9IwrnONB9jSWfS5SJgSWbg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1690588505;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Vpkws96VxtaEEsabDbCElfZ/CAGrK02wRH+80AynJeI=;
+        b=8Q55lJUXFBHf57Cv+CiVQiUiSOH7V5hOKA6feYU+GV3JRVICNdSfLqIBR1+peepyi30Au+
+        Ahu9gx8p4TVr9XAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EC26D13276;
+        Fri, 28 Jul 2023 23:55:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id EVBRJ1VVxGTpfgAAMHmgww
+        (envelope-from <neilb@suse.de>); Fri, 28 Jul 2023 23:55:01 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <550502.1690588340.1@warthog.procyon.org.uk>
-Date:   Sat, 29 Jul 2023 00:52:20 +0100
-Message-ID: <550503.1690588340@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Chuck Lever" <cel@kernel.org>
+Cc:     "Chuck Lever" <chuck.lever@oracle.com>,
+        "David Howells" <dhowells@redhat.com>,
+        "Jeff Layton" <jlayton@kernel.org>,
+        "Hugh Dickins" <hughd@google.com>, "Jens Axboe" <axboe@kernel.dk>,
+        "Matthew Wilcox" <willy@infradead.org>, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] nfsd: Fix reading via splice
+In-reply-to: <169054754615.3783.11682801287165281930.stgit@klimt.1015granger.net>
+References: <169054754615.3783.11682801287165281930.stgit@klimt.1015granger.net>
+Date:   Sat, 29 Jul 2023 09:54:58 +1000
+Message-id: <169058849828.32308.14965537137761913794@noble.neil.brown.name>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jakub Kicinski <kuba@kernel.org> wrote:
+On Fri, 28 Jul 2023, Chuck Lever wrote:
+> From: David Howells <dhowells@redhat.com>
+>=20
+> nfsd_splice_actor() has a clause in its loop that chops up a compound page
+> into individual pages such that if the same page is seen twice in a row, it
+> is discarded the second time.  This is a problem with the advent of
+> shmem_splice_read() as that inserts zero_pages into the pipe in lieu of
+> pages that aren't present in the pagecache.
+>=20
+> Fix this by assuming that the last page is being extended only if the
+> currently stored length + starting offset is not currently on a page
+> boundary.
+>=20
+> This can be tested by NFS-exporting a tmpfs filesystem on the test machine
+> and truncating it to more than a page in size (eg. truncate -s 8192) and
+> then reading it by NFS.  The first page will be all zeros, but thereafter
+> garbage will be read.
+>=20
+> Note: I wonder if we can ever get a situation now where we get a splice
+> that gives us contiguous parts of a page in separate actor calls.  As NFSD
+> can only be splicing from a file (I think), there are only three sources of
+> the page: copy_splice_read(), shmem_splice_read() and file_splice_read().
+> The first allocates pages for the data it reads, so the problem cannot
+> occur; the second should never see a partial page; and the third waits for
+> each page to become available before we're allowed to read from it.
+>=20
+> Fixes: bd194b187115 ("shmem: Implement splice-read")
+> Reported-by: Chuck Lever <chuck.lever@oracle.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> cc: Hugh Dickins <hughd@google.com>
+> cc: Jens Axboe <axboe@kernel.dk>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: linux-nfs@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
+> cc: linux-mm@kvack.org
+> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+> ---
+>  fs/nfsd/vfs.c |    9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index 59b7d60ae33e..ee3bbaa79478 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -956,10 +956,13 @@ nfsd_splice_actor(struct pipe_inode_info *pipe, struc=
+t pipe_buffer *buf,
+>  	last_page =3D page + (offset + sd->len - 1) / PAGE_SIZE;
+>  	for (page +=3D offset / PAGE_SIZE; page <=3D last_page; page++) {
+>  		/*
+> -		 * Skip page replacement when extending the contents
+> -		 * of the current page.
+> +		 * Skip page replacement when extending the contents of the
+> +		 * current page.  But note that we may get two zero_pages in a
+> +		 * row from shmem.
+>  		 */
+> -		if (page =3D=3D *(rqstp->rq_next_page - 1))
+> +		if (page =3D=3D *(rqstp->rq_next_page - 1) &&
+> +		    offset_in_page(rqstp->rq_res.page_base +
+> +				   rqstp->rq_res.page_len))
 
-> Hi David, any ideas about this one? Looks like it triggers on fairly
-> recent upstream?
+This seems fragile in that it makes assumptions about the pages being
+sent and their alignment.
+Given that it was broken by the splice-read change, that confirms it is
+fragile.  Maybe we could make the code a bit more explicit about what is
+expected.
 
-I've managed to reproduce it finally.  Instrumenting the pipe_lock/unlock
-functions, splice_to_socket() and pipe_release() seems to show that
-pipe_release() is being called whilst splice_to_socket() is still running.
+Also, I don't think this test can ever be relevant after the first time
+through the loop.  So I think it would be clearest to have the
+interesting case outside the loop.
 
-I *think* syzbot is arranging things such that splice_to_socket() takes a
-significant amount of time so that another thread can close the socket as it
-exits.
+ page +=3D offset / PAGE_SIZE;
+ if (rqstp->rq_res.pages_len > 0) {
+      /* appending to page list - check alignment */
+      if (offset % PAGE_SIZE !=3D (rqstp->rq_res.page_base +
+                                 rqstp-.rq_res.page_len) % PAGE_SIZE)
+	  return -EIO;
+      if (offset % PAGE_SIZE !=3D 0) {
+           /* continuing previous page */
+           if (page !=3D rqstp->rq_next_page[-1])
+               return -EIO;
+	   page +=3D 1;
+      }
+ } else
+      /* Starting new page list */
+      rqstp->rq_res.page_base =3D offset % PAGE_SIZE;
 
-In this sample logging, the pipe is created by pid 7101:
+ for ( ; page <=3D last_page ; page++)
+       if (unlikely(!svc_rqst_replace_page(rqstp, page)))
+           return -EIO;
 
-[   66.205719] --pipe 7101
-[   66.209942] lock
-[   66.212526] locked
-[   66.215344] unlock
-[   66.218103] unlocked
+ rqstp->rq_res.page_len +=3D sd->len;
+ return sd->len;
 
-splice begins in 7101 also and locks the pipe:
 
-[   66.221057] ==>splice_to_socket() 7101
-[   66.225596] lock
-[   66.228177] locked
+Also, the name "svc_rqst_replace_page" doesn't give any hint that the
+next_page pointer is advanced.  Maybe svc_rqst_add_page() ???  Not great
+I admit.
 
-but for some reason, pid 7100 then tries to release it:
+NeilBrown
 
-[   66.377781] release 7100
+  =20
 
-and hangs on the __pipe_lock() call in pipe_release():
-
-[   66.381059] lock
-
-The syz reproducer does weird things with threading - and I'm wondering if
-there's a file struct refcount bug here.  Note that splice_to_socket() can't
-access the pipe file structs to alter the refcount, and the involved pipe
-isn't communicated to udp_sendmsg() in any way - so if there is a refcount
-bug, it must be somewhere in the VFS, the pipe driver or the splice
-infrastructure:-/.
-
-I'm also not sure what's going on inside udp_sendmsg() as yet.  It doesn't
-show a stack in /proc/7101/stacks, which means it doesn't hit a schedule().
-
-David
+>  			continue;
+>  		if (unlikely(!svc_rqst_replace_page(rqstp, page)))
+>  			return -EIO;
+>=20
+>=20
+>=20
 
