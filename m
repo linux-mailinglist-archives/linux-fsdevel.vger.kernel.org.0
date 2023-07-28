@@ -2,144 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 13EEC766C0F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 13:49:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 698B4766C45
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jul 2023 13:59:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236319AbjG1Ltp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jul 2023 07:49:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45692 "EHLO
+        id S235909AbjG1L7M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jul 2023 07:59:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234888AbjG1Ltn (ORCPT
+        with ESMTP id S236338AbjG1L7H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jul 2023 07:49:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C7B63C2F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 04:48:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690544931;
+        Fri, 28 Jul 2023 07:59:07 -0400
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050:0:465::101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACA8F3C2F;
+        Fri, 28 Jul 2023 04:59:04 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4RC5l91gd3z9sTn;
+        Fri, 28 Jul 2023 13:59:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+        t=1690545541;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=amggK1c1iFQcIsltx9iiMJ/J2TdCT43VOB9zNEC3MjI=;
-        b=XaA2Ymu3O+5JsaHScx6dm4yid9YJkBftsU4KEZRPf20w43437oGkoYb6HAnjQXkChHW5OI
-        k9Qlnc4nQiNb20II50tGcxEvDm4RwND206QcodaKJySHIZvWs0/X+Ndx2f5kjeE/MoWXgF
-        w/g8xRhQ0je7NMcB5BEup3cohxLeG3w=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-453-0w7W7exxNu2uZdYHX42iuw-1; Fri, 28 Jul 2023 07:48:49 -0400
-X-MC-Unique: 0w7W7exxNu2uZdYHX42iuw-1
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-63cf3d966e1so22730216d6.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 04:48:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690544929; x=1691149729;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=amggK1c1iFQcIsltx9iiMJ/J2TdCT43VOB9zNEC3MjI=;
-        b=cKc6u1yIDpSEKMOjb1tOwh11Kc0yf1RNP/NFnHeqPaiip4TuBhI+oKdXcw+rDSWcoL
-         WNdSyN5nDiNj6y9Rz1Hv8rGIinEKIDgpgE7wtKjoL1Y5IIjwMYwb4DiUwGZn6lIzX1+d
-         smvzXNFID44oe+yuFgZc4zZuByFKYxNHlmuxmoDBHp+G2/dSfuTbDnIu5hyE5HqrsFGN
-         S2HQK8jdC1OrZ/sdjfGMnp7M2y850iXdOsgRbxF/z4rfF9AAo2zHeB7IOYggqA5tmk1R
-         k+zVymyMRzbTYZNryxD0dQqCsT4sLCCRnxA94kdp8WzKiPofQeDJc910LJ385NKVIOLW
-         AbNA==
-X-Gm-Message-State: ABy/qLZbiuLM8Fmt/6Cf06cLE4WhDUwVjTatvyNKe+zc3lsnDFJQoct/
-        S/NMxE+ScWb+EHlNP+23jNjmsUenWVw+hRDYNuiVE92Km7qWJHFnTDqrXxRjSodSfCNOrNUZYmf
-        DdToLR9NLDBmt0Q4OTKKi6DP8rA==
-X-Received: by 2002:a05:622a:170c:b0:403:a263:5402 with SMTP id h12-20020a05622a170c00b00403a2635402mr2914428qtk.18.1690544929315;
-        Fri, 28 Jul 2023 04:48:49 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlF4HP9emyj8PfcdfRAEbYECoLJjWWPCTFXihnHLKkpiXAxEqfjwIUSpFIWY/4/sObMMv7h2zQ==
-X-Received: by 2002:a05:622a:170c:b0:403:a263:5402 with SMTP id h12-20020a05622a170c00b00403a2635402mr2914415qtk.18.1690544929078;
-        Fri, 28 Jul 2023 04:48:49 -0700 (PDT)
-Received: from [172.16.0.7] ([209.73.90.46])
-        by smtp.gmail.com with ESMTPSA id c26-20020ac81e9a000000b00403fcd4ea59sm1099677qtm.10.2023.07.28.04.48.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jul 2023 04:48:48 -0700 (PDT)
-Message-ID: <c4360163-3595-e152-765d-641f9c79e8fd@redhat.com>
-Date:   Fri, 28 Jul 2023 06:48:47 -0500
+         content-transfer-encoding:content-transfer-encoding;
+        bh=9/8Enmq6dGEBOaAdXif/TTkAgQwGHnKWZ5AzFbgN4lM=;
+        b=t5NZavTc7lWMKBbq8l3ZnXRLu/MSHXptAjkir+IPnEbyJtD5N+MkUUZW4zTOWwNf2tiqzU
+        /zRFaTWsRg705H2Svh+ckkCC1uUTfv5zRQfRac37UDqlVvB1UaRwHRhzWKtaJuXB6JXrBh
+        YS0s0IFQeC7V+g++epP5p17PlYO0wu9ez6u/1lRDrTJ1BBJqeW/krT6PDXd2hmOUvyTQGC
+        laYDsAPgtBG6N9QxDcA3ndGe2StnvvdBQvPiTVcga4jkGnnniZSz3bGGMcdbYgxZV2cagy
+        SiodEq0drMJBmEQJApSnSyTpYEQxHDwSCNoeGcalJ57epuPhXNMVGes8bM/H6g==
+From:   Aleksa Sarai <cyphar@cyphar.com>
+Date:   Fri, 28 Jul 2023 21:58:26 +1000
+Subject: [PATCH] fchmodat2: add support for AT_EMPTY_PATH
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [syzbot] [gfs2?] kernel panic: hung_task: blocked tasks (2)
-To:     David Howells <dhowells@redhat.com>,
-        syzbot <syzbot+607aa822c60b2e75b269@syzkaller.appspotmail.com>
-Cc:     agruenba@redhat.com, arnd@arndb.de, cluster-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <00000000000045a44b0601802056@google.com>
- <200478.1690532408@warthog.procyon.org.uk>
-Content-Language: en-US
-From:   Bob Peterson <rpeterso@redhat.com>
-In-Reply-To: <200478.1690532408@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Message-Id: <20230728-fchmodat2-at_empty_path-v1-1-f3add31d3516@cyphar.com>
+X-B4-Tracking: v=1; b=H4sIAGGtw2QC/x3MTQqAIBBA4avErBN0Cvq5SoSIjTmLSlSiiO6et
+ PwW7z2QKDIlGKsHIp2c+NgLVF2B9WZfSfBSDCixkR32wlm/HYvJKEzWtIV862CyF42S1rXSDqg
+ clDpEcnz952l+3w8jpB3yaQAAAA==
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Aleksa Sarai <cyphar@cyphar.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1877; i=cyphar@cyphar.com;
+ h=from:subject:message-id; bh=Sdckq9QBnej4bYwFL1SzVqR7z5ef8LWJ7BK0J1vaGeM=;
+ b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMaQcXls/546PAaPoeos/bF1/XzHtjn7Pe6ib3eDr0o8BK
+ dN2Rc2e1FHKwiDGxSArpsiyzc8zdNP8xVeSP61kg5nDygQyhIGLUwAm0r6c4Z9m64T9W5KdbQKO
+ uuz6lMgyY/Hy/H0BiQZXV96SbincMIGXkWG5ePa9Dw+WiBV8mCXF7/sgc9EZkdnPcryaZNOy2HJ
+ 3RbICAA==
+X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
+ fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/28/23 3:20 AM, David Howells wrote:
-> syzbot <syzbot+607aa822c60b2e75b269@syzkaller.appspotmail.com> wrote:
-> 
->> Fixes: 9c8ad7a2ff0b ("uapi, x86: Fix the syscall numbering of the mount API syscalls [ver #2]")
-> 
-> This would seem unlikely to be the culprit.  It just changes the numbering on
-> the fsconfig-related syscalls.
-> 
-> Running the test program on v6.5-rc3, however, I end up with the test process
-> stuck in the D state:
-> 
-> INFO: task repro-17687f1aa:5551 blocked for more than 120 seconds.
->        Not tainted 6.5.0-rc3-build3+ #1448
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:repro-17687f1aa state:D stack:0     pid:5551  ppid:5516   flags:0x00004002
-> Call Trace:
->   <TASK>
->   __schedule+0x4a7/0x4f1
->   schedule+0x66/0xa1
->   schedule_timeout+0x9d/0xd7
->   ? __next_timer_interrupt+0xf6/0xf6
->   gfs2_gl_hash_clear+0xa0/0xdc
->   ? sugov_irq_work+0x15/0x15
->   gfs2_put_super+0x19f/0x1d3
->   generic_shutdown_super+0x78/0x187
->   kill_block_super+0x1c/0x32
->   deactivate_locked_super+0x2f/0x61
->   cleanup_mnt+0xab/0xcc
->   task_work_run+0x6b/0x80
->   exit_to_user_mode_prepare+0x76/0xfd
->   syscall_exit_to_user_mode+0x14/0x31
->   entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> RIP: 0033:0x7f89aac31dab
-> RSP: 002b:00007fff43d9b878 EFLAGS: 00000206 ORIG_RAX: 00000000000000a6
-> RAX: 0000000000000000 RBX: 00007fff43d9cad8 RCX: 00007f89aac31dab
-> RDX: 0000000000000000 RSI: 000000000000000a RDI: 00007fff43d9b920
-> RBP: 00007fff43d9c960 R08: 0000000000000000 R09: 0000000000000073
-> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
-> R13: 00007fff43d9cae8 R14: 0000000000417e18 R15: 00007f89aad51000
->   </TASK>
-> 
-> David
-> 
-Hi David,
+This allows userspace to avoid going through /proc/self/fd when dealing
+with all types of file descriptors for chmod(), and makes fchmodat2() a
+proper superset of all other chmod syscalls.
 
-This indicates gfs2 is having trouble resolving and freeing all its 
-glocks, which usually means a reference counting problem or ail (active 
-items list) problem during unmount.
+The primary difference between fchmodat2(AT_EMPTY_PATH) and fchmod() is
+that fchmod() doesn't operate on O_PATH file descriptors by design. To
+quote open(2):
 
-If gfs2_gl_hash_clear gets stuck for a long period of time it is 
-supposed to dump the remaining list of glocks that still have not been 
-resolved. I think it takes 10 minutes or so. Can you post the console 
-messages that follow? That will help us figure out what's happening. Thanks.
+> O_PATH (since Linux 2.6.39)
+> [...]
+> The file itself is not opened, and other file operations (e.g.,
+> read(2), write(2), fchmod(2), fchown(2), fgetxattr(2), ioctl(2),
+> mmap(2)) fail with the error EBADF.
 
-Regards,
+However, procfs has allowed userspace to do this operation ever since
+the introduction of O_PATH through magic-links, so adding this feature
+is only an improvement for programs that have to mess around with
+/proc/self/fd/$n today to get this behaviour. In addition,
+fchownat(AT_EMPTY_PATH) has existed since the introduction of O_PATH and
+allows chown() operations directly on O_PATH descriptors.
 
-Bob Peterson
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+---
+ fs/open.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/open.c b/fs/open.c
+index e52d78e5a333..b8883ec286f5 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -678,10 +678,12 @@ static int do_fchmodat(int dfd, const char __user *filename, umode_t mode,
+ 	int error;
+ 	unsigned int lookup_flags;
+ 
+-	if (unlikely(flags & ~AT_SYMLINK_NOFOLLOW))
++	if (unlikely(flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)))
+ 		return -EINVAL;
+ 
+ 	lookup_flags = (flags & AT_SYMLINK_NOFOLLOW) ? 0 : LOOKUP_FOLLOW;
++	if (flags & AT_EMPTY_PATH)
++		lookup_flags |= LOOKUP_EMPTY;
+ 
+ retry:
+ 	error = user_path_at(dfd, filename, lookup_flags, &path);
+
+---
+base-commit: 4859c257d295949c23f4074850a8c2ec31357abb
+change-id: 20230728-fchmodat2-at_empty_path-310cf40c921f
+
+Best regards,
+-- 
+Aleksa Sarai <cyphar@cyphar.com>
 
