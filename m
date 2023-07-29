@@ -2,186 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8173576792D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jul 2023 01:55:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7D4376794B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jul 2023 02:03:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235087AbjG1XzK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Jul 2023 19:55:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42450 "EHLO
+        id S230338AbjG2ADk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Jul 2023 20:03:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230274AbjG1XzJ (ORCPT
+        with ESMTP id S235824AbjG2ADh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Jul 2023 19:55:09 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A691A4231;
-        Fri, 28 Jul 2023 16:55:07 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 582231F896;
-        Fri, 28 Jul 2023 23:55:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1690588505; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Vpkws96VxtaEEsabDbCElfZ/CAGrK02wRH+80AynJeI=;
-        b=Zg53RflBzXPb/WjOhq9z7GxPVaVruduuA94kKZsJzMtKSgnxgDI5subY4BsPKxKUj9bawz
-        R8IYSw0j2TterfOw53YuY58c+Hd4LizvlARaUXX+5LbD5+ptMqSBHyBgjlVKJI92alnzLb
-        RtXNi0nCF9IwrnONB9jSWfS5SJgSWbg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1690588505;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Vpkws96VxtaEEsabDbCElfZ/CAGrK02wRH+80AynJeI=;
-        b=8Q55lJUXFBHf57Cv+CiVQiUiSOH7V5hOKA6feYU+GV3JRVICNdSfLqIBR1+peepyi30Au+
-        Ahu9gx8p4TVr9XAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EC26D13276;
-        Fri, 28 Jul 2023 23:55:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id EVBRJ1VVxGTpfgAAMHmgww
-        (envelope-from <neilb@suse.de>); Fri, 28 Jul 2023 23:55:01 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Chuck Lever" <cel@kernel.org>
-Cc:     "Chuck Lever" <chuck.lever@oracle.com>,
-        "David Howells" <dhowells@redhat.com>,
-        "Jeff Layton" <jlayton@kernel.org>,
-        "Hugh Dickins" <hughd@google.com>, "Jens Axboe" <axboe@kernel.dk>,
-        "Matthew Wilcox" <willy@infradead.org>, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] nfsd: Fix reading via splice
-In-reply-to: <169054754615.3783.11682801287165281930.stgit@klimt.1015granger.net>
-References: <169054754615.3783.11682801287165281930.stgit@klimt.1015granger.net>
-Date:   Sat, 29 Jul 2023 09:54:58 +1000
-Message-id: <169058849828.32308.14965537137761913794@noble.neil.brown.name>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+        Fri, 28 Jul 2023 20:03:37 -0400
+Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF5C83C22
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 17:03:35 -0700 (PDT)
+Received: by mail-pl1-x64a.google.com with SMTP id d9443c01a7336-1bb982d2572so17187825ad.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jul 2023 17:03:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1690589015; x=1691193815;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rJg9MbukUkeAf25VcBnSvGPEfaUIyqqF94QJU8orhSY=;
+        b=Zp0GOXqU9vAtanM7byzLEY1ZTAuQCQrnfrak1thKcFFHMBCZO/N4KqKDBd5I3kJffW
+         Vh8ovzLtMVpv7R9tgjnJuitRPz0iowTqbSccpqb9sCrit8s8jZkHgE3EKWmaz9/YJybN
+         uhR+1LBQ/EGKFm12kofvmo1N8Or8Mhd5I9QIxgAZxJjUnAncn/OfNQ+xg9V9rSfFrTW5
+         6+gyXWvxsDfod0XUAEoSS/aCS0HqakbjGuI1/I8BU2Uy6FDW2YJ6LrCVt60GU5GehRX5
+         3Ug/sPFW2Iawha4cKCkpfEtG9Mwjo7aL2M8Rz65tztUDm7ObzFqkZ6ozvUAWJtziwaLO
+         +gKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690589015; x=1691193815;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rJg9MbukUkeAf25VcBnSvGPEfaUIyqqF94QJU8orhSY=;
+        b=Oi8EZg6Tzsczk3rnA111bdqYmT88EsCgGBkhtjeGv+05JHfYzuZ9IwmAZcoP7yAl4l
+         iNmwMwwRh1Rkm9a5wya5KcZYD0hg5iE/6cSHCc2tPV+EuZdI6m0h1MMSljIew0dtOaBy
+         AYnsnTjnrdtW0NTd/KWQA8FPKicQSKxJJDF4BxZB5k5SU6n2ylU3MoXA5DjwPaR3H8BR
+         93rPDZb+rK1dTJ3S1l8gRCZ09iojG5032om0GUQu054r7p0uevH6uGGeMdt6W8v5fzfA
+         XU696zj165itGpX5IYFAOS+qYJNj3GQYRnJqtsPc7PDHFDkrLB6IdeKgAK6ypVrWnRWl
+         4xpw==
+X-Gm-Message-State: ABy/qLZlqoDyYi6BWS4LRv86N/0U35xXEdrSk9AhgpmtRU3YLHSLnvdp
+        wUotRMmTsllq2NqtbmSKZzsichQVwKg=
+X-Google-Smtp-Source: APBJJlGy4rMQGFiWHQC+IuRONPQH0HvvNAt7asJXiFk+bZ/uVjfNOjPYVgrOl+x+eQJGyA+j61wbqvGP0DI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:c951:b0:1ae:6895:cb96 with SMTP id
+ i17-20020a170902c95100b001ae6895cb96mr12864pla.5.1690589014804; Fri, 28 Jul
+ 2023 17:03:34 -0700 (PDT)
+Date:   Fri, 28 Jul 2023 17:03:33 -0700
+In-Reply-To: <ZMOJgnyzzUNIx+Tn@google.com>
+Mime-Version: 1.0
+References: <20230718234512.1690985-1-seanjc@google.com> <20230718234512.1690985-7-seanjc@google.com>
+ <ZMOJgnyzzUNIx+Tn@google.com>
+Message-ID: <ZMRXVZYaJ9wojGtS@google.com>
+Subject: Re: [RFC PATCH v11 06/29] KVM: Introduce KVM_SET_USER_MEMORY_REGION2
+From:   Sean Christopherson <seanjc@google.com>
+To:     Quentin Perret <qperret@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 28 Jul 2023, Chuck Lever wrote:
-> From: David Howells <dhowells@redhat.com>
->=20
-> nfsd_splice_actor() has a clause in its loop that chops up a compound page
-> into individual pages such that if the same page is seen twice in a row, it
-> is discarded the second time.  This is a problem with the advent of
-> shmem_splice_read() as that inserts zero_pages into the pipe in lieu of
-> pages that aren't present in the pagecache.
->=20
-> Fix this by assuming that the last page is being extended only if the
-> currently stored length + starting offset is not currently on a page
-> boundary.
->=20
-> This can be tested by NFS-exporting a tmpfs filesystem on the test machine
-> and truncating it to more than a page in size (eg. truncate -s 8192) and
-> then reading it by NFS.  The first page will be all zeros, but thereafter
-> garbage will be read.
->=20
-> Note: I wonder if we can ever get a situation now where we get a splice
-> that gives us contiguous parts of a page in separate actor calls.  As NFSD
-> can only be splicing from a file (I think), there are only three sources of
-> the page: copy_splice_read(), shmem_splice_read() and file_splice_read().
-> The first allocates pages for the data it reads, so the problem cannot
-> occur; the second should never see a partial page; and the third waits for
-> each page to become available before we're allowed to read from it.
->=20
-> Fixes: bd194b187115 ("shmem: Implement splice-read")
-> Reported-by: Chuck Lever <chuck.lever@oracle.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> cc: Hugh Dickins <hughd@google.com>
-> cc: Jens Axboe <axboe@kernel.dk>
-> cc: Matthew Wilcox <willy@infradead.org>
-> cc: linux-nfs@vger.kernel.org
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-mm@kvack.org
-> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-> ---
->  fs/nfsd/vfs.c |    9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->=20
-> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> index 59b7d60ae33e..ee3bbaa79478 100644
-> --- a/fs/nfsd/vfs.c
-> +++ b/fs/nfsd/vfs.c
-> @@ -956,10 +956,13 @@ nfsd_splice_actor(struct pipe_inode_info *pipe, struc=
-t pipe_buffer *buf,
->  	last_page =3D page + (offset + sd->len - 1) / PAGE_SIZE;
->  	for (page +=3D offset / PAGE_SIZE; page <=3D last_page; page++) {
->  		/*
-> -		 * Skip page replacement when extending the contents
-> -		 * of the current page.
-> +		 * Skip page replacement when extending the contents of the
-> +		 * current page.  But note that we may get two zero_pages in a
-> +		 * row from shmem.
->  		 */
-> -		if (page =3D=3D *(rqstp->rq_next_page - 1))
-> +		if (page =3D=3D *(rqstp->rq_next_page - 1) &&
-> +		    offset_in_page(rqstp->rq_res.page_base +
-> +				   rqstp->rq_res.page_len))
+On Fri, Jul 28, 2023, Quentin Perret wrote:
+> On Tuesday 18 Jul 2023 at 16:44:49 (-0700), Sean Christopherson wrote:
+> > --- a/include/uapi/linux/kvm.h
+> > +++ b/include/uapi/linux/kvm.h
+> > @@ -95,6 +95,16 @@ struct kvm_userspace_memory_region {
+> >  	__u64 userspace_addr; /* start of the userspace allocated memory */
+> >  };
+> >  
+> > +/* for KVM_SET_USER_MEMORY_REGION2 */
+> > +struct kvm_userspace_memory_region2 {
+> > +	__u32 slot;
+> > +	__u32 flags;
+> > +	__u64 guest_phys_addr;
+> > +	__u64 memory_size;
+> > +	__u64 userspace_addr;
+> > +	__u64 pad[16];
+> 
+> Should we replace that pad[16] with:
+> 
+> 	__u64 size;
+> 
+> where 'size' is the size of the structure as seen by userspace? This is
+> used in other UAPIs (see struct sched_attr for example) and is a bit
+> more robust for future extensions (e.g. an 'old' kernel can correctly
+> reject a newer version of the struct with additional fields it doesn't
+> know about if that makes sense, etc).
 
-This seems fragile in that it makes assumptions about the pages being
-sent and their alignment.
-Given that it was broken by the splice-read change, that confirms it is
-fragile.  Maybe we could make the code a bit more explicit about what is
-expected.
+"flags" serves that purpose, i.e. allows userspace to opt-in to having KVM actually
+consume what is currently just padding.
 
-Also, I don't think this test can ever be relevant after the first time
-through the loop.  So I think it would be clearest to have the
-interesting case outside the loop.
+The padding is there mainly to simplify kernel/KVM code, e.g. the number of bytes
+that KVM needs to copy in is static.
 
- page +=3D offset / PAGE_SIZE;
- if (rqstp->rq_res.pages_len > 0) {
-      /* appending to page list - check alignment */
-      if (offset % PAGE_SIZE !=3D (rqstp->rq_res.page_base +
-                                 rqstp-.rq_res.page_len) % PAGE_SIZE)
-	  return -EIO;
-      if (offset % PAGE_SIZE !=3D 0) {
-           /* continuing previous page */
-           if (page !=3D rqstp->rq_next_page[-1])
-               return -EIO;
-	   page +=3D 1;
-      }
- } else
-      /* Starting new page list */
-      rqstp->rq_res.page_base =3D offset % PAGE_SIZE;
+But now that I think more on this, I don't know why we didn't just unconditionally
+bump the size of kvm_userspace_memory_region.  We tried to play games with unions
+and overlays, but that was a mess[*].
 
- for ( ; page <=3D last_page ; page++)
-       if (unlikely(!svc_rqst_replace_page(rqstp, page)))
-           return -EIO;
+KVM would need to do multiple uaccess reads, but that's not a big deal.  Am I
+missing something, or did past us just get too clever and miss the obvious solution?
 
- rqstp->rq_res.page_len +=3D sd->len;
- return sd->len;
-
-
-Also, the name "svc_rqst_replace_page" doesn't give any hint that the
-next_page pointer is advanced.  Maybe svc_rqst_add_page() ???  Not great
-I admit.
-
-NeilBrown
-
-  =20
-
->  			continue;
->  		if (unlikely(!svc_rqst_replace_page(rqstp, page)))
->  			return -EIO;
->=20
->=20
->=20
-
+[*] https://lkml.kernel.org/r/Y7xrtf9FCuYRYm1q%40google.com
