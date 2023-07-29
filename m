@@ -2,429 +2,402 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A8FBE767DAA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jul 2023 11:36:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DC48767DF6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jul 2023 12:02:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231587AbjG2JgQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Jul 2023 05:36:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49676 "EHLO
+        id S229646AbjG2KCB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Jul 2023 06:02:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230285AbjG2JgP (ORCPT
+        with ESMTP id S229448AbjG2KCA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Jul 2023 05:36:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 514F21B4
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Jul 2023 02:35:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690623327;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6bWqJqgkrC5EioI6ENy0pfk/g25n5XtUYg/1+69k8UA=;
-        b=SmB+fDh2MiLxbTT5BcVRJJhPl2VY404gGo9LC0s1wkTJ/I5F2/7oww7/MQb2q7N1kgw5L6
-        ZHaa+oocJSHU+eBSAVHGfBwIOTzV9mcaPhEtLgcviH8sbbWkfTvBTN9jHppRPiRpTR/aFF
-        X+p2wKKekAiw4lS/mYzbBVnSuvsbyuo=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-94-HtYHq8ddPbGg2PR3Z63JYA-1; Sat, 29 Jul 2023 05:35:25 -0400
-X-MC-Unique: HtYHq8ddPbGg2PR3Z63JYA-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-3fbb0c01e71so15408395e9.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Jul 2023 02:35:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690623324; x=1691228124;
-        h=content-transfer-encoding:in-reply-to:subject:organization
-         :content-language:references:cc:to:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6bWqJqgkrC5EioI6ENy0pfk/g25n5XtUYg/1+69k8UA=;
-        b=Y8V8OwElh0OEAYS3XmkylhYWS9ZEa3PNiP2it8urd5UIcjn3fGUD48KqmEE0FffFso
-         Rdq/WMPuBiqMQEj4YrkS6LHRb/pAvC9PFkbM8G27sOH8M/+2rCdmjQA5oqXe4cH3/wlm
-         ceVNY4bF2TTiXI/rVlJmN9wP7sERQ5llmeAnTE0ohJpT3GG5tQn6nUvssOdSB5n7kWqj
-         v3KOSR7OEpY+rOLV9fgVZLGzYZgyZv7zjfPzIumPaAEB0TTFX5/GpgVfkD3Cj+cNym0b
-         0ONn1ICRwdtE49IdlrbnRBl6b4nQJ0PUwNx2dBkxMe7HQtEEqwMjAKL0AtmeoD2tURHe
-         GmVQ==
-X-Gm-Message-State: ABy/qLZgLF/GgdMgWDYfTBQ/qi2keajt7CF2ae/60HhKtM7fzr/uPurn
-        +ggtIG9oHOQeHYJwJe7aPaZ0SfL8rLEx3YRdciFAwbCdkW+Os9L7MJEW8sHUBpSci/kgEE+e0JE
-        x8FTqH6sFEU77/Z/NeK3CrLTQ6zDx3og5GA==
-X-Received: by 2002:a05:600c:22c8:b0:3fe:16c8:65fa with SMTP id 8-20020a05600c22c800b003fe16c865famr787764wmg.4.1690623324353;
-        Sat, 29 Jul 2023 02:35:24 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlF5HKDUHU/Q4DZ3GTAP9JDBn+VvrtxbWt9uwss6Myi9d3auLmATkPId9YkbyExNVQJTLirffg==
-X-Received: by 2002:a05:600c:22c8:b0:3fe:16c8:65fa with SMTP id 8-20020a05600c22c800b003fe16c865famr787741wmg.4.1690623323834;
-        Sat, 29 Jul 2023 02:35:23 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c706:e700:4a51:80ee:e9e3:910c? (p200300cbc706e7004a5180eee9e3910c.dip0.t-ipconnect.de. [2003:cb:c706:e700:4a51:80ee:e9e3:910c])
-        by smtp.gmail.com with ESMTPSA id t20-20020a7bc3d4000000b003fe146fae45sm1650033wmj.46.2023.07.29.02.35.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Jul 2023 02:35:23 -0700 (PDT)
-Message-ID: <66e26ad5-982e-fe2a-e4cd-de0e552da0ca@redhat.com>
-Date:   Sat, 29 Jul 2023 11:35:22 +0200
+        Sat, 29 Jul 2023 06:02:00 -0400
+Received: from esa6.hc1455-7.c3s2.iphmx.com (esa6.hc1455-7.c3s2.iphmx.com [68.232.139.139])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F613129;
+        Sat, 29 Jul 2023 03:01:54 -0700 (PDT)
+X-IronPort-AV: E=McAfee;i="6600,9927,10785"; a="127546897"
+X-IronPort-AV: E=Sophos;i="6.01,240,1684767600"; 
+   d="scan'208";a="127546897"
+Received: from unknown (HELO oym-r1.gw.nic.fujitsu.com) ([210.162.30.89])
+  by esa6.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2023 19:01:06 +0900
+Received: from oym-m3.gw.nic.fujitsu.com (oym-nat-oym-m3.gw.nic.fujitsu.com [192.168.87.60])
+        by oym-r1.gw.nic.fujitsu.com (Postfix) with ESMTP id 87835D29E1;
+        Sat, 29 Jul 2023 19:01:03 +0900 (JST)
+Received: from kws-ab3.gw.nic.fujitsu.com (kws-ab3.gw.nic.fujitsu.com [192.51.206.21])
+        by oym-m3.gw.nic.fujitsu.com (Postfix) with ESMTP id A7721D9467;
+        Sat, 29 Jul 2023 19:01:02 +0900 (JST)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+        by kws-ab3.gw.nic.fujitsu.com (Postfix) with ESMTP id 395AF2007687B;
+        Sat, 29 Jul 2023 19:01:02 +0900 (JST)
+Received: from [10.193.128.127] (unknown [10.193.128.127])
+        by edo.cn.fujitsu.com (Postfix) with ESMTP id E6FB01A0070;
+        Sat, 29 Jul 2023 18:01:00 +0800 (CST)
+Message-ID: <70c9baf5-767e-b9ac-c27e-c51b44dc2472@fujitsu.com>
+Date:   Sat, 29 Jul 2023 18:01:00 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-From:   David Hildenbrand <david@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        liubo <liubo254@huawei.com>, Peter Xu <peterx@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mel Gorman <mgorman@suse.de>
-References: <20230727212845.135673-1-david@redhat.com>
- <CAHk-=wiig=N75AGP7UAG9scmghWAqsTB5NRO6RiWLOB5YWfcTQ@mail.gmail.com>
- <412bb30f-0417-802c-3fc4-a4e9d5891c5d@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/2] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
 Content-Language: en-US
-Organization: Red Hat
-Subject: Re: [PATCH v1 0/4] smaps / mm/gup: fix gup_can_follow_protnone
- fallout
-In-Reply-To: <412bb30f-0417-802c-3fc4-a4e9d5891c5d@redhat.com>
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
+        akpm@linux-foundation.org, mcgrof@kernel.org
+References: <20230629081651.253626-1-ruansy.fnst@fujitsu.com>
+ <20230629081651.253626-3-ruansy.fnst@fujitsu.com>
+ <2840406d-0b7d-9897-87f6-ef3627e9ed5d@fujitsu.com>
+ <20230714141834.GV108251@frogsfrogsfrogs>
+ <191fbccb-173b-64d3-df6b-ec98973bddc3@fujitsu.com>
+In-Reply-To: <191fbccb-173b-64d3-df6b-ec98973bddc3@fujitsu.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-27780.006
+X-TM-AS-User-Approved-Sender: Yes
+X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-27780.006
+X-TMASE-Result: 10--24.764300-10.000000
+X-TMASE-MatchedRID: +J68l7PWK+aPvrMjLFD6eHchRkqzj/bEC/ExpXrHizw0tugJQ9Wdw3HJ
+        dVMZw6tLLJoLOSH2KMayBgfewqvpfXaJlMFevvypOE8QJa8KOA9lH44U2Ru12jm1yj+M+IObY2i
+        R7K8Wcszod+F7EpZSHFewJwmHzLN4IQPGoj5DOk7Sg3E9X/QoxE0s9CXRACW0ymP/1piI/6HXQj
+        bjf/eQSaRXnaYAhcWl5GxirD+G/Cfg2s1T022TRqroPbyANljgQmwrAurhEVUBLwIiWDU8awfNh
+        shqWR17ZqqU0+WeIQVMNbrUuyXyo2k5Fql3Faa7v0DcGXX8NxUxXH/dlhvLv5fHgnfL4gdUhj53
+        gjhYKkTYuoa3D2RgX5dhdFyTxMUk0MIzlvZD6LRO5y1KmK5bJTZlY6a4lRLZnhD4vcFcha6lNpx
+        3XgfaSLlMXBKuvIsDFUpxEqvctVIFmkZlQ8RPcUTfhTClWQYRNGC/UiT7n1+xPXYIh1l6dtgjE0
+        ANqbLcw1SS/C5hZQyw1m5gC0nDzT3TQfUpAv1sWFHKJ2wSViTxKR2kbb+f15whPv65A8aGlE61F
+        sXNTXvZ+FN7+NxPfifGqPCe8bxyxrdsXS7GN2RZNYSHk3Zr0SD8R4lgmqKYBlnw3dG9MzGjxYyR
+        Ba/qJUpZ1N/CwmPLYseN4aSOH1fYoM82yqmFMvoLR4+zsDTtAqYBE3k9Mpw=
+X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 29.07.23 00:35, David Hildenbrand wrote:
->> The original reason for not setting FOLL_NUMA all the time is
->> documented in commit 0b9d705297b2 ("mm: numa: Support NUMA hinting
->> page faults from gup/gup_fast") from way back in 2012:
->>
->>            * If FOLL_FORCE and FOLL_NUMA are both set, handle_mm_fault
->>            * would be called on PROT_NONE ranges. We must never invoke
->>            * handle_mm_fault on PROT_NONE ranges or the NUMA hinting
->>            * page faults would unprotect the PROT_NONE ranges if
->>            * _PAGE_NUMA and _PAGE_PROTNONE are sharing the same pte/pmd
->>            * bitflag. So to avoid that, don't set FOLL_NUMA if
->>            * FOLL_FORCE is set.
->>
->> but I don't think the original reason for this is *true* any more.
->>
->> Because then two years later in 2014, in commit c46a7c817e66 ("x86:
->> define _PAGE_NUMA by reusing software bits on the PMD and PTE levels")
->> Mel made the code able to distinguish between PROT_NONE and NUMA
->> pages, and he changed the comment above too.
+
+
+在 2023/7/20 9:50, Shiyang Ruan 写道:
 > 
 > 
+> 在 2023/7/14 22:18, Darrick J. Wong 写道:
+>> On Fri, Jul 14, 2023 at 05:07:58PM +0800, Shiyang Ruan wrote:
+>>> Hi Darrick,
+>>>
+>>> Thanks for applying the 1st patch.
+>>>
+>>> Now, since this patch is based on the new freeze_super()/thaw_super()
+>>> api[1], I'd like to ask what's the plan for this api?  It seems to have
+>>> missed the v6.5-rc1.
+>>>
+>>> [1] 
+>>> https://lore.kernel.org/linux-xfs/168688010689.860947.1788875898367401950.stgit@frogsfrogsfrogs/
+>>
+>> 6.6.  I intend to push the XFS UBSAN fixes to the list today for review.
+>> Early next week I'll resend the 6.5 rebase of the kernelfreeze series
+>> and push it to vfs-for-next.  Some time after that will come large folio
+>> writes.
+> 
+> Got it.  Thanks for your information!
 
-Sleeping over it and looking into some nasty details, I realized the following things:
-
-
-(1) The pte_protnone() comment in include/linux/pgtable.h is
-     either wrong or misleading.
-
-     Especially the "For PROT_NONE VMAs, the PTEs are not marked
-     _PAGE_PROTNONE" is *wrong* nowadays on x86.
-
-     Doing an mprotect(PROT_NONE) will also result in pte_protnone()
-     succeeding, because the pages *are* marked _PAGE_PROTNONE.
-
-     The comment should be something like this
-
-     /*
-      * In an inaccessible (PROT_NONE) VMA, pte_protnone() *may* indicate
-      * "yes". It is perfectly valid to indicate "no" in that case,
-      * which is why our default implementation defaults to "always no".
-      *
-      * In an accessible VMA, however, pte_protnone() *reliably*
-      * indicates PROT_NONE page protection due to NUMA hinting. NUMA
-      * hinting faults only apply in accessible VMAs.
-      *
-      * So, to reliably distinguish between PROT_NONE due to an
-      * inaccessible VMA and NUMA hinting, looking at the VMA
-      * accessibility is sufficient.
-      */
-
-     I'll send that as a separate patch.
+A small request:  If you have time to give some comments, I would 
+appreciate it because I hope we can make the most out of this 
+period(before freeze api be merged in 6.6).
 
 
-(2) Consequently, commit c46a7c817e66 from 2014 does not tell the whole
-     story.
+--
+Thanks,
+Ruan.
 
-     commit 21d9ee3eda77 ("mm: remove remaining references to NUMA
-     hinting bits and helpers") from 2015 made the distinction again
-     impossible.
-
-     Setting FOLL_FORCE | FOLL_HONOR_NUMA_HINT would end up never making
-     progress in GUP with an inaccessible (PROT_NONE) VMA.
-
-     (a) GUP sees the pte_protnone() and triggers a NUMA hinting fault,
-         although NUMA hinting does not apply.
-
-     (b) handle_mm_fault() refuses to do anything with pte_protnone() in
-         an inaccessible VMA. And even if it would do something, the new
-         PTE would end up as pte_protnone() again.
-  
-     So, GUP will keep retrying. I have a reproducer that triggers that
-     using ptrace read in an inaccessible VMA.
-
-     It's easy to make that work in GUP, simply by looking at the VMA
-     accessibility.
-
-     See my patch proposal, that cleanly decouples FOLL_FORCE from
-     FOLL_HONOR_NUMA_HINT.
-
-
-(3) follow_page() does not check VMA permissions and, therefore, my
-     "implied FOLL_FORCE" assumption is not actually completely wrong.
-
-     And especially callers that dont't pass FOLL_WRITE really expect
-     follow_page() to work even if the VMA is inaccessible.
-
-     But the interaction with NUMA hinting is just nasty, absolutely
-     agreed.
-
-     As raised in another comment, I'm looking into removing the
-     "foll_flags" parameter from follow_page() completely and cleanly
-     documenting the semantics of follow_page().
-
-     IMHO, the less follow_page(), the better. Let's see what we can do
-     to improve that.
-
-
-So this would be the patch I would suggest as the first fix we can also
-backport to stable.
-
-Gave it a quick test, also with my ptrace read reproducer (trigger
-FOLL_FORCE on inaccessible VMA; make sure it works and that the pages don't
-suddenly end up readable in the page table). Seems to work.
-
-I'll follow up with cleanups and moving FOLL_HONOR_NUMA_HINT setting to the
-relevant callers (especially KVM). Further, I'll add a selftest to make
-sure that ptrace on inaccessible VMAs keeps working as expected.
-
-
-
- From 36c1aeb9aa3e859762f671776601a71179247d17 Mon Sep 17 00:00:00 2001
-From: David Hildenbrand <david@redhat.com>
-Date: Fri, 28 Jul 2023 21:57:04 +0200
-Subject: [PATCH] mm/gup: reintroduce FOLL_NUMA as FOLL_HONOR_NUMA_FAULT
-
-As it turns out, unfortunately commit 474098edac26 ("mm/gup: replace
-FOLL_NUMA by gup_can_follow_protnone()") missed that follow_page() and
-follow_trans_huge_pmd() never set FOLL_NUMA because they really don't want
-NUMA hinting faults.
-
-As spelled out in commit 0b9d705297b2 ("mm: numa: Support NUMA hinting page
-faults from gup/gup_fast"): "Other follow_page callers like KSM should not
-use FOLL_NUMA, or they would fail to get the pages if they use follow_page
-instead of get_user_pages."
-
-While we didn't get BUG reports on the changed follow_page() semantics yet
-(and it's just a matter of time), liubo reported [1] that smaps_rollup
-results are imprecise, because they miss accounting of pages that are
-mapped PROT_NONE due to NUMA hinting.
-
-As KVM really depends on these NUMA hinting faults, removing the
-pte_protnone()/pmd_protnone() handling in GUP code completely is not really
-an option.
-
-To fix the issues at hand, let's revive FOLL_NUMA as FOLL_HONOR_NUMA_FAULT
-to restore the original behavior and add better comments.
-
-Set FOLL_HONOR_NUMA_FAULT independent of FOLL_FORCE. To make that
-combination work in inaccessible VMAs, we have to perform proper VMA
-accessibility checks in gup_can_follow_protnone().
-
-Move gup_can_follow_protnone() to internal.h which feels more
-appropriate and is required as long as FOLL_HONOR_NUMA_FAULT is an
-internal flag.
-
-As Linus notes [2], this handling doesn't make sense for many GUP users.
-So we should really see if we instead let relevant GUP callers specify it
-manually, and not trigger NUMA hinting faults from GUP as default.
-
-[1] https://lore.kernel.org/r/20230726073409.631838-1-liubo254@huawei.com
-[2] https://lore.kernel.org/r/CAHk-=wgRiP_9X0rRdZKT8nhemZGNateMtb366t37d8-x7VRs=g@mail.gmail.com
-
-Reported-by: liubo <liubo254@huawei.com>
-Reported-by: Peter Xu <peterx@redhat.com>
-Fixes: 474098edac26 ("mm/gup: replace FOLL_NUMA by gup_can_follow_protnone()")
-Cc: <stable@vger.kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: liubo <liubo254@huawei.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
-  include/linux/mm.h | 15 ---------------
-  mm/gup.c           | 18 ++++++++++++++----
-  mm/huge_memory.c   |  2 +-
-  mm/internal.h      | 31 +++++++++++++++++++++++++++++++
-  4 files changed, 46 insertions(+), 20 deletions(-)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 2dd73e4f3d8e..f8d7fa3c01c1 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3400,21 +3400,6 @@ static inline int vm_fault_to_errno(vm_fault_t vm_fault, int foll_flags)
-  	return 0;
-  }
-  
--/*
-- * Indicates whether GUP can follow a PROT_NONE mapped page, or whether
-- * a (NUMA hinting) fault is required.
-- */
--static inline bool gup_can_follow_protnone(unsigned int flags)
--{
--	/*
--	 * FOLL_FORCE has to be able to make progress even if the VMA is
--	 * inaccessible. Further, FOLL_FORCE access usually does not represent
--	 * application behaviour and we should avoid triggering NUMA hinting
--	 * faults.
--	 */
--	return flags & FOLL_FORCE;
--}
--
-  typedef int (*pte_fn_t)(pte_t *pte, unsigned long addr, void *data);
-  extern int apply_to_page_range(struct mm_struct *mm, unsigned long address,
-  			       unsigned long size, pte_fn_t fn, void *data);
-diff --git a/mm/gup.c b/mm/gup.c
-index 76d222ccc3ff..54b8d77f3a3d 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -597,7 +597,7 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
-  	pte = ptep_get(ptep);
-  	if (!pte_present(pte))
-  		goto no_page;
--	if (pte_protnone(pte) && !gup_can_follow_protnone(flags))
-+	if (pte_protnone(pte) && !gup_can_follow_protnone(vma, flags))
-  		goto no_page;
-  
-  	page = vm_normal_page(vma, address, pte);
-@@ -714,7 +714,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
-  	if (likely(!pmd_trans_huge(pmdval)))
-  		return follow_page_pte(vma, address, pmd, flags, &ctx->pgmap);
-  
--	if (pmd_protnone(pmdval) && !gup_can_follow_protnone(flags))
-+	if (pmd_protnone(pmdval) && !gup_can_follow_protnone(vma, flags))
-  		return no_page_table(vma, flags);
-  
-  	ptl = pmd_lock(mm, pmd);
-@@ -851,6 +851,10 @@ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
-  	if (WARN_ON_ONCE(foll_flags & FOLL_PIN))
-  		return NULL;
-  
-+	/*
-+	 * We never set FOLL_HONOR_NUMA_FAULT because callers don't expect
-+	 * to fail on PROT_NONE-mapped pages.
-+	 */
-  	page = follow_page_mask(vma, address, foll_flags, &ctx);
-  	if (ctx.pgmap)
-  		put_dev_pagemap(ctx.pgmap);
-@@ -1200,6 +1204,12 @@ static long __get_user_pages(struct mm_struct *mm,
-  
-  	VM_BUG_ON(!!pages != !!(gup_flags & (FOLL_GET | FOLL_PIN)));
-  
-+	/*
-+	 * For now, always trigger NUMA hinting faults. Some GUP users like
-+	 * KVM really require it to benefit from autonuma.
-+	 */
-+	gup_flags |= FOLL_HONOR_NUMA_FAULT;
-+
-  	do {
-  		struct page *page;
-  		unsigned int foll_flags = gup_flags;
-@@ -2551,7 +2561,7 @@ static int gup_pte_range(pmd_t pmd, pmd_t *pmdp, unsigned long addr,
-  		struct page *page;
-  		struct folio *folio;
-  
--		if (pte_protnone(pte) && !gup_can_follow_protnone(flags))
-+		if (pte_protnone(pte) && !gup_can_follow_protnone(NULL, flags))
-  			goto pte_unmap;
-  
-  		if (!pte_access_permitted(pte, flags & FOLL_WRITE))
-@@ -2971,7 +2981,7 @@ static int gup_pmd_range(pud_t *pudp, pud_t pud, unsigned long addr, unsigned lo
-  		if (unlikely(pmd_trans_huge(pmd) || pmd_huge(pmd) ||
-  			     pmd_devmap(pmd))) {
-  			if (pmd_protnone(pmd) &&
--			    !gup_can_follow_protnone(flags))
-+			    !gup_can_follow_protnone(NULL, flags))
-  				return 0;
-  
-  			if (!gup_huge_pmd(pmd, pmdp, addr, next, flags,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index eb3678360b97..ef6bdc4a6fec 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1468,7 +1468,7 @@ struct page *follow_trans_huge_pmd(struct vm_area_struct *vma,
-  		return ERR_PTR(-EFAULT);
-  
-  	/* Full NUMA hinting faults to serialise migration in fault paths */
--	if (pmd_protnone(*pmd) && !gup_can_follow_protnone(flags))
-+	if (pmd_protnone(*pmd) && !gup_can_follow_protnone(vma, flags))
-  		return NULL;
-  
-  	if (!pmd_write(*pmd) && gup_must_unshare(vma, flags, page))
-diff --git a/mm/internal.h b/mm/internal.h
-index a7d9e980429a..7db17259c51a 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -937,6 +937,8 @@ enum {
-  	FOLL_FAST_ONLY = 1 << 20,
-  	/* allow unlocking the mmap lock */
-  	FOLL_UNLOCKABLE = 1 << 21,
-+	/* Honor (trigger) NUMA hinting faults on PROT_NONE-mapped pages. */
-+	FOLL_HONOR_NUMA_FAULT = 1 << 22,
-  };
-  
-  /*
-@@ -1004,6 +1006,35 @@ static inline bool gup_must_unshare(struct vm_area_struct *vma,
-  	return !PageAnonExclusive(page);
-  }
-  
-+/*
-+ * Indicates whether GUP can follow a PROT_NONE mapped page, or whether
-+ * a (NUMA hinting) fault is required.
-+ */
-+static inline bool gup_can_follow_protnone(struct vm_area_struct *vma,
-+					   unsigned int flags)
-+{
-+	/*
-+	 * If callers don't want to honor NUMA hinting faults, no need to
-+	 * determine if we would actually have to trigger a NUMA hinting fault.
-+	 */
-+	if (!(flags & FOLL_HONOR_NUMA_FAULT))
-+		return true;
-+
-+	/* We really need the VMA ... */
-+	if (!vma)
-+		return false;
-+
-+	/*
-+	 * ... because NUMA hinting faults only apply in accessible VMAs. In
-+	 * inaccessible (PROT_NONE) VMAs, NUMA hinting faults don't apply.
-+	 *
-+	 * Requiring a fault here even for inaccessible VMAs would mean that
-+	 * FOLL_FORCE cannot make any progress, because handle_mm_fault()
-+	 * refuses to process NUMA hinting faults in inaccessible VMAs.
-+	 */
-+	return !vma_is_accessible(vma);
-+}
-+
-  extern bool mirrored_kernelcore;
-  
-  static inline bool vma_soft_dirty_enabled(struct vm_area_struct *vma)
--- 
-2.41.0
-
-
-
--- 
-Cheers,
-
-David / dhildenb
-
+> 
+> 
+> -- 
+> Ruan.
+> 
+>>
+>> --D
+>>
+>>>
+>>> -- 
+>>> Thanks,
+>>> Ruan.
+>>>
+>>>
+>>> 在 2023/6/29 16:16, Shiyang Ruan 写道:
+>>>> This patch is inspired by Dan's "mm, dax, pmem: Introduce
+>>>> dev_pagemap_failure()"[1].  With the help of dax_holder and
+>>>> ->notify_failure() mechanism, the pmem driver is able to ask filesystem
+>>>> on it to unmap all files in use, and notify processes who are using
+>>>> those files.
+>>>>
+>>>> Call trace:
+>>>> trigger unbind
+>>>>    -> unbind_store()
+>>>>     -> ... (skip)
+>>>>      -> devres_release_all()
+>>>>       -> kill_dax()
+>>>>        -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, 
+>>>> MF_MEM_PRE_REMOVE)
+>>>>         -> xfs_dax_notify_failure()
+>>>>         `-> freeze_super()             // freeze (kernel call)
+>>>>         `-> do xfs rmap
+>>>>         ` -> mf_dax_kill_procs()
+>>>>         `  -> collect_procs_fsdax()    // all associated processes
+>>>>         `  -> unmap_and_kill()
+>>>>         ` -> invalidate_inode_pages2_range() // drop file's cache
+>>>>         `-> thaw_super()               // thaw (both kernel & user 
+>>>> call)
+>>>>
+>>>> Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
+>>>> event.  Use the exclusive freeze/thaw[2] to lock the filesystem to 
+>>>> prevent
+>>>> new dax mapping from being created.  Do not shutdown filesystem 
+>>>> directly
+>>>> if configuration is not supported, or if failure range includes 
+>>>> metadata
+>>>> area.  Make sure all files and processes(not only the current progress)
+>>>> are handled correctly.  Also drop the cache of associated files before
+>>>> pmem is removed.
+>>>>
+>>>> [1]: 
+>>>> https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
+>>>> [2]: 
+>>>> https://lore.kernel.org/linux-xfs/168688010689.860947.1788875898367401950.stgit@frogsfrogsfrogs/
+>>>>
+>>>> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+>>>> ---
+>>>>    drivers/dax/super.c         |  3 +-
+>>>>    fs/xfs/xfs_notify_failure.c | 86 
+>>>> ++++++++++++++++++++++++++++++++++---
+>>>>    include/linux/mm.h          |  1 +
+>>>>    mm/memory-failure.c         | 17 ++++++--
+>>>>    4 files changed, 96 insertions(+), 11 deletions(-)
+>>>>
+>>>> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+>>>> index c4c4728a36e4..2e1a35e82fce 100644
+>>>> --- a/drivers/dax/super.c
+>>>> +++ b/drivers/dax/super.c
+>>>> @@ -323,7 +323,8 @@ void kill_dax(struct dax_device *dax_dev)
+>>>>            return;
+>>>>        if (dax_dev->holder_data != NULL)
+>>>> -        dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
+>>>> +        dax_holder_notify_failure(dax_dev, 0, U64_MAX,
+>>>> +                MF_MEM_PRE_REMOVE);
+>>>>        clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
+>>>>        synchronize_srcu(&dax_srcu);
+>>>> diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
+>>>> index 4a9bbd3fe120..f6ec56b76db6 100644
+>>>> --- a/fs/xfs/xfs_notify_failure.c
+>>>> +++ b/fs/xfs/xfs_notify_failure.c
+>>>> @@ -22,6 +22,7 @@
+>>>>    #include <linux/mm.h>
+>>>>    #include <linux/dax.h>
+>>>> +#include <linux/fs.h>
+>>>>    struct xfs_failure_info {
+>>>>        xfs_agblock_t        startblock;
+>>>> @@ -73,10 +74,16 @@ xfs_dax_failure_fn(
+>>>>        struct xfs_mount        *mp = cur->bc_mp;
+>>>>        struct xfs_inode        *ip;
+>>>>        struct xfs_failure_info        *notify = data;
+>>>> +    struct address_space        *mapping;
+>>>> +    pgoff_t                pgoff;
+>>>> +    unsigned long            pgcnt;
+>>>>        int                error = 0;
+>>>>        if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
+>>>>            (rec->rm_flags & (XFS_RMAP_ATTR_FORK | 
+>>>> XFS_RMAP_BMBT_BLOCK))) {
+>>>> +        /* Continue the query because this isn't a failure. */
+>>>> +        if (notify->mf_flags & MF_MEM_PRE_REMOVE)
+>>>> +            return 0;
+>>>>            notify->want_shutdown = true;
+>>>>            return 0;
+>>>>        }
+>>>> @@ -92,14 +99,55 @@ xfs_dax_failure_fn(
+>>>>            return 0;
+>>>>        }
+>>>> -    error = mf_dax_kill_procs(VFS_I(ip)->i_mapping,
+>>>> -                  xfs_failure_pgoff(mp, rec, notify),
+>>>> -                  xfs_failure_pgcnt(mp, rec, notify),
+>>>> -                  notify->mf_flags);
+>>>> +    mapping = VFS_I(ip)->i_mapping;
+>>>> +    pgoff = xfs_failure_pgoff(mp, rec, notify);
+>>>> +    pgcnt = xfs_failure_pgcnt(mp, rec, notify);
+>>>> +
+>>>> +    /* Continue the rmap query if the inode isn't a dax file. */
+>>>> +    if (dax_mapping(mapping))
+>>>> +        error = mf_dax_kill_procs(mapping, pgoff, pgcnt,
+>>>> +                      notify->mf_flags);
+>>>> +
+>>>> +    /* Invalidate the cache in dax pages. */
+>>>> +    if (notify->mf_flags & MF_MEM_PRE_REMOVE)
+>>>> +        invalidate_inode_pages2_range(mapping, pgoff,
+>>>> +                          pgoff + pgcnt - 1);
+>>>> +
+>>>>        xfs_irele(ip);
+>>>>        return error;
+>>>>    }
+>>>> +static void
+>>>> +xfs_dax_notify_failure_freeze(
+>>>> +    struct xfs_mount    *mp)
+>>>> +{
+>>>> +    struct super_block     *sb = mp->m_super;
+>>>> +
+>>>> +    /* Wait until no one is holding the FREEZE_HOLDER_KERNEL. */
+>>>> +    while (freeze_super(sb, FREEZE_HOLDER_KERNEL) != 0) {
+>>>> +        // Shall we just wait, or print warning then return -EBUSY?
+>>>> +        delay(HZ / 10);
+>>>> +    }
+>>>> +}
+>>>> +
+>>>> +static void
+>>>> +xfs_dax_notify_failure_thaw(
+>>>> +    struct xfs_mount    *mp)
+>>>> +{
+>>>> +    struct super_block    *sb = mp->m_super;
+>>>> +    int            error;
+>>>> +
+>>>> +    error = thaw_super(sb, FREEZE_HOLDER_KERNEL);
+>>>> +    if (error)
+>>>> +        xfs_emerg(mp, "still frozen after notify failure, err=%d",
+>>>> +              error);
+>>>> +    /*
+>>>> +     * Also thaw userspace call anyway because the device is about 
+>>>> to be
+>>>> +     * removed immediately.
+>>>> +     */
+>>>> +    thaw_super(sb, FREEZE_HOLDER_USERSPACE);
+>>>> +}
+>>>> +
+>>>>    static int
+>>>>    xfs_dax_notify_ddev_failure(
+>>>>        struct xfs_mount    *mp,
+>>>> @@ -120,7 +168,7 @@ xfs_dax_notify_ddev_failure(
+>>>>        error = xfs_trans_alloc_empty(mp, &tp);
+>>>>        if (error)
+>>>> -        return error;
+>>>> +        goto out;
+>>>>        for (; agno <= end_agno; agno++) {
+>>>>            struct xfs_rmap_irec    ri_low = { };
+>>>> @@ -165,11 +213,23 @@ xfs_dax_notify_ddev_failure(
+>>>>        }
+>>>>        xfs_trans_cancel(tp);
+>>>> +
+>>>> +    /*
+>>>> +     * Determine how to shutdown the filesystem according to the
+>>>> +     * error code and flags.
+>>>> +     */
+>>>>        if (error || notify.want_shutdown) {
+>>>>            xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+>>>>            if (!error)
+>>>>                error = -EFSCORRUPTED;
+>>>> -    }
+>>>> +    } else if (mf_flags & MF_MEM_PRE_REMOVE)
+>>>> +        xfs_force_shutdown(mp, SHUTDOWN_FORCE_UMOUNT);
+>>>> +
+>>>> +out:
+>>>> +    /* Thaw the fs if it is freezed before. */
+>>>> +    if (mf_flags & MF_MEM_PRE_REMOVE)
+>>>> +        xfs_dax_notify_failure_thaw(mp);
+>>>> +
+>>>>        return error;
+>>>>    }
+>>>> @@ -197,6 +257,8 @@ xfs_dax_notify_failure(
+>>>>        if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == 
+>>>> dax_dev &&
+>>>>            mp->m_logdev_targp != mp->m_ddev_targp) {
+>>>> +        if (mf_flags & MF_MEM_PRE_REMOVE)
+>>>> +            return 0;
+>>>>            xfs_err(mp, "ondisk log corrupt, shutting down fs!");
+>>>>            xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+>>>>            return -EFSCORRUPTED;
+>>>> @@ -210,6 +272,12 @@ xfs_dax_notify_failure(
+>>>>        ddev_start = mp->m_ddev_targp->bt_dax_part_off;
+>>>>        ddev_end = ddev_start + 
+>>>> bdev_nr_bytes(mp->m_ddev_targp->bt_bdev) - 1;
+>>>> +    /* Notify failure on the whole device. */
+>>>> +    if (offset == 0 && len == U64_MAX) {
+>>>> +        offset = ddev_start;
+>>>> +        len = bdev_nr_bytes(mp->m_ddev_targp->bt_bdev);
+>>>> +    }
+>>>> +
+>>>>        /* Ignore the range out of filesystem area */
+>>>>        if (offset + len - 1 < ddev_start)
+>>>>            return -ENXIO;
+>>>> @@ -226,6 +294,12 @@ xfs_dax_notify_failure(
+>>>>        if (offset + len - 1 > ddev_end)
+>>>>            len = ddev_end - offset + 1;
+>>>> +    if (mf_flags & MF_MEM_PRE_REMOVE) {
+>>>> +        xfs_info(mp, "device is about to be removed!");
+>>>> +        /* Freeze fs to prevent new mappings from being created. */
+>>>> +        xfs_dax_notify_failure_freeze(mp);
+>>>> +    }
+>>>> +
+>>>>        return xfs_dax_notify_ddev_failure(mp, BTOBB(offset), 
+>>>> BTOBB(len),
+>>>>                mf_flags);
+>>>>    }
+>>>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>>>> index 27ce77080c79..a80c255b88d2 100644
+>>>> --- a/include/linux/mm.h
+>>>> +++ b/include/linux/mm.h
+>>>> @@ -3576,6 +3576,7 @@ enum mf_flags {
+>>>>        MF_UNPOISON = 1 << 4,
+>>>>        MF_SW_SIMULATED = 1 << 5,
+>>>>        MF_NO_RETRY = 1 << 6,
+>>>> +    MF_MEM_PRE_REMOVE = 1 << 7,
+>>>>    };
+>>>>    int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+>>>>                  unsigned long count, int mf_flags);
+>>>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+>>>> index 5b663eca1f29..483b75f2fcfb 100644
+>>>> --- a/mm/memory-failure.c
+>>>> +++ b/mm/memory-failure.c
+>>>> @@ -688,7 +688,7 @@ static void add_to_kill_fsdax(struct task_struct 
+>>>> *tsk, struct page *p,
+>>>>     */
+>>>>    static void collect_procs_fsdax(struct page *page,
+>>>>            struct address_space *mapping, pgoff_t pgoff,
+>>>> -        struct list_head *to_kill)
+>>>> +        struct list_head *to_kill, bool pre_remove)
+>>>>    {
+>>>>        struct vm_area_struct *vma;
+>>>>        struct task_struct *tsk;
+>>>> @@ -696,8 +696,15 @@ static void collect_procs_fsdax(struct page *page,
+>>>>        i_mmap_lock_read(mapping);
+>>>>        read_lock(&tasklist_lock);
+>>>>        for_each_process(tsk) {
+>>>> -        struct task_struct *t = task_early_kill(tsk, true);
+>>>> +        struct task_struct *t = tsk;
+>>>> +        /*
+>>>> +         * Search for all tasks while MF_MEM_PRE_REMOVE, because the
+>>>> +         * current may not be the one accessing the fsdax page.
+>>>> +         * Otherwise, search for the current task.
+>>>> +         */
+>>>> +        if (!pre_remove)
+>>>> +            t = task_early_kill(tsk, true);
+>>>>            if (!t)
+>>>>                continue;
+>>>>            vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, 
+>>>> pgoff) {
+>>>> @@ -1793,6 +1800,7 @@ int mf_dax_kill_procs(struct address_space 
+>>>> *mapping, pgoff_t index,
+>>>>        dax_entry_t cookie;
+>>>>        struct page *page;
+>>>>        size_t end = index + count;
+>>>> +    bool pre_remove = mf_flags & MF_MEM_PRE_REMOVE;
+>>>>        mf_flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
+>>>> @@ -1804,9 +1812,10 @@ int mf_dax_kill_procs(struct address_space 
+>>>> *mapping, pgoff_t index,
+>>>>            if (!page)
+>>>>                goto unlock;
+>>>> -        SetPageHWPoison(page);
+>>>> +        if (!pre_remove)
+>>>> +            SetPageHWPoison(page);
+>>>> -        collect_procs_fsdax(page, mapping, index, &to_kill);
+>>>> +        collect_procs_fsdax(page, mapping, index, &to_kill, 
+>>>> pre_remove);
+>>>>            unmap_and_kill(&to_kill, page_to_pfn(page), mapping,
+>>>>                    index, mf_flags);
+>>>>    unlock:
