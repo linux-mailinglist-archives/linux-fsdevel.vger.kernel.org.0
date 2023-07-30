@@ -2,268 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 03D2D768719
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Jul 2023 20:17:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCB2A76884A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Jul 2023 23:30:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229582AbjG3SRq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Jul 2023 14:17:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59334 "EHLO
+        id S229658AbjG3Vay (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Jul 2023 17:30:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjG3SRp (ORCPT
+        with ESMTP id S229566AbjG3Vax (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Jul 2023 14:17:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53864BB;
-        Sun, 30 Jul 2023 11:17:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DBD3260CEC;
-        Sun, 30 Jul 2023 18:17:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BF2BC433C8;
-        Sun, 30 Jul 2023 18:17:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690741063;
-        bh=QjUZjEw1F51W0Eeyt5ZfnNs5KyebGUK0k84riJGi6UM=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=f0gGiGSuUv5+bFP1swcXx8SOcwmzm5hJ6nYlex8CKQdbhS4BJgvSTQrqi8DtbcTOP
-         6HVOU6yO+IMbxCgkIBGyCcYKHyrupqpBRIvPqk7lc24yVlCYb1msgsgNi4JIEJJZWQ
-         g0J3gu/ken1NM7ViA8tNp1doleNUlA25yAeifMxlpn+WCoYpDD5j6wd61UVoSmfB67
-         4hzhEnSgi8Mio5HgHSq4lZyrz0LGc9AxuddoXwKcE3OPPYVM9bgX64fsXLw1HZ1Nce
-         5OHjZ3r98pNjNagqgItWevvMWizfHX9vwGS8Eap4vqToAMBXEkxEgj+tQLN3pR6viY
-         hO/A+iUemLZ9A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-        id C8EBFCE0DEB; Sun, 30 Jul 2023 11:17:42 -0700 (PDT)
-Date:   Sun, 30 Jul 2023 11:17:42 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     akpm@linux-foundation.org, adobriyan@gmail.com, arnd@kernel.org,
-        ndesaulniers@google.com, sfr@canb.auug.org.au,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@meta.com
-Subject: Re: [PATCH RFC bootconfig] 1/2] fs/proc: Add /proc/cmdline_load for
- boot loader arguments
-Message-ID: <182ca5f1-c3f9-4ed6-9f8a-3244b2683ce9@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <197cba95-3989-4d2f-a9f1-8b192ad08c49@paulmck-laptop>
- <20230728033701.817094-1-paulmck@kernel.org>
- <20230729232929.a3e962f46c16973031bb466c@kernel.org>
- <fc4a8339-9fb0-47ef-9b6e-5f3cdde82658@paulmck-laptop>
- <20230730105844.ab4ad370a30be8f56db3a488@kernel.org>
+        Sun, 30 Jul 2023 17:30:53 -0400
+Received: from mail-oa1-f78.google.com (mail-oa1-f78.google.com [209.85.160.78])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D59291702
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Jul 2023 14:30:51 -0700 (PDT)
+Received: by mail-oa1-f78.google.com with SMTP id 586e51a60fabf-1b44332e279so7628600fac.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Jul 2023 14:30:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690752651; x=1691357451;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1dzkWPTHgrzXDv6An/kvkTC93fsahnOUWFYybiAjBrg=;
+        b=lF7epj+IgQfvp3UarNRyGCDR2m1jP1kOeAkwXR3EFIyb4x4R0K8DmoO2IWObggmHeO
+         8oTo/TWa2z6yT7Wxibsaer6j2vmOzPX0PSn7qA06Cl5uRyORj04bpl4Ow+kd+W5HE3Hp
+         LCqS1zvPXA0wFjWqrlNpfw7mTDTTUqSi+biPnU/xv30or7Gy/snWyuP8+4+kMbzQdooP
+         mTA3gwUfYwBLbI6nHROIDY7cXchis3ia9nzKyjDXcsEeHdjXxNaxnGRjDKZ7XEkj4mYG
+         m2zUk5E1eDPW2rfu3ijUt/C/KpL4v6XXSXWJ4dx643xNtKnEZSb6FQF6turOchNNqjC+
+         MQ7w==
+X-Gm-Message-State: ABy/qLZpwEF6dpFm+eZxsmMMGhGCc8m1TRHKLV14PJQpNsjwLKQyzFIf
+        913noYBjC6V1ab8q2HNC0bcwTKllvKhT4zUVkb97c6fDk/HXblPRfw==
+X-Google-Smtp-Source: APBJJlFcr8ZsqZWPjbq9Goa2+VmUhYYQwF4OFS0ChFXiWEV1jSbtytY3KpISncBrep6UHJYEF+uRO6RRMHE7eKjXi+bMf62f+dzH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230730105844.ab4ad370a30be8f56db3a488@kernel.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6870:a89b:b0:1bb:6519:d254 with SMTP id
+ eb27-20020a056870a89b00b001bb6519d254mr10003470oab.3.1690752651256; Sun, 30
+ Jul 2023 14:30:51 -0700 (PDT)
+Date:   Sun, 30 Jul 2023 14:30:51 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002e675c0601bb077c@google.com>
+Subject: [syzbot] [reiserfs?] KMSAN: uninit-value in __run_timers (3)
+From:   syzbot <syzbot+a476a62530a631834eb0@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 30, 2023 at 10:58:44AM +0900, Masami Hiramatsu wrote:
-> On Sat, 29 Jul 2023 09:16:56 -0700
-> "Paul E. McKenney" <paulmck@kernel.org> wrote:
-> 
-> > On Sat, Jul 29, 2023 at 11:29:29PM +0900, Masami Hiramatsu wrote:
-> > > Hi Paul,
-> > > 
-> > > On Thu, 27 Jul 2023 20:37:00 -0700
-> > > "Paul E. McKenney" <paulmck@kernel.org> wrote:
-> > > 
-> > > > In kernels built with CONFIG_BOOT_CONFIG_FORCE=y, /proc/cmdline will
-> > > > show all kernel boot parameters, both those supplied by the boot loader
-> > > > and those embedded in the kernel image.  This works well for those who
-> > > > just want to see all of the kernel boot parameters, but is not helpful to
-> > > > those who need to see only those parameters supplied by the boot loader.
-> > > > This is especially important when these parameters are presented to the
-> > > > boot loader by automation that might gather them from diverse sources.
-> > > > 
-> > > > Therefore, provide a /proc/cmdline_load file that shows only those kernel
-> > > > boot parameters supplied by the boot loader.
-> > > 
-> > > If I understand correctly, /proc/cmdline_load is something like
-> > > /proc/cmdline_load - `/proc/bootconfig | grep ^kernel\\.`.
-> 
-> ^^^ /proc/cmdline - `/proc/bootconfig | grep ^kernel\\.`
+Hello,
 
-Heh!  My mind autocorrected without me noticing.  ;-)
+syzbot found the following issue on:
 
-> > Yes, very much something like that.
-> > 
-> > For one use case, suppose you have a kernel that gets some boot parameters
-> > from the boot loader and some from bootconfig.  If you want to kexec()
-> > into a new kernel, you must tell kexec() what the kernel boot parameters
-> > are.  However, you must *not* tell kexec() about any of the current
-> > kernel's parameters that came from bootconfig, because those should
-> > instead be supplied by the new kernel being kexec()ed into.
-> > 
-> > So you must pass in only those parameters that came from the boot loader,
-> > hence my proposed /proc/cmdline_load.
-> 
-> Ah, I got it. Indeed, for kexec, we need to drop the options from
-> the bootconfig.
-> 
-> > > BTW, what about CONFIG_CMDLINE? We already have that Kconfig and it is also
-> > > merged with the command line specified by boot loader. Should we also
-> > > expose that? (when CONFIG_CMDLINE_OVERRIDE=y, we don't need it because
-> > > cmdline is always overridden by the CONFIG_CMDLINE) Unfortunatelly, this
-> > > option is implemented in each arch init, so we have to change all of them...
-> > 
-> > The use case is embedded systems, right?  I have no idea whether they
-> > have a use case requiring this.  Do those sorts of embedded systems
-> > use kexec()?  (I don't know of any that do, but then again, I haven't
-> > been looking.)
-> 
-> Not sure, I guess it is possible to use kexec() for kdump or warm reboot,
-> but it should be rare and we can expand this if someone need it.
+HEAD commit:    0ba5d0720577 Add linux-next specific files for 20230726
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=131d6165a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f33fb77ef67a25e1
+dashboard link: https://syzkaller.appspot.com/bug?extid=a476a62530a631834eb0
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=110a13e9a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10d06ef6a80000
 
-Works for me!
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2fa09c6312ae/disk-0ba5d072.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7361000a4380/vmlinux-0ba5d072.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/48a015458a58/bzImage-0ba5d072.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/fe2a8163e2fa/mount_0.gz
 
-> > This arch init is in setup_arch(), correct?  If so, one option is to
-> > make start_kernel() or something that it invokes make a copy of the
-> > command line just before invoking setup_arch().  Full disclosure: I
-> > have not yet looked at all the ins and outs of CONFIG_CMDLINE, so this
-> > suggestion should be viewed with appropriate skepticism.
-> 
-> Yeah, maybe it is the best way to do.
-> Anyway, I understand the reason why we need this interface.
-> 
-> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a476a62530a631834eb0@syzkaller.appspotmail.com
 
-Thank you!  I will apply your Acked-by on my next rebase.
+general protection fault, probably for non-canonical address 0xdffffc002000800c: 0000 [#1] PREEMPT SMP KASAN
+KASAN: probably user-memory-access in range [0x0000000100040060-0x0000000100040067]
+CPU: 0 PID: 5042 Comm: syz-executor269 Not tainted 6.5.0-rc3-next-20230726-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2023
+RIP: 0010:lookup_object lib/debugobjects.c:195 [inline]
+RIP: 0010:debug_object_deactivate lib/debugobjects.c:785 [inline]
+RIP: 0010:debug_object_deactivate+0x175/0x320 lib/debugobjects.c:771
+Code: da 48 c1 ea 03 80 3c 02 00 0f 85 54 01 00 00 48 8b 1b 48 85 db 0f 84 82 00 00 00 48 8d 7b 18 41 83 c4 01 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 11 01 00 00 4c 3b 7b 18 75 c4 48 8d 7b 10 48 b8
+RSP: 0018:ffffc90000007c90 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 0000000100040048 RCX: ffffffff816850de
+RDX: 000000002000800c RSI: 0000000000000002 RDI: 0000000100040060
+RBP: ffffc90000007d78 R08: 0000000000000001 R09: fffff52000000f80
+R10: 0000000000000003 R11: 0000000000000800 R12: 0000000000000004
+R13: 1ffff92000000f96 R14: ffffffff8a6eef00 R15: ffff888027a74448
+FS:  0000555557506380(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005571928dd028 CR3: 0000000072de4000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ debug_timer_deactivate kernel/time/timer.c:787 [inline]
+ debug_deactivate kernel/time/timer.c:831 [inline]
+ detach_timer kernel/time/timer.c:878 [inline]
+ expire_timers kernel/time/timer.c:1734 [inline]
+ __run_timers+0x5f9/0xb10 kernel/time/timer.c:2022
+ run_timer_softirq+0x58/0xd0 kernel/time/timer.c:2035
+ __do_softirq+0x218/0x965 kernel/softirq.c:553
+ invoke_softirq kernel/softirq.c:427 [inline]
+ __irq_exit_rcu kernel/softirq.c:632 [inline]
+ irq_exit_rcu+0xb7/0x120 kernel/softirq.c:644
+ sysvec_apic_timer_interrupt+0x93/0xc0 arch/x86/kernel/apic/apic.c:1109
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:645
+RIP: 0010:memmove+0x28/0x1b0 arch/x86/lib/memmove_64.S:44
+Code: c3 90 f3 0f 1e fa 48 89 f8 48 39 fe 7d 0f 49 89 f0 49 01 d0 49 39 f8 0f 8f b5 00 00 00 48 83 fa 20 0f 82 01 01 00 00 48 89 d1 <f3> a4 c3 48 81 fa a8 02 00 00 72 05 40 38 fe 74 47 48 83 ea 20 48
+RSP: 0018:ffffc900039def88 EFLAGS: 00010286
+RAX: ffff888069fa5fb4 RBX: 0000000000000002 RCX: fffffffffdbd2eff
+RDX: ffffffffffffffe0 RSI: ffff88806c3d3085 RDI: ffff88806c3d3095
+RBP: 0000000000000020 R08: ffff888069fa5f84 R09: 0000766972705f73
+R10: 667265736965722e R11: 0000766972705f73 R12: 0000000000000001
+R13: 0000000000000000 R14: ffff888069fa5fa4 R15: 0000000000000010
+ leaf_paste_entries+0x43c/0x920 fs/reiserfs/lbalance.c:1377
+ balance_leaf_finish_node_paste_dirent fs/reiserfs/do_balan.c:1295 [inline]
+ balance_leaf_finish_node_paste fs/reiserfs/do_balan.c:1321 [inline]
+ balance_leaf_finish_node fs/reiserfs/do_balan.c:1364 [inline]
+ balance_leaf+0x9476/0xcd90 fs/reiserfs/do_balan.c:1452
+ do_balance+0x337/0x840 fs/reiserfs/do_balan.c:1888
+ reiserfs_paste_into_item+0x62a/0x7c0 fs/reiserfs/stree.c:2157
+ reiserfs_add_entry+0x936/0xd20 fs/reiserfs/namei.c:565
+ reiserfs_mkdir+0x68a/0x9a0 fs/reiserfs/namei.c:860
+ xattr_mkdir fs/reiserfs/xattr.c:77 [inline]
+ create_privroot fs/reiserfs/xattr.c:891 [inline]
+ reiserfs_xattr_init+0x57f/0xbb0 fs/reiserfs/xattr.c:1007
+ reiserfs_fill_super+0x2139/0x3150 fs/reiserfs/super.c:2175
+ mount_bdev+0x30d/0x3d0 fs/super.c:1391
+ legacy_get_tree+0x109/0x220 fs/fs_context.c:611
+ vfs_get_tree+0x88/0x350 fs/super.c:1519
+ do_new_mount fs/namespace.c:3335 [inline]
+ path_mount+0x1492/0x1ed0 fs/namespace.c:3662
+ do_mount fs/namespace.c:3675 [inline]
+ __do_sys_mount fs/namespace.c:3884 [inline]
+ __se_sys_mount fs/namespace.c:3861 [inline]
+ __x64_sys_mount+0x293/0x310 fs/namespace.c:3861
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fefa74039aa
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 3e 06 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcc4c45728 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffcc4c45740 RCX: 00007fefa74039aa
+RDX: 00000000200011c0 RSI: 0000000020001100 RDI: 00007ffcc4c45740
+RBP: 0000000000000004 R08: 00007ffcc4c45780 R09: 00000000000010ed
+R10: 000000000000c0cc R11: 0000000000000286 R12: 000000000000c0cc
+R13: 00007ffcc4c45780 R14: 0000000000000003 R15: 0000000000400000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:lookup_object lib/debugobjects.c:195 [inline]
+RIP: 0010:debug_object_deactivate lib/debugobjects.c:785 [inline]
+RIP: 0010:debug_object_deactivate+0x175/0x320 lib/debugobjects.c:771
+Code: da 48 c1 ea 03 80 3c 02 00 0f 85 54 01 00 00 48 8b 1b 48 85 db 0f 84 82 00 00 00 48 8d 7b 18 41 83 c4 01 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 11 01 00 00 4c 3b 7b 18 75 c4 48 8d 7b 10 48 b8
+RSP: 0018:ffffc90000007c90 EFLAGS: 00010006
 
-							Thanx, Paul
+RAX: dffffc0000000000 RBX: 0000000100040048 RCX: ffffffff816850de
+RDX: 000000002000800c RSI: 0000000000000002 RDI: 0000000100040060
+RBP: ffffc90000007d78 R08: 0000000000000001 R09: fffff52000000f80
+R10: 0000000000000003 R11: 0000000000000800 R12: 0000000000000004
+R13: 1ffff92000000f96 R14: ffffffff8a6eef00 R15: ffff888027a74448
+FS:  0000555557506380(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005571928dd028 CR3: 0000000072de4000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	48 c1 ea 03          	shr    $0x3,%rdx
+   4:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
+   8:	0f 85 54 01 00 00    	jne    0x162
+   e:	48 8b 1b             	mov    (%rbx),%rbx
+  11:	48 85 db             	test   %rbx,%rbx
+  14:	0f 84 82 00 00 00    	je     0x9c
+  1a:	48 8d 7b 18          	lea    0x18(%rbx),%rdi
+  1e:	41 83 c4 01          	add    $0x1,%r12d
+  22:	48 89 fa             	mov    %rdi,%rdx
+  25:	48 c1 ea 03          	shr    $0x3,%rdx
+* 29:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
+  2d:	0f 85 11 01 00 00    	jne    0x144
+  33:	4c 3b 7b 18          	cmp    0x18(%rbx),%r15
+  37:	75 c4                	jne    0xfffffffd
+  39:	48 8d 7b 10          	lea    0x10(%rbx),%rdi
+  3d:	48                   	rex.W
+  3e:	b8                   	.byte 0xb8
 
-> Thank you!
-> 
-> > 
-> > > Thank you,
-> > > 
-> > > > 
-> > > > Why put this in /proc?  Because it is quite similar to /proc/cmdline, so
-> > > > it makes sense to put it in the same place that /proc/cmdline is located.
-> > > > 
-> > > > [ sfr: Apply kernel test robot feedback. ]
-> > > > 
-> > > > Co-developed-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > Co-developed-by: Arnd Bergmann <arnd@kernel.org>
-> > > > Signed-off-by: Arnd Bergmann <arnd@kernel.org>
-> > > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > > > Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> > > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > > Cc: Alexey Dobriyan <adobriyan@gmail.com>
-> > > > Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> > > > Cc: <linux-fsdevel@vger.kernel.org>
-> > > > ---
-> > > >  fs/proc/cmdline.c    | 13 +++++++++++++
-> > > >  include/linux/init.h |  3 ++-
-> > > >  init/main.c          |  2 +-
-> > > >  3 files changed, 16 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/fs/proc/cmdline.c b/fs/proc/cmdline.c
-> > > > index a6f76121955f..1d0ef9d2949d 100644
-> > > > --- a/fs/proc/cmdline.c
-> > > > +++ b/fs/proc/cmdline.c
-> > > > @@ -3,6 +3,7 @@
-> > > >  #include <linux/init.h>
-> > > >  #include <linux/proc_fs.h>
-> > > >  #include <linux/seq_file.h>
-> > > > +#include <asm/setup.h>
-> > > >  #include "internal.h"
-> > > >  
-> > > >  static int cmdline_proc_show(struct seq_file *m, void *v)
-> > > > @@ -12,6 +13,13 @@ static int cmdline_proc_show(struct seq_file *m, void *v)
-> > > >  	return 0;
-> > > >  }
-> > > >  
-> > > > +static int cmdline_load_proc_show(struct seq_file *m, void *v)
-> > > > +{
-> > > > +	seq_puts(m, boot_command_line);
-> > > > +	seq_putc(m, '\n');
-> > > > +	return 0;
-> > > > +}
-> > > > +
-> > > >  static int __init proc_cmdline_init(void)
-> > > >  {
-> > > >  	struct proc_dir_entry *pde;
-> > > > @@ -19,6 +27,11 @@ static int __init proc_cmdline_init(void)
-> > > >  	pde = proc_create_single("cmdline", 0, NULL, cmdline_proc_show);
-> > > >  	pde_make_permanent(pde);
-> > > >  	pde->size = saved_command_line_len + 1;
-> > > > +	if (IS_ENABLED(CONFIG_BOOT_CONFIG_FORCE)) {
-> > > > +		pde = proc_create_single("cmdline_load", 0, NULL, cmdline_load_proc_show);
-> > > > +		pde_make_permanent(pde);
-> > > > +		pde->size = strnlen(boot_command_line, COMMAND_LINE_SIZE) + 1;
-> > > > +	}
-> > > >  	return 0;
-> > > >  }
-> > > >  fs_initcall(proc_cmdline_init);
-> > > > diff --git a/include/linux/init.h b/include/linux/init.h
-> > > > index 266c3e1640d4..29e75bbe7984 100644
-> > > > --- a/include/linux/init.h
-> > > > +++ b/include/linux/init.h
-> > > > @@ -112,6 +112,7 @@
-> > > >  #define __REFCONST       .section       ".ref.rodata", "a"
-> > > >  
-> > > >  #ifndef __ASSEMBLY__
-> > > > +
-> > > >  /*
-> > > >   * Used for initialization calls..
-> > > >   */
-> > > > @@ -143,7 +144,7 @@ struct file_system_type;
-> > > >  
-> > > >  /* Defined in init/main.c */
-> > > >  extern int do_one_initcall(initcall_t fn);
-> > > > -extern char __initdata boot_command_line[];
-> > > > +extern char boot_command_line[];
-> > > 
-> > > FYI, boot_command_line[] is mixture of built-in cmdline string with
-> > > bootloader cmdline string.
-> > 
-> > So if we also need to separate out the CONFIG_CMDLINE arguments, then
-> > /proc/cmdline_load will need to come from some string saved off before
-> > the CONFIG_CMDLINE processing, correct?  I would expect that to be a
-> > separate patch series, but if it is needed, I would be happy to look
-> > into setting it up, as long as I am in the area.
-> > 
-> > My tests indicate that boot_command_line[] doesn't contain any bootconfig
-> > (and opposed to CONFIG_CMDLINE) arguments, but I could easily have missed
-> > some other corner-case configuration.
-> > 
-> > And thank you for looking this over!
-> > 
-> > 							Thanx, Paul
-> > 
-> > > >  extern char *saved_command_line;
-> > > >  extern unsigned int saved_command_line_len;
-> > > >  extern unsigned int reset_devices;
-> > > > diff --git a/init/main.c b/init/main.c
-> > > > index ad920fac325c..2121685c479a 100644
-> > > > --- a/init/main.c
-> > > > +++ b/init/main.c
-> > > > @@ -135,7 +135,7 @@ EXPORT_SYMBOL(system_state);
-> > > >  void (*__initdata late_time_init)(void);
-> > > >  
-> > > >  /* Untouched command line saved by arch-specific code. */
-> > > > -char __initdata boot_command_line[COMMAND_LINE_SIZE];
-> > > > +char boot_command_line[COMMAND_LINE_SIZE] __ro_after_init;
-> > > >  /* Untouched saved command line (eg. for /proc) */
-> > > >  char *saved_command_line __ro_after_init;
-> > > >  unsigned int saved_command_line_len __ro_after_init;
-> > > > -- 
-> > > > 2.40.1
-> > > > 
-> > > 
-> > > 
-> > > -- 
-> > > Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> 
-> -- 
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
