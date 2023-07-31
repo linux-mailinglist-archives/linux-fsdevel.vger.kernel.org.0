@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F7F676985D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jul 2023 15:54:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A6B7769861
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jul 2023 15:54:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232953AbjGaNyW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Jul 2023 09:54:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43142 "EHLO
+        id S233014AbjGaNyf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Jul 2023 09:54:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233116AbjGaNxN (ORCPT
+        with ESMTP id S233152AbjGaNxQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Jul 2023 09:53:13 -0400
+        Mon, 31 Jul 2023 09:53:16 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C131BEC;
-        Mon, 31 Jul 2023 06:52:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97FBE1FC9;
+        Mon, 31 Jul 2023 06:52:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6524D61164;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 78C466113A;
+        Mon, 31 Jul 2023 13:52:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FACCC433D9;
         Mon, 31 Jul 2023 13:52:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18347C433C9;
-        Mon, 31 Jul 2023 13:52:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690811542;
-        bh=ggfCgbEg0UE7JP5CH6e+dKjRf0SerXD/ltcRHcZOEeI=;
+        s=k20201202; t=1690811548;
+        bh=sSLA8c9zD81mYMEEIJgpRALMzE62vMXK9V14WuQWjaE=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=QrkUAv/W0nEQPufXRsBRT09S1vN1MsrhsyLx/XO9OmUHtWcHJSX7+yGNATPxVMZXS
-         MRAvlmh71lY5c83nhcOd93cPbNBZNitx2jj/E3dySRlPeWDH9BNgohphQpJzN+Ppo8
-         ZNXFwiKV/a8C8tjKxGpm4qm23Pok5wDzyojLAMecNxTRr5STl9yzNetcm1HmECXI0C
-         WZzXNVC0L3BxNLpxHi899QcxhUn4VAqPIVlE4LRshZldKQXFh0i5U9Wi2j8vcM/JkB
-         uoZYq35+Ke9i8Md2EAj1uZ/YUddwuAMKQM4dwoZVLBOYrec3huk9QpAUsGxkICQIlp
-         yUPmEARlnmHAA==
+        b=c2PCj6t+bB/6OlIwo8Tpv5EzvoqPZRN7PFTpzhVvReZ9cXCysOJzHp2TnfwcN46qX
+         rgb+Ztuniedy0S1vMlqSZMDErnzPXdUYNZ1c17JM3+NbAxAxn1i6mvVKQPBLWLU0LD
+         NHmVpcMTyyNfN4M/uck3wgbHbt08yAivn7xV4qrbFeNlyhVNLCTr8eVob9Z97mRTJ/
+         MW+JLtQutKhoMl3qfeLbEsdLd7NwmQMrGD8Ugz4msdBnYpJXVyFq8/I3IxpIH8/UUw
+         8xeQ73YgNGdrRCBFdDnz33kXRqlhKSB35IlOLWWVDoQhjOV/rCZ1do0lRpfrEgNpL2
+         1Y9kmk1XHEjsw==
 From:   Mark Brown <broonie@kernel.org>
-Date:   Mon, 31 Jul 2023 14:43:24 +0100
-Subject: [PATCH v3 15/36] arm64/hwcap: Add hwcap for GCS
+Date:   Mon, 31 Jul 2023 14:43:25 +0100
+Subject: [PATCH v3 16/36] arm64/traps: Handle GCS exceptions
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230731-arm64-gcs-v3-15-cddf9f980d98@kernel.org>
+Message-Id: <20230731-arm64-gcs-v3-16-cddf9f980d98@kernel.org>
 References: <20230731-arm64-gcs-v3-0-cddf9f980d98@kernel.org>
 In-Reply-To: <20230731-arm64-gcs-v3-0-cddf9f980d98@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
@@ -68,15 +68,15 @@ Cc:     "H.J. Lu" <hjl.tools@gmail.com>,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-099c9
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3001; i=broonie@kernel.org;
- h=from:subject:message-id; bh=ggfCgbEg0UE7JP5CH6e+dKjRf0SerXD/ltcRHcZOEeI=;
- b=owGbwMvMwMWocq27KDak/QLjabUkhpTjexTSlzo3H+HfUrXWf8rP6liO2dtUd823deW8IcaRbim7
- wM+9k9GYhYGRi0FWTJFl7bOMVenhElvnP5r/CmYQKxPIFAYuTgGYyMYs9n+qHTbKkasqexICpjxWfx
- 2rejZ71RG5mbPkW6UPHc7w4fLnt0lXsjqyyHWrejXXeXHT4NDgoouP5R4xxa3u8DFOc2GVMNKSmCOw
- ueew6GOu3ABzPceoPXdXPVB4zlYpwGzPvCl0avPF0/ktfLd6+UzMjMIe1EaLnH2/n+dl3BW+//ztm1
- mjPgckO87+1fm3s6D03C77Hwz6RSwBzWpvjymG7rSIz3a17jNqyOyveP1veunVmv2fXj06cPX3twPK
- 66x/r3Dq+7bW2NGsfnXYhaUTIya/e7HyY/HjPq+sBUqFk5a7eG9evtVXuNLwmahpgqfMnyvi8bcWFn
- +M3ZB3v2mCnqn6VT+9SI2Oz+aRAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6026; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=sSLA8c9zD81mYMEEIJgpRALMzE62vMXK9V14WuQWjaE=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBkx7wg3tbU/Jvi+aBnZbgu1wIt+l+iH6Qq5kpWaVbp
+ uxALrEKJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZMe8IAAKCRAk1otyXVSH0D2JB/
+ 9kPL7Cuf95NJv1AQKOpMb/HS6lBnOqyovumdMehBGZCgSicHfn0mP0FLjCOdL4m2inLSFGncZVXtBM
+ ZVjBjrivFLu1pQT2ACgCYbtTShUspT4GZBFKEZwC/rvdpCCJx7egz4NCw37ZFlW4Go/NXjpfUwNARt
+ V7cHKNTJsRBhyyCpsNCi/DCpjc7lrsvUaShC2ZzB/Ecy1MqyKQhNdVNMQ3as3B9PIG5pDfc2PeFx6U
+ Mvz+UkxgUQnnfoOHPJRvKoGf/RzALWBl9TCt/fJ7EK5e+Yh6TgXD4qn2B3rO21BhkRIfRd7LQccfNU
+ a4PLqOVnYRvb1MAB83M4E5HC1/i1MF
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -89,80 +89,171 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provide a hwcap to enable userspace to detect support for GCS.
+A new exception code is defined for GCS specific faults other than
+standard load/store faults, for example GCS token validation failures,
+add handling for this. These faults are reported to userspace as
+segfaults with code SEGV_CPERR (protection error), mirroring the
+reporting for x86 shadow stack errors.
+
+GCS faults due to memory load/store operations generate data aborts with
+a flag set, these will be handled separately as part of the data abort
+handling.
+
+Since we do not currently enable GCS for EL1 we should not get any faults
+there but while we're at it we wire things up there, treating any GCS
+fault as fatal.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/arch/arm64/elf_hwcaps.rst | 3 +++
- arch/arm64/include/asm/hwcap.h          | 1 +
- arch/arm64/include/uapi/asm/hwcap.h     | 1 +
- arch/arm64/kernel/cpufeature.c          | 3 +++
- arch/arm64/kernel/cpuinfo.c             | 1 +
- 5 files changed, 9 insertions(+)
+ arch/arm64/include/asm/esr.h       | 28 +++++++++++++++++++++++++++-
+ arch/arm64/include/asm/exception.h |  2 ++
+ arch/arm64/kernel/entry-common.c   | 23 +++++++++++++++++++++++
+ arch/arm64/kernel/traps.c          | 11 +++++++++++
+ 4 files changed, 63 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/arch/arm64/elf_hwcaps.rst b/Documentation/arch/arm64/elf_hwcaps.rst
-index 8c8addb4194c..75f3960cad39 100644
---- a/Documentation/arch/arm64/elf_hwcaps.rst
-+++ b/Documentation/arch/arm64/elf_hwcaps.rst
-@@ -305,6 +305,9 @@ HWCAP2_SMEF16F16
- HWCAP2_MOPS
-     Functionality implied by ID_AA64ISAR2_EL1.MOPS == 0b0001.
+diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
+index ae35939f395b..a87a8305051f 100644
+--- a/arch/arm64/include/asm/esr.h
++++ b/arch/arm64/include/asm/esr.h
+@@ -51,7 +51,8 @@
+ #define ESR_ELx_EC_FP_EXC32	(0x28)
+ /* Unallocated EC: 0x29 - 0x2B */
+ #define ESR_ELx_EC_FP_EXC64	(0x2C)
+-/* Unallocated EC: 0x2D - 0x2E */
++#define ESR_ELx_EC_GCS		(0x2D)
++/* Unallocated EC: 0x2E */
+ #define ESR_ELx_EC_SERROR	(0x2F)
+ #define ESR_ELx_EC_BREAKPT_LOW	(0x30)
+ #define ESR_ELx_EC_BREAKPT_CUR	(0x31)
+@@ -382,6 +383,31 @@
+ #define ESR_ELx_MOPS_ISS_SRCREG(esr)	(((esr) & (UL(0x1f) << 5)) >> 5)
+ #define ESR_ELx_MOPS_ISS_SIZEREG(esr)	(((esr) & (UL(0x1f) << 0)) >> 0)
  
-+HWCAP2_GCS
-+    Functionality implied by ID_AA64PFR1_EL1.GCS == 0b1
++/* ISS field definitions for GCS */
++#define ESR_ELx_ExType_SHIFT	(20)
++#define ESR_ELx_ExType_MASK		GENMASK(23, 20)
++#define ESR_ELx_Raddr_SHIFT		(10)
++#define ESR_ELx_Raddr_MASK		GENMASK(14, 10)
++#define ESR_ELx_Rn_SHIFT		(5)
++#define ESR_ELx_Rn_MASK			GENMASK(9, 5)
++#define ESR_ELx_Rvalue_SHIFT		5
++#define ESR_ELx_Rvalue_MASK		GENMASK(9, 5)
++#define ESR_ELx_IT_SHIFT		(0)
++#define ESR_ELx_IT_MASK			GENMASK(4, 0)
 +
- 4. Unused AT_HWCAP bits
- -----------------------
++#define ESR_ELx_ExType_DATA_CHECK	0
++#define ESR_ELx_ExType_EXLOCK		1
++#define ESR_ELx_ExType_STR		2
++
++#define ESR_ELx_IT_RET			0
++#define ESR_ELx_IT_GCSPOPM		1
++#define ESR_ELx_IT_RET_KEYA		2
++#define ESR_ELx_IT_RET_KEYB		3
++#define ESR_ELx_IT_GCSSS1		4
++#define ESR_ELx_IT_GCSSS2		5
++#define ESR_ELx_IT_GCSPOPCX		6
++#define ESR_ELx_IT_GCSPOPX		7
++
+ #ifndef __ASSEMBLY__
+ #include <asm/types.h>
  
-diff --git a/arch/arm64/include/asm/hwcap.h b/arch/arm64/include/asm/hwcap.h
-index 692b1ec663b2..39f397a2b5b2 100644
---- a/arch/arm64/include/asm/hwcap.h
-+++ b/arch/arm64/include/asm/hwcap.h
-@@ -138,6 +138,7 @@
- #define KERNEL_HWCAP_SME_B16B16		__khwcap2_feature(SME_B16B16)
- #define KERNEL_HWCAP_SME_F16F16		__khwcap2_feature(SME_F16F16)
- #define KERNEL_HWCAP_MOPS		__khwcap2_feature(MOPS)
-+#define KERNEL_HWCAP_GCS		__khwcap2_feature(GCS)
+diff --git a/arch/arm64/include/asm/exception.h b/arch/arm64/include/asm/exception.h
+index ad688e157c9b..99caff458e20 100644
+--- a/arch/arm64/include/asm/exception.h
++++ b/arch/arm64/include/asm/exception.h
+@@ -57,6 +57,8 @@ void do_el0_undef(struct pt_regs *regs, unsigned long esr);
+ void do_el1_undef(struct pt_regs *regs, unsigned long esr);
+ void do_el0_bti(struct pt_regs *regs);
+ void do_el1_bti(struct pt_regs *regs, unsigned long esr);
++void do_el0_gcs(struct pt_regs *regs, unsigned long esr);
++void do_el1_gcs(struct pt_regs *regs, unsigned long esr);
+ void do_debug_exception(unsigned long addr_if_watchpoint, unsigned long esr,
+ 			struct pt_regs *regs);
+ void do_fpsimd_acc(unsigned long esr, struct pt_regs *regs);
+diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
+index 6b2e0c367702..4d86216962e5 100644
+--- a/arch/arm64/kernel/entry-common.c
++++ b/arch/arm64/kernel/entry-common.c
+@@ -400,6 +400,15 @@ static void noinstr el1_bti(struct pt_regs *regs, unsigned long esr)
+ 	exit_to_kernel_mode(regs);
+ }
  
- /*
-  * This yields a mask that user programs can use to figure out what
-diff --git a/arch/arm64/include/uapi/asm/hwcap.h b/arch/arm64/include/uapi/asm/hwcap.h
-index a2cac4305b1e..7510c35e6864 100644
---- a/arch/arm64/include/uapi/asm/hwcap.h
-+++ b/arch/arm64/include/uapi/asm/hwcap.h
-@@ -103,5 +103,6 @@
- #define HWCAP2_SME_B16B16	(1UL << 41)
- #define HWCAP2_SME_F16F16	(1UL << 42)
- #define HWCAP2_MOPS		(1UL << 43)
-+#define HWCAP2_GCS		(1UL << 44)
++static void noinstr el1_gcs(struct pt_regs *regs, unsigned long esr)
++{
++	enter_from_kernel_mode(regs);
++	local_daif_inherit(regs);
++	do_el1_gcs(regs, esr);
++	local_daif_mask();
++	exit_to_kernel_mode(regs);
++}
++
+ static void noinstr el1_dbg(struct pt_regs *regs, unsigned long esr)
+ {
+ 	unsigned long far = read_sysreg(far_el1);
+@@ -442,6 +451,9 @@ asmlinkage void noinstr el1h_64_sync_handler(struct pt_regs *regs)
+ 	case ESR_ELx_EC_BTI:
+ 		el1_bti(regs, esr);
+ 		break;
++	case ESR_ELx_EC_GCS:
++		el1_gcs(regs, esr);
++		break;
+ 	case ESR_ELx_EC_BREAKPT_CUR:
+ 	case ESR_ELx_EC_SOFTSTP_CUR:
+ 	case ESR_ELx_EC_WATCHPT_CUR:
+@@ -621,6 +633,14 @@ static void noinstr el0_mops(struct pt_regs *regs, unsigned long esr)
+ 	exit_to_user_mode(regs);
+ }
  
- #endif /* _UAPI__ASM_HWCAP_H */
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 91a14a6ccb04..7b46e01140c4 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -2840,6 +2840,9 @@ static const struct arm64_cpu_capabilities arm64_elf_hwcaps[] = {
- 	HWCAP_CAP(ID_AA64ZFR0_EL1, I8MM, IMP, CAP_HWCAP, KERNEL_HWCAP_SVEI8MM),
- 	HWCAP_CAP(ID_AA64ZFR0_EL1, F32MM, IMP, CAP_HWCAP, KERNEL_HWCAP_SVEF32MM),
- 	HWCAP_CAP(ID_AA64ZFR0_EL1, F64MM, IMP, CAP_HWCAP, KERNEL_HWCAP_SVEF64MM),
-+#endif
-+#ifdef CONFIG_ARM64_GCS
-+	HWCAP_CAP(ID_AA64PFR1_EL1, GCS, IMP, CAP_HWCAP, KERNEL_HWCAP_GCS),
- #endif
- 	HWCAP_CAP(ID_AA64PFR1_EL1, SSBS, SSBS2, CAP_HWCAP, KERNEL_HWCAP_SSBS),
- #ifdef CONFIG_ARM64_BTI
-diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
-index 58622dc85917..451fbbeffa39 100644
---- a/arch/arm64/kernel/cpuinfo.c
-+++ b/arch/arm64/kernel/cpuinfo.c
-@@ -126,6 +126,7 @@ static const char *const hwcap_str[] = {
- 	[KERNEL_HWCAP_SME_B16B16]	= "smeb16b16",
- 	[KERNEL_HWCAP_SME_F16F16]	= "smef16f16",
- 	[KERNEL_HWCAP_MOPS]		= "mops",
-+	[KERNEL_HWCAP_GCS]		= "gcs",
- };
++static void noinstr el0_gcs(struct pt_regs *regs, unsigned long esr)
++{
++	enter_from_user_mode(regs);
++	local_daif_restore(DAIF_PROCCTX);
++	do_el0_gcs(regs, esr);
++	exit_to_user_mode(regs);
++}
++
+ static void noinstr el0_inv(struct pt_regs *regs, unsigned long esr)
+ {
+ 	enter_from_user_mode(regs);
+@@ -701,6 +721,9 @@ asmlinkage void noinstr el0t_64_sync_handler(struct pt_regs *regs)
+ 	case ESR_ELx_EC_MOPS:
+ 		el0_mops(regs, esr);
+ 		break;
++	case ESR_ELx_EC_GCS:
++		el0_gcs(regs, esr);
++		break;
+ 	case ESR_ELx_EC_BREAKPT_LOW:
+ 	case ESR_ELx_EC_SOFTSTP_LOW:
+ 	case ESR_ELx_EC_WATCHPT_LOW:
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index 8b70759cdbb9..65dab959f620 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -500,6 +500,16 @@ void do_el1_bti(struct pt_regs *regs, unsigned long esr)
+ 	die("Oops - BTI", regs, esr);
+ }
  
- #ifdef CONFIG_COMPAT
++void do_el0_gcs(struct pt_regs *regs, unsigned long esr)
++{
++	force_signal_inject(SIGSEGV, SEGV_CPERR, regs->pc, 0);
++}
++
++void do_el1_gcs(struct pt_regs *regs, unsigned long esr)
++{
++	die("Oops - GCS", regs, esr);
++}
++
+ void do_el0_fpac(struct pt_regs *regs, unsigned long esr)
+ {
+ 	force_signal_inject(SIGILL, ILL_ILLOPN, regs->pc, esr);
+@@ -884,6 +894,7 @@ static const char *esr_class_str[] = {
+ 	[ESR_ELx_EC_MOPS]		= "MOPS",
+ 	[ESR_ELx_EC_FP_EXC32]		= "FP (AArch32)",
+ 	[ESR_ELx_EC_FP_EXC64]		= "FP (AArch64)",
++	[ESR_ELx_EC_GCS]		= "Guarded Control Stack",
+ 	[ESR_ELx_EC_SERROR]		= "SError",
+ 	[ESR_ELx_EC_BREAKPT_LOW]	= "Breakpoint (lower EL)",
+ 	[ESR_ELx_EC_BREAKPT_CUR]	= "Breakpoint (current EL)",
 
 -- 
 2.30.2
