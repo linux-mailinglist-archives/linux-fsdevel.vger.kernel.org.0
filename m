@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 87F41768E5B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jul 2023 09:21:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0F75768E39
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jul 2023 09:21:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231236AbjGaHUl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Jul 2023 03:20:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59386 "EHLO
+        id S231526AbjGaHUv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Jul 2023 03:20:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231904AbjGaHT2 (ORCPT
+        with ESMTP id S231389AbjGaHT3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Jul 2023 03:19:28 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 382F919B0;
-        Mon, 31 Jul 2023 00:17:55 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-31763b2c5a4so4351555f8f.3;
-        Mon, 31 Jul 2023 00:17:55 -0700 (PDT)
+        Mon, 31 Jul 2023 03:19:29 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 909DC19B7;
+        Mon, 31 Jul 2023 00:17:56 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3fbc54cab6fso38849145e9.0;
+        Mon, 31 Jul 2023 00:17:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690787874; x=1691392674;
+        d=gmail.com; s=20221208; t=1690787875; x=1691392675;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WLmPwUxElpGPIItGBie9qSPLiGC8xTssPnC4wjmH8Co=;
-        b=IpykfJb7hcUQStL2f0jwevdksgcPlej76+9Dvlr1etAys3iM7VBIf1dA9mPPbAYwEb
-         ovJ3JqI/719OJKxsZ6C+Z8AKuT8aGJ8b4PaOI4zBQOwthNmU3T7saorlPq0OFGxCpSve
-         zgNuz5M+is0YyrITjMyHTZmRVk7n/qm4sjOgmkOO54OTjqAif6/SwiRsLOZuEL+B98qp
-         GAICvEE8SmvklGodmsUNzWyuYtuSW1QtXfHA5t9EADp21BbKXmmGvog+lzyPMjWS0+o9
-         YAQafxqNi3TE5xfJHhmTEkye+I77LFFqaIu/Xim5e2O7+IpfnM5rQvYU0EPtAIag7AvX
-         7qPA==
+        bh=5noSV5uL5R3dSrbr/R0oWH8ijMnn3jtlsPFspVagWKY=;
+        b=SdrDkcAXByY0sJ7+rsAQdKfwmVG3c5WCPbN//BnCCScfOVUkasmGjo067IR+VtoRFo
+         D6fwH8JniXv/Aup+rPGRbJrL8OTu9SbMmBiODdKPF8oMnV5nnhT5Dk8pAsrGnQ1wlSD+
+         ZPSjKJj0Pl4FANdos20Y/es0ysWL5w8sQZmI+ZHUBkv+tuJ1lk6dlgDvkzs/df09zXrj
+         ozr7xMnnfqrKvmouPpdXKljCbCEOiFQv0X/hWykCE2eIqIt79Ja2MJK+869pNwih6sKq
+         TE5UeaBofIs4fRFHFLZTtsmqowO2I2B2j/4dl6w9Zz7MLeQMomK17YoLSMVAB2k5xiif
+         a5kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690787874; x=1691392674;
+        d=1e100.net; s=20221208; t=1690787875; x=1691392675;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WLmPwUxElpGPIItGBie9qSPLiGC8xTssPnC4wjmH8Co=;
-        b=U7euX327XCUDFBvRqU7FRl+AFuZSBqtqYricR2K8UPJRWxFO52JX48UHhTKIeqpVAd
-         gi2BuN7DZl9rB6nikm91qGQla15A5vtVqQwxNirDHfBf3WF1LQT606e5QptxE19teKDg
-         hDnUAbpNOUJ6jCw2ea9sKycGijQ3JoCu7Ea1FlY8UcB7VRgD06KqY/EJxrs5P/rCJiAC
-         xK4hWi1r177juHXa73PoEjcOToQD2UrBqkNSgnW9y/3Qf54bMET8VPczvhe0OAh693sF
-         fb0I4EwiTOg45XKgsHwuxTzoVSEnq87pZ89eboR0qLcmnYno8aaQz4IJ/+5ys1W/95c0
-         tUbA==
-X-Gm-Message-State: ABy/qLaztbFjnkG3v1bBampAPdm5NFwR2iPdL3LyEDArp8WbyrwKpNEo
-        i8OM9AbZOr/0igong0nXSKg=
-X-Google-Smtp-Source: APBJJlEWJpIRsYgvvSuwbjUjC75DanD11Vxqj9Uy7oRYPl2tqIHO5CFVTD3oPksJ5zp8xbINTXCHDg==
-X-Received: by 2002:a5d:474c:0:b0:317:52d2:d196 with SMTP id o12-20020a5d474c000000b0031752d2d196mr6971143wrs.33.1690787873675;
-        Mon, 31 Jul 2023 00:17:53 -0700 (PDT)
+        bh=5noSV5uL5R3dSrbr/R0oWH8ijMnn3jtlsPFspVagWKY=;
+        b=N2ouy/r5GVUOQi+JrBf2ipL4gUAzxPLYM8mf2Rum2icnbKriJ2bfDR7vhLg2y1Rvz2
+         nelKIQFqde7NzmUgDRFqtVs4gdhCHHwYXsoBudOFbgA7fvCfuxvoDv5v0FcbSTcXAfZr
+         nYhO5ynRTSg8W6nn14WtLedoLiy/QyAnSUkTOW85JD3wh6kFRsYZ/txaueMLPQcf0FdK
+         jraN1SGsFdrX5DIwjZffbHpAy6Vh6yY3i8gqZ/Dmp8NFcrrhXWv8tJPWx/KhYmX3DNS4
+         imWTTyj2QeDTbrJQUGsrG0vpsNNRcPtxEtBg8Hy8y1zD7MmsSX37QwGmRD8pPKS9oJzW
+         +TEQ==
+X-Gm-Message-State: ABy/qLaWU8XN47XpcmrI3gNnL/OednKp9cqzM4bvwzqbeMIUoH70yE6i
+        u16uKZStv4qVcjm1z7WCzdA=
+X-Google-Smtp-Source: APBJJlHpAH3o3EDSC2u2zI8yHuEQrXycm/dtoKdWekhqyBYm7o6lNwNkDT7RDClIujTk2ibrxiYYXQ==
+X-Received: by 2002:a7b:c4d0:0:b0:3fb:ac9c:e6f with SMTP id g16-20020a7bc4d0000000b003fbac9c0e6fmr6026875wmk.38.1690787875090;
+        Mon, 31 Jul 2023 00:17:55 -0700 (PDT)
 Received: from localhost ([165.225.194.214])
-        by smtp.gmail.com with ESMTPSA id r8-20020adfe688000000b0031434c08bb7sm12018523wrm.105.2023.07.31.00.17.53
+        by smtp.gmail.com with ESMTPSA id s10-20020a7bc38a000000b003fbfc61d36asm10570517wmj.5.2023.07.31.00.17.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jul 2023 00:17:53 -0700 (PDT)
+        Mon, 31 Jul 2023 00:17:54 -0700 (PDT)
 From:   Joel Granados <joel.granados@gmail.com>
 X-Google-Original-From: Joel Granados <j.granados@samsung.com>
 To:     mcgrof@kernel.org
@@ -97,10 +97,11 @@ Cc:     Catalin Marinas <catalin.marinas@arm.com>,
         Xin Long <lucien.xin@gmail.com>,
         Nikolay Aleksandrov <razor@blackwall.org>,
         netdev@vger.kernel.org, rds-devel@oss.oracle.com,
-        Joel Granados <j.granados@samsung.com>
-Subject: [PATCH v2 12/14] vrf: Update to register_net_sysctl_sz
-Date:   Mon, 31 Jul 2023 09:17:26 +0200
-Message-Id: <20230731071728.3493794-13-j.granados@samsung.com>
+        Joel Granados <j.granados@samsung.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>
+Subject: [PATCH v2 13/14] sysctl: SIZE_MAX->ARRAY_SIZE in register_net_sysctl
+Date:   Mon, 31 Jul 2023 09:17:27 +0200
+Message-Id: <20230731071728.3493794-14-j.granados@samsung.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20230731071728.3493794-1-j.granados@samsung.com>
 References: <20230731071728.3493794-1-j.granados@samsung.com>
@@ -116,33 +117,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move from register_net_sysctl to register_net_sysctl_sz and pass the
-ARRAY_SIZE of the ctl_table array that was used to create the table
-variable. We need to move to the new function in preparation for when we
-change SIZE_MAX to ARRAY_SIZE() in the register_net_sysctl macro.
-Failing to do so would erroneously allow ARRAY_SIZE() to be called on a
-pointer. The actual change from SIZE_MAX to ARRAY_SIZE will take place
-in subsequent commits.
+Replace SIZE_MAX with ARRAY_SIZE in the register_net_sysctl macro. Now
+that all the callers to register_net_sysctl are actual arrays, we can
+call ARRAY_SIZE() without any compilation warnings. By calculating the
+actual array size, this commit is making sure that register_net_sysctl
+and all its callers forward the table_size into sysctl backend for when
+the sentinel elements in the ctl_table arrays (last empty markers) are
+removed. Without it the removal would fail lacking a stopping criteria
+for traversing the ctl_table arrays.
+
+Stopping condition continues to be based on both table size and the
+procname null test. This is needed in order to allow for the systematic
+removal al the sentinel element in subsequent commits: Before removing
+sentinel the stopping criteria will be the last null element. When the
+sentinel is removed then the (correct) size will take over.
 
 Signed-off-by: Joel Granados <j.granados@samsung.com>
+Suggested-by: Jani Nikula <jani.nikula@linux.intel.com>
 ---
- drivers/net/vrf.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/net/net_namespace.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/vrf.c b/drivers/net/vrf.c
-index bdb3a76a352e..f4c3df15a0e5 100644
---- a/drivers/net/vrf.c
-+++ b/drivers/net/vrf.c
-@@ -1979,7 +1979,8 @@ static int vrf_netns_init_sysctl(struct net *net, struct netns_vrf *nn_vrf)
- 	/* init the extra1 parameter with the reference to current netns */
- 	table[0].extra1 = net;
+diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
+index e4e5fe75a281..75dba309e043 100644
+--- a/include/net/net_namespace.h
++++ b/include/net/net_namespace.h
+@@ -470,7 +470,7 @@ void unregister_pernet_device(struct pernet_operations *);
+ struct ctl_table;
  
--	nn_vrf->ctl_hdr = register_net_sysctl(net, "net/vrf", table);
-+	nn_vrf->ctl_hdr = register_net_sysctl_sz(net, "net/vrf", table,
-+						 ARRAY_SIZE(vrf_table));
- 	if (!nn_vrf->ctl_hdr) {
- 		kfree(table);
- 		return -ENOMEM;
+ #define register_net_sysctl(net, path, table)	\
+-	register_net_sysctl_sz(net, path, table, SIZE_MAX)
++	register_net_sysctl_sz(net, path, table, ARRAY_SIZE(table))
+ #ifdef CONFIG_SYSCTL
+ int net_sysctl_init(void);
+ struct ctl_table_header *register_net_sysctl_sz(struct net *net, const char *path,
 -- 
 2.30.2
 
