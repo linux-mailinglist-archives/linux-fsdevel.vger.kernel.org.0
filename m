@@ -2,58 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 437537691D1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jul 2023 11:32:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52D6B7691E1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jul 2023 11:36:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232387AbjGaJc0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Jul 2023 05:32:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54316 "EHLO
+        id S231309AbjGaJgz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Jul 2023 05:36:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232369AbjGaJb7 (ORCPT
+        with ESMTP id S231549AbjGaJgs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Jul 2023 05:31:59 -0400
-Received: from out-82.mta0.migadu.com (out-82.mta0.migadu.com [91.218.175.82])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F847120
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Jul 2023 02:31:55 -0700 (PDT)
-Message-ID: <eee2b24d-880e-027d-ad5a-f1e20a7a549a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1690795913;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pV64waeOvnRMbmrjExtmesrq08vlMnfmvqlc7BNMPow=;
-        b=d4vf6v6NAxFQQmdf5v3Q40fdf6tH0t4ZAMVmh2Z8ZmFzQpLXkFp+vY2c7Qw9M3HQvOEWyR
-        SnTMyWXMoYYPc2E04Rf6buLByBeCuDFDpdXeN5O2nwUfsxS6C5ta0BXSoA7DruZSvFe4RY
-        oMKpWgCaGRKdJYYSF3SYGo+ssFP70Ko=
-Date:   Mon, 31 Jul 2023 17:31:45 +0800
+        Mon, 31 Jul 2023 05:36:48 -0400
+Received: from esa10.hc1455-7.c3s2.iphmx.com (esa10.hc1455-7.c3s2.iphmx.com [139.138.36.225])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D5D3199;
+        Mon, 31 Jul 2023 02:36:43 -0700 (PDT)
+X-IronPort-AV: E=McAfee;i="6600,9927,10787"; a="114190180"
+X-IronPort-AV: E=Sophos;i="6.01,244,1684767600"; 
+   d="scan'208";a="114190180"
+Received: from unknown (HELO oym-r1.gw.nic.fujitsu.com) ([210.162.30.89])
+  by esa10.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2023 18:36:40 +0900
+Received: from oym-m4.gw.nic.fujitsu.com (oym-nat-oym-m4.gw.nic.fujitsu.com [192.168.87.61])
+        by oym-r1.gw.nic.fujitsu.com (Postfix) with ESMTP id 01A51D29E8;
+        Mon, 31 Jul 2023 18:36:39 +0900 (JST)
+Received: from kws-ab4.gw.nic.fujitsu.com (kws-ab4.gw.nic.fujitsu.com [192.51.206.22])
+        by oym-m4.gw.nic.fujitsu.com (Postfix) with ESMTP id 36D85D6059;
+        Mon, 31 Jul 2023 18:36:38 +0900 (JST)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+        by kws-ab4.gw.nic.fujitsu.com (Postfix) with ESMTP id BFCA410211;
+        Mon, 31 Jul 2023 18:36:37 +0900 (JST)
+Received: from [192.168.50.5] (unknown [10.167.234.230])
+        by edo.cn.fujitsu.com (Postfix) with ESMTP id BBDA81A0070;
+        Mon, 31 Jul 2023 17:36:36 +0800 (CST)
+Message-ID: <da239482-b3e4-a9d4-a1cc-c13973fb9cef@fujitsu.com>
+Date:   Mon, 31 Jul 2023 17:36:36 +0800
 MIME-Version: 1.0
-Subject: Re: [PATCH 3/5] io_uring: add support for getdents
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/2] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
+        akpm@linux-foundation.org, mcgrof@kernel.org
+References: <20230629081651.253626-1-ruansy.fnst@fujitsu.com>
+ <20230629081651.253626-3-ruansy.fnst@fujitsu.com>
+ <20230729151506.GI11352@frogsfrogsfrogs>
 Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     djwong@kernel.org, Dave Chinner <david@fromorbit.com>,
-        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-References: <20230718132112.461218-1-hao.xu@linux.dev>
- <20230718132112.461218-4-hao.xu@linux.dev>
- <20230726-leinen-basisarbeit-13ae322690ff@brauner>
- <e9ddc8cc-f567-46bc-8f82-cf5ff8ff6c95@linux.dev>
- <20230727-salbe-kurvigen-31b410c07bb9@brauner>
- <7adaea37-f84f-9415-41fa-53d36833f8f2@linux.dev>
- <20230731-jawohl-schafsfell-0a890454b2af@brauner>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <20230731-jawohl-schafsfell-0a890454b2af@brauner>
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+In-Reply-To: <20230729151506.GI11352@frogsfrogsfrogs>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-27784.006
+X-TM-AS-User-Approved-Sender: Yes
+X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-27784.006
+X-TMASE-Result: 10--21.513100-10.000000
+X-TMASE-MatchedRID: fQs1WIo05PGPvrMjLFD6eHchRkqzj/bEC/ExpXrHizxBqLOmHiM3wxem
+        4OLSGy1EiNggJ6Pbm2FbtzD5SJbjLpGZilTi8ctSxDiakrJ+Splt9UVWhqbRIWtEzrC9eANpEJm
+        hpJ8aMPMs4TH6G8STucqWFlCQS6PJay2H+VAa8iXTCZHfjFFBzxokPBiBBj9/WAuSz3ewb23jE7
+        v208scT4Cx+Toe1sV/EUEPr56O2WIv+0FNnM7lDRFbgtHjUWLyGB9/bxS68hPMtotGtpF5VgimM
+        t6TSXWl9IAP3W8IJ6ROaA8tMUkyucwitucT3dE79Ib/6w+1lWQ0YL9SJPufX7E9dgiHWXp2dCIZ
+        l7SNYAwqrSgxSiVy6T4BGdad1mqh8p7loYJT/FuDpW5ZeDjLZEEe5VjFzwNbFCmwHLoxcsa20nP
+        Q2eZ7CcNUkvwuYWUMsNZuYAtJw80900H1KQL9bG03YawHJvPCTfK5j0EZbyuHvxzu1FG4kbEOoi
+        tFQVcIGBKlWUwuGka5HjqbLog5/l7FLEpyoHYAgnMtC97jHVQXivwflisSrHd17Y6gGqDCbxGoC
+        yAt4uiBwOiAXd70LJNHG+DwJ1Q9najGxrJsU4OeAiCmPx4NwFkMvWAuahr8AsMBg/gBdVHudjnW
+        XAurT7xAi7jPoeEQftwZ3X11IV0=
+X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,214 +76,320 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-On 7/31/23 16:18, Christian Brauner wrote:
-> On Mon, Jul 31, 2023 at 02:02:25AM +0800, Hao Xu wrote:
->> Hi Christian,
+
+在 2023/7/29 23:15, Darrick J. Wong 写道:
+> On Thu, Jun 29, 2023 at 04:16:51PM +0800, Shiyang Ruan wrote:
+>> This patch is inspired by Dan's "mm, dax, pmem: Introduce
+>> dev_pagemap_failure()"[1].  With the help of dax_holder and
+>> ->notify_failure() mechanism, the pmem driver is able to ask filesystem
+>> on it to unmap all files in use, and notify processes who are using
+>> those files.
 >>
->> On 7/27/23 22:27, Christian Brauner wrote:
->>> On Thu, Jul 27, 2023 at 07:51:19PM +0800, Hao Xu wrote:
->>>> On 7/26/23 23:00, Christian Brauner wrote:
->>>>> On Tue, Jul 18, 2023 at 09:21:10PM +0800, Hao Xu wrote:
->>>>>> From: Hao Xu <howeyxu@tencent.com>
->>>>>>
->>>>>> This add support for getdents64 to io_uring, acting exactly like the
->>>>>> syscall: the directory is iterated from it's current's position as
->>>>>> stored in the file struct, and the file's position is updated exactly as
->>>>>> if getdents64 had been called.
->>>>>>
->>>>>> For filesystems that support NOWAIT in iterate_shared(), try to use it
->>>>>> first; if a user already knows the filesystem they use do not support
->>>>>> nowait they can force async through IOSQE_ASYNC in the sqe flags,
->>>>>> avoiding the need to bounce back through a useless EAGAIN return.
->>>>>>
->>>>>> Co-developed-by: Dominique Martinet <asmadeus@codewreck.org>
->>>>>> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
->>>>>> Signed-off-by: Hao Xu <howeyxu@tencent.com>
->>>>>> ---
->>>>>>     include/uapi/linux/io_uring.h |  7 +++++
->>>>>>     io_uring/fs.c                 | 55 +++++++++++++++++++++++++++++++++++
->>>>>>     io_uring/fs.h                 |  3 ++
->>>>>>     io_uring/opdef.c              |  8 +++++
->>>>>>     4 files changed, 73 insertions(+)
->>>>>>
->>>>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
->>>>>> index 36f9c73082de..b200b2600622 100644
->>>>>> --- a/include/uapi/linux/io_uring.h
->>>>>> +++ b/include/uapi/linux/io_uring.h
->>>>>> @@ -65,6 +65,7 @@ struct io_uring_sqe {
->>>>>>     		__u32		xattr_flags;
->>>>>>     		__u32		msg_ring_flags;
->>>>>>     		__u32		uring_cmd_flags;
->>>>>> +		__u32		getdents_flags;
->>>>>>     	};
->>>>>>     	__u64	user_data;	/* data to be passed back at completion time */
->>>>>>     	/* pack this to avoid bogus arm OABI complaints */
->>>>>> @@ -235,6 +236,7 @@ enum io_uring_op {
->>>>>>     	IORING_OP_URING_CMD,
->>>>>>     	IORING_OP_SEND_ZC,
->>>>>>     	IORING_OP_SENDMSG_ZC,
->>>>>> +	IORING_OP_GETDENTS,
->>>>>>     	/* this goes last, obviously */
->>>>>>     	IORING_OP_LAST,
->>>>>> @@ -273,6 +275,11 @@ enum io_uring_op {
->>>>>>      */
->>>>>>     #define SPLICE_F_FD_IN_FIXED	(1U << 31) /* the last bit of __u32 */
->>>>>> +/*
->>>>>> + * sqe->getdents_flags
->>>>>> + */
->>>>>> +#define IORING_GETDENTS_REWIND	(1U << 0)
->>>>>> +
->>>>>>     /*
->>>>>>      * POLL_ADD flags. Note that since sqe->poll_events is the flag space, the
->>>>>>      * command flags for POLL_ADD are stored in sqe->len.
->>>>>> diff --git a/io_uring/fs.c b/io_uring/fs.c
->>>>>> index f6a69a549fd4..480f25677fed 100644
->>>>>> --- a/io_uring/fs.c
->>>>>> +++ b/io_uring/fs.c
->>>>>> @@ -47,6 +47,13 @@ struct io_link {
->>>>>>     	int				flags;
->>>>>>     };
->>>>>> +struct io_getdents {
->>>>>> +	struct file			*file;
->>>>>> +	struct linux_dirent64 __user	*dirent;
->>>>>> +	unsigned int			count;
->>>>>> +	int				flags;
->>>>>> +};
->>>>>> +
->>>>>>     int io_renameat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>>>>     {
->>>>>>     	struct io_rename *ren = io_kiocb_to_cmd(req, struct io_rename);
->>>>>> @@ -291,3 +298,51 @@ void io_link_cleanup(struct io_kiocb *req)
->>>>>>     	putname(sl->oldpath);
->>>>>>     	putname(sl->newpath);
->>>>>>     }
->>>>>> +
->>>>>> +int io_getdents_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>>>> +{
->>>>>> +	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
->>>>>> +
->>>>>> +	if (READ_ONCE(sqe->off) != 0)
->>>>>> +		return -EINVAL;
->>>>>> +
->>>>>> +	gd->dirent = u64_to_user_ptr(READ_ONCE(sqe->addr));
->>>>>> +	gd->count = READ_ONCE(sqe->len);
->>>>>> +
->>>>>> +	return 0;
->>>>>> +}
->>>>>> +
->>>>>> +int io_getdents(struct io_kiocb *req, unsigned int issue_flags)
->>>>>> +{
->>>>>> +	struct io_getdents *gd = io_kiocb_to_cmd(req, struct io_getdents);
->>>>>> +	struct file *file = req->file;
->>>>>> +	unsigned long getdents_flags = 0;
->>>>>> +	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
->>>>> Hm, I'm not sure what exactly the rules are for IO_URING_F_NONBLOCK.
->>>>> But to point this out:
->>>>>
->>>>> vfs_getdents()
->>>>> -> iterate_dir()
->>>>>       {
->>>>>            if (shared)
->>>>>                    res = down_read_killable(&inode->i_rwsem);
->>>>>            else
->>>>>                    res = down_write_killable(&inode->i_rwsem);
->>>>>       }
->>>>>
->>>>> which means you can still end up sleeping here before you go into a
->>>>> filesystem that does actually support non-waiting getdents. So if you
->>>>> have concurrent operations that grab inode lock (touch, mkdir etc) you
->>>>> can end up sleeping here.
->>>>>
->>>>> Is that intentional or an oversight? If the former can someone please
->>>>> explain the rules and why it's fine in this case?
->>>> I actually saw this semaphore, and there is another xfs lock in
->>>> file_accessed
->>>>     --> touch_atime
->>>>       --> inode_update_time
->>>>         --> inode->i_op->update_time == xfs_vn_update_time
->>>>
->>>> Forgot to point them out in the cover-letter..., I didn't modify them
->>>> since I'm not very sure about if we should do so, and I saw Stefan's
->>>> patchset didn't modify them too.
->>>>
->>>> My personnal thinking is we should apply trylock logic for this
->>>> inode->i_rwsem. For xfs lock in touch_atime, we should do that since it
->>>> doesn't make sense to rollback all the stuff while we are almost at the
->>>> end of getdents because of a lock.
->>> That manoeuvres around the problem. Which I'm slightly more sensitive
->>> too as this review is a rather expensive one.
->>>
->>> Plus, it seems fixable in at least two ways:
->>>
->>> For both we need to be able to tell the filesystem that a nowait atime
->>> update is requested. Simple thing seems to me to add a S_NOWAIT flag to
->>> file_time_flags and passing that via i_op->update_time() which already
->>> has a flag argument. That would likely also help kiocb_modified().
->>>
->>> file_accessed()
->>> -> touch_atime()
->>>      -> inode_update_time()
->>>         -> i_op->update_time == xfs_vn_update_time()
->>>
->>> Then we have two options afaict:
->>>
->>> (1) best-effort atime update
->>>
->>> file_accessed() already has the builtin assumption that updating atime
->>> might fail for other reasons - see the comment in there. So it is
->>> somewhat best-effort already.
->>>
->>> (2) move atime update before calling into filesystem
->>>
->>> If we want to be sure that access time is updated when a readdir request
->>> is issued through io_uring then we need to have file_accessed() give a
->>> return value and expose a new helper for io_uring or modify
->>> vfs_getdents() to do something like:
->>>
->>> vfs_getdents()
->>> {
->>> 	if (nowait)
->>> 		down_read_trylock()
->>>
->>> 	if (!IS_DEADDIR(inode)) {
->>> 		ret = file_accessed(file);
->>> 		if (ret == -EAGAIN)
->>> 			goto out_unlock;
->>>
->>> 		f_op->iterate_shared()
->>> 	}
->>> }
->>>
->>> It's not unprecedented to do update atime before the actual operation
->>> has been done afaict. That's already the case in xfs_file_write_checks()
->>> which is called before anything is written. So that seems ok.
->> I'm not familiar with this part(the time update), I guess we should
->> revert the updated time if we succeed to do file_accessed(file) but
->> fail somewhere later in f_op->iterate_shared()? Or is it definitely
->> counted as an "access" as long as we start to call getdents to a file?
-> To answer that you can simply take a look at readdir rn
->
-> res = -ENOENT;
-> if (!IS_DEADDIR(inode)) {
->          ctx->pos = file->f_pos;
->          if (shared)
->                  res = file->f_op->iterate_shared(file, ctx);
->          else
->                  res = file->f_op->iterate(file, ctx);
->          file->f_pos = ctx->pos;
->          fsnotify_access(file);
->          file_accessed(file);
-> }
->
-> Also, I've said this before: touch_atime() is currently best effort. It
-> may fail for any kind of reason.
+>> Call trace:
+>> trigger unbind
+>>   -> unbind_store()
+>>    -> ... (skip)
+>>     -> devres_release_all()
+>>      -> kill_dax()
+>>       -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
+>>        -> xfs_dax_notify_failure()
+>>        `-> freeze_super()             // freeze (kernel call)
+>>        `-> do xfs rmap
+>>        ` -> mf_dax_kill_procs()
+>>        `  -> collect_procs_fsdax()    // all associated processes
+>>        `  -> unmap_and_kill()
+>>        ` -> invalidate_inode_pages2_range() // drop file's cache
+>>        `-> thaw_super()               // thaw (both kernel & user call)
+>>
+>> Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
+>> event.  Use the exclusive freeze/thaw[2] to lock the filesystem to prevent
+>> new dax mapping from being created.  Do not shutdown filesystem directly
+>> if configuration is not supported, or if failure range includes metadata
+>> area.  Make sure all files and processes(not only the current progress)
+>> are handled correctly.  Also drop the cache of associated files before
+>> pmem is removed.
+>>
+>> [1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
+>> [2]: https://lore.kernel.org/linux-xfs/168688010689.860947.1788875898367401950.stgit@frogsfrogsfrogs/
+>>
+>> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+>> ---
+>>   drivers/dax/super.c         |  3 +-
+>>   fs/xfs/xfs_notify_failure.c | 86 ++++++++++++++++++++++++++++++++++---
+>>   include/linux/mm.h          |  1 +
+>>   mm/memory-failure.c         | 17 ++++++--
+>>   4 files changed, 96 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+>> index c4c4728a36e4..2e1a35e82fce 100644
+>> --- a/drivers/dax/super.c
+>> +++ b/drivers/dax/super.c
+>> @@ -323,7 +323,8 @@ void kill_dax(struct dax_device *dax_dev)
+>>   		return;
+>>   
+>>   	if (dax_dev->holder_data != NULL)
+>> -		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
+>> +		dax_holder_notify_failure(dax_dev, 0, U64_MAX,
+>> +				MF_MEM_PRE_REMOVE);
+>>   
+>>   	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
+>>   	synchronize_srcu(&dax_srcu);
+>> diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
+>> index 4a9bbd3fe120..f6ec56b76db6 100644
+>> --- a/fs/xfs/xfs_notify_failure.c
+>> +++ b/fs/xfs/xfs_notify_failure.c
+>> @@ -22,6 +22,7 @@
+>>   
+>>   #include <linux/mm.h>
+>>   #include <linux/dax.h>
+>> +#include <linux/fs.h>
+>>   
+>>   struct xfs_failure_info {
+>>   	xfs_agblock_t		startblock;
+>> @@ -73,10 +74,16 @@ xfs_dax_failure_fn(
+>>   	struct xfs_mount		*mp = cur->bc_mp;
+>>   	struct xfs_inode		*ip;
+>>   	struct xfs_failure_info		*notify = data;
+>> +	struct address_space		*mapping;
+>> +	pgoff_t				pgoff;
+>> +	unsigned long			pgcnt;
+>>   	int				error = 0;
+>>   
+>>   	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
+>>   	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
+>> +		/* Continue the query because this isn't a failure. */
+>> +		if (notify->mf_flags & MF_MEM_PRE_REMOVE)
+>> +			return 0;
+>>   		notify->want_shutdown = true;
+>>   		return 0;
+>>   	}
+>> @@ -92,14 +99,55 @@ xfs_dax_failure_fn(
+>>   		return 0;
+>>   	}
+>>   
+>> -	error = mf_dax_kill_procs(VFS_I(ip)->i_mapping,
+>> -				  xfs_failure_pgoff(mp, rec, notify),
+>> -				  xfs_failure_pgcnt(mp, rec, notify),
+>> -				  notify->mf_flags);
+>> +	mapping = VFS_I(ip)->i_mapping;
+>> +	pgoff = xfs_failure_pgoff(mp, rec, notify);
+>> +	pgcnt = xfs_failure_pgcnt(mp, rec, notify);
+>> +
+>> +	/* Continue the rmap query if the inode isn't a dax file. */
+>> +	if (dax_mapping(mapping))
+>> +		error = mf_dax_kill_procs(mapping, pgoff, pgcnt,
+>> +					  notify->mf_flags);
+>> +
+>> +	/* Invalidate the cache in dax pages. */
+>> +	if (notify->mf_flags & MF_MEM_PRE_REMOVE)
+>> +		invalidate_inode_pages2_range(mapping, pgoff,
+>> +					      pgoff + pgcnt - 1);
+>> +
+>>   	xfs_irele(ip);
+>>   	return error;
+>>   }
+>>   
+>> +static void
+>> +xfs_dax_notify_failure_freeze(
+>> +	struct xfs_mount	*mp)
+>> +{
+>> +	struct super_block 	*sb = mp->m_super;
+> 
+> Nit: extra space right    ^ here.
+> 
+>> +
+>> +	/* Wait until no one is holding the FREEZE_HOLDER_KERNEL. */
+>> +	while (freeze_super(sb, FREEZE_HOLDER_KERNEL) != 0) {
+>> +		// Shall we just wait, or print warning then return -EBUSY?
+> 
+> Hm.  PRE_REMOVE gets called before the pmem gets unplugged, right?  So
+> we'll send a second notification after it goes away, right?
+
+For the first question, yes.
+
+But I'm not sure about the second one.  Do you mean: we'll send this 
+notification again if unbind didn't success because freeze_super() 
+returns -EBUSY?  In other words, if the previous unbind operation did 
+not work, we could unbind the device again.
+
+> 
+> If so, then I'd say return the error here instead of looping, and live
+> with a kernel-frozen fs discarding the PRE_REMOVE message.
+> 
+>> +		delay(HZ / 10);
+>> +	}
+>> +}
+>> +
+>> +static void
+>> +xfs_dax_notify_failure_thaw(
+>> +	struct xfs_mount	*mp)
+>> +{
+>> +	struct super_block	*sb = mp->m_super;
+>> +	int			error;
+>> +
+>> +	error = thaw_super(sb, FREEZE_HOLDER_KERNEL);
+>> +	if (error)
+>> +		xfs_emerg(mp, "still frozen after notify failure, err=%d",
+>> +			  error);
+>> +	/*
+>> +	 * Also thaw userspace call anyway because the device is about to be
+>> +	 * removed immediately.
+>> +	 */
+>> +	thaw_super(sb, FREEZE_HOLDER_USERSPACE);
+>> +}
+>> +
+>>   static int
+>>   xfs_dax_notify_ddev_failure(
+>>   	struct xfs_mount	*mp,
+>> @@ -120,7 +168,7 @@ xfs_dax_notify_ddev_failure(
+>>   
+>>   	error = xfs_trans_alloc_empty(mp, &tp);
+>>   	if (error)
+>> -		return error;
+>> +		goto out;
+>>   
+>>   	for (; agno <= end_agno; agno++) {
+>>   		struct xfs_rmap_irec	ri_low = { };
+>> @@ -165,11 +213,23 @@ xfs_dax_notify_ddev_failure(
+>>   	}
+>>   
+>>   	xfs_trans_cancel(tp);
+>> +
+>> +	/*
+>> +	 * Determine how to shutdown the filesystem according to the
+>> +	 * error code and flags.
+>> +	 */
+>>   	if (error || notify.want_shutdown) {
+>>   		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+>>   		if (!error)
+>>   			error = -EFSCORRUPTED;
+>> -	}
+>> +	} else if (mf_flags & MF_MEM_PRE_REMOVE)
+>> +		xfs_force_shutdown(mp, SHUTDOWN_FORCE_UMOUNT);
+>> +
+>> +out:
+>> +	/* Thaw the fs if it is freezed before. */
+>> +	if (mf_flags & MF_MEM_PRE_REMOVE)
+>> +		xfs_dax_notify_failure_thaw(mp);
+> 
+> _thaw should be called from the same function that called _freeze.
+
+Will fix this.
+
+> 
+> The rest of the patch seems ok to me.
+
+Thank you!
 
 
-Gotcha, I checked the code and I think you are right, time updates
+--
+Ruan.
 
-even the fop->iterate() quits at the very beginning. I'll move 
-file_accessed(file)
-
-to before f_op->the iterate(). Thanks.
-
-
+> 
+> --D
+> 
+>> +
+>>   	return error;
+>>   }
+>>   
+>> @@ -197,6 +257,8 @@ xfs_dax_notify_failure(
+>>   
+>>   	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
+>>   	    mp->m_logdev_targp != mp->m_ddev_targp) {
+>> +		if (mf_flags & MF_MEM_PRE_REMOVE)
+>> +			return 0;
+>>   		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
+>>   		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+>>   		return -EFSCORRUPTED;
+>> @@ -210,6 +272,12 @@ xfs_dax_notify_failure(
+>>   	ddev_start = mp->m_ddev_targp->bt_dax_part_off;
+>>   	ddev_end = ddev_start + bdev_nr_bytes(mp->m_ddev_targp->bt_bdev) - 1;
+>>   
+>> +	/* Notify failure on the whole device. */
+>> +	if (offset == 0 && len == U64_MAX) {
+>> +		offset = ddev_start;
+>> +		len = bdev_nr_bytes(mp->m_ddev_targp->bt_bdev);
+>> +	}
+>> +
+>>   	/* Ignore the range out of filesystem area */
+>>   	if (offset + len - 1 < ddev_start)
+>>   		return -ENXIO;
+>> @@ -226,6 +294,12 @@ xfs_dax_notify_failure(
+>>   	if (offset + len - 1 > ddev_end)
+>>   		len = ddev_end - offset + 1;
+>>   
+>> +	if (mf_flags & MF_MEM_PRE_REMOVE) {
+>> +		xfs_info(mp, "device is about to be removed!");
+>> +		/* Freeze fs to prevent new mappings from being created. */
+>> +		xfs_dax_notify_failure_freeze(mp);
+>> +	}
+>> +
+>>   	return xfs_dax_notify_ddev_failure(mp, BTOBB(offset), BTOBB(len),
+>>   			mf_flags);
+>>   }
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index 27ce77080c79..a80c255b88d2 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -3576,6 +3576,7 @@ enum mf_flags {
+>>   	MF_UNPOISON = 1 << 4,
+>>   	MF_SW_SIMULATED = 1 << 5,
+>>   	MF_NO_RETRY = 1 << 6,
+>> +	MF_MEM_PRE_REMOVE = 1 << 7,
+>>   };
+>>   int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+>>   		      unsigned long count, int mf_flags);
+>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+>> index 5b663eca1f29..483b75f2fcfb 100644
+>> --- a/mm/memory-failure.c
+>> +++ b/mm/memory-failure.c
+>> @@ -688,7 +688,7 @@ static void add_to_kill_fsdax(struct task_struct *tsk, struct page *p,
+>>    */
+>>   static void collect_procs_fsdax(struct page *page,
+>>   		struct address_space *mapping, pgoff_t pgoff,
+>> -		struct list_head *to_kill)
+>> +		struct list_head *to_kill, bool pre_remove)
+>>   {
+>>   	struct vm_area_struct *vma;
+>>   	struct task_struct *tsk;
+>> @@ -696,8 +696,15 @@ static void collect_procs_fsdax(struct page *page,
+>>   	i_mmap_lock_read(mapping);
+>>   	read_lock(&tasklist_lock);
+>>   	for_each_process(tsk) {
+>> -		struct task_struct *t = task_early_kill(tsk, true);
+>> +		struct task_struct *t = tsk;
+>>   
+>> +		/*
+>> +		 * Search for all tasks while MF_MEM_PRE_REMOVE, because the
+>> +		 * current may not be the one accessing the fsdax page.
+>> +		 * Otherwise, search for the current task.
+>> +		 */
+>> +		if (!pre_remove)
+>> +			t = task_early_kill(tsk, true);
+>>   		if (!t)
+>>   			continue;
+>>   		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
+>> @@ -1793,6 +1800,7 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+>>   	dax_entry_t cookie;
+>>   	struct page *page;
+>>   	size_t end = index + count;
+>> +	bool pre_remove = mf_flags & MF_MEM_PRE_REMOVE;
+>>   
+>>   	mf_flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
+>>   
+>> @@ -1804,9 +1812,10 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+>>   		if (!page)
+>>   			goto unlock;
+>>   
+>> -		SetPageHWPoison(page);
+>> +		if (!pre_remove)
+>> +			SetPageHWPoison(page);
+>>   
+>> -		collect_procs_fsdax(page, mapping, index, &to_kill);
+>> +		collect_procs_fsdax(page, mapping, index, &to_kill, pre_remove);
+>>   		unmap_and_kill(&to_kill, page_to_pfn(page), mapping,
+>>   				index, mf_flags);
+>>   unlock:
+>> -- 
+>> 2.40.1
+>>
