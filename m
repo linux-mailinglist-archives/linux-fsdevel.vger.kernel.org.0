@@ -2,45 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 709FA769894
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jul 2023 15:56:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07F4276989B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jul 2023 15:57:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233077AbjGaN4r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Jul 2023 09:56:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43192 "EHLO
+        id S233110AbjGaN5K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Jul 2023 09:57:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232545AbjGaNzp (ORCPT
+        with ESMTP id S231679AbjGaN4o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Jul 2023 09:55:45 -0400
+        Mon, 31 Jul 2023 09:56:44 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 062F3210C;
-        Mon, 31 Jul 2023 06:53:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C73A3588;
+        Mon, 31 Jul 2023 06:53:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CB85561154;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ED9056115C;
+        Mon, 31 Jul 2023 13:53:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADDCDC433CB;
         Mon, 31 Jul 2023 13:53:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 909DCC433C9;
-        Mon, 31 Jul 2023 13:53:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690811604;
-        bh=H5XnWdFwxjuGxEH72kUlpbP8cfBTQj97MLlaTYR448U=;
+        s=k20201202; t=1690811610;
+        bh=6C9vpUKzxaC1YPufnnUpE8qHeuHqYjFB9iVUxK25t6w=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=nZYlPhlhjG2e1wEUfCei062MQ6Dbl9MfpeOxtlNby3v0voK/nj7N+EFE43JqQL5Wj
-         Hs+p8A2tPXTny2c0NtxjgW+c3M4oxb4wc8WIG7tYH0TvYSaeNibc+wtlNZb6m0eiZT
-         nITyOLlHdb1kCbgDuYgvG03K/DJCPIPSYtvfOgAj83T2kpc5aXM4HJ5jgHB5TEFg0T
-         6b2UTVk00oNA8JYYQ0yH6C0pGGkSz8r/rnHteFUub/w194oCNRHAYv+MI9Oe856TNL
-         qn9c0Dtz3rc7tjgn/VHNe7PhELqGqzPCzLAepLqr16IwopZhGucEbInKA25AVHiUtN
-         8fRP8D8j3smag==
+        b=UZFz5zJl1rGYE8fD7JHP53kzdgO69dJ63VOmzz7bUb0LRuW6i+ZcOMuBP5jDkeRes
+         0opKxX8qDYyU7cowwofSW23tP91yr2be4yytxli0fu8+qJNaTuoP6yXPE0BzQ/2HJd
+         btw9ri7qVDKqBxG9CDZa4sEC+7NsK9s1eXRoR4LIR9/02JoljenLgYA+nviZBBpIy5
+         3WFlQYKikMTaZRg8oZMHE5jqtdU5WWNcGod+fL1x8b5uRW6F3CV5PNvRD/qGhWtYMe
+         LA9Lwu0Uo9+P//db7CjlsLxsv3amgMixYWOFazIc1PJp2o1GXXEZWoko+CJfn3Bb3w
+         3CdSUM0Hussmg==
 From:   Mark Brown <broonie@kernel.org>
-Date:   Mon, 31 Jul 2023 14:43:34 +0100
-Subject: [PATCH v3 25/36] arm64: Add Kconfig for Guarded Control Stack
- (GCS)
+Date:   Mon, 31 Jul 2023 14:43:35 +0100
+Subject: [PATCH v3 26/36] kselftest/arm64: Verify the GCS hwcap
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230731-arm64-gcs-v3-25-cddf9f980d98@kernel.org>
+Message-Id: <20230731-arm64-gcs-v3-26-cddf9f980d98@kernel.org>
 References: <20230731-arm64-gcs-v3-0-cddf9f980d98@kernel.org>
 In-Reply-To: <20230731-arm64-gcs-v3-0-cddf9f980d98@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
@@ -69,15 +68,15 @@ Cc:     "H.J. Lu" <hjl.tools@gmail.com>,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-099c9
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1334; i=broonie@kernel.org;
- h=from:subject:message-id; bh=H5XnWdFwxjuGxEH72kUlpbP8cfBTQj97MLlaTYR448U=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBkx7wnodnwjqoZK4muIg3jEUoRCGxezol4tgSrjmCI
- O795jHiJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZMe8JwAKCRAk1otyXVSH0MnuB/
- sHfu5/n7b6sDdSTxDSHao/3yji1/B37g5tOzIcJILXPiDb3SHONtPUBN5opqReBE9DQcr+x0YI6Rkk
- jaJ4E5v3rXaHapeBP61QyIUI/8IIT146hHME6uvN2U4/budEmwshhRg+fRdusyAq2/VBIHsG0KX1da
- LZ099j1sMmvrMIKOrT2bpG0z98HXoIu3bz57PbEyiABWyHtIDeXiKt/QIStz4OVQ9hWYFZBjfNlzZa
- 6/4cBlW8YGgvKS16rKNTxnMLDhROElcWbnnfxdNpw4VknEPzhsdrkvkHTxnQ4zLcFoeC4yl/NW7Swa
- c8XQF5EFbcdiyln3+fENM9B7tSzFF8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1205; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=6C9vpUKzxaC1YPufnnUpE8qHeuHqYjFB9iVUxK25t6w=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBkx7wotwwlH/8oWbi9bhoozQqb9Mmh8Aqb/FKJVt4Z
+ qCjBxyGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZMe8KAAKCRAk1otyXVSH0IsnB/
+ 9tm+woi16lWLPQgMUT4tC/eRXlObR5g86WJCuPogQIpgBdTwwdKYR98ce07K6N7QDtvGAeT+3D7cTe
+ JwbWzUZOYAUDAbdVuM2yT2WvrhhTVVromril0fKmh5LaOewRZNej29XwphRZ168nYzkX0jaCK1z6/5
+ KzEm388tMfPmjOVOtet36gYdjmnBWBSD79CpbZUDTtk2Ld5YvAfo01QDVQde95o1Bhp2d8AFYXkUv2
+ uzEGsFfsW6vn3HxjeNQxJYuDfaHcq/wCJPt+3WGavHLwqClwxZLMG11kK+ZbZpSL/0sJmUeHkQ6CRM
+ nb0Zdkh3/BvB5mcAUTCYuK6uO6A/F8
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -90,44 +89,51 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provide a Kconfig option allowing the user to select if GCS support is
-built into the kernel.
+Add coverage of the GCS hwcap to the hwcap selftest, using a read of
+GCSPR_EL0 to generate SIGILL without having to worry about enabling GCS.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/Kconfig | 19 +++++++++++++++++++
+ tools/testing/selftests/arm64/abi/hwcap.c | 19 +++++++++++++++++++
  1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index a2511b30d0f6..b5ef1a698770 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -2093,6 +2093,25 @@ config ARM64_EPAN
- 	  if the cpu does not implement the feature.
- endmenu # "ARMv8.7 architectural features"
+diff --git a/tools/testing/selftests/arm64/abi/hwcap.c b/tools/testing/selftests/arm64/abi/hwcap.c
+index d4ad813fed10..38844e4c5aae 100644
+--- a/tools/testing/selftests/arm64/abi/hwcap.c
++++ b/tools/testing/selftests/arm64/abi/hwcap.c
+@@ -39,6 +39,17 @@ static void cssc_sigill(void)
+ 	asm volatile(".inst 0xdac01c00" : : : "x0");
+ }
  
-+menu "v9.4 architectural features"
++static void gcs_sigill(void)
++{
++	unsigned long *gcspr;
 +
-+config ARM64_GCS
-+	bool "Enable support for Guarded Control Stack (GCS)"
-+	default y
-+	select ARCH_USES_HIGH_VMA_FLAGS
-+	help
-+	  Guarded Control Stack (GCS) provides support for a separate
-+	  stack with restricted access which contains only return
-+	  addresses.  This can be used to harden against some attacks
-+	  by comparing return address used by the program with what is
-+	  stored in the GCS, and may also be used to efficiently obtain
-+	  the call stack for applications such as profiling.
++	asm volatile(
++		"mrs	%0, S3_3_C2_C5_1"
++	: "=r" (gcspr)
++	:
++	: "cc");
++}
 +
-+	  The feature is detected at runtime, and will remain disabled
-+	  if the system does not implement the feature.
-+
-+endmenu # "v9.4 architectural features"
-+
- config ARM64_SVE
- 	bool "ARM Scalable Vector Extension support"
- 	default y
+ static void mops_sigill(void)
+ {
+ 	char dst[1], src[1];
+@@ -223,6 +234,14 @@ static const struct hwcap_data {
+ 		.cpuinfo = "cssc",
+ 		.sigill_fn = cssc_sigill,
+ 	},
++	{
++		.name = "GCS",
++		.at_hwcap = AT_HWCAP2,
++		.hwcap_bit = HWCAP2_GCS,
++		.cpuinfo = "gcs",
++		.sigill_fn = gcs_sigill,
++		.sigill_reliable = true,
++	},
+ 	{
+ 		.name = "MOPS",
+ 		.at_hwcap = AT_HWCAP2,
 
 -- 
 2.30.2
