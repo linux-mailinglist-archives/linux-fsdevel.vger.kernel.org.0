@@ -2,114 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9551776933E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jul 2023 12:37:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05E2E76935E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jul 2023 12:46:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231654AbjGaKhV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Jul 2023 06:37:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34758 "EHLO
+        id S229895AbjGaKq2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Jul 2023 06:46:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231160AbjGaKhU (ORCPT
+        with ESMTP id S229510AbjGaKq1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Jul 2023 06:37:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEE5A116;
-        Mon, 31 Jul 2023 03:37:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Mon, 31 Jul 2023 06:46:27 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FFB51A7;
+        Mon, 31 Jul 2023 03:46:25 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5254161010;
-        Mon, 31 Jul 2023 10:37:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D215C433CA;
-        Mon, 31 Jul 2023 10:37:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690799838;
-        bh=lJ7MT4bJu2hu3urRd/Dbw246g9KASNJ/qHtB4F8RXmQ=;
-        h=From:Date:Subject:To:Cc:From;
-        b=tISq/f6v43e3jjDYLST9tQBKzSkvT6rZZX3CIh1tQsKXQETYs2Psdq/oJn4Izx3aC
-         HAYS2xyqB06hectAasWILRxyX+QHk0UiUgtrDeAuGGEfhu/0msy5/aejrGTVY31ol+
-         mwzM3KrpBPVURfkrtIo+PSLHnU6DZAyObGrEAyOgEqY8EwvhPLP3wYOHxlFGz0rdHF
-         T+kUuyvD/fNsKNd0w+h53JaBkW3Zpr1YfhTTM208nBRVfGsPoDlN4rrmR1gBnqF6+d
-         41oyrnIbjJ4fEoRS3DyR2emCuu17pMZpzVEoG9xmbxJgMSMNZExo+j6jMx5ysQycPz
-         AOKC0n9sty0Tw==
-From:   Jeff Layton <jlayton@kernel.org>
-Date:   Mon, 31 Jul 2023 06:37:10 -0400
-Subject: [PATCH] fs: fix request_mask variable in generic_fillattr
- kerneldoc comment
+        by smtp-out2.suse.de (Postfix) with ESMTPS id CF64C1F385;
+        Mon, 31 Jul 2023 10:46:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1690800383; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=A4Z9iV8WUq8OgKp1VPZMtqr/fdl1VBql1c/Mb0w5bXo=;
+        b=Exj3kmfQTKCKpyIZnjdm9Mvz5gBVaux+NQ6wJw5l7I7rO3L4maLcSiuzI2p7Q49IBMjetL
+        xe/MgKMLgGJtpRwvOslM6mLQQujpQPOcqs/XyjVIehZ+ZSbLNMDJPVw0mXY1GidYtYVxz8
+        C1A0i0a9YpceiH1Z58NOjfTiBXIuwvs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1690800383;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=A4Z9iV8WUq8OgKp1VPZMtqr/fdl1VBql1c/Mb0w5bXo=;
+        b=h0sQyUjlm33c+qAKcpveXNGpf70sdzLYqGQ7a1iNdlCd37LicU72PtLA0VpXiauhLfiXN0
+        dPr7yXhCsG53prDA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 220C7133F7;
+        Mon, 31 Jul 2023 10:46:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id z0FUB/+Qx2RKZAAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Mon, 31 Jul 2023 10:46:23 +0000
+Message-ID: <703da7eb-d08a-3eca-1b98-b5895e41d53b@suse.cz>
+Date:   Mon, 31 Jul 2023 12:46:22 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Subject: Re: [RFC PATCH v11 11/29] security: Export
+ security_inode_init_security_anon() for use by KVM
+To:     Sean Christopherson <seanjc@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+        linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20230718234512.1690985-1-seanjc@google.com>
+ <20230718234512.1690985-12-seanjc@google.com>
+Content-Language: en-US
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20230718234512.1690985-12-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230731-mgctime-v1-1-1aa1177841ed@kernel.org>
-X-B4-Tracking: v=1; b=H4sIANWOx2QC/2XMQQ7CIBCF4as0sxYzoER05T1MFxamdKIFAw3RN
- Nxd7Nbl//LyrZApMWW4dCskKpw5hhZy14Gd7sGTYNcaFKoDnpQRs7cLzyQ0IVkkcx7wCO39SjT
- ye5NufeuJ8xLTZ4OL/K3/RpFCCj2gc1a7EQ1dH5QCPfcxeehrrV9rABDUnwAAAA==
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1213; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=lJ7MT4bJu2hu3urRd/Dbw246g9KASNJ/qHtB4F8RXmQ=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBkx47dZqxZqKAsq3dR+RDaPXQoZW/P0bPFs17zP
- d2ivCmQ1tCJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZMeO3QAKCRAADmhBGVaC
- FWrZD/9JHoNFKPIdUfkqOjNKpk3LAuraEW3w9gUJAJ4IxkHaIMNpRot4fn6p9Mp9bRY1rmnhuh1
- L45oSgbZLDlqbPf+ZghDl/m0+CcG6UsUErh6s7yOleaHpuocb30axGZ09rt8JAym9QgtjJWL4s2
- wNXb+Dc56xcrgY78bqmMKrWaqmEB/JvaR+n9DrjCtvyXph9qWLouE0/cafQ0KA03KZJGYsrZBzU
- aQFSGpghriTxu7Ii3APqsIrdVOeU+tSbQJyXsu3YxW0onx7ShrTp5tJ2n7xC3mqYl6A0ON/pK6j
- if3Gk4B2/UCIQOerikNCyC/UuRexDeagtpqIv0ja7UD4eimz0/cNo4FzVSzbQdVzUSxjnt8HHeG
- YcKxJ1tA6mIbgfJs2IBUrfdSc6/YX/Sr7YIJ3j5rGM5SLteMnLdK62qhi7pOAJqXjYs/p0Ees/N
- 3yHP5yUlyXLPOx34pfzFGJGepWNx1eECtrSNrU5y83Pz8pZvjCq2ss2+VzE8h/RAPIle9s9NMen
- fAfT+nk/TE6Xqb9T2iVefakxwtvv2dZAI5VzKCRYVWw5EITqyTQEBbDbn1TGinCTfBNWOiDeCwN
- 3lxeIT5v6fy3yHriVftzOcu1I9G+qFxLg3DOQcYNc+3yF0cjGOHBlIoj1CTnyCwwJ6wPpmbJQOl
- jEm7ZbfSq3Hl9Zg==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-req_mask -> request_mask
+On 7/19/23 01:44, Sean Christopherson wrote:
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Fixes: 0a6ab6dc6958 ("fs: pass the request_mask to generic_fillattr")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/stat.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Process wise this will probably be frowned upon when done separately, so I'd
+fold it in the patch using the export, seems to be the next one.
 
-diff --git a/fs/stat.c b/fs/stat.c
-index 51effd1c2bc2..592b62d577b6 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -59,10 +59,10 @@ EXPORT_SYMBOL(fill_mg_cmtime);
- 
- /**
-  * generic_fillattr - Fill in the basic attributes from the inode struct
-- * @idmap:	idmap of the mount the inode was found from
-- * @req_mask	statx request_mask
-- * @inode:	Inode to use as the source
-- * @stat:	Where to fill in the attributes
-+ * @idmap:		idmap of the mount the inode was found from
-+ * @request_mask	statx request_mask
-+ * @inode:		Inode to use as the source
-+ * @stat:		Where to fill in the attributes
-  *
-  * Fill in the basic attributes in the kstat structure from data that's to be
-  * found on the VFS inode structure.  This is the default if no getattr inode
-
----
-base-commit: dec705a2d44a306ca3502dd34ccfe8d8ffd79537
-change-id: 20230728-mgctime-5e0ec0e89b04
-
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
+> ---
+>  security/security.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/security/security.c b/security/security.c
+> index b720424ca37d..7fc78f0f3622 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1654,6 +1654,7 @@ int security_inode_init_security_anon(struct inode *inode,
+>  	return call_int_hook(inode_init_security_anon, 0, inode, name,
+>  			     context_inode);
+>  }
+> +EXPORT_SYMBOL_GPL(security_inode_init_security_anon);
+>  
+>  #ifdef CONFIG_SECURITY_PATH
+>  /**
 
