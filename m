@@ -2,222 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F036A76A0C0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jul 2023 21:01:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC2FD76A0D8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jul 2023 21:07:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231190AbjGaTBJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Jul 2023 15:01:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41348 "EHLO
+        id S231411AbjGaTHa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Jul 2023 15:07:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230179AbjGaTBH (ORCPT
+        with ESMTP id S231465AbjGaTH0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Jul 2023 15:01:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1DC31711
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Jul 2023 12:00:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690830012;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=LRN4iXZUggA9gxv0XWtRGIRu1LUQCEe4QBtdGPEZ4EM=;
-        b=YgaPBcyb7eOXxyQ73Duqrrww7fHt1lWv0QZcXRBAYmtN9Vo3OvYdADSC+NTukm1EcW49qo
-        6aXIVqeA6VesKMWk95JWF8tgzD5K+4TX2asjcacKsp8MDfIJJW8Gwrxuy9kO4AvoRVW5r5
-        NjDuqqxpWN0fFuMe+5+Fj3iCgryImZ4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-76-X1L8jTU9N_idIbIkVx3mjw-1; Mon, 31 Jul 2023 15:00:09 -0400
-X-MC-Unique: X1L8jTU9N_idIbIkVx3mjw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-3fe2477947eso4616645e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Jul 2023 12:00:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690830008; x=1691434808;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :references:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LRN4iXZUggA9gxv0XWtRGIRu1LUQCEe4QBtdGPEZ4EM=;
-        b=cZhvq4tdP/dQwhqxJI2UVk0oCNVtfGBAsyBWKCQBddZ/PL3k9M4G4OTYa2ARSsGwtQ
-         Vk2dF/N5xBuqjTblee/vcualTx3An6lauIxK7T8eh5ma/fBgpzvZKpUOOrnq3Azs8aUp
-         Iek46MCkjA1KuQzcqT29pJ2rv96kIeJ22JxZTab24gbf6jagwGWSziktoPcynq5y3SJl
-         OwTKDJaNmmE4xZOjpjOf0WC/vkMg9iOpZTj2HaadddGP7HlaUvAs/WgoyBZc1vIh6w+f
-         HtWB3fCsjKZcQPdrt7bHLNpYyWllaFdFvX08GAzRsvQWmZLAIzUyN6iAXu/gLVHiRBns
-         l6Pg==
-X-Gm-Message-State: ABy/qLb2ZTNZvPdfBMhx/mYjcIwj+kJOgL6KePE/H++C6jbY24eKTBXU
-        vakwQ8KAOyqJIIHyUw0Yub4KPMwFhmsBhaV11aQSjdpPR1oQfxuT+oxWbeX4L9p+dXaBe3EuQh0
-        Sgy6uJYLYDlvsZH6Pcj6BmOx8mg==
-X-Received: by 2002:adf:dd8a:0:b0:317:6e62:b124 with SMTP id x10-20020adfdd8a000000b003176e62b124mr423301wrl.18.1690830008404;
-        Mon, 31 Jul 2023 12:00:08 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlFqiX9tpRijhcAmgDWj/xfoH3k7N2YHmd2jP9GAIEyCL0XqSLGXqpeGNftPDRTmLgmfpte+Vg==
-X-Received: by 2002:adf:dd8a:0:b0:317:6e62:b124 with SMTP id x10-20020adfdd8a000000b003176e62b124mr423280wrl.18.1690830007915;
-        Mon, 31 Jul 2023 12:00:07 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c723:4c00:5c85:5575:c321:cea3? (p200300cbc7234c005c855575c321cea3.dip0.t-ipconnect.de. [2003:cb:c723:4c00:5c85:5575:c321:cea3])
-        by smtp.gmail.com with ESMTPSA id z7-20020a5d4407000000b0031766e99429sm13799820wrq.115.2023.07.31.12.00.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Jul 2023 12:00:07 -0700 (PDT)
-Message-ID: <a453d403-fc96-e4a0-71ee-c61d527e70da@redhat.com>
-Date:   Mon, 31 Jul 2023 21:00:06 +0200
+        Mon, 31 Jul 2023 15:07:26 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F0C11BEF;
+        Mon, 31 Jul 2023 12:07:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1C24C61277;
+        Mon, 31 Jul 2023 19:07:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B762C433CA;
+        Mon, 31 Jul 2023 19:07:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690830438;
+        bh=nmClbRXgHNUMiULKcf/Jk+DyC9Yg7VyUEy4VtDl2IjU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qNrewbNAX17gBaT9Awc7kLxyeODJt9zjauiKu558BxEajhl+UBhYRZwqRx6cWeHYn
+         /zuVvbQaNBiuopq/kD+gx3SiMgrrB4MgcqFzkwka4tmMi/XAbA2FIpu1zJo3jHGMFS
+         jhyimOaJ5FACsZvRjzfBSFnEPlg+YWjqbMAHWa9UE/JGz7oIMYGNYBV6v2pi6RxtNy
+         TeakImoXcXW120Qu2jjSuApH00LkcbYkihQNLUz9k0og5rn3y7lNctSODiL9scopmi
+         iB0tVmAKbMsbEb2SJqgvXUVTq2OVJTiNE9RZH6YtQ8C4wGrxz5CbDS2228aNpuQVLk
+         0MIPw+3+S2ZKg==
+Date:   Mon, 31 Jul 2023 21:07:06 +0200
+From:   Simon Horman <horms@kernel.org>
+To:     Joel Granados <joel.granados@gmail.com>
+Cc:     mcgrof@kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Kees Cook <keescook@chromium.org>,
+        "D. Wythe" <alibuda@linux.alibaba.com>, mptcp@lists.linux.dev,
+        Jakub Kicinski <kuba@kernel.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Paolo Abeni <pabeni@redhat.com>, coreteam@netfilter.org,
+        Jan Karcher <jaka@linux.ibm.com>,
+        Alexander Aring <alex.aring@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        bridge@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        Joerg Reuter <jreuter@yaina.de>, Julian Anastasov <ja@ssi.bg>,
+        David Ahern <dsahern@kernel.org>,
+        netfilter-devel@vger.kernel.org, Wen Gu <guwen@linux.alibaba.com>,
+        linux-kernel@vger.kernel.org,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        linux-wpan@vger.kernel.org, lvs-devel@vger.kernel.org,
+        Karsten Graul <kgraul@linux.ibm.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-sctp@vger.kernel.org, Tony Lu <tonylu@linux.alibaba.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Florian Westphal <fw@strlen.de>, willy@infradead.org,
+        Heiko Carstens <hca@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-rdma@vger.kernel.org, Roopa Prabhu <roopa@nvidia.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Mat Martineau <martineau@kernel.org>, josh@joshtriplett.org,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Eric Dumazet <edumazet@google.com>, linux-hams@vger.kernel.org,
+        Wenjia Zhang <wenjia@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org, linux-s390@vger.kernel.org,
+        Xin Long <lucien.xin@gmail.com>,
+        Nikolay Aleksandrov <razor@blackwall.org>,
+        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
+        Joel Granados <j.granados@samsung.com>
+Subject: Re: [PATCH v2 03/14] sysctl: Add ctl_table_size to ctl_table_header
+Message-ID: <ZMgGWm4sT+VqDZ3u@kernel.org>
+References: <20230731071728.3493794-1-j.granados@samsung.com>
+ <20230731071728.3493794-4-j.granados@samsung.com>
+ <ZMf9vZpGE98oM9W2@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        liubo <liubo254@huawei.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mel Gorman <mgorman@suse.de>
-References: <20230727212845.135673-1-david@redhat.com>
- <CAHk-=wiig=N75AGP7UAG9scmghWAqsTB5NRO6RiWLOB5YWfcTQ@mail.gmail.com>
- <412bb30f-0417-802c-3fc4-a4e9d5891c5d@redhat.com>
- <66e26ad5-982e-fe2a-e4cd-de0e552da0ca@redhat.com> <ZMfc9+/44kViqjeN@x1n>
- <a3349cdb-f76f-eb87-4629-9ccba9f435a1@redhat.com>
- <CAHk-=wiREarX5MQx9AppxPzV6jXCCQRs5KVKgHoGYwATRL6nPg@mail.gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH v1 0/4] smaps / mm/gup: fix gup_can_follow_protnone
- fallout
-In-Reply-To: <CAHk-=wiREarX5MQx9AppxPzV6jXCCQRs5KVKgHoGYwATRL6nPg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZMf9vZpGE98oM9W2@kernel.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 31.07.23 20:23, Linus Torvalds wrote:
-> On Mon, 31 Jul 2023 at 09:20, David Hildenbrand <david@redhat.com> wrote:
->>
-
-Hi Linus,
-
->> I modified it slightly: FOLL_HONOR_NUMA_FAULT is now set in
->> is_valid_gup_args(), such that it will always be set for any GUP users,
->> including GUP-fast.
+On Mon, Jul 31, 2023 at 08:30:34PM +0200, Simon Horman wrote:
+> On Mon, Jul 31, 2023 at 09:17:17AM +0200, Joel Granados wrote:
+> > The new ctl_table_size element will hold the size of the ctl_table
+> > arrays contained in the ctl_table_header. This value should eventually
+> > be passed by the callers to the sysctl register infrastructure. And
+> > while this commit introduces the variable, it does not set nor use it
+> > because that requires case by case considerations for each caller.
+> > 
+> > It provides two important things: (1) A place to put the
+> > result of the ctl_table array calculation when it gets introduced for
+> > each caller. And (2) the size that will be used as the additional
+> > stopping criteria in the list_for_each_table_entry macro (to be added
+> > when all the callers are migrated)
+> > 
+> > Signed-off-by: Joel Granados <j.granados@samsung.com>
+> > ---
+> >  include/linux/sysctl.h | 14 ++++++++++++--
+> >  1 file changed, 12 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+> > index 59d451f455bf..33252ad58ebe 100644
+> > --- a/include/linux/sysctl.h
+> > +++ b/include/linux/sysctl.h
+> > @@ -159,12 +159,22 @@ struct ctl_node {
+> >  	struct ctl_table_header *header;
+> >  };
+> >  
+> > -/* struct ctl_table_header is used to maintain dynamic lists of
+> > -   struct ctl_table trees. */
+> > +/**
+> > + * struct ctl_table_header - maintains dynamic lists of struct ctl_table trees
+> > + * @ctl_table: pointer to the first element in ctl_table array
+> > + * @ctl_table_size: number of elements pointed by @ctl_table
+> > + * @used: The entry will never be touched when equal to 0.
+> > + * @count: Upped every time something is added to @inodes and downed every time
+> > + *         something is removed from inodes
+> > + * @nreg: When nreg drops to 0 the ctl_table_header will be unregistered.
+> > + * @rcu: Delays the freeing of the inode. Introduced with "unfuck proc_sysctl ->d_compare()"
+> > + *
+> > + */
 > 
-> But do we actually want that? It is actively crazy to honor NUMA
-> faulting at least for get_user_pages_remote().
-
-This would only be for the stable backport that would go in first and 
-where I want to be a bit careful.
-
-Next step would be to let the callers (KVM) specify 
-FOLL_HONOR_NUMA_FAULT, as suggested by you.
-
+> Hi Joel,
 > 
-> So right now, GUP-fast requires us to honor NUMA faults, because
-> GUP-fast doesn't have a vma (which in turn is because GUP-fast doesn't
-> take any locks).
-
-With FOLL_HONOR_NUMA_FAULT moved to the GUP caller that would no longer 
-be the case.
-
-Anybody who
-
-(1) doesn't specify FOLL_HONOR_NUMA_FAULT, which is the majority
-(2) doesn't specify FOLL_WRITE
-
-Would get GUP-fast just grabbing these pte_protnone() pages.
-
+> Please consider also adding kernel doc entries for the other fields of
+> struct ctl_table_header. According to ./scripts/kernel-doc -none
+> they are:
 > 
-> So GUP-fast can only look at the page table data, and as such *has* to
-> fail if the page table is inaccessible.
+>   unregistering
+>   ctl_table_arg
+>   root
+>   set
+>   parent
+>   node
+>   inodes
 
-gup_fast_only, yes, which is what KVM uses if a writable PFN is desired.
-
-> 
-> But GUP in general? Why would it want to honor numa faulting?
-> Particularly by default, and _particularly_ for things like
-> FOLL_REMOTE.
-
-KVM currently does [virt/kvm/kvm_main.c]:
-
-(1) hva_to_pfn_fast(): call get_user_page_fast_only(FOLL_WRITE) if a
-     writable PFN is desired
-(2) hva_to_pfn_slow(): call get_user_pages_unlocked()
-
-
-So in the "!writable" case, we would always call 
-get_user_pages_unlocked() and never honor NUMA faults.
-
-Converting that to some other pattern might be possible (although KVM 
-plays quite some tricks here!), but assuming we would always first do a 
-get_user_page_fast_only(), then when not intending to write (!FOLL_WRITE)
-
-(1) get_user_page_fast_only() would honor NUMA faults and fail
-(2) get_user_pages() would not honor NUMA faults and succeed
-
-Hmmm ... so we would have to use get_user_pages_fast()? It might be 
-possible, but I am not sure if we want get_user_pages_fast() to always 
-honor NUMA faults, because ...
+Sorry, I now realise that I made the same comment on v1.
+And I didn't see your response to that until after I wrote the above.
 
 > 
-> In fact, I feel like this is what the real rule should be: we simply
-> define that get_user_pages_fast() is about looking up the page in the
-> page tables.
 > 
-> So if you want something that acts like a page table lookup, you use
-> that "fast" thing.  It's literally how it is designed. The whole - and
-> pretty much only - point of it is that it can be used with no locking
-> at all, because it basically acts like the hardware lookup does.
-> 
-
-... I see what you mean (HW would similarly refuse to use such a page), 
-but I do wonder if that makes the API clearer and if this is what we 
-actually want.
-
-We do have callers of pin_user_pages_fast() and friends that maybe 
-*really* shouldn't care about NUMA hinting. 
-iov_iter_extract_user_pages() is one example -- used for O_DIRECT nowadays.
-
-Their logic is "if it's directly in the page table, create, hand it 
-over. If not, please go the slow path.". In many cases user space just 
-touched these pages so they are very likely in the page table.
-
-Converting them to pin_user_pages() would mean they will just run slower 
-in the common case.
-
-Converting them to a manual pin_user_pages_fast_only() + 
-pin_user_pages() doesn't seem very compelling.
-
-
-... so we would need a new API? :/
-
-> So then if KVM wants to look up a page in the page table, that is what
-> kvm should use, and it automatically gets the "honor numa faults"
-> behavior, not because it sets a magic flag, but simply because that is
-> how GUP-fast *works*.
-> 
-> But if you use the "normal" get/pin_user_pages() function, which looks
-> up the vma, at that point you are following things at a "software
-> level", and it wouldn't do NUMA faulting, it would just get the page.
-
-My main problem with that is that pin_user_pages_fast() and friends are 
-used all over the place for a "likely already in the page table case, so 
-just make everything faster as default".
-
-Always honoring NUMA faults here does not sound like the improvement we 
-wanted to have :) ... we actually *don't* want to honor NUMA faults here.
-
-
-We just have to find a way to make the KVM special case happy.
-
-Thanks!
-
--- 
-Cheers,
-
-David / dhildenb
-
+> >  struct ctl_table_header {
+> >  	union {
+> >  		struct {
+> >  			struct ctl_table *ctl_table;
+> > +			int ctl_table_size;
+> >  			int used;
+> >  			int count;
+> >  			int nreg;
+> > -- 
+> > 2.30.2
+> > 
