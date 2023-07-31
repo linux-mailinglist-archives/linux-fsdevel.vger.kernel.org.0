@@ -2,159 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C21E7689B9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jul 2023 03:58:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 223587689E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jul 2023 04:13:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229502AbjGaB64 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Jul 2023 21:58:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53690 "EHLO
+        id S229604AbjGaCNb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Jul 2023 22:13:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbjGaB6z (ORCPT
+        with ESMTP id S229459AbjGaCNb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Jul 2023 21:58:55 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31EFE10C0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Jul 2023 18:58:54 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id d2e1a72fcca58-686f1240a22so3718710b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Jul 2023 18:58:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1690768733; x=1691373533;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=99gy8sGpZTQCEv176AofQrJz9GsO2HjG+St+pJozUFU=;
-        b=dikEai/RNimmtDooNZ4k7RikFuIO26TWVfYSNC2sa8voYglrnfcabQIV74qAzBXABH
-         e5zMxrWhw6v3mptVgH3N0XaPyw9dFYZQLw4woI3LAbdRPESkS/2Mbhh4Jp243NYmGtfn
-         0kqLeLVMq7WTDK7ydweT7H5BOuV6kZOD72K8N/Eiw+jcn9KTXCN2MiqWjcSeeJxAHVDZ
-         I0HTBmdDRtSRwId21wU38ZduEF8mY1SpIgvrx5gsXGpMtRFJv1c7Cs8BXApUg5EyspDa
-         /tN4HbbwzF0S73fqVyp1NqbqbtXkDNgrhlKKzWB6hSxC+H3sjEV4iVFqU3ZL2mRzyHF2
-         Wtdg==
+        Sun, 30 Jul 2023 22:13:31 -0400
+Received: from mail-oa1-f72.google.com (mail-oa1-f72.google.com [209.85.160.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9D10E53
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Jul 2023 19:13:29 -0700 (PDT)
+Received: by mail-oa1-f72.google.com with SMTP id 586e51a60fabf-1bc012be5baso5037760fac.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Jul 2023 19:13:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690768733; x=1691373533;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=99gy8sGpZTQCEv176AofQrJz9GsO2HjG+St+pJozUFU=;
-        b=RGWXpYv4XzVofPkwFJU2PphEQa46zktWkF7StdNPk6KAtbv9uxaJeyUCIZZqLkiIG2
-         13jrI1zdkJmwKLwGBgJtBwPnyBJxx+IL9JM9/Hhoee+9tnizN2VaaPqHxj7IzUDNTfrb
-         P6RpeDbrBhUpCaYYgzpcJcN0agQXFPoeh4I+qmo8vqwq2up0QAFnRFT/bxJj9BNGoFzt
-         H659tgUaY51NYxvMAIWST9OzKl0ImC+MbbhiInygVJkAU9Yx5xLnA9djBawDYubJ2wYD
-         KOhvaN85DkfigBdsgCdLlNRhn72z42GsmZy4Mlhj6NxP7I5LPgih+orsCcAdD2hn8SfM
-         2nGQ==
-X-Gm-Message-State: ABy/qLaMxHILfW2lc9xO1E07Oiy3wWQLOW0ovrEva7NqBM1UI//9BTId
-        U/jI4lXTuFzbYDRTTa0ARRqu99DFI0PdgoKYn8M=
-X-Google-Smtp-Source: APBJJlG+oh7wCOzT+xAzPY8A8sHHwSz2Lghhaxk/ElNs0E/iFpdepMPPotj93v202H6GwemypZYxuA==
-X-Received: by 2002:a05:6a00:1687:b0:682:4ef7:9b0b with SMTP id k7-20020a056a00168700b006824ef79b0bmr11697967pfc.0.1690768733631;
-        Sun, 30 Jul 2023 18:58:53 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-119-116.pa.vic.optusnet.com.au. [49.186.119.116])
-        by smtp.gmail.com with ESMTPSA id y16-20020aa78550000000b0066a6059d399sm6485332pfn.116.2023.07.30.18.58.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jul 2023 18:58:52 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qQIBO-00CYrw-1f;
-        Mon, 31 Jul 2023 11:58:50 +1000
-Date:   Mon, 31 Jul 2023 11:58:50 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>, Hao Xu <hao.xu@linux.dev>,
-        djwong@kernel.org, Jens Axboe <axboe@kernel.dk>,
-        io-uring@vger.kernel.org,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>,
-        josef@toxicpanda.com
-Subject: Re: [PATCH 3/5] io_uring: add support for getdents
-Message-ID: <ZMcVWj9GfcHol3xG@dread.disaster.area>
-References: <20230718132112.461218-1-hao.xu@linux.dev>
- <20230718132112.461218-4-hao.xu@linux.dev>
- <20230726-leinen-basisarbeit-13ae322690ff@brauner>
- <e9ddc8cc-f567-46bc-8f82-cf5ff8ff6c95@linux.dev>
- <20230727-salbe-kurvigen-31b410c07bb9@brauner>
- <2785f009-2ebb-028d-8250-d5f3a30510f0@gmail.com>
- <20230727-westen-geldnot-63435c2f65ad@brauner>
- <77feb96e-adf7-56f2-dac5-ca5b075afa83@gmail.com>
- <20230727-daran-abtun-4bc755f668ad@brauner>
+        d=1e100.net; s=20221208; t=1690769609; x=1691374409;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GPkgU757mcAfVErB4JqXmP6kqt1Ainnk7Zov9FfgpnM=;
+        b=RzifVrsccIba2vrpnFod2hUmOyxy/57HYgfz8//cLRhRDIUVvnz6TK5GAdJCDTShWd
+         Mu90ReqX5xbxyMMobhAqxf+xi3XIR79euTCYyrO/MjXuUBbNZ/r8rSCU9q7xUJlO65wk
+         HtdJNQSn8vUJFCAP4d9FoYupDVFeREshzZQL+6pxhY/9CMKGe3+ArZ8ZjI7cNxAZsuHa
+         L8Y6ZFSRcxlLqoFu1EO9bb9SBwz9fjrEJWP2kkjIMFXZmWBhcsuNCLIpdm3RvzN7/QYk
+         z9ewXZZqOtB8VKcAM9S84NGB9PFa7z5Ke7/DbLpMwmCa04TQP/kNndL5n82oHvcUGHLq
+         tQTQ==
+X-Gm-Message-State: ABy/qLY8e5L4s13q+jUyyuy7T4Iw679XWq3LH3fxpJqzK2Ha6MhTJQbO
+        XYMfGEPPJQioAsXqwW0crSH+S6x+WmUUagwkpsDRXyw443eZ
+X-Google-Smtp-Source: APBJJlGXOGBA2AgNlWNY31LIsNq0WRqp6IlSCViwbyXiU2fsMGi3dC8fkFp/KA9wRkqtorpwD5/slNt3e/VUr55xOY+neabpk0dh
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230727-daran-abtun-4bc755f668ad@brauner>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Received: by 2002:a05:6870:76b3:b0:1bb:3cab:49b0 with SMTP id
+ dx51-20020a05687076b300b001bb3cab49b0mr10439028oab.6.1690769609114; Sun, 30
+ Jul 2023 19:13:29 -0700 (PDT)
+Date:   Sun, 30 Jul 2023 19:13:29 -0700
+In-Reply-To: <000000000000a3d67705ff730522@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f2ca8f0601bef9ca@google.com>
+Subject: Re: [syzbot] [btrfs?] kernel BUG in prepare_to_merge
+From:   syzbot <syzbot+ae97a827ae1c3336bbb4@syzkaller.appspotmail.com>
+To:     clm@fb.com, dsterba@suse.com, hch@lst.de,
+        johannes.thumshirn@wdc.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 27, 2023 at 06:28:52PM +0200, Christian Brauner wrote:
-> On Thu, Jul 27, 2023 at 05:17:30PM +0100, Pavel Begunkov wrote:
-> > On 7/27/23 16:52, Christian Brauner wrote:
-> > > On Thu, Jul 27, 2023 at 04:12:12PM +0100, Pavel Begunkov wrote:
-> > > It would also solve it for writes which is what my kiocb_modified()
-> > > comment was about. So right now you have:
-> > 
-> > Great, I assumed there are stricter requirements for mtime not
-> > transiently failing.
-> 
-> But I mean then wouldn't this already be a problem today?
-> kiocb_modified() can error out with EAGAIN today:
-> 
->           ret = inode_needs_update_time(inode, &now);
->           if (ret <= 0)
->                   return ret;
->           if (flags & IOCB_NOWAIT)
->                   return -EAGAIN;
-> 
->           return __file_update_time(file, &now, ret);
-> 
-> the thing is that it doesn't matter for ->write_iter() - for xfs at
-> least - because xfs does it as part of preparatory checks before
-> actually doing any real work. The problem happens when you do actual
-> work and afterwards call kiocb_modified(). That's why I think (2) is
-> preferable.
+syzbot has bisected this issue to:
 
-This has nothing to do with what "XFS does". It's actually an
-IOCB_NOWAIT API design constraint.
+commit 85724171b302914bb8999b9df091fd4616a36eb7
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Tue May 23 08:40:18 2023 +0000
 
-That is, IOCB_NOWAIT means "complete the whole operation without
-blocking or return -EAGAIN having done nothing".  If we have to do
-something that might block (like a timestamp update) then we need to
-punt the entire operation before anything has been modified.  This
-requires all the "do we need to modify this" checks to be done up
-front before we start modifying anything.
+    btrfs: fix the btrfs_get_global_root return value
 
-So while it looks like this might be "an XFS thing", that's because
-XFS tends to be the first filesystem that most io_uring NOWAIT
-functionality is implemented on. IOWs, what you see is XFS is doing
-things the way IOCB_NOWAIT requires to be done. i.e. it's a
-demonstration of how nonblocking filesystem modification operations
-need to be run, not an "XFS thing"...
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12343ac5a80000
+start commit:   d192f5382581 Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=11343ac5a80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16343ac5a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a4507c291b5ab5d4
+dashboard link: https://syzkaller.appspot.com/bug?extid=ae97a827ae1c3336bbb4
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1230cc11a80000
 
-> > > I would prefer 2) which seems cleaner to me. But I might miss why this
-> > > won't work. So input needed/wanted.
-> > 
-> > Maybe I didn't fully grasp the (2) idea
-> > 
-> > 2.1: all read_iter, write_iter, etc. callbacks should do file_accessed()
-> > before doing IO, which sounds like a good option if everyone agrees with
-> > that. Taking a look at direct block io, it's already like this.
-> 
-> Yes, that's what I'm talking about. I'm asking whether that's ok for xfs
-> maintainers basically. i_op->write_iter() already works like that since
-> the dawn of time but i_op->read_iter doesn't and I'm proposing to make
-> it work like that and wondering if there's any issues I'm unaware of.
+Reported-by: syzbot+ae97a827ae1c3336bbb4@syzkaller.appspotmail.com
+Fixes: 85724171b302 ("btrfs: fix the btrfs_get_global_root return value")
 
-XFS already calls file_accessed() in the DIO read path before the
-read gets issued. I don't see any problem with lifting it to before
-the copy-out loop in filemap_read() because it is run regardless of
-whether any data is read or any error occurred.  Hence it just
-doesn't look like it matters if it is run before or after the
-copy-out loop to me....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
