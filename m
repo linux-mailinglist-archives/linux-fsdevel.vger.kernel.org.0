@@ -2,90 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB2937688FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jul 2023 00:02:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E20F07689A7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Jul 2023 03:33:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229641AbjG3WCj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Jul 2023 18:02:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50218 "EHLO
+        id S229584AbjGaBdN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Jul 2023 21:33:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbjG3WCi (ORCPT
+        with ESMTP id S229457AbjGaBdM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Jul 2023 18:02:38 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17AE6A1;
-        Sun, 30 Jul 2023 15:02:37 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 7F3472195F;
-        Sun, 30 Jul 2023 22:02:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1690754556; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0DtQLsEPs2QEX8EYeZ0XdC8blDLkykDYdkAAk1sVMV0=;
-        b=jk1dGzewobiiNJlcH/DTn9D1rWiv4aageju1X+61JXnKJKeEcC7KbtNGkkUnnCP4Uv8nyt
-        EOE6xFzbg1xoe428yCTvwNeT2wLXijXM8WcHKgfZS0J68KyevRZsOXVcSYUt1UoK5YavhE
-        XMlSDKaseRORzV9uFH6hYayFZdTcbwE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1690754556;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0DtQLsEPs2QEX8EYeZ0XdC8blDLkykDYdkAAk1sVMV0=;
-        b=9gWX19jQn5rm4XsHi8Th3zyqX+CkGgDSAjQANMcpdBieRpaOiHFzhLmqUT+QhDTMg58tMI
-        N73msxgi+1DTN7Aw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 135F813595;
-        Sun, 30 Jul 2023 22:02:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 4kDXLfjdxmRtOQAAMHmgww
-        (envelope-from <neilb@suse.de>); Sun, 30 Jul 2023 22:02:32 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Sun, 30 Jul 2023 21:33:12 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24013C2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Jul 2023 18:33:11 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-686f090310dso4028385b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Jul 2023 18:33:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1690767190; x=1691371990;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zCSMs5I0LdE6oxgRjJSMvJRUSRIfqnXQCQ7i3MIqWyo=;
+        b=JUy0vPTZSDasYdc8rwQNkqYiGfaqxZRL8N7NDbhmfwbudqgRPhwh7r7cL6i1Sh9zz6
+         fPItunonZmaXfY7oUAVvHO5gG0TIJT3iXi03V2+KtyOPwDo8m06Qmv2upsxqmSOMqobr
+         x+pgy0ki4e6bqyyrHP7oBTC4zoWSfiFZtuwZyjNu3ZVFWsLRtLllkfQWPTJGCcQH0IIY
+         GLhkHAS2JSd7Vu8jowxC1jCI167ktQAlJ05lnFmsjWPNAaTD/xLizM5Vwzd8LclLvacS
+         dVZjlDcPgdeWkeclqKIZmFvx8phY28J/sKlbnTQRu+3/KeI3JHySjIYurhS/BVx1045O
+         1eAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690767190; x=1691371990;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zCSMs5I0LdE6oxgRjJSMvJRUSRIfqnXQCQ7i3MIqWyo=;
+        b=HFbS8n/k7P9ae7MwO8uZxW1xIlEi6T/3aLAspEZ0Y1vYcVydI/jhF82Jvvpv+r2ND9
+         yZoOahzRy3ieA9Rs2iHWFeRAfFJmjE9H4bthzATHTFEfqi16per+FIOuhnG3D43Gpyzy
+         Vbj/3EqOQzoU7XaQ2+Bs/CeqtoeXrKKvTkaFpKMQt5N4RZC8Y2wWHT6UTLQRX5dHW7hv
+         hXS4Z/h33QVqA5mSucb0Ib89uUR9s7CxrNYrtElZb8j2yeudKf2cFUfGayugefQclocM
+         V01zdfbBRzgHJP7qAsz9xrpZPthZCbkCRBbwz7awCwumHG7CjrMZhn1cbMPPVytCtf3p
+         njpQ==
+X-Gm-Message-State: ABy/qLbuht1h0ZyKWqLi+N6snFeDMNudwXqguoGmz6dGYQN/jC9qsOmY
+        DzLoULvfq8T8OFchj0WWljI5vg==
+X-Google-Smtp-Source: APBJJlGYJO/faS080eGTYkh6D5uQek1bH5LJ9rsSao4U4EWnmL6ks0qX4Neci2c5beo2g6Mvoz+9uA==
+X-Received: by 2002:a05:6a20:105a:b0:133:f0b9:856d with SMTP id gt26-20020a056a20105a00b00133f0b9856dmr8702045pzc.17.1690767190579;
+        Sun, 30 Jul 2023 18:33:10 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-119-116.pa.vic.optusnet.com.au. [49.186.119.116])
+        by smtp.gmail.com with ESMTPSA id e23-20020a62ee17000000b006827d86ca0csm6353364pfi.55.2023.07.30.18.33.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Jul 2023 18:33:09 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qQHmT-00CYPz-2y;
+        Mon, 31 Jul 2023 11:33:05 +1000
+Date:   Mon, 31 Jul 2023 11:33:05 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Hao Xu <hao.xu@linux.dev>, djwong@kernel.org,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+Subject: Re: [PATCH 3/5] io_uring: add support for getdents
+Message-ID: <ZMcPUX0lYC2nscAm@dread.disaster.area>
+References: <20230718132112.461218-1-hao.xu@linux.dev>
+ <20230718132112.461218-4-hao.xu@linux.dev>
+ <20230726-leinen-basisarbeit-13ae322690ff@brauner>
+ <e9ddc8cc-f567-46bc-8f82-cf5ff8ff6c95@linux.dev>
+ <20230727-salbe-kurvigen-31b410c07bb9@brauner>
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Chuck Lever" <chuck.lever@oracle.com>
-Cc:     "Chuck Lever" <cel@kernel.org>,
-        "David Howells" <dhowells@redhat.com>,
-        "Jeff Layton" <jlayton@kernel.org>,
-        "Hugh Dickins" <hughd@google.com>, "Jens Axboe" <axboe@kernel.dk>,
-        "Matthew Wilcox" <willy@infradead.org>, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] nfsd: Fix reading via splice
-In-reply-to: <ZMaB1BwBfNko1ZoE@tissot.1015granger.net>
-References: <169054754615.3783.11682801287165281930.stgit@klimt.1015granger.net>,
- <169058849828.32308.14965537137761913794@noble.neil.brown.name>,
- <ZMaB1BwBfNko1ZoE@tissot.1015granger.net>
-Date:   Mon, 31 Jul 2023 08:02:29 +1000
-Message-id: <169075454985.32308.7692478577605440938@noble.neil.brown.name>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230727-salbe-kurvigen-31b410c07bb9@brauner>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 31 Jul 2023, Chuck Lever wrote:
+On Thu, Jul 27, 2023 at 04:27:30PM +0200, Christian Brauner wrote:
+> On Thu, Jul 27, 2023 at 07:51:19PM +0800, Hao Xu wrote:
+> > I actually saw this semaphore, and there is another xfs lock in
+> > file_accessed
+> >   --> touch_atime
+> >     --> inode_update_time
+> >       --> inode->i_op->update_time == xfs_vn_update_time
+> > 
+> > Forgot to point them out in the cover-letter..., I didn't modify them
+> > since I'm not very sure about if we should do so, and I saw Stefan's
+> > patchset didn't modify them too.
+> > 
+> > My personnal thinking is we should apply trylock logic for this
+> > inode->i_rwsem. For xfs lock in touch_atime, we should do that since it
+> > doesn't make sense to rollback all the stuff while we are almost at the
+> > end of getdents because of a lock.
 > 
-> I'd like to apply David's fix as-is, unless it's truly broken or
-> someone has a better quick solution.
+> That manoeuvres around the problem. Which I'm slightly more sensitive
+> too as this review is a rather expensive one.
 > 
+> Plus, it seems fixable in at least two ways:
+> 
+> For both we need to be able to tell the filesystem that a nowait atime
+> update is requested. Simple thing seems to me to add a S_NOWAIT flag to
+> file_time_flags and passing that via i_op->update_time() which already
+> has a flag argument. That would likely also help kiocb_modified().
 
-Your reasoning is sound.  From a behavioural perspective (though not
-from a maintenance perspective) the patch is no worse than the current
-code, so
-   Reviewed-by: NeilBrown <neilb@suse.de>
+Wait - didn't we already fix this for mtime updates on IOCB_NOWAIT
+modification operations? Yeah, we did:
 
-NeilBrown
+kiocb_modified(iocb)
+  file_modified_flags(iocb->ki_file, iocb->ki_flags)
+    ....
+    ret = inode_needs_update_time()
+    if (ret <= 0)
+	return ret;
+    if (flags & IOCB_NOWAIT)
+	return -EAGAIN;
+    <does timestamp update>
+
+> file_accessed()
+> -> touch_atime()
+>    -> inode_update_time()
+>       -> i_op->update_time == xfs_vn_update_time()
+
+Yeah, so this needs the same treatment as file_modified_flags() -
+touch_atime() needs a flag variant that passes IOCB_NOWAIT, and
+after atime_needs_update() returns trues we should check IOCB_NOWAIT
+and return EAGAIN if it is set. That will punt the operation that
+needs to the update to a worker thread that can block....
+
+> Then we have two options afaict:
+> 
+> (1) best-effort atime update
+> 
+> file_accessed() already has the builtin assumption that updating atime
+> might fail for other reasons - see the comment in there. So it is
+> somewhat best-effort already.
+> 
+> (2) move atime update before calling into filesystem
+> 
+> If we want to be sure that access time is updated when a readdir request
+> is issued through io_uring then we need to have file_accessed() give a
+> return value and expose a new helper for io_uring or modify
+> vfs_getdents() to do something like:
+> 
+> vfs_getdents()
+> {
+> 	if (nowait)
+> 		down_read_trylock()
+> 
+> 	if (!IS_DEADDIR(inode)) {
+> 		ret = file_accessed(file);
+> 		if (ret == -EAGAIN)
+> 			goto out_unlock;
+> 
+> 		f_op->iterate_shared()
+> 	}
+> }
+
+Yup, that's the sort of thing that needs to be done.
+
+But as I said in the "llseek for io-uring" thread, we need to stop
+the game of whack-a-mole passing random nowait boolean flags to VFS
+operations before it starts in earnest.  We really need a common
+context structure (like we have a kiocb for IO operations) that
+holds per operation control state so we have consistency across all
+the operations that we need different behaviours for.
+
+> It's not unprecedented to do update atime before the actual operation
+> has been done afaict. That's already the case in xfs_file_write_checks()
+> which is called before anything is written. So that seems ok.
+
+Writes don't update atime - they update mtime, and there are other
+considerations for doing the mtime update before the data
+modification. e.g. we have to strip permissions from the inode prior
+to any changes that are going to be made, so we've already got to do
+all the "change inode metadata" checks and modifications before the
+data is written anyway....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
