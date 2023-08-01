@@ -2,153 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E774976BA04
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 18:54:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51B0D76BA23
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 18:58:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232757AbjHAQyI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Aug 2023 12:54:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40992 "EHLO
+        id S231732AbjHAQ6f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Aug 2023 12:58:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232800AbjHAQyF (ORCPT
+        with ESMTP id S231223AbjHAQ6d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Aug 2023 12:54:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4B6E2116;
-        Tue,  1 Aug 2023 09:54:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        Tue, 1 Aug 2023 12:58:33 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CE41DA
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 09:57:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1690909066;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZKlr7hPRFIg1XM1Mg6RUtTCl8BMjdJxudj9aZC6n25E=;
+        b=f/xJRKlBpiJ3cPJXSjNSd/3N+XvLgdUpel+tGEjdHIqkSnZYJ1NZ5WA9QsN5QLOYDiaHRM
+        KQdCLw+tC5nIYUv9Pc9TYBWIgqMxj8sImXq/fwikRkxYZYV+zVbeBUXzWS8naY5HRhC/3U
+        Xedqg7A/LARjqtpji14pw4u6IFP44Qc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-651-z-DU3XkbPMy31HetIn3hYg-1; Tue, 01 Aug 2023 12:57:44 -0400
+X-MC-Unique: z-DU3XkbPMy31HetIn3hYg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2C0016163D;
-        Tue,  1 Aug 2023 16:54:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE3C1C433C7;
-        Tue,  1 Aug 2023 16:53:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690908843;
-        bh=liMpSScDu0h+PrjpmqiYb+Q+6aHOwyISw4j8BFIcGVw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BIFlmOCqJS8iQcXvk8oNZxNGz4QNLszdREetAXo8Uo+jxPN2dAxboF2ywOt+r6sF4
-         1Ce2+7VJBYSGs32seKXUp9myi6IuJy6hA4JORLtRMmgg1V/NnkE6s5/mCkx/yY5eSx
-         hJeilqNSHkRQUd3TgjbR5C3RqdbDv1v8l8q/HRJ5d4R42KAnIGAb5tXRn9g5WJ8qqo
-         mDEv5+Zw5cXJgVkudwVKqN6SYARTjqDZCN6holglfEyaqBXFe9dSofXvT6coPEOgpA
-         xj+s68tMRVaVcMe1Q2cVhtEHL+1/z/BwX05ZAZfo29BBJ2ZA0XJP5VyrA4HxSuC/Yz
-         troFt3trmDEBw==
-Date:   Tue, 1 Aug 2023 19:53:12 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-        Deepak Gupta <debug@rivosinc.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 10/36] mm: Define VM_SHADOW_STACK for arm64 when we
- support GCS
-Message-ID: <20230801165312.GB2607694@kernel.org>
-References: <20230731-arm64-gcs-v3-0-cddf9f980d98@kernel.org>
- <20230731-arm64-gcs-v3-10-cddf9f980d98@kernel.org>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 36A678007CE;
+        Tue,  1 Aug 2023 16:57:43 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.131])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 743114024F83;
+        Tue,  1 Aug 2023 16:57:41 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <64c93109c084e_1c5e3529452@willemb.c.googlers.com.notmuch>
+References: <64c93109c084e_1c5e3529452@willemb.c.googlers.com.notmuch> <1420063.1690904933@warthog.procyon.org.uk>
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     dhowells@redhat.com, netdev@vger.kernel.org,
+        syzbot+f527b971b4bdc8e79f9e@syzkaller.appspotmail.com,
+        bpf@vger.kernel.org, brauner@kernel.org, davem@davemloft.net,
+        dsahern@kernel.org, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] udp: Fix __ip_append_data()'s handling of MSG_SPLICE_PAGES
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230731-arm64-gcs-v3-10-cddf9f980d98@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1481563.1690909060.1@warthog.procyon.org.uk>
+Date:   Tue, 01 Aug 2023 17:57:40 +0100
+Message-ID: <1481564.1690909060@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 31, 2023 at 02:43:19PM +0100, Mark Brown wrote:
-> Use VM_HIGH_ARCH_5 for guarded control stack pages.
-> 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  Documentation/filesystems/proc.rst |  2 +-
->  fs/proc/task_mmu.c                 |  3 +++
->  include/linux/mm.h                 | 12 +++++++++++-
->  3 files changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 6ccb57089a06..086a0408a4d7 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -566,7 +566,7 @@ encoded manner. The codes are the following:
->      mt    arm64 MTE allocation tags are enabled
->      um    userfaultfd missing tracking
->      uw    userfaultfd wr-protect tracking
-> -    ss    shadow stack page
-> +    ss    shadow/guarded control stack page
+Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
 
-I've missed this in Rick's patches, but it's not a page but area.
+> copy -= -fraggap definitely seems off. You point out that it even can
+> turn length negative?
 
->      ==    =======================================
->  
->  Note that there is no guarantee that every flag and associated mnemonic will
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index cfab855fe7e9..e8c50848bb16 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -711,6 +711,9 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
->  #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_MINOR */
->  #ifdef CONFIG_X86_USER_SHADOW_STACK
->  		[ilog2(VM_SHADOW_STACK)] = "ss",
-> +#endif
-> +#ifdef CONFIG_ARM64_GCS
-> +		[ilog2(VM_SHADOW_STACK)] = "ss",
->  #endif
->  	};
->  	size_t i;
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 43fe625b85aa..3f939ae212e5 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -372,7 +372,17 @@ extern unsigned int kobjsize(const void *objp);
->   * having a PAGE_SIZE guard gap.
->   */
->  # define VM_SHADOW_STACK	VM_HIGH_ARCH_5
-> -#else
-> +#endif
-> +
-> +#if defined(CONFIG_ARM64_GCS)
-> +/*
-> + * arm64's Guarded Control Stack implements similar functionality and
-> + * has similar constraints to shadow stacks.
-> + */
-> +# define VM_SHADOW_STACK	VM_HIGH_ARCH_5
-> +#endif
-> +
-> +#ifndef VM_SHADOW_STACK
->  # define VM_SHADOW_STACK	VM_NONE
->  #endif
->  
-> 
-> -- 
-> 2.30.2
-> 
-> 
+Yes.  See the logging I posted:
 
--- 
-Sincerely yours,
-Mike.
+	==>splice_to_socket() 6630
+	udp_sendmsg(8,8)
+	__ip_append_data(copy=-1,len=8, mtu=8192 skblen=8189 maxfl=8188)
+	pagedlen 9 = 9 - 0
+	copy -1 = 9 - 0 - 1 - 9
+	length 8 -= -1 + 0
+
+Since datalen and transhdrlen cancel, and fraggap is unsigned, if fraggap is
+non-zero, copy will be negative.
+
+> The WARN_ON_ONCE, if it can be reached, will be user triggerable.
+> Usually for those cases and when there is a viable return with error
+> path, that is preferable. But if you prefer to taunt syzbot, ok. We
+> can always remove this later.
+
+It shouldn't be possible for length to exceed msg->msg_iter.count (assuming
+there is a msg) coming from userspace; further, userspace can't directly
+specify MSG_SPLICE_PAGES.
+
+> __ip6_append_data probably needs the same.
+
+Good point.  The arrangement of the code is a bit different, but I think it's
+substantially the same in this regard.
+
+David
+
