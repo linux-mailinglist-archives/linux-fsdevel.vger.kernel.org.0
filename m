@@ -2,177 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CC3876BCA5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 20:40:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C9F576BD27
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 21:00:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230162AbjHASkS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Aug 2023 14:40:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51240 "EHLO
+        id S230476AbjHATAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Aug 2023 15:00:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229883AbjHASkQ (ORCPT
+        with ESMTP id S231726AbjHAS7s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Aug 2023 14:40:16 -0400
-Received: from out-91.mta1.migadu.com (out-91.mta1.migadu.com [95.215.58.91])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E4CE26A4
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 11:39:44 -0700 (PDT)
-Message-ID: <04109fdf-2863-3fe0-308c-7f07d0e403ed@linux.dev>
+        Tue, 1 Aug 2023 14:59:48 -0400
+Received: from out-68.mta0.migadu.com (out-68.mta0.migadu.com [91.218.175.68])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 081BA115
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 11:59:46 -0700 (PDT)
+Date:   Tue, 1 Aug 2023 14:59:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1690915175;
+        t=1690916384;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=pLMTIcsv8M8W1pPaH5oU7HeVQKW+06uKa9tqYo1sBoo=;
-        b=WxLFLmrX395a+lKM0aOKT6z6yK3R/xCByFKFUovZNi/KO/IH3Q3mR5a1NdER16zmxXMtsE
-        AuQoXaHuhbzX7cUM83pb8W4tt61UtLC8Z/NgSSLK753BGOlnTlA1rezPTgaappTCVI7Jw2
-        wKKhT4nMpoqy1EezTsn5YOqgSYZhkBk=
-Date:   Wed, 2 Aug 2023 02:39:26 +0800
-MIME-Version: 1.0
-Subject: Re: [PATCH 3/5] io_uring: add support for getdents
-Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>,
-        Dave Chinner <david@fromorbit.com>
-Cc:     djwong@kernel.org, Jens Axboe <axboe@kernel.dk>,
-        io-uring@vger.kernel.org,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-References: <20230718132112.461218-1-hao.xu@linux.dev>
- <20230718132112.461218-4-hao.xu@linux.dev>
- <20230726-leinen-basisarbeit-13ae322690ff@brauner>
- <e9ddc8cc-f567-46bc-8f82-cf5ff8ff6c95@linux.dev>
- <20230727-salbe-kurvigen-31b410c07bb9@brauner>
- <ZMcPUX0lYC2nscAm@dread.disaster.area>
- <20230731-gezeugt-tierwelt-f3d6a900c262@brauner>
+        bh=IC+hkFzsraORVL28A/kjM0OytUDIOrQlr7SfFeohqy8=;
+        b=c2RD5mZRt+9NuyWas53Mgwnpp+VIhPCcbfY6GEax8AgF9MRqweC6dyjeiGAS2hUNb+xO4L
+        MfR1rncIoVyDfLJQ5ojrCE4x+JmyTPldISLsk+X4ubRnesBhI4kWaFJBbT6Og+bsefSjDH
+        LkvBWXPu05W12WWSRhtXe4/Y9bePJOY=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Hao Xu <hao.xu@linux.dev>
-In-Reply-To: <20230731-gezeugt-tierwelt-f3d6a900c262@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH 04/20] block: Add some exports for bcachefs
+Message-ID: <20230801185940.b4vsd62fjxwzv7ft@moria.home.lan>
+References: <20230712211115.2174650-1-kent.overstreet@linux.dev>
+ <20230712211115.2174650-5-kent.overstreet@linux.dev>
+ <ZL61WIpYp/tJ6XH1@infradead.org>
+ <20230725030037.minycb3oxubajuqw@moria.home.lan>
+ <ZMEdqvzAUbQPs0io@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZMEdqvzAUbQPs0io@infradead.org>
 X-Migadu-Flow: FLOW_OUT
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/31/23 16:13, Christian Brauner wrote:
-> On Mon, Jul 31, 2023 at 11:33:05AM +1000, Dave Chinner wrote:
->> On Thu, Jul 27, 2023 at 04:27:30PM +0200, Christian Brauner wrote:
->>> On Thu, Jul 27, 2023 at 07:51:19PM +0800, Hao Xu wrote:
->>>> I actually saw this semaphore, and there is another xfs lock in
->>>> file_accessed
->>>>    --> touch_atime
->>>>      --> inode_update_time
->>>>        --> inode->i_op->update_time == xfs_vn_update_time
->>>>
->>>> Forgot to point them out in the cover-letter..., I didn't modify them
->>>> since I'm not very sure about if we should do so, and I saw Stefan's
->>>> patchset didn't modify them too.
->>>>
->>>> My personnal thinking is we should apply trylock logic for this
->>>> inode->i_rwsem. For xfs lock in touch_atime, we should do that since it
->>>> doesn't make sense to rollback all the stuff while we are almost at the
->>>> end of getdents because of a lock.
->>>
->>> That manoeuvres around the problem. Which I'm slightly more sensitive
->>> too as this review is a rather expensive one.
->>>
->>> Plus, it seems fixable in at least two ways:
->>>
->>> For both we need to be able to tell the filesystem that a nowait atime
->>> update is requested. Simple thing seems to me to add a S_NOWAIT flag to
->>> file_time_flags and passing that via i_op->update_time() which already
->>> has a flag argument. That would likely also help kiocb_modified().
->>
->> Wait - didn't we already fix this for mtime updates on IOCB_NOWAIT
->> modification operations? Yeah, we did:
->>
->> kiocb_modified(iocb)
->>    file_modified_flags(iocb->ki_file, iocb->ki_flags)
->>      ....
->>      ret = inode_needs_update_time()
->>      if (ret <= 0)
->> 	return ret;
->>      if (flags & IOCB_NOWAIT)
->> 	return -EAGAIN;
->>      <does timestamp update>
->>
->>> file_accessed()
->>> -> touch_atime()
->>>     -> inode_update_time()
->>>        -> i_op->update_time == xfs_vn_update_time()
->>
->> Yeah, so this needs the same treatment as file_modified_flags() -
->> touch_atime() needs a flag variant that passes IOCB_NOWAIT, and
->> after atime_needs_update() returns trues we should check IOCB_NOWAIT
->> and return EAGAIN if it is set. That will punt the operation that
->> needs to the update to a worker thread that can block....
+On Wed, Jul 26, 2023 at 06:20:42AM -0700, Christoph Hellwig wrote:
+> On Mon, Jul 24, 2023 at 11:00:37PM -0400, Kent Overstreet wrote:
+> > In short, iomap is heavily callback based, the bcachefs io paths are
+> > not - we pass around data structures instead. I discussed this with
+> > people when iomap was first being written, but iomap ended up being a
+> > much more conservative approach, more in line with the old buffer heads
+> > code where the generic code calls into the filesystem to obtain
+> > mappings.
+> > 
+> > I'm gradually convincing people of the merits of the bcachefs approach -
+> > in particular reducing indirect function calls is getting more attention
+> > these days.
 > 
-> As I tried to explain, I would prefer if we could inform the filesystem
-> through i_op->update_time() itself that this is async and give the
-> filesystem the ability to try and acquire the locks it needs and return
-> EAGAIN from i_op->update_time() itself if it can't acquire them.
+> FYI, Matthew has had patches that convert iomap to be an iterator,
+> and I've massage the first half of them and actuall got them in
+> before.  I'd much rather finish off that work (even if only for
+> direct I/O initially) than adding another direct I/O code.  But
+> even with out that we should be able to easily pass more private
+> data, in fact btrfs makes pretty heavy use of that.
 
-I browse code in i_op->update_time = xfs_vn_update_time, it's mainly
-about xfs journal code. It creates a transaction and adds a item to
-it, not familiar with this part, from a quick look I found some
-locks and sleep point in it to modify. I think I need some time to sort
-out this part. Or maybe we can do it like what Dave said as a short term
-solution and change the block points in journal code later as a separate
-patchset, those journal code I believe are common code for xfs IO
-operations. I'm ok with both though.
+That's wonderful, but getting iomap up to the level of what bcachefs
+needs is still going to be a pretty big project and it's not going to be
+my highest priority.
 
-> 
->>
->>> Then we have two options afaict:
->>>
->>> (1) best-effort atime update
->>>
->>> file_accessed() already has the builtin assumption that updating atime
->>> might fail for other reasons - see the comment in there. So it is
->>> somewhat best-effort already.
->>>
->>> (2) move atime update before calling into filesystem
->>>
->>> If we want to be sure that access time is updated when a readdir request
->>> is issued through io_uring then we need to have file_accessed() give a
->>> return value and expose a new helper for io_uring or modify
->>> vfs_getdents() to do something like:
->>>
->>> vfs_getdents()
->>> {
->>> 	if (nowait)
->>> 		down_read_trylock()
->>>
->>> 	if (!IS_DEADDIR(inode)) {
->>> 		ret = file_accessed(file);
->>> 		if (ret == -EAGAIN)
->>> 			goto out_unlock;
->>>
->>> 		f_op->iterate_shared()
->>> 	}
->>> }
->>
->> Yup, that's the sort of thing that needs to be done.
->>
->> But as I said in the "llseek for io-uring" thread, we need to stop
->> the game of whack-a-mole passing random nowait boolean flags to VFS
->> operations before it starts in earnest.  We really need a common
->> context structure (like we have a kiocb for IO operations) that
->> holds per operation control state so we have consistency across all
->> the operations that we need different behaviours for.
-> 
-> Yes, I tend to agree and thought about the same. But right now we don't
-> have a lot of context. So I would lean towards a flag argument at most.
-> 
-> But I also wouldn't consider it necessarily wrong to start with booleans
-> or a flag first and in a couple of months if the need for more context
-> arises we know what kind of struct we want or need.
+bcachefs also hangs more state off of the pagecache, in bcachefs's
+equivvalent of iomap_page - we store reservations for dirty data there
+and a few other things, which means the buffered IO paths don't have to
+walk any other data structures.
 
+I think that's another idea you guys will want to steal, but a higher
+priority for me is getting a proper FUSE port done - and making bcachefs
+more tightly weddded to VFS library code is not likely to make that
+process any easier.
+
+Once a proper fuse port is done and we know what that looks like will be
+a better time for some consolidation.
