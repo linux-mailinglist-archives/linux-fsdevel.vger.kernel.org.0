@@ -2,217 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CDC9576B946
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 18:02:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C0E676B95A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 18:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232151AbjHAQCU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Aug 2023 12:02:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41666 "EHLO
+        id S230050AbjHAQF6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Aug 2023 12:05:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229454AbjHAQCT (ORCPT
+        with ESMTP id S232112AbjHAQF4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Aug 2023 12:02:19 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 775DB90
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 09:01:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690905693;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=2XkdV+BwvY5fppShBDqBRTS7/vq3kiC6iaJMHPy1Nf4=;
-        b=eCI4iOuUPQzm2uyFWfy7WfU64mBA3pNsprXdCZiPE/kQ3Iyh2gSX5hQFXnEmhnqn1hFNCL
-        3XVDkenptA7s+vxpkqATlwWp6syJq/Q1uUKcnvhE+XqZaoR2agUhd4yhjEeMS+9AQmMKZY
-        yhqBK8aGPGqTYInWNddBf5gqST7lgCU=
-Received: from mimecast-mx02.redhat.com (66.187.233.73 [66.187.233.73]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-670-zOa1_9nCO-uE6Aw5tIi0OQ-1; Tue, 01 Aug 2023 12:01:24 -0400
-X-MC-Unique: zOa1_9nCO-uE6Aw5tIi0OQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 47C431C05AEC;
-        Tue,  1 Aug 2023 16:01:20 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.107])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5769E40C2063;
-        Tue,  1 Aug 2023 16:01:19 +0000 (UTC)
-Date:   Wed, 2 Aug 2023 00:01:16 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Lorenzo Stoakes <lstoakes@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        linux-fsdevel@vger.kernel.org, Jiri Olsa <olsajiri@gmail.com>,
-        Will Deacon <will@kernel.org>, Mike Galbraith <efault@gmx.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        wangkefeng.wang@huawei.com, catalin.marinas@arm.com,
-        ardb@kernel.org, David Hildenbrand <david@redhat.com>,
-        Linux regression tracking <regressions@leemhuis.info>,
-        regressions@lists.linux.dev, Matthew Wilcox <willy@infradead.org>,
-        Liu Shixin <liushixin2@huawei.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] fs/proc/kcore: reinstate bounce buffer for KCORE_TEXT
- regions
-Message-ID: <ZMksTC6pewXDgkFe@MiWiFi-R3L-srv>
-References: <20230731215021.70911-1-lstoakes@gmail.com>
- <ZMkrfBDARIAYFYwz@MiWiFi-R3L-srv>
+        Tue, 1 Aug 2023 12:05:56 -0400
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A1D61996
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 09:05:54 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id DB97E5C00D4;
+        Tue,  1 Aug 2023 12:05:53 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Tue, 01 Aug 2023 12:05:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1690905953; x=1690992353; bh=nO
+        5DGjeIsutrs2uJ626SDXn1fcBjOv8s3a1cSCtAGic=; b=Fjv2EvfkRR7JD/t7YU
+        S+a8JgBnKJ7tnBtAm9Bkm1ZNx8F7We0k+7n8Qxi5oTlVbS6THxePmjfkE8D+69sR
+        E/mYUAZdY82whewnUx7A9QdGNY6CzPo0Qi1XIfsHnhDPYMUDUYCHdJNpeookoB57
+        Ot7a7s4e3NZhzCFTXAh3RVNuh6d4aj/kYLUR33ggalJvi9YkTLcoTdKWvgBJsDP2
+        H3pS87w2npB01JI80bU0Gu/vR/pi2vXNYDi+Vl9BEGB+3VRhi9ESQ3YPB2su6bcC
+        KO9mI31ZyaFvU0Rdg5TMIgmVF21yimwBn0poUCICs2dWsnSLxLqmFEjmLVFFdEng
+        uyXA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1690905953; x=1690992353; bh=nO5DGjeIsutrs
+        2uJ626SDXn1fcBjOv8s3a1cSCtAGic=; b=uvXADTDcS79SrOD/8jhN1gdM5//mj
+        bfruIshaoSDEpEndihfd73NcIigud6+r6ftMLoZ3NOj0CZxbru+JcyIxajja5Ahe
+        eU5tSrz7qagAQR9aYEZugySGoXG5UkNhijnUFLPFEt6gm+RNLe8M1dp3pBawanBY
+        2o+/9B0M/0T1wCKcEWGmlF9LuIPIozesHpkH3uGLDceWoHVjfsMWRwufxIn97cOD
+        4pqxqjxTRd9ogz+cmbu9n8K4EI4M7mAUGxktf+AtY48fC42RhcQi1FkpMIrBFTPq
+        GaD+B/dyBo/jl7VfF8yLeWhpDVG3/U5zLMbIn6OBn7fS2Q11oEL63oMww==
+X-ME-Sender: <xms:YS3JZI49jQ5VVi41WswcPZrHwuRbCnA2wLjSPcnW-5F8I3hKVvn7GA>
+    <xme:YS3JZJ7lTkI4tPFWWR8DbffqHfn-y3nlVZOxx7TBHJy_6myPZGuzF5lIbcH9K1wMB
+    -OXARX1F2gxxBfw>
+X-ME-Received: <xmr:YS3JZHcQ7Map0iuYl2glODpROdewikEcNwNbbEQWEtWIv9-8xN8jTUqdCwCZzozgaffvVxVDlqs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrjeeigdelgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvfevufhfffgjkfgfgggtsehttddttddtredtnecuhfhrohhmpefpihhkohhl
+    rghushcutfgrthhhuceopfhikhholhgruhhssehrrghthhdrohhrgheqnecuggftrfgrth
+    htvghrnhepteekleehieffleeuvdelkeekvdettedtteehhfeiheektdeljeelffeuvdej
+    udevnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpefpihhkohhlrghushesrhgrthhhrdhorhhg
+X-ME-Proxy: <xmx:YS3JZNJY5W1lKSv80GfbTqWl1mo2p_z6JdOONOVVJgy8JWFHLUyMjw>
+    <xmx:YS3JZMJBTxIr46sYJoN-DCA1hldbwNBefO4ET2unNHzt5-_0eJI_Lg>
+    <xmx:YS3JZOznkVzuiazPgve4A-o_I25T6zFw9xApX11JCZ0xr7LmwdnVhg>
+    <xmx:YS3JZGgRmLh78LooanvXhk4r-TSUdyirkEvbLTDsczEEWLCcro4Ntg>
+Feedback-ID: i53a843ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 1 Aug 2023 12:05:52 -0400 (EDT)
+Received: from vostro.rath.org (vostro [192.168.12.4])
+        by ebox.rath.org (Postfix) with ESMTPS id 666E2C0F;
+        Tue,  1 Aug 2023 16:05:51 +0000 (UTC)
+Received: by vostro.rath.org (Postfix, from userid 1000)
+        id E701687274; Tue,  1 Aug 2023 17:05:50 +0100 (BST)
+From:   Nikolaus Rath <Nikolaus@rath.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Martin Kaspar via fuse-devel <fuse-devel@lists.sourceforge.net>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: Re: [fuse-devel] Semantics of fuse_notify_delete()
+References: <87wmymk0k9.fsf@vostro.rath.org>
+        <CAJfpegs+FfWGCOxX1XERGHfYRZzCzcLZ99mnchfb8o9U0kTS-A@mail.gmail.com>
+        <87tttpk2kp.fsf@vostro.rath.org> <87r0osjufc.fsf@vostro.rath.org>
+        <CAJfpegu7BtYzPE-NK_t3nFBT3fy2wGyyuJRP=wVGnvZh2oQPBA@mail.gmail.com>
+        <CAJfpeguJESTqU7d0d0_2t=99P3Yt5a8-T4ADTF3tUdg5ou2qow@mail.gmail.com>
+        <87o7jrjant.fsf@vostro.rath.org>
+        <CAJfpegvTTUvrcpzVsJwH63n+zNw+h6krtiCPATCzZ+ePZMVt2Q@mail.gmail.com>
+        <2e44acdd-b113-43c3-80cb-150f09478383@app.fastmail.com>
+        <CAJfpegtoi2jNaKjvqMqrWQQrDoJkTZqheXFAb3MMVv7WVsHi0A@mail.gmail.com>
+Mail-Copies-To: never
+Mail-Followup-To: Miklos Szeredi <miklos@szeredi.hu>, Martin Kaspar via
+        fuse-devel <fuse-devel@lists.sourceforge.net>, Linux FS Devel
+        <linux-fsdevel@vger.kernel.org>, Miklos Szeredi <mszeredi@redhat.com>
+Date:   Tue, 01 Aug 2023 17:05:50 +0100
+In-Reply-To: <CAJfpegtoi2jNaKjvqMqrWQQrDoJkTZqheXFAb3MMVv7WVsHi0A@mail.gmail.com>
+        (Miklos Szeredi's message of "Tue, 1 Aug 2023 16:48:03 +0200")
+Message-ID: <87mszarbmp.fsf@vostro.rath.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZMkrfBDARIAYFYwz@MiWiFi-R3L-srv>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 08/01/23 at 11:57pm, Baoquan He wrote:
-> On 07/31/23 at 10:50pm, Lorenzo Stoakes wrote:
-> > Some architectures do not populate the entire range categorised by
-> > KCORE_TEXT, so we must ensure that the kernel address we read from is
-> > valid.
-> > 
-> > Unfortunately there is no solution currently available to do so with a
-> > purely iterator solution so reinstate the bounce buffer in this instance so
-> > we can use copy_from_kernel_nofault() in order to avoid page faults when
-> > regions are unmapped.
-> > 
-> > This change partly reverts commit 2e1c0170771e ("fs/proc/kcore: avoid
-> > bounce buffer for ktext data"), reinstating the bounce buffer, but adapts
-> > the code to continue to use an iterator.
-> > 
-> > Fixes: 2e1c0170771e ("fs/proc/kcore: avoid bounce buffer for ktext data")
-> > Reported-by: Jiri Olsa <olsajiri@gmail.com>
-> > Closes: https://lore.kernel.org/all/ZHc2fm+9daF6cgCE@krava
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
-> > ---
-> >  fs/proc/kcore.c | 26 +++++++++++++++++++++++++-
-> >  1 file changed, 25 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-> > index 9cb32e1a78a0..3bc689038232 100644
-> > --- a/fs/proc/kcore.c
-> > +++ b/fs/proc/kcore.c
-> > @@ -309,6 +309,8 @@ static void append_kcore_note(char *notes, size_t *i, const char *name,
-> >  
-> >  static ssize_t read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
-> >  {
-> > +	struct file *file = iocb->ki_filp;
-> > +	char *buf = file->private_data;
-> >  	loff_t *fpos = &iocb->ki_pos;
-> >  	size_t phdrs_offset, notes_offset, data_offset;
-> >  	size_t page_offline_frozen = 1;
-> > @@ -554,11 +556,22 @@ static ssize_t read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
-> >  			fallthrough;
-> >  		case KCORE_VMEMMAP:
-> >  		case KCORE_TEXT:
-> > +			/*
-> > +			 * Sadly we must use a bounce buffer here to be able to
-> > +			 * make use of copy_from_kernel_nofault(), as these
-> > +			 * memory regions might not always be mapped on all
-> > +			 * architectures.
-> > +			 */
-> > +			if (copy_from_kernel_nofault(buf, (void *)start, tsz)) {
-> > +				if (iov_iter_zero(tsz, iter) != tsz) {
-> > +					ret = -EFAULT;
-> > +					goto out;
-> > +				}
-> >  			/*
-> >  			 * We use _copy_to_iter() to bypass usermode hardening
-> >  			 * which would otherwise prevent this operation.
-> >  			 */
-> > -			if (_copy_to_iter((char *)start, tsz, iter) != tsz) {
-> > +			} else if (_copy_to_iter(buf, tsz, iter) != tsz) {
-> >  				ret = -EFAULT;
-> >  				goto out;
-> >  			}
-> > @@ -595,6 +608,10 @@ static int open_kcore(struct inode *inode, struct file *filp)
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > +	filp->private_data = kmalloc(PAGE_SIZE, GFP_KERNEL);
-> > +	if (!filp->private_data)
-> > +		return -ENOMEM;
-> > +
-> >  	if (kcore_need_update)
-> >  		kcore_update_ram();
-> >  	if (i_size_read(inode) != proc_root_kcore->size) {
-> > @@ -605,9 +622,16 @@ static int open_kcore(struct inode *inode, struct file *filp)
-> >  	return 0;
-> >  }
-> >  
-> > +static int release_kcore(struct inode *inode, struct file *file)
-> > +{
-> > +	kfree(file->private_data);
-> > +	return 0;
-> > +}
-> > +
-> >  static const struct proc_ops kcore_proc_ops = {
-> >  	.proc_read_iter	= read_kcore_iter,
-> >  	.proc_open	= open_kcore,
-> > +	.proc_release	= release_kcore,
-> >  	.proc_lseek	= default_llseek,
-> >  };
-> 
-> On 6.5-rc4, the failures can be reproduced stably on a arm64 machine.
-> With patch applied, both makedumpfile and objdump test cases passed.
-> 
-> And the code change looks good to me, thanks.
-> 
-> Tested-by: Baoquan He <bhe@redhat.com>
-> Reviewed-by: Baoquan He <bhe@redhat.com>
-> 
-> 
-> ===============================================
-> [root@ ~]# makedumpfile --mem-usage /proc/kcore 
-> The kernel version is not supported.
-> The makedumpfile operation may be incomplete.
-> 
-> TYPE		PAGES			EXCLUDABLE	DESCRIPTION
-> ----------------------------------------------------------------------
-> ZERO		76234           	yes		Pages filled with zero
-> NON_PRI_CACHE	147613          	yes		Cache pages without private flag
-> PRI_CACHE	3847            	yes		Cache pages with private flag
-> USER		15276           	yes		User process pages
-> FREE		15809884        	yes		Free pages
-> KERN_DATA	459950          	no		Dumpable kernel data 
-> 
-> page size:		4096            
-> Total pages on system:	16512804        
-> Total size on system:	67636445184      Byte
-> 
-> [root@ ~]# objdump -d  --start-address=0x^C
-> [root@ ~]# cat /proc/kallsyms | grep ksys_read
-> ffffab3be77229d8 T ksys_readahead
-> ffffab3be782a700 T ksys_read
-> [root@ ~]# objdump -d  --start-address=0xffffab3be782a700 --stop-address=0xffffab3be782a710 /proc/kcore 
-> 
-> /proc/kcore:     file format elf64-littleaarch64
-> 
-> 
-> Disassembly of section load1:
-> 
-> ffffab3be782a700 <load1+0x41a700>:
-> ffffab3be782a700:	aa1e03e9 	mov	x9, x30
-> ffffab3be782a704:	d503201f 	nop
-> ffffab3be782a708:	d503233f 	paciasp
-> ffffab3be782a70c:	a9bc7bfd 	stp	x29, x30, [sp, #-64]!
-> objdump: error: /proc/kcore(load2) is too large (0x7bff70000000 bytes)
-> objdump: Reading section load2 failed because: memory exhausted
+On Aug 01 2023, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> On Tue, 1 Aug 2023 at 16:40, Nikolaus Rath <nikolaus@rath.org> wrote:
+>>
+>> On Tue, 1 Aug 2023, at 13:53, Miklos Szeredi via fuse-devel wrote:
+>> > Here's one with the virtual env and the correct head:
+>> >
+>> > root@kvm:~/s3ql# git log -1 --pretty="%h %s"
+>> > 3d35f18543d9 Reproducer for notify_delete issue. To confirm:
+>> > root@kvm:~/s3ql# ~/s3ql-python-env/bin/python bin/s3qlrm mnt/test
+>> > WARNING: Received unknown command via control inode
+>> > ERROR: Uncaught top-level exception:
+>> > Traceback (most recent call last):
+>> >   File "/root/s3ql/bin/s3qlrm", line 21, in <module>
+>> >     s3ql.remove.main(sys.argv[1:])
+>> >   File "/root/s3ql/src/s3ql/remove.py", line 72, in main
+>> >     pyfuse3.setxattr(ctrlfile, 'rmtree', cmd)
+>> >   File "src/pyfuse3.pyx", line 629, in pyfuse3.setxattr
+>> > OSError: [Errno 22] Invalid argument: 'mnt/test/.__s3ql__ctrl__'
+>>
+>> This is odd. I have never heard of anyone having this problem before and it also works fine in the CI.
+>>
+>> I apologize that this is taking so much of your time.
+>>
+>> I have changed the code a bit to print out what exactly it is receiving:
+>> https://github.com/s3ql/s3ql/commit/eb31f7bff4bd985d68fa20c793c2f2edf5db61a5
+>>
+>> Would you mind updating your branch and trying again? (You'll need to fetch and reset,
+>> since I rebased on top of current master just to be sure).
+>>
+>> I can still reproduce this every time (without any other error):
+>>
+>> $ mkdir bucket
+>> $ bin/mkfs.s3ql --plain local://bucket
+>> Before using S3QL, make sure to read the user's guide, especially
+>> the 'Important Rules to Avoid Losing Data' section.
+>> Creating metadata tables...
+>> Uploading metadata...
+>> Uploading metadata...
+>> Uploaded 1 out of ~1 dirty blocks (100%)
+>> Calculating metadata checksum...
+>> $ mkdir mnt
+>> $ bin/mount.s3ql --fg local://bucket mnt &
+>> Using 10 upload threads.
+>> Autodetected 1048514 file descriptors available for cache entries
+>> Using cached metadata.
+>> Setting cache size to 315297 MB
+>> Mounting local:///home/nikratio/in-progress/s3ql/bucket/ at /home/nikratio/in-progress/s3ql/mnt...
+>>
+>> $ md mnt/test; echo foo > mnt/test/bar
+>> $ bin/s3qlrm mnt/test
+>> fuse: writing device: Directory not empty
+>> ERROR: Failed to submit invalidate_entry request for parent inode 1, name b'test'
+>> Traceback (most recent call last):
+>>   File "src/internal.pxi", line 125, in pyfuse3._notify_loop
+>>   File "src/pyfuse3.pyx", line 915, in pyfuse3.invalidate_entry
+>> OSError: [Errno 39] fuse_lowlevel_notify_delete returned: Directory not empty
+>>
+>> nikratio@vostro ~/i/s3ql (notify_delete_bug)>
+>
+> WARNING: Received unknown command via control inode: b"1, b'test')"
+> ERROR: Uncaught top-level exception:
+> Traceback (most recent call last):
+>   File "/root/s3ql/bin/s3qlrm", line 21, in <module>
+>     s3ql.remove.main(sys.argv[1:])
+>   File "/root/s3ql/src/s3ql/remove.py", line 74, in main
+>     pyfuse3.setxattr(ctrlfile, 'rmtree', cmd)
+>   File "src/pyfuse3.pyx", line 629, in pyfuse3.setxattr
+> OSError: [Errno 22] Invalid argument: 'mnt/test/.__s3ql__ctrl__'
 
-By the way, I can still see the objdump error saying kcore is too large
-as above, at the same time there's console printing as below. Haven't
-checked it's objdump's issue or kernel's.
+Thanks! It looks like the extended attribute name and value that S3QL
+receives from libfuse is corrupted. What reaches S3QL as the xattr name
+is actually the truncated xattr value (leading parenthesis is missing).
 
-[ 6631.575800] __vm_enough_memory: pid: 5321, comm: objdump, not enough memory for the allocation
-[ 6631.584469] __vm_enough_memory: pid: 5321, comm: objdump, not enough memory for the allocation
+Is it possible that you are running into a variant of
+https://github.com/libfuse/libfuse/issues/730? This was fixed in libfuse
+3.14.1 and introduced in 3.13.0.
+
+Best,
+-Nikolaus
 
