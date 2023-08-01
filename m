@@ -2,59 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D68EB76B88F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 17:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6506B76B898
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 17:31:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233746AbjHAP0Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Aug 2023 11:26:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48126 "EHLO
+        id S232163AbjHAPbJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Aug 2023 11:31:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231883AbjHAP0Y (ORCPT
+        with ESMTP id S230094AbjHAPbH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Aug 2023 11:26:24 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AA0B2683;
-        Tue,  1 Aug 2023 08:26:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=XlwSl0KJ11sjJgplqG1VOMn72Ax8pkSOEXXg7F7nV9c=; b=1+EjHCZSdNt7AQcbUEB+fPS3is
-        H9Jy3H0jo4moONZrFHW3pHDrTib81y8wbuiQjkLzd8Y8WbhRIBbQbYQEo4YnnJA21xC6+RC75Axbl
-        q3t1uWqJtQ0iz0tPRCeoN1b/IG30UeHLksQQtWmS6An9XQ6A/+Y1xSvxvBtb0OW8ftsYIaXslMvy+
-        quEpNsPJknNaImNWEsCOPuPK5yqRTHSzbAmwt3gFeKQYh4/oYS1J3zREXUFhQd2991AbagvQEy9Kz
-        Bcqs0/M6i4D76bFhpDSArFOHFbc6j2mFiOD3MrepOeFAy/MycJy7uY3clupfgmVOSQP4NRLKnJFtX
-        HtQRT5kQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qQrGC-002ing-0W;
-        Tue, 01 Aug 2023 15:26:08 +0000
-Date:   Tue, 1 Aug 2023 08:26:08 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Christoph Hellwig <hch@lst.de>,
-        syzbot <syzbot+ae97a827ae1c3336bbb4@syzkaller.appspotmail.com>,
-        clm@fb.com, dsterba@suse.com, johannes.thumshirn@wdc.com,
-        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [btrfs?] kernel BUG in prepare_to_merge
-Message-ID: <ZMkkEEQVr1T/p/vJ@infradead.org>
-References: <000000000000a3d67705ff730522@google.com>
- <000000000000f2ca8f0601bef9ca@google.com>
- <20230731073707.GA31980@lst.de>
- <358fab94-4eaa-4977-dd69-fc39810f18e0@gmx.com>
- <ZMeC6BPCBT/5NR+S@infradead.org>
- <f294c55b-3855-9ec3-c66c-a698747f22e0@gmx.com>
- <ZMju6PMnJ6tnMgfy@infradead.org>
+        Tue, 1 Aug 2023 11:31:07 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98A32EE
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 08:31:05 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 4C9626732D; Tue,  1 Aug 2023 17:31:01 +0200 (CEST)
+Date:   Tue, 1 Aug 2023 17:31:00 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Karel Zak <kzak@redhat.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC 1/3] super: remove get_tree_single_reconf()
+Message-ID: <20230801153100.GB12035@lst.de>
+References: <20230801-vfs-super-exclusive-v1-0-1a587e56c9f3@kernel.org> <20230801-vfs-super-exclusive-v1-1-1a587e56c9f3@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZMju6PMnJ6tnMgfy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+In-Reply-To: <20230801-vfs-super-exclusive-v1-1-1a587e56c9f3@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,15 +42,23 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In the meantime I've also reproduced it with just
-"btrfs: fix the btrfs_get_global_root return value", but it took
-a rather long time.
+On Tue, Aug 01, 2023 at 03:09:00PM +0200, Christian Brauner wrote:
+> The get_tree_single_reconf() helper isn't used anywhere. Remote it.
 
-After wading through the code my suspicion is that before this fix
-the ERR_PTR return made that for those cases btrfs_get_root_ref and
-btrfs_get_fs_root_commit_root don't actually do the
-btrfs_lookup_fs_root.  Although that seemed unintentional as far
-as I can tell it might have prevented some additional problems
-with whatever syzcaller is fuzzing here.  Not sure if anyone who
-knows this code has any good idea where to start looking?
+Yeah, I've got pretty much the same patch hiding somewhere in one of
+me trees..
+
+> -static int vfs_get_super(struct fs_context *fc, bool reconf,
+> -		int (*test)(struct super_block *, struct fs_context *),
+> -		int (*fill_super)(struct super_block *sb,
+> -				  struct fs_context *fc))
+> +static int vfs_get_super(struct fs_context *fc,
+> +			 int (*test)(struct super_block *, struct fs_context *),
+> +			 int (*fill_super)(struct super_block *sb,
+> +					   struct fs_context *fc))
+
+.a althought keeping the existing formatting here seems much more readable
+to me.  No idea why the odd align to brace formatting has picked up so
+many fans recently given that it is horrible to read and causes tons
+of churn when touching the protoptype or function name.
 
