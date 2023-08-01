@@ -2,121 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B96A776B985
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 18:17:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3518776B989
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 18:18:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230012AbjHAQRt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Aug 2023 12:17:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49290 "EHLO
+        id S230145AbjHAQSF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Aug 2023 12:18:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230145AbjHAQRs (ORCPT
+        with ESMTP id S229851AbjHAQSE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Aug 2023 12:17:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0522E1AC
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 09:17:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690906624;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=eXJy6R2O1N6NpbXl3Zkyt7SvhrIHr98fxs9gYSY7xq0=;
-        b=Arx6tDhS/cz3yb/tMxIux8LPuUlA0/OXeCn6116xw6AiAjnxT1CdOXnJK/7DASvrKAANFU
-        DB6Bmy/gkdhzv0Xo6yvKyfbypllK15BmJrmz5FJ4YfB2HC6qvrY8zBVv9ogWHYSJfR616O
-        nVa0EvQgoxYmTJrxntgamATrpInMiUE=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-84-jCgoF44ePUawaKcDFgc3Dg-1; Tue, 01 Aug 2023 12:17:02 -0400
-X-MC-Unique: jCgoF44ePUawaKcDFgc3Dg-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-30e3ee8a42eso2742334f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Aug 2023 09:17:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690906622; x=1691511422;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eXJy6R2O1N6NpbXl3Zkyt7SvhrIHr98fxs9gYSY7xq0=;
-        b=A+IaTsxdO8Z3jnBkifpb2qHzDETvz1WyguGQf8a+vO/+AEm4LcW5xk9pEDUw8SMkgd
-         eBAZO+KsdfoeVaWLk9PwU4rH1eTnpSTJTP5zakTX2G9bcqdnPgSS9oRZzldk5jwo0uwg
-         PaTSoTvnqzAyMLQ5/xkrwHQq1s7v78xWZ+5qRN/s2V6ccW5cg2vQJQ9IiX8bRl+rM0M3
-         pYbxpw1suA4UxAuJ8xjUTMPzkfc/9SatYqGubWbkEiD1RlUrWD77zLAtGJbscqwWVSlN
-         MYE6UJwRcBVCnZT7ruBccStu1sR+TqFe1d8Tu8WVSfM5A00dWXkwFpksQ1l9sPF7Ql/g
-         iPGQ==
-X-Gm-Message-State: ABy/qLZKgE89eLorqN3RTyeUb9xpUiHOsJLdiEB4CZxxHQ+it9MMt081
-        pwCCzMFniwnOa/3K6lGf8+xhEEDMHgiHn+Zlw907VejAzBO5BcVMqfdD0GakHkWai9oDXs3U0Jt
-        wig2po1tIj+mxZmBg6esi9adArQ==
-X-Received: by 2002:adf:ef8b:0:b0:314:2ea7:af4a with SMTP id d11-20020adfef8b000000b003142ea7af4amr2822126wro.13.1690906621792;
-        Tue, 01 Aug 2023 09:17:01 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlEGH0Ulw/x64O87fJEpYxoKABrDKtvZU+QbrtOdpDe0pNVnkFsl/Bu4qmZb7dXZ1ZmPNNOp/w==
-X-Received: by 2002:adf:ef8b:0:b0:314:2ea7:af4a with SMTP id d11-20020adfef8b000000b003142ea7af4amr2822111wro.13.1690906621380;
-        Tue, 01 Aug 2023 09:17:01 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c705:d100:871b:ec55:67d:5247? (p200300cbc705d100871bec55067d5247.dip0.t-ipconnect.de. [2003:cb:c705:d100:871b:ec55:67d:5247])
-        by smtp.gmail.com with ESMTPSA id s6-20020a5d6a86000000b003143add4396sm16471132wru.22.2023.08.01.09.17.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Aug 2023 09:17:00 -0700 (PDT)
-Message-ID: <b10d9d85-d8d6-2ee5-53f9-6b5d586b55fb@redhat.com>
-Date:   Tue, 1 Aug 2023 18:16:59 +0200
+        Tue, 1 Aug 2023 12:18:04 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C534FB0
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 09:18:01 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 63B23615E1
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 16:18:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47A4AC43391;
+        Tue,  1 Aug 2023 16:17:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690906680;
+        bh=xBoGWntMNrsXQJEn+mV8Hxn5c2XYNGctn4xoDLNhtd8=;
+        h=From:Date:Subject:To:Cc:From;
+        b=Cvp+HNOTvEkzNScbaY04KtHMEqKitncIzEBZAfOVJWYY3OTAJLSE0QRlHfq+hbkSh
+         NB7Cg6+IviN1pl1tMFsNRz/FHHC5i1MMF5TGJrYTHqTfEGCWN2zVLz3YZtjeHpQM2t
+         A1CJx74Q65pjuu1QhSTYFxO/XsFOzwaozNnnYqAK87Hmtzhca8tKpYRV48mFTZwhW5
+         gleqx+9eh8s5osI3TMnQjIzh8/LxskK4vIPH+V1oGknnHNLEgXKp9TnSWxzGivnjNp
+         ry/YSTx+ZzrWUXxmuw5Y1C8TtndIU4jBKgmgE0U/RTGjFq+Rs+Ba0Ac7mLEsg3qwcG
+         47SlKkpT8oDuQ==
+From:   Christian Brauner <brauner@kernel.org>
+Date:   Tue, 01 Aug 2023 18:17:04 +0200
+Subject: [PATCH] tmpfs: verify {g,u}id mount options correctly
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2 6/8] mm/huge_memory: remove stale NUMA hinting comment
- from follow_trans_huge_pmd()
-Content-Language: en-US
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        liubo <liubo254@huawei.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mel Gorman <mgorman@suse.de>, Shuah Khan <shuah@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>
-References: <20230801124844.278698-1-david@redhat.com>
- <20230801124844.278698-7-david@redhat.com> <ZMktuATuYhHdAW6M@x1n>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <ZMktuATuYhHdAW6M@x1n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Message-Id: <20230801-vfs-fs_context-uidgid-v1-1-daf46a050bbf@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAP8vyWQC/x3MTQrCMBBA4auUWTslqfQHryIi6WTSzsJUMjEUS
+ u9udPkt3jtAOQkr3JoDEhdR2WKFvTRAq4sLo/hq6Ex3NZOxWIJi0CdtMfOe8SN+EY/j2A80eZo
+ tGajtO3GQ/f+9P6pnp4xzcpHW3+3lNHNqy9D2mMjCeX4BXBbVIYkAAAA=
+To:     Seth Forshee <sforshee@kernel.org>, Hugh Dickins <hughd@google.com>
+Cc:     Seth Jenkins <sethjenkins@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.13-dev-099c9
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3336; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=xBoGWntMNrsXQJEn+mV8Hxn5c2XYNGctn4xoDLNhtd8=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaScNDBTefniV71tes6s2p3XLr0tk7Jf9OpvIb9rE+OynueK
+ 3tHLO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZy+wojQ0M0X/yOjNqaB5uiX7rVzD
+ vQJ3S6bnP6jcIZYTv9GSwMyhgZZoh/XRN/QaBKvTXsgbPm8a0RU/QnFzwMDDz76tpWQ1MnVgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 01.08.23 18:07, Peter Xu wrote:
-> On Tue, Aug 01, 2023 at 02:48:42PM +0200, David Hildenbrand wrote:
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 2cd3e5502180..0b709d2c46c6 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -1467,7 +1467,6 @@ struct page *follow_trans_huge_pmd(struct vm_area_struct *vma,
->>   	if ((flags & FOLL_DUMP) && is_huge_zero_pmd(*pmd))
->>   		return ERR_PTR(-EFAULT);
->>   
->> -	/* Full NUMA hinting faults to serialise migration in fault paths */
->>   	if (pmd_protnone(*pmd) && !gup_can_follow_protnone(vma, flags))
->>   		return NULL;
-> 
-> Perhaps squashing into patch 1?  Thanks,
+A while ago we received the following report:
 
-I decided against it so I don't have to make patch description of patch 
-#1 even longer with something that's mostly unrelated to the core change.
+"The other outstanding issue I noticed comes from the fact that
+fsconfig syscalls may occur in a different userns than that which
+called fsopen. That means that resolving the uid/gid via
+current_user_ns() can save a kuid that isn't mapped in the associated
+namespace when the filesystem is finally mounted. This means that it
+is possible for an unprivileged user to create files owned by any
+group in a tmpfs mount (since we can set the SUID bit on the tmpfs
+directory), or a tmpfs that is owned by any user, including the root
+group/user."
 
--- 
-Cheers,
+The contract for {g,u}id mount options and {g,u}id values in general set
+from userspace has always been that they are translated according to the
+caller's idmapping. In so far, tmpfs has been doing the correct thing.
+But since tmpfs is mountable in unprivileged contexts it is also
+necessary to verify that the resulting {k,g}uid is representable in the
+namespace of the superblock to avoid such bugs as above.
 
-David / dhildenb
+The new mount api's cross-namespace delegation abilities are already
+widely used. After having talked to a bunch of userspace this is the
+most faithful solution with minimal regression risks. I know of one
+users - systemd - that makes use of the new mount api in this way and
+they don't set unresolable {g,u}ids. So the regression risk is minimal.
+
+Link: https://lore.kernel.org/lkml/CALxfFW4BXhEwxR0Q5LSkg-8Vb4r2MONKCcUCVioehXQKr35eHg@mail.gmail.com
+Fixes: f32356261d44 ("vfs: Convert ramfs, shmem, tmpfs, devtmpfs, rootfs to use the new mount API")
+Reported-by: Seth Jenkins <sethjenkins@google.com>
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+
+---
+ mm/shmem.c | 28 ++++++++++++++++++++++++----
+ 1 file changed, 24 insertions(+), 4 deletions(-)
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 2f2e0e618072..1c0b2dafafe5 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3636,6 +3636,8 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
+ 	unsigned long long size;
+ 	char *rest;
+ 	int opt;
++	kuid_t kuid;
++	kgid_t kgid;
+ 
+ 	opt = fs_parse(fc, shmem_fs_parameters, param, &result);
+ 	if (opt < 0)
+@@ -3671,14 +3673,32 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
+ 		ctx->mode = result.uint_32 & 07777;
+ 		break;
+ 	case Opt_uid:
+-		ctx->uid = make_kuid(current_user_ns(), result.uint_32);
+-		if (!uid_valid(ctx->uid))
++		kuid = make_kuid(current_user_ns(), result.uint_32);
++		if (!uid_valid(kuid))
+ 			goto bad_value;
++
++		/*
++		 * The requested uid must be representable in the
++		 * filesystem's idmapping.
++		 */
++		if (!kuid_has_mapping(fc->user_ns, kuid))
++			goto bad_value;
++
++		ctx->uid = kuid;
+ 		break;
+ 	case Opt_gid:
+-		ctx->gid = make_kgid(current_user_ns(), result.uint_32);
+-		if (!gid_valid(ctx->gid))
++		kgid = make_kgid(current_user_ns(), result.uint_32);
++		if (!gid_valid(kgid))
+ 			goto bad_value;
++
++		/*
++		 * The requested gid must be representable in the
++		 * filesystem's idmapping.
++		 */
++		if (!kgid_has_mapping(fc->user_ns, kgid))
++			goto bad_value;
++
++		ctx->gid = kgid;
+ 		break;
+ 	case Opt_huge:
+ 		ctx->huge = result.uint_32;
+
+---
+base-commit: 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5
+change-id: 20230801-vfs-fs_context-uidgid-7756c8dcb1c0
 
