@@ -2,53 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DA0D376B4D4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 14:34:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03F7676B4EF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 14:41:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233191AbjHAMec (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Aug 2023 08:34:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40982 "EHLO
+        id S233730AbjHAMlb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Aug 2023 08:41:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229837AbjHAMec (ORCPT
+        with ESMTP id S233721AbjHAMlb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Aug 2023 08:34:32 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C65721FC7;
-        Tue,  1 Aug 2023 05:34:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=S/u4vYJhKZmYxEtl4s2/42a0qgFgAhFLv7zKyESwQwc=; b=lQ6p7/T9cFvMeIg2EyU85XKRvo
-        rlNd+GuoLvcrJtSy1nKprTIR9lNmaBBEgKJ6TC60RIZh93gtupZYwrBvvqGsyXaXqM3kFbfdeo3za
-        PZwz5czl29B4EWZEbJOwjCSROXrGISrKQs2yH+3IAA61erVASsi3Opu23+QmTYW+Ko62xB9bZ6O46
-        90LRFevYeSULZoPCRz1Y7ba0M2YaD24qBMN1Us13RJH6aQXrfHY/nzH76am3TX7k+zz99f7ioxyzL
-        i3FRo70yR9oTL6XcjJ5nti2x7JApZ5OYxJ8mBXcTkmTQQXGqoL4SUpypLkXFWEX425gOQrRgRmhNc
-        o+Etj7aw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qQoZx-008m2n-Nt; Tue, 01 Aug 2023 12:34:21 +0000
-Date:   Tue, 1 Aug 2023 13:34:21 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        Christian Brauner <christian@brauner.io>,
-        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Hawking Zhang <Hawking.Zhang@amd.com>,
-        Harry Pan <harry.pan@intel.com>, linux-pm@vger.kernel.org
-Subject: Re: ksys_sync_helper
-Message-ID: <ZMj7zTwPw/qi/bNw@casper.infradead.org>
-References: <ZMdgxYPPRYFipu1e@infradead.org>
- <e1aef4d4-b6fb-46ca-f11b-08b3e5eea27d@intel.com>
- <ZMjnZhbKbNMmcUPN@infradead.org>
+        Tue, 1 Aug 2023 08:41:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FF101FCB
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 05:40:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1690893640;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fdSmE0KsRkcAPc+N+tgRm738pW2M/sS8fQouKVDmKko=;
+        b=ioRi8/NXu93PyWzO+QdP5tCBL1syJ7uKL7j/zGAW+w1jqgKIJjRRA+IgHRa/0fjD8e8Ohf
+        0T9AJos+nr07XWZVHaeiAtxzLFoaT0J+0KkUwmraAuVT6CV/tqVl3nzqQKRIaEp4ebiqmB
+        R1wYbVpUkErF+mANAbmaBsBWhksfPPM=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-192-1QObjjXDNfmEubEKL5L97Q-1; Tue, 01 Aug 2023 08:40:37 -0400
+X-MC-Unique: 1QObjjXDNfmEubEKL5L97Q-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4FA53185A792;
+        Tue,  1 Aug 2023 12:40:36 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.131])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 72517492B01;
+        Tue,  1 Aug 2023 12:40:34 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <64c7acd57270c_169cd129420@willemb.c.googlers.com.notmuch>
+References: <64c7acd57270c_169cd129420@willemb.c.googlers.com.notmuch> <64c6672f580e3_11d0042944e@willemb.c.googlers.com.notmuch> <20230718160737.52c68c73@kernel.org> <000000000000881d0606004541d1@google.com> <0000000000001416bb06004ebf53@google.com> <792238.1690667367@warthog.procyon.org.uk> <831028.1690791233@warthog.procyon.org.uk>
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     dhowells@redhat.com, Jakub Kicinski <kuba@kernel.org>,
+        syzbot <syzbot+f527b971b4bdc8e79f9e@syzkaller.appspotmail.com>,
+        bpf@vger.kernel.org, brauner@kernel.org, davem@davemloft.net,
+        dsahern@kernel.org, edumazet@google.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, pabeni@redhat.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: Endless loop in udp with MSG_SPLICE_READ - Re: [syzbot] [fs?] INFO: task hung in pipe_release (4)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZMjnZhbKbNMmcUPN@infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1401695.1690893633.1@warthog.procyon.org.uk>
+Date:   Tue, 01 Aug 2023 13:40:33 +0100
+Message-ID: <1401696.1690893633@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,53 +70,59 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 01, 2023 at 04:07:18AM -0700, Christoph Hellwig wrote:
-> On Mon, Jul 31, 2023 at 08:27:17PM +0200, Wysocki, Rafael J wrote:
-> > 
-> > OK, I'll remember about this.
-> > 
-> > 
-> > > With this
-> > > and commit d5ea093eebf022e now we end up with a random driver (amdgpu)
-> > > syncing all file systems for absolutely no good reason.
-> > 
-> > Sorry about that.
-> > 
-> > The problematic commit should still revert more or less cleanly, so please
-> > do that if that's what you need.
-> 
-> We'd still need to remove abuse in amdgpu first, though.
+The more I look at __ip_append_data(), the more I think the maths is wrong.
+In the bit that allocates a new skbuff:
 
-This would effectively revert d5ea093eebf0
+	if (copy <= 0) {
+	...
+		datalen = length + fraggap;
+		if (datalen > mtu - fragheaderlen)
+			datalen = maxfraglen - fragheaderlen;
+		fraglen = datalen + fragheaderlen;
+		pagedlen = 0;
+	...
+		if ((flags & MSG_MORE) &&
+		    !(rt->dst.dev->features&NETIF_F_SG))
+	...
+		else if (!paged &&
+			 (fraglen + alloc_extra < SKB_MAX_ALLOC ||
+			  !(rt->dst.dev->features & NETIF_F_SG)))
+	...
+		else {
+			alloclen = fragheaderlen + transhdrlen;
+			pagedlen = datalen - transhdrlen;
+		}
+	...
 
+In the MSG_SPLICE_READ but not MSG_MORE case, we go through that else clause.
+The values used here, a few lines further along:
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index dc0e5227119b..af04fece37d5 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -75,7 +75,6 @@
- #include "amdgpu_fru_eeprom.h"
- #include "amdgpu_reset.h"
- 
--#include <linux/suspend.h>
- #include <drm/task_barrier.h>
- #include <linux/pm_runtime.h>
- 
-@@ -5225,17 +5224,6 @@ int amdgpu_device_gpu_recover(struct amdgpu_device *adev,
- 	 */
- 	need_emergency_restart = amdgpu_ras_need_emergency_restart(adev);
- 
--	/*
--	 * Flush RAM to disk so that after reboot
--	 * the user can read log and see why the system rebooted.
--	 */
--	if (need_emergency_restart && amdgpu_ras_get_context(adev)->reboot) {
--		DRM_WARN("Emergency reboot.");
--
--		ksys_sync_helper();
--		emergency_restart();
--	}
--
- 	dev_info(adev->dev, "GPU %s begin!\n",
- 		need_emergency_restart ? "jobs stop":"reset");
- 
+		copy = datalen - transhdrlen - fraggap - pagedlen;
+
+are constant over the intervening span.  This means that, provided the splice
+isn't going to exceed the MTU on the second fragment, the calculation of
+'copy' can then be simplified algebraically thus:
+
+		copy = (length + fraggap) - transhdrlen - fraggap - pagedlen;
+
+		copy = length - transhdrlen - pagedlen;
+
+		copy = length - transhdrlen - (datalen - transhdrlen);
+
+		copy = length - transhdrlen - datalen + transhdrlen;
+
+		copy = length - datalen;
+
+		copy = length - (length + fraggap);
+
+		copy = length - length - fraggap;
+
+		copy = -fraggap;
+
+I think we might need to recalculate copy after the conditional call to
+getfrag().  Possibly we should skip that entirely for MSG_SPLICE_READ.  The
+root seems to be that we're subtracting pagedlen from datalen - but probably
+we shouldn't be doing getfrag() if pagedlen > 0.
+
+David
+
