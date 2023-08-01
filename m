@@ -2,70 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CFFA576A586
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 02:28:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7DAB76A5B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 02:47:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229874AbjHAA2I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Jul 2023 20:28:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40578 "EHLO
+        id S230291AbjHAAr4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Jul 2023 20:47:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231720AbjHAA2F (ORCPT
+        with ESMTP id S229437AbjHAAry (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Jul 2023 20:28:05 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEF8A1716
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Jul 2023 17:28:04 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1bb91c20602so6730665ad.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Jul 2023 17:28:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1690849684; x=1691454484;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kgTPGRyN87jS4tKnavcsDkYQESfL6L9Gm+lJJwkfY6Y=;
-        b=GY9k3M7paXDJczrN/BFVTsqxlkIUdb1LPq8BsiItzAevEc5PYKZlKFO77ItwWaX9i/
-         GTqX1DY9tNt6R+FZVS/tFuqhhkD9jqmnFOhKLJJTpSqNNmsoVePK1v7OnUQ0Qq41BB96
-         sYGS2Jj9N6mu4AGNWz/T1YDoYxdKXWvp9Pl0DhAXJ5L7sHHS1Jr8xIUOkB45OZ1pHeZX
-         Tje4wfSKCtxM5M+XS+Ixaqy7Xp1jzZiE7k1sXga/MTgUUN7ZFxD2rjDpIiM5S5mWac3b
-         tpsBMLD16Xd0M8m+gUYNNeEDEvVgnZ3l3wXeL1R/TOgkyRFQOxuNK9jcvHGeMr23iACu
-         2fLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690849684; x=1691454484;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kgTPGRyN87jS4tKnavcsDkYQESfL6L9Gm+lJJwkfY6Y=;
-        b=YxLmMZFL9I3MtieSa4mEoj0/5xs+xFV7rKmkFGmfXv34X1bvRXHtBmpCAUUuuy3LxY
-         a1dNDTlqSr+Z7sYbeZTwn6iWeKY9RPsWsAzlGmy0JJXiur7h9DTwoX/ND3WQbN/e9bFJ
-         y/TjCrajZWMvYwcQiN5EMN1eEUlVoeufKyivMmfHHB2ZqLRtGFaBPF5mrO9X1zA+Pmu1
-         9m1mCQRZ+WglqseBV3Cop01Qdk8tG8JjbrCZGzhqcR7bY22UUYPnUGuBHD3YfYiwkkgc
-         9ZhVEe73cBkWkbJv9f7NxiteZ2YaPlcrzg6T6r06/pjubkTTmiFB0ncZGWVEHYdKr2e2
-         iskQ==
-X-Gm-Message-State: ABy/qLYkp1Z2EIvdRZ6KPFcC08PdK/6/3Ujxi0MuKjBRNkT11Mf9t7B3
-        tsagKX9HitJgMOBJcpLh9VH42A==
-X-Google-Smtp-Source: APBJJlHorFCBxkYMkXwavHDSuWz+Ga2gEYmSGDJBNf+qMXKtQJQrj6fk7GhUaxAhGoaFTo8aVGMKQg==
-X-Received: by 2002:a17:902:ea04:b0:1b8:17e8:547e with SMTP id s4-20020a170902ea0400b001b817e8547emr10130894plg.1.1690849684276;
-        Mon, 31 Jul 2023 17:28:04 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id jg19-20020a17090326d300b001b8013ed362sm9130054plb.96.2023.07.31.17.28.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Jul 2023 17:28:03 -0700 (PDT)
-Message-ID: <22630618-40fc-5668-078d-6cefcb2e4962@kernel.dk>
-Date:   Mon, 31 Jul 2023 18:28:02 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 3/5] io_uring: add support for getdents
-Content-Language: en-US
-To:     "Darrick J. Wong" <djwong@kernel.org>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     Dave Chinner <david@fromorbit.com>, Hao Xu <hao.xu@linux.dev>,
+        Mon, 31 Jul 2023 20:47:54 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD272116;
+        Mon, 31 Jul 2023 17:47:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=JdZdYfH9Sqqb3oTstrTYwWa0TUTpdBVuYJoktWPnoKE=; b=BaZsjQ3q1NctuJkj/OvL42HX15
+        2KGWN7mUpgailrix6+RSNsan/8fJ14pbvqX4vZgc+4/yBD6fE0KiIgDyqYUVnzd6JINU+bQxAB0no
+        PFvVx0talBM0nASoxdUWv49Ej89gnvM9Xp29N0RBgkmTvwAMP1kFj5D6IW0uFrXnB8T9IpIRG+UHN
+        oMQh//+SCGebOsd6tPQI9zxzCAHvvxIKGcbfudksidij6xIwxG9sP21icRzr6JAR7Gw9f88CaGZzs
+        sFI9PPuV2dpiBfJcuWXH8jadP+VCoI+RqiEHupwSz7Dz0Ftic6yaS4rqSTH+zf6YptcMDa5pYVGsT
+        dw4BiotA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qQdXv-004lPt-BA; Tue, 01 Aug 2023 00:47:31 +0000
+Date:   Tue, 1 Aug 2023 01:47:31 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Dave Chinner <david@fromorbit.com>, Hao Xu <hao.xu@linux.dev>,
         io-uring@vger.kernel.org,
         Dominique Martinet <asmadeus@codewreck.org>,
         Pavel Begunkov <asml.silence@gmail.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
         linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+Subject: Re: [PATCH 3/5] io_uring: add support for getdents
+Message-ID: <ZMhWI/2UIFAb3vR7@casper.infradead.org>
 References: <20230718132112.461218-1-hao.xu@linux.dev>
  <20230718132112.461218-4-hao.xu@linux.dev>
  <20230726-leinen-basisarbeit-13ae322690ff@brauner>
@@ -74,51 +49,28 @@ References: <20230718132112.461218-1-hao.xu@linux.dev>
  <ZMcPUX0lYC2nscAm@dread.disaster.area>
  <20230731-gezeugt-tierwelt-f3d6a900c262@brauner>
  <20230731152623.GC11336@frogsfrogsfrogs>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230731152623.GC11336@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+ <22630618-40fc-5668-078d-6cefcb2e4962@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22630618-40fc-5668-078d-6cefcb2e4962@kernel.dk>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/31/23 9:26?AM, Darrick J. Wong wrote:
-> I've watched quite a bit of NOWAIT whackamole going on over the past few
-> years (i_rwsem, the ILOCK, the IO layer, memory allocations...).  IIRC
-> these filesystem ios all have to run in process context, right?  If so,
-> why don't we capture the NOWAIT state in a PF flag?  We already do that
-> for NOFS/NOIO memory allocations to make sure that /all/ reclaim
-> attempts cannot recurse into the fs/io stacks.
+On Mon, Jul 31, 2023 at 06:28:02PM -0600, Jens Axboe wrote:
+> It's also not an absolute thing, like memory allocations are. It's
+> perfectly fine to grab a mutex under NOWAIT issue. What you should not
+> do is grab a mutex that someone else can grab while waiting on IO. This
+> kind of extra context is only available in the code in question, not
+> generically for eg mutex locking.
 
-I would greatly prefer passing down the context rather than capitulating
-and adding a task_struct flag for this. I think it _kind of_ makes sense
-for things like allocations, as you cannot easily track that all the way
-down, but it's a really ugly solution. It certainly creates more churn
-passing it down, but it also reveals the parts that need to check it.
-WHen new code is added, it's much more likely you'll spot the fact that
-there's passed in context. For allocation, you end up in the allocator
-anyway, which can augment the gfp mask with whatever is set in the task.
-The same is not true for locking and other bits, as they don't return a
-value to begin with. When we know they are sane, we can flag the fs as
-supporting it (like we've done for async buffered reads, for example).
-
-It's also not an absolute thing, like memory allocations are. It's
-perfectly fine to grab a mutex under NOWAIT issue. What you should not
-do is grab a mutex that someone else can grab while waiting on IO. This
-kind of extra context is only available in the code in question, not
-generically for eg mutex locking.
-
-I'm not a huge fan of the "let's add a bool nowait". Most/all use cases
-pass down state anyway, putting it in a suitable type struct seems much
-cleaner to me than the out-of-band approach of just adding a
-current->please_nowait.
-
--- 
-Jens Axboe
-
+Is that information documented somewhere?  I didn't know that was the
+rule, and I wouldn't be surprised if that's news to several of the other
+people on this thread.
