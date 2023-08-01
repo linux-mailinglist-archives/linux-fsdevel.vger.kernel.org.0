@@ -2,234 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 07FE876B523
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 14:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81B6176B533
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 14:53:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234021AbjHAMu3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Aug 2023 08:50:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47844 "EHLO
+        id S231756AbjHAMxo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Aug 2023 08:53:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232535AbjHAMuP (ORCPT
+        with ESMTP id S231197AbjHAMxn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Aug 2023 08:50:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E6DE210D
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 05:49:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690894172;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=hi/J18RARw6/Qxc4oFoZIMtkW25pVX+KOdV/ft2I3Ss=;
-        b=ZidO4QKXdBxWkwb+DXCyX462fJjJpaxR3Oa8WlARuCX4DtPsVC7njU/rQAzSp5aK2ZiTjJ
-        S1JnAvSJL3sLdUnRkqFQ7uLrr7tOYJhrVC43K4D5PvJpy8Om0EdjFsDcYpFeveWlGemEIZ
-        UFATr5+VWIuepMWy0EjgKIexxZZK6vI=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-284-oN0NdSRGOK6hQjSuybYWtw-1; Tue, 01 Aug 2023 08:49:27 -0400
-X-MC-Unique: oN0NdSRGOK6hQjSuybYWtw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 73D17805C10;
-        Tue,  1 Aug 2023 12:49:26 +0000 (UTC)
-Received: from t14s.fritz.box (unknown [10.39.193.232])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 75021C585A0;
-        Tue,  1 Aug 2023 12:49:23 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        liubo <liubo254@huawei.com>, Peter Xu <peterx@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mel Gorman <mgorman@suse.de>, Shuah Khan <shuah@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH v2 8/8] selftest/mm: ksm_functional_tests: Add PROT_NONE test
-Date:   Tue,  1 Aug 2023 14:48:44 +0200
-Message-ID: <20230801124844.278698-9-david@redhat.com>
-In-Reply-To: <20230801124844.278698-1-david@redhat.com>
-References: <20230801124844.278698-1-david@redhat.com>
+        Tue, 1 Aug 2023 08:53:43 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 192EDE6
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 05:53:40 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id 38308e7fff4ca-2b962535808so86184861fa.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Aug 2023 05:53:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1690894418; x=1691499218;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Lx4dB17LVBJWGUEA9QJyHkKX9VBphHZ2Z9Sn7D5kEw=;
+        b=jtdIpXgZ8chrW4jrdRxe0v9LNviS1LEbfC1Nu8VD/6IsCS2T5OqY6qkWVHLHKCNLeF
+         s1QXu5Z9VHyGWNuyUWL/go+k8+PNuRh1Bs0G1B+3xrnLG12Z54g/OsmN9OZrU4xwD5H7
+         Ya1IJifLqtgGE09/jzkgsvEo7Qsef3ayQVQ1s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690894418; x=1691499218;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/Lx4dB17LVBJWGUEA9QJyHkKX9VBphHZ2Z9Sn7D5kEw=;
+        b=Y0XbHBrFqCOLrYZwM/vj3rrjfHgeszOP3NoMWVOo43PyD71g1q9BINWTYSzLx1MR35
+         A/OTWV+9SIaUDN+Sh45FqoAYs24dHO0KbEJcJT6SmSTWFDu21MccJGMMtjuJX+7WDt4Y
+         0fAL7ln+AluLpnLa5YUOUUJr0//pLF2V56vYNEJruOSg4jDgMMC2iI8aNs6+Ku7AsPci
+         TJFv27iRHDLr7HB7aPBi8aFWrT9n7U4nabw0Y3eV94Tu66xv++YGlAe94fjVs+aO6qYZ
+         g9RPZuI2OcJe1tuJBH5Rn0pt/TloIytkNAg7bIBWV3QiHOnDvZgMcR12AWMoCOMN7jya
+         sbHg==
+X-Gm-Message-State: ABy/qLZo4WuPPFejM2CjWyB8OhLrt230U5lfTB1Gw9O9+sHTkNNoGH55
+        HqjWWfUlJ3+IYb/HHX72nxdBR00cHu6nBAFtuv2ALQ==
+X-Google-Smtp-Source: APBJJlGnCFPUx4hlSF2m//OXXH75UxXAAZ1yPrwZ/XKZRrtzlAES2XUd7qQt0wEnfIxb+ayOzKfzNbeQX/MA+M3Vpkg=
+X-Received: by 2002:a2e:3e07:0:b0:2b9:dd5d:5d0c with SMTP id
+ l7-20020a2e3e07000000b002b9dd5d5d0cmr1984051lja.52.1690894418281; Tue, 01 Aug
+ 2023 05:53:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+References: <87wmymk0k9.fsf@vostro.rath.org> <CAJfpegs+FfWGCOxX1XERGHfYRZzCzcLZ99mnchfb8o9U0kTS-A@mail.gmail.com>
+ <87tttpk2kp.fsf@vostro.rath.org> <87r0osjufc.fsf@vostro.rath.org>
+ <CAJfpegu7BtYzPE-NK_t3nFBT3fy2wGyyuJRP=wVGnvZh2oQPBA@mail.gmail.com>
+ <CAJfpeguJESTqU7d0d0_2t=99P3Yt5a8-T4ADTF3tUdg5ou2qow@mail.gmail.com> <87o7jrjant.fsf@vostro.rath.org>
+In-Reply-To: <87o7jrjant.fsf@vostro.rath.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 1 Aug 2023 14:53:26 +0200
+Message-ID: <CAJfpegvTTUvrcpzVsJwH63n+zNw+h6krtiCPATCzZ+ePZMVt2Q@mail.gmail.com>
+Subject: Re: [fuse-devel] Semantics of fuse_notify_delete()
+To:     Miklos Szeredi via fuse-devel <fuse-devel@lists.sourceforge.net>
+Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        miklos <mszeredi@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Let's test whether merging and unmerging in PROT_NONE areas works as
-expected.
+On Tue, 1 Aug 2023 at 12:54, Nikolaus Rath <Nikolaus@rath.org> wrote:
 
-Pass a page protection to mmap_and_merge_range(), which will trigger
-an mprotect() after writing to the pages, but before enabling merging.
+> This sounds like you're using s3qlrm from one version of S3QL, and
+> mount.s3ql from a different one.
 
-Make sure that unsharing works as expected, by performing a ptrace write
-(using /proc/self/mem) and by setting MADV_UNMERGEABLE.
+Indeed, I forgot to checkout the debug branch.
 
-Note that this implicitly tests that ptrace writes in an inaccessible
-(PROT_NONE) mapping work as expected.
+> If you want to keep the Python packages separate, the best way is to use
+> a virtual environment:
+>
+> # mkdir ~/s3ql-python-env
+> # python3 -m venv --system-side-packages ~/s3ql-python-env
+> # ~/s3ql-python-env/bin/python -m pip install --upgrade cryptography defusedxml apsw trio pyfuse3 dugong pytest requests cython
+> # ~/s3ql-python-env/bin/python setup.py build_cython build_ext --inplace
+> # ~/s3ql-python-env/bin/python bin/mount.s3ql [...]
+> # ~/s3ql-python-env/bin/python bin/s3qlrm [...]
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- .../selftests/mm/ksm_functional_tests.c       | 59 ++++++++++++++++---
- 1 file changed, 52 insertions(+), 7 deletions(-)
+Here's one with the virtual env and the correct head:
 
-diff --git a/tools/testing/selftests/mm/ksm_functional_tests.c b/tools/testing/selftests/mm/ksm_functional_tests.c
-index cb63b600cb4f..8fa4889ab4f3 100644
---- a/tools/testing/selftests/mm/ksm_functional_tests.c
-+++ b/tools/testing/selftests/mm/ksm_functional_tests.c
-@@ -27,6 +27,7 @@
- #define KiB 1024u
- #define MiB (1024 * KiB)
- 
-+static int mem_fd;
- static int ksm_fd;
- static int ksm_full_scans_fd;
- static int proc_self_ksm_stat_fd;
-@@ -144,7 +145,8 @@ static int ksm_unmerge(void)
- 	return 0;
- }
- 
--static char *mmap_and_merge_range(char val, unsigned long size, bool use_prctl)
-+static char *mmap_and_merge_range(char val, unsigned long size, int prot,
-+				  bool use_prctl)
- {
- 	char *map;
- 	int ret;
-@@ -176,6 +178,11 @@ static char *mmap_and_merge_range(char val, unsigned long size, bool use_prctl)
- 	/* Make sure each page contains the same values to merge them. */
- 	memset(map, val, size);
- 
-+	if (mprotect(map, size, prot)) {
-+		ksft_test_result_skip("mprotect() failed\n");
-+		goto unmap;
-+	}
-+
- 	if (use_prctl) {
- 		ret = prctl(PR_SET_MEMORY_MERGE, 1, 0, 0, 0);
- 		if (ret < 0 && errno == EINVAL) {
-@@ -218,7 +225,7 @@ static void test_unmerge(void)
- 
- 	ksft_print_msg("[RUN] %s\n", __func__);
- 
--	map = mmap_and_merge_range(0xcf, size, false);
-+	map = mmap_and_merge_range(0xcf, size, PROT_READ | PROT_WRITE, false);
- 	if (map == MAP_FAILED)
- 		return;
- 
-@@ -256,7 +263,7 @@ static void test_unmerge_zero_pages(void)
- 	}
- 
- 	/* Let KSM deduplicate zero pages. */
--	map = mmap_and_merge_range(0x00, size, false);
-+	map = mmap_and_merge_range(0x00, size, PROT_READ | PROT_WRITE, false);
- 	if (map == MAP_FAILED)
- 		return;
- 
-@@ -304,7 +311,7 @@ static void test_unmerge_discarded(void)
- 
- 	ksft_print_msg("[RUN] %s\n", __func__);
- 
--	map = mmap_and_merge_range(0xcf, size, false);
-+	map = mmap_and_merge_range(0xcf, size, PROT_READ | PROT_WRITE, false);
- 	if (map == MAP_FAILED)
- 		return;
- 
-@@ -336,7 +343,7 @@ static void test_unmerge_uffd_wp(void)
- 
- 	ksft_print_msg("[RUN] %s\n", __func__);
- 
--	map = mmap_and_merge_range(0xcf, size, false);
-+	map = mmap_and_merge_range(0xcf, size, PROT_READ | PROT_WRITE, false);
- 	if (map == MAP_FAILED)
- 		return;
- 
-@@ -479,7 +486,7 @@ static void test_prctl_unmerge(void)
- 
- 	ksft_print_msg("[RUN] %s\n", __func__);
- 
--	map = mmap_and_merge_range(0xcf, size, true);
-+	map = mmap_and_merge_range(0xcf, size, PROT_READ | PROT_WRITE, true);
- 	if (map == MAP_FAILED)
- 		return;
- 
-@@ -494,9 +501,42 @@ static void test_prctl_unmerge(void)
- 	munmap(map, size);
- }
- 
-+static void test_prot_none(void)
-+{
-+	const unsigned int size = 2 * MiB;
-+	char *map;
-+	int i;
-+
-+	ksft_print_msg("[RUN] %s\n", __func__);
-+
-+	map = mmap_and_merge_range(0x11, size, PROT_NONE, false);
-+	if (map == MAP_FAILED)
-+		goto unmap;
-+
-+	/* Store a unique value in each page on one half using ptrace */
-+	for (i = 0; i < size / 2; i += pagesize) {
-+		lseek(mem_fd, (uintptr_t) map + i, SEEK_SET);
-+		if (write(mem_fd, &i, sizeof(size)) != sizeof(size)) {
-+			ksft_test_result_fail("ptrace write failed\n");
-+			goto unmap;
-+		}
-+	}
-+
-+	/* Trigger unsharing on the other half. */
-+	if (madvise(map + size / 2, size / 2, MADV_UNMERGEABLE)) {
-+		ksft_test_result_fail("MADV_UNMERGEABLE failed\n");
-+		goto unmap;
-+	}
-+
-+	ksft_test_result(!range_maps_duplicates(map, size),
-+			 "Pages were unmerged\n");
-+unmap:
-+	munmap(map, size);
-+}
-+
- int main(int argc, char **argv)
- {
--	unsigned int tests = 6;
-+	unsigned int tests = 7;
- 	int err;
- 
- #ifdef __NR_userfaultfd
-@@ -508,6 +548,9 @@ int main(int argc, char **argv)
- 
- 	pagesize = getpagesize();
- 
-+	mem_fd = open("/proc/self/mem", O_RDWR);
-+	if (mem_fd < 0)
-+		ksft_exit_fail_msg("opening /proc/self/mem failed\n");
- 	ksm_fd = open("/sys/kernel/mm/ksm/run", O_RDWR);
- 	if (ksm_fd < 0)
- 		ksft_exit_skip("open(\"/sys/kernel/mm/ksm/run\") failed\n");
-@@ -529,6 +572,8 @@ int main(int argc, char **argv)
- 	test_unmerge_uffd_wp();
- #endif
- 
-+	test_prot_none();
-+
- 	test_prctl();
- 	test_prctl_fork();
- 	test_prctl_unmerge();
--- 
-2.41.0
+root@kvm:~/s3ql# git log -1 --pretty="%h %s"
+3d35f18543d9 Reproducer for notify_delete issue. To confirm:
+root@kvm:~/s3ql# ~/s3ql-python-env/bin/python bin/s3qlrm mnt/test
+WARNING: Received unknown command via control inode
+ERROR: Uncaught top-level exception:
+Traceback (most recent call last):
+  File "/root/s3ql/bin/s3qlrm", line 21, in <module>
+    s3ql.remove.main(sys.argv[1:])
+  File "/root/s3ql/src/s3ql/remove.py", line 72, in main
+    pyfuse3.setxattr(ctrlfile, 'rmtree', cmd)
+  File "src/pyfuse3.pyx", line 629, in pyfuse3.setxattr
+OSError: [Errno 22] Invalid argument: 'mnt/test/.__s3ql__ctrl__'
 
+Thanks,
+Miklos
