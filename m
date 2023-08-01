@@ -2,67 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 03F7676B4EF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 14:41:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10EC476B50B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 14:49:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233730AbjHAMlb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Aug 2023 08:41:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43126 "EHLO
+        id S232299AbjHAMtj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Aug 2023 08:49:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233721AbjHAMlb (ORCPT
+        with ESMTP id S231844AbjHAMti (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Aug 2023 08:41:31 -0400
+        Tue, 1 Aug 2023 08:49:38 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FF101FCB
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 05:40:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08BAC10EA
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 05:48:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690893640;
+        s=mimecast20190719; t=1690894131;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fdSmE0KsRkcAPc+N+tgRm738pW2M/sS8fQouKVDmKko=;
-        b=ioRi8/NXu93PyWzO+QdP5tCBL1syJ7uKL7j/zGAW+w1jqgKIJjRRA+IgHRa/0fjD8e8Ohf
-        0T9AJos+nr07XWZVHaeiAtxzLFoaT0J+0KkUwmraAuVT6CV/tqVl3nzqQKRIaEp4ebiqmB
-        R1wYbVpUkErF+mANAbmaBsBWhksfPPM=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-192-1QObjjXDNfmEubEKL5L97Q-1; Tue, 01 Aug 2023 08:40:37 -0400
-X-MC-Unique: 1QObjjXDNfmEubEKL5L97Q-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=RHFvfXcP0yrcIaYOdQEvaIRqqVbMZney2Vh1PcaD7Io=;
+        b=fn75Dx0qzhAvlJAtUU7QOhNQHvqDlZYocg+SJbwePjD18/V5xDkBNE9WvCTtgAujR2VI3E
+        4e3cNH9vPmW/GsnEfs2jDycsIjNOVH306aR8aW4k/J1ZzYm5WUK2SBpGrUkzgjoWiMNf4L
+        8KnDzXnuN9qaSFyNsDQmhu5P/02zqfo=
+Received: from mimecast-mx02.redhat.com (66.187.233.73 [66.187.233.73]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-46-92PRgIToNqSHCN5sbvkKmg-1; Tue, 01 Aug 2023 08:48:50 -0400
+X-MC-Unique: 92PRgIToNqSHCN5sbvkKmg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4FA53185A792;
-        Tue,  1 Aug 2023 12:40:36 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.131])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 72517492B01;
-        Tue,  1 Aug 2023 12:40:34 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <64c7acd57270c_169cd129420@willemb.c.googlers.com.notmuch>
-References: <64c7acd57270c_169cd129420@willemb.c.googlers.com.notmuch> <64c6672f580e3_11d0042944e@willemb.c.googlers.com.notmuch> <20230718160737.52c68c73@kernel.org> <000000000000881d0606004541d1@google.com> <0000000000001416bb06004ebf53@google.com> <792238.1690667367@warthog.procyon.org.uk> <831028.1690791233@warthog.procyon.org.uk>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     dhowells@redhat.com, Jakub Kicinski <kuba@kernel.org>,
-        syzbot <syzbot+f527b971b4bdc8e79f9e@syzkaller.appspotmail.com>,
-        bpf@vger.kernel.org, brauner@kernel.org, davem@davemloft.net,
-        dsahern@kernel.org, edumazet@google.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, pabeni@redhat.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: Endless loop in udp with MSG_SPLICE_READ - Re: [syzbot] [fs?] INFO: task hung in pipe_release (4)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8876C3C14AA4;
+        Tue,  1 Aug 2023 12:48:49 +0000 (UTC)
+Received: from t14s.fritz.box (unknown [10.39.193.232])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B7B1EC585A0;
+        Tue,  1 Aug 2023 12:48:45 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        liubo <liubo254@huawei.com>, Peter Xu <peterx@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Hugh Dickins <hughd@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Mel Gorman <mgorman@suse.de>, Shuah Khan <shuah@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH v2 0/8] smaps / mm/gup: fix gup_can_follow_protnone fallout
+Date:   Tue,  1 Aug 2023 14:48:36 +0200
+Message-ID: <20230801124844.278698-1-david@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1401695.1690893633.1@warthog.procyon.org.uk>
-Date:   Tue, 01 Aug 2023 13:40:33 +0100
-Message-ID: <1401696.1690893633@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,59 +68,69 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The more I look at __ip_append_data(), the more I think the maths is wrong.
-In the bit that allocates a new skbuff:
+This is agains mm/mm-unstable, but everything except patch #7 and #8
+should apply on current master. Especially patch #1 and #2 should go
+upstream first, so we can let the other stuff mature a bit longer.
 
-	if (copy <= 0) {
-	...
-		datalen = length + fraggap;
-		if (datalen > mtu - fragheaderlen)
-			datalen = maxfraglen - fragheaderlen;
-		fraglen = datalen + fragheaderlen;
-		pagedlen = 0;
-	...
-		if ((flags & MSG_MORE) &&
-		    !(rt->dst.dev->features&NETIF_F_SG))
-	...
-		else if (!paged &&
-			 (fraglen + alloc_extra < SKB_MAX_ALLOC ||
-			  !(rt->dst.dev->features & NETIF_F_SG)))
-	...
-		else {
-			alloclen = fragheaderlen + transhdrlen;
-			pagedlen = datalen - transhdrlen;
-		}
-	...
 
-In the MSG_SPLICE_READ but not MSG_MORE case, we go through that else clause.
-The values used here, a few lines further along:
+Next attempt to handle the fallout of 474098edac26
+("mm/gup: replace FOLL_NUMA by gup_can_follow_protnone()") where I
+accidentially missed that follow_page() and smaps implicitly kept the
+FOLL_NUMA flag clear by not setting it if FOLL_FORCE is absent, to
+not trigger faults on PROT_NONE-mapped PTEs.
 
-		copy = datalen - transhdrlen - fraggap - pagedlen;
+Patch #1 fixes the known issues by reintroducing FOLL_NUMA as
+FOLL_HONOR_NUMA_FAULT and decoupling it from FOLL_FORCE.
 
-are constant over the intervening span.  This means that, provided the splice
-isn't going to exceed the MTU on the second fragment, the calculation of
-'copy' can then be simplified algebraically thus:
+Patch #2 is a cleanup that I think actually fixes some corner cases, so
+I added a Fixes: tag.
 
-		copy = (length + fraggap) - transhdrlen - fraggap - pagedlen;
+Patch #3 makes KVM explicitly set FOLL_HONOR_NUMA_FAULT in the single
+case where it is required, and documents the situation.
 
-		copy = length - transhdrlen - pagedlen;
+Patch #4 then stops implicitly setting FOLL_HONOR_NUMA_FAULT. But note that
+for FOLL_WRITE we always implicitly honor NUMA hinting faults.
 
-		copy = length - transhdrlen - (datalen - transhdrlen);
+Patch #5 and patch #6 cleanup some comments.
 
-		copy = length - transhdrlen - datalen + transhdrlen;
+Patch #7 improves the KVM functional tests such that patch #8 can
+actually check for one of the known issues: KSM no longer working on
+PROT_NONE mappings on x86-64 with CONFIG_NUMA_BALANCING.
 
-		copy = length - datalen;
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: liubo <liubo254@huawei.com>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
 
-		copy = length - (length + fraggap);
+David Hildenbrand (8):
+  mm/gup: reintroduce FOLL_NUMA as FOLL_HONOR_NUMA_FAULT
+  smaps: use vm_normal_page_pmd() instead of follow_trans_huge_pmd()
+  kvm: explicitly set FOLL_HONOR_NUMA_FAULT in hva_to_pfn_slow()
+  mm/gup: don't implicitly set FOLL_HONOR_NUMA_FAULT
+  pgtable: improve pte_protnone() comment
+  mm/huge_memory: remove stale NUMA hinting comment from
+    follow_trans_huge_pmd()
+  selftest/mm: ksm_functional_tests: test in mmap_and_merge_range() if
+    anything got merged
+  selftest/mm: ksm_functional_tests: Add PROT_NONE test
 
-		copy = length - length - fraggap;
+ fs/proc/task_mmu.c                            |   3 +-
+ include/linux/mm.h                            |  21 +++-
+ include/linux/mm_types.h                      |   9 ++
+ include/linux/pgtable.h                       |  16 ++-
+ mm/gup.c                                      |  23 +++-
+ mm/huge_memory.c                              |   3 +-
+ .../selftests/mm/ksm_functional_tests.c       | 106 ++++++++++++++++--
+ virt/kvm/kvm_main.c                           |  13 ++-
+ 8 files changed, 164 insertions(+), 30 deletions(-)
 
-		copy = -fraggap;
-
-I think we might need to recalculate copy after the conditional call to
-getfrag().  Possibly we should skip that entirely for MSG_SPLICE_READ.  The
-root seems to be that we're subtracting pagedlen from datalen - but probably
-we shouldn't be doing getfrag() if pagedlen > 0.
-
-David
+-- 
+2.41.0
 
