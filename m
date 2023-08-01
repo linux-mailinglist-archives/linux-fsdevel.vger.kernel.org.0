@@ -2,139 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 99E0E76B7F4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 16:48:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86E3A76B822
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 16:58:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233942AbjHAOsS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Aug 2023 10:48:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33006 "EHLO
+        id S233343AbjHAO6r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Aug 2023 10:58:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234886AbjHAOsR (ORCPT
+        with ESMTP id S234497AbjHAO6q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Aug 2023 10:48:17 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EAF61BC3
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 07:48:16 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-99bcf2de59cso899652666b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Aug 2023 07:48:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1690901295; x=1691506095;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r3kEz1CTM4/QozQ2mRQvCjeRan+rFBPUYaNFk70CP28=;
-        b=iOm3m4lxaeHZrwJ/xIVKTeBN1U0byLijO0LCVzdEl0KAcnoAo7dIl/sjMNTu76FOwj
-         I5sYttUBRz/+24Kk7AcwiIGfsbksopGbx8TSNP+K0sZ9GVgFyS9fq2ygCBwaKym3rVn0
-         HaYBkaU1z4DC0dcDrqnOWS6Pv+75FO+XJE/24=
+        Tue, 1 Aug 2023 10:58:46 -0400
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D1EC1BC7
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 07:58:44 -0700 (PDT)
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3a3b86821fcso9551094b6e.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Aug 2023 07:58:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690901295; x=1691506095;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r3kEz1CTM4/QozQ2mRQvCjeRan+rFBPUYaNFk70CP28=;
-        b=akVDQyt2T8QdoBJiAV7ElIZpXiYAOvHHOrGJrWVrCfJQNziG2f/82KobcWs381TgGf
-         vg95Q2KUaPOMrrNpuhmA/rER8iEFHYOjXGMKccL0sCgGYmTYAtglyoZ/7G2aHqZ5G7cX
-         8GErugmbNn/9L6PLshUiV5dqcKP1bfV2a5PLQA/WAkmR98oqXJxdplZyos3khuKu/0Hu
-         Pz9eqwpMc9i3q7mVjlKt+GsP13SX4MMizAqMeg96bJjAhiKps5KnHyH15mHcteiqyIx2
-         Ftu5Dkq30r8pQbVBhZ4jhYiubWfzIHFPIu+KtpW2Xrqi6eZXbpJBRinEnLT+TQcUBUCe
-         nH5g==
-X-Gm-Message-State: ABy/qLakIAUCNVU/6hS3GWg39uJ3k24TQvuqSlKdrh1A/3RQijiE5Kxr
-        7xm48AD6SayD5lPYiDcU/WV5TRjM3IAmmmo+WoTZoA==
-X-Google-Smtp-Source: APBJJlE8JTL1fjZKhwknbK9ebcNbxHgy/MjRz5MqyE0lvybxwlqNOIe/w5g+TuXq1lChRAh1CFeNn4H/qBp2Jg9LqRE=
-X-Received: by 2002:a17:906:11:b0:993:f744:d235 with SMTP id
- 17-20020a170906001100b00993f744d235mr2630214eja.6.1690901294975; Tue, 01 Aug
- 2023 07:48:14 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1690901923; x=1691506723;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eD2DE6Q5xR8gtuxafv2Kboi3j35MZYfHhwZE2hkFuqY=;
+        b=QSFd0AyzX0MMhxY8xcPn/LPe8zNP1ABAe2Cf4+bT+rqmR4IgGjKxJ5m4SVTL71u1Uj
+         ph8ONGco9eBnv2dzeOu5g4OJh/3GizfZ3d/0Lapso2Nj1fzShap/Yl+lYHGZsl+7xOg6
+         SOZ1U5TU7/LryQ6zJ35SrHCu+SaYdj9VigB1/VOQUq0WFaEQSA5ICauBpcIDeRgyqCUR
+         MVarEnVP5aLeFEf6WVSjcJIzid1dKXddsjq7IUFMJhWMIfQ+XGi4iZd3w/XSSFK/wlAa
+         NC+Xu/yPdjc2esxOiARvoM24NSZVf2m0PInygycbgSdZ0q6z4ceJr75n4aDcKtg1KD1X
+         fU9Q==
+X-Gm-Message-State: ABy/qLbzsZb2ZXW7tZxyo0DdbfUCPJ+n82zTehUdUQUcLbzhV3AzGZ8z
+        M59Tj9SVSXuCw9W0P9/yOjiWwYrh08fIBn3NLWCfULGI+ze+
+X-Google-Smtp-Source: APBJJlGTVitSuEggKreVcl3ASkKPycDrxtzIs36wr2DufsQEr/KD7r4NjQE0aQPLxQQM0MVGeo8kKWwWk5oqK8YPuWDZ1shQmGo3
 MIME-Version: 1.0
-References: <87wmymk0k9.fsf@vostro.rath.org> <CAJfpegs+FfWGCOxX1XERGHfYRZzCzcLZ99mnchfb8o9U0kTS-A@mail.gmail.com>
- <87tttpk2kp.fsf@vostro.rath.org> <87r0osjufc.fsf@vostro.rath.org>
- <CAJfpegu7BtYzPE-NK_t3nFBT3fy2wGyyuJRP=wVGnvZh2oQPBA@mail.gmail.com>
- <CAJfpeguJESTqU7d0d0_2t=99P3Yt5a8-T4ADTF3tUdg5ou2qow@mail.gmail.com>
- <87o7jrjant.fsf@vostro.rath.org> <CAJfpegvTTUvrcpzVsJwH63n+zNw+h6krtiCPATCzZ+ePZMVt2Q@mail.gmail.com>
- <2e44acdd-b113-43c3-80cb-150f09478383@app.fastmail.com>
-In-Reply-To: <2e44acdd-b113-43c3-80cb-150f09478383@app.fastmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 1 Aug 2023 16:48:03 +0200
-Message-ID: <CAJfpegtoi2jNaKjvqMqrWQQrDoJkTZqheXFAb3MMVv7WVsHi0A@mail.gmail.com>
-Subject: Re: [fuse-devel] Semantics of fuse_notify_delete()
-To:     Nikolaus Rath <nikolaus@rath.org>
-Cc:     Martin Kaspar via fuse-devel <fuse-devel@lists.sourceforge.net>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>
+X-Received: by 2002:a05:6808:228f:b0:3a7:57:1c26 with SMTP id
+ bo15-20020a056808228f00b003a700571c26mr17418951oib.2.1690901923570; Tue, 01
+ Aug 2023 07:58:43 -0700 (PDT)
+Date:   Tue, 01 Aug 2023 07:58:43 -0700
+In-Reply-To: <CANp29Y5vZZN0a3NOhk6N2HR89dzQ30xJYdhqZO5C0fsC+C0sKA@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000812c200601ddc8de@google.com>
+Subject: Re: [syzbot] [btrfs?] kernel BUG in prepare_to_merge
+From:   syzbot <syzbot+ae97a827ae1c3336bbb4@syzkaller.appspotmail.com>
+To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, nogikh@google.com,
+        quwenruo.btrfs@gmx.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 1 Aug 2023 at 16:40, Nikolaus Rath <nikolaus@rath.org> wrote:
->
-> On Tue, 1 Aug 2023, at 13:53, Miklos Szeredi via fuse-devel wrote:
-> > Here's one with the virtual env and the correct head:
-> >
-> > root@kvm:~/s3ql# git log -1 --pretty="%h %s"
-> > 3d35f18543d9 Reproducer for notify_delete issue. To confirm:
-> > root@kvm:~/s3ql# ~/s3ql-python-env/bin/python bin/s3qlrm mnt/test
-> > WARNING: Received unknown command via control inode
-> > ERROR: Uncaught top-level exception:
-> > Traceback (most recent call last):
-> >   File "/root/s3ql/bin/s3qlrm", line 21, in <module>
-> >     s3ql.remove.main(sys.argv[1:])
-> >   File "/root/s3ql/src/s3ql/remove.py", line 72, in main
-> >     pyfuse3.setxattr(ctrlfile, 'rmtree', cmd)
-> >   File "src/pyfuse3.pyx", line 629, in pyfuse3.setxattr
-> > OSError: [Errno 22] Invalid argument: 'mnt/test/.__s3ql__ctrl__'
->
-> This is odd. I have never heard of anyone having this problem before and it also works fine in the CI.
->
-> I apologize that this is taking so much of your time.
->
-> I have changed the code a bit to print out what exactly it is receiving: https://github.com/s3ql/s3ql/commit/eb31f7bff4bd985d68fa20c793c2f2edf5db61a5
->
-> Would you mind updating your branch and trying again? (You'll need to fetch and reset, since I rebased on top of current master just to be sure).
->
-> I can still reproduce this every time (without any other error):
->
-> $ mkdir bucket
-> $ bin/mkfs.s3ql --plain local://bucket
-> Before using S3QL, make sure to read the user's guide, especially
-> the 'Important Rules to Avoid Losing Data' section.
-> Creating metadata tables...
-> Uploading metadata...
-> Uploading metadata...
-> Uploaded 1 out of ~1 dirty blocks (100%)
-> Calculating metadata checksum...
-> $ mkdir mnt
-> $ bin/mount.s3ql --fg local://bucket mnt &
-> Using 10 upload threads.
-> Autodetected 1048514 file descriptors available for cache entries
-> Using cached metadata.
-> Setting cache size to 315297 MB
-> Mounting local:///home/nikratio/in-progress/s3ql/bucket/ at /home/nikratio/in-progress/s3ql/mnt...
->
-> $ md mnt/test; echo foo > mnt/test/bar
-> $ bin/s3qlrm mnt/test
-> fuse: writing device: Directory not empty
-> ERROR: Failed to submit invalidate_entry request for parent inode 1, name b'test'
-> Traceback (most recent call last):
->   File "src/internal.pxi", line 125, in pyfuse3._notify_loop
->   File "src/pyfuse3.pyx", line 915, in pyfuse3.invalidate_entry
-> OSError: [Errno 39] fuse_lowlevel_notify_delete returned: Directory not empty
->
-> nikratio@vostro ~/i/s3ql (notify_delete_bug)>
+Hello,
 
-WARNING: Received unknown command via control inode: b"1, b'test')"
-ERROR: Uncaught top-level exception:
-Traceback (most recent call last):
-  File "/root/s3ql/bin/s3qlrm", line 21, in <module>
-    s3ql.remove.main(sys.argv[1:])
-  File "/root/s3ql/src/s3ql/remove.py", line 74, in main
-    pyfuse3.setxattr(ctrlfile, 'rmtree', cmd)
-  File "src/pyfuse3.pyx", line 629, in pyfuse3.setxattr
-OSError: [Errno 22] Invalid argument: 'mnt/test/.__s3ql__ctrl__'
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in prepare_to_merge
 
-Thanks,
-Miklos
+BTRFS error (device loop3): reloc tree mismatch, root 8 has no reloc root, expect reloc root key (-8, 132, 8) gen 17
+------------[ cut here ]------------
+BTRFS: Transaction aborted (error -117)
+WARNING: CPU: 1 PID: 10413 at fs/btrfs/relocation.c:1946 prepare_to_merge+0x10e0/0x1460 fs/btrfs/relocation.c:1946
+Modules linked in:
+CPU: 1 PID: 10413 Comm: syz-executor.3 Not tainted 6.5.0-rc3-syzkaller-g9f2c8c9193cc #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:prepare_to_merge+0x10e0/0x1460 fs/btrfs/relocation.c:1946
+Code: 8b 7e 50 44 89 e2 48 c7 c6 20 d8 b6 8a e8 58 1b 10 00 eb c1 e8 d1 83 00 fe be 8b ff ff ff 48 c7 c7 80 d7 b6 8a e8 f0 4b c7 fd <0f> 0b e9 bf fe ff ff 48 8b 7c 24 28 e8 af 93 53 fe e9 3e f5 ff ff
+RSP: 0018:ffffc90003ebf6b0 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff8880478f2b78 RCX: 0000000000000000
+RDX: ffff8880466c9300 RSI: ffffffff814c5346 RDI: 0000000000000001
+RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000046525442 R12: 0000000000000000
+R13: 0000000000000084 R14: ffff8880478f2b28 R15: ffff888030e28000
+FS:  00007fcc9098a6c0(0000) GS:ffff88806b700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fcc90968f28 CR3: 000000001fa0c000 CR4: 0000000000350ee0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ relocate_block_group+0x8d1/0xe70 fs/btrfs/relocation.c:3782
+ btrfs_relocate_block_group+0x714/0xd90 fs/btrfs/relocation.c:4120
+ btrfs_relocate_chunk+0x143/0x440 fs/btrfs/volumes.c:3277
+ __btrfs_balance fs/btrfs/volumes.c:4012 [inline]
+ btrfs_balance+0x20fc/0x3ef0 fs/btrfs/volumes.c:4389
+ btrfs_ioctl_balance fs/btrfs/ioctl.c:3604 [inline]
+ btrfs_ioctl+0x1362/0x5cf0 fs/btrfs/ioctl.c:4637
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:870 [inline]
+ __se_sys_ioctl fs/ioctl.c:856 [inline]
+ __x64_sys_ioctl+0x18f/0x210 fs/ioctl.c:856
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fcc8fc7cae9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fcc9098a0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fcc8fd9bf80 RCX: 00007fcc8fc7cae9
+RDX: 00000000200003c0 RSI: 00000000c4009420 RDI: 0000000000000005
+RBP: 00007fcc8fcc847a R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007fcc8fd9bf80 R15: 00007ffd6ad55508
+ </TASK>
+
+
+Tested on:
+
+commit:         9f2c8c91 btrfs: exit gracefully if reloc roots don't m..
+git tree:       https://github.com/adam900710/linux graceful_reloc_mismatch
+console output: https://syzkaller.appspot.com/x/log.txt?x=173afb31a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=23c579cf0ae1addd
+dashboard link: https://syzkaller.appspot.com/bug?extid=ae97a827ae1c3336bbb4
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
