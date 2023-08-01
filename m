@@ -2,64 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 81B6176B533
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 14:53:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD1D676B549
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 14:58:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231756AbjHAMxo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Aug 2023 08:53:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51524 "EHLO
+        id S232313AbjHAM6W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Aug 2023 08:58:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231197AbjHAMxn (ORCPT
+        with ESMTP id S234075AbjHAM6S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Aug 2023 08:53:43 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 192EDE6
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 05:53:40 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id 38308e7fff4ca-2b962535808so86184861fa.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Aug 2023 05:53:40 -0700 (PDT)
+        Tue, 1 Aug 2023 08:58:18 -0400
+Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F36551AA;
+        Tue,  1 Aug 2023 05:58:17 -0700 (PDT)
+Received: by mail-qv1-xf2c.google.com with SMTP id 6a1803df08f44-63d0228d32bso30796556d6.2;
+        Tue, 01 Aug 2023 05:58:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1690894418; x=1691499218;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Lx4dB17LVBJWGUEA9QJyHkKX9VBphHZ2Z9Sn7D5kEw=;
-        b=jtdIpXgZ8chrW4jrdRxe0v9LNviS1LEbfC1Nu8VD/6IsCS2T5OqY6qkWVHLHKCNLeF
-         s1QXu5Z9VHyGWNuyUWL/go+k8+PNuRh1Bs0G1B+3xrnLG12Z54g/OsmN9OZrU4xwD5H7
-         Ya1IJifLqtgGE09/jzkgsvEo7Qsef3ayQVQ1s=
+        d=gmail.com; s=20221208; t=1690894697; x=1691499497;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=52xtRMZBq0GtelXFCLGXXpjBQ9BYFSeOAKYA+Oh87s8=;
+        b=kvXqaj+XplVDOb28tqmrpexUF28oi70HOCK4+onfdTzh9FE74ILEwwwzWOm7u/dQ+W
+         fbafYj/o5j09MrGbiTty2jVcNKP/ilMf0vMOYgg/Zr1gRNhAVxMaK5xGPZ97gS1aSFPt
+         ESe6WsuIjE69o7F1KM0/2Ndnde/qqi+zSWO4Ulv+9a5TjxVdYeo47KZCa6QG7GlmR6a6
+         vyc2MEg7XSeR3wMxpZGUBKd31pBzT25OVd8ojchCX8BzZ3WlvMTXu7XTcWj1TAFg3Ac/
+         9T4fv5z0Xfo6Pg+ZXOdI3BquNpgqs3r0Qhx3yDmMVaeCchKFYpNIXLycnXndoWI08DPj
+         dFvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690894418; x=1691499218;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/Lx4dB17LVBJWGUEA9QJyHkKX9VBphHZ2Z9Sn7D5kEw=;
-        b=Y0XbHBrFqCOLrYZwM/vj3rrjfHgeszOP3NoMWVOo43PyD71g1q9BINWTYSzLx1MR35
-         A/OTWV+9SIaUDN+Sh45FqoAYs24dHO0KbEJcJT6SmSTWFDu21MccJGMMtjuJX+7WDt4Y
-         0fAL7ln+AluLpnLa5YUOUUJr0//pLF2V56vYNEJruOSg4jDgMMC2iI8aNs6+Ku7AsPci
-         TJFv27iRHDLr7HB7aPBi8aFWrT9n7U4nabw0Y3eV94Tu66xv++YGlAe94fjVs+aO6qYZ
-         g9RPZuI2OcJe1tuJBH5Rn0pt/TloIytkNAg7bIBWV3QiHOnDvZgMcR12AWMoCOMN7jya
-         sbHg==
-X-Gm-Message-State: ABy/qLZo4WuPPFejM2CjWyB8OhLrt230U5lfTB1Gw9O9+sHTkNNoGH55
-        HqjWWfUlJ3+IYb/HHX72nxdBR00cHu6nBAFtuv2ALQ==
-X-Google-Smtp-Source: APBJJlGnCFPUx4hlSF2m//OXXH75UxXAAZ1yPrwZ/XKZRrtzlAES2XUd7qQt0wEnfIxb+ayOzKfzNbeQX/MA+M3Vpkg=
-X-Received: by 2002:a2e:3e07:0:b0:2b9:dd5d:5d0c with SMTP id
- l7-20020a2e3e07000000b002b9dd5d5d0cmr1984051lja.52.1690894418281; Tue, 01 Aug
- 2023 05:53:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <87wmymk0k9.fsf@vostro.rath.org> <CAJfpegs+FfWGCOxX1XERGHfYRZzCzcLZ99mnchfb8o9U0kTS-A@mail.gmail.com>
- <87tttpk2kp.fsf@vostro.rath.org> <87r0osjufc.fsf@vostro.rath.org>
- <CAJfpegu7BtYzPE-NK_t3nFBT3fy2wGyyuJRP=wVGnvZh2oQPBA@mail.gmail.com>
- <CAJfpeguJESTqU7d0d0_2t=99P3Yt5a8-T4ADTF3tUdg5ou2qow@mail.gmail.com> <87o7jrjant.fsf@vostro.rath.org>
-In-Reply-To: <87o7jrjant.fsf@vostro.rath.org>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 1 Aug 2023 14:53:26 +0200
-Message-ID: <CAJfpegvTTUvrcpzVsJwH63n+zNw+h6krtiCPATCzZ+ePZMVt2Q@mail.gmail.com>
-Subject: Re: [fuse-devel] Semantics of fuse_notify_delete()
-To:     Miklos Szeredi via fuse-devel <fuse-devel@lists.sourceforge.net>
-Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        miklos <mszeredi@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        d=1e100.net; s=20221208; t=1690894697; x=1691499497;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=52xtRMZBq0GtelXFCLGXXpjBQ9BYFSeOAKYA+Oh87s8=;
+        b=lVA+PRvEgXvCpNWfd2CsOMtwn928gOkiHDJrYukmfhA1p9hLtTwgNMGuEaF34D5qGF
+         7lyAjE1vtdEVSXhyFW/KHolVP9rau2iZT8HQhBARTOnQn6C2sy7pS1zaE6MEoP+yHAYe
+         YihC5BKdTpkTLNm/8hRc6FKXwwqEfckUtyxA1hoOZ1S9Lf4NLsQTNuvH6ne+a4W5RLsd
+         gyaJfHZxGOumyQ+F1E+mSdUPQFMIcHiCIdrsnpc8UNOIsikoPp1SmYhGkVUKWxNK4O8o
+         4r+IzTpidUsySETfRtiyk+suoMJZeKtEkRZn9liRVjKepENnLZHroUffPlkQKpctb9YK
+         d9bA==
+X-Gm-Message-State: ABy/qLZj+4oHBdDXtG1ONorpBNiJ2VkCsDRCnTg91ZILoNFZucIXPhAR
+        NSO0uobMd3+aSLp/3SsDiBAuV/0j+ow=
+X-Google-Smtp-Source: APBJJlEIkqTRVKZLtG2Iljy/p50YykXPDd0qhhxO1UjmNJV6WTEQmOjO1bdp1USUVPMsmBVFFenkFw==
+X-Received: by 2002:ad4:5810:0:b0:636:14d4:4461 with SMTP id dd16-20020ad45810000000b0063614d44461mr9962767qvb.62.1690894696926;
+        Tue, 01 Aug 2023 05:58:16 -0700 (PDT)
+Received: from localhost (172.174.245.35.bc.googleusercontent.com. [35.245.174.172])
+        by smtp.gmail.com with ESMTPSA id w10-20020a0cb54a000000b0063d47a29e6fsm3944170qvd.55.2023.08.01.05.58.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Aug 2023 05:58:16 -0700 (PDT)
+Date:   Tue, 01 Aug 2023 08:58:16 -0400
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To:     David Howells <dhowells@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     dhowells@redhat.com, Jakub Kicinski <kuba@kernel.org>,
+        syzbot <syzbot+f527b971b4bdc8e79f9e@syzkaller.appspotmail.com>,
+        bpf@vger.kernel.org, brauner@kernel.org, davem@davemloft.net,
+        dsahern@kernel.org, edumazet@google.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, pabeni@redhat.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Message-ID: <64c901683e0b6_1b28392946b@willemb.c.googlers.com.notmuch>
+In-Reply-To: <1401696.1690893633@warthog.procyon.org.uk>
+References: <64c7acd57270c_169cd129420@willemb.c.googlers.com.notmuch>
+ <64c6672f580e3_11d0042944e@willemb.c.googlers.com.notmuch>
+ <20230718160737.52c68c73@kernel.org>
+ <000000000000881d0606004541d1@google.com>
+ <0000000000001416bb06004ebf53@google.com>
+ <792238.1690667367@warthog.procyon.org.uk>
+ <831028.1690791233@warthog.procyon.org.uk>
+ <1401696.1690893633@warthog.procyon.org.uk>
+Subject: Re: Endless loop in udp with MSG_SPLICE_READ - Re: [syzbot] [fs?]
+ INFO: task hung in pipe_release (4)
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,37 +87,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 1 Aug 2023 at 12:54, Nikolaus Rath <Nikolaus@rath.org> wrote:
+David Howells wrote:
+> The more I look at __ip_append_data(), the more I think the maths is wrong.
+> In the bit that allocates a new skbuff:
+> 
+> 	if (copy <= 0) {
+> 	...
+> 		datalen = length + fraggap;
+> 		if (datalen > mtu - fragheaderlen)
+> 			datalen = maxfraglen - fragheaderlen;
+> 		fraglen = datalen + fragheaderlen;
+> 		pagedlen = 0;
+> 	...
+> 		if ((flags & MSG_MORE) &&
+> 		    !(rt->dst.dev->features&NETIF_F_SG))
+> 	...
+> 		else if (!paged &&
+> 			 (fraglen + alloc_extra < SKB_MAX_ALLOC ||
+> 			  !(rt->dst.dev->features & NETIF_F_SG)))
+> 	...
+> 		else {
+> 			alloclen = fragheaderlen + transhdrlen;
+> 			pagedlen = datalen - transhdrlen;
+> 		}
+> 	...
+> 
+> In the MSG_SPLICE_READ but not MSG_MORE case, we go through that else clause.
+> The values used here, a few lines further along:
+> 
+> 		copy = datalen - transhdrlen - fraggap - pagedlen;
+> 
+> are constant over the intervening span.  This means that, provided the splice
+> isn't going to exceed the MTU on the second fragment, the calculation of
+> 'copy' can then be simplified algebraically thus:
+> 
+> 		copy = (length + fraggap) - transhdrlen - fraggap - pagedlen;
+> 
+> 		copy = length - transhdrlen - pagedlen;
+> 
+> 		copy = length - transhdrlen - (datalen - transhdrlen);
+> 
+> 		copy = length - transhdrlen - datalen + transhdrlen;
+> 
+> 		copy = length - datalen;
+> 
+> 		copy = length - (length + fraggap);
+> 
+> 		copy = length - length - fraggap;
+> 
+> 		copy = -fraggap;
+> 
+> I think we might need to recalculate copy after the conditional call to
+> getfrag().  Possibly we should skip that entirely for MSG_SPLICE_READ.  The
+> root seems to be that we're subtracting pagedlen from datalen - but probably
+> we shouldn't be doing getfrag() if pagedlen > 0.
 
-> This sounds like you're using s3qlrm from one version of S3QL, and
-> mount.s3ql from a different one.
+q
 
-Indeed, I forgot to checkout the debug branch.
-
-> If you want to keep the Python packages separate, the best way is to use
-> a virtual environment:
->
-> # mkdir ~/s3ql-python-env
-> # python3 -m venv --system-side-packages ~/s3ql-python-env
-> # ~/s3ql-python-env/bin/python -m pip install --upgrade cryptography defusedxml apsw trio pyfuse3 dugong pytest requests cython
-> # ~/s3ql-python-env/bin/python setup.py build_cython build_ext --inplace
-> # ~/s3ql-python-env/bin/python bin/mount.s3ql [...]
-> # ~/s3ql-python-env/bin/python bin/s3qlrm [...]
-
-Here's one with the virtual env and the correct head:
-
-root@kvm:~/s3ql# git log -1 --pretty="%h %s"
-3d35f18543d9 Reproducer for notify_delete issue. To confirm:
-root@kvm:~/s3ql# ~/s3ql-python-env/bin/python bin/s3qlrm mnt/test
-WARNING: Received unknown command via control inode
-ERROR: Uncaught top-level exception:
-Traceback (most recent call last):
-  File "/root/s3ql/bin/s3qlrm", line 21, in <module>
-    s3ql.remove.main(sys.argv[1:])
-  File "/root/s3ql/src/s3ql/remove.py", line 72, in main
-    pyfuse3.setxattr(ctrlfile, 'rmtree', cmd)
-  File "src/pyfuse3.pyx", line 629, in pyfuse3.setxattr
-OSError: [Errno 22] Invalid argument: 'mnt/test/.__s3ql__ctrl__'
-
-Thanks,
-Miklos
