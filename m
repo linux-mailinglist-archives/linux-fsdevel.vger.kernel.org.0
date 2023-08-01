@@ -2,67 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6298A76B695
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 16:02:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E92676B69A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 16:02:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233591AbjHAOCG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Aug 2023 10:02:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56190 "EHLO
+        id S234145AbjHAOCM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Aug 2023 10:02:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232117AbjHAOCD (ORCPT
+        with ESMTP id S232459AbjHAOCK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Aug 2023 10:02:03 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 954181702
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 07:01:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690898475;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7WIIC4EmcSMyslcy4PdgRwdrER+lWKYWgkhwMl2vuUk=;
-        b=Dg+xFJgKASFidnUL4dW5Yb/xhL462nWlLhnu9x3BQQBEH4qw6uk6swMninbVJLTHkOed7S
-        JXkxo3zGIXINmeTI36wuon9+5FXWBPoHD1Yt11jrRPE6SVxX+jfab9dTEOHKIcLnKrn/K3
-        Z+J3jseSqtIcFnjR6rCBfDVhSCme05g=
-Received: from mimecast-mx02.redhat.com (66.187.233.73 [66.187.233.73]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-696-Br2tYg1gNg20Cq9TDNc9dw-1; Tue, 01 Aug 2023 10:01:09 -0400
-X-MC-Unique: Br2tYg1gNg20Cq9TDNc9dw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 1 Aug 2023 10:02:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E1D9C3;
+        Tue,  1 Aug 2023 07:02:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5EFE7299E767;
-        Tue,  1 Aug 2023 14:01:06 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.131])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A723240C1258;
-        Tue,  1 Aug 2023 14:01:04 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <64c903b02b234_1b307829418@willemb.c.googlers.com.notmuch>
-References: <64c903b02b234_1b307829418@willemb.c.googlers.com.notmuch> <64c7acd57270c_169cd129420@willemb.c.googlers.com.notmuch> <64c6672f580e3_11d0042944e@willemb.c.googlers.com.notmuch> <20230718160737.52c68c73@kernel.org> <000000000000881d0606004541d1@google.com> <0000000000001416bb06004ebf53@google.com> <792238.1690667367@warthog.procyon.org.uk> <831028.1690791233@warthog.procyon.org.uk> <1401696.1690893633@warthog.procyon.org.uk>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     dhowells@redhat.com, Jakub Kicinski <kuba@kernel.org>,
-        syzbot <syzbot+f527b971b4bdc8e79f9e@syzkaller.appspotmail.com>,
-        bpf@vger.kernel.org, brauner@kernel.org, davem@davemloft.net,
-        dsahern@kernel.org, edumazet@google.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, pabeni@redhat.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: Endless loop in udp with MSG_SPLICE_READ - Re: [syzbot] [fs?] INFO: task hung in pipe_release (4)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 37363615BF;
+        Tue,  1 Aug 2023 14:02:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C64B6C433C7;
+        Tue,  1 Aug 2023 14:02:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690898528;
+        bh=VNvAGs+RJC/wWP8NPciLgTw7gNKF8Q+/ePEXF/moAHc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lR/o/rPJ09W+mjAX+ibUzyjhGjZT2i3QTLa7TI+URr1LjPnvTY2iC6GPqYl/n4r/3
+         WI/UNzJxW35Q0DDQTuxLw1RSoUoPpdFiCbT65gTE9ERpwX6uJ/Jw1QBGc/dTSkYPJx
+         FNA/RjX6qX7wwn/QnanU4oUFJADcz/1x2My8leQsMuZiS57cY8v120f7Yc2vmUiJfX
+         vtvf4FafJWxsU0fipTM5jzne4OEw4wkHM0zMUZ0QMFQkRlqHkhB82tojzXjPQ815fU
+         iQJjqbsqrrEYQWPmSD+mSbB2ySB0Q0+NzwHtr7edz91j3ub2TQM8/Oy+P0v2YI51MP
+         gpWzFmzYQSEUw==
+Date:   Tue, 1 Aug 2023 15:01:59 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc:     "corbet@lwn.net" <corbet@lwn.net>,
+        "ardb@kernel.org" <ardb@kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
+        "maz@kernel.org" <maz@kernel.org>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "debug@rivosinc.com" <debug@rivosinc.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+        "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "palmer@dabbelt.com" <palmer@dabbelt.com>
+Subject: Re: [PATCH v3 21/36] arm64/mm: Implement map_shadow_stack()
+Message-ID: <21d7e814-8608-40ce-b5d3-401f2110ad91@sirena.org.uk>
+References: <20230731-arm64-gcs-v3-0-cddf9f980d98@kernel.org>
+ <20230731-arm64-gcs-v3-21-cddf9f980d98@kernel.org>
+ <5461c56cf4896f18bddaa66c3beec7b909fc8fb9.camel@intel.com>
+ <0a6c90d6-f790-4036-a364-d4761fdd0e95@sirena.org.uk>
+ <e827138f9d8800e3db158831bca88d1ea8b559af.camel@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1403252.1690898464.1@warthog.procyon.org.uk>
-Date:   Tue, 01 Aug 2023 15:01:04 +0100
-Message-ID: <1403253.1690898464@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Nwti0jdLm79TUUP+"
+Content-Disposition: inline
+In-Reply-To: <e827138f9d8800e3db158831bca88d1ea8b559af.camel@intel.com>
+X-Cookie: I thought YOU silenced the guard!
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,29 +89,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
 
-> That getfrag is needed. For non-splice cases, to fill the linear part
-> of an skb. As your example shows, it is skipped if all data is covered
-> by pagedlen?
+--Nwti0jdLm79TUUP+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yes, because copy goes negative.  To quote from the previously quoted log:
+On Mon, Jul 31, 2023 at 11:19:34PM +0000, Edgecombe, Rick P wrote:
 
-	==>splice_to_socket() 6630
-	udp_sendmsg(8,8)
-	__ip_append_data(copy=-1,len=8, mtu=8192 skblen=8189 maxfl=8188)
-	pagedlen 9 = 9 - 0
-	copy -1 = 9 - 0 - 1 - 9
+> The thing I was trying to get at was, we have this shared syscall that
+> means create shadow stack memory and prepopulate it like this flag
+> says. On x86 we optionally support SHADOW_STACK_SET_TOKEN which means
+> put a token right at the end of size. So maybe arm should have a
+> different flag value that includes putting the marker and then the
+> token, and x86 could match it someday if we get markers too.
 
-copy is -(the number of excess bytes).
+Oh, I see.  My mental model was that this was controlling the whole
+thing we put at the top rather than treating the terminator and the cap
+separately.
 
-	length 8 -= -1 + 0
+> It could be a different flag, like SHADOW_STACK_SET_TOKEN_MARKER, or it
+> could be SHADOW_STACK_SET_MARKER, and callers could pass
+> (SHADOW_STACK_SET_TOKEN | SHADOW_STACK_SET_MARKER) to get what you have
+> implemented here. What do you think?
 
-which then gets deducted from the length - but why?  I wonder if copy should
-be cleared if we don't call getfrag().  It looks like it's meant to deduct the
-amount copied by getfrag(), but that doesn't happen if copy < 0.
+For arm64 code this would mean that it would be possible (and fairly
+easy) to create stacks which don't have a termination record which would
+make life harder for unwinders to rely on.  I don't think this is
+insurmountable, creating manually shouldn't be the standard and it'll
+already be an issue on x86 anyway.
 
-Also, note that MSG_ZEROCOPY might see the same maths issue here.
+The other minor issue is that the current arm64 marker is all bits 0
+so by itself for arm64 _MARKER would have no perceptible impact, it
+would only serve to push the token down a slot in the stack (I'm
+guessing that's the intended meaning?).  I'm not sure that's a
+particularly big deal though.
 
-David
+--Nwti0jdLm79TUUP+
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmTJEFYACgkQJNaLcl1U
+h9DMNgf+P37hKhxkgQQ2bx5n4uZZFxfRehguU/iRyfY2v786eRp6cHggr3v5zNbn
+YpYL5VP9uY+etSRtnZI8rksKaS4bR/OnIchJ1WVCyFEZOV+IiJrKgRpXYTFH4wd6
+TJBjdEQtaeU7zIyikLOVb7gstveQddLzsUBDcAOoEwjUnd6alGbDGn262PKDeapK
+hu+THENIjRxbrDkn9An5Uuca6c4XeWL/KbLQLP8uGKbz1FiCPUGDAF1i8FkoVxnL
+IZW9d2IOzqXh0G/ZXwQhw9+9QNtN7zIDXIs2WS29VU2QoGJAZdNP9rJFhdK4C+/y
+ih1/WTOQ+rJxgjVUggW+96FlbhxWZg==
+=fLYM
+-----END PGP SIGNATURE-----
+
+--Nwti0jdLm79TUUP+--
