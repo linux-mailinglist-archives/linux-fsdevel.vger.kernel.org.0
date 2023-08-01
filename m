@@ -2,84 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E98E76AD62
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 11:28:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5587F76AE53
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 11:38:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232933AbjHAJ2r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Aug 2023 05:28:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58050 "EHLO
+        id S232474AbjHAJiL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Aug 2023 05:38:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231462AbjHAJ2a (ORCPT
+        with ESMTP id S233209AbjHAJhg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Aug 2023 05:28:30 -0400
-Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com [209.85.210.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16CAB1FD2
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 02:27:23 -0700 (PDT)
-Received: by mail-ot1-f69.google.com with SMTP id 46e09a7af769-6b9ef9b1920so8054623a34.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Aug 2023 02:27:23 -0700 (PDT)
+        Tue, 1 Aug 2023 05:37:36 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B96FF1BD9;
+        Tue,  1 Aug 2023 02:35:59 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-31297125334so3670523f8f.0;
+        Tue, 01 Aug 2023 02:35:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690882558; x=1691487358;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VvT5J/1PJpb72S8f2nh5awbFCHxyuUpdf923ik/K8j4=;
+        b=ExXgh7eFyYEhKQs65FHri/ViJcpb8MfKCX9kbY13ZsJxBfJuzrlXbGUOa6PJHRnfVL
+         5KktONa25XH2j439bmJpT0Q4yTjYmX4D0DiBC4baDGrA30FHudWESCVxKcX9ypBipHeM
+         SQep1J2NOOI4y6MR1DOFPz5PzuY+E3qQVzADtwAIobtemnENQgZGsUJnpi/joyh4WivY
+         LIlCKOUJEek89CNVl+TOnj477K/qps7R9Z8rmn8+cL4kkeZWcXXI6KXXgTaf/3PYTlrh
+         pg5N0MEigdMBUTHFqQA2OwiMPdbJ/RuZNlJ9em5VweXgkSGFnwmWM0zlA01zCeSuodhm
+         IVHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690882042; x=1691486842;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C27ET6loiS4a597fDoDvp82lhEfceWexZEaZmg7rns4=;
-        b=fJI8R9ASr86hh70y+09yGBIyYkdMLAp9RmLuxGnMm8y6OBdYLGox5vxnnqACNqjXAW
-         35iWS0003wBHHynr91ChLUC40DVowhabaOEuM8dyskU/trSY/grmxlbyz7K9bA+uyQLC
-         Mj7mDp8DV4jTr3edB4IAh7M+Cduh5KJn+WXdi2xph5XHfC6Jqbtlsdb9lh3unTst9yK+
-         Y2lwzmEur1KhgNboAJLFekp1bVBXAwhkppEKks/lhlprGEMfPdq5YnNw074xckp+K5S1
-         vDFMqKwMJmq/C724nX7SYeg+nkkUoiRe8IQIYOyCCB4eWarI2MJN8upGrOgCb1RG05bc
-         ahxw==
-X-Gm-Message-State: ABy/qLZ5gt5W6khnFNKiR0RLrcQb9/UMdRiTlttkwHqtPG5cycIiidIf
-        v7wip13MlPWBvGl2WpOCNfgmSOvRcu4c/Y450En5PKwB1ux5
-X-Google-Smtp-Source: APBJJlF+q8vTSApLRQ0DsriyRIAi3yXyfIxfMoDXTZLqGmWRh5yGZx5GzEG93qqQR4NAAm6evBr0m5ieLt5iW0rGmHW5H8t1P6Mn
+        d=1e100.net; s=20221208; t=1690882558; x=1691487358;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VvT5J/1PJpb72S8f2nh5awbFCHxyuUpdf923ik/K8j4=;
+        b=F92qiyd2ELRgN0C9Eqo0eeM6vKTrICn4XmoijAWyEoQuQNNBrYt5M0qDe75la1KrpA
+         kGUaFyKXnMeBS1lV3K3tT3Jo44uDxScFIzOVipqL5bzkZjO4g1/Jvgm5r6PtBbvZGpBT
+         rQo26uMD3DB1P3sgfZmENXsA0sCCUhHhfib6+4UOGxwd41+gKfs/G113vJrsZNwH63ev
+         etI9JvaJJLGBA5Ud8DEMCN4EZUL95PeS8MEDpuwGTjbJai074sXn90UCiZUyHoD/YVFu
+         cac4BZXifnjB5VxJHQtp4MZoxQ9D/ueu/xrQMI43orgJP4SxxC2GKnAkCKD5+TJP75Q0
+         csHg==
+X-Gm-Message-State: ABy/qLav90cpuWyUPIT+1eJucyRIfRKYtX/gjbqvvqQHsVAJC6bWGhG8
+        ufcGc9httUC6C/E201vQshg=
+X-Google-Smtp-Source: APBJJlFenT4lJzl0wyFu60kMYJMIoCsq+b5HauhGzk/5vhq31BmGRtO2EgfwE19ne+ER5DzuG/6KpA==
+X-Received: by 2002:a5d:6b8c:0:b0:30a:c681:fd2e with SMTP id n12-20020a5d6b8c000000b0030ac681fd2emr1793379wrx.22.1690882557942;
+        Tue, 01 Aug 2023 02:35:57 -0700 (PDT)
+Received: from localhost (0x934e1fc8.cust.fastspeed.dk. [147.78.31.200])
+        by smtp.gmail.com with ESMTPSA id p16-20020a5d68d0000000b003140f47224csm15519172wrw.15.2023.08.01.02.35.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Aug 2023 02:35:57 -0700 (PDT)
+Date:   Tue, 1 Aug 2023 11:35:55 +0200
+From:   Joel Granados <joel.granados@gmail.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Kees Cook <keescook@chromium.org>,
+        "D. Wythe" <alibuda@linux.alibaba.com>, mptcp@lists.linux.dev,
+        Jakub Kicinski <kuba@kernel.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Paolo Abeni <pabeni@redhat.com>, coreteam@netfilter.org,
+        Jan Karcher <jaka@linux.ibm.com>,
+        Alexander Aring <alex.aring@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        bridge@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        Joerg Reuter <jreuter@yaina.de>, Julian Anastasov <ja@ssi.bg>,
+        David Ahern <dsahern@kernel.org>,
+        netfilter-devel@vger.kernel.org, Wen Gu <guwen@linux.alibaba.com>,
+        linux-kernel@vger.kernel.org,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        linux-wpan@vger.kernel.org, lvs-devel@vger.kernel.org,
+        Karsten Graul <kgraul@linux.ibm.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-sctp@vger.kernel.org, Tony Lu <tonylu@linux.alibaba.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Florian Westphal <fw@strlen.de>, willy@infradead.org,
+        Heiko Carstens <hca@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-rdma@vger.kernel.org, Roopa Prabhu <roopa@nvidia.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Mat Martineau <martineau@kernel.org>, josh@joshtriplett.org,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Eric Dumazet <edumazet@google.com>, linux-hams@vger.kernel.org,
+        Wenjia Zhang <wenjia@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org, linux-s390@vger.kernel.org,
+        Xin Long <lucien.xin@gmail.com>,
+        Nikolay Aleksandrov <razor@blackwall.org>,
+        netdev@vger.kernel.org, rds-devel@oss.oracle.com
+Subject: Re: [PATCH v2 00/14] sysctl: Add a size argument to register
+ functions in sysctl
+Message-ID: <20230801093555.wwl27a7wjm2oinxx@localhost>
+References: <20230731071728.3493794-1-j.granados@samsung.com>
+ <CGME20230731213734eucas1p2728233a3b9ecd360bbd0cb77f8a44002@eucas1p2.samsung.com>
+ <ZMgpck0rjqHR74sl@bombadil.infradead.org>
 MIME-Version: 1.0
-X-Received: by 2002:a9d:6c8d:0:b0:6b7:1e75:18e with SMTP id
- c13-20020a9d6c8d000000b006b71e75018emr14153717otr.2.1690882042749; Tue, 01
- Aug 2023 02:27:22 -0700 (PDT)
-Date:   Tue, 01 Aug 2023 02:27:22 -0700
-In-Reply-To: <000000000000fac82605ee97fb72@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000083e9d60601d927a0@google.com>
-Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_free_reserved_data_space_noquota
-From:   syzbot <syzbot+adec8406ad17413d4c06@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, christophe.leroy@csgroup.eu, clm@fb.com,
-        dsterba@suse.com, josef@toxicpanda.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
-        npiggin@gmail.com, shuah@kernel.org,
-        syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org,
-        ye.xingchen@zte.com.cn
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ltg4mtomzaz4i2ki"
+Content-Disposition: inline
+In-Reply-To: <ZMgpck0rjqHR74sl@bombadil.infradead.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
 
-commit 487c20b016dc48230367a7be017f40313e53e3bd
-Author: Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu Mar 30 21:53:51 2023 +0000
+--ltg4mtomzaz4i2ki
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    iov: improve copy_iovec_from_user() code generation
+On Mon, Jul 31, 2023 at 02:36:50PM -0700, Luis Chamberlain wrote:
+> > Joel Granados (14):
+> >   sysctl: Prefer ctl_table_header in proc_sysctl
+> >   sysctl: Use ctl_table_header in list_for_each_table_entry
+> >   sysctl: Add ctl_table_size to ctl_table_header
+> >   sysctl: Add size argument to init_header
+> >   sysctl: Add a size arg to __register_sysctl_table
+> >   sysctl: Add size to register_sysctl
+> >   sysctl: Add size arg to __register_sysctl_init
+>=20
+> This is looking great thanks, I've taken the first 7 patches above
+> to sysctl-next to get more exposure / testing and since we're already
+> on rc4.
+Thx for the feedback.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17cfdf19a80000
-start commit:   4bdec23f971b Merge tag 'hwmon-for-v6.3-rc4' of git://git.k..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=acdb62bf488a8fe5
-dashboard link: https://syzkaller.appspot.com/bug?extid=adec8406ad17413d4c06
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11bf8bcec80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=153d4f75c80000
+>=20
+> Since the below patches involve more networking I'll wait to get
+> more feedback from networking folks before merging them.
+Just FYI, these are all networking except for the last one. That one is
+actually just in sysctl and will set everything up for removing the
+sentinels.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+>=20
+> >   sysctl: Add size to register_net_sysctl function
+> >   ax.25: Update to register_net_sysctl_sz
+> >   netfilter: Update to register_net_sysctl_sz
+> >   networking: Update to register_net_sysctl_sz
+> >   vrf: Update to register_net_sysctl_sz
+> >   sysctl: SIZE_MAX->ARRAY_SIZE in register_net_sysctl
+> >   sysctl: Use ctl_table_size as stopping criteria for list macro
+>=20
+>   Luis
 
-#syz fix: iov: improve copy_iovec_from_user() code generation
+--=20
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Joel Granados
+
+--ltg4mtomzaz4i2ki
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGyBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmTI0fkACgkQupfNUreW
+QU/TKwv3ZwfCMFKh+tMOXHzAsW3p+jp8IR2frQvlCy8j4amsnTB8wJmsjkpeuJ3p
+s6IFeYrPE0pDidKOwzYiA4JDZdYDgF1hevrQAuqDsLkKBHzW0Cr6dt21CIQx9uZR
+RwhONU/JHoW6MKmO2PlcOiSQiRAhX/OvUhtCgQPTbff3fT6EAu9twn0vfWcyy+H0
+mn6LM2go/DW2cgdm4oa1U+DqwpJiGCabLbQNfPa8Vx8g7CK2y2Azd5/obW6ryOxe
+QDPdmQdVjytDnDHSW2AEYe2bDympPHaaoDU79e4FPVXC15+UAgF+/ExfDUVq6ek4
+FG5Gjh7ev+i6vPYAUR4AuPtB3hwH+vDsSE6Vcd37iKn/mjg1fi0DHx7Wz1Be/n1o
+8iSbL0N6an0fzzKlOdfwQs1bytw+ssWZtxLIQ3MUhHvwj882OXkYCBRW4Aycgop7
+/H+zOm0K2Yluph2h+5qmhjkzUlTx2MNwfSs34wsvBNsbb1MGZQouIAAQowb+mTzS
+31kDDA8=
+=shIJ
+-----END PGP SIGNATURE-----
+
+--ltg4mtomzaz4i2ki--
