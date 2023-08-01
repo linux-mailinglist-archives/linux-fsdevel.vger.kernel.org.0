@@ -2,87 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 72D4676B570
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 15:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50EDC76B577
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 15:08:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232919AbjHANFp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Aug 2023 09:05:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57156 "EHLO
+        id S233046AbjHANIP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Aug 2023 09:08:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231663AbjHANFo (ORCPT
+        with ESMTP id S233053AbjHANIO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Aug 2023 09:05:44 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C751B0
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 06:05:42 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1bb7b8390e8so34236015ad.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Aug 2023 06:05:42 -0700 (PDT)
+        Tue, 1 Aug 2023 09:08:14 -0400
+Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E86E1727;
+        Tue,  1 Aug 2023 06:08:02 -0700 (PDT)
+Received: by mail-qt1-x831.google.com with SMTP id d75a77b69052e-40e268fe7ddso13448021cf.3;
+        Tue, 01 Aug 2023 06:08:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1690895142; x=1691499942;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kNAKszskixaa3hgdlCtn/3Bo9V9ma0+ARvrVT7ws8lk=;
-        b=ZCuzNn6APf7Wf5WKyrW32GNHO/80jBoq1pCrGN0t5E5cwIUsRt+Tn/GES+T/KnDh4A
-         tLt6wMhodhapCC063cH2e2hxFD7fuxIe89FyLyk+MflUnbkZo8wAf0AgiYflVFpkd6Aj
-         CmmBUe/FhROpxJgkVL/zskys1dhqdnbpSPxtQc3cTvda5v/yzQ3tAZlzNg7/DPyQmQ/2
-         sTGb8bcyYVIKLSZ6XRVJ+gVxZYwqnq8oYBn5fJPqdJe0e0iEc+hAOhC4VH3eP9MOVmjt
-         nT+pq2XgFtqGgZIfqTE6OWa4Z+V0satqrO3PoJ/gpvEvpAdOpMA0RxY6pQQhp7zoD/yF
-         JWgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690895142; x=1691499942;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1690895281; x=1691500081;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kNAKszskixaa3hgdlCtn/3Bo9V9ma0+ARvrVT7ws8lk=;
-        b=PG595qnMH5BMLs88msefL0Tdmqb/DwIuGJbKI/IOrhMn6GyRGUDYHqcvwPk/iy9d8q
-         JbU9h1yyHr9hEUVfLIM8c5PHiz0RQOTdYSACY0l1jbSebQagb8w/Lc9ekSWCBu916B3C
-         gjs9XrwwIZ3hp1uGaIRjnvbQEpO/9hnR18hppOgJg6/ZeO+/cNvxpw3WNB5X1Wsjrh/z
-         +h+kvy68HdMeQMMGasf8RyUDILVZ8GleRjQIajamIj+FaaGQePbDOewY5Tch+v13nCBw
-         4BJ/EG2RS5bfLDROhh8AazDdyqFfLitOG4UUDQHclJPX8YIy2lVO8QeM8dnG8n5CLRs8
-         WhdA==
-X-Gm-Message-State: ABy/qLYnvXO3Oz/sRrQkZZkslh4kKOvWnrDykQNLHKnWmy4GFBvt3i8L
-        rLEvR76HaN5FDsDzaCK378hMlA==
-X-Google-Smtp-Source: APBJJlFjj/UQBxDKWUdx/frDQYBFVDCh2370GVmNUaRC5O6568WBwiYbCtNgfs0MZwMCvU9A3D5z4A==
-X-Received: by 2002:a17:902:bd48:b0:1b5:4679:568f with SMTP id b8-20020a170902bd4800b001b54679568fmr10179994plx.45.1690895142060;
-        Tue, 01 Aug 2023 06:05:42 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-25-194.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.25.194])
-        by smtp.gmail.com with ESMTPSA id p16-20020a170902e75000b001b9fef7f454sm10388131plf.73.2023.08.01.06.05.41
+        bh=AccyrdI4Islk0cLDdXZ9MEAhmea3ReAH0ddsNjoh+g0=;
+        b=FiwR3Bgf2y/IASlAH4AmTy+Tw1/tBeY/GGYIfvB59YuFHC2g77MRGPDc+Rx20KGaI3
+         xK9RnOYDh27Q9omDLsTtyLSOzeB9y9tJBJ7yzuEZdz9IrpGitbJr9Vky4ffjia300lw0
+         A6FLFOY9gIq+p7DGF2aXTUMvZ8BjFlhv3ft+yupcBIAB0YAlDib7NCfHk3G4ESmJK9Ut
+         IY0saMFeik2bu9euj+rIQAZC8DjdzU1WF16EXuc9suR+6psgpYYYENrLotwTMnvv8CBx
+         zzaKWHH++9Dfz2dbJAvVYtPU8TYeussEg1JAw17BaHYD70Mnl2yVD2Js4jfuZ0xflkBs
+         VzGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690895281; x=1691500081;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AccyrdI4Islk0cLDdXZ9MEAhmea3ReAH0ddsNjoh+g0=;
+        b=PCTUsfSB2AV4XhXDL0KJ80/TxMt3c6NvrryScU4xDvbL+6d+yfRbP8b525CXrgJYmv
+         VMB7IUCfh8xmV2CGoRKpik336i2Zo+CoCux8q79BWzAPkTXuZ8jRR0IGwAYw7j8W5UNh
+         9X/VLRzP2x0FnS3tdRo7rH+vpA9I710P9x9LUB48JpMB/BjeQ6wz6WVIgwgFg90Hct1y
+         5TY3jGdcsHBQLa3AN739gjQaZH3qmagDwcT282VpEhb7ZelUUt2Pxz//wznrDMC0zVof
+         UDxq/veI77XshLZZ44lWk14mXUhAzuN7+nAfsVm6VFFhY4+vOvD4Jyfhpc1tAy/CGOvQ
+         KgYg==
+X-Gm-Message-State: ABy/qLZnK+RKM+5C78x/f8tJBaFBIgbaHOR0zr460SKULumxTkc4EFyA
+        Kx3Q9zygJnofAYbwkGJ2YOk=
+X-Google-Smtp-Source: APBJJlFQTOqNYYriaEQOeEiGlgbmt6PYyFxrbqc33voaEdXCrTIeb5nY1uOaHhYNXQXkkREB2/Qk7A==
+X-Received: by 2002:ac8:5792:0:b0:40a:fc6a:e86e with SMTP id v18-20020ac85792000000b0040afc6ae86emr9900180qta.62.1690895281288;
+        Tue, 01 Aug 2023 06:08:01 -0700 (PDT)
+Received: from localhost (172.174.245.35.bc.googleusercontent.com. [35.245.174.172])
+        by smtp.gmail.com with ESMTPSA id i3-20020ac84f43000000b0040553dac952sm4352606qtw.28.2023.08.01.06.08.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Aug 2023 06:05:41 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1qQp4F-002ma2-5I;
-        Tue, 01 Aug 2023 10:05:39 -0300
-Date:   Tue, 1 Aug 2023 10:05:39 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        liubo <liubo254@huawei.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Hugh Dickins <hughd@google.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mel Gorman <mgorman@suse.de>
-Subject: Re: [PATCH v1 0/4] smaps / mm/gup: fix gup_can_follow_protnone
- fallout
-Message-ID: <ZMkDIxFQQljY8Ah1@ziepe.ca>
-References: <20230727212845.135673-1-david@redhat.com>
- <CAHk-=wiig=N75AGP7UAG9scmghWAqsTB5NRO6RiWLOB5YWfcTQ@mail.gmail.com>
- <412bb30f-0417-802c-3fc4-a4e9d5891c5d@redhat.com>
- <66e26ad5-982e-fe2a-e4cd-de0e552da0ca@redhat.com>
- <ZMfc9+/44kViqjeN@x1n>
- <a3349cdb-f76f-eb87-4629-9ccba9f435a1@redhat.com>
- <CAHk-=wiREarX5MQx9AppxPzV6jXCCQRs5KVKgHoGYwATRL6nPg@mail.gmail.com>
- <a453d403-fc96-e4a0-71ee-c61d527e70da@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a453d403-fc96-e4a0-71ee-c61d527e70da@redhat.com>
+        Tue, 01 Aug 2023 06:08:00 -0700 (PDT)
+Date:   Tue, 01 Aug 2023 09:08:00 -0400
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To:     David Howells <dhowells@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     dhowells@redhat.com, Jakub Kicinski <kuba@kernel.org>,
+        syzbot <syzbot+f527b971b4bdc8e79f9e@syzkaller.appspotmail.com>,
+        bpf@vger.kernel.org, brauner@kernel.org, davem@davemloft.net,
+        dsahern@kernel.org, edumazet@google.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, pabeni@redhat.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Message-ID: <64c903b02b234_1b307829418@willemb.c.googlers.com.notmuch>
+In-Reply-To: <1401696.1690893633@warthog.procyon.org.uk>
+References: <64c7acd57270c_169cd129420@willemb.c.googlers.com.notmuch>
+ <64c6672f580e3_11d0042944e@willemb.c.googlers.com.notmuch>
+ <20230718160737.52c68c73@kernel.org>
+ <000000000000881d0606004541d1@google.com>
+ <0000000000001416bb06004ebf53@google.com>
+ <792238.1690667367@warthog.procyon.org.uk>
+ <831028.1690791233@warthog.procyon.org.uk>
+ <1401696.1690893633@warthog.procyon.org.uk>
+Subject: Re: Endless loop in udp with MSG_SPLICE_READ - Re: [syzbot] [fs?]
+ INFO: task hung in pipe_release (4)
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -90,28 +87,78 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 31, 2023 at 09:00:06PM +0200, David Hildenbrand wrote:
+David Howells wrote:
+> The more I look at __ip_append_data(), the more I think the maths is wrong.
+> In the bit that allocates a new skbuff:
+> 
+> 	if (copy <= 0) {
+> 	...
+> 		datalen = length + fraggap;
+> 		if (datalen > mtu - fragheaderlen)
+> 			datalen = maxfraglen - fragheaderlen;
+> 		fraglen = datalen + fragheaderlen;
+> 		pagedlen = 0;
+> 	...
+> 		if ((flags & MSG_MORE) &&
+> 		    !(rt->dst.dev->features&NETIF_F_SG))
+> 	...
+> 		else if (!paged &&
+> 			 (fraglen + alloc_extra < SKB_MAX_ALLOC ||
+> 			  !(rt->dst.dev->features & NETIF_F_SG)))
+> 	...
+> 		else {
+> 			alloclen = fragheaderlen + transhdrlen;
+> 			pagedlen = datalen - transhdrlen;
+> 		}
+> 	...
+> 
+> In the MSG_SPLICE_READ but not MSG_MORE case, we go through that else clause.
+> The values used here, a few lines further along:
+> 
+> 		copy = datalen - transhdrlen - fraggap - pagedlen;
+> 
+> are constant over the intervening span.  This means that, provided the splice
+> isn't going to exceed the MTU on the second fragment, the calculation of
+> 'copy' can then be simplified algebraically thus:
+> 
+> 		copy = (length + fraggap) - transhdrlen - fraggap - pagedlen;
+> 
+> 		copy = length - transhdrlen - pagedlen;
+> 
+> 		copy = length - transhdrlen - (datalen - transhdrlen);
+> 
+> 		copy = length - transhdrlen - datalen + transhdrlen;
+> 
+> 		copy = length - datalen;
+> 
+> 		copy = length - (length + fraggap);
+> 
+> 		copy = length - length - fraggap;
+> 
+> 		copy = -fraggap;
+> 
+> I think we might need to recalculate copy after the conditional call to
+> getfrag().  Possibly we should skip that entirely for MSG_SPLICE_READ.  The
+> root seems to be that we're subtracting pagedlen from datalen - but probably
+> we shouldn't be doing getfrag() if pagedlen > 0.
 
-> Their logic is "if it's directly in the page table, create, hand it over. If
-> not, please go the slow path.". In many cases user space just touched these
-> pages so they are very likely in the page table.
+That getfrag is needed. For non-splice cases, to fill the linear part
+of an skb. As your example shows, it is skipped if all data is covered
+by pagedlen?
 
-I think it has become pretty confusing, overall.
+In this edge case, splicing appends pagedlen to an skb that holds only
+a small linear part for fragheaderlen and fraggap.
 
-In my mind 'pin_user_pages_fast()' should be functionally the same as
-'pin_user_pages_unlocked()'.
+Splicing has no problem appending to a normal linear skb, right. Say
 
-Places call fast if they have no idea about what is under memory,
-otherwise they call unlocked if you are pretty sure something is there
-that needs the mmap lock to resolve.
+  send(fd, buf, 100, MSG_MORE);
+  write(pipe[1], buf, 8);
+  splice(pipe[2], 0, fd, 0, 8, 0);
 
-If we need different behaviors a GUP flag makes the most sense.
+This only happens when a new skb has to be allocated during the splice
+call.
 
-> Always honoring NUMA faults here does not sound like the improvement we
-> wanted to have :) ... we actually *don't* want to honor NUMA faults here.
+What causes the infinite loop: does skb_splice_from_iter return 0 and
+therefore the loop neither decrements copy, nor breaks out with error?
 
-Yeah, I think that is right. We should not really use the CPU running
-PUP as any input to a NUMA algorithm.. If we want NUMA'ness then the
-PUP user should specify the affinity that makes sense.
-
-Jason
+Apologies for the earlier mail. Accidentally hit send too soon..
