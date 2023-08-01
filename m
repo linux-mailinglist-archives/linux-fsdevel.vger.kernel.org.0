@@ -2,113 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6574976B7F6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 16:48:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99E0E76B7F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Aug 2023 16:48:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234890AbjHAOsc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Aug 2023 10:48:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32920 "EHLO
+        id S233942AbjHAOsS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Aug 2023 10:48:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231742AbjHAOsb (ORCPT
+        with ESMTP id S234886AbjHAOsR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Aug 2023 10:48:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A46A1BCF
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 07:47:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690901268;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=77SgUFl2HB6+f2EfWd7XLhBOxqcp2ZcmVefhFsJwvso=;
-        b=Q9wrMO7VcpmmPA+ZD+vsM2eQZcPXOlvrPLbTBx310ZEY4P9bcIJJJYW/mZYXLUpVDzcd7n
-        jZIaPi40EF9t5RuJs0sk7+KMxgutuTVp2zO7qf6be3YLrkbSv7Eg47vJQvu+8GWYBfDtMZ
-        geG/XOYg+6a6YlPjky9mFeTTxhYdtCE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-615-CN4xJSqeOzmaJVv-cmpRsQ-1; Tue, 01 Aug 2023 10:47:44 -0400
-X-MC-Unique: CN4xJSqeOzmaJVv-cmpRsQ-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A8B201064C0D;
-        Tue,  1 Aug 2023 14:47:38 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.131])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9DA8F492B01;
-        Tue,  1 Aug 2023 14:47:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <64c9174fda48e_1bf0a42945f@willemb.c.googlers.com.notmuch>
-References: <64c9174fda48e_1bf0a42945f@willemb.c.googlers.com.notmuch> <64c903b02b234_1b307829418@willemb.c.googlers.com.notmuch> <64c7acd57270c_169cd129420@willemb.c.googlers.com.notmuch> <64c6672f580e3_11d0042944e@willemb.c.googlers.com.notmuch> <20230718160737.52c68c73@kernel.org> <000000000000881d0606004541d1@google.com> <0000000000001416bb06004ebf53@google.com> <792238.1690667367@warthog.procyon.org.uk> <831028.1690791233@warthog.procyon.org.uk> <1401696.1690893633@warthog.procyon.org.uk> <1409099.1690899546@warthog.procyon.org.uk>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     dhowells@redhat.com, Jakub Kicinski <kuba@kernel.org>,
-        syzbot <syzbot+f527b971b4bdc8e79f9e@syzkaller.appspotmail.com>,
-        bpf@vger.kernel.org, brauner@kernel.org, davem@davemloft.net,
-        dsahern@kernel.org, edumazet@google.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, pabeni@redhat.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: Endless loop in udp with MSG_SPLICE_READ - Re: [syzbot] [fs?] INFO: task hung in pipe_release (4)
+        Tue, 1 Aug 2023 10:48:17 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EAF61BC3
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 07:48:16 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-99bcf2de59cso899652666b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Aug 2023 07:48:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1690901295; x=1691506095;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=r3kEz1CTM4/QozQ2mRQvCjeRan+rFBPUYaNFk70CP28=;
+        b=iOm3m4lxaeHZrwJ/xIVKTeBN1U0byLijO0LCVzdEl0KAcnoAo7dIl/sjMNTu76FOwj
+         I5sYttUBRz/+24Kk7AcwiIGfsbksopGbx8TSNP+K0sZ9GVgFyS9fq2ygCBwaKym3rVn0
+         HaYBkaU1z4DC0dcDrqnOWS6Pv+75FO+XJE/24=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690901295; x=1691506095;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r3kEz1CTM4/QozQ2mRQvCjeRan+rFBPUYaNFk70CP28=;
+        b=akVDQyt2T8QdoBJiAV7ElIZpXiYAOvHHOrGJrWVrCfJQNziG2f/82KobcWs381TgGf
+         vg95Q2KUaPOMrrNpuhmA/rER8iEFHYOjXGMKccL0sCgGYmTYAtglyoZ/7G2aHqZ5G7cX
+         8GErugmbNn/9L6PLshUiV5dqcKP1bfV2a5PLQA/WAkmR98oqXJxdplZyos3khuKu/0Hu
+         Pz9eqwpMc9i3q7mVjlKt+GsP13SX4MMizAqMeg96bJjAhiKps5KnHyH15mHcteiqyIx2
+         Ftu5Dkq30r8pQbVBhZ4jhYiubWfzIHFPIu+KtpW2Xrqi6eZXbpJBRinEnLT+TQcUBUCe
+         nH5g==
+X-Gm-Message-State: ABy/qLakIAUCNVU/6hS3GWg39uJ3k24TQvuqSlKdrh1A/3RQijiE5Kxr
+        7xm48AD6SayD5lPYiDcU/WV5TRjM3IAmmmo+WoTZoA==
+X-Google-Smtp-Source: APBJJlE8JTL1fjZKhwknbK9ebcNbxHgy/MjRz5MqyE0lvybxwlqNOIe/w5g+TuXq1lChRAh1CFeNn4H/qBp2Jg9LqRE=
+X-Received: by 2002:a17:906:11:b0:993:f744:d235 with SMTP id
+ 17-20020a170906001100b00993f744d235mr2630214eja.6.1690901294975; Tue, 01 Aug
+ 2023 07:48:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1410189.1690901255.1@warthog.procyon.org.uk>
-Date:   Tue, 01 Aug 2023 15:47:35 +0100
-Message-ID: <1410190.1690901255@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <87wmymk0k9.fsf@vostro.rath.org> <CAJfpegs+FfWGCOxX1XERGHfYRZzCzcLZ99mnchfb8o9U0kTS-A@mail.gmail.com>
+ <87tttpk2kp.fsf@vostro.rath.org> <87r0osjufc.fsf@vostro.rath.org>
+ <CAJfpegu7BtYzPE-NK_t3nFBT3fy2wGyyuJRP=wVGnvZh2oQPBA@mail.gmail.com>
+ <CAJfpeguJESTqU7d0d0_2t=99P3Yt5a8-T4ADTF3tUdg5ou2qow@mail.gmail.com>
+ <87o7jrjant.fsf@vostro.rath.org> <CAJfpegvTTUvrcpzVsJwH63n+zNw+h6krtiCPATCzZ+ePZMVt2Q@mail.gmail.com>
+ <2e44acdd-b113-43c3-80cb-150f09478383@app.fastmail.com>
+In-Reply-To: <2e44acdd-b113-43c3-80cb-150f09478383@app.fastmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 1 Aug 2023 16:48:03 +0200
+Message-ID: <CAJfpegtoi2jNaKjvqMqrWQQrDoJkTZqheXFAb3MMVv7WVsHi0A@mail.gmail.com>
+Subject: Re: [fuse-devel] Semantics of fuse_notify_delete()
+To:     Nikolaus Rath <nikolaus@rath.org>
+Cc:     Martin Kaspar via fuse-devel <fuse-devel@lists.sourceforge.net>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
+On Tue, 1 Aug 2023 at 16:40, Nikolaus Rath <nikolaus@rath.org> wrote:
+>
+> On Tue, 1 Aug 2023, at 13:53, Miklos Szeredi via fuse-devel wrote:
+> > Here's one with the virtual env and the correct head:
+> >
+> > root@kvm:~/s3ql# git log -1 --pretty="%h %s"
+> > 3d35f18543d9 Reproducer for notify_delete issue. To confirm:
+> > root@kvm:~/s3ql# ~/s3ql-python-env/bin/python bin/s3qlrm mnt/test
+> > WARNING: Received unknown command via control inode
+> > ERROR: Uncaught top-level exception:
+> > Traceback (most recent call last):
+> >   File "/root/s3ql/bin/s3qlrm", line 21, in <module>
+> >     s3ql.remove.main(sys.argv[1:])
+> >   File "/root/s3ql/src/s3ql/remove.py", line 72, in main
+> >     pyfuse3.setxattr(ctrlfile, 'rmtree', cmd)
+> >   File "src/pyfuse3.pyx", line 629, in pyfuse3.setxattr
+> > OSError: [Errno 22] Invalid argument: 'mnt/test/.__s3ql__ctrl__'
+>
+> This is odd. I have never heard of anyone having this problem before and it also works fine in the CI.
+>
+> I apologize that this is taking so much of your time.
+>
+> I have changed the code a bit to print out what exactly it is receiving: https://github.com/s3ql/s3ql/commit/eb31f7bff4bd985d68fa20c793c2f2edf5db61a5
+>
+> Would you mind updating your branch and trying again? (You'll need to fetch and reset, since I rebased on top of current master just to be sure).
+>
+> I can still reproduce this every time (without any other error):
+>
+> $ mkdir bucket
+> $ bin/mkfs.s3ql --plain local://bucket
+> Before using S3QL, make sure to read the user's guide, especially
+> the 'Important Rules to Avoid Losing Data' section.
+> Creating metadata tables...
+> Uploading metadata...
+> Uploading metadata...
+> Uploaded 1 out of ~1 dirty blocks (100%)
+> Calculating metadata checksum...
+> $ mkdir mnt
+> $ bin/mount.s3ql --fg local://bucket mnt &
+> Using 10 upload threads.
+> Autodetected 1048514 file descriptors available for cache entries
+> Using cached metadata.
+> Setting cache size to 315297 MB
+> Mounting local:///home/nikratio/in-progress/s3ql/bucket/ at /home/nikratio/in-progress/s3ql/mnt...
+>
+> $ md mnt/test; echo foo > mnt/test/bar
+> $ bin/s3qlrm mnt/test
+> fuse: writing device: Directory not empty
+> ERROR: Failed to submit invalidate_entry request for parent inode 1, name b'test'
+> Traceback (most recent call last):
+>   File "src/internal.pxi", line 125, in pyfuse3._notify_loop
+>   File "src/pyfuse3.pyx", line 915, in pyfuse3.invalidate_entry
+> OSError: [Errno 39] fuse_lowlevel_notify_delete returned: Directory not empty
+>
+> nikratio@vostro ~/i/s3ql (notify_delete_bug)>
 
-> > I'm also not entirely sure what 'paged' means in this function.  Should it
-> > actually be set in the MSG_SPLICE_PAGES context?
-> 
-> I introduced it with MSG_ZEROCOPY. It sets up pagedlen to capture the
-> length that is not copied.
-> 
-> If the existing code would affect MSG_ZEROCOPY too, I expect syzbot
-> to have reported that previously.
+WARNING: Received unknown command via control inode: b"1, b'test')"
+ERROR: Uncaught top-level exception:
+Traceback (most recent call last):
+  File "/root/s3ql/bin/s3qlrm", line 21, in <module>
+    s3ql.remove.main(sys.argv[1:])
+  File "/root/s3ql/src/s3ql/remove.py", line 74, in main
+    pyfuse3.setxattr(ctrlfile, 'rmtree', cmd)
+  File "src/pyfuse3.pyx", line 629, in pyfuse3.setxattr
+OSError: [Errno 22] Invalid argument: 'mnt/test/.__s3ql__ctrl__'
 
-Ah...  I think it *should* affect MSG_ZEROCOPY also... but...  If you look at:
-
-		} else {
-			err = skb_zerocopy_iter_dgram(skb, from, copy);
-			if (err < 0)
-				goto error;
-		}
-		offset += copy;
-		length -= copy;
-
-MSG_ZEROCOPY assumes that if it didn't return an error, then
-skb_zerocopy_iter_dgram() copied all the data requested - whether or not the
-iterator had sufficient data to copy.
-
-If you look in __zerocopy_sg_from_iter(), it will drop straight out, returning
-0 if/when iov_iter_count() is/reaches 0, even if length is still > 0, just as
-skb_splice_from_iter() does.
-
-So there's a potential bug in the handling of MSG_ZEROCOPY - but one that you
-survive because it subtracts 'copy' from 'length', reducing it to zero, exits
-the loop and returns without looking at 'length' again.  The actual length to
-be transmitted is in the skbuff.
-
-> Since the arithmetic is so complicated and error prone, I would try
-> to structure a fix that is easy to reason about to only change
-> behavior for the MSG_SPLICE_PAGES case.
-
-Does that mean you want to have a go at that - or did you want me to try?
-
-David
-
+Thanks,
+Miklos
