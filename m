@@ -2,102 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DA9D76CB0A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 12:38:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AAEC76CB9B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 13:19:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234075AbjHBKij (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Aug 2023 06:38:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55378 "EHLO
+        id S234084AbjHBLTB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Aug 2023 07:19:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232480AbjHBKiM (ORCPT
+        with ESMTP id S232002AbjHBLTA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Aug 2023 06:38:12 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD2254682;
-        Wed,  2 Aug 2023 03:34:24 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 764A41F747;
-        Wed,  2 Aug 2023 10:34:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1690972463; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MR58NMBglJtxUxpSgzfkjnZorzDEMsBbaguIyc3mpKs=;
-        b=TmbFmgfwfLg9UiwJyY4spbAzOMrXavHMXBOiqxAIOwPFBgpM+LJm0+qmZCaBUIZGCDTGrE
-        fRg903IGUjPcrRFNtuZGT0D6u3CFXvgSqDTTPtmfR20P33YAX5EhhQgEwLKGstRMxY8IYP
-        /WQZ2vIFg4FibpaKv4AS/V3BxxqhZxE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1690972463;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MR58NMBglJtxUxpSgzfkjnZorzDEMsBbaguIyc3mpKs=;
-        b=ErQJZxwi/4DRe4LY5xycNVKcu6lQanAV3vJzTxo1eJ/06fLw6ANa8v4Z0yYYiLNgvvT/f4
-        Ns5BsunpYqjDacCg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6847113919;
-        Wed,  2 Aug 2023 10:34:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id V9VqGS8xymSDCgAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 02 Aug 2023 10:34:23 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id EAB7CA076B; Wed,  2 Aug 2023 12:34:22 +0200 (CEST)
-Date:   Wed, 2 Aug 2023 12:34:22 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.cz>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH] ext4: fix the time handling macros when ext4 is using
- small inodes
-Message-ID: <20230802103422.lzgb7yyksfbpw4rh@quack3>
-References: <20230718-ctime-v1-1-24e2f96dcdf3@kernel.org>
+        Wed, 2 Aug 2023 07:19:00 -0400
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D57F211E
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 04:18:59 -0700 (PDT)
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3a7292a2a72so6440841b6e.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Aug 2023 04:18:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690975138; x=1691579938;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tG/9RhsoOpqUYPDbY3A2SCrWREUkDCcVSurVLIMXES0=;
+        b=FWIgGxMZPVT9+QgrO2+X0nNyqAkGvAMKtEX9vYsUCGjCnViAH40wVN/NGkhTAEZ6FO
+         xeJbsTqpxxeCDLLtUpfAeA6XYoBHLB5GxcbPPc50LdcOUj5xtKyVT27tWAM4N1s9gW6p
+         yvfTPjrGIKh1RAiJsKTDKeAWw6aVKzRZ29Bn0/UXuIjBGBECRXffwlEdximufhU1n2UH
+         RPmpwFJYx3iOxpUgGHaH8ZFQfDdqUzYPaJMLc+KvgZkIkZXUwO3LpAOqxaSHOq63J8v+
+         3d/TRkv30+X8918dPcFBCBfPmcqIljSpsqq0BQyyoYGs0ObkX8kNa4I9TMW84KcsbAwj
+         tRLQ==
+X-Gm-Message-State: ABy/qLac0q0fnFXvLCgJojmGXb3znIu5XCWXjotfn9ss7krdLuxqvCww
+        4Hig6h0nF/NAMfqRW1cUhb/kW+VnUlRju+GQUMEDtrtvHeys
+X-Google-Smtp-Source: APBJJlFDaYXeuroNY34COc/l3laqrnv+Mv8wxy0p7P5oKzctisDOWKPhrtk27+nmEF2HhuHOaNFi3xaXqEHYz3SboaUPv0kmCzcW
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230718-ctime-v1-1-24e2f96dcdf3@kernel.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6808:13c2:b0:3a4:24bc:125f with SMTP id
+ d2-20020a05680813c200b003a424bc125fmr26661106oiw.1.1690975138443; Wed, 02 Aug
+ 2023 04:18:58 -0700 (PDT)
+Date:   Wed, 02 Aug 2023 04:18:58 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000073777d0601eed428@google.com>
+Subject: [syzbot] Monthly gfs2 report (Aug 2023)
+From:   syzbot <syzbot+list07452ddeb3cf4800d090@syzkaller.appspotmail.com>
+To:     cluster-devel@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 18-07-23 13:31:59, Jeff Layton wrote:
-> If ext4 is using small on-disk inodes, then it may not be able to store
-> fine grained timestamps. It also can't store the i_crtime at all in that
-> case since that fully lives in the extended part of the inode.
-> 
-> 979492850abd got the EXT4_EINODE_{GET,SET}_XTIME macros wrong, and would
-> still store the tv_sec field of the i_crtime into the raw_inode, even
-> when they were small, corrupting adjacent memory.
-> 
-> This fixes those macros to skip setting anything in the raw_inode if the
-> tv_sec field doesn't fit, and to properly return a {0,0} timestamp when
-> the raw_inode doesn't support it.
-> 
-> Cc: Jan Kara <jack@suse.cz>
-> Fixes: 979492850abd ("ext4: convert to ctime accessor functions")
-> Reported-by: Hugh Dickins <hughd@google.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Hello gfs2 maintainers/developers,
 
-I've seen Christian has already folded this fixup so I just want to say:
-Thanks for fixing this up while I was away!
+This is a 31-day syzbot report for the gfs2 subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/gfs2
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+During the period, 3 new issues were detected and 0 were fixed.
+In total, 18 issues are still open and 18 have been fixed so far.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 3678    Yes   WARNING in folio_account_dirtied
+                  https://syzkaller.appspot.com/bug?extid=8d1d62bfb63d6a480be1
+<2> 2371    Yes   WARNING in __folio_mark_dirty (2)
+                  https://syzkaller.appspot.com/bug?extid=e14d6cd6ec241f507ba7
+<3> 501     Yes   kernel BUG in gfs2_glock_nq (2)
+                  https://syzkaller.appspot.com/bug?extid=70f4e455dee59ab40c80
+<4> 71      Yes   INFO: task hung in gfs2_gl_hash_clear (3)
+                  https://syzkaller.appspot.com/bug?extid=ed7d0f71a89e28557a77
+<5> 52      Yes   WARNING in gfs2_check_blk_type
+                  https://syzkaller.appspot.com/bug?extid=092b28923eb79e0f3c41
+<6> 3       Yes   BUG: unable to handle kernel NULL pointer dereference in gfs2_rgrp_dump
+                  https://syzkaller.appspot.com/bug?extid=da0fc229cc1ff4bb2e6d
+<7> 3       Yes   BUG: unable to handle kernel NULL pointer dereference in gfs2_rindex_update
+                  https://syzkaller.appspot.com/bug?extid=2b32df23ff6b5b307565
+<8> 1       Yes   BUG: sleeping function called from invalid context in gfs2_make_fs_ro
+                  https://syzkaller.appspot.com/bug?extid=60369f4775c014dd1804
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
