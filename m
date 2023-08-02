@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3144576D3B1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 18:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93F0B76D3C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 18:33:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232302AbjHBQcX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Aug 2023 12:32:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37418 "EHLO
+        id S232594AbjHBQdX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Aug 2023 12:33:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230352AbjHBQcV (ORCPT
+        with ESMTP id S232394AbjHBQdW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Aug 2023 12:32:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F02091FFA;
-        Wed,  2 Aug 2023 09:32:20 -0700 (PDT)
+        Wed, 2 Aug 2023 12:33:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93BF12101;
+        Wed,  2 Aug 2023 09:33:21 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5041761A0D;
-        Wed,  2 Aug 2023 16:32:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB7D9C433C8;
-        Wed,  2 Aug 2023 16:32:19 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 329C761A24;
+        Wed,  2 Aug 2023 16:33:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8773FC433C7;
+        Wed,  2 Aug 2023 16:33:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690993939;
-        bh=GcVu5AKxQx3Xueu/J47RQ71hv6d/lK6wYIHHmRfGqaQ=;
+        s=k20201202; t=1690994000;
+        bh=U5pXU2c37LOZ29omq1nYjOha2+PkFnv5cZZI28wk6xI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Wtd/B0tT5WFKMlZ4FcUuBOY403mH8jUVkWi+G6Rc6yRr8xqjh9e6QJP4M5cVaQZjl
-         RdSRk087/R+zJKvlBUY6iflSrQVduZHiM7vhrntHc8ykJ5MZ3CsTWNydd8G60nAjjB
-         xsTI+0r8XJWzqubQJge2bfArwRHdY+O0Fl3cJpBpiRZiCeObWknsnSeiOIYUNNlQ5n
-         gF1Wsh0ENOOBgf0aIBZa5zNVBIhSdH4vc5MXOCvbYSInOKhXU+6gtVD2ABSpP8k6sE
-         GxKNKflCh1H01pQA/zivBFr3jCjg3b+DK9HkonEjcCq0iyGozH4qOncit0g9T89zgx
-         DasFxOweGYc3Q==
-Date:   Wed, 2 Aug 2023 09:32:19 -0700
+        b=VbhXgLKwgsrsAQ9lKMSn42pa4Ylk6IKQnzpDE7eTo6XWu8QXA8ASoiiWUp5vePHa4
+         rqKYL37JGUX9BYkCAq6Qa8f7fGtfFLzcMqz+eu6fI8dgYR1AAcKZIwk67k6sSHEK5a
+         Njz82jH8Ug+YQ2Q1h4sDTGfhQcEv4iGu0G/SVUWQa2Pt/MuSQ64lm77P0GczVG9m1Q
+         DKM8m4hoED2p4UVsLydshoE+nAb2SHTV3Q+EDW0nZpH+Ge1CA1glHR2oD3mFU2ZrFO
+         Onx7JmBXl+uQCY9uDiWr6KaBHqsgZYWYOWiRpEIGfLcVhIwvH7UOPO/1IFtwzm3fow
+         kufdy4/TMWpFw==
+Date:   Wed, 2 Aug 2023 09:33:20 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
@@ -48,110 +48,81 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-xfs@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH 11/12] xfs: drop s_umount over opening the log and RT
- devices
-Message-ID: <20230802163219.GW11352@frogsfrogsfrogs>
+Subject: Re: [PATCH 12/12] xfs use fs_holder_ops for the log and RT devices
+Message-ID: <20230802163320.GX11352@frogsfrogsfrogs>
 References: <20230802154131.2221419-1-hch@lst.de>
- <20230802154131.2221419-12-hch@lst.de>
+ <20230802154131.2221419-13-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230802154131.2221419-12-hch@lst.de>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230802154131.2221419-13-hch@lst.de>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 02, 2023 at 05:41:30PM +0200, Christoph Hellwig wrote:
-> Just like get_tree_bdev needs to drop s_umount when opening the main
-> device, we need to do the same for the xfs log and RT devices to avoid a
-> potential lock order reversal with s_unmount for the mark_dead path.
-> 
-> It might be preferable to just drop s_umount over ->fill_super entirely,
-> but that will require a fairly massive audit first, so we'll do the easy
-> version here first.
+On Wed, Aug 02, 2023 at 05:41:31PM +0200, Christoph Hellwig wrote:
+> Use the generic fs_holder_ops to shut down the file system when the
+> log or RT device goes away instead of duplicating the logic.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/xfs/xfs_super.c | 15 +++++++++++----
->  1 file changed, 11 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 8185102431301d..d5042419ed9997 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -448,17 +448,21 @@ STATIC int
->  xfs_open_devices(
->  	struct xfs_mount	*mp)
->  {
-> -	struct block_device	*ddev = mp->m_super->s_bdev;
-> +	struct super_block	*sb = mp->m_super;
-> +	struct block_device	*ddev = sb->s_bdev;
->  	struct block_device	*logdev = NULL, *rtdev = NULL;
->  	int			error;
->  
-> +	/* see get_tree_bdev why this is needed and safe */
 
-Which part of get_tree_bdev?  Is it this?
-
-		/*
-		 * s_umount nests inside open_mutex during
-		 * __invalidate_device().  blkdev_put() acquires
-		 * open_mutex and can't be called under s_umount.  Drop
-		 * s_umount temporarily.  This is safe as we're
-		 * holding an active reference.
-		 */
-		up_write(&s->s_umount);
-		blkdev_put(bdev, fc->fs_type);
-		down_write(&s->s_umount);
-
-<confused>
-
-> +	up_write(&sb->s_umount);
-> +
->  	/*
->  	 * Open real time and log devices - order is important.
->  	 */
->  	if (mp->m_logname) {
->  		error = xfs_blkdev_get(mp, mp->m_logname, &logdev);
->  		if (error)
-> -			return error;
-> +			goto out_unlock;
->  	}
->  
->  	if (mp->m_rtname) {
-> @@ -496,7 +500,10 @@ xfs_open_devices(
->  		mp->m_logdev_targp = mp->m_ddev_targp;
->  	}
->  
-> -	return 0;
-> +	error = 0;
-> +out_unlock:
-> +	down_write(&sb->s_umount);
-
-Isn't down_write taking s_umount?  I think the label should be
-out_relock or something less misleading.
+Nice cleanup,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
-> +	return error;
->  
->   out_free_rtdev_targ:
->  	if (mp->m_rtdev_targp)
-> @@ -508,7 +515,7 @@ xfs_open_devices(
->   out_close_logdev:
->  	if (logdev && logdev != ddev)
->  		xfs_blkdev_put(mp, logdev);
-> -	return error;
-> +	goto out_unlock;
+> ---
+>  fs/xfs/xfs_super.c | 17 +++--------------
+>  1 file changed, 3 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index d5042419ed9997..338eba71ff8667 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -377,17 +377,6 @@ xfs_setup_dax_always(
+>  	return 0;
 >  }
 >  
->  /*
+> -static void
+> -xfs_bdev_mark_dead(
+> -	struct block_device	*bdev)
+> -{
+> -	xfs_force_shutdown(bdev->bd_holder, SHUTDOWN_DEVICE_REMOVED);
+> -}
+> -
+> -static const struct blk_holder_ops xfs_holder_ops = {
+> -	.mark_dead		= xfs_bdev_mark_dead,
+> -};
+> -
+>  STATIC int
+>  xfs_blkdev_get(
+>  	xfs_mount_t		*mp,
+> @@ -396,8 +385,8 @@ xfs_blkdev_get(
+>  {
+>  	int			error = 0;
+>  
+> -	*bdevp = blkdev_get_by_path(name, BLK_OPEN_READ | BLK_OPEN_WRITE, mp,
+> -				    &xfs_holder_ops);
+> +	*bdevp = blkdev_get_by_path(name, BLK_OPEN_READ | BLK_OPEN_WRITE,
+> +				    mp->m_super, &fs_holder_ops);
+>  	if (IS_ERR(*bdevp)) {
+>  		error = PTR_ERR(*bdevp);
+>  		xfs_warn(mp, "Invalid device [%s], error=%d", name, error);
+> @@ -412,7 +401,7 @@ xfs_blkdev_put(
+>  	struct block_device	*bdev)
+>  {
+>  	if (bdev)
+> -		blkdev_put(bdev, mp);
+> +		blkdev_put(bdev, mp->m_super);
+>  }
+>  
+>  STATIC void
 > -- 
 > 2.39.2
 > 
