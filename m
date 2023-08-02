@@ -2,117 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 02CA176D2B5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 17:44:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C6F676D3A1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 18:28:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234082AbjHBPou (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Aug 2023 11:44:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34968 "EHLO
+        id S231502AbjHBQ2A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Aug 2023 12:28:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235312AbjHBPmf (ORCPT
+        with ESMTP id S231265AbjHBQ17 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Aug 2023 11:42:35 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4627D2695;
-        Wed,  2 Aug 2023 08:42:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=i4RVxh7cqcfhStKnrFuIVUqPlurNIlyMZ1NDN212nv0=; b=m9OaeC94Czmbb5hPBahN8SXBqI
-        HNi7Mt4xq8QD0KfNROKtIz4cWo24dWSBz7X8e50X0RB4sQ5tkio4jz+r4r8ZXafkW2ww175yxfozT
-        NCUZO2qzsSFjl3BFFlIRN3Wfa2mzIAi3PGZkD8Cd957ycv8VcxS6B+Gl86ETq6tCRKfhACSRqvwK7
-        ZdYNXIQB/XHcCPAEwZsU/ppTsd8l/Kd7bPks6ODFCghe5WMh0L9iLVh6NfcG8q01AnZzhLKiyX/4B
-        4MY4Wr/7eVJVJE1UTa4EMeC4cbXZti0JxzrFZGHMr43Ix5mWyHHev/cZbWwF9pp4HCsk18N+iH6el
-        wjXcrqPw==;
-Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qRDzN-005GOT-0f;
-        Wed, 02 Aug 2023 15:42:17 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-block@vger.kernel.org
-Subject: [PATCH 12/12] xfs use fs_holder_ops for the log and RT devices
-Date:   Wed,  2 Aug 2023 17:41:31 +0200
-Message-Id: <20230802154131.2221419-13-hch@lst.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230802154131.2221419-1-hch@lst.de>
-References: <20230802154131.2221419-1-hch@lst.de>
+        Wed, 2 Aug 2023 12:27:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36E79210D;
+        Wed,  2 Aug 2023 09:27:55 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9A52361A3E;
+        Wed,  2 Aug 2023 16:27:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F6D2C433C8;
+        Wed,  2 Aug 2023 16:27:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690993674;
+        bh=IypduYRdhJJTtTi/vdjRUEIIDyW7f/veSqGdfghGaM4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oOEm7306/htJKG4CId0R41FGls9huoRDB8SC5RAspSExEJWc+HyVpGhFGv4Wg+PCF
+         DNKER8c6sgtmUjA+ZIyHRtYIYq7s1L8BFIQctpG47gXwN8Vk7wWF9EhSMrNWfwBrKa
+         xvHTe4Pf4ZHfn6zJaolp23r8l3t+iwOVtR8qQQwVdEQ3yiLL1IIdDsYkwudrO92YiE
+         FYGqNhGsI2AB015N0akL8QNC7MUhH864UCZeGRUpoIjIcQa5QkuuS1mcndY8IYStIr
+         JLUyc346bw68jZ6ki7rhKVwxWbLrfo45Bl68nj4Ylkf3MXxPTk91QSuMRGtzpudBB6
+         QKxmNsVU4IKRg==
+Date:   Wed, 2 Aug 2023 17:27:44 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc:     "corbet@lwn.net" <corbet@lwn.net>,
+        "ardb@kernel.org" <ardb@kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "maz@kernel.org" <maz@kernel.org>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "debug@rivosinc.com" <debug@rivosinc.com>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "palmer@dabbelt.com" <palmer@dabbelt.com>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+        "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v3 21/36] arm64/mm: Implement map_shadow_stack()
+Message-ID: <475f31e1-0f6f-44a9-b93a-540c1d43e1bb@sirena.org.uk>
+References: <20230731-arm64-gcs-v3-0-cddf9f980d98@kernel.org>
+ <20230731-arm64-gcs-v3-21-cddf9f980d98@kernel.org>
+ <5461c56cf4896f18bddaa66c3beec7b909fc8fb9.camel@intel.com>
+ <0a6c90d6-f790-4036-a364-d4761fdd0e95@sirena.org.uk>
+ <e827138f9d8800e3db158831bca88d1ea8b559af.camel@intel.com>
+ <21d7e814-8608-40ce-b5d3-401f2110ad91@sirena.org.uk>
+ <a9ea33d31aad0c45eab41b0dcbd4913d863cc930.camel@intel.com>
+ <55c629cc-0545-460b-91cb-2ebdb8ae9051@sirena.org.uk>
+ <7d03be1277a5f4be23df35ca96f4d6cd77735e2b.camel@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="QS3kL7vV2OH5bUkc"
+Content-Disposition: inline
+In-Reply-To: <7d03be1277a5f4be23df35ca96f4d6cd77735e2b.camel@intel.com>
+X-Cookie: Humpty Dumpty was pushed.
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use the generic fs_holder_ops to shut down the file system when the
-log or RT device goes away instead of duplicating the logic.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/xfs/xfs_super.c | 17 +++--------------
- 1 file changed, 3 insertions(+), 14 deletions(-)
+--QS3kL7vV2OH5bUkc
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index d5042419ed9997..338eba71ff8667 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -377,17 +377,6 @@ xfs_setup_dax_always(
- 	return 0;
- }
- 
--static void
--xfs_bdev_mark_dead(
--	struct block_device	*bdev)
--{
--	xfs_force_shutdown(bdev->bd_holder, SHUTDOWN_DEVICE_REMOVED);
--}
--
--static const struct blk_holder_ops xfs_holder_ops = {
--	.mark_dead		= xfs_bdev_mark_dead,
--};
--
- STATIC int
- xfs_blkdev_get(
- 	xfs_mount_t		*mp,
-@@ -396,8 +385,8 @@ xfs_blkdev_get(
- {
- 	int			error = 0;
- 
--	*bdevp = blkdev_get_by_path(name, BLK_OPEN_READ | BLK_OPEN_WRITE, mp,
--				    &xfs_holder_ops);
-+	*bdevp = blkdev_get_by_path(name, BLK_OPEN_READ | BLK_OPEN_WRITE,
-+				    mp->m_super, &fs_holder_ops);
- 	if (IS_ERR(*bdevp)) {
- 		error = PTR_ERR(*bdevp);
- 		xfs_warn(mp, "Invalid device [%s], error=%d", name, error);
-@@ -412,7 +401,7 @@ xfs_blkdev_put(
- 	struct block_device	*bdev)
- {
- 	if (bdev)
--		blkdev_put(bdev, mp);
-+		blkdev_put(bdev, mp->m_super);
- }
- 
- STATIC void
--- 
-2.39.2
+On Tue, Aug 01, 2023 at 08:57:59PM +0000, Edgecombe, Rick P wrote:
+> On Tue, 2023-08-01 at 18:57 +0100, Mark Brown wrote:
 
+> > Sure, though if we're going to the trouble of checking for the flag
+> > we
+> > probably may as well implement it.=A0 I guess x86 is locked in at this
+> > point by existing userspace.=A0 I guess I'll implement it assuming
+> > nobody
+> > from userspace complains, it's trivial for a kernel.
+
+> To make sure we are on the same page: What I'm saying is say we do
+> something like add another flag SHADOW_STACK_SET_MARKER that means add
+> a marker at the end (making the token off by one frame). Then you can
+> just reject any flags !=3D (SHADOW_STACK_SET_MARKER |
+> SHADOW_STACK_SET_TOKEN) value, and leave the rest of the code as is. So
+> not really implementing anything new.=A0
+
+> Then x86 could use the same flag meanings if/when it implements end
+> markers. If it doesn't seem worth it, it's not a big deal on my end.
+> Just seemed that they were needlessly diverging.
+
+Yes, my understanding of the flags is the same.  I'll definitely
+implement omitting the cap since there's an actual use case for that
+(extending an existing stack, it's marginally safer to not have any
+opportunity to pivot into the newly allocated region).
+
+--QS3kL7vV2OH5bUkc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmTKhAAACgkQJNaLcl1U
+h9AuNwf/eOsxbj3CCh77urZ2bbcgtkDnG2gOY0uK7lM+wipr3GCiDM6ySyjpMrSm
+8tfpAV/QhsCNxV2mHJIbUdNW1v+94GUDf7fzu9+pHKrjZpAfWfo6X7KOPFiJaGgB
+hHeQd7CNvTJNIwSPjgjHEvjsnp39rstVvNFaonSi/9GXlnt3HSqXPr/awnfCoArZ
+eC+NqtyAQ3x/cc8oW9e5cvylNTjXAWg+2QNNXnVVsX6KQkbPXMI6VnQocQBHNCRo
+V25MLEEvRVtpXVUihvLkRuA5ILxM/k6sDHhRjaqgIHDyDIAKplJXwIjSLoMEroq3
+gZY23CL6NCYvjjFyc6XZbpALl9hrUg==
+=/CYh
+-----END PGP SIGNATURE-----
+
+--QS3kL7vV2OH5bUkc--
