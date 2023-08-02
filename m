@@ -2,208 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2225F76D6A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 20:16:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4821376D6C2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 20:22:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232613AbjHBSQI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Aug 2023 14:16:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60488 "EHLO
+        id S233840AbjHBSWE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Aug 2023 14:22:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231996AbjHBSQG (ORCPT
+        with ESMTP id S231406AbjHBSV7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Aug 2023 14:16:06 -0400
-Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AE611717
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 11:16:02 -0700 (PDT)
-Received: by mail-qk1-x72d.google.com with SMTP id af79cd13be357-76754b9eac0so5995785a.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Aug 2023 11:16:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1691000161; x=1691604961;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Jttay3Y7tZ44PZ3pDqY6yaCEufBzLxT6C+Rmg0Bmtnw=;
-        b=d0PA4A+jJfozBkqa8UDo7N4WMrxQqmldV/JhxJQwAwTQxncKxV7wRNigctbcr86AYI
-         clESekvuuB+Wrv1ZtpfR4IysIKu6fag+QBQshGld66Kt0Q5XuzBVE3sezvwdHHM5GBRA
-         /QbFR57HWoXChW9HY4Unpbabt/NXEcF8Mp8W4kKnIVcnINk3NpDlTQ2PvG6h59YoeeXG
-         0UBUUmhk4nFes79N033bvPCT31OiqdAXrld91YhXQF+3Z9q1JUL6gOI1m0L868Lko8rS
-         dBxtDaX/QpbTdFRjMbLdH9vVb6j6uBlTpEPyJ6bFjo/PFc4fUwtLddOSw2bqQJ2b0DU5
-         m/4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691000161; x=1691604961;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jttay3Y7tZ44PZ3pDqY6yaCEufBzLxT6C+Rmg0Bmtnw=;
-        b=VvpMe+t/0l/bRmKp8E1lnidtfSCbAg+TrCvPKVI/aDjDvcIStfsNVfsrE9rRbHpOoO
-         xey/P02J3oTOuIZ4NOoZQ/J2C6Jj18ZanCBOS3inyWouiNAdtPyqxL33jaj8mjF3eB2Y
-         ChcJY9ToM6fphJ84EsefHwL5uzLI4FrmdSJohW4BHV7yR5YjUqJNnBkOUfrtzLT0qC+X
-         i+TXgkDd8BT2qCMLPfpGwjxXkA0Exrug/9WasBvJ3vImhnCcuvfqo8Mww4E26h7dkutM
-         YVz7cFm+q/n0bUylVTRiNfo76KCmbxEtOGO9nbexWokx31ZG8mmRTAzC7zoiYHLdj/jY
-         ayvg==
-X-Gm-Message-State: ABy/qLbkhcCZeSPAD63pqdgnBIH82oz6UCcqdFoUG1VuP7HS/jM2RU9u
-        fYqAXPbx7dWmQ/aTOGzFr/Cv
-X-Google-Smtp-Source: APBJJlGGqbRJcuJCCqcoiQEPQ2nJxHgmcoYfak2Lu/M5Lqa7mfvnk8ungVqsLJDbg3pq5fFNVCUEEg==
-X-Received: by 2002:a05:620a:2204:b0:76c:d007:b544 with SMTP id m4-20020a05620a220400b0076cd007b544mr2485423qkh.26.1691000161351;
-        Wed, 02 Aug 2023 11:16:01 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id u19-20020a05620a121300b007659935ce64sm5224030qkj.71.2023.08.02.11.16.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Aug 2023 11:16:00 -0700 (PDT)
-Date:   Wed, 02 Aug 2023 14:16:00 -0400
-Message-ID: <bac543537058619345b363bbfc745927.paul@paul-moore.com>
-From:   Paul Moore <paul@paul-moore.com>
-To:     Jeff Layton <jlayton@kernel.org>,
+        Wed, 2 Aug 2023 14:21:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 901121724;
+        Wed,  2 Aug 2023 11:21:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1C56D61A87;
+        Wed,  2 Aug 2023 18:21:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51C95C433C8;
+        Wed,  2 Aug 2023 18:21:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691000516;
+        bh=ycwx/5PKSOfdsJleD1GrXVU/2tvqnKBKqdlrqiXz2a4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Lq45skxqh7cpBQLhcIe1Gw+lovpqkvSzuzb8uAcyF5FrElk/i/Ef62Ff+U85B0JYe
+         gb5CgOGTY1TKw/GZkOMcRDcxztlWQJmGUpbe2PB0ZZtJhOtSfNtibfRZFTg6XykiV4
+         x4PKksy3wl2+3UvlwVruRvycuEHFr6v641nEPFf7oKydUHdevtCfIP62s3qFywogxs
+         bUSv3T3yZ3RUK3kjfZ3Erjub/WKAY+sdkcU6WTTdHAgJrOMM/i9gdSpZrws8Unwtrq
+         tNeLRJIXs/0bUybd4cEYmTQYz1K0b/J8KC16T4R6xltE9tlCNFzbPuAaxgMh/CIZB5
+         7bXA8nQ4jZd1w==
+Message-ID: <16f46a9e6d88582d53d31a320589a7ba9d232e0c.camel@kernel.org>
+Subject: Re: [PATCH v6 5/7] xfs: switch to multigrain timestamps
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         Trond Myklebust <trond.myklebust@hammerspace.com>,
         Anna Schumaker <anna@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v6] vfs, security: Fix automount superblock LSM init  problem, preventing NFS sb sharing
-References: <20230802-master-v6-1-45d48299168b@kernel.org>
-In-Reply-To: <20230802-master-v6-1-45d48299168b@kernel.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Richard Weinberger <richard@nod.at>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Anthony Iliopoulos <ailiop@suse.com>, v9fs@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
+        linux-mm@kvack.org, linux-xfs@vger.kernel.org
+Date:   Wed, 02 Aug 2023 14:21:49 -0400
+In-Reply-To: <20230802174853.GC11352@frogsfrogsfrogs>
+References: <20230725-mgctime-v6-0-a794c2b7abca@kernel.org>
+         <20230725-mgctime-v6-5-a794c2b7abca@kernel.org>
+         <20230802174853.GC11352@frogsfrogsfrogs>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Aug  2, 2023 Jeff Layton <jlayton@kernel.org> wrote:
-> 
-> When NFS superblocks are created by automounting, their LSM parameters
-> aren't set in the fs_context struct prior to sget_fc() being called,
-> leading to failure to match existing superblocks.
-> 
-> Fix this by adding a new LSM hook to load fc->security for submount
-> creation when alloc_fs_context() is creating the fs_context for it.
-> 
-> However, this uncovers a further bug: nfs_get_root() initialises the
-> superblock security manually by calling security_sb_set_mnt_opts() or
-> security_sb_clone_mnt_opts() - but then vfs_get_tree() calls
-> security_sb_set_mnt_opts(), which can lead to SELinux, at least,
-> complaining.
-> 
-> Fix that by adding a flag to the fs_context that suppresses the
-> security_sb_set_mnt_opts() call in vfs_get_tree().  This can be set by NFS
-> when it sets the LSM context on the new superblock.
->
-> The first bug leads to messages like the following appearing in dmesg:
-> 
-> 	NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,100000,2ee,3a98,1d4c,3a98,1)
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
-> Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
-> Tested-by: Jeff Layton <jlayton@kernel.org>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> Acked-by: "Christian Brauner (Microsoft)" <brauner@kernel.org>
-> Link: https://lore.kernel.org/r/165962680944.3334508.6610023900349142034.stgit@warthog.procyon.org.uk/ # v1
-> Link: https://lore.kernel.org/r/165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk/ # v2
-> Link: https://lore.kernel.org/r/165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk/ # v3
-> Link: https://lore.kernel.org/r/166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk/ # v4
-> Link: https://lore.kernel.org/r/217595.1662033775@warthog.procyon.org.uk/ # v5
-> ---
-> This patch was originally sent by David several months ago, but it
-> never got merged. I'm resending to resurrect the discussion. Can we
-> get this fixed?
+On Wed, 2023-08-02 at 10:48 -0700, Darrick J. Wong wrote:
+> On Tue, Jul 25, 2023 at 10:58:18AM -0400, Jeff Layton wrote:
+> > Enable multigrain timestamps, which should ensure that there is an
+> > apparent change to the timestamp whenever it has been written after
+> > being actively observed via getattr.
+> >=20
+> > Also, anytime the mtime changes, the ctime must also change, and those
+> > are now the only two options for xfs_trans_ichgtime. Have that function
+> > unconditionally bump the ctime, and ASSERT that XFS_ICHGTIME_CHG is
+> > always set.
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/xfs/libxfs/xfs_trans_inode.c | 6 +++---
+> >  fs/xfs/xfs_iops.c               | 4 ++--
+> >  fs/xfs/xfs_super.c              | 2 +-
+> >  3 files changed, 6 insertions(+), 6 deletions(-)
+> >=20
+> > diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_=
+inode.c
+> > index 6b2296ff248a..ad22656376d3 100644
+> > --- a/fs/xfs/libxfs/xfs_trans_inode.c
+> > +++ b/fs/xfs/libxfs/xfs_trans_inode.c
+> > @@ -62,12 +62,12 @@ xfs_trans_ichgtime(
+> >  	ASSERT(tp);
+> >  	ASSERT(xfs_isilocked(ip, XFS_ILOCK_EXCL));
+> > =20
+> > -	tv =3D current_time(inode);
+> > +	/* If the mtime changes, then ctime must also change */
+> > +	ASSERT(flags & XFS_ICHGTIME_CHG);
+> > =20
+> > +	tv =3D inode_set_ctime_current(inode);
+> >  	if (flags & XFS_ICHGTIME_MOD)
+> >  		inode->i_mtime =3D tv;
+> > -	if (flags & XFS_ICHGTIME_CHG)
+> > -		inode_set_ctime_to_ts(inode, tv);
+> >  	if (flags & XFS_ICHGTIME_CREATE)
+> >  		ip->i_crtime =3D tv;
+> >  }
+> > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > index 3a9363953ef2..3f89ef5a2820 100644
+> > --- a/fs/xfs/xfs_iops.c
+> > +++ b/fs/xfs/xfs_iops.c
+> > @@ -573,10 +573,10 @@ xfs_vn_getattr(
+> >  	stat->gid =3D vfsgid_into_kgid(vfsgid);
+> >  	stat->ino =3D ip->i_ino;
+> >  	stat->atime =3D inode->i_atime;
+> > -	stat->mtime =3D inode->i_mtime;
+> > -	stat->ctime =3D inode_get_ctime(inode);
+> >  	stat->blocks =3D XFS_FSB_TO_BB(mp, ip->i_nblocks + ip->i_delayed_blks=
+);
+> > =20
+> > +	fill_mg_cmtime(request_mask, inode, stat);
+>=20
+> Huh.  I would've thought @stat would come first since that's what we're
+> acting upon, but ... eh. :)
+>=20
+> If everyone else is ok with the fill_mg_cmtime signature,
+> Acked-by: Darrick J. Wong <djwong@kernel.org>
+>=20
+>=20
 
-Sorry, I sorta lost track of this after the ROOTCONTEXT_MNT discussion
-back in v3.  Looking at it a bit closer now I have one nitpicky
-request and one larger concern (see below).
+Good point. We can change the signature. I think xfs is the only caller
+outside of the generic vfs right now, and it'd be best to do it now.
 
-> diff --git a/fs/super.c b/fs/super.c
-> index e781226e2880..13adf43e2e5d 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1541,10 +1541,12 @@ int vfs_get_tree(struct fs_context *fc)
->  	smp_wmb();
->  	sb->s_flags |= SB_BORN;
->  
-> -	error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
-> -	if (unlikely(error)) {
-> -		fc_drop_locked(fc);
-> -		return error;
-> +	if (!(fc->lsm_set)) {
-> +		error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
-> +		if (unlikely(error)) {
-> +			fc_drop_locked(fc);
-> +			return error;
-> +		}
->  	}
-
-I generally dislike core kernel code which makes LSM calls conditional
-on some kernel state maintained outside the LSM.  Sometimes it has to
-be done as there is no other good options, but I would like us to try
-and avoid it if possible.  The commit description mentioned that this
-was put here to avoid a SELinux complaint, can you provide an example
-of the complain?  Does it complain about a double/invalid mount, e.g.
-"SELinux: mount invalid.  Same superblock, different security ..."?
-
-I'd like to understand why the sb_set_mnt_opts() call fails when it
-comes after the fs_context_init() call.  I'm particulary curious to
-know if the failure is due to conflicting SELinux state in the
-fs_context, or if it is simply an issue of sb_set_mnt_opts() not
-properly handling existing values.  Perhaps I'm being overly naive,
-but I'm hopeful that we can address both of these within the SELinux
-code itself.
-
-In a worst case situation, we could always implement a flag *inside*
-the SELinux code, similar to what has been done with 'lsm_set' here.
-
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index d06e350fedee..29cce0fadbeb 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -2745,6 +2745,30 @@ static int selinux_umount(struct vfsmount *mnt, int flags)
->  				   FILESYSTEM__UNMOUNT, NULL);
->  }
->  
-> +static int selinux_fs_context_init(struct fs_context *fc,
-> +				   struct dentry *reference)
-> +{
-> +	const struct superblock_security_struct *sbsec;
-> +	struct selinux_mnt_opts *opts;
-> +
-> +	if (fc->purpose == FS_CONTEXT_FOR_SUBMOUNT) {
-> +		opts = kzalloc(sizeof(*opts), GFP_KERNEL);
-> +		if (!opts)
-> +			return -ENOMEM;
-> +
-> +		sbsec = selinux_superblock(reference->d_sb);
-> +		if (sbsec->flags & FSCONTEXT_MNT)
-> +			opts->fscontext_sid	= sbsec->sid;
-> +		if (sbsec->flags & CONTEXT_MNT)
-> +			opts->context_sid	= sbsec->mntpoint_sid;
-> +		if (sbsec->flags & DEFCONTEXT_MNT)
-> +			opts->defcontext_sid	= sbsec->def_sid;
-
-I acknowledge this is very nitpicky, but we're starting to make a
-greater effort towards using consistent style within the SELinux
-code.  With that in mind, please remove the alignment whitespace in
-the assignments above.  Thank you.
-
-> +		fc->security = opts;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int selinux_fs_context_dup(struct fs_context *fc,
->  				  struct fs_context *src_fc)
->  {
-
---
-paul-moore.com
+Christian, would you prefer that I send an updated series, or patches on
+top of vfs.ctime that can be folded in?
+=20
+--=20
+Jeff Layton <jlayton@kernel.org>
