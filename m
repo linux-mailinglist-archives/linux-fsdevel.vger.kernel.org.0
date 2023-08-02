@@ -2,78 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F27FD76D40F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 18:49:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9287C76D423
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 18:50:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229913AbjHBQsz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Aug 2023 12:48:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47628 "EHLO
+        id S231922AbjHBQt4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Aug 2023 12:49:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232740AbjHBQsd (ORCPT
+        with ESMTP id S230384AbjHBQtY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Aug 2023 12:48:33 -0400
-Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com [209.85.161.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C0B9271C
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 09:48:31 -0700 (PDT)
-Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-56c7c54c25fso8729226eaf.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Aug 2023 09:48:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690994910; x=1691599710;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qYKi8o9F6eiWCa6W4LKamwGGGyahz7HtNFcm3VxSBwM=;
-        b=eR0nU+qReWYrymrgwVyMjldE0O9JqeG0TTCNRaxaO2CdCzT9kEoYIuRLlJCX3Ax30i
-         0CWz3+jp9l6COWeOlRZ9dGbKCsmEGIuPPW2oMQ6zOnRDUZUDfvisRljPk/Cm71j7VRRf
-         4W2r7qJDkp1ofSCuMMh55s1NwOE7XneXBbpZZIaq8zzSHbjPZ94m8IOOpxUhBYevrF8x
-         YrNMzuzoFLSeXGCbMggTmFJlZaNuo8IkrWlXIKhA473Cpp7SOH4kHXDvvli0ZBrm8U4d
-         zLS4KjcMH5zj7DrWNOBtMccNZGuyB0XHwm9NLZLBtWGYKwD2zs61TIcsYpZ47HEh83Go
-         XUjg==
-X-Gm-Message-State: ABy/qLZkYg3rdPywVOy/MM20yaKmb4SSQ2ip9N1dJMFyDWuG2BYqIjlr
-        XgAjtX6z7k7nZ1FrzmmgRUhNuPCADqhMKkkrspAUs9wvjlBe
-X-Google-Smtp-Source: APBJJlGJmB7c8epxLUHVlcd5q9o6JmFyZq+1fc1su7ZzZrNN0BVgY079DaI9kO8K9tDJb1lVZUP9D8ESC8PRbct7dF2zSmc0Pgtv
+        Wed, 2 Aug 2023 12:49:24 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F791AC
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 09:49:23 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 415DC1F381;
+        Wed,  2 Aug 2023 16:49:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1690994962; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=VFP0dUo/DUSFhsC943w8Djs9niqKZ8OV2AN3jaKTTOw=;
+        b=XyBjMMLLp6zM8ZiXJvR7dLodFcM26QgiTCumEu2Y42+Hd3gNfnDji3x2hLJDo+MhfIsjyA
+        QBI056UeMr0wHBsWA9uCqYTSLo2QdX+XyVyqjUKq9cXpuqk8mQ6s4SPf7AZZfecErCNbsW
+        RdnVvR9z8FWy4zDyh8BrBkJrVkm7rlE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1690994962;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=VFP0dUo/DUSFhsC943w8Djs9niqKZ8OV2AN3jaKTTOw=;
+        b=LUHYA/r6l7NmJshUbNLZm1Zq/fw4D1aQdDXuNm+usR/s8YajqbyLyj7hfQ1usoUBcY59it
+        SDtcGTxqLRnEokDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2551913909;
+        Wed,  2 Aug 2023 16:49:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id IZ4YCRKJymTSVAAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 02 Aug 2023 16:49:22 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id A54FCA076B; Wed,  2 Aug 2023 18:49:21 +0200 (CEST)
+Date:   Wed, 2 Aug 2023 18:49:21 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Karel Zak <kzak@redhat.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC 1/3] super: remove get_tree_single_reconf()
+Message-ID: <20230802164921.ttcrnawbzpsscp77@quack3>
+References: <20230801-vfs-super-exclusive-v1-0-1a587e56c9f3@kernel.org>
+ <20230801-vfs-super-exclusive-v1-1-1a587e56c9f3@kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:a888:b0:1bb:4d41:e929 with SMTP id
- eb8-20020a056870a88800b001bb4d41e929mr18010511oab.3.1690994910687; Wed, 02
- Aug 2023 09:48:30 -0700 (PDT)
-Date:   Wed, 02 Aug 2023 09:48:30 -0700
-In-Reply-To: <1796030.1690982494@warthog.procyon.org.uk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f7f8fc0601f36e4c@google.com>
-Subject: Re: [syzbot] [fs?] INFO: task hung in pipe_release (4)
-From:   syzbot <syzbot+f527b971b4bdc8e79f9e@syzkaller.appspotmail.com>
-To:     bpf@vger.kernel.org, brauner@kernel.org, davem@davemloft.net,
-        dhowells@redhat.com, dsahern@kernel.org, edumazet@google.com,
-        kuba@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        pabeni@redhat.com, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230801-vfs-super-exclusive-v1-1-1a587e56c9f3@kernel.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue 01-08-23 15:09:00, Christian Brauner wrote:
+> The get_tree_single_reconf() helper isn't used anywhere. Remote it.
+							   ^^ Remove
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Otherwise looks good to me. Feel free to add:
 
-Reported-and-tested-by: syzbot+f527b971b4bdc8e79f9e@syzkaller.appspotmail.com
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Tested on:
+								Honza
 
-commit:         5d0c230f Linux 6.5-rc4
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15a8b5d5a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df103238a07f256e
-dashboard link: https://syzkaller.appspot.com/bug?extid=f527b971b4bdc8e79f9e
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17e285dea80000
-
-Note: testing is done by a robot and is best-effort only.
+> ---
+>  fs/super.c                 | 34 ++++++++--------------------------
+>  include/linux/fs_context.h |  3 ---
+>  2 files changed, 8 insertions(+), 29 deletions(-)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 3ef39df5bec5..c086ce4929cd 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -1136,10 +1136,10 @@ static int test_single_super(struct super_block *s, struct fs_context *fc)
+>  	return 1;
+>  }
+>  
+> -static int vfs_get_super(struct fs_context *fc, bool reconf,
+> -		int (*test)(struct super_block *, struct fs_context *),
+> -		int (*fill_super)(struct super_block *sb,
+> -				  struct fs_context *fc))
+> +static int vfs_get_super(struct fs_context *fc,
+> +			 int (*test)(struct super_block *, struct fs_context *),
+> +			 int (*fill_super)(struct super_block *sb,
+> +					   struct fs_context *fc))
+>  {
+>  	struct super_block *sb;
+>  	int err;
+> @@ -1154,19 +1154,9 @@ static int vfs_get_super(struct fs_context *fc, bool reconf,
+>  			goto error;
+>  
+>  		sb->s_flags |= SB_ACTIVE;
+> -		fc->root = dget(sb->s_root);
+> -	} else {
+> -		fc->root = dget(sb->s_root);
+> -		if (reconf) {
+> -			err = reconfigure_super(fc);
+> -			if (err < 0) {
+> -				dput(fc->root);
+> -				fc->root = NULL;
+> -				goto error;
+> -			}
+> -		}
+>  	}
+>  
+> +	fc->root = dget(sb->s_root);
+>  	return 0;
+>  
+>  error:
+> @@ -1178,7 +1168,7 @@ int get_tree_nodev(struct fs_context *fc,
+>  		  int (*fill_super)(struct super_block *sb,
+>  				    struct fs_context *fc))
+>  {
+> -	return vfs_get_super(fc, false, NULL, fill_super);
+> +	return vfs_get_super(fc, NULL, fill_super);
+>  }
+>  EXPORT_SYMBOL(get_tree_nodev);
+>  
+> @@ -1186,25 +1176,17 @@ int get_tree_single(struct fs_context *fc,
+>  		  int (*fill_super)(struct super_block *sb,
+>  				    struct fs_context *fc))
+>  {
+> -	return vfs_get_super(fc, false, test_single_super, fill_super);
+> +	return vfs_get_super(fc, test_single_super, fill_super);
+>  }
+>  EXPORT_SYMBOL(get_tree_single);
+>  
+> -int get_tree_single_reconf(struct fs_context *fc,
+> -		  int (*fill_super)(struct super_block *sb,
+> -				    struct fs_context *fc))
+> -{
+> -	return vfs_get_super(fc, true, test_single_super, fill_super);
+> -}
+> -EXPORT_SYMBOL(get_tree_single_reconf);
+> -
+>  int get_tree_keyed(struct fs_context *fc,
+>  		  int (*fill_super)(struct super_block *sb,
+>  				    struct fs_context *fc),
+>  		void *key)
+>  {
+>  	fc->s_fs_info = key;
+> -	return vfs_get_super(fc, false, test_keyed_super, fill_super);
+> +	return vfs_get_super(fc, test_keyed_super, fill_super);
+>  }
+>  EXPORT_SYMBOL(get_tree_keyed);
+>  
+> diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+> index ff6341e09925..851b3fe2549c 100644
+> --- a/include/linux/fs_context.h
+> +++ b/include/linux/fs_context.h
+> @@ -150,9 +150,6 @@ extern int get_tree_nodev(struct fs_context *fc,
+>  extern int get_tree_single(struct fs_context *fc,
+>  			 int (*fill_super)(struct super_block *sb,
+>  					   struct fs_context *fc));
+> -extern int get_tree_single_reconf(struct fs_context *fc,
+> -			 int (*fill_super)(struct super_block *sb,
+> -					   struct fs_context *fc));
+>  extern int get_tree_keyed(struct fs_context *fc,
+>  			 int (*fill_super)(struct super_block *sb,
+>  					   struct fs_context *fc),
+> 
+> -- 
+> 2.34.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
