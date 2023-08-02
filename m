@@ -2,54 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B75776D022
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 16:35:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 713E076D057
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 16:43:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233969AbjHBOff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Aug 2023 10:35:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37930 "EHLO
+        id S234209AbjHBOnZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Aug 2023 10:43:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233837AbjHBOfd (ORCPT
+        with ESMTP id S232680AbjHBOnY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Aug 2023 10:35:33 -0400
-Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com [209.85.210.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E59E26AB
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 07:35:32 -0700 (PDT)
-Received: by mail-ot1-f69.google.com with SMTP id 46e09a7af769-6b9f057f6daso12519580a34.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Aug 2023 07:35:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690986931; x=1691591731;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kMzVnXoXwmrDEP/EBdZT0/0KvQJuotKfTHODxNRgwrQ=;
-        b=dRC3J9KzahiJSKUlLVdR3h3SI194+RXfhRBK0NCDB/LD7vcUsEf1Fcp0KSRQRKjFly
-         UvCKlk3jYYV4e9/BgeAoSaINq8LwXtMJAMzNd1gHjnFuTSVjbnCHt4ruv2gcHqbhxJf3
-         LIBo1nqUSdT/DKLxVcanWDnLAbztuDNZBHEnJ4wYdmWfVTu9jUso6keS9pP3hzlRiFpi
-         sU5cm28gkPPJwWYHmIRPWayjYd9zNJls3PySaM1n6SyFwxl4HGccz6qH8HvswMGlZeSm
-         LznvJ+gZHRnACy/PEaceyCd7AvqcHNq+OEJYmiCTKDITxCb6McaWoRNDtKJLlwNrF36J
-         qNzA==
-X-Gm-Message-State: ABy/qLahfmaeopy/JGWu5fujfuqVJpErzMRiggNPabuT1dUrr0xQqfwK
-        DrS0TsPR7XpM8iuhX4DbRcpVLJBJZg7gEoOG8O6ZOB2qxW4A
-X-Google-Smtp-Source: APBJJlFzh1WWYcMl7B/lP9jcvknVyu6XVG3DLcNWnDU6HKWjBszAOCCUF9w3ZlWwsVd4D1WBmvjV8y+rzl9+7AJJQDJVNiDRbtHu
+        Wed, 2 Aug 2023 10:43:24 -0400
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09525E62
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 07:43:22 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id AB68F5C0078;
+        Wed,  2 Aug 2023 10:43:19 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Wed, 02 Aug 2023 10:43:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1690987399; x=1691073799; bh=/l
+        k1BzPvZPL1NHodEevLiXC5I8ZD4Nn8OvqJGs1zbkI=; b=no1jfhsUn5wsIGrLoa
+        AbZah6bjh4GAa8BS2/YaPrNcNjd9JRM2ypDvjVMQkP76mhS9KzrIYqsYK+iNeOKf
+        yA+rqtfdG2lvFK6MUTb5v8FBQAseE0U+sxvqTns3a6cgToVqC0F6rpHITYNCy44D
+        QUx1OhpL9y5qSi0ICgZywW/UJaujmz240ZeXyX7Yjh83zwrxqC/7VPfl0vT3Qt/U
+        dFFXZdMnmObzNJLnd8GVMpjWFWw8Np9SeCyArJQGG770duPudP4e3qd0/Ow/cYUK
+        SW4t/BIcJTeuZA9Z2eg/vUprR8udA1g9MIAq45EhDzeWANne6OM+qs7BiLd1gscG
+        mwDw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1690987399; x=1691073799; bh=/lk1BzPvZPL1N
+        HodEevLiXC5I8ZD4Nn8OvqJGs1zbkI=; b=pamDoIlkGh3w01ynAZycjBeqcVvyI
+        BWgV9Fbxs1zFJQhCa2KsMja7vOLwdFdcWTN13k3SlvzM/g5RZiKvafTQ+T3a3P/x
+        +PhEjhlJvb2eNhgAREsWxxrYpZuEaR4cISdNW9owSLqGKRZgYGBwFKx1YQM1Q/uj
+        g9hCTlndqXf1+aaS8gNwldfxEKvYMGZAqPo48UV57b8Q6RX043l/X7M1APRJy1jl
+        5kkmngbHOZqwya7MdqyNogEQFgmwkKQfCtb19D39CpRZd/GLf/TU4YNQv7YPMrz0
+        fL9HdRVewbvoDSbNre23AfoLdXHSblDuzKEEosWi6+mo7oTSU5rpr6N2w==
+X-ME-Sender: <xms:h2vKZEbs-lm9xgcC7aCY73BRhXroLu2bR9e8betmfzQczQBQalZvgA>
+    <xme:h2vKZPaZm4yYGyNJb-TjtMuNs9jTm3wxMQgI4-TbHQfb66lLMARmp9tYvi3VjzHcJ
+    rsve5TXU9x0MZBy>
+X-ME-Received: <xmr:h2vKZO_pu-RMQFON3ufg7VC1EsEUmC0Qn_h9JHUBBRziN1XWojLXMqFk4awPCcGEAE4hDVRrfVs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrjeekgdejlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvfevufhfffgjkfgfgggtsehttddttddtredtnecuhfhrohhmpefpihhkohhl
+    rghushcutfgrthhhuceopfhikhholhgruhhssehrrghthhdrohhrgheqnecuggftrfgrth
+    htvghrnhepjeeuveettdeugfeigeefveehhffhieegieetvdelgfelleekgffgvefhffeg
+    udffnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomheppfhikhholhgruhhssehrrghthhdrohhr
+    gh
+X-ME-Proxy: <xmx:h2vKZOrAZmfd7vUGP8ot_JEN41v5f8XDsiwMXiULiej2mJnxKQmvoA>
+    <xmx:h2vKZPojDlg0WPA7IzeHI4F7jnNb9waLku62ngBKPA5hDWKVK69XEw>
+    <xmx:h2vKZMSJtqmFw0cAEsY4erQDcVf_CajTEPWMnaIifiBwYSUJglHb7A>
+    <xmx:h2vKZAB-MKTIMRvdi9yRJDlTQD7Skx_bO6Shmwhj-gzr9xGOnGJyOQ>
+Feedback-ID: i53a843ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 2 Aug 2023 10:43:19 -0400 (EDT)
+Received: from vostro.rath.org (vostro [192.168.12.4])
+        by ebox.rath.org (Postfix) with ESMTPS id A54F853;
+        Wed,  2 Aug 2023 14:43:17 +0000 (UTC)
+Received: by vostro.rath.org (Postfix, from userid 1000)
+        id BA1D087689; Wed,  2 Aug 2023 15:43:17 +0100 (BST)
+From:   Nikolaus Rath <Nikolaus@rath.org>
+To:     Miklos Szeredi via fuse-devel <fuse-devel@lists.sourceforge.net>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        miklos <mszeredi@redhat.com>
+Subject: Re: [fuse-devel] Semantics of fuse_notify_delete()
+References: <87wmymk0k9.fsf@vostro.rath.org>
+        <CAJfpegs+FfWGCOxX1XERGHfYRZzCzcLZ99mnchfb8o9U0kTS-A@mail.gmail.com>
+        <87tttpk2kp.fsf@vostro.rath.org>
+        <CAJfpegvbNKiRggOKysv1QyoG4xsZkrEt0LUuehV+SfN=ByQnig@mail.gmail.com>
+Mail-Copies-To: never
+Mail-Followup-To: Miklos Szeredi via fuse-devel
+        <fuse-devel@lists.sourceforge.net>, Miklos Szeredi
+        <miklos@szeredi.hu>, Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        miklos <mszeredi@redhat.com>
+Date:   Wed, 02 Aug 2023 15:43:17 +0100
+In-Reply-To: <CAJfpegvbNKiRggOKysv1QyoG4xsZkrEt0LUuehV+SfN=ByQnig@mail.gmail.com>
+        (Miklos Szeredi via fuse-devel's message of "Wed, 2 Aug 2023 15:18:22
+        +0200")
+Message-ID: <87jzudqzcq.fsf@vostro.rath.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
-X-Received: by 2002:a9d:7b59:0:b0:6b7:4ec4:cbb1 with SMTP id
- f25-20020a9d7b59000000b006b74ec4cbb1mr16261534oto.7.1690986931595; Wed, 02
- Aug 2023 07:35:31 -0700 (PDT)
-Date:   Wed, 02 Aug 2023 07:35:31 -0700
-In-Reply-To: <000000000000672c810601db3e84@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000060bb2a0601f1936f@google.com>
-Subject: Re: [syzbot] [btrfs?] kernel BUG in btrfs_cancel_balance
-From:   syzbot <syzbot+d6443e1f040e8d616e7b@syzkaller.appspotmail.com>
-To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,25 +102,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this issue to:
+On Aug 02 2023, Miklos Szeredi via fuse-devel <fuse-devel@lists.sourceforge.net> wrote:
+> On Thu, 27 Jul 2023 at 13:37, Nikolaus Rath <Nikolaus@rath.org> wrote:
+>>
+>> On Jul 27 2023, Miklos Szeredi via fuse-devel <fuse-devel@lists.sourceforge.net> wrote:
+>> > On Wed, 26 Jul 2023 at 20:09, Nikolaus Rath <Nikolaus@rath.org> wrote:
+>> >>
+>> >> Hello,
+>> >>
+>> >> It seems to me that fuse_notify_delete
+>> >> (https://elixir.bootlin.com/linux/v6.1/source/fs/fuse/dev.c#L1512) fails
+>> >> with ENOTEMPTY if there is a pending FORGET request for a directory
+>> >> entry within. Is that correct?
+>> >
+>> > It's bug if it does that.
+>> >
+>> > The code related to NOTIFY_DELETE in fuse_reverse_inval_entry() seems
+>> > historic.  It's supposed to be careful about mountpoints and
+>> > referenced dentries, but d_invalidate() should have already gotten all
+>> > that out of the way and left an unhashed dentry without any submounts
+>> > or children. The checks just seem redundant, but not harmful.
+>> >
+>> > If you are managing to trigger the ENOTEMPTY case, then something
+>> > strange is going on, and we need to investigate.
+>>
+>> I can trigger this reliable on kernel 6.1.0-10-amd64 (Debian stable)
+>> with this sequence of operations:
+>>
+>> $ mkdir test
+>> $ echo foo > test/bar
+>> $ Trigger removal of test/bar and then test within the filesystem (not
+>> through unlink()/rmdir() but out-of-band)
+>
+> Issue is that "test/.__s3ql__ctrl__" is still positive.  I.e. the
+> directory is *really* not empty.
+>
+> I thought that that's okay, and d_invalidate will recursively unhash
+> dentries, but that's not the case.   d_invalidate removes submounts
+> but only unhashes the root of the subtree, leaving the rest intact.
+>
+> So the solution here is to invoke NOTIFY_DELETE on
+> "test/.__s3ql__ctrl__"  before doing it on "test" itself.
 
-commit b19c98f237cd76981aaded52c258ce93f7daa8cb
-Author: Josef Bacik <josef@toxicpanda.com>
-Date:   Fri Jun 23 05:05:41 2023 +0000
+Ah, thanks a lot for your help! I did not think of the potential
+connection to this pseudo-file.
 
-    btrfs: fix race between balance and cancel/pause
+Will think about how to best fix that. The problem is that LOOKUP for
+the ctrl file name always succeeds (no matter the directory), so we'd
+have to issue an additional NOTIFY_DELETE for every directory *and*
+there'd still be a race condition with LOOKUP(ctrl_file) being called
+in-between.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12223eb9a80000
-start commit:   5d0c230f1de8 Linux 6.5-rc4
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=11223eb9a80000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16223eb9a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1e3d5175079af5a4
-dashboard link: https://syzkaller.appspot.com/bug?extid=d6443e1f040e8d616e7b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1167e711a80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16a90161a80000
 
-Reported-by: syzbot+d6443e1f040e8d616e7b@syzkaller.appspotmail.com
-Fixes: b19c98f237cd ("btrfs: fix race between balance and cancel/pause")
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Best,
+-Nikolaus
