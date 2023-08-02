@@ -2,192 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D0D776C427
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 06:31:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97C4276C4C2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 07:20:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231889AbjHBEbZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Aug 2023 00:31:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51534 "EHLO
+        id S232466AbjHBFUg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Aug 2023 01:20:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231744AbjHBEbY (ORCPT
+        with ESMTP id S232480AbjHBFUA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Aug 2023 00:31:24 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEDB81704
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Aug 2023 21:31:20 -0700 (PDT)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20230802043118epoutp03055eeefced8ab3c594e47b99f0e117c7~3dq7TQbJu1586515865epoutp03s
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 04:31:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20230802043118epoutp03055eeefced8ab3c594e47b99f0e117c7~3dq7TQbJu1586515865epoutp03s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1690950678;
-        bh=Gd76as/DzpDjYh3/r5rRA3x6waAAF+TrgBJUsPlPzNM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Av3UfBpm0RHzBTVqQG7+I2QePSBQpK1TX6LNYVQa95m84lD8mXsl1XYsE/ds9go0g
-         KL0FHIJE4oXGR2UWm6tQfoPuFd7NCp90VfaLTrqCFsATkN/IommLsPbAqooMOE3fYK
-         eCI2TdUwX2MHk90mvdlsymjF9lopJrhdaQZyOYao=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20230802043117epcas5p4f65a3af8f58ed9fbd09a0de76a1a6e98~3dq6q3CdP0307103071epcas5p4G;
-        Wed,  2 Aug 2023 04:31:17 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.183]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4RFzZD00jzz4x9Q8; Wed,  2 Aug
-        2023 04:31:16 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        46.DF.06099.31CD9C46; Wed,  2 Aug 2023 13:31:15 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20230801131020epcas5p39ed61d99f4711bb3275c06db551abe96~3RG0as1091260612606epcas5p3k;
-        Tue,  1 Aug 2023 13:10:20 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230801131020epsmtrp120d0022b70a61a613b1e6a625a053500~3RG0YTEid1439414394epsmtrp1v;
-        Tue,  1 Aug 2023 13:10:20 +0000 (GMT)
-X-AuditID: b6c32a4b-cafff700000017d3-74-64c9dc13528b
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        28.29.34491.C3409C46; Tue,  1 Aug 2023 22:10:20 +0900 (KST)
-Received: from green245 (unknown [107.99.41.245]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230801131015epsmtip2074fb69732b70a6432999c6e507196bd~3RGwMiLU92662426624epsmtip2c;
-        Tue,  1 Aug 2023 13:10:15 +0000 (GMT)
-Date:   Tue, 1 Aug 2023 18:37:02 +0530
-From:   Nitesh Shetty <nj.shetty@samsung.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
-        Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-        willy@infradead.org, hare@suse.de, djwong@kernel.org,
-        bvanassche@acm.org, ming.lei@redhat.com, dlemoal@kernel.org,
-        nitheshshetty@gmail.com, gost.dev@samsung.com,
-        Vincent Fu <vincent.fu@samsung.com>,
-        Anuj Gupta <anuj20.g@samsung.com>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v13 3/9] block: add emulation for copy
-Message-ID: <20230801130702.2taecrgn4v66ehtx@green245>
+        Wed, 2 Aug 2023 01:20:00 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED5BB272B;
+        Tue,  1 Aug 2023 22:19:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.com;
+ s=s31663417; t=1690953575; x=1691558375; i=quwenruo.btrfs@gmx.com;
+ bh=w/TScA02ogqhMMolhH46P9UN02nEO/zVcArS9T+/saY=;
+ h=X-UI-Sender-Class:Date:Subject:To:References:From:In-Reply-To;
+ b=IORdsgOx+/qB7WnS/dvEO9Ugn3e5E3cj0pVhcT1hqC1VC5m2TFzyWDxTwDgfvVC4vrsZ1a1
+ W9xaIG0uH2Vx0swS8P+3wE9BV4BtFLQwD77N/OBhAOc8NLbdTCiTEhCklqdCbIl1hB0OqY1Js
+ Bh8329dpZ7KH6k4WWRtW5x+6ZEhAu5sqYbiDQqkfA4f4YkuJjbWJ8llp7ekk7amHy9+mT9nOF
+ 8dcAff0v6rCsFHPt8hO2SWMNSyCyfdZG/u0f1MrljVd9p6WdtQGlPTm4hJhRXMRAnGBXZQHzn
+ ztcPmo4e5QtSIX1Uzq7PhWvwjIvZe4/qgVxI/aQ/yNgMwg0XfwtA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1M72sJ-1qUf2f12PH-008aV7; Wed, 02
+ Aug 2023 07:19:34 +0200
+Message-ID: <8d17478c-f1d7-d1fa-3012-06b0ba8d534c@gmx.com>
+Date:   Wed, 2 Aug 2023 13:19:29 +0800
 MIME-Version: 1.0
-In-Reply-To: <20230720075050.GB5042@lst.de>
-User-Agent: NeoMutt/20171215
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTdxTH/d3bXi5s7a5Fth8PB1azKYbXhPKDlEcicVcwiJI5NpeUht4B
-        AqVpy5jTbTyUhwo4ZG7reMhDKLDAKLihlI0ArgME4qowiDCeZkB4OpRB0BUuLP73yTnne545
-        JC7QmdmQ0XI1o5RLY4WEBeentgNvO1k+6pC5NqyKUG3nbzhKubqOo+qhHALNtC0BdH3hXxxN
-        tKQDZJzgo5Ff/VDz3PdcNNByG0P6klwMVVbfxVBuax9Akw81GGoePIiK08o4SN/cwUHGO/kE
-        KiqfNEOX+xsJVGF4jqHWa6kYapxIBqhmZp6Dfh+0ReOXMwDqXTdw0dpKPuFvRxsfBNG3NUNm
-        dO9wHYeu1zrSxu4EWleVSdD1ZV/STQNJBF2afY1LZ6XOEfTi5CCHnv/lIUFnN1QBur7rHP1E
-        9yatm5jFQqgPY8RRjFTGKB0YeUS8LFoe6SMMCpUclniIXN2c3LyQp9BBLo1jfIQBx0KcjkTH
-        mrYjdPhEGptgMoVIVSqhi69YGZ+gZhyi4lVqHyGjkMUq3BXOKmmcKkEe6Sxn1N5urq7veJgC
-        w2Oiio2ruGL41U/rV0axJKC1uATMSUi5w/G0x8QlYEEKqCYAKwp7uRsOAbUEYPtoNOt4CmBR
-        +7jZtqKmZQ1nHc0APqku2ZI/BnDpVjXYiOJQ+2BqgdEURZIEdRB2vSA3zLsoIZyc7gYb8ThV
-        SsDxobHNcpaUN+xuHN3U8igRzK3/A2N5J+z4boKzweamPH+PD212YUXZwW9vLuNsR8PmMDn9
-        BMsBsHRBy2HZEk4bGra6toFTOWlbnAgr87SbTUPqAoCafg1gHX7wYmfOZlKcioJ63Z9bgt3w
-        684ajLXzYdbaBMbaebCxcJv3wh9qbxAsW8O+Z8nExvCQomGP8TC7oBEAMwc6wVVgr3lpNs1L
-        5Vj2hpkLKVyNSY5TtrDiOcniAVh7x+UG4FYBa0ahiotkVB6KQ3Im8f+DR8TH6cDm8zgGNYKx
-        kQXnVoCRoBVAEhfu4tmuGWQCnkx69jNGGS9RJsQyqlbgYbrVV7iNVUS86fvkaombu5eru0gk
-        cvc6JHITvsGbuVggE1CRUjUTwzAKRrmtw0hzmyQs9f2s0BIrm9CCHz/WLBp+fs1wf0fXktno
-        5GxYjstdcWre68II0vAij3v6GxFfa+CHd6/49ZxqX1bz35vi/+V6fvGR/x69ryh4RjYdeKYv
-        cn6Hf1naUd7+ujpf3ok1mHWqKX+f2B4k8r08nkFe8v3V8LjgLzyrzt/MLz+pDxsP3m1VmSIQ
-        g3dT6sbEMfb6mMYMiaSjedo8oGjNm5wtP5nKe3A25J+2paPa09r1fKvAdZv63KA5OnvlracL
-        /mcMnj2DTu6rhbpi348srLPuZWb0LwbM7A0dXjnXtFKql17f33C8+njvnqaUe8wUmXzs0ufp
-        RwIlYa98sKC9cuuCk10od+eykKOKkro54kqV9D+VmoMoxQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKIsWRmVeSWpSXmKPExsWy7bCSvK4Ny8kUgyOHBCzWnzrGbNE04S+z
-        xeq7/WwWrw9/YrSY9uEns8WTA+2MFpef8Fk82G9vsffdbFaLmwd2MlnsWTSJyWLl6qNMFpMO
-        XWO0eHp1FpPF3lvaFgvblrBY7Nl7ksXi8q45bBbzlz1lt+i+voPNYvnxf0wWhyY3M1nseNLI
-        aLHu9XsWixO3pC0ed3cwWpz/e5zV4vePOWwOMh6Xr3h77Jx1l93j/L2NLB6bV2h5XD5b6rFp
-        VSebx+Yl9R67bzaweSzum8zq0dv8js3j49NbLB7v911l8+jbsorRY/Ppao/Pm+Q8Nj15yxQg
-        EMVlk5Kak1mWWqRvl8CVcWL/Z8aCCVwVSw+dZGlg/MLexcjJISFgIrHuwG/mLkYuDiGB3YwS
-        LyZNg0pISiz7e4QZwhaWWPnvOTtE0RNGiWX9K1hAEiwCKhLNcy8DFXFwsAloS5z+zwESFhFQ
-        knj66iwjSD2zwHI2iQWXN4ANEhawkji74yEjiM0rYCYxafMlJoihDxglej7dYINICEqcnPkE
-        bAEzUNG8zQ/BFjALSEss/we2gBNo14vHd8EOFRWQkZix9CvzBEbBWUi6ZyHpnoXQvYCReRWj
-        ZGpBcW56brFhgWFearlecWJucWleul5yfu4mRnDK0NLcwbh91Qe9Q4xMHIyHGCU4mJVEeKV/
-        H08R4k1JrKxKLcqPLyrNSS0+xCjNwaIkziv+ojdFSCA9sSQ1OzW1ILUIJsvEwSnVwLRRRvvt
-        jTsc388q2D+55KOQYXOwcfOeS+eM/yRb5P7wKWYtk1VWytf+GyZ0dV6cqJuU2J5DWy7efrTi
-        +YRzr2OuXvxpd1ihqNB5oVf1+/9m4epam478m31wguKimAe7VIW9zryOD7K+ELqP137lmauH
-        3mowp69yXVK8v0i5c+cx5aTCI/I15g8knt15Xvh2yikB05VLPOwXMk/84np3Qfud10kuF0/8
-        T4/4/XrvjAXvZPT0WFvXVh/xXrZ0Uc3B8lkGnd/OWaQbvlZbLfWxl3nb67NTcqSe8VwvXHKo
-        e57zR4tj9TuXZJ1T2Nv9vsBL+fO2pc0XH6x7Lf6nq1mn8DhD9valXcYix5O+HFRfc7zslRJL
-        cUaioRZzUXEiADYZ85yIAwAA
-X-CMS-MailID: 20230801131020epcas5p39ed61d99f4711bb3275c06db551abe96
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----nvFln8z3L_krFSQI_duuyTsYVGNcxCMU6qftyQwhOSKtHzaF=_17c6a_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230627184020epcas5p13fdcea52edead5ffa3fae444f923439e
-References: <20230627183629.26571-1-nj.shetty@samsung.com>
-        <CGME20230627184020epcas5p13fdcea52edead5ffa3fae444f923439e@epcas5p1.samsung.com>
-        <20230627183629.26571-4-nj.shetty@samsung.com>
-        <20230720075050.GB5042@lst.de>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [btrfs?] kernel BUG in prepare_to_merge
+Content-Language: en-US
+To:     syzbot <syzbot+ae97a827ae1c3336bbb4@syzkaller.appspotmail.com>,
+        clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, nogikh@google.com,
+        syzkaller-bugs@googlegroups.com
+References: <000000000000812c200601ddc8de@google.com>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
+ pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
+ BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
+ XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
+ jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
+ LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
+ mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
+ CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
+ tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
+ INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
+ DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
+ iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+In-Reply-To: <000000000000812c200601ddc8de@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:mIIxj0WpHO3rjxsIe1WuG918amMGZOPOazE2o1MRO5cl8CwJZsD
+ w1/vhRpTAYyimijG6nU3YjBNio6HujOd6WAz7oONK7hTTHGAqakBS8/pBv8Pq+0SEkZrxFw
+ FTGabLNoI0kuHI/f9e0oYoxx1CvuyryN0EOIqe8wbctlyeN8M5krvrBsp5/iF2nvfXGm8VS
+ VbngFSbGh8niisXy8S10w==
+UI-OutboundReport: notjunk:1;M01:P0:ZdGh3AeLqNI=;uEWK2DMK8GQjxkuboOS8QknoT5G
+ t2jIRBoisa1DIOghuawrdhvg3rMHhFPZKEug7ruWj0R+bqSuF8nEhYHCFrbbsImAHiFZDfi1Z
+ iOSy9LfvszGUBE8Z6J30v7NTPEF86b7b74FaFX6zt/0St+bhcl8Szm0uIF5dYz4yEsfgDCh2w
+ rmN1tIxRdQovI3gzbP099QG6U78MMCgptVSZlBhpUa0nmhysdNklGhqul9qOYBPATAQ4uRJ+d
+ OuZiy0tjs5VwZS3ATRVnpiAFJvW/fN6zF5L9f8pMYRCIRbMorp+mKnJ1FnAP5Dd2UcJcqDsu9
+ MgZ99Nebyq6+qg9+pIUkqJr13eoVlCEUxahnzl/tZN7EGBWI3CZEiG29vawUrL/+0CRN8Ejou
+ 3TykBQUMh4RNxcI6G7O9cegV0iWN2BcG918pTvAlpxRBo+qoIS4yJ4MLCrQMv/uqK6s7xQR0+
+ W7zGevE1tVIY8XuZrgyr9IrPUnycJAP9LyMzvXQONBN8l7lHfh88H5V1XJPJL+jInMAazjpyT
+ eKw5cBwgd22BLh/xGb+nGIkpN93tb8YjPxDrgitU4Q6duVB5KovsMji4zpAEuSCVQLuDIIzKV
+ ccOwRVzCDlodpLy/Gg1IjPGJr6WI+XbVUbn0viXNw06a81n5juwfciakeyruOqgsSJ16b+aKK
+ XnNzk/JC9/+8zhzYNcdMwqu3Cvra7PCDsvW77XZGE3xNY1jpM5gl23PEY8DZdSirD1qlKCHyc
+ VdF8rjaxCWo/xVEByXKwaaQlpBytvEuJmP8Jz7+ikP3Phz2ziyhJKEDe0KFqM5TySBex9iZAU
+ IUvp9Zq0CUXqx9hNytJEItbaK+vmAeCDveXNYh2Dvaidq+dmycHRkbP1p09sBHD1nt4rwow0W
+ Y3Rkkg6zhqrjZOAfHKOzKTg1vBbSLsCQHJdX6/KKpoV0bK+pCqyEVpJRoIu8oss8HFIGf2BdP
+ mcBrRdOBe8FFJQB4yXUa+TcNL3w=
+X-Spam-Status: No, score=-0.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-------nvFln8z3L_krFSQI_duuyTsYVGNcxCMU6qftyQwhOSKtHzaF=_17c6a_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
 
-On 23/07/20 09:50AM, Christoph Hellwig wrote:
->> +static void *blkdev_copy_alloc_buf(sector_t req_size, sector_t *alloc_size,
->> +		gfp_t gfp_mask)
->> +{
->> +	int min_size = PAGE_SIZE;
->> +	void *buf;
->> +
->> +	while (req_size >= min_size) {
->> +		buf = kvmalloc(req_size, gfp_mask);
->> +		if (buf) {
->> +			*alloc_size = req_size;
->> +			return buf;
->> +		}
->> +		/* retry half the requested size */
->> +		req_size >>= 1;
->> +	}
->> +
->> +	return NULL;
+
+On 2023/8/1 22:58, syzbot wrote:
+> Hello,
 >
->Is there any good reason for using vmalloc instead of a bunch
->of distcontiguous pages?
+> syzbot has tested the proposed patch but the reproducer is still trigger=
+ing an issue:
+> WARNING in prepare_to_merge
 >
+> BTRFS error (device loop3): reloc tree mismatch, root 8 has no reloc roo=
+t, expect reloc root key (-8, 132, 8) gen 17
 
-kvmalloc seemed convenient for the purpose. 
-We will need to call alloc_page in a loop to guarantee discontigous pages. 
-Do you prefer that over kvmalloc?
+#syz test: https://github.com/adam900710/linux graceful_reloc_mismatch
 
->> +		ctx = kzalloc(sizeof(struct copy_ctx), gfp_mask);
->> +		if (!ctx)
->> +			goto err_ctx;
+I have added another patch to reject those invalid reloc tree keys, thus
+at least we could have a more graceful rejection (without kernel warnings)=
+.
+
+But the previous patch is still needed to catch not-so-obvious corrupted
+reloc root keys.
+
+Thanks,
+Qu
+> ------------[ cut here ]------------
+> BTRFS: Transaction aborted (error -117)
+> WARNING: CPU: 1 PID: 10413 at fs/btrfs/relocation.c:1946 prepare_to_merg=
+e+0x10e0/0x1460 fs/btrfs/relocation.c:1946
+> Modules linked in:
+> CPU: 1 PID: 10413 Comm: syz-executor.3 Not tainted 6.5.0-rc3-syzkaller-g=
+9f2c8c9193cc #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1=
+.16.2-1 04/01/2014
+> RIP: 0010:prepare_to_merge+0x10e0/0x1460 fs/btrfs/relocation.c:1946
+> Code: 8b 7e 50 44 89 e2 48 c7 c6 20 d8 b6 8a e8 58 1b 10 00 eb c1 e8 d1 =
+83 00 fe be 8b ff ff ff 48 c7 c7 80 d7 b6 8a e8 f0 4b c7 fd <0f> 0b e9 bf =
+fe ff ff 48 8b 7c 24 28 e8 af 93 53 fe e9 3e f5 ff ff
+> RSP: 0018:ffffc90003ebf6b0 EFLAGS: 00010286
+> RAX: 0000000000000000 RBX: ffff8880478f2b78 RCX: 0000000000000000
+> RDX: ffff8880466c9300 RSI: ffffffff814c5346 RDI: 0000000000000001
+> RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000046525442 R12: 0000000000000000
+> R13: 0000000000000084 R14: ffff8880478f2b28 R15: ffff888030e28000
+> FS:  00007fcc9098a6c0(0000) GS:ffff88806b700000(0000) knlGS:000000000000=
+0000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fcc90968f28 CR3: 000000001fa0c000 CR4: 0000000000350ee0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   <TASK>
+>   relocate_block_group+0x8d1/0xe70 fs/btrfs/relocation.c:3782
+>   btrfs_relocate_block_group+0x714/0xd90 fs/btrfs/relocation.c:4120
+>   btrfs_relocate_chunk+0x143/0x440 fs/btrfs/volumes.c:3277
+>   __btrfs_balance fs/btrfs/volumes.c:4012 [inline]
+>   btrfs_balance+0x20fc/0x3ef0 fs/btrfs/volumes.c:4389
+>   btrfs_ioctl_balance fs/btrfs/ioctl.c:3604 [inline]
+>   btrfs_ioctl+0x1362/0x5cf0 fs/btrfs/ioctl.c:4637
+>   vfs_ioctl fs/ioctl.c:51 [inline]
+>   __do_sys_ioctl fs/ioctl.c:870 [inline]
+>   __se_sys_ioctl fs/ioctl.c:856 [inline]
+>   __x64_sys_ioctl+0x18f/0x210 fs/ioctl.c:856
+>   do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>   do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
+>   entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> RIP: 0033:0x7fcc8fc7cae9
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 =
+f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 =
+ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fcc9098a0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007fcc8fd9bf80 RCX: 00007fcc8fc7cae9
+> RDX: 00000000200003c0 RSI: 00000000c4009420 RDI: 0000000000000005
+> RBP: 00007fcc8fcc847a R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 000000000000000b R14: 00007fcc8fd9bf80 R15: 00007ffd6ad55508
+>   </TASK>
 >
->I'd suspect it would be better to just allocte a single buffer and
->only have a single outstanding copy.  That will reduce the bandwith
->you can theoretically get, but copies tend to be background operations
->anyway.  It will reduce the required memory, and thus the chance for
->this operation to fail on a loaded system.  It will also dramatically
->reduce the effect on memory managment.
 >
-
-Next version will have that change.
-
-Thank You,
-Nitesh Shetty
-
-------nvFln8z3L_krFSQI_duuyTsYVGNcxCMU6qftyQwhOSKtHzaF=_17c6a_
-Content-Type: text/plain; charset="utf-8"
-
-
-------nvFln8z3L_krFSQI_duuyTsYVGNcxCMU6qftyQwhOSKtHzaF=_17c6a_--
+> Tested on:
+>
+> commit:         9f2c8c91 btrfs: exit gracefully if reloc roots don't m..
+> git tree:       https://github.com/adam900710/linux graceful_reloc_misma=
+tch
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D173afb31a800=
+00
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D23c579cf0ae1=
+addd
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dae97a827ae1c33=
+36bbb4
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for =
+Debian) 2.40
+>
+> Note: no patches were applied.
