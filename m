@@ -2,170 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 83EF276D804
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 21:38:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD18D76D878
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 22:17:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233753AbjHBTiP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Aug 2023 15:38:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44536 "EHLO
+        id S229863AbjHBURB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Aug 2023 16:17:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233960AbjHBTiH (ORCPT
+        with ESMTP id S229547AbjHBURA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Aug 2023 15:38:07 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E2C613D;
-        Wed,  2 Aug 2023 12:38:06 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id B25161F38D;
-        Wed,  2 Aug 2023 19:38:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1691005084; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Wed, 2 Aug 2023 16:17:00 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4B4CE46
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 13:16:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1691007375;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=hQKpatODDlYJjI5h6ON2K0Xm2qnmIDyhIc44gu3NWBE=;
-        b=LhplXH4J5uUbAjgtJUQ8qRPaaSWgOUuCpAHU5WpGZ3ZAa8UXXkk/2huxZA8KHPddB0sxWg
-        82L3KRAWJBUdPEoSRzDYuyi9h1xUjxTNvcAYVw2CReEhTitiu/Xav/t4Oc3Djs3GIk7CnS
-        UDsWSZfelZno+J9gahI+zq5QLWxp4pM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1691005084;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=hQKpatODDlYJjI5h6ON2K0Xm2qnmIDyhIc44gu3NWBE=;
-        b=OOAabGwwpODl/y0IYa1Ey56S8QpPiHacMq0qFwPFteERmRpVU6lGbeF0lh1V5mr0JH+VK9
-        pnHPb7fzF+uFUUAA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        bh=0XIGrFGP7J2HGVDS8S1Cuzs5GSwXNIGvY43RGd9K/2A=;
+        b=CgR7zEnLP2Oepx+D64NLGgKHYWKWIQlUTHAI4fS6NVVt0lX9LvwdInZ2AG4fJfh2MlnpX9
+        MuisS8yCCjWLAa8P40TWye6t4XX6AA0A64KbqLSUrUovd1d4T8MhAde5xDypsdNMNvkGVN
+        E772Ui+s94Xdq+YhHxkVVy8evtIz2JE=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-224-9AZaV10IMy2zzJtrak0OJw-1; Wed, 02 Aug 2023 16:16:13 -0400
+X-MC-Unique: 9AZaV10IMy2zzJtrak0OJw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 998F013919;
-        Wed,  2 Aug 2023 19:38:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Jvt9JZywymRbHwAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 02 Aug 2023 19:38:04 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id EBAAAA076B; Wed,  2 Aug 2023 21:38:03 +0200 (CEST)
-Date:   Wed, 2 Aug 2023 21:38:03 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Richard Weinberger <richard@nod.at>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Anthony Iliopoulos <ailiop@suse.com>, v9fs@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
-        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
-        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
-        linux-mm@kvack.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 6/7] ext4: switch to multigrain timestamps
-Message-ID: <20230802193803.onjopgwdqjonzkwa@quack3>
-References: <20230725-mgctime-v6-0-a794c2b7abca@kernel.org>
- <20230725-mgctime-v6-6-a794c2b7abca@kernel.org>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5BA28185A792;
+        Wed,  2 Aug 2023 20:16:13 +0000 (UTC)
+Received: from [10.22.18.41] (unknown [10.22.18.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0C10E200A7CA;
+        Wed,  2 Aug 2023 20:16:13 +0000 (UTC)
+Message-ID: <bb77f456-8804-b63a-7868-19e0cd9e697f@redhat.com>
+Date:   Wed, 2 Aug 2023 16:16:12 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230725-mgctime-v6-6-a794c2b7abca@kernel.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [PATCH 11/20] locking/osq: Export osq_(lock|unlock)
+Content-Language: en-US
+To:     Kent Overstreet <kent.overstreet@linux.dev>,
+        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>
+References: <20230712211115.2174650-1-kent.overstreet@linux.dev>
+ <20230712211115.2174650-12-kent.overstreet@linux.dev>
+From:   Waiman Long <longman@redhat.com>
+In-Reply-To: <20230712211115.2174650-12-kent.overstreet@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 25-07-23 10:58:19, Jeff Layton wrote:
-> Enable multigrain timestamps, which should ensure that there is an
-> apparent change to the timestamp whenever it has been written after
-> being actively observed via getattr.
-> 
-> For ext4, we only need to enable the FS_MGTIME flag.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+On 7/12/23 17:11, Kent Overstreet wrote:
+> These are used by bcachefs's six locks.
+>
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Waiman Long <longman@redhat.com>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
 > ---
->  fs/ext4/super.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index b54c70e1a74e..cb1ff47af156 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -7279,7 +7279,7 @@ static struct file_system_type ext4_fs_type = {
->  	.init_fs_context	= ext4_init_fs_context,
->  	.parameters		= ext4_param_specs,
->  	.kill_sb		= kill_block_super,
-> -	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
-> +	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
->  };
->  MODULE_ALIAS_FS("ext4");
->  
-> 
-> -- 
-> 2.41.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>   kernel/locking/osq_lock.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/kernel/locking/osq_lock.c b/kernel/locking/osq_lock.c
+> index d5610ad52b..b752ec5cc6 100644
+> --- a/kernel/locking/osq_lock.c
+> +++ b/kernel/locking/osq_lock.c
+> @@ -203,6 +203,7 @@ bool osq_lock(struct optimistic_spin_queue *lock)
+>   
+>   	return false;
+>   }
+> +EXPORT_SYMBOL_GPL(osq_lock);
+>   
+>   void osq_unlock(struct optimistic_spin_queue *lock)
+>   {
+> @@ -230,3 +231,4 @@ void osq_unlock(struct optimistic_spin_queue *lock)
+>   	if (next)
+>   		WRITE_ONCE(next->locked, 1);
+>   }
+> +EXPORT_SYMBOL_GPL(osq_unlock);
+
+Have you considered extending the current rw_semaphore to support a SIX 
+lock semantics? There are a number of instances in the kernel that a 
+up_read() is followed by a down_write(). Basically, the code try to 
+upgrade the lock from read to write. I have been thinking about adding a 
+upgrade_read() API to do that. However, the concern that I had was that 
+another writer may come in and make modification before the reader can 
+be upgraded to have exclusive write access and will make the task to 
+repeat what has been done in the read lock part. By adding a read with 
+intent to upgrade to write, we can have that guarantee.
+
+With that said, I would prefer to keep osq_{lock/unlock} for internal 
+use by some higher level locking primitives - mutex, rwsem and rt_mutex.
+
+Cheers,
+Longman
+
