@@ -2,92 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BBF3576D49C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 19:03:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B412276D4D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 19:13:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232607AbjHBRDJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Aug 2023 13:03:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58390 "EHLO
+        id S230099AbjHBRNI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Aug 2023 13:13:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232714AbjHBRC5 (ORCPT
+        with ESMTP id S230094AbjHBRNF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Aug 2023 13:02:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9A7526B5;
-        Wed,  2 Aug 2023 10:02:50 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Wed, 2 Aug 2023 13:13:05 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DACDD11D
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 10:13:04 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2FAC361377;
-        Wed,  2 Aug 2023 17:02:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A438C433CD;
-        Wed,  2 Aug 2023 17:02:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1690995769;
-        bh=sjqBXD6oFCrgUqohETGdLnElwGXtye3lxYOYXr8IIBQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=tu2qP6Hb8TEFQJFv5V0JPnO5+W3847Kw7qcHa6wLbwOOdz7/AW1SL0kAIhiQiDQa9
-         LGABdIUhh3g3jl/eKOmtnW7Yrb4K7mb8YjCqknHxA8yL2gKi6mVuKgMWfj6tu1STHl
-         +u8dSibFuCdF0pAe0EeTTCFF/4cPweTek6z7CzRQ=
-Date:   Wed, 2 Aug 2023 10:02:48 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Zhu Wang <wangzhu9@huawei.com>
-Cc:     <linux-kernel@vger.kernel.org>, Al.Smith@aeschi.ch.eu.org,
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 649EF21A31;
+        Wed,  2 Aug 2023 17:13:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1690996383; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8a6nSQ6BGJjmwI1qe/ove6DusMgVnapcDCqX2gdNmSs=;
+        b=Gr3yxU2gQKPzLKxN8LIhOoydaPy82iHF+Cv8YB2SbjlKOSv6TPSzZLa4pO8SLY4fWtfDzh
+        n+6WBm5nU9k+FKcjCgpchyUD7ezNcuKgL2kLMThfqCTnBnGyIUms45vGVR0CLyS+4XB/js
+        /WqsfEuSy8hAzBfZskWqu9JqYAcoYaY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1690996383;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8a6nSQ6BGJjmwI1qe/ove6DusMgVnapcDCqX2gdNmSs=;
+        b=Id49LMf+EblobUitpCqVoDh7gc2HrD0SXZwyKZO0CHRWi++kPp3bLoqd57vM20m4+7JOD+
+        Yih3hbaiYMKNs/DA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5690B13919;
+        Wed,  2 Aug 2023 17:13:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id yxceFZ+OymS4XwAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 02 Aug 2023 17:13:03 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id E923CA076B; Wed,  2 Aug 2023 19:13:02 +0200 (CEST)
+Date:   Wed, 2 Aug 2023 19:13:02 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Karel Zak <kzak@redhat.com>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH -next] efs: fix -Wunused-const-variable= warning
-Message-Id: <20230802100248.b6e24e19f33e483d4cf55512@linux-foundation.org>
-In-Reply-To: <20230802065753.217179-1-wangzhu9@huawei.com>
-References: <20230802065753.217179-1-wangzhu9@huawei.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Subject: Re: [PATCH RFC 2/3] fs: add vfs_cmd_create()
+Message-ID: <20230802171302.5kceref6gp7wn3os@quack3>
+References: <20230801-vfs-super-exclusive-v1-0-1a587e56c9f3@kernel.org>
+ <20230801-vfs-super-exclusive-v1-2-1a587e56c9f3@kernel.org>
+ <20230802170155.l7sru3projdgsna5@quack3>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230802170155.l7sru3projdgsna5@quack3>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2 Aug 2023 14:57:53 +0800 Zhu Wang <wangzhu9@huawei.com> wrote:
-
-> When building with W=1, the following warning occurs.
+On Wed 02-08-23 19:01:55, Jan Kara wrote:
+> On Tue 01-08-23 15:09:01, Christian Brauner wrote:
+> > Split the steps to create a superblock into a tiny helper. This will
+> > make the next patch easier to follow.
+> > 
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > 
-> In file included from fs/efs/super.c:18:0:
-> fs/efs/efs.h:22:19: warning: ‘cprt’ defined but not used [-Wunused-const-variable=]
->  static const char cprt[] = "EFS: "EFS_VERSION" - (c) 1999 Al Smith
-> <Al.Smith@aeschi.ch.eu.org>";
->                    ^~~~
-> The header file is included in many C files, there are many
-> similar errors which are not included here. We add __maybe_unsed
-> to remove it.
+> I agree with Christoph that the error handling in vfs_fsconfig_locked() is
+> confusing - in particular the fact that if you 'break' out of the switch
+> statement it causes the fs context to be marked as failed is probably handy
+> but too subtle to my taste.
 > 
-> ...
->
-> --- a/fs/efs/efs.h
-> +++ b/fs/efs/efs.h
-> @@ -19,7 +19,8 @@
->  
->  #define EFS_VERSION "1.0a"
->  
-> -static const char cprt[] = "EFS: "EFS_VERSION" - (c) 1999 Al Smith <Al.Smith@aeschi.ch.eu.org>";
-> +static const char __maybe_unused cprt[] =
-> +	"EFS: "EFS_VERSION" - (c) 1999 Al Smith <Al.Smith@aeschi.ch.eu.org>";
->  
->  
->  /* 1 block is 512 bytes */
+> Also I think this patch does cause a behavioral change because before if we
+> bailed e.g. due to:
+> 
+> if (fc->phase != FS_CONTEXT_CREATE_PARAMS)
+> 
+> we returned -EBUSY but didn't set fc->phase = FS_CONTEXT_FAILED. After your
+> patch we 'break' on any error and thus fc->phase is set on any error...
 
-I don't know if Al is still around, but I added the Cc anyway.
+Ah, I can see you've already posted v2 where you addressed this problem.
+Sorry for the noise.
 
-cprt[] is unreferenced in fs/efs/*.c.  I assume the intent here was to
-embed the copyright strings in the generated binary.  But this doesn't
-work nowadays - the compiler/linker are removing this string entirely.
-
-I guess the best approach is to move this copyright statement into a
-comment as we do in many other places.  See fs/ext2/acl.c for a random
-example.
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
