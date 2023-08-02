@@ -2,88 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2438976D3EA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 18:44:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F27FD76D40F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 18:49:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230182AbjHBQop (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Aug 2023 12:44:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45196 "EHLO
+        id S229913AbjHBQsz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Aug 2023 12:48:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229930AbjHBQoo (ORCPT
+        with ESMTP id S232740AbjHBQsd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Aug 2023 12:44:44 -0400
-Received: from out-72.mta1.migadu.com (out-72.mta1.migadu.com [IPv6:2001:41d0:203:375::48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5847C188
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 09:44:43 -0700 (PDT)
-Date:   Wed, 2 Aug 2023 12:44:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1690994681;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=pZgu6VYBtVmDJxB8/yQqdmC5ll//zvqWRVFeO9x8huE=;
-        b=fce+OLsEemL82w3gvvoTSKcithaQm7VhHQwGW1Rlpuf7kw3knwpOdgJ+tuUuunjiijUxHa
-        5N6DI50igXJhCvKGa5fTTo9x5aho5jo0/fXftHomHmeD0u0LvDU2NigvOpU2xEFPcGEWQ5
-        lZzSqKR+IqsPHWoPCg0YnnvAh13JbEc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH 05/20] block: Allow bio_iov_iter_get_pages() with
- bio->bi_bdev unset
-Message-ID: <20230802164437.jskidimw32dofxpi@moria.home.lan>
-References: <20230712211115.2174650-1-kent.overstreet@linux.dev>
- <20230712211115.2174650-6-kent.overstreet@linux.dev>
- <ZL62HKrAJapXfcaR@infradead.org>
- <20230725024312.alq7df33ckede2gb@moria.home.lan>
- <ZMEeOZZcOu2p0SDP@infradead.org>
- <20230801190450.3lbr2hjdi7t52anx@moria.home.lan>
- <ZMpCRpNyt0EJpg9G@infradead.org>
+        Wed, 2 Aug 2023 12:48:33 -0400
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com [209.85.161.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C0B9271C
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 09:48:31 -0700 (PDT)
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-56c7c54c25fso8729226eaf.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Aug 2023 09:48:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690994910; x=1691599710;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qYKi8o9F6eiWCa6W4LKamwGGGyahz7HtNFcm3VxSBwM=;
+        b=eR0nU+qReWYrymrgwVyMjldE0O9JqeG0TTCNRaxaO2CdCzT9kEoYIuRLlJCX3Ax30i
+         0CWz3+jp9l6COWeOlRZ9dGbKCsmEGIuPPW2oMQ6zOnRDUZUDfvisRljPk/Cm71j7VRRf
+         4W2r7qJDkp1ofSCuMMh55s1NwOE7XneXBbpZZIaq8zzSHbjPZ94m8IOOpxUhBYevrF8x
+         YrNMzuzoFLSeXGCbMggTmFJlZaNuo8IkrWlXIKhA473Cpp7SOH4kHXDvvli0ZBrm8U4d
+         zLS4KjcMH5zj7DrWNOBtMccNZGuyB0XHwm9NLZLBtWGYKwD2zs61TIcsYpZ47HEh83Go
+         XUjg==
+X-Gm-Message-State: ABy/qLZkYg3rdPywVOy/MM20yaKmb4SSQ2ip9N1dJMFyDWuG2BYqIjlr
+        XgAjtX6z7k7nZ1FrzmmgRUhNuPCADqhMKkkrspAUs9wvjlBe
+X-Google-Smtp-Source: APBJJlGJmB7c8epxLUHVlcd5q9o6JmFyZq+1fc1su7ZzZrNN0BVgY079DaI9kO8K9tDJb1lVZUP9D8ESC8PRbct7dF2zSmc0Pgtv
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZMpCRpNyt0EJpg9G@infradead.org>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6870:a888:b0:1bb:4d41:e929 with SMTP id
+ eb8-20020a056870a88800b001bb4d41e929mr18010511oab.3.1690994910687; Wed, 02
+ Aug 2023 09:48:30 -0700 (PDT)
+Date:   Wed, 02 Aug 2023 09:48:30 -0700
+In-Reply-To: <1796030.1690982494@warthog.procyon.org.uk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f7f8fc0601f36e4c@google.com>
+Subject: Re: [syzbot] [fs?] INFO: task hung in pipe_release (4)
+From:   syzbot <syzbot+f527b971b4bdc8e79f9e@syzkaller.appspotmail.com>
+To:     bpf@vger.kernel.org, brauner@kernel.org, davem@davemloft.net,
+        dhowells@redhat.com, dsahern@kernel.org, edumazet@google.com,
+        kuba@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        pabeni@redhat.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 02, 2023 at 04:47:18AM -0700, Christoph Hellwig wrote:
-> On Tue, Aug 01, 2023 at 03:04:50PM -0400, Kent Overstreet wrote:
-> > > Because blk-cgroup not only works at the lowest level in the stack,
-> > > but also for stackable block devices.  It's not a design decision I
-> > > particularly agree with, but it's been there forever.
-> > 
-> > You're setting the association only to the highest block device in the
-> > stack - how on earth is it supposed to work with anything lower?
-> 
-> Hey, ask the cgroup folks as they come up with it.  I'm not going to
-> defend the logic here.
-> 
-> > And looking at bio_associate_blkg(), this code looks completely broken.
-> > It's checking bio->bi_blkg, but that's just been set to NULL in
-> > bio_init().
-> 
-> It's checking bi_blkg because it can also be called from bio_set_dev.
+Hello,
 
-So bio_set_dev() has subtly different behaviour than passing the block
-device to bio_init()?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-That's just broken.
+Reported-and-tested-by: syzbot+f527b971b4bdc8e79f9e@syzkaller.appspotmail.com
 
-> 
-> > And this is your code, so I think you need to go over this again.
-> 
-> It's "my code" in the sene of that I did one big round of unwinding
-> the even bigger mess that was there.  There is another few rounds needed
-> for the code to vaguely make sense.
+Tested on:
 
-Well, I'll watch for those patches then...
+commit:         5d0c230f Linux 6.5-rc4
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15a8b5d5a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df103238a07f256e
+dashboard link: https://syzkaller.appspot.com/bug?extid=f527b971b4bdc8e79f9e
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17e285dea80000
+
+Note: testing is done by a robot and is best-effort only.
