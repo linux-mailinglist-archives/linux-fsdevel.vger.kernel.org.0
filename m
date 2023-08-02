@@ -2,109 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BDC676D137
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 17:13:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 606EE76D222
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 17:36:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234211AbjHBPNq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Aug 2023 11:13:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36816 "EHLO
+        id S235275AbjHBPgK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Aug 2023 11:36:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234506AbjHBPNm (ORCPT
+        with ESMTP id S234903AbjHBPfy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Aug 2023 11:13:42 -0400
-Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6181430D5
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 08:13:36 -0700 (PDT)
-Received: by mail-il1-x130.google.com with SMTP id e9e14a558f8ab-34770dd0b4eso3775865ab.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Aug 2023 08:13:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1690989215; x=1691594015;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aFN0yTkYJmRYBxe8C0crI4IHgD1XQCao320E85C1eJo=;
-        b=kp7n9nNtSk8/5HElDyrHrxdGYt7rv/xOLxBpQU+qG5wUj+aPhHFt7hOsgBNU+OETht
-         KWYQgN+RSSEkCSHwBiuIn2wqCn91pIcH/6WpiiodnA80qHVCbrbi7a5F7VrS1AWocpGX
-         lkpINsr9WOQxcFPAY8112JHDHuJNcmJ6kzBmZcak+HGIKh1mUfZlmlGg/fFYiljja8Iw
-         hOStezDZIgh7VUM+4wefm3ZdGRsulRhaUdKProubNLnmpS5r9xd7/3JvspGQR7Qmuo3D
-         jGBr6kX71aa/Ip9kVb1+ByoY7pLHM2YwhbYEQr92yRmJOnBOGLIpP3nmoti+KebJ98IT
-         YNZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690989215; x=1691594015;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aFN0yTkYJmRYBxe8C0crI4IHgD1XQCao320E85C1eJo=;
-        b=CqNxpJSe87fjKxz6RhupXkORJTSNTVDXEMFbzFaStrvEjfICA19LZAf3Dv7vrkIMJy
-         36TiDX0jIX11CXnb5McMyLgx/BWIQeiLRZWZxsbqW0xqAA2s0OhWAZKKS3gS7JGeSppF
-         +IE5I9npR4EDpOGMq2vGJjRSZhOUYH5iYQtJxrM27d9Px0/7/tiGU2pdgcE3TZzSH6l/
-         MmwQ92M4KjJwDDhr7ZU/yAKM3jHID1oKcddeoQVeBg6+cM87bO2oZ1Wib7r3QhKLlUIi
-         Nz7XB+MpzPafnq+t7MnQo7g+OWH1NRDfOLyrv7GsxyFougUsmE5MIFE8LVYHnTsHwNtr
-         P/hw==
-X-Gm-Message-State: ABy/qLalhv0oqSOTUtSPqnUUKJH/r2x1lEXEVvt+9T1tUMYvG26l8MW0
-        gOa7DvtaMqVP+gMe2u88hBuTag==
-X-Google-Smtp-Source: APBJJlGV0GWnRqN4nUuY2j+yBlsWFiPPK/hRERx9kc8EMoqN+d2kaqg0kL1v4ktlNGSiEvEAkXeswA==
-X-Received: by 2002:a05:6e02:4c4:b0:345:a3d0:f0d4 with SMTP id f4-20020a056e0204c400b00345a3d0f0d4mr12930279ils.3.1690989215175;
-        Wed, 02 Aug 2023 08:13:35 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id y8-20020a02a388000000b0042b46224650sm4293136jak.91.2023.08.02.08.13.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Aug 2023 08:13:34 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Wed, 2 Aug 2023 11:35:54 -0400
+Received: from outbound-smtp43.blacknight.com (outbound-smtp43.blacknight.com [46.22.139.229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B62433C24
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 08:35:20 -0700 (PDT)
+Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
+        by outbound-smtp43.blacknight.com (Postfix) with ESMTPS id 92B0B2236
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 16:16:15 +0100 (IST)
+Received: (qmail 9455 invoked from network); 2 Aug 2023 15:16:15 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.20.191])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 2 Aug 2023 15:16:15 -0000
+Date:   Wed, 2 Aug 2023 16:16:13 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        liubo <liubo254@huawei.com>, Peter Xu <peterx@redhat.com>,
         Matthew Wilcox <willy@infradead.org>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
-        Hannes Reinecke <hare@suse.de>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Christian Brauner <brauner@kernel.org>
-In-Reply-To: <20230801172201.1923299-2-hch@lst.de>
-References: <20230801172201.1923299-1-hch@lst.de>
- <20230801172201.1923299-2-hch@lst.de>
-Subject: Re: [PATCH 1/6] fs: remove emergency_thaw_bdev
-Message-Id: <169098921438.7183.18231196765480619399.b4-ty@kernel.dk>
-Date:   Wed, 02 Aug 2023 09:13:34 -0600
+        Hugh Dickins <hughd@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Mel Gorman <mgorman@suse.de>, Shuah Khan <shuah@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v2 2/8] smaps: use vm_normal_page_pmd() instead of
+ follow_trans_huge_pmd()
+Message-ID: <20230802151613.3nyg3xof3gyovlxu@techsingularity.net>
+References: <20230801124844.278698-1-david@redhat.com>
+ <20230801124844.278698-3-david@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-034f2
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20230801124844.278698-3-david@redhat.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On Tue, 01 Aug 2023 19:21:56 +0200, Christoph Hellwig wrote:
-> Fold emergency_thaw_bdev into it's only caller, to prepare for buffer.c
-> to be built only when buffer_head support is enabled.
+On Tue, Aug 01, 2023 at 02:48:38PM +0200, David Hildenbrand wrote:
+> We shouldn't be using a GUP-internal helper if it can be avoided.
 > 
+> Similar to smaps_pte_entry() that uses vm_normal_page(), let's use
+> vm_normal_page_pmd() that similarly refuses to return the huge zeropage.
 > 
+> In contrast to follow_trans_huge_pmd(), vm_normal_page_pmd():
+> 
+> (1) Will always return the head page, not a tail page of a THP.
+> 
+>  If we'd ever call smaps_account with a tail page while setting "compound
+>  = true", we could be in trouble, because smaps_account() would look at
+>  the memmap of unrelated pages.
+> 
+>  If we're unlucky, that memmap does not exist at all. Before we removed
+>  PG_doublemap, we could have triggered something similar as in
+>  commit 24d7275ce279 ("fs/proc: task_mmu.c: don't read mapcount for
+>  migration entry").
+> 
+>  This can theoretically happen ever since commit ff9f47f6f00c ("mm: proc:
+>  smaps_rollup: do not stall write attempts on mmap_lock"):
+> 
+>   (a) We're in show_smaps_rollup() and processed a VMA
+>   (b) We release the mmap lock in show_smaps_rollup() because it is
+>       contended
+>   (c) We merged that VMA with another VMA
+>   (d) We collapsed a THP in that merged VMA at that position
+> 
+>  If the end address of the original VMA falls into the middle of a THP
+>  area, we would call smap_gather_stats() with a start address that falls
+>  into a PMD-mapped THP. It's probably very rare to trigger when not
+>  really forced.
+> 
+> (2) Will succeed on a is_pci_p2pdma_page(), like vm_normal_page()
+> 
+>  Treat such PMDs here just like smaps_pte_entry() would treat such PTEs.
+>  If such pages would be anonymous, we most certainly would want to
+>  account them.
+> 
+> (3) Will skip over pmd_devmap(), like vm_normal_page() for pte_devmap()
+> 
+>  As noted in vm_normal_page(), that is only for handling legacy ZONE_DEVICE
+>  pages. So just like smaps_pte_entry(), we'll now also ignore such PMD
+>  entries.
+> 
+>  Especially, follow_pmd_mask() never ends up calling
+>  follow_trans_huge_pmd() on pmd_devmap(). Instead it calls
+>  follow_devmap_pmd() -- which will fail if neither FOLL_GET nor FOLL_PIN
+>  is set.
+> 
+>  So skipping pmd_devmap() pages seems to be the right thing to do.
+> 
+> (4) Will properly handle VM_MIXEDMAP/VM_PFNMAP, like vm_normal_page()
+> 
+>  We won't be returning a memmap that should be ignored by core-mm, or
+>  worse, a memmap that does not even exist. Note that while
+>  walk_page_range() will skip VM_PFNMAP mappings, walk_page_vma() won't.
+> 
+>  Most probably this case doesn't currently really happen on the PMD level,
+>  otherwise we'd already be able to trigger kernel crashes when reading
+>  smaps / smaps_rollup.
+> 
+> So most probably only (1) is relevant in practice as of now, but could only
+> cause trouble in extreme corner cases.
+> 
+> Fixes: ff9f47f6f00c ("mm: proc: smaps_rollup: do not stall write attempts on mmap_lock")
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Applied, thanks!
+Maybe move the follow_trans_huge_pmd() declaration from linux/huge_mm.h
+to mm/internal.h to discourage future mistakes? Otherwise
 
-[1/6] fs: remove emergency_thaw_bdev
-      commit: 4a8b719f95c0dcd15fb7a04b806ad8139fa7c850
-[2/6] fs: rename and move block_page_mkwrite_return
-      commit: 2ba39cc46bfe463cb9673bf62a04c4c21942f1f2
-[3/6] block: open code __generic_file_write_iter for blkdev writes
-      commit: 727cfe976758b79f8d2f8051c75a5ccb14539a56
-[4/6] block: stop setting ->direct_IO
-      commit: a05f7bd9578b17521a9a5f3689f3934c082c6390
-[5/6] block: use iomap for writes to block devices
-      commit: 487c607df790d366e67a7d6a30adf785cdd98e55
-[6/6] fs: add CONFIG_BUFFER_HEAD
-      commit: 925c86a19bacf8ce10eb666328fb3fa5aff7b951
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
 
-Best regards,
 -- 
-Jens Axboe
-
-
-
+Mel Gorman
+SUSE Labs
