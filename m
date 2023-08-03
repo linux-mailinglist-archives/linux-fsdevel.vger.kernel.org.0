@@ -2,81 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E3A576E743
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 13:47:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F94076E747
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 13:47:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235648AbjHCLrB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Aug 2023 07:47:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44074 "EHLO
+        id S233322AbjHCLrn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Aug 2023 07:47:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232462AbjHCLrA (ORCPT
+        with ESMTP id S234777AbjHCLrm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Aug 2023 07:47:00 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B48B430C0;
-        Thu,  3 Aug 2023 04:46:53 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 5113A1F747;
-        Thu,  3 Aug 2023 11:46:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1691063212; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZRATTl9ze2dbUUVR6EVaJqJOlEgsHbOiGIMflJWuqI0=;
-        b=h+EOnXJZ1jQZw9KNznDfrtEVfnT0I2iXG3/4HvbXo1yozv3rIJ+Wdq9MEXs36iEvzouiwa
-        Qa8ClVd3Mwj47ujqwbT/HakaB10E6VKYHQZyrhi2fOcf6kBVnzu7m3kX6pRQr2zwBP0jIi
-        nGT1wBjrem2o26HsmwfVoHsRyMvqQbg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1691063212;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZRATTl9ze2dbUUVR6EVaJqJOlEgsHbOiGIMflJWuqI0=;
-        b=qfBkEeurvDJwpRK/HkPdKdpHXcX207g6s3ATzE+1nJ8sM1f44b6FY6WolKFsTJ/M5qyHi4
-        gkmsb6FWy8DyysCQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3A1D01333C;
-        Thu,  3 Aug 2023 11:46:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id ymsfDqyTy2QOPAAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 03 Aug 2023 11:46:52 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id B5F2AA076B; Thu,  3 Aug 2023 13:46:51 +0200 (CEST)
-Date:   Thu, 3 Aug 2023 13:46:51 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Jan Kara <jack@suse.cz>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH 02/12] nilfs2: use setup_bdev_super to de-duplicate the
- mount code
-Message-ID: <20230803114651.ihtqqgthbdjjgxev@quack3>
-References: <20230802154131.2221419-1-hch@lst.de>
- <20230802154131.2221419-3-hch@lst.de>
+        Thu, 3 Aug 2023 07:47:42 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AAEAE53;
+        Thu,  3 Aug 2023 04:47:41 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-9923833737eso121973566b.3;
+        Thu, 03 Aug 2023 04:47:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1691063259; x=1691668059;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uCIhJJ2hQzGyb6KTmj3+r2054kWgm3yg50ej7a2QDQc=;
+        b=csXKjk2uhcfAg18dyTPk/RSzhNTWvubZIkepX1Mj3atVktKxOrnvv2YG36KoACoDNC
+         cny9ht4allynSHcLQQ6ciTN8i8LPccQRSd11vfi8IHmkUB6to8/GFYqbVUp4B8Ak6kk6
+         twCtl4BfxAgLsPpRxML7vLOq0u7wGQzuMesOoc7Kx+VlkPtdnNMdWEewM9LKFaejDUVB
+         4qZbE64kk18Jcyh8H5Knp5wcFoOR8GkbVyVk2qu3wHkCP+ZE3A+CjAlP6einWWRpoDF+
+         k86qVzOyoRWv48h49pVjr+5EKlk4xNSxVuEAaYeNtq2jaV70WfIi8IZn2tQ9qZJH+M+H
+         cQ9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691063259; x=1691668059;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uCIhJJ2hQzGyb6KTmj3+r2054kWgm3yg50ej7a2QDQc=;
+        b=Sd4Dx+TeTG4/BmrWHjkCLk7FlsDUWcD5Y2suFzXQRnkLPEstp0TW7c6PTNOEmMqWIM
+         4VHMbjXsLclDy9ZIeocDL5PpcQIrNKq/YZ9ooBpUKqzGaij4pLibYKSBDrs2NAbGlEBj
+         +Gv53Pm46w1i3w6ZX6mnz9pyVt/Gog+4MUkBLRzUG0UlEWaif2TMnEYoOU3z2u3W2PRh
+         smyrt56OB6eSgBvsTvKPURAfeOX5q8zyHKMgmOEeCYPnua0JCMsC7SOScBQcHsqYlvT1
+         UZ9bGaiNBfOvaWTWDvgatllVc5CB2TxEyowGY9cIzIhY8Mpk0ohVBbsLKvxmSrMnoF3P
+         b5Sg==
+X-Gm-Message-State: ABy/qLZMtC/RyulAl0OtPWr4helf1d6cANlQIUeEYMrOIPvm81AAbkMa
+        PgoPblcy+LUIWBKMwvp1Ph1K6FS5G/Y=
+X-Google-Smtp-Source: APBJJlEuLtlzLF7ZRSWqZTPsnYH5PMw8werL0IhJsaRD6sunTyQymk/YX8Sx+fiBHSP3tF/19IR7Yw==
+X-Received: by 2002:a17:906:8a58:b0:991:d5ad:f1b1 with SMTP id gx24-20020a1709068a5800b00991d5adf1b1mr7306166ejc.47.1691063259192;
+        Thu, 03 Aug 2023 04:47:39 -0700 (PDT)
+Received: from [192.168.0.103] ([77.126.7.132])
+        by smtp.gmail.com with ESMTPSA id sb9-20020a170906edc900b00992ae4cf3c1sm10325742ejb.186.2023.08.03.04.47.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Aug 2023 04:47:38 -0700 (PDT)
+Message-ID: <852cef0c-2c1a-fdcd-4ee9-4a0bca3f54c5@gmail.com>
+Date:   Thu, 3 Aug 2023 14:47:35 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230802154131.2221419-3-hch@lst.de>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=no
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH net-next v10 08/16] tls: Inline do_tcp_sendpages()
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>, netdev@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Boris Pismenny <borisp@nvidia.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Gal Pressman <gal@nvidia.com>, ranro@nvidia.com,
+        samiram@nvidia.com, drort@nvidia.com,
+        Tariq Toukan <tariqt@nvidia.com>
+References: <ecbb5d7e-7238-28e2-1a17-686325e2bb50@gmail.com>
+ <4c49176f-147a-4283-f1b1-32aac7b4b996@gmail.com>
+ <20230522121125.2595254-1-dhowells@redhat.com>
+ <20230522121125.2595254-9-dhowells@redhat.com>
+ <2267272.1686150217@warthog.procyon.org.uk>
+ <5a9d4ffb-a569-3f60-6ac8-070ab5e5f5ad@gmail.com>
+ <776549.1687167344@warthog.procyon.org.uk>
+ <7337a904-231d-201d-397a-7bbe7cae929f@gmail.com>
+ <20230630102143.7deffc30@kernel.org>
+ <f0538006-6641-eaf6-b7b5-b3ef57afc652@gmail.com>
+ <20230705091914.5bee12f8@kernel.org>
+ <bbdce803-0f23-7d3f-f75a-2bc3cfb794af@gmail.com>
+ <20230725173036.442ba8ba@kernel.org>
+Content-Language: en-US
+From:   Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20230725173036.442ba8ba@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        NORMAL_HTTP_TO_IP,NUMERIC_HTTP_ADDR,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,WEIRD_PORT autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -84,176 +105,80 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 02-08-23 17:41:21, Christoph Hellwig wrote:
-> Use the generic setup_bdev_super helper to open the main block device
-> and do various bits of superblock setup instead of duplicating the
-> logic.  This includes moving to the new scheme implemented in common
-> code that only opens the block device after the superblock has allocated.
+
+
+On 26/07/2023 3:30, Jakub Kicinski wrote:
+> On Sun, 23 Jul 2023 09:35:56 +0300 Tariq Toukan wrote:
+>> Hi Jakub, David,
+>>
+>> We repro the issue on the server side using this client command:
+>> $ wrk -b2.2.2.2 -t4 -c1000 -d5 --timeout 5s
+>> https://2.2.2.3:20443/256000b.img
+>>
+>> Port 20443 is configured with:
+>>       ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256;
+>>       sendfile    off;
+>>
+>>
+>> Important:
+>> 1. Couldn't repro with files smaller than 40KB.
+>> 2. Couldn't repro with "sendfile    on;"
+>>
+>> In addition, we collected the vmcore (forced by panic_on_warn), it can
+>> be downloaded from here:
+>> https://drive.google.com/file/d/1Fi2dzgq6k2hb2L_kwyntRjfLF6_RmbxB/view?usp=sharing
 > 
-> It does not yet convert nilfs2 to the new mount API, but doing so will
-> become a bit simpler after this first step.
+> This has no symbols :(
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-AFAICS nilfs2 could *almost* use mount_bdev() directly and then just do its
-snapshot thing after mount_bdev() returns. But it has this weird logic
-that: "if the superblock is already mounted but we can shrink the whole
-dcache, then do remount instead of ignoring mount options". Firstly, this
-looks racy - what prevents someone from say opening a file on the sb just
-after nilfs_tree_is_busy() shrinks dcache? Secondly, it is inconsistent
-with any other filesystem so it's going to surprise sysadmins not
-intimately knowing nilfs2. Thirdly, from userspace you cannot tell what
-your mount call is going to do. Last but not least, what is it really good
-for? Ryusuke, can you explain please?
-
-								Honza
-
+> There is a small bug in this commit, we should always set SPLICE.
+> But I don't see how that'd cause the warning you're seeing.
+> Does your build have CONFIG_DEBUG_VM enabled?
+> 
+> -->8-------------------------
+> 
+> From: Jakub Kicinski <kuba@kernel.org>
+> Date: Tue, 25 Jul 2023 17:03:25 -0700
+> Subject: net: tls: set MSG_SPLICE_PAGES consistently
+> 
+> We used to change the flags for the last segment, because
+> non-last segments had the MSG_SENDPAGE_NOTLAST flag set.
+> That flag is no longer a thing so remove the setting.
+> 
+> Since flags most likely don't have MSG_SPLICE_PAGES set
+> this avoids passing parts of the sg as splice and parts
+> as non-splice.
+> 
+> ... tags ...
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 > ---
->  fs/nilfs2/super.c | 81 ++++++++++++++++++-----------------------------
->  1 file changed, 30 insertions(+), 51 deletions(-)
+>   net/tls/tls_main.c | 3 ---
+>   1 file changed, 3 deletions(-)
 > 
-> diff --git a/fs/nilfs2/super.c b/fs/nilfs2/super.c
-> index 0ef8c71bde8e5f..a5d1fa4e7552f6 100644
-> --- a/fs/nilfs2/super.c
-> +++ b/fs/nilfs2/super.c
-> @@ -35,6 +35,7 @@
->  #include <linux/writeback.h>
->  #include <linux/seq_file.h>
->  #include <linux/mount.h>
-> +#include <linux/fs_context.h>
->  #include "nilfs.h"
->  #include "export.h"
->  #include "mdt.h"
-> @@ -1216,7 +1217,6 @@ static int nilfs_remount(struct super_block *sb, int *flags, char *data)
->  }
->  
->  struct nilfs_super_data {
-> -	struct block_device *bdev;
->  	__u64 cno;
->  	int flags;
->  };
-> @@ -1283,64 +1283,49 @@ static int nilfs_identify(char *data, struct nilfs_super_data *sd)
->  
->  static int nilfs_set_bdev_super(struct super_block *s, void *data)
->  {
-> -	s->s_bdev = data;
-> -	s->s_dev = s->s_bdev->bd_dev;
-> +	s->s_dev = *(dev_t *)data;
->  	return 0;
->  }
->  
->  static int nilfs_test_bdev_super(struct super_block *s, void *data)
->  {
-> -	return (void *)s->s_bdev == data;
-> +	return !(s->s_iflags & SB_I_RETIRED) && s->s_dev == *(dev_t *)data;
->  }
->  
->  static struct dentry *
->  nilfs_mount(struct file_system_type *fs_type, int flags,
->  	     const char *dev_name, void *data)
->  {
-> -	struct nilfs_super_data sd;
-> +	struct nilfs_super_data sd = { .flags = flags };
->  	struct super_block *s;
-> -	struct dentry *root_dentry;
-> -	int err, s_new = false;
-> +	dev_t dev;
-> +	int err;
->  
-> -	sd.bdev = blkdev_get_by_path(dev_name, sb_open_mode(flags), fs_type,
-> -				     NULL);
-> -	if (IS_ERR(sd.bdev))
-> -		return ERR_CAST(sd.bdev);
-> +	if (nilfs_identify(data, &sd))
-> +		return ERR_PTR(-EINVAL);
->  
-> -	sd.cno = 0;
-> -	sd.flags = flags;
-> -	if (nilfs_identify((char *)data, &sd)) {
-> -		err = -EINVAL;
-> -		goto failed;
-> -	}
-> +	err = lookup_bdev(dev_name, &dev);
-> +	if (err)
-> +		return ERR_PTR(err);
->  
-> -	/*
-> -	 * once the super is inserted into the list by sget, s_umount
-> -	 * will protect the lockfs code from trying to start a snapshot
-> -	 * while we are mounting
-> -	 */
-> -	mutex_lock(&sd.bdev->bd_fsfreeze_mutex);
-> -	if (sd.bdev->bd_fsfreeze_count > 0) {
-> -		mutex_unlock(&sd.bdev->bd_fsfreeze_mutex);
-> -		err = -EBUSY;
-> -		goto failed;
-> -	}
->  	s = sget(fs_type, nilfs_test_bdev_super, nilfs_set_bdev_super, flags,
-> -		 sd.bdev);
-> -	mutex_unlock(&sd.bdev->bd_fsfreeze_mutex);
-> -	if (IS_ERR(s)) {
-> -		err = PTR_ERR(s);
-> -		goto failed;
-> -	}
-> +		 &dev);
-> +	if (IS_ERR(s))
-> +		return ERR_CAST(s);
->  
->  	if (!s->s_root) {
-> -		s_new = true;
+> diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
+> index b6896126bb92..4a8ee2f6badb 100644
+> --- a/net/tls/tls_main.c
+> +++ b/net/tls/tls_main.c
+> @@ -139,9 +139,6 @@ int tls_push_sg(struct sock *sk,
+>   
+>   	ctx->splicing_pages = true;
+>   	while (1) {
+> -		if (sg_is_last(sg))
+> -			msg.msg_flags = flags;
 > -
-> -		/* New superblock instance created */
-> -		snprintf(s->s_id, sizeof(s->s_id), "%pg", sd.bdev);
-> -		sb_set_blocksize(s, block_size(sd.bdev));
-> -
-> -		err = nilfs_fill_super(s, data, flags & SB_SILENT ? 1 : 0);
-> +		/*
-> +		 * We drop s_umount here because we need to open the bdev and
-> +		 * bdev->open_mutex ranks above s_umount (blkdev_put() ->
-> +		 * __invalidate_device()). It is safe because we have active sb
-> +		 * reference and SB_BORN is not set yet.
-> +		 */
-> +		up_write(&s->s_umount);
-> +		err = setup_bdev_super(s, flags, NULL);
-> +		down_write(&s->s_umount);
-> +		if (!err)
-> +			err = nilfs_fill_super(s, data,
-> +					       flags & SB_SILENT ? 1 : 0);
->  		if (err)
->  			goto failed_super;
->  
-> @@ -1366,24 +1351,18 @@ nilfs_mount(struct file_system_type *fs_type, int flags,
->  	}
->  
->  	if (sd.cno) {
-> +		struct dentry *root_dentry;
-> +
->  		err = nilfs_attach_snapshot(s, sd.cno, &root_dentry);
->  		if (err)
->  			goto failed_super;
-> -	} else {
-> -		root_dentry = dget(s->s_root);
-> +		return root_dentry;
->  	}
->  
-> -	if (!s_new)
-> -		blkdev_put(sd.bdev, fs_type);
-> -
-> -	return root_dentry;
-> +	return dget(s->s_root);
->  
->   failed_super:
->  	deactivate_locked_super(s);
-> -
-> - failed:
-> -	if (!s_new)
-> -		blkdev_put(sd.bdev, fs_type);
->  	return ERR_PTR(err);
->  }
->  
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>   		/* is sending application-limited? */
+>   		tcp_rate_check_app_limited(sk);
+>   		p = sg_page(sg);
+
+Hi Jakub,
+
+When applying this patch, repro disappears! :)
+Apparently it is related to the warning.
+Please go on and submit it.
+
+Tested-by: Tariq Toukan <tariqt@nvidia.com>
+
+We are going to run more comprehensive tests, I'll let you know if we 
+find anything unusual.
+
+Regards,
+Tariq
