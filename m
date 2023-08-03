@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CBC9076F190
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 20:12:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6E5876F19B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 20:15:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231254AbjHCSMT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Aug 2023 14:12:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42368 "EHLO
+        id S230478AbjHCSPW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Aug 2023 14:15:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230369AbjHCSMO (ORCPT
+        with ESMTP id S230335AbjHCSPT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Aug 2023 14:12:14 -0400
+        Thu, 3 Aug 2023 14:15:19 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC773ABB;
-        Thu,  3 Aug 2023 11:12:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CEF81704;
+        Thu,  3 Aug 2023 11:15:18 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 97E1361E56;
-        Thu,  3 Aug 2023 18:12:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1541C433C8;
-        Thu,  3 Aug 2023 18:11:58 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1506F61E67;
+        Thu,  3 Aug 2023 18:15:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 356B0C433C7;
+        Thu,  3 Aug 2023 18:15:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691086323;
-        bh=FvE8CcpTg/rwFyIjkGKpbi4sVFpEPrWRcbOUHH0og0E=;
+        s=k20201202; t=1691086517;
+        bh=7WvYC67Xe7oFF+cFC3hBpoW1fSKlO5ncgxOAS6uNu5M=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pW7WFuTLRAPoN8tiK+U2RXIY2N8l9VIKhr4v5EuwvrjQjf3HdRQf7xbN68UZZ46zH
-         SO1MA9DuRBFsu/t101HYGMhge4PpqCvyyFdCSiM6yxB5L2rIj/XJaXXMMh9Zh/Cuu+
-         co+kKz1UN7oez5C8+giAJgZwdFug00bKSW2NUiG/NmUDxnk6vUU0SV5iwwzbS7c9PV
-         ENMI160o/kjEUAuSQu7B0b9aiWQQ359FaQygUVE6PTlsN667YIfLe7I1yKSIAq18O6
-         t1BukcVZsqtEKb564oyOfYihvq+7U4lXIKeLsRGPjRhjk5Iylovvs66qrt9tj6OKwC
-         WUm7iF7kPoIZQ==
-Date:   Thu, 3 Aug 2023 20:11:56 +0200
+        b=M+0H21hPL+ViqgirVBRmgZ4PVVO0IsTWsesv9cA8GHZUL2nO1Jaskrh1hTcb8hJgn
+         zcbTF80tO8RHk8SPGrBaIY1HWV9lAP9kNCAvgF90TSNFmKJ61pagPvH2VFoo87Hcb6
+         R4MGzUpmn/vOw9saQfSEZSvf4/PMN97ff43Y1NGByYWS7kQY2fYrEvIo6C0QHTG02q
+         khnbhGSsGhhH0hk6KEOVJA7QyCJawZo/H8HB+DK7XECpYi8elC4KWWHzdhJoLk80T6
+         k6n3yR57Ezm420usiThIMT2fn0n+EuAnrG0tm69k3En+xpEtbBxuMQMsPeRVFWq9as
+         HeB02bJmZTTNw==
+Date:   Thu, 3 Aug 2023 20:15:10 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
@@ -47,15 +47,14 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
         linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-xfs@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH 06/12] fs: use the super_block as holder when mounting
- file systems
-Message-ID: <20230803-zornig-drucken-7e2a53465a15@brauner>
+Subject: Re: [PATCH 07/12] fs: stop using get_super in fs_mark_dead
+Message-ID: <20230803-umringt-aufprallen-e3adc44d2c75@brauner>
 References: <20230802154131.2221419-1-hch@lst.de>
- <20230802154131.2221419-7-hch@lst.de>
+ <20230802154131.2221419-8-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230802154131.2221419-7-hch@lst.de>
+In-Reply-To: <20230802154131.2221419-8-hch@lst.de>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -66,10 +65,15 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 02, 2023 at 05:41:25PM +0200, Christoph Hellwig wrote:
-> The file system type is not a very useful holder as it doesn't allow us
-> to go back to the actual file system instance.  Pass the super_block instead
-> which is useful when passed back to the file system driver.
+On Wed, Aug 02, 2023 at 05:41:26PM +0200, Christoph Hellwig wrote:
+> fs_mark_dead currently uses get_super to find the superblock for the
+> block device that is going away.  This means it is limited to the
+> main device stored in sb->s_dev, leading to a lot of code duplication
+> for file systems that can use multiple block devices.
+> 
+> Now that the holder for all block devices used by file systems is set
+> to the super_block, we can instead look at that holder and then check
+> if the file system is born and active, so do that instead.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
