@@ -2,75 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 16A3F76E5DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 12:44:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B6D776E65B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 13:05:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235439AbjHCKoi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Aug 2023 06:44:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37848 "EHLO
+        id S235630AbjHCLF2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Aug 2023 07:05:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229710AbjHCKoh (ORCPT
+        with ESMTP id S235323AbjHCLFI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Aug 2023 06:44:37 -0400
-Received: from esa8.hc1455-7.c3s2.iphmx.com (esa8.hc1455-7.c3s2.iphmx.com [139.138.61.253])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C6EA10EA;
-        Thu,  3 Aug 2023 03:44:34 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6600,9927,10790"; a="114993486"
-X-IronPort-AV: E=Sophos;i="6.01,252,1684767600"; 
-   d="scan'208";a="114993486"
-Received: from unknown (HELO yto-r4.gw.nic.fujitsu.com) ([218.44.52.220])
-  by esa8.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2023 19:44:32 +0900
-Received: from yto-m2.gw.nic.fujitsu.com (yto-nat-yto-m2.gw.nic.fujitsu.com [192.168.83.65])
-        by yto-r4.gw.nic.fujitsu.com (Postfix) with ESMTP id 3EE38D3EA9;
-        Thu,  3 Aug 2023 19:44:30 +0900 (JST)
-Received: from kws-ab3.gw.nic.fujitsu.com (kws-ab3.gw.nic.fujitsu.com [192.51.206.21])
-        by yto-m2.gw.nic.fujitsu.com (Postfix) with ESMTP id 72696D67B7;
-        Thu,  3 Aug 2023 19:44:29 +0900 (JST)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-        by kws-ab3.gw.nic.fujitsu.com (Postfix) with ESMTP id F3EA92007685B;
-        Thu,  3 Aug 2023 19:44:28 +0900 (JST)
-Received: from [192.168.50.5] (unknown [10.167.234.230])
-        by edo.cn.fujitsu.com (Postfix) with ESMTP id DE3E41A0072;
-        Thu,  3 Aug 2023 18:44:27 +0800 (CST)
-Message-ID: <25cf6700-4db0-a346-632c-ec9fc291793a@fujitsu.com>
-Date:   Thu, 3 Aug 2023 18:44:27 +0800
+        Thu, 3 Aug 2023 07:05:08 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5324F3C3E;
+        Thu,  3 Aug 2023 04:03:33 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id C5EC421980;
+        Thu,  3 Aug 2023 11:03:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1691060607; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ELFTahEoHWF3OWY1nmXyZ3K1aLk6cFNvnoHkAihu/Mw=;
+        b=Zk1HY4iMRP9uheCuU2Gwd5DiqLAsx6L/pbJrWVbGs2G5tg+EI9ElS+gE66dB2FTHm11UF8
+        qWgiTyTJQ7yRAiBtoBdi2fqPMtREOO8my04MU6Xu8b+lwvm6aj++D29U6Bm4b38Thm1sQ5
+        PdGs2uwSRTJt8ojn16bv8gGCtOwUUxA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1691060607;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ELFTahEoHWF3OWY1nmXyZ3K1aLk6cFNvnoHkAihu/Mw=;
+        b=ZJe2RSlXii++jrPpaFNL6iXhx+JwVqn0T8np7kqzxyJSLwbPFRd7+wdefPUF3yIddEHPpo
+        hddKSxL+A16bWFAg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 34D39134B0;
+        Thu,  3 Aug 2023 11:03:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id VY8NDH+Jy2RAJQAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Thu, 03 Aug 2023 11:03:27 +0000
+Message-ID: <d6ee67a2-b5b9-7287-bc62-b250c1872ed5@suse.cz>
+Date:   Thu, 3 Aug 2023 13:03:26 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 2/2] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Subject: Re: [RFC PATCH v11 00/29] KVM: guest_memfd() and per-page attributes
 Content-Language: en-US
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-        dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
-        akpm@linux-foundation.org, mcgrof@kernel.org
-References: <20230629081651.253626-1-ruansy.fnst@fujitsu.com>
- <20230629081651.253626-3-ruansy.fnst@fujitsu.com>
- <20230729151506.GI11352@frogsfrogsfrogs>
- <da239482-b3e4-a9d4-a1cc-c13973fb9cef@fujitsu.com>
- <20230801032542.GK11352@frogsfrogsfrogs>
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-In-Reply-To: <20230801032542.GK11352@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-27790.006
-X-TM-AS-User-Approved-Sender: Yes
-X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-27790.006
-X-TMASE-Result: 10--21.967400-10.000000
-X-TMASE-MatchedRID: OnXFgg5KIq2PvrMjLFD6eHchRkqzj/bEC/ExpXrHizxBqLOmHiM3wxem
-        4OLSGy1EiNggJ6Pbm2FbtzD5SJbjLpGZilTi8ctSxDiakrJ+Splt9UVWhqbRIWtEzrC9eANpEJm
-        hpJ8aMPMs4TH6G8STucqWFlCQS6PJay2H+VAa8iXTCZHfjFFBzxokPBiBBj9/WAuSz3ewb23jE7
-        v208scT4Cx+Toe1sV/EUEPr56O2WIv+0FNnM7lDRFbgtHjUWLyGB9/bxS68hPMtotGtpF5VgimM
-        t6TSXWl9IAP3W8IJ6ROaA8tMUkyucwitucT3dE79Ib/6w+1lWQ0YL9SJPufX7E9dgiHWXp2dCIZ
-        l7SNYAwqrSgxSiVy6T4BGdad1mqh8p7loYJT/FuDpW5ZeDjLZEEe5VjFzwNb0YLhWw8kOkGiifM
-        nl53xwItb4R/byxWkL85GNF7P6IqHf4Ivz8X+zfQxpA7auLwMhomn0bwgVmnZPbBjXTwpHvGG5P
-        ZMzxFopfslanYoIHQnqFw2BWATnBHdGMlurS25CbJWswK4n1IntGeqbHuvm9P7VmP7Drr69S1II
-        Zo1c6uxnFZ///SKRuYPT+f2a/53JiFLMSoR+9ydd2mFBNIr8heK/B+WKxKs9mqZiOfja8/3MMlW
-        Bma+yP7fBrTybMg2glA4PnzL7viR9GF2J2xqM4MbH85DUZXyudR/NJw2JHcNYpvo9xW+mI6HM5r
-        qDwqtlExlQIQeRG0=
-X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+To:     nikunj@amd.com, Sean Christopherson <seanjc@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Anup Patel <anup@brainfault.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Fuad Tabba <tabba@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Ackerley Tng <ackerleytng@google.com>,
+        Maciej Szmigiero <mail@maciej.szmigiero.name>,
+        David Hildenbrand <david@redhat.com>,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>,
+        Wang <wei.w.wang@intel.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Isaku Yamahata <isaku.yamahata@gmail.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20230718234512.1690985-1-seanjc@google.com>
+ <110f1aa0-7fcd-1287-701a-89c2203f0ac2@amd.com> <ZL6uMk/8UeuGj8CP@google.com>
+ <2f98a32c-bd3d-4890-b757-4d2f67a3b1a7@amd.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <2f98a32c-bd3d-4890-b757-4d2f67a3b1a7@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -78,355 +107,178 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-在 2023/8/1 11:25, Darrick J. Wong 写道:
-> On Mon, Jul 31, 2023 at 05:36:36PM +0800, Shiyang Ruan wrote:
->>
->>
->> 在 2023/7/29 23:15, Darrick J. Wong 写道:
->>> On Thu, Jun 29, 2023 at 04:16:51PM +0800, Shiyang Ruan wrote:
->>>> This patch is inspired by Dan's "mm, dax, pmem: Introduce
->>>> dev_pagemap_failure()"[1].  With the help of dax_holder and
->>>> ->notify_failure() mechanism, the pmem driver is able to ask filesystem
->>>> on it to unmap all files in use, and notify processes who are using
->>>> those files.
->>>>
->>>> Call trace:
->>>> trigger unbind
->>>>    -> unbind_store()
->>>>     -> ... (skip)
->>>>      -> devres_release_all()
->>>>       -> kill_dax()
->>>>        -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
->>>>         -> xfs_dax_notify_failure()
->>>>         `-> freeze_super()             // freeze (kernel call)
->>>>         `-> do xfs rmap
->>>>         ` -> mf_dax_kill_procs()
->>>>         `  -> collect_procs_fsdax()    // all associated processes
->>>>         `  -> unmap_and_kill()
->>>>         ` -> invalidate_inode_pages2_range() // drop file's cache
->>>>         `-> thaw_super()               // thaw (both kernel & user call)
->>>>
->>>> Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
->>>> event.  Use the exclusive freeze/thaw[2] to lock the filesystem to prevent
->>>> new dax mapping from being created.  Do not shutdown filesystem directly
->>>> if configuration is not supported, or if failure range includes metadata
->>>> area.  Make sure all files and processes(not only the current progress)
->>>> are handled correctly.  Also drop the cache of associated files before
->>>> pmem is removed.
->>>>
->>>> [1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
->>>> [2]: https://lore.kernel.org/linux-xfs/168688010689.860947.1788875898367401950.stgit@frogsfrogsfrogs/
->>>>
->>>> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
->>>> ---
->>>>    drivers/dax/super.c         |  3 +-
->>>>    fs/xfs/xfs_notify_failure.c | 86 ++++++++++++++++++++++++++++++++++---
->>>>    include/linux/mm.h          |  1 +
->>>>    mm/memory-failure.c         | 17 ++++++--
->>>>    4 files changed, 96 insertions(+), 11 deletions(-)
->>>>
->>>> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
->>>> index c4c4728a36e4..2e1a35e82fce 100644
->>>> --- a/drivers/dax/super.c
->>>> +++ b/drivers/dax/super.c
->>>> @@ -323,7 +323,8 @@ void kill_dax(struct dax_device *dax_dev)
->>>>    		return;
->>>>    	if (dax_dev->holder_data != NULL)
->>>> -		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
->>>> +		dax_holder_notify_failure(dax_dev, 0, U64_MAX,
->>>> +				MF_MEM_PRE_REMOVE);
->>>>    	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
->>>>    	synchronize_srcu(&dax_srcu);
->>>> diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
->>>> index 4a9bbd3fe120..f6ec56b76db6 100644
->>>> --- a/fs/xfs/xfs_notify_failure.c
->>>> +++ b/fs/xfs/xfs_notify_failure.c
->>>> @@ -22,6 +22,7 @@
->>>>    #include <linux/mm.h>
->>>>    #include <linux/dax.h>
->>>> +#include <linux/fs.h>
->>>>    struct xfs_failure_info {
->>>>    	xfs_agblock_t		startblock;
->>>> @@ -73,10 +74,16 @@ xfs_dax_failure_fn(
->>>>    	struct xfs_mount		*mp = cur->bc_mp;
->>>>    	struct xfs_inode		*ip;
->>>>    	struct xfs_failure_info		*notify = data;
->>>> +	struct address_space		*mapping;
->>>> +	pgoff_t				pgoff;
->>>> +	unsigned long			pgcnt;
->>>>    	int				error = 0;
->>>>    	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
->>>>    	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
->>>> +		/* Continue the query because this isn't a failure. */
->>>> +		if (notify->mf_flags & MF_MEM_PRE_REMOVE)
->>>> +			return 0;
->>>>    		notify->want_shutdown = true;
->>>>    		return 0;
->>>>    	}
->>>> @@ -92,14 +99,55 @@ xfs_dax_failure_fn(
->>>>    		return 0;
->>>>    	}
->>>> -	error = mf_dax_kill_procs(VFS_I(ip)->i_mapping,
->>>> -				  xfs_failure_pgoff(mp, rec, notify),
->>>> -				  xfs_failure_pgcnt(mp, rec, notify),
->>>> -				  notify->mf_flags);
->>>> +	mapping = VFS_I(ip)->i_mapping;
->>>> +	pgoff = xfs_failure_pgoff(mp, rec, notify);
->>>> +	pgcnt = xfs_failure_pgcnt(mp, rec, notify);
->>>> +
->>>> +	/* Continue the rmap query if the inode isn't a dax file. */
->>>> +	if (dax_mapping(mapping))
->>>> +		error = mf_dax_kill_procs(mapping, pgoff, pgcnt,
->>>> +					  notify->mf_flags);
->>>> +
->>>> +	/* Invalidate the cache in dax pages. */
->>>> +	if (notify->mf_flags & MF_MEM_PRE_REMOVE)
->>>> +		invalidate_inode_pages2_range(mapping, pgoff,
->>>> +					      pgoff + pgcnt - 1);
->>>> +
->>>>    	xfs_irele(ip);
->>>>    	return error;
->>>>    }
->>>> +static void
->>>> +xfs_dax_notify_failure_freeze(
->>>> +	struct xfs_mount	*mp)
->>>> +{
->>>> +	struct super_block 	*sb = mp->m_super;
->>>
->>> Nit: extra space right    ^ here.
->>>
->>>> +
->>>> +	/* Wait until no one is holding the FREEZE_HOLDER_KERNEL. */
->>>> +	while (freeze_super(sb, FREEZE_HOLDER_KERNEL) != 0) {
->>>> +		// Shall we just wait, or print warning then return -EBUSY?
->>>
->>> Hm.  PRE_REMOVE gets called before the pmem gets unplugged, right?  So
->>> we'll send a second notification after it goes away, right?
->>
->> For the first question, yes.
->>
->> But I'm not sure about the second one.  Do you mean: we'll send this
->> notification again if unbind didn't success because freeze_super() returns
->> -EBUSY?  In other words, if the previous unbind operation did not work, we
->> could unbind the device again.
+On 7/26/23 13:20, Nikunj A. Dadhania wrote:
+> Hi Sean,
 > 
-> Yeah.  If the MF_MEM_PRE_REMOVE fails with EBUSY, then call it again
-> without PRE_REMOVE and let it kill processes.
-
-Ok.  But I have to pass the flag (MF_MEM_PRE_REMOVE) to 
-mf_dax_kill_procs() so that it can search for all processes who are 
-holding dax pages rather than the only the current process.
-
-Then, my thought is, if filesystem is currently frozen by kernel during 
-unbind, just allow the -EBUSY and keep on the RMAP & killing processes. 
-After RMAP is done, ignore the kernel thaw as well.  In this way, there 
-is no need to send a second notification.
-
-```
-     bool frozen_by_kernel = false;
-
-     // skip... other definitions
-
-     if (mf_flags & MF_MEM_PRE_REMOVE) {
-         xfs_info(mp, "Device is about to be removed!");
-         /* Freeze fs to prevent new mappings from being created. */
-         error = xfs_dax_notify_failure_freeze(mp);
-         if (error) {
-             /* Keep on if filesystem is frozen by kernel */
-             if (error == -EBUSY)
-                 frozen_by_kernel = true;
-             else
-                 return error;
-         }
-     }
-
-     // skip... RMAP
-
-out:
-     /* Thaw the filesystem. */
-     if (mf_flags & MF_MEM_PRE_REMOVE)
-         /* don't thaw kernel frozen if already frozen by kernel */
-         xfs_dax_notify_failure_thaw(mp, frozen_by_kernel);
-
-     return error;
-```
-
-
---
-Thanks,
-Ruan.
-
-> 
-> --D
-> 
->>>
->>> If so, then I'd say return the error here instead of looping, and live
->>> with a kernel-frozen fs discarding the PRE_REMOVE message.
->>>
->>>> +		delay(HZ / 10);
->>>> +	}
->>>> +}
->>>> +
->>>> +static void
->>>> +xfs_dax_notify_failure_thaw(
->>>> +	struct xfs_mount	*mp)
->>>> +{
->>>> +	struct super_block	*sb = mp->m_super;
->>>> +	int			error;
->>>> +
->>>> +	error = thaw_super(sb, FREEZE_HOLDER_KERNEL);
->>>> +	if (error)
->>>> +		xfs_emerg(mp, "still frozen after notify failure, err=%d",
->>>> +			  error);
->>>> +	/*
->>>> +	 * Also thaw userspace call anyway because the device is about to be
->>>> +	 * removed immediately.
->>>> +	 */
->>>> +	thaw_super(sb, FREEZE_HOLDER_USERSPACE);
->>>> +}
->>>> +
->>>>    static int
->>>>    xfs_dax_notify_ddev_failure(
->>>>    	struct xfs_mount	*mp,
->>>> @@ -120,7 +168,7 @@ xfs_dax_notify_ddev_failure(
->>>>    	error = xfs_trans_alloc_empty(mp, &tp);
->>>>    	if (error)
->>>> -		return error;
->>>> +		goto out;
->>>>    	for (; agno <= end_agno; agno++) {
->>>>    		struct xfs_rmap_irec	ri_low = { };
->>>> @@ -165,11 +213,23 @@ xfs_dax_notify_ddev_failure(
->>>>    	}
->>>>    	xfs_trans_cancel(tp);
->>>> +
->>>> +	/*
->>>> +	 * Determine how to shutdown the filesystem according to the
->>>> +	 * error code and flags.
->>>> +	 */
->>>>    	if (error || notify.want_shutdown) {
->>>>    		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
->>>>    		if (!error)
->>>>    			error = -EFSCORRUPTED;
->>>> -	}
->>>> +	} else if (mf_flags & MF_MEM_PRE_REMOVE)
->>>> +		xfs_force_shutdown(mp, SHUTDOWN_FORCE_UMOUNT);
->>>> +
->>>> +out:
->>>> +	/* Thaw the fs if it is freezed before. */
->>>> +	if (mf_flags & MF_MEM_PRE_REMOVE)
->>>> +		xfs_dax_notify_failure_thaw(mp);
->>>
->>> _thaw should be called from the same function that called _freeze.
->>
->> Will fix this.
->>
->>>
->>> The rest of the patch seems ok to me.
->>
->> Thank you!
->>
->>
->> --
->> Ruan.
->>
->>>
->>> --D
->>>
->>>> +
->>>>    	return error;
->>>>    }
->>>> @@ -197,6 +257,8 @@ xfs_dax_notify_failure(
->>>>    	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
->>>>    	    mp->m_logdev_targp != mp->m_ddev_targp) {
->>>> +		if (mf_flags & MF_MEM_PRE_REMOVE)
->>>> +			return 0;
->>>>    		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
->>>>    		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
->>>>    		return -EFSCORRUPTED;
->>>> @@ -210,6 +272,12 @@ xfs_dax_notify_failure(
->>>>    	ddev_start = mp->m_ddev_targp->bt_dax_part_off;
->>>>    	ddev_end = ddev_start + bdev_nr_bytes(mp->m_ddev_targp->bt_bdev) - 1;
->>>> +	/* Notify failure on the whole device. */
->>>> +	if (offset == 0 && len == U64_MAX) {
->>>> +		offset = ddev_start;
->>>> +		len = bdev_nr_bytes(mp->m_ddev_targp->bt_bdev);
->>>> +	}
->>>> +
->>>>    	/* Ignore the range out of filesystem area */
->>>>    	if (offset + len - 1 < ddev_start)
->>>>    		return -ENXIO;
->>>> @@ -226,6 +294,12 @@ xfs_dax_notify_failure(
->>>>    	if (offset + len - 1 > ddev_end)
->>>>    		len = ddev_end - offset + 1;
->>>> +	if (mf_flags & MF_MEM_PRE_REMOVE) {
->>>> +		xfs_info(mp, "device is about to be removed!");
->>>> +		/* Freeze fs to prevent new mappings from being created. */
->>>> +		xfs_dax_notify_failure_freeze(mp);
->>>> +	}
->>>> +
->>>>    	return xfs_dax_notify_ddev_failure(mp, BTOBB(offset), BTOBB(len),
->>>>    			mf_flags);
->>>>    }
->>>> diff --git a/include/linux/mm.h b/include/linux/mm.h
->>>> index 27ce77080c79..a80c255b88d2 100644
->>>> --- a/include/linux/mm.h
->>>> +++ b/include/linux/mm.h
->>>> @@ -3576,6 +3576,7 @@ enum mf_flags {
->>>>    	MF_UNPOISON = 1 << 4,
->>>>    	MF_SW_SIMULATED = 1 << 5,
->>>>    	MF_NO_RETRY = 1 << 6,
->>>> +	MF_MEM_PRE_REMOVE = 1 << 7,
->>>>    };
->>>>    int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
->>>>    		      unsigned long count, int mf_flags);
->>>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->>>> index 5b663eca1f29..483b75f2fcfb 100644
->>>> --- a/mm/memory-failure.c
->>>> +++ b/mm/memory-failure.c
->>>> @@ -688,7 +688,7 @@ static void add_to_kill_fsdax(struct task_struct *tsk, struct page *p,
->>>>     */
->>>>    static void collect_procs_fsdax(struct page *page,
->>>>    		struct address_space *mapping, pgoff_t pgoff,
->>>> -		struct list_head *to_kill)
->>>> +		struct list_head *to_kill, bool pre_remove)
->>>>    {
->>>>    	struct vm_area_struct *vma;
->>>>    	struct task_struct *tsk;
->>>> @@ -696,8 +696,15 @@ static void collect_procs_fsdax(struct page *page,
->>>>    	i_mmap_lock_read(mapping);
->>>>    	read_lock(&tasklist_lock);
->>>>    	for_each_process(tsk) {
->>>> -		struct task_struct *t = task_early_kill(tsk, true);
->>>> +		struct task_struct *t = tsk;
->>>> +		/*
->>>> +		 * Search for all tasks while MF_MEM_PRE_REMOVE, because the
->>>> +		 * current may not be the one accessing the fsdax page.
->>>> +		 * Otherwise, search for the current task.
->>>> +		 */
->>>> +		if (!pre_remove)
->>>> +			t = task_early_kill(tsk, true);
->>>>    		if (!t)
->>>>    			continue;
->>>>    		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
->>>> @@ -1793,6 +1800,7 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
->>>>    	dax_entry_t cookie;
->>>>    	struct page *page;
->>>>    	size_t end = index + count;
->>>> +	bool pre_remove = mf_flags & MF_MEM_PRE_REMOVE;
->>>>    	mf_flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
->>>> @@ -1804,9 +1812,10 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
->>>>    		if (!page)
->>>>    			goto unlock;
->>>> -		SetPageHWPoison(page);
->>>> +		if (!pre_remove)
->>>> +			SetPageHWPoison(page);
->>>> -		collect_procs_fsdax(page, mapping, index, &to_kill);
->>>> +		collect_procs_fsdax(page, mapping, index, &to_kill, pre_remove);
->>>>    		unmap_and_kill(&to_kill, page_to_pfn(page), mapping,
->>>>    				index, mf_flags);
->>>>    unlock:
->>>> -- 
->>>> 2.40.1
+> On 7/24/2023 10:30 PM, Sean Christopherson wrote:
+>> On Mon, Jul 24, 2023, Nikunj A. Dadhania wrote:
+>>> On 7/19/2023 5:14 AM, Sean Christopherson wrote:
+>>>> This is the next iteration of implementing fd-based (instead of vma-based)
+>>>> memory for KVM guests.  If you want the full background of why we are doing
+>>>> this, please go read the v10 cover letter[1].
 >>>>
+>>>> The biggest change from v10 is to implement the backing storage in KVM
+>>>> itself, and expose it via a KVM ioctl() instead of a "generic" sycall.
+>>>> See link[2] for details on why we pivoted to a KVM-specific approach.
+>>>>
+>>>> Key word is "biggest".  Relative to v10, there are many big changes.
+>>>> Highlights below (I can't remember everything that got changed at
+>>>> this point).
+>>>>
+>>>> Tagged RFC as there are a lot of empty changelogs, and a lot of missing
+>>>> documentation.  And ideally, we'll have even more tests before merging.
+>>>> There are also several gaps/opens (to be discussed in tomorrow's PUCK).
+>>>
+>>> As per our discussion on the PUCK call, here are the memory/NUMA accounting 
+>>> related observations that I had while working on SNP guest secure page migration:
+>>>
+>>> * gmem allocations are currently treated as file page allocations
+>>>   accounted to the kernel and not to the QEMU process.
+>> 
+>> We need to level set on terminology: these are all *stats*, not accounting.  That
+>> distinction matters because we have wiggle room on stats, e.g. we can probably get
+>> away with just about any definition of how guest_memfd memory impacts stats, so
+>> long as the information that is surfaced to userspace is useful and expected.
+>> 
+>> But we absolutely need to get accounting correct, specifically the allocations
+>> need to be correctly accounted in memcg.  And unless I'm missing something,
+>> nothing in here shows anything related to memcg.
+> 
+> I tried out memcg after creating a separate cgroup for the qemu process. Guest 
+> memory is accounted in memcg.
+> 
+>   $ egrep -w "file|file_thp|unevictable" memory.stat
+>   file 42978775040
+>   file_thp 42949672960
+>   unevictable 42953588736 
+> 
+> NUMA allocations are coming from right nodes as set by the numactl.
+> 
+>   $ egrep -w "file|file_thp|unevictable" memory.numa_stat
+>   file N0=0 N1=20480 N2=21489377280 N3=21489377280
+>   file_thp N0=0 N1=0 N2=21472739328 N3=21476933632
+>   unevictable N0=0 N1=0 N2=21474697216 N3=21478891520
+> 
+>> 
+>>>   Starting an SNP guest with 40G memory with memory interleave between
+>>>   Node2 and Node3
+>>>
+>>>   $ numactl -i 2,3 ./bootg_snp.sh
+>>>
+>>>     PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+>>>  242179 root      20   0   40.4g  99580  51676 S  78.0   0.0   0:56.58 qemu-system-x86
+>>>
+>>>   -> Incorrect process resident memory and shared memory is reported
+>> 
+>> I don't know that I would call these "incorrect".  Shared memory definitely is
+>> correct, because by definition guest_memfd isn't shared.  RSS is less clear cut;
+>> gmem memory is resident in RAM, but if we show gmem in RSS then we'll end up with
+>> scenarios where RSS > VIRT, which will be quite confusing for unaware users (I'm
+>> assuming the 40g of VIRT here comes from QEMU mapping the shared half of gmem
+>> memslots).
+> 
+> I am not sure why will RSS exceed the VIRT, it should be at max 40G (assuming all the
+> memory is private)
+> 
+> As per my experiments with a hack below. MM_FILEPAGES does get accounted to RSS/SHR in top
+> 
+>     PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+>    4339 root      20   0   40.4g  40.1g  40.1g S  76.7  16.0   0:13.83 qemu-system-x86
+> 
+> diff --git a/mm/memory.c b/mm/memory.c
+> index f456f3b5049c..5b1f48a2e714 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -166,6 +166,7 @@ void mm_trace_rss_stat(struct mm_struct *mm, int member)
+>  {
+>         trace_rss_stat(mm, member);
+>  }
+> +EXPORT_SYMBOL(mm_trace_rss_stat);
+> 
+>  /*
+>   * Note: this doesn't free the actual pages themselves. That
+> diff --git a/virt/kvm/guest_mem.c b/virt/kvm/guest_mem.c
+> index a7e926af4255..e4f268bf9ce2 100644
+> --- a/virt/kvm/guest_mem.c
+> +++ b/virt/kvm/guest_mem.c
+> @@ -91,6 +91,10 @@ static struct folio *kvm_gmem_get_folio(struct file *file, pgoff_t index)
+>                         clear_highpage(folio_page(folio, i));
+>         }
+> 
+> +       /* Account only once for the first time */
+> +       if (!folio_test_dirty(folio))
+> +               add_mm_counter(current->mm, MM_FILEPAGES, folio_nr_pages(folio));
+
+I think this alone would cause "Bad rss-counter" messages when the process
+exits, because there's no corresponding decrement when page tables are torn
+down. We would probably have to instantiate the page tables (i.e. with
+PROT_NONE so userspace can't really do accesses through them) for this to
+work properly.
+
+So then it wouldn't technically be "unmapped private memory" anymore, but
+effectively still would be. Maybe there would be more benefits, like the
+mbind() working. But where would the PROT_NONE page tables be instantiated
+if there's no page fault? During the ioctl? And is perhaps too much (CPU)
+work for little benefit? Maybe, but we could say it makes things simpler and
+can be optimized later?
+
+Anyway IMHO it would be really great if the memory usage was attributable
+the usual way without new IOCTLs or something. Each time some memory appears
+"unaccounted" somewhere, it causes confusion.
+
+> +
+>         folio_mark_accessed(folio);
+>         folio_mark_dirty(folio);
+>         folio_mark_uptodate(folio);
+> 
+> We can update the rss_stat appropriately to get correct reporting in userspace.
+> 
+>>>   Accounting of the memory happens in the host page fault handler path,
+>>>   but for private guest pages we will never hit that.
+>>>
+>>> * NUMA allocation does use the process mempolicy for appropriate node 
+>>>   allocation (Node2 and Node3), but they again do not get attributed to 
+>>>   the QEMU process
+>>>
+>>>   Every 1.0s: sudo numastat  -m -p qemu-system-x86 | egrep -i "qemu|PID|Node|Filepage"   gomati: Mon Jul 24 11:51:34 2023
+>>>
+>>>   Per-node process memory usage (in MBs)
+>>>   PID                               Node 0          Node 1          Node 2          Node 3           Total
+>>>   242179 (qemu-system-x86)           21.14            1.61           39.44           39.38          101.57
+>>>
+>>>   Per-node system memory usage (in MBs):
+>>>                             Node 0          Node 1          Node 2          Node 3           Total
+>>>   FilePages                2475.63         2395.83        23999.46        23373.22        52244.14
+>>>
+>>>
+>>> * Most of the memory accounting relies on the VMAs and as private-fd of 
+>>>   gmem doesn't have a VMA(and that was the design goal), user-space fails 
+>>>   to attribute the memory appropriately to the process.
+>>>
+>>>   /proc/<qemu pid>/numa_maps
+>>>   7f528be00000 interleave:2-3 file=/memfd:memory-backend-memfd-shared\040(deleted) anon=1070 dirty=1070 mapped=1987 mapmax=256 active=1956 N2=582 N3=1405 kernelpagesize_kB=4
+>>>   7f5c90200000 interleave:2-3 file=/memfd:rom-backend-memfd-shared\040(deleted)
+>>>   7f5c90400000 interleave:2-3 file=/memfd:rom-backend-memfd-shared\040(deleted) dirty=32 active=0 N2=32 kernelpagesize_kB=4
+>>>   7f5c90800000 interleave:2-3 file=/memfd:rom-backend-memfd-shared\040(deleted) dirty=892 active=0 N2=512 N3=380 kernelpagesize_kB=4
+>>>
+>>>   /proc/<qemu pid>/smaps
+>>>   7f528be00000-7f5c8be00000 rw-p 00000000 00:01 26629                      /memfd:memory-backend-memfd-shared (deleted)
+>>>   7f5c90200000-7f5c90220000 rw-s 00000000 00:01 44033                      /memfd:rom-backend-memfd-shared (deleted)
+>>>   7f5c90400000-7f5c90420000 rw-s 00000000 00:01 44032                      /memfd:rom-backend-memfd-shared (deleted)
+>>>   7f5c90800000-7f5c90b7c000 rw-s 00000000 00:01 1025                       /memfd:rom-backend-memfd-shared (deleted)
+>> 
+>> This is all expected, and IMO correct.  There are no userspace mappings, and so
+>> not accounting anything is working as intended.
+> Doesn't sound that correct, if 10 SNP guests are running each using 10GB, how would we know who is using 100GB of memory?
+> 
+>> 
+>>> * QEMU based NUMA bindings will not work. Memory backend uses mbind() 
+>>>   to set the policy for a particular virtual memory range but gmem 
+>>>   private-FD does not have a virtual memory range visible in the host.
+>> 
+>> Yes, adding a generic fbind() is the way to solve silve.
+> 
+> Regards,
+> Nikunj
+> 
+
