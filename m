@@ -2,148 +2,452 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 52D8B76F1F2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 20:36:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9430176F317
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 20:59:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233005AbjHCSgR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Aug 2023 14:36:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55872 "EHLO
+        id S230236AbjHCS7B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Aug 2023 14:59:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230344AbjHCSgQ (ORCPT
+        with ESMTP id S229652AbjHCS7A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Aug 2023 14:36:16 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3793A273E
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Aug 2023 11:36:15 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-99bdcade7fbso173194066b.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Aug 2023 11:36:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1691087773; x=1691692573;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bjK7RUYhJ3o/ZdfV6zCLpQPvuk/yGcfZkOCyD/T1w4M=;
-        b=BrZIJzPS8/nphMMUSPTsqlcNKZIP1VxUgEbJEpWV/1dO1z8be/bQCYvXxqCITxkmpc
-         80lSPno+8k7LzCXEKfVo2bJrMsb5DXjvjjfktPML0/PhhKRuDAWk/eKBiOsEtN6Dssnw
-         PXyeq1jHoLMPHJNgNStzHa0CbGMgAm7cch/S0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691087773; x=1691692573;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bjK7RUYhJ3o/ZdfV6zCLpQPvuk/yGcfZkOCyD/T1w4M=;
-        b=hvg/OKpl9q3jzQwolZOzcat4NdvsU7D2fsiJ5Y2Wv4EEEliJ9ZhJU3ZjCjJoI2mrzh
-         foQcUeKi42zAcVh5VswRH93C1VXOVtiwoeU5xLNrD5WwR9SC3lO9k7y4Of/cBGUGGBFU
-         Ttxc4YdnnaHFhNmW1pCd8QDdS2FJslWEHWnCZni8ch6YYlAmbXDi6tN9HZ8Xq5WLQC1/
-         eT/i5rbIkPx88BXL9GIms5DAOnqsmE9vqfZKgw40aahnwZjo6w7dMsm6+B5G40mLbdfe
-         U9le/8hUWgDdFgUjACCXWF2/3O62gyag2+0F6261hsdL5XrqiwGzsz0CCTQuNFA/doWp
-         Zt2w==
-X-Gm-Message-State: ABy/qLZJgZWc/W+1JRMEz5RRMYiiwWZAXDcLh664c72NE6YjYMweNB8V
-        hehH+S2CdHitOLd2Leq8lmcDbMC/evueyY+kpWhjKbR3
-X-Google-Smtp-Source: APBJJlED75syQHmhdW2/F5FpINDeEeTwBGJEyqccfOcaAJnNK8WJOtQC75nhx/Sr3JT/sQEkoqyM3g==
-X-Received: by 2002:a17:906:73db:b0:993:f996:52d5 with SMTP id n27-20020a17090673db00b00993f99652d5mr8716119ejl.25.1691087773520;
-        Thu, 03 Aug 2023 11:36:13 -0700 (PDT)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
-        by smtp.gmail.com with ESMTPSA id gw1-20020a170906f14100b0099b8234a9fesm168090ejb.1.2023.08.03.11.36.11
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Aug 2023 11:36:11 -0700 (PDT)
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5231410ab27so573797a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Aug 2023 11:36:11 -0700 (PDT)
-X-Received: by 2002:a05:6402:60e:b0:522:27c4:3865 with SMTP id
- n14-20020a056402060e00b0052227c43865mr7594168edv.41.1691087771299; Thu, 03
- Aug 2023 11:36:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230724-vfs-fdget_pos-v1-1-a4abfd7103f3@kernel.org>
- <CAHk-=whfJhag+iEscftpVq=dHTeL7rQopCvH+Pcs8vJHCGNvXQ@mail.gmail.com>
- <20230724-pyjama-papier-9e4cdf5359cb@brauner> <CAHk-=wj2XZqex6kzz7SbdVHwP9fFoOvHSzHj--0KuxyrVO+3-w@mail.gmail.com>
- <20230803095311.ijpvhx3fyrbkasul@f> <CAHk-=whQ51+rKrnUYeuw3EgJMv2RJrwd7UO9qCgOkUdJzcirWw@mail.gmail.com>
- <20230803-libellen-klebrig-0a9e19dfa7dd@brauner>
-In-Reply-To: <20230803-libellen-klebrig-0a9e19dfa7dd@brauner>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 3 Aug 2023 11:35:53 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi97khTatMKCvJD4tBkf6rMKTP=fLQDnok7MGEEewSz9g@mail.gmail.com>
-Message-ID: <CAHk-=wi97khTatMKCvJD4tBkf6rMKTP=fLQDnok7MGEEewSz9g@mail.gmail.com>
-Subject: Re: [PATCH] file: always lock position
+        Thu, 3 Aug 2023 14:59:00 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C492A3A9C;
+        Thu,  3 Aug 2023 11:58:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8EF1E61E7A;
+        Thu,  3 Aug 2023 18:58:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D57FC433C8;
+        Thu,  3 Aug 2023 18:58:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691089129;
+        bh=hDv8LWjWgKvZp7KwDrZhjBj9e+DeCL7C2LJNQvTVA0w=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=NnciuiivLNwNSGtUcWGXa4mnldxlR5zX18ly69SmF12VK0QYIvqpH/QZEomeM7Yq3
+         7gPqegMa9AW+c0J6WcTiulSCn1C3+KW8fX+KNipNCY1OHuuIKvOn6UsHSqNP8NdTPD
+         mqtgtdxPvnUyDmsdL7o5EL7MXDncFQtPEYbFl1NC6eMnWNy/Mp0/lJVK3ET5OLp8K6
+         iSMqbDv2tdCD/cd8vZcQZ/HXdbkL1w5YDh9khfyqsLyXa2xqgx8ArRo15V8Hc0hP8R
+         joOqsRhm6iXw5JVM44g93EcmBDoQmq4w/ceEci+ZVZUcDqAOIQnyhjWLTG0zqDIiVr
+         nfo0sNtdfFzkQ==
+Message-ID: <bab1dda495bc157d3d0650738ea9b620365d9813.camel@kernel.org>
+Subject: Re: [PATCH v6] vfs, security: Fix automount superblock LSM init
+ problem, preventing NFS sb sharing
+From:   Jeff Layton <jlayton@kernel.org>
 To:     Christian Brauner <brauner@kernel.org>
-Cc:     Mateusz Guzik <mjguzik@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@lst.de>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Seth Forshee <sforshee@kernel.org>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000e529550602090d09"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Date:   Thu, 03 Aug 2023 14:58:46 -0400
+In-Reply-To: <20230803-verstanden-perfide-70ee3b425417@brauner>
+References: <20230802-master-v6-1-45d48299168b@kernel.org>
+         <bac543537058619345b363bbfc745927.paul@paul-moore.com>
+         <ca156cecbc070c3b7c68626572274806079a6e04.camel@kernel.org>
+         <20230803-verlassen-lernprogramm-b9e61719ce55@brauner>
+         <782a39afec947b1a3575be9cf8921e7294190326.camel@kernel.org>
+         <20230803-verstanden-perfide-70ee3b425417@brauner>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---000000000000e529550602090d09
-Content-Type: text/plain; charset="UTF-8"
+On Thu, 2023-08-03 at 19:36 +0200, Christian Brauner wrote:
+> On Thu, Aug 03, 2023 at 12:09:33PM -0400, Jeff Layton wrote:
+> > On Thu, 2023-08-03 at 15:27 +0200, Christian Brauner wrote:
+> > > On Wed, Aug 02, 2023 at 03:34:27PM -0400, Jeff Layton wrote:
+> > > > On Wed, 2023-08-02 at 14:16 -0400, Paul Moore wrote:
+> > > > > On Aug  2, 2023 Jeff Layton <jlayton@kernel.org> wrote:
+> > > > > >=20
+> > > > > > When NFS superblocks are created by automounting, their LSM par=
+ameters
+> > > > > > aren't set in the fs_context struct prior to sget_fc() being ca=
+lled,
+> > > > > > leading to failure to match existing superblocks.
+> > > > > >=20
+> > > > > > Fix this by adding a new LSM hook to load fc->security for subm=
+ount
+> > > > > > creation when alloc_fs_context() is creating the fs_context for=
+ it.
+> > > > > >=20
+> > > > > > However, this uncovers a further bug: nfs_get_root() initialise=
+s the
+> > > > > > superblock security manually by calling security_sb_set_mnt_opt=
+s() or
+> > > > > > security_sb_clone_mnt_opts() - but then vfs_get_tree() calls
+> > > > > > security_sb_set_mnt_opts(), which can lead to SELinux, at least=
+,
+> > > > > > complaining.
+> > > > > >=20
+> > > > > > Fix that by adding a flag to the fs_context that suppresses the
+> > > > > > security_sb_set_mnt_opts() call in vfs_get_tree().  This can be=
+ set by NFS
+> > > > > > when it sets the LSM context on the new superblock.
+> > > > > >=20
+> > > > > > The first bug leads to messages like the following appearing in=
+ dmesg:
+> > > > > >=20
+> > > > > > 	NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,=
+,,,100000,100000,2ee,3a98,1d4c,3a98,1)
+> > > > > >=20
+> > > > > > Signed-off-by: David Howells <dhowells@redhat.com>
+> > > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > > > Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_ker=
+n_mount() to it.")
+> > > > > > Fixes: 779df6a5480f ("NFS: Ensure security label is set for roo=
+t inode)
+> > > > > > Tested-by: Jeff Layton <jlayton@kernel.org>
+> > > > > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> > > > > > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> > > > > > Acked-by: "Christian Brauner (Microsoft)" <brauner@kernel.org>
+> > > > > > Link: https://lore.kernel.org/r/165962680944.3334508.6610023900=
+349142034.stgit@warthog.procyon.org.uk/ # v1
+> > > > > > Link: https://lore.kernel.org/r/165962729225.3357250.1435072884=
+6471527137.stgit@warthog.procyon.org.uk/ # v2
+> > > > > > Link: https://lore.kernel.org/r/165970659095.2812394.6868894171=
+102318796.stgit@warthog.procyon.org.uk/ # v3
+> > > > > > Link: https://lore.kernel.org/r/166133579016.3678898.6283195019=
+480567275.stgit@warthog.procyon.org.uk/ # v4
+> > > > > > Link: https://lore.kernel.org/r/217595.1662033775@warthog.procy=
+on.org.uk/ # v5
+> > > > > > ---
+> > > > > > This patch was originally sent by David several months ago, but=
+ it
+> > > > > > never got merged. I'm resending to resurrect the discussion. Ca=
+n we
+> > > > > > get this fixed?
+> > > > >=20
+> > > > > Sorry, I sorta lost track of this after the ROOTCONTEXT_MNT discu=
+ssion
+> > > > > back in v3.  Looking at it a bit closer now I have one nitpicky
+> > > > > request and one larger concern (see below).
+> > > > >=20
+> > > > > > diff --git a/fs/super.c b/fs/super.c
+> > > > > > index e781226e2880..13adf43e2e5d 100644
+> > > > > > --- a/fs/super.c
+> > > > > > +++ b/fs/super.c
+> > > > > > @@ -1541,10 +1541,12 @@ int vfs_get_tree(struct fs_context *fc)
+> > > > > >  	smp_wmb();
+> > > > > >  	sb->s_flags |=3D SB_BORN;
+> > > > > > =20
+> > > > > > -	error =3D security_sb_set_mnt_opts(sb, fc->security, 0, NULL)=
+;
+> > > > > > -	if (unlikely(error)) {
+> > > > > > -		fc_drop_locked(fc);
+> > > > > > -		return error;
+> > > > > > +	if (!(fc->lsm_set)) {
+> > > > > > +		error =3D security_sb_set_mnt_opts(sb, fc->security, 0, NULL=
+);
+> > > > > > +		if (unlikely(error)) {
+> > > > > > +			fc_drop_locked(fc);
+> > > > > > +			return error;
+> > > > > > +		}
+> > > > > >  	}
+> > > > >=20
+> > > > > I generally dislike core kernel code which makes LSM calls condit=
+ional
+> > > > > on some kernel state maintained outside the LSM.  Sometimes it ha=
+s to
+> > > > > be done as there is no other good options, but I would like us to=
+ try
+> > > > > and avoid it if possible.  The commit description mentioned that =
+this
+> > > > > was put here to avoid a SELinux complaint, can you provide an exa=
+mple
+> > > > > of the complain?  Does it complain about a double/invalid mount, =
+e.g.
+> > > > > "SELinux: mount invalid.  Same superblock, different security ...=
+"?
+> > > > >=20
+> > > >=20
+> > > > The problem I had was not so much SELinux warnings, but rather that=
+ in a
+> > > > situation where I would expect to share superblocks between two
+> > > > filesystems, it didn't.
+> > > >=20
+> > > > Basically if you do something like this:
+> > > >=20
+> > > > # mount nfsserver:/export/foo /mnt/foo -o context=3Dsystem_u:object=
+_r:root_t:s0
+> > > > # mount nfsserver:/export/bar /mnt/bar -o context=3Dsystem_u:object=
+_r:root_t:s0
+> > > >=20
+> > > > ...when "foo" and "bar" are directories on the same filesystem on t=
+he
+> > > > server, you should get two vfsmounts that share a superblock. That'=
+s
+> > > > what you get if selinux is disabled, but not when it's enabled (eve=
+n
+> > > > when it's in permissive mode).
+> > > >=20
+> > > > The problems that David hit with the automounter have a similar roo=
+t
+> > > > cause though, I believe.
+> > > >=20
+> > > > > I'd like to understand why the sb_set_mnt_opts() call fails when =
+it
+> > > > > comes after the fs_context_init() call.  I'm particulary curious =
+to
+> > > > > know if the failure is due to conflicting SELinux state in the
+> > > > > fs_context, or if it is simply an issue of sb_set_mnt_opts() not
+> > > > > properly handling existing values.  Perhaps I'm being overly naiv=
+e,
+> > > > > but I'm hopeful that we can address both of these within the SELi=
+nux
+> > > > > code itself.
+> > > > >=20
+> > > >=20
+> > > > The problem I hit was that nfs_compare_super is called with a fs_co=
+ntext
+> > > > that has a NULL ->security pointer. That caused it to call
+> > > > selinux_sb_mnt_opts_compat with mnt_opts set to NULL, and at that p=
+oint
+> > > > it returns 1 and decides not to share sb's.
+> > >=20
+> > > I tried to follow this because I'm really still quite puzzled by this
+> > > whole thing. Two consecutive mounts that should share the superblock
+> > > don't share the superblock. But behavior differs between nfs3 and nfs=
+4
+> > > due to how automounting works.
+> > >=20
+> > > Afaict, the callchain you're looking at in this scenario is:
+> > >=20
+> > > (1) nfs3
+> > >=20
+> > > (1.1) mount 127.0.0.1:/export/foo /mnt/foo -o context=3Dsystem_u:obje=
+ct_r:root_t:s0,nfsvers=3D3
+> > >       vfs_get_tree(fc_foo)
+> > >       -> fs_contex_operations->get_tree::nfs_get_tree(fc_foo)
+> > >             -> ctx->nfs_mod->rpc_ops->try_get_tree::nfs_try_get_tree(=
+fc_foo)
+> > >                -> nfs_get_tree_common(fc_foo)
+> > >                   -> sb_foo =3D sget_fc(fc_foo, nfs_compare_super, ..=
+.)
+> > >=20
+> > > (1.2) mount 127.0.0.1:/export/bar /mnt/bar -o context=3Dsystem_u:obje=
+ct_r:root_t:s0,nfsvers=3D3
+> > >       vfs_get_tree(fc_bar)
+> > >       -> fs_contex_operations->get_tree::nfs_get_tree(fc_bar)
+> > >             -> ctx->nfs_mod->rpc_ops->try_get_tree::nfs_try_get_tree(=
+fc_bar)
+> > >                -> nfs_get_tree_common(fc_bar)
+> > >                   -> sb_foo =3D sget_fc(fc_bar, nfs_compare_super, ..=
+.)
+> > >                      -> nfs_compare_super(sb_foo, fc_bar)
+> > >                         -> selinux_sb_mnt_opts_compat(sb_foo, fc_bar-=
+>security)
+> > >=20
+> > > And fc_bar->security is non-NULL and compatible with sb_foo's current
+> > > security settings. Fine.
+> > >=20
+> > > (2) nfs4
+> > >=20
+> > > But for nfs4 we're looking at a vastly more complicated callchain at
+> > > least looking at this from a local nfs:
+> > >=20
+> > > (2.1) mount 127.0.0.1:/export/foo /mnt/foo -o context=3Dsystem_u:obje=
+ct_r:root_t:s0
+> > >       vfs_get_tree(fc_foo)
+> > >       -> fs_contex_operations->get_tree::nfs_get_tree(fc_foo)
+> > >          -> if (!ctx->internal) branch is taken
+> > >             -> ctx->nfs_mod->rpc_ops->try_get_tree::nfs4_try_get_tree=
+(fc_foo)
+> > >                -> do_nfs4_mount(fc_foo)
+> > >                   -> fc_dup_foo =3D vfs_dup_fs_context(fc_foo)
+> > >                     -> security_fs_context_dup(fc_dup_foo, fc_foo)
+> > >                        {
+> > >                                 fc_dup_foo->security =3D kmemdup(fc_f=
+oo->security)
+> > >                        }
+> > >                        new_fs_context->internal =3D true
+> > >                   -> foo_mnt =3D fc_mount(fc_dup_foo)
+> > >                     -> vfs_get_tree(fc_dup_foo)
+> > >                        -> if (!ctx->internal) branch is _not_ taken
+> > >                           -> nfs_get_tree_common(fc_dup_foo)
+> > >                                  sb_foo =3D sget_fc(fc, nfs_compare_s=
+uper, ...)
+> > >                   -> mount_subtree()
+> > >                      -> vfs_path_lookup(..., "/export/foo", LOOKUP_AU=
+TOMOUNT)
+> > >                         -> nfs_d_automount("export")
+> > >                            -> fc_sub_foo =3D fs_context_for_submount(=
+)
+> > >                               {
+> > >                                       fc_sub_bar->security =3D NULL
+> >=20
+> >=20
+> > Should the above be:
+> >=20
+> > 					fc_sub_foo->security =3D NULL;
+>=20
+> Yes, typo for whatever reason.
+>=20
+> >=20
+> > ?
+> >=20
+> > If so, then with this patch, the above would no longer be NULL. We'd
+> > inherit the security context info from the reference dentry passed to
+> > fs_context_for_submount().
+> >=20
+> > >                               {
+> > >                            -> nfs4_submount(fc_sub_foo)
+> > >                               -> nfs4_do_submount(fc_sub_foo)
+> > >                                  -> vfs_get_tree(fc_sub_foo)
+> > >                                     -> nfs_get_tree_common(fc_sub_foo=
+)
+> > >                                        -> sb_foo_2 =3D sget_fc(fc_sub=
+_foo, nfs_compare_super, ...)
+> > >                         -> nfs_d_automount("foo")
+> > >                            -> fc_sub_foo =3D fs_context_for_submount(=
+)
+> > >                               {
+> > >                                       fc_sub_bar->security =3D NULL
+> >=20
+> > Ditto here -- that should be fc_sub_foo , correct?
+>=20
+> Yes, same. Was just a typo.
+>=20
+> > >                               {
+> > >                            -> nfs4_submount(fc_sub_foo)
+> > >                               -> nfs4_do_submount(fc_sub_foo)
+> > >                                  -> vfs_get_tree(fc_sub_foo)
+> > >                                     -> nfs_get_tree_common(fc_sub_foo=
+)
+> > >              |--------------------------> sb_foo_3 =3D sget_fc(fc_sub=
+_foo, nfs_compare_super, ...)
+> > >              |
+> > > As far as I can see you're already allocating 3 separate superblocks =
+of
+> > > which two are discarded and only one survives. Afaict, the one that
+> > > survives is _| the last one. Under the assumption that I'm correct,
+> > > where does the third superblock get it's selinux context from given t=
+hat
+> > > fc->security isn't even set during submount?
+> > >=20
+> >=20
+> > That's the problem this patch is intended to fix. It allows child mount=
+s
+> > to properly inherit security options from a parent dentry.
+>=20
+> Yeah, I'm aware. Your patch will ensure that the last superblock is
+> found again. But you're always going to allocate addititional
+> superblocks afaict. That's at least what I can gather from the logic.
+> Say you have:
+>=20
+> /export/a/b/c/d/e/foo   *(rw,insecure,no_subtree_check,no_root_squash)
+> /export/a/b/c/d/e/bar   *(rw,insecure,no_subtree_check,no_root_squash)
+>=20
+> you allocate 8 superblocks (it's always path components +1) of which you
+> immediately discard 7 after you finished. That's easily reproducible
+> with selinux completely disabled. I'm just astonished.
+>=20
 
-On Thu, 3 Aug 2023 at 11:03, Christian Brauner <brauner@kernel.org> wrote:
->
-> Only thing that's missing is exclusion with seek on directories
-> as that's the heinous part.
+Actually, your callchain might not be correct.
 
-Bah. I forgot about lseek entirely, because for some completely stupid
-reason I just thought "Oh, that will always get the lock".
+I think that you should only end up calling back into nfs_d_automount
+and creating a new sb when we cross a mount boundary. So if each of
+those intermediate directories represents a different fs, then you'll
+get a bunch of superblocks that will end up discarded, but I don't
+believe we create a new mount just for intermediate directories that we
+can walk.
 
-So I guess we'd just have to do that "unconditional fdget_dir()" thing
-in the header file after all, and make llseek() and ksys_lseek() use
-it.
+Basically the nfsv4 mount process is to create a (hidden) superblock for
+the root of the tree on the server, and then use the normal pathwalk
+scheme to walk down to the right dentry for the root. Once we get there
+we can prune everything above that point and we end up with a single sb.
 
-Bah. And then we'd still have to worry about any filesystem that
-allows 'read()' and 'write()' on the directory - which can also update
-f_pos.
 
-And yes, those exist. See at least 'adfs_dir_ops', and
-'ceph_dir_fops'. They may be broken, but people actually did do things
-like that historically, maybe there's a reason adfs and ceph allow it.
 
-End result: we can forget about fdget_dir(). We'd need to split
-FMODE_ATOMIC_POS into two instead.
+> >=20
+> > > And where is the context=3D%s output generated for mountinfo?
+> > >=20
+> >=20
+> > security_sb_show_options / selinux_sb_show_options
+> >=20
+> > > Is this a correct callchain?
+> > >=20
+> >=20
+> > I think it looks about right, but I didn't verify the details to the
+> > degree you have.
+> >=20
+> > > >=20
+> > > > Filling out fc->security with this new operation seems to fix that,=
+ but
+> > > > if you see a better way to do this, then I'm certainly open to the =
+idea.
+> > > >=20
+> > > > > In a worst case situation, we could always implement a flag *insi=
+de*
+> > > > > the SELinux code, similar to what has been done with 'lsm_set' he=
+re.
+> > > > >=20
+> > > >=20
+> > > > I'm fine with a different solution, if you see a better one. You'll=
+ have
+> > >=20
+> > > Independent of the modification in fs_context_for_submount() you migh=
+t want to
+> > > think about something like:
+> > >=20
+> > > static const struct fs_context_operations nfs4_fs_context_ops =3D {
+> > >       .free           =3D nfs4_free,
+> > >       .parse_param    =3D nfs4_parse_param,
+> > >       .get_tree       =3D nfs4_get_tree,
+> > > };
+> > >=20
+> > > static const struct fs_context_operations nfs4_fs_submount_ops =3D {
+> > >       .free           =3D nfs4_free_submount,
+> > >       .parse_param    =3D nfs4_parse_param_submount,
+> > >       .get_tree       =3D nfs4_get_tree_submount,
+> > > };
+> > >=20
+> > > static int nfs4_init_fs_context_submount(struct fs_context *fc)
+> > > {
+> > >         return 0;
+> > > }
+> > >=20
+> > > static int nfs4_fs_context_get_tree(struct fs_context *fc)
+> > > {
+> > >         if (fc->purpose =3D=3D FS_CONTEXT_FOR_SUBMOUNT)
+> > >                 fc->ops =3D &nfs4_fs_submount_ops;
+> > >         else
+> > >                 fc->ops =3D &nfs4_fs_context_ops;
+> > >         .
+> > >         .
+> > >         .
+> > > }
+> > >=20
+> > > which will make the callchain probably a lot to follow instead of waf=
+ting
+> > > through the same nested functions over and over. But just a thought.
+> >=20
+> > Sounds reasonable. I'd rather do that sort of cleanup afterward though,
+> > to make this patch easier to eventually backport.
+>=20
+> Yeah, sure.
 
-I don't think we have any free flags, but I didn't check. The ugly
-thing to do is to just special-case S_ISDIR. Not lovely, but whatever.
-
-So something like this instead? It's a smaller diff anyway, and it
-gets the crazy afds/ceph cases right too.
-
-And by "gets them right" I obviously mean "I didn't actually *TEST*
-any of this, so who knows..."
-
-             Linus
-
---000000000000e529550602090d09
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lkvhzg8u0>
-X-Attachment-Id: f_lkvhzg8u0
-
-IGZzL2ZpbGUuYyB8IDE4ICsrKysrKysrKysrKysrKysrLQogMSBmaWxlIGNoYW5nZWQsIDE3IGlu
-c2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9mcy9maWxlLmMgYi9mcy9m
-aWxlLmMKaW5kZXggMzVjNjJiNTRjOWQ2Li5kYmNhMjZlZjdhMDEgMTAwNjQ0Ci0tLSBhL2ZzL2Zp
-bGUuYworKysgYi9mcy9maWxlLmMKQEAgLTEwMzYsMTIgKzEwMzYsMjggQEAgdW5zaWduZWQgbG9u
-ZyBfX2ZkZ2V0X3Jhdyh1bnNpZ25lZCBpbnQgZmQpCiAJcmV0dXJuIF9fZmdldF9saWdodChmZCwg
-MCk7CiB9CiAKKy8qCisgKiBUcnkgdG8gYXZvaWQgZl9wb3MgbG9ja2luZy4gV2Ugb25seSBuZWVk
-IGl0IGlmIHRoZQorICogZmlsZSBpcyBtYXJrZWQgZm9yIEZNT0RFX0FUT01JQ19QT1MsIGFuZCBp
-dCBjYW4gYmUKKyAqIGFjY2Vzc2VkIG11bHRpcGxlIHdheXMuCisgKgorICogQWx3YXlzIGRvIGl0
-IGZvciBkaXJlY3RvcmllcywgYmVjYXVzZSBwaWRmZF9nZXRmZCgpCisgKiBjYW4gbWFrZSBhIGZp
-bGUgYWNjZXNzaWJsZSBldmVuIGlmIGl0IG90aGVyd2lzZSB3b3VsZAorICogbm90IGJlLCBhbmQg
-Zm9yIGRpcmVjdG9yaWVzIHRoaXMgaXMgYSBjb3JyZWN0bmVzcworICogaXNzdWUsIG5vdCBhICJQ
-T1NJWCByZXF1aXJlbWVudCIuCisgKi8KK3N0YXRpYyBpbmxpbmUgYm9vbCBmaWxlX25lZWRzX2Zf
-cG9zX2xvY2soc3RydWN0IGZpbGUgKmZpbGUpCit7CisJcmV0dXJuIChmaWxlLT5mX21vZGUgJiBG
-TU9ERV9BVE9NSUNfUE9TKSAmJgorCQkoZmlsZV9jb3VudChmaWxlKSA+IDEgfHwgU19JU0RJUihm
-aWxlX2lub2RlKGZpbGUpLT5pX21vZGUpKTsKK30KKwogdW5zaWduZWQgbG9uZyBfX2ZkZ2V0X3Bv
-cyh1bnNpZ25lZCBpbnQgZmQpCiB7CiAJdW5zaWduZWQgbG9uZyB2ID0gX19mZGdldChmZCk7CiAJ
-c3RydWN0IGZpbGUgKmZpbGUgPSAoc3RydWN0IGZpbGUgKikodiAmIH4zKTsKIAotCWlmIChmaWxl
-ICYmIChmaWxlLT5mX21vZGUgJiBGTU9ERV9BVE9NSUNfUE9TKSkgeworCWlmIChmaWxlICYmIGZp
-bGVfbmVlZHNfZl9wb3NfbG9jayhmaWxlKSkgewogCQl2IHw9IEZEUFVUX1BPU19VTkxPQ0s7CiAJ
-CW11dGV4X2xvY2soJmZpbGUtPmZfcG9zX2xvY2spOwogCX0K
---000000000000e529550602090d09--
+--=20
+Jeff Layton <jlayton@kernel.org>
