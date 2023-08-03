@@ -2,131 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 03F7C76DF78
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 06:45:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF58F76E0C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 09:03:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231599AbjHCEpq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Aug 2023 00:45:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43466 "EHLO
+        id S233828AbjHCHDh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Aug 2023 03:03:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229697AbjHCEpo (ORCPT
+        with ESMTP id S234055AbjHCHDL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Aug 2023 00:45:44 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86F5E2102
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 21:45:40 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1bc34b32785so4045205ad.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Aug 2023 21:45:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1691037940; x=1691642740;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2OW0P9FbDz0jEUlrcjINl0iKku3iiNF5P+iKjIDvOz8=;
-        b=ADJ+vfsHCojkPlo9ghBd3e2j79VQH5938lnT8BPSakzG8kvD8oW4DKosnKnsEJbJTC
-         PZqdaunc0/n8q/4Ss4WwPr8rNrf8GHP0FwPA4Qf/XiFcF0ehrHblXD2O7dj/pI77LgQk
-         /on81oA6vB1sVxKnnTtm4MI6BP9vKFF6j9Axff54MzseNdLJ7lkgZ3xYFSLb6NJLa95n
-         N62ZpBSHMhZnR5f6XQnZlLtPkFWCtMgUJUxkeDTUzZip4Y35JnWzgjUqWgZgYiQZhMIX
-         K00h1+DonariIV82oziBxYlnpohPt3cT1Z9rEygF4Ew2s640BvAynondir8pol5RyliS
-         wDrQ==
+        Thu, 3 Aug 2023 03:03:11 -0400
+Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com [209.85.160.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8EF33A87
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Aug 2023 00:02:51 -0700 (PDT)
+Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-187959a901eso804606fac.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Aug 2023 00:02:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691037940; x=1691642740;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2OW0P9FbDz0jEUlrcjINl0iKku3iiNF5P+iKjIDvOz8=;
-        b=UWILrDhF58MU5QZPehlQxmKLA+AfOgtozv80Ey9/yblkr5O8bEEhQPXOiCUQ1tnqj4
-         nearTIWkjkIEwjrQQzNl+5ishZ2xsJ754AhkmZBtHoisS0avigsI6wNmnHOQthj2daEK
-         KDWNl1IJRYIFFIdz/Ae4cAMxByjQ1Fn4y7PP98fmLBMAl7DgClMKuZAxAxnTzqykV5jq
-         zUo7uaemUvO+tEyPCfiVp4gSUw94RdO10pyiSDELWndEmYQG7XlEnYz+9KPBy65MU9Xp
-         kF6t65e9owDw2NQo0Xv7/eroTSQeXnhDymIc6HNSj9uVTQ7y4XKXJfOoMuNTaxB+sZwe
-         80tA==
-X-Gm-Message-State: ABy/qLZmXWm/FmA6klQmXiGvvP5ind2oC9/hJN76pddGnPELHjZ9NZcE
-        pyXHjyf7MSah4wMwS6O27u2/FA==
-X-Google-Smtp-Source: APBJJlHPygn+X6jDwzmrzt6ZO0JcBeTMqOj3nxPVktoQoX+9TCQ11QIROnUHfaf+U7ar3DlBslLa/w==
-X-Received: by 2002:a17:902:eccf:b0:1b8:6b17:9093 with SMTP id a15-20020a170902eccf00b001b86b179093mr19729248plh.1.1691037939975;
-        Wed, 02 Aug 2023 21:45:39 -0700 (PDT)
-Received: from [10.255.204.88] ([139.177.225.248])
-        by smtp.gmail.com with ESMTPSA id z18-20020a170903019200b001bba7aab838sm13244306plg.162.2023.08.02.21.45.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Aug 2023 21:45:39 -0700 (PDT)
-Message-ID: <9442a542-957a-5b88-9a50-a55c9a7115ee@bytedance.com>
-Date:   Thu, 3 Aug 2023 12:45:34 +0800
+        d=1e100.net; s=20221208; t=1691046171; x=1691650971;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ub/xbfPlZpojg8/OoN0aL5GP8HdKwgPpTd7mwazWUX8=;
+        b=ELl3l8dL+3nRrNhr3ZE/DZQvIFz2Hsi+9YRfCoXG18rcrJBQAMwPAYUr1LLUfqdGSe
+         5q8ceRPPtxsa5u6wwx3ckagdV8Jt6dB111YRob5SCYOHwImbHyLyUhVIQ9V/zcxn+PoK
+         sCfvgvhOv5FFZqoOM/4YYm44obWPRiZ5aaayJvdAIBr2D+ylbJcLqaRFbZeKOGZDRPvV
+         lHb3FRlY2WQtHNjaXaXsid4OTTsy+ehq3FLbzBxmFOjvRxgBNlQOJyfN2Qjbix92Idls
+         O8veEaZycnVbdnRMMkPQrPJXpQCDCyG9jT7g9dSJEx8FUOszxqflxovv6ddf0LA2GIU+
+         /tbg==
+X-Gm-Message-State: ABy/qLYIpyovXISosnO1szcSZ8cC01e6QJZIGzzK3qwO5KEVtwAND6G7
+        O2qSd3OXukRvehKex5d/0VQJlgUQNfdxeNcQ+3sH3/ADXt6M
+X-Google-Smtp-Source: APBJJlHC+53K0z0PJNrt9FGKz8CCrzg+6kRSqTZAuXgL9WmfuW8+o8NjzldBQLmzKrgdJWqmCKM9XIOCbsv0tsMZkMNm9yf2tSH7
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.13.0
-Subject: Re: [PATCH 1/3] fuse: invalidate page cache pages before direct write
-To:     Hao Xu <hao.xu@linux.dev>, fuse-devel@lists.sourceforge.net,
-        miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm,
-        Wanpeng Li <wanpengli@tencent.com>, cgxu519@mykernel.net
-References: <20230801080647.357381-1-hao.xu@linux.dev>
- <20230801080647.357381-2-hao.xu@linux.dev>
-From:   Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-In-Reply-To: <20230801080647.357381-2-hao.xu@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6870:d899:b0:1a6:d518:f72c with SMTP id
+ dv25-20020a056870d89900b001a6d518f72cmr18423230oab.11.1691046171028; Thu, 03
+ Aug 2023 00:02:51 -0700 (PDT)
+Date:   Thu, 03 Aug 2023 00:02:50 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000052b50a0601ff5eb3@google.com>
+Subject: [syzbot] Monthly ntfs report (Aug 2023)
+From:   syzbot <syzbot+listc96f9b68a1099993c28c@syzkaller.appspotmail.com>
+To:     anton@tuxera.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023/8/1 16:06, Hao Xu wrote:
-> From: Hao Xu <howeyxu@tencent.com>
-> 
-> In FOPEN_DIRECT_IO, page cache may still be there for a file since
-> private mmap is allowed. Direct write should respect that and invalidate
-> the corresponding pages so that page cache readers don't get stale data.
-> 
-> Signed-off-by: Hao Xu <howeyxu@tencent.com>
-> ---
->   fs/fuse/file.c | 12 +++++++++++-
->   1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index bc4115288eec..3d320fc99859 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -1465,7 +1465,8 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
->   	int write = flags & FUSE_DIO_WRITE;
->   	int cuse = flags & FUSE_DIO_CUSE;
->   	struct file *file = io->iocb->ki_filp;
-> -	struct inode *inode = file->f_mapping->host;
-> +	struct address_space *mapping = file->f_mapping;
-> +	struct inode *inode = mapping->host;
->   	struct fuse_file *ff = file->private_data;
->   	struct fuse_conn *fc = ff->fm->fc;
->   	size_t nmax = write ? fc->max_write : fc->max_read;
-> @@ -1477,6 +1478,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
->   	int err = 0;
->   	struct fuse_io_args *ia;
->   	unsigned int max_pages;
-> +	bool fopen_direct_io = ff->open_flags & FOPEN_DIRECT_IO;
->   
->   	max_pages = iov_iter_npages(iter, fc->max_pages);
->   	ia = fuse_io_alloc(io, max_pages);
-> @@ -1491,6 +1493,14 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
->   			inode_unlock(inode);
->   	}
->   
-> +	if (fopen_direct_io && write) {
-> +		res = invalidate_inode_pages2_range(mapping, idx_from, idx_to);
-> +		if (res) {
-> +			fuse_io_free(ia);
-> +			return res;
-> +		}
-> +	}
-> +
->   	io->should_dirty = !write && user_backed_iter(iter);
->   	while (count) {
->   		ssize_t nres;
+Hello ntfs maintainers/developers,
 
-Tested-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+This is a 31-day syzbot report for the ntfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/ntfs
 
-Thanks,
-Jiachen
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 25 issues are still open and 7 have been fixed so far.
+
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  3467    Yes   possible deadlock in ntfs_read_folio
+                   https://syzkaller.appspot.com/bug?extid=8ef76b0b1f86c382ad37
+<2>  2820    Yes   kernel BUG at fs/ntfs/aops.c:LINE!
+                   https://syzkaller.appspot.com/bug?extid=6a5a7672f663cce8b156
+<3>  1153    Yes   kernel BUG in __ntfs_grab_cache_pages
+                   https://syzkaller.appspot.com/bug?extid=01b3ade7c86f7dd584d7
+<4>  548     Yes   possible deadlock in map_mft_record
+                   https://syzkaller.appspot.com/bug?extid=cb1fdea540b46f0ce394
+<5>  348     Yes   KASAN: slab-out-of-bounds Read in ntfs_readdir
+                   https://syzkaller.appspot.com/bug?extid=d36761079ac1b585a6df
+<6>  294     No    KASAN: use-after-free Read in ntfs_test_inode
+                   https://syzkaller.appspot.com/bug?extid=2751da923b5eb8307b0b
+<7>  184     No    possible deadlock in __ntfs_clear_inode
+                   https://syzkaller.appspot.com/bug?extid=5ebb8d0e9b8c47867596
+<8>  24      Yes   kernel BUG in ntfs_lookup_inode_by_name
+                   https://syzkaller.appspot.com/bug?extid=d532380eef771ac0034b
+<9>  17      Yes   kernel BUG in ntfs_iget
+                   https://syzkaller.appspot.com/bug?extid=d62e6bd2a2d05103d105
+<10> 13      Yes   KASAN: use-after-free Read in ntfs_attr_find (2)
+                   https://syzkaller.appspot.com/bug?extid=ef50f8eb00b54feb7ba2
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
