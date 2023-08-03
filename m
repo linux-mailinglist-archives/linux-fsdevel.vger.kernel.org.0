@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 16CE576EB7F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 16:01:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF6F976EB92
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 16:01:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236550AbjHCOBI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Aug 2023 10:01:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47342 "EHLO
+        id S236627AbjHCOB3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Aug 2023 10:01:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236373AbjHCOAp (ORCPT
+        with ESMTP id S236559AbjHCOBV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Aug 2023 10:00:45 -0400
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A52B2137
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Aug 2023 07:00:25 -0700 (PDT)
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        Thu, 3 Aug 2023 10:01:21 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F8492101
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Aug 2023 07:00:43 -0700 (PDT)
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id CAE923F36D
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Aug 2023 14:00:21 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 2C7FC4247E
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Aug 2023 14:00:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1691071221;
-        bh=9W3amFuCFaMdLEZWgVp07pDZ7km3dCVDUs8gQZd55IA=;
+        s=20210705; t=1691071225;
+        bh=mZe9Srkw8mk9+UpxCgBj79JVdzJ8PXD8OnJawp13C+4=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=ZfLQ7d/coFIGTAiabuzKvyh3jTxGGdSP6hTasz+TsZZyZzVB81Os76ZVo+5a5/fMr
-         hPyvjFYHBC85tbd6bE0EnniQL/x89N/gQS7Iraayrp4V+PVE/kAt3REiA3gBvV/jO7
-         0vVxvIK1nV/3fP30/m4btNFvH/CeFtfXb76LVeclv8IP1ADgbry+Lt4PXXZ5UE1E9l
-         5objCIIQeiuq1yWrKmNO3HnpOP3CJQfezFh3WIoUBebnCx0jDaIiT27JagFAjNivHs
-         BBdtCEc70vBWU9kz873R2lWp8pfYWriYgFnezd1xdRt0S3X2qDrxTCl5NR7gxOo1sM
-         NNbu+kDHs9OaA==
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-521a38098faso678346a12.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Aug 2023 07:00:21 -0700 (PDT)
+         MIME-Version;
+        b=hQ94tLgZhZxjBhm3kAse5zvk4HUg01EyK4tg2hWDiMgenUHO5qFaLo5onT4JteuHv
+         xnCpv2WTPw9pWa25KpIIUIT5meatWbYpry//1uJqevvF8hlql3cYwaB1kgGwqFw/rs
+         hkRbPguOIazISBDu7CmQrcGRp2XUIk+TmL6wwGRe4H4rq1Stbzyb2pBxAUTpC2AV5Z
+         nOiZteY506lnZWNZ9JPdHaYE4K2wb7ja6yDb5QfNfMWOQ7+Yre21MEJ5kNj6KMs4+0
+         dOvrKEioawt5/qph/tgILwHBbpoe5rZB+Fg/kDYvl+Ji1lJ9M3I69RXrwlA8+p5K/x
+         1vLCBDyy0/2Uw==
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5218b9647a8so681779a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Aug 2023 07:00:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691071220; x=1691676020;
+        d=1e100.net; s=20221208; t=1691071223; x=1691676023;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9W3amFuCFaMdLEZWgVp07pDZ7km3dCVDUs8gQZd55IA=;
-        b=cBOwf4Awu1DuMoXxOes4PT7vz2ELhSVT3vt29Hb3YXLTRVe2bI/kJKuIklqyxgJZVR
-         jNGzKbHIhw8B6cLA5BYc/eJbnY7IYD5FUCbDlAd+QBto1nAh57G8ygUr31+SxYN6dt7q
-         4RXoCtw7G+ItjJj+YOt5MMcSvv+T0TS+G7guk+RWIZv9h6iHvAq/zxojbKIw1mIa8a28
-         Uz8upWQ7Mw+vY9N4lVb7Uw8qw4aDSExW2MbAeSt8ZTe3pZ9hmpGmlL4zJMaf6RyrQcBL
-         wrtDHycsP3Ev+9xFt+ITZzC2jqylz31hB8yH236fdota35OWGXR9gsnj8hgfhSXudTFC
-         XCpg==
-X-Gm-Message-State: ABy/qLYPDbLIrRDR9lbnH+noDZ8g9uBE7t2mynIB/64zAnHZIAyYUtjT
-        Brq3/lEe9yWTBr7fovnTU2o3/pnPLPjOobi6vK1IR/2ll+xoZf0YcFvvFIV2xUIvYpGTyevOWoF
-        6X7LAqV8i9PmfNPz6nIjtB0D5m0Q50ECgKzeYFpI1efc=
-X-Received: by 2002:a50:fa8d:0:b0:522:38cb:d8cb with SMTP id w13-20020a50fa8d000000b0052238cbd8cbmr6675512edr.20.1691071220748;
-        Thu, 03 Aug 2023 07:00:20 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlFSUBGl00xYVgZu1n5QXjWGAchYdp2zZyXd+HoKtwgE5xEvzgdLvZUVhlHU8FZGINndDOCSng==
-X-Received: by 2002:a50:fa8d:0:b0:522:38cb:d8cb with SMTP id w13-20020a50fa8d000000b0052238cbd8cbmr6675499edr.20.1691071220564;
-        Thu, 03 Aug 2023 07:00:20 -0700 (PDT)
+        bh=mZe9Srkw8mk9+UpxCgBj79JVdzJ8PXD8OnJawp13C+4=;
+        b=a/jzQ817lcdcElDi3qGr5DjLPMz54aYPT1hs/hFNrc7r5BzLcv8SvL41F7K80vkohm
+         3SVkyraA8RJ/182Fzwy/vj4Ukys0NhYyFVxNiGLeTBQUOKd14sUHV47X+FlBFPydUrGd
+         KaR+536i1Lbd9W7C0+bj1WnRLhQHHXZ4i7taohC3zNf+UKNUWvOJ/6/iEvSxwxw0qLiD
+         534jPgxuMakSj3iPVYlXJQZsIOL1P0eA27gGNP0E/kN/Qaxa5UAnxb6SPHsZmjwDHHVT
+         psxmQ0Z5ptx37iEAnUxQNqPMNmVspw+94Yx8yE7ut1YmInkorj2ZL05/NDWFR4jTh1eY
+         fqyQ==
+X-Gm-Message-State: AOJu0YxrHJWAkr/huLlUoY/pSZ+4/wXMNDZiUZnPxe9fFYtt/opszsi3
+        nUZ2JnoMFIARS4pumSXz/OHFHotta9ifNhVea7FSAs/9t9wCMOHgLPL46p8dWizj2daXFm3YRUY
+        rDncM0NvK5trM1LG11msiaq1ZcmdJioFXaF/G+BpRuFw=
+X-Received: by 2002:aa7:dbda:0:b0:523:f29:a912 with SMTP id v26-20020aa7dbda000000b005230f29a912mr1338861edt.21.1691071223232;
+        Thu, 03 Aug 2023 07:00:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHNXClq9w1vu3j+/MCpqQ1qf7yVb7U3H47Lv374blmqMtgY6wWk79A9/cAXoEkoeyvY03jUKw==
+X-Received: by 2002:aa7:dbda:0:b0:523:f29:a912 with SMTP id v26-20020aa7dbda000000b005230f29a912mr1338852edt.21.1691071223066;
+        Thu, 03 Aug 2023 07:00:23 -0700 (PDT)
 Received: from amikhalitsyn.local (dslb-088-066-182-192.088.066.pools.vodafone-ip.de. [88.66.182.192])
-        by smtp.gmail.com with ESMTPSA id bc21-20020a056402205500b0052229882fb0sm10114822edb.71.2023.08.03.07.00.19
+        by smtp.gmail.com with ESMTPSA id bc21-20020a056402205500b0052229882fb0sm10114822edb.71.2023.08.03.07.00.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Aug 2023 07:00:20 -0700 (PDT)
+        Thu, 03 Aug 2023 07:00:22 -0700 (PDT)
 From:   Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 To:     xiubli@redhat.com
 Cc:     brauner@kernel.org, stgraber@ubuntu.com,
@@ -65,133 +65,72 @@ Cc:     brauner@kernel.org, stgraber@ubuntu.com,
         Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
         Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v8 04/12] ceph: add enable_unsafe_idmap module parameter
-Date:   Thu,  3 Aug 2023 15:59:47 +0200
-Message-Id: <20230803135955.230449-5-aleksandr.mikhalitsyn@canonical.com>
+Subject: [PATCH v8 05/12] ceph: pass an idmapping to mknod/symlink/mkdir
+Date:   Thu,  3 Aug 2023 15:59:48 +0200
+Message-Id: <20230803135955.230449-6-aleksandr.mikhalitsyn@canonical.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230803135955.230449-1-aleksandr.mikhalitsyn@canonical.com>
 References: <20230803135955.230449-1-aleksandr.mikhalitsyn@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This parameter is used to decide if we allow
-to perform IO on idmapped mount in case when MDS lacks
-support of CEPHFS_FEATURE_HAS_OWNER_UIDGID feature.
+From: Christian Brauner <brauner@kernel.org>
 
-In this case we can't properly handle MDS permission
-checks and if UID/GID-based restrictions are enabled
-on the MDS side then IO requests which go through an
-idmapped mount may fail with -EACCESS/-EPERM.
-Fortunately, for most of users it's not a case and
-everything should work fine. But we put work "unsafe"
-in the module parameter name to warn users about
-possible problems with this feature and encourage
-update of cephfs MDS.
+Enable mknod/symlink/mkdir iops to handle idmapped mounts.
+This is just a matter of passing down the mount's idmapping.
 
 Cc: Xiubo Li <xiubli@redhat.com>
 Cc: Jeff Layton <jlayton@kernel.org>
 Cc: Ilya Dryomov <idryomov@gmail.com>
 Cc: ceph-devel@vger.kernel.org
-Suggested-by: Stéphane Graber <stgraber@ubuntu.com>
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 ---
- fs/ceph/mds_client.c | 28 +++++++++++++++++++++-------
- fs/ceph/mds_client.h |  2 ++
- fs/ceph/super.c      |  5 +++++
- 3 files changed, 28 insertions(+), 7 deletions(-)
+v4:
+	- call mnt_idmap_get
+v7:
+	- don't pass idmapping for ceph_rename (no need)
+---
+ fs/ceph/dir.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 7d3106d3b726..d8097e84a5ee 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2949,6 +2949,8 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
- 	int ret;
- 	bool legacy = !(session->s_con.peer_features & CEPH_FEATURE_FS_BTIME);
- 	u16 request_head_version = mds_supported_head_version(session);
-+	kuid_t caller_fsuid = req->r_cred->fsuid;
-+	kgid_t caller_fsgid = req->r_cred->fsgid;
- 
- 	ret = set_request_path_attr(mdsc, req->r_inode, req->r_dentry,
- 			      req->r_parent, req->r_path1, req->r_ino1.ino,
-@@ -3044,12 +3046,24 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
- 
- 	if ((req->r_mnt_idmap != &nop_mnt_idmap) &&
- 	    !test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID, &session->s_features)) {
--		pr_err_ratelimited_client(cl,
--			"idmapped mount is used and CEPHFS_FEATURE_HAS_OWNER_UIDGID"
--			" is not supported by MDS. Fail request with -EIO.\n");
-+		if (enable_unsafe_idmap) {
-+			pr_warn_once_client(cl,
-+				"idmapped mount is used and CEPHFS_FEATURE_HAS_OWNER_UIDGID"
-+				" is not supported by MDS. UID/GID-based restrictions may"
-+				" not work properly.\n");
-+
-+			caller_fsuid = from_vfsuid(req->r_mnt_idmap, &init_user_ns,
-+						   VFSUIDT_INIT(req->r_cred->fsuid));
-+			caller_fsgid = from_vfsgid(req->r_mnt_idmap, &init_user_ns,
-+						   VFSGIDT_INIT(req->r_cred->fsgid));
-+		} else {
-+			pr_err_ratelimited_client(cl,
-+				"idmapped mount is used and CEPHFS_FEATURE_HAS_OWNER_UIDGID"
-+				" is not supported by MDS. Fail request with -EIO.\n");
- 
--		ret = -EIO;
--		goto out_err;
-+			ret = -EIO;
-+			goto out_err;
-+		}
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index b752ed3ccdf0..397656ae7787 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -952,6 +952,7 @@ static int ceph_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 	req->r_parent = dir;
+ 	ihold(dir);
+ 	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
++	req->r_mnt_idmap = mnt_idmap_get(idmap);
+ 	req->r_args.mknod.mode = cpu_to_le32(mode);
+ 	req->r_args.mknod.rdev = cpu_to_le32(rdev);
+ 	req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL |
+@@ -1067,6 +1068,7 @@ static int ceph_symlink(struct mnt_idmap *idmap, struct inode *dir,
  	}
  
- 	/*
-@@ -3094,9 +3108,9 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
- 	lhead->mdsmap_epoch = cpu_to_le32(mdsc->mdsmap->m_epoch);
- 	lhead->op = cpu_to_le32(req->r_op);
- 	lhead->caller_uid = cpu_to_le32(from_kuid(&init_user_ns,
--						  req->r_cred->fsuid));
-+						  caller_fsuid));
- 	lhead->caller_gid = cpu_to_le32(from_kgid(&init_user_ns,
--						  req->r_cred->fsgid));
-+						  caller_fsgid));
- 	lhead->ino = cpu_to_le64(req->r_deleg_ino);
- 	lhead->args = req->r_args;
- 
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 8f683e8203bd..0945ae4cf3c5 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -619,4 +619,6 @@ static inline int ceph_wait_on_async_create(struct inode *inode)
- extern int ceph_wait_on_conflict_unlink(struct dentry *dentry);
- extern u64 ceph_get_deleg_ino(struct ceph_mds_session *session);
- extern int ceph_restore_deleg_ino(struct ceph_mds_session *session, u64 ino);
-+
-+extern bool enable_unsafe_idmap;
- #endif
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 49fd17fbba9f..18bfdfd48cef 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -1680,6 +1680,11 @@ static const struct kernel_param_ops param_ops_mount_syntax = {
- module_param_cb(mount_syntax_v1, &param_ops_mount_syntax, &mount_support, 0444);
- module_param_cb(mount_syntax_v2, &param_ops_mount_syntax, &mount_support, 0444);
- 
-+bool enable_unsafe_idmap = false;
-+module_param(enable_unsafe_idmap, bool, 0644);
-+MODULE_PARM_DESC(enable_unsafe_idmap,
-+		 "Allow to use idmapped mounts with MDS without CEPHFS_FEATURE_HAS_OWNER_UIDGID");
-+
- module_init(init_ceph);
- module_exit(exit_ceph);
- 
+ 	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
++	req->r_mnt_idmap = mnt_idmap_get(idmap);
+ 	req->r_dentry = dget(dentry);
+ 	req->r_num_caps = 2;
+ 	req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL |
+@@ -1146,6 +1148,7 @@ static int ceph_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 	req->r_parent = dir;
+ 	ihold(dir);
+ 	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
++	req->r_mnt_idmap = mnt_idmap_get(idmap);
+ 	req->r_args.mkdir.mode = cpu_to_le32(mode);
+ 	req->r_dentry_drop = CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL |
+ 			     CEPH_CAP_XATTR_EXCL;
 -- 
 2.34.1
 
