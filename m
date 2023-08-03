@@ -2,257 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 20D5476EE85
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 17:45:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B03076EE89
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 17:46:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237223AbjHCPpf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Aug 2023 11:45:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36240 "EHLO
+        id S235291AbjHCPqR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Aug 2023 11:46:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237217AbjHCPpd (ORCPT
+        with ESMTP id S235159AbjHCPqQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Aug 2023 11:45:33 -0400
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD0973582;
-        Thu,  3 Aug 2023 08:45:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=pcNm2tGAu/WGE5Yp4ptBPcu3Aj2mc+V2YQ93YaHjPbA=; b=MGgek6bKJYJGB6q5NaDjncOFWW
-        w8Pb7gdLYpWPD6Wm7XenLRfiXnr20dYUMXu0Z9DYdbQzbNCEaUsaK8D5W7OaHy5E5tjHyxRKiHkjX
-        De05WpGEvvaSETbptTeKmLkBzZOZaAP3q/lTbCcAjHI9LRKTsnvpovZJZv3vmVJEzsYUqEIQvZJzN
-        981hVxC8SCPGWOUeQ4bZcDB9fq5rZzUDjOBs763miMPNuEqbYFp+rQAFmr/spDH1XuLaHZrqx8Tvt
-        foC9wwEJ0wESByQDE+UYld38iu8TlsvKlWjTQseOoP3lXKsZ6Gm0pl5Aiu5ZEyi7a3AThxpYsLY1Z
-        2wi8vWgw==;
-Received: from [201.92.22.215] (helo=localhost)
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-        id 1qRaW0-00Btyc-I0; Thu, 03 Aug 2023 17:45:29 +0200
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-To:     linux-btrfs@vger.kernel.org
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-fsdevel@vger.kernel.org, kernel@gpiccoli.net,
-        gpiccoli@igalia.com, kernel-dev@igalia.com, anand.jain@oracle.com,
-        david@fromorbit.com, kreijack@libero.it, johns@valvesoftware.com,
-        ludovico.denittis@collabora.com, quwenruo.btrfs@gmx.com,
-        wqu@suse.com, vivek@collabora.com
-Subject: [PATCH 3/3] btrfs: Add parameter to force devices behave as single-dev ones
-Date:   Thu,  3 Aug 2023 12:43:41 -0300
-Message-ID: <20230803154453.1488248-4-gpiccoli@igalia.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230803154453.1488248-1-gpiccoli@igalia.com>
-References: <20230803154453.1488248-1-gpiccoli@igalia.com>
+        Thu, 3 Aug 2023 11:46:16 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FA9E2690
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Aug 2023 08:46:15 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2b962535808so16977851fa.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Aug 2023 08:46:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1691077573; x=1691682373;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MoBcdPCRF0XjTgUM5UPr0xqiAJMOpt5c2TYsrfgKub0=;
+        b=IdyGn6BYXmKPfm91vysECDFly9PZjhmO/0Pha8RvsQLI8Kdsrr3UJMXLMsAsPdszxn
+         6NwC8vWfRCwkQRhnyIAAo+kK83DpexZhmwTIhmoKYcBcfY9xkT7SRloiZsVJXrsIVFqp
+         Od2OqBAVGgK1RMwFv5eCrhjRSqPUdAvw9SXv0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691077573; x=1691682373;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MoBcdPCRF0XjTgUM5UPr0xqiAJMOpt5c2TYsrfgKub0=;
+        b=MjqiD9pOefFwTnsd4cwMRcEdatWFGCUhT1SZtKPeAZnMbYotuEFsCUrN+XDLo3u3sZ
+         lfaPDB740sm3KDJAyzmF1/2wmxFBiBHY5RvnekXzmnwM7R7Wi0K8kd7aCH66JdG1wN6x
+         aHzpBeqGUiABpfpsl6t0gKIn1TIx8q6EobtmhUdUfG4BKxWTkhBD8qajHmh7c7GDR+cx
+         UBSbnz5CuH7b4tJhe591DSifvorofUh01WVntBvMEANwxdIZ7KzbhF/RZ7gssMhzvTzI
+         dXIth0ZQ6r/1G6F3w3+tR4UInYV/nZI7zgWdg6et71DGCtT5609JpZq0h278AXufISyT
+         YqZQ==
+X-Gm-Message-State: ABy/qLYYj8J4IMPLvexOM5nQBAWRhVHw+EmEyoOGd+2VqkfgoGdsQYeC
+        YBvw3EGBDlmtwFDsz3y1l22CcTgU90rlBiHIrVbjsFTb
+X-Google-Smtp-Source: APBJJlHaJk5QSNUQ5FpftiYS/jtFMTiFxa6jqefgr3Fm8ghHVB+TBFBU1XydO5iopymv3gC5vT17Mg==
+X-Received: by 2002:a2e:86c8:0:b0:2b9:c676:434a with SMTP id n8-20020a2e86c8000000b002b9c676434amr7930298ljj.15.1691077573050;
+        Thu, 03 Aug 2023 08:46:13 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id u4-20020a2e2e04000000b002b9b27cf729sm22926lju.52.2023.08.03.08.46.12
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Aug 2023 08:46:12 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2b9f48b6796so16539521fa.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Aug 2023 08:46:12 -0700 (PDT)
+X-Received: by 2002:a2e:3c0e:0:b0:2b6:cdfb:d06a with SMTP id
+ j14-20020a2e3c0e000000b002b6cdfbd06amr7765701lja.22.1691077571652; Thu, 03
+ Aug 2023 08:46:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230724-vfs-fdget_pos-v1-1-a4abfd7103f3@kernel.org>
+ <CAHk-=whfJhag+iEscftpVq=dHTeL7rQopCvH+Pcs8vJHCGNvXQ@mail.gmail.com>
+ <20230724-pyjama-papier-9e4cdf5359cb@brauner> <CAHk-=wj2XZqex6kzz7SbdVHwP9fFoOvHSzHj--0KuxyrVO+3-w@mail.gmail.com>
+ <20230803095311.ijpvhx3fyrbkasul@f>
+In-Reply-To: <20230803095311.ijpvhx3fyrbkasul@f>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 3 Aug 2023 08:45:54 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whQ51+rKrnUYeuw3EgJMv2RJrwd7UO9qCgOkUdJzcirWw@mail.gmail.com>
+Message-ID: <CAHk-=whQ51+rKrnUYeuw3EgJMv2RJrwd7UO9qCgOkUdJzcirWw@mail.gmail.com>
+Subject: Re: [PATCH] file: always lock position
+To:     Mateusz Guzik <mjguzik@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Seth Forshee <sforshee@kernel.org>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: multipart/mixed; boundary="000000000000f2f075060206ada9"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Devices with the single-dev feature enabled in their superblock are
-allowed to be mounted regardless of their fsid being already present
-in the system - the goal of such feature is to have the device in a
-single mode with no advanced features, like RAID; it is a compat_ro
-feature present since kernel v6.5.
+--000000000000f2f075060206ada9
+Content-Type: text/plain; charset="UTF-8"
 
-The thing is that such feature comes in the form of a superblock flag,
-so devices that doesn't have it set, can't use the feature of course.
-The Steam Deck console aims to have block-based updates in its
-RO rootfs, and given its A/B partition nature, both block devices are
-required to be the same for their hash to match, so it's not possible
-to compare two images if one has this feature set in the superblock,
-while the other has not. So if we end-up having two old images, we
-couldn't make use of the single-dev feature to mount both at same time,
-or if we set the flag in one of them to enable the feature, we break
-the block-based hash comparison.
+On Thu, 3 Aug 2023 at 02:53, Mateusz Guzik <mjguzik@gmail.com> wrote:
+>
+> So yes, atomics remain expensive on x86-64 even on a very moden uarch
+> and their impact is measurable in a syscall like read.
 
-We propose here a module parameter approach to allow forcing any given
-path (to a device holding a btrfs filesystem) behaving as a single-dev
-device. That would useful for cases like the Steam Deck one, or for
-debug purposes. If the filesystem already has the compat_ro flag set
-in its superblock, the parameter is no-op.
+Well, a patch like this should fix it.
 
-Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
----
- fs/btrfs/disk-io.c |  2 +-
- fs/btrfs/ioctl.c   |  6 +++---
- fs/btrfs/super.c   |  5 +++++
- fs/btrfs/super.h   |  2 ++
- fs/btrfs/volumes.c | 45 ++++++++++++++++++++++++++++++++++++++++++---
- fs/btrfs/volumes.h |  2 ++
- 6 files changed, 55 insertions(+), 7 deletions(-)
+I intentionally didn't bother with the alpha osf version of readdir,
+because nobody cares, but I guess we could do this in the header too.
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 455fa4949c98..8df1defa1ede 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -2378,7 +2378,7 @@ int btrfs_validate_super(struct btrfs_fs_info *fs_info,
- 	 * in the disk. That's the reason we're required here to compare the
- 	 * fsid with the metadata_uuid for such devices.
- 	 */
--	if (btrfs_fs_compat_ro(fs_info, SINGLE_DEV))
-+	if (fs_info->fs_devices->single_dev)
- 		fsid = fs_info->fs_devices->metadata_uuid;
- 	else
- 		fsid = fs_info->fs_devices->fsid;
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 56703d87def9..4fc63e802b08 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -2678,7 +2678,7 @@ static long btrfs_ioctl_rm_dev_v2(struct file *file, void __user *arg)
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
- 
--	if (btrfs_fs_compat_ro(fs_info, SINGLE_DEV)) {
-+	if (fs_info->fs_devices->single_dev) {
- 		btrfs_err(fs_info,
- 			  "device removal is unsupported on SINGLE_DEV devices\n");
- 		return -EINVAL;
-@@ -2750,7 +2750,7 @@ static long btrfs_ioctl_rm_dev(struct file *file, void __user *arg)
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
- 
--	if (btrfs_fs_compat_ro(fs_info, SINGLE_DEV)) {
-+	if (fs_info->fs_devices->single_dev) {
- 		btrfs_err(fs_info,
- 			  "device removal is unsupported on SINGLE_DEV devices\n");
- 		return -EINVAL;
-@@ -3280,7 +3280,7 @@ static long btrfs_ioctl_dev_replace(struct btrfs_fs_info *fs_info,
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
- 
--	if (btrfs_fs_compat_ro(fs_info, SINGLE_DEV)) {
-+	if (fs_info->fs_devices->single_dev) {
- 		btrfs_err(fs_info,
- 			  "device removal is unsupported on SINGLE_DEV devices\n");
- 		return -EINVAL;
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index ee87189b1ccd..3cfc9c63360f 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -62,6 +62,11 @@
- #define CREATE_TRACE_POINTS
- #include <trace/events/btrfs.h>
- 
-+char *force_single_dev;
-+module_param(force_single_dev, charp, 0444);
-+MODULE_PARM_DESC(force_single_dev,
-+	"User list of devices to force acting as single-dev (comma separated)");
-+
- static const struct super_operations btrfs_super_ops;
- 
- /*
-diff --git a/fs/btrfs/super.h b/fs/btrfs/super.h
-index 8dbb909b364f..c855127600c8 100644
---- a/fs/btrfs/super.h
-+++ b/fs/btrfs/super.h
-@@ -3,6 +3,8 @@
- #ifndef BTRFS_SUPER_H
- #define BTRFS_SUPER_H
- 
-+extern char *force_single_dev;
-+
- int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
- 			unsigned long new_flags);
- int btrfs_sync_fs(struct super_block *sb, int wait);
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 433a490f2de8..06c5bad77bdf 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -12,6 +12,7 @@
- #include <linux/uuid.h>
- #include <linux/list_sort.h>
- #include <linux/namei.h>
-+#include <linux/string.h>
- #include "misc.h"
- #include "ctree.h"
- #include "extent_map.h"
-@@ -865,6 +866,7 @@ static noinline struct btrfs_device *device_list_add(const char *path,
- 			return ERR_CAST(fs_devices);
- 
- 		fs_devices->fsid_change = fsid_change_in_progress;
-+		fs_devices->single_dev = single_dev;
- 
- 		mutex_lock(&fs_devices->device_list_mutex);
- 		list_add(&fs_devices->fs_list, &fs_uuids);
-@@ -1399,6 +1401,45 @@ int btrfs_forget_devices(dev_t devt)
- 	return ret;
- }
- 
-+/*
-+ * SINGLE_DEV is a compat_ro feature, but we also have the force_single_dev
-+ * module parameter in order to allow forcing a device to behave as single-dev,
-+ * so old filesystems could also get mounted in a same-fsid mounting way.
-+ */
-+
-+static bool is_single_dev(const char *path, struct btrfs_super_block *sb)
-+{
-+
-+	if (btrfs_super_compat_ro_flags(sb) & BTRFS_FEATURE_COMPAT_RO_SINGLE_DEV)
-+		return true;
-+
-+	if (force_single_dev) {
-+		char *p, *skip_devs, *orig;
-+
-+		skip_devs = kstrdup(force_single_dev, GFP_KERNEL);
-+		if (!skip_devs) {
-+			pr_err("BTRFS: couldn't parse force_single_dev parameter\n");
-+			return false;
-+		}
-+
-+		orig = skip_devs;
-+		while ((p = strsep(&skip_devs, ",")) != NULL) {
-+			if (!*p)
-+				continue;
-+
-+			if (!strcmp(p, path)) {
-+				pr_info(
-+			"BTRFS: forcing device %s to be single-dev\n", path);
-+				kfree(orig);
-+				return true;
-+			}
-+		}
-+		kfree(orig);
-+	}
-+
-+	return false;
-+}
-+
- /*
-  * Look for a btrfs signature on a device. This may be called out of the mount path
-  * and we are not allowed to call set_blocksize during the scan. The superblock
-@@ -1451,9 +1492,7 @@ struct btrfs_device *btrfs_scan_one_device(const char *path, blk_mode_t flags,
- 		goto error_bdev_put;
- 	}
- 
--	single_dev = btrfs_super_compat_ro_flags(disk_super) &
--			BTRFS_FEATURE_COMPAT_RO_SINGLE_DEV;
--
-+	single_dev = is_single_dev(path, disk_super);
- 	if (!mounting && single_dev) {
- 		pr_info("BTRFS: skipped non-mount scan on SINGLE_DEV device %s\n",
- 			path);
-diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-index b9856c801567..57a3969f101c 100644
---- a/fs/btrfs/volumes.h
-+++ b/fs/btrfs/volumes.h
-@@ -293,6 +293,8 @@ struct btrfs_fs_devices {
- 	 */
- 	u8 metadata_uuid[BTRFS_FSID_SIZE];
- 
-+	bool single_dev;
-+
- 	struct list_head fs_list;
- 
- 	/*
--- 
-2.41.0
+Or we could have split the FMODE_ATOMIC_POS bit into two, and had a
+"ALWAYS" version and a regular version, but just having a
+"fdget_dir()" made it simpler.
 
+So this - together with just reverting commit 20ea1e7d13c1 ("file:
+always lock position for FMODE_ATOMIC_POS") - *should* fix any
+performance regression.
+
+But I have not tested it at all. So....
+
+                 Linus
+
+--000000000000f2f075060206ada9
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lkvbwqay0>
+X-Attachment-Id: f_lkvbwqay0
+
+IGZzL3JlYWRkaXIuYyB8IDQxICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0t
+LS0tCiAxIGZpbGUgY2hhbmdlZCwgMzEgaW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pCgpk
+aWZmIC0tZ2l0IGEvZnMvcmVhZGRpci5jIGIvZnMvcmVhZGRpci5jCmluZGV4IGIyNjRjZTYwMTE0
+ZC4uYTQzOTQ2ZDAyNmJhIDEwMDY0NAotLS0gYS9mcy9yZWFkZGlyLmMKKysrIGIvZnMvcmVhZGRp
+ci5jCkBAIC0yNCw2ICsyNCwyNyBAQAogCiAjaW5jbHVkZSA8YXNtL3VuYWxpZ25lZC5oPgogCisv
+KgorICogZmR7Z2V0LHB1dH1fZGlyKCkgaXMgbGlrZSBmZGdldF9wb3MoKSwgYnV0IGRvZXMgdGhl
+CisgKiBsb2NraW5nIHVuY29uZGl0aW9uYWxseSwgc2luY2UgaXQncyBhIGNvcnJlY3RuZXNzIGlz
+c3VlLAorICogbm90IGEgImZvbGxvdyBQT1NJWCIgaXNzdWUuCisgKgorICogcGlkZmRfZ2V0ZmQo
+KSBjYW4gdmlvbGF0ZSB0aGUgUE9TSVggcnVsZXMgb3RoZXJ3aXNlLgorICovCitzdGF0aWMgaW5s
+aW5lIHN0cnVjdCBmZCBmZGdldF9kaXIoaW50IGZkKQoreworCXVuc2lnbmVkIGxvbmcgdiA9IF9f
+ZmRnZXQoZmQpOworCXN0cnVjdCBmaWxlICpmaWxlID0gKHN0cnVjdCBmaWxlICopKHYgJiB+Myk7
+CisKKwlpZiAoZmlsZSkgeworCQl2IHw9IEZEUFVUX1BPU19VTkxPQ0s7CisJCW11dGV4X2xvY2so
+JmZpbGUtPmZfcG9zX2xvY2spOworCX0KKwlyZXR1cm4gX190b19mZCh2KTsKK30KKworI2RlZmlu
+ZSBmZHB1dF9kaXIoeCkgZmRwdXRfcG9zKHgpCisKIC8qCiAgKiBOb3RlIHRoZSAidW5zYWZlX3B1
+dF91c2VyKCkgc2VtYW50aWNzOiB3ZSBnb3RvIGEKICAqIGxhYmVsIGZvciBlcnJvcnMuCkBAIC0x
+ODEsNyArMjAyLDcgQEAgU1lTQ0FMTF9ERUZJTkUzKG9sZF9yZWFkZGlyLCB1bnNpZ25lZCBpbnQs
+IGZkLAogCQlzdHJ1Y3Qgb2xkX2xpbnV4X2RpcmVudCBfX3VzZXIgKiwgZGlyZW50LCB1bnNpZ25l
+ZCBpbnQsIGNvdW50KQogewogCWludCBlcnJvcjsKLQlzdHJ1Y3QgZmQgZiA9IGZkZ2V0X3Bvcyhm
+ZCk7CisJc3RydWN0IGZkIGYgPSBmZGdldF9kaXIoZmQpOwogCXN0cnVjdCByZWFkZGlyX2NhbGxi
+YWNrIGJ1ZiA9IHsKIAkJLmN0eC5hY3RvciA9IGZpbGxvbmVkaXIsCiAJCS5kaXJlbnQgPSBkaXJl
+bnQKQEAgLTE5NCw3ICsyMTUsNyBAQCBTWVNDQUxMX0RFRklORTMob2xkX3JlYWRkaXIsIHVuc2ln
+bmVkIGludCwgZmQsCiAJaWYgKGJ1Zi5yZXN1bHQpCiAJCWVycm9yID0gYnVmLnJlc3VsdDsKIAot
+CWZkcHV0X3BvcyhmKTsKKwlmZHB1dF9kaXIoZik7CiAJcmV0dXJuIGVycm9yOwogfQogCkBAIC0y
+NzksNyArMzAwLDcgQEAgU1lTQ0FMTF9ERUZJTkUzKGdldGRlbnRzLCB1bnNpZ25lZCBpbnQsIGZk
+LAogCX07CiAJaW50IGVycm9yOwogCi0JZiA9IGZkZ2V0X3BvcyhmZCk7CisJZiA9IGZkZ2V0X2Rp
+cihmZCk7CiAJaWYgKCFmLmZpbGUpCiAJCXJldHVybiAtRUJBREY7CiAKQEAgLTI5NSw3ICszMTYs
+NyBAQCBTWVNDQUxMX0RFRklORTMoZ2V0ZGVudHMsIHVuc2lnbmVkIGludCwgZmQsCiAJCWVsc2UK
+IAkJCWVycm9yID0gY291bnQgLSBidWYuY291bnQ7CiAJfQotCWZkcHV0X3BvcyhmKTsKKwlmZHB1
+dF9kaXIoZik7CiAJcmV0dXJuIGVycm9yOwogfQogCkBAIC0zNjIsNyArMzgzLDcgQEAgU1lTQ0FM
+TF9ERUZJTkUzKGdldGRlbnRzNjQsIHVuc2lnbmVkIGludCwgZmQsCiAJfTsKIAlpbnQgZXJyb3I7
+CiAKLQlmID0gZmRnZXRfcG9zKGZkKTsKKwlmID0gZmRnZXRfZGlyKGZkKTsKIAlpZiAoIWYuZmls
+ZSkKIAkJcmV0dXJuIC1FQkFERjsKIApAQCAtMzc5LDcgKzQwMCw3IEBAIFNZU0NBTExfREVGSU5F
+MyhnZXRkZW50czY0LCB1bnNpZ25lZCBpbnQsIGZkLAogCQllbHNlCiAJCQllcnJvciA9IGNvdW50
+IC0gYnVmLmNvdW50OwogCX0KLQlmZHB1dF9wb3MoZik7CisJZmRwdXRfZGlyKGYpOwogCXJldHVy
+biBlcnJvcjsKIH0KIApAQCAtNDM5LDcgKzQ2MCw3IEBAIENPTVBBVF9TWVNDQUxMX0RFRklORTMo
+b2xkX3JlYWRkaXIsIHVuc2lnbmVkIGludCwgZmQsCiAJCXN0cnVjdCBjb21wYXRfb2xkX2xpbnV4
+X2RpcmVudCBfX3VzZXIgKiwgZGlyZW50LCB1bnNpZ25lZCBpbnQsIGNvdW50KQogewogCWludCBl
+cnJvcjsKLQlzdHJ1Y3QgZmQgZiA9IGZkZ2V0X3BvcyhmZCk7CisJc3RydWN0IGZkIGYgPSBmZGdl
+dF9kaXIoZmQpOwogCXN0cnVjdCBjb21wYXRfcmVhZGRpcl9jYWxsYmFjayBidWYgPSB7CiAJCS5j
+dHguYWN0b3IgPSBjb21wYXRfZmlsbG9uZWRpciwKIAkJLmRpcmVudCA9IGRpcmVudApAQCAtNDUy
+LDcgKzQ3Myw3IEBAIENPTVBBVF9TWVNDQUxMX0RFRklORTMob2xkX3JlYWRkaXIsIHVuc2lnbmVk
+IGludCwgZmQsCiAJaWYgKGJ1Zi5yZXN1bHQpCiAJCWVycm9yID0gYnVmLnJlc3VsdDsKIAotCWZk
+cHV0X3BvcyhmKTsKKwlmZHB1dF9kaXIoZik7CiAJcmV0dXJuIGVycm9yOwogfQogCkBAIC01MzAs
+NyArNTUxLDcgQEAgQ09NUEFUX1NZU0NBTExfREVGSU5FMyhnZXRkZW50cywgdW5zaWduZWQgaW50
+LCBmZCwKIAl9OwogCWludCBlcnJvcjsKIAotCWYgPSBmZGdldF9wb3MoZmQpOworCWYgPSBmZGdl
+dF9kaXIoZmQpOwogCWlmICghZi5maWxlKQogCQlyZXR1cm4gLUVCQURGOwogCkBAIC01NDYsNyAr
+NTY3LDcgQEAgQ09NUEFUX1NZU0NBTExfREVGSU5FMyhnZXRkZW50cywgdW5zaWduZWQgaW50LCBm
+ZCwKIAkJZWxzZQogCQkJZXJyb3IgPSBjb3VudCAtIGJ1Zi5jb3VudDsKIAl9Ci0JZmRwdXRfcG9z
+KGYpOworCWZkcHV0X2RpcihmKTsKIAlyZXR1cm4gZXJyb3I7CiB9CiAjZW5kaWYK
+--000000000000f2f075060206ada9--
