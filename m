@@ -2,115 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B3CB76F0C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 19:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11E1176F0F3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 19:54:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235121AbjHCRh5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Aug 2023 13:37:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50034 "EHLO
+        id S232439AbjHCRyt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Aug 2023 13:54:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235117AbjHCRhv (ORCPT
+        with ESMTP id S230460AbjHCRyr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Aug 2023 13:37:51 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E552F10B;
-        Thu,  3 Aug 2023 10:37:48 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 9BDF3218EB;
-        Thu,  3 Aug 2023 17:37:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1691084267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nUrIcCgKfn8Ln+psoMSqthh4paG1THVbdii5u1kozU8=;
-        b=OGxF/Y/oYJ1fU84+6F/RoPLLg35d4x0oZCxn7NJYfsPYaWyvnRyXHf4DpYhnHIw3AkH3PX
-        BJZstYEbB8LUqRjqLjnTpX/TyqqePgq5GT48C61y8Lb4rZ9K2dtS1h0Smt0EYdOu76tQNZ
-        CvchZify8FuYF5UYOBMlpefOsxln22g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1691084267;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nUrIcCgKfn8Ln+psoMSqthh4paG1THVbdii5u1kozU8=;
-        b=ho8JvdBvLvswROYHxKBwf9LRoHGI9RbaY2o/N43xAICwJABGHb/t2edJT1Nkm29HchCy3L
-        qOnMv5JMwYiyM3CQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5DDA3134B0;
-        Thu,  3 Aug 2023 17:37:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id CX3WEOvly2R3fQAAMHmgww
-        (envelope-from <krisman@suse.de>); Thu, 03 Aug 2023 17:37:47 +0000
-From:   Gabriel Krisman Bertazi <krisman@suse.de>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
-        jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: Re: [PATCH v4 3/7] libfs: Validate negative dentries in
- case-insensitive directories
-Organization: SUSE
-References: <20230727172843.20542-1-krisman@suse.de>
-        <20230727172843.20542-4-krisman@suse.de>
-        <20230729042048.GB4171@sol.localdomain>
-Date:   Thu, 03 Aug 2023 13:37:45 -0400
-In-Reply-To: <20230729042048.GB4171@sol.localdomain> (Eric Biggers's message
-        of "Fri, 28 Jul 2023 21:20:48 -0700")
-Message-ID: <875y5w10ye.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+        Thu, 3 Aug 2023 13:54:47 -0400
+Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 302A81718;
+        Thu,  3 Aug 2023 10:54:47 -0700 (PDT)
+Received: by mail-ot1-x331.google.com with SMTP id 46e09a7af769-6bb29b9044dso1187264a34.1;
+        Thu, 03 Aug 2023 10:54:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1691085286; x=1691690086;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=D7LTYlYje0TUsKNQaI2LboxS6Qn358z3O478ZJWdmjw=;
+        b=r/9Z6eMPIOzREx6Pvs3xpquUvT3EprftDjYwww4EnfyyPnW5aBfE0MIAZ1aDjSzvT9
+         WvW0snQ2jDtv0wx2co0Enz7OPaQQ+uP2Tc5JZZj6mOaMBMv6sMc5DqXMUtj2/OlY2m5I
+         dJNkbK/PlXasSqx5tQ0VEs7VEmO3sAk7DDPOCDPFsgIKDVOEvkQuC1VSKOCtnjHWUV+n
+         W41N2fDtZZ386PLVUyGMiH+4NFmKdqbUPt6T7vbrw8j0bITdmTVKb8imrJzk71tw75QR
+         gXGZYRAw18BVMZ6Vx5zBdt2AZlcQcpnIILp3yYQADET8bP4MNIb9cn059OweH5lOPgkY
+         xieg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691085286; x=1691690086;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D7LTYlYje0TUsKNQaI2LboxS6Qn358z3O478ZJWdmjw=;
+        b=QCeenE2bhEJ7RcIo05PoBQyCcn4SzYenKL1kxmjCjiKlHEKLMBMN9U0SGhSUeMZNAW
+         7jbNqMJXH8zqdDo383+mt0NFY0kHilfHijPhFmnIAnbfClZDwqCBeoRvaG+0FmxokgAq
+         b0IAbI8ggDIvBkSejZAQgMNbxUmrwCQmDcQdPSG+CxeCSem3qUuPat9z9kQCbV1yj2EL
+         GI5p5sBjWBx6/Ast10kSGSVDODt0OVG0feKPdO13TMvpDmB9FvPtV75EHptpjZ4oEi9I
+         s2FrIxywT+lOU9Pws7DQc9aF8seiX+RvAqtbuObJxWm4xpgMO4M4uwkk7327/UFCmCYf
+         gPCQ==
+X-Gm-Message-State: ABy/qLYRDy32hQAo+/M7+Lq0Z93TZgQQSApI+3Z2eWotaBand1VJXcN2
+        kwlgGS1Coh7mIgy7lEp/eVVLcrZq5xQyW3fMxdTaQwFCNRc=
+X-Google-Smtp-Source: APBJJlFp89+GfmjeUHYM0Ku5hGfuU07pSvxYcwrTJACnuqOchCHvn4E4mKaaLnQHg4iL8fjqbDGTUZp7vuJRWVRtgKI=
+X-Received: by 2002:a05:6830:52:b0:6b9:2e88:79cc with SMTP id
+ d18-20020a056830005200b006b92e8879ccmr22282451otp.19.1691085286435; Thu, 03
+ Aug 2023 10:54:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+Received: by 2002:a8a:1183:0:b0:4f0:1250:dd51 with HTTP; Thu, 3 Aug 2023
+ 10:54:45 -0700 (PDT)
+In-Reply-To: <CAHk-=whQ51+rKrnUYeuw3EgJMv2RJrwd7UO9qCgOkUdJzcirWw@mail.gmail.com>
+References: <20230724-vfs-fdget_pos-v1-1-a4abfd7103f3@kernel.org>
+ <CAHk-=whfJhag+iEscftpVq=dHTeL7rQopCvH+Pcs8vJHCGNvXQ@mail.gmail.com>
+ <20230724-pyjama-papier-9e4cdf5359cb@brauner> <CAHk-=wj2XZqex6kzz7SbdVHwP9fFoOvHSzHj--0KuxyrVO+3-w@mail.gmail.com>
+ <20230803095311.ijpvhx3fyrbkasul@f> <CAHk-=whQ51+rKrnUYeuw3EgJMv2RJrwd7UO9qCgOkUdJzcirWw@mail.gmail.com>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Thu, 3 Aug 2023 19:54:45 +0200
+Message-ID: <CAGudoHG8X3Uvuj2Y7H9wnk8Rm=igAUvOF2XrzqYGs0wDvTzk2w@mail.gmail.com>
+Subject: Re: [PATCH] file: always lock position
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Seth Forshee <sforshee@kernel.org>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eric Biggers <ebiggers@kernel.org> writes:
-
-> On Thu, Jul 27, 2023 at 01:28:39PM -0400, Gabriel Krisman Bertazi wrote:
->>   - In __lookup_slow, either the parent inode is read locked by the
->>     caller (lookup_slow), or it is called with no flags (lookup_one*).
->>     The read lock suffices to prevent ->d_name modifications, with the
->>     exception of one case: __d_unalias, will call __d_move to fix a
->>     directory accessible from multiple dentries, which effectively swaps
->>     ->d_name while holding only the shared read lock.  This happens
->>     through this flow:
->> 
->>     lookup_slow()  //LOOKUP_CREATE
->>       d_lookup()
->>         ->d_lookup()
->>           d_splice_alias()
->>             __d_unalias()
->>               __d_move()
->> 
->>     Nevertheless, this case is not a problem because negative dentries
->>     are not allowed to be moved with __d_move.
+On 8/3/23, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> On Thu, 3 Aug 2023 at 02:53, Mateusz Guzik <mjguzik@gmail.com> wrote:
+>>
+>> So yes, atomics remain expensive on x86-64 even on a very moden uarch
+>> and their impact is measurable in a syscall like read.
 >
-> Isn't it possible for a negative dentry to become a positive one concurrently?
+> Well, a patch like this should fix it.
+>
+> I intentionally didn't bother with the alpha osf version of readdir,
+> because nobody cares, but I guess we could do this in the header too.
+>
+> Or we could have split the FMODE_ATOMIC_POS bit into two, and had a
+> "ALWAYS" version and a regular version, but just having a
+> "fdget_dir()" made it simpler.
+>
+> So this - together with just reverting commit 20ea1e7d13c1 ("file:
+> always lock position for FMODE_ATOMIC_POS") - *should* fix any
+> performance regression.
+>
 
-Do you mean d_splice_alias racing with a dentry instantiation and
-__d_move being called on a negative dentry that is turning positive?
+That would do it, but I'm uneasy about the partially "gimped" status
+of the fd the caller can't do anything about.
 
-It is not possible for __d_move to be called with a negative dentry for
-d_splice_alias, since the inode->i_lock is locked during __d_find_alias,
-so it can't race with __d_instantiate or d_add. Then, __d_find_alias
-can't find negative dentries in the first place, so we either have a
-positive dentry, in which case __d_move is fine with regard to
-d_revalidate_name, or we don't have any aliases and don't call
-__d_move.
+I read the thread and still don't get what is the real-world use case
+for the thing, a real-world consumer to take a look at would be nice.
 
-Can you clarify what problem you see here?
+As noted in another e-mail, the entire lack of pos locking in stock
+kernel is a transient ordeal -- there is a point where the "donor" is
+guaranteed to not use it and spot the refcount > 1 for any future use,
+using pos locking going forward.
+
+Perhaps, and I'm really just spitballing here, almost all expected use
+cases would be 100% fine without pos lock so it all works out as is.
+Similarly, if the target is multithreaded it already works as well.
+
+Those who expect "fully qualified" semantics would pass a flag
+argument denoting it but would possibly wait indefinitely while the
+target is blocked somewhere in the kernel and it is not known if it is
+even using the fd. This very well may be a deal breaker though and may
+be too cumbersome to implement for real use.
+
+All that said, personally I would either go forward with a "full fix"
+(probably not worth it) or take the L and lock for all fds.
 
 -- 
-Gabriel Krisman Bertazi
+Mateusz Guzik <mjguzik gmail.com>
