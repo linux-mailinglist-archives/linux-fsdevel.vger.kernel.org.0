@@ -2,98 +2,221 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3398776F349
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 21:16:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66E8976F35A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 21:19:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230444AbjHCTQH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Aug 2023 15:16:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55130 "EHLO
+        id S231638AbjHCTTH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Aug 2023 15:19:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230500AbjHCTQA (ORCPT
+        with ESMTP id S231722AbjHCTTB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Aug 2023 15:16:00 -0400
-Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 003BD3A97
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Aug 2023 12:15:57 -0700 (PDT)
-Received: by mail-pg1-x54a.google.com with SMTP id 41be03b00d2f7-55c04f5827eso879848a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Aug 2023 12:15:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1691090157; x=1691694957;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1QAbc+4fCOMN1wq3LOwJ4k1bsXl9R1Q+x4bhgj3rFIg=;
-        b=DSNF3uKlxbN1/j9sGPdV4RLbiLmTPzUp9Zu3X+X+jI/CXp8qoKO4kiLFxh0eWH4ras
-         3UHMbP1YaoUXHaU6RKc0xiD6OqP0/G8GaXsxhmkMXaXcobPCXbuINlBumVapPQ9eL9WI
-         SQMF6MIyr2Twu3rQpgN63Ty4xEmvWMdFcq1qk0s/bO53R4WtT4D6mxqEq84CrHbE24tW
-         R+R0wb7QBQEWXSd0EQn3phD4GyYVVYig+DH6wM230PxAw/bTqhOS8nPt+LaY5XqmbBEo
-         2lNVu9E2Fm9D/OSL8FvXxR34+QmBLtfkxeWiU2TVRkIK5+koZ6XE0PUmvWk9wsqvFkyB
-         PpQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691090157; x=1691694957;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1QAbc+4fCOMN1wq3LOwJ4k1bsXl9R1Q+x4bhgj3rFIg=;
-        b=bVXEcEnF+EfbhVIO1+DuXABaezTPKaXhQVEa37kbqIq+YtwJGVty31FmVGasSthgu2
-         Z9LUHtPzjLgWonPjoZaeMAdFgeIixbxxc4qkkQ3ps7RXD26XyTPDjuVN6cEzH454ylAr
-         WUHF8sbdeHXGw0mGq74gxX8p5tlCQzntKlCYXeTW1US+uVMOyANwEoXD5Ds1/87PevBx
-         19EZLxhlMAtwZeW55vzPIdIdhbF6CwcUCA5kfE6wW1d4clG08u3w3z/DKgSm5J33/WPM
-         vQ+x8eOxQe1fm4ZQe7kSFCSQTWR4KeedOQbotmDHItjIdc4DybEqUWc2Mmrij4h0nyhz
-         W1lQ==
-X-Gm-Message-State: ABy/qLZjFwnxUPNf4oK+vqq1E7vr/K2aq8oeeBB+rQCoJHOzd/IDLipe
-        bLwfE6/RAaG2DWksckiJ6mpX0ju1UGsH
-X-Google-Smtp-Source: APBJJlHtGvcJEMYqDDCqDrlA6FqIV7ZBvnc2RG3ctaXexB6pNXaY+PGUAOnc1N44cMVGOG5WgF6ZzIYHZzSS
-X-Received: from afranji.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:47f1])
- (user=afranji job=sendgmr) by 2002:a63:295a:0:b0:563:5065:9d40 with SMTP id
- bu26-20020a63295a000000b0056350659d40mr129290pgb.5.1691090157410; Thu, 03 Aug
- 2023 12:15:57 -0700 (PDT)
-Date:   Thu,  3 Aug 2023 19:15:54 +0000
-In-Reply-To: <20230718234512.1690985-13-seanjc@google.com>
-Mime-Version: 1.0
-References: <20230718234512.1690985-13-seanjc@google.com>
-X-Mailer: git-send-email 2.41.0.640.ga95def55d0-goog
-Message-ID: <20230803191554.205599-1-afranji@google.com>
-Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-From:   Ryan Afranji <afranji@google.com>
-To:     seanjc@google.com
-Cc:     ackerleytng@google.com, akpm@linux-foundation.org,
-        anup@brainfault.org, aou@eecs.berkeley.edu,
-        chao.p.peng@linux.intel.com, chenhuacai@kernel.org,
-        david@redhat.com, isaku.yamahata@gmail.com, jarkko@kernel.org,
-        jmorris@namei.org, kirill.shutemov@linux.intel.com,
-        kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
-        kvmarm@lists.linux.dev, liam.merwick@oracle.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-mm@kvack.org,
-        linux-riscv@lists.infradead.org,
-        linux-security-module@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, mail@maciej.szmigiero.name,
-        maz@kernel.org, michael.roth@amd.com, mpe@ellerman.id.au,
-        oliver.upton@linux.dev, palmer@dabbelt.com,
-        paul.walmsley@sifive.com, paul@paul-moore.com, pbonzini@redhat.com,
-        qperret@google.com, serge@hallyn.com, tabba@google.com,
-        vannapurve@google.com, vbabka@suse.cz, wei.w.wang@intel.com,
-        willy@infradead.org, yu.c.zhang@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        Thu, 3 Aug 2023 15:19:01 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75FD24200;
+        Thu,  3 Aug 2023 12:18:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=t0TbnvGpxcMLXyXHUZ0m2svnUuAhcbLL5LDUOoEa528=; b=DSDXYpbnNh6FmWxcNrgUyz+uKZ
+        bqOs9CSFijKfMsHTZdXaPgw5Mv3MtReHduoW1qwYLDO70dCJtgpQrqhkCsJ8Ps5aBeuGsCGkU89WV
+        L33LwfwT1lANgMFLCFPbWbPc3gNatbmTLyl4LjeOcmFM4TB7BXXd+B8dkJ0vzUEN4EvVoka3ryddG
+        HHjr87Mhl7HQlGYBqRdN58p9uAjzDZhPQtl9VKSP+ld7jmycL9CgLy/ssN/h1pbJohTozREAa7B1k
+        n2gh+XvVts+rvyNFO5MMmv3HB1KuPZ73SO49cpQ0l+bHyGkyGQdUF+rSli39tyeNx7Yj+TsIey+2P
+        kEdUZZ3w==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qRdqN-00Aj2k-0L;
+        Thu, 03 Aug 2023 19:18:48 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     fstests@vger.kernel.org, aalbersh@redhat.com,
+        chandan.babu@oracle.com, amir73il@gmail.com, josef@toxicpanda.com,
+        djwong@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: [PATCH v3] fstests: add helper to canonicalize devices used to enable persistent disks
+Date:   Thu,  3 Aug 2023 12:18:41 -0700
+Message-Id: <20230803191841.2556370-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.38.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> +static struct folio *kvm_gmem_get_folio(struct file *file, pgoff_t index)
-> +{
-> +	struct folio *folio;
-> +
-> +	/* TODO: Support huge pages. */
-> +	folio = filemap_grab_folio(file->f_mapping, index);
-> +	if (!folio)
-> +		return NULL;
+The filesystem configuration file does not allow you to use symlinks to
+real devices given the existing sanity checks verify that the target end
+device matches the source. Device mapper links work but not symlinks for
+real drives do not.
 
-In Linux 6.4, filemap_grab_folio() may also return an error value.
-Instead of just checking for NULL, "IS_ERR_OR_NULL(folio)" will be needed.
+Using a symlink is desirable if you want to enable persistent tests
+across reboots. For example you may want to use /dev/disk/by-id/nvme-eui.*
+so to ensure that the same drives are used even after reboot. This
+is very useful if you are testing for example with a virtualized
+environment and are using PCIe passthrough with other qemu NVMe drives
+with one or many NVMe drives.
+
+To enable support just add a helper to canonicalize devices prior to
+running the tests.
+
+This allows one test runner, kdevops, which I just extended with
+support to use real NVMe drives it has support now to use nvme EUI
+symlinks and fallbacks to nvme model + serial symlinks as not all
+NVMe drives support EUIs. The drives it uses for the filesystem
+configuration optionally is with NVMe eui symlinks so to allow
+the same drives to be used over reboots.
+
+For instance this works today with real nvme drives:
+
+mkfs.xfs -f /dev/nvme0n1
+mount /dev/nvme0n1 /mnt
+TEST_DIR=/mnt TEST_DEV=/dev/nvme0n1 FSTYP=xfs ./check generic/110
+
+FSTYP         -- xfs (debug)
+PLATFORM      -- Linux/x86_64 flax-mtr01 6.5.0-rc3-djwx #rc3 SMP PREEMPT_DYNAMIC Wed Jul 26 14:26:48 PDT 2023
+
+generic/110        2s
+Ran: generic/110
+Passed all 1 tests
+
+But this does not:
+
+TEST_DIR=/mnt TEST_DEV=/dev/disk/by-id/nvme-eui.0035385411904c1e FSTYP=xfs ./check generic/110
+mount: /mnt: /dev/disk/by-id/nvme-eui.0035385411904c1e already mounted on /mnt.
+common/rc: retrying test device mount with external set
+mount: /mnt: /dev/disk/by-id/nvme-eui.0035385411904c1e already mounted on /mnt.
+common/rc: could not mount /dev/disk/by-id/nvme-eui.0035385411904c1e on /mnt
+
+umount /mnt
+TEST_DIR=/mnt TEST_DEV=/dev/disk/by-id/nvme-eui.0035385411904c1e FSTYP=xfs ./check generic/110
+TEST_DEV=/dev/disk/by-id/nvme-eui.0035385411904c1e is mounted but not on TEST_DIR=/mnt - aborting
+Already mounted result:
+/dev/disk/by-id/nvme-eui.0035385411904c1e /mnt
+
+This fixes this. This allows the same real drives for a test to be
+used over and over after reboots.
+
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+
+Changes on v3:
+
+  - local varible for tmp variable as suggested by Zorro
+  - use quotes in all places as suggested by Zorro
+
+Changes on v2:
+
+ - Enhanced the commit log to describe the existing status quo where
+   at least device mapper symlinks work but not for real drives. Also
+   provide an example output of the issue and use case as implied by
+   Darrick.
+ - Added CANON_DEVS to disable this by default, document it
+ - simplify _canonicalize_devices() with as many one liners as possible
+ - use readlink -e because my history scavanging has found it has existed for
+   7 years longer thjan realpath -e support. Documen this on the commit
+   log as well.
+
+ README        |  3 +++
+ check         |  1 +
+ common/config | 32 +++++++++++++++++++++++++++++++-
+ 3 files changed, 35 insertions(+), 1 deletion(-)
+
+diff --git a/README b/README
+index 1ca506492bf0..97ef63d6d693 100644
+--- a/README
++++ b/README
+@@ -268,6 +268,9 @@ Misc:
+    this option is supported for all filesystems currently only -overlay is
+    expected to run without issues. For other filesystems additional patches
+    and fixes to the test suite might be needed.
++ - set CANON_DEVS=yes to canonicalize device symlinks. This will let you
++   for example use something like TEST_DEV/dev/disk/by-id/nvme-* so the
++   device remains persistent between reboots. This is disabled by default.
+ 
+ ______________________
+ USING THE FSQA SUITE
+diff --git a/check b/check
+index 0bf5b22e061a..577e09655844 100755
+--- a/check
++++ b/check
+@@ -711,6 +711,7 @@ function run_section()
+ 	fi
+ 
+ 	get_next_config $section
++	_canonicalize_devices
+ 
+ 	mkdir -p $RESULT_BASE
+ 	if [ ! -d $RESULT_BASE ]; then
+diff --git a/common/config b/common/config
+index 6c8cb3a5ba68..d1ea7fe07a32 100644
+--- a/common/config
++++ b/common/config
+@@ -25,6 +25,9 @@
+ # KEEP_DMESG -      whether to keep all dmesg for each test case.
+ #                   yes: keep all dmesg
+ #                   no: only keep dmesg with error/warning (default)
++# CANON_DEVS -      whether or not to canonicalize device symlinks
++#                   yes: canonicalize device symlinks
++#                   no (default) do not canonicalize device if they are symlinks
+ #
+ # - These can be added to $HOST_CONFIG_DIR (witch default to ./config)
+ #   below or a separate local configuration file can be used (using
+@@ -644,6 +647,32 @@ _canonicalize_mountpoint()
+ 	echo "$parent/$base"
+ }
+ 
++# Enables usage of /dev/disk/by-id/ symlinks to persist target devices
++# over reboots
++_canonicalize_devices()
++{
++	if [ "$CANON_DEVS" != "yes" ]; then
++		return
++	fi
++	[ -L "$TEST_DEV" ]	&& TEST_DEV=$(readlink -e "$TEST_DEV")
++	[ -L "$SCRATCH_DEV" ]	&& SCRATCH_DEV=$(readlink -e "$SCRATCH_DEV")
++	[ -L "$TEST_LOGDEV" ]	&& TEST_LOGDEV=$(readlink -e "$TEST_LOGDEV")
++	[ -L "$TEST_RTDEV" ]	&& TEST_RTDEV=$(readlink -e "$TEST_RTDEV")
++	[ -L "$SCRATCH_RTDEV" ]	&& SCRATCH_RTDEV=$(readlink -e "$SCRATCH_RTDEV")
++	[ -L "$LOGWRITES_DEV" ]	&& LOGWRITES_DEV=$(readlink -e "$LOGWRITES_DEV")
++	if [ ! -z "$SCRATCH_DEV_POOL" ]; then
++		local NEW_SCRATCH_POOL=""
++		for i in $SCRATCH_DEV_POOL; do
++			if [ -L $i ]; then
++				NEW_SCRATCH_POOL="$NEW_SCRATCH_POOL $(readlink -e $i)"
++			else
++				NEW_SCRATCH_POOL="$NEW_SCRATCH_POOL $i)"
++			fi
++		done
++		SCRATCH_DEV_POOL="$NEW_SCRATCH_POOL"
++	fi
++}
++
+ # On check -overlay, for the non multi section config case, this
+ # function is called on every test, before init_rc().
+ # When SCRATCH/TEST_* vars are defined in config file, config file
+@@ -774,7 +803,6 @@ get_next_config() {
+ 	fi
+ 
+ 	parse_config_section $1
+-
+ 	if [ ! -z "$OLD_FSTYP" ] && [ $OLD_FSTYP != $FSTYP ]; then
+ 		[ -z "$MOUNT_OPTIONS" ] && _mount_opts
+ 		[ -z "$TEST_FS_MOUNT_OPTS" ] && _test_mount_opts
+@@ -890,5 +918,7 @@ else
+ 	fi
+ fi
+ 
++_canonicalize_devices
++
+ # make sure this script returns success
+ /bin/true
+-- 
+2.39.2
+
