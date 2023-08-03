@@ -2,136 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B13B76D9C5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Aug 2023 23:42:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EFC576DBE1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 02:01:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231903AbjHBVmU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Aug 2023 17:42:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42874 "EHLO
+        id S231482AbjHCABB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Aug 2023 20:01:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231196AbjHBVmT (ORCPT
+        with ESMTP id S229626AbjHCABA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Aug 2023 17:42:19 -0400
-Received: from out-70.mta0.migadu.com (out-70.mta0.migadu.com [IPv6:2001:41d0:1004:224b::46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F111BC7
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 14:42:16 -0700 (PDT)
-Date:   Wed, 2 Aug 2023 17:42:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1691012534;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZzBQg5VUXqLAKjjN4npoHC5O8MdyP2pe5UxP8f8UCv0=;
-        b=CY9jWmaOO/AQjkgCnBVJ1+PgFoc7NS1FexhWJqyh/hcsBz9oJ8ZJsAryVBNcutKnZazgGn
-        uMYGXkTOPD/HJi6qqM/rca2STB17n6e3Gf+YF0XOjjZJekBp8VLo81Mt1W9//N3rpDOcWE
-        QQ9pOpLGjwqcbbJdIWWRMe7zkw8zAl0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     Waiman Long <longman@redhat.com>
-Cc:     linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>
-Subject: Re: [PATCH 11/20] locking/osq: Export osq_(lock|unlock)
-Message-ID: <20230802214211.y3x3swic4jbphmtg@moria.home.lan>
-References: <20230712211115.2174650-1-kent.overstreet@linux.dev>
- <20230712211115.2174650-12-kent.overstreet@linux.dev>
- <bb77f456-8804-b63a-7868-19e0cd9e697f@redhat.com>
- <20230802204407.lk5mnj7ua6idddbd@moria.home.lan>
- <11d39248-31fc-c625-7c06-341f0146bd67@redhat.com>
+        Wed, 2 Aug 2023 20:01:00 -0400
+Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67CD52D43
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 17:00:59 -0700 (PDT)
+Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-5839f38342fso3176817b3.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Aug 2023 17:00:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1691020858; x=1691625658;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/LpVe26Go9OijFX1KyR3zeStDg9CzBEWRIOPZGWl218=;
+        b=Z36CN6eVM+75yMw8ieui52ogTz5kn+DDKibjhGjYMzhehuZY8XHtoWJaIxWdrxz7nh
+         qqlYN0BOoT29Xd4WCRcUhYKlGvuhCrCk0GUy3/RUVjQ5M5JB/PU+Ay3mz0/AZrBJVq26
+         Ctxl4WmRiuRba2Tw/ocalt0tyKxEYk5npn7M5yLQ/pMyEtfqW6VQHhIS8iVI4ASAiSXQ
+         0lxcmQZrEqA0Gi1Q+YUDV3oVtKsl3bBfjLafo0sFfI7U/NMb0IE2RFHKs5EU+jxLZ5SL
+         Kmf0PY0WSPNzEkIZUsQlmpTxZe6IxrRti0wGJREDzAZ1UBpwTeoMhma+hiSRzv7ewosG
+         yRxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691020858; x=1691625658;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/LpVe26Go9OijFX1KyR3zeStDg9CzBEWRIOPZGWl218=;
+        b=K2bZTjMoCICe/9Qo3jKblZXK2hQ4OdF4xq6ZcKA8Y+iwD6KBK7bVSKiwkJJ+eFcF/5
+         krICajPwmNadFtp3nsZfVsv6comO+/6WvAaPRMOrxQr6tUyYK7hqKMN/NYB5gG+X7eog
+         EAf7p4IDaik6cqB7Yg2UxIWuCHRKCXJ0l8I/u0RMvxbMmY3Bd71FQKN+TEB9Iwu6dRhq
+         f6HQbjUnYmpfRRRw/qYZfYlLF9/+yRRypIhqwUBAKMuNjztFD3iuuFkWK6ss/6H7B9k3
+         nKTj7qdQYr1MO7gwo/jBTCjysrujsTvmLrTi47TKR/+wsEb5DADsW6opkeNcagn1xb6I
+         LAQg==
+X-Gm-Message-State: ABy/qLZ7Avzkqk4QisBdqQ4B7TTwuvah+nXd8G/c8sR8tcP58S+tlLQD
+        K6ZjX3mpa7QAiL/T4WHwaQ0TdQ==
+X-Google-Smtp-Source: APBJJlH+589spTw6VYWXLet+X2wEUqAVJj6mVrbnQe14GIxf1b/tvS3uaY7SLSbYWlUf4svZPuQ4PA==
+X-Received: by 2002:a0d:ccd4:0:b0:56f:f40f:9414 with SMTP id o203-20020a0dccd4000000b0056ff40f9414mr20041546ywd.38.1691020858293;
+        Wed, 02 Aug 2023 17:00:58 -0700 (PDT)
+Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id y80-20020a81a153000000b0058419c57c66sm4991563ywg.4.2023.08.02.17.00.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Aug 2023 17:00:57 -0700 (PDT)
+Date:   Wed, 2 Aug 2023 17:00:49 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@ripple.attlocal.net
+To:     Carlos Maiolino <cem@kernel.org>
+cc:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org,
+        hughd@google.com
+Subject: Re: [bug report] shmem: quota support
+In-Reply-To: <20230802142225.of27saigrzotlmza@andromeda>
+Message-ID: <1858133-56ab-fafb-7230-a7b0b66694ed@google.com>
+References: <kU3N4tqbYA3gHO6AXf5TbwIkfbkKFI9NaCK_39Uj4qC6YJKXa_j98uqXcegkmzc8Nxj8L3rD_UWv_x6y0RGv1Q==@protonmail.internalid> <ffd7ca34-7f2a-44ee-b05d-b54d920ce076@moroto.mountain> <20230802142225.of27saigrzotlmza@andromeda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <11d39248-31fc-c625-7c06-341f0146bd67@redhat.com>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 02, 2023 at 05:09:13PM -0400, Waiman Long wrote:
-> On 8/2/23 16:44, Kent Overstreet wrote:
-> > On Wed, Aug 02, 2023 at 04:16:12PM -0400, Waiman Long wrote:
-> > > On 7/12/23 17:11, Kent Overstreet wrote:
-> > > > These are used by bcachefs's six locks.
-> > > > 
-> > > > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> > > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > > Cc: Ingo Molnar <mingo@redhat.com>
-> > > > Cc: Waiman Long <longman@redhat.com>
-> > > > Cc: Boqun Feng <boqun.feng@gmail.com>
-> > > > ---
-> > > >    kernel/locking/osq_lock.c | 2 ++
-> > > >    1 file changed, 2 insertions(+)
-> > > > 
-> > > > diff --git a/kernel/locking/osq_lock.c b/kernel/locking/osq_lock.c
-> > > > index d5610ad52b..b752ec5cc6 100644
-> > > > --- a/kernel/locking/osq_lock.c
-> > > > +++ b/kernel/locking/osq_lock.c
-> > > > @@ -203,6 +203,7 @@ bool osq_lock(struct optimistic_spin_queue *lock)
-> > > >    	return false;
-> > > >    }
-> > > > +EXPORT_SYMBOL_GPL(osq_lock);
-> > > >    void osq_unlock(struct optimistic_spin_queue *lock)
-> > > >    {
-> > > > @@ -230,3 +231,4 @@ void osq_unlock(struct optimistic_spin_queue *lock)
-> > > >    	if (next)
-> > > >    		WRITE_ONCE(next->locked, 1);
-> > > >    }
-> > > > +EXPORT_SYMBOL_GPL(osq_unlock);
-> > > Have you considered extending the current rw_semaphore to support a SIX lock
-> > > semantics? There are a number of instances in the kernel that a up_read() is
-> > > followed by a down_write(). Basically, the code try to upgrade the lock from
-> > > read to write. I have been thinking about adding a upgrade_read() API to do
-> > > that. However, the concern that I had was that another writer may come in
-> > > and make modification before the reader can be upgraded to have exclusive
-> > > write access and will make the task to repeat what has been done in the read
-> > > lock part. By adding a read with intent to upgrade to write, we can have
-> > > that guarantee.
-> > It's been discussed, Linus had the same thought.
+On Wed, 2 Aug 2023, Carlos Maiolino wrote:
+> On Wed, Aug 02, 2023 at 09:53:54AM +0300, Dan Carpenter wrote:
+> > Hello Carlos Maiolino,
 > > 
-> > But it'd be a massive change to the rw semaphore code; this "read with
-> > intent" really is a third lock state which needs all the same
-> > lock/trylock/unlock paths, and with the way rw semaphore has separate
-> > entry points for read and write it'd be a _ton_ of new code. It really
-> > touches everything - waitlist handling included.
-> 
-> Yes, it is a major change, but I had done that before and it is certainly
-> doable. There are spare bits in the low byte of rwsem->count that can be
-> used as an intent bit. We also need to add a new rwsem_wake_type for that
-> for waitlist handling.
-> 
-> 
+> > The patch 9a9f8f590f6d: "shmem: quota support" from Jul 25, 2023
+> > (linux-next), leads to the following Smatch static checker warning:
 > > 
-> > And six locks have several other features that bcachefs needs, and other
-> > users may also end up wanting, that rw semaphores don't have; the two
-> > main features being a percpu read lock mode and support for an external
-> > cycle detector (which requires exposing lock waitlists, with some
-> > guarantees about how those waitlists are used).
-> 
-> Can you provide more information about those features?
-> 
+> > 	fs/quota/dquot.c:1271 flush_warnings()
+> > 	warn: sleeping in atomic context
 > > 
-> > > With that said, I would prefer to keep osq_{lock/unlock} for internal use by
-> > > some higher level locking primitives - mutex, rwsem and rt_mutex.
-> > Yeah, I'm aware, but it seems like exposing osq_(lock|unlock) is the
-> > most palatable solution for now. Long term, I'd like to get six locks
-> > promoted to kernel/locking.
 > 
-> Your SIX overlaps with rwsem in term of features. So we will have to somehow
-> merge them instead of having 2 APIs with somewhat similar functionality.
+> Thanks for the report Dan!
+> 
+> > fs/quota/dquot.c
+> >     1261 static void flush_warnings(struct dquot_warn *warn)
+> >     1262 {
+> >     1263         int i;
+> >     1264
+> >     1265         for (i = 0; i < MAXQUOTAS; i++) {
+> >     1266                 if (warn[i].w_type == QUOTA_NL_NOWARN)
+> >     1267                         continue;
+> >     1268 #ifdef CONFIG_PRINT_QUOTA_WARNING
+> >     1269                 print_warning(&warn[i]);
+> >     1270 #endif
+> > --> 1271                 quota_send_warning(warn[i].w_dq_id,
+> >     1272                                    warn[i].w_sb->s_dev, warn[i].w_type);
+> > 
+> > The quota_send_warning() function does GFP_NOFS allocations, which don't
+> > touch the fs but can still sleep.  GFP_ATOMIC or GFP_NOWAIT don't sleep.
+> > 
+> 
+> Hmm, tbh I think the simplest way to fix it is indeed change GFP_NOFS to
+> GFP_NOWAIT when calling genlmsg_new(), quota_send_warnings() already abstain to
+> pass any error back to its caller, I don't think moving it from GFP_NOFS ->
+> GFP_NOWAIT will have much impact here as the amount of memory required for it is
+> not that big and wouldn't fail unless free memory is really short. I might be
+> wrong though.
+> 
+> If not that, another option would be to swap tmpfs spinlocks for mutexes, but I
+> would rather avoid that.
+> 
+> CC'ing other folks for more suggestions.
 
-Waiman, if you think you can add all the features of six locks to rwsem,
-knock yourself out - but right now this is a vaporware idea for you, not
-something I can seriously entertain. I'm looking to merge bcachefs next
-cycle, not sit around and bikeshed for the next six months.
+This is certainly a problem, for both dquot_alloc and dquot_free paths.
+Thank you, Dan, for catching it.
 
-If you start making a serious effort on adding those features to rwsem
-I'll start walking you through everything six locks has, but right now
-this is a major digression on a patch that just exports two symbols.
+GFP_NOWAIT is an invitation to flakiness: I don't think it's right to
+regress existing quota users by changing GFP_NOFS to GFP_NOWAIT in all
+cases there; but it does seem a sensible stopgap for the new experimental
+user tmpfs.
+
+I think the thing to do, for now, is to add a flag (DQUOT_SPACE_WARN_NOWAIT?)
+which gets passed down to the __dquot_alloc and __dquot_free for tmpfs,
+and those choose GFP_NOFS or GFP_NOWAIT accordingly, and pass that gfp_t
+on down to flush_warnings() to quota_send_warning() to genlmsg_new() and
+genlmsg_multicast().  Carlos, if you agree, please try that.
+
+I have no experience with netlink whatsoever: I hope that will be enough
+to stop it from blocking.
+
+I did toy with the idea of passing back the dquot_warn, and letting the
+caller do the flush_warnings() at a more suitable moment; and that might
+work out, but I suspect that the rearrangement involved would be better
+directed to just rearranging where mm/shmem.c makes it dquot_alloc and
+dquot_free calls.
+
+And that's something I shall probably want to do, but not rush into.
+There's an existing problem, for which I do have the pre-quotas fix,
+of concurrent faulters in a size-limited tmpfs getting failures when
+they try to allocate the last block (worse when huge page).  Respecting
+all the different layers of limiting is awkward, now quotas add another.
+
+Ordinariily, with this blocking issue coming up now, I'd have asked to
+back the tmpfs quotas series out of the next tree, and you rework where
+the dquot_alloc and dquot_free are done, then bring the series back in
+the next cycle.  But with it being managed from vfs.git for this cycle,
+and strong preference to return to mm.git next cycle, let's try for a
+workaround now, then maybe I can do the rearrangement in mm/shmem.c
+next cycle - it is one of the things I was hoping to do then (but
+"hope" is not much of a guarantee).
+
+info->mutex instead of info->lock: no thanks.
+
+Hugh
+
+> 
+> Carlos
+> 
+> >     1273         }
+> >     1274 }
+> > 
+> > The call trees that Smatch is worried about are listed.  The "disables
+> > preempt" functions take the spin_lock_irq(&info->lock) before calling
+> > shmem_recalc_inode().
+> > 
+> > shmem_charge() <- disables preempt
+> > shmem_uncharge() <- disables preempt
+> > shmem_undo_range() <- disables preempt
+> > shmem_getattr() <- disables preempt
+> > shmem_writepage() <- disables preempt
+> > shmem_set_folio_swapin_error() <- disables preempt
+> > shmem_swapin_folio() <- disables preempt
+> > shmem_get_folio_gfp() <- disables preempt
+> > -> shmem_recalc_inode()
+> >    -> shmem_inode_unacct_blocks()
+> >       -> dquot_free_block_nodirty()
+> >          -> dquot_free_space_nodirty()
+> >             -> __dquot_free_space()
+> >                -> flush_warnings()
+> 
+> Hm, I see, we add dquot_free_block_nodirty() call to shmem_inode_unacct_blocks()
+> here, which leads to this possible sleep inside spin_lock_irq().
+> > 
+> > regards,
+> > dan carpenter
