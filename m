@@ -2,81 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 78B8876DE71
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 04:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D56F076DF49
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 06:07:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233361AbjHCCqp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Aug 2023 22:46:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33748 "EHLO
+        id S231656AbjHCEHD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Aug 2023 00:07:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230248AbjHCCqo (ORCPT
+        with ESMTP id S231577AbjHCEG7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Aug 2023 22:46:44 -0400
-Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57904BA
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 19:46:42 -0700 (PDT)
-Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-583f837054eso4002777b3.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Aug 2023 19:46:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1691030801; x=1691635601;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C7rPDjP3w7SFi7WVbOLZnOQv42SK/YK3pgxUtFOJqn8=;
-        b=NhqdR98K7bSRKTQ7CDjVRuusX4/Mn2110sFpO+gM2ndRgcP5OGA/FvizImRpEFEI4Z
-         PzGJ2fbtz7V+aSAsGKRRX4zdMzG2Ac0+NO8G5LU04GpWmY1oYpNibBULXCfo1KfjeD/Y
-         VkGVoJ4W5p9nydWS1OU+rOHdFLg07+H2eJVFgHRBmy669hWJ8MfQyLHxBzHgyNt/2Jk+
-         CcwoWKuzcB5rmpv9andPMrMoVDPaHBL3zU3r1fFGqN7x74QhHlDsK1NwpW9SEdncDCRd
-         FkoTtcniWlVsCYHVycdjAtMDuJQ9Pfykj7simTA9WCo2OIiEEMeuJSS5RVZpb31IsaiE
-         GjcA==
+        Thu, 3 Aug 2023 00:06:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C86972D72
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Aug 2023 21:06:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1691035574;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/JX7cAs7chLrarjH6MrLPnJz44xJdfnup4JJenCs9Y8=;
+        b=airg41NvBiwn+zgM1V6vpRXb+vML2F8neZt7+K4JZQXhzqq22Z1whqsfHXarvwp/IPTasx
+        tJkOHANvB2g/zeg+DHgFq/DsrWIMYlEgVUnMWZnjwN1CtyM2YcjadqHxeoDEi25Mp3fMYf
+        jTcdHKcUzpppdcuaBveA3tD89ND82Qg=
+Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com
+ [209.85.210.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-46-sZ4O9R9JPaiL1_b3sIlLZA-1; Thu, 03 Aug 2023 00:06:13 -0400
+X-MC-Unique: sZ4O9R9JPaiL1_b3sIlLZA-1
+Received: by mail-ot1-f69.google.com with SMTP id 46e09a7af769-6bb0ba9fc81so892487a34.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Aug 2023 21:06:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691030801; x=1691635601;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C7rPDjP3w7SFi7WVbOLZnOQv42SK/YK3pgxUtFOJqn8=;
-        b=lnRgBTE0lfCfSi6H1fWvrQ4BPprLXCMbmaI3+dfeYSUs6pCzMdb0AeQFqSAWmQG1FZ
-         fPytdiY2sRSsSWyD++GdvDC50ybe1KRpmc6c+YJalPEJ+sl/RtHABTHKZNrQFSM3Nvo7
-         /4KupRr54wbj1CVfKu/ds7NFlVtrkiGUlONPZc9sD5reD1J85gVuvHpzWlAhLlJw+JPj
-         qasbimtVAzgTK+9z0NFBl29dZxEZnwW8fEj7dXKb49FRAkEfy+1gFd6cIxAOxZzJ3ggc
-         CtjVmOiqqcw2P/UrIkYiS8CY4Jk5QoPCYgvRV7bUIXBZkB4aQ4VJwzwEA2S/DXp2OqLf
-         PmEA==
-X-Gm-Message-State: ABy/qLb6BOb+uCgyUakkfefexKnt3ro2Se+GUGleRvXTEWR/QMGD1LmC
-        g1DTKtfmdkY798EN1DQa3g0jm3tD347h6/ce2u7o
-X-Google-Smtp-Source: APBJJlFqHlrp0u9AowD2PWwPoxkgbyl77rYK4KODV0+X/B9t9X/ggsV9oR4Jf3avj9eFA1ansLbJ8J91robM9izXfWw=
-X-Received: by 2002:a81:7b05:0:b0:56c:e1e0:8da1 with SMTP id
- w5-20020a817b05000000b0056ce1e08da1mr23328025ywc.19.1691030801385; Wed, 02
- Aug 2023 19:46:41 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1691035572; x=1691640372;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/JX7cAs7chLrarjH6MrLPnJz44xJdfnup4JJenCs9Y8=;
+        b=VSd6eVpRyIkGJls3p4nNm7KKlDtH1ZZ5aLd7DjF3KZpKcyO5LHVuhHOchKXQJ9vIaa
+         x0r22GWeOMVFZWnHax0NJeX1p2V8aRH3AUkFv/rnfOauyI5beQgPhJ3EYkv7Oy8DhCXe
+         nBClFDDK368obZv2iqSm8Tjok/WR8kovKnRjIOjN3TaIlLHbhL/bHe+ERUcWQytYVzB4
+         5EWOkOQHkLqO3HBB9exHoicbYwBbXDteJuCQ6BZon5NDpt2G/j+wgrkC+VIWF+9Pjt2g
+         RFCQl0uTE6ppuvoLYwjZs4pc1wBJEee3d6CwlIpkAL5uoj9eOOYuPu5Zv2w7jYdbZrvo
+         UINA==
+X-Gm-Message-State: ABy/qLaCjg3awnvwScQBgxyRd87gTCyUDaNbJLgOwIP/J9ofTOWfcCQi
+        93g44qtb93zLnhmcGUi2oTf+z/HDBdraB/cw8VLNPnJLqTJVkX0LUEpvRkzhj6vCtb0veOJvzHh
+        9ZlO9jQiaNqz8DJa+jU2UGj2hYw==
+X-Received: by 2002:a05:6830:1016:b0:6b9:9129:dddf with SMTP id a22-20020a056830101600b006b99129dddfmr20079924otp.16.1691035572643;
+        Wed, 02 Aug 2023 21:06:12 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlGDciwVs7e8bxeFPbFtGT6SCsgLYajkMm4G923j7g9rMQqPkn0wzXiSF+kTBoSNoNxO0vl30g==
+X-Received: by 2002:a05:6830:1016:b0:6b9:9129:dddf with SMTP id a22-20020a056830101600b006b99129dddfmr20079905otp.16.1691035572268;
+        Wed, 02 Aug 2023 21:06:12 -0700 (PDT)
+Received: from zlang-mailbox ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id e12-20020a63744c000000b005641fadb844sm10049195pgn.49.2023.08.02.21.06.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Aug 2023 21:06:11 -0700 (PDT)
+Date:   Thu, 3 Aug 2023 12:06:07 +0800
+From:   Zorro Lang <zlang@redhat.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     fstests@vger.kernel.org, aalbersh@redhat.com,
+        chandan.babu@oracle.com, amir73il@gmail.com, josef@toxicpanda.com,
+        djwong@kernel.org, linux-fsdevel@vger.kernel.org,
+        patches@lists.linux.dev
+Subject: Re: [PATCH v2] fstests: add helper to canonicalize devices used to
+ enable persistent disks
+Message-ID: <20230803040607.eytde4s5dnqavtqb@zlang-mailbox>
+References: <20230802191535.1365096-1-mcgrof@kernel.org>
 MIME-Version: 1.0
-References: <20230802-master-v6-1-45d48299168b@kernel.org> <bac543537058619345b363bbfc745927.paul@paul-moore.com>
- <ca156cecbc070c3b7c68626572274806079a6e04.camel@kernel.org>
-In-Reply-To: <ca156cecbc070c3b7c68626572274806079a6e04.camel@kernel.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 2 Aug 2023 22:46:30 -0400
-Message-ID: <CAHC9VhTQDVyZewU0Oiy4AfJt_UtB7O2_-PcUmXkZtuwKDQBfXg@mail.gmail.com>
-Subject: Re: [PATCH v6] vfs, security: Fix automount superblock LSM init
- problem, preventing NFS sb sharing
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230802191535.1365096-1-mcgrof@kernel.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -84,89 +81,191 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 2, 2023 at 3:34=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
-te:
-> On Wed, 2023-08-02 at 14:16 -0400, Paul Moore wrote:
-> > On Aug  2, 2023 Jeff Layton <jlayton@kernel.org> wrote:
+On Wed, Aug 02, 2023 at 12:15:35PM -0700, Luis Chamberlain wrote:
+> The filesystem configuration file does not allow you to use symlinks to
+> real devices given the existing sanity checks verify that the target end
+> device matches the source. Device mapper links work but not symlinks for
+> real drives do not.
+> 
+> Using a symlink is desirable if you want to enable persistent tests
+> across reboots. For example you may want to use /dev/disk/by-id/nvme-eui.*
+> so to ensure that the same drives are used even after reboot. This
+> is very useful if you are testing for example with a virtualized
+> environment and are using PCIe passthrough with other qemu NVMe drives
+> with one or many NVMe drives.
+> 
+> To enable support just add a helper to canonicalize devices prior to
+> running the tests.
+> 
+> This allows one test runner, kdevops, which I just extended with
+> support to use real NVMe drives it has support now to use nvme EUI
+> symlinks and fallbacks to nvme model + serial symlinks as not all
+> NVMe drives support EUIs. The drives it uses for the filesystem
+> configuration optionally is with NVMe eui symlinks so to allow
+> the same drives to be used over reboots.
+> 
+> For instance this works today with real nvme drives:
+> 
+> mkfs.xfs -f /dev/nvme0n1
+> mount /dev/nvme0n1 /mnt
+> TEST_DIR=/mnt TEST_DEV=/dev/nvme0n1 FSTYP=xfs ./check generic/110
+> 
+> FSTYP         -- xfs (debug)
+> PLATFORM      -- Linux/x86_64 flax-mtr01 6.5.0-rc3-djwx #rc3 SMP PREEMPT_DYNAMIC Wed Jul 26 14:26:48 PDT 2023
+> 
+> generic/110        2s
+> Ran: generic/110
+> Passed all 1 tests
+> 
+> But this does not:
+> 
+> TEST_DIR=/mnt TEST_DEV=/dev/disk/by-id/nvme-eui.0035385411904c1e FSTYP=xfs ./check generic/110
+> mount: /mnt: /dev/disk/by-id/nvme-eui.0035385411904c1e already mounted on /mnt.
+> common/rc: retrying test device mount with external set
+> mount: /mnt: /dev/disk/by-id/nvme-eui.0035385411904c1e already mounted on /mnt.
+> common/rc: could not mount /dev/disk/by-id/nvme-eui.0035385411904c1e on /mnt
+> 
+> umount /mnt
+> TEST_DIR=/mnt TEST_DEV=/dev/disk/by-id/nvme-eui.0035385411904c1e FSTYP=xfs ./check generic/110
+> TEST_DEV=/dev/disk/by-id/nvme-eui.0035385411904c1e is mounted but not on TEST_DIR=/mnt - aborting
+> Already mounted result:
+> /dev/disk/by-id/nvme-eui.0035385411904c1e /mnt
+> 
+> This fixes this. This allows the same real drives for a test to be
+> used over and over after reboots.
+> 
+> Use readlink -e because that support exists since 2004:
+> 
+> https://github.com/coreutils/coreutils/commit/e0b8973bd4b146b5fb39641a4ee7984e922c3ff5
+> 
+> realpath is much newer than readlink, it's first commit including
+> support for -e dates back to 2011:
+> 
+> https://github.com/coreutils/coreutils/commit/77ea441f79aa115f79b47d9c1fc9c0004c5c7111
+> 
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> ---
+> 
+> Changes on v2:
+> 
+>  - Enhanced the commit log to describe the existing status quo where
+>    at least device mapper symlinks work but not for real drives. Also
+>    provide an example output of the issue and use case as implied by
+>    Darrick.
+>  - Added CANON_DEVS to disable this by default, document it
+>  - simplify _canonicalize_devices() with as many one liners as possible
+>  - use readlink -e because my history scavanging has found it has existed for
+>    7 years longer thjan realpath -e support. Documen this on the commit
+>    log as well.
+> 
+>  README        |  3 +++
+>  check         |  1 +
+>  common/config | 32 +++++++++++++++++++++++++++++++-
+>  3 files changed, 35 insertions(+), 1 deletion(-)
+> 
+> diff --git a/README b/README
+> index 1ca506492bf0..97ef63d6d693 100644
+> --- a/README
+> +++ b/README
+> @@ -268,6 +268,9 @@ Misc:
+>     this option is supported for all filesystems currently only -overlay is
+>     expected to run without issues. For other filesystems additional patches
+>     and fixes to the test suite might be needed.
+> + - set CANON_DEVS=yes to canonicalize device symlinks. This will let you
+> +   for example use something like TEST_DEV/dev/disk/by-id/nvme-* so the
+> +   device remains persistent between reboots. This is disabled by default.
+>  
+>  ______________________
+>  USING THE FSQA SUITE
+> diff --git a/check b/check
+> index 0bf5b22e061a..577e09655844 100755
+> --- a/check
+> +++ b/check
+> @@ -711,6 +711,7 @@ function run_section()
+>  	fi
+>  
+>  	get_next_config $section
+> +	_canonicalize_devices
+>  
+>  	mkdir -p $RESULT_BASE
+>  	if [ ! -d $RESULT_BASE ]; then
+> diff --git a/common/config b/common/config
+> index 6c8cb3a5ba68..7d74c285ac71 100644
+> --- a/common/config
+> +++ b/common/config
+> @@ -25,6 +25,9 @@
+>  # KEEP_DMESG -      whether to keep all dmesg for each test case.
+>  #                   yes: keep all dmesg
+>  #                   no: only keep dmesg with error/warning (default)
+> +# CANON_DEVS -      whether or not to canonicalize device symlinks
+> +#                   yes: canonicalize device symlinks
+> +#                   no (default) do not canonicalize device if they are symlinks
+>  #
+>  # - These can be added to $HOST_CONFIG_DIR (witch default to ./config)
+>  #   below or a separate local configuration file can be used (using
+> @@ -644,6 +647,32 @@ _canonicalize_mountpoint()
+>  	echo "$parent/$base"
+>  }
+>  
+> +# Enables usage of /dev/disk/by-id/ symlinks to persist target devices
+> +# over reboots
+> +_canonicalize_devices()
+> +{
+> +	if [ "$CANON_DEVS" != "yes" ]; then
+> +		return
+> +	fi
+> +	[ -L "$TEST_DEV" ]	&& TEST_DEV=$(readlink -e "$TEST_DEV")
+> +	[ -L $SCRATCH_DEV ]	&& SCRATCH_DEV=$(readlink -e "$SCRATCH_DEV")
 
-...
+With or without "" will be different...
 
-> > I generally dislike core kernel code which makes LSM calls conditional
-> > on some kernel state maintained outside the LSM.  Sometimes it has to
-> > be done as there is no other good options, but I would like us to try
-> > and avoid it if possible.  The commit description mentioned that this
-> > was put here to avoid a SELinux complaint, can you provide an example
-> > of the complain?  Does it complain about a double/invalid mount, e.g.
-> > "SELinux: mount invalid.  Same superblock, different security ..."?
->
-> The problem I had was not so much SELinux warnings, but rather that in a
-> situation where I would expect to share superblocks between two
-> filesystems, it didn't.
->
-> Basically if you do something like this:
->
-> # mount nfsserver:/export/foo /mnt/foo -o context=3Dsystem_u:object_r:roo=
-t_t:s0
-> # mount nfsserver:/export/bar /mnt/bar -o context=3Dsystem_u:object_r:roo=
-t_t:s0
->
-> ...when "foo" and "bar" are directories on the same filesystem on the
-> server, you should get two vfsmounts that share a superblock. That's
-> what you get if selinux is disabled, but not when it's enabled (even
-> when it's in permissive mode).
+> +	[ -L $TEST_LOGDEV ]	&& TEST_LOGDEV=$(readlink -e "$TEST_LOGDEV")
+> +	[ -L $TEST_RTDEV ]	&& TEST_RTDEV=$(readlink -e "$TEST_RTDEV")
+> +	[ -L $SCRATCH_RTDEV ]	&& SCRATCH_RTDEV=$(readlink -e "$SCRATCH_RTDEV")
+> +	[ -L $LOGWRITES_DEV ]	&& LOGWRITES_DEV=$(readlink -e "$LOGWRITES_DEV")
 
-Thanks, that helps.  I'm guessing the difference in behavior is due to
-the old->has_sec_mnt_opts check in nfs_compare_super().
+You've give "" to $TEST_DEV, others should be same.
 
-> > I'd like to understand why the sb_set_mnt_opts() call fails when it
-> > comes after the fs_context_init() call.  I'm particulary curious to
-> > know if the failure is due to conflicting SELinux state in the
-> > fs_context, or if it is simply an issue of sb_set_mnt_opts() not
-> > properly handling existing values.  Perhaps I'm being overly naive,
-> > but I'm hopeful that we can address both of these within the SELinux
-> > code itself.
->
-> The problem I hit was that nfs_compare_super is called with a fs_context
-> that has a NULL ->security pointer. That caused it to call
-> selinux_sb_mnt_opts_compat with mnt_opts set to NULL, and at that point
-> it returns 1 and decides not to share sb's.
->
-> Filling out fc->security with this new operation seems to fix that, but
-> if you see a better way to do this, then I'm certainly open to the idea.
+> +	if [ ! -z "$SCRATCH_DEV_POOL" ]; then
+> +		NEW_SCRATCH_POOL=""
 
-Just as you mention that you are not a LSM expert, I am not a VFS
-expert, so I think we'll have to help each other a bit ;)
+If the NEW_SCRATCH_POOL isn't used in other places, it can be a local variable as
+a tmp variable.
 
-I think I'm beginning to understand alloc_fs_context() a bit more,
-including the fs_context_for_XXX() wrappers.  One thing I have
-realized is that I believe we need to update the
-selinux_fs_context_init() and smack_fs_context_init() functions to
-properly handle a NULL @reference dentry; I think returning without
-error in both cases is the correct answer.  In the non-NULL @reference
-case, I believe your patch is correct, we do want to inherit the
-options from @reference.  My only concern now is the
-fs_context::lsm_set flag.
+Thanks,
+Zorro
 
-You didn't mention exactly why the security_sb_set_mnt_opts() was
-failing, and requires the fs_context::lsm_set check, but my guess is
-that something is tripping over the fact that the superblock is
-already properly setup.  I'm working under the assumption that this
-problem - attempting to reconfigure a properly configured superblock -
-should only be happening in the submount/non-NULL-reference case.  If
-it is happening elsewhere I think I'm going to need some help
-understanding that ...
+> +		for i in $SCRATCH_DEV_POOL; do
+> +			if [ -L $i ]; then
+> +				NEW_SCRATCH_POOL="$NEW_SCRATCH_POOL $(readlink -e $i)"
+> +			else
+> +				NEW_SCRATCH_POOL="$NEW_SCRATCH_POOL $i)"
+> +			fi
+> +		done
+> +		SCRATCH_DEV_POOL="$NEW_SCRATCH_POOL"
+> +	fi
+> +}
+> +
+>  # On check -overlay, for the non multi section config case, this
+>  # function is called on every test, before init_rc().
+>  # When SCRATCH/TEST_* vars are defined in config file, config file
+> @@ -774,7 +803,6 @@ get_next_config() {
+>  	fi
+>  
+>  	parse_config_section $1
+> -
+>  	if [ ! -z "$OLD_FSTYP" ] && [ $OLD_FSTYP != $FSTYP ]; then
+>  		[ -z "$MOUNT_OPTIONS" ] && _mount_opts
+>  		[ -z "$TEST_FS_MOUNT_OPTS" ] && _test_mount_opts
+> @@ -890,5 +918,7 @@ else
+>  	fi
+>  fi
+>  
+> +_canonicalize_devices
+> +
+>  # make sure this script returns success
+>  /bin/true
+> -- 
+> 2.39.2
+> 
 
-However, assuming I'm mostly correct in the above paragraph, would it
-be possible to take a reference to the @reference dentry's superblock
-in security_fs_context_init(), that we could later compare to the
-superblock passed into security_sb_set_mnt_opts()?  If we know that
-the fs_context was initialized with the same superblock we are now
-being asked to set mount options on, we should be able to return from
-the LSM hook without doing anything.
-
-Right?
-
-Or am I missing something really silly? :)
-
---=20
-paul-moore.com
