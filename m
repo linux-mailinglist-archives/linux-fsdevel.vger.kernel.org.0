@@ -2,70 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9225B76EF5C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 18:27:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E09D76F010
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Aug 2023 18:53:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236282AbjHCQ1c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Aug 2023 12:27:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60016 "EHLO
+        id S234193AbjHCQxq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Aug 2023 12:53:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231460AbjHCQ1b (ORCPT
+        with ESMTP id S234191AbjHCQxp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Aug 2023 12:27:31 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CD5F30D3;
-        Thu,  3 Aug 2023 09:27:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CFC7861E31;
-        Thu,  3 Aug 2023 16:27:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95019C433C7;
-        Thu,  3 Aug 2023 16:27:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691080049;
-        bh=R9CF2H7mbl0cgRXO+z4tXwwMfit3swiAWcNJEtpzi1Y=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=cItRdHU8ppyTRYkjux/OaZteYYB46EBf6G8e/iMfeXgRUR8ZGlWDDbC9jCWrex8dX
-         q88xudYsQ4coAFRhO/Uiq2Ste3axYkcId1WfMhh85ioLEjq87RsPVLZA7ILU7ZNhqo
-         Q6Bnh2fcTMyiCEKX2IIx57hQKViodinp4xPXgG3N2VTtsTuN+/8NMPeMMk46zyu39k
-         ezVItsWlD5GsUOD0jo7fUYoAlA4HQLTE5IDnmAIZhCLk9ZO6zcgWXlshnO3FupfZM4
-         6cpWec+RvB0hGaMmVB7kUVVEH1ikferq79RA2TN0sxqoUy0yYw/op2RMMdNpTgVKlG
-         Ot0/BUJr2U50Q==
-Message-ID: <ec1fd18f271593d5c6b6813cfaeb688994f20bf4.camel@kernel.org>
-Subject: Re: [PATCH v6] vfs, security: Fix automount superblock LSM init
- problem, preventing NFS sb sharing
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Date:   Thu, 03 Aug 2023 12:27:26 -0400
-In-Reply-To: <CAHC9VhTQDVyZewU0Oiy4AfJt_UtB7O2_-PcUmXkZtuwKDQBfXg@mail.gmail.com>
-References: <20230802-master-v6-1-45d48299168b@kernel.org>
-         <bac543537058619345b363bbfc745927.paul@paul-moore.com>
-         <ca156cecbc070c3b7c68626572274806079a6e04.camel@kernel.org>
-         <CAHC9VhTQDVyZewU0Oiy4AfJt_UtB7O2_-PcUmXkZtuwKDQBfXg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Thu, 3 Aug 2023 12:53:45 -0400
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41D303C28
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Aug 2023 09:53:23 -0700 (PDT)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-586a3159588so234387b3.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Aug 2023 09:53:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1691081602; x=1691686402;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iE+KLblSLBJ4kXV8+nruJL6O/VLshmXbz1ZZlAXbfhs=;
+        b=K4rpr4iY87TMzY/bO2lJDOkCruiOyNMkr+8sHxp2LSxV/keG/6eK4Ls4YT+xSv7bTd
+         IauXuyz/0k43lPO7qej9uuT7Nap4DJoOoicVq0Zdbct9MVw+EL1dvEas94tY/NJYnFhG
+         GeOnXBabvnPW+ZK1vOZ7T5n3A0VwyyIHlXsLubzZ7zxXHvjI5sFsrVSmqAi8V2PkFdkc
+         9OJ5ioJUd8ZTOwnB+Rw0ey3g+u2sfHyg08ANOh+Vdyigf97YEz5JnNdDZpK7epHuZ3tN
+         dfeWZjoDoZewNELen0ZU0tV6puJQ7unM7EKdDXbXfkAtmHtcGlKP/szfQ2XTc3SPtZqz
+         whbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691081602; x=1691686402;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iE+KLblSLBJ4kXV8+nruJL6O/VLshmXbz1ZZlAXbfhs=;
+        b=JORQ2Rhd6Y5yj60Iq5aNYQsLA0oy5oqpafZdGirJ+SNgqsyKkIUb1ztSMrrGvMVZtj
+         DZAVNlP63V7cghUqI01xHLVYCPfLK9BVwYM0/uqkfKM6irw8RkzjWmrxe12OGsA5aliu
+         cOda+0uDrK1jJ8JtIlako4AxLeCj4Eqp6N25VxSTD0WYPueSNgHaKHebcCZ/YjZQFdlf
+         F344wtzkMcCdv397xtZp/JcH9KgfUtBFaIPW/QoLXunugUn3y4nwtEbAlAYC4UqumS0S
+         DCWGPoD17eQzRf9rCvtHOtDPc2TLGfr1FUy4mcECYAvOHUpVWo3MiKztNZ7u6Tgmg2Uq
+         5omA==
+X-Gm-Message-State: ABy/qLaWeEqdrdUvJGTWtV3PQzlsz6ER6N7UQGgGj0vWkA4Sbx4IonQv
+        BCwnvBV1GMnWlR6j2oPL1yXbTQNdX/qFfy1HAK0UjA==
+X-Google-Smtp-Source: APBJJlFq03Wwzc6dStu0AHQLS94GfSxzSu4VpbSZTuFLRnYAxPo9/VX69eZHjE/Mttdel43F0F5hqw==
+X-Received: by 2002:a0d:e614:0:b0:583:8c62:b162 with SMTP id p20-20020a0de614000000b005838c62b162mr21969892ywe.4.1691081602253;
+        Thu, 03 Aug 2023 09:53:22 -0700 (PDT)
+Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id u187-20020a8160c4000000b005869d9535dcsm86697ywb.55.2023.08.03.09.53.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Aug 2023 09:53:21 -0700 (PDT)
+Date:   Thu, 3 Aug 2023 09:53:13 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@ripple.attlocal.net
+To:     Jan Kara <jack@suse.cz>
+cc:     Hugh Dickins <hughd@google.com>, Carlos Maiolino <cem@kernel.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, brauner@kernel.org
+Subject: Re: [bug report] shmem: quota support
+In-Reply-To: <20230803111021.ge3asfgvc3nl4uml@quack3>
+Message-ID: <a2309115-81f2-bf77-ec3-5b5d91d33b67@google.com>
+References: <kU3N4tqbYA3gHO6AXf5TbwIkfbkKFI9NaCK_39Uj4qC6YJKXa_j98uqXcegkmzc8Nxj8L3rD_UWv_x6y0RGv1Q==@protonmail.internalid> <ffd7ca34-7f2a-44ee-b05d-b54d920ce076@moroto.mountain> <20230802142225.of27saigrzotlmza@andromeda> <1858133-56ab-fafb-7230-a7b0b66694ed@google.com>
+ <20230803111021.ge3asfgvc3nl4uml@quack3>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,127 +74,89 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2023-08-02 at 22:46 -0400, Paul Moore wrote:
-> On Wed, Aug 2, 2023 at 3:34=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
-rote:
-> > On Wed, 2023-08-02 at 14:16 -0400, Paul Moore wrote:
-> > > On Aug  2, 2023 Jeff Layton <jlayton@kernel.org> wrote:
->=20
-> ...
->=20
-> > > I generally dislike core kernel code which makes LSM calls conditiona=
-l
-> > > on some kernel state maintained outside the LSM.  Sometimes it has to
-> > > be done as there is no other good options, but I would like us to try
-> > > and avoid it if possible.  The commit description mentioned that this
-> > > was put here to avoid a SELinux complaint, can you provide an example
-> > > of the complain?  Does it complain about a double/invalid mount, e.g.
-> > > "SELinux: mount invalid.  Same superblock, different security ..."?
-> >=20
-> > The problem I had was not so much SELinux warnings, but rather that in =
-a
-> > situation where I would expect to share superblocks between two
-> > filesystems, it didn't.
-> >=20
-> > Basically if you do something like this:
-> >=20
-> > # mount nfsserver:/export/foo /mnt/foo -o context=3Dsystem_u:object_r:r=
-oot_t:s0
-> > # mount nfsserver:/export/bar /mnt/bar -o context=3Dsystem_u:object_r:r=
-oot_t:s0
-> >=20
-> > ...when "foo" and "bar" are directories on the same filesystem on the
-> > server, you should get two vfsmounts that share a superblock. That's
-> > what you get if selinux is disabled, but not when it's enabled (even
-> > when it's in permissive mode).
->=20
-> Thanks, that helps.  I'm guessing the difference in behavior is due to
-> the old->has_sec_mnt_opts check in nfs_compare_super().
->=20
+Thanks for very helpful reply, Jan: it changes everything, at the bottom.
 
-Yep. That gets set, but fc->security is still NULL.
+On Thu, 3 Aug 2023, Jan Kara wrote:
+> On Wed 02-08-23 17:00:49, Hugh Dickins wrote:
+> > 
+> > This is certainly a problem, for both dquot_alloc and dquot_free paths.
+> > Thank you, Dan, for catching it.
+> > 
+> > GFP_NOWAIT is an invitation to flakiness: I don't think it's right to
+> > regress existing quota users by changing GFP_NOFS to GFP_NOWAIT in all
+> > cases there; but it does seem a sensible stopgap for the new experimental
+> > user tmpfs.
+> 
+> So passing gfp argument to quota_send_warning() and propagating the
+> blocking info through __dquot_alloc_space() and __dquot_free_space() flags
+> would be OK for me *but* if CONFIG_PRINT_QUOTA_WARNING is set (which is
+> deprecated but still exists), we end up calling tty_write_message() out of
+> flush_warnings() and that can definitely block.
 
-> > > I'd like to understand why the sb_set_mnt_opts() call fails when it
-> > > comes after the fs_context_init() call.  I'm particulary curious to
-> > > know if the failure is due to conflicting SELinux state in the
-> > > fs_context, or if it is simply an issue of sb_set_mnt_opts() not
-> > > properly handling existing values.  Perhaps I'm being overly naive,
-> > > but I'm hopeful that we can address both of these within the SELinux
-> > > code itself.
-> >=20
-> > The problem I hit was that nfs_compare_super is called with a fs_contex=
-t
-> > that has a NULL ->security pointer. That caused it to call
-> > selinux_sb_mnt_opts_compat with mnt_opts set to NULL, and at that point
-> > it returns 1 and decides not to share sb's.
-> >=20
-> > Filling out fc->security with this new operation seems to fix that, but
-> > if you see a better way to do this, then I'm certainly open to the idea=
-.
->=20
-> Just as you mention that you are not a LSM expert, I am not a VFS
-> expert, so I think we'll have to help each other a bit ;)
->=20
-> I think I'm beginning to understand alloc_fs_context() a bit more,
-> including the fs_context_for_XXX() wrappers.  One thing I have
-> realized is that I believe we need to update the
-> selinux_fs_context_init() and smack_fs_context_init() functions to
-> properly handle a NULL @reference dentry; I think returning without
-> error in both cases is the correct answer.  In the non-NULL @reference
-> case, I believe your patch is correct, we do want to inherit the
-> options from @reference.
->=20
+Oh yes :(
 
+> 
+> So if we are looking for unintrusive stopgap solution, maybe tmpfs can just
+> tell quota code to not issue warnings at all by using
+> __dquot_alloc_space() without DQUOT_SPACE_WARN flag and add support for
+> this flag to __dquot_free_space()? The feature is not used too much AFAIK
+> anyway. And once we move dquot calls into places where they can sleep, we
+> can reenable the warning support.
 
-ACK. That seems reasonable. I'll work that in.
+If the warning feature is not used very much at all (I did not realize
+that), then certainly this would be a better way to go for now, than
+the inadequate and extra DQUOT_SPACE_WARN_NOWAIT I was suggesting.
 
+> 
+> > I think the thing to do, for now, is to add a flag (DQUOT_SPACE_WARN_NOWAIT?)
+> > which gets passed down to the __dquot_alloc and __dquot_free for tmpfs,
+> > and those choose GFP_NOFS or GFP_NOWAIT accordingly, and pass that gfp_t
+> > on down to flush_warnings() to quota_send_warning() to genlmsg_new() and
+> > genlmsg_multicast().  Carlos, if you agree, please try that.
 
->   My only concern now is the
-> fs_context::lsm_set flag.
->=20
+Carlos, sorry, please don't waste your time on DQUOT_SPACE_WARN_NOWAIT
+or no-DQUOT_SPACE_WARN.
 
-Yeah, that bit is ugly. David studied this problem a lot more than I
-have, but basically, we only want to set the context info once, and
-we're not always going to have a nice string to parse to set up the
-options. This obviously works, but I'm fine with a more elegant method
-if you can spot one.
+> > 
+> > I have no experience with netlink whatsoever: I hope that will be enough
+> > to stop it from blocking.
+> 
+> Yes, if you pass non-blocking gfp mode to netlink code, it takes care not
+> to block when allocating and sending the message.
 
+Useful info, thanks.
 
-> You didn't mention exactly why the security_sb_set_mnt_opts() was
-> failing, and requires the fs_context::lsm_set check, but my guess is
-> that something is tripping over the fact that the superblock is
-> already properly setup.  I'm working under the assumption that this
-> problem - attempting to reconfigure a properly configured superblock -
-> should only be happening in the submount/non-NULL-reference case.  If
-> it is happening elsewhere I think I'm going to need some help
-> understanding that ...
->=20
+>  
+> > I did toy with the idea of passing back the dquot_warn, and letting the
+> > caller do the flush_warnings() at a more suitable moment; and that might
+> > work out, but I suspect that the rearrangement involved would be better
+> > directed to just rearranging where mm/shmem.c makes it dquot_alloc and
+> > dquot_free calls.
+> 
+> Yeah, frankly I think this is the best fix. AFAIU the problem is only with
+> shmem_recalc_inode() getting called under info->lock which looks managable
+> as far as I'm looking at the call sites and relatively easy wrt quotas as
+> freeing of quota space cannot fail. At least all shmem_inode_acct_blocks()
+> calls seem to be in places where they can sleep.
 
-Correct. When you pass in the mount options, fc->security seems to be
-properly set. NFS mounting is complex though, so the final superblock
-you care about may end up being a descendant of the one that was
-originally configured.
+Ah, I believe you're right, and that's great: I was living in the past,
+when shmem_charge() was still calling shmem_inode_acct_block() under
+info->lock.
 
-This patch is intended to ensure we carry over security info in these
-cases. We already try to inherit other parameters from parent mounts, so
-this is just another set that we need to make sure we inherit.
+I agree, the only problem appears to be that shmem_inode_unacct_blocks()
+call which I had to place inside shmem_recalc_inode(): under info->lock,
+so I was just perpetuating the problems - extending them even.
 
-> However, assuming I'm mostly correct in the above paragraph, would it
-> be possible to take a reference to the @reference dentry's superblock
-> in security_fs_context_init(), that we could later compare to the
-> superblock passed into security_sb_set_mnt_opts()?  If we know that
-> the fs_context was initialized with the same superblock we are now
-> being asked to set mount options on, we should be able to return from
-> the LSM hook without doing anything.
->=20
+So the fix should not require any rearrangement of where the dquot_alloc
+and dquot_free are done: I may want to do so later, when updating to fix
+the failures of concurrent allocation of last block, but there's no need
+to get into any such rearrangement as part of this fix.
 
-I'm not sure that I follow your logic here:
+We just want shmem_recalc_inode() to take the info->lock itself, do its
+adjustments and balancing, release the lock and dquot_free the excess.
 
-You want to take a sb reference and carry that in the fs_context? What
-will you do with it in security_sb_set_mnt_opts?
+I had a quick look through that, most places look straightforward to
+update, but there are a couple where I need to think a bit first.
+So no patch in this mail, but I'll get back to it in a few hours.
 
-FWIW, It's generally easier to deal with inode or dentry references than
-refs to the superblock too, so if we want to carry a reference to an
-object around, we'd probably rather handle one of those.
---=20
-Jeff Layton <jlayton@kernel.org>
+Hugh
