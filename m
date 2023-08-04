@@ -2,137 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F72E7706EA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 19:17:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B8A37706F9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 19:23:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231912AbjHDRRk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Aug 2023 13:17:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48912 "EHLO
+        id S231264AbjHDRX0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Aug 2023 13:23:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230235AbjHDRRj (ORCPT
+        with ESMTP id S231156AbjHDRXZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Aug 2023 13:17:39 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05BF93C25
-        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Aug 2023 10:17:38 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-5223910acf2so873a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Aug 2023 10:17:37 -0700 (PDT)
+        Fri, 4 Aug 2023 13:23:25 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD3974698;
+        Fri,  4 Aug 2023 10:23:24 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3fb4146e8fcso14639335e9.0;
+        Fri, 04 Aug 2023 10:23:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1691169456; x=1691774256;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2T7SZZ0QByC9mXWRPlKUQtKM6dHFG9MmvGQY+HbLzlI=;
-        b=hmS6ejEYooO73Y1iHy9ByBdsVNCWHhIXOmkn86Mpa2uIhVYifsMqtqRwFHXLw/ex06
-         7oFeaY4aQ/qnfIVyspO+UKW5YG709KzIf154oIbVuXABHG+pSDHlG1gVvIR1Hfl7hJug
-         //45rV4vbvwomgdKJjj/XPpv2ceSPFrIHzDSgLK3+R1Wt5fVPcBFmcjs3uis7aTQzkgt
-         kGRHQs/CsbSOOMee/gSnPungVo+QlAaPXW9rJ1nV4aQrdcfEnPjEO5I5KaisoGeymxqL
-         rbe5rObHIcOApfBUD1UkUBHby2p3hJw4TPnXVRiQolYKTVfcOnGO8E+giH8NQKotR+v0
-         EbYA==
+        d=gmail.com; s=20221208; t=1691169803; x=1691774603;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o8gADuiK/ShCeRt5VVNqfT87ZmatM5Y8Hl/O5iaVWq8=;
+        b=oLa3IjoUEykKezHiIEXrPqXTtPLUyQL6UuZs/E5dFSNp0Yl6o7v7XXoaXbHd9bPb1Q
+         xaKbBLOrDMKOZWIhaErgf1zqP9BNibJjQTOC6uLW6yQRQbRw/8CH/lqkUEm1dAYgyXNW
+         OXlX6cJX25ahUV1nLcHbbD6liiWnG3OVV+2/OnqmYp146YN/RnGrrm/V+7M8chrUbvjl
+         WxUtFHORxjZHwclVje5SM1oH/c3AwlRMFN5t6MzhRDJcCnFsa1H0SrK3FXeuawfJt94T
+         mJtu4ggjtiuDJmDQrKy3sS/sMQ3pRn6Y4hpeyZ29kUXYP+2x0gzABSj6F/IpdYQkIGhw
+         Kqew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691169456; x=1691774256;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2T7SZZ0QByC9mXWRPlKUQtKM6dHFG9MmvGQY+HbLzlI=;
-        b=BiF5WlalGWz+mufr/pQYDJ4HG0t07nnkUd+lPl0AC/0XYgE+r3JvxNjNCGJGkeNXKN
-         d0p57iPFsiLHGB9f03B6i0MpXmyHfMKjcOo0J43Pq3JVqU/VNOmzoX/TBUfhNDgSEtTv
-         Te+XU2RfqhM9yLGvsWdYKo0bzV+7FFoYkv24clS/8WdMc/LDzurDh4V0cdqhHuGtQtkB
-         tekRzIY39QMqdoe82VrMHcYfxE1Ai/76mlEHe0sEt9seqrNelLesXZcd9hL+w0Onnlgu
-         +rC0SNLAn4ku52NnM/hrUe/I+aWhkEFJ/dPPZpAUK3R8SO/BqY/nooY4qI7lCO3Hnc02
-         ckQw==
-X-Gm-Message-State: AOJu0YySV7QgP2OheijXVnTdqPS/dQ7QoECD5olN7OZ0wtEIwY5GePm+
-        MelIq0rbNwg1PFuwpv/tKY3rQ6ceLEF59pJZlbfzjQ==
-X-Google-Smtp-Source: AGHT+IFIK7TPHCce2Qe4wF8yiMXNXYDY1TdJ/LxM9hHDEm980z2PUH32FJWyzAfwa5rUA9j0fY/RVeEM/1u2sys5awU=
-X-Received: by 2002:a50:a6cf:0:b0:523:13df:297b with SMTP id
- f15-20020a50a6cf000000b0052313df297bmr5477edc.1.1691169456301; Fri, 04 Aug
- 2023 10:17:36 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1691169803; x=1691774603;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o8gADuiK/ShCeRt5VVNqfT87ZmatM5Y8Hl/O5iaVWq8=;
+        b=ZQBJaWCmSgJPUo6ccy2V3IYGkPPsM/Fpr5Yos4qQcqbBQ2QuHT2oJwPWS416GRQS9H
+         j6PAfsdphH1PKWd8em8kpEjN3bM8u8cpwN+Aa9349EBqb1CUhekSRKmD7gmasDLOGGXM
+         6qCts3fLhugZd/Uk/Up1fN4DlrSQkOo/ZAKB01QyqB8vWjnl5dwfZda8tOR7ibyuZ+tK
+         CGN93yXIGgQicCs1MDZ5aYjEXIbzKo1+d+1AhIW/URNeWHYKpM5w33w2g1RBv8eLQCuw
+         TNjxwBOx8TR0/kwkPcL6FEqPR12BBshp8/stM73K8th23ecd+23B7LF74lcSOt5brhJb
+         ZuJg==
+X-Gm-Message-State: AOJu0Yxq1cldD+3oSMy1100Swzb5unWxET+IpnrOsEh+PuV9sxWbaLGM
+        bbkpIYbjk+3DBuuZ5Xvurw==
+X-Google-Smtp-Source: AGHT+IEBtyiCIzgK0yIXCgAkMuGSyJif1rx6WNwBW+8P1ihmjffU0s0vkIsFLvsCzdHvsifdShe2lQ==
+X-Received: by 2002:a05:600c:210e:b0:3fe:215e:44a0 with SMTP id u14-20020a05600c210e00b003fe215e44a0mr277446wml.18.1691169802990;
+        Fri, 04 Aug 2023 10:23:22 -0700 (PDT)
+Received: from p183 ([46.53.252.19])
+        by smtp.gmail.com with ESMTPSA id f10-20020a7bc8ca000000b003fe1afb99b5sm5751275wml.0.2023.08.04.10.23.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Aug 2023 10:23:22 -0700 (PDT)
+Date:   Fri, 4 Aug 2023 20:23:20 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     akpm@linux-foundation.org, mhiramat@kernel.org, arnd@kernel.org,
+        ndesaulniers@google.com, sfr@canb.auug.org.au,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@meta.com
+Subject: Re: [PATCH RFC bootconfig] 1/2] fs/proc: Add /proc/cmdline_load for
+ boot loader arguments
+Message-ID: <db2617d2-589d-47c1-a0cc-e8aeca58710a@p183>
+References: <197cba95-3989-4d2f-a9f1-8b192ad08c49@paulmck-laptop>
+ <20230728033701.817094-1-paulmck@kernel.org>
 MIME-Version: 1.0
-References: <20230727093637.1262110-1-usama.anjum@collabora.com>
- <20230727093637.1262110-3-usama.anjum@collabora.com> <ZMvDCeUN8qrUmnJV@gmail.com>
- <CABb0KFF7K2SHvSwXMheVAgd3VcJf_twuRsc=P-uTJW9HGQcqfA@mail.gmail.com> <CANaxB-ytK5QNP4K4L3T=-F6sLc5kD6HjHc_C3U2sdTtBDgbmCg@mail.gmail.com>
-In-Reply-To: <CANaxB-ytK5QNP4K4L3T=-F6sLc5kD6HjHc_C3U2sdTtBDgbmCg@mail.gmail.com>
-From:   =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
-Date:   Fri, 4 Aug 2023 19:17:24 +0200
-Message-ID: <CABb0KFEfmRz+Z_-7GygTL12E5Y254dvoUfWe4uSv9-wOx+Cs8w@mail.gmail.com>
-Subject: Re: [PATCH v26 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-To:     Andrei Vagin <avagin@gmail.com>
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        URIBL_BLOCKED,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230728033701.817094-1-paulmck@kernel.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 4 Aug 2023 at 17:59, Andrei Vagin <avagin@gmail.com> wrote:
->
-> On Thu, Aug 3, 2023 at 8:25=E2=80=AFAM Micha=C5=82 Miros=C5=82aw <emmir@g=
-oogle.com> wrote:
-> >
-> > On Thu, 3 Aug 2023 at 17:09, Andrei Vagin <avagin@gmail.com> wrote:
-> > > On Thu, Jul 27, 2023 at 02:36:34PM +0500, Muhammad Usama Anjum wrote:
-> > [...]
-> > > > +     n_pages =3D (*end - addr) / PAGE_SIZE;
-> > > > +     if (check_add_overflow(p->found_pages, n_pages, &total_pages)=
- ||
-> > > > +         total_pages > p->arg.max_pages) {
-> > >
-> > > why do we need to use check_add_overflow here?
-> > >
-> > > > +             size_t n_too_much =3D total_pages - p->arg.max_pages;
-> > >
-> > > it is unsafe to use total_pages if check_add_overflow returns non-zer=
-o.
-> >
-> > Since we're adding unsigned integers, this is well defined even after o=
-verflow.
->
-> The description of check_add_overflow declares that is unsafe:
-> https://elixir.bootlin.com/linux/latest/source/include/linux/overflow.h#L=
-62
->
-> It actually doesn't matter, because it should be impossible to
-> overflow total_pages
-> and we can consider not to use check_add_overflow here.
+On Thu, Jul 27, 2023 at 08:37:00PM -0700, Paul E. McKenney wrote:
+> In kernels built with CONFIG_BOOT_CONFIG_FORCE=y, /proc/cmdline will
+> show all kernel boot parameters, both those supplied by the boot loader
+> and those embedded in the kernel image.  This works well for those who
+> just want to see all of the kernel boot parameters, but is not helpful to
+> those who need to see only those parameters supplied by the boot loader.
+> This is especially important when these parameters are presented to the
+> boot loader by automation that might gather them from diverse sources.
+> 
+> Therefore, provide a /proc/cmdline_load file that shows only those kernel
+> boot parameters supplied by the boot loader.
 
-It seems the doc warning is quite new (d219d2a9a92e / Mon Aug 29
-13:37:17 2022 -0700). The underlying __builtin_add_overflow() is
-well-defined for any integer type, though. Even staying with C99,
-arithmetic on unsigned integers is always defined as being done modulo
-2^n.
+> +static int cmdline_load_proc_show(struct seq_file *m, void *v)
+> +{
+> +	seq_puts(m, boot_command_line);
+> +	seq_putc(m, '\n');
+> +	return 0;
+> +}
+> +
+>  static int __init proc_cmdline_init(void)
+>  {
+>  	struct proc_dir_entry *pde;
+> @@ -19,6 +27,11 @@ static int __init proc_cmdline_init(void)
+>  	pde = proc_create_single("cmdline", 0, NULL, cmdline_proc_show);
+>  	pde_make_permanent(pde);
+>  	pde->size = saved_command_line_len + 1;
+> +	if (IS_ENABLED(CONFIG_BOOT_CONFIG_FORCE)) {
+> +		pde = proc_create_single("cmdline_load", 0, NULL, cmdline_load_proc_show);
+> +		pde_make_permanent(pde);
+> +		pde->size = strnlen(boot_command_line, COMMAND_LINE_SIZE) + 1;
+> +	}
 
-Best Regards
-Micha=C5=82 Miros=C5=82aw
+Please add it as separate fs/proc/cmdline_load.c file so that name of
+the file matches name of the /proc file.
+
+The name "cmdline_load" is kind of non-descriptive. Mentioning "bootloader"
+somewhere should improve things.
