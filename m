@@ -2,130 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ACCC37704FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 17:39:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BA98770505
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 17:41:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231511AbjHDPjp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Aug 2023 11:39:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41666 "EHLO
+        id S230446AbjHDPlI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Aug 2023 11:41:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231263AbjHDPjn (ORCPT
+        with ESMTP id S229920AbjHDPlH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Aug 2023 11:39:43 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F82249C1;
-        Fri,  4 Aug 2023 08:39:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 061246202B;
-        Fri,  4 Aug 2023 15:39:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31522C433C9;
-        Fri,  4 Aug 2023 15:39:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691163570;
-        bh=WBKOiXxNnEcmIAXLd9bFnF2KFmCPgIBMmS+a6ZOzWKY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=guM3dTEfPj9gzW4hZVBn+/1D3e6V0oGJa3WQkuaCaRJm+YEkO/j0g28vpLcq+8KPx
-         00I5JDimR9O6GRpM1sCbRoDBeqI3dA0US5iDcvRFH1wRzLZGMG/AKi+37CHK3OiKfl
-         Pd3WUGjQp78CvSWurtOz9TKUp2R8T9+xWekamZzkpVJreEREn7gcZJVUpwDMtQgJPa
-         oNlJ1Fd+Wv/UAECk8iLUJUaVzEv4k+34Xo4z1QJAK3CSDmvC6vv3w+O4TwoqgSUVxv
-         yOZLQQe40+3upkBEjN2TRg8dq8CL62TzVM9oUzcd7edWypJQ/9r8RDeBu3CtctpdP3
-         S7Paz1gf4bygw==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-block@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: more blkdev_get and holder work
-Date:   Fri,  4 Aug 2023 17:39:20 +0200
-Message-Id: <20230804-wegelagerei-nagel-e5ba7e7cedd5@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230802154131.2221419-1-hch@lst.de>
-References: <20230802154131.2221419-1-hch@lst.de>
+        Fri, 4 Aug 2023 11:41:07 -0400
+Received: from mail-oa1-f78.google.com (mail-oa1-f78.google.com [209.85.160.78])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AC4D2D71
+        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Aug 2023 08:41:05 -0700 (PDT)
+Received: by mail-oa1-f78.google.com with SMTP id 586e51a60fabf-1bf57b54f88so3292213fac.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Aug 2023 08:41:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691163664; x=1691768464;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yXfmTWLCk2PZ6zLYPtx1+xYpmGXAer9fGUnxxtzOS0o=;
+        b=JZ4QiF+uDCQPVm4yFImScprmHRJbl03Q44FugsIXD16GulPJxCdNC67+ipbq20oS3V
+         cimZ51p4aEQztB/si37zW2Dd+l1LJOcUGvo5CfbJHa02LQIFWFQQxYbrJYMLE2XIammq
+         k7hXu3utwbVfB+RbiUfCuHds0TayG0p2hZjjoan921y8PFYwa3We5Yk+T4wVzTcsRl1w
+         udjewVuXuPT/95EkHoQNotNyoK2ahAAYNY4vBhYgzVWL+jYglmGL3buelZg7Z4Mr7p5r
+         /3MO5sEZqvyMZc1hFT64sroUEwZYCdGGzJAGTdW9S4MQpnOP+JzOJT49Ae8QL2QkmZGr
+         83GQ==
+X-Gm-Message-State: AOJu0Yz44kQNP9ZapJgiQbtoNEqDoCpmiLfN28j/Vvy91CpXIgZjnsKi
+        ln28nDG5I/e91ViLjdaS8PF4b/TsMKfmXRIyRk8k/HgnTmV0
+X-Google-Smtp-Source: AGHT+IEUwsgSul9CpdIBS7IL94M839EAF9eEJdcZ/poRlgToKAtFFG22qKCSWE//DiIUalyoMjz0qfwhvIOQGqo9iDWwomPTuLO1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3062; i=brauner@kernel.org; h=from:subject:message-id; bh=7FNUYW+x5CSjf6yCNgXxulkGn+cMsTW366YHSfu1h4A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSclU4X5tucveB9lDl37gJ9jlmvFGN+KNg9TprAwbY/er8W 31PtjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIncNWf4K3Hkgdv/npvLfSQ798adms 9ScvSZ2rptQtc471tqdUeIZzMyHOPQmly1SzxZ11D73stJc0XjnmfPNpO6vb5+SlL6wynWPAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6870:e282:b0:1bb:7d2b:9eb with SMTP id
+ v2-20020a056870e28200b001bb7d2b09ebmr2148690oad.7.1691163664777; Fri, 04 Aug
+ 2023 08:41:04 -0700 (PDT)
+Date:   Fri, 04 Aug 2023 08:41:04 -0700
+In-Reply-To: <0000000000002930a705fc32b231@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007f094106021ab951@google.com>
+Subject: Re: [syzbot] [nilfs?] general protection fault in folio_create_empty_buffers
+From:   syzbot <syzbot+0ad741797f4565e7e2d2@syzkaller.appspotmail.com>
+To:     konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 02 Aug 2023 17:41:19 +0200, Christoph Hellwig wrote:
-> this series sits on top of the vfs.super branch in the VFS tree and does a
-> few closely related things:
-> 
->   1) it also converts nilfs2 and btrfs to the new scheme where the file system
->      only opens the block devices after we know that a new super_block was
->      allocated.
->   2) it then makes sure that for all file system openers the super_block is
->      stored in bd_holder, and makes use of that fact in the mark_dead method
->      so that it doesn't have to fall get_super and thus can also work on
->      block devices that sb->s_bdev doesn't point to
->   3) it then drops the fs-specific holder ops in ext4 and xfs and uses the
->      generic fs_holder_ops there
-> 
-> [...]
+syzbot has found a reproducer for the following issue on:
 
-Let's pick this up now so it still has ample time in -next even though
-we're still missing a nod from the btrfs people. The nilfs to
-mount_bdev() conversion is probably not super urgent but if wanted a
-follow-up patch won't be frowned upon.
+HEAD commit:    bdffb18b5dd8 Add linux-next specific files for 20230804
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1625c47da80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4edf5fc5e1e5446f
+dashboard link: https://syzkaller.appspot.com/bug?extid=0ad741797f4565e7e2d2
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b893bea80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16764a71a80000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9d65b99a07c2/disk-bdffb18b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8b9623d8bd2e/vmlinux-bdffb18b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3e6c96c97edb/bzImage-bdffb18b.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/17c4ca724160/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0ad741797f4565e7e2d2@syzkaller.appspotmail.com
+
+general protection fault, probably for non-canonical address 0xdffffc000000003a: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x00000000000001d0-0x00000000000001d7]
+CPU: 0 PID: 5323 Comm: segctord Not tainted 6.5.0-rc4-next-20230804-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2023
+RIP: 0010:debug_spin_lock_before kernel/locking/spinlock_debug.c:85 [inline]
+RIP: 0010:do_raw_spin_lock+0x6e/0x2b0 kernel/locking/spinlock_debug.c:114
+Code: 81 48 8d 54 05 00 c7 02 f1 f1 f1 f1 c7 42 04 04 f3 f3 f3 65 48 8b 14 25 28 00 00 00 48 89 54 24 60 31 d2 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 e3
+RSP: 0018:ffffc9000507f6e8 EFLAGS: 00010207
+RAX: dffffc0000000000 RBX: 00000000000001d0 RCX: 0000000000000000
+RDX: 000000000000003a RSI: ffffffff8ac889a0 RDI: 00000000000001d4
+RBP: 1ffff92000a0fede R08: 0000000000000000 R09: fffffbfff1d598ca
+R10: ffffffff8eacc657 R11: 000000000000004e R12: 0000000000000000
+R13: ffffea0001ca6bc0 R14: ffff888072088d98 R15: ffffea0001ca6bd8
+FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000480 CR3: 0000000027f80000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ spin_lock include/linux/spinlock.h:351 [inline]
+ folio_create_empty_buffers+0xb0/0x470 fs/buffer.c:1657
+ nilfs_lookup_dirty_data_buffers+0x5a1/0x720 fs/nilfs2/segment.c:730
+ nilfs_segctor_scan_file+0x1b1/0x6f0 fs/nilfs2/segment.c:1080
+ nilfs_segctor_collect_blocks fs/nilfs2/segment.c:1202 [inline]
+ nilfs_segctor_collect fs/nilfs2/segment.c:1529 [inline]
+ nilfs_segctor_do_construct+0x2f11/0x8bf0 fs/nilfs2/segment.c:2077
+ nilfs_segctor_construct+0x924/0xb50 fs/nilfs2/segment.c:2411
+ nilfs_segctor_thread_construct fs/nilfs2/segment.c:2519 [inline]
+ nilfs_segctor_thread+0x38f/0xe90 fs/nilfs2/segment.c:2602
+ kthread+0x33a/0x430 kernel/kthread.c:389
+ ret_from_fork+0x2c/0x70 arch/x86/kernel/process.c:145
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:304
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:debug_spin_lock_before kernel/locking/spinlock_debug.c:85 [inline]
+RIP: 0010:do_raw_spin_lock+0x6e/0x2b0 kernel/locking/spinlock_debug.c:114
+Code: 81 48 8d 54 05 00 c7 02 f1 f1 f1 f1 c7 42 04 04 f3 f3 f3 65 48 8b 14 25 28 00 00 00 48 89 54 24 60 31 d2 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 e3
+RSP: 0018:ffffc9000507f6e8 EFLAGS: 00010207
+RAX: dffffc0000000000 RBX: 00000000000001d0 RCX: 0000000000000000
+RDX: 000000000000003a RSI: ffffffff8ac889a0 RDI: 00000000000001d4
+RBP: 1ffff92000a0fede R08: 0000000000000000 R09: fffffbfff1d598ca
+R10: ffffffff8eacc657 R11: 000000000000004e R12: 0000000000000000
+R13: ffffea0001ca6bc0 R14: ffff888072088d98 R15: ffffea0001ca6bd8
+FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000480 CR3: 0000000027f80000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	81 48 8d 54 05 00 c7 	orl    $0xc7000554,-0x73(%rax)
+   7:	02 f1                	add    %cl,%dh
+   9:	f1                   	int1
+   a:	f1                   	int1
+   b:	f1                   	int1
+   c:	c7 42 04 04 f3 f3 f3 	movl   $0xf3f3f304,0x4(%rdx)
+  13:	65 48 8b 14 25 28 00 	mov    %gs:0x28,%rdx
+  1a:	00 00
+  1c:	48 89 54 24 60       	mov    %rdx,0x60(%rsp)
+  21:	31 d2                	xor    %edx,%edx
+  23:	48 89 fa             	mov    %rdi,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	0f b6 14 02          	movzbl (%rdx,%rax,1),%edx <-- trapping instruction
+  2e:	48 89 f8             	mov    %rdi,%rax
+  31:	83 e0 07             	and    $0x7,%eax
+  34:	83 c0 03             	add    $0x3,%eax
+  37:	38 d0                	cmp    %dl,%al
+  39:	7c 08                	jl     0x43
+  3b:	84 d2                	test   %dl,%dl
+  3d:	0f                   	.byte 0xf
+  3e:	85 e3                	test   %esp,%ebx
+
 
 ---
-
-Applied to the vfs.super branch of the vfs/vfs.git tree.
-Patches in the vfs.super branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.super
-
-[01/12] fs: export setup_bdev_super
-        https://git.kernel.org/vfs/vfs/c/71c00ec51d83
-[02/12] nilfs2: use setup_bdev_super to de-duplicate the mount code
-        https://git.kernel.org/vfs/vfs/c/c820df38784a
-[03/12] btrfs: always open the device read-only in btrfs_scan_one_device
-        https://git.kernel.org/vfs/vfs/c/75029e14cea6
-[04/12] btrfs: open block devices after superblock creation
-        https://git.kernel.org/vfs/vfs/c/364820697dbb
-[05/12] ext4: make the IS_EXT2_SB/IS_EXT3_SB checks more robust
-        https://git.kernel.org/vfs/vfs/c/4cf66c030db1
-[06/12] fs: use the super_block as holder when mounting file systems
-        https://git.kernel.org/vfs/vfs/c/c0188baf8f7e
-[07/12] fs: stop using get_super in fs_mark_dead
-        https://git.kernel.org/vfs/vfs/c/2a8402f9db25
-[08/12] fs: export fs_holder_ops
-        https://git.kernel.org/vfs/vfs/c/ee62b0ec9ff8
-[09/12] ext4: drop s_umount over opening the log device
-        https://git.kernel.org/vfs/vfs/c/644ab8c64a12
-[10/12] ext4: use fs_holder_ops for the log device
-        https://git.kernel.org/vfs/vfs/c/fba3de1aad77
-[11/12] xfs: drop s_umount over opening the log and RT devices
-        https://git.kernel.org/vfs/vfs/c/9470514a171c
-[12/12] xfs use fs_holder_ops for the log and RT devices
-        https://git.kernel.org/vfs/vfs/c/c6fb2ed736e3
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
