@@ -2,137 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 061FC76F814
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 04:49:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50E1B76F848
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 05:14:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231936AbjHDCtG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Aug 2023 22:49:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60588 "EHLO
+        id S233005AbjHDDO3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Aug 2023 23:14:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230345AbjHDCtE (ORCPT
+        with ESMTP id S234088AbjHDDNP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Aug 2023 22:49:04 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D475030F8
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Aug 2023 19:49:02 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-57a6df91b1eso19229317b3.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Aug 2023 19:49:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1691117342; x=1691722142;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vd95Z3+osQHMY4UnbAFYs8153P0Rw3koffJjaaUVqu8=;
-        b=PS7MVmREtdk+t0YqbU+r1cv06QIkKaMZgrhKw9zvVfR87cpxMdSKlrUm0ED8EwbS+G
-         8vG57n9I5BgiXaUlca0jp6ISgoOtJurxusghMJizM47WzjUxGfezWrAughIOtqjuW83q
-         dlLn+h66NqO41NcMjSRF0rCNOiX9dMqGfS2nr00ndQBlwXVgHLA35XzkX9kDCwlvZxrS
-         Y0J+qtfivoQp+KRAa5VI6TjlK6xSTF/AzdMDxeJRcbCzUDhRDDEic/3Ya1LM5vYaElVx
-         ruML3a/NIPnZxzd9oRLznWO1BXP8QIVIDq5spPdmCEhrqd6TG1ixFLHjuyHI3ds6UHlJ
-         6J6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691117342; x=1691722142;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vd95Z3+osQHMY4UnbAFYs8153P0Rw3koffJjaaUVqu8=;
-        b=PK4U8qYlStm8vqtxV9q21CeadMvs2+V5QfVWuttaa7mLp0u79uHz2ZezxE8VGVp5Pr
-         2g8VnqqnNJG4mK3O/Cd3u7ZyXz2lTLhAlg5T940+pmu6TsH/B0cOGARt97RWNTlcdYI9
-         p5Pyveb9EVwP0JM1wtb2H369D01GQuhsU86Agk17O09RCScKJ/J1tnGfxUAUlkgcAZbP
-         uG9eaqrOEhTVbjCgf3tw7K6zsDPm+/Ig3DVG2r1JPqmrCnnhz3hiD+CLl+67mE87Q02v
-         7uQ1V9oWzsmOAcnWu6+TUf1J2Ip1g8jWDlN1FSMscZGBc1c05RRkFpY+rMXz+g2r2Ba/
-         qf4g==
-X-Gm-Message-State: AOJu0Yw9slM4/f/Zbe5tAgVSmIVHD1yVwRRjo1/IK+XLGX0+kwZdbK6k
-        2y9yc4BqfC3wR4KfIq2/ioSTm8mVeyl6GCHL5jT9
-X-Google-Smtp-Source: AGHT+IHzOMv/ju9Tw8bPVPB4bGc67BfMOW+0Um7p830iso0PGeWxqbRtl37oozAHp4DGTMSMiA7RzLqc14ciUx57+XE=
-X-Received: by 2002:a0d:e253:0:b0:584:189c:13ec with SMTP id
- l80-20020a0de253000000b00584189c13ecmr519784ywe.21.1691117342044; Thu, 03 Aug
- 2023 19:49:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230802-master-v6-1-45d48299168b@kernel.org> <bac543537058619345b363bbfc745927.paul@paul-moore.com>
- <ca156cecbc070c3b7c68626572274806079a6e04.camel@kernel.org>
- <CAHC9VhTQDVyZewU0Oiy4AfJt_UtB7O2_-PcUmXkZtuwKDQBfXg@mail.gmail.com> <ec1fd18f271593d5c6b6813cfaeb688994f20bf4.camel@kernel.org>
-In-Reply-To: <ec1fd18f271593d5c6b6813cfaeb688994f20bf4.camel@kernel.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 3 Aug 2023 22:48:50 -0400
-Message-ID: <CAHC9VhSNXbJzfKLF+DjfK+_2eJYYc_AC3u3aUc_NUs_o5M5AaA@mail.gmail.com>
-Subject: Re: [PATCH v6] vfs, security: Fix automount superblock LSM init
- problem, preventing NFS sb sharing
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thu, 3 Aug 2023 23:13:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D611A49C1;
+        Thu,  3 Aug 2023 20:12:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 74F5461F20;
+        Fri,  4 Aug 2023 03:12:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 049F2C433C7;
+        Fri,  4 Aug 2023 03:12:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691118733;
+        bh=JRNDrr8Q5XicQAEnr/UMUDvJf9uks/FyRXeJTq4Lonc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=R0WGwn2s0vAe/DsI3XGK11OMvfOJmtznPvIDw84m40aHVTpIpcqb2BBYLuzfuLVXk
+         dZ9acA9IAQwtQzTU28t9fuHvoxracxbRDCqOkzLX1LeJe0NAsASu8TMADmINbZgGdd
+         BX1P/gy9WCmjlM0BVG0hX4jELQWFjCNAAo0NB2evy4APrirEumPedKRUVDBkxVBYCa
+         fUd1SRVIjlviVLoEWElgozH8jaA3DN65SmuYGQbu3LeHFnLKFAiUC4/TJ29BR+GhsW
+         RhGkM/EcwsZYTxHL13maI270zR85GYjtNQTRlmot3tdxlHuqRiD6Jvh+6E17duy9Fk
+         pAi6/OWVkJa3g==
+Date:   Thu, 3 Aug 2023 20:12:12 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Tariq Toukan <ttoukan.linux@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>, netdev@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
         Christian Brauner <brauner@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        linux-mm@kvack.org, Boris Pismenny <borisp@nvidia.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Gal Pressman <gal@nvidia.com>, ranro@nvidia.com,
+        samiram@nvidia.com, drort@nvidia.com,
+        Tariq Toukan <tariqt@nvidia.com>
+Subject: Re: [PATCH net-next v10 08/16] tls: Inline do_tcp_sendpages()
+Message-ID: <20230803201212.1d5dd0f9@kernel.org>
+In-Reply-To: <852cef0c-2c1a-fdcd-4ee9-4a0bca3f54c5@gmail.com>
+References: <ecbb5d7e-7238-28e2-1a17-686325e2bb50@gmail.com>
+        <4c49176f-147a-4283-f1b1-32aac7b4b996@gmail.com>
+        <20230522121125.2595254-1-dhowells@redhat.com>
+        <20230522121125.2595254-9-dhowells@redhat.com>
+        <2267272.1686150217@warthog.procyon.org.uk>
+        <5a9d4ffb-a569-3f60-6ac8-070ab5e5f5ad@gmail.com>
+        <776549.1687167344@warthog.procyon.org.uk>
+        <7337a904-231d-201d-397a-7bbe7cae929f@gmail.com>
+        <20230630102143.7deffc30@kernel.org>
+        <f0538006-6641-eaf6-b7b5-b3ef57afc652@gmail.com>
+        <20230705091914.5bee12f8@kernel.org>
+        <bbdce803-0f23-7d3f-f75a-2bc3cfb794af@gmail.com>
+        <20230725173036.442ba8ba@kernel.org>
+        <852cef0c-2c1a-fdcd-4ee9-4a0bca3f54c5@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 3, 2023 at 12:27=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
-ote:
-> On Wed, 2023-08-02 at 22:46 -0400, Paul Moore wrote:
-> > On Wed, Aug 2, 2023 at 3:34=E2=80=AFPM Jeff Layton <jlayton@kernel.org>=
- wrote:
-> > > On Wed, 2023-08-02 at 14:16 -0400, Paul Moore wrote:
-> > > > On Aug  2, 2023 Jeff Layton <jlayton@kernel.org> wrote:
+On Thu, 3 Aug 2023 14:47:35 +0300 Tariq Toukan wrote:
+> When applying this patch, repro disappears! :)
+> Apparently it is related to the warning.
+> Please go on and submit it.
 
-...
+I have no idea how. I found a different bug, staring at this code
+for another hour. But I still don't get how we can avoid UaF on
+a page by having the TCP take a ref on it rather than copy it.
 
-> > My only concern now is the fs_context::lsm_set flag.
->
-> Yeah, that bit is ugly. David studied this problem a lot more than I
-> have, but basically, we only want to set the context info once, and
-> we're not always going to have a nice string to parse to set up the
-> options. This obviously works, but I'm fine with a more elegant method
-> if you can spot one.
+If anything we should have 2 refs on any page in the sg, one because
+it's on the sg, and another held by the re-tx handling.
 
-Like I said before, sometimes making a LSM hook conditional on some
-flag is the only practical solution, but I always worry that there is
-a chance that a future patch might end up toggling that flag by
-accident and we lose an important call into the LSM.  Even if all we
-end up doing is moving the flag down into the LSMs I would be happier;
-there is still a risk, but at least if something breaks it is our (the
-LSM folks) own damn fault ;)
-
-> > You didn't mention exactly why the security_sb_set_mnt_opts() was
-> > failing, and requires the fs_context::lsm_set check, but my guess is
-> > that something is tripping over the fact that the superblock is
-> > already properly setup.  I'm working under the assumption that this
-> > problem - attempting to reconfigure a properly configured superblock -
-> > should only be happening in the submount/non-NULL-reference case.  If
-> > it is happening elsewhere I think I'm going to need some help
-> > understanding that ...
->
-> Correct. When you pass in the mount options, fc->security seems to be
-> properly set. NFS mounting is complex though, so the final superblock
-> you care about may end up being a descendant of the one that was
-> originally configured.
-
-Ooof, okay, there goes that idea.
-
-At this point I guess it comes back to that question of why is calling
-into security_sb_set_mnt_opts() a second (or third, etc.) time failing
-for you?  Is there some conflict with the superblock
-config/labeling/etc.?  Is there a permissions problem?  Better
-understanding why that is failing might help us come up with a better
-solution.
-
---=20
-paul-moore.com
+So I'm afraid we're papering over something here :( We need to keep
+digging.
