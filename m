@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A27477012E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 15:17:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 262BA77013C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 15:17:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229962AbjHDNRN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Aug 2023 09:17:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56418 "EHLO
+        id S229924AbjHDNRh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Aug 2023 09:17:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230514AbjHDNQS (ORCPT
+        with ESMTP id S230457AbjHDNQl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Aug 2023 09:16:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C60E04ECA
-        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Aug 2023 06:14:05 -0700 (PDT)
+        Fri, 4 Aug 2023 09:16:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 363FA4ED0
+        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Aug 2023 06:14:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1691154845;
+        s=mimecast20190719; t=1691154847;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=QWNtQ/nYYrYbr77ZEWyL6um5yN2tXRzHz2RkALfII30=;
-        b=c/90+t+t9ezzyMM6Lv73S3IndenLtnO5Cf+Y39bwUbap7MxRmC0D+4UsOcrDBF0iALoJRF
-        n6wN5/LxgFjpHsbgU7uRT88fZ9B3DWMwf/PjS7QtkWm6PnuTSnvl76Qvk7s4m3kbmWkYwI
-        d343SjJBB1H7MTZQyRVxSB1wtvWcwYQ=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-6-YDTrl4H0P9WryLrySiFWrw-1; Fri, 04 Aug 2023 09:14:01 -0400
-X-MC-Unique: YDTrl4H0P9WryLrySiFWrw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        bh=jzu8fasV+aKxrhKzf7SpDRjT/Fb/KvqzXURcAl/1eC8=;
+        b=DxDuIDHYzBSktQi99yEAh1rSaI0+x0dRFeq1z76l7qQw0MfW+Zkl4nmnGKbzbnyBt/zcFa
+        lWTXDbIrSaCXNVS0KeV1c14Mr8dYLqS4x7PJMfq6i09d0y0QgSMZni3nQpAEAAkXpLo6N2
+        CvJK7SPi9u5HdXJ0NlZ/T1PyiO5WSmg=
+Received: from mimecast-mx02.redhat.com (66.187.233.73 [66.187.233.73]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-611-KDnOmyoHPMCfaw7z8GudnA-1; Fri, 04 Aug 2023 09:14:03 -0400
+X-MC-Unique: KDnOmyoHPMCfaw7z8GudnA-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F2866104458D;
-        Fri,  4 Aug 2023 13:14:00 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C08613C0FCB0;
+        Fri,  4 Aug 2023 13:14:02 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.42.28.131])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D51B44087C81;
-        Fri,  4 Aug 2023 13:13:59 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 93B07492B03;
+        Fri,  4 Aug 2023 13:14:01 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>
 Cc:     David Howells <dhowells@redhat.com>,
@@ -45,215 +45,174 @@ Cc:     David Howells <dhowells@redhat.com>,
         Dongsheng Yang <dongsheng.yang@easystack.cn>,
         ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 15/18] ceph: Convert ceph_osdc_notify() reply to ceph_databuf
-Date:   Fri,  4 Aug 2023 14:13:24 +0100
-Message-ID: <20230804131327.2574082-16-dhowells@redhat.com>
+Subject: [RFC PATCH 16/18] ceph: Remove CEPH_OS_DATA_TYPE_PAGES and its attendant helpers
+Date:   Fri,  4 Aug 2023 14:13:25 +0100
+Message-ID: <20230804131327.2574082-17-dhowells@redhat.com>
 In-Reply-To: <20230804131327.2574082-1-dhowells@redhat.com>
 References: <20230804131327.2574082-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert the reply buffer of ceph_osdc_notify() to ceph_databuf rather than
-an array of pages.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
 ---
- drivers/block/rbd.c             | 33 ++++++++++++++++++++-------------
- include/linux/ceph/osd_client.h |  7 ++-----
- net/ceph/osd_client.c           | 17 ++++-------------
- 3 files changed, 26 insertions(+), 31 deletions(-)
+ include/linux/ceph/osd_client.h | 20 ++----------
+ net/ceph/osd_client.c           | 57 +--------------------------------
+ 2 files changed, 3 insertions(+), 74 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 950b63eb41de..7a624e75ac7a 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3455,8 +3455,7 @@ static void rbd_unlock(struct rbd_device *rbd_dev)
- 
- static int __rbd_notify_op_lock(struct rbd_device *rbd_dev,
- 				enum rbd_notify_op notify_op,
--				struct page ***preply_pages,
--				size_t *preply_len)
-+				struct ceph_databuf *reply)
- {
- 	struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
- 	struct rbd_client_id cid = rbd_get_cid(rbd_dev);
-@@ -3474,13 +3473,13 @@ static int __rbd_notify_op_lock(struct rbd_device *rbd_dev,
- 
- 	return ceph_osdc_notify(osdc, &rbd_dev->header_oid,
- 				&rbd_dev->header_oloc, buf, buf_size,
--				RBD_NOTIFY_TIMEOUT, preply_pages, preply_len);
-+				RBD_NOTIFY_TIMEOUT, reply);
- }
- 
- static void rbd_notify_op_lock(struct rbd_device *rbd_dev,
- 			       enum rbd_notify_op notify_op)
- {
--	__rbd_notify_op_lock(rbd_dev, notify_op, NULL, NULL);
-+	__rbd_notify_op_lock(rbd_dev, notify_op, NULL);
- }
- 
- static void rbd_notify_acquired_lock(struct work_struct *work)
-@@ -3501,23 +3500,26 @@ static void rbd_notify_released_lock(struct work_struct *work)
- 
- static int rbd_request_lock(struct rbd_device *rbd_dev)
- {
--	struct page **reply_pages;
--	size_t reply_len;
-+	struct ceph_databuf *reply;
- 	bool lock_owner_responded = false;
- 	int ret;
- 
- 	dout("%s rbd_dev %p\n", __func__, rbd_dev);
- 
--	ret = __rbd_notify_op_lock(rbd_dev, RBD_NOTIFY_OP_REQUEST_LOCK,
--				   &reply_pages, &reply_len);
-+	reply = ceph_databuf_alloc(0, 0, GFP_KERNEL);
-+	if (!reply)
-+		return -ENOMEM;
-+
-+	ret = __rbd_notify_op_lock(rbd_dev, RBD_NOTIFY_OP_REQUEST_LOCK, reply);
- 	if (ret && ret != -ETIMEDOUT) {
- 		rbd_warn(rbd_dev, "failed to request lock: %d", ret);
- 		goto out;
- 	}
- 
--	if (reply_len > 0 && reply_len <= PAGE_SIZE) {
--		void *p = page_address(reply_pages[0]);
--		void *const end = p + reply_len;
-+	if (reply->length > 0 && reply->length <= PAGE_SIZE) {
-+		void *s = kmap_ceph_databuf_page(reply, 0);
-+		void *p = s;
-+		void *const end = p + reply->length;
- 		u32 n;
- 
- 		ceph_decode_32_safe(&p, end, n, e_inval); /* num_acks */
-@@ -3529,10 +3531,12 @@ static int rbd_request_lock(struct rbd_device *rbd_dev)
- 			p += 8 + 8; /* skip gid and cookie */
- 
- 			ceph_decode_32_safe(&p, end, len, e_inval);
--			if (!len)
-+			if (!len) {
- 				continue;
-+			}
- 
- 			if (lock_owner_responded) {
-+				kunmap_local(s);
- 				rbd_warn(rbd_dev,
- 					 "duplicate lock owners detected");
- 				ret = -EIO;
-@@ -3543,6 +3547,7 @@ static int rbd_request_lock(struct rbd_device *rbd_dev)
- 			ret = ceph_start_decoding(&p, end, 1, "ResponseMessage",
- 						  &struct_v, &len);
- 			if (ret) {
-+				kunmap_local(s);
- 				rbd_warn(rbd_dev,
- 					 "failed to decode ResponseMessage: %d",
- 					 ret);
-@@ -3551,6 +3556,8 @@ static int rbd_request_lock(struct rbd_device *rbd_dev)
- 
- 			ret = ceph_decode_32(&p);
- 		}
-+
-+		kunmap_local(s);
- 	}
- 
- 	if (!lock_owner_responded) {
-@@ -3559,7 +3566,7 @@ static int rbd_request_lock(struct rbd_device *rbd_dev)
- 	}
- 
- out:
--	ceph_release_page_vector(reply_pages, calc_pages_for(0, reply_len));
-+	ceph_databuf_release(reply);
- 	return ret;
- 
- e_inval:
 diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-index 83c3073c44bb..3099f923c241 100644
+index 3099f923c241..1a1137787487 100644
 --- a/include/linux/ceph/osd_client.h
 +++ b/include/linux/ceph/osd_client.h
-@@ -332,9 +332,7 @@ struct ceph_osd_linger_request {
- 
- 	struct ceph_databuf *request_pl;
- 	struct ceph_databuf *notify_id_buf;
--
--	struct page ***preply_pages;
--	size_t *preply_len;
-+	struct ceph_databuf *reply;
+@@ -103,23 +103,13 @@ struct ceph_osd {
+ enum ceph_osd_data_type {
+ 	CEPH_OSD_DATA_TYPE_NONE = 0,
+ 	CEPH_OSD_DATA_TYPE_DATABUF,
+-	CEPH_OSD_DATA_TYPE_PAGES,
+ 	CEPH_OSD_DATA_TYPE_ITER,
  };
  
- struct ceph_watch_item {
-@@ -587,8 +585,7 @@ int ceph_osdc_notify(struct ceph_osd_client *osdc,
- 		     void *payload,
- 		     u32 payload_len,
- 		     u32 timeout,
--		     struct page ***preply_pages,
--		     size_t *preply_len);
-+		     struct ceph_databuf *reply);
- int ceph_osdc_watch_check(struct ceph_osd_client *osdc,
- 			  struct ceph_osd_linger_request *lreq);
- int ceph_osdc_list_watchers(struct ceph_osd_client *osdc,
+ struct ceph_osd_data {
+ 	enum ceph_osd_data_type	type;
+-	union {
+-		struct ceph_databuf	*dbuf;
+-		struct {
+-			struct page	**pages;
+-			u64		length;
+-			u32		offset;
+-			bool		pages_from_pool;
+-			bool		own_pages;
+-		};
+-		struct iov_iter		iter;
+-	};
++	struct ceph_databuf	*dbuf;
++	struct iov_iter		iter;
+ };
+ 
+ struct ceph_osd_req_op {
+@@ -451,12 +441,6 @@ void ceph_osdc_clear_abort_err(struct ceph_osd_client *osdc);
+ struct ceph_osd_req_op *osd_req_op_init(struct ceph_osd_request *osd_req,
+ 			    unsigned int which, u16 opcode, u32 flags);
+ 
+-extern void osd_req_op_raw_data_in_pages(struct ceph_osd_request *,
+-					unsigned int which,
+-					struct page **pages, u64 length,
+-					u32 offset, bool pages_from_pool,
+-					bool own_pages);
+-
+ extern void osd_req_op_extent_init(struct ceph_osd_request *osd_req,
+ 					unsigned int which, u16 opcode,
+ 					u64 offset, u64 length,
 diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index 8cbe06d2e16d..0fe16fdc760f 100644
+index 0fe16fdc760f..70f81a0b62c0 100644
 --- a/net/ceph/osd_client.c
 +++ b/net/ceph/osd_client.c
-@@ -4530,7 +4530,7 @@ static void handle_watch_notify(struct ceph_osd_client *osdc,
- 			    msg->num_data_items ? &msg->data[0] : NULL;
+@@ -122,21 +122,6 @@ static void ceph_osd_data_init(struct ceph_osd_data *osd_data)
+ 	osd_data->type = CEPH_OSD_DATA_TYPE_NONE;
+ }
  
- 			if (data) {
--				if (lreq->preply_pages) {
-+				if (lreq->reply) {
- 					WARN_ON(data->type !=
- 							CEPH_MSG_DATA_PAGES);
- 					*lreq->preply_pages = data->pages;
-@@ -4828,10 +4828,7 @@ EXPORT_SYMBOL(ceph_osdc_notify_ack);
- /*
-  * @timeout: in seconds
-  *
-- * @preply_{pages,len} are initialized both on success and error.
-- * The caller is responsible for:
-- *
-- *     ceph_release_page_vector(reply_pages, calc_pages_for(0, reply_len))
-+ * @reply should be an empty ceph_databuf.
-  */
- int ceph_osdc_notify(struct ceph_osd_client *osdc,
- 		     struct ceph_object_id *oid,
-@@ -4839,17 +4836,12 @@ int ceph_osdc_notify(struct ceph_osd_client *osdc,
- 		     void *payload,
- 		     u32 payload_len,
- 		     u32 timeout,
--		     struct page ***preply_pages,
--		     size_t *preply_len)
-+		     struct ceph_databuf *reply)
+-/*
+- * Consumes @pages if @own_pages is true.
+- */
+-static void ceph_osd_data_pages_init(struct ceph_osd_data *osd_data,
+-			struct page **pages, u64 length, u32 offset,
+-			bool pages_from_pool, bool own_pages)
+-{
+-	osd_data->type = CEPH_OSD_DATA_TYPE_PAGES;
+-	osd_data->pages = pages;
+-	osd_data->length = length;
+-	osd_data->offset = offset;
+-	osd_data->pages_from_pool = pages_from_pool;
+-	osd_data->own_pages = own_pages;
+-}
+-
+ static void ceph_osd_iter_init(struct ceph_osd_data *osd_data,
+ 			       struct iov_iter *iter)
  {
- 	struct ceph_osd_linger_request *lreq;
- 	int ret;
+@@ -181,19 +166,6 @@ void osd_req_op_raw_data_in_databuf(struct ceph_osd_request *osd_req,
+ }
+ EXPORT_SYMBOL(osd_req_op_raw_data_in_databuf);
  
- 	WARN_ON(!timeout);
--	if (preply_pages) {
--		*preply_pages = NULL;
--		*preply_len = 0;
+-void osd_req_op_raw_data_in_pages(struct ceph_osd_request *osd_req,
+-			unsigned int which, struct page **pages,
+-			u64 length, u32 offset,
+-			bool pages_from_pool, bool own_pages)
+-{
+-	struct ceph_osd_data *osd_data;
+-
+-	osd_data = osd_req_op_raw_data_in(osd_req, which);
+-	ceph_osd_data_pages_init(osd_data, pages, length, offset,
+-				pages_from_pool, own_pages);
+-}
+-EXPORT_SYMBOL(osd_req_op_raw_data_in_pages);
+-
+ void osd_req_op_extent_osd_databuf(struct ceph_osd_request *osd_req,
+ 				   unsigned int which,
+ 				   struct ceph_databuf *dbuf)
+@@ -205,19 +177,6 @@ void osd_req_op_extent_osd_databuf(struct ceph_osd_request *osd_req,
+ }
+ EXPORT_SYMBOL(osd_req_op_extent_osd_databuf);
+ 
+-void osd_req_op_extent_osd_data_pages(struct ceph_osd_request *osd_req,
+-			unsigned int which, struct page **pages,
+-			u64 length, u32 offset,
+-			bool pages_from_pool, bool own_pages)
+-{
+-	struct ceph_osd_data *osd_data;
+-
+-	osd_data = osd_req_op_data(osd_req, which, extent, osd_data);
+-	ceph_osd_data_pages_init(osd_data, pages, length, offset,
+-				pages_from_pool, own_pages);
+-}
+-EXPORT_SYMBOL(osd_req_op_extent_osd_data_pages);
+-
+ /**
+  * osd_req_op_extent_osd_iter - Set up an operation with an iterator buffer
+  * @osd_req: The request to set up
+@@ -285,8 +244,6 @@ static u64 ceph_osd_data_length(struct ceph_osd_data *osd_data)
+ 	switch (osd_data->type) {
+ 	case CEPH_OSD_DATA_TYPE_NONE:
+ 		return 0;
+-	case CEPH_OSD_DATA_TYPE_PAGES:
+-		return osd_data->length;
+ 	case CEPH_OSD_DATA_TYPE_ITER:
+ 		return iov_iter_count(&osd_data->iter);
+ 	default:
+@@ -297,13 +254,6 @@ static u64 ceph_osd_data_length(struct ceph_osd_data *osd_data)
+ 
+ static void ceph_osd_data_release(struct ceph_osd_data *osd_data)
+ {
+-	if (osd_data->type == CEPH_OSD_DATA_TYPE_PAGES && osd_data->own_pages) {
+-		int num_pages;
+-
+-		num_pages = calc_pages_for((u64)osd_data->offset,
+-						(u64)osd_data->length);
+-		ceph_release_page_vector(osd_data->pages, num_pages);
 -	}
+ 	ceph_osd_data_init(osd_data);
+ }
  
- 	lreq = linger_alloc(osdc);
- 	if (!lreq)
-@@ -4877,8 +4869,7 @@ int ceph_osdc_notify(struct ceph_osd_client *osdc,
- 		goto out_put_lreq;
- 	}
+@@ -881,12 +831,7 @@ static void ceph_osdc_msg_data_add(struct ceph_msg *msg,
+ {
+ 	u64 length = ceph_osd_data_length(osd_data);
  
--	lreq->preply_pages = preply_pages;
--	lreq->preply_len = preply_len;
-+	lreq->reply = reply;
- 
- 	ceph_oid_copy(&lreq->t.base_oid, oid);
- 	ceph_oloc_copy(&lreq->t.base_oloc, oloc);
+-	if (osd_data->type == CEPH_OSD_DATA_TYPE_PAGES) {
+-		BUG_ON(length > (u64) SIZE_MAX);
+-		if (length)
+-			ceph_msg_data_add_pages(msg, osd_data->pages,
+-					length, osd_data->offset, false);
+-	} else if (osd_data->type == CEPH_OSD_DATA_TYPE_ITER) {
++	if (osd_data->type == CEPH_OSD_DATA_TYPE_ITER) {
+ 		ceph_msg_data_add_iter(msg, &osd_data->iter);
+ 	} else {
+ 		BUG_ON(osd_data->type != CEPH_OSD_DATA_TYPE_NONE);
 
