@@ -2,60 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BD62476FFD6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 13:59:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 634657700A2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 14:58:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbjHDL7Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Aug 2023 07:59:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53364 "EHLO
+        id S229740AbjHDM6n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Aug 2023 08:58:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbjHDL7P (ORCPT
+        with ESMTP id S229585AbjHDM6l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Aug 2023 07:59:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B6F4B1;
-        Fri,  4 Aug 2023 04:59:14 -0700 (PDT)
+        Fri, 4 Aug 2023 08:58:41 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3B2D13D;
+        Fri,  4 Aug 2023 05:58:40 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 00D4A61F69;
-        Fri,  4 Aug 2023 11:59:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2E47C433C9;
-        Fri,  4 Aug 2023 11:59:10 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8012061FDF;
+        Fri,  4 Aug 2023 12:58:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46253C433C8;
+        Fri,  4 Aug 2023 12:58:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691150353;
-        bh=TlxRuxshp1+YEtrdMg8rVE0v+c8+0ZCqcnwFTAXxjpw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HcD49VFzi/A6qiHCW/un5jA9r576MNjHpV0OwWK0UaQcwSCkmN5BEV3W29E4+xuHs
-         +l/Eyr9uUBYwKinhoYq4H6p1kyCSIErdj/WWKRf9z+U5OKpm1FRpedp6ASfOJG7VYx
-         5CvyFiRFLLSgIh+lPwDwmCcRtu1Q9/WhqeKSGFCIQhB6h5ICdTpyAop9gZKjGeSoq6
-         DPNNRGHJkhAX+XTiUoS2s3qNPoSPOPa58XejfwlavvTDLLXlyLIpIkP2netue/HOof
-         bFL71jXAPnkHWHpKVXXgXYfZX7zhxEB2FkEbeiZoQFSw2mJIV67JCJZCC9YxzNuZgD
-         qmihkgzqDqyqw==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Ian Kent <raven@themaw.net>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        autofs mailing list <autofs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Fedor Pchelkin <pchelkin@ispras.ru>,
-        Takeshi Misawa <jeliantsurux@gmail.com>,
-        Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrey Vagin <avagin@openvz.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: [PATCH 1/2] autofs: fix memory leak of waitqueues in autofs_catatonic_mode
-Date:   Fri,  4 Aug 2023 13:59:05 +0200
-Message-Id: <20230804-testverfahren-bison-351d431d4491@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <169112719161.7590.6700123246297365841.stgit@donald.themaw.net>
-References: <169112719161.7590.6700123246297365841.stgit@donald.themaw.net>
+        s=k20201202; t=1691153919;
+        bh=FJU2BYATQry473jCPeCpOu9lfHYELvBFzEIys+3I708=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=BfL3xD/hQTN+OEA2XaALBGIMQtjxr+xppY+5gosC0+dxWrRWMlW5n24DKRg07PExg
+         O6bbMq6tyjok2CmXagNkNZ+GXjejQs5quJRlZqV3naksus+477wBZdHrhariqq8pIV
+         Np6P4PQWGln7ckslB83NjJzc2do8oRsS7eJY4oERn113V3It4mSCZA2Js+0V/4/PiC
+         rB2QHlRKX7aa+BYkxTyWNLnbcIS4vM43y5S15nciEKsVNF5OKFph1ev/AP/UPjBcnw
+         1eVKSu/i6WGr9V6sHBBbrvjPBrSkw9+/cJKDzEpPW5GRN6Yhc/Hg30vroTT6t7/lbU
+         Z6Fu5yaS+DTBg==
+Message-ID: <d6b4f6b84f8470264702771f00531c47225f0e6b.camel@kernel.org>
+Subject: Re: [PATCH v6] vfs, security: Fix automount superblock LSM init
+ problem, preventing NFS sb sharing
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Paul Moore <paul@paul-moore.com>,
+        David Howells <dhowells@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Date:   Fri, 04 Aug 2023 08:58:37 -0400
+In-Reply-To: <CAHC9VhSNXbJzfKLF+DjfK+_2eJYYc_AC3u3aUc_NUs_o5M5AaA@mail.gmail.com>
+References: <20230802-master-v6-1-45d48299168b@kernel.org>
+         <bac543537058619345b363bbfc745927.paul@paul-moore.com>
+         <ca156cecbc070c3b7c68626572274806079a6e04.camel@kernel.org>
+         <CAHC9VhTQDVyZewU0Oiy4AfJt_UtB7O2_-PcUmXkZtuwKDQBfXg@mail.gmail.com>
+         <ec1fd18f271593d5c6b6813cfaeb688994f20bf4.camel@kernel.org>
+         <CAHC9VhSNXbJzfKLF+DjfK+_2eJYYc_AC3u3aUc_NUs_o5M5AaA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2384; i=brauner@kernel.org; h=from:subject:message-id; bh=TlxRuxshp1+YEtrdMg8rVE0v+c8+0ZCqcnwFTAXxjpw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaScecGa53mD0SqYv1/Ubvvbb5c0DZWPR4Uo8y0zWqH+RPOV 4SzJjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInUhjH8z1pqUfxFxHlTgt6ljy9LLn +flcTgaXx60/vpZet2TLhtr8/I8KrOPGdyQbdXb+XK7vMX2W50zbvf9eTiSy+eb6cuFs98xw8A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -66,49 +76,66 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 04 Aug 2023 13:33:12 +0800, Ian Kent wrote:
-> Syzkaller reports a memory leak:
-> 
-> BUG: memory leak
-> unreferenced object 0xffff88810b279e00 (size 96):
->   comm "syz-executor399", pid 3631, jiffies 4294964921 (age 23.870s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 08 9e 27 0b 81 88 ff ff  ..........'.....
->     08 9e 27 0b 81 88 ff ff 00 00 00 00 00 00 00 00  ..'.............
->   backtrace:
->     [<ffffffff814cfc90>] kmalloc_trace+0x20/0x90 mm/slab_common.c:1046
->     [<ffffffff81bb75ca>] kmalloc include/linux/slab.h:576 [inline]
->     [<ffffffff81bb75ca>] autofs_wait+0x3fa/0x9a0 fs/autofs/waitq.c:378
->     [<ffffffff81bb88a7>] autofs_do_expire_multi+0xa7/0x3e0 fs/autofs/expire.c:593
->     [<ffffffff81bb8c33>] autofs_expire_multi+0x53/0x80 fs/autofs/expire.c:619
->     [<ffffffff81bb6972>] autofs_root_ioctl_unlocked+0x322/0x3b0 fs/autofs/root.c:897
->     [<ffffffff81bb6a95>] autofs_root_ioctl+0x25/0x30 fs/autofs/root.c:910
->     [<ffffffff81602a9c>] vfs_ioctl fs/ioctl.c:51 [inline]
->     [<ffffffff81602a9c>] __do_sys_ioctl fs/ioctl.c:870 [inline]
->     [<ffffffff81602a9c>] __se_sys_ioctl fs/ioctl.c:856 [inline]
->     [<ffffffff81602a9c>] __x64_sys_ioctl+0xfc/0x140 fs/ioctl.c:856
->     [<ffffffff84608225>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->     [<ffffffff84608225>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
->     [<ffffffff84800087>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> 
-> [...]
+On Thu, 2023-08-03 at 22:48 -0400, Paul Moore wrote:
+> On Thu, Aug 3, 2023 at 12:27=E2=80=AFPM Jeff Layton <jlayton@kernel.org> =
+wrote:
+> > On Wed, 2023-08-02 at 22:46 -0400, Paul Moore wrote:
+> > > On Wed, Aug 2, 2023 at 3:34=E2=80=AFPM Jeff Layton <jlayton@kernel.or=
+g> wrote:
+> > > > On Wed, 2023-08-02 at 14:16 -0400, Paul Moore wrote:
+> > > > > On Aug  2, 2023 Jeff Layton <jlayton@kernel.org> wrote:
+>=20
+> ...
+>=20
+> > > My only concern now is the fs_context::lsm_set flag.
+> >=20
+> > Yeah, that bit is ugly. David studied this problem a lot more than I
+> > have, but basically, we only want to set the context info once, and
+> > we're not always going to have a nice string to parse to set up the
+> > options. This obviously works, but I'm fine with a more elegant method
+> > if you can spot one.
+>=20
+> Like I said before, sometimes making a LSM hook conditional on some
+> flag is the only practical solution, but I always worry that there is
+> a chance that a future patch might end up toggling that flag by
+> accident and we lose an important call into the LSM.  Even if all we
+> end up doing is moving the flag down into the LSMs I would be happier;
+> there is still a risk, but at least if something breaks it is our (the
+> LSM folks) own damn fault ;)
+>=20
+> > > You didn't mention exactly why the security_sb_set_mnt_opts() was
+> > > failing, and requires the fs_context::lsm_set check, but my guess is
+> > > that something is tripping over the fact that the superblock is
+> > > already properly setup.  I'm working under the assumption that this
+> > > problem - attempting to reconfigure a properly configured superblock =
+-
+> > > should only be happening in the submount/non-NULL-reference case.  If
+> > > it is happening elsewhere I think I'm going to need some help
+> > > understanding that ...
+> >=20
+> > Correct. When you pass in the mount options, fc->security seems to be
+> > properly set. NFS mounting is complex though, so the final superblock
+> > you care about may end up being a descendant of the one that was
+> > originally configured.
+>=20
+> Ooof, okay, there goes that idea.
+>=20
+> At this point I guess it comes back to that question of why is calling
+> into security_sb_set_mnt_opts() a second (or third, etc.) time failing
+> for you?  Is there some conflict with the superblock
+> config/labeling/etc.?  Is there a permissions problem?  Better
+> understanding why that is failing might help us come up with a better
+> solution.
+>=20
 
-Applied to the vfs.autofs branch of the vfs/vfs.git tree.
-Patches in the vfs.autofs branch should appear in linux-next soon.
+I removed the lsm_set parameter from this patch, and my testcase still
+works fine.=C2=A0I can post a v7 if we want to go forward with that. I'm
+guessing the complaint he saw was the "out_double_mount" pr_warn.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+It looks like as long as the context options match, there shouldn't be
+an issue, and I don't see how you'd get mismatched ones if you're
+inheriting them.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.autofs
-
-[1/2] autofs: fix memory leak of waitqueues in autofs_catatonic_mode
-      https://git.kernel.org/vfs/vfs/c/ccbe77f7e45d
-[2/2] autofs: use wake_up() instead of wake_up_interruptible(()
-      https://git.kernel.org/vfs/vfs/c/17fce12e7c0a
+David, do you remember what prompted you to add the lsm_set parameter?
+--=20
+Jeff Layton <jlayton@kernel.org>
