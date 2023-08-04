@@ -2,176 +2,303 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 11E7176F766
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 04:02:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82F1276F7D9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 04:27:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232741AbjHDCCA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Aug 2023 22:02:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33124 "EHLO
+        id S232286AbjHDC1T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Aug 2023 22:27:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232705AbjHDCB7 (ORCPT
+        with ESMTP id S231638AbjHDC1P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Aug 2023 22:01:59 -0400
-Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 306E544A1;
-        Thu,  3 Aug 2023 19:01:57 -0700 (PDT)
-Received: by mail-vs1-xe2e.google.com with SMTP id ada2fe7eead31-447684c4283so673822137.2;
-        Thu, 03 Aug 2023 19:01:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691114516; x=1691719316;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Li4Rr3SDbAWbMC9vqUARkDUxqa5LNmgwNWmtZCQPN7c=;
-        b=MoVB1XjmMagsHZzn9G8ftY6HWJZOUd3UQbdoUZGHvxiTrJtRhQmKpY5hMXxXdiDzuq
-         zQBrBD4AM2yCz+AjuuOypK1qRVFL8If5W+fTO+cw9XBWSGuM7Hrx2k1cmlpjp62wiDDF
-         xmsVPYq08ScKsEB2acJFU2fLVkjAs3OQk4kUojzHHGQtCjQau8BO/IfSPhWz7s7RoG+F
-         ObfsdVyd9J6qFm5iu3TH8pCH6XZy+vWbCGwACVvcWshSg7B1v3rxfId451mLVIpY2bVi
-         GasCyfXQI0s3z46olnWXSpFmLflSUgwZZScpT/KeG4Ra5OVORJFyNsdv2rD2oRuBkEtE
-         dKlA==
+        Thu, 3 Aug 2023 22:27:15 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6D03AA4
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Aug 2023 19:26:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1691115986;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=H0wMlfA22BxZl9Q9Znlq2V03kgETsb/XxqrfcgpjE8w=;
+        b=P2ENrDJtPHnoBXz2exUYS9NcxNBQdWvrO347MuWxqLJ4SnMpyP1M1BDl+aZSWJVldSzYsz
+        8BONXYFGT5E8BCT2xDC7K+gujrS5c0UPfaxha1/F5ud2rEjiJj5ggea9a/k+f0J47/yBE0
+        lDQdwKLTENNK69s4LzEWMHfdZQVQb3c=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-230-dmW9yZ-JN-u4PKB31iDMMw-1; Thu, 03 Aug 2023 22:26:23 -0400
+X-MC-Unique: dmW9yZ-JN-u4PKB31iDMMw-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2684179be07so909395a91.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Aug 2023 19:26:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691114516; x=1691719316;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Li4Rr3SDbAWbMC9vqUARkDUxqa5LNmgwNWmtZCQPN7c=;
-        b=AHwHs1RDHmSRRmMjEQdp+RoWkigg69QbSEujxAVrY8D9ipzJ60Ju0TJHasS2oa2qcp
-         QbDA3n8BWOjcDu7YmnYL80StdtYdCcaJS+9TwoUiYpuxqzZt7IPnjwf0A6ImjihI7ljx
-         Rz+3hsVYQo3vef1JPaB/jl0TW3sVPCr5wgfXf91SkP92D74ssmF2C15Ah/LhHFgD6OrZ
-         Dr/G81p/groWSONlBM9e2z1WG6HPPfD3YAjCK6lfKGyxNfKaWUwVKXJL35T1lR9phjzH
-         c2uCC3MK43cARq8goc0EWtvy/EVUyEM1JWP2C5M0YA7UrRdxGcPsM3YyfBYcevdmUcOR
-         rlMw==
-X-Gm-Message-State: AOJu0YyZGsTcfdCada2Pv0UMonW1QldD/e237rGQQSMnfF7ynhVuJ9H/
-        Gm3gH9iSKS6EsN42ApoOrz+Xc1/wNT+tEcOslw0=
-X-Google-Smtp-Source: AGHT+IHATFbengwvPlZLXwXXl9tdvm/xeC68n6I1h9PJY7Qw0FOEZCU8f3gigNz/0f8AxRF04Qwf1gS0iLv+NBKaP4k=
-X-Received: by 2002:a05:6102:a35:b0:443:7635:34d with SMTP id
- 21-20020a0561020a3500b004437635034dmr329869vsb.30.1691114516008; Thu, 03 Aug
- 2023 19:01:56 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1691115982; x=1691720782;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H0wMlfA22BxZl9Q9Znlq2V03kgETsb/XxqrfcgpjE8w=;
+        b=APAS7H/VRNjqpcE41XjzLf800T22oU0XX/PRxSdH9/55+/vwjbicnFvkjlgxvkUBrQ
+         pvGDB5pmE2bXQZee/HvLaXRR3akZHdEWDneDYbfHF7IQfxOD+JLpOJTmfyuPvfZ+Q+sP
+         Un7NUVq8ljlVmsYqFjjgqS8rCt4M0UMjngdhIxmwBBlLsiomPzgFH7ALWmgRfzRUknN+
+         CfB3L4Ri0og95g+1G1yOV6O22f57XjTZD20fIW97bkXcA8EmmuZjaOTsmOjPEGImvqXg
+         xKZa/a7KaIB+zxGsjoJTKOgexCWmgbCxqnmcPWraVOTbDqJvxxEmYuHekitcbDHqp+a/
+         cgDg==
+X-Gm-Message-State: AOJu0Yzu76d0dt3Z0OOu2AhQwKJPStov1LULgSGR5uaI9nrpMI2uaRbF
+        rp6aM5ZJoCL8RWEZNGmEuVBX6REHjXGod/yJ+du3T6fBiuVd8EgbpHbZOviHU4XZ4fyP+ZVtrh0
+        g5FYN3gTyLB/Hslrd+ffMdKSfTY2BI6U+9aQ7
+X-Received: by 2002:a17:90a:2e13:b0:263:f9c8:9d9e with SMTP id q19-20020a17090a2e1300b00263f9c89d9emr413739pjd.46.1691115982682;
+        Thu, 03 Aug 2023 19:26:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG0dlagFne501RQWKVeqZVExYIA4sQCa0fB+4YVPJIVXtpybohnWZLPL+iJ14LyqQR4oE1EzA==
+X-Received: by 2002:a17:90a:2e13:b0:263:f9c8:9d9e with SMTP id q19-20020a17090a2e1300b00263f9c89d9emr413724pjd.46.1691115982357;
+        Thu, 03 Aug 2023 19:26:22 -0700 (PDT)
+Received: from [10.72.112.41] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d4-20020a17090a8d8400b00263fc1ef1aasm3129493pjo.10.2023.08.03.19.26.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Aug 2023 19:26:21 -0700 (PDT)
+Message-ID: <71018b94-45a0-3404-d3d0-d9f808a72a00@redhat.com>
+Date:   Fri, 4 Aug 2023 10:26:16 +0800
 MIME-Version: 1.0
-References: <20230802154131.2221419-1-hch@lst.de> <20230802154131.2221419-3-hch@lst.de>
- <20230803114651.ihtqqgthbdjjgxev@quack3>
-In-Reply-To: <20230803114651.ihtqqgthbdjjgxev@quack3>
-From:   Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date:   Fri, 4 Aug 2023 11:01:39 +0900
-Message-ID: <CAKFNMomzHg33SHnp6xGMEZY=+k6Y4t7dvBvgBDbO9H3ujzNDCw@mail.gmail.com>
-Subject: Re: [PATCH 02/12] nilfs2: use setup_bdev_super to de-duplicate the
- mount code
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v8 03/12] ceph: handle idmapped mounts in
+ create_request_message()
+To:     Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc:     brauner@kernel.org, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230803135955.230449-1-aleksandr.mikhalitsyn@canonical.com>
+ <20230803135955.230449-4-aleksandr.mikhalitsyn@canonical.com>
+Content-Language: en-US
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20230803135955.230449-4-aleksandr.mikhalitsyn@canonical.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 3, 2023 at 8:46=E2=80=AFPM Jan Kara wrote:
+
+On 8/3/23 21:59, Alexander Mikhalitsyn wrote:
+> From: Christian Brauner <brauner@kernel.org>
 >
-> On Wed 02-08-23 17:41:21, Christoph Hellwig wrote:
-> > Use the generic setup_bdev_super helper to open the main block device
-> > and do various bits of superblock setup instead of duplicating the
-> > logic.  This includes moving to the new scheme implemented in common
-> > code that only opens the block device after the superblock has allocate=
-d.
-> >
-> > It does not yet convert nilfs2 to the new mount API, but doing so will
-> > become a bit simpler after this first step.
-> >
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Inode operations that create a new filesystem object such as ->mknod,
+> ->create, ->mkdir() and others don't take a {g,u}id argument explicitly.
+> Instead the caller's fs{g,u}id is used for the {g,u}id of the new
+> filesystem object.
 >
-> AFAICS nilfs2 could *almost* use mount_bdev() directly and then just do i=
-ts
-
-> snapshot thing after mount_bdev() returns. But it has this weird logic
-> that: "if the superblock is already mounted but we can shrink the whole
-> dcache, then do remount instead of ignoring mount options". Firstly, this
-> looks racy - what prevents someone from say opening a file on the sb just
-> after nilfs_tree_is_busy() shrinks dcache? Secondly, it is inconsistent
-> with any other filesystem so it's going to surprise sysadmins not
-> intimately knowing nilfs2. Thirdly, from userspace you cannot tell what
-> your mount call is going to do. Last but not least, what is it really goo=
-d
-> for? Ryusuke, can you explain please?
+> In order to ensure that the correct {g,u}id is used map the caller's
+> fs{g,u}id for creation requests. This doesn't require complex changes.
+> It suffices to pass in the relevant idmapping recorded in the request
+> message. If this request message was triggered from an inode operation
+> that creates filesystem objects it will have passed down the relevant
+> idmaping. If this is a request message that was triggered from an inode
+> operation that doens't need to take idmappings into account the initial
+> idmapping is passed down which is an identity mapping.
 >
->                                                                 Honza
+> This change uses a new cephfs protocol extension CEPHFS_FEATURE_HAS_OWNER_UIDGID
+> which adds two new fields (owner_{u,g}id) to the request head structure.
+> So, we need to ensure that MDS supports it otherwise we need to fail
+> any IO that comes through an idmapped mount because we can't process it
+> in a proper way. MDS server without such an extension will use caller_{u,g}id
+> fields to set a new inode owner UID/GID which is incorrect because caller_{u,g}id
+> values are unmapped. At the same time we can't map these fields with an
+> idmapping as it can break UID/GID-based permission checks logic on the
+> MDS side. This problem was described with a lot of details at [1], [2].
+>
+> [1] https://lore.kernel.org/lkml/CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThfzuibrhA3RKM=ZOYLg@mail.gmail.com/
+> [2] https://lore.kernel.org/all/20220104140414.155198-3-brauner@kernel.org/
+>
+> https://github.com/ceph/ceph/pull/52575
+> https://tracker.ceph.com/issues/62217
+>
+> Cc: Xiubo Li <xiubli@redhat.com>
+> Cc: Jeff Layton <jlayton@kernel.org>
+> Cc: Ilya Dryomov <idryomov@gmail.com>
+> Cc: ceph-devel@vger.kernel.org
+> Co-Developed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> ---
+> v7:
+> 	- reworked to use two new fields for owner UID/GID (https://github.com/ceph/ceph/pull/52575)
+> v8:
+> 	- properly handled case when old MDS used with new kernel client
+> ---
+>   fs/ceph/mds_client.c         | 46 +++++++++++++++++++++++++++++++++---
+>   fs/ceph/mds_client.h         |  5 +++-
+>   include/linux/ceph/ceph_fs.h |  4 +++-
+>   3 files changed, 50 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 8829f55103da..7d3106d3b726 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -2902,6 +2902,17 @@ static void encode_mclientrequest_tail(void **p, const struct ceph_mds_request *
+>   	}
+>   }
+>   
+> +static inline u16 mds_supported_head_version(struct ceph_mds_session *session)
+> +{
+> +	if (!test_bit(CEPHFS_FEATURE_32BITS_RETRY_FWD, &session->s_features))
+> +		return 1;
+> +
+> +	if (!test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID, &session->s_features))
+> +		return 2;
+> +
+> +	return CEPH_MDS_REQUEST_HEAD_VERSION;
+> +}
+> +
+>   static struct ceph_mds_request_head_legacy *
+>   find_legacy_request_head(void *p, u64 features)
+>   {
+> @@ -2923,6 +2934,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>   {
+>   	int mds = session->s_mds;
+>   	struct ceph_mds_client *mdsc = session->s_mdsc;
+> +	struct ceph_client *cl = mdsc->fsc->client;
+>   	struct ceph_msg *msg;
+>   	struct ceph_mds_request_head_legacy *lhead;
+>   	const char *path1 = NULL;
+> @@ -2936,7 +2948,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>   	void *p, *end;
+>   	int ret;
+>   	bool legacy = !(session->s_con.peer_features & CEPH_FEATURE_FS_BTIME);
+> -	bool old_version = !test_bit(CEPHFS_FEATURE_32BITS_RETRY_FWD, &session->s_features);
+> +	u16 request_head_version = mds_supported_head_version(session);
+>   
+>   	ret = set_request_path_attr(mdsc, req->r_inode, req->r_dentry,
+>   			      req->r_parent, req->r_path1, req->r_ino1.ino,
+> @@ -2977,8 +2989,10 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>   	 */
+>   	if (legacy)
+>   		len = sizeof(struct ceph_mds_request_head_legacy);
+> -	else if (old_version)
+> +	else if (request_head_version == 1)
+>   		len = sizeof(struct ceph_mds_request_head_old);
+> +	else if (request_head_version == 2)
+> +		len = offsetofend(struct ceph_mds_request_head, ext_num_fwd);
+>   	else
+>   		len = sizeof(struct ceph_mds_request_head);
+>   
 
-I think you are referring to the following part:
+This is not what we suppose to. If we do this again and again when 
+adding new members it will make the code very complicated to maintain.
 
->        if (!s->s_root) {
-...
->        } else if (!sd.cno) {
->                if (nilfs_tree_is_busy(s->s_root)) {
->                        if ((flags ^ s->s_flags) & SB_RDONLY) {
->                                nilfs_err(s,
->                                          "the device already has a %s mou=
-nt.",
->                                          sb_rdonly(s) ? "read-only" : "re=
-ad/write");
->                                err =3D -EBUSY;
->                                goto failed_super;
->                        }
->                } else {
->                        /*
->                         * Try remount to setup mount states if the curren=
-t
->                         * tree is not mounted and only snapshots use this=
- sb.
->                         */
->                        err =3D nilfs_remount(s, &flags, data);
->                        if (err)
->                                goto failed_super;
->                }
->        }
+Once the CEPHFS_FEATURE_32BITS_RETRY_FWD has been supported the ceph 
+should correctly decode it and if CEPHFS_FEATURE_HAS_OWNER_UIDGID is not 
+supported the decoder should skip it directly.
 
-What this logic is trying to do is, if there is already a nilfs2 mount
-instance for the device, and are trying to mounting the current tree
-(sd.cno is 0, so this is not a snapshot mount), then will switch
-depending on whether the current tree has a mount:
+Is the MDS side buggy ? Why you last version didn't work ?
 
-- If the current tree is mounted, it's just like a normal filesystem.
-(A read-only mount and a read/write mount can't coexist, so check
-that, and reuse the instance if possible)
-- Otherwise, i.e. for snapshot mounts only, do whatever is necessary
-to add a new current mount, such as starting a log writer.
-   Since it does the same thing that nilfs_remount does, so
-nilfs_remount() is used there.
+Thanks
 
-Whether or not there is a current tree mount can be determined by
-d_count(s->s_root) > 1 as nilfs_tree_is_busy() does.
-Where s->s_root is always the root dentry of the current tree, not
-that of the mounted snapshot.
+- Xiubo
 
-I remember that calling shrink_dcache_parent() before this test was to
-do the test correctly if there was garbage left in the dcache from the
-past current mount.
+> @@ -3028,6 +3042,16 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>   	lhead = find_legacy_request_head(msg->front.iov_base,
+>   					 session->s_con.peer_features);
+>   
+> +	if ((req->r_mnt_idmap != &nop_mnt_idmap) &&
+> +	    !test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID, &session->s_features)) {
+> +		pr_err_ratelimited_client(cl,
+> +			"idmapped mount is used and CEPHFS_FEATURE_HAS_OWNER_UIDGID"
+> +			" is not supported by MDS. Fail request with -EIO.\n");
+> +
+> +		ret = -EIO;
+> +		goto out_err;
+> +	}
+> +
+>   	/*
+>   	 * The ceph_mds_request_head_legacy didn't contain a version field, and
+>   	 * one was added when we moved the message version from 3->4.
+> @@ -3035,17 +3059,33 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>   	if (legacy) {
+>   		msg->hdr.version = cpu_to_le16(3);
+>   		p = msg->front.iov_base + sizeof(*lhead);
+> -	} else if (old_version) {
+> +	} else if (request_head_version == 1) {
+>   		struct ceph_mds_request_head_old *ohead = msg->front.iov_base;
+>   
+>   		msg->hdr.version = cpu_to_le16(4);
+>   		ohead->version = cpu_to_le16(1);
+>   		p = msg->front.iov_base + sizeof(*ohead);
+> +	} else if (request_head_version == 2) {
+> +		struct ceph_mds_request_head *nhead = msg->front.iov_base;
+> +
+> +		msg->hdr.version = cpu_to_le16(6);
+> +		nhead->version = cpu_to_le16(2);
+> +
+> +		p = msg->front.iov_base + offsetofend(struct ceph_mds_request_head, ext_num_fwd);
+>   	} else {
+>   		struct ceph_mds_request_head *nhead = msg->front.iov_base;
+> +		kuid_t owner_fsuid;
+> +		kgid_t owner_fsgid;
+>   
+>   		msg->hdr.version = cpu_to_le16(6);
+>   		nhead->version = cpu_to_le16(CEPH_MDS_REQUEST_HEAD_VERSION);
+> +
+> +		owner_fsuid = from_vfsuid(req->r_mnt_idmap, &init_user_ns,
+> +					  VFSUIDT_INIT(req->r_cred->fsuid));
+> +		owner_fsgid = from_vfsgid(req->r_mnt_idmap, &init_user_ns,
+> +					  VFSGIDT_INIT(req->r_cred->fsgid));
+> +		nhead->owner_uid = cpu_to_le32(from_kuid(&init_user_ns, owner_fsuid));
+> +		nhead->owner_gid = cpu_to_le32(from_kgid(&init_user_ns, owner_fsgid));
+>   		p = msg->front.iov_base + sizeof(*nhead);
+>   	}
+>   
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index e3bbf3ba8ee8..8f683e8203bd 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -33,8 +33,10 @@ enum ceph_feature_type {
+>   	CEPHFS_FEATURE_NOTIFY_SESSION_STATE,
+>   	CEPHFS_FEATURE_OP_GETVXATTR,
+>   	CEPHFS_FEATURE_32BITS_RETRY_FWD,
+> +	CEPHFS_FEATURE_NEW_SNAPREALM_INFO,
+> +	CEPHFS_FEATURE_HAS_OWNER_UIDGID,
+>   
+> -	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_32BITS_RETRY_FWD,
+> +	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_HAS_OWNER_UIDGID,
+>   };
+>   
+>   #define CEPHFS_FEATURES_CLIENT_SUPPORTED {	\
+> @@ -49,6 +51,7 @@ enum ceph_feature_type {
+>   	CEPHFS_FEATURE_NOTIFY_SESSION_STATE,	\
+>   	CEPHFS_FEATURE_OP_GETVXATTR,		\
+>   	CEPHFS_FEATURE_32BITS_RETRY_FWD,	\
+> +	CEPHFS_FEATURE_HAS_OWNER_UIDGID,	\
+>   }
+>   
+>   /*
+> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+> index 5f2301ee88bc..6eb83a51341c 100644
+> --- a/include/linux/ceph/ceph_fs.h
+> +++ b/include/linux/ceph/ceph_fs.h
+> @@ -499,7 +499,7 @@ struct ceph_mds_request_head_legacy {
+>   	union ceph_mds_request_args args;
+>   } __attribute__ ((packed));
+>   
+> -#define CEPH_MDS_REQUEST_HEAD_VERSION  2
+> +#define CEPH_MDS_REQUEST_HEAD_VERSION  3
+>   
+>   struct ceph_mds_request_head_old {
+>   	__le16 version;                /* struct version */
+> @@ -530,6 +530,8 @@ struct ceph_mds_request_head {
+>   
+>   	__le32 ext_num_retry;          /* new count retry attempts */
+>   	__le32 ext_num_fwd;            /* new count fwd attempts */
+> +
+> +	__le32 owner_uid, owner_gid;   /* used for OPs which create inodes */
+>   } __attribute__ ((packed));
+>   
+>   /* cap/lease release record */
 
-If the current tree isn't mounted, it just cleans up the garbage, and
-the reference count wouldn't have incremented in parallel.
-
-If the current tree is mounted, d_count(s->s_root) will not decrease
-to 1, so it's not a problem.
-However, this will cause unexpected dcache shrinkage for the in-use
-tree, so it's not a good idea, as you pointed out.  If there is
-another way of judging without this side effect, it should be
-replaced.
-
-I will reply here once.
-
-Regards,
-Ryusuke Konishi
