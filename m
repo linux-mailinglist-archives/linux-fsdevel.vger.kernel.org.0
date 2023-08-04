@@ -2,90 +2,316 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EEC47705E6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 18:25:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A9EB7705E8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 18:25:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229666AbjHDQZW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Aug 2023 12:25:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40492 "EHLO
+        id S230184AbjHDQZb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Aug 2023 12:25:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjHDQZV (ORCPT
+        with ESMTP id S230043AbjHDQZ1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Aug 2023 12:25:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D123B2D71;
-        Fri,  4 Aug 2023 09:24:59 -0700 (PDT)
+        Fri, 4 Aug 2023 12:25:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B1744C03;
+        Fri,  4 Aug 2023 09:25:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4DF98620A2;
-        Fri,  4 Aug 2023 16:24:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F7BBC433C8;
-        Fri,  4 Aug 2023 16:24:58 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0730F6209E;
+        Fri,  4 Aug 2023 16:25:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F98EC433C8;
+        Fri,  4 Aug 2023 16:25:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691166298;
-        bh=2bO4g+/LC6BUQGYzlZrvEMgihTqm2I8P3Wk2jYORC2U=;
-        h=Subject:From:To:Cc:Date:From;
-        b=GjNHBOgS6v8Y3FLDRUHx0kqJ9idsqCcF8dLWLtApqT8zkdqOlbAqhHohCd3H1Cayt
-         iyrZBjZ6rjmgoDIJmobLBsmnNDXETxwRprE5vA6eCJmiiEWTcaCk5mi54mQhsPFpyr
-         Lspobg76Lk8TjiUL7zmDYItd2ZDaAyKox3dSE0qCCSykQuXLGSmaHehgUcHUrwgP1v
-         hWrCs+EL1lVflTceBxQRD/sBHVCQTLpWQNJQI84jAd9g+8dP/yy+skQ6vZfs4Os8+S
-         tc6UMvY/mRWa+NRj8a6kgcXUFXhYmOVbJAZ2QaBeg1LNzpBljGNySDpZWYk1TbRr7r
-         JjD6MZPzIGGJg==
-Subject: [PATCHSET v2 0/3] xfs: maintainer transition for 6.6
+        s=k20201202; t=1691166304;
+        bh=I7qvxvL8P/mw7kRzyfLpmDWdMeHsU7ozC37mIPfjykc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=H6Jo+MVed8qy1PVHJI15N2IC2E3ZoTOHlV6SYBuQBvm7LLqZyfH/xA4yBvVi4Y5YQ
+         TKPqveuyXTY5TNpFurGUimA4mfaLyZP2/hLtKDRjZc0n+TCnRlcOLx2z39lv4EeKps
+         MHMo+881WSyoOT6cGWxTOUqS7D3pxQfIMDuf6ee/lTbMd7P+vuzrvKGkz/FOEKsddT
+         lr/hPmx+8lake3QR7a2RJhe9/RHZk58eOLCFOCwGj/6JA06kpCzs/Z+Zfd0wEFAvo7
+         A8z1lGATvNXC3eS15nbo5qWhp+U9HftxluDWeCqF0LsDAj+uSjsRZliDj0UIQIBVjF
+         SKuKqE6lYWlGQ==
+Subject: [PATCH 1/3] docs: add maintainer entry profile for XFS
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
-Cc:     Chandan Babu R <chandan.babu@oracle.com>, corbet@lwn.net,
+Cc:     corbet@lwn.net, Chandan Babu R <chandan.babu@oracle.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         david@fromorbit.com, cem@kernel.org, sandeen@sandeen.net,
         chandan.babu@oracle.com, amir73il@gmail.com,
         leah.rumancik@gmail.com, zlang@kernel.org, fstests@vger.kernel.org,
         willy@infradead.org, shirley.ma@oracle.com, konrad.wilk@oracle.com
-Date:   Fri, 04 Aug 2023 09:24:58 -0700
-Message-ID: <169116629797.3243794.7024231508559123519.stgit@frogsfrogsfrogs>
+Date:   Fri, 04 Aug 2023 09:25:03 -0700
+Message-ID: <169116630379.3243794.7476300844644954184.stgit@frogsfrogsfrogs>
+In-Reply-To: <169116629797.3243794.7024231508559123519.stgit@frogsfrogsfrogs>
+References: <169116629797.3243794.7024231508559123519.stgit@frogsfrogsfrogs>
 User-Agent: StGit/0.19
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+From: Darrick J. Wong <djwong@kernel.org>
 
-I do not choose to continue as maintainer.
+Create a new document to list what I think are (within the scope of XFS)
+our shared goals and community roles.  Since I will be stepping down
+shortly, I feel it's important to write down somewhere all the hats that
+I have been wearing for the past six years.
 
-My final act as maintainer is to write down every thing that I've been
-doing as maintainer for the past six years.  There are too many demands
-placed on the maintainer, and the only way to fix this is to delegate
-the responsibilities.  I also wrote down my impressions of the unwritten
-rules about how to contribute to XFS.
+Also, document important extra details about how to contribute to XFS.
 
-The patchset concludes with my nomination for a new release manager to
-keep things running in the interim.  Testing and triage; community
-management; and LTS maintenance are all open positions.
-
-I'm /continuing/ as a senior developer and reviewer for XFS.  I expect
-to continue participating in interlock calls, LSFMM, etc.
-
-v2: clarify release manager role, amend some factual errors, add some
-    acks and reviews.
-
-Comments and questions are, as always, welcome.
-
---D
+Cc: corbet@lwn.net
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Chandan Babu R <chandan.babu@oracle.com>
 ---
  Documentation/filesystems/index.rst                |    1 
  .../filesystems/xfs-maintainer-entry-profile.rst   |  194 ++++++++++++++++++++
  .../maintainer/maintainer-entry-profile.rst        |    1 
- MAINTAINERS                                        |    4 
- 4 files changed, 199 insertions(+), 1 deletion(-)
+ MAINTAINERS                                        |    1 
+ 4 files changed, 197 insertions(+)
  create mode 100644 Documentation/filesystems/xfs-maintainer-entry-profile.rst
+
+
+diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
+index eb252fc972aa..09cade7eaefc 100644
+--- a/Documentation/filesystems/index.rst
++++ b/Documentation/filesystems/index.rst
+@@ -122,6 +122,7 @@ Documentation for filesystem implementations.
+    virtiofs
+    vfat
+    xfs-delayed-logging-design
++   xfs-maintainer-entry-profile
+    xfs-self-describing-metadata
+    xfs-online-fsck-design
+    zonefs
+diff --git a/Documentation/filesystems/xfs-maintainer-entry-profile.rst b/Documentation/filesystems/xfs-maintainer-entry-profile.rst
+new file mode 100644
+index 000000000000..32b6ac4ca9d6
+--- /dev/null
++++ b/Documentation/filesystems/xfs-maintainer-entry-profile.rst
+@@ -0,0 +1,194 @@
++XFS Maintainer Entry Profile
++============================
++
++Overview
++--------
++XFS is a well known high-performance filesystem in the Linux kernel.
++The aim of this project is to provide and maintain a robust and
++performant filesystem.
++
++Patches are generally merged to the for-next branch of the appropriate
++git repository.
++After a testing period, the for-next branch is merged to the master
++branch.
++
++Kernel code are merged to the xfs-linux tree[0].
++Userspace code are merged to the xfsprogs tree[1].
++Test cases are merged to the xfstests tree[2].
++Ondisk format documentation are merged to the xfs-documentation tree[3].
++
++All patchsets involving XFS *must* be cc'd in their entirety to the mailing
++list linux-xfs@vger.kernel.org.
++
++Roles
++-----
++There are eight key roles in the XFS project.
++A person can take on multiple roles, and a role can be filled by
++multiple people.
++Anyone taking on a role is advised to check in with themselves and
++others on a regular basis about burnout.
++
++- **Outside Contributor**: Anyone who sends a patch but is not involved
++  in the XFS project on a regular basis.
++  These folks are usually people who work on other filesystems or
++  elsewhere in the kernel community.
++
++- **Developer**: Someone who is familiar with the XFS codebase enough to
++  write new code, documentation, and tests.
++
++  Developers can often be found in the IRC channel mentioned by the ``C:``
++  entry in the kernel MAINTAINERS file.
++
++- **Senior Developer**: A developer who is very familiar with at least
++  some part of the XFS codebase and/or other subsystems in the kernel.
++  These people collectively decide the long term goals of the project
++  and nudge the community in that direction.
++  They should help prioritize development and review work for each release
++  cycle.
++
++  Senior developers tend to be more active participants in the IRC channel.
++
++- **Reviewer**: Someone (most likely also a developer) who reads code
++  submissions to decide:
++
++  0. Is the idea behind the contribution sound?
++  1. Does the idea fit the goals of the project?
++  2. Is the contribution designed correctly?
++  3. Is the contribution polished?
++  4. Can the contribution be tested effectively?
++
++  Reviewers should identify themselves with an ``R:`` entry in the kernel
++  and fstests MAINTAINERS files.
++
++- **Testing Lead**: This person is responsible for setting the test
++  coverage goals of the project, negotiating with developers to decide
++  on new tests for new features, and making sure that developers and
++  release managers execute on the testing.
++
++  The testing lead should identify themselves with an ``M:`` entry in
++  the XFS section of the fstests MAINTAINERS file.
++
++- **Bug Triager**: Someone who examines incoming bug reports in just
++  enough detail to identify the person to whom the report should be
++  forwarded.
++
++  The bug triagers should identify themselves with a ``B:`` entry in
++  the kernel MAINTAINERS file.
++
++- **Release Manager**: This person merges reviewed patchsets into an
++  integration branch, tests the result locally, pushes the branch to a
++  public git repository, and sends pull requests further upstream.
++  The release manager is not expected to work on new feature patchsets.
++  If a developer and a reviewer fail to reach a resolution on some point,
++  the release manager must have the ability to intervene to try to drive a
++  resolution.
++
++  The release manager should identify themselves with an ``M:`` entry in
++  the kernel MAINTAINERS file.
++
++- **Community Manager**: This person calls and moderates meetings of as many
++  XFS participants as they can get when mailing list discussions prove
++  insufficient for collective decisionmaking.
++  They may also serve as liaison between managers of the organizations
++  sponsoring work on any part of XFS.
++
++- **LTS Maintainer**: Someone who backports and tests bug fixes from
++  uptream to the LTS kernels.
++  There tend to be six separate LTS trees at any given time.
++
++  The maintainer for a given LTS release should identify themselves with an
++  ``M:`` entry in the MAINTAINERS file for that LTS tree.
++  Unmaintained LTS kernels should be marked with status ``S: Orphan`` in that
++  same file.
++
++Submission Checklist Addendum
++-----------------------------
++Please follow these additional rules when submitting to XFS:
++
++- Patches affecting only the filesystem itself should be based against
++  the latest -rc or the for-next branch.
++  These patches will be merged back to the for-next branch.
++
++- Authors of patches touching other subsystems need to coordinate with
++  the maintainers of XFS and the relevant subsystems to decide how to
++  proceed with a merge.
++
++- Any patchset changing XFS should be cc'd in its entirety to linux-xfs.
++  Do not send partial patchsets; that makes analysis of the broader
++  context of the changes unnecessarily difficult.
++
++- Anyone making kernel changes that have corresponding changes to the
++  userspace utilities should send the userspace changes as separate
++  patchsets immediately after the kernel patchsets.
++
++- Authors of bug fix patches are expected to use fstests[2] to perform
++  an A/B test of the patch to determine that there are no regressions.
++  When possible, a new regression test case should be written for
++  fstests.
++
++- Authors of new feature patchsets must ensure that fstests will have
++  appropriate functional and input corner-case test cases for the new
++  feature.
++
++- When implementing a new feature, it is strongly suggested that the
++  developers write a design document to answer the following questions:
++
++  * **What** problem is this trying to solve?
++
++  * **Who** will benefit from this solution, and **where** will they
++    access it?
++
++  * **How** will this new feature work?  This should touch on major data
++    structures and algorithms supporting the solution at a higher level
++    than code comments.
++
++  * **What** userspace interfaces are necessary to build off of the new
++    features?
++
++  * **How** will this work be tested to ensure that it solves the
++    problems laid out in the design document without causing new
++    problems?
++
++  The design document should be committed in the kernel documentation
++  directory.
++  It may be omitted if the feature is already well known to the
++  community.
++
++- Patchsets for the new tests should be submitted as separate patchsets
++  immediately after the kernel and userspace code patchsets.
++
++- Changes to the on-disk format of XFS must be described in the ondisk
++  format document[3] and submitted as a patchset after the fstests
++  patchsets.
++
++- Patchsets implementing bug fixes and further code cleanups should put
++  the bug fixes at the beginning of the series to ease backporting.
++
++Key Release Cycle Dates
++-----------------------
++Bug fixes may be sent at any time, though the release manager may decide to
++defer a patch when the next merge window is close.
++
++Code submissions targeting the next merge window should be sent between
++-rc1 and -rc6.
++This gives the community time to review the changes, to suggest other changes,
++and for the author to retest those changes.
++
++Code submissions also requiring changes to fs/iomap and targeting the
++next merge window should be sent between -rc1 and -rc4.
++This allows the broader kernel community adequate time to test the
++infrastructure changes.
++
++Review Cadence
++--------------
++In general, please wait at least one week before pinging for feedback.
++To find reviewers, either consult the MAINTAINERS file, or ask
++developers that have Reviewed-by tags for XFS changes to take a look and
++offer their opinion.
++
++References
++----------
++| [0] https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git/
++| [1] https://git.kernel.org/pub/scm/fs/xfs/xfsprogs-dev.git/
++| [2] https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git/
++| [3] https://git.kernel.org/pub/scm/fs/xfs/xfs-documentation.git/
+diff --git a/Documentation/maintainer/maintainer-entry-profile.rst b/Documentation/maintainer/maintainer-entry-profile.rst
+index cfd37f31077f..6b64072d4bf2 100644
+--- a/Documentation/maintainer/maintainer-entry-profile.rst
++++ b/Documentation/maintainer/maintainer-entry-profile.rst
+@@ -105,3 +105,4 @@ to do something different in the near future.
+    ../driver-api/media/maintainer-entry-profile
+    ../driver-api/vfio-pci-device-specific-driver-acceptance
+    ../nvme/feature-and-quirk-policy
++   ../filesystems/xfs-maintainer-entry-profile
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d516295978a4..d232e9e36b87 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -23330,6 +23330,7 @@ S:	Supported
+ W:	http://xfs.org/
+ C:	irc://irc.oftc.net/xfs
+ T:	git git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
++P:	Documentation/filesystems/xfs-maintainer-entry-profile.rst
+ F:	Documentation/ABI/testing/sysfs-fs-xfs
+ F:	Documentation/admin-guide/xfs.rst
+ F:	Documentation/filesystems/xfs-delayed-logging-design.rst
 
