@@ -2,93 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 796BE770569
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 17:59:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA9EA770573
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 18:00:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230488AbjHDP7o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Aug 2023 11:59:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53154 "EHLO
+        id S232019AbjHDQAs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Aug 2023 12:00:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbjHDP7n (ORCPT
+        with ESMTP id S231640AbjHDQAq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Aug 2023 11:59:43 -0400
-Received: from mail-vk1-xa34.google.com (mail-vk1-xa34.google.com [IPv6:2607:f8b0:4864:20::a34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91CF8170F;
-        Fri,  4 Aug 2023 08:59:42 -0700 (PDT)
-Received: by mail-vk1-xa34.google.com with SMTP id 71dfb90a1353d-48719fc6b18so402213e0c.1;
-        Fri, 04 Aug 2023 08:59:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691164781; x=1691769581;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sw3xh+PMtP2yuJR1nFYspmq9wxfYxKQfnC9fvCILIlQ=;
-        b=afQhVBJw3yxE80g2NnA1he1WE3lgXw4xUGeu427SsD/JdIrD6Ztqt1XuaqU1vb8r5F
-         OOHFPU0caPI55jFspqHSKKfXF+x2zKeMHwhuZoPbFoSlJ4obYxgGEcbaHE6uARNqz/NL
-         gd3HB1UO663b8Ve3zANadUhqL9NYm+Ejo9MajFDH1adXo/+jixja1ozwqBtcJUG4TxH1
-         p+a8jxakaT2anrAUrDVXkSyIPa9oYe733iLJFKxXCsG1Z4vfomt7bolARAZNK05k4yqH
-         ijh19kh4fLeWW0IVt2IJanjVay6uxEjmpOO3BE8LQ/VOKfI3nVuV98DakZuwWPcfU+UQ
-         vgzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691164781; x=1691769581;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sw3xh+PMtP2yuJR1nFYspmq9wxfYxKQfnC9fvCILIlQ=;
-        b=c4QroOZEGViD88WTe3+ng4NZGok4pDbtjB+3mG5MGXwhIJwGF7NcfdC3+G/GLY8d7A
-         JFg4+pvjjGhJgV7mAMK7X7IJ0UIZvnSEbga6I4xS3kC7byxAoMybA4A1vuHjLkDz4sD3
-         j3m+kkSq2ZEiVmFnKpcVhwxioawwoeA7KBjjNNiUm6C0oYwWqR9t5jtFD8dViS9a1JT6
-         nnaaYzxqGTP8LBzxW6kssAWrTMZU56RlGIBQlhMz8BDW8R69QaivOm3+b+yE3DvsErlM
-         SimuA2xThidptavxOPNo1dm63j6lQ1Gec5egenOTBW99DYH705Mvis6zdzEIBjEF1E4T
-         W86A==
-X-Gm-Message-State: AOJu0Ywl+GdJPJ39gMLOWkGmKGIJg/8dOdbpZrBMI4zk6/zl7rRTDBlK
-        STyEryeeFl2JheK7d9dE75TFpgbF1h6NNKkRoxk=
-X-Google-Smtp-Source: AGHT+IHVJyr2VPvbwXl96CS2++6bMajvUEaWTD3SfCdliP+x9YtE5vm6tsqwDHhgIrl14+DbEiE7B8he2KP0NFLq1KA=
-X-Received: by 2002:a1f:bd4b:0:b0:487:1bc8:4638 with SMTP id
- n72-20020a1fbd4b000000b004871bc84638mr1442446vkf.0.1691164781532; Fri, 04 Aug
- 2023 08:59:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230727093637.1262110-1-usama.anjum@collabora.com>
- <20230727093637.1262110-3-usama.anjum@collabora.com> <ZMvDCeUN8qrUmnJV@gmail.com>
- <CABb0KFF7K2SHvSwXMheVAgd3VcJf_twuRsc=P-uTJW9HGQcqfA@mail.gmail.com>
-In-Reply-To: <CABb0KFF7K2SHvSwXMheVAgd3VcJf_twuRsc=P-uTJW9HGQcqfA@mail.gmail.com>
-From:   Andrei Vagin <avagin@gmail.com>
-Date:   Fri, 4 Aug 2023 08:59:30 -0700
-Message-ID: <CANaxB-ytK5QNP4K4L3T=-F6sLc5kD6HjHc_C3U2sdTtBDgbmCg@mail.gmail.com>
-Subject: Re: [PATCH v26 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
+        Fri, 4 Aug 2023 12:00:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C3D846B1;
+        Fri,  4 Aug 2023 09:00:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2153E62094;
+        Fri,  4 Aug 2023 16:00:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9E8DC433C7;
+        Fri,  4 Aug 2023 16:00:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691164842;
+        bh=ZGRZkL9j/a65VBX6IUFj1r1iHPQgJzVhn4+RJMNyhb4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=jDUlmBzKAG67l59gJhJXTCjFGZxUTKhGt4lRB76NexmMj5D3j0bk/Ma6cI3RS7XWM
+         v7a4a2cc9Sm5TrC3pPZ13VZFYw4IY51G7RnAwq9oBfGVRCpYiHJY6H9JGZ1reKiKQq
+         ejpVdZr/ki0V8XIIjXpTTM/IHWUv68r5Eu1Y+hhy4dCoiWZLg83/vvQRv0OB1E3t4w
+         YPcQ7XXKFhh+++7Sp/EIC1bXhAqAPlOwurvUjdH4+tII6zuqO7rxPiPKuqDm2hVON9
+         uBUllR3gPlFcIyTyyhqmiVIck+VbHouHrIDz6iZ0hMeEQocKUp+gtZiX9KWsxoLhiY
+         SLEbKWUnTy42w==
+Message-ID: <7a947cfaa00f9bfce32ef9fac7a9f46f5dfab52f.camel@kernel.org>
+Subject: Re: [PATCH v6] vfs, security: Fix automount superblock LSM init
+ problem, preventing NFS sb sharing
+From:   Jeff Layton <jlayton@kernel.org>
+To:     David Howells <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Content-Type: text/plain; charset="UTF-8"
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Date:   Fri, 04 Aug 2023 12:00:39 -0400
+In-Reply-To: <2680108.1691162547@warthog.procyon.org.uk>
+References: <2678222.1691162178@warthog.procyon.org.uk>
+         <bac543537058619345b363bbfc745927.paul@paul-moore.com>
+         <20230802-master-v6-1-45d48299168b@kernel.org>
+         <2680108.1691162547@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -96,33 +73,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 3, 2023 at 8:25=E2=80=AFAM Micha=C5=82 Miros=C5=82aw <emmir@goo=
-gle.com> wrote:
->
-> On Thu, 3 Aug 2023 at 17:09, Andrei Vagin <avagin@gmail.com> wrote:
-> > On Thu, Jul 27, 2023 at 02:36:34PM +0500, Muhammad Usama Anjum wrote:
-> [...]
-> > > +     n_pages =3D (*end - addr) / PAGE_SIZE;
-> > > +     if (check_add_overflow(p->found_pages, n_pages, &total_pages) |=
-|
-> > > +         total_pages > p->arg.max_pages) {
-> >
-> > why do we need to use check_add_overflow here?
-> >
-> > > +             size_t n_too_much =3D total_pages - p->arg.max_pages;
-> >
-> > it is unsafe to use total_pages if check_add_overflow returns non-zero.
->
-> Since we're adding unsigned integers, this is well defined even after ove=
-rflow.
+On Fri, 2023-08-04 at 16:22 +0100, David Howells wrote:
+> David Howells <dhowells@redhat.com> wrote:
+>=20
+> > IIRC, the issue is when you make a mount with an explicit context=3D se=
+tting and
+> > make another mount from some way down the export tree that doesn't have=
+ an
+> > explicit setting, e.g.:
+> >=20
+> > 	mount carina:/ /mnt -o context=3Dsystem_u:object_r:root_t:s0
+> > 	mount carina:/nfs/scratch /mnt2
+> >=20
+> > and then cause an automount to walk from one to the other:
+> >=20
+> > 	stat /mnt/nfs/scratch/foo
+>=20
+> Actually, the order there isn't quite right.  The problem is with this or=
+der:
+>=20
+> 	# mount carina:/ /mnt -o context=3Dsystem_u:object_r:root_t:s0
+> 	# stat /mnt/nfs/scratch/bus
+> 	  File: /mnt/nfs/scratch/bus
+> 	  Size: 124160          Blocks: 248        IO Block: 1048576 regular fil=
+e
+> 	Device: 0,55    Inode: 131         Links: 1
+> 	...
+> 	# mount carina:/nfs/scratch /mnt2
+> 	mount.nfs: /mnt2 is busy or already mounted or sharecache fail
+>=20
+> with the error:
+>=20
+> 	SELinux: mount invalid.  Same superblock, different security settings fo=
+r (dev 0:52, type nfs4)
+>=20
 
-The description of check_add_overflow declares that is unsafe:
-https://elixir.bootlin.com/linux/latest/source/include/linux/overflow.h#L62
+That seems like the correct behavior to me. You tried to mount the same
+mount with a different sec context. If you want that, then you need to
+use -o nosharecache.
 
-It actually doesn't matter, because it should be impossible to
-overflow total_pages
-and we can consider not to use check_add_overflow here.
-
->
-> Best Regards
-> Micha=C5=82 Miros=C5=82aw
+I'll send a v7 in a bit.=20
+--=20
+Jeff Layton <jlayton@kernel.org>
