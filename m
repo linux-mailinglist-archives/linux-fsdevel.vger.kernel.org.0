@@ -2,53 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BA98770505
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 17:41:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 796BE770569
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 17:59:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230446AbjHDPlI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Aug 2023 11:41:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42456 "EHLO
+        id S230488AbjHDP7o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Aug 2023 11:59:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229920AbjHDPlH (ORCPT
+        with ESMTP id S229555AbjHDP7n (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Aug 2023 11:41:07 -0400
-Received: from mail-oa1-f78.google.com (mail-oa1-f78.google.com [209.85.160.78])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AC4D2D71
-        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Aug 2023 08:41:05 -0700 (PDT)
-Received: by mail-oa1-f78.google.com with SMTP id 586e51a60fabf-1bf57b54f88so3292213fac.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Aug 2023 08:41:05 -0700 (PDT)
+        Fri, 4 Aug 2023 11:59:43 -0400
+Received: from mail-vk1-xa34.google.com (mail-vk1-xa34.google.com [IPv6:2607:f8b0:4864:20::a34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91CF8170F;
+        Fri,  4 Aug 2023 08:59:42 -0700 (PDT)
+Received: by mail-vk1-xa34.google.com with SMTP id 71dfb90a1353d-48719fc6b18so402213e0c.1;
+        Fri, 04 Aug 2023 08:59:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1691164781; x=1691769581;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sw3xh+PMtP2yuJR1nFYspmq9wxfYxKQfnC9fvCILIlQ=;
+        b=afQhVBJw3yxE80g2NnA1he1WE3lgXw4xUGeu427SsD/JdIrD6Ztqt1XuaqU1vb8r5F
+         OOHFPU0caPI55jFspqHSKKfXF+x2zKeMHwhuZoPbFoSlJ4obYxgGEcbaHE6uARNqz/NL
+         gd3HB1UO663b8Ve3zANadUhqL9NYm+Ejo9MajFDH1adXo/+jixja1ozwqBtcJUG4TxH1
+         p+a8jxakaT2anrAUrDVXkSyIPa9oYe733iLJFKxXCsG1Z4vfomt7bolARAZNK05k4yqH
+         ijh19kh4fLeWW0IVt2IJanjVay6uxEjmpOO3BE8LQ/VOKfI3nVuV98DakZuwWPcfU+UQ
+         vgzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691163664; x=1691768464;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yXfmTWLCk2PZ6zLYPtx1+xYpmGXAer9fGUnxxtzOS0o=;
-        b=JZ4QiF+uDCQPVm4yFImScprmHRJbl03Q44FugsIXD16GulPJxCdNC67+ipbq20oS3V
-         cimZ51p4aEQztB/si37zW2Dd+l1LJOcUGvo5CfbJHa02LQIFWFQQxYbrJYMLE2XIammq
-         k7hXu3utwbVfB+RbiUfCuHds0TayG0p2hZjjoan921y8PFYwa3We5Yk+T4wVzTcsRl1w
-         udjewVuXuPT/95EkHoQNotNyoK2ahAAYNY4vBhYgzVWL+jYglmGL3buelZg7Z4Mr7p5r
-         /3MO5sEZqvyMZc1hFT64sroUEwZYCdGGzJAGTdW9S4MQpnOP+JzOJT49Ae8QL2QkmZGr
-         83GQ==
-X-Gm-Message-State: AOJu0Yz44kQNP9ZapJgiQbtoNEqDoCpmiLfN28j/Vvy91CpXIgZjnsKi
-        ln28nDG5I/e91ViLjdaS8PF4b/TsMKfmXRIyRk8k/HgnTmV0
-X-Google-Smtp-Source: AGHT+IEUwsgSul9CpdIBS7IL94M839EAF9eEJdcZ/poRlgToKAtFFG22qKCSWE//DiIUalyoMjz0qfwhvIOQGqo9iDWwomPTuLO1
+        d=1e100.net; s=20221208; t=1691164781; x=1691769581;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Sw3xh+PMtP2yuJR1nFYspmq9wxfYxKQfnC9fvCILIlQ=;
+        b=c4QroOZEGViD88WTe3+ng4NZGok4pDbtjB+3mG5MGXwhIJwGF7NcfdC3+G/GLY8d7A
+         JFg4+pvjjGhJgV7mAMK7X7IJ0UIZvnSEbga6I4xS3kC7byxAoMybA4A1vuHjLkDz4sD3
+         j3m+kkSq2ZEiVmFnKpcVhwxioawwoeA7KBjjNNiUm6C0oYwWqR9t5jtFD8dViS9a1JT6
+         nnaaYzxqGTP8LBzxW6kssAWrTMZU56RlGIBQlhMz8BDW8R69QaivOm3+b+yE3DvsErlM
+         SimuA2xThidptavxOPNo1dm63j6lQ1Gec5egenOTBW99DYH705Mvis6zdzEIBjEF1E4T
+         W86A==
+X-Gm-Message-State: AOJu0Ywl+GdJPJ39gMLOWkGmKGIJg/8dOdbpZrBMI4zk6/zl7rRTDBlK
+        STyEryeeFl2JheK7d9dE75TFpgbF1h6NNKkRoxk=
+X-Google-Smtp-Source: AGHT+IHVJyr2VPvbwXl96CS2++6bMajvUEaWTD3SfCdliP+x9YtE5vm6tsqwDHhgIrl14+DbEiE7B8he2KP0NFLq1KA=
+X-Received: by 2002:a1f:bd4b:0:b0:487:1bc8:4638 with SMTP id
+ n72-20020a1fbd4b000000b004871bc84638mr1442446vkf.0.1691164781532; Fri, 04 Aug
+ 2023 08:59:41 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:e282:b0:1bb:7d2b:9eb with SMTP id
- v2-20020a056870e28200b001bb7d2b09ebmr2148690oad.7.1691163664777; Fri, 04 Aug
- 2023 08:41:04 -0700 (PDT)
-Date:   Fri, 04 Aug 2023 08:41:04 -0700
-In-Reply-To: <0000000000002930a705fc32b231@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007f094106021ab951@google.com>
-Subject: Re: [syzbot] [nilfs?] general protection fault in folio_create_empty_buffers
-From:   syzbot <syzbot+0ad741797f4565e7e2d2@syzkaller.appspotmail.com>
-To:     konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+References: <20230727093637.1262110-1-usama.anjum@collabora.com>
+ <20230727093637.1262110-3-usama.anjum@collabora.com> <ZMvDCeUN8qrUmnJV@gmail.com>
+ <CABb0KFF7K2SHvSwXMheVAgd3VcJf_twuRsc=P-uTJW9HGQcqfA@mail.gmail.com>
+In-Reply-To: <CABb0KFF7K2SHvSwXMheVAgd3VcJf_twuRsc=P-uTJW9HGQcqfA@mail.gmail.com>
+From:   Andrei Vagin <avagin@gmail.com>
+Date:   Fri, 4 Aug 2023 08:59:30 -0700
+Message-ID: <CANaxB-ytK5QNP4K4L3T=-F6sLc5kD6HjHc_C3U2sdTtBDgbmCg@mail.gmail.com>
+Subject: Re: [PATCH v26 2/5] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,102 +96,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+On Thu, Aug 3, 2023 at 8:25=E2=80=AFAM Micha=C5=82 Miros=C5=82aw <emmir@goo=
+gle.com> wrote:
+>
+> On Thu, 3 Aug 2023 at 17:09, Andrei Vagin <avagin@gmail.com> wrote:
+> > On Thu, Jul 27, 2023 at 02:36:34PM +0500, Muhammad Usama Anjum wrote:
+> [...]
+> > > +     n_pages =3D (*end - addr) / PAGE_SIZE;
+> > > +     if (check_add_overflow(p->found_pages, n_pages, &total_pages) |=
+|
+> > > +         total_pages > p->arg.max_pages) {
+> >
+> > why do we need to use check_add_overflow here?
+> >
+> > > +             size_t n_too_much =3D total_pages - p->arg.max_pages;
+> >
+> > it is unsafe to use total_pages if check_add_overflow returns non-zero.
+>
+> Since we're adding unsigned integers, this is well defined even after ove=
+rflow.
 
-HEAD commit:    bdffb18b5dd8 Add linux-next specific files for 20230804
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1625c47da80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4edf5fc5e1e5446f
-dashboard link: https://syzkaller.appspot.com/bug?extid=0ad741797f4565e7e2d2
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b893bea80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16764a71a80000
+The description of check_add_overflow declares that is unsafe:
+https://elixir.bootlin.com/linux/latest/source/include/linux/overflow.h#L62
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9d65b99a07c2/disk-bdffb18b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8b9623d8bd2e/vmlinux-bdffb18b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3e6c96c97edb/bzImage-bdffb18b.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/17c4ca724160/mount_0.gz
+It actually doesn't matter, because it should be impossible to
+overflow total_pages
+and we can consider not to use check_add_overflow here.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0ad741797f4565e7e2d2@syzkaller.appspotmail.com
-
-general protection fault, probably for non-canonical address 0xdffffc000000003a: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x00000000000001d0-0x00000000000001d7]
-CPU: 0 PID: 5323 Comm: segctord Not tainted 6.5.0-rc4-next-20230804-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2023
-RIP: 0010:debug_spin_lock_before kernel/locking/spinlock_debug.c:85 [inline]
-RIP: 0010:do_raw_spin_lock+0x6e/0x2b0 kernel/locking/spinlock_debug.c:114
-Code: 81 48 8d 54 05 00 c7 02 f1 f1 f1 f1 c7 42 04 04 f3 f3 f3 65 48 8b 14 25 28 00 00 00 48 89 54 24 60 31 d2 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 e3
-RSP: 0018:ffffc9000507f6e8 EFLAGS: 00010207
-RAX: dffffc0000000000 RBX: 00000000000001d0 RCX: 0000000000000000
-RDX: 000000000000003a RSI: ffffffff8ac889a0 RDI: 00000000000001d4
-RBP: 1ffff92000a0fede R08: 0000000000000000 R09: fffffbfff1d598ca
-R10: ffffffff8eacc657 R11: 000000000000004e R12: 0000000000000000
-R13: ffffea0001ca6bc0 R14: ffff888072088d98 R15: ffffea0001ca6bd8
-FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000480 CR3: 0000000027f80000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- spin_lock include/linux/spinlock.h:351 [inline]
- folio_create_empty_buffers+0xb0/0x470 fs/buffer.c:1657
- nilfs_lookup_dirty_data_buffers+0x5a1/0x720 fs/nilfs2/segment.c:730
- nilfs_segctor_scan_file+0x1b1/0x6f0 fs/nilfs2/segment.c:1080
- nilfs_segctor_collect_blocks fs/nilfs2/segment.c:1202 [inline]
- nilfs_segctor_collect fs/nilfs2/segment.c:1529 [inline]
- nilfs_segctor_do_construct+0x2f11/0x8bf0 fs/nilfs2/segment.c:2077
- nilfs_segctor_construct+0x924/0xb50 fs/nilfs2/segment.c:2411
- nilfs_segctor_thread_construct fs/nilfs2/segment.c:2519 [inline]
- nilfs_segctor_thread+0x38f/0xe90 fs/nilfs2/segment.c:2602
- kthread+0x33a/0x430 kernel/kthread.c:389
- ret_from_fork+0x2c/0x70 arch/x86/kernel/process.c:145
- ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:304
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:debug_spin_lock_before kernel/locking/spinlock_debug.c:85 [inline]
-RIP: 0010:do_raw_spin_lock+0x6e/0x2b0 kernel/locking/spinlock_debug.c:114
-Code: 81 48 8d 54 05 00 c7 02 f1 f1 f1 f1 c7 42 04 04 f3 f3 f3 65 48 8b 14 25 28 00 00 00 48 89 54 24 60 31 d2 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 e3
-RSP: 0018:ffffc9000507f6e8 EFLAGS: 00010207
-RAX: dffffc0000000000 RBX: 00000000000001d0 RCX: 0000000000000000
-RDX: 000000000000003a RSI: ffffffff8ac889a0 RDI: 00000000000001d4
-RBP: 1ffff92000a0fede R08: 0000000000000000 R09: fffffbfff1d598ca
-R10: ffffffff8eacc657 R11: 000000000000004e R12: 0000000000000000
-R13: ffffea0001ca6bc0 R14: ffff888072088d98 R15: ffffea0001ca6bd8
-FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000480 CR3: 0000000027f80000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	81 48 8d 54 05 00 c7 	orl    $0xc7000554,-0x73(%rax)
-   7:	02 f1                	add    %cl,%dh
-   9:	f1                   	int1
-   a:	f1                   	int1
-   b:	f1                   	int1
-   c:	c7 42 04 04 f3 f3 f3 	movl   $0xf3f3f304,0x4(%rdx)
-  13:	65 48 8b 14 25 28 00 	mov    %gs:0x28,%rdx
-  1a:	00 00
-  1c:	48 89 54 24 60       	mov    %rdx,0x60(%rsp)
-  21:	31 d2                	xor    %edx,%edx
-  23:	48 89 fa             	mov    %rdi,%rdx
-  26:	48 c1 ea 03          	shr    $0x3,%rdx
-* 2a:	0f b6 14 02          	movzbl (%rdx,%rax,1),%edx <-- trapping instruction
-  2e:	48 89 f8             	mov    %rdi,%rax
-  31:	83 e0 07             	and    $0x7,%eax
-  34:	83 c0 03             	add    $0x3,%eax
-  37:	38 d0                	cmp    %dl,%al
-  39:	7c 08                	jl     0x43
-  3b:	84 d2                	test   %dl,%dl
-  3d:	0f                   	.byte 0xf
-  3e:	85 e3                	test   %esp,%ebx
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> Best Regards
+> Micha=C5=82 Miros=C5=82aw
