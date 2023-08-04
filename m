@@ -2,661 +2,374 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 47EBF76F9D6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 08:09:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 694F676FA06
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 08:25:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232068AbjHDGJL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Aug 2023 02:09:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56016 "EHLO
+        id S232742AbjHDGZ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Aug 2023 02:25:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbjHDGJK (ORCPT
+        with ESMTP id S233561AbjHDGZa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Aug 2023 02:09:10 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F62FE70;
-        Thu,  3 Aug 2023 23:09:06 -0700 (PDT)
-Received: from [192.168.100.7] (unknown [59.103.216.172])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        Fri, 4 Aug 2023 02:25:30 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7BE54696
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Aug 2023 23:25:24 -0700 (PDT)
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com [209.85.219.197])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id CE4DE66071B4;
-        Fri,  4 Aug 2023 07:08:58 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1691129344;
-        bh=GHiDn6z49w8DSJiWMTNDCjw/8dmlTiV+mivprEdx0oQ=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=X1praBfr2kohHw4j1LoDupI8T8dP+M7CV4A7i9bNrXfYuyO25KZJR4vX5y4dLRorA
-         fgWSQsjN+USjQjGLrNDPFQMgeIVRyTdo4WfnFetebjXtEdnYcGuSEf5G1nC2DP02xu
-         8yzI9BVm9AEckSwcDQ21tE8f29LTivo0RATuWkHCl2VQwAmvjhrx/OMycqOCupjhpR
-         GJzcxG2X56YBH1mJSWlMPPzIxW/Bv1uDFkB9EwtA94dzxjHsil03bCufFLOAOv+Tw7
-         v4xnJtqWWIZIwGuKAceXUPOVWZNyNpZVHcX+/yZx+bx4GUOetO/2Nv/vhjEAsbAMxx
-         RgAASlN07z6jw==
-Message-ID: <0eadde5d-a08e-dcb1-812d-f356631c3f04@collabora.com>
-Date:   Fri, 4 Aug 2023 11:08:54 +0500
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5ECD0417B7
+        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Aug 2023 06:25:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1691130321;
+        bh=itdf6DX/+djB/5S+zCyJq9/k0mddNxPoSW79Hcknvrw=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=qx4lLP3+xlL3zfgajeMl8IoOPMShVU2w8tYD2SS7/LaAllwHwb8RHovlpX8CLyXhJ
+         PvcsbOmGal7oWbn3zJlvycuuG93vWbx/o+3LruvcgVIHDRRSJX4Kh0kojlSYNQzm71
+         ZgUCz9EXKZFzQwjo8K4GkPY+kUQenSWxs4Z1mBNZFkMIBFkYQ2FHHfxYK+GmpTGRMG
+         yeCTM9DGYGdnJlyi2Ffw7fb39q8CmQJr06uu9gzywRhsykJ0eZ44vt0IO7uDgpXUGT
+         bOV4tRhoRatsfJnmu5h3A+hd+W00BIA2OnWFk4z1yckRRGO0FpTAX38vf0iGbxepaW
+         zRqrRALuU9Wlg==
+Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-d11f35a0d5cso2015428276.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Aug 2023 23:25:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691130319; x=1691735119;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=itdf6DX/+djB/5S+zCyJq9/k0mddNxPoSW79Hcknvrw=;
+        b=RLv/coLnpvpKsEZdILM1psJHhZgGciisT7/X1VZ5KI+GwWU7DFKCUL0dJsF68yGEZJ
+         YxovFCvcOK7zRivelXtQBqKVyfMOHeaoSfI7jQaP4HbSAQDunbXYKastW/glarb12ruh
+         EgPlEz/50njZz/MAUL7GFI7BLR1KI/HWKx+vWNa8Lx3Av/BJ5GN3qrY1wWjgfn3+Dq8Y
+         QWfQsO81B2xvpFCK93dMfYA8rsP197RXdVcbeZOzx/1401+cstukgeB8eayNragXTD9L
+         iF9pONuLviUZPKu8T5H8Y+CmDRfHZDgQVsARC2pA4EPovLoMU1d3o7TkbS/49wPiOLuO
+         jp+Q==
+X-Gm-Message-State: AOJu0YwpHs6QLWyCELNVeRLXHNzadK+I0JHkwZ/R4zdsFNcgJ8Q2eH68
+        xq1uVPLbC3/dJ8utaygW1hlZC3xvnXqe2d/pTbVSYye3/ckaBQUGYXCvdzHrTB8kG8OIn8uzfO8
+        xz29dVpg5/rCrqUMLyfDDABcFBzRe0TJcxqu00b4/BDOVy/rFQb+SJGZy5ao=
+X-Received: by 2002:a05:6902:508:b0:d44:a90b:ba50 with SMTP id x8-20020a056902050800b00d44a90bba50mr778731ybs.5.1691130319698;
+        Thu, 03 Aug 2023 23:25:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHyKTZRqtr/EO+10gorsT0drzn+0f/e3R2eDHCxrX6lpPi1AkEAljxTqL9lhvMsdzwdgr4jC6/1WI3YOJ8HhWM=
+X-Received: by 2002:a05:6902:508:b0:d44:a90b:ba50 with SMTP id
+ x8-20020a056902050800b00d44a90bba50mr778716ybs.5.1691130319410; Thu, 03 Aug
+ 2023 23:25:19 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WC?= =?UTF-8?Q?aw?= 
-        <emmir@google.com>, Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Subject: Re: [PATCH v26 2/5] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-To:     Andrei Vagin <avagin@gmail.com>
-References: <20230727093637.1262110-1-usama.anjum@collabora.com>
- <20230727093637.1262110-3-usama.anjum@collabora.com>
- <ZMvDCeUN8qrUmnJV@gmail.com>
-Content-Language: en-US
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <ZMvDCeUN8qrUmnJV@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+References: <20230803135955.230449-1-aleksandr.mikhalitsyn@canonical.com>
+ <20230803135955.230449-4-aleksandr.mikhalitsyn@canonical.com> <71018b94-45a0-3404-d3d0-d9f808a72a00@redhat.com>
+In-Reply-To: <71018b94-45a0-3404-d3d0-d9f808a72a00@redhat.com>
+From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date:   Fri, 4 Aug 2023 08:25:08 +0200
+Message-ID: <CAEivzxezBsWe-=Ey03u4wf59y9g6+TUF0sFZh=XK3-Q1rPm9hQ@mail.gmail.com>
+Subject: Re: [PATCH v8 03/12] ceph: handle idmapped mounts in create_request_message()
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     brauner@kernel.org, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/3/23 8:08 PM, Andrei Vagin wrote:
-> On Thu, Jul 27, 2023 at 02:36:34PM +0500, Muhammad Usama Anjum wrote:
-> 
-> <snip>
-> 
->> +
->> +static void pagemap_scan_backout_range(struct pagemap_scan_private *p,
->> +				       unsigned long addr, unsigned long end,
->> +				       unsigned long end_addr)
-> 
-> It hard to figure out what difference between end and end_addr. I would
-> add a comment here.
-I'll fix these in next version.
+On Fri, Aug 4, 2023 at 4:26=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
+>
+>
+> On 8/3/23 21:59, Alexander Mikhalitsyn wrote:
+> > From: Christian Brauner <brauner@kernel.org>
+> >
+> > Inode operations that create a new filesystem object such as ->mknod,
+> > ->create, ->mkdir() and others don't take a {g,u}id argument explicitly=
+.
+> > Instead the caller's fs{g,u}id is used for the {g,u}id of the new
+> > filesystem object.
+> >
+> > In order to ensure that the correct {g,u}id is used map the caller's
+> > fs{g,u}id for creation requests. This doesn't require complex changes.
+> > It suffices to pass in the relevant idmapping recorded in the request
+> > message. If this request message was triggered from an inode operation
+> > that creates filesystem objects it will have passed down the relevant
+> > idmaping. If this is a request message that was triggered from an inode
+> > operation that doens't need to take idmappings into account the initial
+> > idmapping is passed down which is an identity mapping.
+> >
+> > This change uses a new cephfs protocol extension CEPHFS_FEATURE_HAS_OWN=
+ER_UIDGID
+> > which adds two new fields (owner_{u,g}id) to the request head structure=
+.
+> > So, we need to ensure that MDS supports it otherwise we need to fail
+> > any IO that comes through an idmapped mount because we can't process it
+> > in a proper way. MDS server without such an extension will use caller_{=
+u,g}id
+> > fields to set a new inode owner UID/GID which is incorrect because call=
+er_{u,g}id
+> > values are unmapped. At the same time we can't map these fields with an
+> > idmapping as it can break UID/GID-based permission checks logic on the
+> > MDS side. This problem was described with a lot of details at [1], [2].
+> >
+> > [1] https://lore.kernel.org/lkml/CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThfzuib=
+rhA3RKM=3DZOYLg@mail.gmail.com/
+> > [2] https://lore.kernel.org/all/20220104140414.155198-3-brauner@kernel.=
+org/
+> >
+> > https://github.com/ceph/ceph/pull/52575
+> > https://tracker.ceph.com/issues/62217
+> >
+> > Cc: Xiubo Li <xiubli@redhat.com>
+> > Cc: Jeff Layton <jlayton@kernel.org>
+> > Cc: Ilya Dryomov <idryomov@gmail.com>
+> > Cc: ceph-devel@vger.kernel.org
+> > Co-Developed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical=
+.com>
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.c=
+om>
+> > ---
+> > v7:
+> >       - reworked to use two new fields for owner UID/GID (https://githu=
+b.com/ceph/ceph/pull/52575)
+> > v8:
+> >       - properly handled case when old MDS used with new kernel client
+> > ---
+> >   fs/ceph/mds_client.c         | 46 +++++++++++++++++++++++++++++++++--=
+-
+> >   fs/ceph/mds_client.h         |  5 +++-
+> >   include/linux/ceph/ceph_fs.h |  4 +++-
+> >   3 files changed, 50 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > index 8829f55103da..7d3106d3b726 100644
+> > --- a/fs/ceph/mds_client.c
+> > +++ b/fs/ceph/mds_client.c
+> > @@ -2902,6 +2902,17 @@ static void encode_mclientrequest_tail(void **p,=
+ const struct ceph_mds_request *
+> >       }
+> >   }
+> >
+> > +static inline u16 mds_supported_head_version(struct ceph_mds_session *=
+session)
+> > +{
+> > +     if (!test_bit(CEPHFS_FEATURE_32BITS_RETRY_FWD, &session->s_featur=
+es))
+> > +             return 1;
+> > +
+> > +     if (!test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID, &session->s_featur=
+es))
+> > +             return 2;
+> > +
+> > +     return CEPH_MDS_REQUEST_HEAD_VERSION;
+> > +}
+> > +
+> >   static struct ceph_mds_request_head_legacy *
+> >   find_legacy_request_head(void *p, u64 features)
+> >   {
+> > @@ -2923,6 +2934,7 @@ static struct ceph_msg *create_request_message(st=
+ruct ceph_mds_session *session,
+> >   {
+> >       int mds =3D session->s_mds;
+> >       struct ceph_mds_client *mdsc =3D session->s_mdsc;
+> > +     struct ceph_client *cl =3D mdsc->fsc->client;
+> >       struct ceph_msg *msg;
+> >       struct ceph_mds_request_head_legacy *lhead;
+> >       const char *path1 =3D NULL;
+> > @@ -2936,7 +2948,7 @@ static struct ceph_msg *create_request_message(st=
+ruct ceph_mds_session *session,
+> >       void *p, *end;
+> >       int ret;
+> >       bool legacy =3D !(session->s_con.peer_features & CEPH_FEATURE_FS_=
+BTIME);
+> > -     bool old_version =3D !test_bit(CEPHFS_FEATURE_32BITS_RETRY_FWD, &=
+session->s_features);
+> > +     u16 request_head_version =3D mds_supported_head_version(session);
+> >
+> >       ret =3D set_request_path_attr(mdsc, req->r_inode, req->r_dentry,
+> >                             req->r_parent, req->r_path1, req->r_ino1.in=
+o,
+> > @@ -2977,8 +2989,10 @@ static struct ceph_msg *create_request_message(s=
+truct ceph_mds_session *session,
+> >        */
+> >       if (legacy)
+> >               len =3D sizeof(struct ceph_mds_request_head_legacy);
+> > -     else if (old_version)
+> > +     else if (request_head_version =3D=3D 1)
+> >               len =3D sizeof(struct ceph_mds_request_head_old);
+> > +     else if (request_head_version =3D=3D 2)
+> > +             len =3D offsetofend(struct ceph_mds_request_head, ext_num=
+_fwd);
+> >       else
+> >               len =3D sizeof(struct ceph_mds_request_head);
+> >
+>
+> This is not what we suppose to. If we do this again and again when
+> adding new members it will make the code very complicated to maintain.
+>
+> Once the CEPHFS_FEATURE_32BITS_RETRY_FWD has been supported the ceph
+> should correctly decode it and if CEPHFS_FEATURE_HAS_OWNER_UIDGID is not
+> supported the decoder should skip it directly.
 
-> 
->> +{
->> +	struct page_region *cur_buf = &p->cur_buf;
->> +
->> +	if (cur_buf->start != addr)
->> +		cur_buf->end = addr;
->> +	else
->> +		cur_buf->start = cur_buf->end = 0;
->> +
->> +	p->end_addr = end_addr;
->> +	p->found_pages -= (end - addr) / PAGE_SIZE;
->> +}
->> +
->> +static int pagemap_scan_output(unsigned long categories,
->> +			       struct pagemap_scan_private *p,
->> +			       unsigned long addr, unsigned long *end)
->> +{
->> +	unsigned long n_pages, total_pages;
->> +	int ret = 0;
->> +
->> +	if (!pagemap_scan_is_interesting_page(categories, p)) {
->> +		*end = addr;
->> +		return 0;
->> +	}
->> +
->> +	if (!p->vec_buf)
->> +		return 0;
->> +
->> +	categories &= p->arg.return_mask;
->> +
->> +	n_pages = (*end - addr) / PAGE_SIZE;
->> +	if (check_add_overflow(p->found_pages, n_pages, &total_pages) ||
->> +	    total_pages > p->arg.max_pages) {
-> 
-> why do we need to use check_add_overflow here?
-> 
->> +		size_t n_too_much = total_pages - p->arg.max_pages;
-> 
-> it is unsafe to use total_pages if check_add_overflow returns non-zero.
-> 
->> +		*end -= n_too_much * PAGE_SIZE;
->> +		n_pages -= n_too_much;
->> +		ret = -ENOSPC;
->> +	}
->> +
->> +	if (!pagemap_scan_push_range(categories, p, addr, *end)) {
->> +		*end = addr;
->> +		n_pages = 0;
->> +		ret = -ENOSPC;
->> +	}
->> +
->> +	p->found_pages += n_pages;
->> +	if (ret)
->> +		p->end_addr = *end;
->> +
->> +	return ret;
->> +}
->> +
->> +static int pagemap_scan_thp_entry(pmd_t *pmd, unsigned long start,
->> +				  unsigned long end, struct mm_walk *walk)
->> +{
->> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->> +	struct pagemap_scan_private *p = walk->private;
->> +	struct vm_area_struct *vma = walk->vma;
->> +	unsigned long categories;
->> +	spinlock_t *ptl;
->> +	int ret = 0;
->> +
->> +	ptl = pmd_trans_huge_lock(pmd, vma);
->> +	if (!ptl)
->> +		return -ENOENT;
->> +
->> +	categories = p->cur_vma_category | pagemap_thp_category(*pmd);
->> +
->> +	ret = pagemap_scan_output(categories, p, start, &end);
->> +	if (start == end)
->> +		goto out_unlock;
->> +
->> +	if (~p->arg.flags & PM_SCAN_WP_MATCHING)
->> +		goto out_unlock;
->> +	if (~categories & PAGE_IS_WRITTEN)
->> +		goto out_unlock;
->> +
->> +	/*
->> +	 * Break huge page into small pages if the WP operation
->> +	 * need to be performed is on a portion of the huge page.
->> +	 */
->> +	if (end != start + HPAGE_SIZE) {
->> +		spin_unlock(ptl);
->> +		split_huge_pmd(vma, pmd, start);
->> +		pagemap_scan_backout_range(p, start, end, 0);
-> 
-> pagemap_scan_backout_range looks "weird"... imho, it makes the code
-> harder for understanding.
-> 
->> +		return -ENOENT;
-> 
-> I think you need to add a comment that this ENOENT is a special case.
-> 
->> +	}
->> +
->> +	make_uffd_wp_pmd(vma, start, pmd);
->> +	flush_tlb_range(vma, start, end);
->> +out_unlock:
->> +	spin_unlock(ptl);
->> +	return ret;
->> +#else /* !CONFIG_TRANSPARENT_HUGEPAGE */
->> +	return -ENOENT;
->> +#endif
->> +}
->> +
->> +static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
->> +				  unsigned long end, struct mm_walk *walk)
->> +{
->> +	struct pagemap_scan_private *p = walk->private;
->> +	struct vm_area_struct *vma = walk->vma;
->> +	pte_t *pte, *start_pte;
->> +	unsigned long addr;
->> +	bool flush = false;
->> +	spinlock_t *ptl;
->> +	int ret;
->> +
->> +	arch_enter_lazy_mmu_mode();
->> +
->> +	ret = pagemap_scan_thp_entry(pmd, start, end, walk);
->> +	if (ret != -ENOENT) {
->> +		arch_leave_lazy_mmu_mode();
->> +		return ret;
->> +	}
->> +
->> +	start_pte = pte = pte_offset_map_lock(vma->vm_mm, pmd, start, &ptl);
->> +	if (!pte) {
->> +		arch_leave_lazy_mmu_mode();
->> +		walk->action = ACTION_AGAIN;
->> +		return 0;
->> +	}
->> +
->> +	for (addr = start; addr != end; pte++, addr += PAGE_SIZE) {
->> +		unsigned long categories = p->cur_vma_category |
->> +					   pagemap_page_category(vma, addr, ptep_get(pte));
->> +		unsigned long next = addr + PAGE_SIZE;
->> +
->> +		ret = pagemap_scan_output(categories, p, addr, &next);
->> +		if (next == addr) {
->> +			if (!ret)
->> +				continue;
->> +			break;
->> +		}
->> +
->> +		if (~p->arg.flags & PM_SCAN_WP_MATCHING)
->> +			continue;
->> +		if (~categories & PAGE_IS_WRITTEN)
->> +			continue;
->> +
->> +		make_uffd_wp_pte(vma, addr, pte);
->> +		if (!flush) {
->> +			start = addr;
->> +			flush = true;
->> +		}
->> +	}
->> +
->> +	if (flush)
->> +		flush_tlb_range(vma, start, addr);
->> +
->> +	pte_unmap_unlock(start_pte, ptl);
->> +	arch_leave_lazy_mmu_mode();
->> +
->> +	cond_resched();
->> +	return ret;
->> +}
->> +
->> +#ifdef CONFIG_HUGETLB_PAGE
->> +static int pagemap_scan_hugetlb_entry(pte_t *ptep, unsigned long hmask,
->> +				      unsigned long start, unsigned long end,
->> +				      struct mm_walk *walk)
->> +{
->> +	struct pagemap_scan_private *p = walk->private;
->> +	struct vm_area_struct *vma = walk->vma;
->> +	unsigned long categories;
->> +	spinlock_t *ptl;
->> +	int ret = 0;
->> +	pte_t pte;
->> +
->> +	if (~p->arg.flags & PM_SCAN_WP_MATCHING) {
->> +		/* Go the short route when not write-protecting pages. */
->> +
->> +		pte = huge_ptep_get(ptep);
->> +		categories = p->cur_vma_category | pagemap_hugetlb_category(pte);
->> +
->> +		return pagemap_scan_output(categories, p, start, &end);
->> +	}
->> +
->> +	i_mmap_lock_write(vma->vm_file->f_mapping);
->> +	ptl = huge_pte_lock(hstate_vma(vma), vma->vm_mm, ptep);
->> +
->> +	pte = huge_ptep_get(ptep);
->> +	categories = p->cur_vma_category | pagemap_hugetlb_category(pte);
->> +
->> +	ret = pagemap_scan_output(categories, p, start, &end);
->> +	if (start == end)
->> +		goto out_unlock;
->> +
->> +	if (~categories & PAGE_IS_WRITTEN)
->> +		goto out_unlock;
->> +
->> +	if (end != start + HPAGE_SIZE) {
->> +		/* Partial HugeTLB page WP isn't possible. */
->> +		pagemap_scan_backout_range(p, start, end, start);
->> +		ret = -EINVAL;
-> 
-> Why is it EINVAL in this case?
-> 
->> +		goto out_unlock;
->> +	}
->> +
->> +	make_uffd_wp_huge_pte(vma, start, ptep, pte);
->> +	flush_hugetlb_tlb_range(vma, start, end);
->> +
->> +out_unlock:
->> +	spin_unlock(ptl);
->> +	i_mmap_unlock_write(vma->vm_file->f_mapping);
->> +
->> +	return ret;
->> +}
->> +#else
->> +#define pagemap_scan_hugetlb_entry NULL
->> +#endif
->> +
->> +static int pagemap_scan_pte_hole(unsigned long addr, unsigned long end,
->> +				 int depth, struct mm_walk *walk)
->> +{
->> +	struct pagemap_scan_private *p = walk->private;
->> +	struct vm_area_struct *vma = walk->vma;
->> +	int ret, err;
->> +
->> +	if (!vma)
->> +		return 0;
->> +
->> +	ret = pagemap_scan_output(p->cur_vma_category, p, addr, &end);
->> +	if (addr == end)
->> +		return ret;
->> +
->> +	if (~p->arg.flags & PM_SCAN_WP_MATCHING)
->> +		return ret;
->> +
->> +	err = uffd_wp_range(vma, addr, end - addr, true);
->> +	if (err < 0)
->> +		ret = err;
->> +
->> +	return ret;
->> +}
->> +
->> +static const struct mm_walk_ops pagemap_scan_ops = {
->> +	.test_walk = pagemap_scan_test_walk,
->> +	.pmd_entry = pagemap_scan_pmd_entry,
->> +	.pte_hole = pagemap_scan_pte_hole,
->> +	.hugetlb_entry = pagemap_scan_hugetlb_entry,
->> +};
->> +
->> +static int pagemap_scan_get_args(struct pm_scan_arg *arg,
->> +				 unsigned long uarg)
->> +{
->> +	if (copy_from_user(arg, (void __user *)uarg, sizeof(*arg)))
->> +		return -EFAULT;
->> +
->> +	if (arg->size != sizeof(struct pm_scan_arg))
->> +		return -EINVAL;
->> +
->> +	/* Validate requested features */
->> +	if (arg->flags & ~PM_SCAN_FLAGS)
->> +		return -EINVAL;
->> +	if ((arg->category_inverted | arg->category_mask |
->> +	     arg->category_anyof_mask | arg->return_mask) & ~PM_SCAN_CATEGORIES)
->> +		return -EINVAL;
->> +
->> +	arg->start = untagged_addr((unsigned long)arg->start);
->> +	arg->end = untagged_addr((unsigned long)arg->end);
->> +	arg->vec = untagged_addr((unsigned long)arg->vec);
->> +
->> +	/* Validate memory pointers */
->> +	if (!IS_ALIGNED(arg->start, PAGE_SIZE))
->> +		return -EINVAL;
->> +	if (!access_ok((void __user *)arg->start, arg->end - arg->start))
->> +		return -EFAULT;
->> +	if (!arg->vec && arg->vec_len)
->> +		return -EFAULT;
->> +	if (arg->vec && !access_ok((void __user *)arg->vec,
->> +			      arg->vec_len * sizeof(struct page_region)))
->> +		return -EFAULT;
->> +
->> +	/* Fixup default values */
->> +	arg->end = ALIGN(arg->end, PAGE_SIZE);
->> +	if (!arg->max_pages)
->> +		arg->max_pages = ULONG_MAX;
->> +
->> +	return 0;
->> +}
->> +
->> +static int pagemap_scan_writeback_args(struct pm_scan_arg *arg,
->> +				       unsigned long uargl)
->> +{
->> +	struct pm_scan_arg __user *uarg	= (void __user *)uargl;
->> +
->> +	if (copy_to_user(&uarg->walk_end, &arg->walk_end, sizeof(arg->walk_end)))
->> +		return -EFAULT;
->> +
->> +	return 0;
->> +}
->> +
->> +static int pagemap_scan_init_bounce_buffer(struct pagemap_scan_private *p)
->> +{
->> +	if (!p->arg.vec_len) {
->> +		/*
->> +		 * An arbitrary non-page-aligned sentinel value for
->> +		 * pagemap_scan_push_range().
->> +		 */
->> +		p->cur_buf.start = p->cur_buf.end = ULLONG_MAX;
->> +		if (p->arg.vec)
->> +			p->vec_buf = ZERO_SIZE_PTR;
->> +		return 0;
->> +	}
->> +
->> +	/*
->> +	 * Allocate a smaller buffer to get output from inside the page
->> +	 * walk functions and walk the range in PAGEMAP_WALK_SIZE chunks.
->> +	 * The last range is always stored in p.cur_buf to allow coalescing
->> +	 * consecutive ranges that have the same categories returned across
->> +	 * walk_page_range() calls.
->> +	 */
->> +	p->vec_buf_len = min_t(size_t, PAGEMAP_WALK_SIZE >> PAGE_SHIFT,
->> +			       p->arg.vec_len - 1);
->> +	p->vec_buf = kmalloc_array(p->vec_buf_len, sizeof(*p->vec_buf),
->> +				   GFP_KERNEL);
->> +	if (!p->vec_buf)
->> +		return -ENOMEM;
->> +
->> +	p->vec_out = (struct page_region __user *)p->arg.vec;
->> +
->> +	return 0;
->> +}
->> +
->> +static int pagemap_scan_flush_buffer(struct pagemap_scan_private *p)
->> +{
->> +	const struct page_region *buf = p->vec_buf;
->> +	int n = (int)p->vec_buf_index;
->> +
->> +	if (!n)
->> +		return 0;
->> +
->> +	if (copy_to_user(p->vec_out, buf, n * sizeof(*buf)))
->> +		return -EFAULT;
->> +
->> +	p->arg.vec_len -= n;
->> +	p->vec_out += n;
->> +
->> +	p->vec_buf_index = 0;
->> +	p->vec_buf_len = min_t(size_t, p->vec_buf_len, p->arg.vec_len - 1);
->> +
->> +	return n;
->> +}
->> +
->> +static long do_pagemap_scan(struct mm_struct *mm, unsigned long uarg)
->> +{
->> +	unsigned long walk_start, walk_end;
->> +	struct mmu_notifier_range range;
->> +	struct pagemap_scan_private p;
->> +	size_t n_ranges_out = 0;
->> +	int ret;
->> +
->> +	memset(&p, 0, sizeof(p));
->> +	ret = pagemap_scan_get_args(&p.arg, uarg);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = pagemap_scan_init_bounce_buffer(&p);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Protection change for the range is going to happen. */
->> +	if (p.arg.flags & PM_SCAN_WP_MATCHING) {
->> +		mmu_notifier_range_init(&range, MMU_NOTIFY_PROTECTION_VMA, 0,
->> +					mm, p.arg.start, p.arg.end);
->> +		mmu_notifier_invalidate_range_start(&range);
->> +	}
->> +
->> +	walk_start = walk_end = p.arg.start;
->> +	for (; walk_end != p.arg.end; walk_start = walk_end) {
->> +		int n_out;
->> +
->> +		walk_end = min_t(unsigned long,
->> +				 (walk_start + PAGEMAP_WALK_SIZE) & PAGEMAP_WALK_MASK,
->> +				 p.arg.end);
->> +
-> 
-> if (fatal_signal_pending(current)) {
-> 	ret = EINTR;
-> 	break;
-> }
-> 
->> +		ret = mmap_read_lock_killable(mm);
->> +		if (ret)
->> +			break;
->> +		ret = walk_page_range(mm, walk_start, walk_end,
->> +				      &pagemap_scan_ops, &p);
->> +		mmap_read_unlock(mm);
->> +
->> +		n_out = pagemap_scan_flush_buffer(&p);
->> +		if (n_out < 0)
->> +			ret = n_out;
->> +		else
->> +			n_ranges_out += n_out;
->> +
->> +		if (ret)
->> +			break;
->> +	}
->> +
->> +	if (p.cur_buf.start != p.cur_buf.end) {
->> +		if (copy_to_user(p.vec_out, &p.cur_buf, sizeof(p.cur_buf)))
->> +			ret = -EFAULT;
->> +		else
->> +			++n_ranges_out;
->> +	}
->> +
->> +	/* ENOSPC signifies early stop (buffer full) from the walk. */
->> +	if (!ret || ret == -ENOSPC)
->> +		ret = n_ranges_out;
->> +
->> +	p.arg.walk_end = p.end_addr ? p.end_addr : walk_start;
->> +	if (pagemap_scan_writeback_args(&p.arg, uarg))
->> +		ret = -EFAULT;
->> +
->> +	if (p.arg.flags & PM_SCAN_WP_MATCHING)
->> +		mmu_notifier_invalidate_range_end(&range);
->> +
->> +	kfree(p.vec_buf);
->> +	return ret;
->> +}
->> +
->> +static long do_pagemap_cmd(struct file *file, unsigned int cmd,
->> +			   unsigned long arg)
->> +{
->> +	struct mm_struct *mm = file->private_data;
->> +
->> +	switch (cmd) {
->> +	case PAGEMAP_SCAN:
->> +		return do_pagemap_scan(mm, arg);
->> +
->> +	default:
->> +		return -EINVAL;
->> +	}
->> +}
->> +
->>  const struct file_operations proc_pagemap_operations = {
->>  	.llseek		= mem_lseek, /* borrow this */
->>  	.read		= pagemap_read,
->>  	.open		= pagemap_open,
->>  	.release	= pagemap_release,
->> +	.unlocked_ioctl = do_pagemap_cmd,
->> +	.compat_ioctl	= do_pagemap_cmd,
->>  };
->>  #endif /* CONFIG_PROC_PAGE_MONITOR */
->>  
->> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
->> index 0a393bc02f25b..8f8ff07453f22 100644
->> --- a/include/linux/hugetlb.h
->> +++ b/include/linux/hugetlb.h
->> @@ -259,6 +259,7 @@ long hugetlb_change_protection(struct vm_area_struct *vma,
->>  		unsigned long cp_flags);
->>  
->>  bool is_hugetlb_entry_migration(pte_t pte);
->> +bool is_hugetlb_entry_hwpoisoned(pte_t pte);
->>  void hugetlb_unshare_all_pmds(struct vm_area_struct *vma);
->>  
->>  #else /* !CONFIG_HUGETLB_PAGE */
->> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
->> index b7b56871029c5..1bb3c625c2381 100644
->> --- a/include/uapi/linux/fs.h
->> +++ b/include/uapi/linux/fs.h
->> @@ -305,4 +305,62 @@ typedef int __bitwise __kernel_rwf_t;
->>  #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
->>  			 RWF_APPEND)
->>  
->> +/* Pagemap ioctl */
->> +#define PAGEMAP_SCAN	_IOWR('f', 16, struct pm_scan_arg)
->> +
->> +/* Bits are set in flags of the page_region and masks in pm_scan_args */
->> +#define PAGE_IS_WPALLOWED	(1 << 0)
->> +#define PAGE_IS_WRITTEN		(1 << 1)
->> +#define PAGE_IS_FILE		(1 << 2)
->> +#define PAGE_IS_PRESENT		(1 << 3)
->> +#define PAGE_IS_SWAPPED		(1 << 4)
->> +#define PAGE_IS_PFNZERO		(1 << 5)
->> +
->> +/*
->> + * struct page_region - Page region with flags
->> + * @start:	Start of the region
->> + * @end:	End of the region (exclusive)
->> + * @categories:	PAGE_IS_* category bitmask for the region
->> + */
->> +struct page_region {
->> +	__u64 start;
->> +	__u64 end;
->> +	__u64 categories;
->> +};
->> +
->> +/* Flags for PAGEMAP_SCAN ioctl */
->> +#define PM_SCAN_WP_MATCHING	(1 << 0)	/* Write protect the pages matched. */
->> +#define PM_SCAN_CHECK_WPASYNC	(1 << 1)	/* Abort the scan when a non-WP-enabled page is found. */
->> +
->> +/*
->> + * struct pm_scan_arg - Pagemap ioctl argument
->> + * @size:		Size of the structure
->> + * @flags:		Flags for the IOCTL
->> + * @start:		Starting address of the region
->> + * @end:		Ending address of the region
->> + * @walk_end:		Ending address of the visited memory is returned
->> + *			(This helps if entire range hasn't been visited)
->> + * @vec:		Address of page_region struct array for output
->> + * @vec_len:		Length of the page_region struct array
->> + * @max_pages:		Optional limit for number of returned pages (0 = disabled)
->> + * @category_inverted:	PAGE_IS_* categories which values match if 0 instead of 1
->> + * @category_mask:	Skip pages for which any category doesn't match
->> + * @category_anyof_mask: Skip pages for which no category matches
->> + * @return_mask:	PAGE_IS_* categories that are to be reported in `page_region`s returned
->> + */
->> +struct pm_scan_arg {
->> +	__u64 size;
->> +	__u64 flags;
->> +	__u64 start;
->> +	__u64 end;
->> +	__u64 walk_end;
->> +	__u64 vec;
->> +	__u64 vec_len;
->> +	__u64 max_pages;
->> +	__u64 category_inverted;
->> +	__u64 category_mask;
->> +	__u64 category_anyof_mask;
->> +	__u64 return_mask;
->> +};
->> +
->>  #endif /* _UAPI_LINUX_FS_H */
->> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
->> index a073e6ed8900b..3b07db0a4f2d9 100644
->> --- a/mm/hugetlb.c
->> +++ b/mm/hugetlb.c
->> @@ -5008,7 +5008,7 @@ bool is_hugetlb_entry_migration(pte_t pte)
->>  		return false;
->>  }
->>  
->> -static bool is_hugetlb_entry_hwpoisoned(pte_t pte)
->> +bool is_hugetlb_entry_hwpoisoned(pte_t pte)
->>  {
->>  	swp_entry_t swp;
->>  
->> -- 
->> 2.39.2
->>
+I thought that too. But it doesn't work. Just try - take kernel client
+testing branch, and then
+add a new field to the struct ceph_mds_request_head. Compile and try to mou=
+nt.
+It will stop to work and on the MDS side you will see something like:
 
--- 
-BR,
-Muhammad Usama Anjum
+2023-08-03T13:15:40.871+0200 7fe64ef5e640 10 mds.c ms_handle_accept
+v1:192.168.2.136:0/49354629 con 0x563962206880 session 0x563967054000
+2023-08-03T13:15:40.871+0200 7fe650f62640 -1 failed to decode message
+of type 24 v6: End of buffer [buffer:2]
+2023-08-03T13:15:40.871+0200 7fe650f62640  1 dump:
+00000000  03 00 01 00 00 00 00 00  00 00 10 00 00 00 00 00  |..............=
+..|
+00000010  00 00 00 00 00 00 01 01  00 00 00 00 00 00 00 00  |..............=
+..|
+00000020  00 00 00 00 00 00 00 00  00 00 01 00 00 00 00 00  |..............=
+..|
+00000030  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |..............=
+..|
+*
+00000070  00 00 01 01 00 00 00 00  00 00 00 00 00 00 00 01  |..............=
+..|
+00000080  00 00 00 00 00 00 00 00  00 00 00 00 5b 8c cb 64  |............[.=
+.d|
+00000090  64 78 11 13 01 00 00 00  00 00 00 00 00 00 00 00  |dx............=
+..|
+000000a0  00 00 00 00 00 00 00 00  00 00 00 00              |............|
+000000ac
+
+As I understand, the MDS side is not ready to see struct
+ceph_mds_request_head bigger in size
+than supported.
+
+>
+> Is the MDS side buggy ? Why you last version didn't work ?
+>
+> Thanks
+>
+> - Xiubo
+>
+> > @@ -3028,6 +3042,16 @@ static struct ceph_msg *create_request_message(s=
+truct ceph_mds_session *session,
+> >       lhead =3D find_legacy_request_head(msg->front.iov_base,
+> >                                        session->s_con.peer_features);
+> >
+> > +     if ((req->r_mnt_idmap !=3D &nop_mnt_idmap) &&
+> > +         !test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID, &session->s_featur=
+es)) {
+> > +             pr_err_ratelimited_client(cl,
+> > +                     "idmapped mount is used and CEPHFS_FEATURE_HAS_OW=
+NER_UIDGID"
+> > +                     " is not supported by MDS. Fail request with -EIO=
+.\n");
+> > +
+> > +             ret =3D -EIO;
+> > +             goto out_err;
+> > +     }
+> > +
+> >       /*
+> >        * The ceph_mds_request_head_legacy didn't contain a version fiel=
+d, and
+> >        * one was added when we moved the message version from 3->4.
+> > @@ -3035,17 +3059,33 @@ static struct ceph_msg *create_request_message(=
+struct ceph_mds_session *session,
+> >       if (legacy) {
+> >               msg->hdr.version =3D cpu_to_le16(3);
+> >               p =3D msg->front.iov_base + sizeof(*lhead);
+> > -     } else if (old_version) {
+> > +     } else if (request_head_version =3D=3D 1) {
+> >               struct ceph_mds_request_head_old *ohead =3D msg->front.io=
+v_base;
+> >
+> >               msg->hdr.version =3D cpu_to_le16(4);
+> >               ohead->version =3D cpu_to_le16(1);
+> >               p =3D msg->front.iov_base + sizeof(*ohead);
+> > +     } else if (request_head_version =3D=3D 2) {
+> > +             struct ceph_mds_request_head *nhead =3D msg->front.iov_ba=
+se;
+> > +
+> > +             msg->hdr.version =3D cpu_to_le16(6);
+> > +             nhead->version =3D cpu_to_le16(2);
+> > +
+> > +             p =3D msg->front.iov_base + offsetofend(struct ceph_mds_r=
+equest_head, ext_num_fwd);
+> >       } else {
+> >               struct ceph_mds_request_head *nhead =3D msg->front.iov_ba=
+se;
+> > +             kuid_t owner_fsuid;
+> > +             kgid_t owner_fsgid;
+> >
+> >               msg->hdr.version =3D cpu_to_le16(6);
+> >               nhead->version =3D cpu_to_le16(CEPH_MDS_REQUEST_HEAD_VERS=
+ION);
+> > +
+> > +             owner_fsuid =3D from_vfsuid(req->r_mnt_idmap, &init_user_=
+ns,
+> > +                                       VFSUIDT_INIT(req->r_cred->fsuid=
+));
+> > +             owner_fsgid =3D from_vfsgid(req->r_mnt_idmap, &init_user_=
+ns,
+> > +                                       VFSGIDT_INIT(req->r_cred->fsgid=
+));
+> > +             nhead->owner_uid =3D cpu_to_le32(from_kuid(&init_user_ns,=
+ owner_fsuid));
+> > +             nhead->owner_gid =3D cpu_to_le32(from_kgid(&init_user_ns,=
+ owner_fsgid));
+> >               p =3D msg->front.iov_base + sizeof(*nhead);
+> >       }
+> >
+> > diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> > index e3bbf3ba8ee8..8f683e8203bd 100644
+> > --- a/fs/ceph/mds_client.h
+> > +++ b/fs/ceph/mds_client.h
+> > @@ -33,8 +33,10 @@ enum ceph_feature_type {
+> >       CEPHFS_FEATURE_NOTIFY_SESSION_STATE,
+> >       CEPHFS_FEATURE_OP_GETVXATTR,
+> >       CEPHFS_FEATURE_32BITS_RETRY_FWD,
+> > +     CEPHFS_FEATURE_NEW_SNAPREALM_INFO,
+> > +     CEPHFS_FEATURE_HAS_OWNER_UIDGID,
+> >
+> > -     CEPHFS_FEATURE_MAX =3D CEPHFS_FEATURE_32BITS_RETRY_FWD,
+> > +     CEPHFS_FEATURE_MAX =3D CEPHFS_FEATURE_HAS_OWNER_UIDGID,
+> >   };
+> >
+> >   #define CEPHFS_FEATURES_CLIENT_SUPPORTED {  \
+> > @@ -49,6 +51,7 @@ enum ceph_feature_type {
+> >       CEPHFS_FEATURE_NOTIFY_SESSION_STATE,    \
+> >       CEPHFS_FEATURE_OP_GETVXATTR,            \
+> >       CEPHFS_FEATURE_32BITS_RETRY_FWD,        \
+> > +     CEPHFS_FEATURE_HAS_OWNER_UIDGID,        \
+> >   }
+> >
+> >   /*
+> > diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.=
+h
+> > index 5f2301ee88bc..6eb83a51341c 100644
+> > --- a/include/linux/ceph/ceph_fs.h
+> > +++ b/include/linux/ceph/ceph_fs.h
+> > @@ -499,7 +499,7 @@ struct ceph_mds_request_head_legacy {
+> >       union ceph_mds_request_args args;
+> >   } __attribute__ ((packed));
+> >
+> > -#define CEPH_MDS_REQUEST_HEAD_VERSION  2
+> > +#define CEPH_MDS_REQUEST_HEAD_VERSION  3
+> >
+> >   struct ceph_mds_request_head_old {
+> >       __le16 version;                /* struct version */
+> > @@ -530,6 +530,8 @@ struct ceph_mds_request_head {
+> >
+> >       __le32 ext_num_retry;          /* new count retry attempts */
+> >       __le32 ext_num_fwd;            /* new count fwd attempts */
+> > +
+> > +     __le32 owner_uid, owner_gid;   /* used for OPs which create inode=
+s */
+> >   } __attribute__ ((packed));
+> >
+> >   /* cap/lease release record */
+>
