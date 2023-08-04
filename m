@@ -2,172 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B80B76FF45
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 13:14:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4A9C76FF8C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Aug 2023 13:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229836AbjHDLOQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Aug 2023 07:14:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35454 "EHLO
+        id S229685AbjHDLip (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Aug 2023 07:38:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229796AbjHDLOP (ORCPT
+        with ESMTP id S229481AbjHDLio (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Aug 2023 07:14:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED2D9EA;
-        Fri,  4 Aug 2023 04:14:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7233061F9F;
-        Fri,  4 Aug 2023 11:14:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8FD7C433C7;
-        Fri,  4 Aug 2023 11:14:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691147652;
-        bh=JVIKIVP6jH+DMGB4nfqfFhN+jPBpeIIndyqUb83cE/4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OugvZtVdIdPlnCOVwjBjxCOFfLvSmaGbl8S4BAH1YIIUv4knOp6uYrk+m8zXEeWov
-         YacV5nAGCwzjiGoP2pFzoNtOU4dU03jcUWiAK7iw7wP+xsgv1HoCPrexZkOfi+vfSd
-         7eO8RW7a3Gw/vVyyfIVLeEuWZWjfIV73xjUGJr9nqDsKrq4L+YUfmgJKrv9a5NAH8K
-         incUndsQt2D6cnQAueemTtQPz/H5UZQjOx02K5BtQww3Az5g4V1EkmxCSw3GFb/8Vz
-         tVkbKlN+18+9JbxpPYBDnMq2/WXYpbDGpJpuQYUbHixg7iGYnASaPNf8vdzQnO1xIH
-         ukI9MDGRgzZUA==
-Date:   Fri, 4 Aug 2023 13:14:07 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Ian Kent <raven@themaw.net>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        autofs mailing list <autofs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Fedor Pchelkin <pchelkin@ispras.ru>,
-        Takeshi Misawa <jeliantsurux@gmail.com>,
-        Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrey Vagin <avagin@openvz.org>
-Subject: Re: [PATCH 1/2] autofs: fix memory leak of waitqueues in
- autofs_catatonic_mode
-Message-ID: <20230804-siegen-moralisieren-dd3dc2595ee2@brauner>
-References: <169112719161.7590.6700123246297365841.stgit@donald.themaw.net>
+        Fri, 4 Aug 2023 07:38:44 -0400
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79610B9;
+        Fri,  4 Aug 2023 04:38:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=1zlonKhnVXwi/pJ23MHfKc3RrbGzVuwuxf93bjyTk9g=; b=ISAaPZJRkJzLCz4+8PvsQ2jc+t
+        3B2z/+Dv5+7hLfdRPS/S+GQ/y4SHiiVBGBAuGbyT0utBWpr8ytNYA3/JG9kN8yzJumFZIJZQB4F2k
+        2Gm+GxGl+d2rWvyZ6Sqjtme3+BrKbZucHPXBpa0Wc7FG66mGT5r7YDE1M6TkSi2uuAmcdL16zhsOJ
+        iWPvAqQYfpAvSBHNF328BSPJhDoGL1LsCuHZvra6X5Jf0vfw77auqsy4gqGjo0+Akub+NURT8jDr2
+        8R827POtuYHswmKtX+IY1Z9KJE/Zl+tqcGdfjWah44N4zbEzyyVsMF3YKlJJgkAtwUmK2REBmST4U
+        Ig6ERN0A==;
+Received: from 201-92-22-215.dsl.telesp.net.br ([201.92.22.215] helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1qRt8c-00CLf9-Dh; Fri, 04 Aug 2023 13:38:34 +0200
+Message-ID: <b7f6a100-a802-67a9-589b-1457dee6d32a@igalia.com>
+Date:   Fri, 4 Aug 2023 08:38:23 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <169112719161.7590.6700123246297365841.stgit@donald.themaw.net>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 2/3] btrfs: Introduce the single-dev feature
+To:     Qu Wenruo <quwenruo.btrfs@gmx.com>, linux-btrfs@vger.kernel.org
+Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+        linux-fsdevel@vger.kernel.org, kernel@gpiccoli.net,
+        kernel-dev@igalia.com, anand.jain@oracle.com, david@fromorbit.com,
+        kreijack@libero.it, johns@valvesoftware.com,
+        ludovico.denittis@collabora.com, wqu@suse.com, vivek@collabora.com
+References: <20230803154453.1488248-1-gpiccoli@igalia.com>
+ <20230803154453.1488248-3-gpiccoli@igalia.com>
+ <58a425ca-f7e8-b7e2-eb04-d83bb952b382@gmx.com>
+Content-Language: en-US
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <58a425ca-f7e8-b7e2-eb04-d83bb952b382@gmx.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 04, 2023 at 01:33:12PM +0800, Ian Kent wrote:
-> From: Fedor Pchelkin <pchelkin@ispras.ru>
+On 04/08/2023 05:27, Qu Wenruo wrote:
+> [...] 
+> My concern is still about the "virtual" fsid part.
 > 
-> Syzkaller reports a memory leak:
+> If we go virtual fsid, there can be some unexpected problems.
 > 
-> BUG: memory leak
-> unreferenced object 0xffff88810b279e00 (size 96):
->   comm "syz-executor399", pid 3631, jiffies 4294964921 (age 23.870s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 08 9e 27 0b 81 88 ff ff  ..........'.....
->     08 9e 27 0b 81 88 ff ff 00 00 00 00 00 00 00 00  ..'.............
->   backtrace:
->     [<ffffffff814cfc90>] kmalloc_trace+0x20/0x90 mm/slab_common.c:1046
->     [<ffffffff81bb75ca>] kmalloc include/linux/slab.h:576 [inline]
->     [<ffffffff81bb75ca>] autofs_wait+0x3fa/0x9a0 fs/autofs/waitq.c:378
->     [<ffffffff81bb88a7>] autofs_do_expire_multi+0xa7/0x3e0 fs/autofs/expire.c:593
->     [<ffffffff81bb8c33>] autofs_expire_multi+0x53/0x80 fs/autofs/expire.c:619
->     [<ffffffff81bb6972>] autofs_root_ioctl_unlocked+0x322/0x3b0 fs/autofs/root.c:897
->     [<ffffffff81bb6a95>] autofs_root_ioctl+0x25/0x30 fs/autofs/root.c:910
->     [<ffffffff81602a9c>] vfs_ioctl fs/ioctl.c:51 [inline]
->     [<ffffffff81602a9c>] __do_sys_ioctl fs/ioctl.c:870 [inline]
->     [<ffffffff81602a9c>] __se_sys_ioctl fs/ioctl.c:856 [inline]
->     [<ffffffff81602a9c>] __x64_sys_ioctl+0xfc/0x140 fs/ioctl.c:856
->     [<ffffffff84608225>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->     [<ffffffff84608225>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
->     [<ffffffff84800087>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> E.g. the /sys/fs/btrfs/<uuid>/ entry would be the new virtual one.
 > 
-> autofs_wait_queue structs should be freed if their wait_ctr becomes zero.
-> Otherwise they will be lost.
+> And there may be some other problems like user space UUID detection of
+> mounted fs, thus I'm not 100% sure if this is a good idea.
 > 
-> In this case an AUTOFS_IOC_EXPIRE_MULTI ioctl is done, then a new
-> waitqueue struct is allocated in autofs_wait(), its initial wait_ctr
-> equals 2. After that wait_event_killable() is interrupted (it returns
-> -ERESTARTSYS), so that 'wq->name.name == NULL' condition may be not
-> satisfied. Actually, this condition can be satisfied when
-> autofs_wait_release() or autofs_catatonic_mode() is called and, what is
-> also important, wait_ctr is decremented in those places. Upon the exit of
-> autofs_wait(), wait_ctr is decremented to 1. Then the unmounting process
-> begins: kill_sb calls autofs_catatonic_mode(), which should have freed the
-> waitqueues, but it only decrements its usage counter to zero which is not
-> a correct behaviour.
+> However I don't have any better solution either, so this may be the
+> least worst solution for now.
 > 
-> edit:imk
-> This description is of course not correct. The umount performed as a result
-> of an expire is a umount of a mount that has been automounted, it's not the
-> autofs mount itself. They happen independently, usually after everything
-> mounted within the autofs file system has been expired away. If everything
-> hasn't been expired away the automount daemon can still exit leaving mounts
-> in place. But expires done in both cases will result in a notification that
-> calls autofs_wait_release() with a result status. The problem case is the
-> summary execution of of the automount daemon. In this case any waiting
-> processes won't be woken up until either they are terminated or the mount
-> is umounted.
-> end edit: imk
-> 
-> So in catatonic mode we should free waitqueues which counter becomes zero.
-> 
-> edit: imk
-> Initially I was concerned that the calling of autofs_wait_release() and
-> autofs_catatonic_mode() was not mutually exclusive but that can't be the
-> case (obviously) because the queue entry (or entries) is removed from the
-> list when either of these two functions are called. Consequently the wait
-> entry will be freed by only one of these functions or by the woken process
-> in autofs_wait() depending on the order of the calls.
-> end edit: imk
-> 
-> Reported-by: syzbot+5e53f70e69ff0c0a1c0c@syzkaller.appspotmail.com
-> Suggested-by: Takeshi Misawa <jeliantsurux@gmail.com>
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
-> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-> Signed-off-by: Ian Kent <raven@themaw.net>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Andrei Vagin <avagin@gmail.com>
-> Cc: autofs@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  fs/autofs/waitq.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/autofs/waitq.c b/fs/autofs/waitq.c
-> index 54c1f8b8b075..efdc76732fae 100644
-> --- a/fs/autofs/waitq.c
-> +++ b/fs/autofs/waitq.c
-> @@ -32,8 +32,9 @@ void autofs_catatonic_mode(struct autofs_sb_info *sbi)
->  		wq->status = -ENOENT; /* Magic is gone - report failure */
->  		kfree(wq->name.name - wq->offset);
->  		wq->name.name = NULL;
-> -		wq->wait_ctr--;
->  		wake_up_interruptible(&wq->queue);
-> +		if (!--wq->wait_ctr)
-> +			kfree(wq);
+> Thanks,
+> Qu
 
-The only thing that peeked my interest was:
+Hi Qu, thanks for your analysis!
 
-autofs_wait()
--> if (!wq)
-   -> wq->wait_ctr = 2;
-   -> autofs_notify_daemon()
+I think the virtual/spoofed fsid part is not without problems but I
+consider it to be less prone to unexpected issues than not.
 
-Let's say autofs_write() fails with -EIO or for whatever reason and so
-we end up calling:
+It's based on the metadata_uuid code, which is stable and present in
+btrfs for like 5 years. Also, we don't need to "corner-case" a lot of
+stuff to use that, which would be needed if we went to the pure dup fsid
+route. I tried that and it breaks in a lot of places, to which we
+require a lot of if conditionals (I even discussed that briefly in the
+last thread with you, about sysfs, remember?).
 
-      -> autofs_catatonic_mode()
+So, despite not perfect, I agree with you that seems to be the least
+worse solution :)
 
-If wait_ctr can be decremented in between so that
-autofs_catatonic_mode() frees it and then autofs_wait() would cause a
-UAF when it tries to much with wq again. But afaict, this can't happen
-because and would also affect autofs_notify_daemon() then.
+Cheers,
+
+
+Guilherme
