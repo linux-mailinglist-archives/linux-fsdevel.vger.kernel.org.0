@@ -2,101 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5101077106F
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Aug 2023 18:12:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D9C077107D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Aug 2023 18:19:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229641AbjHEQMc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Aug 2023 12:12:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34876 "EHLO
+        id S229649AbjHEQTI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Aug 2023 12:19:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjHEQMa (ORCPT
+        with ESMTP id S229481AbjHEQTH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Aug 2023 12:12:30 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ACB510F8;
-        Sat,  5 Aug 2023 09:12:29 -0700 (PDT)
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+        Sat, 5 Aug 2023 12:19:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B1A910F8;
+        Sat,  5 Aug 2023 09:19:06 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4RJ6zt0Slbz9sW7;
-        Sat,  5 Aug 2023 18:12:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-        t=1691251946;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=yCYqR+EeCPhLlyuM0EqRgutL3UUW623kAbsrUT4n0kQ=;
-        b=OdHd8pGnTpNlH8BuqgTP2VG0QtbjeH+XFPBKgoRCyFzxn5xBoAejSoyYHQTYZ7gNnV8+pf
-        x8IUMF26GANA0MZ3PS2IudaGlDu07PS/G7/h4n0CrM6s2DKtBYWDpINo882+LsvNHyv1X1
-        vWCYSXacXeKQRf6Q1365f1pcSoLWMBIU9gAXFckG/98YZvO4CgBOdPmWTJH0K71YO/Y9Z3
-        voWV9JqroE3EY+8PZRtzatBf//qtMQIQCH1qrfcV1nisYQm80mGKdphzRdnwyMMYLAYecH
-        VoFZvyY1qkaPzYSLnaxONLuFtLxmqMZaxlHMVNvZKb+Ld8NNtDqwjdCK3X8opQ==
-From:   Aleksa Sarai <cyphar@cyphar.com>
-Date:   Sun, 06 Aug 2023 02:11:58 +1000
-Subject: [PATCH] open: make RESOLVE_CACHED correctly test for O_TMPFILE
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230806-resolve_cached-o_tmpfile-v1-1-7ba16308465e@cyphar.com>
-X-B4-Tracking: v=1; b=H4sIAM10zmQC/x3M0QpAMBiG4VvRf2w1U4xbkcT24S9Mm6SWe7ccP
- gfvGynAMwK1WSSPmwO7I6HIMzLreCwQbJNJSVVKLSvhEdx2YzCjWWGFG679nHmDaGptJlXqyVa
- aUn56zPz8665/3w/C9KPragAAAA==
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E366960C08;
+        Sat,  5 Aug 2023 16:19:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F45DC433C8;
+        Sat,  5 Aug 2023 16:19:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691252345;
+        bh=eczxg65nAKdspBAZJjvsqnJ9aD9e1Cnh1ASqk/5x4Tc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z0h/IrNV9FDvUWv2eNzdGVI/pdKwMLXK4ephLjq8qasptg9QR42I18oxpmAO8umTF
+         +jPDQ/hHlUXz8vlybFxoV5RemFk0DVSLbmOMRAK0CJqcO8LUXtppZEHOBIInbCw1Bp
+         JTrajwX0bDnORyljOsGHdnXOxmx4UhQ4gFvfINhcXD8pnn5ERuxQv6rcgrEHwNJK1I
+         cw8urElSBCWxmfql/5enH6QJ/LQEtkXgzdIYOACoSdLpWEdSHCXQJS6+TIJwCyfYu7
+         hRiEBFxuNr7P2y5wMX51/z0/iaXoTcxnlDluglqILaNhlVU/0TaObzI32WdPQIaxv2
+         RPO/N8LaaV66Q==
+Date:   Sat, 5 Aug 2023 09:19:04 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1168; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=h2QuFb5UlHU5Y1F2VVpvnKPcSGujrQ9dOJy94AF37xw=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMaScK3nk1nf+Q8LV1/2PmHr2fTU5ltOxr7prz4nNXd+vT
- dgkeExuS0cpC4MYF4OsmCLLNj/P0E3zF19J/rSSDWYOKxPIEAYuTgGYyGwzhl/MlcFRcw/msdgI
- 1Fzpnen1sGP/pvjZtnoGcat55f5a31vF8Fdi/du2a+4N71dnSu45b9i252+939kvu0/Mszyf93/
- Xpa+MAA==
-X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
- fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
-X-Rspamd-Queue-Id: 4RJ6zt0Slbz9sW7
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        Jan Kara <jack@suse.cz>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH 11/12] xfs: drop s_umount over opening the log and RT
+ devices
+Message-ID: <20230805161904.GM11377@frogsfrogsfrogs>
+References: <20230802154131.2221419-1-hch@lst.de>
+ <20230802154131.2221419-12-hch@lst.de>
+ <20230802163219.GW11352@frogsfrogsfrogs>
+ <20230805083239.GA29780@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230805083239.GA29780@lst.de>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-O_TMPFILE is actually __O_TMPFILE|O_DIRECTORY. This means that the old
-fast-path check for RESOLVE_CACHED would reject all users passing
-O_DIRECTORY with -EAGAIN, when in fact the intended test was to check
-for __O_TMPFILE.
+On Sat, Aug 05, 2023 at 10:32:39AM +0200, Christoph Hellwig wrote:
+> On Wed, Aug 02, 2023 at 09:32:19AM -0700, Darrick J. Wong wrote:
+> > > +	/* see get_tree_bdev why this is needed and safe */
+> > 
+> > Which part of get_tree_bdev?  Is it this?
+> > 
+> > 		/*
+> > 		 * s_umount nests inside open_mutex during
+> > 		 * __invalidate_device().  blkdev_put() acquires
+> > 		 * open_mutex and can't be called under s_umount.  Drop
+> > 		 * s_umount temporarily.  This is safe as we're
+> > 		 * holding an active reference.
+> > 		 */
+> > 		up_write(&s->s_umount);
+> > 		blkdev_put(bdev, fc->fs_type);
+> > 		down_write(&s->s_umount);
+> 
+> Yes.  With the refactoring earlier in the series get_tree_bdev should
+> be trivial enough to not need a more specific reference.  If you
+> think there's a better way to refer to it I can update the comment,
+> though.
 
-Cc: stable@vger.kernel.org # v5.12+
-Fixes: 99668f618062 ("fs: expose LOOKUP_CACHED through openat2() RESOLVE_CACHED")
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- fs/open.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+How about:
 
-diff --git a/fs/open.c b/fs/open.c
-index b8883ec286f5..2634047c9e9f 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1337,7 +1337,7 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
- 		lookup_flags |= LOOKUP_IN_ROOT;
- 	if (how->resolve & RESOLVE_CACHED) {
- 		/* Don't bother even trying for create/truncate/tmpfile open */
--		if (flags & (O_TRUNC | O_CREAT | O_TMPFILE))
-+		if (flags & (O_TRUNC | O_CREAT | __O_TMPFILE))
- 			return -EAGAIN;
- 		lookup_flags |= LOOKUP_CACHED;
- 	}
+	/*
+	 * blkdev_put can't be called under s_umount, see the comment in
+	 * get_tree_bdev for more details
+	 */
 
----
-base-commit: bf5ad7af0516cb47121dae1b1c160e4385615274
-change-id: 20230806-resolve_cached-o_tmpfile-978cb238bd68
+with that and the label name change,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-Best regards,
--- 
-Aleksa Sarai <cyphar@cyphar.com>
+--D
 
+
+> > >  		mp->m_logdev_targp = mp->m_ddev_targp;
+> > >  	}
+> > >  
+> > > -	return 0;
+> > > +	error = 0;
+> > > +out_unlock:
+> > > +	down_write(&sb->s_umount);
+> > 
+> > Isn't down_write taking s_umount?  I think the label should be
+> > out_relock or something less misleading.
+> 
+> Agreed.  Christian, can you just change this in your branch, or should
+> I send an incremental patch?
+> 
