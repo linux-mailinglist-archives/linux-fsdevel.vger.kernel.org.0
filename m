@@ -2,246 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8752F770D53
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Aug 2023 04:38:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80897770DCE
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Aug 2023 06:57:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229468AbjHECir (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Aug 2023 22:38:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32816 "EHLO
+        id S229604AbjHEE5T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Aug 2023 00:57:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229744AbjHECiq (ORCPT
+        with ESMTP id S229445AbjHEE5R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Aug 2023 22:38:46 -0400
-Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC4504EE6;
-        Fri,  4 Aug 2023 19:38:42 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id CE9D4320085B;
-        Fri,  4 Aug 2023 22:38:37 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 04 Aug 2023 22:38:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1691203117; x=1691289517; bh=XeYyMuf4nTof6DJeNjR1M2UY/Ud55rp04sm
-        HiFwidbI=; b=VNuMFDFiIXo2a+6kdC0RTo2uZf27G3JL1EeYtLCWvUFxwnstJ73
-        JKHBZKaXqyrJG/1BejltrcQZKEo19uIBGIcb5PpVpTLwhgQtrrDC9ufVtErPBq2F
-        O7zjcKnzKFqyLIsuJT5Jf+Up+XGISsPXku244rWFV0G0cSWRJLrePeRdtcnm01bx
-        mFl3+WYYTcNADZQct7EMDD09nd6udb28tHxT6cBoPXZQag58/KSXsGIgJjrF+cFD
-        DuQjSzm33MdZw0ccemTfh8un1G6I3VuYkCfyBMd2jOoJTPLekRFlZx5DLU+vZT+7
-        aZeADCudi0dd8Uhsg6PPaDFoK+Y/1i5SRog==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1691203117; x=1691289517; bh=XeYyMuf4nTof6DJeNjR1M2UY/Ud55rp04sm
-        HiFwidbI=; b=RAP32c6Ko+JP0MRo1V0LGvxZrOB4XM5hWLW7ip3KkPGaojJEben
-        5cuizde/h2CmqS4NqXDBbxyxeefbq+c1B1ssNEfXy+Z/cbXQKEuYjm/zCNYANjkk
-        mWXykyFimoCPAeTAUmkF4llVYoNZ310nazOljg4Zxzb7sXdHvB60HWAhgv9S8TwP
-        fh1ERXiN3DyyP4ETUkkTZ9Z6nnJOFZNaKXMrjxPE17Xuj57jd82jYROvmn7PwXHX
-        X5kArb8HxhJRg1z41m5af3viN/ny1aMUaIYtzhEs8GfdMkSsMW5CE09hhN3raN9e
-        2AmxHCtxy7rA3cMFF22Hu7OTZQEt2x8Vfvw==
-X-ME-Sender: <xms:LLbNZItISBCyiYZPZPjVITFckN47gJ2GTfxtc_UK5uHKx6hxgpdMkw>
-    <xme:LLbNZFfhDZK-cwCNLirtpXUtVu9mYKteGb5x_UR4uZrn-L_ZKF8Vh7U218fBzcvEE
-    f8ax1iHCc2J>
-X-ME-Received: <xmr:LLbNZDx08c2mJHgZeR4bsC-K8n7X0h5BSd_hKz9s4Ith50QsLjLX8gkts5u8umMRlbUqYIQen8A3k7FHlRhKdgbez8dSm0-oYUK3fFLmF59VPV-Agow>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrkeehgdehiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttdefjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    euhfeuieeijeeuveekgfeitdethefguddtleffhfelfeelhfduuedvfefhgefhheenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
-    hthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:LLbNZLPRbxJbREg3fv1vL9YyELpkZvPz21V1_aFDupQCRKTyqqWQfQ>
-    <xmx:LLbNZI_fShfMiYqhVqNZ2rsGDIJY0LOXGdpwrdZBIHIkzc0MQIAVGw>
-    <xmx:LLbNZDVGdsoub_7Jeeu7vDGclmExvuzS0RdNdmZzRqDErOFQVgnriA>
-    <xmx:LbbNZFNvHt8jkuEJJqeCdPygMG94kGxLdZEWBEQQeKmfxrvq5vtMNA>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 4 Aug 2023 22:38:32 -0400 (EDT)
-Message-ID: <3030f42d-1ab2-4815-0526-73136f349665@themaw.net>
-Date:   Sat, 5 Aug 2023 10:38:29 +0800
+        Sat, 5 Aug 2023 00:57:17 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 058604ED3;
+        Fri,  4 Aug 2023 21:57:16 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id 41be03b00d2f7-563de62f861so1580767a12.1;
+        Fri, 04 Aug 2023 21:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1691211435; x=1691816235;
+        h=subject:reply-to:content-language:cc:to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dQvwEdX9TBr9o+EckKmYGe1U7wS/eabk61QQqb82cfA=;
+        b=kn0fkjvFsTxWFQJolGTwW1if3Yzo/h77LOHnFxcwLgzSjVWgCX2H9SGJaEbbfS5XKi
+         d9+y291rxEyUcfFjWZ5ujUQEtspD7KgFDDNx5aD0f9yKefVFvLoUNwkJQCY5+EhGxSVD
+         JPRtczdhoX2kvgBuxHu9znc8Sz/VTbyMOV96db5u8QEV6bv0ZHZxMItALrlq+hEs04W2
+         KKvkdhz2zkF9DVeXgw3yfnVhPJtew7eRHqAU5IcNfK0+8k29dlBnqSGZy0pvpPI8acqc
+         qIfVVAKJwDZodh6Ae+g82QdD2xeZIa22vmJdhZab2dRH8WPEcuL9mFRNvGhzKu+QzxCX
+         dE8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691211435; x=1691816235;
+        h=subject:reply-to:content-language:cc:to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dQvwEdX9TBr9o+EckKmYGe1U7wS/eabk61QQqb82cfA=;
+        b=L4wKd643GmoRoyCUgMA74Q3IUl7KwzkmPHdk8o1s85M7GmX0WJMJoFlbfH+1VhtW9a
+         9A3PitstNHfkycjmM6oJp7T2wcE1eARSHUaZBEVYnFNoIBj3boAGULSq/CTdIT4CpGxn
+         DwAsUsfjZ5lhOCq3iEcVWdzFG9YxkQq0JCNZsR1ZwYPqvfXnqyxASBV3rSZn8PkiNXuL
+         3OIfCMUbudBP2/hTVnc0UQzoDwmjvDiFGKod7ItJXh2UTpi3VKWrFgjfhHDPYZKADCGk
+         Ll9LEZrKcIVdcovImDKnF+O+6lyP9e750GOHHTIBD7qRNZoHnus6y6b5BcqVR2DFanPu
+         Ea0A==
+X-Gm-Message-State: AOJu0YxYrluxRguFKhOyKOxUxLihuQwsmxWi8rKZZ/TedjSVsRbc7mVq
+        0MPoESIXPyNdIaQrA8+FNcY=
+X-Google-Smtp-Source: AGHT+IG2u1qBiLgaRvn0xQRB3FoCYjWpMhuAdJDrCx3FzwDcx3e7VY7JDb5EqsEvy1lMa40LrNN0Bg==
+X-Received: by 2002:a17:902:cec7:b0:1bb:3979:d467 with SMTP id d7-20020a170902cec700b001bb3979d467mr4446443plg.63.1691211435378;
+        Fri, 04 Aug 2023 21:57:15 -0700 (PDT)
+Received: from [10.0.2.15] ([103.37.201.176])
+        by smtp.gmail.com with ESMTPSA id iz11-20020a170902ef8b00b001b9c5e0393csm2555482plb.225.2023.08.04.21.57.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Aug 2023 21:57:14 -0700 (PDT)
+Content-Type: multipart/mixed; boundary="------------oihDkra1NslgCm8MY9XksS30"
+Message-ID: <913c36b5-f651-c728-7322-fe648d614a66@gmail.com>
+Date:   Sat, 5 Aug 2023 10:27:09 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 1/2] autofs: fix memory leak of waitqueues in
- autofs_catatonic_mode
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        autofs mailing list <autofs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Fedor Pchelkin <pchelkin@ispras.ru>,
-        Takeshi Misawa <jeliantsurux@gmail.com>,
-        Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrey Vagin <avagin@openvz.org>
-References: <169112719161.7590.6700123246297365841.stgit@donald.themaw.net>
- <20230804-siegen-moralisieren-dd3dc2595ee2@brauner>
+ Thunderbird/102.13.0
+From:   Manas Ghandat <ghandatmanas@gmail.com>
+To:     "syzbot+4768a8f039aa677897d0@syzkaller.appspotmail.com" 
+        <syzbot+4768a8f039aa677897d0@syzkaller.appspotmail.com>
+Cc:     anton@tuxera.com, linkinjeon@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net,
+        syzkaller-bugs@googlegroups.com
 Content-Language: en-US
-From:   Ian Kent <raven@themaw.net>
-In-Reply-To: <20230804-siegen-moralisieren-dd3dc2595ee2@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_PASS,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Reply-To: 0000000000000424f205fcf9a132@google.com
+Subject: [syzbot] [ntfs?] UBSAN: shift-out-of-bounds in ntfs_iget
+X-Spam-Status: No, score=0.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/8/23 19:14, Christian Brauner wrote:
-> On Fri, Aug 04, 2023 at 01:33:12PM +0800, Ian Kent wrote:
->> From: Fedor Pchelkin <pchelkin@ispras.ru>
->>
->> Syzkaller reports a memory leak:
->>
->> BUG: memory leak
->> unreferenced object 0xffff88810b279e00 (size 96):
->>    comm "syz-executor399", pid 3631, jiffies 4294964921 (age 23.870s)
->>    hex dump (first 32 bytes):
->>      00 00 00 00 00 00 00 00 08 9e 27 0b 81 88 ff ff  ..........'.....
->>      08 9e 27 0b 81 88 ff ff 00 00 00 00 00 00 00 00  ..'.............
->>    backtrace:
->>      [<ffffffff814cfc90>] kmalloc_trace+0x20/0x90 mm/slab_common.c:1046
->>      [<ffffffff81bb75ca>] kmalloc include/linux/slab.h:576 [inline]
->>      [<ffffffff81bb75ca>] autofs_wait+0x3fa/0x9a0 fs/autofs/waitq.c:378
->>      [<ffffffff81bb88a7>] autofs_do_expire_multi+0xa7/0x3e0 fs/autofs/expire.c:593
->>      [<ffffffff81bb8c33>] autofs_expire_multi+0x53/0x80 fs/autofs/expire.c:619
->>      [<ffffffff81bb6972>] autofs_root_ioctl_unlocked+0x322/0x3b0 fs/autofs/root.c:897
->>      [<ffffffff81bb6a95>] autofs_root_ioctl+0x25/0x30 fs/autofs/root.c:910
->>      [<ffffffff81602a9c>] vfs_ioctl fs/ioctl.c:51 [inline]
->>      [<ffffffff81602a9c>] __do_sys_ioctl fs/ioctl.c:870 [inline]
->>      [<ffffffff81602a9c>] __se_sys_ioctl fs/ioctl.c:856 [inline]
->>      [<ffffffff81602a9c>] __x64_sys_ioctl+0xfc/0x140 fs/ioctl.c:856
->>      [<ffffffff84608225>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->>      [<ffffffff84608225>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
->>      [<ffffffff84800087>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
->>
->> autofs_wait_queue structs should be freed if their wait_ctr becomes zero.
->> Otherwise they will be lost.
->>
->> In this case an AUTOFS_IOC_EXPIRE_MULTI ioctl is done, then a new
->> waitqueue struct is allocated in autofs_wait(), its initial wait_ctr
->> equals 2. After that wait_event_killable() is interrupted (it returns
->> -ERESTARTSYS), so that 'wq->name.name == NULL' condition may be not
->> satisfied. Actually, this condition can be satisfied when
->> autofs_wait_release() or autofs_catatonic_mode() is called and, what is
->> also important, wait_ctr is decremented in those places. Upon the exit of
->> autofs_wait(), wait_ctr is decremented to 1. Then the unmounting process
->> begins: kill_sb calls autofs_catatonic_mode(), which should have freed the
->> waitqueues, but it only decrements its usage counter to zero which is not
->> a correct behaviour.
->>
->> edit:imk
->> This description is of course not correct. The umount performed as a result
->> of an expire is a umount of a mount that has been automounted, it's not the
->> autofs mount itself. They happen independently, usually after everything
->> mounted within the autofs file system has been expired away. If everything
->> hasn't been expired away the automount daemon can still exit leaving mounts
->> in place. But expires done in both cases will result in a notification that
->> calls autofs_wait_release() with a result status. The problem case is the
->> summary execution of of the automount daemon. In this case any waiting
->> processes won't be woken up until either they are terminated or the mount
->> is umounted.
->> end edit: imk
->>
->> So in catatonic mode we should free waitqueues which counter becomes zero.
->>
->> edit: imk
->> Initially I was concerned that the calling of autofs_wait_release() and
->> autofs_catatonic_mode() was not mutually exclusive but that can't be the
->> case (obviously) because the queue entry (or entries) is removed from the
->> list when either of these two functions are called. Consequently the wait
->> entry will be freed by only one of these functions or by the woken process
->> in autofs_wait() depending on the order of the calls.
->> end edit: imk
->>
->> Reported-by: syzbot+5e53f70e69ff0c0a1c0c@syzkaller.appspotmail.com
->> Suggested-by: Takeshi Misawa <jeliantsurux@gmail.com>
->> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
->> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
->> Signed-off-by: Ian Kent <raven@themaw.net>
->> Cc: Matthew Wilcox <willy@infradead.org>
->> Cc: Andrei Vagin <avagin@gmail.com>
->> Cc: autofs@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> ---
->>   fs/autofs/waitq.c |    3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/autofs/waitq.c b/fs/autofs/waitq.c
->> index 54c1f8b8b075..efdc76732fae 100644
->> --- a/fs/autofs/waitq.c
->> +++ b/fs/autofs/waitq.c
->> @@ -32,8 +32,9 @@ void autofs_catatonic_mode(struct autofs_sb_info *sbi)
->>   		wq->status = -ENOENT; /* Magic is gone - report failure */
->>   		kfree(wq->name.name - wq->offset);
->>   		wq->name.name = NULL;
->> -		wq->wait_ctr--;
->>   		wake_up_interruptible(&wq->queue);
->> +		if (!--wq->wait_ctr)
->> +			kfree(wq);
-> The only thing that peeked my interest was:
->
-> autofs_wait()
-> -> if (!wq)
->     -> wq->wait_ctr = 2;
->     -> autofs_notify_daemon()
->
-> Let's say autofs_write() fails with -EIO or for whatever reason and so
-> we end up calling:
->
->        -> autofs_catatonic_mode()
->
-> If wait_ctr can be decremented in between so that
-> autofs_catatonic_mode() frees it and then autofs_wait() would cause a
-> UAF when it tries to much with wq again. But afaict, this can't happen
-> because and would also affect autofs_notify_daemon() then.
+This is a multi-part message in MIME format.
+--------------oihDkra1NslgCm8MY9XksS30
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Interesting observation.
+In this bug, the logic at the following line 
+(https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/ntfs/inode.c?id=e8f75c0270d930ef675fee22d74d1a3250e96962#n1067) 
+is getting skipped. The `if` condition is not triggered and thus the 
+compression issue occurs. I was trying to change the `if` conditions so 
+that the check occurs but was getting the following error. Can you 
+suggest any way so that the condition gets triggered.
 
-I'll think about it some more.
+Thanks,
+Manas
 
+--------------oihDkra1NslgCm8MY9XksS30
+Content-Type: text/plain; charset=UTF-8; name="trace"
+Content-Disposition: attachment; filename="trace"
+Content-Transfer-Encoding: base64
 
-But I think a call autofs_catatonic_mode() or autofs_wait_release()
+CkJvb3RpbmcgZnJvbSBST00uLgpbICAgIDAuMDAwMDAwXVsgICAgVDBdIExpbnV4IHZlcnNp
+b24gNi40LjAtMDE0MDYtZ2U4Zjc1YzAyNzBkOS1kaXJ0eSAobWFuYXNAbWFuYXMtVmlydHVh
+bEJveCkgKGdjYyAoVWJ1bnR1IDEyLjIuMC0zdWJ1bnR1MSkgMTIuMi4wLCBHTlUgbGQgKEdO
+VSBCaW51dGlscyBmb3IgVWJ1bnR1KSAyLjM5KSAjOCBTTVAgUFJFRU1QVF9EWU5BTUlDIFNh
+dCBBdWcgIDUgMDk6MDg6MjUgSVNUIDIwMjMKWyAgICAwLjAwMDAwMF1bICAgIFQwXSBDb21t
+YW5kIGxpbmU6IHJvb3Q9L2Rldi9yYW0gcncgY29uc29sZT10dHlTMCBvb3BzPXBhbmljIHBh
+bmljPTEgbm9rYXNsciBxdWlldApbICAgIDAuMDAwMDAwXVsgICAgVDBdIEtFUk5FTCBzdXBw
+b3J0ZWQgY3B1czoKWyAgICAwLjAwMDAwMF1bICAgIFQwXSAgIEludGVsIEdlbnVpbmVJbnRl
+bApbICAgIDAuMDAwMDAwXVsgICAgVDBdICAgQU1EIEF1dGhlbnRpY0FNRApbICAgIDAuMDAw
+MDAwXVsgICAgVDBdIEJJT1MtcHJvdmlkZWQgcGh5c2ljYWwgUkFNIG1hcDoKWyAgICAwLjAw
+MDAwMF1bICAgIFQwXSBCSU9TLWU4MjA6IFttZW0gMHgwMDAwMDAwMDAwMDAwMDAwLTB4MDAw
+MDAwMDAwMDA5ZmJmZl0gdXNhYmxlClsgICAgMC4wMDAwMDBdWyAgICBUMF0gQklPUy1lODIw
+OiBbbWVtIDB4MDAwMDAwMDAwMDA5ZmMwMC0weDAwMDAwMDAwMDAwOWZmZmZdIHJlc2VydmVk
+ClsgICAgMC4wMDAwMDBdWyAgICBUMF0gQklPUy1lODIwOiBbbWVtIDB4MDAwMDAwMDAwMDBm
+MDAwMC0weDAwMDAwMDAwMDAwZmZmZmZdIHJlc2VydmVkClsgICAgMC4wMDAwMDBdWyAgICBU
+MF0gQklPUy1lODIwOiBbbWVtIDB4MDAwMDAwMDAwMDEwMDAwMC0weDAwMDAwMDAwN2ZmZGZm
+ZmZdIHVzYWJsZQpbICAgIDAuMDAwMDAwXVsgICAgVDBdIEJJT1MtZTgyMDogW21lbSAweDAw
+MDAwMDAwN2ZmZTAwMDAtMHgwMDAwMDAwMDdmZmZmZmZmXSByZXNlcnZlZApbICAgIDAuMDAw
+MDAwXVsgICAgVDBdIEJJT1MtZTgyMDogW21lbSAweDAwMDAwMDAwZmVmZmMwMDAtMHgwMDAw
+MDAwMGZlZmZmZmZmXSByZXNlcnZlZApbICAgIDAuMDAwMDAwXVsgICAgVDBdIEJJT1MtZTgy
+MDogW21lbSAweDAwMDAwMDAwZmZmYzAwMDAtMHgwMDAwMDAwMGZmZmZmZmZmXSByZXNlcnZl
+ZApbICAgIDAuMDAwMDAwXVsgICAgVDBdIHByaW50azogYm9vdGNvbnNvbGUgW2Vhcmx5c2Vy
+MF0gZW5hYmxlZApbICAgIDAuMDAwMDAwXVsgICAgVDBdIEVSUk9SOiBlYXJseXByaW50az0g
+ZWFybHlzZXIgYWxyZWFkeSB1c2VkClsgICAgMC4wMDAwMDBdWyAgICBUMF0gRVJST1I6IGVh
+cmx5cHJpbnRrPSBlYXJseXNlciBhbHJlYWR5IHVzZWQKWyAgICAwLjAwMDAwMF1bICAgIFQw
+XSAqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqClsgICAgMC4wMDAwMDBdWyAgICBUMF0gKiogICBOT1RJQ0UgTk9USUNFIE5PVElD
+RSBOT1RJQ0UgTk9USUNFIE5PVElDRSBOT1RJQ0UgICAqKgpbICAgIDAuMDAwMDAwXVsgICAg
+VDBdICoqICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgKioKWyAgICAwLjAwMDAwMF1bICAgIFQwXSAqKiBUaGlzIHN5c3RlbSBzaG93cyB1
+bmhhc2hlZCBrZXJuZWwgbWVtb3J5IGFkZHJlc3NlcyAgICoqClsgICAgMC4wMDAwMDBdWyAg
+ICBUMF0gKiogdmlhIHRoZSBjb25zb2xlLCBsb2dzLCBhbmQgb3RoZXIgaW50ZXJmYWNlcy4g
+VGhpcyAgICAqKgpbICAgIDAuMDAwMDAwXVsgICAgVDBdICoqIG1pZ2h0IHJlZHVjZSB0aGUg
+c2VjdXJpdHkgb2YgeW91ciBzeXN0ZW0uICAgICAgICAgICAgKioKWyAgICAwLjAwMDAwMF1b
+ICAgIFQwXSAqKiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICoqClsgICAgMC4wMDAwMDBdWyAgICBUMF0gKiogSWYgeW91IHNlZSB0aGlz
+IG1lc3NhZ2UgYW5kIHlvdSBhcmUgbm90IGRlYnVnZ2luZyAgICAqKgpbICAgIDAuMDAwMDAw
+XVsgICAgVDBdICoqIHRoZSBrZXJuZWwsIHJlcG9ydCB0aGlzIGltbWVkaWF0ZWx5IHRvIHlv
+dXIgc3lzdGVtICAgKioKWyAgICAwLjAwMDAwMF1bICAgIFQwXSAqKiBhZG1pbmlzdHJhdG9y
+ISAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICoqClsgICAgMC4wMDAw
+MDBdWyAgICBUMF0gKiogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAqKgpbICAgIDAuMDAwMDAwXVsgICAgVDBdICoqICAgTk9USUNFIE5P
+VElDRSBOT1RJQ0UgTk9USUNFIE5PVElDRSBOT1RJQ0UgTk9USUNFICAgKioKWyAgICAwLjAw
+MDAwMF1bICAgIFQwXSAqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqClsgICAgMC4wMDAwMDBdWyAgICBUMF0gTWFsZm9ybWVkIGVh
+cmx5IG9wdGlvbiAndnN5c2NhbGwnClsgICAgMC42NDg0MzRdWyAgICBUMF0gU3BlY3RyZSBW
+MiA6IEtlcm5lbCBub3QgY29tcGlsZWQgd2l0aCByZXRwb2xpbmU7IG5vIG1pdGlnYXRpb24g
+YXZhaWxhYmxlIQpbICAgIDIuNjEyNDIyXVsgICAgVDFdIGt2bV9pbnRlbDogVk1YIG5vdCBz
+dXBwb3J0ZWQgYnkgQ1BVIDAKWyAgICAyLjYxNTcyMF1bICAgIFQxXSBrdm1fYW1kOiBTVk0g
+bm90IHN1cHBvcnRlZCBieSBDUFUgMCwgY2FuJ3QgZXhlY3V0ZSBjcHVpZF84MDAwMDAwYQpb
+ICAgIDYuMDg0MzM5XVsgICAgVDFdIGRiX3Jvb3Q6IGNhbm5vdCBvcGVuOiAvZXRjL3Rhcmdl
+dApbICAgIDguNzU2OTMwXVsgICAgVDFdIG5mX2Nvbm50cmFja19pcmM6IGZhaWxlZCB0byBy
+ZWdpc3RlciBoZWxwZXJzClsgICAgOC43NjM4NjNdWyAgICBUMV0gbmZfY29ubnRyYWNrX3Nh
+bmU6IGZhaWxlZCB0byByZWdpc3RlciBoZWxwZXJzClsgICAgOC44Nzc3MDRdWyAgICBUMV0g
+bmZfY29ubnRyYWNrX3NpcDogZmFpbGVkIHRvIHJlZ2lzdGVyIGhlbHBlcnMKWyAgIDEwLjE1
+NzY4Ml1bICAgIFQxXSBleEZBVC1mcyAocmFtMCk6IGludmFsaWQgZnNfbmFtZQpbICAgMTAu
+MTU4ODA1XVsgICAgVDFdIGV4RkFULWZzIChyYW0wKTogZmFpbGVkIHRvIHJlYWQgYm9vdCBz
+ZWN0b3IKWyAgIDEwLjE1OTk3N11bICAgIFQxXSBleEZBVC1mcyAocmFtMCk6IGZhaWxlZCB0
+byByZWNvZ25pemUgZXhmYXQgdHlwZQpbICAgMTAuMTY2ODM2XVsgICAgVDFdIFZGUzogY291
+bGQgbm90IGZpbmQgYSB2YWxpZCBWNyBvbiByYW0wLgpbICAgMTAuMTcwMTM3XVsgICAgVDFd
+IG50ZnM6IChkZXZpY2UgcmFtMCk6IG50ZnNfYXR0cl9maW5kKCk6IElub2RlIGlzIGNvcnJ1
+cHQuICBSdW4gY2hrZHNrLgpbICAgMTAuMTcxNzMzXVsgICAgVDFdIG50ZnM6IChkZXZpY2Ug
+cmFtMCk6IG50ZnNfcmVhZF9sb2NrZWRfaW5vZGUoKTogRmFpbGVkIHRvIGxvb2t1cCAkREFU
+QSBhdHRyaWJ1dGUuClsgICAxMC4xNzM0MzldWyAgICBUMV0gbnRmczogKGRldmljZSByYW0w
+KTogbnRmc19yZWFkX2xvY2tlZF9pbm9kZSgpOiBGYWlsZWQgd2l0aCBlcnJvciBjb2RlIC01
+LiAgTWFya2luZyBjb3JydXB0IGlub2RlIDB4MSBhcyBiYWQuICBSdW4gY2hrZHNrLgpbICAg
+MTAuMTc1ODE1XVsgICAgVDFdIG50ZnM6IChkZXZpY2UgcmFtMCk6IGxvYWRfc3lzdGVtX2Zp
+bGVzKCk6IEZhaWxlZCB0byBsb2FkICRNRlRNaXJyLiAgTW91bnRpbmcgcmVhZC1vbmx5LiAg
+UnVuIG50ZnNmaXggYW5kL29yIGNoa2Rzay4KWyAgIDEwLjE3ODY4NF1bICAgIFQxXSBudGZz
+OiAoZGV2aWNlIHJhbTApOiBudGZzX21hcHBpbmdfcGFpcnNfZGVjb21wcmVzcygpOiBNaXNz
+aW5nIGxlbmd0aCBlbnRyeSBpbiBtYXBwaW5nIHBhaXJzIGFycmF5LgpbICAgMTAuMTgwODg2
+XVsgICAgVDFdIG50ZnM6IChkZXZpY2UgcmFtMCk6IG50ZnNfbWFwcGluZ19wYWlyc19kZWNv
+bXByZXNzKCk6IEludmFsaWQgbGVuZ3RoIGluIG1hcHBpbmcgcGFpcnMgYXJyYXkuClsgICAx
+MC4xODI4MDRdWyAgICBUMV0gbnRmczogKGRldmljZSByYW0wKTogbnRmc19yZWFkX2Jsb2Nr
+KCk6IEZhaWxlZCB0byByZWFkIGZyb20gaW5vZGUgMHhhLCBhdHRyaWJ1dGUgdHlwZSAweDgw
+LCB2Y24gMHgwLCBvZmZzZXQgMHgwIGJlY2F1c2UgaXRzIGxvY2F0aW9uIG9uIGRpc2sgY291
+bGQgbm90IGJlIGRldGVybWluZWQgZXZlbiBhZnRlciByZXRyeWluZyAoZXJyb3IgY29kZSAt
+NSkuClsgICAxMC4xODY0MTBdWyAgICBUMV0gbnRmczogKGRldmljZSByYW0wKTogbnRmc19t
+YXBwaW5nX3BhaXJzX2RlY29tcHJlc3MoKTogTWlzc2luZyBsZW5ndGggZW50cnkgaW4gbWFw
+cGluZyBwYWlycyBhcnJheS4KWyAgIDEwLjE4ODQ4NV1bICAgIFQxXSBudGZzOiAoZGV2aWNl
+IHJhbTApOiBudGZzX21hcHBpbmdfcGFpcnNfZGVjb21wcmVzcygpOiBJbnZhbGlkIGxlbmd0
+aCBpbiBtYXBwaW5nIHBhaXJzIGFycmF5LgpbICAgMTAuMTkwNDExXVsgICAgVDFdIG50ZnM6
+IChkZXZpY2UgcmFtMCk6IG50ZnNfcmVhZF9ibG9jaygpOiBGYWlsZWQgdG8gcmVhZCBmcm9t
+IGlub2RlIDB4YSwgYXR0cmlidXRlIHR5cGUgMHg4MCwgdmNuIDB4MCwgb2Zmc2V0IDB4ODAw
+IGJlY2F1c2UgaXRzIGxvY2F0aW9uIG9uIGRpc2sgY291bGQgbm90IGJlIGRldGVybWluZWQg
+ZXZlbiBhZnRlciByZXRyeWluZyAoZXJyb3IgY29kZSAtNSkuClsgICAxMC4zMTM0NjVdWyAg
+ICBUMV0gRmFpbGVkIHRvIHNldCBzeXNjdGwgcGFyYW1ldGVyICdtYXhfcmN1X3N0YWxsX3Rv
+X3BhbmljPTEnOiBwYXJhbWV0ZXIgbm90IGZvdW5kClsgICAxMC4zMTYyMThdWyAgICBUMV0g
+U3RhcnRpbmcgaW5pdDogL3NiaW4vaW5pdCBleGlzdHMgYnV0IGNvdWxkbid0IGV4ZWN1dGUg
+aXQgKGVycm9yIC01KQpbICAgMTAuMzE4MjY4XVsgICAgVDFdIFN0YXJ0aW5nIGluaXQ6IC9l
+dGMvaW5pdCBleGlzdHMgYnV0IGNvdWxkbid0IGV4ZWN1dGUgaXQgKGVycm9yIC01KQpbICAg
+MTAuMzIwMDQ3XVsgICAgVDFdIFN0YXJ0aW5nIGluaXQ6IC9iaW4vaW5pdCBleGlzdHMgYnV0
+IGNvdWxkbid0IGV4ZWN1dGUgaXQgKGVycm9yIC01KQpbICAgMTAuMzIxODk1XVsgICAgVDFd
+IFN0YXJ0aW5nIGluaXQ6IC9iaW4vc2ggZXhpc3RzIGJ1dCBjb3VsZG4ndCBleGVjdXRlIGl0
+IChlcnJvciAtNSkKWyAgIDEwLjMyMzQxMF1bICAgIFQxXSBLZXJuZWwgcGFuaWMgLSBub3Qg
+c3luY2luZzogTm8gd29ya2luZyBpbml0IGZvdW5kLiAgVHJ5IHBhc3NpbmcgaW5pdD0gb3B0
+aW9uIHRvIGtlcm5lbC4gU2VlIExpbnV4IERvY3VtZW50YXRpb24vYWRtaW4tZ3VpZGUvaW5p
+dC5yc3QgZm9yIGd1aWRhbmNlLgpbICAgMTAuMzI2MTgxXVsgICAgVDFdIENQVTogMCBQSUQ6
+IDEgQ29tbTogc3dhcHBlci8wIE5vdCB0YWludGVkIDYuNC4wLTAxNDA2LWdlOGY3NWMwMjcw
+ZDktZGlydHkgIzgKWyAgIDEwLjMyNzc4MV1bICAgIFQxXSBIYXJkd2FyZSBuYW1lOiBRRU1V
+IFN0YW5kYXJkIFBDIChpNDQwRlggKyBQSUlYLCAxOTk2KSwgQklPUyAxLjE2LjAtZGViaWFu
+LTEuMTYuMC00IDA0LzAxLzIwMTQKWyAgIDEwLjMyNzc4MV1bICAgIFQxXSBDYWxsIFRyYWNl
+OgpbICAgMTAuMzI3NzgxXVsgICAgVDFdICA8VEFTSz4KWyAgIDEwLjMyNzc4MV1bICAgIFQx
+XSAgZHVtcF9zdGFja19sdmwrMHhkOS8weDFiMApbICAgMTAuMzI3NzgxXVsgICAgVDFdICBw
+YW5pYysweDZhNC8weDc1MApbICAgMTAuMzI3NzgxXVsgICAgVDFdICA/IHBhbmljX3NtcF9z
+ZWxmX3N0b3ArMHhhMC8weGEwClsgICAxMC4zMjc3ODFdWyAgICBUMV0gID8gcHV0bmFtZSsw
+eDEwMS8weDE0MApbICAgMTAuMzI3NzgxXVsgICAgVDFdICA/IGtlcm5lbF9pbml0KzB4MjY1
+LzB4MmEwClsgICAxMC4zMjc3ODFdWyAgICBUMV0gIGtlcm5lbF9pbml0KzB4Mjc2LzB4MmEw
+ClsgICAxMC4zMjc3ODFdWyAgICBUMV0gID8gcmVzdF9pbml0KzB4MmIwLzB4MmIwClsgICAx
+MC4zMjc3ODFdWyAgICBUMV0gIHJldF9mcm9tX2ZvcmsrMHgxZi8weDMwClsgICAxMC4zMjc3
+ODFdWyAgICBUMV0gIDwvVEFTSz4KWyAgIDEwLjMyNzc4MV1bICAgIFQxXSBLZXJuZWwgT2Zm
+c2V0OiBkaXNhYmxlZApbICAgMTAuMzI3NzgxXVsgICAgVDFdIFJlYm9vdGluZyBpbiAxIHNl
+Y29uZHMuLgo=
 
-from autofs_notify_daemon() will reduce the count by one. At this
-
-point there can't be any other calls to autofs_wait_release() for
-
-this wait id since they come back as a result of the notification. But
-
-perhaps there could be a call for another wait id which implies that
-
-catatonic mode might cause a problem ... I'm not sure that can happen ...
-
-if the pipe isn't setup then the autofs mount hasn't been done ... if
-
-the pipe has gone away the daemon has gone away so no calls to
-
-autofs_wait_release() ...
-
-
-It is worth some more thought though ...
-
-
-I guess there could be something odd where some process accesses
-
-a path and triggers a request when the daemon is killed and then
-
-the mount is umounted at the same time of the request but it's
-
-hard to see how that could happen.
-
-
-Ian
-
+--------------oihDkra1NslgCm8MY9XksS30--
