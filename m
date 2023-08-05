@@ -2,360 +2,246 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D0ED0770D35
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Aug 2023 03:56:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8752F770D53
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Aug 2023 04:38:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229602AbjHEB4J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Aug 2023 21:56:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55824 "EHLO
+        id S229468AbjHECir (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Aug 2023 22:38:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjHEB4I (ORCPT
+        with ESMTP id S229744AbjHECiq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Aug 2023 21:56:08 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC24210C1;
-        Fri,  4 Aug 2023 18:56:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1691200566; x=1722736566;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Et6Rrm61Lji+18cFR2dy374SZbyJrnpsNyX8KY8XEt0=;
-  b=HNELKP9NeUt3hMkKnmsVt7EmanEsT4TGmlpRb1oalkvevPiif7ti9rdc
-   YnoBYHEwzA7PAQYTJF6BMbmfxh7gCKOLHkGs/XcRajUVuO0mQ5vshcSQJ
-   81ibvjfU7d7omwZp3g48QIztACT+m/+vsH3r8KjR8xRlmEkY/DLqrbnUt
-   97VEBW5rJykUFYnajMuRGZWQRqeRMTfSZSrRp4kuzudOyVYiyANMEuLSE
-   +gVzqHwdfNbNFpjETMLOcSMFiblnH+8QXXfal+8cT5+0saKRvFs+gC4r4
-   oGuFGPyvnfw0qAPR6vFRnF4k0Y1lXgxQXYy3rBmfJ1MVy+dYj51vLqh2S
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10792"; a="456661255"
-X-IronPort-AV: E=Sophos;i="6.01,256,1684825200"; 
-   d="scan'208";a="456661255"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2023 18:56:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10792"; a="800309559"
-X-IronPort-AV: E=Sophos;i="6.01,256,1684825200"; 
-   d="scan'208";a="800309559"
-Received: from lkp-server01.sh.intel.com (HELO d1ccc7e87e8f) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 04 Aug 2023 18:56:03 -0700
-Received: from kbuild by d1ccc7e87e8f with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qS6WQ-0003FD-1r;
-        Sat, 05 Aug 2023 01:56:02 +0000
-Date:   Sat, 5 Aug 2023 09:55:59 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-        xiubli@redhat.com
-Cc:     oe-kbuild-all@lists.linux.dev, brauner@kernel.org,
-        stgraber@ubuntu.com, linux-fsdevel@vger.kernel.org,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
-        Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 03/12] ceph: handle idmapped mounts in
- create_request_message()
-Message-ID: <202308050925.ifGg1BUH-lkp@intel.com>
-References: <20230804084858.126104-4-aleksandr.mikhalitsyn@canonical.com>
+        Fri, 4 Aug 2023 22:38:46 -0400
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC4504EE6;
+        Fri,  4 Aug 2023 19:38:42 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id CE9D4320085B;
+        Fri,  4 Aug 2023 22:38:37 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Fri, 04 Aug 2023 22:38:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
+        1691203117; x=1691289517; bh=XeYyMuf4nTof6DJeNjR1M2UY/Ud55rp04sm
+        HiFwidbI=; b=VNuMFDFiIXo2a+6kdC0RTo2uZf27G3JL1EeYtLCWvUFxwnstJ73
+        JKHBZKaXqyrJG/1BejltrcQZKEo19uIBGIcb5PpVpTLwhgQtrrDC9ufVtErPBq2F
+        O7zjcKnzKFqyLIsuJT5Jf+Up+XGISsPXku244rWFV0G0cSWRJLrePeRdtcnm01bx
+        mFl3+WYYTcNADZQct7EMDD09nd6udb28tHxT6cBoPXZQag58/KSXsGIgJjrF+cFD
+        DuQjSzm33MdZw0ccemTfh8un1G6I3VuYkCfyBMd2jOoJTPLekRFlZx5DLU+vZT+7
+        aZeADCudi0dd8Uhsg6PPaDFoK+Y/1i5SRog==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+        1691203117; x=1691289517; bh=XeYyMuf4nTof6DJeNjR1M2UY/Ud55rp04sm
+        HiFwidbI=; b=RAP32c6Ko+JP0MRo1V0LGvxZrOB4XM5hWLW7ip3KkPGaojJEben
+        5cuizde/h2CmqS4NqXDBbxyxeefbq+c1B1ssNEfXy+Z/cbXQKEuYjm/zCNYANjkk
+        mWXykyFimoCPAeTAUmkF4llVYoNZ310nazOljg4Zxzb7sXdHvB60HWAhgv9S8TwP
+        fh1ERXiN3DyyP4ETUkkTZ9Z6nnJOFZNaKXMrjxPE17Xuj57jd82jYROvmn7PwXHX
+        X5kArb8HxhJRg1z41m5af3viN/ny1aMUaIYtzhEs8GfdMkSsMW5CE09hhN3raN9e
+        2AmxHCtxy7rA3cMFF22Hu7OTZQEt2x8Vfvw==
+X-ME-Sender: <xms:LLbNZItISBCyiYZPZPjVITFckN47gJ2GTfxtc_UK5uHKx6hxgpdMkw>
+    <xme:LLbNZFfhDZK-cwCNLirtpXUtVu9mYKteGb5x_UR4uZrn-L_ZKF8Vh7U218fBzcvEE
+    f8ax1iHCc2J>
+X-ME-Received: <xmr:LLbNZDx08c2mJHgZeR4bsC-K8n7X0h5BSd_hKz9s4Ith50QsLjLX8gkts5u8umMRlbUqYIQen8A3k7FHlRhKdgbez8dSm0-oYUK3fFLmF59VPV-Agow>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrkeehgdehiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttdefjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    euhfeuieeijeeuveekgfeitdethefguddtleffhfelfeelhfduuedvfefhgefhheenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
+    hthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:LLbNZLPRbxJbREg3fv1vL9YyELpkZvPz21V1_aFDupQCRKTyqqWQfQ>
+    <xmx:LLbNZI_fShfMiYqhVqNZ2rsGDIJY0LOXGdpwrdZBIHIkzc0MQIAVGw>
+    <xmx:LLbNZDVGdsoub_7Jeeu7vDGclmExvuzS0RdNdmZzRqDErOFQVgnriA>
+    <xmx:LbbNZFNvHt8jkuEJJqeCdPygMG94kGxLdZEWBEQQeKmfxrvq5vtMNA>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 4 Aug 2023 22:38:32 -0400 (EDT)
+Message-ID: <3030f42d-1ab2-4815-0526-73136f349665@themaw.net>
+Date:   Sat, 5 Aug 2023 10:38:29 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230804084858.126104-4-aleksandr.mikhalitsyn@canonical.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 1/2] autofs: fix memory leak of waitqueues in
+ autofs_catatonic_mode
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        autofs mailing list <autofs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fedor Pchelkin <pchelkin@ispras.ru>,
+        Takeshi Misawa <jeliantsurux@gmail.com>,
+        Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrey Vagin <avagin@openvz.org>
+References: <169112719161.7590.6700123246297365841.stgit@donald.themaw.net>
+ <20230804-siegen-moralisieren-dd3dc2595ee2@brauner>
+Content-Language: en-US
+From:   Ian Kent <raven@themaw.net>
+In-Reply-To: <20230804-siegen-moralisieren-dd3dc2595ee2@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_PASS,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Alexander,
+On 4/8/23 19:14, Christian Brauner wrote:
+> On Fri, Aug 04, 2023 at 01:33:12PM +0800, Ian Kent wrote:
+>> From: Fedor Pchelkin <pchelkin@ispras.ru>
+>>
+>> Syzkaller reports a memory leak:
+>>
+>> BUG: memory leak
+>> unreferenced object 0xffff88810b279e00 (size 96):
+>>    comm "syz-executor399", pid 3631, jiffies 4294964921 (age 23.870s)
+>>    hex dump (first 32 bytes):
+>>      00 00 00 00 00 00 00 00 08 9e 27 0b 81 88 ff ff  ..........'.....
+>>      08 9e 27 0b 81 88 ff ff 00 00 00 00 00 00 00 00  ..'.............
+>>    backtrace:
+>>      [<ffffffff814cfc90>] kmalloc_trace+0x20/0x90 mm/slab_common.c:1046
+>>      [<ffffffff81bb75ca>] kmalloc include/linux/slab.h:576 [inline]
+>>      [<ffffffff81bb75ca>] autofs_wait+0x3fa/0x9a0 fs/autofs/waitq.c:378
+>>      [<ffffffff81bb88a7>] autofs_do_expire_multi+0xa7/0x3e0 fs/autofs/expire.c:593
+>>      [<ffffffff81bb8c33>] autofs_expire_multi+0x53/0x80 fs/autofs/expire.c:619
+>>      [<ffffffff81bb6972>] autofs_root_ioctl_unlocked+0x322/0x3b0 fs/autofs/root.c:897
+>>      [<ffffffff81bb6a95>] autofs_root_ioctl+0x25/0x30 fs/autofs/root.c:910
+>>      [<ffffffff81602a9c>] vfs_ioctl fs/ioctl.c:51 [inline]
+>>      [<ffffffff81602a9c>] __do_sys_ioctl fs/ioctl.c:870 [inline]
+>>      [<ffffffff81602a9c>] __se_sys_ioctl fs/ioctl.c:856 [inline]
+>>      [<ffffffff81602a9c>] __x64_sys_ioctl+0xfc/0x140 fs/ioctl.c:856
+>>      [<ffffffff84608225>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>>      [<ffffffff84608225>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+>>      [<ffffffff84800087>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
+>>
+>> autofs_wait_queue structs should be freed if their wait_ctr becomes zero.
+>> Otherwise they will be lost.
+>>
+>> In this case an AUTOFS_IOC_EXPIRE_MULTI ioctl is done, then a new
+>> waitqueue struct is allocated in autofs_wait(), its initial wait_ctr
+>> equals 2. After that wait_event_killable() is interrupted (it returns
+>> -ERESTARTSYS), so that 'wq->name.name == NULL' condition may be not
+>> satisfied. Actually, this condition can be satisfied when
+>> autofs_wait_release() or autofs_catatonic_mode() is called and, what is
+>> also important, wait_ctr is decremented in those places. Upon the exit of
+>> autofs_wait(), wait_ctr is decremented to 1. Then the unmounting process
+>> begins: kill_sb calls autofs_catatonic_mode(), which should have freed the
+>> waitqueues, but it only decrements its usage counter to zero which is not
+>> a correct behaviour.
+>>
+>> edit:imk
+>> This description is of course not correct. The umount performed as a result
+>> of an expire is a umount of a mount that has been automounted, it's not the
+>> autofs mount itself. They happen independently, usually after everything
+>> mounted within the autofs file system has been expired away. If everything
+>> hasn't been expired away the automount daemon can still exit leaving mounts
+>> in place. But expires done in both cases will result in a notification that
+>> calls autofs_wait_release() with a result status. The problem case is the
+>> summary execution of of the automount daemon. In this case any waiting
+>> processes won't be woken up until either they are terminated or the mount
+>> is umounted.
+>> end edit: imk
+>>
+>> So in catatonic mode we should free waitqueues which counter becomes zero.
+>>
+>> edit: imk
+>> Initially I was concerned that the calling of autofs_wait_release() and
+>> autofs_catatonic_mode() was not mutually exclusive but that can't be the
+>> case (obviously) because the queue entry (or entries) is removed from the
+>> list when either of these two functions are called. Consequently the wait
+>> entry will be freed by only one of these functions or by the woken process
+>> in autofs_wait() depending on the order of the calls.
+>> end edit: imk
+>>
+>> Reported-by: syzbot+5e53f70e69ff0c0a1c0c@syzkaller.appspotmail.com
+>> Suggested-by: Takeshi Misawa <jeliantsurux@gmail.com>
+>> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+>> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+>> Signed-off-by: Ian Kent <raven@themaw.net>
+>> Cc: Matthew Wilcox <willy@infradead.org>
+>> Cc: Andrei Vagin <avagin@gmail.com>
+>> Cc: autofs@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> ---
+>>   fs/autofs/waitq.c |    3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/autofs/waitq.c b/fs/autofs/waitq.c
+>> index 54c1f8b8b075..efdc76732fae 100644
+>> --- a/fs/autofs/waitq.c
+>> +++ b/fs/autofs/waitq.c
+>> @@ -32,8 +32,9 @@ void autofs_catatonic_mode(struct autofs_sb_info *sbi)
+>>   		wq->status = -ENOENT; /* Magic is gone - report failure */
+>>   		kfree(wq->name.name - wq->offset);
+>>   		wq->name.name = NULL;
+>> -		wq->wait_ctr--;
+>>   		wake_up_interruptible(&wq->queue);
+>> +		if (!--wq->wait_ctr)
+>> +			kfree(wq);
+> The only thing that peeked my interest was:
+>
+> autofs_wait()
+> -> if (!wq)
+>     -> wq->wait_ctr = 2;
+>     -> autofs_notify_daemon()
+>
+> Let's say autofs_write() fails with -EIO or for whatever reason and so
+> we end up calling:
+>
+>        -> autofs_catatonic_mode()
+>
+> If wait_ctr can be decremented in between so that
+> autofs_catatonic_mode() frees it and then autofs_wait() would cause a
+> UAF when it tries to much with wq again. But afaict, this can't happen
+> because and would also affect autofs_notify_daemon() then.
 
-kernel test robot noticed the following build warnings:
+Interesting observation.
 
-[auto build test WARNING on ceph-client/testing]
-[cannot apply to ceph-client/for-linus brauner-vfs/vfs.all linus/master vfs-idmapping/for-next v6.5-rc4 next-20230804]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I'll think about it some more.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexander-Mikhalitsyn/fs-export-mnt_idmap_get-mnt_idmap_put/20230804-165330
-base:   https://github.com/ceph/ceph-client.git testing
-patch link:    https://lore.kernel.org/r/20230804084858.126104-4-aleksandr.mikhalitsyn%40canonical.com
-patch subject: [PATCH v9 03/12] ceph: handle idmapped mounts in create_request_message()
-config: um-randconfig-r091-20230730 (https://download.01.org/0day-ci/archive/20230805/202308050925.ifGg1BUH-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20230805/202308050925.ifGg1BUH-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202308050925.ifGg1BUH-lkp@intel.com/
+But I think a call autofs_catatonic_mode() or autofs_wait_release()
 
-sparse warnings: (new ones prefixed by >>)
->> fs/ceph/mds_client.c:3082:35: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] struct_len @@     got unsigned long @@
-   fs/ceph/mds_client.c:3082:35: sparse:     expected restricted __le32 [usertype] struct_len
-   fs/ceph/mds_client.c:3082:35: sparse:     got unsigned long
+from autofs_notify_daemon() will reduce the count by one. At this
 
-vim +3082 fs/ceph/mds_client.c
+point there can't be any other calls to autofs_wait_release() for
 
-  2927	
-  2928	/*
-  2929	 * called under mdsc->mutex
-  2930	 */
-  2931	static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
-  2932						       struct ceph_mds_request *req,
-  2933						       bool drop_cap_releases)
-  2934	{
-  2935		int mds = session->s_mds;
-  2936		struct ceph_mds_client *mdsc = session->s_mdsc;
-  2937		struct ceph_client *cl = mdsc->fsc->client;
-  2938		struct ceph_msg *msg;
-  2939		struct ceph_mds_request_head_legacy *lhead;
-  2940		const char *path1 = NULL;
-  2941		const char *path2 = NULL;
-  2942		u64 ino1 = 0, ino2 = 0;
-  2943		int pathlen1 = 0, pathlen2 = 0;
-  2944		bool freepath1 = false, freepath2 = false;
-  2945		struct dentry *old_dentry = NULL;
-  2946		int len;
-  2947		u16 releases;
-  2948		void *p, *end;
-  2949		int ret;
-  2950		bool legacy = !(session->s_con.peer_features & CEPH_FEATURE_FS_BTIME);
-  2951		u16 request_head_version = mds_supported_head_version(session);
-  2952	
-  2953		ret = set_request_path_attr(mdsc, req->r_inode, req->r_dentry,
-  2954				      req->r_parent, req->r_path1, req->r_ino1.ino,
-  2955				      &path1, &pathlen1, &ino1, &freepath1,
-  2956				      test_bit(CEPH_MDS_R_PARENT_LOCKED,
-  2957						&req->r_req_flags));
-  2958		if (ret < 0) {
-  2959			msg = ERR_PTR(ret);
-  2960			goto out;
-  2961		}
-  2962	
-  2963		/* If r_old_dentry is set, then assume that its parent is locked */
-  2964		if (req->r_old_dentry &&
-  2965		    !(req->r_old_dentry->d_flags & DCACHE_DISCONNECTED))
-  2966			old_dentry = req->r_old_dentry;
-  2967		ret = set_request_path_attr(mdsc, NULL, old_dentry,
-  2968				      req->r_old_dentry_dir,
-  2969				      req->r_path2, req->r_ino2.ino,
-  2970				      &path2, &pathlen2, &ino2, &freepath2, true);
-  2971		if (ret < 0) {
-  2972			msg = ERR_PTR(ret);
-  2973			goto out_free1;
-  2974		}
-  2975	
-  2976		req->r_altname = get_fscrypt_altname(req, &req->r_altname_len);
-  2977		if (IS_ERR(req->r_altname)) {
-  2978			msg = ERR_CAST(req->r_altname);
-  2979			req->r_altname = NULL;
-  2980			goto out_free2;
-  2981		}
-  2982	
-  2983		/*
-  2984		 * For old cephs without supporting the 32bit retry/fwd feature
-  2985		 * it will copy the raw memories directly when decoding the
-  2986		 * requests. While new cephs will decode the head depending the
-  2987		 * version member, so we need to make sure it will be compatible
-  2988		 * with them both.
-  2989		 */
-  2990		if (legacy)
-  2991			len = sizeof(struct ceph_mds_request_head_legacy);
-  2992		else if (request_head_version == 1)
-  2993			len = sizeof(struct ceph_mds_request_head_old);
-  2994		else if (request_head_version == 2)
-  2995			len = offsetofend(struct ceph_mds_request_head, ext_num_fwd);
-  2996		else
-  2997			len = sizeof(struct ceph_mds_request_head);
-  2998	
-  2999		/* filepaths */
-  3000		len += 2 * (1 + sizeof(u32) + sizeof(u64));
-  3001		len += pathlen1 + pathlen2;
-  3002	
-  3003		/* cap releases */
-  3004		len += sizeof(struct ceph_mds_request_release) *
-  3005			(!!req->r_inode_drop + !!req->r_dentry_drop +
-  3006			 !!req->r_old_inode_drop + !!req->r_old_dentry_drop);
-  3007	
-  3008		if (req->r_dentry_drop)
-  3009			len += pathlen1;
-  3010		if (req->r_old_dentry_drop)
-  3011			len += pathlen2;
-  3012	
-  3013		/* MClientRequest tail */
-  3014	
-  3015		/* req->r_stamp */
-  3016		len += sizeof(struct ceph_timespec);
-  3017	
-  3018		/* gid list */
-  3019		len += sizeof(u32) + (sizeof(u64) * req->r_cred->group_info->ngroups);
-  3020	
-  3021		/* alternate name */
-  3022		len += sizeof(u32) + req->r_altname_len;
-  3023	
-  3024		/* fscrypt_auth */
-  3025		len += sizeof(u32); // fscrypt_auth
-  3026		if (req->r_fscrypt_auth)
-  3027			len += ceph_fscrypt_auth_len(req->r_fscrypt_auth);
-  3028	
-  3029		/* fscrypt_file */
-  3030		len += sizeof(u32);
-  3031		if (test_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags))
-  3032			len += sizeof(__le64);
-  3033	
-  3034		msg = ceph_msg_new2(CEPH_MSG_CLIENT_REQUEST, len, 1, GFP_NOFS, false);
-  3035		if (!msg) {
-  3036			msg = ERR_PTR(-ENOMEM);
-  3037			goto out_free2;
-  3038		}
-  3039	
-  3040		msg->hdr.tid = cpu_to_le64(req->r_tid);
-  3041	
-  3042		lhead = find_legacy_request_head(msg->front.iov_base,
-  3043						 session->s_con.peer_features);
-  3044	
-  3045		if ((req->r_mnt_idmap != &nop_mnt_idmap) &&
-  3046		    !test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID, &session->s_features)) {
-  3047			pr_err_ratelimited_client(cl,
-  3048				"idmapped mount is used and CEPHFS_FEATURE_HAS_OWNER_UIDGID"
-  3049				" is not supported by MDS. Fail request with -EIO.\n");
-  3050	
-  3051			ret = -EIO;
-  3052			goto out_err;
-  3053		}
-  3054	
-  3055		/*
-  3056		 * The ceph_mds_request_head_legacy didn't contain a version field, and
-  3057		 * one was added when we moved the message version from 3->4.
-  3058		 */
-  3059		if (legacy) {
-  3060			msg->hdr.version = cpu_to_le16(3);
-  3061			p = msg->front.iov_base + sizeof(*lhead);
-  3062		} else if (request_head_version == 1) {
-  3063			struct ceph_mds_request_head_old *ohead = msg->front.iov_base;
-  3064	
-  3065			msg->hdr.version = cpu_to_le16(4);
-  3066			ohead->version = cpu_to_le16(1);
-  3067			p = msg->front.iov_base + sizeof(*ohead);
-  3068		} else if (request_head_version == 2) {
-  3069			struct ceph_mds_request_head *nhead = msg->front.iov_base;
-  3070	
-  3071			msg->hdr.version = cpu_to_le16(6);
-  3072			nhead->version = cpu_to_le16(2);
-  3073	
-  3074			p = msg->front.iov_base + offsetofend(struct ceph_mds_request_head, ext_num_fwd);
-  3075		} else {
-  3076			struct ceph_mds_request_head *nhead = msg->front.iov_base;
-  3077			kuid_t owner_fsuid;
-  3078			kgid_t owner_fsgid;
-  3079	
-  3080			msg->hdr.version = cpu_to_le16(6);
-  3081			nhead->version = cpu_to_le16(CEPH_MDS_REQUEST_HEAD_VERSION);
-> 3082			nhead->struct_len = sizeof(struct ceph_mds_request_head);
-  3083	
-  3084			owner_fsuid = from_vfsuid(req->r_mnt_idmap, &init_user_ns,
-  3085						  VFSUIDT_INIT(req->r_cred->fsuid));
-  3086			owner_fsgid = from_vfsgid(req->r_mnt_idmap, &init_user_ns,
-  3087						  VFSGIDT_INIT(req->r_cred->fsgid));
-  3088			nhead->owner_uid = cpu_to_le32(from_kuid(&init_user_ns, owner_fsuid));
-  3089			nhead->owner_gid = cpu_to_le32(from_kgid(&init_user_ns, owner_fsgid));
-  3090			p = msg->front.iov_base + sizeof(*nhead);
-  3091		}
-  3092	
-  3093		end = msg->front.iov_base + msg->front.iov_len;
-  3094	
-  3095		lhead->mdsmap_epoch = cpu_to_le32(mdsc->mdsmap->m_epoch);
-  3096		lhead->op = cpu_to_le32(req->r_op);
-  3097		lhead->caller_uid = cpu_to_le32(from_kuid(&init_user_ns,
-  3098							  req->r_cred->fsuid));
-  3099		lhead->caller_gid = cpu_to_le32(from_kgid(&init_user_ns,
-  3100							  req->r_cred->fsgid));
-  3101		lhead->ino = cpu_to_le64(req->r_deleg_ino);
-  3102		lhead->args = req->r_args;
-  3103	
-  3104		ceph_encode_filepath(&p, end, ino1, path1);
-  3105		ceph_encode_filepath(&p, end, ino2, path2);
-  3106	
-  3107		/* make note of release offset, in case we need to replay */
-  3108		req->r_request_release_offset = p - msg->front.iov_base;
-  3109	
-  3110		/* cap releases */
-  3111		releases = 0;
-  3112		if (req->r_inode_drop)
-  3113			releases += ceph_encode_inode_release(&p,
-  3114			      req->r_inode ? req->r_inode : d_inode(req->r_dentry),
-  3115			      mds, req->r_inode_drop, req->r_inode_unless,
-  3116			      req->r_op == CEPH_MDS_OP_READDIR);
-  3117		if (req->r_dentry_drop) {
-  3118			ret = ceph_encode_dentry_release(&p, req->r_dentry,
-  3119					req->r_parent, mds, req->r_dentry_drop,
-  3120					req->r_dentry_unless);
-  3121			if (ret < 0)
-  3122				goto out_err;
-  3123			releases += ret;
-  3124		}
-  3125		if (req->r_old_dentry_drop) {
-  3126			ret = ceph_encode_dentry_release(&p, req->r_old_dentry,
-  3127					req->r_old_dentry_dir, mds,
-  3128					req->r_old_dentry_drop,
-  3129					req->r_old_dentry_unless);
-  3130			if (ret < 0)
-  3131				goto out_err;
-  3132			releases += ret;
-  3133		}
-  3134		if (req->r_old_inode_drop)
-  3135			releases += ceph_encode_inode_release(&p,
-  3136			      d_inode(req->r_old_dentry),
-  3137			      mds, req->r_old_inode_drop, req->r_old_inode_unless, 0);
-  3138	
-  3139		if (drop_cap_releases) {
-  3140			releases = 0;
-  3141			p = msg->front.iov_base + req->r_request_release_offset;
-  3142		}
-  3143	
-  3144		lhead->num_releases = cpu_to_le16(releases);
-  3145	
-  3146		encode_mclientrequest_tail(&p, req);
-  3147	
-  3148		if (WARN_ON_ONCE(p > end)) {
-  3149			ceph_msg_put(msg);
-  3150			msg = ERR_PTR(-ERANGE);
-  3151			goto out_free2;
-  3152		}
-  3153	
-  3154		msg->front.iov_len = p - msg->front.iov_base;
-  3155		msg->hdr.front_len = cpu_to_le32(msg->front.iov_len);
-  3156	
-  3157		if (req->r_pagelist) {
-  3158			struct ceph_pagelist *pagelist = req->r_pagelist;
-  3159			ceph_msg_data_add_pagelist(msg, pagelist);
-  3160			msg->hdr.data_len = cpu_to_le32(pagelist->length);
-  3161		} else {
-  3162			msg->hdr.data_len = 0;
-  3163		}
-  3164	
-  3165		msg->hdr.data_off = cpu_to_le16(0);
-  3166	
-  3167	out_free2:
-  3168		if (freepath2)
-  3169			ceph_mdsc_free_path((char *)path2, pathlen2);
-  3170	out_free1:
-  3171		if (freepath1)
-  3172			ceph_mdsc_free_path((char *)path1, pathlen1);
-  3173	out:
-  3174		return msg;
-  3175	out_err:
-  3176		ceph_msg_put(msg);
-  3177		msg = ERR_PTR(ret);
-  3178		goto out_free2;
-  3179	}
-  3180	
+this wait id since they come back as a result of the notification. But
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+perhaps there could be a call for another wait id which implies that
+
+catatonic mode might cause a problem ... I'm not sure that can happen ...
+
+if the pipe isn't setup then the autofs mount hasn't been done ... if
+
+the pipe has gone away the daemon has gone away so no calls to
+
+autofs_wait_release() ...
+
+
+It is worth some more thought though ...
+
+
+I guess there could be something odd where some process accesses
+
+a path and triggers a request when the daemon is killed and then
+
+the mount is umounted at the same time of the request but it's
+
+hard to see how that could happen.
+
+
+Ian
+
