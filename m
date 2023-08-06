@@ -2,71 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 77E2B771502
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Aug 2023 14:30:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA79D771516
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Aug 2023 14:45:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229959AbjHFMaY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Aug 2023 08:30:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60376 "EHLO
+        id S230136AbjHFMpv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Aug 2023 08:45:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229573AbjHFMaX (ORCPT
+        with ESMTP id S229528AbjHFMpu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Aug 2023 08:30:23 -0400
-X-Greylist: delayed 61 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 06 Aug 2023 05:30:19 PDT
-Received: from email.cn (m218-153.88.com [110.43.218.153])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8ADFFA;
-        Sun,  6 Aug 2023 05:30:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=email.cn;
-        s=dkim; h=Date:From:To; bh=XwvT4ZuzAPUjEFNoeaoPoW3ZrSbwhJkckqLc3
-        rE+ZvA=; b=bERUKlstL21R5tjOcnGCogy4zOddooRJ+JbIzmcmA1v2qgm7k3YGt
-        RlZ1owQmOLCF0Z9OIcA/3LNELEPDKDlErZ7WelA65tLW/cltM/cOdML4vaxj6em8
-        9MOgmPgsorNQlBaKq0I/vt8QQWD451+vN/3loBmZaLIwk9ckZJwZnw=
-Received: from localhost (unknown [124.64.65.102])
-        by v_coremail2-frontend-2 (Coremail) with SMTP id GiKnCgCndHYPks9kZPQPAA--.22373S3;
-        Sun, 06 Aug 2023 20:29:04 +0800 (CST)
-Date:   Sun, 6 Aug 2023 20:29:03 +0800
-From:   Liang Li <liliang6@email.cn>
+        Sun, 6 Aug 2023 08:45:50 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 183E7E47;
+        Sun,  6 Aug 2023 05:45:49 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A0FEA610AA;
+        Sun,  6 Aug 2023 12:45:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 302AFC433C7;
+        Sun,  6 Aug 2023 12:45:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691325948;
+        bh=wXYWg26OzEPN2k/ZF3JgHRFogg3a61pPPpi9inOVm0Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tx0smzmfap8JWuh2SZ9JmhyGP1aSjTUCbKer+myYAxc9LGi8YZptXIxr9qyE965RE
+         ubARg98QO+oI84FfP2kWZwNqMooABOZ9r+nlA6U+wkeLYmfD6wgM0t0zi+nC74b5GR
+         vZZmMI7+IKKxCQ1sdGzSbEQzQVxtrhPC3SRgaVj+R6o8MFN36bf5kB2MGXt0A9KcGd
+         AJ4xpkm39pPw3QuGja99kp0sNJAUUGk+eQFCg6015bn1uW1+hKmtELU60Fb1e58Suw
+         lNrdwirRHXYFe6lVToMHh44PHxq4yMFnKxipckUoYNsipvbaGepjxKwWbE4gSibC7d
+         SROX5an+Cm3gQ==
+Date:   Sun, 6 Aug 2023 14:45:43 +0200
+From:   Christian Brauner <brauner@kernel.org>
 To:     Loic Poulain <loic.poulain@linaro.org>
-Cc:     brauner@kernel.org, viro@zeniv.linux.org.uk, corbet@lwn.net,
+Cc:     viro@zeniv.linux.org.uk, corbet@lwn.net,
         linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, hch@infradead.org,
         rdunlap@infradead.org
 Subject: Re: [PATCH v3] init: Add support for rootwait timeout parameter
-Message-ID: <ZM+SD+37ZXpIXAZO@localhost>
-Reply-To: Liang Li <liliang6@email.cn>
+Message-ID: <20230806-leibhaftig-deutung-dd4a6b01d038@brauner>
 References: <20230806101217.164068-1-loic.poulain@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 In-Reply-To: <20230806101217.164068-1-loic.poulain@linaro.org>
-X-CM-TRANSID: GiKnCgCndHYPks9kZPQPAA--.22373S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF17uF18KrWftr15CrW3KFg_yoWrJw45pF
-        WkuFZrtF97JF47KF1xArn7u34Utw1Ikw1ayrZFgw48Aw1DJrnYvw4j9rWYy3WDCrZ8Ja15
-        XFs7CF1rWr1jyFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUgab7Iv0xC_Kw4lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-        cIk0rVWUuVWrJwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-        v20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j6r4UM28EF7xvwVC2
-        z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAS0I0E0x
-        vYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VCjz48v1sIEY20_
-        Cr1UJr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkIecxEwVAFwVW5JwCF04
-        k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26F4UJr1UMxC20s026xCaFVCjc4AY6r1j
-        6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7
-        AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE
-        2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcV
-        C2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73
-        UjIFyTuYvjxUf3C7UUUUU
-X-Originating-IP: [124.64.65.102]
-X-CM-SenderInfo: 5oloxttqjwqvhpdlzhdfq/
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023-08-06 18:12, Loic Poulain <loic.poulain@linaro.org> wrote:
+On Sun, Aug 06, 2023 at 12:12:17PM +0200, Loic Poulain wrote:
 > Add an optional timeout arg to 'rootwait' as the maximum time in
 > seconds to wait for the root device to show up before attempting
 > forced mount of the root filesystem.
@@ -138,10 +129,6 @@ On 2023-08-06 18:12, Loic Poulain <loic.poulain@linaro.org> wrote:
 > +		pr_warn("ignoring invalid rootwait value\n");
 > +		/* fallback to indefinite wait */
 > +		root_wait = -1;
-
-Will it be a little better to add the 'fallback to infinite wait' message
-into pr_wran as well?
-
 > +	}
 > +
 > +	return 1;
@@ -157,29 +144,38 @@ into pr_wran as well?
 >  static void __init wait_for_root(char *root_device_name)
 >  {
 > +	const ktime_t end = ktime_add_ms(ktime_get_raw(), root_wait * MSEC_PER_SEC);
-> +
->  	if (ROOT_DEV != 0)
->  		return;
->  
->  	pr_info("Waiting for root device %s...\n", root_device_name);
->  
->  	while (!driver_probe_done() ||
-> -	       early_lookup_bdev(root_device_name, &ROOT_DEV) < 0)
-> +	       early_lookup_bdev(root_device_name, &ROOT_DEV) < 0) {
 
-Seems like one indent issue here?
+I'd only initialize @end after the ROOT_DEV check.
 
->  		msleep(5);
-> +		if (root_wait > 0 && ktime_after(ktime_get_raw(), end))
-> +			break;
-> +	}
-> +
->  	async_synchronize_full();
->  
->  }
-> -- 
-> 2.34.1
+Also, afaict, this currently allows userspace to overflow, i.e.,
 
-Regards.
-Liang Li
+root_wait=2147483647
 
+ktime_add_ms(..., root_wait(2147483647) * MSEC_PER_SEC(1000))
+
+So idk, you probably want to convert root_wait to ms right away and do
+sm like (completely untested):
+
+static int __init rootwait_timeout_setup(char *str)
+{
+	int ret, tmp;
+
+	THIS LINE WILL BREAK COMPILATION
+
+	if (*str)
+		return 0;
+
+	/* always fallback to indefinite wait */
+	root_wait = -1;
+
+	ret = kstrtoint(str, 0, &tmp));
+	if (ret || tmp < 0) {
+		pr_warn("ignoring invalid rootwait value\n");
+		return 1;
+	}
+
+	if (check_mul_overflow(tmp, MSEC_PER_SEC, &root_wait))
+		pr_warn("ignoring excessive rootwait value\n");
+
+	return 1;
+}
