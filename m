@@ -2,121 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E31F47713CA
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Aug 2023 08:43:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21F29771457
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Aug 2023 12:12:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229942AbjHFGm6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Aug 2023 02:42:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46184 "EHLO
+        id S230257AbjHFKM0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Aug 2023 06:12:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjHFGm5 (ORCPT
+        with ESMTP id S230249AbjHFKMZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Aug 2023 02:42:57 -0400
-X-Greylist: delayed 28440 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 05 Aug 2023 23:42:55 PDT
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC6091FD4;
-        Sat,  5 Aug 2023 23:42:55 -0700 (PDT)
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4RJVJC40Wmz9sd7;
-        Sun,  6 Aug 2023 08:42:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-        t=1691304171;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=TKUhKDbUC2/JSkRExIBVVYTgnPGLNw5xhGLizhZFaHo=;
-        b=0nHhRGGKpevO0jS9yjWDUb1TZ5f6D4nVFvWmJdx6fQ1GxYReNPVZzuSzFZOlXqxQgPy5xU
-        gDHuynxSoFBJ1fZl/lzJdVvwLSE33BtTsC/e1J9N3zVk2gkALsL0ZZM/ZTytvry27UYdBi
-        4pKzRWBPIBWu4GvJ5bKSpdYliUFrAlbPP16bbiNXj04qjo4b+N76EecgznCYkVWPZz6HdT
-        V9XJke6raTUWhnoK3E8QuxrgfztQF2A5fvkQxOU/5Gx385NoF6/rwZT8OnP3I67Fwk6kaT
-        531fC1WASz3rSgkjRJbDnnfMNrORpEiI5VI6iLFJOMDkQNqAuNqUsZ1M/9+1OQ==
-Date:   Sun, 6 Aug 2023 16:42:37 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] io_uring: correct check for O_TMPFILE
-Message-ID: <20230806.063800-dusky.orc.woody.spectrum-98W6qtUkFLgk@cyphar.com>
-References: <20230806-resolve_cached-o_tmpfile-v2-0-058bff24fb16@cyphar.com>
- <20230806-resolve_cached-o_tmpfile-v2-2-058bff24fb16@cyphar.com>
- <41b5f092-5422-e461-b9bf-3a5a04c0b9e2@kernel.dk>
+        Sun, 6 Aug 2023 06:12:25 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33B0719A3
+        for <linux-fsdevel@vger.kernel.org>; Sun,  6 Aug 2023 03:12:23 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3fe4ad22e36so18557625e9.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Aug 2023 03:12:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1691316741; x=1691921541;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=stuJqaNoc8+CyrTaBzMymqInJJyNxuySrxbp3ccLMSM=;
+        b=BvUibkjXpSn53ss6d2zWo3GHot1opOycwPZLmgg5RX03G6KJzC2uUYMo7Ej1fmktPN
+         n1TE2pKhI+mHYJfzop9rxOhvuDM81/U6vmE74ewiMKl4X4FSfQQvHEqlqh7fcZ/L2r03
+         scb0mhJCHjZcxPW4ammn5glclltGIvkWPapubBJM+ds7HjObw6hRGkM3+ggBs8XG6q0+
+         PU9DnBiea1oKKox9Bnv/vj7cY78J3oljrMclWguKcWyoJ/8znocnA20Wt4StxGjiyzJD
+         +/I3T+OIJTtL+u3qaY0bBofAHKSmP5yohxv+ffm4YZOKDzwEuhBmVakVqfrFZkZfF7MY
+         MhwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691316741; x=1691921541;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=stuJqaNoc8+CyrTaBzMymqInJJyNxuySrxbp3ccLMSM=;
+        b=dR0dt1NqMqGSr0tJ1xf/SgirTwlbSdiJ7wHmJ53ptvzCFDWv4llPAJf4XRRRni0Jf8
+         aU26HnhJFyxldn9GvYkacoUFPQAIEQFBSSniIWHPtIo8UbD9gDnG2wl476QaMvDken0C
+         ExVJ7OcuCfvB2ZtSrGI3jgmDLVfEQ+EfTZqxLWR2eZSBI2360+LeXWPozFDtMAMRFNqc
+         F0ODgWJkByX57ZN1ekrGWHeNBCyHqY83jpQkhp00UqNqOE4YpkVISNYaTbgMC7HAHwAE
+         tTwFiL7PmLD0/pIpckKqPNANoTthCjpAacW8FD2eoi5trNGz92kCuzqEa+Hi3Y3tqmvd
+         x8kQ==
+X-Gm-Message-State: AOJu0YwhkDO9hraWASp5KWRw4uvPlT4+L05se2CuRcfP8XS/WJ2bMeax
+        /H595DVFlnGLsr1F+a8im29GLw==
+X-Google-Smtp-Source: AGHT+IHFd/KlMS3CBCtwj91xL7Xwekc7eD/+pg68NTNAiQoIDYiivoLT70Bf8C7dD+yRl6RV03H1Kg==
+X-Received: by 2002:a7b:cc99:0:b0:3fe:1f98:deb7 with SMTP id p25-20020a7bcc99000000b003fe1f98deb7mr4690456wma.35.1691316741571;
+        Sun, 06 Aug 2023 03:12:21 -0700 (PDT)
+Received: from loic-ThinkPad-T470p.. ([2a01:e0a:82c:5f0:2a5f:dd16:fb77:b314])
+        by smtp.gmail.com with ESMTPSA id a14-20020adfed0e000000b003177f57e79esm7209115wro.88.2023.08.06.03.12.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Aug 2023 03:12:20 -0700 (PDT)
+From:   Loic Poulain <loic.poulain@linaro.org>
+To:     brauner@kernel.org, viro@zeniv.linux.org.uk, corbet@lwn.net
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, hch@infradead.org,
+        rdunlap@infradead.org, Loic Poulain <loic.poulain@linaro.org>
+Subject: [PATCH v3] init: Add support for rootwait timeout parameter
+Date:   Sun,  6 Aug 2023 12:12:17 +0200
+Message-Id: <20230806101217.164068-1-loic.poulain@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="hguio7qt6czmuq3q"
-Content-Disposition: inline
-In-Reply-To: <41b5f092-5422-e461-b9bf-3a5a04c0b9e2@kernel.dk>
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Add an optional timeout arg to 'rootwait' as the maximum time in
+seconds to wait for the root device to show up before attempting
+forced mount of the root filesystem.
 
---hguio7qt6czmuq3q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Use case:
+In case of device mapper usage for the rootfs (e.g. root=/dev/dm-0),
+if the mapper is not able to create the virtual block for any reason
+(wrong arguments, bad dm-verity signature, etc), the `rootwait` param
+causes the kernel to wait forever. It may however be desirable to only
+wait for a given time and then panic (force mount) to cause device reset.
+This gives the bootloader a chance to detect the problem and to take some
+measures, such as marking the booted partition as bad (for A/B case) or
+entering a recovery mode.
 
-On 2023-08-05, Jens Axboe <axboe@kernel.dk> wrote:
-> On 8/5/23 4:48?PM, Aleksa Sarai wrote:
-> > O_TMPFILE is actually __O_TMPFILE|O_DIRECTORY. This means that the old
-> > check for whether RESOLVE_CACHED can be used would incorrectly think
-> > that O_DIRECTORY could not be used with RESOLVE_CACHED.
-> >=20
-> > Cc: stable@vger.kernel.org # v5.12+
-> > Fixes: 3a81fd02045c ("io_uring: enable LOOKUP_CACHED path resolution fo=
-r filename lookups")
-> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> > ---
-> >  io_uring/openclose.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/io_uring/openclose.c b/io_uring/openclose.c
-> > index 10ca57f5bd24..a029c230119f 100644
-> > --- a/io_uring/openclose.c
-> > +++ b/io_uring/openclose.c
-> > @@ -35,9 +35,9 @@ static bool io_openat_force_async(struct io_open *ope=
-n)
-> >  {
-> >  	/*
-> >  	 * Don't bother trying for O_TRUNC, O_CREAT, or O_TMPFILE open,
-> > -	 * it'll always -EAGAIN
-> > +	 * it'll always -EAGAIN.
->=20
-> Please don't make this change, it just detracts from the actual change.
-> And if we are making changes in there, why not change O_TMPFILE as well
-> since this is what the change is about?
+In success case, mounting happens as soon as the root device is ready,
+unlike the existing 'rootdelay' parameter which performs an unconditional
+pause.
 
-Userspace can't pass just __O_TMPFILE, so to me "__O_TMPFILE open"
-sounds strange. The intention is to detect open(O_TMPFILE), it just so
-happens that the correct check is __O_TMPFILE.
+Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+---
+ v2: rebase + reword: add use case example
+ v3: Use kstrtoint instead of deprecated simple_strtoul
 
-But I can change it if you prefer.
+ .../admin-guide/kernel-parameters.txt         |  4 ++++
+ init/do_mounts.c                              | 24 +++++++++++++++++--
+ 2 files changed, 26 insertions(+), 2 deletions(-)
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index a1457995fd41..387cf9c2a2c5 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -5501,6 +5501,10 @@
+ 			Useful for devices that are detected asynchronously
+ 			(e.g. USB and MMC devices).
+ 
++	rootwait=	[KNL] Maximum time (in seconds) to wait for root device
++			to show up before attempting to mount the root
++			filesystem.
++
+ 	rproc_mem=nn[KMG][@address]
+ 			[KNL,ARM,CMA] Remoteproc physical memory block.
+ 			Memory area to be used by remote processor image,
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index 1aa015883519..98190bf34a9f 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -18,6 +18,7 @@
+ #include <linux/slab.h>
+ #include <linux/ramfs.h>
+ #include <linux/shmem_fs.h>
++#include <linux/ktime.h>
+ 
+ #include <linux/nfs_fs.h>
+ #include <linux/nfs_fs_sb.h>
+@@ -71,12 +72,25 @@ static int __init rootwait_setup(char *str)
+ {
+ 	if (*str)
+ 		return 0;
+-	root_wait = 1;
++	root_wait = -1;
+ 	return 1;
+ }
+ 
+ __setup("rootwait", rootwait_setup);
+ 
++static int __init rootwait_timeout_setup(char *str)
++{
++	if (kstrtoint(str, 0, &root_wait) || root_wait < 0) {
++		pr_warn("ignoring invalid rootwait value\n");
++		/* fallback to indefinite wait */
++		root_wait = -1;
++	}
++
++	return 1;
++}
++
++__setup("rootwait=", rootwait_timeout_setup);
++
+ static char * __initdata root_mount_data;
+ static int __init root_data_setup(char *str)
+ {
+@@ -384,14 +398,20 @@ void __init mount_root(char *root_device_name)
+ /* wait for any asynchronous scanning to complete */
+ static void __init wait_for_root(char *root_device_name)
+ {
++	const ktime_t end = ktime_add_ms(ktime_get_raw(), root_wait * MSEC_PER_SEC);
++
+ 	if (ROOT_DEV != 0)
+ 		return;
+ 
+ 	pr_info("Waiting for root device %s...\n", root_device_name);
+ 
+ 	while (!driver_probe_done() ||
+-	       early_lookup_bdev(root_device_name, &ROOT_DEV) < 0)
++	       early_lookup_bdev(root_device_name, &ROOT_DEV) < 0) {
+ 		msleep(5);
++		if (root_wait > 0 && ktime_after(ktime_get_raw(), end))
++			break;
++	}
++
+ 	async_synchronize_full();
+ 
+ }
+-- 
+2.34.1
 
---hguio7qt6czmuq3q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZM9A3QAKCRAol/rSt+lE
-b6q1AQCfpbiZQ3YBX5RjN7wlBlTKoVIIWmi3jbLZIfwsLpbALQEAxjj7JrE5m2QB
-Ef3B/oTCkUaU5I9BTzF90EexiV0qAww=
-=mPYA
------END PGP SIGNATURE-----
-
---hguio7qt6czmuq3q--
