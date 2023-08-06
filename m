@@ -2,123 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B3626771618
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Aug 2023 18:41:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F683771656
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Aug 2023 19:49:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230419AbjHFQlQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Aug 2023 12:41:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38572 "EHLO
+        id S230124AbjHFRtf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Aug 2023 13:49:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230410AbjHFQlP (ORCPT
+        with ESMTP id S229558AbjHFRte (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Aug 2023 12:41:15 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21DF4BF
-        for <linux-fsdevel@vger.kernel.org>; Sun,  6 Aug 2023 09:41:14 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id 41be03b00d2f7-51f64817809so287185a12.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Aug 2023 09:41:14 -0700 (PDT)
+        Sun, 6 Aug 2023 13:49:34 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AD851716
+        for <linux-fsdevel@vger.kernel.org>; Sun,  6 Aug 2023 10:49:33 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4fe44955decso4593390e87.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Aug 2023 10:49:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691340073; x=1691944873;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Vnl3tBw3YI1niJ5TydLVcO6YxwztzFA4jbV40tVanFY=;
-        b=hh1zmX7NwxNZeOk99/85QYp6A6gNzoRJA6BoOUqiuIv51NGU0009x+CnUCHjWA5oBL
-         IyAZskuQyWj1tLZLI955AnGzmdfpwrGEtnC4kMtaav798hsW95tOJNi14FulJ5oOooV+
-         q5Z32wFlGQkP7jqNkwE4bGQ+WqmqkttGYhlAlabG9hULO7nBNK3nB9GjdUyHBqqz/hP7
-         LadFfeyKS4pDY4NYYYZGqVL9U8+Wbbx8uznKViieVNt7ayyFngQNMjurZVn5vr0L81cX
-         Y1amK1L7Uap0yJV54tr9qWQ6WRH4o5uYFhWar7o145uUpWnVhzWoSSd1Sx4Ni5palK8Y
-         2GYg==
+        d=linux-foundation.org; s=google; t=1691344171; x=1691948971;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5c+qcNDwemDSSTXvTKcISpxIGdg6gcplF2JUpghI6yw=;
+        b=Y7czYanOw1jkq3Ke+oPnYmgVSNNSvEHn0BW+Brrk87ZZffcwmvrJkbmXdkVgY6wVrG
+         w1rpUT/evg+p+4IcnUQuHWPAh9T0wLm67GRIRI2hg7SJJB1uoSwUOEipy3+0VNoD9aha
+         nqrFj4Vz98Nw5p7Z8hp/t38UB3bc21+NnTe3o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691340073; x=1691944873;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vnl3tBw3YI1niJ5TydLVcO6YxwztzFA4jbV40tVanFY=;
-        b=FCYDDy37M25h/Y851gFERsjbBF5QuJDi7FOmGQhrVujLvHlKNLfNeCcUc0GXjiw6vc
-         psMzWCKGMmIIowygqGa/UQJAQrv9KnVyTayz4SK+wUiv3j3aBaxVPx29DZR9e7LKMuNv
-         zD0baz1PEB8YYfOAUsuWGBE55HcioYwcYF63P7gkdoybfX3gJV5sN5YAEfxqEQu3EIxs
-         9waksdcp1kwD0Tl9QaxD9ktlBmeYKgjVFN5o1d2aYzjRsTZG/O93HcemZdk9h7Vo9I4Q
-         F5v0xS6IwHsB/GWUPljynnDN2o6iwKps9cFJ4KOFRX+FFYb01RljnKmsFLCUP65yRWMM
-         71/A==
-X-Gm-Message-State: ABy/qLYRblryk9ivg7VU9M7tI5ItJ37TvNgl6LszpYHnUfWmyv9nURFj
-        jtvNNFnDUQHFDbQhpJKF+d6AXA==
-X-Google-Smtp-Source: APBJJlHaJrhRit6lB72vyAi4XrYgFZt7u5QYVx4Pdd5tsa9Hkz7FagEU0t5nMFfGozR08NMf60pZrw==
-X-Received: by 2002:a17:90a:faf:b0:268:abc:83d5 with SMTP id 44-20020a17090a0faf00b002680abc83d5mr21967439pjz.4.1691340073398;
-        Sun, 06 Aug 2023 09:41:13 -0700 (PDT)
-Received: from [172.20.1.218] (071-095-160-189.biz.spectrum.com. [71.95.160.189])
-        by smtp.gmail.com with ESMTPSA id bf22-20020a17090b0b1600b00263987a50fcsm7198103pjb.22.2023.08.06.09.41.11
+        d=1e100.net; s=20221208; t=1691344171; x=1691948971;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5c+qcNDwemDSSTXvTKcISpxIGdg6gcplF2JUpghI6yw=;
+        b=Xlv49dl/Bn9mbiebU53gEkWambllP4SkJ1nWpm0n9ut0wielmo0sSNQdDZub+taJ1/
+         F5fgrCZ3agNRbyVJYti/AWMJeeoP+V3iO3VBld8oCDM8sknB1VfBwBl97NCK0+zWZy9X
+         z/+E1Ic/xJn8qVJHT5X0iZKv3VoRCDB4niKFDYjAEd9p8Cc9VYiVF3P3SO8ZF2YOMgeR
+         /Q2zUuVWxIwc18B42k9IrDy/CgtoFqZdCMrNpP/Yz4pBqSg7rKDFQqkXWgqP2hF8qBDd
+         DtXSDgwM7M+ZhnXICGJAGTtNeZvv6FNH0uaJ6IKvk6/DRzEpQTnEv9hzP1nwdCvjpEiH
+         4CqQ==
+X-Gm-Message-State: AOJu0YzVRI9Ex9t4VDwuzDrpp9B7OBNl5cknIBqMNHpEEIjG/mkjIrdR
+        CqKGsb4uVXz7ZgMD8ol2A33wrL0PmxuIqXTsi/G1qfBo
+X-Google-Smtp-Source: AGHT+IELN8Dwhp63ANQ37qMjUQYF1OUoqZUCW6aqUXj7/oII3ZiNznhfT+MrAEa2oaB9IHTqZCu6tA==
+X-Received: by 2002:a19:e044:0:b0:4f8:6e1a:f3ac with SMTP id g4-20020a19e044000000b004f86e1af3acmr1459987lfj.28.1691344171015;
+        Sun, 06 Aug 2023 10:49:31 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id p20-20020ac246d4000000b004fbf37b73ccsm1192416lfo.284.2023.08.06.10.49.30
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Aug 2023 09:41:12 -0700 (PDT)
-Message-ID: <3fab7978-3dca-a6a8-a908-e9f7d8100dda@kernel.dk>
-Date:   Sun, 6 Aug 2023 10:41:11 -0600
+        Sun, 06 Aug 2023 10:49:30 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-4fe55d70973so3977103e87.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Aug 2023 10:49:30 -0700 (PDT)
+X-Received: by 2002:a17:907:160e:b0:993:da5f:5a9b with SMTP id
+ hb14-20020a170907160e00b00993da5f5a9bmr6239608ejc.8.1691344149938; Sun, 06
+ Aug 2023 10:49:09 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Subject: Re: [PATCH v2 2/2] io_uring: correct check for O_TMPFILE
-Content-Language: en-US
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        io-uring@vger.kernel.org, stable@vger.kernel.org
-References: <20230806-resolve_cached-o_tmpfile-v2-0-058bff24fb16@cyphar.com>
- <20230806-resolve_cached-o_tmpfile-v2-2-058bff24fb16@cyphar.com>
- <41b5f092-5422-e461-b9bf-3a5a04c0b9e2@kernel.dk>
- <20230806.063800-dusky.orc.woody.spectrum-98W6qtUkFLgk@cyphar.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20230806.063800-dusky.orc.woody.spectrum-98W6qtUkFLgk@cyphar.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20230804-turnverein-helfer-ef07a4d7bbec@brauner>
+ <20230805-furor-angekauft-82e334fc83a3@brauner> <CAHk-=witxS+hfdFc+xJVpb9y-cE6vYopkDaZvvk=aXHcv-P5=w@mail.gmail.com>
+ <CAHk-=wiEzoh1gqfOp3DNTS9iPOxAWtS71qS0xv1XBziqGHGTwg@mail.gmail.com>
+ <20230806-mundwinkel-wenig-d1c9dcb2c595@brauner> <20230806-appell-heulen-61fc63545739@brauner>
+In-Reply-To: <20230806-appell-heulen-61fc63545739@brauner>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 6 Aug 2023 10:48:52 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whJtLkYwEFTS9LcRiMjSqq_xswDeXo7hYNWT0Em6nL4Sw@mail.gmail.com>
+Message-ID: <CAHk-=whJtLkYwEFTS9LcRiMjSqq_xswDeXo7hYNWT0Em6nL4Sw@mail.gmail.com>
+Subject: Re: [PATCH] file: always lock position
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mateusz Guzik <mjguzik@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Seth Forshee <sforshee@kernel.org>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/6/23 12:42?AM, Aleksa Sarai wrote:
-> On 2023-08-05, Jens Axboe <axboe@kernel.dk> wrote:
->> On 8/5/23 4:48?PM, Aleksa Sarai wrote:
->>> O_TMPFILE is actually __O_TMPFILE|O_DIRECTORY. This means that the old
->>> check for whether RESOLVE_CACHED can be used would incorrectly think
->>> that O_DIRECTORY could not be used with RESOLVE_CACHED.
->>>
->>> Cc: stable@vger.kernel.org # v5.12+
->>> Fixes: 3a81fd02045c ("io_uring: enable LOOKUP_CACHED path resolution for filename lookups")
->>> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
->>> ---
->>>  io_uring/openclose.c | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/io_uring/openclose.c b/io_uring/openclose.c
->>> index 10ca57f5bd24..a029c230119f 100644
->>> --- a/io_uring/openclose.c
->>> +++ b/io_uring/openclose.c
->>> @@ -35,9 +35,9 @@ static bool io_openat_force_async(struct io_open *open)
->>>  {
->>>  	/*
->>>  	 * Don't bother trying for O_TRUNC, O_CREAT, or O_TMPFILE open,
->>> -	 * it'll always -EAGAIN
->>> +	 * it'll always -EAGAIN.
->>
->> Please don't make this change, it just detracts from the actual change.
->> And if we are making changes in there, why not change O_TMPFILE as well
->> since this is what the change is about?
-> 
-> Userspace can't pass just __O_TMPFILE, so to me "__O_TMPFILE open"
-> sounds strange. The intention is to detect open(O_TMPFILE), it just so
-> happens that the correct check is __O_TMPFILE.
+On Sun, 6 Aug 2023 at 06:26, Christian Brauner <brauner@kernel.org> wrote:
+>
+> We got sent a fix for a wrong check for O_TMPFILE during RESOLVE_CACHED
+> lookup which I've put on vfs.fixes yesterday:
+>
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/v6.5-rc5.vfs.resolve_cached.fix
+>
+> But in case you planned on applying this directly instead of waiting for
+> next cycle I've added your two appended patches on top of it and my
+> earlier patch for massaging the file_needs_f_pos_lock() check that
+> triggered this whole thing:
+>
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/v6.5-rc5.vfs.fixes
 
-Right, but it's confusing now as the comment refers to O_TMPFILE but
-__O_TMPFILE is being used. I'd include a comment in there on why it's
-__O_TMPFILE and not O_TMPFILE, that's the interesting bit. As it stands,
-you'd read the comment and look at the code and need to figure that on
-your own. Hence it deserves a comment.
+I had actually planned on just waiting for the 6.6 merge window, but
+then you made this _so_ easy for me that I ended up taking these
+things right now.
 
--- 
-Jens Axboe
+The timing may not be entirely right, but I'm very comfortable with
+the "get rid of '->iterate' op" change since it (a) would clearly fail
+the build on a missed conversion and (b) doesn't touch any core
+filesystems anyway.
 
+And now that file_needs_f_pos_lock() does look better, and as you say
+in teh commit, makes it clearer why that locking rule exists.
+
+             Linus
+
+                     Linus
