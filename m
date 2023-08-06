@@ -2,180 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DA79D771516
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Aug 2023 14:45:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57754771540
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Aug 2023 15:26:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230136AbjHFMpv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Aug 2023 08:45:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34010 "EHLO
+        id S229804AbjHFN0B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Aug 2023 09:26:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229528AbjHFMpu (ORCPT
+        with ESMTP id S229456AbjHFN0B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Aug 2023 08:45:50 -0400
+        Sun, 6 Aug 2023 09:26:01 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 183E7E47;
-        Sun,  6 Aug 2023 05:45:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46A81B3;
+        Sun,  6 Aug 2023 06:26:00 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A0FEA610AA;
-        Sun,  6 Aug 2023 12:45:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 302AFC433C7;
-        Sun,  6 Aug 2023 12:45:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B9F7061138;
+        Sun,  6 Aug 2023 13:25:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0187C433C7;
+        Sun,  6 Aug 2023 13:25:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691325948;
-        bh=wXYWg26OzEPN2k/ZF3JgHRFogg3a61pPPpi9inOVm0Y=;
+        s=k20201202; t=1691328359;
+        bh=egMvoe6nYl3MirXCExFG7Mag+dF3/2MBUdh7Je7OQYY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tx0smzmfap8JWuh2SZ9JmhyGP1aSjTUCbKer+myYAxc9LGi8YZptXIxr9qyE965RE
-         ubARg98QO+oI84FfP2kWZwNqMooABOZ9r+nlA6U+wkeLYmfD6wgM0t0zi+nC74b5GR
-         vZZmMI7+IKKxCQ1sdGzSbEQzQVxtrhPC3SRgaVj+R6o8MFN36bf5kB2MGXt0A9KcGd
-         AJ4xpkm39pPw3QuGja99kp0sNJAUUGk+eQFCg6015bn1uW1+hKmtELU60Fb1e58Suw
-         lNrdwirRHXYFe6lVToMHh44PHxq4yMFnKxipckUoYNsipvbaGepjxKwWbE4gSibC7d
-         SROX5an+Cm3gQ==
-Date:   Sun, 6 Aug 2023 14:45:43 +0200
+        b=un5kdDEhIG5fw+14rCm5ojUSu9WW+0B248SGQZgCXBKTS3hZVPanAfptLuro2rYDU
+         GPmo+NtVIryg7BmN3OotP29tH81TIgztCcsKpme/fBGaA2UzdudQmK68P1HNd/4oE+
+         X6V3l9LD6IoCDhYyvFzvDmqzSD6b5dL7EPKm8G9lXhKNwB8SsiIcaosd/UgQNV7UjX
+         te+cISU3WNSPIg/G4rmO6wUEkQqBH0C3fAM0gXOnxre6eLhRO0Rqx+sd8W/rCWgoYs
+         aZN1iRsIxIMwyeZe5FQwNgQir48vskvlrifHORqOWXJjziR5vCglPcXAplfXE0PS7D
+         p84WbvKCqp7fQ==
+Date:   Sun, 6 Aug 2023 15:25:51 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Loic Poulain <loic.poulain@linaro.org>
-Cc:     viro@zeniv.linux.org.uk, corbet@lwn.net,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, hch@infradead.org,
-        rdunlap@infradead.org
-Subject: Re: [PATCH v3] init: Add support for rootwait timeout parameter
-Message-ID: <20230806-leibhaftig-deutung-dd4a6b01d038@brauner>
-References: <20230806101217.164068-1-loic.poulain@linaro.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mateusz Guzik <mjguzik@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Seth Forshee <sforshee@kernel.org>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] file: always lock position
+Message-ID: <20230806-appell-heulen-61fc63545739@brauner>
+References: <20230804-turnverein-helfer-ef07a4d7bbec@brauner>
+ <20230805-furor-angekauft-82e334fc83a3@brauner>
+ <CAHk-=witxS+hfdFc+xJVpb9y-cE6vYopkDaZvvk=aXHcv-P5=w@mail.gmail.com>
+ <CAHk-=wiEzoh1gqfOp3DNTS9iPOxAWtS71qS0xv1XBziqGHGTwg@mail.gmail.com>
+ <20230806-mundwinkel-wenig-d1c9dcb2c595@brauner>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230806101217.164068-1-loic.poulain@linaro.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230806-mundwinkel-wenig-d1c9dcb2c595@brauner>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 06, 2023 at 12:12:17PM +0200, Loic Poulain wrote:
-> Add an optional timeout arg to 'rootwait' as the maximum time in
-> seconds to wait for the root device to show up before attempting
-> forced mount of the root filesystem.
+On Sun, Aug 06, 2023 at 08:10:40AM +0200, Christian Brauner wrote:
+> > Yes, some filesystems then still get the inode lock in write mode, but
+> > now it's the filesystem itself that wraps its own iterator, rather
+> > than cause pain for the callers.
 > 
-> Use case:
-> In case of device mapper usage for the rootfs (e.g. root=/dev/dm-0),
-> if the mapper is not able to create the virtual block for any reason
-> (wrong arguments, bad dm-verity signature, etc), the `rootwait` param
-> causes the kernel to wait forever. It may however be desirable to only
-> wait for a given time and then panic (force mount) to cause device reset.
-> This gives the bootloader a chance to detect the problem and to take some
-> measures, such as marking the booted partition as bad (for A/B case) or
-> entering a recovery mode.
+> And, btrfs already does this in some cases where it first upgrades from
+> shared to non-shared and then downgrades again before returning in
+> btrfs_real_readdir(). So it's not like this isn't already happening.
 > 
-> In success case, mounting happens as soon as the root device is ready,
-> unlike the existing 'rootdelay' parameter which performs an unconditional
-> pause.
+> > 
+> > So no more "Do you have an ->iterate() _or_ ->iterate_shared()
+> > function?" and associated "I need to do locking differently"
+> > nastiness. Only odd filesystems that never got the memo on "don't use
+> > .iterate".
 > 
-> Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
-> ---
->  v2: rebase + reword: add use case example
->  v3: Use kstrtoint instead of deprecated simple_strtoul
+> Ack. It's not pretty but that hasn't stopped us before and it's less
+> ugly than double inode methods which pass exactly the same parameters. I
+> think removing the double methods is good and I see no problem in
+> shaming filesystems that didn't manage to convert properly in the last 7
+> years.
 > 
->  .../admin-guide/kernel-parameters.txt         |  4 ++++
->  init/do_mounts.c                              | 24 +++++++++++++++++--
->  2 files changed, 26 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index a1457995fd41..387cf9c2a2c5 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -5501,6 +5501,10 @@
->  			Useful for devices that are detected asynchronously
->  			(e.g. USB and MMC devices).
->  
-> +	rootwait=	[KNL] Maximum time (in seconds) to wait for root device
-> +			to show up before attempting to mount the root
-> +			filesystem.
-> +
->  	rproc_mem=nn[KMG][@address]
->  			[KNL,ARM,CMA] Remoteproc physical memory block.
->  			Memory area to be used by remote processor image,
-> diff --git a/init/do_mounts.c b/init/do_mounts.c
-> index 1aa015883519..98190bf34a9f 100644
-> --- a/init/do_mounts.c
-> +++ b/init/do_mounts.c
-> @@ -18,6 +18,7 @@
->  #include <linux/slab.h>
->  #include <linux/ramfs.h>
->  #include <linux/shmem_fs.h>
-> +#include <linux/ktime.h>
->  
->  #include <linux/nfs_fs.h>
->  #include <linux/nfs_fs_sb.h>
-> @@ -71,12 +72,25 @@ static int __init rootwait_setup(char *str)
->  {
->  	if (*str)
->  		return 0;
-> -	root_wait = 1;
-> +	root_wait = -1;
->  	return 1;
->  }
->  
->  __setup("rootwait", rootwait_setup);
->  
-> +static int __init rootwait_timeout_setup(char *str)
-> +{
-> +	if (kstrtoint(str, 0, &root_wait) || root_wait < 0) {
-> +		pr_warn("ignoring invalid rootwait value\n");
-> +		/* fallback to indefinite wait */
-> +		root_wait = -1;
-> +	}
-> +
-> +	return 1;
-> +}
-> +
-> +__setup("rootwait=", rootwait_timeout_setup);
-> +
->  static char * __initdata root_mount_data;
->  static int __init root_data_setup(char *str)
->  {
-> @@ -384,14 +398,20 @@ void __init mount_root(char *root_device_name)
->  /* wait for any asynchronous scanning to complete */
->  static void __init wait_for_root(char *root_device_name)
->  {
-> +	const ktime_t end = ktime_add_ms(ktime_get_raw(), root_wait * MSEC_PER_SEC);
+> And let's please not get stuck on incoming pinky promises that everyone
+> will have converted before the next 7 years are over. I'd prefer to see
+> the iop wiped and leave the ugliness to the individual filesystems rn.
 
-I'd only initialize @end after the ROOT_DEV check.
+We got sent a fix for a wrong check for O_TMPFILE during RESOLVE_CACHED
+lookup which I've put on vfs.fixes yesterday:
 
-Also, afaict, this currently allows userspace to overflow, i.e.,
+git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/v6.5-rc5.vfs.resolve_cached.fix
 
-root_wait=2147483647
+But in case you planned on applying this directly instead of waiting for
+next cycle I've added your two appended patches on top of it and my
+earlier patch for massaging the file_needs_f_pos_lock() check that
+triggered this whole thing:
 
-ktime_add_ms(..., root_wait(2147483647) * MSEC_PER_SEC(1000))
-
-So idk, you probably want to convert root_wait to ms right away and do
-sm like (completely untested):
-
-static int __init rootwait_timeout_setup(char *str)
-{
-	int ret, tmp;
-
-	THIS LINE WILL BREAK COMPILATION
-
-	if (*str)
-		return 0;
-
-	/* always fallback to indefinite wait */
-	root_wait = -1;
-
-	ret = kstrtoint(str, 0, &tmp));
-	if (ret || tmp < 0) {
-		pr_warn("ignoring invalid rootwait value\n");
-		return 1;
-	}
-
-	if (check_mul_overflow(tmp, MSEC_PER_SEC, &root_wait))
-		pr_warn("ignoring excessive rootwait value\n");
-
-	return 1;
-}
+git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/v6.5-rc5.vfs.fixes
