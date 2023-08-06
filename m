@@ -2,90 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F683771656
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Aug 2023 19:49:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA041771739
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 01:06:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230124AbjHFRtf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Aug 2023 13:49:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49576 "EHLO
+        id S230028AbjHFXGk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Aug 2023 19:06:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229558AbjHFRte (ORCPT
+        with ESMTP id S229636AbjHFXGj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Aug 2023 13:49:34 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AD851716
-        for <linux-fsdevel@vger.kernel.org>; Sun,  6 Aug 2023 10:49:33 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4fe44955decso4593390e87.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Aug 2023 10:49:32 -0700 (PDT)
+        Sun, 6 Aug 2023 19:06:39 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16B68170B;
+        Sun,  6 Aug 2023 16:06:37 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-5232bb5e47bso1538765a12.2;
+        Sun, 06 Aug 2023 16:06:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1691344171; x=1691948971;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5c+qcNDwemDSSTXvTKcISpxIGdg6gcplF2JUpghI6yw=;
-        b=Y7czYanOw1jkq3Ke+oPnYmgVSNNSvEHn0BW+Brrk87ZZffcwmvrJkbmXdkVgY6wVrG
-         w1rpUT/evg+p+4IcnUQuHWPAh9T0wLm67GRIRI2hg7SJJB1uoSwUOEipy3+0VNoD9aha
-         nqrFj4Vz98Nw5p7Z8hp/t38UB3bc21+NnTe3o=
+        d=gmail.com; s=20221208; t=1691363195; x=1691967995;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z8J7F1SfsLEfOh6WPX5WiVP+3zeSXbPu22MisWTehAY=;
+        b=p8xkpVlrnknOX+87xR9gI5+YHDKYnmAIKhj6ETtoRi79wcpnClkDtBc3CwRYecgZDJ
+         VOJFVOoJ2XdYR6wz6DuzCBbTLZLhwvYtvMEH+Xrel2GejbDmjxrieioB1Faf9V0jyIpv
+         YqHvx4Evye1rIgHrvc/4KkU23HUESqS7aWZL2qpzFMXs7UO+/5USbtPkkiz7dKRE7I9F
+         iLskvR6QG62c4H2lXajdMBSjvMqPgL6yl0xAFYoQdlzFoY+VVqkbfkUx99Ce2NCuecIC
+         ae0rZH7rcZo5x6+UhDLFKacCTZWb+qBNku3XngMadrgay2diZM5mlNoM2HfI7haASHav
+         Mn1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691344171; x=1691948971;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20221208; t=1691363195; x=1691967995;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5c+qcNDwemDSSTXvTKcISpxIGdg6gcplF2JUpghI6yw=;
-        b=Xlv49dl/Bn9mbiebU53gEkWambllP4SkJ1nWpm0n9ut0wielmo0sSNQdDZub+taJ1/
-         F5fgrCZ3agNRbyVJYti/AWMJeeoP+V3iO3VBld8oCDM8sknB1VfBwBl97NCK0+zWZy9X
-         z/+E1Ic/xJn8qVJHT5X0iZKv3VoRCDB4niKFDYjAEd9p8Cc9VYiVF3P3SO8ZF2YOMgeR
-         /Q2zUuVWxIwc18B42k9IrDy/CgtoFqZdCMrNpP/Yz4pBqSg7rKDFQqkXWgqP2hF8qBDd
-         DtXSDgwM7M+ZhnXICGJAGTtNeZvv6FNH0uaJ6IKvk6/DRzEpQTnEv9hzP1nwdCvjpEiH
-         4CqQ==
-X-Gm-Message-State: AOJu0YzVRI9Ex9t4VDwuzDrpp9B7OBNl5cknIBqMNHpEEIjG/mkjIrdR
-        CqKGsb4uVXz7ZgMD8ol2A33wrL0PmxuIqXTsi/G1qfBo
-X-Google-Smtp-Source: AGHT+IELN8Dwhp63ANQ37qMjUQYF1OUoqZUCW6aqUXj7/oII3ZiNznhfT+MrAEa2oaB9IHTqZCu6tA==
-X-Received: by 2002:a19:e044:0:b0:4f8:6e1a:f3ac with SMTP id g4-20020a19e044000000b004f86e1af3acmr1459987lfj.28.1691344171015;
-        Sun, 06 Aug 2023 10:49:31 -0700 (PDT)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id p20-20020ac246d4000000b004fbf37b73ccsm1192416lfo.284.2023.08.06.10.49.30
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Aug 2023 10:49:30 -0700 (PDT)
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-4fe55d70973so3977103e87.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Aug 2023 10:49:30 -0700 (PDT)
-X-Received: by 2002:a17:907:160e:b0:993:da5f:5a9b with SMTP id
- hb14-20020a170907160e00b00993da5f5a9bmr6239608ejc.8.1691344149938; Sun, 06
- Aug 2023 10:49:09 -0700 (PDT)
+        bh=z8J7F1SfsLEfOh6WPX5WiVP+3zeSXbPu22MisWTehAY=;
+        b=bQF2s1q58voa1EV/nXidToquDkwKfxIK+tlxRQdJZaLpPi7Be9cj/M0f5sSiIYfial
+         xudRgovX5AYvJcKJV8LiGjwrPC9jyAliTNLivpFLNTWy40JWeAIV03/L7JoJHTAMx3Eq
+         Uq2saHp+AKeVXmh7Us67TahrBAddaoEu5gkIrR8O755lqISt+K3MpbwIK2x1H3w1792d
+         /jED8tF5X19b0NaJXYc0WcPH9x/DQCn0yUjSnAiUs0sZjmJ2OixjVdkz5hUDBQ356/ad
+         T3oguJdMiQtL7PfkJQGgG4Ou0fag0UnDdg/SEvJQg6AY72CE7z+UJMib6Ihgh2c1VKDi
+         LxwQ==
+X-Gm-Message-State: AOJu0Yy6bGaK/PSMk0xygx+86VqSeopV3Nl2N67IU39pTE5hq9dwSNWn
+        kvFpV498bNjTfC3Q5++gWm0=
+X-Google-Smtp-Source: AGHT+IFVmOK2lJ8rZeCF0X7ktggRTxgho4SNARvwtY3ibO21kmSDTbHwsPzqbm+5V1i1vp1iZ6wO2Q==
+X-Received: by 2002:aa7:d284:0:b0:51e:53eb:88a3 with SMTP id w4-20020aa7d284000000b0051e53eb88a3mr5604490edq.25.1691363195313;
+        Sun, 06 Aug 2023 16:06:35 -0700 (PDT)
+Received: from f.. (cst-prg-21-219.cust.vodafone.cz. [46.135.21.219])
+        by smtp.gmail.com with ESMTPSA id x22-20020aa7cd96000000b0051e26c7a154sm4398501edv.18.2023.08.06.16.06.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Aug 2023 16:06:34 -0700 (PDT)
+From:   Mateusz Guzik <mjguzik@gmail.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        oleg@redhat.com, Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: use __fput_sync in close(2)
+Date:   Mon,  7 Aug 2023 01:06:27 +0200
+Message-Id: <20230806230627.1394689-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230804-turnverein-helfer-ef07a4d7bbec@brauner>
- <20230805-furor-angekauft-82e334fc83a3@brauner> <CAHk-=witxS+hfdFc+xJVpb9y-cE6vYopkDaZvvk=aXHcv-P5=w@mail.gmail.com>
- <CAHk-=wiEzoh1gqfOp3DNTS9iPOxAWtS71qS0xv1XBziqGHGTwg@mail.gmail.com>
- <20230806-mundwinkel-wenig-d1c9dcb2c595@brauner> <20230806-appell-heulen-61fc63545739@brauner>
-In-Reply-To: <20230806-appell-heulen-61fc63545739@brauner>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 6 Aug 2023 10:48:52 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whJtLkYwEFTS9LcRiMjSqq_xswDeXo7hYNWT0Em6nL4Sw@mail.gmail.com>
-Message-ID: <CAHk-=whJtLkYwEFTS9LcRiMjSqq_xswDeXo7hYNWT0Em6nL4Sw@mail.gmail.com>
-Subject: Re: [PATCH] file: always lock position
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mateusz Guzik <mjguzik@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Seth Forshee <sforshee@kernel.org>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=no
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -93,32 +69,212 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 6 Aug 2023 at 06:26, Christian Brauner <brauner@kernel.org> wrote:
->
-> We got sent a fix for a wrong check for O_TMPFILE during RESOLVE_CACHED
-> lookup which I've put on vfs.fixes yesterday:
->
-> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/v6.5-rc5.vfs.resolve_cached.fix
->
-> But in case you planned on applying this directly instead of waiting for
-> next cycle I've added your two appended patches on top of it and my
-> earlier patch for massaging the file_needs_f_pos_lock() check that
-> triggered this whole thing:
->
-> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/v6.5-rc5.vfs.fixes
+Making close(2) delegate fput finalization with task_work_add() runs
+into a slowdown (atomics needed to do it) which is artificially worsened
+in presence of rseq, which glibc blindly uses if present (and it is
+normally present) -- they added a user memory-touching handler into
+resume_user_mode_work(), where the thread leaving the kernel lands after
+issuing task_work_add() from fput(). Said touching requires a SMAP
+round-trip which is quite expensive and it always executes when landing
+in the resume routine.
 
-I had actually planned on just waiting for the 6.6 merge window, but
-then you made this _so_ easy for me that I ended up taking these
-things right now.
+I'm going to write a separate e-mail about the rseq problem later, but
+even if it gets sorted out there is still perf to gain (or rather,
+overhead to avoid).
 
-The timing may not be entirely right, but I'm very comfortable with
-the "get rid of '->iterate' op" change since it (a) would clearly fail
-the build on a missed conversion and (b) doesn't touch any core
-filesystems anyway.
+Numbers are below in the proposed patch, but tl;dr without CONFIG_RSEQ
+making things worse for the stock kernel I see about 7% increase in
+ops/s with open+close.
 
-And now that file_needs_f_pos_lock() does look better, and as you say
-in teh commit, makes it clearer why that locking rule exists.
+Searching mailing lists for discussions explaining why close(2) was not
+already doing this I found a patch with the easiest way out (call
+__fput_sync() in filp_close()):
+https://lore.kernel.org/all/20150831120525.GA31015@redhat.com/
 
-             Linus
+There was no response to it though.
 
-                     Linus
+From poking around there is tons of filp_close() users (including from
+close_fd()) and it is unclear to me if they are going to be fine with
+such a change.
+
+With the assumption this is not going to work, I wrote my own patch
+which adds close_fd_sync() and filp_close_sync().  They are shipped as
+dedicated func entry points, but perhaps inlines which internally add a
+flag to to the underlying routine would be preferred? Also adding __ in
+front would be in line with __fput_sync, but having __filp_close_sync
+call  __filp_close looks weird to me.
+
+All that said, if the simpler patch by Oleg Nestero works, then I'm
+happy to drop this one. I just would like to see this sorted out,
+whichever way.
+
+Thoughts?
+
+============================================================
+
+fs: use __fput_sync in close(2)
+
+close(2) is a special close which guarantees shallow kernel stack,
+making delegation to task_work machinery unnecessary. Said delegation is
+problematic as it involves atomic ops and interrupt masking trips, none
+of which are cheap on x86-64. Forcing close(2) to do it looks like an
+oversight in the original work.
+
+Moreover presence of CONFIG_RSEQ adds an additional overhead as fput()
+-> task_work_add(..., TWA_RESUME) -> set_notify_resume() makes the
+thread returning to userspace land in resume_user_mode_work(), where
+rseq_handle_notify_resume takes a SMAP round-trip if rseq is enabled for
+the thread (and it is by default with contemporary glibc).
+
+Sample result when benchmarking open1_processes -t 1 from will-it-scale
+(that's a open + close loop) + tmpfs on /tmp, running on the Sapphire
+Rapid CPU (ops/s):
+stock+RSEQ:	1329857
+stock-RSEQ:	1421667	(+7%)
+patched:	1523521 (+14.5% / +7%) (with / without rseq)
+
+Patched result is the same as it dodges rseq.
+
+As there are numerous close_fd() and filp_close() consumers which may or
+may not tolerate __fput_sync() behavior, dedicated routines are added
+for close(2).
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+ fs/file.c               | 20 +++++++++++++++++---
+ fs/file_table.c         |  2 --
+ fs/open.c               | 21 ++++++++++++++++++---
+ include/linux/fdtable.h |  1 +
+ include/linux/fs.h      |  1 +
+ 5 files changed, 37 insertions(+), 8 deletions(-)
+
+diff --git a/fs/file.c b/fs/file.c
+index 3fd003a8604f..eedb8a9fb6d2 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -651,7 +651,7 @@ static struct file *pick_file(struct files_struct *files, unsigned fd)
+ 	return file;
+ }
+ 
+-int close_fd(unsigned fd)
++static __always_inline int __close_fd(unsigned fd, bool sync)
+ {
+ 	struct files_struct *files = current->files;
+ 	struct file *file;
+@@ -662,9 +662,23 @@ int close_fd(unsigned fd)
+ 	if (!file)
+ 		return -EBADF;
+ 
+-	return filp_close(file, files);
++	if (sync)
++		return filp_close_sync(file, files);
++	else
++		return filp_close(file, files);
++}
++
++int close_fd_sync(unsigned fd)
++{
++	return __close_fd(fd, true);
++}
++EXPORT_SYMBOL(close_fd_sync); /* for ksys_close() */
++
++int close_fd(unsigned fd)
++{
++	return __close_fd(fd, false);
+ }
+-EXPORT_SYMBOL(close_fd); /* for ksys_close() */
++EXPORT_SYMBOL(close_fd);
+ 
+ /**
+  * last_fd - return last valid index into fd table
+diff --git a/fs/file_table.c b/fs/file_table.c
+index fc7d677ff5ad..c7b7fcd7a8b5 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -462,8 +462,6 @@ void fput(struct file *file)
+ void __fput_sync(struct file *file)
+ {
+ 	if (atomic_long_dec_and_test(&file->f_count)) {
+-		struct task_struct *task = current;
+-		BUG_ON(!(task->flags & PF_KTHREAD));
+ 		__fput(file);
+ 	}
+ }
+diff --git a/fs/open.c b/fs/open.c
+index e6ead0f19964..e5f03f891977 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1503,7 +1503,7 @@ SYSCALL_DEFINE2(creat, const char __user *, pathname, umode_t, mode)
+  * "id" is the POSIX thread ID. We use the
+  * files pointer for this..
+  */
+-int filp_close(struct file *filp, fl_owner_t id)
++static __always_inline int __filp_close(struct file *filp, fl_owner_t id, bool sync)
+ {
+ 	int retval = 0;
+ 
+@@ -1520,12 +1520,27 @@ int filp_close(struct file *filp, fl_owner_t id)
+ 		dnotify_flush(filp, id);
+ 		locks_remove_posix(filp, id);
+ 	}
+-	fput(filp);
++	if (sync)
++		__fput_sync(filp);
++	else
++		fput(filp);
+ 	return retval;
+ }
+ 
++int filp_close_sync(struct file *filp, fl_owner_t id)
++{
++	return __filp_close(filp, id, true);
++}
++EXPORT_SYMBOL(filp_close_sync);
++
++int filp_close(struct file *filp, fl_owner_t id)
++{
++	return __filp_close(filp, id, false);
++}
+ EXPORT_SYMBOL(filp_close);
+ 
++extern unsigned long sysctl_fput_sync;
++
+ /*
+  * Careful here! We test whether the file pointer is NULL before
+  * releasing the fd. This ensures that one clone task can't release
+@@ -1533,7 +1548,7 @@ EXPORT_SYMBOL(filp_close);
+  */
+ SYSCALL_DEFINE1(close, unsigned int, fd)
+ {
+-	int retval = close_fd(fd);
++	int retval = close_fd_sync(fd);
+ 
+ 	/* can't restart close syscall because file table entry was cleared */
+ 	if (unlikely(retval == -ERESTARTSYS ||
+diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
+index e066816f3519..dd3d0505d34b 100644
+--- a/include/linux/fdtable.h
++++ b/include/linux/fdtable.h
+@@ -123,6 +123,7 @@ int iterate_fd(struct files_struct *, unsigned,
+ 		int (*)(const void *, struct file *, unsigned),
+ 		const void *);
+ 
++extern int close_fd_sync(unsigned int fd);
+ extern int close_fd(unsigned int fd);
+ extern int __close_range(unsigned int fd, unsigned int max_fd, unsigned int flags);
+ extern struct file *close_fd_get_file(unsigned int fd);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 562f2623c9c9..300ce66eef0a 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2388,6 +2388,7 @@ static inline struct file *file_clone_open(struct file *file)
+ {
+ 	return dentry_open(&file->f_path, file->f_flags, file->f_cred);
+ }
++extern int filp_close_sync(struct file *, fl_owner_t id);
+ extern int filp_close(struct file *, fl_owner_t id);
+ 
+ extern struct filename *getname_flags(const char __user *, int, int *);
+-- 
+2.39.2
+
