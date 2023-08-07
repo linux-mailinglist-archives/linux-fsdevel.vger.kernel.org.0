@@ -2,182 +2,322 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E9AE771DDB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 12:21:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EDDD771E10
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 12:29:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231473AbjHGKVt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Aug 2023 06:21:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49898 "EHLO
+        id S231689AbjHGK3f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Aug 2023 06:29:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231269AbjHGKVn (ORCPT
+        with ESMTP id S231652AbjHGK3c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Aug 2023 06:21:43 -0400
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2075.outbound.protection.outlook.com [40.107.20.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F150710F7;
-        Mon,  7 Aug 2023 03:21:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Mrs6y9Ptah9WPIEcrIb0ZeASDoxywYFtpPwtKfqhMWE=;
- b=oQyNepHlSzcZkHsVl1gWTKObuR6WipAgDDDyaUwJjBOR5TvLMEJzz0NHus7CsbcjMobDo62Wi1+X58GzYj/qVIek0EQKSgLSIQxi5D3pS8Gtl997RYuBnTyyNQ/dBPybVU/12SuNTphNaWHyc3/6RB34oJwKGVqb8K4TtEJDAU8=
-Received: from DUZPR01CA0207.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b6::9) by AM0PR08MB5476.eurprd08.prod.outlook.com
- (2603:10a6:208:18d::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6652.26; Mon, 7 Aug
- 2023 10:21:26 +0000
-Received: from DBAEUR03FT064.eop-EUR03.prod.protection.outlook.com
- (2603:10a6:10:4b6:cafe::63) by DUZPR01CA0207.outlook.office365.com
- (2603:10a6:10:4b6::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6652.26 via Frontend
- Transport; Mon, 7 Aug 2023 10:21:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=armh.onmicrosoft.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
- pr=C
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- DBAEUR03FT064.mail.protection.outlook.com (100.127.143.3) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6678.15 via Frontend Transport; Mon, 7 Aug 2023 10:21:25 +0000
-Received: ("Tessian outbound f9124736ff4f:v145"); Mon, 07 Aug 2023 10:21:25 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: d6abb263343ff9e9
-X-CR-MTA-TID: 64aa7808
-Received: from 7876b55f53d8.2
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 9065A3D3-B4AC-44BB-8CEB-3887A004694F.1;
-        Mon, 07 Aug 2023 10:21:15 +0000
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 7876b55f53d8.2
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Mon, 07 Aug 2023 10:21:15 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WDVtEsOp0ZspyDEtXDuyt2lDuf5M3rqll2Hidi63YbB2TTEh4Vb/wasdd4uwIuPYy2q//Zf5O2L8DksZmVVpaN3VYLpZ5y54Z6Z4tXVZWReNB3xqmVnj0WVmW5Pw0Ubd5/o8DM+V9k7DFXiucOx9FpiSJTvjakD7vWRpUAMKMwkuaKJXRJjuj6T9OzKHZKy4h47bRrmOaykvGUCcI36hDW7A9QnjAPzzNXvF26QG/J+JI1zoXaWVTnkO7mEaKN/4NX2E5JfewoF94wtTtiIGgm3YYZTtuYCDWTo1+Hb+xYdCGcFKNJYVRJt0ZF6leXny8pNevr0kVY6BWAKXbukVyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Mrs6y9Ptah9WPIEcrIb0ZeASDoxywYFtpPwtKfqhMWE=;
- b=cMABMlLUSQEgcDRC48dwh12XE/QqL/SgrUWPWlNMDnISJYswVit6whfTZo4umx96pGT1DLzJxydfn9MrgyqmtXjNIm38FSbcQ86VNuxYuLHO2cXumpMRTO9tsbeiRE7DVFiE0AwkpF79HAeLS+vY846I2qltkFbwiX+OK8DMdNsTYw2/VCfjGzOp2I9NuHaYI+kHClPUtqmwqax9dgeFXGXahuBCFtCqvGnlK2kYbZbSWnJmedvXcvRWCXLmUwbXBDs/F3B41JLf1Q58FZoMyJfT8pQTu7pMQPaoSwkIavJOD4Dzht3PMVWC+/F1LyifYl9c3Nd0aKluTzOsZuKphw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Mrs6y9Ptah9WPIEcrIb0ZeASDoxywYFtpPwtKfqhMWE=;
- b=oQyNepHlSzcZkHsVl1gWTKObuR6WipAgDDDyaUwJjBOR5TvLMEJzz0NHus7CsbcjMobDo62Wi1+X58GzYj/qVIek0EQKSgLSIQxi5D3pS8Gtl997RYuBnTyyNQ/dBPybVU/12SuNTphNaWHyc3/6RB34oJwKGVqb8K4TtEJDAU8=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from DB9PR08MB7179.eurprd08.prod.outlook.com (2603:10a6:10:2cc::19)
- by AS8PR08MB10151.eurprd08.prod.outlook.com (2603:10a6:20b:628::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6652.26; Mon, 7 Aug
- 2023 10:21:12 +0000
-Received: from DB9PR08MB7179.eurprd08.prod.outlook.com
- ([fe80::adb0:61cb:8733:6db2]) by DB9PR08MB7179.eurprd08.prod.outlook.com
- ([fe80::adb0:61cb:8733:6db2%7]) with mapi id 15.20.6652.026; Mon, 7 Aug 2023
- 10:21:12 +0000
-Date:   Mon, 7 Aug 2023 11:20:58 +0100
-From:   Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-        Deepak Gupta <debug@rivosinc.com>,
-        Ard Biesheuvel <ardb@kernel.org>
-Cc:     "H.J. Lu" <hjl.tools@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 21/36] arm64/mm: Implement map_shadow_stack()
-Message-ID: <ZNDFioFIM34VcsuV@arm.com>
-References: <20230731-arm64-gcs-v3-0-cddf9f980d98@kernel.org>
- <20230731-arm64-gcs-v3-21-cddf9f980d98@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230731-arm64-gcs-v3-21-cddf9f980d98@kernel.org>
-X-ClientProxiedBy: LO6P123CA0017.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:313::7) To DB9PR08MB7179.eurprd08.prod.outlook.com
- (2603:10a6:10:2cc::19)
+        Mon, 7 Aug 2023 06:29:32 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B97BF1711
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Aug 2023 03:28:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1691404123;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=XN5gC0ZQhXU2kLFdzGcj+W8wiDigmtGB2Pp+bBDFoSU=;
+        b=IbPXGQaRk3R24zeDqbVpBvBMxgLdmFNhZkEikNiNQXEB8DkJVR4Z0bwEQntjBLoPsrdum2
+        kgFHEjr9W4RWyTuQq3JoTdJWnPkRNv4pXK1pclRkofqveDFgYwZQ03ST933qLOnKvQBwl1
+        3rGSDomu786rQHq7BvC6VmlAAqDHsdM=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-614-xUc3GhC-OdWlWU_q4XIE_g-1; Mon, 07 Aug 2023 06:28:42 -0400
+X-MC-Unique: xUc3GhC-OdWlWU_q4XIE_g-1
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-55c04f5827eso2823726a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Aug 2023 03:28:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691404121; x=1692008921;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XN5gC0ZQhXU2kLFdzGcj+W8wiDigmtGB2Pp+bBDFoSU=;
+        b=iujyrLvfEXTAjMGnzgwurl5EGoSMABm4CT5kEZVd6I8Zf4cAL7/ePMm7jNG38lr0G8
+         lVele91uQXxBh52yrZy2bc1g1zG1vieKNgKnxs/FSx/fDtpUyng3L0ipBUGwA6STQA/j
+         oqPaAH2hJb1pSXMoP1xz7Uzlfda3md1sEI1b4IBxxi2yUVu5Rv4x7SQvo1wwqw1zrDrk
+         wJPqTqFIsTVAbJmRHLJpEQvRaU0vgKaPkl8dgcN+0pXHHcuryVXXmOLo/vpI4xMl18fM
+         jB33SIkJaSJfQRIldw2fUGaHJeuCBYQr9WodRDn4XtbPrd3tkeYsgr6x4tfcTXFRWFP1
+         j/CQ==
+X-Gm-Message-State: AOJu0YwuF4J1kuDaELvI2JJn1zgrIAiI4W4aVHFxpZ5RzufiaeSn8FAm
+        P+1kD8cRMstEwrWeJLBFU6CBsVCt0oDACfauIKSLlL2pzgbLXRUUVo2jLbKw336oNLih/8mMPT9
+        k3N3er3vZNQP3mGtjd+nygHTgVQ==
+X-Received: by 2002:a05:6a20:440f:b0:13e:6447:ce45 with SMTP id ce15-20020a056a20440f00b0013e6447ce45mr11316168pzb.43.1691404121365;
+        Mon, 07 Aug 2023 03:28:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEqZ5UzWbNU/K0Wn3ZoOZbyQXnqktfWrcWflO+hgiN2LZKzJ57Xe0+YfWE1WaTxMokIQPfo1w==
+X-Received: by 2002:a05:6a20:440f:b0:13e:6447:ce45 with SMTP id ce15-20020a056a20440f00b0013e6447ce45mr11316143pzb.43.1691404120950;
+        Mon, 07 Aug 2023 03:28:40 -0700 (PDT)
+Received: from [10.72.112.77] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id b14-20020aa7870e000000b00687790191a2sm5850320pfo.58.2023.08.07.03.28.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Aug 2023 03:28:40 -0700 (PDT)
+Message-ID: <d119ef88-d827-5e8d-13e3-74ddfea61d7f@redhat.com>
+Date:   Mon, 7 Aug 2023 18:28:35 +0800
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic: DB9PR08MB7179:EE_|AS8PR08MB10151:EE_|DBAEUR03FT064:EE_|AM0PR08MB5476:EE_
-X-MS-Office365-Filtering-Correlation-Id: c72431a3-cfbc-4efc-6995-08db97300e62
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: CTRobn5o9nqHHhogJ7n8JBCHnbaaCwFAgnJ1NMXylevQ6J4xtiPtYYyAvqQCiRG/rMlJ5OGosHgNx6zVzMwOE46qZ6ysELCvpfVTxVKI1xYrVYjM0IjDYfsk6TgFFehNoHe/t03778ZtffFy70hdIXk24wXL+PjrFtjJ3LowlG4JD/wySKmJEJVAKC98NbAh453Eibky/SExOELBrzoGxTMT+XVxAbd02vXqLgI5+tsYi3uFU0BRQb7ZSPZvdnRI4dtqKL9+o2uuSLJUgRCDAJL0h4+3c+M+7pNhdxAVhRgU9yVxRCFLa2uIMJCHgqeKrxwqfqIS2Mu3zGMjkvOA3K6t91e/JDGg8wMRn+Kv2nf0KnOp6hu/WDAy0d4wASwNbeeGZyQpFEVYjQrLwD0U7heWx8BRW1wYJh4Z9RWpXMhlvskb8YMl6zabT/a8WF7kOSwHpD3T55kjTUbnbogY+Ly3nKfeigmXV8nLWBAeC0I0gBaTk4pbdxXkHfZ4lFfpkdjzK6KRyuGI8pt6altuAOvwyl6w/FHbUmeF8WgNdp+JlfSFwdYFG8kILSugIySaEpx71QCDaSX4CZoZeM3U9KIzZdTbB2XIZT2ceyeX4W0=
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR08MB7179.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(346002)(366004)(39860400002)(376002)(136003)(451199021)(1800799003)(186006)(6512007)(26005)(6506007)(36756003)(110136005)(54906003)(38100700002)(5660300002)(7416002)(86362001)(4744005)(4326008)(2906002)(66476007)(66556008)(66946007)(41300700001)(316002)(8936002)(8676002)(6666004)(478600001)(921005)(2616005)(6486002);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB10151
-Original-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: DBAEUR03FT064.eop-EUR03.prod.protection.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs: fbe038b5-8ae4-4c9f-ce87-08db973005e5
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 0OnYTicc3g4QWAuhipwb+rvZ5MWFXP01n2gRK2Pp0c5XxDTbHCDOdp0FWwXzbdPXHU5zVsCLgv2X7wFit5mYHNGjLH2cRYGjb9YsPg9kBA3ith650XlJJwi/uM1//1wpFJnks7XWXdvBYbQXvK6LSXeT5rsQtV3J3qZBx4yFYdVOK4NcCyq0dmi6VvTCfTDZKIBdJ4jhPLfeUwnDnBztfnIXUu2A/SRR/9MRrvKGwefvRlAjOCAEktd/PW37hPT11oDkU+AewDiseglQTS1ol2lz16/GWa8pAp2sGMxvGXzcyKx3Wvvp7b8FBa4HlBaeYEIkdS6mTDC4/idKt3a2NAirnyJqb1r3O7ntTvTI59pzQr2VYtyuiZbdjgc5mV5OHTSBT+IGmxJTTI7MNrptiA4bFrQ25MBA5l1OalfL9RNzO6yOZhdvq0qi8IiE+Kk3c45dD+plxxuSY3GI3XscDL00QUxvtrpbyZme7SDXE9cwHmlKIYkRG0onEtMgVDgaU2DWzcYeBZN8wcMVjCH+G9a+bbMumEeCS2rkUd8i9NTPlZ4aKIOnVQYTFzi7Z9/kcFLCCpnipBHdGxhOUNQl+RQCB2MyRRn1d9scjluyt4Qtqrlucp4qvt3TyTtROHgaCY8hTWF69JXLH2AacJD9990Dgv25fLMxmxXsyilHhpYmESPvf5CVCa6t+jGT3xTtXnKTJSCXzwHxY/mCkvYuoHzuKcQJRgb9dxkBBj2i8cQM0kvHP/15KdtVjlkTaZ77
-X-Forefront-Antispam-Report: CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230028)(4636009)(396003)(39860400002)(376002)(136003)(346002)(451199021)(82310400008)(1800799003)(186006)(46966006)(36840700001)(40470700004)(6512007)(40480700001)(26005)(6506007)(107886003)(40460700003)(36756003)(54906003)(110136005)(5660300002)(86362001)(4744005)(4326008)(2906002)(450100002)(70206006)(70586007)(41300700001)(8936002)(8676002)(316002)(6666004)(921005)(356005)(478600001)(81166007)(82740400003)(2616005)(47076005)(36860700001)(6486002)(336012);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2023 10:21:25.7205
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c72431a3-cfbc-4efc-6995-08db97300e62
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource: DBAEUR03FT064.eop-EUR03.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB5476
-X-Spam-Status: No, score=-0.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,FORGED_SPF_HELO,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_PASS,SPF_NONE,UNPARSEABLE_RELAY autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v9 03/12] ceph: handle idmapped mounts in
+ create_request_message()
+Content-Language: en-US
+To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc:     brauner@kernel.org, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230804084858.126104-1-aleksandr.mikhalitsyn@canonical.com>
+ <20230804084858.126104-4-aleksandr.mikhalitsyn@canonical.com>
+ <8446e5c9-7dd7-a1e9-e262-13811ee9e640@redhat.com>
+ <CAEivzxedfaD7cPfQ-sspJabw_P6zSJtOrbiAGYN35LGXPoSwcg@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <CAEivzxedfaD7cPfQ-sspJabw_P6zSJtOrbiAGYN35LGXPoSwcg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The 07/31/2023 14:43, Mark Brown wrote:
-> +SYSCALL_DEFINE3(map_shadow_stack, unsigned long, addr, unsigned long, size, unsigned int, flags)
-> +{
-> +	unsigned long alloc_size;
-> +	unsigned long __user *cap_ptr;
-> +	unsigned long cap_val;
-> +	int ret;
-> +
-> +	if (!system_supports_gcs())
-> +		return -EOPNOTSUPP;
-> +
-> +	if (flags)
-> +		return -EINVAL;
-> +
-> +	if (addr % 16)
-> +		return -EINVAL;
 
-mmap addr must be page aligned (and there is no align req on size).
+On 8/7/23 14:51, Aleksandr Mikhalitsyn wrote:
+> On Mon, Aug 7, 2023 at 3:25 AM Xiubo Li <xiubli@redhat.com> wrote:
+>>
+>> On 8/4/23 16:48, Alexander Mikhalitsyn wrote:
+>>> From: Christian Brauner <brauner@kernel.org>
+>>>
+>>> Inode operations that create a new filesystem object such as ->mknod,
+>>> ->create, ->mkdir() and others don't take a {g,u}id argument explicitly.
+>>> Instead the caller's fs{g,u}id is used for the {g,u}id of the new
+>>> filesystem object.
+>>>
+>>> In order to ensure that the correct {g,u}id is used map the caller's
+>>> fs{g,u}id for creation requests. This doesn't require complex changes.
+>>> It suffices to pass in the relevant idmapping recorded in the request
+>>> message. If this request message was triggered from an inode operation
+>>> that creates filesystem objects it will have passed down the relevant
+>>> idmaping. If this is a request message that was triggered from an inode
+>>> operation that doens't need to take idmappings into account the initial
+>>> idmapping is passed down which is an identity mapping.
+>>>
+>>> This change uses a new cephfs protocol extension CEPHFS_FEATURE_HAS_OWNER_UIDGID
+>>> which adds two new fields (owner_{u,g}id) to the request head structure.
+>>> So, we need to ensure that MDS supports it otherwise we need to fail
+>>> any IO that comes through an idmapped mount because we can't process it
+>>> in a proper way. MDS server without such an extension will use caller_{u,g}id
+>>> fields to set a new inode owner UID/GID which is incorrect because caller_{u,g}id
+>>> values are unmapped. At the same time we can't map these fields with an
+>>> idmapping as it can break UID/GID-based permission checks logic on the
+>>> MDS side. This problem was described with a lot of details at [1], [2].
+>>>
+>>> [1] https://lore.kernel.org/lkml/CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThfzuibrhA3RKM=ZOYLg@mail.gmail.com/
+>>> [2] https://lore.kernel.org/all/20220104140414.155198-3-brauner@kernel.org/
+>>>
+>>> Link: https://github.com/ceph/ceph/pull/52575
+>>> Link: https://tracker.ceph.com/issues/62217
+>>> Cc: Xiubo Li <xiubli@redhat.com>
+>>> Cc: Jeff Layton <jlayton@kernel.org>
+>>> Cc: Ilya Dryomov <idryomov@gmail.com>
+>>> Cc: ceph-devel@vger.kernel.org
+>>> Co-Developed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+>>> Signed-off-by: Christian Brauner <brauner@kernel.org>
+>>> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+>>> ---
+>>> v7:
+>>>        - reworked to use two new fields for owner UID/GID (https://github.com/ceph/ceph/pull/52575)
+>>> v8:
+>>>        - properly handled case when old MDS used with new kernel client
+>>> ---
+>>>    fs/ceph/mds_client.c         | 47 +++++++++++++++++++++++++++++++++---
+>>>    fs/ceph/mds_client.h         |  5 +++-
+>>>    include/linux/ceph/ceph_fs.h |  5 +++-
+>>>    3 files changed, 52 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+>>> index 8829f55103da..41e4bf3811c4 100644
+>>> --- a/fs/ceph/mds_client.c
+>>> +++ b/fs/ceph/mds_client.c
+>>> @@ -2902,6 +2902,17 @@ static void encode_mclientrequest_tail(void **p, const struct ceph_mds_request *
+>>>        }
+>>>    }
+>>>
+>>> +static inline u16 mds_supported_head_version(struct ceph_mds_session *session)
+>>> +{
+>>> +     if (!test_bit(CEPHFS_FEATURE_32BITS_RETRY_FWD, &session->s_features))
+>>> +             return 1;
+>>> +
+>>> +     if (!test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID, &session->s_features))
+>>> +             return 2;
+>>> +
+>>> +     return CEPH_MDS_REQUEST_HEAD_VERSION;
+>>> +}
+>>> +
+>>>    static struct ceph_mds_request_head_legacy *
+>>>    find_legacy_request_head(void *p, u64 features)
+>>>    {
+>>> @@ -2923,6 +2934,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>>>    {
+>>>        int mds = session->s_mds;
+>>>        struct ceph_mds_client *mdsc = session->s_mdsc;
+>>> +     struct ceph_client *cl = mdsc->fsc->client;
+>>>        struct ceph_msg *msg;
+>>>        struct ceph_mds_request_head_legacy *lhead;
+>>>        const char *path1 = NULL;
+>>> @@ -2936,7 +2948,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>>>        void *p, *end;
+>>>        int ret;
+>>>        bool legacy = !(session->s_con.peer_features & CEPH_FEATURE_FS_BTIME);
+>>> -     bool old_version = !test_bit(CEPHFS_FEATURE_32BITS_RETRY_FWD, &session->s_features);
+>>> +     u16 request_head_version = mds_supported_head_version(session);
+>>>
+>>>        ret = set_request_path_attr(mdsc, req->r_inode, req->r_dentry,
+>>>                              req->r_parent, req->r_path1, req->r_ino1.ino,
+>>> @@ -2977,8 +2989,10 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>>>         */
+>>>        if (legacy)
+>>>                len = sizeof(struct ceph_mds_request_head_legacy);
+>>> -     else if (old_version)
+>>> +     else if (request_head_version == 1)
+>>>                len = sizeof(struct ceph_mds_request_head_old);
+>>> +     else if (request_head_version == 2)
+>>> +             len = offsetofend(struct ceph_mds_request_head, ext_num_fwd);
+>>>        else
+>>>                len = sizeof(struct ceph_mds_request_head);
+>>>
+>>> @@ -3028,6 +3042,16 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>>>        lhead = find_legacy_request_head(msg->front.iov_base,
+>>>                                         session->s_con.peer_features);
+>>>
+>>> +     if ((req->r_mnt_idmap != &nop_mnt_idmap) &&
+>>> +         !test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID, &session->s_features)) {
+>>> +             pr_err_ratelimited_client(cl,
+>>> +                     "idmapped mount is used and CEPHFS_FEATURE_HAS_OWNER_UIDGID"
+>>> +                     " is not supported by MDS. Fail request with -EIO.\n");
+>>> +
+>>> +             ret = -EIO;
+>>> +             goto out_err;
+>>> +     }
+>>> +
+>>>        /*
+>>>         * The ceph_mds_request_head_legacy didn't contain a version field, and
+>>>         * one was added when we moved the message version from 3->4.
+>>> @@ -3035,17 +3059,34 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+>>>        if (legacy) {
+>>>                msg->hdr.version = cpu_to_le16(3);
+>>>                p = msg->front.iov_base + sizeof(*lhead);
+>>> -     } else if (old_version) {
+>>> +     } else if (request_head_version == 1) {
+>>>                struct ceph_mds_request_head_old *ohead = msg->front.iov_base;
+>>>
+>>>                msg->hdr.version = cpu_to_le16(4);
+>>>                ohead->version = cpu_to_le16(1);
+>>>                p = msg->front.iov_base + sizeof(*ohead);
+>>> +     } else if (request_head_version == 2) {
+>>> +             struct ceph_mds_request_head *nhead = msg->front.iov_base;
+>>> +
+>>> +             msg->hdr.version = cpu_to_le16(6);
+>>> +             nhead->version = cpu_to_le16(2);
+>>> +
+>>> +             p = msg->front.iov_base + offsetofend(struct ceph_mds_request_head, ext_num_fwd);
+>>>        } else {
+>>>                struct ceph_mds_request_head *nhead = msg->front.iov_base;
+>>> +             kuid_t owner_fsuid;
+>>> +             kgid_t owner_fsgid;
+>>>
+>>>                msg->hdr.version = cpu_to_le16(6);
+>>>                nhead->version = cpu_to_le16(CEPH_MDS_REQUEST_HEAD_VERSION);
+>>> +             nhead->struct_len = sizeof(struct ceph_mds_request_head);
+>>> +
+>>> +             owner_fsuid = from_vfsuid(req->r_mnt_idmap, &init_user_ns,
+>>> +                                       VFSUIDT_INIT(req->r_cred->fsuid));
+>>> +             owner_fsgid = from_vfsgid(req->r_mnt_idmap, &init_user_ns,
+>>> +                                       VFSGIDT_INIT(req->r_cred->fsgid));
+>>> +             nhead->owner_uid = cpu_to_le32(from_kuid(&init_user_ns, owner_fsuid));
+>>> +             nhead->owner_gid = cpu_to_le32(from_kgid(&init_user_ns, owner_fsgid));
+>>>                p = msg->front.iov_base + sizeof(*nhead);
+>>>        }
+>>>
+>>> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+>>> index e3bbf3ba8ee8..8f683e8203bd 100644
+>>> --- a/fs/ceph/mds_client.h
+>>> +++ b/fs/ceph/mds_client.h
+>>> @@ -33,8 +33,10 @@ enum ceph_feature_type {
+>>>        CEPHFS_FEATURE_NOTIFY_SESSION_STATE,
+>>>        CEPHFS_FEATURE_OP_GETVXATTR,
+>>>        CEPHFS_FEATURE_32BITS_RETRY_FWD,
+>>> +     CEPHFS_FEATURE_NEW_SNAPREALM_INFO,
+>>> +     CEPHFS_FEATURE_HAS_OWNER_UIDGID,
+>>>
+>>> -     CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_32BITS_RETRY_FWD,
+>>> +     CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_HAS_OWNER_UIDGID,
+>>>    };
+>>>
+>>>    #define CEPHFS_FEATURES_CLIENT_SUPPORTED {  \
+>>> @@ -49,6 +51,7 @@ enum ceph_feature_type {
+>>>        CEPHFS_FEATURE_NOTIFY_SESSION_STATE,    \
+>>>        CEPHFS_FEATURE_OP_GETVXATTR,            \
+>>>        CEPHFS_FEATURE_32BITS_RETRY_FWD,        \
+>>> +     CEPHFS_FEATURE_HAS_OWNER_UIDGID,        \
+>>>    }
+>>>
+>>>    /*
+>>> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+>>> index 5f2301ee88bc..b91699b08f26 100644
+>>> --- a/include/linux/ceph/ceph_fs.h
+>>> +++ b/include/linux/ceph/ceph_fs.h
+>>> @@ -499,7 +499,7 @@ struct ceph_mds_request_head_legacy {
+>>>        union ceph_mds_request_args args;
+>>>    } __attribute__ ((packed));
+>>>
+>>> -#define CEPH_MDS_REQUEST_HEAD_VERSION  2
+>>> +#define CEPH_MDS_REQUEST_HEAD_VERSION  3
+>>>
+>>>    struct ceph_mds_request_head_old {
+>>>        __le16 version;                /* struct version */
+>>> @@ -530,6 +530,9 @@ struct ceph_mds_request_head {
+>>>
+>>>        __le32 ext_num_retry;          /* new count retry attempts */
+>>>        __le32 ext_num_fwd;            /* new count fwd attempts */
+>>> +
+>>> +     __le32 struct_len;             /* to store size of struct ceph_mds_request_head */
+>>> +     __le32 owner_uid, owner_gid;   /* used for OPs which create inodes */
+>> Let's also initialize them to -1 for all the other requests as we do in
+>> your PR.
+> They are always initialized already. As you can see from the code we
+> don't have any extra conditions
+> on filling these fields. We always fill them with an appropriate
+> UID/GID. If mount is not idmapped then it's just == caller_uid/gid,
+> if mount idmapped then it's idmapped caller_uid/gid.
 
-i'd expect similar api here.
+Then in kclient all the request will always initialized the 
+'owner_{uid/gid}' with 'caller_{uid/gid}'. While in userspace libcephfs 
+it will only set them for 'create/mknod/mkdir/symlink` instead.
 
-> +
-> +	if (size == 16 || size % 16)
-> +		return -EINVAL;
+I'd prefer to make them consistent, which is what I am still focusing 
+on, to make them easier to read and comparing when troubles hooting.
 
-why %16 and not %8 ?
+Thanks
+
+- Xiubo
+
+> Kind regards,
+> Alex
+>
+>> Thanks
+>>
+>> - Xiubo
+>>
+>>
+>>
+>>>    } __attribute__ ((packed));
+>>>
+>>>    /* cap/lease release record */
+
