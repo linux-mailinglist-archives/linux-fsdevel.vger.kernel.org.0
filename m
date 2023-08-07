@@ -2,201 +2,291 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C887977332D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 01:01:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7801773494
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 01:09:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229470AbjHGXBc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Aug 2023 19:01:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40308 "EHLO
+        id S229481AbjHGXJB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Aug 2023 19:09:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229828AbjHGXBa (ORCPT
+        with ESMTP id S231760AbjHGXI2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Aug 2023 19:01:30 -0400
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2045.outbound.protection.outlook.com [40.107.101.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B33F810F0;
-        Mon,  7 Aug 2023 16:01:28 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=U73Tcyfbb2gyurNSag4bgajgzTsYBUGmWlB/lKM1NjBSO9pPds9sE3LBPrI7Y/0K/B7n72PoULiGyleqiWoEo2W1lEE3FiLn9VAwJYpZM3nLhsQumrhDCGv3n9fqUOqshxt6vhyA2oGus7QBXTS6Lw+lkKYNAOhP+Fn2yJ0u0IRI1VyYzfqXIr+FmvueWWEtDrL8zlEBFBYgj+D0P9GMLz6Dph4DYhL0i58cB/tDkKpCzmdR9uEyCNn53XeTaDRQIP/CUY36hF6M38RJJEJvUywjDgkR8DKHSWIVJei3gMz/ac+ah4dCFE/E8ZKSPKm6EMNgldWmLY7MalPeoLlFuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xLy79+XZzmn72G/Xf34Csuf9oxbRxlXMpXnm0uCCGD4=;
- b=Y9VGWz8SIn6g7cXaKJcHeduq//edCmZB9poieF0LJ90WJsTnRyFu0AAHshzTkk4Wu0TFWyssPlK4pMFdknoS68L2mH8k0HxQRIGh4+oDE/V54ul9FFDKLI69Sfn43Wf49+ON+VOMsn96iuPZe0mfbXRtZXKQ67U/Paq8zvKDMAcB2WYKU6UJDN6WCahjZq6s2BsjINm1N8+qnptnw5lOArsOPKy0L4MLMyLPzLmQ/1DyhsGfVNyTF+xV/nSeFnhZOBad+q+aqgL4fHt0b9mM7ylkem+AT7ECjKs1fYj55CXIpI1isdv2X0xChxpN2r5le9wS3HohwdvIRa0LnNxZ+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xLy79+XZzmn72G/Xf34Csuf9oxbRxlXMpXnm0uCCGD4=;
- b=TWnfktaEFzIzq+tH5hVIzd+EsFkJSTXIpTGTJb736Q92Aut492bQ54c/8GTIhsMU48SJwzu0dk6Wd+K9ARkgFI6SV5E6z5qm/3POPTcENiSEDZwHNmdYOsNR8grUW90r1/l/YehIrmgx2kZni+Uvf/E1hYLcm5t/QtCKK2eMC4g=
-Received: from BL1PR12MB5144.namprd12.prod.outlook.com (2603:10b6:208:316::6)
- by MN0PR12MB5954.namprd12.prod.outlook.com (2603:10b6:208:37d::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.47; Mon, 7 Aug
- 2023 23:01:22 +0000
-Received: from BL1PR12MB5144.namprd12.prod.outlook.com
- ([fe80::bcfa:7757:68bd:f905]) by BL1PR12MB5144.namprd12.prod.outlook.com
- ([fe80::bcfa:7757:68bd:f905%5]) with mapi id 15.20.6652.026; Mon, 7 Aug 2023
- 23:01:26 +0000
-From:   "Deucher, Alexander" <Alexander.Deucher@amd.com>
-To:     Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>
-CC:     "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        Christian Brauner <christian@brauner.io>,
-        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Zhang, Hawking" <Hawking.Zhang@amd.com>,
-        Harry Pan <harry.pan@intel.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Subject: RE: ksys_sync_helper
-Thread-Topic: ksys_sync_helper
-Thread-Index: AQHZw3+H8Y9jcJgF9UOuhI7iy4bjF6/UMkWAgAEXZwCAABhSgIAKF+3g
-Date:   Mon, 7 Aug 2023 23:01:25 +0000
-Message-ID: <BL1PR12MB514488C022435B4090B72D3BF70CA@BL1PR12MB5144.namprd12.prod.outlook.com>
-References: <ZMdgxYPPRYFipu1e@infradead.org>
- <e1aef4d4-b6fb-46ca-f11b-08b3e5eea27d@intel.com>
- <ZMjnZhbKbNMmcUPN@infradead.org> <ZMj7zTwPw/qi/bNw@casper.infradead.org>
-In-Reply-To: <ZMj7zTwPw/qi/bNw@casper.infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_d4243a53-6221-4f75-8154-e4b33a5707a1_ActionId=1a418b82-b739-4131-9694-0c9f74dbb058;MSIP_Label_d4243a53-6221-4f75-8154-e4b33a5707a1_ContentBits=0;MSIP_Label_d4243a53-6221-4f75-8154-e4b33a5707a1_Enabled=true;MSIP_Label_d4243a53-6221-4f75-8154-e4b33a5707a1_Method=Privileged;MSIP_Label_d4243a53-6221-4f75-8154-e4b33a5707a1_Name=Public-AIP
- 2.0;MSIP_Label_d4243a53-6221-4f75-8154-e4b33a5707a1_SetDate=2023-08-07T22:42:44Z;MSIP_Label_d4243a53-6221-4f75-8154-e4b33a5707a1_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR12MB5144:EE_|MN0PR12MB5954:EE_
-x-ms-office365-filtering-correlation-id: eb00c3d5-fae0-4f45-438c-08db979a3a35
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Jq9fMA3iYivrlUL4ZrUDY5cEL2SPX9PvkgL/BnisRbrNGbkdL7V2lq6QBpvAU/E5nmTohRriCTM/JCyOgd9uTeTpN6kLDSw0/etWlCEVfyNulNY2zIpZDP+f1KVNsz2SUImg4Utz559f9hxKwRpy7HUoVN0F35Cd7WcpJxs2FM9VQ3m3H7+ab5LMl//9BVyPqFqsnjMzDl8ylucV70tp3wnAGY0Bxbj+7dVMk6+jIn628k0ArkaxXuclq+m8buIga4JwNdXsPfxXHrFnet6zBV84bjb50wHTgZMknOrR3HnT4N2hg1Qvzx5xx8X7YaL9X/DsfQlS3xHJwI8lwTnmxvtAlqCzVcHbEwdIjnNo0yrft62m6FuV7ocEnvNS39impHJ7i0c0DAZlHGpFCtTDm0bMOhPyz/0Y1ICZQs0Gphe3v8G7UNgOB6XgxExokALcVdJpMfcPBJFF2NP4glHx9GdT1HF2yqNQPs9Z7MTbtAwTbXvR+FSF24zqrRmNIljWr0VvTJM02h6HwEUH/eaP1ScWOmitYHRj0gJ/zulwX3pLN17mLoj/PvTJ2btFIeVdxC1+ubClqoNm8koZ1FvaIM6nQpoX6gJ3teQgAg9nXGCuztR6CVKTvEe5aXNgA2f/vZeGsvbWeejYOcVJY4H5iw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5144.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(366004)(39860400002)(376002)(396003)(346002)(1800799003)(186006)(90011799006)(451199021)(83380400001)(55016003)(110136005)(54906003)(2906002)(4326008)(316002)(5660300002)(8936002)(7116003)(38070700005)(52536014)(8676002)(66946007)(76116006)(66446008)(64756008)(66556008)(66476007)(38100700002)(86362001)(478600001)(33656002)(7696005)(122000001)(9686003)(71200400001)(41300700001)(6506007)(26005)(53546011);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?tbZkbm1gF3v57qHHuh62drecohJ94npfT8eag6GU+piuWNjhh38axBRb5AU8?=
- =?us-ascii?Q?IizrF6d91W7C82dSuG3WDHIkjaKGII1Q/49zodNjA+4Vh/WNZ0K4ztNibeCW?=
- =?us-ascii?Q?ljGiMV0hYhzzvGDvlghvVmg4vOcz3UnUjuuKx2b5LdiElPJHDMV2qjwBsCcv?=
- =?us-ascii?Q?r/+nr9Cx70vx4+7L3oaG6NQc5EK81U7Z+yrL3L1oa01jSOJBIwD7FLIx9wr6?=
- =?us-ascii?Q?b/FH/CPZ8bYOAJTsvijhbECP5Qjj5oMB62h8F5UFrZ8NE5j0IaDz/HakCAIX?=
- =?us-ascii?Q?UJ0eaVmckx/xlx0p5q1Dnf8jdVO4HhQd34V8YMuGiju0QpdAM6WED900E2vV?=
- =?us-ascii?Q?qwZ83Gq43xp+PVUTCg0RMgg0EiY2Q3xqnVJBi66AnFAK3alCBu0ueqOEQ00J?=
- =?us-ascii?Q?ZjHt8GczLBzcv3bsaj0WB9oSfDPvLNyYuALaF2veDX1DNR6q3S//+ScXmNZc?=
- =?us-ascii?Q?CWD7VS4id+8k8AM5VsjX8aYcxqGXfR9TuBXuNLJ1lcPorvlH1eXay42ZjA8l?=
- =?us-ascii?Q?YoT9bF9Q9aZ+uFdSfPXTUvoOeAvzXp2y5Cbz4n7719HexB7JCOS5ZmwEtVeu?=
- =?us-ascii?Q?P+QrJI6PFCEVzib1XFIHYLgZ0eq1RrS6br0I9ngIVcsOltA73zzhkWrKtiwv?=
- =?us-ascii?Q?UGisXjlUfmjrvzHwt0K8vN+pk5LpStxD66LfrP79EF1WsscdWBdsypejwUf9?=
- =?us-ascii?Q?FDvJKT2mjES4Qhrqh6b3Sf3R22WYd1AVmvgEMvzNIruVCJBsa2AOX+MHFZ3K?=
- =?us-ascii?Q?i6+vmzyUvoOwkJKKjaC9pHbXGd17h9cwI+kZ3wuVmTPYq1YiPp3xU49naoKU?=
- =?us-ascii?Q?v4V01ku1PDHqCoIiGsbyjAVi+5BDKE/NrNigZwlQLn6e5V3ZoPpGf7EjMISc?=
- =?us-ascii?Q?Fa5iLvepz2c2i2ZOlH1W30Yo8NGnLjm/NVm/bAHeK8wXOzn82ZCtgBp6bvsG?=
- =?us-ascii?Q?4okJOkbhbubAjl8QqGAya1AO3WO08jksrlkwhrrT7X9XEGqoy86QZy03svsH?=
- =?us-ascii?Q?MQjYAZcdTsUJUEvqfIgVaScicdUqqZWsmZPr+jxhfMep1ttLMbjwC86SK2ag?=
- =?us-ascii?Q?8OCdjZUE5w/RYfXrJWcyWo9qaKFtPMYOtyr3sRlX6HpQijiR58vJiK3Mmfzm?=
- =?us-ascii?Q?WLT82pxqEjpNDZHLfZ4nhSHGca8tnOxLh+FIdeguQLiYb7BQPs/MFythYPXf?=
- =?us-ascii?Q?aqq80Vyz0nqOQpdmCZcxg5+c8SR6Fih0/b2IwzTUEE+EXxhSP0rLXZDJB+PG?=
- =?us-ascii?Q?VriPD0Ha6HhWs4m6R+i2cJJ5qG3ROMbPgpbD/OjJnN2j8olTjXF5HuZey1uN?=
- =?us-ascii?Q?xY/TrBompdAi/U00MQwHCWWzGFBiJO7QcNMaUL4+pP6wVX1WBohu/YZAL8qX?=
- =?us-ascii?Q?IwJwNoNNc5iadrCsVLu5MqJaQQ/c8vZeaZP8xgnZ39h94lBAql0Wi3uJnmfR?=
- =?us-ascii?Q?K9PEt4hxkbSk8vh+xkR34iR+pzr4Z8NH7dfX1dlpxW0vK7MGIMuPue3tJ92N?=
- =?us-ascii?Q?DkAuW3y+sYo3pUsIpotx+LwwWReMBQ9Cf95S6pAiS73mrKtR8fkv/aBiKEPC?=
- =?us-ascii?Q?1BW8kxMlUU3APj/gjiQ=3D?=
-Content-Type: text/plain; charset="us-ascii"
+        Mon, 7 Aug 2023 19:08:28 -0400
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0F8330E6
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Aug 2023 16:07:09 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-58667d06607so43983707b3.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Aug 2023 16:07:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1691449607; x=1692054407;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h7A5aUX2ecj7Bbl/7ce/OdAJyafyQZh2jovAmUQfIOU=;
+        b=BwuvQdbCy2eUR+bp2NSDknEVbKVENYiDa6uZlyXUwJVmlF4iKp7HjX09JvbwikelLF
+         rKNAwCIOjLOCd9hfp54t7rYGOQkDWMmLVeB7tC4wNPL/xp+tqM5HxKngfQKLrmiljVMH
+         iSIS4pBQ45QD1qQyRXNJtH27IiaYgguvgYTqI/+bBLhU+TqFpp7Sutp2QK2jo2kiAyxG
+         IG//K3Uxz4ck43yxOcKsJnHFISIoIpmEz14csW59Ae6FEeel85qKxKoUZusz6vFuY6is
+         pXI++E1KnyDArrSs+pWezCptJywjGpfbd67K7HxwhlAzqazZgZUp2EXPv3WY6f0/mDR8
+         iGnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691449607; x=1692054407;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=h7A5aUX2ecj7Bbl/7ce/OdAJyafyQZh2jovAmUQfIOU=;
+        b=AJetc3I8Cf+kVpp5vtsxxNwnIf7ZJr/WXuS0l8kmJEV01CdZrdiKW3opuV7h2dTJlc
+         qn7CSsrVFdqNtZIAERg6a+jRyTTydBjwz7Duha6o6XqhH2k/Lug9cgw0LUSzzWNkx/Q4
+         p8FzV2dmnA7OTLbVxq7ILretplrCuzayWblFIJ5hVBXvmkm2NaeVIlibT1OIqOMRrYlZ
+         JWoFLyrhxX01EDy+yyn/WaVjNpHy5AhXwT7ssFHkjDjAuhfTcNBJjpjPgTnIHCDbNv3U
+         5MamMLFb5IYepebJRoEyYuPTQSFyXm2OW4EvukJl96I/2HGveToTCj6+S01M22tWm3DD
+         8Pxg==
+X-Gm-Message-State: AOJu0Ywi21p4s5jCM+xowhjqixSHBiBiVkxYF76Vyvtf1hOvSm+RRI+t
+        CzQs0w6GxtK0DNe+/UOExXbN65CscDaAWOTUzA==
+X-Google-Smtp-Source: AGHT+IGQixIKGybe4T+GVPibQ4+cbo9epXOA0dv0EjBAf7syaC6i5AoszZ6gyEUK9SdsuOsgoX+oe0ThmUR8eGJG6g==
+X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
+ (user=ackerleytng job=sendgmr) by 2002:a25:dbcf:0:b0:d01:60ec:d0e with SMTP
+ id g198-20020a25dbcf000000b00d0160ec0d0emr68969ybf.9.1691449607047; Mon, 07
+ Aug 2023 16:06:47 -0700 (PDT)
+Date:   Mon, 07 Aug 2023 23:06:45 +0000
+In-Reply-To: <20230718234512.1690985-13-seanjc@google.com> (message from Sean
+ Christopherson on Tue, 18 Jul 2023 16:44:55 -0700)
+Mime-Version: 1.0
+Message-ID: <diqzv8dq3116.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+From:   Ackerley Tng <ackerleytng@google.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     pbonzini@redhat.com, maz@kernel.org, oliver.upton@linux.dev,
+        chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, seanjc@google.com, willy@infradead.org,
+        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
+        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
+        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
+        david@redhat.com, qperret@google.com, michael.roth@amd.com,
+        wei.w.wang@intel.com, liam.merwick@oracle.com,
+        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5144.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb00c3d5-fae0-4f45-438c-08db979a3a35
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2023 23:01:25.9817
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: YlaP+jWmz8q8lXbeUIU4hoCZ1WYQuZKslmGG2+JvPAbmOrdaVv/u8hWvvwU/Oo473aKzpJ+KySWL911/DrmCfw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5954
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE
-        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[Public]
+Sean Christopherson <seanjc@google.com> writes:
 
-> -----Original Message-----
-> From: Matthew Wilcox <willy@infradead.org>
-> Sent: Tuesday, August 1, 2023 8:34 AM
-> To: Christoph Hellwig <hch@infradead.org>
-> Cc: Wysocki, Rafael J <rafael.j.wysocki@intel.com>; Christian Brauner
-> <christian@brauner.io>; Andrey Grodzovsky <andrey.grodzovsky@amd.com>;
-> linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org; Deucher,
-> Alexander <Alexander.Deucher@amd.com>; Zhang, Hawking
-> <Hawking.Zhang@amd.com>; Harry Pan <harry.pan@intel.com>; linux-
-> pm@vger.kernel.org
-> Subject: Re: ksys_sync_helper
->
-> On Tue, Aug 01, 2023 at 04:07:18AM -0700, Christoph Hellwig wrote:
-> > On Mon, Jul 31, 2023 at 08:27:17PM +0200, Wysocki, Rafael J wrote:
-> > >
-> > > OK, I'll remember about this.
-> > >
-> > >
-> > > > With this
-> > > > and commit d5ea093eebf022e now we end up with a random driver
-> > > > (amdgpu) syncing all file systems for absolutely no good reason.
-> > >
-> > > Sorry about that.
-> > >
-> > > The problematic commit should still revert more or less cleanly, so
-> > > please do that if that's what you need.
-> >
-> > We'd still need to remove abuse in amdgpu first, though.
->
-> This would effectively revert d5ea093eebf0
->
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> index dc0e5227119b..af04fece37d5 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> @@ -75,7 +75,6 @@
->  #include "amdgpu_fru_eeprom.h"
->  #include "amdgpu_reset.h"
->
-> -#include <linux/suspend.h>
->  #include <drm/task_barrier.h>
->  #include <linux/pm_runtime.h>
->
-> @@ -5225,17 +5224,6 @@ int amdgpu_device_gpu_recover(struct
-> amdgpu_device *adev,
->        */
->       need_emergency_restart =3D
-> amdgpu_ras_need_emergency_restart(adev);
->
-> -     /*
-> -      * Flush RAM to disk so that after reboot
-> -      * the user can read log and see why the system rebooted.
-> -      */
-> -     if (need_emergency_restart && amdgpu_ras_get_context(adev)-
-> >reboot) {
-> -             DRM_WARN("Emergency reboot.");
-> -
-> -             ksys_sync_helper();
-> -             emergency_restart();
-> -     }
-> -
+>   <snip>
 
-Was on PTO last week.  I think we can drop this.  Will try and send out a p=
-atch this week to clean this up.
+> +static int kvm_gmem_release(struct inode *inode, struct file *file)
+> +{
+> +	struct kvm_gmem *gmem =3D file->private_data;
+> +	struct kvm_memory_slot *slot;
+> +	struct kvm *kvm =3D gmem->kvm;
+> +	unsigned long index;
+> +
+> +	filemap_invalidate_lock(inode->i_mapping);
+> +
+> +	/*
+> +	 * Prevent concurrent attempts to *unbind* a memslot.  This is the last
+> +	 * reference to the file and thus no new bindings can be created, but
+> +	 * dereferencing the slot for existing bindings needs to be protected
+> +	 * against memslot updates, specifically so that unbind doesn't race
+> +	 * and free the memslot (kvm_gmem_get_file() will return NULL).
+> +	 */
+> +	mutex_lock(&kvm->slots_lock);
+> +
+> +	xa_for_each(&gmem->bindings, index, slot)
+> +		rcu_assign_pointer(slot->gmem.file, NULL);
+> +
+> +	synchronize_rcu();
+> +
+> +	/*
+> +	 * All in-flight operations are gone and new bindings can be created.
+> +	 * Zap all SPTEs pointed at by this file.  Do not free the backing
+> +	 * memory, as its lifetime is associated with the inode, not the file.
+> +	 */
+> +	kvm_gmem_invalidate_begin(gmem, 0, -1ul);
+> +	kvm_gmem_invalidate_end(gmem, 0, -1ul);
+> +
+> +	mutex_unlock(&kvm->slots_lock);
+> +
+> +	list_del(&gmem->entry);
+> +
+> +	filemap_invalidate_unlock(inode->i_mapping);
+> +
+> +	xa_destroy(&gmem->bindings);
+> +	kfree(gmem);
+> +
+> +	kvm_put_kvm(kvm);
+> +
+> +	return 0;
+> +}
+> +
 
-Alex
+> <snip>
 
->       dev_info(adev->dev, "GPU %s begin!\n",
->               need_emergency_restart ? "jobs stop":"reset");
->
+> +
+> +int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
+> +		  unsigned int fd, loff_t offset)
+> +{
+> +	loff_t size =3D slot->npages << PAGE_SHIFT;
+> +	unsigned long start, end, flags;
+> +	struct kvm_gmem *gmem;
+> +	struct inode *inode;
+> +	struct file *file;
+> +
+> +	BUILD_BUG_ON(sizeof(gfn_t) !=3D sizeof(slot->gmem.pgoff));
+> +
+> +	file =3D fget(fd);
+> +	if (!file)
+> +		return -EINVAL;
+> +
+> +	if (file->f_op !=3D &kvm_gmem_fops)
+> +		goto err;
+> +
+> +	gmem =3D file->private_data;
+> +	if (gmem->kvm !=3D kvm)
+> +		goto err;
+> +
+> +	inode =3D file_inode(file);
+> +	flags =3D (unsigned long)inode->i_private;
+> +
+> +	/*
+> +	 * For simplicity, require the offset into the file and the size of the
+> +	 * memslot to be aligned to the largest possible page size used to back
+> +	 * the file (same as the size of the file itself).
+> +	 */
+> +	if (!kvm_gmem_is_valid_size(offset, flags) ||
+> +	    !kvm_gmem_is_valid_size(size, flags))
+> +		goto err;
+> +
+> +	if (offset + size > i_size_read(inode))
+> +		goto err;
+> +
+> +	filemap_invalidate_lock(inode->i_mapping);
+> +
+> +	start =3D offset >> PAGE_SHIFT;
+> +	end =3D start + slot->npages;
+> +
+> +	if (!xa_empty(&gmem->bindings) &&
+> +	    xa_find(&gmem->bindings, &start, end - 1, XA_PRESENT)) {
+> +		filemap_invalidate_unlock(inode->i_mapping);
+> +		goto err;
+> +	}
+> +
+> +	/*
+> +	 * No synchronize_rcu() needed, any in-flight readers are guaranteed to
+> +	 * be see either a NULL file or this new file, no need for them to go
+> +	 * away.
+> +	 */
+> +	rcu_assign_pointer(slot->gmem.file, file);
+> +	slot->gmem.pgoff =3D start;
+> +
+> +	xa_store_range(&gmem->bindings, start, end - 1, slot, GFP_KERNEL);
+> +	filemap_invalidate_unlock(inode->i_mapping);
+> +
+> +	/*
+> +	 * Drop the reference to the file, even on success.  The file pins KVM,
+> +	 * not the other way 'round.  Active bindings are invalidated if the
+> +	 * file is closed before memslots are destroyed.
+> +	 */
+> +	fput(file);
+> +	return 0;
+> +
+> +err:
+> +	fput(file);
+> +	return -EINVAL;
+> +}
+> +
+
+I=E2=80=99d like to propose an alternative to the refcounting approach betw=
+een
+the gmem file and associated kvm, where we think of KVM=E2=80=99s memslots =
+as
+users of the gmem file.
+
+Instead of having the gmem file pin the VM (i.e. take a refcount on
+kvm), we could let memslot take a refcount on the gmem file when the
+memslots are configured.
+
+Here=E2=80=99s a POC patch that flips the refcounting (and modified selftes=
+ts in
+the next commit):
+https://github.com/googleprodkernel/linux-cc/commit/7f487b029b89b9f3e9b094a=
+721bc0772f3c8c797
+
+One side effect of having the gmem file pin the VM is that now the gmem
+file becomes sort of a false handle on the VM:
+
++ Closing the file destroys the file pointers in the VM and invalidates
+  the pointers
++ Keeping the file open keeps the VM around in the kernel even though
+  the VM fd may already be closed.
+
+I feel that memslots form a natural way of managing usage of the gmem
+file. When a memslot is created, it is using the file; hence we take a
+refcount on the gmem file, and as memslots are removed, we drop
+refcounts on the gmem file.
+
+The KVM pointer is shared among all the bindings in gmem=E2=80=99s xarray, =
+and we can enforce that a gmem file is used only with one VM:
+
++ When binding a memslot to the file, if a kvm pointer exists, it must
+  be the same kvm as the one in this binding
++ When the binding to the last memslot is removed from a file, NULL the
+  kvm pointer.
+
+When the VM is freed, KVM will iterate over all the memslots, removing
+them one at a time and eventually NULLing the kvm pointer.
+
+I believe the =E2=80=9CKVM=E2=80=99s memslots using the file=E2=80=9D appro=
+ach is also simpler
+because all accesses to the bindings xarray and kvm pointer can be
+serialized using filemap_invalidate_lock(), and we are already using
+this lock regardless of refcounting approach. This serialization means
+we don=E2=80=99t need to use RCU on file/kvm pointers since accesses are al=
+ready
+serialized.
+
+There=E2=80=99s also no need to specially clean up the associated KVM when =
+the
+file reference close, because by the time the .release() handler is
+called, any file references held by memslots would have been dropped,
+and so the bindings would have been removed, and the kvm pointer would
+have been NULLed out.
+
+The corollary to this approach is that at creation time, the file won=E2=80=
+=99t
+be associated with any kvm, and we can use a system ioctl instead of a
+VM-specific ioctl as Fuad brought up [1] (Association with kvm before
+the file is used with memslots is possible would mean more tracking so
+that kvm can close associated files when it is closed.)
+
+One reason for binding gmem files to a specific VM on creation is to
+allow (in future) a primary VM to control permissions on the memory for
+other files [2]. This permission control can still be enforced with the
+=E2=80=9CKVM=E2=80=99s memslots using the file=E2=80=9D approach. The enfor=
+cement rules will
+just be delayed till the first binding between a VM and a gmem file.
+
+Could binding gmem files not on creation, but at memslot configuration
+time be sufficient and simpler?
+
+[1] https://lore.kernel.org/lkml/CA+EHjTzP2fypgkJbRpSPrKaWytW7v8ANEifofMnQC=
+kdvYaX6Eg@mail.gmail.com/
+[2] https://lore.kernel.org/lkml/ZMKlo+Fe8n%2FeLQ82@google.com/
+
+> <snip>
