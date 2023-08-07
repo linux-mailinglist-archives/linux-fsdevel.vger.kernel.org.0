@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CDF52772239
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 13:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA67B77223B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 13:30:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232481AbjHGLai (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Aug 2023 07:30:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35488 "EHLO
+        id S232087AbjHGLak (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Aug 2023 07:30:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232727AbjHGLaZ (ORCPT
+        with ESMTP id S232735AbjHGLaZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 7 Aug 2023 07:30:25 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7966610C6;
-        Mon,  7 Aug 2023 04:27:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 113D959DC;
+        Mon,  7 Aug 2023 04:27:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=/Zn3NpNJWq/hZ5prwh3EWG/jr2VOTrVu8Gph2i+fSUQ=; b=1hOyzHBDzvjoL9S9paVvMSG/Ev
-        86tUyqf5KZEiWSRo8pRl7Qzrf9SVzlA6JoV3gOzYsKNh8QFyAoG7vVUqGGbDG5b/D9IJOvN4wtryF
-        OmwL71CG+z8jKK65wWU6RHq5k6lQ1ZOMxyoDiTRlnHl3JP/poDNyeJp+0s3UxHnG7HKXgGwker+qY
-        CTe+ZQLc8WRFoLmGkpk+5/Y5tEk90PxlZNQWRLfsLuVx1KlS1q/6bIDCWx85dMi3S4g/S+/Y7mT3U
-        jqn9PMlWI1dj+mK97db0zfvhLZEPFSz1Ipf+ZClZ5m9Ss/fN4s8EdfFhIwHjiSwMkPHLsEuNpmpkM
-        OkdQPMpA==;
+        bh=Ky+k0g+J5564niq+DKuVc0tR1t2yylRBRhDkAPI/eLw=; b=AbDWfoXa1Rrr6yaRZ2JfglBrWC
+        74h77GUxINqS1IYkil/0bfIDp00HdT4F+eW0qd4qC9R3LM+VJWT6ZHcOqg/sa8G+cqIxB5Ci481y9
+        wgowCTHq4ZgvtfAeS+qRHHotyF+JVrgJMF68lYpO65FcWVr/rUSchVJeOlyV2CEtJ03abCRkk9oFW
+        b5x+qwDsaNSS6EIAnqlJHdZUDctX9Hb5ghAC08WPISbqK8qv0qdoLKrB6PUzSxDyrmmMLMfAG38Ry
+        fEIHvnddFad4vKve5/58yzndhEB4WzjhqhegDMmq+eYdx6+xHDVfgdXOCgiFokaLhMld51XLKe4Tp
+        9CzCPr6Q==;
 Received: from [82.33.212.90] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1qSyNn-00H58p-3C;
-        Mon, 07 Aug 2023 11:26:44 +0000
+        id 1qSyNq-00H59J-02;
+        Mon, 07 Aug 2023 11:26:46 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>
@@ -40,9 +40,9 @@ Cc:     "Theodore Ts'o" <tytso@mit.edu>,
         Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
         linux-ext4@vger.kernel.org, ocfs2-devel@lists.linux.dev,
         linux-block@vger.kernel.org
-Subject: [PATCH 2/4] ext4: don't use bdev->bd_super in __ext4_journal_get_write_access
-Date:   Mon,  7 Aug 2023 12:26:23 +0100
-Message-Id: <20230807112625.652089-3-hch@lst.de>
+Subject: [PATCH 3/4] ocfs2: stop using bdev->bd_super for journal error logging
+Date:   Mon,  7 Aug 2023 12:26:24 +0100
+Message-Id: <20230807112625.652089-4-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230807112625.652089-1-hch@lst.de>
 References: <20230807112625.652089-1-hch@lst.de>
@@ -59,29 +59,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-__ext4_journal_get_write_access already has a super_block available,
-and there is no need to go from that to the bdev to go back to the
-owning super_block.
+All ocfs2 journal error handling and logging is based on buffer_heads,
+and the owning inode and thus super_block can be retrieved through
+bh->b_assoc_map->host.  Switch to using that to remove the last users
+of bdev->bd_super.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/ext4/ext4_jbd2.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/ocfs2/journal.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ext4/ext4_jbd2.c b/fs/ext4/ext4_jbd2.c
-index 77f318ec8abb78..b38d59581411c0 100644
---- a/fs/ext4/ext4_jbd2.c
-+++ b/fs/ext4/ext4_jbd2.c
-@@ -234,8 +234,7 @@ int __ext4_journal_get_write_access(const char *where, unsigned int line,
+diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
+index 25d8072ccfce46..c19c730c26e270 100644
+--- a/fs/ocfs2/journal.c
++++ b/fs/ocfs2/journal.c
+@@ -557,7 +557,7 @@ static void ocfs2_abort_trigger(struct jbd2_buffer_trigger_type *triggers,
+ 	     (unsigned long)bh,
+ 	     (unsigned long long)bh->b_blocknr);
  
- 	might_sleep();
+-	ocfs2_error(bh->b_bdev->bd_super,
++	ocfs2_error(bh->b_assoc_map->host->i_sb,
+ 		    "JBD2 has aborted our journal, ocfs2 cannot continue\n");
+ }
  
--	if (bh->b_bdev->bd_super)
--		ext4_check_bdev_write_error(bh->b_bdev->bd_super);
-+	ext4_check_bdev_write_error(sb);
+@@ -780,14 +780,14 @@ void ocfs2_journal_dirty(handle_t *handle, struct buffer_head *bh)
+ 		mlog_errno(status);
+ 		if (!is_handle_aborted(handle)) {
+ 			journal_t *journal = handle->h_transaction->t_journal;
+-			struct super_block *sb = bh->b_bdev->bd_super;
  
- 	if (ext4_handle_valid(handle)) {
- 		err = jbd2_journal_get_write_access(handle, bh);
+ 			mlog(ML_ERROR, "jbd2_journal_dirty_metadata failed. "
+ 					"Aborting transaction and journal.\n");
+ 			handle->h_err = status;
+ 			jbd2_journal_abort_handle(handle);
+ 			jbd2_journal_abort(journal, status);
+-			ocfs2_abort(sb, "Journal already aborted.\n");
++			ocfs2_abort(bh->b_assoc_map->host->i_sb,
++				    "Journal already aborted.\n");
+ 		}
+ 	}
+ }
 -- 
 2.39.2
 
