@@ -2,47 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E5A24772FB7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 21:45:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73C5D772F53
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 21:40:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231199AbjHGTpf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Aug 2023 15:45:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37512 "EHLO
+        id S229971AbjHGTkr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Aug 2023 15:40:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230364AbjHGTpZ (ORCPT
+        with ESMTP id S229458AbjHGTkp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Aug 2023 15:45:25 -0400
+        Mon, 7 Aug 2023 15:40:45 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74D591FC7;
-        Mon,  7 Aug 2023 12:45:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54F0E1BF4;
+        Mon,  7 Aug 2023 12:40:08 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 353A9621C1;
-        Mon,  7 Aug 2023 19:38:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 054D5C433C7;
-        Mon,  7 Aug 2023 19:38:38 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D100F621CE;
+        Mon,  7 Aug 2023 19:38:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC784C0760F;
+        Mon,  7 Aug 2023 19:38:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691437125;
-        bh=9NJxICXmYLBXPMfC64XdrCwzqAF8iKfLe8/dZ5HUTCM=;
-        h=From:Subject:Date:To:Cc:From;
-        b=qVA0Ix0lBGcrjnJMlaHoGn+dmPVHJcXPNwPRNVYPTUHaY6qqAw93e+HMLjVLlc3Ja
-         IhWApauDUcVfJmEKAxeUufIWqAFry217pjJdec6Gnx5t1+ywYk3pNZ8WXdPlRwKNOd
-         OSlQaHVYM2YnEQ+qBkyv9bQY+28OOz6U5Y/c45rbeadHiicXNG4D8cy/yMF2ZxGYQT
-         WF+CZGWrnkMTatxkmUPRWrUl37dNWDGAI5WHVIRN+E3qOc0vGvg3j/8gZRUS/cWeFM
-         o6kKmy9XR+DjgsHsIdeKI6U026YwGTiGD5oZ9j361Mp366ShxOWQxvQ1jUtP+L7u3o
-         JIESFeiSwFvYg==
+        s=k20201202; t=1691437132;
+        bh=SoSg4hRs/3AF7gmmZ5KQieVLFGATpnVC2zTweWQTdLU=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+        b=KxIu3/cu0khoRWfNJXEJNIHdkniXf13AfUwiYzwbEfIu8g3DBtfZfzYS9IOYy9Gpk
+         Bj3cYzwEKlh8g81NTtaccKy7aMqTEYuSZfyn9SEoQUp7kUA4ckYCfHueh6Qfif9NgK
+         slFb5wQGYXGFb4CWnSXlLxHUkaQKI2w9y4EhGJbBrVFp5aU9fk7DAWfQl7jLSAfqD1
+         UccpkoMfyyMBq4af30lIQ5AB/cwMdmHd6Z3n40C38snUYNYnW8fp27SzSPjzVX5Rmr
+         sneuDS6BTX/Zciu9zoJxNLu+PbQqNw9x3B9TP5CDuF4m+Ww8wcMCuyC78gSMsgXucT
+         7N0lCiWdDCoMA==
 From:   Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v7 00/13] fs: implement multigrain timestamps
-Date:   Mon, 07 Aug 2023 15:38:31 -0400
-Message-Id: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
+Date:   Mon, 07 Aug 2023 15:38:32 -0400
+Subject: [PATCH v7 01/13] fs: remove silly warning from current_time
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADdI0WQC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyzHUUlJIzE
- vPSU3UzU4B8JSMDI2MDc0Nj3dz05JLM3FTdNKNEy7RkYyMTS0MLJaDqgqLUtMwKsEnRsbW1AGM
- 0/ohZAAAA
+Message-Id: <20230807-mgctime-v7-1-d1dec143a704@kernel.org>
+References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
+In-Reply-To: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         Eric Van Hensbergen <ericvh@kernel.org>,
@@ -104,22 +103,22 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
         linux-mtd@lists.infradead.org, linux-mm@kvack.org,
         linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>
+        Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5508; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=9NJxICXmYLBXPMfC64XdrCwzqAF8iKfLe8/dZ5HUTCM=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBk0Ug9Vt6h3uVooR3L32BzC9FtHm9ZXcj5fgD9W
- kZjn/QE83GJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZNFIPQAKCRAADmhBGVaC
- FTXFD/4tOOz/frcT1juvFdX2M7h8GdVQCCM3jUzq8E7v2hZzdNQ+TudlDlEIxe9c16PcuMEkopG
- +kFNCV6iGCNYHD41A1XVOFEaG1ktWpd4NFo0iZbI38zUAkY1Hq+1jOeJ8bi322DrqAlwoonAz0S
- xjoCCsczgKHec9BxsuY4jfg7RVOvXrFnrpkUDxIomwZ80NN40sF+XG+bvbNSLZLb5dlTvoeQVQc
- smZ+JCtorGZdRxl2ILJbhENfex5Z0Cqgyh5A9MXqnl+J5Hm9s1es+lk7e+q9IK18+YypOP1HSHI
- K4MMDRodJG3ELlDifK8mUDMexXoWFTdW8MdVW5HTGHShQubI6zShgS4psxnRhF+jhlkcLxFz7Ui
- NL0E8WBVqsxLTUShLtKzEZ5j4wrb8yHur66NZrhvTeqgQwKIouSImzG0S+GAC8xIRAfXk06T/Do
- NpD+OXK/CELcMQD5+q1WcE7fPstPcyNp2PfOjHsnyMEzzkXXe3n1aeImG7MmCUDsftccGNQtajU
- WpL+Dq+bljKjojhVg9eJQYbnM0hNchEPUfMtAsdaFl7R/fRVlwsD+brmqMnYjtUGL/EPcQK+KrS
- 4PhSQm9PfqdGsTZlG/r+wg2LxN9mxhg3X4wHeNUKI7S2IrJnkf5g6P8SBMSBluFrkbUD4n8Ko27
- OYH1/EhApgN3hYA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=648; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=SoSg4hRs/3AF7gmmZ5KQieVLFGATpnVC2zTweWQTdLU=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBk0Ug9m1G2XKd9FuFQHFpf/xUPtkdl5tYH/twvk
+ pTBUT8ItSeJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZNFIPQAKCRAADmhBGVaC
+ FQz2D/0VAN0+ej/IEUpgqVfQAjQ8iolTJV7E0suDKXij0ebakC68W10jwrlT0yi9VzJjG+zWKlu
+ TPi0thiI9CyD/g4niQelv35XmBxU8+fVi3c6QBE+uHc2Ye0nZvMEETJoMoCQ9vWHE0o4DGUU2J0
+ 26j+6oaILlvI1X0SUof0ithfuve3VLXGJWbNFJiF0l7dGjWrFCmDi1p7+bpTkunQiHaOyb8WO8t
+ 9XrB4x7Lw8nyVzPkyifucdtKaVzyIgZmBTqfzkjEb4acmJF1j/dKiwiKpIraaYMJEUmwqClF9np
+ XnLxTxRAuW/grOiacgsfaNgmBqYN15Sjc04u/Q4I4g2N16lCqkw70LyyWxv++cJHfJPx4W0ZHfC
+ R/gn2xIcFEAKBEHArqXew/pH7qG7uDz/b1Tj2mM3gqLV7eTr5JFzSI/7wSktMHXAzgUD24sZiHI
+ ynRl73zTIzC6nZMJLAX2n8vToMIHUD3FE7/TSjsZyhMot40Erl6eO12t1dHzizbh3GH2yOW9/Rh
+ 4vCxMpdrHxu0ThUYFW+V5LTlnES54b+/oIaCI5d+yTMQQ0CzptPaqHEo/3Hn1P6GXDGbu5ddJKI
+ KaPeUyTJxHdX5P1JavBBd5+dhqnWjI4y5Jd1sbR9Cl9wKKlVfciVMR5ZT7Ph9rsafHUC49jW/f+
+ bi/n8FB4iErM8Ig==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -131,129 +130,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The VFS always uses coarse-grained timestamps when updating the
-ctime and mtime after a change. This has the benefit of allowing
-filesystems to optimize away a lot metadata updates, down to around 1
-per jiffy, even when a file is under heavy writes.
+An inode with no superblock? Unpossible!
 
-Unfortunately, this coarseness has always been an issue when we're
-exporting via NFSv3, which relies on timestamps to validate caches. A
-lot of changes can happen in a jiffy, so timestamps aren't sufficient to
-help the client decide to invalidate the cache.
-
-Even with NFSv4, a lot of exported filesystems don't properly support a
-change attribute and are subject to the same problems with timestamp
-granularity. Other applications have similar issues with timestamps (e.g
-backup applications).
-
-If we were to always use fine-grained timestamps, that would improve the
-situation, but that becomes rather expensive, as the underlying
-filesystem would have to log a lot more metadata updates.
-
-What we need is a way to only use fine-grained timestamps when they are
-being actively queried. The idea is to use an unused bit in the ctime's
-tv_nsec field to mark when the mtime or ctime has been queried via
-getattr. Once that has been marked, the next m/ctime update will use a
-fine-grained timestamp.
-
-Credit goes to Dave Chinner for the original idea, and to Ben Coddington
-for the catchy name. This series should apply cleanly onto Christian's
-vfs.ctime branch, once the v6 mgtime patches have been dropped. That
-should be everything above this commit:
-
-    525deaeb2fbf gfs2: fix timestamp handling on quota inodes
-
-base-commit: cf22d118b89a09a0160586412160d89098f7c4c7
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-Changes in v7:
-- change update_time operation to fetch the current time itself
-- don't modify current_time operation. Leave it always returning coarse timestamp
-- rework inode_set_ctime_current for better atomicity and ensure that
-  all mgtime filesystems use it
-- reorder arguments to fill_mg_cmtime
+ fs/inode.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Changes in v6:
-- drop the patch that removed XFS_ICHGTIME_CHG
-- change WARN_ON_ONCE to ASSERT in xfs conversion patch
+diff --git a/fs/inode.c b/fs/inode.c
+index d4ab92233062..3fc251bfaf73 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2495,12 +2495,6 @@ struct timespec64 current_time(struct inode *inode)
+ 	struct timespec64 now;
+ 
+ 	ktime_get_coarse_real_ts64(&now);
+-
+-	if (unlikely(!inode->i_sb)) {
+-		WARN(1, "current_time() called with uninitialized super_block in the inode");
+-		return now;
+-	}
+-
+ 	return timestamp_truncate(now, inode);
+ }
+ EXPORT_SYMBOL(current_time);
 
----
-Jeff Layton (13):
-      fs: remove silly warning from current_time
-      fs: pass the request_mask to generic_fillattr
-      fs: drop the timespec64 arg from generic_update_time
-      btrfs: have it use inode_update_timestamps
-      fat: make fat_update_time get its own timestamp
-      ubifs: have ubifs_update_time use inode_update_timestamps
-      xfs: have xfs_vn_update_time gets its own timestamp
-      fs: drop the timespec64 argument from update_time
-      fs: add infrastructure for multigrain timestamps
-      tmpfs: add support for multigrain timestamps
-      xfs: switch to multigrain timestamps
-      ext4: switch to multigrain timestamps
-      btrfs: convert to multigrain timestamps
-
- fs/9p/vfs_inode.c               |   4 +-
- fs/9p/vfs_inode_dotl.c          |   4 +-
- fs/afs/inode.c                  |   2 +-
- fs/bad_inode.c                  |   3 +-
- fs/btrfs/file.c                 |  24 +----
- fs/btrfs/inode.c                |  14 +--
- fs/btrfs/super.c                |   5 +-
- fs/btrfs/volumes.c              |   4 +-
- fs/ceph/inode.c                 |   2 +-
- fs/coda/inode.c                 |   3 +-
- fs/ecryptfs/inode.c             |   5 +-
- fs/erofs/inode.c                |   2 +-
- fs/exfat/file.c                 |   2 +-
- fs/ext2/inode.c                 |   2 +-
- fs/ext4/inode.c                 |   2 +-
- fs/ext4/super.c                 |   2 +-
- fs/f2fs/file.c                  |   2 +-
- fs/fat/fat.h                    |   3 +-
- fs/fat/file.c                   |   2 +-
- fs/fat/misc.c                   |   6 +-
- fs/fuse/dir.c                   |   2 +-
- fs/gfs2/inode.c                 |   8 +-
- fs/hfsplus/inode.c              |   2 +-
- fs/inode.c                      | 200 +++++++++++++++++++++++++++++++---------
- fs/kernfs/inode.c               |   2 +-
- fs/libfs.c                      |   4 +-
- fs/minix/inode.c                |   2 +-
- fs/nfs/inode.c                  |   2 +-
- fs/nfs/namespace.c              |   3 +-
- fs/ntfs3/file.c                 |   2 +-
- fs/ocfs2/file.c                 |   2 +-
- fs/orangefs/inode.c             |   5 +-
- fs/overlayfs/inode.c            |   2 +-
- fs/overlayfs/overlayfs.h        |   2 +-
- fs/proc/base.c                  |   4 +-
- fs/proc/fd.c                    |   2 +-
- fs/proc/generic.c               |   2 +-
- fs/proc/proc_net.c              |   2 +-
- fs/proc/proc_sysctl.c           |   2 +-
- fs/proc/root.c                  |   3 +-
- fs/smb/client/inode.c           |   2 +-
- fs/smb/server/smb2pdu.c         |  22 ++---
- fs/smb/server/vfs.c             |   3 +-
- fs/stat.c                       |  65 ++++++++++---
- fs/sysv/itree.c                 |   3 +-
- fs/ubifs/dir.c                  |   2 +-
- fs/ubifs/file.c                 |  19 ++--
- fs/ubifs/ubifs.h                |   2 +-
- fs/udf/symlink.c                |   2 +-
- fs/vboxsf/utils.c               |   2 +-
- fs/xfs/libxfs/xfs_trans_inode.c |   6 +-
- fs/xfs/xfs_iops.c               |  25 +++--
- fs/xfs/xfs_super.c              |   2 +-
- include/linux/fs.h              |  55 +++++++++--
- mm/shmem.c                      |   4 +-
- 55 files changed, 368 insertions(+), 192 deletions(-)
----
-base-commit: 525deaeb2fbf634222f4231608c72190c551c935
-change-id: 20230713-mgctime-f2a9fc324918
-
-Best regards,
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.41.0
 
