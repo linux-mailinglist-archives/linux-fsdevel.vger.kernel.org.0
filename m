@@ -2,90 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D8D42771C62
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 10:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41AF2771CB1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 10:57:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230448AbjHGIg6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Aug 2023 04:36:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33168 "EHLO
+        id S231204AbjHGI43 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Aug 2023 04:56:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230050AbjHGIg4 (ORCPT
+        with ESMTP id S231217AbjHGI4K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Aug 2023 04:36:56 -0400
-Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com [209.85.167.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A49621721
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Aug 2023 01:36:55 -0700 (PDT)
-Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-3a7697e580fso7216214b6e.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Aug 2023 01:36:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691397415; x=1692002215;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DMSutLnpa34k/l8CgouoKF7mkj9KHuv/9BVvf3Oxcm4=;
-        b=OEsyi2Q07UEG3nSHXGgf2ZSn1Z0ofEgJZT/FMn/asP0dmC3Y/NrpgQOaxccvKy3eBO
-         qiSycGwqKw7PwO0Sexi6vGVYyiRFa3spVuLzzVhnNqqvNbM8QA9iR/IHxCIvKu8gg8D6
-         YN0jDQxM6eusUFQppYNl5KguyjjAftbzq/KH31WERa5IUgpf5QgeTi8XZ3sJC0/NoBSI
-         WmZvkgnOydAhdatlx743zDMZSxetjoMk+9oxETmpQjE71/E8l0zymXVSL88XsBlnixid
-         SNU3MIDeTdj1gmWHKwCaVN+FQkahTqaU+39O31AmaaR7N+J7U2fSj7Hqm8UIT6KJ1sPU
-         OF0g==
-X-Gm-Message-State: AOJu0Yw6SGiqAEzh/yZ3OjqC6epPTC8k+1o5ek558AQ7xto0bI1A6xft
-        Mz+JiauY518HpjHYxV1GoHvx0Ta9dbd4A0tZfjJWKrt4VO7Y
-X-Google-Smtp-Source: AGHT+IEQBV2lRxaqMU43Iy1+iR8bpEHHGRaq6484w4ETQ1fDGJ82//5sszCKkz9B3PcD0fq4kk0FT2Poqjx8tf+5TNDgUrXr2jKK
+        Mon, 7 Aug 2023 04:56:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8EF710FE
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Aug 2023 01:56:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4CCA36167A
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Aug 2023 08:56:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37E74C433C7;
+        Mon,  7 Aug 2023 08:56:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691398568;
+        bh=5RR/2Gwtht+lUSZTGrMyxscAeSiOU/sdIv55M23y7UE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lhBGTN9UlAMQlQaAQ9HfT4pheFALcRl126hPIvgQqLh/YLiYIslfR8uyWrZOo3FFd
+         MA033hKJZRFMRcD4oCBGavHqLCJpY15Ml3Oixm73/NJb0BlCBI6HDIzF6gKeU/0puy
+         klAmgmFxBp68wRzXblx0eo99IGg+YSSafdU9sG24K8lfKwbcr+fW11jPzlmtuoCm1F
+         V7/kFOvyx9REGpuuhfWlpGq9HGoYofurN42UBV80BMXyCKxSeCI7y2CKl1N7aG5FGd
+         tLsP3nxqEnQL8kjRltJDRzc2N37BIZo0kotCuj9VTV44+suLpdxhRZaHCvMb/gtma6
+         EgM+j9qW/qDTA==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Seth Jenkins <sethjenkins@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Seth Forshee <sforshee@kernel.org>
+Subject: Re: [PATCH] tmpfs: verify {g,u}id mount options correctly
+Date:   Mon,  7 Aug 2023 10:56:03 +0200
+Message-Id: <20230807-ozonwerte-aderlass-2c1d8a3a750c@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230801-vfs-fs_context-uidgid-v1-1-daf46a050bbf@kernel.org>
+References: <20230801-vfs-fs_context-uidgid-v1-1-daf46a050bbf@kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:1a1f:b0:3a7:2639:f835 with SMTP id
- bk31-20020a0568081a1f00b003a72639f835mr16477704oib.6.1691397415038; Mon, 07
- Aug 2023 01:36:55 -0700 (PDT)
-Date:   Mon, 07 Aug 2023 01:36:54 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000018fd5c06025126a4@google.com>
-Subject: [syzbot] Monthly xfs report (Aug 2023)
-From:   syzbot <syzbot+list53c228f913ba424c6fa5@syzkaller.appspotmail.com>
-To:     djwong@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1456; i=brauner@kernel.org; h=from:subject:message-id; bh=5RR/2Gwtht+lUSZTGrMyxscAeSiOU/sdIv55M23y7UE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRc2Ljw0vqe992VKucWP2zOCvz55/Sbt9uXXJWoa7D9/MM8 SbmRpaOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiyV4Mf8VrVj49UTBX/rDwontbV/ Sw3DBqOzjXd7Kj2p53HPk531cwMpx6ayDELWAbzfb5vZ5l9I3jvnsfxunsr2HK+pTg+9CLixUA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello xfs maintainers/developers,
+On Tue, 01 Aug 2023 18:17:04 +0200, Christian Brauner wrote:
+> A while ago we received the following report:
+> 
+> "The other outstanding issue I noticed comes from the fact that
+> fsconfig syscalls may occur in a different userns than that which
+> called fsopen. That means that resolving the uid/gid via
+> current_user_ns() can save a kuid that isn't mapped in the associated
+> namespace when the filesystem is finally mounted. This means that it
+> is possible for an unprivileged user to create files owned by any
+> group in a tmpfs mount (since we can set the SUID bit on the tmpfs
+> directory), or a tmpfs that is owned by any user, including the root
+> group/user."
+> 
+> [...]
 
-This is a 31-day syzbot report for the xfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/xfs
+Applied to the vfs.tmpfs branch of the vfs/vfs.git tree.
+Patches in the vfs.tmpfs branch should appear in linux-next soon.
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 18 issues are still open and 22 have been fixed so far.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Some of the still happening issues:
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Ref Crashes Repro Title
-<1> 4258    No    KMSAN: uninit-value in __crc32c_le_base (3)
-                  https://syzkaller.appspot.com/bug?extid=a6d6b8fffa294705dbd8
-<2> 1923    Yes   UBSAN: array-index-out-of-bounds in xfs_attr3_leaf_add_work
-                  https://syzkaller.appspot.com/bug?extid=510dcbdc6befa1e6b2f6
-<3> 221     Yes   KASAN: stack-out-of-bounds Read in xfs_buf_lock
-                  https://syzkaller.appspot.com/bug?extid=0bc698a422b5e4ac988c
-<4> 69      No    KCSAN: data-race in __filemap_remove_folio / folio_mapping (2)
-                  https://syzkaller.appspot.com/bug?extid=606f94dfeaaa45124c90
-<5> 4       Yes   WARNING: Reset corrupted AGFL on AG NUM. NUM blocks leaked. Please unmount and run xfs_repair.
-                  https://syzkaller.appspot.com/bug?extid=9d0b0d54a8bd799f6ae4
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.tmpfs
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+[1/1] tmpfs: verify {g,u}id mount options correctly
+      https://git.kernel.org/vfs/vfs/c/f90277cb4cae
