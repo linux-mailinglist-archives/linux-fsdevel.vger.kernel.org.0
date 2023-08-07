@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 68041772F7F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 21:41:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F088772FCB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 21:47:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231496AbjHGTlk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Aug 2023 15:41:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33918 "EHLO
+        id S231296AbjHGTqy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Aug 2023 15:46:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231352AbjHGTl3 (ORCPT
+        with ESMTP id S231415AbjHGTqo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Aug 2023 15:41:29 -0400
+        Mon, 7 Aug 2023 15:46:44 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D8AC1BEF;
-        Mon,  7 Aug 2023 12:40:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 277D31BC0;
+        Mon,  7 Aug 2023 12:46:23 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C2408621D2;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 705EE621D1;
+        Mon,  7 Aug 2023 19:39:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7263AC433C8;
         Mon,  7 Aug 2023 19:39:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2BF7C433AB;
-        Mon,  7 Aug 2023 19:39:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691437179;
-        bh=gkJEj5WuPn1YoOjO7KBBeS926Ai36nzHHhtaOzFOExo=;
+        s=k20201202; t=1691437185;
+        bh=E/83oEeb0rRq6smX7PPRvHC27zWaOYAH/vghT4/Cfkw=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=U2JE3yj2BX8fXCafrlPQzZGpZMFLvsLj/nn7ICNmsgrPM7QZrw5TLTAnaVR7hmLoH
-         Mqs2TOutOSYI+v9pyOyXDdyU760Pk+U02cOhgUyiCh7url+3MQ0QkTU4AuU3dzY8fa
-         3RLxbiFfjYOsn2+T9i2DWYM2K5U7AGf40Yaek2aXt8ITKeSyrh20YZZqYJmLXly09C
-         IWckTDcl+oOGYnBZhbvvXv9p7UjkoCMqCrBBMrYU6aDD2LawVk1w7p1wXo1Ft5/CJB
-         So0jmwYkrWnpNrCfQf/c7Ox7yZWzXX2gR7j77bPsx2Z5zIKPFT7kvupiuKamNcu8a9
-         ryH8lhnB4ROeA==
+        b=Rb9+2g0w0tmnfmL9+7rFJ7odGS32g3NvVD6Cnsmxw/SQgRVCL/aJTEmCkOJnGG4IW
+         t3t+3pwUEunByoYJLfuLqOLxWkWVllEJs6OPTYQDPsRPA/kspWYPCUhS9PF8mTg5oU
+         dbPvvPqcYu4ND6L4QE9Sg8na5fxImwirbf9gXQKCLxKK3hv35TPs0+KsTP3btikwBr
+         MHf4GBLUZqQRy6lI22miPFyTJyVMOUxaR5u7jizaxBvrU/+Qb1b8Z+jNLcCcARxRRZ
+         U9Hf/NKrYnPpwnjfGNquKi1oft22YUir+zbRKBWcHw4QMOKUXEP5HtXBL81yH4CVAp
+         QoeNz/DBM872w==
 From:   Jeff Layton <jlayton@kernel.org>
-Date:   Mon, 07 Aug 2023 15:38:39 -0400
-Subject: [PATCH v7 08/13] fs: drop the timespec64 argument from update_time
+Date:   Mon, 07 Aug 2023 15:38:40 -0400
+Subject: [PATCH v7 09/13] fs: add infrastructure for multigrain timestamps
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230807-mgctime-v7-8-d1dec143a704@kernel.org>
+Message-Id: <20230807-mgctime-v7-9-d1dec143a704@kernel.org>
 References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
 In-Reply-To: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -105,20 +105,20 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
         Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11305; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=gkJEj5WuPn1YoOjO7KBBeS926Ai36nzHHhtaOzFOExo=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBk0Ug+GjxPCaxOL3/Hh96G4qx6En6kK7pSs7PBS
- +qgeev2ZmKJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZNFIPgAKCRAADmhBGVaC
- FfZlD/wOK+NhIWXwGOoqV8eNwYf9Z6j7FOlM9B23dAE8nfaM0JHbFLI/5nyNdIbKZZKU+qm4VpQ
- 00Hq8dO4sLmPsk/onWXDmVdxXxHL0hmWQGSodM0gZOX1/lJaOPFNw+XSeywsA8zlk2RJR0dFYWH
- assHOlJf81I9YqU0qjocYICQm6WqeZGM0o3GKsTI3V+qEVtWfPG7VRzFqdye2m6aMwQeFPldshG
- Jpo2sVNKdT3qfXPhBOGnKPSijwMqE41+bfnRLhWInom7CUN6L8nXjXUlDBBhTSareLtKc+aurKB
- 27qlSHIt85hqAtN03DN/caRLKX17nBDRrO0ZzK0Fp4oZMh6LGKd/c1R9FQQFmAD/TjabTb+l/3b
- eU7MkNi9FnnByp8BadvQSVTMySrQKtWKKwzPflPPX1N5Djtt1EfNT3peRZ3dsZWOqfig+H3fRnF
- hsU9zK1WZhl2YNdHupE3VVziL+vU1Bl3eXxZk6V8mbe2PChqgJWPERKEaLcSSYFNbPfk14kPh3M
- 56gMDOEvkXdddTr+aVR5PSe5qGDiCmmIsHUlGqDjctg2SBYuP6UVUV2fB1JGrgWc4FH20rmX3Hb
- dkC163IAkUr2yHQJKFcsCOltGpKMq9EpVmQAeNqKANIzTLbXmslUphOJvQ5ITe7grLXOMRlm6Vz
- YQKDvW2mH8JkK4A==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11097; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=E/83oEeb0rRq6smX7PPRvHC27zWaOYAH/vghT4/Cfkw=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBk0Ug+ngTiz69nFoNr0s9PfN/r+KONXD6df/T+W
+ qOmcWLsY7GJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZNFIPgAKCRAADmhBGVaC
+ Fd5dEACCjRC+9kikBkEjdUAr+OrC4yH7ItKRQ0DzyxB11eKo9u6rgV0AZluwu4UIwjcbznhAVxk
+ qAqOZUllUaNrhn+hc3wywznL8hYpFvWNqwjVCKQhuF7QOX+Rps2+o4pjUpViKdLJ01fh/jdCll2
+ PD80G7D/AdQPBYOXAnTWCDhR6OxcgN4nNYu7tg7s4JaM0Uv3rOshkdYW3iMJqJaoEhaqMTWCChq
+ 9Tzo4+x4gTKl74OhWm64n1QnI7LAi9AzFtHxz+QrKpzYFqrgI/avYIH+vd4qVrwcj5FCIWEc2li
+ DosXT/iav8fWGLRw/CeTFJq2GYVlTt0l2hGiNcA1C/o6N1oQhxt3Tqjw6UvvdpWk+Q1XGTUmuIQ
+ I3issIz9cDUF4GZG2/VHN+AKQL75SUzZp6aN2qQt3qJGqHPouHDrsVSDhN09E/ogxnmcyYTrjAY
+ tQkb+wGYY5fSj93k6AkmlpJy98e6Nn2POe4QTSnzOEi53HYAA83n9lf4i0fsdmoY6UFTm62kYmu
+ jhT+0z4O/FYy5FLx8PpBPiof0aHhmQBQ08W/pr0uiu/cWyJEoRXSQRq1tZIKbQwz58Ynnq3Ra91
+ 3PKBZUBn63Yn4uJpco4GNZdLRmHIwEoqCEULuwummnm8Nd24QTYGhZRHvaMGbbW/O1Dpq5pB7gK
+ cp9sZmkWSkDyTCQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -130,323 +130,301 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that all of the update_time operations are prepared for it, we can
-drop the timespec64 argument from the update_time operation. Do that and
-remove it from some associated functions like inode_update_time and
-inode_needs_update_time.
+The VFS always uses coarse-grained timestamps when updating the ctime
+and mtime after a change. This has the benefit of allowing filesystems
+to optimize away a lot metadata updates, down to around 1 per jiffy,
+even when a file is under heavy writes.
+
+Unfortunately, this has always been an issue when we're exporting via
+NFSv3, which relies on timestamps to validate caches. A lot of changes
+can happen in a jiffy, so timestamps aren't sufficient to help the
+client decide to invalidate the cache. Even with NFSv4, a lot of
+exported filesystems don't properly support a change attribute and are
+subject to the same problems with timestamp granularity. Other
+applications have similar issues with timestamps (e.g backup
+applications).
+
+If we were to always use fine-grained timestamps, that would improve the
+situation, but that becomes rather expensive, as the underlying
+filesystem would have to log a lot more metadata updates.
+
+What we need is a way to only use fine-grained timestamps when they are
+being actively queried.
+
+POSIX generally mandates that when the the mtime changes, the ctime must
+also change. The kernel always stores normalized ctime values, so only
+the first 30 bits of the tv_nsec field are ever used.
+
+Use the 31st bit of the ctime tv_nsec field to indicate that something
+has queried the inode for the mtime or ctime. When this flag is set,
+on the next mtime or ctime update, the kernel will fetch a fine-grained
+timestamp instead of the usual coarse-grained one.
+
+Filesytems can opt into this behavior by setting the FS_MGTIME flag in
+the fstype. Filesystems that don't set this flag will continue to use
+coarse-grained timestamps.
+
+Later patches will convert individual filesystems to use the new
+infrastructure.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/bad_inode.c           |  3 +--
- fs/btrfs/inode.c         |  3 +--
- fs/btrfs/volumes.c       |  4 +---
- fs/fat/fat.h             |  3 +--
- fs/fat/misc.c            |  2 +-
- fs/gfs2/inode.c          |  3 +--
- fs/inode.c               | 30 +++++++++++++-----------------
- fs/overlayfs/inode.c     |  2 +-
- fs/overlayfs/overlayfs.h |  2 +-
- fs/ubifs/file.c          |  3 +--
- fs/ubifs/ubifs.h         |  2 +-
- fs/xfs/xfs_iops.c        |  1 -
- include/linux/fs.h       |  4 ++--
- 13 files changed, 25 insertions(+), 37 deletions(-)
+ fs/inode.c         | 82 ++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ fs/stat.c          | 41 +++++++++++++++++++++++++--
+ include/linux/fs.h | 46 ++++++++++++++++++++++++++++--
+ 3 files changed, 162 insertions(+), 7 deletions(-)
 
-diff --git a/fs/bad_inode.c b/fs/bad_inode.c
-index 6e21f7412a85..83f9566c973b 100644
---- a/fs/bad_inode.c
-+++ b/fs/bad_inode.c
-@@ -133,8 +133,7 @@ static int bad_inode_fiemap(struct inode *inode,
- 	return -EIO;
- }
- 
--static int bad_inode_update_time(struct inode *inode, struct timespec64 *time,
--				 int flags)
-+static int bad_inode_update_time(struct inode *inode, int flags)
- {
- 	return -EIO;
- }
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index d52e7d64570a..0964c66411a1 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -6059,8 +6059,7 @@ static int btrfs_dirty_inode(struct btrfs_inode *inode)
-  * This is a copy of file_update_time.  We need this so we can return error on
-  * ENOSPC for updating the inode in the case of file write and mmap writes.
-  */
--static int btrfs_update_time(struct inode *inode, struct timespec64 *now,
--			     int flags)
-+static int btrfs_update_time(struct inode *inode, int flags)
- {
- 	struct btrfs_root *root = BTRFS_I(inode)->root;
- 	bool dirty = flags & ~S_VERSION;
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 73f9ea7672db..264c71590370 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -1917,15 +1917,13 @@ static int btrfs_add_dev_item(struct btrfs_trans_handle *trans,
- static void update_dev_time(const char *device_path)
- {
- 	struct path path;
--	struct timespec64 now;
- 	int ret;
- 
- 	ret = kern_path(device_path, LOOKUP_FOLLOW, &path);
- 	if (ret)
- 		return;
- 
--	now = current_time(d_inode(path.dentry));
--	inode_update_time(d_inode(path.dentry), &now, S_MTIME | S_CTIME | S_VERSION);
-+	inode_update_time(d_inode(path.dentry), S_MTIME | S_CTIME | S_VERSION);
- 	path_put(&path);
- }
- 
-diff --git a/fs/fat/fat.h b/fs/fat/fat.h
-index e3b690b48e3e..66cf4778cf3b 100644
---- a/fs/fat/fat.h
-+++ b/fs/fat/fat.h
-@@ -460,8 +460,7 @@ extern struct timespec64 fat_truncate_mtime(const struct msdos_sb_info *sbi,
- 					    const struct timespec64 *ts);
- extern int fat_truncate_time(struct inode *inode, struct timespec64 *now,
- 			     int flags);
--extern int fat_update_time(struct inode *inode, struct timespec64 *now,
--			   int flags);
-+extern int fat_update_time(struct inode *inode, int flags);
- extern int fat_sync_bhs(struct buffer_head **bhs, int nr_bhs);
- 
- int fat_cache_init(void);
-diff --git a/fs/fat/misc.c b/fs/fat/misc.c
-index 8cab87145d63..080a5035483f 100644
---- a/fs/fat/misc.c
-+++ b/fs/fat/misc.c
-@@ -339,7 +339,7 @@ int fat_truncate_time(struct inode *inode, struct timespec64 *now, int flags)
- }
- EXPORT_SYMBOL_GPL(fat_truncate_time);
- 
--int fat_update_time(struct inode *inode, struct timespec64 *now, int flags)
-+int fat_update_time(struct inode *inode, int flags)
- {
- 	int dirty_flags = 0;
- 
-diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
-index f1f04557aa21..a21ac41d6669 100644
---- a/fs/gfs2/inode.c
-+++ b/fs/gfs2/inode.c
-@@ -2139,8 +2139,7 @@ loff_t gfs2_seek_hole(struct file *file, loff_t offset)
- 	return vfs_setpos(file, ret, inode->i_sb->s_maxbytes);
- }
- 
--static int gfs2_update_time(struct inode *inode, struct timespec64 *time,
--			    int flags)
-+static int gfs2_update_time(struct inode *inode, int flags)
- {
- 	struct gfs2_inode *ip = GFS2_I(inode);
- 	struct gfs2_glock *gl = ip->i_gl;
 diff --git a/fs/inode.c b/fs/inode.c
-index e07e45f6cd01..e50d94a136fe 100644
+index e50d94a136fe..f55957ac80e6 100644
 --- a/fs/inode.c
 +++ b/fs/inode.c
-@@ -1958,10 +1958,10 @@ EXPORT_SYMBOL(generic_update_time);
-  * This does the actual work of updating an inodes time or version.  Must have
-  * had called mnt_want_write() before calling this.
-  */
--int inode_update_time(struct inode *inode, struct timespec64 *time, int flags)
-+int inode_update_time(struct inode *inode, int flags)
- {
- 	if (inode->i_op->update_time)
--		return inode->i_op->update_time(inode, time, flags);
-+		return inode->i_op->update_time(inode, flags);
- 	generic_update_time(inode, flags);
- 	return 0;
- }
-@@ -2015,7 +2015,6 @@ void touch_atime(const struct path *path)
- {
- 	struct vfsmount *mnt = path->mnt;
- 	struct inode *inode = d_inode(path->dentry);
--	struct timespec64 now;
- 
- 	if (!atime_needs_update(path, inode))
- 		return;
-@@ -2034,8 +2033,7 @@ void touch_atime(const struct path *path)
- 	 * We may also fail on filesystems that have the ability to make parts
- 	 * of the fs read only, e.g. subvolumes in Btrfs.
- 	 */
--	now = current_time(inode);
--	inode_update_time(inode, &now, S_ATIME);
-+	inode_update_time(inode, S_ATIME);
- 	__mnt_drop_write(mnt);
- skip_update:
- 	sb_end_write(inode->i_sb);
-@@ -2120,20 +2118,21 @@ int file_remove_privs(struct file *file)
+@@ -2118,10 +2118,52 @@ int file_remove_privs(struct file *file)
  }
  EXPORT_SYMBOL(file_remove_privs);
  
--static int inode_needs_update_time(struct inode *inode, struct timespec64 *now)
-+static int inode_needs_update_time(struct inode *inode)
++/**
++ * current_mgtime - Return FS time (possibly fine-grained)
++ * @inode: inode.
++ *
++ * Return the current time truncated to the time granularity supported by
++ * the fs, as suitable for a ctime/mtime change. If the ctime is flagged
++ * as having been QUERIED, get a fine-grained timestamp.
++ */
++struct timespec64 current_mgtime(struct inode *inode)
++{
++	struct timespec64 now, ctime;
++	atomic_long_t *pnsec = (atomic_long_t *)&inode->__i_ctime.tv_nsec;
++	long nsec = atomic_long_read(pnsec);
++
++	if (nsec & I_CTIME_QUERIED) {
++		ktime_get_real_ts64(&now);
++		return timestamp_truncate(now, inode);
++	}
++
++	ktime_get_coarse_real_ts64(&now);
++	now = timestamp_truncate(now, inode);
++
++	/*
++	 * If we've recently fetched a fine-grained timestamp
++	 * then the coarse-grained one may still be earlier than the
++	 * existing ctime. Just keep the existing value if so.
++	 */
++	ctime = inode_get_ctime(inode);
++	if (timespec64_compare(&ctime, &now) > 0)
++		now = ctime;
++
++	return now;
++}
++EXPORT_SYMBOL(current_mgtime);
++
++static struct timespec64 current_ctime(struct inode *inode)
++{
++	if (is_mgtime(inode))
++		return current_mgtime(inode);
++	return current_time(inode);
++}
++
+ static int inode_needs_update_time(struct inode *inode)
  {
  	int sync_it = 0;
-+	struct timespec64 now = current_time(inode);
+-	struct timespec64 now = current_time(inode);
++	struct timespec64 now = current_ctime(inode);
  	struct timespec64 ctime;
  
  	/* First try to exhaust all avenues to not sync */
- 	if (IS_NOCMTIME(inode))
- 		return 0;
+@@ -2552,9 +2594,43 @@ EXPORT_SYMBOL(current_time);
+  */
+ struct timespec64 inode_set_ctime_current(struct inode *inode)
+ {
+-	struct timespec64 now = current_time(inode);
++	struct timespec64 now;
++	struct timespec64 ctime;
++
++	ctime.tv_nsec = READ_ONCE(inode->__i_ctime.tv_nsec);
++	if (!(ctime.tv_nsec & I_CTIME_QUERIED)) {
++		now = current_time(inode);
  
--	if (!timespec64_equal(&inode->i_mtime, now))
-+	if (!timespec64_equal(&inode->i_mtime, &now))
- 		sync_it = S_MTIME;
+-	inode_set_ctime(inode, now.tv_sec, now.tv_nsec);
++		/* Just copy it into place if it's not multigrain */
++		if (!is_mgtime(inode)) {
++			inode_set_ctime_to_ts(inode, now);
++			return now;
++		}
++
++		/*
++		 * If we've recently updated with a fine-grained timestamp,
++		 * then the coarse-grained one may still be earlier than the
++		 * existing ctime. Just keep the existing value if so.
++		 */
++		ctime.tv_sec = inode->__i_ctime.tv_sec;
++		if (timespec64_compare(&ctime, &now) > 0)
++			return ctime;
++
++		/*
++		 * Ctime updates are usually protected by the inode_lock, but
++		 * we can still race with someone setting the QUERIED flag.
++		 * Try to swap the new nsec value into place. If it's changed
++		 * in the interim, then just go with a fine-grained timestamp.
++		 */
++		if (cmpxchg(&inode->__i_ctime.tv_nsec, ctime.tv_nsec,
++			    now.tv_nsec) != ctime.tv_nsec)
++			goto fine_grained;
++		inode->__i_ctime.tv_sec = now.tv_sec;
++		return now;
++	}
++fine_grained:
++	ktime_get_real_ts64(&now);
++	inode_set_ctime_to_ts(inode, timestamp_truncate(now, inode));
+ 	return now;
+ }
+ EXPORT_SYMBOL(inode_set_ctime_current);
+diff --git a/fs/stat.c b/fs/stat.c
+index 7644e5997035..136711ae72fb 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -26,6 +26,37 @@
+ #include "internal.h"
+ #include "mount.h"
  
- 	ctime = inode_get_ctime(inode);
--	if (!timespec64_equal(&ctime, now))
-+	if (!timespec64_equal(&ctime, &now))
- 		sync_it |= S_CTIME;
++/**
++ * fill_mg_cmtime - Fill in the mtime and ctime and flag ctime as QUERIED
++ * @stat: where to store the resulting values
++ * @request_mask: STATX_* values requested
++ * @inode: inode from which to grab the c/mtime
++ *
++ * Given @inode, grab the ctime and mtime out if it and store the result
++ * in @stat. When fetching the value, flag it as queried so the next write
++ * will use a fine-grained timestamp.
++ */
++void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode)
++{
++	atomic_long_t *pnsec = (atomic_long_t *)&inode->__i_ctime.tv_nsec;
++
++	/* If neither time was requested, then don't report them */
++	if (!(request_mask & (STATX_CTIME|STATX_MTIME))) {
++		stat->result_mask &= ~(STATX_CTIME|STATX_MTIME);
++		return;
++	}
++
++	stat->mtime = inode->i_mtime;
++	stat->ctime.tv_sec = inode->__i_ctime.tv_sec;
++	/*
++	 * Atomically set the QUERIED flag and fetch the new value with
++	 * the flag masked off.
++	 */
++	stat->ctime.tv_nsec = atomic_long_fetch_or(I_CTIME_QUERIED, pnsec) &
++					~I_CTIME_QUERIED;
++}
++EXPORT_SYMBOL(fill_mg_cmtime);
++
+ /**
+  * generic_fillattr - Fill in the basic attributes from the inode struct
+  * @idmap:		idmap of the mount the inode was found from
+@@ -58,8 +89,14 @@ void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
+ 	stat->rdev = inode->i_rdev;
+ 	stat->size = i_size_read(inode);
+ 	stat->atime = inode->i_atime;
+-	stat->mtime = inode->i_mtime;
+-	stat->ctime = inode_get_ctime(inode);
++
++	if (is_mgtime(inode)) {
++		fill_mg_cmtime(stat, request_mask, inode);
++	} else {
++		stat->mtime = inode->i_mtime;
++		stat->ctime = inode_get_ctime(inode);
++	}
++
+ 	stat->blksize = i_blocksize(inode);
+ 	stat->blocks = inode->i_blocks;
  
- 	if (IS_I_VERSION(inode) && inode_iversion_need_inc(inode))
-@@ -2142,15 +2141,14 @@ static int inode_needs_update_time(struct inode *inode, struct timespec64 *now)
- 	return sync_it;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index a83313f90fe3..455835d0e963 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1474,18 +1474,47 @@ static inline bool fsuidgid_has_mapping(struct super_block *sb,
+ 	       kgid_has_mapping(fs_userns, kgid);
  }
  
--static int __file_update_time(struct file *file, struct timespec64 *now,
--			int sync_mode)
-+static int __file_update_time(struct file *file, int sync_mode)
++struct timespec64 current_mgtime(struct inode *inode);
+ struct timespec64 current_time(struct inode *inode);
+ struct timespec64 inode_set_ctime_current(struct inode *inode);
+ 
++/*
++ * Multigrain timestamps
++ *
++ * Conditionally use fine-grained ctime and mtime timestamps when there
++ * are users actively observing them via getattr. The primary use-case
++ * for this is NFS clients that use the ctime to distinguish between
++ * different states of the file, and that are often fooled by multiple
++ * operations that occur in the same coarse-grained timer tick.
++ *
++ * The kernel always keeps normalized struct timespec64 values in the ctime,
++ * which means that only the first 30 bits of the value are used. Use the
++ * 31st bit of the ctime's tv_nsec field as a flag to indicate that the value
++ * has been queried since it was last updated.
++ */
++#define I_CTIME_QUERIED		(1L<<30)
++
+ /**
+  * inode_get_ctime - fetch the current ctime from the inode
+  * @inode: inode from which to fetch ctime
+  *
+- * Grab the current ctime from the inode and return it.
++ * Grab the current ctime tv_nsec field from the inode, mask off the
++ * I_CTIME_QUERIED flag and return it. This is mostly intended for use by
++ * internal consumers of the ctime that aren't concerned with ensuring a
++ * fine-grained update on the next change (e.g. when preparing to store
++ * the value in the backing store for later retrieval).
++ *
++ * This is safe to call regardless of whether the underlying filesystem
++ * is using multigrain timestamps.
+  */
+ static inline struct timespec64 inode_get_ctime(const struct inode *inode)
  {
- 	int ret = 0;
- 	struct inode *inode = file_inode(file);
- 
- 	/* try to update time settings */
- 	if (!__mnt_want_write_file(file)) {
--		ret = inode_update_time(inode, now, sync_mode);
-+		ret = inode_update_time(inode, sync_mode);
- 		__mnt_drop_write_file(file);
- 	}
- 
-@@ -2175,13 +2173,12 @@ int file_update_time(struct file *file)
- {
- 	int ret;
- 	struct inode *inode = file_inode(file);
--	struct timespec64 now = current_time(inode);
- 
--	ret = inode_needs_update_time(inode, &now);
-+	ret = inode_needs_update_time(inode);
- 	if (ret <= 0)
- 		return ret;
- 
--	return __file_update_time(file, &now, ret);
-+	return __file_update_time(file, ret);
- }
- EXPORT_SYMBOL(file_update_time);
- 
-@@ -2204,7 +2201,6 @@ static int file_modified_flags(struct file *file, int flags)
- {
- 	int ret;
- 	struct inode *inode = file_inode(file);
--	struct timespec64 now = current_time(inode);
- 
- 	/*
- 	 * Clear the security bits if the process is not being run by root.
-@@ -2217,13 +2213,13 @@ static int file_modified_flags(struct file *file, int flags)
- 	if (unlikely(file->f_mode & FMODE_NOCMTIME))
- 		return 0;
- 
--	ret = inode_needs_update_time(inode, &now);
-+	ret = inode_needs_update_time(inode);
- 	if (ret <= 0)
- 		return ret;
- 	if (flags & IOCB_NOWAIT)
- 		return -EAGAIN;
- 
--	return __file_update_time(file, &now, ret);
-+	return __file_update_time(file, ret);
+-	return inode->__i_ctime;
++	struct timespec64 ctime;
++
++	ctime.tv_sec = inode->__i_ctime.tv_sec;
++	ctime.tv_nsec = inode->__i_ctime.tv_nsec & ~I_CTIME_QUERIED;
++
++	return ctime;
  }
  
  /**
-diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index a63e57447be9..f22e27b78025 100644
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -693,7 +693,7 @@ int ovl_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- }
- #endif
+@@ -2259,6 +2288,7 @@ struct file_system_type {
+ #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
+ #define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
+ #define FS_ALLOW_IDMAP         32      /* FS has been updated to handle vfs idmappings. */
++#define FS_MGTIME		64	/* FS uses multigrain timestamps */
+ #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+ 	int (*init_fs_context)(struct fs_context *);
+ 	const struct fs_parameter_spec *parameters;
+@@ -2282,6 +2312,17 @@ struct file_system_type {
  
--int ovl_update_time(struct inode *inode, struct timespec64 *ts, int flags)
-+int ovl_update_time(struct inode *inode, int flags)
- {
- 	if (flags & S_ATIME) {
- 		struct ovl_fs *ofs = inode->i_sb->s_fs_info;
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index 9402591f12aa..8bbe6173bef4 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -665,7 +665,7 @@ static inline struct posix_acl *ovl_get_acl_path(const struct path *path,
- }
- #endif
+ #define MODULE_ALIAS_FS(NAME) MODULE_ALIAS("fs-" NAME)
  
--int ovl_update_time(struct inode *inode, struct timespec64 *ts, int flags);
-+int ovl_update_time(struct inode *inode, int flags);
- bool ovl_is_private_xattr(struct super_block *sb, const char *name);
- 
- struct ovl_inode_params {
-diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-index 2d0178922e19..eae4001ac92f 100644
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -1378,8 +1378,7 @@ static inline int mctime_update_needed(const struct inode *inode,
-  *
-  * This function updates time of the inode.
-  */
--int ubifs_update_time(struct inode *inode, struct timespec64 *time,
--			     int flags)
-+int ubifs_update_time(struct inode *inode, int flags)
- {
- 	struct ubifs_inode *ui = ubifs_inode(inode);
- 	struct ubifs_info *c = inode->i_sb->s_fs_info;
-diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
-index 4c36044140e7..ebb3ad6b5e7e 100644
---- a/fs/ubifs/ubifs.h
-+++ b/fs/ubifs/ubifs.h
-@@ -2027,7 +2027,7 @@ int ubifs_calc_dark(const struct ubifs_info *c, int spc);
- int ubifs_fsync(struct file *file, loff_t start, loff_t end, int datasync);
- int ubifs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 		  struct iattr *attr);
--int ubifs_update_time(struct inode *inode, struct timespec64 *time, int flags);
-+int ubifs_update_time(struct inode *inode, int flags);
- 
- /* dir.c */
- struct inode *ubifs_new_inode(struct ubifs_info *c, struct inode *dir,
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index 72d18e7840f5..c73529f77bac 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -1029,7 +1029,6 @@ xfs_vn_setattr(
- STATIC int
- xfs_vn_update_time(
- 	struct inode		*inode,
--	struct timespec64	*now,
- 	int			flags)
- {
- 	struct xfs_inode	*ip = XFS_I(inode);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index bb3c2c4f871f..a83313f90fe3 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1887,7 +1887,7 @@ struct inode_operations {
- 	ssize_t (*listxattr) (struct dentry *, char *, size_t);
- 	int (*fiemap)(struct inode *, struct fiemap_extent_info *, u64 start,
- 		      u64 len);
--	int (*update_time)(struct inode *, struct timespec64 *, int);
-+	int (*update_time)(struct inode *, int);
- 	int (*atomic_open)(struct inode *, struct dentry *,
- 			   struct file *, unsigned open_flag,
- 			   umode_t create_mode);
-@@ -2237,7 +2237,7 @@ enum file_time_flags {
- 
- extern bool atime_needs_update(const struct path *, struct inode *);
- extern void touch_atime(const struct path *);
--int inode_update_time(struct inode *inode, struct timespec64 *time, int flags);
-+int inode_update_time(struct inode *inode, int flags);
- 
- static inline void file_accessed(struct file *file)
- {
++/**
++ * is_mgtime: is this inode using multigrain timestamps
++ * @inode: inode to test for multigrain timestamps
++ *
++ * Return true if the inode uses multigrain timestamps, false otherwise.
++ */
++static inline bool is_mgtime(const struct inode *inode)
++{
++	return inode->i_sb->s_type->fs_flags & FS_MGTIME;
++}
++
+ extern struct dentry *mount_bdev(struct file_system_type *fs_type,
+ 	int flags, const char *dev_name, void *data,
+ 	int (*fill_super)(struct super_block *, void *, int));
+@@ -2918,6 +2959,7 @@ extern void page_put_link(void *);
+ extern int page_symlink(struct inode *inode, const char *symname, int len);
+ extern const struct inode_operations page_symlink_inode_operations;
+ extern void kfree_link(void *);
++void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode);
+ void generic_fillattr(struct mnt_idmap *, u32, struct inode *, struct kstat *);
+ void generic_fill_statx_attr(struct inode *inode, struct kstat *stat);
+ extern int vfs_getattr_nosec(const struct path *, struct kstat *, u32, unsigned int);
 
 -- 
 2.41.0
