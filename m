@@ -2,74 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AC69F7725A5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 15:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FBC87725A7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 15:28:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234010AbjHGN2z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Aug 2023 09:28:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43030 "EHLO
+        id S234120AbjHGN24 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Aug 2023 09:28:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232429AbjHGN2r (ORCPT
+        with ESMTP id S233738AbjHGN2v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Aug 2023 09:28:47 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4EFFB3
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Aug 2023 06:28:25 -0700 (PDT)
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        Mon, 7 Aug 2023 09:28:51 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F76E1991
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Aug 2023 06:28:27 -0700 (PDT)
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 96EBC4248F
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Aug 2023 13:28:02 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A1D77417BC
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Aug 2023 13:28:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1691414882;
-        bh=GFNwWvhavDkNrI4eqwez7OWrv+w+Iw1WNhnwQW/Fw7E=;
+        s=20210705; t=1691414885;
+        bh=StxqveXF5moq9iJU4D0IjENKfN6jaIfCw60woBc2a1E=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=kEsiTuUaGvgiZixzSK5tdhGyQohFuGub9EDTjE3KOpKq+YhpJ3pw9pcphgZcg4AJH
-         9/JF1ZVM0VrdfSONyEyg9tQNWjNA8ZTdmkvARrN4N0mm7negxE08ztHWwOG11HNV+X
-         bcCJ7NdzJiKvXzi/vQ+aGAc2Z2kaMJwLI6FC0Bz5g+C3RCx4aysuh7YyWaSfVW0PMh
-         iOq7uU5pRGQdCh9sWJX5+6zn6urjCR73ZJ4oX9vtnxYwmEPBH9QAa7B6a+mLlOzNRw
-         CAV3LvCEAlJSeTNqoPl7MGXt2jXYnQlX07tWUbki2bB3I/oUqNoWSIjPqCLf0ScNz9
-         F7lsW11lqx4Vg==
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5219ceead33so3351046a12.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Aug 2023 06:28:02 -0700 (PDT)
+        b=vw9pr0c6YCf32t2r70+2SVyfe7Hdbrf46brAr5cDFKgGWqmDfbqzKhE8LQzkpc8NZ
+         Qw6JQDuC2glVDrjXwnOxWmnfSjUrcRDEUI2VajOnpEsl2IXwDOYWpLCrC1Oj8cWhqa
+         NM+LeTkQW9xiuXdm26QwJ3bwZcTTRtiKUgyI7dSVmwfEsI8zmMPpG9cgm5GxOQ3zsU
+         r6qBfyRaRvK5Tni3WVSea9geyI83KhYk4SSTXFQZJbwAFfQs6SrXSVcRm1Ua1zMgr4
+         pv8YbSyUWf0hgOlFVNS+9CUyivRRIFOi05N3tBLQYEihQg3A3VugjDacigdbaDHbo+
+         fWaYNgDBrFiuQ==
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-4fe2f3cd8caso4560147e87.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Aug 2023 06:28:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691414882; x=1692019682;
+        d=1e100.net; s=20221208; t=1691414885; x=1692019685;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GFNwWvhavDkNrI4eqwez7OWrv+w+Iw1WNhnwQW/Fw7E=;
-        b=f5eu9KPh9vpCWRaB0mVc35mdlGLzG8A2PwVieR6nNph2lfmDAwirZhxKgUwlWg7kxN
-         GaXKwDpRx35AK22tiCcK326ShVcOjtiE7Ael2KKN6eo8ix9GArdcTkR91jtsVoyUK/e0
-         eYi7CKt3YkSE7MC2HWIvba5DOtpr8rD81dNe2/yyKj51I5G5ZTIUP9rRRclWiVPJpXLp
-         LntItGehp7FX0gEZklKkgyaTw7DwKfuhK8GnjRHm2grcpL55e6yJiwtVyBdwk1c7tfJy
-         XTmI8R5ZFdW8rZoCQwK3tTRkvmV6drdAwkb75mWHaeoWfLJByCwn8IDq5Aw4M9zZlb/4
-         02rQ==
-X-Gm-Message-State: AOJu0YxSq+jaEWDrdWDnE6sNbdZeeedYagmqcGUV/oVk8W5fa+TQ/202
-        0Tv/lMwFKHGOYnRAxZbjJk+3u4KqdFcQ0Gxm09nPPwztRXoKbmw1dpSn6pyJnlh/SymzDvJdBS+
-        a5HTHzszk7Dde/BizXN1z/jw4RPd5fnSLyBq/6zUG+RU=
-X-Received: by 2002:a17:906:1db:b0:993:f2c2:7512 with SMTP id 27-20020a17090601db00b00993f2c27512mr10084635ejj.33.1691414882352;
-        Mon, 07 Aug 2023 06:28:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJO/0vqqE3tOHSpFzVew5B2QmVjKhzPumTSIkC7c+m2kty/8ghyCXqQKoZTu6KRcvPeoWfNg==
-X-Received: by 2002:a17:906:1db:b0:993:f2c2:7512 with SMTP id 27-20020a17090601db00b00993f2c27512mr10084624ejj.33.1691414882075;
-        Mon, 07 Aug 2023 06:28:02 -0700 (PDT)
+        bh=StxqveXF5moq9iJU4D0IjENKfN6jaIfCw60woBc2a1E=;
+        b=jUFTncvX0/lHZ+ujEVjD9UBmllpPC7sIIKGvIwYWGkqeFqVbEV/jeXjM0VuhaerqkT
+         qq0X1eJRORe47gyGgX8/ZaEdhKpX9qCo2CcBs7GvC3D/flhhVRc2hgKs7KMPUOq/aIUA
+         uh0Z7o1J7g0RJyScWugjaayuIcDFfD97k3MJ0DT1NsyfyeREG9XMmrqPl2pe0nDwxpiu
+         SjD1WzvSsF6cA5Ki5C7nXkbpY8HoRkmHwMjIjbBkksL7mthzQw2e4smHkjcLyrqSUqvX
+         Rr9RTVWUKZmfYanmFYUHZRYIK8XcGbb5o5IwFpAnixdJ9rItDaxeOqK3TzdrgNHjja3Q
+         nkMg==
+X-Gm-Message-State: AOJu0Ywg5CwBRMwu7STL17QbcWtrhTG8ViwYQZ23Ye72KrQMoh30DXJz
+        eju6D75N56Sl/9NE6onRThywxDMFUrup+wDgz3iGDUSrYFnVEiazpYX6PPlgy81JEHlrujskcEg
+        4CGFKjoRLJB7+qwMJ+g448N1pOLtyent7Djnu51WMN8M=
+X-Received: by 2002:a19:384d:0:b0:4fd:f85d:f67a with SMTP id d13-20020a19384d000000b004fdf85df67amr5042657lfj.61.1691414885028;
+        Mon, 07 Aug 2023 06:28:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGH8dpV5asuzqi3+idsYjvpcoY+P3TuwWpXio+/xGhWIZTKsOh87DyxGbqpTlfVO9qsRuKnSQ==
+X-Received: by 2002:a19:384d:0:b0:4fd:f85d:f67a with SMTP id d13-20020a19384d000000b004fdf85df67amr5042642lfj.61.1691414884702;
+        Mon, 07 Aug 2023 06:28:04 -0700 (PDT)
 Received: from amikhalitsyn.local (dslb-088-066-182-192.088.066.pools.vodafone-ip.de. [88.66.182.192])
-        by smtp.gmail.com with ESMTPSA id lg12-20020a170906f88c00b00992ca779f42sm5175257ejb.97.2023.08.07.06.28.01
+        by smtp.gmail.com with ESMTPSA id lg12-20020a170906f88c00b00992ca779f42sm5175257ejb.97.2023.08.07.06.28.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Aug 2023 06:28:01 -0700 (PDT)
+        Mon, 07 Aug 2023 06:28:04 -0700 (PDT)
 From:   Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 To:     xiubli@redhat.com
 Cc:     brauner@kernel.org, stgraber@ubuntu.com,
         linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
         Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Seth Forshee <sforshee@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v10 01/12] fs: export mnt_idmap_get/mnt_idmap_put
-Date:   Mon,  7 Aug 2023 15:26:15 +0200
-Message-Id: <20230807132626.182101-2-aleksandr.mikhalitsyn@canonical.com>
+Subject: [PATCH v10 02/12] ceph: stash idmapping in mdsc request
+Date:   Mon,  7 Aug 2023 15:26:16 +0200
+Message-Id: <20230807132626.182101-3-aleksandr.mikhalitsyn@canonical.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230807132626.182101-1-aleksandr.mikhalitsyn@canonical.com>
 References: <20230807132626.182101-1-aleksandr.mikhalitsyn@canonical.com>
@@ -85,55 +83,85 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-These helpers are required to support idmapped mounts in the Cephfs.
+From: Christian Brauner <brauner@kernel.org>
 
-Cc: Christian Brauner <brauner@kernel.org>
+When sending a mds request cephfs will send relevant data for the
+requested operation. For creation requests the caller's fs{g,u}id is
+used to set the ownership of the newly created filesystem object. For
+setattr requests the caller can pass in arbitrary {g,u}id values to
+which the relevant filesystem object is supposed to be changed.
+
+If the caller is performing the relevant operation via an idmapped mount
+cephfs simply needs to take the idmapping into account when it sends the
+relevant mds request.
+
+In order to support idmapped mounts for cephfs we stash the idmapping
+whenever they are relevant for the operation for the duration of the
+request. Since mds requests can be queued and performed asynchronously
+we make sure to keep the idmapping around and release it once the
+request has finished.
+
+In follow-up patches we will use this to send correct ownership
+information over the wire. This patch just adds the basic infrastructure
+to keep the idmapping around. The actual conversion patches are all
+fairly minimal.
+
 Cc: Xiubo Li <xiubli@redhat.com>
 Cc: Jeff Layton <jlayton@kernel.org>
 Cc: Ilya Dryomov <idryomov@gmail.com>
 Cc: ceph-devel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Reviewed-by: Christian Brauner <brauner@kernel.org>
 ---
-v3:
-	- EXPORT_SYMBOL -> EXPORT_SYMBOL_GPL as Christoph Hellwig suggested
+v4:
+	- don't call mnt_idmap_get(..) in __register_request
 ---
- fs/mnt_idmapping.c            | 2 ++
- include/linux/mnt_idmapping.h | 3 +++
- 2 files changed, 5 insertions(+)
+ fs/ceph/mds_client.c | 5 +++++
+ fs/ceph/mds_client.h | 1 +
+ 2 files changed, 6 insertions(+)
 
-diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
-index 4905665c47d0..57d1dedf3f8f 100644
---- a/fs/mnt_idmapping.c
-+++ b/fs/mnt_idmapping.c
-@@ -256,6 +256,7 @@ struct mnt_idmap *mnt_idmap_get(struct mnt_idmap *idmap)
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 9aae39289b43..8829f55103da 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -12,6 +12,7 @@
+ #include <linux/bits.h>
+ #include <linux/ktime.h>
+ #include <linux/bitmap.h>
++#include <linux/mnt_idmapping.h>
  
- 	return idmap;
- }
-+EXPORT_SYMBOL_GPL(mnt_idmap_get);
+ #include "super.h"
+ #include "crypto.h"
+@@ -1121,6 +1122,8 @@ void ceph_mdsc_release_request(struct kref *kref)
+ 	kfree(req->r_path1);
+ 	kfree(req->r_path2);
+ 	put_cred(req->r_cred);
++	if (req->r_mnt_idmap)
++		mnt_idmap_put(req->r_mnt_idmap);
+ 	if (req->r_pagelist)
+ 		ceph_pagelist_release(req->r_pagelist);
+ 	kfree(req->r_fscrypt_auth);
+@@ -1180,6 +1183,8 @@ static void __register_request(struct ceph_mds_client *mdsc,
+ 	insert_request(&mdsc->request_tree, req);
  
- /**
-  * mnt_idmap_put - put a reference to an idmapping
-@@ -271,3 +272,4 @@ void mnt_idmap_put(struct mnt_idmap *idmap)
- 		kfree(idmap);
- 	}
- }
-+EXPORT_SYMBOL_GPL(mnt_idmap_put);
-diff --git a/include/linux/mnt_idmapping.h b/include/linux/mnt_idmapping.h
-index 057c89867aa2..b8da2db4ecd2 100644
---- a/include/linux/mnt_idmapping.h
-+++ b/include/linux/mnt_idmapping.h
-@@ -115,6 +115,9 @@ static inline bool vfsgid_eq_kgid(vfsgid_t vfsgid, kgid_t kgid)
+ 	req->r_cred = get_current_cred();
++	if (!req->r_mnt_idmap)
++		req->r_mnt_idmap = &nop_mnt_idmap;
  
- int vfsgid_in_group_p(vfsgid_t vfsgid);
+ 	if (mdsc->oldest_tid == 0 && req->r_op != CEPH_MDS_OP_SETFILELOCK)
+ 		mdsc->oldest_tid = req->r_tid;
+diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+index 717a7399bacb..e3bbf3ba8ee8 100644
+--- a/fs/ceph/mds_client.h
++++ b/fs/ceph/mds_client.h
+@@ -300,6 +300,7 @@ struct ceph_mds_request {
+ 	int r_fmode;        /* file mode, if expecting cap */
+ 	int r_request_release_offset;
+ 	const struct cred *r_cred;
++	struct mnt_idmap *r_mnt_idmap;
+ 	struct timespec64 r_stamp;
  
-+struct mnt_idmap *mnt_idmap_get(struct mnt_idmap *idmap);
-+void mnt_idmap_put(struct mnt_idmap *idmap);
-+
- vfsuid_t make_vfsuid(struct mnt_idmap *idmap,
- 		     struct user_namespace *fs_userns, kuid_t kuid);
- 
+ 	/* for choosing which mds to send this request to */
 -- 
 2.34.1
 
