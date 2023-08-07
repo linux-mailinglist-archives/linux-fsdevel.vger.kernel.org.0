@@ -2,149 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A7759772967
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 17:37:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1B0A772DD3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 20:25:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230473AbjHGPhi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Aug 2023 11:37:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57916 "EHLO
+        id S229480AbjHGSZE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Aug 2023 14:25:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230469AbjHGPhd (ORCPT
+        with ESMTP id S229740AbjHGSZD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Aug 2023 11:37:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DD42C4
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Aug 2023 08:36:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1691422609;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wCM0LSVABzEid+9ZFB8RVu58baVBQ5wmkVT334cAYKs=;
-        b=dlHOSv6650uKMK7y6IFub5qerDl7w/6oHXuqCiC2rXK7mXr0JaPfo+E0c0YD8ioIr4HVmD
-        Wl46VYkPR4tWQsXn+AIpaqy3XaIATCi2jUq7G4GuJ6ctQVWbQmfcPq7ObIiTPefN+sRH7z
-        AfSheYF0HQNqc6MtYoAU+1yfNmHdYk0=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-357-qIpDTy_dMSCd9wBn_3QTbw-1; Mon, 07 Aug 2023 11:36:48 -0400
-X-MC-Unique: qIpDTy_dMSCd9wBn_3QTbw-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3172a94b274so2521665f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Aug 2023 08:36:47 -0700 (PDT)
+        Mon, 7 Aug 2023 14:25:03 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C1AF1B7
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Aug 2023 11:25:01 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1bb91c20602so10145865ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Aug 2023 11:25:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691432701; x=1692037501;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3pJjNXs4QCJ//eacbs196+Ii1BpskstaQNpYfpqnv34=;
+        b=kqpgx8X5bLaxAqYEt2ijFW6BbvzevlhTzCZkihAiTGIL5Bt5jai7jEaWqvv1B7EO+b
+         22+Upfg9ezalxH4MWmswPVIgAvpB6gqHr1UBWtXQh4GJ8lj7IPFOsFeQPxcUcl7CbGnN
+         5PkVwiWNBnQz+7my0AmCfmTF1JIPazlgFI9k9clZhAK4nNqyE6tnB+js5OIBMeE1dWgH
+         NCuxFlGYMHbG+08KJ2xmr/lVGyPUU7+nWAclpnykQk0yJkVkLCovZIuGYjCkfr1GRIjk
+         nflf74Wc4lnMaNOwfcrJpx+48WwZyCFGXvFGPlWCUlq7uU28bzZrsbxRVCw/ODyKsKk7
+         dFtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691422607; x=1692027407;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wCM0LSVABzEid+9ZFB8RVu58baVBQ5wmkVT334cAYKs=;
-        b=DpgwyjnH/2bZXH7nFIUTZjov06izoEzV5L3GMVx/uOLJRZThE/1cXCwcY43vsZjeDH
-         Ri2YsBX1meTXX9Sf7s0a6kqckxV0yl1NoXYjhGSXHXf4i9SEnlhTYSba+xUWCgQ7WJQm
-         yCgBMciEeFNZ+ZXeWZeNzrbWdEwWToq2z2QtXjwlm0fv3YZdPRg//dsoU2Tt0Qev6Xt4
-         ZOJOYuHXK0m5JGD8nV4sdDlP3YUK33PwcqfPafFgcqj/AnQZn5w2v8hfY7hivzKZMwYK
-         9DdL7TjxdfRSB7U4lLbZu5t1hogcwM2KvscXxZ9zl+veC7tcyVEBD2YLnR3kRBvJZibR
-         ATJQ==
-X-Gm-Message-State: AOJu0YwFg0Cy54NLcCKBTfY1SgyvpfHHbMXKY6AnepMk4K2ihQQTovjS
-        hHGEw7z28jAz0q9TxpByUwcl7h4P1Ph0UUwsof/LNQOBY+C8GJU3ddoLdmY94GO7CvytxgaMyTw
-        JQQHmNmvXw9LV6/Y/cin6BY5Ktg==
-X-Received: by 2002:a5d:4085:0:b0:315:96ca:dcab with SMTP id o5-20020a5d4085000000b0031596cadcabmr7337371wrp.35.1691422607007;
-        Mon, 07 Aug 2023 08:36:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFazJ0hQvyp0w7nVsyclbNvRXnBSHlJEwsegobzfYo7VP5sfkvDEV8yiWkWqkqGh7ZbhT/yBw==
-X-Received: by 2002:a5d:4085:0:b0:315:96ca:dcab with SMTP id o5-20020a5d4085000000b0031596cadcabmr7337347wrp.35.1691422606590;
-        Mon, 07 Aug 2023 08:36:46 -0700 (PDT)
-Received: from [192.168.3.108] (p4ff234da.dip0.t-ipconnect.de. [79.242.52.218])
-        by smtp.gmail.com with ESMTPSA id s1-20020adff801000000b00314417f5272sm10811517wrp.64.2023.08.07.08.36.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Aug 2023 08:36:46 -0700 (PDT)
-Message-ID: <e9cdb144-70c7-6596-2377-e675635c94e0@redhat.com>
-Date:   Mon, 7 Aug 2023 17:36:44 +0200
+        d=1e100.net; s=20221208; t=1691432701; x=1692037501;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3pJjNXs4QCJ//eacbs196+Ii1BpskstaQNpYfpqnv34=;
+        b=gGoBbH0nG5OBVD44/RskdAU1H2cFrNDnUC0/zLt+IuVsrl9Qmb90/irzH83jnmN879
+         zU/e0dZtICPyj3n0G/w8abkWhKvLIJa8YmmrcaKYB8JWJ+SWKH6ZeCDtO6J7EReE0Ygt
+         am9/3N0Wlp8L7M6tcQuVLLhKFeqeUeTuN22E7mN20EoVWR75dYLc1EDQKtr6chiA5rTE
+         q6QYG+bhxlg3EyNuc9PV+Jdmz4qNXJ1S3C2FXrxzag8YS3RCviDhebtW1UiA12ml85Fs
+         piiOtGPWLJtYfQL9BL+C3fl5A/1oaPL76EEG3R3e0787vKMqNbSLTcapO5Lv0ibCdCIX
+         vFSQ==
+X-Gm-Message-State: ABy/qLYs9+4QpnUKJv8PiILtyPQ3Xtc1Ougas/4c7aanSdfMty4MatLT
+        EhYlD+FqOjs3y2F5N0l7Xl+JKA==
+X-Google-Smtp-Source: APBJJlFURYryyRLRBjK4Cyr916nSBSaubf5aUgZlsfvmwJhugTUqlPYOfhCnpbjWJ4qrDtXrk7/lgg==
+X-Received: by 2002:a17:902:d503:b0:1bb:83ec:832 with SMTP id b3-20020a170902d50300b001bb83ec0832mr33892430plg.2.1691432700593;
+        Mon, 07 Aug 2023 11:25:00 -0700 (PDT)
+Received: from [127.0.0.1] ([12.221.160.50])
+        by smtp.gmail.com with ESMTPSA id u3-20020a170902b28300b001b66a71a4a0sm7240722plr.32.2023.08.07.11.24.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Aug 2023 11:24:59 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        io-uring@vger.kernel.org, stable@vger.kernel.org
+In-Reply-To: <20230807-resolve_cached-o_tmpfile-v3-1-e49323e1ef6f@cyphar.com>
+References: <20230807-resolve_cached-o_tmpfile-v3-1-e49323e1ef6f@cyphar.com>
+Subject: Re: [PATCH v3] io_uring: correct check for O_TMPFILE
+Message-Id: <169143269944.27533.6390760474967259170.b4-ty@kernel.dk>
+Date:   Mon, 07 Aug 2023 12:24:59 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 7/7] selftest/mm: ksm_functional_tests: Add PROT_NONE
- test
-Content-Language: en-US
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        liubo <liubo254@huawei.com>, Peter Xu <peterx@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mel Gorman <mgorman@suse.de>, Shuah Khan <shuah@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>
-References: <20230803143208.383663-1-david@redhat.com>
- <20230803143208.383663-8-david@redhat.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20230803143208.383663-8-david@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Mailer: b4 0.13-dev-034f2
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_SBL_CSS,SPF_HELO_NONE,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 03.08.23 16:32, David Hildenbrand wrote:
-> Let's test whether merging and unmerging in PROT_NONE areas works as
-> expected.
+
+On Mon, 07 Aug 2023 12:24:15 +1000, Aleksa Sarai wrote:
+> O_TMPFILE is actually __O_TMPFILE|O_DIRECTORY. This means that the old
+> check for whether RESOLVE_CACHED can be used would incorrectly think
+> that O_DIRECTORY could not be used with RESOLVE_CACHED.
 > 
-> Pass a page protection to mmap_and_merge_range(), which will trigger
-> an mprotect() after writing to the pages, but before enabling merging.
 > 
-> Make sure that unsharing works as expected, by performing a ptrace write
-> (using /proc/self/mem) and by setting MADV_UNMERGEABLE.
-> 
-> Note that this implicitly tests that ptrace writes in an inaccessible
-> (PROT_NONE) mapping work as expected.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
 
-Andrew, can you squash the following?
+Applied, thanks!
 
- From c2be7c02cb96b9189a52a5937821600ef4e259bd Mon Sep 17 00:00:00 2001
-From: David Hildenbrand <david@redhat.com>
-Date: Mon, 7 Aug 2023 17:33:54 +0200
-Subject: [PATCH] Fixup: selftest/mm: ksm_functional_tests: Add PROT_NONE test
+[1/1] io_uring: correct check for O_TMPFILE
+      (no commit info)
 
-As noted by Peter, we should be using sizeof(i) in test_prot_none().
-
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
-  tools/testing/selftests/mm/ksm_functional_tests.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/mm/ksm_functional_tests.c b/tools/testing/selftests/mm/ksm_functional_tests.c
-index 8fa4889ab4f3..901e950f9138 100644
---- a/tools/testing/selftests/mm/ksm_functional_tests.c
-+++ b/tools/testing/selftests/mm/ksm_functional_tests.c
-@@ -516,7 +516,7 @@ static void test_prot_none(void)
-  	/* Store a unique value in each page on one half using ptrace */
-  	for (i = 0; i < size / 2; i += pagesize) {
-  		lseek(mem_fd, (uintptr_t) map + i, SEEK_SET);
--		if (write(mem_fd, &i, sizeof(size)) != sizeof(size)) {
-+		if (write(mem_fd, &i, sizeof(i)) != sizeof(i)) {
-  			ksft_test_result_fail("ptrace write failed\n");
-  			goto unmap;
-  		}
+Best regards,
 -- 
-2.41.0
+Jens Axboe
 
 
-
--- 
-Cheers,
-
-David / dhildenb
 
