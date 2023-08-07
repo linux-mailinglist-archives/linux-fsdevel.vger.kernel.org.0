@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D9C677323C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 00:03:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03BF2773242
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 00:03:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231211AbjHGWDf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Aug 2023 18:03:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42742 "EHLO
+        id S231269AbjHGWDu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Aug 2023 18:03:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231236AbjHGWC6 (ORCPT
+        with ESMTP id S230024AbjHGWDX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Aug 2023 18:02:58 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2C992136;
-        Mon,  7 Aug 2023 15:02:28 -0700 (PDT)
+        Mon, 7 Aug 2023 18:03:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C786E26B0;
+        Mon,  7 Aug 2023 15:02:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AEDDF622A3;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D5B5C6223E;
+        Mon,  7 Aug 2023 22:02:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C5C7C433C9;
         Mon,  7 Aug 2023 22:02:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61D44C433B6;
-        Mon,  7 Aug 2023 22:02:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691445747;
-        bh=BgZhQzy1ZDJ87SbUj0QMsK2M0tcAHYl7N7+4HCzYWRs=;
+        s=k20201202; t=1691445753;
+        bh=38AeaFL37vV9MyUQ5JVKuM1gVCMvtkdVnDbNL3TTQpU=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=EmOZ2tYUJCJhMhJ7hO34qV5fLR5s6c+Swyx0MdJ40FErxgl5j1pJ1C/4mPxfC/fB0
-         zDT+DR54Mvr4RmVYj3PS0INYq5at6DJwiJvlBLToBENbgbSF9qThUiahmn/iImdMun
-         PbRfcsONPOAz/DgAjZkxiEiueS6TUZ5Yi6L6FvhGBVc1jkT4KNRf3lkY+HfN1hSh2D
-         VFR2AVLEomJrR2LGmXga00ZjV0tf0hkN6eRbDVRD4D3G41ruz+/5U7xBTi7fc6s7L4
-         8rXROIj6mbaHHv12TMfkAL0zqssrdoHVk7BA+B8lqyVX07XUu8TZWdW8z9DNOBAnTQ
-         2mlgvyFVXCLDQ==
+        b=db1Dx/sxvi2GeSAf3rMhKXkcdbmJDIbfGUllMMOe7trw5TGd+vI308J3L4cvkXQIy
+         A5eOMbMBeV+Iy6DXGLgZPV2F+yerFVZYxAxPyGfOBYF1anXcMVZRwrdJqAwLAvpbXc
+         YDsN6zKyGjydncigvfYWIOjoqQ1hCoR5Gi43v8eOSsHPg/aqEgfOPiOgs1WJaLMRb1
+         9BvC/IsPYBbZuRF2oYfHysw7ZJkNDBsrQP5yK/Cs4ueUWvjxWcwBpuCkbMS40bOKci
+         sHSrh8RghAfAnm3dUDKaiUdqcray+L0SvleZYqxC83BUSBcJhJ+dAsfdeeIjAER83K
+         gdG039mOCCB/A==
 From:   Mark Brown <broonie@kernel.org>
-Date:   Mon, 07 Aug 2023 23:00:14 +0100
-Subject: [PATCH v4 09/36] arm64/mm: Allocate PIE slots for EL0 guarded
- control stack
+Date:   Mon, 07 Aug 2023 23:00:15 +0100
+Subject: [PATCH v4 10/36] mm: Define VM_SHADOW_STACK for arm64 when we
+ support GCS
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230807-arm64-gcs-v4-9-68cfa37f9069@kernel.org>
+Message-Id: <20230807-arm64-gcs-v4-10-68cfa37f9069@kernel.org>
 References: <20230807-arm64-gcs-v4-0-68cfa37f9069@kernel.org>
 In-Reply-To: <20230807-arm64-gcs-v4-0-68cfa37f9069@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
@@ -69,81 +69,85 @@ Cc:     "H.J. Lu" <hjl.tools@gmail.com>,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-034f2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2919; i=broonie@kernel.org;
- h=from:subject:message-id; bh=BgZhQzy1ZDJ87SbUj0QMsK2M0tcAHYl7N7+4HCzYWRs=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBk0WmfSCjgX4zgvM1dX0NE3FBZc7yto4Ja/r7dY9ZP
- YJvd+7mJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZNFpnwAKCRAk1otyXVSH0LkeB/
- 487t0CeDsRzEJ/l8PbvmVhXGzZVKGNciRrG6v29QenKmFmWK3ROkp6BzL/Dr4xPkYV9tDVG69jz2aW
- noHAWdge6E/0geaaJAFe05seIm9jrY46BFHIZxolVLKZH4oFO0uG3qyA+Ct9k2m2RQI+zLhSAIj2Ue
- aO41sp2HhKo8umHeqzwsPEdHCZIlmQUPrK3X5emQgDFo/6iYIl7t2GRErkfDQdNq6kI+7i78vRgwHs
- M1fyR9/182RGa2FTE6YB6iQZY9Jpp1ngitVNFnpgQz7Gn9UTy5WHOU9xWttf7pOQFH7FZ3OIQ7BGRe
- w9VbzxIICBHqJFtASettRlZBpIAvmI
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2027; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=38AeaFL37vV9MyUQ5JVKuM1gVCMvtkdVnDbNL3TTQpU=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBk0WmfHaDrJuk1F8BZkrWtkiZfyI8pNxlLvkhZH0Bl
+ wPbm6M2JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZNFpnwAKCRAk1otyXVSH0KzOB/
+ 9Z7ayW1CxNIiEst1DkkfZk1750XtkJW5QHNR8NSJRtowY7IRMCt/HPlKhkUlwoJoOyEqw3wHyEl4sr
+ rhjQWNFCJHDmgCM0xKPUfgrUIUYMqtv7thpDIo4VkVaOE0EIgiVWFpTTaGMzDv1QKouCPw9QV+Jj1G
+ stKQEubuFBvpvQLYb7DKL8KHCeQ8GSLbYJMvJeQOa5n2uFdCYPkRws2FWxsnioGmwjj5GsvOrbzWgK
+ og0YmpMW5ApYcyyP3Sab9jWA8qRAKY+6tJJDIVQvnDM2u+9cXapRklfDOYo49HIPvX2JDVyL/RM7SS
+ hQ/pTlu9f3Mx39vSgZh/yIdSidNcTp
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Pages used for guarded control stacks need to be described to the hardware
-using the Permission Indirection Extension, GCS is not supported without
-PIE. In order to support copy on write for guarded stacks we allocate two
-values, one for active GCSs and one for GCS pages marked as read only prior
-to copy.
-
-Since the actual effect is defined using PIE the specific bit pattern used
-does not matter to the hardware but we choose two values which differ only
-in PTE_WRITE in order to help share code with non-PIE cases.
+Use VM_HIGH_ARCH_5 for guarded control stack pages.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/include/asm/pgtable-prot.h | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ Documentation/filesystems/proc.rst |  2 +-
+ fs/proc/task_mmu.c                 |  3 +++
+ include/linux/mm.h                 | 12 +++++++++++-
+ 3 files changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
-index eed814b00a38..b157ae0420ed 100644
---- a/arch/arm64/include/asm/pgtable-prot.h
-+++ b/arch/arm64/include/asm/pgtable-prot.h
-@@ -131,15 +131,23 @@ extern bool arm64_use_ng_mappings;
- /* 6:                                PTE_PXN | PTE_WRITE            */
- /* 7: PAGE_SHARED_EXEC               PTE_PXN | PTE_WRITE | PTE_USER */
- /* 8: PAGE_KERNEL_ROX      PTE_UXN                                  */
--/* 9:                      PTE_UXN |                       PTE_USER */
-+/* 9: PAGE_GCS_RO          PTE_UXN |                       PTE_USER */
- /* a: PAGE_KERNEL_EXEC     PTE_UXN |           PTE_WRITE            */
--/* b:                      PTE_UXN |           PTE_WRITE | PTE_USER */
-+/* b: PAGE_GCS             PTE_UXN |           PTE_WRITE | PTE_USER */
- /* c: PAGE_KERNEL_RO       PTE_UXN | PTE_PXN                        */
- /* d: PAGE_READONLY        PTE_UXN | PTE_PXN |             PTE_USER */
- /* e: PAGE_KERNEL          PTE_UXN | PTE_PXN | PTE_WRITE            */
- /* f: PAGE_SHARED          PTE_UXN | PTE_PXN | PTE_WRITE | PTE_USER */
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index 6ccb57089a06..086a0408a4d7 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -566,7 +566,7 @@ encoded manner. The codes are the following:
+     mt    arm64 MTE allocation tags are enabled
+     um    userfaultfd missing tracking
+     uw    userfaultfd wr-protect tracking
+-    ss    shadow stack page
++    ss    shadow/guarded control stack page
+     ==    =======================================
  
-+#define _PAGE_GCS	(_PAGE_DEFAULT | PTE_UXN | PTE_WRITE | PTE_USER)
-+#define _PAGE_GCS_RO	(_PAGE_DEFAULT | PTE_UXN | PTE_USER)
+ Note that there is no guarantee that every flag and associated mnemonic will
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index cfab855fe7e9..e8c50848bb16 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -711,6 +711,9 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+ #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_MINOR */
+ #ifdef CONFIG_X86_USER_SHADOW_STACK
+ 		[ilog2(VM_SHADOW_STACK)] = "ss",
++#endif
++#ifdef CONFIG_ARM64_GCS
++		[ilog2(VM_SHADOW_STACK)] = "ss",
+ #endif
+ 	};
+ 	size_t i;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 43fe625b85aa..3f939ae212e5 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -372,7 +372,17 @@ extern unsigned int kobjsize(const void *objp);
+  * having a PAGE_SIZE guard gap.
+  */
+ # define VM_SHADOW_STACK	VM_HIGH_ARCH_5
+-#else
++#endif
 +
-+#define PAGE_GCS	__pgprot(_PAGE_GCS)
-+#define PAGE_GCS_RO	__pgprot(_PAGE_GCS_RO)
++#if defined(CONFIG_ARM64_GCS)
++/*
++ * arm64's Guarded Control Stack implements similar functionality and
++ * has similar constraints to shadow stacks.
++ */
++# define VM_SHADOW_STACK	VM_HIGH_ARCH_5
++#endif
 +
- #define PIE_E0	( \
-+	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS),           PIE_GCS)  | \
-+	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS_RO),        PIE_R)   | \
- 	PIRx_ELx_PERM(pte_pi_index(_PAGE_EXECONLY),      PIE_X_O) | \
- 	PIRx_ELx_PERM(pte_pi_index(_PAGE_READONLY_EXEC), PIE_RX)  | \
- 	PIRx_ELx_PERM(pte_pi_index(_PAGE_SHARED_EXEC),   PIE_RWX) | \
-@@ -147,6 +155,8 @@ extern bool arm64_use_ng_mappings;
- 	PIRx_ELx_PERM(pte_pi_index(_PAGE_SHARED),        PIE_RW))
++#ifndef VM_SHADOW_STACK
+ # define VM_SHADOW_STACK	VM_NONE
+ #endif
  
- #define PIE_E1	( \
-+	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS),           PIE_RW)      | \
-+	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS_RO),        PIE_R)      | \
- 	PIRx_ELx_PERM(pte_pi_index(_PAGE_EXECONLY),      PIE_NONE_O) | \
- 	PIRx_ELx_PERM(pte_pi_index(_PAGE_READONLY_EXEC), PIE_R)      | \
- 	PIRx_ELx_PERM(pte_pi_index(_PAGE_SHARED_EXEC),   PIE_RW)     | \
 
 -- 
 2.30.2
