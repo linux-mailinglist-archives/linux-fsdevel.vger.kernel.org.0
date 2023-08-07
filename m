@@ -2,91 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B46DD772468
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 14:43:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94F457724A4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 14:46:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231232AbjHGMnu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Aug 2023 08:43:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42270 "EHLO
+        id S232502AbjHGMqw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Aug 2023 08:46:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbjHGMnt (ORCPT
+        with ESMTP id S231672AbjHGMqr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Aug 2023 08:43:49 -0400
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30F3F10F8
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Aug 2023 05:43:48 -0700 (PDT)
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3a5a7e981ddso7486766b6e.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Aug 2023 05:43:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691412227; x=1692017027;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wAEWqP5gKB8uMLpoS6Eqg26cWLFr6ZbPDCWQagcLkqw=;
-        b=OZtuA6Jys4+aUOc/xZofSc8OnxAcQF/K3P4kqEj7vtvUdUcPRRmtkePTktBP9QpY0H
-         yDIWIoidb+ANN6U0DUfDks/nNQMPmTk1VPZpOmUunbhg/4wqQFcQ8tWOMn4lFtQYUSdY
-         cWUu6q2HXJwW1h2uj6VyIFvIKrpF/e45214xIUkJLsh3EXHphMmKYrqbNTY/eV+20lD7
-         x4j9Vowhgydrd/V/2g/OV8TH8Alu5tBCfHWwFcGn6sglcDT1Vu0eBNQiieqFbwV69lL9
-         PSMiXQMT/GNw+vG+n2bqNaDSM83HimgsT9GOdU0AQuIsPDPOpOUtyLH/3V8AnF/DTD8k
-         nEKQ==
-X-Gm-Message-State: AOJu0YxK2Dt0qAN0F4EoLwW+WT5K8ZlD1ZVS4kPIrnb06H8tQfRKVSrP
-        Bop3cuOoDUAoNEVtlmHomKfUfIObs1jr2fbee9et9s1naK1u
-X-Google-Smtp-Source: AGHT+IHoJoMb/0e51YPNNTuP6jvIId9mMmDNqwQpwY5ckCNyEbt8LKrux+lqYhBfIuZKO5MvEUix56dTzWkvf3fG+sopLtXkkSGO
+        Mon, 7 Aug 2023 08:46:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D31451FC7;
+        Mon,  7 Aug 2023 05:46:22 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9D105611B4;
+        Mon,  7 Aug 2023 12:45:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 716E5C433C8;
+        Mon,  7 Aug 2023 12:45:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691412347;
+        bh=pMGmT/Pou6cIXNxMdsIaUSmMDmATLx/PEP2zAeUDuX8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sHETf0uokHvoUHbhzYLDcSFcC4vi7PEbJ04Mo71aUABVSfk/V/PTwVS/UIpHyGprP
+         ryL5sQTIUOdivJhNyFqjhwODP9uuPU9AG7EezC9YSOOMiNKFak20m4Bvj6qCw8AxM2
+         TKpK97mhg6k13SPOyKAKRDNOqxSGcLobCxbKmqFnemyN4RlEcQVYt9LkKx/D7BYxEh
+         nickfShRB+v2c59KrbiC8PyUWm5fCJBjBC9RjR8IynGY4hccKZZgd/V7jKMcWAs5hJ
+         dr+EjnVtVddP6eLRKkm74zfm5vr2wW5pdnvnFgKmOSVJBR1455bwqCdUVVebLc4XgF
+         GPVbin0EDplrQ==
+Date:   Mon, 7 Aug 2023 14:45:41 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+        linux-block@vger.kernel.org
+Subject: Re: [PATCH 4/4] fs, block: remove bdev->bd_super
+Message-ID: <20230807-riesig-wehrlos-9f90c87d9a09@brauner>
+References: <20230807112625.652089-1-hch@lst.de>
+ <20230807112625.652089-5-hch@lst.de>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:150d:b0:3a3:efef:5c74 with SMTP id
- u13-20020a056808150d00b003a3efef5c74mr16036098oiw.8.1691412227608; Mon, 07
- Aug 2023 05:43:47 -0700 (PDT)
-Date:   Mon, 07 Aug 2023 05:43:47 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fed3d506025498b2@google.com>
-Subject: [syzbot] Monthly udf report (Aug 2023)
-From:   syzbot <syzbot+listb71671ff52af662862e3@syzkaller.appspotmail.com>
-To:     jack@suse.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230807112625.652089-5-hch@lst.de>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello udf maintainers/developers,
+On Mon, Aug 07, 2023 at 12:26:25PM +0100, Christoph Hellwig wrote:
+> bdev->bd_super is unused now, remove it.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
 
-This is a 31-day syzbot report for the udf subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/udf
-
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 19 issues are still open and 18 have been fixed so far.
-
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 1068    Yes   WARNING in udf_truncate_extents
-                  https://syzkaller.appspot.com/bug?extid=43fc5ba6dcb33e3261ca
-<2> 69      Yes   KASAN: use-after-free Write in udf_close_lvid
-                  https://syzkaller.appspot.com/bug?extid=60864ed35b1073540d57
-<3> 12      Yes   KASAN: use-after-free Read in udf_finalize_lvid
-                  https://syzkaller.appspot.com/bug?extid=46073c22edd7f242c028
-<4> 5       Yes   WARNING in __udf_add_aext (2)
-                  https://syzkaller.appspot.com/bug?extid=e381e4c52ca8a53c3af7
-<5> 3       Yes   KASAN: slab-out-of-bounds Write in udf_adinicb_writepage
-                  https://syzkaller.appspot.com/bug?extid=a3db10baf0c0ee459854
-<6> 1       No    UBSAN: array-index-out-of-bounds in udf_process_sequence
-                  https://syzkaller.appspot.com/bug?extid=abb7222a58e4ebc930ad
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Looks good to me,
+Reviewed-by: Christian Brauner <brauner@kernel.org>
