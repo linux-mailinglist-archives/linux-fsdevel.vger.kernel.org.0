@@ -2,125 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D4DC677186C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 04:45:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 214D17718BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 05:18:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229849AbjHGCpH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Aug 2023 22:45:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44706 "EHLO
+        id S229684AbjHGDSo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Aug 2023 23:18:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229587AbjHGCpG (ORCPT
+        with ESMTP id S229538AbjHGDSm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Aug 2023 22:45:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C90D4E6A;
-        Sun,  6 Aug 2023 19:45:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 609DE61305;
-        Mon,  7 Aug 2023 02:45:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BECFC433C8;
-        Mon,  7 Aug 2023 02:44:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691376300;
-        bh=USJIDDP4kE+cHkQpFsYQKXS4O9YsCyYriaif+zRMHog=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GsGnow7ie8LxtIeC6X2zkGz1iQ19g51CjlUZ/q4wN2GfgP9HTXdWWd9tY+69L1JKh
-         TAGeYVROKtU0OWlnUEZ8IYDv6w6fIEHL4Jj63cl4FF2QgWNflWt98pSSdLDAS8svDC
-         dGmdgRh4iL3XoGrBSrkFZZJz6+aBRqgLNsAO2JiVM5CxDJxljcSPzEvFiNsbmdtNOJ
-         rFq1xFyJNtopVS2TMwb36r/4/dKrcT3Nus4unJw5wO44n6oHykN3ZVwHKMiN4uBgHO
-         JuKGJH0FeN2H+1YKq1GmGcLmSAODdk3zcKDHlb3ZMF/xsEqYjcDMuRioEE9D3bmz1k
-         PO7Ytcz2Ws0GQ==
-Date:   Mon, 7 Aug 2023 11:44:55 +0900
-From:   Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To:     paulmck@kernel.org
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>, akpm@linux-foundation.org,
-        mhiramat@kernel.org, arnd@kernel.org, ndesaulniers@google.com,
-        sfr@canb.auug.org.au, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH RFC bootconfig] 1/2] fs/proc: Add /proc/cmdline_load for
- boot loader arguments
-Message-Id: <20230807114455.b4bab41d771556d086e8bdf4@kernel.org>
-In-Reply-To: <9a42de2a-7d9f-4be3-b6c8-9f3e8a092c4d@paulmck-laptop>
-References: <197cba95-3989-4d2f-a9f1-8b192ad08c49@paulmck-laptop>
-        <20230728033701.817094-1-paulmck@kernel.org>
-        <db2617d2-589d-47c1-a0cc-e8aeca58710a@p183>
-        <9a42de2a-7d9f-4be3-b6c8-9f3e8a092c4d@paulmck-laptop>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        Sun, 6 Aug 2023 23:18:42 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADC4E10F7;
+        Sun,  6 Aug 2023 20:18:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=YLGI+m+NtSfah82olnSRoKFqUzieef4s4ojluCMDHpQ=; b=avi5+BV2nn4+9w0hK9/NTCHS9f
+        fHFDN2iP+4ajHibTF3ytnoRejVZvJuizuiWN3+ZJw7aKfMR7FRQAl2r1s7fELP0EC39pnh39Kveu1
+        VOwEg6QBl3iXnaMHMiS9RYcmxUKXiOf9FgdLxGP5Y9m5cEKVdqesePOkhfUOa+tFJQoitydRmNsWr
+        TIGXzMYjGsoEqejJgOqI8ovxWuTEkN74sBZqkezFzAX1wjZXHCyjPuf+1PDmxZXGknOoqFdCnLJNl
+        HiGGROamZfkEYwUE7CgVkzADgahTorf8aAzHWrOhVCn77xvtQiiZQZTIuQ3lYW83TvOv1BTH+LtNl
+        ttBAmL+w==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qSqlS-00828U-Qi; Mon, 07 Aug 2023 03:18:38 +0000
+Date:   Mon, 7 Aug 2023 04:18:38 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mateusz Guzik <mjguzik@gmail.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, oleg@redhat.com
+Subject: Re: [PATCH] fs: use __fput_sync in close(2)
+Message-ID: <ZNBijjmst12/V87J@casper.infradead.org>
+References: <20230806230627.1394689-1-mjguzik@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230806230627.1394689-1-mjguzik@gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 4 Aug 2023 10:36:17 -0700
-"Paul E. McKenney" <paulmck@kernel.org> wrote:
+On Mon, Aug 07, 2023 at 01:06:27AM +0200, Mateusz Guzik wrote:
+> With the assumption this is not going to work, I wrote my own patch
+> which adds close_fd_sync() and filp_close_sync().  They are shipped as
+> dedicated func entry points, but perhaps inlines which internally add a
+> flag to to the underlying routine would be preferred?
 
-> On Fri, Aug 04, 2023 at 08:23:20PM +0300, Alexey Dobriyan wrote:
-> > On Thu, Jul 27, 2023 at 08:37:00PM -0700, Paul E. McKenney wrote:
-> > > In kernels built with CONFIG_BOOT_CONFIG_FORCE=y, /proc/cmdline will
-> > > show all kernel boot parameters, both those supplied by the boot loader
-> > > and those embedded in the kernel image.  This works well for those who
-> > > just want to see all of the kernel boot parameters, but is not helpful to
-> > > those who need to see only those parameters supplied by the boot loader.
-> > > This is especially important when these parameters are presented to the
-> > > boot loader by automation that might gather them from diverse sources.
-> > > 
-> > > Therefore, provide a /proc/cmdline_load file that shows only those kernel
-> > > boot parameters supplied by the boot loader.
-> > 
-> > > +static int cmdline_load_proc_show(struct seq_file *m, void *v)
-> > > +{
-> > > +	seq_puts(m, boot_command_line);
-> > > +	seq_putc(m, '\n');
-> > > +	return 0;
-> > > +}
-> > > +
-> > >  static int __init proc_cmdline_init(void)
-> > >  {
-> > >  	struct proc_dir_entry *pde;
-> > > @@ -19,6 +27,11 @@ static int __init proc_cmdline_init(void)
-> > >  	pde = proc_create_single("cmdline", 0, NULL, cmdline_proc_show);
-> > >  	pde_make_permanent(pde);
-> > >  	pde->size = saved_command_line_len + 1;
-> > > +	if (IS_ENABLED(CONFIG_BOOT_CONFIG_FORCE)) {
-> > > +		pde = proc_create_single("cmdline_load", 0, NULL, cmdline_load_proc_show);
-> > > +		pde_make_permanent(pde);
-> > > +		pde->size = strnlen(boot_command_line, COMMAND_LINE_SIZE) + 1;
-> > > +	}
-> > 
-> > Please add it as separate fs/proc/cmdline_load.c file so that name of
-> > the file matches name of the /proc file.
-> 
-> Thank you, will do!
-> 
-> > The name "cmdline_load" is kind of non-descriptive. Mentioning "bootloader"
-> > somewhere should improve things.
-> 
-> If we can all quickly come to agreement on a name, I can of course easily
-> change it.
-> 
-> /proc/cmdline_bootloader?  Better than /proc/cmdline_from_bootloader,
-> I suppose.  /proc/cmdline_bootldr?  /proc/bootloader by analogy with
-> /proc/bootconfig?  Something else?
+Yes, I think static inlines would be better here.  
 
-What about "/proc/raw_cmdline" ?
+> Also adding __ in
+> front would be in line with __fput_sync, but having __filp_close_sync
+> call  __filp_close looks weird to me.
 
-Thank you,
+I'd handle this as ...
 
+int file_close_sync(struct file *, fl_owner_t, bool sync);
+static inline filp_close(struct file *file, fl_owner_t owner)
+{
+	return file_close_sync(file, owner, false);
+}
 
-> 
-> 							Thanx, Paul
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
