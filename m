@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D4F80772F5F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 21:41:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6B41772F8B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Aug 2023 21:42:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230201AbjHGTlW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Aug 2023 15:41:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33760 "EHLO
+        id S231536AbjHGTmN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Aug 2023 15:42:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229562AbjHGTlU (ORCPT
+        with ESMTP id S230249AbjHGTla (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Aug 2023 15:41:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06BB5199B;
-        Mon,  7 Aug 2023 12:40:45 -0700 (PDT)
+        Mon, 7 Aug 2023 15:41:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AAFF1FD0;
+        Mon,  7 Aug 2023 12:40:59 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 14483621C6;
-        Mon,  7 Aug 2023 19:39:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 190D6C433CB;
-        Mon,  7 Aug 2023 19:39:06 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BBAA0621BE;
+        Mon,  7 Aug 2023 19:39:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7F53C0760F;
+        Mon,  7 Aug 2023 19:39:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691437152;
-        bh=FjK4CXRYiETGn7OzM9We0k7POLcZSDg/Zv0Z2hVxi0I=;
+        s=k20201202; t=1691437159;
+        bh=w/lSN0ukwva6epMNoVXoGECLFjjw4G/9PpuKUglAlXI=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=Ho/bKlx1W7NVzVpTF8gn0UewKv0nHppAuc8rdt0EpJYDtixyqx9Pm88/s99GjJrGi
-         VyWirQXhlLAHTHZVHTzlGto3MlaV9AC0IS4d6ITtkzLyremJTCyhuBghtZLgXI+wFI
-         BWGm+mORoGztRukCVECswMBc3DvEXZDbVqOKZXPaUiWJUmCkRudhYLBAFuaGRz0svy
-         C36sqbKO7RSDcSDE/CGOWo0cEGgTtCDEY05Q94XhMpgiKRb5sItIEiDQCoyYVBZcIf
-         Wa4V9O81hy5cBvQhbAwM4fAHf3aZVD4FS2Awad7m8GiNGAzXgq+KA8NdanYEf8qWKH
-         93tAXs2YealYw==
+        b=n+ZsTu28M3VdcwnYvSVxoPse+qwGyO+HkVh5pC077q8BEHXzpiyNNUgAHQPYiFJIS
+         j6ZKghZfFnGATLTZj4oxP2NYEGEO7AiSUifGgRP68IlVHDXaWCgn54hYIL0JpmM0p+
+         CqLzra1OclcPSOt/Hnsh2xZ1sDfSGHbAsCwHm3aTfTxLNmvkLgEmlZKZJ5/0AUuD+R
+         Eqm6CVVkz6y/GuBriAK4Wwi5djQ8NvbLaSPToikNPLCl3fBhu8w7JrnSDO0z49QTWe
+         mdzgssplnSDCZhdVt8pPDznGidgkZHlZ4hD7/wgE/28c355BGbe+y20j1GWIEszM3w
+         vHVLY1B9cMgXw==
 From:   Jeff Layton <jlayton@kernel.org>
-Date:   Mon, 07 Aug 2023 15:38:35 -0400
-Subject: [PATCH v7 04/13] btrfs: have it use inode_update_timestamps
+Date:   Mon, 07 Aug 2023 15:38:36 -0400
+Subject: [PATCH v7 05/13] fat: make fat_update_time get its own timestamp
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230807-mgctime-v7-4-d1dec143a704@kernel.org>
+Message-Id: <20230807-mgctime-v7-5-d1dec143a704@kernel.org>
 References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
 In-Reply-To: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -105,61 +105,68 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
         Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1015; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=FjK4CXRYiETGn7OzM9We0k7POLcZSDg/Zv0Z2hVxi0I=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBk0Ug9ionAyEQ00FE2RysKd05kyYmr3Uo7M3P+S
- fZsake1O9WJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZNFIPQAKCRAADmhBGVaC
- FSb/D/46K68INm7LKy6yCb3jkxB2bvd3492M0QuN7zYTdZH4x4RyMrHVer1FcL+lgqeruzzWSEv
- f1jPsb2uT+va62GuDI/zejA857D6P77Pxxt62BL6PnF8w9wZfjNo2RBhUJFbcYvEl7WV0QxsBOz
- eVhLOFWlIfBl7qnRoQcQ1EXt/gqm3vncmzxpOhadSWSyAjf3Uyf3ySH1I8zBuzQ6i19jmqQ0RvT
- bb3mEN/W/iBYc3G76Eud3bo16w9EvoB9nxjRlcTuuZvFPC7ModhHKFVftanzKrqnN++LssBxJTt
- qCOGvNDD4XQsoYkNqWK/GeE2dbwuRgBPiPB4T/mRNQGXzoSkgEejZgIlG9UhkKivUvI8mAD1Fvf
- EsZs1aXtF60wPVfCdR9EzkWR98DlT7wHqFko2/J5x3ayqhk5/Hd7Dxd9+3KOUjobqgsNV6z/0hu
- iEa0QiZI9t2vkWtpHGQNGJWoW5i6lWMNl2ugTM4Ph4rAECf19PhJ6QMCL6sLB1t/Yg+5Y9QCkZa
- u6JThQBEJCg3b3v0vqUh9tAePT84Au/SSSO41CUtR4p6gYotqAK/13vCIRlgBGFlSFirEva3rSu
- O4r5y/T/dIV3T3tPLC2QfaJLzkymk/JC3a+VkmmiF/LAO2Y1vQ5KE1bfV2hX76K1OaxCpRxc3+Z
- GjdlHLhrXMsZpbw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1355; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=w/lSN0ukwva6epMNoVXoGECLFjjw4G/9PpuKUglAlXI=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBk0Ug9pI0NrLPqkw/IVc72gm+1CKA4xq0qrZy8b
+ uVUq7nnyrmJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZNFIPQAKCRAADmhBGVaC
+ Fa9OEACCVBv40jfSNekICILFILSv3kfMvSgBhgjGx95YgjXppdwzEyLLlwpSVrSsRV+cftyGpIm
+ fAE/yx7Tg45YQHPEAIjZsXv7bmnKzSjeE6SBYRlzajEuRP5jYccKnpHBkFgt3Bm6CzwTXKsc+wP
+ P+Os6/rMfvLYhgIRrsw2TynaKTK+KCmkPhLl2MY80nE/IJJDuKyc12CA3WObaND9DMiDvrpFrVy
+ +EpTXRHLFTVw9XhkfotB2MTddGG22XE2bX61v2EY7jVHsLfvCexOUHqHERkOMf7sNYTYBNGbQWj
+ GDOTlMmoFkepJxCRNTmBrGPvaEWotzG/J/olLjLSwazaPHviKqV6+YswMlUDwNSkpe3Vj9wVLz4
+ 2q00zgOWKIlzdWwn+HfMColQvMyebLbvGGAipQSNWb31zah3OmKeUULR8PVuszN88ZNHeezNxXA
+ hvZpmJoX1eJLN7m8v8Ed43X/VhazgHgNvOCNu7abZkmYVfTwgI40o7Bd9RLXq+64YqOP+YK+z3Q
+ Zq+YbwZYcxNUuUpn+Cgp7YHZUbEsahymP2YrmwqP4Xob7knCd5llIT+NhSveXB+ZQWC6fDyX7Ch
+ VbhvDGsvPZ+SUd/2o3PDvfQrzxcr0zoGj7FQvhSljVPTCnHDYuqdBgwJjRAwav0+7Gr4YtL69lE
+ MReVPilZbhz9ThA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In later patches, we're going to drop the "now" argument from the
-update_time operation. Have btrfs_update_time use the new
-inode_update_timestamps helper to fetch a new timestamp and update it
-properly.
+In later patches, we're going to drop the "now" parameter from the
+update_time operation. Fix fat_update_time to fetch its own timestamp.
+It turns out that this is easily done by just passing a NULL timestamp
+pointer to fat_update_time.
+
+Also, it may be that things have changed by the time we get to calling
+fat_update_time after checking inode_needs_update_time. Ensure that we
+attempt the i_version bump if any of the S_* flags besides S_ATIME are
+set.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/btrfs/inode.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ fs/fat/misc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 29a20f828dda..d52e7d64570a 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -6068,14 +6068,7 @@ static int btrfs_update_time(struct inode *inode, struct timespec64 *now,
- 	if (btrfs_root_readonly(root))
- 		return -EROFS;
+diff --git a/fs/fat/misc.c b/fs/fat/misc.c
+index 67006ea08db6..8cab87145d63 100644
+--- a/fs/fat/misc.c
++++ b/fs/fat/misc.c
+@@ -347,14 +347,14 @@ int fat_update_time(struct inode *inode, struct timespec64 *now, int flags)
+ 		return 0;
  
--	if (flags & S_VERSION)
--		dirty |= inode_maybe_inc_iversion(inode, dirty);
--	if (flags & S_CTIME)
--		inode_set_ctime_to_ts(inode, *now);
--	if (flags & S_MTIME)
--		inode->i_mtime = *now;
--	if (flags & S_ATIME)
--		inode->i_atime = *now;
-+	dirty = inode_update_timestamps(inode, flags);
- 	return dirty ? btrfs_dirty_inode(BTRFS_I(inode)) : 0;
- }
+ 	if (flags & (S_ATIME | S_CTIME | S_MTIME)) {
+-		fat_truncate_time(inode, now, flags);
++		fat_truncate_time(inode, NULL, flags);
+ 		if (inode->i_sb->s_flags & SB_LAZYTIME)
+ 			dirty_flags |= I_DIRTY_TIME;
+ 		else
+ 			dirty_flags |= I_DIRTY_SYNC;
+ 	}
  
+-	if ((flags & S_VERSION) && inode_maybe_inc_iversion(inode, false))
++	if ((flags & (S_VERSION|S_CTIME|S_MTIME)) && inode_maybe_inc_iversion(inode, false))
+ 		dirty_flags |= I_DIRTY_SYNC;
+ 
+ 	__mark_inode_dirty(inode, dirty_flags);
 
 -- 
 2.41.0
