@@ -2,107 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2500277435F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 20:02:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 058D2773E9E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 18:33:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231161AbjHHSCz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Aug 2023 14:02:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34696 "EHLO
+        id S232912AbjHHQdW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Aug 2023 12:33:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231523AbjHHRvp (ORCPT
+        with ESMTP id S233074AbjHHQcL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Aug 2023 13:51:45 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 741769EE1;
-        Tue,  8 Aug 2023 09:23:07 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id d75a77b69052e-40398ccdaeeso29131091cf.3;
-        Tue, 08 Aug 2023 09:23:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691511780; x=1692116580;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tT3Th0/cW0C8QpOpbxiYIDyUxnSvmk/dEVgZXb7Tjac=;
-        b=iHGZkB29fNcL61mi7ibfI2d32f7EdZPicl4/eEsU8HY5431IdVR+/vRgEk7pmEZCzr
-         kM6O5EfmYD2UnXmdKV63J4pxLezUNwHm2AKWfW46OlLP4sszCSsak6bcwXpoT50t6Tm2
-         ZJAAdKD/aZKS4X5uWzRX2+jbjoTS7EIU72g0rxNe4L2PjYbHheh96M9chWqhCU9nG6n1
-         CLz3X0DXz0PXd6pO0Lg1F02qk4GBqWSpqD8s36HfVWIKlrPbP2MPOSoHmn3BJa4d5+0g
-         1Eembnz7blEs9okI/z1GseBVE+Php9izJzz9B8eRaiHMWfkTFxM+bdkX0iv6yUBRTiyB
-         EoTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691511780; x=1692116580;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tT3Th0/cW0C8QpOpbxiYIDyUxnSvmk/dEVgZXb7Tjac=;
-        b=PvtUhrTGkGPdEGup7cPKfDs/yRbcOYnIQTrgb/ISTtwX3qD5YKiL2h2cHAjQ+v3iEY
-         vf002b2YRsVJZTSWSiKgFCnV3fAZTuu+X4BCMZK7Z4CbNgHhqwI6JzSnUT38SusZ58dj
-         QN2LugAR9C2x8QVv2Jt6J/qcDLFrkS2ak0Mu2uZThk8xgFUWGW4bdf0ucmrmaCS+J1SZ
-         xhe9gfeeoZ04GVlF8lOdeAvhAmcTC6vwJ9qx5aeGPm6FN4gJtroA+NP5slNsNYU+IwXs
-         hIekfPt9O4y4CZ7/i7ef9HSKcs9+8kv6rGxiK7YPWDjF1LlYDRtXK0x7mH/744oLNwpG
-         YYrw==
-X-Gm-Message-State: AOJu0YzOdXjj7y+HK88XK+GdJvp0lcYj2eyOxDGtZovJljV/cjwAZ5r6
-        rUI6xLGCtQTSSQjTbRYpG56AHp+F7XWYPIlc
-X-Google-Smtp-Source: AGHT+IEDVzUF/xiLAO/scynI8YtPCMd8bJNj1zeo/rRkV58CULjDs5vKoh76aCZ85kWCLMCO9sTzzQ==
-X-Received: by 2002:a05:6a20:96d7:b0:137:a3c9:aaa2 with SMTP id hq23-20020a056a2096d700b00137a3c9aaa2mr10921555pzc.30.1691469275697;
-        Mon, 07 Aug 2023 21:34:35 -0700 (PDT)
-Received: from manas-VirtualBox.iitr.ac.in ([103.37.201.176])
-        by smtp.gmail.com with ESMTPSA id n5-20020a62e505000000b0068779015507sm6978787pff.194.2023.08.07.21.34.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Aug 2023 21:34:35 -0700 (PDT)
-From:   Manas Ghandat <ghandatmanas@gmail.com>
-To:     anton@tuxera.com, linkinjeon@kernel.org
-Cc:     Manas Ghandat <ghandatmanas@gmail.com>,
-        linux-ntfs-dev@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Linux-kernel-mentees@lists.linuxfoundation.org,
-        syzbot+4768a8f039aa677897d0@syzkaller.appspotmail.com
-Subject: [PATCH] ntfs : fix shift-out-of-bounds in ntfs_iget
-Date:   Tue,  8 Aug 2023 10:04:05 +0530
-Message-Id: <20230808043404.9028-1-ghandatmanas@gmail.com>
-X-Mailer: git-send-email 2.37.2
+        Tue, 8 Aug 2023 12:32:11 -0400
+Received: from out-101.mta1.migadu.com (out-101.mta1.migadu.com [IPv6:2001:41d0:203:375::65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8BD44C12
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 08:51:56 -0700 (PDT)
+Message-ID: <588ede3c-3de0-5469-735e-8c9fe4d52b6a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1691469264;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=LnHMX10bH6+mrf/dzTR81KlSjnm22TOl66PKR/tiy0Q=;
+        b=nH5luNlLih8wuBeN5jkwDvqcSsBXrJhkU5ThzE1kc7gNo6M81QPNk+4ah62SFjwxeP/3qG
+        6qbpsuhXxL7PveukVbwqqTi4cOtDrCBbz0ScuBIcQb1j5Oo56LVXdL5b48loDnTFetSkVj
+        q0jURjOYP1350zbhjEzLMF6ceEu8TX4=
+Date:   Tue, 8 Aug 2023 12:34:14 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Subject: Re: [PATCH 3/5] io_uring: add support for getdents
+Content-Language: en-US
+To:     Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+References: <20230718132112.461218-1-hao.xu@linux.dev>
+ <20230718132112.461218-4-hao.xu@linux.dev>
+ <20230726-leinen-basisarbeit-13ae322690ff@brauner>
+ <e9ddc8cc-f567-46bc-8f82-cf5ff8ff6c95@linux.dev>
+ <20230727-salbe-kurvigen-31b410c07bb9@brauner>
+ <ZMcPUX0lYC2nscAm@dread.disaster.area>
+ <20230731-gezeugt-tierwelt-f3d6a900c262@brauner>
+ <20230731152623.GC11336@frogsfrogsfrogs>
+ <22630618-40fc-5668-078d-6cefcb2e4962@kernel.dk>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Hao Xu <hao.xu@linux.dev>
+In-Reply-To: <22630618-40fc-5668-078d-6cefcb2e4962@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-0.6 required=5.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Added a check to the compression_unit so that out of bound doesn't
-occur.
+On 8/1/23 08:28, Jens Axboe wrote:
+> On 7/31/23 9:26?AM, Darrick J. Wong wrote:
+>> I've watched quite a bit of NOWAIT whackamole going on over the past few
+>> years (i_rwsem, the ILOCK, the IO layer, memory allocations...).  IIRC
+>> these filesystem ios all have to run in process context, right?  If so,
+>> why don't we capture the NOWAIT state in a PF flag?  We already do that
+>> for NOFS/NOIO memory allocations to make sure that /all/ reclaim
+>> attempts cannot recurse into the fs/io stacks.
+> 
+> I would greatly prefer passing down the context rather than capitulating
+> and adding a task_struct flag for this. I think it _kind of_ makes sense
+> for things like allocations, as you cannot easily track that all the way
+> down, but it's a really ugly solution. It certainly creates more churn
+> passing it down, but it also reveals the parts that need to check it.
+> WHen new code is added, it's much more likely you'll spot the fact that
+> there's passed in context. For allocation, you end up in the allocator
+> anyway, which can augment the gfp mask with whatever is set in the task.
+> The same is not true for locking and other bits, as they don't return a
+> value to begin with. When we know they are sane, we can flag the fs as
+> supporting it (like we've done for async buffered reads, for example).
+> 
+> It's also not an absolute thing, like memory allocations are. It's
+> perfectly fine to grab a mutex under NOWAIT issue. What you should not
 
-Signed-off-by: Manas Ghandat <ghandatmanas@gmail.com>
-Reported-by: syzbot+4768a8f039aa677897d0@syzkaller.appspotmail.com
----
- fs/ntfs/inode.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Hi Jens,
+To make sure, I'd like to ask, for memory allocation, GFP_NOIO semantics
+is all we need in NOWAIT issue, GFP_NOWAIT is not necessary, do I
+understand it right?
 
-diff --git a/fs/ntfs/inode.c b/fs/ntfs/inode.c
-index 6c3f38d66579..2ee100a7df32 100644
---- a/fs/ntfs/inode.c
-+++ b/fs/ntfs/inode.c
-@@ -1077,6 +1077,17 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 					goto unm_err_out;
- 				}
- 				if (a->data.non_resident.compression_unit) {
-+					if(a->data.non_resident.compression_unit + 
-+						vol->cluster_size_bits > 32) {
-+							ntfs_error(vi->i_sb, "Found "
-+								"non-standard "
-+								"compression unit (%u).   "
-+								"Cannot handle this.",
-+								a->data.non_resident.
-+								compression_unit);
-+							err = -EOPNOTSUPP;
-+							goto unm_err_out;
-+						}
- 					ni->itype.compressed.block_size = 1U <<
- 							(a->data.non_resident.
- 							compression_unit +
--- 
-2.37.2
+Thanks,
+Hao
+
+> do is grab a mutex that someone else can grab while waiting on IO. This
+> kind of extra context is only available in the code in question, not
+> generically for eg mutex locking.
+> 
+> I'm not a huge fan of the "let's add a bool nowait". Most/all use cases
+> pass down state anyway, putting it in a suitable type struct seems much
+> cleaner to me than the out-of-band approach of just adding a
+> current->please_nowait.
+> 
 
