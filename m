@@ -2,197 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C003773C5B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 18:04:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C127A773F8C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 18:49:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231699AbjHHQEw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Aug 2023 12:04:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59110 "EHLO
+        id S231924AbjHHQtg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Aug 2023 12:49:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231612AbjHHQDX (ORCPT
+        with ESMTP id S232062AbjHHQss (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Aug 2023 12:03:23 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2045.outbound.protection.outlook.com [40.107.94.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5600BC;
-        Tue,  8 Aug 2023 08:45:00 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Pbg0xGOCYYTawii4xH2zWytnxeWIPFTrt4kDMug8QmW+Lri65lprNxPSXB0tJJt8arzlRxmy2KWXI8QeGw2oNoQBqqvuS+FAWQOt5ia4D9K50siG7gV88v5oHCpAHAChalO9cwPqwECFmpywGEEGwcHvGzScoHV50rnPENyBDc9aGqHgcy7XbE3jqWTsLgG9r72ahXO+s/FZmVSUlS4udcxxpIhYgU3AoWHTzsYRwO37hRzKl2Hj2guB+BmLBVQeonUhgI9gkE3My8IuIm/RB3GmADVbryN4b8etLLTvjlqwyFZBI+AKSV5XGZhirvzTMG1A2Jd7s9eXIw8azCW6Aw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7guSE/On/Af6MDAkEypPOZndSAV8AV2RCD5K0lnYs+Y=;
- b=QZXri4XWZ9TYZ59S1m5e6gYAWxEEQueOb2nYI4vAZsK1hvfDz7UpI/0cf97ZSXyJvNBtlppTjzDc88BZNBtes9GRV6MUrSEl9dgTFh/u9z0LbwwIusYr53pirR/Mg1VZvtf+omnBtW7IaxPX28Y+aAxDOIWWT34VgZVo+QlAmA3eRGdK6j+X+ha+eFK0hjrtA+asKr+Y0Y3ppWy8VSYs6S3mYYpSOmyWbdnsx8O1S9WRKSxVjBHnDoOQFXe477iSVt1mkPvfD/gk8xef6h/R5kvJupgKfgbg3MxmIypnnS0n4I37vNDWNhpI4yxQG02M7fAdUFOpp6l0fNCo9I1QXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7guSE/On/Af6MDAkEypPOZndSAV8AV2RCD5K0lnYs+Y=;
- b=SjHt1r0MOAszMQxKSR5S+6l3VUa1SsTkCi8DGmf1ZDuWdlpI/cK8U6dlhxsQmLRIwUBv+eoTQOb+br2b7c9/Kw5aJ+y0g/YCB3LQz5LmwHu2jCdaOfH5uNPXxhQQgv57Y7i5IMFzEKQPpyfv5+bjP7wyASxuiiqP7+qrPsOHPIYO3lqPy+/F3obb80ns/ZX7cerpSOrJwcayDhtjGKcuIu/2NrEHgmCRchFr1HgRey7wiWrd/Y8oWnD9cxyC8kA1Bo/n9H+jDyhsY/HjRIM0fPz/p0I0yDEksmsh2Dws4iLozDLdh6K/6RKp4b/UVdxlHeFrJ9NrimyihAMP0YbTAQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) by
- DM6PR12MB4401.namprd12.prod.outlook.com (2603:10b6:5:2a9::15) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6652.27; Tue, 8 Aug 2023 14:45:37 +0000
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::c166:b535:d93:641e]) by DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::c166:b535:d93:641e%4]) with mapi id 15.20.6652.026; Tue, 8 Aug 2023
- 14:45:37 +0000
-From:   Zi Yan <ziy@nvidia.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>,
-        linux-mm@kvack.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ryan Roberts <ryan.roberts@arm.com>,
-        =?utf-8?q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        "Zach O'Keefe" <zokeefe@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] mm: thp: split huge page to any lower order pages.
-Date:   Tue, 08 Aug 2023 10:45:34 -0400
-X-Mailer: MailMate (1.14r5964)
-Message-ID: <A6C02D09-CD3A-4F12-89D6-F1F4B03C177A@nvidia.com>
-In-Reply-To: <b545cac8-76f7-e3c3-0e1c-3cb922c9c9ae@redhat.com>
-References: <20230329011712.3242298-1-zi.yan@sent.com>
- <20230329011712.3242298-6-zi.yan@sent.com>
- <b545cac8-76f7-e3c3-0e1c-3cb922c9c9ae@redhat.com>
-Content-Type: multipart/signed;
- boundary="=_MailMate_B9F89779-6ED9-4666-9B7F-FF6FF172146B_=";
- micalg=pgp-sha512; protocol="application/pgp-signature"
-X-ClientProxiedBy: MN2PR10CA0025.namprd10.prod.outlook.com
- (2603:10b6:208:120::38) To DS7PR12MB5744.namprd12.prod.outlook.com
- (2603:10b6:8:73::18)
+        Tue, 8 Aug 2023 12:48:48 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DC444447B;
+        Tue,  8 Aug 2023 08:57:16 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4fe4762173bso9624702e87.3;
+        Tue, 08 Aug 2023 08:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1691510195; x=1692114995;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EKR/mQxiWCp6UmZoc/ZIdm/CvMRbYORnLL2Bmf5WunY=;
+        b=iTep3vMy6Z8EHVl1pNEMn2tN+1w99+9Dgp6gAbfQO3hye73jDjBdCub0T2zqH9X7hD
+         noYURqNZ/iggYzokFPQFPUCJ+YaRsqyljdSvL3znPKS9FmhZ4/OkbBbZv2jVRlYmiEP1
+         vkTgmujWH7QdPoYhDSHUmN3kGqsy8spVGBdMriHHT+TIm6srxytss76c0BZzpd6eTVYo
+         HChuERSTjv7yicIqn3TmG7rfgl/GFLAbQZagCVVkY4E6/7GnxAYyCw9v+QUTQVxJUtle
+         NPW60gvllRzBqLHk9eOWD9RR52y7u8XOeCw6JWaKtqPMSAX5Yy2L1FzRT8dsoy+RWVd9
+         s0rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691510195; x=1692114995;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EKR/mQxiWCp6UmZoc/ZIdm/CvMRbYORnLL2Bmf5WunY=;
+        b=iz8fRiVPO5DYbcN1sqJmxrj6kfRfx2EHmXaZk4Hrzcy5rCVxguA5Bx7IlP+v2qP/br
+         UfmQVQiAboVgOGnLH2A4L0Ex7e0slkv9IoPkfy0+EGjO162zMQbxk27vCnJ/m1klKU1R
+         nAvREpSNg+FCVqeFJuOE8azncNSLAYzRxLdfjDkfzwRtjd6j7z3kSuQSA/KUYyWhhvVz
+         uL3zS3pqakebLxYFkLq2eZ1Lrr8r9yp3BJroA0bXyMa6ixfXq8k3kTI1VScAKXJah9c0
+         qzUu6qjMAeoYVfYCL74ggVClc1sAg/QdbENhzhW3cr93yoyim+BPjQgVwVcRi5Jw7CGs
+         BOTA==
+X-Gm-Message-State: AOJu0Yyrnnet/IFtl8CTde8u6iirhZCeAVTOI7MsdYEd/vO5nZ4rCEZO
+        wkJmwng9pTni8IvLVu8t3YkLG43UTdFaW//T
+X-Google-Smtp-Source: AGHT+IFnYhIzaS3Y+KcV0Lrw6qJXYUrYWCoAb9tRY2N+65/72vnKp1uSD5k97nShAi0GFBixW7Zi2Q==
+X-Received: by 2002:a05:6512:3b0a:b0:4fe:3f2:2efc with SMTP id f10-20020a0565123b0a00b004fe03f22efcmr11495192lfv.0.1691508221319;
+        Tue, 08 Aug 2023 08:23:41 -0700 (PDT)
+Received: from localhost (0x934e1fc8.cust.fastspeed.dk. [147.78.31.200])
+        by smtp.gmail.com with ESMTPSA id a3-20020a056512020300b004fcdd81355csm1920516lfo.269.2023.08.08.08.23.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Aug 2023 08:23:40 -0700 (PDT)
+Date:   Tue, 8 Aug 2023 17:23:38 +0200
+From:   Joel Granados <joel.granados@gmail.com>
+To:     Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc:     mcgrof@kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Kees Cook <keescook@chromium.org>,
+        "D. Wythe" <alibuda@linux.alibaba.com>, mptcp@lists.linux.dev,
+        Jakub Kicinski <kuba@kernel.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Paolo Abeni <pabeni@redhat.com>, coreteam@netfilter.org,
+        Jan Karcher <jaka@linux.ibm.com>,
+        Alexander Aring <alex.aring@gmail.com>,
+        Will Deacon <will@kernel.org>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        bridge@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        Joerg Reuter <jreuter@yaina.de>, Julian Anastasov <ja@ssi.bg>,
+        David Ahern <dsahern@kernel.org>,
+        netfilter-devel@vger.kernel.org, Wen Gu <guwen@linux.alibaba.com>,
+        linux-kernel@vger.kernel.org,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        linux-wpan@vger.kernel.org, lvs-devel@vger.kernel.org,
+        Karsten Graul <kgraul@linux.ibm.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-sctp@vger.kernel.org, Tony Lu <tonylu@linux.alibaba.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Florian Westphal <fw@strlen.de>, willy@infradead.org,
+        Heiko Carstens <hca@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-rdma@vger.kernel.org, Roopa Prabhu <roopa@nvidia.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Mat Martineau <martineau@kernel.org>, josh@joshtriplett.org,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Eric Dumazet <edumazet@google.com>, linux-hams@vger.kernel.org,
+        Wenjia Zhang <wenjia@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org, linux-s390@vger.kernel.org,
+        Xin Long <lucien.xin@gmail.com>,
+        Nikolay Aleksandrov <razor@blackwall.org>,
+        netdev@vger.kernel.org, rds-devel@oss.oracle.com
+Subject: Re: [PATCH v2 11/14] networking: Update to register_net_sysctl_sz
+Message-ID: <20230808152338.aoubpvauxpcuwfuz@localhost>
+References: <20230731071728.3493794-1-j.granados@samsung.com>
+ <20230731071728.3493794-12-j.granados@samsung.com>
+ <CGME20230808112110eucas1p1332795fa88d771ac3f05825f33052cf9@eucas1p1.samsung.com>
+ <22e0e672-f9f6-6afe-6ce6-63de264e7b6d@intel.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_|DM6PR12MB4401:EE_
-X-MS-Office365-Filtering-Correlation-Id: d1530fa2-a290-4caa-b353-08db981e20c4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: EjPZGAvBBJ4IkJ+tPLobVY2xBO0feHIOzJf8fWW5MZ0KkXXLKHu+VyOnjtgn1UJ+oj1LQM4liFckjZJoi3zSXMlZHyrsGWbXqI47QmIe8P/qxAD6Zb5oox9x8ctH91WBlxSrDj/A0lFe4/ri1JO1SetvtKxCMPbO9WFNR3zB7HMqUv9ncVhhTLQZtdQ4dZ+ltW5KTqNBJOh+WdUgEum718J/5nFXvjVVmJWAJTOYWnL6xUpNYmgjiDgwOoHxpic9dsum5f1wsa4uPdk1SQzf3zX4ncGJEteJc99gO0Xcr5nqOcY5797DDuuhcSLSYqaqm+hfRlfwdGwG49tjgPbsH3tgNwWJWVrDCNQ19Q0p4flApe8rLw+auufOMC7YgXgVia77E0SmCkzoN9D18J8oJzpVcWGbosipZOkcNOtcozMMbuoTJ5HNJnKg9mel5v0rrg77hmVLXLGVh+Gg+CA6f5ySU1i1rv0WKexarifpw7A7Q0IbZOf+lvE7HHktMkTJVUaY3v6Qu3O7j7q1SgBjhBmf8YZrTMbfvxmc+Xe3ZJYN5A4EedvCvmfW2g67kv9EZErm2uxIwt3vt2/4Kup1+YgBKbjBlGANDZzfklntCdbeKVyXnOr2tFKBWtbZUGcccdFx5QOL4h9KXcLoRELTisz2PpOMOdskXEst8etAzEg=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5744.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(366004)(346002)(376002)(136003)(39860400002)(451199021)(186006)(1800799003)(2616005)(6512007)(36756003)(4326008)(316002)(6916009)(38100700002)(54906003)(6506007)(6666004)(86362001)(66946007)(6486002)(66556008)(66476007)(33656002)(478600001)(53546011)(26005)(8936002)(235185007)(41300700001)(8676002)(2906002)(83380400001)(7416002)(5660300002)(14583001)(72826004)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?tuveEswnXg7Dip2wkuPSJYG9qjPDc08i+8pMq7gJwPM09clFY4haVSnTPzr7?=
- =?us-ascii?Q?wyRqzVVMTb52/ECnztJjRzgl5YXERbZAd/3bBFONAP8ShDSqN9eaIXdY7aN9?=
- =?us-ascii?Q?F8I+wL9Jqihy9/DBBS19+kHMv3WpFTDlf6Jvvjl86D70SYvQWeUliFvO3EAc?=
- =?us-ascii?Q?rE98GThgpsHPC+0/wBvgCgFsbYY72XtjPJ03SIGif2o05aqOtYdx1V4X0KJE?=
- =?us-ascii?Q?ZJ9N7v6ielO5ev8s1+t7Sb+vTF2Q4n7gDwtd6CZepBWPZ+eDqg7e/gEJpf4M?=
- =?us-ascii?Q?xNp57HE+ZjNN6jMB+NjL8oDpL6DSzRMBXVQZSO1LR7xpRJfnuvilEMVIpN/a?=
- =?us-ascii?Q?sYRsIJigVFOjMmZaKeUeTcIUQWwMBgrF6lXJR2cFuEGMDS7ALDrRmQ7GsIHK?=
- =?us-ascii?Q?1XAbSZhoEAb0RLib5OzkfcFXCqAxLPdPxih9BoPJpKx01AkbKanvDqaE3Wwi?=
- =?us-ascii?Q?edUxOid0jL2iA3KtAGUZcdj9XtjGX7+yJjO4/vA3Inpc6nlS3AvQmRqusJum?=
- =?us-ascii?Q?uFKS85oRCREvASpqbHdKxDEorWJQ4WDzDL9CLo7ESWI/gyKn7lULX2eAoSPX?=
- =?us-ascii?Q?0okoJ5DG1CwJjJbUgYFO8wiIZL4sHecw6tVBn2wdvC8MY7jZ1w/eNlhntLG3?=
- =?us-ascii?Q?F4t6qNnz6vjXy/44V2sNlLQyK7Csq8x90IPzZJIB19ySOpIRed+8BNIwbowC?=
- =?us-ascii?Q?/XzKdNJLhyQKN8wgi3yFg6gtvjvjxyJQBzUqjaZnGLfnnb4dWzflOYjYNFm5?=
- =?us-ascii?Q?IhUM39wO4xvfw+6hkJYNFdOiv1k3hq0qH2VyrWTQzBUnSQjrdJUwASdemRqc?=
- =?us-ascii?Q?jCvlspl3ttVBYe3PD73FhEkTNqNAERAxFIwIaQU0JeMT+WOwxpiHhrh7doqU?=
- =?us-ascii?Q?hmSlXCQ/1I77WoGrNGheuOsrXkaEVoCNjgTbUOj8ITb171aIL+Pfxup1e+yr?=
- =?us-ascii?Q?WCIKuKBlcaVtYj9sGJw2ZkbkzCnRyTK+Yzm5bsjUVJe70XnOZ1oQwNcjh/Xm?=
- =?us-ascii?Q?DQVaS5mND+nzEKku7vmICPOfVsg2S6ZeLf121VJjhvaTC0I8WOzzs3QiSqyT?=
- =?us-ascii?Q?pa6HEq1NoLKAPIurpmBvKF3J1/PNHxh8eyDLwma2UpAKCOKtmCjOsRkqDD85?=
- =?us-ascii?Q?7UYcvnLgAcK+lF/e644hHeShSQ5SYNuetoqY876X9duAte0C+s5roNC3/Nfr?=
- =?us-ascii?Q?S/tUKXs6hpHFMNhG8LKbV/iBQ43mupoOnY6UwQggkEcZmU2VAssw/ZihLgGq?=
- =?us-ascii?Q?AE4cTBqVNljKHZXBNjf5DKqkXIKShkXwT355b9U0kqDP2iK4T5iSOa7lsio7?=
- =?us-ascii?Q?ygeG4WsqE6So5zu656ady/M95+cmmntypghfnF2Ng6+mVaZMRudoIyc87Me+?=
- =?us-ascii?Q?bWI9x1BPJfzKeoZys+sfNacwy50KBbdrwITKGyS+Vx1PJ3Exv2v/sfefDDKk?=
- =?us-ascii?Q?N9jwA0eLfKgOM9oCmUlLnqlggeizN+9CE0txHulBXkWMRJnaQK7XtHbKry10?=
- =?us-ascii?Q?sr9tYdEBv0rOYt/2N1ccoodq4NCfb91Og7B9f+4RWw3X+6Fjc5OwO8inbS6w?=
- =?us-ascii?Q?eQX7mZelLtptZZOShmou75fr6LT2cyp9FgN7xxeR?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1530fa2-a290-4caa-b353-08db981e20c4
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5744.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2023 14:45:37.1009
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iodjFmPTfQBDhiYxms/d8me/hcArJh4gUqFUSbz42B5/3JqJbwDL2KePPQkSzxfL
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4401
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ry2jlv6i2gzplzus"
+Content-Disposition: inline
+In-Reply-To: <22e0e672-f9f6-6afe-6ce6-63de264e7b6d@intel.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=_MailMate_B9F89779-6ED9-4666-9B7F-FF6FF172146B_=
-Content-Type: text/plain
+
+--ry2jlv6i2gzplzus
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 8 Aug 2023, at 5:01, David Hildenbrand wrote:
+On Tue, Aug 08, 2023 at 01:20:36PM +0200, Przemek Kitszel wrote:
+> On 7/31/23 09:17, Joel Granados wrote:
+> > Move from register_net_sysctl to register_net_sysctl_sz for all the
+> > networking related files. Do this while making sure to mirror the NULL
+> > assignments with a table_size of zero for the unprivileged users.
+> >=20
+> > We need to move to the new function in preparation for when we change
+> > SIZE_MAX to ARRAY_SIZE() in the register_net_sysctl macro. Failing to do
+> > so would erroneously allow ARRAY_SIZE() to be called on a pointer. We
+> > hold off the SIZE_MAX to ARRAY_SIZE change until we have migrated all
+> > the relevant net sysctl registering functions to register_net_sysctl_sz
+> > in subsequent commits.
+> >=20
+> > An additional size function was added to the following files in order to
+> > calculate the size of an array that is defined in another file:
+> >      include/net/ipv6.h
+> >      net/ipv6/icmp.c
+> >      net/ipv6/route.c
 
-> On 29.03.23 03:17, Zi Yan wrote:
->> From: Zi Yan <ziy@nvidia.com>
->>
->> To split a THP to any lower order pages, we need to reform THPs on
->> subpages at given order and add page refcount based on the new page
->> order. Also we need to reinitialize page_deferred_list after removing
->> the page from the split_queue, otherwise a subsequent split will see
->> list corruption when checking the page_deferred_list again.
->>
->> It has many uses, like minimizing the number of pages after
->> truncating a huge pagecache page. For anonymous THPs, we can only spli=
-t
->> them to order-0 like before until we add support for any size anonymou=
-s
->> THPs.
->>
->
-> Because I'm currently looking into something that would also not be com=
-patible with order-1 for now:
->
-> You should make it clear that order-1 is not supported, like:
->
-> "mm: thp: split huge page to any lower order pages (except order 1)"
->
-> And clarify in the subject why that is the case.
+=2E..
 
-Sure.
+> > diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+> > index 64e873f5895f..51c6cdae8723 100644
+> > --- a/net/ipv6/route.c
+> > +++ b/net/ipv6/route.c
+> > @@ -6447,14 +6447,19 @@ struct ctl_table * __net_init ipv6_route_sysctl=
+_init(struct net *net)
+> >   		table[8].data =3D &net->ipv6.sysctl.ip6_rt_min_advmss;
+> >   		table[9].data =3D &net->ipv6.sysctl.ip6_rt_gc_min_interval;
+> >   		table[10].data =3D &net->ipv6.sysctl.skip_notify_on_dev_down;
+> > -
+> > -		/* Don't export sysctls to unprivileged users */
+> > -		if (net->user_ns !=3D &init_user_ns)
+> > -			table[1].procname =3D NULL;
+Here I remove the setting of the procname to NULL for ipv6 sysctl
+registers in route.c and I do not replace that assignment anywhere.
+This means that we will export sysctls to unprivilged users for ipv6.
+I'll correct this in V3.
 
-I will add below to the commit message and the comment of
-split_huge_page_to_list_to_order():
+> >   	}
+> >   	return table;
+> >   }
+> > +
+> > +size_t ipv6_route_sysctl_table_size(struct net *net)
+> > +{
+> > +	/* Don't export sysctls to unprivileged users */
+> > +	if (net->user_ns !=3D &init_user_ns)
+> > +		return 0;
+> > +
+> > +	return ARRAY_SIZE(ipv6_route_table_template);
+> > +}
+> >   #endif
+> >   static int __net_init ip6_route_net_init(struct net *net)
 
-Order-1 folio is not supported because _deferred_list, which is used by
-partially mapped folios, is stored in subpage 2 and an order-1 folio only=
+--=20
 
-has subpage 0 and 1.
+Joel Granados
 
-
---
-Best Regards,
-Yan, Zi
-
---=_MailMate_B9F89779-6ED9-4666-9B7F-FF6FF172146B_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename=signature.asc
-Content-Type: application/pgp-signature; name=signature.asc
+--ry2jlv6i2gzplzus
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQJDBAEBCgAtFiEE6rR4j8RuQ2XmaZol4n+egRQHKFQFAmTSVQ4PHHppeUBudmlk
-aWEuY29tAAoJEOJ/noEUByhUANcP/3yZuiZWzhU5HjmynjKBIMR7eGcLOBQ5fRvR
-FhT7g5vFE7BRQwY3mMomckjStXE6Xiy4BLL5m/VkYv8m/Xnf7M49tjlmPBZJYOvT
-/X29IvRo1iJLXUYRUOaDmMlkcblpcwIGdKNmYsVSMsMrmeKyYds8nMP/8R0W+oJP
-g5U5hndjPq2tNI6w7Ca5cyIfXek9wRebEmtovybk8tNw/uaRVj046L82Oo63hiYj
-czzjV61LvBd82Zu5VKBHwqHVcSfAIct3fkt6aOJscFANeUsQl3EYiOofAzDyEGq+
-L5tVe9EDSt+pH9UHvnuThrhttEKdkHFZHnzeUcrRQjCB7EQotdMNxwB7ZfOJ4LVc
-Hlg/PfV2+aODadmjtcOg0dhBppRV6z7JwZI+oCTRDWpmNID0eNvVlz5Z2Z2/JxY4
-8LKZ4//7Q7XWTGBwj9P7o6jtDUd8yflhP1dTBofafBPQldknWxj90P5OUgomF4bE
-O6r0Gri8Xla1jJLx4tIJ2CYO/cgCNtSaIFXEWVFp/tKJJQX5SLKyckNbvEODLZdJ
-Rz1Nqb6zu3yhMpZTgE/Kznkj+AVPcI8f9SMGvAy85dcdzWFPgNMx5z0qkgwUF6MG
-LK1OyDN708foIYISU8AaiekagwwkkDKQaxysWhCRf7ylc0qyBz3O8vzQog3Dg2AO
-eIbafFJL
-=2pY6
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmTSXfgACgkQupfNUreW
+QU9uhwv/YNoyTbkHH/5RMLpQdKDepd7w6f8Rtax3cD35VYfVbj2aNFy9lcELq0sL
+WWEkcnq1tZav3I+it4as5M7BUfGePS1Zj/D2OYSS7sR0ehwJMaO19qvfuGLiQLP9
+XQe6cyy071sk9U5fxmpZkZgfKtldzchYMt1GluPzw0/a1CRkUlQqaDkHS0/hiOAn
+JCY8mDLWC5DZwVZjz1Ai3UZ3lSIoxFqZbIk8IWpB6E6r9j+ulQUBw6CnYpSu8HMg
+JNHA2wqyYaNLKxwQzSDhG3E0AaK59dPzneyrLVRnpJhc4yMFY+yDSPAzAZTgr1Ny
++/lASH2c7d0obmafitPwIOhxg7xPPnp+AYKDP65ZMGp0olUCNYKqUhF0Mc8sWq75
+1kzOSul2jqUCTCkODYWut1aoqApizX5phuRCj/wCorVWBazLV7J9fDNopmAtmTYY
+MKPmbbgWQdQHKDCEN7aSL5GGY51bp1dl4M0G+rkmW3RXRPl1OJLTsxP6Vk7ZizpE
+4CYHvD9R
+=8NUh
 -----END PGP SIGNATURE-----
 
---=_MailMate_B9F89779-6ED9-4666-9B7F-FF6FF172146B_=--
+--ry2jlv6i2gzplzus--
