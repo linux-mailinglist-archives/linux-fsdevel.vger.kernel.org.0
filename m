@@ -2,35 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AAD177373B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 05:01:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC1A8773752
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 05:07:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231286AbjHHDBe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Aug 2023 23:01:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40438 "EHLO
+        id S230031AbjHHDHk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Aug 2023 23:07:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231157AbjHHDBa (ORCPT
+        with ESMTP id S229553AbjHHDHh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Aug 2023 23:01:30 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0904EE62;
-        Mon,  7 Aug 2023 20:01:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=awhihqdhuWHeoYd3N+GeqIh75MDzai4L3hYXPN/a5fs=; b=tUST17gLJ8xZ0XM9L8/HrXEzU6
-        tZMGClzY4pZ/RImt/bnbB/JZcOjtt5PmKLr+dRTMvmYeQEcUBooY2DNhz58NUerVaQqDC015TRyjc
-        g1IssTuWVGi/DL9wssEj8dLTlcAJscsVmNWS5BVgJhme/xZGO0m8ySRFoRMNYJTG4Xl7MxTjTGp7C
-        ZalLCKJuEZWuvODxF3D9hPb9kAHImXekJu/C7Hsr+LVqEdAUuRP99EiAC4ltf/mLdEYZHlbcagzl2
-        JAzO8s3ORZZCLfmIi6xHnozbVOvMIBfDJ4vQwyENOCQFObn49Nzg3oOA/pzlUucU/MFJhjPm93T0s
-        D1w47+5g==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qTCxh-001bG0-1K;
-        Tue, 08 Aug 2023 03:00:45 +0000
-Date:   Mon, 7 Aug 2023 20:00:45 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Chris Maness <christopher.maness@gmail.com>
+        Mon, 7 Aug 2023 23:07:37 -0400
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D722180;
+        Mon,  7 Aug 2023 20:07:36 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-5861116fd74so49005587b3.0;
+        Mon, 07 Aug 2023 20:07:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1691464055; x=1692068855;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0G2Gm44L7ws5E/quoPqMuJmdghfzOor5wGEa6AaRIig=;
+        b=MIB1dRWNV6Yb3HUd1qPb/bgwaoUzAlGVu8CxiiwIDYwN4TMseNzdPMVbuAfPyciWjI
+         AZzeBtiA00C4EVQ8EGlp9e8Q3pbBFc8aCRl+HJu3YtRoio8lAQY1qu2UvIE5hChxs5Q1
+         PKMC/y7tlRiDWg5YOtPXbZsaYs//GKuhiSEDo5WpI7edOLzGAaAJjqvFIOQWWQAuLo7Z
+         JBsPnB5UvxOuJ1p76ZyxSuA7+KQWE3J2jS89kM5pl3PIv+dMsBBD/LquAyRZomdcC7zN
+         v+sSG+iPprRQeQoEH+XZP/GEzjEboCjqHBhNwHzm7vxhsHdZplrvrz31A5i2G+xxBQ4/
+         u+EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691464055; x=1692068855;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0G2Gm44L7ws5E/quoPqMuJmdghfzOor5wGEa6AaRIig=;
+        b=cTAhVJDVEwS8pBrL0SXNg3xFgnu4vZIU6lfQn2gDq/eIdolAU9TIC+ou5tokaftI+9
+         mtUtgXKRyRudmqhl9YfrHSS43aDD0oD/K37mVVcecuoDRxxbolTEFoZf5vO/ky7XGkXH
+         7J3sW/KIiEJvkuaE9Dq5LNGNXhIwCGi1YpPyqDosfSTIRe2oRSicB+02CwgQSwuCwQbN
+         KfJwPJEo/DaesAeCnohgFjM6xjNJlKCn7L6seUd6sfmNskz8x1+HOllrVd9Yr9Jf0HoX
+         grksd3LcUPDn23cLuTdAeryouLh/sxwbnaOABtHmiMeHIxPe22tDDyD0VPGUus1usR5P
+         OL7A==
+X-Gm-Message-State: AOJu0YznfGMieNEkSIdc/xYwQunbD1ZgIZuYbs6BDwk+bZMW8qVnrafK
+        tMz721jgIzMLSSdVF+/WF+kouKBvwYAulTCE11k=
+X-Google-Smtp-Source: AGHT+IHQrIvich9PHSVbgRXTdmB7iIbb8QzxP6y5/ZjBG6gKIk1MkGZwx3L/64MT/J6/QOrL9i/+Y+FD0/7A7U+VjlM=
+X-Received: by 2002:a0d:dd4a:0:b0:589:642d:6d84 with SMTP id
+ g71-20020a0ddd4a000000b00589642d6d84mr2728002ywe.23.1691464055184; Mon, 07
+ Aug 2023 20:07:35 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230731071728.3493794-1-j.granados@samsung.com>
+ <ZMgpck0rjqHR74sl@bombadil.infradead.org> <ZNFlqwwvE6w6HyHl@bombadil.infradead.org>
+ <CANnsUMG3WO_19GpnsNaXPqu6eEnpBvYUpkrf1QbHwsc9wEoCZQ@mail.gmail.com>
+ <ZNGBrkP7J2g/BAWV@bombadil.infradead.org> <CANnsUMGRBnatKB4-3eYjb5aG7YnXDiZG6cjuwSgtjvVF6ErJNg@mail.gmail.com>
+ <ZNGv3Q5VBsS2/w4e@bombadil.infradead.org>
+In-Reply-To: <ZNGv3Q5VBsS2/w4e@bombadil.infradead.org>
+From:   Chris Maness <christopher.maness@gmail.com>
+Date:   Mon, 7 Aug 2023 20:07:24 -0700
+Message-ID: <CANnsUMGHnurbph9F7mex=1s0mxhwpNgeQbKJ6j1r37Qmd6LAMQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/14] sysctl: Add a size argument to register
+ functions in sysctl
+To:     Luis Chamberlain <mcgrof@kernel.org>
 Cc:     Alexander Aring <alex.aring@gmail.com>,
         Alexander Gordeev <agordeev@linux.ibm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -80,47 +108,37 @@ Cc:     Alexander Aring <alex.aring@gmail.com>,
         mptcp@lists.linux.dev, netdev@vger.kernel.org,
         netfilter-devel@vger.kernel.org, rds-devel@oss.oracle.com,
         willy@infradead.org
-Subject: Re: [PATCH v2 00/14] sysctl: Add a size argument to register
- functions in sysctl
-Message-ID: <ZNGv3Q5VBsS2/w4e@bombadil.infradead.org>
-References: <20230731071728.3493794-1-j.granados@samsung.com>
- <ZMgpck0rjqHR74sl@bombadil.infradead.org>
- <ZNFlqwwvE6w6HyHl@bombadil.infradead.org>
- <CANnsUMG3WO_19GpnsNaXPqu6eEnpBvYUpkrf1QbHwsc9wEoCZQ@mail.gmail.com>
- <ZNGBrkP7J2g/BAWV@bombadil.infradead.org>
- <CANnsUMGRBnatKB4-3eYjb5aG7YnXDiZG6cjuwSgtjvVF6ErJNg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANnsUMGRBnatKB4-3eYjb5aG7YnXDiZG6cjuwSgtjvVF6ErJNg@mail.gmail.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 07, 2023 at 07:50:44PM -0700, Chris Maness wrote:
-> I tried running the current mainline kernel (current Arch Linux) with
-> simple single MUX socket (ax0) using LinFBB.  I was a happy camper as
-> it seemed to work fine at first, then the system just slowed to a
-> crawl.  I am wondering if any of these patches are addressing this
-> behavior.
+>
+> Are you reporting a separate regression that goes all the way back to v4 kernels?
+>
 
-If its a regressio no.
+I am not certain what you mean by regression.
 
-> No kernel panic like before, but not what I was hoping for.
-> I have also tried sixpack, and that explodes instantly the last time I
-> have checked.   That goes all the way back to the v4 kernels. 
+> > v2 is fine there.
+>
+> What does this mean?
 
-Are you reporting a separate regression that goes all the way back to v4 kernels?
+I have to go all the way back to kernel version 2 for the serial 6PACK
+driver to work.  If I try to use it in Kernel version 4, 5, or 6 the
+kernel panics as soon as I attempt to connect to another station.
 
-> v2 is fine there.
+>
+>   Luis
 
-What does this mean?
+Chris KQ6UP
 
-  Luis
+
+-- 
+Thanks,
+Chris Maness
