@@ -2,225 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ED19774809
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 21:24:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C895774D81
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 23:58:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234206AbjHHTYo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Aug 2023 15:24:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35848 "EHLO
+        id S230196AbjHHV6Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Aug 2023 17:58:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231809AbjHHTYb (ORCPT
+        with ESMTP id S231126AbjHHV6G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Aug 2023 15:24:31 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 272F016D0F2;
-        Tue,  8 Aug 2023 12:21:28 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-d5eeb722a82so143040276.0;
-        Tue, 08 Aug 2023 12:21:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691522487; x=1692127287;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=diySgYB/+o5ldcXShApfWPeWlXdCLBpgzXr+03nag2s=;
-        b=aI86kVcP5RX4GTYucp3JU2R1gispSFteGcvwqhB5v+uYh7lcaprwx/MvsiOux+7dVV
-         FFTmPer/GsrHdWL9j/bC/KWEeoGTrZpUO47fwt/mV+10/Hu3EKMNvfEBqSbXbB00sYoR
-         hRX5bHwEgspX/uOCtN77niYpyyOiMriJM0k5xj+6ISQ3+EXFKDYoML2VRJ1K4vfPoP85
-         BSEDZ7jJ2ZRd1COxOLZZ9aTxlVrNmDjU7uJ7dYXmEyYsU5u8s79gWzDLoFdCjAfDOJwq
-         PO6pjyJaiVBjmwDI63B0SRwDiN/KKCjI8gtWXmhsACnd6YuRIplqMyjIm3yJMQzZz+YL
-         e6LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691522487; x=1692127287;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=diySgYB/+o5ldcXShApfWPeWlXdCLBpgzXr+03nag2s=;
-        b=GmbKAGog9a3FtxS35aPx1HGMUtiUeYhBqb75eikpgEPjGuvacKtkfY2cZ8DjDWkApa
-         AKb5g5n863fJ8Kvve3U9rIjnuQ6xgRYWqvH4y4kN4PUQC9y+oQvrHLcWie08f3AZJPUq
-         eCHgONeIY2OwLusi/4eSWK00d/ADVeuu86s06Pwitqwi27Vhinm1uHdiIm37GrogT4sn
-         qUQzJjU9RonkUkwhFPTu/IRjOKCSwerlIwvkWdHaw0rKSYWMsFIcnGgRYtQB9u9F4PJO
-         uUIo9XEJ8zLYjSZG/WIi6pqJp8JsVurbTGVpRQWSpp8GTmDZ5COcwNpTK3Z5fyWL9pqh
-         JSdQ==
-X-Gm-Message-State: AOJu0YwEWrzG6rtEJWUnF63B7B4CPFUxJCL2SVOQvdRF+RB8YJPj756j
-        tNRpLnHZrTB8k4T8LKOFACpzrTtBbcl406CkJ6w=
-X-Google-Smtp-Source: AGHT+IG5d90bapjIOlJBGA8irxOFPeCaIv3uCJP0B3jPOYPbIPyqiMre2cM/diK+xvgImaerO4LitHR/iRqNuHbzkeQ=
-X-Received: by 2002:a25:aaaa:0:b0:d43:a0d8:8db4 with SMTP id
- t39-20020a25aaaa000000b00d43a0d88db4mr11596435ybi.11.1691522486684; Tue, 08
- Aug 2023 12:21:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230808104309.357852-1-usama.anjum@collabora.com> <20230808104309.357852-3-usama.anjum@collabora.com>
-In-Reply-To: <20230808104309.357852-3-usama.anjum@collabora.com>
-From:   Andrei Vagin <avagin@gmail.com>
-Date:   Tue, 8 Aug 2023 12:21:10 -0700
-Message-ID: <CANaxB-ww6AcO4QThubYw62Mdeid4e3FOQAXvA_GZ=wu4J60-AQ@mail.gmail.com>
-Subject: Re: [PATCH v27 2/6] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
+        Tue, 8 Aug 2023 17:58:06 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4E593A68F;
+        Tue,  8 Aug 2023 09:39:25 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 313B020317;
+        Tue,  8 Aug 2023 09:32:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1691487147; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=URemeKpdb8J18iMONbqIB4P02haKyRX6mS8Xu4Mgmc8=;
+        b=kAP4/qU3eebbLi9EbGgoNiblqEAMz2n9d8dDZjEU/zYHxmh4xQUAW4aRmDsDFAo1LDW4XS
+        Jz3jziQyqFQJ2OS6XJQCmcd5h9qdcD3Byn8qpddgol9CAV8ew1WhVYDKOVKgTmZrEM14u3
+        +VucJ+n1ddguqczAaW5Ki56KFXcMMvI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1691487147;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=URemeKpdb8J18iMONbqIB4P02haKyRX6mS8Xu4Mgmc8=;
+        b=zakAo2cWrWyYBcipF4rIUwLGrOqm5ZeFyaCmUH+fTkQWLNKyEQyre7V0L+jFNWPtWdDjYF
+        EO0z/Yllpo+E3ODA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1EA0313451;
+        Tue,  8 Aug 2023 09:32:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id uyF3B6sL0mR7GwAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 08 Aug 2023 09:32:27 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 82443A0769; Tue,  8 Aug 2023 11:32:26 +0200 (CEST)
+Date:   Tue, 8 Aug 2023 11:32:26 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Richard Weinberger <richard@nod.at>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, ntfs3@lists.linux.dev,
+        ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-mtd@lists.infradead.org, linux-mm@kvack.org,
+        linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v7 05/13] fat: make fat_update_time get its own timestamp
+Message-ID: <20230808093226.bq2qfxv5npckk643@quack3>
+References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
+ <20230807-mgctime-v7-5-d1dec143a704@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230807-mgctime-v7-5-d1dec143a704@kernel.org>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 8, 2023 at 3:43=E2=80=AFAM Muhammad Usama Anjum
-<usama.anjum@collabora.com> wrote:
+On Mon 07-08-23 15:38:36, Jeff Layton wrote:
+> In later patches, we're going to drop the "now" parameter from the
+> update_time operation. Fix fat_update_time to fetch its own timestamp.
+> It turns out that this is easily done by just passing a NULL timestamp
+> pointer to fat_update_time.
+             ^^^ fat_truncate_time()
 
-....
+> Also, it may be that things have changed by the time we get to calling
+> fat_update_time after checking inode_needs_update_time. Ensure that we
+> attempt the i_version bump if any of the S_* flags besides S_ATIME are
+> set.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-> +static int pagemap_scan_output(unsigned long categories,
-> +                              struct pagemap_scan_private *p,
-> +                              unsigned long addr, unsigned long *end)
-> +{
-> +       unsigned long n_pages, total_pages;
-> +       int ret =3D 0;
-> +
-> +       if (!p->vec_buf)
-> +               return 0;
-> +
-> +       categories &=3D p->arg.return_mask;
-> +
-> +       n_pages =3D (*end - addr) / PAGE_SIZE;
-> +       if (check_add_overflow(p->found_pages, n_pages, &total_pages) || =
-//TODO
+Looks good. Feel free to add:
 
-Need to fix this TODO.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-> +           total_pages > p->arg.max_pages) {
-> +               size_t n_too_much =3D total_pages - p->arg.max_pages;
-> +               *end -=3D n_too_much * PAGE_SIZE;
-> +               n_pages -=3D n_too_much;
-> +               ret =3D -ENOSPC;
-> +       }
-> +
-> +       if (!pagemap_scan_push_range(categories, p, addr, *end)) {
-> +               *end =3D addr;
-> +               n_pages =3D 0;
-> +               ret =3D -ENOSPC;
-> +       }
-> +
-> +       p->found_pages +=3D n_pages;
-> +       if (ret)
-> +               p->walk_end_addr =3D *end;
-> +
-> +       return ret;
-> +}
-> +
+								Honza
 
-...
-
-> +static long do_pagemap_scan(struct mm_struct *mm, unsigned long uarg)
-> +{
-> +       struct mmu_notifier_range range;
-> +       struct pagemap_scan_private p;
-> +       unsigned long walk_start;
-> +       size_t n_ranges_out =3D 0;
-> +       int ret;
-> +
-> +       memset(&p, 0, sizeof(p));
-> +       ret =3D pagemap_scan_get_args(&p.arg, uarg);
-> +       if (ret)
-> +               return ret;
-> +
-> +       p.masks_of_interest =3D MASKS_OF_INTEREST(p.arg);
-> +       ret =3D pagemap_scan_init_bounce_buffer(&p);
-> +       if (ret)
-> +               return ret;
-> +
-> +       /* Protection change for the range is going to happen. */
-> +       if (p.arg.flags & PM_SCAN_WP_MATCHING) {
-> +               mmu_notifier_range_init(&range, MMU_NOTIFY_PROTECTION_VMA=
-, 0,
-> +                                       mm, p.arg.start, p.arg.end);
-> +               mmu_notifier_invalidate_range_start(&range);
-> +       }
-> +
-> +       walk_start =3D p.arg.start;
-> +       for (; walk_start < p.arg.end; walk_start =3D p.arg.walk_end) {
-> +               int n_out;
-> +
-> +               if (fatal_signal_pending(current)) {
-> +                       ret =3D -EINTR;
-> +                       break;
-> +               }
-> +
-> +               ret =3D mmap_read_lock_killable(mm);
-> +               if (ret)
-> +                       break;
-> +               ret =3D walk_page_range(mm, walk_start, p.arg.end,
-> +                                     &pagemap_scan_ops, &p);
-> +               mmap_read_unlock(mm);
-> +
-> +               n_out =3D pagemap_scan_flush_buffer(&p);
-> +               if (n_out < 0)
-> +                       ret =3D n_out;
-> +               else
-> +                       n_ranges_out +=3D n_out;
-> +
-> +               if (ret !=3D -ENOSPC || p.arg.vec_len - 1 =3D=3D 0 ||
-> +                   p.found_pages =3D=3D p.arg.max_pages) {
-> +                       p.walk_end_addr =3D p.arg.end;
-
-You should not change p.walk_end_addr If ret is ENOSPC. Pls add a test
-case to check this.
-
-> +                       break;
-> +               }
-> +       }
-> +
-> +       if (p.cur_buf.start !=3D p.cur_buf.end) {
-> +               if (copy_to_user(p.vec_out, &p.cur_buf, sizeof(p.cur_buf)=
-))
-> +                       ret =3D -EFAULT;
-> +               else
-> +                       ++n_ranges_out;
-> +       }
-> +
-> +       /* ENOSPC signifies early stop (buffer full) from the walk. */
-> +       if (!ret || ret =3D=3D -ENOSPC)
-> +               ret =3D n_ranges_out;
-> +
-> +       p.arg.walk_end =3D p.walk_end_addr ? p.walk_end_addr : walk_start=
-;
-> +       if (pagemap_scan_writeback_args(&p.arg, uarg))
-> +               ret =3D -EFAULT;
-> +
-> +       if (p.arg.flags & PM_SCAN_WP_MATCHING)
-> +               mmu_notifier_invalidate_range_end(&range);
-> +
-> +       kfree(p.vec_buf);
-> +       return ret;
-> +}
-
-Thanks,
-Andrei
+> ---
+>  fs/fat/misc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/fat/misc.c b/fs/fat/misc.c
+> index 67006ea08db6..8cab87145d63 100644
+> --- a/fs/fat/misc.c
+> +++ b/fs/fat/misc.c
+> @@ -347,14 +347,14 @@ int fat_update_time(struct inode *inode, struct timespec64 *now, int flags)
+>  		return 0;
+>  
+>  	if (flags & (S_ATIME | S_CTIME | S_MTIME)) {
+> -		fat_truncate_time(inode, now, flags);
+> +		fat_truncate_time(inode, NULL, flags);
+>  		if (inode->i_sb->s_flags & SB_LAZYTIME)
+>  			dirty_flags |= I_DIRTY_TIME;
+>  		else
+>  			dirty_flags |= I_DIRTY_SYNC;
+>  	}
+>  
+> -	if ((flags & S_VERSION) && inode_maybe_inc_iversion(inode, false))
+> +	if ((flags & (S_VERSION|S_CTIME|S_MTIME)) && inode_maybe_inc_iversion(inode, false))
+>  		dirty_flags |= I_DIRTY_SYNC;
+>  
+>  	__mark_inode_dirty(inode, dirty_flags);
+> 
+> -- 
+> 2.41.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
