@@ -2,171 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6977F7741F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 19:31:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 126217742DF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 19:51:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234717AbjHHRbE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Aug 2023 13:31:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58658 "EHLO
+        id S235091AbjHHRv2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Aug 2023 13:51:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234574AbjHHRaX (ORCPT
+        with ESMTP id S230452AbjHHRvF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Aug 2023 13:30:23 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44D95217B9;
-        Tue,  8 Aug 2023 09:13:11 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id A7B1922468;
-        Tue,  8 Aug 2023 09:05:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1691485527; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wcZ0MvDWAvHGz+Tvz5BQspV1+Y90atrQ/21gTPDSJ5A=;
-        b=ltvgN98jUPLfVGzwkX2IMCxL1+gt7mU2eMGWerKExKXl9rFxELcQOOu6LDPvkVgELBTWMM
-        RPR+CvNDbp+v8nhbcYMs5NsoZ+s9OQ/UvQVEgQ88doFw/btLczZrQg2i1eZV1+ZBjvbv6d
-        v//UiKTWiNGL8LuYIfEW5snVicPsNCw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1691485527;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wcZ0MvDWAvHGz+Tvz5BQspV1+Y90atrQ/21gTPDSJ5A=;
-        b=NtHl8v8fs0QRleiCInWaMqHlp3B+YiNNeUD28RUprosc+RMkGA1oFQ5OJqyi3S1c2mho42
-        UGYfjYfTqGY9zJAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 903E5139E9;
-        Tue,  8 Aug 2023 09:05:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id RgEgI1cF0mRWDgAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 08 Aug 2023 09:05:27 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 215FCA0769; Tue,  8 Aug 2023 11:05:27 +0200 (CEST)
-Date:   Tue, 8 Aug 2023 11:05:27 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Richard Weinberger <richard@nod.at>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-mtd@lists.infradead.org, linux-mm@kvack.org,
-        linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v7 01/13] fs: remove silly warning from current_time
-Message-ID: <20230808090527.nvn6vd5wdw4o5b2m@quack3>
-References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
- <20230807-mgctime-v7-1-d1dec143a704@kernel.org>
+        Tue, 8 Aug 2023 13:51:05 -0400
+Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 847EEB4F3A;
+        Tue,  8 Aug 2023 09:22:51 -0700 (PDT)
+Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-1ba5cda3530so4607646fac.3;
+        Tue, 08 Aug 2023 09:22:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1691511749; x=1692116549;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GCxwlyhJ8vXEVNF+yz9sQrPr3bcnp/8Z+q3sGhYbKzY=;
+        b=eyYEBmT8U9BS0g9YiDGnxXjtGCDVRksgzluqxEPtICdyaVdggKOALR63x2PcECwMqD
+         5MoUQi8ERs4RlPVnesDEPYSjONko7qcfZsBrumb9x1K1/UMqvjU26Ho3PAwaGMrqkdsh
+         ScPN/kEIF334KbdDY43rB1lWj1V2DpiRtRIlglLsvSyhGOtWHH4uZ5qZfSAujgW1vZQ3
+         wGm3VnLKKWDjf9nVgnyUjvaCfERuKMc0GG8YbfU9/RuaYpguciP86d5QB2kAR0uTTagt
+         8fxrg3rNl05BnC8H+imitZHN34Es5Hhjc+bJqnaV/XPK1IrQNBZJcvojPsbgPpxcMcCz
+         2eQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691511749; x=1692116549;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GCxwlyhJ8vXEVNF+yz9sQrPr3bcnp/8Z+q3sGhYbKzY=;
+        b=mEqKU1IdgBfyNl3nJ6i5LmvNUWZWX6OPVsq16dBm+KPlSxwbVh8bvGkVG5oyr9oc7C
+         9xlv4NG0DIN3a0zRu4cZ4JIw8WrknQLkJl2Pbjhk2UCd1TwuMmCwbzcJKcC9DZ4dedTx
+         SWG2JvBQrvW2dpGEJJ7Cru9vGumjtQgeEbvGXMhf5Pl3yDUPkQsY8MQmcQ8b+Uqzxd7+
+         D5wlBgWHMSz8pRqynJxaBXTRuOl6368guFB7s+XDhJeW2BL81LSk3KmtfkGfCLYN85Hb
+         tbDWukcrhFivCsIMZtPefX96OBVre4D8S+fjNyP3q10E+y6CM34NMHar2hUE+C0hXHz/
+         Q0rA==
+X-Gm-Message-State: AOJu0YzL3KroaHJUozzC5NGGeeiKF092qAv0lcJqbHRirFK2BO7flWOT
+        mjWq3YIKCkxLVXbMMzcZoeHAmn1mRgTWyvBAVEiv8Ihf/wE=
+X-Google-Smtp-Source: AGHT+IGOOwkdjvLToEWmeAFn8PNhrCDb0D7BXur/JKENEzDLzdhvPs+JtGOveAYXQ4R3LxtNi3mUSqHtZes+Z+zHw9s=
+X-Received: by 2002:a05:6870:612b:b0:1bd:55be:5880 with SMTP id
+ s43-20020a056870612b00b001bd55be5880mr14170980oae.42.1691486507460; Tue, 08
+ Aug 2023 02:21:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230807-mgctime-v7-1-d1dec143a704@kernel.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Received: by 2002:a8a:696:0:b0:4f0:1250:dd51 with HTTP; Tue, 8 Aug 2023
+ 02:21:46 -0700 (PDT)
+In-Reply-To: <20230808-unsensibel-scham-c61a71622ae7@brauner>
+References: <20230806230627.1394689-1-mjguzik@gmail.com> <87o7jidqlg.fsf@email.froward.int.ebiederm.org>
+ <20230808-eingaben-lumpen-e3d227386e23@brauner> <CAGudoHF=cEvXy3v96dN_ruXHnPv33BA6fA+dCWCm-9L3xgMPNQ@mail.gmail.com>
+ <20230808-unsensibel-scham-c61a71622ae7@brauner>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Tue, 8 Aug 2023 11:21:46 +0200
+Message-ID: <CAGudoHEQ6Tq=88VKqurypjHqOzfU2eBmPts4+H8C7iNu96MRKQ@mail.gmail.com>
+Subject: Re: [PATCH] fs: use __fput_sync in close(2)
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, oleg@redhat.com,
+        Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-0.6 required=5.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 07-08-23 15:38:32, Jeff Layton wrote:
-> An inode with no superblock? Unpossible!
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On 8/8/23, Christian Brauner <brauner@kernel.org> wrote:
+>> I don't think perf tax on something becomes more sensible the longer
+>> it is there.
+>
+> One does need to answer the question why it does suddenly become
+> relevant after all these years though.
+>
 
-Looks good. Feel free to add:
+There is some work I'm considering doing, but before that happens I'm
+sanity checking performance of various syscalls and I keep finding
+problems, some of which are trivially avoidable.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+I'm genuinely confused with the strong opposition to the very notion
+of making close(2) a special case (which I consider conceptually
+trivial), but as you noted below I'm not ultimately the person on the
+hook for any problems.
 
-								Honza
+> The original discussion was triggered by fifo ordering in task work
+> which led to a noticable regression and why it was ultimately reverted.
+> The sync proposal for fput() was an orthogonal proposal and the
+> conclusion was that it wasn't safe generally
+> https://lore.kernel.org/all/20150905051915.GC22011@ZenIV.linux.org.uk
+> even though it wasn't a direct response to the patch you linked.
+>
 
-> ---
->  fs/inode.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index d4ab92233062..3fc251bfaf73 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -2495,12 +2495,6 @@ struct timespec64 current_time(struct inode *inode)
->  	struct timespec64 now;
->  
->  	ktime_get_coarse_real_ts64(&now);
-> -
-> -	if (unlikely(!inode->i_sb)) {
-> -		WARN(1, "current_time() called with uninitialized super_block in the inode");
-> -		return now;
-> -	}
-> -
->  	return timestamp_truncate(now, inode);
->  }
->  EXPORT_SYMBOL(current_time);
-> 
-> -- 
-> 2.41.0
-> 
+Ok, I missed this e-mail. It further discourages patching filp_close,
+but does not make an argument against *just* close(2) rolling with
+sync which is what I'm proposing.
+
+> If you care about it enough send a patch that just makes close(2) go
+> sync.
+
+But this is precisely what the submitted patch is doing. It adds
+file_fput_sync, then adds close_fd_sync which is the only consumer and
+only makes close(2) use it. *nobody* else has sync added.
+
+One can argue the way this is sorted out is crap and I'm not going to
+defend it. I am saying making *just* close(2) roll with sync is very
+easy, there are numerous ways to do it and anyone involved with
+maintaining vfs can write their own variant in minutes. Basically I
+don't see *technical* problems here.
+
+> We'll stuff it in a branch and we'll see what LKP has to say about
+> it or whether this gets lost in noise. I really don't think letting
+> micro-benchmarks become a decisive factor for code churn is a good
+> idea.
+>
+
+That would be nice. Given the patch is already doing what you asked,
+can you just take it as is?
+
+I'll note though what I mentioned elsewhere
+(https://lore.kernel.org/all/CAGudoHEG7vtCRWjn0yR5LMUsaw3KJANfa+Hkke9gy0imXQz6tg@mail.gmail.com/):
+can they make sure to whack CONFIG_RANDOMIZE_KSTACK_OFFSET=y from
+their kernel config? It is an *optional* measure and it comes at a
+massive premium, so single-threaded changes are easily diminished.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Mateusz Guzik <mjguzik gmail.com>
