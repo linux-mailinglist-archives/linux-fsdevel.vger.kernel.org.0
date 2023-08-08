@@ -2,51 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F59D773D3B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 18:15:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6395A77404B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 19:01:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232187AbjHHQO5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Aug 2023 12:14:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45170 "EHLO
+        id S233964AbjHHRBk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Aug 2023 13:01:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232077AbjHHQNW (ORCPT
+        with ESMTP id S233736AbjHHRBB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Aug 2023 12:13:22 -0400
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FE167EED
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 08:47:31 -0700 (PDT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-686db2bb3eeso4257133b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Aug 2023 08:47:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691509651; x=1692114451;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c8YDGf6Dm5bfzl8CozS5WyC56nf5MVDnOuABuB/Ukn4=;
-        b=TB3TTlyaWbQ2tAONO8uumV0JPxpHauCGKV0KSF80XZS9LxI+Ci6ee2cssWmjwP3xzz
-         qForCuZ5OjoFrYPFvBcVe5TE1xeSZqF/QWeCmgFllN53A5kXqgr9W8YfqR1qHcK9Y1x3
-         qprvDND7YDtTQKkOgMa5y4skCyLdferyGHnIvVV8rIPudVzopFoXbaSZNbOYxdD+RM1b
-         GJlOBHEneHjE9XFnvYI90EWP5/EvVQkBPH9PVYNh7yqqYWxXoH9JQOS03B+bZT3LHe1F
-         YOEPzCn/aK2D62UdH2N13apDmqkBtD2RB6PF9fitMQGosLHsz60YpsqacuqSH1sNIGJp
-         FguA==
-X-Gm-Message-State: AOJu0YztfWE9XcpzhwHPKW+A1v50DyWOiG2cqXKgO1rB8yadNrlbFLcR
-        zyCFIYrygsklYIclxmSCiVrgun91nZiBCYNwd+PkbDzqpqX7ySQ=
-X-Google-Smtp-Source: AGHT+IFixi+1yc1yTH4mx4Xf5OrmPTh9KOmPjprukSt7oe6VTsQMsbzV/ZEEuKRqevAJ8XOFwrqB8msvNghHsdIBCpnXvQ+YzyJo
+        Tue, 8 Aug 2023 13:01:01 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A90B8682;
+        Tue,  8 Aug 2023 09:00:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 575C462544;
+        Tue,  8 Aug 2023 13:32:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31B3AC433C8;
+        Tue,  8 Aug 2023 13:32:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691501527;
+        bh=xTIkYrBHz5+6SzO4pB3IGPq/HC4uBhzgU7+be7OH9VU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dZpEWm+PTm9uFdGmOoy5ygSH3XOPg6Y5ZyF0Ulu0M0HE1hTyuXrVvdG9f3BOamM/W
+         3m8sLzVajCx1eYX5lZ3b30+sYKYXM3u0ewDW4+nd1xPBNtK65Jo8h2yyJ+inwyMHGs
+         w2WK+YR84CUHGvViczIvWnkEgwBIt6jA9UIpd40G6jrmvqJVOK9KewB009NnSwZCHe
+         FuqGamjpS7LjpwZz+GvSUYyUZWQ2PfS5KwB+UQ3reJTzCdmZf4c/JSvS6NM2uliol5
+         LUwdEFraQwdTOXt7nGBplT/LAucUY6qUfKgCd/hdf4oAwdV56AZjsHCGIqFzd81wlg
+         GdbWrpF/FvN3g==
+Date:   Tue, 8 Aug 2023 15:31:56 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: Re: [PATCH v9] vfs, security: Fix automount superblock LSM init
+ problem, preventing NFS sb sharing
+Message-ID: <20230808-erdaushub-sanieren-2bd8d7e0a286@brauner>
+References: <20230808-master-v9-1-e0ecde888221@kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a9d:63d7:0:b0:6bc:fb26:499e with SMTP id
- e23-20020a9d63d7000000b006bcfb26499emr6695466otl.2.1691499322068; Tue, 08 Aug
- 2023 05:55:22 -0700 (PDT)
-Date:   Tue, 08 Aug 2023 05:55:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003ad2bd060268e001@google.com>
-Subject: [syzbot] Monthly fs report (Aug 2023)
-From:   syzbot <syzbot+lista41a75f5a209d3d79bf1@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20230808-master-v9-1-e0ecde888221@kernel.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -54,46 +69,70 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello fs maintainers/developers,
+On Tue, Aug 08, 2023 at 07:34:20AM -0400, Jeff Layton wrote:
+> From: David Howells <dhowells@redhat.com>
+> 
+> When NFS superblocks are created by automounting, their LSM parameters
+> aren't set in the fs_context struct prior to sget_fc() being called,
+> leading to failure to match existing superblocks.
+> 
+> This bug leads to messages like the following appearing in dmesg when
+> fscache is enabled:
+> 
+>     NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,100000,2ee,3a98,1d4c,3a98,1)
+> 
+> Fix this by adding a new LSM hook to load fc->security for submount
+> creation.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
+> Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
+> Tested-by: Jeff Layton <jlayton@kernel.org>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> Acked-by: "Christian Brauner (Microsoft)" <brauner@kernel.org>
+> Link: https://lore.kernel.org/r/165962680944.3334508.6610023900349142034.stgit@warthog.procyon.org.uk/ # v1
+> Link: https://lore.kernel.org/r/165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk/ # v2
+> Link: https://lore.kernel.org/r/165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk/ # v3
+> Link: https://lore.kernel.org/r/166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk/ # v4
+> Link: https://lore.kernel.org/r/217595.1662033775@warthog.procyon.org.uk/ # v5
+> ---
+> ver #2)
+> - Added Smack support
+> - Made LSM parameter extraction dependent on reference != NULL.
+> 
+> ver #3)
+> - Made LSM parameter extraction dependent on fc->purpose ==
+>    FS_CONTEXT_FOR_SUBMOUNT.  Shouldn't happen on FOR_RECONFIGURE.
+> 
+> ver #4)
+> - When doing a FOR_SUBMOUNT mount, don't set the root label in SELinux or Smack.
+> 
+> ver #5)
+> - Removed unused variable.
+> - Only allocate smack_mnt_opts if we're dealing with a submount.
+> 
+> ver #6)
+> - Rebase onto v6.5.0-rc4
+> - Link to v6: https://lore.kernel.org/r/20230802-master-v6-1-45d48299168b@kernel.org
+> 
+> ver #7)
+> - Drop lsm_set boolean
+> - Link to v7: https://lore.kernel.org/r/20230804-master-v7-1-5d4e48407298@kernel.org
+> 
+> ver #8)
+> - Remove spurious semicolon in smack_fs_context_init
+> - Make fs_context_init take a superblock as reference instead of dentry
+> - WARN_ON_ONCE's when fc->purpose != FS_CONTEXT_FOR_SUBMOUNT
+> - Call the security hook from fs_context_for_submount instead of alloc_fs_context
+> - Link to v8: https://lore.kernel.org/r/20230807-master-v8-1-54e249595f10@kernel.org
+> 
+> ver #9)
+> - rename *_fs_context_init to *_fs_context_submount
+> - remove checks for FS_CONTEXT_FOR_SUBMOUNT and NULL reference pointers
+> - fix prototype on smack_fs_context_submount
 
-This is a 31-day syzbot report for the fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/fs
-
-During the period, 9 new issues were detected and 1 were fixed.
-In total, 55 issues are still open and 327 have been fixed so far.
-
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 2854    Yes   BUG: sleeping function called from invalid context in __getblk_gfp
-                  https://syzkaller.appspot.com/bug?extid=69b40dc5fd40f32c199f
-<2> 2535    Yes   general protection fault in iommu_deinit_device
-                  https://syzkaller.appspot.com/bug?extid=a8bd07230391c0c577c2
-<3> 2178    Yes   WARNING in firmware_fallback_sysfs
-                  https://syzkaller.appspot.com/bug?extid=95f2e2439b97575ec3c0
-<4> 1279    Yes   possible deadlock in input_event (2)
-                  https://syzkaller.appspot.com/bug?extid=d4c06e848a1c1f9f726f
-<5> 267     Yes   BUG: sleeping function called from invalid context in __bread_gfp
-                  https://syzkaller.appspot.com/bug?extid=5869fb71f59eac925756
-<6> 140     No    possible deadlock in evdev_pass_values (2)
-                  https://syzkaller.appspot.com/bug?extid=13d3cb2a3dc61e6092f5
-<7> 37      No    KASAN: slab-use-after-free Read in __ext4_iget
-                  https://syzkaller.appspot.com/bug?extid=5407ecf3112f882d2ef3
-<8> 21      Yes   INFO: task hung in synchronize_rcu (4)
-                  https://syzkaller.appspot.com/bug?extid=222aa26d0a5dbc2e84fe
-<9> 20      Yes   INFO: rcu detected stall in sys_clock_adjtime
-                  https://syzkaller.appspot.com/bug?extid=25b7addb06e92c482190
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Thanks, this looks good from my perspective. If it looks fine to LSM
+folks as well I can put it with the rest of the super work for this
+cycle or it can go through the LSM tree.
