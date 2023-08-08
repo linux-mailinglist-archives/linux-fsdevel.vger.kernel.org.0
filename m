@@ -2,113 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ECB637746DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 21:05:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB9DC77453B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 20:39:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233828AbjHHTFV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Aug 2023 15:05:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60720 "EHLO
+        id S232002AbjHHSjJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Aug 2023 14:39:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234264AbjHHTFB (ORCPT
+        with ESMTP id S231910AbjHHSir (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Aug 2023 15:05:01 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2CCBAFA0C
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 10:48:41 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4fe58faa5cfso7240005e87.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Aug 2023 10:48:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1691516919; x=1692121719;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=A07tSATk4WyiLzh2AjGN9k9LM0i/q4SHz/ST015SGFQ=;
-        b=PPY00NUkXMnlLi1TsqTk2nHeZwm5/SEj9NBv8ZZ7fViHFNYSZhLFqNJRgLiY5rC5KM
-         wxMnVuBrR7c/mp8Wtjc2+nwRK6gpdnFZHuxak2Q7diMkwmIXiIJqMMlLjiQJZ3wi9c/A
-         /h7Ntk1OM//bvAEthaS4mwOxhHkfnzHVIvYsc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691516919; x=1692121719;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A07tSATk4WyiLzh2AjGN9k9LM0i/q4SHz/ST015SGFQ=;
-        b=U3gluyaG3Ac7/qyUAIWQd3JS4KDj5nZ0nbJ0N0UzHzm8lR+oTDF+8OumwhIf5ctOFp
-         7wmdo1l98wgUv4pHDvRtZcPRDICGvwN/3hk2FG+0mEfg0vFuLxLKS6Pzg3Ue59CAHA50
-         siLTPfvUzSocs9OFVxVfsYaICzOQaI5WVdzf3TYnP/T1KmCPR9mQB0FfNUkjuUfGO4ty
-         vDAM5di20uQX+4XWk0kJwzN5OXTosex/Ltx9Gp5rGP3hA5EwhsefX7tzPqNelZnBs21u
-         MhqEAX6hHkvszfykwZuTZ33KUihuMa00blEVTput1zL9QU4YTI79xCq9bKRZ3MawkBwk
-         Ociw==
-X-Gm-Message-State: AOJu0Yyc/Voy2nRUUdmGnHBNazk86IvSAAboZoZ0I6g6uEgx+QO3l47J
-        PaJQLy6cPx3Mlk+5ZfQ8u1wU3hsXDPwsdd0/oRaBAS6V
-X-Google-Smtp-Source: AGHT+IHoBUG+Be5ns1NP8j6xLDmNBfhpapzL3SswkGCYPobYcGulYvXNMMFQCqsJCrc0f+KoHYJBdg==
-X-Received: by 2002:a05:6512:3a83:b0:4f8:680a:68f8 with SMTP id q3-20020a0565123a8300b004f8680a68f8mr131249lfu.41.1691516918981;
-        Tue, 08 Aug 2023 10:48:38 -0700 (PDT)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id v26-20020ac2559a000000b004fddb0eb961sm1959844lfg.18.2023.08.08.10.48.37
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Aug 2023 10:48:37 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-4fe28e4671dso9684777e87.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Aug 2023 10:48:37 -0700 (PDT)
-X-Received: by 2002:a05:6512:159c:b0:4fd:f77d:5051 with SMTP id
- bp28-20020a056512159c00b004fdf77d5051mr149456lfb.26.1691516917321; Tue, 08
- Aug 2023 10:48:37 -0700 (PDT)
+        Tue, 8 Aug 2023 14:38:47 -0400
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4954F28949
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 10:52:26 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id CFDF55C0114;
+        Tue,  8 Aug 2023 13:52:23 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Tue, 08 Aug 2023 13:52:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=devkernel.io; h=
+        cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1691517143; x=1691603543; bh=gs
+        RzqsPv0D50dYYvXCyt8FH+bEkTzZQKhUQ82O4Gc/8=; b=MMy2PWim3Y4wSGGjcH
+        gShZzBcpxNGohr/t5dU0Zxh4dqeXR4OPNPWiHJjPUWi8eFN5cu3m3aG0kzaWMJMM
+        wPg2KT1z9LjtCEbP8VfcroNVfkusLJPPMsNZNDEO0Auz3H3RtwBjtKpx140F4IQ4
+        C5RzMNJysoLPZIOvb7tYpQRulaCJ6wxH4hXiuMZXMGWRpChv+c7rGkKTbvVophZq
+        1yWEQ0MQsDdiBTcwV0G5T3pRibRODVo0s1y+CSITvzKEmXqM055bj6p7PaO83w3R
+        WDp/E8769V6+QwY9XJVOqPnaKXbl1lskRogWnCsnTEdA85eDA2Xd/YeNoKXByAmH
+        h38A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1691517143; x=1691603543; bh=gsRzqsPv0D50d
+        YYvXCyt8FH+bEkTzZQKhUQ82O4Gc/8=; b=NDelgJiGKbDAuOcEoWE2qhXjWTE9F
+        UG3MqxIDI70NBC51M34GJt67D1QaipmGoJQqftLJdcaGI3sNxrkSA5t/ACQ7clNB
+        FLuFO78f2waLReIzzuISdoX9WZukFzVgp/tVl35NgFZiUuHI0kej/3PWW9Itz1tP
+        eelA9fFkFwP4iXRBDtBaeAs/48hz8vBj6VwTabYoaB2YJ39olUmEcXbXmGoj2FFd
+        WlKotb+mFv/IJh1GC3gFJAzkdeSUcQIri10PBL8BM+7ycMJIkP1V/KGrBZRy67B2
+        q6zzzngJ/mzSA5i2CGLo5FqE1y6LiosX8OD5OaAhTwlrxq1aCdaoOTPzQ==
+X-ME-Sender: <xms:14DSZMbi-NdLVQ6vAH-tyJ-F3VoFqCNi147wTXiIBb8Rs6vYThRRIg>
+    <xme:14DSZHaONJs95kejzgK5JIu0juE2PtW1iBabHTdjW0Pol-wI5Fs92g5aBY5kN3jwb
+    lOOcPRRJ7kWdWMgaoo>
+X-ME-Received: <xmr:14DSZG8Eh-31WyV-QkkA3NVz3gjgGVGmdxEEeqtt1QQ7I9Ntrj3xhKGF3Np1PLKN0e9p4R9owFttsVniks32-IlgrxdKD7nPsEbDxSRoA5nq>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrledvgdduudejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpehffgfhvfevufffjgfkgggtsehttd
+    ertddtredtnecuhfhrohhmpefuthgvfhgrnhcutfhovghstghhuceoshhhrhesuggvvhhk
+    vghrnhgvlhdrihhoqeenucggtffrrghtthgvrhhnpeevlefggffhheduiedtheejveehtd
+    fhtedvhfeludetvdegieekgeeggfdugeeutdenucevlhhushhtvghrufhiiigvpedtnecu
+    rfgrrhgrmhepmhgrihhlfhhrohhmpehshhhrseguvghvkhgvrhhnvghlrdhioh
+X-ME-Proxy: <xmx:14DSZGoJsA2hc1t1_qzJF3qeHxEbFLz-WnciCDp1AhwOpkaAI5ml_g>
+    <xmx:14DSZHoCZdK5IZ65W7yw9Q65v7DYwB8wVX9NnTJm_KSfz8RpSm6j8Q>
+    <xmx:14DSZERGmuq92skfcbKJ5f5xxGM9aNuUenEpcmbJrvBMeLm3M_C5pg>
+    <xmx:14DSZIl4vEI7OLfiLNWjK7QAlOYbLGMsO1OXdJfHReS-kSjRxhkAsQ>
+Feedback-ID: i84614614:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 8 Aug 2023 13:52:22 -0400 (EDT)
+References: <20230808170858.397542-1-shr@devkernel.io>
+ <20230808101713.766c270cc0465c3938f24182@linux-foundation.org>
+User-agent: mu4e 1.10.1; emacs 28.2.50
+From:   Stefan Roesch <shr@devkernel.io>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     kernel-team@fb.com, david@redhat.com,
+        linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, riel@surriel.com
+Subject: Re: [PATCH v1] proc/ksm: add ksm stats to /proc/pid/smaps
+Date:   Tue, 08 Aug 2023 10:51:22 -0700
+In-reply-to: <20230808101713.766c270cc0465c3938f24182@linux-foundation.org>
+Message-ID: <qvqw7cq5pgkr.fsf@devbig1114.prn1.facebook.com>
 MIME-Version: 1.0
-References: <20230806230627.1394689-1-mjguzik@gmail.com> <87o7jidqlg.fsf@email.froward.int.ebiederm.org>
- <CAHk-=whk-8Pv5YXH4jNfyAf2xiQCGCUVyBWw71qJEafn4mT6vw@mail.gmail.com>
- <CAGudoHE5UDj0Y7fY=gicOq8Je=e1MX+5VWo04qoDRpHRG03fFg@mail.gmail.com>
- <CAHk-=wj+Uu+=iUZLc+MfOBKgRoyM56c0z0ustZKru0We9os63A@mail.gmail.com>
- <CAGudoHE=jJ+MKduj9-95Nk8_F=fkv2P+akftvFw1fVr46jm8ng@mail.gmail.com> <20230808-divers-verehren-02abcc37fe60@brauner>
-In-Reply-To: <20230808-divers-verehren-02abcc37fe60@brauner>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 8 Aug 2023 10:48:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgKpvn_u_9R72JbBaTw8gQnzhoER3hnR4WQpY8j96Gxcg@mail.gmail.com>
-Message-ID: <CAHk-=wgKpvn_u_9R72JbBaTw8gQnzhoER3hnR4WQpY8j96Gxcg@mail.gmail.com>
-Subject: Re: [PATCH] fs: use __fput_sync in close(2)
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Mateusz Guzik <mjguzik@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, oleg@redhat.com,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 8 Aug 2023 at 10:36, Christian Brauner <brauner@kernel.org> wrote:
+
+Andrew Morton <akpm@linux-foundation.org> writes:
+
+> On Tue,  8 Aug 2023 10:08:58 -0700 Stefan Roesch <shr@devkernel.io> wrote:
 >
-> @Linus, you ok with the appended thing?
+>> With madvise and prctl KSM can be enabled for different VMA's. Once it
+>> is enabled we can query how effective KSM is overall. However we cannot
+>> easily query if an individual VMA benefits from KSM.
+>>
+>> This commit adds a KSM section to the /prod/<pid>/smaps file. It reports
+>> how many of the pages are KSM pages.
+>>
+>> Here is a typical output:
+>>
+>> 7f420a000000-7f421a000000 rw-p 00000000 00:00 0
+>> Size:             262144 kB
+>> KernelPageSize:        4 kB
+>> MMUPageSize:           4 kB
+>> Rss:               51212 kB
+>> Pss:                8276 kB
+>> Shared_Clean:        172 kB
+>> Shared_Dirty:      42996 kB
+>> Private_Clean:       196 kB
+>> Private_Dirty:      7848 kB
+>> Referenced:        15388 kB
+>> Anonymous:         51212 kB
+>> KSM:               41376 kB
+>> LazyFree:              0 kB
+>> AnonHugePages:         0 kB
+>> ShmemPmdMapped:        0 kB
+>> FilePmdMapped:         0 kB
+>> Shared_Hugetlb:        0 kB
+>> Private_Hugetlb:       0 kB
+>> Swap:             202016 kB
+>> SwapPss:            3882 kB
+>> Locked:                0 kB
+>> THPeligible:    0
+>> ProtectionKey:         0
+>> ksm_state:          0
+>> ksm_skip_base:      0
+>> ksm_skip_count:     0
+>> VmFlags: rd wr mr mw me nr mg anon
+>>
+>> This information also helps with the following workflow:
+>> - First enable KSM for all the VMA's of a process with prctl.
+>> - Then analyze with the above smaps report which VMA's benefit the most
+>> - Change the application (if possible) to add the corresponding madvise
+>> calls for the VMA's that benefit the most
+>
+> smaps is documented in Documentation/filesystems/proc.rst, please.
+> (And it looks a bit out of date).
+>
+> Did you consider adding this info to smaps_rollup as well?
 
-Yes.
-
-I do think that the CHECK_DATA_CORRUPTION() case (used to be in
-filp_close, now in filp_flush) is now very questionable since we'll
-end up doing an "fput()" on it anyway.
-
-But I think that's actually not a new thing - it was always in the
-wrong place, and only caught the "filp_close()" cases. Which -
-considering that it would only happen with people using 'fput()'
-incorrectly - was always quite suspicious.
-
-The actual "CHECK_DATA_CORRUPTION()" part of the check is new, but the
-check itself predates not just the git tree, but the BK history too.
-Google does find that we had it trigger back in 1998, apparently.
-
-I think we should probably remove it entirely - and just depend on all
-our modern use-after-free infrastructure.
-
-Or we could move it into __fput() itself - the ordering wrt any
-flushing is immaterial, because it's no different from using read or
-write or whatever on a stale file descriptor - and at least get much
-better coverage of the situation where it would happen.
-
-But that is, I think, a completely separate issue - this is all just
-made more obvious by the reorganization.
-
-              Linus
+The smaps_rollup is covered. Under the covers it uses the same code as smaps.
