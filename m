@@ -2,83 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C1C00774CCF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 23:18:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7E85774EB4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 00:55:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233834AbjHHVSW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Aug 2023 17:18:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37242 "EHLO
+        id S229971AbjHHWzi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Aug 2023 18:55:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236516AbjHHVSM (ORCPT
+        with ESMTP id S229943AbjHHWzL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Aug 2023 17:18:12 -0400
-Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9559211F
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 14:13:28 -0700 (PDT)
-Received: by mail-pg1-x54a.google.com with SMTP id 41be03b00d2f7-56463e0340cso6299735a12.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Aug 2023 14:13:28 -0700 (PDT)
+        Tue, 8 Aug 2023 18:55:11 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C03B1995
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 15:55:10 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1b89b0c73d7so8411525ad.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Aug 2023 15:55:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1691529208; x=1692134008;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2U8op5NWCZxGer1aWuXuZ1d6J73Ge5+Hk7EgkvJJLAs=;
-        b=EiApR7LgfgrJOIT4RH8vwTp7YvtN3WX8F65amcCZ5tUQpyv/ZsbnzElbxtLH3YiRAr
-         Xco5OB//pxBTUJ1Hz9I9wbK8VFMOtBI25Tou7znxlR4xLwF5hwG16hAzm3VNuOm7qNVv
-         RXaphvZexnvsjJwdUedz4miwZlrHjyPKGJ4tg41nXpc1Cr1tDeUR45j+cXRmHY2zeNeJ
-         aD2FSNHH9s2X0AH/332mpiw5dSfBYPcqgRab/m5d5fFkQb+ZWPzwvwukMvExFid52TaS
-         W3qOIOCRBt/UK+p15DAoWro/GC9Q6ni0EalNj49A0OSEsHwDkeyMMKxa0prAwizF/XXF
-         JV1Q==
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691535309; x=1692140109;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Fq5/S8J1QpqhbVz+0r61Fn703VpjoVLaBkKsH4mRO14=;
+        b=kMceCnbwPqduAso4KGF5sL9eSspmG4gvl7B7O2ECWFkuKrw/Kb6rSYSdGWXLbO+htA
+         IG7fCtiuREpOHs4OZMKt0G0TkeqIm5m9keiENc4DPkpiP3Mf3pJthm1e6sFUp570uzjn
+         WwLLf+e2g/0Xjn+gJYKfNlGFBLBZaudCw8SVjB4STr5Mu3t+5EOpPpDfHIa4JddYmBbC
+         EDbt/f9W3NKuLw9hwgysKH5Qa/vEBGQ9HujIsY4zpACiR3kjyLrBvTKFMhHDij2o4Q5h
+         7SHutotgWYoN9zqaLgmGEnyWRePMFZCgnDbH36aDux8tjuTSkmwGVLuLDjuIFsGhlGHs
+         BoHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691529208; x=1692134008;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2U8op5NWCZxGer1aWuXuZ1d6J73Ge5+Hk7EgkvJJLAs=;
-        b=BfHJBEN1ubECwusSFCsyULi7vmgS6rTbnt8+2RWTD9aAGRBH9xvbeu15Ak5P+hPG4U
-         soA/4U4gIwos9dA1iZdevG6V/PILr/l8vYvKD+sfcOu15x5y7pkfmnAdx4VW42lVbgcq
-         Q884Z7xViH0Ql6o4tGu6axdYalQirc8uKOqOLWnekdR4LnoOMJqR4Umg3D5v4K3Yq8Wl
-         LCI3uJFkXemTjbln+S1GeNMH0GGslTagfJNnE8vZ2lshmGCUMAOo792YeleaoK91uH4D
-         dUbQD6ET4Adx8uY4tEp5J0vw+7K+vil8yVaBhFZP1RMYrXmRxuwyu3m1hjTMVXvCfR3v
-         mtoQ==
-X-Gm-Message-State: AOJu0YwnpsvNAhKcnWUrSRnyEg8wR4hj5i0SaPt2sBnRgYG1J+0wJdNA
-        IhxAQN9SRiPmOmzRSdJnMCNbo2ACP6s=
-X-Google-Smtp-Source: AGHT+IF3VhVvM3seA6Kd3G1yrwf0aF3MmO0cqr5SVZX1MHXlsabrjEav/SHlO1qK0PHGPVCVUrfGthX1EsA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:b242:0:b0:563:e937:5e87 with SMTP id
- t2-20020a63b242000000b00563e9375e87mr12735pgo.5.1691529208021; Tue, 08 Aug
- 2023 14:13:28 -0700 (PDT)
-Date:   Tue, 8 Aug 2023 14:13:26 -0700
-In-Reply-To: <diqzv8dq3116.fsf@ackerleytng-ctop.c.googlers.com>
-Mime-Version: 1.0
-References: <20230718234512.1690985-13-seanjc@google.com> <diqzv8dq3116.fsf@ackerleytng-ctop.c.googlers.com>
-Message-ID: <ZNKv9ul2I7A4V7IF@google.com>
-Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-From:   Sean Christopherson <seanjc@google.com>
-To:     Ackerley Tng <ackerleytng@google.com>
-Cc:     pbonzini@redhat.com, maz@kernel.org, oliver.upton@linux.dev,
-        chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, willy@infradead.org,
-        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
-        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
-        vannapurve@google.com, mail@maciej.szmigiero.name, vbabka@suse.cz,
-        david@redhat.com, qperret@google.com, michael.roth@amd.com,
-        wei.w.wang@intel.com, liam.merwick@oracle.com,
-        isaku.yamahata@gmail.com, kirill.shutemov@linux.intel.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+        d=1e100.net; s=20221208; t=1691535309; x=1692140109;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fq5/S8J1QpqhbVz+0r61Fn703VpjoVLaBkKsH4mRO14=;
+        b=QXyKR606tRsfGJszLKz6VAbaMv7A4BsMREtTZMHeD3zd1vCWBz7p+dONwVSl7vSB0U
+         cDUQCaUFpEcMqZVphovzeqQRURhiDNOgzGDJghMVXAUw/mX/dE2JP6G991APrxTD/IQk
+         TXqDmEGwLmjg/ow5B4O4mUPgMoGnFeX7WFFknzB6ypwQZv9cA2nhxfTazr3XMc34GuCQ
+         wnqFGQMeVNWb5WnLrgV0jLbu6McUfrjx7q2ynWby3EG/woDySjyMWrfgaln8u6MRlqNm
+         ZW40Xc8AWt+mATXqCoFoMzzxHohtscW71dUxve90lkymkbAVfj05i3S0aLrknO+NsdVU
+         /94w==
+X-Gm-Message-State: AOJu0YyEnbmLuHTh8TFKYWXtuoRebmTopbJENguXwUwJGJfYgqgZp9JO
+        d9INLvdY5runKXqMoGYKeLQltw==
+X-Google-Smtp-Source: AGHT+IGQhrfxYYrEl6v690kg205iYI/9lt/xA1ZvgaALoPEw4FOUCnMsSbfMapzRTUij16VALh0CTw==
+X-Received: by 2002:a17:903:2281:b0:1b8:85c4:48f5 with SMTP id b1-20020a170903228100b001b885c448f5mr1219880plh.2.1691535309528;
+        Tue, 08 Aug 2023 15:55:09 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id m7-20020a170902768700b001ae0a4b1d3fsm9518846pll.153.2023.08.08.15.55.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Aug 2023 15:55:08 -0700 (PDT)
+Message-ID: <5cf17fbc-103f-0bdc-edc1-2e24f24ea7d9@kernel.dk>
+Date:   Tue, 8 Aug 2023 16:55:07 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Subject: Re: [PATCH 3/5] io_uring: add support for getdents
+Content-Language: en-US
+To:     Hao Xu <hao.xu@linux.dev>, "Darrick J. Wong" <djwong@kernel.org>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
+References: <20230718132112.461218-1-hao.xu@linux.dev>
+ <20230718132112.461218-4-hao.xu@linux.dev>
+ <20230726-leinen-basisarbeit-13ae322690ff@brauner>
+ <e9ddc8cc-f567-46bc-8f82-cf5ff8ff6c95@linux.dev>
+ <20230727-salbe-kurvigen-31b410c07bb9@brauner>
+ <ZMcPUX0lYC2nscAm@dread.disaster.area>
+ <20230731-gezeugt-tierwelt-f3d6a900c262@brauner>
+ <20230731152623.GC11336@frogsfrogsfrogs>
+ <22630618-40fc-5668-078d-6cefcb2e4962@kernel.dk>
+ <3aacee27-6e30-ef50-ff1f-9fc1334c8924@linux.dev>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <3aacee27-6e30-ef50-ff1f-9fc1334c8924@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
         autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -86,139 +88,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 07, 2023, Ackerley Tng wrote:
-> I=E2=80=99d like to propose an alternative to the refcounting approach be=
-tween
-> the gmem file and associated kvm, where we think of KVM=E2=80=99s memslot=
-s as
-> users of the gmem file.
->=20
-> Instead of having the gmem file pin the VM (i.e. take a refcount on
-> kvm), we could let memslot take a refcount on the gmem file when the
-> memslots are configured.
->=20
-> Here=E2=80=99s a POC patch that flips the refcounting (and modified selft=
-ests in
-> the next commit):
-> https://github.com/googleprodkernel/linux-cc/commit/7f487b029b89b9f3e9b09=
-4a721bc0772f3c8c797
->=20
-> One side effect of having the gmem file pin the VM is that now the gmem
-> file becomes sort of a false handle on the VM:
->=20
-> + Closing the file destroys the file pointers in the VM and invalidates
->   the pointers
+On 8/8/23 3:33?AM, Hao Xu wrote:
+> On 8/1/23 08:28, Jens Axboe wrote:
+>> On 7/31/23 9:26?AM, Darrick J. Wong wrote:
+>>> I've watched quite a bit of NOWAIT whackamole going on over the past few
+>>> years (i_rwsem, the ILOCK, the IO layer, memory allocations...). IIRC
+>>> these filesystem ios all have to run in process context, right? If so,
+>>> why don't we capture the NOWAIT state in a PF flag? We already do that
+>>> for NOFS/NOIO memory allocations to make sure that /all/ reclaim
+>>> attempts cannot recurse into the fs/io stacks.
+>>
+>> I would greatly prefer passing down the context rather than capitulating
+>> and adding a task_struct flag for this. I think it _kind of_ makes sense
+>> for things like allocations, as you cannot easily track that all the way
+>> down, but it's a really ugly solution. It certainly creates more churn
+>> passing it down, but it also reveals the parts that need to check it.
+>> WHen new code is added, it's much more likely you'll spot the fact that
+>> there's passed in context. For allocation, you end up in the allocator
+>> anyway, which can augment the gfp mask with whatever is set in the task.
+>> The same is not true for locking and other bits, as they don't return a
+>> value to begin with. When we know they are sane, we can flag the fs as
+>> supporting it (like we've done for async buffered reads, for example).
+>>
+>> It's also not an absolute thing, like memory allocations are. It's
+>> perfectly fine to grab a mutex under NOWAIT issue. What you should not
+> 
+> Hi Jens,
+> To make sure, I'd like to ask, for memory allocation, GFP_NOIO semantics
+> is all we need in NOWAIT issue, GFP_NOWAIT is not necessary, do I
+> understand it right?
 
-Yeah, this is less than ideal.  But, it's also how things operate today.  K=
-VM
-doesn't hold references to VMAs or files, e.g. if userspace munmap()s memor=
-y,
-any and all SPTEs pointing at the memory are zapped.  The only difference w=
-ith
-gmem is that KVM needs to explicitly invalidate file pointers, instead of t=
-hat
-happening behind the scenes (no more VMAs to find).  Again, I agree the res=
-ulting
-code is more complex than I would prefer, but from a userspace perspective =
-I
-don't see this as problematic.
+Yep, GFP_NOIO should be just fine.
 
-> + Keeping the file open keeps the VM around in the kernel even though
->   the VM fd may already be closed.
+-- 
+Jens Axboe
 
-That is perfectly ok.  There is plenty of prior art, as well as plenty of w=
-ays
-for userspace to shoot itself in the foot.  E.g. open a stats fd for a vCPU=
- and
-the VM and all its vCPUs will be kept alive.  And conceptually it's sound,
-anything created in the scope of a VM _should_ pin the VM.
-
-> I feel that memslots form a natural way of managing usage of the gmem
-> file. When a memslot is created, it is using the file; hence we take a
-> refcount on the gmem file, and as memslots are removed, we drop
-> refcounts on the gmem file.
-
-Yes and no.  It's definitely more natural *if* the goal is to allow guest_m=
-emfd
-memory to exist without being attached to a VM.  But I'm not at all convinc=
-ed
-that we want to allow that, or that it has desirable properties.  With TDX =
-and
-SNP in particuarly, I'm pretty sure that allowing memory to outlive the VM =
-is
-very underisable (more below).
-
-> The KVM pointer is shared among all the bindings in gmem=E2=80=99s xarray=
-, and we can
-> enforce that a gmem file is used only with one VM:
->=20
-> + When binding a memslot to the file, if a kvm pointer exists, it must
->   be the same kvm as the one in this binding
-> + When the binding to the last memslot is removed from a file, NULL the
->   kvm pointer.
-
-Nullifying the KVM pointer isn't sufficient, because without additional act=
-ions
-userspace could extract data from a VM by deleting its memslots and then bi=
-nding
-the guest_memfd to an attacker controlled VM.  Or more likely with TDX and =
-SNP,
-induce badness by coercing KVM into mapping memory into a guest with the wr=
-ong
-ASID/HKID.
-
-I can think of three ways to handle that:
-
-  (a) prevent a different VM from *ever* binding to the gmem instance
-  (b) free/zero physical pages when unbinding
-  (c) free/zero when binding to a different VM
-
-Option (a) is easy, but that pretty much defeats the purpose of decopuling
-guest_memfd from a VM.
-
-Option (b) isn't hard to implement, but it screws up the lifecycle of the m=
-emory,
-e.g. would require memory when a memslot is deleted.  That isn't necessaril=
-y a
-deal-breaker, but it runs counter to how KVM memlots currently operate.  Me=
-mslots
-are basically just weird page tables, e.g. deleting a memslot doesn't have =
-any
-impact on the underlying data in memory.  TDX throws a wrench in this as re=
-moving
-a page from the Secure EPT is effectively destructive to the data (can't be=
- mapped
-back in to the VM without zeroing the data), but IMO that's an oddity with =
-TDX and
-not necessarily something we want to carry over to other VM types.
-
-There would also be performance implications (probably a non-issue in pract=
-ice),
-and weirdness if/when we get to sharing, linking and/or mmap()ing gmem.  E.=
-g. what
-should happen if the last memslot (binding) is deleted, but there outstandi=
-ng userspace
-mappings?
-
-Option (c) is better from a lifecycle perspective, but it adds its own flav=
-or of
-complexity, e.g. the performant way to reclaim TDX memory requires the TDMR
-(effectively the VM pointer), and so a deferred relcaim doesn't really work=
- for
-TDX.  And I'm pretty sure it *can't* work for SNP, because RMP entries must=
- not
-outlive the VM; KVM can't reuse an ASID if there are pages assigned to that=
- ASID
-in the RMP, i.e. until all memory belonging to the VM has been fully freed.
-
-> Could binding gmem files not on creation, but at memslot configuration
-> time be sufficient and simpler?
-
-After working through the flows, I think binding on-demand would simplify t=
-he
-refcounting (stating the obvious), but complicate the lifecycle of the memo=
-ry as
-well as the contract between KVM and userspace, and would break the separat=
-ion of
-concerns between the inode (physical memory / data) and file (VM's view / m=
-appings).
