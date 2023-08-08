@@ -2,120 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B2CC7747E7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 21:22:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D35E7774373
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 20:04:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230290AbjHHTWd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Aug 2023 15:22:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60290 "EHLO
+        id S235205AbjHHSEt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Aug 2023 14:04:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236124AbjHHTVp (ORCPT
+        with ESMTP id S235262AbjHHSE2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Aug 2023 15:21:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F94810C397;
-        Tue,  8 Aug 2023 09:45:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6854B6249D;
-        Tue,  8 Aug 2023 10:45:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41632C433C9;
-        Tue,  8 Aug 2023 10:45:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1691491551;
-        bh=gyjPKuYD6JNhlxb0kNhxGzdUJ6csqcLkvyjwlVH2pDM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Mhcqifm9dNwNrQ9v5LsHk6rgbfaLMA/lUO+//NapmjQVpB7E5fXcUxGY0paOtkRQn
-         Eg8Cz0j5IiFfK4hCe748TVN9n9Z6uqzYyQWQh0h0UBpDOKw+P567t9inQPCLE2BCgl
-         UY47DFeKRSmTAbS9qB8eGuh3/buqG4TOB3zBNqGM=
-Date:   Tue, 8 Aug 2023 12:45:48 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Manas Ghandat <ghandatmanas@gmail.com>
-Cc:     Linux-kernel-mentees@lists.linuxfoundation.org, anton@tuxera.com,
-        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        syzbot+4768a8f039aa677897d0@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2] ntfs : fix shift-out-of-bounds in ntfs_iget
-Message-ID: <2023080833-pedicure-flavorful-921c@gregkh>
-References: <2023080821-blandness-survival-44af@gregkh>
- <20230808102958.8161-1-ghandatmanas@gmail.com>
+        Tue, 8 Aug 2023 14:04:28 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3755574A5
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 10:01:34 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-5223910acf2so456a12.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Aug 2023 10:01:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1691514093; x=1692118893;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lwAW4asVrEkUVVSKI2WNTJmzRtpxh5nDYHP0xuDjc0s=;
+        b=y5ZUQf5txiTC5rqWFk9xkDefQJtek86V5zXvOhQO96o5wzcCHFzlAlbrDzYAN/jvte
+         K4ixG/X0EJa86LsKogQcqyeqjvKca1d/rcKzSbC7z7s4P5nxzshP5eXhq1cieG/TysyL
+         V3MV/oYT6mxxQmeCO/CNgWHWm1C081Dg0b9ccLh/kxYTSd1ZJwRuIYEV8AbO1Aml8O5+
+         Hg45L9GC2p+u7JT7LOHG1AMKFsdOknSXfg/4EGLB3pw8AKoGfMT8RRr2exSCGBmkzmSE
+         FZOXG8K9JJ9bf1WQ7icPuuWhZHkLItXKHl1NjP0KozqYsOKcGIvJWwx7C8cr7846Rlak
+         jo1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691514093; x=1692118893;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lwAW4asVrEkUVVSKI2WNTJmzRtpxh5nDYHP0xuDjc0s=;
+        b=k1io6c9wcpgiRtsjSXoZLkgzBShAfqAL6WKyxA/SqpFQUd1sZs6iF3JLBze4Y/st+u
+         5MvlRIhiKhmINzkwSAnlcE1Xktfn7GeebJjjfrSgBJ7vMurfYeRR9UmM4w5jxaTvuQ1Z
+         PK8SebnR6rMf6EpPgaSz3OAmf2yaif276jtv/rbNKG3c4XQUoeKpEHpoQM/awhLi9DW+
+         oGPSlp8FecQmuCYWwRetzg4I3EmgH+VF6Z3anv4EkRjHwYyuQUxOix5m9XtrBQfAdCCX
+         J+xoqF6GlToTru69nBbBZlgpz2OmBQJ026pP7NbljRBFE53lIYrlrsfT5+0QWZqhKibr
+         8AIw==
+X-Gm-Message-State: AOJu0Yx4ZcOT0XxYEKDXfzOUtjpnmKU2FnOUfqu5ha4xRsdn6AzY0iyV
+        I6cFjohw8xal20/D5BIzh29j6TASg/VPE44DCnYo1bWQH06Bv4w3797x+L/B
+X-Google-Smtp-Source: AGHT+IGCuc1ECA/DdvhuJs8hrdI6B0b0q+56VMbNGS79u6n7XtDIRdL1Iu+hAqJPTrb26LRWfquYy88hAzXnhi0ISBA=
+X-Received: by 2002:a50:f61b:0:b0:523:193b:5587 with SMTP id
+ c27-20020a50f61b000000b00523193b5587mr283949edn.6.1691492435497; Tue, 08 Aug
+ 2023 04:00:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230808102958.8161-1-ghandatmanas@gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <00000000000069948205f7fb357f@google.com> <000000000000a9bf5106026705ec@google.com>
+In-Reply-To: <000000000000a9bf5106026705ec@google.com>
+From:   Aleksandr Nogikh <nogikh@google.com>
+Date:   Tue, 8 Aug 2023 13:00:23 +0200
+Message-ID: <CANp29Y6M-CU+eqUFqN3Rkf2iba7upqsLvnHNNyMmhd4JFdH-8A@mail.gmail.com>
+Subject: Re: [syzbot] [fat?] possible deadlock in do_user_addr_fault
+To:     syzbot <syzbot+278098b0faaf0595072b@syzkaller.appspotmail.com>
+Cc:     linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-16.1 required=5.0 tests=BAYES_00,DATE_IN_PAST_06_12,
+        DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        URIBL_BLOCKED,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 08, 2023 at 03:59:58PM +0530, Manas Ghandat wrote:
-> Added a check to the compression_unit so that out of bound doesn't occur.
-> 
-> Fix patching issues in version 2.
-> 
-> Signed-off-by: Manas Ghandat <ghandatmanas@gmail.com>
-> Reported-by: syzbot+4768a8f039aa677897d0@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=4768a8f039aa677897d0
-> ---
->  fs/ntfs/inode.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/fs/ntfs/inode.c b/fs/ntfs/inode.c
-> index 6c3f38d66579..a657322874ed 100644
-> --- a/fs/ntfs/inode.c
-> +++ b/fs/ntfs/inode.c
-> @@ -1077,6 +1077,15 @@ static int ntfs_read_locked_inode(struct inode *vi)
->  					goto unm_err_out;
->  				}
->  				if (a->data.non_resident.compression_unit) {
-> +					if (a->data.non_resident.compression_unit +
-> +						vol->cluster_size_bits > 32) {
-> +						ntfs_error(vi->i_sb,
-> +							"Found non-standard compression unit (%u).   Cannot handle this.",
-> +							a->data.non_resident.compression_unit
-> +						);
-> +						err = -EOPNOTSUPP;
-> +						goto unm_err_out;
-> +					}
->  					ni->itype.compressed.block_size = 1U <<
->  							(a->data.non_resident.
->  							compression_unit +
-> -- 
-> 2.37.2
-> 
+On Tue, Aug 8, 2023 at 12:42=E2=80=AFPM syzbot
+<syzbot+278098b0faaf0595072b@syzkaller.appspotmail.com> wrote:
+>
+> syzbot suspects this issue was fixed by commit:
+>
+> commit ff84772fd45d486e4fc78c82e2f70ce5333543e6
+> Author: Sungjong Seo <sj1557.seo@samsung.com>
+> Date:   Fri Jul 14 08:43:54 2023 +0000
+>
+>     exfat: release s_lock before calling dir_emit()
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D16623aa9a8=
+0000
+> start commit:   f8dba31b0a82 Merge tag 'asym-keys-fix-for-linus-v6.4-rc5'=
+ ..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D3c980bfe8b399=
+968
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D278098b0faaf059=
+5072b
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D144ccf79280=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D135fab7928000=
+0
+>
+> If the result looks correct, please mark the issue as fixed by replying w=
+ith:
+>
+> #syz fix: exfat: release s_lock before calling dir_emit()
 
-Hi,
+Seems reasonable.
+#syz fix: exfat: release s_lock before calling dir_emit()
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
+ion
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/syzkaller-bugs/000000000000a9bf5106026705ec%40google.com.
