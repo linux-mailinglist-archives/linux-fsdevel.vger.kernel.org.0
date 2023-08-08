@@ -2,124 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7E85774EB4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 00:55:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A3BC774F32
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 01:16:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229971AbjHHWzi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Aug 2023 18:55:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44764 "EHLO
+        id S229781AbjHHXQh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Aug 2023 19:16:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229943AbjHHWzL (ORCPT
+        with ESMTP id S229611AbjHHXQf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Aug 2023 18:55:11 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C03B1995
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 15:55:10 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1b89b0c73d7so8411525ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Aug 2023 15:55:10 -0700 (PDT)
+        Tue, 8 Aug 2023 19:16:35 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2510C1BC1
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 16:16:24 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1bc1c1c68e2so40087675ad.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Aug 2023 16:16:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1691535309; x=1692140109;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Fq5/S8J1QpqhbVz+0r61Fn703VpjoVLaBkKsH4mRO14=;
-        b=kMceCnbwPqduAso4KGF5sL9eSspmG4gvl7B7O2ECWFkuKrw/Kb6rSYSdGWXLbO+htA
-         IG7fCtiuREpOHs4OZMKt0G0TkeqIm5m9keiENc4DPkpiP3Mf3pJthm1e6sFUp570uzjn
-         WwLLf+e2g/0Xjn+gJYKfNlGFBLBZaudCw8SVjB4STr5Mu3t+5EOpPpDfHIa4JddYmBbC
-         EDbt/f9W3NKuLw9hwgysKH5Qa/vEBGQ9HujIsY4zpACiR3kjyLrBvTKFMhHDij2o4Q5h
-         7SHutotgWYoN9zqaLgmGEnyWRePMFZCgnDbH36aDux8tjuTSkmwGVLuLDjuIFsGhlGHs
-         BoHA==
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1691536554; x=1692141354;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WOuOSlruUZcGR8zFMJNehfc4BcoLJdH6P9wW18YDQ0g=;
+        b=ubMftYeNe5in/UHpQBFw8Qhxv6cS1+gdKFl1v3U6IM5NiY+6njAUDmxSzBWSvrgKL5
+         j7u7tGz3YiAxPJ4VgCbKWhDMs+g7vrukoy01kw751e+cbn5cCD5mzZJN9QA6n5t5zQol
+         mWmaGLr2yLt+3YKRipdH4RokDXrG7nIkikXWLd2c6bcBNnEExkk2EKC9cJRX0aXVqyCD
+         X/qCa80cGiPHro7DopY0qkQjcL5J2sNLcbzsXjAFVj9Dld81/nlUi3eAWeRsPDPrPqJp
+         4C4dd7SCkmSw1I1dlJUwglsZ9vX6pq7hwFiVH+8QgIzofHI2KHdxhlwdqX9sjqDmb1MZ
+         +pmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691535309; x=1692140109;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fq5/S8J1QpqhbVz+0r61Fn703VpjoVLaBkKsH4mRO14=;
-        b=QXyKR606tRsfGJszLKz6VAbaMv7A4BsMREtTZMHeD3zd1vCWBz7p+dONwVSl7vSB0U
-         cDUQCaUFpEcMqZVphovzeqQRURhiDNOgzGDJghMVXAUw/mX/dE2JP6G991APrxTD/IQk
-         TXqDmEGwLmjg/ow5B4O4mUPgMoGnFeX7WFFknzB6ypwQZv9cA2nhxfTazr3XMc34GuCQ
-         wnqFGQMeVNWb5WnLrgV0jLbu6McUfrjx7q2ynWby3EG/woDySjyMWrfgaln8u6MRlqNm
-         ZW40Xc8AWt+mATXqCoFoMzzxHohtscW71dUxve90lkymkbAVfj05i3S0aLrknO+NsdVU
-         /94w==
-X-Gm-Message-State: AOJu0YyEnbmLuHTh8TFKYWXtuoRebmTopbJENguXwUwJGJfYgqgZp9JO
-        d9INLvdY5runKXqMoGYKeLQltw==
-X-Google-Smtp-Source: AGHT+IGQhrfxYYrEl6v690kg205iYI/9lt/xA1ZvgaALoPEw4FOUCnMsSbfMapzRTUij16VALh0CTw==
-X-Received: by 2002:a17:903:2281:b0:1b8:85c4:48f5 with SMTP id b1-20020a170903228100b001b885c448f5mr1219880plh.2.1691535309528;
-        Tue, 08 Aug 2023 15:55:09 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id m7-20020a170902768700b001ae0a4b1d3fsm9518846pll.153.2023.08.08.15.55.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Aug 2023 15:55:08 -0700 (PDT)
-Message-ID: <5cf17fbc-103f-0bdc-edc1-2e24f24ea7d9@kernel.dk>
-Date:   Tue, 8 Aug 2023 16:55:07 -0600
+        d=1e100.net; s=20221208; t=1691536554; x=1692141354;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WOuOSlruUZcGR8zFMJNehfc4BcoLJdH6P9wW18YDQ0g=;
+        b=IG5F9AWi2N5QUH7sfWatdIQSVjB3S/13jL2Z50qr+wfGKoSv2ER48NOGcO2WOYvTy5
+         11Qxw8f9bNiAzAdptwWqMcaoWPbvIYAQpEvUpihqrvbRvLhHR8uvwJ68ogcDy5glif4J
+         STSz/s5222FPR2Mnkq6oxi2jJYF/FZqTtQrw21oAAPUBi63Ku/D/kshaPswrYiktxGgk
+         UkPPk3ucHzIUAT+prGNL9wlCQz8xH7BzjFMskEOp3sJqxmyEhP4w2UYJGWDsQiDiDVwb
+         O3ui0eOMuMUSAP2liU7rwrj3PYthrrhf5YUu1MwSEufJNQTe3cu9LHNky+qyeA2BvTMZ
+         kGVg==
+X-Gm-Message-State: AOJu0YydOukIdNEll0GTTmzP1MIj9OO9HbQWkVakv29HlYFFBl7+t1VT
+        qYLwjW2dcHDiEflk9lgw/CtAXw==
+X-Google-Smtp-Source: AGHT+IHlCU0XJSLNj4wzvYDj/xmkWLj/tctgRQYV2ZXWs5Bs5ZjCChkp6v9ThAHcyfTeuNtd1DLt8w==
+X-Received: by 2002:a17:902:d486:b0:1b9:c68f:91a5 with SMTP id c6-20020a170902d48600b001b9c68f91a5mr1164296plg.6.1691536554027;
+        Tue, 08 Aug 2023 16:15:54 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-166-213.pa.nsw.optusnet.com.au. [49.180.166.213])
+        by smtp.gmail.com with ESMTPSA id n9-20020a170902e54900b001b8062c1db3sm9555273plf.82.2023.08.08.16.15.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Aug 2023 16:15:53 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qTVva-002uHX-27;
+        Wed, 09 Aug 2023 09:15:50 +1000
+Date:   Wed, 9 Aug 2023 09:15:50 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Mateusz Guzik <mjguzik@gmail.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: new_inode_pseudo vs locked inode->i_state = 0
+Message-ID: <ZNLMpgrCOQXFQnDk@dread.disaster.area>
+References: <CAGudoHF_Y0shcU+AMRRdN5RQgs9L_HHvBH8D4K=7_0X72kYy2g@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Subject: Re: [PATCH 3/5] io_uring: add support for getdents
-Content-Language: en-US
-To:     Hao Xu <hao.xu@linux.dev>, "Darrick J. Wong" <djwong@kernel.org>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
-        linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>
-References: <20230718132112.461218-1-hao.xu@linux.dev>
- <20230718132112.461218-4-hao.xu@linux.dev>
- <20230726-leinen-basisarbeit-13ae322690ff@brauner>
- <e9ddc8cc-f567-46bc-8f82-cf5ff8ff6c95@linux.dev>
- <20230727-salbe-kurvigen-31b410c07bb9@brauner>
- <ZMcPUX0lYC2nscAm@dread.disaster.area>
- <20230731-gezeugt-tierwelt-f3d6a900c262@brauner>
- <20230731152623.GC11336@frogsfrogsfrogs>
- <22630618-40fc-5668-078d-6cefcb2e4962@kernel.dk>
- <3aacee27-6e30-ef50-ff1f-9fc1334c8924@linux.dev>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <3aacee27-6e30-ef50-ff1f-9fc1334c8924@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGudoHF_Y0shcU+AMRRdN5RQgs9L_HHvBH8D4K=7_0X72kYy2g@mail.gmail.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/8/23 3:33?AM, Hao Xu wrote:
-> On 8/1/23 08:28, Jens Axboe wrote:
->> On 7/31/23 9:26?AM, Darrick J. Wong wrote:
->>> I've watched quite a bit of NOWAIT whackamole going on over the past few
->>> years (i_rwsem, the ILOCK, the IO layer, memory allocations...). IIRC
->>> these filesystem ios all have to run in process context, right? If so,
->>> why don't we capture the NOWAIT state in a PF flag? We already do that
->>> for NOFS/NOIO memory allocations to make sure that /all/ reclaim
->>> attempts cannot recurse into the fs/io stacks.
->>
->> I would greatly prefer passing down the context rather than capitulating
->> and adding a task_struct flag for this. I think it _kind of_ makes sense
->> for things like allocations, as you cannot easily track that all the way
->> down, but it's a really ugly solution. It certainly creates more churn
->> passing it down, but it also reveals the parts that need to check it.
->> WHen new code is added, it's much more likely you'll spot the fact that
->> there's passed in context. For allocation, you end up in the allocator
->> anyway, which can augment the gfp mask with whatever is set in the task.
->> The same is not true for locking and other bits, as they don't return a
->> value to begin with. When we know they are sane, we can flag the fs as
->> supporting it (like we've done for async buffered reads, for example).
->>
->> It's also not an absolute thing, like memory allocations are. It's
->> perfectly fine to grab a mutex under NOWAIT issue. What you should not
+On Tue, Aug 08, 2023 at 06:05:33PM +0200, Mateusz Guzik wrote:
+> Hello,
 > 
-> Hi Jens,
-> To make sure, I'd like to ask, for memory allocation, GFP_NOIO semantics
-> is all we need in NOWAIT issue, GFP_NOWAIT is not necessary, do I
-> understand it right?
+> new_inode_pseudo is:
+>         struct inode *inode = alloc_inode(sb);
+> 
+> 	if (inode) {
+> 		spin_lock(&inode->i_lock);
+> 		inode->i_state = 0;
+> 		spin_unlock(&inode->i_lock);
+> 	}
+> 
+> I'm trying to understand:
+> 1. why is it zeroing i_state (as opposed to have it happen in inode_init_always)
+> 2. why is zeroing taking place with i_lock held
+> 
+> The inode is freshly allocated, not yet added to the hash -- I would
+> expect that nobody else can see it.
 
-Yep, GFP_NOIO should be just fine.
+Maybe not at this point, but as soon as the function returns with
+the new inode, it could be published in some list that can be
+accessed concurrently and then the i_state visible on other CPUs
+better be correct.
 
+I'll come back to this, because the answer lies in this code:
+
+> Moreover, another consumer of alloc_inode zeroes without bothering to
+> lock -- see iget5_locked:
+> [snip]
+> 	struct inode *new = alloc_inode(sb);
+> 
+> 		if (new) {
+> 			new->i_state = 0;
+> [/snip]
+
+Yes, that one is fine because the inode has not been published yet.
+The actual i_state serialisation needed to publish the inode happens
+in the function called in the very next line - inode_insert5().
+
+That does:
+
+	spin_lock(&inode_hash_lock);
+
+	.....
+        /*
+         * Return the locked inode with I_NEW set, the
+         * caller is responsible for filling in the contents
+         */
+        spin_lock(&inode->i_lock);
+        inode->i_state |= I_NEW;
+        hlist_add_head_rcu(&inode->i_hash, head);
+        spin_unlock(&inode->i_lock);
+	.....
+
+	spin_unlock(&inode_hash_lock);
+
+The i_lock is held across the inode state initialisation and hash
+list insert so that if anything finds the inode in the hash
+immediately after insert, they should set an initialised value.
+
+Don't be fooled by the inode_hash_lock here. We have
+find_inode_rcu() which walks hash lists without holding the hash
+lock, hence if anything needs to do a state check on the found
+inode, they are guaranteed to see I_NEW after grabbing the i_lock....
+
+Further, inode_insert5() adds the inode to the superblock inode
+list, which means concurrent sb inode list walkers can also see this
+inode whilst the inode_hash_lock is still held by inode_insert5().
+Those inode list walkers *must* see I_NEW at this point, and they
+are guaranteed to do so by taking i_lock before checking i_state....
+
+IOWs, the initialisation of inode->i_state for normal inodes must be
+done under i_lock so that lookups that occur after hash/sb list
+insert are guaranteed to see the correct value.
+
+If we now go back to new_inode_pseudo(), we see one of the callers
+is new_inode(), and it does this:
+
+struct inode *new_inode(struct super_block *sb)
+{
+        struct inode *inode;
+
+        spin_lock_prefetch(&sb->s_inode_list_lock);
+
+        inode = new_inode_pseudo(sb);
+        if (inode)
+                inode_sb_list_add(inode);
+        return inode;
+}
+
+IOWs, the inode is immediately published on the superblock inode
+list, and so inode list walkers can see it immediately. As per
+inode_insert5(), this requires the inode state to be fully
+initialised and memory barriers in place such that any walker will
+see the correct value of i_state. The simplest, safest way to do
+this is to initialise i_state under the i_lock....
+
+> I don't know the original justification nor whether it made sense at
+> the time, this is definitely problematic today in the rather heavy
+> multicore era -- there is tons of work happening between the prefetch
+> and actually take the s_inode_list_lock lock, meaning if there is
+> contention, the cacheline is going to be marked invalid by the time
+> spin_lock on it is called. But then this only adds to cacheline
+> bouncing.
+
+Well know problem - sb->s_inode_list_lock has been the heaviest
+contended lock in the VFS for various XFS workloads for the best
+part of a decade, yet XFS does not use new_inode(). See this branch
+for how we fix the s_inode_list_lock contention issues:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/dgc/linux-xfs.git/log/?h=vfs-scale
+
+This commit removes the spin_lock_prefetch() you talk about:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/dgc/linux-xfs.git/commit/?h=vfs-scale&id=fb17545b70d8c228295105044dd6b52085197d75
+
+If only I had the time and resources available right now to push
+this to completion.....
+
+-Dave.
 -- 
-Jens Axboe
-
+Dave Chinner
+david@fromorbit.com
