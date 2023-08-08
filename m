@@ -2,104 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C077774CDF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 23:20:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D0A4774A52
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 22:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236307AbjHHVUU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Aug 2023 17:20:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33996 "EHLO
+        id S231755AbjHHUZH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Aug 2023 16:25:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236593AbjHHVUC (ORCPT
+        with ESMTP id S234298AbjHHUYx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Aug 2023 17:20:02 -0400
-Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64B114084C;
-        Tue,  8 Aug 2023 12:20:11 -0700 (PDT)
-Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-1bb7d1f7aeaso4731067fac.1;
-        Tue, 08 Aug 2023 12:20:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691522408; x=1692127208;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=lo4mgIh/9nXIAz81CZMW5MI7/+F8GTcgLr96nVQtDgE=;
-        b=csn37X32wO1Au0l6vBQx2q5u4zXc0k/TrPFkYfdNkHlqb8/drEsmOuqi2csZBahR2C
-         9PWU7Qh8JQLTEXu2ZPj6v2zt8FgVz8U3iuFkJtIeFTPmgQmr5HrAdWvhh1JWDX+z9J0B
-         z12PX7uPVy6AsEA5GYnbtBbjjGTmL6e1ifaJIj+i+d1s+1KUgnF4Knchq7FVtYYfudtO
-         LJNQI4HdMAiwjUj0FJ3ud+Q+/zT26+u8kX8OsUuuKxVJvRqhbWTBpZ3mXqh4Yf3YBHMd
-         Gx8a2ZKhUur0mbCdLm8bTYgwGqgpqFdpambtjFRCAtf0/c1rcPfXUaBrIQJhQ99lNZy5
-         hHGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691522408; x=1692127208;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lo4mgIh/9nXIAz81CZMW5MI7/+F8GTcgLr96nVQtDgE=;
-        b=ktksGH12QFtnE5DMlC6U0o0KAjsoJ9RNHkXmcqcFpUhGbXKThiyVQHyNzd1hAyWyJM
-         eEavoUpyZsHmbtCXF7IvUh0hLxzG3tigWVXr+r5i4AiR+AP8SSxZ5m42mmc08kq/GrfR
-         QYb3le2CiVdM7HplbJFs6WbusPKPOaIqf5FalGVot+RDOcSjMOs/Ue1RGAbWBFG/uzLt
-         yeqFifq7PgEjhup48gOQSpAQD+ijYM/gqThmwv8OFYclHFNh0ABhlimJIH2QMSI+M0s0
-         Imlm4Rtihgb8M5SPqyfbVWotYYbrHFUCNC03GPjOBK0/33tlz84o4yAEqgRbAriynyD3
-         6CBA==
-X-Gm-Message-State: AOJu0Ywtsc5474bT97o3MWARenHKPI8fOxqHmtX8vqZFdaptLllKRFL1
-        +iw3f2GBD6vdKUoFKT75H2g=
-X-Google-Smtp-Source: AGHT+IHqOyan+5/7RWD1nJ8ax3s1SDYfKm888u41Ha2ElbdK8zMF5qKXrs1hOE5/fwe70xvMZWhCbQ==
-X-Received: by 2002:a05:6870:c18c:b0:1a9:af29:46eb with SMTP id h12-20020a056870c18c00b001a9af2946ebmr529285oad.59.1691522408303;
-        Tue, 08 Aug 2023 12:20:08 -0700 (PDT)
-Received: from [192.168.1.119] ([216.130.59.33])
-        by smtp.gmail.com with ESMTPSA id n27-20020a4ad63b000000b00565d41ba4d0sm5602140oon.35.2023.08.08.12.20.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Aug 2023 12:20:07 -0700 (PDT)
-Sender: Larry Finger <larry.finger@gmail.com>
-Message-ID: <20fc56ef-6240-e86e-6d38-9278592a3b25@lwfinger.net>
-Date:   Tue, 8 Aug 2023 14:20:06 -0500
+        Tue, 8 Aug 2023 16:24:53 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8844A273;
+        Tue,  8 Aug 2023 12:35:13 -0700 (PDT)
+Received: from [192.168.100.7] (unknown [59.103.218.230])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 34A2F66071EF;
+        Tue,  8 Aug 2023 20:35:06 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1691523311;
+        bh=1+Z3o6x/w64sAUDuV9BLbfjMD1tjNE9ITcvlYGSrFCA=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=GVGRPRGg5bp00TFStvcTgcHZrdGu8CbEKIX5GK/131gbeAjlAmTXBtZcbhXbokZea
+         t0Xv5kj5mdk7PGNoj3x0Kxg3g8rYoeQd0mHjbIrMA/rgo7jn9LxTJDOCzZrH8tjtbH
+         1CIrJrH9949atBbLsdw+B3zQx6SvGIsy3uF0oxuJvZ6mZXUbpO9qTuXMeqL6gUzzEI
+         t9AiryugpvDYuOGgz2irZV5t3lJPd9gLxleRhsbhrT0hdBiFQBoZ/ipQksYAn/8LQB
+         QCZtrHXClSEdpc2wOVjNtgiUXupXIbxcKiMPNLalFZeJc043XSF9VemqVmryFnzlve
+         UyVJfg11YPk3w==
+Message-ID: <624cfa26-5650-ee0d-8e0a-1d844175bcaf@collabora.com>
+Date:   Wed, 9 Aug 2023 00:35:01 +0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH] vboxsf: Use flexible arrays for trailing string member
+ Thunderbird/102.13.1
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WC?= =?UTF-8?Q?aw?= 
+        <emmir@google.com>, Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Subject: Re: [PATCH v27 2/6] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     Andrei Vagin <avagin@gmail.com>
+References: <20230808104309.357852-1-usama.anjum@collabora.com>
+ <20230808104309.357852-3-usama.anjum@collabora.com>
+ <CANaxB-ww6AcO4QThubYw62Mdeid4e3FOQAXvA_GZ=wu4J60-AQ@mail.gmail.com>
 Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-hardening@vger.kernel.org
-References: <20230720151458.never.673-kees@kernel.org>
- <169040854617.1782642.4557415464507636357.b4-ty@chromium.org>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-In-Reply-To: <169040854617.1782642.4557415464507636357.b4-ty@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <CANaxB-ww6AcO4QThubYw62Mdeid4e3FOQAXvA_GZ=wu4J60-AQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/26/23 16:55, Kees Cook wrote:
+On 8/9/23 12:21 AM, Andrei Vagin wrote:
+> On Tue, Aug 8, 2023 at 3:43 AM Muhammad Usama Anjum
+> <usama.anjum@collabora.com> wrote:
 > 
-> On Thu, 20 Jul 2023 08:15:06 -0700, Kees Cook wrote:
->> The declaration of struct shfl_string used trailing fake flexible arrays
->> for the string member. This was tripping FORTIFY_SOURCE since commit
->> df8fc4e934c1 ("kbuild: Enable -fstrict-flex-arrays=3"). Replace the
->> utf8 and utf16 members with actual flexible arrays, drop the unused ucs2
->> member, and retriain a 2 byte padding to keep the structure size the same.
->>
->>
->> [...]
+> ....
 > 
-> Applied to for-linus/hardening, thanks!
+>> +static int pagemap_scan_output(unsigned long categories,
+>> +                              struct pagemap_scan_private *p,
+>> +                              unsigned long addr, unsigned long *end)
+>> +{
+>> +       unsigned long n_pages, total_pages;
+>> +       int ret = 0;
+>> +
+>> +       if (!p->vec_buf)
+>> +               return 0;
+>> +
+>> +       categories &= p->arg.return_mask;
+>> +
+>> +       n_pages = (*end - addr) / PAGE_SIZE;
+>> +       if (check_add_overflow(p->found_pages, n_pages, &total_pages) || //TODO
 > 
-> [1/1] vboxsf: Use flexible arrays for trailing string member
->        https://git.kernel.org/kees/c/a8f014ec6a21
+> Need to fix this TODO.
+Sorry, I forgot to remove the "//TODO". As far as I've understood, the last
+discussion ended in keeping the check_add_overflow(). [1] I'll just remove
+the TODO.
 
-Kees,
-
-This patch has not been applied to kernel 6.5-rc5. Is there some problem?
-
-Larry
+https://lore.kernel.org/all/CABb0KFEfmRz+Z_-7GygTL12E5Y254dvoUfWe4uSv9-wOx+Cs8w@mail.gmail.com
 
 
+> 
+>> +           total_pages > p->arg.max_pages) {
+>> +               size_t n_too_much = total_pages - p->arg.max_pages;
+>> +               *end -= n_too_much * PAGE_SIZE;
+>> +               n_pages -= n_too_much;
+>> +               ret = -ENOSPC;
+>> +       }
+>> +
+>> +       if (!pagemap_scan_push_range(categories, p, addr, *end)) {
+>> +               *end = addr;
+>> +               n_pages = 0;
+>> +               ret = -ENOSPC;
+>> +       }
+>> +
+>> +       p->found_pages += n_pages;
+>> +       if (ret)
+>> +               p->walk_end_addr = *end;
+>> +
+>> +       return ret;
+>> +}
+>> +
+> 
+> ...
+> 
+>> +static long do_pagemap_scan(struct mm_struct *mm, unsigned long uarg)
+>> +{
+>> +       struct mmu_notifier_range range;
+>> +       struct pagemap_scan_private p;
+>> +       unsigned long walk_start;
+>> +       size_t n_ranges_out = 0;
+>> +       int ret;
+>> +
+>> +       memset(&p, 0, sizeof(p));
+>> +       ret = pagemap_scan_get_args(&p.arg, uarg);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       p.masks_of_interest = MASKS_OF_INTEREST(p.arg);
+>> +       ret = pagemap_scan_init_bounce_buffer(&p);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       /* Protection change for the range is going to happen. */
+>> +       if (p.arg.flags & PM_SCAN_WP_MATCHING) {
+>> +               mmu_notifier_range_init(&range, MMU_NOTIFY_PROTECTION_VMA, 0,
+>> +                                       mm, p.arg.start, p.arg.end);
+>> +               mmu_notifier_invalidate_range_start(&range);
+>> +       }
+>> +
+>> +       walk_start = p.arg.start;
+>> +       for (; walk_start < p.arg.end; walk_start = p.arg.walk_end) {
+>> +               int n_out;
+>> +
+>> +               if (fatal_signal_pending(current)) {
+>> +                       ret = -EINTR;
+>> +                       break;
+>> +               }
+>> +
+>> +               ret = mmap_read_lock_killable(mm);
+>> +               if (ret)
+>> +                       break;
+>> +               ret = walk_page_range(mm, walk_start, p.arg.end,
+>> +                                     &pagemap_scan_ops, &p);
+>> +               mmap_read_unlock(mm);
+>> +
+>> +               n_out = pagemap_scan_flush_buffer(&p);
+>> +               if (n_out < 0)
+>> +                       ret = n_out;
+>> +               else
+>> +                       n_ranges_out += n_out;
+>> +
+>> +               if (ret != -ENOSPC || p.arg.vec_len - 1 == 0 ||
+>> +                   p.found_pages == p.arg.max_pages) {
+>> +                       p.walk_end_addr = p.arg.end;
+> 
+> You should not change p.walk_end_addr If ret is ENOSPC. Pls add a test
+> case to check this.
+Yeah, I'm not setting walk_end_addr if ret is ENOSPC.
+
+I'm setting walk_end_addr only when ret = 0. I'd added this as a result of
+a test case in my local test application. I can look at adding some tests
+in pagemap_ioctl.c kselftest as well.
+
+> 
+>> +                       break;
+>> +               }
+>> +       }
+>> +
+>> +       if (p.cur_buf.start != p.cur_buf.end) {
+>> +               if (copy_to_user(p.vec_out, &p.cur_buf, sizeof(p.cur_buf)))
+>> +                       ret = -EFAULT;
+>> +               else
+>> +                       ++n_ranges_out;
+>> +       }
+>> +
+>> +       /* ENOSPC signifies early stop (buffer full) from the walk. */
+>> +       if (!ret || ret == -ENOSPC)
+>> +               ret = n_ranges_out;
+>> +
+>> +       p.arg.walk_end = p.walk_end_addr ? p.walk_end_addr : walk_start;
+>> +       if (pagemap_scan_writeback_args(&p.arg, uarg))
+>> +               ret = -EFAULT;
+>> +
+>> +       if (p.arg.flags & PM_SCAN_WP_MATCHING)
+>> +               mmu_notifier_invalidate_range_end(&range);
+>> +
+>> +       kfree(p.vec_buf);
+>> +       return ret;
+>> +}
+> 
+> Thanks,
+> Andrei
+
+-- 
+BR,
+Muhammad Usama Anjum
