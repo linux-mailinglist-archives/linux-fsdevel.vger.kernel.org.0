@@ -2,258 +2,219 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 90DE0774AAA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 22:32:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9AE5774CB3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 23:14:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235286AbjHHUct (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Aug 2023 16:32:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36784 "EHLO
+        id S234998AbjHHVOi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Aug 2023 17:14:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236464AbjHHUcW (ORCPT
+        with ESMTP id S236381AbjHHVO1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Aug 2023 16:32:22 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 156D84445C;
-        Tue,  8 Aug 2023 12:56:04 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-d4364cf8be3so5031061276.1;
-        Tue, 08 Aug 2023 12:56:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691524563; x=1692129363;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=shx8xzzcKiMrKveTUHLTR3Q3hB2SO4sAG3AUT0OsTBQ=;
-        b=Tx0pmOfUE84GvT8iHHKudjkY6/uU6+P0q4Vq3Fi92Ai4HjE8vjdNm/CgwD/GBUhAi4
-         H+c93rt+kOWcWN9wMelSq5gRU6D9fVm2AqUDDcLd/f+dt1P2PhYh/nN8/nXgLFdgE/fm
-         LcBdCB1rYzMM+bXvvExqt10//p1OpzjGy4gNa1eo3p/VkYal498m2r6AdeN98nyK3Kxw
-         hQmirUesK5dKLRbM2V2tfuWcSLgFoVbDFR5021fkQR46p5dkVP7IkZQU3rz5bX8GWT7n
-         dzxkxagsG9uSb+QKU8SFvyBWRbBjK+cXAAch3R03s80Er3YOi38saKC4ekEgdE5sSKo/
-         g2uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691524563; x=1692129363;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=shx8xzzcKiMrKveTUHLTR3Q3hB2SO4sAG3AUT0OsTBQ=;
-        b=GCi4CjS56WiCeHlT9fJYMn8iA3eso+bl947qAkRvWvC1qyNh8GC4cHDe7R41pU4Avx
-         heHeFZwqoVjAxV7rN5+2pQxRFbXMezi16dxkbzrWh7WAPBbmhvrzBn4V8GQ6BSpSXeo/
-         YmL8EY0835PBOlkpS1AH6Ys9EB+CzdBRwrsj0e+3oeEBHgYOl7b3dR8evNkhqSCy8ffB
-         iU1PzBlS2u4W8pBhQAyHbaVutvazW1K7Vv0K5aAzS9/DNxj/gIeYLrL2SMzDpgmtOYDC
-         BJQogWPcl9P7IgPSsrLta+7IyF8c9hVvRCMlm8pQJRBaUknA71xgVjZ7/MP+OtKLdphY
-         GP3g==
-X-Gm-Message-State: AOJu0Yybaz52HgZJVaJKA7PsRMRmZMI9/pyshvBZ6tMwJUITfSMDr9Kn
-        oqY1ItM+6QU0rWHNnbtVyrmqlCbjyVBjs2jMpZQ=
-X-Google-Smtp-Source: AGHT+IFy0BOqHaKaqCVl3Uzsyn4s5OT0PuHJ8AmLJXWxJ5buKDC2Yg9lLoFo7mpr7qLMgMD11tf3/gMK0ON3S2VlRtY=
-X-Received: by 2002:a25:5f0d:0:b0:c5d:f2af:5a24 with SMTP id
- t13-20020a255f0d000000b00c5df2af5a24mr595770ybb.14.1691524562978; Tue, 08 Aug
- 2023 12:56:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230808104309.357852-1-usama.anjum@collabora.com>
- <20230808104309.357852-3-usama.anjum@collabora.com> <CANaxB-ww6AcO4QThubYw62Mdeid4e3FOQAXvA_GZ=wu4J60-AQ@mail.gmail.com>
- <624cfa26-5650-ee0d-8e0a-1d844175bcaf@collabora.com>
-In-Reply-To: <624cfa26-5650-ee0d-8e0a-1d844175bcaf@collabora.com>
-From:   Andrei Vagin <avagin@gmail.com>
-Date:   Tue, 8 Aug 2023 12:55:51 -0700
-Message-ID: <CANaxB-yhCcvc9W6POFR8SNjECeD_WNGidnuxXrHKT2if=CgyrA@mail.gmail.com>
-Subject: Re: [PATCH v27 2/6] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
+        Tue, 8 Aug 2023 17:14:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59B66EF08;
+        Tue,  8 Aug 2023 13:25:22 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E447662972;
+        Tue,  8 Aug 2023 20:25:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 642B0C433C7;
+        Tue,  8 Aug 2023 20:25:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691526321;
+        bh=smwaBn/3bhNSBudLMySHNd7VdPh0ay51eRzjOUAiv8k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z7qPau380MtqBH1YfBjf3ydSe5ZPYOXHkvrPUe9NueiqGF06irfTF61HfBlWIgEFM
+         Xene2NE0cZsbfc2/THaiH2McN+fJdiUtfouEeeC+uTCqNKj3ibgNrxGiBbpzXM2Rfr
+         SLP2dNBoB4rAy2dAR+EjA+W5kuwIc3bsOHQmGjDMAjdbaal6lB4m2K1kA6RktTFbmO
+         02t7XsWWSbtTXvIUWrk8iMcnEOIvFO7Y/cWPTnAO+6lk64SAs11bpXJ/uRCtzNh6CR
+         cFThQj0MCTV2OyT9PlJbicNhDswQ0VbfX2XhKiU6rRGAMW/+MAkZniDHdnmuLuo+LK
+         255m/CZ2eUo6w==
+Date:   Tue, 8 Aug 2023 21:25:11 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Will Deacon <will@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
         Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
         Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+        Deepak Gupta <debug@rivosinc.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v3 00/36] arm64/gcs: Provide support for GCS in userspace
+Message-ID: <f279ec25-e1c7-48e6-bd9d-5c753e829aad@sirena.org.uk>
+References: <20230731-arm64-gcs-v3-0-cddf9f980d98@kernel.org>
+ <20230801141319.GC26253@willie-the-truck>
+ <09b7a94d-cc88-4372-85de-52db26bc2daf@sirena.org.uk>
+ <20230808133857.GC2369@willie-the-truck>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2iuCE+Z3sT2tGztq"
+Content-Disposition: inline
+In-Reply-To: <20230808133857.GC2369@willie-the-truck>
+X-Cookie: You need not be present to win.
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 8, 2023 at 12:35=E2=80=AFPM Muhammad Usama Anjum
-<usama.anjum@collabora.com> wrote:
->
-> On 8/9/23 12:21=E2=80=AFAM, Andrei Vagin wrote:
-> > On Tue, Aug 8, 2023 at 3:43=E2=80=AFAM Muhammad Usama Anjum
-> > <usama.anjum@collabora.com> wrote:
-> >
-> > ....
-> >
-> >> +static int pagemap_scan_output(unsigned long categories,
-> >> +                              struct pagemap_scan_private *p,
-> >> +                              unsigned long addr, unsigned long *end)
-> >> +{
-> >> +       unsigned long n_pages, total_pages;
-> >> +       int ret =3D 0;
-> >> +
-> >> +       if (!p->vec_buf)
-> >> +               return 0;
-> >> +
-> >> +       categories &=3D p->arg.return_mask;
-> >> +
-> >> +       n_pages =3D (*end - addr) / PAGE_SIZE;
-> >> +       if (check_add_overflow(p->found_pages, n_pages, &total_pages) =
-|| //TODO
-> >
-> > Need to fix this TODO.
-> Sorry, I forgot to remove the "//TODO". As far as I've understood, the la=
-st
-> discussion ended in keeping the check_add_overflow(). [1] I'll just remov=
-e
-> the TODO.
->
-> https://lore.kernel.org/all/CABb0KFEfmRz+Z_-7GygTL12E5Y254dvoUfWe4uSv9-wO=
-x+Cs8w@mail.gmail.com
->
->
-> >
-> >> +           total_pages > p->arg.max_pages) {
-> >> +               size_t n_too_much =3D total_pages - p->arg.max_pages;
-> >> +               *end -=3D n_too_much * PAGE_SIZE;
-> >> +               n_pages -=3D n_too_much;
-> >> +               ret =3D -ENOSPC;
-> >> +       }
-> >> +
-> >> +       if (!pagemap_scan_push_range(categories, p, addr, *end)) {
-> >> +               *end =3D addr;
-> >> +               n_pages =3D 0;
-> >> +               ret =3D -ENOSPC;
-> >> +       }
-> >> +
-> >> +       p->found_pages +=3D n_pages;
-> >> +       if (ret)
-> >> +               p->walk_end_addr =3D *end;
-> >> +
-> >> +       return ret;
-> >> +}
-> >> +
-> >
-> > ...
-> >
-> >> +static long do_pagemap_scan(struct mm_struct *mm, unsigned long uarg)
-> >> +{
-> >> +       struct mmu_notifier_range range;
-> >> +       struct pagemap_scan_private p;
-> >> +       unsigned long walk_start;
-> >> +       size_t n_ranges_out =3D 0;
-> >> +       int ret;
-> >> +
-> >> +       memset(&p, 0, sizeof(p));
-> >> +       ret =3D pagemap_scan_get_args(&p.arg, uarg);
-> >> +       if (ret)
-> >> +               return ret;
-> >> +
-> >> +       p.masks_of_interest =3D MASKS_OF_INTEREST(p.arg);
-> >> +       ret =3D pagemap_scan_init_bounce_buffer(&p);
-> >> +       if (ret)
-> >> +               return ret;
-> >> +
-> >> +       /* Protection change for the range is going to happen. */
-> >> +       if (p.arg.flags & PM_SCAN_WP_MATCHING) {
-> >> +               mmu_notifier_range_init(&range, MMU_NOTIFY_PROTECTION_=
-VMA, 0,
-> >> +                                       mm, p.arg.start, p.arg.end);
-> >> +               mmu_notifier_invalidate_range_start(&range);
-> >> +       }
-> >> +
-> >> +       walk_start =3D p.arg.start;
-> >> +       for (; walk_start < p.arg.end; walk_start =3D p.arg.walk_end) =
-{
-> >> +               int n_out;
-> >> +
-> >> +               if (fatal_signal_pending(current)) {
-> >> +                       ret =3D -EINTR;
-> >> +                       break;
-> >> +               }
-> >> +
-> >> +               ret =3D mmap_read_lock_killable(mm);
-> >> +               if (ret)
-> >> +                       break;
-> >> +               ret =3D walk_page_range(mm, walk_start, p.arg.end,
-> >> +                                     &pagemap_scan_ops, &p);
-> >> +               mmap_read_unlock(mm);
-> >> +
-> >> +               n_out =3D pagemap_scan_flush_buffer(&p);
-> >> +               if (n_out < 0)
-> >> +                       ret =3D n_out;
-> >> +               else
-> >> +                       n_ranges_out +=3D n_out;
-> >> +
-> >> +               if (ret !=3D -ENOSPC || p.arg.vec_len - 1 =3D=3D 0 ||
-> >> +                   p.found_pages =3D=3D p.arg.max_pages) {
-> >> +                       p.walk_end_addr =3D p.arg.end;
-> >
-> > You should not change p.walk_end_addr If ret is ENOSPC. Pls add a test
-> > case to check this.
-> Yeah, I'm not setting walk_end_addr if ret is ENOSPC.
->
-> I'm setting walk_end_addr only when ret =3D 0. I'd added this as a result=
- of
-> a test case in my local test application. I can look at adding some tests
-> in pagemap_ioctl.c kselftest as well.
 
-I am not sure that I understand what you mean here. ENOSPC can be returned
-when the vec array is full and in this case, walk_end_addr should be
-the address when it stops scanning.
+--2iuCE+Z3sT2tGztq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
-> >
-> >> +                       break;
-> >> +               }
-> >> +       }
-> >> +
-> >> +       if (p.cur_buf.start !=3D p.cur_buf.end) {
-> >> +               if (copy_to_user(p.vec_out, &p.cur_buf, sizeof(p.cur_b=
-uf)))
-> >> +                       ret =3D -EFAULT;
-> >> +               else
-> >> +                       ++n_ranges_out;
-> >> +       }
-> >> +
-> >> +       /* ENOSPC signifies early stop (buffer full) from the walk. */
-> >> +       if (!ret || ret =3D=3D -ENOSPC)
-> >> +               ret =3D n_ranges_out;
-> >> +
-> >> +       p.arg.walk_end =3D p.walk_end_addr ? p.walk_end_addr : walk_st=
-art;
-> >> +       if (pagemap_scan_writeback_args(&p.arg, uarg))
-> >> +               ret =3D -EFAULT;
-> >> +
-> >> +       if (p.arg.flags & PM_SCAN_WP_MATCHING)
-> >> +               mmu_notifier_invalidate_range_end(&range);
-> >> +
-> >> +       kfree(p.vec_buf);
-> >> +       return ret;
-> >> +}
-> >
-> > Thanks,
-> > Andrei
->
-> --
-> BR,
-> Muhammad Usama Anjum
+On Tue, Aug 08, 2023 at 02:38:58PM +0100, Will Deacon wrote:
+
+> But seriously, I think the question is more about what this brings us
+> *on top of* SCS, since for the forseeable future folks that care about
+> this stuff (like Android) will be using SCS. GCS on its own doesn't make
+> sense to me, given the recompilation effort to remove SCS and the lack
+> of hardware, so then you have to look at what it brings in addition to
+> GCS and balance that against the performance cost.
+
+> Given that, is anybody planning to ship a distribution with this enabled?
+
+I'm not sure that your assumption that the only people would would
+consider deploying this are those who have deployed SCS is a valid one,
+SCS users are definitely part of the mix but GCS is expected to be much
+more broadly applicable.  As you say SCS is very invasive, requires a
+rebuild of everything with different code generated and as Szabolcs
+outlined has ABI challenges for general distros.  Any code built (or
+JITed) with anything other than clang is going to require some explicit
+support to do SCS (eg, the kernel's SCS support does nothing for
+assembly code) and there's a bunch of runtime support.  It's very much a
+specialist feature, mainly practical in well controlled somewhat
+vertical systems - I've not seen any suggestion that general purpose
+distros are considering using it.
+
+In contrast in the case of GCS one of the nice features is that for most
+code it's very much non-invasive, much less so than things like PAC/BTI
+and SCS, which means that the audience is much wider than it is for SCS
+- it's a *much* easier sell for general purpose distros to enable GCS
+than to enable SCS.  For the majority of programs all the support that
+is needed is in the kernel and libgcc/libc, there's no impact on the
+code generation.  There are no extra instructions in the normal flow
+which will impact systems without the feature, and there are no extra
+registers in use, so even if the binaries are run on a system without
+GCS or for some reason someone decides that it's best to turn the
+feature off on a system that is capable of using it the fact that it's
+just using the existing bl/ret pairs means that there is minimal
+overhead.  This all means that it's much more practical to deploy in
+general purpose distros.  On the other hand when active it affects all
+code, this improves coverage but the improved coverage can be a worry.
+
+I can see that systems that have gone through all the effort of enabling
+SCS might not rush to implement GCS, though there should be no harm in
+having the two features running side by side beyond the doubled memory
+requirements so you can at least have a transition plan (GCS does have
+some allowances which enable hardware to mitigate some of the memory
+bandwidth requirements at least).  You do still get the benefit of the
+additional hardware protections GCS offers, and the coverage of all
+branch and ret instructions will be of interest both for security and
+for unwinders.  It's definitely offers less of an incremental
+improvement on top of SCS than it is without SCS though.
+
+GCS and SCS are comparable features in terms of the protection they aim
+to add but their system integration impacts are different.
+
+> If not, why are we bothering? If so, how much of that distribution has
+> been brought up and how does the "dynamic linker or other startup code"
+> decide what to do?
+
+There is active interest in the x86 shadow stack support from distros,
+GCS is a lot earlier on in the process but isn't fundamentally different
+so it is expected that this will translate.  There is also a chicken and
+egg thing where upstream support gates a lot of people's interest, what
+people will consider carrying out of tree is different to what they'll
+enable.  Architecture specific feedback on the implementation can also
+be fed back into the still ongoing review of the ABI that is being
+established for x86, there will doubtless be pushback about variations
+between architectures from userspace people.
+
+The userspace decision about enablement will primarily be driven by an
+ELF marking which the dynamic linker looks at to determine if the
+binaries it is loading can support GCS, a later dlopen() can either
+refuse to load an additional library if the process currently has GCS
+enabled, ignore the issue and hope things work out (there's a good
+chance they will but obviously that's not safe) or (more complicatedly)
+go round all the threads and disable GCS before proceeding.  The main
+reason any sort of rebuild is required for most code is to add the ELF
+marking, there will be a compiler option to select it.  Static binaries
+should know if everything linked into them is GCS compatible and enable
+GCS if appropriate in their startup code.
+
+The majority of the full distro work at this point is on the x86 side
+given the hardware availability, we are looking at that within Arm of
+course.  I'm not aware of any huge blockers we have encountered thus
+far.
+
+It is fair to say that there's less active interest on the arm64 side
+since as you say the feature is quite a way off making it's way into
+hardware, though there are also long lead times on getting the full
+software stack to end users and kernel support becomes a blocker for
+the userspace stack.
+
+> After the mess we had with BTI and mprotect(), I'm hesitant to merge
+> features like this without knowing that the ABI can stand real code.
+
+The equivalent x86 feature is in current hardware[1], there has been
+some distro work (I believe one of the issues x86 has had is coping with
+a distro which shipped an early out of tree ABI, that experience has
+informed the current ABI which as the cover letter says we are following
+closely).  AIUI the biggest blocker on userspace work for x86 right now
+is landing the kernel side of things so that everyone else has a stable
+ABI to work from and don't need to carry out of tree patches, I've heard
+frustration expressed at the deployment being held up.  IIRC Fedora were
+on the leading edge in terms of active interest, they tend to be given
+that they're one of the most quickly iterating distros. =20
+
+This definitely does rely fairly heavily on the x86 experience for
+confidence in the ABI, and to be honest one of the big unknowns at this
+point is if you or Catalin will have opinions on how things are being
+done.
+
+[1] https://edc.intel.com/content/www/us/en/design/ipla/software-developmen=
+t-platforms/client/platforms/alder-lake-desktop/12th-generation-intel-core-=
+processors-datasheet-volume-1-of-2/009/shadow-stack/
+
+--2iuCE+Z3sT2tGztq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmTSpKYACgkQJNaLcl1U
+h9Bm7wf/TWEY6FZexKo9ZslcLVc8FfZTGr2JbqBTjc0hIyi6JIvIUPaBtV8B4GKh
+aJOvjQlkWGfIrVsezaRToCVgoxhsnRmsKCDr1gABiWQuJDCL5mLR1BRMF6XfJC+g
+FANZz3+vabPD5HlypgtGUsdgtm1d3vPwRnOcI1XK5ARt53I+3Wbd1Gc/Kzsv8qz2
+KmEbIIR0tk/KpUJwAokBaHnsH6pnZKxUDy0Ei3i9zFBtcRjqWOJSgjJ0fKKscJQa
+uIKhZ7no7GVtdNnfO1XBllyefendmwyKNc9QdFsNgE3WgXy2iiaMbWmp4JJU6GHr
+BamhHq9n+PvDZVvrISCsTZxmnjcGVg==
+=YAxR
+-----END PGP SIGNATURE-----
+
+--2iuCE+Z3sT2tGztq--
