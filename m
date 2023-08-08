@@ -2,227 +2,267 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CF62773D1B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 18:14:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3D06773EF9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Aug 2023 18:39:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231371AbjHHQNz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Aug 2023 12:13:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50382 "EHLO
+        id S233233AbjHHQjx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Aug 2023 12:39:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232109AbjHHQMv (ORCPT
+        with ESMTP id S230332AbjHHQjN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Aug 2023 12:12:51 -0400
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3331B7A91;
-        Tue,  8 Aug 2023 08:47:03 -0700 (PDT)
-Received: by mail-qk1-x729.google.com with SMTP id af79cd13be357-7658752ce2fso367474285a.1;
-        Tue, 08 Aug 2023 08:47:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691509621; x=1692114421;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5Xz/zhFKbMIJR+KKgZSw7P32rjOpIQihabZraRVRGK0=;
-        b=gmdO3Cj4fkyniRVQa3BwSCJQrjTDaAdtuRHCdamQd7oE9DKI9tmIArNHrs15jtgZ16
-         eRwxmVAp6CsvrfZS93LnZua1a8Co4VzfmIxEgSPJRUzy9km03LaCzBk1jRDbsH1q/vrd
-         0jEG9/eHZKJdh+IRhOCWPpQ6DJR86CBwISaPUJ2skEiGa+VA283eszdmeh5XuEbYeIUq
-         5OICAjUM8nnWhmpruyy96+7ulKr7cfYYdtNIozVjz4fO3dLMAnLNRsyBvho4EKtKB9p9
-         bMBNz6/7EvUQWpXSeORWxsz1zlZqWtivsc6zLsy49gPaDf3BtAxVFhAJAZ+/APS3mYN4
-         /mLQ==
+        Tue, 8 Aug 2023 12:39:13 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE04C3A4C9
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 08:54:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1691510001;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=I61UNjTLAG95oq9qtMKUyrUKZXpIaEksaYyC4k2Zul0=;
+        b=JAIOVhEE9j0ytcNa+Gx5idvnXK727zmgmMANh59mVPo4wsnCXrcxcRudmCMC1yIzBlJjir
+        oX56oAVgNZfKViFYyIf8+8XhzNHKDQBpxx6PG5IEc3bBLW9fLPJPzIZpa/qnGrgt4Cv23a
+        lYpfI5POqY1W+fJrUt/dFRbVm9wtomo=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-536-wNfu8JjrMaaOQUxE-zg8gg-1; Tue, 08 Aug 2023 03:51:07 -0400
+X-MC-Unique: wNfu8JjrMaaOQUxE-zg8gg-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2694a083e16so1659593a91.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Aug 2023 00:51:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691509621; x=1692114421;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5Xz/zhFKbMIJR+KKgZSw7P32rjOpIQihabZraRVRGK0=;
-        b=eHLVpPWH0AMVfTpZDDVlmhKcWl/L/kFDePHfHEfJXYDNLP0BhusbKQCL04uVcpIKLW
-         nOKM/3K1IHtNRLbwniuXi2TnlZWIGiGQcDjZGcnp/zvBW5QYIdsW4dLD8Bdaw2seN3aq
-         8SmL6Q3O8RmL1o7723N2cSFwFOmFXdpsABHmCRquMa9F/owrA7dnGciQTg5VKJsQ8KPx
-         U84nKIeLrEK1D1DP42wwc/WtSrsPTR9S8JCp3D9MR3qT5HVcVQAwv4pEYxJlauReicvR
-         kxju+DXHCKo1I6Q/0Z+EoLG5ydjbInsnLdr2WmBC4CANP2DpCjXKUinP19NRTuka8m8i
-         y1mA==
-X-Gm-Message-State: AOJu0YyZhCsgytT+/it831PxmCJTEL7BQdNkji9Et//urFofWQeULPhm
-        mKiC54MRaYGuJw91FcnIQzPK9Hle+kY2/jHKCH8sQVU2
-X-Google-Smtp-Source: AGHT+IF1Xxk73VEWS4jxoUC9ZSSjSHdUi0h1IMt3oZJ23RnlCV/2A0GcySDKw7cZcRysgjBABCDDdC2hCFoernZsw60=
-X-Received: by 2002:a05:6870:d10b:b0:1ba:629a:e34a with SMTP id
- e11-20020a056870d10b00b001ba629ae34amr14595706oac.12.1691479929454; Tue, 08
- Aug 2023 00:32:09 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1691481066; x=1692085866;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I61UNjTLAG95oq9qtMKUyrUKZXpIaEksaYyC4k2Zul0=;
+        b=C9OU8ThzNTffsqVhQB2i0Q6PtOkWfZJswcYhL5XuakaAEQklp29rBGBmWTC+MeqQ8j
+         tha72J8heGgGbP7etNOb3dwScOBLfG6c/c4J6eRVTd/yjaoSVyB4BuYjJcLJCg7NLkml
+         +Wu/e3xgRf5yGT9ZBUnIBfGeaN5+5Sorx0r0SOihRylb8pjYQ7ywdw0WAxG3upl2dAzO
+         RLQ7sGDavW02QebGscKRZ+8V9fUK4ZTki5/fHf4ryjM1YMOKqu9dEveshH+MYiKjAqqL
+         aY21b+HNiUqJv4StIcEroB4ZIKYMH01F53KAVpTlyCTS/uSOiTL+llrQ7qVWFAl8Uuyt
+         eKyA==
+X-Gm-Message-State: AOJu0Yz3V/P5Mai8q5U1LcwRaMT9MuYQtsnIL7yNj74HPBQ2syfOyyZd
+        M0jCA1o7eLXPOJlXpr1SM+1j0LnptLcB7Ipba6B9U+GEHFcCHD/o540rQhO1LcWGbUpbQgwb0jJ
+        HBTK1TdqiRsFxoEj3bAfDA0LC6A==
+X-Received: by 2002:a17:90a:1f06:b0:262:e49b:12d0 with SMTP id u6-20020a17090a1f0600b00262e49b12d0mr7464994pja.48.1691481066322;
+        Tue, 08 Aug 2023 00:51:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHTrnPTN25dJ5Xvq4lyfSvE+5LAMnJSWzkQdpqVJ6TSUnn1I/3RUmRCjFP3/Qd+tphTyy7tWw==
+X-Received: by 2002:a17:90a:1f06:b0:262:e49b:12d0 with SMTP id u6-20020a17090a1f0600b00262e49b12d0mr7464986pja.48.1691481065875;
+        Tue, 08 Aug 2023 00:51:05 -0700 (PDT)
+Received: from [10.72.12.166] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id js22-20020a17090b149600b00262e485156esm9877439pjb.57.2023.08.08.00.51.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Aug 2023 00:51:05 -0700 (PDT)
+Message-ID: <72db4603-e350-ac24-5819-d2519ce809b6@redhat.com>
+Date:   Tue, 8 Aug 2023 15:50:59 +0800
 MIME-Version: 1.0
-Received: by 2002:a8a:696:0:b0:4f0:1250:dd51 with HTTP; Tue, 8 Aug 2023
- 00:32:08 -0700 (PDT)
-In-Reply-To: <87o7jidqlg.fsf@email.froward.int.ebiederm.org>
-References: <20230806230627.1394689-1-mjguzik@gmail.com> <87o7jidqlg.fsf@email.froward.int.ebiederm.org>
-From:   Mateusz Guzik <mjguzik@gmail.com>
-Date:   Tue, 8 Aug 2023 09:32:08 +0200
-Message-ID: <CAGudoHGKU-22o9AFWHk2c25dk_ugXJR3e3DHCZq_ku5BuJKwxQ@mail.gmail.com>
-Subject: Re: [PATCH] fs: use __fput_sync in close(2)
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, oleg@redhat.com,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-0.6 required=5.0 tests=BAYES_00,DATE_IN_PAST_06_12,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v10 00/12] ceph: support idmapped mounts
+To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc:     brauner@kernel.org, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230807132626.182101-1-aleksandr.mikhalitsyn@canonical.com>
+ <bcda164b-e4b7-1c16-2714-13e3c6514b47@redhat.com>
+ <CAEivzxfsj82q2x3C2U6yemB9qRrLnW+fLAAE=e7Tq-LDDfH0-g@mail.gmail.com>
+Content-Language: en-US
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <CAEivzxfsj82q2x3C2U6yemB9qRrLnW+fLAAE=e7Tq-LDDfH0-g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/8/23, Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> Adding a couple more people.
->
-> Mateusz Guzik <mjguzik@gmail.com> writes:
->
->> Making close(2) delegate fput finalization with task_work_add() runs
->> into a slowdown (atomics needed to do it) which is artificially worsened
->> in presence of rseq, which glibc blindly uses if present (and it is
->> normally present) -- they added a user memory-touching handler into
->> resume_user_mode_work(), where the thread leaving the kernel lands after
->> issuing task_work_add() from fput(). Said touching requires a SMAP
->> round-trip which is quite expensive and it always executes when landing
->> in the resume routine.
+
+On 8/8/23 14:30, Aleksandr Mikhalitsyn wrote:
+> On Tue, Aug 8, 2023 at 2:45 AM Xiubo Li <xiubli@redhat.com> wrote:
+>> LGTM.
 >>
->> I'm going to write a separate e-mail about the rseq problem later, but
->> even if it gets sorted out there is still perf to gain (or rather,
->> overhead to avoid).
+>> Reviewed-by: Xiubo Li <xiubli@redhat.com>
 >>
->> Numbers are below in the proposed patch, but tl;dr without CONFIG_RSEQ
->> making things worse for the stock kernel I see about 7% increase in
->> ops/s with open+close.
+>> I will queue this to the 'testing' branch and then we will run ceph qa
+>> tests.
+> Thanks, Xiubo!
+>
+> JFYI: commit ordering in
+> https://github.com/ceph/ceph-client/commits/testing looks a little bit
+> weird
+> probably something got wrong during patch application to the tree.
+
+I will check it.
+
+Thanks
+
+- Xiubo
+
+
+> Kind regards,
+> Alex
+>
+>> Thanks Alex.
 >>
->> Searching mailing lists for discussions explaining why close(2) was not
->> already doing this I found a patch with the easiest way out (call
->> __fput_sync() in filp_close()):
->> https://lore.kernel.org/all/20150831120525.GA31015@redhat.com/
->
-> What you need to search for is probably the opposite why is
-> task_work_add used in close.
->
+>> - Xiubo
+>>
+>> On 8/7/23 21:26, Alexander Mikhalitsyn wrote:
+>>> Dear friends,
+>>>
+>>> This patchset was originally developed by Christian Brauner but I'll continue
+>>> to push it forward. Christian allowed me to do that :)
+>>>
+>>> This feature is already actively used/tested with LXD/LXC project.
+>>>
+>>> Git tree (based on https://github.com/ceph/ceph-client.git testing):
+>>> v10: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v10
+>>> current: https://github.com/mihalicyn/linux/tree/fs.idmapped.ceph
+>>>
+>>> In the version 3 I've changed only two commits:
+>>> - fs: export mnt_idmap_get/mnt_idmap_put
+>>> - ceph: allow idmapped setattr inode op
+>>> and added a new one:
+>>> - ceph: pass idmap to __ceph_setattr
+>>>
+>>> In the version 4 I've reworked the ("ceph: stash idmapping in mdsc request")
+>>> commit. Now we take idmap refcounter just in place where req->r_mnt_idmap
+>>> is filled. It's more safer approach and prevents possible refcounter underflow
+>>> on error paths where __register_request wasn't called but ceph_mdsc_release_request is
+>>> called.
+>>>
+>>> Changelog for version 5:
+>>> - a few commits were squashed into one (as suggested by Xiubo Li)
+>>> - started passing an idmapping everywhere (if possible), so a caller
+>>> UID/GID-s will be mapped almost everywhere (as suggested by Xiubo Li)
+>>>
+>>> Changelog for version 6:
+>>> - rebased on top of testing branch
+>>> - passed an idmapping in a few places (readdir, ceph_netfs_issue_op_inline)
+>>>
+>>> Changelog for version 7:
+>>> - rebased on top of testing branch
+>>> - this thing now requires a new cephfs protocol extension CEPHFS_FEATURE_HAS_OWNER_UIDGID
+>>> https://github.com/ceph/ceph/pull/52575
+>>>
+>>> Changelog for version 8:
+>>> - rebased on top of testing branch
+>>> - added enable_unsafe_idmap module parameter to make idmapped mounts
+>>> work with old MDS server versions
+>>> - properly handled case when old MDS used with new kernel client
+>>>
+>>> Changelog for version 9:
+>>> - added "struct_len" field in struct ceph_mds_request_head as requested by Xiubo Li
+>>>
+>>> Changelog for version 10:
+>>> - fill struct_len field properly (use cpu_to_le32)
+>>> - add extra checks IS_CEPH_MDS_OP_NEWINODE(..) as requested by Xiubo to match
+>>>     userspace client behavior
+>>> - do not set req->r_mnt_idmap for MKSNAP operation
+>>> - atomic_open: set req->r_mnt_idmap only for CEPH_MDS_OP_CREATE as userspace client does
+>>>
+>>> I can confirm that this version passes xfstests and
+>>> tested with old MDS (without CEPHFS_FEATURE_HAS_OWNER_UIDGID)
+>>> and with recent MDS version.
+>>>
+>>> Links to previous versions:
+>>> v1: https://lore.kernel.org/all/20220104140414.155198-1-brauner@kernel.org/
+>>> v2: https://lore.kernel.org/lkml/20230524153316.476973-1-aleksandr.mikhalitsyn@canonical.com/
+>>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v2
+>>> v3: https://lore.kernel.org/lkml/20230607152038.469739-1-aleksandr.mikhalitsyn@canonical.com/#t
+>>> v4: https://lore.kernel.org/lkml/20230607180958.645115-1-aleksandr.mikhalitsyn@canonical.com/#t
+>>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v4
+>>> v5: https://lore.kernel.org/lkml/20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com/#t
+>>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v5
+>>> v6: https://lore.kernel.org/lkml/20230609093125.252186-1-aleksandr.mikhalitsyn@canonical.com/
+>>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v6
+>>> v7: https://lore.kernel.org/all/20230726141026.307690-1-aleksandr.mikhalitsyn@canonical.com/
+>>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v7
+>>> v8: https://lore.kernel.org/all/20230803135955.230449-1-aleksandr.mikhalitsyn@canonical.com/
+>>> tree: -
+>>> v9: https://lore.kernel.org/all/20230804084858.126104-1-aleksandr.mikhalitsyn@canonical.com/
+>>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v9
+>>>
+>>> Kind regards,
+>>> Alex
+>>>
+>>> Original description from Christian:
+>>> ========================================================================
+>>> This patch series enables cephfs to support idmapped mounts, i.e. the
+>>> ability to alter ownership information on a per-mount basis.
+>>>
+>>> Container managers such as LXD support sharaing data via cephfs between
+>>> the host and unprivileged containers and between unprivileged containers.
+>>> They may all use different idmappings. Idmapped mounts can be used to
+>>> create mounts with the idmapping used for the container (or a different
+>>> one specific to the use-case).
+>>>
+>>> There are in fact more use-cases such as remapping ownership for
+>>> mountpoints on the host itself to grant or restrict access to different
+>>> users or to make it possible to enforce that programs running as root
+>>> will write with a non-zero {g,u}id to disk.
+>>>
+>>> The patch series is simple overall and few changes are needed to cephfs.
+>>> There is one cephfs specific issue that I would like to discuss and
+>>> solve which I explain in detail in:
+>>>
+>>> [PATCH 02/12] ceph: handle idmapped mounts in create_request_message()
+>>>
+>>> It has to do with how to handle mds serves which have id-based access
+>>> restrictions configured. I would ask you to please take a look at the
+>>> explanation in the aforementioned patch.
+>>>
+>>> The patch series passes the vfs and idmapped mount testsuite as part of
+>>> xfstests. To run it you will need a config like:
+>>>
+>>> [ceph]
+>>> export FSTYP=ceph
+>>> export TEST_DIR=/mnt/test
+>>> export TEST_DEV=10.103.182.10:6789:/
+>>> export TEST_FS_MOUNT_OPTS="-o name=admin,secret=$password
+>>>
+>>> and then simply call
+>>>
+>>> sudo ./check -g idmapped
+>>>
+>>> ========================================================================
+>>>
+>>> Alexander Mikhalitsyn (3):
+>>>     fs: export mnt_idmap_get/mnt_idmap_put
+>>>     ceph: add enable_unsafe_idmap module parameter
+>>>     ceph: pass idmap to __ceph_setattr
+>>>
+>>> Christian Brauner (9):
+>>>     ceph: stash idmapping in mdsc request
+>>>     ceph: handle idmapped mounts in create_request_message()
+>>>     ceph: pass an idmapping to mknod/symlink/mkdir
+>>>     ceph: allow idmapped getattr inode op
+>>>     ceph: allow idmapped permission inode op
+>>>     ceph: allow idmapped setattr inode op
+>>>     ceph/acl: allow idmapped set_acl inode op
+>>>     ceph/file: allow idmapped atomic_open inode op
+>>>     ceph: allow idmapped mounts
+>>>
+>>>    fs/ceph/acl.c                 |  6 +--
+>>>    fs/ceph/crypto.c              |  2 +-
+>>>    fs/ceph/dir.c                 |  4 ++
+>>>    fs/ceph/file.c                | 11 ++++-
+>>>    fs/ceph/inode.c               | 29 +++++++------
+>>>    fs/ceph/mds_client.c          | 78 ++++++++++++++++++++++++++++++++---
+>>>    fs/ceph/mds_client.h          |  8 +++-
+>>>    fs/ceph/super.c               |  7 +++-
+>>>    fs/ceph/super.h               |  3 +-
+>>>    fs/mnt_idmapping.c            |  2 +
+>>>    include/linux/ceph/ceph_fs.h  | 10 ++++-
+>>>    include/linux/mnt_idmapping.h |  3 ++
+>>>    12 files changed, 136 insertions(+), 27 deletions(-)
+>>>
 
-You are splitting hairs here.
-
-> Taking a quick look at the history it appears that fput was always
-> synchronous until a decade ago when commit 4a9d4b024a31 ("switch fput to
-> task_work_add") was merged.
->
-> The next two commits 3ffa3c0e3f6e ("aio: now fput() is OK from interrupt
-> context; get rid of manual delayed __fput()") and commit 6120d3dbb122
-> ("get rid of ->scm_work_list") seem to demonstrate why fput was made
-> asynchronous.  They rely on the new fput behavior to break recursive
-> calls and to allow fput from any context.  That plus as Al talks about
-> having any lock held over fput can potentially cause a deadlock.
->
-> All 3 issues taken together says that a synchronous fput is a
-> loaded foot gun that must be used very carefully.   That said
-> close(2) does seem to be a reliably safe place to be synchronous.
->
-
-Benefits of fput not taking surprise sleepable locks (and only
-sometimes) and whatnot were pretty obvious and I'm not proposing
-changing random consumers back to __fput_sync equivalent.
-
-What is not obvious is if filp_close consumers, which already suffer a
-lot of work, forces them to be in a spot where __fput_sync is safe to
-do. The question was de facto brought up by Oleg's patch and did not
-get a response, I don't see any explanations in other places either.
-Cursory reading by me suggested it is indeed dodgy thus the proposal
-which does not alter filp_close semantics.
-
-As you stated yourself, the close syscall itself should be the safe
-spot here and I was surprised to find this was not sorted out already
--- it genuinely looks like an oversight.
-
-> The big question is can your loop calling open then close going 7%
-> faster into any real world improvements?  How much can it generalize?
->
-
-In this context you mean how many other spots can use it? I expect
-none (apart from maybe close_range). But as I mention later, close is
-not an obscure syscall, it is used all the time.
-
-As for real world, I don't think anyone will get a marked win as is.
-
-So happens there is perf loss all over the kernel, here is perf top
-from the bench with task_work out of the way:
-   7.07%  [kernel]           [k] entry_SYSCALL_64
-   3.59%  [kernel]           [k] do_dentry_open
-   2.95%  [kernel]           [k] strncpy_from_user
-   2.93%  [kernel]           [k] kmem_cache_free
-   2.88%  [kernel]           [k] init_file
-   2.86%  [kernel]           [k] __call_rcu_common.constprop.0
-   2.72%  [kernel]           [k] kmem_cache_alloc
-   2.70%  [kernel]           [k] memcg_slab_post_alloc_hook
-   2.46%  libc.so.6          [.] __GI___libc_open
-   2.37%  [kernel]           [k] mod_objcg_state
-   2.28%  [kernel]           [k] link_path_walk.part.0.constprop.0
-   2.20%  [kernel]           [k] apparmor_current_getsecid_subj
-   2.19%  [kernel]           [k] apparmor_file_open
-[snip]
-
-For example memory allocation/free is taking quite a bit of CPU time
-and I strongly suspect with enough hackery it can be significantly
-less expensive (it mostly bottlenecks on cmpxchg16b).
-
-That is to say, if one was to sort all other things out, there is
-several more percent to recover.
-
-I would agree with the concern if the patch was complex, but it is not.
-
-> Taking a look at close_fd, it is used in autofs, cachefiles, bpf, amoung
-> others.  I think there is a very good argument that we can not say that
-> filep_close is always a safe place to call __fput_close.  There is just
-> too much going on in some of those place.  A particular possibly
-> dangerous example is cachefiles_ondemand_daemon_read which calls
-> complete after close_fd.  If as Oleg suggested filp_close started always
-> calling __fput_sync that call to complete looks like a deadlock waiting
-> to happen.
->
-
-I did not look at cachefiles specifically, brief look at others was
-indeed worrisome.
-But then again, they are not a factor with the proposed patch.
-
-> [snip]
-> Which is a long way of saying that this only looks safe for close(2).
->
-
-Yep. Except is a highly popular syscall, so it's not like I'm
-proposing a change to facilitate something which happens once a year.
-
->
-> Are there any real world gains if close(2) is the only place this
-> optimization can be applied?  Is the added maintenance burden worth the
-> speed up?
->
-
-I don't think the patch at hand adds any particular burden and can be
-easily modified to appease most concerns.
-
-> I would not export any of your new _sync variants to modules.  They are
-> all loaded foot-guns.
->
-
-Specifics, including glaring warning signs and some commentary to the
-extent "don't use it" can be trivially added if dodging task_work by
-close is considered fine by people maintaining the code.
-
-Ultimately the real question I asked in my e-mail was if close(2) not
-being exempt from task_work was *intentional* (it does not look as
-such). Writing a patch which only changes semantics for this syscall
-(and not for anyone else) is trivial and there are numerous ways to do
-it, I only shipped one I almost had to write for benchmarking anyway.
-
-Frankly I expected changing the behavior for close(2) to be a
-no-brainer, I did expect pushback on the way the patch is implemented.
-
-That is to say, my willingness to argue about this is not particularly
-high, so if people insist on not patching close I'm going to drop this
-thread sooner than later.
-
--- 
-Mateusz Guzik <mjguzik gmail.com>
