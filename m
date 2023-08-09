@@ -2,181 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D6510776143
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 15:36:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9448E77616A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 15:41:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231942AbjHINgo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Aug 2023 09:36:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46678 "EHLO
+        id S229890AbjHINlp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Aug 2023 09:41:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231284AbjHINgj (ORCPT
+        with ESMTP id S229456AbjHINln (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Aug 2023 09:36:39 -0400
-Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 51BF3210C;
-        Wed,  9 Aug 2023 06:36:37 -0700 (PDT)
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 6E7A32055FA2;
-        Wed,  9 Aug 2023 22:36:36 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.17.2/8.17.2/Debian-1) with ESMTPS id 379DaZlY216308
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Wed, 9 Aug 2023 22:36:36 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.17.2/8.17.2/Debian-1) with ESMTPS id 379DaZkg190033
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Wed, 9 Aug 2023 22:36:35 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.17.2/8.17.2/Submit) id 379DaTmi190025;
-        Wed, 9 Aug 2023 22:36:29 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>,
-        Yue Hu <huyue2@gl0jj8bn.sched.sma.tdnsstic1.cn>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>, "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Richard Weinberger <richard@nod.at>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
+        Wed, 9 Aug 2023 09:41:43 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9A5C1986
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 06:41:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=3TRNqmcaEGWcqiDRqyA2b3ib5K8DQ6i1timI+5pEw34=; b=Bd2Opyajb45fFr2wKhQzsXDLu7
+        mnzwHp0JaARZ+eAmLjiv8nlwo14v4YA6lEdxQBGD6aBAjB0kflFxrzMBWTd4PGLn+1uxy4ncjbRH9
+        7hnljHdlosVjZWagAs1di2LuKBAe1c/LQD8CSI8SC0KiQ2MWBtY/CKJDsdx59LO7LmqRB3ufMiUH+
+        H4OtiIQUmeGBGr5lpdxbDs3+ynDbwCZb3eiaRW9pnIvDRXOWAlbEkbDp7+AwndTXtNkf38uVRifI3
+        WgtTOoS3ymngTQNcQHJz7da0B4s5U+/IeRhb/pgUxKzYzcEJNj0djhFfl1Uysu1jL4qABLDjFkwIi
+        qUJMRQhA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qTjR7-0053pV-30;
+        Wed, 09 Aug 2023 13:41:17 +0000
+Date:   Wed, 9 Aug 2023 06:41:17 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@telemann.coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-mtd@lists.infradead.org, linux-mm@kvack.org,
-        linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v7 05/13] fat: make fat_update_time get its own timestamp
-In-Reply-To: <52bead1d6a33fec89944b96e2ec20d1ea8747a9a.camel@kernel.org> (Jeff
-        Layton's message of "Wed, 09 Aug 2023 06:10:53 -0400")
-References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
-        <20230807-mgctime-v7-5-d1dec143a704@kernel.org>
-        <87msz08vc7.fsf@mail.parknet.co.jp>
-        <52bead1d6a33fec89944b96e2ec20d1ea8747a9a.camel@kernel.org>
-Date:   Wed, 09 Aug 2023 22:36:29 +0900
-Message-ID: <878rak8hia.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        Oleksandr Tymoshenko <ovt@google.com>,
+        Carlos Maiolino <cem@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
+        Miklos Szeredi <miklos@szeredi.hu>, Daniel Xu <dxu@dxuuu.xyz>,
+        Chris Down <chris@chrisdown.name>, Tejun Heo <tj@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Pete Zaitcev <zaitcev@redhat.com>,
+        Helge Deller <deller@gmx.de>,
+        Topi Miettinen <toiwoton@gmail.com>,
+        Yu Kuai <yukuai3@huawei.com>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH vfs.tmpfs 4/5] tmpfs: trivial support for direct IO
+Message-ID: <ZNOXfanlsgTrAsny@infradead.org>
+References: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com>
+ <7c12819-9b94-d56-ff88-35623aa34180@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7c12819-9b94-d56-ff88-35623aa34180@google.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> writes:
+Please do not add a new ->direct_IO method.  I'm currently working hard
+on removing it, just set FMODE_CAN_ODIRECT and handle the fallback in
+your read_iter/write_iter methods.
 
-> On Wed, 2023-08-09 at 17:37 +0900, OGAWA Hirofumi wrote:
->> Jeff Layton <jlayton@kernel.org> writes:
->> 
->> > Also, it may be that things have changed by the time we get to calling
->> > fat_update_time after checking inode_needs_update_time. Ensure that we
->> > attempt the i_version bump if any of the S_* flags besides S_ATIME are
->> > set.
->> 
->> I'm not sure what it meaning though, this is from
->> generic_update_time(). Are you going to change generic_update_time()
->> too? If so, it doesn't break lazytime feature?
->> 
->
-> Yes. generic_update_time is also being changed in a similar fashion.
-> This shouldn't break the lazytime feature: lazytime is all about how and
-> when timestamps get written to disk. This work is all about which
-> clocksource the timestamps originally come from.
+But if we just start claiming direct I/O support for file systems that
+don't actually support it, I'm starting to seriously wonder why we
+bother with the flag at all and don't just allow O_DIRECT opens
+to always succeed..
 
-I can only find the following update in this series, another series
-updates generic_update_time()? The patch updates only if S_VERSION is
-set.
-
-Your fat patch sets I_DIRTY_SYNC always instead of I_DIRTY_TIME. When I
-last time checked lazytime, and it was depending on I_DIRTY_TIME.
-
-Are you sure it doesn't break lazytime? I'm totally confusing, and
-really similar with generic_update_time()?
-
-Thanks.
-
-+/**
-+ * generic_update_time - update the timestamps on the inode
-+ * @inode: inode to be updated
-+ * @flags: S_* flags that needed to be updated
-+ *
-+ * The update_time function is called when an inode's timestamps need to be
-+ * updated for a read or write operation. In the case where any of S_MTIME, S_CTIME,
-+ * or S_VERSION need to be updated we attempt to update all three of them. S_ATIME
-+ * updates can be handled done independently of the rest.
-+ *
-+ * Returns a S_* mask indicating which fields were updated.
-+ */
-+int generic_update_time(struct inode *inode, int flags)
-+{
-+	int updated = inode_update_timestamps(inode, flags);
-+	int dirty_flags = 0;
- 
-+	if (updated & (S_ATIME|S_MTIME|S_CTIME))
-+		dirty_flags = inode->i_sb->s_flags & SB_LAZYTIME ? I_DIRTY_TIME : I_DIRTY_SYNC;
-+	if (updated & S_VERSION)
-+		dirty_flags |= I_DIRTY_SYNC;
- 	__mark_inode_dirty(inode, dirty_flags);
--	return 0;
-+	return updated;
- }
-
->> > -	if ((flags & S_VERSION) && inode_maybe_inc_iversion(inode, false))
->> > +	if ((flags & (S_VERSION|S_CTIME|S_MTIME)) && inode_maybe_inc_iversion(inode, false))
->> >  		dirty_flags |= I_DIRTY_SYNC;
->> >  
->> >  	__mark_inode_dirty(inode, dirty_flags);
->> 
-
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
