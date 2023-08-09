@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 40B3D775679
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 11:33:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B53CF7756AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 11:50:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230093AbjHIJdq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Aug 2023 05:33:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51566 "EHLO
+        id S231684AbjHIJu6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Aug 2023 05:50:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjHIJdq (ORCPT
+        with ESMTP id S229498AbjHIJu5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Aug 2023 05:33:46 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4842E10D4
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 02:33:45 -0700 (PDT)
+        Wed, 9 Aug 2023 05:50:57 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08F301986
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 02:50:56 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 063132185F;
-        Wed,  9 Aug 2023 09:33:44 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id A7BF21F38C;
+        Wed,  9 Aug 2023 09:50:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1691573624; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1691574654; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=Mj+K1aNZJ1uaFnsL24bOcXEwStC6A27y5q3AB//p7H8=;
-        b=G9BMtRzZ2nbYvJkJii51EcoKrr1yZDN20yh1rOM8f8mJsIsS99Ibx4r4NWgCb/9+i39Q03
-        hY8pdeZkbYXkv5vUHEnBgt67/shPbah9ovPykD+qYP+H5DyuefBvFVsaXJkqpSQhikML3w
-        /gbJ7zQz9lFm27VwJv6Lu/YKZ1B9fUo=
+        bh=pzno/UZcEN9Q2ua/jIDTbweLbHF86WOzEmwLdWml3rQ=;
+        b=WEII2DpkGJENjFEaNuFeGVWCvv2AXFm9MfgUkQmElVILmP2iA60hmg8Kc9z3OuQEXnyX0I
+        5Ruy76VyZ/GC0Gj2vB/H48LZiJAsedGHaqys3UDB9UIwC9k5V2unFFiJG1ucVa3toGyAqE
+        gz2/bnvsf/PZrfp7+N+FYKowrrW3qsw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1691573624;
+        s=susede2_ed25519; t=1691574654;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=Mj+K1aNZJ1uaFnsL24bOcXEwStC6A27y5q3AB//p7H8=;
-        b=i8D+rLkmodjqW86R3R0Q405lndRiUvr5KdGS/rc4GDr7Ty0DzhH2CLOX4M0WbxpBXsIQVM
-        nYgF/6SEOBClpiDg==
+        bh=pzno/UZcEN9Q2ua/jIDTbweLbHF86WOzEmwLdWml3rQ=;
+        b=7CUVerWnwSEVWDVGXFquMd0VKNTmv0uCEtj5dDRtvG5kT6jkDhEdwtD4Esg+Rh3VVCmLAY
+        OLHroF2XzUlePUCg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DD517133B5;
-        Wed,  9 Aug 2023 09:33:43 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 92633133B5;
+        Wed,  9 Aug 2023 09:50:54 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id x+6cNXdd02RqFAAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 09 Aug 2023 09:33:43 +0000
+        id CTa5I35h02SKHQAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 09 Aug 2023 09:50:54 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 499A6A0769; Wed,  9 Aug 2023 11:33:43 +0200 (CEST)
-Date:   Wed, 9 Aug 2023 11:33:43 +0200
+        id 1D0AAA0769; Wed,  9 Aug 2023 11:50:54 +0200 (CEST)
+Date:   Wed, 9 Aug 2023 11:50:54 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     Hugh Dickins <hughd@google.com>
 Cc:     Christian Brauner <brauner@kernel.org>,
@@ -68,36 +68,49 @@ Cc:     Christian Brauner <brauner@kernel.org>,
         Topi Miettinen <toiwoton@gmail.com>,
         Yu Kuai <yukuai3@huawei.com>, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH vfs.tmpfs 2/5] tmpfs: track free_ispace instead of
- free_inodes
-Message-ID: <20230809093343.f72rf5zxwknljkjv@quack3>
+Subject: Re: [PATCH vfs.tmpfs 3/5] tmpfs,xattr: enable limited user extended
+ attributes
+Message-ID: <20230809095054.w3cjtggejv3nph5e@quack3>
 References: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com>
- <4fe1739-d9e7-8dfd-5bce-12e7339711da@google.com>
+ <2e63b26e-df46-5baa-c7d6-f9a8dd3282c5@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4fe1739-d9e7-8dfd-5bce-12e7339711da@google.com>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+In-Reply-To: <2e63b26e-df46-5baa-c7d6-f9a8dd3282c5@google.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_SOFTFAIL,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 08-08-23 21:32:21, Hugh Dickins wrote:
-> In preparation for assigning some inode space to extended attributes,
-> keep track of free_ispace instead of number of free_inodes: as if one
-> tmpfs inode (and accompanying dentry) occupies very approximately 1KiB.
+On Tue 08-08-23 21:33:56, Hugh Dickins wrote:
+> Enable "user." extended attributes on tmpfs, limiting them by tracking
+> the space they occupy, and deducting that space from the limited ispace
+> (unless tmpfs mounted with nr_inodes=0 to leave that ispace unlimited).
 > 
-> Unsigned long is large enough for free_ispace, on 64-bit and on 32-bit:
-> but take care to enforce the maximum.  And fix the nr_blocks maximum on
-> 32-bit: S64_MAX would be too big for it there, so say LONG_MAX instead.
+> tmpfs inodes and simple xattrs are both unswappable, and have to be in
+> lowmem on a 32-bit highmem kernel: so the ispace limit is appropriate
+> for xattrs, without any need for a further mount option.
 > 
-> Delete the incorrect limited<->unlimited blocks/inodes comment above
-> shmem_reconfigure(): leave it to the error messages below to describe.
+> Add simple_xattr_space() to give approximate but deterministic estimate
+> of the space taken up by each xattr: with simple_xattrs_free() outputting
+> the space freed if required (but kernfs and even some tmpfs usages do not
+> require that, so don't waste time on strlen'ing if not needed).
+> 
+> Security and trusted xattrs were already supported: for consistency and
+> simplicity, account them from the same pool; though there's a small risk
+> that a tmpfs with enough space before would now be considered too small.
+> 
+> When extended attributes are used, "df -i" does show more IUsed and less
+> IFree than can be explained by the inodes: document that (manpage later).
+> 
+> xfstests tests/generic which were not run on tmpfs before but now pass:
+> 020 037 062 070 077 097 103 117 337 377 454 486 523 533 611 618 728
+> with no new failures.
 > 
 > Signed-off-by: Hugh Dickins <hughd@google.com>
 
@@ -108,147 +121,324 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  include/linux/shmem_fs.h |  2 +-
->  mm/shmem.c               | 33 +++++++++++++++++----------------
->  2 files changed, 18 insertions(+), 17 deletions(-)
+>  Documentation/filesystems/tmpfs.rst |  7 ++-
+>  fs/Kconfig                          |  4 +-
+>  fs/kernfs/dir.c                     |  2 +-
+>  fs/xattr.c                          | 28 ++++++++++-
+>  include/linux/xattr.h               |  3 +-
+>  mm/shmem.c                          | 78 +++++++++++++++++++++++++++----
+>  6 files changed, 106 insertions(+), 16 deletions(-)
 > 
-> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-> index 9b2d2faff1d0..6b0c626620f5 100644
-> --- a/include/linux/shmem_fs.h
-> +++ b/include/linux/shmem_fs.h
-> @@ -54,7 +54,7 @@ struct shmem_sb_info {
->  	unsigned long max_blocks;   /* How many blocks are allowed */
->  	struct percpu_counter used_blocks;  /* How many are allocated */
->  	unsigned long max_inodes;   /* How many inodes are allowed */
-> -	unsigned long free_inodes;  /* How many are left for allocation */
-> +	unsigned long free_ispace;  /* How much ispace left for allocation */
->  	raw_spinlock_t stat_lock;   /* Serialize shmem_sb_info changes */
->  	umode_t mode;		    /* Mount mode for root directory */
->  	unsigned char huge;	    /* Whether to try for hugepages */
+> diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
+> index 67422ee10e03..56a26c843dbe 100644
+> --- a/Documentation/filesystems/tmpfs.rst
+> +++ b/Documentation/filesystems/tmpfs.rst
+> @@ -21,8 +21,8 @@ explained further below, some of which can be reconfigured dynamically on the
+>  fly using a remount ('mount -o remount ...') of the filesystem. A tmpfs
+>  filesystem can be resized but it cannot be resized to a size below its current
+>  usage. tmpfs also supports POSIX ACLs, and extended attributes for the
+> -trusted.* and security.* namespaces. ramfs does not use swap and you cannot
+> -modify any parameter for a ramfs filesystem. The size limit of a ramfs
+> +trusted.*, security.* and user.* namespaces. ramfs does not use swap and you
+> +cannot modify any parameter for a ramfs filesystem. The size limit of a ramfs
+>  filesystem is how much memory you have available, and so care must be taken if
+>  used so to not run out of memory.
+>  
+> @@ -97,6 +97,9 @@ mount with such options, since it allows any user with write access to
+>  use up all the memory on the machine; but enhances the scalability of
+>  that instance in a system with many CPUs making intensive use of it.
+>  
+> +If nr_inodes is not 0, that limited space for inodes is also used up by
+> +extended attributes: "df -i"'s IUsed and IUse% increase, IFree decreases.
+> +
+>  tmpfs blocks may be swapped out, when there is a shortage of memory.
+>  tmpfs has a mount option to disable its use of swap:
+>  
+> diff --git a/fs/Kconfig b/fs/Kconfig
+> index 8218a71933f9..7da21f563192 100644
+> --- a/fs/Kconfig
+> +++ b/fs/Kconfig
+> @@ -205,8 +205,8 @@ config TMPFS_XATTR
+>  	  Extended attributes are name:value pairs associated with inodes by
+>  	  the kernel or by users (see the attr(5) manual page for details).
+>  
+> -	  Currently this enables support for the trusted.* and
+> -	  security.* namespaces.
+> +	  This enables support for the trusted.*, security.* and user.*
+> +	  namespaces.
+>  
+>  	  You need this for POSIX ACL support on tmpfs.
+>  
+> diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+> index 5a1a4af9d3d2..660995856a04 100644
+> --- a/fs/kernfs/dir.c
+> +++ b/fs/kernfs/dir.c
+> @@ -556,7 +556,7 @@ void kernfs_put(struct kernfs_node *kn)
+>  	kfree_const(kn->name);
+>  
+>  	if (kn->iattr) {
+> -		simple_xattrs_free(&kn->iattr->xattrs);
+> +		simple_xattrs_free(&kn->iattr->xattrs, NULL);
+>  		kmem_cache_free(kernfs_iattrs_cache, kn->iattr);
+>  	}
+>  	spin_lock(&kernfs_idr_lock);
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index ba37a8f5cfd1..2d607542281b 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -1039,6 +1039,26 @@ const char *xattr_full_name(const struct xattr_handler *handler,
+>  }
+>  EXPORT_SYMBOL(xattr_full_name);
+>  
+> +/**
+> + * simple_xattr_space - estimate the memory used by a simple xattr
+> + * @name: the full name of the xattr
+> + * @size: the size of its value
+> + *
+> + * This takes no account of how much larger the two slab objects actually are:
+> + * that would depend on the slab implementation, when what is required is a
+> + * deterministic number, which grows with name length and size and quantity.
+> + *
+> + * Return: The approximate number of bytes of memory used by such an xattr.
+> + */
+> +size_t simple_xattr_space(const char *name, size_t size)
+> +{
+> +	/*
+> +	 * Use "40" instead of sizeof(struct simple_xattr), to return the
+> +	 * same result on 32-bit and 64-bit, and even if simple_xattr grows.
+> +	 */
+> +	return 40 + size + strlen(name);
+> +}
+> +
+>  /**
+>   * simple_xattr_free - free an xattr object
+>   * @xattr: the xattr object
+> @@ -1363,14 +1383,17 @@ void simple_xattrs_init(struct simple_xattrs *xattrs)
+>  /**
+>   * simple_xattrs_free - free xattrs
+>   * @xattrs: xattr header whose xattrs to destroy
+> + * @freed_space: approximate number of bytes of memory freed from @xattrs
+>   *
+>   * Destroy all xattrs in @xattr. When this is called no one can hold a
+>   * reference to any of the xattrs anymore.
+>   */
+> -void simple_xattrs_free(struct simple_xattrs *xattrs)
+> +void simple_xattrs_free(struct simple_xattrs *xattrs, size_t *freed_space)
+>  {
+>  	struct rb_node *rbp;
+>  
+> +	if (freed_space)
+> +		*freed_space = 0;
+>  	rbp = rb_first(&xattrs->rb_root);
+>  	while (rbp) {
+>  		struct simple_xattr *xattr;
+> @@ -1379,6 +1402,9 @@ void simple_xattrs_free(struct simple_xattrs *xattrs)
+>  		rbp_next = rb_next(rbp);
+>  		xattr = rb_entry(rbp, struct simple_xattr, rb_node);
+>  		rb_erase(&xattr->rb_node, &xattrs->rb_root);
+> +		if (freed_space)
+> +			*freed_space += simple_xattr_space(xattr->name,
+> +							   xattr->size);
+>  		simple_xattr_free(xattr);
+>  		rbp = rbp_next;
+>  	}
+> diff --git a/include/linux/xattr.h b/include/linux/xattr.h
+> index e37fe667ae04..d20051865800 100644
+> --- a/include/linux/xattr.h
+> +++ b/include/linux/xattr.h
+> @@ -114,7 +114,8 @@ struct simple_xattr {
+>  };
+>  
+>  void simple_xattrs_init(struct simple_xattrs *xattrs);
+> -void simple_xattrs_free(struct simple_xattrs *xattrs);
+> +void simple_xattrs_free(struct simple_xattrs *xattrs, size_t *freed_space);
+> +size_t simple_xattr_space(const char *name, size_t size);
+>  struct simple_xattr *simple_xattr_alloc(const void *value, size_t size);
+>  void simple_xattr_free(struct simple_xattr *xattr);
+>  int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
 > diff --git a/mm/shmem.c b/mm/shmem.c
-> index df3cabf54206..c39471384168 100644
+> index c39471384168..7420b510a9f3 100644
 > --- a/mm/shmem.c
 > +++ b/mm/shmem.c
-> @@ -90,6 +90,9 @@ static struct vfsmount *shm_mnt;
->  /* Pretend that each entry is of this size in directory's i_size */
->  #define BOGO_DIRENT_SIZE 20
->  
-> +/* Pretend that one inode + its dentry occupy this much memory */
-> +#define BOGO_INODE_SIZE 1024
-> +
->  /* Symlink up to this size is kmalloc'ed instead of using a swappable page */
->  #define SHORT_SYMLINK_LEN 128
->  
-> @@ -137,7 +140,8 @@ static unsigned long shmem_default_max_inodes(void)
->  {
->  	unsigned long nr_pages = totalram_pages();
->  
-> -	return min(nr_pages - totalhigh_pages(), nr_pages / 2);
-> +	return min3(nr_pages - totalhigh_pages(), nr_pages / 2,
-> +			ULONG_MAX / BOGO_INODE_SIZE);
+> @@ -393,12 +393,12 @@ static int shmem_reserve_inode(struct super_block *sb, ino_t *inop)
+>  	return 0;
 >  }
->  #endif
 >  
-> @@ -331,11 +335,11 @@ static int shmem_reserve_inode(struct super_block *sb, ino_t *inop)
->  	if (!(sb->s_flags & SB_KERNMOUNT)) {
->  		raw_spin_lock(&sbinfo->stat_lock);
->  		if (sbinfo->max_inodes) {
-> -			if (!sbinfo->free_inodes) {
-> +			if (sbinfo->free_ispace < BOGO_INODE_SIZE) {
->  				raw_spin_unlock(&sbinfo->stat_lock);
->  				return -ENOSPC;
->  			}
-> -			sbinfo->free_inodes--;
-> +			sbinfo->free_ispace -= BOGO_INODE_SIZE;
->  		}
->  		if (inop) {
->  			ino = sbinfo->next_ino++;
-> @@ -394,7 +398,7 @@ static void shmem_free_inode(struct super_block *sb)
+> -static void shmem_free_inode(struct super_block *sb)
+> +static void shmem_free_inode(struct super_block *sb, size_t freed_ispace)
+>  {
 >  	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
 >  	if (sbinfo->max_inodes) {
 >  		raw_spin_lock(&sbinfo->stat_lock);
-> -		sbinfo->free_inodes++;
-> +		sbinfo->free_ispace += BOGO_INODE_SIZE;
+> -		sbinfo->free_ispace += BOGO_INODE_SIZE;
+> +		sbinfo->free_ispace += BOGO_INODE_SIZE + freed_ispace;
 >  		raw_spin_unlock(&sbinfo->stat_lock);
 >  	}
 >  }
-> @@ -3155,7 +3159,7 @@ static int shmem_statfs(struct dentry *dentry, struct kstatfs *buf)
->  	}
->  	if (sbinfo->max_inodes) {
->  		buf->f_files = sbinfo->max_inodes;
-> -		buf->f_ffree = sbinfo->free_inodes;
-> +		buf->f_ffree = sbinfo->free_ispace / BOGO_INODE_SIZE;
->  	}
->  	/* else leave those fields 0 like simple_statfs */
->  
-> @@ -3815,13 +3819,13 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
->  		break;
->  	case Opt_nr_blocks:
->  		ctx->blocks = memparse(param->string, &rest);
-> -		if (*rest || ctx->blocks > S64_MAX)
-> +		if (*rest || ctx->blocks > LONG_MAX)
->  			goto bad_value;
->  		ctx->seen |= SHMEM_SEEN_BLOCKS;
->  		break;
->  	case Opt_nr_inodes:
->  		ctx->inodes = memparse(param->string, &rest);
-> -		if (*rest)
-> +		if (*rest || ctx->inodes > ULONG_MAX / BOGO_INODE_SIZE)
->  			goto bad_value;
->  		ctx->seen |= SHMEM_SEEN_INODES;
->  		break;
-> @@ -4002,21 +4006,17 @@ static int shmem_parse_options(struct fs_context *fc, void *data)
->  
->  /*
->   * Reconfigure a shmem filesystem.
-> - *
-> - * Note that we disallow change from limited->unlimited blocks/inodes while any
-> - * are in use; but we must separately disallow unlimited->limited, because in
-> - * that case we have no record of how much is already in use.
->   */
->  static int shmem_reconfigure(struct fs_context *fc)
+> @@ -1232,6 +1232,7 @@ static void shmem_evict_inode(struct inode *inode)
 >  {
->  	struct shmem_options *ctx = fc->fs_private;
->  	struct shmem_sb_info *sbinfo = SHMEM_SB(fc->root->d_sb);
-> -	unsigned long inodes;
-> +	unsigned long used_isp;
->  	struct mempolicy *mpol = NULL;
->  	const char *err;
+>  	struct shmem_inode_info *info = SHMEM_I(inode);
+>  	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
+> +	size_t freed;
 >  
->  	raw_spin_lock(&sbinfo->stat_lock);
-> -	inodes = sbinfo->max_inodes - sbinfo->free_inodes;
-> +	used_isp = sbinfo->max_inodes * BOGO_INODE_SIZE - sbinfo->free_ispace;
->  
->  	if ((ctx->seen & SHMEM_SEEN_BLOCKS) && ctx->blocks) {
->  		if (!sbinfo->max_blocks) {
-> @@ -4034,7 +4034,7 @@ static int shmem_reconfigure(struct fs_context *fc)
->  			err = "Cannot retroactively limit inodes";
->  			goto out;
+>  	if (shmem_mapping(inode->i_mapping)) {
+>  		shmem_unacct_size(info->flags, inode->i_size);
+> @@ -1258,9 +1259,9 @@ static void shmem_evict_inode(struct inode *inode)
 >  		}
-> -		if (ctx->inodes < inodes) {
-> +		if (ctx->inodes * BOGO_INODE_SIZE < used_isp) {
->  			err = "Too few inodes for current use";
->  			goto out;
->  		}
-> @@ -4080,7 +4080,7 @@ static int shmem_reconfigure(struct fs_context *fc)
->  		sbinfo->max_blocks  = ctx->blocks;
->  	if (ctx->seen & SHMEM_SEEN_INODES) {
->  		sbinfo->max_inodes  = ctx->inodes;
-> -		sbinfo->free_inodes = ctx->inodes - inodes;
-> +		sbinfo->free_ispace = ctx->inodes * BOGO_INODE_SIZE - used_isp;
 >  	}
 >  
->  	/*
-> @@ -4211,7 +4211,8 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
->  	sb->s_flags |= SB_NOUSER;
->  #endif
->  	sbinfo->max_blocks = ctx->blocks;
-> -	sbinfo->free_inodes = sbinfo->max_inodes = ctx->inodes;
-> +	sbinfo->max_inodes = ctx->inodes;
-> +	sbinfo->free_ispace = sbinfo->max_inodes * BOGO_INODE_SIZE;
->  	if (sb->s_flags & SB_KERNMOUNT) {
->  		sbinfo->ino_batch = alloc_percpu(ino_t);
->  		if (!sbinfo->ino_batch)
+> -	simple_xattrs_free(&info->xattrs);
+> +	simple_xattrs_free(&info->xattrs, sbinfo->max_inodes ? &freed : NULL);
+> +	shmem_free_inode(inode->i_sb, freed);
+>  	WARN_ON(inode->i_blocks);
+> -	shmem_free_inode(inode->i_sb);
+>  	clear_inode(inode);
+>  #ifdef CONFIG_TMPFS_QUOTA
+>  	dquot_free_inode(inode);
+> @@ -2440,7 +2441,7 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
+>  	inode = new_inode(sb);
+>  
+>  	if (!inode) {
+> -		shmem_free_inode(sb);
+> +		shmem_free_inode(sb, 0);
+>  		return ERR_PTR(-ENOSPC);
+>  	}
+>  
+> @@ -3281,7 +3282,7 @@ static int shmem_link(struct dentry *old_dentry, struct inode *dir, struct dentr
+>  	ret = simple_offset_add(shmem_get_offset_ctx(dir), dentry);
+>  	if (ret) {
+>  		if (inode->i_nlink)
+> -			shmem_free_inode(inode->i_sb);
+> +			shmem_free_inode(inode->i_sb, 0);
+>  		goto out;
+>  	}
+>  
+> @@ -3301,7 +3302,7 @@ static int shmem_unlink(struct inode *dir, struct dentry *dentry)
+>  	struct inode *inode = d_inode(dentry);
+>  
+>  	if (inode->i_nlink > 1 && !S_ISDIR(inode->i_mode))
+> -		shmem_free_inode(inode->i_sb);
+> +		shmem_free_inode(inode->i_sb, 0);
+>  
+>  	simple_offset_remove(shmem_get_offset_ctx(dir), dentry);
+>  
+> @@ -3554,21 +3555,40 @@ static int shmem_initxattrs(struct inode *inode,
+>  			    void *fs_info)
+>  {
+>  	struct shmem_inode_info *info = SHMEM_I(inode);
+> +	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
+>  	const struct xattr *xattr;
+>  	struct simple_xattr *new_xattr;
+> +	size_t ispace = 0;
+>  	size_t len;
+>  
+> +	if (sbinfo->max_inodes) {
+> +		for (xattr = xattr_array; xattr->name != NULL; xattr++) {
+> +			ispace += simple_xattr_space(xattr->name,
+> +				xattr->value_len + XATTR_SECURITY_PREFIX_LEN);
+> +		}
+> +		if (ispace) {
+> +			raw_spin_lock(&sbinfo->stat_lock);
+> +			if (sbinfo->free_ispace < ispace)
+> +				ispace = 0;
+> +			else
+> +				sbinfo->free_ispace -= ispace;
+> +			raw_spin_unlock(&sbinfo->stat_lock);
+> +			if (!ispace)
+> +				return -ENOSPC;
+> +		}
+> +	}
+> +
+>  	for (xattr = xattr_array; xattr->name != NULL; xattr++) {
+>  		new_xattr = simple_xattr_alloc(xattr->value, xattr->value_len);
+>  		if (!new_xattr)
+> -			return -ENOMEM;
+> +			break;
+>  
+>  		len = strlen(xattr->name) + 1;
+>  		new_xattr->name = kmalloc(XATTR_SECURITY_PREFIX_LEN + len,
+>  					  GFP_KERNEL);
+>  		if (!new_xattr->name) {
+>  			kvfree(new_xattr);
+> -			return -ENOMEM;
+> +			break;
+>  		}
+>  
+>  		memcpy(new_xattr->name, XATTR_SECURITY_PREFIX,
+> @@ -3579,6 +3599,16 @@ static int shmem_initxattrs(struct inode *inode,
+>  		simple_xattr_add(&info->xattrs, new_xattr);
+>  	}
+>  
+> +	if (xattr->name != NULL) {
+> +		if (ispace) {
+> +			raw_spin_lock(&sbinfo->stat_lock);
+> +			sbinfo->free_ispace += ispace;
+> +			raw_spin_unlock(&sbinfo->stat_lock);
+> +		}
+> +		simple_xattrs_free(&info->xattrs, NULL);
+> +		return -ENOMEM;
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> @@ -3599,16 +3629,39 @@ static int shmem_xattr_handler_set(const struct xattr_handler *handler,
+>  				   size_t size, int flags)
+>  {
+>  	struct shmem_inode_info *info = SHMEM_I(inode);
+> +	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
+>  	struct simple_xattr *old_xattr;
+> +	size_t ispace = 0;
+>  
+>  	name = xattr_full_name(handler, name);
+> +	if (value && sbinfo->max_inodes) {
+> +		ispace = simple_xattr_space(name, size);
+> +		raw_spin_lock(&sbinfo->stat_lock);
+> +		if (sbinfo->free_ispace < ispace)
+> +			ispace = 0;
+> +		else
+> +			sbinfo->free_ispace -= ispace;
+> +		raw_spin_unlock(&sbinfo->stat_lock);
+> +		if (!ispace)
+> +			return -ENOSPC;
+> +	}
+> +
+>  	old_xattr = simple_xattr_set(&info->xattrs, name, value, size, flags);
+>  	if (!IS_ERR(old_xattr)) {
+> +		ispace = 0;
+> +		if (old_xattr && sbinfo->max_inodes)
+> +			ispace = simple_xattr_space(old_xattr->name,
+> +						    old_xattr->size);
+>  		simple_xattr_free(old_xattr);
+>  		old_xattr = NULL;
+>  		inode->i_ctime = current_time(inode);
+>  		inode_inc_iversion(inode);
+>  	}
+> +	if (ispace) {
+> +		raw_spin_lock(&sbinfo->stat_lock);
+> +		sbinfo->free_ispace += ispace;
+> +		raw_spin_unlock(&sbinfo->stat_lock);
+> +	}
+>  	return PTR_ERR(old_xattr);
+>  }
+>  
+> @@ -3624,9 +3677,16 @@ static const struct xattr_handler shmem_trusted_xattr_handler = {
+>  	.set = shmem_xattr_handler_set,
+>  };
+>  
+> +static const struct xattr_handler shmem_user_xattr_handler = {
+> +	.prefix = XATTR_USER_PREFIX,
+> +	.get = shmem_xattr_handler_get,
+> +	.set = shmem_xattr_handler_set,
+> +};
+> +
+>  static const struct xattr_handler *shmem_xattr_handlers[] = {
+>  	&shmem_security_xattr_handler,
+>  	&shmem_trusted_xattr_handler,
+> +	&shmem_user_xattr_handler,
+>  	NULL
+>  };
+>  
 > -- 
 > 2.35.3
 > 
