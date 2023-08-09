@@ -2,36 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 29E6177630F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 16:52:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46B73776331
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 17:00:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234351AbjHIOwR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Aug 2023 10:52:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41852 "EHLO
+        id S233488AbjHIPAp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Aug 2023 11:00:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233448AbjHIOwP (ORCPT
+        with ESMTP id S233040AbjHIPAn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Aug 2023 10:52:15 -0400
-Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7B2FD210D;
-        Wed,  9 Aug 2023 07:52:14 -0700 (PDT)
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 7D4BE2055FA3;
-        Wed,  9 Aug 2023 23:52:13 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.17.2/8.17.2/Debian-1) with ESMTPS id 379EqCN9218206
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Wed, 9 Aug 2023 23:52:13 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.17.2/8.17.2/Debian-1) with ESMTPS id 379EqCeg199482
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Wed, 9 Aug 2023 23:52:12 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.17.2/8.17.2/Submit) id 379EqA73199481;
-        Wed, 9 Aug 2023 23:52:10 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Wed, 9 Aug 2023 11:00:43 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E61B41FF5;
+        Wed,  9 Aug 2023 08:00:42 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id A40162183F;
+        Wed,  9 Aug 2023 15:00:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1691593241; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=T9pM1doI1agk+X2MmwPKol+CkTUFgsM83Ac97tdZe88=;
+        b=PhVUi/uOUAMtA9N5d0/Cfyd7ajz4cp2kJoUJhaQu6DDg/4ZBR2ulD5NnnIutb+RvTgOhZu
+        va3jLTw2VLniHCcL7mPa8wCZF+q+F4znEx4s9wuxLkAbwAMW1TTsE6/P2XRHAKC2zla6BB
+        rR1DtgPeT6Q9ikUt3HY3IlDOz+sGSpQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1691593241;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=T9pM1doI1agk+X2MmwPKol+CkTUFgsM83Ac97tdZe88=;
+        b=cqqb6K6iG6a7Y6ZZq2rzMwz1c5y090ilDlyL/8hMS5IblOhw3I1NrjIjlnRdaQl5+/nifI
+        AlcMBSfF0kUhaGAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 858EE13251;
+        Wed,  9 Aug 2023 15:00:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id TWyOIBmq02RvPAAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 09 Aug 2023 15:00:41 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 1BAC9A0769; Wed,  9 Aug 2023 17:00:41 +0200 (CEST)
+Date:   Wed, 9 Aug 2023 17:00:41 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
         Eric Van Hensbergen <ericvh@kernel.org>,
         Latchesar Ionkov <lucho@ionkov.net>,
@@ -49,7 +71,7 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Jeffle Xu <jefflexu@linux.alibaba.com>,
         Namjae Jeon <linkinjeon@kernel.org>,
         Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
         Andreas Dilger <adilger.kernel@dilger.ca>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Miklos Szeredi <miklos@szeredi.hu>,
@@ -93,65 +115,74 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-mtd@lists.infradead.org, linux-mm@kvack.org,
         linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org
 Subject: Re: [PATCH v7 05/13] fat: make fat_update_time get its own timestamp
-In-Reply-To: <874jl88ed1.fsf@mail.parknet.co.jp> (OGAWA Hirofumi's message of
-        "Wed, 09 Aug 2023 23:44:26 +0900")
+Message-ID: <20230809150041.452w7gucjmvjnvbg@quack3>
 References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
-        <20230807-mgctime-v7-5-d1dec143a704@kernel.org>
-        <87msz08vc7.fsf@mail.parknet.co.jp>
-        <52bead1d6a33fec89944b96e2ec20d1ea8747a9a.camel@kernel.org>
-        <878rak8hia.fsf@mail.parknet.co.jp>
-        <7edc9239f73022b9c2a1d3f4f946153f85f94739.camel@kernel.org>
-        <874jl88ed1.fsf@mail.parknet.co.jp>
-Date:   Wed, 09 Aug 2023 23:52:10 +0900
-Message-ID: <87zg306zfp.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+ <20230807-mgctime-v7-5-d1dec143a704@kernel.org>
+ <87msz08vc7.fsf@mail.parknet.co.jp>
+ <52bead1d6a33fec89944b96e2ec20d1ea8747a9a.camel@kernel.org>
+ <878rak8hia.fsf@mail.parknet.co.jp>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <878rak8hia.fsf@mail.parknet.co.jp>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp> writes:
-
+On Wed 09-08-23 22:36:29, OGAWA Hirofumi wrote:
 > Jeff Layton <jlayton@kernel.org> writes:
->
->> I'm a little confused too. Why do you believe this will break
->> -o relatime handling? This patch changes two things:
->>
->> 1/ it has fat_update_time fetch its own timestamp (and ignore the "now"
->> parameter). This is in line with the changes in patch #3 of this series,
->> which explains the rationale for this in more detail.
->>
->> 2/ it changes fat_update_time to also update the i_version if any of
->> S_CTIME|S_MTIME|S_VERSION are set. relatime is all about the S_ATIME,
->> and it is specifically excluded from that set.
->>
->> The rationale for the second change is is also in patch #3, but
->> basically, we can't guarantee that current_time hasn't changed since we
->> last checked for inode_needs_update_time, so if any of
->> S_CTIME/S_MTIME/S_VERSION have changed, then we need to assume that any
->> of them may need to be changed and attempt to update all 3.
->>
->> That said, I think the logic in fat_update_time isn't quite right. I
->> think want something like this on top of this patch to ensure that the
->> S_CTIME and S_MTIME get updated, even if the flags only have S_VERSION
->> set.
->>
->> Thoughts?
->
-> I'm not talking about "relatime" at all, I'm always talking about
-> "lazytime".
->
-> I_DIRTY_TIME delays to update on disk inode only if changed
-> timestamp. But you changed it to I_DIRTY_SYNC, i.e. always update on
-> disk inode by timestamp.
+> 
+> > On Wed, 2023-08-09 at 17:37 +0900, OGAWA Hirofumi wrote:
+> >> Jeff Layton <jlayton@kernel.org> writes:
+> >> 
+> >> > Also, it may be that things have changed by the time we get to calling
+> >> > fat_update_time after checking inode_needs_update_time. Ensure that we
+> >> > attempt the i_version bump if any of the S_* flags besides S_ATIME are
+> >> > set.
+> >> 
+> >> I'm not sure what it meaning though, this is from
+> >> generic_update_time(). Are you going to change generic_update_time()
+> >> too? If so, it doesn't break lazytime feature?
+> >> 
+> >
+> > Yes. generic_update_time is also being changed in a similar fashion.
+> > This shouldn't break the lazytime feature: lazytime is all about how and
+> > when timestamps get written to disk. This work is all about which
+> > clocksource the timestamps originally come from.
+> 
+> I can only find the following update in this series, another series
+> updates generic_update_time()? The patch updates only if S_VERSION is
+> set.
+> 
+> Your fat patch sets I_DIRTY_SYNC always instead of I_DIRTY_TIME. When I
+> last time checked lazytime, and it was depending on I_DIRTY_TIME.
+> 
+> Are you sure it doesn't break lazytime? I'm totally confusing, and
+> really similar with generic_update_time()?
 
-And if change like it, why doesn't same change goes to generic_update_time()?
-It looks like generic_update_time() in this series doesn't work like you said.
+Since you are talking past one another with Jeff let me chime in here :). I
+think you are worried about this hunk:
+
+-	if ((flags & S_VERSION) && inode_maybe_inc_iversion(inode, false))
++	if ((flags & (S_VERSION|S_CTIME|S_MTIME)) && inode_maybe_inc_iversion(inode, false))
+ 		dirty_flags |= I_DIRTY_SYNC;
+
+which makes the 'flags' test pass even if we just modified ctime or mtime.
+But do note the second part of the if - inode_maybe_inc_iversion() - so we
+are going to mark the inode dirty with I_DIRTY_SYNC only if someone queried
+iversion since the last time we have incremented it.
+
+So this hunk is not really changing how inode is marked dirty, it only
+changes how often we check whether iversion needs increment and that should
+be fine (and desirable). Hence lazytime isn't really broken by this in any
+way.
+
+								Honza
 -- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
