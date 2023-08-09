@@ -2,55 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AE9BE776A86
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 22:49:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6545776BB8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 00:05:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231417AbjHIUt1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Aug 2023 16:49:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39680 "EHLO
+        id S233077AbjHIWF5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Aug 2023 18:05:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229750AbjHIUt0 (ORCPT
+        with ESMTP id S230212AbjHIWFz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Aug 2023 16:49:26 -0400
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA32A18E
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 13:49:25 -0700 (PDT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-686c06b9338so233154b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Aug 2023 13:49:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691614165; x=1692218965;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KiO1UYKz1KmGz5vyEYa20p8Kf9nv4M/wBjQ77gRnteM=;
-        b=P3WQAyAD4BcKk/pzOisjKglyi/K0ghT9ufJvU8cOE368Mrxmdz7lE+it3JNc8pcpTE
-         miKxorBnN/irBYt5nrQlbJmgo2IFWo7DpmJ7fgE1U3DRFWCNW34bIQsCPuG6MeZj0vym
-         xqF1EMi9xmoSyg4cfCAQgdb49HO4OOEzQabCXAE99vj7GMy7xceydjQGSy4ABBGlPwXO
-         7c2fO2mcLffMhPqCfV1sGq1ymb7Qk2ae6prS+4hdRvMQWxzfXQAub+bO3tSt+9IKlmhP
-         tJBmR/xgGPf6KLpxsV4D9Aj19+bacRh0wrf5VMx8HYyhiRi89pHZSpLANu36//q5dSPD
-         X3iw==
-X-Gm-Message-State: AOJu0YzmR91fgNV5DeDeA2xNAdL8/4UIma3r2NEsDlA/o02DbzXqt54E
-        owl5sw1Ca704PL5USAReob0/EIZJc+hhpbaBpTkBW7qG2zZP
-X-Google-Smtp-Source: AGHT+IHM/PSrbeg1ZRWPQCHIWQxkAXmB84lw1plRrMW/1JwBCTdX+F8fk/Cvw8TeA/TVHtTefHpEhpbCSsRcdC5cgVKcXAmvAm1x
+        Wed, 9 Aug 2023 18:05:55 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 842371729;
+        Wed,  9 Aug 2023 15:05:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=QErTeQkz1cVsGQxjUoASrFujfY4NBEiICWhnXG0gBV0=; b=aCZKusqHBKNCz29OEKtMrCA0hp
+        H3ASUAefgwC2AqVwlmJVgJBQRdFlvWLqBrWITEhcCE5VoHY+OS70nmuUs7TplQ99030xLEX11gB0L
+        amI17KAIn6duu/Mr17rJcXumsmN4y5HiSx0FpSADV+z7iFLgPLuGeGyEH6r3ihoG3SuEPpQi/vIIS
+        riRg1P7lpsCZ/8zWjDKUEAt14j3I2xoHKu8QPPOkWNvcK4ZiC92iho70hhnAF9YDADQzWoRgN2KbM
+        1iludwYtrQxeVoPiIv3k3h8/i1M//8pkg5xw0TyR7sgZC4BMy3yLUydPZJpX0bW8w3nr4Hj2wEktI
+        FwyoIhAg==;
+Received: from [4.28.11.157] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1qTrJK-005xnv-0d;
+        Wed, 09 Aug 2023 22:05:46 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        ntfs3@lists.linux.dev, linux-xfs@vger.kernel.org
+Subject: s_fs_info and ->kill_sb revisited v2
+Date:   Wed,  9 Aug 2023 15:05:32 -0700
+Message-Id: <20230809220545.1308228-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-X-Received: by 2002:a05:6a00:c8a:b0:677:7731:5edd with SMTP id
- a10-20020a056a000c8a00b0067777315eddmr162506pfv.0.1691614165376; Wed, 09 Aug
- 2023 13:49:25 -0700 (PDT)
-Date:   Wed, 09 Aug 2023 13:49:25 -0700
-In-Reply-To: <20230809191118.30721-1-astrajoan@yahoo.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006ca4a20602839deb@google.com>
-Subject: Re: [syzbot] [ntfs3?] BUG: unable to handle kernel NULL pointer
- dereference in hdr_find_e (2)
-From:   syzbot <syzbot+60cf892fc31d1f4358fc@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com, astrajoan@yahoo.com,
-        ivan.orlov0322@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev,
-        skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED
         autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -58,20 +57,20 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hi all,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+this series is against the VFS vfs.super branch does two slightly
+related things:
 
-Reported-and-tested-by: syzbot+60cf892fc31d1f4358fc@syzkaller.appspotmail.com
+ - move closing of the external devices in ext4 and xfs from ->put_super
+   into ->kill_sb so that this isn't done under s_umount which creates
+   lock ordere reversal
+ - move freeing the private dta in s_fs_info into ->kill_sb for file systems
+   that pass it in through the fs_context, as otherwise we could leak it
+   before fill_super is called (this is something new on the vfs.super
+   branch because of the changed place where blkdev_get is called)
 
-Tested on:
+Changes since v1:
+ - keep the invalidate_bdev call in XFS and actually document it
+ - minor whitespace fixes
 
-commit:         cacc6e22 tpm: Add a helper for checking hwrng enabled
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=1107f5a5a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=171b698bc2e613cf
-dashboard link: https://syzkaller.appspot.com/bug?extid=60cf892fc31d1f4358fc
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11e4f5fda80000
-
-Note: testing is done by a robot and is best-effort only.
