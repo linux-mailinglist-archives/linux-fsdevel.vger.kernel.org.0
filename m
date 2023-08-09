@@ -2,163 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B63FB775F68
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 14:40:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CCB7776039
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 15:09:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230259AbjHIMkt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Aug 2023 08:40:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33740 "EHLO
+        id S231147AbjHINJM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Aug 2023 09:09:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229549AbjHIMks (ORCPT
+        with ESMTP id S230265AbjHINJL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Aug 2023 08:40:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E68410F3
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 05:40:47 -0700 (PDT)
+        Wed, 9 Aug 2023 09:09:11 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B74B1FF9;
+        Wed,  9 Aug 2023 06:09:11 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AEAC161924
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 12:40:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3645C433C8;
-        Wed,  9 Aug 2023 12:40:43 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 01D4D639CD;
+        Wed,  9 Aug 2023 13:09:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73691C433C8;
+        Wed,  9 Aug 2023 13:09:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691584846;
-        bh=qkN4hCfczhkVGSFHRn3lAEAKDnEVv6B1jgLozsEWEqY=;
+        s=k20201202; t=1691586550;
+        bh=RP3a1yCokfgzUe01alZGGBBHrvBOhkP0Oj8s3lt3FLM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=a0vBC+6ieEcnyA5uNIRNHO+91hD1X8GUNViLzSjtyRwkAN1arAXA24SpDU40Yhymt
-         GN8zNpND43HrjlblgvK/VXtTia1wyhVTSX5uYQemANd8ScmrfcTaWWQ7CvZOQkCcij
-         0YZaHS8jxP+AeuGxmBgDD0MQSF1gfMQJzhMyR1HIZG2WlJRbEIB1HPQ2J4R/XDxzlY
-         4rSb8KCOk9O3vvMc8jPyqWM4c93LvOknSzBQsL6xFSmqfJt4H9/j/Ao8SrgprJ3W4q
-         zdFfrly18GUz/BWNYZZo6PwJtX9DmMHXTYsloIGq7AkaPbLoqkWAKv1N9LKwerXlLZ
-         gg/bZ55/SvQaQ==
-Date:   Wed, 9 Aug 2023 15:39:51 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Tomas Mudrunka <tomas.mudrunka@gmail.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, willy@infradead.org
-Subject: Re: [PATCH v2] mm: memtest: convert to memtest_report_meminfo()
-Message-ID: <20230809123951.GL2607694@kernel.org>
-References: <20230808033359.174986-1-wangkefeng.wang@huawei.com>
+        b=A3qf0Solz/HQtLEfafinM+HaCYc8Ft1YmkZBmDztHwy6j6yR8EQCuObDGd++0B5bQ
+         Wv2bnzQIp/uoasevq+oEInQzVuhjReDedDNDONveL7reIqCveZr/6fRzhsNubOxGJX
+         FHhm8jzIj9iCI4nxnCX2txwi3LHpQc/8in3sNGbsiWeLCaRDATmUpYEF8Vv7Xamihw
+         LDhj03safM2CiKKDW0zWV+xL9N5/YECvXBeDOX9drm0KP8ZGfd9bgZ2qCcWAMawtkD
+         17IWyurnx8xaB0bn6dj7SE57vzQylpmSjU4TdMMc3aw4qSW9lRNdpHArymx/wtcNVQ
+         98M0uLkuBljcg==
+Date:   Wed, 9 Aug 2023 15:09:04 +0200
+From:   Carlos Maiolino <cem@kernel.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Chandan Babu R <chandan.babu@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, sandeen@sandeen.net, amir73il@gmail.com,
+        leah.rumancik@gmail.com, zlang@kernel.org, fstests@vger.kernel.org,
+        willy@infradead.org, shirley.ma@oracle.com, konrad.wilk@oracle.com
+Subject: Re: [PATCH 3/3] MAINTAINERS: add Chandan Babu as XFS release manager
+Message-ID: <20230809130904.veisiszzzssp6ohr@andromeda>
+References: <169116629797.3243794.7024231508559123519.stgit@frogsfrogsfrogs>
+ <RxME8o56Hr2QxC47qqkEkiU90SY26D2ubgubhreqqss6dZP5GfdYjpy_mDZyHLGDeOrPceqWuPwPJ4jX3SM_Gg==@protonmail.internalid>
+ <169116631533.3243794.12031505140377581673.stgit@frogsfrogsfrogs>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230808033359.174986-1-wangkefeng.wang@huawei.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <169116631533.3243794.12031505140377581673.stgit@frogsfrogsfrogs>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 08, 2023 at 11:33:59AM +0800, Kefeng Wang wrote:
-> It is better to not expose too many internal variables of memtest,
-> add a helper memtest_report_meminfo() to show memtest results.
+On Fri, Aug 04, 2023 at 09:25:15AM -0700, Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
 > 
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> I nominate Chandan Babu to take over release management for the upstream
+> kernel's XFS code.  He has had sufficient experience merging backports
+> to the 5.4 LTS tree, testing them, and sending them on to the LTS leads.
+> 
+> NOTE: I am /not/ nominating Chandan to take on any of the other roles I
+> have just dropped.  Bug triager, testing lead, and community manager are
+> open positions that need to be filled.  There's also maintainer for
+> supported LTS releases (4.14, 4.19, 5.10...).
+> 
+> Cc: Chandan Babu R <chandan.babu@oracle.com>
+> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> Acked-by: Chandan Babu R <chandan.babu@oracle.com>
 
-Acked-by: Mike Rapoport (IBM) <rppt@kernel.org>
+Reviewed-by: Carlos Maiolino <cem@kernel.org>
 
 > ---
-> v2: add CONFIG_PROC_FS check, per Matthew
+>  MAINTAINERS |    1 +
+>  1 file changed, 1 insertion(+)
 > 
->  fs/proc/meminfo.c        | 12 +-----------
->  include/linux/memblock.h | 10 ++++------
->  mm/memtest.c             | 22 ++++++++++++++++++++--
->  3 files changed, 25 insertions(+), 19 deletions(-)
 > 
-> diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
-> index 74e3c3815696..45af9a989d40 100644
-> --- a/fs/proc/meminfo.c
-> +++ b/fs/proc/meminfo.c
-> @@ -133,17 +133,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
->  	show_val_kb(m, "VmallocChunk:   ", 0ul);
->  	show_val_kb(m, "Percpu:         ", pcpu_nr_pages());
->  
-> -#ifdef CONFIG_MEMTEST
-> -	if (early_memtest_done) {
-> -		unsigned long early_memtest_bad_size_kb;
-> -
-> -		early_memtest_bad_size_kb = early_memtest_bad_size>>10;
-> -		if (early_memtest_bad_size && !early_memtest_bad_size_kb)
-> -			early_memtest_bad_size_kb = 1;
-> -		/* When 0 is reported, it means there actually was a successful test */
-> -		seq_printf(m, "EarlyMemtestBad:   %5lu kB\n", early_memtest_bad_size_kb);
-> -	}
-> -#endif
-> +	memtest_report_meminfo(m);
->  
->  #ifdef CONFIG_MEMORY_FAILURE
->  	seq_printf(m, "HardwareCorrupted: %5lu kB\n",
-> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> index 0d031fbfea25..1c1072e3ca06 100644
-> --- a/include/linux/memblock.h
-> +++ b/include/linux/memblock.h
-> @@ -594,13 +594,11 @@ extern int hashdist;		/* Distribute hashes across NUMA nodes? */
->  #endif
->  
->  #ifdef CONFIG_MEMTEST
-> -extern phys_addr_t early_memtest_bad_size;	/* Size of faulty ram found by memtest */
-> -extern bool early_memtest_done;			/* Was early memtest done? */
-> -extern void early_memtest(phys_addr_t start, phys_addr_t end);
-> +void early_memtest(phys_addr_t start, phys_addr_t end);
-> +void memtest_report_meminfo(struct seq_file *m);
->  #else
-> -static inline void early_memtest(phys_addr_t start, phys_addr_t end)
-> -{
-> -}
-> +static inline void early_memtest(phys_addr_t start, phys_addr_t end) { }
-> +static inline void memtest_report_meminfo(struct seq_file *m) { }
->  #endif
->  
->  
-> diff --git a/mm/memtest.c b/mm/memtest.c
-> index 57149dfee438..32f3e9dda837 100644
-> --- a/mm/memtest.c
-> +++ b/mm/memtest.c
-> @@ -3,9 +3,10 @@
->  #include <linux/types.h>
->  #include <linux/init.h>
->  #include <linux/memblock.h>
-> +#include <linux/seq_file.h>
->  
-> -bool early_memtest_done;
-> -phys_addr_t early_memtest_bad_size;
-> +static bool early_memtest_done;
-> +static phys_addr_t early_memtest_bad_size;
->  
->  static u64 patterns[] __initdata = {
->  	/* The first entry has to be 0 to leave memtest with zeroed memory */
-> @@ -117,3 +118,20 @@ void __init early_memtest(phys_addr_t start, phys_addr_t end)
->  		do_one_pass(patterns[idx], start, end);
->  	}
->  }
-> +
-> +void memtest_report_meminfo(struct seq_file *m)
-> +{
-> +	unsigned long early_memtest_bad_size_kb;
-> +
-> +	if (!IS_ENABLED(CONFIG_PROC_FS))
-> +		return;
-> +
-> +	if (!early_memtest_done)
-> +		return;
-> +
-> +	early_memtest_bad_size_kb = early_memtest_bad_size >> 10;
-> +	if (early_memtest_bad_size && !early_memtest_bad_size_kb)
-> +		early_memtest_bad_size_kb = 1;
-> +	/* When 0 is reported, it means there actually was a successful test */
-> +	seq_printf(m, "EarlyMemtestBad:   %5lu kB\n", early_memtest_bad_size_kb);
-> +}
-> -- 
-> 2.41.0
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d6b82aac42a4..f059e7c30f90 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -23324,6 +23324,7 @@ F:	include/xen/arm/swiotlb-xen.h
+>  F:	include/xen/swiotlb-xen.h
 > 
-
--- 
-Sincerely yours,
-Mike.
+>  XFS FILESYSTEM
+> +M:	Chandan Babu R <chandan.babu@oracle.com>
+>  R:	Darrick J. Wong <djwong@kernel.org>
+>  L:	linux-xfs@vger.kernel.org
+>  S:	Supported
+> 
