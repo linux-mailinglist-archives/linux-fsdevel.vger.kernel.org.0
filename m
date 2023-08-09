@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D5886775D10
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 13:33:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 219EA775D72
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 13:37:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233983AbjHILdX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Aug 2023 07:33:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50356 "EHLO
+        id S234107AbjHILhi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Aug 2023 07:37:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233981AbjHILdW (ORCPT
+        with ESMTP id S234101AbjHILhh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Aug 2023 07:33:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B4A11BFA
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 04:33:22 -0700 (PDT)
+        Wed, 9 Aug 2023 07:37:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92C2EE3
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 04:37:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AE7466344C
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 11:33:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A8C1C433CD;
-        Wed,  9 Aug 2023 11:33:16 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3032263578
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 11:37:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A193DC433CC;
+        Wed,  9 Aug 2023 11:37:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691580801;
-        bh=yfN5UCZo6xbkux7scRdLuYalhIgfIZOnSdg2lgYlVKs=;
+        s=k20201202; t=1691581056;
+        bh=FJoooeg67aJXJ8sAVmKmUGj9XYVpvc9JajYCjM5Bi7g=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UW5KL+QFrtnkvTEnRq3MNUT85vxBYAsVOmDFPaUz0z7e6mFAcygcmNiGDigjKNb89
-         fI8O+hwThC5za2KQCAtVcrd68uSaWzOWzpXm3JWrcruSMnWZEDKrHWQbaHrzl77c4p
-         5ldtUWxROzt8zgJHTRmCcNu7RUmvYosyQNRmCk99y+q1bjSabBlX/cwHC5D7vuZknv
-         XAhJ9V3+Ko51vlft/dTJML08IUA3lWFYVBSHLYVmQIRnPB6TtLPIduA4L68IPQJ+S2
-         Z/75DwQx+rmR/sXdaN36mXniJUT+8KTpcqaM3dmJp7VBCZbFyqrpeOaJ1xclfX3Tj9
-         aeFpSFyKwJIyQ==
-Date:   Wed, 9 Aug 2023 13:33:14 +0200
+        b=nrzJgK9G81CHt7hGXMFo5ihY80acXwrKdKHgIKVPWAQbJjH468Az5Wnc6YkmJvfiW
+         PnbOBOfth+0IqNCdMzVP2PSa62X1vQWb3loqsYgkkNFMI/k/ucmeAC5BFMIAa5xZeP
+         V68HUgZR5F6Xxa59UXj/Bt2Z7/Z8bi3+svuDOToxUyy+WFRE8PYL/+BCd9z7AsuY30
+         vSZDM7R2rjgm1ohWWQtCRNfH4K/MysnbMUTbTuoVnxCTGFQrb2DbfCY0epFfM6gIuW
+         jS4Gox3BHI61SrCp8PHjUaSuDiSox1gc71h3tppcVJ+Rnhr5PsxxiPkFTQlu9ESj29
+         97nn65CCuUs8w==
+Date:   Wed, 9 Aug 2023 13:37:29 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     Hugh Dickins <hughd@google.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -51,40 +51,39 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Topi Miettinen <toiwoton@gmail.com>,
         Yu Kuai <yukuai3@huawei.com>, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH vfs.tmpfs 0/5] tmpfs: user xattrs and direct IO
-Message-ID: <20230809-leitgedanke-weltumsegelung-55042d9f7177@brauner>
+Subject: Re: [PATCH vfs.tmpfs 1/5] xattr: simple_xattr_set() return old_xattr
+ to be freed
+Message-ID: <20230809-freuden-genom-9a00d6e5158d@brauner>
 References: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com>
- <20230809-postkarten-zugute-3cde38456390@brauner>
+ <158c6585-2aa7-d4aa-90ff-f7c3f8fe407c@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230809-postkarten-zugute-3cde38456390@brauner>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <158c6585-2aa7-d4aa-90ff-f7c3f8fe407c@google.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 09, 2023 at 08:45:57AM +0200, Christian Brauner wrote:
-> On Tue, Aug 08, 2023 at 09:28:08PM -0700, Hugh Dickins wrote:
-> > This series enables and limits user extended attributes on tmpfs,
-> > and independently provides a trivial direct IO stub for tmpfs.
-> > 
-> > It is here based on the vfs.tmpfs branch in vfs.git in next-20230808
-> > but with a cherry-pick of v6.5-rc4's commit
-> > 253e5df8b8f0 ("tmpfs: fix Documentation of noswap and huge mount options")
-> > first: since the vfs.tmpfs branch is based on v6.5-rc1, but 3/5 in this
-> > series updates tmpfs.rst in a way which depends on that commit.
-> > 
-> > IIUC the right thing to do would be to cherry-pick 253e5df8b8f0 into
-> > vfs.tmpfs before applying this series.  I'm sorry that the series as
-> > posted does not apply cleanly to any known tree! but I think posting
-> > it against v6.5-rc5 or next-20230808 would be even less helpful.
+On Tue, Aug 08, 2023 at 09:30:59PM -0700, Hugh Dickins wrote:
+> tmpfs wants to support limited user extended attributes, but kernfs
+> (or cgroupfs, the only kernfs with KERNFS_ROOT_SUPPORT_USER_XATTR)
+> already supports user extended attributes through simple xattrs: but
+> limited by a policy (128KiB per inode) too liberal to be used on tmpfs.
 > 
-> No worries, I'll sort that out.
+> To allow a different limiting policy for tmpfs, without affecting the
+> policy for kernfs, change simple_xattr_set() to return the replaced or
+> removed xattr (if any), leaving the caller to update their accounting
+> then free the xattr (by simple_xattr_free(), renamed from the static
+> free_simple_xattr()).
+> 
+> Signed-off-by: Hugh Dickins <hughd@google.com>
+> ---
 
-So, I hemmed and hawed but decided to rebase vfs.tmpfs onto v6.5-rc4
-which includes that fix as cherry picking is odd.
+Seems good enough,
+Reviewed-by: Christian Brauner <brauner@kernel.org>
