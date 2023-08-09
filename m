@@ -2,52 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE4F47751D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 06:15:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDBF07751EB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 06:28:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229967AbjHIEPD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Aug 2023 00:15:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47868 "EHLO
+        id S229623AbjHIE2W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Aug 2023 00:28:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbjHIEPC (ORCPT
+        with ESMTP id S229590AbjHIE2V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Aug 2023 00:15:02 -0400
-Received: from mail-oi1-f205.google.com (mail-oi1-f205.google.com [209.85.167.205])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C522A19A1
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 21:15:01 -0700 (PDT)
-Received: by mail-oi1-f205.google.com with SMTP id 5614622812f47-3a5ad6088f8so11354742b6e.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Aug 2023 21:15:01 -0700 (PDT)
+        Wed, 9 Aug 2023 00:28:21 -0400
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FE5019A1
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 21:28:20 -0700 (PDT)
+Received: by mail-yb1-xb30.google.com with SMTP id 3f1490d57ef6-d07c535377fso6836160276.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Aug 2023 21:28:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1691555299; x=1692160099;
+        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LNX2gVTfjhVTAgrxowx/Ja6Ynr5BMCRl3aEeyLA/OyA=;
+        b=Lp5IxKL3QYN8alsy4CzPCKT8uDmwrXUjy4IjlkWKHsQwI2AgxbPfVYMFJrLzg0eaLn
+         2j7MUtFRjz6MVSIYk9zRHgl8UTP1ibj5IL+1MVpf3LVlJ9s9tCh1dF1wZxVgSge5tgR7
+         XU4uI+BdhotRicWNYP31bFkaVUGeOWjscPGqH6+YqhnhBSWEFrOg3/ociku8hPyXejnq
+         mEkQlFIJfiQ15uYTZNSjvWklnkDAeig9vP0CJ5DH5gFV7uyrlO++L0+wrqlhWPQ0QXM2
+         mD45hj/KDLX8tDEXT9ULdh6oSgJklKLlmek2eEupUUOXBHX1dlP0YlUSsXvsO2FmKfkD
+         afcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691554501; x=1692159301;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        d=1e100.net; s=20221208; t=1691555299; x=1692160099;
+        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FoC+ZHK/Ul0zUz/gPO+LgSvXGBeamDhZjMv6kjqJlv0=;
-        b=Wd7ejVhGS1OQZOyvlf5oyNERcP6GZcZWLcTZ8qKPUCDrvxUkhGuTE2nu8ytddFYtLY
-         mVbQsbLdFCg8mJKACWNa94duDBRbD6woO1u0QKTYrOj3unZnIEVm9DoNtcbtn5GDkNs1
-         1gN5D9UKShqShBakcZVRFcdbR5c8sHq2gD3Ldti7LosF+hK+4Yi4LRKFASqIxta65W93
-         iSQb5xu4M5NZS6Tag/ICoaQb+/7GhsZALmtpLA2gnrwaOwqUDRy67s14E3HYMHagZHNs
-         AJ/gOJZ7Ri4BZoiOv0AebG8xSfwLNEtvvGxcTvwNBGOakks+jvONyuryb8kU86dXcOf9
-         nzjQ==
-X-Gm-Message-State: AOJu0YwNwZaHD65UwqTfphjjQrqFhR8LZEdOagYhy3veKKI/Tc98hq3f
-        9j/KD6ftCdi9oScF/mzOUwoaW4wGbXETQwBp62dyqgyzTZZ4
-X-Google-Smtp-Source: AGHT+IE6SQO4Zp8MUQQnAcglW5Mq2oa+Ullg76DaCVffi2y85gWpT/v/GiHVg1+24DczZ8vpPW4iyIwgLsSUbKaq7ubMxnU8aQwm
+        bh=LNX2gVTfjhVTAgrxowx/Ja6Ynr5BMCRl3aEeyLA/OyA=;
+        b=NJs9Q69ktRdsyTzA8T8MPcH5liLg5T4n993IWV0RilZW/aCeZHbAI6P8Itg98FsQtz
+         eoEDm2ajBkUg5kVHknKqIPpd03psFejFA+u4QA46Vvi7CjCqHj597MloG05o63iQWVqC
+         53Qemk5QIEVtP/5VtvdEkIEPLDCHsLdcDG9J9xJdxxUrSFvlkLJfDcHm6cChi7Qq4rEU
+         h0LgBAILRVJAJDcOBCRCpuRzxLYoFl9bLamEpqobsd2ptd0ADdcowr7mqA8dTBuLXLYH
+         2q7/Ac7sRiIYzsO0Tul01asmoz5k61lykI4+naKYT4vZnd7OTvB1MTK4o15aDV4xZTYu
+         lzZg==
+X-Gm-Message-State: AOJu0YxRDaWvglWXxVzLZibfZkbqkEDdDTeiDn0/BlWQa6CaU/FpM22B
+        Gs1SXHwIrqSiW7wjy5X5i7JjSA==
+X-Google-Smtp-Source: AGHT+IGdENtZZLPLv1rOUsSWfPNXi+awN4YQgBXL+LsGL+tZPvcj5kvheolqqxPSLvIXTwHMcHAsWQ==
+X-Received: by 2002:a25:dfc1:0:b0:d47:d267:26d0 with SMTP id w184-20020a25dfc1000000b00d47d26726d0mr1531341ybg.38.1691555299507;
+        Tue, 08 Aug 2023 21:28:19 -0700 (PDT)
+Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id t5-20020a25c305000000b00c5ec980da48sm3192362ybf.9.2023.08.08.21.28.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Aug 2023 21:28:18 -0700 (PDT)
+Date:   Tue, 8 Aug 2023 21:28:08 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@ripple.attlocal.net
+To:     Christian Brauner <brauner@kernel.org>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oleksandr Tymoshenko <ovt@google.com>,
+        Carlos Maiolino <cem@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
+        Miklos Szeredi <miklos@szeredi.hu>, Daniel Xu <dxu@dxuuu.xyz>,
+        Chris Down <chris@chrisdown.name>, Tejun Heo <tj@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Pete Zaitcev <zaitcev@redhat.com>,
+        Helge Deller <deller@gmx.de>,
+        Topi Miettinen <toiwoton@gmail.com>,
+        Yu Kuai <yukuai3@huawei.com>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH vfs.tmpfs 0/5] tmpfs: user xattrs and direct IO
+Message-ID: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:1292:b0:3a7:4878:233d with SMTP id
- a18-20020a056808129200b003a74878233dmr1014400oiw.0.1691554501128; Tue, 08 Aug
- 2023 21:15:01 -0700 (PDT)
-Date:   Tue, 08 Aug 2023 21:15:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000287928060275b914@google.com>
-Subject: [syzbot] [btrfs?] kernel BUG in update_inline_extent_backref
-From:   syzbot <syzbot+c128866d4c63fd09a097@syzkaller.appspotmail.com>
-To:     clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,117 +82,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+This series enables and limits user extended attributes on tmpfs,
+and independently provides a trivial direct IO stub for tmpfs.
 
-syzbot found the following issue on:
+It is here based on the vfs.tmpfs branch in vfs.git in next-20230808
+but with a cherry-pick of v6.5-rc4's commit
+253e5df8b8f0 ("tmpfs: fix Documentation of noswap and huge mount options")
+first: since the vfs.tmpfs branch is based on v6.5-rc1, but 3/5 in this
+series updates tmpfs.rst in a way which depends on that commit.
 
-HEAD commit:    e6fda526d9db Merge tag 'arm64-fixes' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13056635a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1e3d5175079af5a4
-dashboard link: https://syzkaller.appspot.com/bug?extid=c128866d4c63fd09a097
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+IIUC the right thing to do would be to cherry-pick 253e5df8b8f0 into
+vfs.tmpfs before applying this series.  I'm sorry that the series as
+posted does not apply cleanly to any known tree! but I think posting
+it against v6.5-rc5 or next-20230808 would be even less helpful.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+There is one "conflict" between this series and the final next-20230808:
+Jeff Layton's vfs.ctime mods update a line of shmem_xattr_handler_set(),
+where neighbouring lines are modified by 1/5 and 3/5 here: easily
+resolved in the merge commit, I hope.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/97a696eca453/disk-e6fda526.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d4053dfcc8c4/vmlinux-e6fda526.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5e22f1544aca/bzImage-e6fda526.xz
+1/5 xattr: simple_xattr_set() return old_xattr to be freed
+2/5 tmpfs: track free_ispace instead of free_inodes
+3/5 tmpfs,xattr: enable limited user extended attributes
+4/5 tmpfs: trivial support for direct IO
+5/5 mm: invalidation check mapping before folio_contains
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c128866d4c63fd09a097@syzkaller.appspotmail.com
+ Documentation/filesystems/tmpfs.rst |   7 +-
+ fs/Kconfig                          |   4 +-
+ fs/kernfs/dir.c                     |   2 +-
+ fs/kernfs/inode.c                   |  46 +++++++----
+ fs/xattr.c                          |  79 +++++++++++-------
+ include/linux/shmem_fs.h            |   2 +-
+ include/linux/xattr.h               |  10 ++-
+ mm/shmem.c                          | 130 +++++++++++++++++++++++-------
+ mm/truncate.c                       |   4 +-
+ 9 files changed, 197 insertions(+), 87 deletions(-)
 
-   btrfs_ioctl_balance+0x496/0x7c0 fs/btrfs/ioctl.c:3604
-   vfs_ioctl fs/ioctl.c:51 [inline]
-   __do_sys_ioctl fs/ioctl.c:870 [inline]
-   __se_sys_ioctl+0xf8/0x170 fs/ioctl.c:856
-   do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-   do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
-   entry_SYSCALL_64_after_hwframe+0x63/0xcd
-------------[ cut here ]------------
-kernel BUG at fs/btrfs/extent-tree.c:1125!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 21577 Comm: syz-executor.3 Not tainted 6.5.0-rc4-syzkaller-00211-ge6fda526d9db #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2023
-RIP: 0010:update_inline_extent_backref+0x530/0x5d0 fs/btrfs/extent-tree.c:1125
-Code: a7 5d fe e9 9e fc ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 11 ff ff ff 48 89 df e8 6a a7 5d fe e9 04 ff ff ff e8 30 da 04 fe <0f> 0b e8 29 da 04 fe 4c 89 e7 e8 71 80 00 00 4c 89 e3 49 8d 7c 24
-RSP: 0018:ffffc9000bee6fc8 EFLAGS: 00010246
-RAX: ffffffff8386cd50 RBX: 0000000000000002 RCX: 0000000000040000
-RDX: ffffc900113d3000 RSI: 000000000003ffff RDI: 0000000000040000
-RBP: 00000000000000b2 R08: ffffffff8386cb53 R09: ffffffff8386ca4a
-R10: 0000000000000004 R11: ffff88803763bb80 R12: 00000000fffffffe
-R13: 0000000000000001 R14: ffff88801e544000 R15: 0000000000000f3e
-FS:  00007ffb6820e6c0(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8f6ded71e5 CR3: 000000003561e000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- remove_extent_backref fs/btrfs/extent-tree.c:1193 [inline]
- __btrfs_free_extent+0x1329/0x3250 fs/btrfs/extent-tree.c:3116
- run_delayed_data_ref fs/btrfs/extent-tree.c:1532 [inline]
- run_one_delayed_ref fs/btrfs/extent-tree.c:1706 [inline]
- btrfs_run_delayed_refs_for_head fs/btrfs/extent-tree.c:1948 [inline]
- __btrfs_run_delayed_refs+0x108d/0x3f90 fs/btrfs/extent-tree.c:2009
- btrfs_run_delayed_refs+0x140/0x480 fs/btrfs/extent-tree.c:2121
- btrfs_commit_transaction+0x495/0x2ff0 fs/btrfs/transaction.c:2163
- relocate_block_group+0xb7d/0xcd0 fs/btrfs/relocation.c:3763
- btrfs_relocate_block_group+0x7ab/0xd70 fs/btrfs/relocation.c:4087
- btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3283
- __btrfs_balance+0x1b06/0x2690 fs/btrfs/volumes.c:4018
- btrfs_balance+0xbd8/0x10d0 fs/btrfs/volumes.c:4395
- btrfs_ioctl_balance+0x496/0x7c0 fs/btrfs/ioctl.c:3604
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
- __se_sys_ioctl+0xf8/0x170 fs/ioctl.c:856
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7ffb6747cae9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffb6820e0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007ffb6759c1f0 RCX: 00007ffb6747cae9
-RDX: 00000000200003c0 RSI: 00000000c4009420 RDI: 0000000000000009
-RBP: 00007ffb674c847a R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000006e R14: 00007ffb6759c1f0 R15: 00007ffeafbe6508
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:update_inline_extent_backref+0x530/0x5d0 fs/btrfs/extent-tree.c:1125
-Code: a7 5d fe e9 9e fc ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 11 ff ff ff 48 89 df e8 6a a7 5d fe e9 04 ff ff ff e8 30 da 04 fe <0f> 0b e8 29 da 04 fe 4c 89 e7 e8 71 80 00 00 4c 89 e3 49 8d 7c 24
-RSP: 0018:ffffc9000bee6fc8 EFLAGS: 00010246
-RAX: ffffffff8386cd50 RBX: 0000000000000002 RCX: 0000000000040000
-RDX: ffffc900113d3000 RSI: 000000000003ffff RDI: 0000000000040000
-RBP: 00000000000000b2 R08: ffffffff8386cb53 R09: ffffffff8386ca4a
-R10: 0000000000000004 R11: ffff88803763bb80 R12: 00000000fffffffe
-R13: 0000000000000001 R14: ffff88801e544000 R15: 0000000000000f3e
-FS:  00007ffb6820e6c0(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8f6ded71e5 CR3: 000000003561e000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Hugh
