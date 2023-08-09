@@ -2,364 +2,248 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9094E7751F0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 06:31:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E343D7751F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 06:32:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229986AbjHIEbG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Aug 2023 00:31:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52198 "EHLO
+        id S230139AbjHIEbb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Aug 2023 00:31:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230100AbjHIEbF (ORCPT
+        with ESMTP id S230101AbjHIEb3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Aug 2023 00:31:05 -0400
-Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92B371BC3
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 21:31:03 -0700 (PDT)
-Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-5861116fd74so62361967b3.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Aug 2023 21:31:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1691555463; x=1692160263;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0QEq4BtWj7XF+SzsAQAvfuVLV+e829beqWHSxHJfrd4=;
-        b=HJptNXYyAYDNQBptp9KJN1ynN6d4xCu37HYicEN6u5bGotYv6/fxImpozw/WEF6Omm
-         XWZa6948pq1yCfnYIPHZt+ZWG2sDZc0Ek3Xbq0KkHEJlVzDyOWyGO8vqhhio9SGnt+Gy
-         kOUV4G21FiiPWrRBz6qOkWN/8WOKiZKJYBFV/QHl7tlDTu8sZGSQA/DMCaL8SEQ93aJE
-         uIpYmLvLAp3D+BDbdhvTkCuWCOAj3CaJr9KZksD2j4vtQiUBkOMnE2VLOA4pSN3BwmEi
-         ktY+0MhDjLeXRwsjx0AQKAbXt2oJQjNezKGDyUzB6awQdWLnvZ9a/RuBiLKePQBxQa0x
-         YziQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691555463; x=1692160263;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0QEq4BtWj7XF+SzsAQAvfuVLV+e829beqWHSxHJfrd4=;
-        b=CWoWK9H1yb0BPHfk8ezfoHJ6HF2WHPG1YzrLxJd3UuZv6ARc4VJ3/YGQIuM8ybdAlZ
-         O51R47mzJJq7NryLatEAzYM7qv9vwG6gQCq4DqNSOPcyMtv5tCmL8MPoeFmeBCEpcDC0
-         5gffjYbu0bYaBWb4IQyXq58ydYqi4By4/YTRivHWraFojhsAtyM2uBxEZ4pwPqDnU3t2
-         ZHVfgza2VmYQq0/JdyUgZTUFAZVRFmc+VE2DVfTfr9jSkmsHbqKkyIDpe45zfkWtzi7K
-         tgfjg0ZgmR8iAB//olJOZkSdZXKKFLwM7WY06Pg2eEnxx+W0fSniNAdIv9VfAAC7SOR4
-         yl5w==
-X-Gm-Message-State: AOJu0YyCAxBKq5yfTSt7WR1KJZ6RlUXi99hFr15f0Q1J3+X7Bex03A8w
-        QbQVuhTUpLO21rmlSOcbTPVBkA==
-X-Google-Smtp-Source: AGHT+IFC/9yEPmxQ2d3jqattfPdMdJ9f0tThZS9o2vogrFxNROEZWWPd9XKK26aiRb6Kf73SCBCPeA==
-X-Received: by 2002:a25:361d:0:b0:d06:d1ae:dcf2 with SMTP id d29-20020a25361d000000b00d06d1aedcf2mr1670959yba.13.1691555462645;
-        Tue, 08 Aug 2023 21:31:02 -0700 (PDT)
-Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id d130-20020a254f88000000b00d0b0bbe574asm3212321ybb.44.2023.08.08.21.31.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 21:31:02 -0700 (PDT)
-Date:   Tue, 8 Aug 2023 21:30:59 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@ripple.attlocal.net
-To:     Christian Brauner <brauner@kernel.org>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Oleksandr Tymoshenko <ovt@google.com>,
-        Carlos Maiolino <cem@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
-        Miklos Szeredi <miklos@szeredi.hu>, Daniel Xu <dxu@dxuuu.xyz>,
-        Chris Down <chris@chrisdown.name>, Tejun Heo <tj@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Pete Zaitcev <zaitcev@redhat.com>,
-        Helge Deller <deller@gmx.de>,
-        Topi Miettinen <toiwoton@gmail.com>,
-        Yu Kuai <yukuai3@huawei.com>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH vfs.tmpfs 1/5] xattr: simple_xattr_set() return old_xattr to
- be freed
-In-Reply-To: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com>
-Message-ID: <158c6585-2aa7-d4aa-90ff-f7c3f8fe407c@google.com>
-References: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com>
+        Wed, 9 Aug 2023 00:31:29 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D94A1BDA;
+        Tue,  8 Aug 2023 21:31:28 -0700 (PDT)
+Received: from [192.168.100.7] (unknown [59.103.218.230])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id A65296607193;
+        Wed,  9 Aug 2023 05:31:19 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1691555486;
+        bh=xGTOVBf346p5z7gNl1KYsQVdZ1a5kLLBqA30qKLUwLk=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=nCzWb4J3wzCCrxjFs9KzjZu7S+A0zBSNj0abZIZQiqxXmLJdf/8OYdTkD8AkSHq55
+         8YEL9f/3M1+EuVWhryjVnX/jKuTQlpudcZrrlS1+/oRx0HPQBNbKIDOva/d90sU/5Q
+         LqCI5WWJxwlA+lhzD04b7IPIETpF6et+ddKWYlW5TdxZiiveoHdDevHJ5gCNgL7E6Y
+         GBWr5AG3OcbOD7vJyYeJbJwqP9BgB6WjIvRJ8ZfYZ9hCpHjc7i9wvmePInqQvFOqgK
+         afBzw2NwqrvsYSRR3BGya817C3Pd5oShlxGV6GGOEe6WJ9yZ3mUdThWd7eOvDTZS1y
+         tGyyCHoAGs2Wg==
+Message-ID: <e2967189-84b1-6bcb-9d7f-4c528c06c4bc@collabora.com>
+Date:   Wed, 9 Aug 2023 09:31:14 +0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WC?= =?UTF-8?Q?aw?= 
+        <emmir@google.com>, Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Subject: Re: [PATCH v27 2/6] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+Content-Language: en-US
+To:     Andrei Vagin <avagin@gmail.com>
+References: <20230808104309.357852-1-usama.anjum@collabora.com>
+ <20230808104309.357852-3-usama.anjum@collabora.com>
+ <CANaxB-ww6AcO4QThubYw62Mdeid4e3FOQAXvA_GZ=wu4J60-AQ@mail.gmail.com>
+ <624cfa26-5650-ee0d-8e0a-1d844175bcaf@collabora.com>
+ <CANaxB-yhCcvc9W6POFR8SNjECeD_WNGidnuxXrHKT2if=CgyrA@mail.gmail.com>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <CANaxB-yhCcvc9W6POFR8SNjECeD_WNGidnuxXrHKT2if=CgyrA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-tmpfs wants to support limited user extended attributes, but kernfs
-(or cgroupfs, the only kernfs with KERNFS_ROOT_SUPPORT_USER_XATTR)
-already supports user extended attributes through simple xattrs: but
-limited by a policy (128KiB per inode) too liberal to be used on tmpfs.
+On 8/9/23 12:55 AM, Andrei Vagin wrote:
+> On Tue, Aug 8, 2023 at 12:35 PM Muhammad Usama Anjum
+> <usama.anjum@collabora.com> wrote:
+>>
+>> On 8/9/23 12:21 AM, Andrei Vagin wrote:
+>>> On Tue, Aug 8, 2023 at 3:43 AM Muhammad Usama Anjum
+>>> <usama.anjum@collabora.com> wrote:
+>>>
+>>> ....
+>>>
+>>>> +static int pagemap_scan_output(unsigned long categories,
+>>>> +                              struct pagemap_scan_private *p,
+>>>> +                              unsigned long addr, unsigned long *end)
+>>>> +{
+>>>> +       unsigned long n_pages, total_pages;
+>>>> +       int ret = 0;
+>>>> +
+>>>> +       if (!p->vec_buf)
+>>>> +               return 0;
+>>>> +
+>>>> +       categories &= p->arg.return_mask;
+>>>> +
+>>>> +       n_pages = (*end - addr) / PAGE_SIZE;
+>>>> +       if (check_add_overflow(p->found_pages, n_pages, &total_pages) || //TODO
+>>>
+>>> Need to fix this TODO.
+>> Sorry, I forgot to remove the "//TODO". As far as I've understood, the last
+>> discussion ended in keeping the check_add_overflow(). [1] I'll just remove
+>> the TODO.
+>>
+>> https://lore.kernel.org/all/CABb0KFEfmRz+Z_-7GygTL12E5Y254dvoUfWe4uSv9-wOx+Cs8w@mail.gmail.com
+>>
+>>
+>>>
+>>>> +           total_pages > p->arg.max_pages) {
+>>>> +               size_t n_too_much = total_pages - p->arg.max_pages;
+>>>> +               *end -= n_too_much * PAGE_SIZE;
+>>>> +               n_pages -= n_too_much;
+>>>> +               ret = -ENOSPC;
+>>>> +       }
+>>>> +
+>>>> +       if (!pagemap_scan_push_range(categories, p, addr, *end)) {
+>>>> +               *end = addr;
+>>>> +               n_pages = 0;
+>>>> +               ret = -ENOSPC;
+>>>> +       }
+>>>> +
+>>>> +       p->found_pages += n_pages;
+>>>> +       if (ret)
+>>>> +               p->walk_end_addr = *end;
+>>>> +
+>>>> +       return ret;
+>>>> +}
+>>>> +
+>>>
+>>> ...
+>>>
+>>>> +static long do_pagemap_scan(struct mm_struct *mm, unsigned long uarg)
+>>>> +{
+>>>> +       struct mmu_notifier_range range;
+>>>> +       struct pagemap_scan_private p;
+>>>> +       unsigned long walk_start;
+>>>> +       size_t n_ranges_out = 0;
+>>>> +       int ret;
+>>>> +
+>>>> +       memset(&p, 0, sizeof(p));
+>>>> +       ret = pagemap_scan_get_args(&p.arg, uarg);
+>>>> +       if (ret)
+>>>> +               return ret;
+>>>> +
+>>>> +       p.masks_of_interest = MASKS_OF_INTEREST(p.arg);
+>>>> +       ret = pagemap_scan_init_bounce_buffer(&p);
+>>>> +       if (ret)
+>>>> +               return ret;
+>>>> +
+>>>> +       /* Protection change for the range is going to happen. */
+>>>> +       if (p.arg.flags & PM_SCAN_WP_MATCHING) {
+>>>> +               mmu_notifier_range_init(&range, MMU_NOTIFY_PROTECTION_VMA, 0,
+>>>> +                                       mm, p.arg.start, p.arg.end);
+>>>> +               mmu_notifier_invalidate_range_start(&range);
+>>>> +       }
+>>>> +
+>>>> +       walk_start = p.arg.start;
+>>>> +       for (; walk_start < p.arg.end; walk_start = p.arg.walk_end) {
+>>>> +               int n_out;
+>>>> +
+>>>> +               if (fatal_signal_pending(current)) {
+>>>> +                       ret = -EINTR;
+>>>> +                       break;
+>>>> +               }
+>>>> +
+>>>> +               ret = mmap_read_lock_killable(mm);
+>>>> +               if (ret)
+>>>> +                       break;
+>>>> +               ret = walk_page_range(mm, walk_start, p.arg.end,
+>>>> +                                     &pagemap_scan_ops, &p);
+>>>> +               mmap_read_unlock(mm);
+>>>> +
+>>>> +               n_out = pagemap_scan_flush_buffer(&p);
+>>>> +               if (n_out < 0)
+>>>> +                       ret = n_out;
+>>>> +               else
+>>>> +                       n_ranges_out += n_out;
+>>>> +
+>>>> +               if (ret != -ENOSPC || p.arg.vec_len - 1 == 0 ||
+>>>> +                   p.found_pages == p.arg.max_pages) {
+>>>> +                       p.walk_end_addr = p.arg.end;
+>>>
+>>> You should not change p.walk_end_addr If ret is ENOSPC. Pls add a test
+>>> case to check this.
+>> Yeah, I'm not setting walk_end_addr if ret is ENOSPC.
+>>
+>> I'm setting walk_end_addr only when ret = 0. I'd added this as a result of
+>> a test case in my local test application. I can look at adding some tests
+>> in pagemap_ioctl.c kselftest as well.
+> 
+> I am not sure that I understand what you mean here. ENOSPC can be returned
+> when the vec array is full and in this case, walk_end_addr should be
+> the address when it stops scanning.
+I'll copy a test case in kselftest to prove or dis-prove the correctness of
+walk_end address.
 
-To allow a different limiting policy for tmpfs, without affecting the
-policy for kernfs, change simple_xattr_set() to return the replaced or
-removed xattr (if any), leaving the caller to update their accounting
-then free the xattr (by simple_xattr_free(), renamed from the static
-free_simple_xattr()).
+> 
+>>
+>>>
+>>>> +                       break;
+>>>> +               }
+>>>> +       }
+>>>> +
+>>>> +       if (p.cur_buf.start != p.cur_buf.end) {
+>>>> +               if (copy_to_user(p.vec_out, &p.cur_buf, sizeof(p.cur_buf)))
+>>>> +                       ret = -EFAULT;
+>>>> +               else
+>>>> +                       ++n_ranges_out;
+>>>> +       }
+>>>> +
+>>>> +       /* ENOSPC signifies early stop (buffer full) from the walk. */
+>>>> +       if (!ret || ret == -ENOSPC)
+>>>> +               ret = n_ranges_out;
+>>>> +
+>>>> +       p.arg.walk_end = p.walk_end_addr ? p.walk_end_addr : walk_start;
+>>>> +       if (pagemap_scan_writeback_args(&p.arg, uarg))
+>>>> +               ret = -EFAULT;
+>>>> +
+>>>> +       if (p.arg.flags & PM_SCAN_WP_MATCHING)
+>>>> +               mmu_notifier_invalidate_range_end(&range);
+>>>> +
+>>>> +       kfree(p.vec_buf);
+>>>> +       return ret;
+>>>> +}
+>>>
+>>> Thanks,
+>>> Andrei
+>>
+>> --
+>> BR,
+>> Muhammad Usama Anjum
 
-Signed-off-by: Hugh Dickins <hughd@google.com>
----
- fs/kernfs/inode.c     | 46 +++++++++++++++++++++++++---------------
- fs/xattr.c            | 51 +++++++++++++++++++--------------------------
- include/linux/xattr.h |  7 ++++---
- mm/shmem.c            | 10 +++++----
- 4 files changed, 61 insertions(+), 53 deletions(-)
-
-diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-index b22b74d1a115..fec5d5f78f07 100644
---- a/fs/kernfs/inode.c
-+++ b/fs/kernfs/inode.c
-@@ -306,11 +306,17 @@ int kernfs_xattr_get(struct kernfs_node *kn, const char *name,
- int kernfs_xattr_set(struct kernfs_node *kn, const char *name,
- 		     const void *value, size_t size, int flags)
- {
-+	struct simple_xattr *old_xattr;
- 	struct kernfs_iattrs *attrs = kernfs_iattrs(kn);
- 	if (!attrs)
- 		return -ENOMEM;
- 
--	return simple_xattr_set(&attrs->xattrs, name, value, size, flags, NULL);
-+	old_xattr = simple_xattr_set(&attrs->xattrs, name, value, size, flags);
-+	if (IS_ERR(old_xattr))
-+		return PTR_ERR(old_xattr);
-+
-+	simple_xattr_free(old_xattr);
-+	return 0;
- }
- 
- static int kernfs_vfs_xattr_get(const struct xattr_handler *handler,
-@@ -342,7 +348,7 @@ static int kernfs_vfs_user_xattr_add(struct kernfs_node *kn,
- {
- 	atomic_t *sz = &kn->iattr->user_xattr_size;
- 	atomic_t *nr = &kn->iattr->nr_user_xattrs;
--	ssize_t removed_size;
-+	struct simple_xattr *old_xattr;
- 	int ret;
- 
- 	if (atomic_inc_return(nr) > KERNFS_MAX_USER_XATTRS) {
-@@ -355,13 +361,18 @@ static int kernfs_vfs_user_xattr_add(struct kernfs_node *kn,
- 		goto dec_size_out;
- 	}
- 
--	ret = simple_xattr_set(xattrs, full_name, value, size, flags,
--			       &removed_size);
--
--	if (!ret && removed_size >= 0)
--		size = removed_size;
--	else if (!ret)
-+	old_xattr = simple_xattr_set(xattrs, full_name, value, size, flags);
-+	if (!old_xattr)
- 		return 0;
-+
-+	if (IS_ERR(old_xattr)) {
-+		ret = PTR_ERR(old_xattr);
-+		goto dec_size_out;
-+	}
-+
-+	ret = 0;
-+	size = old_xattr->size;
-+	simple_xattr_free(old_xattr);
- dec_size_out:
- 	atomic_sub(size, sz);
- dec_count_out:
-@@ -376,18 +387,19 @@ static int kernfs_vfs_user_xattr_rm(struct kernfs_node *kn,
- {
- 	atomic_t *sz = &kn->iattr->user_xattr_size;
- 	atomic_t *nr = &kn->iattr->nr_user_xattrs;
--	ssize_t removed_size;
--	int ret;
-+	struct simple_xattr *old_xattr;
- 
--	ret = simple_xattr_set(xattrs, full_name, value, size, flags,
--			       &removed_size);
-+	old_xattr = simple_xattr_set(xattrs, full_name, value, size, flags);
-+	if (!old_xattr)
-+		return 0;
- 
--	if (removed_size >= 0) {
--		atomic_sub(removed_size, sz);
--		atomic_dec(nr);
--	}
-+	if (IS_ERR(old_xattr))
-+		return PTR_ERR(old_xattr);
- 
--	return ret;
-+	atomic_sub(old_xattr->size, sz);
-+	atomic_dec(nr);
-+	simple_xattr_free(old_xattr);
-+	return 0;
- }
- 
- static int kernfs_vfs_user_xattr_set(const struct xattr_handler *handler,
-diff --git a/fs/xattr.c b/fs/xattr.c
-index e7bbb7f57557..ba37a8f5cfd1 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -1040,12 +1040,12 @@ const char *xattr_full_name(const struct xattr_handler *handler,
- EXPORT_SYMBOL(xattr_full_name);
- 
- /**
-- * free_simple_xattr - free an xattr object
-+ * simple_xattr_free - free an xattr object
-  * @xattr: the xattr object
-  *
-  * Free the xattr object. Can handle @xattr being NULL.
-  */
--static inline void free_simple_xattr(struct simple_xattr *xattr)
-+void simple_xattr_free(struct simple_xattr *xattr)
- {
- 	if (xattr)
- 		kfree(xattr->name);
-@@ -1164,7 +1164,6 @@ int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
-  * @value: the value to store along the xattr
-  * @size: the size of @value
-  * @flags: the flags determining how to set the xattr
-- * @removed_size: the size of the removed xattr
-  *
-  * Set a new xattr object.
-  * If @value is passed a new xattr object will be allocated. If XATTR_REPLACE
-@@ -1181,29 +1180,27 @@ int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
-  * nothing if XATTR_CREATE is specified in @flags or @flags is zero. For
-  * XATTR_REPLACE we fail as mentioned above.
-  *
-- * Return: On success zero and on error a negative error code is returned.
-+ * Return: On success, the removed or replaced xattr is returned, to be freed
-+ * by the caller; or NULL if none. On failure a negative error code is returned.
-  */
--int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
--		     const void *value, size_t size, int flags,
--		     ssize_t *removed_size)
-+struct simple_xattr *simple_xattr_set(struct simple_xattrs *xattrs,
-+				      const char *name, const void *value,
-+				      size_t size, int flags)
- {
--	struct simple_xattr *xattr = NULL, *new_xattr = NULL;
-+	struct simple_xattr *old_xattr = NULL, *new_xattr = NULL;
- 	struct rb_node *parent = NULL, **rbp;
- 	int err = 0, ret;
- 
--	if (removed_size)
--		*removed_size = -1;
--
- 	/* value == NULL means remove */
- 	if (value) {
- 		new_xattr = simple_xattr_alloc(value, size);
- 		if (!new_xattr)
--			return -ENOMEM;
-+			return ERR_PTR(-ENOMEM);
- 
- 		new_xattr->name = kstrdup(name, GFP_KERNEL);
- 		if (!new_xattr->name) {
--			free_simple_xattr(new_xattr);
--			return -ENOMEM;
-+			simple_xattr_free(new_xattr);
-+			return ERR_PTR(-ENOMEM);
- 		}
- 	}
- 
-@@ -1217,12 +1214,12 @@ int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
- 		else if (ret > 0)
- 			rbp = &(*rbp)->rb_right;
- 		else
--			xattr = rb_entry(*rbp, struct simple_xattr, rb_node);
--		if (xattr)
-+			old_xattr = rb_entry(*rbp, struct simple_xattr, rb_node);
-+		if (old_xattr)
- 			break;
- 	}
- 
--	if (xattr) {
-+	if (old_xattr) {
- 		/* Fail if XATTR_CREATE is requested and the xattr exists. */
- 		if (flags & XATTR_CREATE) {
- 			err = -EEXIST;
-@@ -1230,12 +1227,10 @@ int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
- 		}
- 
- 		if (new_xattr)
--			rb_replace_node(&xattr->rb_node, &new_xattr->rb_node,
--					&xattrs->rb_root);
-+			rb_replace_node(&old_xattr->rb_node,
-+					&new_xattr->rb_node, &xattrs->rb_root);
- 		else
--			rb_erase(&xattr->rb_node, &xattrs->rb_root);
--		if (!err && removed_size)
--			*removed_size = xattr->size;
-+			rb_erase(&old_xattr->rb_node, &xattrs->rb_root);
- 	} else {
- 		/* Fail if XATTR_REPLACE is requested but no xattr is found. */
- 		if (flags & XATTR_REPLACE) {
-@@ -1260,12 +1255,10 @@ int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
- 
- out_unlock:
- 	write_unlock(&xattrs->lock);
--	if (err)
--		free_simple_xattr(new_xattr);
--	else
--		free_simple_xattr(xattr);
--	return err;
--
-+	if (!err)
-+		return old_xattr;
-+	simple_xattr_free(new_xattr);
-+	return ERR_PTR(err);
- }
- 
- static bool xattr_is_trusted(const char *name)
-@@ -1386,7 +1379,7 @@ void simple_xattrs_free(struct simple_xattrs *xattrs)
- 		rbp_next = rb_next(rbp);
- 		xattr = rb_entry(rbp, struct simple_xattr, rb_node);
- 		rb_erase(&xattr->rb_node, &xattrs->rb_root);
--		free_simple_xattr(xattr);
-+		simple_xattr_free(xattr);
- 		rbp = rbp_next;
- 	}
- }
-diff --git a/include/linux/xattr.h b/include/linux/xattr.h
-index d591ef59aa98..e37fe667ae04 100644
---- a/include/linux/xattr.h
-+++ b/include/linux/xattr.h
-@@ -116,11 +116,12 @@ struct simple_xattr {
- void simple_xattrs_init(struct simple_xattrs *xattrs);
- void simple_xattrs_free(struct simple_xattrs *xattrs);
- struct simple_xattr *simple_xattr_alloc(const void *value, size_t size);
-+void simple_xattr_free(struct simple_xattr *xattr);
- int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
- 		     void *buffer, size_t size);
--int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
--		     const void *value, size_t size, int flags,
--		     ssize_t *removed_size);
-+struct simple_xattr *simple_xattr_set(struct simple_xattrs *xattrs,
-+				      const char *name, const void *value,
-+				      size_t size, int flags);
- ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
- 			  char *buffer, size_t size);
- void simple_xattr_add(struct simple_xattrs *xattrs,
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 0f83d86fd8b4..df3cabf54206 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3595,15 +3595,17 @@ static int shmem_xattr_handler_set(const struct xattr_handler *handler,
- 				   size_t size, int flags)
- {
- 	struct shmem_inode_info *info = SHMEM_I(inode);
--	int err;
-+	struct simple_xattr *old_xattr;
- 
- 	name = xattr_full_name(handler, name);
--	err = simple_xattr_set(&info->xattrs, name, value, size, flags, NULL);
--	if (!err) {
-+	old_xattr = simple_xattr_set(&info->xattrs, name, value, size, flags);
-+	if (!IS_ERR(old_xattr)) {
-+		simple_xattr_free(old_xattr);
-+		old_xattr = NULL;
- 		inode->i_ctime = current_time(inode);
- 		inode_inc_iversion(inode);
- 	}
--	return err;
-+	return PTR_ERR(old_xattr);
- }
- 
- static const struct xattr_handler shmem_security_xattr_handler = {
 -- 
-2.35.3
-
+BR,
+Muhammad Usama Anjum
