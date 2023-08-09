@@ -2,70 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA6377562A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 11:11:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEC99775640
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 11:21:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231543AbjHIJLx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Aug 2023 05:11:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42118 "EHLO
+        id S231256AbjHIJVN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Aug 2023 05:21:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229592AbjHIJLw (ORCPT
+        with ESMTP id S229963AbjHIJVM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Aug 2023 05:11:52 -0400
-Received: from mail-oo1-xc2a.google.com (mail-oo1-xc2a.google.com [IPv6:2607:f8b0:4864:20::c2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CF981FCE;
-        Wed,  9 Aug 2023 02:11:51 -0700 (PDT)
-Received: by mail-oo1-xc2a.google.com with SMTP id 006d021491bc7-56c711a88e8so4462981eaf.2;
-        Wed, 09 Aug 2023 02:11:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691572311; x=1692177111;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=95b0g0kQ/kMh+tBO2T92o5rrBTjwtyERuJc6qJBCnQM=;
-        b=ahA3fta79K1lED+E4D8vrc/b9MyPv4KQmnxXjKknfBtas1D1OXW48Tca+A8ieiXNDY
-         usNfiF8+74jrvXXO6puw7VPlmAV4AuSi8EoYlJxQHTiKeZ18qQ7BqH9bfGggBs0yTTXo
-         sFS05h9iPOHgYyvMCmTbEWzh3zMZ0SAiEEOZEAYBp+8vca/6hn7pgsulRvdMRUb50zUw
-         0/Zp23g7vY2Cj9vzakF6/BnXEdiuyjdEFQ1T+PpXpyjiXaR1t3Zz5feZdQyh+uOikd/5
-         ar7JaCmZFAJXrTfjOYi9U2jtVnruGJNi4X1gF16Pbp8aSCTEKxEUXvdQdRRUplkhLMeG
-         EwcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691572311; x=1692177111;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=95b0g0kQ/kMh+tBO2T92o5rrBTjwtyERuJc6qJBCnQM=;
-        b=ZepB7MfSBPMA9L8O0xbSvcxto+B5mKIiaqd/RcP+VhLXvXf3dhVey7LL/lunE0LkAl
-         oWYNBloyGlSog1PPDE+4UYHf9brISiHzBlw9NLY9kZ/ua5W+Weh4yCRUVbn6DGQfddWy
-         kNAtfFPiUW0996ItX5/XPLy9zOu5OWjjL8++L+NRhcT5P9y+w8VgCXlidEaprlt2/K2Z
-         3z/BMlC0OyOq3fb1Kw8HdavH5gTv9bhMdo1J8wobDrQqXnzHz5Gh+ml3A8pEt2p3WErj
-         pVIIGPkx1haDn8lp46BXNNKw0wpEV19f7GWrPGjAPRuk03OfzlGAwbJEI3hEdEuVUHz8
-         SwBQ==
-X-Gm-Message-State: AOJu0YxOIapSAMJRqTry1LX7to67OC4qtQucjJG+W9DbdkHcHnDyC0b4
-        gy+fwltLcGjwVOhsOj+HifWMHuKht5PpkfneHc7KKbkSwx4=
-X-Google-Smtp-Source: AGHT+IHaBM7G8aIFg9fxaN5s/odXkiFXeWtEKvsK8sSmSQBrTTLYQ2tVfdnmTGD6rvljhCm0D6LxG+UwuSOx72KG9Fs=
-X-Received: by 2002:a4a:270e:0:b0:56c:c38a:c9cb with SMTP id
- l14-20020a4a270e000000b0056cc38ac9cbmr2225969oof.4.1691572310608; Wed, 09 Aug
- 2023 02:11:50 -0700 (PDT)
+        Wed, 9 Aug 2023 05:21:12 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57E671FD5
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 02:21:07 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id CA0662184F;
+        Wed,  9 Aug 2023 09:21:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1691572865; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sa/Ur4Xvab0nuX/5llhwwRSNuVsSYXGazw2MR1iK1sg=;
+        b=gPn+0eHIR3aHvDBuhDFyupFCpo4iecxgslyfGtGaqwipUT8GwGxqlefNMvVW7GmxA6GebR
+        XIayPflXzfVmKgRyX+hqg2xheJTQNe3JES4cjHythwT/ZJCGxpuOAoYPyr583uyOGGufh3
+        OoJKoNL6vf7KLXKVqaRq+ra5BziLl5o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1691572865;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sa/Ur4Xvab0nuX/5llhwwRSNuVsSYXGazw2MR1iK1sg=;
+        b=cTmN2Y4EQpWzAkVq61Jzr1Dh27eDAVl/eU1XLLtdn0n7PX2VfaVCRlLL9BE7cAXz/s4RnS
+        aGQKounQCioLU4Bw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7A6D7133B5;
+        Wed,  9 Aug 2023 09:21:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id SyvaHYFa02R9DgAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 09 Aug 2023 09:21:05 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id A4916A0769; Wed,  9 Aug 2023 11:21:04 +0200 (CEST)
+Date:   Wed, 9 Aug 2023 11:21:04 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleksandr Tymoshenko <ovt@google.com>,
+        Carlos Maiolino <cem@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
+        Miklos Szeredi <miklos@szeredi.hu>, Daniel Xu <dxu@dxuuu.xyz>,
+        Chris Down <chris@chrisdown.name>, Tejun Heo <tj@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Pete Zaitcev <zaitcev@redhat.com>,
+        Helge Deller <deller@gmx.de>,
+        Topi Miettinen <toiwoton@gmail.com>,
+        Yu Kuai <yukuai3@huawei.com>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH vfs.tmpfs 1/5] xattr: simple_xattr_set() return old_xattr
+ to be freed
+Message-ID: <20230809092104.paz5wu5m5b6blndo@quack3>
+References: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com>
+ <158c6585-2aa7-d4aa-90ff-f7c3f8fe407c@google.com>
 MIME-Version: 1.0
-Received: by 2002:a8a:129a:0:b0:4f0:1250:dd51 with HTTP; Wed, 9 Aug 2023
- 02:11:50 -0700 (PDT)
-In-Reply-To: <ZNL6MRbWWnleybR3@dread.disaster.area>
-References: <CAGudoHF_Y0shcU+AMRRdN5RQgs9L_HHvBH8D4K=7_0X72kYy2g@mail.gmail.com>
- <ZNLMpgrCOQXFQnDk@dread.disaster.area> <CAGudoHG0Rp2Ku1mRRQnksDZFemUBzfhwyK3LJidEFgvmUfsfsQ@mail.gmail.com>
- <ZNL6MRbWWnleybR3@dread.disaster.area>
-From:   Mateusz Guzik <mjguzik@gmail.com>
-Date:   Wed, 9 Aug 2023 11:11:50 +0200
-Message-ID: <CAGudoHHyZn6Gsd8MDwFkxBKdAyhSztmEJXz=9zse2EoM0CNPrQ@mail.gmail.com>
-Subject: Re: new_inode_pseudo vs locked inode->i_state = 0
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <158c6585-2aa7-d4aa-90ff-f7c3f8fe407c@google.com>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_SOFTFAIL,URIBL_BLOCKED autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,278 +87,292 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/9/23, Dave Chinner <david@fromorbit.com> wrote:
-> On Wed, Aug 09, 2023 at 02:23:59AM +0200, Mateusz Guzik wrote:
->> On 8/9/23, Dave Chinner <david@fromorbit.com> wrote:
->> > On Tue, Aug 08, 2023 at 06:05:33PM +0200, Mateusz Guzik wrote:
->> >> Hello,
->> >>
->> >> new_inode_pseudo is:
->> >>         struct inode *inode = alloc_inode(sb);
->> >>
->> >> 	if (inode) {
->> >> 		spin_lock(&inode->i_lock);
->> >> 		inode->i_state = 0;
->> >> 		spin_unlock(&inode->i_lock);
->> >> 	}
->> >>
->> >> I'm trying to understand:
->> >> 1. why is it zeroing i_state (as opposed to have it happen in
->> >> inode_init_always)
->> >> 2. why is zeroing taking place with i_lock held
->> >>
->> >> The inode is freshly allocated, not yet added to the hash -- I would
->> >> expect that nobody else can see it.
->> >
->> > Maybe not at this point, but as soon as the function returns with
->> > the new inode, it could be published in some list that can be
->> > accessed concurrently and then the i_state visible on other CPUs
->> > better be correct.
->> >
->> > I'll come back to this, because the answer lies in this code:
->> >
->> >> Moreover, another consumer of alloc_inode zeroes without bothering to
->> >> lock -- see iget5_locked:
->> >> [snip]
->> >> 	struct inode *new = alloc_inode(sb);
->> >>
->> >> 		if (new) {
->> >> 			new->i_state = 0;
->> >> [/snip]
->> >
->> > Yes, that one is fine because the inode has not been published yet.
->> > The actual i_state serialisation needed to publish the inode happens
->> > in the function called in the very next line - inode_insert5().
->> >
->> > That does:
->> >
->> > 	spin_lock(&inode_hash_lock);
->> >
->> > 	.....
->> >         /*
->> >          * Return the locked inode with I_NEW set, the
->> >          * caller is responsible for filling in the contents
->> >          */
->> >         spin_lock(&inode->i_lock);
->> >         inode->i_state |= I_NEW;
->> >         hlist_add_head_rcu(&inode->i_hash, head);
->> >         spin_unlock(&inode->i_lock);
->> > 	.....
->> >
->> > 	spin_unlock(&inode_hash_lock);
->> >
->> > The i_lock is held across the inode state initialisation and hash
->> > list insert so that if anything finds the inode in the hash
->> > immediately after insert, they should set an initialised value.
->> >
->> > Don't be fooled by the inode_hash_lock here. We have
->> > find_inode_rcu() which walks hash lists without holding the hash
->> > lock, hence if anything needs to do a state check on the found
->> > inode, they are guaranteed to see I_NEW after grabbing the i_lock....
->> >
->> > Further, inode_insert5() adds the inode to the superblock inode
->> > list, which means concurrent sb inode list walkers can also see this
->> > inode whilst the inode_hash_lock is still held by inode_insert5().
->> > Those inode list walkers *must* see I_NEW at this point, and they
->> > are guaranteed to do so by taking i_lock before checking i_state....
->> >
->> > IOWs, the initialisation of inode->i_state for normal inodes must be
->> > done under i_lock so that lookups that occur after hash/sb list
->> > insert are guaranteed to see the correct value.
->> >
->> > If we now go back to new_inode_pseudo(), we see one of the callers
->> > is new_inode(), and it does this:
->> >
->> > struct inode *new_inode(struct super_block *sb)
->> > {
->> >         struct inode *inode;
->> >
->> >         spin_lock_prefetch(&sb->s_inode_list_lock);
->> >
->> >         inode = new_inode_pseudo(sb);
->> >         if (inode)
->> >                 inode_sb_list_add(inode);
->> >         return inode;
->> > }
->> >
->> > IOWs, the inode is immediately published on the superblock inode
->> > list, and so inode list walkers can see it immediately. As per
->> > inode_insert5(), this requires the inode state to be fully
->> > initialised and memory barriers in place such that any walker will
->> > see the correct value of i_state. The simplest, safest way to do
->> > this is to initialise i_state under the i_lock....
->> >
->>
->> Thanks for the detailed answer, I do think you have a valid point but
->> I don't think it works with the given example. ;)
->>
->> inode_sb_list_add is:
->>         spin_lock(&inode->i_sb->s_inode_list_lock);
->>         list_add(&inode->i_sb_list, &inode->i_sb->s_inodes);
->>         spin_unlock(&inode->i_sb->s_inode_list_lock);
->>
->> ... thus i_state is published by the time it unlocks.
->>
->> According to my grep all iterations over the list hold the
->> s_inode_list_lock, thus they are guaranteed to see the update, making
->> the release fence in new_inode_pseudo redundant for this case.
->
-> I don't believe that is the case - the i_state modification is not
-> within the critical region the s_inode_list_lock covers, nor is the
-> cacheline i_state lies on referenced within the critical section.
-> Hence there is no explicit ordering dependency created by
-> inode_sb_list_add on the value of i_state.
->
-> Your argument seems to be that we can rely on the side effect of
-> some unrelated lock to provide ordered memory access - that's just
-> really poor locking design and will result in unmaintainable code
-> that gets broken without realising in the future.
->
+On Tue 08-08-23 21:30:59, Hugh Dickins wrote:
+> tmpfs wants to support limited user extended attributes, but kernfs
+> (or cgroupfs, the only kernfs with KERNFS_ROOT_SUPPORT_USER_XATTR)
+> already supports user extended attributes through simple xattrs: but
+> limited by a policy (128KiB per inode) too liberal to be used on tmpfs.
+> 
+> To allow a different limiting policy for tmpfs, without affecting the
+> policy for kernfs, change simple_xattr_set() to return the replaced or
+> removed xattr (if any), leaving the caller to update their accounting
+> then free the xattr (by simple_xattr_free(), renamed from the static
+> free_simple_xattr()).
+> 
+> Signed-off-by: Hugh Dickins <hughd@google.com>
 
-In that spirit, *normally* when you add an object to some
-list/whatever, there are probably other changes you made past i_state
-= 0 (i.e. another fence is ultimately needed just before insertion).
+Looks good to me. Feel free to add:
 
-Least error prone approach as far as I'm concerned would make sure the
-inserting routine issues relevant fences -- that way consumers which
-sneak in some updates prior to calling it are still covered just fine
-and so happens the sb list iteration *is* covered in this manner. But
-I guess that's not the expected way here.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-I feel compelled to note that not issuing the fence in iget5_locked
-and instead relying on hash insertion to sort it out is implementing
-this approach, albeit internally it is explicitly done with i_lock.
+								Honza
 
-> That's why the spin lock. It's *obviously correct*, and it doesn't
-> require any of the other code that checks i_state to have to care
-> about any lock or memory barrier mechanism other than taking
-> i_lock...
->
-
-It is obvious not *wrong* to do in sense of not breaking code, just
-deeply confusing for the reader -- I don't know about you, if I see a
-lock taken and released for what should be an object invisible to
-other threads, immediately the question pops up if the inode *is* in
-fact visible somewhere. Making sure i_state update is published by
-starting with acquiring the lock on freshly allocated inode is not
-something I thought of.
-
->> With this in mind I'm assuming the fence was there as a safety
->> measure, for consumers which would maybe need it.
->>
->> Then the code can:
->>         struct inode *inode = alloc_inode(sb);
->>
->>         if (inode) {
->>                 inode->i_state = 0;
->>                 /* make sure i_state update will be visible before we
->> insert
->>                  * the inode anywhere */
->>                 smp_wmb();
->>         }
->
-> AFAIA, that doesn't work by itself without a matching smp_rmb()
-> prior to the i_state reader - memory barriers need to be paired for
-> ordering to be valid. Hence this also seems to assume that we can
-> rely on some other unrelated lock pairing to actually order memory
-> accesses to i_state....
->
-
-It has to be either smp_rmb or a consume barrier.
-
-Spelling it out instead of having it implicitly done through
-spin_unlock points out that it is redundant for the new_inode vs sb
-allocation case, people just don't have strong reaction to plain
-lock/unlock trips, whereas they get very worried about any explicitly
-mentioned barriers (most justified for the latter, but they also
-should be this way for the former).
-
->> Upshots:
->> - replaces 2 atomics with a mere release fence, which is way cheaper
->> to do everywhere and virtually free on x86-64
->> - people reading the code don't wonder who on earth are we locking
->> against
->
-> Downsides:
-> - memory barriers are hard to get right,
-> - nobody will be able to look at the code and say "this is obviously
->   correct".
-> - random unpaired memory barriers in code end up making it
->   unmaintainable.
-> - impossible to test for correctness
->
-[snip]
->> I am however going to /strongly suggest/ that a comment explaining
->> what's going on is added there, if the current state is to remain.
->
-> If you really think that improves the code, send a patch....
->
->> As far as I'm concerned *locking* when a mere smp_wmb would sufficne
->> is heavily misleading and should be whacked if only for that reason.
->
-> If it ain't broke, don't fix it.
->
-> The code we have now is widely used (there are over a hundred
-> callers of new_inode()) and we know it works correctly. Nobody is
-> complaining that it is too slow, and generally speaking the overhead
-> of this lock traversal is lost in the noise of all the other
-> operations needed to be performed to initialise a new inode.
->
-
-Maybe you have been around this code too long to see an outsider
-perspective or maybe I did not do a good job spelling it out.
-
-I'm not complaining about speed, I'm complaining that a standalone
-lock trip there is *confusing*, especially when another consumer in
-the same file does not do it and filesystems have *custom* allocation
-routines -- is the inode visible to other threads?
-
-I also noted the reasoning you initially gave is trivially satisified
-with smp_wmb, but I'm definitely not going to push for it.
-
-However, after more poking around, what I think what you were trying
-to say is that whatever inode lookups/traversal always take the inode
-lock to inspect i_state, thus zeroing enclosed by it makes it easier
-to reason about it (but if that's the case why is iget5_locked
-standing out and you seem fine with it?). Now that I justification I
-can understand at least.
-
-All that said, how about this (modulo wording):
-diff --git a/fs/inode.c b/fs/inode.c
-index 8fefb69e1f84..977e72942706 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1018,6 +1018,13 @@ struct inode *new_inode_pseudo(struct super_block *sb)
-        struct inode *inode = alloc_inode(sb);
-
-        if (inode) {
-+               /*
-+                * Make sure i_state update is visible before this inode gets
-+                * inserted anywhere.
-+                *
-+                * Safe way for consumers to inspect the field is with i_lock
-+                * held, match this for simplicity.
-+                */
-                spin_lock(&inode->i_lock);
-                inode->i_state = 0;
-                spin_unlock(&inode->i_lock);
-@@ -1285,6 +1292,11 @@ struct inode *iget5_locked(struct super_block
-*sb, unsigned long hashval,
-                struct inode *new = alloc_inode(sb);
-
-                if (new) {
-+                       /*
-+                        * new_inode_pseudo takes a lock to zero i_state, here
-+                        * we safely skip it because hash insertion will take
-+                        * care of it
-+                        */
-                        new->i_state = 0;
-                        inode = inode_insert5(new, hashval, test, set, data);
-                        if (unlikely(inode != new))
-
-
-or patch iget5_locked to use new_inode_pseudo, but then I don't want
-to be on a lookout for someone's microbench changing
-
+> ---
+>  fs/kernfs/inode.c     | 46 +++++++++++++++++++++++++---------------
+>  fs/xattr.c            | 51 +++++++++++++++++++--------------------------
+>  include/linux/xattr.h |  7 ++++---
+>  mm/shmem.c            | 10 +++++----
+>  4 files changed, 61 insertions(+), 53 deletions(-)
+> 
+> diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
+> index b22b74d1a115..fec5d5f78f07 100644
+> --- a/fs/kernfs/inode.c
+> +++ b/fs/kernfs/inode.c
+> @@ -306,11 +306,17 @@ int kernfs_xattr_get(struct kernfs_node *kn, const char *name,
+>  int kernfs_xattr_set(struct kernfs_node *kn, const char *name,
+>  		     const void *value, size_t size, int flags)
+>  {
+> +	struct simple_xattr *old_xattr;
+>  	struct kernfs_iattrs *attrs = kernfs_iattrs(kn);
+>  	if (!attrs)
+>  		return -ENOMEM;
+>  
+> -	return simple_xattr_set(&attrs->xattrs, name, value, size, flags, NULL);
+> +	old_xattr = simple_xattr_set(&attrs->xattrs, name, value, size, flags);
+> +	if (IS_ERR(old_xattr))
+> +		return PTR_ERR(old_xattr);
+> +
+> +	simple_xattr_free(old_xattr);
+> +	return 0;
+>  }
+>  
+>  static int kernfs_vfs_xattr_get(const struct xattr_handler *handler,
+> @@ -342,7 +348,7 @@ static int kernfs_vfs_user_xattr_add(struct kernfs_node *kn,
+>  {
+>  	atomic_t *sz = &kn->iattr->user_xattr_size;
+>  	atomic_t *nr = &kn->iattr->nr_user_xattrs;
+> -	ssize_t removed_size;
+> +	struct simple_xattr *old_xattr;
+>  	int ret;
+>  
+>  	if (atomic_inc_return(nr) > KERNFS_MAX_USER_XATTRS) {
+> @@ -355,13 +361,18 @@ static int kernfs_vfs_user_xattr_add(struct kernfs_node *kn,
+>  		goto dec_size_out;
+>  	}
+>  
+> -	ret = simple_xattr_set(xattrs, full_name, value, size, flags,
+> -			       &removed_size);
+> -
+> -	if (!ret && removed_size >= 0)
+> -		size = removed_size;
+> -	else if (!ret)
+> +	old_xattr = simple_xattr_set(xattrs, full_name, value, size, flags);
+> +	if (!old_xattr)
+>  		return 0;
+> +
+> +	if (IS_ERR(old_xattr)) {
+> +		ret = PTR_ERR(old_xattr);
+> +		goto dec_size_out;
+> +	}
+> +
+> +	ret = 0;
+> +	size = old_xattr->size;
+> +	simple_xattr_free(old_xattr);
+>  dec_size_out:
+>  	atomic_sub(size, sz);
+>  dec_count_out:
+> @@ -376,18 +387,19 @@ static int kernfs_vfs_user_xattr_rm(struct kernfs_node *kn,
+>  {
+>  	atomic_t *sz = &kn->iattr->user_xattr_size;
+>  	atomic_t *nr = &kn->iattr->nr_user_xattrs;
+> -	ssize_t removed_size;
+> -	int ret;
+> +	struct simple_xattr *old_xattr;
+>  
+> -	ret = simple_xattr_set(xattrs, full_name, value, size, flags,
+> -			       &removed_size);
+> +	old_xattr = simple_xattr_set(xattrs, full_name, value, size, flags);
+> +	if (!old_xattr)
+> +		return 0;
+>  
+> -	if (removed_size >= 0) {
+> -		atomic_sub(removed_size, sz);
+> -		atomic_dec(nr);
+> -	}
+> +	if (IS_ERR(old_xattr))
+> +		return PTR_ERR(old_xattr);
+>  
+> -	return ret;
+> +	atomic_sub(old_xattr->size, sz);
+> +	atomic_dec(nr);
+> +	simple_xattr_free(old_xattr);
+> +	return 0;
+>  }
+>  
+>  static int kernfs_vfs_user_xattr_set(const struct xattr_handler *handler,
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index e7bbb7f57557..ba37a8f5cfd1 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -1040,12 +1040,12 @@ const char *xattr_full_name(const struct xattr_handler *handler,
+>  EXPORT_SYMBOL(xattr_full_name);
+>  
+>  /**
+> - * free_simple_xattr - free an xattr object
+> + * simple_xattr_free - free an xattr object
+>   * @xattr: the xattr object
+>   *
+>   * Free the xattr object. Can handle @xattr being NULL.
+>   */
+> -static inline void free_simple_xattr(struct simple_xattr *xattr)
+> +void simple_xattr_free(struct simple_xattr *xattr)
+>  {
+>  	if (xattr)
+>  		kfree(xattr->name);
+> @@ -1164,7 +1164,6 @@ int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
+>   * @value: the value to store along the xattr
+>   * @size: the size of @value
+>   * @flags: the flags determining how to set the xattr
+> - * @removed_size: the size of the removed xattr
+>   *
+>   * Set a new xattr object.
+>   * If @value is passed a new xattr object will be allocated. If XATTR_REPLACE
+> @@ -1181,29 +1180,27 @@ int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
+>   * nothing if XATTR_CREATE is specified in @flags or @flags is zero. For
+>   * XATTR_REPLACE we fail as mentioned above.
+>   *
+> - * Return: On success zero and on error a negative error code is returned.
+> + * Return: On success, the removed or replaced xattr is returned, to be freed
+> + * by the caller; or NULL if none. On failure a negative error code is returned.
+>   */
+> -int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
+> -		     const void *value, size_t size, int flags,
+> -		     ssize_t *removed_size)
+> +struct simple_xattr *simple_xattr_set(struct simple_xattrs *xattrs,
+> +				      const char *name, const void *value,
+> +				      size_t size, int flags)
+>  {
+> -	struct simple_xattr *xattr = NULL, *new_xattr = NULL;
+> +	struct simple_xattr *old_xattr = NULL, *new_xattr = NULL;
+>  	struct rb_node *parent = NULL, **rbp;
+>  	int err = 0, ret;
+>  
+> -	if (removed_size)
+> -		*removed_size = -1;
+> -
+>  	/* value == NULL means remove */
+>  	if (value) {
+>  		new_xattr = simple_xattr_alloc(value, size);
+>  		if (!new_xattr)
+> -			return -ENOMEM;
+> +			return ERR_PTR(-ENOMEM);
+>  
+>  		new_xattr->name = kstrdup(name, GFP_KERNEL);
+>  		if (!new_xattr->name) {
+> -			free_simple_xattr(new_xattr);
+> -			return -ENOMEM;
+> +			simple_xattr_free(new_xattr);
+> +			return ERR_PTR(-ENOMEM);
+>  		}
+>  	}
+>  
+> @@ -1217,12 +1214,12 @@ int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
+>  		else if (ret > 0)
+>  			rbp = &(*rbp)->rb_right;
+>  		else
+> -			xattr = rb_entry(*rbp, struct simple_xattr, rb_node);
+> -		if (xattr)
+> +			old_xattr = rb_entry(*rbp, struct simple_xattr, rb_node);
+> +		if (old_xattr)
+>  			break;
+>  	}
+>  
+> -	if (xattr) {
+> +	if (old_xattr) {
+>  		/* Fail if XATTR_CREATE is requested and the xattr exists. */
+>  		if (flags & XATTR_CREATE) {
+>  			err = -EEXIST;
+> @@ -1230,12 +1227,10 @@ int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
+>  		}
+>  
+>  		if (new_xattr)
+> -			rb_replace_node(&xattr->rb_node, &new_xattr->rb_node,
+> -					&xattrs->rb_root);
+> +			rb_replace_node(&old_xattr->rb_node,
+> +					&new_xattr->rb_node, &xattrs->rb_root);
+>  		else
+> -			rb_erase(&xattr->rb_node, &xattrs->rb_root);
+> -		if (!err && removed_size)
+> -			*removed_size = xattr->size;
+> +			rb_erase(&old_xattr->rb_node, &xattrs->rb_root);
+>  	} else {
+>  		/* Fail if XATTR_REPLACE is requested but no xattr is found. */
+>  		if (flags & XATTR_REPLACE) {
+> @@ -1260,12 +1255,10 @@ int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
+>  
+>  out_unlock:
+>  	write_unlock(&xattrs->lock);
+> -	if (err)
+> -		free_simple_xattr(new_xattr);
+> -	else
+> -		free_simple_xattr(xattr);
+> -	return err;
+> -
+> +	if (!err)
+> +		return old_xattr;
+> +	simple_xattr_free(new_xattr);
+> +	return ERR_PTR(err);
+>  }
+>  
+>  static bool xattr_is_trusted(const char *name)
+> @@ -1386,7 +1379,7 @@ void simple_xattrs_free(struct simple_xattrs *xattrs)
+>  		rbp_next = rb_next(rbp);
+>  		xattr = rb_entry(rbp, struct simple_xattr, rb_node);
+>  		rb_erase(&xattr->rb_node, &xattrs->rb_root);
+> -		free_simple_xattr(xattr);
+> +		simple_xattr_free(xattr);
+>  		rbp = rbp_next;
+>  	}
+>  }
+> diff --git a/include/linux/xattr.h b/include/linux/xattr.h
+> index d591ef59aa98..e37fe667ae04 100644
+> --- a/include/linux/xattr.h
+> +++ b/include/linux/xattr.h
+> @@ -116,11 +116,12 @@ struct simple_xattr {
+>  void simple_xattrs_init(struct simple_xattrs *xattrs);
+>  void simple_xattrs_free(struct simple_xattrs *xattrs);
+>  struct simple_xattr *simple_xattr_alloc(const void *value, size_t size);
+> +void simple_xattr_free(struct simple_xattr *xattr);
+>  int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
+>  		     void *buffer, size_t size);
+> -int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
+> -		     const void *value, size_t size, int flags,
+> -		     ssize_t *removed_size);
+> +struct simple_xattr *simple_xattr_set(struct simple_xattrs *xattrs,
+> +				      const char *name, const void *value,
+> +				      size_t size, int flags);
+>  ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+>  			  char *buffer, size_t size);
+>  void simple_xattr_add(struct simple_xattrs *xattrs,
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 0f83d86fd8b4..df3cabf54206 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -3595,15 +3595,17 @@ static int shmem_xattr_handler_set(const struct xattr_handler *handler,
+>  				   size_t size, int flags)
+>  {
+>  	struct shmem_inode_info *info = SHMEM_I(inode);
+> -	int err;
+> +	struct simple_xattr *old_xattr;
+>  
+>  	name = xattr_full_name(handler, name);
+> -	err = simple_xattr_set(&info->xattrs, name, value, size, flags, NULL);
+> -	if (!err) {
+> +	old_xattr = simple_xattr_set(&info->xattrs, name, value, size, flags);
+> +	if (!IS_ERR(old_xattr)) {
+> +		simple_xattr_free(old_xattr);
+> +		old_xattr = NULL;
+>  		inode->i_ctime = current_time(inode);
+>  		inode_inc_iversion(inode);
+>  	}
+> -	return err;
+> +	return PTR_ERR(old_xattr);
+>  }
+>  
+>  static const struct xattr_handler shmem_security_xattr_handler = {
+> -- 
+> 2.35.3
+> 
 -- 
-Mateusz Guzik <mjguzik gmail.com>
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
