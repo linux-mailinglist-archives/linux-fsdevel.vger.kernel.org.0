@@ -2,67 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A8677761B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 15:52:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABB89776250
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 16:23:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231159AbjHINwr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Aug 2023 09:52:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41702 "EHLO
+        id S232194AbjHIOXG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Aug 2023 10:23:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230088AbjHINwr (ORCPT
+        with ESMTP id S230191AbjHIOXE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Aug 2023 09:52:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3DE01986
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 06:52:45 -0700 (PDT)
+        Wed, 9 Aug 2023 10:23:04 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00A5210F5;
+        Wed,  9 Aug 2023 07:23:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6480361CD2
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 13:52:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3824C433C7;
-        Wed,  9 Aug 2023 13:52:39 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7EAEF62D6B;
+        Wed,  9 Aug 2023 14:23:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D2D2C433C7;
+        Wed,  9 Aug 2023 14:22:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691589164;
-        bh=WKU0DcxCJpAhiK4MtfA7gI84ySw84cr7T7ez1Sx9MmI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bKHajDl8e6XVJHvmlj2XB1kg3natBqiv8MLNtCSsfbsdnBE7vb2YDlXhDJerdkALo
-         hPfipLlqDW2V/d6y+HLxzZGNqKESTBxjJHNR8xGNRZJO6HDAFrnPPuGQfdjwrfl52a
-         aIKmcYaSEAcGxKE58LEfStiPZYOsXSOlR3F4nttdRhQvKge9owPi/veREkC4QWIjq4
-         t3KsVA+AbrkdkTk0Pgeszgt/2VuuJs+03Nvh7OHglO4/dvP+D4NQRiAcuw9KnFYdC9
-         f77kQACe6HzfvT+X91/gjCMekYiC8i92YvTJelHUcXCND8kc9Rxw5xRsy15FEQBMkU
-         0fk1eEDg+5gSA==
-Date:   Wed, 9 Aug 2023 15:52:36 +0200
-From:   Carlos Maiolino <cem@kernel.org>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleksandr Tymoshenko <ovt@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
-        Miklos Szeredi <miklos@szeredi.hu>, Daniel Xu <dxu@dxuuu.xyz>,
-        Chris Down <chris@chrisdown.name>, Tejun Heo <tj@kernel.org>,
+        s=k20201202; t=1691590982;
+        bh=LgXOvH2tCTHIjBx4H7FiUs60LQPWskUEsq2zDenCRXk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=d3tvC2K0q9zmSKovb3MCz70OZ0zDUfwQjvtmqpayy/+0zTCRnvBnhoitfla9mzpYS
+         6/IQTcAliZ/qw+jQL6ikoz6PNYzqJ5V/AqPdhloBtpJ7o+04K1HJBA1CLTORrD2v+D
+         7LM1T9XMRPVFf25JkonEGd6tPIqFqFkNRPbUkBuWrkC1zyTV3QcmWREwMXrZwRBWOf
+         qlZSX+5xrbt2rURYBov8h1oSuPFEc5pUfvutsD/+H96L3ykp7YO0AtG9js4MbdLlC5
+         xVqrAhV0e5CphxqERFiIWxatm9vmAPUWZveD51138XqFFJM1+SpLi461h67PgiJAZz
+         6pxgp2dPf4+Bg==
+Message-ID: <7edc9239f73022b9c2a1d3f4f946153f85f94739.camel@kernel.org>
+Subject: Re: [PATCH v7 05/13] fat: make fat_update_time get its own timestamp
+From:   Jeff Layton <jlayton@kernel.org>
+To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>,
+        Yue Hu <huyue2@gl0jj8bn.sched.sma.tdnsstic1.cn>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Pete Zaitcev <zaitcev@redhat.com>,
-        Helge Deller <deller@gmx.de>,
-        Topi Miettinen <toiwoton@gmail.com>,
-        Yu Kuai <yukuai3@huawei.com>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH vfs.tmpfs 3/5] tmpfs,xattr: enable limited user extended
- attributes
-Message-ID: <20230809135236.y6wwxqjtytqou6wu@andromeda>
-References: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com>
- <DGXswPHLCqNl9gaSW5_4h9eYnLYIw6e0BV82LKpk1d2T71H-lAKQDZ7gNh4CBlQJv6QSLTKyi0JUVh4vQCnGwg==@protonmail.internalid>
- <2e63b26e-df46-5baa-c7d6-f9a8dd3282c5@google.com>
+        Tejun Heo <tj@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Richard Weinberger <richard@nod.at>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@telemann.coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, ntfs3@lists.linux.dev,
+        ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-mtd@lists.infradead.org, linux-mm@kvack.org,
+        linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org
+Date:   Wed, 09 Aug 2023 10:22:54 -0400
+In-Reply-To: <878rak8hia.fsf@mail.parknet.co.jp>
+References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
+         <20230807-mgctime-v7-5-d1dec143a704@kernel.org>
+         <87msz08vc7.fsf@mail.parknet.co.jp>
+         <52bead1d6a33fec89944b96e2ec20d1ea8747a9a.camel@kernel.org>
+         <878rak8hia.fsf@mail.parknet.co.jp>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2e63b26e-df46-5baa-c7d6-f9a8dd3282c5@google.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,354 +118,100 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 08, 2023 at 09:33:56PM -0700, Hugh Dickins wrote:
-> Enable "user." extended attributes on tmpfs, limiting them by tracking
-> the space they occupy, and deducting that space from the limited ispace
-> (unless tmpfs mounted with nr_inodes=0 to leave that ispace unlimited).
-> 
-> tmpfs inodes and simple xattrs are both unswappable, and have to be in
-> lowmem on a 32-bit highmem kernel: so the ispace limit is appropriate
-> for xattrs, without any need for a further mount option.
-> 
-> Add simple_xattr_space() to give approximate but deterministic estimate
-> of the space taken up by each xattr: with simple_xattrs_free() outputting
-> the space freed if required (but kernfs and even some tmpfs usages do not
-> require that, so don't waste time on strlen'ing if not needed).
-> 
-> Security and trusted xattrs were already supported: for consistency and
-> simplicity, account them from the same pool; though there's a small risk
-> that a tmpfs with enough space before would now be considered too small.
-> 
-> When extended attributes are used, "df -i" does show more IUsed and less
-> IFree than can be explained by the inodes: document that (manpage later).
-> 
-> xfstests tests/generic which were not run on tmpfs before but now pass:
-> 020 037 062 070 077 097 103 117 337 377 454 486 523 533 611 618 728
-> with no new failures.
-> 
+On Wed, 2023-08-09 at 22:36 +0900, OGAWA Hirofumi wrote:
+> Jeff Layton <jlayton@kernel.org> writes:
+>=20
+> > On Wed, 2023-08-09 at 17:37 +0900, OGAWA Hirofumi wrote:
+> > > Jeff Layton <jlayton@kernel.org> writes:
+> > >=20
+> > > > Also, it may be that things have changed by the time we get to call=
+ing
+> > > > fat_update_time after checking inode_needs_update_time. Ensure that=
+ we
+> > > > attempt the i_version bump if any of the S_* flags besides S_ATIME =
+are
+> > > > set.
+> > >=20
+> > > I'm not sure what it meaning though, this is from
+> > > generic_update_time(). Are you going to change generic_update_time()
+> > > too? If so, it doesn't break lazytime feature?
+> > >=20
+> >=20
+> > Yes. generic_update_time is also being changed in a similar fashion.
+> > This shouldn't break the lazytime feature: lazytime is all about how an=
+d
+> > when timestamps get written to disk. This work is all about which
+> > clocksource the timestamps originally come from.
+>=20
+> I can only find the following update in this series, another series
+> updates generic_update_time()? The patch updates only if S_VERSION is
+> set.
+>=20
+> Your fat patch sets I_DIRTY_SYNC always instead of I_DIRTY_TIME. When I
+> last time checked lazytime, and it was depending on I_DIRTY_TIME.
+>=20
+> Are you sure it doesn't break lazytime? I'm totally confusing, and
+> really similar with generic_update_time()?
+>=20
 
-Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
+I'm a little confused too. Why do you believe this will break
+-o relatime handling? This patch changes two things:
 
-> Signed-off-by: Hugh Dickins <hughd@google.com>
-> ---
->  Documentation/filesystems/tmpfs.rst |  7 ++-
->  fs/Kconfig                          |  4 +-
->  fs/kernfs/dir.c                     |  2 +-
->  fs/xattr.c                          | 28 ++++++++++-
->  include/linux/xattr.h               |  3 +-
->  mm/shmem.c                          | 78 +++++++++++++++++++++++++++----
->  6 files changed, 106 insertions(+), 16 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
-> index 67422ee10e03..56a26c843dbe 100644
-> --- a/Documentation/filesystems/tmpfs.rst
-> +++ b/Documentation/filesystems/tmpfs.rst
-> @@ -21,8 +21,8 @@ explained further below, some of which can be reconfigured dynamically on the
->  fly using a remount ('mount -o remount ...') of the filesystem. A tmpfs
->  filesystem can be resized but it cannot be resized to a size below its current
->  usage. tmpfs also supports POSIX ACLs, and extended attributes for the
-> -trusted.* and security.* namespaces. ramfs does not use swap and you cannot
-> -modify any parameter for a ramfs filesystem. The size limit of a ramfs
-> +trusted.*, security.* and user.* namespaces. ramfs does not use swap and you
-> +cannot modify any parameter for a ramfs filesystem. The size limit of a ramfs
->  filesystem is how much memory you have available, and so care must be taken if
->  used so to not run out of memory.
-> 
-> @@ -97,6 +97,9 @@ mount with such options, since it allows any user with write access to
->  use up all the memory on the machine; but enhances the scalability of
->  that instance in a system with many CPUs making intensive use of it.
-> 
-> +If nr_inodes is not 0, that limited space for inodes is also used up by
-> +extended attributes: "df -i"'s IUsed and IUse% increase, IFree decreases.
-> +
->  tmpfs blocks may be swapped out, when there is a shortage of memory.
->  tmpfs has a mount option to disable its use of swap:
-> 
-> diff --git a/fs/Kconfig b/fs/Kconfig
-> index 8218a71933f9..7da21f563192 100644
-> --- a/fs/Kconfig
-> +++ b/fs/Kconfig
-> @@ -205,8 +205,8 @@ config TMPFS_XATTR
->  	  Extended attributes are name:value pairs associated with inodes by
->  	  the kernel or by users (see the attr(5) manual page for details).
-> 
-> -	  Currently this enables support for the trusted.* and
-> -	  security.* namespaces.
-> +	  This enables support for the trusted.*, security.* and user.*
-> +	  namespaces.
-> 
->  	  You need this for POSIX ACL support on tmpfs.
-> 
-> diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-> index 5a1a4af9d3d2..660995856a04 100644
-> --- a/fs/kernfs/dir.c
-> +++ b/fs/kernfs/dir.c
-> @@ -556,7 +556,7 @@ void kernfs_put(struct kernfs_node *kn)
->  	kfree_const(kn->name);
-> 
->  	if (kn->iattr) {
-> -		simple_xattrs_free(&kn->iattr->xattrs);
-> +		simple_xattrs_free(&kn->iattr->xattrs, NULL);
->  		kmem_cache_free(kernfs_iattrs_cache, kn->iattr);
->  	}
->  	spin_lock(&kernfs_idr_lock);
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index ba37a8f5cfd1..2d607542281b 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -1039,6 +1039,26 @@ const char *xattr_full_name(const struct xattr_handler *handler,
->  }
->  EXPORT_SYMBOL(xattr_full_name);
-> 
-> +/**
-> + * simple_xattr_space - estimate the memory used by a simple xattr
-> + * @name: the full name of the xattr
-> + * @size: the size of its value
-> + *
-> + * This takes no account of how much larger the two slab objects actually are:
-> + * that would depend on the slab implementation, when what is required is a
-> + * deterministic number, which grows with name length and size and quantity.
-> + *
-> + * Return: The approximate number of bytes of memory used by such an xattr.
-> + */
-> +size_t simple_xattr_space(const char *name, size_t size)
-> +{
-> +	/*
-> +	 * Use "40" instead of sizeof(struct simple_xattr), to return the
-> +	 * same result on 32-bit and 64-bit, and even if simple_xattr grows.
-> +	 */
-> +	return 40 + size + strlen(name);
-> +}
-> +
->  /**
->   * simple_xattr_free - free an xattr object
->   * @xattr: the xattr object
-> @@ -1363,14 +1383,17 @@ void simple_xattrs_init(struct simple_xattrs *xattrs)
->  /**
->   * simple_xattrs_free - free xattrs
->   * @xattrs: xattr header whose xattrs to destroy
-> + * @freed_space: approximate number of bytes of memory freed from @xattrs
->   *
->   * Destroy all xattrs in @xattr. When this is called no one can hold a
->   * reference to any of the xattrs anymore.
->   */
-> -void simple_xattrs_free(struct simple_xattrs *xattrs)
-> +void simple_xattrs_free(struct simple_xattrs *xattrs, size_t *freed_space)
->  {
->  	struct rb_node *rbp;
-> 
-> +	if (freed_space)
-> +		*freed_space = 0;
->  	rbp = rb_first(&xattrs->rb_root);
->  	while (rbp) {
->  		struct simple_xattr *xattr;
-> @@ -1379,6 +1402,9 @@ void simple_xattrs_free(struct simple_xattrs *xattrs)
->  		rbp_next = rb_next(rbp);
->  		xattr = rb_entry(rbp, struct simple_xattr, rb_node);
->  		rb_erase(&xattr->rb_node, &xattrs->rb_root);
-> +		if (freed_space)
-> +			*freed_space += simple_xattr_space(xattr->name,
-> +							   xattr->size);
->  		simple_xattr_free(xattr);
->  		rbp = rbp_next;
->  	}
-> diff --git a/include/linux/xattr.h b/include/linux/xattr.h
-> index e37fe667ae04..d20051865800 100644
-> --- a/include/linux/xattr.h
-> +++ b/include/linux/xattr.h
-> @@ -114,7 +114,8 @@ struct simple_xattr {
->  };
-> 
->  void simple_xattrs_init(struct simple_xattrs *xattrs);
-> -void simple_xattrs_free(struct simple_xattrs *xattrs);
-> +void simple_xattrs_free(struct simple_xattrs *xattrs, size_t *freed_space);
-> +size_t simple_xattr_space(const char *name, size_t size);
->  struct simple_xattr *simple_xattr_alloc(const void *value, size_t size);
->  void simple_xattr_free(struct simple_xattr *xattr);
->  int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index c39471384168..7420b510a9f3 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -393,12 +393,12 @@ static int shmem_reserve_inode(struct super_block *sb, ino_t *inop)
->  	return 0;
->  }
-> 
-> -static void shmem_free_inode(struct super_block *sb)
-> +static void shmem_free_inode(struct super_block *sb, size_t freed_ispace)
->  {
->  	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
->  	if (sbinfo->max_inodes) {
->  		raw_spin_lock(&sbinfo->stat_lock);
-> -		sbinfo->free_ispace += BOGO_INODE_SIZE;
-> +		sbinfo->free_ispace += BOGO_INODE_SIZE + freed_ispace;
->  		raw_spin_unlock(&sbinfo->stat_lock);
->  	}
->  }
-> @@ -1232,6 +1232,7 @@ static void shmem_evict_inode(struct inode *inode)
->  {
->  	struct shmem_inode_info *info = SHMEM_I(inode);
->  	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
-> +	size_t freed;
-> 
->  	if (shmem_mapping(inode->i_mapping)) {
->  		shmem_unacct_size(info->flags, inode->i_size);
-> @@ -1258,9 +1259,9 @@ static void shmem_evict_inode(struct inode *inode)
->  		}
->  	}
-> 
-> -	simple_xattrs_free(&info->xattrs);
-> +	simple_xattrs_free(&info->xattrs, sbinfo->max_inodes ? &freed : NULL);
-> +	shmem_free_inode(inode->i_sb, freed);
->  	WARN_ON(inode->i_blocks);
-> -	shmem_free_inode(inode->i_sb);
->  	clear_inode(inode);
->  #ifdef CONFIG_TMPFS_QUOTA
->  	dquot_free_inode(inode);
-> @@ -2440,7 +2441,7 @@ static struct inode *__shmem_get_inode(struct mnt_idmap *idmap,
->  	inode = new_inode(sb);
-> 
->  	if (!inode) {
-> -		shmem_free_inode(sb);
-> +		shmem_free_inode(sb, 0);
->  		return ERR_PTR(-ENOSPC);
->  	}
-> 
-> @@ -3281,7 +3282,7 @@ static int shmem_link(struct dentry *old_dentry, struct inode *dir, struct dentr
->  	ret = simple_offset_add(shmem_get_offset_ctx(dir), dentry);
->  	if (ret) {
->  		if (inode->i_nlink)
-> -			shmem_free_inode(inode->i_sb);
-> +			shmem_free_inode(inode->i_sb, 0);
->  		goto out;
->  	}
-> 
-> @@ -3301,7 +3302,7 @@ static int shmem_unlink(struct inode *dir, struct dentry *dentry)
->  	struct inode *inode = d_inode(dentry);
-> 
->  	if (inode->i_nlink > 1 && !S_ISDIR(inode->i_mode))
-> -		shmem_free_inode(inode->i_sb);
-> +		shmem_free_inode(inode->i_sb, 0);
-> 
->  	simple_offset_remove(shmem_get_offset_ctx(dir), dentry);
-> 
-> @@ -3554,21 +3555,40 @@ static int shmem_initxattrs(struct inode *inode,
->  			    void *fs_info)
->  {
->  	struct shmem_inode_info *info = SHMEM_I(inode);
-> +	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
->  	const struct xattr *xattr;
->  	struct simple_xattr *new_xattr;
-> +	size_t ispace = 0;
->  	size_t len;
-> 
-> +	if (sbinfo->max_inodes) {
-> +		for (xattr = xattr_array; xattr->name != NULL; xattr++) {
-> +			ispace += simple_xattr_space(xattr->name,
-> +				xattr->value_len + XATTR_SECURITY_PREFIX_LEN);
-> +		}
-> +		if (ispace) {
-> +			raw_spin_lock(&sbinfo->stat_lock);
-> +			if (sbinfo->free_ispace < ispace)
-> +				ispace = 0;
-> +			else
-> +				sbinfo->free_ispace -= ispace;
-> +			raw_spin_unlock(&sbinfo->stat_lock);
-> +			if (!ispace)
-> +				return -ENOSPC;
-> +		}
-> +	}
-> +
->  	for (xattr = xattr_array; xattr->name != NULL; xattr++) {
->  		new_xattr = simple_xattr_alloc(xattr->value, xattr->value_len);
->  		if (!new_xattr)
-> -			return -ENOMEM;
-> +			break;
-> 
->  		len = strlen(xattr->name) + 1;
->  		new_xattr->name = kmalloc(XATTR_SECURITY_PREFIX_LEN + len,
->  					  GFP_KERNEL);
->  		if (!new_xattr->name) {
->  			kvfree(new_xattr);
-> -			return -ENOMEM;
-> +			break;
->  		}
-> 
->  		memcpy(new_xattr->name, XATTR_SECURITY_PREFIX,
-> @@ -3579,6 +3599,16 @@ static int shmem_initxattrs(struct inode *inode,
->  		simple_xattr_add(&info->xattrs, new_xattr);
->  	}
-> 
-> +	if (xattr->name != NULL) {
-> +		if (ispace) {
-> +			raw_spin_lock(&sbinfo->stat_lock);
-> +			sbinfo->free_ispace += ispace;
-> +			raw_spin_unlock(&sbinfo->stat_lock);
-> +		}
-> +		simple_xattrs_free(&info->xattrs, NULL);
-> +		return -ENOMEM;
-> +	}
-> +
->  	return 0;
->  }
-> 
-> @@ -3599,16 +3629,39 @@ static int shmem_xattr_handler_set(const struct xattr_handler *handler,
->  				   size_t size, int flags)
->  {
->  	struct shmem_inode_info *info = SHMEM_I(inode);
-> +	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
->  	struct simple_xattr *old_xattr;
-> +	size_t ispace = 0;
-> 
->  	name = xattr_full_name(handler, name);
-> +	if (value && sbinfo->max_inodes) {
-> +		ispace = simple_xattr_space(name, size);
-> +		raw_spin_lock(&sbinfo->stat_lock);
-> +		if (sbinfo->free_ispace < ispace)
-> +			ispace = 0;
-> +		else
-> +			sbinfo->free_ispace -= ispace;
-> +		raw_spin_unlock(&sbinfo->stat_lock);
-> +		if (!ispace)
-> +			return -ENOSPC;
-> +	}
-> +
->  	old_xattr = simple_xattr_set(&info->xattrs, name, value, size, flags);
->  	if (!IS_ERR(old_xattr)) {
-> +		ispace = 0;
-> +		if (old_xattr && sbinfo->max_inodes)
-> +			ispace = simple_xattr_space(old_xattr->name,
-> +						    old_xattr->size);
->  		simple_xattr_free(old_xattr);
->  		old_xattr = NULL;
->  		inode->i_ctime = current_time(inode);
->  		inode_inc_iversion(inode);
->  	}
-> +	if (ispace) {
-> +		raw_spin_lock(&sbinfo->stat_lock);
-> +		sbinfo->free_ispace += ispace;
-> +		raw_spin_unlock(&sbinfo->stat_lock);
-> +	}
->  	return PTR_ERR(old_xattr);
->  }
-> 
-> @@ -3624,9 +3677,16 @@ static const struct xattr_handler shmem_trusted_xattr_handler = {
->  	.set = shmem_xattr_handler_set,
->  };
-> 
-> +static const struct xattr_handler shmem_user_xattr_handler = {
-> +	.prefix = XATTR_USER_PREFIX,
-> +	.get = shmem_xattr_handler_get,
-> +	.set = shmem_xattr_handler_set,
-> +};
-> +
->  static const struct xattr_handler *shmem_xattr_handlers[] = {
->  	&shmem_security_xattr_handler,
->  	&shmem_trusted_xattr_handler,
-> +	&shmem_user_xattr_handler,
->  	NULL
->  };
-> 
-> --
-> 2.35.3
-> 
+1/ it has fat_update_time fetch its own timestamp (and ignore the "now"
+parameter). This is in line with the changes in patch #3 of this series,
+which explains the rationale for this in more detail.
+
+2/ it changes fat_update_time to also update the i_version if any of
+S_CTIME|S_MTIME|S_VERSION are set. relatime is all about the S_ATIME,
+and it is specifically excluded from that set.
+
+The rationale for the second change is is also in patch #3, but
+basically, we can't guarantee that current_time hasn't changed since we
+last checked for inode_needs_update_time, so if any of
+S_CTIME/S_MTIME/S_VERSION have changed, then we need to assume that any
+of them may need to be changed and attempt to update all 3.
+
+That said, I think the logic in fat_update_time isn't quite right. I
+think want something like this on top of this patch to ensure that the
+S_CTIME and S_MTIME get updated, even if the flags only have S_VERSION
+set.
+
+Thoughts?
+
+---------------------8<-----------------------
+
+diff --git a/fs/fat/misc.c b/fs/fat/misc.c
+index 080a5035483f..313eef02f45c 100644
+--- a/fs/fat/misc.c
++++ b/fs/fat/misc.c
+@@ -346,15 +346,21 @@ int fat_update_time(struct inode *inode, int flags)
+        if (inode->i_ino =3D=3D MSDOS_ROOT_INO)
+                return 0;
+=20
+-       if (flags & (S_ATIME | S_CTIME | S_MTIME)) {
+-               fat_truncate_time(inode, NULL, flags);
+-               if (inode->i_sb->s_flags & SB_LAZYTIME)
+-                       dirty_flags |=3D I_DIRTY_TIME;
+-               else
+-                       dirty_flags |=3D I_DIRTY_SYNC;
+-       }
++       /*
++        * If any of the flags indicate an expicit change to the file, then=
+ we
++        * need to ensure that we attempt to update all of 3. We do not do
++        * this in the case of an S_ATIME-only update.
++        */
++       if (flags & (S_CTIME | S_MTIME | S_VERSION))
++               flags |=3D S_CTIME | S_MTIME | S_VERSION;
++
++       fat_truncate_time(inode, NULL, flags);
++       if (inode->i_sb->s_flags & SB_LAZYTIME)
++               dirty_flags |=3D I_DIRTY_TIME;
++       else
++               dirty_flags |=3D I_DIRTY_SYNC;
+=20
+-       if ((flags & (S_VERSION|S_CTIME|S_MTIME)) && inode_maybe_inc_iversi=
+on(inode, false))
++       if ((flags & S_VERSION) && inode_maybe_inc_iversion(inode, false))
+                dirty_flags |=3D I_DIRTY_SYNC;
+
