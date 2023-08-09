@@ -2,300 +2,360 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C75E7750E5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 04:30:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2C6277512A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 05:04:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229746AbjHICaQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Aug 2023 22:30:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38348 "EHLO
+        id S229994AbjHIDEH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Aug 2023 23:04:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229674AbjHICaP (ORCPT
+        with ESMTP id S229470AbjHIDEF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Aug 2023 22:30:15 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03F331BD4
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 19:30:14 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-686e29b058cso4546584b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Aug 2023 19:30:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1691548213; x=1692153013;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gyfp6/2lE4hfVWKzgHrPf1nFIaC64TP1oDST4S2dfl0=;
-        b=ulu95Y2+kgQdpeV+25AK9IH5fI08CD9OWmtSI1iM0Vmmmi1Ej1NzFcK6CWGv7vpOfj
-         wn4WC2vIY26y0HvqrRvdU09jilWgdMYuYEUGNs3fUT/GEbyQtILHEyBY79U/PLrrX9TP
-         SNSbPDs8T/OGQyTjBDzP3BXlufrepaN2Dfe6nKEWKnIRuz9Kf5FDlVEI47FTNW5QBLqO
-         EzdtV38eCuzNjw4zUHMNdI9qwo12Lze3hvCGAoxeRSMz8RBhW81I3OfQrAGuHS/tNKMl
-         ZlQxl1T/JiqAxZGHJj2g0g2PygPwLsMbs+33UrOwRjvsWkplQp/TSzDkAy+ks1W2DGPW
-         EqzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691548213; x=1692153013;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gyfp6/2lE4hfVWKzgHrPf1nFIaC64TP1oDST4S2dfl0=;
-        b=I710bLU9hHDKldmd50VpTutegSlnoPUy0nbS3gWdUhZnyNqJBBVOwOcH+xgNC5pWdh
-         NwWLLDthKEzyfY5ThGQJO811K+tLt7quMnfK3J58ksUHvdSFlf964CPSSXtzCPzo2Z9u
-         cwtaNrQu69wyt0jzZOlcIOYNnDphFYaX6iGc6xceOY1mJLp0gBA/1NUhhOguA9c6/W9p
-         Y/YHy1gJGlkAFwlecvDVm3yVAup5RGsd7/gMxHlLSF4PIO9yHgz/vUrCRiApCaNm3gT0
-         OiALKw/SZxMC1H7HSLnP+a0jEnoDgVwO0KgRtf4+lY8kU86l2ygvJMPbLHGXBf7x3PCn
-         KR1Q==
-X-Gm-Message-State: AOJu0YyQGzJaUhynPQ1k2jZohC29Zx5OFUOm+uDtyYchGaTWYi9wPIOq
-        QN65T73nc2L2X0YwuBuu1WNK5hJK3E+27SC2yqg=
-X-Google-Smtp-Source: AGHT+IF3qoTVzAV4hz1Zju6dhOcSE4C1HkfgjegEFW/dolPYh7fLcdkK5H0OrCk9kkL8SLj/utT21A==
-X-Received: by 2002:a05:6a20:ce9f:b0:140:48d4:8199 with SMTP id if31-20020a056a20ce9f00b0014048d48199mr1189133pzb.24.1691548213400;
-        Tue, 08 Aug 2023 19:30:13 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-166-213.pa.nsw.optusnet.com.au. [49.180.166.213])
-        by smtp.gmail.com with ESMTPSA id b4-20020a170902b60400b001a95f632340sm9721034pls.46.2023.08.08.19.30.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 19:30:12 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1qTYxd-002xzB-38;
-        Wed, 09 Aug 2023 12:30:09 +1000
-Date:   Wed, 9 Aug 2023 12:30:09 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: new_inode_pseudo vs locked inode->i_state = 0
-Message-ID: <ZNL6MRbWWnleybR3@dread.disaster.area>
-References: <CAGudoHF_Y0shcU+AMRRdN5RQgs9L_HHvBH8D4K=7_0X72kYy2g@mail.gmail.com>
- <ZNLMpgrCOQXFQnDk@dread.disaster.area>
- <CAGudoHG0Rp2Ku1mRRQnksDZFemUBzfhwyK3LJidEFgvmUfsfsQ@mail.gmail.com>
+        Tue, 8 Aug 2023 23:04:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43EA41995
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 20:04:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4F64D62576
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 03:04:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08921C433C7;
+        Wed,  9 Aug 2023 03:04:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691550242;
+        bh=eh9seziunh5+s/GcrcaEqqO774QZUCEFypj14i4qOng=;
+        h=From:To:Cc:Subject:Date:From;
+        b=i7ygaoEvyUByBDuTIyz42FA3Ns7T150PLiPtx8DOl02LCDnNCym5GlV/EtTdPXyzb
+         wZSoHkRL4zhkmDvK78ymCy5tyzhic0XsNIsW2UcWghTXkjmlsQusO15+U1zaT9yQzB
+         rR5Zlc8bq+Gtr9bVzRdC1J0qOI+97kXeadelV4rzkcOwyr2CkPJPCj1WtzkQoWo0lj
+         gBMJsq1xvcEnKo4vMBc5mVN6leSJzdUbDEX2kbepUr9P/8c/JdDV7+wQDA53EbzxHs
+         emKSH5mdZTsubnskGFplXC92gGGspZw/F16lEHvk7x+0zEVDleQAq2YQf+PBl0UsE8
+         St0zBBr92ifOw==
+From:   Damien Le Moal <dlemoal@kernel.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH] zonefs: fix synchronous direct writes to sequential files
+Date:   Wed,  9 Aug 2023 12:04:00 +0900
+Message-ID: <20230809030400.700093-1-dlemoal@kernel.org>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGudoHG0Rp2Ku1mRRQnksDZFemUBzfhwyK3LJidEFgvmUfsfsQ@mail.gmail.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 09, 2023 at 02:23:59AM +0200, Mateusz Guzik wrote:
-> On 8/9/23, Dave Chinner <david@fromorbit.com> wrote:
-> > On Tue, Aug 08, 2023 at 06:05:33PM +0200, Mateusz Guzik wrote:
-> >> Hello,
-> >>
-> >> new_inode_pseudo is:
-> >>         struct inode *inode = alloc_inode(sb);
-> >>
-> >> 	if (inode) {
-> >> 		spin_lock(&inode->i_lock);
-> >> 		inode->i_state = 0;
-> >> 		spin_unlock(&inode->i_lock);
-> >> 	}
-> >>
-> >> I'm trying to understand:
-> >> 1. why is it zeroing i_state (as opposed to have it happen in
-> >> inode_init_always)
-> >> 2. why is zeroing taking place with i_lock held
-> >>
-> >> The inode is freshly allocated, not yet added to the hash -- I would
-> >> expect that nobody else can see it.
-> >
-> > Maybe not at this point, but as soon as the function returns with
-> > the new inode, it could be published in some list that can be
-> > accessed concurrently and then the i_state visible on other CPUs
-> > better be correct.
-> >
-> > I'll come back to this, because the answer lies in this code:
-> >
-> >> Moreover, another consumer of alloc_inode zeroes without bothering to
-> >> lock -- see iget5_locked:
-> >> [snip]
-> >> 	struct inode *new = alloc_inode(sb);
-> >>
-> >> 		if (new) {
-> >> 			new->i_state = 0;
-> >> [/snip]
-> >
-> > Yes, that one is fine because the inode has not been published yet.
-> > The actual i_state serialisation needed to publish the inode happens
-> > in the function called in the very next line - inode_insert5().
-> >
-> > That does:
-> >
-> > 	spin_lock(&inode_hash_lock);
-> >
-> > 	.....
-> >         /*
-> >          * Return the locked inode with I_NEW set, the
-> >          * caller is responsible for filling in the contents
-> >          */
-> >         spin_lock(&inode->i_lock);
-> >         inode->i_state |= I_NEW;
-> >         hlist_add_head_rcu(&inode->i_hash, head);
-> >         spin_unlock(&inode->i_lock);
-> > 	.....
-> >
-> > 	spin_unlock(&inode_hash_lock);
-> >
-> > The i_lock is held across the inode state initialisation and hash
-> > list insert so that if anything finds the inode in the hash
-> > immediately after insert, they should set an initialised value.
-> >
-> > Don't be fooled by the inode_hash_lock here. We have
-> > find_inode_rcu() which walks hash lists without holding the hash
-> > lock, hence if anything needs to do a state check on the found
-> > inode, they are guaranteed to see I_NEW after grabbing the i_lock....
-> >
-> > Further, inode_insert5() adds the inode to the superblock inode
-> > list, which means concurrent sb inode list walkers can also see this
-> > inode whilst the inode_hash_lock is still held by inode_insert5().
-> > Those inode list walkers *must* see I_NEW at this point, and they
-> > are guaranteed to do so by taking i_lock before checking i_state....
-> >
-> > IOWs, the initialisation of inode->i_state for normal inodes must be
-> > done under i_lock so that lookups that occur after hash/sb list
-> > insert are guaranteed to see the correct value.
-> >
-> > If we now go back to new_inode_pseudo(), we see one of the callers
-> > is new_inode(), and it does this:
-> >
-> > struct inode *new_inode(struct super_block *sb)
-> > {
-> >         struct inode *inode;
-> >
-> >         spin_lock_prefetch(&sb->s_inode_list_lock);
-> >
-> >         inode = new_inode_pseudo(sb);
-> >         if (inode)
-> >                 inode_sb_list_add(inode);
-> >         return inode;
-> > }
-> >
-> > IOWs, the inode is immediately published on the superblock inode
-> > list, and so inode list walkers can see it immediately. As per
-> > inode_insert5(), this requires the inode state to be fully
-> > initialised and memory barriers in place such that any walker will
-> > see the correct value of i_state. The simplest, safest way to do
-> > this is to initialise i_state under the i_lock....
-> >
-> 
-> Thanks for the detailed answer, I do think you have a valid point but
-> I don't think it works with the given example. ;)
-> 
-> inode_sb_list_add is:
->         spin_lock(&inode->i_sb->s_inode_list_lock);
->         list_add(&inode->i_sb_list, &inode->i_sb->s_inodes);
->         spin_unlock(&inode->i_sb->s_inode_list_lock);
-> 
-> ... thus i_state is published by the time it unlocks.
-> 
-> According to my grep all iterations over the list hold the
-> s_inode_list_lock, thus they are guaranteed to see the update, making
-> the release fence in new_inode_pseudo redundant for this case.
+Commit 16d7fd3cfa72 ("zonefs: use iomap for synchronous direct writes")
+changes zonefs code from a self-built zone append BIO to using iomap for
+synchronous direct writes. This change relies on iomap submit BIO
+callback to change the write BIO built by iomap to a zone append BIO.
+However, this change overlloked the fact that a write BIO may be very
+large as it is split when issued. The change from a regular write to a
+zone append operation for the built BIO can result in a block layer
+warning as zone append BIO are not allowed to be split.
 
-I don't believe that is the case - the i_state modification is not
-within the critical region the s_inode_list_lock covers, nor is the
-cacheline i_state lies on referenced within the critical section.
-Hence there is no explicit ordering dependency created by
-inode_sb_list_add on the value of i_state.
+WARNING: CPU: 18 PID: 202210 at block/bio.c:1644 bio_split+0x288/0x350
+Call Trace:
+? __warn+0xc9/0x2b0
+? bio_split+0x288/0x350
+? report_bug+0x2e6/0x390
+? handle_bug+0x41/0x80
+? exc_invalid_op+0x13/0x40
+? asm_exc_invalid_op+0x16/0x20
+? bio_split+0x288/0x350
+bio_split_rw+0x4bc/0x810
+? __pfx_bio_split_rw+0x10/0x10
+? lockdep_unlock+0xf2/0x250
+__bio_split_to_limits+0x1d8/0x900
+blk_mq_submit_bio+0x1cf/0x18a0
+? __pfx_iov_iter_extract_pages+0x10/0x10
+? __pfx_blk_mq_submit_bio+0x10/0x10
+? find_held_lock+0x2d/0x110
+? lock_release+0x362/0x620
+? mark_held_locks+0x9e/0xe0
+__submit_bio+0x1ea/0x290
+? __pfx___submit_bio+0x10/0x10
+? seqcount_lockdep_reader_access.constprop.0+0x82/0x90
+submit_bio_noacct_nocheck+0x675/0xa20
+? __pfx_bio_iov_iter_get_pages+0x10/0x10
+? __pfx_submit_bio_noacct_nocheck+0x10/0x10
+iomap_dio_bio_iter+0x624/0x1280
+__iomap_dio_rw+0xa22/0x18a0
+? lock_is_held_type+0xe3/0x140
+? __pfx___iomap_dio_rw+0x10/0x10
+? lock_release+0x362/0x620
+? zonefs_file_write_iter+0x74c/0xc80 [zonefs]
+? down_write+0x13d/0x1e0
+iomap_dio_rw+0xe/0x40
+zonefs_file_write_iter+0x5ea/0xc80 [zonefs]
+do_iter_readv_writev+0x18b/0x2c0
+? __pfx_do_iter_readv_writev+0x10/0x10
+? inode_security+0x54/0xf0
+do_iter_write+0x13b/0x7c0
+? lock_is_held_type+0xe3/0x140
+vfs_writev+0x185/0x550
+? __pfx_vfs_writev+0x10/0x10
+? __handle_mm_fault+0x9bd/0x1c90
+? find_held_lock+0x2d/0x110
+? lock_release+0x362/0x620
+? find_held_lock+0x2d/0x110
+? lock_release+0x362/0x620
+? __up_read+0x1ea/0x720
+? do_pwritev+0x136/0x1f0
+do_pwritev+0x136/0x1f0
+? __pfx_do_pwritev+0x10/0x10
+? syscall_enter_from_user_mode+0x22/0x90
+? lockdep_hardirqs_on+0x7d/0x100
+do_syscall_64+0x58/0x80
 
-Your argument seems to be that we can rely on the side effect of
-some unrelated lock to provide ordered memory access - that's just
-really poor locking design and will result in unmaintainable code
-that gets broken without realising in the future.
+This error depends on the hardware used, specifically on the max zone
+append bytes and max_[hw_]sectors limits. Tests using AMD Epyc machines
+that have low limits did not reveal this issue while runs on Intel Xeon
+machines with larger limits trigger it.
 
-That's why the spin lock. It's *obviously correct*, and it doesn't
-require any of the other code that checks i_state to have to care
-about any lock or memory barrier mechanism other than taking
-i_lock...
+Manually splitting the zone append BIO using bio_split_rw() can solve
+this issue but also requires issuing the fragment BIOs sunchronously
+with submit_bio_wait(), to avoid potential reordering of the zone append
+BIO fragments, which would lead to data corruption. That is, this
+solution is not better than using regular write BIOs which are subject
+to serialization using zone write locking at the IO scheduler level.
 
-> With this in mind I'm assuming the fence was there as a safety
-> measure, for consumers which would maybe need it.
-> 
-> Then the code can:
->         struct inode *inode = alloc_inode(sb);
-> 
->         if (inode) {
->                 inode->i_state = 0;
->                 /* make sure i_state update will be visible before we insert
->                  * the inode anywhere */
->                 smp_wmb();
->         }
+Given this, fix the issue by removing zone append support and uisng
+regular write BIOs for synchronous direct writes. This allows preseving
+the use of iomap and having iidentical synchronous and asynchronous
+sequential file write path. Zone append support will be reintroduced
+later through io_uring commands to ensure that the needed special
+handling is done correctly.
 
-AFAIA, that doesn't work by itself without a matching smp_rmb()
-prior to the i_state reader - memory barriers need to be paired for
-ordering to be valid. Hence this also seems to assume that we can
-rely on some other unrelated lock pairing to actually order memory
-accesses to i_state....
+Reported-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Fixes: 16d7fd3cfa72 ("zonefs: use iomap for synchronous direct writes")
+Cc: stable@vger.kernel.org
+Signed-off-by: Damien Le Moal <dlemoal@kernel.org>
+---
+ fs/zonefs/file.c   | 111 ++-------------------------------------------
+ fs/zonefs/super.c  |   9 +---
+ fs/zonefs/zonefs.h |   2 -
+ 3 files changed, 4 insertions(+), 118 deletions(-)
 
-> Upshots:
-> - replaces 2 atomics with a mere release fence, which is way cheaper
-> to do everywhere and virtually free on x86-64
-> - people reading the code don't wonder who on earth are we locking against
-
-Downsides:
-- memory barriers are hard to get right,
-- nobody will be able to look at the code and say "this is obviously
-  correct".
-- random unpaired memory barriers in code end up making it
-  unmaintainable.
-- impossible to test for correctness
-
-> All that said, if the (possibly redundant) fence is literally the only
-> reason for the lock trip, I would once more propose zeroing in
-> inode_init_always:
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 8fefb69e1f84..ce9664c4efe9 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -232,6 +232,13 @@ int inode_init_always(struct super_block *sb,
-> struct inode *inode)
->                 return -ENOMEM;
->         this_cpu_inc(nr_inodes);
-> 
-> +       inode->i_state = 0;
-> +       /*
-> +        * Make sure i_state update is visible before this inode gets inserted
-> +        * anywhere.
-> +        */
-> +       smp_wmb();
-
-We've had code calling inode_init_always() for a long time that
-requires i_state to remain untouched until the caller is ready to
-change it. This would break that code....
-
-> Now, I'm not going to flame with anyone over doing smp_wmb instead of
-> the lock trip (looks like a no-brainer to me, but I got flamed for
-> another one earlier today ;>).
-
-Yes, I read that thread, and nobody was flaming anyone. People just
-asked hard questions about why we need to change code that has been
-working largely untouched for a decade.
-
-> I am however going to /strongly suggest/ that a comment explaining
-> what's going on is added there, if the current state is to remain.
-
-If you really think that improves the code, send a patch....
-
-> As far as I'm concerned *locking* when a mere smp_wmb would sufficne
-> is heavily misleading and should be whacked if only for that reason.
-
-If it ain't broke, don't fix it.
-
-The code we have now is widely used (there are over a hundred
-callers of new_inode()) and we know it works correctly. Nobody is
-complaining that it is too slow, and generally speaking the overhead
-of this lock traversal is lost in the noise of all the other
-operations needed to be performed to initialise a new inode.
-
-If there's a compelling reason to change the code (e.g. benchmark
-improvements), then spend the time to do the audit to determine the
-change is safe and test all the filesystems the change affects to
-validate there are no regressions...
-
-Cheers,
-
-Dave.
+diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
+index 92c9aaae3663..789cfb74c146 100644
+--- a/fs/zonefs/file.c
++++ b/fs/zonefs/file.c
+@@ -341,77 +341,6 @@ static loff_t zonefs_file_llseek(struct file *file, loff_t offset, int whence)
+ 	return generic_file_llseek_size(file, offset, whence, isize, isize);
+ }
+ 
+-struct zonefs_zone_append_bio {
+-	/* The target inode of the BIO */
+-	struct inode *inode;
+-
+-	/* For sync writes, the target append write offset */
+-	u64 append_offset;
+-
+-	/*
+-	 * This member must come last, bio_alloc_bioset will allocate enough
+-	 * bytes for entire zonefs_bio but relies on bio being last.
+-	 */
+-	struct bio bio;
+-};
+-
+-static inline struct zonefs_zone_append_bio *
+-zonefs_zone_append_bio(struct bio *bio)
+-{
+-	return container_of(bio, struct zonefs_zone_append_bio, bio);
+-}
+-
+-static void zonefs_file_zone_append_dio_bio_end_io(struct bio *bio)
+-{
+-	struct zonefs_zone_append_bio *za_bio = zonefs_zone_append_bio(bio);
+-	struct zonefs_zone *z = zonefs_inode_zone(za_bio->inode);
+-	sector_t za_sector;
+-
+-	if (bio->bi_status != BLK_STS_OK)
+-		goto bio_end;
+-
+-	/*
+-	 * If the file zone was written underneath the file system, the zone
+-	 * append operation can still succedd (if the zone is not full) but
+-	 * the write append location will not be where we expect it to be.
+-	 * Check that we wrote where we intended to, that is, at z->z_wpoffset.
+-	 */
+-	za_sector = z->z_sector + (za_bio->append_offset >> SECTOR_SHIFT);
+-	if (bio->bi_iter.bi_sector != za_sector) {
+-		zonefs_warn(za_bio->inode->i_sb,
+-			    "Invalid write sector %llu for zone at %llu\n",
+-			    bio->bi_iter.bi_sector, z->z_sector);
+-		bio->bi_status = BLK_STS_IOERR;
+-	}
+-
+-bio_end:
+-	iomap_dio_bio_end_io(bio);
+-}
+-
+-static void zonefs_file_zone_append_dio_submit_io(const struct iomap_iter *iter,
+-						  struct bio *bio,
+-						  loff_t file_offset)
+-{
+-	struct zonefs_zone_append_bio *za_bio = zonefs_zone_append_bio(bio);
+-	struct inode *inode = iter->inode;
+-	struct zonefs_zone *z = zonefs_inode_zone(inode);
+-
+-	/*
+-	 * Issue a zone append BIO to process sync dio writes. The append
+-	 * file offset is saved to check the zone append write location
+-	 * on completion of the BIO.
+-	 */
+-	za_bio->inode = inode;
+-	za_bio->append_offset = file_offset;
+-
+-	bio->bi_opf &= ~REQ_OP_WRITE;
+-	bio->bi_opf |= REQ_OP_ZONE_APPEND;
+-	bio->bi_iter.bi_sector = z->z_sector;
+-	bio->bi_end_io = zonefs_file_zone_append_dio_bio_end_io;
+-
+-	submit_bio(bio);
+-}
+-
+ static int zonefs_file_write_dio_end_io(struct kiocb *iocb, ssize_t size,
+ 					int error, unsigned int flags)
+ {
+@@ -442,14 +371,6 @@ static int zonefs_file_write_dio_end_io(struct kiocb *iocb, ssize_t size,
+ 	return 0;
+ }
+ 
+-static struct bio_set zonefs_zone_append_bio_set;
+-
+-static const struct iomap_dio_ops zonefs_zone_append_dio_ops = {
+-	.submit_io	= zonefs_file_zone_append_dio_submit_io,
+-	.end_io		= zonefs_file_write_dio_end_io,
+-	.bio_set	= &zonefs_zone_append_bio_set,
+-};
+-
+ static const struct iomap_dio_ops zonefs_write_dio_ops = {
+ 	.end_io		= zonefs_file_write_dio_end_io,
+ };
+@@ -533,9 +454,6 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+ 	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+ 	struct zonefs_zone *z = zonefs_inode_zone(inode);
+ 	struct super_block *sb = inode->i_sb;
+-	const struct iomap_dio_ops *dio_ops;
+-	bool sync = is_sync_kiocb(iocb);
+-	bool append = false;
+ 	ssize_t ret, count;
+ 
+ 	/*
+@@ -543,7 +461,8 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+ 	 * as this can cause write reordering (e.g. the first aio gets EAGAIN
+ 	 * on the inode lock but the second goes through but is now unaligned).
+ 	 */
+-	if (zonefs_zone_is_seq(z) && !sync && (iocb->ki_flags & IOCB_NOWAIT))
++	if (zonefs_zone_is_seq(z) && !is_sync_kiocb(iocb) &&
++	    (iocb->ki_flags & IOCB_NOWAIT))
+ 		return -EOPNOTSUPP;
+ 
+ 	if (iocb->ki_flags & IOCB_NOWAIT) {
+@@ -573,18 +492,6 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+ 			goto inode_unlock;
+ 		}
+ 		mutex_unlock(&zi->i_truncate_mutex);
+-		append = sync;
+-	}
+-
+-	if (append) {
+-		unsigned int max = bdev_max_zone_append_sectors(sb->s_bdev);
+-
+-		max = ALIGN_DOWN(max << SECTOR_SHIFT, sb->s_blocksize);
+-		iov_iter_truncate(from, max);
+-
+-		dio_ops = &zonefs_zone_append_dio_ops;
+-	} else {
+-		dio_ops = &zonefs_write_dio_ops;
+ 	}
+ 
+ 	/*
+@@ -593,7 +500,7 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+ 	 * the user can make sense of the error.
+ 	 */
+ 	ret = iomap_dio_rw(iocb, from, &zonefs_write_iomap_ops,
+-			   dio_ops, 0, NULL, 0);
++			   &zonefs_write_dio_ops, 0, NULL, 0);
+ 	if (ret == -ENOTBLK)
+ 		ret = -EBUSY;
+ 
+@@ -938,15 +845,3 @@ const struct file_operations zonefs_file_operations = {
+ 	.splice_write	= iter_file_splice_write,
+ 	.iopoll		= iocb_bio_iopoll,
+ };
+-
+-int zonefs_file_bioset_init(void)
+-{
+-	return bioset_init(&zonefs_zone_append_bio_set, BIO_POOL_SIZE,
+-			   offsetof(struct zonefs_zone_append_bio, bio),
+-			   BIOSET_NEED_BVECS);
+-}
+-
+-void zonefs_file_bioset_exit(void)
+-{
+-	bioset_exit(&zonefs_zone_append_bio_set);
+-}
+diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+index bbe44a26a8e5..9350221abfc5 100644
+--- a/fs/zonefs/super.c
++++ b/fs/zonefs/super.c
+@@ -1412,13 +1412,9 @@ static int __init zonefs_init(void)
+ 
+ 	BUILD_BUG_ON(sizeof(struct zonefs_super) != ZONEFS_SUPER_SIZE);
+ 
+-	ret = zonefs_file_bioset_init();
+-	if (ret)
+-		return ret;
+-
+ 	ret = zonefs_init_inodecache();
+ 	if (ret)
+-		goto destroy_bioset;
++		return ret;
+ 
+ 	ret = zonefs_sysfs_init();
+ 	if (ret)
+@@ -1434,8 +1430,6 @@ static int __init zonefs_init(void)
+ 	zonefs_sysfs_exit();
+ destroy_inodecache:
+ 	zonefs_destroy_inodecache();
+-destroy_bioset:
+-	zonefs_file_bioset_exit();
+ 
+ 	return ret;
+ }
+@@ -1445,7 +1439,6 @@ static void __exit zonefs_exit(void)
+ 	unregister_filesystem(&zonefs_type);
+ 	zonefs_sysfs_exit();
+ 	zonefs_destroy_inodecache();
+-	zonefs_file_bioset_exit();
+ }
+ 
+ MODULE_AUTHOR("Damien Le Moal");
+diff --git a/fs/zonefs/zonefs.h b/fs/zonefs/zonefs.h
+index f663b8ebc2cb..8175652241b5 100644
+--- a/fs/zonefs/zonefs.h
++++ b/fs/zonefs/zonefs.h
+@@ -279,8 +279,6 @@ extern const struct file_operations zonefs_dir_operations;
+ extern const struct address_space_operations zonefs_file_aops;
+ extern const struct file_operations zonefs_file_operations;
+ int zonefs_file_truncate(struct inode *inode, loff_t isize);
+-int zonefs_file_bioset_init(void);
+-void zonefs_file_bioset_exit(void);
+ 
+ /* In sysfs.c */
+ int zonefs_sysfs_register(struct super_block *sb);
 -- 
-Dave Chinner
-david@fromorbit.com
+2.41.0
+
