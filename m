@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5755577538C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 09:07:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 931C27753A0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 09:08:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231382AbjHIHHE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Aug 2023 03:07:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59362 "EHLO
+        id S231472AbjHIHIh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Aug 2023 03:08:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229785AbjHIHGx (ORCPT
+        with ESMTP id S230390AbjHIHId (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Aug 2023 03:06:53 -0400
+        Wed, 9 Aug 2023 03:08:33 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14DF11FF6;
-        Wed,  9 Aug 2023 00:06:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0F861FD8;
+        Wed,  9 Aug 2023 00:08:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9FAEA62FC9;
-        Wed,  9 Aug 2023 07:06:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46BD8C433C7;
-        Wed,  9 Aug 2023 07:06:37 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 446D562FBF;
+        Wed,  9 Aug 2023 07:08:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB972C433C8;
+        Wed,  9 Aug 2023 07:08:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691564812;
-        bh=LyptcIlHZJMPRLgCQdT8M5vqzNKCvVA2tglx+SSzKhk=;
+        s=k20201202; t=1691564910;
+        bh=/rZSqjAZtsBizYYtIOB21nSsnZRBJybWyyf062l+VJQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bD7f0dTITrbaEv4ks9HGhx0VVGQl2go0/eu1op4nP82j4N7TgX5btWqWiaSGoe8jp
-         i6+z7Q/Jk2DuDRVzKbPo4bN2rJnb7ZSAdXE4Z0xYd+h6nr/dULJQsuanMXc8U/mPWC
-         durewToMDZYiugVbqFDpM/vlNxIknI7IjiKj4iWyBj6wWmzWhg0/t+ygbJ1TK6LZ+2
-         DAg/4gaYUGbCnyrWc2K3wnSswvzR8b++oY6In8hF21Owe2spxR27o2A1Ew8ijOuuN3
-         Wo+4rLZHSLxhk9EzIXmcSquBg+Bnp2nKOE70h2bjG7fT6iPfQRAHqxOjlzas9G4WAl
-         a1bfUfvPCKxNg==
-Date:   Wed, 9 Aug 2023 09:06:34 +0200
+        b=XBXM6YuN/DJfcAIiFmHbtES3QfTM1C8dTZvNbHpT0ojlG4HZRC1KRdUNiYIozuLtf
+         Mj8KiYlNBlPNH6bVN/SdgMEWVqW0bd0EXRksBsHLCfEXTYWFcUxKPmMlZQa4BLXc+u
+         HVWJiPLV6I93Alqf8bHPAj4p352DMAD62OU7S075NpSOa7OY8Rzy7Lkh+DmR2NEoSD
+         3F9BROSdL1LVyjHyT/qVqpX14CEeISxG8JvWDSf6VlsP5oBPdi9SjzN2dJtXprrLw2
+         PAttEXxJZrNwNwPks/SfSAHbRPRAuqTa/QqJFHQ6a/wwq8PwFX8puWJ6ZzYsWf6rHi
+         p6EZ4DAxuERvA==
+Date:   Wed, 9 Aug 2023 09:08:13 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     Jan Kara <jack@suse.cz>
 Cc:     Jeff Layton <jlayton@kernel.org>,
@@ -97,16 +97,15 @@ Cc:     Jeff Layton <jlayton@kernel.org>,
         linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
         linux-mtd@lists.infradead.org, linux-mm@kvack.org,
         linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v7 06/13] ubifs: have ubifs_update_time use
- inode_update_timestamps
-Message-ID: <20230809-handreichung-umgearbeitet-951eebed4d61@brauner>
+Subject: Re: [PATCH v7 05/13] fat: make fat_update_time get its own timestamp
+Message-ID: <20230809-goldpreis-nennen-798a895973be@brauner>
 References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
- <20230807-mgctime-v7-6-d1dec143a704@kernel.org>
- <20230808093701.ggyj7tyqonivl7tb@quack3>
+ <20230807-mgctime-v7-5-d1dec143a704@kernel.org>
+ <20230808093226.bq2qfxv5npckk643@quack3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230808093701.ggyj7tyqonivl7tb@quack3>
+In-Reply-To: <20230808093226.bq2qfxv5npckk643@quack3>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -117,39 +116,12 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 08, 2023 at 11:37:01AM +0200, Jan Kara wrote:
-> On Mon 07-08-23 15:38:37, Jeff Layton wrote:
+On Tue, Aug 08, 2023 at 11:32:26AM +0200, Jan Kara wrote:
+> On Mon 07-08-23 15:38:36, Jeff Layton wrote:
 > > In later patches, we're going to drop the "now" parameter from the
-> > update_time operation. Prepare ubifs for this, by having it use the new
-> > inode_update_timestamps helper.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> 
-> One comment below:
-> 
-> > diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-> > index df9086b19cd0..2d0178922e19 100644
-> > --- a/fs/ubifs/file.c
-> > +++ b/fs/ubifs/file.c
-> > @@ -1397,15 +1397,9 @@ int ubifs_update_time(struct inode *inode, struct timespec64 *time,
-> >  		return err;
-> >  
-> >  	mutex_lock(&ui->ui_mutex);
-> > -	if (flags & S_ATIME)
-> > -		inode->i_atime = *time;
-> > -	if (flags & S_CTIME)
-> > -		inode_set_ctime_to_ts(inode, *time);
-> > -	if (flags & S_MTIME)
-> > -		inode->i_mtime = *time;
-> > -
-> > -	release = ui->dirty;
-> > +	inode_update_timestamps(inode, flags);
-> >  	__mark_inode_dirty(inode, I_DIRTY_SYNC);
-> > +	release = ui->dirty;
-> >  	mutex_unlock(&ui->ui_mutex);
-> 
-> I think this is wrong. You need to keep sampling ui->dirty before calling
-> __mark_inode_dirty(). Otherwise you could release budget for inode update
-> you really need...
+> > update_time operation. Fix fat_update_time to fetch its own timestamp.
+> > It turns out that this is easily done by just passing a NULL timestamp
+> > pointer to fat_update_time.
+>              ^^^ fat_truncate_time()
 
-Fixed in-tree.
+Fixed in-tree, thanks!
