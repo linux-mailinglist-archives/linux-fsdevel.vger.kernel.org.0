@@ -2,44 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FC007767EE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 21:05:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01B7677699E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 22:14:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232082AbjHITFd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Aug 2023 15:05:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55982 "EHLO
+        id S233824AbjHIUOj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Aug 2023 16:14:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjHITFb (ORCPT
+        with ESMTP id S233619AbjHIUOi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Aug 2023 15:05:31 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5DE7E71;
-        Wed,  9 Aug 2023 12:05:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1B6A964095;
-        Wed,  9 Aug 2023 19:05:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F5CFC433C8;
-        Wed,  9 Aug 2023 19:05:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691607929;
-        bh=4GKDaia1VeW/OijfJXE9UHIufNesebWNQDy9LU2whYI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=gEyeaJZ4RUWChIryvRrKWbHk6CbM8eHu0rqtHvzvba6SSDpBpPtag+D6BMw4GFw2n
-         hFXK4OEbm0L9R1B4K8eNiaiBDtquinDOVTFyiDIMSP6pKYqwvVgkMBHyc14BMMGMP8
-         zAV3KdTeX3lKcSKjE5oKnAjO29eKsnCAgTvUvEsF/+3xUpWxGZvbyls48Ed9vXaSwV
-         DcuV4QvGf703nsP6BpmM4kVysUgEr6LDinf8/zizcxdQ20sie+EHfzuPrXj/APOCtH
-         91Mo4Dg4M0l0SApVPB8n1GBtVl5sn3TKwCbUSa9ZQiDyJiArJw0iRB7MWozIYejid0
-         q+2d4Xd9I1nbw==
-Message-ID: <cbc98eb171d6ccacb24213af7d0ae91094d39780.camel@kernel.org>
-Subject: Re: [PATCH v7 08/13] fs: drop the timespec64 argument from
- update_time
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Mike Marshall <hubcap@omnibond.com>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Wed, 9 Aug 2023 16:14:38 -0400
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F33A410CF;
+        Wed,  9 Aug 2023 13:14:36 -0700 (PDT)
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+        by mail.parknet.co.jp (Postfix) with ESMTPSA id 0B7972055FA7;
+        Thu, 10 Aug 2023 05:14:36 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+        by ibmpc.myhome.or.jp (8.17.2/8.17.2/Debian-1) with ESMTPS id 379KEYfO226784
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Thu, 10 Aug 2023 05:14:35 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+        by devron.myhome.or.jp (8.17.2/8.17.2/Debian-1) with ESMTPS id 379KEYHK237230
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Thu, 10 Aug 2023 05:14:34 +0900
+Received: (from hirofumi@localhost)
+        by devron.myhome.or.jp (8.17.2/8.17.2/Submit) id 379KESDU237221;
+        Thu, 10 Aug 2023 05:14:28 +0900
+From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
         Eric Van Hensbergen <ericvh@kernel.org>,
         Latchesar Ionkov <lucho@ionkov.net>,
         Dominique Martinet <asmadeus@codewreck.org>,
@@ -51,14 +44,14 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Ilya Dryomov <idryomov@gmail.com>,
         Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
         Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
+        Chao Yu <chao@kernel.org>,
+        Yue Hu <huyue2@gl0jj8bn.sched.sma.tdnsstic1.cn>,
         Jeffle Xu <jefflexu@linux.alibaba.com>,
         Namjae Jeon <linkinjeon@kernel.org>,
         Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Jan Kara <jack@suse.com>, "Theodore Ts'o" <tytso@mit.edu>,
         Andreas Dilger <adilger.kernel@dilger.ca>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
         Miklos Szeredi <miklos@szeredi.hu>,
         Bob Peterson <rpeterso@redhat.com>,
         Andreas Gruenbacher <agruenba@redhat.com>,
@@ -70,6 +63,7 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Mark Fasheh <mark@fasheh.com>,
         Joel Becker <jlbec@evilplan.org>,
         Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mike Marshall <hubcap@omnibond.com>,
         Martin Brandenburg <martin@omnibond.com>,
         Luis Chamberlain <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>,
@@ -90,7 +84,7 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
         linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        codalist@telemann.coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
         linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
         linux-nfs@vger.kernel.org, ntfs3@lists.linux.dev,
@@ -98,18 +92,27 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
         linux-mtd@lists.infradead.org, linux-mm@kvack.org,
         linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Date:   Wed, 09 Aug 2023 15:05:21 -0400
-In-Reply-To: <CAOg9mST=WFAjEwS9eNi_huoUpBvPy3R3fbFVTLUeFZAv6BJEEQ@mail.gmail.com>
+Subject: Re: [PATCH v7 05/13] fat: make fat_update_time get its own timestamp
+In-Reply-To: <edf8e8ca3b38e56f30e0d24ac7293f848ffee371.camel@kernel.org> (Jeff
+        Layton's message of "Wed, 09 Aug 2023 15:04:42 -0400")
 References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
-         <20230807-mgctime-v7-8-d1dec143a704@kernel.org>
-         <20230809-segeln-pflaumen-460b81bd2d3a@brauner>
-         <CAOg9mST=WFAjEwS9eNi_huoUpBvPy3R3fbFVTLUeFZAv6BJEEQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        <20230807-mgctime-v7-5-d1dec143a704@kernel.org>
+        <87msz08vc7.fsf@mail.parknet.co.jp>
+        <52bead1d6a33fec89944b96e2ec20d1ea8747a9a.camel@kernel.org>
+        <878rak8hia.fsf@mail.parknet.co.jp>
+        <20230809150041.452w7gucjmvjnvbg@quack3>
+        <87v8do6y8q.fsf@mail.parknet.co.jp>
+        <2cb998ff14ace352a9dd553e82cfa0aa92ec09ce.camel@kernel.org>
+        <87leek6rh1.fsf@mail.parknet.co.jp>
+        <ccffe6ca3397c8374352b002fe01d55b09d84ef4.camel@kernel.org>
+        <87h6p86p9z.fsf@mail.parknet.co.jp>
+        <edf8e8ca3b38e56f30e0d24ac7293f848ffee371.camel@kernel.org>
+Date:   Thu, 10 Aug 2023 05:14:28 +0900
+Message-ID: <87a5v06kij.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -117,48 +120,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Yes. It's in Christian's vfs.ctime branch:
+Jeff Layton <jlayton@kernel.org> writes:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=3Dvfs.ct=
-ime
+> When you say it "doesn't work the same", what do you mean, specifically?
+> I had to make some allowances for the fact that FAT is substantially
+> different in its timestamp handling, and I tried to preserve existing
+> behavior as best I could.
 
-On Wed, 2023-08-09 at 14:38 -0400, Mike Marshall wrote:
-> I've been following this patch on fsdevel... is there a
-> remote I could fetch with a branch that has this in it?
->=20
-> -Mike
->=20
-> On Wed, Aug 9, 2023 at 8:32=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
-> >=20
-> > On Mon, Aug 07, 2023 at 03:38:39PM -0400, Jeff Layton wrote:
-> > > Now that all of the update_time operations are prepared for it, we ca=
-n
-> > > drop the timespec64 argument from the update_time operation. Do that =
-and
-> > > remove it from some associated functions like inode_update_time and
-> > > inode_needs_update_time.
-> > >=20
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  fs/bad_inode.c           |  3 +--
-> > >  fs/btrfs/inode.c         |  3 +--
-> > >  fs/btrfs/volumes.c       |  4 +---
-> > >  fs/fat/fat.h             |  3 +--
-> > >  fs/fat/misc.c            |  2 +-
-> > >  fs/gfs2/inode.c          |  3 +--
-> > >  fs/inode.c               | 30 +++++++++++++-----------------
-> > >  fs/overlayfs/inode.c     |  2 +-
-> > >  fs/overlayfs/overlayfs.h |  2 +-
-> > >  fs/ubifs/file.c          |  3 +--
-> > >  fs/ubifs/ubifs.h         |  2 +-
-> > >  fs/xfs/xfs_iops.c        |  1 -
-> > >  include/linux/fs.h       |  4 ++--
-> >=20
-> > This was missing the conversion of fs/orangefs orangefs_update_time()
-> > causing the build to fail. So at some point kbuild will yell here.
-> > Fwiw, I've fixed that up in-tree.
+Ah, ok. I was misreading some.
 
-Cheers,
---=20
-Jeff Layton <jlayton@kernel.org>
+inode_update_timestamps() checks IS_I_VERSION() now, not S_VERSION.  So,
+if adding the check of IS_I_VERSION() and (S_MTIME|S_CTIME|S_VERSION) to
+FAT?
+
+With it, IS_I_VERSION() would be false on FAT, and I'm fine.
+
+I.e. something like
+
+	if ((flags & (S_VERSION|S_CTIME|S_MTIME)) && IS_I_VERSION(inode)
+	    && inode_maybe_inc_iversion(inode, false))
+  		dirty_flags |= I_DIRTY_SYNC;
+
+Thanks.
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
