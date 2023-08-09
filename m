@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EDBF07751EB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 06:28:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9094E7751F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 06:31:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229623AbjHIE2W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Aug 2023 00:28:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46030 "EHLO
+        id S229986AbjHIEbG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Aug 2023 00:31:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229590AbjHIE2V (ORCPT
+        with ESMTP id S230100AbjHIEbF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Aug 2023 00:28:21 -0400
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FE5019A1
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 21:28:20 -0700 (PDT)
-Received: by mail-yb1-xb30.google.com with SMTP id 3f1490d57ef6-d07c535377fso6836160276.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Aug 2023 21:28:20 -0700 (PDT)
+        Wed, 9 Aug 2023 00:31:05 -0400
+Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92B371BC3
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 21:31:03 -0700 (PDT)
+Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-5861116fd74so62361967b3.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Aug 2023 21:31:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1691555299; x=1692160099;
-        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LNX2gVTfjhVTAgrxowx/Ja6Ynr5BMCRl3aEeyLA/OyA=;
-        b=Lp5IxKL3QYN8alsy4CzPCKT8uDmwrXUjy4IjlkWKHsQwI2AgxbPfVYMFJrLzg0eaLn
-         2j7MUtFRjz6MVSIYk9zRHgl8UTP1ibj5IL+1MVpf3LVlJ9s9tCh1dF1wZxVgSge5tgR7
-         XU4uI+BdhotRicWNYP31bFkaVUGeOWjscPGqH6+YqhnhBSWEFrOg3/ociku8hPyXejnq
-         mEkQlFIJfiQ15uYTZNSjvWklnkDAeig9vP0CJ5DH5gFV7uyrlO++L0+wrqlhWPQ0QXM2
-         mD45hj/KDLX8tDEXT9ULdh6oSgJklKLlmek2eEupUUOXBHX1dlP0YlUSsXvsO2FmKfkD
-         afcg==
+        d=google.com; s=20221208; t=1691555463; x=1692160263;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0QEq4BtWj7XF+SzsAQAvfuVLV+e829beqWHSxHJfrd4=;
+        b=HJptNXYyAYDNQBptp9KJN1ynN6d4xCu37HYicEN6u5bGotYv6/fxImpozw/WEF6Omm
+         XWZa6948pq1yCfnYIPHZt+ZWG2sDZc0Ek3Xbq0KkHEJlVzDyOWyGO8vqhhio9SGnt+Gy
+         kOUV4G21FiiPWrRBz6qOkWN/8WOKiZKJYBFV/QHl7tlDTu8sZGSQA/DMCaL8SEQ93aJE
+         uIpYmLvLAp3D+BDbdhvTkCuWCOAj3CaJr9KZksD2j4vtQiUBkOMnE2VLOA4pSN3BwmEi
+         ktY+0MhDjLeXRwsjx0AQKAbXt2oJQjNezKGDyUzB6awQdWLnvZ9a/RuBiLKePQBxQa0x
+         YziQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691555299; x=1692160099;
-        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LNX2gVTfjhVTAgrxowx/Ja6Ynr5BMCRl3aEeyLA/OyA=;
-        b=NJs9Q69ktRdsyTzA8T8MPcH5liLg5T4n993IWV0RilZW/aCeZHbAI6P8Itg98FsQtz
-         eoEDm2ajBkUg5kVHknKqIPpd03psFejFA+u4QA46Vvi7CjCqHj597MloG05o63iQWVqC
-         53Qemk5QIEVtP/5VtvdEkIEPLDCHsLdcDG9J9xJdxxUrSFvlkLJfDcHm6cChi7Qq4rEU
-         h0LgBAILRVJAJDcOBCRCpuRzxLYoFl9bLamEpqobsd2ptd0ADdcowr7mqA8dTBuLXLYH
-         2q7/Ac7sRiIYzsO0Tul01asmoz5k61lykI4+naKYT4vZnd7OTvB1MTK4o15aDV4xZTYu
-         lzZg==
-X-Gm-Message-State: AOJu0YxRDaWvglWXxVzLZibfZkbqkEDdDTeiDn0/BlWQa6CaU/FpM22B
-        Gs1SXHwIrqSiW7wjy5X5i7JjSA==
-X-Google-Smtp-Source: AGHT+IGdENtZZLPLv1rOUsSWfPNXi+awN4YQgBXL+LsGL+tZPvcj5kvheolqqxPSLvIXTwHMcHAsWQ==
-X-Received: by 2002:a25:dfc1:0:b0:d47:d267:26d0 with SMTP id w184-20020a25dfc1000000b00d47d26726d0mr1531341ybg.38.1691555299507;
-        Tue, 08 Aug 2023 21:28:19 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1691555463; x=1692160263;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0QEq4BtWj7XF+SzsAQAvfuVLV+e829beqWHSxHJfrd4=;
+        b=CWoWK9H1yb0BPHfk8ezfoHJ6HF2WHPG1YzrLxJd3UuZv6ARc4VJ3/YGQIuM8ybdAlZ
+         O51R47mzJJq7NryLatEAzYM7qv9vwG6gQCq4DqNSOPcyMtv5tCmL8MPoeFmeBCEpcDC0
+         5gffjYbu0bYaBWb4IQyXq58ydYqi4By4/YTRivHWraFojhsAtyM2uBxEZ4pwPqDnU3t2
+         ZHVfgza2VmYQq0/JdyUgZTUFAZVRFmc+VE2DVfTfr9jSkmsHbqKkyIDpe45zfkWtzi7K
+         tgfjg0ZgmR8iAB//olJOZkSdZXKKFLwM7WY06Pg2eEnxx+W0fSniNAdIv9VfAAC7SOR4
+         yl5w==
+X-Gm-Message-State: AOJu0YyCAxBKq5yfTSt7WR1KJZ6RlUXi99hFr15f0Q1J3+X7Bex03A8w
+        QbQVuhTUpLO21rmlSOcbTPVBkA==
+X-Google-Smtp-Source: AGHT+IFC/9yEPmxQ2d3jqattfPdMdJ9f0tThZS9o2vogrFxNROEZWWPd9XKK26aiRb6Kf73SCBCPeA==
+X-Received: by 2002:a25:361d:0:b0:d06:d1ae:dcf2 with SMTP id d29-20020a25361d000000b00d06d1aedcf2mr1670959yba.13.1691555462645;
+        Tue, 08 Aug 2023 21:31:02 -0700 (PDT)
 Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id t5-20020a25c305000000b00c5ec980da48sm3192362ybf.9.2023.08.08.21.28.17
+        by smtp.gmail.com with ESMTPSA id d130-20020a254f88000000b00d0b0bbe574asm3212321ybb.44.2023.08.08.21.31.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Aug 2023 21:28:18 -0700 (PDT)
-Date:   Tue, 8 Aug 2023 21:28:08 -0700 (PDT)
+        Tue, 08 Aug 2023 21:31:02 -0700 (PDT)
+Date:   Tue, 8 Aug 2023 21:30:59 -0700 (PDT)
 From:   Hugh Dickins <hughd@google.com>
 X-X-Sender: hugh@ripple.attlocal.net
 To:     Christian Brauner <brauner@kernel.org>
@@ -67,8 +67,11 @@ cc:     Andrew Morton <akpm@linux-foundation.org>,
         Topi Miettinen <toiwoton@gmail.com>,
         Yu Kuai <yukuai3@huawei.com>, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH vfs.tmpfs 0/5] tmpfs: user xattrs and direct IO
-Message-ID: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com>
+Subject: [PATCH vfs.tmpfs 1/5] xattr: simple_xattr_set() return old_xattr to
+ be freed
+In-Reply-To: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com>
+Message-ID: <158c6585-2aa7-d4aa-90ff-f7c3f8fe407c@google.com>
+References: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
@@ -82,40 +85,281 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This series enables and limits user extended attributes on tmpfs,
-and independently provides a trivial direct IO stub for tmpfs.
+tmpfs wants to support limited user extended attributes, but kernfs
+(or cgroupfs, the only kernfs with KERNFS_ROOT_SUPPORT_USER_XATTR)
+already supports user extended attributes through simple xattrs: but
+limited by a policy (128KiB per inode) too liberal to be used on tmpfs.
 
-It is here based on the vfs.tmpfs branch in vfs.git in next-20230808
-but with a cherry-pick of v6.5-rc4's commit
-253e5df8b8f0 ("tmpfs: fix Documentation of noswap and huge mount options")
-first: since the vfs.tmpfs branch is based on v6.5-rc1, but 3/5 in this
-series updates tmpfs.rst in a way which depends on that commit.
+To allow a different limiting policy for tmpfs, without affecting the
+policy for kernfs, change simple_xattr_set() to return the replaced or
+removed xattr (if any), leaving the caller to update their accounting
+then free the xattr (by simple_xattr_free(), renamed from the static
+free_simple_xattr()).
 
-IIUC the right thing to do would be to cherry-pick 253e5df8b8f0 into
-vfs.tmpfs before applying this series.  I'm sorry that the series as
-posted does not apply cleanly to any known tree! but I think posting
-it against v6.5-rc5 or next-20230808 would be even less helpful.
+Signed-off-by: Hugh Dickins <hughd@google.com>
+---
+ fs/kernfs/inode.c     | 46 +++++++++++++++++++++++++---------------
+ fs/xattr.c            | 51 +++++++++++++++++++--------------------------
+ include/linux/xattr.h |  7 ++++---
+ mm/shmem.c            | 10 +++++----
+ 4 files changed, 61 insertions(+), 53 deletions(-)
 
-There is one "conflict" between this series and the final next-20230808:
-Jeff Layton's vfs.ctime mods update a line of shmem_xattr_handler_set(),
-where neighbouring lines are modified by 1/5 and 3/5 here: easily
-resolved in the merge commit, I hope.
+diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
+index b22b74d1a115..fec5d5f78f07 100644
+--- a/fs/kernfs/inode.c
++++ b/fs/kernfs/inode.c
+@@ -306,11 +306,17 @@ int kernfs_xattr_get(struct kernfs_node *kn, const char *name,
+ int kernfs_xattr_set(struct kernfs_node *kn, const char *name,
+ 		     const void *value, size_t size, int flags)
+ {
++	struct simple_xattr *old_xattr;
+ 	struct kernfs_iattrs *attrs = kernfs_iattrs(kn);
+ 	if (!attrs)
+ 		return -ENOMEM;
+ 
+-	return simple_xattr_set(&attrs->xattrs, name, value, size, flags, NULL);
++	old_xattr = simple_xattr_set(&attrs->xattrs, name, value, size, flags);
++	if (IS_ERR(old_xattr))
++		return PTR_ERR(old_xattr);
++
++	simple_xattr_free(old_xattr);
++	return 0;
+ }
+ 
+ static int kernfs_vfs_xattr_get(const struct xattr_handler *handler,
+@@ -342,7 +348,7 @@ static int kernfs_vfs_user_xattr_add(struct kernfs_node *kn,
+ {
+ 	atomic_t *sz = &kn->iattr->user_xattr_size;
+ 	atomic_t *nr = &kn->iattr->nr_user_xattrs;
+-	ssize_t removed_size;
++	struct simple_xattr *old_xattr;
+ 	int ret;
+ 
+ 	if (atomic_inc_return(nr) > KERNFS_MAX_USER_XATTRS) {
+@@ -355,13 +361,18 @@ static int kernfs_vfs_user_xattr_add(struct kernfs_node *kn,
+ 		goto dec_size_out;
+ 	}
+ 
+-	ret = simple_xattr_set(xattrs, full_name, value, size, flags,
+-			       &removed_size);
+-
+-	if (!ret && removed_size >= 0)
+-		size = removed_size;
+-	else if (!ret)
++	old_xattr = simple_xattr_set(xattrs, full_name, value, size, flags);
++	if (!old_xattr)
+ 		return 0;
++
++	if (IS_ERR(old_xattr)) {
++		ret = PTR_ERR(old_xattr);
++		goto dec_size_out;
++	}
++
++	ret = 0;
++	size = old_xattr->size;
++	simple_xattr_free(old_xattr);
+ dec_size_out:
+ 	atomic_sub(size, sz);
+ dec_count_out:
+@@ -376,18 +387,19 @@ static int kernfs_vfs_user_xattr_rm(struct kernfs_node *kn,
+ {
+ 	atomic_t *sz = &kn->iattr->user_xattr_size;
+ 	atomic_t *nr = &kn->iattr->nr_user_xattrs;
+-	ssize_t removed_size;
+-	int ret;
++	struct simple_xattr *old_xattr;
+ 
+-	ret = simple_xattr_set(xattrs, full_name, value, size, flags,
+-			       &removed_size);
++	old_xattr = simple_xattr_set(xattrs, full_name, value, size, flags);
++	if (!old_xattr)
++		return 0;
+ 
+-	if (removed_size >= 0) {
+-		atomic_sub(removed_size, sz);
+-		atomic_dec(nr);
+-	}
++	if (IS_ERR(old_xattr))
++		return PTR_ERR(old_xattr);
+ 
+-	return ret;
++	atomic_sub(old_xattr->size, sz);
++	atomic_dec(nr);
++	simple_xattr_free(old_xattr);
++	return 0;
+ }
+ 
+ static int kernfs_vfs_user_xattr_set(const struct xattr_handler *handler,
+diff --git a/fs/xattr.c b/fs/xattr.c
+index e7bbb7f57557..ba37a8f5cfd1 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -1040,12 +1040,12 @@ const char *xattr_full_name(const struct xattr_handler *handler,
+ EXPORT_SYMBOL(xattr_full_name);
+ 
+ /**
+- * free_simple_xattr - free an xattr object
++ * simple_xattr_free - free an xattr object
+  * @xattr: the xattr object
+  *
+  * Free the xattr object. Can handle @xattr being NULL.
+  */
+-static inline void free_simple_xattr(struct simple_xattr *xattr)
++void simple_xattr_free(struct simple_xattr *xattr)
+ {
+ 	if (xattr)
+ 		kfree(xattr->name);
+@@ -1164,7 +1164,6 @@ int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
+  * @value: the value to store along the xattr
+  * @size: the size of @value
+  * @flags: the flags determining how to set the xattr
+- * @removed_size: the size of the removed xattr
+  *
+  * Set a new xattr object.
+  * If @value is passed a new xattr object will be allocated. If XATTR_REPLACE
+@@ -1181,29 +1180,27 @@ int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
+  * nothing if XATTR_CREATE is specified in @flags or @flags is zero. For
+  * XATTR_REPLACE we fail as mentioned above.
+  *
+- * Return: On success zero and on error a negative error code is returned.
++ * Return: On success, the removed or replaced xattr is returned, to be freed
++ * by the caller; or NULL if none. On failure a negative error code is returned.
+  */
+-int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
+-		     const void *value, size_t size, int flags,
+-		     ssize_t *removed_size)
++struct simple_xattr *simple_xattr_set(struct simple_xattrs *xattrs,
++				      const char *name, const void *value,
++				      size_t size, int flags)
+ {
+-	struct simple_xattr *xattr = NULL, *new_xattr = NULL;
++	struct simple_xattr *old_xattr = NULL, *new_xattr = NULL;
+ 	struct rb_node *parent = NULL, **rbp;
+ 	int err = 0, ret;
+ 
+-	if (removed_size)
+-		*removed_size = -1;
+-
+ 	/* value == NULL means remove */
+ 	if (value) {
+ 		new_xattr = simple_xattr_alloc(value, size);
+ 		if (!new_xattr)
+-			return -ENOMEM;
++			return ERR_PTR(-ENOMEM);
+ 
+ 		new_xattr->name = kstrdup(name, GFP_KERNEL);
+ 		if (!new_xattr->name) {
+-			free_simple_xattr(new_xattr);
+-			return -ENOMEM;
++			simple_xattr_free(new_xattr);
++			return ERR_PTR(-ENOMEM);
+ 		}
+ 	}
+ 
+@@ -1217,12 +1214,12 @@ int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
+ 		else if (ret > 0)
+ 			rbp = &(*rbp)->rb_right;
+ 		else
+-			xattr = rb_entry(*rbp, struct simple_xattr, rb_node);
+-		if (xattr)
++			old_xattr = rb_entry(*rbp, struct simple_xattr, rb_node);
++		if (old_xattr)
+ 			break;
+ 	}
+ 
+-	if (xattr) {
++	if (old_xattr) {
+ 		/* Fail if XATTR_CREATE is requested and the xattr exists. */
+ 		if (flags & XATTR_CREATE) {
+ 			err = -EEXIST;
+@@ -1230,12 +1227,10 @@ int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
+ 		}
+ 
+ 		if (new_xattr)
+-			rb_replace_node(&xattr->rb_node, &new_xattr->rb_node,
+-					&xattrs->rb_root);
++			rb_replace_node(&old_xattr->rb_node,
++					&new_xattr->rb_node, &xattrs->rb_root);
+ 		else
+-			rb_erase(&xattr->rb_node, &xattrs->rb_root);
+-		if (!err && removed_size)
+-			*removed_size = xattr->size;
++			rb_erase(&old_xattr->rb_node, &xattrs->rb_root);
+ 	} else {
+ 		/* Fail if XATTR_REPLACE is requested but no xattr is found. */
+ 		if (flags & XATTR_REPLACE) {
+@@ -1260,12 +1255,10 @@ int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
+ 
+ out_unlock:
+ 	write_unlock(&xattrs->lock);
+-	if (err)
+-		free_simple_xattr(new_xattr);
+-	else
+-		free_simple_xattr(xattr);
+-	return err;
+-
++	if (!err)
++		return old_xattr;
++	simple_xattr_free(new_xattr);
++	return ERR_PTR(err);
+ }
+ 
+ static bool xattr_is_trusted(const char *name)
+@@ -1386,7 +1379,7 @@ void simple_xattrs_free(struct simple_xattrs *xattrs)
+ 		rbp_next = rb_next(rbp);
+ 		xattr = rb_entry(rbp, struct simple_xattr, rb_node);
+ 		rb_erase(&xattr->rb_node, &xattrs->rb_root);
+-		free_simple_xattr(xattr);
++		simple_xattr_free(xattr);
+ 		rbp = rbp_next;
+ 	}
+ }
+diff --git a/include/linux/xattr.h b/include/linux/xattr.h
+index d591ef59aa98..e37fe667ae04 100644
+--- a/include/linux/xattr.h
++++ b/include/linux/xattr.h
+@@ -116,11 +116,12 @@ struct simple_xattr {
+ void simple_xattrs_init(struct simple_xattrs *xattrs);
+ void simple_xattrs_free(struct simple_xattrs *xattrs);
+ struct simple_xattr *simple_xattr_alloc(const void *value, size_t size);
++void simple_xattr_free(struct simple_xattr *xattr);
+ int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
+ 		     void *buffer, size_t size);
+-int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
+-		     const void *value, size_t size, int flags,
+-		     ssize_t *removed_size);
++struct simple_xattr *simple_xattr_set(struct simple_xattrs *xattrs,
++				      const char *name, const void *value,
++				      size_t size, int flags);
+ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+ 			  char *buffer, size_t size);
+ void simple_xattr_add(struct simple_xattrs *xattrs,
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 0f83d86fd8b4..df3cabf54206 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3595,15 +3595,17 @@ static int shmem_xattr_handler_set(const struct xattr_handler *handler,
+ 				   size_t size, int flags)
+ {
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+-	int err;
++	struct simple_xattr *old_xattr;
+ 
+ 	name = xattr_full_name(handler, name);
+-	err = simple_xattr_set(&info->xattrs, name, value, size, flags, NULL);
+-	if (!err) {
++	old_xattr = simple_xattr_set(&info->xattrs, name, value, size, flags);
++	if (!IS_ERR(old_xattr)) {
++		simple_xattr_free(old_xattr);
++		old_xattr = NULL;
+ 		inode->i_ctime = current_time(inode);
+ 		inode_inc_iversion(inode);
+ 	}
+-	return err;
++	return PTR_ERR(old_xattr);
+ }
+ 
+ static const struct xattr_handler shmem_security_xattr_handler = {
+-- 
+2.35.3
 
-1/5 xattr: simple_xattr_set() return old_xattr to be freed
-2/5 tmpfs: track free_ispace instead of free_inodes
-3/5 tmpfs,xattr: enable limited user extended attributes
-4/5 tmpfs: trivial support for direct IO
-5/5 mm: invalidation check mapping before folio_contains
-
- Documentation/filesystems/tmpfs.rst |   7 +-
- fs/Kconfig                          |   4 +-
- fs/kernfs/dir.c                     |   2 +-
- fs/kernfs/inode.c                   |  46 +++++++----
- fs/xattr.c                          |  79 +++++++++++-------
- include/linux/shmem_fs.h            |   2 +-
- include/linux/xattr.h               |  10 ++-
- mm/shmem.c                          | 130 +++++++++++++++++++++++-------
- mm/truncate.c                       |   4 +-
- 9 files changed, 197 insertions(+), 87 deletions(-)
-
-Hugh
