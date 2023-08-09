@@ -2,62 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C889775315
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 08:46:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF846775375
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Aug 2023 09:04:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230527AbjHIGp7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Aug 2023 02:45:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51454 "EHLO
+        id S231378AbjHIHEf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Aug 2023 03:04:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbjHIGp6 (ORCPT
+        with ESMTP id S229840AbjHIHEd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Aug 2023 02:45:58 -0400
+        Wed, 9 Aug 2023 03:04:33 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7084D10CF
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Aug 2023 23:45:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78D40E7D;
+        Wed,  9 Aug 2023 00:04:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 050B262FA9
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 06:45:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 726B0C433C9;
-        Wed,  9 Aug 2023 06:45:53 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 043FF62FC2;
+        Wed,  9 Aug 2023 07:04:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF415C433C8;
+        Wed,  9 Aug 2023 07:04:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691563557;
-        bh=Tft/Bnkk5YmxLkV16c+O2VCCAFfOTx33/EESt63JUWU=;
+        s=k20201202; t=1691564670;
+        bh=mNaI4yIhrZSJhUwcMni6JCN62HgxRgb2ToogP2H4jFU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=agYtRmZcNSSJhVVXYHVOaO/ayJ01hW33svkCdd3jiJeBWkXSCUljHeUoNiQh3X37u
-         3zyn/SN6JEXIqeR+WehDCQ9gZjL0jLmZmBYuU82MlTip4DhEBpqN8t6edapY8jG6an
-         VAKs/VHSYkb/mNf9m+6zzsXOIApcpSb9OnRW1GjJdY6c+sB1qLZ4toGBgbhCtoGSAf
-         qL0dLTqFhllGnH2ablo0BvXwnspTVqRDzkDGZ+nvgPJinokR0tgyIET7WHL+ZGnA7n
-         66CR03Y4jylItWH/5sJ3KSk8tRlRtrlTWnpS7rANp/G1xhSAvOn3hlHg3IBRZBnJX/
-         /RvZPowG88WjA==
-Date:   Wed, 9 Aug 2023 08:45:50 +0200
+        b=dm1BfYtz2dqQMxa4y4K1DetMu3X3Ln+bwz+2jEemWCBc68DqnWDXfI9TyuC86JRyc
+         OV6+7i/vF54n6ROMNvy+VNt+3Tcbr5mPPxWG7+kZZzvdk1l5Y2fXqdyi4kiTIEHp6R
+         c+NokRM5ch22ngFHcUfi3IxiA2Hed3py0L00cGbjgid38+MsphBbYkHDRv8n5kfv6l
+         165HU85tqTN8dPjx7l1xQ1d3Tv6OZoFdRY/kHWh7X900UpXqc/s3kp4a/FPaL7/Rze
+         xRv3G8HkDEWg3uieFtEQ8pvVu174WnaDQBFW7zKSqu+mNZR7+LKPBNsWLcV/CsHS/4
+         sOc78sTonZdgw==
+Date:   Wed, 9 Aug 2023 09:04:12 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Oleksandr Tymoshenko <ovt@google.com>,
-        Carlos Maiolino <cem@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
-        Miklos Szeredi <miklos@szeredi.hu>, Daniel Xu <dxu@dxuuu.xyz>,
-        Chris Down <chris@chrisdown.name>, Tejun Heo <tj@kernel.org>,
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Pete Zaitcev <zaitcev@redhat.com>,
-        Helge Deller <deller@gmx.de>,
-        Topi Miettinen <toiwoton@gmail.com>,
-        Yu Kuai <yukuai3@huawei.com>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH vfs.tmpfs 0/5] tmpfs: user xattrs and direct IO
-Message-ID: <20230809-postkarten-zugute-3cde38456390@brauner>
-References: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com>
+        Tejun Heo <tj@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Richard Weinberger <richard@nod.at>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, ntfs3@lists.linux.dev,
+        ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-mtd@lists.infradead.org, linux-mm@kvack.org,
+        linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v7 07/13] xfs: have xfs_vn_update_time gets its own
+ timestamp
+Message-ID: <20230809-abartig-lachen-df1965c6b37a@brauner>
+References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
+ <20230807-mgctime-v7-7-d1dec143a704@kernel.org>
+ <20230808093903.2cg5wwbwbvflkeph@quack3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com>
+In-Reply-To: <20230808093903.2cg5wwbwbvflkeph@quack3>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -68,28 +117,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 08, 2023 at 09:28:08PM -0700, Hugh Dickins wrote:
-> This series enables and limits user extended attributes on tmpfs,
-> and independently provides a trivial direct IO stub for tmpfs.
+On Tue, Aug 08, 2023 at 11:39:03AM +0200, Jan Kara wrote:
+> On Mon 07-08-23 15:38:38, Jeff Layton wrote:
+> > In later patches we're going to drop the "now" parameter from the
+> > update_time operation. Prepare XFS for this by reworking how it fetches
+> > timestamps and sets them in the inode. Ensure that we update the ctime
+> > even if only S_MTIME is set.
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/xfs/xfs_iops.c | 12 ++++++++----
+> >  1 file changed, 8 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > index 731f45391baa..72d18e7840f5 100644
+> > --- a/fs/xfs/xfs_iops.c
+> > +++ b/fs/xfs/xfs_iops.c
+> > @@ -1037,6 +1037,7 @@ xfs_vn_update_time(
+> >  	int			log_flags = XFS_ILOG_TIMESTAMP;
+> >  	struct xfs_trans	*tp;
+> >  	int			error;
+> > +	struct timespec64	now = current_time(inode);
 > 
-> It is here based on the vfs.tmpfs branch in vfs.git in next-20230808
-> but with a cherry-pick of v6.5-rc4's commit
-> 253e5df8b8f0 ("tmpfs: fix Documentation of noswap and huge mount options")
-> first: since the vfs.tmpfs branch is based on v6.5-rc1, but 3/5 in this
-> series updates tmpfs.rst in a way which depends on that commit.
-> 
-> IIUC the right thing to do would be to cherry-pick 253e5df8b8f0 into
-> vfs.tmpfs before applying this series.  I'm sorry that the series as
-> posted does not apply cleanly to any known tree! but I think posting
-> it against v6.5-rc5 or next-20230808 would be even less helpful.
+> No need to fetch current_time() here where you overwrite it just a bit
+> later...
 
-No worries, I'll sort that out.
-
-> 
-> There is one "conflict" between this series and the final next-20230808:
-> Jeff Layton's vfs.ctime mods update a line of shmem_xattr_handler_set(),
-> where neighbouring lines are modified by 1/5 and 3/5 here: easily
-> resolved in the merge commit, I hope.
-
-Yeah, git rerere is our friend here as well so reassembling the tree
-isn't really that much pain.
+It also shadows the @now parameter of that function. Since that function
+parameter is dropped in follow-up patches I simply s/now/time/g it here.
+In any case, fixed in-tree.
