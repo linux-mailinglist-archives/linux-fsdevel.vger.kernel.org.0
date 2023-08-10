@@ -2,124 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 75D1B777F9A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 19:52:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28D7D777FB0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 19:58:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235466AbjHJRwJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 13:52:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55350 "EHLO
+        id S235537AbjHJR63 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 13:58:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233922AbjHJRwI (ORCPT
+        with ESMTP id S231618AbjHJR62 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 13:52:08 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A63F103;
-        Thu, 10 Aug 2023 10:52:07 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 1B0C221868;
-        Thu, 10 Aug 2023 17:52:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1691689926; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CZ25GytU7V9PgZNVJFOgesoNXDMmwuqCEuLI9Og+gD0=;
-        b=3K6fTy/+6iG/SrmpmBGEQBykxWplX1/caGh8yDZmqsCxPfXZ9Dzvo6bt2J7mj7ror0D9II
-        /NtQ/NPTpXumjtVhH/ByfA07nTaNLtK4Y/+GgVdSMC8G8KNerhGUZIPSBrnv4bSbBSj15D
-        lhlXfYsgJcLvgApKx5zsAZfWC+eCxqE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1691689926;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CZ25GytU7V9PgZNVJFOgesoNXDMmwuqCEuLI9Og+gD0=;
-        b=KrZiBwadLWs7KzP/JdR/tDkEM8FIxIo7xZll2oJfT8DKJV8u+KbFPTz+K4Aob7QhULMBau
-        /xPSqNaLaEb1tzDg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 03E5C138E2;
-        Thu, 10 Aug 2023 17:52:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 7pHnAMYj1WSgWgAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 10 Aug 2023 17:52:06 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 83BE3A076F; Thu, 10 Aug 2023 19:52:05 +0200 (CEST)
-Date:   Thu, 10 Aug 2023 19:52:05 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Kent Overstreet <kent.overstreet@linux.dev>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-bcachefs@vger.kernel.org, djwong@kernel.org,
-        dchinner@redhat.com, sandeen@redhat.com, willy@infradead.org,
-        josef@toxicpanda.com, tytso@mit.edu, bfoster@redhat.com,
-        jack@suse.cz, andreas.gruenbacher@gmail.com, brauner@kernel.org,
-        peterz@infradead.org, akpm@linux-foundation.org,
-        dhowells@redhat.com, snitzer@kernel.org, axboe@kernel.dk
-Subject: Re: [GIT PULL] bcachefs
-Message-ID: <20230810175205.gtlkydeis37xdxuk@quack3>
-References: <20230626214656.hcp4puionmtoloat@moria.home.lan>
- <20230706155602.mnhsylo3pnief2of@moria.home.lan>
- <20230712025459.dbzcjtkb4zem4pdn@moria.home.lan>
- <CAHk-=whaFz0uyBB79qcEh-7q=wUOAbGHaMPofJfxGqguiKzFyQ@mail.gmail.com>
- <20230810155453.6xz2k7f632jypqyz@moria.home.lan>
+        Thu, 10 Aug 2023 13:58:28 -0400
+Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BD4CED;
+        Thu, 10 Aug 2023 10:58:28 -0700 (PDT)
+Received: by mail-vk1-xa30.google.com with SMTP id 71dfb90a1353d-4872c3dff53so331580e0c.1;
+        Thu, 10 Aug 2023 10:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1691690307; x=1692295107;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kiORD/kwp8ZCOVHFvTu8hUSLSgnUCKWjtsN+Cf0UQ8M=;
+        b=TtnCfLTLSVsD/8mjJL/uLjovm8JaiHo4b/mdbCmmW0taf99at9JYttFr/1Hu0stXaV
+         QQl2us1k6/9eXNUFDtwJb/oSuQXngYpRZyyf0G9fxzspyXjrJ08NiAKA7m7tceYtevTM
+         SReJ4OltoiPmzNpA2eGc+eP1wKX5raWlRyrAvhi8nsbCv0x7tNoXClfdZzAHbT4uN2/F
+         833eH1GXj8mx9+xOrghJw7iLqZw2NgupKsylHF/WEShyB8+GcMTeB7oaQnkqdW6diB8R
+         cZennwKesLSivITSEzqKKThB1XmJW193+8NPxsGt2vfR35g3PWm0PdRrvL09OKlJk8AL
+         rk4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691690307; x=1692295107;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kiORD/kwp8ZCOVHFvTu8hUSLSgnUCKWjtsN+Cf0UQ8M=;
+        b=ZFnT6z4stSsMI0SlnBC8hCPOqTD+HtR7UJribqHd1tNbo4sRqigDRqCoUbnq5h6h+P
+         DCcMpdXgnnFI6EmpyevHvtFwIjvQ+4dCgVsc23AKwzM8xDHDH4/ouxzUz59zOBpeo3Up
+         2oL0Jz628o/PSewfbpLfb9Jlnbgp22pKvX3s0+QqMYo1pKDG99Z8IpUiK8YhckvaGO5R
+         u7Y4iW7hCEWH4gobt02j1NCpcs1OC/1aykds/9/zXtYNNLxhpJ+7GTcduRAN6sh8QRu3
+         ZOmaT7BXhGmIMVCnmhiL7SoloNR/AqVHznjNtbZA3gmrlXbW1hAim+ATcHza6tu+Rqet
+         Nrkw==
+X-Gm-Message-State: AOJu0YzpZp+2u2DwoQXsm5/m6fRwgabORNuffJG1x9MBvtVP2Ld6VDmx
+        IioZOUmi+K7G06CKgKLfA7vz3rhoI/NTv9wv/8g=
+X-Google-Smtp-Source: AGHT+IGDjuq+B+GVfzoZTy2uejYFgq74ja6JTdwGiEo0ZXML7lE1kjUGv4Wrybm5T8bBc8rvSZq8nEyKiMdB+Vd+2EQ=
+X-Received: by 2002:a1f:6011:0:b0:45e:892b:d436 with SMTP id
+ u17-20020a1f6011000000b0045e892bd436mr2213267vkb.12.1691690307097; Thu, 10
+ Aug 2023 10:58:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230810155453.6xz2k7f632jypqyz@moria.home.lan>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
-        version=3.4.6
+References: <20230808091849.505809-1-suhui@nfschina.com>
+In-Reply-To: <20230808091849.505809-1-suhui@nfschina.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 10 Aug 2023 20:58:16 +0300
+Message-ID: <CAOQ4uxhtZSr-kq3G1vmm4=GyBO3E5RdSbGSp108moRiRBx4vvg@mail.gmail.com>
+Subject: Re: [PATCH] fanotify: avoid possible NULL dereference
+To:     Su Hui <suhui@nfschina.com>
+Cc:     jack@suse.cz, repnop@google.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 10-08-23 11:54:53, Kent Overstreet wrote:
-> > And there clearly is something very strange going on with superblock
-> > handling
-> 
-> This deserves an explanation because sget() is a bit nutty.
-> 
-> The way sget() is conventionally used for block device filesystems, the
-> block device open _isn't actually exclusive_ - sure, FMODE_EXCL is used,
-> but the holder is the fs type pointer, so it won't exclude with other
-> opens of the same fs type.
-> 
-> That means the only protection from multiple opens scribbling over each
-> other is sget() itself - but if the bdev handle ever outlives the
-> superblock we're completely screwed; that's a silent data corruption bug
-> that we can't easily catch, and if the filesystem teardown path has any
-> asynchronous stuff going on (and of course it does) that's not a hard
-> mistake to make. I've observed at least one bug that looked suspiciously
-> like that, but I don't think I quite pinned it down at the time.
+On Tue, Aug 8, 2023 at 12:19=E2=80=AFPM Su Hui <suhui@nfschina.com> wrote:
+>
+> smatch error:
+> fs/notify/fanotify/fanotify_user.c:462 copy_fid_info_to_user():
+> we previously assumed 'fh' could be null (see line 421)
+>
+> Fixes: afc894c784c8 ("fanotify: Store fanotify handles differently")
+> Signed-off-by: Su Hui <suhui@nfschina.com>'
 
-This is just being changed - check Christian's VFS tree. There are patches
-that make sget() use superblock pointer as a bdev holder so the reuse
-you're speaking about isn't a problem anymore.
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-> It also forces the caller to separate opening of the block devices from
-> the rest of filesystem initialization, which is a bit less than ideal.
-> 
-> Anyways, bcachefs just wants to be able to do real exclusive opens of
-> the block devices, and we do all filesystem bringup with a single
-> bch2_fs_open() call. I think this could be made to work with the way
-> sget() wants to work, but it'd require reworking the locking in
-> sget() - it does everything, including the test() and set() calls, under
-> a single spinlock.
-
-Yeah. Maybe the current upstream changes aren't enough to make your life
-easier for bcachefs, btrfs does its special thing as well after all because
-mount also involves multiple devices for it. I just wanted to mention that
-the exclusive bdev open thing is changing.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> ---
+>  fs/notify/fanotify/fanotify_user.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fano=
+tify_user.c
+> index f69c451018e3..5a5487ae2460 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -459,12 +459,13 @@ static int copy_fid_info_to_user(__kernel_fsid_t *f=
+sid, struct fanotify_fh *fh,
+>         if (WARN_ON_ONCE(len < sizeof(handle)))
+>                 return -EFAULT;
+>
+> -       handle.handle_type =3D fh->type;
+>         handle.handle_bytes =3D fh_len;
+>
+>         /* Mangle handle_type for bad file_handle */
+>         if (!fh_len)
+>                 handle.handle_type =3D FILEID_INVALID;
+> +       else
+> +               handle.handle_type =3D fh->type;
+>
+>         if (copy_to_user(buf, &handle, sizeof(handle)))
+>                 return -EFAULT;
+> --
+> 2.30.2
+>
