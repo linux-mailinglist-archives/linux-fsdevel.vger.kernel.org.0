@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CFCD677794D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 15:12:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD5BC77794A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 15:12:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234023AbjHJNMM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 09:12:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51770 "EHLO
+        id S233216AbjHJNMP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 09:12:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231978AbjHJNML (ORCPT
+        with ESMTP id S233699AbjHJNMM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 09:12:11 -0400
+        Thu, 10 Aug 2023 09:12:12 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2015E136;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE76191;
         Thu, 10 Aug 2023 06:12:11 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A97C163875;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 84AE062EE1;
+        Thu, 10 Aug 2023 13:12:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5727DC433CA;
         Thu, 10 Aug 2023 13:12:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B63FC433CB;
-        Thu, 10 Aug 2023 13:12:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691673130;
-        bh=qEGRHERJDD6pf6eauAwl2sw44g31DM2S00kWiYDSE2Q=;
+        s=k20201202; t=1691673131;
+        bh=sWnTCUjG/8VJ8vbCcrMecGrqt9k5P6DlV83pYz2Oy94=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=ELS5wT6wY+1eGzsgNKqf/4DSKbkla03pIoy7LZRuX5j4w8/GIYlOBj6R6TZ/KWwtK
-         B+63AELT3JTE7kWOt2lU9yPFz0BB1poTvJ59gLKsCvgErxHeIqsM6UUJ5z6hNMI0Rh
-         FsguVLk0a357UYL6e5t3x1NdDipaNphc1QcvmJT404O2wluM6XqFT/KdNBP2xyG7QU
-         1c0Io68mN9zvJG5iEGEKMbh158l1rM71yNsBtP/c4hQBygKckWtJwdGwLe3OJXaWTY
-         fvR+1YgVMBWaOvUjXhGu0wLPOpLJNfK5MVm7ovW6T+y0ejxiJ+pWSv5CV7MuG3LYRg
-         yPOzgOiSK7cZw==
+        b=N7x/taN4/Vz2LHtz89xLrAuRlFkXnRDYaEWTg2eYgLJhwmJFX59yXTxQdOfAI0ONd
+         1hM/Q9E+YZMn70nTReoZGbro31vQGQ4oUhypoXrzcDG6BRx7jKUEHarZ6rFw2IDScy
+         UkvioLq7puUHg6E2jZADC3CR/XYkbaxeVzSRNfKN2EGWeLLrm+87sZ+8uo/8Ni8lqB
+         USzP1VZIbV/0soeWEA70+SI+01eJ10GsG7rRXvLkpDLmeFmxoYFTxTTBHfGjFEzeYq
+         KS9xyCO6ZkKGMGFhUaZUcgDSH9XBd1erEZk8nXMk5Byqhe4NUf4Gmf8rgMqorSp6db
+         WMJd90EK2a0vQ==
 From:   Jeff Layton <jlayton@kernel.org>
-Date:   Thu, 10 Aug 2023 09:12:04 -0400
-Subject: [PATCH 1/2] fat: remove i_version handling from fat_update_time
+Date:   Thu, 10 Aug 2023 09:12:05 -0400
+Subject: [PATCH 2/2] fat: make fat_update_time get its own timestamp
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230810-ctime-fat-v1-1-327598fd1de8@kernel.org>
+Message-Id: <20230810-ctime-fat-v1-2-327598fd1de8@kernel.org>
 References: <20230810-ctime-fat-v1-0-327598fd1de8@kernel.org>
 In-Reply-To: <20230810-ctime-fat-v1-0-327598fd1de8@kernel.org>
 To:     Christian Brauner <brauner@kernel.org>,
@@ -48,20 +48,20 @@ To:     Christian Brauner <brauner@kernel.org>,
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=997; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=qEGRHERJDD6pf6eauAwl2sw44g31DM2S00kWiYDSE2Q=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBk1OIoQw6ZsmX4vC0yb2/1NWPLO8xdxhDhjM/hR
- ObdyBBrRiCJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZNTiKAAKCRAADmhBGVaC
- FWCUEAC9+CezU7ndFRliS/8zKwJjJGmx/HoOu8e65SKrTQrEWlRL/rzWHzn8jknlSv3xpq9dJjf
- UAhZm1b9rj7XCS3oNJJqLcTMaQKCNnJrPcECRILLMWmbG+gE+4sDxeIlWuqCAxGIIyGSY51OND5
- HN15h/Rd4Lu4jh5ZSyCfB59mEvFLtOyznbX2cEHtjESri9Qd3wNildNZrd+PZhRsUi85GbjXI/p
- kfFz6+ZuiniM6X9acRFTbmyAL99rFrJETEzdV+4R0RjGQEnTZPEEpDCb21Mv7u2uHrYzzVvjM0F
- D4NuPGPIh+wEK31J7TaWOOCa/K5PzxxpuFVq1TrqCHdlk5j3J+dhojiP/Ky9eeq3gHuamLQpFJU
- 7g7PRJiQK7isiV5U2t0VOduguDMwd7vZlRGYoMA3b5ncMb4DHnuEVM0FxLkDH8PbchcADKuSpWC
- ilX41Vk4gq0Ph8v5NDbnmLoBcQapUC7byTrw4DQXqguCqGe+7VM/CE82h6hekKNb9K+ncp4EzYJ
- nZew5LtSXGTdrLWS0aBIi0l+sJznnIo+2E9UXJciBD+MB6fTREog9DdYJZFCILmR+9Ihx/XQqNe
- JU3cIgFYFeETO524mMmiS27yGaKUUdh0VcIMFWUBjFPoCGsqRe7xAMc+SjFXphbAARsx29yNdTn
- wL2kM2PcFIeJgKw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=824; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=sWnTCUjG/8VJ8vbCcrMecGrqt9k5P6DlV83pYz2Oy94=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBk1OIoFsZaNNKC83Oz7ClMXf2h3TADk4VzazKCo
+ yTo7933ROyJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZNTiKAAKCRAADmhBGVaC
+ FUQMD/4uSUbtoyOw/8HxuFSZeAJrv4k7WqZJzPyEPIJQ3YYV9r8kbJnYM/K5GOEVKFxW1/CA/6W
+ bfZ0CaEgZCvps13bbARi0eMuAjzOZs1FvyRMP39RxjoyjQufvWqlpg+sefj1YDCZ2PzsixtXagD
+ XZ5b02Kj4SFWD0t2DIX+BgDmaZld3jz/1oWGg7p335WGiLnA7CIbBvAM24yQZsoGsjqwfz8DAtw
+ Se+TJrDVLA/Rt/dPzLHpzz5gIA2tZ/W2htf6Q5Sd2Ty4H0waSx46qJDbNTqC469Xx8zsh0bf0qY
+ DUzt1xfC+1UvAH6QapYSnn9UAYfYf+bFxtsepEVHB+gY6Ayhpn8RblARq4PIotKitjqsIHNTRHv
+ oAT7ql5Em83p40vmawKCiY8yxn1TR/s8n3WJQ70M+pg2EDSAFMSnQvpN4CJWyG0rQhC92hBkUPd
+ e5NXhr8zsPecE5upofGgBaW/IbwqeZV0U9+6Dh8chJ7u7/d6UTrSMFdfuHvQN2LGJ3ELcwRlHLk
+ gwNxWPuFyS1DW+6TQ8mByh7xGSdq99+ynkC7mb1XI9pe1DUKESm8q2RJTGFB9wRbO0vc6StnvpT
+ Orkn8jOhtB28yVotD84G4AoSeJBnHoHwElUQIZr59Zgs/zOhjxtdX0dGC6tVa/vuJRwcbCmkavC
+ vhoEOHO7jj0vV8Q==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -74,35 +74,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-commit 6bb885ecd746 (fat: add functions to update and truncate
-timestamps appropriately") added an update_time routine for fat. That
-patch added a section for handling the S_VERSION bit, even though FAT
-doesn't enable SB_I_VERSION and the S_VERSION bit will never be set when
-calling it.
+In later patches, we're going to drop the "now" parameter from the
+update_time operation. Fix fat_update_time to fetch its own timestamp.
+It turns out that this is easily done by just passing a NULL timestamp
+pointer to fat_truncate_time.
 
-Remove the section for handling S_VERSION since it's effectively dead
-code, and will be problematic vs. future changes.
-
-Cc: Frank Sorenson <sorenson@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/fat/misc.c | 3 ---
- 1 file changed, 3 deletions(-)
+ fs/fat/misc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/fat/misc.c b/fs/fat/misc.c
-index ab28173348fa..37f4afb346af 100644
+index 37f4afb346af..f2304a1054aa 100644
 --- a/fs/fat/misc.c
 +++ b/fs/fat/misc.c
-@@ -354,9 +354,6 @@ int fat_update_time(struct inode *inode, int flags)
- 			dirty_flags |= I_DIRTY_SYNC;
- 	}
+@@ -347,7 +347,7 @@ int fat_update_time(struct inode *inode, int flags)
+ 		return 0;
  
--	if ((flags & S_VERSION) && inode_maybe_inc_iversion(inode, false))
--		dirty_flags |= I_DIRTY_SYNC;
--
- 	__mark_inode_dirty(inode, dirty_flags);
- 	return 0;
- }
+ 	if (flags & (S_ATIME | S_CTIME | S_MTIME)) {
+-		fat_truncate_time(inode, now, flags);
++		fat_truncate_time(inode, NULL, flags);
+ 		if (inode->i_sb->s_flags & SB_LAZYTIME)
+ 			dirty_flags |= I_DIRTY_TIME;
+ 		else
 
 -- 
 2.41.0
