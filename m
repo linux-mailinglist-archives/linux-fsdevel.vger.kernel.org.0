@@ -2,109 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 28D7D777FB0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 19:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D237D777FE2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 20:02:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235537AbjHJR63 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 13:58:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34784 "EHLO
+        id S234498AbjHJSCy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 14:02:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231618AbjHJR62 (ORCPT
+        with ESMTP id S234452AbjHJSCx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 13:58:28 -0400
-Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BD4CED;
-        Thu, 10 Aug 2023 10:58:28 -0700 (PDT)
-Received: by mail-vk1-xa30.google.com with SMTP id 71dfb90a1353d-4872c3dff53so331580e0c.1;
-        Thu, 10 Aug 2023 10:58:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691690307; x=1692295107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kiORD/kwp8ZCOVHFvTu8hUSLSgnUCKWjtsN+Cf0UQ8M=;
-        b=TtnCfLTLSVsD/8mjJL/uLjovm8JaiHo4b/mdbCmmW0taf99at9JYttFr/1Hu0stXaV
-         QQl2us1k6/9eXNUFDtwJb/oSuQXngYpRZyyf0G9fxzspyXjrJ08NiAKA7m7tceYtevTM
-         SReJ4OltoiPmzNpA2eGc+eP1wKX5raWlRyrAvhi8nsbCv0x7tNoXClfdZzAHbT4uN2/F
-         833eH1GXj8mx9+xOrghJw7iLqZw2NgupKsylHF/WEShyB8+GcMTeB7oaQnkqdW6diB8R
-         cZennwKesLSivITSEzqKKThB1XmJW193+8NPxsGt2vfR35g3PWm0PdRrvL09OKlJk8AL
-         rk4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691690307; x=1692295107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kiORD/kwp8ZCOVHFvTu8hUSLSgnUCKWjtsN+Cf0UQ8M=;
-        b=ZFnT6z4stSsMI0SlnBC8hCPOqTD+HtR7UJribqHd1tNbo4sRqigDRqCoUbnq5h6h+P
-         DCcMpdXgnnFI6EmpyevHvtFwIjvQ+4dCgVsc23AKwzM8xDHDH4/ouxzUz59zOBpeo3Up
-         2oL0Jz628o/PSewfbpLfb9Jlnbgp22pKvX3s0+QqMYo1pKDG99Z8IpUiK8YhckvaGO5R
-         u7Y4iW7hCEWH4gobt02j1NCpcs1OC/1aykds/9/zXtYNNLxhpJ+7GTcduRAN6sh8QRu3
-         ZOmaT7BXhGmIMVCnmhiL7SoloNR/AqVHznjNtbZA3gmrlXbW1hAim+ATcHza6tu+Rqet
-         Nrkw==
-X-Gm-Message-State: AOJu0YzpZp+2u2DwoQXsm5/m6fRwgabORNuffJG1x9MBvtVP2Ld6VDmx
-        IioZOUmi+K7G06CKgKLfA7vz3rhoI/NTv9wv/8g=
-X-Google-Smtp-Source: AGHT+IGDjuq+B+GVfzoZTy2uejYFgq74ja6JTdwGiEo0ZXML7lE1kjUGv4Wrybm5T8bBc8rvSZq8nEyKiMdB+Vd+2EQ=
-X-Received: by 2002:a1f:6011:0:b0:45e:892b:d436 with SMTP id
- u17-20020a1f6011000000b0045e892bd436mr2213267vkb.12.1691690307097; Thu, 10
- Aug 2023 10:58:27 -0700 (PDT)
+        Thu, 10 Aug 2023 14:02:53 -0400
+Received: from out-80.mta0.migadu.com (out-80.mta0.migadu.com [IPv6:2001:41d0:1004:224b::50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FF352715
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 11:02:51 -0700 (PDT)
+Date:   Thu, 10 Aug 2023 14:02:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1691690569;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8dtvltwxe9GpUk64vNVIpMuGwfyjEXky0AlDC9nQsl0=;
+        b=evMeZLbwLASvgab2eASCSsx0BMJ3x+w8WmFhkv/BkD/Kb3qE86IPqp18nTVQBZ/dE6tTNJ
+        cZumN7IH0wNK9a87gcxHRn3pzm22IwQXRXihkmrzkjPNAW3cRLN6OZl0Y+lGmm14TN+KpF
+        iwT0y4VQAjvOc3JTQxouA66IJBTstwA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcachefs@vger.kernel.org, djwong@kernel.org,
+        dchinner@redhat.com, sandeen@redhat.com, willy@infradead.org,
+        josef@toxicpanda.com, tytso@mit.edu, bfoster@redhat.com,
+        jack@suse.cz, andreas.gruenbacher@gmail.com, brauner@kernel.org,
+        peterz@infradead.org, akpm@linux-foundation.org,
+        dhowells@redhat.com, snitzer@kernel.org, axboe@kernel.dk
+Subject: Re: [GIT PULL] bcachefs
+Message-ID: <20230810180244.cx3vouaqtisklttn@moria.home.lan>
+References: <20230626214656.hcp4puionmtoloat@moria.home.lan>
+ <20230706155602.mnhsylo3pnief2of@moria.home.lan>
+ <20230712025459.dbzcjtkb4zem4pdn@moria.home.lan>
+ <CAHk-=whaFz0uyBB79qcEh-7q=wUOAbGHaMPofJfxGqguiKzFyQ@mail.gmail.com>
+ <20230810155453.6xz2k7f632jypqyz@moria.home.lan>
+ <CAHk-=wie4U8hwRN+nYRwV4G51qXPJKr0DpjbxO1XSMZnPA_LTw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20230808091849.505809-1-suhui@nfschina.com>
-In-Reply-To: <20230808091849.505809-1-suhui@nfschina.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 10 Aug 2023 20:58:16 +0300
-Message-ID: <CAOQ4uxhtZSr-kq3G1vmm4=GyBO3E5RdSbGSp108moRiRBx4vvg@mail.gmail.com>
-Subject: Re: [PATCH] fanotify: avoid possible NULL dereference
-To:     Su Hui <suhui@nfschina.com>
-Cc:     jack@suse.cz, repnop@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wie4U8hwRN+nYRwV4G51qXPJKr0DpjbxO1XSMZnPA_LTw@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 8, 2023 at 12:19=E2=80=AFPM Su Hui <suhui@nfschina.com> wrote:
->
-> smatch error:
-> fs/notify/fanotify/fanotify_user.c:462 copy_fid_info_to_user():
-> we previously assumed 'fh' could be null (see line 421)
->
-> Fixes: afc894c784c8 ("fanotify: Store fanotify handles differently")
-> Signed-off-by: Su Hui <suhui@nfschina.com>'
+On Thu, Aug 10, 2023 at 09:40:08AM -0700, Linus Torvalds wrote:
+> > > Some of the other oddity is around the this_cpu ops, but I suspect
+> > > that is at least partly then because we don't have acquire/release
+> > > versions of the local cpu ops that the code looks like it would want.
+> >
+> > You mean using full barriers where acquire/release would be sufficient?
+> 
+> Yes.
+> 
+> That code looks like it should work, but be hugely less efficient than
+> it might be. "smp_mb()" tends to be expensive everywhere, even x86.
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+do_six_unlock_type() doesn't need a full barrier, but I'm not sure we
+can avoid the one in __do_six_trylock(), in the percpu reader path.
 
-> ---
->  fs/notify/fanotify/fanotify_user.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fano=
-tify_user.c
-> index f69c451018e3..5a5487ae2460 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -459,12 +459,13 @@ static int copy_fid_info_to_user(__kernel_fsid_t *f=
-sid, struct fanotify_fh *fh,
->         if (WARN_ON_ONCE(len < sizeof(handle)))
->                 return -EFAULT;
->
-> -       handle.handle_type =3D fh->type;
->         handle.handle_bytes =3D fh_len;
->
->         /* Mangle handle_type for bad file_handle */
->         if (!fh_len)
->                 handle.handle_type =3D FILEID_INVALID;
-> +       else
-> +               handle.handle_type =3D fh->type;
->
->         if (copy_to_user(buf, &handle, sizeof(handle)))
->                 return -EFAULT;
-> --
-> 2.30.2
->
+> Of course, I might be missing some other cases. That percpu reader
+> queue worries me a bit just because it ends up generating ordering
+> based on two different things - the lock word _and_ the percpu word.
+> 
+> And I get very nervous if the final "this gets the lock" isn't some
+> obvious "try_cmpxchg_acquire()" or similar, just because we've
+> historically had *so* many very subtle bugs in just about every single
+> lock we've ever had.
+
+kernel/locking/percpu-rwsem.c uses the same idea. The difference is that
+percpu-rwsem avoids the memory barrier on the read side in the fast path
+at the cost of requiring an rcu barrier on the write side... and all the
+crazyness that entails.
+
+But __percpu_down_read_trylock() uses the same algorithm I'm using,
+including the same smp_mb(): we need to ensure that the read of the lock
+state happens after the store to the percpu read count, and I don't know
+how to that without a smp_mb() - smp_store_acquire() isn't a thing.
+
+> > Matthew was planning on sending the iov_iter patch to you - right around
+> > now, I believe, as a bugfix, since right now
+> > copy_page_from_iter_atomic() silently does crazy things if you pass it a
+> > compound page.
+> >
+> > Block layer patches aside, are there any _others_ you really want to go
+> > via maintainers?
+> 
+> It was mainly just the iov and the block layer.
+> 
+> The superblock cases I really don't understand why you insist on just
+> being different from everybody else.
+> 
+> Your exclusivity arguments make no sense to me. Just open the damn
+> thing. No other filesystem has ever had the fundamental problems you
+> describe. You can do any exclusivity test you want in the
+> "test()/set()" functions passed to sget().
+
+When using sget() in the conventional way it's not possible for
+FMODE_EXCL to protect against concurrent opens scribbling over each
+other because we open the block device before checking if it's already
+mounted, and we expect that open to succeed.
+
+> You say that it's a problem because of a "single spinlock", but it
+> hasn't been a problem for anybody else.
+
+The spinlock means you can't do the actual open in set(), which is why
+the block device has to be opened in not-really-exclusive mode.
+
+I think it's be possible to change the locking in sget() so that the
+set() callback could do the open, but I haven't looked closely at it.
+
+> and basically sent your first pull request as a fait-accompli.
+
+When did I ever do that?
