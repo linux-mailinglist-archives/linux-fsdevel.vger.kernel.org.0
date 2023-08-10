@@ -2,147 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A03E8777936
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 15:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2BA1777949
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 15:12:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233133AbjHJNIv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 09:08:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50734 "EHLO
+        id S232500AbjHJNML (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 09:12:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231902AbjHJNIu (ORCPT
+        with ESMTP id S229470AbjHJNMK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 09:08:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4986B91
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 06:08:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1691672880;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Gv2PHDy05xeKCb4ONOqV5jsjjW0Plf8giK9Cu4AytwA=;
-        b=e22Gi62pAA3I75ahRh7K2HlvZEg/lXqtedvU6BVIYvHgULp/AtR2Lmx532NWTGNP3qI56b
-        gwh7xtj/WIAqKfZSIBZaZgMTeh4ArIcljDrqzRGlqRhRebWe/9N7AQ7/h7eoISbijR8GQ5
-        IPcaJAPPIJeWmaneMMWy1536pnchPrk=
-Received: from mimecast-mx02.redhat.com (66.187.233.73 [66.187.233.73]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-12-YI7mgYmVP4al5-pb-1FX0A-1; Thu, 10 Aug 2023 09:07:55 -0400
-X-MC-Unique: YI7mgYmVP4al5-pb-1FX0A-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 10 Aug 2023 09:12:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5081291;
+        Thu, 10 Aug 2023 06:12:10 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A46151C07263;
-        Thu, 10 Aug 2023 13:07:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.185])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 33D24C15BB8;
-        Thu, 10 Aug 2023 13:07:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <f0538006-6641-eaf6-b7b5-b3ef57afc652@gmail.com>
-References: <f0538006-6641-eaf6-b7b5-b3ef57afc652@gmail.com> <ecbb5d7e-7238-28e2-1a17-686325e2bb50@gmail.com> <4c49176f-147a-4283-f1b1-32aac7b4b996@gmail.com> <20230522121125.2595254-1-dhowells@redhat.com> <20230522121125.2595254-9-dhowells@redhat.com> <2267272.1686150217@warthog.procyon.org.uk> <5a9d4ffb-a569-3f60-6ac8-070ab5e5f5ad@gmail.com> <776549.1687167344@warthog.procyon.org.uk> <7337a904-231d-201d-397a-7bbe7cae929f@gmail.com> <20230630102143.7deffc30@kernel.org>
-To:     Tariq Toukan <ttoukan.linux@gmail.com>
-Cc:     dhowells@redhat.com, Jakub Kicinski <kuba@kernel.org>,
-        netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        David Ahern <dsahern@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Boris Pismenny <borisp@nvidia.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Gal Pressman <gal@nvidia.com>, ranro@nvidia.com,
-        samiram@nvidia.com, drort@nvidia.com,
-        Tariq Toukan <tariqt@nvidia.com>
-Subject: Re: [PATCH net-next v10 08/16] tls: Inline do_tcp_sendpages()
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DF0CF649A1;
+        Thu, 10 Aug 2023 13:12:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94ABEC433C7;
+        Thu, 10 Aug 2023 13:12:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691673129;
+        bh=r86+KrBFWpBZ4ui4lqaDN3LO7MYoEiyMnGcqbZZmkao=;
+        h=From:Subject:Date:To:Cc:From;
+        b=n4KO9mjuPAVebBacGuwUBfTlJypeoyaJ9ix2hNWsk6CnFlVg9amn3gnEpo71darZ6
+         npGgE/LDwOI5J9tebEz3jq9VbJnH3oxcRrrm1NPYLQDlxPg2Vu0kEs5d1tjwVXwWNq
+         U4gDt9Pm+8KZTHuSUTZQ4dYD3z8FKI1PXouAVd7wrdEw7wdheU7ayaCPHBXN5Sx6An
+         Fua587dbvE0/7JigN+OWuLPAJ1nkv8yJrL15IwOyVBwIOWbx03Y9ubviUR05ilw5rH
+         jNfLl99zjyCf9Fdp//az6k4L6H7TrauhngRU7o7C6SIlzPa2HBzyIswb99GidPk2I1
+         agW3lR0zOpXfA==
+From:   Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH 0/2] fat: revise the FAT patches for mgtime series
+Date:   Thu, 10 Aug 2023 09:12:03 -0400
+Message-Id: <20230810-ctime-fat-v1-0-327598fd1de8@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3480242.1691672869.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 10 Aug 2023 14:07:49 +0100
-Message-ID: <3480243.1691672869@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACPi1GQC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI2MDC0MD3eSSzNxU3bTEEt1Uk6RUQ5O01CRDM1MloPqCotS0zAqwWdGxtbU
+ A8AtQkFsAAAA=
+To:     Christian Brauner <brauner@kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Frank Sorenson <sorenson@redhat.com>, Jan Kara <jack@suse.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=953; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=r86+KrBFWpBZ4ui4lqaDN3LO7MYoEiyMnGcqbZZmkao=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBk1OIo0W8IAbJr/H5M9fb0vyl44RKoBYaYtSBJ7
+ +9vZYfjZrOJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZNTiKAAKCRAADmhBGVaC
+ FatmD/9e9j+6VECB7kmx/5YuAjqT8I161pzUzgavKKD4rmT3x6YzHaUfTNxV/Hl2VBeVbC1u1sL
+ CfXChrj9W9anLFkPEhV4GbszLFYWNa64a8P7TdU6sMNVhR50PXcpXhNOf/NW0FsXsxtb+76hSDh
+ iKQUARzo058/kIc7mv3m1ipKJjQ602iNhGemws2z1n7GrEw/HUHjqiOQkvTR0mAU0DuBD1B6wo8
+ SCR5t+nmeSwBh8dq3eUFlSrm2FrGyTK+aduJLEEEhQBeUMVVa4d8lrGaNSgBMdCfo9bZadntDQd
+ XFNw/ulPLTE+M9c+tF5+zUZjB6mJKwJIWPMyJzHitR9uS19gZ+WU2EAicb0SAwvjp8eSGKcOab6
+ UvZ7YIFq3+pMy619RJlI69mB8SDv2ENVrW8N3KcgdeeIgLE+tl+inkeizu7/208QqOdUAC2ovGx
+ vwXMVc/zH5umnQGr+tXNbQwFvESpvlQhKn65AufWRDb30TLDOFlC6nR0RHIKRzava9MwO64veLH
+ Y1jj3re69SPz0ik5K5pgnlanhxH4LunCmpqz9HyRwHrBsF/+rYNk6//4XbucBaI2QefGlgRJ+8f
+ +N/iouWbZ3ML05p4NEoUGDRtCMjyQL7mo9hbiyuwbmiY+/mLjaQnJRCwHD5cu3lmpGKdrzhzQQt
+ G9I9yiwy9pxeTuw==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Tariq Toukan <ttoukan.linux@gmail.com> wrote:
+This is a respin of just the FAT patches for the multigrain ctime
+series. It's based on top of Christian's vfs.ctime branch, with this
+patch reverted:
 
-> We are collecting more info on how the repro is affected by the differen=
-t
-> parameters.
+    89b39bea91c4 fat: make fat_update_time get its own timestamp
 
-I'm wondering if userspace is feeding the unspliceable page in somehow.  C=
-ould
-you try running with the attached changes?  It might help catch the point =
-at
-which the offending page is first spliced into the pipe and any backtrace
-might help localise the driver that's producing it.
+Christian, let me know if you'd rather I resend the whole series.
 
-Thanks,
-David
+To: Christian Brauner <brauner@kernel.org>
+To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Frank Sorenson <sorenson@redhat.com>
+To: Jan Kara <jack@suse.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-diff --git a/fs/splice.c b/fs/splice.c
-index 3e2a31e1ce6a..877df1de3863 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -218,6 +218,8 @@ ssize_t splice_to_pipe(struct pipe_inode_info *pipe,
- 	while (!pipe_full(head, tail, pipe->max_usage)) {
- 		struct pipe_buffer *buf =3D &pipe->bufs[head & mask];
- =
+Jeff Layton (2):
+      fat: remove i_version handling from fat_update_time
+      fat: make fat_update_time get its own timestamp
 
-+		WARN_ON_ONCE(!sendpage_ok(spd->pages[page_nr]));
-+
- 		buf->page =3D spd->pages[page_nr];
- 		buf->offset =3D spd->partial[page_nr].offset;
- 		buf->len =3D spd->partial[page_nr].len;
-@@ -252,6 +254,8 @@ ssize_t add_to_pipe(struct pipe_inode_info *pipe, stru=
-ct pipe_buffer *buf)
- 	unsigned int mask =3D pipe->ring_size - 1;
- 	int ret;
- =
+ fs/fat/misc.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+---
+base-commit: bae85436bd3cca48ba625d0caf7457fe7708c336
+change-id: 20230810-ctime-fat-e4be14feb165
 
-+	WARN_ON_ONCE(!sendpage_ok(buf->page));
-+
- 	if (unlikely(!pipe->readers)) {
- 		send_sig(SIGPIPE, current, 0);
- 		ret =3D -EPIPE;
-@@ -861,6 +865,8 @@ ssize_t splice_to_socket(struct pipe_inode_info *pipe,=
- struct file *out,
- 				break;
- 			}
- =
-
-+			WARN_ON_ONCE(!sendpage_ok(buf->page));
-+
- 			bvec_set_page(&bvec[bc++], buf->page, seg, buf->offset);
- 			remain -=3D seg;
- 			if (remain =3D=3D 0 || bc >=3D ARRAY_SIZE(bvec))
-@@ -1411,6 +1417,8 @@ static int iter_to_pipe(struct iov_iter *from,
- 		for (i =3D 0; i < n; i++) {
- 			int size =3D min_t(int, left, PAGE_SIZE - start);
- =
-
-+			WARN_ON_ONCE(!sendpage_ok(pages[i]));
-+
- 			buf.page =3D pages[i];
- 			buf.offset =3D start;
- 			buf.len =3D size;
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
