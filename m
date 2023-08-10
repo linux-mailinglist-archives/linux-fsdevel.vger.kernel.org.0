@@ -2,93 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B87AF778001
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 20:11:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E704777800F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 20:14:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234003AbjHJSLN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 14:11:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57998 "EHLO
+        id S235319AbjHJSO0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 14:14:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231825AbjHJSLM (ORCPT
+        with ESMTP id S231330AbjHJSOZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 14:11:12 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20EFAE48;
-        Thu, 10 Aug 2023 11:11:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de;
- s=s31663417; t=1691691069; x=1692295869; i=deller@gmx.de;
- bh=r9C155D6FKUWvgMge2Mcch0kcsQsx9RDIo47jzZI5To=;
- h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
- b=VuU1HYOlcxFu9yu0A2qHcWjm+taIzgpziGjYqwtvybVejlAl7JsnG76LA2rSpgAEm78MU2C
- G4pmccoPXr8EYWZhk9dnswvEB9HoAP+9Wn1loRKyuvNIKKd3gtFgRdn+js3v944scNliUUhSY
- Mp7N7Z8sonAFHcGsAh4aWkrr+eoper/Vs5vEDxt7yHvFDIllu6xp0FSVWa+dIln/RWV6f4cNw
- cmE4WZeOaElWU41NRsY/wPqfSqs3vtZl0ZAw3Ftgw3ZPHolgpV9V6Xg8DK4LoKDjHfaL0FpxS
- 42oT/CJhIz4PNeuhSxP1BDJ8p2aOYUT9GXtUYEvTnhtb6b90529A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from p100.fritz.box ([94.134.144.133]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MrhQC-1pyOCH1QQ8-00nfbr; Thu, 10
- Aug 2023 20:11:09 +0200
-From:   Helge Deller <deller@gmx.de>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Helge Deller <deller@gmx.de>
-Subject: [PATCH] proc: Mark arch_report_meminfo() extern
-Date:   Thu, 10 Aug 2023 20:10:46 +0200
-Message-ID: <20230810181046.147812-1-deller@gmx.de>
-X-Mailer: git-send-email 2.41.0
+        Thu, 10 Aug 2023 14:14:25 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AEA9E4B;
+        Thu, 10 Aug 2023 11:14:25 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id B203A1F45B;
+        Thu, 10 Aug 2023 18:14:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1691691263; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EtACbPUf2jciroUOwqpt2N6vNFZggLTp4OAzqG/4taE=;
+        b=y0bjlm1WNB3Ygc3dgC3Kv8bc5ZJyIxCe9ta+2EwqzpPoGdBb6TSGISmCiwJa3S+0U7Q35G
+        +4djJF18Qc6Z1325CwpU9HDJU/IBkfJZfzExHWfm0GZE8wxvxQXYKjn8MGr08DUX4RI9m+
+        jxkKrBwNHD6TBJZX6w5lOET4v8eOeCM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1691691263;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EtACbPUf2jciroUOwqpt2N6vNFZggLTp4OAzqG/4taE=;
+        b=7PjYFUIKEw1GXEov7YN9IhoFXZPsyn4524+pgBxoltMvENURUdC4NVCBm+H0l+iWNYGZT1
+        L46pv46dVdE2PXBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9C4B6138E2;
+        Thu, 10 Aug 2023 18:14:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id o0waJv8o1WRkYwAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 10 Aug 2023 18:14:23 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 1B1B9A076F; Thu, 10 Aug 2023 20:14:23 +0200 (CEST)
+Date:   Thu, 10 Aug 2023 20:14:23 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH 02/12] nilfs2: use setup_bdev_super to de-duplicate the
+ mount code
+Message-ID: <20230810181423.dfz3lrezwvutls2w@quack3>
+References: <20230802154131.2221419-1-hch@lst.de>
+ <20230802154131.2221419-3-hch@lst.de>
+ <20230803114651.ihtqqgthbdjjgxev@quack3>
+ <CAKFNMomzHg33SHnp6xGMEZY=+k6Y4t7dvBvgBDbO9H3ujzNDCw@mail.gmail.com>
+ <20230810110547.ks62g2flysgwpgru@quack3>
+ <CAKFNMon_3A7dC+k1q_RjEnoXXNtxBJAUQud_FD4s4VrHZdCVzg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:pw82Gm6tOfkYrickFuRKQF6z2gVlq7BvEaWYxII5IUPH6QN+L4/
- rHrKUItLQoA4vdwlPJFcwE4OwdMMebVUmbreavrw7ZVvxmpgeEajfxvtCA5eqMzsIxIgz+B
- sTnBg+zQawOYXvgZuKy7DD3pjvcL8Q+g40+/WwxW8CQ8Lj0nsWL/go8B5x5XmmhkZ0L1OrR
- +yU5kLrmKg1yVB53ag70A==
-UI-OutboundReport: notjunk:1;M01:P0:Yb00O6hs6Pg=;O3eMuvVr9jbQwOQe1mmozxFtxwJ
- 83T0VyqlPglG+LXxjW+yZ9yi4W/e+tV0bSb9TA8OtLEVDXq5f9KCZQxiB6MgYaKpwC2WR0ybl
- oR/zU9FaTeNFXvm1UGA8bvTniSvFp/amQOwfsLG9ZWC4qUe0QPJ5gH0pZh3PXPF2Z6f+zB3j6
- Ypwx3lepVz5ZpsEtCmjGNwKnPFMdAfjRmm6QO1AJ+QKUCPaxdlLl8rqm+83MxSl6y1ESSwksE
- OGPQVhi6iLqlzD27ZvBmK9R/RFDZLF2bzyoyXAUYE5RGIzQfCaFdsuIrBmM1kYmiZlOx6oX18
- uSiefx7eb8UuW3ek8+AmvQ8QbpkfMVD7fYf7OtrwMqsCj0PCQ/uysyMpBTHMjUMW5rLQolZvh
- 2k3A+NeValopBQJQ5XgKugDlmEYqCylnTi+m3bR4Ez0xlQMsnHG1QJxljxcybbGXUkgfefQRE
- j2ZqHQceLnkmXKdH20lJpe9rQVTNhN7j1vKUO84CWfSZErRWiCzgjOvAif2nseaKDFIjcPMdg
- f0uVVIE2xRtH5o9dJkKVt+QNHjuNTdFm3twNh7OFwDV44Ld1i9TyTIFvv2T5Px6cxWb6Rds2n
- +O2gI/2j1ncztCgLw0pz5M0UFE8+gA+IIqL4R/u8w7j1fSB9SIBqdRGxp2kSCcaW2ePXzM6XW
- IGNcIDvioJz8ZgdhFDYda2ZkKqbZyuzd7G8PLI9EvcZ8Xc8O3tKsXIHwb9gCYXnXvxxEt06eF
- 9BPsEZ4VrqIFrf55hlJ4xq4g4cwR1eCFsSWL0at9OmpGR7LQQBayS3NVH7iN9ox+IAP5qqc/b
- dxjIiZr0uENJ9Ii+uu1mnMt9D0s6HfXz7VMzUI7XfRg7iH4hpA3qL3OuHNHofS7BKFkidzNav
- FbTZCTgAv9vHgAiUSd04eJJa+YUDGRcrAVt4Fb6SDWRylN97MaDOH8eT6hcT2OmjcCkqORiyz
- hPiirw==
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKFNMon_3A7dC+k1q_RjEnoXXNtxBJAUQud_FD4s4VrHZdCVzg@mail.gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix this sparse warning:
-arch/parisc/kernel/pdt.c:67:6: warning: symbol 'arch_report_meminfo' was n=
-ot declared. Should it be static?
+On Fri 11-08-23 01:39:10, Ryusuke Konishi wrote:
+> On Thu, Aug 10, 2023 at 8:05 PM Jan Kara wrote:
+> >
+> > On Fri 04-08-23 11:01:39, Ryusuke Konishi wrote:
+> > > On Thu, Aug 3, 2023 at 8:46 PM Jan Kara wrote:
+> > > >
+> > > > On Wed 02-08-23 17:41:21, Christoph Hellwig wrote:
+> > > > > Use the generic setup_bdev_super helper to open the main block device
+> > > > > and do various bits of superblock setup instead of duplicating the
+> > > > > logic.  This includes moving to the new scheme implemented in common
+> > > > > code that only opens the block device after the superblock has allocated.
+> > > > >
+> > > > > It does not yet convert nilfs2 to the new mount API, but doing so will
+> > > > > become a bit simpler after this first step.
+> > > > >
+> > > > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > > >
+> > > > AFAICS nilfs2 could *almost* use mount_bdev() directly and then just do its
+> > >
+> > > > snapshot thing after mount_bdev() returns. But it has this weird logic
+> > > > that: "if the superblock is already mounted but we can shrink the whole
+> > > > dcache, then do remount instead of ignoring mount options". Firstly, this
+> > > > looks racy - what prevents someone from say opening a file on the sb just
+> > > > after nilfs_tree_is_busy() shrinks dcache? Secondly, it is inconsistent
+> > > > with any other filesystem so it's going to surprise sysadmins not
+> > > > intimately knowing nilfs2. Thirdly, from userspace you cannot tell what
+> > > > your mount call is going to do. Last but not least, what is it really good
+> > > > for? Ryusuke, can you explain please?
+> > > >
+> > > >                                                                 Honza
+> > >
+> > > I think you are referring to the following part:
+> > >
+> > > >        if (!s->s_root) {
+> > > ...
+> > > >        } else if (!sd.cno) {
+> > > >                if (nilfs_tree_is_busy(s->s_root)) {
+> > > >                        if ((flags ^ s->s_flags) & SB_RDONLY) {
+> > > >                                nilfs_err(s,
+> > > >                                          "the device already has a %s mount.",
+> > > >                                          sb_rdonly(s) ? "read-only" : "read/write");
+> > > >                                err = -EBUSY;
+> > > >                                goto failed_super;
+> > > >                        }
+> > > >                } else {
+> > > >                        /*
+> > > >                         * Try remount to setup mount states if the current
+> > > >                         * tree is not mounted and only snapshots use this sb.
+> > > >                         */
+> > > >                        err = nilfs_remount(s, &flags, data);
+> > > >                        if (err)
+> > > >                                goto failed_super;
+> > > >                }
+> > > >        }
+> > >
+> > > What this logic is trying to do is, if there is already a nilfs2 mount
+> > > instance for the device, and are trying to mounting the current tree
+> > > (sd.cno is 0, so this is not a snapshot mount), then will switch
+> > > depending on whether the current tree has a mount:
+> > >
+> > > - If the current tree is mounted, it's just like a normal filesystem.
+> > > (A read-only mount and a read/write mount can't coexist, so check
+> > > that, and reuse the instance if possible)
+> > > - Otherwise, i.e. for snapshot mounts only, do whatever is necessary
+> > > to add a new current mount, such as starting a log writer.
+> > >    Since it does the same thing that nilfs_remount does, so
+> > > nilfs_remount() is used there.
+> > >
+> > > Whether or not there is a current tree mount can be determined by
+> > > d_count(s->s_root) > 1 as nilfs_tree_is_busy() does.
+> > > Where s->s_root is always the root dentry of the current tree, not
+> > > that of the mounted snapshot.
+> >
+> > I see now, thanks for explanation! But one thing still is not clear to me.
+> > If you say have a snapshot mounted read-write and then you mount the
+> > current snapshot (cno == 0) read-only, you'll switch the whole superblock
+> > to read-only state. So also the mounted snapshot is suddently read-only
+> > which is unexpected and actually supposedly breaks things because you can
+> > still have file handles open for writing on the snapshot etc.. So how do
+> > you solve that?
+> >
+> >                                                                 Honza
+> 
+> One thing I have to tell you as a premise is that nilfs2's snapshot
+> mounts (cno != 0) are read-only.
+> 
+> The read-only option is mandatory for nilfs2 snapshot mounts, so
+> remounting to read/write mode will result in an error.
+> This constraint is checked in nilfs_parse_snapshot_option() which is
+> called from nilfs_identify().
+> 
+> In fact, any write mode file/inode operations on a snapshot mount will
+> result in an EROFS error, regardless of whether the coexisting current
+> tree mount is read-only or read/write (i.e. regardless of the
+> read-only flag of the superblock instance).
+> 
+> This is mostly (and possibly entirely) accomplished at the vfs layer
+> by checking the MNT_READONLY flag in mnt_flags of the vfsmount
+> structure, and even on the nilfs2 side,  iops->permission
+> (=nilfs_permission) rejects write operations on snapshot mounts.
+> 
+> Therefore, the problem you pointed out shouldn't occur in the first
+> place since the situation where a snapshot with a handle in write mode
+> suddenly becomes read-only doesn't happen.   Unless I'm missing
+> something..
 
-Signed-off-by: Helge Deller <deller@gmx.de>
-=2D--
- include/linux/proc_fs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+No, I think you are correct. This particular case should be safe because
+MNT_READONLY flags on the mounts used by snapshots will still keep them
+read-only even if you remount the superblock to read-write mode for the
+current snapshot. So I see why this is useful and I agree this isn't easy
+to implement using mount_bdev() so no special code reduction here ;).
+Thanks for patient explanation!
 
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index 253f2676d93a..e981ef830252 100644
-=2D-- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -158,7 +158,7 @@ int proc_pid_arch_status(struct seq_file *m, struct pi=
-d_namespace *ns,
- 			struct pid *pid, struct task_struct *task);
- #endif /* CONFIG_PROC_PID_ARCH_STATUS */
-
--void arch_report_meminfo(struct seq_file *m);
-+extern void arch_report_meminfo(struct seq_file *m);
-
- #else /* CONFIG_PROC_FS */
-
-=2D-
-2.41.0
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
