@@ -2,82 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AD62776F8F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 07:29:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCA46776FD1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 07:50:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233024AbjHJF3v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 01:29:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45626 "EHLO
+        id S232911AbjHJFux (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 01:50:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231550AbjHJF3s (ORCPT
+        with ESMTP id S232289AbjHJFuw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 01:29:48 -0400
-Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB09F1704
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 22:29:47 -0700 (PDT)
-Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-583fe10bb3cso6972627b3.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Aug 2023 22:29:47 -0700 (PDT)
+        Thu, 10 Aug 2023 01:50:52 -0400
+Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA119F3
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Aug 2023 22:50:51 -0700 (PDT)
+Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-5844bb9923eso7405067b3.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Aug 2023 22:50:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1691645387; x=1692250187;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4uoKPPUVJQJvxmsNX8HdKmHcwGoP8j8tE48dXRoXR/o=;
-        b=mzZ96Ky/PAAf413iiveXZmgW90wIqSR/MJMOaUb3WJrDqIlkNWalvVdCinPsqCcpGd
-         0N1W6RdHTOisjFF8yVEaAPEwSOgkyh9aVG7dS6/wPDY8VQ8k55dEOXkSBbxth1cdshKu
-         KuVJ0xLBtzLhbi7oy8MQMA3diIYQtyKxWimeja88GgIhwf5/WDE353lXkehBDgzF7tPR
-         0ET5tP0Fyxa6xJY8lp/20m98rMqh9YGqkgAVlnu1t4YxE0KLdchG6oCYJXCU2qcFrvWB
-         LCI+109wtD8KzZ8uyZi8/qgjzatRXooagunLE+qL8AO9leSJ60WXDgnBjD780d3Rg+CN
-         M4VA==
+        d=google.com; s=20221208; t=1691646651; x=1692251451;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=x7yqFcfihO6UZ4Ofnmt86oPYT4hQDfDAsWIzATt1sTc=;
+        b=NAi9DyAm+4viuBaK+2te/vEYT+Qzw6FmpDOVGbbjLStMiQomr4Av2iBnJIL6Uw4DBs
+         pycOXzFZlP3T8OK1any+yj5dBc2FMkEEiNo30B+BKPwyfOs5+/L9b1fS2scHlVuFJypc
+         yyO1X1LKQXDjxCQGYwSBAwJleAyDIevE3FpVAlXDZrKJXDwAWnEFZgfMSsBQVg8gBD08
+         YmNl+Si6DBE/oWAB0TFEay9z5QHBBPacQBGnidZZUFPoI5MUmOIXxsawP8l5ESkXe+L6
+         Oun/VSu/O91/o34Q99uYMUqp1tkHQJorTfYZmpWROFuHdkRgV4zPzgPskCBPjV0rYP1Y
+         wglw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691645387; x=1692250187;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4uoKPPUVJQJvxmsNX8HdKmHcwGoP8j8tE48dXRoXR/o=;
-        b=dOf7Ore0TxrLqD6wGE2e6U64QNp5BwgKjyKj2xsf5xBvprSv5ynJjaA9yW6I+aTMve
-         cqRzLaPEE15XNniVJsx1e5IysKjCD7xxiUSJLnQARJJmQTIMMP1gc9/mIeFojdSNf7cn
-         UvdcCNcUBJoNX+CGgkZ06QqfQzhMHKHp/VEd7XXrxCRAypwvKqAWIxsfUh002MAdpARY
-         5RBe/vzj1EDTFp6Un3jrSusONF2OrlWAZy+GoBjirMt11rzj5/aMHkHbEbL8oM+xDWgj
-         kDar8io1fU93OxFbDc8VsKqHC5ORDxksWllXIyEf/Y7rbBQp5Pucu+q7aePpeHLp+4wV
-         SNBw==
-X-Gm-Message-State: AOJu0YxeUFn9fMCQNL1xwWm97sGAMOwa4mkm6YVEuhSHzU25UhShPRHM
-        sUBF2SUNbzd3kbLG3Q/54bcNds+v8X1Ass/SDnh+rw==
-X-Google-Smtp-Source: AGHT+IGzAcGbdmxpwXQwtenXA6IAHlZx6Spg93JJ19ndyf0aos6wu+/eP5nmq4DyCWY4KDBzCxs8VUzXGduln/PfdhE=
-X-Received: by 2002:a0d:dd08:0:b0:573:30c8:6e1d with SMTP id
- g8-20020a0ddd08000000b0057330c86e1dmr1491956ywe.44.1691645386722; Wed, 09 Aug
- 2023 22:29:46 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1691646651; x=1692251451;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x7yqFcfihO6UZ4Ofnmt86oPYT4hQDfDAsWIzATt1sTc=;
+        b=I3YeVV12UjiL/vIYq0AtQIo++cqNoOsgkxMx02YQqBKcZXPKAvqrdLeQfCZIWB6fdL
+         oDdJsvQ0xHizbrM1rNbV0SV9Z5XIFLo22D8OUMOsqE0un3wOIhWVviCTT4v4Cr3oyrzd
+         rqeTbJubvDZ/HNA3jgZm91WRmpWy4z6b4LjW0W9sPG4mQHkkqRz3c/HnBU0BE+u7rjZP
+         Lj4Cb/iLPnk45HL/ukYrmlaB+W99D9SWgAk3eLzNTqh7sZMbsfaspEdJtbR7FMEA1nbv
+         0E1ANZw6AF9xajjzl439cb7pxk6fJBvegyY8gd0iSmtHTJD5FE+T94F2q3hoo94yXZKH
+         ovjA==
+X-Gm-Message-State: AOJu0YxasD48eKLI9evAf/CT4OGKkzZxMIOFCx5BkhkmC9AzkCxsB+dE
+        i1qHPX1l1rBdP57HxDr6h0r7LA==
+X-Google-Smtp-Source: AGHT+IHL9XQObwck1BTnXd+TUHEB5iSg6FPFgszodJQAfdmJqAorzD2QzqndyFri9FLAViEk8CrsfA==
+X-Received: by 2002:a81:d54d:0:b0:577:189b:ad4 with SMTP id l13-20020a81d54d000000b00577189b0ad4mr1713495ywj.48.1691646651068;
+        Wed, 09 Aug 2023 22:50:51 -0700 (PDT)
+Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id e187-20020a8169c4000000b00559fb950d9fsm174825ywc.45.2023.08.09.22.50.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Aug 2023 22:50:50 -0700 (PDT)
+Date:   Wed, 9 Aug 2023 22:50:39 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@ripple.attlocal.net
+To:     Christian Brauner <brauner@kernel.org>
+cc:     Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleksandr Tymoshenko <ovt@google.com>,
+        Carlos Maiolino <cem@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
+        Miklos Szeredi <miklos@szeredi.hu>, Daniel Xu <dxu@dxuuu.xyz>,
+        Chris Down <chris@chrisdown.name>, Tejun Heo <tj@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Pete Zaitcev <zaitcev@redhat.com>,
+        Helge Deller <deller@gmx.de>,
+        Topi Miettinen <toiwoton@gmail.com>,
+        Yu Kuai <yukuai3@huawei.com>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH vfs.tmpfs 0/5] tmpfs: user xattrs and direct IO
+In-Reply-To: <20230809-leitgedanke-weltumsegelung-55042d9f7177@brauner>
+Message-ID: <cdedadf2-d199-1133-762f-a8fe166fb968@google.com>
+References: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com> <20230809-postkarten-zugute-3cde38456390@brauner> <20230809-leitgedanke-weltumsegelung-55042d9f7177@brauner>
 MIME-Version: 1.0
-References: <20230630211957.1341547-1-surenb@google.com> <a34a418a-9a6c-9d9a-b7a3-bde8013bf86c@redhat.com>
- <CAJuCfpGCWekMdno=L=4m7ujWTYMr0Wv77oYzXWT5RXnx+fWe0w@mail.gmail.com>
- <CAJuCfpGMvYxu-g9kVH40UDGnpF2kxctH7AazhvmwhWWq1Rn1sA@mail.gmail.com>
- <CAJuCfpHA78vxOBcaB3m7S7=CoBLMXTzRWego+jZM7JvUm3rEaQ@mail.gmail.com>
- <0ab6524a-6917-efe2-de69-f07fb5cdd9d2@redhat.com> <CAJuCfpEs2k8mHM+9uq05vmcOYCfkNnOb4s3xPSoWheizPkcwLA@mail.gmail.com>
- <CAJuCfpERuCx6QvfejUkS-ysMxbzp3mFfhCbH=rDtt2UGzbwtyg@mail.gmail.com>
-In-Reply-To: <CAJuCfpERuCx6QvfejUkS-ysMxbzp3mFfhCbH=rDtt2UGzbwtyg@mail.gmail.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Wed, 9 Aug 2023 22:29:34 -0700
-Message-ID: <CAJuCfpH-drRnwqUqynTnvgqSjs=_Fwc0H_7h6nzsdztRef0oKw@mail.gmail.com>
-Subject: Re: [PATCH v7 0/6] Per-VMA lock support for swap and userfaults
-To:     David Hildenbrand <david@redhat.com>
-Cc:     akpm@linux-foundation.org, willy@infradead.org, hannes@cmpxchg.org,
-        mhocko@suse.com, josef@toxicpanda.com, jack@suse.cz,
-        ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
-        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
-        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
-        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
-        apopple@nvidia.com, peterx@redhat.com, ying.huang@intel.com,
-        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
-        viro@zeniv.linux.org.uk, brauner@kernel.org,
-        pasha.tatashin@soleen.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,94 +85,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 9, 2023 at 11:31=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> On Wed, Aug 9, 2023 at 11:08=E2=80=AFAM Suren Baghdasaryan <surenb@google=
-.com> wrote:
-> >
-> > On Wed, Aug 9, 2023 at 11:04=E2=80=AFAM David Hildenbrand <david@redhat=
-.com> wrote:
-> > >
-> > > >>>> Which ends up being
-> > > >>>>
-> > > >>>> VM_BUG_ON_MM(!rwsem_is_locked(&mm->mmap_lock), mm);
-> > > >>>>
-> > > >>>> I did not check if this is also the case on mainline, and if thi=
-s series is responsible.
-> > > >>>
-> > > >>> Thanks for reporting! I'm checking it now.
-> > > >>
-> > > >> Hmm. From the code it's not obvious how lock_mm_and_find_vma() end=
-s up
-> > > >> calling find_vma() without mmap_lock after successfully completing
-> > > >> get_mmap_lock_carefully(). lock_mm_and_find_vma+0x3f/0x270 points =
-to
-> > > >> the first invocation of find_vma(), so this is not even the lock
-> > > >> upgrade path... I'll try to reproduce this issue and dig up more b=
-ut
-> > > >> from the information I have so far this issue does not seem to be
-> > > >> related to this series.
-> > >
-> > > I just checked on mainline and it does not fail there.
->
-> Thanks. Just to eliminate the possibility, I'll try reverting my
-> patchset in mm-unstable and will try the test again. Will do that in
-> the evening once I'm home.
->
-> > >
-> > > >
-> > > > This is really weird. I added mmap_assert_locked(mm) calls into
-> > > > get_mmap_lock_carefully() right after we acquire mmap_lock read loc=
-k
-> > > > and one of them triggers right after successful
-> > > > mmap_read_lock_killable(). Here is my modified version of
-> > > > get_mmap_lock_carefully():
-> > > >
-> > > > static inline bool get_mmap_lock_carefully(struct mm_struct *mm,
-> > > > struct pt_regs *regs) {
-> > > >       /* Even if this succeeds, make it clear we might have slept *=
-/
-> > > >       if (likely(mmap_read_trylock(mm))) {
-> > > >           might_sleep();
-> > > >           mmap_assert_locked(mm);
-> > > >           return true;
-> > > >       }
-> > > >       if (regs && !user_mode(regs)) {
-> > > >           unsigned long ip =3D instruction_pointer(regs);
-> > > >           if (!search_exception_tables(ip))
-> > > >               return false;
-> > > >       }
-> > > >       if (!mmap_read_lock_killable(mm)) {
-> > > >           mmap_assert_locked(mm);                     <---- generat=
-es a BUG
-> > > >           return true;
-> > > >       }
-> > > >       return false;
-> > > > }
-> > >
-> > > Ehm, that's indeed weird.
-> > >
-> > > >
-> > > > AFAIKT conditions for mmap_read_trylock() and
-> > > > mmap_read_lock_killable() are checked correctly. Am I missing
-> > > > something?
-> > >
-> > > Weirdly enough, it only triggers during that specific uffd test, righ=
-t?
-> >
-> > Yes, uffd-unit-tests. I even ran it separately to ensure it's not some
-> > fallback from a previous test and I'm able to reproduce this
-> > consistently.
+On Wed, 9 Aug 2023, Christian Brauner wrote:
+> On Wed, Aug 09, 2023 at 08:45:57AM +0200, Christian Brauner wrote:
+> > On Tue, Aug 08, 2023 at 09:28:08PM -0700, Hugh Dickins wrote:
+> > > This series enables and limits user extended attributes on tmpfs,
+> > > and independently provides a trivial direct IO stub for tmpfs.
+> > > 
+> > > It is here based on the vfs.tmpfs branch in vfs.git in next-20230808
+> > > but with a cherry-pick of v6.5-rc4's commit
+> > > 253e5df8b8f0 ("tmpfs: fix Documentation of noswap and huge mount options")
+> > > first: since the vfs.tmpfs branch is based on v6.5-rc1, but 3/5 in this
+> > > series updates tmpfs.rst in a way which depends on that commit.
+> > > 
+> > > IIUC the right thing to do would be to cherry-pick 253e5df8b8f0 into
+> > > vfs.tmpfs before applying this series.  I'm sorry that the series as
+> > > posted does not apply cleanly to any known tree! but I think posting
+> > > it against v6.5-rc5 or next-20230808 would be even less helpful.
+> > 
+> > No worries, I'll sort that out.
+> 
+> So, I hemmed and hawed but decided to rebase vfs.tmpfs onto v6.5-rc4
+> which includes that fix as cherry picking is odd.
 
-Yeah, it is somehow related to per-vma locking. Unfortunately I can't
-reproduce the issue on my VM, so I have to use my host and bisection
-is slow. I think I'll get to the bottom of this tomorrow.
+Even better, thanks.
 
-> >
-> > >
-> > > --
-> > > Cheers,
-> > >
-> > > David / dhildenb
-> > >
+And big thank you to you and Jan and Carlos for the very quick and
+welcoming reviews.  If only Hugh were able to respond like that...
+
+Needing "freed = 0" in shmem_evict_inode(), as reported by robot:
+that was stupid of me (though it happens not to matter what the value
+is in the uninitialized case): I'll send you the fixup to 3/5 tomorrow
+(unless it turns out that you've typed in the " = 0" yourself already).
+
+And I'll send a replacement for 4/5, the direct IO one, following
+Christoph's guidance: but I'm wilting, and just didn't get to it today.
+
+Hugh
