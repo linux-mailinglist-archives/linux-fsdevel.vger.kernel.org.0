@@ -2,109 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 843EB777569
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 12:08:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70FDC7775E9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 12:36:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233040AbjHJKIR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 06:08:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52312 "EHLO
+        id S233002AbjHJKgo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 06:36:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234179AbjHJKIJ (ORCPT
+        with ESMTP id S231213AbjHJKgn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 06:08:09 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE9BE10CF
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 03:08:08 -0700 (PDT)
+        Thu, 10 Aug 2023 06:36:43 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0DAEF2;
+        Thu, 10 Aug 2023 03:36:42 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7589565736
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 10:08:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECF93C433C7;
-        Thu, 10 Aug 2023 10:08:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6E3FD63B15;
+        Thu, 10 Aug 2023 10:36:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50214C433C8;
+        Thu, 10 Aug 2023 10:36:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691662087;
-        bh=hWvKN3wU8wjWbRwA95OgyxSzGrr+vZxnrxqzjfcVxqk=;
+        s=k20201202; t=1691663801;
+        bh=7STLk6rer7/WorIAWuagccGXb4zGN98HldySsPD3+No=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cQ3yqE7HC5zB5nzsSrxpfMxnCdqRhFx2hwtA53uvHkban4uSzCjrq0RZLZUL4aVw1
-         VhffnZa67oKIrLiI27GZP6prFQZsQ96cEFY4RI9rrnwNv3VVub6nYRKF4UWnutTLsf
-         tIFuXnc7Oyjlf55o5Hg7hsMB/q5O7rda0gxDzISvRecdd8eWuK8PV7gQb4bI+D6/Sy
-         dyCQJ1tfUk8gn9Z/IHTTVlZQ3j13/2PqGQR+PDybqCwVP0tnA6M2kmFEi1AuDOvVLX
-         U1JPUu7yGmwBabE8Fl3aLg+R5SCmhT8DB+hSWctIp4TBYPuOxB5csTLSvxK6POzzWd
-         7queN6GPqqOFw==
-Date:   Thu, 10 Aug 2023 12:07:56 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Oleksandr Tymoshenko <ovt@google.com>,
-        Carlos Maiolino <cem@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
-        Miklos Szeredi <miklos@szeredi.hu>, Daniel Xu <dxu@dxuuu.xyz>,
-        Chris Down <chris@chrisdown.name>, Tejun Heo <tj@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        b=aOqymy5dDQqmV9rwAQp+pXXD+NaZr6GDNhX/UT9tK6WVqRjj4OV9iyu4J9kCV1Qlj
+         WN0MZjoZ0V8KAyYHdK7UwKO+kpDIWABFo7rM/yqA5kM59kTLHBSujtWEJnFKLnXsj9
+         x9Xk7/lFdAFfAbq+8aCLM8F6CHBJNVoTjKxpqqavQuyBpsV+7kAaF/Eipd+7fe56T6
+         QmO40r3DpfMHZ+Puz+zSCSv0Lh3nv9qtY1mo5pxYKe3VRalw8FgcQcVETvdhtS9ktO
+         VtaRip1Aa2lVui1QNDmC0JIxMOUS4sjhCqNOYPcrnjjf/mvHQV4EJynaV3zYlSu3yt
+         j3IfyzHH8EReQ==
+Date:   Thu, 10 Aug 2023 12:36:38 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Marcelo Tosatti <mtosatti@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
         Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Pete Zaitcev <zaitcev@redhat.com>,
-        Helge Deller <deller@gmx.de>,
-        Topi Miettinen <toiwoton@gmail.com>,
-        Yu Kuai <yukuai3@huawei.com>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH vfs.tmpfs 0/5] tmpfs: user xattrs and direct IO
-Message-ID: <20230810-notwehr-denkbar-3be0cc53a87a@brauner>
-References: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com>
- <20230809-postkarten-zugute-3cde38456390@brauner>
- <20230809-leitgedanke-weltumsegelung-55042d9f7177@brauner>
- <cdedadf2-d199-1133-762f-a8fe166fb968@google.com>
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Dave Chinner <david@fromorbit.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Leonardo Bras <leobras@redhat.com>,
+        Yair Podemsky <ypodemsk@redhat.com>, P J P <ppandit@redhat.com>
+Subject: Re: [PATCH] fs/buffer.c: disable per-CPU buffer_head cache for
+ isolated CPUs
+Message-ID: <ZNS9tqX9s7NbQq3c@lothringen>
+References: <ZJtBrybavtb1x45V@tpad>
+ <ZM11z1Jxqrwk47e9@lothringen>
+ <ZM2PvQJd7kRyWnAZ@tpad>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cdedadf2-d199-1133-762f-a8fe166fb968@google.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <ZM2PvQJd7kRyWnAZ@tpad>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 09, 2023 at 10:50:39PM -0700, Hugh Dickins wrote:
-> On Wed, 9 Aug 2023, Christian Brauner wrote:
-> > On Wed, Aug 09, 2023 at 08:45:57AM +0200, Christian Brauner wrote:
-> > > On Tue, Aug 08, 2023 at 09:28:08PM -0700, Hugh Dickins wrote:
-> > > > This series enables and limits user extended attributes on tmpfs,
-> > > > and independently provides a trivial direct IO stub for tmpfs.
-> > > > 
-> > > > It is here based on the vfs.tmpfs branch in vfs.git in next-20230808
-> > > > but with a cherry-pick of v6.5-rc4's commit
-> > > > 253e5df8b8f0 ("tmpfs: fix Documentation of noswap and huge mount options")
-> > > > first: since the vfs.tmpfs branch is based on v6.5-rc1, but 3/5 in this
-> > > > series updates tmpfs.rst in a way which depends on that commit.
-> > > > 
-> > > > IIUC the right thing to do would be to cherry-pick 253e5df8b8f0 into
-> > > > vfs.tmpfs before applying this series.  I'm sorry that the series as
-> > > > posted does not apply cleanly to any known tree! but I think posting
-> > > > it against v6.5-rc5 or next-20230808 would be even less helpful.
-> > > 
-> > > No worries, I'll sort that out.
-> > 
-> > So, I hemmed and hawed but decided to rebase vfs.tmpfs onto v6.5-rc4
-> > which includes that fix as cherry picking is odd.
+On Fri, Aug 04, 2023 at 08:54:37PM -0300, Marcelo Tosatti wrote:
+> > So what happens if they ever do I/O then? Like if they need to do
+> > some prep work before entering an isolated critical section?
 > 
-> Even better, thanks.
+> Then instead of going through the per-CPU LRU buffer_head cache
+> (__find_get_block), isolated CPUs will work as if their per-CPU
+> cache is always empty, going through the slowpath 
+> (__find_get_block_slow). The algorithm is:
 > 
-> And big thank you to you and Jan and Carlos for the very quick and
-> welcoming reviews.
+> /*
+>  * Perform a pagecache lookup for the matching buffer.  If it's there, refresh
+>  * it in the LRU and mark it as accessed.  If it is not present then return
+>  * NULL
+>  */
+> struct buffer_head *
+> __find_get_block(struct block_device *bdev, sector_t block, unsigned size)
+> {
+>         struct buffer_head *bh = lookup_bh_lru(bdev, block, size);
+> 
+>         if (bh == NULL) {
+>                 /* __find_get_block_slow will mark the page accessed */
+>                 bh = __find_get_block_slow(bdev, block);
+>                 if (bh)
+>                         bh_lru_install(bh);
+>         } else
+>                 touch_buffer(bh);
+> 
+>         return bh;
+> }
+> EXPORT_SYMBOL(__find_get_block);
+> 
+> I think the performance difference between the per-CPU LRU cache
+> VS __find_get_block_slow was much more significant when the cache 
+> was introduced. Nowadays its only 26ns (moreover modern filesystems 
+> do not use buffer_head's).
 
-Happy to.
+Sounds good then!
 
-> Needing "freed = 0" in shmem_evict_inode(), as reported by robot:
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
 
-Fixed that.
-
-> And I'll send a replacement for 4/5, the direct IO one, following
-
-Ah great, thanks!
+Thanks!
