@@ -2,67 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B09287779F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 15:57:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1209C777A26
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 16:08:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235499AbjHJN5l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 09:57:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36748 "EHLO
+        id S234714AbjHJOIv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 10:08:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230446AbjHJN5j (ORCPT
+        with ESMTP id S231659AbjHJOIu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 09:57:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5236C212B;
-        Thu, 10 Aug 2023 06:57:39 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E464C64A1F;
-        Thu, 10 Aug 2023 13:57:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C88C1C433C7;
-        Thu, 10 Aug 2023 13:57:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691675858;
-        bh=8TLHDCTColfLSCdxEVFmLaRfu1yS1/99cHLfJeUUwA4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=WBhsUVuR/RFO+wlrVpHGFEl49UYiU3eSfSTZmXJVEdoAdppwGGfY1w94k5Awt0ScR
-         Mqsx+eEA35BFxGTQ6rkQd/rL3nPeGShFLDkTNa42ScNw5j4b/fjbB05P7hiyqzbNYJ
-         nN7kCP3gcuWcsLOE62Yuk4R+iQPdGPvIi6q/A10mLqSk7zYclfVcVqEi2fIsVKmcFj
-         Xic7aeTVbHof/AB+wNsYOau7ha5h5XA3NAN0mFV1OnC2glqxt4UQWeFDy/jX8q/X4y
-         fJHzeKfg1Khy1hd/P0L7mEFqlG9B9C7f4sn9WirH0GBvu4zmim+X7zZnn1Tmdz+YfY
-         EjgoHPnX7wiBw==
-Message-ID: <7d596fc2c526a5d6e4a84240dede590e868f3345.camel@kernel.org>
-Subject: Re: [PATCH v9] vfs, security: Fix automount superblock LSM init
- problem, preventing NFS sb sharing
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Date:   Thu, 10 Aug 2023 09:57:35 -0400
-In-Reply-To: <20230808-erdaushub-sanieren-2bd8d7e0a286@brauner>
-References: <20230808-master-v9-1-e0ecde888221@kernel.org>
-         <20230808-erdaushub-sanieren-2bd8d7e0a286@brauner>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Thu, 10 Aug 2023 10:08:50 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7432F1B4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 07:08:47 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-99bcc0adab4so135895366b.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 07:08:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1691676526; x=1692281326;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TqsJpU7LFb3GLTAfKEbp8lhEqnnez3erI34FjCCVUt0=;
+        b=oLBy2DGzKYdHZux1tS2W41KakaRW9SY0HZKBF7I2HLFTkVO5Em4dedsZCSvSJSlmZG
+         qb8UbIz1WxgIzdx4tY99yIV+vqbTlmN23UamoaqNNDm+SAUwAd+tqsGflKDTQts6RCTR
+         y60S3Gk0QeD0XjAU41PdqS6T08XDbrEAfOoo0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691676526; x=1692281326;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TqsJpU7LFb3GLTAfKEbp8lhEqnnez3erI34FjCCVUt0=;
+        b=LwjOP5stbQVhCM8vaL7mROjQB9M3nu36QGtm3M4P2Uv5pozBIFLmixq4vxkCir3w3s
+         Ys7YQbee+d2+aD03CsnesgvwZ+QvQAT8HLvoOTu29Ub9yeESlMo4Yfsu4dUvHPecJMFF
+         CVsEk5n+vHJjD/v+JHceC9XsaLdIbYOaRxzhkuDVTvKItehySI5ArkSwSyjU5ZCP3mbM
+         FJF54WYy/NEdJ4LC1x7awWwScqPib6xQUVqT+II1LpZsojtVJds4M/x+UVobrloiwlcy
+         e0EPak0XURJ4+uNWB1dGzTWrWOA1EzjdtvcOc3yH7aflVbR84wzMP/qLmX9b0iHbTv1/
+         soAg==
+X-Gm-Message-State: AOJu0YxH+emsqXB25L0Snb6qllU6JnU5wqtjHYECc+8mMZJ1TkCWxBu9
+        wwDpznvcLVsxNcXhA25MeRh5rEPzfuJ5WJDzDxXCsg==
+X-Google-Smtp-Source: AGHT+IEh9Byy+qklcNWdN5y35mnUr0YKMoeLeOg+FRbqCdBL0HqzUOAgQm6FExfxXyWJpFL9rLwyWD2o3LjRCJkm5EI=
+X-Received: by 2002:a17:906:3101:b0:99c:40f2:a402 with SMTP id
+ 1-20020a170906310100b0099c40f2a402mr2229590ejx.6.1691676525853; Thu, 10 Aug
+ 2023 07:08:45 -0700 (PDT)
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+References: <20230810105501.1418427-1-mszeredi@redhat.com> <20230810105501.1418427-3-mszeredi@redhat.com>
+ <e7979772-7e7b-9078-7b25-24e5bdb91342@fastmail.fm>
+In-Reply-To: <e7979772-7e7b-9078-7b25-24e5bdb91342@fastmail.fm>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 10 Aug 2023 16:08:34 +0200
+Message-ID: <CAJfpegugchRF8JagD7-zViQVeT_7-h33F+AvpmHhr8FHUcZ4sg@mail.gmail.com>
+Subject: Re: [PATCH 2/5] fuse: add STATX request
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,94 +63,111 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2023-08-08 at 15:31 +0200, Christian Brauner wrote:
-> On Tue, Aug 08, 2023 at 07:34:20AM -0400, Jeff Layton wrote:
-> > From: David Howells <dhowells@redhat.com>
-> >=20
-> > When NFS superblocks are created by automounting, their LSM parameters
-> > aren't set in the fs_context struct prior to sget_fc() being called,
-> > leading to failure to match existing superblocks.
-> >=20
-> > This bug leads to messages like the following appearing in dmesg when
-> > fscache is enabled:
-> >=20
-> >     NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,10=
-0000,100000,2ee,3a98,1d4c,3a98,1)
-> >=20
-> > Fix this by adding a new LSM hook to load fc->security for submount
-> > creation.
-> >=20
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount(=
-) to it.")
-> > Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
-> > Tested-by: Jeff Layton <jlayton@kernel.org>
-> > Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+On Thu, 10 Aug 2023 at 15:23, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+>
+>
+>
+> On 8/10/23 12:54, Miklos Szeredi wrote:
+> > Use the same structure as statx.
+>
+> Wouldn't it be easier to just include struct statx? Or is there an issue
+> with __u32, etc? If so, just a sufficiently large array could be used
+> and statx values just mem-copied in/out?
 
-I've made a significant number of changes since Casey acked this. It
-might be a good idea to drop his Acked-by (unless he wants to chime in
-and ask us to keep it).
+<linux/uapi/fuse.h> is OS independent.  Ports can grab it and use it
+in their userspace and kernel implementations.
+
+
+>
+> >
+> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> > ---
+> >   include/uapi/linux/fuse.h | 56 ++++++++++++++++++++++++++++++++++++++-
+> >   1 file changed, 55 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > index b3fcab13fcd3..fe700b91b33b 100644
+> > --- a/include/uapi/linux/fuse.h
+> > +++ b/include/uapi/linux/fuse.h
+> > @@ -207,6 +207,9 @@
+> >    *  - add FUSE_EXT_GROUPS
+> >    *  - add FUSE_CREATE_SUPP_GROUP
+> >    *  - add FUSE_HAS_EXPIRE_ONLY
+> > + *
+> > + *  7.39
+> > + *  - add FUSE_STATX and related structures
+> >    */
+> >
+> >   #ifndef _LINUX_FUSE_H
+> > @@ -242,7 +245,7 @@
+> >   #define FUSE_KERNEL_VERSION 7
+> >
+> >   /** Minor version number of this interface */
+> > -#define FUSE_KERNEL_MINOR_VERSION 38
+> > +#define FUSE_KERNEL_MINOR_VERSION 39
+> >
+> >   /** The node ID of the root inode */
+> >   #define FUSE_ROOT_ID 1
+> > @@ -269,6 +272,40 @@ struct fuse_attr {
+> >       uint32_t        flags;
+> >   };
+> >
+> > +/*
+> > + * The following structures are bit-for-bit compatible with the statx(2) ABI in
+> > + * Linux.
+> > + */
+> > +struct fuse_sx_time {
+> > +     int64_t         tv_sec;
+> > +     uint32_t        tv_nsec;
+> > +     int32_t         __reserved;
+> > +};
+> > +
+> > +struct fuse_statx {
+> > +     uint32_t        mask;
+> > +     uint32_t        blksize;
+> > +     uint64_t        attributes;
+> > +     uint32_t        nlink;
+> > +     uint32_t        uid;
+> > +     uint32_t        gid;
+> > +     uint16_t        mode;
+> > +     uint16_t        __spare0[1];
+> > +     uint64_t        ino;
+> > +     uint64_t        size;
+> > +     uint64_t        blocks;
+> > +     uint64_t        attributes_mask;
+> > +     struct fuse_sx_time     atime;
+> > +     struct fuse_sx_time     btime;
+> > +     struct fuse_sx_time     ctime;
+> > +     struct fuse_sx_time     mtime;
+> > +     uint32_t        rdev_major;
+> > +     uint32_t        rdev_minor;
+> > +     uint32_t        dev_major;
+> > +     uint32_t        dev_minor;
+> > +     uint64_t        __spare2[14];
+> > +};
+>
+> Looks like some recent values are missing?
+
+It doesn't matter, since those parts are not used.
+
+>
+>         /* 0x90 */
+>         __u64   stx_mnt_id;
+>         __u32   stx_dio_mem_align;      /* Memory buffer alignment for direct I/O */
+>         __u32   stx_dio_offset_align;   /* File offset alignment for direct I/O */
+>         /* 0xa0 */
+>         __u64   __spare3[12];   /* Spare space for future expansion */
+>         /* 0x100 */
+>
+> Which is basically why my personal preference would be not to do have a
+> copy of the struct - there is maintenance overhead.
+
+Whenever the new fields would be used in the kernel the fields can be
+added.  So no need to continually update the one in fuse, since those
+fields cannot be referenced by the kernel.   Userspace might actually
+access those fields through struct statx, but that's okay, the
+interface was designed so that the producer and consumer can use
+different versions of the API.
 
 Thanks,
-Jeff
-
-> > Acked-by: "Christian Brauner (Microsoft)" <brauner@kernel.org>
-> > Link: https://lore.kernel.org/r/165962680944.3334508.661002390034914203=
-4.stgit@warthog.procyon.org.uk/ # v1
-> > Link: https://lore.kernel.org/r/165962729225.3357250.143507288464715271=
-37.stgit@warthog.procyon.org.uk/ # v2
-> > Link: https://lore.kernel.org/r/165970659095.2812394.686889417110231879=
-6.stgit@warthog.procyon.org.uk/ # v3
-> > Link: https://lore.kernel.org/r/166133579016.3678898.628319501948056727=
-5.stgit@warthog.procyon.org.uk/ # v4
-> > Link: https://lore.kernel.org/r/217595.1662033775@warthog.procyon.org.u=
-k/ # v5
-> > ---
-> > ver #2)
-> > - Added Smack support
-> > - Made LSM parameter extraction dependent on reference !=3D NULL.
-> >=20
-> > ver #3)
-> > - Made LSM parameter extraction dependent on fc->purpose =3D=3D
-> >    FS_CONTEXT_FOR_SUBMOUNT.  Shouldn't happen on FOR_RECONFIGURE.
-> >=20
-> > ver #4)
-> > - When doing a FOR_SUBMOUNT mount, don't set the root label in SELinux =
-or Smack.
-> >=20
-> > ver #5)
-> > - Removed unused variable.
-> > - Only allocate smack_mnt_opts if we're dealing with a submount.
-> >=20
-> > ver #6)
-> > - Rebase onto v6.5.0-rc4
-> > - Link to v6: https://lore.kernel.org/r/20230802-master-v6-1-45d4829916=
-8b@kernel.org
-> >=20
-> > ver #7)
-> > - Drop lsm_set boolean
-> > - Link to v7: https://lore.kernel.org/r/20230804-master-v7-1-5d4e484072=
-98@kernel.org
-> >=20
-> > ver #8)
-> > - Remove spurious semicolon in smack_fs_context_init
-> > - Make fs_context_init take a superblock as reference instead of dentry
-> > - WARN_ON_ONCE's when fc->purpose !=3D FS_CONTEXT_FOR_SUBMOUNT
-> > - Call the security hook from fs_context_for_submount instead of alloc_=
-fs_context
-> > - Link to v8: https://lore.kernel.org/r/20230807-master-v8-1-54e249595f=
-10@kernel.org
-> >=20
-> > ver #9)
-> > - rename *_fs_context_init to *_fs_context_submount
-> > - remove checks for FS_CONTEXT_FOR_SUBMOUNT and NULL reference pointers
-> > - fix prototype on smack_fs_context_submount
->=20
-> Thanks, this looks good from my perspective. If it looks fine to LSM
-> folks as well I can put it with the rest of the super work for this
-> cycle or it can go through the LSM tree.
-
---=20
-Jeff Layton <jlayton@kernel.org>
+Miklos
