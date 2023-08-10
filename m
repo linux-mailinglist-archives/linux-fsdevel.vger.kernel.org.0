@@ -2,71 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 25458777DDC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 18:14:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C34C777E4D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 18:30:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236661AbjHJQOD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 12:14:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35886 "EHLO
+        id S235900AbjHJQaZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 12:30:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236733AbjHJQNs (ORCPT
+        with ESMTP id S236289AbjHJQaX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 12:13:48 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 028C83581;
-        Thu, 10 Aug 2023 09:13:28 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1bcad794ad4so8481285ad.3;
-        Thu, 10 Aug 2023 09:13:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691684007; x=1692288807;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t8Q9xp1hpHwj6pNr+X5XwC5Li0wmHIWn07CtqwvptdI=;
-        b=IJ/HEYnsAODmGUD4SLrT2mk7Kbfjk1jGBf5ows/R6bb0x7AXJDbGwsptPTPHMbM0M5
-         MMFSQsDlD9avKRFzTtOUE+YKB7oEOEIah017O3TX/qsEVd7o77QfNMzpw2qLC+XJba7t
-         UuVOsAcETenzmYfx1XlUFTh9SfJlC/RjGFzPgYI+dretjrt3lYzpVf0UKxw7MeL2rq4P
-         pbKUfxQrtifvATuD+EM/dnqAmb4m7Ko5L6/4ikHw3nDAqULRsfMa4Wudql0nenUeCraX
-         Hu+pyUPMXFIlHM7uGuTQfCuljoeGJU6DnrhRzxS3N+tz7Lp7XeZzIZcuMXFbCS/e3WnJ
-         JenA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691684007; x=1692288807;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t8Q9xp1hpHwj6pNr+X5XwC5Li0wmHIWn07CtqwvptdI=;
-        b=VBbwT44mL6Shr5eoxs9uIvcMRa1pV3OJhJawMCZzSZu/qO26vApDlaC/oq03C4tNtQ
-         GfqKZU8my+RaCKejnAzGGwEDXfJ+Ikr7s26C3t/z/x7jXOncENsNC8Hyn2ipwyoFsj71
-         wPvK390BDXV0HHXI/L9DEa6pX8sZWqwkHHCYueInc+FnjD0zgT9Rh6sMMbM2XQm8brdJ
-         BBxHCLV6o7l4RaPlYlPqMf+s+t2WZ7r9q+QyOvjZlx2vDL0HdeJq2OoSUuk9R+qaxV9p
-         974J95Ms8DBwrG4c9ko9tHUBZ3BqpC6Vmw62S/YTRRHnHHkxbX/0Bgal/a4YQ1A83rZR
-         jNcw==
-X-Gm-Message-State: AOJu0YztvYo9/Kr9C+wf5vliRu1GSFom0tsJdUPrzR+kYZ6+JI5LyxWB
-        urK9EQVigvc6QLS9kdP84IY=
-X-Google-Smtp-Source: AGHT+IF2wwr+Qo2PrhtF+th5PmcbtS3OAFIljYU9PclgzSIHGvB8qfweZAb49T2u7uYeNr0ZCbtWLA==
-X-Received: by 2002:a17:902:dacd:b0:1bb:a941:d940 with SMTP id q13-20020a170902dacd00b001bba941d940mr3108026plx.15.1691684007304;
-        Thu, 10 Aug 2023 09:13:27 -0700 (PDT)
-Received: from manas-VirtualBox.iitr.ac.in ([103.37.201.179])
-        by smtp.gmail.com with ESMTPSA id t6-20020a170902b20600b001b9e0918b0asm1960070plr.169.2023.08.10.09.13.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Aug 2023 09:13:26 -0700 (PDT)
-From:   Manas Ghandat <ghandatmanas@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     Manas Ghandat <ghandatmanas@gmail.com>,
-        Linux-kernel-mentees@lists.linuxfoundation.org, anton@tuxera.com,
-        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        syzbot+4768a8f039aa677897d0@syzkaller.appspotmail.com
-Subject: [PATCH v3] ntfs : fix shift-out-of-bounds in ntfs_iget
-Date:   Thu, 10 Aug 2023 21:43:08 +0530
-Message-Id: <20230810161308.8577-1-ghandatmanas@gmail.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <2023080811-populace-raven-96d2@gregkh>
-References: <2023080811-populace-raven-96d2@gregkh>
+        Thu, 10 Aug 2023 12:30:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04A962728;
+        Thu, 10 Aug 2023 09:30:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 982BB63C09;
+        Thu, 10 Aug 2023 16:30:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBC34C433C7;
+        Thu, 10 Aug 2023 16:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691685019;
+        bh=6q/Y46TIpsSPhXSxrFEF/VLkfW3O+0fXt+mKjW7zycU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QBTjQqGMrvrEx1cPGNDE6eBGCUIGSu7QfnO9qJ2fxmYvkPqU3uHCMgyBgqQTf/an2
+         Z+gn6DD3Hyi2/XpbY+JVY1qMgaDWQl+2hnwz0tVPTFJ/aQbIQmVZ1kcfhhPjRdTHQE
+         pJIv156HmhMPVc4rUaGTnBIRVcIwyce9fqtZavbwMLCcXcb+iIRAvB+N8r6TXlneb4
+         UD2iv++wxJLA1MWi34RB4oGLv7/wnHhRqPZEFzgBWFZI+EWK5VqP8eJGXk5oRzCMEx
+         VVvgWtIxSwNXI117isSSjrqm7FKpRTocaPXB2KmulJEbsgbDl0ASgz97yEvHnqUTRR
+         0d2hwTU0pEbDg==
+Date:   Thu, 10 Aug 2023 17:30:07 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+        Deepak Gupta <debug@rivosinc.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v4 03/36] arm64/gcs: Document the ABI for Guarded Control
+ Stacks
+Message-ID: <e676deee-fc7a-4f7f-8605-41b4af274c81@sirena.org.uk>
+References: <20230807-arm64-gcs-v4-0-68cfa37f9069@kernel.org>
+ <20230807-arm64-gcs-v4-3-68cfa37f9069@kernel.org>
+ <ZNOhjrYleGBR6Pbs@arm.com>
+ <f4cec4b3-c386-4873-aa1d-90528e062f2a@sirena.org.uk>
+ <ZNSmFmYFHDw3NvvP@arm.com>
+ <4e215e53-c7d1-4338-8df9-3f9bf783ced9@sirena.org.uk>
+ <ZNTnTGb341TSMuvA@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="N3GIhup1qS9ZN5af"
+Content-Disposition: inline
+In-Reply-To: <ZNTnTGb341TSMuvA@arm.com>
+X-Cookie: Reunite Gondwondaland!
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -75,38 +86,51 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Added a check to the compression_unit so that out of bound doesn't occur.
 
-Signed-off-by: Manas Ghandat <ghandatmanas@gmail.com>
-Reported-by: syzbot+4768a8f039aa677897d0@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=4768a8f039aa677897d0
----
-V2 -> V3: Fix patching issue.
-V1 -> V2: Cleaned up coding style.
+--N3GIhup1qS9ZN5af
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- fs/ntfs/inode.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+On Thu, Aug 10, 2023 at 02:34:04PM +0100, Szabolcs Nagy wrote:
+> The 08/10/2023 12:41, Mark Brown wrote:
 
-diff --git a/fs/ntfs/inode.c b/fs/ntfs/inode.c
-index 6c3f38d66579..a657322874ed 100644
---- a/fs/ntfs/inode.c
-+++ b/fs/ntfs/inode.c
-@@ -1077,6 +1077,15 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 					goto unm_err_out;
- 				}
- 				if (a->data.non_resident.compression_unit) {
-+					if (a->data.non_resident.compression_unit +
-+						vol->cluster_size_bits > 32) {
-+						ntfs_error(vi->i_sb,
-+							"Found non-standard compression unit (%u).   Cannot handle this.",
-+							a->data.non_resident.compression_unit
-+						);
-+						err = -EOPNOTSUPP;
-+						goto unm_err_out;
-+					}
- 					ni->itype.compressed.block_size = 1U <<
- 							(a->data.non_resident.
- 							compression_unit +
--- 
-2.37.2
+> > I agree that it's going to be excessive for pretty much all
+> > applications, I adjusted it to match x86 as part of the general effort
+> > to avoid divergence and because I was a bit concerned about non-PCS
+> > cases (eg, JITed code) potentially running into trouble, especially with
 
+> is that even possible?
+
+> 16byte alignment is not a convention but architectural:
+> access via unaligned sp traps (at least in userspace).
+
+> it is possible to use bl such that the stack is not involved
+> e.g. if there is no bl/ret pairing, but if we base the gcs
+> size on the stack size then i'd expect one stack frame per
+> bl/ret pair with 16byte alignment, or is there a programming
+> model possible that uses 8byte stack per bl?
+
+That's definitely what I'd expect most of the time.  You'd need to be
+tracking what needs pushing in some other register but it's possible.
+Quite why you'd do this is a separate question, I think I'm being overly
+cautious worrying about anyone actually having done it but it wouldn't
+be the first time I was surprised by someone doing something unexpected.
+Like I say I think it's excessive and was erring on the side of being
+conservative.
+
+--N3GIhup1qS9ZN5af
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmTVEI4ACgkQJNaLcl1U
+h9A4Awf/bx8Lj3RQIsL13zO6Rcr8idtjPSrfssjIBQQtk+Ytcou3d6I0srD7ZcYS
+KIOrfTZRe8dRpA45iRARURQA9vzzzeS2pMY0bviaHVPz0kbfeiJ8x/PXOgLOHMkX
+EV2us3XQYCNpiGAozGpIK5m8GntmZotF3bJtqK8PDxzf+ujeo361xNzQFcBX7js/
+YNED0FhW8OeI/+z7ztalZM26vZw05bE2MwbJmazHCO6L/flUyNSyrk+otZdC71s0
+UEVhosgX4Ba4KFRmDBvl5JiCIohdEI+k5S3vJOAZiLauPFRDQuFlrNvs1SGkHcMv
+WbwxA1SwHdT5GRMpJCXjvIAWhkckqg==
+=j9pJ
+-----END PGP SIGNATURE-----
+
+--N3GIhup1qS9ZN5af--
