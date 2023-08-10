@@ -2,122 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D292177775D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 13:41:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99BB87777B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 14:00:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235437AbjHJLlU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 07:41:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54970 "EHLO
+        id S233517AbjHJMAD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 08:00:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232196AbjHJLlT (ORCPT
+        with ESMTP id S230093AbjHJMAC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 07:41:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 061A191;
-        Thu, 10 Aug 2023 04:41:19 -0700 (PDT)
+        Thu, 10 Aug 2023 08:00:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4D4BE4D;
+        Thu, 10 Aug 2023 05:00:01 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8CB1565784;
-        Thu, 10 Aug 2023 11:41:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3391FC433C9;
-        Thu, 10 Aug 2023 11:41:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3A84A65A89;
+        Thu, 10 Aug 2023 12:00:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5EDEC433C8;
+        Thu, 10 Aug 2023 11:59:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691667677;
-        bh=SjY6cOlS50SecqcUH+vtDGVI75FsC2Isz7CGfrRn3Vg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YBTItZUv0G89tFiv0O0B8TEhjWNjnoNEmZi8nt6DuvO/scAwoxRs7XA6BiURuHLnb
-         4Aq2cDA2bbWglZvwEXyOfnCjN38AzLwQwsZN4mG6gfoGXUaFw0f/4i09YWO4gcWvo9
-         ooMH/iYINXNk9s5xHIZ/l8yPA4RolpVcnCfTpJUEFbuMe7IwbvQa/cAOEn0/WIwLxX
-         Jma2PMvPtsFsaIMl7jjQYY0kzKwqaua6ViLBFNC+1zlvZ81ZtUeCKnh7WBGsyWT0AJ
-         0q7MPoQEpgwIXfUQ8+CODBM5Jhp17HRovOb1/sPzqGLFa82MDNsHsLUj71MptXKTqp
-         kA8rBQ2dsmgng==
-Date:   Thu, 10 Aug 2023 12:41:09 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-        Deepak Gupta <debug@rivosinc.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 03/36] arm64/gcs: Document the ABI for Guarded Control
- Stacks
-Message-ID: <4e215e53-c7d1-4338-8df9-3f9bf783ced9@sirena.org.uk>
-References: <20230807-arm64-gcs-v4-0-68cfa37f9069@kernel.org>
- <20230807-arm64-gcs-v4-3-68cfa37f9069@kernel.org>
- <ZNOhjrYleGBR6Pbs@arm.com>
- <f4cec4b3-c386-4873-aa1d-90528e062f2a@sirena.org.uk>
- <ZNSmFmYFHDw3NvvP@arm.com>
+        s=k20201202; t=1691668800;
+        bh=cLcSp/OITxB2lIR6ZNDHQ4eJMnOnALLPpdxcYxd5zyQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mXItDfQ3tcVHY/X2iUJFOjdIIiTQ86KreeAXKzmfffSizVS7vKOzViqW3o42TL17L
+         IyxnBJ3igK7CzygdZsmesvKml6PS8VwMNhdbUkOjGTQ/IpnMyrAVku/yclApQ8ev44
+         8M32m5gbkOxu1y94SKAxYuebUOGQOAGTYmv7ynTXbQC1yCz2f+M+twVp1cC0O+Ybgy
+         F2dtuRnfWs1dlDYUm/mRKlhjo0cH9Cu2MiF+NqgqvGbdrqLqJhAorX1miwt6sb+4ws
+         SwRDQr0SFP0nn9mGTD2bFSR40e7zl549MkTqnBgtscdBmQMUcbFp7TiUnpz5nWl25x
+         Rtd7hQ4SczzTA==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Marcelo Tosatti <mtosatti@redhat.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        Leonardo Bras <leobras@redhat.com>,
+        Yair Podemsky <ypodemsk@redhat.com>,
+        P J P <ppandit@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs/buffer.c: disable per-CPU buffer_head cache for isolated CPUs
+Date:   Thu, 10 Aug 2023 13:59:53 +0200
+Message-Id: <20230810-vordem-prospekt-28a1fb423f73@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ZJtBrybavtb1x45V@tpad>
+References: <ZJtBrybavtb1x45V@tpad>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="HX3zqelcmaABHbLq"
-Content-Disposition: inline
-In-Reply-To: <ZNSmFmYFHDw3NvvP@arm.com>
-X-Cookie: Reunite Gondwondaland!
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1164; i=brauner@kernel.org; h=from:subject:message-id; bh=cLcSp/OITxB2lIR6ZNDHQ4eJMnOnALLPpdxcYxd5zyQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRcuWgW6jFB+Zwc41y7g766M9e53L26//nqhABFsfe1cxnr AjYkdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkRCLDX/mnrId5ND55KVVJnVJ7o5 p2tlrMRE2D4w7fjds7bUKTDRkZNjUcT5haq/d6vc2vg6u3r71zb7MO46aXhZcfKWxdKNmhygwA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, 27 Jun 2023 17:08:15 -0300, Marcelo Tosatti wrote:
+> For certain types of applications (for example PLC software or
+> RAN processing), upon occurrence of an event, it is necessary to
+> complete a certain task in a maximum amount of time (deadline).
+> 
+> One way to express this requirement is with a pair of numbers,
+> deadline time and execution time, where:
+> 
+> [...]
 
---HX3zqelcmaABHbLq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-On Thu, Aug 10, 2023 at 09:55:50AM +0100, Szabolcs Nagy wrote:
-> The 08/09/2023 16:34, Mark Brown wrote:
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> > It's actually based on bitrot that I'd initially chosen a smaller value
-> > since it's likely that functions will push at least something as you
-> > suggest, the patches now just use RLIMIT_STACK.  I'll fix.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-> the pcs requires 16byte aligned stack frames, with 8byte per gcs entry
-> there is no need for same gcs size as stack size in userspace.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-I agree that it's going to be excessive for pretty much all
-applications, I adjusted it to match x86 as part of the general effort
-to avoid divergence and because I was a bit concerned about non-PCS
-cases (eg, JITed code) potentially running into trouble, especially with
-smaller stack limits.  It's not an issue I have super strong opinions on
-though, as you can see I had implemented it both ways at various times.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
 
---HX3zqelcmaABHbLq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmTUzNQACgkQJNaLcl1U
-h9CX2Af/ZivuFjFTpJA8oad5auH8pxkhXVEAIPD0ff/7T6abVR9+lSwBwNj9fu7u
-QzV10fINsZecsGZed5ZdpIR3HeeSZW2rAVaF2fIu1u7L6gXy0UwG1jPkOB21G4Ca
-LApqqi+p4OfTtZtySK1optntQ4+DJRFrhFESNYwt/UyKffuB9bbr5xaIB/23ghe+
-ZLmOWBXMpL4NaZMPdi9Tm43gAvVlDnXsANCWTZfq0uRGZBJBggQIM7Mwrz9JwmVy
-3633R9GviRxPWQm83UqZI7n51wspiOfjdhYYtsqqo7jYwawpnfb4Jj89/3j6QmJO
-WdrDN78D2wpFLApdojZDDftk6sXHkg==
-=m3b4
------END PGP SIGNATURE-----
-
---HX3zqelcmaABHbLq--
+[1/1] fs/buffer.c: disable per-CPU buffer_head cache for isolated CPUs
+      https://git.kernel.org/vfs/vfs/c/9ed7cfdf38b8
