@@ -2,269 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9948C777652
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 12:56:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03384777671
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 13:06:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234476AbjHJK4G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 06:56:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59852 "EHLO
+        id S233149AbjHJLFw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 07:05:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234444AbjHJK4F (ORCPT
+        with ESMTP id S231643AbjHJLFv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 06:56:05 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9A8E26B8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 03:55:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1691664912;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:
+        Thu, 10 Aug 2023 07:05:51 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1E8F2108;
+        Thu, 10 Aug 2023 04:05:49 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 5FD561F749;
+        Thu, 10 Aug 2023 11:05:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1691665548; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Xwa6+6zF9pv0djpXrnIbd8z6z5wH7RTpeeZ5RrhlEq0=;
-        b=I/gbyPC446Rh1yQGhNPA0lhOOX8m0wMc0ZKrxq31lcKfgv6nLqCAEkQ2A3ShjbS5W6CI5F
-        7C+q38ZUpFvO9o7bgZMg6ILg0k0Wt6qDMQuM7tbv5oZK0ky8o3dwdaEym8APaUjcuSEIJW
-        +XGkX2SK/eralu/XEYK063MhvNoEovs=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-644-qe3Js4a4PSOciikMrrL3vg-1; Thu, 10 Aug 2023 06:55:10 -0400
-X-MC-Unique: qe3Js4a4PSOciikMrrL3vg-1
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-523338c7bc8so566486a12.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 03:55:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691664909; x=1692269709;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xwa6+6zF9pv0djpXrnIbd8z6z5wH7RTpeeZ5RrhlEq0=;
-        b=AJUkwfGMXEOoPvqwtbYJeHDD+O5Ze8V40JYVCHLyM5ODQsNleT191S3B8VpiZ6+SZI
-         Ws+5eCcDMOAvCZ4TW5pVkHHl45nulOX7t3i3K8ViZgOpiNN8SNhfatgbREWXuuPSUd4O
-         Br3CejzSulR1fVNvWS4QhfZ5E0frB4pWH2S8wvskdE2BksI64ogYb804axIOjZwodh7N
-         ZKf5NhDRiNI9Jzwv+V3ybbQ0kjj1MNsdVQdLVaCwpOLVj+rWT8C8OgwcwqLXPYtzX6zg
-         YTM3VeATg9wCXq5naF+w93ooUOhIGKEZG40rYTfEE3tDuybqQxLlXeDeX0pUrNEc7XBA
-         TZMg==
-X-Gm-Message-State: AOJu0YzR5RAUzMuz5esm/FGADrpWYXwsmZ6IcycbOlKcInQ0wfhSLdzs
-        RL3Vw8oMWU1mwDG/tq2FlKQIWdWP8FMDcVNLj3cM8s4o+gpyAdF5MMlLL+ZEe3Lcqmzjr+hWN+6
-        3kiVJyphAXpaOoU5Sg0dsoUiVDucvosrDRcaQ1Pmaiv1sqo0GEcoyP6ycDBgUcvHjantr5jyMDO
-        rMhBiCmKWUtw==
-X-Received: by 2002:a50:ec84:0:b0:523:1ce9:1f41 with SMTP id e4-20020a50ec84000000b005231ce91f41mr1992692edr.18.1691664909397;
-        Thu, 10 Aug 2023 03:55:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHFCuL0IZC0lTPmn/H8CQNSDJR7CUUSaNs1Lm2FwXonn3StFHC6uLjGfmFy+v/jcH7UcyD56g==
-X-Received: by 2002:a50:ec84:0:b0:523:1ce9:1f41 with SMTP id e4-20020a50ec84000000b005231ce91f41mr1992666edr.18.1691664909038;
-        Thu, 10 Aug 2023 03:55:09 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (193-226-246-142.pool.digikabel.hu. [193.226.246.142])
-        by smtp.gmail.com with ESMTPSA id v20-20020aa7cd54000000b005231f324a0bsm643732edw.28.2023.08.10.03.55.07
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Aug 2023 03:55:07 -0700 (PDT)
-From:   Miklos Szeredi <mszeredi@redhat.com>
-To:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 5/5] fuse: cache btime
-Date:   Thu, 10 Aug 2023 12:55:01 +0200
-Message-Id: <20230810105501.1418427-6-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230810105501.1418427-1-mszeredi@redhat.com>
-References: <20230810105501.1418427-1-mszeredi@redhat.com>
+        bh=1DFh8evqtxspjStydxXxKkjnilpW0tYumnluwrTMIZo=;
+        b=vLT7nxhsKaVB+2d6j1Yf5X8t1GLYqRuuN4g6ZutMMICOunL7y0FZNv7gLZiYXzC/l2Xomu
+        I8xmm0CPUZCp/iFMbz+eWr+/L/YJb1/utRAjSeiWYdJX1v/2EQl6s2syK6Yg4TzJfLlWXK
+        j+SruuD6SzbR8Z3B6IZKMOfh62510CU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1691665548;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=1DFh8evqtxspjStydxXxKkjnilpW0tYumnluwrTMIZo=;
+        b=gjop8gtt3TnFXcbkSm06MHlxNzKkmd+CJQt27qbqqSRylA/dQexstbBZ/MQ0KnNaiV041a
+        Mrb6ToOuPtQHkpAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4EB2E138E2;
+        Thu, 10 Aug 2023 11:05:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id bLIxE4zE1GQpLAAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 10 Aug 2023 11:05:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id D2565A076F; Thu, 10 Aug 2023 13:05:47 +0200 (CEST)
+Date:   Thu, 10 Aug 2023 13:05:47 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH 02/12] nilfs2: use setup_bdev_super to de-duplicate the
+ mount code
+Message-ID: <20230810110547.ks62g2flysgwpgru@quack3>
+References: <20230802154131.2221419-1-hch@lst.de>
+ <20230802154131.2221419-3-hch@lst.de>
+ <20230803114651.ihtqqgthbdjjgxev@quack3>
+ <CAKFNMomzHg33SHnp6xGMEZY=+k6Y4t7dvBvgBDbO9H3ujzNDCw@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CAKFNMomzHg33SHnp6xGMEZY=+k6Y4t7dvBvgBDbO9H3ujzNDCw@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Not all inode attributes are supported by all filesystems, but for the
-basic stats (which are returned by stat(2) and friends) all of them will
-have some value, even if that doesn't reflect a real attribute of the file.
+On Fri 04-08-23 11:01:39, Ryusuke Konishi wrote:
+> On Thu, Aug 3, 2023 at 8:46 PM Jan Kara wrote:
+> >
+> > On Wed 02-08-23 17:41:21, Christoph Hellwig wrote:
+> > > Use the generic setup_bdev_super helper to open the main block device
+> > > and do various bits of superblock setup instead of duplicating the
+> > > logic.  This includes moving to the new scheme implemented in common
+> > > code that only opens the block device after the superblock has allocated.
+> > >
+> > > It does not yet convert nilfs2 to the new mount API, but doing so will
+> > > become a bit simpler after this first step.
+> > >
+> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> >
+> > AFAICS nilfs2 could *almost* use mount_bdev() directly and then just do its
+> 
+> > snapshot thing after mount_bdev() returns. But it has this weird logic
+> > that: "if the superblock is already mounted but we can shrink the whole
+> > dcache, then do remount instead of ignoring mount options". Firstly, this
+> > looks racy - what prevents someone from say opening a file on the sb just
+> > after nilfs_tree_is_busy() shrinks dcache? Secondly, it is inconsistent
+> > with any other filesystem so it's going to surprise sysadmins not
+> > intimately knowing nilfs2. Thirdly, from userspace you cannot tell what
+> > your mount call is going to do. Last but not least, what is it really good
+> > for? Ryusuke, can you explain please?
+> >
+> >                                                                 Honza
+> 
+> I think you are referring to the following part:
+> 
+> >        if (!s->s_root) {
+> ...
+> >        } else if (!sd.cno) {
+> >                if (nilfs_tree_is_busy(s->s_root)) {
+> >                        if ((flags ^ s->s_flags) & SB_RDONLY) {
+> >                                nilfs_err(s,
+> >                                          "the device already has a %s mount.",
+> >                                          sb_rdonly(s) ? "read-only" : "read/write");
+> >                                err = -EBUSY;
+> >                                goto failed_super;
+> >                        }
+> >                } else {
+> >                        /*
+> >                         * Try remount to setup mount states if the current
+> >                         * tree is not mounted and only snapshots use this sb.
+> >                         */
+> >                        err = nilfs_remount(s, &flags, data);
+> >                        if (err)
+> >                                goto failed_super;
+> >                }
+> >        }
+> 
+> What this logic is trying to do is, if there is already a nilfs2 mount
+> instance for the device, and are trying to mounting the current tree
+> (sd.cno is 0, so this is not a snapshot mount), then will switch
+> depending on whether the current tree has a mount:
+> 
+> - If the current tree is mounted, it's just like a normal filesystem.
+> (A read-only mount and a read/write mount can't coexist, so check
+> that, and reuse the instance if possible)
+> - Otherwise, i.e. for snapshot mounts only, do whatever is necessary
+> to add a new current mount, such as starting a log writer.
+>    Since it does the same thing that nilfs_remount does, so
+> nilfs_remount() is used there.
+> 
+> Whether or not there is a current tree mount can be determined by
+> d_count(s->s_root) > 1 as nilfs_tree_is_busy() does.
+> Where s->s_root is always the root dentry of the current tree, not
+> that of the mounted snapshot.
 
-Btime is different, in that filesystems are free to report or not report a
-value in statx.  If the value is available, then STATX_BTIME bit is set in
-stx_mask.
+I see now, thanks for explanation! But one thing still is not clear to me.
+If you say have a snapshot mounted read-write and then you mount the
+current snapshot (cno == 0) read-only, you'll switch the whole superblock
+to read-only state. So also the mounted snapshot is suddently read-only
+which is unexpected and actually supposedly breaks things because you can
+still have file handles open for writing on the snapshot etc.. So how do
+you solve that?
 
-When caching the value of btime, remember the availability of the attribute
-as well as the value (if available).  This is done by using the
-FUSE_I_BTIME bit in fuse_inode->state to indicate availability, while using
-fuse_inode->inval_mask & STATX_BTIME to indicate the state of the cache
-itself (i.e. set if cache is invalid, and cleared if cache is valid).
-
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/fuse/dir.c     | 14 +++++++++-----
- fs/fuse/fuse_i.h  |  7 +++++++
- fs/fuse/inode.c   | 25 +++++++++++++++++++++++--
- fs/fuse/readdir.c |  2 +-
- 4 files changed, 40 insertions(+), 8 deletions(-)
-
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 552157bd6a4d..42f49fe6e770 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -255,7 +255,7 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
- 			goto invalid;
- 
- 		forget_all_cached_acls(inode);
--		fuse_change_attributes(inode, &outarg.attr,
-+		fuse_change_attributes(inode, &outarg.attr, NULL,
- 				       ATTR_TIMEOUT(&outarg),
- 				       attr_version);
- 		fuse_change_entry_timeout(entry, &outarg);
-@@ -1213,8 +1213,8 @@ static int fuse_do_statx(struct inode *inode, struct file *file,
- 
- 	fuse_statx_to_attr(&outarg.stat, &attr);
- 	if ((sx->mask & STATX_BASIC_STATS) == STATX_BASIC_STATS) {
--		fuse_change_attributes(inode, &attr, ATTR_TIMEOUT(&outarg),
--				       attr_version);
-+		fuse_change_attributes(inode, &attr, &outarg.stat,
-+				       ATTR_TIMEOUT(&outarg), attr_version);
- 	}
- 	stat->result_mask = sx->mask & (STATX_BASIC_STATS | STATX_BTIME);
- 	stat->btime.tv_sec = sx->btime.tv_sec;
-@@ -1261,7 +1261,7 @@ static int fuse_do_getattr(struct inode *inode, struct kstat *stat,
- 			fuse_make_bad(inode);
- 			err = -EIO;
- 		} else {
--			fuse_change_attributes(inode, &outarg.attr,
-+			fuse_change_attributes(inode, &outarg.attr, NULL,
- 					       ATTR_TIMEOUT(&outarg),
- 					       attr_version);
- 			if (stat)
-@@ -1316,6 +1316,10 @@ static int fuse_update_get_attr(struct inode *inode, struct file *file,
- 		generic_fillattr(&nop_mnt_idmap, inode, stat);
- 		stat->mode = fi->orig_i_mode;
- 		stat->ino = fi->orig_ino;
-+		if (test_bit(FUSE_I_BTIME, &fi->state)) {
-+			stat->btime = fi->i_btime;
-+			stat->result_mask |= STATX_BTIME;
-+		}
- 	}
- 
- 	return err;
-@@ -1952,7 +1956,7 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
- 		/* FIXME: clear I_DIRTY_SYNC? */
- 	}
- 
--	fuse_change_attributes_common(inode, &outarg.attr,
-+	fuse_change_attributes_common(inode, &outarg.attr, NULL,
- 				      ATTR_TIMEOUT(&outarg),
- 				      fuse_get_cache_mask(inode));
- 	oldsize = inode->i_size;
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index daae31c58754..4608c3deab52 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -88,6 +88,9 @@ struct fuse_inode {
- 	    preserve the original mode */
- 	umode_t orig_i_mode;
- 
-+	/* Cache birthtime */
-+	struct timespec64 i_btime;
-+
- 	/** 64 bit inode number */
- 	u64 orig_ino;
- 
-@@ -167,6 +170,8 @@ enum {
- 	FUSE_I_SIZE_UNSTABLE,
- 	/* Bad inode */
- 	FUSE_I_BAD,
-+	/* Has btime */
-+	FUSE_I_BTIME,
- };
- 
- struct fuse_conn;
-@@ -1061,9 +1066,11 @@ void fuse_init_symlink(struct inode *inode);
-  * Change attributes of an inode
-  */
- void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
-+			    struct fuse_statx *sx,
- 			    u64 attr_valid, u64 attr_version);
- 
- void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
-+				   struct fuse_statx *sx,
- 				   u64 attr_valid, u32 cache_mask);
- 
- u32 fuse_get_cache_mask(struct inode *inode);
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index a6cc102e66bc..175ac7e4e06d 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -163,6 +163,7 @@ static ino_t fuse_squash_ino(u64 ino64)
- }
- 
- void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
-+				   struct fuse_statx *sx,
- 				   u64 attr_valid, u32 cache_mask)
- {
- 	struct fuse_conn *fc = get_fuse_conn(inode);
-@@ -198,6 +199,25 @@ void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
- 		inode->i_ctime.tv_sec   = attr->ctime;
- 		inode->i_ctime.tv_nsec  = attr->ctimensec;
- 	}
-+	if (sx) {
-+		/* Sanitize nsecs */
-+		sx->btime.tv_nsec =
-+			min_t(u32, sx->btime.tv_nsec, NSEC_PER_SEC - 1);
-+
-+		/*
-+		 * Btime has been queried, cache is valid (whether or not btime
-+		 * is available or not) so clear STATX_BTIME from inval_mask.
-+		 *
-+		 * Availability of the btime attribute is indicated in
-+		 * FUSE_I_BTIME
-+		 */
-+		set_mask_bits(&fi->inval_mask, STATX_BTIME, 0);
-+		if (sx->mask & STATX_BTIME) {
-+			set_bit(FUSE_I_BTIME, &fi->state);
-+			fi->i_btime.tv_sec = sx->btime.tv_sec;
-+			fi->i_btime.tv_nsec = sx->btime.tv_nsec;
-+		}
-+	}
- 
- 	if (attr->blksize != 0)
- 		inode->i_blkbits = ilog2(attr->blksize);
-@@ -237,6 +257,7 @@ u32 fuse_get_cache_mask(struct inode *inode)
- }
- 
- void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
-+			    struct fuse_statx *sx,
- 			    u64 attr_valid, u64 attr_version)
- {
- 	struct fuse_conn *fc = get_fuse_conn(inode);
-@@ -271,7 +292,7 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
- 	}
- 
- 	old_mtime = inode->i_mtime;
--	fuse_change_attributes_common(inode, attr, attr_valid, cache_mask);
-+	fuse_change_attributes_common(inode, attr, sx, attr_valid, cache_mask);
- 
- 	oldsize = inode->i_size;
- 	/*
-@@ -409,7 +430,7 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
- 	spin_lock(&fi->lock);
- 	fi->nlookup++;
- 	spin_unlock(&fi->lock);
--	fuse_change_attributes(inode, attr, attr_valid, attr_version);
-+	fuse_change_attributes(inode, attr, NULL, attr_valid, attr_version);
- 
- 	return inode;
- }
-diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
-index 48b3a6ec278b..1c5e5bfb5d58 100644
---- a/fs/fuse/readdir.c
-+++ b/fs/fuse/readdir.c
-@@ -223,7 +223,7 @@ static int fuse_direntplus_link(struct file *file,
- 		spin_unlock(&fi->lock);
- 
- 		forget_all_cached_acls(inode);
--		fuse_change_attributes(inode, &o->attr,
-+		fuse_change_attributes(inode, &o->attr, NULL,
- 				       ATTR_TIMEOUT(o),
- 				       attr_version);
- 		/*
+								Honza
 -- 
-2.40.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
