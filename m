@@ -2,67 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3229977764F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 12:56:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2EE0777653
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 12:56:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233953AbjHJK4B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 06:56:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59874 "EHLO
+        id S234461AbjHJK4F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 06:56:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230510AbjHJK4B (ORCPT
+        with ESMTP id S234373AbjHJK4C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 06:56:01 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43B1B268A
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 03:55:10 -0700 (PDT)
+        Thu, 10 Aug 2023 06:56:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4352B1736
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 03:55:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
         s=mimecast20190719; t=1691664909;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=pfJH3noYbWyg5mwtDgx4Z5kj3eCpv/dKZ/d4TuLP0Yc=;
-        b=LP0vlNl3hr9pNxgfLShQDf37Nw8xmiDtQt8nNGmx6mNQWv04X4CVj6h+L07KxU7gcWTdHK
-        W6cuoIpN9PrHLvTKY8TxWeCeNOfkvkZ+ilIfK+lPluhNVYQP9+7V3Q2bZ8+oi9oEx1ETKw
-        R6gYFIgFfFF3Eo0LKq8qG45hBa2cH6k=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=NPNRQJq/hyiYldLtrBMY3seKZRMqc2xitsd2NuT766U=;
+        b=RiPLeBvw0uuzdLPCbsBr1eCw+hh4AAybdNrFhH9H7+1rrsZY8fdKvTsQVNnMC7gfkbSpYq
+        HlcwpS1X1FI4Ifdq4GXObuKqN1MZpiy+DNE6B51GX5GzOfvw+JuM1IyZ8e8oHmmu9HFSun
+        y9K5jOYfzUiEMPKl38rcepK1ipu5aRc=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-361-6V2vaXgIOBClHFwHCJDc-A-1; Thu, 10 Aug 2023 06:55:07 -0400
-X-MC-Unique: 6V2vaXgIOBClHFwHCJDc-A-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-4fe7546f2a7so775254e87.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 03:55:06 -0700 (PDT)
+ us-mta-592-4Xw3uI9CMUCXHM6WcjuLdg-1; Thu, 10 Aug 2023 06:55:08 -0400
+X-MC-Unique: 4Xw3uI9CMUCXHM6WcjuLdg-1
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-52349404bb0so535875a12.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 03:55:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691664905; x=1692269705;
+        d=1e100.net; s=20221208; t=1691664906; x=1692269706;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pfJH3noYbWyg5mwtDgx4Z5kj3eCpv/dKZ/d4TuLP0Yc=;
-        b=HVlb3qUeixdLvHluwokAgUxDQbLWk5a5BC3tppcBr0iWiehyvkVYyLWtKbk8dsbPpq
-         tDiyWuvqpUHGU1ui4ByvIaawn/Pa48IwXAbRWxJodzCkFbZVRS7pDud15zIZe+ufr73V
-         a8Cy/vGzHGVq/0xAYBdZ1uu67vKjHd+xKgFzr7mKHw0HXblxrGubPkQpeDQwY0aUUi2f
-         ZP5I3aCsAKk58Hl8DBV9jvHx7PFzDuFJFHEPFmvsFrBi/WHittMh4ojAlrk+Ya0Cg+Z/
-         vdSauxnFiYObgWdD9phfvOby2/u1RFand4eBr+lz2qbTUEOpREn9UjG3i6R5dADRa4wb
-         29KQ==
-X-Gm-Message-State: AOJu0YxJTVA+XWfnS1vIvnZxxPLeB10iJjWnXTm7qaXSndjv9jISVdSM
-        PNFcjjb+wydTWrVmzk4DR2qqL6oPj27GIsF228v9/PVhbIULiVmARNrkEmi6sPeZMC4UxlKr6/N
-        n2g33AjPNqU9gLo1rIVKdzerB8W22jGB8QoX4m8pvIVkAdNWoCniN258ovdNRM0cMqXJ/vdbtfi
-        9BJbEGMygwXw==
-X-Received: by 2002:ac2:5e70:0:b0:4f8:661f:60a4 with SMTP id a16-20020ac25e70000000b004f8661f60a4mr1345653lfr.41.1691664905131;
-        Thu, 10 Aug 2023 03:55:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFY7GxqJXA2cePG8IGrxbzknyDxGlhlrTIntijSq8/dSqIIoMteFEGSHaAFE1+hQs9SuoD2yQ==
-X-Received: by 2002:ac2:5e70:0:b0:4f8:661f:60a4 with SMTP id a16-20020ac25e70000000b004f8661f60a4mr1345637lfr.41.1691664904860;
-        Thu, 10 Aug 2023 03:55:04 -0700 (PDT)
+        bh=NPNRQJq/hyiYldLtrBMY3seKZRMqc2xitsd2NuT766U=;
+        b=auqOzn8SoI3M8J+IatG5L8WcoB3R5uKQMVeMxi9JwmwVc2ywyChLe6UtTJW9hCinDq
+         mBMaAXcKAsy4PImui26ihBb+lpuJvTNMfkyFd8DcC7/ldTSNYjS9b4slv6bhSxoRpSGA
+         6ujJ5DynfAqqd7pglgsjHYQl4l1ZLeXDFpdm7Fc580fboHvWnL6PU7MiGzoitVNhSn8g
+         p0u2vqB60G8MoC1wPovFJuZdWpBwhPYaURDqhixWyA8u7Tolur1IGHlFPMRW+GH9wOZd
+         AMZGDHJ0ZpMJAcz+mSYr6gXDRQEFUNsXwAZTXUKYKkwDmuFGze1LbTUTtBmJTbXrpRzh
+         8Jiw==
+X-Gm-Message-State: AOJu0YxCqNEXy1zHWCFMPmiCTr7VYaQjQC1qRVWXWK+FKKQuM7bdSgip
+        iqFVIywARWg6Lkf+4keiipLoTy3cmjabWzN0txNqzbeG3mIrl6QyiEJIxnwAAEX+Zb4orRHuPta
+        QZh9dv6RYC9RNgV/nPr/8xpgnoU6Ft0I/Wg07R5DiTq8Q3uuzPMECW2l3tZTSWRtZMDCZh55yH2
+        4qUwDa44tgrA==
+X-Received: by 2002:aa7:d646:0:b0:51e:53eb:88a3 with SMTP id v6-20020aa7d646000000b0051e53eb88a3mr1641341edr.25.1691664906534;
+        Thu, 10 Aug 2023 03:55:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGpjv0QjJoe8gLhTAOi//9Ylb+gcQKJlx8YVL8Nuqm6t+2y/Bm/vapXtIKJXH/LOcZElgjxKQ==
+X-Received: by 2002:aa7:d646:0:b0:51e:53eb:88a3 with SMTP id v6-20020aa7d646000000b0051e53eb88a3mr1641332edr.25.1691664906171;
+        Thu, 10 Aug 2023 03:55:06 -0700 (PDT)
 Received: from miu.piliscsaba.redhat.com (193-226-246-142.pool.digikabel.hu. [193.226.246.142])
         by smtp.gmail.com with ESMTPSA id v20-20020aa7cd54000000b005231f324a0bsm643732edw.28.2023.08.10.03.55.04
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Aug 2023 03:55:04 -0700 (PDT)
+        Thu, 10 Aug 2023 03:55:05 -0700 (PDT)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/5] fuse: add STATX request
-Date:   Thu, 10 Aug 2023 12:54:58 +0200
-Message-Id: <20230810105501.1418427-3-mszeredi@redhat.com>
+Subject: [PATCH 3/5] fuse: add ATTR_TIMEOUT macro
+Date:   Thu, 10 Aug 2023 12:54:59 +0200
+Message-Id: <20230810105501.1418427-4-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230810105501.1418427-1-mszeredi@redhat.com>
 References: <20230810105501.1418427-1-mszeredi@redhat.com>
@@ -78,108 +78,140 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use the same structure as statx.
+Next patch will introduce yet another type attribute reply.  Add a macro
+that can handle attribute timeouts for all of the structs.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- include/uapi/linux/fuse.h | 56 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 55 insertions(+), 1 deletion(-)
+ fs/fuse/dir.c     | 26 ++++++++------------------
+ fs/fuse/fuse_i.h  |  5 ++++-
+ fs/fuse/readdir.c |  4 ++--
+ 3 files changed, 14 insertions(+), 21 deletions(-)
 
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index b3fcab13fcd3..fe700b91b33b 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -207,6 +207,9 @@
-  *  - add FUSE_EXT_GROUPS
-  *  - add FUSE_CREATE_SUPP_GROUP
-  *  - add FUSE_HAS_EXPIRE_ONLY
-+ *
-+ *  7.39
-+ *  - add FUSE_STATX and related structures
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index d38ab93e2007..04006db6e173 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -92,7 +92,7 @@ static void fuse_dentry_settime(struct dentry *dentry, u64 time)
+ /*
+  * Calculate the time in jiffies until a dentry/attributes are valid
   */
+-static u64 time_to_jiffies(u64 sec, u32 nsec)
++u64 fuse_time_to_jiffies(u64 sec, u32 nsec)
+ {
+ 	if (sec || nsec) {
+ 		struct timespec64 ts = {
+@@ -112,17 +112,7 @@ static u64 time_to_jiffies(u64 sec, u32 nsec)
+ void fuse_change_entry_timeout(struct dentry *entry, struct fuse_entry_out *o)
+ {
+ 	fuse_dentry_settime(entry,
+-		time_to_jiffies(o->entry_valid, o->entry_valid_nsec));
+-}
+-
+-static u64 attr_timeout(struct fuse_attr_out *o)
+-{
+-	return time_to_jiffies(o->attr_valid, o->attr_valid_nsec);
+-}
+-
+-u64 entry_attr_timeout(struct fuse_entry_out *o)
+-{
+-	return time_to_jiffies(o->attr_valid, o->attr_valid_nsec);
++		fuse_time_to_jiffies(o->entry_valid, o->entry_valid_nsec));
+ }
  
- #ifndef _LINUX_FUSE_H
-@@ -242,7 +245,7 @@
- #define FUSE_KERNEL_VERSION 7
+ void fuse_invalidate_attr_mask(struct inode *inode, u32 mask)
+@@ -266,7 +256,7 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
  
- /** Minor version number of this interface */
--#define FUSE_KERNEL_MINOR_VERSION 38
-+#define FUSE_KERNEL_MINOR_VERSION 39
+ 		forget_all_cached_acls(inode);
+ 		fuse_change_attributes(inode, &outarg.attr,
+-				       entry_attr_timeout(&outarg),
++				       ATTR_TIMEOUT(&outarg),
+ 				       attr_version);
+ 		fuse_change_entry_timeout(entry, &outarg);
+ 	} else if (inode) {
+@@ -399,7 +389,7 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
+ 		goto out_put_forget;
  
- /** The node ID of the root inode */
- #define FUSE_ROOT_ID 1
-@@ -269,6 +272,40 @@ struct fuse_attr {
- 	uint32_t	flags;
- };
+ 	*inode = fuse_iget(sb, outarg->nodeid, outarg->generation,
+-			   &outarg->attr, entry_attr_timeout(outarg),
++			   &outarg->attr, ATTR_TIMEOUT(outarg),
+ 			   attr_version);
+ 	err = -ENOMEM;
+ 	if (!*inode) {
+@@ -686,7 +676,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+ 	ff->nodeid = outentry.nodeid;
+ 	ff->open_flags = outopen.open_flags;
+ 	inode = fuse_iget(dir->i_sb, outentry.nodeid, outentry.generation,
+-			  &outentry.attr, entry_attr_timeout(&outentry), 0);
++			  &outentry.attr, ATTR_TIMEOUT(&outentry), 0);
+ 	if (!inode) {
+ 		flags &= ~(O_CREAT | O_EXCL | O_TRUNC);
+ 		fuse_sync_release(NULL, ff, flags);
+@@ -813,7 +803,7 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
+ 		goto out_put_forget_req;
  
-+/*
-+ * The following structures are bit-for-bit compatible with the statx(2) ABI in
-+ * Linux.
-+ */
-+struct fuse_sx_time {
-+	int64_t		tv_sec;
-+	uint32_t	tv_nsec;
-+	int32_t		__reserved;
-+};
+ 	inode = fuse_iget(dir->i_sb, outarg.nodeid, outarg.generation,
+-			  &outarg.attr, entry_attr_timeout(&outarg), 0);
++			  &outarg.attr, ATTR_TIMEOUT(&outarg), 0);
+ 	if (!inode) {
+ 		fuse_queue_forget(fm->fc, forget, outarg.nodeid, 1);
+ 		return -ENOMEM;
+@@ -1190,7 +1180,7 @@ static int fuse_do_getattr(struct inode *inode, struct kstat *stat,
+ 			err = -EIO;
+ 		} else {
+ 			fuse_change_attributes(inode, &outarg.attr,
+-					       attr_timeout(&outarg),
++					       ATTR_TIMEOUT(&outarg),
+ 					       attr_version);
+ 			if (stat)
+ 				fuse_fillattr(inode, &outarg.attr, stat);
+@@ -1867,7 +1857,7 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
+ 	}
+ 
+ 	fuse_change_attributes_common(inode, &outarg.attr,
+-				      attr_timeout(&outarg),
++				      ATTR_TIMEOUT(&outarg),
+ 				      fuse_get_cache_mask(inode));
+ 	oldsize = inode->i_size;
+ 	/* see the comment in fuse_change_attributes() */
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 9b7fc7d3c7f1..fd55c09514cd 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -1111,7 +1111,10 @@ void fuse_invalidate_entry_cache(struct dentry *entry);
+ 
+ void fuse_invalidate_atime(struct inode *inode);
+ 
+-u64 entry_attr_timeout(struct fuse_entry_out *o);
++u64 fuse_time_to_jiffies(u64 sec, u32 nsec);
++#define ATTR_TIMEOUT(o) \
++	fuse_time_to_jiffies((o)->attr_valid, (o)->attr_valid_nsec)
 +
-+struct fuse_statx {
-+	uint32_t	mask;
-+	uint32_t	blksize;
-+	uint64_t	attributes;
-+	uint32_t	nlink;
-+	uint32_t	uid;
-+	uint32_t	gid;
-+	uint16_t	mode;
-+	uint16_t	__spare0[1];
-+	uint64_t	ino;
-+	uint64_t	size;
-+	uint64_t	blocks;
-+	uint64_t	attributes_mask;
-+	struct fuse_sx_time	atime;
-+	struct fuse_sx_time	btime;
-+	struct fuse_sx_time	ctime;
-+	struct fuse_sx_time	mtime;
-+	uint32_t	rdev_major;
-+	uint32_t	rdev_minor;
-+	uint32_t	dev_major;
-+	uint32_t	dev_minor;
-+	uint64_t	__spare2[14];
-+};
-+
- struct fuse_kstatfs {
- 	uint64_t	blocks;
- 	uint64_t	bfree;
-@@ -575,6 +612,7 @@ enum fuse_opcode {
- 	FUSE_REMOVEMAPPING	= 49,
- 	FUSE_SYNCFS		= 50,
- 	FUSE_TMPFILE		= 51,
-+	FUSE_STATX		= 52,
+ void fuse_change_entry_timeout(struct dentry *entry, struct fuse_entry_out *o);
  
- 	/* CUSE specific operations */
- 	CUSE_INIT		= 4096,
-@@ -639,6 +677,22 @@ struct fuse_attr_out {
- 	struct fuse_attr attr;
- };
+ /**
+diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
+index dc603479b30e..48b3a6ec278b 100644
+--- a/fs/fuse/readdir.c
++++ b/fs/fuse/readdir.c
+@@ -224,7 +224,7 @@ static int fuse_direntplus_link(struct file *file,
  
-+struct fuse_statx_in {
-+	uint32_t	getattr_flags;
-+	uint32_t	reserved;
-+	uint64_t	fh;
-+	uint32_t	sx_flags;
-+	uint32_t	sx_mask;
-+};
-+
-+struct fuse_statx_out {
-+	uint64_t	attr_valid;	/* Cache timeout for the attributes */
-+	uint32_t	attr_valid_nsec;
-+	uint32_t	flags;
-+	uint64_t	spare[2];
-+	struct fuse_statx stat;
-+};
-+
- #define FUSE_COMPAT_MKNOD_IN_SIZE 8
- 
- struct fuse_mknod_in {
+ 		forget_all_cached_acls(inode);
+ 		fuse_change_attributes(inode, &o->attr,
+-				       entry_attr_timeout(o),
++				       ATTR_TIMEOUT(o),
+ 				       attr_version);
+ 		/*
+ 		 * The other branch comes via fuse_iget()
+@@ -232,7 +232,7 @@ static int fuse_direntplus_link(struct file *file,
+ 		 */
+ 	} else {
+ 		inode = fuse_iget(dir->i_sb, o->nodeid, o->generation,
+-				  &o->attr, entry_attr_timeout(o),
++				  &o->attr, ATTR_TIMEOUT(o),
+ 				  attr_version);
+ 		if (!inode)
+ 			inode = ERR_PTR(-ENOMEM);
 -- 
 2.40.1
 
