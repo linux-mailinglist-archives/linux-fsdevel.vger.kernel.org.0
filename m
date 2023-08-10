@@ -2,111 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 46D5E777FED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 20:05:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C454C777FFD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 20:09:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232701AbjHJSFh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 14:05:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53810 "EHLO
+        id S232555AbjHJSJz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 14:09:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230287AbjHJSFg (ORCPT
+        with ESMTP id S235230AbjHJSJw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 14:05:36 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61893ED;
-        Thu, 10 Aug 2023 11:05:36 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id d75a77b69052e-40fda409ca7so7376541cf.3;
-        Thu, 10 Aug 2023 11:05:36 -0700 (PDT)
+        Thu, 10 Aug 2023 14:09:52 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E986E4B
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 11:09:52 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-52256241c66so2478197a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 11:09:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691690735; x=1692295535;
-        h=content-transfer-encoding:in-reply-to:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=CdwQW66GxTUGS1hb03P56Xx3tOus4NqR8pcDQ0WauvY=;
-        b=MJN7kCPaFF4uldJBQTNaOx1rhfR8bZNApbQnxeAnsj4fy+PUcAl5vZd0bkWHaZY2xP
-         LB1FStaBMIyPL0x+cGVSExlJsspt014SF1CZQfxav72bQETBAm/uYudkyPrsUjBJRwys
-         IjnTGKYvtiiTg2PX/tb9LWOgrH3A6ej3PNv/mu7cuK4n+HwU0AWrzGfYe8P820N7YbaU
-         Rf6SQan0K5LDjxyO8iMSwnRGe6OfwgTcZy9TNoC9AYG6UQJZEDHl7Wn0XpsacfGsSrzs
-         QF4v38ZYjhIB7bi1deFtgk5pI3gVHLU5zzGf2YD5RxoOvSe5EdwbGt9C6F8oBe+gb1WF
-         Vk7w==
+        d=linux-foundation.org; s=google; t=1691690990; x=1692295790;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CdVO7LGdqPVywscLfXnXC7vbQR6Oxa8Ot+Ua+mHkMYE=;
+        b=Ea7sNbAxq5l52YuA5/kkvqgTynB0iI2IpGjDlcwSF/cyvMuRZtTmChqyQ42aC5y+5L
+         OsNhk0ed8ezMAkt0fJQdd6K5tooV+fMckUUl1X+dT88VSzioH0agUtlR/T8JFCUdFC12
+         lp4osvVuqf7ZMo45ogvh5p1cNtT9YxtEj+w5Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691690735; x=1692295535;
-        h=content-transfer-encoding:in-reply-to:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:sender:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20221208; t=1691690990; x=1692295790;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CdwQW66GxTUGS1hb03P56Xx3tOus4NqR8pcDQ0WauvY=;
-        b=OaK1cOjHb0MDSDMIWsVZ1uVXffV9fALbw2U59e2aupQl4B/T/tJz7mRLAstJgqj29W
-         JwwJj9dkDL3kOYgL/yY06KRDTk9SKphOj+h6kwY4URGQ2tuH/VbrqtnnvnloyKP/T4MM
-         JlLrjKMYGSn+9MFxXeh1+4z1W9PNZ7tH5NZW7RbqRiGuuvmXJyCkztk7UyynEAbtjpOr
-         M1UUSjxHOG/DPotjkBd/bK+j37naUsxELMUAlApeZM0of/+znLD7tEhSpgSRaX8rc878
-         t0Gph+tqlr1Sa61tk48H17A9Ok6DoOc7TBNuCNIjAp7ZxhuFIGeUEefaQPZmoi8TjaPq
-         b0pQ==
-X-Gm-Message-State: AOJu0YxYtSZJ7F6MVJui20iXcBJylRg0YwZISusr2J9LhHU8jZidBo9s
-        OL1vmTm+gGQFYL9gKGJqPfM=
-X-Google-Smtp-Source: AGHT+IHXD6o/DnCp0MyI00jckONxtiHikBtwmkaG5MB3wKcDgd6/RNF8R/4wVAZmJrgCHXejKyxXUQ==
-X-Received: by 2002:a05:622a:1711:b0:405:5aed:300a with SMTP id h17-20020a05622a171100b004055aed300amr4307115qtk.19.1691690735418;
-        Thu, 10 Aug 2023 11:05:35 -0700 (PDT)
-Received: from [172.16.0.69] (c-67-184-72-25.hsd1.il.comcast.net. [67.184.72.25])
-        by smtp.gmail.com with ESMTPSA id 1-20020a05620a070100b0076816153dcdsm646174qkc.106.2023.08.10.11.05.34
+        bh=CdVO7LGdqPVywscLfXnXC7vbQR6Oxa8Ot+Ua+mHkMYE=;
+        b=Z/YvZnyJGYBfzZeWV3EAPzaxDxf6b9ttd5h5fsVozKEysNtHkZin6O0VjHfUiRPI7W
+         SEIjU/IoWKLA4L19FSUnWm9jDQ5tzS9aYzkX6BEbf7A5yOaggf99JJy00r5swGBuA2SN
+         LxEmeTt/f8L7mDyMQVoUZd8wV6W9jwwpbbcZk+AFJI9f1OsYCSlKr1czivGf4hjKj98U
+         /zxPht5dTRjeVl5piDCC6vfFfcZXWAPagq9y8NAGDpOXB685tOWCIyPc+5ylrT103V/Z
+         3vcaD4WV8r2zF3RiQC+/AaYP0P9TDmDfkRddSzbOINnd7BK1uDr+iJtLz3mKOWmGwA/n
+         JQEw==
+X-Gm-Message-State: AOJu0YyrWLLZ95xZM9fecio/q9aWis/t/6B4CYqZ0FvudTEfIyyUrBau
+        qhs7t1Ut8HoDjuL59gWpgGHuwt4YYVRcyqDA908VHwZE
+X-Google-Smtp-Source: AGHT+IFJO9WAQTUejzrxnfrKL5p8QfH+FoXRYKwHRN+CCKWWq2votshTeMILxUMR+xIwoxDOsoIqHA==
+X-Received: by 2002:a05:6402:3508:b0:51e:4218:b91b with SMTP id b8-20020a056402350800b0051e4218b91bmr3574495edd.1.1691690990574;
+        Thu, 10 Aug 2023 11:09:50 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id d11-20020aa7c1cb000000b005232ea6a330sm1077225edp.2.2023.08.10.11.09.49
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Aug 2023 11:05:35 -0700 (PDT)
-Sender: Frank Sorenson <frank.sorenson@gmail.com>
-From:   Frank Sorenson <frank@tuxrocks.com>
-X-Google-Original-From: Frank Sorenson <sorenson@redhat.com>
-Message-ID: <9646c74c-1402-05fb-4e7f-60d2e7818831@redhat.com>
-Date:   Thu, 10 Aug 2023 13:05:33 -0500
+        Thu, 10 Aug 2023 11:09:49 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-51a52a7d859so4818968a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 11:09:49 -0700 (PDT)
+X-Received: by 2002:a05:6402:520a:b0:51e:5206:d69e with SMTP id
+ s10-20020a056402520a00b0051e5206d69emr3555926edd.10.1691690989521; Thu, 10
+ Aug 2023 11:09:49 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 2/2] fat: make fat_update_time get its own timestamp
-Content-Language: en-US
-To:     Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Jan Kara <jack@suse.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20230810-ctime-fat-v1-0-327598fd1de8@kernel.org>
- <20230810-ctime-fat-v1-2-327598fd1de8@kernel.org>
-In-Reply-To: <20230810-ctime-fat-v1-2-327598fd1de8@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20230626214656.hcp4puionmtoloat@moria.home.lan>
+ <20230706155602.mnhsylo3pnief2of@moria.home.lan> <20230712025459.dbzcjtkb4zem4pdn@moria.home.lan>
+ <CAHk-=whaFz0uyBB79qcEh-7q=wUOAbGHaMPofJfxGqguiKzFyQ@mail.gmail.com>
+ <20230810155453.6xz2k7f632jypqyz@moria.home.lan> <CAHk-=wie4U8hwRN+nYRwV4G51qXPJKr0DpjbxO1XSMZnPA_LTw@mail.gmail.com>
+ <20230810180244.cx3vouaqtisklttn@moria.home.lan>
+In-Reply-To: <20230810180244.cx3vouaqtisklttn@moria.home.lan>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 10 Aug 2023 11:09:31 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh6R1z=6v+qJpe7qAZGNYZK1ZMs1+dhD7FahVywnMr1Uw@mail.gmail.com>
+Message-ID: <CAHk-=wh6R1z=6v+qJpe7qAZGNYZK1ZMs1+dhD7FahVywnMr1Uw@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-bcachefs@vger.kernel.org, djwong@kernel.org,
+        dchinner@redhat.com, sandeen@redhat.com, willy@infradead.org,
+        josef@toxicpanda.com, tytso@mit.edu, bfoster@redhat.com,
+        jack@suse.cz, andreas.gruenbacher@gmail.com, brauner@kernel.org,
+        peterz@infradead.org, akpm@linux-foundation.org,
+        dhowells@redhat.com, snitzer@kernel.org, axboe@kernel.dk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 8/10/23 08:12, Jeff Layton wrote:
-> In later patches, we're going to drop the "now" parameter from the
-> update_time operation. Fix fat_update_time to fetch its own timestamp.
-> It turns out that this is easily done by just passing a NULL timestamp
-> pointer to fat_truncate_time.
+On Thu, 10 Aug 2023 at 11:02, Kent Overstreet <kent.overstreet@linux.dev> wrote:
 >
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
+> When using sget() in the conventional way it's not possible for
+> FMODE_EXCL to protect against concurrent opens scribbling over each
+> other because we open the block device before checking if it's already
+> mounted, and we expect that open to succeed.
 
-Reviewed-by:  Frank Sorenson <sorenson@redhat.com>
+So? Read-only operations. Don't write to anything until after you then
+have verified your exclusive status.
 
+If you think you need to be exclusive to other people opening the
+device for other things, just stop expecting to control the whole
+world.
 
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/fat/misc.c b/fs/fat/misc.c
-> index 37f4afb346af..f2304a1054aa 100644
-> --- a/fs/fat/misc.c
-> +++ b/fs/fat/misc.c
-> @@ -347,7 +347,7 @@ int fat_update_time(struct inode *inode, int flags)
->   		return 0;
->   
->   	if (flags & (S_ATIME | S_CTIME | S_MTIME)) {
-> -		fat_truncate_time(inode, now, flags);
-> +		fat_truncate_time(inode, NULL, flags);
->   		if (inode->i_sb->s_flags & SB_LAZYTIME)
->   			dirty_flags |= I_DIRTY_TIME;
->   		else
->
+                Linus
