@@ -2,85 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 567957778FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 15:02:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A03E8777936
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 15:08:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235254AbjHJNCN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 09:02:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41282 "EHLO
+        id S233133AbjHJNIv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 09:08:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230197AbjHJNCM (ORCPT
+        with ESMTP id S231902AbjHJNIu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 09:02:12 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4587E5D;
-        Thu, 10 Aug 2023 06:02:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        Thu, 10 Aug 2023 09:08:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4986B91
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 06:08:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1691672880;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Gv2PHDy05xeKCb4ONOqV5jsjjW0Plf8giK9Cu4AytwA=;
+        b=e22Gi62pAA3I75ahRh7K2HlvZEg/lXqtedvU6BVIYvHgULp/AtR2Lmx532NWTGNP3qI56b
+        gwh7xtj/WIAqKfZSIBZaZgMTeh4ArIcljDrqzRGlqRhRebWe/9N7AQ7/h7eoISbijR8GQ5
+        IPcaJAPPIJeWmaneMMWy1536pnchPrk=
+Received: from mimecast-mx02.redhat.com (66.187.233.73 [66.187.233.73]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-12-YI7mgYmVP4al5-pb-1FX0A-1; Thu, 10 Aug 2023 09:07:55 -0400
+X-MC-Unique: YI7mgYmVP4al5-pb-1FX0A-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 69D1E657F1;
-        Thu, 10 Aug 2023 13:02:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEF34C433CA;
-        Thu, 10 Aug 2023 13:02:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691672530;
-        bh=fWjzqbfyq3dqLOBOt3ZEPD08+Rztcs8+WqFfJPdEYEE=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=KVljWqOSmgio0hTSn1uej4374CX8MDSt/O/tCgjlhsWVgnNaEgFiLUjkc1sldi/Bq
-         vZNpntkTioSt/xNG5VieQzLVex9KsclxtZLK0IfThtfs90UvPRz3Nsyro8wF+8smoD
-         lWu5m4gCjWky2VB/92CHijaBdHMTzKQVQ4Vxqth5V+ArmH6zNMzHTwFxyU0iDTXwnN
-         8IJsv2fvTEu4Q0+gZpZW+fDcYiVOf4yUpdrKcDYkE7lHtc10FFKMG7g18JatGYSZO/
-         lEmN9e13BUh6NEdLG2oSFkQf+TQ5jzQe5g0dMSwkP/AX4koskZk0EG52tyKRAcnyEj
-         CbZ4HbnWd1OsQ==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-1bef8f0904eso805736fac.2;
-        Thu, 10 Aug 2023 06:02:10 -0700 (PDT)
-X-Gm-Message-State: AOJu0YxpKoZ9QLUB4JE3i95QGtb7Z26txO1t5t6dflMEYR2g8mYJKz2K
-        I2Qiu7qPdvpyVo0jWnSj4QZP7cAp78dPGeHoMN8=
-X-Google-Smtp-Source: AGHT+IGqdLSse0MyFayFMx2um0Jvds45aRF5j4EF+uhq5gWdDfwz037RnQXgHT8V4WMer8tSRo8i0DRENFNLRBLWqKE=
-X-Received: by 2002:a05:6870:70a6:b0:1b3:f1f7:999e with SMTP id
- v38-20020a05687070a600b001b3f1f7999emr2426297oae.45.1691672530035; Thu, 10
- Aug 2023 06:02:10 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a8a:482:0:b0:4e8:f6ff:2aab with HTTP; Thu, 10 Aug 2023
- 06:02:08 -0700 (PDT)
-In-Reply-To: <20230809220545.1308228-11-hch@lst.de>
-References: <20230809220545.1308228-1-hch@lst.de> <20230809220545.1308228-11-hch@lst.de>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Thu, 10 Aug 2023 22:02:08 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9TaQnWja4vrHqzjA2FSoGhkJThv1FvOBbmcoR8x2ybXw@mail.gmail.com>
-Message-ID: <CAKYAXd9TaQnWja4vrHqzjA2FSoGhkJThv1FvOBbmcoR8x2ybXw@mail.gmail.com>
-Subject: Re: [PATCH 10/13] exfat: free the sbi and iocharset in ->kill_sb
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A46151C07263;
+        Thu, 10 Aug 2023 13:07:53 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.185])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 33D24C15BB8;
+        Thu, 10 Aug 2023 13:07:50 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <f0538006-6641-eaf6-b7b5-b3ef57afc652@gmail.com>
+References: <f0538006-6641-eaf6-b7b5-b3ef57afc652@gmail.com> <ecbb5d7e-7238-28e2-1a17-686325e2bb50@gmail.com> <4c49176f-147a-4283-f1b1-32aac7b4b996@gmail.com> <20230522121125.2595254-1-dhowells@redhat.com> <20230522121125.2595254-9-dhowells@redhat.com> <2267272.1686150217@warthog.procyon.org.uk> <5a9d4ffb-a569-3f60-6ac8-070ab5e5f5ad@gmail.com> <776549.1687167344@warthog.procyon.org.uk> <7337a904-231d-201d-397a-7bbe7cae929f@gmail.com> <20230630102143.7deffc30@kernel.org>
+To:     Tariq Toukan <ttoukan.linux@gmail.com>
+Cc:     dhowells@redhat.com, Jakub Kicinski <kuba@kernel.org>,
+        netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Ahern <dsahern@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
         Christian Brauner <brauner@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        ntfs3@lists.linux.dev, linux-xfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Boris Pismenny <borisp@nvidia.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Gal Pressman <gal@nvidia.com>, ranro@nvidia.com,
+        samiram@nvidia.com, drort@nvidia.com,
+        Tariq Toukan <tariqt@nvidia.com>
+Subject: Re: [PATCH net-next v10 08/16] tls: Inline do_tcp_sendpages()
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3480242.1691672869.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 10 Aug 2023 14:07:49 +0100
+Message-ID: <3480243.1691672869@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2023-08-10 7:05 GMT+09:00, Christoph Hellwig <hch@lst.de>:
-> As a rule of thumb everything allocated to the fs_context and moved into
-> the super_block should be freed by ->kill_sb so that the teardown
-> handling doesn't need to be duplicated between the fill_super error
-> path and put_super.  Implement an exfat-specific kill_sb method to do
-> that and share the code with the mount contex free helper for the
-> mount error handling case.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Namjae Jeon <linkinjeon@kernel.org>
+Tariq Toukan <ttoukan.linux@gmail.com> wrote:
 
-Thanks!
+> We are collecting more info on how the repro is affected by the differen=
+t
+> parameters.
+
+I'm wondering if userspace is feeding the unspliceable page in somehow.  C=
+ould
+you try running with the attached changes?  It might help catch the point =
+at
+which the offending page is first spliced into the pipe and any backtrace
+might help localise the driver that's producing it.
+
+Thanks,
+David
+---
+diff --git a/fs/splice.c b/fs/splice.c
+index 3e2a31e1ce6a..877df1de3863 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -218,6 +218,8 @@ ssize_t splice_to_pipe(struct pipe_inode_info *pipe,
+ 	while (!pipe_full(head, tail, pipe->max_usage)) {
+ 		struct pipe_buffer *buf =3D &pipe->bufs[head & mask];
+ =
+
++		WARN_ON_ONCE(!sendpage_ok(spd->pages[page_nr]));
++
+ 		buf->page =3D spd->pages[page_nr];
+ 		buf->offset =3D spd->partial[page_nr].offset;
+ 		buf->len =3D spd->partial[page_nr].len;
+@@ -252,6 +254,8 @@ ssize_t add_to_pipe(struct pipe_inode_info *pipe, stru=
+ct pipe_buffer *buf)
+ 	unsigned int mask =3D pipe->ring_size - 1;
+ 	int ret;
+ =
+
++	WARN_ON_ONCE(!sendpage_ok(buf->page));
++
+ 	if (unlikely(!pipe->readers)) {
+ 		send_sig(SIGPIPE, current, 0);
+ 		ret =3D -EPIPE;
+@@ -861,6 +865,8 @@ ssize_t splice_to_socket(struct pipe_inode_info *pipe,=
+ struct file *out,
+ 				break;
+ 			}
+ =
+
++			WARN_ON_ONCE(!sendpage_ok(buf->page));
++
+ 			bvec_set_page(&bvec[bc++], buf->page, seg, buf->offset);
+ 			remain -=3D seg;
+ 			if (remain =3D=3D 0 || bc >=3D ARRAY_SIZE(bvec))
+@@ -1411,6 +1417,8 @@ static int iter_to_pipe(struct iov_iter *from,
+ 		for (i =3D 0; i < n; i++) {
+ 			int size =3D min_t(int, left, PAGE_SIZE - start);
+ =
+
++			WARN_ON_ONCE(!sendpage_ok(pages[i]));
++
+ 			buf.page =3D pages[i];
+ 			buf.offset =3D start;
+ 			buf.len =3D size;
+
