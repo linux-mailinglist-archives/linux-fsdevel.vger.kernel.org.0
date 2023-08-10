@@ -2,48 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 760CD777C2D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 17:28:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95947777C30
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 17:28:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236137AbjHJP2a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 11:28:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56798 "EHLO
+        id S236150AbjHJP2x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 11:28:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232967AbjHJP2a (ORCPT
+        with ESMTP id S236144AbjHJP2w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 11:28:30 -0400
+        Thu, 10 Aug 2023 11:28:52 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A5CE212B;
-        Thu, 10 Aug 2023 08:28:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 658E210C7;
+        Thu, 10 Aug 2023 08:28:52 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A483866022;
-        Thu, 10 Aug 2023 15:28:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CCD4C433C8;
-        Thu, 10 Aug 2023 15:28:29 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F174B66023;
+        Thu, 10 Aug 2023 15:28:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CF83C433C9;
+        Thu, 10 Aug 2023 15:28:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691681309;
-        bh=kTbq/0/6yOK0gnFzVi50l4An8RgulDpk4leGz1t6WIU=;
+        s=k20201202; t=1691681331;
+        bh=tWJLv3Tq2hwgxWt3KPp6sB8ABoshY+fdR+XTRU60v7g=;
         h=Date:From:To:Cc:Subject:From;
-        b=uFZIysE9ys6mAR/q21+X8cpBHSqICG9uIJ/cO0aHW4gVVdrE6niuL+MVser2dGLT3
-         sURHdctnQFq8YW4K7+SNLKNvDjvhhVtf9lszwtZwfQCV+tQ+7IAGcdUXe2vGgjznk5
-         8z7qGXgJGFx/fcTajeBc2HhfCkj0HT7kxTUsm4jc4Hn0+nNzDsJBwWyx/w8Zui/hSK
-         kxv37z9+veY8gpaTBL7aj59TQ1pyUWrJr0AbXIxOj8wstdGH1QhrFJ3IbmlXBsypIP
-         XMUXDevMC+y+VTHJDWhE7uNNyR+a+IB4tKO+sWixn14NwjO3TroVtewbfG30cxF2JQ
-         mAcpg8CXiXW0Q==
-Date:   Thu, 10 Aug 2023 08:28:28 -0700
+        b=LB9Deb725GkPaZ/rYEbtkRdEmA49QY2tIlsHeX4/OidsckJuYR8dWAd2spwOsnoQV
+         pxcWtaDsKx5TxGkN576icFbmMQu2nTrE0a5EZZW65jc/Lms+lilxA3pRYRzqNdu7S6
+         od6z6UPW70NzAxY970rUSZ4RtH2w5Wb0k4XxSgYd0ATIzszeRVQAkQaqFq0/OWJmOM
+         6v0+kWbfE8gwb3I8+QuDxB08Czx3xPVcmkR40HGTb9lDZhnMHsuMCFzTpVuAjtU+zM
+         6cPNnM24JRhtXRZ5Ic1hRk6UlmfYVBynJEoycjsm+v0ZG99+Vf9jNz6K7wiWGIgoJ6
+         XYzAQc9KFXLxg==
+Date:   Thu, 10 Aug 2023 08:28:51 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     chandan.babu@oracle.com, djwong@kernel.org
-Cc:     amir73il@gmail.com, cem@kernel.org, corbet@lwn.net,
-        david@fromorbit.com, fstests@vger.kernel.org,
-        konrad.wilk@oracle.com, leah.rumancik@gmail.com,
+Cc:     dchinner@redhat.com, kent.overstreet@linux.dev,
         linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        sandeen@sandeen.net, shirley.ma@oracle.com, willy@infradead.org,
-        zlang@kernel.org
-Subject: [GIT PULL 1/9] xfs: maintainer transition for 6.6
-Message-ID: <169168055240.1060601.8588880532893202137.stg-ugh@frogsfrogsfrogs>
+        willy@infradead.org
+Subject: [GIT PULL 3/9] xfs: stage repair information in pageable memory
+Message-ID: <169168056068.1060601.568454110317783572.stg-ugh@frogsfrogsfrogs>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -67,53 +64,62 @@ encounter any problems.
 
 --D
 
-The following changes since commit 52a93d39b17dc7eb98b6aa3edb93943248e03b2f:
+The following changes since commit 014ad53732d2bac34d21a251f3622a4da516e21b:
 
-Linux 6.5-rc5 (2023-08-06 15:07:51 -0700)
+xfs: use per-AG bitmaps to reap unused AG metadata blocks during repair (2023-08-10 07:48:04 -0700)
 
 are available in the Git repository at:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git tags/maintainer-transition-6.6_2023-08-10
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git tags/big-array-6.6_2023-08-10
 
-for you to fetch changes up to d6532904a10290b94d2375ff438313e0fb9fc9f8:
+for you to fetch changes up to 764018caa99f7629cefc92257a26b83289a674f3:
 
-MAINTAINERS: add Chandan Babu as XFS release manager (2023-08-10 07:47:54 -0700)
+xfs: improve xfarray quicksort pivot (2023-08-10 07:48:07 -0700)
 
 ----------------------------------------------------------------
-xfs: maintainer transition for 6.6 [v3]
+xfs: stage repair information in pageable memory [v26.1]
 
-I do not choose to continue as maintainer.
+In general, online repair of an indexed record set walks the filesystem
+looking for records.  These records are sorted and bulk-loaded into a
+new btree.  To make this happen without pinning gigabytes of metadata in
+memory, first create an abstraction ('xfile') of memfd files so that
+kernel code can access paged memory, and then an array abstraction
+('xfarray') based on xfiles so that online repair can create an array of
+new records without pinning memory.
 
-My final act as maintainer is to write down every thing that I've been
-doing as maintainer for the past six years.  There are too many demands
-placed on the maintainer, and the only way to fix this is to delegate
-the responsibilities.  I also wrote down my impressions of the unwritten
-rules about how to contribute to XFS.
+These two data storage abstractions are critical for repair of space
+metadata -- the memory used is pageable, which helps us avoid pinning
+kernel memory and driving OOM problems; and they are byte-accessible
+enough that we can use them like (very slow and programmatic) memory
+buffers.
 
-The patchset concludes with my nomination for a new release manager to
-keep things running in the interim.  Testing and triage; community
-management; and LTS maintenance are all open positions.
+Later patchsets will build on this functionality to provide blob storage
+and btrees.
 
-I'm /continuing/ as a senior developer and reviewer for XFS.  I expect
-to continue participating in interlock calls, LSFMM, etc.
-
-v2: clarify release manager role, amend some factual errors, add some
-acks and reviews.
-v3: add more review tags.
-
-With a bit of luck, this should all go splendidly.
+This has been running on the djcloud for years with no problems.  Enjoy!
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 
 ----------------------------------------------------------------
-Darrick J. Wong (3):
-docs: add maintainer entry profile for XFS
-MAINTAINERS: drop me as XFS maintainer
-MAINTAINERS: add Chandan Babu as XFS release manager
+Darrick J. Wong (7):
+xfs: create a big array data structure
+xfs: enable sorting of xfile-backed arrays
+xfs: convert xfarray insertion sort to heapsort using scratchpad memory
+xfs: teach xfile to pass back direct-map pages to caller
+xfs: speed up xfarray sort by sorting xfile page contents directly
+xfs: cache pages used for xfarray quicksort convergence
+xfs: improve xfarray quicksort pivot
 
-Documentation/filesystems/index.rst                |   1 +
-.../filesystems/xfs-maintainer-entry-profile.rst   | 194 +++++++++++++++++++++
-.../maintainer/maintainer-entry-profile.rst        |   1 +
-MAINTAINERS                                        |   4 +-
-4 files changed, 199 insertions(+), 1 deletion(-)
-create mode 100644 Documentation/filesystems/xfs-maintainer-entry-profile.rst
+fs/xfs/Kconfig         |    1 +
+fs/xfs/Makefile        |    2 +
+fs/xfs/scrub/trace.c   |    4 +-
+fs/xfs/scrub/trace.h   |  260 ++++++++++++
+fs/xfs/scrub/xfarray.c | 1083 ++++++++++++++++++++++++++++++++++++++++++++++++
+fs/xfs/scrub/xfarray.h |  141 +++++++
+fs/xfs/scrub/xfile.c   |  420 +++++++++++++++++++
+fs/xfs/scrub/xfile.h   |   77 ++++
+8 files changed, 1987 insertions(+), 1 deletion(-)
+create mode 100644 fs/xfs/scrub/xfarray.c
+create mode 100644 fs/xfs/scrub/xfarray.h
+create mode 100644 fs/xfs/scrub/xfile.c
+create mode 100644 fs/xfs/scrub/xfile.h
