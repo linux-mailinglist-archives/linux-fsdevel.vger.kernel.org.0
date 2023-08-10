@@ -2,96 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 654F97774DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 11:46:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63113777555
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 12:04:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232891AbjHJJqB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 05:46:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39464 "EHLO
+        id S235322AbjHJKEH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 06:04:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229994AbjHJJqA (ORCPT
+        with ESMTP id S235195AbjHJKDo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 05:46:00 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FAE31BD9;
-        Thu, 10 Aug 2023 02:45:59 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        Thu, 10 Aug 2023 06:03:44 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B63A93ABF;
+        Thu, 10 Aug 2023 03:01:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 44EE421852;
-        Thu, 10 Aug 2023 09:45:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1691660758; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=T5qTe0YO8ZqB3VKwRihJas1gwrGZq8M70nX+lVeOtE4=;
-        b=ncg0wKhJKKECfLl1sFF4YhPUNlfV59io48guMoOonvWgTdJjVRfGbdT+1/bWhly/jpv7hx
-        kIdLlCbqD7WfxmQ2H97bi6Z5frEgW1eDwSJCenXTxKr4sPNFcDpXOcQh97eaztbtVe1DRT
-        jGXCmWWCnE6LF3DX1/qMszXsf+Qkxyw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1691660758;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=T5qTe0YO8ZqB3VKwRihJas1gwrGZq8M70nX+lVeOtE4=;
-        b=z2fwfT5Fk/VdD3D/wapPZUHO8CNQLtNVsxwkSYm/8Ip/D4tiTihZOBGPtvem3ZPDvLmSn6
-        O/i0ueJsxX0FexDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 33164138E0;
-        Thu, 10 Aug 2023 09:45:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 4fbbC9ax1GSsCAAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 10 Aug 2023 09:45:58 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id A36BCA076F; Thu, 10 Aug 2023 11:45:57 +0200 (CEST)
-Date:   Thu, 10 Aug 2023 11:45:57 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jan Kara <jack@suse.cz>, Haibo Li <haibo.li@mediatek.com>,
-        linux-kernel@vger.kernel.org,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, xiaoming.yu@mediatek.com
-Subject: Re: [PATCH] mm/filemap.c:fix update prev_pos after one read request
- done
-Message-ID: <20230810094557.pesc4pnwuicrisqh@quack3>
-References: <20230628110220.120134-1-haibo.li@mediatek.com>
- <20230809164446.uwxryhrfbjka2lio@quack3>
- <20230809114507.57282ff1dd14973f3964e669@linux-foundation.org>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5608B6570C;
+        Thu, 10 Aug 2023 10:01:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14833C433C7;
+        Thu, 10 Aug 2023 10:01:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691661703;
+        bh=7ugjWJhVsy+T1T5nRjQNqcfhGEJuIF4KKFMz/3r4FkI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MT5PkUJBlaKBchM5vURYE9/YCNX/fU6qtulF8QygyYrLJfspVjsVkV6e5lvibTMgx
+         9J7pG5gQZcab+isZSkfbQhuK1e15vqx/IpeZpSQYYYkb/0jx6EtYCxOA619AOd6P1a
+         aUij20wCV4kmq08+eFMQxVGp1eGIAmw6u6y/gchASNm/Gwt6ZyvSXY3tSAxK36Pn3O
+         nkY0HdFfTTXrTdwBMrK1iPe6V0i3ohJ1seNTVbDEBvCnppa/R9PjA2JozL8MO7OAzO
+         0TnF9LNiemrXuxTMb4qVY4SaTd60u+HnBpdQOFPMXH9uO1mca6pZgq4TkU/HKstKkS
+         aj7ZtcUTSUU1Q==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>, Paul Moore <paul@paul-moore.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>
+Subject: Re: [PATCH v9] vfs, security: Fix automount superblock LSM init problem, preventing NFS sb sharing
+Date:   Thu, 10 Aug 2023 12:01:34 +0200
+Message-Id: <20230810-wagten-otter-2cbcbcf048cd@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230808-master-v9-1-e0ecde888221@kernel.org>
+References: <20230808-master-v9-1-e0ecde888221@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230809114507.57282ff1dd14973f3964e669@linux-foundation.org>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1286; i=brauner@kernel.org; h=from:subject:message-id; bh=7ugjWJhVsy+T1T5nRjQNqcfhGEJuIF4KKFMz/3r4FkI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRc2Vo578LFWEe+wOnaTz9yLfnaLrX1iNqH8++/344+eyvm b4j35o5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJ3LNkZPgQuujHFakSh5mPkjfG9j 1WFoqblxt66sgFGT4BMRcjJXGG/xG+CcoiCWpWxfsfLq1vVI1+M7vohPcGly2flkzTXOd1kgcA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 09-08-23 11:45:07, Andrew Morton wrote:
-> On Wed, 9 Aug 2023 18:44:46 +0200 Jan Kara <jack@suse.cz> wrote:
+On Tue, 08 Aug 2023 07:34:20 -0400, Jeff Layton wrote:
+> When NFS superblocks are created by automounting, their LSM parameters
+> aren't set in the fs_context struct prior to sget_fc() being called,
+> leading to failure to match existing superblocks.
 > 
-> > Willy, any opinion? Andrew, can you pickup the patch if Willy doesn't
-> > object?
+> This bug leads to messages like the following appearing in dmesg when
+> fscache is enabled:
 > 
-> I added it to mm.git on July 2.
+> [...]
 
-Ah, sorry for the noise then. I should have checked that. Thanks!
+I'm stuffing this on vfs.misc because this should be in -next for some
+time. If there's objections let me know.
 
-								Honza
+---
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] vfs, security: Fix automount superblock LSM init problem, preventing NFS sb sharing
+      https://git.kernel.org/vfs/vfs/c/4b4fb74b1aa1
