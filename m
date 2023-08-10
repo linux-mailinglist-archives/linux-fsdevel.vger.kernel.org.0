@@ -2,95 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 99BB87777B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 14:00:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55D8F7778F9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 15:01:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233517AbjHJMAD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 08:00:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35306 "EHLO
+        id S235233AbjHJNBm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 09:01:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230093AbjHJMAC (ORCPT
+        with ESMTP id S231774AbjHJNBl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 08:00:02 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4D4BE4D;
-        Thu, 10 Aug 2023 05:00:01 -0700 (PDT)
+        Thu, 10 Aug 2023 09:01:41 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6263F2691;
+        Thu, 10 Aug 2023 06:01:41 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3A84A65A89;
-        Thu, 10 Aug 2023 12:00:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5EDEC433C8;
-        Thu, 10 Aug 2023 11:59:57 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 01DA665BB2;
+        Thu, 10 Aug 2023 13:01:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F141C433CC;
+        Thu, 10 Aug 2023 13:01:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691668800;
-        bh=cLcSp/OITxB2lIR6ZNDHQ4eJMnOnALLPpdxcYxd5zyQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mXItDfQ3tcVHY/X2iUJFOjdIIiTQ86KreeAXKzmfffSizVS7vKOzViqW3o42TL17L
-         IyxnBJ3igK7CzygdZsmesvKml6PS8VwMNhdbUkOjGTQ/IpnMyrAVku/yclApQ8ev44
-         8M32m5gbkOxu1y94SKAxYuebUOGQOAGTYmv7ynTXbQC1yCz2f+M+twVp1cC0O+Ybgy
-         F2dtuRnfWs1dlDYUm/mRKlhjo0cH9Cu2MiF+NqgqvGbdrqLqJhAorX1miwt6sb+4ws
-         SwRDQr0SFP0nn9mGTD2bFSR40e7zl549MkTqnBgtscdBmQMUcbFp7TiUnpz5nWl25x
-         Rtd7hQ4SczzTA==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Marcelo Tosatti <mtosatti@redhat.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Valentin Schneider <vschneid@redhat.com>,
-        Leonardo Bras <leobras@redhat.com>,
-        Yair Podemsky <ypodemsk@redhat.com>,
-        P J P <ppandit@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/buffer.c: disable per-CPU buffer_head cache for isolated CPUs
-Date:   Thu, 10 Aug 2023 13:59:53 +0200
-Message-Id: <20230810-vordem-prospekt-28a1fb423f73@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <ZJtBrybavtb1x45V@tpad>
-References: <ZJtBrybavtb1x45V@tpad>
+        s=k20201202; t=1691672500;
+        bh=L8v0r9doqZel/J2v7dujLyNos+92a27rf2u0qXW1J3s=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=buHrPopGvpa2PXQH2ihgGLWcE3tKpdzREf7fOef2SobndHttHp3mY7Zbo+pWmSjd2
+         KMTnXejW6RxtiMq2GmdVWrfMASOuIkFWsGWFylNvcdafpUac7PYBKCmkXvU2g62wb8
+         rM8BUTgNjphg88x1gT8UKtdTVA4JxWWEDKJN9wr7DBaWdsX/CszZDkjC6SQ/RTprXt
+         7kxeMpaYIOPZVbmujFI2QewnZtkhD6cYZAhyC/PFUYrPDYv/GpspXeiAQURb6Rzuwg
+         cbT6Ns2vdWIMXD6/0aKBc8h9zcEY7xvoVtSJHa2tZhrEbnYoLfZPZXTBqDOOpDDHWb
+         8+hyUXgwVQJwg==
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-1c0fa9dd74fso278977fac.3;
+        Thu, 10 Aug 2023 06:01:40 -0700 (PDT)
+X-Gm-Message-State: AOJu0YyVIRrSKR8fyBz8TNv3lwa/oGU8Hrl2y6V1T4arRU68I/TjfUb7
+        2keRBRF/oSkzqE+k+CFrsdm5Zvv9byEVqjp/OYY=
+X-Google-Smtp-Source: AGHT+IHGXX8j5FtK2vAGECuIYYeKRL8lP5vqMAg+4bwDrvliN//5tmNM3DXELlLFKcDyM4MBXQs+Ek4XnYl/S6pN5ZI=
+X-Received: by 2002:a05:6870:239b:b0:1bf:ce5b:436 with SMTP id
+ e27-20020a056870239b00b001bfce5b0436mr2584340oap.58.1691672499477; Thu, 10
+ Aug 2023 06:01:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1164; i=brauner@kernel.org; h=from:subject:message-id; bh=cLcSp/OITxB2lIR6ZNDHQ4eJMnOnALLPpdxcYxd5zyQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRcuWgW6jFB+Zwc41y7g766M9e53L26//nqhABFsfe1cxnr AjYkdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkRCLDX/mnrId5ND55KVVJnVJ7o5 p2tlrMRE2D4w7fjds7bUKTDRkZNjUcT5haq/d6vc2vg6u3r71zb7MO46aXhZcfKWxdKNmhygwA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Received: by 2002:a8a:482:0:b0:4e8:f6ff:2aab with HTTP; Thu, 10 Aug 2023
+ 06:01:38 -0700 (PDT)
+In-Reply-To: <20230809220545.1308228-10-hch@lst.de>
+References: <20230809220545.1308228-1-hch@lst.de> <20230809220545.1308228-10-hch@lst.de>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Thu, 10 Aug 2023 22:01:38 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd80rJ6v4=b-=i4XUi_0d9JNqEothmh3614FSxPg1apitA@mail.gmail.com>
+Message-ID: <CAKYAXd80rJ6v4=b-=i4XUi_0d9JNqEothmh3614FSxPg1apitA@mail.gmail.com>
+Subject: Re: [PATCH 09/13] exfat: don't RCU-free the sbi
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        ntfs3@lists.linux.dev, linux-xfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 27 Jun 2023 17:08:15 -0300, Marcelo Tosatti wrote:
-> For certain types of applications (for example PLC software or
-> RAN processing), upon occurrence of an event, it is necessary to
-> complete a certain task in a maximum amount of time (deadline).
-> 
-> One way to express this requirement is with a pair of numbers,
-> deadline time and execution time, where:
-> 
-> [...]
+2023-08-10 7:05 GMT+09:00, Christoph Hellwig <hch@lst.de>:
+> There are no RCU critical sections for accessing any information in the
+> sbi, so drop the call_rcu indirection for freeing the sbi.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Namjae Jeon <linkinjeon@kernel.org>
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] fs/buffer.c: disable per-CPU buffer_head cache for isolated CPUs
-      https://git.kernel.org/vfs/vfs/c/9ed7cfdf38b8
+Thanks!
