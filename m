@@ -2,49 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 66899777F1F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 19:31:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E1B1777F26
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Aug 2023 19:32:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232963AbjHJRbS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 13:31:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46826 "EHLO
+        id S234759AbjHJRcM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 13:32:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjHJRbR (ORCPT
+        with ESMTP id S233628AbjHJRcL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 13:31:17 -0400
-Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F15172132;
-        Thu, 10 Aug 2023 10:31:16 -0700 (PDT)
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 88944205DB99;
-        Fri, 11 Aug 2023 02:31:16 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.17.2/8.17.2/Debian-1) with ESMTPS id 37AHVFWc264049
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Fri, 11 Aug 2023 02:31:16 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.17.2/8.17.2/Debian-1) with ESMTPS id 37AHVFXB402800
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Fri, 11 Aug 2023 02:31:15 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.17.2/8.17.2/Submit) id 37AHVFbi402799;
-        Fri, 11 Aug 2023 02:31:15 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Frank Sorenson <sorenson@redhat.com>, Jan Kara <jack@suse.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fat: make fat_update_time get its own timestamp
-In-Reply-To: <20230810-ctime-fat-v1-2-327598fd1de8@kernel.org> (Jeff Layton's
-        message of "Thu, 10 Aug 2023 09:12:05 -0400")
-References: <20230810-ctime-fat-v1-0-327598fd1de8@kernel.org>
-        <20230810-ctime-fat-v1-2-327598fd1de8@kernel.org>
-Date:   Fri, 11 Aug 2023 02:31:15 +0900
-Message-ID: <87msyyn6sc.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        Thu, 10 Aug 2023 13:32:11 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E1142702;
+        Thu, 10 Aug 2023 10:32:11 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C066C60C6E;
+        Thu, 10 Aug 2023 17:32:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7F11C433C8;
+        Thu, 10 Aug 2023 17:32:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1691688730;
+        bh=jqKPlFDYzdL8CJp3TA+4twzklky0wW7cWmS7m81wH+o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wIK/zj2SRsqJMsUjc8U5fOPZna2hBCpa6VhGWa1RTzraVJdrpH06+zrTRa8s9FwWd
+         lDp9xMCp9LptZ1R++ywSKldAbIZCYW+mW82qZvhO+ukEgP0faf99pAx7cmbT8YCpRR
+         K4ikjzLtlOJTE3grhFYBb/zdgTM1vH/Xtbj0AKt8=
+Date:   Thu, 10 Aug 2023 19:32:07 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Manas Ghandat <ghandatmanas@gmail.com>
+Cc:     Linux-kernel-mentees@lists.linuxfoundation.org, anton@tuxera.com,
+        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        syzbot+4768a8f039aa677897d0@syzkaller.appspotmail.com
+Subject: Re: [PATCH v3] ntfs : fix shift-out-of-bounds in ntfs_iget
+Message-ID: <2023081050-extent-footsie-66c9@gregkh>
+References: <2023080811-populace-raven-96d2@gregkh>
+ <20230810161308.8577-1-ghandatmanas@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230810161308.8577-1-ghandatmanas@gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -53,36 +55,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> writes:
+On Thu, Aug 10, 2023 at 09:43:08PM +0530, Manas Ghandat wrote:
+> Added a check to the compression_unit so that out of bound doesn't occur.
 
-> In later patches, we're going to drop the "now" parameter from the
-> update_time operation. Fix fat_update_time to fetch its own timestamp.
-> It turns out that this is easily done by just passing a NULL timestamp
-> pointer to fat_truncate_time.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+This probably needs more text to describe what is happening.
 
-Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
-Thanks.
+> 
+> Signed-off-by: Manas Ghandat <ghandatmanas@gmail.com>
+> Reported-by: syzbot+4768a8f039aa677897d0@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=4768a8f039aa677897d0
+
+What commit id does this fix?  Should it go to stable kernels?
+
 
 > ---
->  fs/fat/misc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/fat/misc.c b/fs/fat/misc.c
-> index 37f4afb346af..f2304a1054aa 100644
-> --- a/fs/fat/misc.c
-> +++ b/fs/fat/misc.c
-> @@ -347,7 +347,7 @@ int fat_update_time(struct inode *inode, int flags)
->  		return 0;
->  
->  	if (flags & (S_ATIME | S_CTIME | S_MTIME)) {
-> -		fat_truncate_time(inode, now, flags);
-> +		fat_truncate_time(inode, NULL, flags);
->  		if (inode->i_sb->s_flags & SB_LAZYTIME)
->  			dirty_flags |= I_DIRTY_TIME;
->  		else
+> V2 -> V3: Fix patching issue.
+> V1 -> V2: Cleaned up coding style.
+> 
+>  fs/ntfs/inode.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/fs/ntfs/inode.c b/fs/ntfs/inode.c
+> index 6c3f38d66579..a657322874ed 100644
+> --- a/fs/ntfs/inode.c
+> +++ b/fs/ntfs/inode.c
+> @@ -1077,6 +1077,15 @@ static int ntfs_read_locked_inode(struct inode *vi)
+>  					goto unm_err_out;
+>  				}
+>  				if (a->data.non_resident.compression_unit) {
+> +					if (a->data.non_resident.compression_unit +
+> +						vol->cluster_size_bits > 32) {
 
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Should be indented a bit left, right?
+
+> +						ntfs_error(vi->i_sb,
+> +							"Found non-standard compression unit (%u).   Cannot handle this.",
+
+Why all the extra ' ' characters?
+
+thanks,
+
+greg k-h
