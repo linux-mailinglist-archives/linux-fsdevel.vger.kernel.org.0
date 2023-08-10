@@ -2,79 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E10D8778382
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 00:14:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 125C7778386
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 00:16:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232117AbjHJWOk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Aug 2023 18:14:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60102 "EHLO
+        id S230419AbjHJWQs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Aug 2023 18:16:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232071AbjHJWOj (ORCPT
+        with ESMTP id S229539AbjHJWQr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Aug 2023 18:14:39 -0400
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE89E273C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 15:14:38 -0700 (PDT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1bc84c4f043so19675625ad.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 15:14:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691705678; x=1692310478;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+iSfVQKiy94ihvevaPz7mdBT1Zd/e8n0em7o/WIjuQ0=;
-        b=l9m2/TwsjBUewASC0iFwONzO6Bi0yYFjwt86vOQt9DYoO9DTV3HKjrYGOX+qmjCqad
-         HOnWTtzL6GhAxsMIEZplabiqXTPt9F7tYtMc0kEVtCddERz7CrPQtdX1lRvPdPNA87aY
-         BHtfuNf1ol7MRfU6vVb2sfObMQBPqp6lSle/OwUZI4H2VuNyHWLR74VBfTyv+Swe0E0U
-         07xnkHQh5CQPwkoSH5cf+U9F7spGZgNqOK8HIVVY4Qvbx0N+HctLXvGWk6EB4p3wa+AO
-         4nShiSg9na9ZmSOJcL5MS3Nz4zhJHUmxZEz8bAJVfljkoSBjcSZ8Hrp7iOlaIxnfsFrT
-         sFQg==
-X-Gm-Message-State: AOJu0Yy0I+bXNCGnQL4u603IHHQLjZZZLBYWwrMm3DgCST8Uh4LUI1wx
-        CMbY/Q5sWfmC9smDaeIf8CcL4nv1G+y2JIR8i4RaXC9C6U6t
-X-Google-Smtp-Source: AGHT+IHTzTABqpJVuLtnELQWEcoBDNkcI7acDmY68LAjTTfOxK2QXJmkSMtIbz4lbKeoczQf+GCJ8xGSG+P8VQnPmUL+jm88OSVl
-MIME-Version: 1.0
-X-Received: by 2002:a17:902:e748:b0:1bd:9c78:8042 with SMTP id
- p8-20020a170902e74800b001bd9c788042mr13632plf.11.1691705678229; Thu, 10 Aug
- 2023 15:14:38 -0700 (PDT)
-Date:   Thu, 10 Aug 2023 15:14:38 -0700
-In-Reply-To: <00000000000040e14205ffbf333f@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000003f591060298ecc6@google.com>
-Subject: Re: [syzbot] [ntfs3?] WARNING in wnd_add_free_ext (2)
-From:   syzbot <syzbot+5b2f934f08ab03d473ff@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
+        Thu, 10 Aug 2023 18:16:47 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27D9A2717;
+        Thu, 10 Aug 2023 15:16:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=kZPovxlvK/roVyxwyrIHXjZdgR6OfruTG8lx5laTMjE=; b=Wu9JD/vLovqSrk7O9Ir9t5qFsz
+        B7QVo0bG4GprbraPb6elzFPJ3NE/0hGrj9rgwFwVX0NDoTwdn5+NFUTNBSqdhXrTeSAegMaRIfYS3
+        sBlOmjAdS7vP+kUu7bSDI8NMwxfhWi0JJ6PeN1v0CCn1P9iRRp1bNjkboCR6gCltj0pWY2RPXoqir
+        tzEbcfCPZm/LCQ50fGWMeFvYFV7mNpl1EQZOQC1XHuGqWbUk4gkZ7IYoX3rgb94KtusmIUVxgv1kp
+        30OyN/78yXUBl3imywAb+maKp42gUxHzQxhb0MVHJ0rrbZWzqjQOSRMDTeHddGq8L6aUWWwHyjyhy
+        RMI8I8aQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qUDwr-00F0qE-VO; Thu, 10 Aug 2023 22:16:06 +0000
+Date:   Thu, 10 Aug 2023 23:16:05 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+        hannes@cmpxchg.org, mhocko@suse.com, josef@toxicpanda.com,
+        jack@suse.cz, ldufour@linux.ibm.com, laurent.dufour@fr.ibm.com,
+        michel@lespinasse.org, liam.howlett@oracle.com, jglisse@google.com,
+        vbabka@suse.cz, minchan@google.com, dave@stgolabs.net,
+        punit.agrawal@bytedance.com, lstoakes@gmail.com, hdanton@sina.com,
+        apopple@nvidia.com, peterx@redhat.com, ying.huang@intel.com,
+        yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        pasha.tatashin@soleen.com, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+        kernel-team@android.com
+Subject: Re: [PATCH v7 0/6] Per-VMA lock support for swap and userfaults
+Message-ID: <ZNVhpeejqGkEqqSr@casper.infradead.org>
+References: <20230630211957.1341547-1-surenb@google.com>
+ <a34a418a-9a6c-9d9a-b7a3-bde8013bf86c@redhat.com>
+ <CAJuCfpGCWekMdno=L=4m7ujWTYMr0Wv77oYzXWT5RXnx+fWe0w@mail.gmail.com>
+ <CAJuCfpGMvYxu-g9kVH40UDGnpF2kxctH7AazhvmwhWWq1Rn1sA@mail.gmail.com>
+ <CAJuCfpHA78vxOBcaB3m7S7=CoBLMXTzRWego+jZM7JvUm3rEaQ@mail.gmail.com>
+ <0ab6524a-6917-efe2-de69-f07fb5cdd9d2@redhat.com>
+ <CAJuCfpEs2k8mHM+9uq05vmcOYCfkNnOb4s3xPSoWheizPkcwLA@mail.gmail.com>
+ <CAJuCfpERuCx6QvfejUkS-ysMxbzp3mFfhCbH=rDtt2UGzbwtyg@mail.gmail.com>
+ <CAJuCfpH-drRnwqUqynTnvgqSjs=_Fwc0H_7h6nzsdztRef0oKw@mail.gmail.com>
+ <CAJuCfpH8ucOkCFYrVZafUAppi5+mVhy=uD+BK6-oYX=ysQv5qQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJuCfpH8ucOkCFYrVZafUAppi5+mVhy=uD+BK6-oYX=ysQv5qQ@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this issue to:
+On Thu, Aug 10, 2023 at 06:24:15AM +0000, Suren Baghdasaryan wrote:
+> Ok, I think I found the issue.  wp_page_shared() ->
+> fault_dirty_shared_page() can drop mmap_lock (see the comment saying
+> "Drop the mmap_lock before waiting on IO, if we can...", therefore we
+> have to ensure we are not doing this under per-VMA lock.
 
-commit 3880f2b816a7e4ca889b7e8a42e6c62c5706ed36
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Mon Oct 25 15:31:28 2021 +0000
+... or we could change maybe_unlock_mmap_for_io() the same way
+that we changed folio_lock_or_retry():
 
-    fs/ntfs3: Fix fiemap + fix shrink file size (to remove preallocated space)
++++ b/mm/internal.h
+@@ -706,7 +706,7 @@ static inline struct file *maybe_unlock_mmap_for_io(struct vm_fault *vmf,
+        if (fault_flag_allow_retry_first(flags) &&
+            !(flags & FAULT_FLAG_RETRY_NOWAIT)) {
+                fpin = get_file(vmf->vma->vm_file);
+-               mmap_read_unlock(vmf->vma->vm_mm);
++               release_fault_lock(vmf);
+        }
+        return fpin;
+ }
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=168fd89ba80000
-start commit:   f6a691685962 Merge tag '6.5-rc4-smb3-client-fix' of git://..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=158fd89ba80000
-console output: https://syzkaller.appspot.com/x/log.txt?x=118fd89ba80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1e3d5175079af5a4
-dashboard link: https://syzkaller.appspot.com/bug?extid=5b2f934f08ab03d473ff
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13f56679a80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=118b8eeda80000
+What do you think?
 
-Reported-by: syzbot+5b2f934f08ab03d473ff@syzkaller.appspotmail.com
-Fixes: 3880f2b816a7 ("fs/ntfs3: Fix fiemap + fix shrink file size (to remove preallocated space)")
+> I think what happens is that this path is racing with another page
+> fault which took mmap_lock for read. fault_dirty_shared_page()
+> releases this lock which was taken by another page faulting thread and
+> that thread generates an assertion when it finds out the lock it just
+> took got released from under it.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+I'm confused that our debugging didn't catch this earlier.  lockdep
+should always catch this.
