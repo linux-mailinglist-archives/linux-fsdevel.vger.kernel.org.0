@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B86D3779A65
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Aug 2023 00:06:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F06D2779A76
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Aug 2023 00:11:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236816AbjHKWGN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 18:06:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34418 "EHLO
+        id S236479AbjHKWLQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Aug 2023 18:11:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231659AbjHKWGL (ORCPT
+        with ESMTP id S236565AbjHKWLM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 18:06:11 -0400
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4B572D57;
-        Fri, 11 Aug 2023 15:06:11 -0700 (PDT)
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1bc7b25c699so17952905ad.1;
-        Fri, 11 Aug 2023 15:06:11 -0700 (PDT)
+        Fri, 11 Aug 2023 18:11:12 -0400
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDFA1358B;
+        Fri, 11 Aug 2023 15:11:08 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1bc8a2f71eeso18350115ad.0;
+        Fri, 11 Aug 2023 15:11:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691791571; x=1692396371;
+        d=1e100.net; s=20221208; t=1691791868; x=1692396668;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hCulArU7T/2N0cjtt9v/Sb6kpK5zL9r3ISOsLR/eGqQ=;
-        b=J/C1ZReKG1KJpEsoHjyOdEU0WWkxb8/jDnHYSmqBLqtBaIpfXuwmMyzm/Jf7to5SNt
-         CGXU+uHXe7bdMz/N7lCbQ7sJryMvcWkgYcsao1pSD0i/ufFfe8tSTHAu2xVk2g8UapHR
-         tKFH/omV5AMTsBkpopJ7DRThdkPGZkz7257eTBP0OSSV6tna8F+9+kK+22VF3NV/ThIz
-         2cNflgc9PVkOgi2r+pqZYEwx8shcTxtebWvp64/Fbdb+VfFoGBl+Z+MSzDL6rRASSHF4
-         NBLpR7HqfDNf13KJltHo+4jdyQEk/kVnJLxk9shqvrtgNZpBhquc/7l1LQU/2JLWu6cv
-         vxzw==
-X-Gm-Message-State: AOJu0Yyb+GNJ9osNBQuFhLNfBg6m9FI5Fuw4ueY89oNlfh9D5jk3gVFT
-        xoZZl08VlmvH+olOK7upnvE=
-X-Google-Smtp-Source: AGHT+IGRDCvq8p2vjG6TVx2gDv6+cL2iFQ4Ue2nk9VRR38rhHkVlR+1xjT53rq6hRwjwXypPBI3lmA==
-X-Received: by 2002:a17:903:244d:b0:1b8:5ab2:49a4 with SMTP id l13-20020a170903244d00b001b85ab249a4mr3374277pls.53.1691791571131;
-        Fri, 11 Aug 2023 15:06:11 -0700 (PDT)
+        bh=o52cWlwXR3N6/ms+y9tYy0bzSVEqexTODJML7eEO/+8=;
+        b=EQ2sZul3d57pqCL8M8JVf1ldHkCXVvqzCEvH+txVulk9x2C3v8ffvTOm4L6gxElL1s
+         N2QTT4r0VkOzvGS7zPRkHlsmnvuGVpUSwhbEnmi7xoTzL2qnFqKxRQsnb9APMIvWtIjZ
+         Cu78wspgNNGRJdY+B49+0ov+c6soFd98jGWmhtDLuGlOii/Eok8pzCWRLmSeOT7iaR3U
+         FQ5Bbs+Wh7mw1W0HUtYBXpnTnfojTs2TM5OzK0IG8xFdpAwxrITEyXsNshPtbO3+v2Dk
+         pImFJ1A0etPF0UJWJaConocr2c2ADpFOdseJE3/w/Tck8f8i9q9qKVMnFx9fn0BxybE6
+         tLjQ==
+X-Gm-Message-State: AOJu0YxLFZVlwPf9Ya+FTbjQhIT2L6qgX4N+LjXxfIeM6ELlm1syCRgP
+        OaQrgzbwnuurtKFj4bmAptc=
+X-Google-Smtp-Source: AGHT+IGO1cYq9ryCeUR18SdH4aYD4OVeMcVgDFSRF+fdG4TERHS/ZNVH28DIGQxUbVu84B1GJsMb2w==
+X-Received: by 2002:a17:903:185:b0:1bc:2036:2219 with SMTP id z5-20020a170903018500b001bc20362219mr2795385plg.41.1691791868121;
+        Fri, 11 Aug 2023 15:11:08 -0700 (PDT)
 Received: from ?IPV6:2620:15c:211:201:cdd8:4c3:2f3c:adea? ([2620:15c:211:201:cdd8:4c3:2f3c:adea])
-        by smtp.gmail.com with ESMTPSA id c11-20020a170903234b00b001a183ade911sm4424160plh.56.2023.08.11.15.06.09
+        by smtp.gmail.com with ESMTPSA id u9-20020a17090282c900b001bc53321392sm4413845plz.69.2023.08.11.15.11.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Aug 2023 15:06:10 -0700 (PDT)
-Message-ID: <2e263977-0ee7-ae78-5a8a-2a67df43df76@acm.org>
-Date:   Fri, 11 Aug 2023 15:06:08 -0700
+        Fri, 11 Aug 2023 15:11:07 -0700 (PDT)
+Message-ID: <57558d7b-4444-b709-60bf-5a061cd6c3e9@acm.org>
+Date:   Fri, 11 Aug 2023 15:11:05 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [dm-devel] [PATCH v14 03/11] block: add copy offload support
+Subject: Re: [dm-devel] [PATCH v14 04/11] block: add emulation for copy
 Content-Language: en-US
 To:     Nitesh Shetty <nj.shetty@samsung.com>,
         Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
@@ -55,16 +55,17 @@ To:     Nitesh Shetty <nj.shetty@samsung.com>,
         Chaitanya Kulkarni <kch@nvidia.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>
-Cc:     martin.petersen@oracle.com, linux-doc@vger.kernel.org,
-        gost.dev@samsung.com, Anuj Gupta <anuj20.g@samsung.com>,
+Cc:     Vincent Fu <vincent.fu@samsung.com>, martin.petersen@oracle.com,
+        linux-doc@vger.kernel.org, gost.dev@samsung.com,
+        Anuj Gupta <anuj20.g@samsung.com>,
         linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-block@vger.kernel.org, mcgrof@kernel.org, dlemoal@kernel.org,
         linux-fsdevel@vger.kernel.org
 References: <20230811105300.15889-1-nj.shetty@samsung.com>
- <CGME20230811105659epcas5p1982eeaeb580c4cb9b23a29270945be08@epcas5p1.samsung.com>
- <20230811105300.15889-4-nj.shetty@samsung.com>
+ <CGME20230811105713epcas5p3b5323a0c553006e60671dde6c72fc4c6@epcas5p3.samsung.com>
+ <20230811105300.15889-5-nj.shetty@samsung.com>
 From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20230811105300.15889-4-nj.shetty@samsung.com>
+In-Reply-To: <20230811105300.15889-5-nj.shetty@samsung.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,
@@ -78,14 +79,10 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 8/11/23 03:52, Nitesh Shetty wrote:
-> +		if (rem != chunk)
-> +			atomic_inc(&cio->refcount);
+> +	schedule_work(&emulation_io->emulation_work);
 
-This code will be easier to read if the above if-test is left out
-and if the following code is added below the for-loop:
-
-	if (atomic_dec_and_test(&cio->refcount))
-		blkdev_copy_endio(cio);
+schedule_work() uses system_wq. This won't work for all users since 
+there are no latency guarantees for system_wq.
 
 Thanks,
 
