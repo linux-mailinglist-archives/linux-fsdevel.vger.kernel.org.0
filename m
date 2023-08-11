@@ -2,196 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E0D10778950
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 10:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88B72778AE2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 12:08:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234595AbjHKI4g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 04:56:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50010 "EHLO
+        id S235435AbjHKKIv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Aug 2023 06:08:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230224AbjHKI4f (ORCPT
+        with ESMTP id S229719AbjHKKIk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 04:56:35 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 605CAE75
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 01:56:34 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id EC1321F88C;
-        Fri, 11 Aug 2023 08:56:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1691744192; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=6fhVb2cx4yzEnYTf9Ohkg8zDjKEMQKhFBxXUAKKq+aU=;
-        b=JqNe/CyvlBtYjWqcGYTzITpkCs70XnLANK/XkJmPg5d2LGH6HCj8GvH1NZfz/ZSiBNlRbH
-        I1SzawXs7wWw1khy+iUiHupqQm7S+WrXrl4VryxO6JPLXILsLRcwYNRnAr1G6R/+5gOuDx
-        2zTvkDG4K+BejSKRnWv/EfC3MNGezH8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1691744192;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=6fhVb2cx4yzEnYTf9Ohkg8zDjKEMQKhFBxXUAKKq+aU=;
-        b=Tfu7sJUr1Wyc5JsibINKkP1kVCyWdQqypjPKx3qo3ydW4k8rC0Y7pHtBubF5Yjhgjv+F8k
-        2ntel4Q+Lw/UtfCA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CA8F113592;
-        Fri, 11 Aug 2023 08:56:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 6xhcMcD31WQMDgAAMHmgww
-        (envelope-from <jack@suse.cz>); Fri, 11 Aug 2023 08:56:32 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 4FA1DA076F; Fri, 11 Aug 2023 10:56:32 +0200 (CEST)
-Date:   Fri, 11 Aug 2023 10:56:32 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleksandr Tymoshenko <ovt@google.com>,
-        Carlos Maiolino <cem@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
-        Miklos Szeredi <miklos@szeredi.hu>, Daniel Xu <dxu@dxuuu.xyz>,
-        Chris Down <chris@chrisdown.name>, Tejun Heo <tj@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Pete Zaitcev <zaitcev@redhat.com>,
-        Helge Deller <deller@gmx.de>,
-        Topi Miettinen <toiwoton@gmail.com>,
-        Yu Kuai <yukuai3@huawei.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH vfs.tmpfs v2 4/5] tmpfs: trivial support for direct IO
-Message-ID: <20230811085632.hfmdzni2yzgmcy44@quack3>
-References: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com>
- <7c12819-9b94-d56-ff88-35623aa34180@google.com>
- <6f2742-6f1f-cae9-7c5b-ed20fc53215@google.com>
+        Fri, 11 Aug 2023 06:08:40 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A063EEA;
+        Fri, 11 Aug 2023 03:08:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=hcbvw/RfBq8JHr30xw9G1Ra3s1wKjT/PtsrPUt7GxO0=; b=lu2+QOoKycflUw3sVvBPND/Cj+
+        XTbtxhvdxSyGd5ObrfLgXyuf/MlGn3ic0Qeo3NkdDwkW0THLSAQ70FV9T9f7YlkbHYP4MCZBFz5n0
+        LJrhRWNiAMuS6BRWdZHHKc5kvZ19+oSA3ubIyV1NgGhs4yy2lQDw2rXNQSJaonRC/dXJHLmY0ZAPa
+        Cz3D/MCTrgZY+3NHmytpoiir3/bEV47uqe5Sp0fFYjsWXp6K/C/CIAZZnz2oIz+eVtJ+eleP+gvk/
+        c1QD0c1cBmOfoGQPBXwN/zqxR67IkgXLVZYAj+cOMmuh4oTvvCSmRZ9GQGltc3k3csGhK5qdPUxnq
+        9MblYUNA==;
+Received: from [88.128.92.63] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1qUP4I-00A5Xm-25;
+        Fri, 11 Aug 2023 10:08:31 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Denis Efremov <efremov@linux.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        "Darrick J . Wong" <djwong@kernel.org>, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>, linux-block@vger.kernel.org,
+        nbd@other.debian.org, linux-s390@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: remove get_super
+Date:   Fri, 11 Aug 2023 12:08:11 +0200
+Message-Id: <20230811100828.1897174-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6f2742-6f1f-cae9-7c5b-ed20fc53215@google.com>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_SOFTFAIL,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 10-08-23 23:27:07, Hugh Dickins wrote:
-> Depending upon your philosophical viewpoint, either tmpfs always does
-> direct IO, or it cannot ever do direct IO; but whichever, if tmpfs is to
-> stand in for a more sophisticated filesystem, it can be helpful for tmpfs
-> to support O_DIRECT.  So, give tmpfs a shmem_file_open() method, to set
-> the FMODE_CAN_ODIRECT flag: then unchanged shmem_file_read_iter() and new
-> shmem_file_write_iter() do the work (without any shmem_direct_IO() stub).
-> 
-> Perhaps later, once the direct_IO method has been eliminated from all
-> filesystems, generic_file_write_iter() will be such that tmpfs can again
-> use it, even for O_DIRECT.
-> 
-> xfstests auto generic which were not run on tmpfs before but now pass:
-> 036 091 113 125 130 133 135 198 207 208 209 210 211 212 214 226 239 263
-> 323 355 391 406 412 422 427 446 451 465 551 586 591 609 615 647 708 729
-> with no new failures.
-> 
-> LTP dio tests which were not run on tmpfs before but now pass:
-> dio01 through dio30, except for dio04 and dio10, which fail because
-> tmpfs dio read and write allow odd count: tmpfs could be made stricter,
-> but would that be an improvement?
-> 
-> Signed-off-by: Hugh Dickins <hughd@google.com>
-> ---
-> Thanks for your earlier review, Jan: I've certainly not copied that
-> into this entirely different version.  I prefer the v1, but fine if
-> people prefer this v2.
+Hi all,
 
-Yeah, this solution is also fine with me so feel free to add:
+this series against the VFS vfs.super branch finishes off the work to remove
+get_super and move (almost) all upcalls to use the holder ops.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+The first part is the missing btrfs bits so that all file systems use the
+super_block as holder.
 
-I agree the previous version has less code duplication but once .direct_IO
-is gone shmem_file_write_iter() will be actually how some generic helper
-will look like so we can deduplicate the code then.
+The second part is various block driver cleanups so that we use proper
+interfaces instead of raw calls to __invalidate_device and fsync_bdev.
 
-								Honza
- 
->  mm/shmem.c | 32 ++++++++++++++++++++++++++++++--
->  1 file changed, 30 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index ca43fb256b8e..b782edeb69aa 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2388,6 +2388,12 @@ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
->  	return 0;
->  }
->  
-> +static int shmem_file_open(struct inode *inode, struct file *file)
-> +{
-> +	file->f_mode |= FMODE_CAN_ODIRECT;
-> +	return generic_file_open(inode, file);
-> +}
-> +
->  #ifdef CONFIG_TMPFS_XATTR
->  static int shmem_initxattrs(struct inode *, const struct xattr *, void *);
->  
-> @@ -2839,6 +2845,28 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
->  	return retval ? retval : error;
->  }
->  
-> +static ssize_t shmem_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> +{
-> +	struct file *file = iocb->ki_filp;
-> +	struct inode *inode = file->f_mapping->host;
-> +	ssize_t ret;
-> +
-> +	inode_lock(inode);
-> +	ret = generic_write_checks(iocb, from);
-> +	if (ret <= 0)
-> +		goto unlock;
-> +	ret = file_remove_privs(file);
-> +	if (ret)
-> +		goto unlock;
-> +	ret = file_update_time(file);
-> +	if (ret)
-> +		goto unlock;
-> +	ret = generic_perform_write(iocb, from);
-> +unlock:
-> +	inode_unlock(inode);
-> +	return ret;
-> +}
-> +
->  static bool zero_pipe_buf_get(struct pipe_inode_info *pipe,
->  			      struct pipe_buffer *buf)
->  {
-> @@ -4434,12 +4462,12 @@ EXPORT_SYMBOL(shmem_aops);
->  
->  static const struct file_operations shmem_file_operations = {
->  	.mmap		= shmem_mmap,
-> -	.open		= generic_file_open,
-> +	.open		= shmem_file_open,
->  	.get_unmapped_area = shmem_get_unmapped_area,
->  #ifdef CONFIG_TMPFS
->  	.llseek		= shmem_file_llseek,
->  	.read_iter	= shmem_file_read_iter,
-> -	.write_iter	= generic_file_write_iter,
-> +	.write_iter	= shmem_file_write_iter,
->  	.fsync		= noop_fsync,
->  	.splice_read	= shmem_file_splice_read,
->  	.splice_write	= iter_file_splice_write,
-> -- 
-> 2.35.3
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+The last part than replaces __invalidate_device and fsync_bdev with upcalls
+to the file system through the holder ops, and finally removes get_super.
+
+It leaves user_get_super and get_active_super around.  The former is not
+used for upcalls in the traditional sense, but for legacy UAPI that for
+some weird reason take a dev_t argument (ustat) or a block device path
+(quotactl).  get_active_super is only used for calling into the file system
+on freeze and should get a similar treatment, but given that Darrick has
+changes to that code queued up already this will be handled in the next
+merge window.
+
+A git tree is available here:
+
+    git://git.infradead.org/users/hch/misc.git remove-get_super
+
+Gitweb:
+
+    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/remove-get_super
+
+Diffstat:
+ block/bdev.c              |   61 ++++++++++++++++++++-------------------------
+ block/disk-events.c       |   23 ++++-------------
+ block/genhd.c             |   45 +++++++++++++++++----------------
+ block/ioctl.c             |    9 +++++-
+ block/partitions/core.c   |    5 ---
+ drivers/block/amiflop.c   |    1 
+ drivers/block/floppy.c    |    2 -
+ drivers/block/loop.c      |    6 ++--
+ drivers/block/nbd.c       |    8 ++---
+ drivers/s390/block/dasd.c |    7 +----
+ fs/btrfs/disk-io.c        |    4 +-
+ fs/btrfs/super.c          |   59 ++++++++++++++++++++++---------------------
+ fs/btrfs/volumes.c        |   58 ++++++++++++++++++++++---------------------
+ fs/btrfs/volumes.h        |    8 +++--
+ fs/inode.c                |   16 +----------
+ fs/internal.h             |    2 -
+ fs/super.c                |   62 +++++++++++++++-------------------------------
+ include/linux/blkdev.h    |   13 +++++----
+ include/linux/fs.h        |    1 
+ 19 files changed, 175 insertions(+), 215 deletions(-)
