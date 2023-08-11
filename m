@@ -2,182 +2,192 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 35859778CD1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 13:05:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32411778CB1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 13:05:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234863AbjHKLFU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 07:05:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50524 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235518AbjHKLFJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S229940AbjHKLFJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Fri, 11 Aug 2023 07:05:09 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54F2210C0;
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51696 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234091AbjHKLFI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 11 Aug 2023 07:05:08 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90D09E65;
         Fri, 11 Aug 2023 04:05:06 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 554E921867;
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 585EF21873;
         Fri, 11 Aug 2023 11:05:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
         t=1691751905; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=5tRGa7YNpy5azfO2DILJGaxnHQqIrHRIuX4HPJpenrQ=;
-        b=nS0o04Ko2eofWDhOvWx6o3T36EV25HqbUFvkN9WMKumyZo3DU5IiWgMskXfjyH4OXEiKYl
-        IITYxvL5Q8pMKkFc8O6biwC3K3TxmcmnzVR3W1NQhsfgztirbY49kzZoor0HytOQKCBlyL
-        GV3cB78+BIPaD5P0M4y2xB0Q495MkAo=
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=p33yma4hPeQjfptnAuDv8R+4vemmXJBhcJwNzI+I3Tg=;
+        b=rj1FmjcU1H5wdXbyfBkllnOoXq+1FlbffEwkBD1EQE/8c35BCuibAdSSDq/NO/TeYEukFe
+        YuQgVqixN/J0iStvE4nP9plhDVvaVBHaBcCRh+N0Ui5Er7NoaEePFj6Vt/IXyejUxGU+Rn
+        x6gpjOj3sBzsaUtjiU7r5k/CVz9yn90=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
         s=susede2_ed25519; t=1691751905;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=5tRGa7YNpy5azfO2DILJGaxnHQqIrHRIuX4HPJpenrQ=;
-        b=PRu3LFGsOROMaty7jNH51X1wMClD6ZMlY5AdbxYnc0QwtMHxNWZ8s/wVfL1uImLDOQT/Rl
-        cDHfO/YvLXNV1tAw==
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=p33yma4hPeQjfptnAuDv8R+4vemmXJBhcJwNzI+I3Tg=;
+        b=AsNe3HOND0MfIbHJRWnzgFpdoah3EE3IElMeesdUjk10693N+Jjam1qvo1n/zHTxZmYbCE
+        JpSDoskQF2hQO6DA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 40B5313592;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4ACD2139F3;
         Fri, 11 Aug 2023 11:05:05 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id kdy/D+EV1mQuRQAAMHmgww
+        id eUOwEeEV1mQyRQAAMHmgww
         (envelope-from <jack@suse.cz>); Fri, 11 Aug 2023 11:05:05 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id B94BAA076F; Fri, 11 Aug 2023 13:05:04 +0200 (CEST)
+        id C0BBCA076B; Fri, 11 Aug 2023 13:05:04 +0200 (CEST)
 From:   Jan Kara <jack@suse.cz>
 To:     <linux-fsdevel@vger.kernel.org>
 Cc:     <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-        Alasdair Kergon <agk@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        David Sterba <dsterba@suse.com>, dm-devel@redhat.com,
-        drbd-dev@lists.linbit.com, Gao Xiang <xiang@kernel.org>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        jfs-discussion@lists.sourceforge.net,
-        Joern Engel <joern@lazybastard.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-xfs@vger.kernel.org,
-        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Minchan Kim <minchan@kernel.org>, ocfs2-devel@oss.oracle.com,
-        reiserfs-devel@vger.kernel.org,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Song Liu <song@kernel.org>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        target-devel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        xen-devel@lists.xenproject.org
-Subject: [PATCH v2 0/29] block: Make blkdev_get_by_*() return handle
-Date:   Fri, 11 Aug 2023 13:04:31 +0200
-Message-Id: <20230810171429.31759-1-jack@suse.cz>
+        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>
+Subject: [PATCH 01/29] block: Provide bdev_open_* functions
+Date:   Fri, 11 Aug 2023 13:04:32 +0200
+Message-Id: <20230811110504.27514-1-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
+In-Reply-To: <20230810171429.31759-1-jack@suse.cz>
+References: <20230810171429.31759-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3218; i=jack@suse.cz; h=from:subject:message-id; bh=8um6o7br1koHMcykRc7ml18Y2BSCm69vwpPmgjRXxkk=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBk1hW86qklK68Z0G139b8b61UzO/oV2Y6qvJg1uvDC +JKlEZuJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZNYVvAAKCRCcnaoHP2RA2epoB/ 9Sgdf//aomv8tBKGEg1kRzItWS+CXbN/cjy5B6uL3IUWhEY6vxFg7DsN+znMmPFPOp7X1w/e2PExiA dGNvKiX2BNUyl6ZLFstCZUiXyzlig8pnDHrmrN4lbx3SIS3BHdNJ8igPArMWVDYXlZuosexzFn3fIW ELsTpVpNLZdp6BAxZg4925E1qscyN11eFDJecvW+IrpMA1nHR12Y/AX4zqXWcBT8MPUEiJD1Cnfxfa Leji+h3vOG0k2IQAyfN6R1cj/0POs0zJWvSVK9bZM8IYFIOHr+jpYHi0KEVh62q6NLoQxbMBVEzn9K JsmkBplP7UobjvtEWvfH0EwVENii9z
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3914; i=jack@suse.cz; h=from:subject; bh=++/cZSRXrDCK81ezSOlOg+esY7SKAD7w3+2l/OLF3aA=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBk1hXDV2IqRT2JpzXSXAx49LFsHSTMRPmecO+nsjyp RgsH+IKJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZNYVwwAKCRCcnaoHP2RA2QATCA CroRpSoJeuTTTMdz9jrO70qR9eX4Hco7cf3ySb4uim4MmbYu+iRcQgV69tZHZJR5QbxBLzTJZZ1JzP ax0YmDPSceRw9+piSVadTTU3xE/CuRwKLZbg7eaXhCxxFOFhvx5F3buNx8Tjh3PNeX4l17rF/We5pt fZ1bghdgwVHPZrmUQ1BX9GGiBenHUIPZmdPkrPIcVnNSs0B9/87OSDUSeX7qaDxz5DxJZjZTevAzCN vDcPt5lvNrFDyAH9/a5ZxG2rzvFELaVhcL+C9sMZjka2R9pCVvC6EW4dAynBVvqErvDYAmNQi7bquI zS0c92yGOA1FCleM7R16hW9+bUvE2t
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Create struct bdev_handle that contains all parameters that need to be
+passed to blkdev_put() and provide bdev_open_* functions that return
+this structure instead of plain bdev pointer. This will eventually allow
+us to pass one more argument to blkdev_put() (renamed to bdev_release())
+without too much hassle.
 
-this is a v2 of the patch series which implements the idea of blkdev_get_by_*()
-calls returning bdev_handle which is then passed to blkdev_put() [1]. This
-makes the get and put calls for bdevs more obviously matching and allows us to
-propagate context from get to put without having to modify all the users
-(again!).  In particular I need to propagate used open flags to blkdev_put() to
-be able count writeable opens and add support for blocking writes to mounted
-block devices. I'll send that series separately.
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ block/bdev.c           | 48 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/blkdev.h | 10 +++++++++
+ 2 files changed, 58 insertions(+)
 
-The series is based on Christian's vfs tree as of yesterday as there is quite
-some overlap. Patches have passed some reasonable testing - I've tested block
-changes, md, dm, bcache, xfs, btrfs, ext4, swap. This obviously doesn't cover
-everything so I'd like to ask respective maintainers to review / test their
-changes. Thanks! I've pushed out the full branch to:
+diff --git a/block/bdev.c b/block/bdev.c
+index 979e28a46b98..74fc2aeaab2c 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -846,6 +846,25 @@ struct block_device *blkdev_get_by_dev(dev_t dev, blk_mode_t mode, void *holder,
+ }
+ EXPORT_SYMBOL(blkdev_get_by_dev);
+ 
++struct bdev_handle *bdev_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
++				     const struct blk_holder_ops *hops)
++{
++	struct bdev_handle *handle = kmalloc(sizeof(*handle), GFP_KERNEL);
++	struct block_device *bdev;
++
++	if (!handle)
++		return ERR_PTR(-ENOMEM);
++	bdev = blkdev_get_by_dev(dev, mode, holder, hops);
++	if (IS_ERR(bdev)) {
++		kfree(handle);
++		return ERR_CAST(bdev);
++	}
++	handle->bdev = bdev;
++	handle->holder = holder;
++	return handle;
++}
++EXPORT_SYMBOL(bdev_open_by_dev);
++
+ /**
+  * blkdev_get_by_path - open a block device by name
+  * @path: path to the block device to open
+@@ -884,6 +903,28 @@ struct block_device *blkdev_get_by_path(const char *path, blk_mode_t mode,
+ }
+ EXPORT_SYMBOL(blkdev_get_by_path);
+ 
++struct bdev_handle *bdev_open_by_path(const char *path, blk_mode_t mode,
++		void *holder, const struct blk_holder_ops *hops)
++{
++	struct bdev_handle *handle;
++	dev_t dev;
++	int error;
++
++	error = lookup_bdev(path, &dev);
++	if (error)
++		return ERR_PTR(error);
++
++	handle = bdev_open_by_dev(dev, mode, holder, hops);
++	if (!IS_ERR(handle) && (mode & BLK_OPEN_WRITE) &&
++	    bdev_read_only(handle->bdev)) {
++		bdev_release(handle);
++		return ERR_PTR(-EACCES);
++	}
++
++	return handle;
++}
++EXPORT_SYMBOL(bdev_open_by_path);
++
+ void blkdev_put(struct block_device *bdev, void *holder)
+ {
+ 	struct gendisk *disk = bdev->bd_disk;
+@@ -920,6 +961,13 @@ void blkdev_put(struct block_device *bdev, void *holder)
+ }
+ EXPORT_SYMBOL(blkdev_put);
+ 
++void bdev_release(struct bdev_handle *handle)
++{
++	blkdev_put(handle->bdev, handle->holder);
++	kfree(handle);
++}
++EXPORT_SYMBOL(bdev_release);
++
+ /**
+  * lookup_bdev() - Look up a struct block_device by name.
+  * @pathname: Name of the block device in the filesystem.
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 83262702eea7..8bdaf89fd879 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1473,14 +1473,24 @@ extern const struct blk_holder_ops fs_holder_ops;
+ #define sb_open_mode(flags) \
+ 	(BLK_OPEN_READ | (((flags) & SB_RDONLY) ? 0 : BLK_OPEN_WRITE))
+ 
++struct bdev_handle {
++	struct block_device *bdev;
++	void *holder;
++};
++
+ struct block_device *blkdev_get_by_dev(dev_t dev, blk_mode_t mode, void *holder,
+ 		const struct blk_holder_ops *hops);
+ struct block_device *blkdev_get_by_path(const char *path, blk_mode_t mode,
+ 		void *holder, const struct blk_holder_ops *hops);
++struct bdev_handle *bdev_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
++		const struct blk_holder_ops *hops);
++struct bdev_handle *bdev_open_by_path(const char *path, blk_mode_t mode,
++		void *holder, const struct blk_holder_ops *hops);
+ int bd_prepare_to_claim(struct block_device *bdev, void *holder,
+ 		const struct blk_holder_ops *hops);
+ void bd_abort_claiming(struct block_device *bdev, void *holder);
+ void blkdev_put(struct block_device *bdev, void *holder);
++void bdev_release(struct bdev_handle *handle);
+ 
+ /* just for blk-cgroup, don't use elsewhere */
+ struct block_device *blkdev_get_no_open(dev_t dev);
+-- 
+2.35.3
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git bdev_handle
-
-to ease review / testing.
-
-Changes since v1:
-* Rebased on top of current vfs tree
-* Renamed final functions to bdev_open_by_*() and bdev_release()
-* Fixed detection of exclusive open in blkdev_ioctl() and blkdev_fallocate()
-* Fixed swap conversion to properly reinitialize swap_info->bdev_handle
-* Fixed xfs conversion to not oops with rtdev without logdev
-* Couple other minor fixups
-
-								Honza
-
-[1] https://lore.kernel.org/all/ZJGNsVDhZx0Xgs2H@infradead.org
-
-CC: Alasdair Kergon <agk@redhat.com>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Anna Schumaker <anna@kernel.org>
-CC: Chao Yu <chao@kernel.org>
-CC: Christian Borntraeger <borntraeger@linux.ibm.com>
-CC: Coly Li <colyli@suse.de
-CC: "Darrick J. Wong" <djwong@kernel.org>
-CC: Dave Kleikamp <shaggy@kernel.org>
-CC: David Sterba <dsterba@suse.com>
-CC: dm-devel@redhat.com
-CC: drbd-dev@lists.linbit.com
-CC: Gao Xiang <xiang@kernel.org>
-CC: Jack Wang <jinpu.wang@ionos.com>
-CC: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: jfs-discussion@lists.sourceforge.net
-CC: Joern Engel <joern@lazybastard.org>
-CC: Joseph Qi <joseph.qi@linux.alibaba.com>
-CC: Kent Overstreet <kent.overstreet@gmail.com>
-CC: linux-bcache@vger.kernel.org
-CC: linux-btrfs@vger.kernel.org
-CC: linux-erofs@lists.ozlabs.org
-CC: <linux-ext4@vger.kernel.org>
-CC: linux-f2fs-devel@lists.sourceforge.net
-CC: linux-mm@kvack.org
-CC: linux-mtd@lists.infradead.org
-CC: linux-nfs@vger.kernel.org
-CC: linux-nilfs@vger.kernel.org
-CC: linux-nvme@lists.infradead.org
-CC: linux-pm@vger.kernel.org
-CC: linux-raid@vger.kernel.org
-CC: linux-s390@vger.kernel.org
-CC: linux-scsi@vger.kernel.org
-CC: linux-xfs@vger.kernel.org
-CC: "Md. Haris Iqbal" <haris.iqbal@ionos.com>
-CC: Mike Snitzer <snitzer@kernel.org>
-CC: Minchan Kim <minchan@kernel.org>
-CC: ocfs2-devel@oss.oracle.com
-CC: reiserfs-devel@vger.kernel.org
-CC: Sergey Senozhatsky <senozhatsky@chromium.org>
-CC: Song Liu <song@kernel.org>
-CC: Sven Schnelle <svens@linux.ibm.com>
-CC: target-devel@vger.kernel.org
-CC: Ted Tso <tytso@mit.edu>
-CC: Trond Myklebust <trond.myklebust@hammerspace.com>
-CC: xen-devel@lists.xenproject.org
-
-Previous versions:
-Link: http://lore.kernel.org/r/20230629165206.383-1-jack@suse.cz # v1
