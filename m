@@ -2,89 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D49A777865D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 06:09:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93641778692
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 06:37:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232614AbjHKEJ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 00:09:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40188 "EHLO
+        id S230157AbjHKEhz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Aug 2023 00:37:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230027AbjHKEJ0 (ORCPT
+        with ESMTP id S229456AbjHKEhy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 00:09:26 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1837E4F;
-        Thu, 10 Aug 2023 21:09:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=z8egCMDdCKN1EXCGPL4reMjRjk9xsFH++3pfyuruZfU=; b=MOTPjcIZLPn8WruQCRaT70LBFW
-        Gxf/2nUHoKqaDmGMHP13PMdotlfYwDeUGaoFx3o72tAXtkZF8zGmUvDtlgT+U11pajT1+ZBZcYjxV
-        9PHkKNJY2kpIJe9xNTTxgqyClyNdcWiS0IlxnuWBdLQXNaCMmmeRA+cCLCX8gqf1HsfKww/PKQUov
-        1bpVTJ3ZnckLSrlUxE8VyKEZKSZo2CZa5l19Gp1k+JbJresJBrAurBlUaVPJJDTPikPUWOG7JVK55
-        IXpD6mYSi7z3dI0uti6BJhIDlWi2+AhZlUedsg/SF8G+MgGeUO9cvS/1p9N6qrGcx5GKHfdy97/CW
-        0cazM6bw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qUJSK-00GYNf-GK; Fri, 11 Aug 2023 04:08:56 +0000
-Date:   Fri, 11 Aug 2023 05:08:56 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hui Zhu <teawaterz@linux.alibaba.com>
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, akpm@linux-foundation.org, jack@suse.cz,
-        yi.zhang@huawei.com, hare@suse.de, p.raghav@samsung.com,
-        ritesh.list@gmail.com, mpatocka@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, teawater@antgroup.com,
-        teawater@gmail.com
-Subject: Re: [PATCH] ext4_sb_breadahead_unmovable: Change to be no-blocking
-Message-ID: <ZNW0WF/K8HS8AIu5@casper.infradead.org>
-References: <20230811035705.3296-1-teawaterz@linux.alibaba.com>
+        Fri, 11 Aug 2023 00:37:54 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1FA32686;
+        Thu, 10 Aug 2023 21:37:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 58FBC63346;
+        Fri, 11 Aug 2023 04:37:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A174C433C8;
+        Fri, 11 Aug 2023 04:37:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691728672;
+        bh=oM3J+HVnI97b6e/ppsDoFWW8Qty/fxY7Rh8duwlKvUU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ea2MI1M4M8Dw/ox1lQePpfUuORPD9a3DC/NS4MLPgTllPv+LLun1HVt23zY6TRwl6
+         C5DSfr3mJuz8QeOZlspmikVejYhmppu2usBzHP+o0eTEEVCt5E9zYKyrFblbjQN7P+
+         h+KXKA5K7WOF8IDI4pyTJ7RYeIqLZzkiooLECBPaPA2C2yfwEXhf2kMfd9FpKF8ZZ5
+         gx7syZKLMudzKsSx1GUWQbnD5+6hgExBaVzwONoIIPJMWWDaAxTdhamxM609SYfFKa
+         cGaKIGH2nlFJK16vvE7DIYFOn1l6hRegX5n1P+3amh8TkQHE2n6BwBjiMLC80J20WG
+         mNptodM1vxr6A==
+Date:   Thu, 10 Aug 2023 21:37:50 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Zhang Zhiyu <zhiyuzhang999@gmail.com>,
+        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: A Discussion Request about a maybe-false-positive of UBSAN: OOB
+ Write in do_journal_end in Kernel 6.5-rc3(with POC)
+Message-ID: <20230811043750.GA1934@sol.localdomain>
+References: <CALf2hKvsXPbRoqEYL8LEBZOFFoZd-puf6VEiLd60+oYy2TaxLg@mail.gmail.com>
+ <20230809153207.zokdmoco4lwa5s6b@quack3>
+ <20230810051521.GC923@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230811035705.3296-1-teawaterz@linux.alibaba.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20230810051521.GC923@sol.localdomain>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 11, 2023 at 03:57:05AM +0000, Hui Zhu wrote:
-> Encountered an issue where a large number of filesystem reads and writes
-> occurred suddenly within a container.  At the same time, other tasks on
-> the same host that were performing filesystem read and write operations
-> became blocked.  It was observed that many of the blocked tasks were
-> blocked on the ext4 journal lock. For example:
-> PID: 171453 TASK: ffff926566c9440 CPU: 54 COMMAND: "Thread"
+On Wed, Aug 09, 2023 at 10:15:23PM -0700, Eric Biggers wrote:
+> On Wed, Aug 09, 2023 at 05:32:07PM +0200, Jan Kara wrote:
+> > Improving kernel security is certainly a worthy goal but I have two notes.
+> > Firstly, reiserfs is a deprecated filesystem and it will be removed from
+> > the kernel in a not so distant future. So it is not very useful to fuzz it
+> > because there are practically no users anymore and no developer is
+> > interested in fixing those bugs even if you find some. Secondly, please do
+> > a better job of reading the code and checking whether your theory is
+> > actually valid before filing a CVE (CVE-2023-4205). That's just adding
+> > pointless job for everyone... Thanks!
 > 
-> Meanwhile, it was observed that the task holding the ext4 journal lock
-> was blocked for an extended period of time on "shrink_page_list" due to
-> "ext4_sb_breadahead_unmovable".
+> FYI I filled out https://cveform.mitre.org/ to request revocation of this CVE.
 > 
-> The function "grow_dev_page" increased the gfp mask with "__GFP_NOFAIL",
-> causing longer blocking times.
-> 	/*
-> 	 * XXX: __getblk_slow() can not really deal with failure and
-> 	 * will endlessly loop on improvised global reclaim.  Prefer
-> 	 * looping in the allocator rather than here, at least that
-> 	 * code knows what it's doing.
-> 	 */
-> 	gfp_mask |= __GFP_NOFAIL;
-> However, "ext4_sb_breadahead_unmovable" is a prefetch function and
-> failures are acceptable.
+> - Eric
 
-That's a really good point.
+Just to follow up on this, the CVE has now been "rejected".  For future
+reference, MITRE had me contact Red Hat since they issued the CVE.  So the right
+procedure was to email secalert@redhat.com, not fill out the CVE form.
 
-> Therefore, this commit changes "ext4_sb_breadahead_unmovable" to be
-> non-blocking, removing "__GFP_DIRECT_RECLAIM" from the gfp mask in the
-> "grow_dev_page" function if caller is ext4_sb_breadahead_unmovable to
-> alleviate memory-related blocking issues.
-
-Uh, not like this though.  Fix the gfp flags in the callers instead of
-working this new "bool" flag through the buffer head layers.
-
+- Eric
