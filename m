@@ -2,172 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D104777965E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 19:44:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ADCD7796E9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 20:16:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236910AbjHKRoR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 13:44:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39978 "EHLO
+        id S233755AbjHKSQb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Aug 2023 14:16:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236899AbjHKRoP (ORCPT
+        with ESMTP id S235816AbjHKSQa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 13:44:15 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46F092702
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 10:44:14 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-c5fc972760eso2331907276.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 10:44:14 -0700 (PDT)
+        Fri, 11 Aug 2023 14:16:30 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A179030E5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 11:16:29 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-51a52a7d859so6954483a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 11:16:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1691775853; x=1692380653;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y5tf/etP9591sBoXXP0u0lhmE2sGhQYCIj4rXej+PgY=;
-        b=z4avZMYBxF/USDP2G14KA+P8N8yreov1u2JOHwfc1TVZdl6Iz+YTKH19wDx7mUMq9M
-         o4u6qon1QiMk8DVxh93qeN2Mz6fZGsUFtzOg33bB4Mo7KFsOypRjJRdzz9Y8WFCiY85q
-         br+fPgBO/on1YU5soxnymBtm9OPZyICHaFKZfYSg9Ropko2mo0wKLVwIok1lVrWFw51i
-         jjhtl/HK+nEz+jNhJe7imTF+VBA6+NGFZjFm7+hHqXCkfP3+rYY1oaYSypJ0v6009kFT
-         lq7bEwknPOhWjDhET6YMFrJ/3n1YTZ5hf1bP/IHZB/5/XDyHPzuDGnqfF1kEhe1cc6AD
-         1nfg==
+        d=linux-foundation.org; s=google; t=1691777788; x=1692382588;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yc08NlpUYdnLIv24Lptdj+fSBDTOBa932kABNWFPLk4=;
+        b=dlJ1tEDlztHmryjbQZih0pdyEUsXg81udRjdiDTbqn2QFS3KT0ZuyD4/c5fLwlboLE
+         RiNMr+EnCv/TL/33QqpDGg0ZaHXezf8UK1U/fFXHKmXCbe1Kxf7+3pYUa8TYpyIPsi6x
+         MDst4WAHK23JqgtOxCIw86lrY5lL5nLZZtTts=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691775853; x=1692380653;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=y5tf/etP9591sBoXXP0u0lhmE2sGhQYCIj4rXej+PgY=;
-        b=jVY2HBwtRxX0/HJI3VvbNN7dJDZMHZiBHF9PNwIhm3Wie2Y6RB4RZn2zYABjv6r3OS
-         rmmK0BliSLQtMz03xm04h7TvXo1Ug/KK7nyKLzhrNsjGKkAKcftQYuEbt1C5bCdi3C3u
-         mngsvcRsBTJPgB7Tq9RoZt1BE0Sk3bRT3PG7nflr0zAcaq9qwQuJrjsFkGei3yWRnRRt
-         4pWx4TTM3Fj7mcynSdq2XvKaDe+gDix/iVX9Twx/Dd8K6O57TM1upn05sDyfkVFKpD6k
-         mezKRg6Aew4BsNGYDxO8ZDjJzG2lvWrBLilPQWO/G2FxvRHq0kGwXp4wvAlSEv28leYh
-         s79Q==
-X-Gm-Message-State: AOJu0Yzy3VeiYxkPXWb6nJfu4ZsL/fenbMj749vbXv21fY0qoVubO1Go
-        OC6fRA19chMradttsCDlZ0eMOI7AM9s=
-X-Google-Smtp-Source: AGHT+IFlh+eXwF8rMcD2luIRCX1nl8Idt0F+6stO6hsWWfidj415wHUgqoJc8kVAwNGB8y2mQW1tGjk2lPA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:7443:0:b0:d20:7752:e384 with SMTP id
- p64-20020a257443000000b00d207752e384mr41859ybc.3.1691775853469; Fri, 11 Aug
- 2023 10:44:13 -0700 (PDT)
-Date:   Fri, 11 Aug 2023 10:44:11 -0700
-In-Reply-To: <CAGtprH9YE50RtqhW-U+wK0Vv6aKfqqtOPn8q4s8or=UZwPXZoA@mail.gmail.com>
-Mime-Version: 1.0
-References: <20230718234512.1690985-13-seanjc@google.com> <diqzv8dq3116.fsf@ackerleytng-ctop.c.googlers.com>
- <ZNKv9ul2I7A4V7IF@google.com> <CAGtprH9YE50RtqhW-U+wK0Vv6aKfqqtOPn8q4s8or=UZwPXZoA@mail.gmail.com>
-Message-ID: <ZNZza/emWldkJC6X@google.com>
-Subject: Re: [RFC PATCH v11 12/29] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-From:   Sean Christopherson <seanjc@google.com>
-To:     Vishal Annapurve <vannapurve@google.com>
-Cc:     Ackerley Tng <ackerleytng@google.com>, pbonzini@redhat.com,
-        maz@kernel.org, oliver.upton@linux.dev, chenhuacai@kernel.org,
-        mpe@ellerman.id.au, anup@brainfault.org, paul.walmsley@sifive.com,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu, willy@infradead.org,
-        akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chao.p.peng@linux.intel.com,
-        tabba@google.com, jarkko@kernel.org, yu.c.zhang@linux.intel.com,
-        mail@maciej.szmigiero.name, vbabka@suse.cz, david@redhat.com,
-        qperret@google.com, michael.roth@amd.com, wei.w.wang@intel.com,
-        liam.merwick@oracle.com, isaku.yamahata@gmail.com,
-        kirill.shutemov@linux.intel.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        d=1e100.net; s=20221208; t=1691777788; x=1692382588;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yc08NlpUYdnLIv24Lptdj+fSBDTOBa932kABNWFPLk4=;
+        b=lDd7+ydnPmptzyiArNjH+GiTI53luudQSypTbOb+9fPW/949nreZXV8pooHkWt/RPa
+         ygBQLEvsrKYRrKy2/EMYX2NzzdNw76L+MoSmzcnMauFDEty/b4wxD4o9/w8DhNsuXdQN
+         +ZfUeAWVF06jCr03mggjepUz/8BPqxH2gMzNrZwgOCfdNdTSGIKRai27d1eZ3DL2PGbl
+         sTu+aH4QmgDNhI88N+H27rf1MPNhO85CznfzRUxjtKBAhIDiuTIkdNdk2YfuNBKScDMm
+         oPIAsonuA5hv1a0WDLh3yPUHB0YAmId9w/U6K9KczFSSKO3lI0ibLDzydOWjNMzlxtZt
+         UOMQ==
+X-Gm-Message-State: AOJu0Yx1+2vmeLoAdNHqJMNcgq/3Tgv0Nm60jQQoYKY783SmZpMlCIY8
+        GVbaRWJRE0K2C8Vjpd8YaygEFa70sFow0wC/KGQVtu+S
+X-Google-Smtp-Source: AGHT+IGeHjEO0O/knnArXSI7gHXAXuoO/Y+I0Wz5hMOM+SAqxVfYKV0Scp6gbf4CoD3q6VF00OAwFA==
+X-Received: by 2002:a17:907:1c23:b0:98e:3dac:6260 with SMTP id nc35-20020a1709071c2300b0098e3dac6260mr7160651ejc.13.1691777327787;
+        Fri, 11 Aug 2023 11:08:47 -0700 (PDT)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id i18-20020a1709061cd200b0098e422d6758sm2498760ejh.219.2023.08.11.11.08.47
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Aug 2023 11:08:47 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-51a52a7d859so6941753a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 11:08:47 -0700 (PDT)
+X-Received: by 2002:aa7:dad9:0:b0:521:ad49:8493 with SMTP id
+ x25-20020aa7dad9000000b00521ad498493mr3461940eds.6.1691777323138; Fri, 11 Aug
+ 2023 11:08:43 -0700 (PDT)
+MIME-Version: 1.0
+References: <3710261.1691764329@warthog.procyon.org.uk> <CAHk-=wi1QZ+zdXkjnEY7u1GsVDaBv8yY+m4-9G3R34ihwg9pmQ@mail.gmail.com>
+ <3888331.1691773627@warthog.procyon.org.uk>
+In-Reply-To: <3888331.1691773627@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 11 Aug 2023 11:08:26 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whsKN50RfZAP4EL12djwvMiWYKTca_5AYxPnHNzF7ffvg@mail.gmail.com>
+Message-ID: <CAHk-=whsKN50RfZAP4EL12djwvMiWYKTca_5AYxPnHNzF7ffvg@mail.gmail.com>
+Subject: Re: [RFC PATCH] iov_iter: Convert iterate*() to inline funcs
+To:     David Howells <dhowells@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Christian Brauner <christian@brauner.io>,
+        Matthew Wilcox <willy@infradead.org>, jlayton@kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 10, 2023, Vishal Annapurve wrote:
-> On Tue, Aug 8, 2023 at 2:13=E2=80=AFPM Sean Christopherson <seanjc@google=
-.com> wrote:
-> > ...
->=20
-> > > + When binding a memslot to the file, if a kvm pointer exists, it mus=
-t
-> > >   be the same kvm as the one in this binding
-> > > + When the binding to the last memslot is removed from a file, NULL t=
-he
-> > >   kvm pointer.
-> >
-> > Nullifying the KVM pointer isn't sufficient, because without additional=
- actions
-> > userspace could extract data from a VM by deleting its memslots and the=
-n binding
-> > the guest_memfd to an attacker controlled VM.  Or more likely with TDX =
-and SNP,
-> > induce badness by coercing KVM into mapping memory into a guest with th=
-e wrong
-> > ASID/HKID.
-> >
->=20
-> TDX/SNP have mechanisms i.e. PAMT/RMP tables to ensure that the same
-> memory is not assigned to two different VMs.
+On Fri, 11 Aug 2023 at 10:07, David Howells <dhowells@redhat.com> wrote:
+>
+> Hmmm...  It seems that using if-if-if rather than switch() gets optimised
+> better in terms of .text space.  The attached change makes things a bit
+> smaller (by 69 bytes).
 
-One of the main reasons we pivoted away from using a flag in "struct page" =
-to
-indicate that a page was private was so that KVM could enforce 1:1 VM:page =
-ownership
-*without* relying on hardware.
+Ack, and that also makes your change look more like the original code
+and more as just a plain "turn macros into inline functions".
 
-And FWIW, the PAMT provides no protection in this specific case because KVM=
- does
-TDH.MEM.PAGE.REMOVE when zapping S-EPT entries, and that marks the page cle=
-ar in
-the PAMT.  The danger there is that physical memory is still encrypted with=
- the
-guest's HKID, and so mapping the memory into a different VM, which might no=
-t be
-a TDX guest!, could lead to corruption and/or poison #MCs.
+As a result the code diff initially seems a bit smaller too, but then
+at some point it looks like at least clang decides that it can combine
+common code and turn those 'ustep' calls into indirect calls off a
+conditional register, ie code like
 
-The HKID issues wouldn't be a problem if v15 is merged as-is, because zappi=
-ng
-S-EPT entries also fully purges and reclaims the page, but as we discussed =
-in
-one of the many threads, reclaiming physical memory should be tied to the i=
-node,
-i.e. to memory truly being freed, and not to S-EPTs being zapped.  And ther=
-e is
-a very good reason for wanting to do that, as it allows KVM to do the expen=
-sive
-cache flush + clear outside of mmu_lock.
+        movq    $memcpy_from_iter, %rax
+        movq    $memcpy_from_iter_mc, %r13
+        cmoveq  %rax, %r13
+        [...]
+        movq    %r13, %r11
+        callq   __x86_indirect_thunk_r11
 
-> Deleting memslots should also clear out the contents of the memory as the=
- EPT
-> tables will be zapped in the process
+Which is absolutely horrible. It might actually generate smaller code,
+but with all the speculation overhead, indirect calls are a complete
+no-no. They now cause a pipeline flush on a large majority of CPUs out
+there.
 
-No, deleting a memslot should not clear memory.  As I said in my previous r=
-esponse,
-the fact that zapping S-EPT entries is destructive is a limitiation of TDX,=
- not a
-feature we want to apply to other VM types.  And that's not even a fundamen=
-tal
-property of TDX, e.g. TDX could remove the limitation, at the cost of consu=
-ming
-quite a bit more memory, by tracking the exact owner by HKID in the PAMT an=
-d
-decoupling S-EPT entries from page ownership.
+That code generation is not ok, and the old macro thing didn't
+generate it (because it didn't have any indirect calls).
 
-Or in theory, KVM could workaround the limitation by only doing TDH.MEM.RAN=
-GE.BLOCK
-when zapping S-EPTs.  Hmm, that might actually be worth looking at.
+And it turns out that __always_inline on those functions doesn't even
+help, because the fact that it's called through an indirect function
+pointer means that at least clang just keeps it as an indirect call.
 
-> and the host will reclaim the memory.
+So I think you need to remove the changes you did to
+memcpy_from_iter(). The old code was an explicit conditional of direct
+calls:
 
-There are no guarantees that the host will reclaim the memory.  E.g. QEMU w=
-ill
-delete and re-create memslots for "regular" VMs when emulating option ROMs.=
-  Even
-if that use case is nonsensical for confidential VMs (and it probably is no=
-nsensical),
-I don't want to define KVM's ABI based on what we *think* userspace will do=
-.
+        if (iov_iter_is_copy_mc(i))
+                return (void *)copy_mc_to_kernel(to, from, size);
+        return memcpy(to, from, size);
+
+and now you do that
+
+                                   iov_iter_is_copy_mc(i) ?
+                                   memcpy_from_iter_mc : memcpy_from_iter);
+
+to pass in a function pointer.
+
+Not ok. Not ok at all. It may look clever, but function pointers are
+bad. Avoid them like the plague.
+
+            Linus
