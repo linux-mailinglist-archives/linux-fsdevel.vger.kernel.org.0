@@ -2,51 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 171CB7787C0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 08:59:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B930D7787D2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 09:06:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229822AbjHKG67 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 02:58:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54058 "EHLO
+        id S232942AbjHKHGc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Aug 2023 03:06:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229514AbjHKG66 (ORCPT
+        with ESMTP id S229677AbjHKHGb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 02:58:58 -0400
+        Fri, 11 Aug 2023 03:06:31 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AD1426AE;
-        Thu, 10 Aug 2023 23:58:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AA11271B;
+        Fri, 11 Aug 2023 00:06:30 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E616266B5C;
-        Fri, 11 Aug 2023 06:58:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10DBEC433C7;
-        Fri, 11 Aug 2023 06:58:55 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E7C4064413;
+        Fri, 11 Aug 2023 07:06:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA1D0C433C8;
+        Fri, 11 Aug 2023 07:06:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691737137;
-        bh=0+nHeOb2wyaH/L+9qJDvLMyfdCJlsIUJxngwWxzj5uI=;
+        s=k20201202; t=1691737589;
+        bh=0mhkwsILu5FGoHxKXt/ZbuBENNtd8n4lJIl2kTSCuOw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HSIokHQGsxTUQ/b0FW50RjZmCiveeY+qwOozlLPKomC5/uL5bBps5rQiosChUloHq
-         GsB83RxKCqBr9dr7Om9PPIlNHJ/Sf72Nc6uOe9FiSBREx5ysUPolyjm6TDVh7etvIr
-         JjE73dtq8j/giU82j+rgS0HcbmMe7MOdMTXpnBDGUTgKLVwmpgpl2kA4+s7XCXqkrc
-         lFyefvOA10g3snjj271Oxg9ntpo9T5e0TAXfjIDXs0TFpErxHQOeTdghVKJewep+3b
-         ziv8uGMTjWsO9g/WxSNOu2AVYr0MzMtvvn+p3y9Dm6Kzg/NKan7LGypDf373UotgDq
-         sC1VfKfrm0jjQ==
+        b=Tx2bYIjMEHlMNbKrnlXSpOuSRZel7w9096TLTXag83HCjPJAkgRlkEIN9jU2yeaXz
+         ZHzyFgD1tDxLzAxVAA+asv8L/+ybF/BmxX3ma21qXywicI5To9mBzC6+mOvqOdxLy2
+         z2h4ZiASjpBbTGDw2c/ZjgpPJbJnN+Jv0386qTqU6Dr2OeyYMwyGrWvc+bLQsvTtNz
+         NsWlpiWqvulqkN5SDfF1QKE2uzIABvoW75FM+dSQ3tA2olwsn9FP7v1gjCjNedGvLU
+         PC38mJ8ORp6irhf3Y6hHE7h0h81Rdf/1kut9M8yd99gQanWcJJKWxlJPweahkq3Fal
+         oHiVPgNuWnF9w==
 From:   Christian Brauner <brauner@kernel.org>
-To:     Yang Li <yang.lee@linux.alibaba.com>
+To:     Jeff Layton <jlayton@kernel.org>
 Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk
-Subject: Re: [PATCH -next] fs: Fix one kernel-doc comment
-Date:   Fri, 11 Aug 2023 08:58:51 +0200
-Message-Id: <20230811-zufrieden-etatplanung-6413a9f83b62@brauner>
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Frank Sorenson <sorenson@redhat.com>, Jan Kara <jack@suse.com>
+Subject: Re: [PATCH 0/2] fat: revise the FAT patches for mgtime series
+Date:   Fri, 11 Aug 2023 09:06:18 +0200
+Message-Id: <20230811-fluor-denkfabrik-61880b8fbc86@brauner>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230811014359.4960-1-yang.lee@linux.alibaba.com>
-References: <20230811014359.4960-1-yang.lee@linux.alibaba.com>
+In-Reply-To: <20230810-ctime-fat-v1-0-327598fd1de8@kernel.org>
+References: <20230810-ctime-fat-v1-0-327598fd1de8@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=975; i=brauner@kernel.org; h=from:subject:message-id; bh=0+nHeOb2wyaH/L+9qJDvLMyfdCJlsIUJxngwWxzj5uI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRcvSP/QT3L0m/OU7YlLf0B3ZOnZZ8Jsn2T+fvhZSGZtedZ GjyudJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEykXJfhf8CNq5WW/j97cy3nhlzNCH m7JnMqw9nk++dPPHK553baL47hN9v8LwxWFk8/dYntW9b7a+HTtTn7lvzdyTA1eM2Z8h8GItwA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1433; i=brauner@kernel.org; h=from:subject:message-id; bh=0mhkwsILu5FGoHxKXt/ZbuBENNtd8n4lJIl2kTSCuOw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRcvftse8qWM6F7Vx+ds82yU63j6DEmpoNmm0+XhZ/X/f7y pKnKh45SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJKBkzMvznbtZ/9/9oqluM/7PnMx ICWqRd1k++cnLvxtCHD+6c0hFgZPh3XtTq8TO5hzlX9kY8vrDoufuLq1Llk0+6Gezpu1nDXckPAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -59,15 +60,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 11 Aug 2023 09:43:59 +0800, Yang Li wrote:
-> Fix one kernel-doc comment to silence the warning:
+On Thu, 10 Aug 2023 09:12:03 -0400, Jeff Layton wrote:
+> This is a respin of just the FAT patches for the multigrain ctime
+> series. It's based on top of Christian's vfs.ctime branch, with this
+> patch reverted:
 > 
-> fs/read_write.c:88: warning: Function parameter or member 'maxsize' not described in 'generic_file_llseek_size'
+>     89b39bea91c4 fat: make fat_update_time get its own timestamp
 > 
+> Christian, let me know if you'd rather I resend the whole series.
 > 
+> [...]
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+I simply dropped the old fat patch and applied these two instead. I've
+rebased them so their in the same position as the old patch so the
+series is still logically ordered.
+
+---
+
+Applied to the vfs.ctime branch of the vfs/vfs.git tree.
+Patches in the vfs.ctime branch should appear in linux-next soon.
 
 Please report any outstanding bugs that were missed during review in a
 new review to the original patch series allowing us to drop it.
@@ -79,7 +90,9 @@ Note that commit hashes shown below are subject to change due to rebase,
 trailer updates or similar. If in doubt, please check the listed branch.
 
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+branch: vfs.ctime
 
-[1/1] fs: Fix one kernel-doc comment
-      https://git.kernel.org/vfs/vfs/c/3e797ad1c5df
+[1/2] fat: remove i_version handling from fat_update_time
+      https://git.kernel.org/vfs/vfs/c/93e6c3043544
+[2/2] fat: make fat_update_time get its own timestamp
+      https://git.kernel.org/vfs/vfs/c/6f4aaee3faa8
