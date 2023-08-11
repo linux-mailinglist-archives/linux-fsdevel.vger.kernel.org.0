@@ -2,173 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7557E779160
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 16:06:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D6DC7791A9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 16:19:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233860AbjHKOGl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 10:06:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37560 "EHLO
+        id S233761AbjHKOTV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Aug 2023 10:19:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230189AbjHKOGk (ORCPT
+        with ESMTP id S230287AbjHKOTU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 10:06:40 -0400
-Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 211E710E4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 07:06:39 -0700 (PDT)
-Received: by mail-qk1-x72e.google.com with SMTP id af79cd13be357-76c4890a220so154726985a.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 07:06:39 -0700 (PDT)
+        Fri, 11 Aug 2023 10:19:20 -0400
+Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58EAC1994
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 07:19:20 -0700 (PDT)
+Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-583f65806f8so21812847b3.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 07:19:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20221208.gappssmtp.com; s=20221208; t=1691762798; x=1692367598;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1LaTqs7ZBDewPUU56wdQ2mZ0WG5gFPridMnasGRU3TE=;
-        b=oSK6H2f1VoLGhkFVBFahTNmiaSz+9ddjuI7eviPMvJ23ReEL68H3nocV28Z1XOeaYw
-         E73p5yUm11yWzBWpXQ6b4KnJaRAGrmcuc3w0c4ulQ7ajDCuO7ry7m2W0MxIn6umjJ6bA
-         umyQzzYTxKp/XHJAzkuzeYwZbvT6dwi5uiJ+4yaRNI4NYJkeJY+aXqkHrUKeF+YN1ou8
-         AWC/NjpndTfNBg3L+YFGahuwqzvKVLB0c9+7+4j0WxrHKwKwhbMb81PY8j0+xMqRZuHM
-         LQjwHspSoiBllinG6/eikDj+TIYrWBESVX4oxvc3KBX4S809bt0wZhm/6JXT6vikdyIz
-         HGSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691762798; x=1692367598;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1691763559; x=1692368359;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1LaTqs7ZBDewPUU56wdQ2mZ0WG5gFPridMnasGRU3TE=;
-        b=ZBRI++FQxJcCjv9VZatF8h7a5eC88YRDvYFKflJw6B5rXKxhuyk/+0HprcBJtGQAtN
-         5cgA5w+22tuGOuiZbglG/KWr3UZay7RDstOodF4vNieNAVv70IaX/jAUn0Ne5S6yZ2o3
-         cTYlGI1UYnnFnUeKj8WIrntgRiW5kCOmQUW21ZbYfDBMltApRLc4U0icJknyjAUsV5ll
-         S3td4ROcRDE4pbTAabbcouvRHyRN5RgND+aoa8vGjD/ZmqY3HtAU8mpR81/sve2mH0oO
-         nU4PQxCdU4oQW5lh+GsLqdSeA0DP8JQOOJxdod8Jj4DlCg0kWickrH2ZO7HPaYkST4lT
-         uBtw==
-X-Gm-Message-State: AOJu0YyWtwwNanPIG5//XO5w3abEYVh/ayleCXwBduzgu0RhdJ5tO6+G
-        VUIj8sc0ZX3G/tV7ZZPI07gU9Q==
-X-Google-Smtp-Source: AGHT+IHQZCuZ3R57Hm5e/nQz9l3ao+mbtKSvreuooOPx+q/w0ud5TQ0ygRS57Q8Om4iNn3D4C5VUdQ==
-X-Received: by 2002:a05:620a:f13:b0:76a:eee2:cd09 with SMTP id v19-20020a05620a0f1300b0076aeee2cd09mr2216785qkl.9.1691762798225;
-        Fri, 11 Aug 2023 07:06:38 -0700 (PDT)
-Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id m14-20020ae9e70e000000b0076c7f3dd32csm1205342qka.100.2023.08.11.07.06.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Aug 2023 07:06:37 -0700 (PDT)
-Date:   Fri, 11 Aug 2023 10:06:36 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Denis Efremov <efremov@linux.com>,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        "Darrick J . Wong" <djwong@kernel.org>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>, linux-block@vger.kernel.org,
-        nbd@other.debian.org, linux-s390@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 15/17] block: call into the file system for ioctl
- BLKFLSBUF
-Message-ID: <20230811140636.GB2724906@perftesting>
-References: <20230811100828.1897174-1-hch@lst.de>
- <20230811100828.1897174-16-hch@lst.de>
+        bh=yZudPvE77obhdTH9BwvUPtFGRDBscAM9ndagajqjxgA=;
+        b=fOJN7/01bKuxSiPWfoaDMd1rHwiRAo0+t60pWZ00VIRK5P/s0UEBMLu0XrnF9XsLNV
+         +onChgYJMLEIznghAYMqxv6BBQbzL3K4Dl/8BSeCWxmJPDrVH41nEszOeVOR7j0M1MD5
+         wbxa/yU9BVYYZb3mpKOVWFX9fVibxwzRxagGwfCf0G/yDF9ez2Vg0DnBthuH4WEfb8Q2
+         yeTz6xCPKqpO6fbB7cvF2cDw3rJUNxAf+CkMDBsXEwlLYgA1Eqv/a+swWYKEO5rBFYY1
+         68hrQiMt/IQ+wRkMAP91apnd+8qIvri+8zvp7jaet6Xg0mjEIulThjZjEb7ymSaAtFLX
+         +SFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691763559; x=1692368359;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yZudPvE77obhdTH9BwvUPtFGRDBscAM9ndagajqjxgA=;
+        b=h2qKd3tXb9fd3x0p0tBx2bllch4ZE6EIVZvSMofVVCoSmaYrZdGCZByNcraSojDJE1
+         FujXzGs9iNkTpko0AfBAHAi1zmpfHI9F3n8WfUT5h49u1HgJQotLd2r9xNbs10X6lkyQ
+         P0n81S0veOnHoBqw/eNKAIX4/VO2t9Erkejfpx7QkO6j1/Yorpb36jmJZurG/UjD8WmR
+         W/kS9A3BfpBlT40FTi2cEcBBBXi2wbNq2n/Pt0ZLqqKg3jxjxHzARn1fbhYd/kF1y46K
+         w0qQReRQ8l9o1lOUmfHE5cKBlRNJVVG06SHQII2FQNBqF0TMQ7thblcfrskfhF0+xPTZ
+         KXmw==
+X-Gm-Message-State: AOJu0Yz4UpFn7SoE4noYTtk1Wu3WcyEhyOmMnQWnebyZi+Bx+/FYyUVZ
+        T2VZ/Kus8lrxT10nwyEHdvJYvIb0NtEqAkewSGZD
+X-Google-Smtp-Source: AGHT+IGDUbfXK+AIRXUY0biV6PHrbsLLAXTemWgR+C8O2IbwMktrRjWoRwhHhix/sOWiIoiNeNiblxKOu29ljZis3Jc=
+X-Received: by 2002:a0d:f806:0:b0:584:1a4d:bbfa with SMTP id
+ i6-20020a0df806000000b005841a4dbbfamr2228192ywf.29.1691763559514; Fri, 11 Aug
+ 2023 07:19:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230811100828.1897174-16-hch@lst.de>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20230808-master-v9-1-e0ecde888221@kernel.org> <20230808-erdaushub-sanieren-2bd8d7e0a286@brauner>
+ <7d596fc2c526a5d6e4a84240dede590e868f3345.camel@kernel.org>
+In-Reply-To: <7d596fc2c526a5d6e4a84240dede590e868f3345.camel@kernel.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 11 Aug 2023 10:19:08 -0400
+Message-ID: <CAHC9VhTAF43=-j4A-Ky1WxJVBOAWzU+y2sb4YmeSQjFOa4Sy-A@mail.gmail.com>
+Subject: Re: [PATCH v9] vfs, security: Fix automount superblock LSM init
+ problem, preventing NFS sb sharing
+To:     Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 11, 2023 at 12:08:26PM +0200, Christoph Hellwig wrote:
-> BLKFLSBUF is a historic ioctl that is called on a file handle to a
-> block device and syncs either the file system mounted on that block
-> device if there is one, or otherwise the just the data on the block
-> device.
-> 
-> Replace the get_super based syncing with a holder operation to remove
-> the last usage of get_super, and to also support syncing the file system
-> if the block device is not the main block device stored in s_dev.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  block/bdev.c           | 16 ----------------
->  block/ioctl.c          |  9 ++++++++-
->  fs/super.c             | 13 +++++++++++++
->  include/linux/blkdev.h |  7 +++++--
->  4 files changed, 26 insertions(+), 19 deletions(-)
-> 
-> diff --git a/block/bdev.c b/block/bdev.c
-> index 658d5dd62cac0a..2a035be7f3ee90 100644
-> --- a/block/bdev.c
-> +++ b/block/bdev.c
-> @@ -206,22 +206,6 @@ int sync_blockdev_range(struct block_device *bdev, loff_t lstart, loff_t lend)
->  }
->  EXPORT_SYMBOL(sync_blockdev_range);
->  
-> -/*
-> - * Write out and wait upon all dirty data associated with this
-> - * device.   Filesystem data as well as the underlying block
-> - * device.  Takes the superblock lock.
-> - */
-> -int fsync_bdev(struct block_device *bdev)
-> -{
-> -	struct super_block *sb = get_super(bdev);
-> -	if (sb) {
-> -		int res = sync_filesystem(sb);
-> -		drop_super(sb);
-> -		return res;
-> -	}
-> -	return sync_blockdev(bdev);
-> -}
-> -
->  /**
->   * freeze_bdev - lock a filesystem and force it into a consistent state
->   * @bdev:	blockdevice to lock
-> diff --git a/block/ioctl.c b/block/ioctl.c
-> index 3be11941fb2ddc..648670ddb164a0 100644
-> --- a/block/ioctl.c
-> +++ b/block/ioctl.c
-> @@ -364,7 +364,14 @@ static int blkdev_flushbuf(struct block_device *bdev, unsigned cmd,
->  {
->  	if (!capable(CAP_SYS_ADMIN))
->  		return -EACCES;
-> -	fsync_bdev(bdev);
-> +
-> +	mutex_lock(&bdev->bd_holder_lock);
-> +	if (bdev->bd_holder_ops && bdev->bd_holder_ops->sync)
-> +		bdev->bd_holder_ops->sync(bdev);
-> +	else
-> +		sync_blockdev(bdev);
-> +	mutex_unlock(&bdev->bd_holder_lock);
-> +
->  	invalidate_bdev(bdev);
->  	return 0;
->  }
-> diff --git a/fs/super.c b/fs/super.c
-> index 94d41040584f7b..714dbae58b5e8e 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1248,8 +1248,21 @@ static void fs_bdev_mark_dead(struct block_device *bdev, bool surprise)
->  	up_read(&sb->s_umount);
->  }
->  
-> +static void fs_bdev_sync(struct block_device *bdev)
-> +{
-> +	struct super_block *sb = bdev->bd_holder;
-> +
-> +	lockdep_assert_held(&bdev->bd_holder_lock);
-> +
-> +	if (!lock_active_super(sb))
-> +		return;
-> +	sync_filesystem(sb);
-> +	up_read(&sb->s_umount);
-> +}
-> + 
+On Thu, Aug 10, 2023 at 9:57=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+> On Tue, 2023-08-08 at 15:31 +0200, Christian Brauner wrote:
+> > On Tue, Aug 08, 2023 at 07:34:20AM -0400, Jeff Layton wrote:
+> > > From: David Howells <dhowells@redhat.com>
+> > >
+> > > When NFS superblocks are created by automounting, their LSM parameter=
+s
+> > > aren't set in the fs_context struct prior to sget_fc() being called,
+> > > leading to failure to match existing superblocks.
+> > >
+> > > This bug leads to messages like the following appearing in dmesg when
+> > > fscache is enabled:
+> > >
+> > >     NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,=
+100000,100000,2ee,3a98,1d4c,3a98,1)
+> > >
+> > > Fix this by adding a new LSM hook to load fc->security for submount
+> > > creation.
+> > >
+> > > Signed-off-by: David Howells <dhowells@redhat.com>
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_moun=
+t() to it.")
+> > > Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inod=
+e)
+> > > Tested-by: Jeff Layton <jlayton@kernel.org>
+> > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> > > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+>
+> I've made a significant number of changes since Casey acked this. It
+> might be a good idea to drop his Acked-by (unless he wants to chime in
+> and ask us to keep it).
 
-Whitespace error.  Thanks,
+My apologies in that it took me some time to be able to come back to
+this, but v9 looks fine to me, and I have no problems with Christian
+sending this up via the VFS tree.
 
-Josef
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+--=20
+paul-moore.com
