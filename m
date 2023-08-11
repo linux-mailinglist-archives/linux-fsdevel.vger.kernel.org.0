@@ -2,147 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 68A2A779460
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 18:26:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59857779485
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 18:28:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230159AbjHKQ0N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 12:26:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41310 "EHLO
+        id S232749AbjHKQ2W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Aug 2023 12:28:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjHKQ0M (ORCPT
+        with ESMTP id S229610AbjHKQ2V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 12:26:12 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECAF418F;
-        Fri, 11 Aug 2023 09:26:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 87FA464ED5;
-        Fri, 11 Aug 2023 16:26:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AFF3C433C7;
-        Fri, 11 Aug 2023 16:26:05 +0000 (UTC)
-Date:   Fri, 11 Aug 2023 17:26:03 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-        Deepak Gupta <debug@rivosinc.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 19/36] arm64/gcs: Allocate a new GCS for threads with
- GCS enabled
-Message-ID: <ZNZhG/4rBpTenYVH@arm.com>
-References: <20230807-arm64-gcs-v4-0-68cfa37f9069@kernel.org>
- <20230807-arm64-gcs-v4-19-68cfa37f9069@kernel.org>
+        Fri, 11 Aug 2023 12:28:21 -0400
+Received: from 66-220-144-179.mail-mxout.facebook.com (66-220-144-179.mail-mxout.facebook.com [66.220.144.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6E18109
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 09:28:20 -0700 (PDT)
+Received: by devbig1114.prn1.facebook.com (Postfix, from userid 425415)
+        id DC108A076222; Fri, 11 Aug 2023 09:28:06 -0700 (PDT)
+From:   Stefan Roesch <shr@devkernel.io>
+To:     kernel-team@fb.com
+Cc:     shr@devkernel.io, akpm@linux-foundation.org, david@redhat.com,
+        linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+        riel@surriel.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v2] proc/ksm: add ksm stats to /proc/pid/smaps
+Date:   Fri, 11 Aug 2023 09:28:03 -0700
+Message-Id: <20230811162803.1361989-1-shr@devkernel.io>
+X-Mailer: git-send-email 2.39.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230807-arm64-gcs-v4-19-68cfa37f9069@kernel.org>
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,RDNS_DYNAMIC,SPF_HELO_PASS,SPF_NEUTRAL,
+        TVD_RCVD_IP autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 07, 2023 at 11:00:24PM +0100, Mark Brown wrote:
-> diff --git a/arch/arm64/mm/gcs.c b/arch/arm64/mm/gcs.c
-> index b0a67efc522b..1e059c37088d 100644
-> --- a/arch/arm64/mm/gcs.c
-> +++ b/arch/arm64/mm/gcs.c
-> @@ -8,6 +8,62 @@
->  #include <asm/cpufeature.h>
->  #include <asm/page.h>
->  
-> +static unsigned long alloc_gcs(unsigned long addr, unsigned long size,
-> +			       unsigned long token_offset, bool set_res_tok)
-> +{
-> +	int flags = MAP_ANONYMOUS | MAP_PRIVATE;
-> +	struct mm_struct *mm = current->mm;
-> +	unsigned long mapped_addr, unused;
-> +
-> +	if (addr)
-> +		flags |= MAP_FIXED_NOREPLACE;
-> +
-> +	mmap_write_lock(mm);
-> +	mapped_addr = do_mmap(NULL, addr, size, PROT_READ, flags,
-> +			      VM_SHADOW_STACK | VM_WRITE, 0, &unused, NULL);
+With madvise and prctl KSM can be enabled for different VMA's. Once it
+is enabled we can query how effective KSM is overall. However we cannot
+easily query if an individual VMA benefits from KSM.
 
-Why not PROT_WRITE as well? I guess I need to check the x86 patches
-since the do_mmap() called here has a different prototype than what's in
-mainline.
+This commit adds a KSM section to the /prod/<pid>/smaps file. It reports
+how many of the pages are KSM pages.
 
-This gets confusing since currently the VM_* flags are derived from the
-PROT_* flags passed to mmap(). But you skip the PROT_WRITE in favour of
-adding VM_WRITE directly.
+Here is a typical output:
 
-I haven't followed the x86 discussion but did we run out of PROT_* bits
-for a PROT_SHADOW_STACK?
+7f420a000000-7f421a000000 rw-p 00000000 00:00 0
+Size:             262144 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:               51212 kB
+Pss:                8276 kB
+Shared_Clean:        172 kB
+Shared_Dirty:      42996 kB
+Private_Clean:       196 kB
+Private_Dirty:      7848 kB
+Referenced:        15388 kB
+Anonymous:         51212 kB
+KSM:               41376 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+FilePmdMapped:         0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:             202016 kB
+SwapPss:            3882 kB
+Locked:                0 kB
+THPeligible:    0
+ProtectionKey:         0
+ksm_state:          0
+ksm_skip_base:      0
+ksm_skip_count:     0
+VmFlags: rd wr mr mw me nr mg anon
 
-> +	mmap_write_unlock(mm);
-> +
-> +	return mapped_addr;
-> +}
-> +
-> +static unsigned long gcs_size(unsigned long size)
-> +{
-> +	if (size)
-> +		return PAGE_ALIGN(size);
-> +
-> +	/* Allocate RLIMIT_STACK with limits of PAGE_SIZE..4G */
-> +	size = PAGE_ALIGN(min_t(unsigned long long,
-> +				rlimit(RLIMIT_STACK), SZ_4G));
-> +	return max(PAGE_SIZE, size);
-> +}
+This information also helps with the following workflow:
+- First enable KSM for all the VMA's of a process with prctl.
+- Then analyze with the above smaps report which VMA's benefit the most
+- Change the application (if possible) to add the corresponding madvise
+calls for the VMA's that benefit the most
 
-I saw Szabolcs commenting on the default size as well. Maybe we should
-go for RLIMIT_STACK/2 but let's see how the other sub-thread is going.
+Signed-off-by: Stefan Roesch <shr@devkernel.io>
+---
+ Documentation/filesystems/proc.rst | 3 +++
+ fs/proc/task_mmu.c                 | 5 +++++
+ 2 files changed, 8 insertions(+)
 
-> +
-> +unsigned long gcs_alloc_thread_stack(struct task_struct *tsk,
-> +				     unsigned long clone_flags, size_t size)
-> +{
-> +	unsigned long addr;
-> +
-> +	if (!system_supports_gcs())
-> +		return 0;
-> +
-> +	if (!task_gcs_el0_enabled(tsk))
-> +		return 0;
-> +
-> +	if ((clone_flags & (CLONE_VFORK | CLONE_VM)) != CLONE_VM)
-> +		return 0;
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesyste=
+ms/proc.rst
+index 7897a7dafcbc..4ef3c0bbf16a 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -461,6 +461,7 @@ Memory Area, or VMA) there is a series of lines such =
+as the following::
+     Private_Dirty:         0 kB
+     Referenced:          892 kB
+     Anonymous:             0 kB
++    KSM:                   0 kB
+     LazyFree:              0 kB
+     AnonHugePages:         0 kB
+     ShmemPmdMapped:        0 kB
+@@ -501,6 +502,8 @@ accessed.
+ a mapping associated with a file may contain anonymous pages: when MAP_P=
+RIVATE
+ and a page is modified, the file page is replaced by a private anonymous=
+ copy.
+=20
++"KSM" shows the amount of anonymous memory that has been de-duplicated.
++
+ "LazyFree" shows the amount of memory which is marked by madvise(MADV_FR=
+EE).
+ The memory isn't freed immediately with madvise(). It's freed in memory
+ pressure if the memory is clean. Please note that the printed value migh=
+t
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 51315133cdc2..f591c750ffda 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -396,6 +396,7 @@ struct mem_size_stats {
+ 	unsigned long swap;
+ 	unsigned long shared_hugetlb;
+ 	unsigned long private_hugetlb;
++	unsigned long ksm;
+ 	u64 pss;
+ 	u64 pss_anon;
+ 	u64 pss_file;
+@@ -452,6 +453,9 @@ static void smaps_account(struct mem_size_stats *mss,=
+ struct page *page,
+ 			mss->lazyfree +=3D size;
+ 	}
+=20
++	if (PageKsm(page))
++		mss->ksm +=3D size;
++
+ 	mss->resident +=3D size;
+ 	/* Accumulate the size in pages that have been accessed. */
+ 	if (young || page_is_young(page) || PageReferenced(page))
+@@ -822,6 +826,7 @@ static void __show_smap(struct seq_file *m, const str=
+uct mem_size_stats *mss,
+ 	SEQ_PUT_DEC(" kB\nPrivate_Dirty:  ", mss->private_dirty);
+ 	SEQ_PUT_DEC(" kB\nReferenced:     ", mss->referenced);
+ 	SEQ_PUT_DEC(" kB\nAnonymous:      ", mss->anonymous);
++	SEQ_PUT_DEC(" kB\nKSM:            ", mss->ksm);
+ 	SEQ_PUT_DEC(" kB\nLazyFree:       ", mss->lazyfree);
+ 	SEQ_PUT_DEC(" kB\nAnonHugePages:  ", mss->anonymous_thp);
+ 	SEQ_PUT_DEC(" kB\nShmemPmdMapped: ", mss->shmem_thp);
 
-Is it safe for CLONE_VFORK not to get a new shadow stack? A syscall for
-exec could push something to the stack. I guess the GCS pointer in the
-parent stays the same, so it wouldn't matter.
+base-commit: f4a280e5bb4a764a75d3215b61bc0f02b4c26417
+--=20
+2.39.3
 
-That said, I think this check should be somewhere higher up in the
-caller of gcs_alloc_thread_stack(). The copy_thread_gcs() function
-already does most of the above checks. Is the GCS allocation called from
-elsewhere as well?
-
--- 
-Catalin
