@@ -2,60 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 33384778751
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 08:16:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 436AD778768
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 08:27:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233551AbjHKGQ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 02:16:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36306 "EHLO
+        id S231580AbjHKG1N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Aug 2023 02:27:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233517AbjHKGQZ (ORCPT
+        with ESMTP id S229517AbjHKG1M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 02:16:25 -0400
-Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAE122D4F
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 23:16:24 -0700 (PDT)
-Received: by mail-vs1-xe33.google.com with SMTP id ada2fe7eead31-44781abd5a8so694714137.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 23:16:24 -0700 (PDT)
+        Fri, 11 Aug 2023 02:27:12 -0400
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C1AF2D4F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 23:27:11 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-586a3159588so24269977b3.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Aug 2023 23:27:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1691734584; x=1692339384;
+        d=google.com; s=20221208; t=1691735230; x=1692340030;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=k63lmr8I7sqJPk2JhZZQWH3JdgVkDU1otw9D0h7AzuA=;
-        b=E2x0gdiZ/pVqLIYLGDDCsoEUQDDNoRjtt/iz1R4NSiJbFmar3d8Hlx15JCkUvScQcI
-         9ShucdHVB0T9WfJex6c/wKRuJ8RgOs4dVHKsG8poxSCu9vn/Hx8hijITVVhvfSyKcCeM
-         lKGgZQlmO4qUZ7jtmJs/1QXeru4VG46rfhrsf+mTagfiekkU4mrrlW0GCFgjEvGdkYMW
-         mPrYc/hTApWZMhZs07bbywG9yZEZL99xflTrQXruEkM6bI1xaaBlMOj22kbfEoNDaGRu
-         4Ihw2fthsxGpUFQQVnWuwg+/BNfseTasvt4/GkWRvFCtyHnxZSu3P+9oeha1WPGZ6kvB
-         JmPw==
+        bh=LjSC6ORUGqX5v9IH/a5QjzTjJ0xPrBuZ4pptH8o9IgM=;
+        b=Ne5/1/YuoznmAWP9saoti+yPi0jnWl9VKghSRaCnRpWZ7kNaigo131ld1R4sZCWXqM
+         xtptL/obzPWlxsXVucEc3oZ4xmUq5seUpUn98/zCzzLrVv3rEWkugM13AkU/qG6VX1dm
+         y/JYsycPB7FgCJHOFC9703Kyw3lew4kxX3gDdpeTK6ormuMaU8wtH2CfpSRrsHn2f570
+         D0BkT8Y5oGI3Ie+WE6RJXuJ/xOAbo9z6es7jdLyxTRRXwUKS7Rz85MukUwZaLlw/rwDi
+         BkR60JRKmE0fy31UnWWmQcytaMlzBzyIoXN2ooIB4VemfkZPzGKD64GxN2uoWeL+Lmae
+         TKXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691734584; x=1692339384;
+        d=1e100.net; s=20221208; t=1691735230; x=1692340030;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k63lmr8I7sqJPk2JhZZQWH3JdgVkDU1otw9D0h7AzuA=;
-        b=VfXu+YFgiJjydtXLV7taflACOv92CGMxcXgvjQZU2oTcFFcekF6/xl+SrrGPJFaLdl
-         mHlPJ49e8eTvyOBBBq5bVi8X2FT2Z4LgtMDvF1Pqo1g+uLM2WQWW5JiyD/kYyH3WzyLz
-         Vno9Et2QmDq1v6NNdL4HjMVh6kk3SvBf+dJ1QCHLeKNSn4CyzcknH6+zUQvmsgFmhgqz
-         XsnU7SL8CSh+e2RCkQvVQ4ahK5/Y/Nd9+RdJF0Yj5cz5Idb+GYasDIQFwxZbUZbP8k/y
-         wLAUWc64GM5Q4aFW0ui1Yutc8J7r/wag/1Q1JRPliwHaBQDivtFCR1xSCIE9HnAveAgJ
-         afig==
-X-Gm-Message-State: AOJu0YzlaCXwzd4SWgd8n6gVE4Rh8hKFMrlvdfvke7ZZALgXekqmp7Nq
-        2DElV9YLlcUxkYinj66/YUfI2A==
-X-Google-Smtp-Source: AGHT+IGKZO8zd/JD5KljLPxbp3udF/OyhU30sxa+eu8czKTLWgnV1zl64yRaOhp2KRRBQ4LGpsIRfg==
-X-Received: by 2002:a67:ffd1:0:b0:443:6afe:e842 with SMTP id w17-20020a67ffd1000000b004436afee842mr592456vsq.35.1691734583817;
-        Thu, 10 Aug 2023 23:16:23 -0700 (PDT)
+        bh=LjSC6ORUGqX5v9IH/a5QjzTjJ0xPrBuZ4pptH8o9IgM=;
+        b=P898eT6bkdzgihmP1G46W7ohtfOT7pHlh/QwBTiCBw2jEzW30hOvkhXv82zIjN6qtL
+         FEeUUCLWCgUEbNUq99aY4078Qsr0ArjUu8IDKHft/NfOxC31DKqYIgi9xdhTUWNN6yBG
+         N7WY3EDcRYSWaivHw5GgCjOrsfX/Gchnxi+GpVb9PGHHJ0n3GFvA/7xwyRaBkAS9YiSm
+         4PXMF9MWjvLzGzsY5vQ/8yemNs4Snmyhhv+z2OGYzSWRLxDcsWvKBvaAbue5UUWHVRMu
+         EjGfMez5saXttL7zbj7Nek21tqz2GEF7dAHciISGmvqJD5dGAewfzWK4JoOt6j+tXAEP
+         HI3A==
+X-Gm-Message-State: AOJu0Yxr3w5stfeFQnXb3Tk7h3oAubuWpaxoI+vzOctlAS8/NB4aD5sg
+        qyIjYkQNkJqD+4WMMgfhJfIs6w==
+X-Google-Smtp-Source: AGHT+IEmm8MWAaG7syMMW88reDhcEhTyiYTMB0u94NqgqZhkO7TO6fu1NBNpSAC8ZfvcJtoyRS37fA==
+X-Received: by 2002:a0d:d4c9:0:b0:579:e6e4:a165 with SMTP id w192-20020a0dd4c9000000b00579e6e4a165mr5056049ywd.10.1691735230373;
+        Thu, 10 Aug 2023 23:27:10 -0700 (PDT)
 Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id o124-20020a254182000000b00d1f0204c1b6sm770452yba.27.2023.08.10.23.16.21
+        by smtp.gmail.com with ESMTPSA id h123-20020a0df781000000b0055a373a7e5asm817227ywf.131.2023.08.10.23.27.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Aug 2023 23:16:23 -0700 (PDT)
-Date:   Thu, 10 Aug 2023 23:16:20 -0700 (PDT)
+        Thu, 10 Aug 2023 23:27:09 -0700 (PDT)
+Date:   Thu, 10 Aug 2023 23:27:07 -0700 (PDT)
 From:   Hugh Dickins <hughd@google.com>
 X-X-Sender: hugh@ripple.attlocal.net
-To:     "Darrick J. Wong" <djwong@kernel.org>
-cc:     Christoph Hellwig <hch@infradead.org>,
-        Hugh Dickins <hughd@google.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+To:     Christian Brauner <brauner@kernel.org>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
         Oleksandr Tymoshenko <ovt@google.com>,
         Carlos Maiolino <cem@kernel.org>,
         Jeff Layton <jlayton@kernel.org>,
@@ -64,20 +61,22 @@ cc:     Christoph Hellwig <hch@infradead.org>,
         Chris Down <chris@chrisdown.name>, Tejun Heo <tj@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
         Pete Zaitcev <zaitcev@redhat.com>,
         Helge Deller <deller@gmx.de>,
         Topi Miettinen <toiwoton@gmail.com>,
-        Yu Kuai <yukuai3@huawei.com>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH vfs.tmpfs 4/5] tmpfs: trivial support for direct IO
-In-Reply-To: <20230810234124.GH11336@frogsfrogsfrogs>
-Message-ID: <5d913a4-a118-1218-25f2-32709b3e618@google.com>
-References: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com> <7c12819-9b94-d56-ff88-35623aa34180@google.com> <ZNOXfanlsgTrAsny@infradead.org> <20230810234124.GH11336@frogsfrogsfrogs>
+        Yu Kuai <yukuai3@huawei.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH vfs.tmpfs v2 4/5] tmpfs: trivial support for direct IO
+In-Reply-To: <7c12819-9b94-d56-ff88-35623aa34180@google.com>
+Message-ID: <6f2742-6f1f-cae9-7c5b-ed20fc53215@google.com>
+References: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com> <7c12819-9b94-d56-ff88-35623aa34180@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -86,73 +85,96 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 10 Aug 2023, Darrick J. Wong wrote:
-> On Wed, Aug 09, 2023 at 06:41:17AM -0700, Christoph Hellwig wrote:
-> > Please do not add a new ->direct_IO method.  I'm currently working hard
-> > on removing it, just set FMODE_CAN_ODIRECT and handle the fallback in
-> > your read_iter/write_iter methods.
-> > 
-> > But if we just start claiming direct I/O support for file systems that
-> > don't actually support it, I'm starting to seriously wonder why we
-> > bother with the flag at all and don't just allow O_DIRECT opens
-> > to always succeed..
-> 
-> I see it differently -- you can do byte-aligned directio to S_DAX files
-> on persistent memory, so I don't see why you can't do that for tmpfs
-> files too.
+Depending upon your philosophical viewpoint, either tmpfs always does
+direct IO, or it cannot ever do direct IO; but whichever, if tmpfs is to
+stand in for a more sophisticated filesystem, it can be helpful for tmpfs
+to support O_DIRECT.  So, give tmpfs a shmem_file_open() method, to set
+the FMODE_CAN_ODIRECT flag: then unchanged shmem_file_read_iter() and new
+shmem_file_write_iter() do the work (without any shmem_direct_IO() stub).
 
-Helpful support, thanks.  But I didn't read Christoph as unhappy with
-the granularity issue: just giving me directIOn to FMODE_CAN_ODIRECT,
-and rightly wondering why we ever fail O_DIRECTs.
+Perhaps later, once the direct_IO method has been eliminated from all
+filesystems, generic_file_write_iter() will be such that tmpfs can again
+use it, even for O_DIRECT.
 
-Hugh
+xfstests auto generic which were not run on tmpfs before but now pass:
+036 091 113 125 130 133 135 198 207 208 209 210 211 212 214 226 239 263
+323 355 391 406 412 422 427 446 451 465 551 586 591 609 615 647 708 729
+with no new failures.
 
-> 
-> (I'm not advocating for letting *disk* based filesystems allow O_DIRECT
-> even if read and writes are always going to go through the page cache
-> and get flushed to disk.  If programs wanted that, they'd use O_SYNC.)
-> 
-> /mnt is a pmem filesystem, /mnt/on/file has S_DAX set, and /mnt/off/file
-> does not:
-> 
-> # xfs_io -c statx /mnt/{on,off}/file
-> fd.path = "/mnt/on/file"
-> fd.flags = non-sync,non-direct,read-write
-> stat.ino = 132
-> stat.type = regular file
-> stat.size = 1048576
-> stat.blocks = 2048
-> fsxattr.xflags = 0x8002 [-p------------x--]
-> fsxattr.projid = 0
-> fsxattr.extsize = 0
-> fsxattr.cowextsize = 0
-> fsxattr.nextents = 1
-> fsxattr.naextents = 0
-> dioattr.mem = 0x200
-> dioattr.miniosz = 512
-> dioattr.maxiosz = 2147483136
-> fd.path = "/mnt/off/file"
-> fd.flags = non-sync,non-direct,read-write
-> stat.ino = 8388737
-> stat.type = regular file
-> stat.size = 1048576
-> stat.blocks = 2048
-> fsxattr.xflags = 0x2 [-p---------------]
-> fsxattr.projid = 0
-> fsxattr.extsize = 0
-> fsxattr.cowextsize = 0
-> fsxattr.nextents = 1
-> fsxattr.naextents = 0
-> dioattr.mem = 0x200
-> dioattr.miniosz = 512
-> dioattr.maxiosz = 2147483136
-> 
-> And now we try a byte-aligned direct write:
-> 
-> # xfs_io -d -c 'pwrite -S 0x58 47 1' /mnt/off/file
-> pwrite: Invalid argument
-> # xfs_io -d -c 'pwrite -S 0x58 47 1' /mnt/on/file
-> wrote 1/1 bytes at offset 47
-> 1.000000 bytes, 1 ops; 0.0001 sec (5.194 KiB/sec and 5319.1489 ops/sec)
-> 
-> --D
+LTP dio tests which were not run on tmpfs before but now pass:
+dio01 through dio30, except for dio04 and dio10, which fail because
+tmpfs dio read and write allow odd count: tmpfs could be made stricter,
+but would that be an improvement?
+
+Signed-off-by: Hugh Dickins <hughd@google.com>
+---
+Thanks for your earlier review, Jan: I've certainly not copied that
+into this entirely different version.  I prefer the v1, but fine if
+people prefer this v2.
+
+ mm/shmem.c | 32 ++++++++++++++++++++++++++++++--
+ 1 file changed, 30 insertions(+), 2 deletions(-)
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index ca43fb256b8e..b782edeb69aa 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2388,6 +2388,12 @@ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
+ 	return 0;
+ }
+ 
++static int shmem_file_open(struct inode *inode, struct file *file)
++{
++	file->f_mode |= FMODE_CAN_ODIRECT;
++	return generic_file_open(inode, file);
++}
++
+ #ifdef CONFIG_TMPFS_XATTR
+ static int shmem_initxattrs(struct inode *, const struct xattr *, void *);
+ 
+@@ -2839,6 +2845,28 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	return retval ? retval : error;
+ }
+ 
++static ssize_t shmem_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
++{
++	struct file *file = iocb->ki_filp;
++	struct inode *inode = file->f_mapping->host;
++	ssize_t ret;
++
++	inode_lock(inode);
++	ret = generic_write_checks(iocb, from);
++	if (ret <= 0)
++		goto unlock;
++	ret = file_remove_privs(file);
++	if (ret)
++		goto unlock;
++	ret = file_update_time(file);
++	if (ret)
++		goto unlock;
++	ret = generic_perform_write(iocb, from);
++unlock:
++	inode_unlock(inode);
++	return ret;
++}
++
+ static bool zero_pipe_buf_get(struct pipe_inode_info *pipe,
+ 			      struct pipe_buffer *buf)
+ {
+@@ -4434,12 +4462,12 @@ EXPORT_SYMBOL(shmem_aops);
+ 
+ static const struct file_operations shmem_file_operations = {
+ 	.mmap		= shmem_mmap,
+-	.open		= generic_file_open,
++	.open		= shmem_file_open,
+ 	.get_unmapped_area = shmem_get_unmapped_area,
+ #ifdef CONFIG_TMPFS
+ 	.llseek		= shmem_file_llseek,
+ 	.read_iter	= shmem_file_read_iter,
+-	.write_iter	= generic_file_write_iter,
++	.write_iter	= shmem_file_write_iter,
+ 	.fsync		= noop_fsync,
+ 	.splice_read	= shmem_file_splice_read,
+ 	.splice_write	= iter_file_splice_write,
+-- 
+2.35.3
