@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EC5A87796D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 20:09:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0C8F7796D4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 20:09:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237066AbjHKSJS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 14:09:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50822 "EHLO
+        id S237116AbjHKSJc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Aug 2023 14:09:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237035AbjHKSJQ (ORCPT
+        with ESMTP id S237064AbjHKSJS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 14:09:16 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E3EA30F1;
-        Fri, 11 Aug 2023 11:09:02 -0700 (PDT)
+        Fri, 11 Aug 2023 14:09:18 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0387035A8;
+        Fri, 11 Aug 2023 11:09:09 -0700 (PDT)
 Received: from localhost.localdomain (unknown [39.34.188.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 66E206607197;
-        Fri, 11 Aug 2023 19:08:55 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 35F6866071E6;
+        Fri, 11 Aug 2023 19:09:01 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1691777341;
-        bh=N1bb2bmImca/AwkgXk3ST8FG+ESCcX0dr73XZYNgZ+Y=;
+        s=mail; t=1691777348;
+        bh=t6KDLQboJXb75EqFmpDGqcwaoKQRU5LM6A+oefUjRKM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=diGoM56fNSeTTqO5vbMywyRi4uIMR5biVBqSMN6al3lMaCbN9XuCiIWaxrE1mWlbV
-         E0fEwWGLdf09H0ue2EKUw5IoY+mEN6f+sLjutvQ6acKF/8O2Oas7wdROJQJK2H3ZeS
-         SFeQO4c4yyxt1iXbxpATeCLcI6S4O/7knYyGtbJZOQLnvCODUAdZP1pxLtUOIBQOPz
-         K5xyNJTlVP3cmkDFkXeo/MrOI11Fp43zWsaCfh3ns1N3sTUQl9p1f1nkI1qULtpYoy
-         jf71yxnsxUgsX177LxaG26C68gE05epW9kkgB0t9JP2ZM86VXXy5yNGi1rUtNXeBbB
-         12QO9sXb8wCDQ==
+        b=obHqwrawRv+MYbqjqn7NpNf6BxwCx/rBnVR2zwUmMBlS4gvgp3l4AvlfvXlCX6URE
+         xCK0C+AoCW5fCpgLSGB85bTORCrZNM0hRtfxjimYvNnp3fbIQ+jKsuJv9cWGGVvB7B
+         LcNhArvitnRxESslH//FEY5MsvPLpw3aNcCOdZ0rP56EVtFKyfZA6FWAB9tmk7RHtq
+         irWtswv3Ds/y1ErUEvhbxl5EZpLfpaA7Nw9FEZI61nmMdR62TPBqEwzPOI3GonLTGx
+         TKagzpp3U0l10umNdY8Fb49fVgUCTQKXgk9HRHAUgkAuSzXIp+VoFnwFSgdh+ptOo0
+         7sPsG7ubXc86g==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
 To:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -58,14 +58,16 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Dan Williams <dan.j.williams@intel.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: [PATCH v29 1/6] userfaultfd: UFFD_FEATURE_WP_ASYNC
-Date:   Fri, 11 Aug 2023 23:08:37 +0500
-Message-Id: <20230811180842.3141781-2-usama.anjum@collabora.com>
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH v29 2/6] fs/proc/task_mmu: Implement IOCTL to get and optionally clear info about PTEs
+Date:   Fri, 11 Aug 2023 23:08:38 +0500
+Message-Id: <20230811180842.3141781-3-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230811180842.3141781-1-usama.anjum@collabora.com>
 References: <20230811180842.3141781-1-usama.anjum@collabora.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
@@ -76,463 +78,989 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Peter Xu <peterx@redhat.com>
+The PAGEMAP_SCAN IOCTL on the pagemap file can be used to get or optionally
+clear the info about page table entries. The following operations are supported
+in this IOCTL:
+- Scan the address range and get the memory ranges matching the provided criteria.
+  This is performed by default when the output buffer is specified.
+- Write-protect the pages. The PM_SCAN_WP_MATCHING is used to write-protect
+  the pages of interest. The PM_SCAN_CHECK_WPASYNC aborts the operation if
+  non-Async Write Protected pages are found. The ``PM_SCAN_WP_MATCHING`` can be
+  used with or without PM_SCAN_CHECK_WPASYNC.
+- Both of those operations can be combined into one atomic operation where we can
+  get and write protect the pages as well.
 
-This patch adds a new userfaultfd-wp feature UFFD_FEATURE_WP_ASYNC, that
-allows userfaultfd wr-protect faults to be resolved by the kernel directly.
+Following flags about pages are currently supported:
+- PAGE_IS_WPALLOWED - Page has async-write-protection enabled
+- PAGE_IS_WRITTEN - Page has been written to from the time it was write protected
+- PAGE_IS_FILE - Page is file backed
+- PAGE_IS_PRESENT - Page is present in the memory
+- PAGE_IS_SWAPPED - Page is in swapped
+- PAGE_IS_PFNZERO - Page has zero PFN
+- PAGE_IS_HUGE - Page is THP or Hugetlb backed
 
-It can be used like a high accuracy version of soft-dirty, without vma
-modifications during tracking, and also with ranged support by default
-rather than for a whole mm when reset the protections due to existence of
-ioctl(UFFDIO_WRITEPROTECT).
+This IOCTL can be extended to get information about more PTE bits. The
+entire address range passed by user [start, end) is scanned until either
+the user provided buffer is full or max_pages have been found.
 
-Several goals of such a dirty tracking interface:
-
-1. All types of memory should be supported and tracable. This is nature
-   for soft-dirty but should mention when the context is userfaultfd,
-   because it used to only support anon/shmem/hugetlb. The problem is for
-   a dirty tracking purpose these three types may not be enough, and it's
-   legal to track anything e.g. any page cache writes from mmap.
-
-2. Protections can be applied to partial of a memory range, without vma
-   split/merge fuss.  The hope is that the tracking itself should not
-   affect any vma layout change.  It also helps when reset happens because
-   the reset will not need mmap write lock which can block the tracee.
-
-3. Accuracy needs to be maintained.  This means we need pte markers to work
-   on any type of VMA.
-
-One could question that, the whole concept of async dirty tracking is not
-really close to fundamentally what userfaultfd used to be: it's not "a
-fault to be serviced by userspace" anymore. However, using userfaultfd-wp
-here as a framework is convenient for us in at least:
-
-1. VM_UFFD_WP vma flag, which has a very good name to suite something like
-   this, so we don't need VM_YET_ANOTHER_SOFT_DIRTY. Just use a new
-   feature bit to identify from a sync version of uffd-wp registration.
-
-2. PTE markers logic can be leveraged across the whole kernel to maintain
-   the uffd-wp bit as long as an arch supports, this also applies to this
-   case where uffd-wp bit will be a hint to dirty information and it will
-   not go lost easily (e.g. when some page cache ptes got zapped).
-
-3. Reuse ioctl(UFFDIO_WRITEPROTECT) interface for either starting or
-   resetting a range of memory, while there's no counterpart in the old
-   soft-dirty world, hence if this is wanted in a new design we'll need a
-   new interface otherwise.
-
-We can somehow understand that commonality because uffd-wp was
-fundamentally a similar idea of write-protecting pages just like
-soft-dirty.
-
-This implementation allows WP_ASYNC to imply WP_UNPOPULATED, because so far
-WP_ASYNC seems to not usable if without WP_UNPOPULATE.  This also gives us
-chance to modify impl of WP_ASYNC just in case it could be not depending on
-WP_UNPOPULATED anymore in the future kernels. It's also fine to imply that
-because both features will rely on PTE_MARKER_UFFD_WP config option, so
-they'll show up together (or both missing) in an UFFDIO_API probe.
-
-vma_can_userfault() now allows any VMA if the userfaultfd registration is
-only about async uffd-wp. So we can track dirty for all kinds of memory
-including generic file systems (like XFS, EXT4 or BTRFS).
-
-One trick worth mention in do_wp_page() is that we need to manually update
-vmf->orig_pte here because it can be used later with a pte_same() check -
-this path always has FAULT_FLAG_ORIG_PTE_VALID set in the flags.
-
-The major defect of this approach of dirty tracking is we need to populate
-the pgtables when tracking starts. Soft-dirty doesn't do it like that.
-It's unwanted in the case where the range of memory to track is huge and
-unpopulated (e.g., tracking updates on a 10G file with mmap() on top,
-without having any page cache installed yet). One way to improve this is
-to allow pte markers exist for larger than PTE level for PMD+. That will
-not change the interface if to implemented, so we can leave that for later.
-
-Co-developed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Reviewed-by: Andrei Vagin <avagin@gmail.com>
+Reviewed-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
+Changes in v29:
+- Cosmetic changes
+- Add and improve comments
+- Remove cur_buf as merging members issue has been removed
+
+Changes in v28:
+- Fix walk_end one last time after doing through testing
+
+Changes in v27:
+- Add PAGE_IS_HUGE
+- Iterate until temporary buffer is full to do less iterations
+- Don't check if PAGE_IS_FILE if no mask needs it as it is very
+  expensive to check per pte
+- bring is_interesting_page() outside pagemap_scan_output() to remove
+  the horrible return value check
+- Replace memcpy() with direct copy
+- rename end_addr to walk_end_addr in pagemap_scan_private
+- Abort walk if fatal_signal_pending()
+
+Changes in v26:
+Changes made by Usama:
+- Fix the wrong breaking of loop if page isn't interesting, skip intsead
+- Untag the address and save them into struct
+- Round off the end address to next page
+- Correct the partial hugetlb page handling and returning the error
+- Rename PAGE_IS_WPASYNC to PAGE_IS_WPALLOWED
+- Return walk ending address in walk_end instead of returning in start
+  as there is potential of replacing the memory tag
+
+Changes by Michał:
+1. the API:
+  a. return ranges as {begin, end} instead of {begin + len};
+  b. rename match "flags" to 'page categories' everywhere - this makes
+	it easier to differentiate the ioctl()s categorisation of pages
+	from struct page flags;
+  c. change {required + excluded} to {inverted + required}. This was
+	rejected before, but I'd like to illustrate the difference.
+	Old interface can be translated to the new by:
+		categories_inverted = excluded_mask
+		categories_mask = required_mask | excluded_mask
+		categories_anyof_mask = anyof_mask
+	The new way allows filtering by: A & (B | !C)
+		categories_inverted = C
+		categories_mask = A
+		categories_anyof_mask = B | C
+  e. allow no-op calls
+2. the implementation:
+  a. gather the page-categorising and write-protecting code in one place;
+  b. optimization: add whole-vma skipping for WP usecase;
+  c. extracted output limiting code to pagemap_scan_output();
+  d. extracted range coalescing to pagemap_scan_push_range();
+  e. extracted THP entry handling to pagemap_scan_thp_entry();
+  f. added a shortcut for non-WP hugetlb scan; avoids conditional
+	locking;
+  g. extracted scan buffer handling code out of do_pagemap_scan();
+  h. rework output code to always try to write pending ranges; if EFAULT
+	is generated it always overwrites the original error code;
+	(the case of SIGKILL is needlessly trying to write the output
+	now, but this should be rare case and ignoring it makes the code
+	not needing a goto)
+3.Change no-GET operation condition from `arg.return_mask == 0` to
+  `arg.vec == NULL`. This will allow issuing the ioctl with
+  return_mask == 0 to gather matching ranges when the exact category
+  is not interesting. (Anticipated for CRIU scanning a large sparse
+  anonymous mapping).
+
+Changes in v25:
+- Do proper filtering on hole as well (hole got missed earlier)
+
 Changes in v24:
-- Rebase on top of next-20230710
-- UFFD_FEATURE_WP_ASYNC has been defined to be (1 << 15) after the
-  rebase
+- Place WP markers in case of hole as well
+
+Changes in v23:
+- Set vec_buf_index to 0 only when vec_buf_index is set
+- Return -EFAULT instead of -EINVAL if vec is NULL
+- Correctly return the walk ending address to the page granularity
+
+Changes in v22:
+- Interface change to return walk ending address to user:
+  - Replace [start start + len) with [start, end)
+  - Return the ending address of the address walk in start
+
+Changes in v21:
+- Abort walk instead of returning error if WP is to be performed on
+  partial hugetlb
+- Changed the data types of some variables in pagemap_scan_private to
+  long
+
+Changes in v20:
+- Correct PAGE_IS_FILE and add PAGE_IS_PFNZERO
+
+Changes in v19:
+- Interface changes such as renaming, return mask and WP can be used
+  with any flags specified in masks
+- Internal code changes
 
 Changes in v18:
-- Rebase on top of next-20230613 (use ptep_get)
+- Rebased on top of next-20230613
+  - ptep_get() updates
+  - remove pmd_trans_unstable() and add ACTION_AGAIN
+- Review updates (Micheal)
 
 Changes in v17:
-- Rebase on top of next-20230525
+- Rebased on next-20230606
+- Made make_uffd_wp_*_pte() better and minor changes
+
+Changes in v16:
+- Fixed a corner case where kernel writes beyond user buffer by one
+  element
+- Bring back exclusive PM_SCAN_OP_WP
+- Cosmetic changes
+
+Changes in v15:
+- Build fix:
+  - Use generic tlb flush function in pagemap_scan_pmd_entry() instead of
+    using x86 specific flush function in do_pagemap_scan()
+  - Remove #ifdef from pagemap_scan_hugetlb_entry()
+  - Use mm instead of undefined vma->vm_mm
+
+Changes in v14:
+- Fix build error caused by #ifdef added at last minute in some configs
+
+Changes in v13:
+- Review updates
+- mmap_read_lock_killable() instead of mmap_read_lock()
+- Replace uffd_wp_range() with helpers which increases performance
+  drastically for OP_WP operations by reducing the number of tlb
+  flushing etc
+- Add MMU_NOTIFY_PROTECTION_VMA notification for the memory range
 
 Changes in v12:
-- Peter added the hugetlb support and revamped some other implementation
-- Transferred the authorship to Peter
-- Merge documentation to this patch
+- Add hugetlb support to cover all memory types
+- Merge "userfaultfd: Define dummy uffd_wp_range()" with this patch
+- Review updates to the code
 
 Changes in v11:
-- Fix return code in userfaultfd_register() and minor changes here and
-  there
-- Rebase on top of next-20230307
-- Base patches on UFFD_FEATURE_WP_UNPOPULATED https://lore.kernel.org/all/20230306213925.617814-1-peterx@redhat.com
-- UFFD_FEATURE_WP_ASYNC depends on UFFD_FEATURE_WP_UNPOPULATED to work
-  (correctly)
+- Find written pages in a better way
+- Fix a corner case (thanks Paul)
+- Improve the code/comments
+- remove ENGAGE_WP + ! GET operation
+- shorten the commit message in favour of moving documentation to
+  pagemap.rst
 
 Changes in v10:
-- Build fix
-- Update comments and add error condition to return error from uffd
-  register if hugetlb pages are present when wp async flag is set
+- move changes in tools/include/uapi/linux/fs.h to separate patch
+- update commit message
 
-Changes in v9:
-- Correct the fault resolution with code contributed by Peter
+Change in v8:
+- Correct is_pte_uffd_wp()
+- Improve readability and error checks
+- Remove some un-needed code
 
 Changes in v7:
-- Remove UFFDIO_WRITEPROTECT_MODE_ASYNC_WP and add UFFD_FEATURE_WP_ASYNC
-- Handle automatic page fault resolution in better way (thanks to Peter)
+- Rebase on top of latest next
+- Fix some corner cases
+- Base soft-dirty on the uffd wp async
+- Update the terminologies
+- Optimize the memory usage inside the ioctl
 ---
- Documentation/admin-guide/mm/userfaultfd.rst | 35 ++++++++++++++++++++
- fs/userfaultfd.c                             | 26 ++++++++++++---
- include/linux/userfaultfd_k.h                | 21 +++++++++++-
- include/uapi/linux/userfaultfd.h             |  9 ++++-
- mm/hugetlb.c                                 | 32 ++++++++++--------
- mm/memory.c                                  | 27 +++++++++++++--
- 6 files changed, 128 insertions(+), 22 deletions(-)
+ fs/proc/task_mmu.c      | 673 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/hugetlb.h |   1 +
+ include/uapi/linux/fs.h |  59 ++++
+ mm/hugetlb.c            |   2 +-
+ 4 files changed, 734 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/admin-guide/mm/userfaultfd.rst b/Documentation/admin-guide/mm/userfaultfd.rst
-index 4349a8c2b9783..203e26da5f920 100644
---- a/Documentation/admin-guide/mm/userfaultfd.rst
-+++ b/Documentation/admin-guide/mm/userfaultfd.rst
-@@ -244,6 +244,41 @@ write-protected (so future writes will also result in a WP fault). These ioctls
- support a mode flag (``UFFDIO_COPY_MODE_WP`` or ``UFFDIO_CONTINUE_MODE_WP``
- respectively) to configure the mapping this way.
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index c1e6531cb02ae..5271c634d2dc8 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -19,6 +19,8 @@
+ #include <linux/shmem_fs.h>
+ #include <linux/uaccess.h>
+ #include <linux/pkeys.h>
++#include <linux/minmax.h>
++#include <linux/overflow.h>
  
-+If the userfaultfd context has ``UFFD_FEATURE_WP_ASYNC`` feature bit set,
-+any vma registered with write-protection will work in async mode rather
-+than the default sync mode.
-+
-+In async mode, there will be no message generated when a write operation
-+happens, meanwhile the write-protection will be resolved automatically by
-+the kernel.  It can be seen as a more accurate version of soft-dirty
-+tracking and it can be different in a few ways:
-+
-+  - The dirty result will not be affected by vma changes (e.g. vma
-+    merging) because the dirty is only tracked by the pte.
-+
-+  - It supports range operations by default, so one can enable tracking on
-+    any range of memory as long as page aligned.
-+
-+  - Dirty information will not get lost if the pte was zapped due to
-+    various reasons (e.g. during split of a shmem transparent huge page).
-+
-+  - Due to a reverted meaning of soft-dirty (page clean when uffd-wp bit
-+    set; dirty when uffd-wp bit cleared), it has different semantics on
-+    some of the memory operations.  For example: ``MADV_DONTNEED`` on
-+    anonymous (or ``MADV_REMOVE`` on a file mapping) will be treated as
-+    dirtying of memory by dropping uffd-wp bit during the procedure.
-+
-+The user app can collect the "written/dirty" status by looking up the
-+uffd-wp bit for the pages being interested in /proc/pagemap.
-+
-+The page will not be under track of uffd-wp async mode until the page is
-+explicitly write-protected by ``ioctl(UFFDIO_WRITEPROTECT)`` with the mode
-+flag ``UFFDIO_WRITEPROTECT_MODE_WP`` set.  Trying to resolve a page fault
-+that was tracked by async mode userfaultfd-wp is invalid.
-+
-+When userfaultfd-wp async mode is used alone, it can be applied to all
-+kinds of memory.
-+
- Memory Poisioning Emulation
- ---------------------------
- 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index bbfaf5837a08a..938f29be55422 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -123,6 +123,11 @@ static bool userfaultfd_is_initialized(struct userfaultfd_ctx *ctx)
- 	return ctx->features & UFFD_FEATURE_INITIALIZED;
+ #include <asm/elf.h>
+ #include <asm/tlb.h>
+@@ -1749,11 +1751,682 @@ static int pagemap_release(struct inode *inode, struct file *file)
+ 	return 0;
  }
  
-+static bool userfaultfd_wp_async_ctx(struct userfaultfd_ctx *ctx)
++#define PM_SCAN_CATEGORIES	(PAGE_IS_WPALLOWED | PAGE_IS_WRITTEN |	\
++				 PAGE_IS_FILE |	PAGE_IS_PRESENT |	\
++				 PAGE_IS_SWAPPED | PAGE_IS_PFNZERO |	\
++				 PAGE_IS_HUGE)
++#define PM_SCAN_FLAGS		(PM_SCAN_WP_MATCHING | PM_SCAN_CHECK_WPASYNC)
++
++struct pagemap_scan_private {
++	struct pm_scan_arg arg;
++	unsigned long masks_of_interest, cur_vma_category;
++	struct page_region *vec_buf;
++	unsigned long vec_buf_len, vec_buf_index, found_pages, walk_end_addr;
++	struct page_region __user *vec_out;
++};
++
++static unsigned long pagemap_page_category(struct pagemap_scan_private *p,
++					   struct vm_area_struct *vma,
++					   unsigned long addr, pte_t pte)
 +{
-+	return ctx && (ctx->features & UFFD_FEATURE_WP_ASYNC);
++	unsigned long categories = 0;
++
++	if (pte_present(pte)) {
++		struct page *page;
++
++		categories |= PAGE_IS_PRESENT;
++		if (!pte_uffd_wp(pte))
++			categories |= PAGE_IS_WRITTEN;
++
++		if (p->masks_of_interest & PAGE_IS_FILE) {
++			page = vm_normal_page(vma, addr, pte);
++			if (page && !PageAnon(page))
++				categories |= PAGE_IS_FILE;
++		}
++
++		if (is_zero_pfn(pte_pfn(pte)))
++			categories |= PAGE_IS_PFNZERO;
++	} else if (is_swap_pte(pte)) {
++		swp_entry_t swp;
++
++		categories |= PAGE_IS_SWAPPED;
++		if (!pte_swp_uffd_wp_any(pte))
++			categories |= PAGE_IS_WRITTEN;
++
++		if (p->masks_of_interest & PAGE_IS_FILE) {
++			swp = pte_to_swp_entry(pte);
++			if (is_pfn_swap_entry(swp) &&
++			    !PageAnon(pfn_swap_entry_to_page(swp)))
++				categories |= PAGE_IS_FILE;
++		}
++	}
++
++	return categories;
 +}
 +
- /*
-  * Whether WP_UNPOPULATED is enabled on the uffd context.  It is only
-  * meaningful when userfaultfd_wp()==true on the vma and when it's
-@@ -1318,6 +1323,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
- 	bool basic_ioctls;
- 	unsigned long start, end, vma_end;
- 	struct vma_iterator vmi;
-+	bool wp_async = userfaultfd_wp_async_ctx(ctx);
- 	pgoff_t pgoff;
- 
- 	user_uffdio_register = (struct uffdio_register __user *) arg;
-@@ -1392,7 +1398,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
- 
- 		/* check not compatible vmas */
- 		ret = -EINVAL;
--		if (!vma_can_userfault(cur, vm_flags))
-+		if (!vma_can_userfault(cur, vm_flags, wp_async))
- 			goto out_unlock;
- 
- 		/*
-@@ -1453,7 +1459,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
- 	for_each_vma_range(vmi, vma, end) {
- 		cond_resched();
- 
--		BUG_ON(!vma_can_userfault(vma, vm_flags));
-+		BUG_ON(!vma_can_userfault(vma, vm_flags, wp_async));
- 		BUG_ON(vma->vm_userfaultfd_ctx.ctx &&
- 		       vma->vm_userfaultfd_ctx.ctx != ctx);
- 		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
-@@ -1553,6 +1559,7 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
- 	unsigned long start, end, vma_end;
- 	const void __user *buf = (void __user *)arg;
- 	struct vma_iterator vmi;
-+	bool wp_async = userfaultfd_wp_async_ctx(ctx);
- 	pgoff_t pgoff;
- 
- 	ret = -EFAULT;
-@@ -1607,7 +1614,7 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
- 		 * provides for more strict behavior to notice
- 		 * unregistration errors.
- 		 */
--		if (!vma_can_userfault(cur, cur->vm_flags))
-+		if (!vma_can_userfault(cur, cur->vm_flags, wp_async))
- 			goto out_unlock;
- 
- 		found = true;
-@@ -1623,7 +1630,7 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
- 	for_each_vma_range(vmi, vma, end) {
- 		cond_resched();
- 
--		BUG_ON(!vma_can_userfault(vma, vma->vm_flags));
-+		BUG_ON(!vma_can_userfault(vma, vma->vm_flags, wp_async));
- 
- 		/*
- 		 * Nothing to do: this vma is already registered into this
-@@ -2008,6 +2015,11 @@ static inline int userfaultfd_poison(struct userfaultfd_ctx *ctx, unsigned long
- 	return ret;
- }
- 
-+bool userfaultfd_wp_async(struct vm_area_struct *vma)
++static void make_uffd_wp_pte(struct vm_area_struct *vma,
++			     unsigned long addr, pte_t *pte)
 +{
-+	return userfaultfd_wp_async_ctx(vma->vm_userfaultfd_ctx.ctx);
++	pte_t ptent = ptep_get(pte);
++
++	if (pte_present(ptent)) {
++		pte_t old_pte;
++
++		old_pte = ptep_modify_prot_start(vma, addr, pte);
++		ptent = pte_mkuffd_wp(ptent);
++		ptep_modify_prot_commit(vma, addr, pte, old_pte, ptent);
++	} else if (is_swap_pte(ptent)) {
++		ptent = pte_swp_mkuffd_wp(ptent);
++		set_pte_at(vma->vm_mm, addr, pte, ptent);
++	} else {
++		set_pte_at(vma->vm_mm, addr, pte,
++			   make_pte_marker(PTE_MARKER_UFFD_WP));
++	}
 +}
 +
- static inline unsigned int uffd_ctx_features(__u64 user_features)
- {
- 	/*
-@@ -2041,6 +2053,11 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
- 	ret = -EPERM;
- 	if ((features & UFFD_FEATURE_EVENT_FORK) && !capable(CAP_SYS_PTRACE))
- 		goto err_out;
-+
-+	/* WP_ASYNC relies on WP_UNPOPULATED, choose it unconditionally */
-+	if (features & UFFD_FEATURE_WP_ASYNC)
-+		features |= UFFD_FEATURE_WP_UNPOPULATED;
-+
- 	/* report all available features and ioctls to userland */
- 	uffdio_api.features = UFFD_API_FEATURES;
- #ifndef CONFIG_HAVE_ARCH_USERFAULTFD_MINOR
-@@ -2053,6 +2070,7 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
- #ifndef CONFIG_PTE_MARKER_UFFD_WP
- 	uffdio_api.features &= ~UFFD_FEATURE_WP_HUGETLBFS_SHMEM;
- 	uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
-+	uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
- #endif
- 	uffdio_api.ioctls = UFFD_API_IOCTLS;
- 	ret = -EFAULT;
-diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-index ac8c6854097cd..c98df391bfd8f 100644
---- a/include/linux/userfaultfd_k.h
-+++ b/include/linux/userfaultfd_k.h
-@@ -161,11 +161,22 @@ static inline bool userfaultfd_armed(struct vm_area_struct *vma)
- }
- 
- static inline bool vma_can_userfault(struct vm_area_struct *vma,
--				     unsigned long vm_flags)
-+				     unsigned long vm_flags,
-+				     bool wp_async)
- {
-+	vm_flags &= __VM_UFFD_FLAGS;
-+
- 	if ((vm_flags & VM_UFFD_MINOR) &&
- 	    (!is_vm_hugetlb_page(vma) && !vma_is_shmem(vma)))
- 		return false;
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++static unsigned long pagemap_thp_category(pmd_t pmd)
++{
++	unsigned long categories = PAGE_IS_HUGE;
 +
 +	/*
-+	 * If wp async enabled, and WP is the only mode enabled, allow any
-+	 * memory type.
++	 * THPs don't support file-backed memory. So PAGE_IS_FILE
++	 * hasn't been checked here.
 +	 */
-+	if (wp_async && (vm_flags == VM_UFFD_WP))
-+		return true;
++	if (pmd_present(pmd)) {
++		categories |= PAGE_IS_PRESENT;
++		if (!pmd_uffd_wp(pmd))
++			categories |= PAGE_IS_WRITTEN;
++		if (is_zero_pfn(pmd_pfn(pmd)))
++			categories |= PAGE_IS_PFNZERO;
++	} else if (is_swap_pmd(pmd)) {
++		categories |= PAGE_IS_SWAPPED;
++		if (!pmd_swp_uffd_wp(pmd))
++			categories |= PAGE_IS_WRITTEN;
++	}
 +
- #ifndef CONFIG_PTE_MARKER_UFFD_WP
- 	/*
- 	 * If user requested uffd-wp but not enabled pte markers for
-@@ -175,6 +186,8 @@ static inline bool vma_can_userfault(struct vm_area_struct *vma,
- 	if ((vm_flags & VM_UFFD_WP) && !vma_is_anonymous(vma))
- 		return false;
- #endif
-+
-+	/* By default, allow any of anon|shmem|hugetlb */
- 	return vma_is_anonymous(vma) || is_vm_hugetlb_page(vma) ||
- 	    vma_is_shmem(vma);
- }
-@@ -197,6 +210,7 @@ extern int userfaultfd_unmap_prep(struct vm_area_struct *vma,
- extern void userfaultfd_unmap_complete(struct mm_struct *mm,
- 				       struct list_head *uf);
- extern bool userfaultfd_wp_unpopulated(struct vm_area_struct *vma);
-+extern bool userfaultfd_wp_async(struct vm_area_struct *vma);
- 
- #else /* CONFIG_USERFAULTFD */
- 
-@@ -297,6 +311,11 @@ static inline bool userfaultfd_wp_unpopulated(struct vm_area_struct *vma)
- 	return false;
- }
- 
-+static inline bool userfaultfd_wp_async(struct vm_area_struct *vma)
-+{
-+	return false;
++	return categories;
 +}
 +
- #endif /* CONFIG_USERFAULTFD */
++static void make_uffd_wp_pmd(struct vm_area_struct *vma,
++			     unsigned long addr, pmd_t *pmdp)
++{
++	pmd_t old, pmd = *pmdp;
++
++	if (pmd_present(pmd)) {
++		old = pmdp_invalidate_ad(vma, addr, pmdp);
++		pmd = pmd_mkuffd_wp(old);
++		set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
++	} else if (is_migration_entry(pmd_to_swp_entry(pmd))) {
++		pmd = pmd_swp_mkuffd_wp(pmd);
++		set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
++	}
++}
++#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
++
++#ifdef CONFIG_HUGETLB_PAGE
++static unsigned long pagemap_hugetlb_category(pte_t pte)
++{
++	unsigned long categories = PAGE_IS_HUGE;
++
++	/*
++	 * According to pagemap_hugetlb_range(), file-backed HugeTLB
++	 * page cannot be swapped. So PAGE_IS_FILE hasn't been checked
++	 * for swapped pages.
++	 */
++	if (pte_present(pte)) {
++		categories |= PAGE_IS_PRESENT;
++		if (!huge_pte_uffd_wp(pte))
++			categories |= PAGE_IS_WRITTEN;
++		if (!PageAnon(pte_page(pte)))
++			categories |= PAGE_IS_FILE;
++		if (is_zero_pfn(pte_pfn(pte)))
++			categories |= PAGE_IS_PFNZERO;
++	} else if (is_swap_pte(pte)) {
++		categories |= PAGE_IS_SWAPPED;
++		if (!pte_swp_uffd_wp_any(pte))
++			categories |= PAGE_IS_WRITTEN;
++	}
++
++	return categories;
++}
++
++static void make_uffd_wp_huge_pte(struct vm_area_struct *vma,
++				  unsigned long addr, pte_t *ptep,
++				  pte_t ptent)
++{
++	if (is_hugetlb_entry_hwpoisoned(ptent) || is_pte_marker(ptent))
++		return;
++
++	if (is_hugetlb_entry_migration(ptent))
++		set_huge_pte_at(vma->vm_mm, addr, ptep,
++				pte_swp_mkuffd_wp(ptent));
++	else if (!huge_pte_none(ptent))
++		huge_ptep_modify_prot_commit(vma, addr, ptep, ptent,
++					     huge_pte_mkuffd_wp(ptent));
++	else
++		set_huge_pte_at(vma->vm_mm, addr, ptep,
++				make_pte_marker(PTE_MARKER_UFFD_WP));
++}
++#endif /* CONFIG_HUGETLB_PAGE */
++
++static bool pagemap_scan_is_interesting_page(unsigned long categories,
++					     const struct pagemap_scan_private *p)
++{
++	categories ^= p->arg.category_inverted;
++	if ((categories & p->arg.category_mask) != p->arg.category_mask)
++		return false;
++	if (p->arg.category_anyof_mask && !(categories & p->arg.category_anyof_mask))
++		return false;
++
++	return true;
++}
++
++static bool pagemap_scan_is_interesting_vma(unsigned long categories,
++					    const struct pagemap_scan_private *p)
++{
++	unsigned long required = p->arg.category_mask & PAGE_IS_WPALLOWED;
++
++	categories ^= p->arg.category_inverted;
++	if ((categories & required) != required)
++		return false;
++
++	return true;
++}
++
++static int pagemap_scan_test_walk(unsigned long start, unsigned long end,
++				  struct mm_walk *walk)
++{
++	struct pagemap_scan_private *p = walk->private;
++	struct vm_area_struct *vma = walk->vma;
++	unsigned long vma_category = 0;
++
++	if (userfaultfd_wp_async(vma) && userfaultfd_wp_use_markers(vma))
++		vma_category |= PAGE_IS_WPALLOWED;
++	else if (p->arg.flags & PM_SCAN_CHECK_WPASYNC)
++		return -EPERM;
++
++	if (vma->vm_flags & VM_PFNMAP)
++		return 1;
++
++	if (!pagemap_scan_is_interesting_vma(vma_category, p))
++		return 1;
++
++	p->cur_vma_category = vma_category;
++
++	return 0;
++}
++
++static bool pagemap_scan_push_range(unsigned long categories,
++				    struct pagemap_scan_private *p,
++				    unsigned long addr, unsigned long end)
++{
++	struct page_region *cur_buf = &p->vec_buf[p->vec_buf_index];
++
++	/*
++	 * When there is no output buffer provided at all, the sentinel values
++	 * won't match here. There is no other way for `cur_buf->end` to be
++	 * non-zero other than it being non-empty.
++	 */
++	if (addr == cur_buf->end && categories == cur_buf->categories) {
++		cur_buf->end = end;
++		return true;
++	}
++
++	if (cur_buf->end) {
++		if (p->vec_buf_index >= p->vec_buf_len - 1)
++			return false;
++
++		cur_buf = &p->vec_buf[++p->vec_buf_index];
++	}
++
++	cur_buf->start = addr;
++	cur_buf->end = end;
++	cur_buf->categories = categories;
++
++	return true;
++}
++
++static void pagemap_scan_backout_range(struct pagemap_scan_private *p,
++				       unsigned long addr, unsigned long end)
++{
++	struct page_region *cur_buf = &p->vec_buf[p->vec_buf_index];
++
++	if (cur_buf->start != addr) {
++		cur_buf->end = addr;
++	} else {
++		cur_buf->start = cur_buf->end = 0;
++		if (p->vec_buf_index > 0)
++			p->vec_buf_index--;
++	}
++
++	p->found_pages -= (end - addr) / PAGE_SIZE;
++}
++
++static int pagemap_scan_output(unsigned long categories,
++			       struct pagemap_scan_private *p,
++			       unsigned long addr, unsigned long *end)
++{
++	unsigned long n_pages, total_pages;
++	int ret = 0;
++
++	if (!p->vec_buf)
++		return 0;
++
++	categories &= p->arg.return_mask;
++
++	n_pages = (*end - addr) / PAGE_SIZE;
++	if (check_add_overflow(p->found_pages, n_pages, &total_pages) ||
++	    total_pages > p->arg.max_pages) {
++		size_t n_too_much = total_pages - p->arg.max_pages;
++		*end -= n_too_much * PAGE_SIZE;
++		n_pages -= n_too_much;
++		ret = -ENOSPC;
++	}
++
++	if (!pagemap_scan_push_range(categories, p, addr, *end)) {
++		*end = addr;
++		n_pages = 0;
++		ret = -ENOSPC;
++	}
++
++	p->found_pages += n_pages;
++	if (ret)
++		p->walk_end_addr = *end;
++
++	return ret;
++}
++
++static int pagemap_scan_thp_entry(pmd_t *pmd, unsigned long start,
++				  unsigned long end, struct mm_walk *walk)
++{
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	struct pagemap_scan_private *p = walk->private;
++	struct vm_area_struct *vma = walk->vma;
++	unsigned long categories;
++	spinlock_t *ptl;
++	int ret = 0;
++
++	ptl = pmd_trans_huge_lock(pmd, vma);
++	if (!ptl)
++		return -ENOENT;
++
++	categories = p->cur_vma_category | pagemap_thp_category(*pmd);
++
++	if (!pagemap_scan_is_interesting_page(categories, p))
++		goto out_unlock;
++
++	ret = pagemap_scan_output(categories, p, start, &end);
++	if (start == end)
++		goto out_unlock;
++
++	if (~p->arg.flags & PM_SCAN_WP_MATCHING)
++		goto out_unlock;
++	if (~categories & PAGE_IS_WRITTEN)
++		goto out_unlock;
++
++	/*
++	 * Break huge page into small pages if the WP operation
++	 * needs to be performed on a portion of the huge page.
++	 */
++	if (end != start + HPAGE_SIZE) {
++		spin_unlock(ptl);
++		split_huge_pmd(vma, pmd, start);
++		pagemap_scan_backout_range(p, start, end);
++		/* Report as if there was no THP */
++		return -ENOENT;
++	}
++
++	make_uffd_wp_pmd(vma, start, pmd);
++	flush_tlb_range(vma, start, end);
++out_unlock:
++	spin_unlock(ptl);
++	return ret;
++#else /* !CONFIG_TRANSPARENT_HUGEPAGE */
++	return -ENOENT;
++#endif
++}
++
++static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
++				  unsigned long end, struct mm_walk *walk)
++{
++	struct pagemap_scan_private *p = walk->private;
++	struct vm_area_struct *vma = walk->vma;
++	unsigned long addr, flush_end = 0;
++	pte_t *pte, *start_pte;
++	spinlock_t *ptl;
++	int ret;
++
++	arch_enter_lazy_mmu_mode();
++
++	ret = pagemap_scan_thp_entry(pmd, start, end, walk);
++	if (ret != -ENOENT) {
++		arch_leave_lazy_mmu_mode();
++		return ret;
++	}
++
++	ret = 0;
++	start_pte = pte = pte_offset_map_lock(vma->vm_mm, pmd, start, &ptl);
++	if (!pte) {
++		arch_leave_lazy_mmu_mode();
++		walk->action = ACTION_AGAIN;
++		return 0;
++	}
++
++	for (addr = start; addr != end; pte++, addr += PAGE_SIZE) {
++		unsigned long categories = p->cur_vma_category |
++					   pagemap_page_category(p, vma, addr, ptep_get(pte));
++		unsigned long next = addr + PAGE_SIZE;
++
++		if (!pagemap_scan_is_interesting_page(categories, p))
++			continue;
++
++		ret = pagemap_scan_output(categories, p, addr, &next);
++		if (next == addr)
++			break;
++
++		if (~p->arg.flags & PM_SCAN_WP_MATCHING)
++			continue;
++		if (~categories & PAGE_IS_WRITTEN)
++			continue;
++
++		make_uffd_wp_pte(vma, addr, pte);
++		if (!flush_end)
++			start = addr;
++		flush_end = next;
++	}
++
++	if (flush_end)
++		flush_tlb_range(vma, start, addr);
++
++	pte_unmap_unlock(start_pte, ptl);
++	arch_leave_lazy_mmu_mode();
++
++	cond_resched();
++	return ret;
++}
++
++#ifdef CONFIG_HUGETLB_PAGE
++static int pagemap_scan_hugetlb_entry(pte_t *ptep, unsigned long hmask,
++				      unsigned long start, unsigned long end,
++				      struct mm_walk *walk)
++{
++	struct pagemap_scan_private *p = walk->private;
++	struct vm_area_struct *vma = walk->vma;
++	unsigned long categories;
++	spinlock_t *ptl;
++	int ret = 0;
++	pte_t pte;
++
++	if (~p->arg.flags & PM_SCAN_WP_MATCHING) {
++		/* Go the short route when not write-protecting pages. */
++
++		pte = huge_ptep_get(ptep);
++		categories = p->cur_vma_category | pagemap_hugetlb_category(pte);
++
++		if (!pagemap_scan_is_interesting_page(categories, p))
++			return 0;
++
++		return pagemap_scan_output(categories, p, start, &end);
++	}
++
++	i_mmap_lock_write(vma->vm_file->f_mapping);
++	ptl = huge_pte_lock(hstate_vma(vma), vma->vm_mm, ptep);
++
++	pte = huge_ptep_get(ptep);
++	categories = p->cur_vma_category | pagemap_hugetlb_category(pte);
++
++	if (!pagemap_scan_is_interesting_page(categories, p))
++		goto out_unlock;
++
++	ret = pagemap_scan_output(categories, p, start, &end);
++	if (start == end)
++		goto out_unlock;
++
++	if (~categories & PAGE_IS_WRITTEN)
++		goto out_unlock;
++
++	if (end != start + HPAGE_SIZE) {
++		/* Partial HugeTLB page WP isn't possible. */
++		pagemap_scan_backout_range(p, start, end);
++		p->walk_end_addr = start;
++		ret = 0;
++		goto out_unlock;
++	}
++
++	make_uffd_wp_huge_pte(vma, start, ptep, pte);
++	flush_hugetlb_tlb_range(vma, start, end);
++
++out_unlock:
++	spin_unlock(ptl);
++	i_mmap_unlock_write(vma->vm_file->f_mapping);
++
++	return ret;
++}
++#else
++#define pagemap_scan_hugetlb_entry NULL
++#endif
++
++static int pagemap_scan_pte_hole(unsigned long addr, unsigned long end,
++				 int depth, struct mm_walk *walk)
++{
++	struct pagemap_scan_private *p = walk->private;
++	struct vm_area_struct *vma = walk->vma;
++	int ret, err;
++
++	if (!vma || !pagemap_scan_is_interesting_page(p->cur_vma_category, p))
++		return 0;
++
++	ret = pagemap_scan_output(p->cur_vma_category, p, addr, &end);
++	if (addr == end)
++		return ret;
++
++	if (~p->arg.flags & PM_SCAN_WP_MATCHING)
++		return ret;
++
++	err = uffd_wp_range(vma, addr, end - addr, true);
++	if (err < 0)
++		ret = err;
++
++	return ret;
++}
++
++static const struct mm_walk_ops pagemap_scan_ops = {
++	.test_walk = pagemap_scan_test_walk,
++	.pmd_entry = pagemap_scan_pmd_entry,
++	.pte_hole = pagemap_scan_pte_hole,
++	.hugetlb_entry = pagemap_scan_hugetlb_entry,
++};
++
++static int pagemap_scan_get_args(struct pm_scan_arg *arg,
++				 unsigned long uarg)
++{
++	if (copy_from_user(arg, (void __user *)uarg, sizeof(*arg)))
++		return -EFAULT;
++
++	if (arg->size != sizeof(struct pm_scan_arg))
++		return -EINVAL;
++
++	/* Validate requested features */
++	if (arg->flags & ~PM_SCAN_FLAGS)
++		return -EINVAL;
++	if ((arg->category_inverted | arg->category_mask |
++	     arg->category_anyof_mask | arg->return_mask) & ~PM_SCAN_CATEGORIES)
++		return -EINVAL;
++
++	arg->start = untagged_addr((unsigned long)arg->start);
++	arg->end = untagged_addr((unsigned long)arg->end);
++	arg->vec = untagged_addr((unsigned long)arg->vec);
++
++	/* Validate memory pointers */
++	if (!IS_ALIGNED(arg->start, PAGE_SIZE))
++		return -EINVAL;
++	if (!access_ok((void __user *)arg->start, arg->end - arg->start))
++		return -EFAULT;
++	if (!arg->vec && arg->vec_len)
++		return -EINVAL;
++	if (arg->vec && !access_ok((void __user *)arg->vec,
++			      arg->vec_len * sizeof(struct page_region)))
++		return -EFAULT;
++
++	/* Fixup default values */
++	arg->end = ALIGN(arg->end, PAGE_SIZE);
++	if (!arg->max_pages)
++		arg->max_pages = ULONG_MAX;
++
++	return 0;
++}
++
++static int pagemap_scan_writeback_args(struct pm_scan_arg *arg,
++				       unsigned long uargl)
++{
++	struct pm_scan_arg __user *uarg	= (void __user *)uargl;
++
++	if (copy_to_user(&uarg->walk_end, &arg->walk_end, sizeof(arg->walk_end)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static int pagemap_scan_init_bounce_buffer(struct pagemap_scan_private *p)
++{
++	if (!p->arg.vec_len)
++		return 0;
++
++	/*
++	 * Allocate a smaller buffer to get output from inside the page
++	 * walk functions and walk the range in PAGEMAP_WALK_SIZE chunks.
++	 */
++	p->vec_buf_len = min_t(size_t, PAGEMAP_WALK_SIZE >> PAGE_SHIFT,
++			       p->arg.vec_len);
++	p->vec_buf = kmalloc_array(p->vec_buf_len, sizeof(*p->vec_buf),
++				   GFP_KERNEL);
++	if (!p->vec_buf)
++		return -ENOMEM;
++
++	p->vec_buf[0].end = 0;
++	p->vec_out = (struct page_region __user *)p->arg.vec;
++
++	return 0;
++}
++
++static int pagemap_scan_flush_buffer(struct pagemap_scan_private *p)
++{
++	const struct page_region *buf = p->vec_buf;
++	int n = (int)p->vec_buf_index;
++
++	if (p->arg.vec_len == 0)
++		return 0;
++
++	if (buf[n].end && buf[n].end != buf[n].start)
++		n++;
++
++	if (!n)
++		return 0;
++
++	if (copy_to_user(p->vec_out, buf, n * sizeof(*buf)))
++		return -EFAULT;
++
++	p->arg.vec_len -= n;
++	p->vec_out += n;
++
++	p->vec_buf_index = 0;
++	p->vec_buf_len = min_t(size_t, p->vec_buf_len, p->arg.vec_len);
++	p->vec_buf[0].end = 0;
++
++	return n;
++}
++
++static long do_pagemap_scan(struct mm_struct *mm, unsigned long uarg)
++{
++	struct mmu_notifier_range range;
++	struct pagemap_scan_private p = {0};
++	unsigned long walk_start;
++	size_t n_ranges_out = 0;
++	int ret;
++
++	ret = pagemap_scan_get_args(&p.arg, uarg);
++	if (ret)
++		return ret;
++
++	p.masks_of_interest = p.arg.category_inverted | p.arg.category_mask |
++			      p.arg.category_anyof_mask | p.arg.return_mask;
++	ret = pagemap_scan_init_bounce_buffer(&p);
++	if (ret)
++		return ret;
++
++	/* Protection change for the range is going to happen. */
++	if (p.arg.flags & PM_SCAN_WP_MATCHING) {
++		mmu_notifier_range_init(&range, MMU_NOTIFY_PROTECTION_VMA, 0,
++					mm, p.arg.start, p.arg.end);
++		mmu_notifier_invalidate_range_start(&range);
++	}
++
++	for (walk_start = p.arg.start; walk_start < p.arg.end;
++			walk_start = p.arg.walk_end) {
++		int n_out;
++
++		if (fatal_signal_pending(current)) {
++			ret = -EINTR;
++			break;
++		}
++
++		ret = mmap_read_lock_killable(mm);
++		if (ret)
++			break;
++		ret = walk_page_range(mm, walk_start, p.arg.end,
++				      &pagemap_scan_ops, &p);
++		mmap_read_unlock(mm);
++
++		n_out = pagemap_scan_flush_buffer(&p);
++		if (n_out < 0)
++			ret = n_out;
++		else
++			n_ranges_out += n_out;
++
++		p.walk_end_addr = p.walk_end_addr ? p.walk_end_addr : p.arg.end;
++
++		if (ret != -ENOSPC || p.arg.vec_len == 0 ||
++		    p.found_pages == p.arg.max_pages)
++			break;
++	}
++
++	/* ENOSPC signifies early stop (buffer full) from the walk. */
++	if (!ret || ret == -ENOSPC)
++		ret = n_ranges_out;
++
++	p.arg.walk_end = p.walk_end_addr ? p.walk_end_addr : walk_start;
++	if (pagemap_scan_writeback_args(&p.arg, uarg))
++		ret = -EFAULT;
++
++	if (p.arg.flags & PM_SCAN_WP_MATCHING)
++		mmu_notifier_invalidate_range_end(&range);
++
++	kfree(p.vec_buf);
++	return ret;
++}
++
++static long do_pagemap_cmd(struct file *file, unsigned int cmd,
++			   unsigned long arg)
++{
++	struct mm_struct *mm = file->private_data;
++
++	switch (cmd) {
++	case PAGEMAP_SCAN:
++		return do_pagemap_scan(mm, arg);
++
++	default:
++		return -EINVAL;
++	}
++}
++
+ const struct file_operations proc_pagemap_operations = {
+ 	.llseek		= mem_lseek, /* borrow this */
+ 	.read		= pagemap_read,
+ 	.open		= pagemap_open,
+ 	.release	= pagemap_release,
++	.unlocked_ioctl = do_pagemap_cmd,
++	.compat_ioctl	= do_pagemap_cmd,
+ };
+ #endif /* CONFIG_PROC_PAGE_MONITOR */
  
- static inline bool userfaultfd_wp_use_markers(struct vm_area_struct *vma)
-diff --git a/include/uapi/linux/userfaultfd.h b/include/uapi/linux/userfaultfd.h
-index 62151706c5a38..0dbc81015018b 100644
---- a/include/uapi/linux/userfaultfd.h
-+++ b/include/uapi/linux/userfaultfd.h
-@@ -40,7 +40,8 @@
- 			   UFFD_FEATURE_EXACT_ADDRESS |		\
- 			   UFFD_FEATURE_WP_HUGETLBFS_SHMEM |	\
- 			   UFFD_FEATURE_WP_UNPOPULATED |	\
--			   UFFD_FEATURE_POISON)
-+			   UFFD_FEATURE_POISON |		\
-+			   UFFD_FEATURE_WP_ASYNC)
- #define UFFD_API_IOCTLS				\
- 	((__u64)1 << _UFFDIO_REGISTER |		\
- 	 (__u64)1 << _UFFDIO_UNREGISTER |	\
-@@ -216,6 +217,11 @@ struct uffdio_api {
- 	 * (i.e. empty ptes).  This will be the default behavior for shmem
- 	 * & hugetlbfs, so this flag only affects anonymous memory behavior
- 	 * when userfault write-protection mode is registered.
-+	 *
-+	 * UFFD_FEATURE_WP_ASYNC indicates that userfaultfd write-protection
-+	 * asynchronous mode is supported in which the write fault is
-+	 * automatically resolved and write-protection is un-set.
-+	 * It implies UFFD_FEATURE_WP_UNPOPULATED.
- 	 */
- #define UFFD_FEATURE_PAGEFAULT_FLAG_WP		(1<<0)
- #define UFFD_FEATURE_EVENT_FORK			(1<<1)
-@@ -232,6 +238,7 @@ struct uffdio_api {
- #define UFFD_FEATURE_WP_HUGETLBFS_SHMEM		(1<<12)
- #define UFFD_FEATURE_WP_UNPOPULATED		(1<<13)
- #define UFFD_FEATURE_POISON			(1<<14)
-+#define UFFD_FEATURE_WP_ASYNC			(1<<15)
- 	__u64 features;
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 0a393bc02f25b..8f8ff07453f22 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -259,6 +259,7 @@ long hugetlb_change_protection(struct vm_area_struct *vma,
+ 		unsigned long cp_flags);
  
- 	__u64 ioctls;
+ bool is_hugetlb_entry_migration(pte_t pte);
++bool is_hugetlb_entry_hwpoisoned(pte_t pte);
+ void hugetlb_unshare_all_pmds(struct vm_area_struct *vma);
+ 
+ #else /* !CONFIG_HUGETLB_PAGE */
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index b7b56871029c5..0202af0434791 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -305,4 +305,63 @@ typedef int __bitwise __kernel_rwf_t;
+ #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
+ 			 RWF_APPEND)
+ 
++/* Pagemap ioctl */
++#define PAGEMAP_SCAN	_IOWR('f', 16, struct pm_scan_arg)
++
++/* Bitmasks provided in pm_scan_args masks and reported in page_region.categories. */
++#define PAGE_IS_WPALLOWED	(1 << 0)
++#define PAGE_IS_WRITTEN		(1 << 1)
++#define PAGE_IS_FILE		(1 << 2)
++#define PAGE_IS_PRESENT		(1 << 3)
++#define PAGE_IS_SWAPPED		(1 << 4)
++#define PAGE_IS_PFNZERO		(1 << 5)
++#define PAGE_IS_HUGE		(1 << 6)
++
++/*
++ * struct page_region - Page region with flags
++ * @start:	Start of the region
++ * @end:	End of the region (exclusive)
++ * @categories:	PAGE_IS_* category bitmask for the region
++ */
++struct page_region {
++	__u64 start;
++	__u64 end;
++	__u64 categories;
++};
++
++/* Flags for PAGEMAP_SCAN ioctl */
++#define PM_SCAN_WP_MATCHING	(1 << 0)	/* Write protect the pages matched. */
++#define PM_SCAN_CHECK_WPASYNC	(1 << 1)	/* Abort the scan when a non-WP-enabled page is found. */
++
++/*
++ * struct pm_scan_arg - Pagemap ioctl argument
++ * @size:		Size of the structure
++ * @flags:		Flags for the IOCTL
++ * @start:		Starting address of the region
++ * @end:		Ending address of the region
++ * @walk_end		Address where the scan stopped (written by kernel).
++ *			walk_end == end (tag removed) informs that the scan completed on entire range.
++ * @vec:		Address of page_region struct array for output
++ * @vec_len:		Length of the page_region struct array
++ * @max_pages:		Optional limit for number of returned pages (0 = disabled)
++ * @category_inverted:	PAGE_IS_* categories which values match if 0 instead of 1
++ * @category_mask:	Skip pages for which any category doesn't match
++ * @category_anyof_mask: Skip pages for which no category matches
++ * @return_mask:	PAGE_IS_* categories that are to be reported in `page_region`s returned
++ */
++struct pm_scan_arg {
++	__u64 size;
++	__u64 flags;
++	__u64 start;
++	__u64 end;
++	__u64 walk_end;
++	__u64 vec;
++	__u64 vec_len;
++	__u64 max_pages;
++	__u64 category_inverted;
++	__u64 category_mask;
++	__u64 category_anyof_mask;
++	__u64 return_mask;
++};
++
+ #endif /* _UAPI_LINUX_FS_H */
 diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 154cc5b315727..a073e6ed8900b 100644
+index a073e6ed8900b..3b07db0a4f2d9 100644
 --- a/mm/hugetlb.c
 +++ b/mm/hugetlb.c
-@@ -6191,21 +6191,27 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 	/* Handle userfault-wp first, before trying to lock more pages */
- 	if (userfaultfd_wp(vma) && huge_pte_uffd_wp(huge_ptep_get(ptep)) &&
- 	    (flags & FAULT_FLAG_WRITE) && !huge_pte_write(entry)) {
--		struct vm_fault vmf = {
--			.vma = vma,
--			.address = haddr,
--			.real_address = address,
--			.flags = flags,
--		};
-+		if (!userfaultfd_wp_async(vma)) {
-+			struct vm_fault vmf = {
-+				.vma = vma,
-+				.address = haddr,
-+				.real_address = address,
-+				.flags = flags,
-+			};
+@@ -5008,7 +5008,7 @@ bool is_hugetlb_entry_migration(pte_t pte)
+ 		return false;
+ }
  
--		spin_unlock(ptl);
--		if (pagecache_folio) {
--			folio_unlock(pagecache_folio);
--			folio_put(pagecache_folio);
-+			spin_unlock(ptl);
-+			if (pagecache_folio) {
-+				folio_unlock(pagecache_folio);
-+				folio_put(pagecache_folio);
-+			}
-+			hugetlb_vma_unlock_read(vma);
-+			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
-+			return handle_userfault(&vmf, VM_UFFD_WP);
- 		}
--		hugetlb_vma_unlock_read(vma);
--		mutex_unlock(&hugetlb_fault_mutex_table[hash]);
--		return handle_userfault(&vmf, VM_UFFD_WP);
-+
-+		entry = huge_pte_clear_uffd_wp(entry);
-+		set_huge_pte_at(mm, haddr, ptep, entry);
-+		/* Fallthrough to CoW */
- 	}
- 
- 	/*
-diff --git a/mm/memory.c b/mm/memory.c
-index 7ff73a197cced..94a24ac2270b2 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3466,11 +3466,28 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
- 	const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct folio *folio = NULL;
-+	pte_t pte;
- 
- 	if (likely(!unshare)) {
- 		if (userfaultfd_pte_wp(vma, ptep_get(vmf->pte))) {
--			pte_unmap_unlock(vmf->pte, vmf->ptl);
--			return handle_userfault(vmf, VM_UFFD_WP);
-+			if (!userfaultfd_wp_async(vma)) {
-+				pte_unmap_unlock(vmf->pte, vmf->ptl);
-+				return handle_userfault(vmf, VM_UFFD_WP);
-+			}
-+
-+			/*
-+			 * Nothing needed (cache flush, TLB invalidations,
-+			 * etc.) because we're only removing the uffd-wp bit,
-+			 * which is completely invisible to the user.
-+			 */
-+			pte = pte_clear_uffd_wp(ptep_get(vmf->pte));
-+
-+			set_pte_at(vma->vm_mm, vmf->address, vmf->pte, pte);
-+			/*
-+			 * Update this to be prepared for following up CoW
-+			 * handling
-+			 */
-+			vmf->orig_pte = pte;
- 		}
- 
- 		/*
-@@ -4965,8 +4982,11 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
- 
- 	if (vma_is_anonymous(vmf->vma)) {
- 		if (likely(!unshare) &&
--		    userfaultfd_huge_pmd_wp(vmf->vma, vmf->orig_pmd))
-+		    userfaultfd_huge_pmd_wp(vmf->vma, vmf->orig_pmd)) {
-+			if (userfaultfd_wp_async(vmf->vma))
-+				goto split;
- 			return handle_userfault(vmf, VM_UFFD_WP);
-+		}
- 		return do_huge_pmd_wp_page(vmf);
- 	}
- 
-@@ -4978,6 +4998,7 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
- 		}
- 	}
- 
-+split:
- 	/* COW or write-notify handled on pte level: split pmd. */
- 	__split_huge_pmd(vmf->vma, vmf->pmd, vmf->address, false, NULL);
+-static bool is_hugetlb_entry_hwpoisoned(pte_t pte)
++bool is_hugetlb_entry_hwpoisoned(pte_t pte)
+ {
+ 	swp_entry_t swp;
  
 -- 
 2.40.1
