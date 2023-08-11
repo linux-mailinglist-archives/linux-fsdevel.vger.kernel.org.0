@@ -2,90 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 21A6C778F7B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 14:27:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9833E778FB4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 14:40:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236456AbjHKM1d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 08:27:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40372 "EHLO
+        id S235232AbjHKMky (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Aug 2023 08:40:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235414AbjHKM1c (ORCPT
+        with ESMTP id S229379AbjHKMkx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 08:27:32 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E55FE60;
-        Fri, 11 Aug 2023 05:27:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=96Jyxa0hgrG24aZgu2ilDmsPaDJbIFT8CvAcqFGq7ak=; b=Lt8QMt/qiwPklQXJKNxAAayl50
-        ejm5z3TauQQgWXDYeiy6ev7CoxuktCUjLml+tQTXB0FrmwYo9bGjhm2G8bwiVtr2qWkYfM3c8FNl1
-        cPDaz7ayPa6vktH3ev1ZeHUse0hr9sV3dSKzn62142iTuA8TTM4tDaiYAHOFhJAm7nP3aQxRbODoe
-        cl8s2GHmVFeXScu6jrXcZHGDTmN2udO8XZ0pPwfpsd5QoOiRLOiFHXD6KYR9f2MEyvA/KeT9RzHmF
-        DIvDgADu/AxqynsuMYC3hcwdLyXOsBeZQBLnrFNVOoRqDCMnS+8kcWICKZ1ml8I/4TT3bYAOcmKWy
-        N15IsxAA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qUREm-00Abyw-17;
-        Fri, 11 Aug 2023 12:27:28 +0000
-Date:   Fri, 11 Aug 2023 05:27:28 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Alasdair Kergon <agk@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        David Sterba <dsterba@suse.com>, dm-devel@redhat.com,
-        drbd-dev@lists.linbit.com, Gao Xiang <xiang@kernel.org>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        jfs-discussion@lists.sourceforge.net,
-        Joern Engel <joern@lazybastard.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-xfs@vger.kernel.org,
-        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Minchan Kim <minchan@kernel.org>, ocfs2-devel@oss.oracle.com,
-        reiserfs-devel@vger.kernel.org,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Song Liu <song@kernel.org>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        target-devel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 0/29] block: Make blkdev_get_by_*() return handle
-Message-ID: <ZNYpMPM5o4q1xcIt@infradead.org>
-References: <20230810171429.31759-1-jack@suse.cz>
+        Fri, 11 Aug 2023 08:40:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54F0530C1;
+        Fri, 11 Aug 2023 05:40:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DFC1264C7F;
+        Fri, 11 Aug 2023 12:40:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C7FAC433C7;
+        Fri, 11 Aug 2023 12:40:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691757652;
+        bh=zy6yguugoUgSRaMd817bUoOIpAK3qiNWAX7KHUkxXvI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kqRC84LHdMiJo/qRRpOJUQXlSLc4kg2hhZDz1RNK5m4WfAI65m5IbSBi4KIau7nSO
+         99AgLCrH4Dna3zh1NWyzlg64B1OLVt6vajSXTShcNMx3qvc64Yv05aysP7VdSK4BuU
+         YleiIUg9pc6M/CLTf4Eof/tJfwGKqDsze4ENjpVg6Kwb6F11Oxoi+DgmaEn961rqpx
+         MJ16B7fDiGR1yVZbfRPL9iyknvANzAgZBEMmyd8BGBob7KD/hUkY2hwbOQf/fNWBEY
+         fR/hUKEkQp2NUmzi+q99Zs0UOa2LehixxwKiwLp0pVqTK13tiE88ngfv74bHQlQdcT
+         QTYlxaNLA4/3g==
+Date:   Fri, 11 Aug 2023 14:40:45 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
+        Denis Efremov <efremov@linux.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        "Darrick J . Wong" <djwong@kernel.org>, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>, linux-block@vger.kernel.org,
+        nbd@other.debian.org, linux-s390@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/17] btrfs: split btrfs_fs_devices.opened
+Message-ID: <20230811-wildtier-fortbestand-f6ec45e09f4e@brauner>
+References: <20230811100828.1897174-1-hch@lst.de>
+ <20230811100828.1897174-5-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230810171429.31759-1-jack@suse.cz>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20230811100828.1897174-5-hch@lst.de>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Except for a mostly cosmetic nitpick this looks good to me:
+On Fri, Aug 11, 2023 at 12:08:15PM +0200, Christoph Hellwig wrote:
+> The btrfs_fs_devices.opened member mixes an in use counter for the
+> fs_devices structure that prevents it from being garbage collected with
+> a flag if the underlying devices were actually opened.  This not only
+> makes the code hard to follow, but also prevents btrfs from switching
+> to opening the block device only after super block creation.  Split it
+> into an in_use counter and an is_open boolean flag instead.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
 
-Acked-by: Christoph Hellwig <hch@lst.de>
-
-That's not eactly the deep review I'd like to do, but as I'm about to
-head out for vacation that's probably as good as it gets.
+That looks like it will fix the issue we've seen with the first version.
+So Acked-by: Christian Brauner <brauner@kernel.org>
+but it'd be excellent to hear from btrfs maintainers.
