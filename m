@@ -2,49 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BAD9779946
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 23:16:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D603C77995E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 23:26:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236752AbjHKVQA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 17:16:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42168 "EHLO
+        id S236518AbjHKV0U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Aug 2023 17:26:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbjHKVP7 (ORCPT
+        with ESMTP id S236942AbjHKV0H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 17:15:59 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21A23171F;
-        Fri, 11 Aug 2023 14:15:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1691788559; x=1723324559;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=r3gM2YsGq24wLI63levM/2uhpcljlyD/xcFHlYhLSl8=;
-  b=YZu/jjg1c88IOLu11PzOSM4xW1gSF9Kub7bUpu5baUUE93difTiwUTG6
-   5/LL6cSv0l/SYyA7HKVCSc30dFKoIaAq2ricxqPtyrfXObu34metPIYS8
-   V0kDnKVMEP6WkguyD0+TOSgFDkCaw/12t+OfUv4pz9X4pxyVKuh4xHT5F
-   1zUjnwks1mH828umYNXJhPa/HQMZZ2yHZ+NDWXIYuCzsovmZVrqCBGpeC
-   L1DmAGeLXIjwdw6o6HSm75QyBR03/aOhcxaT2ByZpb8T33CZX3TR7l2q0
-   lHy6z4Ke9e+hg0ZBK5UOmF6NQP9EjzB9b8AK2r1I/9OE5Smp4h77Ixtoi
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10799"; a="438098274"
-X-IronPort-AV: E=Sophos;i="6.01,166,1684825200"; 
-   d="scan'208";a="438098274"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2023 14:15:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10799"; a="802817157"
-X-IronPort-AV: E=Sophos;i="6.01,166,1684825200"; 
-   d="scan'208";a="802817157"
-Received: from lkp-server01.sh.intel.com (HELO d1ccc7e87e8f) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 11 Aug 2023 14:15:52 -0700
-Received: from kbuild by d1ccc7e87e8f with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qUZU8-00082u-06;
-        Fri, 11 Aug 2023 21:15:52 +0000
-Date:   Sat, 12 Aug 2023 05:15:10 +0800
-From:   kernel test robot <lkp@intel.com>
+        Fri, 11 Aug 2023 17:26:07 -0400
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C2C32684;
+        Fri, 11 Aug 2023 14:26:02 -0700 (PDT)
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-5655f47ae3fso1418353a12.1;
+        Fri, 11 Aug 2023 14:26:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691789161; x=1692393961;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jkael3S2pdg/VfM2aJEaWso36Tz2Khr7pAvSvEHl94s=;
+        b=Sh4HHYe/Rz/dg/H5o717KaXy0D1F/lfULPWTBy/iqDBt/PK8CxPRi7Ttwu2mHTvD3g
+         YsweqgxQBV+Kw3CVCWotszr6Hih2NFcMaR+gNUGGOu7XRRPaIwU4kmeUlB6QIJi+MEII
+         GZ1LGfQ8TgpYz/vgeSilmQRKSqLzAQxC6QM+3WW24NgyB0waYrvhmaP6fxlAy60gcuOv
+         V5fgmjFZ7a5A+rL4cNVLMf1K8i25UmlstL9CyFFdzAWSXm74Ik1iXcultXSUd9LUiFqv
+         AnWOmS0WzDpUaI8DE5QIv45/SV4jCGmLnoM2VgvbyKlvFDVcGpC2gNqHMgLr7rKDHvku
+         cX5w==
+X-Gm-Message-State: AOJu0YykkXoEGgu8ZFQqwNZaul1Qf4M2keTOZx0FH+SR9d4RT3YiDmyG
+        0G6xfQ8QlaAs/RspdwIa4uY=
+X-Google-Smtp-Source: AGHT+IGvgfv1o9rzwDcunf/qZS4YYopLpr1rFa2hIc4fQs8fXgSIMEA6km+8Z6cMKCMBJqWea0/OGQ==
+X-Received: by 2002:a17:90a:bd95:b0:26b:ab3:493a with SMTP id z21-20020a17090abd9500b0026b0ab3493amr2567330pjr.16.1691789161399;
+        Fri, 11 Aug 2023 14:26:01 -0700 (PDT)
+Received: from ?IPV6:2620:15c:211:201:cdd8:4c3:2f3c:adea? ([2620:15c:211:201:cdd8:4c3:2f3c:adea])
+        by smtp.gmail.com with ESMTPSA id e10-20020a170902b78a00b001bd41b70b60sm4386849pls.45.2023.08.11.14.25.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Aug 2023 14:26:00 -0700 (PDT)
+Message-ID: <3b1da341-1c7f-e28f-d6aa-cecb83188f34@acm.org>
+Date:   Fri, 11 Aug 2023 14:25:58 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [dm-devel] [PATCH v14 02/11] Add infrastructure for copy offload
+ in block and request layer.
+Content-Language: en-US
 To:     Nitesh Shetty <nj.shetty@samsung.com>,
         Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
         Alasdair Kergon <agk@redhat.com>,
@@ -55,65 +56,43 @@ To:     Nitesh Shetty <nj.shetty@samsung.com>,
         Chaitanya Kulkarni <kch@nvidia.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        martin.petersen@oracle.com, mcgrof@kernel.org, dlemoal@kernel.org,
-        gost.dev@samsung.com, Nitesh Shetty <nj.shetty@samsung.com>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Anuj Gupta <anuj20.g@samsung.com>,
-        Vincent Fu <vincent.fu@samsung.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-nvme@lists.infradead.org,
+Cc:     martin.petersen@oracle.com, linux-doc@vger.kernel.org,
+        gost.dev@samsung.com, Anuj Gupta <anuj20.g@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, mcgrof@kernel.org, dlemoal@kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 11/11] null_blk: add support for copy offload
-Message-ID: <202308120529.EW7DuUW7-lkp@intel.com>
-References: <20230811105300.15889-12-nj.shetty@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230811105300.15889-12-nj.shetty@samsung.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20230811105300.15889-1-nj.shetty@samsung.com>
+ <CGME20230811105648epcas5p3ae8b8f6ed341e2aa253e8b4de8920a4d@epcas5p3.samsung.com>
+ <20230811105300.15889-3-nj.shetty@samsung.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20230811105300.15889-3-nj.shetty@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Nitesh,
+On 8/11/23 03:52, Nitesh Shetty wrote:
+> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+> index 0bad62cca3d0..de0ad7a0d571 100644
+> +static inline bool op_is_copy(blk_opf_t op)
+> +{
+> +	return ((op & REQ_OP_MASK) == REQ_OP_COPY_SRC ||
+> +		(op & REQ_OP_MASK) == REQ_OP_COPY_DST);
+> +}
+> +
 
-kernel test robot noticed the following build errors:
+The above function should be moved into include/linux/blk-mq.h below the
+definition of req_op() such that it can use req_op() instead of 
+open-coding it.
 
-[auto build test ERROR on f7dc24b3413851109c4047b22997bd0d95ed52a2]
+Thanks,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nitesh-Shetty/block-Introduce-queue-limits-and-sysfs-for-copy-offload-support/20230811-192259
-base:   f7dc24b3413851109c4047b22997bd0d95ed52a2
-patch link:    https://lore.kernel.org/r/20230811105300.15889-12-nj.shetty%40samsung.com
-patch subject: [PATCH v14 11/11] null_blk: add support for copy offload
-config: hexagon-randconfig-r032-20230811 (https://download.01.org/0day-ci/archive/20230812/202308120529.EW7DuUW7-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
-reproduce: (https://download.01.org/0day-ci/archive/20230812/202308120529.EW7DuUW7-lkp@intel.com/reproduce)
+Bart.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202308120529.EW7DuUW7-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: __tracepoint_nullb_copy_op
-   >>> referenced by atomic-arch-fallback.h:444 (include/linux/atomic/atomic-arch-fallback.h:444)
-   >>>               drivers/block/null_blk/main.o:(null_process_cmd) in archive vmlinux.a
-   >>> referenced by atomic-arch-fallback.h:444 (include/linux/atomic/atomic-arch-fallback.h:444)
-   >>>               drivers/block/null_blk/main.o:(null_process_cmd) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: __traceiter_nullb_copy_op
-   >>> referenced by trace.h:71 (drivers/block/null_blk/trace.h:71)
-   >>>               drivers/block/null_blk/main.o:(null_process_cmd) in archive vmlinux.a
-   >>> referenced by trace.h:71 (drivers/block/null_blk/trace.h:71)
-   >>>               drivers/block/null_blk/main.o:(null_process_cmd) in archive vmlinux.a
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
