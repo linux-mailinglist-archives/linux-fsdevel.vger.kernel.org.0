@@ -2,98 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 807057794DC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 18:39:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE97177951A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 18:49:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235777AbjHKQjK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 12:39:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56520 "EHLO
+        id S234786AbjHKQt4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Aug 2023 12:49:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235748AbjHKQjJ (ORCPT
+        with ESMTP id S231681AbjHKQtz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 12:39:09 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00FA32D70
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 09:39:09 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-99bcc0adab4so293756666b.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 09:39:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1691771947; x=1692376747;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZIHlgRVD4zuIsPHrllchsXgEvRrrKBDJPCXSLRIlRrE=;
-        b=HKHeGXsCsnFAgm5g19pTrZh7wlETPzz6bibBKIHF7dFVtlcbrZfdZx/5fo+bjGFGKR
-         JlmyttburRrNMleVRL7az+QY06Z99EU/gQdrtZiZtFMDu9QYak1AQGY/CfVzd8BSx0FQ
-         YYXV9UECSnsSqdxDAaAJ2Pm0riRPcsoqhgyK8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691771947; x=1692376747;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZIHlgRVD4zuIsPHrllchsXgEvRrrKBDJPCXSLRIlRrE=;
-        b=X2Bs2oYbtuvS/Kypcu2+8dWprCzE15CeiDIUt5MbiOfET9zwy1wgdR0bbtKSydTcSB
-         cRv052o49EbjvOOj8AuGYoUgwK43yZbVCeq0uZqU8H6y2zxX4krNpmPMCQV/QAC8wtns
-         JN7sEngIUZ5p2lnpAC9J5rGcijpuTvxYCsdlTQnMIeyN9ZZIiNsZvm48C9ZpWpHAV10o
-         /7d8SgoHyfRQ7AUxlbJAhsYsurDxe7CxX4G0BK1xX8gPv16Rw+91KcNthgY/TtvY8YjW
-         48pKQCfkq3koI8T3JUfqE9epQm7miMqZjev5Q2ni/Txhm6YeeJVgc/Rd2NKwMa5MfV35
-         kwZw==
-X-Gm-Message-State: AOJu0YwRzdx4S+mCYQxjFBdEFvbmluU1sn4AXHeK0MGxJD2gM2Trv7i6
-        r9FZM3ikWiIO7r7R3/8q+ZyNhDU5mSQLYIkmuagBayZA
-X-Google-Smtp-Source: AGHT+IFuO/cJAo8hBjZnH67xnyyBuNCn2vkHqFMeMEycTnaLlyvdN511ZjRfszlBvd0k+K0eGjiykQ==
-X-Received: by 2002:a17:907:9715:b0:99b:db4f:68b8 with SMTP id jg21-20020a170907971500b0099bdb4f68b8mr2503094ejc.76.1691771947304;
-        Fri, 11 Aug 2023 09:39:07 -0700 (PDT)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
-        by smtp.gmail.com with ESMTPSA id os5-20020a170906af6500b0098e34446464sm2450194ejb.25.2023.08.11.09.39.04
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Aug 2023 09:39:04 -0700 (PDT)
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-51e2a6a3768so2927997a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 09:39:04 -0700 (PDT)
-X-Received: by 2002:a05:6402:184c:b0:522:ae79:3ee8 with SMTP id
- v12-20020a056402184c00b00522ae793ee8mr2037905edy.5.1691771944135; Fri, 11 Aug
- 2023 09:39:04 -0700 (PDT)
+        Fri, 11 Aug 2023 12:49:55 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 272C82D78;
+        Fri, 11 Aug 2023 09:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=oUhqXwPiOWFNveyUDU+xr0z5RJ8d81Aju54m/CW4sYA=; b=TNuHSPOWgjVZsykDgsIiVM1BeH
+        bL6bJ5C0ys31kNb4mswLrnD7zu36A2jG46vo23W/Qw28W3/rPGkR8CRsTKMJIs3sIeMUL4vOaHIYe
+        2zRPFj2FXp2wHynclnABrKhsRl6HBYw9N8YRweReefT3mL6RBRx7qxpty0SSoRUvqCvSBUEWLhCcl
+        wcwle+riWfXEHCndx7a8j8vqgyJSTHO8+zfzotrh4/zWZndKo68MJsR8PR1bVOYFKPsSFu80aYW8U
+        qhSZzaH3YRwVir8tEG7IvRKeM4qKErs7oYSal37Sp+QEySCzx96Myp6M1jUAcVczoLS2NuW7SlfIp
+        BiDQMbcw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qUVKI-002FqJ-CR; Fri, 11 Aug 2023 16:49:26 +0000
+Date:   Fri, 11 Aug 2023 17:49:26 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Hui Zhu <teawaterz@linux.alibaba.com>
+Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, akpm@linux-foundation.org, jack@suse.cz,
+        yi.zhang@huawei.com, hare@suse.de, p.raghav@samsung.com,
+        ritesh.list@gmail.com, mpatocka@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, teawater@antgroup.com,
+        teawater@gmail.com
+Subject: Re: [PATCH] ext4_sb_breadahead_unmovable: Change to be no-blocking
+Message-ID: <ZNZmlhQ1zW4vdTFK@casper.infradead.org>
+References: <20230811071519.1094-1-teawaterz@linux.alibaba.com>
 MIME-Version: 1.0
-References: <3710261.1691764329@warthog.procyon.org.uk>
-In-Reply-To: <3710261.1691764329@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 11 Aug 2023 09:38:46 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi1QZ+zdXkjnEY7u1GsVDaBv8yY+m4-9G3R34ihwg9pmQ@mail.gmail.com>
-Message-ID: <CAHk-=wi1QZ+zdXkjnEY7u1GsVDaBv8yY+m4-9G3R34ihwg9pmQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] iov_iter: Convert iterate*() to inline funcs
-To:     David Howells <dhowells@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <christian@brauner.io>,
-        Matthew Wilcox <willy@infradead.org>, jlayton@kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230811071519.1094-1-teawaterz@linux.alibaba.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 11 Aug 2023 at 07:40, David Howells <dhowells@redhat.com> wrote:
->
-> Convert the iov_iter iteration macros to inline functions to make the code
-> easier to follow.
+On Fri, Aug 11, 2023 at 07:15:19AM +0000, Hui Zhu wrote:
+> From: Hui Zhu <teawater@antgroup.com>
+> 
+> This version fix the gfp flags in the callers instead of working this
+> new "bool" flag through the buffer head layers according to the comments
+> from Matthew Wilcox.
 
-I like this generally, the code generation deprovement worries me a
-bit, but from a quick look on a test-branch it didn't really look all
-that bad (but the changes are too big to usefully show up as asm
-diffs)
+FYI, this paragraph should have been below the --- so it gets excluded
+from the commit log.
 
-I do note that maybe you should just also mark
-copy_to/from/page_user_iter as being always-inlines. clang actually
-seems to do that without prompting, gcc apparently not.
+> Meanwhile, it was observed that the task holding the ext4 journal lock
+> was blocked for an extended period of time on "shrink_page_list" due to
+> "ext4_sb_breadahead_unmovable".
+> 0 [] __schedule at xxxxxxxxxxxxxxx
+> 1 [] _cond_resched at xxxxxxxxxxxxxxx
+> 2 [] shrink_page_list at xxxxxxxxxxxxxxx
+> 3 [] shrink_inactive_list at xxxxxxxxxxxxxxx
+> 4 [] shrink_lruvec at xxxxxxxxxxxxxxx
+> 5 [] shrink_node_memcgs at xxxxxxxxxxxxxxx
+> 6 [] shrink_node at xxxxxxxxxxxxxxx
+> 7 [] shrink_zones at xxxxxxxxxxxxxxx
+> 8 [] do_try_to_free_pages at xxxxxxxxxxxxxxx
+> 9 [] try_to_free_mem_cgroup_pages at xxxxxxxxxxxxxxx
+> 10 [] try_charge at xxxxxxxxxxxxxxx
+> 11 [] mem_cgroup_charge at xxxxxxxxxxxxxxx
+> 12 [] __add_to_page_cache_locked at xxxxxxxxxxxxxxx
+> 13 [] add_to_page_cache_lru at xxxxxxxxxxxxxxx
+> 14 [] pagecache_get_page at xxxxxxxxxxxxxxx
+> 15 [] grow_dev_page at xxxxxxxxxxxxxxx
 
-Or at *least* do the memcpy_to/from_iter functions, which are only
-wrappers around memcpy and are just completely noise. I'm surprised
-gcc didn't already inline that. Strange.
+After applying your patch, we'd still get into trouble with
+folio_alloc_buffers() also specifying __GFP_NOWAIT.  So I decided
+to pass the GFP flags into folio_alloc_buffers() -- see the patch
+series I just sent out.
 
-            Linus
+> @@ -1050,18 +1051,27 @@ grow_dev_page(struct block_device *bdev, sector_t block,
+>  	int ret = 0;
+>  	gfp_t gfp_mask;
+>  
+> -	gfp_mask = mapping_gfp_constraint(inode->i_mapping, ~__GFP_FS) | gfp;
+> +	gfp_mask = mapping_gfp_constraint(inode->i_mapping, ~__GFP_FS);
+> +	if (gfp == ~__GFP_DIRECT_RECLAIM)
+> +		gfp_mask &= ~__GFP_DIRECT_RECLAIM;
+
+This isn't how we normally use gfp_mask.  OTOH, how buffer.c uses GFP
+masks is also a bit weird.  The bdev_getblk() I just added is more
+normal.
+
+Please try the patchset I cc'd you on (with the __GFP_ACCOUNT added);
+I'm currently running it through xfstests and it's holding up fine.
+I suppose I should play around with memcgs to try to make it happen a
+bit more often.
