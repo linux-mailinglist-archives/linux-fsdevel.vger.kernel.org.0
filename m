@@ -2,68 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3215D778D08
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 13:06:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8015C778CF4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 13:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236170AbjHKLGJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 07:06:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42040 "EHLO
+        id S236108AbjHKLF6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Aug 2023 07:05:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232555AbjHKLFh (ORCPT
+        with ESMTP id S235957AbjHKLFR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 07:05:37 -0400
+        Fri, 11 Aug 2023 07:05:17 -0400
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED26B19AC;
-        Fri, 11 Aug 2023 04:05:11 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED7AAE54;
+        Fri, 11 Aug 2023 04:05:10 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 5A64D1F8A6;
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 4C71C1F8A3;
         Fri, 11 Aug 2023 11:05:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
         t=1691751906; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Dm65YPBU4WF++93NcPRGO369cin1mb5NbYyvGd96QdM=;
-        b=rnFgytbUUSfM1yYlAEV3N0MlVgYnNtYUI/uZIYRClxlsK15vDvg3JUNj4lQtLlS7NO9W59
-        3umrFRvx+Dt04JUTb+zDUK6X/9xPE/FaYOowLuTGpPiyoFRY0q15CyLkjSAdirzjvC+Td/
-        pQVPfVJvQBHxyWEWhV+Hb1RNkZD1YrQ=
+        bh=05eBw6LT3aheA6N30/JQ77zGGkCHy8nL7YIEnGTwsqs=;
+        b=WjFa0xY+ba3borwBNUUocT+z7JHHPmEeZDYHoM1ukKc40Fq0hoqidU7EgZ8mJPjtwF3cPy
+        1ozp8L0yvGUMtbcdXlvCxvVouDmpJFOUUIW/OJmIjhS0ZWLO+UzddyGFFHCGD+8BFQKHsU
+        9t0Xtna9cw4jowbl8ROcU1r0smiJ4eY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
         s=susede2_ed25519; t=1691751906;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Dm65YPBU4WF++93NcPRGO369cin1mb5NbYyvGd96QdM=;
-        b=koJjKAtqi+tSuBCmnka8qupqnsy/l+xssfsV98M70AFB/Vphua6mq0DUUwD0JApj03fnFM
-        kUhmqENMLrI/R7Cw==
+        bh=05eBw6LT3aheA6N30/JQ77zGGkCHy8nL7YIEnGTwsqs=;
+        b=NArdNqc0O0GyilcvVE7uhFoLVrKc82sQ3QYNrxLbHrL0shN2IpVjfeA90HBlzVj6G3I9Jd
+        4LVdRpjtuxs26QCg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4CE6913AA3;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3DDF1138E3;
         Fri, 11 Aug 2023 11:05:06 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id VBbDEuIV1mRsRQAAMHmgww
+        id KagdD+IV1mRnRQAAMHmgww
         (envelope-from <jack@suse.cz>); Fri, 11 Aug 2023 11:05:06 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 296A6A0791; Fri, 11 Aug 2023 13:05:05 +0200 (CEST)
+        id 2EB4FA0792; Fri, 11 Aug 2023 13:05:05 +0200 (CEST)
 From:   Jan Kara <jack@suse.cz>
 To:     <linux-fsdevel@vger.kernel.org>
 Cc:     <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 18/29] mm/swap: Convert to use bdev_open_by_dev()
-Date:   Fri, 11 Aug 2023 13:04:49 +0200
-Message-Id: <20230811110504.27514-18-jack@suse.cz>
+        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>
+Subject: [PATCH 19/29] fs: Convert to bdev_open_by_dev()
+Date:   Fri, 11 Aug 2023 13:04:50 +0200
+Message-Id: <20230811110504.27514-19-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20230810171429.31759-1-jack@suse.cz>
 References: <20230810171429.31759-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2720; i=jack@suse.cz; h=from:subject; bh=FDmfvKiq2bPU3yLB5qvHKCGkR05qUs5JO4bCliChJ1c=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBk1hXSQQNy+iXJtgc29QwdVw1/9omYyGR1nnhzV2w2 rjBIYu2JATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZNYV0gAKCRCcnaoHP2RA2auVB/ 9TOquphUJz+/zD06SKTcFzZ5Ihz8Qv4AH+/Y0K2oNQdnpm6oTeRhTVGJJkHhBkq2ZNdeIyh+6vtxNH raAsIOSezmjfRr234tUBor6E/VtlzBiu/a8gQbXu9pm6+tthX5mSLG3jXYxxXzOuunswiaL4I5pUcS Is8x0LNIEL/uNXjJX4UtpRlTEXCy0MNR/0DyXQGrqw3aGrNsD2XNyR4aMzaZ6swS7qXy9Ls3SnxAja r5alxCecit/eNbyzB8+yve8qi1rE0DuyiDz04SzZ5ViT0ua81LE6piK/Z5vfuUmmm+If9chDVBYT9a 62MeMLplsGWXaK9L5nXBJKzndSjQZ0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2513; i=jack@suse.cz; h=from:subject; bh=1gzMVIideoh+K3PY2AkSqx8nOf6Di6drGzw80ttb91o=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBk1hXTm1x8wadUUzym+MpihPmtl4cncp30/dT+oEd4 L23CmWKJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZNYV0wAKCRCcnaoHP2RA2Rb2CA CpdzrKF1vp9u5SuFtxVzmjbPF9eNBmYy8Ci6R10+i3ALf6C7Hzebi8IpeiZ3a2X6iJgKjBgpqUn4KB eEjIIg1+Ku1Mx+9Eg94qHXTetwoo9nUldNDb2G5vCMfckwJECNKC0dqJj8KhMWHvHgV2AZoa9KVZHv kj2IWB1jxAdQXNaWhghXGenz+IVZt01dhT43Y/jYuAlsHPMsg5NCtmedJh2mi708n0nikhrzuXcG3V JAELgEFxrKhq1yETRpBMMBSk6G0uvluu/i3m3GSj8BO61ATdBU85YdR0NiNLUvtpxvBD0m+2lMUaA/ BK4dPbqW2iVEVC6iXs+RZN2T59IUtV
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -76,81 +75,82 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert swapping code to use bdev_open_by_dev() and pass the handle
-around.
+Convert mount code to use bdev_open_by_dev() and propagate the handle
+around to bdev_release().
 
-CC: linux-mm@kvack.org
-CC: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- include/linux/swap.h |  1 +
- mm/swapfile.c        | 23 ++++++++++++-----------
- 2 files changed, 13 insertions(+), 11 deletions(-)
+ fs/super.c         | 15 +++++++++------
+ include/linux/fs.h |  1 +
+ 2 files changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 456546443f1f..62334f8d4932 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -298,6 +298,7 @@ struct swap_info_struct {
- 	unsigned int __percpu *cluster_next_cpu; /*percpu index for next allocation */
- 	struct percpu_cluster __percpu *percpu_cluster; /* per cpu's swap location */
- 	struct rb_root swap_extent_root;/* root of the swap extent rbtree */
-+	struct bdev_handle *bdev_handle;/* open handle of the bdev */
- 	struct block_device *bdev;	/* swap device or bdev of swap file */
- 	struct file *swap_file;		/* seldom referenced */
- 	unsigned int old_block_size;	/* seldom referenced */
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 8e6dde68b389..621428ee6895 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -2526,11 +2526,10 @@ SYSCALL_DEFINE1(swapoff, const char __user *, specialfile)
- 	exit_swap_address_space(p->type);
+diff --git a/fs/super.c b/fs/super.c
+index 71fe297a7e90..030e897c2c68 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1270,14 +1270,16 @@ int setup_bdev_super(struct super_block *sb, int sb_flags,
+ 		struct fs_context *fc)
+ {
+ 	blk_mode_t mode = sb_open_mode(sb_flags);
++	struct bdev_handle *bdev_handle;
+ 	struct block_device *bdev;
  
- 	inode = mapping->host;
--	if (S_ISBLK(inode->i_mode)) {
--		struct block_device *bdev = I_BDEV(inode);
--
--		set_blocksize(bdev, old_block_size);
--		blkdev_put(bdev, p);
-+	if (p->bdev_handle) {
-+		set_blocksize(p->bdev, old_block_size);
-+		bdev_release(p->bdev_handle);
-+		p->bdev_handle = NULL;
+-	bdev = blkdev_get_by_dev(sb->s_dev, mode, sb, &fs_holder_ops);
+-	if (IS_ERR(bdev)) {
++	bdev_handle = bdev_open_by_dev(sb->s_dev, mode, sb, &fs_holder_ops);
++	if (IS_ERR(bdev_handle)) {
+ 		if (fc)
+ 			errorf(fc, "%s: Can't open blockdev", fc->source);
+-		return PTR_ERR(bdev);
++		return PTR_ERR(bdev_handle);
+ 	}
++	bdev = bdev_handle->bdev;
+ 
+ 	/*
+ 	 * This really should be in blkdev_get_by_dev, but right now can't due
+@@ -1285,7 +1287,7 @@ int setup_bdev_super(struct super_block *sb, int sb_flags,
+ 	 * writable from userspace even for a read-only block device.
+ 	 */
+ 	if ((mode & BLK_OPEN_WRITE) && bdev_read_only(bdev)) {
+-		blkdev_put(bdev, sb);
++		bdev_release(bdev_handle);
+ 		return -EACCES;
  	}
  
- 	inode_lock(inode);
-@@ -2760,13 +2759,14 @@ static int claim_swapfile(struct swap_info_struct *p, struct inode *inode)
- 	int error;
- 
- 	if (S_ISBLK(inode->i_mode)) {
--		p->bdev = blkdev_get_by_dev(inode->i_rdev,
-+		p->bdev_handle = bdev_open_by_dev(inode->i_rdev,
- 				BLK_OPEN_READ | BLK_OPEN_WRITE, p, NULL);
--		if (IS_ERR(p->bdev)) {
--			error = PTR_ERR(p->bdev);
--			p->bdev = NULL;
-+		if (IS_ERR(p->bdev_handle)) {
-+			error = PTR_ERR(p->bdev_handle);
-+			p->bdev_handle = NULL;
- 			return error;
- 		}
-+		p->bdev = p->bdev_handle->bdev;
- 		p->old_block_size = block_size(p->bdev);
- 		error = set_blocksize(p->bdev, PAGE_SIZE);
- 		if (error < 0)
-@@ -3210,9 +3210,10 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 	p->percpu_cluster = NULL;
- 	free_percpu(p->cluster_next_cpu);
- 	p->cluster_next_cpu = NULL;
--	if (inode && S_ISBLK(inode->i_mode) && p->bdev) {
-+	if (p->bdev_handle) {
- 		set_blocksize(p->bdev, p->old_block_size);
--		blkdev_put(p->bdev, p);
-+		bdev_release(p->bdev_handle);
-+		p->bdev_handle = NULL;
+@@ -1301,10 +1303,11 @@ int setup_bdev_super(struct super_block *sb, int sb_flags,
+ 		mutex_unlock(&bdev->bd_fsfreeze_mutex);
+ 		if (fc)
+ 			warnf(fc, "%pg: Can't mount, blockdev is frozen", bdev);
+-		blkdev_put(bdev, sb);
++		bdev_release(bdev_handle);
+ 		return -EBUSY;
  	}
- 	inode = NULL;
- 	destroy_swap_extents(p);
+ 	spin_lock(&sb_lock);
++	sb->s_bdev_handle = bdev_handle;
+ 	sb->s_bdev = bdev;
+ 	sb->s_bdi = bdi_get(bdev->bd_disk->bdi);
+ 	if (bdev_stable_writes(bdev))
+@@ -1438,7 +1441,7 @@ void kill_block_super(struct super_block *sb)
+ 	generic_shutdown_super(sb);
+ 	if (bdev) {
+ 		sync_blockdev(bdev);
+-		blkdev_put(bdev, sb);
++		bdev_release(sb->s_bdev_handle);
+ 	}
+ }
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 234ad85a28b5..a77a20955d91 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1187,6 +1187,7 @@ struct super_block {
+ 	struct hlist_bl_head	s_roots;	/* alternate root dentries for NFS */
+ 	struct list_head	s_mounts;	/* list of mounts; _not_ for fs use */
+ 	struct block_device	*s_bdev;
++	struct bdev_handle	*s_bdev_handle;
+ 	struct backing_dev_info *s_bdi;
+ 	struct mtd_info		*s_mtd;
+ 	struct hlist_node	s_instances;
 -- 
 2.35.3
 
