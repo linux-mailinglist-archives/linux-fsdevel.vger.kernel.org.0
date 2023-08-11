@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C8A5D77955C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 18:57:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 751C977956A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 18:58:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235582AbjHKQ5X convert rfc822-to-8bit (ORCPT
+        id S234084AbjHKQ6Z convert rfc822-to-8bit (ORCPT
         <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 12:57:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40388 "EHLO
+        Fri, 11 Aug 2023 12:58:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235502AbjHKQ5V (ORCPT
+        with ESMTP id S232879AbjHKQ6Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 12:57:21 -0400
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DB172D79;
-        Fri, 11 Aug 2023 09:57:21 -0700 (PDT)
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-56d0deeca09so401101eaf.0;
-        Fri, 11 Aug 2023 09:57:21 -0700 (PDT)
+        Fri, 11 Aug 2023 12:58:25 -0400
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E14D030C4;
+        Fri, 11 Aug 2023 09:58:24 -0700 (PDT)
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-56d75fb64a6so415816eaf.0;
+        Fri, 11 Aug 2023 09:58:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691773040; x=1692377840;
+        d=1e100.net; s=20221208; t=1691773104; x=1692377904;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/MKrsTvyOkFqYnQxHrODPvzn4CYiImWubBs2zxt84WE=;
-        b=N5zN+I8pPchiAd+KAWPGPUQU50wB0o4Q8DHbGKcz5BDjqyXOn/7BKL7q6+bCOyg/Oj
-         X9Qb++jgWKLOfyqCil6MTnsef/wNKvF0N3X+Jw1+bApaxg91CZSPyXLxvs7e3YLeI4dD
-         zaiitjwoWnLxJCVOA6v6te64qqbdL4bCjS74dlk7Bp5HE4QZorIV0neDHOzVEIkvSx87
-         7plLYsGgzIU2XOFIb+syK84yL5Ww3lDlCWgENwTKA6ynsSkhQ4ILDYchhZcGe2bae7kc
-         aEAcHCxr+QB5TdzlhuucbnRWMVSXSK+/gGswqVC/cQJ9a6nd/r9vK0fTx7D7l2yCuZ7x
-         Bilw==
-X-Gm-Message-State: AOJu0Yw6PAg/IaMe1xlmv/7/8qn14nWrkvieRPDEgx54UWLCvsG8Y3Fp
-        5b/h4HJPQJjrEx0obBzE88xAehIfPk7tTI1dCsPIwELz
-X-Google-Smtp-Source: AGHT+IFMyWrzb3vv1ElBiPYzpwa36cwgwBCpEMcLCPL2IYmDcOJa1XmuQJK0vw7falr30iJFoiXy4kqHBDPTohgtiSs=
-X-Received: by 2002:a4a:e04e:0:b0:569:a08a:d9c5 with SMTP id
- v14-20020a4ae04e000000b00569a08ad9c5mr1997794oos.0.1691773040594; Fri, 11 Aug
- 2023 09:57:20 -0700 (PDT)
+        bh=7VvzFvdraEO195DSRyKfwzhYtZjNnrGvLR0U45hfcrI=;
+        b=Kj72t7DQJRDzKo4qhscrldMXLR9vpGTtnUrURefX8wvPmXMkFzxGZTZM+98XppY4AM
+         t+aS2PtiYil2+Tzt0RXFwvHlgc6EWpF5IhMlQGM3rfb1+Whh0KtXdbAlRSN+fJOekzXE
+         lg4Nm+8SJj30D7UCWr8TWDM+Eu9mpuUS0x5lM1pngfkiSqeZS4xd9hK4UD3NksnDt4v8
+         wM/yd70yOVCfyZrYgYyTbfeGW6YggYEEKf/Vf4UIzWbfAVeF1C/APA4L/xByBBamBQJO
+         22SbyokUIO8Q1r+l1lmapA08kO3RCaL+H/v/e5rwteF1If7UdYLc77g8Vusfwz/tVzXQ
+         Atug==
+X-Gm-Message-State: AOJu0YxZf9SdDYkyRnywKT5iO5ibtyAorwV3tXIROjycm1xFDMqGk4ie
+        MuwVyVxPq8s8Gq0fdViRkES/mXdeLRSO8UROjWk=
+X-Google-Smtp-Source: AGHT+IE2PrstuZZuekdTu1Ir9/Dd8rLqox3w1rJ6BrpndqICe6ITX+Oqb6eeMW6+cOVRuMvVCMvZeFgvfFX/kkaqJqs=
+X-Received: by 2002:a05:6820:1687:b0:566:951e:140c with SMTP id
+ bc7-20020a056820168700b00566951e140cmr2302088oob.1.1691773104132; Fri, 11 Aug
+ 2023 09:58:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230810171429.31759-1-jack@suse.cz> <20230811110504.27514-16-jack@suse.cz>
-In-Reply-To: <20230811110504.27514-16-jack@suse.cz>
+References: <20230810171429.31759-1-jack@suse.cz> <20230811110504.27514-17-jack@suse.cz>
+In-Reply-To: <20230811110504.27514-17-jack@suse.cz>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 11 Aug 2023 18:57:09 +0200
-Message-ID: <CAJZ5v0jpCQugJCqPEXCsjskmRRoF9PTj0p696WA+GoKVroL0Lw@mail.gmail.com>
-Subject: Re: [PATCH 16/29] PM: hibernate: Convert to bdev_open_by_dev()
+Date:   Fri, 11 Aug 2023 18:58:13 +0200
+Message-ID: <CAJZ5v0i6UsfYFoKdgd-RN9yMS1Nwjt0uKxhoS25vhah2d47cZw@mail.gmail.com>
+Subject: Re: [PATCH 17/29] PM: hibernate: Drop unused snapshot_test argument
 To:     Jan Kara <jack@suse.cz>
 Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>, linux-pm@vger.kernel.org
@@ -60,7 +60,8 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Fri, Aug 11, 2023 at 1:05 PM Jan Kara <jack@suse.cz> wrote:
 >
-> Convert hibernation code to use bdev_open_by_dev().
+> snapshot_test argument is now unused in swsusp_close() and
+> load_image_and_restore(). Drop it
 >
 > CC: linux-pm@vger.kernel.org
 > Signed-off-by: Jan Kara <jack@suse.cz>
@@ -68,96 +69,119 @@ On Fri, Aug 11, 2023 at 1:05 PM Jan Kara <jack@suse.cz> wrote:
 Acked-by: Rafael J. Wysocki <rafael@kernel.org>
 
 > ---
->  kernel/power/swap.c | 31 ++++++++++++++++---------------
->  1 file changed, 16 insertions(+), 15 deletions(-)
+>  kernel/power/hibernate.c | 14 +++++++-------
+>  kernel/power/power.h     |  2 +-
+>  kernel/power/swap.c      |  6 +++---
+>  3 files changed, 11 insertions(+), 11 deletions(-)
 >
+> diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+> index e1b4bfa938dd..6abeec0ae084 100644
+> --- a/kernel/power/hibernate.c
+> +++ b/kernel/power/hibernate.c
+> @@ -684,7 +684,7 @@ static void power_down(void)
+>                 cpu_relax();
+>  }
+>
+> -static int load_image_and_restore(bool snapshot_test)
+> +static int load_image_and_restore(void)
+>  {
+>         int error;
+>         unsigned int flags;
+> @@ -694,12 +694,12 @@ static int load_image_and_restore(bool snapshot_test)
+>         lock_device_hotplug();
+>         error = create_basic_memory_bitmaps();
+>         if (error) {
+> -               swsusp_close(snapshot_test);
+> +               swsusp_close();
+>                 goto Unlock;
+>         }
+>
+>         error = swsusp_read(&flags);
+> -       swsusp_close(snapshot_test);
+> +       swsusp_close();
+>         if (!error)
+>                 error = hibernation_restore(flags & SF_PLATFORM_MODE);
+>
+> @@ -788,7 +788,7 @@ int hibernate(void)
+>                 pm_pr_dbg("Checking hibernation image\n");
+>                 error = swsusp_check(snapshot_test);
+>                 if (!error)
+> -                       error = load_image_and_restore(snapshot_test);
+> +                       error = load_image_and_restore();
+>         }
+>         thaw_processes();
+>
+> @@ -952,7 +952,7 @@ static int software_resume(void)
+>         /* The snapshot device should not be opened while we're running */
+>         if (!hibernate_acquire()) {
+>                 error = -EBUSY;
+> -               swsusp_close(false);
+> +               swsusp_close();
+>                 goto Unlock;
+>         }
+>
+> @@ -973,7 +973,7 @@ static int software_resume(void)
+>                 goto Close_Finish;
+>         }
+>
+> -       error = load_image_and_restore(false);
+> +       error = load_image_and_restore();
+>         thaw_processes();
+>   Finish:
+>         pm_notifier_call_chain(PM_POST_RESTORE);
+> @@ -987,7 +987,7 @@ static int software_resume(void)
+>         pm_pr_dbg("Hibernation image not present or could not be loaded.\n");
+>         return error;
+>   Close_Finish:
+> -       swsusp_close(false);
+> +       swsusp_close();
+>         goto Finish;
+>  }
+>
+> diff --git a/kernel/power/power.h b/kernel/power/power.h
+> index 46eb14dc50c3..bebf049a51c1 100644
+> --- a/kernel/power/power.h
+> +++ b/kernel/power/power.h
+> @@ -172,7 +172,7 @@ int swsusp_check(bool snapshot_test);
+>  extern void swsusp_free(void);
+>  extern int swsusp_read(unsigned int *flags_p);
+>  extern int swsusp_write(unsigned int flags);
+> -void swsusp_close(bool snapshot_test);
+> +void swsusp_close(void);
+>  #ifdef CONFIG_SUSPEND
+>  extern int swsusp_unmark(void);
+>  #endif
 > diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-> index f6ebcd00c410..b475bee282ff 100644
+> index b475bee282ff..17e0dad5008e 100644
 > --- a/kernel/power/swap.c
 > +++ b/kernel/power/swap.c
-> @@ -222,7 +222,7 @@ int swsusp_swap_in_use(void)
+> @@ -444,7 +444,7 @@ static int get_swap_writer(struct swap_map_handle *handle)
+>  err_rel:
+>         release_swap_writer(handle);
+>  err_close:
+> -       swsusp_close(false);
+> +       swsusp_close();
+>         return ret;
+>  }
+>
+> @@ -509,7 +509,7 @@ static int swap_writer_finish(struct swap_map_handle *handle,
+>         if (error)
+>                 free_all_swap_pages(root_swap);
+>         release_swap_writer(handle);
+> -       swsusp_close(false);
+> +       swsusp_close();
+>
+>         return error;
+>  }
+> @@ -1567,7 +1567,7 @@ int swsusp_check(bool snapshot_test)
+>   *     swsusp_close - close swap device.
 >   */
 >
->  static unsigned short root_swap = 0xffff;
-> -static struct block_device *hib_resume_bdev;
-> +static struct bdev_handle *hib_resume_bdev_handle;
->
->  struct hib_bio_batch {
->         atomic_t                count;
-> @@ -276,7 +276,8 @@ static int hib_submit_io(blk_opf_t opf, pgoff_t page_off, void *addr,
->         struct bio *bio;
->         int error = 0;
->
-> -       bio = bio_alloc(hib_resume_bdev, 1, opf, GFP_NOIO | __GFP_HIGH);
-> +       bio = bio_alloc(hib_resume_bdev_handle->bdev, 1, opf,
-> +                       GFP_NOIO | __GFP_HIGH);
->         bio->bi_iter.bi_sector = page_off * (PAGE_SIZE >> 9);
->
->         if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
-> @@ -356,14 +357,14 @@ static int swsusp_swap_check(void)
->                 return res;
->         root_swap = res;
->
-> -       hib_resume_bdev = blkdev_get_by_dev(swsusp_resume_device,
-> +       hib_resume_bdev_handle = bdev_open_by_dev(swsusp_resume_device,
->                         BLK_OPEN_WRITE, NULL, NULL);
-> -       if (IS_ERR(hib_resume_bdev))
-> -               return PTR_ERR(hib_resume_bdev);
-> +       if (IS_ERR(hib_resume_bdev_handle))
-> +               return PTR_ERR(hib_resume_bdev_handle);
->
-> -       res = set_blocksize(hib_resume_bdev, PAGE_SIZE);
-> +       res = set_blocksize(hib_resume_bdev_handle->bdev, PAGE_SIZE);
->         if (res < 0)
-> -               blkdev_put(hib_resume_bdev, NULL);
-> +               bdev_release(hib_resume_bdev_handle);
->
->         return res;
->  }
-> @@ -1521,10 +1522,10 @@ int swsusp_check(bool snapshot_test)
->         void *holder = snapshot_test ? &swsusp_holder : NULL;
->         int error;
->
-> -       hib_resume_bdev = blkdev_get_by_dev(swsusp_resume_device, BLK_OPEN_READ,
-> -                                           holder, NULL);
-> -       if (!IS_ERR(hib_resume_bdev)) {
-> -               set_blocksize(hib_resume_bdev, PAGE_SIZE);
-> +       hib_resume_bdev_handle = bdev_open_by_dev(swsusp_resume_device,
-> +                               BLK_OPEN_READ, holder, NULL);
-> +       if (!IS_ERR(hib_resume_bdev_handle)) {
-> +               set_blocksize(hib_resume_bdev_handle->bdev, PAGE_SIZE);
->                 clear_page(swsusp_header);
->                 error = hib_submit_io(REQ_OP_READ, swsusp_resume_block,
->                                         swsusp_header, NULL);
-> @@ -1549,11 +1550,11 @@ int swsusp_check(bool snapshot_test)
->
->  put:
->                 if (error)
-> -                       blkdev_put(hib_resume_bdev, holder);
-> +                       bdev_release(hib_resume_bdev_handle);
->                 else
->                         pr_debug("Image signature found, resuming\n");
->         } else {
-> -               error = PTR_ERR(hib_resume_bdev);
-> +               error = PTR_ERR(hib_resume_bdev_handle);
->         }
->
->         if (error)
-> @@ -1568,12 +1569,12 @@ int swsusp_check(bool snapshot_test)
->
->  void swsusp_close(bool snapshot_test)
+> -void swsusp_close(bool snapshot_test)
+> +void swsusp_close(void)
 >  {
-> -       if (IS_ERR(hib_resume_bdev)) {
-> +       if (IS_ERR(hib_resume_bdev_handle)) {
+>         if (IS_ERR(hib_resume_bdev_handle)) {
 >                 pr_debug("Image device not initialised\n");
->                 return;
->         }
->
-> -       blkdev_put(hib_resume_bdev, snapshot_test ? &swsusp_holder : NULL);
-> +       bdev_release(hib_resume_bdev_handle);
->  }
->
->  /**
 > --
 > 2.35.3
 >
