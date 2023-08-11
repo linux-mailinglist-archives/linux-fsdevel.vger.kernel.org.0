@@ -2,127 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D6DC7791A9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 16:19:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78ED87791BC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 16:23:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233761AbjHKOTV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 10:19:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53654 "EHLO
+        id S235715AbjHKOXX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Aug 2023 10:23:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230287AbjHKOTU (ORCPT
+        with ESMTP id S232453AbjHKOXW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 10:19:20 -0400
-Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58EAC1994
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 07:19:20 -0700 (PDT)
-Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-583f65806f8so21812847b3.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 07:19:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1691763559; x=1692368359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yZudPvE77obhdTH9BwvUPtFGRDBscAM9ndagajqjxgA=;
-        b=fOJN7/01bKuxSiPWfoaDMd1rHwiRAo0+t60pWZ00VIRK5P/s0UEBMLu0XrnF9XsLNV
-         +onChgYJMLEIznghAYMqxv6BBQbzL3K4Dl/8BSeCWxmJPDrVH41nEszOeVOR7j0M1MD5
-         wbxa/yU9BVYYZb3mpKOVWFX9fVibxwzRxagGwfCf0G/yDF9ez2Vg0DnBthuH4WEfb8Q2
-         yeTz6xCPKqpO6fbB7cvF2cDw3rJUNxAf+CkMDBsXEwlLYgA1Eqv/a+swWYKEO5rBFYY1
-         68hrQiMt/IQ+wRkMAP91apnd+8qIvri+8zvp7jaet6Xg0mjEIulThjZjEb7ymSaAtFLX
-         +SFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691763559; x=1692368359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yZudPvE77obhdTH9BwvUPtFGRDBscAM9ndagajqjxgA=;
-        b=h2qKd3tXb9fd3x0p0tBx2bllch4ZE6EIVZvSMofVVCoSmaYrZdGCZByNcraSojDJE1
-         FujXzGs9iNkTpko0AfBAHAi1zmpfHI9F3n8WfUT5h49u1HgJQotLd2r9xNbs10X6lkyQ
-         P0n81S0veOnHoBqw/eNKAIX4/VO2t9Erkejfpx7QkO6j1/Yorpb36jmJZurG/UjD8WmR
-         W/kS9A3BfpBlT40FTi2cEcBBBXi2wbNq2n/Pt0ZLqqKg3jxjxHzARn1fbhYd/kF1y46K
-         w0qQReRQ8l9o1lOUmfHE5cKBlRNJVVG06SHQII2FQNBqF0TMQ7thblcfrskfhF0+xPTZ
-         KXmw==
-X-Gm-Message-State: AOJu0Yz4UpFn7SoE4noYTtk1Wu3WcyEhyOmMnQWnebyZi+Bx+/FYyUVZ
-        T2VZ/Kus8lrxT10nwyEHdvJYvIb0NtEqAkewSGZD
-X-Google-Smtp-Source: AGHT+IGDUbfXK+AIRXUY0biV6PHrbsLLAXTemWgR+C8O2IbwMktrRjWoRwhHhix/sOWiIoiNeNiblxKOu29ljZis3Jc=
-X-Received: by 2002:a0d:f806:0:b0:584:1a4d:bbfa with SMTP id
- i6-20020a0df806000000b005841a4dbbfamr2228192ywf.29.1691763559514; Fri, 11 Aug
- 2023 07:19:19 -0700 (PDT)
+        Fri, 11 Aug 2023 10:23:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03C85E53;
+        Fri, 11 Aug 2023 07:23:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9695665A33;
+        Fri, 11 Aug 2023 14:23:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85887C433C8;
+        Fri, 11 Aug 2023 14:23:14 +0000 (UTC)
+Date:   Fri, 11 Aug 2023 15:23:12 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+        Deepak Gupta <debug@rivosinc.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v4 09/36] arm64/mm: Allocate PIE slots for EL0 guarded
+ control stack
+Message-ID: <ZNZEUEqJuHrdEa/c@arm.com>
+References: <20230807-arm64-gcs-v4-0-68cfa37f9069@kernel.org>
+ <20230807-arm64-gcs-v4-9-68cfa37f9069@kernel.org>
 MIME-Version: 1.0
-References: <20230808-master-v9-1-e0ecde888221@kernel.org> <20230808-erdaushub-sanieren-2bd8d7e0a286@brauner>
- <7d596fc2c526a5d6e4a84240dede590e868f3345.camel@kernel.org>
-In-Reply-To: <7d596fc2c526a5d6e4a84240dede590e868f3345.camel@kernel.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 11 Aug 2023 10:19:08 -0400
-Message-ID: <CAHC9VhTAF43=-j4A-Ky1WxJVBOAWzU+y2sb4YmeSQjFOa4Sy-A@mail.gmail.com>
-Subject: Re: [PATCH v9] vfs, security: Fix automount superblock LSM init
- problem, preventing NFS sb sharing
-To:     Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230807-arm64-gcs-v4-9-68cfa37f9069@kernel.org>
+X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 10, 2023 at 9:57=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
-ote:
-> On Tue, 2023-08-08 at 15:31 +0200, Christian Brauner wrote:
-> > On Tue, Aug 08, 2023 at 07:34:20AM -0400, Jeff Layton wrote:
-> > > From: David Howells <dhowells@redhat.com>
-> > >
-> > > When NFS superblocks are created by automounting, their LSM parameter=
-s
-> > > aren't set in the fs_context struct prior to sget_fc() being called,
-> > > leading to failure to match existing superblocks.
-> > >
-> > > This bug leads to messages like the following appearing in dmesg when
-> > > fscache is enabled:
-> > >
-> > >     NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,=
-100000,100000,2ee,3a98,1d4c,3a98,1)
-> > >
-> > > Fix this by adding a new LSM hook to load fc->security for submount
-> > > creation.
-> > >
-> > > Signed-off-by: David Howells <dhowells@redhat.com>
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_moun=
-t() to it.")
-> > > Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inod=
-e)
-> > > Tested-by: Jeff Layton <jlayton@kernel.org>
-> > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> > > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
->
-> I've made a significant number of changes since Casey acked this. It
-> might be a good idea to drop his Acked-by (unless he wants to chime in
-> and ask us to keep it).
+On Mon, Aug 07, 2023 at 11:00:14PM +0100, Mark Brown wrote:
+> diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
+> index eed814b00a38..b157ae0420ed 100644
+> --- a/arch/arm64/include/asm/pgtable-prot.h
+> +++ b/arch/arm64/include/asm/pgtable-prot.h
+> @@ -131,15 +131,23 @@ extern bool arm64_use_ng_mappings;
+>  /* 6:                                PTE_PXN | PTE_WRITE            */
+>  /* 7: PAGE_SHARED_EXEC               PTE_PXN | PTE_WRITE | PTE_USER */
+>  /* 8: PAGE_KERNEL_ROX      PTE_UXN                                  */
+> -/* 9:                      PTE_UXN |                       PTE_USER */
+> +/* 9: PAGE_GCS_RO          PTE_UXN |                       PTE_USER */
+>  /* a: PAGE_KERNEL_EXEC     PTE_UXN |           PTE_WRITE            */
+> -/* b:                      PTE_UXN |           PTE_WRITE | PTE_USER */
+> +/* b: PAGE_GCS             PTE_UXN |           PTE_WRITE | PTE_USER */
+>  /* c: PAGE_KERNEL_RO       PTE_UXN | PTE_PXN                        */
+>  /* d: PAGE_READONLY        PTE_UXN | PTE_PXN |             PTE_USER */
+>  /* e: PAGE_KERNEL          PTE_UXN | PTE_PXN | PTE_WRITE            */
+>  /* f: PAGE_SHARED          PTE_UXN | PTE_PXN | PTE_WRITE | PTE_USER */
+>  
+> +#define _PAGE_GCS	(_PAGE_DEFAULT | PTE_UXN | PTE_WRITE | PTE_USER)
+> +#define _PAGE_GCS_RO	(_PAGE_DEFAULT | PTE_UXN | PTE_USER)
+> +
+> +#define PAGE_GCS	__pgprot(_PAGE_GCS)
+> +#define PAGE_GCS_RO	__pgprot(_PAGE_GCS_RO)
+> +
+>  #define PIE_E0	( \
+> +	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS),           PIE_GCS)  | \
+> +	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS_RO),        PIE_R)   | \
+>  	PIRx_ELx_PERM(pte_pi_index(_PAGE_EXECONLY),      PIE_X_O) | \
+>  	PIRx_ELx_PERM(pte_pi_index(_PAGE_READONLY_EXEC), PIE_RX)  | \
+>  	PIRx_ELx_PERM(pte_pi_index(_PAGE_SHARED_EXEC),   PIE_RWX) | \
+> @@ -147,6 +155,8 @@ extern bool arm64_use_ng_mappings;
+>  	PIRx_ELx_PERM(pte_pi_index(_PAGE_SHARED),        PIE_RW))
+>  
+>  #define PIE_E1	( \
+> +	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS),           PIE_RW)      | \
+> +	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS_RO),        PIE_R)      | \
 
-My apologies in that it took me some time to be able to come back to
-this, but v9 looks fine to me, and I have no problems with Christian
-sending this up via the VFS tree.
+Had some thoughts on this. Why do we need the EL1 GCS attributes to map
+to RW? The instructions we'd use to write the shadow stack are the GCS
+'T' variants that run as user already.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+The only instructions we have in the kernel that would run as EL1 on a
+user address are the exclusives (futex code or the old deprecated
+emulation but we don't care about them in this context). So I wonder
+whether the kernel PIE entry could simply be PIE_NONE_O. Would this be
+too restrictive for future uses? Given the coherency between a GCS
+access and a standard data access, we may want to restrict it now until
+we have a use-case.
 
---=20
-paul-moore.com
+-- 
+Catalin
