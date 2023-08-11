@@ -2,44 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 18C4D779724
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 20:38:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEEF0779727
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Aug 2023 20:39:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234892AbjHKSip (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 14:38:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56530 "EHLO
+        id S235184AbjHKSjE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Aug 2023 14:39:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230287AbjHKSin (ORCPT
+        with ESMTP id S235573AbjHKSjC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 14:38:43 -0400
+        Fri, 11 Aug 2023 14:39:02 -0400
 Received: from outbound-ip7b.ess.barracuda.com (outbound-ip7b.ess.barracuda.com [209.222.82.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 153BE30DC
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 11:38:39 -0700 (PDT)
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2103.outbound.protection.outlook.com [104.47.70.103]) by mx-outbound19-176.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Fri, 11 Aug 2023 18:38:31 +0000
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2731230E8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Aug 2023 11:39:02 -0700 (PDT)
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2175.outbound.protection.outlook.com [104.47.55.175]) by mx-outbound46-215.us-east-2c.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Fri, 11 Aug 2023 18:38:31 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lcJFSt/XIvaF4qqUSKFPWKkEJo6RxL/ANAGtOiu0SyhGhQAad1sJrllc7bp3uqcZFtUcwb/gq80XBtN7Ki+jut4CRWTNy/Ka4eZ+N2g2FZtob7pyFFnCZQdBU1W0SuBpCppNLGV+v+vg74/aDLEllfuTL4X4hlZMets0hft2II64TdCN2xNURIjl4qMPsyRbN6LfOwc6zXCPI1bLCtCmnRIhyhOFz8sJ+PVi/LQNuJILV8QZ+IWOBrHQeKyLjh52Vh9GerjurQTygukUt6Y6gYtgbJynkPGfFgjIhjH4zaQiPrvGCHRM3VZVASVjX5jKVBAmj4VoG5tX3WIITmi61Q==
+ b=cdlF8t4+bGQPhO3ZHjRoLGqo9jXpyFCivgcPHQbc7z1XHMC0sydpkHcldEZN9SO6sn1Y7qc7Bse/DNTUztvQIVtbYlfXp2wn7z9IV9CEsEKxk0W2ENBo/5E8wmZ5IbfrlE1y0/cSc7rgGcbr80joAX1vgGFkEyhugmUFy44jgrwmmxdPKxwLtS30Ls3RC//6ZEOIShn0d6LjShMhsKL0NsDSnPn2pZItju6LTAqfj8dBvLBsoBrqbqV/OwsqjF2ofbntutGmwE5YbxTcj4U1MC2sfNd3c43nhCh42yIio7tROSC0KqsyDywiqS8ECKB9tGt8kMyaBt4Ef1zZ1zphgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NDgiDraLOqUY0epzpyLv4XeGEfNhSHKb/QaFImf7jks=;
- b=KqD+VJXFUAVO2ENaYgNHcjDT+84qalrKuJ6ERnw9dUQm9evzU8lUPd8nbC+b+Pq5T5rPysuctLH5MmRLKw55pkCjYn+BZEirzBSFF3EsC4kXfzWxIHsrw0h7FQIkFmNlIXEjPCXDdTrlg0lw/5Rv+TzJ0IeRIPJc6NNGdKWKa+5uXOzW+GnmEaYuKk0r2ww3y2DuGCjKRzv/nEx2Sj6qZsrOpf9BPhdZy+VFEYYhjSFMT0jgiS7v1s/7A+C166GP41sBKB2LJuu3mSp9cxr3ol7o/3gwEzvgEXnrpM5H5AfkKQMSUhj4h1qr0EPFHN8r8pK7ClFlA3wl1tiC6HghOg==
+ bh=hc0gZidMxZAsC9qVDHsL4I2niulPDO0WSv/kjqbSjBk=;
+ b=ZVPD6+Zzt13XjAMzM9rsWypz0m7g3zn2FSnhxPIkn++W8x8V7dhC2MGjSedmL6XWy2qGgNb4hMgwljpfletux5yGF01yzPmkf96dlq26CvYda0Nu1nW7lzC2iCboccrM3hvqwachik6X8kwh0TEpxGHc6BUP3qg/BRzek+IBwNvcbfhIsj7TZnN4jPtnJVJRCRObXhJOkDBSzKIVkhymB5u8FuOyZzp5m3StPtgcc3/6qJ2Tufr2iPcjCJtrN4Y3EOzE1dQG8rRqTeXFW+IypMe0UUjCIae3Bojds8bpkknBYCoy8tz2Fc/Haw9FUXhDzMeI6j1EZv20KLEStaiJTA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
  (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
  (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NDgiDraLOqUY0epzpyLv4XeGEfNhSHKb/QaFImf7jks=;
- b=xGKY2zHEU/4tDkR8uaUCKwBSSK91jnYxpS8T8PvcaWsheMzRSfP3/HeERLBSVEG1ZVvaRe7a0HPWFHAtQfrnPOQUgmbuWBvYuvIKWbfzyRTEb0ALT25njAJV1b5gQAwinAIXqTk3dWepJbVoe2zSBVbAB/6PrSWaarnVLPHriB0=
-Received: from MW2PR16CA0032.namprd16.prod.outlook.com (2603:10b6:907::45) by
- SA0PR19MB4459.namprd19.prod.outlook.com (2603:10b6:806:b1::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6652.30; Fri, 11 Aug 2023 18:38:26 +0000
-Received: from MW2NAM04FT063.eop-NAM04.prod.protection.outlook.com
- (2603:10b6:907:0:cafe::7e) by MW2PR16CA0032.outlook.office365.com
- (2603:10b6:907::45) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6652.31 via Frontend
- Transport; Fri, 11 Aug 2023 18:38:25 +0000
+ bh=hc0gZidMxZAsC9qVDHsL4I2niulPDO0WSv/kjqbSjBk=;
+ b=0yXm37mSFg6QeF7+qWUVBTl7yNUvNRPS2X6Q1qZQVOULsLXkaOJqP8ucENB2sTgOOGj4b1B562ROMPntErqFACN6veSsTiuVnvEeTGTsqpXgrV83103bL5H2rA0iNCvyRTTrWwpmIP7upUBNu3brvWnc5frXbMJM0iR4vD2k5E4=
+Received: from SJ0PR05CA0036.namprd05.prod.outlook.com (2603:10b6:a03:33f::11)
+ by PH0PR19MB5504.namprd19.prod.outlook.com (2603:10b6:510:129::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6652.30; Fri, 11 Aug
+ 2023 18:38:28 +0000
+Received: from MW2NAM04FT062.eop-NAM04.prod.protection.outlook.com
+ (2603:10b6:a03:33f:cafe::2) by SJ0PR05CA0036.outlook.office365.com
+ (2603:10b6:a03:33f::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6678.18 via Frontend
+ Transport; Fri, 11 Aug 2023 18:38:28 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
  smtp.mailfrom=ddn.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=ddn.com;
@@ -47,22 +48,23 @@ Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
  50.222.100.11 as permitted sender) receiver=protection.outlook.com;
  client-ip=50.222.100.11; helo=uww-mx01.datadirectnet.com; pr=C
 Received: from uww-mx01.datadirectnet.com (50.222.100.11) by
- MW2NAM04FT063.mail.protection.outlook.com (10.13.31.109) with Microsoft SMTP
+ MW2NAM04FT062.mail.protection.outlook.com (10.13.31.41) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6699.9 via Frontend Transport; Fri, 11 Aug 2023 18:38:26 +0000
+ 15.20.6699.10 via Frontend Transport; Fri, 11 Aug 2023 18:38:28 +0000
 Received: from localhost (unknown [10.68.0.8])
-        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 9601420C684B;
-        Fri, 11 Aug 2023 12:39:31 -0600 (MDT)
+        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 7F54A20C684B;
+        Fri, 11 Aug 2023 12:39:33 -0600 (MDT)
 From:   Bernd Schubert <bschubert@ddn.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     bernd.schubert@fastmail.fm, fuse-devel@lists.sourceforge.net,
+        Miklos Szeredi <miklos@szeredi.hu>,
         Bernd Schubert <bschubert@ddn.com>,
-        Dharmendra Singh <dsingh@ddn.com>,
-        Horst Birthelmer <hbirthelmer@ddn.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: [PATCH 2/6] fuse: introduce atomic open
-Date:   Fri, 11 Aug 2023 20:37:48 +0200
-Message-Id: <20230811183752.2506418-3-bschubert@ddn.com>
+        Christian Brauner <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dharmendra Singh <dsingh@ddn.com>
+Subject: [PATCH 3/6] [RFC] Allow atomic_open() on positive dentry
+Date:   Fri, 11 Aug 2023 20:37:49 +0200
+Message-Id: <20230811183752.2506418-4-bschubert@ddn.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230811183752.2506418-1-bschubert@ddn.com>
 References: <20230811183752.2506418-1-bschubert@ddn.com>
@@ -70,40 +72,56 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW2NAM04FT063:EE_|SA0PR19MB4459:EE_
+X-MS-TrafficTypeDiagnostic: MW2NAM04FT062:EE_|PH0PR19MB5504:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: bcdfdece-5489-403e-711e-08db9a9a26ad
+X-MS-Office365-Filtering-Correlation-Id: 2ba2034b-9d18-4472-40b0-08db9a9a27cf
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: smQa4Q+WWrIRYMn9Afb5WHQ+ZrQLdzLR0l04zpGaAjx7NHNNkJrCSzAvho4T3J6SxvD25fD7tWbet2KBo7aCSp9Mokjd+ZIPi5puhJpFcuYy92j3Y7MjUrh/p770kvqaMQj/kkfBwTgkptbCMud3B1nJy3kXgWk4vlUwSCgHK2/fmf7HeKT/mwznt2GG/XLZXZ3OUT6l0Usnfriw2PiR+PUEL9Ss7L7sLaQXcP1flo+1QquhMNhEHLEn9EUgwl/UTCCkMj6JefjYQsSHhgq/6mq9vFYlrVpzP59PV83COdVLSzOMwFqpiWTKOdPz0UUSqAqwO39nVpJZ895Uk2YlcePoKCepBhvBrSM3zdwxHOExDmDYRqhmETbxHNl5lGR8Go2cvSXL0k52DX9nS4G51aYFM6+DMQ7SmKoCIHdusj/3zHNTcx05E/C4R/CRXFUdc0VdzsCbXIQ3Ck6IJGABIn2zDwsA3VXkuvK57naQlRPR0hHZuYeeRvyoy0pRhWP9bKCeWf1in54PcEZgHjVXUKXdA6iXYxbVqIQsDO6hgEd2cRwGvD6/4ZRcxJu+6Gl+R2/ZxmnHuzlzZ/Exyww7t2RIq5RLRFJ6DS4DYf00GwV1CeHU+XKpzWpzQI4uVXaGDwqg5Gh0RdrB7NXbw8DOzLzfz8mgDYee6RMQQoYiDtWmhF3/CwqINNBSfb6rLIyhJ/BJKibWUIalyQZRFVfE1ZhrXRuZsUIkGCz0Ou7axrWRRMIkOZRanl1fLM7SKCKW
-X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(136003)(346002)(39850400004)(376002)(396003)(186006)(451199021)(1800799006)(82310400008)(46966006)(36840700001)(6666004)(478600001)(6916009)(70586007)(4326008)(70206006)(5660300002)(316002)(54906003)(41300700001)(8676002)(8936002)(26005)(1076003)(86362001)(82740400003)(6266002)(336012)(40480700001)(36756003)(36860700001)(47076005)(356005)(83380400001)(81166007)(2906002)(2616005)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: RAq5FRTS0PV5gE1gBdU+rVvn4Gx8LqwugdtkCDnzEi8Cd6RU3F90Q45Uhm8VBj5+F7P6x6dN/6cnZ9+Jh9TERLW8q6D1vVIQMYXehNOdN+0RHnePMz56RJ5KafcLUOLocJKWqbNFbDQSe0r64x5E83z/QMYc0EeHPAcsgsC6KxK/GTfJcenJYexdt7h223HO9Q6i8FWjkAzqR4vBj67w77KS4rT6RTVmZf3Fi1QuQ+/KqONHh1NXpr5WMXs/2XUo/xDEJNbsUSd6zhhYk5qbDPucISMDeNuvkxJMebcVAcrtRL8sJvQeKO0P3yhFIP4BUBhB4lGQM9X4Oy38cailY+aEB+WqP/aGvfzG8/7FRtw7PPdOkoyoj13cr3QVE6saQjWPf/0PvK6LJXJoXZVvkZ7+asz0O9+QKTygvnvJfkZji371oFQ/gxfmb+2wwvhT2n04V+yIi88k6du1fttrDZhke6tsKg35y3kgkZ9+V/t7jUMjd5K5OKIGG0KsGBLAOGojbbGC7ZQc3ay21XZA0VbzYSKnuMwer+/cFk5wIlcphIFglKFGrRlpTK0fbPbsuAdbwF8+FUCgailkhfZtiPxkzlY+zyjjx+Y6bNqXivBUVgkUVvE4hRBtysVLCng07irlxg+xEr1W4TGGodcKo8u+sjubcwxgsa5n4x8H6e8U4O6NfnKi7pze099Y7xrb0vFt0snoX84+/HteCCW5Eh1KZMQg/GRY0ndPvaTUB4FeHtt0AafXphFfsw5kd2JF
+X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(396003)(136003)(39850400004)(376002)(346002)(186006)(1800799006)(82310400008)(451199021)(46966006)(36840700001)(83380400001)(8676002)(2906002)(2616005)(41300700001)(47076005)(36756003)(336012)(6266002)(40480700001)(5660300002)(1076003)(36860700001)(26005)(8936002)(86362001)(54906003)(82740400003)(6666004)(70206006)(478600001)(81166007)(356005)(316002)(4326008)(6916009)(70586007)(36900700001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: IJX09dwLLi5yS7jm0gge7xlj6oVxmZkyE0eS+B3YGnCfeqjfJz3bPgGA//LfhLPsyYsyp+paEJFbYl3fyvMU4PU8Ig2NVpp5Ju9uVbQGSVHJTep60zisWodgJWW2oxAa9UmNMtulFduMGa78HaV0EbHryJv7M5SsfOkCfgQ0z+ZIvkiDftAquFZ7AZYqvMFwD6E9W+3NjKK0ADJ+0a7gpdd5iiMhpVmvg55hjBp7TiHIHKs3y3XSmofyyR9jFmJcNZVBaUbzjIUy+M0xL2CWTowkdiTWGtNKS+7ITOGaK2jpcNY+FvhooYYjiLDWOxVPqKskw6v6lOMU1BcXm1FXwGizJgxiJ3HUR+j1OFx6QlBfbrvfwo+PnVGJDvDHxjLi4z59oqZpq5ecbYrfjGalzyflR3T/TKpypa5NjywXV8kH4QeTFerZdWHGBQB4kC2DuzMlu6EHxCcmNThMN6fNVJ4YrImrJr5vF/FOuN+WAQaGImmFWxoQpHiBqmECJS2yEXZjJ3wGCwAfZYCFAI+wgJZ64aq0gJ0kj5tjPnDUf7SGFvzLOae5r3SzRdzkmVbGMpoNnAiqXvNMBBNTfB6LaX1EtJATw0FaNhw8BchNFySX6CJu8qTJ1fENkmIntUE6kJ4XjrS7P+Lsp4uXYLBWMFkt+4fY80M/CSx586/HdYyGE3n2EEoOXcvE6bFyfYP+tN+LJzo4rjmrzhPGBWXXfQH3HfWlhOFWkP4stumDEeweFPR/7KXjbdrVM7djagW79kmHE/b3QinYK/VGcgMQYFihXy/sElonXR67gn9bm3e57bBLDNcarA9ptXESWV3qhI2oQejYYrWb3Lq1b0OPlAH+jIwJQ8igXk61wFfQNhlMrH7uMhcrHEdLvC+nYNubcpLAyEXtubnxGZ8jVgYafp2G+SDbM75yY0ASa6xCZcM=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?JP/VzyqUjDykciOBSMpk43VIM/OwVjJkUv6CuzfaTG/N/V0L4NSAhohdZ8iq?=
+ =?us-ascii?Q?7iTZPPAerVz64QEEbj6eIxtO+8d6oovoe6ChMciFugj4+KU2+E8q/XOgC4DQ?=
+ =?us-ascii?Q?962qHVeRywSDTAF6bks0pEUTyZx1zsniIYyL8UjadzaZPlQEFv50C1cfsILC?=
+ =?us-ascii?Q?LGq7wHKYBqPLHhGPENk4nX0EzAKdNxhAyFIpJaGQ0w8lJ7boelwvgY4blHai?=
+ =?us-ascii?Q?M2XQuH6fACtrE/C8JtImupopvLuMv3biAWAEIENsfRjCXkxZZWdYp2K02W43?=
+ =?us-ascii?Q?8wsfRkrtB4hJx3Z0tiDU78w2xTB3gddYHg+WVkonddizoNyyztzIfXngvehl?=
+ =?us-ascii?Q?BnVpTa7Ie0mAeWf1q407eGioGhJheFtd5fqniKioiu1pDnFdHQe/ktqcZRt3?=
+ =?us-ascii?Q?a1AX9/D621TR91HofxZf5EC8IGQiHqT54XGrPdbDCjaZUVahHNWxhK0ItVPd?=
+ =?us-ascii?Q?s3AQxf9ntXkrmUV6JUvI/s7FspPPS6mlhiAK1SMahE6G2EpgyMp3Cw0WUM3d?=
+ =?us-ascii?Q?gH/m1mK43MxwIeBPBSxZvFen3WvH2uhNVMedRl62HtFCzLePFsXBjHLpfjp1?=
+ =?us-ascii?Q?2qdcp4viNFWlGtQ06wOqh1Dsp4lkxshQ9+o3ZQv8uirCus2ZfiIFtLn7ejuR?=
+ =?us-ascii?Q?N34bfsXX7+/SD9Fmnuc+D3ILIgRLd9kwurMOX7mRFUrvdj1PlFzLQ7R1sEmd?=
+ =?us-ascii?Q?LA+5F63vgAnjlSFuGFKfrd9sJEPtRQBxlLTc6+mN7ZXjbvxutZm0L77cN6LZ?=
+ =?us-ascii?Q?ql6N5g/iKv1HDzNH3fQSr6a6vIb24dRQfacCQXoSDnTSXP75vKrF4zxk/luo?=
+ =?us-ascii?Q?QlIDrUY2Vw59KJv3fk0jNeaAe4OBmLSSqew9bRG6tUWcwxkhgsMGLZ6BMtB8?=
+ =?us-ascii?Q?6WSNv95KD4n3WAgOe5HAo/dEjlYnnziFnD4WxSw1Tk9T0WwyMwDUf2R4f1Ay?=
+ =?us-ascii?Q?rw5O/VRCUjjuvTJemGpRtzOMumvzfdkM/KzG0e0P76B+zmbpHwIuSpPDA94Q?=
+ =?us-ascii?Q?iVW4?=
 X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2023 18:38:26.6661
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2023 18:38:28.5810
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bcdfdece-5489-403e-711e-08db9a9a26ad
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ba2034b-9d18-4472-40b0-08db9a9a27cf
 X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mx01.datadirectnet.com]
-X-MS-Exchange-CrossTenant-AuthSource: MW2NAM04FT063.eop-NAM04.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: MW2NAM04FT062.eop-NAM04.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR19MB4459
-X-BESS-ID: 1691779111-105040-12337-14224-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR19MB5504
+X-BESS-ID: 1691779110-111991-4730-9748-1
 X-BESS-VER: 2019.1_20230807.1901
-X-BESS-Apparent-Source-IP: 104.47.70.103
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVhYmZsZAVgZQ0DIpNTklyTTF2D
-        w11cQ4NcXQwjI1KSU1KSkl0TItJcVQqTYWACsuU7tBAAAA
-X-BESS-Outbound-Spam-Score: 0.50
+X-BESS-Apparent-Source-IP: 104.47.55.175
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVqYGhpZAVgZQ0DLV2MAwJS3VMN
+        kASKQkGhgnJ5sYmhqlpBqkmZqYpCjVxgIA5uQW2UEAAAA=
+X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.250079 [from 
-        cloudscan11-179.us-east-2a.ess.aws.cudaops.com]
+        cloudscan21-52.us-east-2b.ess.aws.cudaops.com]
         Rule breakdown below
          pts rule name              description
         ---- ---------------------- --------------------------------
-        0.50 BSF_RULE7568M          META: Custom Rule 7568M 
         0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
 X-BESS-BRTS-Status: 1
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
@@ -115,307 +133,152 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Dharmendra Singh <dsingh@ddn.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
 
-This adds full atomic open support, to avoid lookup before open/create.
-If the implementation (fuse server/daemon) does not support atomic open
-it falls back to non-atomic open.
+atomic_open() will do an open-by-name or create-and-open
+depending on the flags.
 
-Co-developed-by: Bernd Schubert <bschubert@ddn.com>
-Signed-off-by: Dharmendra Singh <dsingh@ddn.com>
-Signed-off-by: Horst Birthelmer <hbirthelmer@ddn.com>
+If file was created, then the old positive dentry is obviously
+stale, so it will be invalidated and a new one will be allocated.
+
+If not created, then check whether it's the same inode (same as in
+->d_revalidate()) and if not, invalidate & allocate new dentry.
+
+Changes from Miklos initial patch (by Bernd):
+- LOOKUP_ATOMIC_REVALIDATE was added and is set for revalidate
+  calls into the file system when revalidate by atomic open is
+  supported - this is to avoid that ->d_revalidate() would skip
+  revalidate and set DCACHE_ATOMIC_OPEN, although vfs
+  does not supported it in the given code path (for example
+  when LOOKUP_RCU is set)).
+- Support atomic-open-revalidate in lookup_fast() - allow atomic
+  open for positive dentries without O_CREAT being set.
+
+Signed-off-by: Miklos Szeredi <miklos@szeredi.hu>
 Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Dharmendra Singh <dsingh@ddn.com>
 Cc: linux-fsdevel@vger.kernel.org
 ---
- fs/fuse/dir.c             | 222 +++++++++++++++++++++++++++++++++++++-
- fs/fuse/fuse_i.h          |   3 +
- include/uapi/linux/fuse.h |   3 +
- 3 files changed, 227 insertions(+), 1 deletion(-)
+ fs/fuse/dir.c          |  5 ++---
+ fs/namei.c             | 17 +++++++++++++----
+ include/linux/dcache.h |  6 ++++++
+ include/linux/namei.h  |  1 +
+ 4 files changed, 22 insertions(+), 7 deletions(-)
 
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 6ffc573de470..c02b63fe91ca 100644
+index c02b63fe91ca..8ccd49d63235 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -724,7 +724,7 @@ static int _fuse_create_open(struct inode *dir, struct dentry *entry,
+@@ -380,7 +380,6 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
+ 	if (name->len > FUSE_NAME_MAX)
+ 		goto out;
  
- static int fuse_mknod(struct mnt_idmap *, struct inode *, struct dentry *,
- 		      umode_t, dev_t);
--static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
-+static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 			    struct file *file, unsigned flags,
- 			    umode_t mode)
- {
-@@ -770,6 +770,226 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
- 	return finish_no_open(file, res);
+-
+ 	forget = fuse_alloc_forget();
+ 	err = -ENOMEM;
+ 	if (!forget)
+@@ -771,8 +770,8 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
  }
  
-+static int _fuse_atomic_open(struct inode *dir, struct dentry *entry,
-+			    struct file *file, unsigned flags,
-+			    umode_t mode)
+ static int _fuse_atomic_open(struct inode *dir, struct dentry *entry,
+-			    struct file *file, unsigned flags,
+-			    umode_t mode)
++			     struct file *file, unsigned flags,
++			     umode_t mode)
+ {
+ 
+ 	int err;
+diff --git a/fs/namei.c b/fs/namei.c
+index e4fe0879ae55..5dae1b1afd0e 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1643,12 +1643,14 @@ static struct dentry *lookup_fast(struct nameidata *nd)
+ 			return ERR_PTR(-ECHILD);
+ 		if (status == -ECHILD)
+ 			/* we'd been told to redo it in non-rcu mode */
+-			status = d_revalidate(dentry, nd->flags);
++			status = d_revalidate(dentry,
++					      nd->flags | LOOKUP_ATOMIC_REVALIDATE);
+ 	} else {
+ 		dentry = __d_lookup(parent, &nd->last);
+ 		if (unlikely(!dentry))
+ 			return NULL;
+-		status = d_revalidate(dentry, nd->flags);
++		status = d_revalidate(dentry,
++				      nd->flags | LOOKUP_ATOMIC_REVALIDATE);
+ 	}
+ 	if (unlikely(status <= 0)) {
+ 		if (!status)
+@@ -1656,6 +1658,12 @@ static struct dentry *lookup_fast(struct nameidata *nd)
+ 		dput(dentry);
+ 		return ERR_PTR(status);
+ 	}
++
++	if (unlikely(d_atomic_open(dentry))) {
++		dput(dentry);
++		return NULL;
++	}
++
+ 	return dentry;
+ }
+ 
+@@ -3421,7 +3429,8 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+ 		if (d_in_lookup(dentry))
+ 			break;
+ 
+-		error = d_revalidate(dentry, nd->flags);
++		error = d_revalidate(dentry,
++				     nd->flags | LOOKUP_ATOMIC_REVALIDATE);
+ 		if (likely(error > 0))
+ 			break;
+ 		if (error)
+@@ -3430,7 +3439,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+ 		dput(dentry);
+ 		dentry = NULL;
+ 	}
+-	if (dentry->d_inode) {
++	if (dentry->d_inode && !d_atomic_open(dentry)) {
+ 		/* Cached positive dentry: will open in f_op->open */
+ 		return dentry;
+ 	}
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index 6b351e009f59..f90eec22691c 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -208,6 +208,7 @@ struct dentry_operations {
+ #define DCACHE_FALLTHRU			0x01000000 /* Fall through to lower layer */
+ #define DCACHE_NOKEY_NAME		0x02000000 /* Encrypted name encoded without key */
+ #define DCACHE_OP_REAL			0x04000000
++#define DCACHE_ATOMIC_OPEN		0x08000000 /* Always use ->atomic_open() to open this file */
+ 
+ #define DCACHE_PAR_LOOKUP		0x10000000 /* being looked up (with parent locked shared) */
+ #define DCACHE_DENTRY_CURSOR		0x20000000
+@@ -496,6 +497,11 @@ static inline bool d_is_fallthru(const struct dentry *dentry)
+ 	return dentry->d_flags & DCACHE_FALLTHRU;
+ }
+ 
++static inline bool d_atomic_open(const struct dentry *dentry)
 +{
-+
-+	int err;
-+	struct inode *inode;
-+	struct fuse_mount *fm = get_fuse_mount(dir);
-+	struct fuse_conn *fc = fm->fc;
-+	FUSE_ARGS(args);
-+	struct fuse_forget_link *forget;
-+	struct fuse_create_in inarg;
-+	struct fuse_open_out outopen;
-+	struct fuse_entry_out outentry;
-+	struct fuse_inode *fi;
-+	struct fuse_file *ff;
-+	struct dentry *switched_entry = NULL, *alias = NULL;
-+	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
-+
-+	/* Expect a negative dentry */
-+	if (unlikely(d_inode(entry)))
-+		goto fallback;
-+
-+	/* Userspace expects S_IFREG in create mode */
-+	if ((flags & O_CREAT) && (mode & S_IFMT) != S_IFREG)
-+		goto fallback;
-+
-+	forget = fuse_alloc_forget();
-+	err = -ENOMEM;
-+	if (!forget)
-+		goto out_err;
-+
-+	err = -ENOMEM;
-+	ff = fuse_file_alloc(fm);
-+	if (!ff)
-+		goto out_put_forget_req;
-+
-+	if (!fc->dont_mask)
-+		mode &= ~current_umask();
-+
-+	flags &= ~O_NOCTTY;
-+	memset(&inarg, 0, sizeof(inarg));
-+	memset(&outentry, 0, sizeof(outentry));
-+	inarg.flags = flags;
-+	inarg.mode = mode;
-+	inarg.umask = current_umask();
-+
-+	if (fc->handle_killpriv_v2 && (flags & O_TRUNC) &&
-+	    !(flags & O_EXCL) && !capable(CAP_FSETID)) {
-+		inarg.open_flags |= FUSE_OPEN_KILL_SUIDGID;
-+	}
-+
-+	args.opcode = FUSE_OPEN_ATOMIC;
-+	args.nodeid = get_node_id(dir);
-+	args.in_numargs = 2;
-+	args.in_args[0].size = sizeof(inarg);
-+	args.in_args[0].value = &inarg;
-+	args.in_args[1].size = entry->d_name.len + 1;
-+	args.in_args[1].value = entry->d_name.name;
-+	args.out_numargs = 2;
-+	args.out_args[0].size = sizeof(outentry);
-+	args.out_args[0].value = &outentry;
-+	args.out_args[1].size = sizeof(outopen);
-+	args.out_args[1].value = &outopen;
-+
-+	if (flags & O_CREAT) {
-+		err = get_create_ext(&args, dir, entry, mode);
-+		if (err)
-+			goto out_free_ff;
-+	}
-+
-+	err = fuse_simple_request(fm, &args);
-+	free_ext_value(&args);
-+	if (err == -ENOSYS) {
-+		fc->no_open_atomic = 1;
-+		fuse_file_free(ff);
-+		kfree(forget);
-+		goto fallback;
-+	}
-+
-+	if (!err && !outentry.nodeid)
-+		err = -ENOENT;
-+
-+	if (err)
-+		goto out_free_ff;
-+
-+	err = -EIO;
-+	if (invalid_nodeid(outentry.nodeid) || fuse_invalid_attr(&outentry.attr))
-+		goto out_free_ff;
-+
-+	ff->fh = outopen.fh;
-+	ff->nodeid = outentry.nodeid;
-+	ff->open_flags = outopen.open_flags;
-+	inode = fuse_iget(dir->i_sb, outentry.nodeid, outentry.generation,
-+			  &outentry.attr, entry_attr_timeout(&outentry), 0);
-+	if (!inode) {
-+		flags &= ~(O_CREAT | O_EXCL | O_TRUNC);
-+		fuse_sync_release(NULL, ff, flags);
-+		fuse_queue_forget(fm->fc, forget, outentry.nodeid, 1);
-+		err = -ENOMEM;
-+		goto out_err;
-+	}
-+
-+	/* prevent racing/parallel lookup on a negative hashed */
-+	if (!(flags & O_CREAT) && !d_in_lookup(entry)) {
-+		d_drop(entry);
-+		switched_entry = d_alloc_parallel(entry->d_parent,
-+						   &entry->d_name, &wq);
-+		if (IS_ERR(switched_entry)) {
-+			err = PTR_ERR(switched_entry);
-+			goto out_free_ff;
-+		}
-+
-+		if (unlikely(!d_in_lookup(switched_entry))) {
-+			/* fall back */
-+			dput(switched_entry);
-+			switched_entry = NULL;
-+			goto free_and_fallback;
-+		}
-+
-+		entry = switched_entry;
-+	}
-+
-+	/* modified version of _nfs4_open_and_get_state - nfs does not open
-+	 * dirs, fuse doe
-+	 * nfs has additional d_really_is_negative condition, which does not
-+	 * make sense as long as only negative dentries come into this function,
-+	 * see BUG_ON above and missing revalidate patch - but needed if
-+	 * we are going to handle revalidate
-+	 */
-+	if (d_really_is_negative(entry)) {
-+		d_drop(entry);
-+		alias = d_exact_alias(entry, inode);
-+		if (!alias) {
-+			alias = d_splice_alias(inode, entry);
-+			if (IS_ERR(alias)) {
-+				/*
-+				 * Close the file in user space, but do not unlink it,
-+				 * if it was created - with network file systems other
-+				 * clients might have already accessed it.
-+				 */
-+				fi = get_fuse_inode(inode);
-+				fuse_sync_release(fi, ff, flags);
-+				fuse_queue_forget(fm->fc, forget, outentry.nodeid, 1);
-+				err = PTR_ERR(alias);
-+				goto out_err;
-+			}
-+		}
-+
-+		if (alias)
-+			entry = alias;
-+	}
-+
-+	fuse_change_entry_timeout(entry, &outentry);
-+
-+	/*  File was indeed created */
-+	if (outopen.open_flags & FOPEN_FILE_CREATED) {
-+		if (!(flags & O_CREAT)) {
-+			pr_debug("Server side bug, FOPEN_FILE_CREATED set "
-+				 "without O_CREAT, ignoring.");
-+		} else {
-+			/* This should be always set when the file is created */
-+			fuse_dir_changed(dir);
-+			file->f_mode |= FMODE_CREATED;
-+		}
-+	}
-+
-+	if (S_ISDIR(mode))
-+		ff->open_flags &= ~FOPEN_DIRECT_IO;
-+	err = finish_open(file, entry, generic_file_open);
-+	if (err) {
-+		fi = get_fuse_inode(inode);
-+		fuse_sync_release(fi, ff, flags);
-+	} else {
-+		file->private_data = ff;
-+		fuse_finish_open(inode, file);
-+	}
-+
-+	kfree(forget);
-+
-+	if (switched_entry) {
-+		d_lookup_done(switched_entry);
-+		dput(switched_entry);
-+	}
-+
-+	dput(alias);
-+
-+	return err;
-+
-+out_free_ff:
-+	fuse_file_free(ff);
-+out_put_forget_req:
-+	kfree(forget);
-+out_err:
-+	if (switched_entry) {
-+		d_lookup_done(switched_entry);
-+		dput(switched_entry);
-+	}
-+
-+	return err;
-+
-+free_and_fallback:
-+	fuse_file_free(ff);
-+	kfree(forget);
-+fallback:
-+	return fuse_create_open(dir, entry, file, flags, mode);
++       return dentry->d_flags & DCACHE_ATOMIC_OPEN;
 +}
 +
-+static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
-+			    struct file *file, unsigned flags,
-+			    umode_t mode)
-+{
-+	struct fuse_conn *fc = get_fuse_conn(dir);
-+
-+	if (fc->no_open_atomic)
-+		return fuse_create_open(dir, entry, file, flags, mode);
-+	else
-+		return _fuse_atomic_open(dir, entry, file, flags, mode);
-+}
-+
- /*
-  * Code shared between mknod, mkdir, symlink and link
-  */
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 9b7fc7d3c7f1..4e2ebcc28912 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -672,6 +672,9 @@ struct fuse_conn {
- 	/** Is open/release not implemented by fs? */
- 	unsigned no_open:1;
  
-+	/** Is open atomic not impelmented by fs? */
-+	unsigned no_open_atomic:1;
-+
- 	/** Is opendir/releasedir not implemented by fs? */
- 	unsigned no_opendir:1;
+ extern int sysctl_vfs_cache_pressure;
  
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 1b9d0dfae72d..ee36263c0f3a 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -314,6 +314,7 @@ struct fuse_file_lock {
-  * FOPEN_STREAM: the file is stream-like (no file position at all)
-  * FOPEN_NOFLUSH: don't flush data cache on close (unless FUSE_WRITEBACK_CACHE)
-  * FOPEN_PARALLEL_DIRECT_WRITES: Allow concurrent direct writes on the same inode
-+ * FOPEN_FILE_CREATED: the file was indeed created
-  */
- #define FOPEN_DIRECT_IO		(1 << 0)
- #define FOPEN_KEEP_CACHE	(1 << 1)
-@@ -322,6 +323,7 @@ struct fuse_file_lock {
- #define FOPEN_STREAM		(1 << 4)
- #define FOPEN_NOFLUSH		(1 << 5)
- #define FOPEN_PARALLEL_DIRECT_WRITES	(1 << 6)
-+#define FOPEN_FILE_CREATED	(1 << 7)
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index 1463cbda4888..7eec6c06b192 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -33,6 +33,7 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
+ #define LOOKUP_CREATE		0x0200	/* ... in object creation */
+ #define LOOKUP_EXCL		0x0400	/* ... in exclusive creation */
+ #define LOOKUP_RENAME_TARGET	0x0800	/* ... in destination of rename() */
++#define LOOKUP_ATOMIC_REVALIDATE  0x1000 /* atomic revalidate possible */
  
- /**
-  * INIT request/reply flags
-@@ -572,6 +574,7 @@ enum fuse_opcode {
- 	FUSE_REMOVEMAPPING	= 49,
- 	FUSE_SYNCFS		= 50,
- 	FUSE_TMPFILE		= 51,
-+	FUSE_OPEN_ATOMIC	= 52,
- 
- 	/* CUSE specific operations */
- 	CUSE_INIT		= 4096,
+ /* internal use only */
+ #define LOOKUP_PARENT		0x0010
 -- 
 2.34.1
 
