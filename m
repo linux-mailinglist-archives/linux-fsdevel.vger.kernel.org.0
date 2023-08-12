@@ -1,95 +1,162 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F0296779BBB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Aug 2023 02:05:39 +0200 (CEST)
+Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
+	by mail.lfdr.de (Postfix) with ESMTP id C8158779BFA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Aug 2023 02:42:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235037AbjHLAFP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Aug 2023 20:05:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56900 "EHLO
+        id S236983AbjHLAl7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Aug 2023 20:41:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233777AbjHLAFO (ORCPT
+        with ESMTP id S236946AbjHLAl5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Aug 2023 20:05:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC78B1BF9;
-        Fri, 11 Aug 2023 17:05:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Fri, 11 Aug 2023 20:41:57 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C45A7A6;
+        Fri, 11 Aug 2023 17:41:56 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3459F63F0C;
-        Sat, 12 Aug 2023 00:04:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91CDAC433C7;
-        Sat, 12 Aug 2023 00:04:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691798697;
-        bh=ocsVToj/iVM+XhkH8YNiZ4GKxA2Rc7YUdFp90EQo8T8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pJLVEHvIzbGx8FG3S4BASA9oqvXoB+WSSMea8uqftlDit0geVr92l2KGQ7CsaRTvM
-         kyXcfXCL/+Jg1OTOg1G08kbsj+orBeZDuiQTxeRPEPGbFRK4T1vGTyqNrI/SM+sTpd
-         3BIfD1J7NYjf5BrrvtX7zXYjLnQLtm1zLaPsIsMkfg0p9/KRE41Dsj/9EkcvAibf2H
-         W6qfEsy4tk5MxSJIim9bf9OBJoROguA0/EcCIpOokYlc5DrJcYCZeQbRo6OREsi9cw
-         iXtoLsXx0FOh8eWr3uAOcITsFUTuoUMDAeSZ/jEY2wa7Qy4F2Ctr+VkhsdB6LSgh/l
-         jFd9HCaO/D81g==
-Date:   Fri, 11 Aug 2023 17:04:56 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Amir Goldstein <amir73il@gmail.com>, corbet@lwn.net,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, cem@kernel.org, sandeen@sandeen.net,
-        chandan.babu@oracle.com, leah.rumancik@gmail.com, zlang@kernel.org,
-        fstests@vger.kernel.org, willy@infradead.org,
-        shirley.ma@oracle.com, konrad.wilk@oracle.com
-Subject: Re: [PATCH 1/3] docs: add maintainer entry profile for XFS
-Message-ID: <20230812000456.GA2375177@frogsfrogsfrogs>
-References: <169091989589.112530.11294854598557805230.stgit@frogsfrogsfrogs>
- <169091990172.112530.13872332887678504055.stgit@frogsfrogsfrogs>
- <ZNaMhgqbLJGdateQ@bombadil.infradead.org>
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 4D913218E0;
+        Sat, 12 Aug 2023 00:41:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1691800914; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=Xrrpw3+HUsiXWHTjXG7RJBvNwihn1GUBNy+js8Leqss=;
+        b=xZte8DD6iXDn04AdGNE5WpVyjAnG3v60jjUBMm2KJXecrvUkNEalSpFu2CN8AO5ZjzEtI2
+        vFChXHP3Jnb1jIzk8peU70MsY5p/o6LLouUHce1CLZDTUKh4Tpz/cizVwwhRCyuLpzQjDe
+        EuBiq95BCBTRMTR2sxg20LAMNEGVhBI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1691800914;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=Xrrpw3+HUsiXWHTjXG7RJBvNwihn1GUBNy+js8Leqss=;
+        b=oYAsTjgtsHVDwEXGreH2/pXTVq6R0/U9/EYlX9xHjsi2gQ1kx2w8ymLSVDJYKClJNT/jHM
+        oKP9h5RpYzaOchCg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1214A13592;
+        Sat, 12 Aug 2023 00:41:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id io6fOlHV1mT/DwAAMHmgww
+        (envelope-from <krisman@suse.de>); Sat, 12 Aug 2023 00:41:53 +0000
+From:   Gabriel Krisman Bertazi <krisman@suse.de>
+To:     viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
+        ebiggers@kernel.org, jaegeuk@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Gabriel Krisman Bertazi <krisman@suse.de>
+Subject: [PATCH v5 00/10] Support negative dentries on case-insensitive ext4 and f2fs
+Date:   Fri, 11 Aug 2023 20:41:36 -0400
+Message-ID: <20230812004146.30980-1-krisman@suse.de>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZNaMhgqbLJGdateQ@bombadil.infradead.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 11, 2023 at 12:31:18PM -0700, Luis Chamberlain wrote:
-> On Tue, Aug 01, 2023 at 12:58:21PM -0700, Darrick J. Wong wrote:
-> > +Roles
-> > +-----
-> > +There are seven key roles in the XFS project.
-> > +- **Testing Lead**: This person is responsible for setting the test
-> > +  coverage goals of the project, negotiating with developers to decide
-> > +  on new tests for new features, and making sure that developers and
-> > +  release managers execute on the testing.
-> > +
-> > +  The testing lead should identify themselves with an ``M:`` entry in
-> > +  the XFS section of the fstests MAINTAINERS file.
-> 
-> I think breaking responsibility down is very sensible, and should hopefully
-> allow you to not burn out. Given I realize how difficult it is to do all
-> the tasks, and since I'm already doing quite a bit of testing of XFS
-> on linux-next I can volunteer to help with this task of testing lead
-> if folks also think it may be useful to the community.
-> 
-> The only thing is I'd like to also ask if Amir would join me on the
-> role to avoid conflicts of interest when and if it comes down to testing
-> features I'm involved in somehow.
+Hi,
 
-Good question.  Amir?
+This is the v5 of this patchset.  Thanks Christian and Eric for you
+review.
 
-(/me also notes that he's listed as R: in fstests MAINTAINERS so he can
-pinch hit if there are conflicts of interest, at least for xfs/iomap
-stuff.)
+In this version, the patchset grew a bit because it adds:
 
---D
+  - a preparation patch to merge d_revalidate_name and d_revalidate,
+  attending Christian's request.  The original patch is now touching
+  several filesystems to update the hook signature, so it has grown
+  quite a bit. But, all of that was autogenerated with coccinelle and
+  tested with allyesconfig only.
 
->   Luis
+  - A new patch to expose a helper from libfs that I use in ecryptfs.
+
+  - Code to prevent ecryptfs from mounting on top of casefolded
+  directories. Also following on Christian's review.
+
+Other than these, there are some minor fixes, listed in each patch
+changelog, and more clarifications on the locking, thanks to the
+excellent feedback from Eric.
+
+Eric, I believe I have covered the cases where instantiation can happen
+and I don't think it is possible for a dentry to become positive amidst
+the d_revalidation, since we are holding the inode parent lock to
+synchronize with creations.  Please let me know if you find anything
+else.
+
+Finally, I've dropped the r-b tags from patch "fs: Expose name under
+lookup to d_revalidate hooks", because it changed too much since
+the time of review.
+
+Regarding testing, I verified it doesn't regress fstests for f2fs and
+ext4, verified building all filesystems work fine with allyesconfig,
+even with variation of CONFIG_FS_ENCRYPTION and CONFIG_UNICODE, and,
+finally, I checked I wasn't able to mount or lookup casefolded
+directories with ecryptfs and overlayfs.
+
+Thanks,
+
+Gabriel Krisman Bertazi (10):
+  fs: Expose helper to check if a directory needs casefolding
+  ecryptfs: Reject casefold directory inodes
+  9p: Split ->weak_revalidate from ->revalidate
+  fs: Expose name under lookup to d_revalidate hooks
+  fs: Add DCACHE_CASEFOLDED_NAME flag
+  libfs: Validate negative dentries in case-insensitive directories
+  libfs: Chain encryption checks after case-insensitive revalidation
+  libfs: Merge encrypted_ci_dentry_ops and ci_dentry_ops
+  ext4: Enable negative dentries on case-insensitive lookup
+  f2fs: Enable negative dentries on case-insensitive lookup
+
+ Documentation/filesystems/locking.rst |   3 +-
+ Documentation/filesystems/vfs.rst     |  11 ++-
+ fs/9p/vfs_dentry.c                    |  11 ++-
+ fs/afs/dir.c                          |   6 +-
+ fs/afs/dynroot.c                      |   4 +-
+ fs/ceph/dir.c                         |   3 +-
+ fs/coda/dir.c                         |   3 +-
+ fs/crypto/fname.c                     |   3 +-
+ fs/dcache.c                           |   8 ++
+ fs/ecryptfs/dentry.c                  |   5 +-
+ fs/ecryptfs/inode.c                   |   8 ++
+ fs/exfat/namei.c                      |   3 +-
+ fs/ext4/namei.c                       |  35 +-------
+ fs/f2fs/namei.c                       |  25 +-----
+ fs/fat/namei_vfat.c                   |   6 +-
+ fs/fuse/dir.c                         |   3 +-
+ fs/gfs2/dentry.c                      |   3 +-
+ fs/hfs/sysdep.c                       |   3 +-
+ fs/jfs/namei.c                        |   3 +-
+ fs/kernfs/dir.c                       |   3 +-
+ fs/libfs.c                            | 124 +++++++++++++++++---------
+ fs/namei.c                            |  18 ++--
+ fs/nfs/dir.c                          |   9 +-
+ fs/ocfs2/dcache.c                     |   4 +-
+ fs/orangefs/dcache.c                  |   3 +-
+ fs/overlayfs/super.c                  |  20 +++--
+ fs/proc/base.c                        |   6 +-
+ fs/proc/fd.c                          |   3 +-
+ fs/proc/generic.c                     |   6 +-
+ fs/proc/proc_sysctl.c                 |   3 +-
+ fs/reiserfs/xattr.c                   |   3 +-
+ fs/smb/client/dir.c                   |   3 +-
+ fs/vboxsf/dir.c                       |   4 +-
+ include/linux/dcache.h                |  10 ++-
+ include/linux/fs.h                    |  21 +++++
+ include/linux/fscrypt.h               |   4 +-
+ 36 files changed, 242 insertions(+), 148 deletions(-)
+
+-- 
+2.41.0
+
