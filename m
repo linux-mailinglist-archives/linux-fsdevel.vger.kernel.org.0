@@ -2,129 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 73CBF779FFF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Aug 2023 14:38:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A8E677A067
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Aug 2023 16:22:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236752AbjHLMiB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 12 Aug 2023 08:38:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44152 "EHLO
+        id S236597AbjHLOWS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 12 Aug 2023 10:22:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229649AbjHLMiA (ORCPT
+        with ESMTP id S234551AbjHLOWQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 12 Aug 2023 08:38:00 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD7A519A3;
-        Sat, 12 Aug 2023 05:38:03 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-99cdb0fd093so396763266b.1;
-        Sat, 12 Aug 2023 05:38:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1691843882; x=1692448682;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UClbfeDcgLrN9gw9PYVkTWcXPt6ww2x5TRV68gA4hiI=;
-        b=mh6Y4ZEZNsyNB3U7m5PslH3Ec3aMSRICP6qsSSA35bJik7XE1bXlzPV4G2IvonEBmL
-         P1vgs5rslx+GlIWKkENxVFFheO/KpA5bNNek4UnkDK/HbpwTubAsf4uai1aH+zpKC/t+
-         qEvyiBZ/nGp/ZYxgQS5fTv8ZgmHEYOkxpwM/zLYbttCEwhrSg9VEteT1YT2hCm5+z+7K
-         T5VMWnO5NSc9WRa9af7uhl5EVmCa3Pe44axlqza2W9q3iTu6/UOANb1rHMygQYZR/fRI
-         uxT3ltNBVCbqXXiqBzK07TznU5CKKmCtQPYjh49anInv3w/Y+t0pe6MAkc+toCdURrB9
-         AD5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691843882; x=1692448682;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UClbfeDcgLrN9gw9PYVkTWcXPt6ww2x5TRV68gA4hiI=;
-        b=hauhC2IHEYV6XgBhZZbFME/sUcDFJWOwDt1lREmgmqL4DMxhtgPSysXgzM5NqqGhJt
-         oiwswV/7j+qNFH6xKDMWM+poW4DnM69FBCRhvrjdwQbu1MJmyvckRpo81s2hbvMQl1Wu
-         DNsHWwa95SyMD5zmqNoLwxwsv867lSCqN1B5T8slJKkabLI0eSJTxK/3URY0sYfWHFtB
-         L4zPALu858ZVd6zCGCd97Q7WXwgTeB4ThDUW+tLpqdjpuQeQ+sr7PuLAjNYbhD5IoNH+
-         OGFm1imsHYVAEllQ8jbh1AZiPVcNCusf/2q+GlHrw00f6D5dUKtBGywI0ATPB1L6TBSX
-         twSg==
-X-Gm-Message-State: AOJu0YwioOOxDJpdUd5FufGKpBZXRHeZtCws9G7F9Z/Kb5uC2604meFU
-        fu/n2HA6vdUxkTHut53QN2180ZSeEM8=
-X-Google-Smtp-Source: AGHT+IFYU1RN/MTxWLpvJAIWzkUVKtZAVkG4w3OzsyqyMTgzoQILlHGbWZ61jh4ynW7r+F/uvw9Tiw==
-X-Received: by 2002:a17:906:291:b0:99b:efd3:3dcc with SMTP id 17-20020a170906029100b0099befd33dccmr4173224ejf.62.1691843882069;
-        Sat, 12 Aug 2023 05:38:02 -0700 (PDT)
-Received: from f.. (cst-prg-75-195.cust.vodafone.cz. [46.135.75.195])
-        by smtp.gmail.com with ESMTPSA id ov14-20020a170906fc0e00b0099290e2c163sm3402567ejb.204.2023.08.12.05.38.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Aug 2023 05:38:01 -0700 (PDT)
-From:   Mateusz Guzik <mjguzik@gmail.com>
-To:     brauner@kernel.org
-Cc:     viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        Sat, 12 Aug 2023 10:22:16 -0400
+Received: from rere.qmqm.pl (rere.qmqm.pl [91.227.64.183])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BF54171F;
+        Sat, 12 Aug 2023 07:22:18 -0700 (PDT)
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4RNNCR1K35z8L;
+        Sat, 12 Aug 2023 16:22:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1691850136; bh=u5bq7pd5Cv90/Zbgy2FhjyRSbq0SeJ3nBFKvllWi1eg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=c3QN0PdbGboHQRbBeobFKVXGXglpVS0Mrl0gqCrK49+VoIjGt/OyVtf9lbfoSz5W7
+         oXedUXsCMS59O0kX2vamz4MNt1flWx1AorUMh2Cc+gp7Gn/pbvaHsHb/n4JSDv1pfg
+         v1By/PS1eu61cqPVOE3EtQ53iHf7pELje3zmG5My2sG/sjaL8GmlADrKRr0ANFf+JA
+         hij/Eo1vOvA/gzdJR9QUOLskfTfw6WD77N1V+1DgRzPpsy3u/BDqGtlLsXT/tnRPHC
+         MkPyYl5LxLUVuFu/NF/42rz04gFxscyMb6I63fmubnrp5lGQ4szPSjD2yxXnivZ69i
+         AvvZCuk7olxxg==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.103.8 at mail
+Date:   Sat, 12 Aug 2023 16:22:09 +0200
+From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <emmir@google.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] vfs: remove spin_lock_prefetch(&sb->s_inode_list_lock) from new_inode
-Date:   Sat, 12 Aug 2023 14:37:57 +0200
-Message-Id: <20230812123757.1666664-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: Re: [PATCH v28 2/6] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+Message-ID: <ZNeVkRo2ChHSpv6M@qmqm.qmqm.pl>
+References: <20230809061603.1969154-1-usama.anjum@collabora.com>
+ <20230809061603.1969154-3-usama.anjum@collabora.com>
+ <CABb0KFGqDo8hFohqpXewoquyLVZUhG-bRHxpw_PYXzGW9wXofQ@mail.gmail.com>
+ <97de19a3-bba2-9260-7741-cd5b6f4581e9@collabora.com>
+ <ZNY4bz1450enHxlG@qmqm.qmqm.pl>
+ <f80cc4b8-39ca-c410-655a-9abc377ec442@collabora.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <f80cc4b8-39ca-c410-655a-9abc377ec442@collabora.com>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It showed up in 2001, in the following commit in a historical repo [1]:
+On Fri, Aug 11, 2023 at 08:30:16PM +0500, Muhammad Usama Anjum wrote:
+> On 8/11/23 6:32 PM, Michał Mirosław wrote:
+> > On Fri, Aug 11, 2023 at 05:02:44PM +0500, Muhammad Usama Anjum wrote:
+> >> Now we are walking the entire range walk_page_range(). We don't break loop
+> >> when we get -ENOSPC as this error may only mean that the temporary buffer
+> >> is full. So we need check if max pages have been found or output buffer is
+> >> full or ret is 0 or any other error. When p.arg.vec_len = 1 is end
+> >> condition as the last entry is in cur. As we have walked over the entire
+> >> range, cur must be full after which the walk returned.
+> >>
+> >> So current condition is necessary. I've double checked it. I'll change it
+> >> to `p.arg.vec_len == 1`.
+> > If we have walked the whole range, then the loop will end anyway due to
+> > `walk_start < walk_end` not held in the `for()`'s condition.
+> Sorry, for not explaining to-the-point.
+> Why would we walk the entire range when we should recognize that the output
+> buffer is full and break the loop?
+> 
+> I've test cases written for this case. If I remove `p.arg.vec_len == 1`
+> check, there is infinite loop for walking. So we are doing correct thing here.
 
-commit c37fa164f793735b32aa3f53154ff1a7659e6442
-Author: linus1 <torvalds@athlon.transmeta.com>
-Date:   Thu Aug 16 11:00:00 2001 -0800
+It seems there is a bug somewhere then. I'll take a look at v29.
 
-    v2.4.9.9 -> v2.4.9.10
+> > [...]
+> >>>> +/*
+> >>>> + * struct pm_scan_arg - Pagemap ioctl argument
+> >>>> + * @size:              Size of the structure
+> >>>> + * @flags:             Flags for the IOCTL
+> >>>> + * @start:             Starting address of the region
+> >>>> + * @end:               Ending address of the region
+> >>>> + * @walk_end           Address where the scan stopped (written by kernel).
+> >>>> + *                     walk_end == end informs that the scan completed on entire range.
+> >>>
+> >>> Can we ensure this holds also for the tagged pointers?
+> >> No, we cannot.
+> > So this need explanation in the comment here. (Though I'd still like to
+> > know how the address tags are supposed to be used from someone that
+> > knows them.)
+> I've looked at some documentations (presentations/talks) about tags. Tags
+> is more like userspace feature. Kernel should just ignore them for our use
+> case. I'll add comment.
 
-with a changelog which does not mention it.
+Kernel does ignore them when reading, but what about returning a tagged
+pointer? How that should work? In case of `walk_end` we can safely copy
+the tag from `end` or `start` when we return exactly on of those. But what
+about other addresses? When fed back as `start` any tag will work, so
+the question is only what to do with pointers in the middle? We can clear
+those of course - this should be mentioned in the doc - so userspace always
+gets a predictable value (note: 'predictable' does not require treating
+`start` and `end` the same way as addresses between them, just that what
+happens is well defined). (I think making `walk_end` == `end` work
+regardless of pointer tagging will make userspace happier, but I guess
+doc will also make it workable. And I'm repeating myself. ;-)
 
-Since then the line got only touched up to keep compiling.
-
-While it may have been of benefit back in the day, it is guaranteed to
-at best not get in the way in the multicore setting -- as the code
-performs *a lot* of work between the prefetch and actual lock acquire,
-any contention means the cacheline is already invalid by the time the
-routine calls spin_lock(). It adds spurious traffic, for short.
-
-On top of it prefetch is notoriously tricky to use for single-threaded
-purposes, making it questionable from the get go.
-
-As such, remove it.
-
-I concede upfront I did not see value in benchmarking this change, but I
-can do it if that is deemed appropriate.
-
-Also worth nothing is that this was the only remaining consumer.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/fs/inode.c?id=c37fa164f793735b32aa3f53154ff1a7659e6442
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- fs/inode.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index 8fefb69e1f84..67611a360031 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -16,7 +16,6 @@
- #include <linux/fsnotify.h>
- #include <linux/mount.h>
- #include <linux/posix_acl.h>
--#include <linux/prefetch.h>
- #include <linux/buffer_head.h> /* for inode_has_buffers */
- #include <linux/ratelimit.h>
- #include <linux/list_lru.h>
-@@ -1041,8 +1040,6 @@ struct inode *new_inode(struct super_block *sb)
- {
- 	struct inode *inode;
- 
--	spin_lock_prefetch(&sb->s_inode_list_lock);
--
- 	inode = new_inode_pseudo(sb);
- 	if (inode)
- 		inode_sb_list_add(inode);
--- 
-2.39.2
-
+Best Regards
+Michał Mirosław
