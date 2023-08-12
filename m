@@ -2,368 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E11377A0E1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Aug 2023 17:50:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AAF177A135
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Aug 2023 19:04:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229774AbjHLPty (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 12 Aug 2023 11:49:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44836 "EHLO
+        id S229649AbjHLREX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 12 Aug 2023 13:04:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229494AbjHLPtx (ORCPT
+        with ESMTP id S229568AbjHLREW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 12 Aug 2023 11:49:53 -0400
-Received: from rere.qmqm.pl (rere.qmqm.pl [91.227.64.183])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74A65E4D;
-        Sat, 12 Aug 2023 08:49:55 -0700 (PDT)
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4RNQ8b5Cf0z8L;
-        Sat, 12 Aug 2023 17:49:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1691855393; bh=uybg0n7P9gRYwB1lrnLsuhjHLSKN3IRzqUOnUrhVtAY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SP6CYP/mW7UYk6r8Z97Maz3969/mqPjsoeoSlZEPtO8G3ubEBON8JLPNqUpuCDg6g
-         JHcit07u3d/6iN+Kc7qGIkfcWTlBcldzxpGlE21j+R2/O3ANSUx87JTKO0JJA39qjE
-         VpzaqB3bW0akG5szSa6nOaohcwIw/vwCdRxNvGv98US5Pzv59Yb8kIMvLZ59rIQzAA
-         yJ0X5SMWunvQa0+IIOrBjmoCZJd+ZdqccI44LEA5ulF5sf7iylxfEVo+OxLrf0TuBF
-         qJpMpxPe+0nfpTtnimzIQuGUSguQka58A/13cChGEXy9N44W0Mj/Ncua0eEzioJpox
-         FleY/5jGxOXNQ==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.103.8 at mail
-Date:   Sat, 12 Aug 2023 17:49:50 +0200
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <emmir@google.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
+        Sat, 12 Aug 2023 13:04:22 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E612D3;
+        Sat, 12 Aug 2023 10:04:25 -0700 (PDT)
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37CH3qnI003858;
+        Sat, 12 Aug 2023 17:04:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=SmhC/43SzCGVPkGdp3KGSK3CuIqDXI2hE9Fo6bvJRhg=;
+ b=g2vc94rrRIGiotOUpbeuHdPF7+CMVjaL7CY/ATdYaEw09HU7QsqJrfMW3Qozqm6zP5Ho
+ gC0Si7zk5XlF1VAAt4Hhb7Awjms39fsC5r0Ca6bmLHvKda1lay2h1VObAs+PyGfJoEbs
+ z//n0Zb31EHljgmvfDnHfBz27ItovSCrL6GZIYn2tc75+mjX23zEf0T/WCr0fAWBo8jG
+ jwqye8rbXfqZhc888cZsAKmIqOG16//qBvgSl8JgdN60+cEV/1v4AOuWVRpHFOJiSK5c
+ AydRlhTTCxyDhSMQ+IzZG+fRlmJS0TCO7OFZtNHaBVwPtGQY7+lTtkA2LkiFwufgT6cw aA== 
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3see538032-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 12 Aug 2023 17:04:06 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+        by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37CF8Vqu017891;
+        Sat, 12 Aug 2023 17:04:05 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+        by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3se376m5gv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 12 Aug 2023 17:04:05 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+        by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37CH42v544040552
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 12 Aug 2023 17:04:02 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A303520043;
+        Sat, 12 Aug 2023 17:04:02 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9F63A20040;
+        Sat, 12 Aug 2023 17:04:01 +0000 (GMT)
+Received: from osiris (unknown [9.171.6.134])
+        by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+        Sat, 12 Aug 2023 17:04:01 +0000 (GMT)
+Date:   Sat, 12 Aug 2023 19:04:00 +0200
+From:   Heiko Carstens <hca@linux.ibm.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
-Subject: Re: [PATCH v29 2/6] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-Message-ID: <ZNeqHj//Rt0MIa8s@qmqm.qmqm.pl>
-References: <20230811180842.3141781-1-usama.anjum@collabora.com>
- <20230811180842.3141781-3-usama.anjum@collabora.com>
+        Jens Axboe <axboe@kernel.dk>,
+        Denis Efremov <efremov@linux.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        "Darrick J . Wong" <djwong@kernel.org>, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>, linux-block@vger.kernel.org,
+        nbd@other.debian.org, linux-s390@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 13/17] block: consolidate __invalidate_device and
+ fsync_bdev
+Message-ID: <20230812170400.11613-A-hca@linux.ibm.com>
+References: <20230811100828.1897174-1-hch@lst.de>
+ <20230811100828.1897174-14-hch@lst.de>
+ <20230812105133.GA11904@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230811180842.3141781-3-usama.anjum@collabora.com>
+In-Reply-To: <20230812105133.GA11904@lst.de>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Xb4epEBeU7tcZo3chXqrwHPkKoiFkVd_
+X-Proofpoint-GUID: Xb4epEBeU7tcZo3chXqrwHPkKoiFkVd_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-08-12_17,2023-08-10_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 mlxscore=0 adultscore=0 impostorscore=0 suspectscore=0
+ mlxlogscore=750 spamscore=0 malwarescore=0 phishscore=0 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2308120161
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 11, 2023 at 11:08:38PM +0500, Muhammad Usama Anjum wrote:
-> The PAGEMAP_SCAN IOCTL on the pagemap file can be used to get or optionally
-> clear the info about page table entries. The following operations are supported
-> in this IOCTL:
-> - Scan the address range and get the memory ranges matching the provided criteria.
->   This is performed by default when the output buffer is specified.
-
-Nit: This is actually performed always, but you can disable the output part
-by passing {NULL, 0} for the buffer.
-
-[...]
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -19,6 +19,8 @@
->  #include <linux/shmem_fs.h>
->  #include <linux/uaccess.h>
->  #include <linux/pkeys.h>
-> +#include <linux/minmax.h>
-> +#include <linux/overflow.h>
+On Sat, Aug 12, 2023 at 12:51:33PM +0200, Christoph Hellwig wrote:
+> The buildbot pointed out correctly (but rather late), that the special
+> s390/dasd export needs a _MODULE postfix, so this will have to be
+> folded in:
+> 
+> diff --git a/block/bdev.c b/block/bdev.c
+> index 2a035be7f3ee90..a20263fa27a462 100644
+> --- a/block/bdev.c
+> +++ b/block/bdev.c
+> @@ -967,7 +967,7 @@ void bdev_mark_dead(struct block_device *bdev, bool surprise)
 >  
->  #include <asm/elf.h>
->  #include <asm/tlb.h>
-> @@ -1749,11 +1751,682 @@ static int pagemap_release(struct inode *inode, struct file *file)
->  	return 0;
+>  	invalidate_bdev(bdev);
 >  }
->  
-> +#define PM_SCAN_CATEGORIES	(PAGE_IS_WPALLOWED | PAGE_IS_WRITTEN |	\
-> +				 PAGE_IS_FILE |	PAGE_IS_PRESENT |	\
-> +				 PAGE_IS_SWAPPED | PAGE_IS_PFNZERO |	\
-> +				 PAGE_IS_HUGE)
-> +#define PM_SCAN_FLAGS		(PM_SCAN_WP_MATCHING | PM_SCAN_CHECK_WPASYNC)
-> +
-> +struct pagemap_scan_private {
-> +	struct pm_scan_arg arg;
-> +	unsigned long masks_of_interest, cur_vma_category;
-> +	struct page_region *vec_buf;
-> +	unsigned long vec_buf_len, vec_buf_index, found_pages, walk_end_addr;
-> +	struct page_region __user *vec_out;
-> +};
-[...]
-> +static unsigned long pagemap_thp_category(pmd_t pmd)
-> +{
-> +	unsigned long categories = PAGE_IS_HUGE;
-> +
-> +	/*
-> +	 * THPs don't support file-backed memory. So PAGE_IS_FILE
-> +	 * hasn't been checked here.
+> -#ifdef CONFIG_DASD
+> +#ifdef CONFIG_DASD_MODULE
 
-"hasn't been" -> "is not"
-(same for HugeTLB comment)
+This needs to be
 
-> +static bool pagemap_scan_push_range(unsigned long categories,
-> +				    struct pagemap_scan_private *p,
-> +				    unsigned long addr, unsigned long end)
-> +{
-> +	struct page_region *cur_buf = &p->vec_buf[p->vec_buf_index];
-> +
-> +	/*
-> +	 * When there is no output buffer provided at all, the sentinel values
-> +	 * won't match here. There is no other way for `cur_buf->end` to be
-> +	 * non-zero other than it being non-empty.
-> +	 */
-> +	if (addr == cur_buf->end && categories == cur_buf->categories) {
-> +		cur_buf->end = end;
-> +		return true;
-> +	}
-> +
-> +	if (cur_buf->end) {
-> +		if (p->vec_buf_index >= p->vec_buf_len - 1)
-> +			return false;
-> +
-> +		cur_buf = &p->vec_buf[++p->vec_buf_index];
-> +	}
-> +
-> +	cur_buf->start = addr;
-> +	cur_buf->end = end;
-> +	cur_buf->categories = categories;
-> +
-> +	return true;
-> +}
-> +
-> +static void pagemap_scan_backout_range(struct pagemap_scan_private *p,
-> +				       unsigned long addr, unsigned long end)
-> +{
-> +	struct page_region *cur_buf = &p->vec_buf[p->vec_buf_index];
-> +
-> +	if (cur_buf->start != addr) {
-> +		cur_buf->end = addr;
-> +	} else {
-> +		cur_buf->start = cur_buf->end = 0;
-> +		if (p->vec_buf_index > 0)
-> +			p->vec_buf_index--;
+#if IS_ENABLED(CONFIG_DASD)
 
-There is no need to move to the previous index, as if the walk ends at
-this moment, the flush_buffer() code will ignore the empty last range.
-
-> +	}
-> +
-> +	p->found_pages -= (end - addr) / PAGE_SIZE;
-> +}
-> +
-> +static int pagemap_scan_output(unsigned long categories,
-> +			       struct pagemap_scan_private *p,
-> +			       unsigned long addr, unsigned long *end)
-> +{
-> +	unsigned long n_pages, total_pages;
-> +	int ret = 0;
-> +
-> +	if (!p->vec_buf)
-> +		return 0;
-> +
-> +	categories &= p->arg.return_mask;
-> +
-> +	n_pages = (*end - addr) / PAGE_SIZE;
-> +	if (check_add_overflow(p->found_pages, n_pages, &total_pages) ||
-> +	    total_pages > p->arg.max_pages) {
-> +		size_t n_too_much = total_pages - p->arg.max_pages;
-> +		*end -= n_too_much * PAGE_SIZE;
-> +		n_pages -= n_too_much;
-> +		ret = -ENOSPC;
-> +	}
-> +
-> +	if (!pagemap_scan_push_range(categories, p, addr, *end)) {
-> +		*end = addr;
-> +		n_pages = 0;
-> +		ret = -ENOSPC;
-> +	}
-> +
-> +	p->found_pages += n_pages;
-> +	if (ret)
-> +		p->walk_end_addr = *end;
-> +
-> +	return ret;
-> +}
-[...]
-> +static int pagemap_scan_init_bounce_buffer(struct pagemap_scan_private *p)
-> +{
-> +	if (!p->arg.vec_len)
-> +		return 0;
-
-The removal of `cur_buf` lost the case of empty non-NULL output buffer
-passed in args.  That was requesting the walk to stop at first matching
-page (with the address returned in `walk_end`).  The push_range() call
-is still checking that, but since neither the buffer nor the sentinel
-values are set, the case is not possible to invoke.
-
-> +	/*
-> +	 * Allocate a smaller buffer to get output from inside the page
-> +	 * walk functions and walk the range in PAGEMAP_WALK_SIZE chunks.
-> +	 */
-
-I think this is no longer true? We can now allocate arbitrary number of
-entries, but should probably have at least 512 to cover one PMD of pages.
-So it would be better to have a constant that holds the number of
-entries in the bounce buffer.
-
-> +	p->vec_buf_len = min_t(size_t, PAGEMAP_WALK_SIZE >> PAGE_SHIFT,
-> +			       p->arg.vec_len);
-> +	p->vec_buf = kmalloc_array(p->vec_buf_len, sizeof(*p->vec_buf),
-> +				   GFP_KERNEL);
-> +	if (!p->vec_buf)
-> +		return -ENOMEM;
-> +
-> +	p->vec_buf[0].end = 0;
-
-p->vec_buf->start = p->vec_buf->end = 0;
-
-> +	p->vec_out = (struct page_region __user *)p->arg.vec;
-> +
-> +	return 0;
-> +}
-> +
-> +static int pagemap_scan_flush_buffer(struct pagemap_scan_private *p)
-> +{
-> +	const struct page_region *buf = p->vec_buf;
-> +	int n = (int)p->vec_buf_index;
-
-Why do you need an `int` here (requiring a cast)?
-
-> +	if (p->arg.vec_len == 0)
-> +		return 0;
-
-This should be actually `if (!buf)` as this notes that we don't have any
-buffer allocated (due to no output requested).
-
-> +	if (buf[n].end && buf[n].end != buf[n].start)
-> +		n++;
-
-Testing `buf[n].end` is redundant, as the range is nonempty if
-`end != start`.
-
-> +	if (!n)
-> +		return 0;
-> +
-> +	if (copy_to_user(p->vec_out, buf, n * sizeof(*buf)))
-> +		return -EFAULT;
-> +
-> +	p->arg.vec_len -= n;
-> +	p->vec_out += n;
-> +
-> +	p->vec_buf_index = 0;
-> +	p->vec_buf_len = min_t(size_t, p->vec_buf_len, p->arg.vec_len);
-> +	p->vec_buf[0].end = 0;
-
-buf->start = buf->end = 0;
-
-> +	return n;
-> +}
-> +
-> +static long do_pagemap_scan(struct mm_struct *mm, unsigned long uarg)
-> +{
-> +	struct mmu_notifier_range range;
-> +	struct pagemap_scan_private p = {0};
-> +	unsigned long walk_start;
-> +	size_t n_ranges_out = 0;
-> +	int ret;
-> +
-> +	ret = pagemap_scan_get_args(&p.arg, uarg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	p.masks_of_interest = p.arg.category_inverted | p.arg.category_mask |
-> +			      p.arg.category_anyof_mask | p.arg.return_mask;
-
-`category_inverted` can be left out, because if a set bit it is not also in one
-of the masks, then its value is going to be ignored.
-
-[...]
-> +	for (walk_start = p.arg.start; walk_start < p.arg.end;
-> +			walk_start = p.arg.walk_end) {
-> +		int n_out;
-> +
-> +		if (fatal_signal_pending(current)) {
-> +			ret = -EINTR;
-> +			break;
-> +		}
-> +
-> +		ret = mmap_read_lock_killable(mm);
-> +		if (ret)
-> +			break;
-> +		ret = walk_page_range(mm, walk_start, p.arg.end,
-> +				      &pagemap_scan_ops, &p);
-> +		mmap_read_unlock(mm);
-> +
-> +		n_out = pagemap_scan_flush_buffer(&p);
-> +		if (n_out < 0)
-> +			ret = n_out;
-> +		else
-> +			n_ranges_out += n_out;
-> +
-> +		p.walk_end_addr = p.walk_end_addr ? p.walk_end_addr : p.arg.end;
-
-Why is `p.walk_end_addr` needed? It is not used in the loop code. Shoudn't
-it be `p.arg.walk_end` as used in the `for` loop continuation statement?
-
-> +		if (ret != -ENOSPC || p.arg.vec_len == 0 ||
-> +		    p.found_pages == p.arg.max_pages)
-> +			break;
-
-Nit: I think you could split this into two or three separate `if (x)
-break;` for easier reading. The `vec_len` and `found_pages` are
-buffer-full tests, so could go along, but `ret != ENOSPC` is checking an
-error condition aborting the scan before it ends.
-
-> +	}
-> +
-> +	/* ENOSPC signifies early stop (buffer full) from the walk. */
-> +	if (!ret || ret == -ENOSPC)
-> +		ret = n_ranges_out;
-> +
-> +	p.arg.walk_end = p.walk_end_addr ? p.walk_end_addr : walk_start;
-> +	if (pagemap_scan_writeback_args(&p.arg, uarg))
-> +		ret = -EFAULT;
-[...]
-> --- a/include/uapi/linux/fs.h
-> +++ b/include/uapi/linux/fs.h
-[...]
-> +/*
-> + * struct pm_scan_arg - Pagemap ioctl argument
-> + * @size:		Size of the structure
-> + * @flags:		Flags for the IOCTL
-> + * @start:		Starting address of the region
-> + * @end:		Ending address of the region
-> + * @walk_end		Address where the scan stopped (written by kernel).
-> + *			walk_end == end (tag removed) informs that the scan completed on entire range.
-
-I'm not sure `tag removed` is enough to know what tag was removed.
-Maybe something like "with address tags cleared" would fit?
-
-Best Regards
-Micha³ Miros³aw
+to cover both CONFIG_DASD=y and CONFIG_DASD=m.
