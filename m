@@ -2,61 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5470477A839
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Aug 2023 17:57:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3DCF77AA8E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Aug 2023 20:26:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230527AbjHMP5S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 13 Aug 2023 11:57:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47748 "EHLO
+        id S230519AbjHMS0o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 13 Aug 2023 14:26:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231804AbjHMP4s (ORCPT
+        with ESMTP id S229578AbjHMS0o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 13 Aug 2023 11:56:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B9821FE8;
-        Sun, 13 Aug 2023 08:56:31 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 693F26347A;
-        Sun, 13 Aug 2023 15:55:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6AD7C433C7;
-        Sun, 13 Aug 2023 15:55:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691942111;
-        bh=EE1qBYC2VFNgzkC+5CVDvVGU409np2W52fk9BXNiCT8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=B6Zx4/Zlu08UZbl5IW6n9yXisovtrPq6cDENng6nRMcd88Nk3qkJVpOJH5yA/zdZT
-         vtbmJ7wLIStvLFZ8zbXcyyue4QAuAP7KuKoMJmZyRgdj02TrsG7Lhgv/qYFtrBwNde
-         YnvUhgGS5ZSszmsHdk861EoAJBehNMZv2RodzHZNkFj+2ZxilvINTmJwLnLmupw2GY
-         mrUwVW4LQ51S76y3LId2jMewToI/7Tc9djoZPRO9NSWJbw1E4ghOfsWvvU7Z/WXoqi
-         UfGkvycKUF2ubgvYJyM0AIXXuyHFJ/se5v0JK2eX24SRy7oiR32bPjpdLPJIF06rmj
-         TigsP6W6bNSvw==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2b9dc1bff38so51966551fa.1;
-        Sun, 13 Aug 2023 08:55:11 -0700 (PDT)
-X-Gm-Message-State: AOJu0YwCiD2VWjROBWqSl5Opb/OzFRK1lv7LNWf2kmAEboaqJSckDS9+
-        1KA+J1L4CkPB6HjJROGKmWD+2HM+TSf/1mhutsI=
-X-Google-Smtp-Source: AGHT+IE6JOJlfZPkn6MmM3Dm0G9btbpive7UJR8vXvvHfhahTolgYnkSCRd2XJcGPP1xys/Rq59sG0mLjb1ZArVUtMU=
-X-Received: by 2002:a05:6512:2f9:b0:4fe:82a7:814d with SMTP id
- m25-20020a05651202f900b004fe82a7814dmr4223909lfq.48.1691942109831; Sun, 13
- Aug 2023 08:55:09 -0700 (PDT)
+        Sun, 13 Aug 2023 14:26:44 -0400
+Received: from out-108.mta0.migadu.com (out-108.mta0.migadu.com [IPv6:2001:41d0:1004:224b::6c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12F4610CE
+        for <linux-fsdevel@vger.kernel.org>; Sun, 13 Aug 2023 11:26:45 -0700 (PDT)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1691951203;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=EGnlBdzWiItWEyj1uxLZJa+yR+f6yFA61Olaqu7O6Xs=;
+        b=ZpO3Pa8jpbyBweGMlDtpOFA1GFjTfTEl4PJduSIwRvVhng1wo6lurvZZ5TjYjN5lp5wjRy
+        EceEyVNT1xZJumpjFUVB7NEltO/fu3xNPnqhpbwCiO28RGjfwl3fWidv8Vs3UB1L6u5oS6
+        vOtu/kp4pkG3H1hVd+h+hl8HWatjnz8=
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        axboe@kernel.dk
+Cc:     Kent Overstreet <kent.overstreet@linux.dev>
+Subject: [PATCH 0/3] bcachefs block layer prereqs
+Date:   Sun, 13 Aug 2023 14:26:33 -0400
+Message-Id: <20230813182636.2966159-1-kent.overstreet@linux.dev>
 MIME-Version: 1.0
-References: <20230810171429.31759-1-jack@suse.cz> <20230811110504.27514-11-jack@suse.cz>
-In-Reply-To: <20230811110504.27514-11-jack@suse.cz>
-From:   Song Liu <song@kernel.org>
-Date:   Sun, 13 Aug 2023 19:54:56 +0400
-X-Gmail-Original-Message-ID: <CAPhsuW5S2gjPv+UpLjX=uBhsbPOmNGMbGjF2eJO7rWMnGVgOmg@mail.gmail.com>
-Message-ID: <CAPhsuW5S2gjPv+UpLjX=uBhsbPOmNGMbGjF2eJO7rWMnGVgOmg@mail.gmail.com>
-Subject: Re: [PATCH 11/29] md: Convert to bdev_open_by_dev()
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-raid@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -64,27 +44,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 11, 2023 at 3:05=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-[...]
-> diff --git a/drivers/md/md.h b/drivers/md/md.h
-> index 1aef86bf3fc3..e8108845157b 100644
-> --- a/drivers/md/md.h
-> +++ b/drivers/md/md.h
-> @@ -59,6 +59,7 @@ struct md_rdev {
->          */
->         struct block_device *meta_bdev;
->         struct block_device *bdev;      /* block device handle */
-> +       struct bdev_handle *bdev_handle;        /* Handle from open for b=
-dev */
+Hi Jens, here's the (hopefully final) bcachefs block layer prereqs,
+aiming for v6.6.
 
-With bdev_handle, we should eventually get rid of md_rdev->bdev.
-But that can be done in a separate patch.
+The "block: Don't block on s_umount from __invalidate_super()" patch has
+been dropped for now - but we may want this later as there's a real bug
+it addresses, and with the blockdev holder changes now landing I suspect
+other filesystems will be hitting the same issue as bcachefs.
 
-Acked-by: Song Liu <song@kernel.org>
+But that can be a topic for another thread.
 
->
->         struct page     *sb_page, *bb_page;
->         int             sb_loaded;
-> --
-> 2.35.3
->
+Can I get either acks or have you take them via your tree, your
+preference?
+
+Kent Overstreet (3):
+  block: Add some exports for bcachefs
+  block: Allow bio_iov_iter_get_pages() with bio->bi_bdev unset
+  block: Bring back zero_fill_bio_iter
+
+ block/bio.c            | 18 +++++++++++-------
+ block/blk-core.c       |  1 +
+ block/blk.h            |  1 -
+ include/linux/bio.h    |  7 ++++++-
+ include/linux/blkdev.h |  1 +
+ 5 files changed, 19 insertions(+), 9 deletions(-)
+
+-- 
+2.40.1
+
