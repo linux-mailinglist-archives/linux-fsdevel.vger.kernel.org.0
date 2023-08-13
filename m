@@ -2,55 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 27A7A77A565
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Aug 2023 09:24:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8918777A58D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Aug 2023 10:14:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230328AbjHMHYO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 13 Aug 2023 03:24:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60396 "EHLO
+        id S230211AbjHMIOk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 13 Aug 2023 04:14:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230231AbjHMHYN (ORCPT
+        with ESMTP id S229522AbjHMIOj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 13 Aug 2023 03:24:13 -0400
-Received: from mail-pg1-f208.google.com (mail-pg1-f208.google.com [209.85.215.208])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45CBC1710
-        for <linux-fsdevel@vger.kernel.org>; Sun, 13 Aug 2023 00:24:13 -0700 (PDT)
-Received: by mail-pg1-f208.google.com with SMTP id 41be03b00d2f7-564fa3b49e1so3413861a12.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 13 Aug 2023 00:24:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691911452; x=1692516252;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4ZDNLf1x53mQ0m7AfzRC5QKLe+W/WZUAtVRBH4vOaqU=;
-        b=Vi7B2NDoyttraqP2zxncG45DI3dgq8a5jqXunWjQ7umwqo5i7A7LzOWNgYmPki2KAT
-         S4GpKY6NcEmlzpyvV1zfSzrw8JxT+tzOBkELvEQFSkRepb80dACAd63+lHV144JcH0Id
-         CBwVgOOogB8X48Bw5VxbiycV5yzcu92ztoi6EBXdWzsyfgTbrI+v9VXgrVbimhoH8IOi
-         upp5DAsH/Q1M/lb+iYc1RST6svhMrCeuh2VPm5wy94xKqqaUEAGiyk2PmXs2Lbqw8C/t
-         ZsfIV1qlTGQB8RxXS6Gc7ZEMu6FL94a8MCESZwbaIdpqAQGvi4xfUiVghhnDIwQsWwnP
-         bwbQ==
-X-Gm-Message-State: AOJu0YwuHJYTIc3fTSfuLIRTGkpR9pfpSUZKqZhVbjn/o7cbAqVWvD6h
-        PlXpR+9UQytsz7ZMaF5dgkGwJ3naaMDoolKJKN2Ut/3PmC4W
-X-Google-Smtp-Source: AGHT+IHisSxAI0yURuRrjduklifwHsqlp0NIqF/tB6lRL3gAU/UHYKwzfNV5o0bPVPVnfREXasqCxkniWNxjDk22g7fQheD2sDZQ
+        Sun, 13 Aug 2023 04:14:39 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34780E7;
+        Sun, 13 Aug 2023 01:14:41 -0700 (PDT)
+Received: from [192.168.100.7] (unknown [39.34.188.71])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 1E3DF6607122;
+        Sun, 13 Aug 2023 09:14:32 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1691914479;
+        bh=BChGkJRkjZWgzyQFOCbWXa50jj06kVV10+dAvRN9voo=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=FCjVfVG7uidfPv4zBprM+S9bPUpZPT4QO+5p6F/iyUYonAtFmweBtVQnsE41tO6AT
+         iYGrXnHeRy8PaUESj4Yy8QykXZvZR5wwXxRvBf5l4d1tFCLOqnhyUcuIGWcoBKKv8p
+         J9hnsOO/1lt0xJoVb0NXw7zvGwf9NLV0NyKYw5BaWW4DGnEamKQKhkUocsYlUTpAZF
+         dJ3zBOMRho7KbqY2qS65pmtOOIGaMBcwtdrkF/YGKNkG01ys1nml0itErhrF3/Sl59
+         vlNDWVHqWxQXa3Rq7trUFSTtL2YBUF47GKSDBACjCQoopInUfZf85qfIVSVS8x7yw8
+         +Ec9weZFL4DSw==
+Message-ID: <be42f268-a52a-6ae0-619a-7c8ca5bb58ae@collabora.com>
+Date:   Sun, 13 Aug 2023 13:14:28 +0500
 MIME-Version: 1.0
-X-Received: by 2002:a63:3e48:0:b0:564:6e43:a00d with SMTP id
- l69-20020a633e48000000b005646e43a00dmr1088913pga.3.1691911452735; Sun, 13 Aug
- 2023 00:24:12 -0700 (PDT)
-Date:   Sun, 13 Aug 2023 00:24:12 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000021c1240602c8d549@google.com>
-Subject: [syzbot] [dri?] [reiserfs?] WARNING: bad unlock balance in vkms_vblank_simulate
-From:   syzbot <syzbot+5671b8bcd5178fe56c23@syzkaller.appspotmail.com>
-To:     airlied@gmail.com, daniel@ffwll.ch,
-        dri-devel@lists.freedesktop.org, hamohammed.sa@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mairacanal@riseup.net, melissa.srw@gmail.com,
-        reiserfs-devel@vger.kernel.org, rodrigosiqueiramelo@gmail.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WC?= =?UTF-8?Q?aw?= 
+        <emmir@google.com>, Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: Re: [PATCH v29 2/6] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+References: <20230811180842.3141781-1-usama.anjum@collabora.com>
+ <20230811180842.3141781-3-usama.anjum@collabora.com>
+ <ZNeqHj//Rt0MIa8s@qmqm.qmqm.pl>
+Content-Language: en-US
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <ZNeqHj//Rt0MIa8s@qmqm.qmqm.pl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-6.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -58,131 +85,336 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 8/12/23 8:49 PM, Michał Mirosław wrote:
+> On Fri, Aug 11, 2023 at 11:08:38PM +0500, Muhammad Usama Anjum wrote:
+>> The PAGEMAP_SCAN IOCTL on the pagemap file can be used to get or optionally
+>> clear the info about page table entries. The following operations are supported
+>> in this IOCTL:
+>> - Scan the address range and get the memory ranges matching the provided criteria.
+>>   This is performed by default when the output buffer is specified.
+> 
+> Nit: This is actually performed always, but you can disable the output part
+> by passing {NULL, 0} for the buffer.
+I'll update it to:
+"This is performed when the output buffer is specified."
 
-syzbot found the following issue on:
+> 
+> [...]
+>> --- a/fs/proc/task_mmu.c
+>> +++ b/fs/proc/task_mmu.c
+>> @@ -19,6 +19,8 @@
+>>  #include <linux/shmem_fs.h>
+>>  #include <linux/uaccess.h>
+>>  #include <linux/pkeys.h>
+>> +#include <linux/minmax.h>
+>> +#include <linux/overflow.h>
+>>  
+>>  #include <asm/elf.h>
+>>  #include <asm/tlb.h>
+>> @@ -1749,11 +1751,682 @@ static int pagemap_release(struct inode *inode, struct file *file)
+>>  	return 0;
+>>  }
+>>  
+>> +#define PM_SCAN_CATEGORIES	(PAGE_IS_WPALLOWED | PAGE_IS_WRITTEN |	\
+>> +				 PAGE_IS_FILE |	PAGE_IS_PRESENT |	\
+>> +				 PAGE_IS_SWAPPED | PAGE_IS_PFNZERO |	\
+>> +				 PAGE_IS_HUGE)
+>> +#define PM_SCAN_FLAGS		(PM_SCAN_WP_MATCHING | PM_SCAN_CHECK_WPASYNC)
+>> +
+>> +struct pagemap_scan_private {
+>> +	struct pm_scan_arg arg;
+>> +	unsigned long masks_of_interest, cur_vma_category;
+>> +	struct page_region *vec_buf;
+>> +	unsigned long vec_buf_len, vec_buf_index, found_pages, walk_end_addr;
+>> +	struct page_region __user *vec_out;
+>> +};
+> [...]
+>> +static unsigned long pagemap_thp_category(pmd_t pmd)
+>> +{
+>> +	unsigned long categories = PAGE_IS_HUGE;
+>> +
+>> +	/*
+>> +	 * THPs don't support file-backed memory. So PAGE_IS_FILE
+>> +	 * hasn't been checked here.
+> 
+> "hasn't been" -> "is not"
+> (same for HugeTLB comment)
+I'll update.
 
-HEAD commit:    71cd4fc492ec Add linux-next specific files for 20230808
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=11faa1eda80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e36b5ba725f7349d
-dashboard link: https://syzkaller.appspot.com/bug?extid=5671b8bcd5178fe56c23
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17a54d0ba80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13e2281ba80000
+> 
+>> +static bool pagemap_scan_push_range(unsigned long categories,
+>> +				    struct pagemap_scan_private *p,
+>> +				    unsigned long addr, unsigned long end)
+>> +{
+>> +	struct page_region *cur_buf = &p->vec_buf[p->vec_buf_index];
+>> +
+>> +	/*
+>> +	 * When there is no output buffer provided at all, the sentinel values
+>> +	 * won't match here. There is no other way for `cur_buf->end` to be
+>> +	 * non-zero other than it being non-empty.
+>> +	 */
+>> +	if (addr == cur_buf->end && categories == cur_buf->categories) {
+>> +		cur_buf->end = end;
+>> +		return true;
+>> +	}
+>> +
+>> +	if (cur_buf->end) {
+>> +		if (p->vec_buf_index >= p->vec_buf_len - 1)
+>> +			return false;
+>> +
+>> +		cur_buf = &p->vec_buf[++p->vec_buf_index];
+>> +	}
+>> +
+>> +	cur_buf->start = addr;
+>> +	cur_buf->end = end;
+>> +	cur_buf->categories = categories;
+>> +
+>> +	return true;
+>> +}
+>> +
+>> +static void pagemap_scan_backout_range(struct pagemap_scan_private *p,
+>> +				       unsigned long addr, unsigned long end)
+>> +{
+>> +	struct page_region *cur_buf = &p->vec_buf[p->vec_buf_index];
+>> +
+>> +	if (cur_buf->start != addr) {
+>> +		cur_buf->end = addr;
+>> +	} else {
+>> +		cur_buf->start = cur_buf->end = 0;
+>> +		if (p->vec_buf_index > 0)
+>> +			p->vec_buf_index--;
+> 
+> There is no need to move to the previous index, as if the walk ends at
+> this moment, the flush_buffer() code will ignore the empty last range.
+Yeah, I'll update.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5ea26a69f422/disk-71cd4fc4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c4a6b00863bf/vmlinux-71cd4fc4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/888c2025ec30/bzImage-71cd4fc4.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/3620b064e309/mount_0.gz
+> 
+>> +	}
+>> +
+>> +	p->found_pages -= (end - addr) / PAGE_SIZE;
+>> +}
+>> +
+>> +static int pagemap_scan_output(unsigned long categories,
+>> +			       struct pagemap_scan_private *p,
+>> +			       unsigned long addr, unsigned long *end)
+>> +{
+>> +	unsigned long n_pages, total_pages;
+>> +	int ret = 0;
+>> +
+>> +	if (!p->vec_buf)
+>> +		return 0;
+>> +
+>> +	categories &= p->arg.return_mask;
+>> +
+>> +	n_pages = (*end - addr) / PAGE_SIZE;
+>> +	if (check_add_overflow(p->found_pages, n_pages, &total_pages) ||
+>> +	    total_pages > p->arg.max_pages) {
+>> +		size_t n_too_much = total_pages - p->arg.max_pages;
+>> +		*end -= n_too_much * PAGE_SIZE;
+>> +		n_pages -= n_too_much;
+>> +		ret = -ENOSPC;
+>> +	}
+>> +
+>> +	if (!pagemap_scan_push_range(categories, p, addr, *end)) {
+>> +		*end = addr;
+>> +		n_pages = 0;
+>> +		ret = -ENOSPC;
+>> +	}
+>> +
+>> +	p->found_pages += n_pages;
+>> +	if (ret)
+>> +		p->walk_end_addr = *end;
+>> +
+>> +	return ret;
+>> +}
+> [...]
+>> +static int pagemap_scan_init_bounce_buffer(struct pagemap_scan_private *p)
+>> +{
+>> +	if (!p->arg.vec_len)
+>> +		return 0;
+> 
+> The removal of `cur_buf` lost the case of empty non-NULL output buffer
+> passed in args.  That was requesting the walk to stop at first matching
+> page (with the address returned in `walk_end`).  The push_range() call
+> is still checking that, but since neither the buffer nor the sentinel
+> values are set, the case is not possible to invoke.
+Yeah, this is why I've removed all that logic here. The vec_len is set to 0
+and vec_buf to NULL. This handles all the cases.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5671b8bcd5178fe56c23@syzkaller.appspotmail.com
+> 
+>> +	/*
+>> +	 * Allocate a smaller buffer to get output from inside the page
+>> +	 * walk functions and walk the range in PAGEMAP_WALK_SIZE chunks.
+>> +	 */
+> 
+> I think this is no longer true? We can now allocate arbitrary number of
+> entries, but should probably have at least 512 to cover one PMD of pages.
+> So it would be better to have a constant that holds the number of
+> entries in the bounce buffer.
+I'll remove the comment. PAGEMAP_WALK_SIZE >> PAGE_SHIFT is a constant
+already, just a fancy one.
 
-=====================================
-WARNING: bad unlock balance detected!
-6.5.0-rc5-next-20230808-syzkaller #0 Not tainted
--------------------------------------
-swapper/0/0 is trying to release lock (&vkms_out->enabled_lock) at:
-[<ffffffff852badf9>] vkms_vblank_simulate+0x159/0x3d0 drivers/gpu/drm/vkms/vkms_crtc.c:34
-but there are no more locks to release!
+Altough if we can increase 512 to bigger number, it'll be better in terms
+of performance. I'm not sure how much we can increase it.
 
-other info that might help us debug this:
-no locks held by swapper/0/0.
+> 
+>> +	p->vec_buf_len = min_t(size_t, PAGEMAP_WALK_SIZE >> PAGE_SHIFT,
+>> +			       p->arg.vec_len);
+>> +	p->vec_buf = kmalloc_array(p->vec_buf_len, sizeof(*p->vec_buf),
+>> +				   GFP_KERNEL);
+>> +	if (!p->vec_buf)
+>> +		return -ENOMEM;
+>> +
+>> +	p->vec_buf[0].end = 0;
+> 
+> p->vec_buf->start = p->vec_buf->end = 0;
+Sure.
 
-stack backtrace:
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.5.0-rc5-next-20230808-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/26/2023
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
- __lock_release kernel/locking/lockdep.c:5438 [inline]
- lock_release+0x4b5/0x680 kernel/locking/lockdep.c:5781
- __mutex_unlock_slowpath+0xa3/0x640 kernel/locking/mutex.c:907
- vkms_vblank_simulate+0x159/0x3d0 drivers/gpu/drm/vkms/vkms_crtc.c:34
- __run_hrtimer kernel/time/hrtimer.c:1688 [inline]
- __hrtimer_run_queues+0x203/0xc10 kernel/time/hrtimer.c:1752
- hrtimer_interrupt+0x31b/0x800 kernel/time/hrtimer.c:1814
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1098 [inline]
- __sysvec_apic_timer_interrupt+0x14a/0x430 arch/x86/kernel/apic/apic.c:1115
- sysvec_apic_timer_interrupt+0x8e/0xc0 arch/x86/kernel/apic/apic.c:1109
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:645
-RIP: 0010:native_irq_disable arch/x86/include/asm/irqflags.h:37 [inline]
-RIP: 0010:arch_local_irq_disable arch/x86/include/asm/irqflags.h:72 [inline]
-RIP: 0010:acpi_safe_halt+0x1b/0x20 drivers/acpi/processor_idle.c:113
-Code: ed c3 66 66 2e 0f 1f 84 00 00 00 00 00 66 90 65 48 8b 04 25 c0 bc 03 00 48 8b 00 a8 08 75 0c 66 90 0f 00 2d 57 9d 99 00 fb f4 <fa> c3 0f 1f 00 0f b6 47 08 3c 01 74 0b 3c 02 74 05 8b 7f 04 eb 9f
-RSP: 0000:ffffffff8c607d70 EFLAGS: 00000246
-RAX: 0000000000004000 RBX: 0000000000000001 RCX: ffffffff8a3a232e
-RDX: 0000000000000001 RSI: ffff888144e77800 RDI: ffff888144e77864
-RBP: ffff888144e77864 R08: 0000000000000001 R09: ffffed1017306dbd
-R10: ffff8880b9836deb R11: 0000000000000000 R12: ffff888141ed8000
-R13: ffffffff8d45c680 R14: 0000000000000000 R15: 0000000000000000
- acpi_idle_enter+0xc5/0x160 drivers/acpi/processor_idle.c:707
- cpuidle_enter_state+0x82/0x500 drivers/cpuidle/cpuidle.c:267
- cpuidle_enter+0x4e/0xa0 drivers/cpuidle/cpuidle.c:388
- cpuidle_idle_call kernel/sched/idle.c:215 [inline]
- do_idle+0x315/0x3f0 kernel/sched/idle.c:282
- cpu_startup_entry+0x18/0x20 kernel/sched/idle.c:379
- rest_init+0x16f/0x2b0 init/main.c:726
- arch_call_rest_init+0x13/0x30 init/main.c:823
- start_kernel+0x39f/0x480 init/main.c:1068
- x86_64_start_reservations+0x18/0x30 arch/x86/kernel/head64.c:556
- x86_64_start_kernel+0xb2/0xc0 arch/x86/kernel/head64.c:537
- secondary_startup_64_no_verify+0x167/0x16b
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	ed                   	in     (%dx),%eax
-   1:	c3                   	ret
-   2:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
-   9:	00 00 00 00
-   d:	66 90                	xchg   %ax,%ax
-   f:	65 48 8b 04 25 c0 bc 	mov    %gs:0x3bcc0,%rax
-  16:	03 00
-  18:	48 8b 00             	mov    (%rax),%rax
-  1b:	a8 08                	test   $0x8,%al
-  1d:	75 0c                	jne    0x2b
-  1f:	66 90                	xchg   %ax,%ax
-  21:	0f 00 2d 57 9d 99 00 	verw   0x999d57(%rip)        # 0x999d7f
-  28:	fb                   	sti
-  29:	f4                   	hlt
-* 2a:	fa                   	cli <-- trapping instruction
-  2b:	c3                   	ret
-  2c:	0f 1f 00             	nopl   (%rax)
-  2f:	0f b6 47 08          	movzbl 0x8(%rdi),%eax
-  33:	3c 01                	cmp    $0x1,%al
-  35:	74 0b                	je     0x42
-  37:	3c 02                	cmp    $0x2,%al
-  39:	74 05                	je     0x40
-  3b:	8b 7f 04             	mov    0x4(%rdi),%edi
-  3e:	eb 9f                	jmp    0xffffffdf
+> 
+>> +	p->vec_out = (struct page_region __user *)p->arg.vec;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int pagemap_scan_flush_buffer(struct pagemap_scan_private *p)
+>> +{
+>> +	const struct page_region *buf = p->vec_buf;
+>> +	int n = (int)p->vec_buf_index;
+> 
+> Why do you need an `int` here (requiring a cast)?
+Just looked at it, n and return code of pagemap_scan_flush_buffer() should
+be long. Changed.
 
+> 
+>> +	if (p->arg.vec_len == 0)
+>> +		return 0;
+> 
+> This should be actually `if (!buf)` as this notes that we don't have any
+> buffer allocated (due to no output requested).
+I'll update. !buf seems more reasonable.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+>> +	if (buf[n].end && buf[n].end != buf[n].start)
+>> +		n++;
+> 
+> Testing `buf[n].end` is redundant, as the range is nonempty if
+> `end != start`.
+Sure.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+>> +	if (!n)
+>> +		return 0;
+>> +
+>> +	if (copy_to_user(p->vec_out, buf, n * sizeof(*buf)))
+>> +		return -EFAULT;
+>> +
+>> +	p->arg.vec_len -= n;
+>> +	p->vec_out += n;
+>> +
+>> +	p->vec_buf_index = 0;
+>> +	p->vec_buf_len = min_t(size_t, p->vec_buf_len, p->arg.vec_len);
+>> +	p->vec_buf[0].end = 0;
+> 
+> buf->start = buf->end = 0;
+Sure.
 
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> 
+>> +	return n;
+>> +}
+>> +
+>> +static long do_pagemap_scan(struct mm_struct *mm, unsigned long uarg)
+>> +{
+>> +	struct mmu_notifier_range range;
+>> +	struct pagemap_scan_private p = {0};
+>> +	unsigned long walk_start;
+>> +	size_t n_ranges_out = 0;
+>> +	int ret;
+>> +
+>> +	ret = pagemap_scan_get_args(&p.arg, uarg);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	p.masks_of_interest = p.arg.category_inverted | p.arg.category_mask |
+>> +			      p.arg.category_anyof_mask | p.arg.return_mask;
+> 
+> `category_inverted` can be left out, because if a set bit it is not also in one
+> of the masks, then its value is going to be ignored.
+Okay.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> [...]
+>> +	for (walk_start = p.arg.start; walk_start < p.arg.end;
+>> +			walk_start = p.arg.walk_end) {
+>> +		int n_out;
+>> +
+>> +		if (fatal_signal_pending(current)) {
+>> +			ret = -EINTR;
+>> +			break;
+>> +		}
+>> +
+>> +		ret = mmap_read_lock_killable(mm);
+>> +		if (ret)
+>> +			break;
+>> +		ret = walk_page_range(mm, walk_start, p.arg.end,
+>> +				      &pagemap_scan_ops, &p);
+>> +		mmap_read_unlock(mm);
+>> +
+>> +		n_out = pagemap_scan_flush_buffer(&p);
+>> +		if (n_out < 0)
+>> +			ret = n_out;
+>> +		else
+>> +			n_ranges_out += n_out;
+>> +
+>> +		p.walk_end_addr = p.walk_end_addr ? p.walk_end_addr : p.arg.end;
+> 
+> Why is `p.walk_end_addr` needed? It is not used in the loop code. Shoudn't
+> it be `p.arg.walk_end` as used in the `for` loop continuation statement?
+It isn't needed for the loop. But we need to note down the ending address
+of walk. We can switch to using p.arg.walk_end for better logical reason.
+I'll update code.
 
-If you want to change bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> 
+>> +		if (ret != -ENOSPC || p.arg.vec_len == 0 ||
+>> +		    p.found_pages == p.arg.max_pages)
+>> +			break;
+> 
+> Nit: I think you could split this into two or three separate `if (x)
+> break;` for easier reading. The `vec_len` and `found_pages` are
+> buffer-full tests, so could go along, but `ret != ENOSPC` is checking an
+> error condition aborting the scan before it ends.
+Can be done.
 
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
+> 
+>> +	}
+>> +
+>> +	/* ENOSPC signifies early stop (buffer full) from the walk. */
+>> +	if (!ret || ret == -ENOSPC)
+>> +		ret = n_ranges_out;
+>> +
+>> +	p.arg.walk_end = p.walk_end_addr ? p.walk_end_addr : walk_start;
+>> +	if (pagemap_scan_writeback_args(&p.arg, uarg))
+>> +		ret = -EFAULT;
+> [...]
+>> --- a/include/uapi/linux/fs.h
+>> +++ b/include/uapi/linux/fs.h
+> [...]
+>> +/*
+>> + * struct pm_scan_arg - Pagemap ioctl argument
+>> + * @size:		Size of the structure
+>> + * @flags:		Flags for the IOCTL
+>> + * @start:		Starting address of the region
+>> + * @end:		Ending address of the region
+>> + * @walk_end		Address where the scan stopped (written by kernel).
+>> + *			walk_end == end (tag removed) informs that the scan completed on entire range.
+> 
+> I'm not sure `tag removed` is enough to know what tag was removed.
+> Maybe something like "with address tags cleared" would fit?
+Okay.
 
-If you want to undo deduplication, reply with:
-#syz undup
+> 
+> Best Regards
+> Michał Mirosław
+
+-- 
+BR,
+Muhammad Usama Anjum
