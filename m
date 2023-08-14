@@ -2,156 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D9B6977B836
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 14:08:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60CB577B94E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 15:02:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232039AbjHNMHg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Aug 2023 08:07:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46212 "EHLO
+        id S231193AbjHNNBr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Aug 2023 09:01:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233042AbjHNMHU (ORCPT
+        with ESMTP id S231633AbjHNNBn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Aug 2023 08:07:20 -0400
-Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A537DDD;
-        Mon, 14 Aug 2023 05:07:17 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 0A6893200488;
-        Mon, 14 Aug 2023 08:07:13 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 14 Aug 2023 08:07:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1692014833; x=1692101233; bh=L8+vkE0u6iFHRBlf+qFpYNc+XMstyZCiZPB
-        YIihO2vs=; b=kNSZW46YhNFRnaT+Xo+E+3RHxZS+eoGCB03U32kzcaTFoiTZc/W
-        MIv2QIlvRaGft2D/bvHd8+8HwtT2NcHB3fPkFh69bCaDlEhEvUMh7WljeuFVugqZ
-        tToEAlgXLbhThX/qxcxThpU499FwigwGGmbVIYpC4FlTqvlLevqTvRmvPGw2QSvT
-        dQ1LDqfxuosp5kaVlSWAtV8xKQcTGDynfDf2bu1ovE8s4VCJycKM47Buhy0Wq4VN
-        EIZkoh64Yef0bNmZYuw3zB6cNz+tCtMDMlMaxMrIRjI2WQI8hTRpk4ywMl5RMytb
-        FX1Zf/TvFRPJdJNeAp+27BDSsOMAsctr2Bg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1692014833; x=1692101233; bh=L8+vkE0u6iFHRBlf+qFpYNc+XMstyZCiZPB
-        YIihO2vs=; b=zel/jxTtvBqEdl1YsJU5i5TXefLo2wGi2dwJjp/2b1ZZPAhC88X
-        wLtYyw05/TM2E4vffuc6NvA2+v4x+Ovvi41e/2d0DMDGPMxqUmU4u/jEEVubg1GB
-        d0HclhAd0n7xl4fHaOjh0DbtOFAImzwUPj+5HF/wgLz3fpOllUSV0rp27orMpNXi
-        lQK3JQy5WVz3dM8dUieyZaAJlBjdY1iRlOAB7LGC8BrNF2lFVBMd55fS4jr9Z784
-        F9JJOLbYoFZsUf2MbC5Acd+NqRhXUxIHcSslQAPL6vxA4Ogx7RbntJLSIvNnUHkx
-        CEJEM+LPwZEiUVK6YUDYa8V2Hz+imdUxuPg==
-X-ME-Sender: <xms:8BjaZF-QGSoZNSdFS8CCwSa-uI15sKk-WLQ3u_4H7PCwT3v1o38hAg>
-    <xme:8BjaZJvuIaZUW-paWkll46ZFlhtqYAuWIza7gnf4tKPMAgJHkzp3QtPEuEcB7G8_f
-    5X5Ic0dIvnOphsL>
-X-ME-Received: <xmr:8BjaZDAyFpHE6WtCIqH4LsDR_vFhJ3NERJPDL7f8my65VpFysb2rs4gS5tUkbDfcuqqqLUtneSn2B1skD5_IhIizXiGK1RNrzQrH49szpjSAj17RsbyC1WbW>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedruddtgedggeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtfeejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepfffhtddvveeivdduuedujeetffekkeelgfdv
-    fefgueffieefjefgjeffhedttdefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:8BjaZJfqreAunIo0ZkmHG3gi-3lhBcaiYHCIpzOz1Llk8mH1LMM_8w>
-    <xmx:8BjaZKNQSFxcwQSuXL30PETDDX9qfhgczXE8A6Do2twX-WRjo5cJwQ>
-    <xmx:8BjaZLljZ3RrF-J1wNINoQroTtmGGKvnK4maGfoCxLldvhPlkf3Ejw>
-    <xmx:8RjaZB0IhKImZAFrm_9iY9DNUny9tTyA4puWXz7QanFy2M0r8d33hA>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 14 Aug 2023 08:07:10 -0400 (EDT)
-Message-ID: <da17987a-b096-9ebb-f058-8eb91f15b560@fastmail.fm>
-Date:   Mon, 14 Aug 2023 14:07:08 +0200
+        Mon, 14 Aug 2023 09:01:43 -0400
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E878C1710
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Aug 2023 06:01:22 -0700 (PDT)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20230814130113epoutp01ee192971eb7a728c232384c519041b95~7QXkJH8Wc0677906779epoutp01P
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Aug 2023 13:01:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20230814130113epoutp01ee192971eb7a728c232384c519041b95~7QXkJH8Wc0677906779epoutp01P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1692018073;
+        bh=jM2VGHFb+JlqR9zjYuZhlEYqAEqGzpivCMEb/22+bAE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=N8/b2hifmH6DnilUQOTgvOjptWpBYi1PeG915VClLEOR/R/6/rdJG/aaLNjVQnyiz
+         OUI9tV46PMiqEqNySUcrcLf3zSdMgRQPLVWjgZiqULI/OrOtHDVz4vc3ihf84O1ywz
+         zunoJIyBFMXsfEWUNFxZn1lUKQPEBBNIKcTryMoc=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20230814130112epcas5p4911f9a9e6f010a347b48734a3237a9e6~7QXjHSw3B3072830728epcas5p4X;
+        Mon, 14 Aug 2023 13:01:12 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4RPZK22WlHz4x9Pr; Mon, 14 Aug
+        2023 13:01:10 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        58.C3.55522.6952AD46; Mon, 14 Aug 2023 22:01:10 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20230814121319epcas5p32e02f82561b4040f8e3fb7c7410b6de5~7PtvgeQaE2140321403epcas5p3E;
+        Mon, 14 Aug 2023 12:13:19 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230814121319epsmtrp2479bbf33206258a34d03825743a7e8e3~7PtvfUa9o0884008840epsmtrp2I;
+        Mon, 14 Aug 2023 12:13:19 +0000 (GMT)
+X-AuditID: b6c32a49-419ff7000000d8e2-83-64da2596b55e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        7D.55.30535.E5A1AD46; Mon, 14 Aug 2023 21:13:18 +0900 (KST)
+Received: from green245 (unknown [107.99.41.245]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20230814121315epsmtip264aaea99f00073a95cc0b32dd5a0ebd7~7PtsahaFA0358203582epsmtip2d;
+        Mon, 14 Aug 2023 12:13:15 +0000 (GMT)
+Date:   Mon, 14 Aug 2023 17:39:59 +0530
+From:   Nitesh Shetty <nj.shetty@samsung.com>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        martin.petersen@oracle.com, linux-doc@vger.kernel.org,
+        gost.dev@samsung.com, Anuj Gupta <anuj20.g@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, mcgrof@kernel.org, dlemoal@kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [dm-devel] [PATCH v14 02/11] Add infrastructure for copy
+ offload in block and request layer.
+Message-ID: <20230814120959.ridr6xptirlcjkty@green245>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [REGRESSION] fuse: execve() fails with ETXTBSY due to async
- fuse_flush
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        =?UTF-8?Q?J=c3=bcrg_Billeter?= <j@bitron.ch>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Tycho Andersen <tycho@tycho.pizza>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        regressions@lists.linux.dev
-References: <4f66cded234462964899f2a661750d6798a57ec0.camel@bitron.ch>
- <CAJfpeguG4f4S-pq+_EXHxfB63mbof-VnaOy-7a-7seWLMj_xyQ@mail.gmail.com>
-Content-Language: en-US, de-DE
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <CAJfpeguG4f4S-pq+_EXHxfB63mbof-VnaOy-7a-7seWLMj_xyQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <355bb623-9cd9-fe33-106e-1f091c09fb32@acm.org>
+User-Agent: NeoMutt/20171215
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TfVCTdRzv9zzPxjO6eY+86M9pOudxF/NANsb6ARKmnD1l3XF1epVXa7In
+        IGCbe1GyTKA0kFchSEaCprxtxFtmBI10KEzAzCPexoFcB2oguKBI4sU2Njr/+/w+n+/n9327
+        L4l7ZXjwyHiljtEo5YkCtidxpc1fGFDkZ1MEDf3uieo623GUlreEI9NwLhtNts0AVGSfx9HY
+        1S8AGv05EpmnS1ho8OqPGKo23cBQvqUPoPFeA4bMtu3owqlLBPrJfJNAPc1fs1FZxbgHquxY
+        xtBA3jhAtZOPCGS1bUS3lzpYu9bRPb/to2+PNBB0zy093WjMYNPfXTpBtwymsOmLOQUsOvuz
+        aTb957iNoB+19rLpnMtGQM82bqYbx6awaO47CTvjGLmC0fAZZYxKEa+MjRDse1O2RxYiDRIF
+        iELRCwK+Up7ERAiiXosO2Buf6OhZwD8iT9Q7qGi5VivY8eJOjUqvY/hxKq0uQsCoFYlqiTpQ
+        K0/S6pWxgUpGFyYKChKHOALfT4hb7F/A1AMeyaXzuewUcJ19GnBISElg5UiBA3uSXlQLgLbM
+        +8ApeFEzALYN6V3CHICWr9I9Vh1D6Rcxl2AGcH6iELge9wAcaq5gOaMIyg8au1IdDpJkU9th
+        1xPSSftQz8O50UrCGY9TxSx4paYUdwreVAIsHupjO+O5lBTmFx5z0lxqLbxZPEY4MYcKh2Vd
+        uStF+FKb4Nnyv3HnP5Aq48CHlnPAVV0UNFrbcRf2hhMdl91V8+DstNnd81FY/WUV22X+HEBD
+        v8FtjoQnO3NXzDgVB+sHUwkX/xws7KzFXPwamL0whrl4LmwqXcXbYE3deXeCDbDvn1Q3puHZ
+        6R/c47IDWGu6QOSBLYanujM8lc+Fw2CGPY1lcAwDpzbCymXSBf1hXfOO84BlBBsYtTYpltGG
+        qEVK5uj/G49RJTWClZsQvtIEhkftgRaAkcACIIkLfLhZXJvCi6uQf3SM0ahkGn0io7WAEMey
+        zuA83xiV46iUOplIEhokkUqlktBgqUiwnjt58pzCi4qV65gEhlEzmlUfRnJ4KdjahUy/V2+x
+        eM+W/5HVY/DZOtEQpEonDe0fK6vEr8+Wt5B+rd8WNE8tYMH2w38txr0XwLdydr8UnN/9iZWo
+        3rqFOvxr8ofcT5OzxLrQTtMHp5U6vO7I/g7ZxIGa3vB3eQcfm4yl166X8Eus7WnNsvBD/45P
+        HJT+chzOmk/cW79mc/39499vUgq9aWyyVSx6IyH+Wk/2tidC/yru3EDF2w/8Ti0bxTK0J18W
+        2t2Ssq6nIZR150xaXf/eJt+CIXuaOCxYQd+JGYm8awpTdz4wSHb5iQYjD1hfPiSa4vDrH6bu
+        Ll9sNM1kBmu6jbpvHnOFz+RY7y7diGrU1yikRftZb9ntwwJCGycXCXGNVv4fIjC6FJwEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Re0hTYRjG+c45OzsbrY7T6stZxigqLS/d/CqpIKFTUa3yrwprupOGbo4d
+        L2kXraBU8lJh2MrKtEmTNKd0U0unTkvUcDnymLZoVjC8l2Cp5ZSo/x6e5/e87wsvhUubCU/q
+        pCaO1WmUMXJSTDypl3uvCfPkVQGFuUGo7I0FRxdyJnFU0pNNImf9CEA3hsZx5Ki9DJD91TZU
+        M3BLgLpqn2PoYUkjhq6ZbQD1deoxVMP7ooJLRQSqrnlNIOuL2yS6a+gTouKmKQy9z+kDqNQ5
+        SKBmXobaJ5sE2xcw1nd7mPbecoKxtsYzJmM6yVQUpTBVXakkU5h1XcBkXhwgmeE+nmAGX3aS
+        TFalETCjpiWMydGPKSSHxcEqNuZkAqvz33pcHPXyUQ+mzRCcuj9URqSCHCIDiChIr4fdaYWY
+        S0vpKgD570Gz/iJomGzAZ7U7fDj1VZgBxNOMA8DeiRcCV0DQy6Gx5fx0QFEk7QtbflMu24Ne
+        CcfsxYSLx+l8ATT8ahe6Anc6GvZYykgXL6E3wmu5ybN7hwBML5G4tIR2g69vOmZuw6eROxWf
+        cBeO0zJYPDUzXkRvgXdbsmcmzqe9YN6DH3gOcNP/19b/19b/a98DuBEsYrWcOlLNBWrXathE
+        P06p5uI1kX4RsWoTmHm2j88zUG0c8jMDjAJmAClc7iG5IuFVUolKmZTM6mKP6eJjWM4MZBQh
+        XygZc2aqpHSkMo6NZlktq/ubYpTIMxV7mqgcEb1VN9l2997XH4lIaPj4pWvNwitz8RSvmHyH
+        uGNj4NIC61Zt9+5d4QX+AT/P7Wz9LFzKJeKnbXHFy5zNAzvEO1PeVde5BY+TQb11wtDFzpAW
+        +SN9NRbybd9wYaOhU73y00FrnW17XIjHruxR/ucHWV5Wh/fR7vB+fxPY43598MSgXbicfxW7
+        7kHlPHXyY7/9mzu9z2rj+TSp/mZER+Ot1hL7aH158yHmRumWkbdG7Z2OOUkKUbTF98yGhAlq
+        27ngtLzQ1YccbUGbci+nZTR8bpPFEulcRL5FETUC7Ap/g1kxrvgtnuCLpAcyhfTzMI3Xiqur
+        inItvO3g3io5wUUpA31wHaf8A6ifNtlbAwAA
+X-CMS-MailID: 20230814121319epcas5p32e02f82561b4040f8e3fb7c7410b6de5
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----nvFln8z3L_krFSQI_duuyTsYVGNcxCMU6qftyQwhOSKtHzaF=_548ca_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230811105648epcas5p3ae8b8f6ed341e2aa253e8b4de8920a4d
+References: <20230811105300.15889-1-nj.shetty@samsung.com>
+        <CGME20230811105648epcas5p3ae8b8f6ed341e2aa253e8b4de8920a4d@epcas5p3.samsung.com>
+        <20230811105300.15889-3-nj.shetty@samsung.com>
+        <355bb623-9cd9-fe33-106e-1f091c09fb32@acm.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+------nvFln8z3L_krFSQI_duuyTsYVGNcxCMU6qftyQwhOSKtHzaF=_548ca_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
+
+On 23/08/11 02:58PM, Bart Van Assche wrote:
+>On 8/11/23 03:52, Nitesh Shetty wrote:
+>>We expect caller to take a plug and send bio with source information,
+>>followed by bio with destination information.
+>>Once the src bio arrives we form a request and wait for destination
+>>bio. Upon arrival of destination we merge these two bio's and send
+>>corresponding request down to device driver.
+>
+>Is the above description up-to-date? In the cover letter there is a 
+>different description of how copy offloading works.
+>
+Acked, This description is up to date.
+We need to update this description in cover letter.
+
+Thank you,
+Nitesh Shetty
+
+------nvFln8z3L_krFSQI_duuyTsYVGNcxCMU6qftyQwhOSKtHzaF=_548ca_
+Content-Type: text/plain; charset="utf-8"
 
 
-On 8/14/23 13:02, Miklos Szeredi wrote:
-> On Mon, 14 Aug 2023 at 08:03, Jürg Billeter <j@bitron.ch> wrote:
->>
->> Since v6.3-rc1 commit 5a8bee63b1 ("fuse: in fuse_flush only wait if
->> someone wants the return code") `fput()` is called asynchronously if a
->> file is closed as part of a process exiting, i.e., if there was no
->> explicit `close()` before exit.
->>
->> If the file was open for writing, also `put_write_access()` is called
->> asynchronously as part of the async `fput()`.
->>
->> If that newly written file is an executable, attempting to `execve()`
->> the new file can fail with `ETXTBSY` if it's called after the writer
->> process exited but before the async `fput()` has run.
-> 
-> Thanks for the report.
-> 
-> At this point, I think it would be best to revert the original patch,
-> since only v6.4 has it.
-> 
-> The original fix was already a workaround, and I don't see a clear
-> path forward in this direction.  We need to see if there's better
-> direction.
-> 
-> Ideas?
-
-Is there a good reason to flush O_RDONLY?
-
-
-fuse: Avoid flush for O_RDONLY
-
-From: Bernd Schubert <bschubert@ddn.com>
-
-A file opened in read-only moded does not have data to be
-flushed, so no need to send flush at all.
-
-This also mitigates -EBUSY for executables, which is due to
-async flush with commit 5a8bee63b1.
-
-Fixes: 5a8bee63b1 (unless executable opened in rw)
-Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-
-
-index 89d97f6188e0..e058a6af6751 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -545,7 +545,8 @@ static int fuse_flush(struct file *file, fl_owner_t id)
-         if (fuse_is_bad(inode))
-                 return -EIO;
-  
--       if (ff->open_flags & FOPEN_NOFLUSH && !fm->fc->writeback_cache)
-+       if ((ff->open_flags & FOPEN_NOFLUSH && !fm->fc->writeback_cache) ||
-+           ((file->f_flags & O_ACCMODE) == O_RDONLY))
-                 return 0;
-  
-         fa = kzalloc(sizeof(*fa), GFP_KERNEL);
-
-
-
+------nvFln8z3L_krFSQI_duuyTsYVGNcxCMU6qftyQwhOSKtHzaF=_548ca_--
