@@ -2,57 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C155B77B179
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 08:20:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CD2877B216
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 09:10:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231669AbjHNGT7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Aug 2023 02:19:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33992 "EHLO
+        id S232039AbjHNHJz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Aug 2023 03:09:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233929AbjHNGTR (ORCPT
+        with ESMTP id S233203AbjHNHJ0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Aug 2023 02:19:17 -0400
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 458871993;
-        Sun, 13 Aug 2023 23:19:06 -0700 (PDT)
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4RPPP235Z2z9sWt;
-        Mon, 14 Aug 2023 08:19:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-        t=1691993942;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fb7rxHcuMR6URNyDww8AuEDEgol4onmkgqZcq6YbCpw=;
-        b=1PDx3KPcl6wuEDbmKq1wJPkQdIje+onmlCn5SkKCaqz8B8tWznBByrCzCiwBd39Gb4okxV
-        CAvytefYG8ZicP7yI8YBxeIJ0dSVOP4+MiqaaQ9wcsjOuU2HKIyIdPc+866RYDimahxf7+
-        +OqkYPZa+9kk5yHPmVUjOadmFxoBrqhC1wLMfngzcZm8f+2QvzaEkcKAY05RyUVqPqAyDK
-        4S5pnGRbA/+j4nPLH6G4AQ2WDLdzVFiM81TP3a/zZvstp2Z8uvdqgTAgZbQNMHexn1gN7a
-        vXx4e92vQwayrON31dNe+MWDol8PyUryHKrsBtxMPXDuhbFYouUjev3Q8R8uEQ==
-Date:   Mon, 14 Aug 2023 16:18:49 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH 2/3] fs: Allow user to lock mount attributes with
- mount_setattr
-Message-ID: <20230814.061559-absent.hints.brave.teapots-iRV9CJPKzSJ@cyphar.com>
-References: <20230810090044.1252084-1-sargun@sargun.me>
- <20230810090044.1252084-2-sargun@sargun.me>
- <20230811.020617-buttery.agate.grand.surgery-EoCrXfehGJ8@cyphar.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mjx7yiv554xy53n7"
+        Mon, 14 Aug 2023 03:09:26 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72897E73
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Aug 2023 00:09:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1691996965; x=1723532965;
+  h=date:from:to:cc:subject:message-id:
+   content-transfer-encoding:mime-version;
+  bh=gagBAPdXwZD0GAP0fgPVmMq6TWPa9WnjQgud2Tr6Pmc=;
+  b=JiCoEtqs7Z/sLfMpuijLFYK6VitPoehI+zG+HWzPkPn1tLpZlM0PAFQg
+   9ueJYxdX4O8oV625OC3qEpmXWDFUncJTfPvwWH/GgucBMtl/Y83Pqfrhs
+   q0jte4IyFqm9nPSalek0HXLLA7ZuKsq1QmmRkELR7+VQjBlbN+FZMVVNa
+   iv3T65LjUaZzVehIZytaifEoI+tSS4KbAnpN9tByIqZ8540Su/RFwSmgc
+   NP3bPL0FbwZza6g4d/RiDKIqbEg7FzNCexl+u/64CZR7bioEaU8hOo+F4
+   /80YqbdEES85TE7ztsJAxiwMMHR4ZOtNr5f19gDm7mH6eQKrO3tQe2W5E
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10801"; a="374746492"
+X-IronPort-AV: E=Sophos;i="6.01,171,1684825200"; 
+   d="scan'208";a="374746492"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2023 00:09:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10801"; a="768342837"
+X-IronPort-AV: E=Sophos;i="6.01,171,1684825200"; 
+   d="scan'208";a="768342837"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orsmga001.jf.intel.com with ESMTP; 14 Aug 2023 00:09:17 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Mon, 14 Aug 2023 00:09:16 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Mon, 14 Aug 2023 00:09:16 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27 via Frontend Transport; Mon, 14 Aug 2023 00:09:16 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.48) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.27; Mon, 14 Aug 2023 00:09:16 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lNf+GTq4nyvZFQRj23ncym2w7BtXOJbpa9h7OQiDL+KQOeEZiE6fvWjvY9Dq1LK16viEExZQThKdT6eLSRhh3zZWmzheHU9sKJPzg631FCZe3A16hleLus6v8wAUjV+TxJVyECJUEaWjVLixHu/2HiGT/Sf3on7OTBFREAqd5NQDvboY31ZFu0SBdHZuiuSvaxAiMILI0jrQ170UxED2bJSSKma2dwVAa58n2YZ8wtYW2O0Vn0LS2cATtdOPqRMYMkdLD+i3bxOOjo1ja4YTV176cABSnkIFXvbNiwih/VX1OHoLqIG8hAokssr/qBM8A3nJb3YVN4XxmZt09qQpiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=i37NQOzqU3YJR8p7ogW7aiQxJxZ38ff815SvywEDseI=;
+ b=WkKeckRVLqkxpk0/htU+7m5l/fPbtwbUP6Ah8SLFPHDU6/NZYcPGPWaMsbA4tUsFirqAxXzNAuHZAWIBHlnTsboV+5e872z3V14SCRCyd/NrI5F0KUsGV3VvYDA1Z6S1r3T20bBzamSoMTda5peK01QYvwchqhtcFpVvpJtCZaLptG1KmlIsfcmXSI+ym1winDgaOzloJPn8MqIjkM5zzFYFHvh7dLsYPU8eH3uCW3v32iPNCcrfcjjPuowdOySlQk22PqDTOQNxMyaY/Rr21V1ETkzOGAg4q1hgs1bqn3bhdLQUgsWbIMJwFV8JyObj21SnaSl+r360V9t3rHFH0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB6779.namprd11.prod.outlook.com (2603:10b6:510:1ca::17)
+ by DS0PR11MB7285.namprd11.prod.outlook.com (2603:10b6:8:13d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6678.24; Mon, 14 Aug
+ 2023 07:09:14 +0000
+Received: from PH8PR11MB6779.namprd11.prod.outlook.com
+ ([fe80::73c6:1231:e700:924]) by PH8PR11MB6779.namprd11.prod.outlook.com
+ ([fe80::73c6:1231:e700:924%4]) with mapi id 15.20.6678.022; Mon, 14 Aug 2023
+ 07:09:14 +0000
+Date:   Mon, 14 Aug 2023 15:09:03 +0800
+From:   kernel test robot <oliver.sang@intel.com>
+To:     Christian Brauner <brauner@kernel.org>
+CC:     <oe-lkp@lists.linux.dev>, <lkp@intel.com>,
+        Christian Brauner <christianvanbrauner@gmail.com>,
+        <linux-fsdevel@vger.kernel.org>, <ying.huang@intel.com>,
+        <feng.tang@intel.com>, <fengwei.yin@intel.com>,
+        <oliver.sang@intel.com>
+Subject: [brauner-vfs:vfs.fdget_pos] [file]  3d04e89a11:
+ stress-ng.seek.ops_per_sec -4.8% regression
+Message-ID: <202308141149.d38fdf91-oliver.sang@intel.com>
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
-In-Reply-To: <20230811.020617-buttery.agate.grand.surgery-EoCrXfehGJ8@cyphar.com>
-X-Rspamd-Queue-Id: 4RPPP235Z2z9sWt
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR01CA0187.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:189::12) To PH8PR11MB6779.namprd11.prod.outlook.com
+ (2603:10b6:510:1ca::17)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB6779:EE_|DS0PR11MB7285:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3330b838-ef34-4fa6-c3c8-08db9c955dc1
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 1WyIPAcgjpMEUzRm6xj6LaECCxpmBeqprwbdUbbyQJ7QQUcB/SCPkMT2MvnFP1Axp0nTzFVo53akhKS9+Za4SUoHiYvIdEbjxvJ/oPuzdTruOkMvAYz/og3DxgbSGbbY0XqKCtHiBr1NO9fW3rLrufesKMJ/LtkT+RVHdSKartvK56/9Wch1MJ5NreuTTrMyDXxwV1FQV+PNKzpCErI4cZTonduoCIyTI1udFPSxhb733T1B9jfYd+cf0F+7JgbJhQh5pE6TZmzBJ1nzYF5xA+3i0jkcAehFm+76VmK8OsRE9euXcCQGQ3BcGb9CS1UAkLzNGPJBPqHkk71zKEWzHgdEU+NRDfKWvA8imVx7rFpiHVqmyXqKh0KQIpI4f5Mp0AswM2tDIJsS46xQwUwyUGe8lr+q9NfBcMkMznfi5RwiHcfKNPbzpbmkkRX1r+ZKn+T4xXrrLxjF98msjSXf4SnIxALLUVYhhe2R/K3VdoCdbAnj+4R6YsKrF8bHvH2hUaFbaBgfM0ptRYIC6zCtnXHp3J17nLHNV1OU1i7rn1eLQWn8niDp3ILw2XJkq3fTTn6D6MT9nh4olsSYSZDfww==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB6779.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(396003)(346002)(39860400002)(376002)(366004)(136003)(451199021)(186006)(1800799006)(6666004)(6486002)(966005)(6506007)(82960400001)(478600001)(83380400001)(36756003)(86362001)(2906002)(6512007)(1076003)(107886003)(26005)(66946007)(2616005)(38100700002)(316002)(4326008)(8676002)(66476007)(6916009)(66556008)(5660300002)(8936002)(41300700001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?riU2qDDDgYx7B3GyZo5FJKmnsHIXXKg7fMIE9gpS3W1Tc/yXM/jXJNE+Cz?=
+ =?iso-8859-1?Q?uimfAf1ZoGu6iDnTktjzsUYHYV5AhME6WWcxnIV58O/KV34f5pw4GVuMSj?=
+ =?iso-8859-1?Q?6Dz4bAaoKO1X0DOyyOCFg//9Y5KvLqaCu6+dxQVaxKjjfvrNfBcLCkaoNJ?=
+ =?iso-8859-1?Q?T0rQbwtJCr1SiKwTtnXpfljBvfHViIojhMpFK4pJ/QL9oOe4M6+C6bqk9r?=
+ =?iso-8859-1?Q?zOtG6fzccG8OzQgu2+cJengDYTJ/MoLI4bcEK1QSwc4RdlShShYt4mw+EY?=
+ =?iso-8859-1?Q?Z7e79JN0vI/skb4kpOdxcVMycsYw1u8d9dzFbnzF43N2qe3wjGNwsYKrqh?=
+ =?iso-8859-1?Q?b9ss/eTf/LCa1WQwD4SLOeZzcwqVWQzvTLvAGd+9Cuj4kO9GKqhpBoGtyI?=
+ =?iso-8859-1?Q?/Wf0558AeQH2T7tO5SOduADcsnTErpWvwQOF/ZU2DzlQ3AE8pAmTh+e4vR?=
+ =?iso-8859-1?Q?AspK0w6QsFq8Xg5fZJsQPHmvz2oXYyolBgS2YK1bUm05uU7P1oJYLZF+S+?=
+ =?iso-8859-1?Q?jjohkO8jswZHJ+s3ADuC4gFMEo5/+gA2eOSZjvaAEvsWHFyyTxTlXu2Qa4?=
+ =?iso-8859-1?Q?D5qseGM9K+5Tc4yXHp50mfBrS0Blv5PPPAGv9xjaIWUlTrSuUnJywm+3bn?=
+ =?iso-8859-1?Q?7wjr6jhuEv2Vj3GtnEdmkaHVHXW+tIDBWxyWCXjT8X+HQT1mXpHGn/P9gQ?=
+ =?iso-8859-1?Q?INuY5gurR4qz5OCNzXgh7p8aJ7Ox3VGNrm7Wb8ZGsyZbX9MOZCyQAQkMgS?=
+ =?iso-8859-1?Q?Sbs6PtTQxesrzSooctbAXRcBcTigTFjV2hMsi3ffgitwcl1ipkp8UwdJNr?=
+ =?iso-8859-1?Q?J62hBwbRbltQqVzvlygYhjCT0me93J3C5p7o4NGANUPAy8IPiU99AH5SWM?=
+ =?iso-8859-1?Q?tM6w6FyYhPRQ9RBv4oDA1IyjVw54xEav3aTFvLQpsOszw9OOVOg4iQGoYU?=
+ =?iso-8859-1?Q?x2SdDS/3g5mAFnQbJcUVCE9mPO1XRM/XaqTliVz9Wf51lhCBrvlosrjYPJ?=
+ =?iso-8859-1?Q?U7ydfYvIVtCa8RdkaDXykfgN0lK0p1BhmiYYdP/LWRZo8l+Jnco8nddcUG?=
+ =?iso-8859-1?Q?7FvDUDNWgrbRjHFWez3JeQuwMuhITdb7k4XiC/p06oFWF8shn+PHqDVQMm?=
+ =?iso-8859-1?Q?njT0jHYHLTA7h6U8u+pllm9fjS4KINy8KVXVfH7SgO1Bu2kZJdYP0U337M?=
+ =?iso-8859-1?Q?9Nm09JUpG+y9wqGFEOzliNASLBDehiZoczClOSEMZIiOAUZ/N+bbr0zA/Y?=
+ =?iso-8859-1?Q?2uaOdeait8pEHKsgoEspcijcTzLD6S/KveSK0ESnAPuLpf8Hzx+3QR0Jsy?=
+ =?iso-8859-1?Q?NuAN7OcgqQoRAJDS8BJam3h6+rt8pioAvdiBAaX8lsGYcKtKkUl5bVJJU8?=
+ =?iso-8859-1?Q?DHpg86Xks3awxC4B9W2VrsCt5rkmjOmXeDWfLkqSm8U5XK4xAPZLKmGS/m?=
+ =?iso-8859-1?Q?EG/uCT7txIVtafH11BOWBQHONRyrZ0eLxbq0u9acnUXRUheY4j4us5qC5g?=
+ =?iso-8859-1?Q?fF1dcSeIUdDvrlLTA2hjVN9iF4vcIXpkWIa+cKEQazlWCqpT4K5MM4FOaa?=
+ =?iso-8859-1?Q?AqzkHZab/Se1hk5LnebMx328iBeOA5fBWv2P7lx2GjRk1H165xKF25xsFG?=
+ =?iso-8859-1?Q?FLOzvCSSXPoQ90W+PVlbYifmhSfagFVp/TEJ8zjsd/y+2j4OVaxcGBjQ?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3330b838-ef34-4fa6-c3c8-08db9c955dc1
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB6779.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2023 07:09:14.2887
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: W93uf1vcjjundsC7zAcaHOrRnMMLSTJvGDSCKmrEsso6++LxnNiW5MUFJUpd81J99e4Nfjml//xj58DItj9EKw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7285
+X-OriginatorOrg: intel.com
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -60,220 +155,117 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---mjx7yiv554xy53n7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 2023-08-14, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2023-08-10, Sargun Dhillon <sargun@sargun.me> wrote:
-> > We support locking certain mount attributes in the kernel. This API
-> > isn't directly exposed to users. Right now, users can lock mount
-> > attributes by going through the process of creating a new user
-> > namespaces, and when the mounts are copied to the "lower privilege"
-> > domain, they're locked. The mount can be reopened, and passed around
-> > as a "locked mount".
-> >=20
-> > Locked mounts are useful, for example, in container execution without
-> > user namespaces, where you may want to expose some host data as read
-> > only without allowing the container to remount the mount as mutable.
-> >=20
-> > The API currently requires that the given privilege is taken away
-> > while or before locking the flag in the less privileged position.
-> > This could be relaxed in the future, where the user is allowed to
-> > remount the mount as read only, but once they do, they cannot make
-> > it read only again.
-> >=20
-> > Right now, this allows for all flags that are lockable via the
-> > userns unshare trick to be locked, other than the atime related
-> > ones. This is because the semantics of what the "less privileged"
-> > position is around the atime flags is unclear.
-> >=20
-> > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> > ---
-> >  fs/namespace.c             | 40 +++++++++++++++++++++++++++++++++++---
-> >  include/uapi/linux/mount.h |  2 ++
-> >  2 files changed, 39 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/fs/namespace.c b/fs/namespace.c
-> > index 54847db5b819..5396e544ac84 100644
-> > --- a/fs/namespace.c
-> > +++ b/fs/namespace.c
-> > @@ -78,6 +78,7 @@ static LIST_HEAD(ex_mountpoints); /* protected by nam=
-espace_sem */
-> >  struct mount_kattr {
-> >  	unsigned int attr_set;
-> >  	unsigned int attr_clr;
-> > +	unsigned int attr_lock;
-> >  	unsigned int propagation;
-> >  	unsigned int lookup_flags;
-> >  	bool recurse;
-> > @@ -3608,6 +3609,9 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, c=
-har __user *, dir_name,
-> > =20
-> >  #define MOUNT_SETATTR_PROPAGATION_FLAGS \
-> >  	(MS_UNBINDABLE | MS_PRIVATE | MS_SLAVE | MS_SHARED)
-> > +#define MOUNT_SETATTR_VALID_LOCK_FLAGS					       \
-> > +	(MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID | MOUNT_ATTR_NODEV |	       \
-> > +	 MOUNT_ATTR_NOEXEC)
-> > =20
-> >  static unsigned int attr_flags_to_mnt_flags(u64 attr_flags)
-> >  {
-> > @@ -3629,6 +3633,22 @@ static unsigned int attr_flags_to_mnt_flags(u64 =
-attr_flags)
-> >  	return mnt_flags;
-> >  }
-> > =20
-> > +static unsigned int attr_flags_to_mnt_lock_flags(u64 attr_flags)
-> > +{
-> > +	unsigned int mnt_flags =3D 0;
-> > +
-> > +	if (attr_flags & MOUNT_ATTR_RDONLY)
-> > +		mnt_flags |=3D MNT_LOCK_READONLY;
-> > +	if (attr_flags & MOUNT_ATTR_NOSUID)
-> > +		mnt_flags |=3D MNT_LOCK_NOSUID;
-> > +	if (attr_flags & MOUNT_ATTR_NODEV)
-> > +		mnt_flags |=3D MNT_LOCK_NODEV;
-> > +	if (attr_flags & MOUNT_ATTR_NOEXEC)
-> > +		mnt_flags |=3D MNT_LOCK_NOEXEC;
-> > +
-> > +	return mnt_flags;
-> > +}
-> > +
-> >  /*
-> >   * Create a kernel mount representation for a new, prepared superblock
-> >   * (specified by fs_fd) and attach to an open_tree-like file descripto=
-r.
-> > @@ -4037,11 +4057,18 @@ static int mount_setattr_prepare(struct mount_k=
-attr *kattr, struct mount *mnt)
-> >  	int err;
-> > =20
-> >  	for (m =3D mnt; m; m =3D next_mnt(m, mnt)) {
-> > -		if (!can_change_locked_flags(m, recalc_flags(kattr, m))) {
-> > +		int new_mount_flags =3D recalc_flags(kattr, m);
-> > +
-> > +		if (!can_change_locked_flags(m, new_mount_flags)) {
-> >  			err =3D -EPERM;
-> >  			break;
-> >  		}
->=20
-> It just occurred to me that the whole MNT_LOCK_* machinery has the
-> unfortunate consequence of restricting the host root user from being
-> able to modify the locked flags. Since this change will let you do this
-> without creating a userns, do we want to make can_change_locked_flags()
-> do capable(CAP_SYS_MOUNT)?
+Hello,
 
-Then again, it seems the semantics of changing locked mount flags would
-probably be a bit ugly -- should changing the flag unset the locked bit?
-If not, then not being able to clear the flags would make userspace's
-existing mechanism for handling locked mounts (inherit the all lockable
-mount flags already set on the mountpoint) would not work anymore.
+kernel test robot noticed a -4.8% regression of stress-ng.seek.ops_per_sec on:
 
-So maybe it's better to just leave this as-is...
 
-> > +		if ((new_mount_flags & kattr->attr_lock) !=3D kattr->attr_lock) {
-> > +			err =3D -EINVAL;
-> > +			break;
-> > +		}
->=20
-> Since the MNT_LOCK_* flags are invisible to userspace, it seems more
-> reasonable to have the attr_lock set be added to the existing set rather
-> than requiring userspace to pass the same set of flags.
->=20
-> Actually, AFAICS this implementation breaks backwards compatibility
-> because with this change you now need to pass MNT_LOCK_* flags if
-> operating on a mount that has locks applied already. So existing
-> programs (which have .attr_lock=3D0) will start getting -EINVAL when
-> operating on mounts with locked flags (such as those locked in the
-> userns case). Or am I missing something?
->=20
-> In any case, the most reasonable behaviour would be to OR the requested
-> lock flags with the existing ones IMHO.
->=20
-> > +
-> >  		err =3D can_idmap_mount(kattr, m);
-> >  		if (err)
-> >  			break;
-> > @@ -4278,8 +4305,14 @@ static int build_mount_kattr(const struct mount_=
-attr *attr, size_t usize,
-> >  	if ((attr->attr_set | attr->attr_clr) & ~MOUNT_SETATTR_VALID_FLAGS)
-> >  		return -EINVAL;
-> > =20
-> > +	if (attr->attr_lock & ~MOUNT_SETATTR_VALID_LOCK_FLAGS)
-> > +		return -EINVAL;
-> > +
-> >  	kattr->attr_set =3D attr_flags_to_mnt_flags(attr->attr_set);
-> >  	kattr->attr_clr =3D attr_flags_to_mnt_flags(attr->attr_clr);
-> > +	kattr->attr_lock =3D attr_flags_to_mnt_flags(attr->attr_lock);
-> > +	kattr->attr_set |=3D attr_flags_to_mnt_lock_flags(attr->attr_lock);
-> > +
-> > =20
-> >  	/*
-> >  	 * Since the MOUNT_ATTR_<atime> values are an enum, not a bitmap,
-> > @@ -4337,7 +4370,7 @@ SYSCALL_DEFINE5(mount_setattr, int, dfd, const ch=
-ar __user *, path,
-> >  	struct mount_attr attr;
-> >  	struct mount_kattr kattr;
-> > =20
-> > -	BUILD_BUG_ON(sizeof(struct mount_attr) !=3D MOUNT_ATTR_SIZE_VER0);
-> > +	BUILD_BUG_ON(sizeof(struct mount_attr) !=3D MOUNT_ATTR_SIZE_VER1);
-> > =20
-> >  	if (flags & ~(AT_EMPTY_PATH |
-> >  		      AT_RECURSIVE |
-> > @@ -4360,7 +4393,8 @@ SYSCALL_DEFINE5(mount_setattr, int, dfd, const ch=
-ar __user *, path,
-> >  	/* Don't bother walking through the mounts if this is a nop. */
-> >  	if (attr.attr_set =3D=3D 0 &&
-> >  	    attr.attr_clr =3D=3D 0 &&
-> > -	    attr.propagation =3D=3D 0)
-> > +	    attr.propagation =3D=3D 0 &&
-> > +	    attr.attr_lock =3D=3D 0)
-> >  		return 0;
-> > =20
-> >  	err =3D build_mount_kattr(&attr, usize, &kattr, flags);
-> > diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-> > index 4d93967f8aea..de667c4f852d 100644
-> > --- a/include/uapi/linux/mount.h
-> > +++ b/include/uapi/linux/mount.h
-> > @@ -131,9 +131,11 @@ struct mount_attr {
-> >  	__u64 attr_clr;
-> >  	__u64 propagation;
-> >  	__u64 userns_fd;
-> > +	__u64 attr_lock;
-> >  };
-> > =20
-> >  /* List of all mount_attr versions. */
-> >  #define MOUNT_ATTR_SIZE_VER0	32 /* sizeof first published struct */
-> > +#define MOUNT_ATTR_SIZE_VER1	40
-> > =20
-> >  #endif /* _UAPI_LINUX_MOUNT_H */
-> > --=20
-> > 2.39.3
-> >=20
->=20
-> --=20
-> Aleksa Sarai
-> Senior Software Engineer (Containers)
-> SUSE Linux GmbH
-> <https://www.cyphar.com/>
+commit: 3d04e89a11244255549fe838e9c6126e0e64729b ("file: don't optimize for f_count equal 1")
+https://git.kernel.org/cgit/linux/kernel/git/vfs/vfs.git vfs.fdget_pos
+
+testcase: stress-ng
+test machine: 36 threads 1 sockets Intel(R) Core(TM) i9-10980XE CPU @ 3.00GHz (Cascade Lake) with 128G memory
+parameters:
+
+	nr_threads: 1
+	disk: 1HDD
+	testtime: 60s
+	fs: ext4
+	class: os
+	test: seek
+	cpufreq_governor: performance
 
 
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202308141149.d38fdf91-oliver.sang@intel.com
 
---mjx7yiv554xy53n7
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Details are as below:
+-------------------------------------------------------------------------------------------------->
 
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZNnHSQAKCRAol/rSt+lE
-b0IDAQCp6t6DAOYU6vMnM8SzLBr4vzh1CUF2MxXVQJgP/ZWdRwD/duZ7gFNxMe7N
-PDt6j+JqSjRtgGhFermnHsDb68G3rAI=
-=GQfs
------END PGP SIGNATURE-----
 
---mjx7yiv554xy53n7--
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20230814/202308141149.d38fdf91-oliver.sang@intel.com
+
+=========================================================================================
+class/compiler/cpufreq_governor/disk/fs/kconfig/nr_threads/rootfs/tbox_group/test/testcase/testtime:
+  os/gcc-12/performance/1HDD/ext4/x86_64-rhel-8.3/1/debian-11.1-x86_64-20220510.cgz/lkp-csl-d02/seek/stress-ng/60s
+
+commit: 
+  v6.5-rc1
+  3d04e89a11 ("file: don't optimize for f_count equal 1")
+
+        v6.5-rc1 3d04e89a11244255549fe838e9c 
+---------------- --------------------------- 
+         %stddev     %change         %stddev
+             \          |                \  
+      2.35            +2.6%       2.41        iostat.cpu.system
+      1.16            -6.2%       1.08        iostat.cpu.user
+    163.48            +5.2%     172.02        stress-ng.seek.nanosecs_per_seek
+  22830283            -4.8%   21730866        stress-ng.seek.ops
+    380493            -4.8%     362170        stress-ng.seek.ops_per_sec
+      1.61            -3.8%       1.55 ±  2%  perf-stat.i.MPKI
+      1.32 ±  4%      -0.1        1.20 ±  3%  perf-stat.i.branch-miss-rate%
+  16447081 ±  4%      -7.0%   15288768 ±  2%  perf-stat.i.branch-misses
+   9058578            -3.9%    8705166        perf-stat.i.cache-references
+ 8.886e+08            +1.2%  8.989e+08        perf-stat.i.dTLB-stores
+  10392601 ±  6%     -12.3%    9113713 ±  3%  perf-stat.i.iTLB-load-misses
+    753.71 ±  4%      +9.6%     826.21 ±  4%  perf-stat.i.instructions-per-iTLB-miss
+    275.76            -3.1%     267.08        perf-stat.i.metric.K/sec
+      1.61            -3.7%       1.55        perf-stat.overall.MPKI
+      1.43 ±  4%      -0.1        1.32 ±  2%  perf-stat.overall.branch-miss-rate%
+    544.45 ±  6%     +13.4%     617.59 ±  4%  perf-stat.overall.instructions-per-iTLB-miss
+  16185644 ±  4%      -7.0%   15046357 ±  2%  perf-stat.ps.branch-misses
+   8914660            -3.9%    8567102        perf-stat.ps.cache-references
+ 8.745e+08            +1.2%  8.846e+08        perf-stat.ps.dTLB-stores
+  10227957 ±  6%     -12.3%    8969124 ±  3%  perf-stat.ps.iTLB-load-misses
+     15.97 ±  5%      -2.1       13.85 ±  4%  perf-profile.calltrace.cycles-pp.ext4_llseek.ksys_lseek.do_syscall_64.entry_SYSCALL_64_after_hwframe.llseek
+      1.43 ±  7%      -0.6        0.80 ± 12%  perf-profile.calltrace.cycles-pp.syscall_exit_to_user_mode.do_syscall_64.entry_SYSCALL_64_after_hwframe.llseek
+      1.12 ±  7%      -0.3        0.80 ± 12%  perf-profile.calltrace.cycles-pp.syscall_return_via_sysret.llseek
+      0.00            +1.7        1.66 ±  6%  perf-profile.calltrace.cycles-pp.mutex_unlock.ksys_lseek.do_syscall_64.entry_SYSCALL_64_after_hwframe.llseek
+      0.00            +2.3        2.30 ± 10%  perf-profile.calltrace.cycles-pp.mutex_lock.__fdget_pos.ksys_lseek.do_syscall_64.entry_SYSCALL_64_after_hwframe
+     19.90 ±  4%      +2.4       22.28 ±  6%  perf-profile.calltrace.cycles-pp.ksys_lseek.do_syscall_64.entry_SYSCALL_64_after_hwframe.llseek
+      2.41 ±  5%      +2.5        4.92 ± 10%  perf-profile.calltrace.cycles-pp.__fdget_pos.ksys_lseek.do_syscall_64.entry_SYSCALL_64_after_hwframe.llseek
+     16.09 ±  4%      -2.1       13.97 ±  4%  perf-profile.children.cycles-pp.ext4_llseek
+      1.84 ±  4%      -0.6        1.22 ± 10%  perf-profile.children.cycles-pp.syscall_exit_to_user_mode
+      1.40 ±  5%      -0.3        1.10 ±  7%  perf-profile.children.cycles-pp.syscall_return_via_sysret
+      0.66 ±  3%      -0.2        0.45 ± 14%  perf-profile.children.cycles-pp.exit_to_user_mode_prepare
+      1.78 ±  7%      -0.2        1.57 ±  7%  perf-profile.children.cycles-pp.iomap_iter_advance
+      0.51 ± 11%      -0.2        0.34 ± 14%  perf-profile.children.cycles-pp.syscall_exit_to_user_mode_prepare
+      0.00            +0.1        0.12 ± 22%  perf-profile.children.cycles-pp.__x64_sys_read
+      0.00            +0.1        0.15 ± 25%  perf-profile.children.cycles-pp.__f_unlock_pos
+      0.28 ± 13%      +0.2        0.50 ± 17%  perf-profile.children.cycles-pp.rcu_all_qs
+      0.56 ±  9%      +0.5        1.09 ± 12%  perf-profile.children.cycles-pp.__cond_resched
+      0.00            +2.0        1.99 ±  6%  perf-profile.children.cycles-pp.mutex_unlock
+     20.08 ±  5%      +2.4       22.49 ±  6%  perf-profile.children.cycles-pp.ksys_lseek
+      0.00            +2.7        2.70 ±  9%  perf-profile.children.cycles-pp.mutex_lock
+      3.19 ±  5%      +2.8        6.02 ±  9%  perf-profile.children.cycles-pp.__fdget_pos
+      3.39 ±  5%      -1.9        1.53 ±  2%  perf-profile.self.cycles-pp.ext4_llseek
+      1.31 ±  6%      -0.3        1.00 ±  7%  perf-profile.self.cycles-pp.syscall_return_via_sysret
+      0.74 ±  5%      -0.2        0.49 ± 14%  perf-profile.self.cycles-pp.syscall_exit_to_user_mode
+      0.57 ±  5%      -0.2        0.35 ± 16%  perf-profile.self.cycles-pp.exit_to_user_mode_prepare
+      0.46 ± 15%      -0.2        0.25 ± 10%  perf-profile.self.cycles-pp.syscall_exit_to_user_mode_prepare
+      1.76 ±  6%      -0.2        1.55 ±  6%  perf-profile.self.cycles-pp.iomap_iter_advance
+      0.00            +0.1        0.12 ± 24%  perf-profile.self.cycles-pp.__x64_sys_read
+      0.22 ± 16%      +0.2        0.37 ± 20%  perf-profile.self.cycles-pp.rcu_all_qs
+      0.33 ±  9%      +0.3        0.67 ± 12%  perf-profile.self.cycles-pp.__cond_resched
+      0.00            +2.0        1.97 ±  6%  perf-profile.self.cycles-pp.mutex_unlock
+      0.00            +2.1        2.08 ± 10%  perf-profile.self.cycles-pp.mutex_lock
+
+
+
+
+Disclaimer:
+Results have been estimated based on internal Intel analysis and are provided
+for informational purposes only. Any difference in system hardware or software
+design or configuration may affect actual performance.
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
