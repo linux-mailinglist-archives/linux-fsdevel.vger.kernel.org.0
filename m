@@ -2,88 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B582F77B8CD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 14:39:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D735E77B8D9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 14:41:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229634AbjHNMjL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Aug 2023 08:39:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53262 "EHLO
+        id S229470AbjHNMkv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Aug 2023 08:40:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230418AbjHNMi6 (ORCPT
+        with ESMTP id S230251AbjHNMkZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Aug 2023 08:38:58 -0400
-Received: from nov-007-i659.relay.mailchannels.net (nov-007-i659.relay.mailchannels.net [46.232.183.213])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 002BDE5B;
-        Mon, 14 Aug 2023 05:38:53 -0700 (PDT)
-X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id C1B086C0082;
-        Mon, 14 Aug 2023 12:38:50 +0000 (UTC)
-X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: novatrend|x-authuser|juerg@bitron.ch
-X-MailChannels-Auth-Id: novatrend
-X-Cold-Shoe: 6263835827e2b840_1692016730527_1977572546
-X-MC-Loop-Signature: 1692016730527:1089382471
-X-MC-Ingress-Time: 1692016730527
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bitron.ch;
-        s=default; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
-        In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=UnFq8cK/dpffTOxd/mAzwBFyBjuZ38mvKS1JaKUYa+Y=; b=LqKqitPka07ght4saTNSkUYEjR
-        rq04ITnySzAE1qoVlKxNWbQTSAFZsi49hUVCXX8ECbwBKXLyKj+1boiHTDcUrvcIeF0d63c/JhpC7
-        xxkcOBCd5/GyCpnMjp/NNZ/Ht;
-Message-ID: <e7499d0942a4489086c803dcdf1a5bb4317e973e.camel@bitron.ch>
-Subject: Re: [REGRESSION] fuse: execve() fails with ETXTBSY due to async
- fuse_flush
-From:   =?ISO-8859-1?Q?J=FCrg?= Billeter <j@bitron.ch>
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Tycho Andersen <tycho@tycho.pizza>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        regressions@lists.linux.dev
-Date:   Mon, 14 Aug 2023 14:38:44 +0200
-In-Reply-To: <CAJfpegtUVUDac5_Y7BMJvCHfeicJkNxca2hO1crQjCNFoM54Lg@mail.gmail.com>
-References: <4f66cded234462964899f2a661750d6798a57ec0.camel@bitron.ch>
-         <CAJfpeguG4f4S-pq+_EXHxfB63mbof-VnaOy-7a-7seWLMj_xyQ@mail.gmail.com>
-         <da17987a-b096-9ebb-f058-8eb91f15b560@fastmail.fm>
-         <CAJfpegtUVUDac5_Y7BMJvCHfeicJkNxca2hO1crQjCNFoM54Lg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.1 
+        Mon, 14 Aug 2023 08:40:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0957E52
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Aug 2023 05:39:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1692016778;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tCWjLWX0jYHGbLRrRgLrEnurGr/nDg65nKZxrsGK2PI=;
+        b=htT+U4Ur8PVj/rgK/l8J8Phor2e4M1RiGiHPxJ2UmVcPIiVLXAbtsT1n2/YduYKszrXdDm
+        LS5KqPqOmx0S879HkAm73U+I9v748GckzNbQqFZWdzq+y08yHpLGR4IPvRYVbzHTQUbx4P
+        fYHoLLRpOdc+k7TPe3alfgLtQlIjcfE=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-643-9EnGxdHsMxyzxevp6CtnbQ-1; Mon, 14 Aug 2023 08:39:35 -0400
+X-MC-Unique: 9EnGxdHsMxyzxevp6CtnbQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B5F36185A7A4;
+        Mon, 14 Aug 2023 12:39:34 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0CE1740C2063;
+        Mon, 14 Aug 2023 12:39:33 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20230814093534.18278-1-guozihua@huawei.com>
+References: <20230814093534.18278-1-guozihua@huawei.com>
+To:     GUO Zihua <guozihua@huawei.com>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] fscache: Remove duplicated include
 MIME-Version: 1.0
-X-AuthUser: juerg@bitron.ch
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <4000875.1692016773.1@warthog.procyon.org.uk>
+Date:   Mon, 14 Aug 2023 13:39:33 +0100
+Message-ID: <4000876.1692016773@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2023-08-14 at 14:28 +0200, Miklos Szeredi wrote:
-> On Mon, 14 Aug 2023 at 14:07, Bernd Schubert=20
-> > fuse: Avoid flush for O_RDONLY
-> >=20
-> > From: Bernd Schubert <bschubert@ddn.com>
-> >=20
-> > A file opened in read-only moded does not have data to be
-> > flushed, so no need to send flush at all.
-> >=20
-> > This also mitigates -EBUSY for executables, which is due to
-> > async flush with commit 5a8bee63b1.
->=20
-> Does it?=C2=A0 If I read the bug report correctly, it's the write case th=
-at
-> causes EBUSY.
+GUO Zihua <guozihua@huawei.com> wrote:
 
-Indeed, I see this when trying to execute a file after a process wrote
-to (created) that file. As far as I can tell, `ETXTBSY` can't happen on
-exec without the file being opened for writing and thus, I don't see
-this patch mitigating this bug.
+> Remove duplicated include for linux/uio.h. Resolves checkincludes
+> message.
+> 
+> Signed-off-by: GUO Zihua <guozihua@huawei.com>
 
-J=C3=BCrg
+Acked-by: David Howells <dhowells@redhat.com>
+
