@@ -2,165 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C5F5277B952
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 15:02:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E96F177B89C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 14:29:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231172AbjHNNCT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Aug 2023 09:02:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50890 "EHLO
+        id S229500AbjHNM23 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Aug 2023 08:28:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231222AbjHNNBs (ORCPT
+        with ESMTP id S231651AbjHNM2Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Aug 2023 09:01:48 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98F0FE5F
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Aug 2023 06:01:27 -0700 (PDT)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20230814130116epoutp02b8f4e78191d218f7bd4effe9828dc74a~7QXnily3i2338223382epoutp02x
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Aug 2023 13:01:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20230814130116epoutp02b8f4e78191d218f7bd4effe9828dc74a~7QXnily3i2338223382epoutp02x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1692018076;
-        bh=TtSCb9KBJ2XHwOfKwyT3tCYK0FFVQAC/FyEVAI9BMkA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dhkdcAXLXQFgzYOEVb2yzKfCYyD3S3NWEjnr7pFpSbknHIaJih2dcolLX6+6rKE/Y
-         EpOe33Qa0gOPkDzOUnKfvLXnXUFqjRE3CYKtOCAAJVHhLUw+P7ot9IurrXQsP+ALGJ
-         7Tc1i8LqnIoxwU8pChb/x4hxaYfhtDPCW1aebtg8=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20230814130116epcas5p174c4ae8fa6883c326483da4c005b41ca~7QXm56LGG0176601766epcas5p1A;
-        Mon, 14 Aug 2023 13:01:16 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.178]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4RPZK61vZgz4x9Pq; Mon, 14 Aug
-        2023 13:01:14 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BE.21.57354.A952AD46; Mon, 14 Aug 2023 22:01:14 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20230814122212epcas5p37453fdef19909077528971ee54ed26e7~7P1gNwF260611606116epcas5p3C;
-        Mon, 14 Aug 2023 12:22:12 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20230814122212epsmtrp14a1aafb5de1203698ae6790f4309bb83~7P1gMve2K1933719337epsmtrp1B;
-        Mon, 14 Aug 2023 12:22:12 +0000 (GMT)
-X-AuditID: b6c32a44-007ff7000001e00a-3f-64da259aa015
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D1.07.64355.47C1AD46; Mon, 14 Aug 2023 21:22:12 +0900 (KST)
-Received: from green245 (unknown [107.99.41.245]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20230814122209epsmtip2edb1c9a304e2560d48518e12f30945ff~7P1dR_UgZ0493104931epsmtip24;
-        Mon, 14 Aug 2023 12:22:09 +0000 (GMT)
-Date:   Mon, 14 Aug 2023 17:48:53 +0530
-From:   Nitesh Shetty <nj.shetty@samsung.com>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
-        Keith Busch <kbusch@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        martin.petersen@oracle.com, linux-doc@vger.kernel.org,
-        gost.dev@samsung.com, Anuj Gupta <anuj20.g@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, mcgrof@kernel.org, dlemoal@kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [dm-devel] [PATCH v14 02/11] Add infrastructure for copy
- offload in block and request layer.
-Message-ID: <20230814121853.ms4acxwr56etf3ph@green245>
+        Mon, 14 Aug 2023 08:28:24 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EFF8106
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Aug 2023 05:28:20 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-99bdeae1d0aso568065266b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Aug 2023 05:28:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1692016098; x=1692620898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=izsmEiSniL4Vpqa2NF6daalfMmbpg+9Z6Z1Kc+7+ox4=;
+        b=CLfVoiMh1sB0QC7DEWNr+AJPXjOCXiRTkBknLkQ0BAm1E8j6pwL+s7tzvft4DAQVM9
+         3f6csuTf4gJD4MTv2vdSdQ17bOyG0pkikKOFgJkQgVsMRMsqi0xODkFfvltuUgmDVvBY
+         dk6cF1BjxwJLmw03sxMLCFa7ovXAecTrQTnJQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692016098; x=1692620898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=izsmEiSniL4Vpqa2NF6daalfMmbpg+9Z6Z1Kc+7+ox4=;
+        b=lkPlOdZzuQZRA1JvkCA2jLhgidz0luHnztO25pMyg0zhggiGtEVbMpIv4BnuXZbjVH
+         eWz8yxDgXWV6gEUQyX39a24YKrz079bxDJas5C0rOlXg6oYCSBjmru8olJp/PPqlQ4Vu
+         dh15Bdy2esLs4q9iRy7HyzY4oB19JTk2O2k48KFUNaWOdeqdIsen9IOkkssqr3RwOYyh
+         VtB3MINlJsg7Pvb8Q2n5iNBYP0GI2xkpAcGXmB++7eAYgOJniVxtuFrpFfxPpfb5W842
+         OOiTcSxNkfyhwPV+D7bo4WXVXIUyD6OE3vCpTDkE5DmtBWk1H3iPk8T+e3iLMRa+UD39
+         ZVWw==
+X-Gm-Message-State: AOJu0Yw4Jr4Apz2orsPrh9OzAAWmey8UuTSB8nnbrfwUG5iEijyDYWS7
+        WlTKbETTmxJo7KbK3ctKr7CxJZhuFTdYkMs5+wzkVg==
+X-Google-Smtp-Source: AGHT+IGB9KGGRhBVej7Q/xDzR/9vvDZmK/JkqOEfmuqgJJ1lhO6IXGwof9X8q3cbaMpkykBpZt14zXaapbKCUOQVLRk=
+X-Received: by 2002:a17:906:73dc:b0:99d:101b:8403 with SMTP id
+ n28-20020a17090673dc00b0099d101b8403mr7579441ejl.36.1692016098647; Mon, 14
+ Aug 2023 05:28:18 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <3b1da341-1c7f-e28f-d6aa-cecb83188f34@acm.org>
-User-Agent: NeoMutt/20171215
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TfVDTdRi/7357A5v9HCDfzQpugaIGbDrmF4Ighe53acnlnV3xxxjsd4wY
-        29qYUCcniBggCPkWG8ooMV6PwSREXmpCtgaRL8TEeRZXUAmCCAcCHaOxQfnf53mez+d5vYeJ
-        sQsZXGaqIoNUKyRyHt2T2ta7PShYH2iX8s/e2ICMfT9g6HjZMoYaHpbS0UTvDEAXphcxNGr+
-        DKCR76JR91QFDd03X6eguoabFHSmxwbQ2JCegrrtO9GXJ6upqKvbSkWDHRfpyPD1GAPVWBwU
-        NFw2BlDTxBMq+tG+Bd1attBiNhODv+wnbv3aQiUGB7SEqb6QTlytPkZ03s+hE5dPn6URJXlT
-        dOLpmJ1KPPl2iE6cbq0HxKzpFcI0OkmJZ32YFikjJVJS7U8qkpXSVEVKFG//IfE+cZiILwgW
-        hKM9PH+FJJ2M4sUeiA9+K1XunJnnf0Qi1zpd8RKNhhf6RqRaqc0g/WVKTUYUj1RJ5SqhKkQj
-        SddoFSkhCjIjQsDn7wpzEhPTZO1WHUNlZ2Q5/u7EcsBtehHwYEJcCJuXnoEi4Mlk450Amno6
-        qG5jBsDpWdv/xrDFRluX5Fb/TF3FbPw6gFar2E36E8DylvMuEhUPhJWnzIwiwGTS8Z2wf4W5
-        6vbGg+D8SI0rKYbraLCtsRJbDXjhaVD3wObqiYWL4InZhzQ33gStulFXMQ/8dXjj4oKL44O/
-        BMuvzGGriSD+hQe8/Uc/WC0G8VjY9X2Qu1EvOG5pZbgxFz4qPbmGM2HduVq6W3sCQP09PXAH
-        omF+X6mrIQyXwaJ7BWuCl+H5viaK278RlvwzSnH7WbC9ch2/ChuNVWtL5UDbs9w1TMDyqWsU
-        94amAextKMbKgJ/+ueH0z9Vz4whYOH2cpnfOg+FbYI2D6YbbobEjtArQ6gGHVGnSU8jkMJVA
-        QWb+d/FkZboJuH5iR2w7GDY4QnoAhQl6AGRiPG9WMcsuZbOkkk8+JdVKsVorJzU9IMx5rM8x
-        rk+y0vlUigyxQBjOF4pEImH4bpGA58uayL8kZeMpkgwyjSRVpHpdR2F6cHMo/MW8OP7e2mWv
-        vXX5nm8L75yytSWRFexS3e9dw2SxQSR4MaBumJNfNjc0GXro8KaqloitWZGc7NwQ7wDla7a8
-        Rt9mSYzFGCeDhYMb5NkrWRRObWLFZXHCzK7Jgy8MFORVd8f3Jrb6VH7VdHNk1I9m4XKWzk08
-        np+O6jL9thx46bBuYGXbNcf7ez6eR1s/esfcKN/t6Zta49/SXGJO7yzQMrOFuKFdcZV6cOOB
-        C7PY5sdHOt40JWdb/e4u9S5GrzC01Plxx5Lxp6TOOG5uQsL4B2ZDwz7de0cXLLyWp0MBfyVN
-        ZX6TYyw4OiHZ9kB55m6/d8yxO48QsVhoqEqYezfvygKPqpFJBDswtUbyL9O+GpucBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOIsWRmVeSWpSXmKPExsWy7bCSvG6JzK0UgyUT+SzWnzrGbNE04S+z
-        xeq7/WwWrw9/YrSY9uEns8WTA+2MFg/221vsfTeb1eLmgZ1MFitXH2WymHToGqPF06uzmCz2
-        3tK2WNi2hMViz96TLBaXd81hs5i/7Cm7xfLj/5gsbkx4ymix7vV7FosTt6Qtzv89zuog5nH5
-        irfH+XsbWTwuny312LSqk81j85J6j903G9g8FvdNZvXobX7H5vHx6S0Wj/f7rrJ59G1Zxejx
-        eZOcx6Ynb5kCeKO4bFJSczLLUov07RK4Mo6tbmQp6GGt2DbhLlMD4xyWLkZODgkBE4nGJeeA
-        bC4OIYHtjBKXe5+yQSQkJZb9PcIMYQtLrPz3nB2i6AmjxP7bB5lAEiwCqhLzug8AJTg42AS0
-        JU7/5wAJiwhoSHx7sBxsKLPAXFaJZb/Ps4MkhAWyJe4eWw+2gFfATKLl811WiKEfGCW+zbnE
-        CpEQlDg58wnYecxARfM2P2QGWcAsIC2x/B/YAk4Ba4mDc36AzREVkJGYsfQr8wRGwVlIumch
-        6Z6F0L2AkXkVo2hqQXFuem5ygaFecWJucWleul5yfu4mRnBcawXtYFy2/q/eIUYmDsZDjBIc
-        zEoivD28t1KEeFMSK6tSi/Lji0pzUosPMUpzsCiJ8yrndKYICaQnlqRmp6YWpBbBZJk4OKUa
-        mDzCpxpc3h/7Y5X+wzeb9jlvt+M4Fh7brem0xSfksmxoImecvveU2fN5b32Ukm86HtVxrHRS
-        x47vF4V7nvBcWLxIt1OsKbzqnmn8liknMjLNreu8uP7GR3GulX4iKa2q8+KWD18+t9bvFK1D
-        Etvua1mr9l/k+7WiMG8qz9aQD2xqn6bEyf3/FG72Tt+SOU3WmmNL6DWPr3t6VbnypRoMjq01
-        uyOmKXhkg7uVoFitUsbiXewddnfv33bZeWJ35ZnkIzHTN7q8WmPCoMK4YOqDHOFP4mz3hDqb
-        unYtDJvX/9w1lumlXGsqn/SplOnnrNxD9uzwPXN6efaRyxscPC43PPc+vFHFP6zzzQoeYdZk
-        JZbijERDLeai4kQAwZ9RKVoDAAA=
-X-CMS-MailID: 20230814122212epcas5p37453fdef19909077528971ee54ed26e7
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----nvFln8z3L_krFSQI_duuyTsYVGNcxCMU6qftyQwhOSKtHzaF=_54933_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230811105648epcas5p3ae8b8f6ed341e2aa253e8b4de8920a4d
-References: <20230811105300.15889-1-nj.shetty@samsung.com>
-        <CGME20230811105648epcas5p3ae8b8f6ed341e2aa253e8b4de8920a4d@epcas5p3.samsung.com>
-        <20230811105300.15889-3-nj.shetty@samsung.com>
-        <3b1da341-1c7f-e28f-d6aa-cecb83188f34@acm.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <4f66cded234462964899f2a661750d6798a57ec0.camel@bitron.ch>
+ <CAJfpeguG4f4S-pq+_EXHxfB63mbof-VnaOy-7a-7seWLMj_xyQ@mail.gmail.com> <da17987a-b096-9ebb-f058-8eb91f15b560@fastmail.fm>
+In-Reply-To: <da17987a-b096-9ebb-f058-8eb91f15b560@fastmail.fm>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 14 Aug 2023 14:28:07 +0200
+Message-ID: <CAJfpegtUVUDac5_Y7BMJvCHfeicJkNxca2hO1crQjCNFoM54Lg@mail.gmail.com>
+Subject: Re: [REGRESSION] fuse: execve() fails with ETXTBSY due to async fuse_flush
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc:     =?UTF-8?Q?J=C3=BCrg_Billeter?= <j@bitron.ch>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Tycho Andersen <tycho@tycho.pizza>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        regressions@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-------nvFln8z3L_krFSQI_duuyTsYVGNcxCMU6qftyQwhOSKtHzaF=_54933_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-
-On 23/08/11 02:25PM, Bart Van Assche wrote:
->On 8/11/23 03:52, Nitesh Shetty wrote:
->>diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
->>index 0bad62cca3d0..de0ad7a0d571 100644
->>+static inline bool op_is_copy(blk_opf_t op)
->>+{
->>+	return ((op & REQ_OP_MASK) == REQ_OP_COPY_SRC ||
->>+		(op & REQ_OP_MASK) == REQ_OP_COPY_DST);
->>+}
->>+
+On Mon, 14 Aug 2023 at 14:07, Bernd Schubert <bernd.schubert@fastmail.fm> w=
+rote:
 >
->The above function should be moved into include/linux/blk-mq.h below the
->definition of req_op() such that it can use req_op() instead of 
->open-coding it.
 >
-We use this later for dm patches(patch 9) as well, and we don't have request at
-that time.
+>
+> On 8/14/23 13:02, Miklos Szeredi wrote:
+> > On Mon, 14 Aug 2023 at 08:03, J=C3=BCrg Billeter <j@bitron.ch> wrote:
+> >>
+> >> Since v6.3-rc1 commit 5a8bee63b1 ("fuse: in fuse_flush only wait if
+> >> someone wants the return code") `fput()` is called asynchronously if a
+> >> file is closed as part of a process exiting, i.e., if there was no
+> >> explicit `close()` before exit.
+> >>
+> >> If the file was open for writing, also `put_write_access()` is called
+> >> asynchronously as part of the async `fput()`.
+> >>
+> >> If that newly written file is an executable, attempting to `execve()`
+> >> the new file can fail with `ETXTBSY` if it's called after the writer
+> >> process exited but before the async `fput()` has run.
+> >
+> > Thanks for the report.
+> >
+> > At this point, I think it would be best to revert the original patch,
+> > since only v6.4 has it.
+> >
+> > The original fix was already a workaround, and I don't see a clear
+> > path forward in this direction.  We need to see if there's better
+> > direction.
+> >
+> > Ideas?
+>
+> Is there a good reason to flush O_RDONLY?
 
-Thank you,
-Nitesh Shetty
+->flush() is somewhat of a misnomer, it's the callback for explicit
+close(2) and also for implicit close by exit(2).
 
-------nvFln8z3L_krFSQI_duuyTsYVGNcxCMU6qftyQwhOSKtHzaF=_54933_
-Content-Type: text/plain; charset="utf-8"
+The reason it's called flush is that nfs/fuse use it to ensure
+close-to-open cache consistency, which means flushing dirty data on
+close.
 
+On fuse it also used to unlock remote posix locks, and we really know
+what other "creative" uses were found for this request.  So while we
+could turn off sending FLUSH for read-only case (and use SETLK/F_UNLCK
+for the remote lock case) but first let's see a use case.  Sending
+FLUSH can already be disabled by returning ENOSYS.
 
-------nvFln8z3L_krFSQI_duuyTsYVGNcxCMU6qftyQwhOSKtHzaF=_54933_--
+>
+> fuse: Avoid flush for O_RDONLY
+>
+> From: Bernd Schubert <bschubert@ddn.com>
+>
+> A file opened in read-only moded does not have data to be
+> flushed, so no need to send flush at all.
+>
+> This also mitigates -EBUSY for executables, which is due to
+> async flush with commit 5a8bee63b1.
+
+Does it?  If I read the bug report correctly, it's the write case that
+causes EBUSY.
+
+Thanks,
+Miklos
