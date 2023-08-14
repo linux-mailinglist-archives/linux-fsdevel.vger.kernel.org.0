@@ -2,91 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CE1A77C085
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 21:15:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E54BB77C0BF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 21:26:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232106AbjHNTOf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Aug 2023 15:14:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34044 "EHLO
+        id S231389AbjHNTZ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Aug 2023 15:25:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232238AbjHNTOd (ORCPT
+        with ESMTP id S230423AbjHNTZr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Aug 2023 15:14:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B773CB5;
-        Mon, 14 Aug 2023 12:14:29 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Mon, 14 Aug 2023 15:25:47 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 778DBBF;
+        Mon, 14 Aug 2023 12:25:46 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 50E1465921;
-        Mon, 14 Aug 2023 19:14:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72C21C433C8;
-        Mon, 14 Aug 2023 19:14:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692040468;
-        bh=ZMrO9kHt31aBiTfDQ2I66UBLQJaflkcOw7L4HeyTWHY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NgKmMW/BOVD3WXzBa+PpThz/SSQJ3Eb8LrnQjRsWWDpOaRJL0zPCwC0XT9zQijHMu
-         o9AZVkUFCPZKZahlPAexwJmqT9gxEM0WHxH9esoLU6mo5N30PV0Xfe3VhdaqL5Cyg5
-         c+x6v2TlqR8VnZv+eE+L+DyTKE6Kobk5q4yDRYoUnTjjcXFN7vXznYcUm4r0SkoFHy
-         kpRGyqtQPaCWzI9M0h0C/2+d21EtLWHLQAd6veW9pL1wrWfSpYNG4rOUzYMFV8GOZO
-         abfj0sOO7DL9ivFSQkkjotZ6utGZEv070+imPLZch46B0sgGJAz54wxCAMqwQL42b+
-         Yw/c1J/CJ0MHQ==
-Date:   Mon, 14 Aug 2023 12:14:26 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Gabriel Krisman Bertazi <krisman@suse.de>
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
-        jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v5 01/10] fs: Expose helper to check if a directory needs
- casefolding
-Message-ID: <20230814191426.GC1171@sol.localdomain>
-References: <20230812004146.30980-1-krisman@suse.de>
- <20230812004146.30980-2-krisman@suse.de>
- <20230812015915.GA971@sol.localdomain>
- <875y5h7jld.fsf@suse.de>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 0EB6F1F383;
+        Mon, 14 Aug 2023 19:25:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1692041145;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=gDBqIJKvroeCfXfpUv4/ZGPXv5sa7x8XdKKwPjB9ULg=;
+        b=SOGvOEvbuD5vUTu3J5Fpek+ukg/Zw+Wd0avmcG7Hm1CQ2yvXhNrj+FfcDCQM2b5WfJsHwZ
+        oAiJcmtFZtFweNiQ1OIZtNCYdZ9eJ5CuwkgquFoVqlIxDEAO+5KD8KAOJum1pTTe+QERxW
+        jjSJII360HHBYWxiivNUBjUjAMFE2vk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1692041145;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=gDBqIJKvroeCfXfpUv4/ZGPXv5sa7x8XdKKwPjB9ULg=;
+        b=nbNx+ptD09UhWkkJZQLNvzv+B1jYThTtIU9I2QXPasQ7gEen0mtNfSVRldowl6jXMibSUW
+        RMowIkWMIGlAD/Cw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A3842138EE;
+        Mon, 14 Aug 2023 19:25:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id cxb7Jrh/2mTefAAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Mon, 14 Aug 2023 19:25:44 +0000
+Date:   Mon, 14 Aug 2023 21:19:17 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Denis Efremov <efremov@linux.com>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        "Darrick J . Wong" <djwong@kernel.org>, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>, linux-block@vger.kernel.org,
+        nbd@other.debian.org, linux-s390@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: remove get_super
+Message-ID: <20230814191917.GF2420@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20230811100828.1897174-1-hch@lst.de>
+ <20230811190507.GA2791339@perftesting>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <875y5h7jld.fsf@suse.de>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230811190507.GA2791339@perftesting>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 14, 2023 at 11:02:38AM -0400, Gabriel Krisman Bertazi wrote:
-> 
-> Also, this patchset has been sitting for years before the latest
-> discussions, and I'm tired of it, so I'm happy to keep this
-> discussion for another time.  Will drop this patch and just check
-> IS_CASEFOLDED in ecryptfs for the next iteration.
-> 
-> I'll follow up with another case-insensitive cleanup patchset I've been
-> siting on forever, which includes this patch and will restart this
-> discussion, among others.
-> 
+On Fri, Aug 11, 2023 at 03:05:07PM -0400, Josef Bacik wrote:
+> The CI testing didn't show any regressions or lockdep errors related to moving
+> the device opening around (which is what I was worried about). 
 
-Well, as we know unfortunately filesystem developers are in short supply, and
-doing proper reviews (identifying issues and working closely with the patchset
-author over multiple iterations to address them, as opposed to just slapping on
-a Reviewed-by) is very time consuming.  Earlier this year I tried to get the
-Android Systems team, which is ostensibly responsible for Android's use of
-casefolding, to take a look, but their entire feedback was just "looks good to
-me".  Also, the fact that this patchset originally excluded the casefold+encrypt
-case technically made it not applicable to Android, and discouraged me from
-taking a look since encryption is my focus.  Sorry for not taking a look sooner.
-
-Anyway, thanks for doing this, and I think it's near the finish line now.  Once
-you address the latest feedback and get a couple acks, I think that Christian
-should take this through the VFS tree.  BTW, in my opinion, as the maintainer of
-the "Unicode subsystem" you are also authorized to send a pull request for this
-to Linus yourself.  But VFS does seem ideal in this case, given the diffstat,
-and Christian has been fairly active with taking patches.
-
-- Eric
+The problems with device opening and scanning we fixed in the past were
+not hit by regular testing, syzbot had reproducers that were relatively
+reliable so we'd need this kind of verification.
