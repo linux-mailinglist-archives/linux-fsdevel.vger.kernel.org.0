@@ -2,137 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A0E077BFEB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 20:43:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D3AE77C065
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 21:10:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231502AbjHNSmt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Aug 2023 14:42:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37330 "EHLO
+        id S229884AbjHNTKR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Aug 2023 15:10:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbjHNSmR (ORCPT
+        with ESMTP id S231834AbjHNTJm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Aug 2023 14:42:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D3CCE73;
-        Mon, 14 Aug 2023 11:42:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Mon, 14 Aug 2023 15:09:42 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D826310F2;
+        Mon, 14 Aug 2023 12:09:41 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9E87F628ED;
-        Mon, 14 Aug 2023 18:42:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1DA8C433C8;
-        Mon, 14 Aug 2023 18:42:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692038536;
-        bh=cRZ0oe4bGlgMnSjDZmU1ziyvNS/S6FdTSbvDRpoiBVw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=smEVnz1dXlTZYP+snx+W94hNAvr5efHMO9iywxqCxACPnx7o1llXZSAd1PADdsTks
-         W0JGwBYKhcQg2g00Wdv2eXHtHnL3NjvOq/ONxPrFmYKbzbmWAHaiYVUA47EXfNLzmz
-         NJhUirjgDx4/MePzu1VQXsr4oH7h6/Wdjj2xzmglehsEkI4mtgBMHndjQe6ss4gRAj
-         smEQKPTlw/5bi5eTEJBlIWLwrL0hWUltprMGyc8QCUTkJG9jqoJUUjiEI6izNDHqDe
-         y2kDbQJxk4e2BwFanRKIZOq3MBEPR0ZLaBMT4kYFCSdFaYtG//kXD/GQdhRaqQMlm1
-         U1yogfMOOVlPA==
-Date:   Mon, 14 Aug 2023 11:42:14 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Gabriel Krisman Bertazi <krisman@suse.de>
-Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
-        jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: Re: [PATCH v5 06/10] libfs: Validate negative dentries in
- case-insensitive directories
-Message-ID: <20230814184214.GB1171@sol.localdomain>
-References: <20230812004146.30980-1-krisman@suse.de>
- <20230812004146.30980-7-krisman@suse.de>
- <20230812024145.GD971@sol.localdomain>
- <87a5ut7k62.fsf@suse.de>
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 68B8E21921;
+        Mon, 14 Aug 2023 19:09:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1692040180; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=onjKw2D7T28KbiV2fqNVPG/lTv3CeMZukA/2FuhuI3k=;
+        b=OaoCL+1HGmRHBb/F9NAWbs1Yqpa6tVc9MIOMVhrIMHAqEdUNMLyHbG0FGdhY90iwfKuI5k
+        j9TCcXQEfk026eQ3FqiDSRR1GGqdp8VHedICVMqlRHvR+fGIDPOr+TjttqKQVHBiShlhgY
+        P3wILlVnPYGNSNAK425Epk4m9m4zUG8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1692040180;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=onjKw2D7T28KbiV2fqNVPG/lTv3CeMZukA/2FuhuI3k=;
+        b=kRIzSOepmu2YkLWh1KFqx2AkwdR4+jq7yPp/s/r6AK4a2fNs8aCyiw1PyGOKEFF9ftMRoe
+        5rjqLvHyahidoDCg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1A2F8138EE;
+        Mon, 14 Aug 2023 19:09:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id zankOfN72mQLdwAAMHmgww
+        (envelope-from <krisman@suse.de>); Mon, 14 Aug 2023 19:09:39 +0000
+From:   Gabriel Krisman Bertazi <krisman@suse.de>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH 1/3] ext4: reject casefold inode flag without casefold
+ feature
+In-Reply-To: <20230814182903.37267-2-ebiggers@kernel.org> (Eric Biggers's
+        message of "Mon, 14 Aug 2023 11:29:01 -0700")
+Organization: SUSE
+References: <20230814182903.37267-1-ebiggers@kernel.org>
+        <20230814182903.37267-2-ebiggers@kernel.org>
+Date:   Mon, 14 Aug 2023 15:09:33 -0400
+Message-ID: <87jztx5tle.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87a5ut7k62.fsf@suse.de>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_FILL_THIS_FORM_SHORT
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 14, 2023 at 10:50:13AM -0400, Gabriel Krisman Bertazi wrote:
-> Eric Biggers <ebiggers@kernel.org> writes:
-> 
-> > On Fri, Aug 11, 2023 at 08:41:42PM -0400, Gabriel Krisman Bertazi wrote:
-> >> +	/*
-> >> +	 * Filesystems will call into d_revalidate without setting
-> >> +	 * LOOKUP_ flags even for file creation (see lookup_one*
-> >> +	 * variants).  Reject negative dentries in this case, since we
-> >> +	 * can't know for sure it won't be used for creation.
-> >> +	 */
-> >> +	if (!flags)
-> >> +		return 0;
-> >> +
-> >> +	/*
-> >> +	 * If the lookup is for creation, then a negative dentry can
-> >> +	 * only be reused if it's a case-sensitive match, not just a
-> >> +	 * case-insensitive one.  This is needed to make the new file be
-> >> +	 * created with the name the user specified, preserving case.
-> >> +	 */
-> >> +	if (flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET)) {
-> >> +		/*
-> >> +		 * ->d_name won't change from under us in the creation
-> >> +		 * path only, since d_revalidate during creation and
-> >> +		 * renames is always called with the parent inode
-> >> +		 * locked.  It isn't the case for all lookup callpaths,
-> >> +		 * so ->d_name must not be touched outside
-> >> +		 * (LOOKUP_CREATE|LOOKUP_RENAME_TARGET) context.
-> >> +		 */
-> >> +		if (dentry->d_name.len != name->len ||
-> >> +		    memcmp(dentry->d_name.name, name->name, name->len))
-> >> +			return 0;
-> >> +	}
-> >
-> > This is still really confusing to me.  Can you consider the below?  The code is
-> > the same except for the reordering, but the explanation is reworked to be much
-> > clearer (IMO).  Anything I am misunderstanding?
-> >
-> > 	/*
-> > 	 * If the lookup is for creation, then a negative dentry can only be
-> > 	 * reused if it's a case-sensitive match, not just a case-insensitive
-> > 	 * one.  This is needed to make the new file be created with the name
-> > 	 * the user specified, preserving case.
-> > 	 *
-> > 	 * LOOKUP_CREATE or LOOKUP_RENAME_TARGET cover most creations.  In these
-> > 	 * cases, ->d_name is stable and can be compared to 'name' without
-> > 	 * taking ->d_lock because the caller holds dir->i_rwsem for write.
-> > 	 * (This is because the directory lock blocks the dentry from being
-> > 	 * concurrently instantiated, and negative dentries are never moved.)
-> > 	 *
-> > 	 * All other creations actually use flags==0.  These come from the edge
-> > 	 * case of filesystems calling functions like lookup_one() that do a
-> > 	 * lookup without setting the lookup flags at all.  Such lookups might
-> > 	 * or might not be for creation, and if not don't guarantee stable
-> > 	 * ->d_name.  Therefore, invalidate all negative dentries when flags==0.
-> > 	 */
-> > 	if (flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET)) {
-> > 		if (dentry->d_name.len != name->len ||
-> > 		    memcmp(dentry->d_name.name, name->name, name->len))
-> > 			return 0;
-> > 	}
-> > 	if (!flags)
-> > 		return 0;
-> 
-> I don't see it as particularly better or less confusing than the
-> original. but I also don't mind taking it into the next iteration.
-> 
+Eric Biggers <ebiggers@kernel.org> writes:
 
-Your commit message is still much longer and covers some quite different details
-which seem irrelevant to me.  So if you don't see my explanation as being much
-different, I think we're still not on the same page.  I hope that I'm not
-misunderstanding anything, in which I believe that what I wrote above is a good
-explanation and your commit message should be substantially simplified.
-Remember, longer != better.  Keep things as simple as possible.
+> From: Eric Biggers <ebiggers@google.com>
+>
+> It is invalid for the casefold inode flag to be set without the casefold
+> superblock feature flag also being set.  e2fsck already considers this
+> case to be invalid and handles it by offering to clear the casefold flag
+> on the inode.  __ext4_iget() also already considered this to be invalid,
+> sort of, but it only got so far as logging an error message; it didn't
+> actually reject the inode.  Make it reject the inode so that other code
+> doesn't have to handle this case.  This matches what f2fs does.
+>
+> Note: we could check 's_encoding != NULL' instead of
+> ext4_has_feature_casefold().  This would make the check robust against
+> the casefold feature being enabled by userspace writing to the page
+> cache of the mounted block device.  However, it's unsolvable in general
+> for filesystems to be robust against concurrent writes to the page cache
+> of the mounted block device.  Though this very particular scenario
+> involving the casefold feature is solvable, we should not pretend that
+> we can support this model, so let's just check the casefold feature.
+> tune2fs already forbids enabling casefold on a mounted filesystem.
 
-- Eric
+just because we can't fix the general issue for the entire filesystem
+doesn't mean this case *must not* ever be addressed. What is the
+advantage of making the code less robust against the syzbot code?  Just
+check sb->s_encoding and be safe later knowing the unicode map is
+available.
+
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  fs/ext4/inode.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 43775a6ca505..390dedbb7e8a 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4940,9 +4940,12 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+>  				 "iget: bogus i_mode (%o)", inode->i_mode);
+>  		goto bad_inode;
+>  	}
+> -	if (IS_CASEFOLDED(inode) && !ext4_has_feature_casefold(inode->i_sb))
+> +	if (IS_CASEFOLDED(inode) && !ext4_has_feature_casefold(inode->i_sb)) {
+>  		ext4_error_inode(inode, function, line, 0,
+>  				 "casefold flag without casefold feature");
+> +		ret = -EFSCORRUPTED;
+> +		goto bad_inode;
+> +	}
+>  	if ((err_str = check_igot_inode(inode, flags)) != NULL) {
+>  		ext4_error_inode(inode, function, line, 0, err_str);
+>  		ret = -EFSCORRUPTED;
+
+-- 
+Gabriel Krisman Bertazi
