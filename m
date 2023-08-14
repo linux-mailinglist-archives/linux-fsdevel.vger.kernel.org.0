@@ -2,29 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 560FE77BB8D
+	by mail.lfdr.de (Postfix) with ESMTP id 9F49B77BB8E
 	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 16:27:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231618AbjHNO1G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Aug 2023 10:27:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44296 "EHLO
+        id S232174AbjHNO1I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Aug 2023 10:27:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231674AbjHNO0p (ORCPT
+        with ESMTP id S231634AbjHNO0o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Aug 2023 10:26:45 -0400
+        Mon, 14 Aug 2023 10:26:44 -0400
 Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E41A6E9;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A4A9B2;
         Mon, 14 Aug 2023 07:26:40 -0700 (PDT)
 Received: from [127.0.1.1] ([91.67.199.65]) by mrelayeu.kundenserver.de
  (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MC0HF-1qdUU141YD-00CR9d; Mon, 14 Aug 2023 16:26:17 +0200
+ 1MwjO6-1pXnAR2Gdu-00yAHm; Mon, 14 Aug 2023 16:26:17 +0200
 From:   =?utf-8?q?Michael_Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
-Date:   Mon, 14 Aug 2023 16:26:11 +0200
-Subject: [PATCH RFC 3/4] device_cgroup: wrapper for bpf cgroup device guard
+Date:   Mon, 14 Aug 2023 16:26:12 +0200
+Subject: [PATCH RFC 4/4] fs: allow mknod in non-initial userns using cgroup
+ device guard
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20230814-devcg_guard-v1-3-654971ab88b1@aisec.fraunhofer.de>
+Message-Id: <20230814-devcg_guard-v1-4-654971ab88b1@aisec.fraunhofer.de>
 References: <20230814-devcg_guard-v1-0-654971ab88b1@aisec.fraunhofer.de>
 In-Reply-To: <20230814-devcg_guard-v1-0-654971ab88b1@aisec.fraunhofer.de>
 To:     Alexander Mikhalitsyn <alexander@mihalicyn.com>,
@@ -44,24 +45,24 @@ Cc:     bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, gyroidos@aisec.fraunhofer.de,
         =?utf-8?q?Michael_Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
 X-Mailer: b4 0.12.3
-X-Provags-ID: V03:K1:eZ1bcl/qUp/USJZEuscMU0XkBYRRzn/ZnVwtDVGvt8VlbAaRHzn
- 3fw0y8DLmlAla58hSO9qkLHjlcj4UhHhqMmUUWJrI9YcmzlsIycllF2K4HQ8mML2xTSEZKF
- YfwpV7MfWD6rA0VsUzx4TA08P/5TODnGSrkqa3MmjRr8uzutlTgYUBvhWerF8dedD8eZeq/
- vRMIKjiSm2u3an9j1efcw==
-UI-OutboundReport: notjunk:1;M01:P0:6nqlDtKzeQw=;r1tH9lsibZO3DNJQqiovKwBrXV6
- uzXQ/KvQQ34/Ix/MUk6kQw/pwwC9ZCc+43YmYQs96/LPSNazeMuR7AJtTxumxlVWm39qJe9Yn
- 3+v+UE6f/+gTlgw6ubJM3eSDc8gDaPT+zr1CnNJChDfYdCZDLSMyYmZc1Hv2vXayGySKF3xRn
- nLrPCGcc4SHLrQm4bxNTviUYoLsZ5bNgwz2tii7a5dTJTkG6X0KmrX8VmpQcUUKTylxTbviys
- qF5MVAMDnXRJrImMQ8wU9Swk7uA1OqWJS6prn+Zuw3a3DkbUwFRJf+Hyzobp8ps1Q0AN9hHv3
- EFc8qg7OoFWLoDUDC0OZgokIjpHbMi+ZMKAfq7T2TWY1bgs84XKB7nq/FqV1/THzUU2pz/kwm
- arHJ3UthpPGf4JdBmk9spBXujOt3Bo4DEzKjKfBWx96+Itn8wDnK3eomZ5Q1qhXVV/wS7vR5p
- FRjC7U526KUNkvYsGVMukyRh4DeVEJizL9urhhtaAYdZKBoDY8nLPRc0R3PSbMgjNvojbt+CE
- a+QVMq3L0HhgRSHocZBBUbetCa+mlD2u36vgcESWEzBGnz0caE8gSFkFvZ9uoEjPGNDq+uzmg
- G0fTXqPX97jFkzvYA6cl2INI6IopeN0lmJlSARElCRzLdrVfW4SyXc8Bf5isQe7k1SIz5CO18
- fs753EpKhUHHMNd+m+9xLnZXYX5Cjau6CE+yvu/X2wqxybtBjQaGASIstVfMeOe9ccZFbeeou
- BESWC0Zkgrs9eRSJFb/p14OzloBKWl5bERIPO5bkyXmJA3UKplOu8RIZF8Wvl0aqJRoUcx5wT
- 6b8MfvQFORZ2/SktvhsF6cW5NwnNcdZK78Z8y3d86WQvY+8FwaCMVTpOon5EZgVKKhfHmplrN
- ciwhslV9RGi4+UGNBunTRiwWup/UQ93DZoUk=
+X-Provags-ID: V03:K1:KnYIKMx55P6NK3c2PuhV1Jjt7cPFGO+HnnkYu53YVAgcVZCfr3h
+ 4Z2EvDbitfpN9SHiCXEva3v7Eaf1aqh0jCzx/Pl3/T06bVjGJ4ocF2ilWIUhc+nmNzH/FRG
+ ou/GAwoz57HLmMHB4NUbU2EhXSeSHNSfOPLl/Yz9JRTO7gOXJqqlGq8PpaoO75Z8t0B5ue2
+ 51GzcyHexLZZdjbOwbofw==
+UI-OutboundReport: notjunk:1;M01:P0:ZC+KimZeN+Q=;hFy3WtlerHgRnIyCK1FgNycDelT
+ tSlbU/EinBU2IgWv2cHad0g4tD/fF+XI/Ihofiat1cpCrsjndEekjM+UPJV6aFTt1lpByeW1z
+ 6KuNn22ma5Ca1BEgu8H3jQP3Gx+AsouUS4uCllJIzlUodx5Ol9Zkty4Dd/KFGMvwg7SRbrxgN
+ FU+G38weWulGB2RPunAeLAdu8vGaW01v30ucduy9O1NVgUCJ/F2OaEt9fv7s29Gq4SOk4EGXk
+ qWaYLp+8+2xE6evTly40GIDQ4QZILo8i7I8sTTaXQ8rFA6t2INpG90HiAE6PAFQLK0M58O6RA
+ Iwnzyv/3jmubBV12eNR8ROfaRJsmvjf8NMpfnt6zfHv+5tNLaN7/9m37Ns4l7ZNEpwX/eenHY
+ 23WDlsZ+DRIsb52kTAReNlXdwA/0ES+Oyo2BymranLj8I8G6D+1sXuos5YMscRESK8eD6p98m
+ OKxr6ZcFfRVc+DwxdinnZHasr/E5/6M877674vSsw4zIt9bS3a4/lsvuNsJjyjmiqX3sHGEV7
+ 0XK7xE0Zu9ypCA7h4QUoPp2fzZydhdah/rGsPlCOckNd2g3eHqQ/fdyrE0epm4Nz/zI8V3hJR
+ EqiwS8lFuhC6ktKVHRWmKKOf7h8eO4A3nzIJjdvB/NlZsS/8tWnyFlLaaI6YWWmDgGUCbwfXN
+ rfKhbqAd7FDeN7v1fbDPRbeco1Ra9PRlkgs1sHgq5nzTzdL45llUn+YPndRWpDtcf8NMA+KXC
+ ghNRnOwuIIstzPpWoX6EZhh/J9n2J12FzG3WYQ4nijD+rm062r3S/dczEUtHfx8crJUCWNPLL
+ LSDhQXheZ+/esG2G4p7domdRczsbff0xcNCW4ts4NZjhW80v2BpneNCL4jfWQPZqDEK2X0/ec
+ LGbvzftt1FUL72Q==
 X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,
         RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_SOFTFAIL
         autolearn=no autolearn_force=no version=3.4.6
@@ -71,49 +72,70 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Export the bpf based cgroup guard through device_cgroup to others.
-Thus, devcgroup_task_is_guarded() could be used by subsystems
-which already make use of device_cgroup features, such as fs/namei.
+If a container manager restricts its unprivileged (user namespaced)
+children by a device cgroup, it is not necessary to deny mknod
+anymore. Thus, user space applications may map devices on different
+locations in the file system by using mknod() inside the container.
+
+A use case for this, we also use in GyroidOS, is to run virsh for
+VMs inside an unprivileged container. virsh creates device nodes,
+e.g., "/var/run/libvirt/qemu/11-fgfg.dev/null" which currently fails
+in a non-initial userns, even if a cgroup device white list with the
+corresponding major, minor of /dev/null exists. Thus, in this case
+the usual bind mounts or pre populated device nodes under /dev are
+not sufficient.
+
+To circumvent this limitation, we allow mknod() in fs/namei.c if a
+bpf cgroup device guard is enabeld for the current task using
+devcgroup_task_is_guarded() and check CAP_MKNOD for the current user
+namespace by ns_capable() instead of the global CAP_MKNOD.
+
+To avoid unusable device nodes on file systems mounted in
+non-initial user namespace, may_open_dev() ignores the SB_I_NODEV
+for cgroup device guarded tasks.
 
 Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
 ---
- include/linux/device_cgroup.h |  7 +++++++
- security/device_cgroup.c      | 10 ++++++++++
- 2 files changed, 17 insertions(+)
+ fs/namei.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/device_cgroup.h b/include/linux/device_cgroup.h
-index d02f32b7514e..00c0748b6a8d 100644
---- a/include/linux/device_cgroup.h
-+++ b/include/linux/device_cgroup.h
-@@ -65,3 +65,10 @@ static inline int devcgroup_inode_permission(struct inode *inode, int mask)
- static inline int devcgroup_inode_mknod(int mode, dev_t dev)
- { return 0; }
- #endif
+diff --git a/fs/namei.c b/fs/namei.c
+index e56ff39a79bc..ef4f22b9575c 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3221,6 +3221,9 @@ EXPORT_SYMBOL(vfs_mkobj);
+ 
+ bool may_open_dev(const struct path *path)
+ {
++	if (devcgroup_task_is_guarded(current))
++		return !(path->mnt->mnt_flags & MNT_NODEV);
 +
-+#ifdef CONFIG_CGROUP_BPF
-+bool devcgroup_task_is_guarded(struct task_struct *task);
-+#else
-+static inline bool devcgroup_task_is_guarded(struct task_struct *task)
-+{ return false; }
-+#endif /* CONFIG_CGROUP_BPF */
-diff --git a/security/device_cgroup.c b/security/device_cgroup.c
-index dc4df7475081..95200a3d0b63 100644
---- a/security/device_cgroup.c
-+++ b/security/device_cgroup.c
-@@ -874,3 +874,13 @@ int devcgroup_check_permission(short type, u32 major, u32 minor, short access)
+ 	return !(path->mnt->mnt_flags & MNT_NODEV) &&
+ 		!(path->mnt->mnt_sb->s_iflags & SB_I_NODEV);
  }
- EXPORT_SYMBOL(devcgroup_check_permission);
- #endif /* defined(CONFIG_CGROUP_DEVICE) || defined(CONFIG_CGROUP_BPF) */
-+
-+#ifdef CONFIG_CGROUP_BPF
-+
-+bool devcgroup_task_is_guarded(struct task_struct *task)
-+{
-+	return (cgroup_bpf_enabled(CGROUP_DEVICE) &&
-+		cgroup_bpf_device_guard_enabled(task));
-+}
-+EXPORT_SYMBOL(devcgroup_task_is_guarded);
-+#endif /* CONFIG_CGROUP_BPF */
+@@ -3976,9 +3979,19 @@ int vfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 	if (error)
+ 		return error;
+ 
+-	if ((S_ISCHR(mode) || S_ISBLK(mode)) && !is_whiteout &&
+-	    !capable(CAP_MKNOD))
+-		return -EPERM;
++	/*
++	 * In case of a device cgroup restirction allow mknod in user
++	 * namespace. Otherwise just check global capability; thus,
++	 * mknod is also disabled for user namespace other than the
++	 * initial one.
++	 */
++	if ((S_ISCHR(mode) || S_ISBLK(mode)) && !is_whiteout) {
++		if (devcgroup_task_is_guarded(current)) {
++			if (!ns_capable(current_user_ns(), CAP_MKNOD))
++				return -EPERM;
++		} else if (!capable(CAP_MKNOD))
++			return -EPERM;
++	}
+ 
+ 	if (!dir->i_op->mknod)
+ 		return -EPERM;
 
 -- 
 2.30.2
