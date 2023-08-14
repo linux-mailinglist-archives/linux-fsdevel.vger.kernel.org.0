@@ -2,155 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AD0877BE4F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 18:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 702DE77BE83
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 18:58:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230133AbjHNQni (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Aug 2023 12:43:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53830 "EHLO
+        id S229602AbjHNQ5i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Aug 2023 12:57:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232499AbjHNQn3 (ORCPT
+        with ESMTP id S231678AbjHNQ5S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Aug 2023 12:43:29 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC83610C0;
-        Mon, 14 Aug 2023 09:43:24 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 3B23D21906;
-        Mon, 14 Aug 2023 16:43:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1692031403; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oUvv9I+YRijxn7USCgt6yOIKbwQjotN/UplplcOhebw=;
-        b=zGZSRXl74qCuVw7E/cAaeiE2/vQA42KysW+S4tIkXmxqXJXhJQkiPVScxshWrxycoj40yN
-        b4iHrkX+qQ02XiqOHXy7XbPU88X5fSiKnmIDtx/ZgO5ZBxsfjC9cMsI/EWLqF0e1tbsHHM
-        s8u6+5gmXun9sz1wG+O93/QmW2Q+0Ns=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1692031403;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oUvv9I+YRijxn7USCgt6yOIKbwQjotN/UplplcOhebw=;
-        b=0Sl/zKo/iWi48k0GHMTje0r8oHiqbSbZJINg6D90/3Ki5JyINjXiXRJOYRU9TU3i57jvrv
-        tQgYE3dVl/VrEsBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2BEBC138EE;
-        Mon, 14 Aug 2023 16:43:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Td+3CqtZ2mQnOwAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 14 Aug 2023 16:43:23 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id B03AFA0769; Mon, 14 Aug 2023 18:43:22 +0200 (CEST)
-Date:   Mon, 14 Aug 2023 18:43:22 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Colin Walters <walters@verbum.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Kees Cook <keescook@google.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Alexander Popov <alex.popov@linux.com>,
-        Eric Biggers <ebiggers@google.com>,
-        xfs <linux-xfs@vger.kernel.org>, linux-btrfs@vger.kernel.org,
-        Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH 1/6] block: Add config option to not allow writing to
- mounted devices
-Message-ID: <20230814164322.ipqfug6466jmk6ca@quack3>
-References: <20230704122727.17096-1-jack@suse.cz>
- <20230704125702.23180-1-jack@suse.cz>
- <0c5384c2-307b-43fc-9ea6-2a194f859e9b@app.fastmail.com>
+        Mon, 14 Aug 2023 12:57:18 -0400
+Received: from mail-oo1-xc2a.google.com (mail-oo1-xc2a.google.com [IPv6:2607:f8b0:4864:20::c2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CA27199F;
+        Mon, 14 Aug 2023 09:56:57 -0700 (PDT)
+Received: by mail-oo1-xc2a.google.com with SMTP id 006d021491bc7-56dfe5ce871so1542176eaf.2;
+        Mon, 14 Aug 2023 09:56:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1692032166; x=1692636966;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f9O7uVavugQIWG4+/30ol/uNZ+vUipg1yWncf1HB7Z8=;
+        b=SXLBBu9oNOxnHeWHA3EzDEcQx4zuwk/WnRawLjvMOoFNw7dpzT1cc0Zh3imGGu5biH
+         hF3gj0fRHQ72e59mu7XzFNFxxtuLAL6ZFxOgG2j4wOX+YZAVs3TkYanLQVFe+jZctHSn
+         gRxqqBRQ64EUwLZkoQs6MhwsohiAS+iuZrEPX6LlKTe7wKlVSVqQ5ZUWMS2XWnv3ukdN
+         xlx8rrlrQqId4/tGMozDD2l5xfvpRrFWtivaal0jSX3deLqfh+C3I6DXAEvX5W8/UQJ5
+         CNDQmsfU8Esw1uGGrTs5LBHBGY5zVpcRKJdL/zTQ7JbJGkTBRoprtkOUNrZbBBQ1Hqzm
+         u1xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692032166; x=1692636966;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f9O7uVavugQIWG4+/30ol/uNZ+vUipg1yWncf1HB7Z8=;
+        b=CJ7eDssTBGXb/bdDoe+U+BeEtGUEnRw5bZIoXuQ7k+rRcjidn5a+RaMpoIdkCAx21x
+         pNdPwbfR620dSoVDkA5xIAR7pq8oTz0D4LhXP2cXCNXLxWlb+m4L5O2aL8cs9qhJlQ8b
+         qQhF0X5wy0rUswqY3o8Pn7MxiEg4179t+xZguqyizr6duc67ifapgcRVrt9Xi/XUb4iA
+         KyErwI9hMhYwpcpEo95k6cE8sAs/ckWwWpvMpt2W6cpS3HWIpQCBNOPNIgi2s+9BRipV
+         gwxk+nUlFNe5DWWY2AvUua9AEejMr5NKxg2WsyhHnzLv3VW9QR+V7wiIal/OLU6MJ2AE
+         oSLw==
+X-Gm-Message-State: AOJu0YzIl60tqzkn4qfEO/zGmM8hBaKMmXvqTBedwG/lSbY+LGIIMj4Y
+        Xxr4Cmb3ZjYBwY8Ur+fzgdKagOXaNX3qZVJysSQ=
+X-Google-Smtp-Source: AGHT+IGRiUAbrBbY9Vni9Tn8QSBhVGIX9TfUXofBqPCsNnEmk1YYklY4fqhqnWDK5MhusbsyCSnQmJcr7FbUisha/AQ=
+X-Received: by 2002:a05:6358:9212:b0:134:e952:16a8 with SMTP id
+ d18-20020a056358921200b00134e95216a8mr6760283rwb.24.1692032165879; Mon, 14
+ Aug 2023 09:56:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0c5384c2-307b-43fc-9ea6-2a194f859e9b@app.fastmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <CGME20230811105627epcas5p1aa1ef0e58bcd0fc05a072c8b40dcfb96@epcas5p1.samsung.com>
+ <20230811105300.15889-1-nj.shetty@samsung.com> <2cc56fb5-ddba-b6d0-f66b-aa8fffa42af0@acm.org>
+In-Reply-To: <2cc56fb5-ddba-b6d0-f66b-aa8fffa42af0@acm.org>
+From:   Nitesh Shetty <nitheshshetty@gmail.com>
+Date:   Mon, 14 Aug 2023 22:25:54 +0530
+Message-ID: <CAOSviJ1b5ySAugzKExa_ZQgOzvQAOWB3D-ZRMQeGmNpQbaoBSQ@mail.gmail.com>
+Subject: Re: [dm-devel] [PATCH v14 00/11] Implement copy offload support
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Nitesh Shetty <nj.shetty@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        martin.petersen@oracle.com, linux-doc@vger.kernel.org,
+        gost.dev@samsung.com, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        mcgrof@kernel.org, dlemoal@kernel.org,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 04-07-23 11:56:44, Colin Walters wrote:
-> On Tue, Jul 4, 2023, at 8:56 AM, Jan Kara wrote:
-> > Writing to mounted devices is dangerous and can lead to filesystem
-> > corruption as well as crashes. Furthermore syzbot comes with more and
-> > more involved examples how to corrupt block device under a mounted
-> > filesystem leading to kernel crashes and reports we can do nothing
-> > about. Add tracking of writers to each block device and a kernel cmdline
-> > argument which controls whether writes to block devices open with
-> > BLK_OPEN_BLOCK_WRITES flag are allowed. We will make filesystems use
-> > this flag for used devices.
+On Sat, Aug 12, 2023 at 3:42=E2=80=AFAM Bart Van Assche <bvanassche@acm.org=
+> wrote:
+>
+> On 8/11/23 03:52, Nitesh Shetty wrote:
+> > We achieve copy offload by sending 2 bio's with source and destination
+> > info and merge them to form a request. This request is sent to driver.
+> > So this design works only for request based storage drivers.
+>
+> [ ... ]
+>
+> > Overall series supports:
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+> >       1. Driver
+> >               - NVMe Copy command (single NS, TP 4065), including suppo=
+rt
+> >               in nvme-target (for block and file back end).
 > >
-> > Syzbot can use this cmdline argument option to avoid uninteresting
-> > crashes. Also users whose userspace setup does not need writing to
-> > mounted block devices can set this option for hardening.
+> >       2. Block layer
+> >               - Block-generic copy (REQ_OP_COPY_DST/SRC), operation wit=
+h
+> >                    interface accommodating two block-devs
+> >                  - Merging copy requests in request layer
+> >               - Emulation, for in-kernel user when offload is natively
+> >                  absent
+> >               - dm-linear support (for cases not requiring split)
 > >
-> > Link: 
-> > https://lore.kernel.org/all/60788e5d-5c7c-1142-e554-c21d709acfd9@linaro.org
-> > Signed-off-by: Jan Kara <jack@suse.cz>
-> > ---
-> >  block/Kconfig             | 16 ++++++++++
-> >  block/bdev.c              | 63 ++++++++++++++++++++++++++++++++++++++-
-> >  include/linux/blk_types.h |  1 +
-> >  include/linux/blkdev.h    |  3 ++
-> >  4 files changed, 82 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/block/Kconfig b/block/Kconfig
-> > index 86122e459fe0..8b4fa105b854 100644
-> > --- a/block/Kconfig
-> > +++ b/block/Kconfig
-> > @@ -77,6 +77,22 @@ config BLK_DEV_INTEGRITY_T10
-> >  	select CRC_T10DIF
-> >  	select CRC64_ROCKSOFT
-> > 
-> > +config BLK_DEV_WRITE_MOUNTED
-> > +	bool "Allow writing to mounted block devices"
-> > +	default y
-> > +	help
-> > +	When a block device is mounted, writing to its buffer cache very likely
-> 
-> s/very/is very/
-> 
-> > +	going to cause filesystem corruption. It is also rather easy to crash
-> > +	the kernel in this way since the filesystem has no practical way of
-> > +	detecting these writes to buffer cache and verifying its metadata
-> > +	integrity. However there are some setups that need this capability
-> > +	like running fsck on read-only mounted root device, modifying some
-> > +	features on mounted ext4 filesystem, and similar. If you say N, the
-> > +	kernel will prevent processes from writing to block devices that are
-> > +	mounted by filesystems which provides some more protection from runaway
-> > +	priviledged processes. If in doubt, say Y. The configuration can be
-> 
-> s/priviledged/privileged/
-> 
-> > +	overridden with bdev_allow_write_mounted boot option.
-> 
-> s/with/with the/
+> >       3. User-interface
+> >               - copy_file_range
+>
+> Is this sufficient? The combination of dm-crypt, dm-linear and the NVMe
+> driver is very common. What is the plan for supporting dm-crypt?
 
-Thanks for the language fixes!
+Plan is to add offload support for other dm targets as part of subsequent
+series once current patchset merges, dm targets can use emulation to
+achieve the same at present.
 
-> > +/* open is exclusive wrt all other BLK_OPEN_WRITE opens to the device */
-> > +#define BLK_OPEN_BLOCK_WRITES	((__force blk_mode_t)(1 << 5))
-> 
-> Bikeshed but: I think BLK and BLOCK "stutter" here.  The doc comment
-> already uses the term "exclusive" so how about BLK_OPEN_EXCLUSIVE ?  
+> Shouldn't bio splitting be supported for dm-linear?
+Handling split is tricky in this case, if we allow splitting, there is
+no easy way
+to match/merge different src/dst bio's. Once we have multi range support th=
+en
+we feel at least src bio's can be split. But this series split won't work.
 
-Well, we already have exclusive opens of block devices which are different
-(they are exclusive only wrt other exclusive opens) so BLK_OPEN_EXCLUSIVE
-will be really confusing. But BLK_OPEN_RESTRICT_WRITES sounds good to me.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thank you,
+Nitesh Shetty
