@@ -2,30 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C933F77BB85
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 16:27:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A288377BBDA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Aug 2023 16:40:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232052AbjHNO1D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Aug 2023 10:27:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44288 "EHLO
+        id S230061AbjHNOk0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Aug 2023 10:40:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231658AbjHNO0o (ORCPT
+        with ESMTP id S232515AbjHNOkT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Aug 2023 10:26:44 -0400
+        Mon, 14 Aug 2023 10:40:19 -0400
 Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC8F0E4;
-        Mon, 14 Aug 2023 07:26:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6F7CF5;
+        Mon, 14 Aug 2023 07:40:17 -0700 (PDT)
 Received: from [127.0.1.1] ([91.67.199.65]) by mrelayeu.kundenserver.de
  (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MBBCI-1qcfXN31gM-00Ci0I; Mon, 14 Aug 2023 16:26:15 +0200
+ 1N5UoU-1pgYbq1NVa-016zzS; Mon, 14 Aug 2023 16:26:16 +0200
 From:   =?utf-8?q?Michael_Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
-Date:   Mon, 14 Aug 2023 16:26:09 +0200
-Subject: [PATCH RFC 1/4] bpf: add cgroup device guard to flag a cgroup
- device prog
+Date:   Mon, 14 Aug 2023 16:26:10 +0200
+Subject: [PATCH RFC 2/4] bpf: provide cgroup_device_guard in bpf_prog_info
+ to user space
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20230814-devcg_guard-v1-1-654971ab88b1@aisec.fraunhofer.de>
+Message-Id: <20230814-devcg_guard-v1-2-654971ab88b1@aisec.fraunhofer.de>
 References: <20230814-devcg_guard-v1-0-654971ab88b1@aisec.fraunhofer.de>
 In-Reply-To: <20230814-devcg_guard-v1-0-654971ab88b1@aisec.fraunhofer.de>
 To:     Alexander Mikhalitsyn <alexander@mihalicyn.com>,
@@ -45,24 +45,24 @@ Cc:     bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, gyroidos@aisec.fraunhofer.de,
         =?utf-8?q?Michael_Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
 X-Mailer: b4 0.12.3
-X-Provags-ID: V03:K1:0cXxcmdgmClBD4GPMdMTPagr2itnvAUiDtQcsv8MxFS6hE07CYQ
- BeojX5oXPIPVsWXg8FGVsg2nAXIeCSqU70B8yFYo2t841na+NM2vD4GebfRs3ESXUqOyxfq
- iWSfseZ18CHeWFu1Izn2mMmrccgCe52Gq7OkjltVIt49/NlPPe2K2h0XDJsfCl0ESt//0M5
- 8QTkixGVHRT2s3YuaM21A==
-UI-OutboundReport: notjunk:1;M01:P0:NddmDHLVZyw=;qsT8AXUoHtD7PW1/NyA4rUt3YMp
- ylwjpt+PAIzcM283QbCvuzZ72TtkhK80xTbNCQskNMQHFG/Rp9D7eF6lgrWhxRB0fLTBRpvT9
- 5ThI+pXRVs2ox2KhrINecSUftwLyWEPiKtdjn6sb4YqxeSntR/LOfQGFkE1prO98O/ssOP/Z7
- jcXSdLwaLWoVbCV79jx6S4J82GhE2H9fxLs44O/Nm0Hu4xNnWkL0ocy6uZ2sSILuqZPTl8+Bl
- 9RUjQA0aoCwBl3F4aK1MCMq14UZ6cQ6qtoSlXzYmbS7J6mLPLNMe28F9AoijWh+tYnNFaITfb
- jSLkvpuSEPMDeGyWtiDdXC+0sV0lKJ4mDWMARx/dh5U84Hxcs7VYZKMh9UiXHTlSENH1/Jwhz
- SR5mbvzVMJPRdgwbt2HaFw5ybajmbicIUtBLdXQVlAUCUQ/IqjQJQzM6k0NB86bUDLNMwt4eT
- Vf9QXTluSMDI+KNXDMpTr3DDq9qcp+93IN8qFx+sKV2n3WbvQypKo+5k+islmLIr9sZEmZrwy
- kxS5GhrQgfu0lIIYwJJyMV9f8aUBbnyAZCP1De0/K6u4lgVrilWV7KpD2g1oTEcKgF2gLH8E2
- gPQOjI0lI6AInRUBEPem+ajayq9+2Nt7Rd8VeKzLNyjwCKito0tBhAj/n6/RgJYipe59mFx5Z
- Nng32yZyfnFrPpSQt2d2JcF5MRrMVYffJr9wmihm22xDahO2a/AHumdOwv9S+X6fdnvRiShZU
- NjS95U+RK78Jjg3SWz7FYCXeoQ3DPsvHsb3fTvP5jpAtErAn3tTEVm8Z65kClEBpAE/QPPlhg
- giQI9xP/dcNUXdYzBl5pqT0DbM7Wsvg48PGhZNuzUk3kG2TPC9TQ8KwSs0L9SMguv9Yrw2N48
- rpx7BIZEIK8Jf+xqIc2Y8VEb2YoC2C/fQf/c=
+X-Provags-ID: V03:K1:o8/eibR0KEBv814SkAfdQUcPXonJ4/KKrEByU28jqQCeZFziDrX
+ Jh/nBbMV0+Pqqx0ZAhoiwrS6qeOne5dKIiuY7ocFyLjGOOWLJVKoYkYM6ll2MwgWWbd02yC
+ 8gLOxL4UU8xYYbb9wkiOmLprQj5Y48d6pl6OAUe6EJRZhNRbc3c8LTgWhkdNLxUdooHCahG
+ lW5Zf1nZFvO/RPdhxsTPQ==
+UI-OutboundReport: notjunk:1;M01:P0:xxe2lkYlnOU=;2D+cFgrrWAhPUaEiBJb1W4nqw5v
+ 3u/N/KWFj85CjLC09xRjrG2hLIM0DQUtynr3J216+IVA2UgW+Y5TDtMW75Gxn0CMBofS0XDes
+ gXHA2Tz6feEpXNk1cHRhuz7zH+JkhGEsdiY7b80qufCZMBYS9Hfd3A9gz4SKlTxe4HHUQLB+/
+ dgicc6X9CLgVR7MTx5LVKf9hYCkJsZTfsnKV6cK76o+xd+TBiliKO7LB8/M9iIxVjbmtJS44o
+ u81FLIfYqPqJK45u8frJxbmKWMnC1rVCX4G+DomMJzlgDel407Ji6diLlt9XJaYMsho+24DBj
+ m43tSSFi/rdECLXDsBlN+j3G3UuikprxUn14hmIp9a0R9Kv6TREnZQ5bNfw9byEhBmP28zRCr
+ qPcT6O1BRAwUJxYGQ40FmwWewhqkEkr3nz3ptN8UT7ssfxNPOH2YF48XdFh9q3NEVuGHVHSp2
+ GTWp+nkuXL3DlCq4dym8HWXUdSP0rwb/qM3XKK1eOeR4q0x0Ss+DBPyBXxHLMwH8rhnhfjPT5
+ BHPWBUICqzNmKlNgjwoDUEpAkOkaHa2SRHVJ3d/s1BE5EC/zddh4DmbbrmNjNFVkYuBNob1gL
+ P8fEDFqOSXvTeLgOM3MYVVZZfrbNyhjDRu8JfMaKArd9YLj1isYZ+35IHArukCuqTKGJty4Cq
+ 6lr7apRBTqCs2zhsY87i4WD6Jse/95ZZlXNGZRehGMWpEL9Yevy04REwOJzYw0zBUIY2GlzVq
+ cAwGxAF8ezlsgk/Z8GRT+pvwxDNtzahwUag95krLReBFhNLRjmGDjAsQra8TxhECiTWBh/4Fo
+ zTqks+EEDiPxxQHClhD9T7Ehrzgq2FrfRjG8cJ952TEvV0Kzoz2yThdZcH5Ozu53lzs9tArf2
+ 3yCavtTKp+73glg==
 X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,
         RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_SOFTFAIL
         autolearn=no autolearn_force=no version=3.4.6
@@ -72,157 +72,85 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce the BPF_F_CGROUP_DEVICE_GUARD flag for BPF_PROG_LOAD
-which allows to set a cgroup device program to be a device guard.
-Later this may be used to guard actions on device nodes in
-non-initial userns. For this reason we provide the helper function
-cgroup_bpf_device_guard_enabled() to check if a task has a cgroups
-device program which is a device guard in its effective set of bpf
-programs.
+To allow user space tools to check if a device guard is active,
+we extend the struct bpf_prog_info by a cgroup_device_guard field.
+This is then used by the bpftool in print_prog_header_*() functions.
+
+Output of bpftool, here for the bpf prog of a GyroidOS container:
+
+ # ./bpftool prog show id 37
+ 37: cgroup_device  tag 1824c08482acee1b  gpl  cgdev_guard
+ 	loaded_at 2023-08-14T13:47:10+0200  uid 0
+ 	xlated 456B  jited 311B  memlock 4096B
 
 Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
 ---
- include/linux/bpf-cgroup.h     |  7 +++++++
- include/linux/bpf.h            |  1 +
- include/uapi/linux/bpf.h       |  5 +++++
- kernel/bpf/cgroup.c            | 30 ++++++++++++++++++++++++++++++
- kernel/bpf/syscall.c           |  5 ++++-
- tools/include/uapi/linux/bpf.h |  5 +++++
- 6 files changed, 52 insertions(+), 1 deletion(-)
+ include/uapi/linux/bpf.h       | 3 ++-
+ kernel/bpf/syscall.c           | 1 +
+ tools/bpf/bpftool/prog.c       | 2 ++
+ tools/include/uapi/linux/bpf.h | 3 ++-
+ 4 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
-index 57e9e109257e..112b6093f9fd 100644
---- a/include/linux/bpf-cgroup.h
-+++ b/include/linux/bpf-cgroup.h
-@@ -184,6 +184,8 @@ static inline bool cgroup_bpf_sock_enabled(struct sock *sk,
- 	return array != &bpf_empty_prog_array.hdr;
- }
- 
-+bool cgroup_bpf_device_guard_enabled(struct task_struct *task);
-+
- /* Wrappers for __cgroup_bpf_run_filter_skb() guarded by cgroup_bpf_enabled. */
- #define BPF_CGROUP_RUN_PROG_INET_INGRESS(sk, skb)			      \
- ({									      \
-@@ -476,6 +478,11 @@ static inline int bpf_percpu_cgroup_storage_update(struct bpf_map *map,
- 	return 0;
- }
- 
-+static bool cgroup_bpf_device_guard_enabled(struct task_struct *task)
-+{
-+	return false;
-+}
-+
- #define cgroup_bpf_enabled(atype) (0)
- #define BPF_CGROUP_RUN_SA_PROG_LOCK(sk, uaddr, atype, t_ctx) ({ 0; })
- #define BPF_CGROUP_RUN_SA_PROG(sk, uaddr, atype) ({ 0; })
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index f58895830ada..313cce8aee05 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -1384,6 +1384,7 @@ struct bpf_prog_aux {
- 	bool sleepable;
- 	bool tail_call_reachable;
- 	bool xdp_has_frags;
-+	bool cgroup_device_guard;
- 	/* BTF_KIND_FUNC_PROTO for valid attach_btf_id */
- 	const struct btf_type *attach_func_proto;
- 	/* function name for valid attach_btf_id */
 diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index 60a9d59beeab..3be57f7957b1 100644
+index 3be57f7957b1..7b383665d5f4 100644
 --- a/include/uapi/linux/bpf.h
 +++ b/include/uapi/linux/bpf.h
-@@ -1165,6 +1165,11 @@ enum bpf_link_type {
-  */
- #define BPF_F_XDP_DEV_BOUND_ONLY	(1U << 6)
- 
-+/* If BPF_F_CGROUP_DEVICE_GUARD is used in BPF_PROG_LOAD command, the loaded
-+ * program will be allowed to guard device access inside user namespaces.
-+ */
-+#define BPF_F_CGROUP_DEVICE_GUARD	(1U << 7)
-+
- /* link_create.kprobe_multi.flags used in LINK_CREATE command for
-  * BPF_TRACE_KPROBE_MULTI attach type to create return probe.
-  */
-diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
-index 5b2741aa0d9b..230693ca4cdb 100644
---- a/kernel/bpf/cgroup.c
-+++ b/kernel/bpf/cgroup.c
-@@ -2505,6 +2505,36 @@ const struct bpf_verifier_ops cg_sockopt_verifier_ops = {
- const struct bpf_prog_ops cg_sockopt_prog_ops = {
- };
- 
-+bool
-+cgroup_bpf_device_guard_enabled(struct task_struct *task)
-+{
-+	bool ret;
-+	const struct bpf_prog_array *array;
-+	const struct bpf_prog_array_item *item;
-+	const struct bpf_prog *prog;
-+	struct cgroup *cgrp = task_dfl_cgroup(task);
-+
-+	ret = false;
-+
-+	array = rcu_access_pointer(cgrp->bpf.effective[CGROUP_DEVICE]);
-+	if (array == &bpf_empty_prog_array.hdr)
-+		return ret;
-+
-+	mutex_lock(&cgroup_mutex);
-+	array = rcu_dereference_protected(cgrp->bpf.effective[CGROUP_DEVICE],
-+					      lockdep_is_held(&cgroup_mutex));
-+	item = &array->items[0];
-+	while ((prog = READ_ONCE(item->prog))) {
-+		if (prog->aux->cgroup_device_guard) {
-+			ret = true;
-+			break;
-+		}
-+		item++;
-+	}
-+	mutex_unlock(&cgroup_mutex);
-+	return ret;
-+}
-+
- /* Common helpers for cgroup hooks. */
- const struct bpf_func_proto *
- cgroup_common_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+@@ -6331,7 +6331,8 @@ struct bpf_prog_info {
+ 	char name[BPF_OBJ_NAME_LEN];
+ 	__u32 ifindex;
+ 	__u32 gpl_compatible:1;
+-	__u32 :31; /* alignment pad */
++	__u32 cgroup_device_guard:1;
++	__u32 :30; /* alignment pad */
+ 	__u64 netns_dev;
+ 	__u64 netns_ino;
+ 	__u32 nr_jited_ksyms;
 diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index a2aef900519c..33ea67c702c1 100644
+index 33ea67c702c1..9bc6d5dd2e90 100644
 --- a/kernel/bpf/syscall.c
 +++ b/kernel/bpf/syscall.c
-@@ -2564,7 +2564,8 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
- 				 BPF_F_SLEEPABLE |
- 				 BPF_F_TEST_RND_HI32 |
- 				 BPF_F_XDP_HAS_FRAGS |
--				 BPF_F_XDP_DEV_BOUND_ONLY))
-+				 BPF_F_XDP_DEV_BOUND_ONLY |
-+				 BPF_F_CGROUP_DEVICE_GUARD))
- 		return -EINVAL;
+@@ -4062,6 +4062,7 @@ static int bpf_prog_get_info_by_fd(struct file *file,
+ 	info.created_by_uid = from_kuid_munged(current_user_ns(),
+ 					       prog->aux->user->uid);
+ 	info.gpl_compatible = prog->gpl_compatible;
++	info.cgroup_device_guard = prog->aux->cgroup_device_guard;
  
- 	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) &&
-@@ -2651,6 +2652,8 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
- 	prog->aux->dev_bound = !!attr->prog_ifindex;
- 	prog->aux->sleepable = attr->prog_flags & BPF_F_SLEEPABLE;
- 	prog->aux->xdp_has_frags = attr->prog_flags & BPF_F_XDP_HAS_FRAGS;
-+	prog->aux->cgroup_device_guard =
-+		attr->prog_flags & BPF_F_CGROUP_DEVICE_GUARD;
+ 	memcpy(info.tag, prog->tag, sizeof(prog->tag));
+ 	memcpy(info.name, prog->aux->name, sizeof(prog->aux->name));
+diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+index 8443a149dd17..66d21794b641 100644
+--- a/tools/bpf/bpftool/prog.c
++++ b/tools/bpf/bpftool/prog.c
+@@ -434,6 +434,7 @@ static void print_prog_header_json(struct bpf_prog_info *info, int fd)
+ 		     info->tag[4], info->tag[5], info->tag[6], info->tag[7]);
  
- 	err = security_bpf_prog_alloc(prog->aux);
- 	if (err)
+ 	jsonw_bool_field(json_wtr, "gpl_compatible", info->gpl_compatible);
++	jsonw_bool_field(json_wtr, "cgroup_device_guard", info->cgroup_device_guard);
+ 	if (info->run_time_ns) {
+ 		jsonw_uint_field(json_wtr, "run_time_ns", info->run_time_ns);
+ 		jsonw_uint_field(json_wtr, "run_cnt", info->run_cnt);
+@@ -519,6 +520,7 @@ static void print_prog_header_plain(struct bpf_prog_info *info, int fd)
+ 	fprint_hex(stdout, info->tag, BPF_TAG_SIZE, "");
+ 	print_dev_plain(info->ifindex, info->netns_dev, info->netns_ino);
+ 	printf("%s", info->gpl_compatible ? "  gpl" : "");
++	printf("%s", info->cgroup_device_guard ? "  cgdev_guard" : "");
+ 	if (info->run_time_ns)
+ 		printf(" run_time_ns %lld run_cnt %lld",
+ 		       info->run_time_ns, info->run_cnt);
 diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-index 60a9d59beeab..3be57f7957b1 100644
+index 3be57f7957b1..7b383665d5f4 100644
 --- a/tools/include/uapi/linux/bpf.h
 +++ b/tools/include/uapi/linux/bpf.h
-@@ -1165,6 +1165,11 @@ enum bpf_link_type {
-  */
- #define BPF_F_XDP_DEV_BOUND_ONLY	(1U << 6)
- 
-+/* If BPF_F_CGROUP_DEVICE_GUARD is used in BPF_PROG_LOAD command, the loaded
-+ * program will be allowed to guard device access inside user namespaces.
-+ */
-+#define BPF_F_CGROUP_DEVICE_GUARD	(1U << 7)
-+
- /* link_create.kprobe_multi.flags used in LINK_CREATE command for
-  * BPF_TRACE_KPROBE_MULTI attach type to create return probe.
-  */
+@@ -6331,7 +6331,8 @@ struct bpf_prog_info {
+ 	char name[BPF_OBJ_NAME_LEN];
+ 	__u32 ifindex;
+ 	__u32 gpl_compatible:1;
+-	__u32 :31; /* alignment pad */
++	__u32 cgroup_device_guard:1;
++	__u32 :30; /* alignment pad */
+ 	__u64 netns_dev;
+ 	__u64 netns_ino;
+ 	__u32 nr_jited_ksyms;
 
 -- 
 2.30.2
