@@ -2,67 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5418F77C89C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Aug 2023 09:34:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D7EC77C8C5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Aug 2023 09:44:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235138AbjHOHeT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Aug 2023 03:34:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45556 "EHLO
+        id S235424AbjHOHne (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Aug 2023 03:43:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235229AbjHOHd7 (ORCPT
+        with ESMTP id S235392AbjHOHnG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Aug 2023 03:33:59 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C22C172C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Aug 2023 00:33:57 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-986d8332f50so692419566b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Aug 2023 00:33:57 -0700 (PDT)
+        Tue, 15 Aug 2023 03:43:06 -0400
+Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D00510CE;
+        Tue, 15 Aug 2023 00:43:05 -0700 (PDT)
+Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-1c4c5375329so1889078fac.2;
+        Tue, 15 Aug 2023 00:43:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1692084835; x=1692689635;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
+        d=gmail.com; s=20221208; t=1692085384; x=1692690184;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ptPuBEpK+bTuLrHXWomcWZqL5q0T5IOC69Hvw3A95bI=;
-        b=h7n/uDShYxSNwBRM50GOcCYxuc5JsYL93sEbxiZjMXPXLrqKWNgGPMQHT55ERVVzUL
-         rJ6DnJJzSLywuxsjaP6QrDBf6HopbKSrZ8QnrDztCvKFxUNp+GccUBrtgSDq/4TYZAKk
-         fWvzz4oIF9Me0r7rMIjrl5MMY8kDEdukA6gUo=
+        bh=dopEln9VPZxL0Iq2JZLCcr+rwxXbLb8d+hQCQTunBsQ=;
+        b=sXpXbQ7X0/LnTySjZDkaO9nHDDYr/pU3abQLw5n+GIKm504OloCtIss+QlRkXMojYd
+         lnsMof65iO5zpZY4PDmzq4MvCqh87E7X54BHvQSyyEBEsvQLKlRcO9PFHOwnoC26UxSi
+         0EOZolvVtmL/fjRleZjuvqGddQNE1ZoIFWROwVG2UGNYm6q4+PQ4gJr4l2gvaDj98KI7
+         LNthh1PBVu5kZzVpkcc4O5PE+NiDnj53oYq5p6Usr6X7mva8914eox15YAr9OxM1pcMm
+         bfXnNogduAOX/QmakZMZx8O5v4D5wLTjB0DaOjr43HLmAUvjt7TZ5afaza86l8WrDnrm
+         0KsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692084835; x=1692689635;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
+        d=1e100.net; s=20221208; t=1692085384; x=1692690184;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ptPuBEpK+bTuLrHXWomcWZqL5q0T5IOC69Hvw3A95bI=;
-        b=M/jA7adXU/6zLvIoWqgtuPp9bvmY++RKPthEDReA+jGPHdhy8yorYgebMJ4N887lBL
-         XOSmF/LBhVmT4hQdKriK9vHEriNpc2kUAICZZ+CfbaCIcS2sSejZyWtOtqhuQUi4c9TL
-         EgrQcNoWun3E21vVdCVI2ekSSBl7xcRMOgdAeBLRiG2jrOHcMBuWw55CJ5Nko3PJitlr
-         Wf8OzE7LbSDXkUSQfMWlDQttt11ArKv+qdLkhsqWjviOXuUKve9sO9GNHCYRO8+6UJPQ
-         AahPNk5hC4GnB8rjnNAoVoxZ/MU+APLTuG6LvDcTIkMsLl8RpnIcH+twzGWLylYqp47z
-         Zicg==
-X-Gm-Message-State: AOJu0YyDW7MazOPQ7jsrDbQLfybaaTTr2Dkbo9PAnX5rLtlzdEKQnAcg
-        SWy2WE+eZfysQxshMxVqcJu0ILTy+mTlLXUN0qf+HnRB
-X-Google-Smtp-Source: AGHT+IFxULyjAZ+X8WyUl5Vn3+Ctz7EPQBqQwpP0FPWp0YxZN13M9PiifJ8BVAuB5dvFu2lYIWfIAw==
-X-Received: by 2002:a17:906:314c:b0:99b:64d0:f6c8 with SMTP id e12-20020a170906314c00b0099b64d0f6c8mr8911893eje.50.1692084835775;
-        Tue, 15 Aug 2023 00:33:55 -0700 (PDT)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id s10-20020a1709064d8a00b0099364d9f0e6sm6564582eju.117.2023.08.15.00.33.53
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Aug 2023 00:33:54 -0700 (PDT)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-523bf06f7f8so5230777a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Aug 2023 00:33:53 -0700 (PDT)
-X-Received: by 2002:a05:6402:290:b0:523:1004:1c9a with SMTP id
- l16-20020a056402029000b0052310041c9amr8202386edv.35.1692084833506; Tue, 15
- Aug 2023 00:33:53 -0700 (PDT)
+        bh=dopEln9VPZxL0Iq2JZLCcr+rwxXbLb8d+hQCQTunBsQ=;
+        b=bdQXnNepZ4e9BvfawTiXgATk/eX6+aJzblPoBT7uxHIN96XFCtOTS9hJuq5jzzgh6V
+         PINNZ+8KqbTjhzrRz5dVfb0ZT9pMVdCBW+WufLwd4x9OgbdQisA/H7oC60O7zvSL39sg
+         Zr9765Q/MPboEnMCALSmaIFf4wV9ntbbGfQKvSJhlrLv72u2jIVLd17EiQMT8ZIMLAo6
+         2Sdt8HJDO2ZI9SVcW/o4VmTWDR91cMFBVSBXXK1CnftPhfu7gbJfjugYC401LByKx0mq
+         tgid0mQUIxCqypu/eu8nnlouIjNSmY9eety4pFuEzz1QF7ATa2L1zvfoYB2WxnBsUe2/
+         9/cA==
+X-Gm-Message-State: AOJu0YxaP86Um2V+XGj7w+wbBTUhGKxeoAeYgPLaAK8trTxIl3Yz6NYQ
+        YPxLUy0dh3Or/XNH1BLHU4DLHXKKyhoA9a7EPwk=
+X-Google-Smtp-Source: AGHT+IH21/5w6crwWPD7vIv/j0w3adsBN5eHck6Oh1Qn4awi8woAnlWJm3VwnpYegg1T9u8cFeJOGx/7gnb2bXKv5QE=
+X-Received: by 2002:a05:6870:15d5:b0:1bf:9f6:b810 with SMTP id
+ k21-20020a05687015d500b001bf09f6b810mr11562135oad.36.1692085384532; Tue, 15
+ Aug 2023 00:43:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <202308151426.97be5bd8-oliver.sang@intel.com>
-In-Reply-To: <202308151426.97be5bd8-oliver.sang@intel.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 15 Aug 2023 07:33:36 +0000
-X-Gmail-Original-Message-ID: <CAHk-=whbOEhPUL1m8Ua-+-E7kJXED4xa+duzRF-wJKR84NAPWg@mail.gmail.com>
-Message-ID: <CAHk-=whbOEhPUL1m8Ua-+-E7kJXED4xa+duzRF-wJKR84NAPWg@mail.gmail.com>
+Received: by 2002:ac9:745a:0:b0:4f0:1250:dd51 with HTTP; Tue, 15 Aug 2023
+ 00:43:04 -0700 (PDT)
+In-Reply-To: <CAHk-=whbOEhPUL1m8Ua-+-E7kJXED4xa+duzRF-wJKR84NAPWg@mail.gmail.com>
+References: <202308151426.97be5bd8-oliver.sang@intel.com> <CAHk-=whbOEhPUL1m8Ua-+-E7kJXED4xa+duzRF-wJKR84NAPWg@mail.gmail.com>
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Tue, 15 Aug 2023 09:43:04 +0200
+Message-ID: <CAGudoHFFdFa=0y0XSEMNF4eucngxHKs7tby3rf32A-Wn1cqivQ@mail.gmail.com>
 Subject: Re: [linus:master] [locking] c8afaa1b0f: stress-ng.zero.ops_per_sec
  6.3% improvement
-To:     kernel test robot <oliver.sang@intel.com>
-Cc:     Mateusz Guzik <mjguzik@gmail.com>, oe-lkp@lists.linux.dev,
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
         lkp@intel.com, linux-kernel@vger.kernel.org,
         linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
@@ -70,46 +65,77 @@ Cc:     Mateusz Guzik <mjguzik@gmail.com>, oe-lkp@lists.linux.dev,
         linux-fsdevel@vger.kernel.org, ying.huang@intel.com,
         feng.tang@intel.com, fengwei.yin@intel.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 15 Aug 2023 at 07:12, kernel test robot <oliver.sang@intel.com> wrote:
+On 8/15/23, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> On Tue, 15 Aug 2023 at 07:12, kernel test robot <oliver.sang@intel.com>
+> wrote:
+>>
+>> kernel test robot noticed a 6.3% improvement of stress-ng.zero.ops_per_sec
+>> on:
 >
-> kernel test robot noticed a 6.3% improvement of stress-ng.zero.ops_per_sec on:
+> WTF? That's ridiculous. Why would that even test new_inode() at all?
+> And why would it make any difference anyway to prefetch a new inode?
+> The 'zero' test claims to just read /dev/zero in a loop...
+>
+> [ Goes looking ]
+>
 
-WTF? That's ridiculous. Why would that even test new_inode() at all?
-And why would it make any difference anyway to prefetch a new inode?
-The 'zero' test claims to just read /dev/zero in a loop...
+Ye man, I was puzzled myself but just figured it out and was about to respond ;)
 
-[ Goes looking ]
+# bpftrace -e 'kprobe:new_inode { @[kstack()] = count(); }'
+Attaching 1 probe...
 
->      39.35            -0.3       39.09        perf-profile.calltrace.cycles-pp.inode_sb_list_add.new_inode.shmem_get_inode.__shmem_file_setup.shmem_zero_setup
+@[
+    new_inode+1
+    shmem_get_inode+137
+    __shmem_file_setup+195
+    shmem_zero_setup+46
+    mmap_region+1937
+    do_mmap+956
+    vm_mmap_pgoff+224
+    do_syscall_64+46
+    entry_SYSCALL_64_after_hwframe+115
+]: 2689570
 
-Ahh. It also does the mmap side, and the shared case ends up always
-creating a new inode.
+the bench is doing this *A LOT* and this looks so fishy, for the bench
+itself and the kernel doing it, but I'm not going to dig into any of
+that.
 
-And while the test only tests *reading* and the mmap is read-only, the
-/dev/zero file descriptor was opened for writing too, for a different
-part of a test.
+>>      39.35            -0.3       39.09
+>> perf-profile.calltrace.cycles-pp.inode_sb_list_add.new_inode.shmem_get_inode.__shmem_file_setup.shmem_zero_setup
+>
+> Ahh. It also does the mmap side, and the shared case ends up always
+> creating a new inode.
+>
+> And while the test only tests *reading* and the mmap is read-only, the
+> /dev/zero file descriptor was opened for writing too, for a different
+> part of a test.
+>
+> So even though the mapping is never written to, MAYWRITE is set, and
+> so the /dev/zero mapping is done as a shared memory mapping and we
+> can't do it as just a private one.
+>
+> That's kind of stupid and looks unintentional, but whatever.
+>
+> End result: that benchmark ends up being at least partly (and a fairly
+> noticeable part) a shmem setup benchmark, for no actual good reason.
+>
+> Oh well. I certainly don't mind the removal apparently then also
+> helping some odd benchmark case, but I don't think this translates to
+> anything real. Very random.
+>
+>                     Linus
+>
 
-So even though the mapping is never written to, MAYWRITE is set, and
-so the /dev/zero mapping is done as a shared memory mapping and we
-can't do it as just a private one.
 
-That's kind of stupid and looks unintentional, but whatever.
-
-End result: that benchmark ends up being at least partly (and a fairly
-noticeable part) a shmem setup benchmark, for no actual good reason.
-
-Oh well. I certainly don't mind the removal apparently then also
-helping some odd benchmark case, but I don't think this translates to
-anything real. Very random.
-
-                    Linus
+-- 
+Mateusz Guzik <mjguzik gmail.com>
