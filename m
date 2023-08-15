@@ -2,176 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D92577D4C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Aug 2023 23:05:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FE1777D4FF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Aug 2023 23:17:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239906AbjHOVE5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Aug 2023 17:04:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41962 "EHLO
+        id S240171AbjHOVQr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Aug 2023 17:16:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239951AbjHOVE1 (ORCPT
+        with ESMTP id S240204AbjHOVQT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Aug 2023 17:04:27 -0400
-Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E2DE10EC
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Aug 2023 14:04:20 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id CCCDA5C01B2;
-        Tue, 15 Aug 2023 17:04:18 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Tue, 15 Aug 2023 17:04:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1692133458; x=1692219858; bh=kdLxaVtma3EJMj/sdY5UuI4IkE9NFT7sxPN
-        PZmKJFrI=; b=rp+4t2i+xOPBrgjM8yZ838bfapQwxDnbJ9yhKGUcFx5xyJwAhGu
-        XHKe4w58HgpwCWcOecC3c3UCZWk3JObvIUXn4k2CXYVE+YJ/HRwWD1l2iqvGPrTd
-        234mj6ITe6aDQx3q3L/Zx+MvyBQHkfWsVDno8mVxqhGt74b1eJbPQWwCZqk7v/uZ
-        96/HmcDAIctP+rMbku3sHMUTAfUnqf/8fXT3zXjuTCMinGcFP5/VEIjbT/Xj/G0+
-        HrF5amMXntngbuZl9WnRkryfjhLYEFGYqpyiVJRbud/HOtDGRpt9QnfmI7FY5rI8
-        TIY/E0eHU+TgW0aeTHwZ2yz20FF9Fe14MGQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1692133458; x=1692219858; bh=kdLxaVtma3EJMj/sdY5UuI4IkE9NFT7sxPN
-        PZmKJFrI=; b=XsTU80gWITTnNRquFurhIDi5665xkVh+9c9EpCSOUsyO9fX6nVR
-        UQ7868Z7bX0brzb8GTHv5mSpFNKefiW8F+ZnKi5ZnHcarU/LCFjQKX7wrfmHnAv8
-        4MEUIIXPrN57ueppPMEuNzz1ZHiNv8wF2Tojzo2k43FgVZOyhK6g0rGaXcMBgU76
-        YON+v5Wn+y4rGq52yreUYb4HNkSBEmbOu6OKNK+6pfnTTNZ/eAXJo6W0/8dJmNFz
-        bTCwULhRyrZtQKpP5HfucCjfqw+T7Yxjx1qYHjoCHsyGaZ0+4OaMmUqM3zxouvYM
-        eE9MvF2a7R7Ty/JW4iSU9nLfg6VutaL8wNg==
-X-ME-Sender: <xms:UujbZISYhCzzOJW8-_9Vm6CFYA8b6hZy9y47cPdih_LXw469tKdqfA>
-    <xme:UujbZFykIW9ALVtiZEv4w0ezYzwhMchKz7NzfBc-SUoezl6BbWZMnANtA9PIfFEk2
-    x9Ud9ANDfsi_-t6>
-X-ME-Received: <xmr:UujbZF37Lc_2ZLHfD3N1F-qEADqKOWNpp5Hxeafxbxqpql5Ng_h0RaY3kuUsK12QyTm_28sspGC0yteoAiVcV6nbCHcQzbZVLnWfISSlW0xUkSUa0ALHoXZi>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedruddtjedgudehjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttdefjeenucfhrhhomhepuegv
-    rhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrg
-    hilhdrfhhmqeenucggtffrrghtthgvrhhnpeekheevkeelkeekjefhheegfedtffduudej
-    jeeiheehudeuleelgefhueekfeevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhl
-    rdhfmh
-X-ME-Proxy: <xmx:UujbZMAACSu2HvurydL8Q_4rakTcEXfTRNah6Ye0_Q6dTEwwrtfX2Q>
-    <xmx:UujbZBiWxdbMWGpeStTjhiL0XhAAfOZAyJ6ojW9tYmtZIuH454bg5g>
-    <xmx:UujbZIoUAabVFwf3RGCRoj-Lu3Tc5Y6tGrHMHsLZbma2mtJwzZe9NQ>
-    <xmx:UujbZPaV7LAwK1WJorS1KVTgOE_p-LEcujg5hYJ59tPxKcU3ROU8kg>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 15 Aug 2023 17:04:16 -0400 (EDT)
-Message-ID: <1cb76336-ebd9-0099-5fc4-2340df4ac33d@fastmail.fm>
-Date:   Tue, 15 Aug 2023 23:04:14 +0200
+        Tue, 15 Aug 2023 17:16:19 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CB6A1982
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Aug 2023 14:16:18 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-6874a386ec7so1141610b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Aug 2023 14:16:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1692134178; x=1692738978;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oEu4PLkfiVOa1dY72tvwJNIt3FbMPDLFKBz2++/psio=;
+        b=wPVPYyfgYSnLertA1zuA37jfhDW5YUV7tpZ8H/63514WIGKHe2xES/HMooA+STRa6Q
+         QfprMzg9MB5Ws+7VjkInztB5rg6BfYAHkiCG4Ivdk8Ps0tRG9ZSsHtT7rZscWCvzyt3W
+         r9GlWS205F2Ze8r/Do0DzmqRVwu+gdlLha8S1P5R9hX1mrYk+wRCkEgrvZ6FGGcWNXHO
+         py2i14FOQkgi95nIKyKY8E6R60ycC8jsm4RwWbz5IybVjItkV/mCTAlZDiCJE92M1XdJ
+         dabaq7+tjnI1UxBNrdeAJJtLyefOGuA050EGJpOfx9aU4mWNfltJfmqkyL4K39CRjgH/
+         +vaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692134178; x=1692738978;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oEu4PLkfiVOa1dY72tvwJNIt3FbMPDLFKBz2++/psio=;
+        b=ZlofPgmkvic1GOxeJlEDoyqLxwZtT0K6r/zeevcq2lT3jQwnMQ5QeSEOK2YA4MViGW
+         BvPYD21E70XowgvH5n+56P3WW2nEXrMEJ9gHrOA440lPdtoL/FCev+MI2woVJTkO7/3C
+         rqlwFnOiHUhRQDi5RPfCLISixa7PJ4wIQ7KjBXbsyiIadqzC0QHydwUfq0llPfhmofUr
+         8tL4Nbbjownoe2bwPIoifO5/GSxZE9i3nR+emWliGgCql1HdVCvHuzf/IB3N2BU6+FNs
+         9dhuwLxFdpIgyY9EZ+x8Vlrncy4V/mDuc5D+s7IONKt70TD7184SdGeIa0GvUqIfOc4h
+         5j8w==
+X-Gm-Message-State: AOJu0Ywk4zjCAstqi967fXfgxHqPDv78LyLHeLX5SP7ZUg2xlVi7Czqt
+        GWlBEtpry2wjlFNqMJPRnn3Cmg==
+X-Google-Smtp-Source: AGHT+IF0NZPLb5JXtX9AG4UgIbstmQE/6gX5vHYiQ1ZyKRBL8Qci3WZD3z4yXLe1R/+SKTTewBAV/A==
+X-Received: by 2002:a05:6a00:4789:b0:687:874c:7ce0 with SMTP id dh9-20020a056a00478900b00687874c7ce0mr13953653pfb.1.1692134177735;
+        Tue, 15 Aug 2023 14:16:17 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id s19-20020aa78293000000b00686940bfb77sm9749544pfm.71.2023.08.15.14.16.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Aug 2023 14:16:17 -0700 (PDT)
+Message-ID: <264fbb0a-5fd1-447d-a373-389f74a12bcf@kernel.dk>
+Date:   Tue, 15 Aug 2023 15:16:15 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [fuse-devel] [PATCH 3/6] [RFC] Allow atomic_open() on positive
- dentry
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        Bernd Schubert <bschubert@ddn.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        "fuse-devel@lists.sourceforge.net" <fuse-devel@lists.sourceforge.net>,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: create kiocb_{start,end}_write() helpers
+Content-Language: en-US
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Dharmendra Singh <dsingh@ddn.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <20230811183752.2506418-1-bschubert@ddn.com>
- <20230811183752.2506418-4-bschubert@ddn.com>
- <CAJfpegtsCPZ_c2J7o08kgT8z9UNkTJ0BD5R1yT2_fT+ZPH+Q_w@mail.gmail.com>
- <9a8170ea-fc4d-f8f9-9726-8cc46f545e0d@ddn.com>
- <CAJfpegsP6AnwdzMc6o4dFeLKkE_yaxL=-ejD+S7tqvuLpXBaRA@mail.gmail.com>
-Content-Language: en-US, de-DE
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <CAJfpegsP6AnwdzMc6o4dFeLKkE_yaxL=-ejD+S7tqvuLpXBaRA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        linux-fsdevel@vger.kernel.org
+References: <20230815165721.821906-1-amir73il@gmail.com>
+ <d8013748-f5ec-47c9-b4ba-75538b7ac93d@kernel.dk>
+ <12490760-d3fe-4b9d-b726-be2506eff30b@kernel.dk>
+ <CAOQ4uxh4YYs2=mqqZMi-L=a19gmcgi7M+2F7iy2WDUf=iqZtxQ@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAOQ4uxh4YYs2=mqqZMi-L=a19gmcgi7M+2F7iy2WDUf=iqZtxQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 8/15/23 21:33, Miklos Szeredi via fuse-devel wrote:
-> On Tue, 15 Aug 2023 at 11:56, Bernd Schubert <bschubert@ddn.com> wrote:
+On 8/15/23 12:48 PM, Amir Goldstein wrote:
+> On Tue, Aug 15, 2023 at 8:06?PM Jens Axboe <axboe@kernel.dk> wrote:
 >>
->> On 8/15/23 10:03, Miklos Szeredi wrote:
->>> On Fri, 11 Aug 2023 at 20:38, Bernd Schubert <bschubert@ddn.com> wrote:
->>>>
->>>> From: Miklos Szeredi <miklos@szeredi.hu>
->>>>
->>>> atomic_open() will do an open-by-name or create-and-open
->>>> depending on the flags.
->>>>
->>>> If file was created, then the old positive dentry is obviously
->>>> stale, so it will be invalidated and a new one will be allocated.
->>>>
->>>> If not created, then check whether it's the same inode (same as in
->>>> ->d_revalidate()) and if not, invalidate & allocate new dentry.
->>>>
->>>> Changes from Miklos initial patch (by Bernd):
->>>> - LOOKUP_ATOMIC_REVALIDATE was added and is set for revalidate
->>>>     calls into the file system when revalidate by atomic open is
->>>>     supported - this is to avoid that ->d_revalidate() would skip
->>>>     revalidate and set DCACHE_ATOMIC_OPEN, although vfs
->>>>     does not supported it in the given code path (for example
->>>>     when LOOKUP_RCU is set)).
->>>
->>> I don't get it.   We don't get so far as to set DCACHE_ATOMIC_OPEN if
->>> LOOKUP_RCU is set.
+>> On 8/15/23 11:02 AM, Jens Axboe wrote:
+>>> On 8/15/23 10:57 AM, Amir Goldstein wrote:
+>>>> +/**
+>>>> + * kiocb_start_write - get write access to a superblock for async file io
+>>>> + * @iocb: the io context we want to submit the write with
+>>>> + *
+>>>> + * This is a variant of file_start_write() for async io submission.
+>>>> + * Should be matched with a call to kiocb_end_write().
+>>>> + */
+>>>> +static inline void kiocb_start_write(struct kiocb *iocb)
+>>>> +{
+>>>> +    struct inode *inode = file_inode(iocb->ki_filp);
+>>>> +
+>>>> +    iocb->ki_flags |= IOCB_WRITE;
+>>>> +    if (WARN_ON_ONCE(iocb->ki_flags & IOCB_WRITE_STARTED))
+>>>> +            return;
+>>>> +    if (!S_ISREG(inode->i_mode))
+>>>> +            return;
+>>>> +    sb_start_write(inode->i_sb);
+>>>> +    /*
+>>>> +     * Fool lockdep by telling it the lock got released so that it
+>>>> +     * doesn't complain about the held lock when we return to userspace.
+>>>> +     */
+>>>> +    __sb_writers_release(inode->i_sb, SB_FREEZE_WRITE);
+>>>> +    iocb->ki_flags |= IOCB_WRITE_STARTED;
+>>>> +}
+>>>> +
+>>>> +/**
+>>>> + * kiocb_end_write - drop write access to a superblock after async file io
+>>>> + * @iocb: the io context we sumbitted the write with
+>>>> + *
+>>>> + * Should be matched with a call to kiocb_start_write().
+>>>> + */
+>>>> +static inline void kiocb_end_write(struct kiocb *iocb)
+>>>> +{
+>>>> +    struct inode *inode = file_inode(iocb->ki_filp);
+>>>> +
+>>>> +    if (!(iocb->ki_flags & IOCB_WRITE_STARTED))
+>>>> +            return;
+>>>> +    if (!S_ISREG(inode->i_mode))
+>>>> +            return;
 >>
->>
->> See lookup_fast, there are two calls to d_revalidate() that have
->> LOOKUP_ATOMIC_REVALIDATE and one in RCU mode that does not.
->> With the new flag LOOKUP_ATOMIC_REVALIDATE we tell ->revalidate()
->> that we are in code path that supports revalidating atomically.
->>
->> Sure, ror RCU we can/should always return -ECHILD in fuse_dentry_revalidate when
->> LOOKUP_RCU is set.  But then it is also easy to miss that - at a minimum we
->> need to document that DCACHE_ATOMIC_OPEN must not be set in RCU mode.
+>> And how would IOCB_WRITE_STARTED ever be set, if S_ISREG() isn't true?
 > 
-> I wouldn't say "must not".  Setting DCACHE_ATOMIC_OPEN would result in
-> ATOMIC_OPEN being used instead of plain OPEN.  This may be less
-> optimal in cases when the dentry didn't need to be revalidated, but
-> AFAICS it wouldn't result in a bug.
+> Good point.
+> I will pass is_reg argument from callers of kiocb_start_write() and
+> will only check IOCB_WRITE_STARTED in kiocb_end_write().
 
-In open_last_lookups there is
+Please don't pass in an argument that just makes the function do
+nothing. Just gate calling the function on it instead.
 
-BUG_ON(nd->flags & LOOKUP_RCU)
+-- 
+Jens Axboe
 
-(which is why I had noticed in the first place the issue in RCU mode). 
-In principle we could change the code to give up RCU mode after 
-DCACHE_ATOMIC_OPEN, but the vfs functions certainly wouldn't get
-simpler with that
-
-> BTW I don't see DCACHE_ATOMIC_OPEN being cleared in this patchset,
-> which just shows that it's quite safe ;)
-
-Oh right, it might go a code path later that would have an issue. 
-Actually Dharmendras version had removed the flag in 
-_fuse_atomic_open(), but I thought we wouldn't need to unset it and had 
-removed that part. Also better shouldn't be part of fuse to remove the 
-flag, but in the vfs - here in this patch, which introduces the flag.
-
-> 
-> I'm not at all sure that DCACHE_ATOMIC_OPEN is the best mechanism for
-> this job.  Returning a specific value from ->d_revalidate might be
-> better.
-
-Also fine with me, although it probably would bring back the 'hack' in 
-lookup_fast(), as the caller does not get the return code from 
-d_revalidate . Or we we add it in.
-Going to send an updated version in the morning.
-
-
-Thanks,
-Bernd
