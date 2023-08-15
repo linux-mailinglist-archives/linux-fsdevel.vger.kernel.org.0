@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 03AD977D69B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 01:22:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5907C77D6CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 01:55:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240590AbjHOXWL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Aug 2023 19:22:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33596 "EHLO
+        id S240736AbjHOXy4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Aug 2023 19:54:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240585AbjHOXWD (ORCPT
+        with ESMTP id S240732AbjHOXym (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Aug 2023 19:22:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2063C10D1;
-        Tue, 15 Aug 2023 16:22:00 -0700 (PDT)
+        Tue, 15 Aug 2023 19:54:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 866A5EE;
+        Tue, 15 Aug 2023 16:54:41 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B30C6636E4;
-        Tue, 15 Aug 2023 23:21:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10725C433C7;
-        Tue, 15 Aug 2023 23:21:52 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 073CD62C98;
+        Tue, 15 Aug 2023 23:54:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47CCBC433C8;
+        Tue, 15 Aug 2023 23:54:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692141719;
-        bh=reNBqXvvCRZMEH5t3EgVMW5ozRlNJXzgVYKKybLu7+g=;
+        s=k20201202; t=1692143680;
+        bh=n6eEACiqimpPB7PLvfd+oUPFPVhzIcPuBLC1dr7dvkk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tgYMWvchg/ZUqerIoW+zuO2xrgHp1FjGhIDZf0F7H37BKlHJkiszeodbSFqj3PnGp
-         f2uzSQKMyEbBKULD8jUYoWdw+ho2gUgqSPoCpiRRthF97i2hw0AwvOvxRHsnoMNSWD
-         gttYLq9bj0BRRJjSljAXyHOfxgy/c0FWZkAugtCSLC0HoJVzRQ6itwmObiMg7S3MLp
-         eLTfOBH3K1elFZpgkk9Fi0gRg+xjIRhvBg9Be+iT1N4YlVOZfGuGiWElQwXi9Y4FXf
-         FmuAbbOC05PmLzx2GVJ9olOkny6MKI0EpIV4w8sjVE8FBzZs45FzNtmCLwuIp0+0j3
-         XjZluhZGnyksA==
-Date:   Wed, 16 Aug 2023 00:21:49 +0100
+        b=DxIy5vbUapbtWP3sld3mWYjZBRmjMrNODKGFDnO97nPi0kw+utGl7YhSUxRcSA55j
+         bgF8O8udbd4TU+m5lMdm4Tq8mz2Iji+2duH30c7Uih+GPjDtxMtERbEdC1HkZkRbV1
+         vhFKi5KpL9sjgdjBtwcn8MOqnv66AJbhzBkjh1oYLzW8TtTXJwoSBhyLhul3VdRwcO
+         1WhbPKDlq0Tm06lqfY+xHm0muT2Lor4Y/lV59laZCZRREuOI6SYgQstfXcPOumpgOw
+         HGCLOk+Rs8gWd4G0xWygKex2ny89KElnHHwFax3NDVcmPkRCbi5eOwwkFR7OjQVK7e
+         9jsYzSH7oiqSw==
+Date:   Wed, 16 Aug 2023 00:54:30 +0100
 From:   Mark Brown <broonie@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>
 Cc:     Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
@@ -59,20 +59,19 @@ Cc:     Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 09/36] arm64/mm: Allocate PIE slots for EL0 guarded
- control stack
-Message-ID: <74cb7458-cdf9-4e7d-972a-3dc81e92ec22@sirena.org.uk>
+Subject: Re: [PATCH v4 17/36] arm64/mm: Handle GCS data aborts
+Message-ID: <752f9f06-69e3-4e60-94ca-49cacb1122ff@sirena.org.uk>
 References: <20230807-arm64-gcs-v4-0-68cfa37f9069@kernel.org>
- <20230807-arm64-gcs-v4-9-68cfa37f9069@kernel.org>
- <ZNZEUEqJuHrdEa/c@arm.com>
+ <20230807-arm64-gcs-v4-17-68cfa37f9069@kernel.org>
+ <ZNZPLTky6IZ47n4l@arm.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="RanKLfAULhx4GKnc"
+        protocol="application/pgp-signature"; boundary="bU0eg43A83FLgDHm"
 Content-Disposition: inline
-In-Reply-To: <ZNZEUEqJuHrdEa/c@arm.com>
+In-Reply-To: <ZNZPLTky6IZ47n4l@arm.com>
 X-Cookie: Darth Vader sleeps with a Teddywookie.
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,48 +80,72 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---RanKLfAULhx4GKnc
+--bU0eg43A83FLgDHm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 11, 2023 at 03:23:12PM +0100, Catalin Marinas wrote:
+On Fri, Aug 11, 2023 at 04:09:33PM +0100, Catalin Marinas wrote:
+> On Mon, Aug 07, 2023 at 11:00:22PM +0100, Mark Brown wrote:
 
-> >  #define PIE_E1	( \
-> > +	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS),           PIE_RW)      | \
-> > +	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS_RO),        PIE_R)      | \
+> > +		if (is_write_abort(esr) &&
+> > +		    !(is_gcs_fault(esr) || is_el1_data_abort(esr)))
+> > +			return VM_FAULT_BADACCESS;
 
-> Had some thoughts on this. Why do we need the EL1 GCS attributes to map
-> to RW? The instructions we'd use to write the shadow stack are the GCS
-> 'T' variants that run as user already.
+> Related to my PIE permissions comment: when do we have a valid EL1 data
+> write abort that's not a GCS fault? Does a faulting GCSSTTR set the
+> ESR_ELx_GCS bit?
 
-> The only instructions we have in the kernel that would run as EL1 on a
-> user address are the exclusives (futex code or the old deprecated
-> emulation but we don't care about them in this context). So I wonder
-> whether the kernel PIE entry could simply be PIE_NONE_O. Would this be
-> too restrictive for future uses? Given the coherency between a GCS
-> access and a standard data access, we may want to restrict it now until
-> we have a use-case.
+Yes, it should do.  The GCS instructions have access descriptors created
+with CreateAccDescGCS() which results in the access being flagged as a
+GCS access.
 
-Good point.  I remember I originally wrote that before I checked into
-how things like copying pages for ptrace worked but they don't keep
-the GCSness of the page so they're fine.
+> > +	} else {
+> > +		/*
+> > +		 * GCS faults should never happen for pages that are
+> > +		 * not part of a GCS and the operation being attempted
+> > +		 * can never succeed.
+> > +		 */
+> > +		if (is_gcs_fault(esr))
+> > +			return VM_FAULT_BADACCESS;
 
-I don't think we need to worry about future uses since these are slots
-reserved for GCS use, if we need a different value later
+> If one does a GCS push/store to a non-GCS page, do we get a GCS fault or
+> something else? I couldn't figure out from the engineering spec. If the
+> hardware doesn't generate such exceptions, we might as well remove this
+> 'else' branch. But maybe it does generate a GCS-specific fault as you
+> added a similar check in is_invalid_el0_gcs_access().
 
---RanKLfAULhx4GKnc
+Yes, see AddGCSRecord() and LoadCheckGCSRecord() - all GCS initiated
+accesses need to be AccDescGCS so appropriate permissions enforcement
+can happen and that's what causes the fault to be flagged as GCS.
+
+> > @@ -595,6 +644,19 @@ static int __kprobes do_page_fault(unsigned long f=
+ar, unsigned long esr,
+> >  	if (!vma)
+> >  		goto lock_mmap;
+> > =20
+> > +	/*
+> > +	 * We get legitimate write faults for GCS pages from GCS
+> > +	 * operations and from EL1 writes to EL0 pages but just plain
+
+> What are the EL1 writes to the shadow stack? Would it not use
+> copy_to_user_gcs()?
+
+They should, yes - I'll reword the comment.
+
+--bU0eg43A83FLgDHm
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmTcCI0ACgkQJNaLcl1U
-h9DbgQf/R35NwygifYB/vR8xKnzjHMpwxWKaHX9I5Hinl2E99odV20pM/bgJZbux
-VbIehF+i+Q/QY+dvRrVAvp4oVfOY4ZFJQRtPrLjGoak9Au980nkR6mlKggF6qd4W
-EGfizM1nkmqrTmfm8vHfn/gEDGJ/ZRB9mOzZmvW8U41g6naodsr9S/0ChKLV1ppq
-IEwo7oiwLNc9Uz1lklKsyq5852jWL3B07QwDzubwM7CJC2UNLQywl8SMW7We551y
-ZtE6twEw91+iq9dcBOKkFi+Oay55UKC4eSrci/08sbb1b4lH5Ta9YoiSEDaCqxXm
-cB6WkJJkkCL7RY0qBvEEDSWx1WqolQ==
-=XTlC
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmTcEDYACgkQJNaLcl1U
+h9A2rAgAhd1tNqwsfCv0ZnuQlRFZyTwPwFCn76BeqIuV3TYu4Nymed/YLhOECsZ9
+H6Fni+Igkf4ckDfRhk742+N6QqLOBZz4ddBTJDV74NJk7EgWWv9srbi10k/thyIT
+O/Wz8nVnuUHHXN3dkJIZJQ/l6GjLrzoiskqkrh9ft7HskvTTe1DOL8gFS8Qa5DjS
+ut+XhC5VI7HX7iBwhhqw1tEjsQM3ldnl0r/rSd37tFbJbDX6ujuMlgpBKReSH8qV
+kfrNbgpcBoxaKvE/rytuAXTIS2oqh/1yHuWi8ujBlZgGf8Vo7OK0alzL8T+oIEaQ
+92UJwq3fW51GVCMDxbeaCh1vD7hrKg==
+=cuH7
 -----END PGP SIGNATURE-----
 
---RanKLfAULhx4GKnc--
+--bU0eg43A83FLgDHm--
