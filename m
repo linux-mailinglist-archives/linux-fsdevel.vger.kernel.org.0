@@ -2,84 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DEF977CB85
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Aug 2023 13:14:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42B1377CCFA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Aug 2023 14:53:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236613AbjHOLNn convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Aug 2023 07:13:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41334 "EHLO
+        id S237290AbjHOMwr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Aug 2023 08:52:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236633AbjHOLNE (ORCPT
+        with ESMTP id S237296AbjHOMwR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Aug 2023 07:13:04 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ECFAEE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Aug 2023 04:13:02 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-180-guUsedkBOBOlgnKb9Vot1w-1; Tue, 15 Aug 2023 12:12:59 +0100
-X-MC-Unique: guUsedkBOBOlgnKb9Vot1w-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Tue, 15 Aug
- 2023 12:12:57 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Tue, 15 Aug 2023 12:12:57 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'David Howells' <dhowells@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Tue, 15 Aug 2023 08:52:17 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6A3EE63
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Aug 2023 05:51:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1692103896;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=6h9aonqmeDneHn2sCJ+4YLuPQmV9DjwIRMJXM+2v704=;
+        b=FRYUsOMVd6ooEEtqaDk7vgGAQLDt3bUVwDhggONyKvz0Tapg84J/LvmvLtaGimBlD2K8k+
+        Or2jh1+O4uDhOnFaKfamB0eDdJ3mhky30XLf7jYgMj+j6wAdXnK+jz1dVMG2e4YqGEuvW1
+        a0VTmg33PISwniuS3BToS6t4iNhDnD8=
+Received: from mimecast-mx02.redhat.com (66.187.233.73 [66.187.233.73]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-595-qBAZoA6cNmWTtYvAFtxRoA-1; Tue, 15 Aug 2023 08:51:32 -0400
+X-MC-Unique: qBAZoA6cNmWTtYvAFtxRoA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 576E33C108C9;
+        Tue, 15 Aug 2023 12:51:31 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C3E4B140E917;
+        Tue, 15 Aug 2023 12:51:29 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <aceea2408bf049aebb1f1f893281795c@AcuMS.aculab.com>
+References: <aceea2408bf049aebb1f1f893281795c@AcuMS.aculab.com> <3710261.1691764329@warthog.procyon.org.uk>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
         Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
         Christian Brauner <christian@brauner.io>,
         Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC:     "jlayton@kernel.org" <jlayton@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
         "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC PATCH] iov_iter: Convert iterate*() to inline funcs
-Thread-Topic: [RFC PATCH] iov_iter: Convert iterate*() to inline funcs
-Thread-Index: AQHZzGHVnVxrFjw7PE2nk6LHTBa8tq/rOLUQ
-Date:   Tue, 15 Aug 2023 11:12:57 +0000
-Message-ID: <aceea2408bf049aebb1f1f893281795c@AcuMS.aculab.com>
-References: <3710261.1691764329@warthog.procyon.org.uk>
-In-Reply-To: <3710261.1691764329@warthog.procyon.org.uk>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+Subject: Re: [RFC PATCH] iov_iter: Convert iterate*() to inline funcs
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,PDS_BAD_THREAD_QP_64,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <286906.1692103889.1@warthog.procyon.org.uk>
+Date:   Tue, 15 Aug 2023 13:51:29 +0100
+Message-ID: <286907.1692103889@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: David Howells
-> Sent: 11 August 2023 15:32
-> 
-> Convert the iov_iter iteration macros to inline functions to make the code
-> easier to follow.  Ideally, the optimiser would produce much the same code
-> in both cases, but the revised code ends up a bit bigger.
-...
+David Laight <David.Laight@ACULAB.COM> wrote:
 
-Actually quite typical because inlining happens much later on.
-I suspect that the #define benefits from the compile front-end
-optimising constants.
+> Actually quite typical because inlining happens much later on.
+> I suspect that the #define benefits from the compile front-end
+> optimising constants.
 
-	David
+I managed to mostly pull it back, and even make some functions slightly
+smaller, in the v2 I posted.  Mostly that came about by arranging things to
+look a bit more like the upstream macro version.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+David
 
