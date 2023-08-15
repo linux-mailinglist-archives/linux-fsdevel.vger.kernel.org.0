@@ -2,190 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 39B2977C8DA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Aug 2023 09:50:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DC6777C8E1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Aug 2023 09:51:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235457AbjHOHuM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Aug 2023 03:50:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47800 "EHLO
+        id S235464AbjHOHuq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Aug 2023 03:50:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235452AbjHOHtw (ORCPT
+        with ESMTP id S235527AbjHOHu0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Aug 2023 03:49:52 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2ED211A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Aug 2023 00:49:50 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-4f13c41c957so1561117e87.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Aug 2023 00:49:50 -0700 (PDT)
+        Tue, 15 Aug 2023 03:50:26 -0400
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E193111A;
+        Tue, 15 Aug 2023 00:50:24 -0700 (PDT)
+Received: by mail-yb1-xb33.google.com with SMTP id 3f1490d57ef6-d62ae3fc7f1so3876934276.2;
+        Tue, 15 Aug 2023 00:50:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1692085789; x=1692690589;
+        d=gmail.com; s=20221208; t=1692085824; x=1692690624;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JXOEvzRF8ADpNQSaByqRT4RWjoHlgIorYKOCNB0xrSo=;
-        b=ctI2X5htkoAwJxA2kfQY81apo4f+wOZMRTR4YSRI2MhUTPTrl1aaQxfvGnkOK021Xh
-         N2b6oekgxREzZSBd26EtP2sXHYTmO4B9wM/i9SlqSuK8I2WTsnM40oatmwc5vZcC6UsX
-         dxeGlWj27TUrD/saPJfipYs6jTOAXOCVPpCS0=
+        bh=FA7UNvLh/NtwE8oB7thsQ+ZgxpcPVqBILp5Db1EACXc=;
+        b=i0vKNHq1GyS7aJEKx4XbRrsU+PCcQIEbW/RUDNyYjiAhDowmhMMCSpCW5uqmbQYhfU
+         0aUkNENEhyHUH4Og5FtJz4fLzUNs8pGPtvJaT5Pkmq4GcQ/RG1xOk8lJmVot4NzXWVVT
+         +EMe6Dsl16OBo1dKVXSrxy5sAXiDQQSezHfSLr+N0mYaql5ivZV9RC8qIGjF3BhqSdKg
+         j5NtGUd5VhucPZcectiLfIEWE2KX5unNEKK4w7eXIN6v5EBbc+sUKe2KXowzCE0hsBLU
+         IEfIZ1j3G9HfgN28SkhRqgplcntyqqZY6LS3sxLFknEs9+E4rix/NQLSeE45SDLAtyzU
+         d/Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692085789; x=1692690589;
+        d=1e100.net; s=20221208; t=1692085824; x=1692690624;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JXOEvzRF8ADpNQSaByqRT4RWjoHlgIorYKOCNB0xrSo=;
-        b=iRXxfIXcyxfLi1OJeqwzjKezsL6I1h4grX9ok7kWmiof17H2vACinQI2OTVz+srhkk
-         Le1h1QnD0U42eeJauWBEtohYsfd/KQyoazcMbiBwws2U6MXKV7ShoG7QblUnKmvaMHuL
-         e3nO7YAccvleftD09H7ldFOIbk2VGzzUHWnA5Yylr3usmNCEQPk0L7VmIrCKu2bLfKCa
-         q3okuobAKj3qCKeiekSQrptPQ5NSJEupVZOqKfLCXsJx1rdaa/BL/3Jpf7UTfGhMbS9Q
-         xoDiHdpU2ssJQb9jNg5zKBhvGmo03mEEnxegUCA4vgWhzEjpBDhoev5q/B/Uur8WK5cm
-         ZeDA==
-X-Gm-Message-State: AOJu0YyjIFi525RjcMSpruGLKntF+5Q3qXhxmzuw7fBlyAiBf8L/l4Xe
-        szxSotEzl71sIG8AmGcCfcTD21AI7EXj6loTKVGd4A==
-X-Google-Smtp-Source: AGHT+IGn1Ixr5bTVNGHlW/hSLsuoMvWjfq1mrKGq4Ekrskbsvt5z7tXbeqR2zu4QGtGdbLbRF6sbB0NZkd2uhSdrjUM=
-X-Received: by 2002:a05:6512:49a:b0:4fd:d0f7:5b90 with SMTP id
- v26-20020a056512049a00b004fdd0f75b90mr5999537lfq.4.1692085788398; Tue, 15 Aug
- 2023 00:49:48 -0700 (PDT)
+        bh=FA7UNvLh/NtwE8oB7thsQ+ZgxpcPVqBILp5Db1EACXc=;
+        b=ZHhllPBDibaR25bl1IevukHuIbk7uRzkHANvYN1CmWW98uxOV1zfwPk1UbGCfQcU1M
+         kV7dw8eI+4+oo8lqC0To6mYc51xwsBQjs50VqSEHFf+WzXIC5k8WTG7e4ab9m6Xg6/r0
+         YAjOA2A2TdEsBBuGeehR40LwTFq1w9zHUVGOOPCt1i8uTV5zAur1hNIXwHSo2GICeJjF
+         lFNKWbySHasMKY65CWu+Sfcq13RqSBOe6zIofxlnVdfC6/qLiNm3YMweo1i9VeIP6ao7
+         bivC7WVgsYiFSeYrxgi+7FTbSAyEsxqSKON4+zBGPc8tynTqrpYKJv5BwnkhjQ/p4tLW
+         uOAA==
+X-Gm-Message-State: AOJu0YxUZiu2Pd7rLB5Mdh5Ml6tGhbBPj+M4ftq9Mg807IchFZzNlM88
+        n/rWOIKSf2UA3z+pjnJD1vECX8JnT6nm4zl3z2s=
+X-Google-Smtp-Source: AGHT+IHaiDSMY+QkhVwb3BPgUZZO+nmIvLSHf5aXIVOauSuFeN6IaJFsD4dH94ZZRJntrGxxCFrmO4AX2M6byBZ62ig=
+X-Received: by 2002:a25:bf86:0:b0:c83:27d4:c0d6 with SMTP id
+ l6-20020a25bf86000000b00c8327d4c0d6mr9479331ybk.37.1692085824032; Tue, 15 Aug
+ 2023 00:50:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230814-devcg_guard-v1-4-654971ab88b1@aisec.fraunhofer.de> <202308151506.6be3b169-oliver.sang@intel.com>
-In-Reply-To: <202308151506.6be3b169-oliver.sang@intel.com>
-From:   Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date:   Tue, 15 Aug 2023 09:49:37 +0200
-Message-ID: <CAJqdLrrZAXn8hwReSFtP7x+G_ge-eOrx8A5gUvOZojQdwk4frw@mail.gmail.com>
-Subject: Re: [PATCH RFC 4/4] fs: allow mknod in non-initial userns using
- cgroup device guard
-To:     kernel test robot <oliver.sang@intel.com>
-Cc:     =?UTF-8?Q?Michael_Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>,
-        oe-lkp@lists.linux.dev, lkp@intel.com,
-        linux-fsdevel@vger.kernel.org,
+References: <20230811105300.15889-1-nj.shetty@samsung.com> <CGME20230811105648epcas5p3ae8b8f6ed341e2aa253e8b4de8920a4d@epcas5p3.samsung.com>
+ <20230811105300.15889-3-nj.shetty@samsung.com> <3b1da341-1c7f-e28f-d6aa-cecb83188f34@acm.org>
+ <20230814121853.ms4acxwr56etf3ph@green245> <abad92af-d8b2-0488-cc75-01a3f4e8e270@acm.org>
+In-Reply-To: <abad92af-d8b2-0488-cc75-01a3f4e8e270@acm.org>
+From:   Nitesh Shetty <nitheshshetty@gmail.com>
+Date:   Tue, 15 Aug 2023 13:20:12 +0530
+Message-ID: <CAOSviJ1XL1UyMk2Ur37cJpW5BJAE5Ts6J4BtTSRd2_h_NPtGCQ@mail.gmail.com>
+Subject: Re: [dm-devel] [PATCH v14 02/11] Add infrastructure for copy offload
+ in block and request layer.
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Nitesh Shetty <nj.shetty@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
+        Keith Busch <kbusch@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Quentin Monnet <quentin@isovalent.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gyroidos@aisec.fraunhofer.de,
-        stgraber@ubuntu.com
+        martin.petersen@oracle.com, linux-doc@vger.kernel.org,
+        gost.dev@samsung.com, Anuj Gupta <anuj20.g@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, mcgrof@kernel.org, dlemoal@kernel.org,
+        linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 15, 2023 at 9:18=E2=80=AFAM kernel test robot <oliver.sang@inte=
-l.com> wrote:
->
->
->
-> Hello,
->
-> kernel test robot noticed "WARNING:suspicious_RCU_usage" on:
->
-> commit: bffc333633f1e681c01ada11bd695aa220518bd8 ("[PATCH RFC 4/4] fs: al=
-low mknod in non-initial userns using cgroup device guard")
-> url: https://github.com/intel-lab-lkp/linux/commits/Michael-Wei/bpf-add-c=
-group-device-guard-to-flag-a-cgroup-device-prog/20230814-224110
-> patch link: https://lore.kernel.org/all/20230814-devcg_guard-v1-4-654971a=
-b88b1@aisec.fraunhofer.de/
-> patch subject: [PATCH RFC 4/4] fs: allow mknod in non-initial userns usin=
-g cgroup device guard
->
-> in testcase: boot
->
-> compiler: gcc-12
-> test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
->
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
->
->
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202308151506.6be3b169-oliver.san=
-g@intel.com
->
->
->
-> [   14.468719][  T139]
-> [   14.468999][  T139] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [   14.469545][  T139] WARNING: suspicious RCU usage
-> [   14.469968][  T139] 6.5.0-rc6-00004-gbffc333633f1 #1 Not tainted
-> [   14.470520][  T139] -----------------------------
-> [   14.470940][  T139] include/linux/cgroup.h:423 suspicious rcu_derefere=
-nce_check() usage!
+We had kept this as a part of blk-types.h because we saw some other functio=
+ns
+trying to do similar things inside this file (op_is_write/flush/discard).
+But it should be okay for us to move it to blk-mq.h if that=E2=80=99s the r=
+ight way.
 
-Most likely it's because in "cgroup_bpf_device_guard_enabled" function:
+Thank you,
+Nitesh Shetty
 
-struct cgroup *cgrp =3D task_dfl_cgroup(task);
 
-should be under rcu_read_lock (or cgroup_mutex). If we get rid of
-cgroup_mutex and make cgroup_bpf_device_guard_enabled
-function specific to "current" task we will solve this issue too.
-
-> [   14.471703][  T139]
-> [   14.471703][  T139] other info that might help us debug this:
-> [   14.471703][  T139]
-> [   14.472692][  T139]
-> [   14.472692][  T139] rcu_scheduler_active =3D 2, debug_locks =3D 1
-> [   14.473469][  T139] no locks held by (journald)/139.
-> [   14.473935][  T139]
-> [   14.473935][  T139] stack backtrace:
-> [   14.474454][  T139] CPU: 1 PID: 139 Comm: (journald) Not tainted 6.5.0=
--rc6-00004-gbffc333633f1 #1
-> [   14.475296][  T139] Hardware name: QEMU Standard PC (i440FX + PIIX, 19=
-96), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> [   14.476298][  T139] Call Trace:
-> [   14.476608][  T139]  dump_stack_lvl+0x78/0x8c
-> [   14.477055][  T139]  dump_stack+0x12/0x18
-> [   14.477420][  T139]  lockdep_rcu_suspicious+0x153/0x1a4
-> [   14.477928][  T139]  cgroup_bpf_device_guard_enabled+0x14f/0x168
-> [   14.478476][  T139]  devcgroup_task_is_guarded+0x10/0x20
-> [   14.478973][  T139]  may_open_dev+0x11/0x44
-> [   14.479367][  T139]  may_open+0x115/0x13c
-> [   14.479727][  T139]  do_open+0xa1/0x378
-> [   14.480113][  T139]  path_openat+0xdc/0x1bc
-> [   14.480512][  T139]  do_filp_open+0x91/0x124
-> [   14.480911][  T139]  ? lock_release+0x62/0x118
-> [   14.481329][  T139]  ? _raw_spin_unlock+0x18/0x34
-> [   14.481797][  T139]  ? alloc_fd+0x112/0x1c4
-> [   14.482183][  T139]  do_sys_openat2+0x7a/0xa0
-> [   14.482592][  T139]  __ia32_sys_openat+0x66/0x9c
-> [   14.483065][  T139]  do_int80_syscall_32+0x27/0x48
-> [   14.483502][  T139]  entry_INT80_32+0x10d/0x10d
-> [   14.483962][  T139] EIP: 0xa7f39092
-> [   14.484267][  T139] Code: 00 00 00 e9 90 ff ff ff ff a3 24 00 00 00 68=
- 30 00 00 00 e9 80 ff ff ff ff a3 f8 ff ff ff 66 90 00 00 00 00 00 00 00 00=
- cd 80 <c3> 8d b4
->  26 00 00 00 00 8d b6 00 00 00 00 8b 1c 24 c3 8d b4 26 00
-> [   14.485995][  T139] EAX: ffffffda EBX: ffffff9c ECX: 005df542 EDX: 000=
-08100
-> [   14.486622][  T139] ESI: 00000000 EDI: 00000000 EBP: affeb888 ESP: aff=
-eb6ec
-> [   14.487225][  T139] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAG=
-S: 00200246
+On Mon, Aug 14, 2023 at 8:28=E2=80=AFPM Bart Van Assche <bvanassche@acm.org=
+> wrote:
 >
+> On 8/14/23 05:18, Nitesh Shetty wrote:
+> > On 23/08/11 02:25PM, Bart Van Assche wrote:
+> >> On 8/11/23 03:52, Nitesh Shetty wrote:
+> >>> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+> >>> index 0bad62cca3d0..de0ad7a0d571 100644
+> >>> +static inline bool op_is_copy(blk_opf_t op)
+> >>> +{
+> >>> +    return ((op & REQ_OP_MASK) =3D=3D REQ_OP_COPY_SRC ||
+> >>> +        (op & REQ_OP_MASK) =3D=3D REQ_OP_COPY_DST);
+> >>> +}
+> >>> +
+> >>
+> >> The above function should be moved into include/linux/blk-mq.h below t=
+he
+> >> definition of req_op() such that it can use req_op() instead of
+> >> open-coding it.
+> >>
+> > We use this later for dm patches(patch 9) as well, and we don't have
+> > request at
+> > that time.
 >
+> My understanding is that include/linux/blk_types.h should only contain
+> data types and constants and hence that inline functions like
+> op_is_copy() should be moved elsewhere.
 >
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20230815/202308151506.6be3b169-ol=
-iver.sang@intel.com
->
->
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+> Bart.
 >
