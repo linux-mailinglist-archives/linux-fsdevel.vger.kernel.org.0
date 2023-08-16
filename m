@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8554377E3B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 16:35:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F181877E3AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 16:34:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343661AbjHPOeb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Aug 2023 10:34:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40200 "EHLO
+        id S1343648AbjHPOd7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Aug 2023 10:33:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343694AbjHPOeU (ORCPT
+        with ESMTP id S1343653AbjHPOdv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Aug 2023 10:34:20 -0400
-Received: from outbound-ip7b.ess.barracuda.com (outbound-ip7b.ess.barracuda.com [209.222.82.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B2F42716
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 07:33:54 -0700 (PDT)
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2168.outbound.protection.outlook.com [104.47.58.168]) by mx-outbound21-191.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Wed, 16 Aug 2023 14:33:27 +0000
+        Wed, 16 Aug 2023 10:33:51 -0400
+Received: from outbound-ip7a.ess.barracuda.com (outbound-ip7a.ess.barracuda.com [209.222.82.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BD3C271E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 07:33:43 -0700 (PDT)
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2102.outbound.protection.outlook.com [104.47.70.102]) by mx-outbound10-189.us-east-2a.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Wed, 16 Aug 2023 14:33:28 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PxrFSPqmbJzQ5sMeG4WgaI9kItHkzl9azfOehVHaM+umKrjMJ3HR0RYqf6ULtpyakpx4ewCs3V1/HSPM1PZ+B+UnDCiAkuN4RzyFVqrTovASgT0AKSVGKOaVtgbiDeswYHJOqCRJ6eVKkSxg2kqKm7zXmbQ8ogsWxQ/Fa2qHL1LMh1C/Xk/es6XgtcDXuBt1WewL/ypUP0wkSaZd9bd/oJYZf8c6mZ1oaxEdO2+o5+BAf6P0okGrKCGjFmtPLkJG3n4BX/Ix7iHXk2psqB6xW/FBrmuLa2tseUrM7rVGRYThoYeUkxOnjmFddV548h7nw0bbzjB7fQG0o5dkZ32i5w==
+ b=NU1NWYkNaiPO/5CaWQxhEZy0tCKgZmaXMa2/cFWi3dg/g7Jlpx/GAmsCaurkT5nAM6HMEFB83qv8WGB2tp0xR4/K3FBm9p5f9O0Anhs1+RefTgIr8TlNsYIhDbin4hjzyEtDdyqkHT+YC0M1jkq0P7A1II2XmaPjbLIuUr1Bq4g3jHD9lgNT/bGgWZtva/hbM7RMaJKEPq4V8jdt69Xv23L8ipeTKHgupUW1YV4tnebrFmJm7kmEPGXGK7akJmtWb2n9klg9PA/Uux95DouASlQJP9a5301pYQwlhaHbbTcIepmAxjk9O0visGrDeRzBPhup4PGEtjYHIINTnM50ug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xmEmPXCVGNyRKJseNwAauz79I6pJIrpWZA41rsMD+X4=;
- b=CvX0wkGz8l6dG1s/HrX7iOhX8jq5yF3MGu8+Ev/0pdzmpXbiIWyIVF5nHej8a+MCF/POVUkqwzYKJF0sgvSlg4MttWNbiiTD+tyKGkckM1vp1axB50hws7zl40bCFtXeBBW0uypEaNAPSm0AVeUbriJx03gC7nUUKdnnr5y3niEozLhAkTUwjOy/fDwlni+JvLdMyLHYLaoQ1kdfxpaA0oh96YgvQXNKF5RJxo11j52Nb1GSt0yiDeWRjkgOq2dVgjF67ia7EORRUg56R28e8JLMw6hh7gMSKMzQNgNaSe+mwKY2y44Z5tQ4yWj9K+i+YaoG5hkN0DRbFTJ4EbC3Og==
+ bh=6RyHP8MWUcfxnqGv2FS0zugv49b85MMPFbsW99XNlig=;
+ b=UrVYRXdKLighCoAgsSDij/7lVYs76H4rs0+EhyP3yEWSfaTMdzaw1BA+cnUovV/NwhP4kJIwxEbUiRPRVTA/h1qH6lA511ehoy8LaLjcUPx26GzALyhpRhJ/Qx7IPKTKpNaUfItrOSVPFpvRyaByvgt4Bpr1d80xFpzbpekFyNsVhGVsIfQD/SbD7Fj3Q6CWURUFkc91gn+lW9Z648Lv4++HpTHWRg+SM6qv2RMBtER6BzAMdSijq9GvbSAJ0439WRNcljuw1yQUzaxlQTo2VP9ukcrFqVRo6KQPe8Zyi/y4I8psX0h79b9BWUo9er3CT9DZ/Swu7C+glLqbVCnOGQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
  (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
  (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xmEmPXCVGNyRKJseNwAauz79I6pJIrpWZA41rsMD+X4=;
- b=mZ9nM5onAdDck/ili6aDekXdLJcg7iq/Rzyaia1uD9W4Ld2VrmJZcg1fheAzTn92HZyHMBrU0CaYsd5UEI+OF3yHE6NBDFxTpsZOPn6RSp36gcIPJS27Feee4Jt8WEpj0fydKdZZh+MXbtLvYulzrR+8sc9niJQ1JewonuH5vks=
-Received: from BN9PR03CA0570.namprd03.prod.outlook.com (2603:10b6:408:138::35)
- by CH2PR19MB3783.namprd19.prod.outlook.com (2603:10b6:610:9e::17) with
+ bh=6RyHP8MWUcfxnqGv2FS0zugv49b85MMPFbsW99XNlig=;
+ b=yNywD1TaLxbqyIgAch4DG0aS+1oBVi8rW10dDoF8ndrDTkf45QIgI9mMn4+NtZgst+V6ISSXmqsCojdnbqXcK9LDsC6fxjPQToJfxtJ+OL5jvh5hPbawg1L/7XGDXkiKB0AukNh4iDKArqXFxN9RDGK/LiUk0sYDFMaT5ZS9Yek=
+Received: from MW4PR02CA0008.namprd02.prod.outlook.com (2603:10b6:303:16d::27)
+ by DM4PR19MB7191.namprd19.prod.outlook.com (2603:10b6:8:111::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6678.29; Wed, 16 Aug
- 2023 14:33:20 +0000
-Received: from BN8NAM04FT038.eop-NAM04.prod.protection.outlook.com
- (2603:10b6:408:138:cafe::71) by BN9PR03CA0570.outlook.office365.com
- (2603:10b6:408:138::35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6678.30; Wed, 16 Aug
+ 2023 14:33:24 +0000
+Received: from MW2NAM04FT039.eop-NAM04.prod.protection.outlook.com
+ (2603:10b6:303:16d:cafe::36) by MW4PR02CA0008.outlook.office365.com
+ (2603:10b6:303:16d::27) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6652.33 via Frontend
- Transport; Wed, 16 Aug 2023 14:33:19 +0000
+ Transport; Wed, 16 Aug 2023 14:33:24 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
  smtp.mailfrom=ddn.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=ddn.com;
@@ -48,84 +48,64 @@ Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
  50.222.100.11 as permitted sender) receiver=protection.outlook.com;
  client-ip=50.222.100.11; helo=uww-mx01.datadirectnet.com; pr=C
 Received: from uww-mx01.datadirectnet.com (50.222.100.11) by
- BN8NAM04FT038.mail.protection.outlook.com (10.13.161.43) with Microsoft SMTP
+ MW2NAM04FT039.mail.protection.outlook.com (10.13.30.110) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6699.17 via Frontend Transport; Wed, 16 Aug 2023 14:33:19 +0000
+ 15.20.6699.15 via Frontend Transport; Wed, 16 Aug 2023 14:33:24 +0000
 Received: from localhost (unknown [10.68.0.8])
-        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 77F2420C684D;
-        Wed, 16 Aug 2023 08:34:25 -0600 (MDT)
+        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 4F51D20C684B;
+        Wed, 16 Aug 2023 08:34:30 -0600 (MDT)
 From:   Bernd Schubert <bschubert@ddn.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     bernd.schubert@fastmail.fm, fuse-devel@lists.sourceforge.net,
         Bernd Schubert <bschubert@ddn.com>,
         Miklos Szeredi <miklos@szeredi.hu>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dharmendra Singh <dsingh@ddn.com>,
-        Horst Birthelmer <hbirthelmer@ddn.com>
-Subject: [PATCH v8 0/6] fuse: full atomic open and atomic-open-revalidate
-Date:   Wed, 16 Aug 2023 16:33:07 +0200
-Message-Id: <20230816143313.2591328-1-bschubert@ddn.com>
+        Dharmendra Singh <dsingh@ddn.com>
+Subject: [PATCH 1/6] fuse: rename fuse_create_open
+Date:   Wed, 16 Aug 2023 16:33:08 +0200
+Message-Id: <20230816143313.2591328-2-bschubert@ddn.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230816143313.2591328-1-bschubert@ddn.com>
+References: <20230816143313.2591328-1-bschubert@ddn.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM04FT038:EE_|CH2PR19MB3783:EE_
+X-MS-TrafficTypeDiagnostic: MW2NAM04FT039:EE_|DM4PR19MB7191:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: db3a8f1f-6da8-40ab-a252-08db9e65bcc0
+X-MS-Office365-Filtering-Correlation-Id: f9987b7b-c8cb-407e-f5a7-08db9e65bf83
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 9f9Qu4hanzuGEeBkR78wkS49UBb6/E7DqMQN+X4LphFYTMaXUZcnlPDeJmUdHh6t7EV7wdVyi4PLJO0ffhJRLQWsnjEQphav72dVVdQEH5TzMBvxlgVFYsMHBcb0+wJtS6LIVc0gsiZD8m//t3XFyTr1hIRPOop4PmI+ZXyTzeq00YKa4brt4V75XGIWduoU/OdBiWSmy9seyjH3feMzSDaOE3T9vapkx61/MrFDamSIPYWums6EDZzOOdzaGmidar4jbg7i2plzdFqshBImQdHAnnX1W4+bMYeCMFerW/MePkilF2nUCrVDU0IgM/7Pdp1W9qKIPgwuT5IJqXXDfjKQWNs8dOBeYjgL+qg12swLdjdK3qc/ByQjxDmR/ccRfu/qAz1PqlPA4n/Qn10P7Vng9SY5YqZbRtixBwYhc9GSduXtwmM/mW5El7U924HIS7H6/Mlauw/Vsffu7DId9dj/U1wK4J5XGepJ5uneDapOxW19bPP/xdksKL6aHimXvfMmtcGnRJ2Z6jcQQRQFPwlF/F45M1/AdJWBj8NeF/JsgdK3MXMvGIAv5KMtB8t8ZpJDp0eRqa6JBiNKGJzTXTgK4iZ0dA3VRwVllk+vCApOrAVvNDLr3syQHymcIKIyTvCTy/1dFvRPY4ML49PgXlyQSmjUwe7lH+uvVNuXiMPjLKQxc5mn7JlFvpf3yiRfiA1X3cGQeWxsv7eCGxSJyIuIS4jRVBUh/0IT+XLXrfQGSJipygjOFmhmpxOWPCCjxjrPYu6L2ob6UAGtQNxsQw==
-X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(396003)(346002)(376002)(136003)(39850400004)(1800799009)(451199024)(186009)(82310400011)(46966006)(36840700001)(316002)(54906003)(356005)(82740400003)(6916009)(81166007)(70586007)(70206006)(966005)(36860700001)(41300700001)(5660300002)(47076005)(8676002)(4326008)(8936002)(2906002)(83380400001)(26005)(40480700001)(478600001)(336012)(6266002)(86362001)(36756003)(6666004)(1076003)(2616005)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 5xH9fP0pjgIso3x2xlF8q1asnhwzaa1b3+GuyNkxT4LsEm+DG9OeeEpX38zsvaMeKoJNhEaEIuumYY9c/d/3rWbATeCuxZJWMrTie+XK43Xox7hFX5F8tCk8kAAx7lS36Fw0WiXb/hA1JDnVnWnUDbbSWpKiY/njCj3cEjRlbBF8EJC2TVIIcxDwp/6Ipoz4CXgAWr0FTxkF9bNQJ0kOdJ+T93eox80vb1qksEJeICXAuaSmlsSGkx8GgpuQtDjaSyU443bdVpyyly5TY/mztCadG+FJUHWyIJ79EKylIVT1MWn9Eli5DcZlCKRv4cF4OXN8b3qjhvyRVl7BtiBb0xpNBqVk1eH5a5gR7WSBuZIMOgZRQtjIFHl3Q9Z9qd7KsL0IEyldDLMqPS/RiTinY++8jvh3ESj4ysjebz7KK3NfhQdBUOyP3zUoVGIXvqiNJkHiCGLO/z37kq2Y+0XsDfUfiLBdtAIj6TPG4+dVC2NUgBTNgL+iyzhfUriTsssmlnE3gMy7q4Gi3e0B6t2CLYFl/SBdBlHaHhUT+JIphzyJMYXnNFBzm6HtpqhCaOclkmaKl8B77slOV/NI5GMULqijRl84GeP8SM6b86oetroqJqpuhqaV9hRI3MwXmc/8rlMUewRRd0FV871wtqSq145NVVOH6M6XR5xJoosuyFI8t1CFVE9te0wc150VKRRlGoELIoFRXcQWlKJaR2WHbTDZ+5/v8tAxD6qqK8RyN6y7Q12JmsJ4yQf+s/dIjr4w
+X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(396003)(346002)(376002)(136003)(39850400004)(1800799009)(451199024)(186009)(82310400011)(46966006)(36840700001)(316002)(54906003)(356005)(82740400003)(6916009)(81166007)(70586007)(70206006)(36860700001)(41300700001)(5660300002)(47076005)(8676002)(4326008)(8936002)(2906002)(83380400001)(26005)(40480700001)(478600001)(336012)(6266002)(86362001)(36756003)(6666004)(1076003)(2616005)(36900700001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?us-ascii?Q?loFMzDktTlkyKxeQMOIOZEvcbvuuP5A6xDF1sgzP8xXb1uet9IOgUaviORoU?=
- =?us-ascii?Q?HlMuP6skEKLdvuHpEA2jAMOu1919l9PfjJSBaLYB5J3klIzkqEsIUmHenkQo?=
- =?us-ascii?Q?w2DUJHVYRlmYPWqo9nMRQcYiVgn9H4sGabeSBPFoXYarhmQuFfLnzvT4Bsa/?=
- =?us-ascii?Q?qtx4Z6BEJjt2FaW3SX/L+89J+n4Xtc5Bw0vguwmcdS19bjFtD5/97fMPOmit?=
- =?us-ascii?Q?kjtKQaV7J0spjX94tKGTg26O+FA0ziy/fGe7LK/bb5ULi1xbLG9qAu9b+tFy?=
- =?us-ascii?Q?tEykr8qh3eADtgZaILKSGFcyBRiF+7O17GWGfwIVzOnX+LK6YP/djpFSS9CC?=
- =?us-ascii?Q?m3CUEPQDwBv5mlEtkAmTSjb+Lr1wGfSBopJ6cUEd5xEYJZDHVZyzqrf4zxCk?=
- =?us-ascii?Q?LWq/F1ElkUKLsFkh2Umhpggk2GQ6/M2M+UMpKQPQwBjTQtOTMnEzrcTHif0s?=
- =?us-ascii?Q?X7qUET/peb20EBHvNsHGi/LpkHwuy32KFhKkze5sPdMKsIGH9rM9innJVSj/?=
- =?us-ascii?Q?jIrCWi73Mlks+AIPYgn5pYGzVtP7J0IdTU/gyjmkBqh7AHdIgORPbD98HPHs?=
- =?us-ascii?Q?8cxpPLkKtxXiHxBnnmBMUfE+cwj8OfUHOxK78TqcTSmhaVjrB/GbbqQnQiAe?=
- =?us-ascii?Q?50IaoVf1tTqXhMrJUnfNgStrdPnG8TVXeeFLj1D3pjtluJkK9D8LhRk+LW3G?=
- =?us-ascii?Q?kiWsTW5TPDUKvSACQYpnBoHVVUgMU2bgRh+wOlt8Afx9Ui2RsUV0cwjd9Trn?=
- =?us-ascii?Q?DC2L6iocf9vJybqC9XfSyFXuChc7jDle/z+xxb6BqSS/fXt/D7IPleCZ1lLB?=
- =?us-ascii?Q?O39NL831G8cQv7/g3h2tOpbtPcUNGm4Zz4jZ0erE7vg+pOoJZbIFtpp5mE1c?=
- =?us-ascii?Q?1xvg4BpZ6yjFf+FbnFwAWHQBrxZVf3Ek9cn8veskEnFy2s+kTg7OATB+87qb?=
- =?us-ascii?Q?V/yXCH2/2ZEWt5Ji+aXLgFmjelIuzJb9B1WGSAZp5YNicFQM6euprkFJ8Xss?=
- =?us-ascii?Q?J3CGsIcld6he8uMZ4+KlW8aBzg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 5sE1VrAbbNd/9F+xYkO9ZLq3iApp+LuZ5xs9PArSYZa9JsBSXiVlTJZ8qpw3ts0jXa8HGdCWA0cCuRrYxmcejArcHnsNdVDDP4W+XVcoo5esBvAmZC/JvrPmH09prSpl8p2ENfL7ubq5WZUMWbksMrA4hxdfafoy5weLAXoQybZlo+z3nlaX3p3uTsMSe/tG37VqgqXfwMthxggmUZl+w+1XCgHbSeY7qks9kvDnMWZrtP3BcB5KyZsyj0KUHwbFG8hNaLO1g5gDdaVvs/FrIK8Ot2BC6/qg6PFUYsyNce3kitaFZz9yN7pDDBF6zyFgdjuYwN1xgKJAww4RpOvyxcRKie+fi02Pv9aF2dNbQB4KGndPBXwntfZgtb9xO2RQdd8XrQdv07M+t/ZI1SO5G9u4NLy79noQsSwXIAhn2k37uyJ6Scc8ExZvG0ytpXvognrO3MZYCgfH6oqQYA7z9Lqv4HYWV/J3DlZxWXaZ48LxPPxsC9jWWiSdZjCt3i92PTkbfVCLVQ9CFaFBqMvqAiAXLtJNfiZHOrlxL1VngN95XEJs0BW3uspTafDKXPEz3uGDUxShzgFizR42ws9gXyojdywrHko+igMXWBpTCnjeI5f6wkqBf7DDAoPssYb8gVrk0+3cw2c4JWqw7u19Dbl8RORNoHqPSU0ObzqdevXXnGwtRUWzZ4Y/KkJCSncfCwUAugl2fgslRMcPHWriFf63ghaXDLSM/VFwQ1bu7VfnwUaLBQDmYitfIWvGY0Kpkq5/FJUDD4T8wohwigUrIaxARx9wbShvHHHot5HHBsqNRcyELk6v3K+ApFB8I7EvTkACgT4L+UvfSdt8ZxLKqAKVjwlvf1TGRCG5XKnM8d6JmbJj5U8Ie606Jsubw4HdJ3AvC5MBTUPXXGokBvsZYjde8ZGuPQl/5QmwqVTeLEs=
 X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2023 14:33:19.7277
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2023 14:33:24.4257
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: db3a8f1f-6da8-40ab-a252-08db9e65bcc0
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9987b7b-c8cb-407e-f5a7-08db9e65bf83
 X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mx01.datadirectnet.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM04FT038.eop-NAM04.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: MW2NAM04FT039.eop-NAM04.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR19MB3783
-X-BESS-ID: 1692196407-105567-24272-1026-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR19MB7191
+X-BESS-ID: 1692196408-102749-1080-1092-1
 X-BESS-VER: 2019.1_20230807.1901
-X-BESS-Apparent-Source-IP: 104.47.58.168
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVqaWxpZAVgZQMNk4JcnQzNjC0D
-        zR0NgiNSUtyczS3CItJdkw0TDV1MhUqTYWALERpsNBAAAA
-X-BESS-Outbound-Spam-Score: 0.40
+X-BESS-Apparent-Source-IP: 104.47.70.102
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoamxpZAVgZQMC0pOTXR0MI4Nc
+        08JSXZxNDSPNkiNdHIwCLJ0sDQLNVEqTYWAO12wolBAAAA
+X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.250184 [from 
-        cloudscan19-195.us-east-2b.ess.aws.cudaops.com]
+        cloudscan17-27.us-east-2b.ess.aws.cudaops.com]
         Rule breakdown below
          pts rule name              description
         ---- ---------------------- --------------------------------
-        0.40 BSF_SC0_SA085b         META: Custom Rule SA085b 
         0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.40 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_SC0_SA085b, BSF_BESS_OUTBOUND
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
 X-BESS-BRTS-Status: 1
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
         URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -134,159 +114,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In FUSE, as of now, uncached lookups are expensive over the wire.
-E.g additional latencies and stressing (meta data) servers from
-thousands of clients. With atomic-open lookup before open
-can be avoided.
+Just preparation work for atomic open.
 
-Here is the link to performance numbers
-https://lore.kernel.org/linux-fsdevel/20220322121212.5087-1-dharamhans87@gmail.com/
-
-Here is the libfuse pull request
-https://github.com/libfuse/libfuse/pull/813
-
-The patches are passing passthrough_hp xfstests (libfuse part applied),
-although we had to introduce umount retries into xfstests, as recent
-kernels/xfstests fail umount in some tests with
-EBUSY - independent of atomic open. (Although outstanding for v7)
-
-I'm especially interested in Al's and Christians opinion about the
-atomic open dentry revalidation in v7. If the vfs changes are 
-acceptable, would it be possible to also look at the other patches
-and their vfs/dcache interaction? I __hope__ I got it right and I hope
-the vfs can be accepted.
-
-v8: - Another slight indentation fix in _fuse_atomic_open
-    - Fix compilation error in patch 4 (fuse atomic revalidate)
-    - Remove LOOKUP_ATOMIC_REVALIDATE
-    - Switch from DCACHE_ATOMIC_OPEN flag to return value and
-      and introduce an enum for d_revalidate return values.
-    - checkpatch fixes
-
-v7: - Indentation and style fixes for _fuse_atomic_open.
-    - Remodel atomic open to avoid races with parallel lookup, similar
-      to NFS commit c94c09535c4debcc439f55b5b6d9ebe57bd4665a and what
-      is done in _nfs4_open_and_get_state()
-      A WARN_ONCE() and fallback is added to ensure operation is on
-      negative dentries only.
-    - Error handling is done via the fallback fuse_create_open()
-      to reduce complexity and code duplication.
-    - Remove entry cache invalidation on ENOENT in the atomic-open
-      patch, as atomic-open so far operates on negative dentries only.
-    - Remove fuse_advise_use_readdirplus() in _fuse_atomic_open
-      (Thanks Miklos)
-    - Add forgotten free_ext_value() (Thanks Miklos).
-    - Declare struct fuse_inode per condition as the value needs to
-      be retrieved anyway per condition.
-    - Added atomic open-revalidation and required vfs changes
-    - Added myself (Bernd) as Co-developed-by to Dharmendras patches, as
-      I did substantial modifications.
-    - More as reminder for myself, so far these tests below are
-      done manually or with custom scripts, I think we need xfstests
-      for these.
-
-        With updated libfuse /scratch/dest is mounted by:
-        passthrough_hp -o allow_other --foreground --debug-fuse /scratch/source /scratch/dest
-
-        1) Test atomic open (file create) and negative dentry open
-
-            rm -f /scratch/source/file # ensure file does not exist
-            mount /scratch/dest  # overlay of /scratch source
-            echo a > /scratch/dest/file # non-existing file
-            umount and mount /scratch/test (clear cache)
-            cat /scratch/dest/file
-            rm -f /scratch/dest/file
-
-        2) Test dir open
-
-            mkdir /scratch/source/dir
-            mount /scratch/dest  # overlay of /scratch source
-            cat /scratch/source/dir
-            rmdir /scratch/source/dir
-
-        3)  Test revalidate without file change
-
-            mount /scratch/dest
-            echo "a" > /scratch/dest/file
-            echo "b" >> /scratch/dest/file
-            echo "c" >> /scratch/dest/file
-            cat /scratch/dest/file
-            rm -f /scratch/dest/file
-
-        4)  Test revalidate by underlying file change
-
-            mount /scratch/dest
-            echo "a" > /scratch/dest/file
-            cat /scratch/dest/file
-            rm -f /scratch/source/file # unknown to dest mount
-            str="b"
-            echo "${str}" > /scratch/source/file
-            reval=$(cat /scratch/dest/file)
-            if [ "$str" != "reval" ]; then
-                echo "String mismatch after revalidation"
-                exit 1
-            fi
-            rm -f /scratch/dest/file
-
-        5) Test revalidate by underlying file change, but with
-           O_CREATE included. Tests dentry creation by the atomic
-           revalidate
-
-            mount /scratch/dest
-            echo "a" >> /scratch/dest/file
-            rm -f /scratch/source/file
-            echo "b" > /scratch/source/file
-
-            # revalidate includes O_CREATE
-            echo "c" >> /scratch/dest/file
-
-        6) Repeat above tests, but with additional "--nocache"
-           passthrough_hp option
-
-v6: Addressed Miklos comments and rewrote atomic open into its own
-    function. Also dropped for now is the revalidate optimization, we
-    have the code/patch, but it needs more testing. Also easier to
-    first agree on atomic open and then to land the next optimization.
-
-v5: Addressed comments
-
-v3: Addressed comments
-
-v4: Addressed all comments and refactored the code into 3 separate patches
-    respectively for Atomic create, Atomic open, optimizing lookup in
-    d_revalidate().
-
-v3: handle review comments
-
-v2: fixed a memory leak in <fuse_atomic_open_common>
-
-
-Bernd Schubert (5):
-  fuse: rename fuse_create_open
-  fuse: introduce atomic open
-  fuse: Revalidate positive entries in fuse_atomic_open
-  fuse: revalidate Set DCACHE_ATOMIC_OPEN for cached dentries
-  fuse: Avoid code duplication in atomic open
-
-Miklos Szeredi (1):
-  [RFC] Allow atomic_open() on positive dentry
-
- fs/fuse/dir.c             | 398 +++++++++++++++++++++++++++++++++++++-
- fs/fuse/fuse_i.h          |   6 +
- fs/namei.c                |  17 +-
- include/linux/dcache.h    |   6 +
- include/linux/namei.h     |   1 +
- include/uapi/linux/fuse.h |   3 +
- 6 files changed, 422 insertions(+), 9 deletions(-)
-
+Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Dharmendra Singh <dsingh@ddn.com>
-Cc: Horst Birthelmer <hbirthelmer@ddn.com>
 Cc: linux-fsdevel@vger.kernel.org
+---
+ fs/fuse/dir.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 35bc174f9ba2..6ffc573de470 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -613,7 +613,7 @@ static void free_ext_value(struct fuse_args *args)
+  * If the filesystem doesn't support this, then fall back to separate
+  * 'mknod' + 'open' requests.
+  */
+-static int fuse_create_open(struct inode *dir, struct dentry *entry,
++static int _fuse_create_open(struct inode *dir, struct dentry *entry,
+ 			    struct file *file, unsigned int flags,
+ 			    umode_t mode, u32 opcode)
+ {
+@@ -753,7 +753,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+ 	if (fc->no_create)
+ 		goto mknod;
+ 
+-	err = fuse_create_open(dir, entry, file, flags, mode, FUSE_CREATE);
++	err = _fuse_create_open(dir, entry, file, flags, mode, FUSE_CREATE);
+ 	if (err == -ENOSYS) {
+ 		fc->no_create = 1;
+ 		goto mknod;
+@@ -879,7 +879,7 @@ static int fuse_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
+ 	if (fc->no_tmpfile)
+ 		return -EOPNOTSUPP;
+ 
+-	err = fuse_create_open(dir, file->f_path.dentry, file, file->f_flags, mode, FUSE_TMPFILE);
++	err = _fuse_create_open(dir, file->f_path.dentry, file, file->f_flags, mode, FUSE_TMPFILE);
+ 	if (err == -ENOSYS) {
+ 		fc->no_tmpfile = 1;
+ 		err = -EOPNOTSUPP;
 -- 
-2.34.1
+2.37.2
 
