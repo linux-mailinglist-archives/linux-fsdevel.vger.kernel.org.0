@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1499977ED14
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 00:29:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E040177ED3B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 00:37:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346905AbjHPW2k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Aug 2023 18:28:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43680 "EHLO
+        id S1346939AbjHPWhV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Aug 2023 18:37:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346916AbjHPW2d (ORCPT
+        with ESMTP id S1346991AbjHPWhF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Aug 2023 18:28:33 -0400
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB7DC2727
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 15:28:29 -0700 (PDT)
-Received: by mail-pg1-x529.google.com with SMTP id 41be03b00d2f7-55b5a37acb6so886030a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 15:28:29 -0700 (PDT)
+        Wed, 16 Aug 2023 18:37:05 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFF6426A4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 15:37:01 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1bf11a7cf9fso146495ad.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 15:37:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1692224909; x=1692829709;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1692225421; x=1692830221;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=I6DoL1FR589LmYpx5awXGTxH/dn3Joi4BsWt0GZkdL0=;
-        b=BTZ0T5pdvBGF4gXK4qzltjfvHDHHZJ1jrvXRaMjjmPoe1azVTpMP7R7Cxx7YCDUtYa
-         iqLGuo/IKYHRcSsMaxCvuwKkJHpk8h+Ks0tR+TRuT+fJ7Ko8TYw15z36f8ZPkMGpnSqv
-         7eRYFCwUTtvbT0O0OphI4ugaHAcrPJqaykMlyFd/jGDh0k7Lg1r56jM1w8EzPRXzKHwC
-         D0fw30gS3yoPq578KoWBGA0ZGTXmMEudY+Ij73CdEXkyxEgHmBm64t6+7avLQ7D1d5oe
-         65xJ/dfs+cCFCx2qbMulydKeHyLb/4UlhhfUKa8lBReayapochpck9aJ/yQua5Sokq3B
-         75RA==
+        bh=Mu4dBuyA/Y0XWte76PlMvzUEOyFGLrBbyFYXcAZb4Dc=;
+        b=jbkrqsei1sWKpVR3Wm5wBadPC70zko1PZZOlFEmSsu9HvP2928Q2mth7XIiqmxhcTL
+         nBrdC5KkxxIcTBBDGwJO71ydjZHqlHYsSj0Ipjly+5nk02mah0jqzjojzfmkgdqPa6sp
+         ZFZIN9zOUFtV4dr78HCyZTEfZ++aj2LcFWpKb3s+FOFtT0TCuB7U3oTBEBliJ9P8lpD1
+         ZEclzs19PSZuANRPDA8a/VUGDUZnDp9QJL2yY7usj/lc/L/28Qzmu1g/FtqXaC8Tgd2h
+         nww3YhHe7Wm50v1UMoAEWv3YORvGFzeonp3eAc04zSv1kO+xnvzR12FpwF34RmiTgBKE
+         /Fiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692224909; x=1692829709;
+        d=1e100.net; s=20221208; t=1692225421; x=1692830221;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I6DoL1FR589LmYpx5awXGTxH/dn3Joi4BsWt0GZkdL0=;
-        b=Mct+hMO/y/USgY/grI4JS8jj3zwV9P6mka5jf6iAHS0CLkR+NFvKalKjP+fEqq7/Bs
-         3NZ1kN3cYZ6YpC8PaNY1+c/nnNeOPsWm21BOew66W2abAWArMMF9Crdq/4eu8Dt5qMzj
-         6yZT3hxATsoTr+Yu35Fm5VCkaOQvhJqVgL15AzmV39k+9KX18pQFl577ENfrHoWrKmNV
-         UabhEKuPT3gJYPa+a1w/O1HDx1Cbqw64XgI//QrE/Eo6sbGCWVzVpKkIbKOp333X3cLX
-         5zoDak95VisQJ/FhFV9UWVcO8wwvyhrbUzRcvg4WksA8Xc5wCqMpaKhDdbY/3s70uJQ1
-         lEMA==
-X-Gm-Message-State: AOJu0YxuAmJRl2cqroUyVltXVqNfHpr062WtKZ07qUbKrj3i3PQ7Sz+L
-        ZHFhraDGF/4Dq6dQ8KoT/jUZy/PVolBz1EGKilY=
-X-Google-Smtp-Source: AGHT+IHhBiGLtYdaRPXzs5eJ8Lr8N59jrHisIfxQDsvPglpO4DVvTxIUWle+piHsCiDwIkP4txUMrA==
-X-Received: by 2002:a17:902:e5cc:b0:1b8:a469:53d8 with SMTP id u12-20020a170902e5cc00b001b8a46953d8mr3759451plf.0.1692224908678;
-        Wed, 16 Aug 2023 15:28:28 -0700 (PDT)
+        bh=Mu4dBuyA/Y0XWte76PlMvzUEOyFGLrBbyFYXcAZb4Dc=;
+        b=aeibwWEi9M79A8AfCVRKAWlMD2EKsX0Ftgcgsj9vaqEWxJddmAMGKnSM4ForKrb0Yw
+         meTfdYDLOs+8d1I7yW0SkT2tKw3d81+Tc/4h4kcg9dVz2x+M5R2be+Y5Vn7neHFikFIA
+         uPwjOZAOQuZ9usvULDYL7Wp3NrtWfurYUecIEY1YnAmoDieGC+kfkg+2wVXcBW6dGcx6
+         RM/OH4ssVvaikAHZEk/gzYwe9TFIFElPcrq934LYGwDJcf/Na4TMcQk6iIQQAW0sZlmj
+         1SE/cNNdkGcI2nTrdsb0aCotW4eJuvwEKi+hfz4jQUgMjXlijBGk2enuLWK8czJCvpm9
+         q2RA==
+X-Gm-Message-State: AOJu0YyWHbM2LBIVFLogt0fGWf/LteHffATTX9udJ8E1T3TsQ0o0MnQ3
+        zOzD8wlj8D7FoqYCh+NqtLBAow==
+X-Google-Smtp-Source: AGHT+IF6SXz0bxpJWBH9xJ/dBged9ibuwaqDiticVd8ULaxI1eM+s0n/g93M1VNQbnrKZhu+8LSFYA==
+X-Received: by 2002:a17:903:41c2:b0:1b8:b0c4:2e3d with SMTP id u2-20020a17090341c200b001b8b0c42e3dmr3543868ple.4.1692225421109;
+        Wed, 16 Aug 2023 15:37:01 -0700 (PDT)
 Received: from ?IPV6:2600:380:4b6d:b7a2:213a:1ca6:4fb5:441a? ([2600:380:4b6d:b7a2:213a:1ca6:4fb5:441a])
-        by smtp.gmail.com with ESMTPSA id w14-20020a170902e88e00b001bbdf33b878sm13577254plg.272.2023.08.16.15.28.27
+        by smtp.gmail.com with ESMTPSA id j12-20020a170902c3cc00b001bdc208ab82sm10649937plj.97.2023.08.16.15.36.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Aug 2023 15:28:27 -0700 (PDT)
-Message-ID: <d67e7236-a9e4-421c-b5bf-a4b25748cac2@kernel.dk>
-Date:   Wed, 16 Aug 2023 16:28:25 -0600
+        Wed, 16 Aug 2023 15:37:00 -0700 (PDT)
+Message-ID: <7f8f397a-ebcb-46ca-9211-f9c8efd61b8a@kernel.dk>
+Date:   Wed, 16 Aug 2023 16:36:58 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: Possible io_uring related race leads to btrfs data csum mismatch
@@ -68,8 +68,8 @@ In-Reply-To: <db15e7a6-6c65-494f-9069-a5d1a72f9c45@gmx.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -77,148 +77,13 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 8/16/23 3:46 PM, Qu Wenruo wrote:
-> 
-> 
-> On 2023/8/16 22:33, Jens Axboe wrote:
->> On 8/16/23 12:52 AM, Qu Wenruo wrote:
->>> Hi,
->>>
->>> Recently I'm digging into a very rare failure during btrfs/06[234567],
->>> where btrfs scrub detects unrepairable data corruption.
->>>
->>> After days of digging, I have a much smaller reproducer:
->>>
->>> ```
->>> fail()
->>> {
->>>          echo "!!! FAILED !!!"
->>>          exit 1
->>> }
->>>
->>> workload()
->>> {
->>>          mkfs.btrfs -f -m single -d single --csum sha256 $dev1
->>>          mount $dev1 $mnt
->>>      # There are around 10 more combinations with different
->>>          # seed and -p/-n parameters, but this is the smallest one
->>>      # I found so far.
->>>      $fsstress -p 7 -n 50 -s 1691396493 -w -d $mnt
->>>      umount $mnt
->>>      btrfs check --check-data-csum $dev1 || fail
->>> }
->>> runtime=1024
->>> for (( i = 0; i < $runtime; i++ )); do
->>>          echo "=== $i / $runtime ==="
->>>          workload
->>> done
->>> ```
->>
->> Tried to reproduce this, both on a vm and on a real host, and no luck so
->> far. I've got a few followup questions as your report is missing some
->> important info:
-> 
-> You may want to try much higher -p/-n numbers.
-> 
-> For verification purpose, I normally go with -p 10 -n 10000, which has a
-> much higher chance to hit, but definitely too noisy for debug.
-> 
-> I just tried a run with "$fsstress -p 10 -n 10000 -w -d $mnt" as the
-> workload, it failed at 21/1024.
-
-OK I'll try that.
-
->> 1) What kernel are you running?
-> 
-> David's misc-next branch, aka, lastest upstream tags plus some btrfs
-> patches for the next merge window.
-> 
-> Although I have some internal reports showing this problem quite some
-> time ago.
-
-That's what I was getting at, if it was new or not.
-
->> 2) What's the .config you are using?
-> 
-> Pretty common config, no heavy debug options (KASAN etc).
-
-Please just send the .config, I'd rather not have to guess. Things like
-preempt etc may make a difference in reproducing this.
-
->>> At least here, with a VM with 6 cores (host has 8C/16T), fast enough
->>> storage (PCIE4.0 NVME, with unsafe cache mode), it has the chance around
->>> 1/100 to hit the error.
->>
->> What does "unsafe cche mode" mean?
-> 
-> Libvirt cache option "unsafe"
-> 
-> Which is mostly ignoring flush/fua commands and fully rely on host fs
-> (in my case it's file backed) cache.
-
-Gotcha
-
 >> Is that write back caching enabled?
 >> Write back caching with volatile write cache? For your device, can you
 >> do:
 >>
 >> $ grep . /sys/block/$dev/queue/*
->>
->>> Checking the fsstress verbose log against the failed file, it turns out
->>> to be an io_uring write.
->>
->> Any more details on what the write looks like?
-> 
-> For the involved file, it shows the following operations for the minimal
-> reproducible seed/-p/-n combination:
-> 
-> ```
-> 0/24: link d0/f2 d0/f3 0
-> 0/29: fallocate(INSERT_RANGE) d0/f3 [276 2 0 0 176 481971]t 884736 585728 95
-> 0/30: uring_write d0/f3[276 2 0 0 176 481971] [1400622, 56456(res=56456)] 0
-> 0/31: writev d0/f3[276 2 0 0 296 1457078] [709121,8,964] 0
-> 0/34: dwrite - xfsctl(XFS_IOC_DIOINFO) d0/f3[276 2 308134 1763236 320
-> 1457078] return 25, fallback to stat()
-> 0/34: dwrite d0/f3[276 2 308134 1763236 320 1457078] [589824,16384] 0
-> 0/38: dwrite - xfsctl(XFS_IOC_DIOINFO) d0/f3[276 2 308134 1763236 496
-> 1457078] return 25, fallback to stat()
-> 0/38: dwrite d0/f3[276 2 308134 1763236 496 1457078] [2084864,36864] 0
-> 0/40: fallocate(ZERO_RANGE) d0/f3 [276 2 308134 1763236 688 2809139]t
-> 3512660 81075 0
-> 0/43: splice d0/f5[289 1 0 0 1872 2678784] [552619,59420] -> d0/f3[276 2
-> 308134 1763236 856 3593735] [5603798,59420] 0
-> 0/48: fallocate(KEEP_SIZE|PUNCH_HOLE) d0/f3 [276 1 308134 1763236 976
-> 5663218]t 1361821 480392 0
-> 0/49: clonerange d0/f3[276 1 308134 1763236 856 5663218] [2461696,53248]
-> -> d0/f5[289 1 0 0 1872 2678784] [942080,53248]
-> ```
 
-And just to be sure, this is not mixing dio and buffered, right?
-
->>> However I didn't see any io_uring related callback inside btrfs code,
->>> any advice on the io_uring part would be appreciated.
->>
->> io_uring doesn't do anything special here, it uses the normal page cache
->> read/write parts for buffered IO. But you may get extra parallellism
->> with io_uring here. For example, with the buffered write that this most
->> likely is, libaio would be exactly the same as a pwrite(2) on the file.
->> If this would've blocked, io_uring would offload this to a helper
->> thread. Depending on the workload, you could have multiple of those in
->> progress at the same time.
-> 
-> My biggest concern is, would io_uring modify the page when it's still
-> under writeback?
-
-No, of course not. Like I mentioned, io_uring doesn't do anything that
-the normal read/write path isn't already doing - it's using the same
-->read_iter() and ->write_iter() that everything else is, there's no
-page cache code in io_uring.
-
-> In that case, it's going to cause csum mismatch as btrfs relies on the
-> page under writeback to be unchanged.
-
-Sure, I'm aware of the stable page requirements.
-
-See my followup email as well on a patch to test as well.
+You didn't answer this one either.
 
 -- 
 Jens Axboe
