@@ -2,86 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5263B77DBA7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 10:06:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C80D577DC53
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 10:34:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242685AbjHPIFk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Aug 2023 04:05:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51460 "EHLO
+        id S242956AbjHPIdg convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Aug 2023 04:33:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242781AbjHPIF3 (ORCPT
+        with ESMTP id S243093AbjHPIcu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Aug 2023 04:05:29 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B3DC2705
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 01:05:21 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-99c136ee106so826318666b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 01:05:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1692173119; x=1692777919;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RvdVBocTF3g82OdbrW1329iCJNDsO6RbmMm+mRrv4jM=;
-        b=FAifJtLCb7k6UxvB4wQioo15Zy3SJO9y0ggCGvixx4OaWlavjkvPjeLGAGIP4DLx8r
-         wi+5c7M9kvPr8BKBCRQbJByB7rpEkXzG1Y3axJa/Lt4PcAwRZQhoPd4DfnJfcio87QP/
-         KDUQUuCjT3Q498xn/TtYisguaMITjFhaf+CJo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692173119; x=1692777919;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RvdVBocTF3g82OdbrW1329iCJNDsO6RbmMm+mRrv4jM=;
-        b=i8S0+d+hMDjOgew97UqjOM9EhASRwCydzjHELdRt9vXIqJR3Z2oIaNlHCeBRdXmW2a
-         GJHHmHji3Z8JCXnBMOm47tPI99j5ETVdwgkUbSogYI9wWSHOuQiG0ijxiqxS9SECfg/Q
-         G+onu3hwqRNiKaZPkGjMjB3zZ+qb7KFDREvGGvQYuhp3ZdPOE2RcNjjj923Iwz6Ms1Cu
-         owecHRCSDCcddut5FZI5uRjGqg5eUucPl230GB/b74ogrBuKsy9PfaeNoI+4Fo2XblMV
-         eNC+n0fMXxfM5KCCBzCioQ1Oh+y21+zjiMsBeGNn2OaqFG2Tx5qZZ89EdeztzLcDnxbW
-         jibw==
-X-Gm-Message-State: AOJu0Yy7GYJwr7l60b2La1AVa4nxEe79E+k2GBwtatWGc2PtBrekorv0
-        vmMh5cR87W4me/pg6Ptu3o+JtlckogPX/PZ3Pv3G3/MdsJcbjEkltZs=
-X-Google-Smtp-Source: AGHT+IFQRdhEhXVXFZy1tOAt7zLwCmVCjGMzpQKaXqJKHb+Wy/2fovO0+2JhzK9GXQneeiD0x9EU97yIUu+SAXiZPrk=
-X-Received: by 2002:a17:906:5195:b0:99d:f6e9:1cf8 with SMTP id
- y21-20020a170906519500b0099df6e91cf8mr355025ejk.20.1692173119472; Wed, 16 Aug
- 2023 01:05:19 -0700 (PDT)
+        Wed, 16 Aug 2023 04:32:50 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FCBB30CA
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 01:31:57 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-102-GQJWoHGIPVK3nlIn0yNs6w-1; Wed, 16 Aug 2023 09:30:54 +0100
+X-MC-Unique: GQJWoHGIPVK3nlIn0yNs6w-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 16 Aug
+ 2023 09:30:52 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 16 Aug 2023 09:30:52 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'David Howells' <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Christian Brauner <christian@brauner.io>,
+        Matthew Wilcox <willy@infradead.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC PATCH v2] iov_iter: Convert iterate*() to inline funcs
+Thread-Topic: [RFC PATCH v2] iov_iter: Convert iterate*() to inline funcs
+Thread-Index: AQHZzvgmq2lQZxPz+UuF+eoksadYZ6/rhpfw
+Date:   Wed, 16 Aug 2023 08:30:52 +0000
+Message-ID: <8722207799c342e780e1162a983dc48b@AcuMS.aculab.com>
+References: <855.1692047347@warthog.procyon.org.uk>
+ <5247.1692049208@warthog.procyon.org.uk>
+In-Reply-To: <5247.1692049208@warthog.procyon.org.uk>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-References: <CAJfpegtjQxPd-nncaf+7pvowSJHx+2mLgOZBJuCLXetnSCuqog@mail.gmail.com>
- <202308110712.37B7CIwo078462@mse-fl2.zte.com.cn>
-In-Reply-To: <202308110712.37B7CIwo078462@mse-fl2.zte.com.cn>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 16 Aug 2023 10:05:08 +0200
-Message-ID: <CAJfpegtrmm=+9QkQoQm3t2=GjcwTEAcmCt_ChLkXjn9Bg7M_UA@mail.gmail.com>
-Subject: Re:  [PATCH] nlookup missing decrement in fuse_direntplus_link
-To:     ruan.meisi@zte.com.cn
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,PDS_BAD_THREAD_QP_64,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 11 Aug 2023 at 09:12, <ruan.meisi@zte.com.cn> wrote:
->
-> From 53aad83672123dbe01bcef9f9026becc4e93ee9f Mon Sep 17 00:00:00 2001
-> From: ruanmeisi <ruan.meisi@zte.com.cn>
-> Date: Tue, 25 Apr 2023 19:13:54 +0800
-> Subject: [PATCH] nlookup missing decrement in fuse_direntplus_link
->
-> During our debugging of glusterfs, we found an Assertion
-> failed error: inode_lookup >= nlookup, which was caused by the
-> nlookup value in the kernel being greater than that in the FUSE
-> file system.The issue was introduced by fuse_direntplus_link,
-> where in the function, fuse_iget increments nlookup, and if
-> d_splice_alias returns failure, fuse_direntplus_link returns
-> failure without decrementing nlookup
-> https://github.com/gluster/glusterfs/pull/4081
->
-> Signed-off-by: ruanmeisi <ruan.meisi@zte.com.cn>
+From: David Howells
+> Sent: 14 August 2023 22:40
+> 
+> 
+> >         _copy_from_iter                          inc 0x36e -> 0x395 +0x27
+> 
+> Here a disassembly of _copy_from_iter() from unpatched and patched, marked up for
+> the different iterator-type branches.  To summarise:
+> 
+> 		UNPATCHED	PATCHED
+> 		START	LEN	START	LEN
+> 		=======	=======	=======	=======
+> Prologue	0	77	0	76
+> UBUF		77	36	76	36
+> IOVEC		113	148	112	105
+> BVEC		261	159	217	163
+> KVEC		420	125	380	116
+> XARRAY		545	286	496	374
+> DISCARD/Epi	831	42	870	42
+> Return		873	-	912	-
+> 
+> 
+> The overall change in the entire file, according to size, is:
+>    19855     744       0   20599    5077 build3/lib/iov_iter.o -- before
+>    19739     864       0   20603    507b build3/lib/iov_iter.o -- after
 
-Applied, thanks.
+It is harder to compare because of some of the random name changes.
+The version of the source I found seems to pass priv2 to functions
+that don't use it?
 
-Miklos
+Since the functions aren't inlined you get the cost of passing
+the parameters.
+This seems to affect the common cases.
+Is that all left over from a version that passed function pointers
+(with the hope they'd be inlined?).
+Just directly inlining the simple copies should help.
+
+I rather hope the should_fail_usercopy() and instrument_copy_xxx()
+calls are usually either absent or, at most, nops.
+
+This all seems to have a lot fewer options than last time I looked.
+Is it worth optimising the KVEC case with a single buffer?
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
