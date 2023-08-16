@@ -2,116 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C80D577DC53
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 10:34:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93E1D77DC7B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 10:38:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242956AbjHPIdg convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Aug 2023 04:33:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51874 "EHLO
+        id S242789AbjHPIhb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Aug 2023 04:37:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243093AbjHPIcu (ORCPT
+        with ESMTP id S243025AbjHPIgm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Aug 2023 04:32:50 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FCBB30CA
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 01:31:57 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-102-GQJWoHGIPVK3nlIn0yNs6w-1; Wed, 16 Aug 2023 09:30:54 +0100
-X-MC-Unique: GQJWoHGIPVK3nlIn0yNs6w-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 16 Aug
- 2023 09:30:52 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 16 Aug 2023 09:30:52 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'David Howells' <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <christian@brauner.io>,
-        Matthew Wilcox <willy@infradead.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC PATCH v2] iov_iter: Convert iterate*() to inline funcs
-Thread-Topic: [RFC PATCH v2] iov_iter: Convert iterate*() to inline funcs
-Thread-Index: AQHZzvgmq2lQZxPz+UuF+eoksadYZ6/rhpfw
-Date:   Wed, 16 Aug 2023 08:30:52 +0000
-Message-ID: <8722207799c342e780e1162a983dc48b@AcuMS.aculab.com>
-References: <855.1692047347@warthog.procyon.org.uk>
- <5247.1692049208@warthog.procyon.org.uk>
-In-Reply-To: <5247.1692049208@warthog.procyon.org.uk>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 16 Aug 2023 04:36:42 -0400
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D574231
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 01:35:36 -0700 (PDT)
+Received: by mail-oi1-x233.google.com with SMTP id 5614622812f47-3a776cf15c8so730480b6e.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 01:35:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1692174936; x=1692779736;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wEdYgrJyQcwssjv302WhniVvwDe0CeIVGQ4feBQhaZY=;
+        b=et6Z88qKe8udA5UmW5oLmTpORkL3fIeyIwXvJu5IDozzfA5uufancc+rrBd0ryt6JC
+         6B+J4OmPEbPTFRuR9eKr6ReSS8A4rZiqou2GXvBTPACQyHw1ViltTTNm0wDEVNssyZtm
+         30sJNa/9x+0axRmKkdDF7edtwJSdqKpCcory28n4elEgjjuHTF34l/gDYGL2D31U0C8D
+         i8UmplinKNtMrFYDe8xbzWWloasxtiXFLe2jOACr3e0IqmCMVRJod1OIWmZwb294Idmp
+         b3W/BFdU/Fvw2X6rlj7kFmRwm7hqhNoAW5QKRgmFZOFXovnnMf3t1uqssqOhPGxF/+2V
+         JsAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692174936; x=1692779736;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wEdYgrJyQcwssjv302WhniVvwDe0CeIVGQ4feBQhaZY=;
+        b=KWGUMNt2zQgg7pjn5/NmiXp88yzZbsG/XBGFWJDAvloLYsCE6rR2PzM/xVzh3VXr67
+         Wg84c5uRtDgCEAvSc0oKj1iej0D4GBK2vVHuF6zXF4x9NRyTmriodA/ahvIrO5J7ycZW
+         b2EJ9UjEjSBIvRN0TmCURTJZUBDa5ou8u4s/4NCPdiY2ZClCIpYtY6H7biSVOupRNNrc
+         Hkb5q/CtZx0fv5Y/9Au5ypjoEp4repSAEdlfLWjQ1TgcVh6oos5uYpXRH1LrP+WScJDq
+         ruU4h5jnnwXVWNbSBH+5v/lDTcyxoJ6w/6P1CEfcSbdYlvJMXpnIgHtZD3jkKu/EcUzJ
+         YWvQ==
+X-Gm-Message-State: AOJu0YzIQIZ4bKVrcI2Zs7okTvfoZFOXbPSX/SjUctMLzaL7C6z556h5
+        y0qB2Ilf/bSAUGpLX9Bc3LMVgA==
+X-Google-Smtp-Source: AGHT+IFaewitmFjxr4BvO1FUDyDefEj0UVoHIPf+uKAL+8+YoBigpvW7yp/jXIUbm7qypbdXYQDY6g==
+X-Received: by 2002:a05:6808:3a19:b0:3a8:175f:86de with SMTP id gr25-20020a0568083a1900b003a8175f86demr1196396oib.5.1692174935973;
+        Wed, 16 Aug 2023 01:35:35 -0700 (PDT)
+Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.146])
+        by smtp.gmail.com with ESMTPSA id p16-20020a639510000000b005658d3a46d7sm7506333pgd.84.2023.08.16.01.35.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Aug 2023 01:35:35 -0700 (PDT)
+From:   Qi Zheng <zhengqi.arch@bytedance.com>
+To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
+        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
+        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
+        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
+        yujie.liu@intel.com, gregkh@linuxfoundation.org,
+        muchun.song@linux.dev, joel@joelfernandes.org,
+        christian.koenig@amd.com
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+        Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: [PATCH 0/5] use refcount+RCU method to implement lockless slab shrink (part 1)
+Date:   Wed, 16 Aug 2023 16:34:14 +0800
+Message-Id: <20230816083419.41088-1-zhengqi.arch@bytedance.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,PDS_BAD_THREAD_QP_64,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: David Howells
-> Sent: 14 August 2023 22:40
-> 
-> 
-> >         _copy_from_iter                          inc 0x36e -> 0x395 +0x27
-> 
-> Here a disassembly of _copy_from_iter() from unpatched and patched, marked up for
-> the different iterator-type branches.  To summarise:
-> 
-> 		UNPATCHED	PATCHED
-> 		START	LEN	START	LEN
-> 		=======	=======	=======	=======
-> Prologue	0	77	0	76
-> UBUF		77	36	76	36
-> IOVEC		113	148	112	105
-> BVEC		261	159	217	163
-> KVEC		420	125	380	116
-> XARRAY		545	286	496	374
-> DISCARD/Epi	831	42	870	42
-> Return		873	-	912	-
-> 
-> 
-> The overall change in the entire file, according to size, is:
->    19855     744       0   20599    5077 build3/lib/iov_iter.o -- before
->    19739     864       0   20603    507b build3/lib/iov_iter.o -- after
+Hi all,
 
-It is harder to compare because of some of the random name changes.
-The version of the source I found seems to pass priv2 to functions
-that don't use it?
+To make reviewing and updating easier, I've chosen to split the previous
+patchset[1] into the following three parts:
 
-Since the functions aren't inlined you get the cost of passing
-the parameters.
-This seems to affect the common cases.
-Is that all left over from a version that passed function pointers
-(with the hope they'd be inlined?).
-Just directly inlining the simple copies should help.
+part 1: some cleanups and preparations
+part 2: introduce new APIs and convert all shrinnkers to use these
+part 3: implement lockless slab shrink
 
-I rather hope the should_fail_usercopy() and instrument_copy_xxx()
-calls are usually either absent or, at most, nops.
+This series is the part 1.
 
-This all seems to have a lot fewer options than last time I looked.
-Is it worth optimising the KVEC case with a single buffer?
+Comments and suggestions are welcome.
 
-	David
+[1]. https://lore.kernel.org/lkml/20230807110936.21819-1-zhengqi.arch@bytedance.com/
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+Thanks,
+Qi
+
+Changlog in v4 -> part 1 v1:
+ - split from the previous large patchset
+ - fix comment format in [PATCH v4 01/48] (pointed by Muchun Song)
+ - change to use kzalloc_node() and fix typo in [PATCH v4 44/48]
+   (pointed by Dave Chinner)
+ - collect Reviewed-bys
+ - rebase onto the next-20230815
+
+Qi Zheng (5):
+  mm: move some shrinker-related function declarations to mm/internal.h
+  mm: vmscan: move shrinker-related code into a separate file
+  mm: shrinker: remove redundant shrinker_rwsem in debugfs operations
+  drm/ttm: introduce pool_shrink_rwsem
+  mm: shrinker: add a secondary array for shrinker_info::{map,
+    nr_deferred}
+
+ drivers/gpu/drm/ttm/ttm_pool.c |  15 +
+ include/linux/memcontrol.h     |  12 +-
+ include/linux/shrinker.h       |  37 +-
+ mm/Makefile                    |   4 +-
+ mm/internal.h                  |  28 ++
+ mm/shrinker.c                  | 751 +++++++++++++++++++++++++++++++++
+ mm/shrinker_debug.c            |  16 +-
+ mm/vmscan.c                    | 701 ------------------------------
+ 8 files changed, 815 insertions(+), 749 deletions(-)
+ create mode 100644 mm/shrinker.c
+
+-- 
+2.30.2
 
