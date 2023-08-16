@@ -2,279 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C469677DD7A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 11:40:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94AA577DDA9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 11:46:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243427AbjHPJkV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Aug 2023 05:40:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57706 "EHLO
+        id S242670AbjHPJqT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Aug 2023 05:46:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243498AbjHPJkM (ORCPT
+        with ESMTP id S243526AbjHPJqG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Aug 2023 05:40:12 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 779F526AB;
-        Wed, 16 Aug 2023 02:40:09 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0B2B366401;
-        Wed, 16 Aug 2023 09:40:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C10AC433C7;
-        Wed, 16 Aug 2023 09:40:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692178808;
-        bh=lBPfWO/TodPWM4HTRm/ExEBowxZNY6q92A5fO5js0YI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=H/+xcv0sMV6xf5e+NfyjpwsQ/oOS2Kbrgrl/nIgHidd69t9fyIf8saeMgvVrb7UYT
-         2E5mNn08sy2cVc+/Lw/MbmzL5V+g/et7QgEzqyU7ampWv+BHN7iGR51+zmPzHzBG2t
-         rkvR2e+GNLqO10AjYB2qFRuW+o1QYMWz4TXS/TXOvrMPTz+ss1Yk9tQfD4H8ayT62P
-         VYFw3c7KP+Tz5ZGbwnTUMM8YZokqFeAcgYPnzUAT+byZ8DgXHVR6r+aviNxFtHJXo/
-         4zLmQOBCwUq0lNDty3Ylxf0KK27yFrtrxFqOaqEOLf1V8SFb7QlbBAYq1KWiOEnaWA
-         edd7/FeTQu4mA==
-Date:   Wed, 16 Aug 2023 18:40:03 +0900
-From:   Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To:     paulmck@kernel.org
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>, akpm@linux-foundation.org,
-        arnd@kernel.org, ndesaulniers@google.com, sfr@canb.auug.org.au,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@meta.com
-Subject: Re: [PATCH RFC bootconfig] 1/2] fs/proc: Add /proc/cmdline_load for
- boot loader arguments
-Message-Id: <20230816184003.6e0831cbe1bc7ab9a1af9a39@kernel.org>
-In-Reply-To: <79d0ddcf-3b20-48f5-89f6-7eb5c3fa4c88@paulmck-laptop>
-References: <197cba95-3989-4d2f-a9f1-8b192ad08c49@paulmck-laptop>
-        <20230728033701.817094-1-paulmck@kernel.org>
-        <db2617d2-589d-47c1-a0cc-e8aeca58710a@p183>
-        <9a42de2a-7d9f-4be3-b6c8-9f3e8a092c4d@paulmck-laptop>
-        <20230807114455.b4bab41d771556d086e8bdf4@kernel.org>
-        <7c81c63b-7097-4d28-864e-f364eaafc5a0@paulmck-laptop>
-        <24ec9c40-7310-4544-8c3f-81f2a756aead@paulmck-laptop>
-        <79d0ddcf-3b20-48f5-89f6-7eb5c3fa4c88@paulmck-laptop>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        Wed, 16 Aug 2023 05:46:06 -0400
+Received: from rere.qmqm.pl (rere.qmqm.pl [91.227.64.183])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 593F426AB;
+        Wed, 16 Aug 2023 02:46:00 -0700 (PDT)
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4RQjtq04rDzBZ;
+        Wed, 16 Aug 2023 11:45:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1692179157; bh=Sos1qBs3VlhhehklG3z9L5LLCdtvKR73wVoo/Xasofo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ol06/qIuowDl7DPikhSBJ06gBA3bo6LVSVl3/SSxjEXhTMUOzp2DmEgKigpja0DX5
+         ExHnhjvldSYSXIBbUvvPOEQ+/AlcmfTCYFvFj9OFu7ljS4XL+f4W7PkRzkVLhstuqm
+         DF7fVFuCZDEeUJRt92zYm4pwI6QfXmF8nv1kx9WDAAVJl17NMacCM5aWXRIh0025rH
+         W88IZz96SfBc3464a8ghhNDsZfSSTwHM1c6HMp9RxLNMFVkKLLn9kGzOCIOeoPRxSz
+         bTSC8c0ya+Q7EphOave/HMXcGQwbIK0b8+/oWWi8yyyySIQbRBl0idRigCqsoUmgYY
+         ZX37j+Ik0gWbQ==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.103.8 at mail
+Date:   Wed, 16 Aug 2023 11:45:53 +0200
+From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     Peter Xu <peterx@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v30 2/6] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+Message-ID: <ZNya0c7zRmQ/HPMl@qmqm.qmqm.pl>
+References: <20230816065925.850879-1-usama.anjum@collabora.com>
+ <20230816065925.850879-3-usama.anjum@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-2
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230816065925.850879-3-usama.anjum@collabora.com>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 14 Aug 2023 16:08:29 -0700
-"Paul E. McKenney" <paulmck@kernel.org> wrote:
-
-> On Sat, Aug 12, 2023 at 04:30:41PM -0700, Paul E. McKenney wrote:
-> > On Sun, Aug 06, 2023 at 09:39:28PM -0700, Paul E. McKenney wrote:
-> > > On Mon, Aug 07, 2023 at 11:44:55AM +0900, Masami Hiramatsu wrote:
-> > > > On Fri, 4 Aug 2023 10:36:17 -0700
-> > > > "Paul E. McKenney" <paulmck@kernel.org> wrote:
-> > > > 
-> > > > > On Fri, Aug 04, 2023 at 08:23:20PM +0300, Alexey Dobriyan wrote:
-> > > > > > On Thu, Jul 27, 2023 at 08:37:00PM -0700, Paul E. McKenney wrote:
-> > > > > > > In kernels built with CONFIG_BOOT_CONFIG_FORCE=y, /proc/cmdline will
-> > > > > > > show all kernel boot parameters, both those supplied by the boot loader
-> > > > > > > and those embedded in the kernel image.  This works well for those who
-> > > > > > > just want to see all of the kernel boot parameters, but is not helpful to
-> > > > > > > those who need to see only those parameters supplied by the boot loader.
-> > > > > > > This is especially important when these parameters are presented to the
-> > > > > > > boot loader by automation that might gather them from diverse sources.
-> > > > > > > 
-> > > > > > > Therefore, provide a /proc/cmdline_load file that shows only those kernel
-> > > > > > > boot parameters supplied by the boot loader.
-> > > > > > 
-> > > > > > > +static int cmdline_load_proc_show(struct seq_file *m, void *v)
-> > > > > > > +{
-> > > > > > > +	seq_puts(m, boot_command_line);
-> > > > > > > +	seq_putc(m, '\n');
-> > > > > > > +	return 0;
-> > > > > > > +}
-> > > > > > > +
-> > > > > > >  static int __init proc_cmdline_init(void)
-> > > > > > >  {
-> > > > > > >  	struct proc_dir_entry *pde;
-> > > > > > > @@ -19,6 +27,11 @@ static int __init proc_cmdline_init(void)
-> > > > > > >  	pde = proc_create_single("cmdline", 0, NULL, cmdline_proc_show);
-> > > > > > >  	pde_make_permanent(pde);
-> > > > > > >  	pde->size = saved_command_line_len + 1;
-> > > > > > > +	if (IS_ENABLED(CONFIG_BOOT_CONFIG_FORCE)) {
-> > > > > > > +		pde = proc_create_single("cmdline_load", 0, NULL, cmdline_load_proc_show);
-> > > > > > > +		pde_make_permanent(pde);
-> > > > > > > +		pde->size = strnlen(boot_command_line, COMMAND_LINE_SIZE) + 1;
-> > > > > > > +	}
-> > > > > > 
-> > > > > > Please add it as separate fs/proc/cmdline_load.c file so that name of
-> > > > > > the file matches name of the /proc file.
-> > > > > 
-> > > > > Thank you, will do!
-> > > > > 
-> > > > > > The name "cmdline_load" is kind of non-descriptive. Mentioning "bootloader"
-> > > > > > somewhere should improve things.
-> > > > > 
-> > > > > If we can all quickly come to agreement on a name, I can of course easily
-> > > > > change it.
-> > > > > 
-> > > > > /proc/cmdline_bootloader?  Better than /proc/cmdline_from_bootloader,
-> > > > > I suppose.  /proc/cmdline_bootldr?  /proc/bootloader by analogy with
-> > > > > /proc/bootconfig?  Something else?
-> > > > 
-> > > > What about "/proc/raw_cmdline" ?
-> > > 
-> > > That would work of me!
-> > > 
-> > > Any objections to /proc/raw_cmdline?
-> > > 
-> > > Going once...
-> > 
-> > Going twice...
-> > 
-> > If I don't hear otherwise, /proc/raw_cmdline is is on Monday August 14 PDT.
-> 
-> And gone!
-> 
-> Please see below for the updated version.
-
-OK, I'll pick this.
-
-Thanks!
-
-> 
-> 								Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> commit 0fe10f0d1873a6f6e287c0c5b45e9203b0e33c83
-> Author: Paul E. McKenney <paulmck@kernel.org>
-> Date:   Fri Jul 21 16:05:38 2023 -0700
-> 
->     fs/proc: Add /proc/raw_cmdline for boot loader arguments
->     
->     In kernels built with CONFIG_BOOT_CONFIG_FORCE=y, /proc/cmdline will
->     show all kernel boot parameters, both those supplied by the boot loader
->     and those embedded in the kernel image.  This works well for those who
->     just want to see all of the kernel boot parameters, but is not helpful to
->     those who need to see only those parameters supplied by the boot loader.
->     This is especially important when these parameters are presented to the
->     boot loader by automation that might gather them from diverse sources.
->     It is also useful when booting the next kernel via kexec(), in which
->     case it is necessary to supply only those kernel command-line arguments
->     from the boot loader, and most definitely not those that were embedded
->     into the current kernel.
->     
->     Therefore, provide a /proc/raw_cmdline file that shows only those kernel
->     boot parameters supplied by the boot loader.
->     
->     Why put this in /proc?  Because it is quite similar to /proc/cmdline,
->     and /proc/bootconfig, so it makes sense to put it in the same place that
->     those files are located.
->     
->     [ sfr: Apply kernel test robot feedback. ]
->     [ paulmck: Apply Randy Dunlap feedback. ]
->     [ paulmck: Apply naming feedback from Alexey Dobriyan and Masami Hiramatsu. ]
->     
->     Co-developed-by: Stephen Rothwell <sfr@canb.auug.org.au>
->     Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->     Co-developed-by: Arnd Bergmann <arnd@kernel.org>
->     Signed-off-by: Arnd Bergmann <arnd@kernel.org>
->     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
->     Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
->     Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
->     Cc: Andrew Morton <akpm@linux-foundation.org>
->     Cc: Alexey Dobriyan <adobriyan@gmail.com>
->     Cc: <linux-fsdevel@vger.kernel.org>
-> 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 75a8c899ebcc..61419270c38f 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -723,6 +723,7 @@ files are there, and which are missing.
->   partitions   Table of partitions known to the system
->   pci 	      Deprecated info of PCI bus (new way -> /proc/bus/pci/,
->                decoupled by lspci				(2.4)
-> + raw_cmdline  Kernel command line obtained from kernel image	(6.6)
->   rtc          Real time clock
->   scsi         SCSI info (see text)
->   slabinfo     Slab pool info
-> diff --git a/fs/proc/Makefile b/fs/proc/Makefile
-> index bd08616ed8ba..6182296f3c6b 100644
-> --- a/fs/proc/Makefile
-> +++ b/fs/proc/Makefile
-> @@ -34,3 +34,4 @@ proc-$(CONFIG_PROC_VMCORE)	+= vmcore.o
->  proc-$(CONFIG_PRINTK)	+= kmsg.o
->  proc-$(CONFIG_PROC_PAGE_MONITOR)	+= page.o
->  proc-$(CONFIG_BOOT_CONFIG)	+= bootconfig.o
-> +proc-$(CONFIG_BOOT_CONFIG_FORCE)	+= raw_cmdline.o
-> diff --git a/fs/proc/raw_cmdline.c b/fs/proc/raw_cmdline.c
-> new file mode 100644
-> index 000000000000..2e19eb89fc8e
-> --- /dev/null
-> +++ b/fs/proc/raw_cmdline.c
-> @@ -0,0 +1,25 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <linux/fs.h>
-> +#include <linux/init.h>
-> +#include <linux/proc_fs.h>
-> +#include <linux/seq_file.h>
-> +#include <asm/setup.h>
-> +#include "internal.h"
-> +
-> +static int raw_cmdline_proc_show(struct seq_file *m, void *v)
+On Wed, Aug 16, 2023 at 11:59:21AM +0500, Muhammad Usama Anjum wrote:
+> The PAGEMAP_SCAN IOCTL on the pagemap file can be used to get or optionally
+> clear the info about page table entries.
+[...]
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+[...]
+> +static long do_pagemap_scan(struct mm_struct *mm, unsigned long uarg)
 > +{
-> +	seq_puts(m, boot_command_line);
-> +	seq_putc(m, '\n');
-> +	return 0;
-> +}
+[...]
+> +	for (walk_start = p.arg.start; walk_start < p.arg.end;
+> +			walk_start = p.arg.walk_end) {
+> +		long n_out;
 > +
-> +static int __init proc_raw_cmdline_init(void)
-> +{
-> +	struct proc_dir_entry *pde;
+> +		if (fatal_signal_pending(current)) {
+> +			ret = -EINTR;
+> +			break;
+> +		}
 > +
-> +	pde = proc_create_single("raw_cmdline", 0, NULL, raw_cmdline_proc_show);
-> +	pde_make_permanent(pde);
-> +	pde->size = strnlen(boot_command_line, COMMAND_LINE_SIZE) + 1;
-> +	return 0;
-> +}
-> +fs_initcall(proc_raw_cmdline_init);
-> diff --git a/include/linux/init.h b/include/linux/init.h
-> index 266c3e1640d4..29e75bbe7984 100644
-> --- a/include/linux/init.h
-> +++ b/include/linux/init.h
-> @@ -112,6 +112,7 @@
->  #define __REFCONST       .section       ".ref.rodata", "a"
->  
->  #ifndef __ASSEMBLY__
+> +		ret = mmap_read_lock_killable(mm);
+> +		if (ret)
+> +			break;
+> +		ret = walk_page_range(mm, walk_start, p.arg.end,
+> +				      &pagemap_scan_ops, &p);
+> +		mmap_read_unlock(mm);
 > +
->  /*
->   * Used for initialization calls..
->   */
-> @@ -143,7 +144,7 @@ struct file_system_type;
->  
->  /* Defined in init/main.c */
->  extern int do_one_initcall(initcall_t fn);
-> -extern char __initdata boot_command_line[];
-> +extern char boot_command_line[];
->  extern char *saved_command_line;
->  extern unsigned int saved_command_line_len;
->  extern unsigned int reset_devices;
-> diff --git a/init/main.c b/init/main.c
-> index ad920fac325c..2121685c479a 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -135,7 +135,7 @@ EXPORT_SYMBOL(system_state);
->  void (*__initdata late_time_init)(void);
->  
->  /* Untouched command line saved by arch-specific code. */
-> -char __initdata boot_command_line[COMMAND_LINE_SIZE];
-> +char boot_command_line[COMMAND_LINE_SIZE] __ro_after_init;
->  /* Untouched saved command line (eg. for /proc) */
->  char *saved_command_line __ro_after_init;
->  unsigned int saved_command_line_len __ro_after_init;
+> +		n_out = pagemap_scan_flush_buffer(&p);
+> +		if (n_out < 0)
+> +			ret = n_out;
+> +		else
+> +			n_ranges_out += n_out;
+> +
+> +		p.arg.walk_end = p.walk_end_addr ? p.walk_end_addr : p.arg.end;
 
+I think p.walk_end_addr can be removed and replaced by `p.arg.walk_end`
+directly in the walk functions. If we don't set walk_end_addr we'll also
+return 0 so the check below will match. Might be good to add this as
+a comment.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> +		if (ret != -ENOSPC)
+> +			break;
+> +
+> +		if (p.arg.vec_len == 0 || p.found_pages == p.arg.max_pages)
+> +			break;
+> +	}
+> +
+> +	/* ENOSPC signifies early stop (buffer full) from the walk. */
+> +	if (!ret || ret == -ENOSPC)
+> +		ret = n_ranges_out;
+> +
+> +	p.arg.walk_end = p.arg.walk_end ? p.arg.walk_end : walk_start;
+
+When the walk is finished, with ret == 0, the walk_start will point to
+the beginning, not the end of the range. So:
+
+if (!walk_end) walk_end = p.arg.end;
+
+Other than that, the patch looks complete now. Thanks for all your work!
+
+Best Regards
+Micha³ Miros³aw
