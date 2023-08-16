@@ -2,245 +2,331 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 29B5C77E23C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 15:12:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B917177E256
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 15:16:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244946AbjHPNLb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Aug 2023 09:11:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33428 "EHLO
+        id S244903AbjHPNPt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Aug 2023 09:15:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245404AbjHPNL0 (ORCPT
+        with ESMTP id S245465AbjHPNPi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Aug 2023 09:11:26 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3E6F1FF3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 06:11:23 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id 98e67ed59e1d1-26b10e52ef8so3151084a91.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 06:11:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1692191483; x=1692796283;
-        h=content-transfer-encoding:in-reply-to:from:references:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7y+FGla4ZqarJpsY9rL6fJ+tM9ztKi60WDdpJ1g+IXE=;
-        b=fsm/Z/ak+zuFz6543kEjTWDmVmFDFGkCxSiQA9p+6ruCdw9Uo+s8f1m7XMOiWar8XQ
-         91ONLABndc8fHMjvnH0f4jsYoMKNEWwOMBEnQ0oLsy7+UBeHNSfF0vry2NcMfcdJTrTS
-         vm9o3WQio1gP8LRejs/Cu7K61qUbL/LZFAdrWJhkilDgW/mnRwiEExx6ZFgrtL6lj8Q2
-         6Q/qaVGZNetg4dlHPuE6C5H4mFlcQW4G9+VItj7Ciai/tukYrLB4cFyCbDmQNtVUc2lf
-         zSyw1XjyzVJlhMO/Mk9qY07LD2nDCkKTCXBHfZ2bntqv84f4VM6qS9E1+MJS2ioAT/Ev
-         c+5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692191483; x=1692796283;
-        h=content-transfer-encoding:in-reply-to:from:references:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7y+FGla4ZqarJpsY9rL6fJ+tM9ztKi60WDdpJ1g+IXE=;
-        b=HtLhlK4yHcKM6m8ckZ+NKxfKBzvfmdQpvbb4hvCxKiV0NuaC+x2SKP82yMbqS/DZUP
-         ICQlifZv+/jg1Rl05AHRVEgIkqLD2Ay1V62ccauepyV9bYhwCBUIrhkrsIGfFAc3hkAe
-         gStZdRq7/0ptUO3534ofYwzhWkxkiegToQY3JYisJnBHbmb/csW1I/3pwkDx/3QH+7QI
-         hGPI0xbihXYWu4pnMek8hZMxQHwkNvSByg1OwyjywmRArGpARDtvoXhcXWVGcq7KBn5p
-         YF3VhcOpFrF5DHHVSdShK7FPuLn2GZLUzLYqVIdLNDMMK6sAIDmYyfdiUWwb2yUqGzq/
-         mZaw==
-X-Gm-Message-State: AOJu0Yzn2zVRFwloU4jvn+Ak33bgIUQsA+YykYoBVjT4al3SmCY03d+9
-        N83qJSFM72pQOa4RFfi3V3xgnQ==
-X-Google-Smtp-Source: AGHT+IEhtIhiYveh9oLegEn5CX8U4HyvOiK88j2387qNBXnQtj2zYvVJZn9ewmGPBGrq9IlVrtu1Xw==
-X-Received: by 2002:a17:90b:1e07:b0:268:fb85:3b2 with SMTP id pg7-20020a17090b1e0700b00268fb8503b2mr1246851pjb.7.1692191483350;
-        Wed, 16 Aug 2023 06:11:23 -0700 (PDT)
-Received: from [10.254.252.111] ([139.177.225.249])
-        by smtp.gmail.com with ESMTPSA id u10-20020a17090ae00a00b0026b3f76a063sm7261968pjy.44.2023.08.16.06.11.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Aug 2023 06:11:23 -0700 (PDT)
-Message-ID: <6babc4c1-0f0f-f0b1-1d45-311448af8d70@bytedance.com>
-Date:   Wed, 16 Aug 2023 21:11:15 +0800
+        Wed, 16 Aug 2023 09:15:38 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED84A2711;
+        Wed, 16 Aug 2023 06:15:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1692191735; x=1723727735;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=CLai+YNN3OujjOwMSs+ewWzyb1YQrY4aGWQEsGhHt0M=;
+  b=cq1hE1Z/NvrMFCkfcB+pJBeGU0OxziYSfeI42hlOaVBhcDmfyTYwCLFz
+   ulTOtr6xFbsA/+XaszqaRvMiPUWKeVUIJOxj0HhVUIJFezXVvmQISg99E
+   xPknfp7/qGKZQpOrmVRX3RwNOEOzYiMOVI206qlm02KYmn5tPsq/I7tNX
+   ID5jP/t/w1/x/zpSOw7MFsP6ZCQPDuJPFdoJiVG8c4o4lPQ64wtQbrSz7
+   ixM0HJM0bcVkYBB/v5lC7luu2IuePnECR2CgQCyxQdeNTOppZDyDqxKoz
+   q/5HIZoHHQZkULWTkU/CzhnOnN/4/OhkpYYI+KUQ4VWXSkZhk34ZGZLHC
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10803"; a="352854180"
+X-IronPort-AV: E=Sophos;i="6.01,177,1684825200"; 
+   d="scan'208";a="352854180"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2023 06:15:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10803"; a="734204567"
+X-IronPort-AV: E=Sophos;i="6.01,177,1684825200"; 
+   d="scan'208";a="734204567"
+Received: from lkp-server02.sh.intel.com (HELO a9caf1a0cf30) ([10.239.97.151])
+  by orsmga002.jf.intel.com with ESMTP; 16 Aug 2023 06:15:26 -0700
+Received: from kbuild by a9caf1a0cf30 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qWGMr-0000K0-29;
+        Wed, 16 Aug 2023 13:15:22 +0000
+Date:   Wed, 16 Aug 2023 21:14:55 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Qi Zheng <zhengqi.arch@bytedance.com>, akpm@linux-foundation.org,
+        david@fromorbit.com, tkhai@ya.ru, vbabka@suse.cz,
+        roman.gushchin@linux.dev, djwong@kernel.org, brauner@kernel.org,
+        paulmck@kernel.org, tytso@mit.edu, steven.price@arm.com,
+        cel@kernel.org, senozhatsky@chromium.org, yujie.liu@intel.com,
+        gregkh@linuxfoundation.org, muchun.song@linux.dev,
+        joel@joelfernandes.org, christian.koenig@amd.com
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: Re: [PATCH 1/5] mm: move some shrinker-related function declarations
+ to mm/internal.h
+Message-ID: <202308162118.motJd6aG-lkp@intel.com>
+References: <20230816083419.41088-2-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.14.0
-Subject: Re: [PATCH 06/11] maple_tree: Introduce mas_replace_entry() to
- directly replace an entry
-To:     "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
-        Peng Zhang <zhangpeng.00@bytedance.com>, avagin@gmail.com,
-        npiggin@gmail.com, mathieu.desnoyers@efficios.com,
-        peterz@infradead.org, michael.christie@oracle.com,
-        surenb@google.com, brauner@kernel.org, willy@infradead.org,
-        akpm@linux-foundation.org, corbet@lwn.net,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org
-References: <20230726080916.17454-1-zhangpeng.00@bytedance.com>
- <20230726080916.17454-7-zhangpeng.00@bytedance.com>
- <20230726160843.hpl4razxiikqbuxy@revolver>
- <20aab1af-c183-db94-90d7-5e5425e3fd80@bytedance.com>
- <20230731164854.vbndc2z2mqpw53in@revolver>
-From:   Peng Zhang <zhangpeng.00@bytedance.com>
-In-Reply-To: <20230731164854.vbndc2z2mqpw53in@revolver>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230816083419.41088-2-zhengqi.arch@bytedance.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Qi,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on brauner-vfs/vfs.all]
+[also build test WARNING on linus/master v6.5-rc6 next-20230816]
+[cannot apply to akpm-mm/mm-everything drm-misc/drm-misc-next vfs-idmapping/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Qi-Zheng/mm-move-some-shrinker-related-function-declarations-to-mm-internal-h/20230816-163833
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20230816083419.41088-2-zhengqi.arch%40bytedance.com
+patch subject: [PATCH 1/5] mm: move some shrinker-related function declarations to mm/internal.h
+config: riscv-randconfig-r015-20230816 (https://download.01.org/0day-ci/archive/20230816/202308162118.motJd6aG-lkp@intel.com/config)
+compiler: clang version 16.0.4 (https://github.com/llvm/llvm-project.git ae42196bc493ffe877a7e3dff8be32035dea4d07)
+reproduce: (https://download.01.org/0day-ci/archive/20230816/202308162118.motJd6aG-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202308162118.motJd6aG-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+                                            ~~~~~~~~~~ ^
+   In file included from mm/shrinker_debug.c:7:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:9:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:751:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           insw(addr, buffer, count);
+           ^~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:105:53: note: expanded from macro 'insw'
+   #define insw(addr, buffer, count) __insw(PCI_IOBASE + (addr), buffer, count)
+                                            ~~~~~~~~~~ ^
+   In file included from mm/shrinker_debug.c:7:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:9:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:759:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           insl(addr, buffer, count);
+           ^~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:106:53: note: expanded from macro 'insl'
+   #define insl(addr, buffer, count) __insl(PCI_IOBASE + (addr), buffer, count)
+                                            ~~~~~~~~~~ ^
+   In file included from mm/shrinker_debug.c:7:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:9:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:768:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           outsb(addr, buffer, count);
+           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:118:55: note: expanded from macro 'outsb'
+   #define outsb(addr, buffer, count) __outsb(PCI_IOBASE + (addr), buffer, count)
+                                              ~~~~~~~~~~ ^
+   In file included from mm/shrinker_debug.c:7:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:9:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:777:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           outsw(addr, buffer, count);
+           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:119:55: note: expanded from macro 'outsw'
+   #define outsw(addr, buffer, count) __outsw(PCI_IOBASE + (addr), buffer, count)
+                                              ~~~~~~~~~~ ^
+   In file included from mm/shrinker_debug.c:7:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:9:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:786:2: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           outsl(addr, buffer, count);
+           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/riscv/include/asm/io.h:120:55: note: expanded from macro 'outsl'
+   #define outsl(addr, buffer, count) __outsl(PCI_IOBASE + (addr), buffer, count)
+                                              ~~~~~~~~~~ ^
+   In file included from mm/shrinker_debug.c:7:
+   In file included from include/linux/memcontrol.h:13:
+   In file included from include/linux/cgroup.h:26:
+   In file included from include/linux/kernel_stat.h:9:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/riscv/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/riscv/include/asm/io.h:136:
+   include/asm-generic/io.h:1134:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
+                                                     ~~~~~~~~~~ ^
+>> mm/shrinker_debug.c:174:5: warning: no previous prototype for function 'shrinker_debugfs_add' [-Wmissing-prototypes]
+   int shrinker_debugfs_add(struct shrinker *shrinker)
+       ^
+   mm/shrinker_debug.c:174:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+   int shrinker_debugfs_add(struct shrinker *shrinker)
+   ^
+   static 
+>> mm/shrinker_debug.c:249:16: warning: no previous prototype for function 'shrinker_debugfs_detach' [-Wmissing-prototypes]
+   struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
+                  ^
+   mm/shrinker_debug.c:249:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+   struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
+   ^
+   static 
+>> mm/shrinker_debug.c:265:6: warning: no previous prototype for function 'shrinker_debugfs_remove' [-Wmissing-prototypes]
+   void shrinker_debugfs_remove(struct dentry *debugfs_entry, int debugfs_id)
+        ^
+   mm/shrinker_debug.c:265:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+   void shrinker_debugfs_remove(struct dentry *debugfs_entry, int debugfs_id)
+   ^
+   static 
+   16 warnings generated.
 
 
-åœ¨ 2023/8/1 00:48, Liam R. Howlett å†™é“:
-> * Peng Zhang <zhangpeng.00@bytedance.com> [230731 08:39]:
->>
->>
->> åœ¨ 2023/7/27 00:08, Liam R. Howlett å†™é“:
->>> * Peng Zhang <zhangpeng.00@bytedance.com> [230726 04:10]:
->>>> If mas has located a specific entry, it may be need to replace this
->>>> entry, so introduce mas_replace_entry() to do this. mas_replace_entry()
->>>> will be more efficient than mas_store*() because it doesn't do many
->>>> unnecessary checks.
->>>>
->>>> This function should be inline, but more functions need to be moved to
->>>> the header file, so I didn't do it for the time being.
->>>
->>> I am really nervous having no checks here.  I get that this could be
->>> used for duplicating the tree more efficiently, but having a function
->>> that just swaps a value in is very dangerous - especially since it is
->>> decoupled from the tree duplication code.
->> I've thought about this, and I feel like this is something the user
->> should be guaranteed. If the user is not sure whether to use it,
->> mas_store() can be used instead.
-> 
-> Documentation often isn't up to date and even more rarely read.
-> mas_replace_entry() does not give a hint of a requirement for a specific
-> state to the mas.  This is not acceptable.
-> 
-> The description of the function also doesn't say anything about a
-> requirement of the maple state, just that it replaces an already
-> existing entry.  You have to read the notes to find out that 'mas must
-> already locate an existing entry'.
-> 
->> And we should provide this interface
->> because it has better performance.
-> 
-> How much better is the performance?  There's always a trade off but
-> without numbers, this is hard to justify.
-I have implemented a new version of this pachset, and I will post it
-soon.
+vim +/shrinker_debugfs_add +174 mm/shrinker_debug.c
 
-I tested the benefits of mas_replace_entry() in userspace.
-The test code is attached at the end.
+bbf535fd6f06b94 Roman Gushchin     2022-05-31  173  
+5035ebc644aec92 Roman Gushchin     2022-05-31 @174  int shrinker_debugfs_add(struct shrinker *shrinker)
+5035ebc644aec92 Roman Gushchin     2022-05-31  175  {
+5035ebc644aec92 Roman Gushchin     2022-05-31  176  	struct dentry *entry;
+e33c267ab70de42 Roman Gushchin     2022-05-31  177  	char buf[128];
+5035ebc644aec92 Roman Gushchin     2022-05-31  178  	int id;
+5035ebc644aec92 Roman Gushchin     2022-05-31  179  
+47a7c01c3efc658 Qi Zheng           2023-06-09  180  	lockdep_assert_held(&shrinker_rwsem);
+5035ebc644aec92 Roman Gushchin     2022-05-31  181  
+5035ebc644aec92 Roman Gushchin     2022-05-31  182  	/* debugfs isn't initialized yet, add debugfs entries later. */
+5035ebc644aec92 Roman Gushchin     2022-05-31  183  	if (!shrinker_debugfs_root)
+5035ebc644aec92 Roman Gushchin     2022-05-31  184  		return 0;
+5035ebc644aec92 Roman Gushchin     2022-05-31  185  
+5035ebc644aec92 Roman Gushchin     2022-05-31  186  	id = ida_alloc(&shrinker_debugfs_ida, GFP_KERNEL);
+5035ebc644aec92 Roman Gushchin     2022-05-31  187  	if (id < 0)
+5035ebc644aec92 Roman Gushchin     2022-05-31  188  		return id;
+5035ebc644aec92 Roman Gushchin     2022-05-31  189  	shrinker->debugfs_id = id;
+5035ebc644aec92 Roman Gushchin     2022-05-31  190  
+e33c267ab70de42 Roman Gushchin     2022-05-31  191  	snprintf(buf, sizeof(buf), "%s-%d", shrinker->name, id);
+5035ebc644aec92 Roman Gushchin     2022-05-31  192  
+5035ebc644aec92 Roman Gushchin     2022-05-31  193  	/* create debugfs entry */
+5035ebc644aec92 Roman Gushchin     2022-05-31  194  	entry = debugfs_create_dir(buf, shrinker_debugfs_root);
+5035ebc644aec92 Roman Gushchin     2022-05-31  195  	if (IS_ERR(entry)) {
+5035ebc644aec92 Roman Gushchin     2022-05-31  196  		ida_free(&shrinker_debugfs_ida, id);
+5035ebc644aec92 Roman Gushchin     2022-05-31  197  		return PTR_ERR(entry);
+5035ebc644aec92 Roman Gushchin     2022-05-31  198  	}
+5035ebc644aec92 Roman Gushchin     2022-05-31  199  	shrinker->debugfs_entry = entry;
+5035ebc644aec92 Roman Gushchin     2022-05-31  200  
+2124f79de6a9096 John Keeping       2023-04-18  201  	debugfs_create_file("count", 0440, entry, shrinker,
+5035ebc644aec92 Roman Gushchin     2022-05-31  202  			    &shrinker_debugfs_count_fops);
+2124f79de6a9096 John Keeping       2023-04-18  203  	debugfs_create_file("scan", 0220, entry, shrinker,
+bbf535fd6f06b94 Roman Gushchin     2022-05-31  204  			    &shrinker_debugfs_scan_fops);
+5035ebc644aec92 Roman Gushchin     2022-05-31  205  	return 0;
+5035ebc644aec92 Roman Gushchin     2022-05-31  206  }
+5035ebc644aec92 Roman Gushchin     2022-05-31  207  
+e33c267ab70de42 Roman Gushchin     2022-05-31  208  int shrinker_debugfs_rename(struct shrinker *shrinker, const char *fmt, ...)
+e33c267ab70de42 Roman Gushchin     2022-05-31  209  {
+e33c267ab70de42 Roman Gushchin     2022-05-31  210  	struct dentry *entry;
+e33c267ab70de42 Roman Gushchin     2022-05-31  211  	char buf[128];
+e33c267ab70de42 Roman Gushchin     2022-05-31  212  	const char *new, *old;
+e33c267ab70de42 Roman Gushchin     2022-05-31  213  	va_list ap;
+e33c267ab70de42 Roman Gushchin     2022-05-31  214  	int ret = 0;
+e33c267ab70de42 Roman Gushchin     2022-05-31  215  
+e33c267ab70de42 Roman Gushchin     2022-05-31  216  	va_start(ap, fmt);
+e33c267ab70de42 Roman Gushchin     2022-05-31  217  	new = kvasprintf_const(GFP_KERNEL, fmt, ap);
+e33c267ab70de42 Roman Gushchin     2022-05-31  218  	va_end(ap);
+e33c267ab70de42 Roman Gushchin     2022-05-31  219  
+e33c267ab70de42 Roman Gushchin     2022-05-31  220  	if (!new)
+e33c267ab70de42 Roman Gushchin     2022-05-31  221  		return -ENOMEM;
+e33c267ab70de42 Roman Gushchin     2022-05-31  222  
+47a7c01c3efc658 Qi Zheng           2023-06-09  223  	down_write(&shrinker_rwsem);
+e33c267ab70de42 Roman Gushchin     2022-05-31  224  
+e33c267ab70de42 Roman Gushchin     2022-05-31  225  	old = shrinker->name;
+e33c267ab70de42 Roman Gushchin     2022-05-31  226  	shrinker->name = new;
+e33c267ab70de42 Roman Gushchin     2022-05-31  227  
+e33c267ab70de42 Roman Gushchin     2022-05-31  228  	if (shrinker->debugfs_entry) {
+e33c267ab70de42 Roman Gushchin     2022-05-31  229  		snprintf(buf, sizeof(buf), "%s-%d", shrinker->name,
+e33c267ab70de42 Roman Gushchin     2022-05-31  230  			 shrinker->debugfs_id);
+e33c267ab70de42 Roman Gushchin     2022-05-31  231  
+e33c267ab70de42 Roman Gushchin     2022-05-31  232  		entry = debugfs_rename(shrinker_debugfs_root,
+e33c267ab70de42 Roman Gushchin     2022-05-31  233  				       shrinker->debugfs_entry,
+e33c267ab70de42 Roman Gushchin     2022-05-31  234  				       shrinker_debugfs_root, buf);
+e33c267ab70de42 Roman Gushchin     2022-05-31  235  		if (IS_ERR(entry))
+e33c267ab70de42 Roman Gushchin     2022-05-31  236  			ret = PTR_ERR(entry);
+e33c267ab70de42 Roman Gushchin     2022-05-31  237  		else
+e33c267ab70de42 Roman Gushchin     2022-05-31  238  			shrinker->debugfs_entry = entry;
+e33c267ab70de42 Roman Gushchin     2022-05-31  239  	}
+e33c267ab70de42 Roman Gushchin     2022-05-31  240  
+47a7c01c3efc658 Qi Zheng           2023-06-09  241  	up_write(&shrinker_rwsem);
+e33c267ab70de42 Roman Gushchin     2022-05-31  242  
+e33c267ab70de42 Roman Gushchin     2022-05-31  243  	kfree_const(old);
+e33c267ab70de42 Roman Gushchin     2022-05-31  244  
+e33c267ab70de42 Roman Gushchin     2022-05-31  245  	return ret;
+e33c267ab70de42 Roman Gushchin     2022-05-31  246  }
+e33c267ab70de42 Roman Gushchin     2022-05-31  247  EXPORT_SYMBOL(shrinker_debugfs_rename);
+e33c267ab70de42 Roman Gushchin     2022-05-31  248  
+26e239b37ebdfd1 Joan Bruguera Micó 2023-05-03 @249  struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
+26e239b37ebdfd1 Joan Bruguera Micó 2023-05-03  250  				       int *debugfs_id)
+5035ebc644aec92 Roman Gushchin     2022-05-31  251  {
+badc28d4924bfed Qi Zheng           2023-02-02  252  	struct dentry *entry = shrinker->debugfs_entry;
+badc28d4924bfed Qi Zheng           2023-02-02  253  
+47a7c01c3efc658 Qi Zheng           2023-06-09  254  	lockdep_assert_held(&shrinker_rwsem);
+5035ebc644aec92 Roman Gushchin     2022-05-31  255  
+e33c267ab70de42 Roman Gushchin     2022-05-31  256  	kfree_const(shrinker->name);
+14773bfa70e67f4 Tetsuo Handa       2022-07-20  257  	shrinker->name = NULL;
+e33c267ab70de42 Roman Gushchin     2022-05-31  258  
+26e239b37ebdfd1 Joan Bruguera Micó 2023-05-03  259  	*debugfs_id = entry ? shrinker->debugfs_id : -1;
+badc28d4924bfed Qi Zheng           2023-02-02  260  	shrinker->debugfs_entry = NULL;
+badc28d4924bfed Qi Zheng           2023-02-02  261  
+badc28d4924bfed Qi Zheng           2023-02-02  262  	return entry;
+5035ebc644aec92 Roman Gushchin     2022-05-31  263  }
+5035ebc644aec92 Roman Gushchin     2022-05-31  264  
+26e239b37ebdfd1 Joan Bruguera Micó 2023-05-03 @265  void shrinker_debugfs_remove(struct dentry *debugfs_entry, int debugfs_id)
+26e239b37ebdfd1 Joan Bruguera Micó 2023-05-03  266  {
+26e239b37ebdfd1 Joan Bruguera Micó 2023-05-03  267  	debugfs_remove_recursive(debugfs_entry);
+26e239b37ebdfd1 Joan Bruguera Micó 2023-05-03  268  	ida_free(&shrinker_debugfs_ida, debugfs_id);
+26e239b37ebdfd1 Joan Bruguera Micó 2023-05-03  269  }
+26e239b37ebdfd1 Joan Bruguera Micó 2023-05-03  270  
 
-Run three times:
-mas_replace_entry(): 2.7613050s 2.7120030s 2.7274200s
-mas_store():         3.8451260s 3.8113200s 3.9334160s
-
-Using mas_store() reduces the performance of duplicating VMAs by about
-41%.
-
-So I think mas_replace_entry() is necessary. We can describe it in more
-detail in the documentation to prevent users from misusing it.
-
-
-static noinline void __init bench_forking(struct maple_tree *mt)
-{
-	struct maple_tree newmt;
-	int i, nr_entries = 134, nr_fork = 80000, ret;
-	void *val;
-	MA_STATE(mas, mt, 0, 0);
-	MA_STATE(newmas, &newmt, 0, 0);
-	clock_t start;
-	clock_t end;
-	double cpu_time_used = 0;
-
-	for (i = 0; i <= nr_entries; i++)
-		mtree_store_range(mt, i*10, i*10 + 5,
-				  xa_mk_value(i), GFP_KERNEL);
-
-	for (i = 0; i < nr_fork; i++) {
-		mt_set_non_kernel(99999);
-
-		start = clock();
-		mt_init_flags(&newmt, MT_FLAGS_ALLOC_RANGE);
-		mas_lock(&newmas);
-		mas_lock(&mas);
-		ret = __mt_dup(mt, &newmt, GFP_NOWAIT | __GFP_NOWARN);
-		if (ret) {
-			pr_err("OOM!");
-			BUG_ON(1);
-		}
-
-		mas_set(&newmas, 0);
-		mas_for_each(&newmas, val, ULONG_MAX) {
-			mas_replace_entry(&newmas, val);
-		}
-
-		mas_unlock(&mas);
-		mas_unlock(&newmas);
-		end = clock();
-		cpu_time_used += ((double) (end - start));
-
-		mas_destroy(&newmas);
-		mt_validate(&newmt);
-		mt_set_non_kernel(0);
-		mtree_destroy(&newmt);
-	}
-	printf("time consumption:%.7fs\n", cpu_time_used / CLOCKS_PER_SEC);
-}
-
-
-> 
->>>
->>>>
->>>> Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
->>>> ---
->>>>    include/linux/maple_tree.h |  1 +
->>>>    lib/maple_tree.c           | 25 +++++++++++++++++++++++++
->>>>    2 files changed, 26 insertions(+)
->>>>
->>>> diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
->>>> index 229fe78e4c89..a05e9827d761 100644
->>>> --- a/include/linux/maple_tree.h
->>>> +++ b/include/linux/maple_tree.h
->>>> @@ -462,6 +462,7 @@ struct ma_wr_state {
->>>>    void *mas_walk(struct ma_state *mas);
->>>>    void *mas_store(struct ma_state *mas, void *entry);
->>>> +void mas_replace_entry(struct ma_state *mas, void *entry);
->>>>    void *mas_erase(struct ma_state *mas);
->>>>    int mas_store_gfp(struct ma_state *mas, void *entry, gfp_t gfp);
->>>>    void mas_store_prealloc(struct ma_state *mas, void *entry);
->>>> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
->>>> index efac6761ae37..d58572666a00 100644
->>>> --- a/lib/maple_tree.c
->>>> +++ b/lib/maple_tree.c
->>>> @@ -5600,6 +5600,31 @@ void *mas_store(struct ma_state *mas, void *entry)
->>>>    }
->>>>    EXPORT_SYMBOL_GPL(mas_store);
->>>> +/**
->>>> + * mas_replace_entry() - Replace an entry that already exists in the maple tree
->>>> + * @mas: The maple state
->>>> + * @entry: The entry to store
->>>> + *
->>>> + * Please note that mas must already locate an existing entry, and the new entry
->>>> + * must not be NULL. If these two points cannot be guaranteed, please use
->>>> + * mas_store*() instead, otherwise it will cause an internal error in the maple
->>>> + * tree. This function does not need to allocate memory, so it must succeed.
->>>> + */
->>>> +void mas_replace_entry(struct ma_state *mas, void *entry)
->>>> +{
->>>> +	void __rcu **slots;
->>>> +
->>>> +#ifdef CONFIG_DEBUG_MAPLE_TREE
->>>> +	MAS_WARN_ON(mas, !mte_is_leaf(mas->node));
->>>> +	MAS_WARN_ON(mas, !entry);
->>>> +	MAS_WARN_ON(mas, mas->offset >= mt_slots[mte_node_type(mas->node)]);
->>>> +#endif
->>>> +
->>>> +	slots = ma_slots(mte_to_node(mas->node), mte_node_type(mas->node));
->>>> +	rcu_assign_pointer(slots[mas->offset], entry);
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(mas_replace_entry);
->>>> +
->>>>    /**
->>>>     * mas_store_gfp() - Store a value into the tree.
->>>>     * @mas: The maple state
->>>> -- 
->>>> 2.20.1
->>>>
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
