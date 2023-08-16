@@ -2,178 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 55B6E77E02B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 13:20:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4A1F77E059
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 13:30:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244420AbjHPLUO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Aug 2023 07:20:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32876 "EHLO
+        id S233665AbjHPLaG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Aug 2023 07:30:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241151AbjHPLUC (ORCPT
+        with ESMTP id S244622AbjHPL3r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Aug 2023 07:20:02 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 778141985
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 04:19:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1692184750;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=9DmGZYcSr2I9SiRg9Pn0WyLYqr3/OyAYXMXaLgBZidY=;
-        b=Pga2q02diFL+wHBvThQA0zT3fjcFvGmAlDqFtsM7JDLMLfDg8hTgMvbkoWTAgzx4EfzHgI
-        O8c5ua8wIISvFcKALgic4rQSuTzNnFuFtkcv1mh7iDNqrgSh4yZm6P82GIF5jpTC+ZE4Zc
-        MSTrJjRRdfwIKd2EIVJZ9M/SsSRrDYc=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-389-E48cI-hyNleWg9BbfLx0XA-1; Wed, 16 Aug 2023 07:19:07 -0400
-X-MC-Unique: E48cI-hyNleWg9BbfLx0XA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 16 Aug 2023 07:29:47 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59D881B4;
+        Wed, 16 Aug 2023 04:29:46 -0700 (PDT)
+Received: from [192.168.100.7] (unknown [59.103.216.185])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DB9FF101A528;
-        Wed, 16 Aug 2023 11:19:06 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 322881121314;
-        Wed, 16 Aug 2023 11:19:04 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <a72036d57d50464ea4fe7fa556ee1a72@AcuMS.aculab.com>
-References: <a72036d57d50464ea4fe7fa556ee1a72@AcuMS.aculab.com> <8722207799c342e780e1162a983dc48b@AcuMS.aculab.com> <855.1692047347@warthog.procyon.org.uk> <5247.1692049208@warthog.procyon.org.uk> <440141.1692179410@warthog.procyon.org.uk>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     dhowells@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <christian@brauner.io>,
-        Matthew Wilcox <willy@infradead.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2] iov_iter: Convert iterate*() to inline funcs
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 6B23A66071DF;
+        Wed, 16 Aug 2023 12:29:38 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1692185383;
+        bh=jzdDeX6pUFEUXGNfKX/EwXm6M3rdWUmKoZ0lN9Hznw4=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=Dt8B2jZbp7t6JaXUWr+dIqQM9RjQq2p/RnIdZ7kiF6zOcLSro8jgoV7XUdcMc1Oit
+         LRpKHs3AGqiYDS0sD2De3J020Bpt9SOeJ2KYtIfKLsSTQXfXh1eXWSvgux/FypoVoh
+         uDT5bj7M1rdgnPp92pQpljqC4mx10HCV9jLjzPJdSMX1nAm1QP6LaPa580+5aH2QQ6
+         KGRBk0B8KPf6RRK4DvtGuBN+VnROAGEAed2E/cqkkHdbn94+1AzLpTkw4RZqCi43IZ
+         1+wfOIvDjh92S1UnnqihPgYK7/K2CaMMdJbKyGKV663ah8AkBHAKERhHuxY1wYbkxt
+         kUXWM+tOZCd7w==
+Message-ID: <eab0a5be-0f8d-4e63-683f-0628e891719a@collabora.com>
+Date:   Wed, 16 Aug 2023 16:29:34 +0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <532384.1692184743.1@warthog.procyon.org.uk>
-Date:   Wed, 16 Aug 2023 12:19:03 +0100
-Message-ID: <532385.1692184743@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v31 2/6] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+Content-Language: en-US
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+References: <20230816103814.1522393-1-usama.anjum@collabora.com>
+ <20230816103814.1522393-3-usama.anjum@collabora.com>
+ <ZNywVhVe1H8S60FR@qmqm.qmqm.pl>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <ZNywVhVe1H8S60FR@qmqm.qmqm.pl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Laight <David.Laight@ACULAB.COM> wrote:
-
-> > That can't be avoided if I convert everything to inline functions and
-> > function pointers - but the optimiser can get rid of it where it can
-> > inline the step function.
+On 8/16/23 4:17 PM, Michał Mirosław wrote:
+> On Wed, Aug 16, 2023 at 03:38:10PM +0500, Muhammad Usama Anjum wrote:
+>> The PAGEMAP_SCAN IOCTL on the pagemap file can be used to get or optionally
+>> clear the info about page table entries.
+> [...]
+>> --- a/fs/proc/task_mmu.c
+>> +++ b/fs/proc/task_mmu.c
+> [...]
+>> +static long do_pagemap_scan(struct mm_struct *mm, unsigned long uarg)
+>> +{
+> [...]
+>> +	for (walk_start = p.arg.start; walk_start < p.arg.end;
+>> +			walk_start = p.arg.walk_end) {
+> [...]
+>> +		/* The walk_end isn't set when ret is zero  */
+>> +		if (!p.arg.walk_end)
+>> +			p.arg.walk_end = p.arg.end;
 > 
-> AFAICT the IOVEC one was only called directly.
+> This is now redundant with the `if` after the loop. [1]
+> 
+>> +		if (ret != -ENOSPC)
+>> +			break;
+>> +
+>> +		if (p.arg.vec_len == 0 || p.found_pages == p.arg.max_pages)
+>> +			break;
+>> +	}
+>> +
+>> +	/* ENOSPC signifies early stop (buffer full) from the walk. */
+>> +	if (!ret || ret == -ENOSPC)
+>> +		ret = n_ranges_out;
+>> +
+>> +	if (!p.arg.walk_end)
+>> +		p.arg.walk_end = p.arg.end;
+> 
+> [1] The one above.
+Thank you for noting it down. Let me remove it.
 
-I've made some changes that I'll post shortly, and I now get this:
+> 
+> Best Regards
+> Michał Mirosław
 
-	...
-	<+36>:	cmpb   $0x0,0x1(%rdx)	# iter->copy_mc
-	...
-	<+46>:	je     0xffffffff81779aae <_copy_from_iter+98>
-	<+48>:	jmp    0xffffffff81779a87 <_copy_from_iter+59>
-	...
-	# Handle ->copy_mc == true
-	<+59>:	mov    0x38(%rsp),%rax
-	<+64>:	sub    %gs:0x28,%rax
-	<+73>:	jne    0xffffffff81779db1 <_copy_from_iter+869>
-	<+79>:	add    $0x40,%rsp
-	<+83>:	pop    %rbx
-	<+84>:	pop    %rbp
-	<+85>:	pop    %r12
-	<+87>:	pop    %r13
-	<+89>:	pop    %r14
-	<+91>:	pop    %r15
-	<+93>:	jmp    0xffffffff81777934 <__copy_from_iter_mc>
-	...
-	# ITER_UBUF
-	<+121>:	mov    (%rdx),%al
-	<+123>:	cmp    $0x5,%al
-	<+125>:	jne    0xffffffff81779b01 <_copy_from_iter+181>
-	...
-	<+147>:	call   0xffffffff817777ee <__access_ok>
-	<+152>:	test   %al,%al
-	<+154>:	je     0xffffffff81779af9 <_copy_from_iter+173>
-	<+156>:	nop
-	<+157>:	nop
-	<+158>:	nop
-	<+159>:	mov    %r12,%rdi
-	<+162>:	mov    %rdx,%rsi
-	<+165>:	rep movsb %ds:(%rsi),%es:(%rdi)
-	...
-	# ITER_IOVEC
-	<+181>:	test   %al,%al
-	<+183>:	jne    0xffffffff81779b8d <_copy_from_iter+321>
-	...
-	<+234>:	call   0xffffffff817777ee <__access_ok>
-	<+239>:	test   %al,%al
-	<+241>:	je     0xffffffff81779b54 <_copy_from_iter+264>
-	<+243>:	nop
-	<+244>:	nop
-	<+245>:	nop
-	<+246>:	lea    (%r12,%r15,1),%rax
-	<+250>:	mov    %r8,%rsi
-	<+253>:	mov    %rax,%rdi
-	<+256>:	rep movsb %ds:(%rsi),%es:(%rdi)
-	...
-	# ITER_BVEC
-	<+321>:	cmp    $0x2,%al
-	<+323>:	jne    0xffffffff81779c1f <_copy_from_iter+467>
-	...
-	<+375>:	call   0xffffffff81777282 <kmap_local_page>
-	...
-	<+431>:	rep movsb %ds:(%rsi),%es:(%rdi)
-	...
-	# ITER_KVEC
-	<+467>:	cmp    $0x1,%al
-	<+469>:	jne    0xffffffff81779c82 <_copy_from_iter+566>
-	...
-	<+526>:	rep movsb %ds:(%rsi),%es:(%rdi)
-	...
-	# ITER_XARRAY
-	<+566>:	cmp    $0x3,%al
-	<+568>:	jne    0xffffffff81779d9d <_copy_from_iter+849>
-	...
-	<+639>:	call   0xffffffff81126bcf <__rcu_read_lock>
-	...
-	<+651>:	call   0xffffffff81d5ed97 <xas_find>
-	...
-	<+764>:	call   0xffffffff817772a7 <kmap_local_folio>
-	...
-	<+806>:	rep movsb %ds:(%rsi),%es:(%rdi)
-	...
-	# ITER_DISCARD/default
-	<+849>:	sub    %rbx,0x18(%rbp)
-	<+853>:	mov    0x38(%rsp),%rax
-	<+858>:	sub    %gs:0x28,%rax
-	<+867>:	je     0xffffffff81779db6 <_copy_from_iter+874>
-	<+869>:	call   0xffffffff81d6578c <__stack_chk_fail>
-	<+874>:	add    $0x40,%rsp
-	<+878>:	mov    %rbx,%rax
-	<+881>:	pop    %rbx
-	<+882>:	pop    %rbp
-	<+883>:	pop    %r12
-	<+885>:	pop    %r13
-	<+887>:	pop    %r14
-	<+889>:	pop    %r15
-	<+891>:	jmp    0xffffffff81d72920 <__x86_return_thunk>
-
-David
-
+-- 
+BR,
+Muhammad Usama Anjum
