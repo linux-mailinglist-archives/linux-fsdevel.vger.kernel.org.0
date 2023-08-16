@@ -2,218 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F088F77E31C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 15:58:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB06577E331
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 16:05:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245715AbjHPN6G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Aug 2023 09:58:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57602 "EHLO
+        id S245757AbjHPOEc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Aug 2023 10:04:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245710AbjHPN6F (ORCPT
+        with ESMTP id S245756AbjHPOEJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Aug 2023 09:58:05 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D0621980;
-        Wed, 16 Aug 2023 06:58:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692194283; x=1723730283;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=DUczewNPllC94OPCnns3pO2+rMVMgE13ohRtdkbEVoM=;
-  b=PdGFLCar8eL4e4VW7HxPoBdzKG97HEV7eUTvi7hEmFo7C0R8szGhPPXK
-   69W8RVUgHLuamGtjFYwjskO95xtiZPXfGcQvijhWlRABU2SGcFLhurjIk
-   HZlOCaFu5tWAbl5Tdd+6oS0H7QnsRbhQCAPHbwuOZODNss/zGbZ4PO5Al
-   wcdVNVi3+ciaMIbc3r4uLgAsVfGlesQGu5OzYWOicFdi7rOuDNxTCfNrO
-   PhpGZjdwDdn+YfnEID72JVsj30Fj3nkpzdtxscxoHeWqI7iD8xni/kdYO
-   16YEIKqqoWjrkR/Z+yDA+NPwHnMOJhJsW3/rzwpwBEdtivkrXxXEweNs0
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10803"; a="352863245"
-X-IronPort-AV: E=Sophos;i="6.01,177,1684825200"; 
-   d="scan'208";a="352863245"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2023 06:58:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10803"; a="857828332"
-X-IronPort-AV: E=Sophos;i="6.01,177,1684825200"; 
-   d="scan'208";a="857828332"
-Received: from lkp-server02.sh.intel.com (HELO a9caf1a0cf30) ([10.239.97.151])
-  by orsmga004.jf.intel.com with ESMTP; 16 Aug 2023 06:57:56 -0700
-Received: from kbuild by a9caf1a0cf30 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qWH23-0000M5-18;
-        Wed, 16 Aug 2023 13:57:55 +0000
-Date:   Wed, 16 Aug 2023 21:57:03 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Qi Zheng <zhengqi.arch@bytedance.com>, akpm@linux-foundation.org,
-        david@fromorbit.com, tkhai@ya.ru, vbabka@suse.cz,
-        roman.gushchin@linux.dev, djwong@kernel.org, brauner@kernel.org,
-        paulmck@kernel.org, tytso@mit.edu, steven.price@arm.com,
-        cel@kernel.org, senozhatsky@chromium.org, yujie.liu@intel.com,
-        gregkh@linuxfoundation.org, muchun.song@linux.dev,
-        joel@joelfernandes.org, christian.koenig@amd.com
-Cc:     oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, dri-devel@lists.freedesktop.org,
-        linux-fsdevel@vger.kernel.org,
-        Qi Zheng <zhengqi.arch@bytedance.com>,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: Re: [PATCH 1/5] mm: move some shrinker-related function declarations
- to mm/internal.h
-Message-ID: <202308162105.y9XrlTA7-lkp@intel.com>
-References: <20230816083419.41088-2-zhengqi.arch@bytedance.com>
+        Wed, 16 Aug 2023 10:04:09 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 991CFE48
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 07:04:07 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1bbb7c3d0f5so10624035ad.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 07:04:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1692194647; x=1692799447;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Rs92RPYr3KnM2w4Ysgthns1+cyWKjQmCAzXQwYFV5ZQ=;
+        b=cGPaDuJbwi1387vSHvlIyl874azAHznW/wPryFS/MicBwWCcboix1N4kWbv1EtMzuQ
+         BzGGIZnJoPgYWrgmASRVg2ms5OW1rKNbQGrCw0QQVppNys0ZkmKL5NuU/qqGuiopO/mZ
+         RSeGc41/cZGYrX50/KuaZHf2Hob2PnhvaiBaQKsi0QS5Bt4MhQ6XjS455Hz/F1UrsO4N
+         HC6zMwMXTyT9sNhJ4j1E9F5OoAJjGLCkffzHZGc8XQMjqVQZU165gxJ7uSh+zO26HcN1
+         u/H0KRkhf6LdJWNVZkK+cHdqPP4sONc+496CaJQ6x/vdwTjEpDGOaFgoOoAg68r8X3SE
+         W6Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692194647; x=1692799447;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rs92RPYr3KnM2w4Ysgthns1+cyWKjQmCAzXQwYFV5ZQ=;
+        b=hUlUiZ/Nw5+TQeVyG6Fr7vanLiVQcYrQTF0RsmgqjrBPxoOjX21y0wNkjNg5dBb/Yb
+         KQrL79/vd9T9usXArojii9aiC6uCfYdeoFVXb2JgHqz4Y/ULsnMqd4VyIvnZ0+DDHizQ
+         oNR8zR19j+/pJ9UtsIgzBwmPPbO2BKjoOuVm/1GUI1xONtNFNDKQfQ4ofJjkoMvlsq1T
+         PZiQEn6rwG+ZJt3S99s72qf2UlCM3514ZYZ/mibvAj67SUKOA2iEbaUlquBRCq5lDOMh
+         3nnAyBNp/riCu5//tmrYRVmzhmw8LWIisGJJFd7gWPMDNBWU4TvP2DvlqNg4cwiJzeW9
+         tiPQ==
+X-Gm-Message-State: AOJu0Yz6WcExEa9vqBxWityOEo2J6VFtVd1r8fkmYdAO4t6KM5+TcsR6
+        YPbBBTGmr00XpbxS1fvb4YWNDg==
+X-Google-Smtp-Source: AGHT+IETc1cPFefMflhAe6x6OWrqpsJIXnMTHSY1Ies9dOY5qneDaixOtWAnnQslYsEKXreu5xVhHQ==
+X-Received: by 2002:a17:902:da91:b0:1bb:b832:4be9 with SMTP id j17-20020a170902da9100b001bbb8324be9mr2357596plx.1.1692194646939;
+        Wed, 16 Aug 2023 07:04:06 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id ja11-20020a170902efcb00b001b66e3a77easm13225700plb.50.2023.08.16.07.04.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Aug 2023 07:04:06 -0700 (PDT)
+Message-ID: <45a712b3-a9c7-404b-960c-e2bac2a41007@kernel.dk>
+Date:   Wed, 16 Aug 2023 08:04:04 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230816083419.41088-2-zhengqi.arch@bytedance.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: create kiocb_{start,end}_write() helpers
+Content-Language: en-US
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+References: <20230815165721.821906-1-amir73il@gmail.com>
+ <d8013748-f5ec-47c9-b4ba-75538b7ac93d@kernel.dk>
+ <12490760-d3fe-4b9d-b726-be2506eff30b@kernel.dk>
+ <CAOQ4uxh4YYs2=mqqZMi-L=a19gmcgi7M+2F7iy2WDUf=iqZtxQ@mail.gmail.com>
+ <264fbb0a-5fd1-447d-a373-389f74a12bcf@kernel.dk>
+ <20230816-vergeben-stangen-bf5619e714e6@brauner>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230816-vergeben-stangen-bf5619e714e6@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Qi,
+On 8/16/23 2:51 AM, Christian Brauner wrote:
+> On Tue, Aug 15, 2023 at 03:16:15PM -0600, Jens Axboe wrote:
+>> On 8/15/23 12:48 PM, Amir Goldstein wrote:
+>>> On Tue, Aug 15, 2023 at 8:06?PM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>
+>>>> On 8/15/23 11:02 AM, Jens Axboe wrote:
+>>>>> On 8/15/23 10:57 AM, Amir Goldstein wrote:
+>>>>>> +/**
+>>>>>> + * kiocb_start_write - get write access to a superblock for async file io
+>>>>>> + * @iocb: the io context we want to submit the write with
+>>>>>> + *
+>>>>>> + * This is a variant of file_start_write() for async io submission.
+>>>>>> + * Should be matched with a call to kiocb_end_write().
+>>>>>> + */
+>>>>>> +static inline void kiocb_start_write(struct kiocb *iocb)
+>>>>>> +{
+>>>>>> +    struct inode *inode = file_inode(iocb->ki_filp);
+>>>>>> +
+>>>>>> +    iocb->ki_flags |= IOCB_WRITE;
+>>>>>> +    if (WARN_ON_ONCE(iocb->ki_flags & IOCB_WRITE_STARTED))
+>>>>>> +            return;
+>>>>>> +    if (!S_ISREG(inode->i_mode))
+>>>>>> +            return;
+>>>>>> +    sb_start_write(inode->i_sb);
+>>>>>> +    /*
+>>>>>> +     * Fool lockdep by telling it the lock got released so that it
+>>>>>> +     * doesn't complain about the held lock when we return to userspace.
+>>>>>> +     */
+>>>>>> +    __sb_writers_release(inode->i_sb, SB_FREEZE_WRITE);
+>>>>>> +    iocb->ki_flags |= IOCB_WRITE_STARTED;
+>>>>>> +}
+>>>>>> +
+>>>>>> +/**
+>>>>>> + * kiocb_end_write - drop write access to a superblock after async file io
+>>>>>> + * @iocb: the io context we sumbitted the write with
+>>>>>> + *
+>>>>>> + * Should be matched with a call to kiocb_start_write().
+>>>>>> + */
+>>>>>> +static inline void kiocb_end_write(struct kiocb *iocb)
+>>>>>> +{
+>>>>>> +    struct inode *inode = file_inode(iocb->ki_filp);
+>>>>>> +
+>>>>>> +    if (!(iocb->ki_flags & IOCB_WRITE_STARTED))
+>>>>>> +            return;
+>>>>>> +    if (!S_ISREG(inode->i_mode))
+>>>>>> +            return;
+>>>>
+>>>> And how would IOCB_WRITE_STARTED ever be set, if S_ISREG() isn't true?
+>>>
+>>> Good point.
+>>> I will pass is_reg argument from callers of kiocb_start_write() and
+>>> will only check IOCB_WRITE_STARTED in kiocb_end_write().
+>>
+>> Please don't pass in an argument that just makes the function do
+>> nothing. Just gate calling the function on it instead.
+> 
+> Your commit about avoiding dipping into inodes unnecessarily when not
+> all callers need it is for perf reasons or what's the worry?
 
-kernel test robot noticed the following build warnings:
+Right, it's to avoid pulling in dependent loads for the cases where you
+don't need to access it. Granted for this it's not super important as
+most workloads using read/write would be a regular file to begin with,
+and then we'd dip into the inode anyway for the lock dance. But it's
+good practice in general, and if you were eg using pipes then it becomes
+just wasted dependent loads.
 
-[auto build test WARNING on brauner-vfs/vfs.all]
-[also build test WARNING on linus/master v6.5-rc6 next-20230816]
-[cannot apply to akpm-mm/mm-everything drm-misc/drm-misc-next vfs-idmapping/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Fwiw, I don't mind if we force the callers to check for prerequisites
+> instead of the helpers. I'm just curious what the thinking behind it is.
+> 
+> Otherwise I think a cleanup like this might be useful.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Qi-Zheng/mm-move-some-shrinker-related-function-declarations-to-mm-internal-h/20230816-163833
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20230816083419.41088-2-zhengqi.arch%40bytedance.com
-patch subject: [PATCH 1/5] mm: move some shrinker-related function declarations to mm/internal.h
-config: m68k-randconfig-r013-20230816 (https://download.01.org/0day-ci/archive/20230816/202308162105.y9XrlTA7-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 12.3.0
-reproduce: (https://download.01.org/0day-ci/archive/20230816/202308162105.y9XrlTA7-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202308162105.y9XrlTA7-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> mm/shrinker_debug.c:174:5: warning: no previous prototype for 'shrinker_debugfs_add' [-Wmissing-prototypes]
-     174 | int shrinker_debugfs_add(struct shrinker *shrinker)
-         |     ^~~~~~~~~~~~~~~~~~~~
->> mm/shrinker_debug.c:249:16: warning: no previous prototype for 'shrinker_debugfs_detach' [-Wmissing-prototypes]
-     249 | struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
-         |                ^~~~~~~~~~~~~~~~~~~~~~~
->> mm/shrinker_debug.c:265:6: warning: no previous prototype for 'shrinker_debugfs_remove' [-Wmissing-prototypes]
-     265 | void shrinker_debugfs_remove(struct dentry *debugfs_entry, int debugfs_id)
-         |      ^~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/shrinker_debugfs_add +174 mm/shrinker_debug.c
-
-bbf535fd6f06b9 Roman Gushchin     2022-05-31  173  
-5035ebc644aec9 Roman Gushchin     2022-05-31 @174  int shrinker_debugfs_add(struct shrinker *shrinker)
-5035ebc644aec9 Roman Gushchin     2022-05-31  175  {
-5035ebc644aec9 Roman Gushchin     2022-05-31  176  	struct dentry *entry;
-e33c267ab70de4 Roman Gushchin     2022-05-31  177  	char buf[128];
-5035ebc644aec9 Roman Gushchin     2022-05-31  178  	int id;
-5035ebc644aec9 Roman Gushchin     2022-05-31  179  
-47a7c01c3efc65 Qi Zheng           2023-06-09  180  	lockdep_assert_held(&shrinker_rwsem);
-5035ebc644aec9 Roman Gushchin     2022-05-31  181  
-5035ebc644aec9 Roman Gushchin     2022-05-31  182  	/* debugfs isn't initialized yet, add debugfs entries later. */
-5035ebc644aec9 Roman Gushchin     2022-05-31  183  	if (!shrinker_debugfs_root)
-5035ebc644aec9 Roman Gushchin     2022-05-31  184  		return 0;
-5035ebc644aec9 Roman Gushchin     2022-05-31  185  
-5035ebc644aec9 Roman Gushchin     2022-05-31  186  	id = ida_alloc(&shrinker_debugfs_ida, GFP_KERNEL);
-5035ebc644aec9 Roman Gushchin     2022-05-31  187  	if (id < 0)
-5035ebc644aec9 Roman Gushchin     2022-05-31  188  		return id;
-5035ebc644aec9 Roman Gushchin     2022-05-31  189  	shrinker->debugfs_id = id;
-5035ebc644aec9 Roman Gushchin     2022-05-31  190  
-e33c267ab70de4 Roman Gushchin     2022-05-31  191  	snprintf(buf, sizeof(buf), "%s-%d", shrinker->name, id);
-5035ebc644aec9 Roman Gushchin     2022-05-31  192  
-5035ebc644aec9 Roman Gushchin     2022-05-31  193  	/* create debugfs entry */
-5035ebc644aec9 Roman Gushchin     2022-05-31  194  	entry = debugfs_create_dir(buf, shrinker_debugfs_root);
-5035ebc644aec9 Roman Gushchin     2022-05-31  195  	if (IS_ERR(entry)) {
-5035ebc644aec9 Roman Gushchin     2022-05-31  196  		ida_free(&shrinker_debugfs_ida, id);
-5035ebc644aec9 Roman Gushchin     2022-05-31  197  		return PTR_ERR(entry);
-5035ebc644aec9 Roman Gushchin     2022-05-31  198  	}
-5035ebc644aec9 Roman Gushchin     2022-05-31  199  	shrinker->debugfs_entry = entry;
-5035ebc644aec9 Roman Gushchin     2022-05-31  200  
-2124f79de6a909 John Keeping       2023-04-18  201  	debugfs_create_file("count", 0440, entry, shrinker,
-5035ebc644aec9 Roman Gushchin     2022-05-31  202  			    &shrinker_debugfs_count_fops);
-2124f79de6a909 John Keeping       2023-04-18  203  	debugfs_create_file("scan", 0220, entry, shrinker,
-bbf535fd6f06b9 Roman Gushchin     2022-05-31  204  			    &shrinker_debugfs_scan_fops);
-5035ebc644aec9 Roman Gushchin     2022-05-31  205  	return 0;
-5035ebc644aec9 Roman Gushchin     2022-05-31  206  }
-5035ebc644aec9 Roman Gushchin     2022-05-31  207  
-e33c267ab70de4 Roman Gushchin     2022-05-31  208  int shrinker_debugfs_rename(struct shrinker *shrinker, const char *fmt, ...)
-e33c267ab70de4 Roman Gushchin     2022-05-31  209  {
-e33c267ab70de4 Roman Gushchin     2022-05-31  210  	struct dentry *entry;
-e33c267ab70de4 Roman Gushchin     2022-05-31  211  	char buf[128];
-e33c267ab70de4 Roman Gushchin     2022-05-31  212  	const char *new, *old;
-e33c267ab70de4 Roman Gushchin     2022-05-31  213  	va_list ap;
-e33c267ab70de4 Roman Gushchin     2022-05-31  214  	int ret = 0;
-e33c267ab70de4 Roman Gushchin     2022-05-31  215  
-e33c267ab70de4 Roman Gushchin     2022-05-31  216  	va_start(ap, fmt);
-e33c267ab70de4 Roman Gushchin     2022-05-31  217  	new = kvasprintf_const(GFP_KERNEL, fmt, ap);
-e33c267ab70de4 Roman Gushchin     2022-05-31  218  	va_end(ap);
-e33c267ab70de4 Roman Gushchin     2022-05-31  219  
-e33c267ab70de4 Roman Gushchin     2022-05-31  220  	if (!new)
-e33c267ab70de4 Roman Gushchin     2022-05-31  221  		return -ENOMEM;
-e33c267ab70de4 Roman Gushchin     2022-05-31  222  
-47a7c01c3efc65 Qi Zheng           2023-06-09  223  	down_write(&shrinker_rwsem);
-e33c267ab70de4 Roman Gushchin     2022-05-31  224  
-e33c267ab70de4 Roman Gushchin     2022-05-31  225  	old = shrinker->name;
-e33c267ab70de4 Roman Gushchin     2022-05-31  226  	shrinker->name = new;
-e33c267ab70de4 Roman Gushchin     2022-05-31  227  
-e33c267ab70de4 Roman Gushchin     2022-05-31  228  	if (shrinker->debugfs_entry) {
-e33c267ab70de4 Roman Gushchin     2022-05-31  229  		snprintf(buf, sizeof(buf), "%s-%d", shrinker->name,
-e33c267ab70de4 Roman Gushchin     2022-05-31  230  			 shrinker->debugfs_id);
-e33c267ab70de4 Roman Gushchin     2022-05-31  231  
-e33c267ab70de4 Roman Gushchin     2022-05-31  232  		entry = debugfs_rename(shrinker_debugfs_root,
-e33c267ab70de4 Roman Gushchin     2022-05-31  233  				       shrinker->debugfs_entry,
-e33c267ab70de4 Roman Gushchin     2022-05-31  234  				       shrinker_debugfs_root, buf);
-e33c267ab70de4 Roman Gushchin     2022-05-31  235  		if (IS_ERR(entry))
-e33c267ab70de4 Roman Gushchin     2022-05-31  236  			ret = PTR_ERR(entry);
-e33c267ab70de4 Roman Gushchin     2022-05-31  237  		else
-e33c267ab70de4 Roman Gushchin     2022-05-31  238  			shrinker->debugfs_entry = entry;
-e33c267ab70de4 Roman Gushchin     2022-05-31  239  	}
-e33c267ab70de4 Roman Gushchin     2022-05-31  240  
-47a7c01c3efc65 Qi Zheng           2023-06-09  241  	up_write(&shrinker_rwsem);
-e33c267ab70de4 Roman Gushchin     2022-05-31  242  
-e33c267ab70de4 Roman Gushchin     2022-05-31  243  	kfree_const(old);
-e33c267ab70de4 Roman Gushchin     2022-05-31  244  
-e33c267ab70de4 Roman Gushchin     2022-05-31  245  	return ret;
-e33c267ab70de4 Roman Gushchin     2022-05-31  246  }
-e33c267ab70de4 Roman Gushchin     2022-05-31  247  EXPORT_SYMBOL(shrinker_debugfs_rename);
-e33c267ab70de4 Roman Gushchin     2022-05-31  248  
-26e239b37ebdfd Joan Bruguera Micó 2023-05-03 @249  struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
-26e239b37ebdfd Joan Bruguera Micó 2023-05-03  250  				       int *debugfs_id)
-5035ebc644aec9 Roman Gushchin     2022-05-31  251  {
-badc28d4924bfe Qi Zheng           2023-02-02  252  	struct dentry *entry = shrinker->debugfs_entry;
-badc28d4924bfe Qi Zheng           2023-02-02  253  
-47a7c01c3efc65 Qi Zheng           2023-06-09  254  	lockdep_assert_held(&shrinker_rwsem);
-5035ebc644aec9 Roman Gushchin     2022-05-31  255  
-e33c267ab70de4 Roman Gushchin     2022-05-31  256  	kfree_const(shrinker->name);
-14773bfa70e67f Tetsuo Handa       2022-07-20  257  	shrinker->name = NULL;
-e33c267ab70de4 Roman Gushchin     2022-05-31  258  
-26e239b37ebdfd Joan Bruguera Micó 2023-05-03  259  	*debugfs_id = entry ? shrinker->debugfs_id : -1;
-badc28d4924bfe Qi Zheng           2023-02-02  260  	shrinker->debugfs_entry = NULL;
-badc28d4924bfe Qi Zheng           2023-02-02  261  
-badc28d4924bfe Qi Zheng           2023-02-02  262  	return entry;
-5035ebc644aec9 Roman Gushchin     2022-05-31  263  }
-5035ebc644aec9 Roman Gushchin     2022-05-31  264  
-26e239b37ebdfd Joan Bruguera Micó 2023-05-03 @265  void shrinker_debugfs_remove(struct dentry *debugfs_entry, int debugfs_id)
-26e239b37ebdfd Joan Bruguera Micó 2023-05-03  266  {
-26e239b37ebdfd Joan Bruguera Micó 2023-05-03  267  	debugfs_remove_recursive(debugfs_entry);
-26e239b37ebdfd Joan Bruguera Micó 2023-05-03  268  	ida_free(&shrinker_debugfs_ida, debugfs_id);
-26e239b37ebdfd Joan Bruguera Micó 2023-05-03  269  }
-26e239b37ebdfd Joan Bruguera Micó 2023-05-03  270  
+Agree, it's a useful cleanup.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jens Axboe
+
