@@ -2,142 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C14977DE5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 12:18:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 207ED77DEA4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 12:29:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243812AbjHPKRc convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Aug 2023 06:17:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34746 "EHLO
+        id S243903AbjHPK24 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Aug 2023 06:28:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243832AbjHPKRc (ORCPT
+        with ESMTP id S243957AbjHPK2p (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Aug 2023 06:17:32 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D380E3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 03:17:30 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-263-B9QQiW5KPp2z-0gqw5gR7Q-1; Wed, 16 Aug 2023 11:17:27 +0100
-X-MC-Unique: B9QQiW5KPp2z-0gqw5gR7Q-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 16 Aug
- 2023 11:17:23 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 16 Aug 2023 11:17:23 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'David Howells' <dhowells@redhat.com>
-CC:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <christian@brauner.io>,
-        Matthew Wilcox <willy@infradead.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC PATCH v2] iov_iter: Convert iterate*() to inline funcs
-Thread-Topic: [RFC PATCH v2] iov_iter: Convert iterate*() to inline funcs
-Thread-Index: AQHZzvgmq2lQZxPz+UuF+eoksadYZ6/rhpfwgAEYzACAABNV8A==
-Date:   Wed, 16 Aug 2023 10:17:23 +0000
-Message-ID: <a72036d57d50464ea4fe7fa556ee1a72@AcuMS.aculab.com>
-References: <8722207799c342e780e1162a983dc48b@AcuMS.aculab.com>
- <855.1692047347@warthog.procyon.org.uk>
- <5247.1692049208@warthog.procyon.org.uk>
- <440141.1692179410@warthog.procyon.org.uk>
-In-Reply-To: <440141.1692179410@warthog.procyon.org.uk>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 16 Aug 2023 06:28:45 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A4AF1FE2;
+        Wed, 16 Aug 2023 03:28:39 -0700 (PDT)
+Received: from [192.168.100.7] (unknown [59.103.216.185])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 9F9196601F5E;
+        Wed, 16 Aug 2023 11:28:30 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1692181716;
+        bh=ftvs9GI0pTNN1Q/Ql07C6782DgKc5N83c95v6mS+/Vs=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=PpzIsZzgyGy2AshrVIdc0edRLPNHnuk21fD7lKYnpXHzB3doJSC+w046cwPHp/3hr
+         aGPn8aQutuTcG4dJfCB0G+DhBK26/PIQiLCKqfEdv4XVOxnIs2Xw/5rd7gw3LysdUf
+         G6d4DFOa5zJIzJGVq1WxwkqR53uGvGX9Ec7S1iR4WyZQfAMzWxhgPSee/WCpJUnSZP
+         8QzQsj1RZ2d4z3hBSRUfN2O7gaN3i0UM1t/yduIBDcTVfRbwFvp126hmnNSFzCPqTB
+         KvDfCe2qfyzx+UxAeRAVPZXYkHw5NR7FhImLJF9vXmy1H4wiAJ4gWXswlWiD/saGHX
+         UK21CV+X0xKqA==
+Message-ID: <4367a28b-97c8-a73a-f8a2-8706d8ecf285@collabora.com>
+Date:   Wed, 16 Aug 2023 15:28:26 +0500
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v30 2/6] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+References: <20230816065925.850879-1-usama.anjum@collabora.com>
+ <20230816065925.850879-3-usama.anjum@collabora.com>
+ <ZNya0c7zRmQ/HPMl@qmqm.qmqm.pl>
 Content-Language: en-US
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <ZNya0c7zRmQ/HPMl@qmqm.qmqm.pl>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,PDS_BAD_THREAD_QP_64,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: David Howells
-> Sent: Wednesday, August 16, 2023 10:50 AM
+On 8/16/23 2:45 PM, Michał Mirosław wrote:
+> On Wed, Aug 16, 2023 at 11:59:21AM +0500, Muhammad Usama Anjum wrote:
+>> The PAGEMAP_SCAN IOCTL on the pagemap file can be used to get or optionally
+>> clear the info about page table entries.
+> [...]
+>> --- a/fs/proc/task_mmu.c
+>> +++ b/fs/proc/task_mmu.c
+> [...]
+>> +static long do_pagemap_scan(struct mm_struct *mm, unsigned long uarg)
+>> +{
+> [...]
+>> +	for (walk_start = p.arg.start; walk_start < p.arg.end;
+>> +			walk_start = p.arg.walk_end) {
+>> +		long n_out;
+>> +
+>> +		if (fatal_signal_pending(current)) {
+>> +			ret = -EINTR;
+>> +			break;
+>> +		}
+>> +
+>> +		ret = mmap_read_lock_killable(mm);
+>> +		if (ret)
+>> +			break;
+>> +		ret = walk_page_range(mm, walk_start, p.arg.end,
+>> +				      &pagemap_scan_ops, &p);
+>> +		mmap_read_unlock(mm);
+>> +
+>> +		n_out = pagemap_scan_flush_buffer(&p);
+>> +		if (n_out < 0)
+>> +			ret = n_out;
+>> +		else
+>> +			n_ranges_out += n_out;
+>> +
+>> +		p.arg.walk_end = p.walk_end_addr ? p.walk_end_addr : p.arg.end;
 > 
-> David Laight <David.Laight@ACULAB.COM> wrote:
+> I think p.walk_end_addr can be removed and replaced by `p.arg.walk_end`
+> directly in the walk functions. If we don't set walk_end_addr we'll also
+> return 0 so the check below will match. Might be good to add this as
+> a comment.
+I'll remove it and add a short comment.
+
 > 
-> > It is harder to compare because of some of the random name changes.
+>> +		if (ret != -ENOSPC)
+>> +			break;
+>> +
+>> +		if (p.arg.vec_len == 0 || p.found_pages == p.arg.max_pages)
+>> +			break;
+>> +	}
+>> +
+>> +	/* ENOSPC signifies early stop (buffer full) from the walk. */
+>> +	if (!ret || ret == -ENOSPC)
+>> +		ret = n_ranges_out;
+>> +
+>> +	p.arg.walk_end = p.arg.walk_end ? p.arg.walk_end : walk_start;
 > 
-> I wouldn't say 'random' exactly, but if you prefer, some of the name changing
-> can be split out into a separate patch.  The macros are kind of the worst
-> since they picked up variable names from the callers.
+> When the walk is finished, with ret == 0, the walk_start will point to
+> the beginning, not the end of the range. So:
 > 
-> > The version of the source I found seems to pass priv2 to functions
-> > that don't use it?
+> if (!walk_end) walk_end = p.arg.end;
+This condition is to cater for the case when for loop doesn't execute at
+all because the address range was zero. In that case start == end. So
+p.arg.start or p.arg.end both would work fine. I'll add p.arg.end in
+accordance to above loop.
+
 > 
-> That can't be avoided if I convert everything to inline functions and function
-> pointers - but the optimiser can get rid of it where it can inline the step
-> function.
+> Other than that, the patch looks complete now. Thanks for all your work!
+I'll send the next revision.
 
-AFAICT the IOVEC one was only called directly.
-
-> I tried passing the iterator to the step functions instead, but that just made
-> things bigger.  memcpy_from_iter_mc() is interesting to deal with.  I would
-> prefer to deal with it in the caller so we only do the check once, but that
-> might mean duplicating the caller.
-
-You could try something slightly horrid that the compiler
-might optimise for you.
-Instead of passing in a function pointer pass a number.
-Then do something like:
-#define call_iter(id, ...) \
-	(id == x ? fn_x(__VA_ARGS__) : id == y ? fn_y(__VA_ARGS) ...)
-constant folding on the inline should kill the function pointer.
-You might get away with putting the args on the end.
-
-...
-> > I rather hope the should_fail_usercopy() and instrument_copy_xxx()
-> > calls are usually either absent or, at most, nops.
 > 
-> Okay - it's probably worth marking those too, then.
+> Best Regards
+> Michał Mirosław
 
-Thinking I'm sure they are KASAN annotations.
-The are few enough calls that I suspect that replicating them
-won't affect KASAN (etc) builds.
-
-> > This all seems to have a lot fewer options than last time I looked.
-> 
-> I'm not sure what you mean by 'a lot fewer options'?
-
-It might just be ITER_PIPE that has gone.
-
-> > Is it worth optimising the KVEC case with a single buffer?
-> 
-> You mean an equivalent of UBUF?  Maybe.  There are probably a whole bunch of
-> netfs places that do single-kvec writes, though I'm trying to convert these
-> over to bvec arrays, combining them with their data, and MSG_SPLICE_PAGES.
-
-I'm thinking of what happens with kernel callers of things
-like the socket code - especially for address/option buffers.
-Probably io_uring and bpf (and my out of tree drivers!).
-
-Could be the equivalent of UBUF, but checking for KVEC with
-a count of 1 wouldn't really add any more cmp/jmp pairs.
-
-I've also noticed in the past that some of this code seems
-to be optimised for zero length buffers/fragments.
-Surely they just need to work?
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+-- 
+BR,
+Muhammad Usama Anjum
