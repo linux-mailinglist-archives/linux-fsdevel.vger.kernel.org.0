@@ -2,91 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 11F9C77E215
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 15:02:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FC6177E22D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 15:08:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245111AbjHPNBw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Aug 2023 09:01:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59846 "EHLO
+        id S245373AbjHPNHo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Aug 2023 09:07:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245323AbjHPNBo (ORCPT
+        with ESMTP id S245427AbjHPNHd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Aug 2023 09:01:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35D7526B8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 06:00:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1692190856;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=JL9XHCcHn9+lzn3csLfA/07hiNGl99qLxrzUXZlZiMU=;
-        b=CMYD8dFjSI7u01vLA2WbsRQ8g22bq/SAEriyUdMTLBVRXXzsfhnWF63Sabd09o+DYcm9N8
-        yv2iq3jwWHPKkhfNKprmpAWYiaLPpVEuBzTZ/0SJptfmwZvxhC6Sbtwc5tEroGrREHq4FK
-        OpvVdJfAFgyug0jL0GDUxkdktEtsUHw=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-669-Zdu0GcBbNlWDvx1senW_nQ-1; Wed, 16 Aug 2023 09:00:51 -0400
-X-MC-Unique: Zdu0GcBbNlWDvx1senW_nQ-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 16 Aug 2023 09:07:33 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95CB226BB;
+        Wed, 16 Aug 2023 06:07:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 09950185A7A3;
-        Wed, 16 Aug 2023 13:00:50 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 491CA492C14;
-        Wed, 16 Aug 2023 13:00:48 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <03730b50cebb4a349ad8667373bb8127@AcuMS.aculab.com>
-References: <03730b50cebb4a349ad8667373bb8127@AcuMS.aculab.com> <20230816120741.534415-1-dhowells@redhat.com> <20230816120741.534415-3-dhowells@redhat.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@list.de>,
-        "Christian Brauner" <christian@brauner.io>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Jeff Layton" <jlayton@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] iov_iter: Don't deal with iter->copy_mc in memcpy_from_iter_mc()
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 26610650CB;
+        Wed, 16 Aug 2023 13:07:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A717C433C8;
+        Wed, 16 Aug 2023 13:07:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692191251;
+        bh=TcFs5d6rH94HoGFHxZ/mD1S+yBgNvkwL72WMLLiiWEk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=IEzhoZf3sXjEIuN9AeqIHM+4ILl+0V6KmGu2Q6CH9UmtpTQH5/d9EuwtauFF9cPt0
+         FrxlsyQ6Cqzb8Gt9tADd+AdNkSKefIj8tTGEIDuz2z64V6kTL/Uu3mxeM9yJzrkkgE
+         qCNn/+PvogsvKLKlXYnA8yp8uz1eFLtO9fakcEM7IqUa3J5ty9HiC10nxR8uPtzSZT
+         A8nY82Ui3j6DVJWA8C9O7buZXR4/iVJ9HZqOFO8WYplX86UVNtefFYtXe3+BKYhPUZ
+         DxXQXzLWWajgBX2LMSm2+wFKpOsy91e3HTA/kD6Xw3/U1Htggpo1Bx7PMGV/QxzUKT
+         Dsd/ZkH2Vhb/Q==
+Message-ID: <bd76489a6b0d2f56f4a68d48b3736fcaf5b5119b.camel@kernel.org>
+Subject: Re: [RFCv2 6/7] dlm: use FL_SLEEP to check if blocking request
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Alexander Aring <aahringo@redhat.com>, linux-nfs@vger.kernel.org
+Cc:     cluster-devel@redhat.com, ocfs2-devel@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, teigland@redhat.com,
+        rpeterso@redhat.com, agruenba@redhat.com,
+        trond.myklebust@hammerspace.com, anna@kernel.org,
+        chuck.lever@oracle.com
+Date:   Wed, 16 Aug 2023 09:07:29 -0400
+In-Reply-To: <20230814211116.3224759-7-aahringo@redhat.com>
+References: <20230814211116.3224759-1-aahringo@redhat.com>
+         <20230814211116.3224759-7-aahringo@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <608852.1692190847.1@warthog.procyon.org.uk>
-Date:   Wed, 16 Aug 2023 14:00:47 +0100
-Message-ID: <608853.1692190847@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Laight <David.Laight@ACULAB.COM> wrote:
+On Mon, 2023-08-14 at 17:11 -0400, Alexander Aring wrote:
+> This patch uses the FL_SLEEP flag in struct file_lock to check if it's a
+> blocking request in case if the request coming from nfs lockd process
+> indicated by lm_grant() is set.
+>=20
+> IF FL_SLEEP is set a asynchronous blocking request is being made and
+> it's waiting for lm_grant() callback being called to signal the lock was
+> granted. If it's not set a synchronous non-blocking request is being made=
+.
+>=20
+> Signed-off-by: Alexander Aring <aahringo@redhat.com>
+> ---
+>  fs/dlm/plock.c | 38 ++++++++++++++++++++++----------------
+>  1 file changed, 22 insertions(+), 16 deletions(-)
+>=20
+> diff --git a/fs/dlm/plock.c b/fs/dlm/plock.c
+> index 0094fa4004cc..524771002a2f 100644
+> --- a/fs/dlm/plock.c
+> +++ b/fs/dlm/plock.c
+> @@ -140,7 +140,6 @@ int dlm_posix_lock(dlm_lockspace_t *lockspace, u64 nu=
+mber, struct file *file,
+>  	op->info.optype		=3D DLM_PLOCK_OP_LOCK;
+>  	op->info.pid		=3D fl->fl_pid;
+>  	op->info.ex		=3D (fl->fl_type =3D=3D F_WRLCK);
+> -	op->info.wait		=3D IS_SETLKW(cmd);
+>  	op->info.fsid		=3D ls->ls_global_id;
+>  	op->info.number		=3D number;
+>  	op->info.start		=3D fl->fl_start;
+> @@ -148,24 +147,31 @@ int dlm_posix_lock(dlm_lockspace_t *lockspace, u64 =
+number, struct file *file,
+>  	op->info.owner =3D (__u64)(long)fl->fl_owner;
+>  	/* async handling */
+>  	if (fl->fl_lmops && fl->fl_lmops->lm_grant) {
+> -		op_data =3D kzalloc(sizeof(*op_data), GFP_NOFS);
+> -		if (!op_data) {
+> -			dlm_release_plock_op(op);
+> -			rv =3D -ENOMEM;
+> -			goto out;
+> -		}
+> +		if (fl->fl_flags & FL_SLEEP) {
+> +			op_data =3D kzalloc(sizeof(*op_data), GFP_NOFS);
+> +			if (!op_data) {
+> +				dlm_release_plock_op(op);
+> +				rv =3D -ENOMEM;
+> +				goto out;
+> +			}
+> =20
+> -		op_data->callback =3D fl->fl_lmops->lm_grant;
+> -		locks_init_lock(&op_data->flc);
+> -		locks_copy_lock(&op_data->flc, fl);
+> -		op_data->fl		=3D fl;
+> -		op_data->file	=3D file;
+> +			op->info.wait =3D 1;
+> +			op_data->callback =3D fl->fl_lmops->lm_grant;
+> +			locks_init_lock(&op_data->flc);
+> +			locks_copy_lock(&op_data->flc, fl);
+> +			op_data->fl		=3D fl;
+> +			op_data->file	=3D file;
+> =20
+> -		op->data =3D op_data;
+> +			op->data =3D op_data;
+> =20
+> -		send_op(op);
+> -		rv =3D FILE_LOCK_DEFERRED;
+> -		goto out;
+> +			send_op(op);
+> +			rv =3D FILE_LOCK_DEFERRED;
+> +			goto out;
 
-> 
-> Couldn't the relevant code directly call __copy_from_iter_mc() ?
-> Or a version then checked iov_is_copy_mc() and then fell
-> back to the standard function.
+A question...we're returning FILE_LOCK_DEFERRED after the DLM request is
+sent. If it ends up being blocked, what happens? Does it do a lm_grant
+downcall with -EAGAIN or something as the result?
 
-No, because the marked iterator is handed by the coredump code to
-__kernel_write_iter() and thence on to who-knows-what driver - which will call
-copy_from_iter() or some such.  $DRIVER shouldn't need to know about
-->copy_mc.
 
-One thing I do wonder about, though, is what should happen if they call, say,
-csum_and_copy_from_iter()?  That doesn't have an _mc variant.  Or what if they
-extract the pages and operate directly on those?
+> +		} else {
+> +			op->info.wait =3D 0;
+> +		}
+> +	} else {
+> +		op->info.wait =3D IS_SETLKW(cmd);
+>  	}
+> =20
+>  	send_op(op);
 
-David
+Looks reasonable overall.
 
+Now that I look, we have quite a number of places in the kernel that
+seem to check for F_SETLKW, when what they really want is to check
+FL_SLEEP.
+--=20
+Jeff Layton <jlayton@kernel.org>
