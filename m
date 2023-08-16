@@ -2,239 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA0FC77E51D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 17:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5433077E523
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 17:29:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245487AbjHPP0b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Aug 2023 11:26:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50938 "EHLO
+        id S1344126AbjHPP3M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Aug 2023 11:29:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344202AbjHPP0H (ORCPT
+        with ESMTP id S1344166AbjHPP2u (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Aug 2023 11:26:07 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 482A52D63
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 08:25:40 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-99bcc0adab4so866090066b.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 08:25:40 -0700 (PDT)
+        Wed, 16 Aug 2023 11:28:50 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFC9B1FE2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 08:28:48 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1bf095e1becso86085ad.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 08:28:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1692199536; x=1692804336;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MxXL5SlrE9mps1gsT2ZwBqp+UsgUpTQpEiTDpDxq990=;
-        b=aGvNKC7G7MX7YT8ftThOdZZOlbhXdlzg6neB5mZ/tkKNTXA2uCxi0wPf/81N56b/1P
-         nzgJlgiiD4xb0ZbnFWm5ieYgb8Xq4YbXwdRJMCndXv7blxI5PldvE53KrAU3erRnMiJG
-         0xdF0o8i0u/0Oky57KhU6Ucp383LtoKHKLbzo=
+        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1692199728; x=1692804528;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wVe8WOvg8Lfa0WItyc/0CqS+Bb2dkjc5bYb8c3I+ZmI=;
+        b=SSFnZAFLpDAVR/peuS2whZAlayxatjOnqbzJkE5844BFAIYPmHdwCNbmt4JKKC2A/j
+         mJoQG0Alk3SCYKnP5j0q27IjtC8FWaJRUgrnSRhK/ODiqv5J81fg2dvFvtbf2/j7kEw5
+         RdStgSOClHI+sQurAi22SGKw8zBFWyXcMJsYYxtVygVyXF2A7dk6w/s2iZkZNgOubKaq
+         oxa7EH+jOwvYRoJ9qveFf6QFikp6H95HHaLNqAnFvGcgbe+AZbasFS51fHZ7LGFXv6ON
+         E1Lqn/5+dwe+3RO7vDQJ1vV9zsrCTfkiLwHofqpdQLaLS3Fr0RWWvhZMV+U3IIqT4ZRN
+         EH4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692199536; x=1692804336;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MxXL5SlrE9mps1gsT2ZwBqp+UsgUpTQpEiTDpDxq990=;
-        b=A/pt3Qy8yzoF0IIHBipqY0oR86j2BviSHCNuoYThhWbqm22cOMqLW5h+jDfyxuwxTa
-         Pr4iP/mUw4S3h2q8xzWekPEcXEz/VfOOrxrVgpSyOYuevQUlzpC2MKBJBI+9usUwn8GX
-         vbiQKGEuQNSZoHosMJ+zMsEJc6Jo6b1I6y2c5CWtGFCG8/yVtMWP34cgiUa7tFpw+KHP
-         n5SwjZrLW8VSE/C2t2cLljpc4noF9fe0CfOXwqdYQt0SxisTuuOw/GY7h7p7ooDN1TNg
-         /OBdbQu//inXjHgulzSm9P/jwOHYB/k27OgvRuYq3XV8gyMRKc5+rJYJ4huohm1u4ZPt
-         MRhw==
-X-Gm-Message-State: AOJu0YzIwnc/PxdCU0Y1hB2sGRdfVhXn7gw8eASahaNkCKBRGmxOlEOg
-        g8c/FPxfuEooIsq5/MbkMVTVcnCauGGeJSyEHt/a9g==
-X-Google-Smtp-Source: AGHT+IGSOPKGiwocvoyClNZFoUxssqXNKxcM2Qy+TDlaHjKCL6sYeQptshwE1wjtJqeiO4MNfrtaaBbfM9YrjqirrTU=
-X-Received: by 2002:a17:907:a07b:b0:99b:cc2f:c47c with SMTP id
- ia27-20020a170907a07b00b0099bcc2fc47cmr1484617ejc.53.1692199535758; Wed, 16
- Aug 2023 08:25:35 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1692199728; x=1692804528;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wVe8WOvg8Lfa0WItyc/0CqS+Bb2dkjc5bYb8c3I+ZmI=;
+        b=dTS6F674vtzOCl5UAAEhRSTI2fI22SYKJAuwOBUgFHT4qiU6oHoCQzw3KFb2tMXyXa
+         xVtdVj69+WLyJtBTHiLFAb1VQtYKG8/ralxJqORVrn/o55zOiIrpFIUG+wPtB6HXmRn6
+         o8EeRroKrx/kM1lfubqPa47FKcjofj9aoPFgcQsxN5OV2TCR1peKKl1GDEWO76K0hPAs
+         ZqMGWMA7W97gBXanwVzNLKpMkIsP+fGvW56jyMRNc6P18gXK9+MUC4RltOFs+j+B9Uqn
+         /83IAi+aes35dx773gVQnqq9zUdx/kVVQz+taHrirlbXg13ZuIOrIcCQYkuLojXUWtt0
+         U7yA==
+X-Gm-Message-State: AOJu0YwJfWIurpi3LNtbsX43Z4wN8F3mchBuW31aGOCq32uEwYG2sTLS
+        0A0Cz3POcfW/Lbiy+KIPX1xXhg==
+X-Google-Smtp-Source: AGHT+IFe+TtoSpYT/oNqF1bNprMaM0K4llMMUBaRX7ECC7woIbQkL9BKunBvL3CGVoqvlv1MF9+oNg==
+X-Received: by 2002:a17:902:ce8e:b0:1b8:811:b079 with SMTP id f14-20020a170902ce8e00b001b80811b079mr2631741plg.0.1692199728355;
+        Wed, 16 Aug 2023 08:28:48 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id j6-20020a17090a31c600b00267eead2f16sm12172541pjf.36.2023.08.16.08.28.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Aug 2023 08:28:47 -0700 (PDT)
+Message-ID: <7725feff-8d9d-4b54-9910-951b79f67596@kernel.dk>
+Date:   Wed, 16 Aug 2023 09:28:46 -0600
 MIME-Version: 1.0
-References: <20230816143313.2591328-1-bschubert@ddn.com> <20230816143313.2591328-4-bschubert@ddn.com>
-In-Reply-To: <20230816143313.2591328-4-bschubert@ddn.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 16 Aug 2023 17:25:24 +0200
-Message-ID: <CAJfpegtEj1gyTG+mJLrPEerR3VuNNHhp7uYmU5R8a0x-Sv=BVw@mail.gmail.com>
-Subject: Re: [PATCH 3/6] [RFC] Allow atomic_open() on positive dentry
-To:     Bernd Schubert <bschubert@ddn.com>
-Cc:     linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm,
-        fuse-devel@lists.sourceforge.net,
-        Christian Brauner <brauner@kernel.org>,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fs: create kiocb_{start,end}_write() helpers
+Content-Language: en-US
+To:     Amir Goldstein <amir73il@gmail.com>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Dharmendra Singh <dsingh@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        linux-fsdevel@vger.kernel.org
+References: <20230816085439.894112-1-amir73il@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20230816085439.894112-1-amir73il@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 16 Aug 2023 at 16:34, Bernd Schubert <bschubert@ddn.com> wrote:
->
-> From: Miklos Szeredi <miklos@szeredi.hu>
->
-> atomic_open() will do an open-by-name or create-and-open
-> depending on the flags.
->
-> If file was created, then the old positive dentry is obviously
-> stale, so it will be invalidated and a new one will be allocated.
->
-> If not created, then check whether it's the same inode (same as in
-> ->d_revalidate()) and if not, invalidate & allocate new dentry.
->
-> Changes (v7 global series) from Miklos initial patch (by Bernd):
-> - LOOKUP_ATOMIC_REVALIDATE was added and is set for revalidate
->   calls into the file system when revalidate by atomic open is
->   supported - this is to avoid that ->d_revalidate() would skip
->   revalidate and set DCACHE_ATOMIC_OPEN, although vfs
->   does not supported it in the given code path (for example
->   when LOOKUP_RCU is set)).
-> - Support atomic-open-revalidate in lookup_fast() - allow atomic
->   open for positive dentries without O_CREAT being set.
->
-> Changes (v8 global series)
-> - Introduce enum for d_revalidate return values
-> - LOOKUP_ATOMIC_REVALIDATE is removed again
-> - DCACHE_ATOMIC_OPEN flag is replaced by D_REVALIDATE_ATOMIC
->   return value
->
-> Co-developed-by: Bernd Schubert <bschubert@ddn.com>
-> Signed-off-by: Miklos Szeredi <miklos@szeredi.hu>
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Dharmendra Singh <dsingh@ddn.com>
-> Cc: linux-fsdevel@vger.kernel.org
-> ---
->  fs/namei.c            | 25 +++++++++++++++++++------
->  include/linux/namei.h |  6 ++++++
->  2 files changed, 25 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index e4fe0879ae55..8381ec7645f5 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -858,7 +858,7 @@ static inline int d_revalidate(struct dentry *dentry, unsigned int flags)
->         if (unlikely(dentry->d_flags & DCACHE_OP_REVALIDATE))
->                 return dentry->d_op->d_revalidate(dentry, flags);
->         else
-> -               return 1;
-> +               return D_REVALIDATE_VALID;
->  }
->
->  /**
-> @@ -1611,10 +1611,11 @@ struct dentry *lookup_one_qstr_excl(const struct qstr *name,
->  }
->  EXPORT_SYMBOL(lookup_one_qstr_excl);
->
-> -static struct dentry *lookup_fast(struct nameidata *nd)
-> +static struct dentry *lookup_fast(struct nameidata *nd, int *atomic_revalidate)
+On 8/16/23 2:54 AM, Amir Goldstein wrote:
+> aio, io_uring, cachefiles and overlayfs, all open code an ugly variant
+> of file_{start,end}_write() to silence lockdep warnings.
+> 
+> Create helpers for this lockdep dance and use the helpers in all the
+> callers.
+> 
+> Use a new iocb flag IOCB_WRITE_STARTED to indicate if sb_start_write()
+> was called.
 
-bool?
+Looks better now, but I think you should split this into a prep patch
+that adds the helpers, and then one for each conversion. We've had bugs
+with this accounting before which causes fs freeze issues, would be
+prudent to have it split because of that.
 
->  {
->         struct dentry *dentry, *parent = nd->path.dentry;
->         int status = 1;
-> +       *atomic_revalidate = 0;
->
->         /*
->          * Rename seqlock is not required here because in the off chance
-> @@ -1656,6 +1657,10 @@ static struct dentry *lookup_fast(struct nameidata *nd)
->                 dput(dentry);
->                 return ERR_PTR(status);
->         }
-> +
-> +       if (status == D_REVALIDATE_ATOMIC)
-> +               *atomic_revalidate = 1;
-> +
->         return dentry;
->  }
->
-> @@ -1981,6 +1986,7 @@ static const char *handle_dots(struct nameidata *nd, int type)
->  static const char *walk_component(struct nameidata *nd, int flags)
->  {
->         struct dentry *dentry;
-> +       int atomic_revalidate;
->         /*
->          * "." and ".." are special - ".." especially so because it has
->          * to be able to know about the current root directory and
-> @@ -1991,7 +1997,7 @@ static const char *walk_component(struct nameidata *nd, int flags)
->                         put_link(nd);
->                 return handle_dots(nd, nd->last_type);
->         }
-> -       dentry = lookup_fast(nd);
-> +       dentry = lookup_fast(nd, &atomic_revalidate);
->         if (IS_ERR(dentry))
->                 return ERR_CAST(dentry);
->         if (unlikely(!dentry)) {
-> @@ -1999,6 +2005,9 @@ static const char *walk_component(struct nameidata *nd, int flags)
->                 if (IS_ERR(dentry))
->                         return ERR_CAST(dentry);
->         }
-> +
-> +       WARN_ON(atomic_revalidate);
-> +
->         if (!(flags & WALK_MORE) && nd->depth)
->                 put_link(nd);
->         return step_into(nd, flags, dentry);
-> @@ -3430,7 +3439,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
->                 dput(dentry);
->                 dentry = NULL;
->         }
-> -       if (dentry->d_inode) {
-> +       if (dentry->d_inode && error != D_REVALIDATE_ATOMIC) {
->                 /* Cached positive dentry: will open in f_op->open */
->                 return dentry;
->         }
-> @@ -3523,15 +3532,19 @@ static const char *open_last_lookups(struct nameidata *nd,
->         }
->
->         if (!(open_flag & O_CREAT)) {
-> +               int atomic_revalidate;
->                 if (nd->last.name[nd->last.len])
->                         nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
->                 /* we _can_ be in RCU mode here */
-> -               dentry = lookup_fast(nd);
-> +               dentry = lookup_fast(nd, &atomic_revalidate);
->                 if (IS_ERR(dentry))
->                         return ERR_CAST(dentry);
-> +               if (dentry && unlikely(atomic_revalidate)) {
-
-Need to assert !LOOKUP_RCU
-
-> +                       dput(dentry);
-> +                       dentry = NULL;
-> +               }
-
-Feels a shame to throw away the dentry.  May be worth adding a helper
-for the plain atomic open, most of the complexity of lookup_open() is
-because of O_CREAT, so this should be much simplified.
-
->                 if (likely(dentry))
->                         goto finish_lookup;
+> diff --git a/fs/aio.c b/fs/aio.c
+> index 77e33619de40..16fb3ac2093b 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -1444,17 +1444,8 @@ static void aio_complete_rw(struct kiocb *kiocb, long res)
+>  	if (!list_empty_careful(&iocb->ki_list))
+>  		aio_remove_iocb(iocb);
+>  
+> -	if (kiocb->ki_flags & IOCB_WRITE) {
+> -		struct inode *inode = file_inode(kiocb->ki_filp);
 > -
+> -		/*
+> -		 * Tell lockdep we inherited freeze protection from submission
+> -		 * thread.
+> -		 */
+> -		if (S_ISREG(inode->i_mode))
+> -			__sb_writers_acquired(inode->i_sb, SB_FREEZE_WRITE);
+> -		file_end_write(kiocb->ki_filp);
+> -	}
+> +	if (kiocb->ki_flags & IOCB_WRITE)
+> +		kiocb_end_write(kiocb);
 
-Adding/removing empty lines is just a distraction, so it shouldn't be
-done unless it serves a real purpose.
+Can't we just call kiocb_end_write() here, it checks WRITE_STARTED
+anyway? Not a big deal, and honestly I'd rather just get rid of
+WRITE_STARTED if we're not using it like that. It doesn't serve much of
+a purpose, if we're gating this one IOCB_WRITE anyway (which I do like
+better than WRITE_STARTED). And it avoids writing to the kiocb at the
+end too, which is a nice win.
 
->                 BUG_ON(nd->flags & LOOKUP_RCU);
->         } else {
->                 /* create side of things */
-> diff --git a/include/linux/namei.h b/include/linux/namei.h
-> index 1463cbda4888..675fd6c88201 100644
-> --- a/include/linux/namei.h
-> +++ b/include/linux/namei.h
-> @@ -47,6 +47,12 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
->  /* LOOKUP_* flags which do scope-related checks based on the dirfd. */
->  #define LOOKUP_IS_SCOPED (LOOKUP_BENEATH | LOOKUP_IN_ROOT)
->
-> +enum {
-> +       D_REVALIDATE_INVALID = 0,
-> +       D_REVALIDATE_VALID   = 1,
-> +       D_REVALIDATE_ATOMIC =  2, /* Not allowed with LOOKUP_RCU */
-> +};
-> +
->  extern int path_pts(struct path *path);
->
->  extern int user_path_at_empty(int, const char __user *, unsigned, struct path *, int *empty);
-> --
-> 2.37.2
->
+> index b2adee67f9b2..8e5d410a1be5 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -338,6 +338,8 @@ enum rw_hint {
+>  #define IOCB_NOIO		(1 << 20)
+>  /* can use bio alloc cache */
+>  #define IOCB_ALLOC_CACHE	(1 << 21)
+> +/* file_start_write() was called */
+> +#define IOCB_WRITE_STARTED	(1 << 22)
+>  
+>  /* for use in trace events */
+>  #define TRACE_IOCB_STRINGS \
+> @@ -351,7 +353,8 @@ enum rw_hint {
+>  	{ IOCB_WRITE,		"WRITE" }, \
+>  	{ IOCB_WAITQ,		"WAITQ" }, \
+>  	{ IOCB_NOIO,		"NOIO" }, \
+> -	{ IOCB_ALLOC_CACHE,	"ALLOC_CACHE" }
+> +	{ IOCB_ALLOC_CACHE,	"ALLOC_CACHE" }, \
+> +	{ IOCB_WRITE_STARTED,	"WRITE_STARTED" }
+>  
+>  struct kiocb {
+>  	struct file		*ki_filp;
+
+These changes will conflict with other changes in linux-next that are
+going upstream. I'd prefer to stage this one after those changes, once
+we get to a version that looks good to everybody.
+
+-- 
+Jens Axboe
+
