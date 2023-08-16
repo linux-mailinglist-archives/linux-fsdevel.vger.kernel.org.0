@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3341C77DEF4
+	by mail.lfdr.de (Postfix) with ESMTP id C697B77DEF6
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 12:39:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243555AbjHPKjN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Aug 2023 06:39:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33586 "EHLO
+        id S243562AbjHPKjO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Aug 2023 06:39:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243566AbjHPKit (ORCPT
+        with ESMTP id S243701AbjHPKiz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Aug 2023 06:38:49 -0400
+        Wed, 16 Aug 2023 06:38:55 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A79222684;
-        Wed, 16 Aug 2023 03:38:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC26D2128;
+        Wed, 16 Aug 2023 03:38:53 -0700 (PDT)
 Received: from localhost.localdomain (unknown [59.103.216.185])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 24CB8660576C;
-        Wed, 16 Aug 2023 11:38:39 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id F3E9166071F8;
+        Wed, 16 Aug 2023 11:38:46 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1692182326;
-        bh=b7U0lW+K/mRzYy3w1T1mtXJROQrF5lz0n6aVM+Gn1JE=;
+        s=mail; t=1692182332;
+        bh=KpgOAtB3tRXafG9E2ExNtij79OUEo5+z7uKo4KCrRus=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Uey+jwdUZF/n3EDNLcHf2EHKS/UQpBsnx+w5JILiTSGkQ4+mKLgheBgqeif7c/I5y
-         nOVGRA6rtGP6ZRbz2QOzO2CCVO8sM714UQDpRa/DQarf/653DgkbVP6jAKuWzzI8LG
-         twPnCX2JdpYRxozKWesxxK6piRN4uiM69bFbyALjdaD9FuDYe1TZ9COmP/OvSbA0Jt
-         b2vpuqzokTjieFtJFsXBqHMq+maa+vQVUJt/mcwoDd2QknJs4yLnuc0jsz/OA4db79
-         +5tAojiZ/5gorVIW7IPSqwxR0aRum7utuheGKcbqHPMuejx9g9pOpBywNL2LVDpxco
-         13EisM4dO7zZw==
+        b=Hg+aEKgn9Kfy0LQNoWTUxI+OHxK76Xkil6CalTgEIVK+AN4SUv7mULKfYIW8yegg9
+         7jVqNFlkxxQcDlj0gVIJCjHy/VbJztEF0rind7zOpOrVcsUtGlz42SWUqxEBjGFiQ+
+         Wg9/A5ZWuBFyMq6TjpGpEhTmpHtC6YZAvJWLIsNK2t1QU4568vOsVe2ZnfXzSd4LqN
+         E1uWSjGDWNf9RYtLDKz7QrCMMt1l4IJwOMDC69easAhQniQzVB04Ruw+AZlOLdLGCA
+         WFDQkkxqSgCb955FH4xkrYgELryrZ7MTF9HFiOFQsLJWgWpPHkYTxxAg3BTtTcmmc2
+         Blc0GdIBTNRDA==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
 To:     Peter Xu <peterx@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -60,9 +60,9 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Cyrill Gorcunov <gorcunov@gmail.com>,
         Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
         David Hildenbrand <david@redhat.com>
-Subject: [PATCH v31 3/6] fs/proc/task_mmu: Add fast paths to get/clear PAGE_IS_WRITTEN flag
-Date:   Wed, 16 Aug 2023 15:38:11 +0500
-Message-Id: <20230816103814.1522393-4-usama.anjum@collabora.com>
+Subject: [PATCH v31 4/6] tools headers UAPI: Update linux/fs.h with the kernel sources
+Date:   Wed, 16 Aug 2023 15:38:12 +0500
+Message-Id: <20230816103814.1522393-5-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230816103814.1522393-1-usama.anjum@collabora.com>
 References: <20230816103814.1522393-1-usama.anjum@collabora.com>
@@ -78,91 +78,100 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Adding fast code paths to handle specifically only get and/or clear
-operation of PAGE_IS_WRITTEN, increases its performance by 0-35%.
-The results of some test cases are given below:
-
-Test-case-1
-t1 = (Get + WP) time
-t2 = WP time
-                       t1            t2
-Without this patch:    140-170mcs    90-115mcs
-With this patch:       110mcs        80mcs
-Worst case diff:       35% faster    30% faster
-
-Test-case-2
-t3 = atomic Get and WP
-                      t3
-Without this patch:   120-140mcs
-With this patch:      100-110mcs
-Worst case diff:      21% faster
+New IOCTL and macros has been added in the kernel sources. Update the
+tools header file as well.
 
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
-The test to measure the performance can be found: https://is.gd/FtSKcD
-8 8192 3 1 0 and 8 8192 3 1 1 arguments have been used to produce the
-above mentioned results.
+Changes in v30:
+- Comment update
 
 Changes in v29:
-- Minor updates in flush logic following the original patch
----
- fs/proc/task_mmu.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+- Comment updates
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 62950f3cafc7c..b780fe01d54ca 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -2121,6 +2121,41 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
- 		return 0;
- 	}
+Changes in v27:
+- Comment updates in fs.h
+
+Changes in v26:
+- Update according to tools/include/uapi/linux/fs.h
+
+Changes in v21:
+- Update tools/include/uapi/linux/fs.h
+
+Changes in v19:
+- Update fs.h according to precious patch
+---
+ tools/include/uapi/linux/fs.h | 59 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+
+diff --git a/tools/include/uapi/linux/fs.h b/tools/include/uapi/linux/fs.h
+index b7b56871029c5..da43810b74856 100644
+--- a/tools/include/uapi/linux/fs.h
++++ b/tools/include/uapi/linux/fs.h
+@@ -305,4 +305,63 @@ typedef int __bitwise __kernel_rwf_t;
+ #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
+ 			 RWF_APPEND)
  
-+	if (!p->vec_out) {
-+		/* Fast path for performing exclusive WP */
-+		for (addr = start; addr != end; pte++, addr += PAGE_SIZE) {
-+			if (pte_uffd_wp(ptep_get(pte)))
-+				continue;
-+			make_uffd_wp_pte(vma, addr, pte);
-+			if (!flush_end)
-+				start = addr;
-+			flush_end = addr + PAGE_SIZE;
-+		}
-+		goto flush_and_return;
-+	}
++/* Pagemap ioctl */
++#define PAGEMAP_SCAN	_IOWR('f', 16, struct pm_scan_arg)
 +
-+	if (!p->arg.category_anyof_mask && !p->arg.category_inverted &&
-+	    p->arg.category_mask == PAGE_IS_WRITTEN &&
-+	    p->arg.return_mask == PAGE_IS_WRITTEN) {
-+		for (addr = start; addr < end; pte++, addr += PAGE_SIZE) {
-+			unsigned long next = addr + PAGE_SIZE;
++/* Bitmasks provided in pm_scan_args masks and reported in page_region.categories. */
++#define PAGE_IS_WPALLOWED	(1 << 0)
++#define PAGE_IS_WRITTEN		(1 << 1)
++#define PAGE_IS_FILE		(1 << 2)
++#define PAGE_IS_PRESENT		(1 << 3)
++#define PAGE_IS_SWAPPED		(1 << 4)
++#define PAGE_IS_PFNZERO		(1 << 5)
++#define PAGE_IS_HUGE		(1 << 6)
 +
-+			if (pte_uffd_wp(ptep_get(pte)))
-+				continue;
-+			ret = pagemap_scan_output(p->cur_vma_category | PAGE_IS_WRITTEN,
-+						  p, addr, &next);
-+			if (next == addr)
-+				break;
-+			if (~p->arg.flags & PM_SCAN_WP_MATCHING)
-+				continue;
-+			make_uffd_wp_pte(vma, addr, pte);
-+			if (!flush_end)
-+				start = addr;
-+			flush_end = next;
-+		}
-+		goto flush_and_return;
-+	}
++/*
++ * struct page_region - Page region with flags
++ * @start:	Start of the region
++ * @end:	End of the region (exclusive)
++ * @categories:	PAGE_IS_* category bitmask for the region
++ */
++struct page_region {
++	__u64 start;
++	__u64 end;
++	__u64 categories;
++};
 +
- 	for (addr = start; addr != end; pte++, addr += PAGE_SIZE) {
- 		unsigned long categories = p->cur_vma_category |
- 					   pagemap_page_category(p, vma, addr, ptep_get(pte));
-@@ -2144,6 +2179,7 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
- 		flush_end = next;
- 	}
- 
-+flush_and_return:
- 	if (flush_end)
- 		flush_tlb_range(vma, start, addr);
- 
++/* Flags for PAGEMAP_SCAN ioctl */
++#define PM_SCAN_WP_MATCHING	(1 << 0)	/* Write protect the pages matched. */
++#define PM_SCAN_CHECK_WPASYNC	(1 << 1)	/* Abort the scan when a non-WP-enabled page is found. */
++
++/*
++ * struct pm_scan_arg - Pagemap ioctl argument
++ * @size:		Size of the structure
++ * @flags:		Flags for the IOCTL
++ * @start:		Starting address of the region
++ * @end:		Ending address of the region
++ * @walk_end		Address where the scan stopped (written by kernel).
++ *			walk_end == end (address tags cleared) informs that the scan completed on entire range.
++ * @vec:		Address of page_region struct array for output
++ * @vec_len:		Length of the page_region struct array
++ * @max_pages:		Optional limit for number of returned pages (0 = disabled)
++ * @category_inverted:	PAGE_IS_* categories which values match if 0 instead of 1
++ * @category_mask:	Skip pages for which any category doesn't match
++ * @category_anyof_mask: Skip pages for which no category matches
++ * @return_mask:	PAGE_IS_* categories that are to be reported in `page_region`s returned
++ */
++struct pm_scan_arg {
++	__u64 size;
++	__u64 flags;
++	__u64 start;
++	__u64 end;
++	__u64 walk_end;
++	__u64 vec;
++	__u64 vec_len;
++	__u64 max_pages;
++	__u64 category_inverted;
++	__u64 category_mask;
++	__u64 category_anyof_mask;
++	__u64 return_mask;
++};
++
+ #endif /* _UAPI_LINUX_FS_H */
 -- 
 2.40.1
 
