@@ -2,453 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4228077E484
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 17:02:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2EA677E495
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 17:04:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243294AbjHPPBr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Aug 2023 11:01:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45814 "EHLO
+        id S1343951AbjHPPD4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Aug 2023 11:03:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343943AbjHPPBX (ORCPT
+        with ESMTP id S1344039AbjHPPDr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Aug 2023 11:01:23 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B66CA2736
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 08:01:02 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 5F9F81F459;
-        Wed, 16 Aug 2023 15:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1692198061; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BrSv2YasJLchZkGbZonYQ8KF/dsWsdFjChVazw6Zr3M=;
-        b=sIjG12xD/+Y4vTyFSE0xryAzDkHspXr4l/UlDTyvy135PammhBSq2zwk3dphrY1zjpxcH+
-        6aAOuKnvHwVFV05PoBf+dVLPaZdMWp4+zDJrPnBrWPs5XhtZgh2E41FwlWvoIModBR/9ap
-        ugMQeiL7rliaHzF3XmOsGJitUdiqq7A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1692198061;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BrSv2YasJLchZkGbZonYQ8KF/dsWsdFjChVazw6Zr3M=;
-        b=rB/UhU8BDKXNXzLJCT2dqkCreIhlf57Ed1GRLzN0P3nBQRiXrMKZvqADbkE1TzqX/02u3A
-        VkJJ7rd9xMxJIwCg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 48C311353E;
-        Wed, 16 Aug 2023 15:01:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id LQOlEa3k3GQHDAAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 16 Aug 2023 15:01:01 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id AC012A0769; Wed, 16 Aug 2023 17:01:00 +0200 (CEST)
-Date:   Wed, 16 Aug 2023 17:01:00 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] fs: create kiocb_{start,end}_write() helpers
-Message-ID: <20230816150100.e57mr4pr3u52u64b@quack3>
-References: <20230816085439.894112-1-amir73il@gmail.com>
+        Wed, 16 Aug 2023 11:03:47 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52DCF2D49;
+        Wed, 16 Aug 2023 08:03:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1692198217; x=1723734217;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=AFqvtyU2z39BJI3AYxzGxYmyTqAqjIgBGsSHAKki+8E=;
+  b=FG9m+QsdSxxXHyuAPEZR9vNcoiZPKM6peesKYCHdm/5WI7BKS6s2byd9
+   IH4vPuqv9JEWpDKmSsJWLr+d81+fg+WihvuSx4IqPFQ0Iyr2rBqPdLqFo
+   PMBEtqZwcX2K6K3a8Y+8Y/F2DOeO7Mg2VmcU6Tf+CxinI1yzxlrglr+qS
+   mxQlFik4UHEBxyYBLAyxPnUmY37UwZiz5ohw+6zY8NMM2rieVFF+pCaVJ
+   l6RLjycHJ8fBNBQRfQkVLuxjt+BESXi7a/f8Xgb52dn7ElgvwkDzdVvq7
+   L2/GzajSAjXZOv/QcqDPd7yK4PAi0XvLosDGPAAdk0DWM3lH+pEXdubiO
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10803"; a="372557384"
+X-IronPort-AV: E=Sophos;i="6.01,177,1684825200"; 
+   d="scan'208";a="372557384"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2023 08:02:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10803"; a="857849914"
+X-IronPort-AV: E=Sophos;i="6.01,177,1684825200"; 
+   d="scan'208";a="857849914"
+Received: from lkp-server02.sh.intel.com (HELO a9caf1a0cf30) ([10.239.97.151])
+  by orsmga004.jf.intel.com with ESMTP; 16 Aug 2023 08:02:16 -0700
+Received: from kbuild by a9caf1a0cf30 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qWI2H-0000Ns-0y;
+        Wed, 16 Aug 2023 15:02:13 +0000
+Date:   Wed, 16 Aug 2023 23:01:07 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Qi Zheng <zhengqi.arch@bytedance.com>, akpm@linux-foundation.org,
+        david@fromorbit.com, tkhai@ya.ru, vbabka@suse.cz,
+        roman.gushchin@linux.dev, djwong@kernel.org, brauner@kernel.org,
+        paulmck@kernel.org, tytso@mit.edu, steven.price@arm.com,
+        cel@kernel.org, senozhatsky@chromium.org, yujie.liu@intel.com,
+        gregkh@linuxfoundation.org, muchun.song@linux.dev,
+        joel@joelfernandes.org, christian.koenig@amd.com
+Cc:     oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, dri-devel@lists.freedesktop.org,
+        linux-fsdevel@vger.kernel.org,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: Re: [PATCH 1/5] mm: move some shrinker-related function declarations
+ to mm/internal.h
+Message-ID: <202308162208.cQBnGoER-lkp@intel.com>
+References: <20230816083419.41088-2-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20230816085439.894112-1-amir73il@gmail.com>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_SOFTFAIL,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230816083419.41088-2-zhengqi.arch@bytedance.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 16-08-23 11:54:39, Amir Goldstein wrote:
-> aio, io_uring, cachefiles and overlayfs, all open code an ugly variant
-> of file_{start,end}_write() to silence lockdep warnings.
-> 
-> Create helpers for this lockdep dance and use the helpers in all the
-> callers.
-> 
-> Use a new iocb flag IOCB_WRITE_STARTED to indicate if sb_start_write()
-> was called.
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Hi Qi,
 
-Yeah, looks like a good cleanup to me. Feel free to add:
+kernel test robot noticed the following build warnings:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+[auto build test WARNING on brauner-vfs/vfs.all]
+[also build test WARNING on linus/master v6.5-rc6 next-20230816]
+[cannot apply to akpm-mm/mm-everything drm-misc/drm-misc-next vfs-idmapping/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-								Honza
+url:    https://github.com/intel-lab-lkp/linux/commits/Qi-Zheng/mm-move-some-shrinker-related-function-declarations-to-mm-internal-h/20230816-163833
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20230816083419.41088-2-zhengqi.arch%40bytedance.com
+patch subject: [PATCH 1/5] mm: move some shrinker-related function declarations to mm/internal.h
+config: x86_64-buildonly-randconfig-r003-20230816 (https://download.01.org/0day-ci/archive/20230816/202308162208.cQBnGoER-lkp@intel.com/config)
+compiler: gcc-7 (Ubuntu 7.5.0-6ubuntu2) 7.5.0
+reproduce: (https://download.01.org/0day-ci/archive/20230816/202308162208.cQBnGoER-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202308162208.cQBnGoER-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> mm/shrinker_debug.c:174:5: warning: no previous declaration for 'shrinker_debugfs_add' [-Wmissing-declarations]
+    int shrinker_debugfs_add(struct shrinker *shrinker)
+        ^~~~~~~~~~~~~~~~~~~~
+>> mm/shrinker_debug.c:249:16: warning: no previous declaration for 'shrinker_debugfs_detach' [-Wmissing-declarations]
+    struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
+                   ^~~~~~~~~~~~~~~~~~~~~~~
+>> mm/shrinker_debug.c:265:6: warning: no previous declaration for 'shrinker_debugfs_remove' [-Wmissing-declarations]
+    void shrinker_debugfs_remove(struct dentry *debugfs_entry, int debugfs_id)
+         ^~~~~~~~~~~~~~~~~~~~~~~
 
 
-> ---
-> 
-> Christian,
-> 
-> This is an attempt to consolidate the open coded lockdep fooling in
-> all those async io submitters into a single helper.
-> The idea to do that consolidation was suggested by Jan.
-> The (questionable) idea to use an IOCB_ flag was mine.
-> 
-> This re-factoring is part of a larger vfs cleanup I am doing for
-> fanotify permission events.  The complete series is not ready for
-> prime time yet, but this one patch is independent and I would love
-> to get it reviewed/merged a head of the rest.
-> 
-> Thanks,
-> Amir.
-> 
-> Changes since v1:
-> - Leave ISREG checks in callers (Jens)
-> - Leave setting IOCB_WRITE flag in callers
-> 
->  fs/aio.c            | 26 +++----------------
->  fs/cachefiles/io.c  | 16 +++---------
->  fs/overlayfs/file.c | 15 +++++------
->  include/linux/fs.h  | 62 +++++++++++++++++++++++++++++++++++++++++++--
->  io_uring/rw.c       | 36 +++++---------------------
->  5 files changed, 79 insertions(+), 76 deletions(-)
-> 
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 77e33619de40..16fb3ac2093b 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -1444,17 +1444,8 @@ static void aio_complete_rw(struct kiocb *kiocb, long res)
->  	if (!list_empty_careful(&iocb->ki_list))
->  		aio_remove_iocb(iocb);
->  
-> -	if (kiocb->ki_flags & IOCB_WRITE) {
-> -		struct inode *inode = file_inode(kiocb->ki_filp);
-> -
-> -		/*
-> -		 * Tell lockdep we inherited freeze protection from submission
-> -		 * thread.
-> -		 */
-> -		if (S_ISREG(inode->i_mode))
-> -			__sb_writers_acquired(inode->i_sb, SB_FREEZE_WRITE);
-> -		file_end_write(kiocb->ki_filp);
-> -	}
-> +	if (kiocb->ki_flags & IOCB_WRITE)
-> +		kiocb_end_write(kiocb);
->  
->  	iocb->ki_res.res = res;
->  	iocb->ki_res.res2 = 0;
-> @@ -1581,17 +1572,8 @@ static int aio_write(struct kiocb *req, const struct iocb *iocb,
->  		return ret;
->  	ret = rw_verify_area(WRITE, file, &req->ki_pos, iov_iter_count(&iter));
->  	if (!ret) {
-> -		/*
-> -		 * Open-code file_start_write here to grab freeze protection,
-> -		 * which will be released by another thread in
-> -		 * aio_complete_rw().  Fool lockdep by telling it the lock got
-> -		 * released so that it doesn't complain about the held lock when
-> -		 * we return to userspace.
-> -		 */
-> -		if (S_ISREG(file_inode(file)->i_mode)) {
-> -			sb_start_write(file_inode(file)->i_sb);
-> -			__sb_writers_release(file_inode(file)->i_sb, SB_FREEZE_WRITE);
-> -		}
-> +		if (S_ISREG(file_inode(file)->i_mode))
-> +			kiocb_start_write(req);
->  		req->ki_flags |= IOCB_WRITE;
->  		aio_rw_done(req, call_write_iter(file, req, &iter));
->  	}
-> diff --git a/fs/cachefiles/io.c b/fs/cachefiles/io.c
-> index 175a25fcade8..6e16f7c116da 100644
-> --- a/fs/cachefiles/io.c
-> +++ b/fs/cachefiles/io.c
-> @@ -259,9 +259,7 @@ static void cachefiles_write_complete(struct kiocb *iocb, long ret)
->  
->  	_enter("%ld", ret);
->  
-> -	/* Tell lockdep we inherited freeze protection from submission thread */
-> -	__sb_writers_acquired(inode->i_sb, SB_FREEZE_WRITE);
-> -	__sb_end_write(inode->i_sb, SB_FREEZE_WRITE);
-> +	kiocb_end_write(iocb);
->  
->  	if (ret < 0)
->  		trace_cachefiles_io_error(object, inode, ret,
-> @@ -286,7 +284,6 @@ int __cachefiles_write(struct cachefiles_object *object,
->  {
->  	struct cachefiles_cache *cache;
->  	struct cachefiles_kiocb *ki;
-> -	struct inode *inode;
->  	unsigned int old_nofs;
->  	ssize_t ret;
->  	size_t len = iov_iter_count(iter);
-> @@ -322,19 +319,12 @@ int __cachefiles_write(struct cachefiles_object *object,
->  		ki->iocb.ki_complete = cachefiles_write_complete;
->  	atomic_long_add(ki->b_writing, &cache->b_writing);
->  
-> -	/* Open-code file_start_write here to grab freeze protection, which
-> -	 * will be released by another thread in aio_complete_rw().  Fool
-> -	 * lockdep by telling it the lock got released so that it doesn't
-> -	 * complain about the held lock when we return to userspace.
-> -	 */
-> -	inode = file_inode(file);
-> -	__sb_start_write(inode->i_sb, SB_FREEZE_WRITE);
-> -	__sb_writers_release(inode->i_sb, SB_FREEZE_WRITE);
-> +	kiocb_start_write(ki);
->  
->  	get_file(ki->iocb.ki_filp);
->  	cachefiles_grab_object(object, cachefiles_obj_get_ioreq);
->  
-> -	trace_cachefiles_write(object, inode, ki->iocb.ki_pos, len);
-> +	trace_cachefiles_write(object, file_inode(file), ki->iocb.ki_pos, len);
->  	old_nofs = memalloc_nofs_save();
->  	ret = cachefiles_inject_write_error();
->  	if (ret == 0)
-> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> index 21245b00722a..c756edb9bd4c 100644
-> --- a/fs/overlayfs/file.c
-> +++ b/fs/overlayfs/file.c
-> @@ -290,10 +290,7 @@ static void ovl_aio_cleanup_handler(struct ovl_aio_req *aio_req)
->  	if (iocb->ki_flags & IOCB_WRITE) {
->  		struct inode *inode = file_inode(orig_iocb->ki_filp);
->  
-> -		/* Actually acquired in ovl_write_iter() */
-> -		__sb_writers_acquired(file_inode(iocb->ki_filp)->i_sb,
-> -				      SB_FREEZE_WRITE);
-> -		file_end_write(iocb->ki_filp);
-> +		kiocb_end_write(iocb);
->  		ovl_copyattr(inode);
->  	}
->  
-> @@ -362,6 +359,9 @@ static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
->  	return ret;
->  }
->  
-> +/* IOCB flags that may be propagated to real file io */
-> +#define OVL_IOCB_MASK ~(IOCB_WRITE_STARTED)
-> +
->  static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
->  {
->  	struct file *file = iocb->ki_filp;
-> @@ -369,7 +369,7 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
->  	struct fd real;
->  	const struct cred *old_cred;
->  	ssize_t ret;
-> -	int ifl = iocb->ki_flags;
-> +	int ifl = iocb->ki_flags & OVL_IOCB_MASK;
->  
->  	if (!iov_iter_count(iter))
->  		return 0;
-> @@ -409,10 +409,6 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
->  		if (!aio_req)
->  			goto out;
->  
-> -		file_start_write(real.file);
-> -		/* Pacify lockdep, same trick as done in aio_write() */
-> -		__sb_writers_release(file_inode(real.file)->i_sb,
-> -				     SB_FREEZE_WRITE);
->  		aio_req->fd = real;
->  		real.flags = 0;
->  		aio_req->orig_iocb = iocb;
-> @@ -420,6 +416,7 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
->  		aio_req->iocb.ki_flags = ifl;
->  		aio_req->iocb.ki_complete = ovl_aio_rw_complete;
->  		refcount_set(&aio_req->ref, 2);
-> +		kiocb_start_write(&aio_req->iocb);
->  		ret = vfs_iocb_iter_write(real.file, &aio_req->iocb, iter);
->  		ovl_aio_put(aio_req);
->  		if (ret != -EIOCBQUEUED)
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index b2adee67f9b2..8e5d410a1be5 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -338,6 +338,8 @@ enum rw_hint {
->  #define IOCB_NOIO		(1 << 20)
->  /* can use bio alloc cache */
->  #define IOCB_ALLOC_CACHE	(1 << 21)
-> +/* file_start_write() was called */
-> +#define IOCB_WRITE_STARTED	(1 << 22)
->  
->  /* for use in trace events */
->  #define TRACE_IOCB_STRINGS \
-> @@ -351,7 +353,8 @@ enum rw_hint {
->  	{ IOCB_WRITE,		"WRITE" }, \
->  	{ IOCB_WAITQ,		"WAITQ" }, \
->  	{ IOCB_NOIO,		"NOIO" }, \
-> -	{ IOCB_ALLOC_CACHE,	"ALLOC_CACHE" }
-> +	{ IOCB_ALLOC_CACHE,	"ALLOC_CACHE" }, \
-> +	{ IOCB_WRITE_STARTED,	"WRITE_STARTED" }
->  
->  struct kiocb {
->  	struct file		*ki_filp;
-> @@ -2545,6 +2548,13 @@ static inline bool inode_wrong_type(const struct inode *inode, umode_t mode)
->  	return (inode->i_mode ^ mode) & S_IFMT;
->  }
->  
-> +/**
-> + * file_start_write - get write access to a superblock for regular file io
-> + * @file: the file we want to write to
-> + *
-> + * This is a variant of sb_start_write() which is a noop on non-regualr file.
-> + * Should be matched with a call to file_end_write().
-> + */
->  static inline void file_start_write(struct file *file)
->  {
->  	if (!S_ISREG(file_inode(file)->i_mode))
-> @@ -2559,11 +2569,59 @@ static inline bool file_start_write_trylock(struct file *file)
->  	return sb_start_write_trylock(file_inode(file)->i_sb);
->  }
->  
-> +/**
-> + * file_end_write - drop write access to a superblock of a regular file
-> + * @file: the file we wrote to
-> + *
-> + * Should be matched with a call to file_start_write().
-> + */
->  static inline void file_end_write(struct file *file)
->  {
->  	if (!S_ISREG(file_inode(file)->i_mode))
->  		return;
-> -	__sb_end_write(file_inode(file)->i_sb, SB_FREEZE_WRITE);
-> +	sb_end_write(file_inode(file)->i_sb);
-> +}
-> +
-> +/**
-> + * kiocb_start_write - get write access to a superblock for async file io
-> + * @iocb: the io context we want to submit the write with
-> + *
-> + * This is a variant of file_start_write() for async io submission.
-> + * Should be matched with a call to kiocb_end_write().
-> + */
-> +static inline void kiocb_start_write(struct kiocb *iocb)
-> +{
-> +	struct inode *inode = file_inode(iocb->ki_filp);
-> +
-> +	if (WARN_ON_ONCE(iocb->ki_flags & IOCB_WRITE_STARTED))
-> +		return;
-> +	sb_start_write(inode->i_sb);
-> +	/*
-> +	 * Fool lockdep by telling it the lock got released so that it
-> +	 * doesn't complain about the held lock when we return to userspace.
-> +	 */
-> +	__sb_writers_release(inode->i_sb, SB_FREEZE_WRITE);
-> +	iocb->ki_flags |= IOCB_WRITE_STARTED;
-> +}
-> +
-> +/**
-> + * kiocb_end_write - drop write access to a superblock after async file io
-> + * @iocb: the io context we sumbitted the write with
-> + *
-> + * Should be matched with a call to kiocb_start_write().
-> + */
-> +static inline void kiocb_end_write(struct kiocb *iocb)
-> +{
-> +	struct inode *inode = file_inode(iocb->ki_filp);
-> +
-> +	if (!(iocb->ki_flags & IOCB_WRITE_STARTED))
-> +		return;
-> +	/*
-> +	 * Tell lockdep we inherited freeze protection from submission thread.
-> +	 */
-> +	__sb_writers_acquired(inode->i_sb, SB_FREEZE_WRITE);
-> +	sb_end_write(inode->i_sb);
-> +	iocb->ki_flags &= ~IOCB_WRITE_STARTED;
->  }
->  
->  /*
-> diff --git a/io_uring/rw.c b/io_uring/rw.c
-> index 1bce2208b65c..362d48493096 100644
-> --- a/io_uring/rw.c
-> +++ b/io_uring/rw.c
-> @@ -220,20 +220,6 @@ static bool io_rw_should_reissue(struct io_kiocb *req)
->  }
->  #endif
->  
-> -static void kiocb_end_write(struct io_kiocb *req)
-> -{
-> -	/*
-> -	 * Tell lockdep we inherited freeze protection from submission
-> -	 * thread.
-> -	 */
-> -	if (req->flags & REQ_F_ISREG) {
-> -		struct super_block *sb = file_inode(req->file)->i_sb;
-> -
-> -		__sb_writers_acquired(sb, SB_FREEZE_WRITE);
-> -		sb_end_write(sb);
-> -	}
-> -}
-> -
->  /*
->   * Trigger the notifications after having done some IO, and finish the write
->   * accounting, if any.
-> @@ -243,7 +229,7 @@ static void io_req_io_end(struct io_kiocb *req)
->  	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
->  
->  	if (rw->kiocb.ki_flags & IOCB_WRITE) {
-> -		kiocb_end_write(req);
-> +		kiocb_end_write(&rw->kiocb);
->  		fsnotify_modify(req->file);
->  	} else {
->  		fsnotify_access(req->file);
-> @@ -313,7 +299,7 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res)
->  	struct io_kiocb *req = cmd_to_io_kiocb(rw);
->  
->  	if (kiocb->ki_flags & IOCB_WRITE)
-> -		kiocb_end_write(req);
-> +		kiocb_end_write(kiocb);
->  	if (unlikely(res != req->cqe.res)) {
->  		if (res == -EAGAIN && io_rw_should_reissue(req)) {
->  			req->flags |= REQ_F_REISSUE | REQ_F_PARTIAL_IO;
-> @@ -902,18 +888,8 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
->  		return ret;
->  	}
->  
-> -	/*
-> -	 * Open-code file_start_write here to grab freeze protection,
-> -	 * which will be released by another thread in
-> -	 * io_complete_rw().  Fool lockdep by telling it the lock got
-> -	 * released so that it doesn't complain about the held lock when
-> -	 * we return to userspace.
-> -	 */
-> -	if (req->flags & REQ_F_ISREG) {
-> -		sb_start_write(file_inode(req->file)->i_sb);
-> -		__sb_writers_release(file_inode(req->file)->i_sb,
-> -					SB_FREEZE_WRITE);
-> -	}
-> +	if (req->flags & REQ_F_ISREG)
-> +		kiocb_start_write(kiocb);
->  	kiocb->ki_flags |= IOCB_WRITE;
->  
->  	if (likely(req->file->f_op->write_iter))
-> @@ -961,7 +937,7 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
->  				io->bytes_done += ret2;
->  
->  			if (kiocb->ki_flags & IOCB_WRITE)
-> -				kiocb_end_write(req);
-> +				kiocb_end_write(kiocb);
->  			return ret ? ret : -EAGAIN;
->  		}
->  done:
-> @@ -972,7 +948,7 @@ int io_write(struct io_kiocb *req, unsigned int issue_flags)
->  		ret = io_setup_async_rw(req, iovec, s, false);
->  		if (!ret) {
->  			if (kiocb->ki_flags & IOCB_WRITE)
-> -				kiocb_end_write(req);
-> +				kiocb_end_write(kiocb);
->  			return -EAGAIN;
->  		}
->  		return ret;
-> -- 
-> 2.34.1
-> 
+vim +/shrinker_debugfs_add +174 mm/shrinker_debug.c
+
+bbf535fd6f06b9 Roman Gushchin     2022-05-31  173  
+5035ebc644aec9 Roman Gushchin     2022-05-31 @174  int shrinker_debugfs_add(struct shrinker *shrinker)
+5035ebc644aec9 Roman Gushchin     2022-05-31  175  {
+5035ebc644aec9 Roman Gushchin     2022-05-31  176  	struct dentry *entry;
+e33c267ab70de4 Roman Gushchin     2022-05-31  177  	char buf[128];
+5035ebc644aec9 Roman Gushchin     2022-05-31  178  	int id;
+5035ebc644aec9 Roman Gushchin     2022-05-31  179  
+47a7c01c3efc65 Qi Zheng           2023-06-09  180  	lockdep_assert_held(&shrinker_rwsem);
+5035ebc644aec9 Roman Gushchin     2022-05-31  181  
+5035ebc644aec9 Roman Gushchin     2022-05-31  182  	/* debugfs isn't initialized yet, add debugfs entries later. */
+5035ebc644aec9 Roman Gushchin     2022-05-31  183  	if (!shrinker_debugfs_root)
+5035ebc644aec9 Roman Gushchin     2022-05-31  184  		return 0;
+5035ebc644aec9 Roman Gushchin     2022-05-31  185  
+5035ebc644aec9 Roman Gushchin     2022-05-31  186  	id = ida_alloc(&shrinker_debugfs_ida, GFP_KERNEL);
+5035ebc644aec9 Roman Gushchin     2022-05-31  187  	if (id < 0)
+5035ebc644aec9 Roman Gushchin     2022-05-31  188  		return id;
+5035ebc644aec9 Roman Gushchin     2022-05-31  189  	shrinker->debugfs_id = id;
+5035ebc644aec9 Roman Gushchin     2022-05-31  190  
+e33c267ab70de4 Roman Gushchin     2022-05-31  191  	snprintf(buf, sizeof(buf), "%s-%d", shrinker->name, id);
+5035ebc644aec9 Roman Gushchin     2022-05-31  192  
+5035ebc644aec9 Roman Gushchin     2022-05-31  193  	/* create debugfs entry */
+5035ebc644aec9 Roman Gushchin     2022-05-31  194  	entry = debugfs_create_dir(buf, shrinker_debugfs_root);
+5035ebc644aec9 Roman Gushchin     2022-05-31  195  	if (IS_ERR(entry)) {
+5035ebc644aec9 Roman Gushchin     2022-05-31  196  		ida_free(&shrinker_debugfs_ida, id);
+5035ebc644aec9 Roman Gushchin     2022-05-31  197  		return PTR_ERR(entry);
+5035ebc644aec9 Roman Gushchin     2022-05-31  198  	}
+5035ebc644aec9 Roman Gushchin     2022-05-31  199  	shrinker->debugfs_entry = entry;
+5035ebc644aec9 Roman Gushchin     2022-05-31  200  
+2124f79de6a909 John Keeping       2023-04-18  201  	debugfs_create_file("count", 0440, entry, shrinker,
+5035ebc644aec9 Roman Gushchin     2022-05-31  202  			    &shrinker_debugfs_count_fops);
+2124f79de6a909 John Keeping       2023-04-18  203  	debugfs_create_file("scan", 0220, entry, shrinker,
+bbf535fd6f06b9 Roman Gushchin     2022-05-31  204  			    &shrinker_debugfs_scan_fops);
+5035ebc644aec9 Roman Gushchin     2022-05-31  205  	return 0;
+5035ebc644aec9 Roman Gushchin     2022-05-31  206  }
+5035ebc644aec9 Roman Gushchin     2022-05-31  207  
+e33c267ab70de4 Roman Gushchin     2022-05-31  208  int shrinker_debugfs_rename(struct shrinker *shrinker, const char *fmt, ...)
+e33c267ab70de4 Roman Gushchin     2022-05-31  209  {
+e33c267ab70de4 Roman Gushchin     2022-05-31  210  	struct dentry *entry;
+e33c267ab70de4 Roman Gushchin     2022-05-31  211  	char buf[128];
+e33c267ab70de4 Roman Gushchin     2022-05-31  212  	const char *new, *old;
+e33c267ab70de4 Roman Gushchin     2022-05-31  213  	va_list ap;
+e33c267ab70de4 Roman Gushchin     2022-05-31  214  	int ret = 0;
+e33c267ab70de4 Roman Gushchin     2022-05-31  215  
+e33c267ab70de4 Roman Gushchin     2022-05-31  216  	va_start(ap, fmt);
+e33c267ab70de4 Roman Gushchin     2022-05-31  217  	new = kvasprintf_const(GFP_KERNEL, fmt, ap);
+e33c267ab70de4 Roman Gushchin     2022-05-31  218  	va_end(ap);
+e33c267ab70de4 Roman Gushchin     2022-05-31  219  
+e33c267ab70de4 Roman Gushchin     2022-05-31  220  	if (!new)
+e33c267ab70de4 Roman Gushchin     2022-05-31  221  		return -ENOMEM;
+e33c267ab70de4 Roman Gushchin     2022-05-31  222  
+47a7c01c3efc65 Qi Zheng           2023-06-09  223  	down_write(&shrinker_rwsem);
+e33c267ab70de4 Roman Gushchin     2022-05-31  224  
+e33c267ab70de4 Roman Gushchin     2022-05-31  225  	old = shrinker->name;
+e33c267ab70de4 Roman Gushchin     2022-05-31  226  	shrinker->name = new;
+e33c267ab70de4 Roman Gushchin     2022-05-31  227  
+e33c267ab70de4 Roman Gushchin     2022-05-31  228  	if (shrinker->debugfs_entry) {
+e33c267ab70de4 Roman Gushchin     2022-05-31  229  		snprintf(buf, sizeof(buf), "%s-%d", shrinker->name,
+e33c267ab70de4 Roman Gushchin     2022-05-31  230  			 shrinker->debugfs_id);
+e33c267ab70de4 Roman Gushchin     2022-05-31  231  
+e33c267ab70de4 Roman Gushchin     2022-05-31  232  		entry = debugfs_rename(shrinker_debugfs_root,
+e33c267ab70de4 Roman Gushchin     2022-05-31  233  				       shrinker->debugfs_entry,
+e33c267ab70de4 Roman Gushchin     2022-05-31  234  				       shrinker_debugfs_root, buf);
+e33c267ab70de4 Roman Gushchin     2022-05-31  235  		if (IS_ERR(entry))
+e33c267ab70de4 Roman Gushchin     2022-05-31  236  			ret = PTR_ERR(entry);
+e33c267ab70de4 Roman Gushchin     2022-05-31  237  		else
+e33c267ab70de4 Roman Gushchin     2022-05-31  238  			shrinker->debugfs_entry = entry;
+e33c267ab70de4 Roman Gushchin     2022-05-31  239  	}
+e33c267ab70de4 Roman Gushchin     2022-05-31  240  
+47a7c01c3efc65 Qi Zheng           2023-06-09  241  	up_write(&shrinker_rwsem);
+e33c267ab70de4 Roman Gushchin     2022-05-31  242  
+e33c267ab70de4 Roman Gushchin     2022-05-31  243  	kfree_const(old);
+e33c267ab70de4 Roman Gushchin     2022-05-31  244  
+e33c267ab70de4 Roman Gushchin     2022-05-31  245  	return ret;
+e33c267ab70de4 Roman Gushchin     2022-05-31  246  }
+e33c267ab70de4 Roman Gushchin     2022-05-31  247  EXPORT_SYMBOL(shrinker_debugfs_rename);
+e33c267ab70de4 Roman Gushchin     2022-05-31  248  
+26e239b37ebdfd Joan Bruguera Micó 2023-05-03 @249  struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
+26e239b37ebdfd Joan Bruguera Micó 2023-05-03  250  				       int *debugfs_id)
+5035ebc644aec9 Roman Gushchin     2022-05-31  251  {
+badc28d4924bfe Qi Zheng           2023-02-02  252  	struct dentry *entry = shrinker->debugfs_entry;
+badc28d4924bfe Qi Zheng           2023-02-02  253  
+47a7c01c3efc65 Qi Zheng           2023-06-09  254  	lockdep_assert_held(&shrinker_rwsem);
+5035ebc644aec9 Roman Gushchin     2022-05-31  255  
+e33c267ab70de4 Roman Gushchin     2022-05-31  256  	kfree_const(shrinker->name);
+14773bfa70e67f Tetsuo Handa       2022-07-20  257  	shrinker->name = NULL;
+e33c267ab70de4 Roman Gushchin     2022-05-31  258  
+26e239b37ebdfd Joan Bruguera Micó 2023-05-03  259  	*debugfs_id = entry ? shrinker->debugfs_id : -1;
+badc28d4924bfe Qi Zheng           2023-02-02  260  	shrinker->debugfs_entry = NULL;
+badc28d4924bfe Qi Zheng           2023-02-02  261  
+badc28d4924bfe Qi Zheng           2023-02-02  262  	return entry;
+5035ebc644aec9 Roman Gushchin     2022-05-31  263  }
+5035ebc644aec9 Roman Gushchin     2022-05-31  264  
+26e239b37ebdfd Joan Bruguera Micó 2023-05-03 @265  void shrinker_debugfs_remove(struct dentry *debugfs_entry, int debugfs_id)
+26e239b37ebdfd Joan Bruguera Micó 2023-05-03  266  {
+26e239b37ebdfd Joan Bruguera Micó 2023-05-03  267  	debugfs_remove_recursive(debugfs_entry);
+26e239b37ebdfd Joan Bruguera Micó 2023-05-03  268  	ida_free(&shrinker_debugfs_ida, debugfs_id);
+26e239b37ebdfd Joan Bruguera Micó 2023-05-03  269  }
+26e239b37ebdfd Joan Bruguera Micó 2023-05-03  270  
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
