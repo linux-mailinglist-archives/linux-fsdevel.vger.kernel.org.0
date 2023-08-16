@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 20E4E77E094
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 13:38:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 023CF77E0AB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Aug 2023 13:44:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244563AbjHPLiJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Aug 2023 07:38:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42352 "EHLO
+        id S244708AbjHPLnh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Aug 2023 07:43:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244697AbjHPLhr (ORCPT
+        with ESMTP id S242200AbjHPLnQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Aug 2023 07:37:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 449081BFB;
-        Wed, 16 Aug 2023 04:37:46 -0700 (PDT)
+        Wed, 16 Aug 2023 07:43:16 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CA4C123;
+        Wed, 16 Aug 2023 04:43:14 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D36DC6664B;
-        Wed, 16 Aug 2023 11:37:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38C8BC433C7;
-        Wed, 16 Aug 2023 11:37:44 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2E728666B0;
+        Wed, 16 Aug 2023 11:43:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 877E0C433C9;
+        Wed, 16 Aug 2023 11:43:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692185865;
-        bh=RL4m4ONn3JQ2aJBR+dWTncFryUjjHtRlbcL+rnTLBJQ=;
+        s=k20201202; t=1692186193;
+        bh=tME6yHkXqztm9W3j2l6wvjBFeqKku0k4CRKSqoLlNLM=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ElSdhCW2SgW0LGYw1qdRbeF4aaUkZTfSbwgJkNzEQi74ozYVNsp5Yf/XjHj+oN0Dl
-         1R1og3BX4xR2gOeZuvgQwISBZhJ+Bs9WaMyhPamZNfQqhqy6dlD+/BKWWzFye0brrV
-         sMdkjuOZ172KF9MPA14XyxQJu+nu5k+PJxZpYUCyYeSD24IxlN2MH0slrbD6gLFrO+
-         dd/93H3icHfSQyKMZ1wGf35vP2cdFAcoTaAVLxDMDjw6942Z72gu42cW6/urI8qcXv
-         Ud3WzdN9C/CeOJVxXMd1rbkZQaps22haTrHskTtOvzJttL6kwL3Z7UX6zoDVEZliFk
-         5vBgZXQJIcZrw==
-Message-ID: <88ec807d16a7eb2be252eea0c10e3374c01da1bf.camel@kernel.org>
-Subject: Re: [RFCv2 2/7] lockd: FILE_LOCK_DEFERRED only on FL_SLEEP
+        b=S6AaJ9v7+AgRgJyFZ4lWrI3tycQI7o3yI8+way/BdaENeWQXI67B9eqkGLhIP2A7o
+         FnmLozBjeG3xJNPOuL/fDwd+L3WJ1FzpHClPivsW8NXmrWJTzRTqP7b1hd+vkKso/E
+         6KlUdbzmhbn203yC/68NauvlslQM0K+J2h73jwogka29ctrpPVjJQ1bPCZCfkB1iDx
+         ShAec9R7qPtHd+xD6TISOMi2Y8mdAt9Km+j3mgsWGxuwNXPGs2M4hwMH0AAbKrOmvf
+         6VG3mMPzzSYO4uQ271/FjI2QNiAiP+gHwj0oVlQRkt6mPl+u6ysahosecFR/puOn7F
+         3vWfepcKoT2yg==
+Message-ID: <30aa456827011eabf4b095d66cba2ac23491627a.camel@kernel.org>
+Subject: Re: [RFCv2 3/7] lockd: introduce safe async lock op
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Alexander Aring <aahringo@redhat.com>, linux-nfs@vger.kernel.org
 Cc:     cluster-devel@redhat.com, ocfs2-devel@lists.linux.dev,
@@ -42,18 +42,17 @@ Cc:     cluster-devel@redhat.com, ocfs2-devel@lists.linux.dev,
         rpeterso@redhat.com, agruenba@redhat.com,
         trond.myklebust@hammerspace.com, anna@kernel.org,
         chuck.lever@oracle.com
-Date:   Wed, 16 Aug 2023 07:37:42 -0400
-In-Reply-To: <20230814211116.3224759-3-aahringo@redhat.com>
+Date:   Wed, 16 Aug 2023 07:43:11 -0400
+In-Reply-To: <20230814211116.3224759-4-aahringo@redhat.com>
 References: <20230814211116.3224759-1-aahringo@redhat.com>
-         <20230814211116.3224759-3-aahringo@redhat.com>
+         <20230814211116.3224759-4-aahringo@redhat.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -61,104 +60,141 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Mon, 2023-08-14 at 17:11 -0400, Alexander Aring wrote:
-> This patch removes to handle non-blocking lock requests as asynchronous
-> lock request returning FILE_LOCK_DEFERRED. When fl_lmops and lm_grant()
-> is set and a non-blocking lock request returns FILE_LOCK_DEFERRED will
-> end in an WARNING to signal the user the misusage of the API.
->=20
-
-Probably need to rephrase the word salad in the first sentence of the
-commit log. I had to go over it a few times to understand what was going
-on here.
-
-In any case, I'm guessing that the idea here is that GFS2/DLM shouldn't
-ever return FILE_LOCK_DEFERRED if this is a non-wait request (i.e.
-someone called F_SETLK instead of F_SETLKW)?
-
-That may be ok, but again, lockd goes to great lengths to avoid blocking
-and I think it's generally a good idea. If an upcall to DLM can take a
-long time, it might be a good idea to continue to allow a !wait request
-to return FILE_LOCK_DEFERRED.
-
-I guess this really depends on the current behavior today though. Does
-DLM ever return FILE_LOCK_DEFERRED on a non-blocking lock request?
-
-
-> The reason why we moving to make non-blocking lock request as
-> synchronized call is that we already doing this behaviour for unlock or
-> cancellation as well. Those are POSIX lock operations which are handled
-> in an synchronized way and waiting for an answer. For non-blocking lock
-> requests the answer will probably arrive in the same time as unlock or
-> cancellation operations as those are trylock operations only.
->=20
-> In case of a blocking lock request we need to have it asynchronously
-> because the time when the lock request getting granted is unknown.
+> This patch reverts mostly commit 40595cdc93ed ("nfs: block notification
+> on fs with its own ->lock") and introduces an EXPORT_OP_SAFE_ASYNC_LOCK
+> export flag to signal that the "own ->lock" implementation supports
+> async lock requests. The only main user is DLM that is used by GFS2 and
+> OCFS2 filesystem. Those implement their own lock() implementation and
+> return FILE_LOCK_DEFERRED as return value. Since commit 40595cdc93ed
+> ("nfs: block notification on fs with its own ->lock") the DLM
+> implementation were never updated. This patch should prepare for DLM
+> to set the EXPORT_OP_SAFE_ASYNC_LOCK export flag and update the DLM
+> plock implementation regarding to it.
 >=20
 > Signed-off-by: Alexander Aring <aahringo@redhat.com>
 > ---
->  fs/lockd/svclock.c | 39 +++++++--------------------------------
->  1 file changed, 7 insertions(+), 32 deletions(-)
+>  fs/lockd/svclock.c       |  5 ++---
+>  fs/nfsd/nfs4state.c      | 13 ++++++++++---
+>  include/linux/exportfs.h |  8 ++++++++
+>  3 files changed, 20 insertions(+), 6 deletions(-)
 >=20
 > diff --git a/fs/lockd/svclock.c b/fs/lockd/svclock.c
-> index 7d63524bdb81..1e74a578d7de 100644
+> index 1e74a578d7de..b8bd2b841ee1 100644
 > --- a/fs/lockd/svclock.c
 > +++ b/fs/lockd/svclock.c
-> @@ -440,31 +440,6 @@ static void nlmsvc_freegrantargs(struct nlm_rqst *ca=
-ll)
->  	locks_release_private(&call->a_args.lock.fl);
->  }
+> @@ -449,9 +449,7 @@ nlmsvc_lock(struct svc_rqst *rqstp, struct nlm_file *=
+file,
+>  	    struct nlm_host *host, struct nlm_lock *lock, int wait,
+>  	    struct nlm_cookie *cookie, int reclaim)
+>  {
+> -#if IS_ENABLED(CONFIG_SUNRPC_DEBUG)
+>  	struct inode		*inode =3D nlmsvc_file_inode(file);
+> -#endif
+>  	struct nlm_block	*block =3D NULL;
+>  	int			error;
+>  	int			mode;
+> @@ -465,7 +463,8 @@ nlmsvc_lock(struct svc_rqst *rqstp, struct nlm_file *=
+file,
+>  				(long long)lock->fl.fl_end,
+>  				wait);
 > =20
-> -/*
-> - * Deferred lock request handling for non-blocking lock
-> - */
-> -static __be32
-> -nlmsvc_defer_lock_rqst(struct svc_rqst *rqstp, struct nlm_block *block)
-> -{
-> -	__be32 status =3D nlm_lck_denied_nolocks;
-> -
-> -	block->b_flags |=3D B_QUEUED;
-> -
-> -	nlmsvc_insert_block(block, NLM_TIMEOUT);
-> -
-> -	block->b_cache_req =3D &rqstp->rq_chandle;
-> -	if (rqstp->rq_chandle.defer) {
-> -		block->b_deferred_req =3D
-> -			rqstp->rq_chandle.defer(block->b_cache_req);
-> -		if (block->b_deferred_req !=3D NULL)
-> -			status =3D nlm_drop_reply;
-> -	}
-> -	dprintk("lockd: nlmsvc_defer_lock_rqst block %p flags %d status %d\n",
-> -		block, block->b_flags, ntohl(status));
-> -
-> -	return status;
-> -}
-> -
->  /*
->   * Attempt to establish a lock, and if it can't be granted, block it
->   * if required.
-> @@ -569,14 +544,14 @@ nlmsvc_lock(struct svc_rqst *rqstp, struct nlm_file=
- *file,
->  			ret =3D async_block ? nlm_lck_blocked : nlm_lck_denied;
->  			goto out_cb_mutex;
->  		case FILE_LOCK_DEFERRED:
-> -			block->b_flags |=3D B_PENDING_CALLBACK;
-> +			/* lock requests without waiters are handled in
-> +			 * a non async way. Let assert this to inform
-> +			 * the user about a API violation.
-> +			 */
-> +			WARN_ON_ONCE(!wait);
+> -	if (nlmsvc_file_file(file)->f_op->lock) {
+> +	if (!export_op_support_safe_async_lock(inode->i_sb->s_export_op,
+> +					       nlmsvc_file_file(file)->f_op)) {
+>  		async_block =3D wait;
+>  		wait =3D 0;
+>  	}
+> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> index 3aefbad4cc09..14ca06424ff1 100644
+> --- a/fs/nfsd/nfs4state.c
+> +++ b/fs/nfsd/nfs4state.c
+> @@ -7430,6 +7430,7 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_com=
+pound_state *cstate,
+>  	struct nfsd4_blocked_lock *nbl =3D NULL;
+>  	struct file_lock *file_lock =3D NULL;
+>  	struct file_lock *conflock =3D NULL;
+> +	struct super_block *sb;
+>  	__be32 status =3D 0;
+>  	int lkflg;
+>  	int err;
+> @@ -7451,6 +7452,7 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_com=
+pound_state *cstate,
+>  		dprintk("NFSD: nfsd4_lock: permission denied!\n");
+>  		return status;
+>  	}
+> +	sb =3D cstate->current_fh.fh_dentry->d_sb;
 > =20
-> -			if (wait)
-> -				break;
-> -			/* Filesystem lock operation is in progress
-> -			   Add it to the queue waiting for callback */
-> -			ret =3D nlmsvc_defer_lock_rqst(rqstp, block);
-> -			goto out_cb_mutex;
-> +			block->b_flags |=3D B_PENDING_CALLBACK;
-> +			break;
->  		case -EDEADLK:
->  			nlmsvc_remove_block(block);
->  			ret =3D nlm_deadlock;
+>  	if (lock->lk_is_new) {
+>  		if (nfsd4_has_session(cstate))
+> @@ -7502,7 +7504,9 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_com=
+pound_state *cstate,
+>  	fp =3D lock_stp->st_stid.sc_file;
+>  	switch (lock->lk_type) {
+>  		case NFS4_READW_LT:
+> -			if (nfsd4_has_session(cstate))
+> +			if (nfsd4_has_session(cstate) ||
+> +			    export_op_support_safe_async_lock(sb->s_export_op,
+> +							      nf->nf_file->f_op))
+>  				fl_flags |=3D FL_SLEEP;
+>  			fallthrough;
+>  		case NFS4_READ_LT:
+> @@ -7514,7 +7518,9 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_com=
+pound_state *cstate,
+>  			fl_type =3D F_RDLCK;
+>  			break;
+>  		case NFS4_WRITEW_LT:
+> -			if (nfsd4_has_session(cstate))
+> +			if (nfsd4_has_session(cstate) ||
+> +			    export_op_support_safe_async_lock(sb->s_export_op,
+> +							      nf->nf_file->f_op))
+>  				fl_flags |=3D FL_SLEEP;
+>  			fallthrough;
+>  		case NFS4_WRITE_LT:
+> @@ -7542,7 +7548,8 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_com=
+pound_state *cstate,
+>  	 * for file locks), so don't attempt blocking lock notifications
+>  	 * on those filesystems:
+>  	 */
+> -	if (nf->nf_file->f_op->lock)
+> +	if (!export_op_support_safe_async_lock(sb->s_export_op,
+> +					       nf->nf_file->f_op))
+>  		fl_flags &=3D ~FL_SLEEP;
+> =20
+>  	nbl =3D find_or_allocate_block(lock_sop, &fp->fi_fhandle, nn);
+> diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
+> index 11fbd0ee1370..10358a93cdc1 100644
+> --- a/include/linux/exportfs.h
+> +++ b/include/linux/exportfs.h
+> @@ -3,6 +3,7 @@
+>  #define LINUX_EXPORTFS_H 1
+> =20
+>  #include <linux/types.h>
+> +#include <linux/fs.h>
+> =20
+>  struct dentry;
+>  struct iattr;
+> @@ -224,9 +225,16 @@ struct export_operations {
+>  						  atomic attribute updates
+>  						*/
+>  #define EXPORT_OP_FLUSH_ON_CLOSE	(0x20) /* fs flushes file data on close=
+ */
+> +#define EXPORT_OP_SAFE_ASYNC_LOCK	(0x40) /* fs can do async lock request=
+ */
+>  	unsigned long	flags;
+>  };
+> =20
+> +static inline bool export_op_support_safe_async_lock(const struct export=
+_operations *export_ops,
+> +						     const struct file_operations *f_op)
+> +{
+> +	return (export_ops->flags & EXPORT_OP_SAFE_ASYNC_LOCK) || !f_op->lock;
+> +}
+> +
+>  extern int exportfs_encode_inode_fh(struct inode *inode, struct fid *fid=
+,
+>  				    int *max_len, struct inode *parent,
+>  				    int flags);
 
---=20
-Jeff Layton <jlayton@kernel.org>
+This seems like a reasonable approach, in principle.
+
+Acked-by: Jeff Layton <jlayton@kernel.org>
