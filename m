@@ -2,233 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A66F277F887
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 16:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC40F77F89E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 16:19:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351720AbjHQORF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Aug 2023 10:17:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41454 "EHLO
+        id S1351790AbjHQOTQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Aug 2023 10:19:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351781AbjHQOQw (ORCPT
+        with ESMTP id S1351840AbjHQOTJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Aug 2023 10:16:52 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 752B919A1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 07:16:51 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 362761F37E;
-        Thu, 17 Aug 2023 14:16:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1692281810; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=2OodtyI2RGG5T55PuVr2J9JognnGKpe/J/EdqyEgOU4=;
-        b=fs1RrKm6iOAcNm6kDdXxguKDNSwuIEUOjSmjCCECMq1ozUb+0pS5Py9o7WjTHMnV2+BvTU
-        OtWrSbdyuUV2a5d1HeQ4rxFhA/vkr8ryent0/NLFKBFSmukqFGGz+9zDG9ulXnMmoP2wAm
-        rmny9hZw5uF9+P3/SZvqv4QyP+Nrh1o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1692281810;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=2OodtyI2RGG5T55PuVr2J9JognnGKpe/J/EdqyEgOU4=;
-        b=l3fsKKRySadtQTB7yoyrclicRuNi7tuBzs7KVF4eGmAodT++1ZX66Q0oq4FAvI2CU9q/EX
-        hrU4LeLZD1i7SJBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 273221358B;
-        Thu, 17 Aug 2023 14:16:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id /jaNCdIr3mRYHgAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 17 Aug 2023 14:16:50 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id AF893A0769; Thu, 17 Aug 2023 16:16:49 +0200 (CEST)
-Date:   Thu, 17 Aug 2023 16:16:49 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Jan Kara <jack@suse.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/3] super: wait for nascent superblocks
-Message-ID: <20230817141649.wkpjl72fdmq3772h@quack3>
-References: <20230817-vfs-super-fixes-v3-v1-0-06ddeca7059b@kernel.org>
- <20230817-vfs-super-fixes-v3-v1-2-06ddeca7059b@kernel.org>
- <20230817125021.l6h4ipibfuzd3xdx@quack3>
- <20230817-tortur-wallung-3512b32d8dd5@brauner>
+        Thu, 17 Aug 2023 10:19:09 -0400
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BB242D76
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 07:19:08 -0700 (PDT)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-58c92a2c52dso20014627b3.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 07:19:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20221208.gappssmtp.com; s=20221208; t=1692281947; x=1692886747;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OrbUJMByWo5vPg88+aCkHz5uGYnh9GE5yXXPCqFSCM0=;
+        b=Z8j9s4+WBpoIGmYpwI/d0lIOM/JPC8mtB631bXwhWUzXcnQyReerSG3/8FYJ9jAyup
+         +3FlXukPc4uN6ptJFldvGPDBB+0Bmv3w30oz4EkJ1ys6XhwHdAV8BW0UJUn5qbokrDH0
+         19TsVxOIlmOwBiozW/Kqm4DeoLK19fIDK3IZ3XX4F2uKZhj6pL40WB+qT7RyQg78OvwZ
+         WZp4kB3/a6UdCNmXMb2c/vrFailRMNicy61pPKAcJ6E4qJ2undL7ZRilb4ncW2H44hIR
+         7XGmFqE3HAet3rQL86kuauL2eSfu4lZk623y+kx6ZcFM+GwbpQfw7fReID0tFpKlw3/N
+         Iiow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692281947; x=1692886747;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OrbUJMByWo5vPg88+aCkHz5uGYnh9GE5yXXPCqFSCM0=;
+        b=a/Nl31R5Otcr2pXg7q6zLXPOWSbRO3Qp82ECDlcxXmC7KFNXfXKd8j+9oXpaA3IZfd
+         sbdDIS9wUWZvyL/PotsB+/SY+tIvTcmimtYqhTUAP9V7HFwW7Jju+fyEjD3/DoDHNgb/
+         JscvH6dihzcis56CNdMWcXSYhhsex01r75li8Rou50A0eyU2kKoJCzU7b7fKhEV9o5UQ
+         00rExRyvyGsR7Yc8b+FpXec+3y2Vqjon17sVkrcU0K8wSEOIWoKHPseWdOFJO/yYT7/y
+         eaQdvy0ah3sFdQ23ppzQZ/dGgRGuDBTntMh+j+7Vo5gTHfcFdfQW+wBhCeSwP9ZAiH8l
+         hvwg==
+X-Gm-Message-State: AOJu0Yy+J+ZqL2iBvgdVkK+5UPl/S0fngk5my3Hai5zcnrMADorSycMC
+        Lufv6ulAxAZzfB7Vq52dQVyDZQ==
+X-Google-Smtp-Source: AGHT+IFCvZXcLYvkQo3yXK0be8UsaSh+xObA5AUrn4hww490pN6PdM6Kyd5GqOnNQM2j0ki5WZIiqA==
+X-Received: by 2002:a0d:e883:0:b0:586:a684:e7b6 with SMTP id r125-20020a0de883000000b00586a684e7b6mr5067443ywe.9.1692281947267;
+        Thu, 17 Aug 2023 07:19:07 -0700 (PDT)
+Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id j190-20020a0de0c7000000b00585f60e970esm4643088ywe.134.2023.08.17.07.19.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Aug 2023 07:19:06 -0700 (PDT)
+Date:   Thu, 17 Aug 2023 10:19:05 -0400
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc:     linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com,
+        linux-fsdevel@vger.kernel.org, kernel@gpiccoli.net,
+        kernel-dev@igalia.com, anand.jain@oracle.com, david@fromorbit.com,
+        kreijack@libero.it, johns@valvesoftware.com,
+        ludovico.denittis@collabora.com, quwenruo.btrfs@gmx.com,
+        wqu@suse.com, vivek@collabora.com
+Subject: Re: [PATCH V2 0/3] Supporting same fsid mounting through a compat_ro
+ feature
+Message-ID: <20230817141905.GA2933397@perftesting>
+References: <20230803154453.1488248-1-gpiccoli@igalia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230817-tortur-wallung-3512b32d8dd5@brauner>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20230803154453.1488248-1-gpiccoli@igalia.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 17-08-23 15:24:54, Christian Brauner wrote:
-> On Thu, Aug 17, 2023 at 02:50:21PM +0200, Jan Kara wrote:
-> > On Thu 17-08-23 12:47:43, Christian Brauner wrote:
-> > > Recent patches experiment with making it possible to allocate a new
-> > > superblock before opening the relevant block device. Naturally this has
-> > > intricate side-effects that we get to learn about while developing this.
-> > > 
-> > > Superblock allocators such as sget{_fc}() return with s_umount of the
-> > > new superblock held and ock ordering currently requires that block level
-> > > locks such as bdev_lock and open_mutex rank above s_umount.
-> > > 
-> > > Before aca740cecbe5 ("fs: open block device after superblock creation")
-> > > ordering was guaranteed to be correct as block devices were opened prior
-> > > to superblock allocation and thus s_umount wasn't held. But now s_umount
-> > > must be dropped before opening block devices to avoid locking
-> > > violations.
-> > > 
-> > > This has consequences. The main one being that iterators over
-> > > @super_blocks and @fs_supers that grab a temporary reference to the
-> > > superblock can now also grab s_umount before the caller has managed to
-> > > open block devices and called fill_super(). So whereas before such
-> > > iterators or concurrent mounts would have simply slept on s_umount until
-> > > SB_BORN was set or the superblock was discard due to initalization
-> > > failure they can now needlessly spin through sget{_fc}().
-> > > 
-> > > If the caller is sleeping on bdev_lock or open_mutex one caller waiting
-> > > on SB_BORN will always spin somewhere potentially this can go on for
-> > 					^^ and potentially?
-> > > quite a while.
-> > > 
-> > > It should be possible to drop s_umount while allowing iterators to wait
-> > > on a nascent superblock to either be born or discarded. This patch
-> > > implements a wait_var_event() mechanism allowing iterators to sleep
-> > > until they are woken when the superblock is born or discarded.
-> > > 
-> > > This should also allows us to avoid relooping through @fs_supers and
-> >        ^^^ superfluous "should"
-> > 
-> > > @super_blocks if a superblock isn't yet born or dying.
-> > > 
-> > > Link: aca740cecbe5 ("fs: open block device after superblock creation")
-> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-
-<snip>
-
-> > > @@ -841,15 +942,14 @@ struct super_block *get_active_super(struct block_device *bdev)
-> > >  	if (!bdev)
-> > >  		return NULL;
-> > >  
-> > > -restart:
-> > >  	spin_lock(&sb_lock);
-> > >  	list_for_each_entry(sb, &super_blocks, s_list) {
-> > >  		if (hlist_unhashed(&sb->s_instances))
-> > >  			continue;
-> > >  		if (sb->s_bdev == bdev) {
-> > >  			if (!grab_super(sb))
-> > > -				goto restart;
-> > > -			super_unlock_write(sb);
-> > > +				return NULL;
-> >   Let me check whether I understand the rationale of this change: We found
-> > a matching sb and it's SB_DYING. Instead of waiting for it to die and retry
-> > the search (to likely not find anything) we just return NULL right away to
-> > save us some trouble.
+On Thu, Aug 03, 2023 at 12:43:38PM -0300, Guilherme G. Piccoli wrote:
+> Hi all, this is the 2nd attempt of supporting same fsid mounting
+> on btrfs. V1 is here:
+> https://lore.kernel.org/linux-btrfs/20230504170708.787361-1-gpiccoli@igalia.com/
 > 
-> Thanks for that question! I was missing something. Before these changes,
-> when a superblock was unmounted and it hit deactivate_super() it could do:
+> The mechanism used to achieve that in V2 was a mix between the suggestion
+> from JohnS (spoofed fsid) and Qu (a single-dev compat_ro flag) - it is
+> still based in the metadata_uuid feature, leveraging that infrastructure
+> since it prevents lots of corner cases, like sysfs same-fsid crashes.
 > 
-> P1                                                      P2
-> deactivate_locked_super()                               grab_super()
-> -> if (!atomic_add_unless(&s->s_active, -1, 1))
->                                                         -> super_lock_write()
->                                                            SB_BORN && !atomic_inc_add_unless(s->s_active)
->                                                            // fails, loop until it goes away
->    -> super_lock_write()
->       // remove sb from fs_supers
-
-I don't think this can happen as you describe it. deactivate_super() +
-deactivate_locked_super() are written in a way so that the last s_active
-reference is dropped while sb->s_umount is held for writing. And
-grab_super() tries the increment under sb->s_umount as well. So either
-grab_super() wins the race and deactivate_locked_super() just drops one
-refcount and exits, or deactivate_locked_super() wins the race and
-grab_super() can come only after the sb is shutdown. Then the increment
-will fail and we'll loop as you describe. Perhaps that's what you meant,
-just you've ordered things wrongly...
-
-> That can still happen in the new scheme so my patch needs a fix to wait
-> for SB_DYING to be broadcast when no active reference can be acquired
-> anymore because then we know that we're about to shut this down. Either
-> that or spinning but I think we should just wait as we can now do that
-> with my proposal.
-
-... But in that case by the time grab_super() is able to get sb->s_umount
-semaphore, SB_DYING is already set.
-
-> > >  {
-> > > -	super_lock_read(sb);
-> > > -	if (!sb->s_root ||
-> > > -	    (sb->s_flags & (SB_ACTIVE | SB_BORN)) != (SB_ACTIVE | SB_BORN)) {
-> > > +	bool born = super_wait_read(sb);
-> > > +
-> > > +	if (!born || !sb->s_root || !(sb->s_flags & SB_ACTIVE)) {
-> > >  		super_unlock_read(sb);
-> > >  		return false;
-> > >  	}
-> > > @@ -1572,7 +1674,7 @@ int vfs_get_tree(struct fs_context *fc)
-> > >  	 * flag.
-> > >  	 */
-> > >  	smp_wmb();
-> > 
-> > Is the barrier still needed here when super_wake() has smp_store_release()?
+> The patches are based on kernel v6.5-rc3 with Anand's metadata_uuid refactor
+> part 2 on top of it [0]; the btrfs-progs patch is based on "v6.3.3".
 > 
-> I wasn't sure. The barrier tries to ensure that everything before
-> SB_BORN is seen by super_cache_count(). Whereas the smp_store_release()
-> really is about the flag. Maybe the smp_wmb() would be sufficient for
-> that but since I wasn't sure the additional smp_store_release() is way
-> more obvious imho.
-
-I was looking into memory-barriers.txt and it has:
-
-(6) RELEASE operations.
-
-     This also acts as a one-way permeable barrier.  It guarantees that all
-     memory operations before the RELEASE operation will appear to happen
-     before the RELEASE operation with respect to the other components of the
-     system.
-
-Which sounds like smp_store_release() of SB_BORN should be enough to make
-super_cache_count() see all the stores before it if it sees SB_BORN set...
-
-> > > -	sb->s_flags |= SB_BORN;
-> > > +	super_wake(sb, SB_BORN);
-> > 
-> > I'm also kind of wondering whether when we have SB_BORN and SB_DYING isn't
-> > the SB_ACTIVE flag redundant. SB_BORN is set practically at the same moment
-> > as SB_ACTIVE. SB_ACTIVE gets cleared somewhat earlier than SB_DYING is set
-> > but I believe SB_DYING can be set earlier (after all by the time SB_ACTIVE
-> > is cleared we have sb->s_root == NULL which basically stops most of the
-> > places looking at superblocks. As I'm grepping we've grown a lot of
-> > SB_ACTIVE handling all over the place so this would be a bit non-trivial
-> > but I belive it will make it easier for filesystem developers to decide
-> > which flag they should be using... Also we could then drop sb->s_root
-> > checks from many places because the locking helpers will return false if
-> > SB_DYING is set.
+> Comments/suggestions and overall feedback is much appreciated - tnx in advance!
+> Cheers,
 > 
-> Certainly something to explore but no promises. Would you be open to
-> doig this as a follow-up patch? If you have a clearer idea here then I
-> wouldn't mind you piling this on top of this series even.
+> Guilherme
+> 
 
-Sure, the cleanup of SB_ACTIVE probably deserves a separate patchset
-because it's going to involve a lot of individual filesystem changes.
+In general the concept is fine with me, and the implementation seems reasonable.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+With new features we want fstests to accompany them so we know they work
+correctly, and we don't accidentally break them in the future.
+
+I'd like to see tests that validate all the behaviors you're trying to
+accomplish work as advertised, and that all the failure cases do in fact fail
+properly.
+
+Ideally a test that creates a single device fs image and mounts it in multiple
+places as would be used in the Steam Deck.
+
+Then a test that tries to add a device to it, replace, etc.  All the cases that
+you expect to fail, and validate that they actually fail.
+
+Then any other corner cases you can think of that I haven't thought of.
+
+Make sure these new tests skip appropriately if the btrfs-progs support doesn't
+exist, I'd likely throw the fstests into our CI before the code is merged to
+make sure it's ready to be tested if/when it is merged.
+
+Thanks,
+
+Josef
