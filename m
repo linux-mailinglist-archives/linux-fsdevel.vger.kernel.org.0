@@ -2,53 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 68F7077F515
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 13:25:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF57777F518
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 13:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350235AbjHQLZV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Aug 2023 07:25:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59972 "EHLO
+        id S1350267AbjHQLZX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Aug 2023 07:25:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350248AbjHQLYr (ORCPT
+        with ESMTP id S1350254AbjHQLYy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Aug 2023 07:24:47 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 931A82D58
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 04:24:21 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1bf11a7cf9fso1077065ad.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 04:24:21 -0700 (PDT)
+        Thu, 17 Aug 2023 07:24:54 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 896D530C5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 04:24:30 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1bdb3ecd20dso10200725ad.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 04:24:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1692271461; x=1692876261;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TjcEuXYPc+3P+LflzNgS/R35PrZZxb+MjPLlVSZIGUc=;
-        b=VQyIIEXMiq6pS36wIOW0IXVYQlXj6t1+KnNqrtLm+JWyhseZuF/zL3mfYeyfkuTkax
-         L2evGQoksYxnfMdnfi7L5aelupBzM9GKiySr4tbyMKg6ti09dvUHMz3K83sLuqcnwOC6
-         zVhrcmRWkwFwqkOo511Jr7OJuivS8aHsEj+t05Cp5TVi9xMh+ZV1Hl/K1hNUfhJjioSV
-         u8B2KKWIBCJGihrrTPOzc7H9CH4IHP54TtrVh2620huZ9ap2bfecBprTLHC6J6Qv+Jfa
-         lCH0H3x/Qd9cZhCqRkB+y1K0uMDQJXkuZPox9U/8W4MA2XkhKTj+NGusIquX0F6iHqpx
-         BONw==
+        d=bytedance.com; s=google; t=1692271470; x=1692876270;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Edkj9TBH9r1yTrwiI2mq64ByzXZznvLaEK+Zi+OSIAs=;
+        b=QPrroukD/0sUYTrperpoi4k0+O1FkEFMssCKpRI8fMzWjYWPc1C5njqyG2p1lDvG8X
+         HsOoOZkoy8V0FkWtMQFLoIbhtQ4Y/buM4M3hV+jvWn0vx5yIwLW3bIoUFjLtbjg4liVi
+         8iUPW54HVtYwd8swxQ4P7EcjEabvnc3On0Wf3MpqJfeIlBtjexBIW8RZv9T7kLftiBfe
+         TiABJzV4xgR+Cqa18qjOcrHDQj2Y7Y8AuUREUchQrolVO18tA1srYXpq0JiFzQ18tMjx
+         YQ7ehb4AsmQaiW2z/cJ9uEI7MgIJa3wNkH2UbGSKGqRZyiN3qecKnYz7Eo+IRyCh0r9S
+         VYqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692271461; x=1692876261;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TjcEuXYPc+3P+LflzNgS/R35PrZZxb+MjPLlVSZIGUc=;
-        b=kndALC87zXoNV3KfxZ7uK+OFJKVx90+rFnRtbaVZhW2BLeU0a95JWz1PMNGBJX92oK
-         C8QOjOCRUaFTjap/f2l6/RiwWQRV37fT3rHJ2kMtnNcu7V9sEqhCf3DZ8vHLpff1vYp6
-         rT8pD3P3dqvIq95nUFVHjzObJbYwUC9qHdfEtvQavbNgr4Jox5aosP+fO52HMFCqrtAm
-         kTK9D5Z0HnEYvmJyZRFCoGtL0VPrGOLCEtZhZ3kymq26CopJtVjFdJ2oMUtKPXKOiEMJ
-         lmO7HY7rTABp7LtpRAztgOR54Yd4WzIdFAur6aTTXcG9Iy5rIkmSoEOM6qGpSDtYcoEF
-         3P1g==
-X-Gm-Message-State: AOJu0YzTKQ4cAknOQNjZ7167GcYZD8daqzZAsklkBwLkLyTMq0h1OWug
-        cA6cw85BGBE/tiMZQaJrVywO7A==
-X-Google-Smtp-Source: AGHT+IEeXBbxeyhPNz97Ub6nYdX4Bl9hgGdsmEb3/sN/aMQfAJ6bX7scVeQIfkeMLyVVQUcumeSs6g==
-X-Received: by 2002:a17:902:e803:b0:1b8:9fc4:2733 with SMTP id u3-20020a170902e80300b001b89fc42733mr5237062plg.3.1692271460997;
-        Thu, 17 Aug 2023 04:24:20 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1692271470; x=1692876270;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Edkj9TBH9r1yTrwiI2mq64ByzXZznvLaEK+Zi+OSIAs=;
+        b=IfW+zLLtAvvpCH9i4eicTH4FDwPRCf/sxplv0cz413X8vF+1bodDU+2pTSpMmgTfL1
+         VT8AGFdp6PWoW9TDVlpMY7IULZpeOzGGaDIa2bmtVxKrC/bQLpuC2JTeAlckVrUZxtCO
+         Rigo0FNZ+2GA+15CwXDOhxZgHIjxLLrWeIdiwFgmlKuqXfrwzaKWKh7l7CB9hyKPCsTA
+         3aGVAhxQvIvo6KaFO4XD3evWJvdmI+hWFi4JkzFkEJ7aFHv8sq7IOITs9kucWhGn+pta
+         ppY5fGtFeXdQBSE/3NCQFQtNXNHSTDXocncMwZcHhDtThahLMGdss18uKzRoJFEDE9e0
+         hiWQ==
+X-Gm-Message-State: AOJu0YwaOLaSOVHEvSKsYsymbF7mGiklXJwsYg1wF1JumAjGI0JNhXVK
+        DSNBbNTfVBAJDk97eRrhv35qdA==
+X-Google-Smtp-Source: AGHT+IEJtYhqVgPFBx2Uc3KOT9HxMzyHVti3q5fR4hRNX0J6IpAnsXg7OHEkf7BAe2qVXVwECCkiew==
+X-Received: by 2002:a17:902:da91:b0:1bb:b832:4be9 with SMTP id j17-20020a170902da9100b001bbb8324be9mr5398982plx.1.1692271470090;
+        Thu, 17 Aug 2023 04:24:30 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.146])
-        by smtp.gmail.com with ESMTPSA id jd22-20020a170903261600b001bde877a7casm7229309plb.264.2023.08.17.04.24.11
+        by smtp.gmail.com with ESMTPSA id jd22-20020a170903261600b001bde877a7casm7229309plb.264.2023.08.17.04.24.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Aug 2023 04:24:20 -0700 (PDT)
+        Thu, 17 Aug 2023 04:24:29 -0700 (PDT)
 From:   Qi Zheng <zhengqi.arch@bytedance.com>
 To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
         vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
@@ -59,13 +60,15 @@ To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
         christian.koenig@amd.com
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
-        Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v2 0/5] use refcount+RCU method to implement lockless slab shrink (part 1)
-Date:   Thu, 17 Aug 2023 19:23:57 +0800
-Message-Id: <20230817112402.77010-1-zhengqi.arch@bytedance.com>
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH v2 1/5] mm: move some shrinker-related function declarations to mm/internal.h
+Date:   Thu, 17 Aug 2023 19:23:58 +0800
+Message-Id: <20230817112402.77010-2-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+In-Reply-To: <20230817112402.77010-1-zhengqi.arch@bytedance.com>
+References: <20230817112402.77010-1-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
@@ -76,57 +79,102 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+The following functions are only used inside the mm subsystem, so it's
+better to move their declarations to the mm/internal.h file.
 
-To make reviewing and updating easier, I've chosen to split the previous
-patchset[1] into the following three parts:
+1. shrinker_debugfs_add()
+2. shrinker_debugfs_detach()
+3. shrinker_debugfs_remove()
 
-part 1: some cleanups and preparations
-part 2: introduce new APIs and convert all shrinnkers to use these
-part 3: implement lockless slab shrink
+Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+Reviewed-by: Muchun Song <songmuchun@bytedance.com>
+---
+ include/linux/shrinker.h | 19 -------------------
+ mm/internal.h            | 26 ++++++++++++++++++++++++++
+ mm/shrinker_debug.c      |  2 ++
+ 3 files changed, 28 insertions(+), 19 deletions(-)
 
-This series is the part 1 and is based on the next-20230815.
-
-Comments and suggestions are welcome.
-
-[1]. https://lore.kernel.org/lkml/20230807110936.21819-1-zhengqi.arch@bytedance.com/
-
-Thanks,
-Qi
-
-Changlog in part 1 v1 -> part 1 v2:
- - fix compilation warning in [PATCH 1/5]
- - rename synchronize_shrinkers() to ttm_pool_synchronize_shrinkers()
-   (pointed by Christian König)
- - collect Reviewed-by
-
-Changlog in v4 -> part 1 v1:
- - split from the previous large patchset
- - fix comment format in [PATCH v4 01/48] (pointed by Muchun Song)
- - change to use kzalloc_node() and fix typo in [PATCH v4 44/48]
-   (pointed by Dave Chinner)
- - collect Reviewed-bys
- - rebase onto the next-20230815
-
-Qi Zheng (5):
-  mm: move some shrinker-related function declarations to mm/internal.h
-  mm: vmscan: move shrinker-related code into a separate file
-  mm: shrinker: remove redundant shrinker_rwsem in debugfs operations
-  drm/ttm: introduce pool_shrink_rwsem
-  mm: shrinker: add a secondary array for shrinker_info::{map,
-    nr_deferred}
-
- drivers/gpu/drm/ttm/ttm_pool.c |  17 +-
- include/linux/memcontrol.h     |  12 +-
- include/linux/shrinker.h       |  37 +-
- mm/Makefile                    |   4 +-
- mm/internal.h                  |  28 ++
- mm/shrinker.c                  | 751 +++++++++++++++++++++++++++++++++
- mm/shrinker_debug.c            |  18 +-
- mm/vmscan.c                    | 701 ------------------------------
- 8 files changed, 818 insertions(+), 750 deletions(-)
- create mode 100644 mm/shrinker.c
-
+diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+index 224293b2dd06..8dc15aa37410 100644
+--- a/include/linux/shrinker.h
++++ b/include/linux/shrinker.h
+@@ -106,28 +106,9 @@ extern void free_prealloced_shrinker(struct shrinker *shrinker);
+ extern void synchronize_shrinkers(void);
+ 
+ #ifdef CONFIG_SHRINKER_DEBUG
+-extern int shrinker_debugfs_add(struct shrinker *shrinker);
+-extern struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
+-					      int *debugfs_id);
+-extern void shrinker_debugfs_remove(struct dentry *debugfs_entry,
+-				    int debugfs_id);
+ extern int __printf(2, 3) shrinker_debugfs_rename(struct shrinker *shrinker,
+ 						  const char *fmt, ...);
+ #else /* CONFIG_SHRINKER_DEBUG */
+-static inline int shrinker_debugfs_add(struct shrinker *shrinker)
+-{
+-	return 0;
+-}
+-static inline struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
+-						     int *debugfs_id)
+-{
+-	*debugfs_id = -1;
+-	return NULL;
+-}
+-static inline void shrinker_debugfs_remove(struct dentry *debugfs_entry,
+-					   int debugfs_id)
+-{
+-}
+ static inline __printf(2, 3)
+ int shrinker_debugfs_rename(struct shrinker *shrinker, const char *fmt, ...)
+ {
+diff --git a/mm/internal.h b/mm/internal.h
+index 0b0029e4db87..dc9c81ff1b27 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -1153,4 +1153,30 @@ struct vma_prepare {
+ 	struct vm_area_struct *remove;
+ 	struct vm_area_struct *remove2;
+ };
++
++/* shrinker related functions */
++
++#ifdef CONFIG_SHRINKER_DEBUG
++extern int shrinker_debugfs_add(struct shrinker *shrinker);
++extern struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
++					      int *debugfs_id);
++extern void shrinker_debugfs_remove(struct dentry *debugfs_entry,
++				    int debugfs_id);
++#else /* CONFIG_SHRINKER_DEBUG */
++static inline int shrinker_debugfs_add(struct shrinker *shrinker)
++{
++	return 0;
++}
++static inline struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
++						     int *debugfs_id)
++{
++	*debugfs_id = -1;
++	return NULL;
++}
++static inline void shrinker_debugfs_remove(struct dentry *debugfs_entry,
++					   int debugfs_id)
++{
++}
++#endif /* CONFIG_SHRINKER_DEBUG */
++
+ #endif	/* __MM_INTERNAL_H */
+diff --git a/mm/shrinker_debug.c b/mm/shrinker_debug.c
+index 3ab53fad8876..ee0cddb4530f 100644
+--- a/mm/shrinker_debug.c
++++ b/mm/shrinker_debug.c
+@@ -6,6 +6,8 @@
+ #include <linux/shrinker.h>
+ #include <linux/memcontrol.h>
+ 
++#include "internal.h"
++
+ /* defined in vmscan.c */
+ extern struct rw_semaphore shrinker_rwsem;
+ extern struct list_head shrinker_list;
 -- 
 2.30.2
 
