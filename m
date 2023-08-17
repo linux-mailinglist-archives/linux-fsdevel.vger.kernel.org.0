@@ -2,103 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 60FC277FC6D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 18:59:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB56E77FC81
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 19:07:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353771AbjHQQ6n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Aug 2023 12:58:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48920 "EHLO
+        id S1353815AbjHQRHR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Aug 2023 13:07:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353832AbjHQQ6h (ORCPT
+        with ESMTP id S1352730AbjHQRHD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Aug 2023 12:58:37 -0400
-Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3FB22D73
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 09:58:35 -0700 (PDT)
-Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-58c55d408daso311637b3.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 09:58:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20221208.gappssmtp.com; s=20221208; t=1692291515; x=1692896315;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XPfbwT5lP7oF8sr3fFtMy1piLFYVDYQGf7F5OxaBsLA=;
-        b=kmpvmV/nSoSRtn95qai/zi6Dx895sII/IQfkW9Kr9r1MgnYKy3aywgZV0QEGPAUqKQ
-         saGC8aplb5hyE4VPboitoorcJnWfTJKvopTUP73FVyqUmbYXtq3TV8jS2lQxER0NfqnV
-         +KET1YClH0Na4lOVn1y4mdVSo+AmIptIgx3N6ScM5ubbiaKgroMBXcw6581oXAzHT4fo
-         3HaYAgMCZzJGRn1Mm2lhZtWJVpaxrge9/fzB09YOaJd2gBzk6j1y4pKtG8Eg0D6r0hxG
-         SyozquNG9Y3O4oI7riQG7PKNt+u1tZwIgHOrNVsZkQfH5hdd0uK3hrjA/kI37M+dhFVc
-         AhHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692291515; x=1692896315;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XPfbwT5lP7oF8sr3fFtMy1piLFYVDYQGf7F5OxaBsLA=;
-        b=kd9tHeAmZ7PuGYzPOgVk7d+ubIll2JuDsLVx6YxaRzSOUsGXNzynWAYDiEET5T6mJx
-         0qF+Et/DgaC8WlVhItsbYPeVZ/5AhCF148escQH1dtw8cal1PzNH3OAdvA3emxCJ5bBv
-         fn/sXKJJT1VVqpblyG46xS67GDHnr4mfnk7OzX+jotko8TuwngvXVei0iH7q27GwvLY0
-         4QxofeOguBOveL4QH6GgB9Ofdb1cuibreCuWAP22oaKCnlR0OnwfNy/9bzLDHdk+2D3V
-         5eMNG/jDmcezBYlEn6dhM6IbLGMxAly3H0Z2ywm//lTEFYBOtZOKJQM3gyr9uVBA5h5s
-         ooJA==
-X-Gm-Message-State: AOJu0YxkPCB73UKjqlJ4hrrF4oWVidTIyxDnWdI5nhnU4KoMwZda3P4u
-        KR2/0PRWnTFXYTFMv2rWS8N+LA==
-X-Google-Smtp-Source: AGHT+IHrMoQN21D09izpb0BbTbcUmonBnGXyP0oQnb9jFxMr0xhuSY6w3oPmCIaq7D5DJAA6IHa+3Q==
-X-Received: by 2002:a81:6946:0:b0:589:9ed0:5178 with SMTP id e67-20020a816946000000b005899ed05178mr6183683ywc.13.1692291515120;
-        Thu, 17 Aug 2023 09:58:35 -0700 (PDT)
-Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id k185-20020a0dc8c2000000b005773ca61111sm4727516ywd.42.2023.08.17.09.58.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Aug 2023 09:58:34 -0700 (PDT)
-Date:   Thu, 17 Aug 2023 12:58:33 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc:     linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com,
-        linux-fsdevel@vger.kernel.org, kernel@gpiccoli.net,
-        kernel-dev@igalia.com, anand.jain@oracle.com, david@fromorbit.com,
-        kreijack@libero.it, johns@valvesoftware.com,
-        ludovico.denittis@collabora.com, quwenruo.btrfs@gmx.com,
-        wqu@suse.com, vivek@collabora.com
-Subject: Re: [PATCH 2/3] btrfs: Introduce the single-dev feature
-Message-ID: <20230817165833.GA2935315@perftesting>
-References: <20230803154453.1488248-1-gpiccoli@igalia.com>
- <20230803154453.1488248-3-gpiccoli@igalia.com>
- <20230817154127.GB2934386@perftesting>
- <b49d3f4c-4b3d-06f4-7a37-7383af0781d0@igalia.com>
+        Thu, 17 Aug 2023 13:07:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E4472D7D;
+        Thu, 17 Aug 2023 10:07:02 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A669160EA7;
+        Thu, 17 Aug 2023 17:07:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9C38C433C7;
+        Thu, 17 Aug 2023 17:07:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692292021;
+        bh=Cnc5fd/SEme+J61EWpUydnlttURNe7D0+P6ahO3xQc8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NyA3MyXj29mNfXON4kkdiiJ8iEEdVRKuJxpFf/okQAHl1Ixm51esprU4w/4xqxdYB
+         G53DTRxWeVOISwNDLGmzSmrQZkZvuqnwrzknMCqq/9Wv+v4VQzvDEKw5QXOazQ4JuP
+         8SlXP4+QjLaDNKZ0oEYAXJZQSs3npgN5GFaH9DDYDno8CptvBwQ5ls5y7kxuNNTbVf
+         slCPiwc/Fj3Txs2KaAX6TH7PpRfVv4TC8o1i5ABuiVbEMJRi4SqYLVXMvC+x7rth1V
+         p/+/aCrDV1cVAYFoq7uwgxjiEu92IiSoRDadlCAtH7iHLhwfhSmjvZg1oSvR/EC9wc
+         xELPSzYhNCm7Q==
+Date:   Thu, 17 Aug 2023 10:06:58 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Gabriel Krisman Bertazi <krisman@suse.de>
+Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
+        jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v6 0/9] Support negative dentries on case-insensitive
+ ext4 and f2fs
+Message-ID: <20230817170658.GD1483@sol.localdomain>
+References: <20230816050803.15660-1-krisman@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b49d3f4c-4b3d-06f4-7a37-7383af0781d0@igalia.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20230816050803.15660-1-krisman@suse.de>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 17, 2023 at 01:20:55PM -0300, Guilherme G. Piccoli wrote:
-> On 17/08/2023 12:41, Josef Bacik wrote:
-> >> [...]
-> >> +	pr_info("BTRFS: virtual fsid (%pU) set for SINGLE_DEV device %s (real fsid %pU)\n",
-> >> +		disk_super->fsid, path, disk_super->metadata_uuid);
-> > 
-> > I think just
-> > 
-> > btrfs_info(NULL, "virtual fsid....")
-> > 
-> > is fine here.
-> > 
+On Wed, Aug 16, 2023 at 01:07:54AM -0400, Gabriel Krisman Bertazi wrote:
+> Hi,
 > 
-> So just for my full understanding, do you think we shouldn't show the
-> real fsid here, but keep showing the virtual one, right? Or you prefer
-> we literally show "virtual fsid...."?
+> This is v6 of the negative dentry on case-insensitive directories.
+> Thanks Eric for the review of the last iteration.  This version
+> drops the patch to expose the helper to check casefolding directories,
+> since it is not necessary in ecryptfs and it might be going away.  It
+> also addresses some documentation details, fix a build bot error and
+> simplifies the commit messages.  See the changelog in each patch for
+> more details.
+> 
+> Thanks,
+> 
+> ---
+> 
+> Gabriel Krisman Bertazi (9):
+>   ecryptfs: Reject casefold directory inodes
+>   9p: Split ->weak_revalidate from ->revalidate
+>   fs: Expose name under lookup to d_revalidate hooks
+>   fs: Add DCACHE_CASEFOLDED_NAME flag
+>   libfs: Validate negative dentries in case-insensitive directories
+>   libfs: Chain encryption checks after case-insensitive revalidation
+>   libfs: Merge encrypted_ci_dentry_ops and ci_dentry_ops
+>   ext4: Enable negative dentries on case-insensitive lookup
+>   f2fs: Enable negative dentries on case-insensitive lookup
+> 
 
-Oh no sorry, just swap pr_info for btrfs_info, and keep the rest the same, so
+Looks good,
 
-	btrfs_info("virtual fsid (%pU) set for SINGLE_DEV device %s (real fsid %pU)\n",
-		   disk_super->fsid, path, disk_super->metadata_uuid);
+Reviewed-by: Eric Biggers <ebiggers@google.com>
 
-thanks,
-
-Josef
+- Eric
