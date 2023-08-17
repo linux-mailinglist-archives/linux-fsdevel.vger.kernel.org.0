@@ -2,143 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A4EA77F9AB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 16:51:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ABBF77F9BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 16:55:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352280AbjHQOvB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Aug 2023 10:51:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36022 "EHLO
+        id S1352355AbjHQOyp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Aug 2023 10:54:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352361AbjHQOuw (ORCPT
+        with ESMTP id S1352408AbjHQOyi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Aug 2023 10:50:52 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B05D6BF
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 07:50:50 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        Thu, 17 Aug 2023 10:54:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2851E42
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 07:54:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 717411F37E;
-        Thu, 17 Aug 2023 14:50:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1692283849; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UD+LgMEblwafKP/DYOOxCK1O7QF3idHHEf5EI0i68eg=;
-        b=EmtqjkAWo4RB0O+0Mg64R4BV1evXDnHRhN8HMp2YEvS/7Q6UuT6WlOJmrcQa0tDNhaoeNF
-        HTKlmwkjmqe1h2pTGgMLr1XSrQEK+FtcZwy4pOq/7iigthon2+nRs/gPl3Lm0P1l0bmKOE
-        o/VZuyLdetussEPqUcHb91SLIF/gn3Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1692283849;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UD+LgMEblwafKP/DYOOxCK1O7QF3idHHEf5EI0i68eg=;
-        b=CuuE/qRpr8uIXCkgmoGmcKcVkyiVtCQ0um/nsyJYuxNKEKgGyReDjp1rpkHlE240MOhpVI
-        Qa6u6xNbADzbHNDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 627E51392B;
-        Thu, 17 Aug 2023 14:50:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id +wsIGMkz3mSXMgAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 17 Aug 2023 14:50:49 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id F08E2A0769; Thu, 17 Aug 2023 16:50:48 +0200 (CEST)
-Date:   Thu, 17 Aug 2023 16:50:48 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 39E576737B
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 14:54:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F75C433C7;
+        Thu, 17 Aug 2023 14:54:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692284076;
+        bh=a0WixMQ191OP3FgX2Ha1TGbjaLM+cCuuyIYqTM9xB3k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eNYVjya10/uuxD9hXULMNgxUHHWcD+IBCG7VPMTjjKq7EoAaciR8EXNw80aI6BiKG
+         3lyNgWcbRUw5EpzPVonsavWPxmcjKUC+8NuY1daFgLxe581hp+YxRjZC8qR/lN1bvJ
+         ++Gq/P8lFnE//WaeAO0Cxed2ATFK+fAnx8MsSvQyg1YEkrn9QZZA2YgAMKUH02sd2e
+         p9Sya5HQRCeubYahXCqjexAb1R+r5mekwwMv74qFxqqPTr6fg0luh9Mw6Ab6P4CdFK
+         OkGoXdWd0p0qa8Jcrldesmwghslk3gTAZZBT7rSD/lU5KlQqd8FHqLu2Fgn8rEIxfm
+         Bh/xyagxpx9Vg==
+Date:   Thu, 17 Aug 2023 16:54:32 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jan Kara <jack@suse.com>, Christoph Hellwig <hch@infradead.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] cachefiles: use kiocb_{start,end}_write() helpers
-Message-ID: <20230817145048.5xyzskrdc2syv5cn@quack3>
-References: <20230817141337.1025891-1-amir73il@gmail.com>
- <20230817141337.1025891-8-amir73il@gmail.com>
+Subject: Re: [PATCH 3/3] super: wait until we passed kill super
+Message-ID: <20230817-fachkenntnis-reaktion-cb4b87702365@brauner>
+References: <20230817-vfs-super-fixes-v3-v1-0-06ddeca7059b@kernel.org>
+ <20230817-vfs-super-fixes-v3-v1-3-06ddeca7059b@kernel.org>
+ <20230817143736.u22c5o5sesojlo3y@quack3>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230817141337.1025891-8-amir73il@gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230817143736.u22c5o5sesojlo3y@quack3>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 17-08-23 17:13:37, Amir Goldstein wrote:
-> Use helpers instead of the open coded dance to silence lockdep warnings.
+On Thu, Aug 17, 2023 at 04:37:36PM +0200, Jan Kara wrote:
+> On Thu 17-08-23 12:47:44, Christian Brauner wrote:
+> > Recent rework moved block device closing out of sb->put_super() and into
+> > sb->kill_sb() to avoid deadlocks as s_umount is held in put_super() and
+> > blkdev_put() can end up taking s_umount again.
+> > 
+> > That means we need to move the removal of the superblock from @fs_supers
+> > out of generic_shutdown_super() and into deactivate_locked_super() to
+> > ensure that concurrent mounters don't fail to open block devices that
+> > are still in use because blkdev_put() in sb->kill_sb() hasn't been
+> > called yet.
+> > 
+> > We can now do this as we can make iterators through @fs_super and
+> > @super_blocks wait without holding s_umount. Concurrent mounts will wait
+> > until a dying superblock is fully dead so until sb->kill_sb() has been
+> > called and SB_DEAD been set. Concurrent iterators can already discard
+> > any SB_DYING superblock.
+> > 
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> >  fs/super.c         | 71 +++++++++++++++++++++++++++++++++++++++++++++++++-----
+> >  include/linux/fs.h |  1 +
+> >  2 files changed, 66 insertions(+), 6 deletions(-)
 > 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/cachefiles/io.c | 16 +++-------------
->  1 file changed, 3 insertions(+), 13 deletions(-)
+> <snip>
 > 
-> diff --git a/fs/cachefiles/io.c b/fs/cachefiles/io.c
-> index 175a25fcade8..009d23cd435b 100644
-> --- a/fs/cachefiles/io.c
-> +++ b/fs/cachefiles/io.c
-> @@ -259,9 +259,7 @@ static void cachefiles_write_complete(struct kiocb *iocb, long ret)
->  
->  	_enter("%ld", ret);
->  
-> -	/* Tell lockdep we inherited freeze protection from submission thread */
-> -	__sb_writers_acquired(inode->i_sb, SB_FREEZE_WRITE);
-> -	__sb_end_write(inode->i_sb, SB_FREEZE_WRITE);
-> +	kiocb_end_write(iocb);
->  
->  	if (ret < 0)
->  		trace_cachefiles_io_error(object, inode, ret,
-> @@ -286,7 +284,6 @@ int __cachefiles_write(struct cachefiles_object *object,
->  {
->  	struct cachefiles_cache *cache;
->  	struct cachefiles_kiocb *ki;
-> -	struct inode *inode;
->  	unsigned int old_nofs;
->  	ssize_t ret;
->  	size_t len = iov_iter_count(iter);
-> @@ -322,19 +319,12 @@ int __cachefiles_write(struct cachefiles_object *object,
->  		ki->iocb.ki_complete = cachefiles_write_complete;
->  	atomic_long_add(ki->b_writing, &cache->b_writing);
->  
-> -	/* Open-code file_start_write here to grab freeze protection, which
-> -	 * will be released by another thread in aio_complete_rw().  Fool
-> -	 * lockdep by telling it the lock got released so that it doesn't
-> -	 * complain about the held lock when we return to userspace.
-> -	 */
-> -	inode = file_inode(file);
-> -	__sb_start_write(inode->i_sb, SB_FREEZE_WRITE);
-> -	__sb_writers_release(inode->i_sb, SB_FREEZE_WRITE);
-> +	kiocb_start_write(&ki->iocb);
->  
->  	get_file(ki->iocb.ki_filp);
->  	cachefiles_grab_object(object, cachefiles_obj_get_ioreq);
->  
-> -	trace_cachefiles_write(object, inode, ki->iocb.ki_pos, len);
-> +	trace_cachefiles_write(object, file_inode(file), ki->iocb.ki_pos, len);
->  	old_nofs = memalloc_nofs_save();
->  	ret = cachefiles_inject_write_error();
->  	if (ret == 0)
-> -- 
-> 2.34.1
+> > @@ -456,6 +497,25 @@ void deactivate_locked_super(struct super_block *s)
+> >  		list_lru_destroy(&s->s_dentry_lru);
+> >  		list_lru_destroy(&s->s_inode_lru);
+> >  
+> > +		/*
+> > +		 * Remove it from @fs_supers so it isn't found by new
+> > +		 * sget{_fc}() walkers anymore. Any concurrent mounter still
+> > +		 * managing to grab a temporary reference is guaranteed to
+> > +		 * already see SB_DYING and will wait until we notify them about
+> > +		 * SB_DEAD.
+> > +		 */
+> > +		spin_lock(&sb_lock);
+> > +		hlist_del_init(&s->s_instances);
+> > +		spin_unlock(&sb_lock);
+> > +
+> > +		/*
+> > +		 * Let concurrent mounts know that this thing is really dead.
+> > +		 * We don't need @sb->s_umount here as every concurrent caller
+> > +		 * will see SB_DYING and either discard the superblock or wait
+> > +		 * for SB_DEAD.
+> > +		 */
+> > +		super_wake(s, SB_DEAD);
+> > +
+> >  		put_filesystem(fs);
+> >  		put_super(s);
+> >  	} else {
+> > @@ -638,15 +698,14 @@ void generic_shutdown_super(struct super_block *sb)
+> >  			spin_unlock(&sb->s_inode_list_lock);
+> >  		}
+> >  	}
+> > -	spin_lock(&sb_lock);
+> > -	/* should be initialized for __put_super_and_need_restart() */
+> > -	hlist_del_init(&sb->s_instances);
+> > -	spin_unlock(&sb_lock);
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> OK, but we have several checks of hlist_unhashed(&sb->s_instances) in the
+> code whose meaning is now subtly changed. We have:
+
+If by changed meaning you mean they can be dropped, then yes.
+That's what I understand you as saying given the following list.
+
+>   trylock_super() - needs SB_DYING check instead of s_instances check
+>   __iterate_supers() - probably we should add SB_DYING check to not block
+>     emergency operations on s_umount unnecessarily and drop s_instances
+>     check
+>   iterate_supers() - we can drop s_instances check
+>   get_super() - we can drop s_instances check
+>   get_active_super() - we can drop s_instances check
+>   user_get_super() - we can drop s_instances check
+
+But does this otherwise look reasonable?
+
+(Btw, just because I noticed it, do you prefer suse.cz or suse.com?)
