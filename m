@@ -2,107 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F13EE77FBE6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 18:21:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D15977FC05
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 18:25:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353591AbjHQQVS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Aug 2023 12:21:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45240 "EHLO
+        id S245243AbjHQQZE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Aug 2023 12:25:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353657AbjHQQVJ (ORCPT
+        with ESMTP id S1352300AbjHQQYg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Aug 2023 12:21:09 -0400
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FB33198E;
-        Thu, 17 Aug 2023 09:21:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=OsS8Mas9KAp23jcsVOoXmpRjn2+jYWyQq801JbjkoT4=; b=XoNWhO4Ge7W+lgDlg7/5UQwIMj
-        EQUwJQxLewaunOhp3MMgtOld1TRMXT8VEbEqFIeShmHLsqY9IEJfhCHxOiq+9TwW4ppryLKR1fIgo
-        g7gmAuojXmmhuLQBShUAiEk3sGELRVP/+usN7aOdf1CsDTf6iiB5/+s60nU3s9EvY0gmqUemGBmYo
-        MIAqCZhQR4X2pciBNCbblreZkXSvkQAebN8bG5lPFhYAKIOMlF80YgHFASNwBrit+is9DZ+0dgtEW
-        426CoBL8d/jjro/tS9CYUbRJJvqIPaUHeFfCNza7GJYxswhXGI5ZDfX5uOJYH2aoUWf3zJF0OklkN
-        JYHCE8KA==;
-Received: from 201-92-22-215.dsl.telesp.net.br ([201.92.22.215] helo=[192.168.1.60])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1qWfk8-001z1K-Gd; Thu, 17 Aug 2023 18:21:04 +0200
-Message-ID: <b49d3f4c-4b3d-06f4-7a37-7383af0781d0@igalia.com>
-Date:   Thu, 17 Aug 2023 13:20:55 -0300
+        Thu, 17 Aug 2023 12:24:36 -0400
+Received: from 66-220-144-179.mail-mxout.facebook.com (66-220-144-179.mail-mxout.facebook.com [66.220.144.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9538F3599
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 09:23:53 -0700 (PDT)
+Received: by devbig1114.prn1.facebook.com (Postfix, from userid 425415)
+        id 375BBA56E3A4; Thu, 17 Aug 2023 09:23:09 -0700 (PDT)
+From:   Stefan Roesch <shr@devkernel.io>
+To:     kernel-team@fb.com
+Cc:     shr@devkernel.io, akpm@linux-foundation.org, david@redhat.com,
+        linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+        riel@surriel.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v3] proc/ksm: add ksm stats to /proc/pid/smaps
+Date:   Thu, 17 Aug 2023 09:23:01 -0700
+Message-Id: <20230817162301.3472457-1-shr@devkernel.io>
+X-Mailer: git-send-email 2.39.3
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 2/3] btrfs: Introduce the single-dev feature
-Content-Language: en-US
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com,
-        linux-fsdevel@vger.kernel.org, kernel@gpiccoli.net,
-        kernel-dev@igalia.com, anand.jain@oracle.com, david@fromorbit.com,
-        kreijack@libero.it, johns@valvesoftware.com,
-        ludovico.denittis@collabora.com, quwenruo.btrfs@gmx.com,
-        wqu@suse.com, vivek@collabora.com
-References: <20230803154453.1488248-1-gpiccoli@igalia.com>
- <20230803154453.1488248-3-gpiccoli@igalia.com>
- <20230817154127.GB2934386@perftesting>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <20230817154127.GB2934386@perftesting>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,RDNS_DYNAMIC,
+        SPF_HELO_PASS,SPF_NEUTRAL,TVD_RCVD_IP autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 17/08/2023 12:41, Josef Bacik wrote:
->> [...]
->> +	pr_info("BTRFS: virtual fsid (%pU) set for SINGLE_DEV device %s (real fsid %pU)\n",
->> +		disk_super->fsid, path, disk_super->metadata_uuid);
-> 
-> I think just
-> 
-> btrfs_info(NULL, "virtual fsid....")
-> 
-> is fine here.
-> 
+With madvise and prctl KSM can be enabled for different VMA's. Once it
+is enabled we can query how effective KSM is overall. However we cannot
+easily query if an individual VMA benefits from KSM.
 
-So just for my full understanding, do you think we shouldn't show the
-real fsid here, but keep showing the virtual one, right? Or you prefer
-we literally show "virtual fsid...."?
+This commit adds a KSM section to the /prod/<pid>/smaps file. It reports
+how many of the pages are KSM pages. The returned value for KSM is
+independent of the use of the shared zeropage.
 
+Here is a typical output:
 
->> +}
->> +
->>  /*
->> - * Add new device to list of registered devices
->> + * Add new device to list of registered devices, or in case of a SINGLE_DEV
->> + * device, also creates a virtual fsid to cope with same-fsid cases.
->>   *
->>   * Returns:
->>   * device pointer which was just added or updated when successful
->> @@ -784,7 +814,7 @@ static struct btrfs_fs_devices *find_fsid_reverted_metadata(
->>   */
->>  static noinline struct btrfs_device *device_list_add(const char *path,
->>  			   struct btrfs_super_block *disk_super,
->> -			   bool *new_device_added)
->> +			   bool *new_device_added, bool single_dev)
-> 
-> Same as the comment above.  Generally speaking for stuff like this where we can
-> derive the value local to the function we want to do that instead of growing the
-> argument list.  Thanks,
-> 
-> Josef
-> 
+7f420a000000-7f421a000000 rw-p 00000000 00:00 0
+Size:             262144 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:               51212 kB
+Pss:                8276 kB
+Shared_Clean:        172 kB
+Shared_Dirty:      42996 kB
+Private_Clean:       196 kB
+Private_Dirty:      7848 kB
+Referenced:        15388 kB
+Anonymous:         51212 kB
+KSM:               41376 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+FilePmdMapped:         0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:             202016 kB
+SwapPss:            3882 kB
+Locked:                0 kB
+THPeligible:    0
+ProtectionKey:         0
+ksm_state:          0
+ksm_skip_base:      0
+ksm_skip_count:     0
+VmFlags: rd wr mr mw me nr mg anon
 
-OK, will do it both here and above as you suggested. Thanks for the review!
-Cheers,
+This information also helps with the following workflow:
+- First enable KSM for all the VMA's of a process with prctl.
+- Then analyze with the above smaps report which VMA's benefit the most
+- Change the application (if possible) to add the corresponding madvise
+calls for the VMA's that benefit the most
 
+Signed-off-by: Stefan Roesch <shr@devkernel.io>
+---
+ Documentation/filesystems/proc.rst | 4 ++++
+ fs/proc/task_mmu.c                 | 5 +++++
+ 2 files changed, 9 insertions(+)
 
-Guilherme
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesyste=
+ms/proc.rst
+index 7897a7dafcbc..d5bdfd59f5b0 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -461,6 +461,7 @@ Memory Area, or VMA) there is a series of lines such =
+as the following::
+     Private_Dirty:         0 kB
+     Referenced:          892 kB
+     Anonymous:             0 kB
++    KSM:                   0 kB
+     LazyFree:              0 kB
+     AnonHugePages:         0 kB
+     ShmemPmdMapped:        0 kB
+@@ -501,6 +502,9 @@ accessed.
+ a mapping associated with a file may contain anonymous pages: when MAP_P=
+RIVATE
+ and a page is modified, the file page is replaced by a private anonymous=
+ copy.
+=20
++"KSM" shows the amount of anonymous memory that has been de-duplicated. =
+The
++value is independent of the use of shared zeropage.
++
+ "LazyFree" shows the amount of memory which is marked by madvise(MADV_FR=
+EE).
+ The memory isn't freed immediately with madvise(). It's freed in memory
+ pressure if the memory is clean. Please note that the printed value migh=
+t
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 51315133cdc2..f591c750ffda 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -396,6 +396,7 @@ struct mem_size_stats {
+ 	unsigned long swap;
+ 	unsigned long shared_hugetlb;
+ 	unsigned long private_hugetlb;
++	unsigned long ksm;
+ 	u64 pss;
+ 	u64 pss_anon;
+ 	u64 pss_file;
+@@ -452,6 +453,9 @@ static void smaps_account(struct mem_size_stats *mss,=
+ struct page *page,
+ 			mss->lazyfree +=3D size;
+ 	}
+=20
++	if (PageKsm(page))
++		mss->ksm +=3D size;
++
+ 	mss->resident +=3D size;
+ 	/* Accumulate the size in pages that have been accessed. */
+ 	if (young || page_is_young(page) || PageReferenced(page))
+@@ -822,6 +826,7 @@ static void __show_smap(struct seq_file *m, const str=
+uct mem_size_stats *mss,
+ 	SEQ_PUT_DEC(" kB\nPrivate_Dirty:  ", mss->private_dirty);
+ 	SEQ_PUT_DEC(" kB\nReferenced:     ", mss->referenced);
+ 	SEQ_PUT_DEC(" kB\nAnonymous:      ", mss->anonymous);
++	SEQ_PUT_DEC(" kB\nKSM:            ", mss->ksm);
+ 	SEQ_PUT_DEC(" kB\nLazyFree:       ", mss->lazyfree);
+ 	SEQ_PUT_DEC(" kB\nAnonHugePages:  ", mss->anonymous_thp);
+ 	SEQ_PUT_DEC(" kB\nShmemPmdMapped: ", mss->shmem_thp);
+
+base-commit: f4a280e5bb4a764a75d3215b61bc0f02b4c26417
+--=20
+2.39.3
+
