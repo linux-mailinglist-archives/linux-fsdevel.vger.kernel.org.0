@@ -2,201 +2,235 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E8D5E77EDD2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 01:28:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC55D77EE81
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 03:03:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347178AbjHPX1y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Aug 2023 19:27:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37140 "EHLO
+        id S1347381AbjHQBDF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Aug 2023 21:03:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347177AbjHPX1u (ORCPT
+        with ESMTP id S1347383AbjHQBCl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Aug 2023 19:27:50 -0400
-Received: from mail-pl1-f208.google.com (mail-pl1-f208.google.com [209.85.214.208])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE70B271F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 16:27:47 -0700 (PDT)
-Received: by mail-pl1-f208.google.com with SMTP id d9443c01a7336-1bbb97d27d6so84698785ad.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 16:27:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692228467; x=1692833267;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PAODHEKlkohyVW4SPU/mzzjLtNTRD9df5tm0JKFVRoM=;
-        b=X2dCb0FF4bHDMLjn7ETiw5GC67crQ7T73jjx29StIf2tNJu2WRQA6vxxppbasZkFJh
-         alOTFbu95WxnwtQtRMFWCeoaiR1kEWFFqWn3ECceRSXgORA0mmwylm1MRmfdp5mAITOs
-         Tz9AF3UT/kxQ/zu6Plg77Ay+YrC/3Tyde7izq7xkL5K09cdHfM/xpoIObn4oWj6PiPhJ
-         ciM2tsrseek+rU3/Lwc+duAexhirdee8p9jk/leAJeC8gwdG5uhl95fAGKkvvBbBH6AQ
-         aFfZghfglI+Nr644Prnvp/bUHvZgk7SK+ewjAeFfvMuCLmhKB3HQl1wqW/A+nYKCt35Y
-         s65Q==
-X-Gm-Message-State: AOJu0Yxo1UL7EFgFiW+UmT8WLdCh8pNNqDSsvDMAMIwAZOTNr4WnjbPi
-        LAPHfXBhv+GSVcDRWnhtW/C6AqhRR7xU3qGIWH5jEdjpWA9S
-X-Google-Smtp-Source: AGHT+IEVKJaNYWhsLc8jTBq2cwXfDEnAiIer4Ho7bobQt0yn5iTbUe7aSmJ6XKe0ibJTzIG5RgoIruxRyMGV2FDmDHgDfLBB37dR
+        Wed, 16 Aug 2023 21:02:41 -0400
+Received: from bird.elm.relay.mailchannels.net (bird.elm.relay.mailchannels.net [23.83.212.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C400B271E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 18:02:39 -0700 (PDT)
+X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id 78E8736034F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 00:23:54 +0000 (UTC)
+Received: from pdx1-sub0-mail-a310.dreamhost.com (unknown [127.0.0.6])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id 12082360270
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 00:23:54 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1692231834; a=rsa-sha256;
+        cv=none;
+        b=jzJmzx/whMs2lu603CXBEJjhy5nC02uxAaSBb2gcjeY7+RgLA7/12SAA7NNCEdnlxs3R1H
+        Yxzn5h0a0vnxi1zXtXPN3OatxDBfJyOR3o+qNTHKiG8FGoqE+OMashjbxWoMqJznV3FRAr
+        6XqNWJfV4/Ft7esf468NOqUI6FkWHysERRdE9JaFZqM7lr3lDNurR+JL6Ba1e4EO+JVV0d
+        LgUECj4VkcE/C/W/JDasaw7p381DYM0WH3t3SZppLXANKgN+Rup5PRcoBMgo5DFISGRv0K
+        jLty+UF959hAdYgxOngyn8fJbE1+X2cN6LHmJ9kmOmjB068ynG7oeqP59N9VTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+        s=arc-2022; t=1692231834;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references:dkim-signature;
+        bh=SVWCyxiDqWAorWGpUue5/fKrH0eyYqsolzYWMu1dr3w=;
+        b=eNBsfnBwfi/u52pMzDwkVsOUU0WHuA5XX9l/Ye0RG6RaJBlfFg4n+cpEhBm9DXQE9GKHSz
+        g9jvyfC3a+SsIJqCUQpokjaZLqOWw/w2ThY9IWZKApudPqmxlMNoJK/m1II8F8HwvEN7oC
+        DVlvX+qDYrVS4Hy3LZDGGYvjyLO1tdUfoBrvUrCnmC6nWWVD5ML2DZau41UBj5XvESdSlM
+        FPeINTYeSKQL0F0EYord7yYIG9WKsiTvGE8NAnpcZnlXyIdnlLB4dlRs8zm8zFAcObjV4k
+        obLUce55Hwsj44P6k+6CGzWXq3Sk2e6TEii2EBJwugcKsJE7FD9V7B7cJPnibA==
+ARC-Authentication-Results: i=1;
+        rspamd-749bd77c9c-s6t65;
+        auth=pass smtp.auth=dreamhost smtp.mailfrom=kjlx@templeofstupid.com
+X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|kjlx@templeofstupid.com
+X-MailChannels-Auth-Id: dreamhost
+X-Macabre-Wiry: 65bfd90b785e4ea5_1692231834339_3881573770
+X-MC-Loop-Signature: 1692231834339:923499776
+X-MC-Ingress-Time: 1692231834339
+Received: from pdx1-sub0-mail-a310.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+        by 100.126.240.200 (trex/6.9.1);
+        Thu, 17 Aug 2023 00:23:54 +0000
+Received: from kmjvbox (c-73-231-176-24.hsd1.ca.comcast.net [73.231.176.24])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kjlx@templeofstupid.com)
+        by pdx1-sub0-mail-a310.dreamhost.com (Postfix) with ESMTPSA id 4RR5Ms5jVhz2n
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 17:23:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=templeofstupid.com;
+        s=dreamhost; t=1692231833;
+        bh=SVWCyxiDqWAorWGpUue5/fKrH0eyYqsolzYWMu1dr3w=;
+        h=Date:From:To:Cc:Subject:Content-Type;
+        b=TkVpG4JCBDc/VP07afc74/LPZsCSYy3iOlWBINONtflgZ0OOfnJ31j3DUCl4I6Ttk
+         h+1kQqiE4P1Blj86Da866vQCS/R4nxJavRgfutHP+nkgD+fv6CVpRs1g69KDQ/r1oI
+         15p7sLCxoPpebrUwAvt0QYpN5QaimUB7MkFPC6hsngxhy7sTiVy7B9ogtUtcFVcQv+
+         bosfaJz5Go64GdsnBMx79aQUgXMY0rllmZA6YZ18aZewQDHg3cluHgwedldqTjpnxi
+         JqOxSAKVnIZ2p5Eq7zTl5EcvMuGiOoUaSmVW5ISueYyFQDLMTIVdC9F2S3tQdty2ai
+         861Ocw+fEhgRA==
+Received: from johansen (uid 1000)
+        (envelope-from kjlx@templeofstupid.com)
+        id e0058
+        by kmjvbox (DragonFly Mail Agent v0.12);
+        Wed, 16 Aug 2023 17:23:49 -0700
+Date:   Wed, 16 Aug 2023 17:23:49 -0700
+From:   Krister Johansen <kjlx@templeofstupid.com>
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc:     Krister Johansen <kjlx@templeofstupid.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        German Maglione <gmaglione@redhat.com>,
+        Greg Kurz <groug@kaod.org>, Max Reitz <mreitz@redhat.com>
+Subject: Re: [RFC PATCH 2/2] fuse: ensure that submounts lookup their root
+Message-ID: <20230817002349.GA1980@templeofstupid.com>
+References: <cover.1689038902.git.kjlx@templeofstupid.com>
+ <69bb95c34deb25f56b3b842528edcb40a098d38d.1689038902.git.kjlx@templeofstupid.com>
+ <6a73a722-6bb5-6462-e7ff-a55866374758@fastmail.fm>
 MIME-Version: 1.0
-X-Received: by 2002:a17:903:2302:b0:1bf:794:9e8f with SMTP id
- d2-20020a170903230200b001bf07949e8fmr564090plh.7.1692228467435; Wed, 16 Aug
- 2023 16:27:47 -0700 (PDT)
-Date:   Wed, 16 Aug 2023 16:27:47 -0700
-In-Reply-To: <000000000000f59fa505fe48748f@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ae2d46060312a494@google.com>
-Subject: Re: [syzbot] [ext4?] INFO: task hung in __writeback_inodes_sb_nr (6)
-From:   syzbot <syzbot+38d04642cea49f3a3d2e@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linkinjeon@kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
-        syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6a73a722-6bb5-6462-e7ff-a55866374758@fastmail.fm>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+On Tue, Jul 25, 2023 at 01:16:08AM +0200, Bernd Schubert wrote:
+> On 7/11/23 03:37, Krister Johansen wrote:
+> > Prior to this commit, the submount code assumed that the inode for the
+> > root filesystem could not be evicted.  When eviction occurs the server
+> > may forget the inode.  This author has observed a submount get an EBADF
+> > from a virtiofsd server that resulted from the sole dentry / inode
+> > pair getting evicted from a mount namespace and superblock where they
+> > were originally referenced.  The dentry shrinker triggered a forget
+> > after killing the dentry with the last reference.
+> > 
+> > As a result, a container that was also using this submount failed to
+> > access its filesystem because it had borrowed the reference instead of
+> > taking its own when setting up its superblock for the submount.
+> > 
+> > Fix by ensuring that submount superblock configuration looks up the
+> > nodeid for the submount as well.
+> > 
+> > Signed-off-by: Krister Johansen <kjlx@templeofstupid.com>
+> > ---
+> >   fs/fuse/dir.c    | 10 +++++-----
+> >   fs/fuse/fuse_i.h |  6 ++++++
+> >   fs/fuse/inode.c  | 32 ++++++++++++++++++++++++++++----
+> >   3 files changed, 39 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> > index bdf5526a0733..fe6b3fd4a49c 100644
+> > --- a/fs/fuse/dir.c
+> > +++ b/fs/fuse/dir.c
+> > @@ -193,11 +193,11 @@ static void fuse_lookup_init(struct fuse_conn *fc, struct fuse_args *args,
+> >   	args->out_args[0].value = outarg;
+> >   }
+> > -static int fuse_dentry_revalidate_lookup(struct fuse_mount *fm,
+> > -					 struct dentry *entry,
+> > -					 struct inode *inode,
+> > -					 struct fuse_entry_out *outarg,
+> > -					 bool *lookedup)
+> > +int fuse_dentry_revalidate_lookup(struct fuse_mount *fm,
+> > +				  struct dentry *entry,
+> > +				  struct inode *inode,
+> > +				  struct fuse_entry_out *outarg,
+> > +				  bool *lookedup)
+> >   {
+> >   	struct dentry *parent;
+> >   	struct fuse_forget_link *forget;
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > index 9b7fc7d3c7f1..77b123eddb6d 100644
+> > --- a/fs/fuse/fuse_i.h
+> > +++ b/fs/fuse/fuse_i.h
+> > @@ -1309,6 +1309,12 @@ void fuse_dax_dontcache(struct inode *inode, unsigned int flags);
+> >   bool fuse_dax_check_alignment(struct fuse_conn *fc, unsigned int map_alignment);
+> >   void fuse_dax_cancel_work(struct fuse_conn *fc);
+> > +/* dir.c */
+> > +int fuse_dentry_revalidate_lookup(struct fuse_mount *fm, struct dentry *entry,
+> > +				  struct inode *inode,
+> > +				  struct fuse_entry_out *outarg,
+> > +				  bool *lookedup);
+> > +
+> >   /* ioctl.c */
+> >   long fuse_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+> >   long fuse_file_compat_ioctl(struct file *file, unsigned int cmd,
+> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > index f19d748890f0..1032e4b05d9c 100644
+> > --- a/fs/fuse/inode.c
+> > +++ b/fs/fuse/inode.c
+> > @@ -1441,6 +1441,10 @@ static int fuse_fill_super_submount(struct super_block *sb,
+> >   	struct super_block *parent_sb = parent_fi->inode.i_sb;
+> >   	struct fuse_attr root_attr;
+> >   	struct inode *root;
+> > +	struct inode *parent;
+> > +	struct dentry *pdent;
+> > +	bool lookedup = false;
+> > +	int ret;
+> >   	fuse_sb_defaults(sb);
+> >   	fm->sb = sb;
+> > @@ -1456,14 +1460,34 @@ static int fuse_fill_super_submount(struct super_block *sb,
+> >   	if (parent_sb->s_subtype && !sb->s_subtype)
+> >   		return -ENOMEM;
+> > +	/*
+> > +	 * It is necessary to lookup the parent_if->nodeid in case the dentry
+> > +	 * that triggered the automount of the submount is later evicted.
+> > +	 * If this dentry is evicted without the lookup count getting increased
+> > +	 * on the submount root, then the server can subsequently forget this
+> > +	 * nodeid which leads to errors when trying to access the root of the
+> > +	 * submount.
+> > +	 */
+> > +	parent = &parent_fi->inode;
+> > +	pdent = d_find_alias(parent);
+> > +	if (pdent) {
+> > +		struct fuse_entry_out outarg;
+> > +
+> > +		ret = fuse_dentry_revalidate_lookup(fm, pdent, parent, &outarg,
+> > +						    &lookedup);
+> > +		dput(pdent);
+> > +		if (ret < 0)
+> > +			return ret;
+> > +	}
+> > +
+> >   	fuse_fill_attr_from_inode(&root_attr, parent_fi);
+> >   	root = fuse_iget(sb, parent_fi->nodeid, 0, &root_attr, 0, 0);
+> >   	/*
+> > -	 * This inode is just a duplicate, so it is not looked up and
+> > -	 * its nlookup should not be incremented.  fuse_iget() does
+> > -	 * that, though, so undo it here.
+> > +	 * fuse_iget() sets nlookup to 1 at creation time.  If this nodeid was
+> > +	 * not successfully looked up then decrement the count.
+> >   	 */
+> > -	get_fuse_inode(root)->nlookup--;
+> > +	if (!lookedup)
+> > +		get_fuse_inode(root)->nlookup--;
+> 
+> How does a submount work with a parent mismatch? I wonder if this function
+> should return an error if lookup of the parent failed.
 
-HEAD commit:    4853c74bd7ab Merge tag 'parisc-for-6.5-rc7' of git://git.k..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=178eb2efa80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=aa796b6080b04102
-dashboard link: https://syzkaller.appspot.com/bug?extid=38d04642cea49f3a3d2e
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=171242cfa80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17934703a80000
+Thanks for the feedback.  This was definitely one of the things that I
+didn't like about this patch.  The original code doesn't care if the
+parent nodeid is valid, which is why I kept the old behavior as a
+fallback if lookup failed.  I managed to console myself that it wasn't
+any worse, but would love to remove that if it's okay to fail the mount
+at this point.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fef982ba26aa/disk-4853c74b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/633875549882/vmlinux-4853c74b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a1d2d81c82f6/bzImage-4853c74b.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/45ecbb86ca49/mount_4.gz
+The other thing that was annoying me was my refactoring of the
+fuse_dentry_revalidate() function.  I'm annoyed by having the lookedup
+boolean pointer as an argument to fuse_dentry_revalidate_lookup, but
+couldn't quite work out how to handle the weird nlookup manipulations in
+fuse_dentry_revalidate and fuse_fill_super_submount without it.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+38d04642cea49f3a3d2e@syzkaller.appspotmail.com
-
-INFO: task syz-executor359:5018 blocked for more than 143 seconds.
-      Not tainted 6.5.0-rc6-syzkaller-00036-g4853c74bd7ab #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor359 state:D stack:27216 pid:5018  ppid:5015   flags:0x00004002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5381 [inline]
- __schedule+0xee1/0x59f0 kernel/sched/core.c:6710
- schedule+0xe7/0x1b0 kernel/sched/core.c:6786
- wb_wait_for_completion+0x1ae/0x270 fs/fs-writeback.c:192
- __writeback_inodes_sb_nr+0x1d8/0x270 fs/fs-writeback.c:2650
- sync_filesystem fs/sync.c:54 [inline]
- sync_filesystem+0xb6/0x280 fs/sync.c:30
- generic_shutdown_super+0x74/0x480 fs/super.c:472
- kill_block_super+0x64/0xb0 fs/super.c:1417
- deactivate_locked_super+0x9a/0x170 fs/super.c:330
- deactivate_super+0xde/0x100 fs/super.c:361
- cleanup_mnt+0x222/0x3d0 fs/namespace.c:1254
- task_work_run+0x14d/0x240 kernel/task_work.c:179
- ptrace_notify+0x10c/0x130 kernel/signal.c:2376
- ptrace_report_syscall include/linux/ptrace.h:411 [inline]
- ptrace_report_syscall_exit include/linux/ptrace.h:473 [inline]
- syscall_exit_work kernel/entry/common.c:252 [inline]
- syscall_exit_to_user_mode_prepare+0x120/0x220 kernel/entry/common.c:279
- __syscall_exit_to_user_mode_work kernel/entry/common.c:284 [inline]
- syscall_exit_to_user_mode+0xd/0x50 kernel/entry/common.c:297
- do_syscall_64+0x44/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f497ef65487
-RSP: 002b:00007ffdd57d4148 EFLAGS: 00000206 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f497ef65487
-RDX: 0000000000000000 RSI: 000000000000000a RDI: 00007ffdd57d4200
-RBP: 00007ffdd57d4200 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000206 R12: 00007ffdd57d5270
-R13: 00005555566da6c0 R14: 431bde82d7b634db R15: 00007ffdd57d5290
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by rcu_tasks_kthre/13:
- #0: ffffffff8c9a67f0 (rcu_tasks.tasks_gp_mutex){+.+.}-{3:3}, at: rcu_tasks_one_gp+0x2c/0xe20 kernel/rcu/tasks.h:522
-1 lock held by rcu_tasks_trace/14:
- #0: ffffffff8c9a64f0 (rcu_tasks_trace.tasks_gp_mutex){+.+.}-{3:3}, at: rcu_tasks_one_gp+0x2c/0xe20 kernel/rcu/tasks.h:522
-1 lock held by khungtaskd/27:
- #0: ffffffff8c9a7400 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x340 kernel/locking/lockdep.c:6615
-3 locks held by kworker/u4:2/34:
-2 locks held by getty/4774:
- #0: ffff88802cdfa098 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
- #1: ffffc900015c02f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xfcb/0x1480 drivers/tty/n_tty.c:2187
-1 lock held by syz-executor359/5018:
- #0: ffff88807b0e80e0 (&type->s_umount_key#42){+.+.}-{3:3}, at: deactivate_super+0xd6/0x100 fs/super.c:360
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 27 Comm: khungtaskd Not tainted 6.5.0-rc6-syzkaller-00036-g4853c74bd7ab #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/26/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
- nmi_cpu_backtrace+0x277/0x380 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x2ac/0x310 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:222 [inline]
- watchdog+0xf29/0x11b0 kernel/hung_task.c:379
- kthread+0x33a/0x430 kernel/kthread.c:389
- ret_from_fork+0x2c/0x70 arch/x86/kernel/process.c:145
- ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:304
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 34 Comm: kworker/u4:2 Not tainted 6.5.0-rc6-syzkaller-00036-g4853c74bd7ab #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/26/2023
-Workqueue: writeback wb_workfn (flush-7:0)
-RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x70 kernel/kcov.c:200
-Code: a6 27 99 02 66 0f 1f 44 00 00 f3 0f 1e fa 48 8b be b0 01 00 00 e8 b0 ff ff ff 31 c0 c3 66 66 2e 0f 1f 84 00 00 00 00 00 66 90 <f3> 0f 1e fa 65 8b 05 dd b0 7d 7e 89 c1 48 8b 34 24 81 e1 00 01 00
-RSP: 0018:ffffc90000ab74e8 EFLAGS: 00000206
-RAX: 0000000000000000 RBX: ffffea0001c90174 RCX: ffffffff81fa92f9
-RDX: ffff8880136fbb80 RSI: 0000000000000000 RDI: 0000000000000005
-RBP: 0000000000000001 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000003 R11: 1ffffffff1936441 R12: 0000000000000003
-R13: 0000000000000200 R14: 0000000000000003 R15: ffffea0001c90140
-FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055fded888928 CR3: 0000000028191000 CR4: 0000000000350ef0
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
- atomic_dec_and_test include/linux/atomic/atomic-instrumented.h:1375 [inline]
- page_ref_dec_and_test include/linux/page_ref.h:210 [inline]
- put_page_testzero include/linux/mm.h:1028 [inline]
- folio_put_testzero include/linux/mm.h:1033 [inline]
- folio_put include/linux/mm.h:1439 [inline]
- grow_dev_page fs/buffer.c:1093 [inline]
- grow_buffers fs/buffer.c:1123 [inline]
- __getblk_slow+0x4b7/0x720 fs/buffer.c:1150
- __getblk_gfp fs/buffer.c:1445 [inline]
- __bread_gfp+0x215/0x310 fs/buffer.c:1479
- sb_bread include/linux/buffer_head.h:351 [inline]
- exfat_get_dentry_set+0x283/0xc10 fs/exfat/dir.c:878
- __exfat_write_inode+0x2c0/0x9e0 fs/exfat/inode.c:45
- exfat_write_inode+0xad/0x130 fs/exfat/inode.c:94
- write_inode fs/fs-writeback.c:1456 [inline]
- __writeback_single_inode+0xa81/0xe70 fs/fs-writeback.c:1668
- writeback_sb_inodes+0x599/0x1010 fs/fs-writeback.c:1894
- wb_writeback+0x2a5/0xa90 fs/fs-writeback.c:2070
- wb_do_writeback fs/fs-writeback.c:2217 [inline]
- wb_workfn+0x29c/0xfd0 fs/fs-writeback.c:2257
- process_one_work+0xaa2/0x16f0 kernel/workqueue.c:2600
- worker_thread+0x687/0x1110 kernel/workqueue.c:2751
- kthread+0x33a/0x430 kernel/kthread.c:389
- ret_from_fork+0x2c/0x70 arch/x86/kernel/process.c:145
- ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:304
- </TASK>
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.463 msecs
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+-K
