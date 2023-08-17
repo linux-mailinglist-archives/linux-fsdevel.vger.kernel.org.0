@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C92977F873
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 16:14:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C65B77F875
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 16:14:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351749AbjHQONu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Aug 2023 10:13:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50448 "EHLO
+        id S1351759AbjHQONv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Aug 2023 10:13:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351753AbjHQONr (ORCPT
+        with ESMTP id S1351754AbjHQONs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Aug 2023 10:13:47 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD6AD2D5F
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 07:13:45 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3fe4ad22eb0so75784055e9.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 07:13:45 -0700 (PDT)
+        Thu, 17 Aug 2023 10:13:48 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7859C19A1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 07:13:47 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-31771bb4869so7010187f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 07:13:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692281624; x=1692886424;
+        d=gmail.com; s=20221208; t=1692281626; x=1692886426;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=owUF3NUEAVS5jv0O1CeXNKt3j3CZUNkxw2WpwJ5gxfk=;
-        b=VNegfykbQ1G8N1hEIl/2VCFY1GwHccYbzZP9CuyQWg3PvP1SVagib25x42cWzGGWPa
-         d8B8ujNYlQXWRYZSj7GgKNAYVffit5jCqqWPTTYbBKlh6t7WrVaiHLS8WKgyhZZSD6s6
-         FM2YQt8a8Vvav0fT6fXBwdamQj/yjAEJEdFcJbQfKG3pQKa0A7Pss/9yeOe6Yle1D5wd
-         wquzrxNhoDnSvFaXrCYYPy39uooR7gLRg2WhHG054G3h3h2qxuf17DxBMMLC/l9XIrkH
-         G21rw6UVHNYoAHvVVwU+N4x2K7NFZoTLlNDsXxVh+HT/PiRRND8jspbWxoMUpQCnNCp8
-         fTpA==
+        bh=/6YuWRmUoMignxqEslNtZo8J+oVteko0Nb2mvhOmiic=;
+        b=olMafWZ0I+UTIVhMAu+7C5CGNrftjWIaQlU3c4CY3rkfGz80muqpa8CAeEF4yxQftd
+         ZFqxkgtaVAaNvgg3jIqO68WaFV11qGZkXRRRm2Fgkjy/BUqKtLgDkjIyDTrhvMvxW/5X
+         o0kEos6Sv5hTZ4XQsF5LOOfJRgneCByUY7bv1MGyIO9zj4164R0IHnBAiFrfzHQXehqs
+         +/yw2dxVzYvBKv0m45HcM39VVIrx6JABqmMvl39+Hm486SZts6RX9P3ofaxvLD/SjSNe
+         GaoP8I/NZTZhjhQvxRpFTEbqqxMCraQfUrb2G0tjbb5pV01h4wK0a2TpQOu7tQNfQIns
+         CeJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692281624; x=1692886424;
+        d=1e100.net; s=20221208; t=1692281626; x=1692886426;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=owUF3NUEAVS5jv0O1CeXNKt3j3CZUNkxw2WpwJ5gxfk=;
-        b=lrQCleuqyacLz/LIg2XJv3yiLVEFIFOWo2CF8zgwBpYvxcQlhZJmTo9Y790mz4CU9Y
-         nYI0osMHkeUEbSXlMHyu8lgeU648cQ7H2oB2VU7VONx5wau2VhYjlFREVY03k5MqUUjg
-         VHkSB/t+9uSyv9zXksAzQxgGjgthnxt+y/wOPd9n/ByQbj4Xdml0m+3b8Fgx+VQn9hwC
-         XgBvI0oh5UwwvPsFP5yWvucqsc7a3mNjLCwpZ9BJVoIQWkbz8VvwaoCGG75RGn9QJ+jh
-         wwPvTv7anQ8VupxPM5TniaWxkEfllNnQ0KPlLlHMQ/SQpRWof3sTjA3LQrsBUfv2zM5U
-         v8SA==
-X-Gm-Message-State: AOJu0YxuMcdItyaY2aD3T5W6wStyfmHwryhOhtyw6xUsHPKOb9YZ79cJ
-        h8anQ8FOA0ULfCAqb8QzzMA=
-X-Google-Smtp-Source: AGHT+IEoa0QrX517WHayUaCCcdVuPp0sIIZAl5fIoWiZ4Fnf/36jzg+ivs//w/jesVwKAwWzr1YlSw==
-X-Received: by 2002:a7b:ce95:0:b0:3fe:1871:1826 with SMTP id q21-20020a7bce95000000b003fe18711826mr4067020wmj.27.1692281624283;
-        Thu, 17 Aug 2023 07:13:44 -0700 (PDT)
+        bh=/6YuWRmUoMignxqEslNtZo8J+oVteko0Nb2mvhOmiic=;
+        b=Muf/esqejw+mcYKG0fasN/Md+jrYemejg0w8IGd16PnqsU1p2SpgkoxMQdBO9sZOBy
+         9VKxCLYHb4hzF6InGEMCxg3KdraRAXiWZL3o6xStodINoCgZ+YYCYqUZyuD/kFpXgIEN
+         d7b/r2EGWnocETpSngcv3sZoqtaGtPjvnQnYO8DQibOBMmWji3/OQeSXAaUBMAjdgRKr
+         dMRdQ+QjCzJl8ierHYinSkTE57wik8nSdN6NPibC6B5GzKwgPl1kEXeNLVJ17sWW3o3x
+         qPG6yI693v/wpFlOK88a9hgmJzzMIFo9OWqt0Vuzf1DhvwC1TRyYiJYCWBdaPCeDTHkU
+         Pl5g==
+X-Gm-Message-State: AOJu0Ywfh5n0ka0tiZzXoC5EKjSAk4CZA6olHkynawGuj/Rv+HcGQaQF
+        84rdmxrLLhMRf1OlLfU20J8=
+X-Google-Smtp-Source: AGHT+IFZlG6quUjBbW70ATIfR3KtCW1mYbE7Rgk6ArtnZgfpuSKVTCJ4t43eS5qpGHtPstfzhzZ5YA==
+X-Received: by 2002:a5d:4a91:0:b0:315:8a13:ef17 with SMTP id o17-20020a5d4a91000000b003158a13ef17mr4154631wrq.65.1692281625730;
+        Thu, 17 Aug 2023 07:13:45 -0700 (PDT)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id m12-20020a7bca4c000000b003fe2120ad0bsm3080605wml.41.2023.08.17.07.13.43
+        by smtp.gmail.com with ESMTPSA id m12-20020a7bca4c000000b003fe2120ad0bsm3080605wml.41.2023.08.17.07.13.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Aug 2023 07:13:43 -0700 (PDT)
+        Thu, 17 Aug 2023 07:13:45 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Christian Brauner <brauner@kernel.org>
 Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
@@ -57,9 +57,9 @@ Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
         David Howells <dhowells@redhat.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 2/7] fs: add kerneldoc to file_{start,end}_write() helpers
-Date:   Thu, 17 Aug 2023 17:13:32 +0300
-Message-Id: <20230817141337.1025891-3-amir73il@gmail.com>
+Subject: [PATCH v3 3/7] fs: create kiocb_{start,end}_write() helpers
+Date:   Thu, 17 Aug 2023 17:13:33 +0300
+Message-Id: <20230817141337.1025891-4-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230817141337.1025891-1-amir73il@gmail.com>
 References: <20230817141337.1025891-1-amir73il@gmail.com>
@@ -75,50 +75,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-and use sb_end_write() instead of open coded version.
+aio, io_uring, cachefiles and overlayfs, all open code an ugly variant
+of file_{start,end}_write() to silence lockdep warnings.
 
+Create helpers for this lockdep dance so we can use the helpers in all
+the callers.
+
+Suggested-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- include/linux/fs.h | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ include/linux/fs.h | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index b2adee67f9b2..ced388aff51f 100644
+index ced388aff51f..2548048a6e6c 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -2545,6 +2545,13 @@ static inline bool inode_wrong_type(const struct inode *inode, umode_t mode)
- 	return (inode->i_mode ^ mode) & S_IFMT;
+@@ -2579,6 +2579,42 @@ static inline void file_end_write(struct file *file)
+ 	sb_end_write(file_inode(file)->i_sb);
  }
  
 +/**
-+ * file_start_write - get write access to a superblock for regular file io
-+ * @file: the file we want to write to
++ * kiocb_start_write - get write access to a superblock for async file io
++ * @iocb: the io context we want to submit the write with
 + *
-+ * This is a variant of sb_start_write() which is a noop on non-regualr file.
-+ * Should be matched with a call to file_end_write().
++ * This is a variant of sb_start_write() for async io submission.
++ * Should be matched with a call to kiocb_end_write().
 + */
- static inline void file_start_write(struct file *file)
- {
- 	if (!S_ISREG(file_inode(file)->i_mode))
-@@ -2559,11 +2566,17 @@ static inline bool file_start_write_trylock(struct file *file)
- 	return sb_start_write_trylock(file_inode(file)->i_sb);
- }
- 
++static inline void kiocb_start_write(struct kiocb *iocb)
++{
++	struct inode *inode = file_inode(iocb->ki_filp);
++
++	sb_start_write(inode->i_sb);
++	/*
++	 * Fool lockdep by telling it the lock got released so that it
++	 * doesn't complain about the held lock when we return to userspace.
++	 */
++	__sb_writers_release(inode->i_sb, SB_FREEZE_WRITE);
++}
++
 +/**
-+ * file_end_write - drop write access to a superblock of a regular file
-+ * @file: the file we wrote to
++ * kiocb_end_write - drop write access to a superblock after async file io
++ * @iocb: the io context we sumbitted the write with
 + *
-+ * Should be matched with a call to file_start_write().
++ * Should be matched with a call to kiocb_start_write().
 + */
- static inline void file_end_write(struct file *file)
- {
- 	if (!S_ISREG(file_inode(file)->i_mode))
- 		return;
--	__sb_end_write(file_inode(file)->i_sb, SB_FREEZE_WRITE);
-+	sb_end_write(file_inode(file)->i_sb);
- }
- 
++static inline void kiocb_end_write(struct kiocb *iocb)
++{
++	struct inode *inode = file_inode(iocb->ki_filp);
++
++	/*
++	 * Tell lockdep we inherited freeze protection from submission thread.
++	 */
++	__sb_writers_acquired(inode->i_sb, SB_FREEZE_WRITE);
++	sb_end_write(inode->i_sb);
++}
++
  /*
+  * This is used for regular files where some users -- especially the
+  * currently executed binary in a process, previously handled via
 -- 
 2.34.1
 
