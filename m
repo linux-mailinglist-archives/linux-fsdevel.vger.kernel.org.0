@@ -2,100 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6257F77FB78
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 18:07:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50E1277FBB1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 18:12:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353278AbjHQQGt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Aug 2023 12:06:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38082 "EHLO
+        id S1351830AbjHQQMJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Aug 2023 12:12:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353493AbjHQQGo (ORCPT
+        with ESMTP id S1353632AbjHQQLw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Aug 2023 12:06:44 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5806630FB
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 09:06:42 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-202-WB12oNh9NZeEKc7yOwxybA-1; Thu, 17 Aug 2023 17:06:39 +0100
-X-MC-Unique: WB12oNh9NZeEKc7yOwxybA-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 17 Aug
- 2023 17:06:35 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Thu, 17 Aug 2023 17:06:35 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Linus Torvalds' <torvalds@linux-foundation.org>
-CC:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        Christian Brauner <christian@brauner.io>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 2/2] iov_iter: Don't deal with iter->copy_mc in
- memcpy_from_iter_mc()
-Thread-Topic: [PATCH v3 2/2] iov_iter: Don't deal with iter->copy_mc in
- memcpy_from_iter_mc()
-Thread-Index: AQHZ0DpP/l59sWTPXU+UuQ9VGbJikq/s16Kg///6foCAACRpIIAA7PpbgABGFYCAAFYcAIAAGHiw///2TICAABg4YA==
-Date:   Thu, 17 Aug 2023 16:06:35 +0000
-Message-ID: <d8500b7f585d41628b9c53a9848d9875@AcuMS.aculab.com>
-References: <03730b50cebb4a349ad8667373bb8127@AcuMS.aculab.com>
- <20230816120741.534415-1-dhowells@redhat.com>
- <20230816120741.534415-3-dhowells@redhat.com>
- <608853.1692190847@warthog.procyon.org.uk>
- <3dabec5643b24534a1c1c51894798047@AcuMS.aculab.com>
- <CAHk-=wjFrVp6srTBsMKV8LBjCEO0bRDYXm-KYrq7oRk0TGr6HA@mail.gmail.com>
- <665724.1692218114@warthog.procyon.org.uk>
- <CAHk-=wg8G7teERgR7ExNUjHj0yx3dNRopjefnN3zOWWvYADXCw@mail.gmail.com>
- <d0232378a64a46659507e5c00d0c6599@AcuMS.aculab.com>
- <CAHk-=wi4wNm-2OjjhFEqm21xTNTvksmb5N4794isjkp9+FzngA@mail.gmail.com>
- <2190704172a5458eb909c9df59b6a556@AcuMS.aculab.com>
- <CAHk-=wj1WfFGxHs4k6pn5y6V8BYd3aqODCjqEmrTWP8XO78giw@mail.gmail.com>
-In-Reply-To: <CAHk-=wj1WfFGxHs4k6pn5y6V8BYd3aqODCjqEmrTWP8XO78giw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 17 Aug 2023 12:11:52 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B003359B
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 09:11:49 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-102-95.bstnma.fios.verizon.net [173.48.102.95])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 37HGBITO024446
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Aug 2023 12:11:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1692288680; bh=fHPwV6TxvRwbeuDja45CNkKtsuGepircRHRBRc+9VD0=;
+        h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+        b=k//JNo1Dto08rEtdMfX3xvu+Q84a+tcpM7rjCcVEZCZ/4bJAp37FiUVVd5W9RCF9U
+         sIldjWLdoh9rNe0k0f9Ub9a2zTWfPqbzfqIAA+n8FDlJpEaMe5W+sjwR2W+81bluaH
+         dKL2iJHt28/zBZUs+8KwVe1Ptg7dSXIbKpJpTmQHTS1p0Dha8MOiqZB/mjqDjkgF4f
+         dZ7A9XiHtuZGdE3Xp6mkUKAGMab7oMPaYrlHE3qWDJK9N2x+4tvp4QuXVRwDeOwWVi
+         3yyNZOlBCaynD30v42Lxjh2jTu9gRVWOXhcLj2Hv3PdoExGooJDQBKEq3K7OslVP8H
+         zSD37HkvPfHUA==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 0CB9515C0501; Thu, 17 Aug 2023 12:11:18 -0400 (EDT)
+Date:   Thu, 17 Aug 2023 12:11:18 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     sandeen@redhat.com
+Cc:     syzbot <syzbot+27eece6916b914a49ce7@syzkaller.appspotmail.com>,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
+        syzkaller-bugs@googlegroups.com, trix@redhat.com
+Subject: Re: [syzbot] [ext4?] kernel panic: EXT4-fs (device loop0): panic
+ forced after error (3)
+Message-ID: <20230817161118.GC2247938@mit.edu>
+References: <000000000000530e0d060312199e@google.com>
+ <20230817142103.GA2247938@mit.edu>
+ <81f96763-51fe-8ea1-bf81-cd67deed9087@redhat.com>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <81f96763-51fe-8ea1-bf81-cd67deed9087@redhat.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogVGh1cnNkYXksIEF1Z3VzdCAxNywgMjAyMyA0
-OjMxIFBNDQouLi4NCj4gICAgICAgICBtb3Z6d2wgIC5MQzEoJXJpcCksICVlYXgNCj4gICAgICAg
-ICB0ZXN0bCAgICVlc2ksICVlc2kNCj4gICAgICAgICBtb3ZiICAgICQwLCAoJXJkaSkNCj4gICAg
-ICAgICBtb3ZiICAgICQxLCA0KCVyZGkpDQo+ICAgICAgICAgbW92dyAgICAlYXgsIDEoJXJkaSkN
-Cj4gICAgICAgICBtb3ZxICAgICQwLCA4KCVyZGkpDQo+ICAgICAgICAgbW92cSAgICAlcmR4LCAx
-NiglcmRpKQ0KPiAgICAgICAgIG1vdnEgICAgJXI4LCAyNCglcmRpKQ0KPiAgICAgICAgIG1vdnEg
-ICAgJXJjeCwgMzIoJXJkaSkNCj4gICAgICAgICBzZXRuZSAgIDMoJXJkaSkNCj4gDQo+IHdoaWNo
-IGlzIHRoYXQgZGlzZ3VzdGluZyAibW92ZSB0d28gYnl0ZXMgZnJvbSBtZW1vcnkiLCBhbmQgbWFr
-ZXMNCj4gYWJzb2x1dGVseSBubyBzZW5zZSBhcyBhIHdheSB0byAid3JpdGUgMiB6ZXJvIGJ5dGVz
-IjoNCj4gDQo+IC5MQzE6DQo+ICAgICAgICAgLmJ5dGUgICAwDQo+ICAgICAgICAgLmJ5dGUgICAw
-DQo+IA0KPiBJIHRoaW5rIHRoYXQncyBzb21lIG9kZCBnY2MgYnVnLCBhY3R1YWxseS4NCg0KSSBn
-ZXQgdGhhdCB3aXRoIHNvbWUgY29kZSwgYnV0IG5vdCBvdGhlcnMuDQpTZWVtcyB0byBkZXBlbmQg
-b24gcmFuZG9tIG90aGVyIHN0dWZmLg0KSGFwcGVucyBmb3I6DQoJc3RydWN0IHsgdW5zaWduZWQg
-Y2hhciB4OjcsIHk6MTsgfTsNCmJ1dCBub3QgaWYgSSBhZGQgYW55dGhpbmcgYWZ0ZXIgaWYgKHRo
-YXQgZ2V0cyB6ZXJvZWQpLg0KV2hpY2ggc2VlbXMgdG8gYmUgdGhlIG9wcG9zaXRlIG9mIHdoYXQg
-eW91IHNlZS4NCg0KSWYgSSB1c2UgZXhwbGljaXQgYXNzaWdubWVudHMgKHJhdGhlciB0aGFuIGFu
-IGluaXRpYWxpc2VyKQ0KSSBzdGlsbCBnZXQgbWVyZ2VkIHdyaXRlcyAoZXZlbiBpZiBub3QgYSBi
-aXRmaWVsZCkgYnV0IGFsc28NCmxvc2UgdGhlIG1lbW9yeSBhY2Nlc3MuDQoNCglEYXZpZA0KDQot
-DQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwg
-TWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2Fs
-ZXMpDQo=
+On Thu, Aug 17, 2023 at 09:47:48AM -0500, Eric Sandeen wrote:
+> 
+> Just to play devil's advocate here - (sorry) - I don't see this as any
+> different from any other "malicious" filesystem image.
+> 
+> I've never been a fan of the idea that malicious images are real security
+> threats, but whether the parking lot USB stick paniced the box in an
+> unexpected way or "on purpose," the result is the same ...
+> 
+> I wonder if it might make sense to put EXT4_MOUNT_ERRORS_PANIC under a
+> sysctl or something, so that admins can enable it only when needed.
 
+Well, if someone is stupid enough to plug in a parking lot USB stick
+into their system, they get everything they deserve.  And a forced
+panic isn't going to lead a more privilege escalation attack, so I
+really don't see a problem if a file system which is marked "panic on
+error", well, causes a panic.  It's a good way of (harmlessly)
+punishing stupid user tricks.  :-)
+
+The other way of thinking about it is that if your threat model
+includes an attacker with physical access to the server with a USB
+port, attacks include a cable which has a USB port on one side, and a
+120V/240V AC mains plug on the the other.  This will very likely cause
+a system shutdown, even if they don't have automount enabled.   :-)
+
+							- Ted
