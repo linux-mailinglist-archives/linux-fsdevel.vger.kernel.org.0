@@ -2,87 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 50E1277FBB1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 18:12:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C2A177FBDE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 18:18:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351830AbjHQQMJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Aug 2023 12:12:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41826 "EHLO
+        id S1353572AbjHQQRe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Aug 2023 12:17:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353632AbjHQQLw (ORCPT
+        with ESMTP id S1353578AbjHQQRK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Aug 2023 12:11:52 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B003359B
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 09:11:49 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-173-48-102-95.bstnma.fios.verizon.net [173.48.102.95])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 37HGBITO024446
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Aug 2023 12:11:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1692288680; bh=fHPwV6TxvRwbeuDja45CNkKtsuGepircRHRBRc+9VD0=;
-        h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-        b=k//JNo1Dto08rEtdMfX3xvu+Q84a+tcpM7rjCcVEZCZ/4bJAp37FiUVVd5W9RCF9U
-         sIldjWLdoh9rNe0k0f9Ub9a2zTWfPqbzfqIAA+n8FDlJpEaMe5W+sjwR2W+81bluaH
-         dKL2iJHt28/zBZUs+8KwVe1Ptg7dSXIbKpJpTmQHTS1p0Dha8MOiqZB/mjqDjkgF4f
-         dZ7A9XiHtuZGdE3Xp6mkUKAGMab7oMPaYrlHE3qWDJK9N2x+4tvp4QuXVRwDeOwWVi
-         3yyNZOlBCaynD30v42Lxjh2jTu9gRVWOXhcLj2Hv3PdoExGooJDQBKEq3K7OslVP8H
-         zSD37HkvPfHUA==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 0CB9515C0501; Thu, 17 Aug 2023 12:11:18 -0400 (EDT)
-Date:   Thu, 17 Aug 2023 12:11:18 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     sandeen@redhat.com
-Cc:     syzbot <syzbot+27eece6916b914a49ce7@syzkaller.appspotmail.com>,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
-        syzkaller-bugs@googlegroups.com, trix@redhat.com
-Subject: Re: [syzbot] [ext4?] kernel panic: EXT4-fs (device loop0): panic
- forced after error (3)
-Message-ID: <20230817161118.GC2247938@mit.edu>
-References: <000000000000530e0d060312199e@google.com>
- <20230817142103.GA2247938@mit.edu>
- <81f96763-51fe-8ea1-bf81-cd67deed9087@redhat.com>
+        Thu, 17 Aug 2023 12:17:10 -0400
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E326273F;
+        Thu, 17 Aug 2023 09:17:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=iwlDF0w6o8GP/dUtRoqadxch7elmjv+F6emLEuy5MKY=; b=Y4OB/Ij+hW95CXSkc1WHeoK3ix
+        lLN4hPnl4DL2KTpeeqwTmHeTVbtFBleE0yIVYQiyQL9FpGessLT+yL/U45c4wplxLGZibOFiZIMSk
+        QWzdDnBeZEPEhZAWSJJP9IYpuM3X/XWcOn++/Gez8V6eoB+aG/wDeCcBGKMg4LpcxLcX3mWglp25L
+        lrGwYya+7sC9kSkgRw6oRa4D6ADUyLIQogD7mK3e7RZ1cpzmilqcTN1CtZYIfQfxRDBCCYHifc8AL
+        edD2/QvHuVphQz9ufRDNq6O91eioXvhMNdPWNn7Tq1WRlo8Xa+gk0DcVowJMvUTjqKba55cljAe4Z
+        tMBnbO7Q==;
+Received: from 201-92-22-215.dsl.telesp.net.br ([201.92.22.215] helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1qWfgB-001yts-EZ; Thu, 17 Aug 2023 18:16:59 +0200
+Message-ID: <c6b9fdd3-eb05-3668-a455-fb1cff365885@igalia.com>
+Date:   Thu, 17 Aug 2023 13:16:52 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <81f96763-51fe-8ea1-bf81-cd67deed9087@redhat.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 1/3] btrfs-progs: Add the single-dev feature (to both
+ mkfs/tune)
+Content-Language: en-US
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com,
+        linux-fsdevel@vger.kernel.org, kernel@gpiccoli.net,
+        kernel-dev@igalia.com, anand.jain@oracle.com, david@fromorbit.com,
+        kreijack@libero.it, johns@valvesoftware.com,
+        ludovico.denittis@collabora.com, quwenruo.btrfs@gmx.com,
+        wqu@suse.com, vivek@collabora.com
+References: <20230803154453.1488248-1-gpiccoli@igalia.com>
+ <20230803154453.1488248-2-gpiccoli@igalia.com>
+ <20230817154650.GD2934386@perftesting>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <20230817154650.GD2934386@perftesting>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 17, 2023 at 09:47:48AM -0500, Eric Sandeen wrote:
+On 17/08/2023 12:46, Josef Bacik wrote:
+> [...]
+>> Also, a design decision: I've skipped the btrfs_register_one_device()
+>> call when mkfs was just used with the single-dev tuning, or else
+>> it shows a (harmless) error and succeeds, since of course scanning
+>> fails for such devices, as per the feature implementation.
+>> So, I thought it was more straightforward to just skip the call itself.
+>>
 > 
-> Just to play devil's advocate here - (sorry) - I don't see this as any
-> different from any other "malicious" filesystem image.
+> This is a reasonable approach.
+> [...]
+
+Thanks for the review =)
+
+
+>> [...]
+>>  static int convert_to_fst(struct btrfs_fs_info *fs_info)
+>>  {
+>>  	int ret;
+>> @@ -102,6 +106,7 @@ static const char * const tune_usage[] = {
+>>  	OPTLINE("-r", "enable extended inode refs (mkfs: extref, for hardlink limits)"),
+>>  	OPTLINE("-x", "enable skinny metadata extent refs (mkfs: skinny-metadata)"),
+>>  	OPTLINE("-n", "enable no-holes feature (mkfs: no-holes, more efficient sparse file representation)"),
+>> +	OPTLINE("-s", "enable single device feature (mkfs: single-dev, allows same fsid mounting)"),
 > 
-> I've never been a fan of the idea that malicious images are real security
-> threats, but whether the parking lot USB stick paniced the box in an
-> unexpected way or "on purpose," the result is the same ...
+> btrfstune is going to be integrated into an actual btrfs command, so we're no
+> longer using short options for new btrfstune commands.  Figure out a long name
+> instead and use that only.  Something like
 > 
-> I wonder if it might make sense to put EXT4_MOUNT_ERRORS_PANIC under a
-> sysctl or something, so that admins can enable it only when needed.
+> --convert-to-single-device
+> 
+> as you would be using this on an existing file system.  The rest of the code is
+> generally fine.  Thanks,
+> 
+> Josef
+> 
 
-Well, if someone is stupid enough to plug in a parking lot USB stick
-into their system, they get everything they deserve.  And a forced
-panic isn't going to lead a more privilege escalation attack, so I
-really don't see a problem if a file system which is marked "panic on
-error", well, causes a panic.  It's a good way of (harmlessly)
-punishing stupid user tricks.  :-)
-
-The other way of thinking about it is that if your threat model
-includes an attacker with physical access to the server with a USB
-port, attacks include a cable which has a USB port on one side, and a
-120V/240V AC mains plug on the the other.  This will very likely cause
-a system shutdown, even if they don't have automount enabled.   :-)
-
-							- Ted
+Perfect, will do! Thanks.
