@@ -2,132 +2,233 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B67C477F882
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 16:14:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A66F277F887
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 16:17:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351774AbjHQOOY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Aug 2023 10:14:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42306 "EHLO
+        id S1351720AbjHQORF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Aug 2023 10:17:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351764AbjHQONy (ORCPT
+        with ESMTP id S1351781AbjHQOQw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Aug 2023 10:13:54 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D803B2D72
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 07:13:52 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3fe45481edfso78718675e9.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 07:13:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692281631; x=1692886431;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=loU71ecSUmvR569PkG5F+KhO5I3El9Dcps9V9L1plyc=;
-        b=ZMpibJbyt9JdjnVcgtTKGjgd9X9iogICvmKEEHZ2a7ECsbiC83qaOsdMxpl/hjPfXH
-         Vd9bfCTGkO7e1UC1pkbl9uyrg2Kj8hwEIxR8qG3Xe9O04PwzNr99qjtTTX76PlJI/ej3
-         3dxf1QwH+cd3LEKdYcJmFQAgkZ0BjExmehIAqDKWvzmue+2AQu/8YYH7Fdtqt8J+VBbI
-         XCAHJv5kQwiF7vQs6DCNA7AddsEn/ZP19KfY88tlkStHYilVkPx7REg4VN461qJceEVj
-         rIzvQCJQlsfaHXhhA3cXKY1/VORRD9MDsQb4G6heYCazednYhN7td9Qkh+TEY057SFGR
-         BfsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692281631; x=1692886431;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=loU71ecSUmvR569PkG5F+KhO5I3El9Dcps9V9L1plyc=;
-        b=b9K24a/ZYZYneC8bk5i63qLLHEyZSYBZE2cqHCyGQG6+6ZfFezJJzjswxApAAYz/yl
-         rJ6jvP/pt86TnJzglq+o/MLZEsZKMgTjTo5bd0nxJ9AmfFvbKvnrA8xkIBm41vdzG963
-         7cRQ0E4N73QPSvGKuP8RWd2bN6u833K5EtI8020gAbtUwjX+rkcvs6OaK1s5VVPy5cLy
-         shLkYHMPNLfr0ktsSK0HgpgCB9rh4BO90DDMAseyKQ07PoGPRWjvmcQ1JziTKaN9enV1
-         2n5/iHh/A8UcMeEDsHI5HHJ9A4t9H/3f4k1l+43+YaYcqX2slefIODBg3acu8f7XXfpR
-         Vznw==
-X-Gm-Message-State: AOJu0Yw4X6pZiPzYUNOoNn3YoI5/azYAaXsc/ydjBFcbuq0jmXCDusJ0
-        yR1lb6DGRr5Q/hsXEzjoOV8=
-X-Google-Smtp-Source: AGHT+IFk8Dvu24/0upCDxaOGWe5RtxhdCbzsY0BMU0dCE+1Ypb36en0+2V8y8gn+NBst6dUXoeo5OA==
-X-Received: by 2002:a05:600c:220c:b0:3fe:f45:774c with SMTP id z12-20020a05600c220c00b003fe0f45774cmr4209629wml.41.1692281631366;
-        Thu, 17 Aug 2023 07:13:51 -0700 (PDT)
-Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id m12-20020a7bca4c000000b003fe2120ad0bsm3080605wml.41.2023.08.17.07.13.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Aug 2023 07:13:50 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
+        Thu, 17 Aug 2023 10:16:52 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 752B919A1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 07:16:51 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 362761F37E;
+        Thu, 17 Aug 2023 14:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1692281810; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2OodtyI2RGG5T55PuVr2J9JognnGKpe/J/EdqyEgOU4=;
+        b=fs1RrKm6iOAcNm6kDdXxguKDNSwuIEUOjSmjCCECMq1ozUb+0pS5Py9o7WjTHMnV2+BvTU
+        OtWrSbdyuUV2a5d1HeQ4rxFhA/vkr8ryent0/NLFKBFSmukqFGGz+9zDG9ulXnMmoP2wAm
+        rmny9hZw5uF9+P3/SZvqv4QyP+Nrh1o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1692281810;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2OodtyI2RGG5T55PuVr2J9JognnGKpe/J/EdqyEgOU4=;
+        b=l3fsKKRySadtQTB7yoyrclicRuNi7tuBzs7KVF4eGmAodT++1ZX66Q0oq4FAvI2CU9q/EX
+        hrU4LeLZD1i7SJBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 273221358B;
+        Thu, 17 Aug 2023 14:16:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id /jaNCdIr3mRYHgAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 17 Aug 2023 14:16:50 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id AF893A0769; Thu, 17 Aug 2023 16:16:49 +0200 (CEST)
+Date:   Thu, 17 Aug 2023 16:16:49 +0200
+From:   Jan Kara <jack@suse.cz>
 To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
+Cc:     Jan Kara <jack@suse.cz>, Jan Kara <jack@suse.com>,
+        Christoph Hellwig <hch@infradead.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 7/7] cachefiles: use kiocb_{start,end}_write() helpers
-Date:   Thu, 17 Aug 2023 17:13:37 +0300
-Message-Id: <20230817141337.1025891-8-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230817141337.1025891-1-amir73il@gmail.com>
-References: <20230817141337.1025891-1-amir73il@gmail.com>
+Subject: Re: [PATCH 2/3] super: wait for nascent superblocks
+Message-ID: <20230817141649.wkpjl72fdmq3772h@quack3>
+References: <20230817-vfs-super-fixes-v3-v1-0-06ddeca7059b@kernel.org>
+ <20230817-vfs-super-fixes-v3-v1-2-06ddeca7059b@kernel.org>
+ <20230817125021.l6h4ipibfuzd3xdx@quack3>
+ <20230817-tortur-wallung-3512b32d8dd5@brauner>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230817-tortur-wallung-3512b32d8dd5@brauner>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use helpers instead of the open coded dance to silence lockdep warnings.
+On Thu 17-08-23 15:24:54, Christian Brauner wrote:
+> On Thu, Aug 17, 2023 at 02:50:21PM +0200, Jan Kara wrote:
+> > On Thu 17-08-23 12:47:43, Christian Brauner wrote:
+> > > Recent patches experiment with making it possible to allocate a new
+> > > superblock before opening the relevant block device. Naturally this has
+> > > intricate side-effects that we get to learn about while developing this.
+> > > 
+> > > Superblock allocators such as sget{_fc}() return with s_umount of the
+> > > new superblock held and ock ordering currently requires that block level
+> > > locks such as bdev_lock and open_mutex rank above s_umount.
+> > > 
+> > > Before aca740cecbe5 ("fs: open block device after superblock creation")
+> > > ordering was guaranteed to be correct as block devices were opened prior
+> > > to superblock allocation and thus s_umount wasn't held. But now s_umount
+> > > must be dropped before opening block devices to avoid locking
+> > > violations.
+> > > 
+> > > This has consequences. The main one being that iterators over
+> > > @super_blocks and @fs_supers that grab a temporary reference to the
+> > > superblock can now also grab s_umount before the caller has managed to
+> > > open block devices and called fill_super(). So whereas before such
+> > > iterators or concurrent mounts would have simply slept on s_umount until
+> > > SB_BORN was set or the superblock was discard due to initalization
+> > > failure they can now needlessly spin through sget{_fc}().
+> > > 
+> > > If the caller is sleeping on bdev_lock or open_mutex one caller waiting
+> > > on SB_BORN will always spin somewhere potentially this can go on for
+> > 					^^ and potentially?
+> > > quite a while.
+> > > 
+> > > It should be possible to drop s_umount while allowing iterators to wait
+> > > on a nascent superblock to either be born or discarded. This patch
+> > > implements a wait_var_event() mechanism allowing iterators to sleep
+> > > until they are woken when the superblock is born or discarded.
+> > > 
+> > > This should also allows us to avoid relooping through @fs_supers and
+> >        ^^^ superfluous "should"
+> > 
+> > > @super_blocks if a superblock isn't yet born or dying.
+> > > 
+> > > Link: aca740cecbe5 ("fs: open block device after superblock creation")
+> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Suggested-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/cachefiles/io.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+<snip>
 
-diff --git a/fs/cachefiles/io.c b/fs/cachefiles/io.c
-index 175a25fcade8..009d23cd435b 100644
---- a/fs/cachefiles/io.c
-+++ b/fs/cachefiles/io.c
-@@ -259,9 +259,7 @@ static void cachefiles_write_complete(struct kiocb *iocb, long ret)
- 
- 	_enter("%ld", ret);
- 
--	/* Tell lockdep we inherited freeze protection from submission thread */
--	__sb_writers_acquired(inode->i_sb, SB_FREEZE_WRITE);
--	__sb_end_write(inode->i_sb, SB_FREEZE_WRITE);
-+	kiocb_end_write(iocb);
- 
- 	if (ret < 0)
- 		trace_cachefiles_io_error(object, inode, ret,
-@@ -286,7 +284,6 @@ int __cachefiles_write(struct cachefiles_object *object,
- {
- 	struct cachefiles_cache *cache;
- 	struct cachefiles_kiocb *ki;
--	struct inode *inode;
- 	unsigned int old_nofs;
- 	ssize_t ret;
- 	size_t len = iov_iter_count(iter);
-@@ -322,19 +319,12 @@ int __cachefiles_write(struct cachefiles_object *object,
- 		ki->iocb.ki_complete = cachefiles_write_complete;
- 	atomic_long_add(ki->b_writing, &cache->b_writing);
- 
--	/* Open-code file_start_write here to grab freeze protection, which
--	 * will be released by another thread in aio_complete_rw().  Fool
--	 * lockdep by telling it the lock got released so that it doesn't
--	 * complain about the held lock when we return to userspace.
--	 */
--	inode = file_inode(file);
--	__sb_start_write(inode->i_sb, SB_FREEZE_WRITE);
--	__sb_writers_release(inode->i_sb, SB_FREEZE_WRITE);
-+	kiocb_start_write(&ki->iocb);
- 
- 	get_file(ki->iocb.ki_filp);
- 	cachefiles_grab_object(object, cachefiles_obj_get_ioreq);
- 
--	trace_cachefiles_write(object, inode, ki->iocb.ki_pos, len);
-+	trace_cachefiles_write(object, file_inode(file), ki->iocb.ki_pos, len);
- 	old_nofs = memalloc_nofs_save();
- 	ret = cachefiles_inject_write_error();
- 	if (ret == 0)
+> > > @@ -841,15 +942,14 @@ struct super_block *get_active_super(struct block_device *bdev)
+> > >  	if (!bdev)
+> > >  		return NULL;
+> > >  
+> > > -restart:
+> > >  	spin_lock(&sb_lock);
+> > >  	list_for_each_entry(sb, &super_blocks, s_list) {
+> > >  		if (hlist_unhashed(&sb->s_instances))
+> > >  			continue;
+> > >  		if (sb->s_bdev == bdev) {
+> > >  			if (!grab_super(sb))
+> > > -				goto restart;
+> > > -			super_unlock_write(sb);
+> > > +				return NULL;
+> >   Let me check whether I understand the rationale of this change: We found
+> > a matching sb and it's SB_DYING. Instead of waiting for it to die and retry
+> > the search (to likely not find anything) we just return NULL right away to
+> > save us some trouble.
+> 
+> Thanks for that question! I was missing something. Before these changes,
+> when a superblock was unmounted and it hit deactivate_super() it could do:
+> 
+> P1                                                      P2
+> deactivate_locked_super()                               grab_super()
+> -> if (!atomic_add_unless(&s->s_active, -1, 1))
+>                                                         -> super_lock_write()
+>                                                            SB_BORN && !atomic_inc_add_unless(s->s_active)
+>                                                            // fails, loop until it goes away
+>    -> super_lock_write()
+>       // remove sb from fs_supers
+
+I don't think this can happen as you describe it. deactivate_super() +
+deactivate_locked_super() are written in a way so that the last s_active
+reference is dropped while sb->s_umount is held for writing. And
+grab_super() tries the increment under sb->s_umount as well. So either
+grab_super() wins the race and deactivate_locked_super() just drops one
+refcount and exits, or deactivate_locked_super() wins the race and
+grab_super() can come only after the sb is shutdown. Then the increment
+will fail and we'll loop as you describe. Perhaps that's what you meant,
+just you've ordered things wrongly...
+
+> That can still happen in the new scheme so my patch needs a fix to wait
+> for SB_DYING to be broadcast when no active reference can be acquired
+> anymore because then we know that we're about to shut this down. Either
+> that or spinning but I think we should just wait as we can now do that
+> with my proposal.
+
+... But in that case by the time grab_super() is able to get sb->s_umount
+semaphore, SB_DYING is already set.
+
+> > >  {
+> > > -	super_lock_read(sb);
+> > > -	if (!sb->s_root ||
+> > > -	    (sb->s_flags & (SB_ACTIVE | SB_BORN)) != (SB_ACTIVE | SB_BORN)) {
+> > > +	bool born = super_wait_read(sb);
+> > > +
+> > > +	if (!born || !sb->s_root || !(sb->s_flags & SB_ACTIVE)) {
+> > >  		super_unlock_read(sb);
+> > >  		return false;
+> > >  	}
+> > > @@ -1572,7 +1674,7 @@ int vfs_get_tree(struct fs_context *fc)
+> > >  	 * flag.
+> > >  	 */
+> > >  	smp_wmb();
+> > 
+> > Is the barrier still needed here when super_wake() has smp_store_release()?
+> 
+> I wasn't sure. The barrier tries to ensure that everything before
+> SB_BORN is seen by super_cache_count(). Whereas the smp_store_release()
+> really is about the flag. Maybe the smp_wmb() would be sufficient for
+> that but since I wasn't sure the additional smp_store_release() is way
+> more obvious imho.
+
+I was looking into memory-barriers.txt and it has:
+
+(6) RELEASE operations.
+
+     This also acts as a one-way permeable barrier.  It guarantees that all
+     memory operations before the RELEASE operation will appear to happen
+     before the RELEASE operation with respect to the other components of the
+     system.
+
+Which sounds like smp_store_release() of SB_BORN should be enough to make
+super_cache_count() see all the stores before it if it sees SB_BORN set...
+
+> > > -	sb->s_flags |= SB_BORN;
+> > > +	super_wake(sb, SB_BORN);
+> > 
+> > I'm also kind of wondering whether when we have SB_BORN and SB_DYING isn't
+> > the SB_ACTIVE flag redundant. SB_BORN is set practically at the same moment
+> > as SB_ACTIVE. SB_ACTIVE gets cleared somewhat earlier than SB_DYING is set
+> > but I believe SB_DYING can be set earlier (after all by the time SB_ACTIVE
+> > is cleared we have sb->s_root == NULL which basically stops most of the
+> > places looking at superblocks. As I'm grepping we've grown a lot of
+> > SB_ACTIVE handling all over the place so this would be a bit non-trivial
+> > but I belive it will make it easier for filesystem developers to decide
+> > which flag they should be using... Also we could then drop sb->s_root
+> > checks from many places because the locking helpers will return false if
+> > SB_DYING is set.
+> 
+> Certainly something to explore but no promises. Would you be open to
+> doig this as a follow-up patch? If you have a clearer idea here then I
+> wouldn't mind you piling this on top of this series even.
+
+Sure, the cleanup of SB_ACTIVE probably deserves a separate patchset
+because it's going to involve a lot of individual filesystem changes.
+
+								Honza
 -- 
-2.34.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
