@@ -2,233 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EF86077EF5E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 05:05:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA8C977EFCA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 06:20:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347788AbjHQDFO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Aug 2023 23:05:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44442 "EHLO
+        id S1347993AbjHQETp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Aug 2023 00:19:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347753AbjHQDEu (ORCPT
+        with ESMTP id S239403AbjHQETU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Aug 2023 23:04:50 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42A2210FF
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 20:04:24 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id 98e67ed59e1d1-26b4a95f433so1053804a91.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 20:04:24 -0700 (PDT)
+        Thu, 17 Aug 2023 00:19:20 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AD54272D
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 21:19:15 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-5236b2b4cdbso9407575a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 21:19:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1692241464; x=1692846264;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=j+oN2F++TrhNWLHLX+sRtmpEl+IFfl1u9TrYRTB2hEQ=;
-        b=KyvQ/dasQFNGQMCjR1E3eZ9ABkzpDX7FJ/gyFZWJP35glaGjzutIqjCw5G2HgyUojO
-         LgiuIQ0LiWvmNc4AYSu7qapIgigqkkhfSXg8v5erJucFUVgUZf56q2Z+ELz/y8x94wnI
-         BA1u5d2TUYL93bmsR7UoGco0wbehX6jlUsJWJVWbi17oM7OFeEJkJXv7PlUkbvScnit+
-         0PyWcrWVPzSX2fDCwf2ibhdzD/QGZQacIQv+T5KzYlL0YtG6iWRcgqtklq4Z2LT1xrFj
-         CWrkwpL4BkxPxTzKC3qODe/pFvzWxKZdVDV8ziu/dDM+eoysfhwoW0QHlCZosDYUKPFA
-         pUyg==
+        d=linux-foundation.org; s=google; t=1692245953; x=1692850753;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jfkifynCzRafY3XbR1SksUBb+gadM/LILOU5DSScwMs=;
+        b=d5XbRGfcFBw3RzLytstxp1COH8mGklyUnJoJpnLp1B+WmZwxxX9HYo/f9qxs228e3t
+         JV18dt68/KXd8PmpaxUrD1qIVSAJwF70pe3dCu4WbkeuGuteb4rG0mlKIXhrGeHrFL00
+         D2AVMTlpGxSI2Ey6wDDvqbTgMQC2wePpIcYrI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692241464; x=1692846264;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j+oN2F++TrhNWLHLX+sRtmpEl+IFfl1u9TrYRTB2hEQ=;
-        b=h7Yat1ffSPrSn1jkM2WoOQ+ESYWdbeXvSPSkxeXLNnusaQTKuRrFepaiU7V1XOl+tf
-         8imUScjK1tjeF09CFepavsS+k08HEqaRXeAgOttow3a+3h2mluuF/1+M6nR9C1fJEHyE
-         XP/5at9rDy8OS6jRaVlOHi+0O5jrDSjlP7O6gp/0RJPo6s7YbarqcH/ED1qfG4jQm4GV
-         UkwSp18vV3JOIgEdxkOIoR508hXMp81tKFApXiPCg/I2zFgdoQasjy4K5niVViRvVTuc
-         c30CyJD5/xK1MqImACYshppmniP0dWy+MTDRtBWX8NZeeqfae6OFxVHhGCCww0+PW99M
-         26Dg==
-X-Gm-Message-State: AOJu0YwN4F6fDsixSL2YnCZ1hvI07iJBAS71srUcExpMl1D9r9lkFr6W
-        5kMTQMeYp87sjPRCf8fovpAuxQ==
-X-Google-Smtp-Source: AGHT+IEXhHaOrOFf9jckj4CElIYgH9IvP2qs4Gx/s+K+/IxrJU4WPBPlbfNV2+NQpqjgJCr1yOaPzg==
-X-Received: by 2002:a17:90a:909:b0:263:2312:60c2 with SMTP id n9-20020a17090a090900b00263231260c2mr3384507pjn.3.1692241463669;
-        Wed, 16 Aug 2023 20:04:23 -0700 (PDT)
-Received: from [10.70.252.135] ([203.208.167.146])
-        by smtp.gmail.com with ESMTPSA id ca8-20020a17090af30800b0026801e06ac1sm448211pjb.30.2023.08.16.20.04.14
+        d=1e100.net; s=20221208; t=1692245953; x=1692850753;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jfkifynCzRafY3XbR1SksUBb+gadM/LILOU5DSScwMs=;
+        b=EmPdGjx2YDMeI99ZWSEq6g/ycahukugi0ttLje2norAwLCGqSonRrOUKjWPDKzfkr7
+         jrM6L1OPx5DjhyMeEiq26/2LiHFuH8tu8T+eMOTpM6KUhW27r+1EJJkJ1VG1aQ4Z4x2s
+         X5oZqA037qfhV929AubGad+bITpJIR6Ib8A4US+1KQ1qJwYWr2N5EoDCK+EWC8UT2+BQ
+         VFG/l/iHbJp1oitiNNckBilbI7QWQ54LFbY9iGlFIK549oWx+gshT7HJhsxV2l1dDB86
+         qSYr8LgkVUrsrPWLLEnRAWammBbEC5r3+8vZeUc0dfO0Z10ayQKDl20AU+MU2mNibvq0
+         EzBQ==
+X-Gm-Message-State: AOJu0YwCZ2WTZz1gvMZlZfihINqmtICDd/r+7UYZO/+EFA1Wbc8aoe5r
+        zVwIFCekHosRJeOzcWE1UPhKbaDjiPsIj6eFVy4T9BGv
+X-Google-Smtp-Source: AGHT+IH/KVgdLruGE9nfcrTMe3zHxGtHUBGgdYB6g/pu/qVyxEpSmv0JlBloBaqT0MjbHsjsEq2fKQ==
+X-Received: by 2002:a05:6402:545:b0:526:5c70:7311 with SMTP id i5-20020a056402054500b005265c707311mr764663edx.8.1692245953640;
+        Wed, 16 Aug 2023 21:19:13 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id s25-20020a056402165900b0052568bf9411sm4537062edx.68.2023.08.16.21.19.10
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Aug 2023 20:04:23 -0700 (PDT)
-Message-ID: <52cc55b1-2584-9314-323d-4e407c66399a@bytedance.com>
-Date:   Thu, 17 Aug 2023 11:04:10 +0800
+        Wed, 16 Aug 2023 21:19:10 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5231410ab27so9423626a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Aug 2023 21:19:10 -0700 (PDT)
+X-Received: by 2002:aa7:c505:0:b0:51d:9db8:8257 with SMTP id
+ o5-20020aa7c505000000b0051d9db88257mr3222687edq.30.1692245950059; Wed, 16 Aug
+ 2023 21:19:10 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.14.0
-Subject: Re: [PATCH 1/5] mm: move some shrinker-related function declarations
- to mm/internal.h
-Content-Language: en-US
-To:     kernel test robot <lkp@intel.com>, akpm@linux-foundation.org,
-        david@fromorbit.com, tkhai@ya.ru, vbabka@suse.cz,
-        roman.gushchin@linux.dev, djwong@kernel.org, brauner@kernel.org,
-        paulmck@kernel.org, tytso@mit.edu, steven.price@arm.com,
-        cel@kernel.org, senozhatsky@chromium.org, yujie.liu@intel.com,
-        gregkh@linuxfoundation.org, muchun.song@linux.dev,
-        joel@joelfernandes.org, christian.koenig@amd.com
-Cc:     oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, dri-devel@lists.freedesktop.org,
-        linux-fsdevel@vger.kernel.org,
-        Muchun Song <songmuchun@bytedance.com>
-References: <20230816083419.41088-2-zhengqi.arch@bytedance.com>
- <202308162208.cQBnGoER-lkp@intel.com>
-From:   Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <202308162208.cQBnGoER-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <03730b50cebb4a349ad8667373bb8127@AcuMS.aculab.com>
+ <20230816120741.534415-1-dhowells@redhat.com> <20230816120741.534415-3-dhowells@redhat.com>
+ <608853.1692190847@warthog.procyon.org.uk> <3dabec5643b24534a1c1c51894798047@AcuMS.aculab.com>
+ <CAHk-=wjFrVp6srTBsMKV8LBjCEO0bRDYXm-KYrq7oRk0TGr6HA@mail.gmail.com> <665724.1692218114@warthog.procyon.org.uk>
+In-Reply-To: <665724.1692218114@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 17 Aug 2023 06:18:53 +0200
+X-Gmail-Original-Message-ID: <CAHk-=wg8G7teERgR7ExNUjHj0yx3dNRopjefnN3zOWWvYADXCw@mail.gmail.com>
+Message-ID: <CAHk-=wg8G7teERgR7ExNUjHj0yx3dNRopjefnN3zOWWvYADXCw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] iov_iter: Don't deal with iter->copy_mc in memcpy_from_iter_mc()
+To:     David Howells <dhowells@redhat.com>
+Cc:     David Laight <David.Laight@aculab.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@list.de>,
+        Christian Brauner <christian@brauner.io>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000ba4113060316b66b"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+--000000000000ba4113060316b66b
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 16 Aug 2023 at 22:35, David Howells <dhowells@redhat.com> wrote:
+>
+> I'm not sure that buys us anything.  It would then require every call to
+> iov_iter_is_bvec()[*] to check for two values instead of one
 
-On 2023/8/16 23:01, kernel test robot wrote:
-> Hi Qi,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on brauner-vfs/vfs.all]
-> [also build test WARNING on linus/master v6.5-rc6 next-20230816]
-> [cannot apply to akpm-mm/mm-everything drm-misc/drm-misc-next vfs-idmapping/for-next]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Qi-Zheng/mm-move-some-shrinker-related-function-declarations-to-mm-internal-h/20230816-163833
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-> patch link:    https://lore.kernel.org/r/20230816083419.41088-2-zhengqi.arch%40bytedance.com
-> patch subject: [PATCH 1/5] mm: move some shrinker-related function declarations to mm/internal.h
-> config: x86_64-buildonly-randconfig-r003-20230816 (https://download.01.org/0day-ci/archive/20230816/202308162208.cQBnGoER-lkp@intel.com/config)
-> compiler: gcc-7 (Ubuntu 7.5.0-6ubuntu2) 7.5.0
-> reproduce: (https://download.01.org/0day-ci/archive/20230816/202308162208.cQBnGoER-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202308162208.cQBnGoER-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
->>> mm/shrinker_debug.c:174:5: warning: no previous declaration for 'shrinker_debugfs_add' [-Wmissing-declarations]
->      int shrinker_debugfs_add(struct shrinker *shrinker)
->          ^~~~~~~~~~~~~~~~~~~~
->>> mm/shrinker_debug.c:249:16: warning: no previous declaration for 'shrinker_debugfs_detach' [-Wmissing-declarations]
->      struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
->                     ^~~~~~~~~~~~~~~~~~~~~~~
->>> mm/shrinker_debug.c:265:6: warning: no previous declaration for 'shrinker_debugfs_remove' [-Wmissing-declarations]
->      void shrinker_debugfs_remove(struct dentry *debugfs_entry, int debugfs_id)
->           ^~~~~~~~~~~~~~~~~~~~~~~
+Well, that part is trivially fixable, and we should do that anyway for
+other reasons.
 
-Compiling with W=1 will report this warning, will fix it by including
-"internal.h" in the mm/shrinker_debug.c.
+See the attached patch.
 
-Thanks,
-Qi
+> The issue is that ITER_xyz changes the iteration function - but we don't
+> actually want to do that; rather, we need to change the step function.
 
-> 
-> 
-> vim +/shrinker_debugfs_add +174 mm/shrinker_debug.c
-> 
-> bbf535fd6f06b9 Roman Gushchin     2022-05-31  173
-> 5035ebc644aec9 Roman Gushchin     2022-05-31 @174  int shrinker_debugfs_add(struct shrinker *shrinker)
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  175  {
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  176  	struct dentry *entry;
-> e33c267ab70de4 Roman Gushchin     2022-05-31  177  	char buf[128];
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  178  	int id;
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  179
-> 47a7c01c3efc65 Qi Zheng           2023-06-09  180  	lockdep_assert_held(&shrinker_rwsem);
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  181
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  182  	/* debugfs isn't initialized yet, add debugfs entries later. */
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  183  	if (!shrinker_debugfs_root)
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  184  		return 0;
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  185
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  186  	id = ida_alloc(&shrinker_debugfs_ida, GFP_KERNEL);
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  187  	if (id < 0)
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  188  		return id;
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  189  	shrinker->debugfs_id = id;
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  190
-> e33c267ab70de4 Roman Gushchin     2022-05-31  191  	snprintf(buf, sizeof(buf), "%s-%d", shrinker->name, id);
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  192
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  193  	/* create debugfs entry */
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  194  	entry = debugfs_create_dir(buf, shrinker_debugfs_root);
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  195  	if (IS_ERR(entry)) {
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  196  		ida_free(&shrinker_debugfs_ida, id);
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  197  		return PTR_ERR(entry);
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  198  	}
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  199  	shrinker->debugfs_entry = entry;
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  200
-> 2124f79de6a909 John Keeping       2023-04-18  201  	debugfs_create_file("count", 0440, entry, shrinker,
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  202  			    &shrinker_debugfs_count_fops);
-> 2124f79de6a909 John Keeping       2023-04-18  203  	debugfs_create_file("scan", 0220, entry, shrinker,
-> bbf535fd6f06b9 Roman Gushchin     2022-05-31  204  			    &shrinker_debugfs_scan_fops);
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  205  	return 0;
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  206  }
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  207
-> e33c267ab70de4 Roman Gushchin     2022-05-31  208  int shrinker_debugfs_rename(struct shrinker *shrinker, const char *fmt, ...)
-> e33c267ab70de4 Roman Gushchin     2022-05-31  209  {
-> e33c267ab70de4 Roman Gushchin     2022-05-31  210  	struct dentry *entry;
-> e33c267ab70de4 Roman Gushchin     2022-05-31  211  	char buf[128];
-> e33c267ab70de4 Roman Gushchin     2022-05-31  212  	const char *new, *old;
-> e33c267ab70de4 Roman Gushchin     2022-05-31  213  	va_list ap;
-> e33c267ab70de4 Roman Gushchin     2022-05-31  214  	int ret = 0;
-> e33c267ab70de4 Roman Gushchin     2022-05-31  215
-> e33c267ab70de4 Roman Gushchin     2022-05-31  216  	va_start(ap, fmt);
-> e33c267ab70de4 Roman Gushchin     2022-05-31  217  	new = kvasprintf_const(GFP_KERNEL, fmt, ap);
-> e33c267ab70de4 Roman Gushchin     2022-05-31  218  	va_end(ap);
-> e33c267ab70de4 Roman Gushchin     2022-05-31  219
-> e33c267ab70de4 Roman Gushchin     2022-05-31  220  	if (!new)
-> e33c267ab70de4 Roman Gushchin     2022-05-31  221  		return -ENOMEM;
-> e33c267ab70de4 Roman Gushchin     2022-05-31  222
-> 47a7c01c3efc65 Qi Zheng           2023-06-09  223  	down_write(&shrinker_rwsem);
-> e33c267ab70de4 Roman Gushchin     2022-05-31  224
-> e33c267ab70de4 Roman Gushchin     2022-05-31  225  	old = shrinker->name;
-> e33c267ab70de4 Roman Gushchin     2022-05-31  226  	shrinker->name = new;
-> e33c267ab70de4 Roman Gushchin     2022-05-31  227
-> e33c267ab70de4 Roman Gushchin     2022-05-31  228  	if (shrinker->debugfs_entry) {
-> e33c267ab70de4 Roman Gushchin     2022-05-31  229  		snprintf(buf, sizeof(buf), "%s-%d", shrinker->name,
-> e33c267ab70de4 Roman Gushchin     2022-05-31  230  			 shrinker->debugfs_id);
-> e33c267ab70de4 Roman Gushchin     2022-05-31  231
-> e33c267ab70de4 Roman Gushchin     2022-05-31  232  		entry = debugfs_rename(shrinker_debugfs_root,
-> e33c267ab70de4 Roman Gushchin     2022-05-31  233  				       shrinker->debugfs_entry,
-> e33c267ab70de4 Roman Gushchin     2022-05-31  234  				       shrinker_debugfs_root, buf);
-> e33c267ab70de4 Roman Gushchin     2022-05-31  235  		if (IS_ERR(entry))
-> e33c267ab70de4 Roman Gushchin     2022-05-31  236  			ret = PTR_ERR(entry);
-> e33c267ab70de4 Roman Gushchin     2022-05-31  237  		else
-> e33c267ab70de4 Roman Gushchin     2022-05-31  238  			shrinker->debugfs_entry = entry;
-> e33c267ab70de4 Roman Gushchin     2022-05-31  239  	}
-> e33c267ab70de4 Roman Gushchin     2022-05-31  240
-> 47a7c01c3efc65 Qi Zheng           2023-06-09  241  	up_write(&shrinker_rwsem);
-> e33c267ab70de4 Roman Gushchin     2022-05-31  242
-> e33c267ab70de4 Roman Gushchin     2022-05-31  243  	kfree_const(old);
-> e33c267ab70de4 Roman Gushchin     2022-05-31  244
-> e33c267ab70de4 Roman Gushchin     2022-05-31  245  	return ret;
-> e33c267ab70de4 Roman Gushchin     2022-05-31  246  }
-> e33c267ab70de4 Roman Gushchin     2022-05-31  247  EXPORT_SYMBOL(shrinker_debugfs_rename);
-> e33c267ab70de4 Roman Gushchin     2022-05-31  248
-> 26e239b37ebdfd Joan Bruguera Micó 2023-05-03 @249  struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
-> 26e239b37ebdfd Joan Bruguera Micó 2023-05-03  250  				       int *debugfs_id)
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  251  {
-> badc28d4924bfe Qi Zheng           2023-02-02  252  	struct dentry *entry = shrinker->debugfs_entry;
-> badc28d4924bfe Qi Zheng           2023-02-02  253
-> 47a7c01c3efc65 Qi Zheng           2023-06-09  254  	lockdep_assert_held(&shrinker_rwsem);
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  255
-> e33c267ab70de4 Roman Gushchin     2022-05-31  256  	kfree_const(shrinker->name);
-> 14773bfa70e67f Tetsuo Handa       2022-07-20  257  	shrinker->name = NULL;
-> e33c267ab70de4 Roman Gushchin     2022-05-31  258
-> 26e239b37ebdfd Joan Bruguera Micó 2023-05-03  259  	*debugfs_id = entry ? shrinker->debugfs_id : -1;
-> badc28d4924bfe Qi Zheng           2023-02-02  260  	shrinker->debugfs_entry = NULL;
-> badc28d4924bfe Qi Zheng           2023-02-02  261
-> badc28d4924bfe Qi Zheng           2023-02-02  262  	return entry;
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  263  }
-> 5035ebc644aec9 Roman Gushchin     2022-05-31  264
-> 26e239b37ebdfd Joan Bruguera Micó 2023-05-03 @265  void shrinker_debugfs_remove(struct dentry *debugfs_entry, int debugfs_id)
-> 26e239b37ebdfd Joan Bruguera Micó 2023-05-03  266  {
-> 26e239b37ebdfd Joan Bruguera Micó 2023-05-03  267  	debugfs_remove_recursive(debugfs_entry);
-> 26e239b37ebdfd Joan Bruguera Micó 2023-05-03  268  	ida_free(&shrinker_debugfs_ida, debugfs_id);
-> 26e239b37ebdfd Joan Bruguera Micó 2023-05-03  269  }
-> 26e239b37ebdfd Joan Bruguera Micó 2023-05-03  270
-> 
+Yeah, that may be the fundamental issue. But making the ITER_xyz flags
+be bit masks would help - partly exactly because it makes it so
+trivial yo say "for this set of ITER_xyz, do this".
+
+This patch only does that for the 'user_backed' thing, which was a similar case.
+
+Hmm?
+
+               Linus
+
+--000000000000ba4113060316b66b
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_llenilwk0>
+X-Attachment-Id: f_llenilwk0
+
+IGRyaXZlcnMvaW5maW5pYmFuZC9ody9oZmkxL2ZpbGVfb3BzLmMgICAgfCAgMiArLQogZHJpdmVy
+cy9pbmZpbmliYW5kL2h3L3FpYi9xaWJfZmlsZV9vcHMuYyB8ICAyICstCiBpbmNsdWRlL2xpbnV4
+L3Vpby5oICAgICAgICAgICAgICAgICAgICAgIHwgMzYgKysrKysrKysrKysrKysrLS0tLS0tLS0t
+LS0tLS0tLS0KIGxpYi9pb3ZfaXRlci5jICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMSAt
+CiBzb3VuZC9jb3JlL3BjbV9uYXRpdmUuYyAgICAgICAgICAgICAgICAgIHwgIDQgKystLQogNSBm
+aWxlcyBjaGFuZ2VkLCAyMSBpbnNlcnRpb25zKCspLCAyNCBkZWxldGlvbnMoLSkKCmRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2luZmluaWJhbmQvaHcvaGZpMS9maWxlX29wcy5jIGIvZHJpdmVycy9pbmZp
+bmliYW5kL2h3L2hmaTEvZmlsZV9vcHMuYwppbmRleCBhNWFiMjJjZWRkNDEuLjc4OGZjMjQ5MjM0
+ZiAxMDA2NDQKLS0tIGEvZHJpdmVycy9pbmZpbmliYW5kL2h3L2hmaTEvZmlsZV9vcHMuYworKysg
+Yi9kcml2ZXJzL2luZmluaWJhbmQvaHcvaGZpMS9maWxlX29wcy5jCkBAIC0yNjcsNyArMjY3LDcg
+QEAgc3RhdGljIHNzaXplX3QgaGZpMV93cml0ZV9pdGVyKHN0cnVjdCBraW9jYiAqa2lvY2IsIHN0
+cnVjdCBpb3ZfaXRlciAqZnJvbSkKIAogCWlmICghSEZJMV9DQVBfSVNfS1NFVChTRE1BKSkKIAkJ
+cmV0dXJuIC1FSU5WQUw7Ci0JaWYgKCFmcm9tLT51c2VyX2JhY2tlZCkKKwlpZiAoIXVzZXJfYmFj
+a2VkX2l0ZXIoZnJvbSkpCiAJCXJldHVybiAtRUlOVkFMOwogCWlkeCA9IHNyY3VfcmVhZF9sb2Nr
+KCZmZC0+cHFfc3JjdSk7CiAJcHEgPSBzcmN1X2RlcmVmZXJlbmNlKGZkLT5wcSwgJmZkLT5wcV9z
+cmN1KTsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvaW5maW5pYmFuZC9ody9xaWIvcWliX2ZpbGVfb3Bz
+LmMgYi9kcml2ZXJzL2luZmluaWJhbmQvaHcvcWliL3FpYl9maWxlX29wcy5jCmluZGV4IGVmODVi
+YzhkOTM4NC4uMDlhNmQ5MTIxYjNkIDEwMDY0NAotLS0gYS9kcml2ZXJzL2luZmluaWJhbmQvaHcv
+cWliL3FpYl9maWxlX29wcy5jCisrKyBiL2RyaXZlcnMvaW5maW5pYmFuZC9ody9xaWIvcWliX2Zp
+bGVfb3BzLmMKQEAgLTIyNDQsNyArMjI0NCw3IEBAIHN0YXRpYyBzc2l6ZV90IHFpYl93cml0ZV9p
+dGVyKHN0cnVjdCBraW9jYiAqaW9jYiwgc3RydWN0IGlvdl9pdGVyICpmcm9tKQogCXN0cnVjdCBx
+aWJfY3R4dGRhdGEgKnJjZCA9IGN0eHRfZnAoaW9jYi0+a2lfZmlscCk7CiAJc3RydWN0IHFpYl91
+c2VyX3NkbWFfcXVldWUgKnBxID0gZnAtPnBxOwogCi0JaWYgKCFmcm9tLT51c2VyX2JhY2tlZCB8
+fCAhZnJvbS0+bnJfc2VncyB8fCAhcHEpCisJaWYgKCF1c2VyX2JhY2tlZF9pdGVyKGZyb20pIHx8
+ICFmcm9tLT5ucl9zZWdzIHx8ICFwcSkKIAkJcmV0dXJuIC1FSU5WQUw7CiAKIAlyZXR1cm4gcWli
+X3VzZXJfc2RtYV93cml0ZXYocmNkLCBwcSwgaXRlcl9pb3YoZnJvbSksIGZyb20tPm5yX3NlZ3Mp
+OwpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC91aW8uaCBiL2luY2x1ZGUvbGludXgvdWlvLmgK
+aW5kZXggZmY4MWU1Y2NhZWYyLi4yMzBkYTk3YTQyZDUgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGlu
+dXgvdWlvLmgKKysrIGIvaW5jbHVkZS9saW51eC91aW8uaApAQCAtMjEsMTIgKzIxLDEyIEBAIHN0
+cnVjdCBrdmVjIHsKIAogZW51bSBpdGVyX3R5cGUgewogCS8qIGl0ZXIgdHlwZXMgKi8KLQlJVEVS
+X0lPVkVDLAotCUlURVJfS1ZFQywKLQlJVEVSX0JWRUMsCi0JSVRFUl9YQVJSQVksCi0JSVRFUl9E
+SVNDQVJELAotCUlURVJfVUJVRiwKKwlJVEVSX0lPVkVDID0gMSwKKwlJVEVSX1VCVUYgPSAyLAor
+CUlURVJfS1ZFQyA9IDQsCisJSVRFUl9CVkVDID0gOCwKKwlJVEVSX1hBUlJBWSA9IDE2LAorCUlU
+RVJfRElTQ0FSRCA9IDMyLAogfTsKIAogI2RlZmluZSBJVEVSX1NPVVJDRQkxCS8vID09IFdSSVRF
+CkBAIC0zOSwxMSArMzksMTAgQEAgc3RydWN0IGlvdl9pdGVyX3N0YXRlIHsKIH07CiAKIHN0cnVj
+dCBpb3ZfaXRlciB7Ci0JdTggaXRlcl90eXBlOwotCWJvb2wgY29weV9tYzsKLQlib29sIG5vZmF1
+bHQ7CisJdTgJaXRlcl90eXBlOjYsCisJCWNvcHlfbWM6MSwKKwkJbm9mYXVsdDoxOwogCWJvb2wg
+ZGF0YV9zb3VyY2U7Ci0JYm9vbCB1c2VyX2JhY2tlZDsKIAl1bmlvbiB7CiAJCXNpemVfdCBpb3Zf
+b2Zmc2V0OwogCQlpbnQgbGFzdF9vZmZzZXQ7CkBAIC04NSw3ICs4NCw3IEBAIHN0cnVjdCBpb3Zf
+aXRlciB7CiAKIHN0YXRpYyBpbmxpbmUgY29uc3Qgc3RydWN0IGlvdmVjICppdGVyX2lvdihjb25z
+dCBzdHJ1Y3QgaW92X2l0ZXIgKml0ZXIpCiB7Ci0JaWYgKGl0ZXItPml0ZXJfdHlwZSA9PSBJVEVS
+X1VCVUYpCisJaWYgKGl0ZXItPml0ZXJfdHlwZSAmIElURVJfVUJVRikKIAkJcmV0dXJuIChjb25z
+dCBzdHJ1Y3QgaW92ZWMgKikgJml0ZXItPl9fdWJ1Zl9pb3ZlYzsKIAlyZXR1cm4gaXRlci0+X19p
+b3Y7CiB9CkBAIC0xMDgsMzIgKzEwNywzMiBAQCBzdGF0aWMgaW5saW5lIHZvaWQgaW92X2l0ZXJf
+c2F2ZV9zdGF0ZShzdHJ1Y3QgaW92X2l0ZXIgKml0ZXIsCiAKIHN0YXRpYyBpbmxpbmUgYm9vbCBp
+dGVyX2lzX3VidWYoY29uc3Qgc3RydWN0IGlvdl9pdGVyICppKQogewotCXJldHVybiBpb3ZfaXRl
+cl90eXBlKGkpID09IElURVJfVUJVRjsKKwlyZXR1cm4gaW92X2l0ZXJfdHlwZShpKSAmIElURVJf
+VUJVRjsKIH0KIAogc3RhdGljIGlubGluZSBib29sIGl0ZXJfaXNfaW92ZWMoY29uc3Qgc3RydWN0
+IGlvdl9pdGVyICppKQogewotCXJldHVybiBpb3ZfaXRlcl90eXBlKGkpID09IElURVJfSU9WRUM7
+CisJcmV0dXJuIGlvdl9pdGVyX3R5cGUoaSkgJiBJVEVSX0lPVkVDOwogfQogCiBzdGF0aWMgaW5s
+aW5lIGJvb2wgaW92X2l0ZXJfaXNfa3ZlYyhjb25zdCBzdHJ1Y3QgaW92X2l0ZXIgKmkpCiB7Ci0J
+cmV0dXJuIGlvdl9pdGVyX3R5cGUoaSkgPT0gSVRFUl9LVkVDOworCXJldHVybiBpb3ZfaXRlcl90
+eXBlKGkpICYgSVRFUl9LVkVDOwogfQogCiBzdGF0aWMgaW5saW5lIGJvb2wgaW92X2l0ZXJfaXNf
+YnZlYyhjb25zdCBzdHJ1Y3QgaW92X2l0ZXIgKmkpCiB7Ci0JcmV0dXJuIGlvdl9pdGVyX3R5cGUo
+aSkgPT0gSVRFUl9CVkVDOworCXJldHVybiBpb3ZfaXRlcl90eXBlKGkpICYgSVRFUl9CVkVDOwog
+fQogCiBzdGF0aWMgaW5saW5lIGJvb2wgaW92X2l0ZXJfaXNfZGlzY2FyZChjb25zdCBzdHJ1Y3Qg
+aW92X2l0ZXIgKmkpCiB7Ci0JcmV0dXJuIGlvdl9pdGVyX3R5cGUoaSkgPT0gSVRFUl9ESVNDQVJE
+OworCXJldHVybiBpb3ZfaXRlcl90eXBlKGkpICYgSVRFUl9ESVNDQVJEOwogfQogCiBzdGF0aWMg
+aW5saW5lIGJvb2wgaW92X2l0ZXJfaXNfeGFycmF5KGNvbnN0IHN0cnVjdCBpb3ZfaXRlciAqaSkK
+IHsKLQlyZXR1cm4gaW92X2l0ZXJfdHlwZShpKSA9PSBJVEVSX1hBUlJBWTsKKwlyZXR1cm4gaW92
+X2l0ZXJfdHlwZShpKSAmIElURVJfWEFSUkFZOwogfQogCiBzdGF0aWMgaW5saW5lIHVuc2lnbmVk
+IGNoYXIgaW92X2l0ZXJfcncoY29uc3Qgc3RydWN0IGlvdl9pdGVyICppKQpAQCAtMTQzLDcgKzE0
+Miw3IEBAIHN0YXRpYyBpbmxpbmUgdW5zaWduZWQgY2hhciBpb3ZfaXRlcl9ydyhjb25zdCBzdHJ1
+Y3QgaW92X2l0ZXIgKmkpCiAKIHN0YXRpYyBpbmxpbmUgYm9vbCB1c2VyX2JhY2tlZF9pdGVyKGNv
+bnN0IHN0cnVjdCBpb3ZfaXRlciAqaSkKIHsKLQlyZXR1cm4gaS0+dXNlcl9iYWNrZWQ7CisJcmV0
+dXJuIGktPml0ZXJfdHlwZSAmIChJVEVSX0lPVkVDIHwgSVRFUl9VQlVGKTsKIH0KIAogLyoKQEAg
+LTM3Niw3ICszNzUsNiBAQCBzdGF0aWMgaW5saW5lIHZvaWQgaW92X2l0ZXJfdWJ1ZihzdHJ1Y3Qg
+aW92X2l0ZXIgKmksIHVuc2lnbmVkIGludCBkaXJlY3Rpb24sCiAJKmkgPSAoc3RydWN0IGlvdl9p
+dGVyKSB7CiAJCS5pdGVyX3R5cGUgPSBJVEVSX1VCVUYsCiAJCS5jb3B5X21jID0gZmFsc2UsCi0J
+CS51c2VyX2JhY2tlZCA9IHRydWUsCiAJCS5kYXRhX3NvdXJjZSA9IGRpcmVjdGlvbiwKIAkJLnVi
+dWYgPSBidWYsCiAJCS5jb3VudCA9IGNvdW50LApkaWZmIC0tZ2l0IGEvbGliL2lvdl9pdGVyLmMg
+Yi9saWIvaW92X2l0ZXIuYwppbmRleCBlNGRjODA5ZDEwNzUuLjg1N2U2NjFkMTU1NCAxMDA2NDQK
+LS0tIGEvbGliL2lvdl9pdGVyLmMKKysrIGIvbGliL2lvdl9pdGVyLmMKQEAgLTI5MCw3ICsyOTAs
+NiBAQCB2b2lkIGlvdl9pdGVyX2luaXQoc3RydWN0IGlvdl9pdGVyICppLCB1bnNpZ25lZCBpbnQg
+ZGlyZWN0aW9uLAogCQkuaXRlcl90eXBlID0gSVRFUl9JT1ZFQywKIAkJLmNvcHlfbWMgPSBmYWxz
+ZSwKIAkJLm5vZmF1bHQgPSBmYWxzZSwKLQkJLnVzZXJfYmFja2VkID0gdHJ1ZSwKIAkJLmRhdGFf
+c291cmNlID0gZGlyZWN0aW9uLAogCQkuX19pb3YgPSBpb3YsCiAJCS5ucl9zZWdzID0gbnJfc2Vn
+cywKZGlmZiAtLWdpdCBhL3NvdW5kL2NvcmUvcGNtX25hdGl2ZS5jIGIvc291bmQvY29yZS9wY21f
+bmF0aXZlLmMKaW5kZXggOTVmYzU2ZTQwM2IxLi42NDJkY2VlYjgwZWUgMTAwNjQ0Ci0tLSBhL3Nv
+dW5kL2NvcmUvcGNtX25hdGl2ZS5jCisrKyBiL3NvdW5kL2NvcmUvcGNtX25hdGl2ZS5jCkBAIC0z
+NTI3LDcgKzM1MjcsNyBAQCBzdGF0aWMgc3NpemVfdCBzbmRfcGNtX3JlYWR2KHN0cnVjdCBraW9j
+YiAqaW9jYiwgc3RydWN0IGlvdl9pdGVyICp0bykKIAlpZiAocnVudGltZS0+c3RhdGUgPT0gU05E
+UlZfUENNX1NUQVRFX09QRU4gfHwKIAkgICAgcnVudGltZS0+c3RhdGUgPT0gU05EUlZfUENNX1NU
+QVRFX0RJU0NPTk5FQ1RFRCkKIAkJcmV0dXJuIC1FQkFERkQ7Ci0JaWYgKCF0by0+dXNlcl9iYWNr
+ZWQpCisJaWYgKCF1c2VyX2JhY2tlZF9pdGVyKHRvKSkKIAkJcmV0dXJuIC1FSU5WQUw7CiAJaWYg
+KHRvLT5ucl9zZWdzID4gMTAyNCB8fCB0by0+bnJfc2VncyAhPSBydW50aW1lLT5jaGFubmVscykK
+IAkJcmV0dXJuIC1FSU5WQUw7CkBAIC0zNTY3LDcgKzM1NjcsNyBAQCBzdGF0aWMgc3NpemVfdCBz
+bmRfcGNtX3dyaXRldihzdHJ1Y3Qga2lvY2IgKmlvY2IsIHN0cnVjdCBpb3ZfaXRlciAqZnJvbSkK
+IAlpZiAocnVudGltZS0+c3RhdGUgPT0gU05EUlZfUENNX1NUQVRFX09QRU4gfHwKIAkgICAgcnVu
+dGltZS0+c3RhdGUgPT0gU05EUlZfUENNX1NUQVRFX0RJU0NPTk5FQ1RFRCkKIAkJcmV0dXJuIC1F
+QkFERkQ7Ci0JaWYgKCFmcm9tLT51c2VyX2JhY2tlZCkKKwlpZiAoIXVzZXJfYmFja2VkX2l0ZXIo
+ZnJvbSkpCiAJCXJldHVybiAtRUlOVkFMOwogCWlmIChmcm9tLT5ucl9zZWdzID4gMTI4IHx8IGZy
+b20tPm5yX3NlZ3MgIT0gcnVudGltZS0+Y2hhbm5lbHMgfHwKIAkgICAgIWZyYW1lX2FsaWduZWQo
+cnVudGltZSwgaW92LT5pb3ZfbGVuKSkK
+--000000000000ba4113060316b66b--
