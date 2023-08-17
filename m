@@ -2,360 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 13EE077F7A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 15:25:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6669B77F7EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 15:40:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351387AbjHQNZM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Aug 2023 09:25:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34604 "EHLO
+        id S1351546AbjHQNkT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Aug 2023 09:40:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351043AbjHQNZB (ORCPT
+        with ESMTP id S1351608AbjHQNkM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Aug 2023 09:25:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56793211E
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 06:24:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E8317671D7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 13:24:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CC73C433CA;
-        Thu, 17 Aug 2023 13:24:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692278698;
-        bh=v3vEw6lbeV03ofUSVxhrl1e8sVwy5yOTxbMosPqh0uI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p1jghK6DI34Iqo8NlKtEQN4grG9fGJi0FwuHZwkIPouEFveq1tlbSFETmv0xln+4I
-         a5d4Ba8DUAQVGfUnIJF/iHFCtAfy4EIvYWYJ4AXqoBeKZV4CQxFmwDAzFEfETbPdfn
-         K9S2iGD5afGfyC5PmCAIKNhETXILegH61L80LeqfPxyV41Yc1kDiRrbk1T3R0XdTie
-         DJcxUiRlmoSggDCUO3ZZynh2xrzbTeNLE4tSzXUUt2N26uupOJrNNiQD3NlsR/JH8l
-         WyIqnnlbrXNRlEadYhhwkek8HPgMl6zWMztWzcCSlhIf9fGw++EM5DKpQ+aoe1nfcH
-         Z0ngJT39imrIw==
-Date:   Thu, 17 Aug 2023 15:24:54 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jan Kara <jack@suse.com>, Christoph Hellwig <hch@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/3] super: wait for nascent superblocks
-Message-ID: <20230817-tortur-wallung-3512b32d8dd5@brauner>
-References: <20230817-vfs-super-fixes-v3-v1-0-06ddeca7059b@kernel.org>
- <20230817-vfs-super-fixes-v3-v1-2-06ddeca7059b@kernel.org>
- <20230817125021.l6h4ipibfuzd3xdx@quack3>
+        Thu, 17 Aug 2023 09:40:12 -0400
+Received: from mail-pl1-f207.google.com (mail-pl1-f207.google.com [209.85.214.207])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D36F730E5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 06:40:05 -0700 (PDT)
+Received: by mail-pl1-f207.google.com with SMTP id d9443c01a7336-1bdbd0a7929so72919775ad.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 06:40:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692279605; x=1692884405;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jKM3mqTlgT079nisdnjY2RvkrLED2w8Eo9ddvQKyDq0=;
+        b=OrwXdE5REURnU7rWehOhWTVOvGqhSkDPZA7VlY2rNt6i8WmKBphKEbytCuFY1kkcOG
+         7Qlp6MZF4UqraPC5PS9/x17bcdp9CUGe9z/K5sLxN+c0qhnCJZuCMlValQfsRVDC+wVh
+         BHWJPvGChwQgooUfERU+fmtR1KI9sniQkA9aN6m3R1Y4hE9D5RDPBnMEYMrnUKwdsYdj
+         OXS+f+dXIR8e1xbFDYSpCALhklvotIgUHFoleXN/f0pZnVpcwdJ527J6LF8N05Ybfdr3
+         /vuPOyrZvba4TeVzM2yLkDFfkmILqghCMeqvshKwnROtd638vlw3ED+HROqO09+ER/tf
+         wBRA==
+X-Gm-Message-State: AOJu0Yxd6OJjzNLAJ3YM8skQ5Qt4/WIvzOl9CuHxN6vb1Esuhog5Pb97
+        W8RjWQgiEGEzrUvXDBS8JP8WJVlJ6IaCoOVb2DKr0Qr6dp5a
+X-Google-Smtp-Source: AGHT+IF9XIQq87Cbj1GxerhAfoAV3YFZOXuHglz/+2osaYmfsMGyG/4fpHgKgJFEKeWolLJ/eRAJBXy9Z4DeX5goZCLPUoMR43Cc
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230817125021.l6h4ipibfuzd3xdx@quack3>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a17:902:da88:b0:1b8:a555:7615 with SMTP id
+ j8-20020a170902da8800b001b8a5557615mr1994144plx.9.1692279605391; Thu, 17 Aug
+ 2023 06:40:05 -0700 (PDT)
+Date:   Thu, 17 Aug 2023 06:40:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bd78e706031e8c02@google.com>
+Subject: [syzbot] [ext4?] memory leak in __es_insert_extent
+From:   syzbot <syzbot+f3d40299952f55df8614@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 17, 2023 at 02:50:21PM +0200, Jan Kara wrote:
-> On Thu 17-08-23 12:47:43, Christian Brauner wrote:
-> > Recent patches experiment with making it possible to allocate a new
-> > superblock before opening the relevant block device. Naturally this has
-> > intricate side-effects that we get to learn about while developing this.
-> > 
-> > Superblock allocators such as sget{_fc}() return with s_umount of the
-> > new superblock held and ock ordering currently requires that block level
-> > locks such as bdev_lock and open_mutex rank above s_umount.
-> > 
-> > Before aca740cecbe5 ("fs: open block device after superblock creation")
-> > ordering was guaranteed to be correct as block devices were opened prior
-> > to superblock allocation and thus s_umount wasn't held. But now s_umount
-> > must be dropped before opening block devices to avoid locking
-> > violations.
-> > 
-> > This has consequences. The main one being that iterators over
-> > @super_blocks and @fs_supers that grab a temporary reference to the
-> > superblock can now also grab s_umount before the caller has managed to
-> > open block devices and called fill_super(). So whereas before such
-> > iterators or concurrent mounts would have simply slept on s_umount until
-> > SB_BORN was set or the superblock was discard due to initalization
-> > failure they can now needlessly spin through sget{_fc}().
-> > 
-> > If the caller is sleeping on bdev_lock or open_mutex one caller waiting
-> > on SB_BORN will always spin somewhere potentially this can go on for
-> 					^^ and potentially?
-> > quite a while.
-> > 
-> > It should be possible to drop s_umount while allowing iterators to wait
-> > on a nascent superblock to either be born or discarded. This patch
-> > implements a wait_var_event() mechanism allowing iterators to sleep
-> > until they are woken when the superblock is born or discarded.
-> > 
-> > This should also allows us to avoid relooping through @fs_supers and
->        ^^^ superfluous "should"
-> 
-> > @super_blocks if a superblock isn't yet born or dying.
-> > 
-> > Link: aca740cecbe5 ("fs: open block device after superblock creation")
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/super.c         | 146 +++++++++++++++++++++++++++++++++++++++++++++--------
-> >  include/linux/fs.h |   1 +
-> >  2 files changed, 125 insertions(+), 22 deletions(-)
-> > 
-> > diff --git a/fs/super.c b/fs/super.c
-> > index 878675921bdc..55bf495763d9 100644
-> > --- a/fs/super.c
-> > +++ b/fs/super.c
-> > @@ -86,6 +86,89 @@ static inline void super_unlock_read(struct super_block *sb)
-> >  	super_unlock(sb, false);
-> >  }
-> >  
-> > +static inline bool wait_born(struct super_block *sb)
-> > +{
-> > +	unsigned int flags;
-> > +
-> > +	/*
-> > +	 * Pairs with smp_store_release() in super_wake() and ensure
-> > +	 * that we see SB_BORN or SB_DYING after we're woken.
-> > +	 */
-> > +	flags = smp_load_acquire(&sb->s_flags);
-> > +	return flags & (SB_BORN | SB_DYING);
-> > +}
-> > +
-> > +/**
-> > + * super_wait - wait for superblock to become ready
-> > + * @sb: superblock to wait for
-> > + * @excl: whether exclusive access is required
-> > + *
-> > + * If the superblock has neither passed through vfs_get_tree() or
-> > + * generic_shutdown_super() yet wait for it to happen. Either superblock
-> > + * creation will succeed and SB_BORN is set by vfs_get_tree() or we're
-> > + * woken and we'll see SB_DYING.
-> > + *
-> > + * The caller must have acquired a temporary reference on @sb->s_count.
-> > + *
-> > + * Return: true if SB_BORN was set, false if SB_DYING was set.
-> 
-> The comment should mention that this acquires s_umount and returns with it
-> held. Also the name is a bit too generic for my taste and not expressing
-> the fact this is in fact a lock operation. Maybe something like
-> super_lock_wait_born()?
-> 
-> > + */
-> > +static bool super_wait(struct super_block *sb, bool excl)
-> > +{
-> > +
-> > +	lockdep_assert_not_held(&sb->s_umount);
-> > +
-> > +relock:
-> > +	super_lock(sb, excl);
-> > +
-> > +	/*
-> > +	 * Has gone through generic_shutdown_super() in the meantime.
-> > +	 * @sb->s_root is NULL and @sb->s_active is 0. No one needs to
-> > +	 * grab a reference to this. Tell them so.
-> > +	 */
-> > +	if (sb->s_flags & SB_DYING)
-> > +		return false;
-> > +
-> > +	/* Has called ->get_tree() successfully. */
-> > +	if (sb->s_flags & SB_BORN)
-> > +		return true;
-> > +
-> > +	super_unlock(sb, excl);
-> > +
-> > +	/* wait until the superblock is ready or dying */
-> > +	wait_var_event(&sb->s_flags, wait_born(sb));
-> > +
-> > +	/*
-> > +	 * Neither SB_BORN nor SB_DYING are ever unset so we never loop.
-> > +	 * Just reacquire @sb->s_umount for the caller.
-> > +	 */
-> > +	goto relock;
-> > +}
-> > +
-> > +/* wait and acquire read-side of @sb->s_umount */
-> > +static inline bool super_wait_read(struct super_block *sb)
-> > +{
-> > +	return super_wait(sb, false);
-> > +}
-> 
-> And I'd call this super_lock_read_wait_born().
-> 
-> > +
-> > +/* wait and acquire write-side of @sb->s_umount */
-> > +static inline bool super_wait_write(struct super_block *sb)
-> > +{
-> > +	return super_wait(sb, true);
-> > +}
-> > +
-> > +/* wake waiters */
-> > +static void super_wake(struct super_block *sb, unsigned int flag)
-> > +{
-> > +	unsigned int flags = sb->s_flags;
-> 
-> 	I kind of miss the point of this local variable but whatever...
-> 
-> > +
-> > +	/*
-> > +	 * Pairs with smp_load_acquire() in super_wait() and ensure that
-> 							     ^^^ ensures
-> > +	 * we @flag is set before we wake anyone.
-> 	   ^^ the
-> 
-> > +	 */
-> > +	smp_store_release(&sb->s_flags, flags | flag);
-> > +	wake_up_var(&sb->s_flags);
-> > +}
-> > +
-> >  /*
-> >   * One thing we have to be careful of with a per-sb shrinker is that we don't
-> >   * drop the last active reference to the superblock from within the shrinker.
-> > @@ -415,10 +498,12 @@ EXPORT_SYMBOL(deactivate_super);
-> >   */
-> >  static int grab_super(struct super_block *s) __releases(sb_lock)
-> >  {
-> > +	bool born;
-> > +
-> >  	s->s_count++;
-> >  	spin_unlock(&sb_lock);
-> > -	super_lock_write(s);
-> > -	if ((s->s_flags & SB_BORN) && atomic_inc_not_zero(&s->s_active)) {
-> > +	born = super_wait_write(s);
-> > +	if (born && atomic_inc_not_zero(&s->s_active)) {
-> >  		put_super(s);
-> >  		return 1;
-> >  	}
-> > @@ -557,6 +642,13 @@ void generic_shutdown_super(struct super_block *sb)
-> >  	/* should be initialized for __put_super_and_need_restart() */
-> >  	hlist_del_init(&sb->s_instances);
-> >  	spin_unlock(&sb_lock);
-> > +	/*
-> > +	 * Broadcast to everyone that grabbed a temporary reference to this
-> > +	 * superblock before we removed it from @fs_supers that the superblock
-> > +	 * is dying. Every walker of @fs_supers outside of sget{_fc}() will now
-> > +	 * discard this superblock and treat it as dead.
-> > +	 */
-> > +	super_wake(sb, SB_DYING);
-> >  	super_unlock_write(sb);
-> >  	if (sb->s_bdi != &noop_backing_dev_info) {
-> >  		if (sb->s_iflags & SB_I_PERSB_BDI)
-> > @@ -631,6 +723,11 @@ struct super_block *sget_fc(struct fs_context *fc,
-> >  	s->s_type = fc->fs_type;
-> >  	s->s_iflags |= fc->s_iflags;
-> >  	strscpy(s->s_id, s->s_type->name, sizeof(s->s_id));
-> > +	/*
-> > +	 * Make the superblock visible on @super_blocks and @fs_supers.
-> > +	 * It's in a nascent state and users should wait on SB_BORN or
-> > +	 * SB_DYING to be set.
-> > +	 */
-> 
-> But now sget_fc() (and sget()) will be looping on superblocks with SB_DYING
-> set? Ah, that's solved by the next patch. OK.
-> 
-> >  	list_add_tail(&s->s_list, &super_blocks);
-> >  	hlist_add_head(&s->s_instances, &s->s_type->fs_supers);
-> >  	spin_unlock(&sb_lock);
-> 
-> <snip>
-> 
-> > @@ -841,15 +942,14 @@ struct super_block *get_active_super(struct block_device *bdev)
-> >  	if (!bdev)
-> >  		return NULL;
-> >  
-> > -restart:
-> >  	spin_lock(&sb_lock);
-> >  	list_for_each_entry(sb, &super_blocks, s_list) {
-> >  		if (hlist_unhashed(&sb->s_instances))
-> >  			continue;
-> >  		if (sb->s_bdev == bdev) {
-> >  			if (!grab_super(sb))
-> > -				goto restart;
-> > -			super_unlock_write(sb);
-> > +				return NULL;
->   Let me check whether I understand the rationale of this change: We found
-> a matching sb and it's SB_DYING. Instead of waiting for it to die and retry
-> the search (to likely not find anything) we just return NULL right away to
-> save us some trouble.
+Hello,
 
-Thanks for that question! I was missing something. Before these changes,
-when a superblock was unmounted and it hit deactivate_super() it could do:
+syzbot found the following issue on:
 
-P1                                                      P2
-deactivate_locked_super()                               grab_super()
--> if (!atomic_add_unless(&s->s_active, -1, 1))
-                                                        -> super_lock_write()
-                                                           SB_BORN && !atomic_inc_add_unless(s->s_active)
-                                                           // fails, loop until it goes away
-   -> super_lock_write()
-      // remove sb from fs_supers
+HEAD commit:    a785fd28d31f Merge tag 'for-6.5-rc5-tag' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=141ddd73a80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2bf8962e4f7984f4
+dashboard link: https://syzkaller.appspot.com/bug?extid=f3d40299952f55df8614
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1471c04ba80000
 
-That can still happen in the new scheme so my patch needs a fix to wait
-for SB_DYING to be broadcast when no active reference can be acquired
-anymore because then we know that we're about to shut this down. Either
-that or spinning but I think we should just wait as we can now do that
-with my proposal.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5b766dfb84ba/disk-a785fd28.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c3ee7bb9fc27/vmlinux-a785fd28.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ffbde03d2df8/bzImage-a785fd28.xz
 
-> 
-> > +                        super_unlock_write(sb);
->    ^^^ whitespace damage here
-> 
-> >  			return sb;
-> >  		}
-> >  	}
-> 
-> <snip>
-> 
-> > @@ -1212,9 +1314,9 @@ EXPORT_SYMBOL(get_tree_keyed);
-> >   */
-> >  static bool lock_active_super(struct super_block *sb)
-> 
-> Another inconsistently named locking function after you've introduced your
-> locking helpers...
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f3d40299952f55df8614@syzkaller.appspotmail.com
 
-I wanted a first opinion before digging into this. :)
+BUG: memory leak
+unreferenced object 0xffff888131b41000 (size 40):
+  comm "syz-executor.2", pid 17149, jiffies 4294966508 (age 33.030s)
+  hex dump (first 32 bytes):
+    29 ff b6 31 81 88 ff ff 00 00 00 00 00 00 00 00  )..1............
+    00 00 00 00 00 00 00 00 0b 0c 00 00 09 00 00 00  ................
+  backtrace:
+    [<ffffffff81824c5a>] __es_alloc_extent fs/ext4/extents_status.c:467 [inline]
+    [<ffffffff81824c5a>] __es_alloc_extent fs/ext4/extents_status.c:464 [inline]
+    [<ffffffff81824c5a>] __es_insert_extent+0x28a/0x540 fs/ext4/extents_status.c:815
+    [<ffffffff81826ef0>] ext4_es_insert_extent+0x1e0/0x890 fs/ext4/extents_status.c:882
+    [<ffffffff81842145>] ext4_map_blocks+0x575/0xad0 fs/ext4/inode.c:680
+    [<ffffffff81842790>] _ext4_get_block+0xf0/0x1a0 fs/ext4/inode.c:763
+    [<ffffffff8183ead6>] ext4_block_write_begin+0x216/0x730 fs/ext4/inode.c:1043
+    [<ffffffff8184b4e0>] ext4_write_begin+0x2a0/0x7c0 fs/ext4/inode.c:1183
+    [<ffffffff8184bada>] ext4_da_write_begin+0xda/0x3c0 fs/ext4/inode.c:2867
+    [<ffffffff814fcf36>] generic_perform_write+0x116/0x2e0 mm/filemap.c:3923
+    [<ffffffff81829f20>] ext4_buffered_write_iter+0xa0/0x1a0 fs/ext4/file.c:299
+    [<ffffffff8182a0d2>] ext4_file_write_iter+0xb2/0xde0 fs/ext4/file.c:722
+    [<ffffffff81665edd>] __kernel_write_iter+0x10d/0x370 fs/read_write.c:517
+    [<ffffffff8173cc81>] dump_emit_page fs/coredump.c:888 [inline]
+    [<ffffffff8173cc81>] dump_user_range+0x141/0x3a0 fs/coredump.c:915
+    [<ffffffff8172d344>] elf_core_dump+0x10c4/0x1570 fs/binfmt_elf.c:2142
+    [<ffffffff8173c4c8>] do_coredump+0x19b8/0x2030 fs/coredump.c:764
+    [<ffffffff812a2f92>] get_signal+0xf52/0xfb0 kernel/signal.c:2867
+    [<ffffffff81132f69>] arch_do_signal_or_restart+0x39/0x280 arch/x86/kernel/signal.c:308
 
-> 
-> >  {
-> > -	super_lock_read(sb);
-> > -	if (!sb->s_root ||
-> > -	    (sb->s_flags & (SB_ACTIVE | SB_BORN)) != (SB_ACTIVE | SB_BORN)) {
-> > +	bool born = super_wait_read(sb);
-> > +
-> > +	if (!born || !sb->s_root || !(sb->s_flags & SB_ACTIVE)) {
-> >  		super_unlock_read(sb);
-> >  		return false;
-> >  	}
-> > @@ -1572,7 +1674,7 @@ int vfs_get_tree(struct fs_context *fc)
-> >  	 * flag.
-> >  	 */
-> >  	smp_wmb();
-> 
-> Is the barrier still needed here when super_wake() has smp_store_release()?
 
-I wasn't sure. The barrier tries to ensure that everything before
-SB_BORN is seen by super_cache_count(). Whereas the smp_store_release()
-really is about the flag. Maybe the smp_wmb() would be sufficient for
-that but since I wasn't sure the additional smp_store_release() is way
-more obvious imho.
 
-> 
-> > -	sb->s_flags |= SB_BORN;
-> > +	super_wake(sb, SB_BORN);
-> 
-> I'm also kind of wondering whether when we have SB_BORN and SB_DYING isn't
-> the SB_ACTIVE flag redundant. SB_BORN is set practically at the same moment
-> as SB_ACTIVE. SB_ACTIVE gets cleared somewhat earlier than SB_DYING is set
-> but I believe SB_DYING can be set earlier (after all by the time SB_ACTIVE
-> is cleared we have sb->s_root == NULL which basically stops most of the
-> places looking at superblocks. As I'm grepping we've grown a lot of
-> SB_ACTIVE handling all over the place so this would be a bit non-trivial
-> but I belive it will make it easier for filesystem developers to decide
-> which flag they should be using... Also we could then drop sb->s_root
-> checks from many places because the locking helpers will return false if
-> SB_DYING is set.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Certainly something to explore but no promises. Would you be open to
-doig this as a follow-up patch? If you have a clearer idea here then I
-wouldn't mind you piling this on top of this series even.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
