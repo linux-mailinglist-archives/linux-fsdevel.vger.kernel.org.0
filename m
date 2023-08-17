@@ -2,60 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 94C7477FC54
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 18:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60FC277FC6D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Aug 2023 18:59:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353731AbjHQQrs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Aug 2023 12:47:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38302 "EHLO
+        id S1353771AbjHQQ6n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Aug 2023 12:58:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353771AbjHQQrp (ORCPT
+        with ESMTP id S1353832AbjHQQ6h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Aug 2023 12:47:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D229273F;
-        Thu, 17 Aug 2023 09:47:42 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1B37D658F9;
-        Thu, 17 Aug 2023 16:47:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2448EC433C9;
-        Thu, 17 Aug 2023 16:47:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692290861;
-        bh=S1u9Zd2p2ct/ztBtxvHnHmKyOh9+7SZn3m/BiYXFwLY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GHmNPkW60c8iMPszrpYG3/NYv3hHJHYWQcF8frhbCrR46XJfWtn/xhrX3vwQMHEDj
-         996OttZVINb2W2tYfXi4oK3HeHQu2cAhNR34/JJdGJMs10+U3iyGAW0aMA39I5bjDe
-         RDCeMs206RMcscACula8cgAPaN96J/hzm+zKZg25LOipqppnmzu2M1gIjfZtNgPPB6
-         F218CfrVbFZQS3bo6TRnayZQeCZk5qJSYEoJoO0PVP6rWWw4ldGsAk+U/i0O/TEyfA
-         GA4hG8wv6xyfR1YW4Bxab1YgNsxTZgY4zRyCLgRuVmz3pYWH/MS3ATakXW1ZgKhg8Q
-         u7pC06KodvaPg==
-Date:   Thu, 17 Aug 2023 09:47:39 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     sandeen@redhat.com,
-        syzbot <syzbot+27eece6916b914a49ce7@syzkaller.appspotmail.com>,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
-        syzkaller-bugs@googlegroups.com, trix@redhat.com
-Subject: Re: [syzbot] [ext4?] kernel panic: EXT4-fs (device loop0): panic
- forced after error (3)
-Message-ID: <20230817164739.GC1483@sol.localdomain>
-References: <000000000000530e0d060312199e@google.com>
- <20230817142103.GA2247938@mit.edu>
- <81f96763-51fe-8ea1-bf81-cd67deed9087@redhat.com>
- <20230817161118.GC2247938@mit.edu>
+        Thu, 17 Aug 2023 12:58:37 -0400
+Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3FB22D73
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 09:58:35 -0700 (PDT)
+Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-58c55d408daso311637b3.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Aug 2023 09:58:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20221208.gappssmtp.com; s=20221208; t=1692291515; x=1692896315;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XPfbwT5lP7oF8sr3fFtMy1piLFYVDYQGf7F5OxaBsLA=;
+        b=kmpvmV/nSoSRtn95qai/zi6Dx895sII/IQfkW9Kr9r1MgnYKy3aywgZV0QEGPAUqKQ
+         saGC8aplb5hyE4VPboitoorcJnWfTJKvopTUP73FVyqUmbYXtq3TV8jS2lQxER0NfqnV
+         +KET1YClH0Na4lOVn1y4mdVSo+AmIptIgx3N6ScM5ubbiaKgroMBXcw6581oXAzHT4fo
+         3HaYAgMCZzJGRn1Mm2lhZtWJVpaxrge9/fzB09YOaJd2gBzk6j1y4pKtG8Eg0D6r0hxG
+         SyozquNG9Y3O4oI7riQG7PKNt+u1tZwIgHOrNVsZkQfH5hdd0uK3hrjA/kI37M+dhFVc
+         AhHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692291515; x=1692896315;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XPfbwT5lP7oF8sr3fFtMy1piLFYVDYQGf7F5OxaBsLA=;
+        b=kd9tHeAmZ7PuGYzPOgVk7d+ubIll2JuDsLVx6YxaRzSOUsGXNzynWAYDiEET5T6mJx
+         0qF+Et/DgaC8WlVhItsbYPeVZ/5AhCF148escQH1dtw8cal1PzNH3OAdvA3emxCJ5bBv
+         fn/sXKJJT1VVqpblyG46xS67GDHnr4mfnk7OzX+jotko8TuwngvXVei0iH7q27GwvLY0
+         4QxofeOguBOveL4QH6GgB9Ofdb1cuibreCuWAP22oaKCnlR0OnwfNy/9bzLDHdk+2D3V
+         5eMNG/jDmcezBYlEn6dhM6IbLGMxAly3H0Z2ywm//lTEFYBOtZOKJQM3gyr9uVBA5h5s
+         ooJA==
+X-Gm-Message-State: AOJu0YxkPCB73UKjqlJ4hrrF4oWVidTIyxDnWdI5nhnU4KoMwZda3P4u
+        KR2/0PRWnTFXYTFMv2rWS8N+LA==
+X-Google-Smtp-Source: AGHT+IHrMoQN21D09izpb0BbTbcUmonBnGXyP0oQnb9jFxMr0xhuSY6w3oPmCIaq7D5DJAA6IHa+3Q==
+X-Received: by 2002:a81:6946:0:b0:589:9ed0:5178 with SMTP id e67-20020a816946000000b005899ed05178mr6183683ywc.13.1692291515120;
+        Thu, 17 Aug 2023 09:58:35 -0700 (PDT)
+Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id k185-20020a0dc8c2000000b005773ca61111sm4727516ywd.42.2023.08.17.09.58.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Aug 2023 09:58:34 -0700 (PDT)
+Date:   Thu, 17 Aug 2023 12:58:33 -0400
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc:     linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com,
+        linux-fsdevel@vger.kernel.org, kernel@gpiccoli.net,
+        kernel-dev@igalia.com, anand.jain@oracle.com, david@fromorbit.com,
+        kreijack@libero.it, johns@valvesoftware.com,
+        ludovico.denittis@collabora.com, quwenruo.btrfs@gmx.com,
+        wqu@suse.com, vivek@collabora.com
+Subject: Re: [PATCH 2/3] btrfs: Introduce the single-dev feature
+Message-ID: <20230817165833.GA2935315@perftesting>
+References: <20230803154453.1488248-1-gpiccoli@igalia.com>
+ <20230803154453.1488248-3-gpiccoli@igalia.com>
+ <20230817154127.GB2934386@perftesting>
+ <b49d3f4c-4b3d-06f4-7a37-7383af0781d0@igalia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230817161118.GC2247938@mit.edu>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+In-Reply-To: <b49d3f4c-4b3d-06f4-7a37-7383af0781d0@igalia.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -63,40 +77,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 17, 2023 at 12:11:18PM -0400, Theodore Ts'o wrote:
-> On Thu, Aug 17, 2023 at 09:47:48AM -0500, Eric Sandeen wrote:
+On Thu, Aug 17, 2023 at 01:20:55PM -0300, Guilherme G. Piccoli wrote:
+> On 17/08/2023 12:41, Josef Bacik wrote:
+> >> [...]
+> >> +	pr_info("BTRFS: virtual fsid (%pU) set for SINGLE_DEV device %s (real fsid %pU)\n",
+> >> +		disk_super->fsid, path, disk_super->metadata_uuid);
 > > 
-> > Just to play devil's advocate here - (sorry) - I don't see this as any
-> > different from any other "malicious" filesystem image.
+> > I think just
 > > 
-> > I've never been a fan of the idea that malicious images are real security
-> > threats, but whether the parking lot USB stick paniced the box in an
-> > unexpected way or "on purpose," the result is the same ...
+> > btrfs_info(NULL, "virtual fsid....")
 > > 
-> > I wonder if it might make sense to put EXT4_MOUNT_ERRORS_PANIC under a
-> > sysctl or something, so that admins can enable it only when needed.
+> > is fine here.
+> > 
 > 
-> Well, if someone is stupid enough to plug in a parking lot USB stick
-> into their system, they get everything they deserve.  And a forced
-> panic isn't going to lead a more privilege escalation attack, so I
-> really don't see a problem if a file system which is marked "panic on
-> error", well, causes a panic.  It's a good way of (harmlessly)
-> punishing stupid user tricks.  :-)
-> 
-> The other way of thinking about it is that if your threat model
-> includes an attacker with physical access to the server with a USB
-> port, attacks include a cable which has a USB port on one side, and a
-> 120V/240V AC mains plug on the the other.  This will very likely cause
-> a system shutdown, even if they don't have automount enabled.   :-)
-> 
+> So just for my full understanding, do you think we shouldn't show the
+> real fsid here, but keep showing the virtual one, right? Or you prefer
+> we literally show "virtual fsid...."?
 
-Eric S. is correct that for a filesystem image to enable panic on error, support
-for panic on error should have to be properly consented to by the kernel
-configuration, for example through an fs.allow_panic_on_error sysctl.
+Oh no sorry, just swap pr_info for btrfs_info, and keep the rest the same, so
 
-It can be argued that this not important, or not worth implementing when the
-default will need to remain 1 for backwards compatibility.  Or even that
-syzkaller should work around it in the mean time.  But it is incorrect to write
-"This is fundamentally a syzbot bug."
+	btrfs_info("virtual fsid (%pU) set for SINGLE_DEV device %s (real fsid %pU)\n",
+		   disk_super->fsid, path, disk_super->metadata_uuid);
 
-- Eric
+thanks,
+
+Josef
