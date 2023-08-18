@@ -2,124 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A227B780CA1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 15:38:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60B90780CE5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 15:49:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377204AbjHRNht (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Aug 2023 09:37:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36272 "EHLO
+        id S1377418AbjHRNsd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Aug 2023 09:48:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377219AbjHRNhV (ORCPT
+        with ESMTP id S1377386AbjHRNsL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Aug 2023 09:37:21 -0400
-Received: from domac.alu.hr (domac.alu.unizg.hr [IPv6:2001:b68:2:2800::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15B74358D;
-        Fri, 18 Aug 2023 06:37:16 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by domac.alu.hr (Postfix) with ESMTP id 1870360174;
-        Fri, 18 Aug 2023 15:37:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
-        t=1692365834; bh=9ABLKJW3znMF+2BnIavfP3lVeGPtkFRbVSJFS/sFuwU=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=QFceNfqkxa6IrvniGKAkiEIFCCiDprfZ6RUexdlhUg+UVodUoc5t8EVtgDyAl+M63
-         Ff14aJnlr9p6idlaqs+oGJeLOt8XtlCpkH0CWNBaRF2PqmG83BUIwnxQXJb8qlnpsw
-         zMkj9avzFk6FpjM/G2jm525Fh+t+hxF6E3UEkszLeG76dT811M3I2UgtRz49fRdQpl
-         carSUgKaq9wK/hrxcUqu4a+E1CpBzLS59Od05QXQvJWTENSiok0BlS1J1nGExrJb6O
-         w4WyntMaZmM40XDJ5QTB3qjgzM1JlZhSkZpGFjIugGhkTiEli0w8xS4x1iBAYdvqn2
-         d4Ash8fp73BGw==
-X-Virus-Scanned: Debian amavisd-new at domac.alu.hr
-Received: from domac.alu.hr ([127.0.0.1])
-        by localhost (domac.alu.hr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 5xledPWCeM6A; Fri, 18 Aug 2023 15:37:11 +0200 (CEST)
-Received: from [192.168.1.6] (unknown [94.250.191.183])
-        by domac.alu.hr (Postfix) with ESMTPSA id 799646015E;
-        Fri, 18 Aug 2023 15:37:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
-        t=1692365831; bh=9ABLKJW3znMF+2BnIavfP3lVeGPtkFRbVSJFS/sFuwU=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=JY+M12w0DrzenKc08++lqJyPfBRwl7mMBflod1nU9OXh4D4BuygYLgQsd9abfumXb
-         s4LxvVe/Zb3DCupIxtEqauGp72PXFg53GAEumzGglOwZ7WlyWlSsDzZzOWPknC6S+S
-         LMfMc0gzz//kZkuYtW/frocVvlNrSr97K919PBaOBwSzrGZGPdtOK75TAwLY836ZoD
-         fxpadD15/1v4xfp4EYHFVueXXkEQBTEFy/6v21aWK6oRMitKq6uHS9UJFVXFk0/n89
-         yE4+n9Mic2RUcUbxfzplHpm/SpNoo3zJzrBwjz8ptGPveGXE4Fskh26ryl1klYccj+
-         pBtZJN47m2uXQ==
-Message-ID: <873686fb-6e42-493d-2dcd-f0f04cbcb0c0@alu.unizg.hr>
-Date:   Fri, 18 Aug 2023 15:37:10 +0200
+        Fri, 18 Aug 2023 09:48:11 -0400
+X-Greylist: delayed 485 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 18 Aug 2023 06:47:31 PDT
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fa9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B18E49E9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Aug 2023 06:47:31 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RS2zJ5fxXzMq65p;
+        Fri, 18 Aug 2023 13:39:24 +0000 (UTC)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RS2zJ1F9Vz3W;
+        Fri, 18 Aug 2023 15:39:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1692365964;
+        bh=UWIxdFLVfrHT7rkE+syTuIU+IUhfKVPgorQTBQrhIlM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=S3fSl59xevy+7I4RkWjXq7KYI+4RATl/xWaB8PHzYgzsa0n49BngWU0UdU2aVY6tg
+         VTt1Ne5gyQridX8p5evxsy/ReKN1mXrMt5zT93jBb1/zyomzuYN4m1hkt3gJ5PzIfR
+         EEyBHVb+AnR/ORZ7hC65ho7Q1nsH8FvSxNbKsBg8=
+Date:   Fri, 18 Aug 2023 15:39:19 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
+        Jorge Lucangeli Obes <jorgelo@chromium.org>,
+        Allen Webb <allenwebb@google.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Matt Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] Landlock: IOCTL support
+Message-ID: <20230818.iechoCh0eew0@digikod.net>
+References: <20230814172816.3907299-1-gnoack@google.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [BUG] KCSAN: data-race in xas_clear_mark / xas_find_marked
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-References: <06645d2b-a964-1c4c-15cf-42ccc6c6e19b@alu.unizg.hr>
- <ZN9iPYTmV5nSK2jo@casper.infradead.org>
-From:   Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>
-In-Reply-To: <ZN9iPYTmV5nSK2jo@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230814172816.3907299-1-gnoack@google.com>
+X-Infomaniak-Routing: alpha
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/18/23 14:21, Matthew Wilcox wrote:
-> On Fri, Aug 18, 2023 at 10:01:32AM +0200, Mirsad Todorovac wrote:
->> [  206.510010] ==================================================================
->> [  206.510035] BUG: KCSAN: data-race in xas_clear_mark / xas_find_marked
->>
->> [  206.510067] write to 0xffff963df6a90fe0 of 8 bytes by interrupt on cpu 22:
->> [  206.510081]  xas_clear_mark+0xd5/0x180
->> [  206.510097]  __xa_clear_mark+0xd1/0x100
->> [  206.510114]  __folio_end_writeback+0x293/0x5a0
->> [  206.520722] read to 0xffff963df6a90fe0 of 8 bytes by task 2793 on cpu 6:
->> [  206.520735]  xas_find_marked+0xe5/0x600
->> [  206.520750]  filemap_get_folios_tag+0xf9/0x3d0
-> Also, before submitting this kind of report, you should run the
-> trace through scripts/decode_stacktrace.sh to give us line numbers
-> instead of hex offsets, which are useless to anyone who doesn't have
-> your exact kernel build.
+On Mon, Aug 14, 2023 at 07:28:11PM +0200, Günther Noack wrote:
+> Hello!
 > 
->> [  206.510010] ==================================================================
->> [  206.510035] BUG: KCSAN: data-race in xas_clear_mark / xas_find_marked
->>
->> [  206.510067] write to 0xffff963df6a90fe0 of 8 bytes by interrupt on cpu 22:
->> [  206.510081] xas_clear_mark (./arch/x86/include/asm/bitops.h:178 ./include/asm-generic/bitops/instrumented-non-atomic.h:115 lib/xarray.c:102 lib/xarray.c:914)
->> [  206.510097] __xa_clear_mark (lib/xarray.c:1923)
->> [  206.510114] __folio_end_writeback (mm/page-writeback.c:2981)
+> These patches add simple ioctl(2) support to Landlock.
 > 
-> This path is properly using xa_lock_irqsave() before calling
-> __xa_clear_mark().
+
+[...]
+
+> How we arrived at the list of always-permitted IOCTL commands
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 > 
->> [  206.520722] read to 0xffff963df6a90fe0 of 8 bytes by task 2793 on cpu 6:
->> [  206.520735] xas_find_marked (./include/linux/xarray.h:1706 lib/xarray.c:1354)
->> [  206.520750] filemap_get_folios_tag (mm/filemap.c:1975 mm/filemap.c:2273)
+> To decide which IOCTL commands should be blanket-permitted I went through the
+> list of IOCTL commands mentioned in fs/ioctl.c and looked at them individually
+> to understand what they are about.  The following list is my conclusion from
+> that.
 > 
-> This takes the RCU read lock before calling xas_find_marked() as it's
-> supposed to.
+> We should always allow the following IOCTL commands:
 > 
-> What garbage do I have to write to tell KCSAN it's wrong?  The line
-> that's probably triggering it is currently:
+>  * FIOCLEX, FIONCLEX - these work on the file descriptor and manipulate the
+>    close-on-exec flag
+>  * FIONBIO, FIOASYNC - these work on the struct file and enable nonblocking-IO
+>    and async flags
+>  * FIONREAD - get the number of bytes available for reading (the implementation
+>    is defined per file type)
+
+I think we should treat FIOQSIZE like FIONREAD, i.e. check for
+LANDLOCK_ACCESS_FS_READ_FILE as explain in my previous message.
+Tests should then rely on something else.
+
+[...]
+
+> Changes
+> ~~~~~~~
 > 
->                          unsigned long data = *addr & (~0UL << offset);
-
-Hi, Mr. Wilcox,
-
-Thank you for your evaluation of the bug report.
-
-I am new to KCSAN. I was not aware of KCSAN false positives thus far, so my best bet was to report them.
-
-I thought that maybe READ_ONCE() was required, but I will trust your judgment.
-
-I hope I can find this resolved.
-
-Best regards,
-Mirsad Todorovac
+> V3:
+>  * always permit the IOCTL commands FIOCLEX, FIONCLEX, FIONBIO, FIOASYNC and
+>    FIONREAD, independent of LANDLOCK_ACCESS_FS_IOCTL
+>  * increment ABI version in the same commit where the feature is introduced
+>  * testing changes
+>    * use FIOQSIZE instead of TTY IOCTL commands
+>      (FIOQSIZE works with regular files, directories and memfds)
+>    * run the memfd test with both Landlock enabled and disabled
+>    * add a test for the always-permitted IOCTL commands
