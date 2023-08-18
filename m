@@ -2,249 +2,240 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 253A1780B70
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 13:57:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FF62780B7B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 14:03:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376737AbjHRLyi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Aug 2023 07:54:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48394 "EHLO
+        id S1376768AbjHRMCn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Aug 2023 08:02:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244435AbjHRLyY (ORCPT
+        with ESMTP id S1376767AbjHRMCT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Aug 2023 07:54:24 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99ACE2701
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Aug 2023 04:53:58 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1bc63ef9959so6610335ad.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Aug 2023 04:53:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1692359638; x=1692964438;
-        h=content-transfer-encoding:in-reply-to:from:references:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fWUAu55Okzaxxflb8/jmAhx5gyfvmuNdSd8uGCqH/Zw=;
-        b=eq248EH06v7v4m/+8bSuN+oJAZuyVZ5P3IhvOfLa0gH7Ftb4Z9KOJPje0UAQJX5er3
-         OhtWSQ0AU0VFJKU4fmVprsd/oJUo2QPwIqoQioP3mBhb4FfKfQ01RO5dO9nKWy2SI/MP
-         uTVk259CT4/3xUyvWB4kB2IWgaSxWKXb9L+hjscXInyvbpHmDBPmpl9M7xDVwBcTenEw
-         Ld10dgJhTAcBMt8SxxJddrMcsX7zxwXVGO8YCYY4siCBLxOEN7kItKjMnnr1ePIcPKvP
-         DAa5MKiQQhtw09iC3rbTHJK2e7KNkDZEtI44JZndbkamNp61O7+cGrXXASEv5pxu3x33
-         qjOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692359638; x=1692964438;
-        h=content-transfer-encoding:in-reply-to:from:references:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fWUAu55Okzaxxflb8/jmAhx5gyfvmuNdSd8uGCqH/Zw=;
-        b=fJKylycv2ZHFa7STsm3wSgaZQfma1DGq5IElDE1KkaOPywQLY4rZWswKZ/8TFvyjMM
-         1eylb/Qx2A5C9QP1Q+1kd1CybH76JUzajtkpvubbR5tdFjzEL3KVqElKliNTgX75wIvu
-         1/LoIRthyM7On76RO4SdPJ6h6SRA4Iw0yZnGU3A7D5bX3D/6DTW4rbCwGIV7vEAZf36i
-         FMlelaQkn4TEIt3oTg3ExzcGtwblwLgne4zHOk92PunOJOcRiei2eM0aqqq9N/kQOiEY
-         epRB3gWlCJYhXgpsVBfjAOphNX8nB1RIpOT8uILmpn+5/4ulLr9a46ASSSRJ3MVuGNK+
-         U8LQ==
-X-Gm-Message-State: AOJu0YxqgI4LfJ4qr7+b3Im5mYy8T+QZh7IMsxr+eSBrCwmO1z0yvSz6
-        7QrVXV9E9UsLxsoOn0PFv8YqWQ==
-X-Google-Smtp-Source: AGHT+IEoDhL7JPYYvqyUCrTfrN7Sp8X7zYiAiDB+7WTz2PRk2dwjF8tQdyEs8B7UpMHhLGp3Zs9ccw==
-X-Received: by 2002:a17:90b:3003:b0:269:33cb:e061 with SMTP id hg3-20020a17090b300300b0026933cbe061mr2118476pjb.24.1692359638052;
-        Fri, 18 Aug 2023 04:53:58 -0700 (PDT)
-Received: from [10.254.252.111] ([139.177.225.249])
-        by smtp.gmail.com with ESMTPSA id l11-20020a17090a598b00b00267b38f5e13sm1336696pji.2.2023.08.18.04.53.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Aug 2023 04:53:57 -0700 (PDT)
-Message-ID: <6b6d7ef1-75e4-68a3-1662-82ee19334567@bytedance.com>
-Date:   Fri, 18 Aug 2023 19:53:46 +0800
+        Fri, 18 Aug 2023 08:02:19 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DB042D70
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Aug 2023 05:02:17 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 02E552187B;
+        Fri, 18 Aug 2023 12:02:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1692360136; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=uY0xFS4E+DRDTzVEOyzpCZBNyOWce4mKjTAME5fwncY=;
+        b=cgIbks7WLmrtGQgUPx+eDk4xPow6Z4+EwYj6zCG5qO7BKURryMqSJYv+ggcHyRQUliHZu1
+        EHWTBQ2ZpWApf5yDDFM4GVoIo0MmEvCWmS6dYjEmYEZtbSN8lim6gFE63H6ARLE/uVZEwN
+        pWnKnK1bMMlImNVDh9kx6cW/J7N7+dc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1692360136;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=uY0xFS4E+DRDTzVEOyzpCZBNyOWce4mKjTAME5fwncY=;
+        b=OAYMmsIYsHUvtfj4l8evh/CpTuZ2Wq6PJbUyEfCSMlp9sHcVlh+I5Hya1642mZn19KW4Kt
+        O+0PQmZnMSnC/+DQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DD2A413441;
+        Fri, 18 Aug 2023 12:02:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id pR38Ncdd32TjdgAAMHmgww
+        (envelope-from <jack@suse.cz>); Fri, 18 Aug 2023 12:02:15 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 67D3CA076B; Fri, 18 Aug 2023 14:02:15 +0200 (CEST)
+Date:   Fri, 18 Aug 2023 14:02:15 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] super: wait for nascent superblocks
+Message-ID: <20230818120215.nalsrrfs26nhddpj@quack3>
+References: <20230818-vfs-super-fixes-v3-v2-0-cdab45934983@kernel.org>
+ <20230818-vfs-super-fixes-v3-v2-3-cdab45934983@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.14.0
-Subject: Re: [PATCH 04/11] maple_tree: Introduce interfaces __mt_dup() and
- mt_dup()
-To:     "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
-        Peng Zhang <zhangpeng.00@bytedance.com>, willy@infradead.org,
-        michael.christie@oracle.com, surenb@google.com, npiggin@gmail.com,
-        corbet@lwn.net, mathieu.desnoyers@efficios.com, avagin@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, brauner@kernel.org, peterz@infradead.org
-References: <20230726080916.17454-1-zhangpeng.00@bytedance.com>
- <20230726080916.17454-5-zhangpeng.00@bytedance.com>
- <20230726160354.konsgq6hidj7gr5u@revolver>
- <beaab8b4-180c-017d-bd8d-8766196f302a@bytedance.com>
- <20230731162714.4x3lzymuyvu2mter@revolver>
- <3f4e73cc-1a98-95a8-9ab2-47797d236585@bytedance.com>
- <20230816183029.5rpkbgp2umebrjh5@revolver>
-From:   Peng Zhang <zhangpeng.00@bytedance.com>
-In-Reply-To: <20230816183029.5rpkbgp2umebrjh5@revolver>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230818-vfs-super-fixes-v3-v2-3-cdab45934983@kernel.org>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_SOFTFAIL,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri 18-08-23 12:54:17, Christian Brauner wrote:
+> Recent patches experiment with making it possible to allocate a new
+> superblock before opening the relevant block device. Naturally this has
+> intricate side-effects that we get to learn about while developing this.
+> 
+> Superblock allocators such as sget{_fc}() return with s_umount of the
+> new superblock held and lock ordering currently requires that block
+> level locks such as bdev_lock and open_mutex rank above s_umount.
+> 
+> Before aca740cecbe5 ("fs: open block device after superblock creation")
+> ordering was guaranteed to be correct as block devices were opened prior
+> to superblock allocation and thus s_umount wasn't held. But now s_umount
+> must be dropped before opening block devices to avoid locking
+> violations.
+> 
+> This has consequences. The main one being that iterators over
+> @super_blocks and @fs_supers that grab a temporary reference to the
+> superblock can now also grab s_umount before the caller has managed to
+> open block devices and called fill_super(). So whereas before such
+> iterators or concurrent mounts would have simply slept on s_umount until
+> SB_BORN was set or the superblock was discard due to initalization
+> failure they can now needlessly spin through sget{_fc}().
+> 
+> If the caller is sleeping on bdev_lock or open_mutex one caller waiting
+> on SB_BORN will always spin somewhere and potentially this can go on for
+> quite a while.
+> 
+> It should be possible to drop s_umount while allowing iterators to wait
+> on a nascent superblock to either be born or discarded. This patch
+> implements a wait_var_event() mechanism allowing iterators to sleep
+> until they are woken when the superblock is born or discarded.
+> 
+> This also allows us to avoid relooping through @fs_supers and
+> @super_blocks if a superblock isn't yet born or dying.
+> 
+> Link: aca740cecbe5 ("fs: open block device after superblock creation")
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
+Looks mostly good to me. I've spotted only a couple of nits and one
+possible memory ordering issue...
 
-在 2023/8/17 02:30, Liam R. Howlett 写道:
-> * Peng Zhang <zhangpeng.00@bytedance.com> [230816 09:42]:
->>
->>
-> ...
-> 
->>>>>> +/**
->>>>>> + * __mt_dup(): Duplicate a maple tree
->>>>>> + * @mt: The source maple tree
->>>>>> + * @new: The new maple tree
->>>>>> + * @gfp: The GFP_FLAGS to use for allocations
->>>>>> + *
->>>>>> + * This function duplicates a maple tree using a faster method than traversing
->>>>>> + * the source tree and inserting entries into the new tree one by one. The user
->>>>>> + * needs to lock the source tree manually. Before calling this function, @new
->>>>>> + * must be an empty tree or an uninitialized tree. If @mt uses an external lock,
->>>>>> + * we may also need to manually set @new's external lock using
->>>>>> + * mt_set_external_lock().
->>>>>> + *
->>>>>> + * Return: 0 on success, -ENOMEM if memory could not be allocated.
->>>>>> + */
->>>>>> +int __mt_dup(struct maple_tree *mt, struct maple_tree *new, gfp_t gfp)
->>>>>
->>>>> We use mas_ for things that won't handle the locking and pass in a maple
->>>>> state.  Considering the leaves need to be altered once this is returned,
->>>>> I would expect passing in a maple state should be feasible?
->>>> But we don't really need mas here. What do you think the state of mas
->>>> should be when this function returns? Make it point to the first entry,
->>>> or the last entry?
->>>
->>> I would write it to point to the first element so that the call to
->>> replace the first element can just do that without an extra walk and
->>> document the maple state end point.
->> Unfortunately, this does not seem to be convenient. Users usually use
->> mas_for_each() to replace elements. If we set mas to the first element,
->> the first call to mas_find() in mas_for_each() will get the next
->> element.
-> 
-> This sounds like the need for another iterator specifically for
-> duplicating.
-> 
->>
->> There may also be other scenarios where the user does not necessarily
->> have to replace every element.
-> 
-> Do you mean a limit or elements that need to be skipped?  We could have
-> a limit on the iteration.
-> 
->>
->> Finally, getting the first element in __mt_dup() requires an additional
->> check to check whether the first element has already been recorded. Such
->> a check will be performed at each leaf node, which is unnecessary
->> overhead.
->>
->> Of course, the first reason is the main reason, which prevents us from
->> using mas_for_each(). So I don't want to record the first element.
-> 
-> 
-> I don't like the interface because it can easily be misunderstood and
-> used incorrectly.  I don't know how to make a cleaner interface, but
-> I've gone through a few thoughts:
-> 
-> The first was hide _all of it_ in a new iterator:
-> mas_dup_each(old, new, old_entry) {
-> 	if (don't_dup(old_entry)) {
-> 		mas_erase(new);
-> 		continue;
-> 	}
-> 
-> 	mas_dup_insert(new, new_entry);
-> }
-> 
-> This iterator would check if mas_is_start(old) and dup the tree in that
-> event.  Leave the both new trees pointing to the first element and set
-> old_entry.  I don't know how to handle the failure in duplicating the
-> tree in this case - I guess we could return old_entry = NULL and check
-> if mas_is_err(old) after the loop.  Do you see a problem with this?
-This interface looks OK. But handling the failure case is tricky.
-> 
-> 
-> The second idea was an init of the old tree.  This is closest to what you
-> have:
-> 
-> if (mas_dup_init(old, new))
-> 	goto -ENOMEM;
-> 
-> mas_dup_each(old, new) {
-> 	if (don't_dup(old_entry)) {
-> 		mas_erase(new);
-> 		continue;
-> 	}
-> 
-> 	mas_dup_insert(new, new_entry);
-> }
-I think this interface could be better.
-> 
-> This would duplicate the tree at the start and leave both pointing at
-> the first element so that mas_dup_each() could start on that element.
-> Each subsequent call would go to the next element in both maple states.
-Every element of the new tree is the same as the old tree, and we don't
-need to maintain the mas of the old tree. It is enough to maintain the
-mas of the new tree when traversing.
+> @@ -86,6 +81,94 @@ static inline void super_unlock_shared(struct super_block *sb)
+>  	super_unlock(sb, false);
+>  }
+>  
+> +static inline bool wait_born(struct super_block *sb)
+> +{
+> +	unsigned int flags;
+> +
+> +	/*
+> +	 * Pairs with smp_store_release() in super_wake() and ensures
+> +	 * that we see SB_BORN or SB_DYING after we're woken.
+> +	 */
+> +	flags = smp_load_acquire(&sb->s_flags);
+> +	return flags & (SB_BORN | SB_DYING);
+> +}
+> +
+> +/**
+> + * super_lock - wait for superblock to become ready
 
-> It sounds like you don't want this for performance reasons?  Although
-I mean I don't want to record the first element during duplicating. But
-we can get the first element after the duplicate completes. This can
-also still be within the implementation of the interface.
+Perhaps expand this a bit to "wait for superblock to become ready and
+lock it"
 
-> looking at mas_find() today, I think this could still work since we are
-> checking the maple state for a lot.
-Yes, mas_find() does a whole bunch of checks.
-> 
-> Both ideas could be even faster than what you have if we handle the
-> special cases of mas_is_none()/mas_is_ptr() in a smarter way because we
-> don't need to be as worried about the entry point of the maple state as
-> much as we do with mas_find()/mas_for_each().  I mean, is it possible to
-> get to a mas_is_none() or mas_is_ptr() on duplicating a tree?  How do we
-> handle these users?
-The check for mas_is_none() or mas_is_ptr() in mas_find() is really not
-worth it if we hold the lock. There doesn't seem to be a good way around
-mas_is_ptr() since it needs to enter the loop once. mas_is_none() can be
-solved because it does not enter the loop, we can use it as a condition
-to enter the loop.
+> + * @sb: superblock to wait for
+> + * @excl: whether exclusive access is required
+> + *
+> + * If the superblock has neither passed through vfs_get_tree() or
+> + * generic_shutdown_super() yet wait for it to happen. Either superblock
+> + * creation will succeed and SB_BORN is set by vfs_get_tree() or we're
+> + * woken and we'll see SB_DYING.
+> + *
+> + * The caller must have acquired a temporary reference on @sb->s_count.
+> + *
+> + * Return: This returns true if SB_BORN was set, false if SB_DYING was
+> + *         set. The function acquires s_umount and returns with it held.
+> + */
+> +static bool super_lock(struct super_block *sb, bool excl)
 
-Without using mas_find() to avoid the check inside, I have to figure out
-how I can handle mas_is_ptr() properly.
-> 
-> Both ideas still suffer from someone saying "Gee, that {insert function
-> name here} is used in the forking code, so I can totally use that in my
-> code because that's how it work!"  and find out it works for the limited
-> testing they do.  Then it fails later and the emails start flying.
-> 
-> 
-> I almost think we should do something like this on insert:
-> 
-> void mas_dup_insert(old, new, new_entry) {
-> 	WARN_ON_ONCE(old == new);
-> 	WARN_ON_ONCE(old->index != new->index);
-> 	WARN_ON_ONCE(old->last != new->last);
-> 	...
-> }
-Maintaining old mas doesn't feel worth it. If this we have to traverse
-the old tree one more time.
-> 
-> This would at least _require_ someone to have two maple states and
-> hopefully think twice on using it where it should not be used.
-> 
-> The bottom line is that this code is close to what we need to make
-> forking better, but I fear the misuse of the interface.
-> 
-> Something else to think about:
-> In the work items for the Maple Tree, there is a plan to have an enum to
-> specify the type of write that is going to happen.  The idea was for
-> mas_preallocate() to set this type of write so we can just go right to
-> the correct function.  We could use that here and set the maple state
-> write type to a direct replacement.
-This can be the next step. We can do without it for now.
-> 
-> Thanks,
-> Liam
-> 
+Perhaps we can make the function __must_check? Because if you don't care
+about the result you should be using __super_lock().
+
+> +{
+> +
+> +	lockdep_assert_not_held(&sb->s_umount);
+> +
+> +relock:
+> +	__super_lock(sb, excl);
+> +
+> +	/*
+> +	 * Has gone through generic_shutdown_super() in the meantime.
+> +	 * @sb->s_root is NULL and @sb->s_active is 0. No one needs to
+> +	 * grab a reference to this. Tell them so.
+> +	 */
+> +	if (sb->s_flags & SB_DYING)
+> +		return false;
+> +
+> +	/* Has called ->get_tree() successfully. */
+> +	if (sb->s_flags & SB_BORN)
+> +		return true;
+> +
+> +	super_unlock(sb, excl);
+> +
+> +	/* wait until the superblock is ready or dying */
+> +	wait_var_event(&sb->s_flags, wait_born(sb));
+> +
+> +	/*
+> +	 * Neither SB_BORN nor SB_DYING are ever unset so we never loop.
+> +	 * Just reacquire @sb->s_umount for the caller.
+> +	 */
+> +	goto relock;
+> +}
+> +
+> +/* wait and acquire read-side of @sb->s_umount */
+> +static inline bool super_lock_shared(struct super_block *sb)
+> +{
+> +	return super_lock(sb, false);
+> +}
+> +
+> +/* wait and acquire write-side of @sb->s_umount */
+> +static inline bool super_lock_excl(struct super_block *sb)
+> +{
+> +	return super_lock(sb, true);
+> +}
+> +
+> +/* wake waiters */
+> +#define SUPER_WAKE_FLAGS (SB_BORN | SB_DYING)
+> +static void super_wake(struct super_block *sb, unsigned int flag)
+> +{
+> +	unsigned int flags = sb->s_flags;
+> +
+> +	WARN_ON_ONCE((flag & ~SUPER_WAKE_FLAGS));
+> +	WARN_ON_ONCE(hweight32(flag & SUPER_WAKE_FLAGS) > 1);
+
+Maybe assert here that s_umount is held?
+
+> +
+> +	/*
+> +	 * Pairs with smp_load_acquire() in super_lock() and
+> +	 * ensures that @flag is set before we wake anyone.
+> +	 */
+> +	smp_store_release(&sb->s_flags, flags | flag);
+> +	wake_up_var(&sb->s_flags);
+
+As I'm thinking about it now, we may need at least a smp_rmb() between the
+store and wake_up_var(). What I'm worried about is the following:
+
+TASK1					TASK2
+super_wake()				super_lock()
+					  check s_flags, SB_BORN not set yet
+  waitqueue_active() from wake_up_var()
+    which got reordered by the CPU before
+    smp_store_release(). This seems possible
+    because release is a one-way permeable in
+    this direction.
+					  wait_var_event(..)
+					    prepare_to_wait_event()
+					    wait_born()
+					      SB_BORN still not set => sleep
+  smp_store_release() sets SB_BORN
+  wake_up_var() does nothing because it thinks
+    the waitqueue is empty.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
