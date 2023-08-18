@@ -2,70 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A2CB780AC2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 13:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42083780B4D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 13:41:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376398AbjHRLI3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Aug 2023 07:08:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54522 "EHLO
+        id S1376423AbjHRLk6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Aug 2023 07:40:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376403AbjHRLIR (ORCPT
+        with ESMTP id S1376411AbjHRLk2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Aug 2023 07:08:17 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A1712708
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Aug 2023 04:08:16 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 2980A21884;
-        Fri, 18 Aug 2023 11:08:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1692356895; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Fri, 18 Aug 2023 07:40:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24D572723
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Aug 2023 04:39:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1692358779;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=pvaD4DSy05ZfHNcva0EWDwFteqJUAYrD3l8e3hByZjo=;
-        b=g9fSzb6SqI4q07G8d5mYFpWkUL4db0AnYayyi8tGE+H+38KO5Xyh+HKPMFtX9fC7723FRk
-        8lgp2yDxZzGXWkQfYfpLL1/EwwXFKn80875EkUQBV+KLeVgH1zFr2hg9lWxMhYPmTgWf9g
-        7f4QAEo5tT8z+RjmUnFVEJ+wM6iTzK0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1692356895;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=pvaD4DSy05ZfHNcva0EWDwFteqJUAYrD3l8e3hByZjo=;
-        b=oiBCu1PNrj/6RBSmgR9jUovAWPLFveCZWFmD1lhabIjJWA1U6MOtPUS2bvZ7qLiStc9AvE
-        qyi90rZQ7GRjHHDg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        bh=i3mAd5RT0ADcqFGH0+/dpnTAdMm0BF37Gb+TptEBEak=;
+        b=GZzJ2j/n63KCQN2j/1r3l71OsU37PspvK/+j6MAekGh91lox7fsWfPAVjqSOrJPaUKfpLp
+        MLuIu+UZ0v2t7Rd/FYEfIw1M9gvBIqAYE50zdQnKShbdVbUz6dLUyXs/ToTz2Be3nj5v28
+        sqn4FPUU8RDFrcoDeeDLb6LjxVXrQC8=
+Received: from mimecast-mx02.redhat.com (66.187.233.73 [66.187.233.73]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-683-J945iaf8NySVe-PFItRz9Q-1; Fri, 18 Aug 2023 07:39:36 -0400
+X-MC-Unique: J945iaf8NySVe-PFItRz9Q-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0C32613441;
-        Fri, 18 Aug 2023 11:08:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id uD/3Ah9R32T0WgAAMHmgww
-        (envelope-from <jack@suse.cz>); Fri, 18 Aug 2023 11:08:15 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 6A0AEA076B; Fri, 18 Aug 2023 13:08:14 +0200 (CEST)
-Date:   Fri, 18 Aug 2023 13:08:14 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7F40C29A9CB3;
+        Fri, 18 Aug 2023 11:39:35 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 54FA2492C13;
+        Fri, 18 Aug 2023 11:39:33 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wjFrVp6srTBsMKV8LBjCEO0bRDYXm-KYrq7oRk0TGr6HA@mail.gmail.com>
+References: <CAHk-=wjFrVp6srTBsMKV8LBjCEO0bRDYXm-KYrq7oRk0TGr6HA@mail.gmail.com> <03730b50cebb4a349ad8667373bb8127@AcuMS.aculab.com> <20230816120741.534415-1-dhowells@redhat.com> <20230816120741.534415-3-dhowells@redhat.com> <608853.1692190847@warthog.procyon.org.uk> <3dabec5643b24534a1c1c51894798047@AcuMS.aculab.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, David Laight <David.Laight@aculab.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] super: make locking naming consistent
-Message-ID: <20230818110814.fxosugjmb5znhx2h@quack3>
-References: <20230818-vfs-super-fixes-v3-v2-0-cdab45934983@kernel.org>
- <20230818-vfs-super-fixes-v3-v2-2-cdab45934983@kernel.org>
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Christian Brauner <christian@brauner.io>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] iov_iter: Don't deal with iter->copy_mc in memcpy_from_iter_mc()
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230818-vfs-super-fixes-v3-v2-2-cdab45934983@kernel.org>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL,URIBL_BLOCKED autolearn=ham autolearn_force=no
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1748218.1692358772.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Fri, 18 Aug 2023 12:39:32 +0100
+Message-ID: <1748219.1692358772@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,141 +75,204 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 18-08-23 12:54:16, Christian Brauner wrote:
-> Make the naming consistent with the earlier introduced
-> super_lock_{read,write}() helpers.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+Would it make sense to always check for MCE in _copy_from_iter() and alway=
+s
+return a short transfer if we encounter one?  It looks pretty cheap in ter=
+ms
+of code size as the exception table stuff handles it, so we don't need to =
+do
+anything in the normal path.
 
-Looks good. Feel free to add:
+I guess this would change the handling of memory errors and DAX errors.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+David
+---
+iov_iter: Always handle MCE in _copy_to_iter()
 
-								Honza
+(incomplete)
 
-> ---
->  fs/fs-writeback.c |  4 ++--
->  fs/internal.h     |  2 +-
->  fs/super.c        | 28 ++++++++++++++--------------
->  3 files changed, 17 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index aca4b4811394..969ce991b0b0 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -1953,9 +1953,9 @@ static long __writeback_inodes_wb(struct bdi_writeback *wb,
->  		struct inode *inode = wb_inode(wb->b_io.prev);
->  		struct super_block *sb = inode->i_sb;
->  
-> -		if (!trylock_super(sb)) {
-> +		if (!super_trylock_shared(sb)) {
->  			/*
-> -			 * trylock_super() may fail consistently due to
-> +			 * super_trylock_shared() may fail consistently due to
->  			 * s_umount being grabbed by someone else. Don't use
->  			 * requeue_io() to avoid busy retrying the inode/sb.
->  			 */
-> diff --git a/fs/internal.h b/fs/internal.h
-> index b94290f61714..74d3b161dd2c 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -115,7 +115,7 @@ static inline void put_file_access(struct file *file)
->   * super.c
->   */
->  extern int reconfigure_super(struct fs_context *);
-> -extern bool trylock_super(struct super_block *sb);
-> +extern bool super_trylock_shared(struct super_block *sb);
->  struct super_block *user_get_super(dev_t, bool excl);
->  void put_super(struct super_block *sb);
->  extern bool mount_capable(struct fs_context *);
-> diff --git a/fs/super.c b/fs/super.c
-> index b12e2f247e1e..ba5d813c5804 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -112,7 +112,7 @@ static unsigned long super_cache_scan(struct shrinker *shrink,
->  	if (!(sc->gfp_mask & __GFP_FS))
->  		return SHRINK_STOP;
->  
-> -	if (!trylock_super(sb))
-> +	if (!super_trylock_shared(sb))
->  		return SHRINK_STOP;
->  
->  	if (sb->s_op->nr_cached_objects)
-> @@ -159,17 +159,17 @@ static unsigned long super_cache_count(struct shrinker *shrink,
->  	sb = container_of(shrink, struct super_block, s_shrink);
->  
->  	/*
-> -	 * We don't call trylock_super() here as it is a scalability bottleneck,
-> -	 * so we're exposed to partial setup state. The shrinker rwsem does not
-> -	 * protect filesystem operations backing list_lru_shrink_count() or
-> -	 * s_op->nr_cached_objects(). Counts can change between
-> -	 * super_cache_count and super_cache_scan, so we really don't need locks
-> -	 * here.
-> +	 * We don't call super_trylock_shared() here as it is a scalability
-> +	 * bottleneck, so we're exposed to partial setup state. The shrinker
-> +	 * rwsem does not protect filesystem operations backing
-> +	 * list_lru_shrink_count() or s_op->nr_cached_objects(). Counts can
-> +	 * change between super_cache_count and super_cache_scan, so we really
-> +	 * don't need locks here.
->  	 *
->  	 * However, if we are currently mounting the superblock, the underlying
->  	 * filesystem might be in a state of partial construction and hence it
-> -	 * is dangerous to access it.  trylock_super() uses a SB_BORN check to
-> -	 * avoid this situation, so do the same here. The memory barrier is
-> +	 * is dangerous to access it.  super_trylock_shared() uses a SB_BORN check
-> +	 * to avoid this situation, so do the same here. The memory barrier is
->  	 * matched with the one in mount_fs() as we don't hold locks here.
->  	 */
->  	if (!(sb->s_flags & SB_BORN))
-> @@ -428,7 +428,7 @@ static int grab_super(struct super_block *s) __releases(sb_lock)
->  }
->  
->  /*
-> - *	trylock_super - try to grab ->s_umount shared
-> + *	super_trylock_shared - try to grab ->s_umount shared
->   *	@sb: reference we are trying to grab
->   *
->   *	Try to prevent fs shutdown.  This is used in places where we
-> @@ -444,7 +444,7 @@ static int grab_super(struct super_block *s) __releases(sb_lock)
->   *	of down_read().  There's a couple of places that are OK with that, but
->   *	it's very much not a general-purpose interface.
->   */
-> -bool trylock_super(struct super_block *sb)
-> +bool super_trylock_shared(struct super_block *sb)
->  {
->  	if (down_read_trylock(&sb->s_umount)) {
->  		if (!hlist_unhashed(&sb->s_instances) &&
-> @@ -1210,7 +1210,7 @@ EXPORT_SYMBOL(get_tree_keyed);
->   * and the place that clears the pointer to the superblock used by this function
->   * before freeing the superblock.
->   */
-> -static bool lock_active_super(struct super_block *sb)
-> +static bool super_lock_shared_active(struct super_block *sb)
->  {
->  	super_lock_shared(sb);
->  	if (!sb->s_root ||
-> @@ -1228,7 +1228,7 @@ static void fs_bdev_mark_dead(struct block_device *bdev, bool surprise)
->  	/* bd_holder_lock ensures that the sb isn't freed */
->  	lockdep_assert_held(&bdev->bd_holder_lock);
->  
-> -	if (!lock_active_super(sb))
-> +	if (!super_lock_shared_active(sb))
->  		return;
->  
->  	if (!surprise)
-> @@ -1247,7 +1247,7 @@ static void fs_bdev_sync(struct block_device *bdev)
->  
->  	lockdep_assert_held(&bdev->bd_holder_lock);
->  
-> -	if (!lock_active_super(sb))
-> +	if (!super_lock_shared_active(sb))
->  		return;
->  	sync_filesystem(sb);
->  	super_unlock_shared(sb);
-> 
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+---
+ arch/x86/include/asm/mce.h |   22 ++++++++++++++++++++++
+ fs/coredump.c              |    1 -
+ include/linux/uio.h        |   16 ----------------
+ lib/iov_iter.c             |   17 +++++------------
+ 4 files changed, 27 insertions(+), 29 deletions(-)
+
+diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+index 180b1cbfcc4e..ee3ff090360d 100644
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -353,4 +353,26 @@ static inline void mce_hygon_feature_init(struct cpui=
+nfo_x86 *c)	{ return mce_am
+ =
+
+ unsigned long copy_mc_fragile_handle_tail(char *to, char *from, unsigned =
+len);
+ =
+
++static __always_inline __must_check
++unsigned long memcpy_mc(void *to, const void *from, unsigned long len)
++{
++#ifdef CONFIG_ARCH_HAS_COPY_MC
++	/*
++	 * If CPU has FSRM feature, use 'rep movs'.
++	 * Otherwise, use rep_movs_alternative.
++	 */
++	asm volatile(
++		"1:\n\t"
++		ALTERNATIVE("rep movsb",
++			    "call rep_movs_alternative", ALT_NOT(X86_FEATURE_FSRM))
++		"2:\n"
++		_ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_DEFAULT_MCE_SAFE)
++		:"+c" (len), "+D" (to), "+S" (from), ASM_CALL_CONSTRAINT
++		: : "memory", "rax", "r8", "r9", "r10", "r11");
++#else
++	return memcpy(to, from, len);
++#endif
++	return len;
++}
++
+ #endif /* _ASM_X86_MCE_H */
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 9d235fa14ab9..ad54102a5e14 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -884,7 +884,6 @@ static int dump_emit_page(struct coredump_params *cprm=
+, struct page *page)
+ 	pos =3D file->f_pos;
+ 	bvec_set_page(&bvec, page, PAGE_SIZE, 0);
+ 	iov_iter_bvec(&iter, ITER_SOURCE, &bvec, 1, PAGE_SIZE);
+-	iov_iter_set_copy_mc(&iter);
+ 	n =3D __kernel_write_iter(cprm->file, &iter, &pos);
+ 	if (n !=3D PAGE_SIZE)
+ 		return 0;
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 42bce38a8e87..73078ba297b7 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -40,7 +40,6 @@ struct iov_iter_state {
+ =
+
+ struct iov_iter {
+ 	u8 iter_type;
+-	bool copy_mc;
+ 	bool nofault;
+ 	bool data_source;
+ 	bool user_backed;
+@@ -252,22 +251,8 @@ size_t _copy_from_iter_flushcache(void *addr, size_t =
+bytes, struct iov_iter *i);
+ =
+
+ #ifdef CONFIG_ARCH_HAS_COPY_MC
+ size_t _copy_mc_to_iter(const void *addr, size_t bytes, struct iov_iter *=
+i);
+-static inline void iov_iter_set_copy_mc(struct iov_iter *i)
+-{
+-	i->copy_mc =3D true;
+-}
+-
+-static inline bool iov_iter_is_copy_mc(const struct iov_iter *i)
+-{
+-	return i->copy_mc;
+-}
+ #else
+ #define _copy_mc_to_iter _copy_to_iter
+-static inline void iov_iter_set_copy_mc(struct iov_iter *i) { }
+-static inline bool iov_iter_is_copy_mc(const struct iov_iter *i)
+-{
+-	return false;
+-}
+ #endif
+ =
+
+ size_t iov_iter_zero(size_t bytes, struct iov_iter *);
+@@ -382,7 +367,6 @@ static inline void iov_iter_ubuf(struct iov_iter *i, u=
+nsigned int direction,
+ 	WARN_ON(direction & ~(READ | WRITE));
+ 	*i =3D (struct iov_iter) {
+ 		.iter_type =3D ITER_UBUF,
+-		.copy_mc =3D false,
+ 		.user_backed =3D true,
+ 		.data_source =3D direction,
+ 		.ubuf =3D buf,
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index d282fd4d348f..887d9cb9be4e 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -14,6 +14,7 @@
+ #include <linux/scatterlist.h>
+ #include <linux/instrumented.h>
+ #include <linux/iov_iter.h>
++#include <asm/mce.h>
+ =
+
+ static __always_inline
+ size_t copy_to_user_iter(void __user *iter_to, size_t progress,
+@@ -168,7 +169,6 @@ void iov_iter_init(struct iov_iter *i, unsigned int di=
+rection,
+ 	WARN_ON(direction & ~(READ | WRITE));
+ 	*i =3D (struct iov_iter) {
+ 		.iter_type =3D ITER_IOVEC,
+-		.copy_mc =3D false,
+ 		.nofault =3D false,
+ 		.user_backed =3D true,
+ 		.data_source =3D direction,
+@@ -254,14 +254,11 @@ size_t _copy_mc_to_iter(const void *addr, size_t byt=
+es, struct iov_iter *i)
+ EXPORT_SYMBOL_GPL(_copy_mc_to_iter);
+ #endif /* CONFIG_ARCH_HAS_COPY_MC */
+ =
+
+-static size_t memcpy_from_iter_mc(void *iter_from, size_t progress,
+-				  size_t len, void *to, void *priv2)
++static __always_inline
++size_t memcpy_from_iter_mc(void *iter_from, size_t progress,
++			   size_t len, void *to, void *priv2)
+ {
+-	struct iov_iter *iter =3D priv2;
+-
+-	if (iov_iter_is_copy_mc(iter))
+-		return copy_mc_to_kernel(to + progress, iter_from, len);
+-	return memcpy_from_iter(iter_from, progress, len, to, priv2);
++	return memcpy_mc(to + progress, iter_from, len);
+ }
+ =
+
+ size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i)
+@@ -632,7 +629,6 @@ void iov_iter_kvec(struct iov_iter *i, unsigned int di=
+rection,
+ 	WARN_ON(direction & ~(READ | WRITE));
+ 	*i =3D (struct iov_iter){
+ 		.iter_type =3D ITER_KVEC,
+-		.copy_mc =3D false,
+ 		.data_source =3D direction,
+ 		.kvec =3D kvec,
+ 		.nr_segs =3D nr_segs,
+@@ -649,7 +645,6 @@ void iov_iter_bvec(struct iov_iter *i, unsigned int di=
+rection,
+ 	WARN_ON(direction & ~(READ | WRITE));
+ 	*i =3D (struct iov_iter){
+ 		.iter_type =3D ITER_BVEC,
+-		.copy_mc =3D false,
+ 		.data_source =3D direction,
+ 		.bvec =3D bvec,
+ 		.nr_segs =3D nr_segs,
+@@ -678,7 +673,6 @@ void iov_iter_xarray(struct iov_iter *i, unsigned int =
+direction,
+ 	BUG_ON(direction & ~1);
+ 	*i =3D (struct iov_iter) {
+ 		.iter_type =3D ITER_XARRAY,
+-		.copy_mc =3D false,
+ 		.data_source =3D direction,
+ 		.xarray =3D xarray,
+ 		.xarray_start =3D start,
+@@ -702,7 +696,6 @@ void iov_iter_discard(struct iov_iter *i, unsigned int=
+ direction, size_t count)
+ 	BUG_ON(direction !=3D READ);
+ 	*i =3D (struct iov_iter){
+ 		.iter_type =3D ITER_DISCARD,
+-		.copy_mc =3D false,
+ 		.data_source =3D false,
+ 		.count =3D count,
+ 		.iov_offset =3D 0
+
