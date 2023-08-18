@@ -2,55 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD8AB78105B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 18:29:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F84C7810D8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 18:47:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378635AbjHRQ3F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Aug 2023 12:29:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53116 "EHLO
+        id S1345588AbjHRQrV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Aug 2023 12:47:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378669AbjHRQ2z (ORCPT
+        with ESMTP id S1378884AbjHRQrN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Aug 2023 12:28:55 -0400
-Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [IPv6:2001:1600:4:17::42ac])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3F213C35
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Aug 2023 09:28:50 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RS6kl5nZ9zMq1MM;
-        Fri, 18 Aug 2023 16:28:47 +0000 (UTC)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RS6kk58mWz11p;
-        Fri, 18 Aug 2023 18:28:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1692376127;
-        bh=9DMDGEfPisEXlp15346TGMIklbX6npniTNA6DNlXEWE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V9V33hCBG0M2Jj7Ulkn/VMlFW1Rcpd3u6BZihpa/yoiuSi6A03pFN+NKY0imIEARU
-         ndGiAQv/LUxeDPJH2p5uu2mhPIfire+fJGTwaEuOYfmum1FWRt7kdhmrAx8a4v2lbL
-         FW4rLpbjFgG5R0jjjAAbFS1NSGR0vm0piSgGtBQE=
-Date:   Fri, 18 Aug 2023 18:28:41 +0200
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Matt Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] landlock: Document ioctl support
-Message-ID: <20230818.ShaiGhu3wae9@digikod.net>
-References: <20230814172816.3907299-1-gnoack@google.com>
- <20230814172816.3907299-6-gnoack@google.com>
+        Fri, 18 Aug 2023 12:47:13 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40B0D2D64
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Aug 2023 09:47:11 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3fe2d620d17so1345e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Aug 2023 09:47:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1692377230; x=1692982030;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vcYBK4IDMWdZXBUH9qUpJWq6mMj5wrlrL6q6rkCUyi0=;
+        b=DZchxW7NW3WIGfXMnGboGBURwzn7WFGdeJG+sgmIXEimzDVc8m75Y/skORcrUBqh43
+         xFsQQf5kHDGo2tSO8fvROhiiNwe3/aGiD4kAb0eOXgzVLpbplYd2Ph33tJzQBNrI6YaH
+         BeOf1H6b5FTqKuZrVwD7lBj60By+89vFgf4hUL96Lsic+URcqAXpkfHHvZG5HG7+nM72
+         skJJRmCrsNeyZccYYVrqYg5XIhswhK+MDK0C24bdsjB2D0fzGSafmLO8kdwDGMTXCraR
+         HlptcFEE5XjwTmPRnA2+FWhioo/IKtiFifqVDmAKubMyGxg9a2lNcc7r9nrB5/1qS1BM
+         oydg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692377230; x=1692982030;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vcYBK4IDMWdZXBUH9qUpJWq6mMj5wrlrL6q6rkCUyi0=;
+        b=a9oEGXTYZEqNGPY+/awAa+2WRXiKfHBt/D/h4JMushf6zJ35M/MBeU9htgMy9as7Cn
+         gBzS/AxP9b1sztUpuCmAU88mLoy0eq2z4ZXXQHCLJDSHUWX+JHQpR8QuBeZII4HAmJr9
+         HNho+fcuG/Dab8hgTFvB1SvryL9IiDts3G5AblEdlbtI+9lM5tTey6uFCkoku+A96isW
+         EXCKKyOflgTX763WO9eTFfX9JeEhiIKiA/TcC82/PGPLTxQ21dU04jIGRd6hs5brteSc
+         pfuQmLlR8RTnE/loCF6myKOCnOwGU5nyumas1CoMcs65cIO3MKaeiRlYYQit6sb3UsJQ
+         s6AQ==
+X-Gm-Message-State: AOJu0YzPyYLDR7i0UDNI9z8Lnbek2ZG8mrd/qwFfmvGGrkqAxw35B35X
+        06Y38DcrIq3BIMEBuzj3XvsNGF1E2z9nLfYKbgtmvA==
+X-Google-Smtp-Source: AGHT+IHONJU+ctmsr9aVMkdjHd8jipE/NT/Q0+Z+iy7ah9jBa7kpTKIKB44dhx/A+QLF7kEmMzhGxMlCIOAlBtWCi/w=
+X-Received: by 2002:a05:600c:3b0c:b0:3fd:e47:39c7 with SMTP id
+ m12-20020a05600c3b0c00b003fd0e4739c7mr119961wms.4.1692377229649; Fri, 18 Aug
+ 2023 09:47:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230814172816.3907299-6-gnoack@google.com>
-X-Infomaniak-Routing: alpha
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+References: <000000000000530e0d060312199e@google.com> <20230817142103.GA2247938@mit.edu>
+ <CANp29Y7jbcOw_rS5vbfWNo7Y+ySYhYS-AWC356QN=JRVOm9B8w@mail.gmail.com>
+ <20230817144505.GB2247938@mit.edu> <CANp29Y4HGnp6LJ7jw2hrXNFd7S4+MKfjdpjOGZALUuGK1L3wPA@mail.gmail.com>
+In-Reply-To: <CANp29Y4HGnp6LJ7jw2hrXNFd7S4+MKfjdpjOGZALUuGK1L3wPA@mail.gmail.com>
+From:   Aleksandr Nogikh <nogikh@google.com>
+Date:   Fri, 18 Aug 2023 18:46:57 +0200
+Message-ID: <CANp29Y6JE-HyYL6XZfBy8QvE2CwLHw-HdtVsYxAGMhfy9qT=RQ@mail.gmail.com>
+Subject: Re: [syzbot] [ext4?] kernel panic: EXT4-fs (device loop0): panic
+ forced after error (3)
+To:     "Theodore Ts'o" <tytso@mit.edu>
+Cc:     syzbot <syzbot+27eece6916b914a49ce7@syzkaller.appspotmail.com>,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, nathan@kernel.org, ndesaulniers@google.com,
+        syzkaller-bugs@googlegroups.com, trix@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -58,163 +76,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This looks good!
+On Fri, Aug 18, 2023 at 1:43=E2=80=AFPM Aleksandr Nogikh <nogikh@google.com=
+> wrote:
+>
+> I've taken a closer look at the issue.
+>
+> Documentation/filesystems/ext4.txt says that the "errors=3D" mount
+> parameter "override the errors behavior specified in the superblock".
+> So syzbot can prevent it by passing "errors=3Dcontinue" as a mount
+> argument and there's no need to filter out such reports.
+>
+> Syzkaller actually already does that in the C reproducer. It just
+> seems that this time the tool has mutated the mount options so much
+> that the simple patching no longer worked (most likely because of \0
+> characters in between). I'll update the syz_mount_image() code.
 
-On Mon, Aug 14, 2023 at 07:28:16PM +0200, Günther Noack wrote:
-> In the paragraph above the fallback logic, use the shorter phrasing
-> from the landlock(7) man page.
-> 
-> Signed-off-by: Günther Noack <gnoack@google.com>
-> ---
->  Documentation/userspace-api/landlock.rst | 74 ++++++++++++++++++------
->  1 file changed, 57 insertions(+), 17 deletions(-)
-> 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index d8cd8cd9ce25..e0e35e474307 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -61,18 +61,17 @@ the need to be explicit about the denied-by-default access rights.
->              LANDLOCK_ACCESS_FS_MAKE_BLOCK |
->              LANDLOCK_ACCESS_FS_MAKE_SYM |
->              LANDLOCK_ACCESS_FS_REFER |
-> -            LANDLOCK_ACCESS_FS_TRUNCATE,
-> +            LANDLOCK_ACCESS_FS_TRUNCATE |
-> +            LANDLOCK_ACCESS_FS_IOCTL,
->      };
->  
->  Because we may not know on which kernel version an application will be
->  executed, it is safer to follow a best-effort security approach.  Indeed, we
->  should try to protect users as much as possible whatever the kernel they are
-> -using.  To avoid binary enforcement (i.e. either all security features or
-> -none), we can leverage a dedicated Landlock command to get the current version
-> -of the Landlock ABI and adapt the handled accesses.  Let's check if we should
-> -remove the ``LANDLOCK_ACCESS_FS_REFER`` or ``LANDLOCK_ACCESS_FS_TRUNCATE``
-> -access rights, which are only supported starting with the second and third
-> -version of the ABI.
-> +using.
-> +
-> +To be compatible with older Linux versions, we detect the available Landlock ABI
-> +version, and only use the available subset of access rights:
->  
->  .. code-block:: c
->  
-> @@ -92,6 +91,9 @@ version of the ABI.
->      case 2:
->          /* Removes LANDLOCK_ACCESS_FS_TRUNCATE for ABI < 3 */
->          ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_TRUNCATE;
-> +    case 3:
-> +        /* Removes LANDLOCK_ACCESS_FS_IOCTL for ABI < 4 */
-> +        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL;
->      }
->  
->  This enables to create an inclusive ruleset that will contain our rules.
-> @@ -190,6 +192,7 @@ access rights per directory enables to change the location of such directory
->  without relying on the destination directory access rights (except those that
->  are required for this operation, see ``LANDLOCK_ACCESS_FS_REFER``
->  documentation).
-> +
->  Having self-sufficient hierarchies also helps to tighten the required access
->  rights to the minimal set of data.  This also helps avoid sinkhole directories,
->  i.e.  directories where data can be linked to but not linked from.  However,
-> @@ -283,18 +286,24 @@ It should also be noted that truncating files does not require the
->  system call, this can also be done through :manpage:`open(2)` with the flags
->  ``O_RDONLY | O_TRUNC``.
->  
-> -When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE``
-> -right is associated with the newly created file descriptor and will be used for
-> -subsequent truncation attempts using :manpage:`ftruncate(2)`.  The behavior is
-> -similar to opening a file for reading or writing, where permissions are checked
-> -during :manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
-> +The truncate right is associated with the opened file (see below).
-> +
-> +Rights associated with file descriptors
-> +---------------------------------------
-> +
-> +When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUNCATE`` and
-> +``LANDLOCK_ACCESS_FS_IOCTL`` rights is associated with the newly created file
-> +descriptor and will be used for subsequent truncation and ioctl attempts using
-> +:manpage:`ftruncate(2)` and :manpage:`ioctl(2)`.  The behavior is similar to
-> +opening a file for reading or writing, where permissions are checked during
-> +:manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` and
->  :manpage:`write(2)` calls.
->  
-> -As a consequence, it is possible to have multiple open file descriptors for the
-> -same file, where one grants the right to truncate the file and the other does
-> -not.  It is also possible to pass such file descriptors between processes,
-> -keeping their Landlock properties, even when these processes do not have an
-> -enforced Landlock ruleset.
-> +As a consequence, it is possible to have multiple open file descriptors
-> +referring to the same file, where one grants the truncate or ioctl right and the
-> +other does not.  It is also possible to pass such file descriptors between
-> +processes, keeping their Landlock properties, even when these processes do not
-> +have an enforced Landlock ruleset.
->  
->  Compatibility
->  =============
-> @@ -422,6 +431,27 @@ Memory usage
->  Kernel memory allocated to create rulesets is accounted and can be restricted
->  by the Documentation/admin-guide/cgroup-v1/memory.rst.
->  
-> +IOCTL support
-> +-------------
-> +
-> +The ``LANDLOCK_ACCESS_FS_IOCTL`` access right restricts the use of
-> +:manpage:`ioctl(2)`, but it only applies to newly opened files.  This means
-> +specifically that pre-existing file descriptors like STDIN, STDOUT and STDERR
+Ah, it's a bit trickier -- the syz_mount_image() code is fine. The
+reproducer first mounts an ext4 image via syz_mount_image(), which
+appends "errors=3Dcontinue" to the options and it doesn't lead to the
+panic. But then the reproducer does a direct mount() call for the loop
+device previously created in syz_mount_image(), this time _without_
+mount options.
 
-According to man pages (and unlike IOCTL commands) we should not
-capitalize stdin, stdout and stderr.
+I've sent https://github.com/google/syzkaller/pull/4143 to sanitize
+plain mount() calls.
 
-> +are unaffected.
-> +
-> +Users should be aware that TTY devices have traditionally permitted to control
-> +other processes on the same TTY through the ``TIOCSTI`` and ``TIOCLINUX`` IOCTL
-> +commands.  It is therefore recommended to close inherited TTY file descriptors.
-
-Good to see such warnings in the documentation.
-
-We could also propose a simple solution to still uses stdin, stdout and
-stderr without complex TTY proxying: re-opening the TTY, or replacing
-related FD thanks to /proc/self/fd/*
-
-For instance, with shell scripts it would look like this:
-exec </proc/self/fd/0
-exec >/proc/self/fd/1
-exec 2>/proc/self/fd/2
-
-Because of TIOCGWINSZ and TCGETS, an interactive shell may not work as
-expected though.
-
-> +The :manpage:`isatty(3)` function checks whether a given file descriptor is a
-> +TTY.
-> +
-> +Landlock's IOCTL support is coarse-grained at the moment, but may become more
-> +fine-grained in the future.  Until then, users are advised to establish the
-> +guarantees that they need through the file hierarchy, by only permitting the
-> +``LANDLOCK_ACCESS_FS_IOCTL`` right on files where it is really harmless.  In
-> +cases where you can control the mounts, the ``nodev`` mount option can help to
-> +rule out that device files can be accessed.
-> +
->  Previous limitations
->  ====================
->  
-> @@ -451,6 +481,16 @@ always allowed when using a kernel that only supports the first or second ABI.
->  Starting with the Landlock ABI version 3, it is now possible to securely control
->  truncation thanks to the new ``LANDLOCK_ACCESS_FS_TRUNCATE`` access right.
->  
-> +Ioctl (ABI < 4)
-> +---------------
-> +
-> +IOCTL operations could not be denied before the fourth Landlock ABI, so
-> +:manpage:`ioctl(2)` is always allowed when using a kernel that only supports an
-> +earlier ABI.
-> +
-> +Starting with the Landlock ABI version 4, it is possible to restrict the use of
-> +:manpage:`ioctl(2)` using the new ``LANDLOCK_ACCESS_FS_IOCTL`` access right.
-> +
->  .. _kernel_support:
->  
->  Kernel support
-> -- 
-> 2.41.0.694.ge786442a9b-goog
-> 
+>
+>
+> On Thu, Aug 17, 2023 at 4:45=E2=80=AFPM Theodore Ts'o <tytso@mit.edu> wro=
+te:
+> >
+> > On Thu, Aug 17, 2023 at 04:28:33PM +0200, Aleksandr Nogikh wrote:
+> > > The console log has the following line:
+> > >
+> > > [   60.708717][ T5061] Kernel panic - not syncing: EXT4-fs (device
+> > > loop0): panic forced after error
+> > >
+> > > Can we consider a "panic forced after error" line to be a reliable
+> > > indicator that syzbot must ignore the report?
+> >
+> > Yes.  And the file system image that generated this bug should be
+> > discarded, because otherwise successive mutations will generate a
+> > large number of crashes that syzbot will then need to ignore, thus
+> > consuming syzbot resources.
+> >
+> > Alternatively, you can do the moral equivalent of "tune2fs -e continue
+> > foo.img" on any mutated file system seed, which will clear the "panic
+> > on error".
+> >
+> > (The other alternative is "tune2fs -e remount-ro", but given syzbot's
+> > desire to find kernel crashes, "tune2fs -e continue" is more likely
+> > find ways in which the kernel will find itself into trouble.  Some
+> > sysadmins will want to chose "remount-ro", however, since that is more
+> > likely to limit file system damage once the file system is discovered
+> > to be corrupted.)
+> >
+> >                                         - Ted
+> >
