@@ -2,184 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 153A6780639
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 09:18:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F71E7806D2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 10:02:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358143AbjHRHR2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Aug 2023 03:17:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33000 "EHLO
+        id S1358420AbjHRICQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Aug 2023 04:02:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358168AbjHRHRK (ORCPT
+        with ESMTP id S1358426AbjHRIB7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Aug 2023 03:17:10 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98D9030E6;
-        Fri, 18 Aug 2023 00:17:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1692343026; x=1723879026;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hy9L/G7orcg7EKsXBpzuKk+u1iVyRUCiRiiWR/KGdJc=;
-  b=ad4gmbNApLfKRjeaWiqnmvu0rQeYRN1LQtOiWrN1KujaJjI7LZBSaMXn
-   fmo/Zq9JAJJsClh64urJGpkOa46H0iVVpAACIak+XLTBmyz1kYQ8lrkrU
-   AwZCJ4RBroqoOFLp2Yytkpt5xkDGhPdZlFB7kkhgiFBGiIskYEfwWRf6a
-   uaHGzB42ykNx74LXke3NNyJzoDP+zj6+JpuN+XsnOQJ4e8qo1PMDvjMKk
-   0WEG6SkwhO1/5mgNurAlJ5jzMELAv9XVXXatAFfq2C/rqnnrz+FJIJdtW
-   /HtlnpkboLRT0lE1Ll3uS4dPHjGssGFDI2suETLJ7TCkOgHiT5PFOImry
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10805"; a="404017518"
-X-IronPort-AV: E=Sophos;i="6.01,182,1684825200"; 
-   d="scan'208";a="404017518"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2023 00:16:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10805"; a="800379640"
-X-IronPort-AV: E=Sophos;i="6.01,182,1684825200"; 
-   d="scan'208";a="800379640"
-Received: from lkp-server02.sh.intel.com (HELO a9caf1a0cf30) ([10.239.97.151])
-  by fmsmga008.fm.intel.com with ESMTP; 18 Aug 2023 00:16:42 -0700
-Received: from kbuild by a9caf1a0cf30 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qWtir-0002D4-2R;
-        Fri, 18 Aug 2023 07:16:41 +0000
-Date:   Fri, 18 Aug 2023 15:16:04 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>
-Cc:     oe-kbuild-all@lists.linux.dev,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, Greg KH <greg@kroah.com>,
-        kernel@collabora.com, Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>
-Subject: Re: [PATCH v32 2/6] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-Message-ID: <202308181520.yCq9Z26w-lkp@intel.com>
-References: <20230816113049.1697849-3-usama.anjum@collabora.com>
+        Fri, 18 Aug 2023 04:01:59 -0400
+Received: from domac.alu.hr (domac.alu.unizg.hr [161.53.235.3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4FAC3A88;
+        Fri, 18 Aug 2023 01:01:56 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by domac.alu.hr (Postfix) with ESMTP id 367D960174;
+        Fri, 18 Aug 2023 10:01:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
+        t=1692345714; bh=DWq7plNSMacckvuYD0EBljYEhY22+nbVDzFU4EVun7s=;
+        h=Date:Cc:From:To:Subject:From;
+        b=wdTh7dwi4lDeRAbtT33oQfk6XRfo7AOV0XmvkUQfQedOd+NujNL4fq0dJfSA8TDWw
+         /CfXzeqTZy8XB9HRk+WROh6KnaWf5GGCLdkB6/Tx2broeYEUXmC6LK4MJ2HWUYmrbK
+         Vgw6f8pGGQPHo5uMKJyNqWUe1Zb//EJoElPc7WmQ1nNIuEhbWz5wklx5E5+AfSenMa
+         GhVT3v+u4LP+TDWAOoGJo11Ww5guXuQB9oW+ohyAwYkA3vnr8Lr5SVpXmo21MBhnbl
+         qCjmU52/3yV297+/aZkV5h+nDxDhqz6La7SXyD9P1BHT9m9ia5YvckbCth31i3l5Gp
+         J47PBQyJ6yLOA==
+X-Virus-Scanned: Debian amavisd-new at domac.alu.hr
+Received: from domac.alu.hr ([127.0.0.1])
+        by localhost (domac.alu.hr [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id wlmvasoMhgJm; Fri, 18 Aug 2023 10:01:50 +0200 (CEST)
+Received: from [192.168.1.6] (unknown [94.250.191.183])
+        by domac.alu.hr (Postfix) with ESMTPSA id 8D4146015E;
+        Fri, 18 Aug 2023 10:01:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
+        t=1692345710; bh=DWq7plNSMacckvuYD0EBljYEhY22+nbVDzFU4EVun7s=;
+        h=Date:Cc:From:To:Subject:From;
+        b=u6wmw2rBUyxwKVF6DNSG70LeBO1ws16S8+xnrn2oDuQBa2HBkb5a5gB7N730Hs3mK
+         vpp1Yq/F888GS96AuvLptYMT8H8ZXIBe++HaYROky3s0wAy9GyOf38H1zhBbMV/Xax
+         qpv33E8j6B/FDs1+EB2HigKdsMNpA7PQTpPLOiPaAjpyelkfwZ5uCCZJtbEQzNm9ty
+         E7dzOrhUi2p9xmf1eyBgQVEIZPaDKJRf65wCKj8sJIb/zym/1FJ797gwk21d67nth0
+         N3EvwaMf0HxXsGs1rcglIahdOFD8eZXHqjvoTnXRNnn+K4J+Iya00nhYYThdKKlEIb
+         pfU+DiAC1l2Dw==
+Message-ID: <06645d2b-a964-1c4c-15cf-42ccc6c6e19b@alu.unizg.hr>
+Date:   Fri, 18 Aug 2023 10:01:32 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230816113049.1697849-3-usama.anjum@collabora.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Content-Language: en-US
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+From:   Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>
+To:     linux-kernel@vger.kernel.org
+Subject: [BUG] KCSAN: data-race in xas_clear_mark / xas_find_marked
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Muhammad,
+Hi,
 
-kernel test robot noticed the following build errors:
+This is your friendly bug reporter.
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on next-20230817]
-[cannot apply to linus/master v6.5-rc6]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I have found this KCSAN reported bug on a torvalds tree kernel 6.5-rc6, on an Ubuntu 22.04 LTS system and
+a Ryzen 9 7950X assembled box.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Muhammad-Usama-Anjum/userfaultfd-UFFD_FEATURE_WP_ASYNC/20230816-193454
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20230816113049.1697849-3-usama.anjum%40collabora.com
-patch subject: [PATCH v32 2/6] fs/proc/task_mmu: Implement IOCTL to get and optionally clear info about PTEs
-config: arc-allyesconfig (https://download.01.org/0day-ci/archive/20230818/202308181520.yCq9Z26w-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 12.3.0
-reproduce: (https://download.01.org/0day-ci/archive/20230818/202308181520.yCq9Z26w-lkp@intel.com/reproduce)
+So, the kernel is reported to be tainted, but I reckon it the taint comes from a previous KCSAN detection,
+not from a loaded proprietary module.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202308181520.yCq9Z26w-lkp@intel.com/
+Excert from dmesg log:
 
-All errors (new ones prefixed by >>):
+[  206.510010] ==================================================================
+[  206.510035] BUG: KCSAN: data-race in xas_clear_mark / xas_find_marked
 
-   fs/proc/task_mmu.c: In function 'pagemap_scan_thp_entry':
->> fs/proc/task_mmu.c:2077:28: error: 'HPAGE_SIZE' undeclared (first use in this function); did you mean 'PAGE_SIZE'?
-    2077 |         if (end != start + HPAGE_SIZE) {
-         |                            ^~~~~~~~~~
-         |                            PAGE_SIZE
-   fs/proc/task_mmu.c:2077:28: note: each undeclared identifier is reported only once for each function it appears in
+[  206.510067] write to 0xffff963df6a90fe0 of 8 bytes by interrupt on cpu 22:
+[  206.510081]  xas_clear_mark+0xd5/0x180
+[  206.510097]  __xa_clear_mark+0xd1/0x100
+[  206.510114]  __folio_end_writeback+0x293/0x5a0
+[  206.510128]  folio_end_writeback+0x60/0x170
+[  206.510143]  end_page_writeback+0x2a/0xb0
+[  206.510155]  btrfs_page_clear_writeback+0xbe/0xe0 [btrfs]
+[  206.510994]  end_bio_extent_writepage+0x103/0x310 [btrfs]
+[  206.511817]  __btrfs_bio_end_io+0x9b/0xc0 [btrfs]
+[  206.512640]  btrfs_orig_bbio_end_io+0x70/0x170 [btrfs]
+[  206.513497]  btrfs_simple_end_io+0x122/0x170 [btrfs]
+[  206.514350]  bio_endio+0x2c4/0x2f0
+[  206.514362]  blk_mq_end_request_batch+0x238/0x9b0
+[  206.514377]  nvme_pci_complete_batch+0x38/0x1a0 [nvme]
+[  206.514437]  nvme_irq+0xa0/0xb0 [nvme]
+[  206.514500]  __handle_irq_event_percpu+0x7c/0x290
+[  206.514517]  handle_irq_event+0x7c/0x100
+[  206.514533]  handle_edge_irq+0x13d/0x450
+[  206.514549]  __common_interrupt+0x4f/0x110
+[  206.514563]  common_interrupt+0x9f/0xb0
+[  206.514583]  asm_common_interrupt+0x27/0x40
+[  206.514599]  kcsan_setup_watchpoint+0x274/0x3f0
+[  206.514612]  __tsan_read8+0x11c/0x180
+[  206.514626]  steal_from_bitmap.part.0+0x29f/0x410 [btrfs]
+[  206.515491]  __btrfs_add_free_space+0x1b4/0x850 [btrfs]
+[  206.516361]  btrfs_add_free_space_async_trimmed+0x62/0xa0 [btrfs]
+[  206.517231]  add_new_free_space+0x127/0x160 [btrfs]
+[  206.518095]  load_free_space_tree+0x552/0x680 [btrfs]
+[  206.518953]  caching_thread+0x923/0xba0 [btrfs]
+[  206.519800]  btrfs_work_helper+0xfa/0x620 [btrfs]
+[  206.520643]  process_one_work+0x525/0x930
+[  206.520658]  worker_thread+0x311/0x7e0
+[  206.520672]  kthread+0x18b/0x1d0
+[  206.520684]  ret_from_fork+0x43/0x70
+[  206.520701]  ret_from_fork_asm+0x1b/0x30
 
+[  206.520722] read to 0xffff963df6a90fe0 of 8 bytes by task 2793 on cpu 6:
+[  206.520735]  xas_find_marked+0xe5/0x600
+[  206.520750]  filemap_get_folios_tag+0xf9/0x3d0
+[  206.520763]  __filemap_fdatawait_range+0xa1/0x180
+[  206.520777]  filemap_fdatawait_range+0x13/0x30
+[  206.520790]  btrfs_wait_ordered_range+0x86/0x180 [btrfs]
+[  206.521641]  btrfs_sync_file+0x36e/0xa80 [btrfs]
+[  206.522495]  vfs_fsync_range+0x70/0x120
+[  206.522509]  __x64_sys_fsync+0x44/0x80
+[  206.522522]  do_syscall_64+0x58/0x90
+[  206.522535]  entry_SYSCALL_64_after_hwframe+0x73/0xdd
 
-vim +2077 fs/proc/task_mmu.c
+[  206.522557] value changed: 0xfffffffffff80000 -> 0xfffffffffff00000
 
-  2044	
-  2045	static int pagemap_scan_thp_entry(pmd_t *pmd, unsigned long start,
-  2046					  unsigned long end, struct mm_walk *walk)
-  2047	{
-  2048	#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-  2049		struct pagemap_scan_private *p = walk->private;
-  2050		struct vm_area_struct *vma = walk->vma;
-  2051		unsigned long categories;
-  2052		spinlock_t *ptl;
-  2053		int ret = 0;
-  2054	
-  2055		ptl = pmd_trans_huge_lock(pmd, vma);
-  2056		if (!ptl)
-  2057			return -ENOENT;
-  2058	
-  2059		categories = p->cur_vma_category | pagemap_thp_category(*pmd);
-  2060	
-  2061		if (!pagemap_scan_is_interesting_page(categories, p))
-  2062			goto out_unlock;
-  2063	
-  2064		ret = pagemap_scan_output(categories, p, start, &end);
-  2065		if (start == end)
-  2066			goto out_unlock;
-  2067	
-  2068		if (~p->arg.flags & PM_SCAN_WP_MATCHING)
-  2069			goto out_unlock;
-  2070		if (~categories & PAGE_IS_WRITTEN)
-  2071			goto out_unlock;
-  2072	
-  2073		/*
-  2074		 * Break huge page into small pages if the WP operation
-  2075		 * needs to be performed on a portion of the huge page.
-  2076		 */
-> 2077		if (end != start + HPAGE_SIZE) {
-  2078			spin_unlock(ptl);
-  2079			split_huge_pmd(vma, pmd, start);
-  2080			pagemap_scan_backout_range(p, start, end);
-  2081			/* Report as if there was no THP */
-  2082			return -ENOENT;
-  2083		}
-  2084	
-  2085		make_uffd_wp_pmd(vma, start, pmd);
-  2086		flush_tlb_range(vma, start, end);
-  2087	out_unlock:
-  2088		spin_unlock(ptl);
-  2089		return ret;
-  2090	#else /* !CONFIG_TRANSPARENT_HUGEPAGE */
-  2091		return -ENOENT;
-  2092	#endif
-  2093	}
-  2094	
+[  206.522574] Reported by Kernel Concurrency Sanitizer on:
+[  206.522585] CPU: 6 PID: 2793 Comm: tracker-extract Tainted: G             L     6.5.0-rc6+ #44
+[  206.522600] Hardware name: ASRock X670E PG Lightning/X670E PG Lightning, BIOS 1.21 04/26/2023
+[  206.522608] ==================================================================
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Unwound:
+
+[  206.510010] ==================================================================
+[  206.510035] BUG: KCSAN: data-race in xas_clear_mark / xas_find_marked
+
+[  206.510067] write to 0xffff963df6a90fe0 of 8 bytes by interrupt on cpu 22:
+[  206.510081] xas_clear_mark (./arch/x86/include/asm/bitops.h:178 ./include/asm-generic/bitops/instrumented-non-atomic.h:115 lib/xarray.c:102 lib/xarray.c:914)
+[  206.510097] __xa_clear_mark (lib/xarray.c:1923)
+[  206.510114] __folio_end_writeback (mm/page-writeback.c:2981)
+[  206.510128] folio_end_writeback (mm/filemap.c:1616)
+[  206.510143] end_page_writeback (mm/folio-compat.c:28)
+[  206.510155] btrfs_page_clear_writeback (fs/btrfs/subpage.c:646) btrfs
+[  206.510994] end_bio_extent_writepage (./include/linux/bio.h:84 fs/btrfs/extent_io.c:542) btrfs
+[  206.511817] __btrfs_bio_end_io (fs/btrfs/bio.c:117 fs/btrfs/bio.c:112) btrfs
+[  206.512640] btrfs_orig_bbio_end_io (fs/btrfs/bio.c:164) btrfs
+[  206.513497] btrfs_simple_end_io (fs/btrfs/bio.c:380) btrfs
+[  206.514350] bio_endio (block/bio.c:1617)
+[  206.514362] blk_mq_end_request_batch (block/blk-mq.c:837 block/blk-mq.c:1073)
+[  206.514377] nvme_pci_complete_batch (drivers/nvme/host/pci.c:986) nvme
+[  206.514437] nvme_irq (drivers/nvme/host/pci.c:1086) nvme
+[  206.514500] __handle_irq_event_percpu (kernel/irq/handle.c:158)
+[  206.514517] handle_irq_event (kernel/irq/handle.c:195 kernel/irq/handle.c:210)
+[  206.514533] handle_edge_irq (kernel/irq/chip.c:836)
+[  206.514549] __common_interrupt (./include/linux/irqdesc.h:161 arch/x86/kernel/irq.c:238 arch/x86/kernel/irq.c:257)
+[  206.514563] common_interrupt (arch/x86/kernel/irq.c:247 (discriminator 14))
+[  206.514583] asm_common_interrupt (./arch/x86/include/asm/idtentry.h:636)
+[  206.514599] kcsan_setup_watchpoint (kernel/kcsan/core.c:705 (discriminator 1))
+[  206.514612] __tsan_read8 (kernel/kcsan/core.c:1025)
+[  206.514626] steal_from_bitmap.part.0 (./include/linux/find.h:186 fs/btrfs/free-space-cache.c:2557 fs/btrfs/free-space-cache.c:2613) btrfs
+[  206.515491] __btrfs_add_free_space (fs/btrfs/free-space-cache.c:2689 fs/btrfs/free-space-cache.c:2667) btrfs
+[  206.516361] btrfs_add_free_space_async_trimmed (fs/btrfs/free-space-cache.c:2798) btrfs
+[  206.517231] add_new_free_space (fs/btrfs/block-group.c:550) btrfs
+[  206.518095] load_free_space_tree (fs/btrfs/free-space-tree.c:1595 fs/btrfs/free-space-tree.c:1658) btrfs
+[  206.518953] caching_thread (fs/btrfs/block-group.c:873) btrfs
+[  206.519800] btrfs_work_helper (fs/btrfs/async-thread.c:314) btrfs
+[  206.520643] process_one_work (kernel/workqueue.c:2600)
+[  206.520658] worker_thread (./include/linux/list.h:292 kernel/workqueue.c:2752)
+[  206.520672] kthread (kernel/kthread.c:389)
+[  206.520684] ret_from_fork (arch/x86/kernel/process.c:145)
+[  206.520701] ret_from_fork_asm (arch/x86/entry/entry_64.S:312)
+
+[  206.520722] read to 0xffff963df6a90fe0 of 8 bytes by task 2793 on cpu 6:
+[  206.520735] xas_find_marked (./include/linux/xarray.h:1706 lib/xarray.c:1354)
+[  206.520750] filemap_get_folios_tag (mm/filemap.c:1975 mm/filemap.c:2273)
+[  206.520763] __filemap_fdatawait_range (mm/filemap.c:519)
+[  206.520777] filemap_fdatawait_range (mm/filemap.c:556)
+[  206.520790] btrfs_wait_ordered_range (fs/btrfs/ordered-data.c:839) btrfs
+[  206.521641] btrfs_sync_file (fs/btrfs/file.c:1859) btrfs
+[  206.522495] vfs_fsync_range (fs/sync.c:188)
+[  206.522509] __x64_sys_fsync (./include/linux/file.h:45 fs/sync.c:213 fs/sync.c:220 fs/sync.c:218 fs/sync.c:218)
+[  206.522522] do_syscall_64 (arch/x86/entry/common.c:50 arch/x86/entry/common.c:80)
+[  206.522535] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:120)
+
+[  206.522557] value changed: 0xfffffffffff80000 -> 0xfffffffffff00000
+
+[  206.522574] Reported by Kernel Concurrency Sanitizer on:
+[  206.522585] CPU: 6 PID: 2793 Comm: tracker-extract Tainted: G             L     6.5.0-rc6+ #44
+[  206.522600] Hardware name: ASRock X670E PG Lightning/X670E PG Lightning, BIOS 1.21 04/26/2023
+[  206.522608] ==================================================================
+
+Best regards,
+Mirsad Todorovac
