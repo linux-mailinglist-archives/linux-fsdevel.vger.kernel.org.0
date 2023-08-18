@@ -2,171 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 19E4C781436
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 22:16:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4B9D78147E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 23:01:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379951AbjHRUP7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Aug 2023 16:15:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47628 "EHLO
+        id S232923AbjHRVAf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Aug 2023 17:00:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379968AbjHRUP1 (ORCPT
+        with ESMTP id S234603AbjHRVAY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Aug 2023 16:15:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D60B41BD4;
-        Fri, 18 Aug 2023 13:15:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 42CC860DB6;
-        Fri, 18 Aug 2023 20:15:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4FBFC433C7;
-        Fri, 18 Aug 2023 20:15:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692389724;
-        bh=WCt+HTyPqpQoM8uuU7vN+x57RA6ZJu12mqg0CzvfAKw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UWpnqpi65SH3/qdqWBn6Zd1Ci2gAJDST/B3oTk2b0QqR4KzLEHujl/2sXAp34aaQz
-         rYf/Hxv4pGdxI4XtXA71/BlwdSjOlALBF8+7Nh/txVG1Pr0etLTfoxWGUJ+zGSMQ13
-         12qmiSM3fn6coLaVe6HKubfVBJb5Z/QsLDUtopgpRJBemR/BlWB0eyjCHm7pxUeA6y
-         yvGiBvlRhhmOnJmtqJKBgyLZHzlJhtJfhzvqoLPqNP+U1RPimemgLmIq2et3p1jWan
-         qRLwKdKD5hl3mrqoXMp+UCe8E/WSmGnN+WQpVc/+3X3jhGCfNqyeGGCMUIAzmPI1DF
-         i74Qa8ekO6c+g==
-Date:   Fri, 18 Aug 2023 21:15:15 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-        Deepak Gupta <debug@rivosinc.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 19/36] arm64/gcs: Allocate a new GCS for threads with
- GCS enabled
-Message-ID: <3a01ce20-3365-421b-95ff-211946808174@sirena.org.uk>
-References: <20230807-arm64-gcs-v4-0-68cfa37f9069@kernel.org>
- <20230807-arm64-gcs-v4-19-68cfa37f9069@kernel.org>
- <ZNZhG/4rBpTenYVH@arm.com>
+        Fri, 18 Aug 2023 17:00:24 -0400
+Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 591AC4214;
+        Fri, 18 Aug 2023 14:00:23 -0700 (PDT)
+Received: from in01.mta.xmission.com ([166.70.13.51]:45472)
+        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1qX6Zw-005O8N-KN; Fri, 18 Aug 2023 15:00:20 -0600
+Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:50332 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1qX6Zt-00540T-Ve; Fri, 18 Aug 2023 15:00:20 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Mateusz Guzik <mjguzik@gmail.com>
+Cc:     syzbot <syzbot+6ec38f7a8db3b3fb1002@syzkaller.appspotmail.com>,
+        anton@tuxera.com, brauner@kernel.org, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-ntfs-dev@lists.sourceforge.net,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <000000000000c74d44060334d476@google.com>
+        <87o7j471v8.fsf@email.froward.int.ebiederm.org>
+        <20230818173625.by6bud4u7uz2k4be@f>
+Date:   Fri, 18 Aug 2023 15:59:39 -0500
+In-Reply-To: <20230818173625.by6bud4u7uz2k4be@f> (Mateusz Guzik's message of
+        "Fri, 18 Aug 2023 19:36:25 +0200")
+Message-ID: <87a5uo6p8k.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="45mwPxvFeqYyCSA9"
-Content-Disposition: inline
-In-Reply-To: <ZNZhG/4rBpTenYVH@arm.com>
-X-Cookie: Your aim is high and to the right.
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-XM-SPF: eid=1qX6Zt-00540T-Ve;;;mid=<87a5uo6p8k.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1/ofGYnSpXkgEFr1C7tIJqjxck0R7gNKbE=
+X-SA-Exim-Connect-IP: 68.227.168.167
+X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Mateusz Guzik <mjguzik@gmail.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1993 ms - load_scoreonly_sql: 0.09 (0.0%),
+        signal_user_changed: 17 (0.8%), b_tie_ro: 14 (0.7%), parse: 1.78
+        (0.1%), extract_message_metadata: 26 (1.3%), get_uri_detail_list: 1.51
+        (0.1%), tests_pri_-2000: 15 (0.7%), tests_pri_-1000: 2.8 (0.1%),
+        tests_pri_-950: 1.54 (0.1%), tests_pri_-900: 1.56 (0.1%),
+        tests_pri_-200: 1.30 (0.1%), tests_pri_-100: 5 (0.3%), tests_pri_-90:
+        1583 (79.5%), check_bayes: 1576 (79.1%), b_tokenize: 7 (0.4%),
+        b_tok_get_all: 8 (0.4%), b_comp_prob: 3.2 (0.2%), b_tok_touch_all:
+        1552 (77.9%), b_finish: 1.15 (0.1%), tests_pri_0: 310 (15.6%),
+        check_dkim_signature: 0.66 (0.0%), check_dkim_adsp: 31 (1.6%),
+        poll_dns_idle: 29 (1.4%), tests_pri_10: 2.7 (0.1%), tests_pri_500: 18
+        (0.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [syzbot] [ntfs?] WARNING in do_open_execat
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Mateusz Guzik <mjguzik@gmail.com> writes:
 
---45mwPxvFeqYyCSA9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Fri, Aug 18, 2023 at 11:26:51AM -0500, Eric W. Biederman wrote:
+>> syzbot <syzbot+6ec38f7a8db3b3fb1002@syzkaller.appspotmail.com> writes:
+>> 
+>> > Hello,
+>> >
+>> > syzbot found the following issue on:
+>> 
+>> Not an issue.
+>> Nothing to do with ntfs.
+>> 
+>> The code is working as designed and intended.
+>> 
+>> syzbot generated a malformed exec and the kernel made it
+>> well formed and warned about it.
+>> 
+>
+> There is definitely an issue here.
+>
+> The warn on comes from:
+>         /*
+>          * may_open() has already checked for this, so it should be
+>          * impossible to trip now. But we need to be extra cautious
+>          * and check again at the very end too.
+>          */
+>         err = -EACCES;
+>         if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
+>                          path_noexec(&file->f_path)))
+>                 goto exit;
+>
+> Where path_noexec is:
+>         return (path->mnt->mnt_flags & MNT_NOEXEC) ||
+>                (path->mnt->mnt_sb->s_iflags & SB_I_NOEXEC);
 
-On Fri, Aug 11, 2023 at 05:26:03PM +0100, Catalin Marinas wrote:
-> On Mon, Aug 07, 2023 at 11:00:24PM +0100, Mark Brown wrote:
+My confusion.
 
-> > +	mmap_write_lock(mm);
-> > +	mapped_addr = do_mmap(NULL, addr, size, PROT_READ, flags,
-> > +			      VM_SHADOW_STACK | VM_WRITE, 0, &unused, NULL);
+I was seeing the message from
+	if (retval == 0)
+		pr_warn_once("process '%s' launched '%s' with NULL argv: empty string added\n",
+			     current->comm, bprm->filename);
 
-> Why not PROT_WRITE as well? I guess I need to check the x86 patches
-> since the do_mmap() called here has a different prototype than what's in
-> mainline.
+I made the mistake of assuming that that was generating the backtrace.
+The lack of args to execveat appears to be working fine.
 
-> This gets confusing since currently the VM_* flags are derived from the
-> PROT_* flags passed to mmap(). But you skip the PROT_WRITE in favour of
-> adding VM_WRITE directly.
+I see you tracked this down to a non-exhaustive check in may_open.
+Apologies for the noise.
 
-I have to confess that I inherited this from the x86 code and never
-thought too hard about it.  I've got a horrible feeling the reasoning is
-simply the way in which x86 fits shadow stack into the page tables
-without having a mechanism like permission indirection, these don't
-apply for us.
-
-> I haven't followed the x86 discussion but did we run out of PROT_* bits
-> for a PROT_SHADOW_STACK?
-
-It's more that there are security concerns with having PROT_, especially
-in conjunction with needing to provide a token for stack pivot - we not
-only need to map pages for the GCS, we also need to write a cap token
-into it so that we can pivot to the new stack.  If the GCS can ever be
-written to by userspace via normal means then that's an issue for the
-basic protection model that the feature is trying to implement.  If we
-have the PROT_ but try to check for bad uses of it that makes everything
-messy and complicated which is especially non-ideal for a feature with a
-security focus.  Having a more packaged system call is easier for
-everyone.
-
-More detail in the x86 patch that's currently in -next:
-
-   https://lore.kernel.org/all/20230319001535.23210-34-rick.p.edgecombe@intel.com/
-
-> > +	/* Allocate RLIMIT_STACK with limits of PAGE_SIZE..4G */
-> > +	size = PAGE_ALIGN(min_t(unsigned long long,
-> > +				rlimit(RLIMIT_STACK), SZ_4G));
-> > +	return max(PAGE_SIZE, size);
-> > +}
-
-> I saw Szabolcs commenting on the default size as well. Maybe we should
-> go for RLIMIT_STACK/2 but let's see how the other sub-thread is going.
-
-I've updated it.
-
-> > +	if ((clone_flags & (CLONE_VFORK | CLONE_VM)) != CLONE_VM)
-> > +		return 0;
-
-> Is it safe for CLONE_VFORK not to get a new shadow stack? A syscall for
-> exec could push something to the stack. I guess the GCS pointer in the
-> parent stays the same, so it wouldn't matter.
-
-Yes, pushing should be fine just as for the regular stack.
-
-> That said, I think this check should be somewhere higher up in the
-> caller of gcs_alloc_thread_stack(). The copy_thread_gcs() function
-> already does most of the above checks. Is the GCS allocation called from
-> elsewhere as well?
-
-That's the only place.  I've moved the above check into copy_thread_gcs(),
-you're right that the other checks are redundant as they're done in the
-caller already.
-
---45mwPxvFeqYyCSA9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmTf0VIACgkQJNaLcl1U
-h9AK7Af8DxBPnoklDhEt6uL9Qzwyg5iHuvMMz45iQs74RTv9fEM/vR1B1L0U0vxL
-LjcRxv98KB+GM2DQ+YOoQK84V2okcpKSNu9l/0CY+hvT8JChP5Ljn/b3azVF3FGY
-QYftbzRipJONW9pKxIZ7Svx8+iZIg03PmcwJTtLRsi36gyykxlFbYhzZm/0VbWH6
-HDuDWH8yMX1/BQGizf3FM7CxbBmhcI/zzi2eUslQ3EPOoSKywy4JXRc49XAvrxbT
-Bu8EbBX7Oapi96h+KlZEAWSiTuD4plJ6pJQsjMdMcELiI//3sTIzNRNqmFxBIgWS
-O2Sp933Ku1aQm9TW9TcOY3MVq5dYiQ==
-=X4OS
------END PGP SIGNATURE-----
-
---45mwPxvFeqYyCSA9--
+Eric
