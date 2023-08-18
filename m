@@ -2,273 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 38CBA7808D0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 11:41:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E45AF780919
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 11:56:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359343AbjHRJkj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Aug 2023 05:40:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42086 "EHLO
+        id S1359447AbjHRJ4W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Aug 2023 05:56:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359490AbjHRJka (ORCPT
+        with ESMTP id S1359439AbjHRJz6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Aug 2023 05:40:30 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74A2B26A5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Aug 2023 02:40:05 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id 41be03b00d2f7-565e54cb93aso486451a12.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Aug 2023 02:40:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1692351605; x=1692956405;
-        h=content-transfer-encoding:in-reply-to:from:references:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4wdQzST43/YR9G4a+4189fYlBvDwxb+VSYYfxMLNAKQ=;
-        b=SOWjBTjalNORHHZKvzGHsM3e0FrM/OqDNxtFK/uL+5nzyqhsD6NLaufr46k4Y8QxIQ
-         zgK1jghWZBqZAIRyB5J3byn68BKAsvF7YaHHX8tOhVyu+hdemHkxaChLroYdldZp/YS2
-         DcmB/R7dnzLOjNH6fy3dFipxatNmM/4i1YG3lcIQTGJFYI+PUAi2T3yjKJVMIFo3XukF
-         nqKyYmF6D8w6Ou0cNkW8MEa6l6XSlStkCd2ZBORIdndSHFz77BpMHD0OV3b6FmFR8rqG
-         l2YmqJGp9+OCrGY5qpxOdec04Q1h6we9OYwSfIJK8uS5rpnFXb/2w5XnJlR4CLX4Mdmu
-         tDjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692351605; x=1692956405;
-        h=content-transfer-encoding:in-reply-to:from:references:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4wdQzST43/YR9G4a+4189fYlBvDwxb+VSYYfxMLNAKQ=;
-        b=fdjUk18Mv45h15x57MdY9vXUq7PdwR9jtPCEkbZ1IhpMC00bT665syPTfi/GIuYWRb
-         yLx48j/+fCnRAzVFkjntXZFKlmig++2wbxBUH1LYcBT/YsZqnp46Rrrn4YMr8Qsf59Ry
-         RdtI7U7gVm/xm06OSRCak4kQ8ikUF+zBWyNHZgrk12GtLvYlG6hS5dhiAi7dKNZLrk/w
-         62p2LfBgNuy6Ah/PxcLvhH4yzjnCHH/bDBy/qOZMbFnJApUqXQwbUDvPqXun8eAtPIQ3
-         kErBXBI0KB21QMPvNncICm0ohwNF0dS4pmDMjVBLH/801XmTZsMAh3g4wx+nZF/QN2om
-         HR5A==
-X-Gm-Message-State: AOJu0YwEqyjwzxp5mt8YHQmUnsr7XHylQds9XQC2Mi4TT+sC/ceefkoQ
-        uulnhFsz3y70z26x0c8Up4u3Hg==
-X-Google-Smtp-Source: AGHT+IEEgnW6TEQSEWSujD0tsFa+B/Q9tAV7ezMC0E7moN24gpezliNgu9s2GVwQQGX0a8dFdnkB5Q==
-X-Received: by 2002:a05:6a20:9384:b0:12f:dce2:b385 with SMTP id x4-20020a056a20938400b0012fdce2b385mr2823148pzh.10.1692351604800;
-        Fri, 18 Aug 2023 02:40:04 -0700 (PDT)
-Received: from [10.254.252.111] ([139.177.225.249])
-        by smtp.gmail.com with ESMTPSA id 11-20020aa7910b000000b0067acbc74977sm1169971pfh.96.2023.08.18.02.39.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Aug 2023 02:40:04 -0700 (PDT)
-Message-ID: <51cc7e0c-2fb3-1c40-4cd2-bad15737d616@bytedance.com>
-Date:   Fri, 18 Aug 2023 17:39:53 +0800
+        Fri, 18 Aug 2023 05:55:58 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B8A130DC;
+        Fri, 18 Aug 2023 02:55:51 -0700 (PDT)
+Received: from [192.168.100.7] (unknown [39.34.185.42])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 33CE8660723E;
+        Fri, 18 Aug 2023 10:55:41 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1692352549;
+        bh=jSm113VK4O5di5c9amVgQ+0TBD3Pa6bZ1kfgpxOAP9M=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=UkcqyLrBG7zmA6SoRIwPH7RykRwITDLpCgmJzIMdpZSSGhWDnrqRYMckR2Ls97+1O
+         0KztY/htn/6tBVPKzD01airJtHNIkqolcF/lC4qxZdCcCIz0gKOCCLv2FjRpMskBkk
+         UeZiPrsN3/kUd9pD3jXw+oIN5b/NJFtUmtohzW+ITtuPbs7qXaJx5LSdvXHazL9IEL
+         kvf1bfULa2BqMZenCP6KxI8mWcvO8ZeR4dqMraAPw/0NXKm2QCqvYCXIoJygu4Usld
+         p15w4ECqknF0FBilW+t7TgLKsYAPiwMeekZe3NUEtFlJ2WI1ff5f7dfE/Z3k+L9w7X
+         Y3wx4Hg2pc+OA==
+Message-ID: <ea2af063-67da-137b-1dc4-bace40568187@collabora.com>
+Date:   Fri, 18 Aug 2023 14:55:36 +0500
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.14.0
-Subject: Re: [PATCH 06/11] maple_tree: Introduce mas_replace_entry() to
- directly replace an entry
-To:     "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
-        Peng Zhang <zhangpeng.00@bytedance.com>, avagin@gmail.com,
-        npiggin@gmail.com, mathieu.desnoyers@efficios.com,
-        peterz@infradead.org, michael.christie@oracle.com,
-        surenb@google.com, brauner@kernel.org, willy@infradead.org,
-        akpm@linux-foundation.org, corbet@lwn.net,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        oe-kbuild-all@lists.linux.dev,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org
-References: <20230726080916.17454-1-zhangpeng.00@bytedance.com>
- <20230726080916.17454-7-zhangpeng.00@bytedance.com>
- <20230726160843.hpl4razxiikqbuxy@revolver>
- <20aab1af-c183-db94-90d7-5e5425e3fd80@bytedance.com>
- <20230731164854.vbndc2z2mqpw53in@revolver>
- <6babc4c1-0f0f-f0b1-1d45-311448af8d70@bytedance.com>
- <20230816174017.4imcdnktvyoqcxw6@revolver>
-From:   Peng Zhang <zhangpeng.00@bytedance.com>
-In-Reply-To: <20230816174017.4imcdnktvyoqcxw6@revolver>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        linux-kselftest@vger.kernel.org, Greg KH <greg@kroah.com>,
+        kernel@collabora.com, Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>
+Subject: Re: [PATCH v32 2/6] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+To:     kernel test robot <lkp@intel.com>, Peter Xu <peterx@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WC?= =?UTF-8?Q?aw?= 
+        <emmir@google.com>, Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>
+References: <20230816113049.1697849-3-usama.anjum@collabora.com>
+ <202308181520.yCq9Z26w-lkp@intel.com>
+Content-Language: en-US
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <202308181520.yCq9Z26w-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 8/18/23 12:16 PM, kernel test robot wrote:
+> Hi Muhammad,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on akpm-mm/mm-everything]
+> [also build test ERROR on next-20230817]
+> [cannot apply to linus/master v6.5-rc6]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Muhammad-Usama-Anjum/userfaultfd-UFFD_FEATURE_WP_ASYNC/20230816-193454
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+> patch link:    https://lore.kernel.org/r/20230816113049.1697849-3-usama.anjum%40collabora.com
+> patch subject: [PATCH v32 2/6] fs/proc/task_mmu: Implement IOCTL to get and optionally clear info about PTEs
+> config: arc-allyesconfig (https://download.01.org/0day-ci/archive/20230818/202308181520.yCq9Z26w-lkp@intel.com/config)
+> compiler: arceb-elf-gcc (GCC) 12.3.0
+> reproduce: (https://download.01.org/0day-ci/archive/20230818/202308181520.yCq9Z26w-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202308181520.yCq9Z26w-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    fs/proc/task_mmu.c: In function 'pagemap_scan_thp_entry':
+>>> fs/proc/task_mmu.c:2077:28: error: 'HPAGE_SIZE' undeclared (first use in this function); did you mean 'PAGE_SIZE'?
+>     2077 |         if (end != start + HPAGE_SIZE) {
+>          |                            ^~~~~~~~~~
+>          |                            PAGE_SIZE
+I've been emailing arc maintainers for resolution of this error from April,
+but nobody replies there:
+https://lore.kernel.org/all/0e6b318a-bbf8-3701-00af-1802c6347897@collabora.com
 
+>    fs/proc/task_mmu.c:2077:28: note: each undeclared identifier is reported only once for each function it appears in
+> 
+> 
+> vim +2077 fs/proc/task_mmu.c
+> 
+>   2044	
+>   2045	static int pagemap_scan_thp_entry(pmd_t *pmd, unsigned long start,
+>   2046					  unsigned long end, struct mm_walk *walk)
+>   2047	{
+>   2048	#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>   2049		struct pagemap_scan_private *p = walk->private;
+>   2050		struct vm_area_struct *vma = walk->vma;
+>   2051		unsigned long categories;
+>   2052		spinlock_t *ptl;
+>   2053		int ret = 0;
+>   2054	
+>   2055		ptl = pmd_trans_huge_lock(pmd, vma);
+>   2056		if (!ptl)
+>   2057			return -ENOENT;
+>   2058	
+>   2059		categories = p->cur_vma_category | pagemap_thp_category(*pmd);
+>   2060	
+>   2061		if (!pagemap_scan_is_interesting_page(categories, p))
+>   2062			goto out_unlock;
+>   2063	
+>   2064		ret = pagemap_scan_output(categories, p, start, &end);
+>   2065		if (start == end)
+>   2066			goto out_unlock;
+>   2067	
+>   2068		if (~p->arg.flags & PM_SCAN_WP_MATCHING)
+>   2069			goto out_unlock;
+>   2070		if (~categories & PAGE_IS_WRITTEN)
+>   2071			goto out_unlock;
+>   2072	
+>   2073		/*
+>   2074		 * Break huge page into small pages if the WP operation
+>   2075		 * needs to be performed on a portion of the huge page.
+>   2076		 */
+>> 2077		if (end != start + HPAGE_SIZE) {
+>   2078			spin_unlock(ptl);
+>   2079			split_huge_pmd(vma, pmd, start);
+>   2080			pagemap_scan_backout_range(p, start, end);
+>   2081			/* Report as if there was no THP */
+>   2082			return -ENOENT;
+>   2083		}
+>   2084	
+>   2085		make_uffd_wp_pmd(vma, start, pmd);
+>   2086		flush_tlb_range(vma, start, end);
+>   2087	out_unlock:
+>   2088		spin_unlock(ptl);
+>   2089		return ret;
+>   2090	#else /* !CONFIG_TRANSPARENT_HUGEPAGE */
+>   2091		return -ENOENT;
+>   2092	#endif
+>   2093	}
+>   2094	
+> 
 
-在 2023/8/17 01:40, Liam R. Howlett 写道:
-> * Peng Zhang <zhangpeng.00@bytedance.com> [230816 09:11]:
->>
->>
->> 在 2023/8/1 00:48, Liam R. Howlett 写道:
->>> * Peng Zhang <zhangpeng.00@bytedance.com> [230731 08:39]:
->>>>
->>>>
->>>> 在 2023/7/27 00:08, Liam R. Howlett 写道:
->>>>> * Peng Zhang <zhangpeng.00@bytedance.com> [230726 04:10]:
->>>>>> If mas has located a specific entry, it may be need to replace this
->>>>>> entry, so introduce mas_replace_entry() to do this. mas_replace_entry()
->>>>>> will be more efficient than mas_store*() because it doesn't do many
->>>>>> unnecessary checks.
->>>>>>
->>>>>> This function should be inline, but more functions need to be moved to
->>>>>> the header file, so I didn't do it for the time being.
->>>>>
->>>>> I am really nervous having no checks here.  I get that this could be
->>>>> used for duplicating the tree more efficiently, but having a function
->>>>> that just swaps a value in is very dangerous - especially since it is
->>>>> decoupled from the tree duplication code.
->>>> I've thought about this, and I feel like this is something the user
->>>> should be guaranteed. If the user is not sure whether to use it,
->>>> mas_store() can be used instead.
->>>
->>> Documentation often isn't up to date and even more rarely read.
->>> mas_replace_entry() does not give a hint of a requirement for a specific
->>> state to the mas.  This is not acceptable.
->>>
->>> The description of the function also doesn't say anything about a
->>> requirement of the maple state, just that it replaces an already
->>> existing entry.  You have to read the notes to find out that 'mas must
->>> already locate an existing entry'.
->>>
->>>> And we should provide this interface
->>>> because it has better performance.
->>>
->>> How much better is the performance?  There's always a trade off but
->>> without numbers, this is hard to justify.
->> I have implemented a new version of this pachset, and I will post it
->> soon.
->>
->> I tested the benefits of mas_replace_entry() in userspace.
->> The test code is attached at the end.
->>
->> Run three times:
->> mas_replace_entry(): 2.7613050s 2.7120030s 2.7274200s
->> mas_store():         3.8451260s 3.8113200s 3.9334160s
-> 
-> This runtime is too short, we should increase the number of elements or
-> loops until it is over 10 seconds.  This will make the setup time
-> and other variances less significant and we can use the command run time
-> as a rough estimate of performance. IIRC 134 was picked for a rough
-> estimate of an average task size so maybe increase the loops.
-I changed nr_entries to 1000, and the measured numbers are as follows:
-mas_replace_entry():	20.0375820s
-mas_store():		28.6175720s
-It can be seen that mas_store() is still nearly 40% slower.
-> 
-> I understand the numbers here are from clock recordings to demonstrate
-> the significance of your change.
-> 
->>
->> Using mas_store() reduces the performance of duplicating VMAs by about
->> 41%.
->>
->> So I think mas_replace_entry() is necessary. We can describe it in more
->> detail in the documentation to prevent users from misusing it.
-> 
-> I think something is necessary for a quicker replacement, yes.  I don't
-> want to go as far as you did with the lack of checking.
-> 
->>
->>
->> static noinline void __init bench_forking(struct maple_tree *mt)
->> {
->> 	struct maple_tree newmt;
->> 	int i, nr_entries = 134, nr_fork = 80000, ret;
->> 	void *val;
->> 	MA_STATE(mas, mt, 0, 0);
->> 	MA_STATE(newmas, &newmt, 0, 0);
->> 	clock_t start;
->> 	clock_t end;
->> 	double cpu_time_used = 0;
->>
->> 	for (i = 0; i <= nr_entries; i++)
->> 		mtree_store_range(mt, i*10, i*10 + 5,
->> 				  xa_mk_value(i), GFP_KERNEL);
->>
->> 	for (i = 0; i < nr_fork; i++) {
->> 		mt_set_non_kernel(99999);
->>
->> 		start = clock();
->> 		mt_init_flags(&newmt, MT_FLAGS_ALLOC_RANGE);
->> 		mas_lock(&newmas);
->> 		mas_lock(&mas);
->> 		ret = __mt_dup(mt, &newmt, GFP_NOWAIT | __GFP_NOWARN);
->> 		if (ret) {
->> 			pr_err("OOM!");
->> 			BUG_ON(1);
->> 		}
->>
->> 		mas_set(&newmas, 0);
->> 		mas_for_each(&newmas, val, ULONG_MAX) {
->> 			mas_replace_entry(&newmas, val);
->> 		}
->>
->> 		mas_unlock(&mas);
->> 		mas_unlock(&newmas);
->> 		end = clock();
->> 		cpu_time_used += ((double) (end - start));
->>
->> 		mas_destroy(&newmas);
->> 		mt_validate(&newmt);
->> 		mt_set_non_kernel(0);
->> 		mtree_destroy(&newmt);
->> 	}
->> 	printf("time consumption:%.7fs\n", cpu_time_used / CLOCKS_PER_SEC);
->> }
->>
->>
->>>
->>>>>
->>>>>>
->>>>>> Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
->>>>>> ---
->>>>>>     include/linux/maple_tree.h |  1 +
->>>>>>     lib/maple_tree.c           | 25 +++++++++++++++++++++++++
->>>>>>     2 files changed, 26 insertions(+)
->>>>>>
->>>>>> diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
->>>>>> index 229fe78e4c89..a05e9827d761 100644
->>>>>> --- a/include/linux/maple_tree.h
->>>>>> +++ b/include/linux/maple_tree.h
->>>>>> @@ -462,6 +462,7 @@ struct ma_wr_state {
->>>>>>     void *mas_walk(struct ma_state *mas);
->>>>>>     void *mas_store(struct ma_state *mas, void *entry);
->>>>>> +void mas_replace_entry(struct ma_state *mas, void *entry);
->>>>>>     void *mas_erase(struct ma_state *mas);
->>>>>>     int mas_store_gfp(struct ma_state *mas, void *entry, gfp_t gfp);
->>>>>>     void mas_store_prealloc(struct ma_state *mas, void *entry);
->>>>>> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
->>>>>> index efac6761ae37..d58572666a00 100644
->>>>>> --- a/lib/maple_tree.c
->>>>>> +++ b/lib/maple_tree.c
->>>>>> @@ -5600,6 +5600,31 @@ void *mas_store(struct ma_state *mas, void *entry)
->>>>>>     }
->>>>>>     EXPORT_SYMBOL_GPL(mas_store);
->>>>>> +/**
->>>>>> + * mas_replace_entry() - Replace an entry that already exists in the maple tree
->>>>>> + * @mas: The maple state
->>>>>> + * @entry: The entry to store
->>>>>> + *
->>>>>> + * Please note that mas must already locate an existing entry, and the new entry
->>>>>> + * must not be NULL. If these two points cannot be guaranteed, please use
->>>>>> + * mas_store*() instead, otherwise it will cause an internal error in the maple
->>>>>> + * tree. This function does not need to allocate memory, so it must succeed.
->>>>>> + */
->>>>>> +void mas_replace_entry(struct ma_state *mas, void *entry)
->>>>>> +{
->>>>>> +	void __rcu **slots;
->>>>>> +
->>>>>> +#ifdef CONFIG_DEBUG_MAPLE_TREE
-> 
-> CONFIG_DEBUG_MAPLE_TREE is not necessary, MAS_WRAN_ON() will be compiled
-> out if it's not set.
-> 
->>>>>> +	MAS_WARN_ON(mas, !mte_is_leaf(mas->node));
->>>>>> +	MAS_WARN_ON(mas, !entry);
->>>>>> +	MAS_WARN_ON(mas, mas->offset >= mt_slots[mte_node_type(mas->node)]);
->>>>>> +#endif
->>>>>> +
->>>>>> +	slots = ma_slots(mte_to_node(mas->node), mte_node_type(mas->node));
->>>>>> +	rcu_assign_pointer(slots[mas->offset], entry);
->>>>>> +}
->>>>>> +EXPORT_SYMBOL_GPL(mas_replace_entry);
->>>>>> +
->>>>>>     /**
->>>>>>      * mas_store_gfp() - Store a value into the tree.
->>>>>>      * @mas: The maple state
->>>>>> -- 
->>>>>> 2.20.1
->>>>>>
+-- 
+BR,
+Muhammad Usama Anjum
