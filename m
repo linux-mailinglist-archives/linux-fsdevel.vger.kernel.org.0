@@ -2,55 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CA777813EA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 21:52:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E83578141E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 22:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379844AbjHRTwL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Aug 2023 15:52:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52038 "EHLO
+        id S1379901AbjHRUJD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Aug 2023 16:09:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379846AbjHRTvk (ORCPT
+        with ESMTP id S1379904AbjHRUIh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Aug 2023 15:51:40 -0400
-Received: from mail-pg1-f207.google.com (mail-pg1-f207.google.com [209.85.215.207])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8538D3C06
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Aug 2023 12:51:34 -0700 (PDT)
-Received: by mail-pg1-f207.google.com with SMTP id 41be03b00d2f7-56438e966baso1664178a12.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Aug 2023 12:51:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692388294; x=1692993094;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HTLt7xRmf627+86yGuz9GM7PnjiDtsNM6+2Ur3P8lA0=;
-        b=b02hlfSfXdzKORQnRz4K+aDHGqCJJ9ApjBRsu6ySDhsT93njLNTmVno7mTRqnZAVIL
-         1RfrTGjBMH1pE7juurb1eRacPCPBrJBhWVtayyMi40KZL1OxBLQ5pvtvMDvM0Qkz5hB+
-         H8hcQE0IJ53/LzKTlQKAR+VfIASV/XMtAJuIybWA2Sz9efp/v0loVlq4c5ZNB2XevMlp
-         2effzDU7qrO3K3JnHpRFZwCOTWoPoCfpTJnBQwca1B5rkjEh2L2fK17jcBZ7p/d6kQWt
-         VHNsrB6B/DPt5CNJmxOcXWMNeMFrZWHVamrSMaBxh96LbwGJfx3W0FyILS6SrlVVTp+S
-         bI2A==
-X-Gm-Message-State: AOJu0YzX6rCaEGGtoIepyP43vuY5OtCd4mDuvkD4AeA2FoodPfm9DvmX
-        Fo9GKRZP4odVxVXeBcpiApjeChQDP3xtGtsPBFKUyOaugurF
-X-Google-Smtp-Source: AGHT+IE/Z2CzNGgjIBBJPkbO6w8Ty2ML9X1IN0A6Hbe+ouJjpGk9CVtjZ8bNxowwWZahqnDXsdFR7zR4UpTJmYPQyGkLnmTP1tlj
+        Fri, 18 Aug 2023 16:08:37 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FA9A3C20;
+        Fri, 18 Aug 2023 13:08:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=UGZv0mcmqWJU2GElWXQ4POFjyVj5GsY8tdHi57flpjA=; b=bmSAo9yw2d7X/wbitTbnlRgaG6
+        X9rXlHhzcITAiS5/7vpokhpYR+A0CGooKUcSc0O07/oIcpx+KahZ02g3c8G907FHN/MVv1UFpI2QQ
+        yiCV4PBKdg+8lT70J34+bEfPUDtAy59+EoPdDPFt9xghEi9cAZTauecJh9WCmwiuOekFCkq8co2ng
+        8SEPlfetFnf6W6miqD46/aJcmdqFOemkY2n8DU2Xikx/FWOylN4ReycMNdXY+7wGoqjmvwSuJliVD
+        axVPLHfFHoGk92lK7xPXmiJN3yfZyRHgjm34bTUb5jHBX3yyZHYHJQJn5sRGS3TZRfeUZYgWW95Xq
+        keqAtDqQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qX5lp-00BPbZ-Hh; Fri, 18 Aug 2023 20:08:33 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-docs@vger.kernel.org
+Subject: [PATCH] fs: Fix kernel-doc warnings
+Date:   Fri, 18 Aug 2023 21:08:24 +0100
+Message-Id: <20230818200824.2720007-1-willy@infradead.org>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-X-Received: by 2002:a17:90b:f0f:b0:26d:ae3:f6a4 with SMTP id
- br15-20020a17090b0f0f00b0026d0ae3f6a4mr30124pjb.5.1692388293991; Fri, 18 Aug
- 2023 12:51:33 -0700 (PDT)
-Date:   Fri, 18 Aug 2023 12:51:33 -0700
-In-Reply-To: <ZN/Lwr/Gg8n+vhw3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000015e552060337dbf2@google.com>
-Subject: Re: [syzbot] [f2fs?] possible deadlock in f2fs_getxattr
-From:   syzbot <syzbot+e5600587fa9cbf8e3826@syzkaller.appspotmail.com>
-To:     jaegeuk@kernel.org
-Cc:     chao@kernel.org, jaegeuk@kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -58,182 +47,188 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> #syz test: github.com/jaegeuk/f2fs/tree/g-dev-test g-dev-test
+These have a variety of causes and a corresponding variety of solutions.
 
-"github.com/jaegeuk/f2fs/tree/g-dev-test" does not look like a valid git repo address.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/file.c             |  3 ++-
+ fs/fs_context.c       | 12 +++++++++---
+ fs/ioctl.c            | 10 +++++++---
+ fs/kernel_read_file.c | 12 ++++++------
+ fs/namei.c            |  3 +++
+ fs/open.c             |  4 ++--
+ 6 files changed, 29 insertions(+), 15 deletions(-)
 
->
-> On 07/06, syzbot wrote:
->> Hello,
->> 
->> syzbot found the following issue on:
->> 
->> HEAD commit:    a452483508d7 Merge tag 's390-6.5-2' of git://git.kernel.or..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=161917a0a80000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=15873d91ff37a949
->> dashboard link: https://syzkaller.appspot.com/bug?extid=e5600587fa9cbf8e3826
->> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
->> 
->> Unfortunately, I don't have any reproducer for this issue yet.
->> 
->> Downloadable assets:
->> disk image: https://storage.googleapis.com/syzbot-assets/5a4997524374/disk-a4524835.raw.xz
->> vmlinux: https://storage.googleapis.com/syzbot-assets/a0d32791e67c/vmlinux-a4524835.xz
->> kernel image: https://storage.googleapis.com/syzbot-assets/ff545ba23349/bzImage-a4524835.xz
->> 
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+e5600587fa9cbf8e3826@syzkaller.appspotmail.com
->> 
->> F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th superblock
->> F2FS-fs (loop0): Found nat_bits in checkpoint
->> F2FS-fs (loop0): Try to recover 1th superblock, ret: 0
->> F2FS-fs (loop0): Mounted with checkpoint version = 48b305e5
->> ======================================================
->> WARNING: possible circular locking dependency detected
->> 6.4.0-syzkaller-12155-ga452483508d7 #0 Not tainted
->> ------------------------------------------------------
->> syz-executor.0/5180 is trying to acquire lock:
->> ffff88803c1b90a0 (&fi->i_xattr_sem){.+.+}-{3:3}, at: f2fs_down_read fs/f2fs/f2fs.h:2108 [inline]
->> ffff88803c1b90a0 (&fi->i_xattr_sem){.+.+}-{3:3}, at: f2fs_getxattr+0xb8/0x1460 fs/f2fs/xattr.c:532
->> 
->> but task is already holding lock:
->> ffff88803c0196d8 (&fi->i_sem){+.+.}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2133 [inline]
->> ffff88803c0196d8 (&fi->i_sem){+.+.}-{3:3}, at: f2fs_do_tmpfile+0x25/0x170 fs/f2fs/dir.c:838
->> 
->> which lock already depends on the new lock.
->> 
->> 
->> the existing dependency chain (in reverse order) is:
->> 
->> -> #1 (&fi->i_sem){+.+.}-{3:3}:
->>        down_write+0x3a/0x50 kernel/locking/rwsem.c:1573
->>        f2fs_down_write fs/f2fs/f2fs.h:2133 [inline]
->>        f2fs_add_inline_entry+0x3a8/0x760 fs/f2fs/inline.c:644
->>        f2fs_add_dentry+0xba/0x1e0 fs/f2fs/dir.c:784
->>        f2fs_do_add_link+0x21e/0x340 fs/f2fs/dir.c:827
->>        f2fs_add_link fs/f2fs/f2fs.h:3554 [inline]
->>        f2fs_create+0x32c/0x530 fs/f2fs/namei.c:377
->>        lookup_open fs/namei.c:3492 [inline]
->>        open_last_lookups fs/namei.c:3560 [inline]
->>        path_openat+0x13e7/0x3180 fs/namei.c:3790
->>        do_filp_open+0x234/0x490 fs/namei.c:3820
->>        do_sys_openat2+0x13e/0x1d0 fs/open.c:1407
->>        do_sys_open fs/open.c:1422 [inline]
->>        __do_sys_open fs/open.c:1430 [inline]
->>        __se_sys_open fs/open.c:1426 [inline]
->>        __x64_sys_open+0x225/0x270 fs/open.c:1426
->>        do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->>        do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
->>        entry_SYSCALL_64_after_hwframe+0x63/0xcd
->> 
->> -> #0 (&fi->i_xattr_sem){.+.+}-{3:3}:
->>        check_prev_add kernel/locking/lockdep.c:3142 [inline]
->>        check_prevs_add kernel/locking/lockdep.c:3261 [inline]
->>        validate_chain kernel/locking/lockdep.c:3876 [inline]
->>        __lock_acquire+0x39ff/0x7f70 kernel/locking/lockdep.c:5144
->>        lock_acquire+0x1e3/0x520 kernel/locking/lockdep.c:5761
->>        down_read+0x47/0x2f0 kernel/locking/rwsem.c:1520
->>        f2fs_down_read fs/f2fs/f2fs.h:2108 [inline]
->>        f2fs_getxattr+0xb8/0x1460 fs/f2fs/xattr.c:532
->>        __f2fs_get_acl+0x52/0x8e0 fs/f2fs/acl.c:179
->>        f2fs_acl_create fs/f2fs/acl.c:377 [inline]
->>        f2fs_init_acl+0xd7/0x9a0 fs/f2fs/acl.c:420
->>        f2fs_init_inode_metadata+0x824/0x1190 fs/f2fs/dir.c:558
->>        f2fs_do_tmpfile+0x34/0x170 fs/f2fs/dir.c:839
->>        __f2fs_tmpfile+0x1f9/0x380 fs/f2fs/namei.c:884
->>        f2fs_ioc_start_atomic_write+0x4a3/0x9e0 fs/f2fs/file.c:2099
->>        __f2fs_ioctl+0x1b5c/0xb770
->>        vfs_ioctl fs/ioctl.c:51 [inline]
->>        __do_sys_ioctl fs/ioctl.c:870 [inline]
->>        __se_sys_ioctl+0xf8/0x170 fs/ioctl.c:856
->>        do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->>        do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
->>        entry_SYSCALL_64_after_hwframe+0x63/0xcd
->> 
->> other info that might help us debug this:
->> 
->>  Possible unsafe locking scenario:
->> 
->>        CPU0                    CPU1
->>        ----                    ----
->>   lock(&fi->i_sem);
->>                                lock(&fi->i_xattr_sem);
->>                                lock(&fi->i_sem);
->>   rlock(&fi->i_xattr_sem);
->> 
->>  *** DEADLOCK ***
->> 
->> 5 locks held by syz-executor.0/5180:
->>  #0: ffff888078fb2410 (sb_writers#16){.+.+}-{0:0}, at: mnt_want_write_file+0x61/0x200 fs/namespace.c:447
->>  #1: ffff88803c018a28 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:771 [inline]
->>  #1: ffff88803c018a28 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: f2fs_ioc_start_atomic_write+0x1b2/0x9e0 fs/f2fs/file.c:2060
->>  #2: ffff88803c019008 (&fi->i_gc_rwsem[WRITE]){+.+.}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2133 [inline]
->>  #2: ffff88803c019008 (&fi->i_gc_rwsem[WRITE]){+.+.}-{3:3}, at: f2fs_ioc_start_atomic_write+0x276/0x9e0 fs/f2fs/file.c:2074
->>  #3: ffff88802b7e03b0 (&sbi->cp_rwsem){.+.+}-{3:3}, at: f2fs_down_read fs/f2fs/f2fs.h:2108 [inline]
->>  #3: ffff88802b7e03b0 (&sbi->cp_rwsem){.+.+}-{3:3}, at: f2fs_lock_op fs/f2fs/f2fs.h:2151 [inline]
->>  #3: ffff88802b7e03b0 (&sbi->cp_rwsem){.+.+}-{3:3}, at: __f2fs_tmpfile+0x1ce/0x380 fs/f2fs/namei.c:879
->>  #4: ffff88803c0196d8 (&fi->i_sem){+.+.}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2133 [inline]
->>  #4: ffff88803c0196d8 (&fi->i_sem){+.+.}-{3:3}, at: f2fs_do_tmpfile+0x25/0x170 fs/f2fs/dir.c:838
->> 
->> stack backtrace:
->> CPU: 1 PID: 5180 Comm: syz-executor.0 Not tainted 6.4.0-syzkaller-12155-ga452483508d7 #0
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
->> Call Trace:
->>  <TASK>
->>  __dump_stack lib/dump_stack.c:88 [inline]
->>  dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
->>  check_noncircular+0x375/0x4a0 kernel/locking/lockdep.c:2195
->>  check_prev_add kernel/locking/lockdep.c:3142 [inline]
->>  check_prevs_add kernel/locking/lockdep.c:3261 [inline]
->>  validate_chain kernel/locking/lockdep.c:3876 [inline]
->>  __lock_acquire+0x39ff/0x7f70 kernel/locking/lockdep.c:5144
->>  lock_acquire+0x1e3/0x520 kernel/locking/lockdep.c:5761
->>  down_read+0x47/0x2f0 kernel/locking/rwsem.c:1520
->>  f2fs_down_read fs/f2fs/f2fs.h:2108 [inline]
->>  f2fs_getxattr+0xb8/0x1460 fs/f2fs/xattr.c:532
->>  __f2fs_get_acl+0x52/0x8e0 fs/f2fs/acl.c:179
->>  f2fs_acl_create fs/f2fs/acl.c:377 [inline]
->>  f2fs_init_acl+0xd7/0x9a0 fs/f2fs/acl.c:420
->>  f2fs_init_inode_metadata+0x824/0x1190 fs/f2fs/dir.c:558
->>  f2fs_do_tmpfile+0x34/0x170 fs/f2fs/dir.c:839
->>  __f2fs_tmpfile+0x1f9/0x380 fs/f2fs/namei.c:884
->>  f2fs_ioc_start_atomic_write+0x4a3/0x9e0 fs/f2fs/file.c:2099
->>  __f2fs_ioctl+0x1b5c/0xb770
->>  vfs_ioctl fs/ioctl.c:51 [inline]
->>  __do_sys_ioctl fs/ioctl.c:870 [inline]
->>  __se_sys_ioctl+0xf8/0x170 fs/ioctl.c:856
->>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->>  do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
->>  entry_SYSCALL_64_after_hwframe+0x63/0xcd
->> RIP: 0033:0x7fc9e168c389
->> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
->> RSP: 002b:00007fc9e2476168 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
->> RAX: ffffffffffffffda RBX: 00007fc9e17abf80 RCX: 00007fc9e168c389
->> RDX: 0000000000000000 RSI: 000000000000f501 RDI: 0000000000000005
->> RBP: 00007fc9e16d7493 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
->> R13: 00007fffcc104f8f R14: 00007fc9e2476300 R15: 0000000000022000
->>  </TASK>
->> 
->> 
->> ---
->> This report is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->> 
->> syzbot will keep track of this issue. See:
->> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->> 
->> If the bug is already fixed, let syzbot know by replying with:
->> #syz fix: exact-commit-title
->> 
->> If you want to change bug's subsystems, reply with:
->> #syz set subsystems: new-subsystem
->> (See the list of subsystem names on the web dashboard)
->> 
->> If the bug is a duplicate of another bug, reply with:
->> #syz dup: exact-subject-of-another-report
->> 
->> If you want to undo deduplication, reply with:
->> #syz undup
+diff --git a/fs/file.c b/fs/file.c
+index a8c47c4b6b17..3e4a4dfa38fc 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -668,7 +668,7 @@ EXPORT_SYMBOL(close_fd); /* for ksys_close() */
+ 
+ /**
+  * last_fd - return last valid index into fd table
+- * @cur_fds: files struct
++ * @fdt: File descriptor table.
+  *
+  * Context: Either rcu read lock or files_lock must be held.
+  *
+@@ -724,6 +724,7 @@ static inline void __range_close(struct files_struct *files, unsigned int fd,
+  *
+  * @fd:     starting file descriptor to close
+  * @max_fd: last file descriptor to close
++ * @flags:  CLOSE_RANGE flags.
+  *
+  * This closes a range of file descriptors. All file descriptors
+  * from @fd up to and including @max_fd are closed.
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index fbcdcd301465..a0ad7a0c4680 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -162,6 +162,10 @@ EXPORT_SYMBOL(vfs_parse_fs_param);
+ 
+ /**
+  * vfs_parse_fs_string - Convenience function to just parse a string.
++ * @fc: Filesystem context.
++ * @key: Parameter name.
++ * @value: Default value.
++ * @v_size: Maximum number of bytes in the value.
+  */
+ int vfs_parse_fs_string(struct fs_context *fc, const char *key,
+ 			const char *value, size_t v_size)
+@@ -189,7 +193,7 @@ EXPORT_SYMBOL(vfs_parse_fs_string);
+ 
+ /**
+  * generic_parse_monolithic - Parse key[=val][,key[=val]]* mount data
+- * @ctx: The superblock configuration to fill in.
++ * @fc: The superblock configuration to fill in.
+  * @data: The data to parse
+  *
+  * Parse a blob of data that's in key[=val][,key[=val]]* form.  This can be
+@@ -354,7 +358,7 @@ void fc_drop_locked(struct fs_context *fc)
+ static void legacy_fs_context_free(struct fs_context *fc);
+ 
+ /**
+- * vfs_dup_fc_config: Duplicate a filesystem context.
++ * vfs_dup_fs_context - Duplicate a filesystem context.
+  * @src_fc: The context to copy.
+  */
+ struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc)
+@@ -400,7 +404,9 @@ EXPORT_SYMBOL(vfs_dup_fs_context);
+ 
+ /**
+  * logfc - Log a message to a filesystem context
+- * @fc: The filesystem context to log to.
++ * @log: The filesystem context to log to, or NULL to use printk.
++ * @prefix: A string to prefix the output with, or NULL.
++ * @level: 'w' for a warning, 'e' for an error.  Anything else is a notice.
+  * @fmt: The format of the buffer.
+  */
+ void logfc(struct fc_log *log, const char *prefix, char level, const char *fmt, ...)
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index a56cbceedcd1..f5fd99d6b0d4 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -109,9 +109,6 @@ static int ioctl_fibmap(struct file *filp, int __user *p)
+  * Returns 0 on success, -errno on error, 1 if this was the last
+  * extent that will fit in user array.
+  */
+-#define SET_UNKNOWN_FLAGS	(FIEMAP_EXTENT_DELALLOC)
+-#define SET_NO_UNMOUNTED_IO_FLAGS	(FIEMAP_EXTENT_DATA_ENCRYPTED)
+-#define SET_NOT_ALIGNED_FLAGS	(FIEMAP_EXTENT_DATA_TAIL|FIEMAP_EXTENT_DATA_INLINE)
+ int fiemap_fill_next_extent(struct fiemap_extent_info *fieinfo, u64 logical,
+ 			    u64 phys, u64 len, u32 flags)
+ {
+@@ -127,6 +124,10 @@ int fiemap_fill_next_extent(struct fiemap_extent_info *fieinfo, u64 logical,
+ 	if (fieinfo->fi_extents_mapped >= fieinfo->fi_extents_max)
+ 		return 1;
+ 
++#define SET_UNKNOWN_FLAGS	(FIEMAP_EXTENT_DELALLOC)
++#define SET_NO_UNMOUNTED_IO_FLAGS	(FIEMAP_EXTENT_DATA_ENCRYPTED)
++#define SET_NOT_ALIGNED_FLAGS	(FIEMAP_EXTENT_DATA_TAIL|FIEMAP_EXTENT_DATA_INLINE)
++
+ 	if (flags & SET_UNKNOWN_FLAGS)
+ 		flags |= FIEMAP_EXTENT_UNKNOWN;
+ 	if (flags & SET_NO_UNMOUNTED_IO_FLAGS)
+@@ -877,6 +878,9 @@ SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd, unsigned long, arg)
+ #ifdef CONFIG_COMPAT
+ /**
+  * compat_ptr_ioctl - generic implementation of .compat_ioctl file operation
++ * @file: The file to operate on.
++ * @cmd: The ioctl command number.
++ * @arg: The argument to the ioctl.
+  *
+  * This is not normally called as a function, but instead set in struct
+  * file_operations as
+diff --git a/fs/kernel_read_file.c b/fs/kernel_read_file.c
+index 5d826274570c..c429c42a6867 100644
+--- a/fs/kernel_read_file.c
++++ b/fs/kernel_read_file.c
+@@ -8,16 +8,16 @@
+ /**
+  * kernel_read_file() - read file contents into a kernel buffer
+  *
+- * @file	file to read from
+- * @offset	where to start reading from (see below).
+- * @buf		pointer to a "void *" buffer for reading into (if
++ * @file:	file to read from
++ * @offset:	where to start reading from (see below).
++ * @buf:	pointer to a "void *" buffer for reading into (if
+  *		*@buf is NULL, a buffer will be allocated, and
+  *		@buf_size will be ignored)
+- * @buf_size	size of buf, if already allocated. If @buf not
++ * @buf_size:	size of buf, if already allocated. If @buf not
+  *		allocated, this is the largest size to allocate.
+- * @file_size	if non-NULL, the full size of @file will be
++ * @file_size:	if non-NULL, the full size of @file will be
+  *		written here.
+- * @id		the kernel_read_file_id identifying the type of
++ * @id:		the kernel_read_file_id identifying the type of
+  *		file contents being read (for LSMs to examine)
+  *
+  * @offset must be 0 unless both @buf and @file_size are non-NULL
+diff --git a/fs/namei.c b/fs/namei.c
+index 2bae29ea52ff..567ee547492b 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -643,6 +643,8 @@ static bool nd_alloc_stack(struct nameidata *nd)
+ 
+ /**
+  * path_connected - Verify that a dentry is below mnt.mnt_root
++ * @mnt: The mountpoint to check.
++ * @dentry: The dentry to check.
+  *
+  * Rename can sometimes move a file or directory outside of a bind
+  * mount, path_connected allows those cases to be detected.
+@@ -1083,6 +1085,7 @@ fs_initcall(init_fs_namei_sysctls);
+ /**
+  * may_follow_link - Check symlink following for unsafe situations
+  * @nd: nameidata pathwalk data
++ * @inode: Used for idmapping.
+  *
+  * In the case of the sysctl_protected_symlinks sysctl being enabled,
+  * CAP_DAC_OVERRIDE needs to be specifically ignored if the symlink is
+diff --git a/fs/open.c b/fs/open.c
+index 0142c3895b8c..98f6601fbac6 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1165,7 +1165,7 @@ EXPORT_SYMBOL_GPL(kernel_file_open);
+  * backing_file_open - open a backing file for kernel internal use
+  * @path:	path of the file to open
+  * @flags:	open flags
+- * @path:	path of the backing file
++ * @real_path:	path of the backing file
+  * @cred:	credentials for open
+  *
+  * Open a backing file for a stackable filesystem (e.g., overlayfs).
+@@ -1582,7 +1582,7 @@ SYSCALL_DEFINE1(close, unsigned int, fd)
+ }
+ 
+ /**
+- * close_range() - Close all file descriptors in a given range.
++ * sys_close_range() - Close all file descriptors in a given range.
+  *
+  * @fd:     starting file descriptor to close
+  * @max_fd: last file descriptor to close
+-- 
+2.40.1
+
