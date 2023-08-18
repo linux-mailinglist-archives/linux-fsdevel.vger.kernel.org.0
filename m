@@ -2,130 +2,233 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 501E7781368
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 21:39:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96A417813EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 21:52:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379626AbjHRTij (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Aug 2023 15:38:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36394 "EHLO
+        id S1379801AbjHRTwJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Aug 2023 15:52:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379660AbjHRTiP (ORCPT
+        with ESMTP id S1379847AbjHRTvk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Aug 2023 15:38:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02D191FCE;
-        Fri, 18 Aug 2023 12:38:13 -0700 (PDT)
+        Fri, 18 Aug 2023 15:51:40 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1F9835AD;
+        Fri, 18 Aug 2023 12:51:33 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 88B7662D18;
-        Fri, 18 Aug 2023 19:38:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDBE7C433C8;
-        Fri, 18 Aug 2023 19:38:05 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6131C6396B;
+        Fri, 18 Aug 2023 19:51:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 699F3C433C7;
+        Fri, 18 Aug 2023 19:51:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692387492;
-        bh=01Q2xEmAO2pVJWHzK9M3MZQdGCIPPOuErEoePLDfq+0=;
+        s=k20201202; t=1692388292;
+        bh=HoOtSgniUSBX6Itb+CYcmDEGHCgM3gVlFPO7oTlh8Fc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZvLDUejgDxFNb6IhI4Y0qdql5M25cqQLtbiufVm4Gb1iXmTmAB0Vv7ahIz5a06KAb
-         PUVYYrLHaNR/SZqrZU0yrVK5FDSBVeGGfofO9+Df7X5NWY2X9XcazAltA6H9EsHtv+
-         fc4AWwR9CKunnY9EpyNqH+5BjOB9QdtB0QMaWXxuq/yd9mPtqlVE1q+rF9jr+uSXsI
-         f1NsCWGQH8w59yUVRi8q2TubicSUqChyEh/LQmmTFJ4Z4wetsknCZ6enP2KXAnB49z
-         oUn0kP6MHyAsmo5BdzSFWx5eauk1ZDTV4IrU/9IN+nMSi55OIHvkUfyBmizMa3JLC6
-         ole8zbgLwOsiA==
-Date:   Fri, 18 Aug 2023 20:38:02 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-        Deepak Gupta <debug@rivosinc.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 03/36] arm64/gcs: Document the ABI for Guarded Control
- Stacks
-Message-ID: <aaea542c-929c-4c9b-8caa-ca67e0eb9c1e@sirena.org.uk>
-References: <20230807-arm64-gcs-v4-0-68cfa37f9069@kernel.org>
- <20230807-arm64-gcs-v4-3-68cfa37f9069@kernel.org>
- <ZNOhjrYleGBR6Pbs@arm.com>
- <f4cec4b3-c386-4873-aa1d-90528e062f2a@sirena.org.uk>
- <ZN+qki9EaZ6f9XNi@arm.com>
+        b=Vue8ldVDx+hpirTPek6RuUG+wG9uEpTYJlFbJbBQntWPI6bJPf7viRE98H//WHxLs
+         q4AHh8AJkgJKbab14a527SlDY7y2i8prXF17K3Cl5/mYf8nJyNqoNPAptTyARnvACo
+         8Z8QttphQdSQ8aAPPq1m4be3s4qbTg/CHoAfN62lFaKCAQWspEBebbF56uAzYMrLSZ
+         zKkyZavBZIhBHPy7vQK2+bHktn2BkJL5UtVV6k9CKD7BAvgut0pSb97rcBFgwVQ0oN
+         8QixYSAHDvVNPB0nXv3va6FF2yAqiQFnE2XVM55bepB5uCpoXLOrRHsJlhbDNfscG7
+         8qPSJL1nLIA5Q==
+Date:   Fri, 18 Aug 2023 12:51:30 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     syzbot <syzbot+e5600587fa9cbf8e3826@syzkaller.appspotmail.com>
+Cc:     chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [f2fs?] possible deadlock in f2fs_getxattr
+Message-ID: <ZN/Lwr/Gg8n+vhw3@google.com>
+References: <0000000000005921ef05ffddc3b7@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="LNILMu582aOVL6hM"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZN+qki9EaZ6f9XNi@arm.com>
-X-Cookie: Your aim is high and to the right.
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <0000000000005921ef05ffddc3b7@google.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+#syz test: github.com/jaegeuk/f2fs/tree/g-dev-test g-dev-test
 
---LNILMu582aOVL6hM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Aug 18, 2023 at 06:29:54PM +0100, Catalin Marinas wrote:
-
-> A related question - it may have been discussed intensively on the x86
-> thread (I may read it sometime) - why not have the libc map the shadow
-
-Your assumption that this is a single thread feels optimistic there.
-
-> stack and pass the pointer/size to clone3()? It saves us from having to
-> guess what the right size we'd need. struct clone_args is extensible.
-
-I can't recall or locate the specific reasoning there right now, perhaps
-Rick or someone else can?  I'd guess there would be compat concerns for
-things that don't go via libc which would complicate the story with
-identifying and marking things as GCS/SS safe, it's going to be more
-robust to just supply a GCS if the process is using it.  That said
-having a default doesn't preclude us using the extensibility to allow
-userspace directly to control the GCS size, I would certainly be in
-favour of adding support for that.
-
-> (I plan to get back next week to this series, I'll need to read a bit
-> more on the spec)
-
-I've been making changes, mostly in response to your feedback, so there
-should be a new version on Monday even if not everything is addressed
-yet.
-
---LNILMu582aOVL6hM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmTfyJkACgkQJNaLcl1U
-h9Cw3Af8Cnyy0Sa1PU1lq3c1HV/d6eNcVzOoN4kECuID3B/GKxWng90W0Z7wR75z
-Wl9H0WZxlDkqd/voFGHAJTEtlcEZMg6xNByq8Rhq2jw6R2EX3O8P6+Uqumjb3UQ8
-wb+PJyloj3BhXcQPiMH8vFHAs6b81DyPYo9NtaCLsYbtZv4MwGjgJKRrAl8+O2ct
-n/1P1Hpp/XUeTZUZvyWxrBdDUD7nLq9mQe2/+h6NxTtchrNTb98Kvgk7JrRefjrB
-7kehDj9XiBJt5vVkoSO+e5aVln7wgwWor3KsjviaeNzyXglWrx+VBIc8OT6FMiJw
-VIA6Wrc8ikvi1fZ/oooK9TnU+p5chw==
-=RgY5
------END PGP SIGNATURE-----
-
---LNILMu582aOVL6hM--
+On 07/06, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    a452483508d7 Merge tag 's390-6.5-2' of git://git.kernel.or..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=161917a0a80000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=15873d91ff37a949
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e5600587fa9cbf8e3826
+> compiler:       Debian clang version 15.0.7, GNU ld (GNU Binutils for Debian) 2.35.2
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/5a4997524374/disk-a4524835.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a0d32791e67c/vmlinux-a4524835.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/ff545ba23349/bzImage-a4524835.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+e5600587fa9cbf8e3826@syzkaller.appspotmail.com
+> 
+> F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th superblock
+> F2FS-fs (loop0): Found nat_bits in checkpoint
+> F2FS-fs (loop0): Try to recover 1th superblock, ret: 0
+> F2FS-fs (loop0): Mounted with checkpoint version = 48b305e5
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.4.0-syzkaller-12155-ga452483508d7 #0 Not tainted
+> ------------------------------------------------------
+> syz-executor.0/5180 is trying to acquire lock:
+> ffff88803c1b90a0 (&fi->i_xattr_sem){.+.+}-{3:3}, at: f2fs_down_read fs/f2fs/f2fs.h:2108 [inline]
+> ffff88803c1b90a0 (&fi->i_xattr_sem){.+.+}-{3:3}, at: f2fs_getxattr+0xb8/0x1460 fs/f2fs/xattr.c:532
+> 
+> but task is already holding lock:
+> ffff88803c0196d8 (&fi->i_sem){+.+.}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2133 [inline]
+> ffff88803c0196d8 (&fi->i_sem){+.+.}-{3:3}, at: f2fs_do_tmpfile+0x25/0x170 fs/f2fs/dir.c:838
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #1 (&fi->i_sem){+.+.}-{3:3}:
+>        down_write+0x3a/0x50 kernel/locking/rwsem.c:1573
+>        f2fs_down_write fs/f2fs/f2fs.h:2133 [inline]
+>        f2fs_add_inline_entry+0x3a8/0x760 fs/f2fs/inline.c:644
+>        f2fs_add_dentry+0xba/0x1e0 fs/f2fs/dir.c:784
+>        f2fs_do_add_link+0x21e/0x340 fs/f2fs/dir.c:827
+>        f2fs_add_link fs/f2fs/f2fs.h:3554 [inline]
+>        f2fs_create+0x32c/0x530 fs/f2fs/namei.c:377
+>        lookup_open fs/namei.c:3492 [inline]
+>        open_last_lookups fs/namei.c:3560 [inline]
+>        path_openat+0x13e7/0x3180 fs/namei.c:3790
+>        do_filp_open+0x234/0x490 fs/namei.c:3820
+>        do_sys_openat2+0x13e/0x1d0 fs/open.c:1407
+>        do_sys_open fs/open.c:1422 [inline]
+>        __do_sys_open fs/open.c:1430 [inline]
+>        __se_sys_open fs/open.c:1426 [inline]
+>        __x64_sys_open+0x225/0x270 fs/open.c:1426
+>        do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>        do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+>        entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> 
+> -> #0 (&fi->i_xattr_sem){.+.+}-{3:3}:
+>        check_prev_add kernel/locking/lockdep.c:3142 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3261 [inline]
+>        validate_chain kernel/locking/lockdep.c:3876 [inline]
+>        __lock_acquire+0x39ff/0x7f70 kernel/locking/lockdep.c:5144
+>        lock_acquire+0x1e3/0x520 kernel/locking/lockdep.c:5761
+>        down_read+0x47/0x2f0 kernel/locking/rwsem.c:1520
+>        f2fs_down_read fs/f2fs/f2fs.h:2108 [inline]
+>        f2fs_getxattr+0xb8/0x1460 fs/f2fs/xattr.c:532
+>        __f2fs_get_acl+0x52/0x8e0 fs/f2fs/acl.c:179
+>        f2fs_acl_create fs/f2fs/acl.c:377 [inline]
+>        f2fs_init_acl+0xd7/0x9a0 fs/f2fs/acl.c:420
+>        f2fs_init_inode_metadata+0x824/0x1190 fs/f2fs/dir.c:558
+>        f2fs_do_tmpfile+0x34/0x170 fs/f2fs/dir.c:839
+>        __f2fs_tmpfile+0x1f9/0x380 fs/f2fs/namei.c:884
+>        f2fs_ioc_start_atomic_write+0x4a3/0x9e0 fs/f2fs/file.c:2099
+>        __f2fs_ioctl+0x1b5c/0xb770
+>        vfs_ioctl fs/ioctl.c:51 [inline]
+>        __do_sys_ioctl fs/ioctl.c:870 [inline]
+>        __se_sys_ioctl+0xf8/0x170 fs/ioctl.c:856
+>        do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>        do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+>        entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> 
+> other info that might help us debug this:
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&fi->i_sem);
+>                                lock(&fi->i_xattr_sem);
+>                                lock(&fi->i_sem);
+>   rlock(&fi->i_xattr_sem);
+> 
+>  *** DEADLOCK ***
+> 
+> 5 locks held by syz-executor.0/5180:
+>  #0: ffff888078fb2410 (sb_writers#16){.+.+}-{0:0}, at: mnt_want_write_file+0x61/0x200 fs/namespace.c:447
+>  #1: ffff88803c018a28 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:771 [inline]
+>  #1: ffff88803c018a28 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: f2fs_ioc_start_atomic_write+0x1b2/0x9e0 fs/f2fs/file.c:2060
+>  #2: ffff88803c019008 (&fi->i_gc_rwsem[WRITE]){+.+.}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2133 [inline]
+>  #2: ffff88803c019008 (&fi->i_gc_rwsem[WRITE]){+.+.}-{3:3}, at: f2fs_ioc_start_atomic_write+0x276/0x9e0 fs/f2fs/file.c:2074
+>  #3: ffff88802b7e03b0 (&sbi->cp_rwsem){.+.+}-{3:3}, at: f2fs_down_read fs/f2fs/f2fs.h:2108 [inline]
+>  #3: ffff88802b7e03b0 (&sbi->cp_rwsem){.+.+}-{3:3}, at: f2fs_lock_op fs/f2fs/f2fs.h:2151 [inline]
+>  #3: ffff88802b7e03b0 (&sbi->cp_rwsem){.+.+}-{3:3}, at: __f2fs_tmpfile+0x1ce/0x380 fs/f2fs/namei.c:879
+>  #4: ffff88803c0196d8 (&fi->i_sem){+.+.}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2133 [inline]
+>  #4: ffff88803c0196d8 (&fi->i_sem){+.+.}-{3:3}, at: f2fs_do_tmpfile+0x25/0x170 fs/f2fs/dir.c:838
+> 
+> stack backtrace:
+> CPU: 1 PID: 5180 Comm: syz-executor.0 Not tainted 6.4.0-syzkaller-12155-ga452483508d7 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+>  check_noncircular+0x375/0x4a0 kernel/locking/lockdep.c:2195
+>  check_prev_add kernel/locking/lockdep.c:3142 [inline]
+>  check_prevs_add kernel/locking/lockdep.c:3261 [inline]
+>  validate_chain kernel/locking/lockdep.c:3876 [inline]
+>  __lock_acquire+0x39ff/0x7f70 kernel/locking/lockdep.c:5144
+>  lock_acquire+0x1e3/0x520 kernel/locking/lockdep.c:5761
+>  down_read+0x47/0x2f0 kernel/locking/rwsem.c:1520
+>  f2fs_down_read fs/f2fs/f2fs.h:2108 [inline]
+>  f2fs_getxattr+0xb8/0x1460 fs/f2fs/xattr.c:532
+>  __f2fs_get_acl+0x52/0x8e0 fs/f2fs/acl.c:179
+>  f2fs_acl_create fs/f2fs/acl.c:377 [inline]
+>  f2fs_init_acl+0xd7/0x9a0 fs/f2fs/acl.c:420
+>  f2fs_init_inode_metadata+0x824/0x1190 fs/f2fs/dir.c:558
+>  f2fs_do_tmpfile+0x34/0x170 fs/f2fs/dir.c:839
+>  __f2fs_tmpfile+0x1f9/0x380 fs/f2fs/namei.c:884
+>  f2fs_ioc_start_atomic_write+0x4a3/0x9e0 fs/f2fs/file.c:2099
+>  __f2fs_ioctl+0x1b5c/0xb770
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:870 [inline]
+>  __se_sys_ioctl+0xf8/0x170 fs/ioctl.c:856
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> RIP: 0033:0x7fc9e168c389
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fc9e2476168 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007fc9e17abf80 RCX: 00007fc9e168c389
+> RDX: 0000000000000000 RSI: 000000000000f501 RDI: 0000000000000005
+> RBP: 00007fc9e16d7493 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007fffcc104f8f R14: 00007fc9e2476300 R15: 0000000000022000
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the bug is already fixed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to change bug's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the bug is a duplicate of another bug, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
