@@ -2,161 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AD4A78061B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 09:06:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 153A6780639
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Aug 2023 09:18:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358124AbjHRHFv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Aug 2023 03:05:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47056 "EHLO
+        id S1358143AbjHRHR2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Aug 2023 03:17:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358136AbjHRHFf (ORCPT
+        with ESMTP id S1358168AbjHRHRK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Aug 2023 03:05:35 -0400
-Received: from out-6.mta0.migadu.com (out-6.mta0.migadu.com [91.218.175.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 161C030D4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Aug 2023 00:05:34 -0700 (PDT)
-Message-ID: <a1ad6a41-edd0-1201-c537-68693d5b70e6@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1692342329;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jv+O91aJKOY8Oa1uiqnwHLxjtat+AR7MEL0TnmE0b24=;
-        b=t2VAUZ/03p433tyvzSI/43v6e2AbSGWAj8MxYeOybMl7YnRaVl2x7cj/71xMqWMRKgtL5v
-        gDTi48YCNm6X+Zx7LdxDdJqLYzdh7lfvVT1qlpkHtDEsYVQFpWK4DfMUfninCzwp/lvXbw
-        99BmTYaes3N1P4mgadXNBtLHpTk2S6Q=
-Date:   Fri, 18 Aug 2023 15:05:14 +0800
+        Fri, 18 Aug 2023 03:17:10 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98D9030E6;
+        Fri, 18 Aug 2023 00:17:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1692343026; x=1723879026;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hy9L/G7orcg7EKsXBpzuKk+u1iVyRUCiRiiWR/KGdJc=;
+  b=ad4gmbNApLfKRjeaWiqnmvu0rQeYRN1LQtOiWrN1KujaJjI7LZBSaMXn
+   fmo/Zq9JAJJsClh64urJGpkOa46H0iVVpAACIak+XLTBmyz1kYQ8lrkrU
+   AwZCJ4RBroqoOFLp2Yytkpt5xkDGhPdZlFB7kkhgiFBGiIskYEfwWRf6a
+   uaHGzB42ykNx74LXke3NNyJzoDP+zj6+JpuN+XsnOQJ4e8qo1PMDvjMKk
+   0WEG6SkwhO1/5mgNurAlJ5jzMELAv9XVXXatAFfq2C/rqnnrz+FJIJdtW
+   /HtlnpkboLRT0lE1Ll3uS4dPHjGssGFDI2suETLJ7TCkOgHiT5PFOImry
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10805"; a="404017518"
+X-IronPort-AV: E=Sophos;i="6.01,182,1684825200"; 
+   d="scan'208";a="404017518"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2023 00:16:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10805"; a="800379640"
+X-IronPort-AV: E=Sophos;i="6.01,182,1684825200"; 
+   d="scan'208";a="800379640"
+Received: from lkp-server02.sh.intel.com (HELO a9caf1a0cf30) ([10.239.97.151])
+  by fmsmga008.fm.intel.com with ESMTP; 18 Aug 2023 00:16:42 -0700
+Received: from kbuild by a9caf1a0cf30 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qWtir-0002D4-2R;
+        Fri, 18 Aug 2023 07:16:41 +0000
+Date:   Fri, 18 Aug 2023 15:16:04 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Paul Gofman <pgofman@codeweavers.com>
+Cc:     oe-kbuild-all@lists.linux.dev,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, Greg KH <greg@kroah.com>,
+        kernel@collabora.com, Cyrill Gorcunov <gorcunov@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>
+Subject: Re: [PATCH v32 2/6] fs/proc/task_mmu: Implement IOCTL to get and
+ optionally clear info about PTEs
+Message-ID: <202308181520.yCq9Z26w-lkp@intel.com>
+References: <20230816113049.1697849-3-usama.anjum@collabora.com>
 MIME-Version: 1.0
-Subject: Re: [PATCH 03/13] scatterlist: Add sg_set_folio()
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <20230621164557.3510324-1-willy@infradead.org>
- <20230621164557.3510324-4-willy@infradead.org>
- <a2a2180c-62ac-452f-0737-26f01f228c79@linux.dev>
- <ZMZHH5Xc507OZA1O@casper.infradead.org>
- <40a3ab47-da3e-0d08-b3fa-b4663f3e727d@linux.dev>
- <ZMbZVjMaIeI1DSj9@casper.infradead.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <ZMbZVjMaIeI1DSj9@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230816113049.1697849-3-usama.anjum@collabora.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Muhammad,
 
-在 2023/7/31 5:42, Matthew Wilcox 写道:
-> On Sun, Jul 30, 2023 at 09:57:06PM +0800, Zhu Yanjun wrote:
->> 在 2023/7/30 19:18, Matthew Wilcox 写道:
->>> On Sun, Jul 30, 2023 at 07:01:26PM +0800, Zhu Yanjun wrote:
->>>> Does the following function have folio version?
->>>>
->>>> "
->>>> int sg_alloc_append_table_from_pages(struct sg_append_table *sgt_append,
->>>> 		struct page **pages, unsigned int n_pages, unsigned int offset,
->>>> 		unsigned long size, unsigned int max_segment,
->>>> 		unsigned int left_pages, gfp_t gfp_mask)
->>>> "
->>> No -- I haven't needed to convert anything that uses
->>> sg_alloc_append_table_from_pages() yet.  It doesn't look like it should
->>> be _too_ hard to add a folio version.
->> In many places, this function is used. So this function needs the folio
->> version.
-> It's not used in very many places.  But the first one that I see it used
-> (drivers/infiniband/core/umem.c), you can't do a straightforward folio
-> conversion:
->
->                  pinned = pin_user_pages_fast(cur_base,
->                                            min_t(unsigned long, npages,
->                                                  PAGE_SIZE /
->                                                  sizeof(struct page *)),
->                                            gup_flags, page_list);
-> ...
->                  ret = sg_alloc_append_table_from_pages(
->                          &umem->sgt_append, page_list, pinned, 0,
->                          pinned << PAGE_SHIFT, ib_dma_max_seg_size(device),
->                          npages, GFP_KERNEL);
->
-> That can't be converted to folios.  The GUP might start in the middle of
-> the folio, and we have no way to communicate that.
->
-> This particular usage really needs the phyr work that Jason is doing so
-> we can efficiently communicate physically contiguous ranges from GUP
-> to sg.
+kernel test robot noticed the following build errors:
 
-Hi, Matthew
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on next-20230817]
+[cannot apply to linus/master v6.5-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks. To the following function, it seems that no folio function 
-replace vmalloc_to_page.
+url:    https://github.com/intel-lab-lkp/linux/commits/Muhammad-Usama-Anjum/userfaultfd-UFFD_FEATURE_WP_ASYNC/20230816-193454
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20230816113049.1697849-3-usama.anjum%40collabora.com
+patch subject: [PATCH v32 2/6] fs/proc/task_mmu: Implement IOCTL to get and optionally clear info about PTEs
+config: arc-allyesconfig (https://download.01.org/0day-ci/archive/20230818/202308181520.yCq9Z26w-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 12.3.0
+reproduce: (https://download.01.org/0day-ci/archive/20230818/202308181520.yCq9Z26w-lkp@intel.com/reproduce)
 
-vmalloc_to_page calls virt_to_page to get page. Finally the followings 
-will be called.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202308181520.yCq9Z26w-lkp@intel.com/
 
-"
-(mem_map + ((pfn) - ARCH_PFN_OFFSET))
+All errors (new ones prefixed by >>):
 
-"
-
-And I do not find the related folio functions with vmalloc_to_page.
-
-And no folio function replaces dma_map_page.
-
-dma_map_page will call dma_map_page_attrs.
-
-Or these 2 function should not be replaced with folio functions?
-
-int irdma_map_vm_page_list(struct irdma_hw *hw, void *va, dma_addr_t 
-*pg_dma,
-
-                            u32 pg_cnt)
-{
-         struct page *vm_page;
-         int i;
-         u8 *addr;
-
-         addr = (u8 *)(uintptr_t)va;
-         for (i = 0; i < pg_cnt; i++) {
-                 vm_page = vmalloc_to_page(addr);
-                 if (!vm_page)
-                         goto err;
-
-                 pg_dma[i] = dma_map_page(hw->device, vm_page, 0, PAGE_SIZE,
-                                          DMA_BIDIRECTIONAL);
-                 if (dma_mapping_error(hw->device, pg_dma[i]))
-                         goto err;
-
-                 addr += PAGE_SIZE;
-         }
-
-         return 0;
-
-err:
-         irdma_unmap_vm_page_list(hw, pg_dma, i);
-         return -ENOMEM;
-
-}
-
-Thanks,
-
-Zhu Yanjun
+   fs/proc/task_mmu.c: In function 'pagemap_scan_thp_entry':
+>> fs/proc/task_mmu.c:2077:28: error: 'HPAGE_SIZE' undeclared (first use in this function); did you mean 'PAGE_SIZE'?
+    2077 |         if (end != start + HPAGE_SIZE) {
+         |                            ^~~~~~~~~~
+         |                            PAGE_SIZE
+   fs/proc/task_mmu.c:2077:28: note: each undeclared identifier is reported only once for each function it appears in
 
 
->> Another problem, after folio is used, I want to know the performance after
->> folio is implemented.
->>
->> How to make tests to get the performance?
-> You know what you're working on ... I wouldn't know how best to test
-> your code.
+vim +2077 fs/proc/task_mmu.c
+
+  2044	
+  2045	static int pagemap_scan_thp_entry(pmd_t *pmd, unsigned long start,
+  2046					  unsigned long end, struct mm_walk *walk)
+  2047	{
+  2048	#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+  2049		struct pagemap_scan_private *p = walk->private;
+  2050		struct vm_area_struct *vma = walk->vma;
+  2051		unsigned long categories;
+  2052		spinlock_t *ptl;
+  2053		int ret = 0;
+  2054	
+  2055		ptl = pmd_trans_huge_lock(pmd, vma);
+  2056		if (!ptl)
+  2057			return -ENOENT;
+  2058	
+  2059		categories = p->cur_vma_category | pagemap_thp_category(*pmd);
+  2060	
+  2061		if (!pagemap_scan_is_interesting_page(categories, p))
+  2062			goto out_unlock;
+  2063	
+  2064		ret = pagemap_scan_output(categories, p, start, &end);
+  2065		if (start == end)
+  2066			goto out_unlock;
+  2067	
+  2068		if (~p->arg.flags & PM_SCAN_WP_MATCHING)
+  2069			goto out_unlock;
+  2070		if (~categories & PAGE_IS_WRITTEN)
+  2071			goto out_unlock;
+  2072	
+  2073		/*
+  2074		 * Break huge page into small pages if the WP operation
+  2075		 * needs to be performed on a portion of the huge page.
+  2076		 */
+> 2077		if (end != start + HPAGE_SIZE) {
+  2078			spin_unlock(ptl);
+  2079			split_huge_pmd(vma, pmd, start);
+  2080			pagemap_scan_backout_range(p, start, end);
+  2081			/* Report as if there was no THP */
+  2082			return -ENOENT;
+  2083		}
+  2084	
+  2085		make_uffd_wp_pmd(vma, start, pmd);
+  2086		flush_tlb_range(vma, start, end);
+  2087	out_unlock:
+  2088		spin_unlock(ptl);
+  2089		return ret;
+  2090	#else /* !CONFIG_TRANSPARENT_HUGEPAGE */
+  2091		return -ENOENT;
+  2092	#endif
+  2093	}
+  2094	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
