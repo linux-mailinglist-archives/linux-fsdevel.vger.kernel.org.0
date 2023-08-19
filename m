@@ -2,144 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 405C8781824
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Aug 2023 09:54:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC77D7818CF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Aug 2023 12:39:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344563AbjHSHyV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Aug 2023 03:54:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44862 "EHLO
+        id S229794AbjHSKjt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 19 Aug 2023 06:39:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344539AbjHSHyC (ORCPT
+        with ESMTP id S229838AbjHSKjo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 19 Aug 2023 03:54:02 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F418A3C06;
-        Sat, 19 Aug 2023 00:54:00 -0700 (PDT)
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37J39Dw2032654;
-        Sat, 19 Aug 2023 07:53:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-03-30; bh=nTI8vH3S3FyfDJPkWLfcUdyZ5ckJ1JuWlZCVWTgr0c8=;
- b=yNT1/V5kRDtgJTPv/xIpC5if6lEUUMxNKfPMEeGTDhH+if5646Y3LNKI+USP9HA4H6V6
- uaFi6XymTc5y5o4eehPtMw4w1O5o7Pa/Qc9irqmCRu4l4BOEKoMCwGOTO01O2vtJb1u8
- kT5vJoZCeyqe7YFr8O6dyMB7LeGlWCja6EzKFZZq/fFvYTIVzhNAirLFuAqutxXMXAdr
- f/3wNUNEINNobQ6u4pUsi9Lca4NaReGwBR+Yx/3UZ5jG/mb8jRXsw08TXNiidS6pwqBr
- MGpoMCxTdIFWNP7GSABxb4XoJ5rq/5jkTbbLhOwy+Jr3NRLwUM8GaXiOscJg11zDy5B5 gw== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3sjmnc0905-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 19 Aug 2023 07:53:47 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 37J7Al7i029822;
-        Sat, 19 Aug 2023 07:53:46 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3sjm686xyh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 19 Aug 2023 07:53:46 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 37J7rj5r001073;
-        Sat, 19 Aug 2023 07:53:45 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3sjm686xyc-1;
-        Sat, 19 Aug 2023 07:53:45 +0000
-From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To:     stable@vger.kernel.org
-Cc:     vegard.nossum@oracle.com, Namjae Jeon <linkinjeon@kernel.org>,
-        Yuezhang Mo <Yuezhang.Mo@sony.com>,
-        Maxim Suhanov <dfirblog@gmail.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5.15.y] exfat: check if filename entries exceeds max filename length
-Date:   Sat, 19 Aug 2023 00:53:37 -0700
-Message-ID: <20230819075337.3270182-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.41.0
+        Sat, 19 Aug 2023 06:39:44 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 261CA240AF;
+        Sat, 19 Aug 2023 02:21:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AE73460E07;
+        Sat, 19 Aug 2023 09:21:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1FAEC433C7;
+        Sat, 19 Aug 2023 09:21:29 +0000 (UTC)
+Date:   Sat, 19 Aug 2023 11:21:26 +0200
+From:   Helge Deller <deller@gmx.de>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrei Vagin <avagin@openvz.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-parisc@vger.kernel.org
+Subject: [PATCH] procfs: Fix /proc/self/maps output for 32-bit kernel and
+ compat tasks
+Message-ID: <ZOCJltW/eufPUc+T@p100>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-19_06,2023-08-18_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 suspectscore=0
- bulkscore=0 malwarescore=0 mlxscore=0 adultscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
- definitions=main-2308190073
-X-Proofpoint-GUID: soWY6qcE-5vd3d2QtAZKDXD8gjoZaaV3
-X-Proofpoint-ORIG-GUID: soWY6qcE-5vd3d2QtAZKDXD8gjoZaaV3
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Namjae Jeon <linkinjeon@kernel.org>
+On a 32-bit kernel addresses should be shown with 8 hex digits, e.g.:
 
-[ Upstream commit d42334578eba1390859012ebb91e1e556d51db49 ]
+root@debian:~# cat /proc/self/maps
+00010000-00019000 r-xp 00000000 08:05 787324     /usr/bin/cat
+00019000-0001a000 rwxp 00009000 08:05 787324     /usr/bin/cat
+0001a000-0003b000 rwxp 00000000 00:00 0          [heap]
+f7551000-f770d000 r-xp 00000000 08:05 794765     /usr/lib/hppa-linux-gnu/libc.so.6
+f770d000-f770f000 r--p 001bc000 08:05 794765     /usr/lib/hppa-linux-gnu/libc.so.6
+f770f000-f7714000 rwxp 001be000 08:05 794765     /usr/lib/hppa-linux-gnu/libc.so.6
+f7d39000-f7d68000 r-xp 00000000 08:05 794759     /usr/lib/hppa-linux-gnu/ld.so.1
+f7d68000-f7d69000 r--p 0002f000 08:05 794759     /usr/lib/hppa-linux-gnu/ld.so.1
+f7d69000-f7d6d000 rwxp 00030000 08:05 794759     /usr/lib/hppa-linux-gnu/ld.so.1
+f7ea9000-f7eaa000 r-xp 00000000 00:00 0          [vdso]
+f8565000-f8587000 rwxp 00000000 00:00 0          [stack]
 
-exfat_extract_uni_name copies characters from a given file name entry into
-the 'uniname' variable. This variable is actually defined on the stack of
-the exfat_readdir() function. According to the definition of
-the 'exfat_uni_name' type, the file name should be limited 255 characters
-(+ null teminator space), but the exfat_get_uniname_from_ext_entry()
-function can write more characters because there is no check if filename
-entries exceeds max filename length. This patch add the check not to copy
-filename characters when exceeding max filename length.
+But since commmit 0e3dc0191431 ("procfs: add seq_put_hex_ll to speed up
+/proc/pid/maps") even on native 32-bit kernels the output looks like this:
 
-Cc: stable@vger.kernel.org
-Cc: Yuezhang Mo <Yuezhang.Mo@sony.com>
-Reported-by: Maxim Suhanov <dfirblog@gmail.com>
-Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
-Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-[Harshit: backport to 5.15.y]
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-The conflict resolved patch for 6.1.y applies cleanly to 5.15.y as
-well.
-Note: This fix is already present in 5.10.y but missing in 5.15.y
----
- fs/exfat/dir.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+root@debian:~# cat /proc/self/maps
+0000000010000-0000000019000 r-xp 00000000 000000008:000000005 787324  /usr/bin/cat
+0000000019000-000000001a000 rwxp 000000009000 000000008:000000005 787324  /usr/bin/cat
+000000001a000-000000003b000 rwxp 00000000 00:00 0  [heap]
+00000000f73d1000-00000000f758d000 r-xp 00000000 000000008:000000005 794765  /usr/lib/hppa-linux-gnu/libc.so.6
+00000000f758d000-00000000f758f000 r--p 000000001bc000 000000008:000000005 794765  /usr/lib/hppa-linux-gnu/libc.so.6
+00000000f758f000-00000000f7594000 rwxp 000000001be000 000000008:000000005 794765  /usr/lib/hppa-linux-gnu/libc.so.6
+00000000f7af9000-00000000f7b28000 r-xp 00000000 000000008:000000005 794759  /usr/lib/hppa-linux-gnu/ld.so.1
+00000000f7b28000-00000000f7b29000 r--p 000000002f000 000000008:000000005 794759  /usr/lib/hppa-linux-gnu/ld.so.1
+00000000f7b29000-00000000f7b2d000 rwxp 0000000030000 000000008:000000005 794759  /usr/lib/hppa-linux-gnu/ld.so.1
+00000000f7e0c000-00000000f7e0d000 r-xp 00000000 00:00 0  [vdso]
+00000000f9061000-00000000f9083000 rwxp 00000000 00:00 0  [stack]
 
-diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
-index 8475a8653c3a..f6dd4fc8eaf4 100644
---- a/fs/exfat/dir.c
-+++ b/fs/exfat/dir.c
-@@ -34,6 +34,7 @@ static void exfat_get_uniname_from_ext_entry(struct super_block *sb,
- {
- 	int i;
- 	struct exfat_entry_set_cache *es;
-+	unsigned int uni_len = 0, len;
+This patch brings back the old default 8-hex digit output for
+32-bit kernels and compat tasks.
+
+Signed-off-by: Helge Deller <deller@gmx.de>
+Fixes: 0e3dc0191431 ("procfs: add seq_put_hex_ll to speed up /proc/pid/maps")
+Cc: Andrei Vagin <avagin@openvz.org>
+
+diff --git a/fs/seq_file.c b/fs/seq_file.c
+index f5fdaf3b1572..1a15b531aede 100644
+--- a/fs/seq_file.c
++++ b/fs/seq_file.c
+@@ -19,6 +19,7 @@
+ #include <linux/printk.h>
+ #include <linux/string_helpers.h>
+ #include <linux/uio.h>
++#include <linux/compat.h>
  
- 	es = exfat_get_dentry_set(sb, p_dir, entry, ES_ALL_ENTRIES);
- 	if (!es)
-@@ -52,7 +53,10 @@ static void exfat_get_uniname_from_ext_entry(struct super_block *sb,
- 		if (exfat_get_entry_type(ep) != TYPE_EXTEND)
- 			break;
- 
--		exfat_extract_uni_name(ep, uniname);
-+		len = exfat_extract_uni_name(ep, uniname);
-+		uni_len += len;
-+		if (len != EXFAT_FILE_NAME_LEN || uni_len >= MAX_NAME_LENGTH)
-+			break;
- 		uniname += EXFAT_FILE_NAME_LEN;
+ #include <linux/uaccess.h>
+ #include <asm/page.h>
+@@ -759,11 +760,16 @@ void seq_put_hex_ll(struct seq_file *m, const char *delimiter,
+ 			seq_puts(m, delimiter);
  	}
  
-@@ -1032,7 +1036,8 @@ int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_info *ei,
- 			if (entry_type == TYPE_EXTEND) {
- 				unsigned short entry_uniname[16], unichar;
++#ifdef CONFIG_64BIT
+ 	/* If x is 0, the result of __builtin_clzll is undefined */
+-	if (v == 0)
++	if (v == 0 || is_compat_task())
+ 		len = 1;
+ 	else
+ 		len = (sizeof(v) * 8 - __builtin_clzll(v) + 3) / 4;
++#else
++	/* On 32-bit kernel always use provided width */
++	len = 1;
++#endif
  
--				if (step != DIRENT_STEP_NAME) {
-+				if (step != DIRENT_STEP_NAME ||
-+				    name_len >= MAX_NAME_LENGTH) {
- 					step = DIRENT_STEP_FILE;
- 					continue;
- 				}
--- 
-2.34.1
-
+ 	if (len < width)
+ 		len = width;
