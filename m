@@ -2,116 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 41DED781644
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Aug 2023 03:04:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81F1778168E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Aug 2023 04:09:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243230AbjHSBE1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Aug 2023 21:04:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48050 "EHLO
+        id S243466AbjHSCH7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Aug 2023 22:07:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243181AbjHSBEX (ORCPT
+        with ESMTP id S243544AbjHSCHk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Aug 2023 21:04:23 -0400
-Received: from rere.qmqm.pl (rere.qmqm.pl [91.227.64.183])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA98110F1;
-        Fri, 18 Aug 2023 18:04:21 -0700 (PDT)
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 4RSL9Z0rDnz9Y;
-        Sat, 19 Aug 2023 03:04:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1692407060; bh=sFq9Q+VaStp1O+YV7cwSTZ53EOPS3jtEcfot7OFqKYo=;
+        Fri, 18 Aug 2023 22:07:40 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 771C1421F;
+        Fri, 18 Aug 2023 19:07:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0DA4762BAA;
+        Sat, 19 Aug 2023 02:07:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DFBBC433C7;
+        Sat, 19 Aug 2023 02:07:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692410857;
+        bh=8pcZHtB6DHhPFhFZ/nMj7g3so9AlrY/3Rallqgu9qGg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Gz9HN/5ke2KWkSBGXpxjmiGIQ6pVqMNlBIiUp9oEzLyclbNE27pcaLnZmjGt8fyDG
-         yuRmR4LoesM+ikFVO1lthn22e79wgUIVudmi7uvOWixPYQO+hkS+1AG67vfktG8r/E
-         09xvswvHSS03kZpP08hV29fFX8PYJrsMsOCpyaBMEQpDg2TI9qh/kT4JtD8XlSy+ul
-         amQ6PdgWHi2pYEYYEqD8fbAyEwWFqLM2UUGENRBDQkCiZ6rcVJOtQKOqwtrcAi275N
-         YocSGFnW+CJgcpaXU4w0TdjesZQFKuyBPLkcE1GsIm8ZGl9wi8r5TcPShBF2vXeUpr
-         t+8Ght2q9MPlg==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.103.8 at mail
-Date:   Sat, 19 Aug 2023 03:04:16 +0200
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Peter Xu <peterx@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <emmir@google.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
-        Paul Gofman <pgofman@codeweavers.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Yun Zhou <yun.zhou@windriver.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alex Sierra <alex.sierra@amd.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH v32 2/6] fs/proc/task_mmu: Implement IOCTL to get and
- optionally clear info about PTEs
-Message-ID: <ZOAVEFniF/dm+mre@qmqm.qmqm.pl>
-References: <20230816113049.1697849-1-usama.anjum@collabora.com>
- <20230816113049.1697849-3-usama.anjum@collabora.com>
+        b=kXDVi9Ve8X2lh8APyGpqdQOiprIMgy/NxESGC8XCgZsHGSbEyG+W/sUkGveXL2AmD
+         dpgBplfDQPZEx0ywq13uqH23pG1i92YhRohNPz/AW+4OW9kqPp2At0Z7iZglpPDcoy
+         W9pvOw3bSpanEaCK7NV2axE3Kp8z309EgwmSSQT+ZVDLs/r3yda4fISYNlTNyBT00I
+         TANd1KDhE0HEJiJsGKisewDaVbgGDB2C1rf3u8uwQ1sofjA9CkO+N5J8j9oK3pfxI1
+         K+rDql8UJABBULXnzzRX08BcfJbPZoO4YSE2NVh/0HxYAZTPuHcY70NkSEy+dIWjIb
+         FNCjFyOThHUlg==
+Date:   Fri, 18 Aug 2023 19:07:36 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Zorro Lang <zlang@redhat.com>, Amir Goldstein <amir73il@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>, corbet@lwn.net,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, cem@kernel.org, sandeen@sandeen.net,
+        chandan.babu@oracle.com, leah.rumancik@gmail.com, zlang@kernel.org,
+        fstests@vger.kernel.org, willy@infradead.org,
+        shirley.ma@oracle.com, konrad.wilk@oracle.com
+Subject: Re: [PATCH 1/3] docs: add maintainer entry profile for XFS
+Message-ID: <20230819020736.GS11340@frogsfrogsfrogs>
+References: <169091989589.112530.11294854598557805230.stgit@frogsfrogsfrogs>
+ <169091990172.112530.13872332887678504055.stgit@frogsfrogsfrogs>
+ <ZNaMhgqbLJGdateQ@bombadil.infradead.org>
+ <20230812000456.GA2375177@frogsfrogsfrogs>
+ <CAOQ4uxibnPqE5qG9R53JyaMY1bd6j9OH0pq2eQxYpxDwf3xnGw@mail.gmail.com>
+ <ZNwQT80yoHYrjvn+@bombadil.infradead.org>
+ <20230816001108.GA1348949@frogsfrogsfrogs>
+ <20230816060405.u26tvypmh4tcovef@zlang-mailbox>
+ <20230817003345.GV11377@frogsfrogsfrogs>
+ <ZN10qmDb8rFQKVkI@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230816113049.1697849-3-usama.anjum@collabora.com>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <ZN10qmDb8rFQKVkI@bombadil.infradead.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 16, 2023 at 04:30:45PM +0500, Muhammad Usama Anjum wrote:
-> The PAGEMAP_SCAN IOCTL on the pagemap file can be used to get or optionally
-> clear the info about page table entries.
-[...]
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-[...]
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +static unsigned long pagemap_thp_category(pmd_t pmd)
-> +{
-> +	unsigned long categories = PAGE_IS_HUGE;
-> +
-> +	/*
-> +	 * THPs don't support file-backed memory. So PAGE_IS_FILE
-> +	 * is not checked here.
-> +	 */
+On Wed, Aug 16, 2023 at 06:15:22PM -0700, Luis Chamberlain wrote:
+> On Wed, Aug 16, 2023 at 05:33:45PM -0700, Darrick J. Wong wrote:
+> > However, I defined the testing lead (quoting from above):
+> > 
+> > "**Testing Lead**: This person is responsible for setting the test
+> > coverage goals of the project, negotiating with developers to decide
+> > on new tests for new features, and making sure that developers and
+> > release managers execute on the testing."
+> 
+> This I thought I could do.
 
-It seems that we can have THP for files: ref. recent LKML thread [1].
+Well I certainly invite you to try! :)
 
-[1] https://lkml.org/lkml/2023/8/16/1212
+> > In my mind, that means the testing lead should be reviewing changes
+> > proposed for tests/xfs/* in fstests by XFS developers to make sure that
+> > new features are adequately covered; and checking that drive-by
+> > contributions from others fit well with what's already there.
+> 
+> This should be included in the description if that's part of the role.
+> This alone is a task and I'm afraid *that* does require much more time
+> commitment and experience I don't think I have with XFS yet. And so it
+> would seem to me a more experience developer on both fstests and XFS
+> would be required for this.
 
-> +	if (pmd_present(pmd)) {
-> +		categories |= PAGE_IS_PRESENT;
-> +		if (!pmd_uffd_wp(pmd))
-> +			categories |= PAGE_IS_WRITTEN;
-> +		if (is_zero_pfn(pmd_pfn(pmd)))
-> +			categories |= PAGE_IS_PFNZERO;
-> +	} else if (is_swap_pmd(pmd)) {
-> +		categories |= PAGE_IS_SWAPPED;
-> +		if (!pmd_swp_uffd_wp(pmd))
-> +			categories |= PAGE_IS_WRITTEN;
-> +	}
-> +
-> +	return categories;
-> +}
+<shrug> I think someone familiar with running a QA organization would
+know exactly the sorts of things that need testing and how to make a
+reasonably thorough test plan.  They wouldn't necessarily need to know
+all that much about the xfs codebase per se, though obviously they'd
+need to be familiar with C and all of its marvelous footguns.
 
-Best Regards
-Micha³ Miros³aw
+(As for testcase review: is that the job of the code reviewer?  or the
+test maintainer?  I don't know...)
+
+At this time, our testing is so ... uneven ... that "someone who feels
+totally comfortable with calling bs on obviously inadequate testing and
+people will listen to" is probably qualification enough. :)
+
+> > > And a test lead might do more testing besides fstests. So I can't imagine
+> > > that I need to check another project to learn about who's in charge of the
+> > > current project I'm changing.
+> > 
+> > ...so the testing lead would be the person who you'd talk to directly
+> > about changes that you want to make.
+> 
+> I could certainly help try to set a high bar, but to actually ensure
+> correctness of XFS test patches, I do think that should require a more
+> seasoned XFS developer and with fstests.
+
+<shrug> Maybe we should chat more directly about this? :)
+I'll look you up in #kdevops (the irc) next week.
+
+--D
+
+>   Luis
