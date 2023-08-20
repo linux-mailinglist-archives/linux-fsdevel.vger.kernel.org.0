@@ -2,82 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 113D5781F48
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Aug 2023 20:41:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03CCA781F4B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Aug 2023 20:41:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231617AbjHTSly (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Aug 2023 14:41:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59440 "EHLO
+        id S231641AbjHTSl4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Aug 2023 14:41:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231540AbjHTSlw (ORCPT
+        with ESMTP id S231609AbjHTSlx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Aug 2023 14:41:52 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF3FED1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Aug 2023 11:40:50 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id ca18e2360f4ac-7748ca56133so30857739f.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Aug 2023 11:40:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20221208.gappssmtp.com; s=20221208; t=1692556850; x=1693161650;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MjT7CZ9fGkNj69bOFC/CnWrq6Xp6pxnXfkJZHf8DBSs=;
-        b=a5pm7KT6zLU4VeeEFM9MVlxYrTt3LT78BY7QcOLtXO93FGh24Xato+W/Kw2ZIM53Wo
-         9OQGGVQKMeVXNtSafeKVEwWDBxp8fwiJaUKtEgibR1/+1IBcznJJ4bmfz5JRbAH0IDwm
-         EvnrGAJQWJaxCkQixatYyle1LxGhwjDsvApzzYhQJl1V0tkZSdQlkaEsrxeZ5E2aN4nE
-         TdFVzMyFd7I6b9vBmw/bUu7pRLqEdGVAgfL6JmvBNURYgmxputhm6bMYA8xY56QulLq8
-         DJA+IioRi08WwqqlN8RD+ruQQmSw79r+oag95q7yce/gKOGkcmrvMupaMoD9vjTZLS5o
-         NXEg==
+        Sun, 20 Aug 2023 14:41:53 -0400
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4468C1BCF
+        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Aug 2023 11:41:24 -0700 (PDT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1bf707f526bso6321075ad.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Aug 2023 11:41:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692556850; x=1693161650;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20221208; t=1692556884; x=1693161684;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MjT7CZ9fGkNj69bOFC/CnWrq6Xp6pxnXfkJZHf8DBSs=;
-        b=KKVe0Vp4nDm5jK+OmLO0sVM30Q1asm4MzqV7TS2VL+TUXlYgJhetToI44xlhFhUfK+
-         Y3mYNakfjXhMABqbzKiMJW1lyw6rZW1yfcnbZMoZkVdZaTzTu8sgsofjRuUKFihx/zyi
-         8OPIcw3U0hWl1S2B9mxC+vu1+Z0hKhbfc1N5WfZzA1LSHe14dmIp2+mz60ECioONR32C
-         C8QdNX4bbCMwGl2tFqN5MDF4dCv3RU5u/Tee2Dik6tKOqQCN/wveUYqpe1euZNnyb9FG
-         wcYzyj/P/V0k3j1Bz/FWnFa+dvoGTmD+tgiUzfA6fR+I6UbzNS5Ja26WmdwQyMpgp1C+
-         h2Sg==
-X-Gm-Message-State: AOJu0YxyGZjn4F61cLtwy79j58JhZG4Y/+FcJmJykDvhgsXRtJ3uCplC
-        /AubcYN4685m2CUayBs7tI0uJWU/4hRaRM4mkTM=
-X-Google-Smtp-Source: AGHT+IH5jeI8aXPGcO2sMI6RMmO1M2OwKV+n8kY0pSHEzPp7TXm1eZE5rO0JOZU/pKNuDY5HgsO2TQ==
-X-Received: by 2002:a05:6e02:110:b0:349:582c:a68d with SMTP id t16-20020a056e02011000b00349582ca68dmr4438394ilm.3.1692556850060;
-        Sun, 20 Aug 2023 11:40:50 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id s75-20020a63774e000000b0056416526a5csm5016883pgc.59.2023.08.20.11.40.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Aug 2023 11:40:49 -0700 (PDT)
-Message-ID: <91d99ef5-bc01-45d4-83f3-d5e9a5447fb8@kernel.dk>
-Date:   Sun, 20 Aug 2023 12:40:48 -0600
+        bh=F/n5kjMvYzdRUXwH8feZ+4YEm3skk2x5QaWimKw+DCM=;
+        b=FQGIRDSXTTPb0SeNWR4bA9dStgXGmkQBOZFEOUIogfOsG10uQaowhCmUR5A6IAytFb
+         9sALnn0FKzKa6UcwdsP32bTcSHyonInv+ciyD2f9gT1UJTj1qZyp0BtruMSGbM+i0FwV
+         4QmAwUYZLcsMHvoXpnrlS7UuHlm5oXWXP8mmRnpG/Q+fjEE4b4dHureBvsK1RchxV/of
+         Fzvj+ZcY8mlpiCZ4vDcasFInF5HJgM9XWUClor73xnbD76lVf7Bj6e3ZiKT/xeScpzBV
+         oDu1llZxHfno8C78UEHB0X0O3u1iFaDRiROULWF2druoV6t5oNm8eMaDPyFcpyscF4Z9
+         7BLQ==
+X-Gm-Message-State: AOJu0YwXK+gM4Or+KsB7OBLq+XiUOivfmFjGKRMEqsLbi1nIbusdsugH
+        JQQG/sJlAhbMnZfkDU+snJgyY3tIbEEkSgzaAgNg6wKhfPna
+X-Google-Smtp-Source: AGHT+IG3eaeUAH2EW45k/+HZjIXX99Q9piV7GARJu71AM1i236ME0RtbJCZz+N43b2fgb4vOTwTGQxFuzEj7n5oY0lhEjCqFkOik
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Possible io_uring related race leads to btrfs data csum mismatch
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Qu Wenruo <quwenruo.btrfs@gmx.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        io-uring@vger.kernel.org
-References: <2b3d6880-59c7-4483-9e08-3b10ac936d04@gmx.com>
- <d779f1aa-f6ef-43c6-bfcc-35a6870a639a@kernel.dk>
- <e7bcab0b-d894-40e8-b65c-caa846149608@gmx.com>
- <ee0b1a74-67e3-4b71-bccf-8ecc5fa3819a@kernel.dk>
- <34e2030c-5247-4c1f-bd18-a0008a660746@gmx.com>
- <b60cf9c7-b26d-4871-a3c9-08e030b68df4@kernel.dk>
- <1726ad73-fabb-4c93-8e8c-6d2aab9a0bb0@gmx.com>
- <7526b413-6052-4c2d-9e5b-7d0e4abee1b7@gmx.com>
- <8efc73c1-3fdc-4fc3-9906-0129ff386f20@kernel.dk>
- <22e28af8-b11b-4d0f-954b-8f5504f8d9e4@kernel.dk>
- <ZOJZE3YvBjYQl000@casper.infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZOJZE3YvBjYQl000@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Received: by 2002:a17:902:c449:b0:1bb:b74c:88fa with SMTP id
+ m9-20020a170902c44900b001bbb74c88famr1918271plm.6.1692556883825; Sun, 20 Aug
+ 2023 11:41:23 -0700 (PDT)
+Date:   Sun, 20 Aug 2023 11:41:23 -0700
+In-Reply-To: <000000000000dc83d605f0c70a11@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d299b406035f1bbd@google.com>
+Subject: Re: [syzbot] [nilfs?] kernel BUG in folio_end_writeback
+From:   syzbot <syzbot+7e5cf1d80677ec185e63@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, brauner@kernel.org,
+        konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,37 +58,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/20/23 12:18 PM, Matthew Wilcox wrote:
-> On Sun, Aug 20, 2023 at 08:11:04AM -0600, Jens Axboe wrote:
->> +static int io_get_single_event(struct io_event *event)
->> +{
->> +	int ret;
->> +
->> +	do {
->> +		/*
->> +		 * We can get -EINTR if competing with io_uring using signal
->> +		 * based notifications. For that case, just retry the wait.
->> +		 */
->> +		ret = io_getevents(io_ctx, 1, 1, event, NULL);
->> +		if (ret != -EINTR)
->> +			break;
->> +	} while (1);
->> +
->> +	return ret;
->> +}
-> 
-> Is there a reason to prefer this style over:
-> 
-> 	do {
-> 		ret = io_getevents(io_ctx, 1, 1, event, NULL);
-> 	} while (ret == -1 && errno == EINTR);
-> 
-> (we need to check errno, here, right?  Or is io_getevents() special
-> somehow?)
+syzbot suspects this issue was fixed by commit:
 
-Honestly, don't really care about the style, mostly cared about getting
-a bug fixed. io_getevents() returns number of events claimed, or -errno.
+commit 92c5d1b860e9581d64baca76779576c0ab0d943d
+Author: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date:   Fri May 26 02:13:32 2023 +0000
 
--- 
-Jens Axboe
+    nilfs2: reject devices with insufficient block count
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=170c6337a80000
+start commit:   929ed21dfdb6 Merge tag '6.4-rc4-smb3-client-fixes' of git:..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3da6c5d3e0a6c932
+dashboard link: https://syzkaller.appspot.com/bug?extid=7e5cf1d80677ec185e63
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16cb3b69280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10f34201280000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: nilfs2: reject devices with insufficient block count
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
