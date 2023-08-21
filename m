@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EAB9782272
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Aug 2023 06:09:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAE89782278
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Aug 2023 06:09:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232816AbjHUEI7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Aug 2023 00:08:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49208 "EHLO
+        id S232688AbjHUEJx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Aug 2023 00:09:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232911AbjHUEIs (ORCPT
+        with ESMTP id S231226AbjHUEJx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Aug 2023 00:08:48 -0400
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 217A7D3;
-        Sun, 20 Aug 2023 21:08:08 -0700 (PDT)
-X-AuditID: a67dfc5b-d6dff70000001748-db-64e2ded6d09c
+        Mon, 21 Aug 2023 00:09:53 -0400
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EFB81FD;
+        Sun, 20 Aug 2023 21:09:17 -0700 (PDT)
+X-AuditID: a67dfc5b-d6dff70000001748-eb-64e2ded695c7
 From:   Byungchul Park <byungchul@sk.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel_team@skhynix.com, torvalds@linux-foundation.org,
@@ -41,44 +41,44 @@ Cc:     kernel_team@skhynix.com, torvalds@linux-foundation.org,
         gwan-gyeong.mun@intel.com, max.byungchul.park@gmail.com,
         boqun.feng@gmail.com, longman@redhat.com, hdanton@sina.com,
         her0gyugyu@gmail.com
-Subject: [RESEND PATCH v10 15/25] locking/lockdep, cpu/hotplus: Use a weaker annotation in AP thread
-Date:   Mon, 21 Aug 2023 12:46:27 +0900
-Message-Id: <20230821034637.34630-16-byungchul@sk.com>
+Subject: [RESEND PATCH v10 16/25] dept: Apply sdt_might_sleep_{start,end}() to dma fence wait
+Date:   Mon, 21 Aug 2023 12:46:28 +0900
+Message-Id: <20230821034637.34630-17-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230821034637.34630-1-byungchul@sk.com>
 References: <20230821034637.34630-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSf0yMcRzHfb/Pz05nT6fNQ+bHmWWZxLDPzMx/nv6wGRvDH9y6R91UuCOy
-        mXL5FZni6ZyadWXX1R3pyR9UZ6lVQnVop6yau5BW53LccbpQ4Z/PXnu/93799WEJVQO1gNVl
-        HhP1mZp0Na0gFb5oyyr3oFebJLUvhsIrSRD8dpGE0hoHDa57dgSOB7kYRlq3wpvQGIKJzm4C
-        TJILgcUzQMCDtkEETttZGl6/nwM9QT8NHdJlGowVNTS8HI1g6C8uwmCXt8Hza+UYmsLDJJhG
-        aCgxGfHU+YQhbK1mwJqzHLy2WwxEPGugY9BNgfPtSjDf7qeh0dlBQttDL4bX9aU0DDp+U/C8
-        7SkJrsICCu5+LqdhNGQlwBr0M/CqqQzD/bwp0fmvvyhoL2jCcP5OLYaevgYEjy++wyA73DS0
-        BMcw1MkSAT8rWxF4r/oYOHclzEBJ7lUEl88Vk9A92U5BXv96mPhRSm/ZKLSM+Qkhr+6E4AyV
-        kcKzcl54dGuAEfIev2WEMvm4UGdLECoaR7BgCQQpQa6+RAtyoIgR8n09WPjc1cUIT29OkML7
-        HhPeHrdXsUkrpuuyRP3qzQcUaTf6JvGRSubk+FAJk4MK6HwUxfLcOn5I6mX+s7HYT0wzzcXz
-        vb3hGY7llvB1BR+pfKRgCe7CbN423jkznstpeSlSMsMkt5y3myVqmpXcBt6YW0P+lS7m7feb
-        ZkRRU7ncUI+mWcWt5794hshpKc8Zo/iicvu/wXz+ia2XvIaUZWhWNVLpMrMyNLr0dYlp2Zm6
-        k4kphzNkNPVS1tORfQ9RwLWzGXEsUkcrDyz0alWUJsuQndGMeJZQxyrjvnu0KqVWk31K1B/e
-        rz+eLhqaURxLqucp14ZOaFVcquaYeEgUj4j6/y1moxbkoDPJbZWtLS9+e5J3+zpXhOz0nhSb
-        XLX0Q21qYQ4TjpkbZ4ypepJ/0/E1EEnqM5vvJOo/bLSvjv61K9liHm6sMEgxHft0vlGpMn7/
-        z5ElCV/ci+q7YyFgcnaxqTu2phwdLxqadCv2wtkzA9/0nyaXLTJaDtqGW3b+6Dq4y+96dF1N
-        GtI0axIIvUHzB5lkfvNOAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0hTcRjG+//P1dnksKwOKhWDLhSaldYbVoQROxRG0AchurjaIVfzwlam
-        hTWdWWmKRtPyxtKaOlfWLDFzMbS0JZmm2AWVXFfJMs1ZS63U6MvLj+fh+X16WUJWTPmx6tij
-        ojZWqZHTElKyI8wQ2N3nUgV3FrCQeyEY3KPnSCiqttLQfrMKgfVOCoaBRwp4MTaIYPzpMwLy
-        je0Irvb3EnCnuQ+BvSKVhs53PtDlHqLBacykwVBWTUPH5wkMPXkXMVTZIqA1pxSDw/ORhPwB
-        GgrzDXjqfMLgMVsYMOsXg6uigIGJ/lXg7OumoKnYSYH99Qq4UtJDQ4PdSUJznQtDZ30RDX3W
-        PxS0Nj8moT03i4IbX0tp+DxmJsDsHmLgucOE4VbalC39+28KWrIcGNKv3cbQ9eo+ggfn3mCw
-        WbtpaHIPYqixGQn4Vf4IgSv7CwNnLngYKEzJRpB5Jo+EZ5MtFKT1hML4zyJ6c5jQNDhECGk1
-        xwX7mIkUnpTywr2CXkZIe/CaEUy2Y0JNxXKhrGEAC1dH3JRgs5ynBdvIRUbI+NKFha9tbYzw
-        +PI4Kbzrysc7A3ZLNqhEjTpB1K7cFCWJvvRqEseXM4nf3hYyepRFZyAvludCeEPeEDHNNLeU
-        f/nSM8O+3CK+JusDlYEkLMGd9eYrvj2dGczhVLxxonCGSW4xX3XFSE2zlFvLG1KqyX/ShXzV
-        LceMyGsqt92vR9Ms40L54f63ZA6SmNAsC/JVxybEKNWa0CDdkeikWHVi0MG4GBuaehpz8kRu
-        HRrtVDQijkXy2dKoAJdKRikTdEkxjYhnCbmv1P9Hv0omVSmTTojauP3aYxpR14j8WVI+X7ot
-        UoyScYeUR8Ujohgvav+3mPXy06OHvRHkZR+kKJm77K55CfYuqRwN3LqrfPL0eFBwusfiJT0Q
-        eXhBZW/Ye6WvX1lbqmLRvO21beGs6rBPR0TiVuu88JPqsGr7z30a956GkOQt2bn66Jxwu2Jh
-        gMo08qTH2eq9ZuPw+qad+qDk4OvSEKZ+79661QWWzPhTtQ7/dT4ts+SkLlq5ajmh1Sn/AgTl
-        eBkwAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAAz3SbUxTZxQH8D3Pvfe5l0rNTTHxatWRJmjE+BrAEzONJibekS0u0xgjErmu
+        N6OzFNMqLyZmoKiAQkQCnUKWAqY2gKItvlYcYETQAFUrooHGVnwhgGil3SrVjeK2Lye/nH/O
+        /9PhKJWTmcvpDPtko0HSa4iCVoxF1yzt8/i0KwbDC6HsxAoITBTSUN3USMB1oQFBY3M+huE7
+        m+BJcBTBZHcvBeYKF4Ia7yAFzR0eBC22QwQeDc0Ed2CcQFfFcQKH65oIPBgJYxioPIWhwf49
+        3D9Zi6E19JoG8zCBKvNhPDXeYAhZ61mw5sWBz3aGhbB3JXR5+hhoebYETv8+QOBmSxcNHdd8
+        GB7dqCbgafybgfsdnTS4ykoYOP+2lsBI0EqBNTDOwsNWC4aLBVNFRz98ZuBuSSuGo2cvYXA/
+        dSK4Vfgcg72xj8DtwCgGh72Cgo/n7iDwlY6xcOREiIWq/FIEx49U0tD76S4DBQOJMPlXNVm/
+        Rrw9Ok6JBY5ssSVoocV7tYJ4/cwgKxbcesaKFvt+0WGLF+tuDmOxxh9gRHt9ERHt/lOsWDzm
+        xuLbnh5W7PxtkhaH3Gb8g3qH4hutrNdlycbl69IU6eWhHrI3X5ljcZxl89BLRTGK4gQ+QXBU
+        HaP+9+ur0yb8IqG/PzTtWXys4Ch5xRQjBUfxx2YItnfdJBLE8KlCeXMXjpjm44Q3/jEmYiWf
+        JNR2/vFv6ddCw8XWaUdN7e3OGyhiFZ8ovPe+oCOlAl8eJRR9cpIvB3OENls/fRIpLeireqTS
+        GbIyJJ0+YVl6rkGXs+ynzAw7mnop68FwyjXkd21pRzyHNNHKtHk+rYqRsky5Ge1I4CjNLKX6
+        T69WpdRKuQdkY+Yu4369bGpHao7WzFauCmZrVfzP0j55jyzvlY3/pZiLmpuH6nbEFyXFzCuN
+        29pWXbR1STh5zbcPh37l2mISNi6Y/8QbF7Z8V6HdlvNBvTrZw0Ub9my/krZzyJRKH8p0XU7z
+        O7Imrvok2cn3hvI7sn959WN7vXG+O7HMo5+RseW52RDbn2zdTUkzk2r8wxPdsYs3P36hXp6y
+        oTJ2JGdbamHw4FqrhjalSyvjKaNJ+gcAEHXBTgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAAzXSe0xTZxgGcL/vnPOdQ7fOk0riiZi4NWHLIF5IxLwJzmjC4tlUNDOLycwm
+        jT1IuRTTAoMREwr1MhAjKLIpmlpIJYAip6gIRSsItBAQLUFk0I2OCUSQySizghfqsn/e/PI8
+        yfPXy1Gqi8wqTqdPlwx6TYqaKGhFXEz+2gGvT7vBO7ccik9uAP/cCRrK62oJ9F2rQVDbYMIw
+        2b4dHs9PIVjoeUBBWWkfgsujIxQ0dHgRtFTlEfCMfQT9/hkC7tJCAvkVdQQePlvEMHyuBEON
+        vAu6T1sxOAPjNJRNErhQlo+XzgSGgK2aBVtuOPiqzrOwOBoFbu8AA20X3Qy0DEXCr5eGCTha
+        3DR0NPoweJrKCXhr3zLQ3eGioa+4iIGrz60Ens3bKLD5Z1h45LRguG5eWjv2zxsGOoucGI5V
+        1mPof9KM4M6JPzDItQME2vxTGOxyKQWvrrQj8J2aZuHoyQALF0ynEBQePUfDg9edDJiHo2Hh
+        ZTnZGiO2Tc1Qotn+o9gyb6HFLqsg3j4/wormO0OsaJEzRHtVhFjhmMTi5Vk/I8rVPxNRni1h
+        xYLpfiw+7+1lRdcvC7Q41l+G96z+TrFZK6XoMiXD+i3xisQzgV5y2KTMstgr2Vz0l6IAhXAC
+        v1Gwj9+igib8Z8LgYOC9Q/mPBXvRU6YAKTiKP/6BUPV3DwkWK/jvhTMNbhw0zYcLE7PTTNBK
+        fpNgdd2l/htdI9Rcd753yFIuNzehoFV8tPBi9E/6NFJY0LJqFKrTZ6ZqdCnR64zJidl6Xda6
+        g2mpMlp6GtuRxeJGNOfZ3op4Dqk/VMav9mlVjCbTmJ3aigSOUocqw/4d1aqUWk32T5Ih7YAh
+        I0UytqIwjlavVH69T4pX8Yc06VKyJB2WDP+3mAtZlYsc5jf8b/X7XaYe0knys35/Nf75y6e8
+        Z4fekfPNFxN9WwvVy1Pl2Ncu396kWBxn7zqwbQcXl1D9ZVd5XuQ934SGW7Z/c2SEAx2JLFmj
+        z4v96lruJ9/WeQZvph9XWROaknaaYG9ojjvjftpZZ/hkRtgNa+buq/ZPu2NGhnbail/8cFtN
+        GxM1URGUwah5B5yxqSkwAwAA
 X-CFilter-Loop: Reflected
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -89,33 +89,57 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-cb92173d1f0 ("locking/lockdep, cpu/hotplug: Annotate AP thread") was
-introduced to make lockdep_assert_cpus_held() work in AP thread.
-
-However, the annotation is too strong for that purpose. We don't have to
-use more than try lock annotation for that.
-
-Furthermore, now that Dept was introduced, false positive alarms was
-reported by that. Replaced it with try lock annotation.
+Makes Dept able to track dma fence waits.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- kernel/cpu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma-buf/dma-fence.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index f4a2c5845bcb..19076f798b34 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -356,7 +356,7 @@ int lockdep_is_cpus_held(void)
+diff --git a/drivers/dma-buf/dma-fence.c b/drivers/dma-buf/dma-fence.c
+index f177c56269bb..ad2d7a94c868 100644
+--- a/drivers/dma-buf/dma-fence.c
++++ b/drivers/dma-buf/dma-fence.c
+@@ -16,6 +16,7 @@
+ #include <linux/dma-fence.h>
+ #include <linux/sched/signal.h>
+ #include <linux/seq_file.h>
++#include <linux/dept_sdt.h>
  
- static void lockdep_acquire_cpus_lock(void)
- {
--	rwsem_acquire(&cpu_hotplug_lock.dep_map, 0, 0, _THIS_IP_);
-+	rwsem_acquire(&cpu_hotplug_lock.dep_map, 0, 1, _THIS_IP_);
- }
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/dma_fence.h>
+@@ -782,6 +783,7 @@ dma_fence_default_wait(struct dma_fence *fence, bool intr, signed long timeout)
+ 	cb.task = current;
+ 	list_add(&cb.base.node, &fence->cb_list);
  
- static void lockdep_release_cpus_lock(void)
++	sdt_might_sleep_start(NULL);
+ 	while (!test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags) && ret > 0) {
+ 		if (intr)
+ 			__set_current_state(TASK_INTERRUPTIBLE);
+@@ -795,6 +797,7 @@ dma_fence_default_wait(struct dma_fence *fence, bool intr, signed long timeout)
+ 		if (ret > 0 && intr && signal_pending(current))
+ 			ret = -ERESTARTSYS;
+ 	}
++	sdt_might_sleep_end();
+ 
+ 	if (!list_empty(&cb.base.node))
+ 		list_del(&cb.base.node);
+@@ -884,6 +887,7 @@ dma_fence_wait_any_timeout(struct dma_fence **fences, uint32_t count,
+ 		}
+ 	}
+ 
++	sdt_might_sleep_start(NULL);
+ 	while (ret > 0) {
+ 		if (intr)
+ 			set_current_state(TASK_INTERRUPTIBLE);
+@@ -898,6 +902,7 @@ dma_fence_wait_any_timeout(struct dma_fence **fences, uint32_t count,
+ 		if (ret > 0 && intr && signal_pending(current))
+ 			ret = -ERESTARTSYS;
+ 	}
++	sdt_might_sleep_end();
+ 
+ 	__set_current_state(TASK_RUNNING);
+ 
 -- 
 2.17.1
 
