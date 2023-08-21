@@ -2,58 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E88E6782D49
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Aug 2023 17:30:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65DC5782D4F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Aug 2023 17:32:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236323AbjHUPau (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Aug 2023 11:30:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42628 "EHLO
+        id S236371AbjHUPcJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Aug 2023 11:32:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232711AbjHUPau (ORCPT
+        with ESMTP id S236369AbjHUPcD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Aug 2023 11:30:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAD30D9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Aug 2023 08:30:48 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 74CF661561
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Aug 2023 15:30:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1178BC433C8;
-        Mon, 21 Aug 2023 15:30:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692631847;
-        bh=LCwlhjnN/lD8Sn7IYVqUebx7BKKWnVX5q30n58x2FQk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AZdZSd1eBCXHHAfHd8mZWDZdJrOyg32onB/lgtzIHFWvpLyAXK6n+HIkf/R4FPb0Q
-         5OJxUcJvYhDsUW4g0qeehPv+6fccZhglMmaNHFyc4ZS1R7JBOFB7GuYIT8uaFsinnr
-         oj35Nvygi/qcrfkAV99z5hJMw5zpZvuPp//SAukMLcHUNjSlqcU2y2QcNXmA3AMG8x
-         9V2V+Dpt86lMf8SMkzslUc1Drs3lK25GJY7Lkn8d1NaZ/Q+CENf6/f2IEtV+M5l2Ut
-         GyjZaH8yhtfD9kQ0nTu/7zic1dWeim7SxVI98vim8VsQo5fcBXDqKw945g/CmwjV92
-         OUlmp5WcdQMuA==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 0/7] kiocb_{start,end}_write() helpers
-Date:   Mon, 21 Aug 2023 17:30:37 +0200
-Message-Id: <20230821-zyklisch-seenotrettung-949a7d330b1b@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230817141337.1025891-1-amir73il@gmail.com>
-References: <20230817141337.1025891-1-amir73il@gmail.com>
+        Mon, 21 Aug 2023 11:32:03 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6B1DD9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Aug 2023 08:32:01 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id 38308e7fff4ca-2bcc187e0b5so14652411fa.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Aug 2023 08:32:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1692631920; x=1693236720;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ajMViAn999T2borJAKgty2s8eZcgpP+nQpjCt7tMLBs=;
+        b=LPFdKYxeQdVH2E7Q5TbeGpZWaOvYdTEZXRyPlf3Uhz0AYFvFnpGtzmk+HpqhZbnAD6
+         KRGlXIr+NdKupKVWthCveG9ysMQ9CXZJ/xeH+/BivusXCcmBfU962Y2wLtiNwqofGPHd
+         4809M+OmUMXmes72udljBpM36v6jkoKj42MgQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692631920; x=1693236720;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ajMViAn999T2borJAKgty2s8eZcgpP+nQpjCt7tMLBs=;
+        b=G2rMi6oSwa6ZfgI4srkBq94v4nRSKi75nJjWfNIu7a5cIPQhKtWY5xF3Sc/JW2VYuk
+         yo7jeLDJ+p6Q8t2SRJH5p9YafkS9yGcCUaVktZIQF3RB9VOzfPRQNH5lbp2dcaMRfzIW
+         3wRATSNuP340CkB2G/bpm84d9zd1Ji6aapZi9ceVXlK8LKPku1MFbkiGoXlV2YHMmGLz
+         98KtCmKeEYvlaa4IUunSZRKidgZzoAeYFAA/jJz9P2SsXiYFKSyNnVxSvu/A1ZUNXdoy
+         uZ8uXG07Xpcfa+Jn4az0xHgU/LsVjftesGuoii1gbgPbbs3NNs9dMbD2l3+Igra+I4zt
+         Jkeg==
+X-Gm-Message-State: AOJu0Ywp/Rkaom7upnxOVrcV12l61uQYd2AIz5UPD1pR6td/k69ZSkc7
+        XBZTeJKO9qzNSGp/DsncO/k5RxSaWeNa4rz3gqlbfQ==
+X-Google-Smtp-Source: AGHT+IGdFCpqnhpi/bYMX4uNpBpHyfyXed6rturJBY7W67IqhYWLzE2x172dXVlzvSbZaEUD+auVrY4l54jFuZcovfk=
+X-Received: by 2002:a2e:980f:0:b0:2b9:ea6b:64b with SMTP id
+ a15-20020a2e980f000000b002b9ea6b064bmr4949521ljj.37.1692631919785; Mon, 21
+ Aug 2023 08:31:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1937; i=brauner@kernel.org; h=from:subject:message-id; bh=LCwlhjnN/lD8Sn7IYVqUebx7BKKWnVX5q30n58x2FQk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ8bpacdrY0bt2FO4/XWhvYnq8/p3v5vcqK2wda0+QKlm6Y UKTZ21HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARQWNGhg/+VrfTV8jOLDq65I7BzW lCPJc+XT3NncYxI2LZjukpjCqMDP1861Sjpfon7Okp6/x0q6La4OfKnpl3t+z35Hw0PX1DKAsA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+References: <4f66cded234462964899f2a661750d6798a57ec0.camel@bitron.ch>
+ <CAJfpeguG4f4S-pq+_EXHxfB63mbof-VnaOy-7a-7seWLMj_xyQ@mail.gmail.com>
+ <ZNozdrtKgTeTaMpX@tycho.pizza> <CAJfpegt6x_=F=mD8LEL4AZPbfCLGQrpurhtbDN4Ew50fd2ngqQ@mail.gmail.com>
+ <ZNqseD4hqHWmeF2w@tycho.pizza> <CAJfpegtzj7=f99=m49DShDTgLpGAzx8gpHSakgPn0qe+dNjHdw@mail.gmail.com>
+ <ZON8hKOAGRvTn83a@tycho.pizza>
+In-Reply-To: <ZON8hKOAGRvTn83a@tycho.pizza>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 21 Aug 2023 17:31:48 +0200
+Message-ID: <CAJfpegt2WrKBswYgSzurNogLefO-vU6ZpbCkrDrjFL365kcsug@mail.gmail.com>
+Subject: Re: [REGRESSION] fuse: execve() fails with ETXTBSY due to async fuse_flush
+To:     Tycho Andersen <tycho@tycho.pizza>
+Cc:     =?UTF-8?Q?J=C3=BCrg_Billeter?= <j@bitron.ch>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        regressions@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -61,46 +69,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 17 Aug 2023 17:13:30 +0300, Amir Goldstein wrote:
-> Christian,
-> 
-> This is an attempt to consolidate the open coded lockdep fooling in
-> all those async io submitters into a single helper.
-> The idea to do that consolidation was suggested by Jan.
-> 
-> This re-factoring is part of a larger vfs cleanup I am doing for
-> fanotify permission events.  The complete series is not ready for
-> prime time yet, but this one patch is independent and I would love
-> to get it reviewed/merged a head of the rest.
-> 
-> [...]
+On Mon, 21 Aug 2023 at 17:02, Tycho Andersen <tycho@tycho.pizza> wrote:
+>
+> On Mon, Aug 21, 2023 at 04:24:00PM +0200, Miklos Szeredi wrote:
+> > On Tue, 15 Aug 2023 at 00:36, Tycho Andersen <tycho@tycho.pizza> wrote:
+> > >
+> > > On Mon, Aug 14, 2023 at 04:35:56PM +0200, Miklos Szeredi wrote:
+> > > > On Mon, 14 Aug 2023 at 16:00, Tycho Andersen <tycho@tycho.pizza> wrote:
+> > > >
+> > > > > It seems like we really do need to wait here. I guess that means we
+> > > > > need some kind of exit-proof wait?
+> > > >
+> > > > Could you please recap the original problem?
+> > >
+> > > Sure, the symptom is a deadlock, something like:
+> > >
+> > > # cat /proc/1528591/stack
+> > > [<0>] do_wait+0x156/0x2f0
+> > > [<0>] kernel_wait4+0x8d/0x140
+> > > [<0>] zap_pid_ns_processes+0x104/0x180
+> > > [<0>] do_exit+0xa41/0xb80
+> > > [<0>] do_group_exit+0x3a/0xa0
+> > > [<0>] __x64_sys_exit_group+0x14/0x20
+> > > [<0>] do_syscall_64+0x37/0xb0
+> > > [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+> > >
+> > > which is stuck waiting for:
+> > >
+> > > # cat /proc/1544574/stack
+> > > [<0>] request_wait_answer+0x12f/0x210
+> > > [<0>] fuse_simple_request+0x109/0x2c0
+> > > [<0>] fuse_flush+0x16f/0x1b0
+> > > [<0>] filp_close+0x27/0x70
+> > > [<0>] put_files_struct+0x6b/0xc0
+> > > [<0>] do_exit+0x360/0xb80
+> > > [<0>] do_group_exit+0x3a/0xa0
+> > > [<0>] get_signal+0x140/0x870
+> > > [<0>] arch_do_signal_or_restart+0xae/0x7c0
+> > > [<0>] exit_to_user_mode_prepare+0x10f/0x1c0
+> > > [<0>] syscall_exit_to_user_mode+0x26/0x40
+> > > [<0>] do_syscall_64+0x46/0xb0
+> > > [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+> > >
+> > > I have a reproducer here:
+> > > https://github.com/tych0/kernel-utils/blob/master/fuse2/Makefile#L7
+> >
+> > The issue seems to be that the server process is recursing into the
+> > filesystem it is serving (nested_fsync()).  It's quite easy to
+> > deadlock fuse this way, and I'm not sure why this would be needed for
+> > any server implementation.   Can you explain?
+>
+> I think the idea is that they're saving snapshots of their own threads
+> to the fs for debugging purposes.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+This seems a fairly special situation.   Have they (whoever they may
+be) thought about fixing this in their server?
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+> Whether this is a sane thing to do or not, it doesn't seem like it
+> should deadlock pid ns destruction.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+True.   So the suggested solution is to allow wait_event_killable() to
+return if a terminal signal is pending in the exiting state and only
+in that case turn the flush into a background request?  That would
+still allow for regressions like the one reported, but that would be
+much less likely to happen in real life.  Okay, I said this for the
+original solution as well, so this may turn out to be wrong as well.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Anyway, I'd prefer if this was fixed in the server code, as it looks
+fairly special and adding complexity to the kernel for this case might
+not be justifiable.   But I'm also open to suggestions on fixing this
+in the kernel in a not too complex manner.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/7] io_uring: rename kiocb_end_write() local helper
-      https://git.kernel.org/vfs/vfs/c/790c4d42a7c0
-[2/7] fs: add kerneldoc to file_{start,end}_write() helpers
-      https://git.kernel.org/vfs/vfs/c/7e6aa5e65f14
-[3/7] fs: create kiocb_{start,end}_write() helpers
-      https://git.kernel.org/vfs/vfs/c/e15f778bb179
-[4/7] io_uring: use kiocb_{start,end}_write() helpers
-      https://git.kernel.org/vfs/vfs/c/a2aafea26bd5
-[5/7] aio: use kiocb_{start,end}_write() helpers
-      https://git.kernel.org/vfs/vfs/c/b91bf89f2435
-[6/7] ovl: use kiocb_{start,end}_write() helpers
-      https://git.kernel.org/vfs/vfs/c/6c2366036a05
-[7/7] cachefiles: use kiocb_{start,end}_write() helpers
-      https://git.kernel.org/vfs/vfs/c/e7905aa6226c
+Thanks,
+Miklos
