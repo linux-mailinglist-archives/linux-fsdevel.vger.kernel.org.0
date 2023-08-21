@@ -2,49 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B73F78210D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Aug 2023 03:16:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EC6F7822E6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Aug 2023 06:36:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232272AbjHUBQI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Aug 2023 21:16:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51316 "EHLO
+        id S233034AbjHUEgC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Aug 2023 00:36:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232268AbjHUBQH (ORCPT
+        with ESMTP id S229679AbjHUEgC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Aug 2023 21:16:07 -0400
-X-Greylist: delayed 576 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 20 Aug 2023 18:16:03 PDT
-Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7977A2;
-        Sun, 20 Aug 2023 18:16:03 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mx.ewheeler.net (Postfix) with ESMTP id AA6C585;
-        Sun, 20 Aug 2023 18:06:26 -0700 (PDT)
-X-Virus-Scanned: amavisd-new at ewheeler.net
-Received: from mx.ewheeler.net ([127.0.0.1])
-        by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id ZnQqx6H-gNTA; Sun, 20 Aug 2023 18:06:22 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx.ewheeler.net (Postfix) with ESMTPSA id 01DBC39;
-        Sun, 20 Aug 2023 18:06:21 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net 01DBC39
-Date:   Sun, 20 Aug 2023 18:06:01 -0700 (PDT)
-From:   Eric Wheeler <bcache@lists.ewheeler.net>
-To:     Jan Kara <jack@suse.cz>
-cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-bcache@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Coly Li <colyli@suse.de>
-Subject: Re: [PATCH 09/29] bcache: Convert to bdev_open_by_path()
-In-Reply-To: <20230811110504.27514-9-jack@suse.cz>
-Message-ID: <fd7fc9e-8d24-972-4b63-7eae3d2931e2@ewheeler.net>
-References: <20230810171429.31759-1-jack@suse.cz> <20230811110504.27514-9-jack@suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 21 Aug 2023 00:36:02 -0400
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 52E07C4;
+        Sun, 20 Aug 2023 21:35:37 -0700 (PDT)
+X-AuditID: a67dfc5b-d6dff70000001748-e9-64e2ded45c9c
+From:   Byungchul Park <byungchul@sk.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel_team@skhynix.com, torvalds@linux-foundation.org,
+        damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        mingo@redhat.com, peterz@infradead.org, will@kernel.org,
+        tglx@linutronix.de, rostedt@goodmis.org, joel@joelfernandes.org,
+        sashal@kernel.org, daniel.vetter@ffwll.ch, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
+        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, jack@suse.cz, jlayton@kernel.org,
+        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, rodrigosiqueiramelo@gmail.com,
+        melissa.srw@gmail.com, hamohammed.sa@gmail.com,
+        42.hyeyoo@gmail.com, chris.p.wilson@intel.com,
+        gwan-gyeong.mun@intel.com, max.byungchul.park@gmail.com,
+        boqun.feng@gmail.com, longman@redhat.com, hdanton@sina.com,
+        her0gyugyu@gmail.com
+Subject: [RESEND PATCH v10 00/25] DEPT(Dependency Tracker)
+Date:   Mon, 21 Aug 2023 12:46:12 +0900
+Message-Id: <20230821034637.34630-1-byungchul@sk.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0xTZxzGfd9ztVI9qWQ7yjakGTHBgLKI+QeN7sOWvVtcssXsi5dIY8+k
+        DNC1ctMYQC6ycomyIF5wHnCWjhaLLXGCQBg3ZUTtpAoSLFCZjrRcghSpoA40fnnyS578nk8P
+        T6mqmLW8LvmIpE/WJKpZBa0YD6qMdLk92k1/BsLgdNEm8M8U0FBhs7LgvGpBYK3PxjDW+RX0
+        zfoQzN+5R0F5mRNB5chjCuq73AiazSdY6B1dCS7/JAvdZYUs5Fy2sfCPdwHD4JlSDBb7t9Bz
+        qgpDa+AZDeVjLFwoz8GL8R+GgKmGA1NWOHjM5zlYGImGbvdDBpoHNsC53wZZaGrupqHrhgdD
+        b2MFC27rGwZ6um7T4DxdzEDtRBUL3lkTBSb/JAf3W2UMdbmLQ/nPXzNwq7gVQ/7v1zC4Ht1E
+        0FIwjMFufchCu9+HwWEvo+BldScCT8k4B3lFAQ4uZJcgKMw7Q8O9V7cYyB2Mgfm5CvbzWNLu
+        m6RIriONNM/KNPm7SiQN5x9zJLdlgCOyPYU4zBHkctMYJpXTfobYa35hiX26lCPGcRcmE3fv
+        cuT22XmajLrK8XchuxXbtFKiLlXSb9wep4jPt3Tiw4370uW5AM5Cvi+NaDkvCpvFpzO17Hue
+        sj5BS8wK68X+/gC1xMHCOtFR/JQxIgVPCSdXiOapO2+F1UKsOG/veCvQQrjY5zDSRsTzSiFG
+        bLqe+m4zVLTUtVJLrij4eLGtz4zeFWvEv8z99Cm0QkbLapBKl5yapNElbo6Kz0jWpUcdOJRk
+        R4vPMR1f2HMDTTt3tSGBR+ogZdxHHq2K0aQaMpLakMhT6mBlyIsRrUqp1WQclfSH9utTEiVD
+        GwrhafWHys9m07Qq4aDmiPSTJB2W9O9bzC9fm4W2zW3sNlz85FLsx0PV//LuoL3R6cUfDH+R
+        4My3le5klENXGiYsfzR+WvD16vveUN5b+33kQPrOooXCsIMpWx80/dpxfGZV3paEyL6zx2yZ
+        VOhUb1z2D5YH8vXRb1yZtvAdP1dXb1+z3itn9u6Lae9ZJncGlzwLOkZeNZx7Myzl/FgvX1HT
+        hnhNdASlN2j+B3c1x5E1AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSf0yMcRzHfb/P83yfx3H2LJlnMXFbIhTS9ln5NZv5jjE2Y8tMN/dMt37g
+        jsjYonNxZMrqUOwqTusucWcUXWulX1o/uJtouekYWpHRxbn8KOaf917be+/XX2+BCTFwYYI2
+        /ZCsS1enqoiCVWxJyF7i9vo0S2t+J0De+aXgHznDQnGVnUD3bRsC+72TGAaaNkDP6BCCYEcX
+        A+aCbgQl/a8YuNfsReAqP0XA/XYaePzDBNoKzhHILqsi8HRwDENfYT4Gm2MztF8sxVAfeM+C
+        eYBAkTkbj8cHDAFrBQ/WrAjwlV/lYax/GbR5n3PQeK2NA1fvIrhyvY9ArauNheZqHwb3w2IC
+        XvtvDtqbW1nozsvloPJTKYHBUSsDVv8wD8/qLRjuGMZtxq+/OGjJrcdgvHEXg+flIwR1Z15j
+        cNifE2j0D2FwOgoY+HGrCYHvwkceTp8P8FB08gKCc6cLWej62cKBoS8Ogt+LydoE2jg0zFCD
+        8wh1jVpY+qRUojVXX/HUUNfLU4vjMHWWR9Gy2gFMS774OeqoOEuo40s+T00fPZh+6uzkaevl
+        IEvfesx46+xExUqNnKrNkHUxq5MUyUZbEz7wcPdRy/cAzkJD601osiCJK6TP9jdogokYKb14
+        EWAmOFScKzlz33EmpBAYMWeKVP65g0wU08V4Keh4/HfAihFSj9PEmpAgKMU4qfZ+xj9nuGS7
+        U89cRIIFTapAodr0jDS1NjUuWp+SnJmuPRq9d3+aA41/w3piLK8ajbg3NCBRQKqpyqTZPk0I
+        p87QZ6Y1IElgVKHKWd/6NSFKjTrzmKzbv0d3OFXWN6BZAquaqdy4U04KEfepD8kpsnxA1v1v
+        sTA5LAudIu/26NYcxFGdLxdqp2y6qVkVG9ZXVNmydlHlg2vxgz/41cWu3jmJOybFhG+z9Uxf
+        V5GnMCrNi7tygvnfIhPbF7jZ7QePx0RsM8bmzNfrC2eYBC+37goKn7drhnKvwhO9tcMQnzPy
+        6P6l1lhaNZNrISeiqspudPmId9qH5Zsid6lYfbJ6WRSj06v/AFwUCqoXAwAA
+X-CFilter-Loop: Reflected
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -52,314 +86,279 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 11 Aug 2023, Jan Kara wrote:
-> Convert bcache to use bdev_open_by_path() and pass the handle around.
-> 
-> CC: linux-bcache@vger.kernel.org
-> CC: Coly Li <colyli@suse.de
-> CC: Kent Overstreet <kent.overstreet@gmail.com>
-> Acked-by: Coly Li <colyli@suse.de>
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
->  drivers/md/bcache/bcache.h |  2 +
->  drivers/md/bcache/super.c  | 78 ++++++++++++++++++++------------------
->  2 files changed, 43 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> index 5a79bb3c272f..2aa3f2c1f719 100644
-> --- a/drivers/md/bcache/bcache.h
-> +++ b/drivers/md/bcache/bcache.h
-> @@ -299,6 +299,7 @@ struct cached_dev {
->  	struct list_head	list;
->  	struct bcache_device	disk;
->  	struct block_device	*bdev;
-> +	struct bdev_handle	*bdev_handle;
+From now on, I can work on LKML again! I'm wondering if DEPT has been
+helping kernel debugging well even though it's a form of patches yet.
 
-It looks like you've handled most if not all of the `block_device *bdev` 
-refactor.  Can we drop `block_device *bdev` and fixup any remaining 
-references?  More below.
+I'm happy to see that DEPT reports a real problem in practice. See:
 
->  
->  	struct cache_sb		sb;
->  	struct cache_sb_disk	*sb_disk;
-> @@ -421,6 +422,7 @@ struct cache {
->  
->  	struct kobject		kobj;
->  	struct block_device	*bdev;
-> +	struct bdev_handle	*bdev_handle;
+   https://lore.kernel.org/lkml/6383cde5-cf4b-facf-6e07-1378a485657d@I-love.SAKURA.ne.jp/#t
+   https://lore.kernel.org/lkml/1674268856-31807-1-git-send-email-byungchul.park@lge.com/
 
-ditto.
+Nevertheless, I apologize for the lack of document. I promise to add it
+before it gets needed to use DEPT's APIs by users. For now, you can use
+DEPT just with CONFIG_DEPT on.
 
->  
->  	struct task_struct	*alloc_thread;
->  
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 0ae2b3676293..c11ac86be72b 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -1368,8 +1368,8 @@ static void cached_dev_free(struct closure *cl)
->  	if (dc->sb_disk)
->  		put_page(virt_to_page(dc->sb_disk));
->  
-> -	if (!IS_ERR_OR_NULL(dc->bdev))
-> -		blkdev_put(dc->bdev, dc);
-> +	if (dc->bdev_handle)
-> +		bdev_release(dc->bdev_handle);
+---
 
-bdev_release does not reset dc->bdev, which could leave a hanging 
-reference.
+Hi Linus and folks,
 
->  
->  	wake_up(&unregister_wait);
->  
-> @@ -1444,7 +1444,7 @@ static int cached_dev_init(struct cached_dev *dc, unsigned int block_size)
->  /* Cached device - bcache superblock */
->  
->  static int register_bdev(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
-> -				 struct block_device *bdev,
-> +				 struct bdev_handle *bdev_handle,
->  				 struct cached_dev *dc)
->  {
->  	const char *err = "cannot allocate memory";
-> @@ -1452,14 +1452,15 @@ static int register_bdev(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
->  	int ret = -ENOMEM;
->  
->  	memcpy(&dc->sb, sb, sizeof(struct cache_sb));
-> -	dc->bdev = bdev;
-> +	dc->bdev_handle = bdev_handle;
-> +	dc->bdev = bdev_handle->bdev;
+I've been developing a tool for detecting deadlock possibilities by
+tracking wait/event rather than lock(?) acquisition order to try to
+cover all synchonization machanisms. It's done on v6.4, the latest.
 
-If I understand correctly, this patch duplicates the dc->bdev reference to 
-exist as dc->bdev_handle->bdev _and_ dc->bdev. (Same for changes related 
-to `struct cache`.)
+Benifit:
 
-This would mean future developers have to understand they are the same 
-thing, and someone may not manage it correctly.
+	0. Works with all lock primitives.
+	1. Works with wait_for_completion()/complete().
+	2. Works with 'wait' on PG_locked.
+	3. Works with 'wait' on PG_writeback.
+	4. Works with swait/wakeup.
+	5. Works with waitqueue.
+	6. Works with wait_bit.
+	7. Multiple reports are allowed.
+	8. Deduplication control on multiple reports.
+	9. Withstand false positives thanks to 6.
+	10. Easy to tag any wait/event.
 
-If block core is moving to `struct bdev_handle`, then can we drop 
-`dc->bdev` and replace all occurances of `dc->bdev` with 
-`bdev_handle->bdev`?  Or make an accessor macro/function like 
-bdev_handle_get_bdev(dc->bdev_handle)?
+Future work:
 
-Unless I misunderstand something here, I would NACK this as written 
-because it increases the liklihood of future developer error.  
+	0. To make it more stable.
+	1. To separates Dept from Lockdep.
+	2. To improves performance in terms of time and space.
+	3. To use Dept as a dependency engine for Lockdep.
+	4. To add any missing tags of wait/event in the kernel.
+	5. To deduplicate stack trace.
 
-I've added a few other comments below, but my comments are not exhaustive:
+How to interpret reports:
 
->  	dc->sb_disk = sb_disk;
->  
->  	if (cached_dev_init(dc, sb->block_size << 9))
->  		goto err;
->  
->  	err = "error creating kobject";
-> -	if (kobject_add(&dc->disk.kobj, bdev_kobj(bdev), "bcache"))
-> +	if (kobject_add(&dc->disk.kobj, bdev_kobj(dc->bdev), "bcache"))
->  		goto err;
->  	if (bch_cache_accounting_add_kobjs(&dc->accounting, &dc->disk.kobj))
->  		goto err;
-> @@ -2216,8 +2217,8 @@ void bch_cache_release(struct kobject *kobj)
->  	if (ca->sb_disk)
->  		put_page(virt_to_page(ca->sb_disk));
->  
-> -	if (!IS_ERR_OR_NULL(ca->bdev))
-> -		blkdev_put(ca->bdev, ca);
-> +	if (ca->bdev_handle)
-> +		bdev_release(ca->bdev_handle);
->  
+	1. E(event) in each context cannot be triggered because of the
+	   W(wait) that cannot be woken.
+	2. The stack trace helping find the problematic code is located
+	   in each conext's detail.
 
-ca->bdev is not cleaned up
+Thanks,
+Byungchul
 
->  	kfree(ca);
->  	module_put(THIS_MODULE);
-> @@ -2337,16 +2338,18 @@ static int cache_alloc(struct cache *ca)
->  }
->  
->  static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
-> -				struct block_device *bdev, struct cache *ca)
-> +				struct bdev_handle *bdev_handle,
-> +				struct cache *ca)
->  {
->  	const char *err = NULL; /* must be set for any error case */
->  	int ret = 0;
->  
->  	memcpy(&ca->sb, sb, sizeof(struct cache_sb));
-> -	ca->bdev = bdev;
-> +	ca->bdev_handle = bdev_handle;
-> +	ca->bdev = bdev_handle->bdev;
->  	ca->sb_disk = sb_disk;
->  
-> -	if (bdev_max_discard_sectors((bdev)))
-> +	if (bdev_max_discard_sectors((bdev_handle->bdev)))
->  		ca->discard = CACHE_DISCARD(&ca->sb);
->  
->  	ret = cache_alloc(ca);
-> @@ -2354,10 +2357,10 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
->  		/*
->  		 * If we failed here, it means ca->kobj is not initialized yet,
->  		 * kobject_put() won't be called and there is no chance to
-> -		 * call blkdev_put() to bdev in bch_cache_release(). So we
-> -		 * explicitly call blkdev_put() here.
-> +		 * call bdev_release() to bdev in bch_cache_release(). So
-> +		 * we explicitly call bdev_release() here.
->  		 */
-> -		blkdev_put(bdev, ca);
-> +		bdev_release(bdev_handle);
+---
 
-ca->bdev is not cleaned up
+Changes from v9:
 
->  		if (ret == -ENOMEM)
->  			err = "cache_alloc(): -ENOMEM";
->  		else if (ret == -EPERM)
-> @@ -2367,7 +2370,7 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
->  		goto err;
->  	}
->  
-> -	if (kobject_add(&ca->kobj, bdev_kobj(bdev), "bcache")) {
-> +	if (kobject_add(&ca->kobj, bdev_kobj(bdev_handle->bdev), "bcache")) {
->  		err = "error calling kobject_add";
->  		ret = -ENOMEM;
->  		goto out;
-> @@ -2382,14 +2385,14 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
->  		goto out;
->  	}
->  
-> -	pr_info("registered cache device %pg\n", ca->bdev);
-> +	pr_info("registered cache device %pg\n", ca->bdev_handle->bdev);
->  
->  out:
->  	kobject_put(&ca->kobj);
->  
->  err:
->  	if (err)
-> -		pr_notice("error %pg: %s\n", ca->bdev, err);
-> +		pr_notice("error %pg: %s\n", ca->bdev_handle->bdev, err);
->  
->  	return ret;
->  }
-> @@ -2445,7 +2448,7 @@ struct async_reg_args {
->  	char *path;
->  	struct cache_sb *sb;
->  	struct cache_sb_disk *sb_disk;
-> -	struct block_device *bdev;
-> +	struct bdev_handle *bdev_handle;
->  	void *holder;
->  };
->  
-> @@ -2456,8 +2459,8 @@ static void register_bdev_worker(struct work_struct *work)
->  		container_of(work, struct async_reg_args, reg_work.work);
->  
->  	mutex_lock(&bch_register_lock);
-> -	if (register_bdev(args->sb, args->sb_disk, args->bdev, args->holder)
-> -	    < 0)
-> +	if (register_bdev(args->sb, args->sb_disk, args->bdev_handle,
-> +			  args->holder) < 0)
->  		fail = true;
->  	mutex_unlock(&bch_register_lock);
->  
-> @@ -2477,7 +2480,8 @@ static void register_cache_worker(struct work_struct *work)
->  		container_of(work, struct async_reg_args, reg_work.work);
->  
->  	/* blkdev_put() will be called in bch_cache_release() */
-> -	if (register_cache(args->sb, args->sb_disk, args->bdev, args->holder))
-> +	if (register_cache(args->sb, args->sb_disk, args->bdev_handle,
-> +			   args->holder))
->  		fail = true;
->  
->  	if (fail)
-> @@ -2514,7 +2518,7 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
->  	char *path = NULL;
->  	struct cache_sb *sb;
->  	struct cache_sb_disk *sb_disk;
-> -	struct block_device *bdev, *bdev2;
-> +	struct bdev_handle *bdev_handle, *bdev_handle2;
->  	void *holder = NULL;
->  	ssize_t ret;
->  	bool async_registration = false;
-> @@ -2547,15 +2551,15 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
->  
->  	ret = -EINVAL;
->  	err = "failed to open device";
-> -	bdev = blkdev_get_by_path(strim(path), BLK_OPEN_READ, NULL, NULL);
-> -	if (IS_ERR(bdev))
-> +	bdev_handle = bdev_open_by_path(strim(path), BLK_OPEN_READ, NULL, NULL);
-> +	if (IS_ERR(bdev_handle))
->  		goto out_free_sb;
->  
->  	err = "failed to set blocksize";
-> -	if (set_blocksize(bdev, 4096))
-> +	if (set_blocksize(bdev_handle->bdev, 4096))
->  		goto out_blkdev_put;
->  
-> -	err = read_super(sb, bdev, &sb_disk);
-> +	err = read_super(sb, bdev_handle->bdev, &sb_disk);
->  	if (err)
->  		goto out_blkdev_put;
->  
-> @@ -2567,13 +2571,13 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
->  	}
->  
->  	/* Now reopen in exclusive mode with proper holder */
-> -	bdev2 = blkdev_get_by_dev(bdev->bd_dev, BLK_OPEN_READ | BLK_OPEN_WRITE,
-> -				  holder, NULL);
-> -	blkdev_put(bdev, NULL);
-> -	bdev = bdev2;
-> -	if (IS_ERR(bdev)) {
-> -		ret = PTR_ERR(bdev);
-> -		bdev = NULL;
-> +	bdev_handle2 = bdev_open_by_dev(bdev_handle->bdev->bd_dev,
-> +			BLK_OPEN_READ | BLK_OPEN_WRITE, holder, NULL);
-> +	bdev_release(bdev_handle);
-> +	bdev_handle = bdev_handle2;
-> +	if (IS_ERR(bdev_handle)) {
-> +		ret = PTR_ERR(bdev_handle);
-> +		bdev_handle = NULL;
->  		if (ret == -EBUSY) {
->  			dev_t dev;
->  
-> @@ -2608,7 +2612,7 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
->  		args->path	= path;
->  		args->sb	= sb;
->  		args->sb_disk	= sb_disk;
-> -		args->bdev	= bdev;
-> +		args->bdev_handle	= bdev_handle;
->  		args->holder	= holder;
->  		register_device_async(args);
->  		/* No wait and returns to user space */
-> @@ -2617,14 +2621,14 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
->  
->  	if (SB_IS_BDEV(sb)) {
->  		mutex_lock(&bch_register_lock);
-> -		ret = register_bdev(sb, sb_disk, bdev, holder);
-> +		ret = register_bdev(sb, sb_disk, bdev_handle, holder);
->  		mutex_unlock(&bch_register_lock);
->  		/* blkdev_put() will be called in cached_dev_free() */
->  		if (ret < 0)
->  			goto out_free_sb;
->  	} else {
->  		/* blkdev_put() will be called in bch_cache_release() */
-> -		ret = register_cache(sb, sb_disk, bdev, holder);
-> +		ret = register_cache(sb, sb_disk, bdev_handle, holder);
->  		if (ret)
->  			goto out_free_sb;
->  	}
-> @@ -2640,8 +2644,8 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
->  out_put_sb_page:
->  	put_page(virt_to_page(sb_disk));
->  out_blkdev_put:
-> -	if (bdev)
-> -		blkdev_put(bdev, holder);
-> +	if (bdev_handle)
-> +		bdev_release(bdev_handle);
->  out_free_sb:
->  	kfree(sb);
->  out_free_path:
-> -- 
-> 2.35.3
-> 
-> 
+	1. Fix a bug. SDT tracking didn't work well because of my big
+	   mistake that I should've used waiter's map to indentify its
+	   class but it had been working with waker's one. FYI,
+	   PG_locked and PG_writeback weren't affected. They still
+	   worked well. (reported by YoungJun)
+	
+Changes from v8:
 
+	1. Fix build error by adding EXPORT_SYMBOL(PG_locked_map) and
+	   EXPORT_SYMBOL(PG_writeback_map) for kernel module build -
+	   appologize for that. (reported by kernel test robot)
+	2. Fix build error by removing header file's circular dependency
+	   that was caused by "atomic.h", "kernel.h" and "irqflags.h",
+	   which I introduced - appolgize for that. (reported by kernel
+	   test robot)
 
---
-Eric Wheeler
+Changes from v7:
 
+	1. Fix a bug that cannot track rwlock dependency properly,
+	   introduced in v7. (reported by Boqun and lockdep selftest)
+	2. Track wait/event of PG_{locked,writeback} more aggressively
+	   assuming that when a bit of PG_{locked,writeback} is cleared
+	   there might be waits on the bit. (reported by Linus, Hillf
+	   and syzbot)
+	3. Fix and clean bad style code e.i. unnecessarily introduced
+	   a randome pattern and so on. (pointed out by Linux)
+	4. Clean code for applying DEPT to wait_for_completion().
+
+Changes from v6:
+
+	1. Tie to task scheduler code to track sleep and try_to_wake_up()
+	   assuming sleeps cause waits, try_to_wake_up()s would be the
+	   events that those are waiting for, of course with proper DEPT
+	   annotations, sdt_might_sleep_weak(), sdt_might_sleep_strong()
+	   and so on. For these cases, class is classified at sleep
+	   entrance rather than the synchronization initialization code.
+	   Which would extremely reduce false alarms.
+	2. Remove the DEPT associated instance in each page struct for
+	   tracking dependencies by PG_locked and PG_writeback thanks to
+	   the 1. work above.
+	3. Introduce CONFIG_DEPT_AGGRESIVE_TIMEOUT_WAIT to suppress
+	   reports that waits with timeout set are involved, for those
+	   who don't like verbose reporting.
+	4. Add a mechanism to refill the internal memory pools on
+	   running out so that DEPT could keep working as long as free
+	   memory is available in the system.
+	5. Re-enable tracking hashed-waitqueue wait. That's going to no
+	   longer generate false positives because class is classified
+	   at sleep entrance rather than the waitqueue initailization.
+	6. Refactor to make it easier to port onto each new version of
+	   the kernel.
+	7. Apply DEPT to dma fence.
+	8. Do trivial optimizaitions.
+
+Changes from v5:
+
+	1. Use just pr_warn_once() rather than WARN_ONCE() on the lack
+	   of internal resources because WARN_*() printing stacktrace is
+	   too much for informing the lack. (feedback from Ted, Hyeonggon)
+	2. Fix trivial bugs like missing initializing a struct before
+	   using it.
+	3. Assign a different class per task when handling onstack
+	   variables for waitqueue or the like. Which makes Dept
+	   distinguish between onstack variables of different tasks so
+	   as to prevent false positives. (reported by Hyeonggon)
+	4. Make Dept aware of even raw_local_irq_*() to prevent false
+	   positives. (reported by Hyeonggon)
+	5. Don't consider dependencies between the events that might be
+	   triggered within __schedule() and the waits that requires
+	    __schedule(), real ones. (reported by Hyeonggon)
+	6. Unstage the staged wait that has prepare_to_wait_event()'ed
+	   *and* yet to get to __schedule(), if we encounter __schedule()
+	   in-between for another sleep, which is possible if e.g. a
+	   mutex_lock() exists in 'condition' of ___wait_event().
+	7. Turn on CONFIG_PROVE_LOCKING when CONFIG_DEPT is on, to rely
+	   on the hardirq and softirq entrance tracing to make Dept more
+	   portable for now.
+
+Changes from v4:
+
+	1. Fix some bugs that produce false alarms.
+	2. Distinguish each syscall context from another *for arm64*.
+	3. Make it not warn it but just print it in case Dept ring
+	   buffer gets exhausted. (feedback from Hyeonggon)
+	4. Explicitely describe "EXPERIMENTAL" and "Dept might produce
+	   false positive reports" in Kconfig. (feedback from Ted)
+
+Changes from v3:
+
+	1. Dept shouldn't create dependencies between different depths
+	   of a class that were indicated by *_lock_nested(). Dept
+	   normally doesn't but it does once another lock class comes
+	   in. So fixed it. (feedback from Hyeonggon)
+	2. Dept considered a wait as a real wait once getting to
+	   __schedule() even if it has been set to TASK_RUNNING by wake
+	   up sources in advance. Fixed it so that Dept doesn't consider
+	   the case as a real wait. (feedback from Jan Kara)
+	3. Stop tracking dependencies with a map once the event
+	   associated with the map has been handled. Dept will start to
+	   work with the map again, on the next sleep.
+
+Changes from v2:
+
+	1. Disable Dept on bit_wait_table[] in sched/wait_bit.c
+	   reporting a lot of false positives, which is my fault.
+	   Wait/event for bit_wait_table[] should've been tagged in a
+	   higher layer for better work, which is a future work.
+	   (feedback from Jan Kara)
+	2. Disable Dept on crypto_larval's completion to prevent a false
+	   positive.
+
+Changes from v1:
+
+	1. Fix coding style and typo. (feedback from Steven)
+	2. Distinguish each work context from another in workqueue.
+	3. Skip checking lock acquisition with nest_lock, which is about
+	   correct lock usage that should be checked by Lockdep.
+
+Changes from RFC(v0):
+
+	1. Prevent adding a wait tag at prepare_to_wait() but __schedule().
+	   (feedback from Linus and Matthew)
+	2. Use try version at lockdep_acquire_cpus_lock() annotation.
+	3. Distinguish each syscall context from another.
+
+Byungchul Park (25):
+  llist: Move llist_{head,node} definition to types.h
+  dept: Implement Dept(Dependency Tracker)
+  dept: Add single event dependency tracker APIs
+  dept: Add lock dependency tracker APIs
+  dept: Tie to Lockdep and IRQ tracing
+  dept: Add proc knobs to show stats and dependency graph
+  dept: Apply sdt_might_sleep_{start,end}() to
+    wait_for_completion()/complete()
+  dept: Apply sdt_might_sleep_{start,end}() to PG_{locked,writeback}
+    wait
+  dept: Apply sdt_might_sleep_{start,end}() to swait
+  dept: Apply sdt_might_sleep_{start,end}() to waitqueue wait
+  dept: Apply sdt_might_sleep_{start,end}() to hashed-waitqueue wait
+  dept: Distinguish each syscall context from another
+  dept: Distinguish each work from another
+  dept: Add a mechanism to refill the internal memory pools on running
+    out
+  locking/lockdep, cpu/hotplus: Use a weaker annotation in AP thread
+  dept: Apply sdt_might_sleep_{start,end}() to dma fence wait
+  dept: Track timeout waits separately with a new Kconfig
+  dept: Apply timeout consideration to wait_for_completion()/complete()
+  dept: Apply timeout consideration to swait
+  dept: Apply timeout consideration to waitqueue wait
+  dept: Apply timeout consideration to hashed-waitqueue wait
+  dept: Apply timeout consideration to dma fence wait
+  dept: Record the latest one out of consecutive waits of the same class
+  dept: Make Dept able to work with an external wgen
+  dept: Track the potential waits of PG_{locked,writeback}
+
+ arch/arm64/kernel/syscall.c         |    2 +
+ arch/x86/entry/common.c             |    4 +
+ drivers/dma-buf/dma-fence.c         |    5 +
+ include/linux/completion.h          |   30 +-
+ include/linux/dept.h                |  614 ++++++
+ include/linux/dept_ldt.h            |   77 +
+ include/linux/dept_sdt.h            |   66 +
+ include/linux/hardirq.h             |    3 +
+ include/linux/irqflags.h            |   22 +-
+ include/linux/llist.h               |    8 -
+ include/linux/local_lock_internal.h |    1 +
+ include/linux/lockdep.h             |  102 +-
+ include/linux/lockdep_types.h       |    3 +
+ include/linux/mm_types.h            |    3 +
+ include/linux/mutex.h               |    1 +
+ include/linux/page-flags.h          |  112 +-
+ include/linux/pagemap.h             |    7 +-
+ include/linux/percpu-rwsem.h        |    2 +-
+ include/linux/rtmutex.h             |    1 +
+ include/linux/rwlock_types.h        |    1 +
+ include/linux/rwsem.h               |    1 +
+ include/linux/sched.h               |    3 +
+ include/linux/seqlock.h             |    2 +-
+ include/linux/spinlock_types_raw.h  |    3 +
+ include/linux/srcu.h                |    2 +-
+ include/linux/swait.h               |    3 +
+ include/linux/types.h               |    8 +
+ include/linux/wait.h                |    3 +
+ include/linux/wait_bit.h            |    3 +
+ init/init_task.c                    |    2 +
+ init/main.c                         |    2 +
+ kernel/Makefile                     |    1 +
+ kernel/cpu.c                        |    2 +-
+ kernel/dependency/Makefile          |    4 +
+ kernel/dependency/dept.c            | 3167 +++++++++++++++++++++++++++
+ kernel/dependency/dept_hash.h       |   10 +
+ kernel/dependency/dept_internal.h   |   26 +
+ kernel/dependency/dept_object.h     |   13 +
+ kernel/dependency/dept_proc.c       |   93 +
+ kernel/exit.c                       |    1 +
+ kernel/fork.c                       |    2 +
+ kernel/locking/lockdep.c            |   23 +
+ kernel/module/main.c                |    4 +
+ kernel/sched/completion.c           |    2 +-
+ kernel/sched/core.c                 |    9 +
+ kernel/workqueue.c                  |    3 +
+ lib/Kconfig.debug                   |   37 +
+ lib/locking-selftest.c              |    2 +
+ mm/filemap.c                        |   18 +
+ mm/mm_init.c                        |    3 +
+ 50 files changed, 4461 insertions(+), 55 deletions(-)
+ create mode 100644 include/linux/dept.h
+ create mode 100644 include/linux/dept_ldt.h
+ create mode 100644 include/linux/dept_sdt.h
+ create mode 100644 kernel/dependency/Makefile
+ create mode 100644 kernel/dependency/dept.c
+ create mode 100644 kernel/dependency/dept_hash.h
+ create mode 100644 kernel/dependency/dept_internal.h
+ create mode 100644 kernel/dependency/dept_object.h
+ create mode 100644 kernel/dependency/dept_proc.c
+
+-- 
+2.17.1
 
