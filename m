@@ -2,41 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 29B17782BFD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Aug 2023 16:36:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB572782BFC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Aug 2023 16:36:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236019AbjHUOgu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S236015AbjHUOgu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 21 Aug 2023 10:36:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46968 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235972AbjHUOgu (ORCPT
+        with ESMTP id S235973AbjHUOgu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 21 Aug 2023 10:36:50 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B1B0E2;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60087E4;
         Mon, 21 Aug 2023 07:36:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=2q41UfV5n98MJ5ge86F5yueit9/2pAEyQgCuf9zrqpk=; b=ERqNPjlFVAxH6r9HwrRpzFuQB+
-        V2jSnmzJBKmlA98WO/NSzm4yPhQU5G/5Zxwwd/L2ZU+G/PUc4SoYoT1qx57nwgA2w7MA9pWYMgr9e
-        R9dU8B7DQRKk2g7w0pNwLjQcG8oH2OOqI4SDU27nfeRMok8WKgJyB9VV8Y+9rp+eVd1VzGiWYrlVD
-        509f7wO74USXzLqv9hwJAIWwIKgaf21b/NayMf9ONKVk0LkTtKl24uPGMed8R0Tzr5zi5ah9ofaRD
-        QWurcihLhviG4dMw8hm0iup+Q971CqoHNpUB3Y6gqkCBwMQdCXRhEHyAXTUXoqq8OYPRFpiG1KTXB
-        U6i7EluQ==;
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=NhZK7lLhyk1gRe/kDzCl/6wBwOFUa/J4bfVtj1z1BGk=; b=eNEjOezjN6kQuPgAnyxqBYTVWz
+        k4DDHfNjz1NDeaMOMV3/UDBgmM5vQwKdTEvctgz4C0d7t15HnSmx7bNcGeHtGOb5KQw/zOHyDXd+9
+        nZST91BEoOsJFE1HqOuGhoekfKQ2HDthTZVT9PMcBi1Art/66k3HunYauTjVAGvEBGKJ1YsxgZUvh
+        WfPEdzW5AcPugdyVEROQcb98ksbqo2nWgZBErr4TnnW6cA7kwdNjBWUCawMkOiVNXlgNFyum3lzf4
+        pNx6ku2fTcskSbD7lsBn1JlfL/stCKAYFsFmxlAuQB3a4VlhEJbvOv/V2MywO+eCpJ75cwhEK2iEp
+        Dd3JAr8g==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qY61K-00Aj45-MP; Mon, 21 Aug 2023 14:36:43 +0000
+        id 1qY61M-00Aj4B-9K; Mon, 21 Aug 2023 14:36:44 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     Xiubo Li <xiubli@redhat.com>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/2] ceph: Convert ceph_page_mkwrite() to use a folio
-Date:   Mon, 21 Aug 2023 15:36:39 +0100
-Message-Id: <20230821143640.2556497-1-willy@infradead.org>
+Subject: [PATCH 2/2] mm: Delete page_mkwrite_check_truncate()
+Date:   Mon, 21 Aug 2023 15:36:40 +0100
+Message-Id: <20230821143640.2556497-2-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20230821143640.2556497-1-willy@infradead.org>
+References: <20230821143640.2556497-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -48,104 +50,53 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Operate on the entire folio instead of just the page.  There was an
-earlier effort to do this with thp_size(), but it had the exact type
-confusion between head & tail pages that folios are designed to avoid.
+All users of this function have been converted to
+folio_mkwrite_check_truncate().  Remove it.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ceph/addr.c | 35 +++++++++++++++++------------------
- 1 file changed, 17 insertions(+), 18 deletions(-)
+ include/linux/pagemap.h | 28 ----------------------------
+ 1 file changed, 28 deletions(-)
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 59cbfb80edbd..5ff5ad408a2a 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1565,8 +1565,8 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct ceph_file_info *fi = vma->vm_file->private_data;
- 	struct ceph_cap_flush *prealloc_cf;
--	struct page *page = vmf->page;
--	loff_t off = page_offset(page);
-+	struct folio *folio = page_folio(vmf->page);
-+	loff_t pos = folio_pos(folio);
- 	loff_t size = i_size_read(inode);
- 	size_t len;
- 	int want, got, err;
-@@ -1583,50 +1583,49 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
- 	sb_start_pagefault(inode->i_sb);
- 	ceph_block_sigs(&oldset);
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 351c3b7f93a1..f43a0e05b092 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -1491,34 +1491,6 @@ static inline ssize_t folio_mkwrite_check_truncate(struct folio *folio,
+ 	return offset;
+ }
  
--	if (off + thp_size(page) <= size)
--		len = thp_size(page);
--	else
--		len = offset_in_thp(page, size);
-+	len = folio_size(folio);
-+	if (pos + folio_size(folio) > size)
-+		len = size - pos;
- 
- 	dout("page_mkwrite %p %llx.%llx %llu~%zd getting caps i_size %llu\n",
--	     inode, ceph_vinop(inode), off, len, size);
-+	     inode, ceph_vinop(inode), pos, len, size);
- 	if (fi->fmode & CEPH_FILE_MODE_LAZY)
- 		want = CEPH_CAP_FILE_BUFFER | CEPH_CAP_FILE_LAZYIO;
- 	else
- 		want = CEPH_CAP_FILE_BUFFER;
- 
- 	got = 0;
--	err = ceph_get_caps(vma->vm_file, CEPH_CAP_FILE_WR, want, off + len, &got);
-+	err = ceph_get_caps(vma->vm_file, CEPH_CAP_FILE_WR, want, pos + len, &got);
- 	if (err < 0)
- 		goto out_free;
- 
- 	dout("page_mkwrite %p %llu~%zd got cap refs on %s\n",
--	     inode, off, len, ceph_cap_string(got));
-+	     inode, pos, len, ceph_cap_string(got));
- 
--	/* Update time before taking page lock */
-+	/* Update time before taking folio lock */
- 	file_update_time(vma->vm_file);
- 	inode_inc_iversion_raw(inode);
- 
- 	do {
- 		struct ceph_snap_context *snapc;
- 
--		lock_page(page);
-+		folio_lock(folio);
- 
--		if (page_mkwrite_check_truncate(page, inode) < 0) {
--			unlock_page(page);
-+		if (folio_mkwrite_check_truncate(folio, inode) < 0) {
-+			folio_unlock(folio);
- 			ret = VM_FAULT_NOPAGE;
- 			break;
- 		}
- 
--		snapc = ceph_find_incompatible(page);
-+		snapc = ceph_find_incompatible(&folio->page);
- 		if (!snapc) {
--			/* success.  we'll keep the page locked. */
--			set_page_dirty(page);
-+			/* success.  we'll keep the folio locked. */
-+			folio_mark_dirty(folio);
- 			ret = VM_FAULT_LOCKED;
- 			break;
- 		}
- 
--		unlock_page(page);
-+		folio_unlock(folio);
- 
- 		if (IS_ERR(snapc)) {
- 			ret = VM_FAULT_SIGBUS;
-@@ -1650,7 +1649,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
- 	}
- 
- 	dout("page_mkwrite %p %llu~%zd dropping cap refs on %s ret %x\n",
--	     inode, off, len, ceph_cap_string(got), ret);
-+	     inode, pos, len, ceph_cap_string(got), ret);
- 	ceph_put_cap_refs_async(ci, got);
- out_free:
- 	ceph_restore_sigs(&oldset);
+-/**
+- * page_mkwrite_check_truncate - check if page was truncated
+- * @page: the page to check
+- * @inode: the inode to check the page against
+- *
+- * Returns the number of bytes in the page up to EOF,
+- * or -EFAULT if the page was truncated.
+- */
+-static inline int page_mkwrite_check_truncate(struct page *page,
+-					      struct inode *inode)
+-{
+-	loff_t size = i_size_read(inode);
+-	pgoff_t index = size >> PAGE_SHIFT;
+-	int offset = offset_in_page(size);
+-
+-	if (page->mapping != inode->i_mapping)
+-		return -EFAULT;
+-
+-	/* page is wholly inside EOF */
+-	if (page->index < index)
+-		return PAGE_SIZE;
+-	/* page is wholly past EOF */
+-	if (page->index > index || !offset)
+-		return -EFAULT;
+-	/* page is partially inside EOF */
+-	return offset;
+-}
+-
+ /**
+  * i_blocks_per_folio - How many blocks fit in this folio.
+  * @inode: The inode which contains the blocks.
 -- 
 2.40.1
 
