@@ -2,149 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C9941782CD9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Aug 2023 17:02:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 456CF782D32
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Aug 2023 17:25:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235866AbjHUPCi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Aug 2023 11:02:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49796 "EHLO
+        id S236319AbjHUPZy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Aug 2023 11:25:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231497AbjHUPCi (ORCPT
+        with ESMTP id S235873AbjHUPZy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Aug 2023 11:02:38 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35567D1;
-        Mon, 21 Aug 2023 08:02:35 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id ADC735C271A;
-        Mon, 21 Aug 2023 11:02:32 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Mon, 21 Aug 2023 11:02:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-        cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1692630152; x=1692716552; bh=x2
-        EH9nuzIR6/KmV+lj5VKIPa3WH4/i9ku2KHuJ7oITI=; b=Nf9FOwOfe2cCb8XyUt
-        21tO1n6zZTEtIii0VXN4x1J9tcXcJ95Acfye6y0miwYlB9aCnUybl7NRC/vj5sBI
-        ZLy8MocYyp3BfsGvCC9DAy5hzk0Xj4xz7FfVPsgAlxpAX+5uFzmqg/8QKZ/AtcdJ
-        6MOnzvOHajBx0i0+W023qtW1NPTgcYAvyAVDuclW8uhePtqOt/uSVLtBZJj13lZ3
-        1xxY7MhpbbFWZ2KTcjGt3AJDdaQ5uoqB1Kn1Ja8gxab6L10YRGL5psYJgltiViCT
-        ZzIgfEUkTwV7pd+YO1xqyFbSce1pgY8E72EHzr/mTWz6xHW20bHhOudk8WihEmr5
-        hxsw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; t=1692630152; x=1692716552; bh=x2EH9nuzIR6/K
-        mV+lj5VKIPa3WH4/i9ku2KHuJ7oITI=; b=iYQjkY7NDx7/ChspJRGz9NdNcwqXc
-        5V0MutJCh2tlHwMDDsJVhsgZefOTM/Sjk8C8r8Rc0rRvs5HAEvq2/HxSO5kLLbQG
-        nYXJpiIjrdQthhtoDgb7Qgm9/37UCc8uzB90TJnw6QM6HBqHNg8OxzQqLjw06tfD
-        Hkcg4m5XjjwehpIZyfEgxSV+XSggXxrewnnAhK490wPPpMMOaWSw/mUxDbYctuOF
-        JGIRcvYmJxZSObFF7T/F4yEeQGbiQXsvoTM7nBHVHn4oo+DGAlzMp5zLaYUFF4/F
-        nTYBNWyLdoypIqxudmXY0IwuyQt/dEjvaHBY2je73/eMk9wk6OiIAXykQ==
-X-ME-Sender: <xms:h3zjZCMaXgMh6VmdIqLz5vRU_MCeZONykNh8SpX1QSb9didnzPPa1A>
-    <xme:h3zjZA-vxrRjLoTRmoLGtTUXq-vr8iUZKEYiI8KqhYBbwYMb53mP3lS3VcrkJpwfc
-    78JLGRKmmrYNid7TCE>
-X-ME-Received: <xmr:h3zjZJRbFNUz9LTnFyZ7qUygw9KD8zRRd3nDWFNv2qVqVXG9vXrmCD_EACc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedrudduledgkeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfihtghh
-    ohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrphhiiiiirgeqnecuggftrf
-    grthhtvghrnhepjeeiiedtkeegvefhfeehgfdvheejgedugeduledtvdejveeijefhvedv
-    kefftdehnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthigthhhosehthigthhhordhpihii
-    iigr
-X-ME-Proxy: <xmx:iHzjZCtiRQ2pmBVJtjY-xY3_srDNgtpRuxBwgnq3i2Qin1P35E4EqA>
-    <xmx:iHzjZKcypQKlrgAVRF3HIP64vWZxu3kOdCLb4qzSgz7zcOGhULR45g>
-    <xmx:iHzjZG03s5CBDSK7Xr9yQ_z8EnIDPEgpC7PCgS6lfGJ9MhyrT2ghhQ>
-    <xmx:iHzjZJ42sJNmGuPqTFnSMQvxt1m4TAT4M4-xl6ikOrSR2VdfhwHt2A>
-Feedback-ID: i21f147d5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 21 Aug 2023 11:02:30 -0400 (EDT)
-Date:   Mon, 21 Aug 2023 09:02:28 -0600
-From:   Tycho Andersen <tycho@tycho.pizza>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     =?iso-8859-1?Q?J=FCrg?= Billeter <j@bitron.ch>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        regressions@lists.linux.dev
-Subject: Re: [REGRESSION] fuse: execve() fails with ETXTBSY due to async
- fuse_flush
-Message-ID: <ZON8hKOAGRvTn83a@tycho.pizza>
-References: <4f66cded234462964899f2a661750d6798a57ec0.camel@bitron.ch>
- <CAJfpeguG4f4S-pq+_EXHxfB63mbof-VnaOy-7a-7seWLMj_xyQ@mail.gmail.com>
- <ZNozdrtKgTeTaMpX@tycho.pizza>
- <CAJfpegt6x_=F=mD8LEL4AZPbfCLGQrpurhtbDN4Ew50fd2ngqQ@mail.gmail.com>
- <ZNqseD4hqHWmeF2w@tycho.pizza>
- <CAJfpegtzj7=f99=m49DShDTgLpGAzx8gpHSakgPn0qe+dNjHdw@mail.gmail.com>
+        Mon, 21 Aug 2023 11:25:54 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25993FE
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Aug 2023 08:25:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AF59461474
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Aug 2023 15:25:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FDB3C433C8;
+        Mon, 21 Aug 2023 15:25:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692631549;
+        bh=XSaI4cc1jdaKotenuIZRcuK1/rETWxt7RTH2MYprPMw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=oBNObrFg3p+CLIyywVmEXDSq19Dnzw2ncWf3baiagHSbCBTCg2bNjgIBhyyQHl+kA
+         8iEaVparkRcL5eMN8o/IFKAxp38ReRsF23DUnlkq9qBNSXbPcQuD0h3TpMFQ/udTx5
+         HUxzDMEYKeMcUHnQxM1jo2NzsMRo0P/Q1Zb1HDRc0IdK5SZJBXmEqvjNEK7CGAMZIW
+         CqPTyu0HM2+qSxohf6eSiMVWfC7icTvjXDztrEPXwQHbv3+bH01r7w3oqQFJRVdfoJ
+         hspVfVBgfoNqVTUeAxxiDQYRDhGySIPYKXM9tWAAh6g1Lw1ux16wNVPlqZn1tBLI4X
+         dk6B7lO6lyJVQ==
+From:   Christian Brauner <brauner@kernel.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] libfs: Convert simple_write_begin and simple_write_end to use a folio
+Date:   Mon, 21 Aug 2023 17:25:43 +0200
+Message-Id: <20230821-heirat-sargnagel-612e6ec4dccf@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230821141322.2535459-1-willy@infradead.org>
+References: <20230821141322.2535459-1-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegtzj7=f99=m49DShDTgLpGAzx8gpHSakgPn0qe+dNjHdw@mail.gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1074; i=brauner@kernel.org; h=from:subject:message-id; bh=XSaI4cc1jdaKotenuIZRcuK1/rETWxt7RTH2MYprPMw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ8bvxyaUf9L0Y916bLWTM1jE67XTjLp9BldO76+/Nvv4vN apuu0VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRqbMY/mfviMwLroy2dK9+EDRXRc HUTsallDG61bTmVFeE7K5cL0aGQ643d06paKk5ekXW7cysIxF/LT4cUnjvVS9gt9E+R66ZAwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 21, 2023 at 04:24:00PM +0200, Miklos Szeredi wrote:
-> On Tue, 15 Aug 2023 at 00:36, Tycho Andersen <tycho@tycho.pizza> wrote:
-> >
-> > On Mon, Aug 14, 2023 at 04:35:56PM +0200, Miklos Szeredi wrote:
-> > > On Mon, 14 Aug 2023 at 16:00, Tycho Andersen <tycho@tycho.pizza> wrote:
-> > >
-> > > > It seems like we really do need to wait here. I guess that means we
-> > > > need some kind of exit-proof wait?
-> > >
-> > > Could you please recap the original problem?
-> >
-> > Sure, the symptom is a deadlock, something like:
-> >
-> > # cat /proc/1528591/stack
-> > [<0>] do_wait+0x156/0x2f0
-> > [<0>] kernel_wait4+0x8d/0x140
-> > [<0>] zap_pid_ns_processes+0x104/0x180
-> > [<0>] do_exit+0xa41/0xb80
-> > [<0>] do_group_exit+0x3a/0xa0
-> > [<0>] __x64_sys_exit_group+0x14/0x20
-> > [<0>] do_syscall_64+0x37/0xb0
-> > [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
-> >
-> > which is stuck waiting for:
-> >
-> > # cat /proc/1544574/stack
-> > [<0>] request_wait_answer+0x12f/0x210
-> > [<0>] fuse_simple_request+0x109/0x2c0
-> > [<0>] fuse_flush+0x16f/0x1b0
-> > [<0>] filp_close+0x27/0x70
-> > [<0>] put_files_struct+0x6b/0xc0
-> > [<0>] do_exit+0x360/0xb80
-> > [<0>] do_group_exit+0x3a/0xa0
-> > [<0>] get_signal+0x140/0x870
-> > [<0>] arch_do_signal_or_restart+0xae/0x7c0
-> > [<0>] exit_to_user_mode_prepare+0x10f/0x1c0
-> > [<0>] syscall_exit_to_user_mode+0x26/0x40
-> > [<0>] do_syscall_64+0x46/0xb0
-> > [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
-> >
-> > I have a reproducer here:
-> > https://github.com/tych0/kernel-utils/blob/master/fuse2/Makefile#L7
+On Mon, 21 Aug 2023 15:13:22 +0100, Matthew Wilcox (Oracle) wrote:
+> Remove a number of implicit calls to compound_head() and various calls
+> to compatibility functions.  This is not sufficient to enable support
+> for large folios; generic_perform_write() must be converted first.
 > 
-> The issue seems to be that the server process is recursing into the
-> filesystem it is serving (nested_fsync()).  It's quite easy to
-> deadlock fuse this way, and I'm not sure why this would be needed for
-> any server implementation.   Can you explain?
+> 
 
-I think the idea is that they're saving snapshots of their own threads
-to the fs for debugging purposes.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-Whether this is a sane thing to do or not, it doesn't seem like it
-should deadlock pid ns destruction.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Tycho
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] libfs: Convert simple_write_begin and simple_write_end to use a folio
+      https://git.kernel.org/vfs/vfs/c/22697cef47b7
