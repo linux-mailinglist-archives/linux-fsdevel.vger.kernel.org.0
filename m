@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 456CF782D32
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Aug 2023 17:25:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F04B782D3E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Aug 2023 17:26:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236319AbjHUPZy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Aug 2023 11:25:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37234 "EHLO
+        id S236349AbjHUP07 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Aug 2023 11:26:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235873AbjHUPZy (ORCPT
+        with ESMTP id S236337AbjHUP06 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Aug 2023 11:25:54 -0400
+        Mon, 21 Aug 2023 11:26:58 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25993FE
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Aug 2023 08:25:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79487E2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Aug 2023 08:26:57 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AF59461474
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Aug 2023 15:25:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FDB3C433C8;
-        Mon, 21 Aug 2023 15:25:47 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0D211626B7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Aug 2023 15:26:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EE1DC433C7;
+        Mon, 21 Aug 2023 15:26:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692631549;
-        bh=XSaI4cc1jdaKotenuIZRcuK1/rETWxt7RTH2MYprPMw=;
+        s=k20201202; t=1692631616;
+        bh=DO2QcR8A0FD7wmc5VMkteT5y3lkw9AM0aG//Yt2E56c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oBNObrFg3p+CLIyywVmEXDSq19Dnzw2ncWf3baiagHSbCBTCg2bNjgIBhyyQHl+kA
-         8iEaVparkRcL5eMN8o/IFKAxp38ReRsF23DUnlkq9qBNSXbPcQuD0h3TpMFQ/udTx5
-         HUxzDMEYKeMcUHnQxM1jo2NzsMRo0P/Q1Zb1HDRc0IdK5SZJBXmEqvjNEK7CGAMZIW
-         CqPTyu0HM2+qSxohf6eSiMVWfC7icTvjXDztrEPXwQHbv3+bH01r7w3oqQFJRVdfoJ
-         hspVfVBgfoNqVTUeAxxiDQYRDhGySIPYKXM9tWAAh6g1Lw1ux16wNVPlqZn1tBLI4X
-         dk6B7lO6lyJVQ==
+        b=tT79kI6YjVDt9WNchLZ8s+TKUtCnlDFBuMHUdBol+sOtCivJCOiAXPD9qbQPFDtRt
+         fwxzX2wf6OiYCjuvcq9RjlimsC+IhOobv/HDl2GLfblYUtgNI+UZjchoBHciwA5kpX
+         YQw0wYrwqOQHRqXLwAl1tUONWNkdXVa0ujHecpIEW0vGB3DUuB6O/LKjBsLVpbrNo8
+         0KBO3ient3bolRNfaSCMWTUHyPI/6sfyWzQCWapYVD3+3+0wTIjgFMl4Ql+Zy2i8+c
+         QCGqpBMBBShOT6HH5bIxGmp04nZmLF0Z8drCsKL3q29sEMdBh2RPeSzGOi4Xv/NxIo
+         JLwCnpuQh7Iow==
 From:   Christian Brauner <brauner@kernel.org>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] libfs: Convert simple_write_begin and simple_write_end to use a folio
-Date:   Mon, 21 Aug 2023 17:25:43 +0200
-Message-Id: <20230821-heirat-sargnagel-612e6ec4dccf@brauner>
+Subject: Re: [PATCH] splice: Convert page_cache_pipe_buf_confirm() to use a folio
+Date:   Mon, 21 Aug 2023 17:26:51 +0200
+Message-Id: <20230821-bosse-anmarsch-2f6d5db27115@brauner>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230821141322.2535459-1-willy@infradead.org>
-References: <20230821141322.2535459-1-willy@infradead.org>
+In-Reply-To: <20230821141541.2535953-1-willy@infradead.org>
+References: <20230821141541.2535953-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1074; i=brauner@kernel.org; h=from:subject:message-id; bh=XSaI4cc1jdaKotenuIZRcuK1/rETWxt7RTH2MYprPMw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ8bvxyaUf9L0Y916bLWTM1jE67XTjLp9BldO76+/Nvv4vN apuu0VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRqbMY/mfviMwLroy2dK9+EDRXRc HUTsallDG61bTmVFeE7K5cL0aGQ643d06paKk5ekXW7cysIxF/LT4cUnjvVS9gt9E+R66ZAwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=992; i=brauner@kernel.org; h=from:subject:message-id; bh=DO2QcR8A0FD7wmc5VMkteT5y3lkw9AM0aG//Yt2E56c=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ8brJ89mdO9KfZ4tlmG+ZJv64IE7lrszFFe+WGOWGTJllu 3vght6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiO10ZGWa39HyZ+NjyTvuHSTafrX VO2EzyTeRZ/npz3I5UQe0vDj0M/3Mz2Lhv5ulPepEfmnfqRqx2nPyuqFNbXfREecpX7ow/ygwA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -57,10 +57,9 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 21 Aug 2023 15:13:22 +0100, Matthew Wilcox (Oracle) wrote:
-> Remove a number of implicit calls to compound_head() and various calls
-> to compatibility functions.  This is not sufficient to enable support
-> for large folios; generic_perform_write() must be converted first.
+On Mon, 21 Aug 2023 15:15:41 +0100, Matthew Wilcox (Oracle) wrote:
+> Convert buf->page to a folio once instead of five times.  There's only
+> one uptodate bit per folio, not per page, so we lose nothing here.
 > 
 > 
 
@@ -79,5 +78,5 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: vfs.misc
 
-[1/1] libfs: Convert simple_write_begin and simple_write_end to use a folio
-      https://git.kernel.org/vfs/vfs/c/22697cef47b7
+[1/1] splice: Convert page_cache_pipe_buf_confirm() to use a folio
+      https://git.kernel.org/vfs/vfs/c/4e1428925b4b
