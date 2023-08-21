@@ -2,102 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D5437782805
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Aug 2023 13:35:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E1D37828DF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Aug 2023 14:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232803AbjHULfa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Aug 2023 07:35:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35280 "EHLO
+        id S234803AbjHUMVM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Aug 2023 08:21:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232422AbjHULfa (ORCPT
+        with ESMTP id S232733AbjHUMVL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Aug 2023 07:35:30 -0400
-Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF480E1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Aug 2023 04:35:26 -0700 (PDT)
-Received: by mail-ua1-x931.google.com with SMTP id a1e0cc1a2514c-7a02252eb5dso581791241.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Aug 2023 04:35:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692617726; x=1693222526;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=srbVbucEfZQXweGR9QuuaSfWvIF57fU894A4XoZstkA=;
-        b=TGOgD2fT/IXQhll4lr1UVRYPa9H+5iLQfmJIjRfD/GgFL4GfasliFS0Wf0X6Cf7ha5
-         YTPTxyuacBIKK/DtGLAPi3pujHI8rks4s5q1FAabMU+MYF6WKnvtcfMC/Kc1tMrftCeb
-         PvBgMT+1QVwVIK1qwkCWZu+FfVhNlhXVPbsnW/EliQV2z2KQD5Wc8kYmcixftcRzGpsW
-         LzsJI1Xjz+h3tbvsKzoVnPP+OoR8boH9vyzaBMjmEl4Y4mPPEh1czyX7TaEFJv8zx9N2
-         Ao+Y8/llFz8l3UjmnlFRth75748Vhylv/u7/BMwEPEDUDCPE3DpNi+Ulus7jJCeXIlsF
-         ScSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692617726; x=1693222526;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=srbVbucEfZQXweGR9QuuaSfWvIF57fU894A4XoZstkA=;
-        b=jepfq8/0yaoZSRGm1ZLIM/6b2RekbwfdYNZEozQtcIZmiv1QlbZBzQVjaK/gjmoQKW
-         s2LyXRctktqhVogtfC7bMHWpWJgYvmEHZox16rJQ8k8VAzONAT4xDKCYv9hHhA/owAPd
-         49eSy3fL2VmW8MIf6XsoK/tfHS2M7nFuhZaNXs/+JTwtyTJMkB+OAl7F35RyXbwbzaaP
-         M1f59muTkRU1l4WP2vYjy/hsRERArzFo2cOVctwt+31KAhojaHfAvzi1UT4OggXC6S7E
-         yVoOCNuOeUIKCnXCHnsxJKWt2AA3yapuhsdUnI6inwDrfutaLCVC2GKwDelmfOBpjSEb
-         sBVQ==
-X-Gm-Message-State: AOJu0YwoLdVkwanEEfUDxtc3FbAdXv1gD4LSpRj4JranNsi8XzwCrKys
-        wpN24mhVXvqRGDW1JQ1RsoPM2etAqCCqNQH06vQ=
-X-Google-Smtp-Source: AGHT+IFSbmNMcppRiwU2ce3zDrBufzvtW/pR/3PGkqUc4N5y5kwNA7ejkGUZ+29hIX1I03E19AfHEsj3AWapXHZpyBw=
-X-Received: by 2002:a05:6102:354f:b0:443:621e:d138 with SMTP id
- e15-20020a056102354f00b00443621ed138mr2621866vss.5.1692617725437; Mon, 21 Aug
- 2023 04:35:25 -0700 (PDT)
+        Mon, 21 Aug 2023 08:21:11 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33784E2;
+        Mon, 21 Aug 2023 05:21:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=5IiWcS1pGUM8RhlF+xFAzuOei17PLjfs94NmDiNvo6g=; b=MR/QHwNqCgmOxVS7c6EPkcvTOM
+        ewCAH+I5VyIrZrxJzwYfZLZdCgL8s90TQvZ+npslaTk64GCHlebjy/zTEFSP1XKvpvz0F1mp04dGb
+        Q4Mw4xNqTcDxevU3YZo9ZuZG7u7901KOLFAZQFBrfJj6DTvFoLmKqeOrbe9EGAWJD80G+5oUvjC9E
+        GE7/tDN7WYGjkchDeLjeoEXqx63p+j9VqmffpAwOVP34B8h7G2NH+m2Ijbr5WZl9m60lEmymGlSTH
+        3KMB/ugwe8njVx8yVWKJI7O8kZmYJA5QdxgWpCri1u728bx/fA3oJh+UCaWAdHAzd3/DRUeZhFvtJ
+        MESTOvHA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qY3tZ-00A7pc-KQ; Mon, 21 Aug 2023 12:20:33 +0000
+Date:   Mon, 21 Aug 2023 13:20:33 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Xueshi Hu <xueshi.hu@smartx.com>, dan.j.williams@intel.com,
+        vishal.l.verma@intel.com, dave.jiang@intel.com,
+        jayalk@intworks.biz, daniel@ffwll.ch, deller@gmx.de,
+        bcrl@kvack.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+        jack@suse.com, tytso@mit.edu, adilger.kernel@dilger.ca,
+        miklos@szeredi.hu, mike.kravetz@oracle.com, muchun.song@linux.dev,
+        djwong@kernel.org, akpm@linux-foundation.org, hughd@google.com,
+        nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] fs: clean up usage of noop_dirty_folio
+Message-ID: <ZONWka8NpDVGzI8h@casper.infradead.org>
+References: <20230819124225.1703147-1-xueshi.hu@smartx.com>
+ <20230821111643.5vxtktznjqk42cak@quack3>
 MIME-Version: 1.0
-References: <20230817141337.1025891-1-amir73il@gmail.com> <20230817-situiert-eisstadion-cdf3b6b69539@brauner>
-In-Reply-To: <20230817-situiert-eisstadion-cdf3b6b69539@brauner>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 21 Aug 2023 14:35:14 +0300
-Message-ID: <CAOQ4uxhzwON0hAjCPedTXm9E_iHp58Boy9XiXUtsQHY4uEJzKQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/7] kiocb_{start,end}_write() helpers
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230821111643.5vxtktznjqk42cak@quack3>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 17, 2023 at 5:56=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Thu, Aug 17, 2023 at 05:13:30PM +0300, Amir Goldstein wrote:
-> > Christian,
-> >
-> > This is an attempt to consolidate the open coded lockdep fooling in
-> > all those async io submitters into a single helper.
-> > The idea to do that consolidation was suggested by Jan.
-> >
-> > This re-factoring is part of a larger vfs cleanup I am doing for
-> > fanotify permission events.  The complete series is not ready for
-> > prime time yet, but this one patch is independent and I would love
-> > to get it reviewed/merged a head of the rest.
-> >
-> > This v3 series addresses the review comments of Jens on v2 [1].
->
-> I have neither quarrels nor strong opinions on this so if Jens tells me
-> it looks fine to him I can take it.
+On Mon, Aug 21, 2023 at 01:16:43PM +0200, Jan Kara wrote:
+> On Sat 19-08-23 20:42:25, Xueshi Hu wrote:
+> > In folio_mark_dirty(), it will automatically fallback to
+> > noop_dirty_folio() if a_ops->dirty_folio is not registered.
+> > 
+> > As anon_aops, dev_dax_aops and fb_deferred_io_aops becames empty, remove
+> > them too.
+> > 
+> > Signed-off-by: Xueshi Hu <xueshi.hu@smartx.com>
+> 
+> Yeah, looks sensible to me but for some callbacks we are oscilating between
+> all users having to provide some callback and providing some default
+> behavior for NULL callback. I don't have a strong opinion either way so
+> feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> But I guess let's see what Matthew thinks about this and what plans he has
+> so that we don't switch back again in the near future. Matthew?
 
-That would be great.
+I was hoping Christoph would weigh in ;-)  I don't have a strong
+feeling here, but it seems to me that a NULL ->dirty_folio() should mean
+"do the noop thing" rather than "do the buffer_head thing" or "do the
+filemap thing".  In 0af573780b0b, the buffer_head default was removed.
+I think enough time has passed that we're OK to change what a NULL
+->dirty_folio means (plus we also changed the name of ->set_page_dirty()
+to ->dirty_folio())
 
-Jens, do you approve of v3?
+So Ack to the concept.  One minor change I'd request:
 
-Jan, I see that you acked all patches except for 4/7 - I assume this
-was an oversight?
+-bool noop_dirty_folio(struct address_space *mapping, struct folio *folio)
++static bool noop_dirty_folio(struct address_space *mapping, struct folio *folio)
+ {
+ 	if (!folio_test_dirty(folio))
+ 		return !folio_test_set_dirty(folio);
+ 	return false;
+ }
+-EXPORT_SYMBOL(noop_dirty_folio);
 
-Thanks,
-Amir.
+Please inline this into folio_mark_dirty() instead of calling it.
