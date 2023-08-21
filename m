@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A165D782247
+	by mail.lfdr.de (Postfix) with ESMTP id 02D57782245
 	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Aug 2023 06:07:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232764AbjHUEHB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S232774AbjHUEHB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 21 Aug 2023 00:07:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44576 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232738AbjHUEG7 (ORCPT
+        with ESMTP id S232739AbjHUEHA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Aug 2023 00:06:59 -0400
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8FC7E9B;
+        Mon, 21 Aug 2023 00:07:00 -0400
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A42A7A6;
         Sun, 20 Aug 2023 21:06:57 -0700 (PDT)
-X-AuditID: a67dfc5b-d6dff70000001748-5b-64e2ded5f456
+X-AuditID: a67dfc5b-d6dff70000001748-6b-64e2ded5c594
 From:   Byungchul Park <byungchul@sk.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel_team@skhynix.com, torvalds@linux-foundation.org,
@@ -41,44 +41,44 @@ Cc:     kernel_team@skhynix.com, torvalds@linux-foundation.org,
         gwan-gyeong.mun@intel.com, max.byungchul.park@gmail.com,
         boqun.feng@gmail.com, longman@redhat.com, hdanton@sina.com,
         her0gyugyu@gmail.com
-Subject: [RESEND PATCH v10 07/25] dept: Apply sdt_might_sleep_{start,end}() to wait_for_completion()/complete()
-Date:   Mon, 21 Aug 2023 12:46:19 +0900
-Message-Id: <20230821034637.34630-8-byungchul@sk.com>
+Subject: [RESEND PATCH v10 08/25] dept: Apply sdt_might_sleep_{start,end}() to PG_{locked,writeback} wait
+Date:   Mon, 21 Aug 2023 12:46:20 +0900
+Message-Id: <20230821034637.34630-9-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230821034637.34630-1-byungchul@sk.com>
 References: <20230821034637.34630-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSbUxTZxTH9zz33udeKiXXTrOrzIlNyBaX4UvUHI0xEkn2fHEhWbZkGsVq
-        70Y3KFgExcxRpL6BGGqCdYJLgVkrdAoXljC0roPxNiNWraww7EaHTgaIUIsi+FLY/HLyy/mf
-        8/v0FxhNE7dQMBj3yCajLk1LVKxqJLrigzuBoH758Ng7YD2+HMKPj7JQfslFwHuxBoGrIR/D
-        YOuH8PvEMIKp6zcYsJV6EVT032WgoS2AwO08SOD2QAz4wqMEOkuLCBRUXSJwc2gaQ9+pkxhq
-        lM1wraQSg2fyHxZsgwTKbAU4Mh5gmHRU8+Awx0PQeYaH6f4V0Bno5sDd+z58+10fgSvuThba
-        GoMYbjeVEwi4XnJwra2DBa+1mIMfHlYSGJpwMOAIj/Jwy2PHUGuJiA6HXnDQXuzBcPj7Ogy+
-        nssIrh79C4Pi6ibQEh7GUK+UMvDsfCuC4IkRHg4dn+ShLP8EgqJDp1i48bydA0vfaph6Wk42
-        rqMtw6MMtdTvpe4JO0t/q5ToT2fu8tRytZendiWb1juX0qorg5hWjIc5qlQfI1QZP8nTwhEf
-        pg+7unjacXqKpQM+G06O3aJar5fTDDmyadmGHarUIfcIn/nz3H1nvb/yZtQQU4iiBElcJbVe
-        /JN5zaF/W/gZJuK7kt8/ObufJ8ZJ9cX3uUKkEhjxyBzJ+eg6mQneFDOknnPmWWbFeOlHqzXC
-        gqAWV0vWkv+di6WaWs8sR4lrJOVyE5phTeRkrP9vdsYpiUeipO77Lva/hwXSL04/W4LUdvRG
-        NdIYjDnpOkPaqoTUXKNhX8KujHQFRRrlODC9tRGNez9uRqKAtNHqHW8H9RpOl5OVm96MJIHR
-        zlPHPunXa9R6Xe5+2ZSRYspOk7OaUazAat9Sr5zYq9eIX+j2yF/JcqZsep1iIWqhGeHEpGN1
-        d8Y/s3+SmR3dsT55bE7oc0sDF3fQX/2e3zcYetCYuJvEPdrSHv/1hYSiMlNez72COmtV9pOu
-        NYGe4v1LhpTTnjzLRzn3UmIyzYtDO41/2EJJC17Oz6df+gvDLYnfPDe+2N2bcrM9edei2hDJ
-        W9ZXUvTpxqRN67Yt2T7Qunalls1K1a1YypiydK8AMADUhk0DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAAzXSa1BMcRgGcP//ubYsx2o4IzNYg5FxGzKvcZnGlw4zjBkfXGe0Y49atja7
-        iWUiukhsWiZLbUmxVkWclnFb1kbJpZYSkWhdU1tuGymXjfHlnd/M88zz6WUJhZUazmpi40V9
-        rEqrpGWkbPHs5EmPmr3qqfsdDJj3TQX/13QSrGWlNHjOlCAodezE0HorAh53tSPouV9LgCXb
-        g+BYy3MCHJXNCJz2XTTUvR4I9f5OGqqz99KQXFRGw4O2XgxNhw5gKJEWwd2sQgyu7nckWFpp
-        yLUk48B5j6HbVsyALWkseO05DPS2TIPq5gYKKvKqKXA+nQhH8ptouOqsJqHyohdD3WUrDc2l
-        vym4W3mbBI/ZRMHpjkIa2rpsBNj8nQw8dBVgOJsSWEv78ouCKpMLQ9rxcxjqG68guJb+EoNU
-        2kBDhb8dQ7mUTcCPk7cQeDN9DKTu62Ygd2cmgr2ph0io/VlFQUpTGPR8t9Lhs4WK9k5CSCnf
-        LDi7CkjhTiEvXMp5zggp154yQoG0SSi3hwpFV1uxcOyznxKk4j20IH0+wAgZvnosdNTUMMLt
-        wz2k8LregpeMWCmboxa1mgRRP2VepCy6zelj4q4P3pLnuckkIcfADBTE8twM/suHCqbPNDee
-        f/Kkm+hzMDeKLze9pTKQjCW43f15+8f7dF8whNPxjSeS/prkxvLnzeaAWVbOhfHmLOLf5ki+
-        5Kzrr4O4mbx05TLqsyJQ+dTyisxCsgLUrxgFa2ITYlQabdhkw4ZoY6xmy+S1uhgJBX7Glthr
-        voi+1kW4Ecci5QB55AivWkGpEgzGGDfiWUIZLA/51qJWyNUq41ZRr1uj36QVDW4UwpLKYfKF
-        y8RIBRelihc3iGKcqP+fYjZoeBKaH56o+0B5l6403Sua8OKVlP8i5JRnvex4pnX1Nps7XDYs
-        rqN3QXbNiinPojY3rtG7+sdsz5i5pBg7jPPT8XLL0B2+Ew0RiXNTfW+1Z1aV4dwFYzaOvrAi
-        9ODckzeiRrfdyNftqXq4blBD4puj0zWzhvCD08YdzslsrXXHm2bZjasmHFWShmjVtFBCb1D9
-        AXJoOr8vAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSbVBMexzH/f/nsdVyZpnrVFxmPT9FnuY3GNfcwT0zxjDTeIHxsGOP2rm7
+        1ZySYoyyIZFbmQp12R5m26klzvYiKVJjFUpYidliF7GjxLKRStoab37zme/3O59XP5ZQVVLB
+        rC4qTpSiNHo1rSAV3YGFC592uLWLk7PmQubpxeD7mkpCfrmVhpYrZQisFckYPHf+gWe9XQj6
+        mx4SkJvdgqDA1U5Ahb0DQY3lKA1P3owDh6+HhsbsUzQYi8ppePRhAIMzJwtDmbwJ7mcUYqjt
+        e0dCroeGvFwjHj7vMfSZSxkwJ80Et+UCAwOuMGjsaKWg5sV8OH/RSUN1TSMJ9ko3hidV+TR0
+        WIcouG9vIKElM52Cyx8LafjQaybA7Oth4HGtCcPVlGHR8S8/KbibXovhePE1DI7nNxDcTH2F
+        Qba20lDv68Jgk7MJ+FFyB4H7TDcDx073MZCXfAbBqWM5JDwcvEtBinM59H/Pp9euFOq7eggh
+        xXZAqOk1kcK9Ql64fqGdEVJuvmAEk7xfsFnmCUXVHiwUeH2UIJeepAXZm8UIad0OLHxsbmaE
+        hnP9pPDGkYu3hGxXrNaKel28KC1as0cRmTfkIGIGlQn/t05PQs6xaSiA5bll/ODPkygNsSN8
+        sXiTP6a52XxbWx/h54ncNN6W3kmlIQVLcCfG8pZPTbS/mMDp+P9eXkJ+JrmZvPy5AvtZyS3n
+        292VzKh/Kl92tXZEFMCt4OUbVSN71fDms+s1OboxBvBPc2JGOYi/bWkjM5DShMaUIpUuKt6g
+        0emXhUYmRukSQvdGG2Q0/E/mwwM7KpG3JbwOcSxSByr3THZrVZQmPjbRUId4llBPVIZ8c2lV
+        Sq0m8aAoRe+W9uvF2DoUwpLqScolvQe0Ki5CEyf+K4oxovS7xWxAcBJaKh2qDn4Z96etIUj/
+        lz01ceuucftC3z74w9gzftX4iDlNUkRYpzNovWv15IKinaYxkOmp33twmzHn75D4zjml31VS
+        22ba2jTXNuX2p7eNqZe/hM9ybajKSLi1dIE9bMbzIbe7+MiVdc12sWShd8a+QEM09mZeK3eS
+        ax0e+8rNhrMb1WRspCZsHiHFan4B8io5LUsDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSfUzMcRzHfb+/x47jt6vxm+edNU+TmLOPeRiL+c6m+QtjpuN+000ld6SM
+        SU/Sw5GtopJUTipPv5qFzm6lkvRAJw+r1DHEKZ0uTk+6Nv+899rer73/evOUKpuZyevDjkmG
+        MG2ImlXQisC1scted9p1/gOJ0yAtxR9cA4k05NwtZaHlTgmC0vKzGHpqtsKbQQeCocZmCjLT
+        WxBc7+6goLy2E4GlKIaF1k9TwebqY6E+PZmF2IK7LLz8PoyhPeMShhJ5OzRczMdgdX+hIbOH
+        hezMWDweXzG4zcUcmKN9wV6UxcFw9wqo72xjoPpqPQOW90vhSm47C5WWehpqK+wYWh/lsNBZ
+        OsZAQ+0zGlrSUhm43ZvPwvdBMwVmVx8Hr6x5GO7Fja8l/BploC7ViiGh8D4G27vHCJ4kdmGQ
+        S9tYqHY5MJTJ6RT8vVmDwG76wUF8ipuD7LMmBMnxGTQ0j9QxENeugaE/OezGtaTa0UeRuLIT
+        xDKYR5Pn+SJ5mNXBkbgn7zmSJx8nZUVLSEFlDybXnS6GyMXnWSI7L3Ek6YcNk96mJo48uzxE
+        k0+2TLxj9h7FOp0Uoo+QDMs3BCmCs8dsVPiIMvJq24Jo1D45CfG8KKwScwu3JyEvnhUWim/f
+        uikP+wjzxbLUz0wSUvCUcG6yWPSzkfUU3oJevPDhGvIwLfiKcn859rBS0Igd9grOw6IwTyy5
+        Z50Y8hJWi/LjRxO+atzp7/5IX0SKPDSpGPnowyJCtfoQjZ/xcHBUmD7S7+CRUBmNX8Z8ejit
+        Ag20bq1CAo/UU5RBs+06FaONMEaFViGRp9Q+ylm/u3UqpU4bdVIyHNlvOB4iGavQLJ5Wz1Bu
+        2yUFqYRD2mPSYUkKlwz/W8x7zYxGm4f2ViVQu6drTdTcG7hJ6WeSUEBFW7/vogPivvVp3qcs
+        Wc6VthkHYvxJTksr8nZsypizJvLCrVNev52BdX2RZ+b9HE3p6vLh7OcMDZU1MQ8WBfqFL9aY
+        56bPf+dufhr/YsuCb6/H1h1NNI0UFDY6HQ29dtPSAH7NTt/9GtnKimraGKxdsYQyGLX/AOWw
+        WiQuAwAA
 X-CFilter-Loop: Reflected
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -89,79 +89,56 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Makes Dept able to track dependencies by
-wait_for_completion()/complete().
+Makes Dept able to track dependencies by PG_{locked,writeback} waits.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- include/linux/completion.h | 30 +++++++++++++++++++++++++-----
- 1 file changed, 25 insertions(+), 5 deletions(-)
+ mm/filemap.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/include/linux/completion.h b/include/linux/completion.h
-index 62b32b19e0a8..32d535abebf3 100644
---- a/include/linux/completion.h
-+++ b/include/linux/completion.h
-@@ -10,6 +10,7 @@
-  */
- 
- #include <linux/swait.h>
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 83dda76d1fc3..eed64dc88e43 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -44,6 +44,7 @@
+ #include <linux/migrate.h>
+ #include <linux/pipe_fs_i.h>
+ #include <linux/splice.h>
 +#include <linux/dept_sdt.h>
+ #include <asm/pgalloc.h>
+ #include <asm/tlbflush.h>
+ #include "internal.h"
+@@ -1219,6 +1220,9 @@ static inline bool folio_trylock_flag(struct folio *folio, int bit_nr,
+ /* How many times do we accept lock stealing from under a waiter? */
+ int sysctl_page_lock_unfairness = 5;
  
- /*
-  * struct completion - structure used to maintain state for a "completion"
-@@ -26,14 +27,33 @@
- struct completion {
- 	unsigned int done;
- 	struct swait_queue_head wait;
-+	struct dept_map dmap;
- };
- 
-+#define init_completion(x)				\
-+do {							\
-+	sdt_map_init(&(x)->dmap);			\
-+	__init_completion(x);				\
-+} while (0)
++static struct dept_map __maybe_unused PG_locked_map = DEPT_MAP_INITIALIZER(PG_locked_map, NULL);
++static struct dept_map __maybe_unused PG_writeback_map = DEPT_MAP_INITIALIZER(PG_writeback_map, NULL);
 +
-+/*
-+ * XXX: No use cases for now. Fill the body when needed.
-+ */
- #define init_completion_map(x, m) init_completion(x)
--static inline void complete_acquire(struct completion *x) {}
--static inline void complete_release(struct completion *x) {}
-+
-+static inline void complete_acquire(struct completion *x)
-+{
-+	sdt_might_sleep_start(&x->dmap);
-+}
-+
-+static inline void complete_release(struct completion *x)
-+{
-+	sdt_might_sleep_end();
-+}
- 
- #define COMPLETION_INITIALIZER(work) \
--	{ 0, __SWAIT_QUEUE_HEAD_INITIALIZER((work).wait) }
-+	{ 0, __SWAIT_QUEUE_HEAD_INITIALIZER((work).wait), \
-+	  .dmap = DEPT_MAP_INITIALIZER(work, NULL), }
- 
- #define COMPLETION_INITIALIZER_ONSTACK_MAP(work, map) \
- 	(*({ init_completion_map(&(work), &(map)); &(work); }))
-@@ -75,13 +95,13 @@ static inline void complete_release(struct completion *x) {}
- #endif
- 
- /**
-- * init_completion - Initialize a dynamically allocated completion
-+ * __init_completion - Initialize a dynamically allocated completion
-  * @x:  pointer to completion structure that is to be initialized
-  *
-  * This inline function will initialize a dynamically created completion
-  * structure.
-  */
--static inline void init_completion(struct completion *x)
-+static inline void __init_completion(struct completion *x)
+ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
+ 		int state, enum behavior behavior)
  {
- 	x->done = 0;
- 	init_swait_queue_head(&x->wait);
+@@ -1230,6 +1234,11 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
+ 	unsigned long pflags;
+ 	bool in_thrashing;
+ 
++	if (bit_nr == PG_locked)
++		sdt_might_sleep_start(&PG_locked_map);
++	else if (bit_nr == PG_writeback)
++		sdt_might_sleep_start(&PG_writeback_map);
++
+ 	if (bit_nr == PG_locked &&
+ 	    !folio_test_uptodate(folio) && folio_test_workingset(folio)) {
+ 		delayacct_thrashing_start(&in_thrashing);
+@@ -1331,6 +1340,8 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
+ 	 */
+ 	finish_wait(q, wait);
+ 
++	sdt_might_sleep_end();
++
+ 	if (thrashing) {
+ 		delayacct_thrashing_end(&in_thrashing);
+ 		psi_memstall_leave(&pflags);
 -- 
 2.17.1
 
