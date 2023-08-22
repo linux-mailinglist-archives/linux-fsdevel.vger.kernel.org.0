@@ -2,150 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 588B4783B37
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 09:55:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C46A783C5D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 10:59:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233557AbjHVHzD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Aug 2023 03:55:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38288 "EHLO
+        id S234131AbjHVI7P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Aug 2023 04:59:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233242AbjHVHzC (ORCPT
+        with ESMTP id S234032AbjHVI7O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Aug 2023 03:55:02 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79BBE191
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 00:54:36 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id 98e67ed59e1d1-26f381afc15so270784a91.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 00:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1692690876; x=1693295676;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=f4jgfORi8SmWQDQbZiOec8xn7xqyqjppzAhLAq8G/jM=;
-        b=SOneL3NtXO9oBFlq98JcoX4t3EnesJboldSnWumz5DiUkBnpG7CqEL1eKt5K9rqcA2
-         U3RRuLkwT/GCIUVInlzMYcDj50xv/uxs2qyBQzzhPTYMtkXg2PqKFlKcIAWegMjhGkJZ
-         +fKZaiHC6mfcqYHxcipesaABAxYak2/MZ+QrJr3V6cvvZyagkXZ1QARSjdPbn3ezO8GR
-         DM/xTyQvFqdpZfQWlB4kjX8ZI5jxXRK08bUzQm7S1Pr0J54SUbds0ZKp7eHCmdt5Dn0n
-         NGugvmaAkNnFAW1NpNnaUcyir+eJIXKp9n7vk7+IuTaAiuOSGyKdmnu+jJCHneFWcinO
-         cGiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692690876; x=1693295676;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f4jgfORi8SmWQDQbZiOec8xn7xqyqjppzAhLAq8G/jM=;
-        b=VKEfizEMSeQZuAGsadQjYB5jT3wc6WucfXnOJORtCqZmdIT0DbicnTqQDpRLH/T75S
-         Rfg31s5um8s1Mg94DMbltoilRbldjfkKryfBSbdK6S3wICX2yXD1XN4VKVr3qtTQJavs
-         mnVHmGmizto62bFmsoTXzrI8fNgi3clZNVfSWpnxCqmfCGsmDVg5Dj2/qSjYhER5/uOl
-         GjGgp5JqluR7xZYJaUdtm+8VgoOjQywJBDm4wninrIr+jbRcf6OfTLHv3sUYGF9HHiS0
-         HGoDd0atkTva6u9rT6Przrou/e4U5twsmBRXik4A2/zSlriRduI5YgVqfqJhZgFNj4Tt
-         gnSA==
-X-Gm-Message-State: AOJu0YzrPwam9gU3PnkyXTmOwsn66dpXss8LmR/D/82IkgNfx98X9PgS
-        I3j8sekNLk6HZxWHEov2o9Cuvg==
-X-Google-Smtp-Source: AGHT+IGcQ/Vaoo9QWtXIDxo0cmgc5wb+yjqs29/LxRS2cKLFil77dp/RF48DaAlmNeNv2ExX4nw11A==
-X-Received: by 2002:a05:6a21:788a:b0:13a:3649:dc1a with SMTP id bf10-20020a056a21788a00b0013a3649dc1amr12492491pzc.0.1692690875899;
-        Tue, 22 Aug 2023 00:54:35 -0700 (PDT)
-Received: from [10.70.252.135] ([203.208.167.146])
-        by smtp.gmail.com with ESMTPSA id q6-20020a170902a3c600b001bbdd44bbb6sm8506831plb.136.2023.08.22.00.54.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Aug 2023 00:54:35 -0700 (PDT)
-Message-ID: <c6f933ee-751f-def1-31f6-0940e2ee0108@bytedance.com>
-Date:   Tue, 22 Aug 2023 15:54:25 +0800
+        Tue, 22 Aug 2023 04:59:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3129ACC8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 01:58:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B45F065008
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 08:58:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B135C433C8;
+        Tue, 22 Aug 2023 08:58:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692694717;
+        bh=4qZ7RppNg9qYWoZJetV/MXqzmQCT9MKmJKzbdyaQ3Y0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Y1dezFNnX0NvdIqNeO5gHPMmW8rQdSDv9lYav1w373oqrjRLJ6n+XTYalCGcgVsAO
+         F7dBkLXWJAPjSSlBid46Qkv3QP45lENIQAfwcH0liP1mMc3G0SVwS0ZhFmpES1YI27
+         DAnnsr6+uPhqE2kU0HMmrAKG99Z41a+iI6D6vFVnFQKISKOUpsFpyGVO/22t0C5BE9
+         kR+qlbBzNfITKy8VFOd85VicZRA+Xtk4LBB8k2zyVM87CSerzmnz1HFm/fpp6x97T0
+         NJPGvPiz+Bw5zZTEV8ik3X338CtqlWgZ2MusF1sCDKWKMuEdiAvnF/Q4VwH9EbQaGc
+         NLrtIDF9gWaTw==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleksandr Tymoshenko <ovt@google.com>,
+        Carlos Maiolino <cem@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
+        Miklos Szeredi <miklos@szeredi.hu>, Daniel Xu <dxu@dxuuu.xyz>,
+        Chris Down <chris@chrisdown.name>, Tejun Heo <tj@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Pete Zaitcev <zaitcev@redhat.com>,
+        Helge Deller <deller@gmx.de>,
+        Topi Miettinen <toiwoton@gmail.com>,
+        Yu Kuai <yukuai3@huawei.com>,
+        Franklin Mathieu <snaipe@arista.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: (subset) [PATCH vfs.tmpfs] tmpfs,xattr: GFP_KERNEL_ACCOUNT for simple xattrs
+Date:   Tue, 22 Aug 2023 10:58:26 +0200
+Message-Id: <20230822-anordnen-tracht-4dd042da0e09@brauner>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <f6953e5a-4183-8314-38f2-40be60998615@google.com>
+References: <e92a4d33-f97-7c84-95ad-4fed8e84608c@google.com> <20230809-postkarten-zugute-3cde38456390@brauner> <20230809-leitgedanke-weltumsegelung-55042d9f7177@brauner> <cdedadf2-d199-1133-762f-a8fe166fb968@google.com> <20230810-notwehr-denkbar-3be0cc53a87a@brauner> <f6953e5a-4183-8314-38f2-40be60998615@google.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.14.0
-Subject: Re: [PATCH v2 0/5] use refcount+RCU method to implement lockless slab
- shrink (part 1)
-Content-Language: en-US
-To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
-        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
-        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
-        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
-        yujie.liu@intel.com, gregkh@linuxfoundation.org,
-        muchun.song@linux.dev, joel@joelfernandes.org,
-        christian.koenig@amd.com
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
-        Qi Zheng <zhengqi.arch@bytedance.com>
-References: <20230817112402.77010-1-zhengqi.arch@bytedance.com>
-From:   Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <20230817112402.77010-1-zhengqi.arch@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1511; i=brauner@kernel.org; h=from:subject:message-id; bh=4qZ7RppNg9qYWoZJetV/MXqzmQCT9MKmJKzbdyaQ3Y0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ8qVhrdHjfzayJgX7KP7/31IqX3Dhux1QR6n1T8Kx56rSv b28rdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExkTQQjQ8+r5AQvRpV9j+P3qrxQ/7 t+xifBxZsW1B2Kje+LmaoVdpaRYc2jghl7vDbvv+Qc7daxWX92w2mnfRJ75wbePix3d3LvHj4A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, 21 Aug 2023 10:39:20 -0700, Hugh Dickins wrote:
+> It is particularly important for the userns mount case (when a sensible
+> nr_inodes maximum may not be enforced) that tmpfs user xattrs be subject
+> to memory cgroup limiting.  Leave temporary buffer allocations as is,
+> but change the persistent simple xattr allocations from GFP_KERNEL to
+> GFP_KERNEL_ACCOUNT.  This limits kernfs's cgroupfs too, but that's good.
+> 
+> (I had intended to send this change earlier, but had been confused by
+> shmem_alloc_inode() using GFP_KERNEL, and thought a discussion would be
+> needed to change that too: no, I was forgetting the SLAB_ACCOUNT on that
+> kmem_cache, which implicitly adds __GFP_ACCOUNT to all its allocations.)
+> 
+> [...]
 
+Applied to the vfs.tmpfs branch of the vfs/vfs.git tree.
+Patches in the vfs.tmpfs branch should appear in linux-next soon.
 
-On 2023/8/17 19:23, Qi Zheng wrote:
-> Hi all,
-> 
-> To make reviewing and updating easier, I've chosen to split the previous
-> patchset[1] into the following three parts:
-> 
-> part 1: some cleanups and preparations
-> part 2: introduce new APIs and convert all shrinnkers to use these
-> part 3: implement lockless slab shrink
-> 
-> This series is the part 1 and is based on the next-20230815.
-> 
-> Comments and suggestions are welcome.
-> 
-> [1]. https://lore.kernel.org/lkml/20230807110936.21819-1-zhengqi.arch@bytedance.com/
-> 
-> Thanks,
-> Qi
-> 
-> Changlog in part 1 v1 -> part 1 v2:
->   - fix compilation warning in [PATCH 1/5]
->   - rename synchronize_shrinkers() to ttm_pool_synchronize_shrinkers()
->     (pointed by Christian König)
->   - collect Reviewed-by
-> 
-> Changlog in v4 -> part 1 v1:
->   - split from the previous large patchset
->   - fix comment format in [PATCH v4 01/48] (pointed by Muchun Song)
->   - change to use kzalloc_node() and fix typo in [PATCH v4 44/48]
->     (pointed by Dave Chinner)
->   - collect Reviewed-bys
->   - rebase onto the next-20230815
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Hi all,
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Any more comments and suggestions for this part 1? Or can this part
-be merged first (just some cleanups and preparations)? Or should I
-post the part 2 and part 3 first for everyone to review together?
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Either one is fine for me. :)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.tmpfs
 
-Thanks,
-Qi
-
-> 
-> Qi Zheng (5):
->    mm: move some shrinker-related function declarations to mm/internal.h
->    mm: vmscan: move shrinker-related code into a separate file
->    mm: shrinker: remove redundant shrinker_rwsem in debugfs operations
->    drm/ttm: introduce pool_shrink_rwsem
->    mm: shrinker: add a secondary array for shrinker_info::{map,
->      nr_deferred}
-> 
->   drivers/gpu/drm/ttm/ttm_pool.c |  17 +-
->   include/linux/memcontrol.h     |  12 +-
->   include/linux/shrinker.h       |  37 +-
->   mm/Makefile                    |   4 +-
->   mm/internal.h                  |  28 ++
->   mm/shrinker.c                  | 751 +++++++++++++++++++++++++++++++++
->   mm/shrinker_debug.c            |  18 +-
->   mm/vmscan.c                    | 701 ------------------------------
->   8 files changed, 818 insertions(+), 750 deletions(-)
->   create mode 100644 mm/shrinker.c
-> 
+[1/1] tmpfs,xattr: GFP_KERNEL_ACCOUNT for simple xattrs
+      https://git.kernel.org/vfs/vfs/c/572a3d1e5d3a
