@@ -2,88 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 82DC67848D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 19:55:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D956784935
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 20:05:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229523AbjHVRzj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Aug 2023 13:55:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56176 "EHLO
+        id S229770AbjHVSFd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Aug 2023 14:05:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229480AbjHVRzi (ORCPT
+        with ESMTP id S229754AbjHVSFd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Aug 2023 13:55:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 013891FC8;
-        Tue, 22 Aug 2023 10:55:34 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 879A162094;
-        Tue, 22 Aug 2023 17:55:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02761C433C7;
-        Tue, 22 Aug 2023 17:55:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692726934;
-        bh=nRhOqPrA5BuPwRcvI7MlHlUwPN6wyHo9eKiXJKZmvt4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=myEcl1WQzsR8pyBO5c97oqf72AeVeGXqJVloLwBX8iLiTVv8X7Ia5vxoJdiPn9i+Y
-         VjQOYYmvKvjZbfOh6E8xc61ay9ODF00wOGJfXl/c1vGl0Y6OYChvzjcdwufld/IScF
-         1UGlm7KFs7gyhSRfsTyEylIum6Z+RkaBDfABGffR9V76JaIS9JY5hMmlmS0q/9LklM
-         ePT2X4GvVlJEVV0h+Oer2GtY4Hxhd4pfL+5zEq8l0XyzfybeFF7tgxUXVLmquGqvQ1
-         TZIES52DEgXIUwTk2PsKGVvUBdwYPMTgBnyG4aO6gC+pZlhQLIK4t/O11L17SOC7Vu
-         mGZAJ84Zodf5Q==
-Date:   Tue, 22 Aug 2023 18:55:24 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc:     "david@redhat.com" <david@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "ardb@kernel.org" <ardb@kernel.org>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "debug@rivosinc.com" <debug@rivosinc.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "palmer@dabbelt.com" <palmer@dabbelt.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "hjl.tools@gmail.com" <hjl.tools@gmail.com>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "oleg@redhat.com" <oleg@redhat.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v5 11/37] mm: Define VM_SHADOW_STACK for arm64 when we
- support GCS
-Message-ID: <c9d0881d-e26b-4680-8f8e-0d5e1c82655c@sirena.org.uk>
-References: <20230822-arm64-gcs-v5-0-9ef181dd6324@kernel.org>
- <20230822-arm64-gcs-v5-11-9ef181dd6324@kernel.org>
- <8f2cf5af-cad7-a69c-e8ec-39f48deae1cb@redhat.com>
- <54b2c1e5-a99d-42c0-b686-1b5cbb849581@sirena.org.uk>
- <e10e729392c5fa421baf08b4ea7aaac6ffada0f5.camel@intel.com>
+        Tue, 22 Aug 2023 14:05:33 -0400
+Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2DB010EB;
+        Tue, 22 Aug 2023 11:04:58 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 562A7320082A;
+        Tue, 22 Aug 2023 14:03:54 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Tue, 22 Aug 2023 14:03:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=devkernel.io; h=
+        cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1692727433; x=1692813833; bh=1H
+        tTCgJc0ZUa0k/Dq5F5KRBm+gk3KHx/7qQeQ8kY1jM=; b=nZsyCCnnMgdO1jntrd
+        hhIoQVgbVRN4XBA7ltAGNkUrqy6b+VhnySBUbnekQiw9pBHQacvqDvnyI96uTRsZ
+        ThRwMZFMkZexR0EQAjEVuylVFrJp+w7hF+g9edswmi9ftBUEwp4gySC/qtGW4SeS
+        4sn0Pm5frk/7Zr5UMU7waweSB66nhckmHvi4/QHolythKXnRResiQV7TlZuW3Z4k
+        vLoGn7AaeFG0pPhIjGKfb/MuRF5UaAPXjnAWWOo4pHzemA22bEM3JiaQHhLz0vJP
+        IRq9iWBPlh2xBxfUOPn3FpcIgHOpZr2ceF4iuA6LYMkNKMOfa+yCsiAyTWFJFn/j
+        LTNA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; t=1692727433; x=1692813833; bh=1HtTCgJc0ZUa0
+        k/Dq5F5KRBm+gk3KHx/7qQeQ8kY1jM=; b=EHkCF1bJhw7orL/GQThs6FpRSO6Pd
+        rimPKj40oFxjzbXvEw1SN+vifDkMOqwTenLz+s0YaT8wzBfJjc+VYP2IoHMPlLYH
+        AuTDJQJipFeH9UCUy0BPs5Ypm3u5bf2xTOk7+h4xhp/cDkwklMHyEbjdigHUiSN4
+        IW2ycjD7ZYWSEFDG1BfsEePcy82S5GnNVQpVEuqJy+DG585Hfrk8bxDfRz4TrsCr
+        qp8Cnj1ZMBm2Neq6c/EH9rSlLX5CH+FZXdi9zdwlhx9CCxesvw/cDO47h9HMb4A5
+        tI8lxHjsLbq0cGp4ubhF8egANB7fzh9XGuA5rjHP8Kg4Q86/CAGccJAtA==
+X-ME-Sender: <xms:ifjkZBV_G5vQJGesHNKERPGm5tpaBqSo2rTb533HnPLJjQACNW4_gQ>
+    <xme:ifjkZBkWNGR-G9yshgovFpjowo7BHdjvY1mLswIGVCo1lWuhhXbXxj93WZZt94jAE
+    QvOkHXWgch4tkvI_5E>
+X-ME-Received: <xmr:ifjkZNY2dHpAN4uqSsFqB4EkwcrUvYptmacC1CWtDK4iXYMsLZm8RIQUVDetalO6asvfCVhMlQMmTsA5IoPmYAhLmKGH6AX-mkimqb25PY8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedruddvuddguddulecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpehffgfhvfevufffjgfkgggtsehttdertddtredtnecuhfhrohhmpefuthgv
+    fhgrnhcutfhovghstghhuceoshhhrhesuggvvhhkvghrnhgvlhdrihhoqeenucggtffrrg
+    htthgvrhhnpeevlefggffhheduiedtheejveehtdfhtedvhfeludetvdegieekgeeggfdu
+    geeutdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hshhhrseguvghvkhgvrhhnvghlrdhioh
+X-ME-Proxy: <xmx:ifjkZEUJ6_LYlHRsLpH2OQuXffwe3f1k9NqjtbrDZScskjHWe4dzQA>
+    <xmx:ifjkZLm0Rjbb-i8qP-g_5x9i9RPB88X5-CV2SXOFfxmVqr_j0ETcUg>
+    <xmx:ifjkZBfF6yuz5XHgCkWO0L8osObItaBOtfaALjzaYj3X7j3KawEzww>
+    <xmx:ifjkZJbT6rnEE3N7VLSZciPZTqKe1DT2T_zZKJ7M5A2-eflWfnIYMg>
+Feedback-ID: i84614614:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 22 Aug 2023 14:03:52 -0400 (EDT)
+References: <20230817162301.3472457-1-shr@devkernel.io>
+ <886b6a56-8acb-e975-b5f3-d8098a2285ab@redhat.com>
+User-agent: mu4e 1.10.1; emacs 28.2.50
+From:   Stefan Roesch <shr@devkernel.io>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     kernel-team@fb.com, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+        riel@surriel.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v3] proc/ksm: add ksm stats to /proc/pid/smaps
+Date:   Tue, 22 Aug 2023 11:03:16 -0700
+In-reply-to: <886b6a56-8acb-e975-b5f3-d8098a2285ab@redhat.com>
+Message-ID: <qvqw350b2buj.fsf@devbig1114.prn1.facebook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="M/5Lioh+7qcaKBw4"
-Content-Disposition: inline
-In-Reply-To: <e10e729392c5fa421baf08b4ea7aaac6ffada0f5.camel@intel.com>
-X-Cookie: MIT:
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -91,43 +86,97 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---M/5Lioh+7qcaKBw4
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+David Hildenbrand <david@redhat.com> writes:
 
-On Tue, Aug 22, 2023 at 04:47:26PM +0000, Edgecombe, Rick P wrote:
-> On Tue, 2023-08-22 at 16:41 +0100, Mark Brown wrote:
+> On 17.08.23 18:23, Stefan Roesch wrote:
+>> With madvise and prctl KSM can be enabled for different VMA's. Once it
+>> is enabled we can query how effective KSM is overall. However we cannot
+>> easily query if an individual VMA benefits from KSM.
+>> This commit adds a KSM section to the /prod/<pid>/smaps file. It reports
+>> how many of the pages are KSM pages. The returned value for KSM is
+>> independent of the use of the shared zeropage.
+>> Here is a typical output:
+>> 7f420a000000-7f421a000000 rw-p 00000000 00:00 0
+>> Size:             262144 kB
+>> KernelPageSize:        4 kB
+>> MMUPageSize:           4 kB
+>> Rss:               51212 kB
+>> Pss:                8276 kB
+>> Shared_Clean:        172 kB
+>> Shared_Dirty:      42996 kB
+>> Private_Clean:       196 kB
+>> Private_Dirty:      7848 kB
+>> Referenced:        15388 kB
+>> Anonymous:         51212 kB
+>> KSM:               41376 kB
+>> LazyFree:              0 kB
+>> AnonHugePages:         0 kB
+>> ShmemPmdMapped:        0 kB
+>> FilePmdMapped:         0 kB
+>> Shared_Hugetlb:        0 kB
+>> Private_Hugetlb:       0 kB
+>> Swap:             202016 kB
+>> SwapPss:            3882 kB
+>> Locked:                0 kB
+>> THPeligible:    0
+>> ProtectionKey:         0
+>> ksm_state:          0
+>> ksm_skip_base:      0
+>> ksm_skip_count:     0
+>> VmFlags: rd wr mr mw me nr mg anon
+>> This information also helps with the following workflow:
+>> - First enable KSM for all the VMA's of a process with prctl.
+>> - Then analyze with the above smaps report which VMA's benefit the most
+>> - Change the application (if possible) to add the corresponding madvise
+>> calls for the VMA's that benefit the most
+>> Signed-off-by: Stefan Roesch <shr@devkernel.io>
+>> ---
+>>   Documentation/filesystems/proc.rst | 4 ++++
+>>   fs/proc/task_mmu.c                 | 5 +++++
+>>   2 files changed, 9 insertions(+)
+>> diff --git a/Documentation/filesystems/proc.rst
+>> b/Documentation/filesystems/proc.rst
+>> index 7897a7dafcbc..d5bdfd59f5b0 100644
+>> --- a/Documentation/filesystems/proc.rst
+>> +++ b/Documentation/filesystems/proc.rst
+>> @@ -461,6 +461,7 @@ Memory Area, or VMA) there is a series of lines such as the following::
+>>       Private_Dirty:         0 kB
+>>       Referenced:          892 kB
+>>       Anonymous:             0 kB
+>> +    KSM:                   0 kB
+>>       LazyFree:              0 kB
+>>       AnonHugePages:         0 kB
+>>       ShmemPmdMapped:        0 kB
+>> @@ -501,6 +502,9 @@ accessed.
+>>   a mapping associated with a file may contain anonymous pages: when MAP_PRIVATE
+>>   and a page is modified, the file page is replaced by a private anonymous copy.
+>>   +"KSM" shows the amount of anonymous memory that has been de-duplicated. The
+>> +value is independent of the use of shared zeropage.
+>> +
+>>   "LazyFree" shows the amount of memory which is marked by madvise(MADV_FREE).
+>>   The memory isn't freed immediately with madvise(). It's freed in memory
+>>   pressure if the memory is clean. Please note that the printed value might
+>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>> index 51315133cdc2..f591c750ffda 100644
+>> --- a/fs/proc/task_mmu.c
+>> +++ b/fs/proc/task_mmu.c
+>> @@ -396,6 +396,7 @@ struct mem_size_stats {
+>>   	unsigned long swap;
+>>   	unsigned long shared_hugetlb;
+>>   	unsigned long private_hugetlb;
+>> +	unsigned long ksm;
+>>   	u64 pss;
+>>   	u64 pss_anon;
+>>   	u64 pss_file;
+>> @@ -452,6 +453,9 @@ static void smaps_account(struct mem_size_stats *mss, struct page *page,
+>>   			mss->lazyfree += size;
+>>   	}
+>>   +	if (PageKsm(page))
+>> +		mss->ksm += size;
+>> +
+>
+> Did you accidentally not include handling of the KSM-shared zeropage?
+>
+> Or did I misinterpret "independent of the use of the shared zeropage."
 
-> > I can certainly update it to do that, I was just trying to fit in
-> > with
-> > how the code was written on the basis that there was probably a good
-> > reason for it that had been discussed somewhere.=A0 I can send an
-> > incremental patch for this on top of the x86 patches assuming they go
-> > in
-> > during the merge window.
-
-> There was something like that on the x86 series way back, but it was
-> dropped[0]. IIRC risc-v was going to try to do something other than
-> VM_SHADOW_STACK, so they may conflict some day. But in the meantime,
-> adding a CONFIG_HAVE_ARCH_SHADOW_STACK here in the arm series makes
-> sense to me.
-
-OK, I'll do that.
-
---M/5Lioh+7qcaKBw4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmTk9owACgkQJNaLcl1U
-h9BzkQf/R6al2pexuFT7yjh/QmDQ605ZLN9i97Je0LSd5PuT5nU6GF3W5a54fMib
-6W/3nsCaMStJXsvd+VW79higHGjkzwpJF2gPeI94UCLBgKYqU8qB4MR/adY9Ff1r
-1sA4RWSjuxtC8NBEoIYomxAXMpW05vpD0eruSLYjUnEnTf0NrXtxZmwZQjcVHeeS
-f47zzzB9vzZ1wei7YyAcO+oju9JjWVkD2jTdQJjddCKNIuR+qB98g/qO4BvHp86+
-OPVeSsY4Ko7Kqh4JKdTddAYte0KvQ0SaRh59Zmo6tcorDOv6yVJOfTOEQ8v2SdFD
-daJaRcq070YEVByUMToJ3C0wq/P7+w==
-=2kJA
------END PGP SIGNATURE-----
-
---M/5Lioh+7qcaKBw4--
+I think I misunderstood your review comment. I'll address it in the next version.
