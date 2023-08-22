@@ -2,49 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A4FF7842BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 16:03:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBAAB7842BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 16:03:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235338AbjHVODE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Aug 2023 10:03:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60418 "EHLO
+        id S233351AbjHVODO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Aug 2023 10:03:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233351AbjHVODD (ORCPT
+        with ESMTP id S236234AbjHVODK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Aug 2023 10:03:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9050A1BD;
-        Tue, 22 Aug 2023 07:03:01 -0700 (PDT)
+        Tue, 22 Aug 2023 10:03:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B82A7CD5;
+        Tue, 22 Aug 2023 07:03:08 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 03ECB63A0E;
-        Tue, 22 Aug 2023 14:03:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3312BC433C7;
-        Tue, 22 Aug 2023 14:02:54 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3E90465726;
+        Tue, 22 Aug 2023 14:03:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9638EC433CC;
+        Tue, 22 Aug 2023 14:03:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692712980;
-        bh=0gvkuKR41LGGCd8avLTCcB5z1Ttp9harJ3mALBvT3Gw=;
-        h=From:Subject:Date:To:Cc:From;
-        b=gxEtJXOL1Hgyne57ipBABSTFa6QgcPoxLtH4o+/gaqp9R8cBMbILKQQHppJCVeqNd
-         GbLzFzBrJt2g1yZtqaAiKAq3oBuFQOOIZ0QBrFFqKmhPDfX5ZFjGZ2NeNoIfKSkBEV
-         V8UtWU0wG6g5rCxDfMwL5B6PR2qzrvs9FcbIaj+F2j1sSXv8qw4rrxUMM9lnn7CIwd
-         6pLwxiUHlvhMJEWaDdLq9+ak+XRE2B8Ru6ztsawq4IRsiqlASahr4SNsXx5WCAc50C
-         2wOvuNa6m6HUSXroXkpDmQVCOl6uNobz+xm6ezDIV3a7DbDlTKoKHy0v9daa+5k/Km
-         xCGH3/Zugc95g==
+        s=k20201202; t=1692712987;
+        bh=pFAvrTvTUMO0xGKH/cMXrv1R9nlyUOOKoHgSKri2XFo=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+        b=qTm9XTGvcYh+Br8eJUAeGbO/I6+6TObGxYTwfAxErZq7Ntyj+r+ZjZ36mVjjS7fby
+         MGJHkozGMXiQgElJ1L/hdHWK5jS6K1IdwfgG9KFB0cPquHiAoreyGmmIaE94d5auZT
+         rjpYop2VCduatHJPECR0bjHwBO9GubtNMy0N/6iGoLAWZEN1/T1a/pZ56+uoTSGifm
+         wnKHoGJpjPpQVFEbG7W8LrY+Y/HsoFR9s1p6c//axRtaZ4h28qBqfFbSfM57TLqGYm
+         bBjhEAgEE4xe1eR1F9baQN7ZtJmG9EQIaDzevsFHbvH7o4lc5g6GpvtWWOhLpiaI8I
+         5jsTDl5jo/oGQ==
 From:   Mark Brown <broonie@kernel.org>
-Subject: [PATCH v5 00/37] arm64/gcs: Provide support for GCS in userspace
-Date:   Tue, 22 Aug 2023 14:56:33 +0100
-Message-Id: <20230822-arm64-gcs-v5-0-9ef181dd6324@kernel.org>
+Date:   Tue, 22 Aug 2023 14:56:34 +0100
+Subject: [PATCH v5 01/37] arm64/mm: Restructure arch_validate_flags() for
+ extensibility
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJK+5GQC/2XOy27DIBAF0F+JWJeKVzBklf+osuAx2CiNHUFkN
- bL87x27ixJFrO6Ic2cWUqFkqOR0WEiBOdc8jRiOHwcSBjf2QHPETAQTkuGjrty0on2oFCTnzrN
- oOmEJ/veuAvXFjWHYxON236b3Ain/7Bu+LpiHXB9Tee4LZ75N/7o7rpvumVNGfTrqLlnpvdPnK
- 5QRvj+n0pOtZhYNFaqlAmkMIvCoVBDg36hsqOQtlUhDjMkma1i05o2qf2pY11KFVJuQnMSTmbY
- vdF3XX2N1C0dqAQAA
+Message-Id: <20230822-arm64-gcs-v5-1-9ef181dd6324@kernel.org>
+References: <20230822-arm64-gcs-v5-0-9ef181dd6324@kernel.org>
+In-Reply-To: <20230822-arm64-gcs-v5-0-9ef181dd6324@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
         Jonathan Corbet <corbet@lwn.net>,
@@ -71,15 +69,15 @@ Cc:     "H.J. Lu" <hjl.tools@gmail.com>,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-034f2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12491; i=broonie@kernel.org;
- h=from:subject:message-id; bh=0gvkuKR41LGGCd8avLTCcB5z1Ttp9harJ3mALBvT3Gw=;
- b=owGbwMvMwMWocq27KDak/QLjabUkhpQn+98/yF7BKauw0dr7UGezhMA5o6LOH8He2RybFGIqpS78
- v3+0k9GYhYGRi0FWTJFl7bOMVenhElvnP5r/CmYQKxPIFAYuTgGYSBkr+x+OcIv/lzac/+IuxsucfW
- Zb4fSXOk8m7potuq733mnfLW5fV6ZqCUc/LZ5/0PXvRAbdLUqHFx3pYbnIYmXc+sMu1/DainS50v6S
- /8/41qYezJRddtJieu16IChVenArI1WwUHo5j7xYn1bxvHcZdzgVvhx8KPFH58SqmLtuOUd5H9kHxJ
- 5OnbTh8ffYg3Z7/pes8bnU/6KiasKb+H4WZo9fPaGRvfn/bbrimv5Y5y2MfzSl4kV38Yz6E3LbHnZa
- PbrhWhycveTFYVbDH5Ybf6az8n3zmvRwQRvTxh8Z5X//Rgkd+l+4rGOqgN4ahcAnqTYc5Ux3hCqFA0
- 9ZvH3U7D5X0+mxn7XU28kxnzl9AQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1303; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=pFAvrTvTUMO0xGKH/cMXrv1R9nlyUOOKoHgSKri2XFo=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBk5L/wf8ItiVhhsjU1U1pKaopo/uh7rIWP4I7WMtBO
+ inLmxduJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZOS/8AAKCRAk1otyXVSH0AV6B/
+ 9NgV9lhw6oHPGtixcm5V3lAr7z+o9fWsFcBTBXWxSurUlb0XFjc+t7fDH7SvXhVDsM3caWcvDpNysc
+ rUzR8kRdWUsc2c9LvqoaTcUMfW7SZ4LidddLAhjU+PCa1JGQoP92n9jN6TStbJ85YIH9l9KVVshmVZ
+ XiPc6ANN4NmBzgKj9JGYlITGz4YnTicnXsOeD1e2p0e45JZx9f0hBIkU/lKRzsyIRzwpsY90K00Qz9
+ YGG3gusgb5P00L14xVRHrVAbuNMepnYq7a4rPyLGjenQCUiv8inCi9K4DWKE0JohN+V9sSbORNNply
+ wIdHzUINXrAPZmj+TfHarlSM6uY9B7
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -92,235 +90,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The arm64 Guarded Control Stack (GCS) feature provides support for
-hardware protected stacks of return addresses, intended to provide
-hardening against return oriented programming (ROP) attacks and to make
-it easier to gather call stacks for applications such as profiling.
-
-When GCS is active a secondary stack called the Guarded Control Stack is
-maintained, protected with a memory attribute which means that it can
-only be written with specific GCS operations.  The current GCS pointer
-can not be directly written to by userspace.  When a BL is executed the
-value stored in LR is also pushed onto the GCS, and when a RET is
-executed the top of the GCS is popped and compared to LR with a fault
-being raised if the values do not match.  GCS operations may only be
-performed on GCS pages, a data abort is generated if they are not.
-
-The combination of hardware enforcement and lack of extra instructions
-in the function entry and exit paths should result in something which
-has less overhead and is more difficult to attack than a purely software
-implementation like clang's shadow stacks.
-
-This series implements support for use of GCS by userspace, along with
-support for use of GCS within KVM guests.  It does not enable use of GCS
-by either EL1 or EL2, this will be implemented separately.  Executables
-are started without GCS and must use a prctl() to enable it, it is
-expected that this will be done very early in application execution by
-the dynamic linker or other startup code.  For dynamic linking this will
-be done by checking that everything in the executable is marked as GCS
-compatible.
-
-x86 has an equivalent feature called shadow stacks, this series depends
-on the x86 patches for generic memory management support for the new
-guarded/shadow stack page type and shares APIs as much as possible.  As
-there has been extensive discussion with the wider community around the
-ABI for shadow stacks I have as far as practical kept implementation
-decisions close to those for x86, anticipating that review would lead to
-similar conclusions in the absence of strong reasoning for divergence.
-
-The main divergence I am concious of is that x86 allows shadow stack to
-be enabled and disabled repeatedly, freeing the shadow stack for the
-thread whenever disabled, while this implementation keeps the GCS
-allocated after disable but refuses to reenable it.  This is to avoid
-races with things actively walking the GCS during a disable, we do
-anticipate that some systems will wish to disable GCS at runtime but are
-not aware of any demand for subsequently reenabling it.
-
-x86 uses an arch_prctl() to manage enable and disable, since only x86
-and S/390 use arch_prctl() a generic prctl() was proposed[1] as part of a
-patch set for the equivalent RISC-V zisslpcfi feature which I initially
-adopted fairly directly but following review feedback has been revised
-quite a bit.
-
-There is an open issue with support for CRIU, on x86 this required the
-ability to set the GCS mode via ptrace.  This series supports
-configuring mode bits other than enable/disable via ptrace but it needs
-to be confirmed if this is sufficient.
-
-There's a few bits where I'm not convinced with where I've placed
-things, in particular the GCS write operation is in the GCS header not
-in uaccess.h, I wasn't sure what was clearest there and am probably too
-close to the code to have a clear opinion.  The reporting of GCS in
-/proc/PID/smaps is also a bit awkward.
-
-The series depends on the x86 shadow stack support:
-
-   https://lore.kernel.org/lkml/20230227222957.24501-1-rick.p.edgecombe@intel.com/
-
-I've rebased this onto v6.5-rc4 but not included it in the series in
-order to avoid confusion with Rick's work and cut down the size of the
-series, you can see the branch at:
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/misc.git arm64-gcs
-
-[1] https://lore.kernel.org/lkml/20230213045351.3945824-1-debug@rivosinc.com/
-
-Pending feedback from Catalin:
- - Switch copy_to_user_gcs() to be put_user_gcs().
+Currently arch_validate_flags() is written in a very non-extensible
+fashion, returning immediately if MTE is not supported and writing the MTE
+check as a direct return. Since we will want to add more checks for GCS
+refactor the existing code to be more extensible, no functional change
+intended.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-Changes in v5:
-- Don't map any permissions for user GCSs, we always use EL0 accessors
-  or use a separate mapping of the page.
-- Reduce the standard size of the GCS to RLIMIT_STACK/2.
-- Enforce a PAGE_SIZE alignment requirement on map_shadow_stack().
-- Clarifications and fixes to documentation.
-- More tests.
-- Link to v4: https://lore.kernel.org/r/20230807-arm64-gcs-v4-0-68cfa37f9069@kernel.org
+ arch/arm64/include/asm/mman.h | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-Changes in v4:
-- Implement flags for map_shadow_stack() allowing the cap and end of
-  stack marker to be enabled independently or not at all.
-- Relax size and alignment requirements for map_shadow_stack().
-- Add more blurb explaining the advantages of hardware enforcement.
-- Link to v3: https://lore.kernel.org/r/20230731-arm64-gcs-v3-0-cddf9f980d98@kernel.org
+diff --git a/arch/arm64/include/asm/mman.h b/arch/arm64/include/asm/mman.h
+index 5966ee4a6154..c21849ffdd88 100644
+--- a/arch/arm64/include/asm/mman.h
++++ b/arch/arm64/include/asm/mman.h
+@@ -52,11 +52,17 @@ static inline bool arch_validate_prot(unsigned long prot,
+ 
+ static inline bool arch_validate_flags(unsigned long vm_flags)
+ {
+-	if (!system_supports_mte())
+-		return true;
++	if (system_supports_mte()) {
++		/*
++		 * only allow VM_MTE if VM_MTE_ALLOWED has been set
++		 * previously
++		 */
++		if ((vm_flags & VM_MTE) && !(vm_flags & VM_MTE_ALLOWED))
++			return false;
++	}
++
++	return true;
+ 
+-	/* only allow VM_MTE if VM_MTE_ALLOWED has been set previously */
+-	return !(vm_flags & VM_MTE) || (vm_flags & VM_MTE_ALLOWED);
+ }
+ #define arch_validate_flags(vm_flags) arch_validate_flags(vm_flags)
+ 
 
-Changes in v3:
-- Rebase onto v6.5-rc4.
-- Add a GCS barrier on context switch.
-- Add a GCS stress test.
-- Link to v2: https://lore.kernel.org/r/20230724-arm64-gcs-v2-0-dc2c1d44c2eb@kernel.org
-
-Changes in v2:
-- Rebase onto v6.5-rc3.
-- Rework prctl() interface to allow each bit to be locked independently.
-- map_shadow_stack() now places the cap token based on the size
-  requested by the caller not the actual space allocated.
-- Mode changes other than enable via ptrace are now supported.
-- Expand test coverage.
-- Various smaller fixes and adjustments.
-- Link to v1: https://lore.kernel.org/r/20230716-arm64-gcs-v1-0-bf567f93bba6@kernel.org
-
----
-Mark Brown (37):
-      arm64/mm: Restructure arch_validate_flags() for extensibility
-      prctl: arch-agnostic prctl for shadow stack
-      arm64: Document boot requirements for Guarded Control Stacks
-      arm64/gcs: Document the ABI for Guarded Control Stacks
-      arm64/sysreg: Add new system registers for GCS
-      arm64/sysreg: Add definitions for architected GCS caps
-      arm64/gcs: Add manual encodings of GCS instructions
-      arm64/gcs: Provide copy_to_user_gcs()
-      arm64/cpufeature: Runtime detection of Guarded Control Stack (GCS)
-      arm64/mm: Allocate PIE slots for EL0 guarded control stack
-      mm: Define VM_SHADOW_STACK for arm64 when we support GCS
-      arm64/mm: Map pages for guarded control stack
-      KVM: arm64: Manage GCS registers for guests
-      arm64/gcs: Allow GCS usage at EL0 and EL1
-      arm64/idreg: Add overrride for GCS
-      arm64/hwcap: Add hwcap for GCS
-      arm64/traps: Handle GCS exceptions
-      arm64/mm: Handle GCS data aborts
-      arm64/gcs: Context switch GCS state for EL0
-      arm64/gcs: Allocate a new GCS for threads with GCS enabled
-      arm64/gcs: Implement shadow stack prctl() interface
-      arm64/mm: Implement map_shadow_stack()
-      arm64/signal: Set up and restore the GCS context for signal handlers
-      arm64/signal: Expose GCS state in signal frames
-      arm64/ptrace: Expose GCS via ptrace and core files
-      arm64: Add Kconfig for Guarded Control Stack (GCS)
-      kselftest/arm64: Verify the GCS hwcap
-      kselftest/arm64: Add GCS as a detected feature in the signal tests
-      kselftest/arm64: Add framework support for GCS to signal handling tests
-      kselftest/arm64: Allow signals tests to specify an expected si_code
-      kselftest/arm64: Always run signals tests with GCS enabled
-      kselftest/arm64: Add very basic GCS test program
-      kselftest/arm64: Add a GCS test program built with the system libc
-      kselftest/arm64: Add test coverage for GCS mode locking
-      selftests/arm64: Add GCS signal tests
-      kselftest/arm64: Add a GCS stress test
-      kselftest/arm64: Enable GCS for the FP stress tests
-
- Documentation/admin-guide/kernel-parameters.txt    |   3 +
- Documentation/arch/arm64/booting.rst               |  22 +
- Documentation/arch/arm64/elf_hwcaps.rst            |   3 +
- Documentation/arch/arm64/gcs.rst                   | 233 +++++++
- Documentation/arch/arm64/index.rst                 |   1 +
- Documentation/filesystems/proc.rst                 |   2 +-
- arch/arm64/Kconfig                                 |  19 +
- arch/arm64/include/asm/cpufeature.h                |   6 +
- arch/arm64/include/asm/el2_setup.h                 |  17 +
- arch/arm64/include/asm/esr.h                       |  28 +-
- arch/arm64/include/asm/exception.h                 |   2 +
- arch/arm64/include/asm/gcs.h                       | 106 +++
- arch/arm64/include/asm/hwcap.h                     |   1 +
- arch/arm64/include/asm/kvm_arm.h                   |   4 +-
- arch/arm64/include/asm/kvm_host.h                  |  12 +
- arch/arm64/include/asm/mman.h                      |  20 +-
- arch/arm64/include/asm/pgtable-prot.h              |  14 +-
- arch/arm64/include/asm/processor.h                 |   7 +
- arch/arm64/include/asm/sysreg.h                    |  20 +
- arch/arm64/include/asm/uaccess.h                   |  42 ++
- arch/arm64/include/uapi/asm/hwcap.h                |   1 +
- arch/arm64/include/uapi/asm/ptrace.h               |   8 +
- arch/arm64/include/uapi/asm/sigcontext.h           |   9 +
- arch/arm64/kernel/cpufeature.c                     |  19 +
- arch/arm64/kernel/cpuinfo.c                        |   1 +
- arch/arm64/kernel/entry-common.c                   |  23 +
- arch/arm64/kernel/idreg-override.c                 |   2 +
- arch/arm64/kernel/process.c                        |  89 +++
- arch/arm64/kernel/ptrace.c                         |  59 ++
- arch/arm64/kernel/signal.c                         | 237 ++++++-
- arch/arm64/kernel/traps.c                          |  11 +
- arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h         |  17 +
- arch/arm64/kvm/sys_regs.c                          |  22 +
- arch/arm64/mm/Makefile                             |   1 +
- arch/arm64/mm/fault.c                              |  79 ++-
- arch/arm64/mm/gcs.c                                | 225 +++++++
- arch/arm64/mm/mmap.c                               |  13 +-
- arch/arm64/tools/cpucaps                           |   1 +
- arch/arm64/tools/sysreg                            |  55 ++
- fs/proc/task_mmu.c                                 |   3 +
- include/linux/mm.h                                 |  16 +-
- include/linux/syscalls.h                           |   1 +
- include/uapi/asm-generic/unistd.h                  |   5 +-
- include/uapi/linux/elf.h                           |   1 +
- include/uapi/linux/prctl.h                         |  22 +
- kernel/sys.c                                       |  30 +
- kernel/sys_ni.c                                    |   1 +
- tools/testing/selftests/arm64/Makefile             |   2 +-
- tools/testing/selftests/arm64/abi/hwcap.c          |  19 +
- tools/testing/selftests/arm64/fp/assembler.h       |  15 +
- tools/testing/selftests/arm64/fp/fpsimd-test.S     |   2 +
- tools/testing/selftests/arm64/fp/sve-test.S        |   2 +
- tools/testing/selftests/arm64/fp/za-test.S         |   2 +
- tools/testing/selftests/arm64/fp/zt-test.S         |   2 +
- tools/testing/selftests/arm64/gcs/.gitignore       |   5 +
- tools/testing/selftests/arm64/gcs/Makefile         |  24 +
- tools/testing/selftests/arm64/gcs/asm-offsets.h    |   0
- tools/testing/selftests/arm64/gcs/basic-gcs.c      | 356 ++++++++++
- tools/testing/selftests/arm64/gcs/gcs-locking.c    | 200 ++++++
- .../selftests/arm64/gcs/gcs-stress-thread.S        | 311 +++++++++
- tools/testing/selftests/arm64/gcs/gcs-stress.c     | 532 +++++++++++++++
- tools/testing/selftests/arm64/gcs/gcs-util.h       | 100 +++
- tools/testing/selftests/arm64/gcs/libc-gcs.c       | 742 +++++++++++++++++++++
- tools/testing/selftests/arm64/signal/.gitignore    |   1 +
- .../testing/selftests/arm64/signal/test_signals.c  |  17 +-
- .../testing/selftests/arm64/signal/test_signals.h  |   6 +
- .../selftests/arm64/signal/test_signals_utils.c    |  32 +-
- .../selftests/arm64/signal/test_signals_utils.h    |  39 ++
- .../arm64/signal/testcases/gcs_exception_fault.c   |  59 ++
- .../selftests/arm64/signal/testcases/gcs_frame.c   |  78 +++
- .../arm64/signal/testcases/gcs_write_fault.c       |  67 ++
- .../selftests/arm64/signal/testcases/testcases.c   |   7 +
- .../selftests/arm64/signal/testcases/testcases.h   |   1 +
- 73 files changed, 4096 insertions(+), 38 deletions(-)
----
-base-commit: e514f673179ed8af6c64d79f8d43e2569ad6cb9f
-change-id: 20230303-arm64-gcs-e311ab0d8729
-
-Best regards,
 -- 
-Mark Brown <broonie@kernel.org>
+2.30.2
 
