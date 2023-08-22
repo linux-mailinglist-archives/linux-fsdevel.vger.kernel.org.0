@@ -2,97 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 677D7783D5F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 11:53:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E036E783DAE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 12:12:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234518AbjHVJxu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Aug 2023 05:53:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35300 "EHLO
+        id S234694AbjHVKMS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Aug 2023 06:12:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234461AbjHVJxu (ORCPT
+        with ESMTP id S234685AbjHVKMR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Aug 2023 05:53:50 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC4171AD
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 02:53:46 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-99c353a395cso568210566b.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 02:53:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1692698025; x=1693302825;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZuTxpNKRETd6la1yRSn4wRav/UuhF/r6prO2tRmYX0k=;
-        b=MdHTA02TfH/htz+XYGsk6PK82Rat3nXgHXvPf0Whd7VzeSbEDXQlCouxNwP3vNQq1c
-         F4fFmhzGIBQhrwqdQfprmkelVnztr7tEyj9JwZEAzsiqwI9fns7DiHObCr0j69Wzyhow
-         oLx6XGIGJXAXGC13pJZZEjw6LX0yRhvXbh8dw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692698025; x=1693302825;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZuTxpNKRETd6la1yRSn4wRav/UuhF/r6prO2tRmYX0k=;
-        b=kagnJwd8/Z9vEqu9HVZj3qOCmJJYkdKvUK9Pr4JDZLCRKOnNfn6AN4+dyOlhKvZRkd
-         ZX0LB9Xg2znIVzNwsMCwTqgZ81ZRapuoKK6ttHT3FHHXkXPtd8dvIeO4T8LN+0WmHVpx
-         oYuGWC7/ceUTu51OpAN0IeJMgvseKhLNMAFhXpR0C0nMC4LCxIQmOwhCC4KPLpR4A+a9
-         mSHzWsZgepOGU21SHxfwKodh7ZhI9d2W3ms0G1eVKv9s0fbgSVrUqJj0Z5BlbYTdbHUh
-         fm+FVuMRHqYSg6ifTc8Yfvcr9rgjDpDV/CNbllUs3RI24OdtgHWd+R3XcudWvDoPZlcr
-         YxDA==
-X-Gm-Message-State: AOJu0Yz7YJpUYW+rAcaEfX0iJpdGI8p0OUDerW1gufHuQ1ajjbk7/1Li
-        qeXCcZ40dSRMcCvnzjADCSJIoBSpqvXfJZ3LICmwyw==
-X-Google-Smtp-Source: AGHT+IGaJHZSeoHzhVEt5QjAYh1OUd/9MglP1YUfEDHTLpuWmvTu9Z81dy2i2ItlzKAlow1sDR6IVa8vYAAo05/1eo0=
-X-Received: by 2002:a17:906:105d:b0:992:ab3a:f0d4 with SMTP id
- j29-20020a170906105d00b00992ab3af0d4mr7044354ejj.17.1692698025113; Tue, 22
- Aug 2023 02:53:45 -0700 (PDT)
+        Tue, 22 Aug 2023 06:12:17 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59A4ECE5;
+        Tue, 22 Aug 2023 03:11:56 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 088FF1F85D;
+        Tue, 22 Aug 2023 10:11:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1692699115; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=S/YVbyySg18i1uOcXQyWAmhlJyYaSjI/9UDD6WDlIg8=;
+        b=YmFXLYz60sM43jQ35BHS0DpJGS+pbpD/YkOGc8ozVsTw9QrRV2NAFxu6jTa2uLsLLPGK3C
+        GSPEFXf4PoS5ugPCGV4les6nNMhs91QLNErbtN8UmXK/6XqjYCAmO4lboDKUc05A08J+zX
+        vJIeRCy2nZXRlDuqPFhkLemU4eBN5aE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1692699115;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=S/YVbyySg18i1uOcXQyWAmhlJyYaSjI/9UDD6WDlIg8=;
+        b=Uu+o2ZWQ04qkPbjOHmAVDVp279Yb56IyaNeaeqQhNgmODiEvBDrmf3anfekHf3xaqLQrsk
+        N9b2hPyjQSKScQCg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EB7CD13919;
+        Tue, 22 Aug 2023 10:11:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id gbZzOeqJ5GQWHQAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 22 Aug 2023 10:11:54 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 7A73FA0774; Tue, 22 Aug 2023 12:11:54 +0200 (CEST)
+Date:   Tue, 22 Aug 2023 12:11:54 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Kees Cook <keescook@google.com>,
+        Ted Tso <tytso@mit.edu>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Alexander Popov <alex.popov@linux.com>,
+        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [PATCH 1/6] block: Add config option to not allow writing to
+ mounted devices
+Message-ID: <20230822101154.7udsf4tdwtns2prj@quack3>
+References: <20230704122727.17096-1-jack@suse.cz>
+ <20230704125702.23180-1-jack@suse.cz>
+ <20230822053523.GA8949@sol.localdomain>
 MIME-Version: 1.0
-References: <20230821174753.2736850-1-bschubert@ddn.com> <20230821174753.2736850-2-bschubert@ddn.com>
-In-Reply-To: <20230821174753.2736850-2-bschubert@ddn.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 22 Aug 2023 11:53:33 +0200
-Message-ID: <CAJfpegv6Q5O435xSrYUMEQAvvkObV6gWws8Ju7C+PrSKwjmSew@mail.gmail.com>
-Subject: Re: [PATCH 1/2] [RFC for fuse-next ] fuse: DIO writes always use the
- same code path
-To:     Bernd Schubert <bschubert@ddn.com>
-Cc:     linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm,
-        fuse-devel@lists.sourceforge.net, Hao Xu <howeyxu@tencent.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dharmendra Singh <dsingh@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230822053523.GA8949@sol.localdomain>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_SOFTFAIL,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 21 Aug 2023 at 19:48, Bernd Schubert <bschubert@ddn.com> wrote:
->
-> There were two code paths direct-io writes could
-> take. When daemon/server side did not set FOPEN_DIRECT_IO
->     fuse_cache_write_iter -> direct_write_fallback
-> and with FOPEN_DIRECT_IO being set
->     fuse_direct_write_iter
->
-> Advantage of fuse_direct_write_iter is that it has optimizations
-> for parallel DIO writes - it might only take a shared inode lock,
-> instead of the exclusive lock.
->
-> With commits b5a2a3a0b776/80e4f25262f9 the fuse_direct_write_iter
-> path also handles concurrent page IO (dirty flush and page release),
-> just the condition on fc->direct_io_relax had to be removed.
->
-> Performance wise this basically gives the same improvements as
-> commit 153524053bbb, just O_DIRECT is sufficient, without the need
-> that server side sets FOPEN_DIRECT_IO
-> (it has to set FOPEN_PARALLEL_DIRECT_WRITES), though.
+Hi Eric!
 
-Consolidating the various direct IO paths would be really nice.
+On Mon 21-08-23 22:35:23, Eric Biggers wrote:
+> On Tue, Jul 04, 2023 at 02:56:49PM +0200, Jan Kara wrote:
+> > Writing to mounted devices is dangerous and can lead to filesystem
+> > corruption as well as crashes. Furthermore syzbot comes with more and
+> > more involved examples how to corrupt block device under a mounted
+> > filesystem leading to kernel crashes and reports we can do nothing
+> > about. Add tracking of writers to each block device and a kernel cmdline
+> > argument which controls whether writes to block devices open with
+> > BLK_OPEN_BLOCK_WRITES flag are allowed. We will make filesystems use
+> > this flag for used devices.
+> > 
+> > Syzbot can use this cmdline argument option to avoid uninteresting
+> > crashes. Also users whose userspace setup does not need writing to
+> > mounted block devices can set this option for hardening.
+> > 
+> > Link: https://lore.kernel.org/all/60788e5d-5c7c-1142-e554-c21d709acfd9@linaro.org
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> 
+> Can you make it clear that the important thing this patch prevents is
+> writes to the block device's buffer cache, not writes to the underlying
+> storage?  It's super important not to confuse the two cases.
 
-Problem is that fuse_direct_write_iter() lacks some code from
-generic_file_direct_write() and also completely lacks
-direct_write_fallback().   So more thought needs to go into this.
+Right, I've already updated the description of the help text in the kconfig
+to explicitely explain that this does not prevent underlying device content
+from being modified, it just prevents writes the the block device itself.
+But I guess I can also explain this (with a bit more technical details) in
+the changelog. Good idea.
 
-Thanks,
-Miklos
+> Related to this topic, I wonder if there is any value in providing an option
+> that would allow O_DIRECT writes but forbid buffered writes?  Would that be
+> useful for any of the known use cases for writing to mounted block devices?
+
+I'm not sure how useful that would be but it would be certainly rather
+difficult to implement. The problem is we can currently fallback from
+direct to buffered IO as we see fit, also we need to invalidate page cache
+while doing direct IO which can fail etc. So it will be a rather nasty can
+of worms to open...
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
