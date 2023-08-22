@@ -2,34 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B86F778493A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 20:06:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A9EB784972
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 20:34:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229476AbjHVSGb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Aug 2023 14:06:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39994 "EHLO
+        id S229862AbjHVSe6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Aug 2023 14:34:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbjHVSGa (ORCPT
+        with ESMTP id S229592AbjHVSe5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Aug 2023 14:06:30 -0400
-Received: from 66-220-144-179.mail-mxout.facebook.com (66-220-144-179.mail-mxout.facebook.com [66.220.144.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3713DCF1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 11:06:12 -0700 (PDT)
-Received: by devbig1114.prn1.facebook.com (Postfix, from userid 425415)
-        id D6D9DA9FA88E; Tue, 22 Aug 2023 11:05:42 -0700 (PDT)
-From:   Stefan Roesch <shr@devkernel.io>
-To:     kernel-team@fb.com
-Cc:     shr@devkernel.io, akpm@linux-foundation.org, david@redhat.com,
-        linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
-        riel@surriel.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH v4] proc/ksm: add ksm stats to /proc/pid/smaps
-Date:   Tue, 22 Aug 2023 11:05:39 -0700
-Message-Id: <20230822180539.1424843-1-shr@devkernel.io>
-X-Mailer: git-send-email 2.39.3
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,RDNS_DYNAMIC,
-        SPF_HELO_PASS,SPF_NEUTRAL,TVD_RCVD_IP autolearn=no autolearn_force=no
+        Tue, 22 Aug 2023 14:34:57 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1E2CCE6;
+        Tue, 22 Aug 2023 11:34:55 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 405E464F6B;
+        Tue, 22 Aug 2023 18:34:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 766C1C433C7;
+        Tue, 22 Aug 2023 18:34:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1692729294;
+        bh=DBkztqkcpz432shRdIYR5aanQAPEFzUzG/jzNRqN3vI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=n8Lxd7b9P+s1lKpKDb7uBLQm7y9OONZzwqxv9VRxVK+g3OWyotOUf9adWcgG1nZmv
+         aQOfHDk+Guc/HWHa3IeKrNGUz2zS70eTzhZhQNxuLF/AF73Gc2+I2cC8Qr3PBYmn13
+         oqqyis1f7PDRZ/RJgNmF5ZVKWfGkC/V6ahXjPkGY=
+Date:   Tue, 22 Aug 2023 11:34:53 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Helge Deller <deller@gmx.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrei Vagin <avagin@openvz.org>
+Subject: Re: [PATCH v2] procfs: Fix /proc/self/maps output for 32-bit kernel
+ and compat tasks
+Message-Id: <20230822113453.acc69f8540bed25cde79e675@linux-foundation.org>
+In-Reply-To: <ZOR95DiR8tdcHDfq@p100>
+References: <ZOR95DiR8tdcHDfq@p100>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-8.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -37,162 +54,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With madvise and prctl KSM can be enabled for different VMA's. Once it
-is enabled we can query how effective KSM is overall. However we cannot
-easily query if an individual VMA benefits from KSM.
+On Tue, 22 Aug 2023 11:20:36 +0200 Helge Deller <deller@gmx.de> wrote:
 
-This commit adds a KSM section to the /prod/<pid>/smaps file. It reports
-how many of the pages are KSM pages. The returned value for KSM is
-independent of the use of the shared zeropage.
+> On a 32-bit kernel addresses should be shown with 8 hex digits, e.g.:
+> 
+> root@debian:~# cat /proc/self/maps
+> 00010000-00019000 r-xp 00000000 08:05 787324     /usr/bin/cat
+> 00019000-0001a000 rwxp 00009000 08:05 787324     /usr/bin/cat
+> 0001a000-0003b000 rwxp 00000000 00:00 0          [heap]
+> f7551000-f770d000 r-xp 00000000 08:05 794765     /usr/lib/hppa-linux-gnu/libc.so.6
+> f770d000-f770f000 r--p 001bc000 08:05 794765     /usr/lib/hppa-linux-gnu/libc.so.6
+> f770f000-f7714000 rwxp 001be000 08:05 794765     /usr/lib/hppa-linux-gnu/libc.so.6
+> f7d39000-f7d68000 r-xp 00000000 08:05 794759     /usr/lib/hppa-linux-gnu/ld.so.1
+> f7d68000-f7d69000 r--p 0002f000 08:05 794759     /usr/lib/hppa-linux-gnu/ld.so.1
+> f7d69000-f7d6d000 rwxp 00030000 08:05 794759     /usr/lib/hppa-linux-gnu/ld.so.1
+> f7ea9000-f7eaa000 r-xp 00000000 00:00 0          [vdso]
+> f8565000-f8587000 rwxp 00000000 00:00 0          [stack]
+> 
+> But since commmit 0e3dc0191431 ("procfs: add seq_put_hex_ll to speed up
+> /proc/pid/maps") even on native 32-bit kernels the output looks like this:
+> 
+> root@debian:~# cat /proc/self/maps
+> 0000000010000-0000000019000 r-xp 00000000 000000008:000000005 787324  /usr/bin/cat
+> 0000000019000-000000001a000 rwxp 000000009000 000000008:000000005 787324  /usr/bin/cat
+> 000000001a000-000000003b000 rwxp 00000000 00:00 0  [heap]
+> 00000000f73d1000-00000000f758d000 r-xp 00000000 000000008:000000005 794765  /usr/lib/hppa-linux-gnu/libc.so.6
+> 00000000f758d000-00000000f758f000 r--p 000000001bc000 000000008:000000005 794765  /usr/lib/hppa-linux-gnu/libc.so.6
+> 00000000f758f000-00000000f7594000 rwxp 000000001be000 000000008:000000005 794765  /usr/lib/hppa-linux-gnu/libc.so.6
+> 00000000f7af9000-00000000f7b28000 r-xp 00000000 000000008:000000005 794759  /usr/lib/hppa-linux-gnu/ld.so.1
+> 00000000f7b28000-00000000f7b29000 r--p 000000002f000 000000008:000000005 794759  /usr/lib/hppa-linux-gnu/ld.so.1
+> 00000000f7b29000-00000000f7b2d000 rwxp 0000000030000 000000008:000000005 794759  /usr/lib/hppa-linux-gnu/ld.so.1
+> 00000000f7e0c000-00000000f7e0d000 r-xp 00000000 00:00 0  [vdso]
+> 00000000f9061000-00000000f9083000 rwxp 00000000 00:00 0  [stack]
+> 
+> This patch brings back the old default 8-hex digit output for
+> 32-bit kernels and compat tasks.
+> 
+> Fixes: 0e3dc0191431 ("procfs: add seq_put_hex_ll to speed up /proc/pid/maps")
 
-Here is a typical output:
-
-7f420a000000-7f421a000000 rw-p 00000000 00:00 0
-Size:             262144 kB
-KernelPageSize:        4 kB
-MMUPageSize:           4 kB
-Rss:               51212 kB
-Pss:                8276 kB
-Shared_Clean:        172 kB
-Shared_Dirty:      42996 kB
-Private_Clean:       196 kB
-Private_Dirty:      7848 kB
-Referenced:        15388 kB
-Anonymous:         51212 kB
-KSM:               41376 kB
-LazyFree:              0 kB
-AnonHugePages:         0 kB
-ShmemPmdMapped:        0 kB
-FilePmdMapped:         0 kB
-Shared_Hugetlb:        0 kB
-Private_Hugetlb:       0 kB
-Swap:             202016 kB
-SwapPss:            3882 kB
-Locked:                0 kB
-THPeligible:    0
-ProtectionKey:         0
-ksm_state:          0
-ksm_skip_base:      0
-ksm_skip_count:     0
-VmFlags: rd wr mr mw me nr mg anon
-
-This information also helps with the following workflow:
-- First enable KSM for all the VMA's of a process with prctl.
-- Then analyze with the above smaps report which VMA's benefit the most
-- Change the application (if possible) to add the corresponding madvise
-calls for the VMA's that benefit the most
-
-Signed-off-by: Stefan Roesch <shr@devkernel.io>
----
- Documentation/filesystems/proc.rst |  4 ++++
- fs/proc/task_mmu.c                 | 16 +++++++++++-----
- 2 files changed, 15 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesyste=
-ms/proc.rst
-index 7897a7dafcbc..d5bdfd59f5b0 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -461,6 +461,7 @@ Memory Area, or VMA) there is a series of lines such =
-as the following::
-     Private_Dirty:         0 kB
-     Referenced:          892 kB
-     Anonymous:             0 kB
-+    KSM:                   0 kB
-     LazyFree:              0 kB
-     AnonHugePages:         0 kB
-     ShmemPmdMapped:        0 kB
-@@ -501,6 +502,9 @@ accessed.
- a mapping associated with a file may contain anonymous pages: when MAP_P=
-RIVATE
- and a page is modified, the file page is replaced by a private anonymous=
- copy.
-=20
-+"KSM" shows the amount of anonymous memory that has been de-duplicated. =
-The
-+value is independent of the use of shared zeropage.
-+
- "LazyFree" shows the amount of memory which is marked by madvise(MADV_FR=
-EE).
- The memory isn't freed immediately with madvise(). It's freed in memory
- pressure if the memory is clean. Please note that the printed value migh=
-t
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 51315133cdc2..4532caa8011c 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -4,6 +4,7 @@
- #include <linux/hugetlb.h>
- #include <linux/huge_mm.h>
- #include <linux/mount.h>
-+#include <linux/ksm.h>
- #include <linux/seq_file.h>
- #include <linux/highmem.h>
- #include <linux/ptrace.h>
-@@ -396,6 +397,7 @@ struct mem_size_stats {
- 	unsigned long swap;
- 	unsigned long shared_hugetlb;
- 	unsigned long private_hugetlb;
-+	unsigned long ksm;
- 	u64 pss;
- 	u64 pss_anon;
- 	u64 pss_file;
-@@ -435,9 +437,9 @@ static void smaps_page_accumulate(struct mem_size_sta=
-ts *mss,
- 	}
- }
-=20
--static void smaps_account(struct mem_size_stats *mss, struct page *page,
--		bool compound, bool young, bool dirty, bool locked,
--		bool migration)
-+static void smaps_account(struct mem_size_stats *mss, pte_t *pte,
-+		struct page *page, bool compound, bool young, bool dirty,
-+		bool locked, bool migration)
- {
- 	int i, nr =3D compound ? compound_nr(page) : 1;
- 	unsigned long size =3D nr * PAGE_SIZE;
-@@ -452,6 +454,9 @@ static void smaps_account(struct mem_size_stats *mss,=
- struct page *page,
- 			mss->lazyfree +=3D size;
- 	}
-=20
-+	if (PageKsm(page) && (!pte || !is_ksm_zero_pte(*pte)))
-+		mss->ksm +=3D size;
-+
- 	mss->resident +=3D size;
- 	/* Accumulate the size in pages that have been accessed. */
- 	if (young || page_is_young(page) || PageReferenced(page))
-@@ -557,7 +562,7 @@ static void smaps_pte_entry(pte_t *pte, unsigned long=
- addr,
- 	if (!page)
- 		return;
-=20
--	smaps_account(mss, page, false, young, dirty, locked, migration);
-+	smaps_account(mss, pte, page, false, young, dirty, locked, migration);
- }
-=20
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-@@ -591,7 +596,7 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long=
- addr,
- 	else
- 		mss->file_thp +=3D HPAGE_PMD_SIZE;
-=20
--	smaps_account(mss, page, true, pmd_young(*pmd), pmd_dirty(*pmd),
-+	smaps_account(mss, NULL, page, true, pmd_young(*pmd), pmd_dirty(*pmd),
- 		      locked, migration);
- }
- #else
-@@ -822,6 +827,7 @@ static void __show_smap(struct seq_file *m, const str=
-uct mem_size_stats *mss,
- 	SEQ_PUT_DEC(" kB\nPrivate_Dirty:  ", mss->private_dirty);
- 	SEQ_PUT_DEC(" kB\nReferenced:     ", mss->referenced);
- 	SEQ_PUT_DEC(" kB\nAnonymous:      ", mss->anonymous);
-+	SEQ_PUT_DEC(" kB\nKSM:            ", mss->ksm);
- 	SEQ_PUT_DEC(" kB\nLazyFree:       ", mss->lazyfree);
- 	SEQ_PUT_DEC(" kB\nAnonHugePages:  ", mss->anonymous_thp);
- 	SEQ_PUT_DEC(" kB\nShmemPmdMapped: ", mss->shmem_thp);
-
-base-commit: f4a280e5bb4a764a75d3215b61bc0f02b4c26417
---=20
-2.39.3
+That was five years ago.  Given there is some risk of breaking existing
+parsers, is it worth fixing this?
 
