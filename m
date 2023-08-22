@@ -2,61 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BABA4783DC3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 12:18:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61822783E8A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 13:04:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234683AbjHVKSr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Aug 2023 06:18:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55456 "EHLO
+        id S234408AbjHVLEC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Aug 2023 07:04:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234701AbjHVKSr (ORCPT
+        with ESMTP id S234130AbjHVLEC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Aug 2023 06:18:47 -0400
-Received: from mail-vs1-xe2a.google.com (mail-vs1-xe2a.google.com [IPv6:2607:f8b0:4864:20::e2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DC041B0;
-        Tue, 22 Aug 2023 03:18:42 -0700 (PDT)
-Received: by mail-vs1-xe2a.google.com with SMTP id ada2fe7eead31-44d3e4ad403so939899137.0;
-        Tue, 22 Aug 2023 03:18:42 -0700 (PDT)
+        Tue, 22 Aug 2023 07:04:02 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51DC5CC8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 04:04:00 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4ff09632194so6111652e87.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 04:04:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692699521; x=1693304321;
+        d=szeredi.hu; s=google; t=1692702238; x=1693307038;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Wl4gDEQfnBfsjoQ6NjFakdQvyEEOmqK6yqB6WYPcMdw=;
-        b=CI3QbXWV3ZTw6YdJ4LTcpdCNOIWtx1/sXsMoyjpnwV+yWPHNHA63blhHWli7pLWZLk
-         QUjYS+BsAp8BKY2mg2qacgDMZsL0lwSVt/+PrbQiNFNLMT8x9ZOWG7apXRnhqe0y8olc
-         SHJezq/AA5pLnqk+U8emwwGirERTia28XKbYyFMV6lU3qxNykIFso0o8NzXLMJQZXP+u
-         dbmuacpD899AGUGoImwGBttq2jPlCxa2NfHP4s48ADOnqudrB4pZnbKYrlRzxH3LnLwU
-         9PAGKd4H2OrJwH3kmtMgX3gbcQmyFX+dWRq8yV7unNFYDBKwy2B0qHsn6Wi62tDu42NU
-         woyA==
+        bh=trVN3CuZ4Zhp9Ue7PGXCyXAOehB2OZABgpBxkBylf84=;
+        b=ecHGyCPQo8H5x40ZFNHOeRj5+kqZ1P4F7rr69u8S7Pw9CydrEsm0/pwYtwLuzS81nO
+         S1Ig/gpZ8l1nFgbosUBJG5HQlBrJ4H1dwp2GodBlDwKFmYjEf7VXK7oS4oW0GPEdGWk4
+         shnVVb8iP8RPJ9UBotomQ9DlD1tGHLyrEaWrY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692699521; x=1693304321;
+        d=1e100.net; s=20221208; t=1692702238; x=1693307038;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Wl4gDEQfnBfsjoQ6NjFakdQvyEEOmqK6yqB6WYPcMdw=;
-        b=Cx+dgjPGn6pRksPWffvmu7CMlRnvGXWVMoOLI0fSy5K1G0Mi9KixjDELqR/F3WGJNc
-         zyarwICGYTMu0NcGXQlCFFsDWGb+RuDo/6VYaMJ6m91PB1UxFKPkz38XcJv+FPRGZ6lJ
-         sPcWo2zSznroqNBkfZl5npm9XD4yUlgNKvamnSBGVoVmJ3aBBVkyH6UG9a+HeEpSVKFF
-         0kjfF884HdCSdCbOwW8SccyY4D6M2BXSteSz9VSbEBAOx8M3IOsCsaC2+VZOVFpHnoR9
-         dXoCYR2cyLTC9dpLj9OpWGh/NwFo5IunzKvsdWdkWPAbIvFmIM77Eb/sOnKusRe2AJ4R
-         jwqw==
-X-Gm-Message-State: AOJu0YzFI7sa2UI9VoezlQLk0Co0+W4yA1vSuba8I4//Ufvv4edfNL0o
-        DP5NcXR+kCV/BKHk5XXGDb80lkf4f+d8aTR5F3M=
-X-Google-Smtp-Source: AGHT+IF1FIfQvECOD74OzDdmY5EY3yQh4kOOvB9ea53R0KKJ5E1My8vF38B45k2doaRgZ4QsslCXCBaJV5kpD60mTCw=
-X-Received: by 2002:a05:6102:354f:b0:447:6cd9:42ce with SMTP id
- e15-20020a056102354f00b004476cd942cemr8044574vss.8.1692699521139; Tue, 22 Aug
- 2023 03:18:41 -0700 (PDT)
+        bh=trVN3CuZ4Zhp9Ue7PGXCyXAOehB2OZABgpBxkBylf84=;
+        b=P7/CJnuSAhFWdmHYf7pSvaFjtD+I6M0YT2NUZUkGoM+o7JwfWhgS4QizRGEZc0rS5t
+         HRaNoHovKpGdeZP/j4QXgUCWsGuet6HjwEBmlsqmQqErPSID48fb4sD6R3lUVgw/s23I
+         T4ccrcB1seEjQju717NPjqdnC/ZuAvMBq3wptgY/7Cwy4g3w3ffY52GtVN7Gp3XiUNDX
+         nHDhPGe4SVn59DmpvkuPgG5rgPPhpTftGkN9oSXr5cZx70qHkNuHOJ2aBwjm35x3c88u
+         Qh/0xolgx4TBjTAfybyqLSLDbZJigzjEGbk3QMT5YfBSziWw0cAHtD7HqABq8iMe0n77
+         wYcw==
+X-Gm-Message-State: AOJu0YyPgMDVSQ3OMgjqwAIRvaQx/Ogw/AgQ7CGM1UDmMiYCcTmT+yxa
+        iL2Vfr7e2KkJ8ai6dd+ze/qKv+C7Vno7fPEdO0fR8g==
+X-Google-Smtp-Source: AGHT+IEjlewioVEmIve9ohhJ00v79UX4XU1Bu1tNq5wyCv6Oj2EB7s9xjSHgBX9SsM8lUufy0Q0T9b+1h6bBcZsrmnw=
+X-Received: by 2002:ac2:4db9:0:b0:500:8723:e457 with SMTP id
+ h25-20020ac24db9000000b005008723e457mr2005827lfe.30.1692702238292; Tue, 22
+ Aug 2023 04:03:58 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230519125705.598234-1-amir73il@gmail.com> <20230519125705.598234-6-amir73il@gmail.com>
  <CAJfpeguhmZbjP3JLqtUy0AdWaHOkAPWeP827BBWwRFEAUgnUcQ@mail.gmail.com>
- <CAOQ4uxhYZqe0-r9knvdW_BWNvfeKapiwReTv4FWr_Px+CB+ENw@mail.gmail.com> <CAOQ4uxhBeFSV7TFuWXBgJZuu-eJBjKcsshDdxCz-fie0MqwVcw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhBeFSV7TFuWXBgJZuu-eJBjKcsshDdxCz-fie0MqwVcw@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 22 Aug 2023 13:18:30 +0300
-Message-ID: <CAOQ4uxirdrsaHPyctxRgSMxb2mBHJCJqB12Eof02CnouExKgzQ@mail.gmail.com>
+ <CAOQ4uxhYZqe0-r9knvdW_BWNvfeKapiwReTv4FWr_Px+CB+ENw@mail.gmail.com>
+ <CAOQ4uxhBeFSV7TFuWXBgJZuu-eJBjKcsshDdxCz-fie0MqwVcw@mail.gmail.com> <CAOQ4uxirdrsaHPyctxRgSMxb2mBHJCJqB12Eof02CnouExKgzQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxirdrsaHPyctxRgSMxb2mBHJCJqB12Eof02CnouExKgzQ@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 22 Aug 2023 13:03:46 +0200
+Message-ID: <CAJfpegth3TASZKvc_HrhGLOAFSGiAriiqO6iCN2OzT2bu62aDA@mail.gmail.com>
 Subject: Re: [PATCH v13 05/10] fuse: Handle asynchronous read and write in passthrough
-To:     Miklos Szeredi <miklos@szeredi.hu>
+To:     Amir Goldstein <amir73il@gmail.com>
 Cc:     Daniel Rosenberg <drosen@google.com>,
         Paul Lawrence <paullawrence@google.com>,
         Alessio Balsini <balsini@android.com>,
@@ -65,76 +63,59 @@ Cc:     Daniel Rosenberg <drosen@google.com>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 21, 2023 at 6:27=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
+On Tue, 22 Aug 2023 at 12:18, Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> On Wed, May 24, 2023 at 1:03=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
+> On Mon, Aug 21, 2023 at 6:27=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
 m> wrote:
-> >
-> > On Mon, May 22, 2023 at 6:20=E2=80=AFPM Miklos Szeredi <miklos@szeredi.=
-hu> wrote:
-> > >
-> > > On Fri, 19 May 2023 at 14:57, Amir Goldstein <amir73il@gmail.com> wro=
-te:
-> > > >
-> > > > Extend the passthrough feature by handling asynchronous IO both for=
- read
-> > > > and write operations.
-> > > >
-> > > > When an AIO request is received, if the request targets a FUSE file=
- with
-> > > > the passthrough functionality enabled, a new identical AIO request =
-is
-> > > > created.  The new request targets the backing file and gets assigne=
-d
-> > > > a special FUSE passthrough AIO completion callback.
-> > > >
-> > > > When the backing file AIO request is completed, the FUSE
-> > > > passthrough AIO completion callback is executed and propagates the
-> > > > completion signal to the FUSE AIO request by triggering its complet=
-ion
-> > > > callback as well.
-> > >
-> > > Overlayfs added refcounting to the async req (commit 9a2544037600
-> > > ("ovl: fix use after free in struct ovl_aio_req")).  Is that not
-> > > needed for fuse as well?
-> > >
-> > > Would it make sense to try and merge the two implementations?
-> > >
-> >
-> > Makes sense - I will look into it.
->
->
-> Hi Miklos,
->
-> Getting back to this.
-> Did you mean something like that? (only compile tested)
->
-> https://github.com/amir73il/linux/commits/backing_fs
->
-> If yes, then I wonder:
-> 1. Is the difference between FUSE_IOCB_MASK and OVL_IOCB_MASK
->     (i.e. the APPEND flag) intentional?
-> 2. What would be the right way to do ovl_copyattr() on io completion?
->     Pass another completion handler to read/write helpers?
->     This seems a bit ugly. Do you have a nicer idea?
->
 
-Hmm. Looking closer, ovl_copyattr() in ovl_aio_cleanup_handler()
-seems a bit racy as it is not done under inode_lock().
+> > Getting back to this.
+> > Did you mean something like that? (only compile tested)
+> >
+> > https://github.com/amir73il/linux/commits/backing_fs
+> >
+> > If yes, then I wonder:
+> > 1. Is the difference between FUSE_IOCB_MASK and OVL_IOCB_MASK
+> >     (i.e. the APPEND flag) intentional?
 
-I wonder if it is enough to fix that by adding the lock or if we need
-to resort to a more complicated scheme like FUSE_I_SIZE_UNSTABLE
-for overlayfs aio?
+Setting IOCB_APPEND on the backing file doesn't make a difference as
+long as the backing file is not modified during the write.
+
+In overlayfs the case of the backing file being modified is not
+defined, so I guess that's the reason to omit it.  However I don't see
+a problem with setting it on the backing file either, the file
+size/position is synchronized after the write, so nothing bad should
+happen if the backing file was modified.
+
+> > 2. What would be the right way to do ovl_copyattr() on io completion?
+> >     Pass another completion handler to read/write helpers?
+> >     This seems a bit ugly. Do you have a nicer idea?
+> >
+
+Ugh, I missed that little detail.   I don't have a better idea than to
+use a callback function.
+
+>
+> Hmm. Looking closer, ovl_copyattr() in ovl_aio_cleanup_handler()
+> seems a bit racy as it is not done under inode_lock().
+>
+> I wonder if it is enough to fix that by adding the lock or if we need
+> to resort to a more complicated scheme like FUSE_I_SIZE_UNSTABLE
+> for overlayfs aio?
+
+Quite recently rename didn't take inode lock on source, so
+ovl_aio_cleanup_handler() wasn't the only unlocked instance.
+
+I don't see a strong reason to always lock the inode before
+ovl_copyattr(), but I could be wrong.
 
 Thanks,
-Amir.
+Miklos
