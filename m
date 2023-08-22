@@ -2,92 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 39093783963
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 07:35:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B76D7783A9A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 09:12:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232841AbjHVFf3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Aug 2023 01:35:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38352 "EHLO
+        id S233394AbjHVHMn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Aug 2023 03:12:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231995AbjHVFf2 (ORCPT
+        with ESMTP id S233405AbjHVHMG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Aug 2023 01:35:28 -0400
+        Tue, 22 Aug 2023 03:12:06 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8FB7130;
-        Mon, 21 Aug 2023 22:35:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76117CFF;
+        Tue, 22 Aug 2023 00:11:40 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3167760FB4;
-        Tue, 22 Aug 2023 05:35:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B2C2C433C7;
-        Tue, 22 Aug 2023 05:35:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692682525;
-        bh=0u/LkEF9xPWwwH+3zJUBHtJDhlV+bd1HJH3ZyM1DhmQ=;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4CD9B64DAC;
+        Tue, 22 Aug 2023 07:11:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 099ABC433BD;
+        Tue, 22 Aug 2023 07:11:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1692688271;
+        bh=YTKKyNGQ+Tv8wDS6XyoyNckBezSPa1ShICIvZHky2JA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ER1fmT70yZigtpkEHWQJqqxLOMrz2g+erN497tQb8M/hxgSDzP2CJwIthBDZBl69V
-         iFJbfNI13y5ZaSESFGIWN7SBBC6wegrDL3LUQnK0+fykkh3IfRklKofNjquu5OsOyT
-         NDqhX9rRRUh9MrccprWOg0r3jMXKrAfJNcqX8cjSdIHgOon86xFTEAyo079I7V2rQM
-         BAEz2hlf629zmqVQ1sH5NAwBHnlg7SYtwSWZLJH12gToUoXy8oIJWoMfqtm+6vD197
-         wY89pESyG9DlLy2c3ZexV6JSqDXDN4l9ruSiBSIcqWJvk4FMExHckh6N5vk99Z2aAy
-         qunFy7v4nNbTw==
-Date:   Mon, 21 Aug 2023 22:35:23 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Kees Cook <keescook@google.com>,
-        Ted Tso <tytso@mit.edu>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Alexander Popov <alex.popov@linux.com>,
-        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH 1/6] block: Add config option to not allow writing to
- mounted devices
-Message-ID: <20230822053523.GA8949@sol.localdomain>
-References: <20230704122727.17096-1-jack@suse.cz>
- <20230704125702.23180-1-jack@suse.cz>
+        b=NT+zgFsl55tylkic31ue3bL3wmFJmEAHoKnIxjlc8h+pAm8FOYbOIuVtaDnwrvOHB
+         EKbfxjWpieN2QwlozxINNa9MhVPPe9Yj8E33z6fxy4JZpgri6qA18UCg0pIz1ABj2Z
+         f+uUyN+GpTByCcPJTIJsWmh40YgS/Ic4rTkPXRMc=
+Date:   Tue, 22 Aug 2023 09:08:18 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
+Cc:     stable@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5.4 0/1] mm: allow a controlled amount of unfairness in
+ the page lock
+Message-ID: <2023082248-parting-backed-2ab0@gregkh>
+References: <20230821222547.483583-1-saeed.mirzamohammadi@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230704125702.23180-1-jack@suse.cz>
+In-Reply-To: <20230821222547.483583-1-saeed.mirzamohammadi@oracle.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jan,
+On Mon, Aug 21, 2023 at 03:25:45PM -0700, Saeed Mirzamohammadi wrote:
+> We observed a 35% of regression running phoronix pts/ramspeed and also 16%
+> with unixbench. Regression is caused by the following commit:
+> dd0f194cfeb5 | mm: rewrite wait_on_page_bit_common() logic
 
-On Tue, Jul 04, 2023 at 02:56:49PM +0200, Jan Kara wrote:
-> Writing to mounted devices is dangerous and can lead to filesystem
-> corruption as well as crashes. Furthermore syzbot comes with more and
-> more involved examples how to corrupt block device under a mounted
-> filesystem leading to kernel crashes and reports we can do nothing
-> about. Add tracking of writers to each block device and a kernel cmdline
-> argument which controls whether writes to block devices open with
-> BLK_OPEN_BLOCK_WRITES flag are allowed. We will make filesystems use
-> this flag for used devices.
-> 
-> Syzbot can use this cmdline argument option to avoid uninteresting
-> crashes. Also users whose userspace setup does not need writing to
-> mounted block devices can set this option for hardening.
-> 
-> Link: https://lore.kernel.org/all/60788e5d-5c7c-1142-e554-c21d709acfd9@linaro.org
-> Signed-off-by: Jan Kara <jack@suse.cz>
+That is not a valid git id in Linus's or in the linux-stable repo that I
+can see.  Are you sure that it is correct?
 
-Can you make it clear that the important thing this patch prevents is writes to
-the block device's buffer cache, not writes to the underlying storage?  It's
-super important not to confuse the two cases.
+thanks,
 
-Related to this topic, I wonder if there is any value in providing an option
-that would allow O_DIRECT writes but forbid buffered writes?  Would that be
-useful for any of the known use cases for writing to mounted block devices?
-
-- Eric
+greg k-h
