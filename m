@@ -2,89 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F42C78480D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 18:55:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C1F784820
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 19:01:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237939AbjHVQzY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Aug 2023 12:55:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56122 "EHLO
+        id S237974AbjHVRBh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Aug 2023 13:01:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234012AbjHVQzY (ORCPT
+        with ESMTP id S237969AbjHVRBg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Aug 2023 12:55:24 -0400
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95B05128
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 09:55:22 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 12D605C00D9;
-        Tue, 22 Aug 2023 12:55:22 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 22 Aug 2023 12:55:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1692723322; x=1692809722; bh=UxoiJZ/gDdTY20GZKpdzVI9hAzq1MBBZOUH
-        VVnRtRuM=; b=U5K7csoZUYHzAJmS31f47zMtDYceYdZYVfRr6B1PbnQ5A547nCv
-        Vc5KOJuPAd+JWrGy9ZrhEeTirnZMeQKG69wq1IKYpbYN3WC4t1Z+BPntjt3IRwdg
-        z8klf6gTe/SfkgnRAGO/xuLFm0i6YlmgcjI+MpUAwGF7uZu7x7v9h052NA+FfQ48
-        9ewu9q2aBjsHTy6nzHzYoeHOHaA+s7bukFpcJBwJ++r2u0Q28vpumM+YCmUwFUuz
-        VUpu06+WMhlRrXzX2TMIkTDvQuHVi/HUCbidP9bCbKrvI/L6jzZNuOK+wJl5lfjJ
-        QXPGLY/19USJe44GbQ7O+zef/I87MKnon6A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1692723322; x=1692809722; bh=UxoiJZ/gDdTY20GZKpdzVI9hAzq1MBBZOUH
-        VVnRtRuM=; b=e502AHIJaoFQyYYB/0JiX5OG43jpW2uSwiROkxl5q+qoC5EfFTF
-        RdXnBeZBog3r4QXrVTKKDAn6hTa0wmr/QpIYekUrx+pq7E6KDYiKTEYnRcfAa2xh
-        vn8EZWEh4ioPTGWTT4T6Eq5/z51D5pE7RJ/eNMgeYkzDt8+zCnkZfl+8miXjkqri
-        8LJwpxocXir57A7tGGDWC2Adeah8lmnVVS7uUQXW2jwSHeHXxnpJganarrLttr+L
-        DecvI6GH/zFv5k7pahcDyR7VFH+AzVO1r7j35XDpxZ08m2MO8/llvENn2Yt01opk
-        KYg0HBwKrKTGSwRU5IiGCKtfJ/av8OWp4Pg==
-X-ME-Sender: <xms:eejkZKF8JW9DO6DqQHLNw-UiRkHvz8B6n3amoWaXLTJho3pS8qKrkA>
-    <xme:eejkZLXSUMvxWhFLfS8R-onC38neJNNtJWgaB8jo_cKhmt7-b4gE-xwcSBqhJMZs4
-    SW-q1_3dLAVUIYJ>
-X-ME-Received: <xmr:eejkZEKt9Fr8dZhRZQN6ZRVf5cOgpX0Vf5AEbYQXG17fClSq3fDOyKioZsxZLYkIw7UHunKagAZ1qquXlrZrtWm_EaA8ZrZNU2f_afnNULCO4d0EOaGX>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedruddvuddguddtiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttdefjeenucfhrhhomhepuegv
-    rhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrg
-    hilhdrfhhmqeenucggtffrrghtthgvrhhnpeekheevkeelkeekjefhheegfedtffduudej
-    jeeiheehudeuleelgefhueekfeevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhl
-    rdhfmh
-X-ME-Proxy: <xmx:eejkZEF9ksdqAB_aTYWd-r4KmT7UkI7i4brHyi5hBYZsD2LtPPF7HQ>
-    <xmx:eejkZAV_F6jsry6N0xLSvZoSvFOASo0opLf9fD2iDlc3YGEpop2l3w>
-    <xmx:eejkZHMvop35XxLFEomy-Ern2LfdlmELYeXoIjS3dlIYZCMmmYxMcA>
-    <xmx:eujkZLePaUqd-O9nxBQGzACzQ3acFe5KQhnrT6aIUXU1CVHrgKBXXg>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 22 Aug 2023 12:55:21 -0400 (EDT)
-Message-ID: <9ebc2bcb-5ffd-e82f-9836-58f375f881ea@fastmail.fm>
-Date:   Tue, 22 Aug 2023 18:55:20 +0200
+        Tue, 22 Aug 2023 13:01:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71DECFB;
+        Tue, 22 Aug 2023 10:01:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0B93C643F3;
+        Tue, 22 Aug 2023 17:01:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74E4BC433C7;
+        Tue, 22 Aug 2023 17:01:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692723694;
+        bh=4CwJzH4TL2Y8EXaFoTYYQXYVEx5uhhyOhGKEBL5M5a4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nwIELk0L965ZZxRQU/I6AfIxI41pPfoJ/8ilmpqMMDxttWnkizigjluGn+Ari53wx
+         MqNyiNJuURRYl2rCuLNJJ2Cs85l4nwq7Q2vWycN3a3XFaBaWvpt/KvtYd4TWJtE93y
+         2mhcqEGqeiz2SkybCYJmTOdlsX5/UNDCZXZ+F5YxZ6vS1R+LOWxtY7m0pc+kMGPPlJ
+         kPp/83wuyHdo3Irho6uo8xb6TPcAKTt8iUzDXu8bbnYEB9weodOZjJ9UCKfJORCNeV
+         gnjnzeyg+Tps+7sTo22OVIrcM6LgodrBWVlbjMG9YcUoS05XXyscb+z/gcliAOGlOk
+         ceFShSQCdJEsg==
+Date:   Tue, 22 Aug 2023 18:01:25 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+        Deepak Gupta <debug@rivosinc.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v4 18/36] arm64/gcs: Context switch GCS state for EL0
+Message-ID: <699c1105-df8e-4a08-ae6c-8c01a13e4a3d@sirena.org.uk>
+References: <20230807-arm64-gcs-v4-0-68cfa37f9069@kernel.org>
+ <20230807-arm64-gcs-v4-18-68cfa37f9069@kernel.org>
+ <ZNZUerbrJmzqZzJw@arm.com>
+ <28a61b5f-db65-427e-8e92-60dd61549da5@sirena.org.uk>
+ <ZOTjnmwwZ+iMsi6Y@arm.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH 4/5] fuse: implement statx
-Content-Language: en-US, de-DE
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
-References: <20230810105501.1418427-1-mszeredi@redhat.com>
- <20230810105501.1418427-5-mszeredi@redhat.com>
- <067fcdfa-0a99-4731-0ea1-a799fff51480@fastmail.fm>
- <CAJfpeguEmafkUPqZO2_EAOWbw+7XUm0E9whVpnnj_MVf2fnStQ@mail.gmail.com>
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <CAJfpeguEmafkUPqZO2_EAOWbw+7XUm0E9whVpnnj_MVf2fnStQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/y5R8A5W/qG63MLx"
+Content-Disposition: inline
+In-Reply-To: <ZOTjnmwwZ+iMsi6Y@arm.com>
+X-Cookie: MIT:
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -92,95 +82,46 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+--/y5R8A5W/qG63MLx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 8/22/23 17:33, Miklos Szeredi wrote:
-> On Tue, 22 Aug 2023 at 17:20, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
->>
->> Hi Miklos,
->>
->> sorry for late review.
->>
->> On 8/10/23 12:55, Miklos Szeredi wrote:
->> [...]
->>> +static int fuse_do_statx(struct inode *inode, struct file *file,
->>> +                      struct kstat *stat)
->>> +{
->>> +     int err;
->>> +     struct fuse_attr attr;
->>> +     struct fuse_statx *sx;
->>> +     struct fuse_statx_in inarg;
->>> +     struct fuse_statx_out outarg;
->>> +     struct fuse_mount *fm = get_fuse_mount(inode);
->>> +     u64 attr_version = fuse_get_attr_version(fm->fc);
->>> +     FUSE_ARGS(args);
->>> +
->>> +     memset(&inarg, 0, sizeof(inarg));
->>> +     memset(&outarg, 0, sizeof(outarg));
->>> +     /* Directories have separate file-handle space */
->>> +     if (file && S_ISREG(inode->i_mode)) {
->>> +             struct fuse_file *ff = file->private_data;
->>> +
->>> +             inarg.getattr_flags |= FUSE_GETATTR_FH;
->>> +             inarg.fh = ff->fh;
->>> +     }
->>> +     /* For now leave sync hints as the default, request all stats. */
->>> +     inarg.sx_flags = 0;
->>> +     inarg.sx_mask = STATX_BASIC_STATS | STATX_BTIME;
->>
->>
->>
->> What is actually the reason not to pass through flags from
->> fuse_update_get_attr()? Wouldn't it make sense to request the minimal
->> required mask and then server side can decide if it wants to fill in more?
-> 
-> This and following commit is about btime and btime only.  It's about
-> adding just this single attribute, otherwise the logic is unchanged.
-> 
-> But the flexibility is there in the interface definition, and
-> functionality can be added later.
+On Tue, Aug 22, 2023 at 05:34:38PM +0100, Catalin Marinas wrote:
+> On Wed, Aug 16, 2023 at 07:15:53PM +0100, Mark Brown wrote:
 
-Sure, though what speaks against setting (limiting the mask) right away?
+> > Right, it's for the GCS memory rather than the registers.  I'm fairly
+> > sure it's excessive but but was erring on the side of caution until I
+> > have convinced myself that the interactions between GCS barriers and
+> > regular barriers were doing the right thing, until we have physical
+> > implementations to contend with I'd guess the practical impact will be
+> > minimal.
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 42f49fe6e770..de1d991757a5 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1168,7 +1168,8 @@ static void fuse_statx_to_attr(struct fuse_statx *sx, struct fuse_attr *attr)
-  }
-  
-  static int fuse_do_statx(struct inode *inode, struct file *file,
--                        struct kstat *stat)
-+                        struct kstat *stat, u32 request_mask,
-+                        unsigned int flags)
-  {
-         int err;
-         struct fuse_attr attr;
-@@ -1188,9 +1189,10 @@ static int fuse_do_statx(struct inode *inode, struct file *file,
-                 inarg.getattr_flags |= FUSE_GETATTR_FH;
-                 inarg.fh = ff->fh;
-         }
--       /* For now leave sync hints as the default, request all stats. */
--       inarg.sx_flags = 0;
--       inarg.sx_mask = STATX_BASIC_STATS | STATX_BTIME;
-+
-+       /* request the given mask, server side is free to return more */
-+       inarg.sx_flags = flags;
-+       inarg.sx_mask = request_mask;
-         args.opcode = FUSE_STATX;
-         args.nodeid = get_node_id(inode);
-         args.in_numargs = 1;
-@@ -1304,7 +1306,8 @@ static int fuse_update_get_attr(struct inode *inode, struct file *file,
-                 forget_all_cached_acls(inode);
-                 /* Try statx if BTIME is requested */
-                 if (!fc->no_statx && (request_mask & ~STATX_BASIC_STATS)) {
--                       err = fuse_do_statx(inode, file, stat);
-+                       err = fuse_do_statx(inode, file, stat, request_mask,
-+                                           flags);
-                         if (err == -ENOSYS) {
-                                 fc->no_statx = 1;
-                                 goto retry;
+> Well, I'd say either we are clear about why it's (not) needed or we ask
+> the architects to clarify the spec. I haven't checked your latest
+> series but in principle I don't like adding barriers just because we are
+> not sure they are needed (and I don't think having hardware eventually
+> changes this).
 
+I should probably also mention that another part of my thinking was that
+when we implement GCS for EL1 we'll need to ensure that everything is
+synced during the pivot of the EL1 GCS (each EL needs an independent
+GCS).  We won't be able to rely on having an ERET there so it's going to
+have more stringent requirements, I was partly punting to think things
+through fully there.
 
+--/y5R8A5W/qG63MLx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Bernd
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmTk6eQACgkQJNaLcl1U
+h9A05Qf/V5pH2tcF7cng/WQnlzNdmdQF2NZIRZuZVVzKe1JQ/d5SGT8sP/2ifM6m
+wN2P+4yqnMpjdMltFNtMpcnsMQDx7U6kGEmfdBOpr7tmr3dLxpE9snGGTiwRWUtu
+Th+Jz7B9omQ+w4wFZLCcZZtpiQcjpDwzqiW8ubZdoqdvyGOSkRO9xx6P47d07ter
+dmAEKsDiEQbU/2eFycrJRA85aSwx6Kv1tAC3ZPjigcmFnCGqomM3VzJ0QZNCsMTz
+SiUY5GKoO9gk9JPNd4c57jhzWikGGoFFzivLbal/hPfr8MzeIIrVCR7Jxm4ZNRkX
+zs3fDy9ePEheBAThiikuE6F7aPriRw==
+=VUaf
+-----END PGP SIGNATURE-----
+
+--/y5R8A5W/qG63MLx--
