@@ -2,129 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A4C9784550
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 17:21:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC270784557
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 17:22:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237012AbjHVPU6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Aug 2023 11:20:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37664 "EHLO
+        id S237022AbjHVPWF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Aug 2023 11:22:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236933AbjHVPU6 (ORCPT
+        with ESMTP id S233283AbjHVPWE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Aug 2023 11:20:58 -0400
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEBEDCD6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 08:20:54 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 9E9E45C0186;
-        Tue, 22 Aug 2023 11:20:52 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Tue, 22 Aug 2023 11:20:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:content-transfer-encoding:content-type:content-type:date:date
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1692717652; x=1692804052; bh=lgAHRyTRiyQd67yNbpCDEg82Y5VFwDpEbqC
-        7YgP8xBI=; b=j/CRWlZtbrL8Ps2/k+MrXUXV3q6xU3EmfZ7hkFUlsOZLKwlTwwG
-        tZxm6PWqrnPS8acsXYSbKWyN1+D61wnNTWt3fQex2UQDYQhYPj8ycm291+BNLy5X
-        ejD6Ll/8R2jEAsQfh1wwF0LFh9UQvnJL6Mf1DdUrwLTV7/2Qgfry4GUoOi3hKxhV
-        YiEjq8orEUuto9vid5RJl9/CldXL44EN2+l5FbfGlpZsoz2nyOsc5cm+MS3NvPe7
-        HTtHx0o7wb6gb+x4nnWGsM7fG82FtbT7q7Doaw8I+BK72nSdSiwmgiazgX15f8gB
-        4d0w/wwtgaSrreVrotTbEwiBqwQSVs9OSnA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1692717652; x=
-        1692804052; bh=lgAHRyTRiyQd67yNbpCDEg82Y5VFwDpEbqC7YgP8xBI=; b=f
-        2j+S/jcFaNP2qv9vi38aEdCEaPq1DfLKvqHhjs12Hzapb6VtjGObURQhUvh1n+Qz
-        lo2R0gblH3kSFVD5nFlNWfeboGN6yemdgmXgqtcXTYIHBilQzBXmwYnYoY1Z8HbI
-        57tkOWNSORwABYwRf6+oYSu0bWV+c9qTOcA5u3T6S8i5PcQKy18UyhthJoXK3jkd
-        VVGjlWOXRw4akGat5jU5LuzLCDBTwHuPL2BRMMJqnJSxGDMO5LZkKc4oiD0SgB4N
-        v/dxEt75V0vOThqo066p4qpoz+IQmyt7o8aXOX4YidFDgo6LOwKQvx3pz9fw1xRx
-        Nw9Tu/943W5juBuQmJr1w==
-X-ME-Sender: <xms:VNLkZPPSiKy6Bh-RNkAMnT3pFh39Xzu5O6moXFbk1d1Spni0yMgsXQ>
-    <xme:VNLkZJ8_wt0EYLXeUlP7RX-QUtf7qoM-0QmQSQr9rrUrwh0NntO2KPU3Xi_p8CwdZ
-    ljYkdKalAe6IUAk>
-X-ME-Received: <xmr:VNLkZORI0nC2C5qEjBvA766BgYF4Wj5Aw5sOvmX8azIxipk7b0HhLaE0OPlUOXIggNr8OJlP33O0thrvxTm9Z2h0hj81fSb2DWrW9VnbgToEk7fkllgn>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedruddvuddgkeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvfhfhjggtgfesthejredttdefjeenucfhrhhomhepuegvrhhn
-    ugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
-    drfhhmqeenucggtffrrghtthgvrhhnpeegffdutdegiefgteelleeggeeuueduteefiedu
-    vedvueefieejledvjeeuhfefgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhf
-    mh
-X-ME-Proxy: <xmx:VNLkZDtNGSZ1iDHF1ui3UyBlKuon03wUErG6z68tMrD46-AoEQRRQQ>
-    <xmx:VNLkZHeo0IxCzIK-j8XwCGE9leukJSMPVn4kDzEo9Odc30tqLPZSYg>
-    <xmx:VNLkZP1AzWyw6WM58qAQnRd1iG6IBLR6A8_8stfs8L21CO14J4jcBw>
-    <xmx:VNLkZHkeonMThS44LAFTBm6ekZ3oadcx0EmqPqOuHJrEsrvvLICKkQ>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 22 Aug 2023 11:20:52 -0400 (EDT)
-Message-ID: <067fcdfa-0a99-4731-0ea1-a799fff51480@fastmail.fm>
-Date:   Tue, 22 Aug 2023 17:20:49 +0200
+        Tue, 22 Aug 2023 11:22:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AFE7CD9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 08:21:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1692717675;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=K+4dLM+qjKpedR3SxcMNZWwteZnGWMqZ2x4IrF9xwmE=;
+        b=XhksWGvOujynlzvS4ImTi8AXCHbF/+RC2HFdzjfdePZw4G+w5BHMtkFUwC2tLgFIqeYnT/
+        raiaJsyAhEk3yuzXHlvDIMAQM7rZLKhzvyK+VaQ7zym6ealaHlpmGSX0kxVrYW5tJp7w90
+        Gb8MlHHpW9UMP8VW5d2D/KVOBmvQmPM=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-197-hdeIGybxNZaVc0ijD0FLWg-1; Tue, 22 Aug 2023 11:21:13 -0400
+X-MC-Unique: hdeIGybxNZaVc0ijD0FLWg-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-31adc3ca07aso2738825f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 08:21:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692717672; x=1693322472;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K+4dLM+qjKpedR3SxcMNZWwteZnGWMqZ2x4IrF9xwmE=;
+        b=HVZX3OixJjTCNTii1Dy6j2sVPkB/88cHjmc6kLjvBFdmwX7S7ba0EKlHqUEKc4Drnk
+         7+33UDfShw1CRqLsAYSbF6RAK0f5Dcms3NZwuBxom0RvRhfLGh4OMTB/CNqfJxvJM/j3
+         Fh54AmQ3jIzUEHS3Ipk7P/E1Pil6hpzFPGMOH+tZJCh2fwt7/paKkgjfEQa04VmRWSUs
+         4BGPGsaGZH3fHRHGZAHQFiUTkhivcjoLspW/IOJ5o1KJDBzoYQ9P8ToPnLQTtmJQJdYe
+         QPvA6WO1AODpxpwfyKbns1ZZLO59otVKHXpza02wVasDDY/nJKwun5b/zUxHtD/qM0vO
+         wZsw==
+X-Gm-Message-State: AOJu0YwUwQLL0LylGty5wLZS1K5XJmg76qwWM9v/extmLwy66auQxIpu
+        wcNexfVgNBCKX6fThFI7LbGNYF7sFkcLd3KQwdHQdikfjoGeGc72RbwgW/28XyZ8RuAWdTU8V75
+        yhmPPfWFzRmvP3fHa/48sVDI18Q==
+X-Received: by 2002:a5d:4ccc:0:b0:314:1230:29b0 with SMTP id c12-20020a5d4ccc000000b00314123029b0mr6891022wrt.52.1692717672417;
+        Tue, 22 Aug 2023 08:21:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGvvahb1vrGoYIb2vzRiaZnzgGGGa/+gqBYlj1b7B5EZtm9phlubqZT0TsAOsELNEsT5eF4fQ==
+X-Received: by 2002:a5d:4ccc:0:b0:314:1230:29b0 with SMTP id c12-20020a5d4ccc000000b00314123029b0mr6890972wrt.52.1692717671988;
+        Tue, 22 Aug 2023 08:21:11 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c706:7400:83da:ebad:ba7f:c97c? (p200300cbc706740083daebadba7fc97c.dip0.t-ipconnect.de. [2003:cb:c706:7400:83da:ebad:ba7f:c97c])
+        by smtp.gmail.com with ESMTPSA id n4-20020a5d4204000000b0031c5dda3aedsm3811087wrq.95.2023.08.22.08.21.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Aug 2023 08:21:11 -0700 (PDT)
+Message-ID: <8f2cf5af-cad7-a69c-e8ec-39f48deae1cb@redhat.com>
+Date:   Tue, 22 Aug 2023 17:21:09 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH 4/5] fuse: implement statx
-To:     Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
-References: <20230810105501.1418427-1-mszeredi@redhat.com>
- <20230810105501.1418427-5-mszeredi@redhat.com>
-Content-Language: en-US, de-DE
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <20230810105501.1418427-5-mszeredi@redhat.com>
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v5 11/37] mm: Define VM_SHADOW_STACK for arm64 when we
+ support GCS
+Content-Language: en-US
+To:     Mark Brown <broonie@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+        Deepak Gupta <debug@rivosinc.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+Cc:     "H.J. Lu" <hjl.tools@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+References: <20230822-arm64-gcs-v5-0-9ef181dd6324@kernel.org>
+ <20230822-arm64-gcs-v5-11-9ef181dd6324@kernel.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20230822-arm64-gcs-v5-11-9ef181dd6324@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Miklos,
+On 22.08.23 15:56, Mark Brown wrote:
+> Use VM_HIGH_ARCH_5 for guarded control stack pages.
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>   Documentation/filesystems/proc.rst |  2 +-
+>   fs/proc/task_mmu.c                 |  3 +++
+>   include/linux/mm.h                 | 12 +++++++++++-
+>   3 files changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+> index 6ccb57089a06..086a0408a4d7 100644
+> --- a/Documentation/filesystems/proc.rst
+> +++ b/Documentation/filesystems/proc.rst
+> @@ -566,7 +566,7 @@ encoded manner. The codes are the following:
+>       mt    arm64 MTE allocation tags are enabled
+>       um    userfaultfd missing tracking
+>       uw    userfaultfd wr-protect tracking
+> -    ss    shadow stack page
+> +    ss    shadow/guarded control stack page
+>       ==    =======================================
+>   
+>   Note that there is no guarantee that every flag and associated mnemonic will
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index cfab855fe7e9..e8c50848bb16 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -711,6 +711,9 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+>   #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_MINOR */
+>   #ifdef CONFIG_X86_USER_SHADOW_STACK
+>   		[ilog2(VM_SHADOW_STACK)] = "ss",
+> +#endif
+> +#ifdef CONFIG_ARM64_GCS
+> +		[ilog2(VM_SHADOW_STACK)] = "ss",
+>   #endif
 
-sorry for late review.
+See my comment below.
 
-On 8/10/23 12:55, Miklos Szeredi wrote:
-[...]
-> +static int fuse_do_statx(struct inode *inode, struct file *file,
-> +			 struct kstat *stat)
-> +{
-> +	int err;
-> +	struct fuse_attr attr;
-> +	struct fuse_statx *sx;
-> +	struct fuse_statx_in inarg;
-> +	struct fuse_statx_out outarg;
-> +	struct fuse_mount *fm = get_fuse_mount(inode);
-> +	u64 attr_version = fuse_get_attr_version(fm->fc);
-> +	FUSE_ARGS(args);
+>   	};
+>   	size_t i;
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 43fe625b85aa..3f939ae212e5 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -372,7 +372,17 @@ extern unsigned int kobjsize(const void *objp);
+>    * having a PAGE_SIZE guard gap.
+>    */
+>   # define VM_SHADOW_STACK	VM_HIGH_ARCH_5
+> -#else
+> +#endif
 > +
-> +	memset(&inarg, 0, sizeof(inarg));
-> +	memset(&outarg, 0, sizeof(outarg));
-> +	/* Directories have separate file-handle space */
-> +	if (file && S_ISREG(inode->i_mode)) {
-> +		struct fuse_file *ff = file->private_data;
-> +
-> +		inarg.getattr_flags |= FUSE_GETATTR_FH;
-> +		inarg.fh = ff->fh;
-> +	}
-> +	/* For now leave sync hints as the default, request all stats. */
-> +	inarg.sx_flags = 0;
-> +	inarg.sx_mask = STATX_BASIC_STATS | STATX_BTIME;
+> +#if defined(CONFIG_ARM64_GCS)
+> +/*
+> + * arm64's Guarded Control Stack implements similar functionality and
+> + * has similar constraints to shadow stacks.
+> + */
+> +# define VM_SHADOW_STACK	VM_HIGH_ARCH_5
+> +#endif
 
 
+Shouldn't that all just merged with the previous define(s)?
 
-What is actually the reason not to pass through flags from 
-fuse_update_get_attr()? Wouldn't it make sense to request the minimal 
-required mask and then server side can decide if it wants to fill in more?
+Also, I wonder if we now want to have CONFIG_HAVE_ARCH_SHADOW_STACK or 
+similar.
 
+-- 
+Cheers,
 
-Thanks,
-Bernd
+David / dhildenb
+
