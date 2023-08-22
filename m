@@ -2,54 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD6107840E2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 14:36:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 561F67841EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 15:22:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235730AbjHVMgP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Aug 2023 08:36:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39134 "EHLO
+        id S236077AbjHVNWl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Aug 2023 09:22:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229525AbjHVMgP (ORCPT
+        with ESMTP id S236123AbjHVNWj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Aug 2023 08:36:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC6701B2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 05:36:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7703961047
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 12:36:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86993C433C8;
-        Tue, 22 Aug 2023 12:36:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692707772;
-        bh=fk45I840klujEBH09dc4YYEnHCwe+JRgvyiRvN/D0fs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h5TZWvUBSlqJ7aaVF6WcwyT8J2DEIhRGSzJ72R2R5dBaq/TX7fKTAR4WyvE94N89e
-         8tGRQ/kv/gj8BeyA07sIuW/0dH5enENqp42ZXvJ0SpiyvlO2YW8IPoi0bsIxalY1Lz
-         e6cG5yL1Jl70EJt4lPCrqoo10F8A0q3QW+8fs455XD4KxQlf2NTmbqrX0WLZwxrQSL
-         unZKajkjmfMYaAU2aJdKmXGcsMwrDUYrtjerbjCRRDgMXXO7Ku1iCSsTUjZm/32icb
-         8N9WGmmYDg+mu1CixLvOqR0qZTlSP4RJPER3+WLq6AGMbI2f9tRkt74joltOSlplDH
-         pqs9XFQgUE1Dw==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v3 0/4] super: allow waiting without s_umount held
-Date:   Tue, 22 Aug 2023 14:36:04 +0200
-Message-Id: <20230822-ahnte-hausdach-0c90215cb885@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230818-vfs-super-fixes-v3-v3-0-9f0b1876e46b@kernel.org>
-References: <20230818-vfs-super-fixes-v3-v3-0-9f0b1876e46b@kernel.org>
+        Tue, 22 Aug 2023 09:22:39 -0400
+Received: from mail-ua1-x930.google.com (mail-ua1-x930.google.com [IPv6:2607:f8b0:4864:20::930])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6750CEB;
+        Tue, 22 Aug 2023 06:22:34 -0700 (PDT)
+Received: by mail-ua1-x930.google.com with SMTP id a1e0cc1a2514c-79dea64c428so1316997241.3;
+        Tue, 22 Aug 2023 06:22:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1692710553; x=1693315353;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wZiAVsDpb/EogH9eLF3AXPNbgSh0YM/k8XU96DkY0Sc=;
+        b=GexZpJBw2Ptr/Nu8mEFiGOpENH5+euv6N1kIlB6BRJxCjT2wgXwzb8Kd1gi/kj69mS
+         rFI4a6NFlC6+Qg3VyvKbydEwkJ8RR47QQ/evJvzniVCMnOcbKAfdQn/4gpQyWcn/rOgt
+         Ng2T9O+9DsOQObJNumfS7iLHXH6MSOZoIxwMVl/8mYj0fuPztV2MdK1G6Rc3vP4QkSNt
+         luKpTKhcnB4FbAa+ExRfZQkIBv02Xe4Yueint5zhiooPEBZtTyyW0jCQ53yL4L8UT7Bb
+         4jaIs4o86cXKUxFyy5o286VAOv5Lqmfc+fTcFH0h2EnZMDZ0VbJEogkg14ovZBs273xr
+         6EoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692710553; x=1693315353;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wZiAVsDpb/EogH9eLF3AXPNbgSh0YM/k8XU96DkY0Sc=;
+        b=CnGbxST14E4BDSJvI++lRwoUIkCHodS30bplm41+dE5oyqi6GV+hfRbjp2/4GWaKj9
+         oxsv9jEfC1vDBMORQRvyP1dBYWFo8CawUdOAlxFvxUWYTMYme4bmlRkoc0ru1syyl2uG
+         33liXaTIHFf0BSnTRvNkocKgi17uYZHIvOXTK14TE0rvGLJyv/3TJFKGspLLDBID9jz1
+         ygLz7O0+UISCCRMSWX4U4Xn151q1njoI2oIatQ749GDKBcm5hzHIuFABSrdjAWzwggPs
+         ya3OG1+WeB5yi0WzRzk7FLiXJmaFlnvA8QkSQG6Nktv1JDIOpoa6BGiwaZ7gNPWnlLVq
+         +5Mw==
+X-Gm-Message-State: AOJu0YxnahH4XjD+gEhT9B2y91WP5LCtTC8DHvvrrZjWt5YzdjOpszhL
+        I3SaSZOHfXdsDOaqK6wgUtmbuuLJxLCgqArfFv9vEZR7cQxevw==
+X-Google-Smtp-Source: AGHT+IFvTPBD9DUnhL1ZjtKzrlpt4XtLgDV2PpHPukY7zxoWU1Ie+MKdrKD5nCu+U2QpTtY8/Ih1T+mjjqbamnXKCBs=
+X-Received: by 2002:a67:f3d7:0:b0:447:4cb2:74fb with SMTP id
+ j23-20020a67f3d7000000b004474cb274fbmr7325909vsn.19.1692710553622; Tue, 22
+ Aug 2023 06:22:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1778; i=brauner@kernel.org; h=from:subject:message-id; bh=fk45I840klujEBH09dc4YYEnHCwe+JRgvyiRvN/D0fs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ8Wb1eWcoy+sQa83IDKw6G6/yRblGt1lUHLy8JnjPz4ULh P+XGHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABM5lcrI8DDJlUtj8gqBwvsvmSymJW TN7/DtqM2ucV47cev5hg6Dtwz/vf4deR2Z2MnqfNd4puW3Ph1m8Q8yVRmTTSZHiKafjzVmAQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+References: <20230519125705.598234-1-amir73il@gmail.com> <20230519125705.598234-6-amir73il@gmail.com>
+ <CAJfpeguhmZbjP3JLqtUy0AdWaHOkAPWeP827BBWwRFEAUgnUcQ@mail.gmail.com>
+ <CAOQ4uxhYZqe0-r9knvdW_BWNvfeKapiwReTv4FWr_Px+CB+ENw@mail.gmail.com>
+ <CAOQ4uxhBeFSV7TFuWXBgJZuu-eJBjKcsshDdxCz-fie0MqwVcw@mail.gmail.com>
+ <CAOQ4uxirdrsaHPyctxRgSMxb2mBHJCJqB12Eof02CnouExKgzQ@mail.gmail.com> <CAJfpegth3TASZKvc_HrhGLOAFSGiAriiqO6iCN2OzT2bu62aDA@mail.gmail.com>
+In-Reply-To: <CAJfpegth3TASZKvc_HrhGLOAFSGiAriiqO6iCN2OzT2bu62aDA@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 22 Aug 2023 16:22:22 +0300
+Message-ID: <CAOQ4uxjU5D=BmLe66NyG_qGWk8rhZGKx+BCZmJQmhQOdCSw+1g@mail.gmail.com>
+Subject: Re: [PATCH v13 05/10] fuse: Handle asynchronous read and write in passthrough
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Daniel Rosenberg <drosen@google.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Alessio Balsini <balsini@android.com>,
+        fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -58,47 +76,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 18 Aug 2023 16:00:47 +0200, Christian Brauner wrote:
-> Hey everyone,
-> 
-> This is an attempty to allow concurrent mounters and iterators to wait
-> on superblock state changes without having to hold s_umount. This is
-> made necessary by recent attempts to open block devices after superblock
-> creation and fixing deadlocks due to blkdev_put() trying to acquire
-> s_umount while s_umount is already held.
-> 
-> [...]
+On Tue, Aug 22, 2023 at 2:03=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
+>
+> On Tue, 22 Aug 2023 at 12:18, Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > On Mon, Aug 21, 2023 at 6:27=E2=80=AFPM Amir Goldstein <amir73il@gmail.=
+com> wrote:
+>
+> > > Getting back to this.
+> > > Did you mean something like that? (only compile tested)
+> > >
+> > > https://github.com/amir73il/linux/commits/backing_fs
+> > >
+> > > If yes, then I wonder:
+> > > 1. Is the difference between FUSE_IOCB_MASK and OVL_IOCB_MASK
+> > >     (i.e. the APPEND flag) intentional?
+>
+> Setting IOCB_APPEND on the backing file doesn't make a difference as
+> long as the backing file is not modified during the write.
+>
+> In overlayfs the case of the backing file being modified is not
+> defined, so I guess that's the reason to omit it.  However I don't see
+> a problem with setting it on the backing file either, the file
+> size/position is synchronized after the write, so nothing bad should
+> happen if the backing file was modified.
+>
+> > > 2. What would be the right way to do ovl_copyattr() on io completion?
+> > >     Pass another completion handler to read/write helpers?
+> > >     This seems a bit ugly. Do you have a nicer idea?
+> > >
+>
+> Ugh, I missed that little detail.   I don't have a better idea than to
+> use a callback function.
+>
+> >
+> > Hmm. Looking closer, ovl_copyattr() in ovl_aio_cleanup_handler()
+> > seems a bit racy as it is not done under inode_lock().
+> >
+> > I wonder if it is enough to fix that by adding the lock or if we need
+> > to resort to a more complicated scheme like FUSE_I_SIZE_UNSTABLE
+> > for overlayfs aio?
+>
+> Quite recently rename didn't take inode lock on source, so
+> ovl_aio_cleanup_handler() wasn't the only unlocked instance.
+>
+> I don't see a strong reason to always lock the inode before
+> ovl_copyattr(), but I could be wrong.
+>
 
-Already applied this but didn't send out a notification.
+IDK, ovl_copyattr() looks like a textbook example of a race
+if not protected by something because it reads a bunch of stuff
+from realinode and then writes a bunch of stuff to inode.
 
-Jan's suggestion to log a warning when freeze/thaw is called on dying
-superblock is on top of the series as well:
+Anyway, I guess it wouldn't hurt to wrap it with inode_lock()
+in the ovl completion callback.
 
-      super: use higher-level helper for {freeze,thaw}
-      https://git.kernel.org/vfs/vfs/c/051178c366bb
-
----
-
-Applied to the vfs.super branch of the vfs/vfs.git tree.
-Patches in the vfs.super branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.super.fs_supers_lock
-
-[1/4] super: use locking helpers
-      https://git.kernel.org/vfs/vfs/c/0ed33598ddf3
-[2/4] super: make locking naming consistent
-      https://git.kernel.org/vfs/vfs/c/d8ce82efdece
-[3/4] super: wait for nascent superblocks
-      https://git.kernel.org/vfs/vfs/c/5e8749141521
-[4/4] super: wait until we passed kill super
-      https://git.kernel.org/vfs/vfs/c/2c18a63b760a
+Thanks,
+Amir.
