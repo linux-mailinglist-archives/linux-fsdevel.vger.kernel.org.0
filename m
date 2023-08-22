@@ -2,44 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 551DB784329
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 16:06:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 716A8784347
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 16:07:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233380AbjHVOGM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Aug 2023 10:06:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33854 "EHLO
+        id S236476AbjHVOHG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Aug 2023 10:07:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233337AbjHVOGI (ORCPT
+        with ESMTP id S233411AbjHVOHF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Aug 2023 10:06:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EFD9E56;
-        Tue, 22 Aug 2023 07:05:42 -0700 (PDT)
+        Tue, 22 Aug 2023 10:07:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB20E6F;
+        Tue, 22 Aug 2023 07:06:38 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D3067649B4;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EFFD665433;
+        Tue, 22 Aug 2023 14:05:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85016C433CA;
         Tue, 22 Aug 2023 14:05:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54D3CC433C7;
-        Tue, 22 Aug 2023 14:05:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692713132;
-        bh=oHAoMyZjF9g9W2qKAKfFFNVap7j750I1wK7h+SBfGKM=;
+        s=k20201202; t=1692713138;
+        bh=DpZhswk3pFnI/AW797F4UsIB+Gb0Tunks8tC2WEtzQY=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=uV47zMyNVSy8lZoEqOFp/weZrgIWcrdmMRDiveKCVZQndjxELzRXvFwV375l1ULG9
-         NxC3UN1CfZIPv5jxt4Yn3UCNv5ohrIrEOq5Z9gwKZh/QfoP73v897TbKjGTJPLgp7e
-         knqzGb80zdsUBmK3q30iN5QCO6C2OTdqNzZ6ieAIywu7McPLWfzHcjwSmQGVyAfZRe
-         Pr0rEM9wgopdS2QkbGgRAPKdLOLVILjY2Q77kdpU7LHBveB4MIPH8WUvBK939vwhG3
-         HtsC3PqrX9/PbfRXyQfq778E5ISQZLmyoz/F7g6t2LCYJ+BnjUJDqf13NCgHDNRfaP
-         yJFQ/8TejBicw==
+        b=KI9BiFgEPLnl0qQJLEI+qSuGWe/L9LZyjFgjB9jr5fxGDXI9pth2VTDN7uPhQohQr
+         FPROvWnamDdcixi9r9PLXzgy7fBu1IASt0nBftU/a+CrePaR4k+uwV6Qm3QLV3wceE
+         G+xRSjpd3Febv1tw1YY/fPGfGAjXXprlmT+5ZL9QxOqpTNB4/vpKMo8r8N42EhhTdn
+         dcxnC2nJXk0dlJSiE/jbqdwc1gqpHyqUJi3f1xxdvdaYKlle8unIsiODLk1W8yFPNE
+         ty8akJsFZuQUWrp7A/ufu8MjgvLkTqGhrMJnBxxnMmfU043269sIcHsmKZPjBcPDHW
+         riyQrtp6iKh8g==
 From:   Mark Brown <broonie@kernel.org>
-Date:   Tue, 22 Aug 2023 14:56:57 +0100
-Subject: [PATCH v5 24/37] arm64/signal: Expose GCS state in signal frames
+Date:   Tue, 22 Aug 2023 14:56:58 +0100
+Subject: [PATCH v5 25/37] arm64/ptrace: Expose GCS via ptrace and core
+ files
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230822-arm64-gcs-v5-24-9ef181dd6324@kernel.org>
+Message-Id: <20230822-arm64-gcs-v5-25-9ef181dd6324@kernel.org>
 References: <20230822-arm64-gcs-v5-0-9ef181dd6324@kernel.org>
 In-Reply-To: <20230822-arm64-gcs-v5-0-9ef181dd6324@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
@@ -68,15 +69,15 @@ Cc:     "H.J. Lu" <hjl.tools@gmail.com>,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-034f2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5977; i=broonie@kernel.org;
- h=from:subject:message-id; bh=oHAoMyZjF9g9W2qKAKfFFNVap7j750I1wK7h+SBfGKM=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBk5MACn9EM8kDg4Zd3ABXmAqIDrZFZKjm8ByzT0FPn
- wa1aYZ2JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZOTAAgAKCRAk1otyXVSH0GpaB/
- 9Q9EST0r4US0yp6YSqWBa/X5sqL9DzJGuN65ghuYKH6I/9GnJA9X05tAFD18Y8pVaTr5eqVhd8kdLR
- GS1gSb0sAZyxgOHjScDx2UIHcqBnAdRbAsRtx7osjPHuZocaqeYe2dstvM5jS75++IU1WiCgdSLhXr
- RY6FsHcS+WW6Sw/Euai/4J/VSJmkpdlnE1lkUB1PDIJeo22GfNCFB0dFM1vaqs5WYqF46KY4Ha/AWF
- m82DuyoKwhlI7woW+z61J3H9MqYAJFOfjW2JYzBU/+JAsG4NADaHMZ/7VOiTmhYhD2bULjHLdaOO9B
- u3vDP0dEBlB9/4zoY62abIFNV8i05P
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4259; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=DpZhswk3pFnI/AW797F4UsIB+Gb0Tunks8tC2WEtzQY=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBk5MAD4UAuvxPCD+2JS/1OYO1FSVdbr2FHfLZY2xqB
+ xvsTtfOJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZOTAAwAKCRAk1otyXVSH0Lv4B/
+ 90Fqj+pTPrC/kAVg7I0H0jlhgLYerpXbxl/3W5uR9/E9BxRJzwjqwMKuibxpRI18gc7vazYb560u+o
+ TdllO1UdCgUHyuyYTi+zHu2FRjhPDDJVrp9LnGebV9afCbvZtI3iAqIV30KRZTT9iXWXq5NSxNRCFf
+ sHq9rxGA4snGp0pKG4RnYt4HWH4KHBeTucSGJEGOt1S2LLEsk0AmjNO3BjP4gpY2IccsNGfnp6Zni0
+ 6U8db/6Vp/yjXq4JsER/LNeCm9rUfwKaPFDYoBLgpOFlRFNDYa+Ou7wBmbn/naBnp2Y2+G3sWdCDU8
+ /PB6fkyY7lP10BIhQnIlA9YhiY9WN3
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -89,209 +90,140 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a context for the GCS state and include it in the signal context when
-running on a system that supports GCS. We reuse the same flags that the
-prctl() uses to specify which GCS features are enabled and also provide the
-current GCS pointer.
-
-We do not support enabling GCS via signal return, there is a conflict
-between specifying GCSPR_EL0 and allocation of a new GCS and this is not
-an ancticipated use case.  We also enforce GCS configuration locking on
-signal return.
+Provide a new register type NT_ARM_GCS reporting the current GCS mode
+and pointer for EL0.  Due to the interactions with allocation and
+deallocation of Guarded Control Stacks we do not permit any changes to
+the GCS mode via ptrace, only GCSPR_EL0 may be changed.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/include/uapi/asm/sigcontext.h |   9 +++
- arch/arm64/kernel/signal.c               | 107 +++++++++++++++++++++++++++++++
- 2 files changed, 116 insertions(+)
+ arch/arm64/include/uapi/asm/ptrace.h |  8 +++++
+ arch/arm64/kernel/ptrace.c           | 59 ++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/elf.h             |  1 +
+ 3 files changed, 68 insertions(+)
 
-diff --git a/arch/arm64/include/uapi/asm/sigcontext.h b/arch/arm64/include/uapi/asm/sigcontext.h
-index f23c1dc3f002..7b66d245f2d2 100644
---- a/arch/arm64/include/uapi/asm/sigcontext.h
-+++ b/arch/arm64/include/uapi/asm/sigcontext.h
-@@ -168,6 +168,15 @@ struct zt_context {
- 	__u16 __reserved[3];
- };
+diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
+index 7fa2f7036aa7..0f39ba4f3efd 100644
+--- a/arch/arm64/include/uapi/asm/ptrace.h
++++ b/arch/arm64/include/uapi/asm/ptrace.h
+@@ -324,6 +324,14 @@ struct user_za_header {
+ #define ZA_PT_SIZE(vq)						\
+ 	(ZA_PT_ZA_OFFSET + ZA_PT_ZA_SIZE(vq))
  
-+#define GCS_MAGIC	0x47435300
++/* GCS state (NT_ARM_GCS) */
 +
-+struct gcs_context {
-+	struct _aarch64_ctx head;
-+	__u64 gcspr;
++struct user_gcs {
 +	__u64 features_enabled;
-+	__u64 reserved;
++	__u64 features_locked;
++	__u64 gcspr_el0;
 +};
 +
- #endif /* !__ASSEMBLY__ */
+ #endif /* __ASSEMBLY__ */
  
- #include <asm/sve_context.h>
-diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
-index 97004c52aea3..78370cf9576a 100644
---- a/arch/arm64/kernel/signal.c
-+++ b/arch/arm64/kernel/signal.c
-@@ -87,6 +87,7 @@ struct rt_sigframe_user_layout {
- 
- 	unsigned long fpsimd_offset;
- 	unsigned long esr_offset;
-+	unsigned long gcs_offset;
- 	unsigned long sve_offset;
- 	unsigned long tpidr2_offset;
- 	unsigned long za_offset;
-@@ -213,6 +214,8 @@ struct user_ctxs {
- 	u32 za_size;
- 	struct zt_context __user *zt;
- 	u32 zt_size;
-+	struct gcs_context __user *gcs;
-+	u32 gcs_size;
- };
- 
- static int preserve_fpsimd_context(struct fpsimd_context __user *ctx)
-@@ -605,6 +608,82 @@ extern int restore_zt_context(struct user_ctxs *user);
- 
- #endif /* ! CONFIG_ARM64_SME */
+ #endif /* _UAPI__ASM_PTRACE_H */
+diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
+index 187aa2b175b4..308a8a149717 100644
+--- a/arch/arm64/kernel/ptrace.c
++++ b/arch/arm64/kernel/ptrace.c
+@@ -33,6 +33,7 @@
+ #include <asm/cpufeature.h>
+ #include <asm/debug-monitors.h>
+ #include <asm/fpsimd.h>
++#include <asm/gcs.h>
+ #include <asm/mte.h>
+ #include <asm/pointer_auth.h>
+ #include <asm/stacktrace.h>
+@@ -1408,6 +1409,51 @@ static int tagged_addr_ctrl_set(struct task_struct *target, const struct
+ }
+ #endif
  
 +#ifdef CONFIG_ARM64_GCS
-+
-+static int preserve_gcs_context(struct gcs_context __user *ctx)
++static int gcs_get(struct task_struct *target,
++		   const struct user_regset *regset,
++		   struct membuf to)
 +{
-+	int err = 0;
-+	u64 gcspr;
++	struct user_gcs user_gcs;
 +
-+	/*
-+	 * We will add a cap token to the frame, include it in the
-+	 * GCSPR_EL0 we report to support stack switching via
-+	 * sigreturn.
-+	 */
-+	gcs_preserve_current_state();
-+	gcspr = current->thread.gcspr_el0;
-+	if (task_gcs_el0_enabled(current))
-+		gcspr -= 8;
++	if (target == current)
++		gcs_preserve_current_state();
 +
-+	__put_user_error(GCS_MAGIC, &ctx->head.magic, err);
-+	__put_user_error(sizeof(*ctx), &ctx->head.size, err);
-+	__put_user_error(gcspr, &ctx->gcspr, err);
-+	__put_user_error(current->thread.gcs_el0_mode,
-+			 &ctx->features_enabled, err);
++	user_gcs.features_enabled = target->thread.gcs_el0_mode;
++	user_gcs.features_locked = target->thread.gcs_el0_locked;
++	user_gcs.gcspr_el0 = target->thread.gcspr_el0;
 +
-+	return err;
++	return membuf_write(&to, &user_gcs, sizeof(user_gcs));
 +}
 +
-+static int restore_gcs_context(struct user_ctxs *user)
++static int gcs_set(struct task_struct *target, const struct
++		   user_regset *regset, unsigned int pos,
++		   unsigned int count, const void *kbuf, const
++		   void __user *ubuf)
 +{
-+	u64 gcspr, enabled;
-+	int err = 0;
++	int ret;
++	struct user_gcs user_gcs;
 +
-+	if (user->gcs_size != sizeof(*user->gcs))
++	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &user_gcs, 0, -1);
++	if (ret)
++		return ret;
++
++	if (user_gcs.features_enabled & ~PR_SHADOW_STACK_SUPPORTED_STATUS_MASK)
 +		return -EINVAL;
 +
-+	__get_user_error(gcspr, &user->gcs->gcspr, err);
-+	__get_user_error(enabled, &user->gcs->features_enabled, err);
-+	if (err)
-+		return err;
++	/* Do not allow enable via ptrace */
++	if ((user_gcs.features_enabled & PR_SHADOW_STACK_ENABLE) &&
++	    !!(target->thread.gcs_el0_mode & PR_SHADOW_STACK_ENABLE))
++		return -EBUSY;
 +
-+	/* Don't allow unknown modes */
-+	if (enabled & ~PR_SHADOW_STACK_SUPPORTED_STATUS_MASK)
-+		return -EINVAL;
-+
-+	err = gcs_check_locked(current, enabled);
-+	if (err != 0)
-+		return err;
-+
-+	/* Don't allow enabling */
-+	if (!task_gcs_el0_enabled(current) &&
-+	    (enabled & PR_SHADOW_STACK_ENABLE))
-+		return -EINVAL;
-+
-+	/* If we are disabling disable everything */
-+	if (!(enabled & PR_SHADOW_STACK_ENABLE))
-+		enabled = 0;
-+
-+	current->thread.gcs_el0_mode = enabled;
-+
-+	/*
-+	 * We let userspace set GCSPR_EL0 to anything here, we will
-+	 * validate later in gcs_restore_signal().
-+	 */
-+	current->thread.gcspr_el0 = gcspr;
-+	write_sysreg_s(current->thread.gcspr_el0, SYS_GCSPR_EL0);
++	target->thread.gcs_el0_mode = user_gcs.features_enabled;
++	target->thread.gcs_el0_locked = user_gcs.features_locked;
++	target->thread.gcspr_el0 = user_gcs.gcspr_el0;
 +
 +	return 0;
 +}
++#endif
 +
-+#else /* ! CONFIG_ARM64_GCS */
-+
-+/* Turn any non-optimised out attempts to use these into a link error: */
-+extern int preserve_gcs_context(void __user *ctx);
-+extern int restore_gcs_context(struct user_ctxs *user);
-+
-+#endif /* ! CONFIG_ARM64_GCS */
-+
- static int parse_user_sigframe(struct user_ctxs *user,
- 			       struct rt_sigframe __user *sf)
- {
-@@ -621,6 +700,7 @@ static int parse_user_sigframe(struct user_ctxs *user,
- 	user->tpidr2 = NULL;
- 	user->za = NULL;
- 	user->zt = NULL;
-+	user->gcs = NULL;
+ enum aarch64_regset {
+ 	REGSET_GPR,
+ 	REGSET_FPR,
+@@ -1436,6 +1482,9 @@ enum aarch64_regset {
+ #ifdef CONFIG_ARM64_TAGGED_ADDR_ABI
+ 	REGSET_TAGGED_ADDR_CTRL,
+ #endif
++#ifdef CONFIG_ARM64_GCS
++	REGSET_GCS,
++#endif
+ };
  
- 	if (!IS_ALIGNED((unsigned long)base, 16))
- 		goto invalid;
-@@ -715,6 +795,17 @@ static int parse_user_sigframe(struct user_ctxs *user,
- 			user->zt_size = size;
- 			break;
+ static const struct user_regset aarch64_regsets[] = {
+@@ -1586,6 +1635,16 @@ static const struct user_regset aarch64_regsets[] = {
+ 		.set = tagged_addr_ctrl_set,
+ 	},
+ #endif
++#ifdef CONFIG_ARM64_GCS
++	[REGSET_GCS] = {
++		.core_note_type = NT_ARM_GCS,
++		.n = sizeof(struct user_gcs) / sizeof(u64),
++		.size = sizeof(u64),
++		.align = sizeof(u64),
++		.regset_get = gcs_get,
++		.set = gcs_set,
++	},
++#endif
+ };
  
-+		case GCS_MAGIC:
-+			if (!system_supports_gcs())
-+				goto invalid;
-+
-+			if (user->gcs)
-+				goto invalid;
-+
-+			user->gcs = (struct gcs_context __user *)head;
-+			user->gcs_size = size;
-+			break;
-+
- 		case EXTRA_MAGIC:
- 			if (have_extra_context)
- 				goto invalid;
-@@ -834,6 +925,9 @@ static int restore_sigframe(struct pt_regs *regs,
- 			err = restore_fpsimd_context(&user);
- 	}
- 
-+	if (err == 0 && system_supports_gcs() && user.gcs)
-+		err = restore_gcs_context(&user);
-+
- 	if (err == 0 && system_supports_tpidr2() && user.tpidr2)
- 		err = restore_tpidr2_context(&user);
- 
-@@ -948,6 +1042,13 @@ static int setup_sigframe_layout(struct rt_sigframe_user_layout *user,
- 			return err;
- 	}
- 
-+	if (system_supports_gcs()) {
-+		err = sigframe_alloc(user, &user->gcs_offset,
-+				     sizeof(struct gcs_context));
-+		if (err)
-+			return err;
-+	}
-+
- 	if (system_supports_sve() || system_supports_sme()) {
- 		unsigned int vq = 0;
- 
-@@ -1041,6 +1142,12 @@ static int setup_sigframe(struct rt_sigframe_user_layout *user,
- 		__put_user_error(current->thread.fault_code, &esr_ctx->esr, err);
- 	}
- 
-+	if (system_supports_gcs() && err == 0 && user->gcs_offset) {
-+		struct gcs_context __user *gcs_ctx =
-+			apply_user_offset(user, user->gcs_offset);
-+		err |= preserve_gcs_context(gcs_ctx);
-+	}
-+
- 	/* Scalable Vector Extension state (including streaming), if present */
- 	if ((system_supports_sve() || system_supports_sme()) &&
- 	    err == 0 && user->sve_offset) {
+ static const struct user_regset_view user_aarch64_view = {
+diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
+index 0c8cf359ea5b..00f698a2ab17 100644
+--- a/include/uapi/linux/elf.h
++++ b/include/uapi/linux/elf.h
+@@ -438,6 +438,7 @@ typedef struct elf64_shdr {
+ #define NT_ARM_SSVE	0x40b		/* ARM Streaming SVE registers */
+ #define NT_ARM_ZA	0x40c		/* ARM SME ZA registers */
+ #define NT_ARM_ZT	0x40d		/* ARM SME ZT registers */
++#define NT_ARM_GCS	0x40e		/* ARM GCS state */
+ #define NT_ARC_V2	0x600		/* ARCv2 accumulator/extra registers */
+ #define NT_VMCOREDD	0x700		/* Vmcore Device Dump Note */
+ #define NT_MIPS_DSP	0x800		/* MIPS DSP ASE registers */
 
 -- 
 2.30.2
