@@ -2,105 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E176F78428B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 15:56:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A4FF7842BA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Aug 2023 16:03:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236201AbjHVN42 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Aug 2023 09:56:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53796 "EHLO
+        id S235338AbjHVODE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Aug 2023 10:03:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236203AbjHVN42 (ORCPT
+        with ESMTP id S233351AbjHVODD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Aug 2023 09:56:28 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CCD71B0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 06:56:24 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-31c5ee810e3so184738f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 06:56:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1692712583; x=1693317383;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LXzMnEM8moHL5KfliVx5cD1lb3aAd5NGNjk14fqFYLY=;
-        b=OvQvaauBf9P71X6OM3iV6zJjVstVKwDXVeR2TcNPjDcJz2f399JP5BZxFUiXHkTWc/
-         r5lP7XQ7vkvpSMptW40PFm8KnzYip/IftCKI/V7U1LWv+OZcsOEZqcqKXDKRf7oBDJOP
-         RNOespNYAQNJ9FavrWx3YuWYiBeKAeIF+XsTA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692712583; x=1693317383;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LXzMnEM8moHL5KfliVx5cD1lb3aAd5NGNjk14fqFYLY=;
-        b=ZFHrTbYMMj373EddIbpJqNZj3Ct7elZgxqT20Dok37PkXiT7KZC1V/tkeDk+xTu5sM
-         mYUgVhm0soRyKobxM0kDqjPl+z7JV+VRjI/Nu21oSkHbeHUgZC1s39eWDYrufnJi3zEN
-         51rRLiqTwVAqLbm2s6z5XNFHlWqMykJdvY4YuPm0DngEymza7MCi30DDNzIbBjkVhWgH
-         AKB+Ugjn8cAinazxX812b6NiFzCuQAD1HtMJCmMJUUZjd7QIlYX1OqrQKvtdMY3idJ3u
-         xPGTS6/VhgKhrLalNlAISWCcmj/sK+hi0/mVZ0hFAK+pi9gbzh6AkuIWvzJrb+Ww2hCt
-         I4Jw==
-X-Gm-Message-State: AOJu0Yz1Q62QwEQw8ZhF/mik8OERtWx0MKz5DwDcDpe0InTjuGUyg/KM
-        7JdnwgCSl94qRpLgDMH8A011EA==
-X-Google-Smtp-Source: AGHT+IHJQrlSrCu8WgUX5s8XkdDm6/hR/jwfxds8mVBdQgFEL5tBYnuf/oIT+VMpj8Z6S8wRiH/+Kw==
-X-Received: by 2002:a5d:65c5:0:b0:319:8dcf:5c10 with SMTP id e5-20020a5d65c5000000b003198dcf5c10mr6979657wrw.6.1692712582669;
-        Tue, 22 Aug 2023 06:56:22 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id u5-20020a05600c210500b003fc02e8ea68sm19456835wml.13.2023.08.22.06.56.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Aug 2023 06:56:22 -0700 (PDT)
-Date:   Tue, 22 Aug 2023 15:56:19 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Qi Zheng <zhengqi.arch@bytedance.com>
-Cc:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
-        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
-        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
-        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
-        yujie.liu@intel.com, gregkh@linuxfoundation.org,
-        muchun.song@linux.dev, simon.horman@corigine.com,
-        dlemoal@kernel.org, kvm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
-        dm-devel@redhat.com, linux-mtd@lists.infradead.org, x86@kernel.org,
-        cluster-devel@redhat.com, xen-devel@lists.xenproject.org,
-        linux-ext4@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        rcu@vger.kernel.org, linux-bcache@vger.kernel.org,
-        Muchun Song <songmuchun@bytedance.com>,
-        linux-raid@vger.kernel.org, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH v4 43/48] drm/ttm: introduce pool_shrink_rwsem
-Message-ID: <ZOS+g51Yx9PsYkGU@phenom.ffwll.local>
-Mail-Followup-To: Qi Zheng <zhengqi.arch@bytedance.com>,
-        akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
-        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
-        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
-        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
-        yujie.liu@intel.com, gregkh@linuxfoundation.org,
-        muchun.song@linux.dev, simon.horman@corigine.com,
-        dlemoal@kernel.org, kvm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
-        dm-devel@redhat.com, linux-mtd@lists.infradead.org, x86@kernel.org,
-        cluster-devel@redhat.com, xen-devel@lists.xenproject.org,
-        linux-ext4@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        rcu@vger.kernel.org, linux-bcache@vger.kernel.org,
-        Muchun Song <songmuchun@bytedance.com>, linux-raid@vger.kernel.org,
-        linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-btrfs@vger.kernel.org
-References: <20230807110936.21819-1-zhengqi.arch@bytedance.com>
- <20230807110936.21819-44-zhengqi.arch@bytedance.com>
+        Tue, 22 Aug 2023 10:03:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9050A1BD;
+        Tue, 22 Aug 2023 07:03:01 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 03ECB63A0E;
+        Tue, 22 Aug 2023 14:03:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3312BC433C7;
+        Tue, 22 Aug 2023 14:02:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692712980;
+        bh=0gvkuKR41LGGCd8avLTCcB5z1Ttp9harJ3mALBvT3Gw=;
+        h=From:Subject:Date:To:Cc:From;
+        b=gxEtJXOL1Hgyne57ipBABSTFa6QgcPoxLtH4o+/gaqp9R8cBMbILKQQHppJCVeqNd
+         GbLzFzBrJt2g1yZtqaAiKAq3oBuFQOOIZ0QBrFFqKmhPDfX5ZFjGZ2NeNoIfKSkBEV
+         V8UtWU0wG6g5rCxDfMwL5B6PR2qzrvs9FcbIaj+F2j1sSXv8qw4rrxUMM9lnn7CIwd
+         6pLwxiUHlvhMJEWaDdLq9+ak+XRE2B8Ru6ztsawq4IRsiqlASahr4SNsXx5WCAc50C
+         2wOvuNa6m6HUSXroXkpDmQVCOl6uNobz+xm6ezDIV3a7DbDlTKoKHy0v9daa+5k/Km
+         xCGH3/Zugc95g==
+From:   Mark Brown <broonie@kernel.org>
+Subject: [PATCH v5 00/37] arm64/gcs: Provide support for GCS in userspace
+Date:   Tue, 22 Aug 2023 14:56:33 +0100
+Message-Id: <20230822-arm64-gcs-v5-0-9ef181dd6324@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230807110936.21819-44-zhengqi.arch@bytedance.com>
-X-Operating-System: Linux phenom 6.3.0-2-amd64 
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=unavailable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJK+5GQC/2XOy27DIBAF0F+JWJeKVzBklf+osuAx2CiNHUFkN
+ bL87x27ixJFrO6Ic2cWUqFkqOR0WEiBOdc8jRiOHwcSBjf2QHPETAQTkuGjrty0on2oFCTnzrN
+ oOmEJ/veuAvXFjWHYxON236b3Ain/7Bu+LpiHXB9Tee4LZ75N/7o7rpvumVNGfTrqLlnpvdPnK
+ 5QRvj+n0pOtZhYNFaqlAmkMIvCoVBDg36hsqOQtlUhDjMkma1i05o2qf2pY11KFVJuQnMSTmbY
+ vdF3XX2N1C0dqAQAA
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+        Deepak Gupta <debug@rivosinc.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+Cc:     "H.J. Lu" <hjl.tools@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.13-dev-034f2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12491; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=0gvkuKR41LGGCd8avLTCcB5z1Ttp9harJ3mALBvT3Gw=;
+ b=owGbwMvMwMWocq27KDak/QLjabUkhpQn+98/yF7BKauw0dr7UGezhMA5o6LOH8He2RybFGIqpS78
+ v3+0k9GYhYGRi0FWTJFl7bOMVenhElvnP5r/CmYQKxPIFAYuTgGYSBkr+x+OcIv/lzac/+IuxsucfW
+ Zb4fSXOk8m7potuq733mnfLW5fV6ZqCUc/LZ5/0PXvRAbdLUqHFx3pYbnIYmXc+sMu1/DainS50v6S
+ /8/41qYezJRddtJieu16IChVenArI1WwUHo5j7xYn1bxvHcZdzgVvhx8KPFH58SqmLtuOUd5H9kHxJ
+ 5OnbTh8ffYg3Z7/pes8bnU/6KiasKb+H4WZo9fPaGRvfn/bbrimv5Y5y2MfzSl4kV38Yz6E3LbHnZa
+ PbrhWhycveTFYVbDH5Ybf6az8n3zmvRwQRvTxh8Z5X//Rgkd+l+4rGOqgN4ahcAnqTYc5Ux3hCqFA0
+ 9ZvH3U7D5X0+mxn7XU28kxnzl9AQ==
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -108,119 +92,235 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 07, 2023 at 07:09:31PM +0800, Qi Zheng wrote:
-> Currently, the synchronize_shrinkers() is only used by TTM pool. It only
-> requires that no shrinkers run in parallel.
-> 
-> After we use RCU+refcount method to implement the lockless slab shrink,
-> we can not use shrinker_rwsem or synchronize_rcu() to guarantee that all
-> shrinker invocations have seen an update before freeing memory.
-> 
-> So we introduce a new pool_shrink_rwsem to implement a private
-> synchronize_shrinkers(), so as to achieve the same purpose.
-> 
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-> Reviewed-by: Muchun Song <songmuchun@bytedance.com>
+The arm64 Guarded Control Stack (GCS) feature provides support for
+hardware protected stacks of return addresses, intended to provide
+hardening against return oriented programming (ROP) attacks and to make
+it easier to gather call stacks for applications such as profiling.
 
-On the 5 drm patches (I counted 2 ttm and 3 drivers) for merging through
-some other tree (since I'm assuming that's how this will land):
+When GCS is active a secondary stack called the Guarded Control Stack is
+maintained, protected with a memory attribute which means that it can
+only be written with specific GCS operations.  The current GCS pointer
+can not be directly written to by userspace.  When a BL is executed the
+value stored in LR is also pushed onto the GCS, and when a RET is
+executed the top of the GCS is popped and compared to LR with a fault
+being raised if the values do not match.  GCS operations may only be
+performed on GCS pages, a data abort is generated if they are not.
 
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+The combination of hardware enforcement and lack of extra instructions
+in the function entry and exit paths should result in something which
+has less overhead and is more difficult to attack than a purely software
+implementation like clang's shadow stacks.
 
-> ---
->  drivers/gpu/drm/ttm/ttm_pool.c | 15 +++++++++++++++
->  include/linux/shrinker.h       |  2 --
->  mm/shrinker.c                  | 15 ---------------
->  3 files changed, 15 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/ttm/ttm_pool.c b/drivers/gpu/drm/ttm/ttm_pool.c
-> index c9c9618c0dce..38b4c280725c 100644
-> --- a/drivers/gpu/drm/ttm/ttm_pool.c
-> +++ b/drivers/gpu/drm/ttm/ttm_pool.c
-> @@ -74,6 +74,7 @@ static struct ttm_pool_type global_dma32_uncached[MAX_ORDER + 1];
->  static spinlock_t shrinker_lock;
->  static struct list_head shrinker_list;
->  static struct shrinker *mm_shrinker;
-> +static DECLARE_RWSEM(pool_shrink_rwsem);
->  
->  /* Allocate pages of size 1 << order with the given gfp_flags */
->  static struct page *ttm_pool_alloc_page(struct ttm_pool *pool, gfp_t gfp_flags,
-> @@ -317,6 +318,7 @@ static unsigned int ttm_pool_shrink(void)
->  	unsigned int num_pages;
->  	struct page *p;
->  
-> +	down_read(&pool_shrink_rwsem);
->  	spin_lock(&shrinker_lock);
->  	pt = list_first_entry(&shrinker_list, typeof(*pt), shrinker_list);
->  	list_move_tail(&pt->shrinker_list, &shrinker_list);
-> @@ -329,6 +331,7 @@ static unsigned int ttm_pool_shrink(void)
->  	} else {
->  		num_pages = 0;
->  	}
-> +	up_read(&pool_shrink_rwsem);
->  
->  	return num_pages;
->  }
-> @@ -572,6 +575,18 @@ void ttm_pool_init(struct ttm_pool *pool, struct device *dev,
->  }
->  EXPORT_SYMBOL(ttm_pool_init);
->  
-> +/**
-> + * synchronize_shrinkers - Wait for all running shrinkers to complete.
-> + *
-> + * This is useful to guarantee that all shrinker invocations have seen an
-> + * update, before freeing memory, similar to rcu.
-> + */
-> +static void synchronize_shrinkers(void)
-> +{
-> +	down_write(&pool_shrink_rwsem);
-> +	up_write(&pool_shrink_rwsem);
-> +}
-> +
->  /**
->   * ttm_pool_fini - Cleanup a pool
->   *
-> diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-> index c55c07c3f0cb..025c8070dd86 100644
-> --- a/include/linux/shrinker.h
-> +++ b/include/linux/shrinker.h
-> @@ -103,8 +103,6 @@ struct shrinker *shrinker_alloc(unsigned int flags, const char *fmt, ...);
->  void shrinker_register(struct shrinker *shrinker);
->  void shrinker_free(struct shrinker *shrinker);
->  
-> -extern void synchronize_shrinkers(void);
-> -
->  #ifdef CONFIG_SHRINKER_DEBUG
->  extern int __printf(2, 3) shrinker_debugfs_rename(struct shrinker *shrinker,
->  						  const char *fmt, ...);
-> diff --git a/mm/shrinker.c b/mm/shrinker.c
-> index 3ab301ff122d..a27779ed3798 100644
-> --- a/mm/shrinker.c
-> +++ b/mm/shrinker.c
-> @@ -650,18 +650,3 @@ void shrinker_free(struct shrinker *shrinker)
->  	kfree(shrinker);
->  }
->  EXPORT_SYMBOL_GPL(shrinker_free);
-> -
-> -/**
-> - * synchronize_shrinkers - Wait for all running shrinkers to complete.
-> - *
-> - * This is equivalent to calling unregister_shrink() and register_shrinker(),
-> - * but atomically and with less overhead. This is useful to guarantee that all
-> - * shrinker invocations have seen an update, before freeing memory, similar to
-> - * rcu.
-> - */
-> -void synchronize_shrinkers(void)
-> -{
-> -	down_write(&shrinker_rwsem);
-> -	up_write(&shrinker_rwsem);
-> -}
-> -EXPORT_SYMBOL(synchronize_shrinkers);
-> -- 
-> 2.30.2
-> 
+This series implements support for use of GCS by userspace, along with
+support for use of GCS within KVM guests.  It does not enable use of GCS
+by either EL1 or EL2, this will be implemented separately.  Executables
+are started without GCS and must use a prctl() to enable it, it is
+expected that this will be done very early in application execution by
+the dynamic linker or other startup code.  For dynamic linking this will
+be done by checking that everything in the executable is marked as GCS
+compatible.
 
+x86 has an equivalent feature called shadow stacks, this series depends
+on the x86 patches for generic memory management support for the new
+guarded/shadow stack page type and shares APIs as much as possible.  As
+there has been extensive discussion with the wider community around the
+ABI for shadow stacks I have as far as practical kept implementation
+decisions close to those for x86, anticipating that review would lead to
+similar conclusions in the absence of strong reasoning for divergence.
+
+The main divergence I am concious of is that x86 allows shadow stack to
+be enabled and disabled repeatedly, freeing the shadow stack for the
+thread whenever disabled, while this implementation keeps the GCS
+allocated after disable but refuses to reenable it.  This is to avoid
+races with things actively walking the GCS during a disable, we do
+anticipate that some systems will wish to disable GCS at runtime but are
+not aware of any demand for subsequently reenabling it.
+
+x86 uses an arch_prctl() to manage enable and disable, since only x86
+and S/390 use arch_prctl() a generic prctl() was proposed[1] as part of a
+patch set for the equivalent RISC-V zisslpcfi feature which I initially
+adopted fairly directly but following review feedback has been revised
+quite a bit.
+
+There is an open issue with support for CRIU, on x86 this required the
+ability to set the GCS mode via ptrace.  This series supports
+configuring mode bits other than enable/disable via ptrace but it needs
+to be confirmed if this is sufficient.
+
+There's a few bits where I'm not convinced with where I've placed
+things, in particular the GCS write operation is in the GCS header not
+in uaccess.h, I wasn't sure what was clearest there and am probably too
+close to the code to have a clear opinion.  The reporting of GCS in
+/proc/PID/smaps is also a bit awkward.
+
+The series depends on the x86 shadow stack support:
+
+   https://lore.kernel.org/lkml/20230227222957.24501-1-rick.p.edgecombe@intel.com/
+
+I've rebased this onto v6.5-rc4 but not included it in the series in
+order to avoid confusion with Rick's work and cut down the size of the
+series, you can see the branch at:
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/misc.git arm64-gcs
+
+[1] https://lore.kernel.org/lkml/20230213045351.3945824-1-debug@rivosinc.com/
+
+Pending feedback from Catalin:
+ - Switch copy_to_user_gcs() to be put_user_gcs().
+
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v5:
+- Don't map any permissions for user GCSs, we always use EL0 accessors
+  or use a separate mapping of the page.
+- Reduce the standard size of the GCS to RLIMIT_STACK/2.
+- Enforce a PAGE_SIZE alignment requirement on map_shadow_stack().
+- Clarifications and fixes to documentation.
+- More tests.
+- Link to v4: https://lore.kernel.org/r/20230807-arm64-gcs-v4-0-68cfa37f9069@kernel.org
+
+Changes in v4:
+- Implement flags for map_shadow_stack() allowing the cap and end of
+  stack marker to be enabled independently or not at all.
+- Relax size and alignment requirements for map_shadow_stack().
+- Add more blurb explaining the advantages of hardware enforcement.
+- Link to v3: https://lore.kernel.org/r/20230731-arm64-gcs-v3-0-cddf9f980d98@kernel.org
+
+Changes in v3:
+- Rebase onto v6.5-rc4.
+- Add a GCS barrier on context switch.
+- Add a GCS stress test.
+- Link to v2: https://lore.kernel.org/r/20230724-arm64-gcs-v2-0-dc2c1d44c2eb@kernel.org
+
+Changes in v2:
+- Rebase onto v6.5-rc3.
+- Rework prctl() interface to allow each bit to be locked independently.
+- map_shadow_stack() now places the cap token based on the size
+  requested by the caller not the actual space allocated.
+- Mode changes other than enable via ptrace are now supported.
+- Expand test coverage.
+- Various smaller fixes and adjustments.
+- Link to v1: https://lore.kernel.org/r/20230716-arm64-gcs-v1-0-bf567f93bba6@kernel.org
+
+---
+Mark Brown (37):
+      arm64/mm: Restructure arch_validate_flags() for extensibility
+      prctl: arch-agnostic prctl for shadow stack
+      arm64: Document boot requirements for Guarded Control Stacks
+      arm64/gcs: Document the ABI for Guarded Control Stacks
+      arm64/sysreg: Add new system registers for GCS
+      arm64/sysreg: Add definitions for architected GCS caps
+      arm64/gcs: Add manual encodings of GCS instructions
+      arm64/gcs: Provide copy_to_user_gcs()
+      arm64/cpufeature: Runtime detection of Guarded Control Stack (GCS)
+      arm64/mm: Allocate PIE slots for EL0 guarded control stack
+      mm: Define VM_SHADOW_STACK for arm64 when we support GCS
+      arm64/mm: Map pages for guarded control stack
+      KVM: arm64: Manage GCS registers for guests
+      arm64/gcs: Allow GCS usage at EL0 and EL1
+      arm64/idreg: Add overrride for GCS
+      arm64/hwcap: Add hwcap for GCS
+      arm64/traps: Handle GCS exceptions
+      arm64/mm: Handle GCS data aborts
+      arm64/gcs: Context switch GCS state for EL0
+      arm64/gcs: Allocate a new GCS for threads with GCS enabled
+      arm64/gcs: Implement shadow stack prctl() interface
+      arm64/mm: Implement map_shadow_stack()
+      arm64/signal: Set up and restore the GCS context for signal handlers
+      arm64/signal: Expose GCS state in signal frames
+      arm64/ptrace: Expose GCS via ptrace and core files
+      arm64: Add Kconfig for Guarded Control Stack (GCS)
+      kselftest/arm64: Verify the GCS hwcap
+      kselftest/arm64: Add GCS as a detected feature in the signal tests
+      kselftest/arm64: Add framework support for GCS to signal handling tests
+      kselftest/arm64: Allow signals tests to specify an expected si_code
+      kselftest/arm64: Always run signals tests with GCS enabled
+      kselftest/arm64: Add very basic GCS test program
+      kselftest/arm64: Add a GCS test program built with the system libc
+      kselftest/arm64: Add test coverage for GCS mode locking
+      selftests/arm64: Add GCS signal tests
+      kselftest/arm64: Add a GCS stress test
+      kselftest/arm64: Enable GCS for the FP stress tests
+
+ Documentation/admin-guide/kernel-parameters.txt    |   3 +
+ Documentation/arch/arm64/booting.rst               |  22 +
+ Documentation/arch/arm64/elf_hwcaps.rst            |   3 +
+ Documentation/arch/arm64/gcs.rst                   | 233 +++++++
+ Documentation/arch/arm64/index.rst                 |   1 +
+ Documentation/filesystems/proc.rst                 |   2 +-
+ arch/arm64/Kconfig                                 |  19 +
+ arch/arm64/include/asm/cpufeature.h                |   6 +
+ arch/arm64/include/asm/el2_setup.h                 |  17 +
+ arch/arm64/include/asm/esr.h                       |  28 +-
+ arch/arm64/include/asm/exception.h                 |   2 +
+ arch/arm64/include/asm/gcs.h                       | 106 +++
+ arch/arm64/include/asm/hwcap.h                     |   1 +
+ arch/arm64/include/asm/kvm_arm.h                   |   4 +-
+ arch/arm64/include/asm/kvm_host.h                  |  12 +
+ arch/arm64/include/asm/mman.h                      |  20 +-
+ arch/arm64/include/asm/pgtable-prot.h              |  14 +-
+ arch/arm64/include/asm/processor.h                 |   7 +
+ arch/arm64/include/asm/sysreg.h                    |  20 +
+ arch/arm64/include/asm/uaccess.h                   |  42 ++
+ arch/arm64/include/uapi/asm/hwcap.h                |   1 +
+ arch/arm64/include/uapi/asm/ptrace.h               |   8 +
+ arch/arm64/include/uapi/asm/sigcontext.h           |   9 +
+ arch/arm64/kernel/cpufeature.c                     |  19 +
+ arch/arm64/kernel/cpuinfo.c                        |   1 +
+ arch/arm64/kernel/entry-common.c                   |  23 +
+ arch/arm64/kernel/idreg-override.c                 |   2 +
+ arch/arm64/kernel/process.c                        |  89 +++
+ arch/arm64/kernel/ptrace.c                         |  59 ++
+ arch/arm64/kernel/signal.c                         | 237 ++++++-
+ arch/arm64/kernel/traps.c                          |  11 +
+ arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h         |  17 +
+ arch/arm64/kvm/sys_regs.c                          |  22 +
+ arch/arm64/mm/Makefile                             |   1 +
+ arch/arm64/mm/fault.c                              |  79 ++-
+ arch/arm64/mm/gcs.c                                | 225 +++++++
+ arch/arm64/mm/mmap.c                               |  13 +-
+ arch/arm64/tools/cpucaps                           |   1 +
+ arch/arm64/tools/sysreg                            |  55 ++
+ fs/proc/task_mmu.c                                 |   3 +
+ include/linux/mm.h                                 |  16 +-
+ include/linux/syscalls.h                           |   1 +
+ include/uapi/asm-generic/unistd.h                  |   5 +-
+ include/uapi/linux/elf.h                           |   1 +
+ include/uapi/linux/prctl.h                         |  22 +
+ kernel/sys.c                                       |  30 +
+ kernel/sys_ni.c                                    |   1 +
+ tools/testing/selftests/arm64/Makefile             |   2 +-
+ tools/testing/selftests/arm64/abi/hwcap.c          |  19 +
+ tools/testing/selftests/arm64/fp/assembler.h       |  15 +
+ tools/testing/selftests/arm64/fp/fpsimd-test.S     |   2 +
+ tools/testing/selftests/arm64/fp/sve-test.S        |   2 +
+ tools/testing/selftests/arm64/fp/za-test.S         |   2 +
+ tools/testing/selftests/arm64/fp/zt-test.S         |   2 +
+ tools/testing/selftests/arm64/gcs/.gitignore       |   5 +
+ tools/testing/selftests/arm64/gcs/Makefile         |  24 +
+ tools/testing/selftests/arm64/gcs/asm-offsets.h    |   0
+ tools/testing/selftests/arm64/gcs/basic-gcs.c      | 356 ++++++++++
+ tools/testing/selftests/arm64/gcs/gcs-locking.c    | 200 ++++++
+ .../selftests/arm64/gcs/gcs-stress-thread.S        | 311 +++++++++
+ tools/testing/selftests/arm64/gcs/gcs-stress.c     | 532 +++++++++++++++
+ tools/testing/selftests/arm64/gcs/gcs-util.h       | 100 +++
+ tools/testing/selftests/arm64/gcs/libc-gcs.c       | 742 +++++++++++++++++++++
+ tools/testing/selftests/arm64/signal/.gitignore    |   1 +
+ .../testing/selftests/arm64/signal/test_signals.c  |  17 +-
+ .../testing/selftests/arm64/signal/test_signals.h  |   6 +
+ .../selftests/arm64/signal/test_signals_utils.c    |  32 +-
+ .../selftests/arm64/signal/test_signals_utils.h    |  39 ++
+ .../arm64/signal/testcases/gcs_exception_fault.c   |  59 ++
+ .../selftests/arm64/signal/testcases/gcs_frame.c   |  78 +++
+ .../arm64/signal/testcases/gcs_write_fault.c       |  67 ++
+ .../selftests/arm64/signal/testcases/testcases.c   |   7 +
+ .../selftests/arm64/signal/testcases/testcases.h   |   1 +
+ 73 files changed, 4096 insertions(+), 38 deletions(-)
+---
+base-commit: e514f673179ed8af6c64d79f8d43e2569ad6cb9f
+change-id: 20230303-arm64-gcs-e311ab0d8729
+
+Best regards,
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Mark Brown <broonie@kernel.org>
+
