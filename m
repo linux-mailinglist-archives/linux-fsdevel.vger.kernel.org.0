@@ -2,151 +2,224 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D088C785633
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 12:50:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3938785635
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 12:50:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234088AbjHWKuu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Aug 2023 06:50:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42850 "EHLO
+        id S234293AbjHWKu5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Aug 2023 06:50:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233896AbjHWKuX (ORCPT
+        with ESMTP id S233993AbjHWKuX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 23 Aug 2023 06:50:23 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7127E7D;
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC181E7E;
         Wed, 23 Aug 2023 03:49:27 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 2BC0022238;
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 1577F221CB;
         Wed, 23 Aug 2023 10:48:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
         t=1692787739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=2AUkHVYDDBg67q+3OD0qFSazOfyxTAI2542TIz3rbns=;
-        b=ZXrZlNJ3g4AtXip0gcX9yOKeExtqThYsiSH/r5mRCx7snkGOAI4bxRyChbhpTyL+YexBdn
-        bRYsTUSSyIdny4nYF6zpWcL5pY9mc1XOJHP7Tb+/3HMIMtj5otx7DOkSh/zpAhixApQL6x
-        rd586/2JMwc1UfVFL6EJJw64zSt8XhI=
+        bh=qxOme3BtkxB+Lc+pyXROAfNbUlSklexanirF+w+nvgM=;
+        b=VibswaqR+bZgt1/ahgD1opYGNcFjRAiznhO3TSclVPAIb+jC/sYjlP5+EpvnQPKYrhqUm9
+        2aq6ylumBYD+6q5K+DJDrpsN2to1mO3iRSop4Lx1DfnjvdMU/yUicEN5nnWUyRP3YOLPUS
+        gHo9UBsuE++83mXk1z/N/j6IRNqmwsU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
         s=susede2_ed25519; t=1692787739;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=2AUkHVYDDBg67q+3OD0qFSazOfyxTAI2542TIz3rbns=;
-        b=m5WcXtUVe4h3za6ZijNlLIIyMKLAsIuwR1PjgVMTs0bVDdKI+wzWvV6vSq6kuDZNRA3ulW
-        67bI0IDo7GpnJSAQ==
+        bh=qxOme3BtkxB+Lc+pyXROAfNbUlSklexanirF+w+nvgM=;
+        b=Jk/BymST811HAYmMQhNWKT6HymzG3NpX6EtEq5T05iU+ncno0ydGtv32EzlN5dnLjKZiGx
+        AgJIOqDegk164NDQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1D3C613592;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 03F17139D0;
         Wed, 23 Aug 2023 10:48:59 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id wV8iBxvk5WRzIAAAMHmgww
+        id xuzyABvk5WRqIAAAMHmgww
         (envelope-from <jack@suse.cz>); Wed, 23 Aug 2023 10:48:59 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 8D718A0799; Wed, 23 Aug 2023 12:48:57 +0200 (CEST)
+        id 93575A079A; Wed, 23 Aug 2023 12:48:57 +0200 (CEST)
 From:   Jan Kara <jack@suse.cz>
 To:     Christian Brauner <brauner@kernel.org>
 Cc:     Jens Axboe <axboe@kernel.dk>, <linux-fsdevel@vger.kernel.org>,
         <linux-block@vger.kernel.org>,
         Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 23/29] f2fs: Convert to bdev_open_by_dev/path()
-Date:   Wed, 23 Aug 2023 12:48:34 +0200
-Message-Id: <20230823104857.11437-23-jack@suse.cz>
+        Dave Kleikamp <shaggy@kernel.org>,
+        jfs-discussion@lists.sourceforge.net,
+        Christoph Hellwig <hch@lst.de>,
+        Dave Kleikamp <dave.kleikamp@oracle.com>
+Subject: [PATCH 24/29] jfs: Convert to bdev_open_by_dev()
+Date:   Wed, 23 Aug 2023 12:48:35 +0200
+Message-Id: <20230823104857.11437-24-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20230818123232.2269-1-jack@suse.cz>
 References: <20230818123232.2269-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2284; i=jack@suse.cz; h=from:subject; bh=A8xzyyYYp7e3nycZMwh5um089G3sh6pF1T1fTnU+2b4=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBk5eQCpKEjjgiqB3ZA1c5TSrTxzQCLo0J9QrbxTBbl SsdwFCeJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZOXkAgAKCRCcnaoHP2RA2Yo7CA DYPCyhul0tth4sF/mXbVG+Z7Im4oaDJsjL/BvAEgOC/9sq+RuecArAuEaoYD1RvO49AHJHjPARmsuB xRWlPxNeZFWhePZeL17m7liT+2aykb1N9AsnJR1TSrr/HfCfMFNwsvnE3Hyo8H9hif+Ly/4DZubggh Xa1jU2D/7GK1eVnMKl0NqVABPx80+GL+4TiftnFI/vOMpIR4VnnB0M7fyH85Zv5zRWiTvUkrzEw5qa /CSDo9YDJ58zIAjq3QPYYLeBJ7E+3HCQwYsGT8/xlWjNrxCHYt040qaAeGvv9RjWXmh0krMUsBZW25 yQ9TU9vP6WqA3ZX3kKiLlX9ddWdazR
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4973; i=jack@suse.cz; h=from:subject; bh=ZltR0Xz8NEd1g6jwAVPNXTtc0US/1TBikbPh6ZGYqWE=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBk5eQCjw70IpklIbgyB+EAtiEYVS24OkqzPdfXwC6Q 68bzoY6JATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZOXkAgAKCRCcnaoHP2RA2b4GCA DNT+LOdfOkBvKqfYyr2YijYOhoC1PGtRv1gcrhqoZwxnLyD2cABDVn6lR4so6btjZ2nZRTbmdQ7RFy p5sXqfN2tq2heB2iPk66s/NkQSlYNiZWpJM6L3kuweFej3PgvQZ0SmfmLxY/UPNVuvad3YZ3IKOOmw EwR/pvJ0kmiHIbX+DFRj11x6VScoexyLeOX0p1MS443aNutFbjq/MYjrL0bmqPpm3iR5gjWxwNIKiY ADBvVXVK/KvWYQTjIB2fSpg6MqIevUKiCrcsZRh8vDwx8B+GgX1TkKp7DBJ9XxoOVy9Q0k+Ta0anUE OpTnY+mCMFDMQKDOiR28AxBPH8CxDB
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_SOFTFAIL,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert f2fs to use bdev_open_by_dev/path() and pass the handle around.
+Convert jfs to use bdev_open_by_dev() and pass the handle around.
 
-CC: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: Chao Yu <chao@kernel.org>
-CC: linux-f2fs-devel@lists.sourceforge.net
+CC: Dave Kleikamp <shaggy@kernel.org>
+CC: jfs-discussion@lists.sourceforge.net
 Acked-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Dave Kleikamp <dave.kleikamp@oracle.com>
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/f2fs/f2fs.h  |  1 +
- fs/f2fs/super.c | 17 +++++++++--------
- 2 files changed, 10 insertions(+), 8 deletions(-)
+ fs/jfs/jfs_logmgr.c | 29 +++++++++++++++--------------
+ fs/jfs/jfs_logmgr.h |  2 +-
+ fs/jfs/jfs_mount.c  |  3 ++-
+ 3 files changed, 18 insertions(+), 16 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index e18272ae3119..2ec6c10df636 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1234,6 +1234,7 @@ struct f2fs_bio_info {
- #define FDEV(i)				(sbi->devs[i])
- #define RDEV(i)				(raw_super->devs[i])
- struct f2fs_dev_info {
+diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
+index e855b8fde76c..c911d838b8ec 100644
+--- a/fs/jfs/jfs_logmgr.c
++++ b/fs/jfs/jfs_logmgr.c
+@@ -1058,7 +1058,7 @@ void jfs_syncpt(struct jfs_log *log, int hard_sync)
+ int lmLogOpen(struct super_block *sb)
+ {
+ 	int rc;
+-	struct block_device *bdev;
 +	struct bdev_handle *bdev_handle;
- 	struct block_device *bdev;
- 	char path[MAX_PATH_LEN];
- 	unsigned int total_segments;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index aa1f9a3a8037..885dcbd81859 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1561,7 +1561,7 @@ static void destroy_device_list(struct f2fs_sb_info *sbi)
- 	int i;
+ 	struct jfs_log *log;
+ 	struct jfs_sb_info *sbi = JFS_SBI(sb);
  
- 	for (i = 0; i < sbi->s_ndevs; i++) {
--		blkdev_put(FDEV(i).bdev, sbi->sb);
-+		bdev_release(FDEV(i).bdev_handle);
- #ifdef CONFIG_BLK_DEV_ZONED
- 		kvfree(FDEV(i).blkz_seq);
- #endif
-@@ -4196,9 +4196,9 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+@@ -1070,7 +1070,7 @@ int lmLogOpen(struct super_block *sb)
  
- 		if (max_devices == 1) {
- 			/* Single zoned block device mount */
--			FDEV(0).bdev =
--				blkdev_get_by_dev(sbi->sb->s_bdev->bd_dev, mode,
--						  sbi->sb, NULL);
-+			FDEV(0).bdev_handle = bdev_open_by_dev(
-+					sbi->sb->s_bdev->bd_dev, mode, sbi->sb,
-+					NULL);
- 		} else {
- 			/* Multi-device mount */
- 			memcpy(FDEV(i).path, RDEV(i).path, MAX_PATH_LEN);
-@@ -4216,12 +4216,13 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
- 					(FDEV(i).total_segments <<
- 					sbi->log_blocks_per_seg) - 1;
- 			}
--			FDEV(i).bdev = blkdev_get_by_path(FDEV(i).path, mode,
--							  sbi->sb, NULL);
-+			FDEV(i).bdev_handle = bdev_open_by_path(FDEV(i).path,
-+					mode, sbi->sb, NULL);
- 		}
--		if (IS_ERR(FDEV(i).bdev))
--			return PTR_ERR(FDEV(i).bdev);
-+		if (IS_ERR(FDEV(i).bdev_handle))
-+			return PTR_ERR(FDEV(i).bdev_handle);
+ 	mutex_lock(&jfs_log_mutex);
+ 	list_for_each_entry(log, &jfs_external_logs, journal_list) {
+-		if (log->bdev->bd_dev == sbi->logdev) {
++		if (log->bdev_handle->bdev->bd_dev == sbi->logdev) {
+ 			if (!uuid_equal(&log->uuid, &sbi->loguuid)) {
+ 				jfs_warn("wrong uuid on JFS journal");
+ 				mutex_unlock(&jfs_log_mutex);
+@@ -1100,14 +1100,14 @@ int lmLogOpen(struct super_block *sb)
+ 	 * file systems to log may have n-to-1 relationship;
+ 	 */
  
-+		FDEV(i).bdev = FDEV(i).bdev_handle->bdev;
- 		/* to release errored devices */
- 		sbi->s_ndevs = i + 1;
+-	bdev = blkdev_get_by_dev(sbi->logdev, BLK_OPEN_READ | BLK_OPEN_WRITE,
+-				 log, NULL);
+-	if (IS_ERR(bdev)) {
+-		rc = PTR_ERR(bdev);
++	bdev_handle = bdev_open_by_dev(sbi->logdev,
++			BLK_OPEN_READ | BLK_OPEN_WRITE, log, NULL);
++	if (IS_ERR(bdev_handle)) {
++		rc = PTR_ERR(bdev_handle);
+ 		goto free;
+ 	}
  
+-	log->bdev = bdev;
++	log->bdev_handle = bdev_handle;
+ 	uuid_copy(&log->uuid, &sbi->loguuid);
+ 
+ 	/*
+@@ -1141,7 +1141,7 @@ int lmLogOpen(struct super_block *sb)
+ 	lbmLogShutdown(log);
+ 
+       close:		/* close external log device */
+-	blkdev_put(bdev, log);
++	bdev_release(bdev_handle);
+ 
+       free:		/* free log descriptor */
+ 	mutex_unlock(&jfs_log_mutex);
+@@ -1162,7 +1162,7 @@ static int open_inline_log(struct super_block *sb)
+ 	init_waitqueue_head(&log->syncwait);
+ 
+ 	set_bit(log_INLINELOG, &log->flag);
+-	log->bdev = sb->s_bdev;
++	log->bdev_handle = sb->s_bdev_handle;
+ 	log->base = addressPXD(&JFS_SBI(sb)->logpxd);
+ 	log->size = lengthPXD(&JFS_SBI(sb)->logpxd) >>
+ 	    (L2LOGPSIZE - sb->s_blocksize_bits);
+@@ -1436,7 +1436,7 @@ int lmLogClose(struct super_block *sb)
+ {
+ 	struct jfs_sb_info *sbi = JFS_SBI(sb);
+ 	struct jfs_log *log = sbi->log;
+-	struct block_device *bdev;
++	struct bdev_handle *bdev_handle;
+ 	int rc = 0;
+ 
+ 	jfs_info("lmLogClose: log:0x%p", log);
+@@ -1482,10 +1482,10 @@ int lmLogClose(struct super_block *sb)
+ 	 *	external log as separate logical volume
+ 	 */
+ 	list_del(&log->journal_list);
+-	bdev = log->bdev;
++	bdev_handle = log->bdev_handle;
+ 	rc = lmLogShutdown(log);
+ 
+-	blkdev_put(bdev, log);
++	bdev_release(bdev_handle);
+ 
+ 	kfree(log);
+ 
+@@ -1972,7 +1972,7 @@ static int lbmRead(struct jfs_log * log, int pn, struct lbuf ** bpp)
+ 
+ 	bp->l_flag |= lbmREAD;
+ 
+-	bio = bio_alloc(log->bdev, 1, REQ_OP_READ, GFP_NOFS);
++	bio = bio_alloc(log->bdev_handle->bdev, 1, REQ_OP_READ, GFP_NOFS);
+ 	bio->bi_iter.bi_sector = bp->l_blkno << (log->l2bsize - 9);
+ 	__bio_add_page(bio, bp->l_page, LOGPSIZE, bp->l_offset);
+ 	BUG_ON(bio->bi_iter.bi_size != LOGPSIZE);
+@@ -2113,7 +2113,8 @@ static void lbmStartIO(struct lbuf * bp)
+ 
+ 	jfs_info("lbmStartIO");
+ 
+-	bio = bio_alloc(log->bdev, 1, REQ_OP_WRITE | REQ_SYNC, GFP_NOFS);
++	bio = bio_alloc(log->bdev_handle->bdev, 1, REQ_OP_WRITE | REQ_SYNC,
++			GFP_NOFS);
+ 	bio->bi_iter.bi_sector = bp->l_blkno << (log->l2bsize - 9);
+ 	__bio_add_page(bio, bp->l_page, LOGPSIZE, bp->l_offset);
+ 	BUG_ON(bio->bi_iter.bi_size != LOGPSIZE);
+diff --git a/fs/jfs/jfs_logmgr.h b/fs/jfs/jfs_logmgr.h
+index 805877ce5020..84aa2d253907 100644
+--- a/fs/jfs/jfs_logmgr.h
++++ b/fs/jfs/jfs_logmgr.h
+@@ -356,7 +356,7 @@ struct jfs_log {
+ 				 *    before writing syncpt.
+ 				 */
+ 	struct list_head journal_list; /* Global list */
+-	struct block_device *bdev; /* 4: log lv pointer */
++	struct bdev_handle *bdev_handle; /* 4: log lv pointer */
+ 	int serial;		/* 4: log mount serial number */
+ 
+ 	s64 base;		/* @8: log extent address (inline log ) */
+diff --git a/fs/jfs/jfs_mount.c b/fs/jfs/jfs_mount.c
+index b83aae56a1f2..415eb65a36ff 100644
+--- a/fs/jfs/jfs_mount.c
++++ b/fs/jfs/jfs_mount.c
+@@ -430,7 +430,8 @@ int updateSuper(struct super_block *sb, uint state)
+ 
+ 	if (state == FM_MOUNT) {
+ 		/* record log's dev_t and mount serial number */
+-		j_sb->s_logdev = cpu_to_le32(new_encode_dev(sbi->log->bdev->bd_dev));
++		j_sb->s_logdev = cpu_to_le32(
++			new_encode_dev(sbi->log->bdev_handle->bdev->bd_dev));
+ 		j_sb->s_logserial = cpu_to_le32(sbi->log->serial);
+ 	} else if (state == FM_CLEAN) {
+ 		/*
 -- 
 2.35.3
 
