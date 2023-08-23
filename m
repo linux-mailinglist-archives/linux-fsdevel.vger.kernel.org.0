@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CC60878592D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 15:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38E777859DF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 15:56:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235846AbjHWN1K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Aug 2023 09:27:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42464 "EHLO
+        id S232939AbjHWN4W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Aug 2023 09:56:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234891AbjHWN1H (ORCPT
+        with ESMTP id S236343AbjHWN4V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Aug 2023 09:27:07 -0400
+        Wed, 23 Aug 2023 09:56:21 -0400
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C74BA10C3;
-        Wed, 23 Aug 2023 06:26:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 37C15E45;
+        Wed, 23 Aug 2023 06:56:17 -0700 (PDT)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F7C11655;
-        Wed, 23 Aug 2023 06:17:16 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB6C41692;
+        Wed, 23 Aug 2023 06:17:22 -0700 (PDT)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 880023F740;
-        Wed, 23 Aug 2023 06:16:29 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2EA123F740;
+        Wed, 23 Aug 2023 06:16:36 -0700 (PDT)
 From:   Alexandru Elisei <alexandru.elisei@arm.com>
 To:     catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
         maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
@@ -37,9 +37,9 @@ Cc:     pcc@google.com, steven.price@arm.com, anshuman.khandual@arm.com,
         kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
         linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC 23/37] mm: Teach vma_alloc_folio() about metadata-enabled VMAs
-Date:   Wed, 23 Aug 2023 14:13:36 +0100
-Message-Id: <20230823131350.114942-24-alexandru.elisei@arm.com>
+Subject: [PATCH RFC 24/37] mm: page_alloc: Teach alloc_contig_range() about MIGRATE_METADATA
+Date:   Wed, 23 Aug 2023 14:13:37 +0100
+Message-Id: <20230823131350.114942-25-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230823131350.114942-1-alexandru.elisei@arm.com>
 References: <20230823131350.114942-1-alexandru.elisei@arm.com>
@@ -53,85 +53,130 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When an anonymous page is mapped into the user address space as a result of
-a write fault, that page is zeroed. On arm64, when the VMA has metadata
-enabled, the tags are zeroed at the same time as the page contents, with
-the combination of gfp flags __GFP_ZERO | __GFP_TAGGED (which used be
-called __GFP_ZEROTAGS for this reason). For this use case, it is enough to
-set the __GFP_TAGGED flag in vma_alloc_zeroed_movable_folio().
+alloc_contig_range() allocates a contiguous range of physical memory.
+Metadata pages in use for data will have to be migrated and then taken from
+the free lists when they are repurposed to store tags, and that will be
+accomplished by calling alloc_contig_range().
 
-But with dynamic tag storage reuse, it becomes necessary to have the
-__GFP_TAGGED flag set when allocating a page to be mapped in a VMA with
-metadata enabled in order reserve the corresponding metadata storage.
-Change vma_alloc_folio() to take into account VMAs with metadata enabled.
+The first step in alloc_contig_range() is to isolate the requested pages.
+If the pages are part of a larger huge page, then the hugepage must be
+split before the pages can be isolated. Add support for metadata pages in
+isolate_single_pageblock().
+
+__isolate_free_page() checks the WMARK_MIN watermark before deleting the
+page from the free list. alloc_contig_range(), when called to allocate
+MIGRATE_METADATA pages, ends up calling this function from
+isolate_freepages_range() -> isolate_freepages_block(). As such, take into
+account the number of free metadata pages when checking the watermark to
+avoid false negatives.
 
 Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 ---
- arch/arm64/include/asm/page.h |  5 ++---
- arch/arm64/mm/fault.c         | 19 -------------------
- mm/mempolicy.c                |  3 +++
- 3 files changed, 5 insertions(+), 22 deletions(-)
+ mm/compaction.c     |  4 ++--
+ mm/page_alloc.c     |  9 +++++----
+ mm/page_isolation.c | 19 +++++++++++++------
+ 3 files changed, 20 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
-index 2312e6ee595f..88bab032a493 100644
---- a/arch/arm64/include/asm/page.h
-+++ b/arch/arm64/include/asm/page.h
-@@ -29,9 +29,8 @@ void copy_user_highpage(struct page *to, struct page *from,
- void copy_highpage(struct page *to, struct page *from);
- #define __HAVE_ARCH_COPY_HIGHPAGE
+diff --git a/mm/compaction.c b/mm/compaction.c
+index af2ee3085623..314793ec8bdb 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -46,7 +46,7 @@ static inline void count_compact_events(enum vm_event_item item, long delta)
+ #define count_compact_events(item, delta) do { } while (0)
+ #endif
  
--struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
--						unsigned long vaddr);
--#define vma_alloc_zeroed_movable_folio vma_alloc_zeroed_movable_folio
-+#define vma_alloc_zeroed_movable_folio(vma, vaddr) \
-+	vma_alloc_folio(GFP_HIGHUSER_MOVABLE | __GFP_ZERO, 0, vma, vaddr, false)
+-#if defined CONFIG_COMPACTION || defined CONFIG_CMA
++#if defined CONFIG_COMPACTION || defined CONFIG_CMA || defined CONFIG_MEMORY_METADATA
  
- void tag_clear_highpage(struct page *to);
- #define __HAVE_ARCH_TAG_CLEAR_HIGHPAGE
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 1ca421c11ebc..7e2dcf5e3baf 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -936,25 +936,6 @@ void do_debug_exception(unsigned long addr_if_watchpoint, unsigned long esr,
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/compaction.h>
+@@ -1306,7 +1306,7 @@ isolate_migratepages_range(struct compact_control *cc, unsigned long start_pfn,
+ 	return ret;
  }
- NOKPROBE_SYMBOL(do_debug_exception);
  
--/*
-- * Used during anonymous page fault handling.
-- */
--struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
--						unsigned long vaddr)
--{
--	gfp_t flags = GFP_HIGHUSER_MOVABLE | __GFP_ZERO;
--
--	/*
--	 * If the page is mapped with PROT_MTE, initialise the tags at the
--	 * point of allocation and page zeroing as this is usually faster than
--	 * separate DC ZVA and STGM.
--	 */
--	if (vma->vm_flags & VM_MTE)
--		flags |= __GFP_TAGGED;
--
--	return vma_alloc_folio(flags, 0, vma, vaddr, false);
--}
--
- void tag_clear_highpage(struct page *page)
- {
- 	/* Tag storage pages cannot be tagged. */
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index d164b5c50243..782e0771cabd 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -2170,6 +2170,9 @@ struct folio *vma_alloc_folio(gfp_t gfp, int order, struct vm_area_struct *vma,
- 	int preferred_nid;
- 	nodemask_t *nmask;
+-#endif /* CONFIG_COMPACTION || CONFIG_CMA */
++#endif /* CONFIG_COMPACTION || CONFIG_CMA || CONFIG_MEMORY_METADATA */
+ #ifdef CONFIG_COMPACTION
  
-+	if (vma->vm_flags & VM_MTE)
-+		gfp |= __GFP_TAGGED;
+ static bool suitable_migration_source(struct compact_control *cc,
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 911d3c362848..1adaefa22208 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2624,7 +2624,8 @@ int __isolate_free_page(struct page *page, unsigned int order)
+ 		 * exists.
+ 		 */
+ 		watermark = zone->_watermark[WMARK_MIN] + (1UL << order);
+-		if (!zone_watermark_ok(zone, 0, watermark, 0, ALLOC_CMA))
++		if (!zone_watermark_ok(zone, 0, watermark, 0,
++		    ALLOC_CMA | ALLOC_FROM_METADATA))
+ 			return 0;
+ 
+ 		__mod_zone_freepage_state(zone, -(1UL << order), mt);
+@@ -6246,9 +6247,9 @@ int __alloc_contig_migrate_range(struct compact_control *cc,
+  * @start:	start PFN to allocate
+  * @end:	one-past-the-last PFN to allocate
+  * @migratetype:	migratetype of the underlying pageblocks (either
+- *			#MIGRATE_MOVABLE or #MIGRATE_CMA).  All pageblocks
+- *			in range must have the same migratetype and it must
+- *			be either of the two.
++ *			#MIGRATE_MOVABLE, #MIGRATE_CMA or #MIGRATE_METADATA).
++ *			All pageblocks in range must have the same migratetype
++ *			and it must be either of the three.
+  * @gfp_mask:	GFP mask to use during compaction
+  *
+  * The PFN range does not have to be pageblock aligned. The PFN range must
+diff --git a/mm/page_isolation.c b/mm/page_isolation.c
+index 6599cc965e21..bb2a72ce201b 100644
+--- a/mm/page_isolation.c
++++ b/mm/page_isolation.c
+@@ -52,6 +52,13 @@ static struct page *has_unmovable_pages(unsigned long start_pfn, unsigned long e
+ 		return page;
+ 	}
+ 
++	if (is_migrate_metadata_page(page)) {
++		if (is_migrate_metadata(migratetype))
++			return NULL;
++		else
++			return page;
++	}
 +
- 	pol = get_vma_policy(vma, addr);
+ 	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
+ 		page = pfn_to_page(pfn);
  
- 	if (pol->mode == MPOL_INTERLEAVE) {
+@@ -396,7 +403,7 @@ static int isolate_single_pageblock(unsigned long boundary_pfn, int flags,
+ 				pfn = head_pfn + nr_pages;
+ 				continue;
+ 			}
+-#if defined CONFIG_COMPACTION || defined CONFIG_CMA
++#if defined CONFIG_COMPACTION || defined CONFIG_CMA || defined CONFIG_MEMORY_METADATA
+ 			/*
+ 			 * hugetlb, lru compound (THP), and movable compound pages
+ 			 * can be migrated. Otherwise, fail the isolation.
+@@ -466,7 +473,7 @@ static int isolate_single_pageblock(unsigned long boundary_pfn, int flags,
+ 				pfn = outer_pfn;
+ 				continue;
+ 			} else
+-#endif
++#endif /* CONFIG_COMPACTION || CONFIG_CMA || CONFIG_MEMORY_METADATA */
+ 				goto failed;
+ 		}
+ 
+@@ -495,10 +502,10 @@ static int isolate_single_pageblock(unsigned long boundary_pfn, int flags,
+  * @gfp_flags:		GFP flags used for migrating pages that sit across the
+  *			range boundaries.
+  *
+- * Making page-allocation-type to be MIGRATE_ISOLATE means free pages in
+- * the range will never be allocated. Any free pages and pages freed in the
+- * future will not be allocated again. If specified range includes migrate types
+- * other than MOVABLE or CMA, this will fail with -EBUSY. For isolating all
++ * Making page-allocation-type to be MIGRATE_ISOLATE means free pages in the
++ * range will never be allocated. Any free pages and pages freed in the future
++ * will not be allocated again. If specified range includes migrate types other
++ * than MOVABLE, CMA or METADATA, this will fail with -EBUSY. For isolating all
+  * pages in the range finally, the caller have to free all pages in the range.
+  * test_page_isolated() can be used for test it.
+  *
 -- 
 2.41.0
 
