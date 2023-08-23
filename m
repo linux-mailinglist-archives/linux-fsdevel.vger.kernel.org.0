@@ -2,157 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C915B784CA8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 00:05:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94AB4784F01
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 05:00:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231524AbjHVWFA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Aug 2023 18:05:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51060 "EHLO
+        id S232373AbjHWDAT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Aug 2023 23:00:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbjHVWFA (ORCPT
+        with ESMTP id S232383AbjHWDAR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Aug 2023 18:05:00 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D4D311F;
-        Tue, 22 Aug 2023 15:04:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de;
- s=s31663417; t=1692741895; x=1693346695; i=deller@gmx.de;
- bh=xY/2+QyySjuCzXpTOznTGPpaO1FAuAXckq+otWDEeRc=;
- h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:In-Reply-To;
- b=meesxSB46CrRLY9BxOovDIYo2YRRIJGmrq8c4Mn/YACOlv8SLaFu0xL77Tvwq6CcvmMl3FK
- qfLZmKHuXwB8I0oUtxEMzvf8zX8+ciEA74z05kizeYLFOgMRe6rp9KoXeulZ0HG9EVuXYa8g3
- cUVeRWNJsE22hjS9KEo368UFkCrM7E+K2JmjHHUfCHgSXpCRsx6d/Y5SHK9lpcZMK/o318jME
- hUsz35X0gtBYBGMfH8bEQ2DuZBw1Chk6L/A8uXKhATQ1TC1/vy3mPI3vpRinKpt+whYjZDQi2
- /e1hHNF+bqaqQYAkOMh6jkxapydHWxbOq3TUpLNPfweOipjJ+2Ag==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.60] ([94.134.154.33]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M6Ue3-1qet1b3Tuj-006yac; Wed, 23
- Aug 2023 00:04:54 +0200
-Message-ID: <a1a19e05-0cfd-cae5-9edb-9d63e70ee06d@gmx.de>
-Date:   Wed, 23 Aug 2023 00:04:54 +0200
+        Tue, 22 Aug 2023 23:00:17 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75FDCE56
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 19:59:49 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1befe39630bso9175035ad.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 19:59:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1692759588; x=1693364388;
+        h=content-transfer-encoding:in-reply-to:cc:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bhgEqLuvf9ApSnTvUwn1L76c2o2W1Ei/QD6yE6yt7Vo=;
+        b=RzbIwpF/0rWWCHIbil/kmvbYsiH+zzV8cteo0NeX4iqS5Th3aMObOrBBZ5QIYYiYNO
+         EzLvxXnwaU3C6HJ66DVx0SYeH6DBUUXE/parOT0tZRTGaLZHY6BYCVv0BWvKsae2+Z4V
+         HEkSBtQA++hJt6hjIX8coUzQJXYdSMU0EhPZnC3wJk9rsU5aMcdQM2J2gdrxRnnAl7ZG
+         8NIlks8SUC7HZyd+TSNVs6GUNYerNVLSzTLDuAq02G7Vh6n7NQtQV5W2S/tTxnIxqdnK
+         Yk0AUrfOj+V8sxulrYV9L4sfBNDgKCkzUecP9KTfiIS3EGmzpdtRXoZ4mpHHvApm3vtv
+         04iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692759588; x=1693364388;
+        h=content-transfer-encoding:in-reply-to:cc:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bhgEqLuvf9ApSnTvUwn1L76c2o2W1Ei/QD6yE6yt7Vo=;
+        b=J/2Fen19NP2mQavQiK/Q+f26K4e3z9OtQYAsiK2DhJSs+D4mK3xWe4W1aliN/rGem6
+         j+4LlmcbRWvMSIBIOpJ5WmwowrN9S4zMVFYG9TPHOAcF6vlyhF+d/vZK0tTxJTWD2MFT
+         u0LD9T8oUBuTtX3J2jJ+1TU9tvCp7rwAxMOyRCEgw9xmUwk0vQ7l3/Ad0DcbiP96jDUJ
+         9xDorC2DCcQEpxy7WgtMvHJMDSV6Lwof7/GMf0TLWq3HySW1sHXuUkHNqe2y/WTm9dyR
+         NtJ3EmfEatmtP0herw1qoOcgMBKsTRepvVxsUvKd8grPqhX8mjLXNUXhv27Yt/0FXp5S
+         27zA==
+X-Gm-Message-State: AOJu0YxSeUt09YHPhaaohXfwqV0Wv7FQsx9G/R8vuHbVt+Wy9bHex8oW
+        GgPP6o1+mjsc4okFrlJvtAE9nQ==
+X-Google-Smtp-Source: AGHT+IEfrTZGJtg+pRH2EfLUkWhGiT4SJbELosEEcEbXeeoUMWHqtsVXqJsCto+j1ri8qfTaL4v/sQ==
+X-Received: by 2002:a17:90a:2f41:b0:26d:4ade:fcf0 with SMTP id s59-20020a17090a2f4100b0026d4adefcf0mr10521410pjd.4.1692759588304;
+        Tue, 22 Aug 2023 19:59:48 -0700 (PDT)
+Received: from ?IPV6:fdbd:ff1:ce00:1c25:884:3ed:e1db:b610? ([2408:8000:b001:1:1f:58ff:f102:103])
+        by smtp.gmail.com with ESMTPSA id z2-20020a17090a1fc200b00262ca945cecsm11045048pjz.54.2023.08.22.19.59.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Aug 2023 19:59:47 -0700 (PDT)
+Message-ID: <63dc1d86-2a15-6b7e-f63a-63fccb25eae2@bytedance.com>
+Date:   Wed, 23 Aug 2023 10:59:34 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2] procfs: Fix /proc/self/maps output for 32-bit kernel
- and compat tasks
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.14.0
+Subject: Re: [PATCH v4 43/48] drm/ttm: introduce pool_shrink_rwsem
 Content-Language: en-US
-From:   Helge Deller <deller@gmx.de>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrei Vagin <avagin@openvz.org>,
-        linux-parisc <linux-parisc@vger.kernel.org>
-References: <ZOR95DiR8tdcHDfq@p100>
- <20230822113453.acc69f8540bed25cde79e675@linux-foundation.org>
- <8eb38faf-16a2-a538-b243-1b4706f73169@gmx.de>
-In-Reply-To: <8eb38faf-16a2-a538-b243-1b4706f73169@gmx.de>
+To:     daniel@ffwll.ch
+References: <20230807110936.21819-1-zhengqi.arch@bytedance.com>
+ <20230807110936.21819-44-zhengqi.arch@bytedance.com>
+ <ZOS+g51Yx9PsYkGU@phenom.ffwll.local>
+From:   Qi Zheng <zhengqi.arch@bytedance.com>
+Cc:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
+        vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
+        brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
+        steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
+        yujie.liu@intel.com, gregkh@linuxfoundation.org,
+        muchun.song@linux.dev, simon.horman@corigine.com,
+        dlemoal@kernel.org, kvm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
+        dm-devel@redhat.com, linux-mtd@lists.infradead.org, x86@kernel.org,
+        cluster-devel@redhat.com, xen-devel@lists.xenproject.org,
+        linux-ext4@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        rcu@vger.kernel.org, linux-bcache@vger.kernel.org,
+        Muchun Song <songmuchun@bytedance.com>,
+        linux-raid@vger.kernel.org, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-btrfs@vger.kernel.org, daniel.vetter@ffwll.ch
+In-Reply-To: <ZOS+g51Yx9PsYkGU@phenom.ffwll.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:JVY7fCK5v9wIrnBlZE4htJ33HQe7Ld+JMw3YMCTGofeBjCy3OgZ
- rTXx/E1wJNn79gz8MRdNvff7mqPJoKUIjNw8MCXIyGiV+6hWFRBniI7FLg9gcmLMfnSaksb
- sKKBkBNqEeBKYCDvBtgJdJgDASkArsTdP1lV6mRumtKCtVog4HEOiJXM2JrN5xk5nvWz+pv
- hiMGYC1sLRU432TNN20zg==
-UI-OutboundReport: notjunk:1;M01:P0:3C4JX0WuOeA=;DvqILYy0YE33/S8D4xbe+hBWs7q
- jK6K5mTdoZG1Femfk2n6BevtKXkb2O/4iPOdeYUlGtyl5CVel4QeHc9gUH7K7eLr6ln1xbDkc
- kcRpuba2zahxX4IhQ37cXSRIvI4d5qKV/xYB9SsXkT5ukrRp6cPiPTkURt4bXhOJiflqNnaCT
- Nhqz9pfMfxUEarrAslbTEoQb3P3sii8yibUJMgo15iJRibXjQlXixB2clVRXxCVYAxmyGQH6F
- luOTNqCYvW5ROw/6PTaIwG1G9KJIlbPlbbfdohjozLgmZrW1WPMJXcKH3pmSdrYMBDYgBF90b
- PJd6Ip4SbUuGK+VMYcrk5MhC6kL3EFDksBn7HKr+kcdyqW+0dSmKyOIavfSY4ngtxiVeiP/QZ
- 3tuHqbyObEKTHa+ZX77yQI2Yo4vp1JEHG+48j/35NR0BqjRd3a0xIb5IEFdFIj2gSgPoE9ipJ
- BCpzVKyFUKzl725Rl2h1IDIpycb4vArBFv9QodL3URgIs14I9lbUsSCcKPFoDmgVl40rV+k89
- 9VokyzyQIgwvLT2UI/MAfIafwcHlfg6diYRSUgWdVn6ph/QMqe6FjJ2OSEtGaOLe5nX89+ufB
- 4w+T8RNg84SkCVyaRVZ+Gj/FfWVy3TefGbqNcTpj/y1wjHv2jxqk2grhAmr3zNYI3yMtqcbPf
- Ph89IybQsT2smPLaGbuh/BC5TH3SW6rgKwc+xHjeJLaj3Z0xU0k4af9RXyPgcr8K9Z91TzOJh
- ybaUliMY1MOMzA/Uwrz/jivCf6W8SPM3CC83Ns5wN8CRfXkE5EowbPUZtyTLMNURS2fiLHEJd
- BIqpEu49BdUkUZ0p61/owNURVpGz0PbXWVyYkcqlHsVXCULZxcWJnSay+kClzJ5ZTky7Isfqp
- YahjHHkAvWYp3aS0TNxKPtr2say9YgH1e0dKhRRrizX9gBP9GZNMDECPRc/OqpnpXhGgF6mFb
- TIdSBO2geJO9OLtQSS/sfTD5+us=
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/22/23 22:53, Helge Deller wrote:
-> On 8/22/23 20:34, Andrew Morton wrote:
->> On Tue, 22 Aug 2023 11:20:36 +0200 Helge Deller <deller@gmx.de> wrote:
+Hi Daniel,
+
+On 2023/8/22 21:56, Daniel Vetter wrote:
+> On Mon, Aug 07, 2023 at 07:09:31PM +0800, Qi Zheng wrote:
+>> Currently, the synchronize_shrinkers() is only used by TTM pool. It only
+>> requires that no shrinkers run in parallel.
 >>
->>> On a 32-bit kernel addresses should be shown with 8 hex digits, e.g.:
->>>
->>> root@debian:~# cat /proc/self/maps
->>> 00010000-00019000 r-xp 00000000 08:05 787324=C2=A0=C2=A0=C2=A0=C2=A0 /=
-usr/bin/cat
->>> 00019000-0001a000 rwxp 00009000 08:05 787324=C2=A0=C2=A0=C2=A0=C2=A0 /=
-usr/bin/cat
->>> 0001a000-0003b000 rwxp 00000000 00:00 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 [heap]
->>> f7551000-f770d000 r-xp 00000000 08:05 794765=C2=A0=C2=A0=C2=A0=C2=A0 /=
-usr/lib/hppa-linux-gnu/libc.so.6
->>> f770d000-f770f000 r--p 001bc000 08:05 794765=C2=A0=C2=A0=C2=A0=C2=A0 /=
-usr/lib/hppa-linux-gnu/libc.so.6
->>> f770f000-f7714000 rwxp 001be000 08:05 794765=C2=A0=C2=A0=C2=A0=C2=A0 /=
-usr/lib/hppa-linux-gnu/libc.so.6
->>> f7d39000-f7d68000 r-xp 00000000 08:05 794759=C2=A0=C2=A0=C2=A0=C2=A0 /=
-usr/lib/hppa-linux-gnu/ld.so.1
->>> f7d68000-f7d69000 r--p 0002f000 08:05 794759=C2=A0=C2=A0=C2=A0=C2=A0 /=
-usr/lib/hppa-linux-gnu/ld.so.1
->>> f7d69000-f7d6d000 rwxp 00030000 08:05 794759=C2=A0=C2=A0=C2=A0=C2=A0 /=
-usr/lib/hppa-linux-gnu/ld.so.1
->>> f7ea9000-f7eaa000 r-xp 00000000 00:00 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 [vdso]
->>> f8565000-f8587000 rwxp 00000000 00:00 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 [stack]
->>>
->>> But since commmit 0e3dc0191431 ("procfs: add seq_put_hex_ll to speed u=
-p
->>> /proc/pid/maps") even on native 32-bit kernels the output looks like t=
-his:
->>>
->>> root@debian:~# cat /proc/self/maps
->>> 0000000010000-0000000019000 r-xp 00000000 000000008:000000005 787324=
-=C2=A0 /usr/bin/cat
->>> 0000000019000-000000001a000 rwxp 000000009000 000000008:000000005 7873=
-24=C2=A0 /usr/bin/cat
->>> 000000001a000-000000003b000 rwxp 00000000 00:00 0=C2=A0 [heap]
->>> 00000000f73d1000-00000000f758d000 r-xp 00000000 000000008:000000005 79=
-4765=C2=A0 /usr/lib/hppa-linux-gnu/libc.so.6
->>> 00000000f758d000-00000000f758f000 r--p 000000001bc000 000000008:000000=
-005 794765=C2=A0 /usr/lib/hppa-linux-gnu/libc.so.6
->>> 00000000f758f000-00000000f7594000 rwxp 000000001be000 000000008:000000=
-005 794765=C2=A0 /usr/lib/hppa-linux-gnu/libc.so.6
->>> 00000000f7af9000-00000000f7b28000 r-xp 00000000 000000008:000000005 79=
-4759=C2=A0 /usr/lib/hppa-linux-gnu/ld.so.1
->>> 00000000f7b28000-00000000f7b29000 r--p 000000002f000 000000008:0000000=
-05 794759=C2=A0 /usr/lib/hppa-linux-gnu/ld.so.1
->>> 00000000f7b29000-00000000f7b2d000 rwxp 0000000030000 000000008:0000000=
-05 794759=C2=A0 /usr/lib/hppa-linux-gnu/ld.so.1
->>> 00000000f7e0c000-00000000f7e0d000 r-xp 00000000 00:00 0=C2=A0 [vdso]
->>> 00000000f9061000-00000000f9083000 rwxp 00000000 00:00 0=C2=A0 [stack]
->>>
->>> This patch brings back the old default 8-hex digit output for
->>> 32-bit kernels and compat tasks.
->>>
->>> Fixes: 0e3dc0191431 ("procfs: add seq_put_hex_ll to speed up /proc/pid=
-/maps")
+>> After we use RCU+refcount method to implement the lockless slab shrink,
+>> we can not use shrinker_rwsem or synchronize_rcu() to guarantee that all
+>> shrinker invocations have seen an update before freeing memory.
 >>
->> That was five years ago.=C2=A0 Given there is some risk of breaking exi=
-sting
->> parsers, is it worth fixing this?
->
-> Huh... that's right!
-> Nevertheless, kernel 6.1.45 has it right, which isn't 5 years old.
-> I don't see the reason for that change right now, so I'll need to figure=
- out what changed...
+>> So we introduce a new pool_shrink_rwsem to implement a private
+>> synchronize_shrinkers(), so as to achieve the same purpose.
+>>
+>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>> Reviewed-by: Muchun Song <songmuchun@bytedance.com>
+> 
+> On the 5 drm patches (I counted 2 ttm and 3 drivers) for merging through
+> some other tree (since I'm assuming that's how this will land):
 
-It seems to be due to a new bug in gcc's __builtin_clzll()
-function (at least on parisc), which seems to return values
-for "long" (32bit) instead for "long long" (64bit).
+Yeah, there are 5 drm patches: PATCH v4 07/48 23/48 24/48 25/48 43/48.
 
-Please ignore this patch for now.
+> 
+> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Thanks!
-Helge
+Thanks for your review!
+
+Qi
+
+> 
+>> ---
+>>   drivers/gpu/drm/ttm/ttm_pool.c | 15 +++++++++++++++
+>>   include/linux/shrinker.h       |  2 --
+>>   mm/shrinker.c                  | 15 ---------------
+>>   3 files changed, 15 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/ttm/ttm_pool.c b/drivers/gpu/drm/ttm/ttm_pool.c
+>> index c9c9618c0dce..38b4c280725c 100644
+>> --- a/drivers/gpu/drm/ttm/ttm_pool.c
+>> +++ b/drivers/gpu/drm/ttm/ttm_pool.c
+>> @@ -74,6 +74,7 @@ static struct ttm_pool_type global_dma32_uncached[MAX_ORDER + 1];
+>>   static spinlock_t shrinker_lock;
+>>   static struct list_head shrinker_list;
+>>   static struct shrinker *mm_shrinker;
+>> +static DECLARE_RWSEM(pool_shrink_rwsem);
+>>   
+>>   /* Allocate pages of size 1 << order with the given gfp_flags */
+>>   static struct page *ttm_pool_alloc_page(struct ttm_pool *pool, gfp_t gfp_flags,
+>> @@ -317,6 +318,7 @@ static unsigned int ttm_pool_shrink(void)
+>>   	unsigned int num_pages;
+>>   	struct page *p;
+>>   
+>> +	down_read(&pool_shrink_rwsem);
+>>   	spin_lock(&shrinker_lock);
+>>   	pt = list_first_entry(&shrinker_list, typeof(*pt), shrinker_list);
+>>   	list_move_tail(&pt->shrinker_list, &shrinker_list);
+>> @@ -329,6 +331,7 @@ static unsigned int ttm_pool_shrink(void)
+>>   	} else {
+>>   		num_pages = 0;
+>>   	}
+>> +	up_read(&pool_shrink_rwsem);
+>>   
+>>   	return num_pages;
+>>   }
+>> @@ -572,6 +575,18 @@ void ttm_pool_init(struct ttm_pool *pool, struct device *dev,
+>>   }
+>>   EXPORT_SYMBOL(ttm_pool_init);
+>>   
+>> +/**
+>> + * synchronize_shrinkers - Wait for all running shrinkers to complete.
+>> + *
+>> + * This is useful to guarantee that all shrinker invocations have seen an
+>> + * update, before freeing memory, similar to rcu.
+>> + */
+>> +static void synchronize_shrinkers(void)
+>> +{
+>> +	down_write(&pool_shrink_rwsem);
+>> +	up_write(&pool_shrink_rwsem);
+>> +}
+>> +
+>>   /**
+>>    * ttm_pool_fini - Cleanup a pool
+>>    *
+>> diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+>> index c55c07c3f0cb..025c8070dd86 100644
+>> --- a/include/linux/shrinker.h
+>> +++ b/include/linux/shrinker.h
+>> @@ -103,8 +103,6 @@ struct shrinker *shrinker_alloc(unsigned int flags, const char *fmt, ...);
+>>   void shrinker_register(struct shrinker *shrinker);
+>>   void shrinker_free(struct shrinker *shrinker);
+>>   
+>> -extern void synchronize_shrinkers(void);
+>> -
+>>   #ifdef CONFIG_SHRINKER_DEBUG
+>>   extern int __printf(2, 3) shrinker_debugfs_rename(struct shrinker *shrinker,
+>>   						  const char *fmt, ...);
+>> diff --git a/mm/shrinker.c b/mm/shrinker.c
+>> index 3ab301ff122d..a27779ed3798 100644
+>> --- a/mm/shrinker.c
+>> +++ b/mm/shrinker.c
+>> @@ -650,18 +650,3 @@ void shrinker_free(struct shrinker *shrinker)
+>>   	kfree(shrinker);
+>>   }
+>>   EXPORT_SYMBOL_GPL(shrinker_free);
+>> -
+>> -/**
+>> - * synchronize_shrinkers - Wait for all running shrinkers to complete.
+>> - *
+>> - * This is equivalent to calling unregister_shrink() and register_shrinker(),
+>> - * but atomically and with less overhead. This is useful to guarantee that all
+>> - * shrinker invocations have seen an update, before freeing memory, similar to
+>> - * rcu.
+>> - */
+>> -void synchronize_shrinkers(void)
+>> -{
+>> -	down_write(&shrinker_rwsem);
+>> -	up_write(&shrinker_rwsem);
+>> -}
+>> -EXPORT_SYMBOL(synchronize_shrinkers);
+>> -- 
+>> 2.30.2
+>>
+> 
