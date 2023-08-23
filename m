@@ -2,124 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 24269785082
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 08:18:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62C28785155
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 09:17:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232864AbjHWGSj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Aug 2023 02:18:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47394 "EHLO
+        id S233223AbjHWHRh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Aug 2023 03:17:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232759AbjHWGSg (ORCPT
+        with ESMTP id S233215AbjHWHRg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Aug 2023 02:18:36 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29F7910C1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 23:18:30 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-9936b3d0286so702365866b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Aug 2023 23:18:30 -0700 (PDT)
+        Wed, 23 Aug 2023 03:17:36 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 321CFD1;
+        Wed, 23 Aug 2023 00:17:34 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3fe5c0e587eso49725735e9.0;
+        Wed, 23 Aug 2023 00:17:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1692771508; x=1693376308;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DgYiPB6w71zDBfhr0hMWj12wR0suoRM9Hm3n9xpPb3o=;
-        b=djLqFmn6l9wyrgnB4XBV0MmxUkHv/Oz96IukS5/XbRBHfmE/UuEfq69YmCa0SZqfxa
-         kOgu2f+xLqOnUaJhZOdJY8DzvtqJ5FKFQcMN8jBmHNCvAT4IWCaf38pPomekoDHdw+GT
-         HwdySS4r+oSbYtEbaTA9Ic4SqwAXamkF21YEk=
+        d=gmail.com; s=20221208; t=1692775052; x=1693379852;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ewZ2mWN9LxAUhMlOUISD3iVaY7UEtPxBol9YtDw3XhE=;
+        b=Q88dSrytaqwxWzfjzA1ZJ6+bTOxAUAH8+ppmZ17nWFFL8PtUNquF+Fg2uv4ROtfAYq
+         cpix5tdcx6rNcAXwR5FbRMZw6JF8vu4drNZ5QeA4DYacKuHJxAvApWWXqYwxHUr7LhJG
+         oX30XnHBB04qwFuA0Lr0Obm8fr5Iu+GGqdgVSKL9zZ4ZlRkZyzbGM1Rl8zrOU3qaQLX9
+         yZ0lz6Dh22yrhMWJJjBGiULKXRes7gcaXS15zqc/bUl9xhyhw9CCqDPOSi140KpDFB5C
+         YcpPRMljMsgZFAzU/mbmKEFKt0xZIo9MW8+hvWSME+Eqb88AIh3KUKwP80yalm0XiSOE
+         g/fQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692771508; x=1693376308;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DgYiPB6w71zDBfhr0hMWj12wR0suoRM9Hm3n9xpPb3o=;
-        b=L5ytgXd3bEihFPmk8dpCtFSzUvo/IPYvL5pFuJA7SsdPKMOjgcz3/+m97xp/wPLxeI
-         fkJe+kTcNY9jurkysC9JP7ipwKbzhBd6wevnOk/e9vcPsUXbuss6j6pMxc3nG45e5f8z
-         SnhcPZa5S2iUin/E6/9jwaXnmGnSKP/W3RfUC+YqRFxh6UIOotF8KnAEVucMwSnPyNCO
-         rbeccMhrLRTwyfVGL0GBb4qflijoQ8/uy0IZqoDnPBk2NYhiEZes3+lufwNGN+JWfC5q
-         7D1Q45Ja1u/Vu2xN4yqLBHDpzvvzWEeZUT93aXGeb0IzVF5H8k+oropsJOy1ZmpsKRmq
-         B3Yw==
-X-Gm-Message-State: AOJu0YyUBMltxMRHbSL6C1aIgO5Ox2Hr5kVePoP/z7AphJTJ0lx1YCSX
-        KU7J3vgmlxoOkV0yqoOK4WRCydnOAgxf5pzz/Ki9Sw==
-X-Google-Smtp-Source: AGHT+IGlUVFUdjKWtrk/103p347b+3vEDuwtcRbncpbYCqrbaZKNJPGLXKafOGhh9f2LZFDPajOPEqknofbzM70vcYM=
-X-Received: by 2002:a17:906:2250:b0:99b:bdff:b0ac with SMTP id
- 16-20020a170906225000b0099bbdffb0acmr9315076ejr.16.1692771508599; Tue, 22 Aug
- 2023 23:18:28 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1692775052; x=1693379852;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ewZ2mWN9LxAUhMlOUISD3iVaY7UEtPxBol9YtDw3XhE=;
+        b=beedB2a6nv8Pq6cbgY8YO1qbj1p+UgqHAXqc58s5lf4x9TMlQtYepI2CEM8xd9LDfR
+         TNP5+05n4zNDENjtb46eDyNUm7kHOWiHZDrrvFux6mU7K5qpBwGkoE7IdaytwCAxiDKW
+         +ta+9aKOI/WSL8Y1c+R+EVSsKoNsQM+dRcS4GmK0s/VwYLIZRTS0v6+ESJahm/sMosf0
+         Nxhl50wO1WDBRaRbkzFOl7hbv/MJRb8It5EQuca5xDiIPXO7Oq2ghXroLxqoJNX/ULUe
+         HVFzR4SEpcv5DnCEObg9OmfjepJMbd3YQJdzxPy3l/deO/fz4LWA2PLZHvrB7NKd4SAA
+         /nIg==
+X-Gm-Message-State: AOJu0YxGsITmBzp3nUeqHDXytW+LnLGXdbGZqXLEVwrAVgSIVJAQiEME
+        SHRxHGnsosAhJsZrAGaeAtQ=
+X-Google-Smtp-Source: AGHT+IH5+pR9lSjailTZrJCPgAIZSypSKxZvFMA06mqn57NIoNdanFbIFPE8bJKrwRE5Slcf3bZhLQ==
+X-Received: by 2002:a7b:c38b:0:b0:3fd:30cb:18bd with SMTP id s11-20020a7bc38b000000b003fd30cb18bdmr9394660wmj.15.1692775052435;
+        Wed, 23 Aug 2023 00:17:32 -0700 (PDT)
+Received: from khadija-virtual-machine ([124.29.208.67])
+        by smtp.gmail.com with ESMTPSA id o3-20020a5d4743000000b0031912c0ffebsm17996205wrs.23.2023.08.23.00.17.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Aug 2023 00:17:31 -0700 (PDT)
+Date:   Wed, 23 Aug 2023 12:17:29 +0500
+From:   Khadija Kamran <kamrankhadijadj@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, ztarkhani@microsoft.com,
+        alison.schofield@intel.com
+Subject: [PATCH] lsm: constify 'file' parameter in
+ security_bprm_creds_from_file()
+Message-ID: <ZOWyiUTHCmKvsoX8@gmail.com>
 MIME-Version: 1.0
-References: <20230810105501.1418427-1-mszeredi@redhat.com> <20230810105501.1418427-5-mszeredi@redhat.com>
- <067fcdfa-0a99-4731-0ea1-a799fff51480@fastmail.fm> <CAJfpeguEmafkUPqZO2_EAOWbw+7XUm0E9whVpnnj_MVf2fnStQ@mail.gmail.com>
- <9ebc2bcb-5ffd-e82f-9836-58f375f881ea@fastmail.fm>
-In-Reply-To: <9ebc2bcb-5ffd-e82f-9836-58f375f881ea@fastmail.fm>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 23 Aug 2023 08:18:17 +0200
-Message-ID: <CAJfpegvqdAa+XjHA2VefEu=QZNQHyYnXC988UxPfPMisCj93jA@mail.gmail.com>
-Subject: Re: [PATCH 4/5] fuse: implement statx
-To:     Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 22 Aug 2023 at 18:55, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
->
->
->
-> On 8/22/23 17:33, Miklos Szeredi wrote:
-> > On Tue, 22 Aug 2023 at 17:20, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
-> >>
-> >> Hi Miklos,
-> >>
-> >> sorry for late review.
-> >>
-> >> On 8/10/23 12:55, Miklos Szeredi wrote:
-> >> [...]
-> >>> +static int fuse_do_statx(struct inode *inode, struct file *file,
-> >>> +                      struct kstat *stat)
-> >>> +{
-> >>> +     int err;
-> >>> +     struct fuse_attr attr;
-> >>> +     struct fuse_statx *sx;
-> >>> +     struct fuse_statx_in inarg;
-> >>> +     struct fuse_statx_out outarg;
-> >>> +     struct fuse_mount *fm = get_fuse_mount(inode);
-> >>> +     u64 attr_version = fuse_get_attr_version(fm->fc);
-> >>> +     FUSE_ARGS(args);
-> >>> +
-> >>> +     memset(&inarg, 0, sizeof(inarg));
-> >>> +     memset(&outarg, 0, sizeof(outarg));
-> >>> +     /* Directories have separate file-handle space */
-> >>> +     if (file && S_ISREG(inode->i_mode)) {
-> >>> +             struct fuse_file *ff = file->private_data;
-> >>> +
-> >>> +             inarg.getattr_flags |= FUSE_GETATTR_FH;
-> >>> +             inarg.fh = ff->fh;
-> >>> +     }
-> >>> +     /* For now leave sync hints as the default, request all stats. */
-> >>> +     inarg.sx_flags = 0;
-> >>> +     inarg.sx_mask = STATX_BASIC_STATS | STATX_BTIME;
-> >>
-> >>
-> >>
-> >> What is actually the reason not to pass through flags from
-> >> fuse_update_get_attr()? Wouldn't it make sense to request the minimal
-> >> required mask and then server side can decide if it wants to fill in more?
-> >
-> > This and following commit is about btime and btime only.  It's about
-> > adding just this single attribute, otherwise the logic is unchanged.
-> >
-> > But the flexibility is there in the interface definition, and
-> > functionality can be added later.
->
-> Sure, though what speaks against setting (limiting the mask) right away?
+The 'bprm_creds_from_file' hook has implementation registered in
+commoncap. Looking at the function implementation we observe that the
+'file' parameter is not changing.
 
-But then the result is basically uncacheable, until we have separate
-validity timeouts for each attribute.  Maybe we need that, maybe not,
-but it does definitely have side effects.
+Mark the 'file' parameter of LSM hook security_bprm_creds_from_file() as
+'const' since it will not be changing in the LSM hook.
 
-Thanks,
-Miklos
+Signed-off-by: Khadija Kamran <kamrankhadijadj@gmail.com>
+---
+ include/linux/fs.h            | 2 +-
+ include/linux/lsm_hook_defs.h | 2 +-
+ include/linux/security.h      | 6 +++---
+ security/commoncap.c          | 4 ++--
+ security/security.c           | 2 +-
+ 5 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 133f0640fb24..15d58978efea 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2314,7 +2314,7 @@ struct filename {
+ };
+ static_assert(offsetof(struct filename, iname) % sizeof(long) == 0);
+ 
+-static inline struct mnt_idmap *file_mnt_idmap(struct file *file)
++static inline struct mnt_idmap *file_mnt_idmap(const struct file *file)
+ {
+ 	return mnt_idmap(file->f_path.mnt);
+ }
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 6bb55e61e8e8..1a05d95148e9 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -50,7 +50,7 @@ LSM_HOOK(int, 0, settime, const struct timespec64 *ts,
+ 	 const struct timezone *tz)
+ LSM_HOOK(int, 0, vm_enough_memory, struct mm_struct *mm, long pages)
+ LSM_HOOK(int, 0, bprm_creds_for_exec, struct linux_binprm *bprm)
+-LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, struct file *file)
++LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, const struct file *file)
+ LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
+ LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, struct linux_binprm *bprm)
+ LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, struct linux_binprm *bprm)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index e2734e9e44d5..fbd498046e39 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -150,7 +150,7 @@ extern int cap_capset(struct cred *new, const struct cred *old,
+ 		      const kernel_cap_t *effective,
+ 		      const kernel_cap_t *inheritable,
+ 		      const kernel_cap_t *permitted);
+-extern int cap_bprm_creds_from_file(struct linux_binprm *bprm, struct file *file);
++extern int cap_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file);
+ int cap_inode_setxattr(struct dentry *dentry, const char *name,
+ 		       const void *value, size_t size, int flags);
+ int cap_inode_removexattr(struct mnt_idmap *idmap,
+@@ -289,7 +289,7 @@ int security_syslog(int type);
+ int security_settime64(const struct timespec64 *ts, const struct timezone *tz);
+ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages);
+ int security_bprm_creds_for_exec(struct linux_binprm *bprm);
+-int security_bprm_creds_from_file(struct linux_binprm *bprm, struct file *file);
++int security_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file);
+ int security_bprm_check(struct linux_binprm *bprm);
+ void security_bprm_committing_creds(struct linux_binprm *bprm);
+ void security_bprm_committed_creds(struct linux_binprm *bprm);
+@@ -611,7 +611,7 @@ static inline int security_bprm_creds_for_exec(struct linux_binprm *bprm)
+ }
+ 
+ static inline int security_bprm_creds_from_file(struct linux_binprm *bprm,
+-						struct file *file)
++						const struct file *file)
+ {
+ 	return cap_bprm_creds_from_file(bprm, file);
+ }
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 0b3fc2f3afe7..02a778257e2c 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -720,7 +720,7 @@ int get_vfs_caps_from_disk(struct mnt_idmap *idmap,
+  * its xattrs and, if present, apply them to the proposed credentials being
+  * constructed by execve().
+  */
+-static int get_file_caps(struct linux_binprm *bprm, struct file *file,
++static int get_file_caps(struct linux_binprm *bprm, const struct file *file,
+ 			 bool *effective, bool *has_fcap)
+ {
+ 	int rc = 0;
+@@ -882,7 +882,7 @@ static inline bool nonroot_raised_pE(struct cred *new, const struct cred *old,
+  *
+  * Return: 0 if successful, -ve on error.
+  */
+-int cap_bprm_creds_from_file(struct linux_binprm *bprm, struct file *file)
++int cap_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file)
+ {
+ 	/* Process setpcap binaries and capabilities for uid 0 */
+ 	const struct cred *old = current_cred();
+diff --git a/security/security.c b/security/security.c
+index d5ff7ff45b77..bf7de5211542 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1078,7 +1078,7 @@ int security_bprm_creds_for_exec(struct linux_binprm *bprm)
+  *
+  * Return: Returns 0 if the hook is successful and permission is granted.
+  */
+-int security_bprm_creds_from_file(struct linux_binprm *bprm, struct file *file)
++int security_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file)
+ {
+ 	return call_int_hook(bprm_creds_from_file, 0, bprm, file);
+ }
+-- 
+2.34.1
+
