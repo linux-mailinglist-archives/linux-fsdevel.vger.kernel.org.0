@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 54A7A785926
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 15:27:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49C647859E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 16:01:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235683AbjHWN1H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Aug 2023 09:27:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42420 "EHLO
+        id S235792AbjHWOBh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Aug 2023 10:01:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235167AbjHWN1G (ORCPT
+        with ESMTP id S236007AbjHWN1i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Aug 2023 09:27:06 -0400
+        Wed, 23 Aug 2023 09:27:38 -0400
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 30E2A10CF;
-        Wed, 23 Aug 2023 06:26:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 548CE10CA;
+        Wed, 23 Aug 2023 06:27:05 -0700 (PDT)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 93C321691;
-        Wed, 23 Aug 2023 06:16:56 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C95B2168F;
+        Wed, 23 Aug 2023 06:17:03 -0700 (PDT)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 033CD3F740;
-        Wed, 23 Aug 2023 06:16:09 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B4A793F740;
+        Wed, 23 Aug 2023 06:16:16 -0700 (PDT)
 From:   Alexandru Elisei <alexandru.elisei@arm.com>
 To:     catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
         maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
@@ -37,9 +37,9 @@ Cc:     pcc@google.com, steven.price@arm.com, anshuman.khandual@arm.com,
         kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
         linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC 20/37] mm: compaction: Reserve metadata storage in compaction_alloc()
-Date:   Wed, 23 Aug 2023 14:13:33 +0100
-Message-Id: <20230823131350.114942-21-alexandru.elisei@arm.com>
+Subject: [PATCH RFC 21/37] mm: khugepaged: Handle metadata-enabled VMAs
+Date:   Wed, 23 Aug 2023 14:13:34 +0100
+Message-Id: <20230823131350.114942-22-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230823131350.114942-1-alexandru.elisei@arm.com>
 References: <20230823131350.114942-1-alexandru.elisei@arm.com>
@@ -53,62 +53,104 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If the source page being migrated has metadata associated with it, make
-sure to reserve the metadata storage when choosing a suitable destination
-page from the free list.
+Both madvise(MADV_COLLAPSE) and khugepaged can collapse a contiguous
+THP-sized memory region mapped as PTEs into a THP. If metadata is enabled for
+the VMA where the PTEs are mapped, make sure to allocate metadata storage for
+the compound page that will be replacing them.
 
 Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 ---
- mm/compaction.c | 9 +++++++++
- mm/internal.h   | 1 +
- 2 files changed, 10 insertions(+)
+ arch/arm64/include/asm/memory_metadata.h | 7 +++++++
+ include/asm-generic/memory_metadata.h    | 4 ++++
+ mm/khugepaged.c                          | 7 +++++++
+ 3 files changed, 18 insertions(+)
 
-diff --git a/mm/compaction.c b/mm/compaction.c
-index cc0139fa0cb0..af2ee3085623 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -570,6 +570,7 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
- 	bool locked = false;
- 	unsigned long blockpfn = *start_pfn;
- 	unsigned int order;
-+	int ret;
+diff --git a/arch/arm64/include/asm/memory_metadata.h b/arch/arm64/include/asm/memory_metadata.h
+index 1b18e3217dd0..ade37331a5c8 100644
+--- a/arch/arm64/include/asm/memory_metadata.h
++++ b/arch/arm64/include/asm/memory_metadata.h
+@@ -5,6 +5,8 @@
+ #ifndef __ASM_MEMORY_METADATA_H
+ #define __ASM_MEMORY_METADATA_H
  
- 	/* Strict mode is for isolation, speed is secondary */
- 	if (strict)
-@@ -626,6 +627,11 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
- 
- 		/* Found a free page, will break it into order-0 pages */
- 		order = buddy_order(page);
-+		if (metadata_storage_enabled() && cc->reserve_metadata) {
-+			ret = reserve_metadata_storage(page, order, cc->gfp_mask);
-+			if (ret)
-+				goto isolate_fail;
-+		}
- 		isolated = __isolate_free_page(page, order);
- 		if (!isolated)
- 			break;
-@@ -1757,6 +1763,9 @@ static struct folio *compaction_alloc(struct folio *src, unsigned long data)
- 	struct compact_control *cc = (struct compact_control *)data;
- 	struct folio *dst;
- 
-+	if (metadata_storage_enabled())
-+		cc->reserve_metadata = folio_has_metadata(src);
++#include <linux/mm.h>
 +
- 	if (list_empty(&cc->freepages)) {
- 		isolate_freepages(cc);
+ #include <asm-generic/memory_metadata.h>
  
-diff --git a/mm/internal.h b/mm/internal.h
-index d28ac0085f61..046cc264bfbe 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -492,6 +492,7 @@ struct compact_control {
- 					 */
- 	bool alloc_contig;		/* alloc_contig_range allocation */
- 	bool source_has_metadata;	/* source pages have associated metadata */
-+	bool reserve_metadata;
- };
+ #include <asm/mte.h>
+@@ -40,6 +42,11 @@ static inline int reserve_metadata_storage(struct page *page, int order, gfp_t g
+ static inline void free_metadata_storage(struct page *page, int order)
+ {
+ }
++
++static inline bool vma_has_metadata(struct vm_area_struct *vma)
++{
++	return vma && (vma->vm_flags & VM_MTE);
++}
+ #endif /* CONFIG_MEMORY_METADATA */
  
- /*
+ #endif /* __ASM_MEMORY_METADATA_H  */
+diff --git a/include/asm-generic/memory_metadata.h b/include/asm-generic/memory_metadata.h
+index 111d6edc0997..35a0d6a8b5fc 100644
+--- a/include/asm-generic/memory_metadata.h
++++ b/include/asm-generic/memory_metadata.h
+@@ -35,6 +35,10 @@ static inline bool folio_has_metadata(struct folio *folio)
+ {
+ 	return false;
+ }
++static inline bool vma_has_metadata(struct vm_area_struct *vma)
++{
++	return false;
++}
+ #endif /* !CONFIG_MEMORY_METADATA */
+ 
+ #endif /* __ASM_GENERIC_MEMORY_METADATA_H */
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 78c8d5d8b628..174710d941c2 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -20,6 +20,7 @@
+ #include <linux/swapops.h>
+ #include <linux/shmem_fs.h>
+ 
++#include <asm/memory_metadata.h>
+ #include <asm/tlb.h>
+ #include <asm/pgalloc.h>
+ #include "internal.h"
+@@ -96,6 +97,7 @@ static struct kmem_cache *mm_slot_cache __read_mostly;
+ 
+ struct collapse_control {
+ 	bool is_khugepaged;
++	bool has_metadata;
+ 
+ 	/* Num pages scanned per node */
+ 	u32 node_load[MAX_NUMNODES];
+@@ -1069,6 +1071,9 @@ static int alloc_charge_hpage(struct page **hpage, struct mm_struct *mm,
+ 	int node = hpage_collapse_find_target_node(cc);
+ 	struct folio *folio;
+ 
++	if (cc->has_metadata)
++		gfp |= __GFP_TAGGED;
++
+ 	if (!hpage_collapse_alloc_page(hpage, gfp, node, &cc->alloc_nmask))
+ 		return SCAN_ALLOC_HUGE_PAGE_FAIL;
+ 
+@@ -2497,6 +2502,7 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
+ 		if (khugepaged_scan.address < hstart)
+ 			khugepaged_scan.address = hstart;
+ 		VM_BUG_ON(khugepaged_scan.address & ~HPAGE_PMD_MASK);
++		cc->has_metadata = vma_has_metadata(vma);
+ 
+ 		while (khugepaged_scan.address < hend) {
+ 			bool mmap_locked = true;
+@@ -2838,6 +2844,7 @@ int madvise_collapse(struct vm_area_struct *vma, struct vm_area_struct **prev,
+ 	if (!cc)
+ 		return -ENOMEM;
+ 	cc->is_khugepaged = false;
++	cc->has_metadata = vma_has_metadata(vma);
+ 
+ 	mmgrab(mm);
+ 	lru_add_drain_all();
 -- 
 2.41.0
 
