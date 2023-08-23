@@ -2,161 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5308C786371
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 00:34:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE1107863C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 00:56:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238680AbjHWWeY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Aug 2023 18:34:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38964 "EHLO
+        id S238823AbjHWW4J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Aug 2023 18:56:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238705AbjHWWeE (ORCPT
+        with ESMTP id S235522AbjHWWzi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Aug 2023 18:34:04 -0400
-Received: from outbound-ip7b.ess.barracuda.com (outbound-ip7b.ess.barracuda.com [209.222.82.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3999810D9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 15:34:00 -0700 (PDT)
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2100.outbound.protection.outlook.com [104.47.70.100]) by mx-outbound23-119.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Wed, 23 Aug 2023 22:33:57 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=k807rtbUrzQowQQQGJza63XUGKqN6Kfz2D7aMqMGgIRxA1GQ+AwhUpscC+uV6y/hCyRV3mcvayr6d9XNup/WQzyNIsWoHHsIpypd+bv3BwsB1DDEBXUMFX+OxAKPvEvJt3/j4lKq8LleQkJ/dm4Hy8CnVKpmpfds7gYBC6eHDRCXrIK4Nacx2PdWynqKpDYb2XHRbcqxXjXb78hMVE5+31Uz8hPzuDoMLd52mbK0jV/+GcJuvbDv5mfztDxRwN3zPARg6BOS6lj21Lqyt1EyMungXPE11a6Vtxbom8zdIUYGmrozHBo6/un2bjuAvYFin4yVowDryYujv391li4L0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fnHe4eJHj4U0S27q0W1D+cV6oM5zxcmtAJOj/noGFIc=;
- b=MIhKWEgSzjb7dgm41mSWb6FOn2Tdn5+rQ3HDWV4x77vnIJeGaswVNpUc9Z8F3bNA5CyXcE71jeSsH8euJJbN+7G/tagCj7PO1rAzcK9CuG3psLl52mHjod0YlpGu+nPNmvTVD8DpqiRxoXCB9ktEX30zSxk9GOTCWSYYIhQcf5nWSFzI5EkhpbKjfjzLari7YkvCYNIQbOP4HlHkFElbJn7INULmBEG3Lw70GSSGvSUQJX6HjQvEu86GQd+EVUIvexFnCvtuXASKBVFPNLCn9gnp/78zRJE1kHgOIggU1nQKcD7mVJyY9OLIZJYrFB5JSdow4Qcv9eKnQrdUi8/i5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
- (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
- (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fnHe4eJHj4U0S27q0W1D+cV6oM5zxcmtAJOj/noGFIc=;
- b=cvbrFup8FLeBBcVp/2coq40hhclOalRgEaGpfVleOzirIsMe45UJmC/uwJcDA1azbrClYwBuFFI3dLE76GJEl+kObcAeJt4kP5l9fDJmmeoMkNrdnswV2+/IQnb62c3m1M+mH+7U4mNP8zhOfOeA+kQ1Zg9EZJ/opt+8YyKQoqw=
-Received: from MW4PR04CA0155.namprd04.prod.outlook.com (2603:10b6:303:85::10)
- by DS0PR19MB6504.namprd19.prod.outlook.com (2603:10b6:8:c8::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.24; Wed, 23 Aug
- 2023 22:33:53 +0000
-Received: from MW2NAM04FT047.eop-NAM04.prod.protection.outlook.com
- (2603:10b6:303:85:cafe::72) by MW4PR04CA0155.outlook.office365.com
- (2603:10b6:303:85::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.26 via Frontend
- Transport; Wed, 23 Aug 2023 22:33:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
- smtp.mailfrom=ddn.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ddn.com;
-Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
- 50.222.100.11 as permitted sender) receiver=protection.outlook.com;
- client-ip=50.222.100.11; helo=uww-mx01.datadirectnet.com; pr=C
-Received: from uww-mx01.datadirectnet.com (50.222.100.11) by
- MW2NAM04FT047.mail.protection.outlook.com (10.13.31.185) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6723.17 via Frontend Transport; Wed, 23 Aug 2023 22:33:53 +0000
-Received: from localhost (unknown [10.68.0.8])
-        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 0C6BC20C684B;
-        Wed, 23 Aug 2023 16:34:58 -0600 (MDT)
-From:   Bernd Schubert <bschubert@ddn.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     bernd.schubert@fastmail.fm, miklos@szeredi.hu, dsingh@ddn.com,
-        Bernd Schubert <bschubert@ddn.com>
-Subject: [PATCH] [-next] fuse: Conditionally fill kstat in fuse_do_statx
-Date:   Thu, 24 Aug 2023 00:33:45 +0200
-Message-Id: <20230823223345.2775761-1-bschubert@ddn.com>
-X-Mailer: git-send-email 2.34.1
+        Wed, 23 Aug 2023 18:55:38 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10B78E50;
+        Wed, 23 Aug 2023 15:55:37 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 09BFF5C01AD;
+        Wed, 23 Aug 2023 18:55:34 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Wed, 23 Aug 2023 18:55:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        cc:cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
+        1692831334; x=1692917734; bh=Am3NaVWh1u/SgUw7D2u+AYl0pmbKqJ0ODUQ
+        Srt76FLw=; b=YB0nxz8sKG1HPYZ65G22dhh+G104mMsVpx3YCbl29nFeVSwgSpa
+        4vBKAWSk5hmSTktXkvmmzpZo1UJh9ZY/jWZh8sWwFPiGrdpwQI4iGDT/LCroJA5i
+        SAsnmzBYyZayRGZ3itMRoCEzI/uvx77YrdM8GwcmbnuLp8zCVkz/XlFk0HV97TKc
+        hHoxUGfJA0OP1a8rxrsPG/iCg6WWl1EirDxap4lBZoG16bUOyuN5F37ov2grhR04
+        0K36nkN2F4mAhlh7vcGVLMUk4ZY5yTQ+ckHcLNtHWtyYm5UmnFKSg2ZrwzOkFXdW
+        19TkykbggkYyWVo4As/JKIext1/EdFyZF7A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+        1692831334; x=1692917734; bh=Am3NaVWh1u/SgUw7D2u+AYl0pmbKqJ0ODUQ
+        Srt76FLw=; b=G2WqtEH5Bme/lGj/cbwwRqfJNPMkhQT/2FU/2g9FNMgk3UsxGS+
+        Qw70Mn5889ecllLcQNaNcnVLqarP+8OsWHXYL8bb656SMOSZEZNu5ade1pa9d7PB
+        3D3t9+yY1YMrMSp9QQLXzHfsc1FfE8+o6hue+rl7aJbfaEKz1DVNOxknUCOREvZu
+        ixRCaS+ICxmMdurKtCX+b3zO1VVSqGFzY/Q82pj0WFh2D0kr0TJZYSixu1vMa3BY
+        7z8SymN7IH8tkaYcX5EGkDp/1YNJXlAFtRVUzFjmglSBiC2gR6nk+mVyYn+JMoa5
+        PuIW+c9W8W6nEUj/utGsFOB+zPX+eMnythA==
+X-ME-Sender: <xms:ZI7mZPdVTaEZHAeSusAr0CdEjYK9W3iDkbel76QFCgveTkzOxMlpGw>
+    <xme:ZI7mZFOg0-IXeDFuB_sHvCkLAAY8UCBraoSx8A8YFFQQFCaXkDSSenEbw9mWKtcGf
+    e8KQlwwaYKejdQ0>
+X-ME-Received: <xmr:ZI7mZIgtCnSinPCSrqpD9fhuCyc5c7GzCDJQW1WNHpDsH7Ad5uHrWNhRvFpbdZh6ZftH81z-hDwZB_AlsC2Hy-r5-Hskn65YAmKi-gu4wxvOgy2fp7tG>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedruddvhedgudehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtfeejnecuhfhrohhmpeeuvghr
+    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
+    hlrdhfmheqnecuggftrfgrthhtvghrnhepfffhtddvveeivdduuedujeetffekkeelgfdv
+    fefgueffieefjefgjeffhedttdefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
+    fhhm
+X-ME-Proxy: <xmx:ZI7mZA__gLvDsrZi6XdmTCmlsG_kXF1kcP13MCbW2AutxMaEVLYRpw>
+    <xmx:ZI7mZLvXKxuKfb8m8kBd-UFIYUY5nuR7yGjyBHE8wYYnmPgMCBanMg>
+    <xmx:ZI7mZPF4x4AgUbwQTTFGjme2CnGNKVbCCSrdc3GIQUiGyTHCHlBhJA>
+    <xmx:Zo7mZBVzzL9BfCCAzBMOsYVYjB82LOwcT1p2YaCTqFgl5tMeMtWr8A>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 23 Aug 2023 18:55:31 -0400 (EDT)
+Message-ID: <38a74f67-9bfc-6cb6-6999-343aac95b781@fastmail.fm>
+Date:   Thu, 24 Aug 2023 00:55:29 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH 4/5] fuse: writeback_cache consistency enhancement
+ (writeback_cache_v2)
+To:     Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        me@jcix.top
+References: <20230711043405.66256-1-zhangjiachen.jaycee@bytedance.com>
+ <20230711043405.66256-5-zhangjiachen.jaycee@bytedance.com>
+ <CAJfpegtqJo78wqT0EY0=1xfoSROsJogg9BNC_xJv6id9J1Oa+g@mail.gmail.com>
+ <699673a6-ff82-8968-6310-9a0b1c429be3@fastmail.fm>
+ <029cb695-9b8e-8fb3-ef0f-b223f34e7639@bytedance.com>
+Content-Language: en-US, de-DE
+From:   Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <029cb695-9b8e-8fb3-ef0f-b223f34e7639@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW2NAM04FT047:EE_|DS0PR19MB6504:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 381b8749-4f4a-420f-3470-08dba42907b6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: CDjgBylbxSyWdZ5IHeWnBdHlUmCCGMvHO5+WRkN1JNJItObi9yOv2uFsqkis+56pikHl8uKs4xyLMbEplV+O6No7if4i4o5BQq8cJeoRDLuDEhafIMSu5UjK8DiINXSeUYP5q6m99yrmToHTgsaW4IkEhaG0dKYl5RUaMCDQ6cK4XAN/Qi6B15z2KhgUArGTnfo+4H9jRz/B4+SSuXcqmRxGeC6h3S3MmCGaMq+xxvaL1nTvrI12qhuZZr1F/74Q255TGO4zZBloeUH+pVSfDTIbPnCaEWU0CHImwou+AiLfFzdFiuHjI+d5LqmhFx0egqUyRvapJYf5tQ1vSvE/ifqz7xVSwL5cH69BxcCjDm+w6/zcVNVIa+9Duv0zVVdOLLXyG8y7DpudQOQ29K1xItsWQQqKndIOadLphSK3eQZ6AdiMb29fsKff2xMeBQ+FaUqHxPh2m1p+QfIMmVRbuUvn5/wZnefNuj0uQPo4yK8DqmyYCLej00Y2QLbo0uPavRZ4YsCLIKaspAOkccOnDfj2OWzTtKTQQLOSBupLr6+nCqqXBuFHFOuwjZSQpaUObZ5g4RFBgiIb6pMNefw5W/GAJdKRr42aax5qb5MHW83Lw/kXPvPY1q5puA6wYICFBaue5bSyOCVGzCOMaYiF7MbYDY16q557gBTSefV91puqVaa+EDUiCjwYD7E3YU3eTV4r/PnbaVRsPHvi/6jui8fkN+X89SV70nRugzPgUI8hT3NJcC+rWdxfRek4VVcu
-X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(396003)(136003)(39850400004)(376002)(346002)(451199024)(186009)(82310400011)(1800799009)(36840700001)(46966006)(41300700001)(6266002)(336012)(36756003)(26005)(83380400001)(5660300002)(2906002)(1076003)(86362001)(2616005)(82740400003)(356005)(81166007)(36860700001)(47076005)(40480700001)(8676002)(8936002)(4326008)(6666004)(70586007)(70206006)(316002)(6916009)(478600001)(36900700001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: z4KdGvWI0PF14cDcxQtxFJYCk9gG7J1CP1DSdHwRa/gIx02jAp/u6vVh5R8SUbS/jCPNc52PYDP4+xuKo/VlVSkPhs1fajQqWC+SHrBM0UyPhP1+i+z9aqUzKZq9aOuocAqQJT5k2vGpKqkV+NJmMWJuJ38EwTTav9d1UZVJl2nn2vCN3tnoluSqqI2fhriW+spwMgyf/5m/lY1fczrM3yeYH3EUQfbpQE79mV3bCoyGAtTNLrgtykxxsatsBIAYE/Tqr773D5EwJ35X9fnqQfdpdOlf15euXxmyYNb8RdKtnKH+o1uOKyDUPdwK21wDFpKCrjsJ9L19AruQIYjCjaWZ9V5/ojrsnBm7QAJUgp3yfz0ax0p4QgkzWwM175x3yjbREH5V4kBT5fa1L2xX3JYXuDa2bRt7Wi625kfasztfzpsCApsbFLUFyUM4D0E7/PkG2oX6KAXFLIfup/OgzJUQoJE0mOC3HplaRs/zfIm5SXwDplhcQFRkKWCdiFe66ObZWUzlukZc5U/PWwPugnrAEw2I+udlRxhgulNLp8I4QvVMm6TZDJOilix32V9xUzKcDwObTN32TR3MyDD3r7fU0SSe/luVM+3AqBcASCEgjeFPIQqf2uU0pmU+3XNYofTimMcYZZaSoR2UrSQyeV3gZruRBpZ//yniZi5pZ/ED/u2nYdqnUfjPpGNUtGzLd1l9I8sp6RgxdabWhi7V4XZVEQaLhJIwD3pb3I9rB2Tz4BSsncLnCp/Ft3D87k6GzgH9UgCwr8oui6FTbGlhGCFqjNvcLV9ugEapDQTMtMkuYXr8H/jICTtpmPeCat5/y3rvw9O+LYHS6o9/t8J3dICYX3tVDGvfyBDgsJlH+S8=
-X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2023 22:33:53.2271
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 381b8749-4f4a-420f-3470-08dba42907b6
-X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mx01.datadirectnet.com]
-X-MS-Exchange-CrossTenant-AuthSource: MW2NAM04FT047.eop-NAM04.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR19MB6504
-X-BESS-ID: 1692830037-106007-12302-20125-1
-X-BESS-VER: 2019.1_20230822.1529
-X-BESS-Apparent-Source-IP: 104.47.70.100
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoam5iZAVgZQMM08ydTYwjLZON
-        ko2cIiyTg1JS0xxdLUMjXRyNI8xcRIqTYWANpurW9BAAAA
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.250345 [from 
-        cloudscan15-173.us-east-2a.ess.aws.cudaops.com]
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The code path
 
-fuse_update_attributes
-    fuse_update_get_attr
-        fuse_do_statx
 
-has the risk to use a NULL pointer for struct kstat *stat,
-although current callers of fuse_update_attributes
-only set request_mask to values that will trigger
-the call of fuse_do_getattr, which already handles the NULL
-pointer. Future updates might miss that fuse_do_statx does
-not handle it - it is safer to add a condition already
-right now.
+On 8/23/23 12:59, Jiachen Zhang wrote:
+> On 2023/8/23 18:35, Bernd Schubert wrote:
+>> On 8/23/23 11:07, Miklos Szeredi wrote:
+>>> On Tue, 11 Jul 2023 at 06:36, Jiachen Zhang
+>>> <zhangjiachen.jaycee@bytedance.com> wrote:
+>>>>
+>>>> Some users may want both the high performance of the writeback_cahe 
+>>>> mode
+>>>> and a little bit more consistency among FUSE mounts. Current
+>>>> writeback_cache mode never updates attributes from server, so can never
+>>>> see the file attributes changed by other FUSE mounts, which means
+>>>> 'zero-consisteny'.
+>>>>
+>>>> This commit introduces writeback_cache_v2 mode, which allows the 
+>>>> attributes
+>>>> to be updated from server to kernel when the inode is clean and no
+>>>> writeback is in-progressing. FUSE daemons can select this mode by the
+>>>> FUSE_WRITEBACK_CACHE_V2 init flag.
+>>>>
+>>>> In writeback_cache_v2 mode, the server generates official attributes.
+>>>> Therefore,
+>>>>
+>>>>      1. For the cmtime, the cmtime generated by kernel are just 
+>>>> temporary
+>>>>      values that are never flushed to server by fuse_write_inode(), 
+>>>> and they
+>>>>      could be eventually updated by the official server cmtime. The
+>>>>      mtime-based revalidation of the fc->auto_inval_data mode is also
+>>>>      skipped, as the kernel-generated temporary cmtime are likely 
+>>>> not equal
+>>>>      to the offical server cmtime.
+>>>>
+>>>>      2. For the file size, we expect server updates its file size on
+>>>>      FUSE_WRITEs. So we increase fi->attr_version in 
+>>>> fuse_writepage_end() to
+>>>>      check the staleness of the returning file size.
+>>>>
+>>>> Together with FOPEN_INVAL_ATTR, a FUSE daemon is able to implement
+>>>> close-to-open (CTO) consistency like NFS client implementations.
+>>>
+>>> What I'd prefer is mode similar to NFS: getattr flushes pending writes
+>>> so that server ctime/mtime are always in sync with client.  FUSE
+>>> probably should have done that from the beginning, but at that time I
+>>> wasn't aware of the NFS solution.
+>>
+>>
+>> I think it would be good to have flush-on-getattr configurable - 
+>> systems with a distributed lock manager (DLM) and notifications from 
+>> server/daemon to kernel should not need it.
+>>
+>>
+>> Thanks,
+>> Bernd
+> 
+> Hi Miklos and Bernd,
+> 
+> I agree that flush-on-getattr is a good solution to keep the c/mtime
+> consistency for the view of userspace applications.
+> 
+> Maybe in the next version, we can add the flush-on-getattr just for the
+> writeback_cache_v2 mode, as daemons replying on reverse notifications
+> are likely not need the writeback_cache_v2 mode. What do you think?
 
-Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Dharmendra Singh <dsingh@ddn.com>
-Cc: linux-fsdevel@vger.kernel.org
----
- fs/fuse/dir.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+Hi Jiachen,
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index e190d09f220d..01e78d746338 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1219,11 +1219,15 @@ static int fuse_do_statx(struct inode *inode, struct file *file,
- 		fuse_change_attributes(inode, &attr, &outarg.stat,
- 				       ATTR_TIMEOUT(&outarg), attr_version);
- 	}
--	stat->result_mask = sx->mask & (STATX_BASIC_STATS | STATX_BTIME);
--	stat->btime.tv_sec = sx->btime.tv_sec;
--	stat->btime.tv_nsec = min_t(u32, sx->btime.tv_nsec, NSEC_PER_SEC - 1);
--	fuse_fillattr(inode, &attr, stat);
--	stat->result_mask |= STATX_TYPE;
-+
-+	if (stat) {
-+		stat->result_mask = sx->mask & (STATX_BASIC_STATS | STATX_BTIME);
-+		stat->btime.tv_sec = sx->btime.tv_sec;
-+		stat->btime.tv_nsec = min_t(u32, sx->btime.tv_nsec,
-+					    NSEC_PER_SEC - 1);
-+		fuse_fillattr(inode, &attr, stat);
-+		stat->result_mask |= STATX_TYPE;
-+	}
- 
- 	return 0;
- }
--- 
-2.34.1
+isn't Miklos' idea that we can avoid writeback_cache_v2 mode?
 
+
+Thanks,
+Bernd
