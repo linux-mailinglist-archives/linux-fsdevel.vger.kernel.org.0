@@ -2,293 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6654878562D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 12:50:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9798C78565D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 13:00:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233891AbjHWKuk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Aug 2023 06:50:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42822 "EHLO
+        id S234263AbjHWLAS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Aug 2023 07:00:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233807AbjHWKuW (ORCPT
+        with ESMTP id S234132AbjHWLAR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Aug 2023 06:50:22 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF043E66;
-        Wed, 23 Aug 2023 03:49:26 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 41B5F20755;
-        Wed, 23 Aug 2023 10:48:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1692787739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2fgb/HYtJvfF133Bzfj8za01N4eHl8/RTV3Pg6qaMGk=;
-        b=TtQOdn0RxP/lni32QqcKH5If4pI+mReeUKz62aBHUE7YvHMXcRHan6gtLI2Mt/1HDGf5tO
-        SfT/zVOLsvF15Bpi1JHmvtTg5o3GjeqlsxmmAoTaCq4fI5hgb3wHuZetdX3GyWr9qeZ1Tz
-        q7mPxVDCcktpdVdbBrA0ietVoErUm/g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1692787739;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2fgb/HYtJvfF133Bzfj8za01N4eHl8/RTV3Pg6qaMGk=;
-        b=+9zTWQ0huAwsLiCnlm1bejyJoeBDzknCDGTv0cwBJuEcIyZFgGpKfvIHyfsCqmfS5LlB2Y
-        XBW95k//qNFpKUAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 31B0B13592;
-        Wed, 23 Aug 2023 10:48:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id A0YWDBvk5WR5IAAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 23 Aug 2023 10:48:59 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id B1089A07A1; Wed, 23 Aug 2023 12:48:57 +0200 (CEST)
-From:   Jan Kara <jack@suse.cz>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, <linux-fsdevel@vger.kernel.org>,
-        <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 29/29] block: Remove blkdev_get_by_*() functions
-Date:   Wed, 23 Aug 2023 12:48:40 +0200
-Message-Id: <20230823104857.11437-29-jack@suse.cz>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20230818123232.2269-1-jack@suse.cz>
-References: <20230818123232.2269-1-jack@suse.cz>
+        Wed, 23 Aug 2023 07:00:17 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B53ACD1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 03:59:56 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1bc83a96067so33412725ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 03:59:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1692788395; x=1693393195;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GYZFq9HoRCm6GUrGyMS4vRuIGoFXcojk2tIii80AOf8=;
+        b=hMCv8kaLg9uRTJ7vSvi6IGdU5fZSfTMhlG0zlRPlHSqcYvoDeYlf/0xO+0jJfC14cS
+         Bw/WseNRlkcUtziB19vuZoUOtCEHMS/ZTmr/X4WMxnB4mRrckS65mlok1QlaHfFhxJWk
+         sCvx4/kcuXPrO7i7krfxqRgWsnc78+OU1y2ROexiQGs+BLzrE+OARml5+vAU4fFs8ULg
+         vZc+BkaxQnXvXkkrRzvgPDlePDCUSX3woqMTGCbE1YsycvsZfrDHsQqaTcUoXCtw7MOX
+         MBAUxFHt8Uk9IU3BohH1PGp12RZ6tKt7MxNaUPCBmr/H2Ffdj7158cXTW8jz7fZUES/Q
+         AYYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692788395; x=1693393195;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GYZFq9HoRCm6GUrGyMS4vRuIGoFXcojk2tIii80AOf8=;
+        b=E0fLun1KDaNabyi2Qrbr88Dh/cjV0aK8kRxCmm3h91N1MCqf7ljP7mjyIGB287MoOJ
+         rXcbTgSvt8qx91wuv1U5wBwKyU9HjVDJTKDrCSUxxn1q3sKqvuSscr0jwAhZY3dPTUaD
+         DtOYN+2vDvPhtAXJHlzfKEkgbKnMZArDwCjXqDT3tTQt34OtOAAHFE/OeSS/r/NSvsxp
+         jigzNb1XD5UuQyJY/5IkQvaTkLNHKsZ7d01rYXEJJkg4CR2swZ2pTjFAvRfH1krcmvRk
+         ga0QVaQB8obTA9YavUhPTEirnihTrT1VeigQuAo1BBnlCUtgGebTxDU2yo+dRnEq3V+C
+         vQDw==
+X-Gm-Message-State: AOJu0Ywt/czrSFDhE2dTHHjN5F9K2nA4bv16n80Pck0qYUjAuRAUSR0e
+        F5HbCnb1WKdXcb3H5Km3CMmBxw==
+X-Google-Smtp-Source: AGHT+IG9GEvdMxJhiziwd/SHslHP1nERR5FT/wwW48l3HyWAFbQ06s+mBPnSX8kpNLDY/xUfOyXAKg==
+X-Received: by 2002:a17:902:ea06:b0:1b2:1b22:196 with SMTP id s6-20020a170902ea0600b001b21b220196mr11544921plg.48.1692788395431;
+        Wed, 23 Aug 2023 03:59:55 -0700 (PDT)
+Received: from [10.255.208.99] ([139.177.225.251])
+        by smtp.gmail.com with ESMTPSA id a7-20020a170902ecc700b001b2069072ccsm10655073plh.18.2023.08.23.03.59.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Aug 2023 03:59:55 -0700 (PDT)
+Message-ID: <029cb695-9b8e-8fb3-ef0f-b223f34e7639@bytedance.com>
+Date:   Wed, 23 Aug 2023 18:59:49 +0800
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6836; i=jack@suse.cz; h=from:subject; bh=gCwDmM+ZW4eVvffpF7ALoquCF5lDnp1T4s+n/I/j2LU=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBk5eQH0v6+QvbQa/oufnR0ZUpDli7pMj9yl3QzF6JN Zp70pCeJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZOXkBwAKCRCcnaoHP2RA2e62CA CPIPji2rtczY1FZrcL5NeLwxiq7j30zq5OQ4AGhE8VOxAVDNmnnRW2tXApl3VMCagikApvDo/7SW99 HBdTItk35z4OxV2O6ntfPpg4RhnoUshqu6eNH8OO4BSPfY6W5F0Q5ubbAho6LThReSwSr7TF8Z4rui rwNolyZ29SwV3t7/dejiIcc0UBDC0qwr5lonP8mAL7PKpplqQ3Lz2NpdjxPbZ33OVYi7/DzirkFyvX kqOIcViVv6qEZmQMQhQtwy9SxKba94hR8qBcXCMH4rMlUT0b6CnBsHuY2nkq/yvlgPQeyjRdXjbE0g yfeCXmGMiN1GLzguTjQJZVOO0qe8nK
-X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.14.0
+Subject: Re: [PATCH 4/5] fuse: writeback_cache consistency enhancement
+ (writeback_cache_v2)
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        me@jcix.top
+References: <20230711043405.66256-1-zhangjiachen.jaycee@bytedance.com>
+ <20230711043405.66256-5-zhangjiachen.jaycee@bytedance.com>
+ <CAJfpegtqJo78wqT0EY0=1xfoSROsJogg9BNC_xJv6id9J1Oa+g@mail.gmail.com>
+ <699673a6-ff82-8968-6310-9a0b1c429be3@fastmail.fm>
+From:   Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+In-Reply-To: <699673a6-ff82-8968-6310-9a0b1c429be3@fastmail.fm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_SOFTFAIL,URIBL_BLOCKED autolearn=no
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-blkdev_get_by_*() and blkdev_put() functions are now unused. Remove
-them.
+On 2023/8/23 18:35, Bernd Schubert wrote:
+> On 8/23/23 11:07, Miklos Szeredi wrote:
+>> On Tue, 11 Jul 2023 at 06:36, Jiachen Zhang
+>> <zhangjiachen.jaycee@bytedance.com> wrote:
+>>>
+>>> Some users may want both the high performance of the writeback_cahe mode
+>>> and a little bit more consistency among FUSE mounts. Current
+>>> writeback_cache mode never updates attributes from server, so can never
+>>> see the file attributes changed by other FUSE mounts, which means
+>>> 'zero-consisteny'.
+>>>
+>>> This commit introduces writeback_cache_v2 mode, which allows the 
+>>> attributes
+>>> to be updated from server to kernel when the inode is clean and no
+>>> writeback is in-progressing. FUSE daemons can select this mode by the
+>>> FUSE_WRITEBACK_CACHE_V2 init flag.
+>>>
+>>> In writeback_cache_v2 mode, the server generates official attributes.
+>>> Therefore,
+>>>
+>>>      1. For the cmtime, the cmtime generated by kernel are just 
+>>> temporary
+>>>      values that are never flushed to server by fuse_write_inode(), 
+>>> and they
+>>>      could be eventually updated by the official server cmtime. The
+>>>      mtime-based revalidation of the fc->auto_inval_data mode is also
+>>>      skipped, as the kernel-generated temporary cmtime are likely not 
+>>> equal
+>>>      to the offical server cmtime.
+>>>
+>>>      2. For the file size, we expect server updates its file size on
+>>>      FUSE_WRITEs. So we increase fi->attr_version in 
+>>> fuse_writepage_end() to
+>>>      check the staleness of the returning file size.
+>>>
+>>> Together with FOPEN_INVAL_ATTR, a FUSE daemon is able to implement
+>>> close-to-open (CTO) consistency like NFS client implementations.
+>>
+>> What I'd prefer is mode similar to NFS: getattr flushes pending writes
+>> so that server ctime/mtime are always in sync with client.  FUSE
+>> probably should have done that from the beginning, but at that time I
+>> wasn't aware of the NFS solution.
+> 
+> 
+> I think it would be good to have flush-on-getattr configurable - systems 
+> with a distributed lock manager (DLM) and notifications from 
+> server/daemon to kernel should not need it.
+> 
+> 
+> Thanks,
+> Bernd
 
-Acked-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- block/bdev.c           | 94 ++++++++++++++----------------------------
- include/linux/blkdev.h |  5 ---
- 2 files changed, 30 insertions(+), 69 deletions(-)
+Hi Miklos and Bernd,
 
-diff --git a/block/bdev.c b/block/bdev.c
-index f1de1e65517b..5624cac0aea8 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -729,7 +729,7 @@ void blkdev_put_no_open(struct block_device *bdev)
- }
- 	
- /**
-- * blkdev_get_by_dev - open a block device by device number
-+ * bdev_open_by_dev - open a block device by device number
-  * @dev: device number of block device to open
-  * @mode: open mode (BLK_OPEN_*)
-  * @holder: exclusive holder identifier
-@@ -741,32 +741,40 @@ void blkdev_put_no_open(struct block_device *bdev)
-  *
-  * Use this interface ONLY if you really do not have anything better - i.e. when
-  * you are behind a truly sucky interface and all you are given is a device
-- * number.  Everything else should use blkdev_get_by_path().
-+ * number.  Everything else should use bdev_open_by_path().
-  *
-  * CONTEXT:
-  * Might sleep.
-  *
-  * RETURNS:
-- * Reference to the block_device on success, ERR_PTR(-errno) on failure.
-+ * Handle with a reference to the block_device on success, ERR_PTR(-errno) on
-+ * failure.
-  */
--struct block_device *blkdev_get_by_dev(dev_t dev, blk_mode_t mode, void *holder,
--		const struct blk_holder_ops *hops)
-+struct bdev_handle *bdev_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
-+				     const struct blk_holder_ops *hops)
- {
--	bool unblock_events = true;
-+	struct bdev_handle *handle = kmalloc(sizeof(struct bdev_handle),
-+					     GFP_KERNEL);
- 	struct block_device *bdev;
-+	bool unblock_events = true;
- 	struct gendisk *disk;
- 	int ret;
- 
-+	if (!handle)
-+		return ERR_PTR(-ENOMEM);
-+
- 	ret = devcgroup_check_permission(DEVCG_DEV_BLOCK,
- 			MAJOR(dev), MINOR(dev),
- 			((mode & BLK_OPEN_READ) ? DEVCG_ACC_READ : 0) |
- 			((mode & BLK_OPEN_WRITE) ? DEVCG_ACC_WRITE : 0));
- 	if (ret)
--		return ERR_PTR(ret);
-+		goto free_handle;
- 
- 	bdev = blkdev_get_no_open(dev);
--	if (!bdev)
--		return ERR_PTR(-ENXIO);
-+	if (!bdev) {
-+		ret = -ENXIO;
-+		goto free_handle;
-+	}
- 	disk = bdev->bd_disk;
- 
- 	if (holder) {
-@@ -815,7 +823,10 @@ struct block_device *blkdev_get_by_dev(dev_t dev, blk_mode_t mode, void *holder,
- 
- 	if (unblock_events)
- 		disk_unblock_events(disk);
--	return bdev;
-+	handle->bdev = bdev;
-+	handle->holder = holder;
-+	handle->mode = mode;
-+	return handle;
- put_module:
- 	module_put(disk->fops->owner);
- abort_claiming:
-@@ -825,34 +836,14 @@ struct block_device *blkdev_get_by_dev(dev_t dev, blk_mode_t mode, void *holder,
- 	disk_unblock_events(disk);
- put_blkdev:
- 	blkdev_put_no_open(bdev);
-+free_handle:
-+	kfree(handle);
- 	return ERR_PTR(ret);
- }
--EXPORT_SYMBOL(blkdev_get_by_dev);
--
--struct bdev_handle *bdev_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
--				     const struct blk_holder_ops *hops)
--{
--	struct bdev_handle *handle = kmalloc(sizeof(*handle), GFP_KERNEL);
--	struct block_device *bdev;
--
--	if (!handle)
--		return ERR_PTR(-ENOMEM);
--	bdev = blkdev_get_by_dev(dev, mode, holder, hops);
--	if (IS_ERR(bdev)) {
--		kfree(handle);
--		return ERR_CAST(bdev);
--	}
--	handle->bdev = bdev;
--	handle->holder = holder;
--	if (holder)
--		mode |= BLK_OPEN_EXCL;
--	handle->mode = mode;
--	return handle;
--}
- EXPORT_SYMBOL(bdev_open_by_dev);
- 
- /**
-- * blkdev_get_by_path - open a block device by name
-+ * bdev_open_by_path - open a block device by name
-  * @path: path to the block device to open
-  * @mode: open mode (BLK_OPEN_*)
-  * @holder: exclusive holder identifier
-@@ -866,29 +857,9 @@ EXPORT_SYMBOL(bdev_open_by_dev);
-  * Might sleep.
-  *
-  * RETURNS:
-- * Reference to the block_device on success, ERR_PTR(-errno) on failure.
-+ * Handle with a reference to the block_device on success, ERR_PTR(-errno) on
-+ * failure.
-  */
--struct block_device *blkdev_get_by_path(const char *path, blk_mode_t mode,
--		void *holder, const struct blk_holder_ops *hops)
--{
--	struct block_device *bdev;
--	dev_t dev;
--	int error;
--
--	error = lookup_bdev(path, &dev);
--	if (error)
--		return ERR_PTR(error);
--
--	bdev = blkdev_get_by_dev(dev, mode, holder, hops);
--	if (!IS_ERR(bdev) && (mode & BLK_OPEN_WRITE) && bdev_read_only(bdev)) {
--		blkdev_put(bdev, holder);
--		return ERR_PTR(-EACCES);
--	}
--
--	return bdev;
--}
--EXPORT_SYMBOL(blkdev_get_by_path);
--
- struct bdev_handle *bdev_open_by_path(const char *path, blk_mode_t mode,
- 		void *holder, const struct blk_holder_ops *hops)
- {
-@@ -911,8 +882,9 @@ struct bdev_handle *bdev_open_by_path(const char *path, blk_mode_t mode,
- }
- EXPORT_SYMBOL(bdev_open_by_path);
- 
--void blkdev_put(struct block_device *bdev, void *holder)
-+void bdev_release(struct bdev_handle *handle)
- {
-+	struct block_device *bdev = handle->bdev;
- 	struct gendisk *disk = bdev->bd_disk;
- 
- 	/*
-@@ -926,8 +898,8 @@ void blkdev_put(struct block_device *bdev, void *holder)
- 		sync_blockdev(bdev);
- 
- 	mutex_lock(&disk->open_mutex);
--	if (holder)
--		bd_end_claim(bdev, holder);
-+	if (handle->holder)
-+		bd_end_claim(bdev, handle->holder);
- 
- 	/*
- 	 * Trigger event checking and tell drivers to flush MEDIA_CHANGE
-@@ -944,12 +916,6 @@ void blkdev_put(struct block_device *bdev, void *holder)
- 
- 	module_put(disk->fops->owner);
- 	blkdev_put_no_open(bdev);
--}
--EXPORT_SYMBOL(blkdev_put);
--
--void bdev_release(struct bdev_handle *handle)
--{
--	blkdev_put(handle->bdev, handle->holder);
- 	kfree(handle);
- }
- EXPORT_SYMBOL(bdev_release);
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index ae741dec184b..c54981ecda44 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1484,10 +1484,6 @@ struct bdev_handle {
- 	blk_mode_t mode;
- };
- 
--struct block_device *blkdev_get_by_dev(dev_t dev, blk_mode_t mode, void *holder,
--		const struct blk_holder_ops *hops);
--struct block_device *blkdev_get_by_path(const char *path, blk_mode_t mode,
--		void *holder, const struct blk_holder_ops *hops);
- struct bdev_handle *bdev_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
- 		const struct blk_holder_ops *hops);
- struct bdev_handle *bdev_open_by_path(const char *path, blk_mode_t mode,
-@@ -1495,7 +1491,6 @@ struct bdev_handle *bdev_open_by_path(const char *path, blk_mode_t mode,
- int bd_prepare_to_claim(struct block_device *bdev, void *holder,
- 		const struct blk_holder_ops *hops);
- void bd_abort_claiming(struct block_device *bdev, void *holder);
--void blkdev_put(struct block_device *bdev, void *holder);
- void bdev_release(struct bdev_handle *handle);
- 
- /* just for blk-cgroup, don't use elsewhere */
--- 
-2.35.3
+I agree that flush-on-getattr is a good solution to keep the c/mtime
+consistency for the view of userspace applications.
+
+Maybe in the next version, we can add the flush-on-getattr just for the
+writeback_cache_v2 mode, as daemons replying on reverse notifications
+are likely not need the writeback_cache_v2 mode. What do you think?
+
+Thanks,
+Jiachen
+
 
