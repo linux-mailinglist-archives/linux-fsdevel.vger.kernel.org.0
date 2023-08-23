@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 41938785387
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 11:10:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C6337853BB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 11:21:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235121AbjHWJKY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Aug 2023 05:10:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54912 "EHLO
+        id S235283AbjHWJU7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Aug 2023 05:20:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235304AbjHWJHx (ORCPT
+        with ESMTP id S235583AbjHWJSo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Aug 2023 05:07:53 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6A381BF2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 02:02:02 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-99c1c66876aso711818266b.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 02:02:02 -0700 (PDT)
+        Wed, 23 Aug 2023 05:18:44 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02DC33A82
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 02:07:57 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-991c786369cso715294466b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 02:07:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1692781314; x=1693386114;
+        d=szeredi.hu; s=google; t=1692781676; x=1693386476;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=htSMjdk85wELugVDXAhr8cuhpjEm2Q5vyQ8twDUxEyk=;
-        b=hG3ilkGGJUfAI8sRdQkgGVOuFHUn22bI04fyKmmYAttiVJlkyoYN3afCusCr4PMbkA
-         pNfZSGNZXoSy2v14RslrgQtlmPD00F52wpUwPUo+INhkkkDq8S5TgiTaX1OmH6cwxhvM
-         K+2F0DAHY0lZgmYME1PI3mNPKJN0EmsDIGstw=
+        bh=FVP76RlJvsBtkWhgLM8vBQOXDlj8GhxoiyPHARb5l/E=;
+        b=LyVvis7zYm4I0vHCuioQM5J/LFAGr8OOXZdZExDQl1j63nfL3buqPv+l98yd2v5szd
+         jHpvj83SgKtnEhzrOVuPxK5trCmzk3MTUj9bjTKTnTEsumPlkRp3eyCrkrT0cP2thv2s
+         RuWwL1qDO4NABN0w6oGYhhPHwC9GvDmrDNS0w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692781314; x=1693386114;
+        d=1e100.net; s=20221208; t=1692781676; x=1693386476;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=htSMjdk85wELugVDXAhr8cuhpjEm2Q5vyQ8twDUxEyk=;
-        b=d+UGYao4o/z0mb5KjjzrF1w4HFgA3g8Fvre6vcuN5ILm6luPJQtZJZ0eUY3XpumyKH
-         8XDYNBAJsp+V7ehr7dYncn0nRv1ZoQu4t1Mk4kSI6GkXde1gL0gC649QDm+AccO6yXEc
-         H8qww5PV59mKSqkre2vArSa4kbt4vtoESYY1W61jw2harB9B8WblYPyg8wi7xMbsW0fO
-         yd01ZrYO1T+X14KbYONXSVv0bj8qxyM52ev3jcjpNe5tsSwuksgAAtOK9gMIXD+d19uB
-         cmZPBOSxe8jfklMGdDQAJlLhtVvRw43u7Pc4nlUkfJTePlmDDUACY+6sFcibnr+zuGwE
-         smNQ==
-X-Gm-Message-State: AOJu0YyHCVP0L/Cw0LjnSn4fV73P7I3SXGSCtOVKH0ogHYzntO10+w2u
-        PH2tR8s8qtZxOlsHQtOoNCwUJvg8fw/yky8iWc54hQ==
-X-Google-Smtp-Source: AGHT+IETRpv9wXDM4ZeEVu1LHXQq7WY3Gxn4hHYL3/vW0KawK2WFCTMwX7ltbe/FKT2CNlG4aOJ/vzL7dF8Br1Y5zzw=
-X-Received: by 2002:a17:906:1d9:b0:991:b554:e64b with SMTP id
- 25-20020a17090601d900b00991b554e64bmr10551621ejj.54.1692781313930; Wed, 23
- Aug 2023 02:01:53 -0700 (PDT)
+        bh=FVP76RlJvsBtkWhgLM8vBQOXDlj8GhxoiyPHARb5l/E=;
+        b=KkDQ7FSuTrICcFXnLkl8AaKT89xNy/q8Kv6b/j7M1jO24oWykW88FEAgwJHwxyS8aQ
+         LC/a4ckEQCIa8D6jyOYX0N5zGHilzWHOn6s+D2dXnQVTd4SXE/sQ4bhAl6XnYtBsPD0k
+         m87v0x86STNeLV3y8LS1aQW7pfHFx9TeJE+XsXOKoZfL9t0YFnI3OuKPdN8CqgqzEhWR
+         sRaTYVmOlkRa89PCgc/V2tddsZtNZqIbBGH7X19cxDKTNLZmoFXbylqt3N+JJPJptxT9
+         1+o8UY0kv9Sqbmg4oQrx5HdP4zwCV72sT8ouGzViopDzip5/62uhST7VlTvAD9xLW1PF
+         NCAw==
+X-Gm-Message-State: AOJu0Yw+VNRZrg/ptbnK2JQyGWLbUTK+d3KlXs6lvnKTVMgCqncVtbYp
+        Fnv45UGshQNBy9EkETBxnVBOx/+hCCLSP9RykJYc2Q==
+X-Google-Smtp-Source: AGHT+IFz8/brK1bWJ5bvmYypjGCFsAX9p1Z8B5AoZJZ+Gg/CamQ6zFRzZR72NtZl0GOitVFch3eYVledp8ZGP9aC53Y=
+X-Received: by 2002:a17:906:cc0b:b0:99b:499d:4635 with SMTP id
+ ml11-20020a170906cc0b00b0099b499d4635mr9408127ejb.75.1692781676219; Wed, 23
+ Aug 2023 02:07:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230711043405.66256-1-zhangjiachen.jaycee@bytedance.com> <20230711043405.66256-4-zhangjiachen.jaycee@bytedance.com>
-In-Reply-To: <20230711043405.66256-4-zhangjiachen.jaycee@bytedance.com>
+References: <20230711043405.66256-1-zhangjiachen.jaycee@bytedance.com> <20230711043405.66256-5-zhangjiachen.jaycee@bytedance.com>
+In-Reply-To: <20230711043405.66256-5-zhangjiachen.jaycee@bytedance.com>
 From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 23 Aug 2023 11:01:42 +0200
-Message-ID: <CAJfpegtocWjfqVUpdnct-1-pq_DYJXUuvkBWey2N5q6+K=pL_w@mail.gmail.com>
-Subject: Re: [PATCH 3/5] fuse: add FOPEN_INVAL_ATTR
+Date:   Wed, 23 Aug 2023 11:07:44 +0200
+Message-ID: <CAJfpegtqJo78wqT0EY0=1xfoSROsJogg9BNC_xJv6id9J1Oa+g@mail.gmail.com>
+Subject: Re: [PATCH 4/5] fuse: writeback_cache consistency enhancement (writeback_cache_v2)
 To:     Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
 Cc:     Jonathan Corbet <corbet@lwn.net>, linux-fsdevel@vger.kernel.org,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -68,38 +68,38 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On Tue, 11 Jul 2023 at 06:36, Jiachen Zhang
 <zhangjiachen.jaycee@bytedance.com> wrote:
 >
-> Add FOPEN_INVAL_ATTR so that the fuse daemon can ask kernel to invalidate
-> the attr cache on file open.
+> Some users may want both the high performance of the writeback_cahe mode
+> and a little bit more consistency among FUSE mounts. Current
+> writeback_cache mode never updates attributes from server, so can never
+> see the file attributes changed by other FUSE mounts, which means
+> 'zero-consisteny'.
 >
-> The fi->attr_version should be increased when handling FOPEN_INVAL_ATTR.
-> Because if a FUSE request returning attributes (getattr, setattr, lookup,
-> and readdirplus) starts before a FUSE_OPEN replying FOPEN_INVAL_ATTR, but
-> finishes after the FUSE_OPEN, staled attributes will be set to the inode
-> and falsely clears the inval_mask.
+> This commit introduces writeback_cache_v2 mode, which allows the attributes
+> to be updated from server to kernel when the inode is clean and no
+> writeback is in-progressing. FUSE daemons can select this mode by the
+> FUSE_WRITEBACK_CACHE_V2 init flag.
 >
-> Signed-off-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-> ---
->  fs/fuse/file.c            | 10 ++++++++++
->  include/uapi/linux/fuse.h |  2 ++
->  2 files changed, 12 insertions(+)
+> In writeback_cache_v2 mode, the server generates official attributes.
+> Therefore,
 >
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index de37a3a06a71..412824a11b7b 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -215,6 +215,16 @@ void fuse_finish_open(struct inode *inode, struct file *file)
->                 file_update_time(file);
->                 fuse_invalidate_attr_mask(inode, FUSE_STATX_MODSIZE);
->         }
-> +
-> +       if (ff->open_flags & FOPEN_INVAL_ATTR) {
-> +               struct fuse_inode *fi = get_fuse_inode(inode);
-> +
-> +               spin_lock(&fi->lock);
-> +               fi->attr_version = atomic64_inc_return(&fc->attr_version);
+>     1. For the cmtime, the cmtime generated by kernel are just temporary
+>     values that are never flushed to server by fuse_write_inode(), and they
+>     could be eventually updated by the official server cmtime. The
+>     mtime-based revalidation of the fc->auto_inval_data mode is also
+>     skipped, as the kernel-generated temporary cmtime are likely not equal
+>     to the offical server cmtime.
+>
+>     2. For the file size, we expect server updates its file size on
+>     FUSE_WRITEs. So we increase fi->attr_version in fuse_writepage_end() to
+>     check the staleness of the returning file size.
+>
+> Together with FOPEN_INVAL_ATTR, a FUSE daemon is able to implement
+> close-to-open (CTO) consistency like NFS client implementations.
 
-No need to add locking or change fi->attr_version.  This will be done
-next time the attributes are updated.
+What I'd prefer is mode similar to NFS: getattr flushes pending writes
+so that server ctime/mtime are always in sync with client.  FUSE
+probably should have done that from the beginning, but at that time I
+wasn't aware of the NFS solution.
 
 Thanks,
 Miklos
