@@ -2,93 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F95D785C02
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 17:24:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CC52785C83
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 17:50:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237181AbjHWPY4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Aug 2023 11:24:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41912 "EHLO
+        id S237336AbjHWPuY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Aug 2023 11:50:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233122AbjHWPYz (ORCPT
+        with ESMTP id S237324AbjHWPuW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Aug 2023 11:24:55 -0400
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5116F10F9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 08:24:35 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id EF6473200926;
-        Wed, 23 Aug 2023 11:24:33 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Wed, 23 Aug 2023 11:24:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1692804273; x=1692890673; bh=GlgqpgvjoBj2d0YVL9RyBXf6N9fA3PacZmH
-        cRODSsk0=; b=AqfFfXZZE+0C03nvmgWPDEL5ic2J5p69pjTgxTbsWl46h5Nv+gN
-        4Mq3BGKf6y+HUpNyEIvO+i047ZQMbCPjdTFXjtMwUvP0LuP+HPCoFAy62H8Q/NvR
-        vMH+HWpUgyLpXuezgeVQg1UYOsp6Qhe93gZjgjOCq+XH9E3Ehk/FQIq2XADTblxP
-        3Ae19qiWFnqioL0p0EN90S9M3XOj8Bw0xkkTs9DPbbXSWLsi4bFcsVGu6nBR/6il
-        xkeo4x4IWceDuuF7LZGC0cMWzPt1BO6YjtfIAiWmlsbrIp1rw1ghi5ia1uHuRgci
-        l2YWRHoA24t6F4BE0OYeMGlKwTsuFvALHmg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1692804273; x=1692890673; bh=GlgqpgvjoBj2d0YVL9RyBXf6N9fA3PacZmH
-        cRODSsk0=; b=o4LuXz1khR9feTV096NIeGqo2yFKz+Us8pHM2xpPQ7rAGLacYx5
-        Zijz3Igd44wbrfvlzFV10DRDybnZ8Ok8BmI2bwa2LinqMwYd5VzMGzcp0Vdizoe5
-        Hj8NypMnRKWzR0QGVz9ruZwnUxaemkI7pZ/UEF2NPKc1ZcTpfqLOX0ZQkt+UGj8b
-        M9cRzKPvPpUIdLJbuSKwlylEW6SoVHOWlE2+SvY6riYaRCplZ2bpgnZEnfrP8Apy
-        ef6GpgzoTtTrg2yQ0ypefk5TGodH+f0PgJWNXtxr09P6VEbUhujdXGQiTjN2zKNq
-        JAGzeigACFz11JQWKAZQUwKUu29eD0J1Amg==
-X-ME-Sender: <xms:sSTmZKjEX0JhMuFc9VqZNzzfWTli1dIRKP7H0C56uVTwQD-B6h38mQ>
-    <xme:sSTmZLDHS5CHOPpfmqFkBFSmnBKcFbOiqiihKA-eOBsTvuUW8o0DC8YfyWw6s2BQW
-    QN1xcBrf6lfyXz_>
-X-ME-Received: <xmr:sSTmZCF-TDPay9SQrXkGVSAVfQn8a5RlH55etptJriCw6Rkn-IXJXQVXx6JRya_cizHkcemA6qW0Exv6rmevjClNtTJbghG1LPqzdO8mn48zPsOW3tmD>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedruddvgedgkeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepkeehveekleekkeejhfehgeeftdffuddujeej
-    ieehheduueelleeghfeukeefvedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:sSTmZDTGMrrt5p-MYM3MYQ1lfEBn7mmskOIMz5IBElQyV7bP6s4KUg>
-    <xmx:sSTmZHzg5PErlqnYxxLjLTtFosUCZgr7QaRvjwyhZvHd67mg_XNYzg>
-    <xmx:sSTmZB6ZWZtoQQqlFu3kc_dIeZjxdVQwkYn-Hg2BPELvEEcfVGgsJg>
-    <xmx:sSTmZArkgJYcwszDs5NAU5owuzSTFlATK1WHuqrCfKjyRjspjirn_Q>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 23 Aug 2023 11:24:32 -0400 (EDT)
-Message-ID: <455e7d7e-e81c-dbf3-987f-a8b6e7fd51d5@fastmail.fm>
-Date:   Wed, 23 Aug 2023 17:24:31 +0200
+        Wed, 23 Aug 2023 11:50:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45160E70;
+        Wed, 23 Aug 2023 08:50:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D0FEA66551;
+        Wed, 23 Aug 2023 15:50:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1268FC433C7;
+        Wed, 23 Aug 2023 15:50:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692805820;
+        bh=LfSPyFOC3BjWg0Lc12kxGpYZXTpAJDmnKm0+E48fsYA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JXxYB3+fT0UVF4Njt8TKpmeByoZkbsjd3n/9P3Snic8g9RaQqf8z9/1pAOMPSfemQ
+         Y9j9vhDsu5y69cyAbfuDB83yGakcbvooWW6sYOU+Rpn6rnfgd6jhycZmd5MwPkAey9
+         R/8WjmfnlXliw9apZxQ4dXU84G0pXh4oScGsRUdqq/NLv5BvG+lDtanGz3Qii+HgqF
+         AdTJ6+Yywsuf55Jjh+2jDj/MQPRZoAJorkwc4Da/nqn+B25d4cDvqEJmH+OSk9x917
+         +rI2H7D87DCVOHmkcb8R18WVGIDXoCwWYwvwnOpIIGT5cEuC8VMxE5zVxbsUFeak9i
+         fekkLTSaiJdxg==
+Date:   Wed, 23 Aug 2023 16:50:10 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+        Deepak Gupta <debug@rivosinc.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v4 03/36] arm64/gcs: Document the ABI for Guarded Control
+ Stacks
+Message-ID: <b6b654d6-9f77-463e-bbe9-58e8135536ff@sirena.org.uk>
+References: <20230807-arm64-gcs-v4-0-68cfa37f9069@kernel.org>
+ <20230807-arm64-gcs-v4-3-68cfa37f9069@kernel.org>
+ <ZNOhjrYleGBR6Pbs@arm.com>
+ <f4cec4b3-c386-4873-aa1d-90528e062f2a@sirena.org.uk>
+ <ZN+qki9EaZ6f9XNi@arm.com>
+ <aaea542c-929c-4c9b-8caa-ca67e0eb9c1e@sirena.org.uk>
+ <ZOTnL1SDJWZjHPUW@arm.com>
+ <43ec219d-bf20-47b8-a5f8-32bc3b64d487@sirena.org.uk>
+ <ZOXa98SqwYPwxzNP@arm.com>
+ <ZOYFazB1gYjzDRdA@arm.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH 4/5] fuse: implement statx
-Content-Language: en-US, de-DE
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
-References: <20230810105501.1418427-1-mszeredi@redhat.com>
- <20230810105501.1418427-5-mszeredi@redhat.com>
- <067fcdfa-0a99-4731-0ea1-a799fff51480@fastmail.fm>
- <CAJfpeguEmafkUPqZO2_EAOWbw+7XUm0E9whVpnnj_MVf2fnStQ@mail.gmail.com>
- <9ebc2bcb-5ffd-e82f-9836-58f375f881ea@fastmail.fm>
- <CAJfpegvqdAa+XjHA2VefEu=QZNQHyYnXC988UxPfPMisCj93jA@mail.gmail.com>
- <410b7d7d-b930-4580-3342-c66b3985555d@fastmail.fm>
- <CAJfpeguFuXPPB-SqNizDEoiemqCZGKm_zHYvYfOMGqGM66viSw@mail.gmail.com>
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <CAJfpeguFuXPPB-SqNizDEoiemqCZGKm_zHYvYfOMGqGM66viSw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_PASS,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xcjBCIAjiMPyRAnv"
+Content-Disposition: inline
+In-Reply-To: <ZOYFazB1gYjzDRdA@arm.com>
+X-Cookie: Some optional equipment shown.
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -96,82 +90,36 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+--xcjBCIAjiMPyRAnv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 8/23/23 16:58, Miklos Szeredi wrote:
-> On Wed, 23 Aug 2023 at 16:51, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
->>
->>
->>
->> On 8/23/23 08:18, Miklos Szeredi wrote:
->>> On Tue, 22 Aug 2023 at 18:55, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
->>>>
->>>>
->>>>
->>>> On 8/22/23 17:33, Miklos Szeredi wrote:
->>>>> On Tue, 22 Aug 2023 at 17:20, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
->>>>>>
->>>>>> Hi Miklos,
->>>>>>
->>>>>> sorry for late review.
->>>>>>
->>>>>> On 8/10/23 12:55, Miklos Szeredi wrote:
->>>>>> [...]
->>>>>>> +static int fuse_do_statx(struct inode *inode, struct file *file,
->>>>>>> +                      struct kstat *stat)
->>>>>>> +{
->>>>>>> +     int err;
->>>>>>> +     struct fuse_attr attr;
->>>>>>> +     struct fuse_statx *sx;
->>>>>>> +     struct fuse_statx_in inarg;
->>>>>>> +     struct fuse_statx_out outarg;
->>>>>>> +     struct fuse_mount *fm = get_fuse_mount(inode);
->>>>>>> +     u64 attr_version = fuse_get_attr_version(fm->fc);
->>>>>>> +     FUSE_ARGS(args);
->>>>>>> +
->>>>>>> +     memset(&inarg, 0, sizeof(inarg));
->>>>>>> +     memset(&outarg, 0, sizeof(outarg));
->>>>>>> +     /* Directories have separate file-handle space */
->>>>>>> +     if (file && S_ISREG(inode->i_mode)) {
->>>>>>> +             struct fuse_file *ff = file->private_data;
->>>>>>> +
->>>>>>> +             inarg.getattr_flags |= FUSE_GETATTR_FH;
->>>>>>> +             inarg.fh = ff->fh;
->>>>>>> +     }
->>>>>>> +     /* For now leave sync hints as the default, request all stats. */
->>>>>>> +     inarg.sx_flags = 0;
->>>>>>> +     inarg.sx_mask = STATX_BASIC_STATS | STATX_BTIME;
->>>>>>
->>>>>>
->>>>>>
->>>>>> What is actually the reason not to pass through flags from
->>>>>> fuse_update_get_attr()? Wouldn't it make sense to request the minimal
->>>>>> required mask and then server side can decide if it wants to fill in more?
->>>>>
->>>>> This and following commit is about btime and btime only.  It's about
->>>>> adding just this single attribute, otherwise the logic is unchanged.
->>>>>
->>>>> But the flexibility is there in the interface definition, and
->>>>> functionality can be added later.
->>>>
->>>> Sure, though what speaks against setting (limiting the mask) right away?
->>>
->>> But then the result is basically uncacheable, until we have separate
->>> validity timeouts for each attribute.  Maybe we need that, maybe not,
->>> but it does definitely have side effects.
->>
->> Ah right, updating the cache timeout shouldn't be done unless the reply
->> contains all attributes. Although you already handle that in fuse_do_statx
-> 
-> Yes, correctness is guaranteed.
-> 
-> However not setting the full mask might easily result in a performance
-> regression. At this point just avoid such issues by not allowing
-> partial masks to reach the server.
+On Wed, Aug 23, 2023 at 02:11:07PM +0100, Catalin Marinas wrote:
 
+> Yes, this should work. Any invocation of clone() or clone3() without a
+> shadow stack would disable GCS. What about the reverse, should GCS be
+> enabled for a thread even if the clone3() caller has GCS disabled? I
+> guess we shouldn't since GCS enabling depends on the prctl() state set
+> previously.
 
-Hmm ok, I see a bit more like "these flags are absolutely needed, if you 
-(daemon/server) can provide more/all, I can update my cache timeout".
+It has a fairly obvious intended meaning so we could do it easily enough
+but OTOH allowing it opens up the idea of people wanting to specify GCS
+flags which starts to seem like more trouble than it's worth compared to
+just having them do the prctl() in the new thread.
 
+--xcjBCIAjiMPyRAnv
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Bernd
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmTmKrIACgkQJNaLcl1U
+h9Drbgf/ZBUIo14hOU/3qkdtGyzuQHFus+mYzjU/uobIdprMeuTN+xOA0/oVAhlk
+taPZwtMKHYyCkcXbZYxy6jKqDlM4zT3mz9WnCHkYtdQdCkyue/ftcKMF1SaZS4nk
+Bzily68XoSg2VhZJTZQie/MqOXcwCDJcDHfBX42qmEhLXJZAblCcvtnu2KLwgSFp
+nFmK1EGeH/+y6nXB/zoUYMDrWrzdpnZ4LJB8lwXMQHctPGJDyJIkZ+exBKubOR6H
+ebKadj+npJxy9L4oLx2VRZ5AOjzR34+qZlQIuTPf8WokNrmtz4xQwPz7F1xBjcgN
+jd3C7SSBR98L0uw+V3/L3WK8PKh2Lw==
+=CE8H
+-----END PGP SIGNATURE-----
+
+--xcjBCIAjiMPyRAnv--
