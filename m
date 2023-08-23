@@ -2,275 +2,390 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE74C78516A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 09:23:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F8137852A3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 10:25:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233238AbjHWHX4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Aug 2023 03:23:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39064 "EHLO
+        id S234258AbjHWIZL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Aug 2023 04:25:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231512AbjHWHX4 (ORCPT
+        with ESMTP id S234846AbjHWIWF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Aug 2023 03:23:56 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AF39F3;
-        Wed, 23 Aug 2023 00:23:53 -0700 (PDT)
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37MME9R7026088;
-        Wed, 23 Aug 2023 07:23:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : content-type : mime-version;
- s=corp-2023-03-30; bh=U3QBDkPLkBLAnvllnz5C7SlJ/CJd6uYnSlYjNCRAFeQ=;
- b=Yi77viMK8NPViEn1fmdkq6uo18deADmyolAOANuIEK4BNHbJJc/wAf9VLFmpfbmzd/Lk
- syO90vv/eFX6t65ZHGwmJwNtaWpKVzQEFlSTrvLXVuMKN0+RFVL4pYtPirBJw7LfdELm
- sh2QtRP6+Fhb+71g42fV1q+mVv3aWqTSaOLLNOC/DX9KotTIUWSsxD5EVtBPYd/HbW6e
- qyI1ukcro0Zg51P74LnuYS8GqV/W0C8QlSyQXG5VVdnia0ufvTy5snNRcKBqDehNcp9K
- e6OhOQ7lEhXqyChAZQ9ZW4yC45eCemmzJq8w7edF/gchj8nnJocE58e1kl2EUW9HFeMA rQ== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3sn20d93yk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Aug 2023 07:23:32 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 37N6b6fC036182;
-        Wed, 23 Aug 2023 07:23:30 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2170.outbound.protection.outlook.com [104.47.57.170])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3sn1yu6dad-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Aug 2023 07:23:30 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fv94UkLieylnSRoRFaL4LUPBLqsskOQK0aAEQqPJ0KIDBnD96rxcRRyC3Rx6LszH1he90//5/07xEIC1dMkkxIrfTqEe5OZ60QsCfE4UONAxtimcnkkrxDcqChuyEhMauN3nJmSkutz7wXX7ACu5fbkuGKmt/4krdqSAJE36A9QE3FsnMJM9MFGGPPqjUuGT159W53K/GOmBBWGEyKM50V+f9j2MnBqpsLnbByjXYy4gdq6wBSanwAAhqezjTjyzh5ErGzQEK6Jw4wK3Tt7CxpL9jbvfGiIcRy+NmZmLfS6umd6IsweKUPGiJuUtnxirSUjgzVpDYgvWWs0Fw6lKuw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U3QBDkPLkBLAnvllnz5C7SlJ/CJd6uYnSlYjNCRAFeQ=;
- b=g2RDRNTFAg6NeCwoU8SVbMJvwH1GrU4yu1WBVxSwyfmf1GRHGtt4iVF2STrgTPiG4w22psZodzAbGkM/plqQlcF6JP7fSMRfFmm8UpKYlGZAYWLy9ByKRqhHPwgkfqM8dGDvHswu0aa5N5jLXlmXyB8DYm4ef6EuAiDsuuHDcN4Xu85lqFDV2N+oXj0d1ca22zw03hoaj1U04Imaal0fBXNVdNoBtEHoVlUpwBTcOJZbspDQF7IVqvuLnTgz7uyomgSvSRE9PPZORIJWEFo71w32Q/sYTK7hUCzjojwQAPpxbTDeMXolX66Tvn7qPrZskAcAP/RI/l2NhURqWwuFRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U3QBDkPLkBLAnvllnz5C7SlJ/CJd6uYnSlYjNCRAFeQ=;
- b=HUzkYrzDRF+Z5Z5lGVPH16j0y6vNh4ZSljjQq4UEDLlg4+/wJQgg6py4J+lN6AoZKHGspVedyzHr2HhEWgFcAuVgGd4ioyMUiBPlnxU7dLvukDkHHmrbe1h5+Jf6gjpYxZ0L1cbPbxhHpMCC0ypdDrAJnv7Rou3TAzCFSKEzO/0=
-Received: from SA1PR10MB5867.namprd10.prod.outlook.com (2603:10b6:806:233::19)
- by IA0PR10MB6866.namprd10.prod.outlook.com (2603:10b6:208:434::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.25; Wed, 23 Aug
- 2023 07:23:09 +0000
-Received: from SA1PR10MB5867.namprd10.prod.outlook.com
- ([fe80::707c:5a02:87a1:38e0]) by SA1PR10MB5867.namprd10.prod.outlook.com
- ([fe80::707c:5a02:87a1:38e0%3]) with mapi id 15.20.6699.020; Wed, 23 Aug 2023
- 07:23:09 +0000
-User-agent: mu4e 1.8.10; emacs 27.1
-From:   Chandan Babu R <chandan.babu@oracle.com>
-To:     chandan.babu@oracle.com
-Cc:     cem@kernel.org, dchinner@redhat.com, djwong@kernel.org,
-        kent.overstreet@linux.dev, pangzizhen001@208suo.com,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [ANNOUNCE] xfs-linux: for-next updated to c1950a111dd8
-Date:   Wed, 23 Aug 2023 12:51:01 +0530
-Message-ID: <87cyzedxyj.fsf@debian-BULLSEYE-live-builder-AMD64>
-Content-Type: text/plain
-X-ClientProxiedBy: TY2PR04CA0008.apcprd04.prod.outlook.com
- (2603:1096:404:f6::20) To SA1PR10MB5867.namprd10.prod.outlook.com
- (2603:10b6:806:233::19)
+        Wed, 23 Aug 2023 04:22:05 -0400
+X-Greylist: delayed 66 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 23 Aug 2023 01:20:50 PDT
+Received: from esa2.hc1455-7.c3s2.iphmx.com (esa2.hc1455-7.c3s2.iphmx.com [207.54.90.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49FA710DA;
+        Wed, 23 Aug 2023 01:20:46 -0700 (PDT)
+X-IronPort-AV: E=McAfee;i="6600,9927,10810"; a="129178221"
+X-IronPort-AV: E=Sophos;i="6.01,195,1684767600"; 
+   d="scan'208";a="129178221"
+Received: from unknown (HELO yto-r2.gw.nic.fujitsu.com) ([218.44.52.218])
+  by esa2.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2023 17:19:38 +0900
+Received: from yto-m1.gw.nic.fujitsu.com (yto-nat-yto-m1.gw.nic.fujitsu.com [192.168.83.64])
+        by yto-r2.gw.nic.fujitsu.com (Postfix) with ESMTP id A6C3DC68E5;
+        Wed, 23 Aug 2023 17:19:35 +0900 (JST)
+Received: from kws-ab4.gw.nic.fujitsu.com (kws-ab4.gw.nic.fujitsu.com [192.51.206.22])
+        by yto-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id E0F47CF7C4;
+        Wed, 23 Aug 2023 17:19:34 +0900 (JST)
+Received: from irides.g08.fujitsu.local (unknown [10.167.234.230])
+        by kws-ab4.gw.nic.fujitsu.com (Postfix) with ESMTP id F423522E2EC;
+        Wed, 23 Aug 2023 17:19:33 +0900 (JST)
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org
+Cc:     dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
+        akpm@linux-foundation.org, djwong@kernel.org, mcgrof@kernel.org
+Subject: [PATCH v13] mm, pmem, xfs: Introduce MF_MEM_PRE_REMOVE for unbind
+Date:   Wed, 23 Aug 2023 16:17:06 +0800
+Message-ID: <20230823081706.2970430-1-ruansy.fnst@fujitsu.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230629081651.253626-3-ruansy.fnst@fujitsu.com>
+References: <20230629081651.253626-3-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR10MB5867:EE_|IA0PR10MB6866:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9eaa3512-3805-4d93-2cbf-08dba3a9cd27
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: YsKNMTl4hqExWCYNWmn7dHZ3h6R/189AobhKCNkt+D6OJBHt5tHDRxNHDSBuV3quz7MPQTJZxZIVuOdC8jxhyYiFpA3lF5GgQTvf2+KqkDcZEJJc2nFQ33AMifuVXAg+J2lMFTmd43jpGUuE4rWyR3wZHISoKlmCWuTvpzZiE6fMQZ6/EHhE4kin7A4pJyYMw3uB3bTehiFeoTzp+F7wIpqdNaSB/3H0y+50ZnXhQyoxqa5ifC3xuLnZGfRzV5I9NN10WJ1xi2LxLY6fHWSIy5mrk+t55aiqhmrPQ4lbs1Iun27GBDKVtLSiJGJx263ftqJYBvxudsoS0MYXLitwl/WXKtmRhizyIHI1WEnT11C36QPEzUz2it679E4WgEB7gTbR7sR0WWa59oVzX890b9z2j8Tftiq4k/MYw+EcLczqTWOvIhDU0/GMcpizY/sg1IHp1G7UyhqQm7RjKc/tdKBKtdAquOkYRgkoLAQwAKcrbRPpCoZ/+xPgBnrO+n8KvM652Zi+QNazTI+RJQZQiNNoEV2I7h5c7yuP+9Q3z2MdAnae5CWuU1NonhH2MBPHnTy4JLZzrdEnBou5fpEu5Q==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR10MB5867.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7916004)(39860400002)(376002)(366004)(136003)(396003)(346002)(1800799009)(186009)(451199024)(6666004)(6506007)(6486002)(6512007)(86362001)(66556008)(4326008)(15650500001)(5660300002)(2906002)(38100700002)(66946007)(8936002)(8676002)(34206002)(41300700001)(316002)(66476007)(33716001)(9686003)(966005)(478600001)(83380400001)(26005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ErbWnhQRH5VszFrHGxT5ikVVhXHHjpUGdKmYAlOsSxbbaQqnLosKZ8Bicvmk?=
- =?us-ascii?Q?eqn32KK4iX86TrtlZc3zJDyXYZHEVuZHwWBQKnrOdK0pig/t8oq+XGhhH+wd?=
- =?us-ascii?Q?eKwgztx2zt0jdvgXxlRqNwT7TqCOtTQ0IZD0fZhuBKdG7g9tJCw+C7aOBfZf?=
- =?us-ascii?Q?E6QxYzD/FPCplauYDvyY5bTWcQGavUIf+TdOqsA6qOvPhZv6nVElSFDttpJq?=
- =?us-ascii?Q?6cwa9mzL6Si9E9vo/2rj+8w0NJui9dCN+5T2qCXYvYyMGDGbuhmFrFVmt+i+?=
- =?us-ascii?Q?/tty3wJzLCFJ+++B2FnbeAkgqRayAQr82T5eUTAfKNiSO2DcCnbOOtg6+RWD?=
- =?us-ascii?Q?ajLCCWCVp+awidWb4rTKTqZCiVMKDZRp5SYAVoEFEDaPHPDJ1ler0Q2vfygu?=
- =?us-ascii?Q?UNKAJ5lARermL6hccW93FKOA7vrkYq35AqSc/nDVPDAgBl2Ca7B9XdXkfIM7?=
- =?us-ascii?Q?AzjW3mFLEwfDIqUTNx9ZItq4jmAMvI/+BzREWyHpZYXeT7EaizNBq7Y25wWy?=
- =?us-ascii?Q?ER198dEMOgfWOw7yDIO1UbavkPFy3uxx4NidJ5afBW9mgWdJ0KZvFTZ3V/p4?=
- =?us-ascii?Q?XyS5sIu2lSGI0bx60jjuR1OWiz1BJ7cibfO5IW8fAOTPbqPfqAs9RZkv4yca?=
- =?us-ascii?Q?+ODLmeHzUC1XPbhq9lXy6Ez7teqZbax6vCf3DZBYB5CjBCa6kvBLFZ2+G8/L?=
- =?us-ascii?Q?X0xPpGbDBh+VLfwx2IrT069bVH/D0AeNAF0m5PQ72i2qTQ3zYjsPoawxEldO?=
- =?us-ascii?Q?SR6S/OHqll5RZZWmckYYrRo6vEHMTUSMqTWaaGrbsmNMupp4475fQ9qkvmtA?=
- =?us-ascii?Q?yjhW7jMs/MhqA7xQHeubVN0pltbAIOrGJtVI8eEBQo1M2xgTgQmS79CSrffO?=
- =?us-ascii?Q?A2O4lwjz8b79++Q8Cj7qhUDi2pH2mJBFSQdMxwOnjdAjtuCj9QLsDO+gQBi3?=
- =?us-ascii?Q?6GoHM/pJB8YWkoHT09GhumkzqmcyOPwlCDaDhlvuYDPp64+gQXZpaWzMqBse?=
- =?us-ascii?Q?KSUNfIvNFWydiPsg/MXmpiVnr8oa3HSyrYyH/iHL+FWJ7y44jeYFfNJefJBN?=
- =?us-ascii?Q?mvN8KnoO6O4z4ycSjBImyr5vb11MDaX7cs1XCPtqAA9sIYARKo34Y+dHxaEM?=
- =?us-ascii?Q?/sLQ2an7yUnZL4LoCT6X3ka5l7WeEuyU4962vpiY0fKZe/2ksGLtJbVvjzWt?=
- =?us-ascii?Q?Pv9r2fHxa9nB2YuMMquvQ0NL1SYL52AzHRXFe8zL+yAO2ZK2AmeYo3l8qSNx?=
- =?us-ascii?Q?CsPc8W5Qklor4USicXxc2F9a7Y6Cqq3uJHz8aPbXSD9laUzxmRuzmjfZyDAN?=
- =?us-ascii?Q?XKHQirEWJIZbAplBmtYhdk7lFUpaJLJyXVe/nP5kCF1kVzU6qDmIHl76sSil?=
- =?us-ascii?Q?/zrqOE4R2yaO30Y1KJIsFPgwTpA2hS6u+DfQASmlAwrfQGZI4V6PRqjTRXBL?=
- =?us-ascii?Q?sqPzZyHgjFKN2I0+EmFQvwxlC+m/6vq3g+Ye7XBdAdA6/G7cy8i/sOO6kOs6?=
- =?us-ascii?Q?V3ul6b0UbRnvUxbD1e+v8ZEUcJlYbUNdw/yYEh9isoeBEntYpyUzLnQvBKct?=
- =?us-ascii?Q?ZVDvkuKC/8PYpLspx1tVp+kYGE/1WDLQNjbNTHgJcIOuXXTdCDY+uk3QKfHf?=
- =?us-ascii?Q?iA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 7NRaY4ec2semhdGsHFh/YgQhvVakCNtjG722E1LFj7XUIQ9TsrSjApqsNk2P8kop8tydtGQXSzCGKlNy6e+44EQ/6sWyTmqab8E8sy6z5cmd9PicnsvkreVIGhAfNqHkCUcOEoREViKFD7DujRKdfNBcle9DjSRF63SunPBqnVhqwXLdtPlJyDWTg6m3iyX56iP8NFRXfxV6YfTd6mKKoYsFgsicEkvHoRiqIvhQ1SXnCisqAOXR7GOraXOP0rgYp1VGbnrq40uP898bMlkorsfNCnMSE3Oq4dAhjii9QMKn5XK79fJ23OdSm9GPg+1dlIU6eW5WZ3OqbYAZcpSexDO6i6opS/s26oa3e05uCK8ZjpFPc9zKEBd3XOb5SxfbwiTtmnGq2rMk/b2CWh33ZMDlG4M+EhsXhqIRyEquwHD2//ygWxICufx4AE8MO5HJehu8dY5rQyDdZzoUbfH4sa2XReGNPn1APdU4MN/RxgcOPMqezJSxN7bJl2vnUea3fU8862Hj9a7H9vohjCek3Yy/NLWYrFQapu8MmDBqkDeBUDmxHNRn5wrVIJoP74i63xD+W7OWCyWZJ2fE/9EdSFBusTdgLZK2XjeUkw3uq9mX8AamADH+HnRPq2FkTy9+j83nCF7ykiNcc+cI9HHBIihjjK/IlnRiik7Sb52TQAERsVjuudNZbxrbLInelblf6uESeyIKp9fU76Wsk+epZebHvY2YvV4RCs3qM2XUXMd+vfbKvu1KaaUYakZEL6szhkVINgPOQH1IbAcG/TJv8U+TM3VH7MVoU6uzgfchvjIiD9t+aht2sKfubiANT4PEM9R/ayHlhZ/j8pLjziMUA2wU3w9BJSABzmA4/bgJaTi+I02z5uAnZGc/QNLxSnJF
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9eaa3512-3805-4d93-2cbf-08dba3a9cd27
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR10MB5867.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2023 07:23:09.2071
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tK6M2Kl9O4og4JrkdXj5LVg/Dpq9BW0keQi9Ng/sJd/N9sk9dBtOs429RRP6iLpl05bdL4U0dcIVOaqCcDD2aw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB6866
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-23_04,2023-08-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0
- malwarescore=0 spamscore=0 phishscore=0 mlxlogscore=999 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2308230066
-X-Proofpoint-GUID: Udvzg9svhLT-TdB7_fY2ThBt8agp6Jsk
-X-Proofpoint-ORIG-GUID: Udvzg9svhLT-TdB7_fY2ThBt8agp6Jsk
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-27830.005
+X-TM-AS-User-Approved-Sender: Yes
+X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-27830.005
+X-TMASE-Result: 10--17.307800-10.000000
+X-TMASE-MatchedRID: jyNpowM6mpsUN/8aAzvyJRIRh9wkXSlF2FA7wK9mP9dgPgeggVwCFuZk
+        XqvcLVUNlxPsRwiY5LzUqA+C93oBWsD2BXku4KdJvR08UROkEAchauGyjTkf9QX+uAQWEHBwZn5
+        u7bQd2qJ1oo/WkOb0VaCfwPQUqdEypdSzuQPv1TYLwUwfdPoXvpSlv/9klkDiAS8CIlg1PGsHzY
+        bIalkde73+usKi9oxVdk3TBobQ8JBpORapdxWmu79A3Bl1/DcVdwX/SSKrKHjXFJ7W3lIp4wW/T
+        AV6gqi8We3lYtwpBw+x20KR2zlXCtDCM5b2Q+i0nVTWWiNp+v/BOVz0Jwcxl0fyM5VfgjG2pNen
+        lUW/Ky/OG+e9aAIpHmKW2rd6XT7zf9/Sma78f5LOvXpg7ONnXYoalu7bmVkyJLfQYoCQHFZpQPI
+        /PUz4jq0TVqwcl7WLuR46my6IOf5exSxKcqB2AKoXHZz/dXlxWQ3R4k5PTnBFpKl8aBgi1/cwyV
+        YGZr7I/t8GtPJsyDaCUDg+fMvu+JH0YXYnbGozFEUknJ/kEl6Ax/bc87r9b/oLR4+zsDTtH/zyL
+        +gBqizGDL/XkKk4qWoP4CtLdG3e+dFfB4Lb6TAzPPs7QubshQ==
+X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_PASS,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+====
+Changes since v12:
+ 1. correct flag name in subject (MF_MEM_REMOVE => MF_MEM_PRE_REMOVE)
+ 2. complete the behavior when fs has already frozen by kernel call
+      NOTICE: Instead of "call notify_failure() again w/o PRE_REMOVE",
+              I tried this proposal[0].
+ 3. call xfs_dax_notify_failure_freeze() and _thaw() in same function
+ 4. rebase on: xfs/xfs-linux.git vfs-for-next
+====
 
-The for-next branch of the xfs-linux repository at:
+Now, if we suddenly remove a PMEM device(by calling unbind) which
+contains FSDAX while programs are still accessing data in this device,
+e.g.:
+```
+ $FSSTRESS_PROG -d $SCRATCH_MNT -n 99999 -p 4 &
+ # $FSX_PROG -N 1000000 -o 8192 -l 500000 $SCRATCH_MNT/t001 &
+ echo "pfn1.1" > /sys/bus/nd/drivers/nd_pmem/unbind
+```
+it could come into an unacceptable state:
+  1. device has gone but mount point still exists, and umount will fail
+       with "target is busy"
+  2. programs will hang and cannot be killed
+  3. may crash with NULL pointer dereference
 
-	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+To fix this, we introduce a MF_MEM_PRE_REMOVE flag to let it know that we
+are going to remove the whole device, and make sure all related processes
+could be notified so that they could end up gracefully.
 
-has just been updated.
+This patch is inspired by Dan's "mm, dax, pmem: Introduce
+dev_pagemap_failure()"[1].  With the help of dax_holder and
+->notify_failure() mechanism, the pmem driver is able to ask filesystem
+on it to unmap all files in use, and notify processes who are using
+those files.
 
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.
+Call trace:
+trigger unbind
+ -> unbind_store()
+  -> ... (skip)
+   -> devres_release_all()
+    -> kill_dax()
+     -> dax_holder_notify_failure(dax_dev, 0, U64_MAX, MF_MEM_PRE_REMOVE)
+      -> xfs_dax_notify_failure()
+      `-> freeze_super()             // freeze (kernel call)
+      `-> do xfs rmap
+      ` -> mf_dax_kill_procs()
+      `  -> collect_procs_fsdax()    // all associated processes
+      `  -> unmap_and_kill()
+      ` -> invalidate_inode_pages2_range() // drop file's cache
+      `-> thaw_super()               // thaw (both kernel & user call)
 
-The new head of the for-next branch is commit:
+Introduce MF_MEM_PRE_REMOVE to let filesystem know this is a remove
+event.  Use the exclusive freeze/thaw[2] to lock the filesystem to prevent
+new dax mapping from being created.  Do not shutdown filesystem directly
+if configuration is not supported, or if failure range includes metadata
+area.  Make sure all files and processes(not only the current progress)
+are handled correctly.  Also drop the cache of associated files before
+pmem is removed.
 
-c1950a111dd8 fs/xfs: Fix typos in comments
+[0]: https://lore.kernel.org/linux-xfs/25cf6700-4db0-a346-632c-ec9fc291793a@fujitsu.com/
+[1]: https://lore.kernel.org/linux-mm/161604050314.1463742.14151665140035795571.stgit@dwillia2-desk3.amr.corp.intel.com/
+[2]: https://lore.kernel.org/linux-xfs/169116275623.3187159.16862410128731457358.stg-ugh@frogsfrogsfrogs/
 
-46 new commits:
+Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+---
+ drivers/dax/super.c         |  3 +-
+ fs/xfs/xfs_notify_failure.c | 99 ++++++++++++++++++++++++++++++++++---
+ include/linux/mm.h          |  1 +
+ mm/memory-failure.c         | 17 +++++--
+ 4 files changed, 109 insertions(+), 11 deletions(-)
 
-Chandan Babu R (9):
-      [3eef00105a42] Merge tag 'maintainer-transition-6.6_2023-08-10' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.6-mergeA
-      [81fbc5f93080] Merge tag 'repair-reap-fixes-6.6_2023-08-10' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.6-mergeA
-      [d668fc1fdad1] Merge tag 'big-array-6.6_2023-08-10' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.6-mergeA
-      [889b09b3d00c] Merge tag 'scrub-usage-stats-6.6_2023-08-10' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.6-mergeA
-      [df7833234b66] Merge tag 'scrub-rtsummary-6.6_2023-08-10' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.6-mergeA
-      [7857acd8773e] Merge tag 'repair-tweaks-6.6_2023-08-10' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.6-mergeA
-      [5221002c0543] Merge tag 'repair-force-rebuild-6.6_2023-08-10' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.6-mergeA
-      [939c9de87fc3] Merge tag 'repair-agfl-fixes-6.6_2023-08-10' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.6-mergeA
-      [220c8d57f55f] Merge tag 'scrub-bmap-fixes-6.6_2023-08-10' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.6-mergeA
+diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+index c4c4728a36e4..2e1a35e82fce 100644
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -323,7 +323,8 @@ void kill_dax(struct dax_device *dax_dev)
+ 		return;
+ 
+ 	if (dax_dev->holder_data != NULL)
+-		dax_holder_notify_failure(dax_dev, 0, U64_MAX, 0);
++		dax_holder_notify_failure(dax_dev, 0, U64_MAX,
++				MF_MEM_PRE_REMOVE);
+ 
+ 	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
+ 	synchronize_srcu(&dax_srcu);
+diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
+index 4a9bbd3fe120..6496c32a9172 100644
+--- a/fs/xfs/xfs_notify_failure.c
++++ b/fs/xfs/xfs_notify_failure.c
+@@ -22,6 +22,7 @@
+ 
+ #include <linux/mm.h>
+ #include <linux/dax.h>
++#include <linux/fs.h>
+ 
+ struct xfs_failure_info {
+ 	xfs_agblock_t		startblock;
+@@ -73,10 +74,16 @@ xfs_dax_failure_fn(
+ 	struct xfs_mount		*mp = cur->bc_mp;
+ 	struct xfs_inode		*ip;
+ 	struct xfs_failure_info		*notify = data;
++	struct address_space		*mapping;
++	pgoff_t				pgoff;
++	unsigned long			pgcnt;
+ 	int				error = 0;
+ 
+ 	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
+ 	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
++		/* Continue the query because this isn't a failure. */
++		if (notify->mf_flags & MF_MEM_PRE_REMOVE)
++			return 0;
+ 		notify->want_shutdown = true;
+ 		return 0;
+ 	}
+@@ -92,14 +99,60 @@ xfs_dax_failure_fn(
+ 		return 0;
+ 	}
+ 
+-	error = mf_dax_kill_procs(VFS_I(ip)->i_mapping,
+-				  xfs_failure_pgoff(mp, rec, notify),
+-				  xfs_failure_pgcnt(mp, rec, notify),
+-				  notify->mf_flags);
++	mapping = VFS_I(ip)->i_mapping;
++	pgoff = xfs_failure_pgoff(mp, rec, notify);
++	pgcnt = xfs_failure_pgcnt(mp, rec, notify);
++
++	/* Continue the rmap query if the inode isn't a dax file. */
++	if (dax_mapping(mapping))
++		error = mf_dax_kill_procs(mapping, pgoff, pgcnt,
++					  notify->mf_flags);
++
++	/* Invalidate the cache in dax pages. */
++	if (notify->mf_flags & MF_MEM_PRE_REMOVE)
++		invalidate_inode_pages2_range(mapping, pgoff,
++					      pgoff + pgcnt - 1);
++
+ 	xfs_irele(ip);
+ 	return error;
+ }
+ 
++static int
++xfs_dax_notify_failure_freeze(
++	struct xfs_mount	*mp)
++{
++	struct super_block	*sb = mp->m_super;
++	int			error;
++
++	error = freeze_super(sb, FREEZE_HOLDER_KERNEL);
++	if (error)
++		xfs_emerg(mp, "already frozen by kernel, err=%d", error);
++
++	return error;
++}
++
++static void
++xfs_dax_notify_failure_thaw(
++	struct xfs_mount	*mp,
++	bool			kernel_frozen)
++{
++	struct super_block	*sb = mp->m_super;
++	int			error;
++
++	if (!kernel_frozen) {
++		error = thaw_super(sb, FREEZE_HOLDER_KERNEL);
++		if (error)
++			xfs_emerg(mp, "still frozen after notify failure, err=%d",
++				error);
++	}
++
++	/*
++	 * Also thaw userspace call anyway because the device is about to be
++	 * removed immediately.
++	 */
++	thaw_super(sb, FREEZE_HOLDER_USERSPACE);
++}
++
+ static int
+ xfs_dax_notify_ddev_failure(
+ 	struct xfs_mount	*mp,
+@@ -112,15 +165,29 @@ xfs_dax_notify_ddev_failure(
+ 	struct xfs_btree_cur	*cur = NULL;
+ 	struct xfs_buf		*agf_bp = NULL;
+ 	int			error = 0;
++	bool			kernel_frozen = false;
+ 	xfs_fsblock_t		fsbno = XFS_DADDR_TO_FSB(mp, daddr);
+ 	xfs_agnumber_t		agno = XFS_FSB_TO_AGNO(mp, fsbno);
+ 	xfs_fsblock_t		end_fsbno = XFS_DADDR_TO_FSB(mp,
+ 							     daddr + bblen - 1);
+ 	xfs_agnumber_t		end_agno = XFS_FSB_TO_AGNO(mp, end_fsbno);
+ 
++	if (mf_flags & MF_MEM_PRE_REMOVE) {
++		xfs_info(mp, "Device is about to be removed!");
++		/* Freeze fs to prevent new mappings from being created. */
++		error = xfs_dax_notify_failure_freeze(mp);
++		if (error) {
++			/* Keep going on if filesystem is frozen by kernel. */
++			if (error == -EBUSY)
++				kernel_frozen = true;
++			else
++				return error;
++		}
++	}
++
+ 	error = xfs_trans_alloc_empty(mp, &tp);
+ 	if (error)
+-		return error;
++		goto out;
+ 
+ 	for (; agno <= end_agno; agno++) {
+ 		struct xfs_rmap_irec	ri_low = { };
+@@ -165,11 +232,23 @@ xfs_dax_notify_ddev_failure(
+ 	}
+ 
+ 	xfs_trans_cancel(tp);
++
++	/*
++	 * Determine how to shutdown the filesystem according to the
++	 * error code and flags.
++	 */
+ 	if (error || notify.want_shutdown) {
+ 		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+ 		if (!error)
+ 			error = -EFSCORRUPTED;
+-	}
++	} else if (mf_flags & MF_MEM_PRE_REMOVE)
++		xfs_force_shutdown(mp, SHUTDOWN_FORCE_UMOUNT);
++
++out:
++	/* Thaw the fs if it is frozen before. */
++	if (mf_flags & MF_MEM_PRE_REMOVE)
++		xfs_dax_notify_failure_thaw(mp, kernel_frozen);
++
+ 	return error;
+ }
+ 
+@@ -197,6 +276,8 @@ xfs_dax_notify_failure(
+ 
+ 	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
+ 	    mp->m_logdev_targp != mp->m_ddev_targp) {
++		if (mf_flags & MF_MEM_PRE_REMOVE)
++			return 0;
+ 		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
+ 		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
+ 		return -EFSCORRUPTED;
+@@ -210,6 +291,12 @@ xfs_dax_notify_failure(
+ 	ddev_start = mp->m_ddev_targp->bt_dax_part_off;
+ 	ddev_end = ddev_start + bdev_nr_bytes(mp->m_ddev_targp->bt_bdev) - 1;
+ 
++	/* Notify failure on the whole device. */
++	if (offset == 0 && len == U64_MAX) {
++		offset = ddev_start;
++		len = bdev_nr_bytes(mp->m_ddev_targp->bt_bdev);
++	}
++
+ 	/* Ignore the range out of filesystem area */
+ 	if (offset + len - 1 < ddev_start)
+ 		return -ENXIO;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 799836e84840..944a1165a321 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3577,6 +3577,7 @@ enum mf_flags {
+ 	MF_UNPOISON = 1 << 4,
+ 	MF_SW_SIMULATED = 1 << 5,
+ 	MF_NO_RETRY = 1 << 6,
++	MF_MEM_PRE_REMOVE = 1 << 7,
+ };
+ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+ 		      unsigned long count, int mf_flags);
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index dc5ff7dd4e50..92f18c9e0aaf 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -688,7 +688,7 @@ static void add_to_kill_fsdax(struct task_struct *tsk, struct page *p,
+  */
+ static void collect_procs_fsdax(struct page *page,
+ 		struct address_space *mapping, pgoff_t pgoff,
+-		struct list_head *to_kill)
++		struct list_head *to_kill, bool pre_remove)
+ {
+ 	struct vm_area_struct *vma;
+ 	struct task_struct *tsk;
+@@ -696,8 +696,15 @@ static void collect_procs_fsdax(struct page *page,
+ 	i_mmap_lock_read(mapping);
+ 	read_lock(&tasklist_lock);
+ 	for_each_process(tsk) {
+-		struct task_struct *t = task_early_kill(tsk, true);
++		struct task_struct *t = tsk;
+ 
++		/*
++		 * Search for all tasks while MF_MEM_PRE_REMOVE is set, because
++		 * the current may not be the one accessing the fsdax page.
++		 * Otherwise, search for the current task.
++		 */
++		if (!pre_remove)
++			t = task_early_kill(tsk, true);
+ 		if (!t)
+ 			continue;
+ 		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
+@@ -1793,6 +1800,7 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+ 	dax_entry_t cookie;
+ 	struct page *page;
+ 	size_t end = index + count;
++	bool pre_remove = mf_flags & MF_MEM_PRE_REMOVE;
+ 
+ 	mf_flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
+ 
+@@ -1804,9 +1812,10 @@ int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+ 		if (!page)
+ 			goto unlock;
+ 
+-		SetPageHWPoison(page);
++		if (!pre_remove)
++			SetPageHWPoison(page);
+ 
+-		collect_procs_fsdax(page, mapping, index, &to_kill);
++		collect_procs_fsdax(page, mapping, index, &to_kill, pre_remove);
+ 		unmap_and_kill(&to_kill, page_to_pfn(page), mapping,
+ 				index, mf_flags);
+ unlock:
+-- 
+2.41.0
 
-Darrick J. Wong (36):
-      [19e13b0a6d08] docs: add maintainer entry profile for XFS
-      [d554046e981a] MAINTAINERS: drop me as XFS maintainer
-      [d6532904a102] MAINTAINERS: add Chandan Babu as XFS release manager
-      [86a464179cef] xfs: cull repair code that will never get used
-      [e06ef14b9f8e] xfs: move the post-repair block reaping code to a separate file
-      [8e54e06b5c7d] xfs: only invalidate blocks if we're going to free them
-      [a55e07308831] xfs: only allow reaping of per-AG blocks in xrep_reap_extents
-      [5fee784ed085] xfs: use deferred frees to reap old btree blocks
-      [77a1396f9ff1] xfs: rearrange xrep_reap_block to make future code flow easier
-      [9ed851f695c7] xfs: allow scanning ranges of the buffer cache for live buffers
-      [1c7ce115e521] xfs: reap large AG metadata extents when possible
-      [3934e8ebb7cc] xfs: create a big array data structure
-      [014ad53732d2] xfs: use per-AG bitmaps to reap unused AG metadata blocks during repair
-      [232ea052775f] xfs: enable sorting of xfile-backed arrays
-      [c390c6450318] xfs: convert xfarray insertion sort to heapsort using scratchpad memory
-      [137db333b291] xfs: teach xfile to pass back direct-map pages to caller
-      [e5b46c75892e] xfs: speed up xfarray sort by sorting xfile page contents directly
-      [cf36f4f64c2d] xfs: cache pages used for xfarray quicksort convergence
-      [a76dba3b248c] xfs: create scaffolding for creating debugfs entries
-      [764018caa99f] xfs: improve xfarray quicksort pivot
-      [d7a74cad8f45] xfs: track usage statistics of online fsck
-      [17308539507c] xfs: get our own reference to inodes that we want to scrub
-      [294012fb070e] xfs: wrap ilock/iunlock operations on sc->ip
-      [b7d47a77b904] xfs: move the realtime summary file scrubber to a separate source file
-      [d65eb8a63350] xfs: always rescan allegedly healthy per-ag metadata after repair
-      [526aab5f5790] xfs: implement online scrubbing of rtsummary info
-      [8336a64eb75c] xfs: don't complain about unfixed metadata when repairs were injected
-      [d728f4e3b21e] xfs: allow the user to cancel repairs before we start writing
-      [9ce7f9b225b6] xfs: clear pagf_agflreset when repairing the AGFL
-      [5c83df2e54b6] xfs: allow userspace to rebuild metadata structures
-      [a634c0a60b9c] xfs: fix agf_fllast when repairing an empty AGFL
-      [0d2966345364] xfs: hide xfs_inode_is_allocated in scrub common code
-      [369c001b7a25] xfs: rewrite xchk_inode_is_allocated to work properly
-      [65092ca1402c] xfs: simplify returns in xchk_bmap
-      [e27a1369a9c1] xfs: don't check reflink iflag state when checking cow fork
-      [2c234a22866e] xfs: fix dqiterate thinko
-
-Zizhen Pang (1):
-      [c1950a111dd8] fs/xfs: Fix typos in comments
-
-Code Diffstat:
-
- Documentation/filesystems/index.rst                        |    1 +
- Documentation/filesystems/xfs-maintainer-entry-profile.rst |  194 ++++++++++++++++
- Documentation/maintainer/maintainer-entry-profile.rst      |    1 +
- MAINTAINERS                                                |    4 +-
- fs/xfs/Kconfig                                             |   18 ++
- fs/xfs/Makefile                                            |   11 +-
- fs/xfs/libxfs/xfs_fs.h                                     |    6 +-
- fs/xfs/scrub/agheader_repair.c                             |  101 +++++----
- fs/xfs/scrub/bitmap.c                                      |   78 +------
- fs/xfs/scrub/bitmap.h                                      |   10 +-
- fs/xfs/scrub/bmap.c                                        |   42 ++--
- fs/xfs/scrub/common.c                                      |  215 +++++++++++++++++-
- fs/xfs/scrub/common.h                                      |   39 +++-
- fs/xfs/scrub/health.c                                      |   10 +
- fs/xfs/scrub/ialloc.c                                      |    3 +-
- fs/xfs/scrub/inode.c                                       |   11 +-
- fs/xfs/scrub/parent.c                                      |    4 +-
- fs/xfs/scrub/quota.c                                       |   15 +-
- fs/xfs/scrub/reap.c                                        |  498 +++++++++++++++++++++++++++++++++++++++++
- fs/xfs/scrub/reap.h                                        |   12 +
- fs/xfs/scrub/repair.c                                      |  377 +++++--------------------------
- fs/xfs/scrub/repair.h                                      |   25 ++-
- fs/xfs/scrub/rtbitmap.c                                    |   48 +---
- fs/xfs/scrub/rtsummary.c                                   |  264 ++++++++++++++++++++++
- fs/xfs/scrub/scrub.c                                       |   46 ++--
- fs/xfs/scrub/scrub.h                                       |    4 +
- fs/xfs/scrub/stats.c                                       |  405 +++++++++++++++++++++++++++++++++
- fs/xfs/scrub/stats.h                                       |   59 +++++
- fs/xfs/scrub/trace.c                                       |    4 +-
- fs/xfs/scrub/trace.h                                       |  391 +++++++++++++++++++++++++++++---
- fs/xfs/scrub/xfarray.c                                     | 1083 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/xfs/scrub/xfarray.h                                     |  141 ++++++++++++
- fs/xfs/scrub/xfile.c                                       |  420 ++++++++++++++++++++++++++++++++++
- fs/xfs/scrub/xfile.h                                       |   77 +++++++
- fs/xfs/xfs_aops.c                                          |    2 +-
- fs/xfs/xfs_buf.c                                           |    9 +-
- fs/xfs/xfs_buf.h                                           |   13 ++
- fs/xfs/xfs_dquot.c                                         |    2 +-
- fs/xfs/xfs_icache.c                                        |   38 ----
- fs/xfs/xfs_icache.h                                        |    4 -
- fs/xfs/xfs_linux.h                                         |    1 +
- fs/xfs/xfs_mount.c                                         |    9 +-
- fs/xfs/xfs_mount.h                                         |    4 +
- fs/xfs/xfs_super.c                                         |   53 ++++-
- fs/xfs/xfs_super.h                                         |    2 +
- fs/xfs/xfs_trace.h                                         |    3 +
- 46 files changed, 4109 insertions(+), 648 deletions(-)
- create mode 100644 Documentation/filesystems/xfs-maintainer-entry-profile.rst
- create mode 100644 fs/xfs/scrub/reap.c
- create mode 100644 fs/xfs/scrub/reap.h
- create mode 100644 fs/xfs/scrub/rtsummary.c
- create mode 100644 fs/xfs/scrub/stats.c
- create mode 100644 fs/xfs/scrub/stats.h
- create mode 100644 fs/xfs/scrub/xfarray.c
- create mode 100644 fs/xfs/scrub/xfarray.h
- create mode 100644 fs/xfs/scrub/xfile.c
- create mode 100644 fs/xfs/scrub/xfile.h
