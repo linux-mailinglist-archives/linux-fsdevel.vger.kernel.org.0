@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C32878592B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 15:27:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 078307858E1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 15:17:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235835AbjHWN1J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Aug 2023 09:27:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42478 "EHLO
+        id S235714AbjHWNRt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Aug 2023 09:17:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232438AbjHWN1H (ORCPT
+        with ESMTP id S235397AbjHWNRr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Aug 2023 09:27:07 -0400
+        Wed, 23 Aug 2023 09:17:47 -0400
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C2EB410D0;
-        Wed, 23 Aug 2023 06:26:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 17DE8E6A;
+        Wed, 23 Aug 2023 06:17:21 -0700 (PDT)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D19016F3;
-        Wed, 23 Aug 2023 06:17:51 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 740FB16F8;
+        Wed, 23 Aug 2023 06:17:57 -0700 (PDT)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C9D2F3F740;
-        Wed, 23 Aug 2023 06:17:04 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1BF5A3F740;
+        Wed, 23 Aug 2023 06:17:10 -0700 (PDT)
 From:   Alexandru Elisei <alexandru.elisei@arm.com>
 To:     catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
         maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
@@ -37,9 +37,9 @@ Cc:     pcc@google.com, steven.price@arm.com, anshuman.khandual@arm.com,
         kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
         linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC 28/37] mm: sched: Introduce PF_MEMALLOC_ISOLATE
-Date:   Wed, 23 Aug 2023 14:13:41 +0100
-Message-Id: <20230823131350.114942-29-alexandru.elisei@arm.com>
+Subject: [PATCH RFC 29/37] mm: arm64: Define the PAGE_METADATA_NONE page protection
+Date:   Wed, 23 Aug 2023 14:13:42 +0100
+Message-Id: <20230823131350.114942-30-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230823131350.114942-1-alexandru.elisei@arm.com>
 References: <20230823131350.114942-1-alexandru.elisei@arm.com>
@@ -53,138 +53,99 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On arm64, when reserving tag storage for an allocated page, if the tag
-storage is in use, the tag storage must be migrated before it can be
-reserved. As part of the migration process, the tag storage block is
-first isolated.
+Define the PAGE_METADATA_NONE page protection to be used when a page with
+metadata doesn't have metadata storage reserved.
 
-Compaction also isolates the source pages before migrating them. If the
-target for compaction requires metadata pages to be reserved, those
-metadata pages might also need to be isolated, which, in rare
-circumstances, can lead to the threshold in too_many_isolated() being
-reached, and isolate_migratepages_pageblock() will get stuck in an infinite
-loop.
-
-Add the flag PF_MEMALLOC_ISOLATE for the current thread, which makes
-too_many_isolated() ignore the threshold to make forward progress in
-isolate_migratepages_pageblock().
-
-For consistency, the similarly named function too_many_isolated() called
-during reclaim has received the same treatment.
+For arm64, this is accomplished by adding a new page table entry software
+bit PTE_METADATA_NONE. Linux doesn't set any of the PBHA bits in entries
+from the last level of the translation table and it doesn't use the
+TCR_ELx.HWUxx bits.  This makes it safe to define PTE_METADATA_NONE as bit
+59.
 
 Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 ---
- arch/arm64/kernel/mte_tag_storage.c |  5 ++++-
- include/linux/sched.h               |  2 +-
- include/linux/sched/mm.h            | 13 +++++++++++++
- mm/compaction.c                     |  3 +++
- mm/vmscan.c                         |  3 +++
- 5 files changed, 24 insertions(+), 2 deletions(-)
+ arch/arm64/include/asm/pgtable-prot.h |  2 ++
+ arch/arm64/include/asm/pgtable.h      | 16 ++++++++++++++--
+ include/linux/pgtable.h               | 12 ++++++++++++
+ 3 files changed, 28 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/kernel/mte_tag_storage.c b/arch/arm64/kernel/mte_tag_storage.c
-index 1ab875be5f9b..ba316ffb9aef 100644
---- a/arch/arm64/kernel/mte_tag_storage.c
-+++ b/arch/arm64/kernel/mte_tag_storage.c
-@@ -505,9 +505,9 @@ static int order_to_num_blocks(int order)
- int reserve_metadata_storage(struct page *page, int order, gfp_t gfp)
- {
- 	unsigned long start_block, end_block;
-+	unsigned long flags, cflags;
- 	struct tag_region *region;
- 	unsigned long block;
--	unsigned long flags;
- 	int i, tries;
- 	int ret = 0;
+diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
+index eed814b00a38..ed2a98ec4e95 100644
+--- a/arch/arm64/include/asm/pgtable-prot.h
++++ b/arch/arm64/include/asm/pgtable-prot.h
+@@ -19,6 +19,7 @@
+ #define PTE_SPECIAL		(_AT(pteval_t, 1) << 56)
+ #define PTE_DEVMAP		(_AT(pteval_t, 1) << 57)
+ #define PTE_PROT_NONE		(_AT(pteval_t, 1) << 58) /* only when !PTE_VALID */
++#define PTE_METADATA_NONE	(_AT(pteval_t, 1) << 59) /* only when PTE_PROT_NONE */
  
-@@ -539,6 +539,7 @@ int reserve_metadata_storage(struct page *page, int order, gfp_t gfp)
- 	}
- 	xa_unlock_irqrestore(&tag_blocks_reserved, flags);
+ /*
+  * This bit indicates that the entry is present i.e. pmd_page()
+@@ -98,6 +99,7 @@ extern bool arm64_use_ng_mappings;
+ 	 })
  
-+	cflags = memalloc_isolate_save();
- 	for (block = start_block; block < end_block; block += region->block_size) {
- 		/* Refcount incremented above. */
- 		if (tag_storage_block_is_reserved(block))
-@@ -566,6 +567,7 @@ int reserve_metadata_storage(struct page *page, int order, gfp_t gfp)
- 	for (i = 0; i < (1 << order); i++)
- 		set_bit(PG_tag_storage_reserved, &(page + i)->flags);
- 
-+	memalloc_isolate_restore(cflags);
- 	mutex_unlock(&tag_blocks_lock);
- 
- 	return 0;
-@@ -581,6 +583,7 @@ int reserve_metadata_storage(struct page *page, int order, gfp_t gfp)
- 	}
- 	xa_unlock_irqrestore(&tag_blocks_reserved, flags);
- 
-+	memalloc_isolate_restore(cflags);
- 	mutex_unlock(&tag_blocks_lock);
- 
- 	count_vm_events(METADATA_RESERVE_FAIL, region->block_size);
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 609bde814cb0..a2a930cab31a 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1734,7 +1734,7 @@ extern struct pid *cad_pid;
- #define PF_USED_MATH		0x00002000	/* If unset the fpu must be initialized before use */
- #define PF_USER_WORKER		0x00004000	/* Kernel thread cloned from userspace thread */
- #define PF_NOFREEZE		0x00008000	/* This thread should not be frozen */
--#define PF__HOLE__00010000	0x00010000
-+#define PF_MEMALLOC_ISOLATE	0x00010000	/* Ignore isolation limits */
- #define PF_KSWAPD		0x00020000	/* I am kswapd */
- #define PF_MEMALLOC_NOFS	0x00040000	/* All allocation requests will inherit GFP_NOFS */
- #define PF_MEMALLOC_NOIO	0x00080000	/* All allocation requests will inherit GFP_NOIO */
-diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-index 8d89c8c4fac1..8db491208746 100644
---- a/include/linux/sched/mm.h
-+++ b/include/linux/sched/mm.h
-@@ -393,6 +393,19 @@ static inline void memalloc_pin_restore(unsigned int flags)
- 	current->flags = (current->flags & ~PF_MEMALLOC_PIN) | flags;
+ #define PAGE_NONE		__pgprot(((_PAGE_DEFAULT) & ~PTE_VALID) | PTE_PROT_NONE | PTE_RDONLY | PTE_NG | PTE_PXN | PTE_UXN)
++#define PAGE_METADATA_NONE	__pgprot((_PAGE_DEFAULT & ~PTE_VALID) | PTE_PROT_NONE | PTE_METADATA_NONE | PTE_RDONLY | PTE_NG | PTE_PXN | PTE_UXN)
+ /* shared+writable pages are clean by default, hence PTE_RDONLY|PTE_WRITE */
+ #define PAGE_SHARED		__pgprot(_PAGE_SHARED)
+ #define PAGE_SHARED_EXEC	__pgprot(_PAGE_SHARED_EXEC)
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 944860d7090e..2e42f7713425 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -451,6 +451,18 @@ static inline int pmd_protnone(pmd_t pmd)
  }
+ #endif
  
-+static inline unsigned int memalloc_isolate_save(void)
++#ifdef CONFIG_MEMORY_METADATA
++static inline bool pte_metadata_none(pte_t pte)
 +{
-+	unsigned int flags = current->flags & PF_MEMALLOC_ISOLATE;
++	return (((pte_val(pte) & (PTE_VALID | PTE_PROT_NONE)) == PTE_PROT_NONE)
++		&& (pte_val(pte) & PTE_METADATA_NONE));
++}
++static inline bool pmd_metadata_none(pmd_t pmd)
++{
++	return pte_metadata_none(pmd_pte(pmd));
++}
++#endif
 +
-+	current->flags |= PF_MEMALLOC_ISOLATE;
-+	return flags;
+ #define pmd_present_invalid(pmd)     (!!(pmd_val(pmd) & PMD_PRESENT_INVALID))
+ 
+ static inline int pmd_present(pmd_t pmd)
+@@ -809,8 +821,8 @@ static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+ 	 * in MAIR_EL1. The mask below has to include PTE_ATTRINDX_MASK.
+ 	 */
+ 	const pteval_t mask = PTE_USER | PTE_PXN | PTE_UXN | PTE_RDONLY |
+-			      PTE_PROT_NONE | PTE_VALID | PTE_WRITE | PTE_GP |
+-			      PTE_ATTRINDX_MASK;
++			      PTE_PROT_NONE | PTE_METADATA_NONE | PTE_VALID |
++			      PTE_WRITE | PTE_GP | PTE_ATTRINDX_MASK;
+ 	/* preserve the hardware dirty information */
+ 	if (pte_hw_dirty(pte))
+ 		pte = pte_mkdirty(pte);
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index 5063b482e34f..0119ffa2c0ab 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -1340,6 +1340,18 @@ static inline int pmd_protnone(pmd_t pmd)
+ }
+ #endif /* CONFIG_NUMA_BALANCING */
+ 
++#ifndef CONFIG_MEMORY_METADATA
++static inline bool pte_metadata_none(pte_t pte)
++{
++	return false;
 +}
 +
-+static inline void memalloc_isolate_restore(unsigned int flags)
++static inline bool pmd_metadata_none(pmd_t pmd)
 +{
-+	current->flags = (current->flags & ~PF_MEMALLOC_ISOLATE) | flags;
++	return false;
 +}
++#endif /* CONFIG_MEMORY_METADATA */
 +
- #ifdef CONFIG_MEMCG
- DECLARE_PER_CPU(struct mem_cgroup *, int_active_memcg);
- /**
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 314793ec8bdb..fdb75316f0cc 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -778,6 +778,9 @@ static bool too_many_isolated(struct compact_control *cc)
+ #endif /* CONFIG_MMU */
  
- 	unsigned long active, inactive, isolated;
- 
-+	if (current->flags & PF_MEMALLOC_ISOLATE)
-+		return false;
-+
- 	inactive = node_page_state(pgdat, NR_INACTIVE_FILE) +
- 			node_page_state(pgdat, NR_INACTIVE_ANON);
- 	active = node_page_state(pgdat, NR_ACTIVE_FILE) +
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 1080209a568b..912ebb6003a0 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2453,6 +2453,9 @@ static int too_many_isolated(struct pglist_data *pgdat, int file,
- 	if (current_is_kswapd())
- 		return 0;
- 
-+	if (current->flags & PF_MEMALLOC_ISOLATE)
-+		return 0;
-+
- 	if (!writeback_throttling_sane(sc))
- 		return 0;
- 
+ #ifdef CONFIG_HAVE_ARCH_HUGE_VMAP
 -- 
 2.41.0
 
