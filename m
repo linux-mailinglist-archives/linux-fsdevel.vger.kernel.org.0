@@ -2,123 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A3157785F69
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 20:17:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70D9C785FAA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 20:31:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237624AbjHWSRG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Aug 2023 14:17:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35664 "EHLO
+        id S238157AbjHWSbr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Aug 2023 14:31:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229864AbjHWSRE (ORCPT
+        with ESMTP id S238155AbjHWSbq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Aug 2023 14:17:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25637CC7;
-        Wed, 23 Aug 2023 11:17:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A6A1463D52;
-        Wed, 23 Aug 2023 18:17:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03400C433C7;
-        Wed, 23 Aug 2023 18:16:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692814621;
-        bh=z4aynHRzkI+QjbnRFX6g1vVxQ5ejtsIbs5rrGfHFHGE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vOmP4hLKyqUTY4Rpo3iF4nxe1oNnRDDYIYRbZ/skZ0s1Z1rqv3ybf1aNIxyXlfoZi
-         XzisYoLx7TaoSyRzhpiq5y79KygxbLW8f3Y0aJffZZZK7hn134I1xclZvmJl/advUK
-         FV3HcydgfFsNEx1mO4o6fk/h0jrhMpmi1nPkkVh+mPt1TaLdb9rJOn2FjvFo2V5SVn
-         0YorKgoH/DUEFkI5en//P98Di0z8jX8gihJYc5+yYn8tQilGMhbF79vDUmtEfqzTPE
-         LDNRjNI1lzg8m7cs4daU/NrYVTQWUoyjFGUHdKTLpL2Geei5FDlJv0IUpwuMr4GMxk
-         ZGPH+S1BybA6w==
-Date:   Wed, 23 Aug 2023 19:16:52 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-        Deepak Gupta <debug@rivosinc.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 03/36] arm64/gcs: Document the ABI for Guarded Control
- Stacks
-Message-ID: <ef7272d2-d807-428f-9915-6fc9febadb5c@sirena.org.uk>
-References: <ZNOhjrYleGBR6Pbs@arm.com>
- <f4cec4b3-c386-4873-aa1d-90528e062f2a@sirena.org.uk>
- <ZN+qki9EaZ6f9XNi@arm.com>
- <aaea542c-929c-4c9b-8caa-ca67e0eb9c1e@sirena.org.uk>
- <ZOTnL1SDJWZjHPUW@arm.com>
- <43ec219d-bf20-47b8-a5f8-32bc3b64d487@sirena.org.uk>
- <ZOXa98SqwYPwxzNP@arm.com>
- <227e6552-353c-40a9-86c1-280587a40e3c@sirena.org.uk>
- <ZOY3lz+Zyhd5ZyQ9@arm.com>
- <ZOZEmO6WGyVAcOqK@arm.com>
+        Wed, 23 Aug 2023 14:31:46 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23489CC7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 11:31:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1692815461;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FjjmWq6lbTk8T56RTtAzjKdLtvwQOo42U/71Bxnl1y8=;
+        b=iHVtErC2265bFCmpycmbqQIox4Ggi6PDwK0LeGFgDcpG4Ixosv9kEhiV7SiDB2YziyOTqE
+        kRy8gPexjINObzX01z2QkjR7aJZX647bNs6uWRfS+cjw8Gt/n0z3HpTssLS+HFR+MB7MBj
+        xXLU4stRfPKgdRg9rWN3ZFFD71WTtDE=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-297-zS_x091_OC2UCbJxj8CeaQ-1; Wed, 23 Aug 2023 14:30:59 -0400
+X-MC-Unique: zS_x091_OC2UCbJxj8CeaQ-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-31ad607d383so3838546f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 11:30:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692815458; x=1693420258;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FjjmWq6lbTk8T56RTtAzjKdLtvwQOo42U/71Bxnl1y8=;
+        b=fG0nF+g7fJ7bO2WKKBlGkTXDe0eAFAPJqDGz96OcMsQtZhKoQWgUMEdcw0EszKBOkh
+         qt2M6JWWtyVMwFkWvMJRxRQ65+E6yCqgC5IuAK9dIDIVnLgyqntrnYeIrJHHZj0DrWqu
+         HFYwDYCChdAqeZInD/Cqy8Fai6Tm2Zk//Y8pbsqD3KWYodyClV7L2N+TDAfjIFUOSwb5
+         BRSCW9Tpi/8fg3cHmZf26f9fj4c6eIT1wuZ3JOh6BRr8mnTNaWkd/aY7x4HCtD/e6Lb8
+         5XTa0J+XWhHSxupCUa+bqFNDj80ObLqu6CVRQmu54mvZmkX3bf03s3j/yTYXkN0CB4Ah
+         qjTw==
+X-Gm-Message-State: AOJu0YwoiCzsJXy3WsdzqODQxZkYvPbaYhV65vi3uTdSPMjKeO5cQrEF
+        z6/53kZ7g7ajX/B6y97b0eV6ftd28B8CptOZr6+vOhUYa+O1PDv7FJN+Z1VlxeLeoHxDu8DGbE1
+        htBMzhpBdAGIEoxDQqreeEHYk3aMmDDlJQA==
+X-Received: by 2002:a5d:65c5:0:b0:319:7c07:87bf with SMTP id e5-20020a5d65c5000000b003197c0787bfmr11036929wrw.53.1692815458568;
+        Wed, 23 Aug 2023 11:30:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE5YW6PeWXoqpo8UC3oIa2PjRhpO8TnckdHFiM8LOksY4s1cdCdwuN/zuCB4f7LNLNiYPkqMA==
+X-Received: by 2002:a5d:65c5:0:b0:319:7c07:87bf with SMTP id e5-20020a5d65c5000000b003197c0787bfmr11036915wrw.53.1692815458145;
+        Wed, 23 Aug 2023 11:30:58 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c70c:e700:4d5c:81e2:253e:e397? (p200300cbc70ce7004d5c81e2253ee397.dip0.t-ipconnect.de. [2003:cb:c70c:e700:4d5c:81e2:253e:e397])
+        by smtp.gmail.com with ESMTPSA id s5-20020adff805000000b003143cb109d5sm19903381wrp.14.2023.08.23.11.30.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Aug 2023 11:30:57 -0700 (PDT)
+Message-ID: <1f6b4edb-b906-e1ba-7c1f-c854472ad304@redhat.com>
+Date:   Wed, 23 Aug 2023 20:30:56 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eccODu5HN5W02WFY"
-Content-Disposition: inline
-In-Reply-To: <ZOZEmO6WGyVAcOqK@arm.com>
-X-Cookie: Some optional equipment shown.
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v5] proc/ksm: add ksm stats to /proc/pid/smaps
+Content-Language: en-US
+To:     Stefan Roesch <shr@devkernel.io>, kernel-team@fb.com
+Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        hannes@cmpxchg.org, riel@surriel.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20230823170107.1457915-1-shr@devkernel.io>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20230823170107.1457915-1-shr@devkernel.io>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 23.08.23 19:01, Stefan Roesch wrote:
+> With madvise and prctl KSM can be enabled for different VMA's. Once it
+> is enabled we can query how effective KSM is overall. However we cannot
+> easily query if an individual VMA benefits from KSM.
+> 
+> This commit adds a KSM section to the /prod/<pid>/smaps file. It reports
+> how many of the pages are KSM pages. Note that KSM-placed zeropages are
+> not included, only actual KSM pages.
+> 
+> Here is a typical output:
+> 
+> 7f420a000000-7f421a000000 rw-p 00000000 00:00 0
+> Size:             262144 kB
+> KernelPageSize:        4 kB
+> MMUPageSize:           4 kB
+> Rss:               51212 kB
+> Pss:                8276 kB
+> Shared_Clean:        172 kB
+> Shared_Dirty:      42996 kB
+> Private_Clean:       196 kB
+> Private_Dirty:      7848 kB
+> Referenced:        15388 kB
+> Anonymous:         51212 kB
+> KSM:               41376 kB
+> LazyFree:              0 kB
+> AnonHugePages:         0 kB
+> ShmemPmdMapped:        0 kB
+> FilePmdMapped:         0 kB
+> Shared_Hugetlb:        0 kB
+> Private_Hugetlb:       0 kB
+> Swap:             202016 kB
+> SwapPss:            3882 kB
+> Locked:                0 kB
+> THPeligible:    0
+> ProtectionKey:         0
+> ksm_state:          0
+> ksm_skip_base:      0
+> ksm_skip_count:     0
+> VmFlags: rd wr mr mw me nr mg anon
+> 
+> This information also helps with the following workflow:
+> - First enable KSM for all the VMA's of a process with prctl.
+> - Then analyze with the above smaps report which VMA's benefit the most
+> - Change the application (if possible) to add the corresponding madvise
+> calls for the VMA's that benefit the most
+> 
+> Signed-off-by: Stefan Roesch <shr@devkernel.io>
 
---eccODu5HN5W02WFY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-On Wed, Aug 23, 2023 at 06:40:40PM +0100, Szabolcs Nagy wrote:
+-- 
+Cheers,
 
-> i don't know if we can allow disabled gcs thread creation with locked
-> gcs state. (i can see arguments both ways, so further prctl flag may
-> be needed which may be another divergence from x86)
+David / dhildenb
 
-I think that if we do add a new flag that'd just be new functionality,
-the divergence would be in allowing configuration via clone3() rather
-than the flag.  TBH I'm not sure I see a use case for locking but
-providing a mechanism for getting out of the lock, that seems very
-questionable.
-
---eccODu5HN5W02WFY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmTmTRMACgkQJNaLcl1U
-h9AFoAf/Rmp/X+zsA/zDX+bXBUla+v8qz72JS4cU/67DmXv5Fb8FKCj4nY5j/OnZ
-3G9+lHZYYRFTA8sdQH2qULPo0S6QafNbebM0WxsjYuiCw8CKuztE1jOm+l6aVyf7
-G/h5YxEOQBb4ChLezEXXQWZC0wR/S+7bf34IxDycvRh6Y0700VL4eZ7pu4fc8WDu
-rHrMeB82zAlQCr3fdUgu5FzPQFUiY4dbDzPrJHpuVIq+Vnpk7RK7b1vkYZa4fo5o
-2YB87p19ylZBQa0LvKdA+RkgDNvExeujREoO1O+WrBVa1bdtKw80kGgvXJC3oy0f
-P8bazSIfrut0e41Y3agZotCijYwTlg==
-=JX+L
------END PGP SIGNATURE-----
-
---eccODu5HN5W02WFY--
