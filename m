@@ -2,258 +2,253 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A25D7854F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 12:10:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EE2F7854FC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Aug 2023 12:11:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232170AbjHWKKo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Aug 2023 06:10:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53916 "EHLO
+        id S232724AbjHWKLT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Aug 2023 06:11:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232479AbjHWKKi (ORCPT
+        with ESMTP id S232729AbjHWKKm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Aug 2023 06:10:38 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2DBACDF
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 03:09:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1692785385;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BlfYARvXjr1F28IXgFG58ilrQHBrtyu82Jv5Eef7lQY=;
-        b=U27pp8cZmZRpXPwFw8La68hgjcz9AifibMdKTiN1axXZzfuuo1aomyKilyF8QIZVjLVauO
-        TlOQ8oD3JnmednpYm8xbKPz4uLG0rbuxs0Ght7i56T4Qjeqavxr9wb9pLk3J2xiKY6t8Oo
-        Cra1sN9cF1qQlxzBPz2NyTuWUn46QnY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-662-S9OGswnLM7OTEWvpccZQBw-1; Wed, 23 Aug 2023 06:09:43 -0400
-X-MC-Unique: S9OGswnLM7OTEWvpccZQBw-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-3fe2a5ced6dso35768545e9.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 03:09:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692785382; x=1693390182;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :references:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BlfYARvXjr1F28IXgFG58ilrQHBrtyu82Jv5Eef7lQY=;
-        b=cuI3Pd6VijxOfkNoz3PmOVwBqeS0ktk8avq3PUygAsYzc6Pk1cg7N4GrKzt5eHNakG
-         AP4LTrCctl7f8GwZ5jM0/+2GbCPPMU/MeG1wJ4zIq5aTwCybcGowrR1YrWp34TpukS1y
-         trl2hMxyzLSHHfqJX/JxtY+ha+mSYrEbCbRrbNjLMM0VFGti0Y+88XmWojKrXD8/rfFu
-         Li5yHSS06Ao6j9LQYnjtH0mJXNPOCjSpYKD3/QAHMjYYFlztM7wlWxFQvCfBYf6a7bq8
-         4RyUfItf6GZC6zjz6PHWcYicnEgsXULAVL3JYN1S7HlbHo6xAuY2C9Pz8xdlrj5v2cKp
-         euFg==
-X-Gm-Message-State: AOJu0YypHyQPjCaVNp5HklGtxi5aDoG6NLDR/Gc7z5Vv/gBz6DZsGiDH
-        MzF7FeETGyQW7tvw/o0MALQ6iNQU9/G8/AyZ8IBEE1fDzBPXflaexkKDBedXt3wsDE26fynjCrE
-        td4ZR6FwHYFRAEujaSG9wYCLwUA==
-X-Received: by 2002:a7b:cbcd:0:b0:3fe:25b3:951d with SMTP id n13-20020a7bcbcd000000b003fe25b3951dmr9488609wmi.5.1692785382722;
-        Wed, 23 Aug 2023 03:09:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHVbMW2VcEi17GbUpyPij27yRRiQBB6A/wFEV7rsIx6tgU2fyPnvx+MB2rA90P60UsZotfSvA==
-X-Received: by 2002:a7b:cbcd:0:b0:3fe:25b3:951d with SMTP id n13-20020a7bcbcd000000b003fe25b3951dmr9488589wmi.5.1692785382328;
-        Wed, 23 Aug 2023 03:09:42 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c70c:e700:4d5c:81e2:253e:e397? (p200300cbc70ce7004d5c81e2253ee397.dip0.t-ipconnect.de. [2003:cb:c70c:e700:4d5c:81e2:253e:e397])
-        by smtp.gmail.com with ESMTPSA id v21-20020a1cf715000000b003fe29dc0ff2sm18253291wmh.21.2023.08.23.03.09.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Aug 2023 03:09:41 -0700 (PDT)
-Message-ID: <b380a853-4466-d060-1084-dcdd65a5ce13@redhat.com>
-Date:   Wed, 23 Aug 2023 12:09:40 +0200
+        Wed, 23 Aug 2023 06:10:42 -0400
+Received: from EUR01-VE1-obe.outbound.protection.outlook.com (mail-ve1eur01on2042.outbound.protection.outlook.com [40.107.14.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44303E6A;
+        Wed, 23 Aug 2023 03:10:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IOrDUd+FVk3vNXJqfNKW0UBrz813kwnlFgbS0CSGpQ4=;
+ b=UrD5Sad51hJBTozIGdsHOE8HTs+icpKbg/uzZrAqriUEc8rK/FoB/64yetRLJw00Zb4xlQOKy+QQU8Sek3jNrDLVXhdEdDktxwsiJ0ks9ejuFG1gGNDOc2mtOWxdmPjHnyJOYdMh+rv13tpCPtC3eWneIgOFqX75OR6kuXzEBC0=
+Received: from AS9P194CA0018.EURP194.PROD.OUTLOOK.COM (2603:10a6:20b:46d::30)
+ by GV2PR08MB8025.eurprd08.prod.outlook.com (2603:10a6:150:ad::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.20; Wed, 23 Aug
+ 2023 10:10:29 +0000
+Received: from AM7EUR03FT010.eop-EUR03.prod.protection.outlook.com
+ (2603:10a6:20b:46d:cafe::4f) by AS9P194CA0018.outlook.office365.com
+ (2603:10a6:20b:46d::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.25 via Frontend
+ Transport; Wed, 23 Aug 2023 10:10:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
+ client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
+ pr=C
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ AM7EUR03FT010.mail.protection.outlook.com (100.127.141.22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6723.16 via Frontend Transport; Wed, 23 Aug 2023 10:10:29 +0000
+Received: ("Tessian outbound 169aaa6bf2b7:v175"); Wed, 23 Aug 2023 10:10:29 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: c34bbbab1685a211
+X-CR-MTA-TID: 64aa7808
+Received: from b8c08391aad8.1
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 09E88E55-B2A1-47F3-9522-AF7217A665DD.1;
+        Wed, 23 Aug 2023 10:10:18 +0000
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id b8c08391aad8.1
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Wed, 23 Aug 2023 10:10:18 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=I4cvyyzLieK88VVTDZa+Rkyhrd5+ty0Fg3XXIPbYauXyuKVSbtrfToQLmX3GYdFv8hLfs7h9oDx/Bt0rPK7k838fFsHqBAP62U8KR3Br3H2rdPFRTEAK62gGJY7XISOsa0r/bT3ZcqsYmDYxV/k2ktI63fD0WlbhbaLc7m8ausMbdxLbfFFf4ryjBYEQkXcD/TAppkwqXga7MrV5s0zJPkOXZ/9UvoL8wJgtMEBKDaocGtcIM5dBbA0auYBXXxRaQimzUK+/OmN7BjUK2D+EWEmrUb9xKSNhWbac5L9pecOTGOmlUo0+fXm7XcmTcdNF3vQBk2JAdr+cVeUKtPyZrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IOrDUd+FVk3vNXJqfNKW0UBrz813kwnlFgbS0CSGpQ4=;
+ b=Afh1kkua85zYo+g3NMohX6ohRzkM6iGT2UsyrmzahMSHh0lluLzCRzMBbAt/BrpNPuhn8apQEh3IkoprvQXUXS/mdBe0E6glCjDE1ikDIT/XFTghU/MdZWKmYA5lpnKTqjCI2U3NV7xYV1aDn0q7N8OdoKTl6rc6mpixIHup3HIHfRrOlP0oxXkkxRawui/UqI1MS2PNWKXRGFnyQRAtnxgs5iX3RDC9EYW+v5ZuajQdQNKnOHtazUSjzfEy/Vt16lscv2ItPv6tixBuIFg98ucdtDVRFFKD2lEfq5hmQoAq6hVFjWYF8UHpL+8jdnKNs4SHK1NHiQeeOfpCumPBPA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IOrDUd+FVk3vNXJqfNKW0UBrz813kwnlFgbS0CSGpQ4=;
+ b=UrD5Sad51hJBTozIGdsHOE8HTs+icpKbg/uzZrAqriUEc8rK/FoB/64yetRLJw00Zb4xlQOKy+QQU8Sek3jNrDLVXhdEdDktxwsiJ0ks9ejuFG1gGNDOc2mtOWxdmPjHnyJOYdMh+rv13tpCPtC3eWneIgOFqX75OR6kuXzEBC0=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from DB9PR08MB7179.eurprd08.prod.outlook.com (2603:10a6:10:2cc::19)
+ by DB3PR08MB8794.eurprd08.prod.outlook.com (2603:10a6:10:435::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.25; Wed, 23 Aug
+ 2023 10:10:14 +0000
+Received: from DB9PR08MB7179.eurprd08.prod.outlook.com
+ ([fe80::adb0:61cb:8733:6db2]) by DB9PR08MB7179.eurprd08.prod.outlook.com
+ ([fe80::adb0:61cb:8733:6db2%7]) with mapi id 15.20.6699.026; Wed, 23 Aug 2023
+ 10:10:14 +0000
+Date:   Wed, 23 Aug 2023 11:09:59 +0100
+From:   Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+        Deepak Gupta <debug@rivosinc.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v4 03/36] arm64/gcs: Document the ABI for Guarded Control
+ Stacks
+Message-ID: <ZOXa98SqwYPwxzNP@arm.com>
+References: <20230807-arm64-gcs-v4-0-68cfa37f9069@kernel.org>
+ <20230807-arm64-gcs-v4-3-68cfa37f9069@kernel.org>
+ <ZNOhjrYleGBR6Pbs@arm.com>
+ <f4cec4b3-c386-4873-aa1d-90528e062f2a@sirena.org.uk>
+ <ZN+qki9EaZ6f9XNi@arm.com>
+ <aaea542c-929c-4c9b-8caa-ca67e0eb9c1e@sirena.org.uk>
+ <ZOTnL1SDJWZjHPUW@arm.com>
+ <43ec219d-bf20-47b8-a5f8-32bc3b64d487@sirena.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <43ec219d-bf20-47b8-a5f8-32bc3b64d487@sirena.org.uk>
+X-ClientProxiedBy: LO4P123CA0699.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:37b::6) To DB9PR08MB7179.eurprd08.prod.outlook.com
+ (2603:10a6:10:2cc::19)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Content-Language: en-US
-To:     Stefan Roesch <shr@devkernel.io>, kernel-team@fb.com
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        hannes@cmpxchg.org, riel@surriel.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20230822180539.1424843-1-shr@devkernel.io>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH v4] proc/ksm: add ksm stats to /proc/pid/smaps
-In-Reply-To: <20230822180539.1424843-1-shr@devkernel.io>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-MS-TrafficTypeDiagnostic: DB9PR08MB7179:EE_|DB3PR08MB8794:EE_|AM7EUR03FT010:EE_|GV2PR08MB8025:EE_
+X-MS-Office365-Filtering-Correlation-Id: fe1fb4c9-5c88-4d23-6226-08dba3c12de3
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;
+X-Microsoft-Antispam-Message-Info-Original: 4HQ0xxcgBBCPMnhSSd1T6C9csCC9TL4+zs4YYQeuKQc+0W/Z4RiJV5i1qaLdO1LDs1by7tXNfjKADieew0SnN5v22mpikYrpZLa/Mc1pE3qZtzQrH6gryCEkym4IncFvXo+d5FIRE1yUntf+PjjqTuGpf2KJEHS19IDsIVEk4VEFACENmSQcgwFcT8Je0ersGpNPUMCBR623lDPj3eYgbi2Hes+T0rLrO7QOhY9bcmmUi7O4VaqdZBQePX7VPGymTxhLldgIFIJiQxBzYRJgpRHPpFCVDoQxOFZk0jvXRTJq5rlAF0jeh5M1H8krHdRpsHJBdtTS8Lu5nd4slKla8ogREpIwbl4XJAoXkKe0MZEgPVjkXwjgcNgaEOoOwZXPJHjQs9LaK2DSG6lY5rvrEIN5H1gvlrTvoXe9fe0Asfzjz7jiW7MdEc7HZ2VHvBnS0Sx3U/lYNoThzVKYZvmK8SvebDRSQcjrvU/G1AxzwNQNd6B/QwYfAHXSQRvjJL2WJxZbOs3/SvhWfLElQ+lA/7mFg+C8I3LPtL9foB2qQwYyi39BbNmJW6yKQOqh1kVNFQnlT5Qls/OAmigC35eiYg==
+X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR08MB7179.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(346002)(39860400002)(376002)(136003)(396003)(1800799009)(186009)(451199024)(478600001)(6486002)(6666004)(966005)(110136005)(26005)(6506007)(2616005)(6512007)(7416002)(2906002)(41300700001)(5660300002)(8936002)(316002)(8676002)(6636002)(66556008)(4326008)(66476007)(66946007)(36756003)(54906003)(86362001)(38100700002)(83380400001)(66899024);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR08MB8794
+Original-Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM7EUR03FT010.eop-EUR03.prod.protection.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs: e78cbee6-df21-40e7-f701-08dba3c12464
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 7FmsQGRNHpqf7tRen0AqAW2QVEKhxnYdomyBhJMwGVUjcHJ+NF4kmsFd+5g16e5/GT4deWlU7fRfflfRFpVXfwjwgwnULjddVzgtmMchB3jM7zccAMOchPfJpfDstbOXV0KhuVbfrfYxYKj8xFOHRSibxgwRaUz9xTT8ToIrpUgCySYg3rqXLY+SsHW42Z6j8DbgYtzXqwh7kileQFL/hsW5dlhMN8AJl5wi4knzLovmxZCBjLvAE+Q206T8TvcGoCVrOgA8kDigx1maACiAehU9YUC0e2s0VRh0VyjLOUyv/Dm7/9XR4FT91Fbonoamw9eMt051Ggde5kye/eIS2lolRdIjzWax3Q4hbivCfDClvrVVd1QZ6zmWEv5vtgSMDY8yYPf36ju0/KiAaFAC2hPVTkf2dZlvzIn4H8We/Zvyt7DXaPGJRSQYrIa5HthQrv0GFV2408b3owomHAee5jQNUMqr35bXR86uW9OUKYOVtS+MY+v+Q6jUTTNOXn132YELO/ETcf8KF5I8PSB82hjYAu62nnrYv9PyyRPTdCltu5KRN7+KlpM11Ev8VHTFeUMcMK28QWyraZQq+qPoSKnEUxkSEjEUoTmHoEndpr37eNCVED+v1KjMyiKl2Co6nDTdUB1kzWyBuQLy6lq5RPu8/wooMaAxcQokGsd8HqJQqu/AwQt8fRrJ0HoEFjFnQvdfD9XVWLoRVbTQ+kZZQXFG0QPs6Gv5h87Z+4YQyofssVOvqgsh+4X3aF0J2CeQ9lOa+ZuW6/Dav9doSr8+AQ==
+X-Forefront-Antispam-Report: CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230031)(4636009)(396003)(39860400002)(376002)(346002)(136003)(186009)(1800799009)(451199024)(82310400011)(36840700001)(40470700004)(46966006)(40480700001)(86362001)(36756003)(356005)(110136005)(40460700003)(41300700001)(70206006)(6636002)(70586007)(54906003)(450100002)(966005)(82740400003)(478600001)(81166007)(316002)(6512007)(6666004)(47076005)(26005)(107886003)(6506007)(336012)(36860700001)(66899024)(83380400001)(4326008)(6486002)(2906002)(8676002)(2616005)(5660300002)(8936002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2023 10:10:29.5386
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe1fb4c9-5c88-4d23-6226-08dba3c12de3
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-AuthSource: AM7EUR03FT010.eop-EUR03.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR08MB8025
+X-Spam-Status: No, score=-0.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,FORGED_SPF_HELO,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_PASS,SPF_NONE,UNPARSEABLE_RELAY autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 22.08.23 20:05, Stefan Roesch wrote:
-> With madvise and prctl KSM can be enabled for different VMA's. Once it
-> is enabled we can query how effective KSM is overall. However we cannot
-> easily query if an individual VMA benefits from KSM.
+The 08/22/2023 18:53, Mark Brown wrote:
+> On Tue, Aug 22, 2023 at 05:49:51PM +0100, Catalin Marinas wrote:
+> > On Fri, Aug 18, 2023 at 08:38:02PM +0100, Mark Brown wrote:
 > 
-> This commit adds a KSM section to the /prod/<pid>/smaps file. It reports
-> how many of the pages are KSM pages. The returned value for KSM is
-> independent of the use of the shared zeropage.
+> > > > stack and pass the pointer/size to clone3()? It saves us from having to
+> > > > guess what the right size we'd need. struct clone_args is extensible.
+> 
+> > > I can't recall or locate the specific reasoning there right now, perhaps
+> > > Rick or someone else can?  I'd guess there would be compat concerns for
+> > > things that don't go via libc which would complicate the story with
+> > > identifying and marking things as GCS/SS safe, it's going to be more
+> > > robust to just supply a GCS if the process is using it.  That said
+> > > having a default doesn't preclude us using the extensibility to allow
+> > > userspace directly to control the GCS size, I would certainly be in
+> > > favour of adding support for that.
+> 
+> > It would be good if someone provided a summary of the x86 decision (I'll
+> > get to those thread but most likely in September). I think we concluded
+> > that we can't deploy GCS entirely transparently, so we need a libc
+> > change (apart from the ELF annotations). Since libc is opting in to GCS,
+> 
+> Right, we need changes for setjmp()/longjmp() for example.
+> 
+> > we could also update the pthread_create() etc. to allocate the shadow
+> > together with the standard stack.
+> 
+> > Anyway, that's my preference but maybe there were good reasons not to do
+> > this.
+> 
+> Yeah, it'd be good to understand.  I've been through quite a lot of old
+> versions of the x86 series (I've not found them all, there's 30 versions
+> or something of the old series plus the current one is on v9) and the
+> code always appears to have been this way with changelogs that explain
+> the what but not the why.  For example roughly the current behaviour was
+> already in place in v10 of the original series:
+> 
+>    https://lore.kernel.org/lkml/20200429220732.31602-26-yu-cheng.yu@intel.com/
 
-Maybe phrase that to something like "The returned value for KSM includes
-KSM-placed zeropages, so we can observe the actual KSM benefit independent
-of the usage of the shared zeropage for KSM.".
-
-But thinking about it (see below), maybe we really just let any user figure that out by
-temporarily disabling the shared zeropage.
-
-So this would be
-
-"It reports how many of the pages are KSM pages. Note that KSM-placed zeropages
-are not included, only actual KSM pages."
+well the original shstk patches predate clone3 so no surprise there.
+e.g. v6 is from 2018 and clone3 is 2019 linux 5.3
+https://lore.kernel.org/lkml/20181119214809.6086-1-yu-cheng.yu@intel.com/
 
 > 
-> Here is a typical output:
-> 
-> 7f420a000000-7f421a000000 rw-p 00000000 00:00 0
-> Size:             262144 kB
-> KernelPageSize:        4 kB
-> MMUPageSize:           4 kB
-> Rss:               51212 kB
-> Pss:                8276 kB
-> Shared_Clean:        172 kB
-> Shared_Dirty:      42996 kB
-> Private_Clean:       196 kB
-> Private_Dirty:      7848 kB
-> Referenced:        15388 kB
-> Anonymous:         51212 kB
-> KSM:               41376 kB
-> LazyFree:              0 kB
-> AnonHugePages:         0 kB
-> ShmemPmdMapped:        0 kB
-> FilePmdMapped:         0 kB
-> Shared_Hugetlb:        0 kB
-> Private_Hugetlb:       0 kB
-> Swap:             202016 kB
-> SwapPss:            3882 kB
-> Locked:                0 kB
-> THPeligible:    0
-> ProtectionKey:         0
-> ksm_state:          0
-> ksm_skip_base:      0
-> ksm_skip_count:     0
-> VmFlags: rd wr mr mw me nr mg anon
-> 
-> This information also helps with the following workflow:
-> - First enable KSM for all the VMA's of a process with prctl.
-> - Then analyze with the above smaps report which VMA's benefit the most
-> - Change the application (if possible) to add the corresponding madvise
-> calls for the VMA's that benefit the most
-> 
-> Signed-off-by: Stefan Roesch <shr@devkernel.io>
-> ---
->   Documentation/filesystems/proc.rst |  4 ++++
->   fs/proc/task_mmu.c                 | 16 +++++++++++-----
->   2 files changed, 15 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 7897a7dafcbc..d5bdfd59f5b0 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -461,6 +461,7 @@ Memory Area, or VMA) there is a series of lines such as the following::
->       Private_Dirty:         0 kB
->       Referenced:          892 kB
->       Anonymous:             0 kB
-> +    KSM:                   0 kB
->       LazyFree:              0 kB
->       AnonHugePages:         0 kB
->       ShmemPmdMapped:        0 kB
-> @@ -501,6 +502,9 @@ accessed.
->   a mapping associated with a file may contain anonymous pages: when MAP_PRIVATE
->   and a page is modified, the file page is replaced by a private anonymous copy.
->   
-> +"KSM" shows the amount of anonymous memory that has been de-duplicated. The
-> +value is independent of the use of shared zeropage.
+> I do worry about the story for users calling the underlying clone3() API
+> (or legacy clone() for that matter) directly, and we would also need to
+> handle the initial GCS enable via prctl() - that's not insurmountable,
+> we could add a size argument there that only gets interpreted during the
+> initial enable for example.
 
-Maybe here as well.
+musl and bionic currently use plain clone for threads.
 
-> +
->   "LazyFree" shows the amount of memory which is marked by madvise(MADV_FREE).
->   The memory isn't freed immediately with madvise(). It's freed in memory
->   pressure if the memory is clean. Please note that the printed value might
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 51315133cdc2..4532caa8011c 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -4,6 +4,7 @@
->   #include <linux/hugetlb.h>
->   #include <linux/huge_mm.h>
->   #include <linux/mount.h>
-> +#include <linux/ksm.h>
->   #include <linux/seq_file.h>
->   #include <linux/highmem.h>
->   #include <linux/ptrace.h>
-> @@ -396,6 +397,7 @@ struct mem_size_stats {
->   	unsigned long swap;
->   	unsigned long shared_hugetlb;
->   	unsigned long private_hugetlb;
-> +	unsigned long ksm;
->   	u64 pss;
->   	u64 pss_anon;
->   	u64 pss_file;
-> @@ -435,9 +437,9 @@ static void smaps_page_accumulate(struct mem_size_stats *mss,
->   	}
->   }
->   
-> -static void smaps_account(struct mem_size_stats *mss, struct page *page,
-> -		bool compound, bool young, bool dirty, bool locked,
-> -		bool migration)
-> +static void smaps_account(struct mem_size_stats *mss, pte_t *pte,
-> +		struct page *page, bool compound, bool young, bool dirty,
-> +		bool locked, bool migration)
->   {
->   	int i, nr = compound ? compound_nr(page) : 1;
->   	unsigned long size = nr * PAGE_SIZE;
-> @@ -452,6 +454,9 @@ static void smaps_account(struct mem_size_stats *mss, struct page *page,
->   			mss->lazyfree += size;
->   	}
->   
-> +	if (PageKsm(page) && (!pte || !is_ksm_zero_pte(*pte)))
+and there is user code doing raw clone threads (such threads are
+technically not allowed to call into libc) it's not immediately
+clear to me if having gcs in those threads is better or worse.
 
-I think this won't work either way, because smaps_pte_entry() never ends up calling
-this function with !page. And the shared zeropage here always gives us !page.
+glibc can use clone3 args for gcs, i'd expect the unmap to be more
+annoying than the allocation, but possible (it is certainly more
+work than leaving everything to the kernel).
 
-What would work is:
+one difference is that userspace can then set gcspr of a new thread
+and e.g. two threads can have overlapping gcs, however i don't think
+this impacts security much since if clone3 is attacker controlled
+then likely all bets are off.
 
+and yes the main thread gcs can also be libc allocated given we
+have to deal with the prctl anyway.
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 15ddf4653a19..ef6f39d7c5a2 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -528,6 +528,9 @@ static void smaps_pte_entry(pte_t *pte, unsigned long addr,
-                 page = vm_normal_page(vma, addr, ptent);
-                 young = pte_young(ptent);
-                 dirty = pte_dirty(ptent);
-+
-+               if (!page && is_ksm_zero_pte(ptent))
-+                       mss->ksm += size;
-         } else if (is_swap_pte(ptent)) {
-                 swp_entry_t swpent = pte_to_swp_entry(ptent);
-  
+if gcs size logic is in libc it can depend on env vars and can be
+changed more easily (and adapted to android vs musl vs glibc
+requirements).
 
-That means that "KSM" can be bigger than "Anonymous" and "RSS" when the shared
-zeropage is used.
+sigaltstack with alt gcs was a case where i thought the kernel
+doing it transparently is better (the libc cannot do the same
+as it cannot wrap signal handlers currently so does not know
+when a handler returns or the current alt stack state), but
+others seems to want an explicit sigaltgcs syscall and expose
+it to users. in any case we have no unwinder solution for alt
+gcs nor longjmp solution when the thread gcs is overflowed so
+this is not an issue for now.
 
-Interestingly, right now we account each KSM page individually towards
-"Anonymous" and "RSS".
+> My sense is that they deployment story is going to be smoother with
+> defaults being provided since it avoids dealing with the issue of what
+> to do if userspace creates a thread without a GCS in a GCS enabled
+> process but like I say I'd be totally happy to extend clone3().  I will
+> put some patches together for that (probably once the x86 stuff lands).
+> Given the size of this series it might be better split out for
+> manageability if nothing else.
 
-So if we have 100 times the same KSM page in a VMA, we will have 100 times anon
-and 100 times rss.
-
-Thinking about it, I guess considering the KSM-placed zeropage indeed adds more
-confusion to that. Eventually, we might just want separate "Shared-zeropages" count.
-
-
-So maybe v3 is better, clarifying the documentation a bit, that the
-KSM-placed zeropage is not considered.
-
-Sorry for changing my mind :D Thoughts?
-
--- 
-Cheers,
-
-David / dhildenb
-
+i would make thread without gcs to implicitly disable gcs, since
+that's what's bw compat with clones outside of libc (the libc can
+guarantee gcs allocation when gcs is enabled).
