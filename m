@@ -2,59 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A1297879C0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 22:56:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E04C787BCD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 01:07:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243631AbjHXU4E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Aug 2023 16:56:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41334 "EHLO
+        id S243998AbjHXXGd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Aug 2023 19:06:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243630AbjHXUzq (ORCPT
+        with ESMTP id S244053AbjHXXG3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Aug 2023 16:55:46 -0400
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88F78199F;
-        Thu, 24 Aug 2023 13:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=3YQd/4pI3FjAPT+eeZM7Z9PL3COhGrtkB7spEOXmvmg=; b=UNyqD/7TLBJppu3dma3rcUvj2k
-        JFNH5aB+Mz3IXeqB1F8u8BYtvv1cOlC12p8pavZVpD+EOl4XGdEQhJqeTGsTBULLLQ8hu5CUVkrtF
-        k4o7HukKn/oPbg08YVJyge6I1L0xEQUhfYSBadh+uGvmKUJQa7oXTo8Kw8sJdzSR/A4ooDW7uqlzJ
-        SVcpXusYLfeNig6fL7haKSI2NAY8SWIp1OIxJIqi5GjtOs6rgzepQApMYeWuM94YCaoasZWLonz/c
-        W758CznU0320l1NOTIa39gRBZ469lBzfJIUWnzQF2ImDS8SFhUb1w+E8YfPVfg5JwgcjCG2EXl/Bh
-        OvfU3ZmA==;
-Received: from [187.116.122.196] (helo=[192.168.1.60])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1qZHMg-00F4bN-Br; Thu, 24 Aug 2023 22:55:38 +0200
-Message-ID: <cf39f8e5-0419-3772-341e-11631af1b430@igalia.com>
-Date:   Thu, 24 Aug 2023 17:55:31 -0300
+        Thu, 24 Aug 2023 19:06:29 -0400
+Received: from mail-ot1-x32b.google.com (mail-ot1-x32b.google.com [IPv6:2607:f8b0:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 732D51FD2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Aug 2023 16:06:21 -0700 (PDT)
+Received: by mail-ot1-x32b.google.com with SMTP id 46e09a7af769-6bd3317144fso300903a34.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Aug 2023 16:06:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1692918381; x=1693523181;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eNbaus67NK+zwGGpU1OQ13+AZWMogBzh2lgxE9DpQNI=;
+        b=vu1SIqBnd/8lh5I0VzutUuTOU1KFDrbVXI42qRAmSDugOIAyw47v4NSiTcyUbjXQrT
+         xNfwJGtC50aFGoM83P3SZ468ME5MsHZJ4Rz4EeJqzPfbIzCc8l7wDoaaAuNJY1BBeh6N
+         yc83ey420/RPxrg5bAdbbzklrm6KZU1qsl7YbDqAq+m3+BvlCtAZF6A8zl7z7eLhqnpt
+         zvxG9c0LJiWS2XKOyjN00kuf4q3CjEIfoi2LZrC7EP7cwXotHox1bZEGTer9CVGEjmtE
+         4sNX6wQ9giIMUKp9tezbV7FvxnvF/eJTCs1CG+IYNNxpaZL/2dHWm8JZun5rI40/aogG
+         3ZSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692918381; x=1693523181;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eNbaus67NK+zwGGpU1OQ13+AZWMogBzh2lgxE9DpQNI=;
+        b=cmK5sKRm8TBDC/i+Behw5e7KEHXTNUMN1If9UMRArtSb4EAMah13ViIMggLoTkv+ap
+         6rpQknzq6mdYkV7CadjWFoBot2wFY7mm2nrCQT74h8woqDzcckXnFkqHgAR1I2Knex83
+         vfWq9ldmJLByVu9GAcmjT+OSeiLjX4zM+khpirs3oYghbM8AWK1puyMkG2eGre30xPDH
+         BdMBoDQ76InGQVCUzwftLUqXMMR5PDIr2I/5gJ/vtSC4KBqAygS0vPxxzzNWajpMvAq+
+         AcQ7NH82+ynYHjbY3xZzrsw4+qzbKEd/ry3gx8volzEJvdFsE25bb2C8DYA4T712MO5G
+         t+nQ==
+X-Gm-Message-State: AOJu0YwVAUJFj82NPlWLkoeWdv1Dw5vgO7buIU26pkUzDXlrvQiE4ijW
+        rb9t3gg7oBeBWX/yKXQ8V0Pi2g==
+X-Google-Smtp-Source: AGHT+IFuCd1IFhBJSjX+OmaMYaqaO0qxWLD9iIUTxQwcvKOTOwc4BOpRQfguQEn1f8A95C46XqzsZg==
+X-Received: by 2002:a05:6870:41d2:b0:1b7:2d92:58d6 with SMTP id z18-20020a05687041d200b001b72d9258d6mr1278884oac.32.1692918380797;
+        Thu, 24 Aug 2023 16:06:20 -0700 (PDT)
+Received: from dread.disaster.area (pa49-195-66-88.pa.nsw.optusnet.com.au. [49.195.66.88])
+        by smtp.gmail.com with ESMTPSA id jf15-20020a170903268f00b001bb3beb2bc6sm201670plb.65.2023.08.24.16.06.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Aug 2023 16:06:20 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qZJP8-0065PY-0W;
+        Fri, 25 Aug 2023 09:06:18 +1000
+Date:   Fri, 25 Aug 2023 09:06:18 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 28/29] xfs: Convert to bdev_open_by_path()
+Message-ID: <ZOfiakPoFC5w3FYg@dread.disaster.area>
+References: <20230818123232.2269-1-jack@suse.cz>
+ <20230823104857.11437-28-jack@suse.cz>
+ <ZOaEHrkx1xS9bgk9@dread.disaster.area>
+ <20230824102837.credhh3fsco6vf7p@quack3>
+ <20230824202910.wkzkvx6hbgdz6wuh@quack3>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 2/3] btrfs: Introduce the single-dev feature
-To:     Anand Jain <anand.jain@oracle.com>
-Cc:     linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com,
-        dsterba@suse.com, linux-fsdevel@vger.kernel.org,
-        kernel@gpiccoli.net, kernel-dev@igalia.com, david@fromorbit.com,
-        kreijack@libero.it, johns@valvesoftware.com,
-        ludovico.denittis@collabora.com, quwenruo.btrfs@gmx.com,
-        wqu@suse.com, vivek@collabora.com
-References: <20230803154453.1488248-1-gpiccoli@igalia.com>
- <20230803154453.1488248-3-gpiccoli@igalia.com>
- <9dae9ca5-be94-af95-e7c3-0cb1d04731f2@oracle.com>
-Content-Language: en-US
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <9dae9ca5-be94-af95-e7c3-0cb1d04731f2@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230824202910.wkzkvx6hbgdz6wuh@quack3>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,119 +81,49 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Anand, first of all, thanks for the review! More comments inline below.
-
-
-On 23/08/2023 13:31, Anand Jain wrote:
-> [...]
-> On 8/3/23 23:43, Guilherme G. Piccoli wrote:
->> Btrfs doesn't currently support to mount 2 different devices holding the
->> same filesystem - the fsid is used as a unique identifier in the driver.
+On Thu, Aug 24, 2023 at 10:29:10PM +0200, Jan Kara wrote:
+> On Thu 24-08-23 12:28:37, Jan Kara wrote:
+> > On Thu 24-08-23 08:11:42, Dave Chinner wrote:
+> > > On Wed, Aug 23, 2023 at 12:48:39PM +0200, Jan Kara wrote:
+> > > > Convert xfs to use bdev_open_by_path() and pass the handle around.
+> > > ....
+> > > 
+> > > > @@ -426,15 +427,15 @@ xfs_shutdown_devices(
+> > > >  	 * race, everyone loses.
+> > > >  	 */
+> > > >  	if (mp->m_logdev_targp && mp->m_logdev_targp != mp->m_ddev_targp) {
+> > > > -		blkdev_issue_flush(mp->m_logdev_targp->bt_bdev);
+> > > > -		invalidate_bdev(mp->m_logdev_targp->bt_bdev);
+> > > > +		blkdev_issue_flush(mp->m_logdev_targp->bt_bdev_handle->bdev);
+> > > > +		invalidate_bdev(mp->m_logdev_targp->bt_bdev_handle->bdev);
+> > > >  	}
+> > > >  	if (mp->m_rtdev_targp) {
+> > > > -		blkdev_issue_flush(mp->m_rtdev_targp->bt_bdev);
+> > > > -		invalidate_bdev(mp->m_rtdev_targp->bt_bdev);
+> > > > +		blkdev_issue_flush(mp->m_rtdev_targp->bt_bdev_handle->bdev);
+> > > > +		invalidate_bdev(mp->m_rtdev_targp->bt_bdev_handle->bdev);
+> > > >  	}
+> > > > -	blkdev_issue_flush(mp->m_ddev_targp->bt_bdev);
+> > > > -	invalidate_bdev(mp->m_ddev_targp->bt_bdev);
+> > > > +	blkdev_issue_flush(mp->m_ddev_targp->bt_bdev_handle->bdev);
+> > > > +	invalidate_bdev(mp->m_ddev_targp->bt_bdev_handle->bdev);
+> > > >  }
+> > > 
+> > > Why do these need to be converted to run through bt_bdev_handle?  If
+> > > the buftarg is present and we've assigned targp->bt_bdev_handle
+> > > during the call to xfs_alloc_buftarg(), then we've assigned
+> > > targp->bt_bdev from the handle at the same time, yes?
+> > 
+> > Good point, these conversions are pointless now so I've removed them. They
+> > are leftover from a previous version based on a kernel where xfs was
+> > dropping bdev references in a different place. Thanks for noticing.
 > 
-> fsid is for the external frontend, systemd, and udev stuff;
-> metadata_uuid pertains to the actual btrfs on-disk.
->
+> FWIW attached is a new version of the patch I have currently in my tree.
 
-True, agreed - but I guess my phrase is not wrong per se, right? It's
-more like an "abstraction" of the concept...I'm in fact talking about
-the fsid as the exposed entity to the system, like for udev, etc.
+Looks OK.
 
-I guess I'll keep it on V3 if you don't oppose.
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
 
-
-> [...] 
->> one of the reasons for which is not trivial supporting this case
->> on btrfs is due to its multi-device filesystem nature, native RAID, etc.
-> 
-> How is it related to the multi-device aspect? The main limitation is
-> that a disk image can be cloned without maintaining a unique device-
-> uuid.
-> 
-
-Oh okay, I'll rephrase / drop this part, you're right - thanks.
-
-
-> [...]
->> Without this support, it's not safe for users to keep the
->> same "image version" in both A and B partitions, a setup that is quite
->> common for development, for example. Also, as a big bonus, it allows fs
->> integrity check based on block devices for RO devices (whereas currently
->> it is required that both have different fsid, breaking the block device
->> hash comparison).
-> 
-> Does it apply to smaller disk images? Otherwise, it will be very 
-> time-consuming. Just curious, how is the checksum verified for the entire
-> disk? (Btrfs might provide a checksum tree-based solution at
-> some point.)
->
-
-The disk image is currently 5G, NVMe device - it's usually fast in our case.
-
-After discussing internally with the folks knowledgeable about the
-update process, it seems the Desync tool is responsible for that, taking
-an index chunk-comparison during the update. Based in my quick check,
-seems the codes related to that are here:
-
-https://github.com/folbricht/desync/blob/master/verifyindex.go
-https://github.com/folbricht/desync/blob/master/index.go
-
-
->> +	 */
->> +	if (btrfs_fs_compat_ro(fs_info, SINGLE_DEV))
->> +		fsid = fs_info->fs_devices->metadata_uuid;
->> +	else
->> +		fsid = fs_info->fs_devices->fsid;
-> 
-> Below alloc_fs_device(), fsid is still being kept equal to metadata_uuid
-> in memory for single_dev. So, this distinction is unnecessary.
-> 
-> 
->> +
->> +	if (memcmp(fsid, sb->fsid, BTRFS_FSID_SIZE)) {
-> 
-> David prefers memcmp to be either compared to == or != to 0
-> depending on the requirement.
-> 
-
-OK, thanks - I'll experiment dropping this part, and I see you have code
-present in for-next, changing this specific memcmp. So hopefully don't
-need my code anymore but if we do, I'll keep the convention =)
-
-
-> [...]
->> -static u8 *btrfs_sb_metadata_uuid_or_null(struct btrfs_super_block *sb)
->> +static u8 *btrfs_sb_metadata_uuid_single_dev(struct btrfs_super_block *sb,
->> +					     bool has_metadata_uuid,
->> +					     bool single_dev)
->>   {
->> -	bool has_metadata_uuid = (btrfs_super_incompat_flags(sb) &
->> -				  BTRFS_FEATURE_INCOMPAT_METADATA_UUID);
->> +	if (has_metadata_uuid || single_dev)
->> +		return sb->metadata_uuid;
->>   
->> -	return has_metadata_uuid ? sb->metadata_uuid : NULL;
->> +	return NULL;
->>   }
->>   
->>   u8 *btrfs_sb_fsid_ptr(struct btrfs_super_block *sb)
-> 
-> You can rebase the code onto the latest misc-next branch.
-> This is because we have dropped the function
-> btrfs_sb_metadata_uuid_or_null() in the final integration.
-> [...]
->> -				btrfs_sb_metadata_uuid_or_null(disk_super));
->> +				btrfs_sb_metadata_uuid_single_dev(disk_super,
->> +							has_metadata_uuid, single_dev));
-> 
-> I think it is a good idea to rebase on latest misc-next and add the
-> below patch, as the arguments of alloc_fs_device() have been simplified.
-> 
->     [PATCH resend] btrfs: simplify alloc_fs_devices() remove arg2
-> 
-> 
-
-Very good idea, thanks for pointing that, will do it for V3!
-Cheers,
-
-
-Guilherme
+-- 
+Dave Chinner
+david@fromorbit.com
