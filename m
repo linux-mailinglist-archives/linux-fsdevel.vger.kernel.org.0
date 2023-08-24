@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E9676786656
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 05:53:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E87578665A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 05:53:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239931AbjHXDwf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Aug 2023 23:52:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48658 "EHLO
+        id S239979AbjHXDwo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Aug 2023 23:52:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239981AbjHXDuh (ORCPT
+        with ESMTP id S233422AbjHXDvs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Aug 2023 23:50:37 -0400
-Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D83219AF
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 20:50:04 -0700 (PDT)
-Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-1a2dd615ddcso1128415fac.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 20:50:04 -0700 (PDT)
+        Wed, 23 Aug 2023 23:51:48 -0400
+Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D6C41BC7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 20:50:14 -0700 (PDT)
+Received: by mail-il1-x134.google.com with SMTP id e9e14a558f8ab-34bae11c5a6so6422445ab.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 20:50:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1692848949; x=1693453749;
+        d=bytedance.com; s=google; t=1692848957; x=1693453757;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3h1iK4Tv/ZQ556QR/DSejIrzZMOS74OqSxj2J6MI6fo=;
-        b=CYbGa+Y8xSAbiirspSWcF7tmTfc3vNTi972ZOagbjS5hpdWO8Auyif7k5iVpc+ViYw
-         nP6fwdi1vSkIpa3diPYPZt8B+J6EPCRiz3RD/Gl9V4iTxXAdE+irsgCTblZY7vQ83DDP
-         H56UI3TSBSN9pNHl8/ieVjseHg+VmFwr1Ai/xVQz5GRGk9w7wHVRkKq0FBHVhVkOR7k8
-         8c0M8r7cnG2ZyIAnVb616SwYdzE5Uh1SFlIl/iUa4p82hojy069jJBbm+zLf/semt70K
-         Ecv68sXawysZ9mXwaGVC7F7G4j5lraYla7gomg30/07P8unn5Jr6MOZfPgKQ/rZCI098
-         +/fg==
+        bh=8WIyE6lot1VZj2tUhISd6JoXeKtgl5TACjSye1MYJlQ=;
+        b=L7x5jXCLRGUnKfPoBNOZqmPlrSGKRjlLEl7C6BxvHVl4niA5K6OO+mhnHCeKV33Trg
+         +tz2csuJvDBNqrKXB6/XcE2vyYga4ztF29T2SN17wG+jUVfGj/XDICzaJYljRr5dxCYG
+         Zm9tvrOY9nQ5m3dzv6Iorm144WDh/2Giohela4lh6+P/anbg+SrBnxyEIv6MLHI2yIeP
+         XULXQeHly2RIA6FIjYfl5Z7hCEVdjI7+MeoWo9KLOjxdk6l1SClYS6K9jnti4St8NGny
+         27VX03IgH80SMo75G/G/PAhxd05H78j0nGdfg90bK5XQZyVIF0HyYteEvPnP8OTgORus
+         PfgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692848949; x=1693453749;
+        d=1e100.net; s=20221208; t=1692848957; x=1693453757;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3h1iK4Tv/ZQ556QR/DSejIrzZMOS74OqSxj2J6MI6fo=;
-        b=M1vzkCldjba8cnTajo67KzzI349NnQol0ZYnWccsS12YADKMbZ3OYap28B9xfsua3C
-         C6IuQsHq5OSBYTfIosXL6Nu9WCXW0F07+Bicj0yI8DnZVasRJgUDQY/oZ7P5BerMXyTd
-         ipKXOL4SvvCaMa7nlVYNtbBlBjTZJWF8SMLq1piFI5n1lspmKd55P4CZQYmGPvgXB23d
-         BF2Y6uLxgzydU6S60Z6G+TzpChoK8zP16V5aIqEVNRVlJPNJc/xZPGsT26h1KrL/YE2/
-         qiWy4SVYB1WnBewScdC6jx9qt+xQmsFMO3z9gFnnFSzW+liVlM54fQdkLQ8piFpTWy+F
-         8oqg==
-X-Gm-Message-State: AOJu0YwJO7zT+pmxd3WOZD5GYV9CvD4VFa4jryMZy6yXhi+dW3UtnOr/
-        ioKfGbebGd7V3VFkqK0h6JAEzQ==
-X-Google-Smtp-Source: AGHT+IH531Xg0nVzdtVymmtmVKGs5L1Uo5h6G3XB4ml4AX+WBlLfp5F3iDld4B5r5QTgv36fNpqXQQ==
-X-Received: by 2002:a05:6830:6782:b0:6bd:990:1a2 with SMTP id cs2-20020a056830678200b006bd099001a2mr16258206otb.0.1692848948838;
-        Wed, 23 Aug 2023 20:49:08 -0700 (PDT)
+        bh=8WIyE6lot1VZj2tUhISd6JoXeKtgl5TACjSye1MYJlQ=;
+        b=XXHu+xjXQ2iAnnc4OIWFV3temhh3Dh2jo9GbYORC6IcfK96sv89gcomgSNO6kWKSyl
+         9a0EadjcZvQxkwx7kvM2KG1IvjXBNYihUFeJUxbrZ6W4Wk/I+uizHxB7EOF2+2FVFbR9
+         iD1sUAVnd9n4ot4bMssQBYUyiIxG2mr5exS0vnqfKTYd9TDeN8STk796G/gghubez+9I
+         ms3W7SgNinV7vU6RO7nR3h/7pwY4RHfF3bCCNIwUdrJnquPYbftTLY/uAkOCCRX6Ouzm
+         NBPllKVBHGt4jY+5deYQ2AhVae6qXMYFCF4tNgL0v9SSi/ZXXH41OrGCN90Ln1iH9APd
+         3kYw==
+X-Gm-Message-State: AOJu0Yw6H2J3ltSE8hwZsavaEoWDX0h9v4JxxZCubQQG2HHvmoQOU6E8
+        JTgNtDTxA9nckP6daIQJilPAaQ==
+X-Google-Smtp-Source: AGHT+IGm+Au0wCemT3+vxgVXGUpM4u4I3YXm6qtEhhQvyIskTUE4OJ/MtrbM8i5okDP0p1r/eUsjCQ==
+X-Received: by 2002:a92:da88:0:b0:349:4e1f:e9a0 with SMTP id u8-20020a92da88000000b003494e1fe9a0mr15611442iln.2.1692848956912;
+        Wed, 23 Aug 2023 20:49:16 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.146])
-        by smtp.gmail.com with ESMTPSA id t6-20020a63b246000000b005579f12a238sm10533157pgo.86.2023.08.23.20.49.00
+        by smtp.gmail.com with ESMTPSA id t6-20020a63b246000000b005579f12a238sm10533157pgo.86.2023.08.23.20.49.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Aug 2023 20:49:08 -0700 (PDT)
+        Wed, 23 Aug 2023 20:49:16 -0700 (PDT)
 From:   Qi Zheng <zhengqi.arch@bytedance.com>
 To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
         vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
@@ -61,11 +61,10 @@ Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org,
         Qi Zheng <zhengqi.arch@bytedance.com>,
         Muchun Song <songmuchun@bytedance.com>,
-        Chandan Babu R <chandan.babu@oracle.com>,
-        linux-xfs@vger.kernel.org
-Subject: [PATCH v5 36/45] xfs: dynamically allocate the xfs-qm shrinker
-Date:   Thu, 24 Aug 2023 11:42:55 +0800
-Message-Id: <20230824034304.37411-37-zhengqi.arch@bytedance.com>
+        Minchan Kim <minchan@kernel.org>
+Subject: [PATCH v5 37/45] zsmalloc: dynamically allocate the mm-zspool shrinker
+Date:   Thu, 24 Aug 2023 11:42:56 +0800
+Message-Id: <20230824034304.37411-38-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230824034304.37411-1-zhengqi.arch@bytedance.com>
 References: <20230824034304.37411-1-zhengqi.arch@bytedance.com>
@@ -82,94 +81,83 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 In preparation for implementing lockless slab shrink, use new APIs to
-dynamically allocate the xfs-qm shrinker, so that it can be freed
+dynamically allocate the mm-zspool shrinker, so that it can be freed
 asynchronously via RCU. Then it doesn't need to wait for RCU read-side
-critical section when releasing the struct xfs_quotainfo.
+critical section when releasing the struct zs_pool.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 Reviewed-by: Muchun Song <songmuchun@bytedance.com>
-CC: Chandan Babu R <chandan.babu@oracle.com>
-CC: "Darrick J. Wong" <djwong@kernel.org>
-CC: linux-xfs@vger.kernel.org
+CC: Minchan Kim <minchan@kernel.org>
+CC: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- fs/xfs/xfs_qm.c | 28 +++++++++++++++-------------
- fs/xfs/xfs_qm.h |  2 +-
- 2 files changed, 16 insertions(+), 14 deletions(-)
+ mm/zsmalloc.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
-diff --git a/fs/xfs/xfs_qm.c b/fs/xfs/xfs_qm.c
-index 6abcc34fafd8..15ba23f11271 100644
---- a/fs/xfs/xfs_qm.c
-+++ b/fs/xfs/xfs_qm.c
-@@ -504,8 +504,7 @@ xfs_qm_shrink_scan(
- 	struct shrinker		*shrink,
- 	struct shrink_control	*sc)
- {
--	struct xfs_quotainfo	*qi = container_of(shrink,
--					struct xfs_quotainfo, qi_shrinker);
-+	struct xfs_quotainfo	*qi = shrink->private_data;
- 	struct xfs_qm_isolate	isol;
- 	unsigned long		freed;
- 	int			error;
-@@ -539,8 +538,7 @@ xfs_qm_shrink_count(
- 	struct shrinker		*shrink,
- 	struct shrink_control	*sc)
- {
--	struct xfs_quotainfo	*qi = container_of(shrink,
--					struct xfs_quotainfo, qi_shrinker);
-+	struct xfs_quotainfo	*qi = shrink->private_data;
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index b58f957429f0..1909234bb345 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -229,7 +229,7 @@ struct zs_pool {
+ 	struct zs_pool_stats stats;
  
- 	return list_lru_shrink_count(&qi->qi_lru, sc);
+ 	/* Compact classes */
+-	struct shrinker shrinker;
++	struct shrinker *shrinker;
+ 
+ #ifdef CONFIG_ZSMALLOC_STAT
+ 	struct dentry *stat_dentry;
+@@ -2086,8 +2086,7 @@ static unsigned long zs_shrinker_scan(struct shrinker *shrinker,
+ 		struct shrink_control *sc)
+ {
+ 	unsigned long pages_freed;
+-	struct zs_pool *pool = container_of(shrinker, struct zs_pool,
+-			shrinker);
++	struct zs_pool *pool = shrinker->private_data;
+ 
+ 	/*
+ 	 * Compact classes and calculate compaction delta.
+@@ -2105,8 +2104,7 @@ static unsigned long zs_shrinker_count(struct shrinker *shrinker,
+ 	int i;
+ 	struct size_class *class;
+ 	unsigned long pages_to_free = 0;
+-	struct zs_pool *pool = container_of(shrinker, struct zs_pool,
+-			shrinker);
++	struct zs_pool *pool = shrinker->private_data;
+ 
+ 	for (i = ZS_SIZE_CLASSES - 1; i >= 0; i--) {
+ 		class = pool->size_class[i];
+@@ -2121,18 +2119,24 @@ static unsigned long zs_shrinker_count(struct shrinker *shrinker,
+ 
+ static void zs_unregister_shrinker(struct zs_pool *pool)
+ {
+-	unregister_shrinker(&pool->shrinker);
++	shrinker_free(pool->shrinker);
  }
-@@ -680,15 +678,19 @@ xfs_qm_init_quotainfo(
- 	if (XFS_IS_PQUOTA_ON(mp))
- 		xfs_qm_set_defquota(mp, XFS_DQTYPE_PROJ, qinf);
  
--	qinf->qi_shrinker.count_objects = xfs_qm_shrink_count;
--	qinf->qi_shrinker.scan_objects = xfs_qm_shrink_scan;
--	qinf->qi_shrinker.seeks = DEFAULT_SEEKS;
--	qinf->qi_shrinker.flags = SHRINKER_NUMA_AWARE;
--
--	error = register_shrinker(&qinf->qi_shrinker, "xfs-qm:%s",
--				  mp->m_super->s_id);
--	if (error)
-+	qinf->qi_shrinker = shrinker_alloc(SHRINKER_NUMA_AWARE, "xfs-qm:%s",
-+					   mp->m_super->s_id);
-+	if (!qinf->qi_shrinker) {
-+		error = -ENOMEM;
- 		goto out_free_inos;
-+	}
+ static int zs_register_shrinker(struct zs_pool *pool)
+ {
+-	pool->shrinker.scan_objects = zs_shrinker_scan;
+-	pool->shrinker.count_objects = zs_shrinker_count;
+-	pool->shrinker.batch = 0;
+-	pool->shrinker.seeks = DEFAULT_SEEKS;
++	pool->shrinker = shrinker_alloc(0, "mm-zspool:%s", pool->name);
++	if (!pool->shrinker)
++		return -ENOMEM;
 +
-+	qinf->qi_shrinker->count_objects = xfs_qm_shrink_count;
-+	qinf->qi_shrinker->scan_objects = xfs_qm_shrink_scan;
-+	qinf->qi_shrinker->seeks = DEFAULT_SEEKS;
-+	qinf->qi_shrinker->private_data = qinf;
++	pool->shrinker->scan_objects = zs_shrinker_scan;
++	pool->shrinker->count_objects = zs_shrinker_count;
++	pool->shrinker->batch = 0;
++	pool->shrinker->seeks = DEFAULT_SEEKS;
++	pool->shrinker->private_data = pool;
+ 
+-	return register_shrinker(&pool->shrinker, "mm-zspool:%s",
+-				 pool->name);
++	shrinker_register(pool->shrinker);
 +
-+	shrinker_register(qinf->qi_shrinker);
++	return 0;
+ }
  
- 	return 0;
- 
-@@ -718,7 +720,7 @@ xfs_qm_destroy_quotainfo(
- 	qi = mp->m_quotainfo;
- 	ASSERT(qi != NULL);
- 
--	unregister_shrinker(&qi->qi_shrinker);
-+	shrinker_free(qi->qi_shrinker);
- 	list_lru_destroy(&qi->qi_lru);
- 	xfs_qm_destroy_quotainos(qi);
- 	mutex_destroy(&qi->qi_tree_lock);
-diff --git a/fs/xfs/xfs_qm.h b/fs/xfs/xfs_qm.h
-index 9683f0457d19..d5c9fc4ba591 100644
---- a/fs/xfs/xfs_qm.h
-+++ b/fs/xfs/xfs_qm.h
-@@ -63,7 +63,7 @@ struct xfs_quotainfo {
- 	struct xfs_def_quota	qi_usr_default;
- 	struct xfs_def_quota	qi_grp_default;
- 	struct xfs_def_quota	qi_prj_default;
--	struct shrinker		qi_shrinker;
-+	struct shrinker		*qi_shrinker;
- 
- 	/* Minimum and maximum quota expiration timestamp values. */
- 	time64_t		qi_expiry_min;
+ static int calculate_zspage_chain_size(int class_size)
 -- 
 2.30.2
 
