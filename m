@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B7D2E787159
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 16:21:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57415787168
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 16:24:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235202AbjHXOVJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Aug 2023 10:21:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46650 "EHLO
+        id S241562AbjHXOY0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Aug 2023 10:24:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233083AbjHXOVF (ORCPT
+        with ESMTP id S241607AbjHXOYN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Aug 2023 10:21:05 -0400
+        Thu, 24 Aug 2023 10:24:13 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1187311F;
-        Thu, 24 Aug 2023 07:21:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CAEC1989;
+        Thu, 24 Aug 2023 07:24:07 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 895CE60281;
-        Thu, 24 Aug 2023 14:21:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6A8BC433C8;
-        Thu, 24 Aug 2023 14:20:59 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9490166811;
+        Thu, 24 Aug 2023 14:24:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF803C433C8;
+        Thu, 24 Aug 2023 14:24:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692886861;
-        bh=wcn7OeD/jrIUU62tjdUjIWPA+ZB02vNtj7nrACGImUQ=;
+        s=k20201202; t=1692887046;
+        bh=9L3jOQbK4eNuAr3wKG6NOy84Ax/7TpBaXMA6Pdv2QOg=;
         h=From:To:Cc:Subject:Date:From;
-        b=GqKv+dYVuuKgH4qSvdBMUUEfoFhvkXbv/1Drv3DM0qEOd1qt7Jr+JBxVTwxRU/Q09
-         47ignSMUq9sTUGWeAhq+PnxANbNTj3nugmBF8bRn555KYsf0S1mZr2vrNkXZNbEr8S
-         yskqEtMq8zjRqba+2xf9r821T02IjsHFIgKNkTZscKZwuZatK0WVrc5enGbqeEdKJ1
-         e1Y4f7QBPv5Z1bTV9GQddoZ3UL0m38GAdPD3ltq+Uz3wP/pP97njyXiyzg0ioY9tZb
-         cvMnCL85uQj7XkH6R8p1QAJSbwAnRmfJG+FoRYQ3OBNvoQTPOhjgGDetD2ywUXlVtG
-         WHtpyJoU/6Sww==
+        b=hCm5LCfEIMSlohy11SpmslqgKaGcL6i8QzYo9D2PRNvfhpW0H5TARoER+rYE1TY62
+         o/yogSkxVvhtU+x9NRg66G4TnY2CBGbuHsG0EWEGXJ3WIJjGtcEMS6AvZvbs6ssoGW
+         G9wOZsEY6REyAJ5ZLLg6hcHn2DcILLaEY5AAx1aXpkSlkeJaAXj9r2vA8Kgom61x3f
+         Q5uWG4CWhHnTwTjL4emRzEHXGcadb9c5Kmn5+FKVyYNJZaukpkvti1/VL+n7M+wZ5I
+         06R20Xt2V9+3YlnGHnhJetdsL6W+6CmyD3b7V0B268CeEfGhiH8Wr/foPsBV5L0OoQ
+         QrSVa/CPTSZhA==
 From:   Christian Brauner <brauner@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Christian Brauner <brauner@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] multi-grained timestamps
-Date:   Thu, 24 Aug 2023 16:19:41 +0200
-Message-Id: <20230824-sowie-april-a3f262c64848@brauner>
+Subject: [GIT PULL] libfs and tmpfs updates
+Date:   Thu, 24 Aug 2023 16:23:52 +0200
+Message-Id: <20230824-poren-betanken-fd9aea241890@brauner>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=23471; i=brauner@kernel.org; h=from:subject:message-id; bh=wcn7OeD/jrIUU62tjdUjIWPA+ZB02vNtj7nrACGImUQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ8T3v8++6qOw7MHqdvbl+rn+K2QOmh3MTin9cD9ro8bWrv 1Lm8r6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAi3KwM/2NDPdNDTVv6edesTDlk7N /DF3q1Ui+1YnmR7ZbMAAt+LUaGaYH3nC+5/liTw2g7Q4nhy09uyQrja7GrJ/N331x0U62AEQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=15963; i=brauner@kernel.org; h=from:subject:message-id; bh=9L3jOQbK4eNuAr3wKG6NOy84Ax/7TpBaXMA6Pdv2QOg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ8Ty+yPnFJUehT4jyX1OPHUlj0e9V5H1Wt5356hYPtm+1P 8zchHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOZMZ/hf+Efg1srd8x1KFqcXlVz4f O9bM43ExNelKbwOnnfiBeczs7IsOh3o+KhTEv1Hpe1V590yj3+tKQ0VajtL4Or4o/629mKHAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -57,466 +57,437 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 Hey Linus,
 
 /* Summary */
-This adds VFS support for multi-grain timestamps and converts tmpfs,
-xfs, ext4, and btrfs to use them. This carries acks from all relevant
-filesystems.
+This cycle saw a lot of work for tmpfs that required changes to the vfs
+layer. Andrew, Hugh, and I decided to take tmpfs through vfs this cycle.
+Things will go back to mm next cycle.
 
-The VFS always uses coarse-grained timestamps when updating the ctime
-and mtime after a change. This has the benefit of allowing filesystems
-to optimize away a lot of metadata updates, down to around 1 per jiffy,
-even when a file is under heavy writes.
+Features
+========
 
-Unfortunately, this has always been an issue when we're exporting via
-NFSv3, which relies on timestamps to validate caches. A lot of changes
-can happen in a jiffy, so timestamps aren't sufficient to help the
-client decide to invalidate the cache.
+* By far the biggest work is the quota support for tmpfs. New tmpfs
+  quota infrastructure is added to support it and a new QFMT_SHMEM uapi
+  option is exposed.
 
-Even with NFSv4, a lot of exported filesystems don't properly support a
-change attribute and are subject to the same problems with timestamp
-granularity. Other applications have similar issues with timestamps
-(e.g., backup applications).
+  This offers user and group quotas to tmpfs (project quotas will be
+  added later). Similar to other filesystems tmpfs quota are not
+  supported within user namespaces yet.
 
-If we were to always use fine-grained timestamps, that would improve the
-situation, but that becomes rather expensive, as the underlying
-filesystem would have to log a lot more metadata updates.
+* Add support for user xattrs. While tmpfs already supports security
+  xattrs (security.*) and POSIX ACLs for a long time it lacked support
+  for user xattrs (user.*). With this pull request tmpfs will be able to
+  support a limited number of user xattrs. This is accompanied by a fix
+  (see below) to limit persistent simple xattr allocations.
 
-This introduces fine-grained timestamps that are used when they are
-actively queried.
+* Add support for stable directory offsets. Currently tmpfs relies on
+  the libfs provided cursor-based mechanism for readdir. This causes
+  issues when a tmpfs filesystem is exported via NFS.
 
-This uses the 31st bit of the ctime tv_nsec field to indicate that
-something has queried the inode for the mtime or ctime. When this flag
-is set, on the next mtime or ctime update, the kernel will fetch a
-fine-grained timestamp instead of the usual coarse-grained one.
+  NFS clients do not open directories. Instead, each server-side readdir
+  operation opens the directory, reads it, and then closes it. Since the
+  cursor state for that directory is associated with the opened file it
+  is discarded after each readdir operation. Such directory offsets are
+  not just cached by NFS clients but also various userspace libraries
+  based on these clients.
 
-As POSIX generally mandates that when the mtime changes, the ctime must
-also change the kernel always stores normalized ctime values, so only
-the first 30 bits of the tv_nsec field are ever used.
+  As it stands there is no way to invalidate the caches when directory
+  offsets have changed and the whole application depends on unchanging
+  directory offsets.
 
-Filesytems can opt into this behavior by setting the FS_MGTIME flag in
-the fstype. Filesystems that don't set this flag will continue to use
-coarse-grained timestamps.
+  At LSFMM we discussed how to solve this problem and decided to support
+  stable directory offsets. libfs now allows filesystems like tmpfs to
+  use an xarrary to map a directory offset to a dentry. This mechanism
+  is currently only used by tmpfs but can be supported by others as well.
 
-Various preparatory changes, fixes and cleanups are included:
+Fixes
+=====
 
-* Fixup all relevant places where POSIX requires updating ctime together
-  with mtime. This is a wide-range of places and all maintainers
-  provided necessary Acks.
-* Add new accessors for inode->i_ctime directly and change all callers
-  to rely on them. Plain accesses to inode->i_ctime are now gone and it
-  is accordingly rename to inode->__i_ctime and commented as requiring
-  accessors.
-* Extend generic_fillattr() to pass in a request mask mirroring in a
-  sense the statx() uapi. This allows callers to pass in a request mask
-  to only get a subset of attributes filled in.
-* Rework timestamp updates so it's possible to drop the @now parameter
-  the update_time() inode operation and associated helpers.
-* Add inode_update_timestamps() and convert all filesystems to it
-  removing a bunch of open-coding.
+* Change persistent simple xattrs allocations in libfs from GFP_KERNEL
+  to GPF_KERNEL_ACCOUNT so they're subject to memory cgroup limits.
+  Since this is a change to libfs it affects both tmpfs and kernfs.
+
+* Correctly verify {g,u}id mount options.
+  A new filesystem context is created via fsopen() which records the
+  namespace that becomes the owning namespace of the superblock when
+  fsconfig(FSCONFIG_CMD_CREATE) is called for filesystems that are
+  mountable in namespaces. However, fsconfig() calls can occur in a
+  namespace different from the namespace where fsopen() has been called.
+
+  Currently, when fsconfig() is called to set {g,u}id mount options the
+  requested {g,u}id is mapped into a k{g,u}id according to the namespace
+  where fsconfig() was called from. The resulting k{g,u}id is not
+  guaranteed to be resolvable in the namespace of the filesystem (the
+  one that fsopen() was called in).
+
+  This means it's possible for an unprivileged user to create files
+  owned by any group in a tmpfs mount since it's possible to set the
+  setid bits on the tmpfs directory.
+
+  The contract for {g,u}id mount options and {g,u}id values in general
+  set from userspace has always been that they are translated according
+  to the caller's idmapping. In so far, tmpfs has been doing the correct
+  thing. But since tmpfs is mountable in unprivileged contexts it is
+  also necessary to verify that the resulting {k,g}uid is representable
+  in the namespace of the superblock to avoid such bugs.
+
+  The new mount api's cross-namespace delegation abilities are already
+  widely used. Having talked to a bunch of userspace this is the most
+  faithful solution with minimal regression risks.
 
 /* Testing */
 clang: Ubuntu clang version 15.0.7
 gcc: (Ubuntu 12.2.0-3ubuntu1) 12.2.0
 
-All patches are based on v6.5-rc1 and have been sitting in linux-next.
+All patches are based on v6.5-rc4 and have been sitting in linux-next.
 No build failures or warnings were observed. All old and new tests in
 selftests, and LTP pass without regressions.
 
 /* Conflicts */
-This will have a merge conflict with the v6.6-vfs.tmpfs work. I'm
-providing a conflict resolution in the v6.6-vfs.tmpfs pull request. So I
-would suggest to merge this pull request here first.
+This will cause a merge conflict with the v6.6-vfs.ctime pull request.
+The pull request should have been sent and hopefully merged first. In
+this case I'd suggest the following conflict resolution should you
+decide to pull this branch:
 
-It will also have conflicts with the following trees:
+diff --cc mm/shmem.c
+index 98cc4be7a8a8,11298c797cdc..a7b15ed56eff
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@@ -2363,67 -2437,75 +2437,74 @@@ static struct inode *__shmem_get_inode(
+  	struct shmem_inode_info *info;
+  	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
+  	ino_t ino;
++ 	int err;
++ 
++ 	err = shmem_reserve_inode(sb, &ino);
++ 	if (err)
++ 		return ERR_PTR(err);
+  
+- 	if (shmem_reserve_inode(sb, &ino))
+- 		return NULL;
+  
+  	inode = new_inode(sb);
+- 	if (inode) {
+- 		inode->i_ino = ino;
+- 		inode_init_owner(idmap, inode, dir, mode);
+- 		inode->i_blocks = 0;
+- 		inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
+- 		inode->i_generation = get_random_u32();
+- 		info = SHMEM_I(inode);
+- 		memset(info, 0, (char *)inode - (char *)info);
+- 		spin_lock_init(&info->lock);
+- 		atomic_set(&info->stop_eviction, 0);
+- 		info->seals = F_SEAL_SEAL;
+- 		info->flags = flags & VM_NORESERVE;
+- 		info->i_crtime = inode->i_mtime;
+- 		info->fsflags = (dir == NULL) ? 0 :
+- 			SHMEM_I(dir)->fsflags & SHMEM_FL_INHERITED;
+- 		if (info->fsflags)
+- 			shmem_set_inode_flags(inode, info->fsflags);
+- 		INIT_LIST_HEAD(&info->shrinklist);
+- 		INIT_LIST_HEAD(&info->swaplist);
+- 		if (sbinfo->noswap)
+- 			mapping_set_unevictable(inode->i_mapping);
+- 		simple_xattrs_init(&info->xattrs);
+- 		cache_no_acl(inode);
+- 		mapping_set_large_folios(inode->i_mapping);
+--
+- 		switch (mode & S_IFMT) {
+- 		default:
+- 			inode->i_op = &shmem_special_inode_operations;
+- 			init_special_inode(inode, mode, dev);
+- 			break;
+- 		case S_IFREG:
+- 			inode->i_mapping->a_ops = &shmem_aops;
+- 			inode->i_op = &shmem_inode_operations;
+- 			inode->i_fop = &shmem_file_operations;
+- 			mpol_shared_policy_init(&info->policy,
+- 						 shmem_get_sbmpol(sbinfo));
+- 			break;
+- 		case S_IFDIR:
+- 			inc_nlink(inode);
+- 			/* Some things misbehave if size == 0 on a directory */
+- 			inode->i_size = 2 * BOGO_DIRENT_SIZE;
+- 			inode->i_op = &shmem_dir_inode_operations;
+- 			inode->i_fop = &simple_dir_operations;
+- 			break;
+- 		case S_IFLNK:
+- 			/*
+- 			 * Must not load anything in the rbtree,
+- 			 * mpol_free_shared_policy will not be called.
+- 			 */
+- 			mpol_shared_policy_init(&info->policy, NULL);
+- 			break;
+- 		}
++ 	if (!inode) {
++ 		shmem_free_inode(sb, 0);
++ 		return ERR_PTR(-ENOSPC);
++ 	}
+  
+- 		lockdep_annotate_inode_mutex_key(inode);
+- 	} else
+- 		shmem_free_inode(sb);
++ 	inode->i_ino = ino;
++ 	inode_init_owner(idmap, inode, dir, mode);
++ 	inode->i_blocks = 0;
+ -	inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
+++	inode->i_atime = inode->i_mtime = inode_set_ctime_current(inode);
++ 	inode->i_generation = get_random_u32();
++ 	info = SHMEM_I(inode);
++ 	memset(info, 0, (char *)inode - (char *)info);
++ 	spin_lock_init(&info->lock);
++ 	atomic_set(&info->stop_eviction, 0);
++ 	info->seals = F_SEAL_SEAL;
++ 	info->flags = flags & VM_NORESERVE;
++ 	info->i_crtime = inode->i_mtime;
++ 	info->fsflags = (dir == NULL) ? 0 :
++ 		SHMEM_I(dir)->fsflags & SHMEM_FL_INHERITED;
++ 	if (info->fsflags)
++ 		shmem_set_inode_flags(inode, info->fsflags);
++ 	INIT_LIST_HEAD(&info->shrinklist);
++ 	INIT_LIST_HEAD(&info->swaplist);
++ 	INIT_LIST_HEAD(&info->swaplist);
++ 	if (sbinfo->noswap)
++ 		mapping_set_unevictable(inode->i_mapping);
++ 	simple_xattrs_init(&info->xattrs);
++ 	cache_no_acl(inode);
++ 	mapping_set_large_folios(inode->i_mapping);
++ 
++ 	switch (mode & S_IFMT) {
++ 	default:
++ 		inode->i_op = &shmem_special_inode_operations;
++ 		init_special_inode(inode, mode, dev);
++ 		break;
++ 	case S_IFREG:
++ 		inode->i_mapping->a_ops = &shmem_aops;
++ 		inode->i_op = &shmem_inode_operations;
++ 		inode->i_fop = &shmem_file_operations;
++ 		mpol_shared_policy_init(&info->policy,
++ 					 shmem_get_sbmpol(sbinfo));
++ 		break;
++ 	case S_IFDIR:
++ 		inc_nlink(inode);
++ 		/* Some things misbehave if size == 0 on a directory */
++ 		inode->i_size = 2 * BOGO_DIRENT_SIZE;
++ 		inode->i_op = &shmem_dir_inode_operations;
++ 		inode->i_fop = &simple_offset_dir_operations;
++ 		simple_offset_init(shmem_get_offset_ctx(inode));
++ 		break;
++ 	case S_IFLNK:
++ 		/*
++ 		 * Must not load anything in the rbtree,
++ 		 * mpol_free_shared_policy will not be called.
++ 		 */
++ 		mpol_shared_policy_init(&info->policy, NULL);
++ 		break;
++ 	}
++ 
++ 	lockdep_annotate_inode_mutex_key(inode);
+  	return inode;
+  }
+  
+@@@ -3069,27 -3208,33 +3207,32 @@@ shmem_mknod(struct mnt_idmap *idmap, st
+  	    struct dentry *dentry, umode_t mode, dev_t dev)
+  {
+  	struct inode *inode;
+- 	int error = -ENOSPC;
++ 	int error;
+  
+  	inode = shmem_get_inode(idmap, dir->i_sb, dir, mode, dev, VM_NORESERVE);
+- 	if (inode) {
+- 		error = simple_acl_create(dir, inode);
+- 		if (error)
+- 			goto out_iput;
+- 		error = security_inode_init_security(inode, dir,
+- 						     &dentry->d_name,
+- 						     shmem_initxattrs, NULL);
+- 		if (error && error != -EOPNOTSUPP)
+- 			goto out_iput;
+ -
++ 	if (IS_ERR(inode))
++ 		return PTR_ERR(inode);
+  
+- 		error = 0;
+- 		dir->i_size += BOGO_DIRENT_SIZE;
+- 		dir->i_mtime = inode_set_ctime_current(dir);
+- 		inode_inc_iversion(dir);
+- 		d_instantiate(dentry, inode);
+- 		dget(dentry); /* Extra count - pin the dentry in core */
+- 	}
++ 	error = simple_acl_create(dir, inode);
++ 	if (error)
++ 		goto out_iput;
++ 	error = security_inode_init_security(inode, dir,
++ 					     &dentry->d_name,
++ 					     shmem_initxattrs, NULL);
++ 	if (error && error != -EOPNOTSUPP)
++ 		goto out_iput;
++ 
++ 	error = simple_offset_add(shmem_get_offset_ctx(dir), dentry);
++ 	if (error)
++ 		goto out_iput;
++ 
++ 	dir->i_size += BOGO_DIRENT_SIZE;
+ -	dir->i_ctime = dir->i_mtime = current_time(dir);
+++	dir->i_mtime = inode_set_ctime_current(dir);
++ 	inode_inc_iversion(dir);
++ 	d_instantiate(dentry, inode);
++ 	dget(dentry); /* Extra count - pin the dentry in core */
+  	return error;
++ 
+  out_iput:
+  	iput(inode);
+  	return error;
+@@@ -3159,9 -3310,15 +3308,16 @@@ static int shmem_link(struct dentry *ol
+  			goto out;
+  	}
+  
++ 	ret = simple_offset_add(shmem_get_offset_ctx(dir), dentry);
++ 	if (ret) {
++ 		if (inode->i_nlink)
++ 			shmem_free_inode(inode->i_sb, 0);
++ 		goto out;
++ 	}
++ 
+  	dir->i_size += BOGO_DIRENT_SIZE;
+ -	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(inode);
+ +	dir->i_mtime = inode_set_ctime_to_ts(dir,
+ +					     inode_set_ctime_current(inode));
+  	inode_inc_iversion(dir);
+  	inc_nlink(inode);
+  	ihold(inode);	/* New dentry reference */
+@@@ -3176,11 -3333,12 +3332,13 @@@ static int shmem_unlink(struct inode *d
+  	struct inode *inode = d_inode(dentry);
+  
+  	if (inode->i_nlink > 1 && !S_ISDIR(inode->i_mode))
+- 		shmem_free_inode(inode->i_sb);
++ 		shmem_free_inode(inode->i_sb, 0);
++ 
++ 	simple_offset_remove(shmem_get_offset_ctx(dir), dentry);
+  
+  	dir->i_size -= BOGO_DIRENT_SIZE;
+ -	inode->i_ctime = dir->i_ctime = dir->i_mtime = current_time(inode);
+ +	dir->i_mtime = inode_set_ctime_to_ts(dir,
+ +					     inode_set_ctime_current(inode));
+  	inode_inc_iversion(dir);
+  	drop_nlink(inode);
+  	dput(dentry);	/* Undo the count from "create" - this does all the work */
+@@@ -3459,15 -3660,40 +3658,40 @@@ static int shmem_xattr_handler_set(cons
+  				   size_t size, int flags)
+  {
+  	struct shmem_inode_info *info = SHMEM_I(inode);
+- 	int err;
++ 	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
++ 	struct simple_xattr *old_xattr;
++ 	size_t ispace = 0;
+  
+  	name = xattr_full_name(handler, name);
+- 	err = simple_xattr_set(&info->xattrs, name, value, size, flags, NULL);
+- 	if (!err) {
++ 	if (value && sbinfo->max_inodes) {
++ 		ispace = simple_xattr_space(name, size);
++ 		raw_spin_lock(&sbinfo->stat_lock);
++ 		if (sbinfo->free_ispace < ispace)
++ 			ispace = 0;
++ 		else
++ 			sbinfo->free_ispace -= ispace;
++ 		raw_spin_unlock(&sbinfo->stat_lock);
++ 		if (!ispace)
++ 			return -ENOSPC;
++ 	}
++ 
++ 	old_xattr = simple_xattr_set(&info->xattrs, name, value, size, flags);
++ 	if (!IS_ERR(old_xattr)) {
++ 		ispace = 0;
++ 		if (old_xattr && sbinfo->max_inodes)
++ 			ispace = simple_xattr_space(old_xattr->name,
++ 						    old_xattr->size);
++ 		simple_xattr_free(old_xattr);
++ 		old_xattr = NULL;
+ -		inode->i_ctime = current_time(inode);
+ +		inode_set_ctime_current(inode);
+  		inode_inc_iversion(inode);
+  	}
+- 	return err;
++ 	if (ispace) {
++ 		raw_spin_lock(&sbinfo->stat_lock);
++ 		sbinfo->free_ispace += ispace;
++ 		raw_spin_unlock(&sbinfo->stat_lock);
++ 	}
++ 	return PTR_ERR(old_xattr);
+  }
+  
+  static const struct xattr_handler shmem_security_xattr_handler = {
 
-(1) linux-next: manual merge of the vfs-brauner tree with the btrfs tree
-    https://lore.kernel.org/lkml/20230815112023.5903355c@canb.auug.org.au
+The following changes since commit 5d0c230f1de8c7515b6567d9afba1f196fb4e2f4:
 
-(2) linux-next: manual merge of the vfs-brauner tree with the f2fs tree
-    https://lore.kernel.org/lkml/20230815113013.40cbf98a@canb.auug.org.au
-
-(3) linux-next: manual merge of the vfs-brauner tree with the f2fs tree
-    https://lore.kernel.org/lkml/20230815113357.11919e63@canb.auug.org.au
-
-The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
-
-  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
+  Linux 6.5-rc4 (2023-07-30 13:23:47 -0700)
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/v6.6-vfs.ctime
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/v6.6-vfs.tmpfs
 
-for you to fetch changes up to 50e9ceef1d4f644ee0049e82e360058a64ec284c:
+for you to fetch changes up to 572a3d1e5d3a3e335b92e2c28a63c0b27944480c:
 
-  btrfs: convert to multigrain timestamps (2023-08-11 09:04:58 +0200)
+  tmpfs,xattr: GFP_KERNEL_ACCOUNT for simple xattrs (2023-08-22 10:57:46 +0200)
 
-Please consider pulling these changes from the signed v6.6-vfs.ctime tag.
+Please consider pulling these changes from the signed v6.6-vfs.tmpfs tag.
 
 Thanks!
 Christian
 
 ----------------------------------------------------------------
-v6.6-vfs.ctime
+v6.6-vfs.tmpfs
 
 ----------------------------------------------------------------
-Jeff Layton (107):
-      ibmvmc: update ctime in conjunction with mtime on write
-      bfs: update ctime in addition to mtime when adding entries
-      efivarfs: update ctime when mtime changes on a write
-      exfat: ensure that ctime is updated whenever the mtime is
-      apparmor: update ctime whenever the mtime changes on an inode
-      cifs: update the ctime on a partial page write
-      fs: add ctime accessors infrastructure
-      fs: new helper: simple_rename_timestamp
-      btrfs: convert to simple_rename_timestamp
-      ubifs: convert to simple_rename_timestamp
-      shmem: convert to simple_rename_timestamp
-      exfat: convert to simple_rename_timestamp
-      ntfs3: convert to simple_rename_timestamp
-      reiserfs: convert to simple_rename_timestamp
-      spufs: convert to ctime accessor functions
-      s390: convert to ctime accessor functions
-      binderfs: convert to ctime accessor functions
-      infiniband: convert to ctime accessor functions
-      ibm: convert to ctime accessor functions
-      usb: convert to ctime accessor functions
-      9p: convert to ctime accessor functions
-      adfs: convert to ctime accessor functions
-      affs: convert to ctime accessor functions
-      afs: convert to ctime accessor functions
-      fs: convert to ctime accessor functions
-      autofs: convert to ctime accessor functions
-      befs: convert to ctime accessor functions
-      bfs: convert to ctime accessor functions
-      btrfs: convert to ctime accessor functions
-      ceph: convert to ctime accessor functions
-      coda: convert to ctime accessor functions
-      configfs: convert to ctime accessor functions
-      cramfs: convert to ctime accessor functions
-      debugfs: convert to ctime accessor functions
-      devpts: convert to ctime accessor functions
-      ecryptfs: convert to ctime accessor functions
-      efivarfs: convert to ctime accessor functions
-      efs: convert to ctime accessor functions
-      erofs: convert to ctime accessor functions
-      exfat: convert to ctime accessor functions
-      ext2: convert to ctime accessor functions
-      ext4: convert to ctime accessor functions
-      f2fs: convert to ctime accessor functions
-      fat: convert to ctime accessor functions
-      freevxfs: convert to ctime accessor functions
-      fuse: convert to ctime accessor functions
-      gfs2: convert to ctime accessor functions
-      hfs: convert to ctime accessor functions
-      hfsplus: convert to ctime accessor functions
-      hostfs: convert to ctime accessor functions
-      hpfs: convert to ctime accessor functions
-      hugetlbfs: convert to ctime accessor functions
-      isofs: convert to ctime accessor functions
-      jffs2: convert to ctime accessor functions
-      jfs: convert to ctime accessor functions
-      kernfs: convert to ctime accessor functions
-      nfs: convert to ctime accessor functions
-      nfsd: convert to ctime accessor functions
-      nilfs2: convert to ctime accessor functions
-      ntfs: convert to ctime accessor functions
-      ntfs3: convert to ctime accessor functions
-      ocfs2: convert to ctime accessor functions
-      omfs: convert to ctime accessor functions
-      openpromfs: convert to ctime accessor functions
-      orangefs: convert to ctime accessor functions
-      overlayfs: convert to ctime accessor functions
-      procfs: convert to ctime accessor functions
-      pstore: convert to ctime accessor functions
-      qnx4: convert to ctime accessor functions
-      qnx6: convert to ctime accessor functions
-      ramfs: convert to ctime accessor functions
-      reiserfs: convert to ctime accessor functions
-      romfs: convert to ctime accessor functions
-      smb: convert to ctime accessor functions
-      squashfs: convert to ctime accessor functions
-      sysv: convert to ctime accessor functions
-      tracefs: convert to ctime accessor functions
-      ubifs: convert to ctime accessor functions
-      udf: convert to ctime accessor functions
-      ufs: convert to ctime accessor functions
-      vboxsf: convert to ctime accessor functions
-      xfs: convert to ctime accessor functions
-      zonefs: convert to ctime accessor functions
-      linux: convert to ctime accessor functions
-      mqueue: convert to ctime accessor functions
-      bpf: convert to ctime accessor functions
-      shmem: convert to ctime accessor functions
-      sunrpc: convert to ctime accessor functions
-      apparmor: convert to ctime accessor functions
-      security: convert to ctime accessor functions
-      selinux: convert to ctime accessor functions
-      fs: rename i_ctime field to __i_ctime
-      gfs2: fix timestamp handling on quota inodes
-      fs: remove silly warning from current_time
-      fs: pass the request_mask to generic_fillattr
-      fs: drop the timespec64 arg from generic_update_time
-      btrfs: have it use inode_update_timestamps
-      ubifs: have ubifs_update_time use inode_update_timestamps
-      fat: remove i_version handling from fat_update_time
-      fat: make fat_update_time get its own timestamp
-      xfs: have xfs_vn_update_time gets its own timestamp
-      fs: drop the timespec64 argument from update_time
-      fs: add infrastructure for multigrain timestamps
-      tmpfs: add support for multigrain timestamps
-      xfs: switch to multigrain timestamps
-      ext4: switch to multigrain timestamps
-      btrfs: convert to multigrain timestamps
+Carlos Maiolino (3):
+      shmem: make shmem_get_inode() return ERR_PTR instead of NULL
+      shmem: prepare shmem quota infrastructure
+      shmem: quota support
 
- arch/powerpc/platforms/cell/spufs/inode.c |   2 +-
- arch/s390/hypfs/inode.c                   |   4 +-
- drivers/android/binderfs.c                |   8 +-
- drivers/infiniband/hw/qib/qib_fs.c        |   3 +-
- drivers/misc/ibmasm/ibmasmfs.c            |   2 +-
- drivers/misc/ibmvmc.c                     |   2 +-
- drivers/usb/core/devio.c                  |  16 +--
- drivers/usb/gadget/function/f_fs.c        |   3 +-
- drivers/usb/gadget/legacy/inode.c         |   3 +-
- fs/9p/vfs_inode.c                         |   8 +-
- fs/9p/vfs_inode_dotl.c                    |  12 +-
- fs/adfs/inode.c                           |   4 +-
- fs/affs/amigaffs.c                        |   6 +-
- fs/affs/inode.c                           |  16 +--
- fs/afs/dynroot.c                          |   2 +-
- fs/afs/inode.c                            |   8 +-
- fs/attr.c                                 |   2 +-
- fs/autofs/inode.c                         |   2 +-
- fs/autofs/root.c                          |   6 +-
- fs/bad_inode.c                            |   6 +-
- fs/befs/linuxvfs.c                        |   2 +-
- fs/bfs/dir.c                              |  16 +--
- fs/bfs/inode.c                            |   5 +-
- fs/binfmt_misc.c                          |   3 +-
- fs/btrfs/delayed-inode.c                  |   8 +-
- fs/btrfs/file.c                           |  37 ++---
- fs/btrfs/inode.c                          |  66 +++------
- fs/btrfs/ioctl.c                          |   2 +-
- fs/btrfs/reflink.c                        |   3 +-
- fs/btrfs/super.c                          |   5 +-
- fs/btrfs/transaction.c                    |   3 +-
- fs/btrfs/tree-log.c                       |   4 +-
- fs/btrfs/volumes.c                        |   4 +-
- fs/btrfs/xattr.c                          |   4 +-
- fs/ceph/acl.c                             |   2 +-
- fs/ceph/caps.c                            |   2 +-
- fs/ceph/inode.c                           |  18 +--
- fs/ceph/snap.c                            |   2 +-
- fs/ceph/xattr.c                           |   2 +-
- fs/coda/coda_linux.c                      |   3 +-
- fs/coda/dir.c                             |   2 +-
- fs/coda/file.c                            |   2 +-
- fs/coda/inode.c                           |   5 +-
- fs/configfs/inode.c                       |   7 +-
- fs/cramfs/inode.c                         |   3 +-
- fs/debugfs/inode.c                        |   3 +-
- fs/devpts/inode.c                         |   6 +-
- fs/ecryptfs/inode.c                       |   7 +-
- fs/efivarfs/file.c                        |   2 +-
- fs/efivarfs/inode.c                       |   2 +-
- fs/efs/inode.c                            |   4 +-
- fs/erofs/inode.c                          |  14 +-
- fs/exfat/file.c                           |   6 +-
- fs/exfat/inode.c                          |   6 +-
- fs/exfat/namei.c                          |  26 ++--
- fs/exfat/super.c                          |   3 +-
- fs/ext2/acl.c                             |   2 +-
- fs/ext2/dir.c                             |   6 +-
- fs/ext2/ialloc.c                          |   2 +-
- fs/ext2/inode.c                           |  12 +-
- fs/ext2/ioctl.c                           |   4 +-
- fs/ext2/namei.c                           |   8 +-
- fs/ext2/super.c                           |   2 +-
- fs/ext2/xattr.c                           |   2 +-
- fs/ext4/acl.c                             |   2 +-
- fs/ext4/ext4.h                            |  90 +++++++------
- fs/ext4/extents.c                         |  12 +-
- fs/ext4/ialloc.c                          |   2 +-
- fs/ext4/inline.c                          |   4 +-
- fs/ext4/inode-test.c                      |   6 +-
- fs/ext4/inode.c                           |  18 ++-
- fs/ext4/ioctl.c                           |   9 +-
- fs/ext4/namei.c                           |  26 ++--
- fs/ext4/super.c                           |   4 +-
- fs/ext4/xattr.c                           |   6 +-
- fs/f2fs/dir.c                             |   8 +-
- fs/f2fs/f2fs.h                            |   4 +-
- fs/f2fs/file.c                            |  22 +--
- fs/f2fs/inline.c                          |   2 +-
- fs/f2fs/inode.c                           |  10 +-
- fs/f2fs/namei.c                           |  12 +-
- fs/f2fs/recovery.c                        |   4 +-
- fs/f2fs/super.c                           |   2 +-
- fs/f2fs/xattr.c                           |   2 +-
- fs/fat/fat.h                              |   3 +-
- fs/fat/file.c                             |   2 +-
- fs/fat/inode.c                            |   5 +-
- fs/fat/misc.c                             |  10 +-
- fs/freevxfs/vxfs_inode.c                  |   3 +-
- fs/fuse/control.c                         |   2 +-
- fs/fuse/dir.c                             |  10 +-
- fs/fuse/inode.c                           |  16 +--
- fs/gfs2/acl.c                             |   2 +-
- fs/gfs2/bmap.c                            |  11 +-
- fs/gfs2/dir.c                             |  15 ++-
- fs/gfs2/file.c                            |   2 +-
- fs/gfs2/glops.c                           |   4 +-
- fs/gfs2/inode.c                           |  16 +--
- fs/gfs2/quota.c                           |   2 +-
- fs/gfs2/super.c                           |   4 +-
- fs/gfs2/xattr.c                           |   8 +-
- fs/hfs/catalog.c                          |   8 +-
- fs/hfs/dir.c                              |   2 +-
- fs/hfs/inode.c                            |  13 +-
- fs/hfs/sysdep.c                           |   4 +-
- fs/hfsplus/catalog.c                      |   8 +-
- fs/hfsplus/dir.c                          |   6 +-
- fs/hfsplus/inode.c                        |  18 +--
- fs/hostfs/hostfs_kern.c                   |   3 +-
- fs/hpfs/dir.c                             |   8 +-
- fs/hpfs/inode.c                           |   6 +-
- fs/hpfs/namei.c                           |  29 ++--
- fs/hpfs/super.c                           |   5 +-
- fs/hugetlbfs/inode.c                      |  12 +-
- fs/inode.c                                | 216 ++++++++++++++++++++++++------
- fs/isofs/inode.c                          |   9 +-
- fs/isofs/rock.c                           |  16 +--
- fs/jffs2/dir.c                            |  24 ++--
- fs/jffs2/file.c                           |   3 +-
- fs/jffs2/fs.c                             |  10 +-
- fs/jffs2/os-linux.h                       |   2 +-
- fs/jfs/acl.c                              |   2 +-
- fs/jfs/inode.c                            |   2 +-
- fs/jfs/ioctl.c                            |   2 +-
- fs/jfs/jfs_imap.c                         |   8 +-
- fs/jfs/jfs_inode.c                        |   4 +-
- fs/jfs/namei.c                            |  24 ++--
- fs/jfs/super.c                            |   2 +-
- fs/jfs/xattr.c                            |   2 +-
- fs/kernfs/inode.c                         |   7 +-
- fs/libfs.c                                |  59 +++++---
- fs/minix/bitmap.c                         |   2 +-
- fs/minix/dir.c                            |   6 +-
- fs/minix/inode.c                          |  12 +-
- fs/minix/itree_common.c                   |   4 +-
- fs/minix/namei.c                          |   6 +-
- fs/nfs/callback_proc.c                    |   2 +-
- fs/nfs/fscache.h                          |   4 +-
- fs/nfs/inode.c                            |  22 +--
- fs/nfs/namespace.c                        |   3 +-
- fs/nfsd/nfsctl.c                          |   2 +-
- fs/nfsd/vfs.c                             |   2 +-
- fs/nilfs2/dir.c                           |   6 +-
- fs/nilfs2/inode.c                         |  12 +-
- fs/nilfs2/ioctl.c                         |   2 +-
- fs/nilfs2/namei.c                         |   8 +-
- fs/nsfs.c                                 |   2 +-
- fs/ntfs/inode.c                           |  15 ++-
- fs/ntfs/mft.c                             |   3 +-
- fs/ntfs3/file.c                           |   8 +-
- fs/ntfs3/frecord.c                        |   3 +-
- fs/ntfs3/inode.c                          |  14 +-
- fs/ntfs3/namei.c                          |  11 +-
- fs/ntfs3/xattr.c                          |   4 +-
- fs/ocfs2/acl.c                            |   6 +-
- fs/ocfs2/alloc.c                          |   6 +-
- fs/ocfs2/aops.c                           |   2 +-
- fs/ocfs2/dir.c                            |   8 +-
- fs/ocfs2/dlmfs/dlmfs.c                    |   4 +-
- fs/ocfs2/dlmglue.c                        |   7 +-
- fs/ocfs2/file.c                           |  18 +--
- fs/ocfs2/inode.c                          |  12 +-
- fs/ocfs2/move_extents.c                   |   6 +-
- fs/ocfs2/namei.c                          |  21 +--
- fs/ocfs2/refcounttree.c                   |  14 +-
- fs/ocfs2/xattr.c                          |   6 +-
- fs/omfs/dir.c                             |   4 +-
- fs/omfs/inode.c                           |   9 +-
- fs/openpromfs/inode.c                     |   5 +-
- fs/orangefs/inode.c                       |   7 +-
- fs/orangefs/namei.c                       |   2 +-
- fs/orangefs/orangefs-kernel.h             |   2 +-
- fs/orangefs/orangefs-utils.c              |   6 +-
- fs/overlayfs/file.c                       |   7 +-
- fs/overlayfs/inode.c                      |   2 +-
- fs/overlayfs/overlayfs.h                  |   2 +-
- fs/overlayfs/util.c                       |   2 +-
- fs/pipe.c                                 |   2 +-
- fs/posix_acl.c                            |   2 +-
- fs/proc/base.c                            |   6 +-
- fs/proc/fd.c                              |   2 +-
- fs/proc/generic.c                         |   2 +-
- fs/proc/inode.c                           |   2 +-
- fs/proc/proc_net.c                        |   2 +-
- fs/proc/proc_sysctl.c                     |   4 +-
- fs/proc/root.c                            |   3 +-
- fs/proc/self.c                            |   2 +-
- fs/proc/thread_self.c                     |   2 +-
- fs/pstore/inode.c                         |   4 +-
- fs/qnx4/inode.c                           |   3 +-
- fs/qnx6/inode.c                           |   3 +-
- fs/ramfs/inode.c                          |   6 +-
- fs/reiserfs/inode.c                       |  12 +-
- fs/reiserfs/ioctl.c                       |   4 +-
- fs/reiserfs/namei.c                       |  18 +--
- fs/reiserfs/stree.c                       |   4 +-
- fs/reiserfs/super.c                       |   2 +-
- fs/reiserfs/xattr.c                       |   5 +-
- fs/reiserfs/xattr_acl.c                   |   2 +-
- fs/romfs/super.c                          |   3 +-
- fs/smb/client/file.c                      |   4 +-
- fs/smb/client/fscache.h                   |   5 +-
- fs/smb/client/inode.c                     |  16 +--
- fs/smb/client/smb2ops.c                   |   3 +-
- fs/smb/server/smb2pdu.c                   |  30 ++---
- fs/smb/server/vfs.c                       |   3 +-
- fs/squashfs/inode.c                       |   2 +-
- fs/stack.c                                |   2 +-
- fs/stat.c                                 |  65 +++++++--
- fs/sysv/dir.c                             |   6 +-
- fs/sysv/ialloc.c                          |   2 +-
- fs/sysv/inode.c                           |   5 +-
- fs/sysv/itree.c                           |   7 +-
- fs/sysv/namei.c                           |   6 +-
- fs/tracefs/inode.c                        |   2 +-
- fs/ubifs/debug.c                          |   4 +-
- fs/ubifs/dir.c                            |  41 +++---
- fs/ubifs/file.c                           |  31 ++---
- fs/ubifs/ioctl.c                          |   2 +-
- fs/ubifs/journal.c                        |   4 +-
- fs/ubifs/super.c                          |   4 +-
- fs/ubifs/ubifs.h                          |   2 +-
- fs/ubifs/xattr.c                          |   6 +-
- fs/udf/ialloc.c                           |   2 +-
- fs/udf/inode.c                            |  17 ++-
- fs/udf/namei.c                            |  24 ++--
- fs/udf/symlink.c                          |   2 +-
- fs/ufs/dir.c                              |   6 +-
- fs/ufs/ialloc.c                           |   2 +-
- fs/ufs/inode.c                            |  23 ++--
- fs/ufs/namei.c                            |   8 +-
- fs/vboxsf/utils.c                         |   6 +-
- fs/xfs/libxfs/xfs_inode_buf.c             |   5 +-
- fs/xfs/libxfs/xfs_trans_inode.c           |   6 +-
- fs/xfs/xfs_acl.c                          |   2 +-
- fs/xfs/xfs_bmap_util.c                    |   6 +-
- fs/xfs/xfs_inode.c                        |   3 +-
- fs/xfs/xfs_inode_item.c                   |   2 +-
- fs/xfs/xfs_iops.c                         |  25 ++--
- fs/xfs/xfs_itable.c                       |   4 +-
- fs/xfs/xfs_super.c                        |   2 +-
- fs/zonefs/super.c                         |   8 +-
- include/linux/fs.h                        | 100 +++++++++++++-
- include/linux/fs_stack.h                  |   2 +-
- ipc/mqueue.c                              |  23 ++--
- kernel/bpf/inode.c                        |   6 +-
- mm/shmem.c                                |  30 ++---
- net/sunrpc/rpc_pipe.c                     |   2 +-
- security/apparmor/apparmorfs.c            |  11 +-
- security/apparmor/policy_unpack.c         |  11 +-
- security/inode.c                          |   2 +-
- security/selinux/selinuxfs.c              |   2 +-
- 252 files changed, 1267 insertions(+), 1049 deletions(-)
+Christian Brauner (1):
+      tmpfs: verify {g,u}id mount options correctly
+
+Chuck Lever (5):
+      libfs: Add directory operations for stable offsets
+      shmem: Refactor shmem_symlink()
+      shmem: stable directory offsets
+      libfs: Add a lock class for the offset map's xa_lock
+      libfs: Remove parent dentry locking in offset_iterate_dir()
+
+Hugh Dickins (8):
+      shmem: fix quota lock nesting in huge hole handling
+      shmem: move spinlock into shmem_recalc_inode() to fix quota support
+      xattr: simple_xattr_set() return old_xattr to be freed
+      tmpfs: track free_ispace instead of free_inodes
+      tmpfs,xattr: enable limited user extended attributes
+      tmpfs: trivial support for direct IO
+      mm: invalidation check mapping before folio_contains
+      tmpfs,xattr: GFP_KERNEL_ACCOUNT for simple xattrs
+
+Jan Kara (1):
+      quota: Check presence of quota operation structures instead of ->quota_read and ->quota_write callbacks
+
+Lukas Czerner (2):
+      shmem: make shmem_inode_acct_block() return error
+      shmem: Add default quota limit mount options
+
+ Documentation/filesystems/locking.rst |   8 +-
+ Documentation/filesystems/tmpfs.rst   |  38 +-
+ Documentation/filesystems/vfs.rst     |   6 +-
+ fs/Kconfig                            |  16 +-
+ fs/kernfs/dir.c                       |   2 +-
+ fs/kernfs/inode.c                     |  46 +-
+ fs/libfs.c                            | 248 ++++++++++
+ fs/quota/dquot.c                      |   2 +-
+ fs/xattr.c                            |  83 ++--
+ include/linux/fs.h                    |  18 +
+ include/linux/shmem_fs.h              |  31 +-
+ include/linux/xattr.h                 |  10 +-
+ include/uapi/linux/quota.h            |   1 +
+ mm/Makefile                           |   2 +-
+ mm/huge_memory.c                      |   6 +-
+ mm/khugepaged.c                       |  13 +-
+ mm/shmem.c                            | 827 +++++++++++++++++++++++++---------
+ mm/shmem_quota.c                      | 350 ++++++++++++++
+ mm/truncate.c                         |   4 +-
+ 19 files changed, 1414 insertions(+), 297 deletions(-)
+ create mode 100644 mm/shmem_quota.c
