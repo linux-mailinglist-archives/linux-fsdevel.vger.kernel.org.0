@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E400578739F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 17:08:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC1D978739A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 17:07:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241870AbjHXPH6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Aug 2023 11:07:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32782 "EHLO
+        id S239575AbjHXPGy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Aug 2023 11:06:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242125AbjHXPHv (ORCPT
+        with ESMTP id S242106AbjHXPGf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Aug 2023 11:07:51 -0400
-Received: from outbound-ip7b.ess.barracuda.com (outbound-ip7b.ess.barracuda.com [209.222.82.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA8AAFD
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Aug 2023 08:07:47 -0700 (PDT)
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101]) by mx-outbound45-241.us-east-2c.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Thu, 24 Aug 2023 15:06:19 +0000
+        Thu, 24 Aug 2023 11:06:35 -0400
+Received: from outbound-ip7a.ess.barracuda.com (outbound-ip7a.ess.barracuda.com [209.222.82.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 145591BD4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Aug 2023 08:06:28 -0700 (PDT)
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100]) by mx-outbound15-198.us-east-2a.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Thu, 24 Aug 2023 15:06:23 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EaOOTLALiEGXCnYNodz6nZv9s6vu3yco1SZ38tdt+r11uSLDhmw0u5B8j6lNUZjWA+9wQ0MDZ7j+4kYOt5CUueIKN7Hi9CHyUWnNkoFhfcGvkfLcgcRGBKjD0r5blm19Ym1yQy6EqcYw185qLxQb8o7XhevOKO2iEc04nxTFF9bLXSJRmQ/gP/fqZQIsYbek4bGEETUCQ0I8zKr65og9h7NEUief9jGonp0BoEzHyBPFho0ZPipr7c+j5jSSl2wCUU725zu+owqBwksidxBF4vxuN/7xONGLOVy8AY5qtQMxIzX4pPvXUAuJeBEHv8Y8CrQQecCA1hT6pniLxoeIyw==
+ b=ZTOVrrlLwPK9A3jn1wffusTnPaoNOLTxPDhwRgUBEFrgUYhaWl+kwog0yNwKpPeOpZIf1NrVPnGmsACwiDMoPCFw2xrV+Tn3Z0IDZsYZhDHe4KeDpRAjZJM/9aDzw+dlbAcPHf4wtVISG5HCb8LnykM6XPgxeLmQsYvmGaKKkE7nXLObLqO/5MEwjzWT4Y1ph+j1tyV2XCNSb//Si1HXJDuqBdTJS0t9zGVuIJRfa3bWZnI1VaRGIrhad57QayQi7vA+8lirY/7sv0xz4U1rc7Af7LdwocE2z2O6kT2ACMAPSrcOEg8/ot7WK+Gj7YlU9azUDeJiddDyhROIIPfOtQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vbmTh1TjOZTBwTZXPnUI73gUmgVaABp/k2TUSx+hja0=;
- b=jUIOZAXy5n+3nXRkVktBx8jyT28RBbQrcDVQvC8CHtbPCuFumZ3HQtT/oBCCHLrTgTLlOfwPzOce3XO/ioJeDr5oJd9oo/7zgBDRjFV2NBO8dJHGEXh/qD+FoyedzJTB5BoMwlkigVggVIGmfae/fGCqC18gCYHmcoM89Su6oAIJ3S+EZt8EIx2jOmXrklgJgrebPDcUoEaJp8bkeO0GKudnlqDkV9cFtfA4x+lwYs8G1gVWGd3Q150RfcFGgLAMyJm9Bxif1mv6dTw2m3GeUFUwFK5hgaaMtHTEkFMW/FxwyTar2yMXHDo4SjJGHfLRocpSKt4ElRMDIyn7e1cozg==
+ bh=Nzjgxlalg0V8lqWSz1bKqRHpdj4spdXbYosbLVk3/G0=;
+ b=MuzVhJADaZrfgC+RrbO54j1G9SiqxVLFXgGAxypMl9a2LQJkxnnq5KHnKwyqDBvhwytKzpX6VAyp2Y1ghK/7nnELHB4dAOIxGre8ZwX0006WGCRlTSl/TEgTu/Klzk/CtVd+f2u2kTk7SSgPnsuJJ03lWLZNqQTUX2Z86XixC2joH852PRGHeF36kNOFbkmhJZouasEyPi9w+ABc9tFlQIeghwXq+9Kf/QEvcGQaNHeod++n1yeAGE8DW0sEG5LQiJoJR46VJg98QJr/c5Z9PnGhO7zq+rboQZEAsy0Af0yJa7G1lxMWNzqSXLEjmBo/9Js6y+H3VJ2vi24/kh9oqA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
  (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
  (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vbmTh1TjOZTBwTZXPnUI73gUmgVaABp/k2TUSx+hja0=;
- b=Wr8Eb8gFeh2vh84klKB9i6zGTmwpaZHoya0pCL4/pfRCzLbSyonL8nEttIJUsAMNooZ6Z+Z7l07v+Ga8wM63eEqyqYYrPQjKWV9DuqqBarebOqC53NvZCay8uuZXHYKnQHo2i52BSNxMJufyoaouGftErnh0j+nofnGBkv/e9O4=
-Received: from MW4PR03CA0227.namprd03.prod.outlook.com (2603:10b6:303:b9::22)
- by MN6PR19MB7866.namprd19.prod.outlook.com (2603:10b6:208:470::17) with
+ bh=Nzjgxlalg0V8lqWSz1bKqRHpdj4spdXbYosbLVk3/G0=;
+ b=NxvtX7W43tHZDht/1qBBTn7kvC0dGJbKMSSNhM7/K96Mb9tbUXyPA24lKQD7XNkIKxSSD4tJCIBvMhFyVtbKyUXoAMhN9mwWgLnDC+/4rO+xrbnYUcrk1E3IGC4d7CVu+yBOnNZqxUXpNNnoIM+fwhawkoUE3OwrxnpMBNWTU90=
+Received: from MW4PR03CA0186.namprd03.prod.outlook.com (2603:10b6:303:b8::11)
+ by DM4PR19MB6075.namprd19.prod.outlook.com (2603:10b6:8:6e::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.27; Thu, 24 Aug
- 2023 15:06:06 +0000
-Received: from MW2NAM04FT059.eop-NAM04.prod.protection.outlook.com
- (2603:10b6:303:b9:cafe::81) by MW4PR03CA0227.outlook.office365.com
- (2603:10b6:303:b9::22) with Microsoft SMTP Server (version=TLS1_2,
+ 2023 15:06:08 +0000
+Received: from MW2NAM04FT064.eop-NAM04.prod.protection.outlook.com
+ (2603:10b6:303:b8:cafe::4b) by MW4PR03CA0186.outlook.office365.com
+ (2603:10b6:303:b8::11) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.27 via Frontend
- Transport; Thu, 24 Aug 2023 15:06:06 +0000
+ Transport; Thu, 24 Aug 2023 15:06:08 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
  smtp.mailfrom=ddn.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=ddn.com;
@@ -48,20 +48,20 @@ Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
  50.222.100.11 as permitted sender) receiver=protection.outlook.com;
  client-ip=50.222.100.11; helo=uww-mx01.datadirectnet.com; pr=C
 Received: from uww-mx01.datadirectnet.com (50.222.100.11) by
- MW2NAM04FT059.mail.protection.outlook.com (10.13.30.132) with Microsoft SMTP
+ MW2NAM04FT064.mail.protection.outlook.com (10.13.30.189) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6723.17 via Frontend Transport; Thu, 24 Aug 2023 15:06:06 +0000
+ 15.20.6723.17 via Frontend Transport; Thu, 24 Aug 2023 15:06:08 +0000
 Received: from localhost (unknown [10.68.0.8])
-        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 51FA820C684B;
-        Thu, 24 Aug 2023 09:07:12 -0600 (MDT)
+        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id EAB7620C684B;
+        Thu, 24 Aug 2023 09:07:13 -0600 (MDT)
 From:   Bernd Schubert <bschubert@ddn.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     bernd.schubert@fastmail.fm, miklos@szeredi.hu, dsingh@ddn.com,
         Bernd Schubert <bschubert@ddn.com>,
         Hao Xu <howeyxu@tencent.com>
-Subject: [PATCH 1/5] fuse: direct IO can use the write-through code path
-Date:   Thu, 24 Aug 2023 17:05:29 +0200
-Message-Id: <20230824150533.2788317-2-bschubert@ddn.com>
+Subject: [PATCH 2/5] fuse: Create helper function if DIO write needs exclusive lock
+Date:   Thu, 24 Aug 2023 17:05:30 +0200
+Message-Id: <20230824150533.2788317-3-bschubert@ddn.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230824150533.2788317-1-bschubert@ddn.com>
 References: <20230824150533.2788317-1-bschubert@ddn.com>
@@ -69,34 +69,34 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW2NAM04FT059:EE_|MN6PR19MB7866:EE_
+X-MS-TrafficTypeDiagnostic: MW2NAM04FT064:EE_|DM4PR19MB6075:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 10f3bbeb-599a-443a-c62e-08dba4b3a44a
+X-MS-Office365-Filtering-Correlation-Id: 9937868c-d90f-45a9-1c24-08dba4b3a544
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: nWM1gck2Yt8iLqUzmlNZhKEHGIykYbjX+AE6b9DZ3dXBHICMCfSZmLMqNERxYIUTdRO4NUsyNMPujwb76fBraVGvf6CL6UIpXYbsT/8iVmpEd1egiYsKalt0FJYWpRWDJNvnocnM6e2J0ID0JTYrE2Y3jVT7zqRCujpxj1uRANqQ/zI0gPQs15fgc8NogtNAcnXV0HujmsS51axGJd7rOx8f8gXlcGgUk7MYYtIpQYQqiITA/fMfWMI0VAv8r2izrYYy6TMxhMp+J26G847khb5sCuiq2DhfX8BRX6ZuYmAJ6eaRJroqMrAnQR+1owroJrrsLEfeVVxhQQWP7FhPpWcMY1oETMhzkF+BKbh8bqoVWC5EM1+GaqYW+w2zclH6tTfDplk+ouVDl6T1bxkkzYUKreEXVxgzpQ7B79p9QQZK9JGg6i/i0LaJq4eHz5gEPvJ4V6qbb40CkQvFRYHqbXD+/1B2Kw8iukJjm8nwZlraym51npA+sBrJJ/0HtN8z43TeC0PAMKT8fgU0burDrUfjq0Rc9gR+EnGbEK8B0lBIlOwiW6IShoLWxsHqcZsV1hVI5kzStfBwYDkFUllnT90OT+e2QOPe75yUnX4d4HkQJln1LW81B/9Hs/nxFsT90FIMXgJclVjfeTwhJfwuxQbxdh9/slyql9+ktJSQJupYeEi7K3kmJQJ0fYj5WmGCzuJTzpKF0EwTxJsJFMUV6Dk3cp5N8KueEDzktQjdeOpz3xZszfRLuY//MlQ690ts
-X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(396003)(39850400004)(376002)(346002)(136003)(186009)(1800799009)(82310400011)(451199024)(36840700001)(46966006)(1076003)(2616005)(5660300002)(8936002)(4326008)(8676002)(6266002)(336012)(47076005)(36756003)(4744005)(83380400001)(36860700001)(26005)(40480700001)(82740400003)(356005)(6666004)(81166007)(70206006)(70586007)(54906003)(6916009)(316002)(478600001)(41300700001)(2906002)(86362001)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: Ry9i0kr5NzrsdCqzHVk1tgZpCUldrvb/otBQG04xK1rbkDoKH0MjbDtBuXkuhH0lHR/IZcQL9VBpyLhLQwoispa8oyCmVSuacx8qu3Dh8hD1fGxkGwEZIgAk8x4vWFNCoD0h6u4NfZOV5qohK2ULyBW8Bkij0ZjYZMSbbn0lO66DoLQWb2WhVaa9l7iDlEGOG4YDV/X7fKAEpZus4EieUdi0TQQOr+0kf8kXq6egSMESLM2s74RmZ9Ajxd5I6ib9diRlj7YxgbRaBjn2s+3Egkh/ygxAa2pv5kF1Y0bXZJDVgJfZlGIq8paEiRDUQwDkHKVneENlj6gtbG7IZp7ted9v2tRMfPJmALaP3bElBIAlxbZe2yQR13FZWx2l324zbR1etgqFusp0uYAf7heGOpvQllQFC616fsjufFOB6ovzv9V6jU+HlWymCF+GCWr6trv5lth3rUcdTVvnkIZRYevI20pfVBg3mcAv73TwAFZy6Ild1VkUPAnGpjAebpWwq/bmY+xdsz6TcK0xe/+LbU/kvGIeBst4Av5RJQc5mM1I5ZhlOqd7L1id/5J7AK1boi5a2NjnXnWmGYmmo0BU4Sxksbz0pz1VOZhw2JeCuRu/pHMnjGIRdVE+zOehsNTjPuEka8RZYYkiA9Nmy9f71xHycuM+ukFGCILOdjzN+GdnBJKqSrw22C7EM7vrxmC6jcp1Fqx+QZQ5Ayvz1lKmui13Z6UurH/E+gPliAtiBsV20QO+DHYrf19vuAHWXQv0
+X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(376002)(396003)(39850400004)(136003)(346002)(82310400011)(186009)(1800799009)(451199024)(46966006)(36840700001)(1076003)(2616005)(5660300002)(4326008)(8676002)(8936002)(6266002)(336012)(47076005)(36756003)(83380400001)(36860700001)(26005)(40480700001)(82740400003)(356005)(6666004)(81166007)(70586007)(70206006)(54906003)(6916009)(316002)(478600001)(41300700001)(2906002)(86362001)(36900700001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: JgioNlo85nOYrlexRhA3QPro5xIZzzmQBjod9yq1YdNei7n799ahnsJSaWUc+Yn3NDh2urZfOHrzC5TMptpuqjWizT6kgHyxX1yKt6xT/fkJqyDEL+r1246BnEKBvhpPcovfC1JKxQGQxShDLG4Jgs4AH8cIQs2tHngry58wH9DxjvX9zV75i/RU5/9eyUyDwUkIlp67Jmlp3n+d2Qy5PCt2yUGlYk8P0AAVpjXmP4Y9c6Fr9GXtxqL/5GBj4a1ZZ03sELoi4G7UqzCTDZbYZIsYGm+r7PGSuw6nyCiVNSBh7lE5qneMCGSF8CNCkKGm+TyMnDIxSMXBTKjUO5rqbb8Sy2DkxRPKCLY+MZEfqwzp0ASRoVbddoqa5WOqhKR29df1Cbt0oKwWCo17CGGz7hYohYfpcp+b7XDjVBO/3B+LD4G+xIaIBd+mDu3sGtPafOdMjUH4w8GCamHzKoFLbbG8lwbgwKG1P85K+mHMI6FU0eC4X/ZDXnlddsk1x18X1QshjcPR7bRJ0On9bTupMqOqW745MY6dd5CjB5arzffX+TIlxhKhwmE0y+vTFkrI3GyrIo5mLXgHEP0cjarddtHQmbcp06SRO5JznnADWeB1zjvmEFYG2Ci8BdAG0j0gA2UYwln+dRTf+/ISykgRsPySkxBEeQI3tzaNgp5rvsX1oOgIiTuRUrAgcZ9QD7NJXzrKHWdVM4TCi9IBO++URY2vRsSd3slgg9768zLZ84YcP1GHx+nEFuku3scXlUVxfPuhG4PXPCjsCDrBrr9B6RBCBe9kcFkTyyq+h1bsZaWoNH/nyER+zHkJEkxTdYe1/z6GFpIq4XgOxYovGHGfNiucR0h/M54Dw96yaNYqbsqTMrFIyZJAaYgjfnIsi3ILb7/eLcKSW6fo1IdS1oFc6Q==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: jRHmjdvJTzqJQTz69d0aOAJhqbpuDJTg0vo+tan+dqqP9eLA3sqzMuR7Z0vyS+NYKDz1nYm1EfKSdZ28ehweChN9rtWel+RMtTlps739QaDqrfV8HjteKhzNNL8xYr9EZSNx92iCWoO/VSsVpWPDOaC5TMCJcgWaPgmihdLhYC6PABebWFU+66KK4eamxktACq4HY8lzxbUU5oUQPecdRJhx6bTDNolq3DMAjEKYgC1VINZ9mdHmddTi6ZUANF0orqZPheKV58ThKhGJIfuP6fYJy3TY9zdZZeYvnSfCrANlzUYy8iae3MZonAR/UjPNTWmapTd8kJSH45nwmQnpNtpLzW7yjt23AwAb98T34vh7y4ii57IgFHgTbEJ5zpKEDMGt0ZBO80UM4qWWTSjUnI8utSpHX6a3jBY4+T4X6blTaiJRSq2Qk9ujlseaDJVFSLTsHixhIL9LtJL2h00OUIFuGQzYUmRT+wtcQhG3nD8RRwy9Ecwvt7A98TDKgIJHP8tjvqvxCw8rrivlMHl17sTiSs/vS9KgjStgrzR3IVOmlumg5DqoCPpN5fQ+Wuu8DuyDhDvsZZzS52CnhubYiZbWAD8RGcDoRts+0rxPdH2sKkd7Y2hk/Ysgn0vspXGjhXrKLxX6/47Arg76GLApZ4E2RbtIcxVkZH0n5ObEjTATD1wKDuk7Sq1dLdwNoGGhUgc4K17X5eRRux1zswNnw4nHl1WY2b672rnQpP+3DCAL7NIZ2rLuOiJv6AF6FTw/oejoEk2Ln+Et7ULKae/xqPb8iaIaohJqFF1kvVwZu9Ky7YSDElFPiI2Tk3XRUvSQn/CHFnLy6MPOhJ9aaJcoLpWNsKqdOAiB2dkgQDwJSeV4/95zmjkP/RJeEmB43T6LP1WyLIufcU26UYpGXHZ9qw==
 X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2023 15:06:06.4741
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2023 15:06:08.1081
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 10f3bbeb-599a-443a-c62e-08dba4b3a44a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9937868c-d90f-45a9-1c24-08dba4b3a544
 X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mx01.datadirectnet.com]
-X-MS-Exchange-CrossTenant-AuthSource: MW2NAM04FT059.eop-NAM04.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: MW2NAM04FT064.eop-NAM04.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR19MB7866
-X-BESS-ID: 1692889576-111761-6161-149-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR19MB6075
+X-BESS-ID: 1692889583-104038-25174-37-1
 X-BESS-VER: 2019.1_20230822.1529
-X-BESS-Apparent-Source-IP: 104.47.58.101
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVhaWxkBGBlDMzMDCyMDANDHZ3D
-        QpMSnNzNzMwjzV0jLZPMU4Lc0gyVCpNhYA2S+ZwEAAAAA=
+X-BESS-Apparent-Source-IP: 104.47.58.100
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkZGpmZAVgZQ0MjEODHNwjI11T
+        TV3Mg4KTklzdw0KdXUPDkpJSU1zdxQqTYWABcGkEBBAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.250361 [from 
-        cloudscan11-221.us-east-2a.ess.aws.cudaops.com]
+        cloudscan18-232.us-east-2b.ess.aws.cudaops.com]
         Rule breakdown below
          pts rule name              description
         ---- ---------------------- --------------------------------
@@ -113,30 +113,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Direct IO does not benefit from write back cache and it
-also avoides another direct IO write code path.
+This is just a preparation to avoid code duplication in the next
+commit.
 
 Cc: Hao Xu <howeyxu@tencent.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>
 Cc: Dharmendra Singh <dsingh@ddn.com>
 Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 ---
- fs/fuse/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/fuse/file.c | 36 ++++++++++++++++++++++--------------
+ 1 file changed, 22 insertions(+), 14 deletions(-)
 
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 1cdb6327511e..b1b9f2b9a37d 100644
+index b1b9f2b9a37d..a16f9b6888de 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -1307,7 +1307,7 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	ssize_t err;
- 	struct fuse_conn *fc = get_fuse_conn(inode);
+@@ -1298,6 +1298,27 @@ static ssize_t fuse_perform_write(struct kiocb *iocb, struct iov_iter *ii)
+ 	return res;
+ }
  
--	if (fc->writeback_cache) {
-+	if (fc->writeback_cache && !(iocb->ki_flags & IOCB_DIRECT)) {
- 		/* Update size (EOF optimization) and mode (SUID clearing) */
- 		err = fuse_update_attributes(mapping->host, file,
- 					     STATX_SIZE | STATX_MODE);
++static bool fuse_direct_write_extending_i_size(struct kiocb *iocb,
++					       struct iov_iter *iter)
++{
++	struct inode *inode = file_inode(iocb->ki_filp);
++
++	return iocb->ki_pos + iov_iter_count(iter) > i_size_read(inode);
++}
++
++/*
++ * @return true if an exclusive lock direct IO writes is needed
++ */
++static bool fuse_dio_wr_exclusive_lock(struct kiocb *iocb, struct iov_iter *from)
++{
++	struct file *file = iocb->ki_filp;
++	struct fuse_file *ff = file->private_data;
++
++	return  !(ff->open_flags & FOPEN_PARALLEL_DIRECT_WRITES) ||
++		iocb->ki_flags & IOCB_APPEND ||
++		fuse_direct_write_extending_i_size(iocb, from);
++}
++
+ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	struct file *file = iocb->ki_filp;
+@@ -1557,25 +1578,12 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	return res;
+ }
+ 
+-static bool fuse_direct_write_extending_i_size(struct kiocb *iocb,
+-					       struct iov_iter *iter)
+-{
+-	struct inode *inode = file_inode(iocb->ki_filp);
+-
+-	return iocb->ki_pos + iov_iter_count(iter) > i_size_read(inode);
+-}
+-
+ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	struct inode *inode = file_inode(iocb->ki_filp);
+-	struct file *file = iocb->ki_filp;
+-	struct fuse_file *ff = file->private_data;
+ 	struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
+ 	ssize_t res;
+-	bool exclusive_lock =
+-		!(ff->open_flags & FOPEN_PARALLEL_DIRECT_WRITES) ||
+-		iocb->ki_flags & IOCB_APPEND ||
+-		fuse_direct_write_extending_i_size(iocb, from);
++	bool exclusive_lock = fuse_dio_wr_exclusive_lock(iocb, from);
+ 
+ 	/*
+ 	 * Take exclusive lock if
 -- 
 2.39.2
 
