@@ -2,44 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E7687873B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 17:09:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE53978739C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 17:07:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242038AbjHXPJD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Aug 2023 11:09:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33844 "EHLO
+        id S240834AbjHXPH0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Aug 2023 11:07:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242040AbjHXPIc (ORCPT
+        with ESMTP id S242118AbjHXPHK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Aug 2023 11:08:32 -0400
+        Thu, 24 Aug 2023 11:07:10 -0400
 Received: from outbound-ip7b.ess.barracuda.com (outbound-ip7b.ess.barracuda.com [209.222.82.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DE1A1711
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Aug 2023 08:08:27 -0700 (PDT)
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2045.outbound.protection.outlook.com [104.47.51.45]) by mx-outbound43-111.us-east-2c.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Thu, 24 Aug 2023 15:06:38 +0000
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E5E719A6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Aug 2023 08:07:05 -0700 (PDT)
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2105.outbound.protection.outlook.com [104.47.55.105]) by mx-outbound-ea17-82.us-east-2b.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Thu, 24 Aug 2023 15:06:24 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=D6izq3ZZ0st4jOdxcylg4+FqLBcZXsthKc6tOg3d5gCjh+k7KetlnyzBx+fqIC00Q4ZJoL89yaarUSN4XA6YHjTHfO5gpLwPe3SqXJvVi1SAh+KwVYNrs531IZAOwvCX59xyVib7/3TyXZWSE9FjChC7Hjbz8YmVHsqCwwQupC1JQJk6Zx3ZeLsLvOaqlUwMxKZzRdaTLpc6M80IvUfwSVjmDtQ1H23UXHHR0pMTi5gMuMCWb63rCJU2zbZ8Fqp6LsG6G1CpS+tWgDfTFTEYpaMXLlvuiX4kPNzbA6j5WSIWJJg182NnZ/NxjdLJdIToKivtWOiRfkCT48eEfkhLWQ==
+ b=oJggNZ4NmoKtFzsLayq5FEcW82w1QNL2YxLuk+52oBdaRzXQVDLTfA8a4vxMQRbDqkhv22eUNxCEbaCyKKybIRnONk2cyaC9sYpT6vIot6n3SpUNOmCnR1nIhhFgI6PyouvyFlWjvea7VnU1RDLy2aNTf2/B8WcaKI3OYWyp1x4yxiqBBmryCO6EyFaK95Ypvq8zuNsj5mCChciIX5YD9KsEKrn+OXSg8tRXz0Jl6dBg5bZ9ps1VwcGmJ40gerJwtNWFGR2+8UScKC2TZny65HaOQyWUZyFjsYI0mhwjlDgmhL5ZCGrvzvTt3OXg6Xrx0DB9rIfUkshcWnii+qd9cA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3wJ9BHb5XuUtUwN+eDjU1EfspJns/pdiPyjsZxIQFSI=;
- b=HPjaW0gIyJWH/GbEstd4S+kGvFDJN+cwnBXSkWJRwXHFLYTYaonmEexmITJF53cgJtk8RNm1yKS0OPaSPRtpoMC+2gb7kDmWmd0VveXpYqX/bhFezYwtg5RxWa9POt0UhCpzIosNTO4K1j2M+wyr+HaATWzfLmrk6n8tyg6KhWX6p4yvNQPYy+BBE4CxAy1bQWyN/O7HrDq1m5CzMsVaK4/kBgd18jfuj+VhbcxKlif0m8hwEAlpjeYRiUVHRhG28VTRVoSzgAnNmVxmUmcjlnikozDHacTTS0rI3GtNHA7kiV8XJ5jUcTiiVdu7QB7ldeDj1Ouk0FTSmt0Eykv7+A==
+ bh=5lTNrwulir3onAf7S/QafsprHuIPEf1SiXXrxq2zNTw=;
+ b=P+XT8sp9IhvYJ/g069tdiZaECq5RcSk/rAkAGCBTjkGQHJL6hQlaUUEC3DnEkcu8//S15d4pmSqAzqknHPVFsgS3T44WwnN407a2G3d1YStNYuD9LfqAGUaavW8u++yxWqih4npTbG4gc/H75WNmWEecRvL4yWpAJ89D2qqN18AfORpvXMlioAPgUplSrD96uA/uYGp/5Eh98ekbwlF7mbBgtCUdwOmh3oT3ZWuGtQnJo29UXzZRceldY7OBCGb9Yo2CMS7hLtOlAopQuEbTHIqb+mNqM7VAqw2UVX56283U+hRuqBGJ+7Pwka8NfBZiUgAC5dKVYqTyRWxgGUtZKA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  50.222.100.11) smtp.rcpttodomain=ddn.com smtp.mailfrom=ddn.com; dmarc=pass
  (p=reject sp=reject pct=100) action=none header.from=ddn.com; dkim=none
  (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3wJ9BHb5XuUtUwN+eDjU1EfspJns/pdiPyjsZxIQFSI=;
- b=Atp5ZCVq3Y1trIsa9Ro50Wn9N3Ub6kHrb9uo/sfbw+AR9juUY9pqNdRckY5W1/68kaizRziwLagtFs3ToNtOA5nmuJwoLQC749R/tmKOjHC+xOxkZT41zsGsobomfYHHKFvDavqmzU1holSb6E1v/kC00a94dka9AAQ7PdtQRYA=
-Received: from DS7PR03CA0328.namprd03.prod.outlook.com (2603:10b6:8:2b::30) by
- DM4PR19MB6051.namprd19.prod.outlook.com (2603:10b6:8:6e::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6699.27; Thu, 24 Aug 2023 15:06:09 +0000
-Received: from DM6NAM04FT009.eop-NAM04.prod.protection.outlook.com
- (2603:10b6:8:2b:cafe::50) by DS7PR03CA0328.outlook.office365.com
- (2603:10b6:8:2b::30) with Microsoft SMTP Server (version=TLS1_2,
+ bh=5lTNrwulir3onAf7S/QafsprHuIPEf1SiXXrxq2zNTw=;
+ b=b3YS+G8yjz94yUOEWtbL2+TUcQrI3H7JBZaRWa+odsZozCM3p8NAcVd9XR/Ectx60d22uVyp15Bix06HYbObc0AWI4CaxwcLx2gS7HWOQ8AyDtbkUZmvFbghu5CLgrWG/VU3WjbmMwvtFAOiQ4SJAiX3sJ5LrgTIbIt9TnFHg0U=
+Received: from DM6PR06CA0041.namprd06.prod.outlook.com (2603:10b6:5:54::18) by
+ SA1PR19MB7157.namprd19.prod.outlook.com (2603:10b6:806:2ba::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.27; Thu, 24 Aug
+ 2023 15:06:12 +0000
+Received: from DM6NAM04FT008.eop-NAM04.prod.protection.outlook.com
+ (2603:10b6:5:54:cafe::cf) by DM6PR06CA0041.outlook.office365.com
+ (2603:10b6:5:54::18) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.27 via Frontend
- Transport; Thu, 24 Aug 2023 15:06:09 +0000
+ Transport; Thu, 24 Aug 2023 15:06:11 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 50.222.100.11)
  smtp.mailfrom=ddn.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=ddn.com;
@@ -47,20 +48,20 @@ Received-SPF: Pass (protection.outlook.com: domain of ddn.com designates
  50.222.100.11 as permitted sender) receiver=protection.outlook.com;
  client-ip=50.222.100.11; helo=uww-mx01.datadirectnet.com; pr=C
 Received: from uww-mx01.datadirectnet.com (50.222.100.11) by
- DM6NAM04FT009.mail.protection.outlook.com (10.13.158.71) with Microsoft SMTP
+ DM6NAM04FT008.mail.protection.outlook.com (10.13.158.158) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6723.17 via Frontend Transport; Thu, 24 Aug 2023 15:06:09 +0000
+ 15.20.6723.17 via Frontend Transport; Thu, 24 Aug 2023 15:06:11 +0000
 Received: from localhost (unknown [10.68.0.8])
-        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 949BB20C684B;
-        Thu, 24 Aug 2023 09:07:15 -0600 (MDT)
+        by uww-mx01.datadirectnet.com (Postfix) with ESMTP id 8368220C684B;
+        Thu, 24 Aug 2023 09:07:17 -0600 (MDT)
 From:   Bernd Schubert <bschubert@ddn.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     bernd.schubert@fastmail.fm, miklos@szeredi.hu, dsingh@ddn.com,
         Bernd Schubert <bschubert@ddn.com>,
         Hao Xu <howeyxu@tencent.com>
-Subject: [PATCH 3/5] fuse: Allow parallel direct writes for O_DIRECT
-Date:   Thu, 24 Aug 2023 17:05:31 +0200
-Message-Id: <20230824150533.2788317-4-bschubert@ddn.com>
+Subject: [PATCH 4/5] [RFC] fuse: Set and use IOCB_DIRECT when FOPEN_DIRECT_IO is set
+Date:   Thu, 24 Aug 2023 17:05:32 +0200
+Message-Id: <20230824150533.2788317-5-bschubert@ddn.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230824150533.2788317-1-bschubert@ddn.com>
 References: <20230824150533.2788317-1-bschubert@ddn.com>
@@ -68,34 +69,34 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM04FT009:EE_|DM4PR19MB6051:EE_
+X-MS-TrafficTypeDiagnostic: DM6NAM04FT008:EE_|SA1PR19MB7157:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 0646dc12-a338-4b29-966c-08dba4b3a633
+X-MS-Office365-Filtering-Correlation-Id: b75a8b3e-4712-49e5-193b-08dba4b3a761
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: KGezAZ46XssM+RGDrD6+ZHr+RVkm/2mytXmE907/pvc5M9E5snRrI/2VS+GFUl8EPIQqwydWhzXgrmZgwsYd0YJ5+6oNg7BlisjLeYQ0etZk8yjSsbiJv6KWKOvAnQ5I/swi3KHAHwDWCReB5bLiOSwGwhnwXvaUqU0WnWJ+C45F5DWa2uJNuWLHf/xJM9lf/GFplDRpEx5z5mgNCx2PQB9N1vsilOjL1a4OjUEewKClJdtQvj/Wi2lIKeWWV7E0nxgxUkRblkgMGZOoyim/8htrwFbt/h+evhDyvkb9XxA42bz0cmGZzfXC7XUDtW4cDQshFpMIUm7TdGtmpvGwfkbXfky0/4tcsQVC/rEgeCI4C9KuXnQ5GKa+DQ5uc5F/2y2XMlufEXThJMXXAErW7/Pl7xI9lGu/5up8Herjusx7nxGkvaXnlT/4We8VTUpu/Mod2XA/vmZO7IUYZRKu0V6Bu1LA31hZZPVcRFTKtB4MWxcPe9bWWoRAdO45sjOjmu/1rt/deS+AH8MTMSvAIY6xZPC9x8UWQwngNFSBLH6VhjNKSHSt7tNCbukKJq8QiNiht1vsnbv/cKGwbfa5509GmXXy5rNMRdOdGUmhWFlpr0W+5+JM3xt5yPlFb6/fVqTLVgz6si84TDdAU4ZPdaW6qnV/m4iCBw7gV11MKYxgbz9cvk2JHkFkIcraNC+v2UXNWwMQATl9BzV8oOPqhWWf+KQmAPfPkNA8O80aEl00fkpVPfnYTlv7+Fd4l5pf
-X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(396003)(39850400004)(376002)(346002)(136003)(186009)(1800799009)(82310400011)(451199024)(36840700001)(46966006)(1076003)(2616005)(5660300002)(8936002)(4326008)(8676002)(6266002)(336012)(47076005)(36756003)(83380400001)(36860700001)(26005)(40480700001)(82740400003)(356005)(6666004)(81166007)(70206006)(70586007)(54906003)(6916009)(316002)(478600001)(41300700001)(2906002)(86362001)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: O/3u2vOExTHiMvdniEBvOg+XjgItYipYpyMEH2ckTbuFcP9fzji7ssr6ipTcSWkU05mr/7mZHOEl24agUJPRdVNGGLw+Rj1I63Wz7y4k9VcDfgzkLuoPac4O0ImVBUz5QsDOSXocIcz9SLJyupHc8MO/K1/y00pHujq096ZGSWv1cuuOcIzvMjY1u7Y361SHugiuyK9J3ntvBDxXKn1ZuYJcaKTI5sgnj0lPJeHEgHcnTCv3M1+0or/AZ2MLZymMal359p5nVsWz3YEDiQ0YdlV9cBT0L/fxGf61nGJircYiowoWM3Rg8gHOc6c8XFk5okq4tNPS8meJdEDoK+PpklXYqZdWyuwgT5nmDpvMEO55Xcq5Om0e5jsMN8l8tC7fQUGIZrkTxySdBmF5fBRUkami85FceVXFm2IovYv2l/vaRK/J5rgAQM6zLWgl0H5HbRrsC1k8tfiPT2NmVBapPP15j+GPjFAT/dCW0zJ64op5CN7vSHsuVOAUNn6aP7pPbHkvAD4O64V1k6uyYjlNFyBQH1LkI1i8fiifTbRxBxgZu8z+cF1nkWGioBi/KXCEh9LlC41Hsb/qP3iHcgUmVHGwWEj5aTzZ6fEn1EdNQADLdT9Pf8bVIpbBlPSg1GXPYNJWVQCPQbj70QE1mfb/8uVcb6XD5nikt7cVzjhv3pu/rtCME/5P8dGFHc7ddU5i3MK2LvsxA48mARlOjz776d9vl8msSN9Kg/flL1gvum4iMyBoIUDiAq2fBx3vTY7B
+X-Forefront-Antispam-Report: CIP:50.222.100.11;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:uww-mx01.datadirectnet.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(396003)(346002)(376002)(136003)(39850400004)(1800799009)(82310400011)(186009)(451199024)(36840700001)(46966006)(2616005)(8936002)(4326008)(8676002)(83380400001)(5660300002)(1076003)(336012)(6266002)(36756003)(36860700001)(47076005)(40480700001)(26005)(82740400003)(6666004)(81166007)(70206006)(70586007)(54906003)(6916009)(316002)(478600001)(356005)(41300700001)(2906002)(86362001)(36900700001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: et83gDw1xhP+eoQIeSFi9GTfGRDDBrkuE7hVlrTmG6nwfOlhbS0JagT1+0Rnv95k4IkEYxSE6cJt/wsFYasI32p6bC5+LFWhr00FiletvHXGFXBpiFNjrWCi8X5UDPmNo32UTU6JUX4wwiGbFUJqo8OY+Yp3TkN3fWgdAfISGq9E8sN9WEN+G1NgDcTxZ4a5Yd6xp2GYqEHpxSsJxOgCMFiaqeE3H5mnMDGagJStgoTjpO0rF6lCIdJosX5nLKndMWoIOQdYfAO4nW0gYAvfAgfx3k1Hxj53nMLjTO32ctKSZzgU+Dp3GxOsmLpFqEyd4WzeZNVfzMpeC5jrrpQQrDEA62yz57V8TBnC2RW2ChxAqdL+vW1DnpQlQzsafLYI3DigxqVDZPoxL9h1IcKXgaVT1pI6cHoW4oFu04ZV3aHM1HzC9/RvZhB9aszBtoObjlpYzaRBfO4v6I/+h7m0pqfwGHMh4qzqGR7wsfWApWdf8NE+6FESYHTVOmHZ5rq9bSGzMu7Re6KHusu70/v/jPxvZHEhJZ6ySoGirNQqrIggU99Ov2DoTblSYXpY4eDZc/0+1wAnNEV8H4sXb/rclxn0SVqRmoJiR7IHJT741ya2cZJhnhiZP1KMNyeFpeRSCsQKDIBVxUDxTAzQSSh0q+zP72KdbPr1moH/tNFIc+hf9gaAcwc7TbeoXTqW4KrqTIWoBraUPPnFv5JC17MGPKO92THRk2CS+uywrDOT1yngwG8X1e9KF1rm2Rdmy/7F5WCXtVDqvw41HYrplMI3YWSWQgFDscKpwGbeOG6+XjoBPylgraKXJNtA/OF2MEGG/pms7MYzgwrD8Ec5W+JDYfXpvAJL5Cqz9r0/hctOagI2+wiLUKCGVkf3lnJQMkisD9qPxCeOwh4pP3+3rjb65A==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: OHb11QDoik0ZbznC6niWOInHiG2dfa4Nr85dSJumUbifBvpoo2FOzfdRTXe441d+Z2O6nEQ2JNawC3b0QV1U/TfpxTsh5KnKjO9kjjw1qshzDbZHRteLcH/uA0UBZrG8O+JphCpKb4xwXEtBs3XFk5W6JhkKF4HmSDFqWlCLPNRW+xpOjNyEI9KUsfYIWKYSyvGbmO8aH4sspnRWeLPXAbkudvYC0VeOuEH3PvtEz6L8RTDbFIGu621OcZ58kehHuwiTZixy4H0m/42bshhecPzKtR14DAQmNfi+tvCeiFZW97L7AuToNP4waFzlCsOcc7MPw6PK/NJiBapopH8IEeBc/k04o0htSPIzbfOZt9y0TNnr/VIa80qKaYuExDo5QlkL+gsJFIB418YRP81tYTDlNdSOdHQUVKSsFnROOMBAMvVwxSdlpiAsubd0EHAJJPlJPlAmxh7K2+54alG3DGgZF9i7GRx4Qdfs77J1NtpkKcOOqtQQrj73l2DCNos2Lu09N3vuEzpfjgrB0KeFjfpHU5r3I7fJUJIJlQH0GiAgoxHKqU75kIJNC+RGr6zHCjVyb4vh/m8ZSzk6W9LD7CLDTEyRGunA1Kh+iId5ihMgY/y0RKh9kb95vgEcksjPoCeQ6Zbh520J5gbyobGgskTr0aVbvKmhnbROXpqOl63PCqk16/FdfqiNab5xbGwVb125fWu5pDcL8PXh4966qPEtff6Jt27bEsWj6TLgpqtKRYScFUXz2V7Sm3clDpQnfrTyX02cfOxvh81rPgk2GQ/dJHwKendD17H0f99YOwySd9/zdPVoYflLQiZdrZTxo8NWI5GFofBeDQx/r+rAsDVea5WlhXvNjYCWUZ81qOr2ZTLKe/jJwa3Meco5nLwzBIomgiGvOU1M+PEj+19dBQ==
 X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2023 15:06:09.6619
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2023 15:06:11.6535
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0646dc12-a338-4b29-966c-08dba4b3a633
+X-MS-Exchange-CrossTenant-Network-Message-Id: b75a8b3e-4712-49e5-193b-08dba4b3a761
 X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=753b6e26-6fd3-43e6-8248-3f1735d59bb4;Ip=[50.222.100.11];Helo=[uww-mx01.datadirectnet.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM04FT009.eop-NAM04.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM04FT008.eop-NAM04.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR19MB6051
-X-BESS-ID: 1692889597-111119-20297-58-1
-X-BESS-VER: 2019.1_20230822.1529
-X-BESS-Apparent-Source-IP: 104.47.51.45
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkYmpiZAVgZQ0CLJJDXZItUkyS
-        DNKDnJIikx2STZ2NzQyDQ1MdnC0jRFqTYWAEwR1G9BAAAA
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR19MB7157
+X-BESS-ID: 1692889583-104434-4698-9397-1
+X-BESS-VER: 2019.3_20230821.1520
+X-BESS-Apparent-Source-IP: 104.47.55.105
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkYWRiZAVgZQ0NTCINEy2cgsNT
+        XNxMjUzMg40dDIwNgkOdnU3DDFyMhAqTYWAG0nvuxBAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.250361 [from 
-        cloudscan23-219.us-east-2b.ess.aws.cudaops.com]
+        cloudscan19-64.us-east-2b.ess.aws.cudaops.com]
         Rule breakdown below
          pts rule name              description
         ---- ---------------------- --------------------------------
@@ -112,7 +113,11 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Take a shared lock in fuse_cache_write_iter.
+fuse_direct_write_iter is basically duplicating what is already
+in fuse_cache_write_iter/generic_file_direct_write. That can be
+avoided by setting IOCB_DIRECT in fuse_file_write_iter, after that
+fuse_cache_write_iter can be used for the FOPEN_DIRECT_IO code path
+and fuse_direct_write_iter can be removed.
 
 Cc: Hao Xu <howeyxu@tencent.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>
@@ -120,69 +125,81 @@ Cc: Dharmendra Singh <dsingh@ddn.com>
 Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 ---
- fs/fuse/file.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+ fs/fuse/file.c | 54 ++++----------------------------------------------
+ 1 file changed, 4 insertions(+), 50 deletions(-)
 
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index a16f9b6888de..905ce3bb0047 100644
+index 905ce3bb0047..09277a54b711 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -1314,9 +1314,10 @@ static bool fuse_dio_wr_exclusive_lock(struct kiocb *iocb, struct iov_iter *from
- 	struct file *file = iocb->ki_filp;
- 	struct fuse_file *ff = file->private_data;
- 
--	return  !(ff->open_flags & FOPEN_PARALLEL_DIRECT_WRITES) ||
--		iocb->ki_flags & IOCB_APPEND ||
--		fuse_direct_write_extending_i_size(iocb, from);
-+	return ((!(iocb->ki_flags & IOCB_DIRECT)) ||
-+		(!(ff->open_flags & FOPEN_PARALLEL_DIRECT_WRITES)) ||
-+		 iocb->ki_flags & IOCB_APPEND ||
-+		 fuse_direct_write_extending_i_size(iocb, from));
+@@ -1589,52 +1589,6 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	return res;
  }
  
- static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
-@@ -1327,6 +1328,7 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	struct inode *inode = mapping->host;
- 	ssize_t err;
- 	struct fuse_conn *fc = get_fuse_conn(inode);
-+	bool excl_lock = fuse_dio_wr_exclusive_lock(iocb, from);
+-static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
+-{
+-	struct inode *inode = file_inode(iocb->ki_filp);
+-	struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
+-	ssize_t res;
+-	bool exclusive_lock = fuse_dio_wr_exclusive_lock(iocb, from);
+-
+-	/*
+-	 * Take exclusive lock if
+-	 * - Parallel direct writes are disabled - a user space decision
+-	 * - Parallel direct writes are enabled and i_size is being extended.
+-	 *   This might not be needed at all, but needs further investigation.
+-	 */
+-	if (exclusive_lock)
+-		inode_lock(inode);
+-	else {
+-		inode_lock_shared(inode);
+-
+-		/* A race with truncate might have come up as the decision for
+-		 * the lock type was done without holding the lock, check again.
+-		 */
+-		if (fuse_direct_write_extending_i_size(iocb, from)) {
+-			inode_unlock_shared(inode);
+-			inode_lock(inode);
+-			exclusive_lock = true;
+-		}
+-	}
+-
+-	res = generic_write_checks(iocb, from);
+-	if (res > 0) {
+-		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
+-			res = fuse_direct_IO(iocb, from);
+-		} else {
+-			res = fuse_direct_io(&io, from, &iocb->ki_pos,
+-					     FUSE_DIO_WRITE);
+-			fuse_write_update_attr(inode, iocb->ki_pos, res);
+-		}
+-	}
+-	if (exclusive_lock)
+-		inode_unlock(inode);
+-	else
+-		inode_unlock_shared(inode);
+-
+-	return res;
+-}
+-
+ static ssize_t fuse_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ {
+ 	struct file *file = iocb->ki_filp;
+@@ -1665,10 +1619,10 @@ static ssize_t fuse_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	if (FUSE_IS_DAX(inode))
+ 		return fuse_dax_write_iter(iocb, from);
  
- 	if (fc->writeback_cache && !(iocb->ki_flags & IOCB_DIRECT)) {
- 		/* Update size (EOF optimization) and mode (SUID clearing) */
-@@ -1345,7 +1347,10 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	}
+-	if (!(ff->open_flags & FOPEN_DIRECT_IO))
+-		return fuse_cache_write_iter(iocb, from);
+-	else
+-		return fuse_direct_write_iter(iocb, from);
++	if (ff->open_flags & FOPEN_DIRECT_IO)
++		iocb->ki_flags |= IOCB_DIRECT;
++
++	return fuse_cache_write_iter(iocb, from);
+ }
  
- writethrough:
--	inode_lock(inode);
-+	if (excl_lock)
-+		inode_lock(inode);
-+	else
-+		inode_lock_shared(inode);
- 
- 	err = generic_write_checks(iocb, from);
- 	if (err <= 0)
-@@ -1360,6 +1365,9 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		goto out;
- 
- 	if (iocb->ki_flags & IOCB_DIRECT) {
-+		/* file extending writes will trigger i_size_write - exclusive
-+		 * lock is needed
-+		 */
- 		written = generic_file_direct_write(iocb, from);
- 		if (written < 0 || !iov_iter_count(from))
- 			goto out;
-@@ -1369,7 +1377,10 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		written = fuse_perform_write(iocb, from);
- 	}
- out:
--	inode_unlock(inode);
-+	if (excl_lock)
-+		inode_unlock(inode);
-+	else
-+		inode_unlock_shared(inode);
- 	if (written > 0)
- 		written = generic_write_sync(iocb, written);
- 
+ static void fuse_writepage_free(struct fuse_writepage_args *wpa)
 -- 
 2.39.2
 
