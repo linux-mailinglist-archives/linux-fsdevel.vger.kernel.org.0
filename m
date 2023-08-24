@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD692786601
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 05:45:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9616A786604
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 05:45:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239638AbjHXDo6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Aug 2023 23:44:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56892 "EHLO
+        id S239706AbjHXDpA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Aug 2023 23:45:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239686AbjHXDoi (ORCPT
+        with ESMTP id S239688AbjHXDop (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Aug 2023 23:44:38 -0400
-Received: from mail-oo1-xc2d.google.com (mail-oo1-xc2d.google.com [IPv6:2607:f8b0:4864:20::c2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86A2510F3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 20:44:12 -0700 (PDT)
-Received: by mail-oo1-xc2d.google.com with SMTP id 006d021491bc7-57328758a72so32001eaf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 20:44:12 -0700 (PDT)
+        Wed, 23 Aug 2023 23:44:45 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FE35DB
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 20:44:21 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-68a32506e90so1062057b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 20:44:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1692848652; x=1693453452;
+        d=bytedance.com; s=google; t=1692848661; x=1693453461;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tDsQ7RYDMLqwy7twIXuFD5p94As+lf02HfuxyLHsCC8=;
-        b=Iz2/0G+SOuFIIhaxK3w/LEcD9PS4zKZ/5RcLqJKJdh7uItCmfOpE5/jAV7CTQYQwrv
-         9LBEDsGb7OQVTT0y75+W3hmVRKD+wPpekmo+U1aWv4VIpRlze67WWzhGK7PvHfv80+Aq
-         22HTG7tQsAc/n7lxTDb50FgYJVxBohbov3zGbdkxBFRg2+u94qfoy1WCYE/6SjCv6IEm
-         ltAHVGpsm97r2LYMNXe9UbJZYZZt9/2CCg8ESzyBAJkE7r6xfLbBYY9uJptQzOq9AB8z
-         gdd+zPqCkxoqARc/NmfQ31JLb8MZu5Pxd2lkneChOp1kQa9CHtD0HIZqJbsdwGK/j8pA
-         D8xQ==
+        bh=hCA0ApwXV5FyQtvOpmWRZ9XMHHHCgvXZoPv/VlrFSS0=;
+        b=F7mx7Z2SATT/Tw8oqVu7LGCwIgOY9q6nNnmh5/ganhwLW8GaQrL8dhMzkQme16OyB1
+         4ZcrhSW1iVS/oXJkAxqcqvYnRC8V6z5f0tnKQYSO6HG2Ws1pP37Xuc1otxDqi5KUNw9T
+         WVRuI/U+MbwSKZhcaJBbRNgA7W3KFvvzyeKOBXeWATvONSpA9TS02B13yxyrYGxzzveW
+         u5fhQzEptjlMGS36OjAsEf17/AFamZ+U3xOMpKlF84KqegOgtZie0MuXeEOyLRhKQDjM
+         0P+76n+lplLjw7rWWL6ybRhAGOOQQQlRJmwWoHvL9CcCs2DRS/s36iNm5swp9kdFbKCI
+         NE2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692848652; x=1693453452;
+        d=1e100.net; s=20221208; t=1692848661; x=1693453461;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tDsQ7RYDMLqwy7twIXuFD5p94As+lf02HfuxyLHsCC8=;
-        b=gxhzI6qcTtDZSujkyZcPQXe9IKkI2lJw0Seu0FrGl5Bv9A9PE0pggTPApPDCZLoY5B
-         re4Jc1t1yt5bGAd6wnlehdYS+/WLnwC8YE7NV12403R8A6cV6l3qGD6xa5qa8ZgQetL+
-         8e5c9/CIlHaJOCy25cCHmxCXKmfLrIg3qdv0EOx40KuZp1tIDyemwQtb02HShlrxXs45
-         QCAye8qW2Yc34OCtJOM1oUI3tCrGYuliWUQUuF5AvmoH6omUpJl8NiiL9Qof2ZlyEyFi
-         MD66uASoPqtTKu7YgqSu45rk4dNmFB8Ingz/WfLlX/NxHJ7fZncRYSxXGI+vGfNdHhNf
-         DT4g==
-X-Gm-Message-State: AOJu0YzCTfhLBpyokvoJ55hr+wG8q9DimwsQPyQ8EjxXQtwGVTH+D0ER
-        gYUUsm4xuxRq55nXLKxTteMWpw==
-X-Google-Smtp-Source: AGHT+IEM8N+jMmp+ItOCDi7GhGIbRWYtk0R7RyKurKUW+QPYSbNbY2W9LIX4qInIQ/vDJIM/8yTcQQ==
-X-Received: by 2002:a05:6808:1a84:b0:3a6:f8e5:edad with SMTP id bm4-20020a0568081a8400b003a6f8e5edadmr13552232oib.4.1692848651831;
-        Wed, 23 Aug 2023 20:44:11 -0700 (PDT)
+        bh=hCA0ApwXV5FyQtvOpmWRZ9XMHHHCgvXZoPv/VlrFSS0=;
+        b=cp8lhqBYoolJya/RNMRck/uCiwVWv9++12NFfEIVNHvq8xPpdU9d8RLmW+sq+NPXaS
+         GeMnZjglRjgMl0gRC8dVzyZIKpZygfbBYAqTVLD46BKtujZOt2toeiKtEJmvpzeTy88+
+         VinrH7s4/B9W+tgw8tXMo10Q1gxyYgR65KOv+D7KrK7ny9h+dlrjpKdwTD6EFt1uZzGJ
+         w4WvkCI9imgApu1fUIHHiTRrfMD1MNcM3ml1qz/9/BegemRfc2D+VxF39PwEV3vwcD62
+         RlnZV5osaXBKpkgrn8pxcfGXZaoQYygAaDt42bUtdNRl5RGqOEdniUOSuQL8Q9FJer8o
+         M31A==
+X-Gm-Message-State: AOJu0Yxj1merYVvxZPclciFBis2D+aA14tmhLwy8DwVICsqu3c//wZxC
+        EvetAbszBZxFnlKU++qtZvBaQw==
+X-Google-Smtp-Source: AGHT+IGMOB5tWYNyEDyo5eiTNUNcN0ymONSI8d47WEA6VQz24qAk45RADJx4EG80WGrowCiJNhDryQ==
+X-Received: by 2002:a05:6a20:3941:b0:137:4fd0:e2e6 with SMTP id r1-20020a056a20394100b001374fd0e2e6mr17386821pzg.6.1692848660762;
+        Wed, 23 Aug 2023 20:44:20 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.146])
-        by smtp.gmail.com with ESMTPSA id t6-20020a63b246000000b005579f12a238sm10533157pgo.86.2023.08.23.20.44.04
+        by smtp.gmail.com with ESMTPSA id t6-20020a63b246000000b005579f12a238sm10533157pgo.86.2023.08.23.20.44.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Aug 2023 20:44:11 -0700 (PDT)
+        Wed, 23 Aug 2023 20:44:20 -0700 (PDT)
 From:   Qi Zheng <zhengqi.arch@bytedance.com>
 To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
         vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
@@ -61,10 +61,14 @@ Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org,
         Qi Zheng <zhengqi.arch@bytedance.com>,
         Muchun Song <songmuchun@bytedance.com>,
-        Carlos Llamas <cmllamas@google.com>
-Subject: [PATCH v5 03/45] binder: dynamically allocate the android-binder shrinker
-Date:   Thu, 24 Aug 2023 11:42:22 +0800
-Message-Id: <20230824034304.37411-4-zhengqi.arch@bytedance.com>
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>,
+        David Airlie <airlied@gmail.com>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH v5 04/45] drm/ttm: dynamically allocate the drm-ttm_pool shrinker
+Date:   Thu, 24 Aug 2023 11:42:23 +0800
+Message-Id: <20230824034304.37411-5-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230824034304.37411-1-zhengqi.arch@bytedance.com>
 References: <20230824034304.37411-1-zhengqi.arch@bytedance.com>
@@ -79,71 +83,73 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use new APIs to dynamically allocate the android-binder shrinker.
+Use new APIs to dynamically allocate the drm-ttm_pool shrinker.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 Reviewed-by: Muchun Song <songmuchun@bytedance.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Carlos Llamas <cmllamas@google.com>
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+CC: Christian Koenig <christian.koenig@amd.com>
+CC: Huang Rui <ray.huang@amd.com>
+CC: David Airlie <airlied@gmail.com>
+CC: dri-devel@lists.freedesktop.org
 ---
- drivers/android/binder_alloc.c | 31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/ttm/ttm_pool.c | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index e3db8297095a..62675cedd38e 100644
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -1053,11 +1053,7 @@ binder_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
- 			    NULL, sc->nr_to_scan);
- }
+diff --git a/drivers/gpu/drm/ttm/ttm_pool.c b/drivers/gpu/drm/ttm/ttm_pool.c
+index 648ca70403a7..fe610a3cace0 100644
+--- a/drivers/gpu/drm/ttm/ttm_pool.c
++++ b/drivers/gpu/drm/ttm/ttm_pool.c
+@@ -73,7 +73,7 @@ static struct ttm_pool_type global_dma32_uncached[MAX_ORDER + 1];
  
--static struct shrinker binder_shrinker = {
--	.count_objects = binder_shrink_count,
--	.scan_objects = binder_shrink_scan,
--	.seeks = DEFAULT_SEEKS,
--};
-+static struct shrinker *binder_shrinker;
+ static spinlock_t shrinker_lock;
+ static struct list_head shrinker_list;
+-static struct shrinker mm_shrinker;
++static struct shrinker *mm_shrinker;
+ static DECLARE_RWSEM(pool_shrink_rwsem);
  
- /**
-  * binder_alloc_init() - called by binder_open() for per-proc initialization
-@@ -1077,19 +1073,30 @@ void binder_alloc_init(struct binder_alloc *alloc)
+ /* Allocate pages of size 1 << order with the given gfp_flags */
+@@ -749,8 +749,8 @@ static int ttm_pool_debugfs_shrink_show(struct seq_file *m, void *data)
+ 	struct shrink_control sc = { .gfp_mask = GFP_NOFS };
  
- int binder_alloc_shrinker_init(void)
- {
--	int ret = list_lru_init(&binder_alloc_lru);
-+	int ret;
+ 	fs_reclaim_acquire(GFP_KERNEL);
+-	seq_printf(m, "%lu/%lu\n", ttm_pool_shrinker_count(&mm_shrinker, &sc),
+-		   ttm_pool_shrinker_scan(&mm_shrinker, &sc));
++	seq_printf(m, "%lu/%lu\n", ttm_pool_shrinker_count(mm_shrinker, &sc),
++		   ttm_pool_shrinker_scan(mm_shrinker, &sc));
+ 	fs_reclaim_release(GFP_KERNEL);
  
--	if (ret == 0) {
--		ret = register_shrinker(&binder_shrinker, "android-binder");
--		if (ret)
--			list_lru_destroy(&binder_alloc_lru);
-+	ret = list_lru_init(&binder_alloc_lru);
-+	if (ret)
-+		return ret;
-+
-+	binder_shrinker = shrinker_alloc(0, "android-binder");
-+	if (!binder_shrinker) {
-+		list_lru_destroy(&binder_alloc_lru);
+ 	return 0;
+@@ -794,10 +794,17 @@ int ttm_pool_mgr_init(unsigned long num_pages)
+ 			    &ttm_pool_debugfs_shrink_fops);
+ #endif
+ 
+-	mm_shrinker.count_objects = ttm_pool_shrinker_count;
+-	mm_shrinker.scan_objects = ttm_pool_shrinker_scan;
+-	mm_shrinker.seeks = 1;
+-	return register_shrinker(&mm_shrinker, "drm-ttm_pool");
++	mm_shrinker = shrinker_alloc(0, "drm-ttm_pool");
++	if (!mm_shrinker)
 +		return -ENOMEM;
- 	}
--	return ret;
 +
-+	binder_shrinker->count_objects = binder_shrink_count;
-+	binder_shrinker->scan_objects = binder_shrink_scan;
-+	binder_shrinker->seeks = DEFAULT_SEEKS;
++	mm_shrinker->count_objects = ttm_pool_shrinker_count;
++	mm_shrinker->scan_objects = ttm_pool_shrinker_scan;
++	mm_shrinker->seeks = 1;
 +
-+	shrinker_register(binder_shrinker);
++	shrinker_register(mm_shrinker);
 +
 +	return 0;
  }
  
- void binder_alloc_shrinker_exit(void)
- {
--	unregister_shrinker(&binder_shrinker);
-+	shrinker_free(binder_shrinker);
- 	list_lru_destroy(&binder_alloc_lru);
- }
+ /**
+@@ -817,6 +824,6 @@ void ttm_pool_mgr_fini(void)
+ 		ttm_pool_type_fini(&global_dma32_uncached[i]);
+ 	}
  
+-	unregister_shrinker(&mm_shrinker);
++	shrinker_free(mm_shrinker);
+ 	WARN_ON(!list_empty(&shrinker_list));
+ }
 -- 
 2.30.2
 
