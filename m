@@ -2,54 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E2AEE7874AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 17:56:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C81878751B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 18:20:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241870AbjHXPzs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Aug 2023 11:55:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39820 "EHLO
+        id S242128AbjHXQTt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Aug 2023 12:19:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242355AbjHXPzh (ORCPT
+        with ESMTP id S242508AbjHXQTb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Aug 2023 11:55:37 -0400
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1479D1991
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Aug 2023 08:55:34 -0700 (PDT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-1bdd75d2f73so13108135ad.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Aug 2023 08:55:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692892533; x=1693497333;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+aXdP1B+FgxdGCzykCKzGTnnvyJ+Lx6s4rg1obN7Qbk=;
-        b=HYBZQSgapebj9OFi63YMhQYGE+W71zNyvDw6P1yLVJaSS//TXJ5kV39B9MIUXr9qX2
-         XgxsMRugGAWWY3rqk8d2HLgTSi40TRe9RGptUwVtrCPUmrcg0v1LDK2cQ2u+Dodu3eaI
-         sQTDD2EDfh+5Cc4HBbth8OnRV4bfy6JgDjH71SDIEnpqCQoAhoxhxDE4J8+W5dXh1WM8
-         uzkUNVUvgIqPYpNjDT5NuiUk06Mfgj/lpm5Th+EEcBBGhxegk8yejlAZrcdwTW6GOrth
-         fdlkdDQEZcoRGtZtfa4cDDhgm+pSIewGzu/ykJM/yGxLNM5CgpyOV2SX+DwqzYknbI0M
-         HW5g==
-X-Gm-Message-State: AOJu0Yxkek83ClS7TkEe6ThXk3Zttw7EQ6SSPtsn1Lux7JfsMMt0NU+k
-        aBMnprTEamks3FpOjFs98BNELKOBU8mhurj77PwVaMjiwPaJ
-X-Google-Smtp-Source: AGHT+IGlMDpByqwKN1nPkwOZ6cneGx5U8uHqYAq4mzi8Dm1fiSg/5r5iCD6/x3lo/kY24VLtNZrGpmu0TbdY75CrMu5ucsZiquhn
+        Thu, 24 Aug 2023 12:19:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EF291FD5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Aug 2023 09:19:03 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2A8F467047
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Aug 2023 16:19:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 032ABC433C9;
+        Thu, 24 Aug 2023 16:19:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692893942;
+        bh=fgODWolnoqq5zpODMmlsDVxxmhdPUbz6B19iTv8hL0Q=;
+        h=Subject:From:To:Cc:Date:From;
+        b=AWARVuBSgYkFc8IznXFuI2iwTVhXZCcByKabdEr1LtXWCgGlC2eGLl3ozx1BS7v9J
+         Gssm3SObDo5IqbfZr3d/ucJ6la7NMlWCvHp6KXHKyjHY4kSB1jmiSG1bG3n/0tJi8X
+         C2TsSSO4j3A8b+lHao2EewlDRNT112XapL49wCbs4TANYyOCncvVT0Q9bOXcb6tJeo
+         3JJrLK1uf6341ndhSSu5CXO03pPB3Id++8Z9V7dz5ECaPUlVrgdXVJNTtuzZ5A7Qjo
+         GCZ00zG4j1WHkPOmp4e6P2OmxHIZ49kvpgUFw7qhZrvrKuTUh88gvcUDR++zslbtl7
+         M59dk+JT1ObLQ==
+Message-ID: <be49e494a64fc983e87fd96a441a4f13a62d4362.camel@kernel.org>
+Subject: [GIT PULL] file locking updates for v6.6
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Linus Torvalds <torvalds@linuxfoundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Will Shiu <Will.Shiu@mediatek.com>, jwilk@jwilk.net,
+        Stas Sergeev <stsp2@yandex.ru>,
+        Chuck Lever <chuck.lever@oracle.com>
+Date:   Thu, 24 Aug 2023 12:19:00 -0400
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-X-Received: by 2002:a17:902:f551:b0:1bc:e37:aa5c with SMTP id
- h17-20020a170902f55100b001bc0e37aa5cmr6759816plf.1.1692892533578; Thu, 24 Aug
- 2023 08:55:33 -0700 (PDT)
-Date:   Thu, 24 Aug 2023 08:55:33 -0700
-In-Reply-To: <0000000000000f188605ffdd9cf8@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001b658e0603ad424d@google.com>
-Subject: Re: [syzbot] [f2fs?] possible deadlock in f2fs_add_inline_entry
-From:   syzbot <syzbot+a4976ce949df66b1ddf1@syzkaller.appspotmail.com>
-To:     chao@kernel.org, hdanton@sina.com, jaegeuk@kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,25 +56,53 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this issue to:
+[jlayton@tleilax linux]$ git request-pull 1ef6663a587b git://git.kernel.org=
+/pub/scm/linux/kernel/git/jlayton/linux.git filelock-v6.6
+The following changes since commit 1ef6663a587ba3e57dc5065a477db1c64481eedd=
+:
 
-commit 5eda1ad1aaffdfebdecf7a164e586060a210f74f
-Author: Jaegeuk Kim <jaegeuk@kernel.org>
-Date:   Wed Jun 28 08:00:56 2023 +0000
+  Merge tag 'tag-chrome-platform-for-v6.5' of git://git.kernel.org/pub/scm/=
+linux/kernel/git/chrome-platform/linux (2023-06-26 20:12:07 -0700)
 
-    f2fs: fix deadlock in i_xattr_sem and inode page lock
+are available in the Git repository at:
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=167691b7a80000
-start commit:   cacc6e22932f tpm: Add a helper for checking hwrng enabled
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=157691b7a80000
-console output: https://syzkaller.appspot.com/x/log.txt?x=117691b7a80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=171b698bc2e613cf
-dashboard link: https://syzkaller.appspot.com/bug?extid=a4976ce949df66b1ddf1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=103c6bb3a80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17bb51c7a80000
+  git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git tags/file=
+lock-v6.6
 
-Reported-by: syzbot+a4976ce949df66b1ddf1@syzkaller.appspotmail.com
-Fixes: 5eda1ad1aaff ("f2fs: fix deadlock in i_xattr_sem and inode page lock")
+for you to fetch changes up to 74f6f5912693ce454384eaeec48705646a21c74f:
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+  locks: fix KASAN: use-after-free in trace_event_raw_event_filelock_lock (=
+2023-08-24 10:42:19 -0400)
+
+----------------------------------------------------------------
+Just a few patches in this cycle:
+
+- new functionality for F_OFD_GETLK: requesting a type of F_UNLCK will find=
+ info about whatever lock happens to be first in the given range, regardles=
+s of type.
+- an OFD lock selftest
+- bugfix involving a UAF in a tracepoint
+- comment typo fix
+
+----------------------------------------------------------------
+Jakub Wilk (1):
+      fs/locks: Fix typo
+
+Stas Sergeev (2):
+      fs/locks: F_UNLCK extension for F_OFD_GETLK
+      selftests: add OFD lock tests
+
+Will Shiu (1):
+      locks: fix KASAN: use-after-free in trace_event_raw_event_filelock_lo=
+ck
+
+ fs/locks.c                                  |  27 ++++++++--
+ tools/testing/selftests/filelock/Makefile   |   5 ++
+ tools/testing/selftests/filelock/ofdlocks.c | 132 ++++++++++++++++++++++++=
+++++++++++++++++++++++++
+ 3 files changed, 159 insertions(+), 5 deletions(-)
+ create mode 100644 tools/testing/selftests/filelock/Makefile
+ create mode 100644 tools/testing/selftests/filelock/ofdlocks.c
+
+--=20
+Jeff Layton <jlayton@kernel.org>
