@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E9B8A78661A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 05:47:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4972578661B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Aug 2023 05:47:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239774AbjHXDrM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Aug 2023 23:47:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59408 "EHLO
+        id S239786AbjHXDrP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Aug 2023 23:47:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239787AbjHXDqr (ORCPT
+        with ESMTP id S239792AbjHXDqr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 23 Aug 2023 23:46:47 -0400
-Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99EE8170D
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 20:45:24 -0700 (PDT)
-Received: by mail-oi1-x230.google.com with SMTP id 5614622812f47-3a751bd3372so714120b6e.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 20:45:24 -0700 (PDT)
+Received: from mail-oo1-xc35.google.com (mail-oo1-xc35.google.com [IPv6:2607:f8b0:4864:20::c35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 974061996
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 20:45:50 -0700 (PDT)
+Received: by mail-oo1-xc35.google.com with SMTP id 006d021491bc7-5711d5dac14so204413eaf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Aug 2023 20:45:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1692848717; x=1693453517;
+        d=bytedance.com; s=google; t=1692848725; x=1693453525;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pHpuYVUzN3jckjN0g3IoL6/kLBn9YHZf3O2ocrsGP0s=;
-        b=O1jFqs/8oc1Zkuuh+RreIT00SzE0RITyrrR0tfPQWf0F03mOW3C+kR183ZUZbV19fg
-         1njT0pQF3MiRhEhbmKFe4hB4nORH/DqQUPz83nIj/BcfeWcOQTDvl3XWmeJPiDdxxNCj
-         aSM8Wiu56btqgYfw8FalFa6mxnERxpSyhXdr0cY8BCFqcfkHplZglvPzfqSpSX5vNiS1
-         5kgWXHBkRzg/0siYnFHX8pUt3JbjLp78Al19cln4RC11Rnj2a0ej4lpfuA1lfNaC1BkD
-         tGwbgv8uKluiKTT9ikc6KjEs76P7r8QiIzHs9sjQ/D2bIVhILICDiu7qdUt3X+KwvMRN
-         y3RQ==
+        bh=zhxSeDRYp3v7ieIpIfFPT9sZqK0EZ/0i4DDRxkd6a3g=;
+        b=jj5EOkZd/1Viu3LIpqnqm+9TO83RfQntyjhfpth1xwPMMqC6IeHfbX02lMDFBj9m4i
+         HwTZWXHIfgHNzPBXU+/GXlcEpfMhfZy5bJLefmYCesJViC/+68iG6xd5KwRidLyWJo2c
+         eEBhhIGT0YiGdHQSzZe+BuRB0tQmPb1ArPNTjRXRpv6rdjsXFFFVPCyMT9LQb0O6vhjO
+         X14FAywAN7vHefaxoyfwydq29V8F/tb3M5k7yl3IMC1b/p7T/xlSVAzbSclwGGOZcBEi
+         2UDep6iaZVsbDk0TcVqBKtj26LS1xCeJgHZxHJ9kz4PrRpNyq14TADCeaJlpJuB1QGAS
+         NXUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692848717; x=1693453517;
+        d=1e100.net; s=20221208; t=1692848725; x=1693453525;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pHpuYVUzN3jckjN0g3IoL6/kLBn9YHZf3O2ocrsGP0s=;
-        b=fkr+RZ5pWENHH1/JzPCM93CbHAgj3C4nQF1ZtFx/lghBZXk6q9QDHot+7ByJwpJuC5
-         w4lzt/SjrWl/ubYr1uW9agYd2Oqyl8DriuJGgI1ev6Ebvucsxd/7777TndkW6YayjKiu
-         oMZWDuk5I9476EbTn0+bOSd7HrYjN6LHrRpsdWQyU2r32FkIcUGmWIIq9ok1J1z1jNad
-         ODMKFe4X6FGgeK2ya1+nIlijRU9dtc8gZlCO+uymyjb48YVEvCUFKAGX4IZvdr48F7Vr
-         vvqEQeTKtGVtBmUH1R0jeA+iX4bvIUVr/GSxxZxN5XNe2Ah24EKbpzxPHhalOldsBjxR
-         Mk/g==
-X-Gm-Message-State: AOJu0YztVAIFY9R5OOsiwaGSIlcgGmwy9LD6/Nnse92i2uVgTd/pdvRw
-        uHpIj828bI6o0DRA5EuC1LsD3w==
-X-Google-Smtp-Source: AGHT+IECsy2xziAStlM4iQiBzrpyBsCTGG8fF9NVbEM0k1w/3hIKlU5v5nC6tO+zngn9Mp6S5RbEgA==
-X-Received: by 2002:a05:6808:2e93:b0:3a7:7366:7523 with SMTP id gt19-20020a0568082e9300b003a773667523mr16881965oib.3.1692848716943;
-        Wed, 23 Aug 2023 20:45:16 -0700 (PDT)
+        bh=zhxSeDRYp3v7ieIpIfFPT9sZqK0EZ/0i4DDRxkd6a3g=;
+        b=A5DN2wfS4VoSVA3NOTw6RtthYKON4RHPTlOGuBsfb6gdyomnQpa2O79NfGvs9rrPdx
+         C0AAFa+4S+kk/sYBlEfezyESoAaQQHA4KZ8I2HVaaKlwTPOvjkmDHxle+dUYvLE+R9b6
+         OnarTthiJprx6HDHnG8w7IpGR3nySHKsDbwOlBf5mD6mjRw/iWUUq60MCYJGIoIB5T28
+         +Vp0euZsCI1KAL4Xe3kmnt/ZogvM6pT6S+Soq0LYHes9ixArvxy/+6qE7/4spXErCz91
+         9MTplJK/Nbtzi/pUuZP1EbKewas+3Lt5oimgzO5NqChjT7RkS6aLgsYPRUTWl/kdikWd
+         eIvA==
+X-Gm-Message-State: AOJu0YylS7/X9DO099BB7aJLbqiGl/RRZWj4do+cQQ8/T1s5eeJJis8t
+        Qr3Jj9mTJ0dIujoD9pIzVvzPSg==
+X-Google-Smtp-Source: AGHT+IFTBK/u0iko9Ps2VqzIjicgN2FMlf6qk5M/LKmT2/X3Ry0MSCtC++/3ldoynFepLPPQv6yobQ==
+X-Received: by 2002:a05:6808:152a:b0:3a7:72e2:3262 with SMTP id u42-20020a056808152a00b003a772e23262mr17146531oiw.5.1692848725311;
+        Wed, 23 Aug 2023 20:45:25 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.146])
-        by smtp.gmail.com with ESMTPSA id t6-20020a63b246000000b005579f12a238sm10533157pgo.86.2023.08.23.20.45.08
+        by smtp.gmail.com with ESMTPSA id t6-20020a63b246000000b005579f12a238sm10533157pgo.86.2023.08.23.20.45.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Aug 2023 20:45:16 -0700 (PDT)
+        Wed, 23 Aug 2023 20:45:24 -0700 (PDT)
 From:   Qi Zheng <zhengqi.arch@bytedance.com>
 To:     akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
         vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
@@ -63,9 +63,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Muchun Song <songmuchun@bytedance.com>,
         Trond Myklebust <trond.myklebust@hammerspace.com>,
         Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH v5 10/45] NFSv4.2: dynamically allocate the nfs-xattr shrinkers
-Date:   Thu, 24 Aug 2023 11:42:29 +0800
-Message-Id: <20230824034304.37411-11-zhengqi.arch@bytedance.com>
+Subject: [PATCH v5 11/45] nfs: dynamically allocate the nfs-acl shrinker
+Date:   Thu, 24 Aug 2023 11:42:30 +0800
+Message-Id: <20230824034304.37411-12-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230824034304.37411-1-zhengqi.arch@bytedance.com>
 References: <20230824034304.37411-1-zhengqi.arch@bytedance.com>
@@ -73,15 +73,14 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use new APIs to dynamically allocate the nfs-xattr shrinkers.
+Use new APIs to dynamically allocate the nfs-acl shrinker.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 Reviewed-by: Muchun Song <songmuchun@bytedance.com>
@@ -89,169 +88,57 @@ CC: Trond Myklebust <trond.myklebust@hammerspace.com>
 CC: Anna Schumaker <anna@kernel.org>
 CC: linux-nfs@vger.kernel.org
 ---
- fs/nfs/nfs42xattr.c | 87 +++++++++++++++++++++++----------------------
- 1 file changed, 44 insertions(+), 43 deletions(-)
+ fs/nfs/super.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/fs/nfs/nfs42xattr.c b/fs/nfs/nfs42xattr.c
-index 911f634ba3da..2ad66a8922f4 100644
---- a/fs/nfs/nfs42xattr.c
-+++ b/fs/nfs/nfs42xattr.c
-@@ -796,28 +796,9 @@ static unsigned long nfs4_xattr_cache_scan(struct shrinker *shrink,
- static unsigned long nfs4_xattr_entry_scan(struct shrinker *shrink,
- 					   struct shrink_control *sc);
- 
--static struct shrinker nfs4_xattr_cache_shrinker = {
--	.count_objects	= nfs4_xattr_cache_count,
--	.scan_objects	= nfs4_xattr_cache_scan,
--	.seeks		= DEFAULT_SEEKS,
--	.flags		= SHRINKER_MEMCG_AWARE,
--};
--
--static struct shrinker nfs4_xattr_entry_shrinker = {
--	.count_objects	= nfs4_xattr_entry_count,
--	.scan_objects	= nfs4_xattr_entry_scan,
--	.seeks		= DEFAULT_SEEKS,
--	.batch		= 512,
--	.flags		= SHRINKER_MEMCG_AWARE,
--};
--
--static struct shrinker nfs4_xattr_large_entry_shrinker = {
--	.count_objects	= nfs4_xattr_entry_count,
--	.scan_objects	= nfs4_xattr_entry_scan,
--	.seeks		= 1,
--	.batch		= 512,
--	.flags		= SHRINKER_MEMCG_AWARE,
--};
-+static struct shrinker *nfs4_xattr_cache_shrinker;
-+static struct shrinker *nfs4_xattr_entry_shrinker;
-+static struct shrinker *nfs4_xattr_large_entry_shrinker;
- 
- static enum lru_status
- cache_lru_isolate(struct list_head *item,
-@@ -943,7 +924,7 @@ nfs4_xattr_entry_scan(struct shrinker *shrink, struct shrink_control *sc)
- 	struct nfs4_xattr_entry *entry;
- 	struct list_lru *lru;
- 
--	lru = (shrink == &nfs4_xattr_large_entry_shrinker) ?
-+	lru = (shrink == nfs4_xattr_large_entry_shrinker) ?
- 	    &nfs4_xattr_large_entry_lru : &nfs4_xattr_entry_lru;
- 
- 	freed = list_lru_shrink_walk(lru, sc, entry_lru_isolate, &dispose);
-@@ -971,7 +952,7 @@ nfs4_xattr_entry_count(struct shrinker *shrink, struct shrink_control *sc)
- 	unsigned long count;
- 	struct list_lru *lru;
- 
--	lru = (shrink == &nfs4_xattr_large_entry_shrinker) ?
-+	lru = (shrink == nfs4_xattr_large_entry_shrinker) ?
- 	    &nfs4_xattr_large_entry_lru : &nfs4_xattr_entry_lru;
- 
- 	count = list_lru_shrink_count(lru, sc);
-@@ -991,18 +972,34 @@ static void nfs4_xattr_cache_init_once(void *p)
- 	INIT_LIST_HEAD(&cache->dispose);
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index 2284f749d892..1b5cd0444dda 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -129,11 +129,7 @@ static void nfs_ssc_unregister_ops(void)
  }
+ #endif /* CONFIG_NFS_V4_2 */
  
--static int nfs4_xattr_shrinker_init(struct shrinker *shrinker,
--				    struct list_lru *lru, const char *name)
-+typedef unsigned long (*count_objects_cb)(struct shrinker *s,
-+					  struct shrink_control *sc);
-+typedef unsigned long (*scan_objects_cb)(struct shrinker *s,
-+					 struct shrink_control *sc);
-+
-+static int __init nfs4_xattr_shrinker_init(struct shrinker **shrinker,
-+					   struct list_lru *lru, const char *name,
-+					   count_objects_cb count,
-+					   scan_objects_cb scan, long batch, int seeks)
- {
--	int ret = 0;
-+	int ret;
+-static struct shrinker acl_shrinker = {
+-	.count_objects	= nfs_access_cache_count,
+-	.scan_objects	= nfs_access_cache_scan,
+-	.seeks		= DEFAULT_SEEKS,
+-};
++static struct shrinker *acl_shrinker;
  
--	ret = register_shrinker(shrinker, name);
--	if (ret)
-+	*shrinker = shrinker_alloc(SHRINKER_MEMCG_AWARE, name);
-+	if (!*shrinker)
-+		return -ENOMEM;
+ /*
+  * Register the NFS filesystems
+@@ -153,9 +149,19 @@ int __init register_nfs_fs(void)
+ 	ret = nfs_register_sysctl();
+ 	if (ret < 0)
+ 		goto error_2;
+-	ret = register_shrinker(&acl_shrinker, "nfs-acl");
+-	if (ret < 0)
 +
-+	ret = list_lru_init_memcg(lru, *shrinker);
-+	if (ret) {
-+		shrinker_free(*shrinker);
- 		return ret;
++	acl_shrinker = shrinker_alloc(0, "nfs-acl");
++	if (!acl_shrinker) {
++		ret = -ENOMEM;
+ 		goto error_3;
 +	}
- 
--	ret = list_lru_init_memcg(lru, shrinker);
--	if (ret)
--		unregister_shrinker(shrinker);
-+	(*shrinker)->count_objects = count;
-+	(*shrinker)->scan_objects = scan;
-+	(*shrinker)->batch = batch;
-+	(*shrinker)->seeks = seeks;
 +
-+	shrinker_register(*shrinker);
- 
- 	return ret;
- }
-@@ -1010,7 +1007,7 @@ static int nfs4_xattr_shrinker_init(struct shrinker *shrinker,
- static void nfs4_xattr_shrinker_destroy(struct shrinker *shrinker,
- 					struct list_lru *lru)
++	acl_shrinker->count_objects = nfs_access_cache_count;
++	acl_shrinker->scan_objects = nfs_access_cache_scan;
++	acl_shrinker->seeks = DEFAULT_SEEKS;
++
++	shrinker_register(acl_shrinker);
++
+ #ifdef CONFIG_NFS_V4_2
+ 	nfs_ssc_register_ops();
+ #endif
+@@ -175,7 +181,7 @@ int __init register_nfs_fs(void)
+  */
+ void __exit unregister_nfs_fs(void)
  {
--	unregister_shrinker(shrinker);
-+	shrinker_free(shrinker);
- 	list_lru_destroy(lru);
- }
- 
-@@ -1026,27 +1023,31 @@ int __init nfs4_xattr_cache_init(void)
- 		return -ENOMEM;
- 
- 	ret = nfs4_xattr_shrinker_init(&nfs4_xattr_cache_shrinker,
--				       &nfs4_xattr_cache_lru,
--				       "nfs-xattr_cache");
-+				       &nfs4_xattr_cache_lru, "nfs-xattr_cache",
-+				       nfs4_xattr_cache_count,
-+				       nfs4_xattr_cache_scan, 0, DEFAULT_SEEKS);
- 	if (ret)
- 		goto out1;
- 
- 	ret = nfs4_xattr_shrinker_init(&nfs4_xattr_entry_shrinker,
--				       &nfs4_xattr_entry_lru,
--				       "nfs-xattr_entry");
-+				       &nfs4_xattr_entry_lru, "nfs-xattr_entry",
-+				       nfs4_xattr_entry_count,
-+				       nfs4_xattr_entry_scan, 512, DEFAULT_SEEKS);
- 	if (ret)
- 		goto out2;
- 
- 	ret = nfs4_xattr_shrinker_init(&nfs4_xattr_large_entry_shrinker,
- 				       &nfs4_xattr_large_entry_lru,
--				       "nfs-xattr_large_entry");
-+				       "nfs-xattr_large_entry",
-+				       nfs4_xattr_entry_count,
-+				       nfs4_xattr_entry_scan, 512, 1);
- 	if (!ret)
- 		return 0;
- 
--	nfs4_xattr_shrinker_destroy(&nfs4_xattr_entry_shrinker,
-+	nfs4_xattr_shrinker_destroy(nfs4_xattr_entry_shrinker,
- 				    &nfs4_xattr_entry_lru);
- out2:
--	nfs4_xattr_shrinker_destroy(&nfs4_xattr_cache_shrinker,
-+	nfs4_xattr_shrinker_destroy(nfs4_xattr_cache_shrinker,
- 				    &nfs4_xattr_cache_lru);
- out1:
- 	kmem_cache_destroy(nfs4_xattr_cache_cachep);
-@@ -1056,11 +1057,11 @@ int __init nfs4_xattr_cache_init(void)
- 
- void nfs4_xattr_cache_exit(void)
- {
--	nfs4_xattr_shrinker_destroy(&nfs4_xattr_large_entry_shrinker,
-+	nfs4_xattr_shrinker_destroy(nfs4_xattr_large_entry_shrinker,
- 				    &nfs4_xattr_large_entry_lru);
--	nfs4_xattr_shrinker_destroy(&nfs4_xattr_entry_shrinker,
-+	nfs4_xattr_shrinker_destroy(nfs4_xattr_entry_shrinker,
- 				    &nfs4_xattr_entry_lru);
--	nfs4_xattr_shrinker_destroy(&nfs4_xattr_cache_shrinker,
-+	nfs4_xattr_shrinker_destroy(nfs4_xattr_cache_shrinker,
- 				    &nfs4_xattr_cache_lru);
- 	kmem_cache_destroy(nfs4_xattr_cache_cachep);
- }
+-	unregister_shrinker(&acl_shrinker);
++	shrinker_free(acl_shrinker);
+ 	nfs_unregister_sysctl();
+ 	unregister_nfs4_fs();
+ #ifdef CONFIG_NFS_V4_2
 -- 
 2.30.2
 
