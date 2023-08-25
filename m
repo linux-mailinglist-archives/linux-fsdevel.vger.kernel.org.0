@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 834AA788FA5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 22:14:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E7D5788F9C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 22:14:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230517AbjHYUNT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Aug 2023 16:13:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56734 "EHLO
+        id S230496AbjHYUNS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Aug 2023 16:13:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230312AbjHYUNE (ORCPT
+        with ESMTP id S230309AbjHYUM6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Aug 2023 16:13:04 -0400
+        Fri, 25 Aug 2023 16:12:58 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68F8B2689;
-        Fri, 25 Aug 2023 13:13:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABE4A2689;
+        Fri, 25 Aug 2023 13:12:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=NhZK7lLhyk1gRe/kDzCl/6wBwOFUa/J4bfVtj1z1BGk=; b=BfG3iH95OkyxsHjnevHbNmBLJF
-        xvKrvD7QQr1LEPQDNFzwzKYzIJkNROUQfDth4mjt811sQQwUOgPlcfqk6CK+9kVZAtttVOpZJRtRY
-        v6fOi9ODw/OvVxpotx8yF90gmcFNJ8nVwf55iCLkLsvein5Mz1URQi3/7mdHQhjg5E7RWaJs3HQvu
-        YbzSr7krevkEL/4TOAhOIU3s+zlXHuZybB9tDetftvI7q28cuBS4zFIotQG9UV0IdiUYrwbPhxhZs
-        3ZuRpzHhX5iu8xvadXGlUYdqepYCnpPTCFYEWUSDEgKGzwUegB096fADo08sdd34jUaUJGuGw6F0o
-        FbQKU4tw==;
+        bh=ZIXbxbmWrTOUb6mh+hr1l56LloeqSAYd7MvHY9X30AE=; b=PjsxjRjlgunQfDgdcbQe11qeaU
+        JEgmj/e8JGFhVzrLK2w0f5lGIUY4iAyPpdYGwaGHm6Xz+eobMovp2Rw3PYD084ahFz5Ziw1NqPu/5
+        bC1KFcVY3guT8PwXyOPW5pcEKBhPt4Y1DvzZi/48yeIH5jZ6SUMiLkpG49puz6E3H5k4scS9rNPYu
+        iFo5lHHy5JgmZy7UxvODxsP/8gHF4f4jukuz/cNtZNtNTzqzmTdhORC3eBdhQOt4pVS/jPnxYHOER
+        DD1ExqVHEqc44s55KQ0AgWLRGBW0bTf/0t3etxACeNIRM/6DOvqDHR/G8zohNfX8qZYrXpMbsMFyX
+        lhqFq9xA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qZdAV-001SZi-9V; Fri, 25 Aug 2023 20:12:31 +0000
+        id 1qZdAV-001SZk-CS; Fri, 25 Aug 2023 20:12:31 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
         David Howells <dhowells@redhat.com>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 03/15] mm: Delete page_mkwrite_check_truncate()
-Date:   Fri, 25 Aug 2023 21:12:13 +0100
-Message-Id: <20230825201225.348148-4-willy@infradead.org>
+Subject: [PATCH 04/15] ceph: Add a migrate_folio method
+Date:   Fri, 25 Aug 2023 21:12:14 +0100
+Message-Id: <20230825201225.348148-5-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230825201225.348148-1-willy@infradead.org>
 References: <20230825201225.348148-1-willy@infradead.org>
@@ -50,53 +50,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-All users of this function have been converted to
-folio_mkwrite_check_truncate().  Remove it.
+The ceph_snap_context is independent of the address of the data, so we
+can implement folio migration by just removing the ceph_snap_context
+from the existing folio and attach it to the new one, which is exactly
+what filemap_migrate_folio() does.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/pagemap.h | 28 ----------------------------
- 1 file changed, 28 deletions(-)
+ fs/ceph/addr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 351c3b7f93a1..f43a0e05b092 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -1491,34 +1491,6 @@ static inline ssize_t folio_mkwrite_check_truncate(struct folio *folio,
- 	return offset;
- }
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 7c7dfcd63cd1..a0a1fac1a0db 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1563,6 +1563,7 @@ const struct address_space_operations ceph_aops = {
+ 	.invalidate_folio = ceph_invalidate_folio,
+ 	.release_folio = ceph_release_folio,
+ 	.direct_IO = noop_direct_IO,
++	.migrate_folio = filemap_migrate_folio,
+ };
  
--/**
-- * page_mkwrite_check_truncate - check if page was truncated
-- * @page: the page to check
-- * @inode: the inode to check the page against
-- *
-- * Returns the number of bytes in the page up to EOF,
-- * or -EFAULT if the page was truncated.
-- */
--static inline int page_mkwrite_check_truncate(struct page *page,
--					      struct inode *inode)
--{
--	loff_t size = i_size_read(inode);
--	pgoff_t index = size >> PAGE_SHIFT;
--	int offset = offset_in_page(size);
--
--	if (page->mapping != inode->i_mapping)
--		return -EFAULT;
--
--	/* page is wholly inside EOF */
--	if (page->index < index)
--		return PAGE_SIZE;
--	/* page is wholly past EOF */
--	if (page->index > index || !offset)
--		return -EFAULT;
--	/* page is partially inside EOF */
--	return offset;
--}
--
- /**
-  * i_blocks_per_folio - How many blocks fit in this folio.
-  * @inode: The inode which contains the blocks.
+ static void ceph_block_sigs(sigset_t *oldset)
 -- 
 2.40.1
 
