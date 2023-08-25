@@ -2,110 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BE0FB787DE6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 04:46:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D817787E17
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 04:55:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233096AbjHYCpf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Aug 2023 22:45:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50908 "EHLO
+        id S230209AbjHYCzL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Aug 2023 22:55:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230510AbjHYCpV (ORCPT
+        with ESMTP id S242180AbjHYCzC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Aug 2023 22:45:21 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E167133;
-        Thu, 24 Aug 2023 19:45:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=BAs3vHnqB82jyF9T0JKZy08jGuQDnnwXLjj44ySrvFg=; b=qG/yF0qNQFz1HErcIOwDpMsE95
-        yvpWaJiccPJne5E6IKKdLk49il4mSFXaxO10+cPRq4RqC2mgW99o+1yf2c4bs81MOg47gz2QA9ZFT
-        aLJydE8tWV8lzCMv2+NeX7mQCMknUB5EhVQiqQN5lBaCEsUTiWdC5wvrGaIvwhXVRrB8AFK90tiyv
-        FLjfEbnlTWQpGxkRRGa9YbyGmW5wSGD0SSIG8KNS+lDxJs8er6W0jn8lCxtIFwizoom7apeGKhs9v
-        c0WlIDcCZSTbrPU9y3Jy4WWr/hC4ZjXs2RvO1eOF4P2UntF/l1INZ+xsvc1Hck8kt4ukocelH0IdQ
-        bSBNV7lw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qZMoj-000edp-26;
-        Fri, 25 Aug 2023 02:44:57 +0000
-Date:   Fri, 25 Aug 2023 03:44:57 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Phillip Potter <phil@philpotter.co.uk>,
-        Coly Li <colyli@suse.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-        Christian Brauner <brauner@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
-        linux-btrfs@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCH 01/30] block: also call ->open for incremental partition
- opens
-Message-ID: <20230825024457.GD95084@ZenIV>
-References: <20230608110258.189493-1-hch@lst.de>
- <20230608110258.189493-2-hch@lst.de>
+        Thu, 24 Aug 2023 22:55:02 -0400
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D10D1FFA;
+        Thu, 24 Aug 2023 19:54:28 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=25;SR=0;TI=SMTPD_---0VqVRP4b_1692932044;
+Received: from 30.97.48.238(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VqVRP4b_1692932044)
+          by smtp.aliyun-inc.com;
+          Fri, 25 Aug 2023 10:54:07 +0800
+Message-ID: <d26b3da5-a3f6-f07b-e93f-d895eb230bf4@linux.alibaba.com>
+Date:   Fri, 25 Aug 2023 10:54:03 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230608110258.189493-2-hch@lst.de>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.13.0
+Subject: Re: [PATCH v5 06/45] erofs: dynamically allocate the erofs-shrinker
+To:     Qi Zheng <zhengqi.arch@bytedance.com>, akpm@linux-foundation.org,
+        david@fromorbit.com, tkhai@ya.ru, vbabka@suse.cz,
+        roman.gushchin@linux.dev, djwong@kernel.org, brauner@kernel.org,
+        paulmck@kernel.org, tytso@mit.edu, steven.price@arm.com,
+        cel@kernel.org, senozhatsky@chromium.org, yujie.liu@intel.com,
+        gregkh@linuxfoundation.org, muchun.song@linux.dev
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Muchun Song <songmuchun@bytedance.com>,
+        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+        Yue Hu <huyue2@coolpad.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        linux-erofs@lists.ozlabs.org
+References: <20230824034304.37411-1-zhengqi.arch@bytedance.com>
+ <20230824034304.37411-7-zhengqi.arch@bytedance.com>
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20230824034304.37411-7-zhengqi.arch@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-12.8 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,
+        SPF_PASS,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 08, 2023 at 01:02:29PM +0200, Christoph Hellwig wrote:
 
-> --- a/block/bdev.c
-> +++ b/block/bdev.c
-> @@ -683,9 +683,6 @@ static int blkdev_get_part(struct block_device *part, fmode_t mode)
->  	struct gendisk *disk = part->bd_disk;
->  	int ret;
->  
-> -	if (atomic_read(&part->bd_openers))
-> -		goto done;
-> -
->  	ret = blkdev_get_whole(bdev_whole(part), mode);
->  	if (ret)
->  		return ret;
-> @@ -694,9 +691,10 @@ static int blkdev_get_part(struct block_device *part, fmode_t mode)
->  	if (!bdev_nr_sectors(part))
->  		goto out_blkdev_put;
->  
-> -	disk->open_partitions++;
-> -	set_init_blocksize(part);
-> -done:
-> +	if (!atomic_read(&part->bd_openers)) {
-> +		disk->open_partitions++;
-> +		set_init_blocksize(part);
-> +	}
 
-[with apologies for very late (and tangential) reply]
+On 2023/8/24 11:42, Qi Zheng wrote:
+> Use new APIs to dynamically allocate the erofs-shrinker.
+> 
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> Reviewed-by: Muchun Song <songmuchun@bytedance.com>
+> CC: Gao Xiang <xiang@kernel.org>
+> CC: Chao Yu <chao@kernel.org>
+> CC: Yue Hu <huyue2@coolpad.com>
+> CC: Jeffle Xu <jefflexu@linux.alibaba.com>
+> CC: linux-erofs@lists.ozlabs.org
 
-That got me curious about the ->bd_openers - do we need it atomic?
-Most of the users (and all places that do modifications) are
-under ->open_mutex; the only exceptions are
-	* early sync logics in blkdev_put(); it's explicitly racy -
-see the comment there.
-	* callers of disk_openers() in loop and nbd (the ones in
-zram are under ->open_mutex).  There's driver-private exclusion
-around those, but in any case - READ_ONCE() is no worse than
-atomic_read() in those cases.
+Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
-Is there something subtle I'm missing here?
+Thanks,
+Gao Xiang
