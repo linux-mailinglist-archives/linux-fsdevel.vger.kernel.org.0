@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E7D5788F9C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 22:14:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6269C788FA0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 22:14:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230496AbjHYUNS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Aug 2023 16:13:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32778 "EHLO
+        id S230463AbjHYUNR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Aug 2023 16:13:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230309AbjHYUM6 (ORCPT
+        with ESMTP id S230283AbjHYUMu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Aug 2023 16:12:58 -0400
+        Fri, 25 Aug 2023 16:12:50 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABE4A2689;
-        Fri, 25 Aug 2023 13:12:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3E662689;
+        Fri, 25 Aug 2023 13:12:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=ZIXbxbmWrTOUb6mh+hr1l56LloeqSAYd7MvHY9X30AE=; b=PjsxjRjlgunQfDgdcbQe11qeaU
-        JEgmj/e8JGFhVzrLK2w0f5lGIUY4iAyPpdYGwaGHm6Xz+eobMovp2Rw3PYD084ahFz5Ziw1NqPu/5
-        bC1KFcVY3guT8PwXyOPW5pcEKBhPt4Y1DvzZi/48yeIH5jZ6SUMiLkpG49puz6E3H5k4scS9rNPYu
-        iFo5lHHy5JgmZy7UxvODxsP/8gHF4f4jukuz/cNtZNtNTzqzmTdhORC3eBdhQOt4pVS/jPnxYHOER
-        DD1ExqVHEqc44s55KQ0AgWLRGBW0bTf/0t3etxACeNIRM/6DOvqDHR/G8zohNfX8qZYrXpMbsMFyX
-        lhqFq9xA==;
+        bh=g99Hhk2pP6XTnhJriYN5x3KOeH0Kln5KYpmyrej4TNY=; b=lt+RM7YR+Daq91Y5fUAcC4rbaK
+        oxtEvmA7fCyITfYBnHb3WXy0i14oBPWffh16S7h+kFTvLhSOfPaZLOh7RLp9GkpFoJL8WHKH1jRpb
+        G3Nu9CHWR/RYd1h77NQvlO3fjwDryJKrOQ/kS1Dxu9xJjHHx6KveTByDuU+AaTk2szZalnfNRzZa0
+        bR8fXDWMNDBCEL16zkgNEYONlgIF+ifpyAg1CAXNxF9LTttdZYTp92uZK6psr1hO5Msv47XBCThRv
+        iu7eeQoMAqCUMs02b1uVr/nYZhFE5VXA+NDNKHpjcC6ST/rbPLIyEaOJsckyzgw95pI8p3IBhAmb2
+        prEPkwFg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qZdAV-001SZk-CS; Fri, 25 Aug 2023 20:12:31 +0000
+        id 1qZdAV-001SZm-FJ; Fri, 25 Aug 2023 20:12:31 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
         David Howells <dhowells@redhat.com>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 04/15] ceph: Add a migrate_folio method
-Date:   Fri, 25 Aug 2023 21:12:14 +0100
-Message-Id: <20230825201225.348148-5-willy@infradead.org>
+Subject: [PATCH 05/15] ceph: Remove ceph_writepage()
+Date:   Fri, 25 Aug 2023 21:12:15 +0100
+Message-Id: <20230825201225.348148-6-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230825201225.348148-1-willy@infradead.org>
 References: <20230825201225.348148-1-willy@infradead.org>
@@ -50,28 +50,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The ceph_snap_context is independent of the address of the data, so we
-can implement folio migration by just removing the ceph_snap_context
-from the existing folio and attach it to the new one, which is exactly
-what filemap_migrate_folio() does.
+Now that we have a migrate_folio method, there is no need for a
+writepage method.  All writeback will go through the writepages
+method instead which is more efficient.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ceph/addr.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/ceph/addr.c | 25 -------------------------
+ 1 file changed, 25 deletions(-)
 
 diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 7c7dfcd63cd1..a0a1fac1a0db 100644
+index a0a1fac1a0db..785f2983ac0e 100644
 --- a/fs/ceph/addr.c
 +++ b/fs/ceph/addr.c
-@@ -1563,6 +1563,7 @@ const struct address_space_operations ceph_aops = {
- 	.invalidate_folio = ceph_invalidate_folio,
- 	.release_folio = ceph_release_folio,
- 	.direct_IO = noop_direct_IO,
-+	.migrate_folio = filemap_migrate_folio,
- };
+@@ -795,30 +795,6 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+ 	return err;
+ }
  
- static void ceph_block_sigs(sigset_t *oldset)
+-static int ceph_writepage(struct page *page, struct writeback_control *wbc)
+-{
+-	int err;
+-	struct inode *inode = page->mapping->host;
+-	BUG_ON(!inode);
+-	ihold(inode);
+-
+-	if (wbc->sync_mode == WB_SYNC_NONE &&
+-	    ceph_inode_to_client(inode)->write_congested)
+-		return AOP_WRITEPAGE_ACTIVATE;
+-
+-	wait_on_page_fscache(page);
+-
+-	err = writepage_nounlock(page, wbc);
+-	if (err == -ERESTARTSYS) {
+-		/* direct memory reclaimer was killed by SIGKILL. return 0
+-		 * to prevent caller from setting mapping/page error */
+-		err = 0;
+-	}
+-	unlock_page(page);
+-	iput(inode);
+-	return err;
+-}
+-
+ /*
+  * async writeback completion handler.
+  *
+@@ -1555,7 +1531,6 @@ static int ceph_write_end(struct file *file, struct address_space *mapping,
+ const struct address_space_operations ceph_aops = {
+ 	.read_folio = netfs_read_folio,
+ 	.readahead = netfs_readahead,
+-	.writepage = ceph_writepage,
+ 	.writepages = ceph_writepages_start,
+ 	.write_begin = ceph_write_begin,
+ 	.write_end = ceph_write_end,
 -- 
 2.40.1
 
