@@ -2,165 +2,232 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B795F78902E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 23:10:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFE7378908B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 23:40:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231319AbjHYVKO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Aug 2023 17:10:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37458 "EHLO
+        id S231492AbjHYVjz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Aug 2023 17:39:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231352AbjHYVJr (ORCPT
+        with ESMTP id S231468AbjHYVjU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Aug 2023 17:09:47 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2F6C211E;
-        Fri, 25 Aug 2023 14:09:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de;
- s=s31663417; t=1692997782; x=1693602582; i=deller@gmx.de;
- bh=t9bxSjK12LeGCsmisqAXpIIyjCQZXoB1R6YMQj1H2HE=;
- h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:In-Reply-To;
- b=bY/A9oCZit5AtFz7eNRLjtoj6/tVjjxcHri0JhZOWP6Yv1HHixduLkTrYjXo36++LrAsHml
- j3XfQJ90epx19+glgxdcBBpzwHPS37f1/Un+HpDcVc2NnjAvWwHwXwLbRpX5AYtgVu5R5JMa+
- OW0GycZDlqmdt39YNaQa3494SNlIZHh/h244sxullC3RDVwG51WZu1Nn2rn7/3O4LsV5Kqkd0
- dJw5qOCrt2Ib5udICoWu73LwVB08bnOExhaOn8G3S7pmRUqdHZlLLJHPtf1F00j9JMNEBU3Uo
- tD7xXRd+Ja82OVh/WyeW/We1Rytij5GnUmAdwv+/nXwz7lsHncTw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.60] ([94.134.149.122]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MIdeR-1qW5pL2odB-00EZmp; Fri, 25
- Aug 2023 23:09:42 +0200
-Message-ID: <a7bbca09-b733-2e6e-0662-cb5d7b67d255@gmx.de>
-Date:   Fri, 25 Aug 2023 23:09:42 +0200
+        Fri, 25 Aug 2023 17:39:20 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D82826A2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Aug 2023 14:39:17 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-68bec3a9bdbso1060334b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Aug 2023 14:39:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1692999556; x=1693604356;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o7dRQ9By/T99QWDW5xev9b8rVkM9NZXXwZrmSduoTKY=;
+        b=SlHW1FHh55Miyt5dC5YbHFzbz8/Ww6dpIRyxo6vWvL1BUT9wpnYc90O8W3sh6jbVDI
+         8VSN/Xe7i/NpqgfmZUfGif/OWVY4CvO1XNCApsJ0gTKpBFDUVISAdbUZIXX0AL7Ymm4P
+         GTcb7wyrBEoupwm2T77MgFldNvL555iN8Gi3uYCzgcocNv0xnFj+WWlwbcbOTqmgKZI+
+         MLGEhJoBOR8ij98DujYJDG8/ErJs1WTRaajOZxKdaJWii5ir39jpSlGIz75MH3BFujgn
+         75aCRb2KJIpxhwlYFJHEvUeGNqpylJdIJf8XyyAJR0UoHIDg5wblyZNVqnwV4VZyvNd5
+         jfAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692999556; x=1693604356;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o7dRQ9By/T99QWDW5xev9b8rVkM9NZXXwZrmSduoTKY=;
+        b=jQL7Ikb8ELDc4HXlQlsrmYTBsUK2L2L4titkYjzE0q1t4V3rD956yQ4655U5Kzu7MB
+         2t3/h9oKmHJUOocsQvWEFPbBboxQsfAYejZJd38KrfaEoc1dvPrpZv/DHglQpv3MBD/v
+         +bzjstdDYHgDT263vwVebG36FG4Ba0l1MjZJkgmvFdjGrh7exWadq0T9Op+0ZovhlwpV
+         Plx5NQxeAUgBvOGjKSUyMYKm/+XleLFK6EAgt3YULpOhofOEb+oyo3HRa/j4hSZqTOes
+         pFOquFtab4CRV13lrxbWK9j2y5pxu+UT+dCN8G5rQSW4gZS2AtNxK4eVXJdyUU1ifLgD
+         YR9A==
+X-Gm-Message-State: AOJu0YxDQMJTJDKMsqZfaTWSV8S6nnumhFyF9g+IPRNDBW/0Kh9zNjIt
+        48hHY0K1x9PvgUyEokW9QHKrPQ==
+X-Google-Smtp-Source: AGHT+IFGwDu4J6IE5hfbjc7KSF4OfJEndquVBvBoV5vhWuIhyGy4zoBWcpcC8Lokr19GaOsT0RulfQ==
+X-Received: by 2002:a05:6a20:7fa0:b0:140:324c:124c with SMTP id d32-20020a056a207fa000b00140324c124cmr22387249pzj.62.1692999556447;
+        Fri, 25 Aug 2023 14:39:16 -0700 (PDT)
+Received: from dread.disaster.area (pa49-195-66-88.pa.nsw.optusnet.com.au. [49.195.66.88])
+        by smtp.gmail.com with ESMTPSA id a14-20020a62bd0e000000b006875df4773fsm1997221pff.163.2023.08.25.14.39.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Aug 2023 14:39:15 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1qZeWO-006Uvd-0J;
+        Sat, 26 Aug 2023 07:39:12 +1000
+Date:   Sat, 26 Aug 2023 07:39:12 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Hao Xu <hao.xu@linux.dev>
+Cc:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-cachefs@redhat.com,
+        ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, codalist@coda.cs.cmu.edu,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
+        Wanpeng Li <wanpengli@tencent.com>
+Subject: Re: [PATCH 02/29] xfs: rename XBF_TRYLOCK to XBF_NOWAIT
+Message-ID: <ZOkfgBlWKVmGN84i@dread.disaster.area>
+References: <20230825135431.1317785-1-hao.xu@linux.dev>
+ <20230825135431.1317785-3-hao.xu@linux.dev>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2] procfs: Fix /proc/self/maps output for 32-bit kernel
- and compat tasks
-Content-Language: en-US
-From:   Helge Deller <deller@gmx.de>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrei Vagin <avagin@openvz.org>,
-        linux-parisc <linux-parisc@vger.kernel.org>
-References: <ZOR95DiR8tdcHDfq@p100>
- <20230822113453.acc69f8540bed25cde79e675@linux-foundation.org>
- <8eb38faf-16a2-a538-b243-1b4706f73169@gmx.de>
- <a1a19e05-0cfd-cae5-9edb-9d63e70ee06d@gmx.de>
-In-Reply-To: <a1a19e05-0cfd-cae5-9edb-9d63e70ee06d@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:pgE4+/iNO0aZYR+fzWXyvjMkNs3h2BleANDINF8q2LmPadMpRcA
- Nxxi8U7KzoF8wOSEgScVK8/1WXSQ4keaDmoOjhoPUDxlgQsPe2XHEeRP9aLNdR1eKezTveB
- PZipSe2pFhrldUsZPB/UslmB68RtMqUPY5fJENvxGJZJ8/CMKbC2Mh8f/o7d0srSWsxTuvN
- +sPsQpIsC/wtj52UmqRsQ==
-UI-OutboundReport: notjunk:1;M01:P0:4dNZi+3V608=;0kgLbPPTQEtBxVBcOBBz7lLhB+l
- QEQaQ58OslxI8G1BwP/iCmm4afXPep2x1Pk0T09w+LLzqm/dZtiow1nlsTc/L++FNTRPhwbXx
- 1iExaAGEZMpmIrLn5ho+xY+Ex3K4T2+yJAMFWkkIjWQPbK6HjM7ZaSXNHJERcmQEov/rh0C+1
- T6+n5AOKuuTu9IKcYXuwYa4pcYrgeH5AgQlMtatXC5dXr9dXtF1Ez/Bsrd3LdO5S3wtrBtu0N
- w0VMwBylVE9QqL0DlMBcn5tUfjHeaFSCxQbmr+992Hd6DDc/46fMA8WZnd9OOMhO5sZIJL0Nk
- J4xX3tPrGYQf5uEfhuGwHS/wJzAfbVRZBflZfBH1f66zb3GIQZcq1xZcOCrxo97x8VYW8elb4
- iPpF2AnB3bnHO7n/Oa4dq0YTYkMPVbJSu2FN4pLDtAUuurnrKuIA9Em+yF1UGT8EnrjmbBIN9
- u5zYMlD0Ft2RtGnQfUF2J9wDN91dg8wLDEqqfPdFAGV8LJCwjR0KIIzX+Wc4OEgJ/f/42qhJv
- WK1oIqWjdMkxgHE9ds0ZIRbAeGmLDyhuIpqnUSYKJEQOT0VqbCnCS+Krdkn9MDTZ7yVPRhTcY
- oxpan1EB1cJNBVcmthp2OzhI2LK2C0xotgolUbJsF3N2dFdp9RNFJ+epF9dntEvbWYZWddoIa
- AXBjtMJObP2bt4yr6LhQUgd5oE2JrSkGZ8FaJcV5+n0TFMcTFE2vedAaVfDjwD7clyJSo/dy+
- iXQRX28IuYjJ2Hmy70QySyVY5+D+uYuWqZ/PIrjQKwFC8PXJpqODqp99MtdZuCrkZcgJtgojt
- KURKVFGfFpC9MGd/XftLjnOOhW/5Q9rB8RMiKi3kSO/PkWo3UQ0huqq1EqEoFe90VUjVffEVl
- qDVawubySS09uekF15tI7GnBp+ol4x6myobbZupmkuetYD3OKNw3hesKcwvLvFTGghAwRmO2/
- D6NWiH6Ki0+GGu7Sk8PpTJeUbdE=
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230825135431.1317785-3-hao.xu@linux.dev>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/23/23 00:04, Helge Deller wrote:
-> On 8/22/23 22:53, Helge Deller wrote:
->> On 8/22/23 20:34, Andrew Morton wrote:
->>> On Tue, 22 Aug 2023 11:20:36 +0200 Helge Deller <deller@gmx.de> wrote:
->>>
->>>> On a 32-bit kernel addresses should be shown with 8 hex digits, e.g.:
->>>>
->>>> root@debian:~# cat /proc/self/maps
->>>> 00010000-00019000 r-xp 00000000 08:05 787324=C2=A0=C2=A0=C2=A0=C2=A0 =
-/usr/bin/cat
->>>> 00019000-0001a000 rwxp 00009000 08:05 787324=C2=A0=C2=A0=C2=A0=C2=A0 =
-/usr/bin/cat
->>>> 0001a000-0003b000 rwxp 00000000 00:00 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 [heap]
->>>> f7551000-f770d000 r-xp 00000000 08:05 794765=C2=A0=C2=A0=C2=A0=C2=A0 =
-/usr/lib/hppa-linux-gnu/libc.so.6
->>>> f770d000-f770f000 r--p 001bc000 08:05 794765=C2=A0=C2=A0=C2=A0=C2=A0 =
-/usr/lib/hppa-linux-gnu/libc.so.6
->>>> f770f000-f7714000 rwxp 001be000 08:05 794765=C2=A0=C2=A0=C2=A0=C2=A0 =
-/usr/lib/hppa-linux-gnu/libc.so.6
->>>> f7d39000-f7d68000 r-xp 00000000 08:05 794759=C2=A0=C2=A0=C2=A0=C2=A0 =
-/usr/lib/hppa-linux-gnu/ld.so.1
->>>> f7d68000-f7d69000 r--p 0002f000 08:05 794759=C2=A0=C2=A0=C2=A0=C2=A0 =
-/usr/lib/hppa-linux-gnu/ld.so.1
->>>> f7d69000-f7d6d000 rwxp 00030000 08:05 794759=C2=A0=C2=A0=C2=A0=C2=A0 =
-/usr/lib/hppa-linux-gnu/ld.so.1
->>>> f7ea9000-f7eaa000 r-xp 00000000 00:00 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 [vdso]
->>>> f8565000-f8587000 rwxp 00000000 00:00 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 [stack]
->>>>
->>>> But since commmit 0e3dc0191431 ("procfs: add seq_put_hex_ll to speed =
-up
->>>> /proc/pid/maps") even on native 32-bit kernels the output looks like =
-this:
->>>>
->>>> root@debian:~# cat /proc/self/maps
->>>> 0000000010000-0000000019000 r-xp 00000000 000000008:000000005 787324=
-=C2=A0 /usr/bin/cat
->>>> 0000000019000-000000001a000 rwxp 000000009000 000000008:000000005 787=
-324=C2=A0 /usr/bin/cat
->>>> 000000001a000-000000003b000 rwxp 00000000 00:00 0=C2=A0 [heap]
->>>> 00000000f73d1000-00000000f758d000 r-xp 00000000 000000008:000000005 7=
-94765=C2=A0 /usr/lib/hppa-linux-gnu/libc.so.6
->>>> 00000000f758d000-00000000f758f000 r--p 000000001bc000 000000008:00000=
-0005 794765=C2=A0 /usr/lib/hppa-linux-gnu/libc.so.6
->>>> 00000000f758f000-00000000f7594000 rwxp 000000001be000 000000008:00000=
-0005 794765=C2=A0 /usr/lib/hppa-linux-gnu/libc.so.6
->>>> 00000000f7af9000-00000000f7b28000 r-xp 00000000 000000008:000000005 7=
-94759=C2=A0 /usr/lib/hppa-linux-gnu/ld.so.1
->>>> 00000000f7b28000-00000000f7b29000 r--p 000000002f000 000000008:000000=
-005 794759=C2=A0 /usr/lib/hppa-linux-gnu/ld.so.1
->>>> 00000000f7b29000-00000000f7b2d000 rwxp 0000000030000 000000008:000000=
-005 794759=C2=A0 /usr/lib/hppa-linux-gnu/ld.so.1
->>>> 00000000f7e0c000-00000000f7e0d000 r-xp 00000000 00:00 0=C2=A0 [vdso]
->>>> 00000000f9061000-00000000f9083000 rwxp 00000000 00:00 0=C2=A0 [stack]
->>>>
->>>> This patch brings back the old default 8-hex digit output for
->>>> 32-bit kernels and compat tasks.
->>>>
->>>> Fixes: 0e3dc0191431 ("procfs: add seq_put_hex_ll to speed up /proc/pi=
-d/maps")
->>>
->>> That was five years ago.=C2=A0 Given there is some risk of breaking ex=
-isting
->>> parsers, is it worth fixing this?
->>
->> Huh... that's right!
->> Nevertheless, kernel 6.1.45 has it right, which isn't 5 years old.
->> I don't see the reason for that change right now, so I'll need to figur=
-e out what changed...
->
-> It seems to be due to a new bug in gcc's __builtin_clzll()
-> function (at least on parisc), which seems to return values
-> for "long" (32bit) instead for "long long" (64bit).
->
-> Please ignore this patch for now.
+On Fri, Aug 25, 2023 at 09:54:04PM +0800, Hao Xu wrote:
+> From: Hao Xu <howeyxu@tencent.com>
+> 
+> XBF_TRYLOCK means we need lock but don't block on it,
 
-To sum up:
-It was a bug in the in-kernel __clzdi2() function.
-This patch ("lib/clz_ctz.c: Fix __clzdi2() and __ctzdi2() for 32-bit kerne=
-ls") fixes it:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/=
-?id=3D382d4cd1847517ffcb1800fd462b625db7b2ebea
+Yes.
 
-Thanks!
-Helge
+
+> we can use it to
+> stand for not waiting for memory allcation. Rename XBF_TRYLOCK to
+> XBF_NOWAIT, which is more generic.
+
+No.
+
+Not only can XBF_TRYLOCK require memory allocation, it can require
+IO to be issued. We use TRYLOCK for -readahead- and so we *must* be
+able to allocate memory and issue IO under TRYLOCK caller
+conditions.
+
+[...]
+
+> diff --git a/fs/xfs/libxfs/xfs_attr_remote.c b/fs/xfs/libxfs/xfs_attr_remote.c
+> index d440393b40eb..2ccb0867824c 100644
+> --- a/fs/xfs/libxfs/xfs_attr_remote.c
+> +++ b/fs/xfs/libxfs/xfs_attr_remote.c
+> @@ -661,7 +661,7 @@ xfs_attr_rmtval_invalidate(
+>  			return error;
+>  		if (XFS_IS_CORRUPT(args->dp->i_mount, nmap != 1))
+>  			return -EFSCORRUPTED;
+> -		error = xfs_attr_rmtval_stale(args->dp, &map, XBF_TRYLOCK);
+> +		error = xfs_attr_rmtval_stale(args->dp, &map, XBF_NOWAIT);
+>  		if (error)
+>  			return error;
+
+XBF_INCORE | XBF_NOWAIT makes no real sense. I mean, XBF_INCORE is
+exactly "find a cached buffer or fail" - it's not going to do any
+memory allocation or IO so NOWAIT smeantics don't make any sense
+here. It's the buffer lock that this lookup is explicitly
+avoiding, and so TRYLOCK describes exactly the semantics we want
+from this incore lookup.
+
+Indeed, this is a deadlock avoidance mechanism as the transaction
+may already have the buffer locked and so we don't want the
+xfs_buf_incore() lookup to try to lock the buffer again. TRYLOCK
+documents this pretty clearly - NOWAIT loses that context....
+
+> diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
+> index 6a6503ab0cd7..77c4f1d83475 100644
+> --- a/fs/xfs/libxfs/xfs_btree.c
+> +++ b/fs/xfs/libxfs/xfs_btree.c
+> @@ -1343,7 +1343,7 @@ xfs_btree_read_buf_block(
+>  	int			error;
+>  
+>  	/* need to sort out how callers deal with failures first */
+> -	ASSERT(!(flags & XBF_TRYLOCK));
+> +	ASSERT(!(flags & XBF_NOWAIT));
+>  
+>  	error = xfs_btree_ptr_to_daddr(cur, ptr, &d);
+>  	if (error)
+> diff --git a/fs/xfs/scrub/repair.c b/fs/xfs/scrub/repair.c
+> index ac6d8803e660..9312cf3b20e2 100644
+> --- a/fs/xfs/scrub/repair.c
+> +++ b/fs/xfs/scrub/repair.c
+> @@ -460,7 +460,7 @@ xrep_invalidate_block(
+>  
+>  	error = xfs_buf_incore(sc->mp->m_ddev_targp,
+>  			XFS_FSB_TO_DADDR(sc->mp, fsbno),
+> -			XFS_FSB_TO_BB(sc->mp, 1), XBF_TRYLOCK, &bp);
+> +			XFS_FSB_TO_BB(sc->mp, 1), XBF_NOWAIT, &bp);
+
+My point exactly.
+
+xfs_buf_incore() is simply a lookup with XBF_INCORE set. (XBF_INCORE
+| XBF_TRYLOCK) has the exactly semantics of "return the buffer only
+if it is cached and we can lock it without blocking.
+
+It will not instantiate a new buffer (i.e. do memory allocation) or
+do IO because the if it is under IO the buffer lock will be held.
+
+So, essentially, this "NOWAIT" semantic you want is already supplied
+by (XBF_INCORE | XBF_TRYLOCK) buffer lookups.
+
+>  	if (error)
+>  		return 0;
+>  
+> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> index 15d1e5a7c2d3..9f84bc3b802c 100644
+> --- a/fs/xfs/xfs_buf.c
+> +++ b/fs/xfs/xfs_buf.c
+> @@ -228,7 +228,7 @@ _xfs_buf_alloc(
+>  	 * We don't want certain flags to appear in b_flags unless they are
+>  	 * specifically set by later operations on the buffer.
+>  	 */
+> -	flags &= ~(XBF_UNMAPPED | XBF_TRYLOCK | XBF_ASYNC | XBF_READ_AHEAD);
+> +	flags &= ~(XBF_UNMAPPED | XBF_NOWAIT | XBF_ASYNC | XBF_READ_AHEAD);
+>  
+>  	atomic_set(&bp->b_hold, 1);
+>  	atomic_set(&bp->b_lru_ref, 1);
+> @@ -543,7 +543,7 @@ xfs_buf_find_lock(
+>  	struct xfs_buf          *bp,
+>  	xfs_buf_flags_t		flags)
+>  {
+> -	if (flags & XBF_TRYLOCK) {
+> +	if (flags & XBF_NOWAIT) {
+>  		if (!xfs_buf_trylock(bp)) {
+>  			XFS_STATS_INC(bp->b_mount, xb_busy_locked);
+>  			return -EAGAIN;
+> @@ -886,7 +886,7 @@ xfs_buf_readahead_map(
+>  	struct xfs_buf		*bp;
+>  
+>  	xfs_buf_read_map(target, map, nmaps,
+> -		     XBF_TRYLOCK | XBF_ASYNC | XBF_READ_AHEAD, &bp, ops,
+> +		     XBF_NOWAIT | XBF_ASYNC | XBF_READ_AHEAD, &bp, ops,
+>  		     __this_address);
+
+That will break readahead (which we use extensively in getdents
+operations) if we can't allocate buffers and issue IO under NOWAIT
+conditions.
+
+>  }
+>  
+> diff --git a/fs/xfs/xfs_buf.h b/fs/xfs/xfs_buf.h
+> index 549c60942208..8cd307626939 100644
+> --- a/fs/xfs/xfs_buf.h
+> +++ b/fs/xfs/xfs_buf.h
+> @@ -45,7 +45,7 @@ struct xfs_buf;
+>  
+>  /* flags used only as arguments to access routines */
+>  #define XBF_INCORE	 (1u << 29)/* lookup only, return if found in cache */
+> -#define XBF_TRYLOCK	 (1u << 30)/* lock requested, but do not wait */
+> +#define XBF_NOWAIT	 (1u << 30)/* mem/lock requested, but do not wait */
+
+That's now a really poor comment. It doesn't describe the semantics
+or constraints that NOWAIT might imply.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
