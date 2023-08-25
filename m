@@ -2,75 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 20E77787D51
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 03:48:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1C9A787D5E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 03:57:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239548AbjHYBrf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Aug 2023 21:47:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51142 "EHLO
+        id S236914AbjHYB4o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Aug 2023 21:56:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240524AbjHYBrd (ORCPT
+        with ESMTP id S239670AbjHYB4i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Aug 2023 21:47:33 -0400
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A4E19A9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Aug 2023 18:47:31 -0700 (PDT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-68a3cae6e20so516426b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Aug 2023 18:47:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692928051; x=1693532851;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yL3CxA8tkredETolFyabWDYx09slvthywe8GQXa4Z3o=;
-        b=bvI4w2sJVMKquaEeyVszv3/9avXHNsMu5ap6F2x2mjh0wu4YokKVpsUrtGNQ9X+rJE
-         zNdeowG1rvbZMlZbgzDgOMfu5hGmOZqTjGMwO75EQAoX8/4OrYOc+Cpy2nK3QFDJB3QG
-         nwiFZhzJxuM1lUF2UcL29RXPtTtZh32cCf1wabuYAf1YofT94WrNlvYprThtuj3MO85Z
-         F/l1lsRich0wuQiUNk7/uoTVH9r4ZOv4tMKXkZFu74VovDL9Pslyza4t1A+0M9IQuu6y
-         PCQSBqTFECz8kS9yCv0mAs1Q07wClOLrRfpBsl5RMad7+ax46JzZhwSxf14LfQtDA8bS
-         e4iQ==
-X-Gm-Message-State: AOJu0Yz5K7ajB2i/Fey+IQLj2xpud0bcfp7S3vW/WoQ0fyj56BCDN+f8
-        6zDd4h/cP8p28FzoDNM9e0nJBdJwYmOYaDItvdsfp/h/nXhL
-X-Google-Smtp-Source: AGHT+IHg3bDM5yKFOpPTzd7kkvqQoXbDuznp//mZjuaO1aV0GJPmJQ+Bx0uMRcAb34HUuxUo0oZ6iIfylc09D1Op6ph0vpyQHdTX
+        Thu, 24 Aug 2023 21:56:38 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40900A8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Aug 2023 18:56:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=zGOmB18RB1OY5AGgTsleumk2XgvNgUMI8iEL9xumJk0=; b=ZXvSVtmTyf6k6h6o4XNApeq6M/
+        d4w7hC/lTkT+pCjDE23uFVXoFt69E9bn5T2kuJWhbfLFk/1mAwKyhPUxu4OQJX3ytUHtTxfxN1enb
+        bRBjaWDq0jfSeENUAyqpL/Sju4/HAHtemBgg5p2Dy76FRoPv4gk+OYJhVwMLCz2nAztWGiTIGy/6u
+        Isf1Hjh2oxdnb/g1jGj54l64m4odwRujObylUra0tMDRPbqM93afXB5PkefPcVWxrX1Oj4cjuWit+
+        JIj+K8V0NiFUXOVGbGAndfMUWrX6w2b8i0dD14T4rI/UijI7zLCtPiVjXsgvw9MJbbgtH5g5rc9qu
+        jmG95iFg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qZM3o-00EMuv-Hq; Fri, 25 Aug 2023 01:56:28 +0000
+Date:   Fri, 25 Aug 2023 02:56:28 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Atul Raut <rauji.raut@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        syzbot+e295147e14b474e4ad70@syzkaller.appspotmail.com
+Subject: Re: pagevec: Fix array-index-out-of-bounds error
+Message-ID: <ZOgKTO612u1Fn7PB@casper.infradead.org>
+References: <20230825001720.19101-1-rauji.raut@gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6a00:14c1:b0:68c:585:905e with SMTP id
- w1-20020a056a0014c100b0068c0585905emr205773pfu.3.1692928050960; Thu, 24 Aug
- 2023 18:47:30 -0700 (PDT)
-Date:   Thu, 24 Aug 2023 18:47:30 -0700
-In-Reply-To: <8680b259-528b-32a9-73ee-ce6a6406f13d@kernel.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001ba17a0603b5871e@google.com>
-Subject: Re: [syzbot] [f2fs?] possible deadlock in f2fs_add_inline_entry
-From:   syzbot <syzbot+a4976ce949df66b1ddf1@syzkaller.appspotmail.com>
-To:     chao@kernel.org, hdanton@sina.com, jaegeuk@kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230825001720.19101-1-rauji.raut@gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Thu, Aug 24, 2023 at 05:17:21PM -0700, Atul Raut wrote:
+>  ntfs_evict_inode+0x20/0x48 fs/ntfs3/inode.c:1790
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+No.  This is your clue.  ntfs corrupts memory.  You can't take bug
+reports involving ntfs seriously.  Ignore everything tagged with ntfs.
 
-Reported-and-tested-by: syzbot+a4976ce949df66b1ddf1@syzkaller.appspotmail.com
+> In folio_batch_add, which contains folios rather
+> than fixed-size pages, there is a chance that the
+> array index will fall outside of bounds.
+> Before adding folios, examine the available space to fix.
 
-Tested on:
+This is definitely the wrong fix.
 
-commit:         5c13e238 f2fs: avoid false alarm of circular locking
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev
-console output: https://syzkaller.appspot.com/x/log.txt?x=121bdfcfa80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5ff9844b1e911216
-dashboard link: https://syzkaller.appspot.com/bug?extid=a4976ce949df66b1ddf1
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+>  static inline unsigned folio_batch_add(struct folio_batch *fbatch,
+>  		struct folio *folio)
+>  {
+> -	fbatch->folios[fbatch->nr++] = folio;
+> +	if (folio_batch_space(fbatch))
+> +		fbatch->folios[fbatch->nr++] = folio;
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+Did you look at what folio_batch_space() actually does?
+
+static inline unsigned int folio_batch_space(struct folio_batch *fbatch)
+{
+        return PAGEVEC_SIZE - fbatch->nr;
+}
+
+So if fbatch->nr is 255, what will it return?  How will
+folio_batch_add() behave?
+
+The right way to fix this problem is to find the data corrupter in NTFS.
+You can't "fix" it anywhere else.
