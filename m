@@ -2,163 +2,265 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ECD77888EF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 15:48:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96E70788920
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 15:56:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245250AbjHYNs1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Aug 2023 09:48:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41158 "EHLO
+        id S245313AbjHYNza (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Aug 2023 09:55:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234813AbjHYNsE (ORCPT
+        with ESMTP id S245293AbjHYNy5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Aug 2023 09:48:04 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA72C2136;
-        Fri, 25 Aug 2023 06:47:58 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 49AEC21F79;
-        Fri, 25 Aug 2023 13:47:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1692971277; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BpzfsfMiRxmg30OdFnKzv1mOgTevyt5wkPNcyneGwG0=;
-        b=uohLnKnqtpENx2vCia+CF25VunAvqKNxW8Gl/JZPjm2522sG0QzHP89CKm9gvg5uhIQmJN
-        WBEcUX07tygEsfRFeW0MDCmmX2lneinhEWFdq+jYTgqP+tDCYKowqEsMW88igvW28lrojs
-        hfcd/30g2Ie/qrM4mt7e3dhBm3c9V28=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1692971277;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BpzfsfMiRxmg30OdFnKzv1mOgTevyt5wkPNcyneGwG0=;
-        b=avw/hNX+TPhBa6q/Pyjq6dsHiVTX81moNODEW9+kRWtkr4cKF/cxPXXUPquXV79uoK0IL4
-        nSbq/d/haJGtPRAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 28033138F9;
-        Fri, 25 Aug 2023 13:47:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id UJRbCQ2x6GQZAwAAMHmgww
-        (envelope-from <jack@suse.cz>); Fri, 25 Aug 2023 13:47:57 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id A432FA0774; Fri, 25 Aug 2023 15:47:56 +0200 (CEST)
-Date:   Fri, 25 Aug 2023 15:47:56 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        Alasdair Kergon <agk@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        David Sterba <dsterba@suse.com>, dm-devel@redhat.com,
-        drbd-dev@lists.linbit.com, Gao Xiang <xiang@kernel.org>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        jfs-discussion@lists.sourceforge.net,
-        Joern Engel <joern@lazybastard.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-xfs@vger.kernel.org,
-        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Minchan Kim <minchan@kernel.org>, ocfs2-devel@oss.oracle.com,
-        reiserfs-devel@vger.kernel.org,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Song Liu <song@kernel.org>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        target-devel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        xen-devel@lists.xenproject.org, Jens Axboe <axboe@kernel.dk>,
-        Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 0/29] block: Make blkdev_get_by_*() return handle
-Message-ID: <20230825134756.o3wpq6bogndukn53@quack3>
-References: <20230810171429.31759-1-jack@suse.cz>
- <20230825015843.GB95084@ZenIV>
+        Fri, 25 Aug 2023 09:54:57 -0400
+Received: from out-242.mta1.migadu.com (out-242.mta1.migadu.com [95.215.58.242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 704552139
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Aug 2023 06:54:53 -0700 (PDT)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1692971691;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Tk2hf/ZsTIcu3ZelMcVU1L9gdHG1BIE6+k0PUkf3KOw=;
+        b=uBcPYj+KePQLzK49m3TJoZ63Y8UYXvuGXKh/n3l6WJhsswjd7fki+qH9rfO1d4Ug+ZVsQ9
+        lMMssXOvXKvFl3htZmbseqXbjusga8retQQQvlmfZ3u1SC4cy0Lfpdarfx6uPXt3VqFa7M
+        TnDSmLpV98dTb6gRRR2P2i+KA8l5+u4=
+From:   Hao Xu <hao.xu@linux.dev>
+To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-cachefs@redhat.com,
+        ecryptfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, codalist@coda.cs.cmu.edu,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
+        Wanpeng Li <wanpengli@tencent.com>
+Subject: [PATCH RFC v5 00/29] io_uring getdents
+Date:   Fri, 25 Aug 2023 21:54:02 +0800
+Message-Id: <20230825135431.1317785-1-hao.xu@linux.dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230825015843.GB95084@ZenIV>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_PASS,
-        T_SPF_HELO_TEMPERROR autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 25-08-23 02:58:43, Al Viro wrote:
-> On Fri, Aug 11, 2023 at 01:04:31PM +0200, Jan Kara wrote:
-> > Hello,
-> > 
-> > this is a v2 of the patch series which implements the idea of blkdev_get_by_*()
-> > calls returning bdev_handle which is then passed to blkdev_put() [1]. This
-> > makes the get and put calls for bdevs more obviously matching and allows us to
-> > propagate context from get to put without having to modify all the users
-> > (again!).  In particular I need to propagate used open flags to blkdev_put() to
-> > be able count writeable opens and add support for blocking writes to mounted
-> > block devices. I'll send that series separately.
-> > 
-> > The series is based on Christian's vfs tree as of yesterday as there is quite
-> > some overlap. Patches have passed some reasonable testing - I've tested block
-> > changes, md, dm, bcache, xfs, btrfs, ext4, swap. This obviously doesn't cover
-> > everything so I'd like to ask respective maintainers to review / test their
-> > changes. Thanks! I've pushed out the full branch to:
-> > 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git bdev_handle
-> > 
-> > to ease review / testing.
-> 
-> Hmm...  Completely Insane Idea(tm): how about turning that thing inside out and
-> having your bdev_open_by... return an actual opened struct file?
-> 
-> After all, we do that for sockets and pipes just fine and that's a whole lot
-> hotter area.
-> 
-> Suppose we leave blkdev_open()/blkdev_release() as-is.  No need to mess with
-> what we have for normal opened files for block devices.  And have block_open_by_dev()
-> that would find bdev, etc., same yours does and shove it into anon file.
-> 
-> Paired with plain fput() - no need to bother with new primitives for closing.
-> With a helper returning I_BDEV(bdev_file_inode(file)) to get from those to bdev.
-> 
-> NOTE: I'm not suggesting replacing ->s_bdev with struct file * if we do that -
-> we want that value cached, obviously.  Just store both...
-> 
-> Not saying it's a good idea, but... might be interesting to look into.
-> Comments?
+From: Hao Xu <howeyxu@tencent.com>
 
-I can see the appeal of not having to introduce the new bdev_handle type
-and just using struct file which unifies in-kernel and userspace block
-device opens. But I can see downsides too - the last fput() happening from
-task work makes me a bit nervous whether it will not break something
-somewhere with exclusive bdev opens. Getting from struct file to bdev is
-somewhat harder but I guess a helper like F_BDEV() would solve that just
-fine.
+This series introduce getdents64 to io_uring, the code logic is similar
+with the snychronized version's. It first try nowait issue, and offload
+it to io-wq threads if the first try fails.
 
-So besides my last fput() worry about I think this could work and would be
-probably a bit nicer than what I have. But before going and redoing the whole
-series let me gather some more feedback so that we don't go back and forth.
-Christoph, Christian, Jens, any opinion?
+Patch1 and Patch2 are some preparation
+Patch3 supports nowait for xfs getdents code
+Patch4-11 are vfs change, include adding helpers and trylock for locks
+Patch12-29 supports nowait for involved xfs journal stuff
+note, Patch24 and 27 are actually two questions, might be removed later.
+an xfs test may come later.
 
-								Honza
+Tests I've done:
+a liburing test case for functional test:
+https://github.com/HowHsu/liburing/commit/39dc9a8e19c06a8cebf8c2301b85320eb45c061e?diff=unified
+
+xfstests:
+    test/generic: 1 fails and 171 not run
+    test/xfs: 72 fails and 156 not run
+run the code before without this patchset, same result.
+I'll try to make the environment more right to run more tests here.
+
+
+Tested it with a liburing performance test:
+https://github.com/HowHsu/liburing/blob/getdents/test/getdents2.c
+
+The test is controlled by the below script[2] which runs getdents2.t 100
+times and calulate the avg.
+The result show that io_uring version is about 2.6% faster:
+
+note:
+[1] the number of getdents call/request in io_uring and normal sync version
+are made sure to be same beforehand.
+
+[2] run_getdents.py
+
+```python3
+
+import subprocess
+
+N = 100
+sum = 0.0
+args = ["/data/home/howeyxu/tmpdir", "sync"]
+
+for i in range(N):
+    output = subprocess.check_output(["./liburing/test/getdents2.t"] + args)
+    sum += float(output)
+
+average = sum / N
+print("Average of sync:", average)
+
+sum = 0.0
+args = ["/data/home/howeyxu/tmpdir", "iouring"]
+
+for i in range(N):
+    output = subprocess.check_output(["./liburing/test/getdents2.t"] + args)
+    sum += float(output)
+
+average = sum / N
+print("Average of iouring:", average)
+
+```
+
+v4->v5:
+ - move atime update to the beginning of getdents operation
+ - trylock for i_rwsem
+ - nowait semantics for involved xfs journal stuff
+
+v3->v4:
+ - add Dave's xfs nowait code and fix a deadlock problem, with some code
+   style tweak.
+ - disable fixed file to avoid a race problem for now
+ - add a test program.
+
+v2->v3:
+ - removed the kernfs patches
+ - add f_pos_lock logic
+ - remove the "reduce last EOF getdents try" optimization since
+   Dominique reports that doesn't make difference
+ - remove the rewind logic, I think the right way is to introduce lseek
+   to io_uring not to patch this logic to getdents.
+ - add Singed-off-by of Stefan Roesch for patch 1 since checkpatch
+   complained that Co-developed-by someone should be accompanied with
+   Signed-off-by same person, I can remove them if Stefan thinks that's
+   not proper.
+
+
+Dominique Martinet (1):
+  fs: split off vfs_getdents function of getdents64 syscall
+
+Hao Xu (28):
+  xfs: rename XBF_TRYLOCK to XBF_NOWAIT
+  xfs: add NOWAIT semantics for readdir
+  vfs: add nowait flag for struct dir_context
+  vfs: add a vfs helper for io_uring file pos lock
+  vfs: add file_pos_unlock() for io_uring usage
+  vfs: add a nowait parameter for touch_atime()
+  vfs: add nowait parameter for file_accessed()
+  vfs: move file_accessed() to the beginning of iterate_dir()
+  vfs: add S_NOWAIT for nowait time update
+  vfs: trylock inode->i_rwsem in iterate_dir() to support nowait
+  xfs: enforce GFP_NOIO implicitly during nowait time update
+  xfs: make xfs_trans_alloc() support nowait semantics
+  xfs: support nowait for xfs_log_reserve()
+  xfs: don't wait for free space in xlog_grant_head_check() in nowait
+    case
+  xfs: add nowait parameter for xfs_inode_item_init()
+  xfs: make xfs_trans_ijoin() error out -EAGAIN
+  xfs: set XBF_NOWAIT for xfs_buf_read_map if necessary
+  xfs: support nowait memory allocation in _xfs_buf_alloc()
+  xfs: distinguish error type of memory allocation failure for nowait
+    case
+  xfs: return -EAGAIN when bulk memory allocation fails in nowait case
+  xfs: comment page allocation for nowait case in xfs_buf_find_insert()
+  xfs: don't print warn info for -EAGAIN error in  xfs_buf_get_map()
+  xfs: support nowait for xfs_buf_read_map()
+  xfs: support nowait for xfs_buf_item_init()
+  xfs: return -EAGAIN when nowait meets sync in transaction commit
+  xfs: add a comment for xlog_kvmalloc()
+  xfs: support nowait semantics for xc_ctx_lock in xlog_cil_commit()
+  io_uring: add support for getdents
+
+ arch/s390/hypfs/inode.c         |  2 +-
+ block/fops.c                    |  2 +-
+ fs/btrfs/file.c                 |  2 +-
+ fs/btrfs/inode.c                |  2 +-
+ fs/cachefiles/namei.c           |  2 +-
+ fs/coda/dir.c                   |  4 +--
+ fs/ecryptfs/file.c              |  4 +--
+ fs/ext2/file.c                  |  4 +--
+ fs/ext4/file.c                  |  6 ++--
+ fs/f2fs/file.c                  |  4 +--
+ fs/file.c                       | 13 +++++++
+ fs/fuse/dax.c                   |  2 +-
+ fs/fuse/file.c                  |  4 +--
+ fs/gfs2/file.c                  |  2 +-
+ fs/hugetlbfs/inode.c            |  2 +-
+ fs/inode.c                      | 10 +++---
+ fs/internal.h                   |  8 +++++
+ fs/namei.c                      |  4 +--
+ fs/nfsd/vfs.c                   |  2 +-
+ fs/nilfs2/file.c                |  2 +-
+ fs/orangefs/file.c              |  2 +-
+ fs/orangefs/inode.c             |  2 +-
+ fs/overlayfs/file.c             |  2 +-
+ fs/overlayfs/inode.c            |  2 +-
+ fs/pipe.c                       |  2 +-
+ fs/ramfs/file-nommu.c           |  2 +-
+ fs/readdir.c                    | 61 +++++++++++++++++++++++++--------
+ fs/smb/client/cifsfs.c          |  2 +-
+ fs/splice.c                     |  2 +-
+ fs/stat.c                       |  2 +-
+ fs/ubifs/file.c                 |  2 +-
+ fs/udf/file.c                   |  2 +-
+ fs/xfs/libxfs/xfs_alloc.c       |  2 +-
+ fs/xfs/libxfs/xfs_attr_remote.c |  2 +-
+ fs/xfs/libxfs/xfs_btree.c       |  2 +-
+ fs/xfs/libxfs/xfs_da_btree.c    | 16 +++++++++
+ fs/xfs/libxfs/xfs_da_btree.h    |  1 +
+ fs/xfs/libxfs/xfs_dir2_block.c  |  7 ++--
+ fs/xfs/libxfs/xfs_dir2_priv.h   |  2 +-
+ fs/xfs/libxfs/xfs_shared.h      |  2 ++
+ fs/xfs/libxfs/xfs_trans_inode.c | 12 +++++--
+ fs/xfs/scrub/dir.c              |  2 +-
+ fs/xfs/scrub/readdir.c          |  2 +-
+ fs/xfs/scrub/repair.c           |  2 +-
+ fs/xfs/xfs_buf.c                | 43 +++++++++++++++++------
+ fs/xfs/xfs_buf.h                |  4 +--
+ fs/xfs/xfs_buf_item.c           |  9 +++--
+ fs/xfs/xfs_buf_item.h           |  2 +-
+ fs/xfs/xfs_buf_item_recover.c   |  2 +-
+ fs/xfs/xfs_dir2_readdir.c       | 49 ++++++++++++++++++++------
+ fs/xfs/xfs_dquot.c              |  2 +-
+ fs/xfs/xfs_file.c               |  6 ++--
+ fs/xfs/xfs_inode.c              | 27 +++++++++++++++
+ fs/xfs/xfs_inode.h              | 17 +++++----
+ fs/xfs/xfs_inode_item.c         | 12 ++++---
+ fs/xfs/xfs_inode_item.h         |  3 +-
+ fs/xfs/xfs_iops.c               | 31 ++++++++++++++---
+ fs/xfs/xfs_log.c                | 33 ++++++++++++------
+ fs/xfs/xfs_log.h                |  5 +--
+ fs/xfs/xfs_log_cil.c            | 17 +++++++--
+ fs/xfs/xfs_log_priv.h           |  4 +--
+ fs/xfs/xfs_trans.c              | 44 ++++++++++++++++++++----
+ fs/xfs/xfs_trans.h              |  2 +-
+ fs/xfs/xfs_trans_buf.c          | 18 ++++++++--
+ fs/zonefs/file.c                |  4 +--
+ include/linux/file.h            |  7 ++++
+ include/linux/fs.h              | 16 +++++++--
+ include/uapi/linux/io_uring.h   |  1 +
+ io_uring/fs.c                   | 53 ++++++++++++++++++++++++++++
+ io_uring/fs.h                   |  3 ++
+ io_uring/opdef.c                |  8 +++++
+ kernel/bpf/inode.c              |  4 +--
+ mm/filemap.c                    |  8 ++---
+ mm/shmem.c                      |  6 ++--
+ net/unix/af_unix.c              |  4 +--
+ 75 files changed, 499 insertions(+), 161 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.25.1
+
