@@ -2,30 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E8A4788A19
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 16:03:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DD68788A1F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 16:04:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245530AbjHYOC5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Aug 2023 10:02:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46334 "EHLO
+        id S243407AbjHYOD2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Aug 2023 10:03:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243407AbjHYOCZ (ORCPT
+        with ESMTP id S245597AbjHYODC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Aug 2023 10:02:25 -0400
-Received: from out-245.mta1.migadu.com (out-245.mta1.migadu.com [IPv6:2001:41d0:203:375::f5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37E3326A3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Aug 2023 07:02:01 -0700 (PDT)
+        Fri, 25 Aug 2023 10:03:02 -0400
+Received: from out-243.mta1.migadu.com (out-243.mta1.migadu.com [IPv6:2001:41d0:203:375::f3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABFD22705;
+        Fri, 25 Aug 2023 07:02:41 -0700 (PDT)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1692972120;
+        t=1692972160;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=d4c4JLcaw2hXejiOrGnFBQPVU2RM5hO/J+/aXcCYNEw=;
-        b=khe71NuAofqjJQcQBQh8qaSLQW5l+ABTZSFJ8Vvkem+VJ7Uz3lPnhsRbG1QiQpVIB0WzKu
-        TWSkBSbRJUjuC3LbOfeO0WhIFxiibQKBlsbXK8GLa0a537NlmAJDnBgPGmvzDTS140+5t+
-        gKh3+G5l/F0DpREKKRmtO+kz90FC86s=
+        bh=3IHqyAGVDJ58osMbe/1AdWvJDmRup4/lFC37whRevKc=;
+        b=Eb4iAdgTR0TpdbPqUzDwHbHxPEh5V68LsiBX5YVrmluxRTdzMTEqMqKrZvLhm9MDpgg3K/
+        D2eTyYZZZ+bfvHLihjIIZJ2OKJ2cQ07lnUU3TLxQlV7ixmfK6NG3WLuhhK+cGvea8pFBoo
+        CGGtOLVSVaB7g8RjjJfuG0O31ub2h9Y=
 From:   Hao Xu <hao.xu@linux.dev>
 To:     io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
 Cc:     Dominique Martinet <asmadeus@codewreck.org>,
@@ -47,9 +47,9 @@ Cc:     Dominique Martinet <asmadeus@codewreck.org>,
         devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
         samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
         Wanpeng Li <wanpengli@tencent.com>
-Subject: [PATCH 15/29] xfs: don't wait for free space in xlog_grant_head_check() in nowait case
-Date:   Fri, 25 Aug 2023 21:54:17 +0800
-Message-Id: <20230825135431.1317785-16-hao.xu@linux.dev>
+Subject: [PATCH 17/29] xfs: make xfs_trans_ijoin() error out -EAGAIN
+Date:   Fri, 25 Aug 2023 21:54:19 +0800
+Message-Id: <20230825135431.1317785-18-hao.xu@linux.dev>
 In-Reply-To: <20230825135431.1317785-1-hao.xu@linux.dev>
 References: <20230825135431.1317785-1-hao.xu@linux.dev>
 MIME-Version: 1.0
@@ -66,65 +66,81 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Hao Xu <howeyxu@tencent.com>
 
-Don't sleep and wait for more space for a log ticket in
-xlog_grant_head_check() when it is in nowait case.
+Change return value of xfs_trans_ijoin() to error out -EAGAIN.
 
 Signed-off-by: Hao Xu <howeyxu@tencent.com>
 ---
- fs/xfs/xfs_log.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ fs/xfs/libxfs/xfs_trans_inode.c | 13 +++++++++----
+ fs/xfs/xfs_iops.c               |  4 +++-
+ fs/xfs/xfs_trans.h              |  2 +-
+ 3 files changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-index 90fbb1c0eca2..a2aabdd42a29 100644
---- a/fs/xfs/xfs_log.c
-+++ b/fs/xfs/xfs_log.c
-@@ -341,7 +341,8 @@ xlog_grant_head_check(
- 	struct xlog		*log,
- 	struct xlog_grant_head	*head,
- 	struct xlog_ticket	*tic,
--	int			*need_bytes)
-+	int			*need_bytes,
-+	bool			nowait)
- {
- 	int			free_bytes;
- 	int			error = 0;
-@@ -360,13 +361,15 @@ xlog_grant_head_check(
- 		spin_lock(&head->lock);
- 		if (!xlog_grant_head_wake(log, head, &free_bytes) ||
- 		    free_bytes < *need_bytes) {
--			error = xlog_grant_head_wait(log, head, tic,
--						     *need_bytes);
-+			error = nowait ?
-+				-EAGAIN : xlog_grant_head_wait(log, head, tic,
-+							       *need_bytes);
- 		}
- 		spin_unlock(&head->lock);
- 	} else if (free_bytes < *need_bytes) {
- 		spin_lock(&head->lock);
--		error = xlog_grant_head_wait(log, head, tic, *need_bytes);
-+		error = nowait ? -EAGAIN : xlog_grant_head_wait(log, head, tic,
-+								*need_bytes);
- 		spin_unlock(&head->lock);
- 	}
+diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
+index e7a8f63c8975..7bda62bad90a 100644
+--- a/fs/xfs/libxfs/xfs_trans_inode.c
++++ b/fs/xfs/libxfs/xfs_trans_inode.c
+@@ -23,7 +23,7 @@
+  * The inode must be locked, and it cannot be associated with any transaction.
+  * If lock_flags is non-zero the inode will be unlocked on transaction commit.
+  */
+-void
++int
+ xfs_trans_ijoin(
+ 	struct xfs_trans	*tp,
+ 	struct xfs_inode	*ip,
+@@ -32,9 +32,12 @@ xfs_trans_ijoin(
+ 	struct xfs_inode_log_item *iip;
  
-@@ -428,7 +431,7 @@ xfs_log_regrant(
- 	trace_xfs_log_regrant(log, tic);
+ 	ASSERT(xfs_isilocked(ip, XFS_ILOCK_EXCL));
+-	if (ip->i_itemp == NULL)
+-		xfs_inode_item_init(ip, ip->i_mount,
+-				    tp->t_flags & XFS_TRANS_NOWAIT);
++	if (ip->i_itemp == NULL) {
++		int ret = xfs_inode_item_init(ip, ip->i_mount,
++					      tp->t_flags & XFS_TRANS_NOWAIT);
++		if (ret == -EAGAIN)
++			return ret;
++	}
+ 	iip = ip->i_itemp;
  
- 	error = xlog_grant_head_check(log, &log->l_write_head, tic,
--				      &need_bytes);
-+				      &need_bytes, false);
- 	if (error)
- 		goto out_error;
+ 	ASSERT(iip->ili_lock_flags == 0);
+@@ -44,6 +47,8 @@ xfs_trans_ijoin(
+ 	/* Reset the per-tx dirty context and add the item to the tx. */
+ 	iip->ili_dirty_flags = 0;
+ 	xfs_trans_add_item(tp, &iip->ili_item);
++
++	return 0;
+ }
  
-@@ -487,7 +490,7 @@ xfs_log_reserve(
- 	trace_xfs_log_reserve(log, tic);
+ /*
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 47b4fd5f8f5c..034a8fea1f8e 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1075,7 +1075,9 @@ xfs_vn_update_time(
+ 	if (flags & S_ATIME)
+ 		inode->i_atime = *now;
  
- 	error = xlog_grant_head_check(log, &log->l_reserve_head, tic,
--				      &need_bytes);
-+				      &need_bytes, nowait);
- 	if (error)
- 		goto out_error;
+-	xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL);
++	error = xfs_trans_ijoin(tp, ip, XFS_ILOCK_EXCL);
++	if (error)
++		goto out;
+ 	xfs_trans_log_inode(tp, ip, log_flags);
+ 	error = xfs_trans_commit(tp);
  
+diff --git a/fs/xfs/xfs_trans.h b/fs/xfs/xfs_trans.h
+index 6e3646d524ce..f2c05884c4b6 100644
+--- a/fs/xfs/xfs_trans.h
++++ b/fs/xfs/xfs_trans.h
+@@ -226,7 +226,7 @@ bool		xfs_trans_ordered_buf(xfs_trans_t *, struct xfs_buf *);
+ void		xfs_trans_dquot_buf(xfs_trans_t *, struct xfs_buf *, uint);
+ void		xfs_trans_inode_alloc_buf(xfs_trans_t *, struct xfs_buf *);
+ void		xfs_trans_ichgtime(struct xfs_trans *, struct xfs_inode *, int);
+-void		xfs_trans_ijoin(struct xfs_trans *, struct xfs_inode *, uint);
++int		xfs_trans_ijoin(struct xfs_trans *, struct xfs_inode *, uint);
+ void		xfs_trans_log_buf(struct xfs_trans *, struct xfs_buf *, uint,
+ 				  uint);
+ void		xfs_trans_dirty_buf(struct xfs_trans *, struct xfs_buf *);
 -- 
 2.25.1
 
