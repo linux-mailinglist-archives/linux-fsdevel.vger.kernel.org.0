@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 893EB788FA7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 22:14:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 436A7788F8F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 22:13:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230333AbjHYUNM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Aug 2023 16:13:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37632 "EHLO
+        id S230354AbjHYUNN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Aug 2023 16:13:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229971AbjHYUMl (ORCPT
+        with ESMTP id S229607AbjHYUMk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Aug 2023 16:12:41 -0400
+        Fri, 25 Aug 2023 16:12:40 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68A48268F;
-        Fri, 25 Aug 2023 13:12:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 022F22689;
+        Fri, 25 Aug 2023 13:12:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=dhiojXSvdUlOX72At1qltK2xt894rQa+8d88bX+5rNI=; b=Zyd55oC4gCM8VKt7zmpBQof+2/
-        /yfWY58WgBfDfW98Lkdn0Nrn0E65CxE7P0cHS6HJ8VfASlWkg0tqiiAqy7TXBquQynE8rbZ5/iE7I
-        9Z9FCgHZKE14jBIJA7c++jCduhyUD8jjq2cGKtAUssoI0AN6YtLJSTnKsHjiuqEpAX9nOqg3HI5Io
-        CMoHSTRQY/SVGxBxWobbxr2uEvNXEgfhOWE36hb73VAxbBvk7RhEYmNzBB3qfAo+oBpuutQUqW5Yv
-        kMa3TF/X0unS1v1eOhEOli/rHsgUvxTeY33NrFAFkHB5EV86lEEj15H73sLKPvxr5T+tC14c9fq4n
-        DU19ZCkA==;
+        bh=A9e9J+dnjCMMc42iX3zzfqVkWCVEH8VUZ/HYaNwAhhc=; b=CagZXzLXuThc8baN2nwM8XfRJN
+        YbdQX6dtKhmbFS05r0NgijXYb3fAT98IPpHszGOlgO88v4SswgP9vHxD36boL3hsVFdBxD+zLH3gb
+        /67Ng23CL7XEAfPnlWPlgps895UvfIevcOvGEOg7soNsWbkYewo8VGjLelwJFFAG747jIiDqmVfwF
+        qYWEfcDLaEGZvcpjhCZ/kDyAm0nROWwy0TcDKJtmlxkiUMPHJ1VpGwhb5p8qsSr379zeknq9JR420
+        SlkWcFE3YxORScNkSuTJnNiMyEtjyY5ioXZE3HianNXgqgXv7pCcxZEfVtR2pg7KV/RY0pxpQ5Np1
+        QJJMM5Hw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qZdAW-001SaH-5g; Fri, 25 Aug 2023 20:12:32 +0000
+        id 1qZdAW-001SaN-9p; Fri, 25 Aug 2023 20:12:32 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
         David Howells <dhowells@redhat.com>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 12/15] ceph: Convert ceph_fill_inode() to take a folio
-Date:   Fri, 25 Aug 2023 21:12:22 +0100
-Message-Id: <20230825201225.348148-13-willy@infradead.org>
+Subject: [PATCH 13/15] ceph: Convert ceph_fill_inline_data() to take a folio
+Date:   Fri, 25 Aug 2023 21:12:23 +0100
+Message-Id: <20230825201225.348148-14-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230825201225.348148-1-willy@infradead.org>
 References: <20230825201225.348148-1-willy@infradead.org>
@@ -50,91 +50,114 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Its one caller already has a folio, so pass it through req->r_locked_folio
-into ceph_fill_inode().
+Its one caller now has a folio, so use the folio API within this
+function.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ceph/inode.c      | 10 +++++-----
- fs/ceph/mds_client.h |  2 +-
- fs/ceph/super.h      |  2 +-
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ fs/ceph/addr.c  | 44 ++++++++++++++++++++------------------------
+ fs/ceph/inode.c |  2 +-
+ fs/ceph/super.h |  2 +-
+ 3 files changed, 22 insertions(+), 26 deletions(-)
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index ced036d47b3b..d5f0fe39b92f 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -913,7 +913,7 @@ static int decode_encrypted_symlink(const char *encsym, int symlen, u8 **decsym)
-  * Populate an inode based on info from mds.  May be called on new or
-  * existing inodes.
-  */
--int ceph_fill_inode(struct inode *inode, struct page *locked_page,
-+int ceph_fill_inode(struct inode *inode, struct folio *locked_folio,
- 		    struct ceph_mds_reply_info_in *iinfo,
- 		    struct ceph_mds_reply_dirfrag *dirinfo,
- 		    struct ceph_mds_session *session, int cap_fmode,
-@@ -1261,7 +1261,7 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
- 		int cache_caps = CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO;
- 		ci->i_inline_version = iinfo->inline_version;
- 		if (ceph_has_inline_data(ci) &&
--		    (locked_page || (info_caps & cache_caps)))
-+		    (locked_folio || (info_caps & cache_caps)))
- 			fill_inline = true;
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 09178a8ebbde..79d8f2fddd49 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1748,47 +1748,43 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+ 	return ret;
+ }
+ 
+-void ceph_fill_inline_data(struct inode *inode, struct page *locked_page,
++void ceph_fill_inline_data(struct inode *inode, struct folio *locked_folio,
+ 			   char	*data, size_t len)
+ {
+ 	struct address_space *mapping = inode->i_mapping;
+-	struct page *page;
++	struct folio *folio;
+ 
+-	if (locked_page) {
+-		page = locked_page;
++	if (locked_folio) {
++		folio = locked_folio;
+ 	} else {
+ 		if (i_size_read(inode) == 0)
+ 			return;
+-		page = find_or_create_page(mapping, 0,
+-					   mapping_gfp_constraint(mapping,
+-					   ~__GFP_FS));
+-		if (!page)
++		folio = __filemap_get_folio(mapping, 0,
++				FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
++				mapping_gfp_constraint(mapping, ~__GFP_FS));
++		if (IS_ERR(folio))
+ 			return;
+-		if (PageUptodate(page)) {
+-			unlock_page(page);
+-			put_page(page);
++		if (folio_test_uptodate(folio)) {
++			folio_unlock(folio);
++			folio_put(folio);
+ 			return;
+ 		}
  	}
  
-@@ -1277,7 +1277,7 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+-	dout("fill_inline_data %p %llx.%llx len %zu locked_page %p\n",
+-	     inode, ceph_vinop(inode), len, locked_page);
++	dout("fill_inline_data %p %llx.%llx len %zu locked_folio %lu\n",
++	     inode, ceph_vinop(inode), len, locked_folio->index);
+ 
+-	if (len > 0) {
+-		void *kaddr = kmap_atomic(page);
+-		memcpy(kaddr, data, len);
+-		kunmap_atomic(kaddr);
+-	}
++	memcpy_to_folio(folio, 0, data, len);
+ 
+-	if (page != locked_page) {
++	if (folio != locked_folio) {
+ 		if (len < PAGE_SIZE)
+-			zero_user_segment(page, len, PAGE_SIZE);
++			folio_zero_segment(folio, len, PAGE_SIZE);
+ 		else
+-			flush_dcache_page(page);
++			flush_dcache_folio(folio);
+ 
+-		SetPageUptodate(page);
+-		unlock_page(page);
+-		put_page(page);
++		folio_mark_uptodate(folio);
++		folio_unlock(folio);
++		folio_put(folio);
+ 	}
+ }
+ 
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index d5f0fe39b92f..70f7f68ba078 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1277,7 +1277,7 @@ int ceph_fill_inode(struct inode *inode, struct folio *locked_folio,
  	ceph_fscache_register_inode_cookie(inode);
  
  	if (fill_inline)
--		ceph_fill_inline_data(inode, locked_page,
-+		ceph_fill_inline_data(inode, &locked_folio->page,
+-		ceph_fill_inline_data(inode, &locked_folio->page,
++		ceph_fill_inline_data(inode, locked_folio,
  				      iinfo->inline_data, iinfo->inline_len);
  
  	if (wake)
-@@ -1596,7 +1596,7 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 		BUG_ON(!req->r_target_inode);
- 
- 		in = req->r_target_inode;
--		err = ceph_fill_inode(in, req->r_locked_page, &rinfo->targeti,
-+		err = ceph_fill_inode(in, req->r_locked_folio, &rinfo->targeti,
- 				NULL, session,
- 				(!test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags) &&
- 				 !test_bit(CEPH_MDS_R_ASYNC, &req->r_req_flags) &&
-@@ -2836,7 +2836,7 @@ int __ceph_do_getattr(struct inode *inode, struct folio *locked_folio,
- 	ihold(inode);
- 	req->r_num_caps = 1;
- 	req->r_args.getattr.mask = cpu_to_le32(mask);
--	req->r_locked_page = &locked_folio->page;
-+	req->r_locked_folio = locked_folio;
- 	err = ceph_mdsc_do_request(mdsc, NULL, req);
- 	if (locked_folio && err == 0) {
- 		u64 inline_version = req->r_reply_info.targeti.inline_version;
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 1fa0f78b7b79..d2cf2ff9fa66 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -320,7 +320,7 @@ struct ceph_mds_request {
- 	int r_err;
- 	u32               r_readdir_offset;
- 
--	struct page *r_locked_page;
-+	struct folio *r_locked_folio;
- 	int r_dir_caps;
- 	int r_num_caps;
- 
 diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 3649ac41a626..d741a9d15f52 100644
+index d741a9d15f52..a986928c3000 100644
 --- a/fs/ceph/super.h
 +++ b/fs/ceph/super.h
-@@ -1038,7 +1038,7 @@ extern void ceph_fill_file_time(struct inode *inode, int issued,
- 				u64 time_warp_seq, struct timespec64 *ctime,
- 				struct timespec64 *mtime,
- 				struct timespec64 *atime);
--extern int ceph_fill_inode(struct inode *inode, struct page *locked_page,
-+int ceph_fill_inode(struct inode *inode, struct folio *locked_folio,
- 		    struct ceph_mds_reply_info_in *iinfo,
- 		    struct ceph_mds_reply_dirfrag *dirinfo,
- 		    struct ceph_mds_session *session, int cap_fmode,
+@@ -1311,7 +1311,7 @@ extern ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+ 				struct iov_iter *to, int *retry_op,
+ 				u64 *last_objver);
+ extern int ceph_release(struct inode *inode, struct file *filp);
+-extern void ceph_fill_inline_data(struct inode *inode, struct page *locked_page,
++void ceph_fill_inline_data(struct inode *inode, struct folio *locked_folio,
+ 				  char *data, size_t len);
+ 
+ /* dir.c */
 -- 
 2.40.1
 
