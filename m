@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7DCD788F94
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 22:13:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 893EB788FA7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 22:14:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230406AbjHYUNO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Aug 2023 16:13:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37660 "EHLO
+        id S230333AbjHYUNM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Aug 2023 16:13:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230232AbjHYUMo (ORCPT
+        with ESMTP id S229971AbjHYUMl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Aug 2023 16:12:44 -0400
+        Fri, 25 Aug 2023 16:12:41 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AC62268A;
-        Fri, 25 Aug 2023 13:12:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68A48268F;
+        Fri, 25 Aug 2023 13:12:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=A01TE489ckQP9O12cr6XeHZtnw6Y2F2mnpUztYb0dK8=; b=InTD+PckuTsmPz9rB/jBiJHJsl
-        CFTmebln5vVjMB+j1Y8ydtnKkDJESeQm1yxS21iAvZg6PlCKgHjsoIu8lP5C6ojqEoaea0hBCVdEu
-        UPr6VvMqzW9WjsV4ll29xsvSFhBsJmsNIrUJxcRiLZtMAuY1BaKzmjSXhIde7mZqK1Cg0VmjwOvq9
-        y5aiKBHiAawwmmIdzkxN0f6+nqaBO4k3YJwdiyhET0EgPTdP75dkyMXTe3aSPVVwFn8m4N28wruJQ
-        pBx4ujdYyvjH0LBwcZpxcPFfVqpDEV4iH+ysWzJXEpCZn8WXaNe86u00LlIqehAohBk0u1XkC6IVw
-        pMrAm5Yg==;
+        bh=dhiojXSvdUlOX72At1qltK2xt894rQa+8d88bX+5rNI=; b=Zyd55oC4gCM8VKt7zmpBQof+2/
+        /yfWY58WgBfDfW98Lkdn0Nrn0E65CxE7P0cHS6HJ8VfASlWkg0tqiiAqy7TXBquQynE8rbZ5/iE7I
+        9Z9FCgHZKE14jBIJA7c++jCduhyUD8jjq2cGKtAUssoI0AN6YtLJSTnKsHjiuqEpAX9nOqg3HI5Io
+        CMoHSTRQY/SVGxBxWobbxr2uEvNXEgfhOWE36hb73VAxbBvk7RhEYmNzBB3qfAo+oBpuutQUqW5Yv
+        kMa3TF/X0unS1v1eOhEOli/rHsgUvxTeY33NrFAFkHB5EV86lEEj15H73sLKPvxr5T+tC14c9fq4n
+        DU19ZCkA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qZdAW-001SaB-1g; Fri, 25 Aug 2023 20:12:32 +0000
+        id 1qZdAW-001SaH-5g; Fri, 25 Aug 2023 20:12:32 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
         David Howells <dhowells@redhat.com>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 11/15] ceph: Convert __ceph_do_getattr() to take a folio
-Date:   Fri, 25 Aug 2023 21:12:21 +0100
-Message-Id: <20230825201225.348148-12-willy@infradead.org>
+Subject: [PATCH 12/15] ceph: Convert ceph_fill_inode() to take a folio
+Date:   Fri, 25 Aug 2023 21:12:22 +0100
+Message-Id: <20230825201225.348148-13-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230825201225.348148-1-willy@infradead.org>
 References: <20230825201225.348148-1-willy@infradead.org>
@@ -50,82 +50,91 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Both callers now have a folio, so pass it in.
+Its one caller already has a folio, so pass it through req->r_locked_folio
+into ceph_fill_inode().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ceph/addr.c  | 2 +-
- fs/ceph/file.c  | 2 +-
- fs/ceph/inode.c | 6 +++---
- fs/ceph/super.h | 4 ++--
- 4 files changed, 7 insertions(+), 7 deletions(-)
+ fs/ceph/inode.c      | 10 +++++-----
+ fs/ceph/mds_client.h |  2 +-
+ fs/ceph/super.h      |  2 +-
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 1812c3e6e64f..09178a8ebbde 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1618,7 +1618,7 @@ static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
- 			ret = VM_FAULT_OOM;
- 			goto out_inline;
- 		}
--		err = __ceph_do_getattr(inode, &folio->page,
-+		err = __ceph_do_getattr(inode, folio,
- 					 CEPH_STAT_CAP_INLINE_DATA, true);
- 		if (err < 0 || off >= i_size_read(inode)) {
- 			folio_unlock(folio);
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 5c4f763b1304..f4c3cb05b6f1 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -2091,7 +2091,7 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 				return -ENOMEM;
- 		}
- 
--		statret = __ceph_do_getattr(inode, &folio->page,
-+		statret = __ceph_do_getattr(inode, folio,
- 					    CEPH_STAT_CAP_INLINE_DATA, !!folio);
- 		if (statret < 0) {
- 			if (folio)
 diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 800ab7920513..ced036d47b3b 100644
+index ced036d47b3b..d5f0fe39b92f 100644
 --- a/fs/ceph/inode.c
 +++ b/fs/ceph/inode.c
-@@ -2809,7 +2809,7 @@ int ceph_try_to_choose_auth_mds(struct inode *inode, int mask)
-  * Verify that we have a lease on the given mask.  If not,
-  * do a getattr against an mds.
+@@ -913,7 +913,7 @@ static int decode_encrypted_symlink(const char *encsym, int symlen, u8 **decsym)
+  * Populate an inode based on info from mds.  May be called on new or
+  * existing inodes.
   */
--int __ceph_do_getattr(struct inode *inode, struct page *locked_page,
-+int __ceph_do_getattr(struct inode *inode, struct folio *locked_folio,
- 		      int mask, bool force)
- {
- 	struct ceph_fs_client *fsc = ceph_sb_to_client(inode->i_sb);
-@@ -2836,9 +2836,9 @@ int __ceph_do_getattr(struct inode *inode, struct page *locked_page,
+-int ceph_fill_inode(struct inode *inode, struct page *locked_page,
++int ceph_fill_inode(struct inode *inode, struct folio *locked_folio,
+ 		    struct ceph_mds_reply_info_in *iinfo,
+ 		    struct ceph_mds_reply_dirfrag *dirinfo,
+ 		    struct ceph_mds_session *session, int cap_fmode,
+@@ -1261,7 +1261,7 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+ 		int cache_caps = CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO;
+ 		ci->i_inline_version = iinfo->inline_version;
+ 		if (ceph_has_inline_data(ci) &&
+-		    (locked_page || (info_caps & cache_caps)))
++		    (locked_folio || (info_caps & cache_caps)))
+ 			fill_inline = true;
+ 	}
+ 
+@@ -1277,7 +1277,7 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+ 	ceph_fscache_register_inode_cookie(inode);
+ 
+ 	if (fill_inline)
+-		ceph_fill_inline_data(inode, locked_page,
++		ceph_fill_inline_data(inode, &locked_folio->page,
+ 				      iinfo->inline_data, iinfo->inline_len);
+ 
+ 	if (wake)
+@@ -1596,7 +1596,7 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 		BUG_ON(!req->r_target_inode);
+ 
+ 		in = req->r_target_inode;
+-		err = ceph_fill_inode(in, req->r_locked_page, &rinfo->targeti,
++		err = ceph_fill_inode(in, req->r_locked_folio, &rinfo->targeti,
+ 				NULL, session,
+ 				(!test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags) &&
+ 				 !test_bit(CEPH_MDS_R_ASYNC, &req->r_req_flags) &&
+@@ -2836,7 +2836,7 @@ int __ceph_do_getattr(struct inode *inode, struct folio *locked_folio,
  	ihold(inode);
  	req->r_num_caps = 1;
  	req->r_args.getattr.mask = cpu_to_le32(mask);
--	req->r_locked_page = locked_page;
-+	req->r_locked_page = &locked_folio->page;
+-	req->r_locked_page = &locked_folio->page;
++	req->r_locked_folio = locked_folio;
  	err = ceph_mdsc_do_request(mdsc, NULL, req);
--	if (locked_page && err == 0) {
-+	if (locked_folio && err == 0) {
+ 	if (locked_folio && err == 0) {
  		u64 inline_version = req->r_reply_info.targeti.inline_version;
- 		if (inline_version == 0) {
- 			/* the reply is supposed to contain inline data */
+diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+index 1fa0f78b7b79..d2cf2ff9fa66 100644
+--- a/fs/ceph/mds_client.h
++++ b/fs/ceph/mds_client.h
+@@ -320,7 +320,7 @@ struct ceph_mds_request {
+ 	int r_err;
+ 	u32               r_readdir_offset;
+ 
+-	struct page *r_locked_page;
++	struct folio *r_locked_folio;
+ 	int r_dir_caps;
+ 	int r_num_caps;
+ 
 diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 51c7f2b14f6f..3649ac41a626 100644
+index 3649ac41a626..d741a9d15f52 100644
 --- a/fs/ceph/super.h
 +++ b/fs/ceph/super.h
-@@ -1081,8 +1081,8 @@ static inline void ceph_queue_flush_snaps(struct inode *inode)
- }
- 
- extern int ceph_try_to_choose_auth_mds(struct inode *inode, int mask);
--extern int __ceph_do_getattr(struct inode *inode, struct page *locked_page,
--			     int mask, bool force);
-+int __ceph_do_getattr(struct inode *inode, struct folio *locked_folio,
-+		int mask, bool force);
- static inline int ceph_do_getattr(struct inode *inode, int mask, bool force)
- {
- 	return __ceph_do_getattr(inode, NULL, mask, force);
+@@ -1038,7 +1038,7 @@ extern void ceph_fill_file_time(struct inode *inode, int issued,
+ 				u64 time_warp_seq, struct timespec64 *ctime,
+ 				struct timespec64 *mtime,
+ 				struct timespec64 *atime);
+-extern int ceph_fill_inode(struct inode *inode, struct page *locked_page,
++int ceph_fill_inode(struct inode *inode, struct folio *locked_folio,
+ 		    struct ceph_mds_reply_info_in *iinfo,
+ 		    struct ceph_mds_reply_dirfrag *dirinfo,
+ 		    struct ceph_mds_session *session, int cap_fmode,
 -- 
 2.40.1
 
