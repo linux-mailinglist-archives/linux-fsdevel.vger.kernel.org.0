@@ -2,51 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AF107887B6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 14:42:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED55A788898
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 15:30:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242403AbjHYMmK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Aug 2023 08:42:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38116 "EHLO
+        id S244090AbjHYN3j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Aug 2023 09:29:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244270AbjHYMmJ (ORCPT
+        with ESMTP id S245125AbjHYN3U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Aug 2023 08:42:09 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90F081BE;
-        Fri, 25 Aug 2023 05:42:07 -0700 (PDT)
+        Fri, 25 Aug 2023 09:29:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E08A2133;
+        Fri, 25 Aug 2023 06:29:16 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2756666928;
-        Fri, 25 Aug 2023 12:42:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27F97C433C9;
-        Fri, 25 Aug 2023 12:42:04 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D9A6564C8A;
+        Fri, 25 Aug 2023 13:29:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB0DEC433C7;
+        Fri, 25 Aug 2023 13:29:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692967326;
-        bh=wohoeLc54G470PAxrgSeBMklXj47pDJYky5esTzz8ts=;
+        s=k20201202; t=1692970155;
+        bh=Kbv8RLcnybXhh3ttzFimO6pE4mxcaj6dzrHQVawJyzg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WklpX/LhQ/j/mGp80J4Idd4t4KZtBcF0240AdRlxAF+0O56oLch8U693qjturmdU5
-         JUJ7bjpKTkBKIb8JoRmoQTd7e8neb6EogHbn6RKPxqM5KfBBDRlo7+xTDk4B2XlGpz
-         GBW7F1JlJdmuU+qGLYQeqiurw/8VcAR/i+1aGyIDifLHXdaUkB87wPBo0+NiHCt55t
-         gzqk0oOADE36RQj08sd7eXaD6fDyraPghjG/uu62KIDjshT9xwDPQ53QGYoIi8O5ew
-         Rfw5C7p2D2WQQpGRyZoxwCNcukfNmHNoUa2F8/15natuNKwF40eSBMQ25S7LBS3w0X
-         NHdaxLarBBZsw==
-Date:   Fri, 25 Aug 2023 14:42:02 +0200
+        b=grIN7LIZkkYNWjyPZ9wdNShrKsqLEIxiD5DA3+05miHUlznDEQvH6Ktel0RIvZJgB
+         CztgbPtF7RajFgnZTBM6aCApgzPh4WjpTkn9RI/WaL6nfENdcFY+VvwcBEvrU8REcI
+         jU7kswT1Y5isPklQedJ4jvAZk4WPCYblBejr0UeaEZQdZVZxUyGhb9ATeoPLrxs6TY
+         c9mfg9z/yGL4GkSfw4Jym2O1Wi3molOOvrFenW6NQoAOxxGQt7RBoo2/qoP9KWE8G/
+         LZsjTP4epY1sOategbyVfag4i58nTNWlrlKS73KCdis+EFvhVLNymbILXjvlTBseGS
+         kqrFlqYtNShmg==
+Date:   Fri, 25 Aug 2023 15:29:11 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     Jan Kara <jack@suse.cz>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 29/29] block: Remove blkdev_get_by_*() functions
-Message-ID: <20230825-stiehlt-hallt-30fcac4e1f4f@brauner>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 02/29] block: Use bdev_open_by_dev() in blkdev_open()
+Message-ID: <20230825-attribut-sympathisch-6dfddfe25f45@brauner>
 References: <20230818123232.2269-1-jack@suse.cz>
- <20230823104857.11437-29-jack@suse.cz>
+ <20230823104857.11437-2-jack@suse.cz>
+ <20230825022826.GC95084@ZenIV>
+ <20230825094509.yarnl4jpayqqjk4c@quack3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230823104857.11437-29-jack@suse.cz>
+In-Reply-To: <20230825094509.yarnl4jpayqqjk4c@quack3>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -57,13 +59,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 23, 2023 at 12:48:40PM +0200, Jan Kara wrote:
-> blkdev_get_by_*() and blkdev_put() functions are now unused. Remove
-> them.
-> 
-> Acked-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
+> file->f_flags. Attached is a version of the patch that I'm currently
+> testing.
 
-Looks good to me,
+Appended patch looks good to me,
 Reviewed-by: Christian Brauner <brauner@kernel.org>
+
+The patch also has another fix for O_EXCL. In earlier versions of this
+patch series it relied of f_flags. Thanks for that comment you added in
+there about this now. This really helps given that O_EXCL has special
+meaning for block devices. Ideally we'd have kernel doc for
+file_to_blk_mode().
