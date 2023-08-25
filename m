@@ -2,122 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 528F9787D6E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 04:00:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1869787D84
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 04:06:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240306AbjHYB73 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Aug 2023 21:59:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43294 "EHLO
+        id S238995AbjHYCGZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Aug 2023 22:06:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229797AbjHYB6z (ORCPT
+        with ESMTP id S240644AbjHYCFy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Aug 2023 21:58:55 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A012B1BD1;
-        Thu, 24 Aug 2023 18:58:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=GqmLor0hgV4H3x7IuvuyaB/m3hDiUm8Yzrd7b9keFg8=; b=bxxlNJ96rsx4L2kKszQ8LF6ai5
-        iNtBNOQ6lzvCMPjrA8d2B5SKpMA8ehWy3QlKX8FPouK+kPzVIEZKx+nUetaQRW5JSdDZgZ40B7sUp
-        hz637OO4Su1eEUgn8Gl/dIA4NQM5w6cHamU5x0h4uc+j+8uZ5OMjiX5dOjWaEByfsbwcty7NjoKFy
-        3XYbSKjy+5wYC+oyCRnyAV7fQupk+8Mu6cgtvaubPBjXdneuinMhpNkKRGbKhUYZMh2pnc+qlSq3t
-        /phSE0e2tky2IO5H3c5MgeU2/J9SsgCPwQOsXy7U4/wxiV2850iLaIsQdHEKmyDTGxCmoecJk/YQG
-        iXEtALAQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qZM5z-000dvR-0M;
-        Fri, 25 Aug 2023 01:58:43 +0000
-Date:   Fri, 25 Aug 2023 02:58:43 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Alasdair Kergon <agk@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Anna Schumaker <anna@kernel.org>, Chao Yu <chao@kernel.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        David Sterba <dsterba@suse.com>, dm-devel@redhat.com,
-        drbd-dev@lists.linbit.com, Gao Xiang <xiang@kernel.org>,
-        Jack Wang <jinpu.wang@ionos.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        jfs-discussion@lists.sourceforge.net,
-        Joern Engel <joern@lazybastard.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-bcache@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-xfs@vger.kernel.org,
-        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Minchan Kim <minchan@kernel.org>, ocfs2-devel@oss.oracle.com,
-        reiserfs-devel@vger.kernel.org,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Song Liu <song@kernel.org>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        target-devel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 0/29] block: Make blkdev_get_by_*() return handle
-Message-ID: <20230825015843.GB95084@ZenIV>
-References: <20230810171429.31759-1-jack@suse.cz>
+        Thu, 24 Aug 2023 22:05:54 -0400
+Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE4361BDF
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Aug 2023 19:05:47 -0700 (PDT)
+Received: by mail-ot1-x330.google.com with SMTP id 46e09a7af769-6bd04558784so353999a34.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Aug 2023 19:05:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1692929147; x=1693533947;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tV/xhMrG27pnQQdfeNDXAs9vebCS+5kkS2KT1sSOa80=;
+        b=KH+lMhzI7jZ8rYptdhcbSfZQ8+HBsGRJd77yQHDq+BXrhGxqXTWKXOH3kGZYuze8qe
+         kfvFFx5SyWefbAqyqUbeBn4VDBIuPTMnTciUaWuBxik1CZwCXnLbghczQs+n/YOMn5Sa
+         2mto9NZOBxN5C8qUM1C3b4o8qeN/WKzVjdG+Ez9ViVkD2OhfZfZ0iiejDsSBwxwMtAbj
+         P9VBABTUkDMnw+ZFBjEkHdNoqW2AOlIBc8bFXuyakMoVN2RIxbYplmnGe6i+PmeEPwcn
+         6KjSkifdhykk/A1XmBBLQzc49QwW+jMEeeEv+1Oj5YCTj9FgUWmTPTpA3DqV2PwZBSLe
+         OdhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692929147; x=1693533947;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tV/xhMrG27pnQQdfeNDXAs9vebCS+5kkS2KT1sSOa80=;
+        b=bML8a7AS2Vr4eyVS8D82Ve35HgnZGC2FTJU1XcKjgleAXav4G0aXh26paYpi0AVdeL
+         LyZyYYdOGMJA+ohjVS8hG/fEw41iCU+cwb/8FhrIPTE+ggi9jcIvNwAkn6XmeMltCsAi
+         TmuQViLAbE407RF8vA94POQAVVLihnp9eJUTp9+8yuZv8ALokTxvzekizqaakvUs028h
+         8fBLJWufjqXrTWNbI14g0Q0ax4rG9MyckQs1EWXqPw+wiRFezPjfHgfPfkfvhpnYTWHA
+         s1zqS6Gy0cSravbfkR4AuJBgmER3F7NX4++9obgF7N/1OKOYiwQ27CQ2+XZAAJjbpYQ6
+         lnwA==
+X-Gm-Message-State: AOJu0YwYXLC+MN6njZP01Q7KqCjPKfF92tXQxDu8+wuMFoLKnVTYW2ac
+        rDDxwBUGNAPDC8nNvrC1VyI5IGfLYD8=
+X-Google-Smtp-Source: AGHT+IFwVVg6YiTFk8zpBOPVx1N8fV+8AvVZxuYh+26ryVBhH9WMkI0PDKDJBRCuMeaUJ5VlITHA5w==
+X-Received: by 2002:a05:6870:5620:b0:1bb:583a:db4a with SMTP id m32-20020a056870562000b001bb583adb4amr1678722oao.44.1692929147043;
+        Thu, 24 Aug 2023 19:05:47 -0700 (PDT)
+Received: from rajgad ([2601:204:df00:9cd0:5aa8:2901:89a5:c04b])
+        by smtp.gmail.com with ESMTPSA id f6-20020a17090ace0600b00267ee71f463sm3461672pju.0.2023.08.24.19.05.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Aug 2023 19:05:46 -0700 (PDT)
+Date:   Thu, 24 Aug 2023 19:05:45 -0700
+From:   Atul Raut <rauji.raut@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        syzbot+e295147e14b474e4ad70@syzkaller.appspotmail.com
+Subject: Re: pagevec: Fix array-index-out-of-bounds error
+Message-ID: <20230825020545.bfpxs6uq4qdvrv5x@rajgad>
+References: <20230825001720.19101-1-rauji.raut@gmail.com>
+ <ZOgKTO612u1Fn7PB@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="sve3wn3ghdf5u6b7"
 Content-Disposition: inline
-In-Reply-To: <20230810171429.31759-1-jack@suse.cz>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <ZOgKTO612u1Fn7PB@casper.infradead.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 11, 2023 at 01:04:31PM +0200, Jan Kara wrote:
-> Hello,
-> 
-> this is a v2 of the patch series which implements the idea of blkdev_get_by_*()
-> calls returning bdev_handle which is then passed to blkdev_put() [1]. This
-> makes the get and put calls for bdevs more obviously matching and allows us to
-> propagate context from get to put without having to modify all the users
-> (again!).  In particular I need to propagate used open flags to blkdev_put() to
-> be able count writeable opens and add support for blocking writes to mounted
-> block devices. I'll send that series separately.
-> 
-> The series is based on Christian's vfs tree as of yesterday as there is quite
-> some overlap. Patches have passed some reasonable testing - I've tested block
-> changes, md, dm, bcache, xfs, btrfs, ext4, swap. This obviously doesn't cover
-> everything so I'd like to ask respective maintainers to review / test their
-> changes. Thanks! I've pushed out the full branch to:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git bdev_handle
-> 
-> to ease review / testing.
 
-Hmm...  Completely Insane Idea(tm): how about turning that thing inside out and
-having your bdev_open_by... return an actual opened struct file?
+--sve3wn3ghdf5u6b7
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-After all, we do that for sockets and pipes just fine and that's a whole lot
-hotter area.
+Hello Matthew,
 
-Suppose we leave blkdev_open()/blkdev_release() as-is.  No need to mess with
-what we have for normal opened files for block devices.  And have block_open_by_dev()
-that would find bdev, etc., same yours does and shove it into anon file.
+Thank you for your reply, agree with you its seems wrong fix,
+will take a look at it.
 
-Paired with plain fput() - no need to bother with new primitives for closing.
-With a helper returning I_BDEV(bdev_file_inode(file)) to get from those to bdev.
+-Atul=20
 
-NOTE: I'm not suggesting replacing ->s_bdev with struct file * if we do that -
-we want that value cached, obviously.  Just store both...
+On Fri, Aug 25, 2023 at 02:56:28AM +0100, Matthew Wilcox wrote:
+>On Thu, Aug 24, 2023 at 05:17:21PM -0700, Atul Raut wrote:
+>>  ntfs_evict_inode+0x20/0x48 fs/ntfs3/inode.c:1790
+>
+>No.  This is your clue.  ntfs corrupts memory.  You can't take bug
+>reports involving ntfs seriously.  Ignore everything tagged with ntfs.
+>
+>> In folio_batch_add, which contains folios rather
+>> than fixed-size pages, there is a chance that the
+>> array index will fall outside of bounds.
+>> Before adding folios, examine the available space to fix.
+>
+>This is definitely the wrong fix.
+>
+>>  static inline unsigned folio_batch_add(struct folio_batch *fbatch,
+>>  		struct folio *folio)
+>>  {
+>> -	fbatch->folios[fbatch->nr++] =3D folio;
+>> +	if (folio_batch_space(fbatch))
+>> +		fbatch->folios[fbatch->nr++] =3D folio;
+>
+>Did you look at what folio_batch_space() actually does?
+>
+>static inline unsigned int folio_batch_space(struct folio_batch *fbatch)
+>{
+>        return PAGEVEC_SIZE - fbatch->nr;
+>}
+>
+>So if fbatch->nr is 255, what will it return?  How will
+>folio_batch_add() behave?
+>
+>The right way to fix this problem is to find the data corrupter in NTFS.
+>You can't "fix" it anywhere else.
 
-Not saying it's a good idea, but... might be interesting to look into.
-Comments?
+--sve3wn3ghdf5u6b7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEEk+Uz5/8aTg0U2TbgUdAfNFxksqcFAmToDHUACgkQUdAfNFxk
+sqdPngv+NCUU657tLXSWvPgVhINaEPNau3DK7gKbAEj67weSHu/YUAavgo04fDrg
+nD6ND6gskKrHaOF8uxzaybB49a5d4E4Mp5JTQCJ8D/3771GijyX+PgauDZBAtPsF
+r0PJOc9Gh//OFIQmtxp9COzxL219LBnJysQ7lBxwYJ3/oiO4yvvNwgeIEv1U+L29
+MLoKrFiMc7CGp5NmzPAGc5Fl+OuKF96NgkDW/8ZUvkLp80fkOg+egdqwTFLRJ9Ok
+lqYQrqAQngQhQS3siWFjUR7UNcsOsq6Aj+22MPTAc5VijUFEVW3+0u8npE7g3uoo
++4J/Ip9WZzNvpIetdwrWgSbi61dGezJv5AfxC5zXwQXz3jtC9Hu3ip8f+Xune9pD
+It7225RCOz4A5R/jjWSSpBlmvOUB/+T7BD3PLa3Hpa5x/cb+x2gs/bAGc+7bTsi2
+pIwRqG9I4vHbXSY2eJDUXFeaTBDnLMEgur6nmr5TWNtUt7Cw/4qcPtrfpyMmtsfc
+BlipfPA/
+=Bi8j
+-----END PGP SIGNATURE-----
+
+--sve3wn3ghdf5u6b7--
