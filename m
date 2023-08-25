@@ -2,57 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 57EE4787CC4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 03:09:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 871D8787CFD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Aug 2023 03:15:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236790AbjHYBIj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Aug 2023 21:08:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39346 "EHLO
+        id S239189AbjHYBOd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Aug 2023 21:14:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236173AbjHYBIf (ORCPT
+        with ESMTP id S238162AbjHYBOO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Aug 2023 21:08:35 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D0AE19BB;
-        Thu, 24 Aug 2023 18:08:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 299B262EC9;
-        Fri, 25 Aug 2023 01:08:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07376C433C7;
-        Fri, 25 Aug 2023 01:08:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1692925712;
-        bh=cD8kNYTozm4FuGJASkCTOiGIy89mI5dFCwxsGj6eWRg=;
-        h=Date:Subject:To:References:From:In-Reply-To:From;
-        b=X/w2OvpRG0d2hEVa5GJsOYdO9HO0dZM+351CR1YQawNy+H1cVLe6qfmN4xe7bxD0r
-         iE+dMczgtnuj/gLd8ovO17reyq7Sxs8Ni+UrzOpLuWAzFYpOeOFp8C4Dzwxb+dFHv9
-         Ekxktp3qRZozdqEKajN57fkPifCV/rmhth4Q8J8YIOBUK7M+k08T2n2+MbHaaAjSws
-         hxV/V8czrwT3HURuKsp5rqUXufDOptm5ByF6PW2kn8SfxoTrqUkoZVl9AcxdlGwZ5g
-         UaL3TiWJPNLn03Nh/wAIQ7BxPzmhI62HvH8IbPL2B3uut/k4nk5qDI0/0SeC7vQCTW
-         /CcPCAWsAC4nA==
-Message-ID: <8680b259-528b-32a9-73ee-ce6a6406f13d@kernel.org>
-Date:   Fri, 25 Aug 2023 09:08:28 +0800
+        Thu, 24 Aug 2023 21:14:14 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21FDD19BB;
+        Thu, 24 Aug 2023 18:14:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=VFNVFt/7/5G7r3AO6hVBx/rbI3iYFwIQVfmz3UrxPqI=; b=HPtqqzf93CqXk8WihPhuJV1RSK
+        tSfSSqn/vc3mtUcuanRMu0IQ9ysGwINwGa5jpVcjmo90M8vyVKpF8UQ1VaHRGmV8Eg2IcOr1vnsTf
+        RAjyJ6Gyf/3ks5v2MwTqTr/C99jBG8nCO1qdfrDVe92FmydcZ4DLBTMKjAXntd7e88uQGcPu/2L7x
+        R7iKLLejKOG2tdiXjGz4QC2qK2QtqsUrvB8D6TqbMX39QuczgJnh6bfUUbLHA9s60MTiPon8AcAnW
+        t/mDTpPoN/cTrdda1FVyuXXOht41Iwq6gQg3E+KoI87tZRcd07ozop3LluQdjiC89bgCnYHaeZYZl
+        FKh0gRcQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qZLOr-000czI-12;
+        Fri, 25 Aug 2023 01:14:09 +0000
+Date:   Fri, 25 Aug 2023 02:14:09 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 02/29] block: Use bdev_open_by_dev() in blkdev_open()
+Message-ID: <20230825011409.GA95084@ZenIV>
+References: <20230810171429.31759-1-jack@suse.cz>
+ <20230811110504.27514-2-jack@suse.cz>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [syzbot] [f2fs?] possible deadlock in f2fs_add_inline_entry
-To:     syzbot <syzbot+a4976ce949df66b1ddf1@syzkaller.appspotmail.com>,
-        hdanton@sina.com, jaegeuk@kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-References: <0000000000001b658e0603ad424d@google.com>
-Content-Language: en-US
-From:   Chao Yu <chao@kernel.org>
-In-Reply-To: <0000000000001b658e0603ad424d@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230811110504.27514-2-jack@suse.cz>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -60,29 +51,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023/8/24 23:55, syzbot wrote:
-> syzbot has bisected this issue to:
-> 
-> commit 5eda1ad1aaffdfebdecf7a164e586060a210f74f
-> Author: Jaegeuk Kim <jaegeuk@kernel.org>
-> Date:   Wed Jun 28 08:00:56 2023 +0000
-> 
->      f2fs: fix deadlock in i_xattr_sem and inode page lock
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=167691b7a80000
-> start commit:   cacc6e22932f tpm: Add a helper for checking hwrng enabled
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=157691b7a80000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=117691b7a80000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=171b698bc2e613cf
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a4976ce949df66b1ddf1
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=103c6bb3a80000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17bb51c7a80000
-> 
-> Reported-by: syzbot+a4976ce949df66b1ddf1@syzkaller.appspotmail.com
-> Fixes: 5eda1ad1aaff ("f2fs: fix deadlock in i_xattr_sem and inode page lock")
+On Fri, Aug 11, 2023 at 01:04:33PM +0200, Jan Kara wrote:
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev
+> @@ -478,7 +478,7 @@ blk_mode_t file_to_blk_mode(struct file *file)
+>  		mode |= BLK_OPEN_READ;
+>  	if (file->f_mode & FMODE_WRITE)
+>  		mode |= BLK_OPEN_WRITE;
+> -	if (file->private_data)
+> +	if (file->f_flags & O_EXCL)
+>  		mode |= BLK_OPEN_EXCL;
+>  	if (file->f_flags & O_NDELAY)
+>  		mode |= BLK_OPEN_NDELAY;
 
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+> index 3be11941fb2d..47f216d8697f 100644
+> --- a/block/ioctl.c
+> +++ b/block/ioctl.c
+> @@ -575,7 +575,7 @@ long blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg)
+>  {
+>  	struct block_device *bdev = I_BDEV(file->f_mapping->host);
+>  	void __user *argp = (void __user *)arg;
+> -	blk_mode_t mode = file_to_blk_mode(file);
+> +	blk_mode_t mode = ((struct bdev_handle *)file->private_data)->mode;
+
+Take a look at sd_ioctl() and note that fcntl(2) can be used to set/clear O_NDELAY.
+The current variant works since we recalculate mode every time; this one will end up
+stuck with whatever we had at open time.  Note that Christoph's series could do this
+in blkdev_ioctl()
+-       /*
+-        * O_NDELAY can be altered using fcntl(.., F_SETFL, ..), so we have
+-        * to updated it before every ioctl.
+-        */
+-       if (file->f_flags & O_NDELAY)
+-               mode |= FMODE_NDELAY;
+-       else
+-               mode &= ~FMODE_NDELAY;
+precisely because his file_to_blk_mode() picks O_NDELAY from flags when blkdev_ioctl()
+calls it.
+
+The same goes for compat counterpart of that thing.  Both need to deal with that
+scenario - you need something that would pick the O_NDELAY updates from ->f_flags.
+
+Al, trying to catch up on the awful pile of mail that has accumulated over the 3 months
+of being net.dead...
