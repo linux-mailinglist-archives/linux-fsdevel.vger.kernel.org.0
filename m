@@ -2,201 +2,253 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C6BE7898AA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Aug 2023 20:27:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 583147899DE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Aug 2023 01:41:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229698AbjHZS0o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 26 Aug 2023 14:26:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35562 "EHLO
+        id S229580AbjHZXk0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 26 Aug 2023 19:40:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbjHZS0l (ORCPT
+        with ESMTP id S229475AbjHZXkJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 26 Aug 2023 14:26:41 -0400
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [IPv6:2001:1600:3:17::8faf])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E05A8171A
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Aug 2023 11:26:38 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4RY4yy4c7SzMq14d;
-        Sat, 26 Aug 2023 18:26:34 +0000 (UTC)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4RY4yx3skpz3Z;
-        Sat, 26 Aug 2023 20:26:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1693074394;
-        bh=k9KY2c6i9BmJ9SsZ4rqBiGKgtAJnA3Vgh+QwJPQFQ/M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=msGL4U/LMRUNV5W5PrQcgD48twy701jVMenMizSjGEQgXoUaS1LpjSTSjz9y4iVH8
-         9f8h8p1t1pLbIRrgmMR8Z6u36CtsPrzJTageHPEq+bcL1nHcg8MKBQPcS6Vm9DYOkO
-         FJDFBTuCwqyvNL8huAFfwE5D/BUclViNxCSgEmSY=
-Date:   Sat, 26 Aug 2023 20:26:30 +0200
-From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To:     =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc:     linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>,
-        Jorge Lucangeli Obes <jorgelo@chromium.org>,
-        Allen Webb <allenwebb@google.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Matt Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] Landlock: IOCTL support
-Message-ID: <20230826.ohtooph0Ahmu@digikod.net>
-References: <20230814172816.3907299-1-gnoack@google.com>
- <20230818.iechoCh0eew0@digikod.net>
- <ZOjCz5j4+tgptF53@google.com>
- <20230825.Zoo4ohn1aivo@digikod.net>
+        Sat, 26 Aug 2023 19:40:09 -0400
+Received: from mail-pj1-f77.google.com (mail-pj1-f77.google.com [209.85.216.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDC881B4
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Aug 2023 16:40:05 -0700 (PDT)
+Received: by mail-pj1-f77.google.com with SMTP id 98e67ed59e1d1-26f49625bffso1763023a91.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Aug 2023 16:40:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693093205; x=1693698005;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hd0VIQbu2+WDcMObhboi/8UEQX+wtKY36yiRWodujtE=;
+        b=mIZURTjGb4Clzz0hrpCjwNORwRwC3i2jd9MJzfz8nN+ExzVr3In5QI2ISvb7DgEVSy
+         qwlan0pEFalzZilQeLGfFTg+zZUyhDfD6DS+4Usz2Vr2QEIhgo8hJ+1TdHzdUMQmfXZ8
+         D9RuLJ6XcFoT4l6mipSQ7R2yJSFrbh87Bg+aJ4R1MG/rLTsHvPsdSPRKzIg66kN8bzzj
+         rRhKXVvPDf63l9hHAn823UTTR14KYguu8NkZwIArugn/E4yLhcxARkl//MUyEzzX+yi8
+         RMdu9min3oX4lDMHuGZIuoW111VKl8pQ/tSFxcUZV9/u1bAY8Y8i8sFS1z+OCGkIAbkX
+         nkXw==
+X-Gm-Message-State: AOJu0Yy63WAIyGEUWqRzZvADjthVlxeFq7dBZSxhZyR8DCaaal7ZmeXj
+        tjRv1ESLIV+YQQINp4OMwLLq093AxrCpe41TwngRH1lYpqQt
+X-Google-Smtp-Source: AGHT+IGV4eYMMZTg/IasW3DrFHzHCWe7M3RfOfxzCLmeaYGD8fQti+BTxts++lLbxNNTJIdz/Gxj0MIUJ/BlvCWs5fVaOI7tEino
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230825.Zoo4ohn1aivo@digikod.net>
-X-Infomaniak-Routing: alpha
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Received: by 2002:a17:902:ea04:b0:1bb:a78c:7a3e with SMTP id
+ s4-20020a170902ea0400b001bba78c7a3emr7750122plg.3.1693093205449; Sat, 26 Aug
+ 2023 16:40:05 -0700 (PDT)
+Date:   Sat, 26 Aug 2023 16:40:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001524880603dbfbf8@google.com>
+Subject: [syzbot] [fuse?] KASAN: slab-use-after-free Read in fuse_test_super
+From:   syzbot <syzbot+5b64180f8d9e39d3f061@syzkaller.appspotmail.com>
+To:     brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, miklos@szeredi.hu,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 25, 2023 at 06:50:29PM +0200, Mickaël Salaün wrote:
-> On Fri, Aug 25, 2023 at 05:03:43PM +0200, Günther Noack wrote:
-> > Hi!
-> > 
-> > On Fri, Aug 18, 2023 at 03:39:19PM +0200, Mickaël Salaün wrote:
-> > > On Mon, Aug 14, 2023 at 07:28:11PM +0200, Günther Noack wrote:
-> > > > These patches add simple ioctl(2) support to Landlock.
-> > > 
-> > > [...]
-> > > 
-> > > > How we arrived at the list of always-permitted IOCTL commands
-> > > > ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > 
-> > > > To decide which IOCTL commands should be blanket-permitted I went through the
-> > > > list of IOCTL commands mentioned in fs/ioctl.c and looked at them individually
-> > > > to understand what they are about.  The following list is my conclusion from
-> > > > that.
-> > > > 
-> > > > We should always allow the following IOCTL commands:
-> > > > 
-> > > >  * FIOCLEX, FIONCLEX - these work on the file descriptor and manipulate the
-> > > >    close-on-exec flag
-> > > >  * FIONBIO, FIOASYNC - these work on the struct file and enable nonblocking-IO
-> > > >    and async flags
-> > > >  * FIONREAD - get the number of bytes available for reading (the implementation
-> > > >    is defined per file type)
-> > > 
-> > > I think we should treat FIOQSIZE like FIONREAD, i.e. check for
-> > > LANDLOCK_ACCESS_FS_READ_FILE as explain in my previous message.
-> > > Tests should then rely on something else.
-> > 
-> > OK, I rewrote the tests to use FS_IOC_GETFLAGS.
-> > 
-> > Some thoughts on these two IOCTLs:
-> > 
-> > FIONREAD gives the number of bytes that are ready to read.  This IOCTL seems
-> > only useful when the file is open for reading.  However, do you think that we
-> > should correlate this with (a) LANDLOCK_ACCESS_FS_READ_FILE, or with (b)
-> > f->f_mode & FMODE_READ?  (The difference is that in case (a), FIONREAD will work
-> > if you open a file O_WRONLY and you also have the LANDLOCK_ACCESS_FS_READ_FILE
-> > right for that file.  In case (b), it would only work if you also opened the
-> > file for reading.)
-> 
-> I think we should allow FIONREAD if LANDLOCK_ACCESS_FS_IOCTL is handled
-> and if LANDLOCK_ACCESS_FS_READ_FILE is explicitly allowed for this FD.
-> 
-> f->f_mode & FMODE_READ would make sense but it should have been handled
-> by the kernel; Landlock should not try to fix this inconsistency.
-> 
-> These are good test cases though.
-> 
-> It should be noted that SELinux considers FIONREAD as tied to metadata
-> reading (FILE__GETATTR). It think it makes more sense to tie it to the
-> read right (LANDLOCK_ACCESS_FS_READ_FILE) because it might be
-> (legitimately) required to properly read a file and FIONREAD is tied to
-> the content of a file, not file attributes.
-> 
-> > 
-> > FIOQSIZE seems like it would be useful for both reading *and* writing? -- The
-> > reading case is obvious, but for writers it's also useful if you want to seek
-> > around in the file, and make sure that the position that you seek to already
-> > exists.  (I'm not sure whether that use case is relevant in practical
-> > applications though.) -- Why would FIOQSIZE only be useful for readers?
-> 
-> Good point! The use case you define for writing is interesting. However,
-> would it make sense to seek at a specific offset without being able to
-> know/read the content? I guest not in theory, but in practice we might
-> want to avoid application to require LANDLOCK_ACCESS_FS_READ_FILE is
-> they only require to write (at a specific offset), or to deal with write
-> errors. Anyway, I guess that this information can be inferred by trying
-> to seek at a specific offset.  The only limitation that this approach
-> would bring is that it seems that we can seek into an FD even without
-> read nor write right, and there is no specific (LSM) access control for
-> this operation (and nobody seems to care about being able to read the
-> size of a symlink once opened). If this is correct, I think we should
-> indeed always allow FIOQSIZE. Being able to open a file requires
-> LANDLOCK_ACCESS_FS_READ or WRITE anyway.  It would be interesting to
-> check and test with O_PATH though.
+Hello,
 
-FIOQSIZE should in fact only be allowed if LANDLOCK_ACCESS_FS_READ_FILE or
-LANDLOCK_ACCESS_FS_WRITE_FILE or LANDLOCK_ACCESS_FS_READ_DIR are handled
-and explicitly allowed for the FD. I guess FIOQSIZE is allowed without read
-nor write mode (i.e. O_PATH), so it could be an issue for landlocked
-applications but they can explicitly allow IOCTL for this case. When
-we'll have a LANDLOCK_ACCESS_FS_READ_METADATA (or something similar), we
-should also tie FIOQSIZE to this access right, and we'll be able to
-fully handle all the use cases without fully allowing all other IOCTLs.
+syzbot found the following issue on:
 
-> 
-> > 
-> > (In fact, it seems to me almost like FIOQSIZE might rather be missing a security
-> > hook check for one of the "getting file attribute" hooks?)
-> > 
-> > So basically, the implementation that I currently ended up with is:
-> > 
-> 
-> Before checking these commands, we first need to check that the original
-> domain handle LANDLOCK_ACCESS_FS_IOCTL. We should try to pack this new
-> bit and replace the file's allowed_access field (see
-> landlock_add_fs_access_mask() and similar helpers in the network patch
-> series that does a similar thing but for ruleset's handle access
-> rights), but here is the idea:
-> 
-> if (!landlock_file_handles_ioctl(file))
-> 	return 0;
-> 
-> > switch (cmd) {
-> 	/*
-> 	 * Allows file descriptor and file description operations (see
-> 	 * fcntl commands).
-> 	 */
-> >   case FIOCLEX:
-> >   case FIONCLEX:
-> >   case FIONBIO:
-> >   case FIOASYNC:
-> 
-> >   case FIOQSIZE:
+HEAD commit:    28c736b0e92e Add linux-next specific files for 20230822
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=11bfe65ba80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=20999f779fa96017
+dashboard link: https://syzkaller.appspot.com/bug?extid=5b64180f8d9e39d3f061
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17c50b07a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=156fc5cfa80000
 
-We need to handle FIOQSIZE as done by do_vfs_ioctl: add the same i_mode
-checks. A kselftest test should check that ENOTTY is returned according
-to the file type and the access rights.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/37bc881cd0b2/disk-28c736b0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4512f7892b3d/vmlinux-28c736b0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/052fe1287e05/bzImage-28c736b0.xz
 
-> >     return 0;
-> >   case FIONREAD:
-> >     if (file->f_mode & FMODE_READ)
-> 
-> We should check LANDLOCK_ACCESS_FS_READ instead, which is a superset of
-> FMODE_READ.
-> 
-> >       return 0;
-> > }
-> > 
-> > (with some comments in the source code, of course...)
-> > 
-> > Does that look reasonable to you?
-> > 
-> > —Günther
-> > 
-> > -- 
-> > Sent using Mutt 🐕 Woof Woof
+The issue was bisected to:
+
+commit 2c18a63b760a0f68f14cb8bb4c3840bb0b63b73e
+Author: Christian Brauner <brauner@kernel.org>
+Date:   Fri Aug 18 14:00:51 2023 +0000
+
+    super: wait until we passed kill super
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=154bc0d3a80000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=174bc0d3a80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=134bc0d3a80000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5b64180f8d9e39d3f061@syzkaller.appspotmail.com
+Fixes: 2c18a63b760a ("super: wait until we passed kill super")
+
+==================================================================
+BUG: KASAN: slab-use-after-free in get_fuse_conn_super fs/fuse/fuse_i.h:885 [inline]
+BUG: KASAN: slab-use-after-free in fuse_test_super+0x8c/0xa0 fs/fuse/inode.c:1689
+Read of size 8 at addr ffff88814b51bc40 by task syz-executor382/5079
+
+CPU: 0 PID: 5079 Comm: syz-executor382 Not tainted 6.5.0-rc7-next-20230822-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/26/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:364 [inline]
+ print_report+0xc4/0x620 mm/kasan/report.c:475
+ kasan_report+0xda/0x110 mm/kasan/report.c:588
+ get_fuse_conn_super fs/fuse/fuse_i.h:885 [inline]
+ fuse_test_super+0x8c/0xa0 fs/fuse/inode.c:1689
+ sget_fc+0x582/0x9b0 fs/super.c:778
+ fuse_get_tree+0x39a/0x640 fs/fuse/inode.c:1738
+ vfs_get_tree+0x8c/0x370 fs/super.c:1713
+ do_new_mount fs/namespace.c:3335 [inline]
+ path_mount+0x1492/0x1ed0 fs/namespace.c:3662
+ do_mount fs/namespace.c:3675 [inline]
+ __do_sys_mount fs/namespace.c:3884 [inline]
+ __se_sys_mount fs/namespace.c:3861 [inline]
+ __x64_sys_mount+0x293/0x310 fs/namespace.c:3861
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f65faa253ea
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff5d8df618 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fff5d8df640 RCX: 00007f65faa253ea
+RDX: 0000000020000280 RSI: 0000000020000300 RDI: 0000000000000000
+RBP: 0000000020000280 R08: 00007fff5d8df640 R09: 00007fff5d8df507
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020000300
+R13: 0000000000000000 R14: 00000000200028c0 R15: 00007f65faa6d06a
+ </TASK>
+
+Allocated by task 5081:
+ kasan_save_stack+0x33/0x50 mm/kasan/common.c:45
+ kasan_set_track+0x25/0x30 mm/kasan/common.c:52
+ ____kasan_kmalloc mm/kasan/common.c:374 [inline]
+ __kasan_kmalloc+0xa2/0xb0 mm/kasan/common.c:383
+ kmalloc include/linux/slab.h:599 [inline]
+ kzalloc include/linux/slab.h:720 [inline]
+ fuse_get_tree+0xbe/0x640 fs/fuse/inode.c:1705
+ vfs_get_tree+0x8c/0x370 fs/super.c:1713
+ do_new_mount fs/namespace.c:3335 [inline]
+ path_mount+0x1492/0x1ed0 fs/namespace.c:3662
+ do_mount fs/namespace.c:3675 [inline]
+ __do_sys_mount fs/namespace.c:3884 [inline]
+ __se_sys_mount fs/namespace.c:3861 [inline]
+ __x64_sys_mount+0x293/0x310 fs/namespace.c:3861
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Freed by task 5081:
+ kasan_save_stack+0x33/0x50 mm/kasan/common.c:45
+ kasan_set_track+0x25/0x30 mm/kasan/common.c:52
+ kasan_save_free_info+0x2b/0x40 mm/kasan/generic.c:522
+ ____kasan_slab_free mm/kasan/common.c:236 [inline]
+ ____kasan_slab_free+0x15b/0x1b0 mm/kasan/common.c:200
+ kasan_slab_free include/linux/kasan.h:164 [inline]
+ slab_free_hook mm/slub.c:1800 [inline]
+ slab_free_freelist_hook+0x114/0x1e0 mm/slub.c:1826
+ slab_free mm/slub.c:3809 [inline]
+ __kmem_cache_free+0xb8/0x2f0 mm/slub.c:3822
+ deactivate_locked_super+0xa0/0x2d0 fs/super.c:454
+ deactivate_super+0xde/0x100 fs/super.c:504
+ cleanup_mnt+0x222/0x3d0 fs/namespace.c:1254
+ task_work_run+0x14d/0x240 kernel/task_work.c:179
+ ptrace_notify+0x10c/0x130 kernel/signal.c:2387
+ ptrace_report_syscall include/linux/ptrace.h:411 [inline]
+ ptrace_report_syscall_exit include/linux/ptrace.h:473 [inline]
+ syscall_exit_work kernel/entry/common.c:252 [inline]
+ syscall_exit_to_user_mode_prepare+0x120/0x220 kernel/entry/common.c:279
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:284 [inline]
+ syscall_exit_to_user_mode+0xd/0x60 kernel/entry/common.c:297
+ do_syscall_64+0x44/0xb0 arch/x86/entry/common.c:86
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+The buggy address belongs to the object at ffff88814b51bc40
+ which belongs to the cache kmalloc-32 of size 32
+The buggy address is located 0 bytes inside of
+ freed 32-byte region [ffff88814b51bc40, ffff88814b51bc60)
+
+The buggy address belongs to the physical page:
+page:ffffea00052d46c0 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x14b51b
+ksm flags: 0x57ff00000000800(slab|node=1|zone=2|lastcpupid=0x7ff)
+page_type: 0xffffffff()
+raw: 057ff00000000800 ffff888012c41500 ffffea000501e700 dead000000000003
+raw: 0000000000000000 0000000000400040 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x12cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY), pid 1, tgid 1 (swapper/0), ts 23776999617, free_ts 0
+ set_page_owner include/linux/page_owner.h:31 [inline]
+ post_alloc_hook+0x2cf/0x340 mm/page_alloc.c:1530
+ prep_new_page mm/page_alloc.c:1537 [inline]
+ get_page_from_freelist+0x10d7/0x31b0 mm/page_alloc.c:3213
+ __alloc_pages+0x1d0/0x4a0 mm/page_alloc.c:4469
+ alloc_page_interleave+0x1e/0x250 mm/mempolicy.c:2131
+ alloc_pages+0x22a/0x270 mm/mempolicy.c:2293
+ alloc_slab_page mm/slub.c:1870 [inline]
+ allocate_slab+0x251/0x380 mm/slub.c:2017
+ new_slab mm/slub.c:2070 [inline]
+ ___slab_alloc+0x8be/0x1570 mm/slub.c:3223
+ __slab_alloc.constprop.0+0x56/0xa0 mm/slub.c:3322
+ __slab_alloc_node mm/slub.c:3375 [inline]
+ slab_alloc_node mm/slub.c:3468 [inline]
+ __kmem_cache_alloc_node+0x137/0x350 mm/slub.c:3517
+ __do_kmalloc_node mm/slab_common.c:1022 [inline]
+ __kmalloc+0x4f/0x100 mm/slab_common.c:1036
+ kmalloc include/linux/slab.h:603 [inline]
+ kzalloc include/linux/slab.h:720 [inline]
+ kobject_get_path+0xce/0x2b0 lib/kobject.c:161
+ kobject_uevent_env+0x26b/0x1800 lib/kobject_uevent.c:529
+ kernel_add_sysfs_param kernel/params.c:817 [inline]
+ param_sysfs_builtin kernel/params.c:852 [inline]
+ param_sysfs_builtin_init+0x327/0x450 kernel/params.c:986
+ do_one_initcall+0x117/0x630 init/main.c:1232
+ do_initcall_level init/main.c:1294 [inline]
+ do_initcalls init/main.c:1310 [inline]
+ do_basic_setup init/main.c:1329 [inline]
+ kernel_init_freeable+0x5c2/0x900 init/main.c:1547
+ kernel_init+0x1c/0x2a0 init/main.c:1437
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff88814b51bb00: 00 00 05 fc fc fc fc fc fa fb fb fb fc fc fc fc
+ ffff88814b51bb80: 00 00 00 00 fc fc fc fc fa fb fb fb fc fc fc fc
+>ffff88814b51bc00: fa fb fb fb fc fc fc fc fa fb fb fb fc fc fc fc
+                                           ^
+ ffff88814b51bc80: fa fb fb fb fc fc fc fc fa fb fb fb fc fc fc fc
+ ffff88814b51bd00: fa fb fb fb fc fc fc fc 00 00 00 00 fc fc fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
