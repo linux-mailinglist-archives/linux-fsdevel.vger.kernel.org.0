@@ -2,52 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 583147899DE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Aug 2023 01:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 396F6789B1B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Aug 2023 05:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229580AbjHZXk0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 26 Aug 2023 19:40:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46384 "EHLO
+        id S229867AbjH0DV0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 26 Aug 2023 23:21:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbjHZXkJ (ORCPT
+        with ESMTP id S229468AbjH0DVF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 26 Aug 2023 19:40:09 -0400
-Received: from mail-pj1-f77.google.com (mail-pj1-f77.google.com [209.85.216.77])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDC881B4
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Aug 2023 16:40:05 -0700 (PDT)
-Received: by mail-pj1-f77.google.com with SMTP id 98e67ed59e1d1-26f49625bffso1763023a91.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Aug 2023 16:40:05 -0700 (PDT)
+        Sat, 26 Aug 2023 23:21:05 -0400
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87CBB120;
+        Sat, 26 Aug 2023 20:20:59 -0700 (PDT)
+Received: by mail-oi1-x22e.google.com with SMTP id 5614622812f47-3a88e1a5286so1651811b6e.3;
+        Sat, 26 Aug 2023 20:20:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1693106458; x=1693711258;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6FEyWeqX8Is1IEk36VE0KtAj4uBLFs02fZuBwFGkFHk=;
+        b=d9DMQwkK1yACkkeb4HY83v9R7FyFYVaqO8J1AReDI3dbQ41zO1M1OKlETYX1yQe/Ot
+         XsAU5XdUg00X8VbDReIlqbAcRX0gVUrwxVa7FAh0wR8Y+IC+ylpaW7UOUSmEoFwpDnRp
+         mUIPTNfNV2OgOyFsnUXHEqzaVuFjbpLp15E8s5CiKH7+678c4UogUN9695tN2kVWyi2H
+         KmainU/A+SgDRAh9gOomX91iiTW5HbbqQa0+TaC4vnqJmyfWEG4MGg/iSe4F3pX2nSEW
+         G6PRYMyV98NDPf5tNMKPRdRihOhi8oIUMlWi9MtaJOR6iJtfjBVQ5UU1Emq7gQ5UbuuO
+         7P2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693093205; x=1693698005;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hd0VIQbu2+WDcMObhboi/8UEQX+wtKY36yiRWodujtE=;
-        b=mIZURTjGb4Clzz0hrpCjwNORwRwC3i2jd9MJzfz8nN+ExzVr3In5QI2ISvb7DgEVSy
-         qwlan0pEFalzZilQeLGfFTg+zZUyhDfD6DS+4Usz2Vr2QEIhgo8hJ+1TdHzdUMQmfXZ8
-         D9RuLJ6XcFoT4l6mipSQ7R2yJSFrbh87Bg+aJ4R1MG/rLTsHvPsdSPRKzIg66kN8bzzj
-         rRhKXVvPDf63l9hHAn823UTTR14KYguu8NkZwIArugn/E4yLhcxARkl//MUyEzzX+yi8
-         RMdu9min3oX4lDMHuGZIuoW111VKl8pQ/tSFxcUZV9/u1bAY8Y8i8sFS1z+OCGkIAbkX
-         nkXw==
-X-Gm-Message-State: AOJu0Yy63WAIyGEUWqRzZvADjthVlxeFq7dBZSxhZyR8DCaaal7ZmeXj
-        tjRv1ESLIV+YQQINp4OMwLLq093AxrCpe41TwngRH1lYpqQt
-X-Google-Smtp-Source: AGHT+IGV4eYMMZTg/IasW3DrFHzHCWe7M3RfOfxzCLmeaYGD8fQti+BTxts++lLbxNNTJIdz/Gxj0MIUJ/BlvCWs5fVaOI7tEino
+        d=1e100.net; s=20221208; t=1693106458; x=1693711258;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6FEyWeqX8Is1IEk36VE0KtAj4uBLFs02fZuBwFGkFHk=;
+        b=O2BYFxnKNtapbACbx6hxKg0q7aURF7C3DzCNwMqTguM8nRcf6ZFPotfzK+dv9eH6R6
+         zZhpeptxwxlKuhDcyjy9P8nr1QDYnnSbJUSOQesaGcFzlym4nqx0DbVFa8+XTtOl0Bcz
+         sm6dXQYqimWaF+iNvltNhFwlo01HKaYb/2HY+gmOBSalT++OLfKKLC2hSWYRe889/qTJ
+         BUD5CdqXkB05ruAGmAZ0NETPJBQ+IZGRyL0ikte1wO/hoK+OQapDTQR2Ww7JGOI1p949
+         ii2123wuBFLng+cgb0HcM4c96BA4CVClsD3Vb/uP5Rb2yPG1ayDdArF+vuv4NH/UsaE/
+         uxig==
+X-Gm-Message-State: AOJu0YxYUze0QweVtSsmlYTEm8skRiMnXampRUpCFjOauGOzHhQkIq1T
+        mk1KK1q5JUWimu9+FoV8CPBMx0SpjA0=
+X-Google-Smtp-Source: AGHT+IGZeMydH0CnYFnaoeGYczx3IPWLSTIX41Sx09NBOxgh2z+QEwkfMrNJzkgYUUYmbxhQ9Apw1g==
+X-Received: by 2002:aca:1719:0:b0:3a4:4b42:612b with SMTP id j25-20020aca1719000000b003a44b42612bmr7178019oii.42.1693106458533;
+        Sat, 26 Aug 2023 20:20:58 -0700 (PDT)
+Received: from [192.168.0.105] ([103.124.138.83])
+        by smtp.gmail.com with ESMTPSA id y17-20020aa78051000000b0064d74808738sm3986307pfm.214.2023.08.26.20.20.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Aug 2023 20:20:58 -0700 (PDT)
+Message-ID: <f847bc14-8f53-0547-9082-bb3d1df9ae96@gmail.com>
+Date:   Sun, 27 Aug 2023 10:20:51 +0700
 MIME-Version: 1.0
-X-Received: by 2002:a17:902:ea04:b0:1bb:a78c:7a3e with SMTP id
- s4-20020a170902ea0400b001bba78c7a3emr7750122plg.3.1693093205449; Sat, 26 Aug
- 2023 16:40:05 -0700 (PDT)
-Date:   Sat, 26 Aug 2023 16:40:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001524880603dbfbf8@google.com>
-Subject: [syzbot] [fuse?] KASAN: slab-use-after-free Read in fuse_test_super
-From:   syzbot <syzbot+5b64180f8d9e39d3f061@syzkaller.appspotmail.com>
-To:     brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, miklos@szeredi.hu,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=no
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Content-Language: en-US
+To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        dianlujitao@gmail.com
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux btrfs <linux-btrfs@vger.kernel.org>,
+        Linux Filesystem Development <linux-fsdevel@vger.kernel.org>
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: Fwd: kernel bug when performing heavy IO operations
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,200 +77,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hi,
 
-syzbot found the following issue on:
+I notice a bug report on Bugzilla [1]. Quoting from it:
 
-HEAD commit:    28c736b0e92e Add linux-next specific files for 20230822
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=11bfe65ba80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=20999f779fa96017
-dashboard link: https://syzkaller.appspot.com/bug?extid=5b64180f8d9e39d3f061
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17c50b07a80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=156fc5cfa80000
+> When the IO load is heavy (compiling AOSP in my case), there's a chance to crash the kernel, the only way to recover is to perform a hard reset. Logs look like follows:
+> 
+> 8月 25 13:52:23 arch-pc kernel: BUG: Bad page map in process tmux: client  pte:8000000462500025 pmd:b99c98067
+> 8月 25 13:52:23 arch-pc kernel: page:00000000460fa108 refcount:4 mapcount:-256 mapping:00000000612a1864 index:0x16 pfn:0x462500
+> 8月 25 13:52:23 arch-pc kernel: memcg:ffff8a1056ed0000
+> 8月 25 13:52:23 arch-pc kernel: aops:btrfs_aops [btrfs] ino:9c4635 dentry name:"locale-archive"
+> 8月 25 13:52:23 arch-pc kernel: flags: 0x2ffff5800002056(referenced|uptodate|lru|workingset|private|node=0|zone=2|lastcpupid=0xffff)
+> 8月 25 13:52:23 arch-pc kernel: page_type: 0xfffffeff(offline)
+> 8月 25 13:52:23 arch-pc kernel: raw: 02ffff5800002056 ffffe6e210c05248 ffffe6e20e714dc8 ffff8a10472a8c70
+> 8月 25 13:52:23 arch-pc kernel: raw: 0000000000000016 0000000000000001 00000003fffffeff ffff8a1056ed0000
+> 8月 25 13:52:23 arch-pc kernel: page dumped because: bad pte
+> 8月 25 13:52:23 arch-pc kernel: addr:00007f5fc9816000 vm_flags:08000071 anon_vma:0000000000000000 mapping:ffff8a10472a8c70 index:16
+> 8月 25 13:52:23 arch-pc kernel: file:locale-archive fault:filemap_fault mmap:btrfs_file_mmap [btrfs] read_folio:btrfs_read_folio [btrfs]
+> 8月 25 13:52:23 arch-pc kernel: CPU: 40 PID: 2033787 Comm: tmux: client Tainted: G           OE      6.4.11-zen2-1-zen #1 a571467d6effd6120b1e64d2f88f90c58106da17
+> 8月 25 13:52:23 arch-pc kernel: Hardware name: JGINYUE X99-8D3/2.5G Server/X99-8D3/2.5G Server, BIOS 5.11 06/30/2022
+> 8月 25 13:52:23 arch-pc kernel: Call Trace:
+> 8月 25 13:52:23 arch-pc kernel:  <TASK>
+> 8月 25 13:52:23 arch-pc kernel:  dump_stack_lvl+0x47/0x60
+> 8月 25 13:52:23 arch-pc kernel:  print_bad_pte+0x194/0x250
+> 8月 25 13:52:23 arch-pc kernel:  ? page_remove_rmap+0x8d/0x260
+> 8月 25 13:52:23 arch-pc kernel:  unmap_page_range+0xbb1/0x20f0
+> 8月 25 13:52:23 arch-pc kernel:  unmap_vmas+0x142/0x220
+> 8月 25 13:52:23 arch-pc kernel:  exit_mmap+0xe4/0x350
+> 8月 25 13:52:23 arch-pc kernel:  mmput+0x5f/0x140
+> 8月 25 13:52:23 arch-pc kernel:  do_exit+0x31f/0xbc0
+> 8月 25 13:52:23 arch-pc kernel:  do_group_exit+0x31/0x80
+> 8月 25 13:52:23 arch-pc kernel:  __x64_sys_exit_group+0x18/0x20
+> 8月 25 13:52:23 arch-pc kernel:  do_syscall_64+0x60/0x90
+> 8月 25 13:52:23 arch-pc kernel:  entry_SYSCALL_64_after_hwframe+0x77/0xe1
+> 8月 25 13:52:23 arch-pc kernel: RIP: 0033:0x7f5fca0da14d
+> 8月 25 13:52:23 arch-pc kernel: Code: Unable to access opcode bytes at 0x7f5fca0da123.
+> 8月 25 13:52:23 arch-pc kernel: RSP: 002b:00007fff54a44358 EFLAGS: 00000206 ORIG_RAX: 00000000000000e7
+> 8月 25 13:52:23 arch-pc kernel: RAX: ffffffffffffffda RBX: 00007f5fca23ffa8 RCX: 00007f5fca0da14d
+> 8月 25 13:52:23 arch-pc kernel: RDX: 00000000000000e7 RSI: fffffffffffffeb8 RDI: 0000000000000000
+> 8月 25 13:52:23 arch-pc kernel: RBP: 0000000000000002 R08: 00007fff54a442f8 R09: 00007fff54a4421f
+> 8月 25 13:52:23 arch-pc kernel: R10: 00007fff54a44130 R11: 0000000000000206 R12: 0000000000000000
+> 8月 25 13:52:23 arch-pc kernel: R13: 0000000000000000 R14: 00007f5fca23e680 R15: 00007f5fca23ffc0
+> 8月 25 13:52:23 arch-pc kernel:  </TASK>
+> 8月 25 13:52:23 arch-pc kernel: Disabling lock debugging due to kernel taint
+> 
+> Full log is available at https://fars.ee/HJw3
+> Notice that the issue is introduced by linux kernel released in recent months.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/37bc881cd0b2/disk-28c736b0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4512f7892b3d/vmlinux-28c736b0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/052fe1287e05/bzImage-28c736b0.xz
+See Bugzilla for the full thread.
 
-The issue was bisected to:
+IMO, this looks like it is introduced by page cache (folio) feature.
 
-commit 2c18a63b760a0f68f14cb8bb4c3840bb0b63b73e
-Author: Christian Brauner <brauner@kernel.org>
-Date:   Fri Aug 18 14:00:51 2023 +0000
+Thanks.
 
-    super: wait until we passed kill super
+[1]: https://bugzilla.kernel.org/show_bug.cgi?id=217823
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=154bc0d3a80000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=174bc0d3a80000
-console output: https://syzkaller.appspot.com/x/log.txt?x=134bc0d3a80000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5b64180f8d9e39d3f061@syzkaller.appspotmail.com
-Fixes: 2c18a63b760a ("super: wait until we passed kill super")
-
-==================================================================
-BUG: KASAN: slab-use-after-free in get_fuse_conn_super fs/fuse/fuse_i.h:885 [inline]
-BUG: KASAN: slab-use-after-free in fuse_test_super+0x8c/0xa0 fs/fuse/inode.c:1689
-Read of size 8 at addr ffff88814b51bc40 by task syz-executor382/5079
-
-CPU: 0 PID: 5079 Comm: syz-executor382 Not tainted 6.5.0-rc7-next-20230822-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/26/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:364 [inline]
- print_report+0xc4/0x620 mm/kasan/report.c:475
- kasan_report+0xda/0x110 mm/kasan/report.c:588
- get_fuse_conn_super fs/fuse/fuse_i.h:885 [inline]
- fuse_test_super+0x8c/0xa0 fs/fuse/inode.c:1689
- sget_fc+0x582/0x9b0 fs/super.c:778
- fuse_get_tree+0x39a/0x640 fs/fuse/inode.c:1738
- vfs_get_tree+0x8c/0x370 fs/super.c:1713
- do_new_mount fs/namespace.c:3335 [inline]
- path_mount+0x1492/0x1ed0 fs/namespace.c:3662
- do_mount fs/namespace.c:3675 [inline]
- __do_sys_mount fs/namespace.c:3884 [inline]
- __se_sys_mount fs/namespace.c:3861 [inline]
- __x64_sys_mount+0x293/0x310 fs/namespace.c:3861
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f65faa253ea
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff5d8df618 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fff5d8df640 RCX: 00007f65faa253ea
-RDX: 0000000020000280 RSI: 0000000020000300 RDI: 0000000000000000
-RBP: 0000000020000280 R08: 00007fff5d8df640 R09: 00007fff5d8df507
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020000300
-R13: 0000000000000000 R14: 00000000200028c0 R15: 00007f65faa6d06a
- </TASK>
-
-Allocated by task 5081:
- kasan_save_stack+0x33/0x50 mm/kasan/common.c:45
- kasan_set_track+0x25/0x30 mm/kasan/common.c:52
- ____kasan_kmalloc mm/kasan/common.c:374 [inline]
- __kasan_kmalloc+0xa2/0xb0 mm/kasan/common.c:383
- kmalloc include/linux/slab.h:599 [inline]
- kzalloc include/linux/slab.h:720 [inline]
- fuse_get_tree+0xbe/0x640 fs/fuse/inode.c:1705
- vfs_get_tree+0x8c/0x370 fs/super.c:1713
- do_new_mount fs/namespace.c:3335 [inline]
- path_mount+0x1492/0x1ed0 fs/namespace.c:3662
- do_mount fs/namespace.c:3675 [inline]
- __do_sys_mount fs/namespace.c:3884 [inline]
- __se_sys_mount fs/namespace.c:3861 [inline]
- __x64_sys_mount+0x293/0x310 fs/namespace.c:3861
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x38/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-Freed by task 5081:
- kasan_save_stack+0x33/0x50 mm/kasan/common.c:45
- kasan_set_track+0x25/0x30 mm/kasan/common.c:52
- kasan_save_free_info+0x2b/0x40 mm/kasan/generic.c:522
- ____kasan_slab_free mm/kasan/common.c:236 [inline]
- ____kasan_slab_free+0x15b/0x1b0 mm/kasan/common.c:200
- kasan_slab_free include/linux/kasan.h:164 [inline]
- slab_free_hook mm/slub.c:1800 [inline]
- slab_free_freelist_hook+0x114/0x1e0 mm/slub.c:1826
- slab_free mm/slub.c:3809 [inline]
- __kmem_cache_free+0xb8/0x2f0 mm/slub.c:3822
- deactivate_locked_super+0xa0/0x2d0 fs/super.c:454
- deactivate_super+0xde/0x100 fs/super.c:504
- cleanup_mnt+0x222/0x3d0 fs/namespace.c:1254
- task_work_run+0x14d/0x240 kernel/task_work.c:179
- ptrace_notify+0x10c/0x130 kernel/signal.c:2387
- ptrace_report_syscall include/linux/ptrace.h:411 [inline]
- ptrace_report_syscall_exit include/linux/ptrace.h:473 [inline]
- syscall_exit_work kernel/entry/common.c:252 [inline]
- syscall_exit_to_user_mode_prepare+0x120/0x220 kernel/entry/common.c:279
- __syscall_exit_to_user_mode_work kernel/entry/common.c:284 [inline]
- syscall_exit_to_user_mode+0xd/0x60 kernel/entry/common.c:297
- do_syscall_64+0x44/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-The buggy address belongs to the object at ffff88814b51bc40
- which belongs to the cache kmalloc-32 of size 32
-The buggy address is located 0 bytes inside of
- freed 32-byte region [ffff88814b51bc40, ffff88814b51bc60)
-
-The buggy address belongs to the physical page:
-page:ffffea00052d46c0 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x14b51b
-ksm flags: 0x57ff00000000800(slab|node=1|zone=2|lastcpupid=0x7ff)
-page_type: 0xffffffff()
-raw: 057ff00000000800 ffff888012c41500 ffffea000501e700 dead000000000003
-raw: 0000000000000000 0000000000400040 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x12cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY), pid 1, tgid 1 (swapper/0), ts 23776999617, free_ts 0
- set_page_owner include/linux/page_owner.h:31 [inline]
- post_alloc_hook+0x2cf/0x340 mm/page_alloc.c:1530
- prep_new_page mm/page_alloc.c:1537 [inline]
- get_page_from_freelist+0x10d7/0x31b0 mm/page_alloc.c:3213
- __alloc_pages+0x1d0/0x4a0 mm/page_alloc.c:4469
- alloc_page_interleave+0x1e/0x250 mm/mempolicy.c:2131
- alloc_pages+0x22a/0x270 mm/mempolicy.c:2293
- alloc_slab_page mm/slub.c:1870 [inline]
- allocate_slab+0x251/0x380 mm/slub.c:2017
- new_slab mm/slub.c:2070 [inline]
- ___slab_alloc+0x8be/0x1570 mm/slub.c:3223
- __slab_alloc.constprop.0+0x56/0xa0 mm/slub.c:3322
- __slab_alloc_node mm/slub.c:3375 [inline]
- slab_alloc_node mm/slub.c:3468 [inline]
- __kmem_cache_alloc_node+0x137/0x350 mm/slub.c:3517
- __do_kmalloc_node mm/slab_common.c:1022 [inline]
- __kmalloc+0x4f/0x100 mm/slab_common.c:1036
- kmalloc include/linux/slab.h:603 [inline]
- kzalloc include/linux/slab.h:720 [inline]
- kobject_get_path+0xce/0x2b0 lib/kobject.c:161
- kobject_uevent_env+0x26b/0x1800 lib/kobject_uevent.c:529
- kernel_add_sysfs_param kernel/params.c:817 [inline]
- param_sysfs_builtin kernel/params.c:852 [inline]
- param_sysfs_builtin_init+0x327/0x450 kernel/params.c:986
- do_one_initcall+0x117/0x630 init/main.c:1232
- do_initcall_level init/main.c:1294 [inline]
- do_initcalls init/main.c:1310 [inline]
- do_basic_setup init/main.c:1329 [inline]
- kernel_init_freeable+0x5c2/0x900 init/main.c:1547
- kernel_init+0x1c/0x2a0 init/main.c:1437
-page_owner free stack trace missing
-
-Memory state around the buggy address:
- ffff88814b51bb00: 00 00 05 fc fc fc fc fc fa fb fb fb fc fc fc fc
- ffff88814b51bb80: 00 00 00 00 fc fc fc fc fa fb fb fb fc fc fc fc
->ffff88814b51bc00: fa fb fb fb fc fc fc fc fa fb fb fb fc fc fc fc
-                                           ^
- ffff88814b51bc80: fa fb fb fb fc fc fc fc fa fb fb fb fc fc fc fc
- ffff88814b51bd00: fa fb fb fb fc fc fc fc 00 00 00 00 fc fc fc fc
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the bug is already fixed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite bug's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the bug is a duplicate of another bug, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+An old man doll... just what I always wanted! - Clara
