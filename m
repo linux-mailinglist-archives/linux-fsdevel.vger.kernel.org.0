@@ -2,166 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E0FF789FE8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Aug 2023 17:22:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33F9B78A140
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Aug 2023 21:43:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229945AbjH0PTT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Aug 2023 11:19:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59422 "EHLO
+        id S230129AbjH0Tmb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Aug 2023 15:42:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229890AbjH0PS4 (ORCPT
+        with ESMTP id S230046AbjH0Tl5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Aug 2023 11:18:56 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA62DC
-        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Aug 2023 08:18:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693149487;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kQgrH6086PijRe341uvonhJl7o1Xk5U3vx/ltSx2zME=;
-        b=iBaOWilyVaprj5+g3/Z3eM3PrdU4pNrVr/8JsVuWDzQuiA05lVHT8LKWpTzP3YmIMRU6XB
-        GqEy5W1f/mr7Vpx9WPb+VRWyXxqLvpQ5muRf20YK3WGaxMmXxBtJP7dTnOrTTA2rVw12Ow
-        EPKVIw+R52SBl5c0MoIegf/3wUX8XBQ=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-596-lzZ6zg-WP_aaqIiZll45UQ-1; Sun, 27 Aug 2023 11:18:05 -0400
-X-MC-Unique: lzZ6zg-WP_aaqIiZll45UQ-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-51da39aa6dcso2106697a12.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Aug 2023 08:18:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693149484; x=1693754284;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kQgrH6086PijRe341uvonhJl7o1Xk5U3vx/ltSx2zME=;
-        b=ST+F8AhaLmGAiO+OAjt3FUuRlupv5Jfe7AmIPawfhE1+n9+5OnbgbC8jec1orCHXvq
-         XOcNrF1yLU5sXHUyV8Y0K4579G3WWZg4DnPoCO8Cm7jZuSfDY4fGlJleDV28fyYpcj5G
-         SmeE/f9o+K5ZxrV12UMKRGj+/JQcoW7kglib+hkCfZoaAETzFLPm0JX80vNw+uwybFLp
-         82dBouZcBUde7KWcZz/WzTggiO+GLXYgO/CIP+qY1bsN6CMmYrxNzSbEv1JeRrgVvMxM
-         7wUMlX24TdNaPUFpUyJaRInbY5Fxcw66n/+QinOH77ayFcwodMMfTU2OIt9fNQN/APyd
-         hrbQ==
-X-Gm-Message-State: AOJu0YyPUHrA5wWuR1kBR0Px/rZG6/40kabQb/pUYEI7VxzgaDmwlyzU
-        Amlyf8seiLxUPiHw0Q9JyB78z54zIp4M0wxYJ/+PXokbtA6qlGkzNg2smyfwN7F9hi3zYgxCnzx
-        LEIiGtqOhmzQIiKRJT9ImDLaMWg==
-X-Received: by 2002:aa7:c6d8:0:b0:525:7046:1da0 with SMTP id b24-20020aa7c6d8000000b0052570461da0mr18480692eds.19.1693149484591;
-        Sun, 27 Aug 2023 08:18:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHoOYf3NOFKFbjqclhSf7WabmQcU7e+mLsWALTQeleWidu7ZXiTgdVBmke3CsEQc6eRqStBJw==
-X-Received: by 2002:aa7:c6d8:0:b0:525:7046:1da0 with SMTP id b24-20020aa7c6d8000000b0052570461da0mr18480681eds.19.1693149484253;
-        Sun, 27 Aug 2023 08:18:04 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id c15-20020aa7c74f000000b00522828d438csm3410262eds.7.2023.08.27.08.18.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Aug 2023 08:18:03 -0700 (PDT)
-Message-ID: <e5dc72c4-f5a2-ef66-e30e-74ee183c5ba9@redhat.com>
-Date:   Sun, 27 Aug 2023 17:18:02 +0200
+        Sun, 27 Aug 2023 15:41:57 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F8AD12E;
+        Sun, 27 Aug 2023 12:41:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=684ZmibV0iRA7W1nKgqEgsL3aMIsGcfp6Zpl3WdJ4DU=; b=MC2inegbdk323giCAEH+EfdYar
+        4kXwfSwyy2upf/dK+53+T+qrKyewF5s7dkck4Fy8HiN43ivhIJelmFUnVBY8gTnpZi1xWKTWuXIKw
+        PMxisq0e3KNF97DWVe6B6NWvtgyUOe2N5H03vNuXGmN7U3J3s/iHPYzfZnHTYEtijbR38gB7y6yM+
+        f7ACCYsTkBZjsnjijsZxvBLbNGKP/mTU09fHGjxl78/It44EuuASOQ2dnSIavl4Uy9jNvEkCB6Mv6
+        wSB2x3czu7lrhAFvslc5eM2xpF0ak84dfAdNaJZPWXabaeFkiWOblNYIYyhnd8Q9EJERXc2PyYNn0
+        cSxlywzw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qaLdS-001NqG-1T;
+        Sun, 27 Aug 2023 19:41:22 +0000
+Date:   Sun, 27 Aug 2023 20:41:22 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+        Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCH 03/12] filemap: update ki_pos in generic_perform_write
+Message-ID: <20230827194122.GA325446@ZenIV>
+References: <20230601145904.1385409-1-hch@lst.de>
+ <20230601145904.1385409-4-hch@lst.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: Inbox vboxsf not working
-To:     sumitra sharma <sumitraartsy@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-References: <CALPt=azKNntv31d510UMkYXbcrsOj08aODVozsoKhLY6Gd-fgg@mail.gmail.com>
- <2e4b6df9-8fdf-8188-42a1-c7adf28f2473@redhat.com> <ZNy2zDT6SSUxX9P1@sumitra>
- <2d29fd54-b8c9-6efc-49b2-c83c56463db7@redhat.com>
- <64dd0138c68f2_2a8edb294d5@iweiny-mobl.notmuch>
- <5a01e5fd-cc79-4323-57e6-c861aaf0f08b@redhat.com>
- <CALPt=azRw4YxH+0r=CJfY+pZhAsGB9Am0n04gJ0kqpiND3q2sw@mail.gmail.com>
-Content-Language: en-US, nl
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <CALPt=azRw4YxH+0r=CJfY+pZhAsGB9Am0n04gJ0kqpiND3q2sw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230601145904.1385409-4-hch@lst.de>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Thu, Jun 01, 2023 at 04:58:55PM +0200, Christoph Hellwig wrote:
+> All callers of generic_perform_write need to updated ki_pos, move it into
+> common code.
 
-On 8/27/23 14:54, sumitra sharma wrote:
-> 
-> 
-> On Wed, Aug 16, 2023 at 11:03 PM Hans de Goede <hdegoede@redhat.com <mailto:hdegoede@redhat.com>> wrote:
-> 
->     Hi all,
-> 
->     On 8/16/23 19:02, Ira Weiny wrote:
->     > Hans de Goede wrote:
->     >> Hi,
->     >>
->     >> On 8/16/23 13:45, Sumitra Sharma wrote:
->     >>> On Wed, Aug 16, 2023 at 09:28:51AM +0200, Hans de Goede wrote:
->     >>>> Hi Sumitra,
->     >>>>
->     >
->     > [snip]
->     >
->     >>>
->     >>> Hi Hans,
->     >>>
->     >>> Can you please specify what you mean by "vbox guest functionality"? Are you talking about the guest addition utilities which VirtualBox offers and about which you warned not to install them? [*]
->     >>
->     >> Yes.
->     >>
->     >> Virtualbox consists of 2 parts:
->     >>
->     >> 1. The hypervisor / hw-emulator on which virtual-machines run. This hypervisor itself runs on the host.
->     >>
->     >> 2. The guest addition utilities which can be installed inside a guest / virtual-machine running on top of VirtualBox. These allow things like copy and pasting between the guest and host and sharing  a folder on the host with the guest.
->     >>
->     >> The host always uses out of tree kernel-modules.
->     >
->     > Hans,
->     >
->     > Thanks for this clarification.  This is my fault for leading Sumitra to
->     > believe that the in tree modules could replace the guest additions for the
->     > VirtualBox hypervisor.
-> 
->     Actually the in tree modules can replace the *guest* kernel modules which are shipped with the guest additions from virtualbox.
-> 
->     >> The guest can use the in tree kernel modules.
->     >>
->     >>> How can I make the in-tree vbox modules run?
->     >>
->     >> You can use these and specifically the vboxsf and vboxguest modules by
->     >> installing Fedora 38 Workstation x86_64 as a virtualbox *guest* / inside
->     >> a virtualbox vm and then share a folder on the host with the guest.
->     >>
->     >
->     > I took your original email to mean that some in tree modules could be out
->     > of sync with the interfaces used by code coming from Oracle.
->     >
->     > I'm curious are there also out of tree modules for the guest support?
-> 
->     Yes the guest-additions contain out of tree modules (1). Since Sumitra plans to work on the in tree modules, those should NOT be installed.
-> 
->     The easiest way to avoid installing the out-of-tree guest modules is to just not install the official guest additions at all.
-> 
->     Fedora comes with pre-packaged guest additions which only contain the (FOSS) userspace parts, relying on the in tree vbox guest kernel modules.
-> 
-> 
-> Hi Hans,
-> 
-> I set up the Fedora-64bit machine to test the vboxsf changes. But I was also trying to create another 32-bit machine and enable the HIGHMEM 4G option to test the kmap changes in the vboxsf. I discovered that all Linux distros other than Fedora require installation of the Virtualbox guest additions to share a folder between the host and the guest [1]. It is because Fedora has open-vm-tools inside its repository and is part of the default installation, which other distros do not have. Is there any other way to create a successful 32-bit machine to test the vboxsf changes without installing the Virtualbox guest additions? I tried Ubuntu, Debian, and OpenSUSE.
+> @@ -4034,7 +4037,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		endbyte = pos + status - 1;
+>  		err = filemap_write_and_wait_range(mapping, pos, endbyte);
+>  		if (err == 0) {
+> -			iocb->ki_pos = endbyte + 1;
+>  			written += status;
+>  			invalidate_mapping_pages(mapping,
+>  						 pos >> PAGE_SHIFT,
+> @@ -4047,8 +4049,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		}
+>  	} else {
+>  		written = generic_perform_write(iocb, from);
+> -		if (likely(written > 0))
+> -			iocb->ki_pos += written;
+>  	}
+>  out:
+>  	return written ? written : err;
 
-You can install the vbox guest additions and then after installation remove the vboxguest and vboxsf modules which the virtubal-guest-additions installer will have installed under /lib/modules/<$kver>/updates I think.
+[another late reply, sorry]
 
-After removing the modules from the updates dir run "depmod -a" and reboot and then check if they have not been re-added by some startup script ...
+That part is somewhat fishy - there's a case where you return a positive value
+and advance ->ki_pos by more than that amount.  I really wonder if all callers
+of ->write_iter() are OK with that.  Consider e.g. this:
 
-Regards,
+ssize_t ksys_write(unsigned int fd, const char __user *buf, size_t count)
+{
+        struct fd f = fdget_pos(fd);
+        ssize_t ret = -EBADF;
 
-Hans
+        if (f.file) {
+                loff_t pos, *ppos = file_ppos(f.file);
+                if (ppos) {
+                        pos = *ppos;   
+                        ppos = &pos;
+                }
+                ret = vfs_write(f.file, buf, count, ppos);
+                if (ret >= 0 && ppos)
+                        f.file->f_pos = pos;
+                fdput_pos(f);
+        }
 
+        return ret;
+}
 
+ssize_t vfs_write(struct file *file, const char __user *buf, size_t count, loff_t *pos)
+{
+        ssize_t ret;
+
+        if (!(file->f_mode & FMODE_WRITE))
+                return -EBADF;
+        if (!(file->f_mode & FMODE_CAN_WRITE))
+                return -EINVAL;
+        if (unlikely(!access_ok(buf, count)))
+                return -EFAULT;
+
+        ret = rw_verify_area(WRITE, file, pos, count);
+        if (ret)
+                return ret;
+        if (count > MAX_RW_COUNT)
+                count =  MAX_RW_COUNT;
+        file_start_write(file);
+        if (file->f_op->write)
+                ret = file->f_op->write(file, buf, count, pos);
+        else if (file->f_op->write_iter)
+                ret = new_sync_write(file, buf, count, pos);
+        else   
+                ret = -EINVAL;
+        if (ret > 0) {
+                fsnotify_modify(file);
+                add_wchar(current, ret);
+        }
+        inc_syscw(current);
+        file_end_write(file);
+        return ret;
+}
+
+static ssize_t new_sync_write(struct file *filp, const char __user *buf, size_t len, loff_t *ppos)
+{
+        struct kiocb kiocb;
+        struct iov_iter iter;
+        ssize_t ret; 
+
+        init_sync_kiocb(&kiocb, filp);
+        kiocb.ki_pos = (ppos ? *ppos : 0);
+        iov_iter_ubuf(&iter, ITER_SOURCE, (void __user *)buf, len);
+
+        ret = call_write_iter(filp, &kiocb, &iter);
+        BUG_ON(ret == -EIOCBQUEUED);
+        if (ret > 0 && ppos)
+                *ppos = kiocb.ki_pos;
+        return ret;
+} 
+
+Suppose ->write_iter() ends up doing returning a positive value smaller than
+the increment of kiocb.ki_pos.  What do we get?  ret is positive, so
+kiocb.ki_pos gets copied into *ppos, which is ksys_write's pos and there
+we copy it into file->f_pos.
+
+Is it really OK to have write() return 4096 and advance the file position
+by 16K?  AFAICS, userland wouldn't get any indication of something
+odd going on - just a short write to a regular file, with followup write
+of remaining 12K getting quietly written in the range 16K..28K.
+
+I don't remember what POSIX says about that, but it would qualify as
+nasty surprise for any userland program - sure, one can check fsync()
+results before closing the sucker and see if everything looks fine,
+but the way it's usually discussed could easily lead to assumption that
+(synchronous) O_DIRECT writes would not be affected by anything of that
+sort.
