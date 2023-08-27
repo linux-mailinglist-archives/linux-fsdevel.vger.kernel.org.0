@@ -2,227 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C8F0B789D03
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Aug 2023 12:43:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00E00789DBA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Aug 2023 13:56:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230414AbjH0Kmi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Aug 2023 06:42:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44690 "EHLO
+        id S229798AbjH0Lz1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Aug 2023 07:55:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230376AbjH0KmO (ORCPT
+        with ESMTP id S229740AbjH0LzF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Aug 2023 06:42:14 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B10CEA;
-        Sun, 27 Aug 2023 03:42:11 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-98377c5d53eso284949466b.0;
-        Sun, 27 Aug 2023 03:42:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693132929; x=1693737729;
-        h=content-transfer-encoding:cc:content-language:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rz9CBAI4zwM+YFF3Ydx79sOTLw/EqjnM+oe9j4q1ErI=;
-        b=VCEycUcoyxDEGtLTbMyHcGta0DUHaobkaI73Dq9dJtQmgMu7/ITac3nHcALL6xWQUA
-         PCY1A8ezoOuYuTKEriOAO1ln5XFp08Qe8IWaUk9GpwY4ivvmUPl65bCrYpXB5nOIJz+I
-         zNlB+z109H/IfD42a0EDKwLz9TihYM7bdifmx9ajYncAmfWIJK/mWufH0QaUCGy8pfam
-         T/S6l7oLxpBaLw9m1ZFpjVnvznG15TI5bEjGjYi31PC4rkqA5ig54BMWf0a1Y6ndp9S0
-         x27NJSVj6n4I1NqYJsy8QR9H36nQsbecJdmhAcITlqijyHTuJ+Amijlx38Ubi+xvqcCC
-         FWMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693132929; x=1693737729;
-        h=content-transfer-encoding:cc:content-language:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Rz9CBAI4zwM+YFF3Ydx79sOTLw/EqjnM+oe9j4q1ErI=;
-        b=JNmgzf1QMtxAqtRqtiQQcJyzMaCYlpdbH9nfahARBLJgEeVCC8PywsWXM4QjJzf7vp
-         XH/UCA0L2lYqjKTPSumR1ZYRzAKTi8HiMfXNvsyx+s3fts4W/jSMztpE4S83XSLZad1Z
-         QyzhhbcIpgY/G2a+Ab2Vy357KCwYzApg8lNo+ccVx/0fcL/8Z51Zrrb+9WIzMwh1G83e
-         OGWTQ2H4i4dHWMazVBYTzf1AgMsHWV5UVdQIh+uWVR+l81vku5kvNoaNqiZl/JuXiQhG
-         Z2Pe/sib1y3D5KCXSsl2XU3Pqo0bM8aRHwUL6HOmiN9aq8LTK/KVIl3zokc3cv/jx8g1
-         H2VQ==
-X-Gm-Message-State: AOJu0YzjGyBTrLBpFlQ1suw3WxWaiOFizhn6+e5cRbxyE6axbkWHbc6i
-        XRJDKNOdJAed3xoPqg5+Qx10KLvaqT0fTA==
-X-Google-Smtp-Source: AGHT+IFAOR7TUKUTek81wSVLxldVECpmhuoaGY+lkEGnqAv5EQ2XPSKr3VQ7/XikDzrUuOlnIv59tQ==
-X-Received: by 2002:a17:907:2e19:b0:9a2:16e2:35a with SMTP id ig25-20020a1709072e1900b009a216e2035amr7109135ejc.62.1693132929399;
-        Sun, 27 Aug 2023 03:42:09 -0700 (PDT)
-Received: from [192.168.0.75] (85-160-48-176.reb.o2.cz. [85.160.48.176])
-        by smtp.gmail.com with ESMTPSA id i27-20020a1709063c5b00b009a1c05bd672sm3302442ejg.127.2023.08.27.03.42.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Aug 2023 03:42:08 -0700 (PDT)
-Message-ID: <30bfc906-1d73-01c9-71d0-aa441ac34b96@gmail.com>
-Date:   Sun, 27 Aug 2023 12:42:07 +0200
+        Sun, 27 Aug 2023 07:55:05 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F8F713E;
+        Sun, 27 Aug 2023 04:55:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=lRX3XcY7QZhlnMmis+AtWCcFQ1ER+dbenUbYjT1H8Bw=; b=oy8ciNpaP7G3VnJYSU4pe0vef0
+        4wnwFaobTQcFhQXV6XFwQzQXV1WwdyowU4EuHTH6QQ77K6dFQkdZQ21cu/+YbdMGug1WHOZVamIMG
+        mUWZWP3M8ryUg5Kp8uP+Ryh8iYpYuEUJUkto4GQbWQ75iyto9oQjeldsAsLRNhHPTPrnrz1kh70co
+        U5Ehg0u/NbzRf3ZeysjbcLBrKo7Q/lZN3Gn7jDgbbLfpbJJDaC+tTmfeV50Ns6Oe/pi65fZkVj+Tf
+        ulVcAbfDynZ0Z8Sd9MVtq6QnsfirPnvLQjiWAO9Wb60/1fDfdLiaVEZafJICAUzAcgIgz1IflqJ0g
+        XiSuSoog==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1qaEM4-00BUYj-0B; Sun, 27 Aug 2023 11:54:56 +0000
+Date:   Sun, 27 Aug 2023 12:54:55 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     dianlujitao <dianlujitao@gmail.com>
+Cc:     Bagas Sanjaya <bagasdotme@gmail.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux btrfs <linux-btrfs@vger.kernel.org>,
+        Linux Filesystem Development <linux-fsdevel@vger.kernel.org>
+Subject: Re: Fwd: kernel bug when performing heavy IO operations
+Message-ID: <ZOs5j93aAmZhrA/G@casper.infradead.org>
+References: <f847bc14-8f53-0547-9082-bb3d1df9ae96@gmail.com>
+ <ZOrG5698LPKTp5xM@casper.infradead.org>
+ <7d8b4679-5cd5-4ba1-9996-1a239f7cb1c5@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-From:   Jan Cincera <hcincera@gmail.com>
-Subject: [PATCH v2] exfat: add ioctls for accessing attributes
-To:     Namjae Jeon <linkinjeon@kernel.org>
-Content-Language: cs
-Cc:     Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7d8b4679-5cd5-4ba1-9996-1a239f7cb1c5@gmail.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add GET and SET attributes ioctls to enable attribute modification.
-We already do this in FAT and a few userspace utils made for it would
-benefit from this also working on exFAT, namely fatattr.
+On Sun, Aug 27, 2023 at 12:34:54PM +0800, dianlujitao wrote:
+> 
+> 在 2023/8/27 11:45, Matthew Wilcox 写道:
+> > On Sun, Aug 27, 2023 at 10:20:51AM +0700, Bagas Sanjaya wrote:
+> > > > When the IO load is heavy (compiling AOSP in my case), there's a chance to crash the kernel, the only way to recover is to perform a hard reset. Logs look like follows:
+> > > > 
+> > > > 8月 25 13:52:23 arch-pc kernel: BUG: Bad page map in process tmux: client  pte:8000000462500025 pmd:b99c98067
+> > > > 8月 25 13:52:23 arch-pc kernel: page:00000000460fa108 refcount:4 mapcount:-256 mapping:00000000612a1864 index:0x16 pfn:0x462500
+> > > > 8月 25 13:52:23 arch-pc kernel: memcg:ffff8a1056ed0000
+> > > > 8月 25 13:52:23 arch-pc kernel: aops:btrfs_aops [btrfs] ino:9c4635 dentry name:"locale-archive"
+> > > > 8月 25 13:52:23 arch-pc kernel: flags: 0x2ffff5800002056(referenced|uptodate|lru|workingset|private|node=0|zone=2|lastcpupid=0xffff)
+> > > > 8月 25 13:52:23 arch-pc kernel: page_type: 0xfffffeff(offline)
+> > This is interesting.  PG_offline is set.
+> > 
+> > $ git grep SetPageOffline
+> > arch/powerpc/platforms/powernv/memtrace.c:              __SetPageOffline(pfn_to_page(pfn));
+> > drivers/hv/hv_balloon.c:                        __SetPageOffline(pg);
+> > drivers/hv/hv_balloon.c:                        __SetPageOffline(pg + j);
+> > drivers/misc/vmw_balloon.c:             __SetPageOffline(page + i);
+> > drivers/virtio/virtio_mem.c:            __SetPageOffline(page);
+> > drivers/xen/balloon.c:  __SetPageOffline(page);
+> > include/linux/balloon_compaction.h:     __SetPageOffline(page);
+> > include/linux/balloon_compaction.h:     __SetPageOffline(page);
+> > 
+> > But there's no indication that this kernel is running under a
+> > hypervisor:
+> > 
+> > > > 8月 25 13:52:23 arch-pc kernel: Hardware name: JGINYUE X99-8D3/2.5G Server/X99-8D3/2.5G Server, BIOS 5.11 06/30/2022
+> Yes, I'm running on bare metal hardware.
+> > So I'd agree with Artem, this looks like bad RAM.
+> > 
+> I ran memtest86+ 6.20 for a cycle and it passed. However, could an OOM
+> trigger the bug? e.g., kernel bug fired before the OOM killer has a
+> chance to start? Just a guess because the last log entry in journalctl
+> before "BUG" is an hour earlier.
 
-Signed-off-by: Jan Cincera <hcincera@gmail.com>
----
-Changes in v2:
-  - Removed irrelevant comments.
-  - Now masking reserved fields.
-
- fs/exfat/exfat_fs.h |  6 +++
- fs/exfat/file.c     | 93 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 99 insertions(+)
-
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index 729ada9e26e8..ebe8c4b928f4 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -149,6 +149,12 @@ enum {
- #define DIR_CACHE_SIZE		\
- 	(DIV_ROUND_UP(EXFAT_DEN_TO_B(ES_MAX_ENTRY_NUM), SECTOR_SIZE) + 1)
- 
-+/*
-+ * attribute ioctls, same as their FAT equivalents.
-+ */
-+#define EXFAT_IOCTL_GET_ATTRIBUTES	_IOR('r', 0x10, __u32)
-+#define EXFAT_IOCTL_SET_ATTRIBUTES	_IOW('r', 0x11, __u32)
-+
- struct exfat_dentry_namebuf {
- 	char *lfn;
- 	int lfnbuf_len; /* usually MAX_UNINAME_BUF_SIZE */
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index 3cbd270e0cba..b31ce0868ddd 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -8,6 +8,8 @@
- #include <linux/cred.h>
- #include <linux/buffer_head.h>
- #include <linux/blkdev.h>
-+#include <linux/fsnotify.h>
-+#include <linux/security.h>
- 
- #include "exfat_raw.h"
- #include "exfat_fs.h"
-@@ -316,6 +318,92 @@ int exfat_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	return error;
- }
- 
-+/*
-+ * modified ioctls from fat/file.c by Welmer Almesberger
-+ */
-+static int exfat_ioctl_get_attributes(struct inode *inode, u32 __user *user_attr)
-+{
-+	u32 attr;
-+
-+	inode_lock_shared(inode);
-+	attr = exfat_make_attr(inode);
-+	inode_unlock_shared(inode);
-+
-+	return put_user(attr, user_attr);
-+}
-+
-+static int exfat_ioctl_set_attributes(struct file *file, u32 __user *user_attr)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct exfat_sb_info *sbi = EXFAT_SB(inode->i_sb);
-+	int is_dir = S_ISDIR(inode->i_mode);
-+	u32 attr, oldattr;
-+	struct iattr ia;
-+	int err;
-+
-+	err = get_user(attr, user_attr);
-+	if (err)
-+		goto out;
-+
-+	err = mnt_want_write_file(file);
-+	if (err)
-+		goto out;
-+	inode_lock(inode);
-+
-+	oldattr = exfat_make_attr(inode);
-+
-+	/*
-+	 * Mask attributes so we don't set reserved fields.
-+	 */
-+	attr &= (ATTR_READONLY | ATTR_HIDDEN | ATTR_SYSTEM | ATTR_ARCHIVE);
-+	attr |= (is_dir ? ATTR_SUBDIR : 0);
-+
-+	/* Equivalent to a chmod() */
-+	ia.ia_valid = ATTR_MODE | ATTR_CTIME;
-+	ia.ia_ctime = current_time(inode);
-+	if (is_dir)
-+		ia.ia_mode = exfat_make_mode(sbi, attr, 0777);
-+	else
-+		ia.ia_mode = exfat_make_mode(sbi, attr, 0666 | (inode->i_mode & 0111));
-+
-+	/* The root directory has no attributes */
-+	if (inode->i_ino == EXFAT_ROOT_INO && attr != ATTR_SUBDIR) {
-+		err = -EINVAL;
-+		goto out_unlock_inode;
-+	}
-+
-+	if (((attr | oldattr) & ATTR_SYSTEM) &&
-+	    !capable(CAP_LINUX_IMMUTABLE)) {
-+		err = -EPERM;
-+		goto out_unlock_inode;
-+	}
-+
-+	/*
-+	 * The security check is questionable...  We single
-+	 * out the RO attribute for checking by the security
-+	 * module, just because it maps to a file mode.
-+	 */
-+	err = security_inode_setattr(file_mnt_idmap(file),
-+				     file->f_path.dentry, &ia);
-+	if (err)
-+		goto out_unlock_inode;
-+
-+	/* This MUST be done before doing anything irreversible... */
-+	err = exfat_setattr(file_mnt_idmap(file), file->f_path.dentry, &ia);
-+	if (err)
-+		goto out_unlock_inode;
-+
-+	fsnotify_change(file->f_path.dentry, ia.ia_valid);
-+
-+	exfat_save_attr(inode, attr);
-+	mark_inode_dirty(inode);
-+out_unlock_inode:
-+	inode_unlock(inode);
-+	mnt_drop_write_file(file);
-+out:
-+	return err;
-+}
-+
- static int exfat_ioctl_fitrim(struct inode *inode, unsigned long arg)
- {
- 	struct fstrim_range range;
-@@ -346,8 +434,13 @@ static int exfat_ioctl_fitrim(struct inode *inode, unsigned long arg)
- long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-+	u32 __user *user_attr = (u32 __user *)arg;
- 
- 	switch (cmd) {
-+	case EXFAT_IOCTL_GET_ATTRIBUTES:
-+		return exfat_ioctl_get_attributes(inode, user_attr);
-+	case EXFAT_IOCTL_SET_ATTRIBUTES:
-+		return exfat_ioctl_set_attributes(filp, user_attr);
- 	case FITRIM:
- 		return exfat_ioctl_fitrim(inode, arg);
- 	default:
--- 
-2.40.1
+The problem is that OOM doesn't SetPageOffline.  The only things that
+do are hypervisor guest drivers.  So we've got a random bit being
+cleared, and either that's a stray write which happens to land in
+the struct page in question, or it's bad hardware.  Since it's a
+single bit that's being cleared, bad hardware is the most likely
+explanation, but it's not impossible for there to be a bug that's
+doing this.  The problem is that it could be almost anything ...
