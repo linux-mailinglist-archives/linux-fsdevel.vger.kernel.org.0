@@ -2,70 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6554878B27D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 16:03:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 142C078B2B0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 16:10:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231204AbjH1ODQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Aug 2023 10:03:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41430 "EHLO
+        id S230048AbjH1OKO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Aug 2023 10:10:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231318AbjH1ODM (ORCPT
+        with ESMTP id S231589AbjH1OJo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Aug 2023 10:03:12 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C396F7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Aug 2023 07:03:10 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 5A8326732A; Mon, 28 Aug 2023 16:03:07 +0200 (CEST)
-Date:   Mon, 28 Aug 2023 16:03:07 +0200
-From:   Christoph Hellwig <hch@lst.de>
+        Mon, 28 Aug 2023 10:09:44 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FA47C7;
+        Mon, 28 Aug 2023 07:09:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=vj5uG1CCKuX3jGxRE00yIXM6NXAYana45tP3A2WWLvg=; b=RHFK7QjW1d3z/cgEF/gIaMJXjl
+        q9gk6zavVhCUT0REIgAdFLETumEDgNX31n5tOyQhnvkU8WCYCD8qtF2F7JIh87WewvVfSWsquA0tC
+        uFCleufO1TvGFTPx/jUCwUZCsP2bebu06ODAaAcQbc/4rWi94TPHmbsFH+LtrkjQOR7/lEdbXixYt
+        M+vPsoWZkWHpXWQ+JLcpwQucb2qNJ9pjhKvPZ0mYEZcF0oUJ2H7KL/8UwzwLzq0l0eEfbqJ83KUSP
+        CPkyyt5HHwtXnAdZV1aiX3SpHgdJybm9ZYCfldIarOg79krPJg7SYxA8gZf6WAnxuLyRJx9OH1QRp
+        BgsumDSg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qacvu-001Zez-2i;
+        Mon, 28 Aug 2023 14:09:34 +0000
+Date:   Mon, 28 Aug 2023 15:09:34 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Christian Brauner <brauner@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org,
-        syzbot+5b64180f8d9e39d3f061@syzkaller.appspotmail.com
-Subject: Re: [PATCH 2/2] super: ensure valid info
-Message-ID: <20230828140307.GB19777@lst.de>
-References: <20230828-vfs-super-fixes-v1-0-b37a4a04a88f@kernel.org> <20230828-vfs-super-fixes-v1-2-b37a4a04a88f@kernel.org> <20230828120418.GB10189@lst.de> <20230828-farbkombinationen-gedruckt-6da10079c586@brauner>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Kemeng Shi <shikemeng@huaweicloud.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfs: use helpers for calling f_op->{read,write}_iter()
+ in read_write.c
+Message-ID: <20230828140934.GY3390869@ZenIV>
+References: <20230828155056.4100924-1-shikemeng@huaweicloud.com>
+ <ZOyMZO2i3rKS/4tU@infradead.org>
+ <20230828-alarm-entzug-923f1f8cc109@brauner>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230828-farbkombinationen-gedruckt-6da10079c586@brauner>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230828-alarm-entzug-923f1f8cc109@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 28, 2023 at 02:28:48PM +0200, Christian Brauner wrote:
-> > Maybe I didn't read the commit log carefully enough, but why do we
-> > need to call kill_super_notify before free_anon_bdev and any potential
-> > action in ->kill_sb after calling kill_anon_super here given that
-> > we already add a call to kill_super_notify after ->kill_sb?
+On Mon, Aug 28, 2023 at 02:30:42PM +0200, Christian Brauner wrote:
+> On Mon, Aug 28, 2023 at 05:00:36AM -0700, Christoph Hellwig wrote:
+> > On Mon, Aug 28, 2023 at 11:50:56PM +0800, Kemeng Shi wrote:
+> > > use helpers for calling f_op->{read,write}_iter() in read_write.c
+> > > 
+> > 
+> > Why?  We really should just remove the completely pointless wrappers
+> > instead.
 > 
-> Yeah, the commit log explains this. We leave the superblock on fs_supers
-> past sb->kill_sb() and notify after device closure. For block based
-> filesystems that's the correct thing. They don't rely on sb->s_fs_info
-> and we need to ensure that all devices are closed.
-> 
-> But for filesystems like kernfs that rely on get_keyed_super() they rely
-> on sb->s_fs_info to recycle sbs. sb->s_fs_info is currently always freed
-> in sb->kill_sb()
-> 
-> kernfs_kill_sb()
-> -> kill_anon_super()
->    -> kfree(info)
-> 
-> For such fses sb->s_fs_info is freed with the superblock still on
-> fs_supers which means we get a UAF when the sb is still found on the
-> list. So for such filesystems we need to remove and notify before
-> sb->s_fs_info is freed. That's done in kill_anon_super(). For such
-> filesystems the call in deactivate_locked_super() is a nop.
+> Especially because it means you chase this helper to figure out what's
+> actually going on. If there was more to it then it would make sense but
+> not just as a pointless wrapper.
 
-Ok, so I did fail to parse the commit log.
+It's borderline easier to grep for, but not dramatically so.  call_mmap()
+has a stronger argument in favour - there are several methods called
+->mmap and telling one from another is hard without looking into context.
 
-Looks good:
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+For ->{read,write}_iter() I'd prefer to get rid of the wrappers.
