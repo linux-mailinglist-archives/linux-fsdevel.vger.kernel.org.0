@@ -2,85 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A54578A4D0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 05:48:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 830B278A5D6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 08:37:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229883AbjH1Dru (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Aug 2023 23:47:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48656 "EHLO
+        id S229571AbjH1GhW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Aug 2023 02:37:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229903AbjH1Drp (ORCPT
+        with ESMTP id S229509AbjH1GhV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Aug 2023 23:47:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3849BF;
-        Sun, 27 Aug 2023 20:47:43 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 72EFE61FCB;
-        Mon, 28 Aug 2023 03:47:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5BBEC433C7;
-        Mon, 28 Aug 2023 03:47:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693194462;
-        bh=BuWINHrRquDDWmHEVhKsAhSrCUkzcCM2neHXaS8GC/E=;
-        h=Date:From:To:Cc:Subject:From;
-        b=sf9DLcuyCilCSPUJnCQ6uHZqUz6wLm2jQhxc9NarLw9h4Ln+pCjpdbdJT0SL9IofC
-         A4OqQs4lhkRuUlPm/Ge9OmyBgaVc71QXPR/tOZ5En9tkWHh8OC6IWCZxXM+Xzen8c4
-         0VJ5sxNNURtggbgRnfUceWc3s9mYBT48jdvXdKjyuGvedzL4BWw0oMBlSan37ykgsl
-         W4b/MQLmXjaOEcTRRsGkLdxM0S/do0rC85ZSYHPUsqOtw69X4EuGb82lBDJ2QmbNhr
-         1KF5PQFcUTjX0MA+2V6Ki2KE8MT+6zvZEkwiVyGjcJvAdxiGvqjH+YlgCjwIIvnUtp
-         F+O6uiEYw9Abw==
-Date:   Sun, 27 Aug 2023 20:47:41 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
-Subject: [GIT PULL] fsverity updates for 6.6
-Message-ID: <20230828034741.GB5028@sol.localdomain>
+        Mon, 28 Aug 2023 02:37:21 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E34F0126;
+        Sun, 27 Aug 2023 23:37:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=5xtken3ztdTUny1OMfzFaKlaMxo854CajVDA38Kiekk=; b=NcopADFc2/ECJJnc4sPTJV2HCs
+        oucoi3FqWUgmmWL2TBAkAp6f5/UWWSPbYwMK2t1FmNf9DCFana51kICNmLtKkXJ761PmFHB0kIciE
+        tDPU+fPlvqzYN8rAM/mSYi0biQaE2nJXWR4/LhXs6sXOwn+rDi85UgDnSeFEYvprxuyB0OJDS3X7o
+        v2xpNI5oF0c/7+f4qUhZDe9jzBoCkqp/fWoSoiT+ozzUuABOWCY4mt+L1Go7qVWjjcWLM8JX/eIsZ
+        5tjE66X7sfMtVGm7PjjSjRMkHZipPHTZVAj/5fkfJ06RMhfPBT227rR2yLfmee/6rVsL/f24aLc1t
+        55V7kRVw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1qaVri-008xc2-1x;
+        Mon, 28 Aug 2023 06:36:46 +0000
+Date:   Sun, 27 Aug 2023 23:36:46 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, Xueshi Hu <xueshi.hu@smartx.com>,
+        dan.j.williams@intel.com, vishal.l.verma@intel.com,
+        dave.jiang@intel.com, jayalk@intworks.biz, daniel@ffwll.ch,
+        deller@gmx.de, bcrl@kvack.org, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, jack@suse.com, tytso@mit.edu,
+        adilger.kernel@dilger.ca, miklos@szeredi.hu,
+        mike.kravetz@oracle.com, muchun.song@linux.dev, djwong@kernel.org,
+        akpm@linux-foundation.org, hughd@google.com,
+        nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] fs: clean up usage of noop_dirty_folio
+Message-ID: <ZOxAfrz9etoVUfLQ@infradead.org>
+References: <20230819124225.1703147-1-xueshi.hu@smartx.com>
+ <20230821111643.5vxtktznjqk42cak@quack3>
+ <ZONWka8NpDVGzI8h@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <ZONWka8NpDVGzI8h@casper.infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
+On Mon, Aug 21, 2023 at 01:20:33PM +0100, Matthew Wilcox wrote:
+> I was hoping Christoph would weigh in ;-)  I don't have a strong
 
-  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
+I've enjoyed 2 weeks of almost uninterrupted vacation.
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/fs/fsverity/linux.git tags/fsverity-for-linus
-
-for you to fetch changes up to 919dc320956ea353a7fb2d84265195ad5ef525ac:
-
-  fsverity: skip PKCS#7 parser when keyring is empty (2023-08-20 10:33:43 -0700)
-
-----------------------------------------------------------------
-
-Several cleanups for fs/verity/, including two commits that make the
-builtin signature support more cleanly separated from the base feature.
-
-----------------------------------------------------------------
-Eric Biggers (4):
-      fsverity: explicitly check that there is no algorithm 0
-      fsverity: simplify handling of errors during initcall
-      fsverity: move sysctl registration out of signature.c
-      fsverity: skip PKCS#7 parser when keyring is empty
-
- fs/verity/fsverity_private.h | 12 +++----
- fs/verity/hash_algs.c        |  8 +++++
- fs/verity/init.c             | 56 ++++++++++++++++++++------------
- fs/verity/open.c             | 18 +++--------
- fs/verity/signature.c        | 77 ++++++++++++++------------------------------
- fs/verity/verify.c           | 11 ++-----
- 6 files changed, 79 insertions(+), 103 deletions(-)
+I agree with this patch and also your incremental improvements.
 
