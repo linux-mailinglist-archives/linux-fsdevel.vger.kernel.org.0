@@ -2,219 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F61F78B52A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 18:13:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E22178B56C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Aug 2023 18:36:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232699AbjH1QNS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Aug 2023 12:13:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42934 "EHLO
+        id S231312AbjH1QgL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Aug 2023 12:36:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232693AbjH1QM5 (ORCPT
+        with ESMTP id S230289AbjH1Qfj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Aug 2023 12:12:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA10EBF;
-        Mon, 28 Aug 2023 09:12:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Mon, 28 Aug 2023 12:35:39 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35AC212F;
+        Mon, 28 Aug 2023 09:35:37 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 45696629C7;
-        Mon, 28 Aug 2023 16:12:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98108C433CA;
-        Mon, 28 Aug 2023 16:12:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693239172;
-        bh=UlOpgZ1tTkEvhgiFkpB4fX52Blna1Vdbp2aw+mf4OyI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PaQaZTm0bop52Wh7cRun2MIqNp2xzkJRnte2fNo1uK4IXlOx1giGdjBJ8pSZr67td
-         Jyx4nv7OkHMmbn4NjSC+657pCJ/JWbrAxPoSUDnwQc1Var2pGb4p/9fLx2qDUAhVYW
-         rsB17DrlJI4mhtrNwBdunYfT5yIY/Rk+RHeDEuonrxFLOSrgiQyVqgzkYveTBn9rSj
-         kYovnFPOTYgNHhS+XDenTzXSrj84KPN7JW/NKwTbF/Clqcabsp6U1Qa96gKoJ5VPhj
-         hvLXdYXOch/nSzwXrg+QKTSNfrQVXx7XpuJHBPwve/Kq4vR36UtUlspaht00Ialop6
-         KIognVKQekHug==
-Date:   Mon, 28 Aug 2023 09:12:51 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Jan Cincera <hcincera@gmail.com>
-Cc:     Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] exfat: add ioctls for accessing attributes
-Message-ID: <20230828161251.GA28160@frogsfrogsfrogs>
-References: <30bfc906-1d73-01c9-71d0-aa441ac34b96@gmail.com>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id D6EEA1FD65;
+        Mon, 28 Aug 2023 16:35:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1693240535; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ck2GGOGhROLqsyobrCo5kdF6UPRkrbdxAmY4z9IUuok=;
+        b=EtZzfSgJjiUXpAjtdYKvjMgJ0OZ4Q3hodxxDiiqMsvgYkWHBqZPn8b6HaeiQAJEHW5Uuko
+        06HJR2ONdPdonWFc4Fxv/j1G2uH9dZxPNi9bmg/g7/MdjPYaFrmy0koVHOGYl0yF9ECUFU
+        dvX53BpZP+akCxXPwoDv8WIm+8J4QE0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1693240535;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ck2GGOGhROLqsyobrCo5kdF6UPRkrbdxAmY4z9IUuok=;
+        b=gCDBzKEA8PtUwSuSbwhvUT0MqIp/q0xNdnkg7D4y2kSiwFqCax1L5bOi3yUguxVHz9AwG5
+        nCbyIQ5cQ+9obfDg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C8255139CC;
+        Mon, 28 Aug 2023 16:35:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id wwPfMNfM7GQmJQAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 28 Aug 2023 16:35:35 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 3050AA0774; Mon, 28 Aug 2023 18:35:35 +0200 (CEST)
+Date:   Mon, 28 Aug 2023 18:35:35 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Chao Yu <chao@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 23/29] f2fs: Convert to bdev_open_by_dev/path()
+Message-ID: <20230828163535.s7gnbmgzmsrqdpkt@quack3>
+References: <20230818123232.2269-1-jack@suse.cz>
+ <20230823104857.11437-23-jack@suse.cz>
+ <1388dd5e-8d66-6f88-25d1-f563d7c366d6@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <30bfc906-1d73-01c9-71d0-aa441ac34b96@gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <1388dd5e-8d66-6f88-25d1-f563d7c366d6@kernel.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 27, 2023 at 12:42:07PM +0200, Jan Cincera wrote:
-> Add GET and SET attributes ioctls to enable attribute modification.
-> We already do this in FAT and a few userspace utils made for it would
-> benefit from this also working on exFAT, namely fatattr.
+On Mon 28-08-23 20:57:53, Chao Yu wrote:
+> On 2023/8/23 18:48, Jan Kara wrote:
+> > Convert f2fs to use bdev_open_by_dev/path() and pass the handle around.
 > 
-> Signed-off-by: Jan Cincera <hcincera@gmail.com>
-> ---
-> Changes in v2:
->   - Removed irrelevant comments.
->   - Now masking reserved fields.
+> Hi Jan,
 > 
->  fs/exfat/exfat_fs.h |  6 +++
->  fs/exfat/file.c     | 93 +++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 99 insertions(+)
+> Seems it will confilct w/ below commit, could you please take a look?
 > 
-> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-> index 729ada9e26e8..ebe8c4b928f4 100644
-> --- a/fs/exfat/exfat_fs.h
-> +++ b/fs/exfat/exfat_fs.h
-> @@ -149,6 +149,12 @@ enum {
->  #define DIR_CACHE_SIZE		\
->  	(DIV_ROUND_UP(EXFAT_DEN_TO_B(ES_MAX_ENTRY_NUM), SECTOR_SIZE) + 1)
->  
-> +/*
-> + * attribute ioctls, same as their FAT equivalents.
-> + */
-> +#define EXFAT_IOCTL_GET_ATTRIBUTES	_IOR('r', 0x10, __u32)
-> +#define EXFAT_IOCTL_SET_ATTRIBUTES	_IOW('r', 0x11, __u32)
+> https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=51bf8d3c81992ae57beeaf22df78ed7c2782af9d
 
-Can you reuse the definitions from include/uapi/linux/msdos_fs.h instead
-of redefining them here?
+Yes, it will conflict. But I don't plan to rush these patches into the
+currently running merge window so I can just rebase after the f2fs patch
+gets upstream. Thanks for the heads up.
 
-Otherwise this looks like a mostly straight port of the fs/fat/
-versions of these functions.
+								Honza
 
---D
-
-> +
->  struct exfat_dentry_namebuf {
->  	char *lfn;
->  	int lfnbuf_len; /* usually MAX_UNINAME_BUF_SIZE */
-> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-> index 3cbd270e0cba..b31ce0868ddd 100644
-> --- a/fs/exfat/file.c
-> +++ b/fs/exfat/file.c
-> @@ -8,6 +8,8 @@
->  #include <linux/cred.h>
->  #include <linux/buffer_head.h>
->  #include <linux/blkdev.h>
-> +#include <linux/fsnotify.h>
-> +#include <linux/security.h>
->  
->  #include "exfat_raw.h"
->  #include "exfat_fs.h"
-> @@ -316,6 +318,92 @@ int exfat_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
->  	return error;
->  }
->  
-> +/*
-> + * modified ioctls from fat/file.c by Welmer Almesberger
-> + */
-> +static int exfat_ioctl_get_attributes(struct inode *inode, u32 __user *user_attr)
-> +{
-> +	u32 attr;
-> +
-> +	inode_lock_shared(inode);
-> +	attr = exfat_make_attr(inode);
-> +	inode_unlock_shared(inode);
-> +
-> +	return put_user(attr, user_attr);
-> +}
-> +
-> +static int exfat_ioctl_set_attributes(struct file *file, u32 __user *user_attr)
-> +{
-> +	struct inode *inode = file_inode(file);
-> +	struct exfat_sb_info *sbi = EXFAT_SB(inode->i_sb);
-> +	int is_dir = S_ISDIR(inode->i_mode);
-> +	u32 attr, oldattr;
-> +	struct iattr ia;
-> +	int err;
-> +
-> +	err = get_user(attr, user_attr);
-> +	if (err)
-> +		goto out;
-> +
-> +	err = mnt_want_write_file(file);
-> +	if (err)
-> +		goto out;
-> +	inode_lock(inode);
-> +
-> +	oldattr = exfat_make_attr(inode);
-> +
-> +	/*
-> +	 * Mask attributes so we don't set reserved fields.
-> +	 */
-> +	attr &= (ATTR_READONLY | ATTR_HIDDEN | ATTR_SYSTEM | ATTR_ARCHIVE);
-> +	attr |= (is_dir ? ATTR_SUBDIR : 0);
-> +
-> +	/* Equivalent to a chmod() */
-> +	ia.ia_valid = ATTR_MODE | ATTR_CTIME;
-> +	ia.ia_ctime = current_time(inode);
-> +	if (is_dir)
-> +		ia.ia_mode = exfat_make_mode(sbi, attr, 0777);
-> +	else
-> +		ia.ia_mode = exfat_make_mode(sbi, attr, 0666 | (inode->i_mode & 0111));
-> +
-> +	/* The root directory has no attributes */
-> +	if (inode->i_ino == EXFAT_ROOT_INO && attr != ATTR_SUBDIR) {
-> +		err = -EINVAL;
-> +		goto out_unlock_inode;
-> +	}
-> +
-> +	if (((attr | oldattr) & ATTR_SYSTEM) &&
-> +	    !capable(CAP_LINUX_IMMUTABLE)) {
-> +		err = -EPERM;
-> +		goto out_unlock_inode;
-> +	}
-> +
-> +	/*
-> +	 * The security check is questionable...  We single
-> +	 * out the RO attribute for checking by the security
-> +	 * module, just because it maps to a file mode.
-> +	 */
-> +	err = security_inode_setattr(file_mnt_idmap(file),
-> +				     file->f_path.dentry, &ia);
-> +	if (err)
-> +		goto out_unlock_inode;
-> +
-> +	/* This MUST be done before doing anything irreversible... */
-> +	err = exfat_setattr(file_mnt_idmap(file), file->f_path.dentry, &ia);
-> +	if (err)
-> +		goto out_unlock_inode;
-> +
-> +	fsnotify_change(file->f_path.dentry, ia.ia_valid);
-> +
-> +	exfat_save_attr(inode, attr);
-> +	mark_inode_dirty(inode);
-> +out_unlock_inode:
-> +	inode_unlock(inode);
-> +	mnt_drop_write_file(file);
-> +out:
-> +	return err;
-> +}
-> +
->  static int exfat_ioctl_fitrim(struct inode *inode, unsigned long arg)
->  {
->  	struct fstrim_range range;
-> @@ -346,8 +434,13 @@ static int exfat_ioctl_fitrim(struct inode *inode, unsigned long arg)
->  long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  {
->  	struct inode *inode = file_inode(filp);
-> +	u32 __user *user_attr = (u32 __user *)arg;
->  
->  	switch (cmd) {
-> +	case EXFAT_IOCTL_GET_ATTRIBUTES:
-> +		return exfat_ioctl_get_attributes(inode, user_attr);
-> +	case EXFAT_IOCTL_SET_ATTRIBUTES:
-> +		return exfat_ioctl_set_attributes(filp, user_attr);
->  	case FITRIM:
->  		return exfat_ioctl_fitrim(inode, arg);
->  	default:
-> -- 
-> 2.40.1
+> > CC: Jaegeuk Kim <jaegeuk@kernel.org>
+> > CC: Chao Yu <chao@kernel.org>
+> > CC: linux-f2fs-devel@lists.sourceforge.net
+> > Acked-by: Christoph Hellwig <hch@lst.de>
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> > ---
+> >   fs/f2fs/f2fs.h  |  1 +
+> >   fs/f2fs/super.c | 17 +++++++++--------
+> >   2 files changed, 10 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index e18272ae3119..2ec6c10df636 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1234,6 +1234,7 @@ struct f2fs_bio_info {
+> >   #define FDEV(i)				(sbi->devs[i])
+> >   #define RDEV(i)				(raw_super->devs[i])
+> >   struct f2fs_dev_info {
+> > +	struct bdev_handle *bdev_handle;
+> >   	struct block_device *bdev;
+> >   	char path[MAX_PATH_LEN];
+> >   	unsigned int total_segments;
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index aa1f9a3a8037..885dcbd81859 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -1561,7 +1561,7 @@ static void destroy_device_list(struct f2fs_sb_info *sbi)
+> >   	int i;
+> >   	for (i = 0; i < sbi->s_ndevs; i++) {
+> > -		blkdev_put(FDEV(i).bdev, sbi->sb);
+> > +		bdev_release(FDEV(i).bdev_handle);
+> >   #ifdef CONFIG_BLK_DEV_ZONED
+> >   		kvfree(FDEV(i).blkz_seq);
+> >   #endif
+> > @@ -4196,9 +4196,9 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+> >   		if (max_devices == 1) {
+> >   			/* Single zoned block device mount */
+> > -			FDEV(0).bdev =
+> > -				blkdev_get_by_dev(sbi->sb->s_bdev->bd_dev, mode,
+> > -						  sbi->sb, NULL);
+> > +			FDEV(0).bdev_handle = bdev_open_by_dev(
+> > +					sbi->sb->s_bdev->bd_dev, mode, sbi->sb,
+> > +					NULL);
+> >   		} else {
+> >   			/* Multi-device mount */
+> >   			memcpy(FDEV(i).path, RDEV(i).path, MAX_PATH_LEN);
+> > @@ -4216,12 +4216,13 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+> >   					(FDEV(i).total_segments <<
+> >   					sbi->log_blocks_per_seg) - 1;
+> >   			}
+> > -			FDEV(i).bdev = blkdev_get_by_path(FDEV(i).path, mode,
+> > -							  sbi->sb, NULL);
+> > +			FDEV(i).bdev_handle = bdev_open_by_path(FDEV(i).path,
+> > +					mode, sbi->sb, NULL);
+> >   		}
+> > -		if (IS_ERR(FDEV(i).bdev))
+> > -			return PTR_ERR(FDEV(i).bdev);
+> > +		if (IS_ERR(FDEV(i).bdev_handle))
+> > +			return PTR_ERR(FDEV(i).bdev_handle);
+> > +		FDEV(i).bdev = FDEV(i).bdev_handle->bdev;
+> >   		/* to release errored devices */
+> >   		sbi->s_ndevs = i + 1;
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
